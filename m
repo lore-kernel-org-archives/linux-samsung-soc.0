@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C3F22F82F;
-	Wed, 15 Jan 2025 08:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210FC236ECC;
+	Wed, 15 Jan 2025 08:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736929505; cv=none; b=X7zLk1XrJywVsDl2ZM3+dbcXWOmOMjpLKrJSssQhCRj2vBPkce+SmVbPrnWS3yQkw8aYtTTfLLfuBxcN6Sr8QKmoyUGaJoGVFoTuyOJsQFgou5sJezdCKIjpF+04RcbWL97cMTF+b5yYrAsIOmaa3zgN0gfi+1JwfDxedcAc15s=
+	t=1736929546; cv=none; b=IlEEQCr37YaySsliR0t2ilBR0KYq3jHLhTsPQqCZiu4k80ac/CGKFfmTQL8+DGwYMKvaqPAJSTjEdZqceUUw9xFEvpKEDt+tfGfI2aOrDSxVLuwG7yIyylI2ZJAladXGzeJechfacqeEiTyRDbLAV7nO/eKvXbLyQyY6+qrmuiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736929505; c=relaxed/simple;
-	bh=6gKYwXEMj+Fmgvpyd6795l0qrJPPXCyWBeZFxzULjR0=;
+	s=arc-20240116; t=1736929546; c=relaxed/simple;
+	bh=RdVMX+M7bTTToP03/qMEfXQX3C3yCjjqCO/xBjW6898=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhGixtt+wBj15yaPTFKui5AWC6G+IDidxDga1WfCYGLyNdBZzVy0awu2t6wLT8givK73ywqJo5hV+yGAqX0cUiTzusaglaNNuqplHuHEepf+7SKTE1glnKpz49OSRlyUtlW0jqanVRZrF2yJGx16VBQAeW36T71uxc6nv5MLBb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZ+oDCGX; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=FFzJj/OuDnANJpuRkEI2QQHN7vx/XUWeEp8k4rWfqCkXtYOvlN9txJ/P5QwfhlrcOVd5kPwUU3jLhDpW/CWMmD1ozwrxOpI1RUdHJkZkdWSWrdJgMDYnisjdoEuautn19E4HOwa4TPJVMYto+JnIxKFuBMYq5GAUdGq/w3i2sl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXLD3ScF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZ+oDCGX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D43C4CEE3;
-	Wed, 15 Jan 2025 08:25:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXLD3ScF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E52F1C4CEE4;
+	Wed, 15 Jan 2025 08:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736929505;
-	bh=6gKYwXEMj+Fmgvpyd6795l0qrJPPXCyWBeZFxzULjR0=;
+	s=k20201202; t=1736929545;
+	bh=RdVMX+M7bTTToP03/qMEfXQX3C3yCjjqCO/xBjW6898=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aZ+oDCGXuGzpyESV6RolWG3O2TaGayHzrlNQlSkTRbRZjpjRtX++kN4q9LFl+BY2m
-	 IENTxYkIpNOt7AQeAXaBRZRtBQ7Er7tIS7MZXxpkX5bO/ZyeT8g1xG3y/RnTe+DpCG
-	 WNRDuucKtnCZYz4/crMw2RwrZZ1Ug66SOBLU8A83AIEV2ZjxW9A5N4R1dxNsLts/XZ
-	 mOmkaXOxFvAumz9JtjhihvmLvb2WolkdYE+SBSuRabiYxl1gN1W0kCDb5QxQYZ5sbg
-	 9FFmedgkDWeY4DTHZJLYfvgr7FVB/Q7jho6yUyGGlOtGFRddQr2DCU8OVRHFKPR++T
-	 khuibpzYnXUkA==
-Message-ID: <ea2db4a3-47d3-42d7-bd51-18a0c3eb6d42@kernel.org>
-Date: Wed, 15 Jan 2025 09:24:58 +0100
+	b=gXLD3ScFQ+HQHUoCCSZ31AO0BKwerb0AMkLDHuCWt7v29uKOZ6WhfaKCZH6eIIDGz
+	 jQe6KR6blRZ9KSOvPqK4F99jMUrSJAi2dtUKcOZ252Hbu5Rsot5SOkTnXbLixXSGMi
+	 fT4dVXlAUritel67ymU9uM/ktbuYmP7Y7DKzV8UdZspOZaKlEUMJ1KrElXpeSOgEdd
+	 CqpFlvb6dWWSz5PTt5MZZD6VbhpseXfz+aIl+MawfqxOYuul7IrqCFdbHBBBeZKtF4
+	 +WxWv++kQI+eXHpTtYDlYLUfMCPWIwBTrbs0YTa54PDzl34EgATjljDwKjzqo8yIoe
+	 peQiPZ8+zrzZw==
+Message-ID: <f5c471e9-56c2-4674-af3e-1d19b2241bc2@kernel.org>
+Date: Wed, 15 Jan 2025 09:25:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -46,8 +46,8 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250109090325.595475-1-ivo.ivanov.ivanov1@gmail.com>
  <20250109090325.595475-3-ivo.ivanov.ivanov1@gmail.com>
- <81ff734b-7a5e-4c98-9df2-9b65996fff78@kernel.org>
- <15e9931a-b817-4dd3-abb6-9718e002c6bd@gmail.com>
+ <26aa96ba-36e4-400c-a982-48344f2096e4@kernel.org>
+ <23d2ca03-5578-457c-ad80-778ac4347c04@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,37 +93,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <15e9931a-b817-4dd3-abb6-9718e002c6bd@gmail.com>
+In-Reply-To: <23d2ca03-5578-457c-ad80-778ac4347c04@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/01/2025 22:57, Ivaylo Ivanov wrote:
-> On 1/14/25 20:03, Krzysztof Kozlowski wrote:
+On 14/01/2025 22:59, Ivaylo Ivanov wrote:
+> On 1/14/25 19:59, Krzysztof Kozlowski wrote:
 >> On 09/01/2025 10:03, Ivaylo Ivanov wrote:
->>> +static void exynos_usi_unconfigure(void *data)
->>> +{
->>> +	struct exynos_usi *usi = data;
->>> +	u32 val;
+>>>  static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+>>>  {
+>>>  	int ret;
+>>> @@ -251,6 +268,10 @@ static int exynos_usi_probe(struct platform_device *pdev)
+>>>  			return PTR_ERR(usi->regs);
+>>>  	}
+>>>  
+>>> +	ret = devm_add_action_or_reset(&pdev->dev, exynos_usi_unconfigure, usi);
+>>> +	if (ret)
+>>> +		return ret;
+>> You should not reverse the action before the action actually takes place.
+>>
 >>> +
->>> +	/* Make sure that we've stopped providing the clock to USI IP */
->>> +	val = readl(usi->regs + USI_OPTION);
->>> +	val &= ~USI_OPTION_CLKREQ_ON;
->>> +	val |= ~USI_OPTION_CLKSTOP_ON;
->>> +	writel(val, usi->regs + USI_OPTION);
->>> +
->>> +	/* Set USI block state to reset */
->>> +	val = readl(usi->regs + USI_CON);
->>> +	val |= USI_CON_RESET;
->>> +	writel(val, usi->regs + USI_CON);
->> Also shouldn't you enable clocks for accessing these? They are being
->> disabled at the end of exynos_usi_enable().
+>>>  	ret = exynos_usi_configure(usi);
+>>>  	if (ret)
+>>>  		return ret;
+>> Registering cleanup should therefore happen here.
 > 
-> Hm, perhaps. But I find that weird, since I haven't seen it in the downstream
-> driver implementation.
+> Alright, will fix. I'll try to submit the next (and hopefully final, if that's
+> all the critique you have) version in the following days, but I'm currently
+> focused on working on exynos2200.
 
-So the downstream enables clocks when configured usi, but never when
-unconfiguring? I could believe that no one cared about remove/error
-paths, thus never tested.
+Yeah, rest looks good. Anyway it is too late for this cycle, so I will
+pick this (and everything else not picked up) after the merge window.
 
 Best regards,
 Krzysztof
