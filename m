@@ -1,229 +1,193 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281E029A5;
-	Wed, 15 Jan 2025 13:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A05424A7D1
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 14:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736948757; cv=none; b=nkC3teHxBsfKazVo+Kaa6XEA79kJSzWMjh5FobJBp8257DooCDOXK0ZSnA8ijjXRaAxxBUzY4n+5bCxB1t60Bf0M3qS5iOuPH2J+QZWUXCMlWXctcQxA2CSWga/WmbnUHILq9xULyamOyE1ZuKsQfGO3kd5nxYPLXhjo7oHsde8=
+	t=1736950708; cv=none; b=T1mhll0yIWf4g/+pW2FxPjJppTyNZu4gi7w0mUWO9BBP1GAScwbngyXvwn3Lsaf6m4cBcFfTzcl0CA+tNfN24LYYYnnXyuHKdIItLAEREZDb0Y/fWntCrEFDU2gEDrQf+kMKvrbpj+yWe65bbIVYcKLAbS0IqATTBrjRlJ4LJZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736948757; c=relaxed/simple;
-	bh=b934zu3G0HcZxBB8IkIK44c+dS0hFAjWVvvTYlT82eo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Px2sRQfR0eAGrWdXov6sbJ1fyU9lXxP+yt7SEt961u88flzYbCq/yCEH6/X2ZvTBe9IRtZSigWKNC1bQxKwqXbDntfghfP4hdP0DI0rmjxYSCdc6G3qKKb272gDkuTTuW3ZxAEdcloG+HDSBTowhbYi9GUdQKWwQy9lOB1N52Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TFLFJF3X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qSe023yu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TFLFJF3X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qSe023yu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1736950708; c=relaxed/simple;
+	bh=Ra6VjKu0S3TSfrpyZV+gMCodGc+tYkk8uce5ZVbjZAk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fDIdG/PyyKtS6ceAwxurYnK2XYtE29Xf3ooriyNBXZS/oR9/i69IcUpL3alOMZZuw/BR0IOR4Z0eYfSRjPUnOEFy0p7By+mDbeRqqH357q1w7qoV3PiZuBNvlWtC5CfUmdEwjhY5dRzRLk0GG73+mgRHD+8eAlj+FsGj0O6zvKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a9Lsdstq; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TFLFJF3X";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qSe023yu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TFLFJF3X";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qSe023yu"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 49A6821249;
-	Wed, 15 Jan 2025 13:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1736948753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RYyfSaVw6g5xMH+JMHghdrGYmdnvDx9Zhz3pv4DK3Xw=;
-	b=TFLFJF3XySI2ZDMNWqLtnYi9I2CkKelN5grA2a/4kQ0P1TqzT7tSXr4h7/8Ne+Qn4kV+7e
-	tAGkQWxCqwepai1cL8InSYizan9Cfu381FxyhQuTclpqleEGeeZqfcFFnvdBZ7J8flDV0C
-	llifefl5Ww7OTjsLlhec4er0F+GluGU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1736948753;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RYyfSaVw6g5xMH+JMHghdrGYmdnvDx9Zhz3pv4DK3Xw=;
-	b=qSe023yuize08pZVM2Q7kCwRc6uXGuV4ZJmU+N6SFdTO1SX53lQO+DbJQKBt7UwMutw4m7
-	wijvbfZ3D9R6vCBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TFLFJF3X;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qSe023yu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1736948753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RYyfSaVw6g5xMH+JMHghdrGYmdnvDx9Zhz3pv4DK3Xw=;
-	b=TFLFJF3XySI2ZDMNWqLtnYi9I2CkKelN5grA2a/4kQ0P1TqzT7tSXr4h7/8Ne+Qn4kV+7e
-	tAGkQWxCqwepai1cL8InSYizan9Cfu381FxyhQuTclpqleEGeeZqfcFFnvdBZ7J8flDV0C
-	llifefl5Ww7OTjsLlhec4er0F+GluGU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1736948753;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RYyfSaVw6g5xMH+JMHghdrGYmdnvDx9Zhz3pv4DK3Xw=;
-	b=qSe023yuize08pZVM2Q7kCwRc6uXGuV4ZJmU+N6SFdTO1SX53lQO+DbJQKBt7UwMutw4m7
-	wijvbfZ3D9R6vCBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C332E139CB;
-	Wed, 15 Jan 2025 13:45:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ctv9LRC8h2cUZgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 15 Jan 2025 13:45:52 +0000
-Message-ID: <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
-Date: Wed, 15 Jan 2025 14:45:51 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a9Lsdstq"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-436637e8c8dso69907425e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 06:18:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736950705; x=1737555505; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LyLefsirnFHiBny48nwRg1v70yfpPBzd1WsBXD7eEU0=;
+        b=a9LsdstqCz9KaGW0a3x+4DnluLuuQRVAIbKiSxVN3DIy+xPYQOdWuBd9qHemt/ShQ/
+         GBevwkCC9zDZ9aFmVgMyNm3pGOO2UmClZyfqNarQjPh8GjDvccoMk336xaNEyScjNzh4
+         UoaaHJ15WM826CIPIqgv/Cck4tGI1blfGcmXyGg8sk5KpxDOKRbb2R7msYqmS7Q2o2Oe
+         14lvNSWyPyUC9wJ7ceBoGHEmqb+OzscENmPzRMqSse239XaB8wVnhnw6jHSoLwyBaZb9
+         2vwutpibce8ol3vzfd0EOQuHdlTq6Q1DYF9twIOLXi+AavIKcpA2bijhz/su/L5laWpd
+         RbjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736950705; x=1737555505;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LyLefsirnFHiBny48nwRg1v70yfpPBzd1WsBXD7eEU0=;
+        b=kPtLozllvaR81kPWll01XrJmO7Cbfbr9AXUkZY5bTqDI6vlraj1q+3++hVvj/sGUap
+         FPZqJKtKEakzfWm+YN9LLejqjnQKLFuIf5YbZHeTylQne3guvaXNXnGHGu/Nuc4MsoG2
+         4m0KjzqWcbUDQ4Kv9fXVPlPL4ZZQpkfJWwZhjaux12WLcJ5mXVuToRigjpNV+DslWgs0
+         5FkSLdjI2W7SIjjMkGFL7of0KszX04s6UFzlYsNE5C6QD8rFDCd6obtStSVhZeidpI2+
+         jW+fHCOodRO8WCK/z+tXu48HSFyQKu70t+sSC9k//qS9Bh+osKAwCi40ALvO5TbETBv3
+         3HFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Tzbr3nUYjw+lAAGn0Pdez+FUb0P1P9xrMtKI7lDhPFOzF8iLFTRPCKfsTMBakGBJ8z2/XXXhevSvPI7nFiEhkA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN4Lbw1MPQtrHpJ/ZnWEVjnxBwy023Bi1JwMd67sPHpfvZPZKU
+	xBg3Do019p/vv1/D363ZWAAgmhgGmmPcQoYu0jvHPIxXAQkof+cQ7d8gMt6eAzs=
+X-Gm-Gg: ASbGnctFzRrMGIozd8H5aTX3MiuWjYZjjnzj/mVneh5jcA1JkpRhFOVIYIJtUeZ+Il/
+	O3/0FfuGh0laDxUyDgbEpjEt4qmCZAoYTnjSoK5RQnprXW2Qo/v9DSxrBtmcXj2z62whsIGtzhb
+	lkHWUO2WzC47+A+AybWp2ER1qOVglPMFzaQ1wCBrK/j2bf8rNfqwxN73tcxLvtMd1JhtXzouYJJ
+	6XSgmsr2/99BUD9tyqeTyqqJmxUgV4lLjiO4Ocv3em2QgzIU3wjYxXDL20sb05M0zHT6znrhm4y
+	K5/gI57siRMAZbSSrRtbHdS24rst+GqHSCMB
+X-Google-Smtp-Source: AGHT+IGP60LUIuwASgS9o56h7S+gPKy3P6BFhKHpsGSUmfHT7ch3g+Akxa/OVdsuqoBRuhChB68dWw==
+X-Received: by 2002:a05:600c:3ca4:b0:434:a10f:9b with SMTP id 5b1f17b1804b1-436e26ab2a2mr300078595e9.14.1736950704653;
+        Wed, 15 Jan 2025 06:18:24 -0800 (PST)
+Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74d8e06sm25184555e9.31.2025.01.15.06.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 06:18:24 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v7 0/3] mailbox: add Samsung Exynos driver
+Date: Wed, 15 Jan 2025 14:18:13 +0000
+Message-Id: <20250115-acpm-v4-upstream-mbox-v7-0-948e09fcb5f2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andy Yan <andyshrk@163.com>
-References: <20250109150310.219442-1-tzimmermann@suse.de>
- <20250109150310.219442-26-tzimmermann@suse.de>
- <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
- <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
- <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
- <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
- <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
- <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
- <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 49A6821249
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:mid];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.xenproject.org,ideasonboard.com,163.com];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKXDh2cC/4XNTQ6CMBCG4auQrq1px5YfV97DuCh0Ck2EkhYJh
+ nB3CyuMIS7fL5lnZhLQWwzkmszE42iDdV2M7JSQqlFdjdTq2AQYCA4cqKr6lo6CvvoweFQtbUs
+ 30ULkGReMiZJJEm97j8ZOm3t/xG5sGJx/b29Gsa7/xDgwysDkGguojDK3p+2Ud2fna7KSo9wz2
+ REjI1Npri+F5AZz8cOkOwbYEZNGRqWFgJylKEF9McuyfABK4qjrSQEAAA==
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
+ willmcvicker@google.com, daniel.lezcano@linaro.org, 
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1736950703; l=4681;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=Ra6VjKu0S3TSfrpyZV+gMCodGc+tYkk8uce5ZVbjZAk=;
+ b=h33+NfDQmI1lYuSRo6dWA3xcKVXDp8zt+ua3vNaiqopS3831SKpnkgpY5JbC5qMvfYArvfzDr
+ Nb5gwIHttynAIeGp41FEsEx44XfnSP20eo86RQivF9H0/dkFeiJEri+
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Hi
+Hi,
 
+Now that the channel identifiers are passed through 'void *data' in
+send_data(), the clients now depend on the message format introduced in
+include/linux/mailbox/exynos-message.h. If Jassi finds this set fine,
+then he shall provide either an immutable tag so that Krzysztof uses it
+if applying the ACPM interface driver, or to ACK this set and let Krzysztof
+queue it.
 
-Am 15.01.25 um 14:33 schrieb Tomi Valkeinen:
-[...]
->> Yeah, there are constrains in the scanline and buffer alignments and 
->> orientation. And if we say that bpp==12 means NV12, it will be a 
->> problem for all other cases where bpp==12 makes sense.
->
-> I feel I still don't quite understand. Can't we define and document 
-> CREATE_DUMB like this:
->
-> If (bpp < 8 || is_power_of_two(bpp))
->     bpp means bitsperpixel
->     pitch is args->width * args->bpp / 8, aligned up to 
-> driver-specific-align
-> else
->     bpp is a legacy parameter, and we deal with it case by case.
->     list the cases and what they mean
->
-> And describe that when allocating subsampled buffers, the caller must 
-> adjust the width and height accordingly. And that the bpp and width 
-> can also refer to pixel groups.
->
-> Or if the currently existing code prevents the above for 16 and 32 
-> bpps, how about defining that any non-RGB or not-simple buffer has to 
-> be allocated with bpp=8, and the userspace has to align the pitch 
-> correctly according to the format and platform's hw restrictions?
+Description and change log below. Thanks.
+ta
 
-What if a hardware requires certain per-format alignments? Or requires 
-certain alignments for each plane? Or only supports tile modes? Or has 
-strict limits on the maximum buffer size?
+The Samsung Exynos mailbox controller, used on Google GS101 SoC, has 16 flag
+bits for hardware interrupt generation and a shared register for passing
+mailbox messages. When the controller is used by the ACPM protocol the shared
+register is ignored and the mailbox controller acts as a doorbell.
+The controller just raises the interrupt to APM after the ACPM protocol has
+written the message to SRAM.
 
-It is not possible to encode all this in a simple 32-bit value. So 
-user-space code has to be aware of all this and tweak bpp-based 
-allocation to make it work. Obviously you can use the current UAPI for 
-your use case. It's just not optimal or future proof.
+Changes in v7:
+- driver: pass channel identifiers via 'void *data' in send_data().
+- bindings: drop chan type definitions - not used in dt
+- bindings: drop comment and "|".
+- spin-off dt-bindings mailbox patch on its own. #mbox-cells = <0>; was
+  already allowed and used in brcm and mtk.
+- refer to the ACPM driver as "ACPM interface". The interface uses some
+  protocols (PMIC, DVFS, etc.) to communicate with the ACPM firmware.
+- Link to v6: https://lore.kernel.org/r/20241220-acpm-v4-upstream-mbox-v6-0-a6942806e52a@linaro.org
 
-Best regards
-Thomas
+Changes in v6:
+- mailbox: add support for clients to request channels by arguments.
+  Used by the ACPM interface where the channel identifiers are
+  discovered at runtime. Passing them via DT would be redundant.
+  Initial version sent on its own to gather feedback:
+  - Link: https://lore.kernel.org/all/20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org/
+  - the patches differ from the initial version as they allow #mbox-cells = 0
+- bindings: google,gs101-mbox: update description, make #mbox-cells
+  const 0.
+- mailbox: exynos-mailbox:
+  - replace exynos_mbox_of_xlate with exynos_mbox_xlate, the channel
+    identifiers are discovered at runtime and passed as
+    'const struct mbox_xlate_args *sp'
+  - in the xlate method, the first argument is the channel and the
+    second the type, as channels can be configured either in DOORBELL or
+    DATA modes. This becomes an example for when an exynos_mbox_of_xlate()
+    method will be introduced.
+  - make exynos_mbox_chan_index() inline and directly
+    return chan - chan->mbox->chans;
+- drop Krzysztof's and Peter's R-b tags from the google,gs101-mbox
+  bindings and the Samsung Exynos mailbox driver as they were updated.
+- add Krzysztof's and Peter's R-b tags to the MAINTAINERS patch
+- Link to v5: https://lore.kernel.org/r/20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org
 
->
->
->  Tomi
->
+Changes in v5:
+- fix dt-bindings by using the correct compatible name in the example
+- drop redundand "bindings" from the dt-bindings patch subject
+- rebase on top of v6.13-rc3
+- Link to v4: https://lore.kernel.org/r/20241212-acpm-v4-upstream-mbox-v4-0-02f8de92cfaf@linaro.org
 
+Changes in v4:
+- rename bindings file to be based on compatible: google,gs101-acpm-mbox
+- specify doorbell or data mode via '#mbox-cells' dt property. Update
+  driver and introduce exynos_mbox_of_xlate() to parse the mode.
+- s/samsung/Samsung/, s/exynos/Exynos/
+- use writel instead of writel_relaxed
+- remove stray of_match_ptr()
+- Link to v3: https://lore.kernel.org/linux-arm-kernel/20241205174137.190545-1-tudor.ambarus@linaro.org/
+
+Changes in v3:
+- decouple the mailbox controller driver from the ACPM protocol driver
+- address Krzysztof's review comments
+
+v2:
+https://lore.kernel.org/linux-arm-kernel/20241017163649.3007062-1-tudor.ambarus@linaro.org/
+
+v1:
+https://lore.kernel.org/linux-arm-kernel/20241004165301.1979527-1-tudor.ambarus@linaro.org/
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Tudor Ambarus (3):
+      dt-bindings: mailbox: add google,gs101-mbox
+      mailbox: add Samsung Exynos driver
+      MAINTAINERS: add entry for Samsung Exynos mailbox driver
+
+ .../bindings/mailbox/google,gs101-mbox.yaml        |  69 +++++++++
+ MAINTAINERS                                        |  10 ++
+ drivers/mailbox/Kconfig                            |  11 ++
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/exynos-mailbox.c                   | 157 +++++++++++++++++++++
+ include/linux/mailbox/exynos-message.h             |  19 +++
+ 6 files changed, 268 insertions(+)
+---
+base-commit: 5bc55a333a2f7316b58edc7573e8e893f7acb532
+change-id: 20241212-acpm-v4-upstream-mbox-948714004b05
+
+Best regards,
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
