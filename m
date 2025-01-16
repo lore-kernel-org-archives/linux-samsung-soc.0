@@ -1,151 +1,223 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B86E156F57;
-	Wed, 15 Jan 2025 21:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736976704; cv=pass; b=jiyIWz+b0AAbvc/UavQSjO2S8rFgKIq+cIjJXXhLskWapfzs21YtBRV1ZE02Cq+cXY+8wIrQ1WHLyBGGd3aPQCG1JY62K/CbyK3XuQV2PHHX80LXJBKzK9WrO3YpXfA8AAZR7mfHpqXjEUEwhfIZg1jWRebvhZ5g+WIcPxMvx8c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736976704; c=relaxed/simple;
-	bh=EiKc2+ElfVUDvxV/nsfw5ZdjjC98oAGrYP8FONOp9EE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IT+y0tZsRQN0rmFgMHznfr/Lhc5/4hMuEcpVUa5nwV3JUwD1CtFKMP2wl0Fcr1BuOR8jClffPh0hYW1c+ughKeeAH8ECJhpmXo1jNYeeKY++bGeqCiuljKvvlLy0y/SNIf4CkP5pWTtj9uA6ClNai64+MK5rI1oSyd7VhJKcM0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=jJNd7Ms5; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8511DE4C7;
+	Thu, 16 Jan 2025 08:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737014971; cv=none; b=j7iC1MAHRyKNjzHLBdjOT3yKbk7lLmMkIzAXJNdE42bC9uCHuf0mHpydiCyPrGQ3O+IUmPToTgJyiWiahEyfxbrPWPQpC274H5eXGLK/laxen0rudXl5KyZIamtN60eGypmmR6Nmxe9aczgHeeOP3vsuKsdPGm3bb+8LLQza0gM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737014971; c=relaxed/simple;
+	bh=qutSka+w/xEAf59QNYINpaHGaAu6p4W5IyAck9GACX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oQQCyKEv52wEkyv1WGkhFL+IT13ijbVqH1Kb+EkP1XPPk9fjboCOqW3Rv9+qDQwiHo/GrQkjZRTM2PbqKT1vPJR4sttChUUw0As4rtokxZdwrMZqubuZ15qTHxkpKZ/CwyoYeMh8FCl9I8q3TbD1JMq245jW26mlvkgap0nGuSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=guL7z/7g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QhcTxwz2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=guL7z/7g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QhcTxwz2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="jJNd7Ms5"
-ARC-Seal: i=1; a=rsa-sha256; t=1736976622; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=SE5c+9QEd23cengqfVBIxvKi1XlVmqPNd6ZxKiUvOfowwOTkS1jv4mJrrZJlXVM6aPN4Z4/G8nVxwyY5xamCcxWiyu8fiTbeZxIWujaYUP/0o1U9qDNOz6xDEj0kyBDrSx7UUuX3t8VGbRY3uKuXXlu3olABywxGoHFloIsungA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1736976622; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=44yBoEaBN9BUqiayzCJKrONcQRlrzsyZDx1UtPfWWvc=; 
-	b=MYGT+w+2dDZCwN9Kljm62tsiSjpLgQlABLvDpGygj06DFpCrnMlttSSDADBWTMPRELc7pVGPyRVRueCuqA8s85iIhX/6KCSrjvdNHrxttcK/CrAyQXt1Vc/rme30TT6/3zgO2PGM2qlsZnHzfOiabEnuHqeY8ggY2ET19bWVkjo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1736976622;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=44yBoEaBN9BUqiayzCJKrONcQRlrzsyZDx1UtPfWWvc=;
-	b=jJNd7Ms5UGIFw5cUCEDDTr5D+pS2J3XEkdHQHSj92ICil7Fm59YPsKJnEYHBP0hS
-	160pFHTnC7b6F4s6qaH6nTh4TX9OjxOrFPydPQx8HWLl/Vi646/DeMzgcq2uSwrYtrT
-	bwV3F61ygnsxkzKm5O4MJtDaXIxg3uYO9Xsj5iBU=
-Received: by mx.zohomail.com with SMTPS id 1736976620687410.3754694103633;
-	Wed, 15 Jan 2025 13:30:20 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id 2A79A1060346; Wed, 15 Jan 2025 22:30:16 +0100 (CET)
-Date: Wed, 15 Jan 2025 22:30:16 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: t.antoine@uclouvain.be
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel gauge
-Message-ID: <ocx5n42h25ztwo5twlir5zoajavpcxce2ra5jjyl6ae4qg6c3e@akhc3dylsprm>
-References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be>
- <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="guL7z/7g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QhcTxwz2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="guL7z/7g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QhcTxwz2"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AF679211D2;
+	Thu, 16 Jan 2025 08:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737014961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=guL7z/7g3EcabgvnEePbbCuZQv7xD8Nwr9UitmLW0HdQwyFjV2SSCQgHXiJw8V8gnCT1K2
+	PWtPwlEQencxyOkZzRFYa02U7TT7cyGEKiFsdqSu4Fbz6rTKbBaplstwxqYo2gR84TVDZg
+	EoU34+EHEiZW91gRDl+FfWH9McSLkvo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737014961;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=QhcTxwz2tTYoCTzfudp0U1RC65EHxbTx4mcJuk8sOgRjhjNV0lXRty1p1dQWnKcwWKutz2
+	DR+iY8oRFsTbZEBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737014961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=guL7z/7g3EcabgvnEePbbCuZQv7xD8Nwr9UitmLW0HdQwyFjV2SSCQgHXiJw8V8gnCT1K2
+	PWtPwlEQencxyOkZzRFYa02U7TT7cyGEKiFsdqSu4Fbz6rTKbBaplstwxqYo2gR84TVDZg
+	EoU34+EHEiZW91gRDl+FfWH9McSLkvo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737014961;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=QhcTxwz2tTYoCTzfudp0U1RC65EHxbTx4mcJuk8sOgRjhjNV0lXRty1p1dQWnKcwWKutz2
+	DR+iY8oRFsTbZEBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3205713A57;
+	Thu, 16 Jan 2025 08:09:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3VTFCrG+iGf+BAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 16 Jan 2025 08:09:21 +0000
+Message-ID: <a2bbeb47-2569-4ee0-9265-92bab139bdc6@suse.de>
+Date: Thu, 16 Jan 2025 09:09:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vjczpwchn3jh5lgv"
-Content-Disposition: inline
-In-Reply-To: <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.1/234.845.73
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andy Yan <andyshrk@163.com>
+References: <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-26-tzimmermann@suse.de>
+ <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
+ <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
+ <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
+ <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
+ <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
+ <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
+ <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
+ <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+ <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.xenproject.org,ideasonboard.com,163.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
+
+Hi
 
 
---vjczpwchn3jh5lgv
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel gauge
-MIME-Version: 1.0
+Am 15.01.25 um 15:20 schrieb Tomi Valkeinen:
+[...]
+>
+> My point is that we have the current UAPI, and we have userspace using 
+> it, but we don't have clear rules what the ioctl does with specific 
+> parameters, and we don't document how it has to be used.
+>
+> Perhaps the situation is bad, and all we can really say is that 
+> CREATE_DUMB only works for use with simple RGB formats, and the 
+> behavior for all other formats is platform specific. But I think even 
+> that would be valuable in the UAPI docs.
 
-Hi,
+To be honest, I would not want to specify behavior for anything but the 
+linear RGB formats. If anything, I'd take Daniel's reply mail for 
+documentation as-is. Anyone stretching the UAPI beyond RGB is on their own.
 
-On Thu, Jan 02, 2025 at 12:15:03PM +0100, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
->=20
-> The interface of the Maxim max77759 fuel gauge has a lot of common with t=
-he
-> Maxim max1720x. The major difference is the lack of non-volatile memory
-> slave address. No slave is available at address 0xb of the i2c bus, which
-> is coherent with the following driver from google: line 5836 disables
-> non-volatile memory for m5 gauge.
->=20
-> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68c3=
-6bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
->=20
-> Other differences include the lack of V_BATT register to read the battery
-> level and a difference in the way to identify the chip (the same register
-> is used but not the same mask).
->=20
-> Add support for the max77759 by allowing to use the non-volatile
-> memory or not based on the chip. Also add the V_CELL regsister as a
-> fallback to read voltage value in the case where read of V_BATT fails.
->=20
-> The cast is necessary to avoid an overflow when the value of the register
-> is above 54975 (equivalent to a voltage around 4.29 V).
->=20
-> The regmap of the max77759 will lead the read to fail for V_BATT and to
-> correctly use V_CELL instead. This regmap was proposed by Andr=E9 Draszik=
- in
->=20
-> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a11=
-6.camel@linaro.org/
->=20
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> ---
+>
+> Thinking about this, I wonder if this change is good for omapdrm or 
+> xilinx (probably other platforms too that support non-simple non-RGB 
+> formats via dumb buffers): without this patch, in both drivers, the 
+> pitch calculations just take the bpp as bit-per-pixels, align it up, 
+> and that's it.
+>
+> With this patch we end up using drm_driver_color_mode_format(), and 
+> aligning buffers according to RGB formats figured out via heuristics. 
+> It does happen to work, for the formats I tested, but it sounds like 
+> something that might easily not work, as it's doing adjustments based 
+> on wrong format.
+>
+> Should we have another version of drm_mode_size_dumb() which just 
+> calculates using the bpp, without the drm_driver_color_mode_format() 
+> path? Or does the drm_driver_color_mode_format() path provide some 
+> value for the drivers that do not currently do anything similar?
 
-Please add output from to the cover letter to allow easily verifying
-that all values are correctly scaled.
+With the RGB-only rule, using drm_driver_color_mode_format() makes 
+sense. It aligns dumb buffers and video=, provides error checking, and 
+overall harmonizes code. The fallback is only required because of the 
+existing odd cases that already bend the UAPI's rules.
 
-=2E/tools/testing/selftests/power_supply/test_power_supply_properties.sh
+Best regards
+Thomas
 
-> +static const struct regmap_access_table max77759_write_table =3D {
-> +	.yes_ranges =3D max77759_registers,
-> +	.n_yes_ranges =3D ARRAY_SIZE(max77759_registers),
-> +	.no_ranges =3D max77759_ro_registers,
-> +	.n_no_ranges =3D ARRAY_SIZE(max77759_ro_registers),
-> +};
+>
+>  Tomi
+>
 
-Drop the yes_range from the write table. It is wrong and confusing.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Greetings,
-
--- Sebastian
-
---vjczpwchn3jh5lgv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmeIKOQACgkQ2O7X88g7
-+poemg/7BYKpgndddd6KOyNkHh1f7/mS1SrEz1rSArQasRTtCaXiMgBvA1wRxh1R
-RLDCrfuUsmbgw3iO6bwMOXIxz+YdjJsaiSgLrM4mOrDPILOyWLmmv0rSPVEdVpFj
-S7KksQTPj003J/3xHzVaJtBApMhPDZW2vjbgK4GkL23Gj7fOC4PEyI+5A6tU2Ejo
-WsvcViBfCbQrOKD9N0Mub9pS5xztIhVllEdYMqbSRuyq4r0Uj00UqVBkrc6mx8zQ
-Hicb5UJsB8cARvRz+gnWqAYGvtgI/NO9LaoNb5jHO3NtyGjpYyivwUqUnkN6Y/F3
-38pyNM4dgSZG443aPNM1c+IyBYPXubSDFk0T4cOtR4SQdPIr7c2njf6+n/7O3YkO
-tbFGhYHqpHKN3M1tTOEhY8wQi5LFojGQw3n3QcN/TKCRUkoUXQh8//GFWlSU8vIq
-5Y1iBGTcURolyOtrhkXCaqs/6aBzV7TBa0XIO3P5E01h6kS4PjUzYSKzO7mekwKR
-BSXXUPDr2MniTUSqQ1tTjQrl6+LwI4Xg5PS/+eR+Eu71TZXdqB/CYtfNjrnXMR2k
-ryHOn+JwYxptH5KlAApF9c7N0Bvzvqnkv6x6ti4DyU6IaYpQUE/s/jPrBbKyfcng
-/ogbZww2lQZhhqfYHRf4MneuwRIUKKTY4aytf8zMg80rGjJIxvk=
-=6QDh
------END PGP SIGNATURE-----
-
---vjczpwchn3jh5lgv--
