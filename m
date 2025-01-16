@@ -1,92 +1,105 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2210F1A08BC
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 09:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1479C1DC184;
+	Thu, 16 Jan 2025 09:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737018705; cv=none; b=PfJnTp+Ga5CZdZf/d46hktRFnvla+e2ZC9ld/QSwhydToA8pRq5VRyMCtnx0RLiIne54keIEAFsqZOIx0xBEgckNCAGfCKboCDy0ug3U/4ZtUUR0vlJqiMZUzN5P9KniA9hJYpFLdq9hQsLRNsLTK9vQUHphcO0vPxBMT7hSI60=
+	t=1737020343; cv=none; b=DkjfGONulCX3yLRqb0mBNEzyhZ4BDMTcv7LZpLFzVsicuMQTW8kvKeBV14unKuyRa9nk8m4WkQZctuAigA7kHd2BszWczz0R2TG7Uz7Rnsepjg0CSnZWFvdpOwh5hWtxWw8Xjn4Dn0KbCntDXCcroELZdZNVLvD/CgD8SL6WlbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737018705; c=relaxed/simple;
-	bh=ikLFmXKsca9wmfydpauFYhkGfc0pmf34aJ8RvveDKb8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eweFrKSFuSVlqc39D73CTitLc2SXpXvZB+/TycgYLYWXD4n0B9XGiU6DNvABayuORZpWQd1mvZVKMIFI3yVGafZ7Hbkg6PNQizWlGhlOJdWXWm8xaUaizPIU/bii/dHCs9ZxQghUJa7KGns0U6AiNVM5b1kvXzWOkVunbZ93zZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R7Lini91; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1737020343; c=relaxed/simple;
+	bh=Sz7XGsB0jJiCVcgAYNC5ZZi+VkFA4hXqTcdj3HBGvi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fHRhENrp2ZqQczxWLuq+ty9xQB2BXiDpyYTu6FPi/0NCJfwfXBfA3E6o83hZ5HjpbHPVS4HDtNAIt3aE68mkjpvBtEC02mEkNd/4qrpBPn5dKkXG3eNrtnGWRtheNckw0P3g7HHXHEgFJ07NI7tlSUidW6sD1YWWNvNwNlK4qFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n0BH+gjP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R7Lini91"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30036310158so5860651fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 01:11:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737018702; x=1737623502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ikLFmXKsca9wmfydpauFYhkGfc0pmf34aJ8RvveDKb8=;
-        b=R7Lini91NOqPCx9nTryrKGk0ZKryWMwdGLWXYslUq3s+obqpIZXj2mG5Ygtw+SizaH
-         UbI0NJNfR4VUnPgKWQy1aHqKfTOgiYyIyDmcHcOfZtPJlxmHc1PCKLeoGvgQagxUlEds
-         y1YY3lxW63g21b74hT40CsdsEjMb6pazcq7hfdUj/+iLlX6jfBQEHtiXgKE6B6K/lVE0
-         P9TTyWSZb5R2+aqY7ySlTjbgAiJSMnuvvPxfrG9Zxj5CrKpOAE6ASLTEqqmaxl0TMIy9
-         1k4CdV0rj5p5h9dAS4EuGFoq+3woxfn/3qIY/pHZCbZpxFim1e6aQLAEzSPOpZkJbGkD
-         1U1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737018702; x=1737623502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ikLFmXKsca9wmfydpauFYhkGfc0pmf34aJ8RvveDKb8=;
-        b=se2X8rBFyoTgK8nx8Oe2rVITOXktW7AXkm5yjZshLO+Ai4qlrWhXmAH1shvtAZgBqx
-         A0GFr7wK/g14imZXr6xQSZuFm15iTVAKThc1hWizITAhZDPuVbEfWJm2IuM+pxCbcPmd
-         tYNzLBfH/l/3EUpxG2XpeNFPTaCzOyor0pcQ/+MjW8t2ZS+HTS8HWAuN2yOHDZk7EVAe
-         Nkad4F/A3x0PPFuh4K3pJYqrdIVu0jYbA/nGSqrJ56V+DCLmo4yyiB10vijNekHgEkds
-         nTpRyrh6qqo/XzlccGRTJhfNn4UiOrHhGhuxYK/xEejWVT/Ypr+LA9O8wit+ZJ554G5S
-         uCSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVp46lYfCnxns1aMgj079fm8VOmshdiaXNay0dRjyzB/6TY/4f+MeWkgjpUUW9qTbQosHLTiiRoZQgO0HJRv7sazA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGnv935TZrvFA19pQvD3DiyvXW49jXSUQYkRtfv40/aBGo/O8s
-	dkLAgNJrmlEWl9+/he9kZf3kuSrbNcZUnVf/OQRplG2Yc61lnZ8sgU4LWQHyXoLaDOrfMD+dDtV
-	L8rJNlXlapXyEA9YVrOB1thVuDimjWIEZd1yCWA==
-X-Gm-Gg: ASbGncsaPjzS6YwHr267WA/BMTNdldQgkEqDvZFFcQDL/9ZVh0fa22ScDnAThIfA5zD
-	J9S+iH8I0bHAPQxry9iCbDYSibszvZnoqjFdm
-X-Google-Smtp-Source: AGHT+IGrNyL4WuedbnIHfohMmLOiMsDyLxHxYKbUmK1MCT79/SM2AYsIeC1T5ua5wPDqXM+fDCZ6Rn/6qrHw9NOkVng=
-X-Received: by 2002:a05:651c:b0d:b0:306:10d6:28ad with SMTP id
- 38308e7fff4ca-30610d62ae0mr55983181fa.8.1737018702223; Thu, 16 Jan 2025
- 01:11:42 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n0BH+gjP"
+Received: from pendragon.ideasonboard.com (unknown [193.209.96.36])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 12F276B5;
+	Thu, 16 Jan 2025 10:38:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1737020281;
+	bh=Sz7XGsB0jJiCVcgAYNC5ZZi+VkFA4hXqTcdj3HBGvi4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n0BH+gjPklcJM4K7npyiN+OizL+So166OYOAFCGwmyI31sasdC0hnhksHO/5bLnfw
+	 HMc/eoseS5N2gVokQXXsjM5itCkOuGjpNUxwyWy3Ek6SdEbjqi0yC6yW0imGRrqVj1
+	 1fRnvPVpWPsdUJLy5MKa4eyuKZRKjUpaQVwa4Knc=
+Date: Thu, 16 Jan 2025 11:38:54 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+	Andy Yan <andyshrk@163.com>
+Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+Message-ID: <20250116093854.GG6754@pendragon.ideasonboard.com>
+References: <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
+ <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
+ <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
+ <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
+ <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
+ <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
+ <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+ <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+ <CAPj87rOn=RQ615zyaEdFT2ADfPztU7+heVi0G34Rdg-=QO1cCw@mail.gmail.com>
+ <20250116084340.GF6754@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115-arm-cacheinfo-fix-v1-1-5f30eeb4e463@linaro.org>
-In-Reply-To: <20250115-arm-cacheinfo-fix-v1-1-5f30eeb4e463@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 16 Jan 2025 10:11:31 +0100
-X-Gm-Features: AbW1kvY2Bex2g7NRizUNo-TeBXpa3h2hnqoTmMGAWm_LgIWygats90STWMenwAs
-Message-ID: <CACRpkdaEyC_aOLkJDUPw7=0FhBFN4rRfBU4rghm4RfjZhJFP-Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: cacheinfo fix format field mask
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Russell King <linux@armlinux.org.uk>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250116084340.GF6754@pendragon.ideasonboard.com>
 
-On Wed, Jan 15, 2025 at 12:10=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On Thu, Jan 16, 2025 at 10:43:40AM +0200, Laurent Pinchart wrote:
+> On Wed, Jan 15, 2025 at 02:34:26PM +0000, Daniel Stone wrote:
+> > On Wed, 15 Jan 2025 at 14:20, Tomi Valkeinen wrote:
+> > > No disagreement there, we need CREATE_DUMB2.
+> > >
+> > > My point is that we have the current UAPI, and we have userspace using
+> > > it, but we don't have clear rules what the ioctl does with specific
+> > > parameters, and we don't document how it has to be used.
+> > >
+> > > Perhaps the situation is bad, and all we can really say is that
+> > > CREATE_DUMB only works for use with simple RGB formats, and the behavior
+> > > for all other formats is platform specific. But I think even that would
+> > > be valuable in the UAPI docs.
+> > 
+> > Yeah, CREATE_DUMB only works for use with simple RGB formats in a
+> > linear layout. Not monochrome or YUV or tiled or displayed rotated or
+> > whatever.
+> > 
+> > If it happens to accidentally work for other uses, that's fine, but
+> > it's not generically reliable for anything other than simple linear
+> > RGB. It's intended to let you do splash screens, consoles, recovery
+> > password entries, and software-rendered compositors if you really
+> > want. Anything more than that isn't 'dumb'.
+> 
+> We have lots of software out there that rely on CREATE_DUMB supporting
+> YUV linear formats, and lots of drivers (mostly on Arm I suppose) that
+> implement YUV support in CREATE_DUMB. I'm fine replacing it with
+> something better, but I think we need a standard ioctl that can create
+> linear YUV buffers. I've been told many times that DRM doesn't want to
+> standardize buffer allocation further than what CREATE_DUMB is made for.
+> Can we reconsider this rule then ?
 
-> Fix C&P error left unnoticed during the reviews. The FORMAT field spans
-> over bits 29-31, not 24-27 of the CTR register.
->
-> Fixes: a9ff94477836 ("ARM: 9433/2: implement cacheinfo support")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/linux-arm-msm/01515ea0-c6f0-479f-9da5-764=
-d9ee79ed6@samsung.com/
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Actually... Instead of adding a CREATE_DUMB2, it would be best on trying
+to leverage DMA heaps and deprecate allocating from the KMS device.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+-- 
+Regards,
 
-Yours,
-Linus Walleij
+Laurent Pinchart
