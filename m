@@ -1,174 +1,368 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43441DDC0B
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 10:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4A51DE3B3
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 11:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737023742; cv=none; b=bqjuJq7ezS5uQmEUefhvoYAjty2KrXIyewBuDdVk9Po9pwbOiicdQLmeUweoQpAIrJ/EOjQwB7ZTLOT6UV9GPxoKYU3s9CDM6E+6VOlu8+67wpg/HX8wWDf7ZILJMoLbiuqmvb8qbPh78LZTGsLDBaGovJC+85SSUCjQabdnNXA=
+	t=1737026309; cv=none; b=LJJI4/ol26ybkqHBqPOGsY6Rzdadg4fnthoX36mWgFwKqwYv2PvmEYV/mFVndp9aaZIiDm4dy6sIKHNry6k+pVBMtBmJHJDRpV/R1Z+VlxqdxGMUAFYxYnHjSJsb8tdEdhEgMcFD8JFJaIdqSrO2S3esyuFRtWnkpjISL0xwH2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737023742; c=relaxed/simple;
-	bh=6DNeYuaaCEB0QmL3/61d3YZghnfgrzyOqtsXzdxA9lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRPsmC/g53q/FBUbE5tC8luyHRIxFzdTdXl9NhTYiEngisPJ58ci4Vj2Z3a17rdYaXyeS3euOjOp6q6dl9Xd3LIByKr+yH5lYPAi5v75zSn7b4vXygM8j7Fsxcke7yMGEeJsj5eehSnJdy+Yq8VknE0SW3u8+qrTp3q2jtebsTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HqHF9F/G; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1737026309; c=relaxed/simple;
+	bh=Zd7jHP+XGlfY47OnGIk7XJX8Utuk+7lFL+EDjcWb7Bw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UcUP9AOwwY86wKIARysJ60Np2h9RoC4qb5MITJYfXJqp17wQL/02nLG+0SuDe2e2iGujBHxGt7BeWFjnRrvBHDPfDfRW0vMUpSQc3SQAAoB2BS+lzedrE3IrZeX6HOkT/e6Poz55Z6WgnTpnAKq1uGV88onwWxcAtFohxuOtuyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fcL9TxvF; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HqHF9F/G"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53e3a227b82so807161e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 02:35:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fcL9TxvF"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa679ad4265so388001166b.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 03:18:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737023739; x=1737628539; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gprmJm/Cl6p6869D60XQ3XjbtrOWLJEOxZITgqe2J5o=;
-        b=HqHF9F/Go7BA24+9BcueD0XVMMvTvDq+J44+b7vfGADW5tpGa/4t+v9PQYkLyJ7LS5
-         I5NTgAsY2nEYR0j3sqD5FPuOmH/8wcG8NJuA4MPptVSw8m5Y86mgZb3KIKQ5qsUSU5nc
-         3/9bCOcbgHpzrOo5uAp4rzYofLkjRIFysY/p6S1pR2AGHnm1BFPBO45WcDCRgUxCMY+d
-         XUrPa2H9K5v0F3YZ2HGQY14qq1RHWC01KNLbe6ELLL16xSWgSxWZ1xaloo95l8E19vDv
-         LxLqCg6aE49TDSH6FHPe/0a6hRaej+LhIowvPqtUrRJa5Kv3ywpCrSx54hcEz7qp+s08
-         S3Ow==
+        d=linaro.org; s=google; t=1737026304; x=1737631104; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=52cZ4LMER5qN3pwWPAv/+1Mc4HkXxw2FRobsdgIPybw=;
+        b=fcL9TxvFJXYizI9l8LMguT3E/rLevim6zyrS0J7C01XdWKSGCCJWwyi9oVBmm0CJng
+         ffvHUSi9AAqVbWX7EnLrjxu52QgsubpgyCz6IzdU74a9Q9Rxk9pP+j0I/xS8QbEB14wx
+         Xr1IYNIeym+VbJIocrS2fAdfZQPtLU3XH+TniSIRSLGoSQ1pmH9dcqHDnAgUPwnnQqfj
+         QFDUvsZDx/OOU/uX8wKxPsg9CRpbkBJWpETMV4OBhnVridoXoXZdcNkBVjkv6qJNCHRO
+         xAGuVJ7U220CS088BhgWq/QhLpHxbJ9sVbwhxYMBpyqYsWpXDTmdDaMksT+pCBDxCEvF
+         WgoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737023739; x=1737628539;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gprmJm/Cl6p6869D60XQ3XjbtrOWLJEOxZITgqe2J5o=;
-        b=uGF1mKGYs3lMPiCMrbiCBHWKtwUa142L2915Umn1mbZNeuioJnA1p+3pUoomDWB0vu
-         GllkSXFU6kTN9PGrFJGUgAH9EfeUGhHy4JdCNm+t0wQ4mwIUbwyUTNLhLlntNreQdDV2
-         U1m3PuMxYgOHpqpH8jXiFTCQygNT7z+pmXfatoVw9Du3IpJSHA8UiCS3sJi3gfvIGQPT
-         kszqP8ldkWkqwyR7+ScTO1S7Tbhu9s5qbWP4OivaW6yO6CZZvxKemyv3R8i02U8MA8Wc
-         Vf6+bU7zL+RmBSlq5bR9z2eDiFqkbYcNR4u7LW1SoWERV6+xINR+RxgLyLyMjpD5nDLs
-         QoRw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5hzBBFd/WYY4mo2Vf7qOlFSphbHkMza1bkR/a+DNye4rl+UL1MmEV6oSrUr6jBCnT7fjKKd7fi2GTGhVjFCsFdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFrA+GT9a7CUROfum5/U3+DAe9tay3D9oQFjSwLZ1YCQaBk8F1
-	e8VJzCNPvEsRJVsCxgBBNoowz+zD1wR+JFphLtkOx2+M3uBDiRgRTEPwtF7gBVo=
-X-Gm-Gg: ASbGncvyTTqqz33V/OOd/jt7jeVH/ohc8bGnExV3q02IQthWur6r1VDuCVxqYTGwtYw
-	HPkcuW+JPhiNM84NAoojJ7oSzK2TnqLWZDVXsxPVp3dm3L4HyGfwtMFXAKmTHR90o1pXSxfujmi
-	8ZSdLRKXcBidI1M5l8jVDfV9HyLk5/MvLutWi7OoUuPz5fw9R1GnhBCC6/jY/pf6OI46w4RYYCZ
-	pjMqf78hWij+R235lwfyYLGz+pD8d9LauytyWTFtVVk2Gi9BgeYykeSKJ6j85p3bFDtlR4Lxh3n
-	GTYegBuEGL3kZ1OBcX2hRvKSo/7b1czg0pee
-X-Google-Smtp-Source: AGHT+IH3G1Mnr8k23AF5/dIs7iAuJyOHJCwOMDmvWc4umnN+swRWG+FLBCp9QsFSdvm1xDWFrQeEdg==
-X-Received: by 2002:a05:6512:3d27:b0:540:20a9:9ab5 with SMTP id 2adb3069b0e04-54284824476mr9777793e87.50.1737023738809;
-        Thu, 16 Jan 2025 02:35:38 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5428be49d6esm2261466e87.50.2025.01.16.02.35.36
+        d=1e100.net; s=20230601; t=1737026304; x=1737631104;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=52cZ4LMER5qN3pwWPAv/+1Mc4HkXxw2FRobsdgIPybw=;
+        b=U1oGMN96bQgN5auqODlOb82ClQ7tSNxUJscfMpiXzQrQXfJtPiFhR5D1REkY+XOihN
+         utoDvj9dbdV1ijVHuVN1iYyPOjdCpCi4aJUPC7mSpcvSlmGjhoQ15P3BKuhbnQSpUdBG
+         j5SgCE2S+WELwvLZH564hmr5aOcrmAdlfp33U2bJ7Mz/RagHbQIyoEzsOAJKaypYuofv
+         mZlZTGdwfbIIC/bP97/iOROS678010nHMZCG4JdDLBjeYb919pCWsiN8cISySZLsHXCw
+         gV+q71SoteebRACqEpZCdWKqQ357cbEnBv/5FFEwVxBzPQuaMgkPuQRxyXw8o0MctEbX
+         rY5A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7/9iF4daBMHKQ96eYIu9U148DNTSOy6iINkiXrMnNA97gix+BzonQ4ukw/ckx+vZz+3p5uzW3RhVGlbWt32AFJg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3JLmRbGrCjBDzFYm5VH3Cg/UmCMFQfwSkeL4GNS/PQbFrVmrR
+	EUrwyebVyqkC6oSo7zaUxhvPZqUS0WC0z35JLfXXZGxAne6J1BJKuzN1ehfOYCg=
+X-Gm-Gg: ASbGncuIFOLNMW278q0Nvu2UUu34jBq/g7tfcHXbugC/UGI5JJPKd6R/UKaDM5uj7al
+	TuwSRYu9PBPl11HFT53oIkLBtCH5etI/5wkV3bvi/alzIAHx5xw5P/iODrY9SVJyZxj1cs4yjM3
+	IiJSbfht5lIFc3+pM6sUDq0y8IwgMzf3fnQF5hWJA4R0CEH7xwzw1gJgCFSypj+GMoBFCjcAui6
+	Soc+B9Hhe87ThMOJYdAmOMzAjWXoZ1qxLL/X3Y1dKWUD2CGSQZm9Eo8HgktxGqxBUq2eAbFKLTi
+	1KnFQPXwZCbDVTSRGbEL3QgD2zHdb/0ASYcBZGKm
+X-Google-Smtp-Source: AGHT+IHpMBoX/IkroSmo+PWN098yPyDq9q0kh7bX4gtU767TKeBokR24kjM0/xfgYfs9ZvIbTgjPYw==
+X-Received: by 2002:a17:906:fc3:b0:aa6:489e:5848 with SMTP id a640c23a62f3a-ab36e434f5dmr158846666b.25.1737026304076;
+        Thu, 16 Jan 2025 03:18:24 -0800 (PST)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c90da0casm902233366b.61.2025.01.16.03.18.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 02:35:37 -0800 (PST)
-Date: Thu, 16 Jan 2025 12:35:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andy Yan <andyshrk@163.com>, Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-Message-ID: <xz5ncq67bgmdase2jg3cfvyaxpiwhol2eqpfzow6dqpauvslo5@2w3rw27lhnxo>
-References: <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
- <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
- <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
- <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
- <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
- <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
- <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
- <a2bbeb47-2569-4ee0-9265-92bab139bdc6@suse.de>
- <f3833771-fcd7-45dc-9019-1525fef34429@ideasonboard.com>
- <CAMuHMdXxYa+Na3XxpLTy=-eUL_zQ9kAiUKYu-E04u3KWApusSA@mail.gmail.com>
+        Thu, 16 Jan 2025 03:18:23 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Thu, 16 Jan 2025 11:18:08 +0000
+Subject: [PATCH v3] scsi: ufs: fix use-after free in init error and remove
+ paths
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdXxYa+Na3XxpLTy=-eUL_zQ9kAiUKYu-E04u3KWApusSA@mail.gmail.com>
+Message-Id: <20250116-ufshcd-fix-v3-1-6a83004ea85c@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAO/qiGcC/22MSwrCMBQAr1Le2kjyklTqqvcQFzGf9oE0kmhQS
+ u9u2pUFlzMwM0P2iXyGczND8oUyxamCPDRgRzMNnpGrDMhRcyEke4U8WscCvZlGxbuATmIIUIN
+ H8lVvs8u18kj5GdNnexex2r+bIphg1rTSCaduTuv+TpNJ8RjTAOun4G+rdi3WFp1t8aQ7bpTZt
+ cuyfAE0Smqa4QAAAA==
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Satya Tangirala <satyat@google.com>, 
+ Eric Biggers <ebiggers@google.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, stable@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Thu, Jan 16, 2025 at 11:17:50AM +0100, Geert Uytterhoeven wrote:
-> On Thu, Jan 16, 2025 at 11:03 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
-> > On 16/01/2025 10:09, Thomas Zimmermann wrote:
-> > > Am 15.01.25 um 15:20 schrieb Tomi Valkeinen:
-> > > [...]
-> > >>
-> > >> My point is that we have the current UAPI, and we have userspace using
-> > >> it, but we don't have clear rules what the ioctl does with specific
-> > >> parameters, and we don't document how it has to be used.
-> > >>
-> > >> Perhaps the situation is bad, and all we can really say is that
-> > >> CREATE_DUMB only works for use with simple RGB formats, and the
-> > >> behavior for all other formats is platform specific. But I think even
-> > >> that would be valuable in the UAPI docs.
-> > >
-> > > To be honest, I would not want to specify behavior for anything but the
-> > > linear RGB formats. If anything, I'd take Daniel's reply mail for
-> > > documentation as-is. Anyone stretching the UAPI beyond RGB is on their own.
-> > >
-> > >> Thinking about this, I wonder if this change is good for omapdrm or
-> > >> xilinx (probably other platforms too that support non-simple non-RGB
-> > >> formats via dumb buffers): without this patch, in both drivers, the
-> > >> pitch calculations just take the bpp as bit-per-pixels, align it up,
-> > >> and that's it.
-> > >>
-> > >> With this patch we end up using drm_driver_color_mode_format(), and
-> > >> aligning buffers according to RGB formats figured out via heuristics.
-> > >> It does happen to work, for the formats I tested, but it sounds like
-> > >> something that might easily not work, as it's doing adjustments based
-> > >> on wrong format.
-> > >>
-> > >> Should we have another version of drm_mode_size_dumb() which just
-> > >> calculates using the bpp, without the drm_driver_color_mode_format()
-> > >> path? Or does the drm_driver_color_mode_format() path provide some
-> > >> value for the drivers that do not currently do anything similar?
-> > >
-> > > With the RGB-only rule, using drm_driver_color_mode_format() makes
-> > > sense. It aligns dumb buffers and video=, provides error checking, and
-> > > overall harmonizes code. The fallback is only required because of the
-> > > existing odd cases that already bend the UAPI's rules.
-> >
-> > I have to disagree here.
-> >
-> > On the platforms I have been using (omap, tidss, xilinx, rcar) the dumb
-> > buffers are the only buffers you can get from the DRM driver. The dumb
-> > buffers have been used to allocate linear and multiplanar YUV buffers
-> > for a very long time on those platforms.
-> >
-> > I tried to look around, but I did not find any mentions that CREATE_DUMB
-> > should only be used for RGB buffers. Is anyone outside the core
-> > developers even aware of it?
-> >
-> > If we don't use dumb buffers there, where do we get the buffers? Maybe
-> > from a v4l2 device or from a gpu device, but often you don't have those.
-> > DMA_HEAP is there, of course.
-> 
-> Why can't there be a variant that takes a proper fourcc format instead of
-> an imprecise bpp value?
+devm_blk_crypto_profile_init() registers a cleanup handler to run when
+the associated (platform-) device is being released. For UFS, the
+crypto private data and pointers are stored as part of the ufs_hba's
+data structure 'struct ufs_hba::crypto_profile'. This structure is
+allocated as part of the underlying ufshd allocation.
 
-Backwards compatibility. We can add an IOCTL for YUV / etc. But
-userspace must be able to continue allocating YUV buffers through
-CREATE_DUMB.
+During driver release or during error handling in ufshcd_pltfrm_init(),
+this structure is released as part of ufshcd_dealloc_host() before the
+(platform-) device associated with the crypto call above is released.
+Once this device is released, the crypto cleanup code will run, using
+the just-released 'struct ufs_hba::crypto_profile'. This causes a
+use-after-free situation:
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+    exynos-ufshc 14700000.ufs: ufshcd_pltfrm_init() failed -11
+    exynos-ufshc 14700000.ufs: probe with driver exynos-ufshc failed with error -11
+    Unable to handle kernel paging request at virtual address 01adafad6dadad88
+    Mem abort info:
+      ESR = 0x0000000096000004
+      EC = 0x25: DABT (current EL), IL = 32 bits
+      SET = 0, FnV = 0
+      EA = 0, S1PTW = 0
+      FSC = 0x04: level 0 translation fault
+    Data abort info:
+      ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+      CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+      GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+    [01adafad6dadad88] address between user and kernel address ranges
+    Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+    Modules linked in:
+    CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.13.0-rc5-next-20250106+ #70
+    Tainted: [W]=WARN
+    Hardware name: Oriole (DT)
+    pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+    pc : kfree+0x60/0x2d8
+    lr : kvfree+0x44/0x60
+    sp : ffff80008009ba80
+    x29: ffff80008009ba90 x28: 0000000000000000 x27: ffffbcc6591e0130
+    x26: ffffbcc659309960 x25: ffffbcc658f89c50 x24: ffffbcc659539d80
+    x23: ffff22e000940040 x22: ffff22e001539010 x21: ffffbcc65714b22c
+    x20: 6b6b6b6b6b6b6b6b x19: 01adafad6dadad80 x18: 0000000000000000
+    x17: ffffbcc6579fbac8 x16: ffffbcc657a04300 x15: ffffbcc657a027f4
+    x14: ffffbcc656f969cc x13: ffffbcc6579fdc80 x12: ffffbcc6579fb194
+    x11: ffffbcc6579fbc34 x10: 0000000000000000 x9 : ffffbcc65714b22c
+    x8 : ffff80008009b880 x7 : 0000000000000000 x6 : ffff80008009b940
+    x5 : ffff80008009b8c0 x4 : ffff22e000940518 x3 : ffff22e006f54f40
+    x2 : ffffbcc657a02268 x1 : ffff80007fffffff x0 : ffffc1ffc0000000
+    Call trace:
+     kfree+0x60/0x2d8 (P)
+     kvfree+0x44/0x60
+     blk_crypto_profile_destroy_callback+0x28/0x70
+     devm_action_release+0x1c/0x30
+     release_nodes+0x6c/0x108
+     devres_release_all+0x98/0x100
+     device_unbind_cleanup+0x20/0x70
+     really_probe+0x218/0x2d0
 
+In other words, the initialisation code flow is:
+
+  platform-device probe
+    ufshcd_pltfrm_init()
+      ufshcd_alloc_host()
+        scsi_host_alloc()
+          allocation of struct ufs_hba
+          creation of scsi-host devices
+    devm_blk_crypto_profile_init()
+      devm registration of cleanup handler using platform-device
+
+and during error handling of ufshcd_pltfrm_init() or during driver
+removal:
+
+  ufshcd_dealloc_host()
+    scsi_host_put()
+      put_device(scsi-host)
+        release of struct ufs_hba
+  put_device(platform-device)
+    crypto cleanup handler
+
+To fix this use-after free, change ufshcd_alloc_host() to register a
+devres action to automatically cleanup the underlying SCSI device on
+ufshcd destruction, without requiring explicit calls to
+ufshcd_dealloc_host(). This way:
+
+    * the crypto profile and all other ufs_hba-owned resources are
+      destroyed before SCSI (as they've been registered after)
+    * a memleak is plugged in tc-dwc-g210-pci.c remove() as a
+      side-effect
+    * EXPORT_SYMBOL_GPL(ufshcd_dealloc_host) can be removed fully as
+      it's not needed anymore
+    * no future drivers using ufshcd_alloc_host() could ever forget
+      adding the cleanup
+
+Fixes: cb77cb5abe1f ("blk-crypto: rename blk_keyslot_manager to blk_crypto_profile")
+Fixes: d76d9d7d1009 ("scsi: ufs: use devm_blk_ksm_init()")
+Cc: stable@vger.kernel.org
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v3:
+- rename devres action handler to ufshcd_devres_release() (Bart)
+- Link to v2: https://lore.kernel.org/r/20250114-ufshcd-fix-v2-1-2dc627590a4a@linaro.org
+
+Changes in v2:
+- completely new approach using devres action for Scsi_host cleanup, to
+  ensure ordering
+- add Fixes: and CC: stable tags (Eric)
+- Link to v1: https://lore.kernel.org/r/20250113-ufshcd-fix-v1-1-ca63d1d4bd55@linaro.org
+---
+In my case, as per above trace I initially encountered an error in
+ufshcd_verify_dev_init(), which made me notice this problem both during
+error handling and release. For reproducing, it'd be possible to change
+that function to just return an error, or rmmod the platform glue
+driver.
+
+Other approaches for solving this issue I see are the following, but I
+believe this one here is the cleanest:
+
+* turn 'struct ufs_hba::crypto_profile' into a dynamically allocated
+  pointer, in which case it doesn't matter if cleanup runs after
+  scsi_host_put()
+* add an explicit devm_blk_crypto_profile_deinit() to be called by API
+  users when necessary, e.g. before ufshcd_dealloc_host() in this case
+* register the crypto cleanup handler against the scsi-host device
+  instead, like in v1 of this patch
+---
+ drivers/ufs/core/ufshcd.c        | 27 +++++++++++++++++----------
+ drivers/ufs/host/ufshcd-pci.c    |  2 --
+ drivers/ufs/host/ufshcd-pltfrm.c | 11 ++++-------
+ include/ufs/ufshcd.h             |  1 -
+ 4 files changed, 21 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 43ddae7318cb..8351795296bb 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -10279,16 +10279,6 @@ int ufshcd_system_thaw(struct device *dev)
+ EXPORT_SYMBOL_GPL(ufshcd_system_thaw);
+ #endif /* CONFIG_PM_SLEEP  */
+ 
+-/**
+- * ufshcd_dealloc_host - deallocate Host Bus Adapter (HBA)
+- * @hba: pointer to Host Bus Adapter (HBA)
+- */
+-void ufshcd_dealloc_host(struct ufs_hba *hba)
+-{
+-	scsi_host_put(hba->host);
+-}
+-EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
+-
+ /**
+  * ufshcd_set_dma_mask - Set dma mask based on the controller
+  *			 addressing capability
+@@ -10307,6 +10297,16 @@ static int ufshcd_set_dma_mask(struct ufs_hba *hba)
+ 	return dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(32));
+ }
+ 
++/**
++ * ufshcd_devres_release - devres cleanup handler, invoked during release of
++ *			   hba->dev
++ * @host: pointer to SCSI host
++ */
++static void ufshcd_devres_release(void *host)
++{
++	scsi_host_put(host);
++}
++
+ /**
+  * ufshcd_alloc_host - allocate Host Bus Adapter (HBA)
+  * @dev: pointer to device handle
+@@ -10334,6 +10334,13 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 		err = -ENOMEM;
+ 		goto out_error;
+ 	}
++
++	err = devm_add_action_or_reset(dev, ufshcd_devres_release,
++				       host);
++	if (err)
++		return dev_err_probe(dev, err,
++				     "failed to add ufshcd dealloc action\n");
++
+ 	host->nr_maps = HCTX_TYPE_POLL + 1;
+ 	hba = shost_priv(host);
+ 	hba->host = host;
+diff --git a/drivers/ufs/host/ufshcd-pci.c b/drivers/ufs/host/ufshcd-pci.c
+index ea39c5d5b8cf..9cfcaad23cf9 100644
+--- a/drivers/ufs/host/ufshcd-pci.c
++++ b/drivers/ufs/host/ufshcd-pci.c
+@@ -562,7 +562,6 @@ static void ufshcd_pci_remove(struct pci_dev *pdev)
+ 	pm_runtime_forbid(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 	ufshcd_remove(hba);
+-	ufshcd_dealloc_host(hba);
+ }
+ 
+ /**
+@@ -605,7 +604,6 @@ ufshcd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	err = ufshcd_init(hba, mmio_base, pdev->irq);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Initialization failed\n");
+-		ufshcd_dealloc_host(hba);
+ 		return err;
+ 	}
+ 
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
+index 505572d4fa87..adb0a65d9df5 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.c
++++ b/drivers/ufs/host/ufshcd-pltfrm.c
+@@ -488,13 +488,13 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	if (err) {
+ 		dev_err(dev, "%s: clock parse failed %d\n",
+ 				__func__, err);
+-		goto dealloc_host;
++		goto out;
+ 	}
+ 	err = ufshcd_parse_regulator_info(hba);
+ 	if (err) {
+ 		dev_err(dev, "%s: regulator init failed %d\n",
+ 				__func__, err);
+-		goto dealloc_host;
++		goto out;
+ 	}
+ 
+ 	ufshcd_init_lanes_per_dir(hba);
+@@ -502,14 +502,14 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	err = ufshcd_parse_operating_points(hba);
+ 	if (err) {
+ 		dev_err(dev, "%s: OPP parse failed %d\n", __func__, err);
+-		goto dealloc_host;
++		goto out;
+ 	}
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+ 	if (err) {
+ 		dev_err_probe(dev, err, "Initialization failed with error %d\n",
+ 			      err);
+-		goto dealloc_host;
++		goto out;
+ 	}
+ 
+ 	pm_runtime_set_active(dev);
+@@ -517,8 +517,6 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 
+ 	return 0;
+ 
+-dealloc_host:
+-	ufshcd_dealloc_host(hba);
+ out:
+ 	return err;
+ }
+@@ -534,7 +532,6 @@ void ufshcd_pltfrm_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+ 	ufshcd_remove(hba);
+-	ufshcd_dealloc_host(hba);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ }
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index da0fa5c65081..58eb6e897827 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -1311,7 +1311,6 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ void ufshcd_enable_irq(struct ufs_hba *hba);
+ void ufshcd_disable_irq(struct ufs_hba *hba);
+ int ufshcd_alloc_host(struct device *, struct ufs_hba **);
+-void ufshcd_dealloc_host(struct ufs_hba *);
+ int ufshcd_hba_enable(struct ufs_hba *hba);
+ int ufshcd_init(struct ufs_hba *, void __iomem *, unsigned int);
+ int ufshcd_link_recovery(struct ufs_hba *hba);
+
+---
+base-commit: 4e16367cfe0ce395f29d0482b78970cce8e1db73
+change-id: 20250113-ufshcd-fix-52409f2d32ff
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+André Draszik <andre.draszik@linaro.org>
+
