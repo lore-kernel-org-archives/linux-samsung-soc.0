@@ -1,109 +1,112 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062841DE2B8
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 11:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD5124A7C2
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 11:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737027048; cv=none; b=BVHTuqidACM+k+0h69mC7OdBUMcp8H5izghoylr9eccaynE/Ad/oeOJAQ2NH3byYlSv2N1bls3FDNVmRh1mG/x5KOdUraC7Tgt8Fr5g/1CuqHpVtGgIndXRoRN4XB11JXzs3LMRtw3ubATx2nrT30VNVN2NC1DZZSoOc1rjTdng=
+	t=1737027707; cv=none; b=MGunlD3VQj3I7PhGmvb6wzBqv48CmNUZnHJ57L12imn5H2UAVTl5T+imoEBPpJEho/ZPerzHCuA1t+U3g9b7ay/DWzWkpakNZmWmWuYFau1sBrf/uysJo1WqojgxsJ2lca0kFh2VyTnHYfIkk/GEd/084ZHloP7Eza+uyLeooTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737027048; c=relaxed/simple;
-	bh=kzDN9dmdAK48wXWx0awduq7CrBP6vYP35O8PwR+e9qk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U4ypsAIFb7TH8segbQEjZbazCnW/1lZb6PNCg4Q8J3vQ7h4dRxWoiHjFj6T6d7N3zkMjWjOwr87W1dzuDcVZlzAQdGa+GDFI8Q5axnpD1wklMHkbRyQhdTc0m8KqHJ502z5AQeNuWBJbpUGD7bl0+VOEMBHhrGV4iSr2FKOC3HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S5PRRw1E; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1737027707; c=relaxed/simple;
+	bh=grVoZNVjcvy9MCcSf9CkrEgnrvso4XYxU656pIV7e5E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R34AXmagaA1tpZ3QN8b3s1dIpFiSf7Av/iJfMUz3DhKQN8B5wGiUae9sLnEIe5FNkUsaU/HgpRCaIxtoZD6pobvvpewzqgw6HQp/7VawyglwO5Nk4ZWwtvoytF5MnxywhSE6fxSvxjxhfE9czvk4rmfsxEf8Lq3jK9iyv+j/BhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Az1JkgPU; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S5PRRw1E"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e06af753so435071f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 03:30:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Az1JkgPU"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3862d6d5765so477382f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2025 03:41:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737027045; x=1737631845; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kzDN9dmdAK48wXWx0awduq7CrBP6vYP35O8PwR+e9qk=;
-        b=S5PRRw1En8G+21KOJC9ZD6IqUHXgz4xQLsvIBxr/XWZPdIgRHRo/eicNlgEHSbm1kb
-         1GSs0FuwZkJWhSTbI8sRnjw4lqGhGVOHWmzZ0yxkZ199QjpJ48qSkyfwlh0J7t2cDH16
-         5O+UvF7PGwbTxzl8xtZQjUu2yIhdNvIjWZaX7uFfOqe4w24yiEAkdt1+OoG+UHZ0ii6u
-         4l9rBpEwm0MJgnEvnBvLGqAb2KXZ1W7WasebdcT1tz8uneIWS4mZcpNqQUbB3A6WCvIU
-         VaO0n04kdHOCGitjn0dYqnYnHbSiJdKfZFG5DzRhNNd9oYOuRAVQuWsx2j0NfW/la/bm
-         m4Wg==
+        d=linaro.org; s=google; t=1737027704; x=1737632504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bKtUMEoqDHLTfhHmG3inCWsYClLTJL5ZLVp5zayXN6U=;
+        b=Az1JkgPURBxpMk2FaVwXIK6P2JWoRJf6sXZ39rB3DozZBZxgpBIjvEkVVwB2Kqz0IU
+         I0a1ed9CWyXwdezV9U+7Z/HObjfGYQt8jyWLJ9xyhtRQSAK8vNnXEGzs6ybl0hwE8yM1
+         +F+W51Lw9/Lwko9m6YcADY11v04rUMQ0+GCHiHqsKrQ+myzIWJOhoIPRQw1qeZLA81I2
+         ftcE2CwXtArX9KaEYb1SXkEmrrXg23/fAWHdGs1zuswXAj7fcKRc8CMgswL5S5q28CAK
+         DBgLs7kBMfxwWsft8Okbuhf9anLvYhzlWqF4ENMjhcVUCrF1p6faEcxVhUJgnggymq1U
+         1iDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737027045; x=1737631845;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kzDN9dmdAK48wXWx0awduq7CrBP6vYP35O8PwR+e9qk=;
-        b=dqIh0YveyL80UIg/WZIKm0Ao5GDaXkSz9Wy3gvONjTuvHoBi3fLP113hKk3oKus2HU
-         eXP+uS0IZjrSU7FB8s0jzFo45O2YkQJB8edJhNU3jfSMnq1ud15f9rVMgY7R3B5C2/QF
-         1abH/Ut3wbguR6NiIQw7tRhvAg8hn2mbAEdu3Q3QnBvyW2KEHDscU2CATcHcBXarYOw3
-         AgN1ea7rDyaqJb5M2bstHSy9FqoOSImRlcso7H8wyLdmJS6xdfhnBvu+lFUGkwARzahU
-         70ADqBK5QWIW9D1GCGbncyuUa2z+9R41ngeyK5JalotWhejEmaJVf5oMiUYlKqJoiY9e
-         uqnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3aWFmHeVNfOwr9uGTHM1497yM9kDnaSD1GO4KBBEjdHU7fPlI2STFzEKHGbW0hWeFzJukQCXsj84bu8gSCe/tlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0ZSLQFK9Hk5H2qBTJqGWYiaS5rzkssjMfBBXSHVGt1GoIZXn7
-	lTDO0AjTB77ZYyggBah0SAKv26wIv0cYCLmGNrcwW0rjCB8h166T9b20IU5P5Ww=
-X-Gm-Gg: ASbGncveDpF2j2KldeekebZfNXRFqnDuIWM0amMXDEtQU35SqYR2GTkoHPxE26Gvs2Q
-	ztDdfUnBB1m93gDbuRjwIHq2G5wACKuoQAa9MepBAdLaxXtNagblxnwB9Zoy5TAMhMuXlHJzmPc
-	7t1NYGBjln0NCa3nujP+LDAHDiSoIbMG9oQddz4zx9+t86GbOkxbBsXIg4cv2hDqiW9817PeywG
-	TiQDirYhhxndXnbVctivDcF5m9AS5tgcINXxcaOC9mrD7QYV6FBWbzDa5GUvw==
-X-Google-Smtp-Source: AGHT+IGsW7R8SXZiI21rLVry2LB3/IZkmamq2Z2hj3KPYHeT5ENtm5n56n32F1wCYQ4Tz4sR0OmrNQ==
-X-Received: by 2002:a5d:648b:0:b0:386:3e3c:ef1 with SMTP id ffacd0b85a97d-38a87312f36mr34852486f8f.35.1737027045345;
-        Thu, 16 Jan 2025 03:30:45 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74ac707sm55516355e9.15.2025.01.16.03.30.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 03:30:44 -0800 (PST)
-Message-ID: <941c7920a7d07496222e6e93cb338ca6df38dc33.camel@linaro.org>
-Subject: Re: [PATCH v3] scsi: ufs: fix use-after free in init error and
- remove paths
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
- <avri.altman@wdc.com>,  Bart Van Assche <bvanassche@acm.org>, "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>,  Mike Snitzer <snitzer@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulf.hansson@linaro.org>,  Eric
- Biggers <ebiggers@google.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker
- <willmcvicker@google.com>, kernel-team@android.com,
- linux-scsi@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org,  stable@vger.kernel.org
-Date: Thu, 16 Jan 2025 11:30:43 +0000
-In-Reply-To: <20250116-ufshcd-fix-v3-1-6a83004ea85c@linaro.org>
-References: <20250116-ufshcd-fix-v3-1-6a83004ea85c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+        d=1e100.net; s=20230601; t=1737027704; x=1737632504;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKtUMEoqDHLTfhHmG3inCWsYClLTJL5ZLVp5zayXN6U=;
+        b=gARRn+6gIn4viJIO2SPL+MtprezMcN9RtI8e9et0xKb76rwixOun14fQpcYnD4MRzN
+         NboNytQTSnAQC0gOUPzFufDx+Utd1o6LXjHP3JXHy2yyuLVJjmDGMJtAizHgcIVjeWFp
+         vj4UXqZW0443m7JqgcNOoNqffD9wcs2BVZRVCvDu6eiSt0jPQb71D7JqiZ9WkdI+b43S
+         f1Z9fZTA2bX0ui8IKX98v+BBsoRIZ1nE6IP1Hl53nnyMhvEYgmtGkFNE4LwJwyctzLrW
+         mACen4FdcY0jVfnfi7rmPQY8mxlhQgsLkytI1piAMQlC8CzDPhSwtgI+9u0KjjCUPrA0
+         qbow==
+X-Forwarded-Encrypted: i=1; AJvYcCW61pWm+6agSBFYiu8xAWpDqTzJQ+Xnd1vcl7kAyWSkNHLSMKmku6YtX9FJ0Y9FgTGik3sjyS3grg1BcVxqCe4ITg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGZTverWSouoyHUyUAK0JJCEjgJmp+ciK7Dq28bNlCU0fKhJcI
+	Fi1T5jjq9h+mLHHOd7PUK0et5/C5vjWxyTkVzOeCx4ZPqVXG8uWltpu86j1bSpQ=
+X-Gm-Gg: ASbGncst1D6P+vWg0BrLy0Xg5KljhGhS7JHY9hgL4EJdUKJIKKbKMa1aYTdvU0/gGv/
+	hLe4/2YBEGHDlE0XBygTrckNUTWRp+u4aoU0ruxpj+nOp30c74ZxaOu8cMCzvsv/v5wWk9QsDIO
+	21nmwE1eW1KdjYT4luU8suTS/BDcySNEZEm31p4Oz2i/7v9aMLrXoTQGl16oikUC9wqQdPuDdWz
+	jE/BsIztPXQEYnN42QzWa5X2sK7W0LB+BT7L5aAvwj6IOptxaaIEuXA4DUeYll+MQ==
+X-Google-Smtp-Source: AGHT+IFueE/gZTYtweq/GR16SLOOq+RSDS7PYuc5QwoykXqiYGNy+orWNKBAzKyMcjXwFzsBcfLt3A==
+X-Received: by 2002:a05:6000:401f:b0:386:3328:6106 with SMTP id ffacd0b85a97d-38a872f6193mr33619540f8f.35.1737027704561;
+        Thu, 16 Jan 2025 03:41:44 -0800 (PST)
+Received: from [192.168.0.14] ([188.26.60.120])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74aca93sm57515965e9.13.2025.01.16.03.41.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2025 03:41:44 -0800 (PST)
+Message-ID: <77eeed18-4a48-4407-ae83-7a922045b29a@linaro.org>
+Date: Thu, 16 Jan 2025 11:41:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] firmware: add Exynos ACPM protocol driver
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ peter.griffin@linaro.org, daniel.lezcano@linaro.org,
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241220-gs101-acpm-v5-0-4f26b7fb3f5f@linaro.org>
+ <20241220-gs101-acpm-v5-2-4f26b7fb3f5f@linaro.org>
+ <8e6bade0-5184-4bf7-b1f0-103a77d0f98b@kernel.org>
+ <060c7a96-c1ed-4c97-8a3f-f510102466f9@linaro.org>
+Content-Language: en-US
+In-Reply-To: <060c7a96-c1ed-4c97-8a3f-f510102466f9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-01-16 at 11:18 +0000, Andr=C3=A9 Draszik wrote:
-> Changes in v2:
-> - completely new approach using devres action for Scsi_host cleanup, to
-> =C2=A0 ensure ordering
 
-Just repeating this again due to updated recipients list:
 
-This new approach now means that Scsi_host cleanup (scsi_host_put)
-happens after ufshcd's hba->dev cleanup and I am not sure if this
-approach has wider implications (in particular if there is any
-underlying assumption or requirement for the Scsi_host device to
-clean up before the ufshcd device).
+On 12/31/24 2:32 PM, Tudor Ambarus wrote:
+>>> +config EXYNOS_ACPM_PROTOCOL
+>>> +	tristate "Exynos Alive Clock and Power Manager (ACPM) Message Protocol"
+>>> +	depends on ARCH_EXYNOS || COMPILE_TEST
+>>> +	depends on EXYNOS_MBOX
+>> Is it build time dependency? No || COMPILE_TEST?
+> There's no build time dependency, I'll drop this line.
 
-Simple testing using a few iteration of manual module bind/unbind
-worked, as did the error handling / cleanup during init. But I'm
-not sure if that is sufficient testing for the changed release
-ordering.
+There's no build time dependency on EXYNOS_MBOX, but there is on MAILBOX:
 
-Cheers,
-Andre'
+ERROR: modpost: "mbox_request_channel"
+[drivers/firmware/samsung/acpm-protocol.ko] undefined!
+ERROR: modpost: "mbox_free_channel"
+[drivers/firmware/samsung/acpm-protocol.ko] undefined!
+ERROR: modpost: "mbox_send_message"
+[drivers/firmware/samsung/acpm-protocol.ko] undefined!
+ERROR: modpost: "mbox_client_txdone"
+[drivers/firmware/samsung/acpm-protocol.ko] undefined!
 
+Will replace the line with "depends on MAILBOX".
+
+Thanks!
+ta
