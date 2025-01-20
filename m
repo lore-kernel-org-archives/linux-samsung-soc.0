@@ -1,127 +1,223 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603AA13CFA6
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jan 2025 04:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8473814EC7E
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jan 2025 07:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737348635; cv=none; b=SGBAR/iRQjACQak7cLUWH907iwHax+e9EW8pZuWnuBO7QH7XG44iQ1ejOAGmAT7FWQTHEr8q1if0/A62JO73r0A5w2wxJ+Zllt+iEXN6c52/6xd7AQDjYh06100NONoOv/XPRBC8C6NRnn9scJGJHObYIJrxyDFDCspohWVUUn8=
+	t=1737356722; cv=none; b=haChNLkC8lwwAcbS3Sx0dVBy8LQuIObHqRr5SyO+O1cbtSQ08bgFp0Vp8iZFbbF8gFD4uM4ACj6L/G2cYlW/NfhGcPPIEvw2FRPBRJitaiem6lp8s9U9jl43KBTnd28Xcmaag9tqFlEBV5SpXDW9xLkgPQjwr9cU3FNFDENE8Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737348635; c=relaxed/simple;
-	bh=e/iDzvTCC8bo1dFL2/v4kqgePEuwnjykIjQnI6TREos=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IhoCT/En8oQe12NP0O7N5pDzAcyFcyFGuKZp37w9gRJ9C+Os+Ish+qOUbuBhG0BU2dO44dcIvzE4m6U6YsJfxX68O9a5/K+sFHe3m5Rw4EX4Zegb34mW/qmtPpvmnLkAJaEropreoNGwruDCal6s2RJ09GpWIZAax8B4pDtwEYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jbT5N4Ii; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1737356722; c=relaxed/simple;
+	bh=YHwhOhlln+ZBW4bsRMLXZlhX9KD0bxvWtNvYlkSCv3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tejnwKuTUhiD4jCJg9XijUa10m8TpoNwFX3QIK7rMPmFYDrxknwo8CJCkcOobf2UybOMtLtHgKjxblSlo0SSJpImICHYCLte2cJne2pWLriTTfxfKqgufoDOfV3YbwzWftdRCc6WpphCcWWb8p2ylyD1KULOXHkrOjk8Ii426hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H42Z2l+U; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jbT5N4Ii"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21680814d42so66006205ad.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Jan 2025 20:50:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737348633; x=1737953433; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FW6GDAHddcOMPFKJEakNdIWoZuUyT1szsyK8VMgB8Uk=;
-        b=jbT5N4IiRc67b3DRzhZw7kyJO8SML5ZJHdIv1I7VxTKrxYXxjswIhTLgaftIM9h+tJ
-         +2vxh46mWo0kH5RJB9jzjdqJmC1DGmIJDy2EaR5XfKfYrjYiPa2C0d+MN4520u1fpTFy
-         X2WyXM++aqGX/krCYfz71qMdA+c7+hqQSQoBID+73VgRtoQGM0fghbeNvCspdTAyn8ri
-         z2ceVaDKRiuNtjnB7pUYCKHlKkoEuq20FihjzgsSOUHyO2b+N+umC0eFPLdsIc9hOlYp
-         mtxODA+KGKQgvsPKv4B/DFxqylIOkBqhw2RNV/vJJ+blAgIrPRzkNC+JQLtAvlTD0sgt
-         dvlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737348633; x=1737953433;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FW6GDAHddcOMPFKJEakNdIWoZuUyT1szsyK8VMgB8Uk=;
-        b=aH7VoqjgJRYAWIkPkvSx+FOgADJeNW4oqVbo+Lyys8VF5UtDX4fgwqrO7/ibGX9zuV
-         7yphACCPT18zxLwybEUW0phE3m0qdLpZbieo4elOdcH532EVQUOi/Hy0F4IWfZVtbOQ4
-         +RqVUSWF1xvWeVzBx3Ax/IUZu27w7E4V1+6Y6K0VD+8ibuAioRnJdaiB4Pz1abRAy0gY
-         HtxdjQmsPwQ5lTCbf6J6UJb6o2O+0HSUiWy9CMfx8YOHYiUt4EToIBFOfoanAis6yfCt
-         +GnrQ9js2xvElQstlPTJMA9R3V/B5jGcpOjpxJOz8DqR0RacT4gn1PpPT8WJQ6Ye1CpZ
-         f0EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnaW8nB6aKtcpDQLMGxuj+hwVbyD5+5NlRq1wIQOLOu8GOLFJI2eDD+/+Tv0GCyrTCwKR8ElZnJ4Fj5Am9UDprw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7t9XSE/gzhIRWczL6a+daczOAqo8UNcYDt3Kv/kpYnsUu7+7k
-	34KEGVe0E6LON33J31PZDGClXgQG5eDXq97vUsostGjWqoOd72CJbzzEmfz4KeU=
-X-Gm-Gg: ASbGncsMRhNtxL2C0EmTcVCTJ2OhgEP8o1B6iVucJN3sqH5SL03ob5Xhp18DnG9YakS
-	eDvifzGsj3XS2cLklK/w5i4ZEC3368aY6OmT6r5Jq86dxghP5koRZXYBj2wcnRXVtbIG4hO0aDX
-	t6iE9C9BMkHu3p0scEgxqo2w0LL0y9+uk+WJbvw6HYPeGc/lXV3nvEm4zUKGMAUdYqDUKFWRVhZ
-	eXObBGSpyAAYh+LKd4yhwuworBcOs/sVDM0JWP+1pqyECZFM4OBcZQriKQt38dX0+ReEfoD
-X-Google-Smtp-Source: AGHT+IGFk0vEdymtZTj+lLuHlMGCHpVVSzOjAS6UfJXaYfWRkrCAng+HqZSDbAH8bdLeqj6n7JsTPA==
-X-Received: by 2002:a17:902:ce8a:b0:216:32c4:f7f5 with SMTP id d9443c01a7336-21c3540c7a1mr174490975ad.19.1737348632564;
-        Sun, 19 Jan 2025 20:50:32 -0800 (PST)
-Received: from localhost ([122.172.84.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2d3a91cesm52428625ad.133.2025.01.19.20.50.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jan 2025 20:50:32 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	kernel test robot <lkp@intel.com>,
-	stable@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: s3c64xx: Fix compilation warning
-Date: Mon, 20 Jan 2025 10:20:25 +0530
-Message-Id: <76b218721e5fd5ac2fc03e1340595c9a56c1613d.1737348588.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H42Z2l+U"
+Message-ID: <84adda72-24c1-428d-9c55-8bb9ec189584@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1737356708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s4k8B9SqdOW/b4nXIri28MHaonby69L1MPYqhyNKUX0=;
+	b=H42Z2l+UXNpZWYWEmHERkXyThqLsthOt2Tl1gQlgH7BXsUNxeI/rr3PfiugdYdU7zHqpvq
+	dLqd9siDrRP2RNM9ARbxgV6zGEqcH+5CdCKOZz1TBdC0GDysb1JYpX1OOzaYOnjlwgwB22
+	siLOW8pFM6wtm6a+laFnQN1GQRPRQXE=
+Date: Mon, 20 Jan 2025 15:04:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Andy Yan <andyshrk@163.com>, Daniel Stone <daniel@fooishbar.org>
+References: <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+ <a2bbeb47-2569-4ee0-9265-92bab139bdc6@suse.de>
+ <f3833771-fcd7-45dc-9019-1525fef34429@ideasonboard.com>
+ <CAMuHMdXxYa+Na3XxpLTy=-eUL_zQ9kAiUKYu-E04u3KWApusSA@mail.gmail.com>
+ <xz5ncq67bgmdase2jg3cfvyaxpiwhol2eqpfzow6dqpauvslo5@2w3rw27lhnxo>
+ <b97fcd2f-516a-4172-aef3-631418564cfa@linux.dev>
+ <ef52dab0-058f-408f-a298-c4b2453a3d2f@ideasonboard.com>
+ <f4562dbf-b132-4cfd-8f7e-43cd69f2673f@linux.dev>
+ <cf34be39-ce92-4ea5-b548-03008c163d31@ideasonboard.com>
+ <8234927e-0d12-4655-813d-8ec94179b737@linux.dev>
+ <20250119201443.GB2467@pendragon.ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <20250119201443.GB2467@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The driver generates following warning when regulator support isn't
-enabled in the kernel. Fix it.
+Hi,
 
-   drivers/cpufreq/s3c64xx-cpufreq.c: In function 's3c64xx_cpufreq_set_target':
->> drivers/cpufreq/s3c64xx-cpufreq.c:55:22: warning: variable 'old_freq' set but not used [-Wunused-but-set-variable]
-      55 |         unsigned int old_freq, new_freq;
-         |                      ^~~~~~~~
->> drivers/cpufreq/s3c64xx-cpufreq.c:54:30: warning: variable 'dvfs' set but not used [-Wunused-but-set-variable]
-      54 |         struct s3c64xx_dvfs *dvfs;
-         |                              ^~~~
+On 2025/1/20 04:14, Laurent Pinchart wrote:
+> On Mon, Jan 20, 2025 at 12:26:30AM +0800, Sui Jingfeng wrote:
+>> On 2025/1/19 23:22, Tomi Valkeinen wrote:
+>>> On 19/01/2025 16:59, Sui Jingfeng wrote:
+>>>
+>>>>>>> But userspace must be able to continue allocating YUV buffers through
+>>>>>>> CREATE_DUMB.
+>>>>>> I think, allocating YUV buffers through CREATE_DUMB interface is just
+>>>>>> an *abuse* and *misuse* of this API for now.
+>>>>>>
+>>>>>> Take the NV12 format as an example, NV12 is YUV420 planar format, have
+>>>>>> two planar: the Y-planar and the UV-planar. The Y-planar appear first
+>>>>>> in memory as an array of unsigned char values. The Y-planar is followed
+>>>>>> immediately by the UV-planar, which is also an array of unsigned char
+>>>>>> values that contains packed U (Cb) and V (Cr) samples.
+>>>>>>
+>>>>>> But the 'drm_mode_create_dumb' structure is only intend to provide
+>>>>>> descriptions for *one* planar.
+>>>>>>
+>>>>>> struct drm_mode_create_dumb {
+>>>>>>       __u32 height;
+>>>>>>       __u32 width;
+>>>>>>       __u32 bpp;
+>>>>>>       __u32 flags;
+>>>>>>       __u32 handle;
+>>>>>>       __u32 pitch;
+>>>>>>       __u64 size;
+>>>>>> };
+>>>>>>
+>>>>>> An width x height NV12 image takes up width*height*(1 + 1/4 + 1/4)
+>>>>>> bytes.
+>>>>>>
+>>>>>> So we can allocate an *equivalent* sized buffer to store the NV12
+>>>>>> raw data.
+>>>>>>
+>>>>>> Either 'width * (height * 3/2)' where each pixel take up 8 bits,
+>>>>>> or just 'with * height' where each pixels take up 12 bits.
+>>>>>>
+>>>>>> However, all those math are just equivalents description to the original
+>>>>>> NV12 format, neither are concrete correct physical description.
+>>>>> I don't see the problem. Allocating dumb buffers, if we don't have
+>>>>> any heuristics related to RGB behind it, is essentially just
+>>>>> allocating a specific amount of memory, defined by width, height and
+>>>>> bitsperpixel.
+>>>>>
+>>>> I think, the problem will be that the 'width', 'height' and 'bpp'
+>>>> are originally used to describe one plane. Those three parameters
+>>>> has perfectly defined physical semantics.
+>>>>
+>>>> But with multi planar formats, take NV12 image as an example,
+>>>> for a 2×2 square of pixels, there are 4 Y samples but only 1 U
+>>>> sample and 1 V sample. This format requires 4x8+1x8+1x8=48 bits
+>>>> to store the 2x2 square.
+>>>>
+>>>> So its depth is 12 bits per pixel (48 / (2 * 2)).
+>>>>
+>>>> so my problem is that the mentioned 12bpp in this example only
+>>>> make sense in mathematics, it doesn't has a good physical
+>>>> interpret. Do you agree with me on this technique point?
+>>>>
+>>>>> If I want to create an NV12 framebuffer, I allocate two dumb
+>>>>> buffers, one for Y and one for UV planes, and size them accordingly.
+>>>>> And then create the DRM framebuffer with those.
+>>>>>
+>>>> Then how you fill the value of the 'width', 'height' and 'bpp' of
+>>>> each dumb buffers?
+>>> For 640x480-NV12:
+>>> plane 0: width = 640, height = 480, bpp = 8
+>>> plane 1: width = 640 / 2, height = 480 / 2, bpp = 16
+>> But i think this should be hardware dependent. The hardware I'm using
+>> load NV12  raw data as a whole. I only need to feed gpuva of the backing
+>> memory to the hardware register once.
+>>
+>> Not familiar with your hardware, so I can't talk more on this software
+>> design. Perhaps someone know more could have a comment on this.
+> Layout of planes in memory is just one hardware constraint, the same way
+> we have constraints on alignment and strides. Some devices require the
+> planes to be contiguous (likely with some alignment constraints), some
+> can work with planes being in discontiguous pieces of memory, and even
+> require them to be discontiguous and located in separate DRAM banks.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202501191803.CtfT7b2o-lkp@intel.com/
-Cc: <stable@vger.kernel.org> # v5.4+
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/s3c64xx-cpufreq.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Right.
 
-diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-cpufreq.c
-index c6bdfc308e99..8fc43a74cefb 100644
---- a/drivers/cpufreq/s3c64xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c64xx-cpufreq.c
-@@ -51,15 +51,16 @@ static struct cpufreq_frequency_table s3c64xx_freq_table[] = {
- static int s3c64xx_cpufreq_set_target(struct cpufreq_policy *policy,
- 				      unsigned int index)
- {
--	struct s3c64xx_dvfs *dvfs;
--	unsigned int old_freq, new_freq;
-+	unsigned int new_freq = s3c64xx_freq_table[index].frequency;
- 	int ret;
- 
-+#ifdef CONFIG_REGULATOR
-+	struct s3c64xx_dvfs *dvfs;
-+	unsigned int old_freq;
-+
- 	old_freq = clk_get_rate(policy->clk) / 1000;
--	new_freq = s3c64xx_freq_table[index].frequency;
- 	dvfs = &s3c64xx_dvfs_table[s3c64xx_freq_table[index].driver_data];
- 
--#ifdef CONFIG_REGULATOR
- 	if (vddarm && new_freq > old_freq) {
- 		ret = regulator_set_voltage(vddarm,
- 					    dvfs->vddarm_min,
+
+>>>> Why not allocate storage for the whole on one shoot?
+>>> You can, if you adjust the parameters accordingly. However, if the
+>>> strides of the planes are not equal, I guess it might cause problems
+>>> on some platforms.
+>>>
+>>> But I think it's usually simpler to allocate one buffer per plane, and
+>>> perhaps even better as it doesn't require as large contiguous memory
+>>> area.
+>>>
+>>>> The modetest in libdrm can be an good example, send it[1] to you as
+>>>> an reference.
+>>> Right, so modetest already does it successfully. So... What is the issue?
+>> But then, the problem will become that it override the 'height' parameter.
+>> What's the physical interpretation of the 'height' parameter when creating
+>> an NV12 image with the dump API then?
+> I wouldn't be too concerned about physical interpretations. Yes, the
+> height, width and bpp parameters were likely designed with RGB formats
+> in mind. Yes, using DUMB_CREATE for YUV formats is probably something
+> that the original authors didn't envision. And yes, from that point of
+> view, it could be seen by the original authors as an abuse of the API.
+> But I don't think that's a problem as such.
+
+Sometimes there may have 2D GPU or Image Process Unit get involved.
+Setting the dimension, the clip window and pitch etc parameters to the
+hardware are needed.
+
+The value of bpp affects pitch, bigger pitch may cause the hardware load
+more bytes than it should on one line. While the 'height' may affect the
+size of the clip window, depend on the calculation method.
+
+But I have no strong opinion toward with this and agree with you in overall.
+
+> An API is just an API. True, it would be nicer if the usage of the ioctl
+> parameters was more intuitive for YUV formats, but I believe we could
+> still standardize how the existing parameters map to linear scanout YUV
+> formats without causing the world to end. As has been said before, lots
+> of drivers are using DUMB_CREATE for this purpose, and we can't change
+> that.
+>
+> This doesn't mean we shouldn't work on improving memory allocation, but
+> I see that as a separate issue.
+>
+>> I guess, solving complex problems with simple APIs may see the limitation,
+>> sooner or later. But I not very sure and might be wrong. So other peoples
+>> can override me words.
+>>
+>>> Everyone agrees that CREATE_DUMB is not the best ioctl to allocate
+>>> buffers, and one can't consider it to work identically across the
+>>> platforms. But it's what we have and what has been used for ages.
+>> Yeah, your request are not unreasonable. It can be seen as a kind of rigid demand.
+>> Since GEM DMA helpers doesn't export an more advanced interface to userspace so far.
+>> As a result, drivers that employing GEM DMA has no other choice, but to abuse the
+>> dumb buffer API to do allocation for the more complex format buffers.
+>>
+>> The dumb buffer API doesn't support to specify buffer format, tile status and
+>> placement etc. The more advance drivers has been exposed the xxx_create_gem()
+>> to user-space. It seems that a few more experienced programmers hint us to
+>> create an new ioctl at above thread, so that we can keep employing simple API
+>> to do simple things and to suit complex needs with the more advanced APIs.
+> I'd really like to explore adding new ioctls to exposure memory
+> allocation constraints, and allocating the memory itself from DMA heaps.
+>
 -- 
-2.31.1.272.g89b43f80a514
+Best regards,
+Sui
 
