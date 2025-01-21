@@ -1,144 +1,318 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B501F3FD5
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jan 2025 14:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0051F426C
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jan 2025 15:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737471145; cv=none; b=FlGLVyW01WRimdXq1zSYmuznq/LN92x+1qsx+czLFGOsNmpLtBiLrcPjYLaFtmMIeZeaf7K/4FcVqYvedUt5c7A9HWgSsBFyBQmZ4wBbcOOscwd5nK1y5M32I8PMhsTqgMDrTS/HSJeidqGGNL5JYOAk4i3ZztTnpmReFpQht2U=
+	t=1737473958; cv=none; b=iQLbdw2iv6UFroDMHxJsKIjgGInP5G0FA1AHO8b/ItB6Usnd4yIAukZjPVFgu6hElyHfOMtMWFwY4Yem/kWXFmXF+jFttdzxY6XYJ3XhySZbZupJrPAj8iV6ovFR6Tw7DOfV4k5Phv8RzyByOI9QHVVK6bc8gkH7O+053ugSiZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737471145; c=relaxed/simple;
-	bh=1egCw5s7NzI5hirqMoJt6T40crlHeSKMkXe0VeZC6QE=;
+	s=arc-20240116; t=1737473958; c=relaxed/simple;
+	bh=bT3k2Vj7Q4G7sUClDNlxU6qL8y2LUi1aMMF7FNGcWRU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hVCFSuIX6lyD94BsnQdwV94S5X85Y2zxRF+JIUzF/XclVEXT6WDztt9cZUueAHuEmONI5EorB+Dqpj6qlt98ALWxi+Dh15QUlbXEIPKA6IhfE4nAC5dokA0jQ9oQyH7jeFYTjdiPif4sgWC9RRev9U7X962cjFvk1/ZlVps31Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iisyNLYe; arc=none smtp.client-ip=209.85.219.170
+	 To:Cc:Content-Type; b=lcXfUkI5gMimD+oj89SUSTCHYSkGSUuuit5ViLTCYdF7LmoMqrWlRaBafvpQm2TsGWgibGOlw9VswfKsa6tthB14T0HTOzJzAh/S7z4cyBkSqbrVMTM8L9aFmv5hjtfXDi0VVIgiyivhY255nt3KVKak3lOPWtVj2PnHrLmtd70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NPS2ACGm; arc=none smtp.client-ip=209.85.167.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iisyNLYe"
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e53a91756e5so10217050276.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jan 2025 06:52:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NPS2ACGm"
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3eba347aa6fso3682371b6e.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jan 2025 07:39:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737471143; x=1738075943; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1737473956; x=1738078756; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sniiGLBlwlwVQE72YbXn9tSIJ0uzVlORMQYMI+fWlc8=;
-        b=iisyNLYeghComOYUq0dH6OeL3uL76ksheekE88EmFPCst3ryjT9Fwo0BZtmOZKLX8i
-         5Ndga9lDKB24wIad8nlIg157ZQjBtLJi8M1xAQmgvs55Hf4dekSmVx4M9ROmwvba9yQ+
-         vkjr3+ic6KKuJIlHdV8PYR55In3qmUq0WmI0iSR7UNscY9+GDhOHjlXiswj8rvZB0Pki
-         jg1ZhZc24GOuNyDeMTNPhA+c/wzfoVHwCzutQz+Q5MkVV1ZK6cRaZk5oYYH/SF3h+Sla
-         FdfAU+ZY8wWNUQAFVZSA5hOELzIAQpJ7EFck29NgARvAE6qolhR2wWYWO+8qJ0mdl1bI
-         bbUw==
+        bh=FpEzaLpUPVgnvbMrcFG9GFnZWyKmfdtZfySlxeDdI9A=;
+        b=NPS2ACGmaN8nuMsb+stkJP8Q3mQ7iFhIvWvUkR2FIKUUYv3xJoHq7+K0RP8u0FQmyB
+         vHvH+6QP3mDfOlLz3bWCkxT0NhhGWhbttai7u7kMgQ4oym1jVCq8Etb7SYDtv2XEyl7I
+         971DJT323aHzTeGOZOpHmPfbtRRw6sQKR8h1GPx0xqZkithYPFLmOOUSx8P9PkjRGLWk
+         qV8tqzZWUp/BInmUkrJYJU9fL3QfCjGca4Qg5O91/abSAMO9FKYF9yg4yufFVewkAk8S
+         K0v8m24IdDDASuNbwE0Pz/vcWuzWS0DNAZ0QZRiMnCwzEAgrSLyuxmFCsg8PEdpvpe7m
+         FATg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737471143; x=1738075943;
+        d=1e100.net; s=20230601; t=1737473956; x=1738078756;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sniiGLBlwlwVQE72YbXn9tSIJ0uzVlORMQYMI+fWlc8=;
-        b=LObbfblxCYa54JRWuA1CKj4JbVFZ6M2xjgAOKoegJZ77FOkAmV1xKx/HplL5m48/Nm
-         M5jLgao45UtbvVSxa8di0w+iVUUZy1N5oIeOpN5hvq5JuVKpQwl5dZoWs5HCwTGL4WCK
-         D6YzNy8VWnIXhpZkDzn6t8sXVpMhxoAGS8v4LGfl9jTmI0ZGQPTBwl9QB9xxS7uv1CbO
-         xoZyofvKFzrCu4ZgR2mvll2ojey6rucOGlE+BeNxTs5VXp6TxMmkHwnomTHJmEHfqYrh
-         R+B29MOyUTjFGNOQcaN6phg31Gg64F4Zwe3MyXGqDKAjRGr/fc6X6ZhrZeD9YQdCfkeO
-         UWEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbtwYKmaoECcxAV18rFKbnEJ9W86lHL0853jrypS2T/xsCvdMCc2D8SThdD28cvN3MafkAZSMVg356CIitatJ1vA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGlRi14k+C/DXL11bV7na1U4HKWVPW308KBp3X2gip3X9Nbn81
-	9t3BbnJs9/Q20nMQK4y50/WOIA2pHOfqVFRddKRj81/2wjzmptfJjmlRmFlcMz0v5pua3gIfH/x
-	V0eM0cdjibv9XmRVInXMerA9jLouE46LD3LyOFw==
-X-Gm-Gg: ASbGncsAyi3Ad7ZDLjddFEAWuJXV9q7EO6akVe13nyW5gX23N36vAbMaYL0p/+kVJoz
-	2BMjkdcWmmnj9umOxQccORmd/0qSwum3HG0S1l5An6Zp+WpEsW4h8WtnD8z58YBlSbw==
-X-Google-Smtp-Source: AGHT+IHAR8Oh5IZMK/EFhUxy82Sms5gJQlwLhipbAW1ZqvwX6pE5x6pYuPH97QTlNrx+1G0xVn/kn1tGS1MQfWri5Fo=
-X-Received: by 2002:a05:690c:690d:b0:6ef:5119:6f39 with SMTP id
- 00721157ae682-6f6eb90d631mr163457467b3.30.1737471142696; Tue, 21 Jan 2025
- 06:52:22 -0800 (PST)
+        bh=FpEzaLpUPVgnvbMrcFG9GFnZWyKmfdtZfySlxeDdI9A=;
+        b=QyUX0LWwaMlYQin+/zHAQLPl+2AmWxUl0uPns4mkfMDer/bjUDjyQKadjkNMAaihdL
+         R9B9EaJlsLrgXju+i/Mzu3QMuf5E2wRelkXdBVP6J45axmEIjGywN5muSqh4+mB2tc7j
+         5uP7bir71+RVkSDcbBWhRaot5+VGbtuM3/mWbH7UVqA58kZx98moTjTOutNXFFb5l7jN
+         SKnSV6EekL6FtnWcC3MIxUuqh3WsBXfDbKs04luUGX1KDYwh/lEOBNTsCw3pX+EE4SZ8
+         mBPmTHpFZIhjHmO6YMibfEj1/qNPnC+2nt5YwMk34Sm2u1G9HBD3atVJrou0a+H0J4yZ
+         HArg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc+EKD0OvO+DKYJgEBEyRW1htL36qh945sQKROwNk66o9COuOFPkUkk6eC1OfJRur9wrhKSQYWD65HEnW7wQVSng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOfMM0NxlGGQCFNV4GmSFgSacgacn9EnjNMcJ1TbcfP+wAw+lb
+	WZX/YieEF2SUMNeXYp+UthvfPqJlGiP4yC6uEs1TcJDbM3iUWr0QYPZH7syYUzdTiK34qAsXA4C
+	rxQbV9yb9LVAN8zM/8gnngtiCAPu7MbnurdKexA==
+X-Gm-Gg: ASbGncuK5J44yUI9orKwVZwThXEvMhn3JX1qKR4UtijaCt3t6dpvtyTNPenG5zd6dKX
+	yZqicL4mhaUzkNVI1tlYCt7rvqp83aAzIK/QKC6XQCdGaGnPdCWSC
+X-Google-Smtp-Source: AGHT+IFnJ8N+5YtYfvuf5S6g2HfynsGmJ0fs0JGatpzubpiLPLSrpQDfhHCLB2qE03TDy/+N2p607XTHlk5N9mzZRTU=
+X-Received: by 2002:a05:6808:e89:b0:3eb:623e:84f0 with SMTP id
+ 5614622812f47-3f19fca135amr11337953b6e.20.1737473955684; Tue, 21 Jan 2025
+ 07:39:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115-arm-cacheinfo-fix-v1-1-5f30eeb4e463@linaro.org>
- <CAMuHMdVLvCNZtc2qYrsnMz5L0Hyr70x-Hj5NA8izYBH2tf=yFg@mail.gmail.com> <Z4-s9UHBJZx9APeE@shell.armlinux.org.uk>
-In-Reply-To: <Z4-s9UHBJZx9APeE@shell.armlinux.org.uk>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 21 Jan 2025 16:52:11 +0200
-X-Gm-Features: AbW1kvYT3J50S3fCbdFz3TPsLp6pmDCYH3eh_cCAu0j-x_otJ6Yo49o0bUKeGAI
-Message-ID: <CAA8EJprB9tBoqUaZKnGrJQVPpRA86ynB6k42dOCW7HG-VTfhbA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: cacheinfo fix format field mask
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+References: <20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org>
+ <20250120-pinctrl-fltcon-suspend-v1-3-e77900b2a854@linaro.org> <4e2057fc54022ba5791e482a1e631a1a77551389.camel@linaro.org>
+In-Reply-To: <4e2057fc54022ba5791e482a1e631a1a77551389.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 21 Jan 2025 15:39:04 +0000
+X-Gm-Features: AbW1kvZgrWDOvgxigY9IkhtO-kvZAjtGMpR8OW203jrMm-5JieouqGyGv-ZCaV0
+Message-ID: <CADrjBPr3VVvY4axBhAEO4zVGhLMiDZ8jWHCf=uSfEBMcZSOa=Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] pinctrl: samsung: Add filter selection support for
+ alive bank on gs101
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tudor.ambarus@linaro.org, willmcvicker@google.com, semen.protsenko@linaro.org, 
+	kernel-team@android.com, jaewon02.kim@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Jan 2025 at 16:19, Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
+Hi Andr=C3=A9,
+
+Thanks for your review feedback.
+
+On Tue, 21 Jan 2025 at 11:04, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> On Tue, Jan 21, 2025 at 03:12:13PM +0100, Geert Uytterhoeven wrote:
-> > Hi Dmitry,
-> >
-> > Thanks for your patch!
-> >
-> > On Wed, Jan 15, 2025 at 12:11=E2=80=AFPM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > > Fix C&P error left unnoticed during the reviews. The FORMAT field spa=
-ns
-> > > over bits 29-31, not 24-27 of the CTR register.
-> >
-> > Please add
-> >
-> >     This causes a warning on e.g. Cortex-A8 and Cortex-A9:
-> >
-> >         WARNING: CPU: 0 PID: 0 at arch/arm/kernel/cacheinfo.c:43
-> > cache_line_size+0x84/0x94
-> >
-> > so people find this patch when looking up the warning.
-> >
-> > > Fixes: a9ff94477836 ("ARM: 9433/2: implement cacheinfo support")
-> > > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > Closes: https://lore.kernel.org/linux-arm-msm/01515ea0-c6f0-479f-9da5=
--764d9ee79ed6@samsung.com/
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >
-> > This fixes the warning on Cortex-A8/A9, so
-> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Note that this changes HWalign on Cortex-A9 (various Renesas SoCs,
-> > with 1, 2, or 4 CPU cores):
-> >
-> >     -SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D<N>, Nodes=
-=3D1
-> >     +SLUB: HWalign=3D32, Order=3D0-3, MinObjects=3D0, CPUs=3D<N>, Nodes=
-=3D1
-> >
-> > On Cortex-A8 (BeagleBone Black, i.e. AM335x), it changes HWalign,
-> > and causes a warning message:
-> >
-> >     -SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D1, Nodes=
-=3D1
-> >     +SLUB: HWalign=3D16, Order=3D0-3, MinObjects=3D0, CPUs=3D1, Nodes=
-=3D1
-> >      ...
-> >     +cacheinfo: Unable to detect cache hierarchy for CPU 0
-> >
+> Hi Peter,
 >
-> Also, has this been tested on CPUs that don't implement the cache type
-> register?
+> On Mon, 2025-01-20 at 22:34 +0000, Peter Griffin wrote:
+> > Newer Exynos based SoCs have a filter selection bitfield in the filter
+> > configuration registers on alive bank pins. This allows the selection o=
+f
+> > a digital or analog delay filter for each pin. Add support for selectin=
+g
+> > and enabling the filter.
+> >
+> > On suspend we set the analog filter to all pins in the bank (as the
+> > digital filter relies on a clock). On resume the digital filter is
+> > reapplied to all pins in the bank. The digital filter is working via
+> > a clock and has an adjustable filter delay flt_width bitfield, whereas
+> > the analog filter uses a fixed delay.
+> >
+> > The filter determines to what extent signal fluctuations received throu=
+gh
+> > the pad are considered glitches.
+> >
+> > The code path can be exercised using
+> > echo mem > /sys/power/state
+> > And then wake the device using a eint gpio
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >
+> > Note: this patch was previously sent as part of the initial gs101/ Pixe=
+l 6
+> > series and was dropped in v6. This new version incorporates the review
+> > feedback from Sam Protsenko here in v5.
+> >
+> > Link: https://lore.kernel.org/all/20231201160925.3136868-1-peter.griffi=
+n@linaro.org/T/#m79ced98939e895c840d812c8b4c2b3f33ce604c8
+> >
+> > Changes since previous version
+> > * Drop fltcon_type enum and use bool eint_flt_selectable (Sam)
+> > * Refactor and add exynos_eint_update_flt_reg() (Sam)
+> > * Rename function to exynos_eint_set_filter() for easier readability (S=
+am)
+> > * Remove comments and `if bank->fltcon_type !=3D FLT_DEFAULT)` checks a=
+nd indentation (Sam)
+> > ---
+> >  drivers/pinctrl/samsung/pinctrl-exynos.c  | 60 +++++++++++++++++++++++=
++++++++-
+> >  drivers/pinctrl/samsung/pinctrl-exynos.h  |  9 +++++
+> >  drivers/pinctrl/samsung/pinctrl-samsung.c |  1 +
+> >  drivers/pinctrl/samsung/pinctrl-samsung.h |  4 +++
+> >  4 files changed, 73 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl=
+/samsung/pinctrl-exynos.c
+> > index ddc7245ec2e5..a0256715f8f6 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > @@ -369,6 +369,60 @@ struct exynos_eint_gpio_save {
+> >       u32 eint_mask;
+> >  };
+> >
+> > +static void exynos_eint_update_flt_reg(void __iomem *reg, int cnt, int=
+ con)
+> > +{
+> > +     unsigned int val, shift;
+> > +     int i;
+> > +
+> > +     val =3D readl(reg);
+> > +     for (i =3D 0; i < cnt; i++) {
+> > +             shift =3D i * EXYNOS_FLTCON_LEN;
+> > +             val &=3D ~(EXYNOS_FLTCON_MASK << shift);
+>
+> This is also clearing FLT_WIDTH. Is this intended? Should the
+> value be retained / restored if the digital filter mode is
+> selected? It seems in analog mode the width is ignored anyway,
+> so maybe it doesn't need to be cleared?
 
-It returns -EOPNOTSUPP for anything <=3D v7 (or those v7-but-really-v6).
-And those CPUs are required to implement the register.
+Currently we don't support setting the FLT_WIDTH bitfield and the
+reset value is zero. But I guess it would be better to not clear the
+bitfield in case the bootloader does set a value in the future. I'll
+update to do that in the next version.
+
+> This might be more relevant if samsung-pinctrl implemented
+> PIN_CONFIG_INPUT_DEBOUNCE (which it doesn't at the moment),
+> but would still be good to allow that to work.
+>
+> > +             val |=3D con << shift;
+> > +     }
+> > +     writel(val, reg);
+> > +}
+> > +
+> > +/*
+> > + * Set the desired filter (digital or analog delay) to every pin in
+> > + * the bank. Note the filter selection bitfield is only found on alive
+> > + * banks. The filter determines to what extent signal fluctuations
+> > + * received through the pad are considered glitches.
+> > + *
+> > +  The FLTCON register (on alive banks) has the following layout
+> > + *
+> > + * BitfieldName[PinNum][Bit:Bit]
+> > + * FLT_EN[3][31] FLT_SEL[3][30] FLT_WIDTH[3][29:24]
+> > + * FLT_EN[2][23] FLT_SEL[2][22] FLT_WIDTH[2][21:16]
+> > + * FLT_EN[1][15] FLT_SEL[1][14] FLT_WIDTH[1][13:8]
+> > + * FLT_EN[0][7]  FLT_SEL[0][6]  FLT_WIDTH[0][5:0]
+> > + *
+> > + * FLT_EN    0x0 =3D Disable, 0x1=3DEnable
+> > + * FLT_SEL   0x0 =3D Delay filter, 0x1 Digital filter
+>
+> It's a delay filter filter either way, right? If so, I
+> think '0x0 =3D Delay filter' should instead be reworded to
+> '0x0 =3D Analog filter'.
+
+I see your point, and kind of agree that Analog is a better name. The
+rationale for going with "Digital filter" and "Delay filter" was that
+it matches the FLT_SEL bitfield description in the datasheet. I
+thought it might confuse people using a different name. The info about
+it being Analog filter came via a bug from Samsung. But if folks
+prefer Analog I can use that instead.
+
+@Krzysztof any thoughts on the above naming?
 
 >
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> > + * FLT_WIDTH Filtering width. Valid when FLT_SEL is 0x1
+>
+> This complete above register layout description would be
+> better suited right above the macro definition in
+> pinctrl-exynos.h I believe.
 
+I can move the comment in the next version.
 
+>
+> > + */
+> > +static void exynos_eint_set_filter(struct samsung_pin_bank *bank, int =
+filter)
+> > +{
+> > +     unsigned int off =3D EXYNOS_GPIO_EFLTCON_OFFSET + bank->eint_fltc=
+on_offset;
+> > +     void __iomem *reg =3D bank->drvdata->virt_base + off;
+> > +     unsigned int con =3D EXYNOS_FLTCON_EN | filter;
+> > +     u8 n =3D bank->nr_pins;
+> > +
+> > +     if (!bank->eint_flt_selectable)
+> > +             return;
+> > +
+> > +     /*
+> > +      * If nr_pins > 4, we should set FLTCON0 register fully (pin0~3).
+> > +      * So loop 4 times in case of FLTCON0. Loop for FLTCON1 pin4~7.
+> > +      */
+>
+> This comment is a bit confusing now. There is no loop left here (as
+> it has moved). The loop is an implementation detail of
+> exynos_eint_update_flt_reg() and shouldn't be referred to here.
 
---=20
-With best wishes
-Dmitry
+Will fix.
+
+>
+> > +     if (n <=3D 4) {
+> > +             exynos_eint_update_flt_reg(reg, n, con);
+> > +     } else {
+> > +             exynos_eint_update_flt_reg(reg, 4, con);
+> > +             exynos_eint_update_flt_reg(reg + 0x4, n - 4, con);
+> > +     }
+>
+> How about something like this instead of if/else:
+>
+>         for (int n =3D 0; n < bank->nr_pins; n +=3D 4)
+>                 exynos_eint_update_flt_reg(reg + n,
+>                                            min(bank->nr_pins - n, 4), con=
+);
+
+Will update as you suggest.
+
+>
+>
+> > +}
+> > +
+> >  /*
+> >   * exynos_eint_gpio_init() - setup handling of external gpio interrupt=
+s.
+> >   * @d: driver data of samsung pinctrl driver.
+> > @@ -420,7 +474,7 @@ __init int exynos_eint_gpio_init(struct samsung_pin=
+ctrl_drv_data *d)
+> >                       ret =3D -ENOMEM;
+> >                       goto err_domains;
+> >               }
+> > -
+> > +             exynos_eint_set_filter(bank, EXYNOS_FLTCON_DELAY);
+> >       }
+> >
+> >       return 0;
+> > @@ -833,6 +887,8 @@ void gs101_pinctrl_suspend(struct samsung_pin_bank =
+*bank)
+> >                                bank->name, save->eint_fltcon1);
+> >               pr_debug("%s: save    mask %#010x\n",
+> >                        bank->name, save->eint_mask);
+> > +     } else if (bank->eint_type =3D=3D EINT_TYPE_WKUP) {
+> > +             exynos_eint_set_filter(bank, EXYNOS_FLTCON_DELAY);
+> >       }
+> >  }
+> >
+> > @@ -888,6 +944,8 @@ void gs101_pinctrl_resume(struct samsung_pin_bank *=
+bank)
+> >                       writel(save->eint_fltcon1, eint_fltcfg0 + 4);
+> >               writel(save->eint_mask, regs + bank->irq_chip->eint_mask
+> >                      + bank->eint_offset);
+> > +     } else if (bank->eint_type =3D=3D EINT_TYPE_WKUP) {
+> > +             exynos_eint_set_filter(bank, EXYNOS_FLTCON_DIGITAL);
+> >       }
+> >  }
+> >
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl=
+/samsung/pinctrl-exynos.h
+> > index 773f161a82a3..4f2dc6a2e5c7 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> > @@ -52,6 +52,13 @@
+> >  #define EXYNOS_EINT_MAX_PER_BANK     8
+> >  #define EXYNOS_EINT_NR_WKUP_EINT
+> >
+> > +/* EINT filter configuration */
+> > +#define EXYNOS_FLTCON_EN             BIT(7)
+> > +#define EXYNOS_FLTCON_DIGITAL                BIT(6)
+> > +#define EXYNOS_FLTCON_DELAY          (0 << 6)
+>
+> should EXYNOS_FLTCON_DELAY be EXYNOS_FLTCON_ANALOG?
+
+Same comment as above, I used DELAY  because it matches the datasheet
+bitfield description but I agree that ANALOG is a better name and
+would make code readability better. The downside is we don't match the
+datasheet description.
+
+Thanks,
+
+Peter
