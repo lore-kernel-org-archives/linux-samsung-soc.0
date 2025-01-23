@@ -1,143 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD0E155A59;
-	Thu, 23 Jan 2025 19:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787B01C3BE6;
+	Thu, 23 Jan 2025 21:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737661740; cv=none; b=SansJhcMB0XSB/+bhwP+3edo9ptlZhnp7kooPQ8SwbJjAIXp8zVI95c86bYumt1uMvsj4J0bb1ksjWdCMAC0T+kiY6k1OJ8CYPvOhZ3ZezjCKdr1o41wk0drvg8kzQMBVPH5tooD6r95/4wdgjQRhMl35Mztp1mLQxcp06gltHo=
+	t=1737666679; cv=none; b=V3LIv6ivSLxmboPnJK7zcHUsUV2L7rgKRzcApVeHJaKdtamN3p0JkgCXQ0Pmc9kV+uNBaCCh9pqig9TRyv5TZKh+IECAAJ8BbSPfjA+xFhj1eh9uL3+cUOHJTTHVZT5N6dkIH65YgeXlD28/qxVF2mGby7VKolJkMR09mtMREdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737661740; c=relaxed/simple;
-	bh=b4vDZnBnRJMAExr0E30kjS5qChTkUb0rbppiv1HRSJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DPFlGJ9k2mV7QQrpEAaXUv/v7v40HWfOHX9RYbaZGE6v2agncjD/rbD7wI0DTD0mS14jzT6OgVbkUqv/W0f1tt76za+l8RU37Fm/Dm0bBVNF7pKO4uH/JC5UEe0Ol+9n/527LAk+/jhtieh/HjwXh2gfzkj1D+DGovXLOKcnmQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqFILXrf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737666679; c=relaxed/simple;
+	bh=IQhvNoww/zQ0SkvP01IHh1ffmGSc1Awplj7X6QyKyD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uoxRqFk3OPrICfY4VX326k2wKSm9Gg/J4T4/zLK9FpniEzAZMpnXW9TYh9EpHtr0NPChwOtsoWt7WnRGXo2Ztj5zK09lFM1GswrGUA6T89bnIIeTD7Br8+Xw/4onYL0bOEod/0gmFBkLLi6Ji/WYnkm29mR6FtkZvHVcbPe0TXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txLNZqar; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqFILXrf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D9FC4CEDF;
-	Thu, 23 Jan 2025 19:48:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txLNZqar"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98CABC4CEDF;
+	Thu, 23 Jan 2025 21:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737661739;
-	bh=b4vDZnBnRJMAExr0E30kjS5qChTkUb0rbppiv1HRSJI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EqFILXrfuR2ZIidhuGa5elmndxPWGARZ4+4SUQ2LogGGqSbmkEFngJj3ERNUU5Axy
-	 YYUlQPgrWtS8Bo+FycDGiEFlKSSOw1QJSLV1SkcYzR3JUh5wJOsWKDKhy+f9dHUYrm
-	 7pLUtWpNp2N+2Y0sK8B4CyIWN9Oj9mVmr/pc6wO0nOggRziN+6xsno0t+ylDSmez+f
-	 hHOhgGyHUHGaLZIo95ILsDiPy3DdHTK6ShflF5RwVdt51e0wRjNvkhkge2MoFni6GY
-	 d+OtMIPxV+S9hN6vnPi6I9YS/z47Wg42UQk9TAYDVlKrPFiHJYy97CE2ilrI6E2Cfo
-	 Fe1T5Gag59atw==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3eb7edfa42dso706342b6e.2;
-        Thu, 23 Jan 2025 11:48:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUGJh1b0eXI23JaXiiLByoLQ6wo7CgPw+QgQ7PtQf3pyS3cbWsZaIpbh963m3SK3p42XLf2vBgnPmw=@vger.kernel.org, AJvYcCUg0I2jWu0jGyD7ijwIvrO4uqHdhclgxuV3+fPwUQLqKZVVWnc2UXJKHomE+P2fGCx3QdzHkNxrP6NAGVo=@vger.kernel.org, AJvYcCVdYJ5oGQzZqQCvm26KPp0BJpBeFA7V/N9Z/5N6mvOfXaA4tVH+ykxPAC9hr1+qYeXhDmb/H7al@vger.kernel.org, AJvYcCWFkkKFstd5AHcqiQaXLlYTpzmJEksdyAkpCI1tESn4DI1ZGJvPW9uUW4vj9XBYRa9WI3zd1yxXHQb4pRqqTAIcY/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA74q8x7Ooi4b3gOe4eMTcOdcKb4dSqEsY6+M62fPYIE4UkNNL
-	2RuthEveBhzytxNw4IamC22R5ndND+xYUDmY46FUFEL8WOjPD6GZ5DZCBYt1zwrDBl1Aa8bs63X
-	K/9oX2Y1E6jLF1+VsSvUwkD4RB3g=
-X-Google-Smtp-Source: AGHT+IEn7eMjaHs+zmgjFd4WWVQahCuGuBBNarJzdEYSnQbw32rD83EbOPgQ6J9LSZlnM3ccjdpcf7atXcTLmBuPCOI=
-X-Received: by 2002:a05:6808:4c88:b0:3ea:f791:3caf with SMTP id
- 5614622812f47-3f19fc2ac4fmr14986057b6e.17.1737661739096; Thu, 23 Jan 2025
- 11:48:59 -0800 (PST)
+	s=k20201202; t=1737666678;
+	bh=IQhvNoww/zQ0SkvP01IHh1ffmGSc1Awplj7X6QyKyD8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=txLNZqar3c6JVfjRfeE0aOHAA8Yrnv/cVeiKwkCxrlrlY89xxdDc2y82OXbiIY0FL
+	 lz4t+1x3P+0KO1aFAfe4PuyueHj6xSJ6YSobFCzb3JnY57ThhKj+HieReUSviNuicW
+	 Uk7r/ziyQy5Q06LjugpD8oDFUZxoQp7nn/GDqaEY0qLelVAikeXcwwDF5q3Zl97whb
+	 6KBT+ZXtswh6i/wU80+Ad9hUBVReT47F0pppcgypIXnUOMRrgxGgZ/4lgXYgRAtttb
+	 lBDYm4WGESdNy7NaZcki/tL5ezOXgfKUDN1FAMTPzwbDO1LeW1uuDkFagixclANJfZ
+	 iEonjKB1DWcgQ==
+Date: Thu, 23 Jan 2025 15:11:17 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>, linux-scsi@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] dt-bindings: ufs: Correct indentation and style in DTS
+ example
+Message-ID: <173766667168.303412.17397912225491913488.robh@kernel.org>
+References: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <236b227e929e5adc04d1e9e7af6845a46c8e9432.1737525916.git.viresh.kumar@linaro.org>
-In-Reply-To: <236b227e929e5adc04d1e9e7af6845a46c8e9432.1737525916.git.viresh.kumar@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Jan 2025 20:48:48 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gz2WLtwJca5oAgZ23C+UmX18k9fvCbzRAEV6zZL4jiiQ@mail.gmail.com>
-X-Gm-Features: AWEUYZkHJTFNwFesQmZCHaWO-zzZKYYgHYBBgsz-SFLTIOGI_LaSzdS3jIxf3XU
-Message-ID: <CAJZ5v0gz2WLtwJca5oAgZ23C+UmX18k9fvCbzRAEV6zZL4jiiQ@mail.gmail.com>
-Subject: Re: [PATCH V2] cpufreq: s3c64xx: Fix compilation warning
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, kernel test robot <lkp@intel.com>, stable@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
 
-On Wed, Jan 22, 2025 at 7:06=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> The driver generates following warning when regulator support isn't
-> enabled in the kernel. Fix it.
->
->    drivers/cpufreq/s3c64xx-cpufreq.c: In function 's3c64xx_cpufreq_set_ta=
-rget':
-> >> drivers/cpufreq/s3c64xx-cpufreq.c:55:22: warning: variable 'old_freq' =
-set but not used [-Wunused-but-set-variable]
->       55 |         unsigned int old_freq, new_freq;
->          |                      ^~~~~~~~
-> >> drivers/cpufreq/s3c64xx-cpufreq.c:54:30: warning: variable 'dvfs' set =
-but not used [-Wunused-but-set-variable]
->       54 |         struct s3c64xx_dvfs *dvfs;
->          |                              ^~~~
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202501191803.CtfT7b2o-lkp@i=
-ntel.com/
-> Cc: <stable@vger.kernel.org> # v5.4+
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+On Tue, 07 Jan 2025 14:10:19 +0100, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> V2: Move s3c64xx_dvfs_table too inside ifdef.
+>  .../devicetree/bindings/ufs/renesas,ufs.yaml  | 16 +++++------
+>  .../bindings/ufs/samsung,exynos-ufs.yaml      | 28 +++++++++----------
+>  2 files changed, 22 insertions(+), 22 deletions(-)
+> 
 
-Applied as 6.14-rc material.
+Applied, thanks!
 
-If you'd rather apply it yourself, please let me know and I'll drop it.
-
-Thanks!
-
->  drivers/cpufreq/s3c64xx-cpufreq.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-=
-cpufreq.c
-> index c6bdfc308e99..9cef71528076 100644
-> --- a/drivers/cpufreq/s3c64xx-cpufreq.c
-> +++ b/drivers/cpufreq/s3c64xx-cpufreq.c
-> @@ -24,6 +24,7 @@ struct s3c64xx_dvfs {
->         unsigned int vddarm_max;
->  };
->
-> +#ifdef CONFIG_REGULATOR
->  static struct s3c64xx_dvfs s3c64xx_dvfs_table[] =3D {
->         [0] =3D { 1000000, 1150000 },
->         [1] =3D { 1050000, 1150000 },
-> @@ -31,6 +32,7 @@ static struct s3c64xx_dvfs s3c64xx_dvfs_table[] =3D {
->         [3] =3D { 1200000, 1350000 },
->         [4] =3D { 1300000, 1350000 },
->  };
-> +#endif
->
->  static struct cpufreq_frequency_table s3c64xx_freq_table[] =3D {
->         { 0, 0,  66000 },
-> @@ -51,15 +53,16 @@ static struct cpufreq_frequency_table s3c64xx_freq_ta=
-ble[] =3D {
->  static int s3c64xx_cpufreq_set_target(struct cpufreq_policy *policy,
->                                       unsigned int index)
->  {
-> -       struct s3c64xx_dvfs *dvfs;
-> -       unsigned int old_freq, new_freq;
-> +       unsigned int new_freq =3D s3c64xx_freq_table[index].frequency;
->         int ret;
->
-> +#ifdef CONFIG_REGULATOR
-> +       struct s3c64xx_dvfs *dvfs;
-> +       unsigned int old_freq;
-> +
->         old_freq =3D clk_get_rate(policy->clk) / 1000;
-> -       new_freq =3D s3c64xx_freq_table[index].frequency;
->         dvfs =3D &s3c64xx_dvfs_table[s3c64xx_freq_table[index].driver_dat=
-a];
->
-> -#ifdef CONFIG_REGULATOR
->         if (vddarm && new_freq > old_freq) {
->                 ret =3D regulator_set_voltage(vddarm,
->                                             dvfs->vddarm_min,
-> --
-> 2.31.1.272.g89b43f80a514
->
->
