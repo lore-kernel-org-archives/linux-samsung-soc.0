@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7156C1A8401;
-	Sun, 26 Jan 2025 14:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EDB1AAE1E;
+	Sun, 26 Jan 2025 14:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737903251; cv=none; b=iCB3Lub/jI/ZiQjPQws78vxVCOeeWFJ8oppbuWU3hYX8YYNnldqycXSbVmIGmLgFqJOI6gxc7ykgmnHpIF2CKhSOMrwOszhKTZ4e5XtJKykF2Z09d0uwsFUTO6xBxHb3H+Z1+O6HNrfZYUcLkzIGjZl2oB1CK4eIWVF0VkxedEA=
+	t=1737903337; cv=none; b=VJILdJo5IZO2TZEPArwE1UN083VKxJb7tG8tTyt4zz6x6HGhcGPTpUFAR8eo3YLanAXw2RRd6ywt8M3hM7T5q98LWcBgCv4S7aMYXseiTY7rJZaBrTNsaix6qSR4Y7iNr3QE7HHcFmrcrfpDFkg8rL9bL71hzYVCcCZ2som27ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737903251; c=relaxed/simple;
-	bh=B0wrpQlu9nAlfQPUKDXq1MRbTpeLW/jQYSjWlMnwgA4=;
+	s=arc-20240116; t=1737903337; c=relaxed/simple;
+	bh=fyiEmA/jTVf27Oj64YW7GKYpRdBIwjXLXoZQuJA4XOk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cUE5s/e9gUwQB9NhMAREOEyRawODCrW/vJJ8M+mLrTAJXxpQNnbDp2HsNVr3nRHLSqN2wNmH87SiQXrQEqDTg4sg6TrzKg2FZns/gDQ+bKFJBOAwk22daY6ND7xwCWu+PbUCQ2opnE0NIT5lEvxelCapi7/s2wseuSZbPLcosss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBrwsYS4; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=bUjvFouUi4uln0r/RoR+uy02bw6ORmSq0xKqIeci+D6fcDO1mTc/TGFbrFtsuMMKjZFP9jFC5KR6vNI29YEVuwfHnbLOfm4SvIb6qunsPfGJLMDxYKIZU9efyWjeZQYZCqMwXEKWw30dIe2IpLnIzEKkrS0gNabzGLWWjyscM+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d65Xl5BC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBrwsYS4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B84C4CEE2;
-	Sun, 26 Jan 2025 14:54:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d65Xl5BC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC02C4CED3;
+	Sun, 26 Jan 2025 14:55:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737903250;
-	bh=B0wrpQlu9nAlfQPUKDXq1MRbTpeLW/jQYSjWlMnwgA4=;
+	s=k20201202; t=1737903337;
+	bh=fyiEmA/jTVf27Oj64YW7GKYpRdBIwjXLXoZQuJA4XOk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZBrwsYS4N3lK00xVAJjpnqJ2071KCjNXLCYB/2fFf2aOWmQAG/Zy2/ms6sW+0ALgN
-	 66kU0tTwMepP9kauXLmhUWDD6v7MgaU0/SP4z5N9k+RRhQ1nQlIxdKnpj1sksESU4k
-	 mCW5tgWbCd6lDrKtCuF+9mYRwnW31wPaWxt8tceaXnt3LmGJyELDWeGwQ0IhLBvRjO
-	 jo81UJ0nJJViWLgW+DRLaIWPC2HevnpXTwC9whTxCvMk+iGNX1GJR36xTUGLVHDTRa
-	 BTpMSfGGgk/dWplie05TkZcZVAvIBfEydgzOQL9oB8AyA7q9x11HaWllsABnmPlD8c
-	 vzw+ozn0ktYdg==
+	b=d65Xl5BClaoN0OfHrCvp0yR+SaHMxXr5BzwgKLnilD2eXZNWOgaj5/xsfEnSquWIj
+	 uVFiLXochCNC/NgUKreUJPm4wIHXJgg71iX2aBRjATKaP6dJgtjsOJzAf57udt0xs5
+	 Pfe8OB5xqpw8wWR2+ResKVZCGs1qpkawLhuxUGOkHOxiC3b104al2zVu443sRkWMy4
+	 x8LEqgBXKEL3EvcE2+ezEG0Kyi+8li3ogyPaqcPVBZLehiFx9EaxxKJhrAOrutT/rd
+	 YTxcLSSadsEVLS/WAnS+IOcyg7miArrt5JCblNM93XmB66a1hR+Xf6NrxMbIAx/rPQ
+	 7oQijtw8TiKdg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -41,12 +41,12 @@ Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 18/34] drm/exynos: hdmi: use eld_mutex to protect access to connector->eld
-Date: Sun, 26 Jan 2025 09:52:54 -0500
-Message-Id: <20250126145310.926311-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 16/31] drm/exynos: hdmi: use eld_mutex to protect access to connector->eld
+Date: Sun, 26 Jan 2025 09:54:32 -0500
+Message-Id: <20250126145448.930220-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250126145310.926311-1-sashal@kernel.org>
-References: <20250126145310.926311-1-sashal@kernel.org>
+In-Reply-To: <20250126145448.930220-1-sashal@kernel.org>
+References: <20250126145448.930220-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13
+X-stable-base: Linux 6.12.11
 Content-Transfer-Encoding: 8bit
 
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 466a9e514aa1c..7a57d4a23e410 100644
+index 1e26cd4f83479..52059cfff4f0b 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1648,7 +1648,9 @@ static int hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf,
+@@ -1643,7 +1643,9 @@ static int hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf,
  	struct hdmi_context *hdata = dev_get_drvdata(dev);
  	struct drm_connector *connector = &hdata->connector;
  
