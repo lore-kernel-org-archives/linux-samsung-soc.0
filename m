@@ -1,395 +1,426 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6C3126BEE
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jan 2025 05:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3231FDA94
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jan 2025 10:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737955776; cv=none; b=g4I5XYNl84mqqgSwRxzvQEDud1Wuo3eKABNMoDC5WLhFLaIHKgci+U6qFlhY7dQsTzpq5L1zeI7GCWdfhHRFGt8km9ja+a0BO067YFvWI3dl06ze6EqeAedFgzhaJk9ZGGOve1yg7dEfq9yX0frAbQOBwF0KISR1o3aFA71BrdE=
+	t=1737974442; cv=none; b=E2iipaVD3lGRLS8Ux34OHcZ8Oi6wiV+/s4/Pzeylmuon/1x4X3MUZPxV0L8INxZi9OaX4ISYix4d/csf1IjjhB2uVqTZxF5GLwEHcIsZDbAknEDhPR9SWH0hPxdWnbjC7sZYew5QFG6T6xg9QyfUQ4hw82/zoZeFhViHH0w2W/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737955776; c=relaxed/simple;
-	bh=F3sTReY6m3kvGuzQp7gRS1og/NFu2awRGtg5IERKlj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hrnevfi2VmGpYXs5IT6IyyRg7dYLp59bcne+eKdq+dANJ9EZElaMOZuoEOf+8heHddZ29G6O+DqosBy+WDL0SQNS+/OGzKhEpoWSb2WpPdnF7qIAEUJDIFijeLQV5Li/iN4K6mHtHvi7ctSpW7f8rZaT59IW3LYf8qRusLaHBLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=McLM2ChS; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1737974442; c=relaxed/simple;
+	bh=nDQxahnbxNpxuKTdyEywdl9LsrttiGrst7UuaYPDD8M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ndFDMXYoxjCb+jA1bDRkWIof4DyEf3bwsUO3oQuf6RmUO3E3Wwb65K0Y/EKeDFT/JH6eXqaOkIy+mGZbitpOPi3qmmmcJcyL4tlDfNoAmF03vb8AJMFne9JQx5N4ZLkiLQkulfedp/Ar6grYSrODcXdQzHXcLXSff468jl9UEUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rgIHApm5; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="McLM2ChS"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21631789fcdso65763325ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jan 2025 21:29:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737955773; x=1738560573; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MbpwGjRvSKm7OOEA02QMMzXw4gclV688EfXIr1lIj7Y=;
-        b=McLM2ChSvHSfvcnjbXgVJ2fhNmMFxQo77RTTZkqEvaw1DC+VHjM+FDyARmcgDgkyEE
-         mEL/YXvJkyzH1ecJ1+G6aT9x/PEWH3zrHmZMyhvIKb0OZJlYUOq+e32Rj9EWox0auRFj
-         NZZbMT0Ml/C48ewMPb/a7rV2GTMls4xVYzFaaHKGPmL0Z7dJ4hE3+gFzbNOwrrDoy48o
-         QxbCRHdjq79Gwz0sYzbxv29JhAF5y7m0AUWL+uhgkQn3rh1oZ9aktStETJ4Ml7Xnc4Me
-         DVk82SYNcxKBkMN2CoAJXJueWTbxwXRffpqA9g2vIEySAyB1IVYuGq/ch3Mr02tEWjsR
-         hhcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737955773; x=1738560573;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MbpwGjRvSKm7OOEA02QMMzXw4gclV688EfXIr1lIj7Y=;
-        b=vW43ED4VwLlRFEj7sT/42cDC0tBllSZ8w4HgzyVH8AlNJ6FQSEdxohAWIm0O6nbkqD
-         pcSQcRsjAikqUQu5Bsr+MMzrhdaBRrfKzB9VBc8vA0vxv9HmOXHYSmRryJQ7fCG4tD3x
-         wbZq5wTYvA8TgMkGBKLi5AvYVGvXE366KB+xiv6JYuGfVj/W2nDSHPOD6nDyXTJAiXWs
-         pHlg/E/mYra25W23DAF4tUeKo+EzA0mL5D1O24LslO6BjQEbFSxrOA9RU12ehRPfE/Ta
-         YdzWwKFWDwCcEc71tw9srnCGKxVGTcfZMon/7FWFm016mhL2aeT4203L8KyfqzrQuseo
-         V+mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEyYj/rXlfgUhoxZyj0VbZ2tQORA4+epQpQkxQteYOr57K+/PymhtcVqE9w/YoePucnNaa5dAR64e8sw7OTGjo5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdn3nSG0tVmH9FnByvUnkXwbAX9+Mexayw4LUkMGP8xavsm2AZ
-	SjSTtdOEvXlIEF5kX6qwVz8iuQkRB0TLDXnBM+y5UTyqMZVhT5NprMnCpYVGog==
-X-Gm-Gg: ASbGncuqsA+10u9W23JInMo4GFqOlXsEfAcPgNVU4c5IJxuxlBEbqVV9oc/fYnB8JZs
-	wXfeju8fBXCefQIQQUkkY2mVuqby+ICBRmUq5hux1qtIN5Rprt+GlUjQcsbG7hm2Tf/u/+RHMtY
-	AShRTieRcOxK/aPwRIREwcI5J1aiuZkP4oVpAp6r3Oi/XLEMZX2078towVNxg5I3eMUVK46Ieos
-	oTrufzNgI7TwiR7ZccrF2MQo2AslO4RRho/OJE+cwtyGKyu5vXtSI9e5FyJXYiXH5fDNVPB4as4
-	lPaklh34eAiVOzU=
-X-Google-Smtp-Source: AGHT+IH5cyt33BRSgNah7zwHKJcgR39y5T6qnFhhcjWjaEzJr2vmBVaKLe1dN2yQKZ4MyPHMC1o4Rw==
-X-Received: by 2002:a05:6a21:6d9f:b0:1e1:ad90:dda6 with SMTP id adf61e73a8af0-1eb697c1bb0mr27369444637.20.1737955772669;
-        Sun, 26 Jan 2025 21:29:32 -0800 (PST)
-Received: from thinkpad ([120.60.139.80])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72f8a7614c4sm6185758b3a.120.2025.01.26.21.29.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jan 2025 21:29:32 -0800 (PST)
-Date: Mon, 27 Jan 2025 10:59:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Satya Tangirala <satyat@google.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4] scsi: ufs: fix use-after free in init error and
- remove paths
-Message-ID: <20250127052921.7cld6rrb2fmr2srt@thinkpad>
-References: <20250124-ufshcd-fix-v4-1-c5d0144aae59@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rgIHApm5"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250127103233epoutp04c0c223801f5f23d6ccd5174054a91c14~ehhpWqCt31251812518epoutp04P
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jan 2025 10:32:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250127103233epoutp04c0c223801f5f23d6ccd5174054a91c14~ehhpWqCt31251812518epoutp04P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1737973953;
+	bh=gAKbZvqT9Q5ulJ/Foe0hjc3e2sZYmVIC2ncVLLWesbk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=rgIHApm5Px25iiPmgazy6WjOHaNO1zwQ1xyGmuX6NGpbGMdbje2x0NR5ocDsS0yX8
+	 Zt4Pj1NE4yuUPlRzeD30FIuNnQQ788KX13jq1s2n5KmKXamiqAGiHxu3detbSAbB8P
+	 ZniD4+VfKaLnV+/aj3PUg+CSpCNaYJDuDmjaJYak=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250127103232epcas5p37c492ab6de27ec79418e15ac1aebe0a7~ehhogNBgG1368113681epcas5p3b;
+	Mon, 27 Jan 2025 10:32:32 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4YhPqy5NQHz4x9Pp; Mon, 27 Jan
+	2025 10:32:30 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EA.FF.20052.EB067976; Mon, 27 Jan 2025 19:32:30 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250127094514epcas5p2b5f3757a75c1871cdb219b904499aad9~eg4UzEjpb2884028840epcas5p2G;
+	Mon, 27 Jan 2025 09:45:14 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250127094514epsmtrp17389931eaaa1a95b292eb46bac821181~eg4UxlJZm1933319333epsmtrp1e;
+	Mon, 27 Jan 2025 09:45:14 +0000 (GMT)
+X-AuditID: b6c32a49-3fffd70000004e54-77-679760beab57
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B1.A5.18949.AA557976; Mon, 27 Jan 2025 18:45:14 +0900 (KST)
+Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250127094510epsmtip128b53f2a49647c74971dc89a8eacc94e~eg4QzWiyn0609506095epsmtip18;
+	Mon, 27 Jan 2025 09:45:09 +0000 (GMT)
+From: "Swathi K S" <swathi.ks@samsung.com>
+To: "'Serge Semin'" <fancer.lancer@gmail.com>, "'Andrew Lunn'"
+	<andrew@lunn.ch>
+Cc: <krzk@kernel.org>, <robh@kernel.org>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
+	<mcoquelin.stm32@gmail.com>, <alim.akhtar@samsung.com>,
+	<linux-fsd@tesla.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<alexandre.torgue@foss.st.com>, <peppe.cavallaro@st.com>,
+	<joabreu@synopsys.com>, <rcsekar@samsung.com>, <ssiddha@tesla.com>,
+	<jayati.sahu@samsung.com>, <pankaj.dubey@samsung.com>,
+	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <yqih2sck5ayuhk5wcvgwahcndc4xb3gxthcjxgt4yqg33zfii5@ub25raxykxdp>
+Subject: RE: [PATCH v4 2/4] net: stmmac: dwc-qos: Add FSD EQoS support
+Date: Mon, 27 Jan 2025 15:15:08 +0530
+Message-ID: <085201db70a0$29d736d0$7d85a470$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250124-ufshcd-fix-v4-1-c5d0144aae59@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQD2Gw94KDf30OIcDBeWExyH9iGvOgIzKibnAjAKSeACs1P8YLS8UVdQ
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xbVRzHc+7t7W2ZjAubcEDH8M4ZwBQoK3iAVRbdyDUaBcmE+QhUuCkM
+	uK1tQTE+5mAGcGMSYLCG8RKnsKGsa0tBYIzXhCltpqAYeSmMx9yzk8AYYqFF+e/z+57f43zP
+	yU+AuzWSXoJUTsOqOFk6zXfiGbv9/EQdiWXyINOPvmhp7hRAE5VGPjKPduHofPsghirMuTxU
+	1TNIoOm+P0jUlFdBoJHOFgz1DNRhaKz2FoHM5iYSWYyFBNL9OUygyfk49FNrBR+VmzswVDA8
+	RaDKlUYC9VW7o4WrfwFUa7hPotUbBoAm77SRSGsxEajnh1kcrbaZSFQ7UU3se5zR149gzPRJ
+	A8m0aEdJplqXyega8vnMxbqPmRaTFWNudwzxmUJ9A2Aud4iZ6cV2nNFfsgLmn6NnSMaq847e
+	+nra3hRWlsyqfFguSZGcysml9IuxCc8nhIQGiUXiMPQM7cPJMlgpvf+laFFUarrtXWifLFl6
+	pk2KlqnVdOCze1WKTA3rk6JQa6Q0q0xOV0qUAWpZhjqTkwdwrCZcHBQUHGJLTExLKTUM8JUl
+	r7xnGSsCR0BvZAEQCiAlgebuOrwAOAncqO8ANMx2AntwD8D+lTJHsABgjTGHt1Hy2xfHSPtB
+	O4Bnj111BLMAPqgpINey+JQ/rC3sWOftVAxsW8pbr8apQQJ+ZqHWWEi9DMt/XQZrvI2Kggbj
+	N9ga86jdsOQr47ruTIXB4uExzM6usP/0lKPPTth8swK338gHLk2fJeyzomBO3QW+PccD9i4d
+	XzcHqXtCONNdRtgL9sOpM1dIO2+D81f0DvaCcyc/dXACPFc45LCcAkcfFPHtHAk7f66w6QLb
+	AD/4bWugXd4BSwfs98eprfDE8hRm152hqXKDd8GVG8OOlp7Q+OVt8nNAazdZ026ypt1kQfv/
+	tGrAawCerFKdIWfVIUoxx777348nKTJ0YH1v/F8wgdGJOwFdABOALgAFOL3dOX+kRO7mnCzL
+	fp9VKRJUmemsuguE2N67CPd6NElhWzxOkyCWhAVJQkNDJWF7QsW0h3NOS67cjZLLNGwayypZ
+	1UYdJhB6HcESRb/oh6oP58U8PJh7eNUa764fnQe+Uhfh6bsBu44HS8l9l6PDx71fRRHn5R59
+	rwXXxMRmM3Nv3Dy1238xTBpYLHE3uCYsjkRYaJfe4B2YKO7r4sRrUQ+XmvAs6y0Zn34snjv0
+	hL4/4kKbZeCA1Y0ODh8VaT8a6f7wLT8uK+96n+7a78/NNGeXrwZYxn0N1WXxLsIDjd+LI1Zm
+	TlQm1xQy3GCaKEfh1lVWoSl9Z8ue9vrSWu/lCGPqRc2TTk73e4rUWa45zZP7zpmdI5/Kf7vp
+	buw0D40fKvWLE5vilF2TrcVH3wz94NIjwno4X7Vzi6J4Ifjplv6Vv6uoT5LyPU0Hr9M8dYpM
+	7I+r1LJ/AShiTnHABAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMKsWRmVeSWpSXmKPExsWy7bCSnO6q0OnpBvf3s1n8fDmN0eLBvG1s
+	FufvHmK2WLP3HJPFnPMtLBbzj5xjtXh67BG7xYaOOawWNw/sZLI4cmoJk8W9Re9YLc6f38Bu
+	cWFbH6vFpsfXWC0evgq3uLxrDpvFjPP7mCy6rj1htZj3dy2rxbEFYhbfTr9htFi09Qu7xf/X
+	WxktHn7Yw24x68IOVosjZ14wW/zfs4PdYtGDBawOMh5bVt5k8njav5XdY+esu+weCzaVemxa
+	1cnmsXlJvcfOHZ+ZPN7vu8rm0bdlFaPHwX2GHk9/7GX22LL/M6PHv6a57B6fN8kF8EVx2aSk
+	5mSWpRbp2yVwZUzdeoqtYIp/xYV7ExkbGI/adzFyckgImEjcWtzK3sXIxSEksJtR4tDCx6wQ
+	CUmJT81ToWxhiZX/nkMVPWOUmPz6FDNIgk1AS2JR3z52EFtEIFDizsanbCBFzAKvWCUenJ7C
+	ApIQEvjLKLH2WTGIzSngJzHjxm9GEFtYwE1i67Z1TCA2i4CqxJTl28DivAKWEpOv3WOCsAUl
+	Ts58AjSHA2ionkTbRrASZgF5ie1v5zBDHKcg8fPpMlaIG9wkmpdsZIOoEZc4+rOHeQKj8Cwk
+	k2YhTJqFZNIsJB0LGFlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIEpxstrR2Me1Z9
+	0DvEyMTBeIhRgoNZSYS38+aUdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK83173pggJpCeWpGan
+	phakFsFkmTg4pRqYmGN6Tm7I5vq0UnMGq2rZV3bxou83bsu47rMpfNQZk8SeM9evPvn/2dfn
+	m7LuGhfdWzXX9l/VqeJFix/eWb9B8tid04dW1l7Qtfz6c+/9zmIFyxmrJEKECxJfv3p6o72T
+	P4O/bE396qlVKYJBDbdun/WZNvnkiv2BGcv9Db/EzVl4omDelaQHIeGPXx5/G83yMXXCrLe3
+	vdd/C3nHm7M2oCfGh3MR//nfbYfVFs7eWrXlfbjZ/78OzxxEZ5jU/HzoKzI3nlGD++Cla4Z6
+	K2ykg+b7BMgwT7z12Ng/MqvSqOjkH0fra7O8bQ6yvnbsEsrZbZ1bPjNiw5LypC+rfTgDM1bJ
+	2NmvEekqjVu651uCrBJLcUaioRZzUXEiANgTawmmAwAA
+X-CMS-MailID: 20250127094514epcas5p2b5f3757a75c1871cdb219b904499aad9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240730092902epcas5p1520f9cac624dad29f74a92ed4c559b25
+References: <20240730091648.72322-1-swathi.ks@samsung.com>
+	<CGME20240730092902epcas5p1520f9cac624dad29f74a92ed4c559b25@epcas5p1.samsung.com>
+	<20240730091648.72322-3-swathi.ks@samsung.com>
+	<yqih2sck5ayuhk5wcvgwahcndc4xb3gxthcjxgt4yqg33zfii5@ub25raxykxdp>
 
-On Fri, Jan 24, 2025 at 03:09:00PM +0000, André Draszik wrote:
-> devm_blk_crypto_profile_init() registers a cleanup handler to run when
-> the associated (platform-) device is being released. For UFS, the
-> crypto private data and pointers are stored as part of the ufs_hba's
-> data structure 'struct ufs_hba::crypto_profile'. This structure is
-> allocated as part of the underlying ufshcd and therefore Scsi_host
-> allocation.
-> 
-> During driver release or during error handling in ufshcd_pltfrm_init(),
-> this structure is released as part of ufshcd_dealloc_host() before the
-> (platform-) device associated with the crypto call above is released.
-> Once this device is released, the crypto cleanup code will run, using
-> the just-released 'struct ufs_hba::crypto_profile'. This causes a
-> use-after-free situation:
-> 
->   Call trace:
->    kfree+0x60/0x2d8 (P)
->    kvfree+0x44/0x60
->    blk_crypto_profile_destroy_callback+0x28/0x70
->    devm_action_release+0x1c/0x30
->    release_nodes+0x6c/0x108
->    devres_release_all+0x98/0x100
->    device_unbind_cleanup+0x20/0x70
->    really_probe+0x218/0x2d0
-> 
-> In other words, the initialisation code flow is:
-> 
->   platform-device probe
->     ufshcd_pltfrm_init()
->       ufshcd_alloc_host()
->         scsi_host_alloc()
->           allocation of struct ufs_hba
->           creation of scsi-host devices
->     devm_blk_crypto_profile_init()
->       devm registration of cleanup handler using platform-device
-> 
-> and during error handling of ufshcd_pltfrm_init() or during driver
-> removal:
-> 
->   ufshcd_dealloc_host()
->     scsi_host_put()
->       put_device(scsi-host)
->         release of struct ufs_hba
->   put_device(platform-device)
->     crypto cleanup handler
-> 
-> To fix this use-after free, change ufshcd_alloc_host() to register a
-> devres action to automatically cleanup the underlying SCSI device on
-> ufshcd destruction, without requiring explicit calls to
-> ufshcd_dealloc_host(). This way:
-> 
->     * the crypto profile and all other ufs_hba-owned resources are
->       destroyed before SCSI (as they've been registered after)
->     * a memleak is plugged in tc-dwc-g210-pci.c remove() as a
->       side-effect
->     * EXPORT_SYMBOL_GPL(ufshcd_dealloc_host) can be removed fully as
->       it's not needed anymore
->     * no future drivers using ufshcd_alloc_host() could ever forget
->       adding the cleanup
-> 
-> Fixes: cb77cb5abe1f ("blk-crypto: rename blk_keyslot_manager to blk_crypto_profile")
-> Fixes: d76d9d7d1009 ("scsi: ufs: use devm_blk_ksm_init()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-LGTM!
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> -----Original Message-----
+> From: Serge Semin <fancer.lancer@gmail.com>
+> Sent: 02 August 2024 00:40
+> To: Swathi K S <swathi.ks@samsung.com>; Andrew Lunn <andrew@lunn.ch>
+> Cc: krzk@kernel.org; robh@kernel.org; davem@davemloft.net;
+> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> conor+dt@kernel.org; richardcochran@gmail.com;
+> mcoquelin.stm32@gmail.com; alim.akhtar@samsung.com; linux-
+> fsd@tesla.com; netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
+> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> alexandre.torgue@foss.st.com; peppe.cavallaro@st.com;
+> joabreu@synopsys.com; rcsekar@samsung.com; ssiddha@tesla.com;
+> jayati.sahu@samsung.com; pankaj.dubey@samsung.com;
+> ravi.patel@samsung.com; gost.dev@samsung.com
+> Subject: Re: [PATCH v4 2/4] net: stmmac: dwc-qos: Add FSD EQoS support
+> 
+> Hi Swathi, Andrew
+> 
+> On Tue, Jul 30, 2024 at 02:46:46PM +0530, Swathi K S wrote:
+> > The FSD SoC contains two instance of the Synopsys DWC ethernet QOS IP
+> core.
+> > The binding that it uses is slightly different from existing ones
+> > because of the integration (clocks, resets).
+> >
+> 
+> > For FSD SoC, a mux switch is needed between internal and external
+clocks.
+> > By default after reset internal clock is used but for receiving
+> > packets properly, external clock is needed. Mux switch to external
+> > clock happens only when the external clock is present.
+> >
+> > Signed-off-by: Chandrasekar R <rcsekar@samsung.com>
+> > Signed-off-by: Suresh Siddha <ssiddha@tesla.com>
+> > Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+> > ---
+> >  .../stmicro/stmmac/dwmac-dwc-qos-eth.c        | 90
+> +++++++++++++++++++
+> >  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 28 +++++-
+> >  include/linux/stmmac.h                        |  1 +
+> >  3 files changed, 117 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+> > b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+> > index ec924c6c76c6..bc97b3b573b7 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/reset.h>
+> >  #include <linux/stmmac.h>
+> > +#include <linux/regmap.h>
+> >
+> >  #include "stmmac_platform.h"
+> >  #include "dwmac4.h"
+> > @@ -37,6 +38,13 @@ struct tegra_eqos {
+> >  	struct gpio_desc *reset;
+> >  };
+> >
+> > +struct fsd_eqos_plat_data {
+> > +	const struct fsd_eqos_variant *fsd_eqos_inst_var;
+> > +	struct clk_bulk_data *clks;
+> > +	int num_clks;
+> > +	struct device *dev;
+> > +};
+> > +
+> >  static int dwc_eth_dwmac_config_dt(struct platform_device *pdev,
+> >  				   struct plat_stmmacenet_data *plat_dat)  {
+> @@ -265,6 +273,82 @@
+> > static int tegra_eqos_init(struct platform_device *pdev, void *priv)
+> >  	return 0;
+> >  }
+> >
+> > +static int dwc_eqos_rxmux_setup(void *priv, bool external) {
+> > +	int i = 0;
+> > +	struct fsd_eqos_plat_data *plat = priv;
+> > +	struct clk *rx1 = NULL;
+> > +	struct clk *rx2 = NULL;
+> > +	struct clk *rx3 = NULL;
+> > +
+> > +	for (i = 0; i < plat->num_clks; i++) {
+> > +		if (strcmp(plat->clks[i].id, "eqos_rxclk_mux") == 0)
+> > +			rx1 = plat->clks[i].clk;
+> > +		else if (strcmp(plat->clks[i].id, "eqos_phyrxclk") == 0)
+> > +			rx2 = plat->clks[i].clk;
+> > +		else if (strcmp(plat->clks[i].id, "dout_peric_rgmii_clk") ==
+0)
+> > +			rx3 = plat->clks[i].clk;
+> > +	}
+> > +
+> > +	/* doesn't support RX clock mux */
+> > +	if (!rx1)
+> > +		return 0;
+> > +
+> > +	if (external)
+> > +		return clk_set_parent(rx1, rx2);
+> > +	else
+> > +		return clk_set_parent(rx1, rx3);
+> > +}
+> 
+> Andrew is right asking about this implementation. It does seem
+> questionable:
+> 
+> 1. AFAIR RGMII Rx clock is supposed to be retrieved the PHY. So the
+> eqos_phyrxclk and dout_peric_rgmii_clk are the PHY clocks. Do you have a
+> PHY integrated in the SoC? If so you should have defined it as a separate
+DT-
+> node and moved the clocks definition in there.
 
-- Mani
+In this case, there is no PHY integrated in the SoC.
 
-> ---
-> Changes in v4:
-> - add a kdoc note to ufshcd_alloc_host() to state why there is no
->   ufshcd_dealloc_host() (Mani)
-> - use return err, without goto (Mani)
-> - drop register dump and abort info from commit message (Mani)
-> - Link to v3: https://lore.kernel.org/r/20250116-ufshcd-fix-v3-1-6a83004ea85c@linaro.org
 > 
-> Changes in v3:
-> - rename devres action handler to ufshcd_devres_release() (Bart)
-> - Link to v2: https://lore.kernel.org/r/20250114-ufshcd-fix-v2-1-2dc627590a4a@linaro.org
-> 
-> Changes in v2:
-> - completely new approach using devres action for Scsi_host cleanup, to
->   ensure ordering
-> - add Fixes: and CC: stable tags (Eric)
-> - Link to v1: https://lore.kernel.org/r/20250113-ufshcd-fix-v1-1-ca63d1d4bd55@linaro.org
-> ---
-> In my case, as per above trace I initially encountered an error in
-> ufshcd_verify_dev_init(), which made me notice this problem both during
-> error handling and release. For reproducing, it'd be possible to change
-> that function to just return an error, or rmmod the platform glue
-> driver.
-> 
-> Other approaches for solving this issue I see are the following, but I
-> believe this one here is the cleanest:
-> 
-> * turn 'struct ufs_hba::crypto_profile' into a dynamically allocated
->   pointer, in which case it doesn't matter if cleanup runs after
->   scsi_host_put()
-> * add an explicit devm_blk_crypto_profile_deinit() to be called by API
->   users when necessary, e.g. before ufshcd_dealloc_host() in this case
-> * register the crypto cleanup handler against the scsi-host device
->   instead, like in v1 of this patch
-> ---
->  drivers/ufs/core/ufshcd.c        | 31 +++++++++++++++++++++----------
->  drivers/ufs/host/ufshcd-pci.c    |  2 --
->  drivers/ufs/host/ufshcd-pltfrm.c | 28 +++++++++-------------------
->  include/ufs/ufshcd.h             |  1 -
->  4 files changed, 30 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 43ddae7318cb..4328f769a7c8 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -10279,16 +10279,6 @@ int ufshcd_system_thaw(struct device *dev)
->  EXPORT_SYMBOL_GPL(ufshcd_system_thaw);
->  #endif /* CONFIG_PM_SLEEP  */
->  
-> -/**
-> - * ufshcd_dealloc_host - deallocate Host Bus Adapter (HBA)
-> - * @hba: pointer to Host Bus Adapter (HBA)
-> - */
-> -void ufshcd_dealloc_host(struct ufs_hba *hba)
-> -{
-> -	scsi_host_put(hba->host);
-> -}
-> -EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
-> -
->  /**
->   * ufshcd_set_dma_mask - Set dma mask based on the controller
->   *			 addressing capability
-> @@ -10307,12 +10297,26 @@ static int ufshcd_set_dma_mask(struct ufs_hba *hba)
->  	return dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(32));
->  }
->  
-> +/**
-> + * ufshcd_devres_release - devres cleanup handler, invoked during release of
-> + *			   hba->dev
-> + * @host: pointer to SCSI host
-> + */
-> +static void ufshcd_devres_release(void *host)
-> +{
-> +	scsi_host_put(host);
-> +}
-> +
->  /**
->   * ufshcd_alloc_host - allocate Host Bus Adapter (HBA)
->   * @dev: pointer to device handle
->   * @hba_handle: driver private handle
->   *
->   * Return: 0 on success, non-zero value on failure.
-> + *
-> + * NOTE: There is no corresponding ufshcd_dealloc_host() because this function
-> + * keeps track of its allocations using devres and deallocates everything on
-> + * device removal automatically.
->   */
->  int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
->  {
-> @@ -10334,6 +10338,13 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
->  		err = -ENOMEM;
->  		goto out_error;
->  	}
-> +
-> +	err = devm_add_action_or_reset(dev, ufshcd_devres_release,
-> +				       host);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to add ufshcd dealloc action\n");
-> +
->  	host->nr_maps = HCTX_TYPE_POLL + 1;
->  	hba = shost_priv(host);
->  	hba->host = host;
-> diff --git a/drivers/ufs/host/ufshcd-pci.c b/drivers/ufs/host/ufshcd-pci.c
-> index ea39c5d5b8cf..9cfcaad23cf9 100644
-> --- a/drivers/ufs/host/ufshcd-pci.c
-> +++ b/drivers/ufs/host/ufshcd-pci.c
-> @@ -562,7 +562,6 @@ static void ufshcd_pci_remove(struct pci_dev *pdev)
->  	pm_runtime_forbid(&pdev->dev);
->  	pm_runtime_get_noresume(&pdev->dev);
->  	ufshcd_remove(hba);
-> -	ufshcd_dealloc_host(hba);
->  }
->  
->  /**
-> @@ -605,7 +604,6 @@ ufshcd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	err = ufshcd_init(hba, mmio_base, pdev->irq);
->  	if (err) {
->  		dev_err(&pdev->dev, "Initialization failed\n");
-> -		ufshcd_dealloc_host(hba);
->  		return err;
->  	}
->  
-> diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
-> index 505572d4fa87..ffe5d1d2b215 100644
-> --- a/drivers/ufs/host/ufshcd-pltfrm.c
-> +++ b/drivers/ufs/host/ufshcd-pltfrm.c
-> @@ -465,21 +465,17 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
->  	struct device *dev = &pdev->dev;
->  
->  	mmio_base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(mmio_base)) {
-> -		err = PTR_ERR(mmio_base);
-> -		goto out;
-> -	}
-> +	if (IS_ERR(mmio_base))
-> +		return PTR_ERR(mmio_base);
->  
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0) {
-> -		err = irq;
-> -		goto out;
-> -	}
-> +	if (irq < 0)
-> +		return irq;
->  
->  	err = ufshcd_alloc_host(dev, &hba);
->  	if (err) {
->  		dev_err(dev, "Allocation failed\n");
-> -		goto out;
-> +		return err;
->  	}
->  
->  	hba->vops = vops;
-> @@ -488,13 +484,13 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
->  	if (err) {
->  		dev_err(dev, "%s: clock parse failed %d\n",
->  				__func__, err);
-> -		goto dealloc_host;
-> +		return err;
->  	}
->  	err = ufshcd_parse_regulator_info(hba);
->  	if (err) {
->  		dev_err(dev, "%s: regulator init failed %d\n",
->  				__func__, err);
-> -		goto dealloc_host;
-> +		return err;
->  	}
->  
->  	ufshcd_init_lanes_per_dir(hba);
-> @@ -502,25 +498,20 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
->  	err = ufshcd_parse_operating_points(hba);
->  	if (err) {
->  		dev_err(dev, "%s: OPP parse failed %d\n", __func__, err);
-> -		goto dealloc_host;
-> +		return err;
->  	}
->  
->  	err = ufshcd_init(hba, mmio_base, irq);
->  	if (err) {
->  		dev_err_probe(dev, err, "Initialization failed with error %d\n",
->  			      err);
-> -		goto dealloc_host;
-> +		return err;
->  	}
->  
->  	pm_runtime_set_active(dev);
->  	pm_runtime_enable(dev);
->  
->  	return 0;
-> -
-> -dealloc_host:
-> -	ufshcd_dealloc_host(hba);
-> -out:
-> -	return err;
->  }
->  EXPORT_SYMBOL_GPL(ufshcd_pltfrm_init);
->  
-> @@ -534,7 +525,6 @@ void ufshcd_pltfrm_remove(struct platform_device *pdev)
->  
->  	pm_runtime_get_sync(&pdev->dev);
->  	ufshcd_remove(hba);
-> -	ufshcd_dealloc_host(hba);
->  	pm_runtime_disable(&pdev->dev);
->  	pm_runtime_put_noidle(&pdev->dev);
->  }
-> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-> index da0fa5c65081..58eb6e897827 100644
-> --- a/include/ufs/ufshcd.h
-> +++ b/include/ufs/ufshcd.h
-> @@ -1311,7 +1311,6 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
->  void ufshcd_enable_irq(struct ufs_hba *hba);
->  void ufshcd_disable_irq(struct ufs_hba *hba);
->  int ufshcd_alloc_host(struct device *, struct ufs_hba **);
-> -void ufshcd_dealloc_host(struct ufs_hba *);
->  int ufshcd_hba_enable(struct ufs_hba *hba);
->  int ufshcd_init(struct ufs_hba *, void __iomem *, unsigned int);
->  int ufshcd_link_recovery(struct ufs_hba *hba);
-> 
-> ---
-> base-commit: 4e16367cfe0ce395f29d0482b78970cce8e1db73
-> change-id: 20250113-ufshcd-fix-52409f2d32ff
-> 
-> Best regards,
-> -- 
-> André Draszik <andre.draszik@linaro.org>
-> 
+> 2. Do you really need to perform the "eqos_rxclk_mux" clock re-parenting
+on
+> each interface open/close? Based on the commit log you don't. So the re-
+> parenting can be done in the glue driver or even in the device tree by
+means
+> of the "assigned-clock-parents" property.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks for the insight, we investigated further and realized that this is
+not mandatory. So I will remove the reparenting done in every open/ close in
+the updated patchset v5.
+
+-Swathi
+
+> 
+> -Serge(y)
+> 
+> > +
+> > +static int fsd_clks_endisable(void *priv, bool enabled) {
+> > +	struct fsd_eqos_plat_data *plat = priv;
+> > +
+> > +	if (enabled) {
+> > +		return clk_bulk_prepare_enable(plat->num_clks, plat->clks);
+> > +	} else {
+> > +		clk_bulk_disable_unprepare(plat->num_clks, plat->clks);
+> > +		return 0;
+> > +	}
+> > +}
+> > +
+> > +static int fsd_eqos_probe(struct platform_device *pdev,
+> > +			  struct plat_stmmacenet_data *data,
+> > +			  struct stmmac_resources *res)
+> > +{
+> > +	struct fsd_eqos_plat_data *priv_plat;
+> > +	int ret = 0;
+> > +
+> > +	priv_plat = devm_kzalloc(&pdev->dev, sizeof(*priv_plat),
+> GFP_KERNEL);
+> > +	if (!priv_plat)
+> > +		return -ENOMEM;
+> > +
+> > +	priv_plat->dev = &pdev->dev;
+> > +
+> > +	ret = devm_clk_bulk_get_all(&pdev->dev, &priv_plat->clks);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(&pdev->dev, ret, "No clocks
+> available\n");
+> > +
+> > +	priv_plat->num_clks = ret;
+> > +
+> > +	data->bsp_priv = priv_plat;
+> > +	data->clks_config = fsd_clks_endisable;
+> > +	data->rxmux_setup = dwc_eqos_rxmux_setup;
+> > +
+> > +	ret = fsd_clks_endisable(priv_plat, true);
+> > +	if (ret)
+> > +		return dev_err_probe(&pdev->dev, ret, "Unable to enable
+> fsd
+> > +clock\n");
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void fsd_eqos_remove(struct platform_device *pdev) {
+> > +	struct fsd_eqos_plat_data *priv_plat =
+> > +get_stmmac_bsp_priv(&pdev->dev);
+> > +
+> > +	fsd_clks_endisable(priv_plat, false); }
+> > +
+> >  static int tegra_eqos_probe(struct platform_device *pdev,
+> >  			    struct plat_stmmacenet_data *data,
+> >  			    struct stmmac_resources *res)
+> > @@ -411,6 +495,11 @@ static const struct dwc_eth_dwmac_data
+> tegra_eqos_data = {
+> >  	.remove = tegra_eqos_remove,
+> >  };
+> >
+> > +static const struct dwc_eth_dwmac_data fsd_eqos_data = {
+> > +	.probe = fsd_eqos_probe,
+> > +	.remove = fsd_eqos_remove,
+> > +};
+> > +
+> >  static int dwc_eth_dwmac_probe(struct platform_device *pdev)  {
+> >  	const struct dwc_eth_dwmac_data *data; @@ -473,6 +562,7 @@
+> static
+> > void dwc_eth_dwmac_remove(struct platform_device *pdev)  static const
+> > struct of_device_id dwc_eth_dwmac_match[] = {
+> >  	{ .compatible = "snps,dwc-qos-ethernet-4.10", .data =
+> &dwc_qos_data },
+> >  	{ .compatible = "nvidia,tegra186-eqos", .data = &tegra_eqos_data },
+> > +	{ .compatible = "tesla,fsd-ethqos", .data = &fsd_eqos_data },
+> >  	{ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, dwc_eth_dwmac_match); diff --git
+> > a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > index 12689774d755..2ef82edec522 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -4001,6 +4001,12 @@ static int __stmmac_open(struct net_device
+> *dev,
+> >  	netif_tx_start_all_queues(priv->dev);
+> >  	stmmac_enable_all_dma_irq(priv);
+> >
+> > +	if (priv->plat->rxmux_setup) {
+> > +		ret = priv->plat->rxmux_setup(priv->plat->bsp_priv, true);
+> > +		if (ret)
+> > +			netdev_err(priv->dev, "Rxmux setup failed\n");
+> > +	}
+> > +
+> >  	return 0;
+> >
+> >  irq_error:
+> > @@ -4056,7 +4062,13 @@ static void stmmac_fpe_stop_wq(struct
+> > stmmac_priv *priv)  static int stmmac_release(struct net_device *dev)
+> > {
+> >  	struct stmmac_priv *priv = netdev_priv(dev);
+> > -	u32 chan;
+> > +	u32 chan, ret;
+> > +
+> > +	if (priv->plat->rxmux_setup) {
+> > +		ret = priv->plat->rxmux_setup(priv->plat->bsp_priv, false);
+> > +		if (ret)
+> > +			netdev_err(priv->dev, "Rxmux setup failed\n");
+> > +	}
+> >
+> >  	if (device_may_wakeup(priv->device))
+> >  		phylink_speed_down(priv->phylink, false); @@ -7848,11
+> +7860,17 @@
+> > int stmmac_suspend(struct device *dev)  {
+> >  	struct net_device *ndev = dev_get_drvdata(dev);
+> >  	struct stmmac_priv *priv = netdev_priv(ndev);
+> > -	u32 chan;
+> > +	u32 chan, ret;
+> >
+> >  	if (!ndev || !netif_running(ndev))
+> >  		return 0;
+> >
+> > +	if (priv->plat->rxmux_setup) {
+> > +		ret = priv->plat->rxmux_setup(priv->plat->bsp_priv, false);
+> > +		if (ret)
+> > +			netdev_err(priv->dev, "Rxmux setup failed\n");
+> > +	}
+> > +
+> >  	mutex_lock(&priv->lock);
+> >
+> >  	netif_device_detach(ndev);
+> > @@ -8018,6 +8036,12 @@ int stmmac_resume(struct device *dev)
+> >  	mutex_unlock(&priv->lock);
+> >  	rtnl_unlock();
+> >
+> > +	if (priv->plat->rxmux_setup) {
+> > +		ret = priv->plat->rxmux_setup(priv->plat->bsp_priv, true);
+> > +		if (ret)
+> > +			netdev_err(priv->dev, "Rxmux setup failed\n");
+> > +	}
+> > +
+> >  	netif_device_attach(ndev);
+> >
+> >  	return 0;
+> > diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h index
+> > 84e13bd5df28..f017b818d421 100644
+> > --- a/include/linux/stmmac.h
+> > +++ b/include/linux/stmmac.h
+> > @@ -264,6 +264,7 @@ struct plat_stmmacenet_data {
+> >  	void (*ptp_clk_freq_config)(struct stmmac_priv *priv);
+> >  	int (*init)(struct platform_device *pdev, void *priv);
+> >  	void (*exit)(struct platform_device *pdev, void *priv);
+> > +	int (*rxmux_setup)(void *priv, bool external);
+> >  	struct mac_device_info *(*setup)(void *priv);
+> >  	int (*clks_config)(void *priv, bool enabled);
+> >  	int (*crosststamp)(ktime_t *device, struct system_counterval_t
+> > *system,
+> > --
+> > 2.17.1
+> >
+> >
+
