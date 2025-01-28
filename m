@@ -1,86 +1,96 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE51199EAD;
-	Tue, 28 Jan 2025 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6086F9F8;
+	Tue, 28 Jan 2025 15:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738076423; cv=none; b=DJo/JCbE5X9DCQhMCx0IvXjHzdFk9Q6XeEAsFrP5H3FW92vFy1s1CjDr/0UIm6ApL20EMhETQVDdzey4hXsKxerBi3/ngtjsTaXqQM2EmJ30sG7XHvWBbxuwyhSWOi7mwZmpbEABFoxS2HvV+lBP12lSJZrjApTpIc81uEdpueo=
+	t=1738078807; cv=none; b=rwrDt7ADXlbflngwD2ds/bm3ER9+GSOnuB48kBM4cg60OMmW92Z1rEtTmSIhU/BCtFsIKMENYOD73lpBLm2EDr68Hx6+caTAStNK+pPhwvEjSfWc9rX10rni+SBX3TzTd3FefldeVwno+6z4QBpx60ruhkExYOML3mkzWWpJy6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738076423; c=relaxed/simple;
-	bh=QRfiqBpEw7/liJXDoioKBx1vNw67bwXhn1uGoicqW/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cATf9E1crkMT+8bi95olDJWxdX7kG/OZ9UzRvQHgaO8z/QFz6fCL3Pc2Cbhlcz9L3VNCPnJc0bsfz2Dj2Ilqv/J/nwB0ftAhpxu5bLIb6He/jUlXRu0P24qhEu8YHXL+x3Koy8MLM70qiNUNo3BnyX+GGOVzajnjQxGYtTAyxvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bQv7y2Vk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1738078807; c=relaxed/simple;
+	bh=1Yhm9+Sys8O2xe0fP21kTV+Z0Km1KjgTwV+bcMX8KNs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=OZt6cejyJifD7bUlHx3i/miQeKvcg25N3856WE9Sf6VJrMO5QClhKpuo6rWUefc/TxFICfLLhf2aWRbc26DbXlM7TJnNZT0/4pjpamUUiXSNsqSgdFitNIKbbHasUYyXsA5GOGRsfCujIj5oA3UzSL6e0+ELWg5Mampnu7PgzfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7JIhBo+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bQv7y2Vk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=U0y1/5KjujPLLYN0/a/OAGfW6wEftE6jNU0MO4+5f08=; b=bQv7y2Vk//g3H/hdiNSHTo2fkb
-	5rkNlvgrieDxx2+XrUXeykAh16ZYPuQonhyRvcDlXZsibeVKZvw2rQ3A5ChZeTW7Dr7a6HXQqgpq0
-	M7mg8suoSySCT1qYG1uG5Io1T5I24Ouk19C7lxE/mlrQdHQnnBBMPFWVinUc3qbge6w/C5LkkGbQa
-	VnIjA6fBz6nq28N+1C0LEe6Jq12INu+vt++UroH0nqdRrZwFJysb9SkDhcguTxTfn9PBzFSWY45zD
-	MTt3IGISTU3pufnRvMhep54CEt8+V4mqWdyWEhat0v3dlLWKeW/jLeI0C8zjY+GetUnXM5jLl/PYc
-	zcOGnM0g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58350)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tcn4Q-0007Nk-0L;
-	Tue, 28 Jan 2025 15:00:06 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tcn4I-0002jM-0z;
-	Tue, 28 Jan 2025 14:59:58 +0000
-Date: Tue, 28 Jan 2025 14:59:58 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	mcoquelin.stm32@gmail.com, andrew@lunn.ch, alim.akhtar@samsung.com,
-	linux-fsd@tesla.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
-	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
-	ssiddha@tesla.com, jayati.sahu@samsung.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v5 2/4] net: stmmac: dwc-qos: Add FSD EQoS support
-Message-ID: <Z5jw7pUXEoGjLtgP@shell.armlinux.org.uk>
-References: <20250128102558.22459-1-swathi.ks@samsung.com>
- <CGME20250128102732epcas5p4618e808063ffa992b476f03f7098d991@epcas5p4.samsung.com>
- <20250128102558.22459-3-swathi.ks@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7JIhBo+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F7EBC4CED3;
+	Tue, 28 Jan 2025 15:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738078806;
+	bh=1Yhm9+Sys8O2xe0fP21kTV+Z0Km1KjgTwV+bcMX8KNs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=a7JIhBo+kbWOFf0tpozOgd09Ki5iNofAEkfScgYtJ2SIN4xTLLJhFkpKd6pZk3umJ
+	 Tq4pDr/cQyCTESKxz4NnSRQnq8VCqp4zzbTZqjiGzs9WXhIO5fdeqfSQoqp+iVlS3k
+	 KAct9GhJDaQwyq5eIpPxcP5qkYryaSs9Ql4kVZpgKIKyWLbV1TsZJTma0Th+eFacjZ
+	 qbYjX4K5WFfr9HcSRMP4YIswlUuEtttWwr+xMjT3BTZCqjglzuMV4h0kNqw5jDNgWV
+	 sv5bFu78lU/XB2/ywANJEk3slNl+HFhHgZAj2QPN591nk3THoJIzCQv9gHtlbfzJar
+	 o631Gii1/jw8Q==
+Date: Tue, 28 Jan 2025 09:40:05 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250128102558.22459-3-swathi.ks@samsung.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: kuba@kernel.org, conor+dt@kernel.org, alexandre.torgue@foss.st.com, 
+ linux-samsung-soc@vger.kernel.org, mcoquelin.stm32@gmail.com, 
+ linux-arm-kernel@lists.infradead.org, pankaj.dubey@samsung.com, 
+ edumazet@google.com, peppe.cavallaro@st.com, devicetree@vger.kernel.org, 
+ jayati.sahu@samsung.com, rcsekar@samsung.com, andrew@lunn.ch, 
+ pabeni@redhat.com, gost.dev@samsung.com, joabreu@synopsys.com, 
+ richardcochran@gmail.com, ravi.patel@samsung.com, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, ssiddha@tesla.com, 
+ alim.akhtar@samsung.com, linux-stm32@st-md-mailman.stormreply.com, 
+ davem@davemloft.net, linux-fsd@tesla.com, krzk@kernel.org
+To: Swathi K S <swathi.ks@samsung.com>
+In-Reply-To: <20250128102558.22459-2-swathi.ks@samsung.com>
+References: <20250128102558.22459-1-swathi.ks@samsung.com>
+ <CGME20250128102725epcas5p44b02ac2980a3aeb0016ce9fdef011ecf@epcas5p4.samsung.com>
+ <20250128102558.22459-2-swathi.ks@samsung.com>
+Message-Id: <173807880529.3533023.16090537630413289579.robh@kernel.org>
+Subject: Re: [PATCH v5 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
 
-On Tue, Jan 28, 2025 at 03:55:56PM +0530, Swathi K S wrote:
-> +struct fsd_eqos_plat_data {
-> +	struct clk_bulk_data *clks;
-> +	int num_clks;
-> +	struct device *dev;
 
-You only write to this, so it serves no purpose in this patch. Please
-remove.
+On Tue, 28 Jan 2025 15:55:55 +0530, Swathi K S wrote:
+> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+> Ethernet YAML schema to enable the DT validation.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+> ---
+>  .../devicetree/bindings/net/snps,dwmac.yaml   |  5 +-
+>  .../bindings/net/tesla,fsd-ethqos.yaml        | 91 +++++++++++++++++++
+>  2 files changed, 94 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
+> 
 
-Thanks.
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml:41:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250128102558.22459-2-swathi.ks@samsung.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
