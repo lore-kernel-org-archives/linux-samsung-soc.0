@@ -1,62 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6086F9F8;
-	Tue, 28 Jan 2025 15:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5241AAE0D;
+	Tue, 28 Jan 2025 15:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738078807; cv=none; b=rwrDt7ADXlbflngwD2ds/bm3ER9+GSOnuB48kBM4cg60OMmW92Z1rEtTmSIhU/BCtFsIKMENYOD73lpBLm2EDr68Hx6+caTAStNK+pPhwvEjSfWc9rX10rni+SBX3TzTd3FefldeVwno+6z4QBpx60ruhkExYOML3mkzWWpJy6c=
+	t=1738079139; cv=none; b=kEOcOeCYkS3rHlc5/kjfAwNZMQB+OaXGOX5YQD6nyYqhrMA1k0u8e3eDHOUsTk0LC2kAMLDY7ke+P8nzpXZ/TDTaY0srK4q2il2M6nhIs9cKKA0XZw7l8/iC7YNLSJYZd2AvDOVsXoGUcvf69XikKiDkwV+r1VunL/fjFklxP84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738078807; c=relaxed/simple;
-	bh=1Yhm9+Sys8O2xe0fP21kTV+Z0Km1KjgTwV+bcMX8KNs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=OZt6cejyJifD7bUlHx3i/miQeKvcg25N3856WE9Sf6VJrMO5QClhKpuo6rWUefc/TxFICfLLhf2aWRbc26DbXlM7TJnNZT0/4pjpamUUiXSNsqSgdFitNIKbbHasUYyXsA5GOGRsfCujIj5oA3UzSL6e0+ELWg5Mampnu7PgzfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7JIhBo+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738079139; c=relaxed/simple;
+	bh=y5fiGOpqHsjA5txZTC792Ta1uJ8fD21vvbxKBCkhSwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2rBfU5ThkFWHQcrPJVbaF13DyI+SN0hVwDuv19+xlnZwR4BBgc1xPmjEKjX2sK+qxpKxJEazgtSbgocCAoQVFR9w1yS2fa8MyfG0BLGnCf3tlZZLJZUW90/xzN+IQH4JO6GzU3472HK1ku25WdrS+AA2dqJzC8vRJR1XVL3Krk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPoFvl2F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7JIhBo+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F7EBC4CED3;
-	Tue, 28 Jan 2025 15:40:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPoFvl2F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE9EC4CED3;
+	Tue, 28 Jan 2025 15:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738078806;
-	bh=1Yhm9+Sys8O2xe0fP21kTV+Z0Km1KjgTwV+bcMX8KNs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=a7JIhBo+kbWOFf0tpozOgd09Ki5iNofAEkfScgYtJ2SIN4xTLLJhFkpKd6pZk3umJ
-	 Tq4pDr/cQyCTESKxz4NnSRQnq8VCqp4zzbTZqjiGzs9WXhIO5fdeqfSQoqp+iVlS3k
-	 KAct9GhJDaQwyq5eIpPxcP5qkYryaSs9Ql4kVZpgKIKyWLbV1TsZJTma0Th+eFacjZ
-	 qbYjX4K5WFfr9HcSRMP4YIswlUuEtttWwr+xMjT3BTZCqjglzuMV4h0kNqw5jDNgWV
-	 sv5bFu78lU/XB2/ywANJEk3slNl+HFhHgZAj2QPN591nk3THoJIzCQv9gHtlbfzJar
-	 o631Gii1/jw8Q==
-Date: Tue, 28 Jan 2025 09:40:05 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1738079139;
+	bh=y5fiGOpqHsjA5txZTC792Ta1uJ8fD21vvbxKBCkhSwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PPoFvl2FNra+3ckqpvLYQ20USwf3/15iHNEjTckFICgs2tuHlAlYKYTP0rkMEset1
+	 +7+d+0SHBn/GgPvU5ceG5sebvE0j3K0cciKjUD7+tEYR9qYWc8cGOw4Wc2hpb3uWFv
+	 iC8P+SoIQItyVKJQPgU8T/w50bAnmdh9z6/9GfdBExaxHwPFY5o/rXUy0qs12oU2J3
+	 KmQimFQVwb9+qvwfBqDMGKa7BVNhEABtAkKzYVMTwNHARi2lO2FhRJzKBPH3FcXTXK
+	 Ef0TAu9UF2NFaBmsbEJx01KpyWggysiT2/b7kqNKivKBCWXnxUpgkRZ2FDcqNnyM6b
+	 nYAR8cq2vDu1A==
+Date: Tue, 28 Jan 2025 09:45:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
+	richardcochran@gmail.com, mcoquelin.stm32@gmail.com, andrew@lunn.ch,
+	alim.akhtar@samsung.com, linux-fsd@tesla.com,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
+	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
+	ssiddha@tesla.com, jayati.sahu@samsung.com,
+	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v5 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Message-ID: <20250128154538.GA3539469-robh@kernel.org>
+References: <20250128102558.22459-1-swathi.ks@samsung.com>
+ <CGME20250128102725epcas5p44b02ac2980a3aeb0016ce9fdef011ecf@epcas5p4.samsung.com>
+ <20250128102558.22459-2-swathi.ks@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: kuba@kernel.org, conor+dt@kernel.org, alexandre.torgue@foss.st.com, 
- linux-samsung-soc@vger.kernel.org, mcoquelin.stm32@gmail.com, 
- linux-arm-kernel@lists.infradead.org, pankaj.dubey@samsung.com, 
- edumazet@google.com, peppe.cavallaro@st.com, devicetree@vger.kernel.org, 
- jayati.sahu@samsung.com, rcsekar@samsung.com, andrew@lunn.ch, 
- pabeni@redhat.com, gost.dev@samsung.com, joabreu@synopsys.com, 
- richardcochran@gmail.com, ravi.patel@samsung.com, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, ssiddha@tesla.com, 
- alim.akhtar@samsung.com, linux-stm32@st-md-mailman.stormreply.com, 
- davem@davemloft.net, linux-fsd@tesla.com, krzk@kernel.org
-To: Swathi K S <swathi.ks@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20250128102558.22459-2-swathi.ks@samsung.com>
-References: <20250128102558.22459-1-swathi.ks@samsung.com>
- <CGME20250128102725epcas5p44b02ac2980a3aeb0016ce9fdef011ecf@epcas5p4.samsung.com>
- <20250128102558.22459-2-swathi.ks@samsung.com>
-Message-Id: <173807880529.3533023.16090537630413289579.robh@kernel.org>
-Subject: Re: [PATCH v5 1/4] dt-bindings: net: Add FSD EQoS device tree
- bindings
 
-
-On Tue, 28 Jan 2025 15:55:55 +0530, Swathi K S wrote:
+On Tue, Jan 28, 2025 at 03:55:55PM +0530, Swathi K S wrote:
 > Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
 > Ethernet YAML schema to enable the DT validation.
 > 
@@ -69,28 +71,61 @@ On Tue, 28 Jan 2025 15:55:55 +0530, Swathi K S wrote:
 >  2 files changed, 94 insertions(+), 2 deletions(-)
 >  create mode 100644 Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 91e75eb3f329..2243bf48a0b7 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -103,6 +103,7 @@ properties:
+>          - starfive,jh7100-dwmac
+>          - starfive,jh7110-dwmac
+>          - thead,th1520-gmac
+> +        - tesla,fsd-ethqos
+>  
+>    reg:
+>      minItems: 1
+> @@ -126,7 +127,7 @@ properties:
+>  
+>    clocks:
+>      minItems: 1
+> -    maxItems: 8
+> +    maxItems: 10
+>      additionalItems: true
+>      items:
+>        - description: GMAC main clock
+> @@ -138,7 +139,7 @@ properties:
+>  
+>    clock-names:
+>      minItems: 1
+> -    maxItems: 8
+> +    maxItems: 10
+>      additionalItems: true
+>      contains:
+>        enum:
+> diff --git a/Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml b/Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
+> new file mode 100644
+> index 000000000000..579a7bd1701d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/tesla,fsd-ethqos.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: FSD Ethernet Quality of Service
+> +
+> +maintainers:
+> +  - Swathi K S <swathi.ks@samsung.com>
+> +
+> +description:
+> +  Tesla ethernet devices based on dwmmac support Gigabit ethernet.
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: tesla,fsd-ethqos.yaml
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml:41:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250128102558.22459-2-swathi.ks@samsung.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Humm...
