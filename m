@@ -1,132 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9A715666D;
-	Wed, 29 Jan 2025 17:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B294431;
+	Thu, 30 Jan 2025 01:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738173341; cv=none; b=F29LdOEp41s6t/YL5IQsPwhVsle20AmKtVR+x79HasWSA8jXaAZ+01bAf2amQhwPRH3HnAuU1ESBlNfHrvsaXAIPjWa0gaMvxH9oyZgfSN56Jo9s9hCsPI7pwUxD5t9Abgg+253n3lShr9+IWMvna6P2tj3POIstDa1ofUQMUKY=
+	t=1738200335; cv=none; b=Y02NByAaIF8Df+JKGw2Le+5e1eaGjSVAUFGW3huB2EVU1yza9yngO7V6fm0jfcnYBavPMBJeWhyuw1Tr/JwCtNrLLZH3ghZWwB7lk67w5hq1RAcfC3cfHQf6BG09CR+PGXMq6ooAXhwx7ms3TxUTWLgXJ069MZs2K20D2wCizh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738173341; c=relaxed/simple;
-	bh=f7eHzTfb7CXxy4fxB26nVOMXC2jFiDmHLAVJP5x8kS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPU2mnaIF6gmtB3gz9GUEby783ARxsDAtTi6SaCG7syfoiqKjWOY/mOzRfFa4urHSH8C1L/Mg/9MBJPW0uCm1PlUX003Sgezv3MGh+nmDcOR5sjcdPlVSL9Mduf8V0us4L7uiKOn59XSa215Ot5HsP7wN7JeEeNZS0NpdPt2M2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4X/Nly3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738200335; c=relaxed/simple;
+	bh=a9EQGLaLQ63V8C1g4jacKCgE1IBr1sG4RVQZ6PHSF4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQs6nKPdsOyzSI2iltRswMwnFUBCxOeHwZ9XpHoupEfc7dGyZ9MemWn42Ee5ISfGutddFWpJoAad+OLfBzuaFkTu3LxXBfHNIi01vnTtapREpSc1w5NnHvTg8NH4K4QdIAuCVvbzum6/8n/9uX70+FAOd63tR8SN8D9xH0raBk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzZqnHIy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4X/Nly3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6E1C4CED3;
-	Wed, 29 Jan 2025 17:55:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzZqnHIy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AECC4CED1;
+	Thu, 30 Jan 2025 01:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738173340;
-	bh=f7eHzTfb7CXxy4fxB26nVOMXC2jFiDmHLAVJP5x8kS4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o4X/Nly3iITF/DvvEEvlFemWTvyruj+erfpMn7oF3ohNJGnbmmYH8dWutkxmnht7R
-	 IAA3K+cJVn+clDv0Guo37m7IQYmoCF5gKyVL1V/zpOn8C4tG4mCxT8Gnypwka6c4CX
-	 GQLbgZ+7ttETVtJ4pibyUQABkYCKG1L75+OwIfs3ttI1olsm/dlr5wJ0X19Zdm8rY+
-	 uTL9HCL9B6KZ3Xgy1Rr5BGOnaTym7h9ECoeoaq5ofvKoukU4IREE92+nzkQgjqLELW
-	 Vx06rOdN4tbJhOEXbOxnKXY0Bio9olqobvaR7UGEFNIwYRXvqG1kX1vYhNxlSi7S0G
-	 qsb5prlFOzOwA==
-Message-ID: <c7a76128-175a-482f-b326-a8d786241cdc@kernel.org>
-Date: Wed, 29 Jan 2025 18:55:34 +0100
+	s=k20201202; t=1738200335;
+	bh=a9EQGLaLQ63V8C1g4jacKCgE1IBr1sG4RVQZ6PHSF4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AzZqnHIyUkdd9j4YPjb7ti9EY012tiiYl4bzdy8COzBwzCvPYAQHccVgM+YI27XQX
+	 Fwi8b5P8qgCVZ3LmzBOzCbxcM8MecOF1WaHP9p814TKLgL8zoLZNaNxbhcJV+JenAD
+	 Dj0XFfhbQ/Pa0cpRju1wxolpv1PypDJuEiN8DiuVcNwUE5+4GXK/iwFHriIqd0uYYe
+	 bJYnzrQBdH3OV0kqaGD2wLUFgQGL0k4EWKwGTJ/yA6T/DHzmCOS1Jk4f2Zis2OhcGU
+	 Nxj0eKP1T6mMZ9ISe8feNeFEIltjv4YJQ+ARXdBe5jp2iV+VC+NkPHULttSTEQ5Bw/
+	 OLuLMJDeMh7Ow==
+Date: Wed, 29 Jan 2025 17:25:32 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Satya Tangirala <satyat@google.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] scsi: ufs: fix use-after free in init error and
+ remove paths
+Message-ID: <20250130012532.GB66821@sol.localdomain>
+References: <20250124-ufshcd-fix-v4-1-c5d0144aae59@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] pinctrl: samsung: Add filter selection support for
- alive bank on gs101
-To: Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, kernel-team@android.com, jaewon02.kim@samsung.com
-References: <20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org>
- <20250120-pinctrl-fltcon-suspend-v1-3-e77900b2a854@linaro.org>
- <4e2057fc54022ba5791e482a1e631a1a77551389.camel@linaro.org>
- <CADrjBPr3VVvY4axBhAEO4zVGhLMiDZ8jWHCf=uSfEBMcZSOa=Q@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CADrjBPr3VVvY4axBhAEO4zVGhLMiDZ8jWHCf=uSfEBMcZSOa=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250124-ufshcd-fix-v4-1-c5d0144aae59@linaro.org>
 
-On 21/01/2025 16:39, Peter Griffin wrote:
->>> +  The FLTCON register (on alive banks) has the following layout
->>> + *
->>> + * BitfieldName[PinNum][Bit:Bit]
->>> + * FLT_EN[3][31] FLT_SEL[3][30] FLT_WIDTH[3][29:24]
->>> + * FLT_EN[2][23] FLT_SEL[2][22] FLT_WIDTH[2][21:16]
->>> + * FLT_EN[1][15] FLT_SEL[1][14] FLT_WIDTH[1][13:8]
->>> + * FLT_EN[0][7]  FLT_SEL[0][6]  FLT_WIDTH[0][5:0]
->>> + *
->>> + * FLT_EN    0x0 = Disable, 0x1=Enable
->>> + * FLT_SEL   0x0 = Delay filter, 0x1 Digital filter
->>
->> It's a delay filter filter either way, right? If so, I
->> think '0x0 = Delay filter' should instead be reworded to
->> '0x0 = Analog filter'.
+On Fri, Jan 24, 2025 at 03:09:00PM +0000, André Draszik wrote:
+> devm_blk_crypto_profile_init() registers a cleanup handler to run when
+> the associated (platform-) device is being released. For UFS, the
+> crypto private data and pointers are stored as part of the ufs_hba's
+> data structure 'struct ufs_hba::crypto_profile'. This structure is
+> allocated as part of the underlying ufshcd and therefore Scsi_host
+> allocation.
 > 
-> I see your point, and kind of agree that Analog is a better name. The
-> rationale for going with "Digital filter" and "Delay filter" was that
-> it matches the FLT_SEL bitfield description in the datasheet. I
-> thought it might confuse people using a different name. The info about
-> it being Analog filter came via a bug from Samsung. But if folks
-> prefer Analog I can use that instead.
+> During driver release or during error handling in ufshcd_pltfrm_init(),
+> this structure is released as part of ufshcd_dealloc_host() before the
+> (platform-) device associated with the crypto call above is released.
+> Once this device is released, the crypto cleanup code will run, using
+> the just-released 'struct ufs_hba::crypto_profile'. This causes a
+> use-after-free situation:
 > 
-> @Krzysztof any thoughts on the above naming?
+>   Call trace:
+>    kfree+0x60/0x2d8 (P)
+>    kvfree+0x44/0x60
+>    blk_crypto_profile_destroy_callback+0x28/0x70
+>    devm_action_release+0x1c/0x30
+>    release_nodes+0x6c/0x108
+>    devres_release_all+0x98/0x100
+>    device_unbind_cleanup+0x20/0x70
+>    really_probe+0x218/0x2d0
+> 
+> In other words, the initialisation code flow is:
+> 
+>   platform-device probe
+>     ufshcd_pltfrm_init()
+>       ufshcd_alloc_host()
+>         scsi_host_alloc()
+>           allocation of struct ufs_hba
+>           creation of scsi-host devices
+>     devm_blk_crypto_profile_init()
+>       devm registration of cleanup handler using platform-device
+> 
+> and during error handling of ufshcd_pltfrm_init() or during driver
+> removal:
+> 
+>   ufshcd_dealloc_host()
+>     scsi_host_put()
+>       put_device(scsi-host)
+>         release of struct ufs_hba
+>   put_device(platform-device)
+>     crypto cleanup handler
+> 
+> To fix this use-after free, change ufshcd_alloc_host() to register a
+> devres action to automatically cleanup the underlying SCSI device on
+> ufshcd destruction, without requiring explicit calls to
+> ufshcd_dealloc_host(). This way:
+> 
+>     * the crypto profile and all other ufs_hba-owned resources are
+>       destroyed before SCSI (as they've been registered after)
+>     * a memleak is plugged in tc-dwc-g210-pci.c remove() as a
+>       side-effect
+>     * EXPORT_SYMBOL_GPL(ufshcd_dealloc_host) can be removed fully as
+>       it's not needed anymore
+>     * no future drivers using ufshcd_alloc_host() could ever forget
+>       adding the cleanup
+> 
+> Fixes: cb77cb5abe1f ("blk-crypto: rename blk_keyslot_manager to blk_crypto_profile")
+> Fixes: d76d9d7d1009 ("scsi: ufs: use devm_blk_ksm_init()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-No clue / no preference, you guys have datasheet and more insight into
-this. :)
+Acked-by: Eric Biggers <ebiggers@kernel.org>
 
-
-Best regards,
-Krzysztof
+- Eric
