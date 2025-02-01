@@ -1,63 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD181E570E;
-	Fri, 31 Jan 2025 16:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29332AD20;
+	Sat,  1 Feb 2025 10:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738342553; cv=none; b=pLReaLRhADI98RNm2fc72loQWhe6JEeqdt8idDQ7GXiZGQ+1ZTztm5UlAs+CqkRYNXIFbmXtXk5tR6zLe75puN16AbaTakSlq8ciTDKnrw/XoW063qG57s6N4TvE1Vey6LArJmFKMYjNr+du/Yhtd19tMgBzCzVR7ZMXMwZkj6M=
+	t=1738404538; cv=none; b=OqAAE67SX1xXoJW3nAo3qaK9ze5+d3u2f2wbE4GirdXeQ2AQrVcNOlRIkhqi2VOeklYSvmy4YIs5/m1v1TvtTZcFm6R4E4ngGgTUeWTCo1YpueB833DUqx6zpvEEBlbdgr1uwo2Fjh2q4NMCo8xMVhWBSYJTXP7sc6xkubXvkMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738342553; c=relaxed/simple;
-	bh=9sfX6hltXIEpM8CfQHUqmXVgOqI4/WhaFSfB01kyVac=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rx7u5QYXnEdYTbzPIPPOKJKRGxS1fkBMuauC6FjF75YuN879Ig7wfcQv6mqxgcxpmlzX1cThufESwqIQrQJiDhsY8KizP4mTNkT8v1einBpRMw60CUKvhzOWEBXXqpT5g2JJTu+7UTtZEAoTdHn7TCfL9l0HJW1bCR52O5w5M2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzIiXLKg; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzIiXLKg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0782EC4CEE5;
-	Fri, 31 Jan 2025 16:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738342552;
-	bh=9sfX6hltXIEpM8CfQHUqmXVgOqI4/WhaFSfB01kyVac=;
-	h=Date:From:To:Cc:Subject:From;
-	b=uzIiXLKgnwQQzh785A5uZb4CZPgPN+LhirEhwE9K3HVIzsGpVF43ppZ+r9vWaBEFT
-	 sVHdBbQLJoal2Vo0RGDRVfo/7wnaMRiGFF3fsOKlUJg37AlNa5d5ou7GeMia1jhzeW
-	 ufmZqOWTxT9CFiMn6Gn+/E7uGMJl5Qzo5hX8CJbKcpyHJLqvImiPagokxHGGLzRxB8
-	 +1S433Ca5pEaR+Cht09spyWis2k+QWhU0R+MNJAeDxRm6n9J+S5fa4c0kHnzddE3Pw
-	 yw0DFFbI5pBWTkc95gHenWvLTcfdBTAVGoTgHHxp/HqJNpZHQxn2MuJb1+4jOpN9F1
-	 lQch1VwbARJsw==
-Date: Fri, 31 Jan 2025 10:55:49 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	s=arc-20240116; t=1738404538; c=relaxed/simple;
+	bh=MWng4kz1R/7X2hutMtB5Aa5LMzsZusJUpzCbVnFDv6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c0rh3y2X+sAVByrKNvYYJlwRKOsCJbqmVzEfRSsWnCnEd9FI49SWw/RknjeZwOyiiLp8lQgrK0NySP/EkVJtGONkaV1pE3jRv+lG7Tji0Kw1jSDL1hqtlXsVhr2hf0HgGWVdGBrk93e0OBapyj5xQmZvKCzwzxP0iF1HtDevmVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: Dv6qrRyyRFWMdW8eeRf/XA==
+X-CSE-MsgGUID: 3bIcAGRBRoGnfqOFSySPlQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Feb 2025 19:08:48 +0900
+Received: from localhost.localdomain (unknown [10.226.92.62])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2C6AA40062C1;
+	Sat,  1 Feb 2025 19:08:34 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: wait_event_timeout() usage in decon_wait_for_vblank()
-Message-ID: <20250131165549.GA684322@bhelgaas>
+	linux-samsung-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] media: platform: exynos4-is: Use of_get_available_child_by_name()
+Date: Sat,  1 Feb 2025 10:08:29 +0000
+Message-ID: <20250201100833.34642-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-I don't know this code at all, so this is likely just noise, but the
-wait_event_timeout() usage in decon_wait_for_vblank() looks funny to
-me.
+Simplify fimc_md_is_isp_available() by using
+of_get_available_child_by_name().
 
-decon_wait_for_vblank() waits on wait_vsync_queue for wait_vsync_event
-to be cleared.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+This patch is only compile tested and depend upon[1]
+[1] https://lore.kernel.org/all/20250201093126.7322-1-biju.das.jz@bp.renesas.com/
+---
+ drivers/media/platform/samsung/exynos4-is/media-dev.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-But decon_irq_handler() only clears wait_vsync_event and wakes up
-wait_vsync_queue when !ctx->i80_if.
+diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.h b/drivers/media/platform/samsung/exynos4-is/media-dev.h
+index a50e58ab7ef7..ce89465c22de 100644
+--- a/drivers/media/platform/samsung/exynos4-is/media-dev.h
++++ b/drivers/media/platform/samsung/exynos4-is/media-dev.h
+@@ -179,8 +179,8 @@ int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
+ static inline bool fimc_md_is_isp_available(struct device_node *node)
+ {
+ 	struct device_node *child __free(device_node) =
+-		of_get_child_by_name(node, FIMC_IS_OF_NODE_NAME);
+-	return child ? of_device_is_available(child) : false;
++		of_get_available_child_by_name(node, FIMC_IS_OF_NODE_NAME);
++	return child != NULL;
+ }
+ #else
+ #define fimc_md_is_isp_available(node) (false)
+-- 
+2.43.0
 
-I don't see any i80_if connection in decon_wait_for_vblank().  Does
-the wait always time out if i80_if is set?  Is there some reason we
-don't use decon_wait_for_vblank() at all if i80_if is set?
-
-Bjorn
