@@ -1,163 +1,97 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5062E200BB8;
-	Mon,  3 Feb 2025 10:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A920371E
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Feb 2025 11:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738578516; cv=none; b=qNxywJ4g/Gk8q38tKtUKH300J2ah1vvQKCYorceRWT7meUmTylxnwADkGpvQyS+Rr3n5ZtZiQ9F5HwLY/IFQXD5DfDn8KPcJciudp93xYS0KP93DxEGs56vEKjfrldR0ja6DsKoOePZ/SScShdTNPqf5ApMk2hP7xyeGDH6GnFo=
+	t=1738583961; cv=none; b=GBxIeE26raBHgWvSYXWHVsJMi39fQGevbmAKLX1hB9xBskVJQuM6olafvjOMvT+Jn7MKuGnhmK/V3l0Ln2Z+OXAgw/Eq1652M2PdXhnsv3MTO8ePpB9CO5v9RU+SrXhr5CvWuhxOFVxQDth49H5Fb5wlWnYKhF8l7eH3WquUGv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738578516; c=relaxed/simple;
-	bh=MlNHsg/gxgAAeqVoARH0hmwihkHAT7u67iNVvdULCo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ulEDyUxT9KGKmuGa61Iu8/inR+15qZH/5isqB8WvE2YLzCW0KpUOlA7xZUgg2ono5E9w18iDh9Bdc1mteq1E/WjPh++jT3EpPcZQbUzN6h70fjCnUsekvyUYH+2sUWaDpmjJ/P3Cik8AqzDI4AEYJwib6RBqD4BjHJGSoo3Diks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y2kiDFQh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=E7nPughJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RczhdfHq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+Z4iZ2UX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1738583961; c=relaxed/simple;
+	bh=3NcVFj349lyJfGOL+vdcgKBeFtROFl2Kj/Ur8lBQEhI=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KEk/SczLF/A5rD6Udo0+2DNNIJAeXW5hsmUHO5592Ct218LiNHTzytLsxOhEyggHarP4KtFyHyktMSRWhsIBlATEDXbCOUaJ1ReOSyZB17u8F9C/UWRY2SZ8UrVFXpRMTKFlwyrqkE00sTL8WAIGUkQjG/hgBats+2AGbyMP2aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cUDqQTBu; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y2kiDFQh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E7nPughJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RczhdfHq";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+Z4iZ2UX"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 16B7A1F38F;
-	Mon,  3 Feb 2025 10:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738578508; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nLSzGwXdhOZPlEdl06Qid/R1NcEi8kZ3F3GMl7r9kco=;
-	b=y2kiDFQh8FS3sbgOBnGNwjNbNhvzHozDVPNByMSsLI5hhktN7HD3g3Rs78FdOHVqLUCabZ
-	WA2M50OvnJZRHfgkg+kpvoQ7f4la2J08ZFruuH8+6tHeLwdQAVFd3TZ0noD2sxqM6qVx1z
-	LuxR6TfoRRR6ptID0HLfH1QRbgYpf8Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738578508;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nLSzGwXdhOZPlEdl06Qid/R1NcEi8kZ3F3GMl7r9kco=;
-	b=E7nPughJi/dc4KRWyhWU6/OxAN6M77uRCJxXzxoh/538KKb0mbmg/bB4m1ZpDJtePB9fUQ
-	rd/AEKkpz1iRvNDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738578504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nLSzGwXdhOZPlEdl06Qid/R1NcEi8kZ3F3GMl7r9kco=;
-	b=RczhdfHqsN2OXR8RcctDeOQQ82NtnYSEUoBvHRO2Qd5cM8p/W+p8EN0+ah+lgv3LUtYuyx
-	y68Aof83rkUtmUwYjIdp506ITcBQaZ0ge4t+vIWq9sYOgDUok4yjK+Cr5/sbiLyaoDcCvc
-	XuEMkk2lURlYwzl3Myy79Pcb2zBFMGY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738578504;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nLSzGwXdhOZPlEdl06Qid/R1NcEi8kZ3F3GMl7r9kco=;
-	b=+Z4iZ2UX4gDee8pSXAKTRqP9nttA0DS8kDHhHWfG1yTmeTXoEUYlc2RDKj8orPNBcAt9CC
-	WgemUkcuG4U5zyAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD6A613AF1;
-	Mon,  3 Feb 2025 10:28:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id APrsLEeaoGfwcwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 03 Feb 2025 10:28:23 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: daniel@zonque.org,
-	haojian.zhuang@gmail.com,
-	robert.jarzmik@free.fr,
-	linux@armlinux.org.uk,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 2/2] ARM: s3c: Do not include <linux/fb.h>
-Date: Mon,  3 Feb 2025 11:26:36 +0100
-Message-ID: <20250203102818.56747-3-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250203102818.56747-1-tzimmermann@suse.de>
-References: <20250203102818.56747-1-tzimmermann@suse.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cUDqQTBu"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-436246b1f9bso6584105e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Feb 2025 03:59:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1738583958; x=1739188758; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u4w6z+wwJMdG8nN9Qcvb+agCCZc4JaIRFTNtg95ls2M=;
+        b=cUDqQTBurQiy70pQBraeb0FsyWcYYdtCgA5j+pFbavTpZqrB6dreTagV69q3lCCrJA
+         Xd84HBtKeVBRXYscEkp27tFjLaXQ4UFJ0YkxiJrrgO2xCm+KkKFiayJg5G+6zOohZv04
+         WybjHaXi+XKmhM4PGhBEzmiqOKPh2i4KmFbyyPYMP2MRiOLvJcA+MtpdfdP6AEOHLBr6
+         /WjqZ0OHDL+VU2mxbuDw0M2oTi0Xh22HPOQCAYdKXUMpanNaw9Z6yJ3ESfRkhoqeRfrR
+         ideWrY9SbcZbdxBp2dIcNf/UPzB35KtikDFAwVRefnXGTx+2+6JGdu7DgXtILbtNHgVL
+         m+GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738583958; x=1739188758;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u4w6z+wwJMdG8nN9Qcvb+agCCZc4JaIRFTNtg95ls2M=;
+        b=KxEd7o0yL/cO+OJGOMPVWQvkQmlFF7JPOU3YGMtwrRdyBo3ngYdoxQjTrvsGcVox5X
+         CaiNuc3j3PQ3LjZqxLfpTFsS6IhngI4sU4D3O581W0Ylj9Ny5VohWInj80SA7lhlgWJf
+         CkgJGsOcKIPqxNkGb4Cycw1kzSIpDnE8ybCkLG8IELI51Q+QBlktW3HIcS+TSz9C/Ncx
+         Gry6Ift0yuyhwnDso7htF4s2sWrcMnECCUqLOSp3CRJ58PF6y6Nz/JjJ/gvEQwbVt9QW
+         ONzl5qB5goUs+heFPecf4rSk64gkeonrp0FDzRFGvuaX0IkAm21AVAy9036cwASiHG5K
+         lptg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnJM7aR6+2aJLbBfayie1xbs8vS57QbQDJq0gT6sr/obyv1eAiQEnSL1uGRvtnw/0JTCzP8aYTGBgbW3rjrwjO1Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3UIwesxm7CsAe+v0cDz7EGQAmM1KWiW62daOKgUBxKNExESjt
+	5wza6y1RaukPFhPWpMqyJSSlJCEHMyqNU1HF2vZh0m1oruWiOfym3o+UIZUMjzU=
+X-Gm-Gg: ASbGncvvmiGqp+1S75B2fT9N5NLtGorwA4QP8B7grHUGSs63SNLmMbNTvPxj1YdQdg3
+	sxlVzDiVPEsjVaCBWCwrcPpRhnpx0MN4extolhHo50Ua1FmBlIhxcJUPO8HtKFcZQp1rlYDnZYG
+	DhsQTw3GZBMXkgSCdAow+s5tTGQ5ZOqvswu4akJd9Qmw8HcHqavbacXw/xWVTAYtJD47IqWvDW/
+	f0zwi526IxsOQg137l4uDWWNgHB+RTKr7h9gZn+qI4z4xiJmMiEjZYVjcnbLXZyCFKahXCLM6TE
+	08oWFx0ZpoyJ5RiNVAj27sq4wPWnJAs=
+X-Google-Smtp-Source: AGHT+IGL0xSElRrwcfKwrUUF6e3pFFAp10ZvxPXdfiqbtaqax1cgDagk0qGOXhxfUjZX4jjdbpXMsg==
+X-Received: by 2002:a05:600c:4685:b0:438:ad4d:cefa with SMTP id 5b1f17b1804b1-438dc3faf7emr70962115e9.4.1738583958145;
+        Mon, 03 Feb 2025 03:59:18 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c5c12247esm12921274f8f.53.2025.02.03.03.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 03:59:17 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250111185402.183793-1-krzysztof.kozlowski@linaro.org>
+References: <20250111185402.183793-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] soc: samsung: Use syscon_regmap_lookup_by_phandle_args
+Message-Id: <173858395687.133675.813378795094586109.b4-ty@linaro.org>
+Date: Mon, 03 Feb 2025 12:59:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_TWO(0.00)[2];
-	FREEMAIL_TO(0.00)[zonque.org,gmail.com,free.fr,armlinux.org.uk,kernel.org,samsung.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[free.fr,gmail.com]
-X-Spam-Score: -5.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-These ARM architecture's source files do not require <linux/fb.h>.
-Remove the include statements.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- arch/arm/mach-s3c/devs.c                   | 1 -
- arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c | 1 -
- 2 files changed, 2 deletions(-)
+On Sat, 11 Jan 2025 19:54:02 +0100, Krzysztof Kozlowski wrote:
+> Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
+> syscon_regmap_lookup_by_phandle() combined with getting the syscon
+> argument.  Except simpler code this annotates within one line that given
+> phandle has arguments, so grepping for code would be easier.
+> 
+> 
 
-diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
-index 8c26d592d2a3f..bab2abd8a34ae 100644
---- a/arch/arm/mach-s3c/devs.c
-+++ b/arch/arm/mach-s3c/devs.c
-@@ -19,7 +19,6 @@
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/dma-mapping.h>
--#include <linux/fb.h>
- #include <linux/gfp.h>
- #include <linux/mmc/host.h>
- #include <linux/ioport.h>
-diff --git a/arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c b/arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c
-index cfa34b55ca214..c3269cd6a8486 100644
---- a/arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c
-+++ b/arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c
-@@ -9,7 +9,6 @@
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/fb.h>
- #include <linux/gpio.h>
- 
- #include "fb.h"
+Applied, thanks!
+
+[1/1] soc: samsung: Use syscon_regmap_lookup_by_phandle_args
+      https://git.kernel.org/krzk/linux/c/00c1fda73df8081f40840f860c8d75e2c9070d48
+
+Best regards,
 -- 
-2.48.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
