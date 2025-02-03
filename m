@@ -1,40 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6344210180;
-	Mon,  3 Feb 2025 20:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91F42AF10;
+	Mon,  3 Feb 2025 20:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738615279; cv=none; b=N8wTiqLfAVat7B0UHuQY50+61kq9ItRf8/DbLFfrxdO/Mc+cl28S7T679Kb5Zvu0Qa+ew+O4MhaOc2rk7isWX1nJigTS/+TJno6B5AN+F0Zu+AWDm5yVzZEGXdRUZ20iqJ/hqtIWKZRkUkDLWHbKutfVpTJzagy6K1SQsofMUHY=
+	t=1738615600; cv=none; b=TqaNGimi6atlg7gRA8DOcLxfiAr9mvIqQM3PP1LpTIrdRt3fTbpkVZXVziZiNAoE9QELa1P2nrXfBjLRfJX/+f2rPtQXz6t9txPvVdljcJfhB86LWuUSNzAeYWLhFEsE2qlbn1/xxlKeqSEuLEo6n6sn07tApizU9ciajyh6Ths=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738615279; c=relaxed/simple;
-	bh=rWj06FvYIxT7vbEmJHdYsqQCLp8XJbN54JJ1bJmwGx4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e3ucLd02V+bOVFSJvtfbjNYDGp7+gDMdGVRnPOyquaAzN5d9T8cZR1b+SDWFWQxvYC8LU0J5Jr1HOxl7CKp4EfVSkfNP+F7xId7g5/ozdOsA+7MQZMbnJVpNqahK4gUqtRMWIlUSGVxPDRZHnlXgJ81CDz8ykPGHeuMuKsx+TdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mZTTGcdd; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1738615600; c=relaxed/simple;
+	bh=ch2sSufwQ9ybFmXz46vuGZ4BlSmI/UG2rPdI7UCO+uw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EQyG/02WmPjPRcgL64XMHivMLbSiIQY9WrVoITH7/Y4I0MsyxW+5LVp6KdPqGBBAnHIRVzM0ceXmAamRxW5gEtMN68JVa2LdQgJs6R0Cml1MJogT2XGUJujF0LE0LRnsylrRaKyVs0Uiz4NITuaCaVnSeeHtpdyKLaZDPmibyjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EaYzPbJ8; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mZTTGcdd"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EaYzPbJ8"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A8CEB25BC9;
-	Mon,  3 Feb 2025 21:41:16 +0100 (CET)
+	by disroot.org (Postfix) with ESMTP id 4F9C925BDA;
+	Mon,  3 Feb 2025 21:46:37 +0100 (CET)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id jnQ_KJNVvoAL; Mon,  3 Feb 2025 21:41:12 +0100 (CET)
+ id c0Uzq6I7cQ6X; Mon,  3 Feb 2025 21:46:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1738615272; bh=rWj06FvYIxT7vbEmJHdYsqQCLp8XJbN54JJ1bJmwGx4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=mZTTGcddpINkDrE7Asn8ecdiHwl7akVgIeiDNvCndz77BcerGxfhizLTnerU8x0sk
-	 S3EMr4AxuKYY48nDeevkcCi8AUVwIHbBHx/9ddboKBl083g1Z8Wn8HCdGS5I2y8n7I
-	 A719R7aLOFJyoDv7h6OLGMxiC8kQud4ybnGeA8tto3UWKFnibGN6Gpcb9MNpIuDIU5
-	 jbSNOXwHMSA5g0tuztRCi16AlraImINaHnuLSKyNaU+Fql3hVmO1EtYWexPuZhf1nU
-	 NxR3Xa3j7cKFS8rvaodfJdHSswJFcO2aNpZHH4Ipxv0zaybQdDcWSDUvlsq/9EP3Re
-	 GTn8f2p2whWwg==
+	t=1738615592; bh=ch2sSufwQ9ybFmXz46vuGZ4BlSmI/UG2rPdI7UCO+uw=;
+	h=From:Subject:Date:To:Cc;
+	b=EaYzPbJ8i9CmStJfpg5bLTGSb31LL4ihqugdR8jD3gZeIvJgDin+ReN9WrqDeBbx0
+	 rBZWyoSK5KPmZw3DjFEBxbOQOxAuzKU0VNReVZNDDQ1aPQV/2g0JOLGEuXJa3S3GT4
+	 uCxJ4vDmhpK2RlNmJfvMptlQtAqmMXxGSUkX47hayb/S6QEXqKl0M0U8VWIn137pYJ
+	 tUdyBtjafP/0a1HTKlYuJ7ntuVGhRlg1vvp4F94VUVpzNAQPcRG4LrLJEo2q3rHXq9
+	 Dsx10FJS0rFonAHgXW8n+kUk5nZYJ0iVSIKGoztn838HaG6YU4kdpsXnJrbfD6anUP
+	 48GVv3oM9GyDQ==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Tue, 04 Feb 2025 02:10:15 +0530
-Subject: [PATCH 4/4] phy: exynos5-usbdrd: add exynos7870 USBDRD support
+Subject: [PATCH v2 0/5] Add support for the Exynos7870 SoC, along with
+ three devices
+Date: Tue, 04 Feb 2025 02:16:08 +0530
+Message-Id: <20250204-exynos7870-v2-0-56313165ef0c@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,395 +44,91 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250204-exynos7870-usbphy-v1-4-f30a9857efeb@disroot.org>
-References: <20250204-exynos7870-usbphy-v1-0-f30a9857efeb@disroot.org>
-In-Reply-To: <20250204-exynos7870-usbphy-v1-0-f30a9857efeb@disroot.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Vivek Gautam <gautam.vivek@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Sergey Lisov <sleirsgoevy@gmail.com>, linux-phy@lists.infradead.org, 
+X-B4-Tracking: v=1; b=H4sIABAroWcC/03MQQqDMBCF4avIrJsyidHYrnqP4kKbic4mKYkER
+ bx7U6HQ5f/gfTskikwJ7tUOkTInDr6EulTwmgc/kWBbGhSqBhVKQevmQzKdQYH61nSG9Gisg3J
+ 4R3K8ntizLz1zWkLcTjvL7/pj6n8mS4FCja112rRD7fBhOcUQlmuIE/THcXwAno6L2aYAAAA=
+X-Change-ID: 20250201-exynos7870-049587e4b7df
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Sergey Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
  Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1738615219; l=13362;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1738615584; l=3581;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=GTcOGWDNKNMwP6Bju0nlY+mIa3II8IQPsqSfD64jlOQ=;
- b=kc3inyHZ9+1OYVD7j0ft3nrBTG4B2+VqMqwUH72egkSS5e1QxDEyu8NP2lfQDNujyLk0slKqC
- LLlNQmjDSD4D+dDlhBQbu76yUlQG4mCTzOe8z6qHO43hCvjc+pcpg/Y
+ bh=ch2sSufwQ9ybFmXz46vuGZ4BlSmI/UG2rPdI7UCO+uw=;
+ b=J+fEoP3qHxLg1PKSdLMmq+bK5SaF74eK/t+rxRkWiH4RHe753F1ESqnPBLAD+XNM6gbJ3LcU1
+ 0ACmCbqGBweCAHPLO9vqXIH9/XZ5xYTHy0mlUKBoII8rPitNNZ0oCCa
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-From: Sergey Lisov <sleirsgoevy@gmail.com>
+Samsung Exynos 7870 (codename: Joshua) is an ARM-v8 system-on-chip that was
+announced in 2016. The chipset was found in several popular mid-range to
+low-end Samsung phones, released within 2016 to 2019.
 
-Implement support for Exynos7870 USB DRD on top of the existing
-exynos5-usbdrd driver.
+This patch series aims to add support for Exynos 7870, starting with the
+most basic yet essential components such as CPU, GPU, clock controllers,
+PMIC, pin controllers, etc.
 
-Exynos7870 has a single USB 2.0 DRD PHY controller and no 3.0 PHYs. Thus,
-it only supports the UTMI interface.
+Moreover, the series also adds support for three Exynos 7870 devices via
+devicetree. The devices are:
+ * Samsung Galaxy J7 Prime	- released 2016, codename on7xelte
+ * Samsung Galaxy J6		- released 2018, codename j6lte
+ * Samsung Galaxy A2 Core	- released 2019, codename a2corelte
 
-Moreover, the PMU register offset for enabling the PHY controller is
-different for SoCs such as Exynos7870, where BIT(0) is for the 3.0 PHY and
-BIT(1) is for the 2.0 PHY. The phy_isol function for Exynos7870 uses the
-appropriate register offsets.
+Additional features implemented in this series include:
+ * I2C	- touchscreen, IIO sensors, etc.
+ * UART	- bluetooth and serial debugging
+ * MMC	- eMMC, Wi-Fi SDIO, SDCard
+ * USB	- micro-USB 2.0 interface
 
-Signed-off-by: Sergey Lisov <sleirsgoevy@gmail.com>
-Co-developed-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+The series has commits from me and Sergey, who has given me permission
+to upstream their patches with proper attribution.
+
+Here is a list of all sub-series:
+ * bootmode	  	- https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+ * chipid		- https://lore.kernel.org/all/20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org/
+ * gpu			- https://lore.kernel.org/all/20250204-exynos7870-gpu-v1-1-0db4c163a030@disroot.org/
+ * i2c	      		- https://lore.kernel.org/all/20250204-exynos7870-i2c-v1-0-63d67871ab7e@disroot.org/
+ * mmc			- https://lore.kernel.org/all/20250204-exynos7870-mmc-v1-0-c87cfc72be4a@disroot.org/
+ * pinctrl	  	- https://lore.kernel.org/all/20250204-exynos7870-pinctrl-v1-0-77b9800749b7@disroot.org/
+ * pmic-regulators	- https://lore.kernel.org/all/20250204-exynos7870-pmic-regulators-v1-0-05adad38102c@disroot.org/
+ * pmu-clocks		- https://lore.kernel.org/all/20250204-exynos7870-pmu-clocks-v1-0-a3030ae5bb53@disroot.org/
+ * uart			- https://lore.kernel.org/all/20250204-exynos7870-uart-v1-0-06be6aa96284@disroot.org/
+ * usb			- https://lore.kernel.org/all/20250204-exynos7870-usb-v1-0-a7753f8183a4@disroot.org/
+ * usbphy		- https://lore.kernel.org/all/20250204-exynos7870-usbphy-v1-0-f30a9857efeb@disroot.org/
+(Legend: [R]eviewed, [A]pplied)
+
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c    | 260 ++++++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-regs-pmu.h |   2 +
- 2 files changed, 262 insertions(+)
+Changes in v2:
+- Redo a few commit descriptions.
+- Split patchsets into multiple sub-series, subsystem-wise.
+- Link to v1: https://lore.kernel.org/r/20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index b2194134193984392c8b48bac249591a92eaa924..4fe926483343ee2edf15b53e35f83a721f5cedab 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -37,10 +37,22 @@
- /* Exynos5: USB 3.0 DRD PHY registers */
- #define EXYNOS5_DRD_LINKSYSTEM			0x04
- #define LINKSYSTEM_XHCI_VERSION_CONTROL		BIT(27)
-+#define LINKSYSTEM_FORCE_VBUSVALID		BIT(8)
-+#define LINKSYSTEM_FORCE_BVALID			BIT(7)
- #define LINKSYSTEM_FLADJ			GENMASK(6, 1)
- 
- #define EXYNOS5_DRD_PHYUTMI			0x08
-+#define PHYUTMI_UTMI_SUSPEND_COM_N		BIT(12)
-+#define PHYUTMI_UTMI_L1_SUSPEND_COM_N		BIT(11)
-+#define PHYUTMI_VBUSVLDEXTSEL			BIT(10)
-+#define PHYUTMI_VBUSVLDEXT			BIT(9)
-+#define PHYUTMI_TXBITSTUFFENH			BIT(8)
-+#define PHYUTMI_TXBITSTUFFEN			BIT(7)
- #define PHYUTMI_OTGDISABLE			BIT(6)
-+#define PHYUTMI_IDPULLUP			BIT(5)
-+#define PHYUTMI_DRVVBUS				BIT(4)
-+#define PHYUTMI_DPPULLDOWN			BIT(3)
-+#define PHYUTMI_DMPULLDOWN			BIT(2)
- #define PHYUTMI_FORCESUSPEND			BIT(1)
- #define PHYUTMI_FORCESLEEP			BIT(0)
- 
-@@ -89,6 +101,16 @@
- #define PHYPARAM0_REF_USE_PAD			BIT(31)
- #define PHYPARAM0_REF_LOSLEVEL			GENMASK(30, 26)
- #define PHYPARAM0_REF_LOSLEVEL_VAL		0x9
-+#define PHYPARAM0_TXVREFTUNE			GENMASK(25, 22)
-+#define PHYPARAM0_TXRISETUNE			GENMASK(21, 20)
-+#define PHYPARAM0_TXRESTUNE			GENMASK(19, 18)
-+#define PHYPARAM0_TXPREEMPPULSETUNE		BIT(17)
-+#define PHYPARAM0_TXPREEMPAMPTUNE		GENMASK(16, 15)
-+#define PHYPARAM0_TXHSXVTUNE			GENMASK(14, 13)
-+#define PHYPARAM0_TXFSLSTUNE			GENMASK(12, 9)
-+#define PHYPARAM0_SQRXTUNE			GENMASK(8, 6)
-+#define PHYPARAM0_OTGTUNE			GENMASK(5, 3)
-+#define PHYPARAM0_COMPDISTUNE			GENMASK(2, 0)
- 
- #define EXYNOS5_DRD_PHYPARAM1			0x20
- #define PHYPARAM1_PCS_TXDEEMPH			GENMASK(4, 0)
-@@ -108,6 +130,12 @@
- #define EXYNOS5_DRD_PHYRESUME			0x34
- 
- #define EXYNOS5_DRD_LINKPORT			0x44
-+#define LINKPORT_HOST_U3_PORT_DISABLE		BIT(8)
-+#define LINKPORT_HOST_U2_PORT_DISABLE		BIT(7)
-+#define LINKPORT_HOST_PORT_OVCR_U3		BIT(5)
-+#define LINKPORT_HOST_PORT_OVCR_U2		BIT(4)
-+#define LINKPORT_HOST_PORT_OVCR_U3_SEL		BIT(3)
-+#define LINKPORT_HOST_PORT_OVCR_U2_SEL		BIT(2)
- 
- /* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
- #define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN		(0x15)
-@@ -128,6 +156,24 @@
- #define LANE0_TX_DEBUG_RXDET_MEAS_TIME_62M5		(0x20 << 4)
- #define LANE0_TX_DEBUG_RXDET_MEAS_TIME_96M_100M		(0x40 << 4)
- 
-+/* Exynos7870: USB DRD PHY registers */
-+#define EXYNOS7870_DRD_PHYPCSVAL		0x3C
-+#define PHYPCSVAL_PCS_RX_LOS_MASK		GENMASK(9, 0)
-+
-+#define EXYNOS7870_DRD_PHYPARAM2		0x50
-+#define PHYPARAM2_TX_VBOOST_LVL		        GENMASK(6, 4)
-+#define PHYPARAM2_LOS_BIAS			GENMASK(2, 0)
-+
-+#define EXYNOS7870_DRD_HSPHYCTRL		0x54
-+#define HSPHYCTRL_PHYSWRSTALL			BIT(31)
-+#define HSPHYCTRL_SIDDQ				BIT(6)
-+#define HSPHYCTRL_PHYSWRST			BIT(0)
-+
-+#define EXYNOS7870_DRD_HSPHYPLLTUNE		0x70
-+#define HSPHYPLLTUNE_PLL_B_TUNE			BIT(6)
-+#define HSPHYPLLTUNE_PLL_I_TUNE			GENMASK(5, 4)
-+#define HSPHYPLLTUNE_PLL_P_TUNE			GENMASK(3, 0)
-+
- /* Exynos850: USB DRD PHY registers */
- #define EXYNOS850_DRD_LINKCTRL			0x04
- #define LINKCTRL_FORCE_RXELECIDLE		BIT(18)
-@@ -1052,6 +1098,172 @@ static const struct phy_ops exynos5_usbdrd_phy_ops = {
- 	.owner		= THIS_MODULE,
- };
- 
-+static void exynos7870_usbdrd_phy_isol(struct phy_usb_instance *inst,
-+				       bool isolate)
-+{
-+	unsigned int val;
-+
-+	if (!inst->reg_pmu)
-+		return;
-+
-+	val = isolate ? 0 : EXYNOS7870_USB2PHY_ENABLE;
-+
-+	regmap_update_bits(inst->reg_pmu, inst->pmu_offset,
-+			   EXYNOS7870_USB2PHY_ENABLE, val);
-+}
-+
-+static void exynos7870_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	u32 reg;
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+	/* Use PADREFCLK as ref clock */
-+	reg &= ~PHYCLKRST_REFCLKSEL;
-+	reg |= FIELD_PREP_CONST(PHYCLKRST_REFCLKSEL,
-+				PHYCLKRST_REFCLKSEL_PAD_REFCLK);
-+	/* Select ref clock rate */
-+	reg &= ~PHYCLKRST_FSEL_UTMI;
-+	reg &= ~PHYCLKRST_FSEL_PIPE;
-+	reg |= FIELD_PREP(PHYCLKRST_FSEL_UTMI, phy_drd->extrefclk);
-+	/* Enable suspend and reset the port */
-+	reg |= PHYCLKRST_EN_UTMISUSPEND;
-+	reg |= PHYCLKRST_COMMONONN;
-+	reg |= PHYCLKRST_PORTRESET;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+	udelay(10);
-+
-+	/* Clear the port reset bit */
-+	reg &= ~PHYCLKRST_PORTRESET;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+
-+	/* Change PHY PLL tune value */
-+	reg = readl(phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYPLLTUNE);
-+	if (phy_drd->extrefclk == EXYNOS5_FSEL_24MHZ)
-+		reg |= HSPHYPLLTUNE_PLL_B_TUNE;
-+	else
-+		reg &= ~HSPHYPLLTUNE_PLL_B_TUNE;
-+	reg &= ~HSPHYPLLTUNE_PLL_P_TUNE;
-+	reg |= FIELD_PREP_CONST(HSPHYPLLTUNE_PLL_P_TUNE, 14);
-+	writel(reg, phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYPLLTUNE);
-+
-+	/* High-Speed PHY control */
-+	reg = readl(phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+	reg &= ~HSPHYCTRL_SIDDQ;
-+	reg &= ~HSPHYCTRL_PHYSWRST;
-+	reg &= ~HSPHYCTRL_PHYSWRSTALL;
-+	writel(reg, phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+	udelay(500);
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
-+	/*
-+	 * Setting the Frame length Adj value[6:1] to default 0x20
-+	 * See xHCI 1.0 spec, 5.2.4
-+	 */
-+	reg |= LINKSYSTEM_XHCI_VERSION_CONTROL;
-+	reg |= FIELD_PREP_CONST(LINKSYSTEM_FLADJ, 0x20);
-+	/* Set VBUSVALID signal as the VBUS pad is not used */
-+	reg |= LINKSYSTEM_FORCE_BVALID;
-+	reg |= LINKSYSTEM_FORCE_VBUSVALID;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMI);
-+	/* Release force_sleep & force_suspend */
-+	reg &= ~PHYUTMI_FORCESLEEP;
-+	reg &= ~PHYUTMI_FORCESUSPEND;
-+	/* DP/DM pull down control */
-+	reg &= ~PHYUTMI_DMPULLDOWN;
-+	reg &= ~PHYUTMI_DPPULLDOWN;
-+	reg &= ~PHYUTMI_DRVVBUS;
-+	/* Set DP-pull up as the VBUS pad is not used */
-+	reg |= PHYUTMI_VBUSVLDEXTSEL;
-+	reg |= PHYUTMI_VBUSVLDEXT;
-+	/* Disable OTG block and VBUS valid comparator */
-+	reg |= PHYUTMI_OTGDISABLE;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMI);
-+
-+	/* Configure OVC IO usage */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_LINKPORT);
-+	reg |= LINKPORT_HOST_PORT_OVCR_U3_SEL | LINKPORT_HOST_PORT_OVCR_U2_SEL;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_LINKPORT);
-+
-+	/* High-Speed PHY swrst */
-+	reg = readl(phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+	reg |= HSPHYCTRL_PHYSWRST;
-+	writel(reg, phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+	udelay(20);
-+
-+	/* Clear the PHY swrst bit */
-+	reg = readl(phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+	reg &= ~HSPHYCTRL_PHYSWRST;
-+	writel(reg, phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+
-+	if (phy_drd->drv_data->phy_tunes)
-+		exynos5_usbdrd_apply_phy_tunes(phy_drd,
-+					       PTS_UTMI_POSTINIT);
-+}
-+
-+static int exynos7870_usbdrd_phy_init(struct phy *phy)
-+{
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+	int ret;
-+
-+	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks);
-+	if (ret)
-+		return ret;
-+
-+	/* UTMI or PIPE3 specific init */
-+	inst->phy_cfg->phy_init(phy_drd);
-+
-+	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-+
-+	return 0;
-+}
-+
-+static int exynos7870_usbdrd_phy_exit(struct phy *phy)
-+{
-+	int ret;
-+	u32 reg;
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Disable the VBUS signal and the ID pull-up resistor.
-+	 * Enable force-suspend and force-sleep modes.
-+	 */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMI);
-+	reg &= ~(PHYUTMI_DRVVBUS | PHYUTMI_VBUSVLDEXT | PHYUTMI_VBUSVLDEXTSEL);
-+	reg &= ~PHYUTMI_IDPULLUP;
-+	reg |= PHYUTMI_FORCESUSPEND | PHYUTMI_FORCESLEEP;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMI);
-+
-+	/* Power down PHY analog blocks */
-+	reg = readl(phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+	reg |= HSPHYCTRL_SIDDQ;
-+	writel(reg, phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYCTRL);
-+
-+	/* Clear VBUSVALID signal as the VBUS pad is not used */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
-+	reg &= ~(LINKSYSTEM_FORCE_BVALID | LINKSYSTEM_FORCE_VBUSVALID);
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
-+
-+	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops exynos7870_usbdrd_phy_ops = {
-+	.init		= exynos7870_usbdrd_phy_init,
-+	.exit		= exynos7870_usbdrd_phy_exit,
-+	.power_on	= exynos5_usbdrd_phy_power_on,
-+	.power_off	= exynos5_usbdrd_phy_power_off,
-+	.owner		= THIS_MODULE,
-+};
-+
- static void
- exynos5_usbdrd_usb_v3p1_pipe_override(struct exynos5_usbdrd_phy *phy_drd)
- {
-@@ -1389,6 +1601,14 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
- 	},
- };
- 
-+static const struct exynos5_usbdrd_phy_config phy_cfg_exynos7870[] = {
-+	{
-+		.id		= EXYNOS5_DRDPHY_UTMI,
-+		.phy_isol	= exynos7870_usbdrd_phy_isol,
-+		.phy_init	= exynos7870_usbdrd_utmi_init,
-+	},
-+};
-+
- static const struct exynos5_usbdrd_phy_config phy_cfg_exynos850[] = {
- 	{
- 		.id		= EXYNOS5_DRDPHY_UTMI,
-@@ -1397,6 +1617,30 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos850[] = {
- 	},
- };
- 
-+static
-+const struct exynos5_usbdrd_phy_tuning exynos7870_tunes_utmi_postinit[] = {
-+	PHY_TUNING_ENTRY_PHY(EXYNOS5_DRD_PHYPARAM0,
-+			     (PHYPARAM0_TXVREFTUNE | PHYPARAM0_TXRISETUNE |
-+			      PHYPARAM0_TXRESTUNE | PHYPARAM0_TXPREEMPPULSETUNE |
-+			      PHYPARAM0_TXPREEMPAMPTUNE | PHYPARAM0_TXHSXVTUNE |
-+			      PHYPARAM0_TXFSLSTUNE | PHYPARAM0_SQRXTUNE |
-+			      PHYPARAM0_OTGTUNE | PHYPARAM0_COMPDISTUNE),
-+			     (FIELD_PREP_CONST(PHYPARAM0_TXVREFTUNE, 14) |
-+			      FIELD_PREP_CONST(PHYPARAM0_TXRISETUNE, 1) |
-+			      FIELD_PREP_CONST(PHYPARAM0_TXRESTUNE, 3) |
-+			      FIELD_PREP_CONST(PHYPARAM0_TXPREEMPAMPTUNE, 0) |
-+			      FIELD_PREP_CONST(PHYPARAM0_TXHSXVTUNE, 0) |
-+			      FIELD_PREP_CONST(PHYPARAM0_TXFSLSTUNE, 3) |
-+			      FIELD_PREP_CONST(PHYPARAM0_SQRXTUNE, 6) |
-+			      FIELD_PREP_CONST(PHYPARAM0_OTGTUNE, 2) |
-+			      FIELD_PREP_CONST(PHYPARAM0_COMPDISTUNE, 3))),
-+	PHY_TUNING_ENTRY_LAST
-+};
-+
-+static const struct exynos5_usbdrd_phy_tuning *exynos7870_tunes[PTS_MAX] = {
-+	[PTS_UTMI_POSTINIT] = exynos7870_tunes_utmi_postinit,
-+};
-+
- static const char * const exynos5_clk_names[] = {
- 	"phy",
- };
-@@ -1463,6 +1707,19 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
- 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
- };
- 
-+static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
-+	.phy_cfg		= phy_cfg_exynos7870,
-+	.phy_tunes		= exynos7870_tunes,
-+	.phy_ops		= &exynos7870_usbdrd_phy_ops,
-+	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
-+	.clk_names		= exynos5_clk_names,
-+	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
-+	.core_clk_names		= exynos5_core_clk_names,
-+	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
-+	.regulator_names	= exynos5_regulator_names,
-+	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
-+};
-+
- static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos850,
- 	.phy_ops		= &exynos850_usbdrd_phy_ops,
-@@ -1666,6 +1923,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos7-usbdrd-phy",
- 		.data = &exynos7_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynos7870-usbdrd-phy",
-+		.data = &exynos7870_usbdrd_phy
- 	}, {
- 		.compatible = "samsung,exynos850-usbdrd-phy",
- 		.data = &exynos850_usbdrd_phy
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index ce1a3790d6fb0400021f5cc22394afedfb742152..cde299a85384a70d04dae49ee9a4e2daa88fbbf6 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -55,6 +55,8 @@
- #define EXYNOS4_MIPI_PHY_SRESETN		(1 << 1)
- #define EXYNOS4_MIPI_PHY_MRESETN		(1 << 2)
- #define EXYNOS4_MIPI_PHY_RESET_MASK		(3 << 1)
-+/* USB PHY enable bit, valid for Exynos7870 */
-+#define EXYNOS7870_USB2PHY_ENABLE		(1 << 1)
- 
- #define S5P_INFORM0				0x0800
- #define S5P_INFORM1				0x0804
+---
+Kaustabh Chakraborty (5):
+      dt-bindings: arm: samsung: add compatibles for exynos7870 devices
+      arm64: dts: exynos: add initial devicetree support for exynos7870
+      arm64: dts: exynos: add initial support for Samsung Galaxy J7 Prime
+      arm64: dts: exynos: add initial support for Samsung Galaxy A2 Core
+      arm64: dts: exynos: add initial support for Samsung Galaxy J6
 
+ .../bindings/arm/samsung/samsung-boards.yaml       |    8 +
+ arch/arm64/boot/dts/exynos/Makefile                |    3 +
+ .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts |  619 ++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |  606 ++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts |  654 +++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi | 1035 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870.dtsi         |  722 ++++++++++++++
+ 7 files changed, 3647 insertions(+)
+---
+base-commit: df4b2bbff898227db0c14264ac7edd634e79f755
+change-id: 20250201-exynos7870-049587e4b7df
+
+Best regards,
 -- 
-2.48.1
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
