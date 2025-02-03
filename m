@@ -1,86 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EA2209F5C;
-	Mon,  3 Feb 2025 15:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61D7189F43;
+	Mon,  3 Feb 2025 20:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738598375; cv=none; b=BoLKnRelkKW0G4WhiZy8uTUIx4lG8TJyC1IaALGVM+UnDnSacxPrSBEHG68BaDlhOnUiuCisF9lVuoPFVob5UcCYRX1jtABW8JyzEXTEHHfK25na7VR97G9HTUk75IraGHWwrekulVtsSI8evrbmzxtseho78QEVvg4HNVezG08=
+	t=1738614758; cv=none; b=Qs5DF7prrP2VrhG0fZlgb5fm2A7gpJx8vxsIUm6UgEeMLljQiuuZZxD6B2bzaIWMs8nxgFOb8d7+y4mFQ++2h/tSBNu+hmEaBmBAQDuld/GJsbMtO32YHSHd1ElJdpxhctYg5mzphFFJJ2oDH+6Sw15GctdmWqSzIp4/GenoGKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738598375; c=relaxed/simple;
-	bh=pB/avWjDA66o8qKuT2L9+9mKgLG7V6fnqRlYSS+zEjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=CFYWu/s7fSLVlNMK1DuhS0wzw5SjiFwwkB/wQqvTMM0rAeHfrF0U3QXWkxn5run2i3nhUYVBsxWelemLdwJGk8QKxvHSDX+sD+69qGtUw72G7mMnAnKHRUUWCnpX4+i/7UOGCM7PJYDZfASVcRRuehZIDwL3CCCCmgfjOCtUyWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjfWlBNE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738614758; c=relaxed/simple;
+	bh=NeQcw5rrhoA9bA5UTKSw3syXrmeuhQwUW7S3N0b3KQU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Es38Ie3l0Z4D2sCDDK1OXV9/FVNkFm8jkaPVUPaQlaryuJmPzvSsSYLe/jNl1r7hAav432NT+qPBqWagqhCzpDGxP2K117xrqkd3/WkzltQe0UQ6DwCZ8HRuI4gP7f9thxsC/NbOlKwJD0TNhJbqoPdMp3utSxVWCVD1l5hFG78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=c2vTYrym; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjfWlBNE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28D4C4CEE2;
-	Mon,  3 Feb 2025 15:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738598375;
-	bh=pB/avWjDA66o8qKuT2L9+9mKgLG7V6fnqRlYSS+zEjA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tjfWlBNE0ro2NFADlOh5t7iM+e5SYlVBcjAvJI1pvU3sAOYkBkuaLtsgzyY890KLD
-	 W+/AHwBP880dWVzZhETmMYAuqqaaMUUabAL0zq7aSNZEKqR3l+8MyZV5SIjEv6C/Jc
-	 fPx71AYeqD/Rw1A2U2eqWXkpBBbfLFCnpkvZOLH1BdJFC3wxGqLaN4lvbS+UQ4oml+
-	 GxxemtxZ1Hf/WLwm/yrg1ESx5brqCoM+ma7EJk0/DxPP1tWMIkof3gujXlLpI26i11
-	 12YJ/ZSPwL/2eQYq24WhG+khBlM9XYYqv5aLSjnOh8dFaRck8tGo66yZQNO9aHia2H
-	 Ihmkm0uGc+d3w==
-Date: Mon, 3 Feb 2025 09:59:33 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Inki Dae <daeinki@gmail.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: wait_event_timeout() usage in decon_wait_for_vblank()
-Message-ID: <20250203155933.GA786168@bhelgaas>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="c2vTYrym"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 62A4825BB1;
+	Mon,  3 Feb 2025 21:32:35 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id uvAOHOSqMBCO; Mon,  3 Feb 2025 21:32:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1738614754; bh=NeQcw5rrhoA9bA5UTKSw3syXrmeuhQwUW7S3N0b3KQU=;
+	h=From:Subject:Date:To:Cc;
+	b=c2vTYrymOaujh4T/+OU36Wex/6DpyinJUMXrQdJrlb3eBEZXznX/U9L7WyEtTmfCK
+	 lXXi1JNw1DXwcZyNGdZlC0BUSjymliMR5zBQnYclB60oyL5ulFwmyy13+txrHwYgzq
+	 LRC3VGSaSUA5U5bZDT/R1T8h5xEFOn3lZlhFhGaK5fcRlwZPPUCtL1Gn1i3xA/59xN
+	 zVL9DlhvD9mDrkLHrZn31kyTLTEt72Ze4xaknkyrMpO5vaLwf9rJiSKZuED2dtS4HR
+	 bMGNk1o9ml6amOkO2n3GgEGUJCPR4UPkG1nvG44AUEoIm2Z+zrLTiMyXdInV2VTRVt
+	 AnHZDiJkNta+A==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/2] Add chip ID for Exynos7870 SoC
+Date: Tue, 04 Feb 2025 02:02:18 +0530
+Message-Id: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAQKjZNqFt=SYxCzpQ5JwOADRUwsWsq5KzLRoPG++27SXGubnQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANInoWcC/x3MQQqAIBBA0avIrBPMLKurRAvRqWajohCFePek5
+ Vv8XyBjIsywsgIJb8oUfEPfMbCX8Sdycs0ghRyFFAPH5/Uh61kLbi+K5LidDqnMYuZeOWhdTHj
+ Q8z+3vdYP3D/ueWMAAAA=
+X-Change-ID: 20250203-exynos7870-chipid-c6f24a9a814d
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Sergey Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1738614748; l=669;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=NeQcw5rrhoA9bA5UTKSw3syXrmeuhQwUW7S3N0b3KQU=;
+ b=4fi2GlMBwPdxvLlv0ut4beRiUG8bQwm7b+MzOCl95ltxb58PjnrGf4Obu0Voao6rKyLMtzzPS
+ myowzHHGdGtDd7V22l+Uek37yEL8AgeK9vMgDwGTDxH/1eVMpQdJyEl
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Sun, Feb 02, 2025 at 01:02:47PM +0900, Inki Dae wrote:
-> 2025년 2월 1일 (토) 오전 1:56, Bjorn Helgaas <helgaas@kernel.org>님이 작성:
-> >
-> > I don't know this code at all, so this is likely just noise, but the
-> > wait_event_timeout() usage in decon_wait_for_vblank() looks funny to
-> > me.
-> >
-> > decon_wait_for_vblank() waits on wait_vsync_queue for wait_vsync_event
-> > to be cleared.
-> >
-> > But decon_irq_handler() only clears wait_vsync_event and wakes up
-> > wait_vsync_queue when !ctx->i80_if.
-> >
-> > I don't see any i80_if connection in decon_wait_for_vblank().  Does
-> > the wait always time out if i80_if is set?  Is there some reason we
-> > don't use decon_wait_for_vblank() at all if i80_if is set?
-> 
-> For the decon series, the implementation for the i80 interface has not
-> yet been completed. If you would like to see how the i80 interface is
-> handled in Exynos, please refer to the code for the legacy display
-> controller module, exynos_drm_fimd.c, available at the following link:
-> https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/tree/drivers/gpu/drm/exynos/exynos_drm_fimd.c?h=exynos-drm-fixes#n1053
-> 
-> Furthermore, please note that within the decon driver, prior to
-> creating the CRTC, it is necessary to implement the TE handler for the
-> i80 interface in the te_handler of exynos_drm_crtc_ops and register it
-> as a callback.
+This patch series is a part of Exynos7870 upstreaming.
 
-I'll take your word for it that this all works as intended.  For many
-wait_event_timeout() callers, the connection between kicking off some
-operation, waiting for completion, and doing the wakeup is a little
-bit obscure and hard to analyze without deep knowledge of the driver.
-This was just one instance of those.
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
+      soc: samsung: exynos-chipid: add support for exynos7870
 
-Bjorn
+ Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
+ drivers/soc/samsung/exynos-chipid.c                                 | 1 +
+ 2 files changed, 2 insertions(+)
+---
+base-commit: df4b2bbff898227db0c14264ac7edd634e79f755
+change-id: 20250203-exynos7870-chipid-c6f24a9a814d
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
