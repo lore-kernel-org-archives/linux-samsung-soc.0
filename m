@@ -1,62 +1,62 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C082F213E9A;
-	Tue,  4 Feb 2025 17:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F068221639B;
+	Tue,  4 Feb 2025 17:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738690148; cv=none; b=AWU3ks81jQY5DV2rLKF9jw3ifgiW9gAM9pUm1zjSBF3ZCADeQ3YG2On3WCPNkL/82+qw6WUMD1gUxvs4xc37CGh3P73yBz2B5VxqLHa6JUK/u6pAWObG1PMqC9YJ8BYMEDdjODsbKspIMb8D3HYw+plBmQW7++S9OECHgiY5zV8=
+	t=1738690149; cv=none; b=NoqjfWhLmQ9qCT7q/0PpHaFaxRNuKD/6/UCRdAtjPQ2tiGaGGtSUhKx+U6X4vHvQti/c9DD8mxQudjB84VTvWHdeRIskQb3XLrW9yD1mly26CSHCiD9c6gbF8I7dQ+wm0j1u4qOCr6drYN3yTDSy1pZiLnFqplw2SAwHRDc68pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738690148; c=relaxed/simple;
-	bh=xILKK43P/LIFgLwxGh1CuOmcQnxZi6EiysvJsh83kbw=;
+	s=arc-20240116; t=1738690149; c=relaxed/simple;
+	bh=ZoF3Z9wfn8F9fYz69m+PqZ12wxV41mN3cRR/k8pzt3M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XXx1Y58MY2Q2xu10gAZE47QRpu1VyTFTUMlKyLa6gF7nyxFzDtesTLL40sUU1MM/Y6nH9rDI17GuuWa28c6SGOsZ/RNF+WHejB4teFpUM2K5TMRFWBNItZm91nrsfQHkbXcu31KePDSe6jllo/g6Xd4jI6ysBe4lukJtgD1MQTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbXSRxUg; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version; b=XJeN+Us/87QDSDvRAltA0GX0FHpPJjOWJQCov8QP84bfLNOUKCm7srgg2l8efMehT8xo/oGB6fZXM8HRp2pAQHCeUhziQS29oIYnCLiNllWQdpfWUo4EZXpvskPMbIf1IvNNhdsVXm81loOKlDU2DkJ6uJiSDJu/X5qy9DxdYOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSZOypH1; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbXSRxUg"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d982de9547so11338546a12.2;
-        Tue, 04 Feb 2025 09:29:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSZOypH1"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab34a170526so929186466b.0;
+        Tue, 04 Feb 2025 09:29:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738690145; x=1739294945; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738690146; x=1739294946; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AATmeIywhPXpmS9/RGfjUbh+83T1nTe0P9ZqfpWyPjs=;
-        b=HbXSRxUgaDYmJwswRluiLHjsbXhgeQicUmW3GbVy1X8m+88rZmaDRrdpVKE/qEp6JI
-         knCb9rGgYRdtV2em61wOg9wUCYl5L1TpQs0zSSGI4GuFkuDXRfPKtq/24yjsoFFDFMKA
-         99GxtojSRkRzjKn/S6HH1jaqw6Y1WmHdw3MIFtpnWM+z1FpF6LCLHPpjrx+nH7xvRCFI
-         zB2LKQvxtctqugDG7BYpNutZZlqpMcGylaVHaZDNcykKCN0LichKqie1swAwg23ZLT39
-         9qVapAjG5sk3lw/8v4jyQU8AHRST+H7OAY8scydOa3I4LnRgyo6h3KPSl7qIsxrTM0XD
-         OJUg==
+        bh=l1ZYlfQ5I0ElNygZ6hE0CR1HQzjz8E0f5rQWW+uT53Q=;
+        b=MSZOypH1aEKv+NGgv1XfC5Y4z96aK2aYQ4X9WHIuf8A95Y+hZkKuX9auDtZoZ6Dkqa
+         KBRvzxg6ia3oJrR5eegGeRtSkoVrqh087NMWlG3kRCqRpAu4EsPI4331SUqKjWBc7Ai5
+         EAoJkvM0o01Ijo0+Exj6ilq9Km5b+atbE7aXUzhhTw87322zV7LBFA3S86YXUzmbTKxJ
+         OwWxMuU3b7g6B/a+ynh2lqx7vodu3XDfrHp6s/pE7LbTyfGdcCwqnQUxv/Q4BdHYsxj8
+         q5XQnMGXaWiLqUCA25sgcoySkhw05pJJ/eXm32oUWRcqLUSj7SkBZEXE1lZMbt57pQZn
+         Mhfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738690145; x=1739294945;
+        d=1e100.net; s=20230601; t=1738690146; x=1739294946;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AATmeIywhPXpmS9/RGfjUbh+83T1nTe0P9ZqfpWyPjs=;
-        b=WDyBdxZfmpaVov+HHBl5RQBUUSnlnz/PI+nBx+0qvIW3E/Ds5RIKbygkwfq/jASKOg
-         2FuNIZtrd+vMGPUUtjCddaVdhy2HYprBHN78FsjdrE+oX3G84Vhp4iU7IkzoyBVqGZEd
-         fxGWa8ulBFa3kb8Jj2n8RB+0a5VdMWXjcbDtNC0fMgrErkaQXVEhM8BEYMCBqZjHP6tL
-         xyz2cdOpCp0RIU/dHaf48D7B2/LiIJiM7AvHFW5ukAsX0pz4s0Z8ZKMlP+0HRvUkwqwe
-         0G+UMeBmLRQ9xmCU6kSlO866btED1dFCnyCTBgv0Ync1xt/NcmruwN0OY6HzFm87Gkj/
-         tQwA==
-X-Forwarded-Encrypted: i=1; AJvYcCULbPadAha7A0HOgvmje7iSovZk0P19nP1Sm4BOEohoazlISbWCIum88/Wh1KrvenpEHM+JQYvxqEKbPFc=@vger.kernel.org, AJvYcCXgKUppjLsbpFL1ZdFIyut36ffDLnA9BQ8W/WOCfDsATAGRZjztJ1HIkmFr3Aw5TbfPB7rzuJd4zE6DaTXro4F+U/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdZOY83zo6zzLBCYKxePw6VfkLg2Q6wz6hwk4OewcHuQSgSSXY
-	aRb24Xz6lykTNrUPb6LfMvejEHwh3rxoWXWRyelRkKkXMePS2tyx
-X-Gm-Gg: ASbGncv3Dz4aV2xrLuPxoEBfURTHZICJ4EbOiZ5lnD7AN+2FdiXBWThH5WZ7Xz9Rh58
-	q8Hkvr+5SwZsU1s+qV0bnzNLE2wMsaDqHsR+t2+/otosEQRv0YhwnIvC9EkeYGypVDGgRcl5n9T
-	bWK2DI9BcfcwqUGPmQ8pPZM5ceBo+nqgHhPYN31TGNfrrsPFn+UqfajO7aOYVoSaiZzhEODZDxm
-	GYyATwTvhrC95LkbZaf4S7+RYavdKQaX/sZBmj2vgJ+aeGLWx3ibNcirW56YArTiBQit/tnCfkM
-	a4juAa5W3UhnTxBI9JnW4bQ/wj3Bm4pwzvMXi/6gH/Enoh9ugqN8xRCZapApvm+rOCQ=
-X-Google-Smtp-Source: AGHT+IGrzVxahP7DJr8b9Lq1TbMOwGVsIuh1CHgdVq3igCl7cQiGRsBdPj1QOc6BEt4QbwZNmPprjw==
-X-Received: by 2002:a05:6402:3585:b0:5dc:cc90:a384 with SMTP id 4fb4d7f45d1cf-5dccc90a699mr2303236a12.22.1738690144629;
-        Tue, 04 Feb 2025 09:29:04 -0800 (PST)
+        bh=l1ZYlfQ5I0ElNygZ6hE0CR1HQzjz8E0f5rQWW+uT53Q=;
+        b=rBDAyNKDlaRHOKq1oyJqJitoGJxOcKrGFa+AvZBaPqoFq72tm3LvjFGWDzk7yD1pui
+         SSKZETsDBZoxAoHyT6ib25Eg+0s9Ze4KaEjprJ1AIy7obe3QenuEgvKF4hQlogtgrSrf
+         dS5hMZRsY/ITUICPZ4YdriOdz2bZ+99kIFrKMlMt/fqFOCYEVDd9v+ZECshSj9O242ne
+         L1Y5cD6D6gRIH6kzErQgGSDVDlubVlIa+P0NPUFcVZ2+1xwXvbPwzHqHKnWFtds/H+BE
+         yiAs46ibmaXo8vNnYFq2OkrpghrGM8ef456icvOP9/bf7OD2oRDhayQHKNAAliA4pTbe
+         1Afw==
+X-Forwarded-Encrypted: i=1; AJvYcCUF5N2l0u8dkSd7hvsD+4Su1tdnjoDDxSGs05ITBWEUkmGo8MnxjT/HJGoGw6NF3/l13zyC81EVToBpQTAUrqLSrOs=@vger.kernel.org, AJvYcCXS7Y1gxx3YSzrYTCAkFRS1g67STamwsVguOw/H+cLz6jDRrVD4pvsf6RTnBAWsAva0Bb+Hxb3bIfOqwqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXg4DPV+ErdwZRcfwuCdt8T7DDEkDnQ5oZycX4j4e8eRTVLqMl
+	PRAMADDEC3yHhqkM7KabpakNMNEIIDB9tusMM4Cs/pcl5OV2BYD8
+X-Gm-Gg: ASbGnct6F31CKIXIqFKrVejjgb6mGfvUXvSDxw4YogprdhI9tc9Iy5SUoxQ7kT1kdsn
+	4NzGIYO/Q8nJEQ23Fvld3kqaRZxEKT3rhJO3Zobnvtw0d+0/rN8W+ocXtOWRWXt/wF2ddwqaVaY
+	SA/3IYlQ1pNIlJPlTnqCpEp+dvZ5546ziAJx+YrczzLEzDsL2FhIAf/EJIUAsjtHgmIG5REvk1i
+	Tkwxp6pEL+L2tYHHOSuyQPdVMuhF8KBflEx/7SmPZvDidRav2ZOcdQ8UcbET06i8J5rCBD6y+Aa
+	V6+dPkQLOg5C/MoNx38nlD4dzFqMD1wSWrKscDpgkLGsXP6VdU3TAa9qpW7Y4rLSnu0=
+X-Google-Smtp-Source: AGHT+IEpJOijiDcCjwtFF8cSqgFEaZCubHLE5XagVr3Cu6llzZV801QUD29OTEPZxbzLkYeWwSyXhg==
+X-Received: by 2002:a17:907:60c9:b0:ab7:1cdb:c274 with SMTP id a640c23a62f3a-ab71cdbc2bamr1356827966b.39.1738690145967;
+        Tue, 04 Feb 2025 09:29:05 -0800 (PST)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dcd3156ec7sm664981a12.67.2025.02.04.09.29.03
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dcd3156ec7sm664981a12.67.2025.02.04.09.29.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 09:29:04 -0800 (PST)
+        Tue, 04 Feb 2025 09:29:05 -0800 (PST)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,9 +68,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/4] dt-bindings: soc: samsung: usi: add USIv1 and samsung,exynos8895-usi
-Date: Tue,  4 Feb 2025 19:28:00 +0200
-Message-ID: <20250204172803.3425496-2-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v6 2/4] soc: samsung: usi: add a routine for unconfiguring the ip
+Date: Tue,  4 Feb 2025 19:28:01 +0200
+Message-ID: <20250204172803.3425496-3-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com>
 References: <20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com>
@@ -82,199 +82,60 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add new constants for choosing the additional USIv1 configuration modes
-in device tree. Those are further used in the USI driver to figure out
-which value to write into SW_CONF register. Modify the current USI IP-core
-bindings to include information about USIv1 and a compatible for
-exynos8895.
-
-In the original bindings commit, protocol mode definitions were named
-with the version of the supported USI (in this case, V2) with the idea of
-leaving enough room in the future for other versions of this block. This,
-however, is not how the modes should be modelled. The modes are not
-version specific and you should not be able to tell USI which version of
-a mode to use - that has to be handled in the driver - thus encoding this
-information in the binding is meaningless. Only one constant per mode is
-needed, so while we're at it, add new constants with the prefix USI_MODE
-and mark the old ones as depracated.
+Add a devm_add_action_or_reset() routine for unconfiguring the USI IP
+block whenever the device gets removed.
 
 Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/soc/samsung/exynos-usi.yaml      | 99 ++++++++++++-------
- include/dt-bindings/soc/samsung,exynos-usi.h  | 17 +++-
- 2 files changed, 79 insertions(+), 37 deletions(-)
+ drivers/soc/samsung/exynos-usi.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index 5b046932f..f711e23c0 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -11,11 +11,21 @@ maintainers:
-   - Krzysztof Kozlowski <krzk@kernel.org>
+diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
+index 114352695..85329d4e8 100644
+--- a/drivers/soc/samsung/exynos-usi.c
++++ b/drivers/soc/samsung/exynos-usi.c
+@@ -174,6 +174,30 @@ static int exynos_usi_configure(struct exynos_usi *usi)
+ 	return 0;
+ }
  
- description: |
--  USI IP-core provides selectable serial protocol (UART, SPI or High-Speed I2C).
--  USI shares almost all internal circuits within each protocol, so only one
--  protocol can be chosen at a time. USI is modeled as a node with zero or more
--  child nodes, each representing a serial sub-node device. The mode setting
--  selects which particular function will be used.
-+  The USI IP-core provides configurable support for serial protocols, enabling
-+  different serial communication modes depending on the version.
++static void exynos_usi_unconfigure(void *data)
++{
++	struct exynos_usi *usi = data;
++	u32 val;
++	int ret;
 +
-+  In USIv1, configurations are available to enable either one or two protocols
-+  simultaneously in select combinations - High-Speed I2C0, High-Speed
-+  I2C1, SPI, UART, High-Speed I2C0 and I2C1 or both High-Speed
-+  I2C1 and UART.
++	ret = clk_bulk_prepare_enable(usi->data->num_clks, usi->clks);
++	if (ret)
++		return;
 +
-+  In USIv2, only one protocol can be active at a time, either UART, SPI, or
-+  High-Speed I2C.
++	/* Make sure that we've stopped providing the clock to USI IP */
++	val = readl(usi->regs + USI_OPTION);
++	val &= ~USI_OPTION_CLKREQ_ON;
++	val |= ~USI_OPTION_CLKSTOP_ON;
++	writel(val, usi->regs + USI_OPTION);
 +
-+  The USI core shares internal circuits across protocols, meaning only the
-+  selected configuration is active at any given time. USI is modeled as a node
-+  with zero or more child nodes, each representing a serial sub-node device. The
-+  mode setting selects which particular function will be used.
- 
- properties:
-   $nodename:
-@@ -31,6 +41,7 @@ properties:
-           - const: samsung,exynos850-usi
-       - enum:
-           - samsung,exynos850-usi
-+          - samsung,exynos8895-usi
- 
-   reg:
-     maxItems: 1
-@@ -64,7 +75,7 @@ properties:
- 
-   samsung,mode:
-     $ref: /schemas/types.yaml#/definitions/uint32
--    enum: [0, 1, 2, 3]
-+    enum: [0, 1, 2, 3, 4, 5, 6]
-     description:
-       Selects USI function (which serial protocol to use). Refer to
-       <include/dt-bindings/soc/samsung,exynos-usi.h> for valid USI mode values.
-@@ -101,37 +112,59 @@ required:
-   - samsung,sysreg
-   - samsung,mode
- 
--if:
--  properties:
--    compatible:
--      contains:
--        enum:
--          - samsung,exynos850-usi
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos850-usi
++	/* Set USI block state to reset */
++	val = readl(usi->regs + USI_CON);
++	val |= USI_CON_RESET;
++	writel(val, usi->regs + USI_CON);
 +
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 1
++	clk_bulk_disable_unprepare(usi->data->num_clks, usi->clks);
++}
 +
-+        clocks:
-+          items:
-+            - description: Bus (APB) clock
-+            - description: Operating clock for UART/SPI/I2C protocol
+ static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+ {
+ 	int ret;
+@@ -255,6 +279,10 @@ static int exynos_usi_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = devm_add_action_or_reset(&pdev->dev, exynos_usi_unconfigure, usi);
++	if (ret)
++		return ret;
 +
-+        clock-names:
-+          maxItems: 2
-+
-+        samsung,mode:
-+          enum: [0, 1, 2, 3]
-+
-+      required:
-+        - reg
-+        - clocks
-+        - clock-names
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos8895-usi
- 
--then:
--  properties:
--    reg:
--      maxItems: 1
-+    then:
-+      properties:
-+        reg: false
- 
--    clocks:
--      items:
--        - description: Bus (APB) clock
--        - description: Operating clock for UART/SPI/I2C protocol
-+        clocks:
-+          items:
-+            - description: Bus (APB) clock
-+            - description: Operating clock for UART/SPI protocol
- 
--    clock-names:
--      maxItems: 2
-+        clock-names:
-+          maxItems: 2
- 
--  required:
--    - reg
--    - clocks
--    - clock-names
-+        samsung,clkreq-on: false
- 
--else:
--  properties:
--    reg: false
--    clocks: false
--    clock-names: false
--    samsung,clkreq-on: false
-+      required:
-+        - clocks
-+        - clock-names
- 
- additionalProperties: false
- 
-@@ -144,7 +177,7 @@ examples:
-         compatible = "samsung,exynos850-usi";
-         reg = <0x138200c0 0x20>;
-         samsung,sysreg = <&sysreg_peri 0x1010>;
--        samsung,mode = <USI_V2_UART>;
-+        samsung,mode = <USI_MODE_UART>;
-         samsung,clkreq-on; /* needed for UART mode */
-         #address-cells = <1>;
-         #size-cells = <1>;
-diff --git a/include/dt-bindings/soc/samsung,exynos-usi.h b/include/dt-bindings/soc/samsung,exynos-usi.h
-index a01af169d..b46de214d 100644
---- a/include/dt-bindings/soc/samsung,exynos-usi.h
-+++ b/include/dt-bindings/soc/samsung,exynos-usi.h
-@@ -9,9 +9,18 @@
- #ifndef __DT_BINDINGS_SAMSUNG_EXYNOS_USI_H
- #define __DT_BINDINGS_SAMSUNG_EXYNOS_USI_H
- 
--#define USI_V2_NONE		0
--#define USI_V2_UART		1
--#define USI_V2_SPI		2
--#define USI_V2_I2C		3
-+#define USI_MODE_NONE		0
-+#define USI_MODE_UART		1
-+#define USI_MODE_SPI		2
-+#define USI_MODE_I2C		3
-+#define USI_MODE_I2C1		4
-+#define USI_MODE_I2C0_1		5
-+#define USI_MODE_UART_I2C1	6
-+
-+/* Deprecated */
-+#define USI_V2_NONE		USI_MODE_NONE
-+#define USI_V2_UART		USI_MODE_UART
-+#define USI_V2_SPI		USI_MODE_SPI
-+#define USI_V2_I2C		USI_MODE_I2C
- 
- #endif /* __DT_BINDINGS_SAMSUNG_EXYNOS_USI_H */
+ 	/* Make it possible to embed protocol nodes into USI np */
+ 	return of_platform_populate(np, NULL, NULL, dev);
+ }
 -- 
 2.43.0
 
