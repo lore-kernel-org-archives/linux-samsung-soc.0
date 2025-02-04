@@ -1,109 +1,116 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D73D16D4E6;
-	Tue,  4 Feb 2025 03:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4937205E3B;
+	Tue,  4 Feb 2025 07:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738640116; cv=none; b=IYww34eIH++eP7LHjNlobCOrFVlPEqNp8lHI2O/V34gQuveuiSLnI5cpxR3nUubxOG/FTaaoISgtWkgFqKEuE0WlMfFOxz52XYC5PSyzHGS8jnJH+iXeMd0vFEDypSeCv1b9u4Y/02dmuZ0YfHHa1upCAmPvk+ox80KfE+SE92g=
+	t=1738655616; cv=none; b=NiU77AKPZApPtJ30d15ksqlKpKBIRIoeXqrcryZrDPnwgaTtff/6PWtXtfrdYFLIzPSn+vFyeSMfUpWjtsM3FFQIVpwCGFJpMX8Vr+McmxHFhs+7r00gJraBnusDRPLu8j6vhnsvmR+dsj9EzK6/KGP95il16ueE3RLreRi0ogQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738640116; c=relaxed/simple;
-	bh=LvjcqtCOQasUzHGgpJ3ldZuX5qUSyl44nPnp8M2+sGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YcvlIcTKCmP7HxR9yYvM1YQBBPG+JA1291MDceAI9+GmQTwz6zsznJf0iunHJV4XCrvvsJsnRK+/LzUleWcrtT5weDT3EtaXhyLIKy+ByswnuQVyNxUGjpkeHu2mJZD40xaA2tAouNzsbWVbaWiVyfOuBFfNvMfbq/zPjViZ6gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FFJfIXHj; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1738655616; c=relaxed/simple;
+	bh=6li0nTXDpwk/xunVkZoNszRwoScOYPjfrU33f4c3TUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FwKebiVnEuxx/hkguxyAeXp1wLRHiuQoKAMWfy1wAUB5I9Hn4Nl4ci/6PlfyCVzAENBE7owpJ7pR7lgG10CAZMmkdGZN8xozVcNJ966UONLYQhgPW31hE3ejTcBBCGLuwGnjPtu7zFOgPEtCnpveyLl9wxBEZ8PfsNR02y7OiT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVB0S9ZK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FFJfIXHj"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5141Mpce008581;
-	Tue, 4 Feb 2025 03:33:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=OljqLUza+/baG9lUxsAUE7xPAIhfTiIdxHd6klwyagw=; b=
-	FFJfIXHjRuOGQVijrnCzoA156Qk+NYpQhSg1UlL94wBJ77jYyJv4E/QsaaZEVZvF
-	MzRNI0Ga7MuJutF9QhkpTcPsVgJ57L8l1ftRhMKWNTGsHswN5c5uwnOv7MWwSFYw
-	Aqj+IrOeLwJKeBJ1X9jxBUsVowFlbdLc2I+PcPtXBBpqh1iOwAdzwuR37b8iwYJs
-	CMVDWLn6y4gofR9Cu/VIEB04UoqX1PcR11WebONqF1/fPOC1bj72q1vhYDGSN7Q3
-	wUbfJhLpOsDthRV8CnngZlJty2zAQ8HizjK7nl2gb/PJutdYh7r+wiASEX4mKx4W
-	uXFkHdD25UhN3YuQYM2n8Q==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44hhjtuy2e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 04 Feb 2025 03:33:56 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5140C0vi038928;
-	Tue, 4 Feb 2025 03:33:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44j8e76f08-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 04 Feb 2025 03:33:55 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5143Xs6k015172;
-	Tue, 4 Feb 2025 03:33:54 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 44j8e76ex2-1;
-	Tue, 04 Feb 2025 03:33:54 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Satya Tangirala <satyat@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4] scsi: ufs: fix use-after free in init error and remove paths
-Date: Mon,  3 Feb 2025 22:33:04 -0500
-Message-ID: <173863996284.4118719.16500657324570528150.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250124-ufshcd-fix-v4-1-c5d0144aae59@linaro.org>
-References: <20250124-ufshcd-fix-v4-1-c5d0144aae59@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVB0S9ZK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3ACC4CEDF;
+	Tue,  4 Feb 2025 07:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738655616;
+	bh=6li0nTXDpwk/xunVkZoNszRwoScOYPjfrU33f4c3TUE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iVB0S9ZKvWsh0nnWGNUyCbUj1z6czoHkbsSj87qk/KUT+H+n+FB2Z8ib/rxnbXlRf
+	 C8uXYHu0ZmHq2Gx08/lnDeeRW/avcHvA1czjjuDYhcpIblZ2uVgHZK4VZE0Icf/9yp
+	 llYW+L5kqgyvQOVQIllIR4+doRsLiYhCMNOUezFYUi+cJnjtovGVKe46k9kejtGn8r
+	 zhIDUMxEcWHjLD3g18hKIaq3mTd9LZmm7SPLSDUkOI1cWp7/IfdFMFbyZAFpeistmH
+	 6jbmEl0FjuLWavjlbAT+KrDIx+QmeXyJcVxkPkVJAtwKWgIUXsXpAEjyAvQddOEnBU
+	 sbkpvkBQYLA9g==
+Message-ID: <339ea40f-6bc7-42ad-a5c2-f57b3be8cc39@kernel.org>
+Date: Tue, 4 Feb 2025 08:53:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-04_02,2025-01-31_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=888
- phishscore=0 adultscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2501170000 definitions=main-2502040026
-X-Proofpoint-GUID: aWx47z6fFMo2i7ui5DF1-UpbrtUACWdk
-X-Proofpoint-ORIG-GUID: aWx47z6fFMo2i7ui5DF1-UpbrtUACWdk
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Add chip ID for Exynos7870 SoC
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Sergey Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 24 Jan 2025 15:09:00 +0000, André Draszik wrote:
-
-> devm_blk_crypto_profile_init() registers a cleanup handler to run when
-> the associated (platform-) device is being released. For UFS, the
-> crypto private data and pointers are stored as part of the ufs_hba's
-> data structure 'struct ufs_hba::crypto_profile'. This structure is
-> allocated as part of the underlying ufshcd and therefore Scsi_host
-> allocation.
+On 03/02/2025 21:32, Kaustabh Chakraborty wrote:
+> This patch series is a part of Exynos7870 upstreaming.
 > 
-> [...]
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+> Kaustabh Chakraborty (2):
+>       dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
+>       soc: samsung: exynos-chipid: add support for exynos7870
+> 
+>  Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
+>  drivers/soc/samsung/exynos-chipid.c                                 | 1 +
+>  2 files changed, 2 insertions(+)
 
-Applied to 6.14/scsi-fixes, thanks!
+When I asked to split, I said per subsystem. Soc is one subsystem.
+Everything targeting SoC should be in one patchset. get_maintainers.pl
+tells the name of the subsystem and its maintainers.
 
-[1/1] scsi: ufs: fix use-after free in init error and remove paths
-      https://git.kernel.org/mkp/scsi/c/f8fb2403ddeb
+If there is going to be resend/new version, combine patchsets for soc
+into one patchset (just like the example I gave last time).
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Best regards,
+Krzysztof
