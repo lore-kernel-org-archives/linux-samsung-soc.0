@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4937205E3B;
-	Tue,  4 Feb 2025 07:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA98B139CE3;
+	Tue,  4 Feb 2025 08:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738655616; cv=none; b=NiU77AKPZApPtJ30d15ksqlKpKBIRIoeXqrcryZrDPnwgaTtff/6PWtXtfrdYFLIzPSn+vFyeSMfUpWjtsM3FFQIVpwCGFJpMX8Vr+McmxHFhs+7r00gJraBnusDRPLu8j6vhnsvmR+dsj9EzK6/KGP95il16ueE3RLreRi0ogQ=
+	t=1738658442; cv=none; b=BVh4gBxOTY3lFvBfSOLi5PzQQ0ettIlp517+dsiSVsQpbuYzPbTbuyQ0PkMRWIsu9+H6YUsWj/YxJLFpoMNJIW45eb+9OC5CNTkyZl/DQGVFNMUJ6VfY4n1Ow3X6Af9dB45Wh38wg6OhVxxdFF1Da/FpR2QwXQFeLG9qA383eMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738655616; c=relaxed/simple;
-	bh=6li0nTXDpwk/xunVkZoNszRwoScOYPjfrU33f4c3TUE=;
+	s=arc-20240116; t=1738658442; c=relaxed/simple;
+	bh=egKIg4Sb8jTt5UVyNpSYkZNvshAg5CXpUgYIUdnycVE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FwKebiVnEuxx/hkguxyAeXp1wLRHiuQoKAMWfy1wAUB5I9Hn4Nl4ci/6PlfyCVzAENBE7owpJ7pR7lgG10CAZMmkdGZN8xozVcNJ966UONLYQhgPW31hE3ejTcBBCGLuwGnjPtu7zFOgPEtCnpveyLl9wxBEZ8PfsNR02y7OiT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVB0S9ZK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=SEzxqBYMURsqQhpcUMnMUoz8/OyTvVM3PwAEdqJh9ALL70VeV6zT6jL2LJ0kDGvhWvcUgjT63Hv/8XB/JEvDniki4oB5ZajDOlhSd+Dv7NDOVfEiJJTRtgnYCn7x9RSHiYQHMhofb4wdMqvnyy39ru1melKz3G+5YfyHOf7dJC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEemYWX4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVB0S9ZK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3ACC4CEDF;
-	Tue,  4 Feb 2025 07:53:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEemYWX4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AE71C4CEDF;
+	Tue,  4 Feb 2025 08:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738655616;
-	bh=6li0nTXDpwk/xunVkZoNszRwoScOYPjfrU33f4c3TUE=;
+	s=k20201202; t=1738658442;
+	bh=egKIg4Sb8jTt5UVyNpSYkZNvshAg5CXpUgYIUdnycVE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iVB0S9ZKvWsh0nnWGNUyCbUj1z6czoHkbsSj87qk/KUT+H+n+FB2Z8ib/rxnbXlRf
-	 C8uXYHu0ZmHq2Gx08/lnDeeRW/avcHvA1czjjuDYhcpIblZ2uVgHZK4VZE0Icf/9yp
-	 llYW+L5kqgyvQOVQIllIR4+doRsLiYhCMNOUezFYUi+cJnjtovGVKe46k9kejtGn8r
-	 zhIDUMxEcWHjLD3g18hKIaq3mTd9LZmm7SPLSDUkOI1cWp7/IfdFMFbyZAFpeistmH
-	 6jbmEl0FjuLWavjlbAT+KrDIx+QmeXyJcVxkPkVJAtwKWgIUXsXpAEjyAvQddOEnBU
-	 sbkpvkBQYLA9g==
-Message-ID: <339ea40f-6bc7-42ad-a5c2-f57b3be8cc39@kernel.org>
-Date: Tue, 4 Feb 2025 08:53:31 +0100
+	b=DEemYWX4FzPv64Fhn1ItuDTrz/Su5TNpaJ7BXf/pTTAJYoG2COwheKL1uuQuS+gO2
+	 Wptz2bbRPeYUgufK/XWCGD1ZIPVRrMMrzYsRhEorTx+ZroOP67dlcOlHeJTaFTfv3g
+	 /Gy7KJ3jh24AooqyMMwfoVxyoZXt0LKqpl6EB/WBSVqlEpDSr0Tyyv+aLbk+fdrGpq
+	 scH1QZj2khPkQAsQrsuwcNZnDjiQSg8UKIblAkP8lYlw7yOG4+drc0LzZLObefJ2t8
+	 5FUyliZlU/dDi7Lt/SlBiJk2sdBWf89jB34CdHikFIaaUlPsw9m+PENFU5tNg1hGvn
+	 +dTybvn0OeugA==
+Message-ID: <1cb63ff4-8926-4bbc-8a78-59103d167140@kernel.org>
+Date: Tue, 4 Feb 2025 09:40:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Add chip ID for Exynos7870 SoC
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Sergey Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v5 0/4] net: stmmac: dwc-qos: Add FSD EQoS support
+To: Swathi K S <swathi.ks@samsung.com>, robh@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ conor+dt@kernel.org, richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
+ andrew@lunn.ch, alim.akhtar@samsung.com, linux-fsd@tesla.com
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
-Content-Language: en-US
+ alexandre.torgue@foss.st.com, peppe.cavallaro@st.com, joabreu@synopsys.com,
+ rcsekar@samsung.com, ssiddha@tesla.com, jayati.sahu@samsung.com,
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+References: <CGME20250128102707epcas5p154db286b06da942e18ffe315e4767707@epcas5p1.samsung.com>
+ <20250128102558.22459-1-swathi.ks@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -88,29 +93,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
+In-Reply-To: <20250128102558.22459-1-swathi.ks@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/02/2025 21:32, Kaustabh Chakraborty wrote:
-> This patch series is a part of Exynos7870 upstreaming.
+On 28/01/2025 11:25, Swathi K S wrote:
+> FSD platform has two instances of EQoS IP, one is in FSYS0 block and
+> another one is in PERIC block. This patch series add required DT binding,
+> DT file modifications and platform driver specific changes for the same.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
-> Kaustabh Chakraborty (2):
->       dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
->       soc: samsung: exynos-chipid: add support for exynos7870
+> Changes since v4:
+> 1. Avoided switching between internal and external clocks for every open/
+> close.
+> 2. Addressed the review comments on DT bindings
 > 
->  Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
->  drivers/soc/samsung/exynos-chipid.c                                 | 1 +
->  2 files changed, 2 insertions(+)
+> Here is the link to v4 patches for reference:
+> https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=&submitter=211782&state=&q=&archive=true&delegate=
+> 
+> Swathi K S (4):
+>   dt-bindings: net: Add FSD EQoS device tree bindings
+>   net: stmmac: dwc-qos: Add FSD EQoS support
+>   arm64: dts: fsd: Add Ethernet support for FSYS0 Block of FSD SoC
+>   arm64: dts: fsd: Add Ethernet support for PERIC Block of FSD SoC
 
-When I asked to split, I said per subsystem. Soc is one subsystem.
-Everything targeting SoC should be in one patchset. get_maintainers.pl
-tells the name of the subsystem and its maintainers.
-
-If there is going to be resend/new version, combine patchsets for soc
-into one patchset (just like the example I gave last time).
+In next versions, please split DTS from net and send it separately with
+*lore* link to the posting of bindings.
 
 Best regards,
 Krzysztof
