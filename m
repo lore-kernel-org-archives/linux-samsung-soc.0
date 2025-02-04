@@ -1,449 +1,272 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2073.outbound.protection.outlook.com [40.107.212.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF28A78F4A;
-	Tue,  4 Feb 2025 18:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738693335; cv=none; b=t2uVRcaDkrLW2SGZfWBaNfVxiK7wjgkCPO55H1IUGFIA2tNu6rL/Oa6X5Hu21F2r8h5okq2f3evkeRhFAQbw5tyVL0y7OsyDDNPdV7hPYFt/L4R/0+j5g6/GmVR+CLHjScHkqQRgg5dVqWT9lFiTGfWWwyzB75inLZz5FO2qX2s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738693335; c=relaxed/simple;
-	bh=2x1NwtHWAOEEICZyjoxoW/wEa4Gwmje6nQ9gTEczNFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8IWt+U0fKD+5Xa3WwGnb94W+isOTFbim58q/BAu+Fnc2v6fd0+BIUJHHUR7eqt0FPgfmnh178Kf7W9amddUUFhWqj8zUL1HrqjeCxJjBWD5MQZ39iDTYFgerJ30JHEBEtYD0rKwYJtAGl1X1qJg6y6fN4ij/t3TAkRqw/rsgCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BfPSMemV; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90F115252D;
+	Tue,  4 Feb 2025 18:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738694107; cv=fail; b=WLN+PVLAvb3PMYQ8RdVSRYhRHMB0kmOEMQh1vM+zLCPuP28uFEEUOtTu1U3YU+BNGupMBAgB+h4Tzv8gXSWtqhwjQeSXRl8xfJgnNsZbSp1g/jpYNrZoGtYvIPkCX0f7+k6qiZLBPxi5L/Bao3ci+Qwb1l4aj3NN2cP4Pm9my70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738694107; c=relaxed/simple;
+	bh=o9Fnvlf+a2N9GHZIUTn74QCkieS4ZHf2GqfF9ToOCwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=j5XijqQyguppMYw+4T4ggnCMA7uc+5jvj0FJnjiSjPSaUlvqPNUs5tmKqyDdZcFjr87dA1q89apkktaCDu8mTqBYRJVTyIgDEODGlPH1aaDDfkdWFlQQvcAgDfraX3UGjaVeimK4/A6aW5itsQrz5gSAygwAZ/WRZi7OvNelbq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jOWYvj4S; arc=fail smtp.client-ip=40.107.212.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfPSMemV"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d3e6274015so10151226a12.0;
-        Tue, 04 Feb 2025 10:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738693332; x=1739298132; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uQ5++agd0QoEY64Wz7u8d59Bv8ZNS8ggDIsozpgsnM8=;
-        b=BfPSMemVl+PyVcgUDULcQQahPmJPCJBDszNqUvZ9IzTrRz5ITl7H3M3tD3cvD7sgAk
-         SGdjQLVwnL5atirmfLA45nkD4lHuCCWWjrBswqA3IJNnnpgfWJ/BB6rMLNPbCGpy6mfY
-         pi/J0Zl/oflSHcS0SL4/Sw05NIWtHvuqURTrV6b96K0AoUX8qABqlK2do+Kege/4/Pqn
-         8XmYUfTMfkOzfwnMrhAAz/O9D5++zv2c1nop7xlgi2bq9WTzNmG65kf7vYFS43lexVM4
-         FvT4thzxpTKSfyPn8DRUSOaX/g+hZj+QjVD7IfEKn7I6DcNj4p1M2V+z/iHQEUhC3r00
-         1MXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738693332; x=1739298132;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQ5++agd0QoEY64Wz7u8d59Bv8ZNS8ggDIsozpgsnM8=;
-        b=oXRtuNzBYLjK2KRkfOY0eb9IZFUR9iJonubYPa8UfiME66ACmBMu5+qNYZfHnMyJHU
-         h/UVqb08Zn4x8sXM6WT3Y8iUzibhCRIicCd2r7/VTCvlupVMJ5DBjoyD2GhTc8Fr2LDJ
-         14T/C6aWoZtImmhYHbhei0p9FlZTQXCh2QYFKWB/lveShWNj5sqzQfsVjBNEj08HnAN1
-         +3GQsteVOM8kOuE7o4x+RnHaCD3gbAHfWIzk+VScFZgzR0G9iMEYSvPQpH2/DaJ1JSzX
-         3pes5wi2fVqUyJ7I7s8J+3qEXJgH5DxcHYxtPb8f9EqrKgc3t7rJg+pV+R2lCgXGxu+S
-         xKFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHIASAciPVgu+YqXNFIKcHZPGWRWpNIJbZKmG/lb7FsAuBUeopJGz6xZqFW3ny8OQeJfD57uoRYCg6qdD/p7gU@vger.kernel.org, AJvYcCULVXup5dLR5jYEZpWea5Hsj6sY7jOYI93Db6llsjPSX6oXeY0MLbagOdy/SJvo/72PBCqBxfaqpLML@vger.kernel.org, AJvYcCWrUgWR/XzzlO1dnNZ0LnkZ+QKk128nqDw1moe09H9gJopBTk0ZPQkJ1Fsuo54tNWyIYocMtLqREL2hTta/@vger.kernel.org, AJvYcCXpr2nsXEsUlw87x5Pxr14YsCzt2YwUmlxzJ+eO6KaeVDX3d1ZsbBOkAav11cg6ubYOpwFMTVhWET/fKgQCZAqdIE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcXdasgu21kiiUQiCmCnmHPRCUra5m9uaXtAYy7BlJnJCkCCrQ
-	lccjBkaEbo6WFWdUbjy8NGPyGO7AMjjrNToaX22ViLJe2nVNmf7D
-X-Gm-Gg: ASbGncuypZk37TCjd1W25ZISioyN0+6qm/ct67ldS5wxUKsAnMcM7I4prV45lqpFT39
-	sH1Tx6gt7cmOkjj8zpmCVSSsk0F+zLJ/OIKckUgAA+oFizf+0JFt24R1+RW2z+KqbV9GZNP9VID
-	JqiaCUXoQRqaiQP5YLB0sH2cVXRkfPz4artPmfkuo++jaXtXFDLFWUDqDsTgRJ+vJhcIJjAqVDe
-	7EPSzZcXPEygQxN7SD82vIZmncnZgC5VuomJcRunEewQMEsUKsOg2ogbUJa6kPXK5zMtbqlrGId
-	yAA4A2xm0Ym5YTDJqyVjOfAnbvw++d2rZ+yOMSACbui0jXvZ3Ipwe8fyBnTNiF+u2srmVw==
-X-Google-Smtp-Source: AGHT+IEQ4DMWF7roCrp5EJD85FGwjsBCdu+Kca8lx2Hj1i97FM9pySSYNrsTVSCzOrQrFS6BR/FM0Q==
-X-Received: by 2002:a17:906:9c8c:b0:ab3:3bab:c533 with SMTP id a640c23a62f3a-ab6cfcc2e94mr2804249166b.21.1738693331664;
-        Tue, 04 Feb 2025 10:22:11 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e4a2f90asm954865966b.129.2025.02.04.10.22.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Feb 2025 10:22:11 -0800 (PST)
-Message-ID: <00aa901b-5de9-4b72-a157-c54ad29df458@gmail.com>
-Date: Tue, 4 Feb 2025 20:22:09 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jOWYvj4S"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pUZFOgC8zXE0IEaoj0uSfZksxm3EehcaCckgiUdSFz1HHWKBafHYjvSSj4KAN4Ax0Tmysj+8qwnoztc9J0JxQ7kNji+azz7OCBljwPBD6+im4HSAKvJxLyb9OXOhcg4cpwb1RjERwmqnXCEEUb+f16BZkt+nj+gIeB/2kRvbPGzNCxcoDwUUYhztypSKz7TR/9Am0/CaGtkcrbp6gNLbXjRJikOED61UzFO9IW5aVPwf0PRqvHKnhYOSL1KpE+VhaZK7P1F6IXuP3efrGFzbO4x0DiFqAqWBoU2g5TP17RFhk55G+XGK+TTD/oO9VEP3HjUpE77swa/+tUy4BRFLEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+vttmH8MA91fMaWrbxdlKEOEfxakCHTjQ+0CbNtGzdk=;
+ b=mP+ZwFYOhKM81Nt31inQBQUoKXDs9TEJh/mFZE3SyC16pY2Nhz3wfUEQ7ESFVlMymF2VZ3a6f5MTKwdSfqPIsakLDfgeztiGFuOBInx4x95Y0OnsBmySFH38Af0zMoEhDPtju6+yGS18HHDExlQEwmM0VY3Y57G8A/GgQTN2j+I7sfkN5Q5X4pzNOqmLn6KNTuMRPGUdvM59J3GflJZ9B2ivE3S9yRxxIyxtSJXDPn/BAm8b02hBsnKyF78rF8uOGhVytH+PQH+CdPDS4SyYaC70V99YpId+pMYpNoY1Yp0OAc/dUMaNdurFvQcWA8LUyGN/Bw2nd+3l1w+az+chvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+vttmH8MA91fMaWrbxdlKEOEfxakCHTjQ+0CbNtGzdk=;
+ b=jOWYvj4Snipxzwa1pK+axuMO0atTEEr65fVTc+E/trEL9PRcgGufN2pUwFrL+f0JUEpJIUFTadI/B9d5rNsH3YspElh5Deqs/UI/C/2+KTU1Ijr79mnDcY2nJtqwpwmd0u9j1OUvuFXjZqxwrxmvbn54xIBee0KAOmbd3BI5NwEOReAFa+yrugRyweVLwstH5dwiIEo168meZnQJPvZCFLMuC4460BunNK9NeltCfWFI0ZTlUhtX/hsgAddiMF4c9c/QvkyxZjPZ1jKZXhKNejp80C2DEmUaFVCZp2PPtV55dQJ636PANqasM4BNwBBiWSfbGnNpQH9Fba2pF1+MWQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CY5PR12MB6573.namprd12.prod.outlook.com (2603:10b6:930:43::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.24; Tue, 4 Feb
+ 2025 18:35:02 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8398.025; Tue, 4 Feb 2025
+ 18:35:02 +0000
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	asahi@lists.linux.dev,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	iommu@lists.linux.dev,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Hector Martin <marcan@marcan.st>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tomasz Jeznach <tjeznach@rivosinc.com>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	patches@lists.linux.dev,
+	David Rientjes <rientjes@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 00/19] iommu: Further abstract iommu-pages
+Date: Tue,  4 Feb 2025 14:34:41 -0400
+Message-ID: <0-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL0PR1501CA0007.namprd15.prod.outlook.com
+ (2603:10b6:207:17::20) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] arm64: dts: exynos: add initial devicetree support
- for exynos7870
-Content-Language: en-US
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Conor Dooley <conor@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: Sergey Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250204-exynos7870-v2-0-56313165ef0c@disroot.org>
- <20250204-exynos7870-v2-2-56313165ef0c@disroot.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250204-exynos7870-v2-2-56313165ef0c@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY5PR12MB6573:EE_
+X-MS-Office365-Filtering-Correlation-Id: 552f8802-e39a-45aa-1f36-08dd454aa2ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oNBLfKYs9XO7+mX/3JfzHBYyfoOOZP9xHT37emq5FcYIwOUfE5QWfK0g25wJ?=
+ =?us-ascii?Q?PrRNZcJQr4DdchUHi3D3gJdlxbXxym52f002AW9vbx3CnH2I1yyFvhYrHMuw?=
+ =?us-ascii?Q?h6cX9DVsgXi9zaTHad+mUZzDhzK3/nu/zRwKP0N5eVAyvxfv1ox3bdy7wL0T?=
+ =?us-ascii?Q?Qgu/djYecY3yY+KkiUTXRRljlWfuazArCZ9JiwDh19yf/1I3V9+Z2wEhJU07?=
+ =?us-ascii?Q?sUDZfUUOY5hwsnqgtvTVu23WbMJZFAXNxwffI+/RQgxkW98au4dXIDCxdJtk?=
+ =?us-ascii?Q?LpGUIkKPmJN/noLEXm4jphj2KTsVMBR9t4svYy+HzIr3mcRq+fYs07BMJpq8?=
+ =?us-ascii?Q?FJ2Lm0nR1jIv2lfusBPMlqBCxRVymvax5mpUZNKeVQgpzsh6mS0GguVwoHmc?=
+ =?us-ascii?Q?wWb2hxaaxHGTMEbjSo2MaFH287mnlL8Le/cPukj62aEw0wAG5nuBGvW+p4sJ?=
+ =?us-ascii?Q?dbnaHUtqskhtT0EkgJbVWytph29oyIhKSRNVD/MojhQwcxk/rgx7bXACTaKt?=
+ =?us-ascii?Q?xCKH2mt4t6gmpyMYdrp45zHLBdN7zK3UjMHdY7FRcvpycbz00zrK81zEn0up?=
+ =?us-ascii?Q?T11I2u5a9ky0B7EetcGpi3AZ/uKbezXcZdr6rJes7xJ78fhmyulFsIXsCF+M?=
+ =?us-ascii?Q?x83NVoNJN+EuDT8xopUuyme7wzpb0zfgu79vR8i1CmZpRahZ5+RpKjMzweUi?=
+ =?us-ascii?Q?mPoKZLmxP0y6Z7jNrBoAGMzgo0fReDXhKd4ljrRwN2p7knTuI2rXTNkAiuiC?=
+ =?us-ascii?Q?AbtiOuSiYvM9H8E7NvncGa8gZDZVjIstFGs1+vuadl3zH4E/+p30zaDubfdr?=
+ =?us-ascii?Q?CDbEW2sL9abUekJ6dXVbuOGArYGG4LPGO+DEvDM9uLycTQdO1BFb2ny3OypL?=
+ =?us-ascii?Q?Kr7xwUgCrkn1i5ZcPBGBjxaRl7hG0l935njkDpVVM3DPUjTvP69hiovPmZFH?=
+ =?us-ascii?Q?2sG16NVaHYS+BC36zEqYgZwDtP4mq84HpQeDeHPN6nVIKFcO3LZc2s4MfXrW?=
+ =?us-ascii?Q?6Lxr8riya6lAyT0ky7PKZ9rslZJay3WlIdAarCEzW+p8Gh/upYkDzGHUuV9W?=
+ =?us-ascii?Q?sGhWRaAiVkt1XHHUw8R1g2PuMgvPZj22uFz9kyY09HOlIvUF3Zlzr0SB5Rju?=
+ =?us-ascii?Q?AQUccAS7CrsqqhuQ6C+iKuNlj0yXuhEetxSpQZRx+5v727WzJdt2l9HwrEBl?=
+ =?us-ascii?Q?A4eYCBNsAiL0i/e9iH4KGR+cz9lQDH66QGu0o5Hx9KprB6LNKTDvuuNbggq/?=
+ =?us-ascii?Q?D6j7eeXX5Csl+RR2RyoXX5qyI+RQQ15fjRW7OJ4NcUp8CmbD5o1c6t8ORXWI?=
+ =?us-ascii?Q?3JFK65DZVAh8KGNEGJl1NYcYzNHBlWMT++UpneTPH6frjLy0g/+I+QiytXDM?=
+ =?us-ascii?Q?y2s1DGPZusw/778Jc0zhrEk/+OtE1Ly1PKWt4qeNyGBMXfIhv0bxJ19C6xzh?=
+ =?us-ascii?Q?OokucaEXvHo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?glpHBRs2fTKl1NS3As66LsoyNQ9n/KJXhR/O2bGEbTIY9K0pdAhT4iAkT7aE?=
+ =?us-ascii?Q?4oz8OJNuZSFOkl4f5Bsi0IcpbYUUhUTdOHDphRHEhg222mYxDGKzzVEXBgYu?=
+ =?us-ascii?Q?IdbWgxvEDFKXHZ921vArcYKuB0kFunkcNniuaswXHYLiRUPP/KRbA5zyN2H8?=
+ =?us-ascii?Q?CbfZsZQaga1yZLJravVcyjYGJq7mZH5b80ytqPP/gN7ZadOdpQ1E6VuQRzF4?=
+ =?us-ascii?Q?k3eB2Q/qMRChVp5oiufwps2WiUd4sE0aMzbh13RuFiAJ/8hgw7XhXG4y2c4e?=
+ =?us-ascii?Q?8xhyJMMwSPFdCFtbSIbmjwGRF7B84Nf/wHuJvB8txL/wfsadb4agcJPVNzMN?=
+ =?us-ascii?Q?Jmu/n9EI8M4WXyhDPc8FAd8duVekb8KuWeJgs3EyGERxV1QmzzK0vPgWYxfn?=
+ =?us-ascii?Q?/MYfd+F3oUVUSDF1n+xHGPDCx9o62rRByDn+dra8+2NZ+td5alvKOgzEN9h4?=
+ =?us-ascii?Q?IPeonFDVznUWD06iY9ZPMI7st98CsrEUtfUD5LY8cGRVq8djMd2qSurEnTbt?=
+ =?us-ascii?Q?0G6iIhTjEwOykHx8xpWkIWvjTEpfwnOHUnilKufDiPn4HMe74O/kBABw7Xj5?=
+ =?us-ascii?Q?Pxml/dagKQ3E7hdp+hPfaEzE0a4myN+CLJl7CJo4mPldVHAW9/j8Dmy+3gYL?=
+ =?us-ascii?Q?TIEAmQNGNp96EIuk/8u+jFgRbaCzjawWlp8bJ5O/+UvW//91q+DCjDGr+XCe?=
+ =?us-ascii?Q?I15IjjYPBRDhE7PfeEbU61WXa1iswmsOkxheCetjI5noENo3xPPKxQnFZXEJ?=
+ =?us-ascii?Q?eaB40nV3qwrPRFqxNfKYaIFUnQ7Hj4y970izGbzwQvOrwgIe5aFocB9W1zH/?=
+ =?us-ascii?Q?hA8F0EnJcQzrre7SZr9o0Xm2KN23n9RBA9LyNAnolBblFgRo7iaxG+uoHcr9?=
+ =?us-ascii?Q?8IABHwmCbyTHmKz7+nCFvP+4shJZyQsJuyWy28aTKxlJk8sbLE3SYXGqfyPX?=
+ =?us-ascii?Q?eG9Wzs8fam4N4XYnD1uthKiaTLyO8LjQGBPKH9vo5L0F9cOqTjMyTFBJ0z2F?=
+ =?us-ascii?Q?PHuHj4vzJLjd31rGwSZmxGiogCxFvgmDOhhAgLrl6y96JNXnMZVUvHKrg77S?=
+ =?us-ascii?Q?FjHZ2Wz6PsmyMtGPiSQBsRBsvb5mjF+TYkePnlQ9he0ohHunqCexbuPgbKuo?=
+ =?us-ascii?Q?xDy4SHkXOYsTu02EkdN7HxDy49FLUXs3cmiL7ZyjSik+PAfM4pv9aGVQuvYv?=
+ =?us-ascii?Q?rUf64eVcW6yJC0815JZ37rUQ3/5XM7PSuYndPmr5jyKnp8i42w/JN4cqSGIC?=
+ =?us-ascii?Q?tHomMrRiApfRW4T3NMJ2LCXlNxnnFxPc+6oi8CuaYNv13iecl0eMOW58YcyL?=
+ =?us-ascii?Q?1AsZD7ycZDOcnT2WgaatE8Kc9N53znos9QXKgLQOZQUtfMa8lYxEQ+0LEWLW?=
+ =?us-ascii?Q?hfHuyYqw4ykbNVteJztU/KSnp+KlbLCfTeEx0ViFBxf1u6xbjxUjT1ifqLKW?=
+ =?us-ascii?Q?vmvpBqumorR+vsjsljRzILHH4FeEX30iJbDiNZv0kbtgAQvKmY8Pdsetclxj?=
+ =?us-ascii?Q?LeGvsCP3tXZKH0P1DlDS1W1bLLEANMqQsqbC4tBorEBsCmxlN/GraEI9JfOs?=
+ =?us-ascii?Q?BfyITtn/y0c/ZjmwB6Q=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 552f8802-e39a-45aa-1f36-08dd454aa2ee
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2025 18:35:02.2335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WiUx7JrZnVDFZhNcZSASbv31Bm8yHjwWYXz7UHl/paHUevymKLIM2QqYBiVbXbBE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6573
 
-On 2/3/25 22:46, Kaustabh Chakraborty wrote:
-> Exynos7870 is an arm64 SoC manufactured by Samsung and announced in
-> 2016. It is present in multiple mid-range Samsung phones and tablets.
->
-> Add basic devicetree support for the SoC, which includes CMUs, pin
-> controllers, I2C, UART, DW-MMC, and USB-DRD.
->
-> Co-developed-by: Sergey Lisov <sleirsgoevy@gmail.com>
-> Signed-off-by: Sergey Lisov <sleirsgoevy@gmail.com>
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi | 1035 ++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7870.dtsi         |  722 ++++++++++++++
->  2 files changed, 1757 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..28ff409c4fdc5f766d92617ea2df7be2112c28d1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi
-> @@ -0,0 +1,1035 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung Exynos7870 SoC pin-mux and pin-config device tree source
-> + *
-> + * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include "exynos-pinctrl.h"
-> +
-> +&pinctrl0 {
+This is part of the consolidated iommu page table work, it brings the
+allocator I previously sketched to all drivers.
 
-I haven't had enough time to look deeper, but these are my 2 cents:
+iommu-pages is a small abstraction for allocating page table pages that
+iommu drivers use. It has a few properties that distinguish it from the
+other allocators in the kernel:
+
+ - Allocations are always power of two, and always physically aligned to
+   their size
+ - Allocations can be threaded on a list, in atomic contexts without
+   memory allocations. The list is only used for freeing batch of pages
+   (ie after IOTLB flush as the mm does)
+ - Allocations are accounted for in the secondary page table counters
+ - Allocations can sometimes be less than a full CPU page, 1/4 and 1/16 are
+   some common sub page allocation sizes.
+ - Allocations can sometimes be multiple CPU pages
+ - In future I'd like atomic-safe RCU free of the page lists, as the mm does
+
+Make the API tighter and leak fewer internal details to the
+callers. Particularly this series aims to remove all struct page usage
+related to iommu-pages memory from all drivers, this is things such as:
+
+ struct page
+ virt_to_page()
+ page_to_virt()
+ page_to_pfn()
+ pfn_to_page()
+ dma_map_page()
+ page_address()
+ page->lru
+
+Once drivers no longer use struct page convert iommu-pages to folios and
+use a private memory descriptor. This should help prepare iommu for
+Matthew's memdesc project and clears the way to using more space in the
+struct page for iommu-pages features in future.
+
+Improve the API to work directly on sizes instead of order, the drivers
+generally have HW specs and code paths that already have specific sizes.
+Pass those sizes down into the allocator to remove some boiler plate
+get_order() in drivers. This is cleanup to be ready for a possible sub
+page allocator some day.
+
+This is on github: https://github.com/jgunthorpe/linux/commits/iommu_pages
+
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason Gunthorpe (19):
+  iommu/terga: Do not use struct page as the handle for as->pd memory
+  iommu/tegra: Do not use struct page as the handle for pts
+  iommu/pages: Remove __iommu_alloc_pages()/__iommu_free_pages()
+  iommu/pages: Make iommu_put_pages_list() work with high order
+    allocations
+  iommu/pages: Replace iommu_free_pages() with iommu_free_page()
+  iommu/pages: De-inline the substantial functions
+  iommu/vtd: Use virt_to_phys()
+  iommu/pages: Formalize the freelist API
+  iommu/riscv: Convert to use struct iommu_pages_list
+  iommu/amd: Convert to use struct iommu_pages_list
+  iommu: Change iommu_iotlb_gather to use iommu_page_list
+  iommu/pages: Remove iommu_put_pages_list_old and the _Generic
+  iommu/pages: Move from struct page to struct ioptdesc and folio
+  iommu/pages: Move the __GFP_HIGHMEM checks into the common code
+  iommu/pages: Allow sub page sizes to be passed into the allocator
+  iommu/amd: Use roundup_pow_two() instead of get_order()
+  iommu/riscv: Update to use iommu_alloc_pages_node_lg2()
+  iommu: Update various drivers to pass in lg2sz instead of order to
+    iommu pages
+  iommu/pages: Remove iommu_alloc_page/pages()
+
+ drivers/iommu/Makefile              |   1 +
+ drivers/iommu/amd/init.c            |  62 ++++----
+ drivers/iommu/amd/io_pgtable.c      |  26 ++--
+ drivers/iommu/amd/ppr.c             |   2 +-
+ drivers/iommu/dma-iommu.c           |   9 +-
+ drivers/iommu/exynos-iommu.c        |  12 +-
+ drivers/iommu/intel/dmar.c          |   7 +-
+ drivers/iommu/intel/iommu.c         |  27 ++--
+ drivers/iommu/intel/iommu.h         |  19 ---
+ drivers/iommu/intel/irq_remapping.c |   4 +-
+ drivers/iommu/intel/pasid.c         |   3 +-
+ drivers/iommu/intel/pasid.h         |   1 -
+ drivers/iommu/intel/prq.c           |   4 +-
+ drivers/iommu/io-pgtable-arm.c      |  10 +-
+ drivers/iommu/io-pgtable-dart.c     |  23 +--
+ drivers/iommu/iommu-pages.c         | 119 +++++++++++++++
+ drivers/iommu/iommu-pages.h         | 215 +++++++++++-----------------
+ drivers/iommu/riscv/iommu.c         |  30 ++--
+ drivers/iommu/rockchip-iommu.c      |   6 +-
+ drivers/iommu/sun50i-iommu.c        |   6 +-
+ drivers/iommu/tegra-smmu.c          |  93 ++++++------
+ include/linux/iommu.h               |  16 ++-
+ 22 files changed, 371 insertions(+), 324 deletions(-)
+ create mode 100644 drivers/iommu/iommu-pages.c
 
 
-Can you label them according to their block name rather than numbers?
-For example, pinctrl_abox (make sure to keep them alphabetically sorted
-as well).
-
-> +	etc0: etc0-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	etc1: etc1-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpa0: gpa0-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	gpa1: gpa1-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	gpa2: gpa2-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpq0: gpq0-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	uart2_bus: uart2-bus-pins {
-> +		samsung,pins = "gpa1-1", "gpa1-0";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	uart2_sleep: uart2-sleep-pins {
-> +		samsung,pins = "gpa1-1";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-> +	};
-> +
-> +	bt_btwake: bt-btwake-pins {
-> +		samsung,pins = "gpa1-2";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-> +		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	bt_hostwake: bt-hostwake-pins {
-
-Sort these alphabetically, so you have:
-all a-z-gpio-bank, after which all a-z-pin.
-
-In this case bt_* can be first after all gpio bank nodes.
-
-> +		samsung,pins = "gpa1-6";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
-> +		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	gnss_sensor_irq: gnss-sensor-irq-pins {
-> +		samsung,pins = "gpa2-3";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_6>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +	};
-> +
-> +	gnss_sensor_i2c: gnss-sensor-i2c-pins {
-> +		samsung,pins = "gpa2-5", "gpa2-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_6>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-...
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	hs_i2c0_bus: hs-i2c0-bus-pins {
-
-s/hs_i2c/hsi2c/g
-
-> +		samsung,pins = "gpm0-1", "gpm0-0";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> +		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-> +	};
-...
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7870.dtsi b/arch/arm64/boot/dts/exynos/exynos7870.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..11129e37fc86ebaee01684ed6841c932dd6cbc8a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos7870.dtsi
-> @@ -0,0 +1,722 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung Exynos7870 SoC device tree source
-> + *
-> + * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-> + */
-> +
-> +#include <dt-bindings/clock/exynos7870.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/soc/samsung,boot-mode.h>
-> +
-> +/ {
-> +	compatible = "samsung,exynos7870";
-> +	#address-cells = <2>;
-> +	#size-cells = <1>;
-> +
-> +	/* Samsung's bootloader (S-BOOT) checks for these DT properties */
-> +	model_info-hw_rev = <0>;
-> +	model_info-hw_rev_end = <255>;
-> +	model_info-chip = <7870>;
-
-You could skip the properties with a shim bootloader like uniLoader. Up to
-Krzysztof to decide if you should keep these.
-
-> +
-
-...
-
-> +	};
-> +
-> +	oscclk: oscclk {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +
-> +		clock-frequency = <26000000>;
-
-Frequency must be defined in the board device tree.
-
-> +	};
-> +
-> +	timer {
-
-S is before T, so this goes after soc {}
-
-> +		compatible = "arm,armv8-timer";
-> +		/* Hypervisor Virtual Timer interrupt is not wired to GIC */
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> +
-> +		/* Samsung's bootloader (S-BOOT) doesn't set CNTFRQ_EL0 */
-> +		clock-frequency = <26000000>;
-> +	};
-> +
-> +	gic: interrupt-controller@104e0000 {
-> +		compatible = "arm,cortex-a15-gic";
-> +		reg = <0x0 0x104e1000 0x1000>,
-
-So it should be @104e1000 and not @104e0000
-
-> +		      <0x0 0x104e2000 0x1000>,
-> +		      <0x0 0x104e4000 0x2000>,
-> +		      <0x0 0x104e6000 0x2000>;
-> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> +		interrupt-controller;
-> +		#address-cells = <0>;
-> +		#interrupt-cells = <3>;
-> +	};
-> +
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +		ranges = <0x0 0x0 0x0 0x20000000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		chipid@10100000 {
-> +			compatible = "samsung,exynos7870-chipid",
-> +				     "samsung,exynos4210-chipid";
-> +			reg = <0x10100000 0x100>;
-> +		};
-> +
-> +		pmu_system_controller: system-controller@10480000 {
-> +			compatible = "samsung,exynos7870-pmu",
-> +				     "samsung,exynos7-pmu", "syscon";
-> +			reg = <0x10480000 0x10000>;
-> +			#clock-cells = <1>;
-> +
-> +			clock-names = "clkout8",
-> +				      "clkout9",
-
-Could fit more than one per line.
-
-> +				      "clkout10",
-> +				      "clkout11",
-> +				      "clkout12";
-> +			clocks = <&oscclk>,
-> +				 <&oscclk>,
-> +				 <&oscclk>,
-> +				 <&oscclk>,
-> +				 <&oscclk>;
-> +
-> +			reboot-mode {
-> +				compatible = "syscon-reboot-mode";
-> +				offset = <0x080c>;
-> +				mode-bootloader = <EXYNOS7870_BOOT_BOOTLOADER>;
-> +				mode-download = <EXYNOS7870_BOOT_DOWNLOAD>;
-> +				mode-recovery = <EXYNOS7870_BOOT_RECOVERY>;
-> +			};
-> +		};
-> +
-> +		cmu_mif: clock-controller@10460000 {
-
-Sort all of these by address.
-
-> +			compatible = "samsung,exynos7870-cmu-mif";
-> +			reg = <0x10460000 0x1000>;
-> +			#clock-cells = <1>;
-> +
-> +			clock-names = "oscclk";
-> +			clocks = <&oscclk>;
-> +		};
-> +
-> +		cmu_dispaud: clock-controller@148d0000 {
-> +			compatible = "samsung,exynos7870-cmu-dispaud";
-> +			reg = <0x148d0000 0x1000>;
-> +			#clock-cells = <1>;
-> +
-> +			clock-names = "oscclk",
-> +				      "gout_mif_cmu_dispaud_bus",
-
-bus
-
-> +				      "gout_mif_cmu_dispaud_decon_eclk",
-
-decon_eclk
-
-> +				      "gout_mif_cmu_dispaud_decon_vclk";
-
-decon_vclk
-
-Clock names here shouldn't be long. You'll still describe them in the
-clock YAML either way. Check other SoCs like 8895, autov920, 990.
-
-> +			clocks = <&oscclk>,
-> +				 <&cmu_mif CLK_GOUT_MIF_CMU_DISPAUD_BUS>,
-> +				 <&cmu_mif CLK_GOUT_MIF_CMU_DISPAUD_DECON_ECLK>,
-> +				 <&cmu_mif CLK_GOUT_MIF_CMU_DISPAUD_DECON_VCLK>;
-> +		};
-> +
-
-...
-
-> +
-> +		i2c1: i2c@13880000 {
-> +			compatible = "samsung,exynos7870-i2c",
-> +				     "samsung,s3c2440-i2c";
-> +			reg = <0x13880000 0x100>;
-> +			interrupts = <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
-> +			status = "disabled";
-
-Status always comes last. Make sure to sort all properties as per the DT
-Coding Style [1].
-
-[1] https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
-
-> +
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&i2c1_bus>;
-> +
-> +			clock-names = "i2c";
-> +			clocks = <&cmu_peri CLK_GOUT_PERI_I2C1_PCLK>;
-> +		};
-
-...
-
-> +		};
-> +	};
-> +};
-> +
-> +#include "exynos7870-pinctrl.dtsi"
-> +#include "arm/samsung/exynos-syscon-restart.dtsi"
-
-Didn't this already include a reboot node?
-
-Best regards,
-Ivaylo
-
->
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+-- 
+2.43.0
 
