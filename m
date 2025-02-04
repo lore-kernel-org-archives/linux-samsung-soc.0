@@ -1,62 +1,62 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BF12165E0;
-	Tue,  4 Feb 2025 17:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FA921660B;
+	Tue,  4 Feb 2025 17:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738690151; cv=none; b=b68CBFnFRmZ9ys7HAN4ZXoKr8r5dNCVOP9hLbSURI/UMhDRspbLGuqsnTAVYjw4mMy7mcf/+M92iLae9sL9zA+PQR3iNNA86uasYxRiN2YIQ96+bMZsta8/rO0jp/myjSFFYpKjOvvZcZb61ZjR+F/1r75UzHBipF+vepnOKlAI=
+	t=1738690152; cv=none; b=sbqxIZaa/Y2LvTzoLut01YKRzzdFRviZoMqE1wZ78/gPfv4u6cqMNDnSstTKtbnwf3zjVfuNnXORsN8gdrnD2/MdP3jE/sPMD/R5OmxrjdX6x8h2GMgJBldBTboIlaKxJ+BCbuAntuRoCjcyEisTu4q1uWDTF3F7BDwO0Ux30w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738690151; c=relaxed/simple;
-	bh=sxfCXycmikLKxWWsIM3zyfph3dsElGFzfO51jEySvWE=;
+	s=arc-20240116; t=1738690152; c=relaxed/simple;
+	bh=747rBV4CrB3ncxxx0etCDFXxKa/DqQKjOWmnHOvE8Ac=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nLJxjZgDouXBOHi+h06juJ95v7kIXSwmEhMzS+RlSSbFMMo0rRVFEdVnZX3x8plFLULKFnWaDACtecHeyNefpvDoFIrwRnpim5g6gGmt5/4gYp7hRXBPQir23M879a4/RncCQsOxTiVmFcz4OXD2eeNTogljNvA2TO7OB0RkAxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZivTVage; arc=none smtp.client-ip=209.85.208.53
+	 MIME-Version; b=pSlHvgnJrB+Bv2vDjfUIdw557OwA6fjKMCaVlv1e44YOKgdGfkvj4hDrIoM6WS9Ra9M0e62xjSzE0O+ZbkXUh5/Jq1sRLEZB35chNWQxb6OIHLTGyuMPSVdakWz88q5RMzn4FBkTrsFUNUCBiBW6ReULIPvC9LsJ99ca/nzYzSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxoPEZoY; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZivTVage"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dc82e38c10so9034320a12.3;
-        Tue, 04 Feb 2025 09:29:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxoPEZoY"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5db6890b64eso11465019a12.3;
+        Tue, 04 Feb 2025 09:29:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738690147; x=1739294947; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738690149; x=1739294949; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0PYzXjvsquXcuMSC+z/lM7F/lFFrKruUQntDKpcfZBw=;
-        b=ZivTVageI3oNxXzf45+KlVOukX+U8J3gMIapUaEaoExwei7q81Adx355vLsqXE++/c
-         jsWuZuI9bJce5LN2JwRHH5+QWKjol5mmyFlO0R/Cd+gfdWhH+pB6X9C5IbgYRTB+wBni
-         xxy1RZN6uT8rQI3mFJZcIzv6GRTmGgxTw1nSs4s8ULB/v2wVN3STAx6He8clBY0XKJJ2
-         9XdezHvLWFsEQvmxvj2wk2yumJ6Qt6aZ6HS6eQteIGDz9LcVn33HdGt8J0gcLVVcbyXV
-         cMR5dtM7Fnph98TCW4PfLHtwZkeJTAi4c35PF5Dl1yYuyygxDJO1bEpkly4v96tZR/32
-         LdvQ==
+        bh=ZBre3tfK9eNw0D6ztWoJ2B8wDlLW7jzGaVQPJWiVrhc=;
+        b=BxoPEZoYfEMnC2gHPNpq/oI9dDB41pGmOBga5pgFXEE1jJliG9qz9oGiOVj0sIOh7U
+         NzFRCPoUVbeolLkU7mLup9pMXNDyGTd34C0Z5ZTdI4kIZMOyVv5Lgb0Ykw7bOcRnZM8+
+         LgZlhFG2i/grNdhQJnVXSOJt5cV0kVMJTtMuG8vv6Pm/wPM8HzRxC1SiWy+LXNJEgVAC
+         dobRMZKSZfDEAmWJwnIMimt4cYFsG3T/GmyKc1QoaMraZ3B0qvQcUsFD5d6jDk4zHOhh
+         HtXdEGiSpyJxFmOpHczWo9xIx00nAsanm3oQNgWhs9b8ZgkaBkSoOUh8vX07IDcj/OM0
+         01SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738690147; x=1739294947;
+        d=1e100.net; s=20230601; t=1738690149; x=1739294949;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0PYzXjvsquXcuMSC+z/lM7F/lFFrKruUQntDKpcfZBw=;
-        b=P1nZ7n4j/hyTDk2u8mSVQzWrNdlF6Sa1xajyVpx2qauaR0JYFsE+v3XP9QF8t7ghGc
-         GEOPBG1M7dlDMCwYiYxStEeGIHpsyRY+WRFVz8dD9UEuHRZfD9+udBCAO+cQy2EQp9I3
-         dpN5akmxEGSI8xcRPVg9sy7syLSxicQgP6BXSSYCWN9uKdSYX2mLn1mua7M63Pc5xfGv
-         c/aStf5iUjkUd6GssCWhhnlOS/TeXJ8gOyd7ylm6mcltRA6Xh6+1+OkgHeTcsjNcJ0wH
-         ect/uZfDZeHRsLi7iwzwSylpwOdPgnST2Q5iqPlhwPy/+EfDu10H8AYRtB196ZOknD9F
-         sNKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN3tzr8Ty4tq6/fKDPlhaTcAtK5aANwZuu43qZTie1fgyXZuqlWjsw+lz1Akj85LVK/Nk5ce4jTOuIdjiMvBrw6V4=@vger.kernel.org, AJvYcCWiTR0SlG4Ew2lVQuoqiT3qHQ8gIGlHPbxlmsu0HhzrIW9trqsjmSeoOwVftFdv2EDP9rihBtRZ/9IfBDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5kFV84OwGGD6Kh+Rd4ytyPq7/q0LjKYlwYLj6mwoQDOhkzAjU
-	FcpkUHeI2t3+w/ZW6k7IAWsO7g9O3nK+RVssT3VfluDGQUv+6Gvh
-X-Gm-Gg: ASbGncsOOZZr+B7SZYWhxBcs22Vw29DQgdwUFnp6PuGf5Nzk9Ip3nLkRwIQw0o8dYl5
-	oANGqCqGe4yr/eIlwnQd1s5D/G325qgNTvmTjaveovJ91RRAReVWlhtCbsKMIaL95l3q8uSUa/Z
-	73JDJnmUCbXtfIDmxKlHV6f3dYHopyjtK4Ro8mqIkJSrE2y8GA3p6SRAi8CxNOoWDNxrDr2TxYS
-	7lvFxmbUq1UewghwRI63KLMBEZoFVrxNotqYC5fPaOvOTRXiqMhbKb52cmUBvzxIwX3r359PCgv
-	nDSKY3g00LtoElCUWmrzqXsuF63fl5ATbpxSuJD/lzKQPkBt24sDfqZB2+Vc0REhSwY=
-X-Google-Smtp-Source: AGHT+IGKE1UpcPEwktj0pXPn+Jx+dBmAbbftJr17dD9s3ZCquQy0mlrfmNUjz/1zZKoEyVZO7n5A4A==
-X-Received: by 2002:a05:6402:388c:b0:5dc:90e7:d43 with SMTP id 4fb4d7f45d1cf-5dc90e7101amr15411085a12.26.1738690147137;
-        Tue, 04 Feb 2025 09:29:07 -0800 (PST)
+        bh=ZBre3tfK9eNw0D6ztWoJ2B8wDlLW7jzGaVQPJWiVrhc=;
+        b=IqrjnR6+9KwIyMI2JQEBy853fJS3YxdIvkvFVnc6hIPupXq0xq3DVn/AM/YQa75/xj
+         uqnMTY+L6yrJkq2LV2dB0ahX++cXHJ2OoWFYI5FUzp4IrzvLVYVFhHgH4arf5Upixsaz
+         V/kYiFrkLY1d9D/mAze0d/AP2wc64UXtsY27n4zC29TfxW7o2OWD2y/UDmQotyYDboX4
+         ABWui0GxvlOnoFF5Y5R/19/b/8XAxSEnkBtFS/Ele/GEymFkkCgFdzh+/fE9QtYL5Oki
+         qZT3szSVFqpChc/L/FvbM6+/bZEwWBh66HSOzMcJiGMnaXTRi3piIFetOP7TaeChtAt/
+         gvdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtf09LH1Cpn2qHuMwYvYzzx7vBojeKeDrW+w92AAUazfBxZ9wPvLNbM+dK1P2ey1JttL7qUuLcEQRYRnQ/c6ouccY=@vger.kernel.org, AJvYcCXyfUjGnfw7vxqOjG8UMIFZK+UOa3i3JBjxF/iS0+XhRWFjWSPQ92zBER4GrpKnsQEGIjU9NA3Feb0a86M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1SWOofEaaV6O+buWIUMrPAKnOn/D/SlQlnEIPafKPP8P+jnxe
+	GGxoFgnrIk+AKUUfeGU+eEaFogSxx1SSlKtofGnXHOP95kHh95U0
+X-Gm-Gg: ASbGnctojYDQw/b4qKueQRhAtZ4TpmIdhALpoDFpNOjVPs/BgQDAUdo3APH17a7MbdG
+	UKW6iavBsEUTH1wEzzdfmWvaQDqNCzQF5DOakSh96GhhiFk2ezQnhaO+cAivZXPeVYQkUweoaTX
+	eLaKMi43vB7dguKGq7p3+q8hL8psNC96xnkRNqsdnl+w1iuuPR7K06fXXwVbjgCqzpePKVWnvxa
+	I9qtJ70erVa3e02rriPOtUOiAcGMCGvG8/QsW1YbvzSl4ypqChPT6docL1cCG+WAWmMx2SpnLI3
+	Z2JTa2ZX9F9+DBtT0ke7DUAhYWevFL+j7EvgbR9FolobHmWLeOQ83pfSlq3FE7gYsbM=
+X-Google-Smtp-Source: AGHT+IFu+slwz91GENh5QMjYcOh4lrpEqmBdNLas88SGUpO3WiuE6Ri0unHYb7Tl4RKE9yFsTn+Pnw==
+X-Received: by 2002:a05:6402:40c8:b0:5d0:ed71:3ce4 with SMTP id 4fb4d7f45d1cf-5dc5efad984mr33079113a12.6.1738690148448;
+        Tue, 04 Feb 2025 09:29:08 -0800 (PST)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dcd3156ec7sm664981a12.67.2025.02.04.09.29.06
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dcd3156ec7sm664981a12.67.2025.02.04.09.29.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 09:29:06 -0800 (PST)
+        Tue, 04 Feb 2025 09:29:07 -0800 (PST)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,9 +68,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/4] soc: samsung: usi: implement support for USIv1 and exynos8895
-Date: Tue,  4 Feb 2025 19:28:02 +0200
-Message-ID: <20250204172803.3425496-4-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v6 4/4] arm64: dts: exynos: update all samsung,mode constants
+Date: Tue,  4 Feb 2025 19:28:03 +0200
+Message-ID: <20250204172803.3425496-5-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com>
 References: <20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com>
@@ -82,166 +82,350 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-USIv1 IP-core is found on some ARM64 Exynos SoCs (like Exynos8895) and
-provides selectable serial protocols (one of: HSI2C0, HSI2C1, HSI2C0_1,
-SPI, UART, UART_HSI2C1).
-
-USIv1, unlike USIv2, doesn't have any known register map. Underlying
-protocols that it implements have no offset, like with Exynos850.
-Desired protocol can be chosen via SW_CONF register from System
-Register block of the same domain as USI.
-
-In order to select a particular protocol, the protocol has to be
-selected via the System Register. Unlike USIv2, there's no need for
-any setup before the given protocol becomes accessible apart from
-enabling the APB clock and the protocol operating clock.
-
-Modify the existing driver in order to allow USIv1 instances in
-Exynos8895 to probe and set their protocol. While we're at it,
-make use of the new mode constants in place of the old ones.
+Update all samsung,mode property values to account for renaming USI_V2
+constants to USI_MODE in the bindings.
 
 Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 ---
- drivers/soc/samsung/exynos-usi.c | 71 ++++++++++++++++++++++++++------
- 1 file changed, 58 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     | 14 +++---
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi  | 48 +++++++++----------
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  2 +-
+ .../boot/dts/exynos/google/gs101-oriole.dts   |  4 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi  |  2 +-
+ 5 files changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
-index 85329d4e8..773038770 100644
---- a/drivers/soc/samsung/exynos-usi.c
-+++ b/drivers/soc/samsung/exynos-usi.c
-@@ -16,6 +16,18 @@
- 
- #include <dt-bindings/soc/samsung,exynos-usi.h>
- 
-+/* USIv1: System Register: SW_CONF register bits */
-+#define USI_V1_SW_CONF_NONE		0x0
-+#define USI_V1_SW_CONF_I2C0		0x1
-+#define USI_V1_SW_CONF_I2C1		0x2
-+#define USI_V1_SW_CONF_I2C0_1		0x3
-+#define USI_V1_SW_CONF_SPI		0x4
-+#define USI_V1_SW_CONF_UART		0x8
-+#define USI_V1_SW_CONF_UART_I2C1	0xa
-+#define USI_V1_SW_CONF_MASK		(USI_V1_SW_CONF_I2C0 | USI_V1_SW_CONF_I2C1 | \
-+					 USI_V1_SW_CONF_I2C0_1 | USI_V1_SW_CONF_SPI | \
-+					 USI_V1_SW_CONF_UART | USI_V1_SW_CONF_UART_I2C1)
-+
- /* USIv2: System Register: SW_CONF register bits */
- #define USI_V2_SW_CONF_NONE	0x0
- #define USI_V2_SW_CONF_UART	BIT(0)
-@@ -34,7 +46,8 @@
- #define USI_OPTION_CLKSTOP_ON	BIT(2)
- 
- enum exynos_usi_ver {
--	USI_VER2 = 2,
-+	USI_VER1 = 0,
-+	USI_VER2,
+diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+index f1c8b4613..cb55015c8 100644
+--- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+@@ -651,7 +651,7 @@ usi_uart: usi@138200c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x138200c0 0x20>;
+ 			samsung,sysreg = <&sysreg_peri 0x1010>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -677,7 +677,7 @@ usi_hsi2c_0: usi@138a00c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x138a00c0 0x20>;
+ 			samsung,sysreg = <&sysreg_peri 0x1020>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -706,7 +706,7 @@ usi_hsi2c_1: usi@138b00c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x138b00c0 0x20>;
+ 			samsung,sysreg = <&sysreg_peri 0x1030>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -735,7 +735,7 @@ usi_hsi2c_2: usi@138c00c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x138c00c0 0x20>;
+ 			samsung,sysreg = <&sysreg_peri 0x1040>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -764,7 +764,7 @@ usi_spi_0: usi@139400c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x139400c0 0x20>;
+ 			samsung,sysreg = <&sysreg_peri 0x1050>;
+-			samsung,mode = <USI_V2_SPI>;
++			samsung,mode = <USI_MODE_SPI>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -796,7 +796,7 @@ usi_cmgp0: usi@11d000c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x11d000c0 0x20>;
+ 			samsung,sysreg = <&sysreg_cmgp 0x2000>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -855,7 +855,7 @@ usi_cmgp1: usi@11d200c0 {
+ 			compatible = "samsung,exynos850-usi";
+ 			reg = <0x11d200c0 0x20>;
+ 			samsung,sysreg = <&sysreg_cmgp 0x2010>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+index b36292a7d..66628cb32 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+@@ -442,7 +442,7 @@ usi_0: usi@103000c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103000c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1000>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -505,7 +505,7 @@ usi_i2c_0: usi@103100c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103100c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1004>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -534,7 +534,7 @@ usi_1: usi@103200c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103200c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1008>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -597,7 +597,7 @@ usi_i2c_1: usi@103300c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103300c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x100c>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -626,7 +626,7 @@ usi_2: usi@103400c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103400c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1010>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -689,7 +689,7 @@ usi_i2c_2: usi@103500c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103500c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1014>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -718,7 +718,7 @@ usi_3: usi@103600c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103600c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1018>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -781,7 +781,7 @@ usi_i2c_3: usi@103700c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103700c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x101c>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -810,7 +810,7 @@ usi_4: usi@103800c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103800c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1020>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -873,7 +873,7 @@ usi_i2c_4: usi@103900c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103900c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1024>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -902,7 +902,7 @@ usi_5: usi@103a00c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103a00c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1028>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -965,7 +965,7 @@ usi_i2c_5: usi@103b00c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x103b00c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x102c>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -994,7 +994,7 @@ usi_6: usi@109000c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109000c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1000>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1057,7 +1057,7 @@ usi_i2c_6: usi@109100c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109100c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1004>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1086,7 +1086,7 @@ usi_7: usi@109200c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109200c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1008>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1149,7 +1149,7 @@ usi_i2c_7: usi@109300c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109300c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x100c>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1178,7 +1178,7 @@ usi_8: usi@109400c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109400c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1010>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1241,7 +1241,7 @@ usi_i2c_8: usi@109500c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109500c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1014>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1270,7 +1270,7 @@ usi_9: usi@109600c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109600c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1018>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1333,7 +1333,7 @@ usi_i2c_9: usi@109700c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109700c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x101c>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1362,7 +1362,7 @@ usi_10: usi@109800c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109800c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1020>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1425,7 +1425,7 @@ usi_i2c_10: usi@109900c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109900c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1024>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1454,7 +1454,7 @@ usi_11: usi@109a00c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109a00c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x1028>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1515,7 +1515,7 @@ usi_i2c_11: usi@109b00c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x109b00c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric1 0x102c>;
+-			samsung,mode = <USI_V2_I2C>;
++			samsung,mode = <USI_MODE_I2C>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index c759134c9..6e9007518 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -223,7 +223,7 @@ usi_0: usi@108800c0 {
+ 				     "samsung,exynos850-usi";
+ 			reg = <0x108800c0 0x20>;
+ 			samsung,sysreg = <&syscon_peric0 0x1000>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 387fb779b..b73c152c7 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -161,12 +161,12 @@ &usi_uart {
  };
  
- struct exynos_usi_variant {
-@@ -66,19 +79,39 @@ struct exynos_usi_mode {
- 	unsigned int val;		/* mode register value */
+ &usi8 {
+-	samsung,mode = <USI_V2_I2C>;
++	samsung,mode = <USI_MODE_I2C>;
+ 	status = "okay";
  };
  
--static const struct exynos_usi_mode exynos_usi_modes[] = {
--	[USI_V2_NONE] =	{ .name = "none", .val = USI_V2_SW_CONF_NONE },
--	[USI_V2_UART] =	{ .name = "uart", .val = USI_V2_SW_CONF_UART },
--	[USI_V2_SPI] =	{ .name = "spi",  .val = USI_V2_SW_CONF_SPI },
--	[USI_V2_I2C] =	{ .name = "i2c",  .val = USI_V2_SW_CONF_I2C },
-+#define USI_MODES_MAX (USI_MODE_UART_I2C1 + 1)
-+static const struct exynos_usi_mode exynos_usi_modes[][USI_MODES_MAX] = {
-+	[USI_VER1] = {
-+		[USI_MODE_NONE] =	{ .name = "none", .val = USI_V1_SW_CONF_NONE },
-+		[USI_MODE_UART] =	{ .name = "uart", .val = USI_V1_SW_CONF_UART },
-+		[USI_MODE_SPI] =	{ .name = "spi",  .val = USI_V1_SW_CONF_SPI },
-+		[USI_MODE_I2C] =	{ .name = "i2c",  .val = USI_V1_SW_CONF_I2C0 },
-+		[USI_MODE_I2C1] =	{ .name = "i2c1", .val = USI_V1_SW_CONF_I2C1 },
-+		[USI_MODE_I2C0_1] =	{ .name = "i2c0_1", .val = USI_V1_SW_CONF_I2C0_1 },
-+		[USI_MODE_UART_I2C1] =	{ .name = "uart_i2c1", .val = USI_V1_SW_CONF_UART_I2C1 },
-+	}, [USI_VER2] = {
-+		[USI_MODE_NONE] =	{ .name = "none", .val = USI_V2_SW_CONF_NONE },
-+		[USI_MODE_UART] =	{ .name = "uart", .val = USI_V2_SW_CONF_UART },
-+		[USI_MODE_SPI] =	{ .name = "spi",  .val = USI_V2_SW_CONF_SPI },
-+		[USI_MODE_I2C] =	{ .name = "i2c",  .val = USI_V2_SW_CONF_I2C },
-+	},
+ &usi12 {
+-	samsung,mode = <USI_V2_I2C>;
++	samsung,mode = <USI_MODE_I2C>;
+ 	status = "okay";
  };
  
- static const char * const exynos850_usi_clk_names[] = { "pclk", "ipclk" };
- static const struct exynos_usi_variant exynos850_usi_data = {
- 	.ver		= USI_VER2,
- 	.sw_conf_mask	= USI_V2_SW_CONF_MASK,
--	.min_mode	= USI_V2_NONE,
--	.max_mode	= USI_V2_I2C,
-+	.min_mode	= USI_MODE_NONE,
-+	.max_mode	= USI_MODE_I2C,
-+	.num_clks	= ARRAY_SIZE(exynos850_usi_clk_names),
-+	.clk_names	= exynos850_usi_clk_names,
-+};
-+
-+static const struct exynos_usi_variant exynos8895_usi_data = {
-+	.ver		= USI_VER1,
-+	.sw_conf_mask	= USI_V1_SW_CONF_MASK,
-+	.min_mode	= USI_MODE_NONE,
-+	.max_mode	= USI_MODE_UART_I2C1,
- 	.num_clks	= ARRAY_SIZE(exynos850_usi_clk_names),
- 	.clk_names	= exynos850_usi_clk_names,
- };
-@@ -87,6 +120,9 @@ static const struct of_device_id exynos_usi_dt_match[] = {
- 	{
- 		.compatible = "samsung,exynos850-usi",
- 		.data = &exynos850_usi_data,
-+	}, {
-+		.compatible = "samsung,exynos8895-usi",
-+		.data = &exynos8895_usi_data,
- 	},
- 	{ } /* sentinel */
- };
-@@ -109,14 +145,15 @@ static int exynos_usi_set_sw_conf(struct exynos_usi *usi, size_t mode)
- 	if (mode < usi->data->min_mode || mode > usi->data->max_mode)
- 		return -EINVAL;
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index 302c5beb2..473db46aa 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -825,7 +825,7 @@ usi_uart: usi@10a000c0 {
+ 				 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0>;
+ 			clock-names = "pclk", "ipclk";
+ 			samsung,sysreg = <&sysreg_peric0 0x1020>;
+-			samsung,mode = <USI_V2_UART>;
++			samsung,mode = <USI_MODE_UART>;
+ 			status = "disabled";
  
--	val = exynos_usi_modes[mode].val;
-+	val = exynos_usi_modes[usi->data->ver][mode].val;
- 	ret = regmap_update_bits(usi->sysreg, usi->sw_conf,
- 				 usi->data->sw_conf_mask, val);
- 	if (ret)
- 		return ret;
- 
- 	usi->mode = mode;
--	dev_dbg(usi->dev, "protocol: %s\n", exynos_usi_modes[usi->mode].name);
-+	dev_dbg(usi->dev, "protocol: %s\n",
-+		exynos_usi_modes[usi->data->ver][usi->mode].name);
- 
- 	return 0;
- }
-@@ -168,10 +205,13 @@ static int exynos_usi_configure(struct exynos_usi *usi)
- 	if (ret)
- 		return ret;
- 
--	if (usi->data->ver == USI_VER2)
--		return exynos_usi_enable(usi);
-+	if (usi->data->ver == USI_VER1)
-+		ret = clk_bulk_prepare_enable(usi->data->num_clks,
-+					      usi->clks);
-+	else if (usi->data->ver == USI_VER2)
-+		ret = exynos_usi_enable(usi);
- 
--	return 0;
-+	return ret;
- }
- 
- static void exynos_usi_unconfigure(void *data)
-@@ -180,6 +220,11 @@ static void exynos_usi_unconfigure(void *data)
- 	u32 val;
- 	int ret;
- 
-+	if (usi->data->ver == USI_VER1) {
-+		clk_bulk_disable_unprepare(usi->data->num_clks, usi->clks);
-+		return;
-+	}
-+
- 	ret = clk_bulk_prepare_enable(usi->data->num_clks, usi->clks);
- 	if (ret)
- 		return;
+ 			serial_0: serial@10a00000 {
 -- 
 2.43.0
 
