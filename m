@@ -1,241 +1,169 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBAE1DA628;
-	Wed,  5 Feb 2025 16:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738771825; cv=fail; b=iuv1msQO6OGWkjlF6Axj6JhtHvF7yv3dplLyFL2VNY9D3SYRXERn8iNpf7WlWKJfIZ3oaXAWO8YPULLYHAvr/E1pd9bOsJhuU1ijDyD2eiSlssrQICfskKWhwriEIZKYENw+Df01xszCvvZpLVi96Tq9JidVIHJTgrwhSSUBJpA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738771825; c=relaxed/simple;
-	bh=vGA521OM5+qarb8hJHpyUUljzIQJmRX4KHjXElmBxZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=S1j0WOC6wHyrjujACunXANHaaA2yrtMn4p72oJyuV1dUDTcsdfVW3IbyTga9/uVtrSx/7sWoHOGIaElRMFsu/aUTZAoSXcqSNdmy/7nJPZQLdpvOsBcT9kQ5h2SlNv1v1wV+AXkpLi3Djo+Be9hvdrh7enxWYatAxRFZ5sSTbCk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d+yQoJl1; arc=fail smtp.client-ip=40.107.94.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8971DA31F
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Feb 2025 16:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738771864; cv=none; b=DCL1WLsSHl0PzaCPyDCcGh9T6GPxFYJYG53e+S/OrLIA9UI0R8c0wUcsYSWREb8CCSFW4qHMwvnVWIsu+ur9uzJAlsk6hr/+zH7+K91tL7xDGVVPp6G0c8u6kmkKiEQvSWqZ2yxDRMfJKFaOwXJLX3DNFpqRhVw1qi78W5PbqWo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738771864; c=relaxed/simple;
+	bh=zGOTGbjFfgVATXurZclzZ9z9K3oGBKGvyHPvS3OsEQ8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=BUtAqLHZsjfao+T0/o80OubLp8ZAHibcQMD9EYvloZ2fNeWwKnZ1/1ICJmU8ObVaMycAeadVJ5HPXPnNafHb3a1TOARK6lhoVYcUWD9J2NW4mgA9bQ4ZEdPc2r40BgCMeOUKkugrUxXxYtleNXsVAQvTYVBLjuJw5vZUs8PWp9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vr33Q83R; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d+yQoJl1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UXozDJyukWsR07JysWK15TGiiBloEg0rLlHBgCciz8SljpIycU0p5NigaRoPQCY2vGchrCcP4EM7zrFQeZHjqy9hiWnhogxEJ00xd66i9R2aIy7gUhIG6LXtVOKvzK6s6L4gWOjxoBWgdPVfcRUzpU0MXljyKxlobW3yGZ7LIbIAIb9SEDja73S8K420Qv1WLhOCfqtFKqJvvbJA7J0poKIL6z849yvBsAeBhFemIUAyPlsfigKaJ2VuwbLhJfW1+U0tihnk89bdDUPCtnA8wleyIcux8FBtAJWP65I5eXJmOJ1IByHON5a6/2NVZWoN9kUXZfC6z0UP45VEkPAa8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b/OMJGJUxSk8u3iEYTxR+1Jtywi7Ewv+YoS50Y1KgyM=;
- b=deCYzcKj4M9oR7ELMtRpulWURI+0kcTsMSwoSmNhD/xqaXuRq1vzqBlGsypgSbUEX4MTWjeJXdY5gVFaKS0D5ZRs+phoYVWCpm8SAgMJ/D40sdsI97clR5+TMT9eJCvJ7Jc+Teu7Wy2AsU9Fzn7V67f0hUvmv/5HwchtI8rW9KamaAGtg0kEhpCfKpkVK6+h82bp7WtYKHS4igSGiCMO79gjp0Vl3qd7yXRhFQUNol2Ymw6YeC6h5Mr/19seDMVwPrrEVMvXycz6MIjuN5hjP53HQwmfTuZDii79YYQJoxNzgStb95F04AUWTuAHKCCwPnY4SBKaijEniQvsY91YcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b/OMJGJUxSk8u3iEYTxR+1Jtywi7Ewv+YoS50Y1KgyM=;
- b=d+yQoJl1mpTG6SOuMMVuv6S+Lreyex7i9Da+Mi/3pWf0gIzz/rEkj04+1dp5ShSLubbEgauBXPIkEYpTm/HBjJdepuq6oguk8E0B5MtVsrQ3puIl9QAjtY/znbASIz0v2WDU4jWnvC2rbzpBi0obdyLgtGAmk0z0vvbGAJ524TPsJ0DSqs3Ar+Q8KtTP+di6MRpFr1ckKR0ODfjNwmqPlMPsncZ9poaWiu4t9Ix68sUMnrc2B1YCgJFARQ7LWnP4XormRI+IU2uEJSPtoBl0DY2KguYLKFbvN3SuiD+TWF4jBC5+YZ1lsyA+usULrZzpavlJCP5IATu261FTtbwQXA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by BL1PR12MB5803.namprd12.prod.outlook.com (2603:10b6:208:393::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.10; Wed, 5 Feb
- 2025 16:10:18 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8398.025; Wed, 5 Feb 2025
- 16:10:18 +0000
-Date: Wed, 5 Feb 2025 12:10:17 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Hector Martin <marcan@marcan.st>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tomasz Jeznach <tjeznach@rivosinc.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
-	Will Deacon <will@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
-	David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 18/19] iommu: Update various drivers to pass in lg2sz
- instead of order to iommu pages
-Message-ID: <20250205161017.GB2960738@nvidia.com>
-References: <18-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
- <23d4c47e-a00c-4f15-ab42-303bd2aca032@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23d4c47e-a00c-4f15-ab42-303bd2aca032@arm.com>
-X-ClientProxiedBy: BL1PR13CA0446.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::31) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vr33Q83R"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250205161055epoutp01b203fcba521ea1df552b457cc0817bac~hW8o3ZtvM1197111971epoutp01a
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Feb 2025 16:10:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250205161055epoutp01b203fcba521ea1df552b457cc0817bac~hW8o3ZtvM1197111971epoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1738771855;
+	bh=QW9J/rjwU+o+SqKpPsPh38JFBxMAa0k1ReyEkkZt/Pc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Vr33Q83ReaUYcKmzBa3H3q49/ONTz5UJN51Eu/svtZM8koRnPXVOTGMiM8awVkzga
+	 FX1xfrF8tkqaLsemvcqLYWaur7l9cJqQbilIvQAmHEpJDKC8MECejNvH4jyD4Uofv6
+	 3qkZYwZR5AlovX3iEvihLjFlHjdsH7szva7CW1ic=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250205161054epcas5p462e3a79ddb2c59bb8791bdddc74eb01f~hW8oZ_f9o1659716597epcas5p41;
+	Wed,  5 Feb 2025 16:10:54 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Yp4wD6QgGz4x9Pp; Wed,  5 Feb
+	2025 16:10:52 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9E.CF.20052.C8D83A76; Thu,  6 Feb 2025 01:10:52 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250205161051epcas5p26dda7521e6fe32f18d6ef155802573b7~hW8lbmFSm1244212442epcas5p2U;
+	Wed,  5 Feb 2025 16:10:51 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250205161051epsmtrp10c1cde19bc06d6d10c26eece77d38c94~hW8lav6Ud2899028990epsmtrp1A;
+	Wed,  5 Feb 2025 16:10:51 +0000 (GMT)
+X-AuditID: b6c32a49-3d20270000004e54-6c-67a38d8c4619
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	34.FE.18729.B8D83A76; Thu,  6 Feb 2025 01:10:51 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250205161049epsmtip29462bda9337d6f4970716ff4d4d8fe2c~hW8j4dd_a1519415194epsmtip2Y;
+	Wed,  5 Feb 2025 16:10:49 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Sudeep Holla'"
+	<sudeep.holla@arm.com>
+Cc: "'Devang Tailor'" <dev.tailor@samsung.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <faraz.ata@samsung.com>
+In-Reply-To: <6d4d93a5-9a03-4cc3-9ef4-ab64562560f3@kernel.org>
+Subject: RE: [PATCH v2] arm64: dts: add cpu cache information to
+ ExynosAuto-v920
+Date: Wed, 5 Feb 2025 21:40:48 +0530
+Message-ID: <090d01db77e8$8687db10$93979130$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL1PR12MB5803:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7bbbb457-cdd8-4c81-b56f-08dd45ff9585
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r7fHqp4hsv7vgohXizcPRATjFiqK/Jnmca163JLU8mGtW/CEmpfggF4+OoJm?=
- =?us-ascii?Q?vPFCmdwuqXVbkVLDJAcYP6uaDnLNgVb6PvRgROD0HPzWAtdaIOXX9MJenn3S?=
- =?us-ascii?Q?0MDDes5n+2J1ntQZJeA4yRqrQhDrLX9rmMOdzsIykrDsPXvAMS1xz1A5CO5e?=
- =?us-ascii?Q?BhqLWAKt3Li0tnZLVol9y7jsv7eSB6coSpWUPBKBH3K7+t9XNv3brTzIbs56?=
- =?us-ascii?Q?fvWZC+T8pvzWLzd2tIlcIqNZV1dG7awIhUteyfJoSnE+UjUFu2zNG3WvwNaA?=
- =?us-ascii?Q?vXrlnTfqRHb2hhwznR5AivElCeKPOQEuN5NXOCphwOlQTOWrBt1s2DasYwrC?=
- =?us-ascii?Q?Wmspy5/8a3uEDD3g608kBwsZtirJlxrhlR2avf+Lg9pldHu7tsQjFDNlBV19?=
- =?us-ascii?Q?yCAX4EFJQfIpCJSlUpCSak17KvBZQIvyWQthEpiHgS3jO74ZvOvMbHHvC3eD?=
- =?us-ascii?Q?78bGQUFr1727kJVU+YenBFkKfs/hpypFAW9mtToxgVUlnTPxlG9oC0gWvxIB?=
- =?us-ascii?Q?xE03KmK+UluqLy8FATKNZR9Lo0ogKYNznu2nyQ8sk7UZ17NC3Homm9ukHFKa?=
- =?us-ascii?Q?WC6PPLzN8x3yPyrQbiRrwOxfUshzMgEdviRBCbEvAHdGLD4o7Yx0xrRer6uf?=
- =?us-ascii?Q?lIU01M8gEMbwmCYmAs8D/E+Sew5PeV+vgFD3Skuf/jlxBs9KaVH+Dh5kX4Tl?=
- =?us-ascii?Q?w4uptk/17Wh3K5cYqUuv9B5as6VgOSzFnchbnYT6UgNOAKCi5DkCHI2kS8OJ?=
- =?us-ascii?Q?NfaJq9a4u4bJcbR0goBLd0+mRlihATaUmGQ5mqcF5jAPvzJ/csYJADO7ZNHx?=
- =?us-ascii?Q?9z8E4zq8+uA0oXNwzF5dzRfSNR0xk+ePRdW7NVaTWAhPGpVrYdLuPc6KvTYa?=
- =?us-ascii?Q?FIiYJrQkCPSveG325DrY/8mNVSerLpUDaK70X+Utok9b2/J29gURFoA/8m9X?=
- =?us-ascii?Q?ZIjzXc+9opfZuo1wKs4R7sqDsXIiAqdAZn8qZS3Q1JLLM1mB3+ZXXwX8mEil?=
- =?us-ascii?Q?dJL6XCROCNc0x+kKopQMZsr9+d0UBnqwaOorARM2yN1t/q3MQ4+Go3Jr7Aoi?=
- =?us-ascii?Q?P/O8cbt7hlCZry8XYwLZLvVmqaRl2ixhrQkxpiY8a1iaL5YfZflN0AQzkVzF?=
- =?us-ascii?Q?bnbx7y5bJA+9K7BDs4uBRHsGuHWjjnFPn9LUqIi7hxg81OXp2Ir6RyOUSRs+?=
- =?us-ascii?Q?0gjEff7QBUGLOuNTsSjhyJnJ5MpGNiCRpCSAyTL+vAHxcWe392BDvUgfphDw?=
- =?us-ascii?Q?L3MH2gr6Gj5Fth1TRGlM+O10cFR3wPmdZP+rPbWsp1wTrrZbGmkIo0Ve3Lva?=
- =?us-ascii?Q?1MM0IW+bTE7YSB4HGAGRBSJu2YFEcU9F2q0YTSoXk9LmQkV9y37S65GsEn6u?=
- =?us-ascii?Q?7k4R2vLe+LnH9bOTTJ+4HTVpRCx3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AQD8lHf0TnnoxfzihS7WsHeL0vRGr/Rmgt16eLkCAQl8MLxOP5cJ/wDheUXj?=
- =?us-ascii?Q?L6elLlLVghlP3gFMqXfXBbUIRFKeYFt6pVT9sO+u1WIFTaI2yiX6qkRNozPd?=
- =?us-ascii?Q?sEG9ZLvLkXqySPDb+EIJx6Qq4yEMD10i6HFh0WQ9Kc5RMP+FLIMNG4lFad2y?=
- =?us-ascii?Q?Xtl7BAjw9snL3OFqG7SKtwK0dP0unP2uZff1RFyjNxUnfSEOD6Oqkl7T7IZH?=
- =?us-ascii?Q?PpNkGTEdqeBUTM/x1HJlETj4u7FeZ1o7axCUlQnr9G5k5VxLClvjKN+2hz30?=
- =?us-ascii?Q?eRVd5HTIJiA3YdVpATP+bvOsx9jQ0DrcQX74iDP6lKC53QeH/IT8PrXciuiv?=
- =?us-ascii?Q?BgYpoELIKAVfnEuy0LQRkacRGGNha74tRgr7KOs43bxhV4spU0FIN0L92nRW?=
- =?us-ascii?Q?m06AZV7GV+Xt7+Mzf3q31AKbAbxr1wO53ghehWEl40Oomk2rqWhjF56zgnr1?=
- =?us-ascii?Q?rvbKOTKO+SaKtK9/m0SbObUvN+mP7IgJ1zpk4HFO1hcP4T4o5IzYlgNDcVvR?=
- =?us-ascii?Q?esHOpe13/r3N3sgcQqUEOaxnMA74ii52KXYQWjitd3nXmU9m4K8OtC+mrtO6?=
- =?us-ascii?Q?wcP6cKoWmCeTnRqf2yh9zsqBjUWFOu0HiHJ7k2QJjIHyC5/h7t4GJgdI8UA2?=
- =?us-ascii?Q?5IOIIoIBVFvJpTe4YZT/gAs0EiU+kdTWth2eYY3bxzMlZsfZ0NJTuG2TTK/a?=
- =?us-ascii?Q?YmFSMT+Etfl8uEClX2IV/vGiq0uX0l0JcyThF4WojLWhHStOqLoC6jxOv14N?=
- =?us-ascii?Q?d44xUI/0nRYK3pzEHuJxhmf+FXEjxyCEJFcfBCExfdf3VAK/rYOjEMafQ1RC?=
- =?us-ascii?Q?TMB5OtXQlI/+DJstPezs76bbxIKAclQ4oaV3tnKiF/TJlvFG9Pfp74rf3RR0?=
- =?us-ascii?Q?XIoN5VKBwcQWlrei62/qGgj/032nBbTzfRXf0Mrf/uvotA7oPfgeijPcOhqP?=
- =?us-ascii?Q?4Y/4MpLRiYmRHhkJ4YnQH9kkZj0fadoa2fiVM36KqDl/Gs3M8zLNHbdgmooc?=
- =?us-ascii?Q?KoCOu4MLndQ5mvmlT7NjPRvEaPGRCmkDt9ZA/P0BZT4ypdw3AI/Gf+3kOO+e?=
- =?us-ascii?Q?B9CPnmciTMEsXtY7spqkW8Vbhhhw2fotSdf2oAXQQvQk8shZ9+fgrFezTwWx?=
- =?us-ascii?Q?1DPB0kRWY2uj2PyjyhVYrIqJLYhIT1MntVmLdNryXdr4tVISKAOd21uzZ6TO?=
- =?us-ascii?Q?WttHzvh5IDAp74XR3j/4ZpKR6bUzvXEtav0laPYGa+mtySb9jCDPqEMjoGHv?=
- =?us-ascii?Q?FgY+UBQZAog/geH4wxKjJIv//MrdB/zL295+dhT4xuXAD8VahJ68prBPBjSk?=
- =?us-ascii?Q?8J1R6wLdzyfltqCLTIMYVne1stL+7d+HZJnpuEldvve85Xqn2Y9d/9goTYl+?=
- =?us-ascii?Q?VHLob6r68zfBwoafN+DdRxRe7VIBa4YMPXEd+iE4u7qlCC/+5wzIA+ltj2E6?=
- =?us-ascii?Q?1yRFURYjcxgQcHY0aw+gyjsswvScXhnciqZ9Me6SMdLO33FGmkeypPrSNXFh?=
- =?us-ascii?Q?7m5dMugwp5sqMYHqyZ2rPTwh8PPk6EKKN+sSIxeX/HKtVQmheD8EkfYLfIjJ?=
- =?us-ascii?Q?Fwu7y2/Q+2//jyiZtzo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bbbb457-cdd8-4c81-b56f-08dd45ff9585
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2025 16:10:18.5860
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 21qidtMarIgWnp8EBfNVOnl1yMidhRr3LOm7t0HU5YM6P0QHT8RYxsqhkuJHf9jK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5803
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJnCMNmj1amGSmPwLixER7WDeLbQALDHLFMAzsAx8ICGgWRGwKIqjkLscy4HXA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmum5P7+J0g6ufjCzW7D3HZHFvxzJ2
+	i/lHzrFaXLuxkN3i5ax7bBbnz29gt9j0+BqrxeVdc9gsZpzfx2Txf88Odovlp3awOHB7rJm3
+	htFj06pONo/NS+o9+rasYvT4vEkugDUq2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ
+	0sJcSSEvMTfVVsnFJ0DXLTMH6DIlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJ
+	gV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGrenrmAq+8FTc36bUwLiXq4uRk0NCwERiY/931i5G
+	Lg4hgd2MEpveH2SGcD4xSmzYco8FwvnGKPF6ylZWmJZliz5CVe1llHi8vwPKeckosXHCZUaQ
+	KjYBXYkdi9vYQGwRgQiJW98mMoIUMQvMYJLYvfwCC0iCU8BOYsmUvWBjhQWCJBZMPcIOYrMI
+	qEgcar4AZvMKWEpsOj0fyhaUODnzCVgvs4C2xLKFr5khTlKQ+Pl0GSvEMj+Jhxt2skLUiEu8
+	PAoykwuoZguHxKsrd9kgGlwk3k/+wAhhC0u8Or6FHcKWknjZ3wZlV0us3zCPBcLuYJRo3F4D
+	YdtL7Hx0EyjOAbRAU2L9Ln2IXXwSvb+fMIGEJQR4JTrahCCqVSWa312FmiItMbG7GxqKHhLv
+	r81inMCoOAvJZ7OQfDYLyQezEJYtYGRZxSiZWlCcm55abFpgmJdaDo/w5PzcTYzghKvluYPx
+	7oMPeocYmTgYDzFKcDArifCe3r4gXYg3JbGyKrUoP76oNCe1+BCjKTC4JzJLiSbnA1N+Xkm8
+	oYmlgYmZmZmJpbGZoZI4b/POlnQhgfTEktTs1NSC1CKYPiYOTqkGpoRPPRNf30i7863kxt6j
+	e5jj37xxqm6S7fZdpvHMso3nRZ2V8iwtX/dpR65JV56TONH3vdKISX3R4iKjfcn+m389Pbh3
+	q6buHZfrD9kYVI+zG6+OPnZddq/J3uornxtcNa89cvxxyUDn94oXK4QLrdJkDv5oeLS2ns1v
+	0bSPHg8+v5S8dLx4ig3ft4Z5x9fMvRM7UzPjqvFUxd9sG9dpnNvq6GGcLuwn/FWTNXrB5CyW
+	r9YqpyY9zLUPr5/c9X2povnWdKfLsl29T05yTd8Ws3D5iZ9vl1j1tuS3ckYYmpq+jxHZIH23
+	13/nOj+1AraIDyrTLX6VLucyWLlw3Uvp3ZZ+MfuZHkx+qGWjadZ3ZroSS3FGoqEWc1FxIgDd
+	4f+zQQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWy7bCSvG537+J0g5VrpC3W7D3HZHFvxzJ2
+	i/lHzrFaXLuxkN3i5ax7bBbnz29gt9j0+BqrxeVdc9gsZpzfx2Txf88Odovlp3awOHB7rJm3
+	htFj06pONo/NS+o9+rasYvT4vEkugDWKyyYlNSezLLVI3y6BK2PX3mXsBSd4Kn59PMfSwDiR
+	q4uRk0NCwERi2aKPzF2MXBxCArsZJX6vWc4EkZCWuL5xAjuELSyx8t9zdoii54wS/99fYANJ
+	sAnoSuxY3AZmiwhESBw+Mp8FpIhZYBGTxKal11khOjqYJG7/2Qw2llPATmLJlL1ACQ4OYYEA
+	iQN7pEHCLAIqEoeaL4Bt4xWwlNh0ej6ULShxcuYTFhCbWUBbovdhKyOMvWzha2aI6xQkfj5d
+	xgpxhJ/Eww07WSFqxCVeHj3CPoFReBaSUbOQjJqFZNQsJC0LGFlWMUqmFhTnpucWGxYY5qWW
+	6xUn5haX5qXrJefnbmIEx52W5g7G7as+6B1iZOJgPMQowcGsJMJ7evuCdCHelMTKqtSi/Pii
+	0pzU4kOM0hwsSuK84i96U4QE0hNLUrNTUwtSi2CyTBycUg1Mu591zj50Jf/e8j/Zb/4nLX4o
+	URKkFVq2Ov3LnZDZExXO/mI00ahjsFF7Ilr/O2jh3Ac3THeaRfqc1k17sdb+Qz1PZxpz/FW2
+	sv8Z5x27uKftd1ucevPdt8bZxQJXL/jox69XWS6ZoHj8wX4FhX7tnJVPzvqb/3O3e73wUiTX
+	V2WBVyd2P1+l4/P7RHeu2vOc2kDJzRtlr8Welzr3ZvbLc57/uJKnLzku8/ZR1s0dTXY7qwtb
+	1kXzH+CyCxX83Hryzxqvv+ZfrXjs+6W3HjptVcQXcV/veNZebdG75+axPmd6te/rFJeYrF93
+	mNIq05vlpQTvVohOX2a46OTnX8IOza+SGVff3+Q8JbydqfJBlhJLcUaioRZzUXEiAMu9VZIq
+	AwAA
+X-CMS-MailID: 20250205161051epcas5p26dda7521e6fe32f18d6ef155802573b7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250108054224epcas5p399f3d734f8d9f82e5ae75d183d1a5344
+References: <CGME20250108054224epcas5p399f3d734f8d9f82e5ae75d183d1a5344@epcas5p3.samsung.com>
+	<20250108055012.1938530-1-dev.tailor@samsung.com>
+	<006401db73d6$2af35fb0$80da1f10$@samsung.com> <Z5zPpz6WAbPJX701@bogus>
+	<6d4d93a5-9a03-4cc3-9ef4-ab64562560f3@kernel.org>
 
-On Wed, Feb 05, 2025 at 03:47:03PM +0000, Robin Murphy wrote:
-> On 2025-02-04 6:34 pm, Jason Gunthorpe wrote:
-> > Convert most of the places calling get_order() as an argument to the
-> > iommu-pages allocator into order_base_2() or the _sz flavour
-> > instead. These places already have an exact size, there is no particular
-> > reason to use order here.
-> > 
-> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> > ---
-> [...]
-> > @@ -826,7 +825,7 @@ void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu, gfp_t gfp,
-> >   				  size_t size)
-> >   {
-> >   	int order = get_order(size);
-> > -	void *buf = iommu_alloc_pages(gfp, order);
-> > +	void *buf = iommu_alloc_pages_lg2(gfp, order + PAGE_SHIFT);
-> 
-> This is a size, really - it's right there above.
+Hi Krzysztof
 
-I didn't want to make major surgery to this thing, but yes it
-could be:
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Wednesday, February 5, 2025 9:22 PM
+> To: Sudeep Holla <sudeep.holla=40arm.com>; Alim Akhtar
+> <alim.akhtar=40samsung.com>
+> Cc: 'Devang Tailor' <dev.tailor=40samsung.com>; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; devicetree=40vger.kernel.org=
+;
+> linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.o=
+rg;
+> linux-kernel=40vger.kernel.org; faraz.ata=40samsung.com
+> Subject: Re: =5BPATCH v2=5D arm64: dts: add cpu cache information to
+> ExynosAuto-v920
+>=20
+> On 31/01/2025 14:27, Sudeep Holla wrote:
+> >>>
+> >> =5Bsnip=5D
+> >>  > +		l3_cache_cl0: l3-cache0 =7B
+> >> You can add one node for cl0 and cl1, say =22l3_cache_cl0_cl1=22 and
+> >> Remove the specific node for CL1, because both are same.
+> >>
+> >
+> > What do you mean by =22both are same=22 ?
+> > Do you mean both have exact same properties but are physically
+> > different caches ? OR Do you mean it is just one shared cache ?
+> >
+> > If former, we still need distinct node to get the cacheinfo about
+> > shareability correct. If this is about avoiding duplication of errors,
+> > you can probably define some macro and avoid it, but we need 2 nodes
+> > in the devicetree.
+> >
+> > If latter, you suggestion is correct.
+>=20
+> No answers here, so I drop this patch from my queue.
+>=20
+It took sometime to get the confirmation internally (because of new year ho=
+liday)
+Just replied to Sudeep. It will be great if you can consider this patch for=
+ this cycle.=20
+Thanks=21
 
-void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu, gfp_t gfp,
-				  size_t size)
-{
-	void *buf;
+> Best regards,
+> Krzysztof
 
-	size = PAGE_ALIGN(size);
-	buf = iommu_alloc_pages_sz(gfp, size);
-	if (buf &&
-	    check_feature(FEATURE_SNP) &&
-	    set_memory_4k((unsigned long)buf, size / PAGE_SIZE )) {
-		iommu_free_page(buf);
-		buf = NULL;
-	}
-
-	return buf;
-}
-
-> (although alloc_cwwb_sem() passing 1 looks highly suspicious - judging by
-> other cmd_sem references that probably should be PAGE_SIZE...)
-
-Indeed, amd folks?
-
-> >   	if (buf &&
-> >   	    check_feature(FEATURE_SNP) &&
-> [...]
-> > @@ -1702,8 +1701,10 @@ int dmar_enable_qi(struct intel_iommu *iommu)
-> >   	 * Need two pages to accommodate 256 descriptors of 256 bits each
-> >   	 * if the remapping hardware supports scalable mode translation.
-> >   	 */
-> > -	order = ecap_smts(iommu->ecap) ? 1 : 0;
-> > -	desc = iommu_alloc_pages_node(iommu->node, GFP_ATOMIC, order);
-> > +	desc = iommu_alloc_pages_node_lg2(iommu->node, GFP_ATOMIC,
-> > +					  ecap_smts(iommu->ecap) ?
-> > +						  order_base_2(SZ_8K) :
-> > +						  order_base_2(SZ_4K));
-> 
-> These are also clearly sizes.
-
-I didn't make a size wrapper version of the _node_ variation because
-there are only three callers.
-
-> I don't see any need to have the log2 stuff at all, I think we just
-> switch iommu_alloc_pages{_node}() to take a size and keep things
-> simple.
-
-Ok it is easy to remove lg2 calls from the drivers, but I would keep
-the internal function like this because most of the size callers have
-constants and the order_base_2() will become a constexpr when
-inlined. Only a few places are not like that.
-
-Thanks,
-Jason
