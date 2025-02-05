@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CF721C16F;
-	Wed,  5 Feb 2025 07:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD42139C9;
+	Wed,  5 Feb 2025 07:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738740490; cv=none; b=sPkuf7hBQ0rLX47/PBON/IX4NEIe70dGy8/fRvkz1svqCc7RNQ6JmwzlRMJauJN+eD1G7PETYSLGZBQX/jrTw5ba4NB9CUQbh/iDWUt1Ka0YH4s/3AMLybeRBC8Ow1hYW0g4TjKVqCMj/FJukzc06clxF/OXiFA1T3Zo8Pp3LU0=
+	t=1738741745; cv=none; b=SbZ9V8gb38p7YJX+HopX7UCVfyubaZH1Lt1WnVZ7hfvzTf2wzbcGwkKmIasQTQvzyWxS1enMqrUy3nWLi70dzB+Ft8G9S93cG7WUIXYnq4gfxLjUH4aD5BOaDCrdfYqM9knzpemjzdEOtv30FB9Cp7uwtlcs9fL/kBeCjszBPiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738740490; c=relaxed/simple;
-	bh=Mtk3GPiawz6xM56KH+DJhCTEAZ8bddN3kYMWpzWZj2U=;
+	s=arc-20240116; t=1738741745; c=relaxed/simple;
+	bh=Qw/0yWcANrMoXnTl4P+9ue7UVDNlxb5psQJThBWBFaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HJjAq7T/i0CJ88wlmWgpCed8YbpLUWjlDg13yHjppU13ZjwcG3C6o495Y2n+pMFkdh2vlmld38yVEzK+8xrHyGo6v9JtKKNl/MFg6GvjzFhH8OSdPQiVoC6NMrCNKb++3PZmt5QlrvK/wsIJignvBXQu6UOcTMdzLzE5POsKieQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Py9eFSyR; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=IL6TpJlZ1PeoMbHj0qG746StMhMGmIgafA40DW6ABUM3ivuVeYX2f8luTmF2xMBYfyD4iDf4yXhtCi5LlD3ioHyUu/y4LIs5cIam5wlFxmPdep2hoIiuc64nElRJmZ4LN6urhT2LtyE4i72lYibOKQ4+qamHQvJU8ssI6Mie3Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sv8ZJzTz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Py9eFSyR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE7BC4CED1;
-	Wed,  5 Feb 2025 07:28:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sv8ZJzTz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26362C4CED1;
+	Wed,  5 Feb 2025 07:49:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738740489;
-	bh=Mtk3GPiawz6xM56KH+DJhCTEAZ8bddN3kYMWpzWZj2U=;
+	s=k20201202; t=1738741745;
+	bh=Qw/0yWcANrMoXnTl4P+9ue7UVDNlxb5psQJThBWBFaY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Py9eFSyRUEtY/p4T17HMXZ6qxQQsU0ieBz9iWBnZgzu6jp31QwKHISJ+9l44f/CeH
-	 b39DerG2O2Rkvmvz1qx3lEFbxObouTrZR305+htCWS59QlNy2c9mrudQdvF08X1lQr
-	 z+2E3vQhtyUDBSzuR2zpElazSzx5RI74D42jaRtU8sXQbwLoAbXJmpcgCgqlZJEHnM
-	 hZy53PCfGf/c3l+x6pegq3VraO1gsDqY82nqHZtWMHRUOuV9NaKd5y+Ks8EL6Ba8Hq
-	 TozPUOSMo7KpqBDCfLRiZu9D9pacDqwUdmDXJJfjKhxZtQgNdAnBsFTBykPZgj5E7/
-	 4ZPp5jufNmpEA==
-Message-ID: <6be49594-87a1-4e5a-8f68-4c5b5ee1708a@kernel.org>
-Date: Wed, 5 Feb 2025 08:28:03 +0100
+	b=Sv8ZJzTzRjZTGo1UGH6BRpLl2PRniI9Qe4x+s6+Zlo1H5J9yw0Kdc+EXoRtY0uz/d
+	 XTEkAmsOeeSKLCC2d++dlrDZL3ngiyb/MH876EyUphTTeP1TARB5wNgjq0QrrJndwg
+	 wK11/k0cD+f4kOYzTfAw7Tnz8Bx+z0yyt7cNudHrME8v3t33l8Av+NuEMH9Gbr7jJf
+	 HAcQYosTtABgjDcZWPHXirP2YKmhxPSBRJiN0KH0J2NLPLlwzoiZlbzcD0XFU+hItp
+	 48KdV9iviHmWhQoOn9ETIuvQ6FVt90Y7HfWhJomxc3ReU9RttWoA1DMYk5A5CtPNOE
+	 yqsenCxZ0+KZw==
+Message-ID: <53511b7c-aec3-4846-ab68-05958d585516@kernel.org>
+Date: Wed, 5 Feb 2025 08:48:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Support ExynosAutov920 ufs phy driver
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?B?J+uCmOyGjOybkC9TT1dPTiBOQSc=?= <sowon.na@samsung.com>,
- vkoul@kernel.org
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- robh@kernel.org, conor+dt@kernel.org, kishon@kernel.org
-References: <CGME20241226031145epcas2p4fa41b44749a7f675364437856d01a4c6@epcas2p4.samsung.com>
- <20241226031142.1764652-1-sowon.na@samsung.com>
- <000001db658c$4dce63c0$e96b2b40$@samsung.com>
- <080d01db7786$ed980e90$c8c82bb0$@samsung.com>
+Subject: Re: [PATCH 0/2] Add chip ID for Exynos7870 SoC
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Sergey Lisov <sleirsgoevy@gmail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
+ <339ea40f-6bc7-42ad-a5c2-f57b3be8cc39@kernel.org>
+ <e9d9388d0adacd5599c6c6f5b7f33f87@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,37 +89,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <080d01db7786$ed980e90$c8c82bb0$@samsung.com>
+In-Reply-To: <e9d9388d0adacd5599c6c6f5b7f33f87@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 05/02/2025 05:32, Alim Akhtar wrote:
-> Hello Krzysztof / Vinod
+On 04/02/2025 20:29, Kaustabh Chakraborty wrote:
+> On 2025-02-04 07:53, Krzysztof Kozlowski wrote:
+>> On 03/02/2025 21:32, Kaustabh Chakraborty wrote:
+>>> This patch series is a part of Exynos7870 upstreaming.
+>>>
+>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>>> ---
+>>> Kaustabh Chakraborty (2):
+>>>       dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
+>>>       soc: samsung: exynos-chipid: add support for exynos7870
+>>>
+>>>  Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
+>>>  drivers/soc/samsung/exynos-chipid.c                                 | 1 +
+>>>  2 files changed, 2 insertions(+)
+>>
+>> When I asked to split, I said per subsystem. Soc is one subsystem.
+>> Everything targeting SoC should be in one patchset. get_maintainers.pl
+>> tells the name of the subsystem and its maintainers.
+>>
+>> If there is going to be resend/new version, combine patchsets for soc
+>> into one patchset (just like the example I gave last time).
 > 
->> -----Original Message-----
->> From: 나소원/SOWON NA <sowon.na@samsung.com>
->> Sent: Monday, January 13, 2025 12:55 PM
->> To: vkoul@kernel.org
->> Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
->> devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
->> robh@kernel.org; krzk@kernel.org; conor+dt@kernel.org;
->> alim.akhtar@samsung.com; kishon@kernel.org
->> Subject: RE: [PATCH v4 0/3] Support ExynosAutov920 ufs phy driver
->>
->> Hi Vinod,
->>
->>> -----Original Message-----
->>> From: Sowon Na <sowon.na@samsung.com>
->>
-> [Snip]
->> I can't see these patches in -next yet, do let me know if anything is missing to
->> be addressed from myside.
->>
-> Which tree will this series go through? 
+> Alright, so I'll move these patches to the one which has the devicetrees.
+> 
+> There's also a Documentation/devicetree/bindings/soc/ patch in
+> exynos7870-pmu-clocks [1]. The CLKOUT driver uses the compatible declared
+> in there, i.e., the CLKOUT driver depends on that commit. So, should it
+> stay there? Or...?
+
+The binding stays with the driver.
 
 
-phy goes through phy. I take the DTS once the bindings got accepted. I
-cannot take it earlier for obvious reasons - warnings.
+
 
 Best regards,
 Krzysztof
