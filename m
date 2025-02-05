@@ -1,33 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD42139C9;
-	Wed,  5 Feb 2025 07:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8788215077;
+	Wed,  5 Feb 2025 08:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738741745; cv=none; b=SbZ9V8gb38p7YJX+HopX7UCVfyubaZH1Lt1WnVZ7hfvzTf2wzbcGwkKmIasQTQvzyWxS1enMqrUy3nWLi70dzB+Ft8G9S93cG7WUIXYnq4gfxLjUH4aD5BOaDCrdfYqM9knzpemjzdEOtv30FB9Cp7uwtlcs9fL/kBeCjszBPiU=
+	t=1738743531; cv=none; b=PGtrMZsrUSaZeT9wZsPByud5AmMqfW6BkSLAS5ap11IDPGN7GBxS7BVZ2AY+tCIezCQ3NbYA5GW2mDI24aboBaAPr/D/VucyKmduniab1VqtHpqaWdhm4DHVLK3Uk28FIRmPfa0K2Wlzu6GRSTP9D4aJM0DsEwgURaXZJRwQXjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738741745; c=relaxed/simple;
-	bh=Qw/0yWcANrMoXnTl4P+9ue7UVDNlxb5psQJThBWBFaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IL6TpJlZ1PeoMbHj0qG746StMhMGmIgafA40DW6ABUM3ivuVeYX2f8luTmF2xMBYfyD4iDf4yXhtCi5LlD3ioHyUu/y4LIs5cIam5wlFxmPdep2hoIiuc64nElRJmZ4LN6urhT2LtyE4i72lYibOKQ4+qamHQvJU8ssI6Mie3Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sv8ZJzTz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738743531; c=relaxed/simple;
+	bh=4yFYHF9xYptZpF0Uo5Lcj/AR1aNAJOWX6ts3nzJseaw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Dplou9QtQj6p2a8xYSiWy3vxaYv06REatIqnTq1A9CuAveAAzHlVYHuqnErwaT23AIJP2kgSy4JOmB3YtN4V8ckBStdzMsiCJGtyBu9UeqfTKBUCuAcL/QLL0f2ZaVssY66+hXQ5ksrYlmk8Skh5y1OMBmr9khRy//RlIfKcke4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQ4uWsNv; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sv8ZJzTz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26362C4CED1;
-	Wed,  5 Feb 2025 07:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738741745;
-	bh=Qw/0yWcANrMoXnTl4P+9ue7UVDNlxb5psQJThBWBFaY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sv8ZJzTzRjZTGo1UGH6BRpLl2PRniI9Qe4x+s6+Zlo1H5J9yw0Kdc+EXoRtY0uz/d
-	 XTEkAmsOeeSKLCC2d++dlrDZL3ngiyb/MH876EyUphTTeP1TARB5wNgjq0QrrJndwg
-	 wK11/k0cD+f4kOYzTfAw7Tnz8Bx+z0yyt7cNudHrME8v3t33l8Av+NuEMH9Gbr7jJf
-	 HAcQYosTtABgjDcZWPHXirP2YKmhxPSBRJiN0KH0J2NLPLlwzoiZlbzcD0XFU+hItp
-	 48KdV9iviHmWhQoOn9ETIuvQ6FVt90Y7HfWhJomxc3ReU9RttWoA1DMYk5A5CtPNOE
-	 yqsenCxZ0+KZw==
-Message-ID: <53511b7c-aec3-4846-ab68-05958d585516@kernel.org>
-Date: Wed, 5 Feb 2025 08:48:59 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQ4uWsNv"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dce27a72e8so118544a12.2;
+        Wed, 05 Feb 2025 00:18:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738743528; x=1739348328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UNW7uXFJKMR9kCFEqLTGkFIRk/6qrajv5bHRhgQljQY=;
+        b=RQ4uWsNv3338UCA+ipMQNzPY5G4qwecPntSeEVjnlWU4NRfd2BTGlDcifuU8+gUYj3
+         r2828MYLgVf8AeWSR5PNhmCDkuTHhNG8AQYnzE9jrMX56HBJ6jnQED1nmDEnNasECYK4
+         /ij++L5Q+zF+VoCzW0m8CuxGa7aG8kbES7i7D628APWDDFzi2bvWo0Foi9DtDdsY+udS
+         lb0f4zB7vMW0s3L2TfkeFoFYJTrc759rU5urUTMKmEbwRTDkMlxY2RK0/Q5I2vi77gTz
+         aCbXSsPl/dERXhd+ElzujujYmClNxhjg/01U2grmvl4Yc3y5kmkEk1VSDJp5wSkBNsFw
+         3P1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738743528; x=1739348328;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UNW7uXFJKMR9kCFEqLTGkFIRk/6qrajv5bHRhgQljQY=;
+        b=h7HZaWg7nxSx21VX3hB9hSHh3jNugelNSSyG2sQ03eyktTWFcUATWZQpbE5FpAUzaS
+         CMevZWBOFnqwBsWsFI2/VZaXsw/j+l1NM3dbvgUjPmXvks+KL/ytK67ntEiyWFCsLUew
+         BeEgALDyXqkdoNZJShHpEugyoHbUracJYnsPO7P176BJVMqIVAvd0EFvqpqgFf4UZOLC
+         HkHTB7hPqqBxyUKhBZGVZHRPAnPHvjX0QHb6bIx/6XeLCtsq1Y35jHDQjXCxFU2i8eOv
+         /kdobKaBQCnpmQVcGBKc4xZUBGrlUDdsvEkcVGX+LruceO405W+Zmu0vXEVUZ7gZl75U
+         +0CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGHT9biXC8PtFFw7pXSDTgi4f3aSCP3VuoX0WeB3sNHe/YT5TvWBB06BTOifY9CLSX7yb4uSzKgnIegdHzWtaZBmg=@vger.kernel.org, AJvYcCXsiXCJCaJd/XHCBgSmBmDJ37QdQW0mEBzq0RoyMR/XaVj/fqluE3cuuKrdAUrOgvIqbzGZQSL4HfuhY80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs0rEsDQm7I/nyPFxtZ+bdHi3i84Ml0wWKmaHsWd7Kc2+OjkY2
+	mMA7D8yxGky4MA7Ar2xC74cIwrKHAfn7fYSRH7HyAEDt8CiMxiY5/oDHXA==
+X-Gm-Gg: ASbGncsQeilcQ2qLhUo6zH1H0IeMjhgsxkwBdBamYkPxSNsEQKv+5D32SvEpnjtkD3I
+	tNNamafvNta2c6gKl040sLeO5wDvqph4nX0uahxuWDsLx/yfyFNiaFYMGF6QGyRG1+Mv0vcv3po
+	j2KdTBsgSavTE9vaw1ci1xnRLp+phnCycJyCeHq5W2jeHdVNCX8aWZgerL8ErRFSdEEARWjKB1A
+	CGg1qpK66K0G6aY0vshUdYoUiS81SchhRRJxoG7PeHaBBhDez7ov9ak4E2BlwD6x3MrL/aL7Pna
+	BlTOeep6wD5D5A1TnWvvGAz5wkfRXvn2AAItMCL8ZuVjz76EnjHm2vJMM46T5l2pgBTiRA==
+X-Google-Smtp-Source: AGHT+IHDbLiE7YoVUr4CvYmahaf4zTpaa81sGHBgInIf/ZKG021o5cEBnKKzmiCc6pqVQHocIMOaAQ==
+X-Received: by 2002:a17:906:db04:b0:ab6:d575:9540 with SMTP id a640c23a62f3a-ab75e34dc14mr153610966b.50.1738743527521;
+        Wed, 05 Feb 2025 00:18:47 -0800 (PST)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7008b2c04sm852094466b.33.2025.02.05.00.18.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Feb 2025 00:18:46 -0800 (PST)
+Message-ID: <dc3dcfe1-2706-449b-8622-2783349e8b41@gmail.com>
+Date: Wed, 5 Feb 2025 10:18:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,97 +66,82 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Add chip ID for Exynos7870 SoC
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Sergey Lisov <sleirsgoevy@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org>
- <339ea40f-6bc7-42ad-a5c2-f57b3be8cc39@kernel.org>
- <e9d9388d0adacd5599c6c6f5b7f33f87@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 4/4] arm64: dts: exynos: update all samsung,mode
+ constants
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e9d9388d0adacd5599c6c6f5b7f33f87@disroot.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250204172803.3425496-5-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250204172803.3425496-5-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/02/2025 20:29, Kaustabh Chakraborty wrote:
-> On 2025-02-04 07:53, Krzysztof Kozlowski wrote:
->> On 03/02/2025 21:32, Kaustabh Chakraborty wrote:
->>> This patch series is a part of Exynos7870 upstreaming.
->>>
->>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>> ---
->>> Kaustabh Chakraborty (2):
->>>       dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
->>>       soc: samsung: exynos-chipid: add support for exynos7870
->>>
->>>  Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
->>>  drivers/soc/samsung/exynos-chipid.c                                 | 1 +
->>>  2 files changed, 2 insertions(+)
->>
->> When I asked to split, I said per subsystem. Soc is one subsystem.
->> Everything targeting SoC should be in one patchset. get_maintainers.pl
->> tells the name of the subsystem and its maintainers.
->>
->> If there is going to be resend/new version, combine patchsets for soc
->> into one patchset (just like the example I gave last time).
-> 
-> Alright, so I'll move these patches to the one which has the devicetrees.
-> 
-> There's also a Documentation/devicetree/bindings/soc/ patch in
-> exynos7870-pmu-clocks [1]. The CLKOUT driver uses the compatible declared
-> in there, i.e., the CLKOUT driver depends on that commit. So, should it
-> stay there? Or...?
+On 2/4/25 19:28, Ivaylo Ivanov wrote:
+> Update all samsung,mode property values to account for renaming USI_V2
+> constants to USI_MODE in the bindings.
+>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 14 +++---
+>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi  | 48 +++++++++----------
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi |  2 +-
+>  .../boot/dts/exynos/google/gs101-oriole.dts   |  4 +-
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi  |  2 +-
+>  5 files changed, 35 insertions(+), 35 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> index f1c8b4613..cb55015c8 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> @@ -651,7 +651,7 @@ usi_uart: usi@138200c0 {
+>  			compatible = "samsung,exynos850-usi";
 
-The binding stays with the driver.
+...
 
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> index 387fb779b..b73c152c7 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
 
+This patch won't apply anymore since gs101-oriole was moved to pixel-common.
 
+I didn't see that [1] was applied yesterday. I could make a new patch that
+also covers these changes, but I'd expect the rest of this series to get applied first.
 
-Best regards,
-Krzysztof
+[1] https://lore.kernel.org/all/20250117-gs101-simplefb-v4-0-a5b90ca2f917@linaro.org/
+
+> @@ -161,12 +161,12 @@ &usi_uart {
+>  };
+>  
+>  &usi8 {
+> -	samsung,mode = <USI_V2_I2C>;
+> +	samsung,mode = <USI_MODE_I2C>;
+>  	status = "okay";
+>  };
+>  
+>  &usi12 {
+> -	samsung,mode = <USI_V2_I2C>;
+> +	samsung,mode = <USI_MODE_I2C>;
+>  	status = "okay";
+>  };
+>  
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> index 302c5beb2..473db46aa 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> @@ -825,7 +825,7 @@ usi_uart: usi@10a000c0 {
+>  				 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0>;
+>  			clock-names = "pclk", "ipclk";
+>  			samsung,sysreg = <&sysreg_peric0 0x1020>;
+> -			samsung,mode = <USI_V2_UART>;
+> +			samsung,mode = <USI_MODE_UART>;
+>  			status = "disabled";
+>  
+>  			serial_0: serial@10a00000 {
+
