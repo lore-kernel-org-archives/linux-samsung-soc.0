@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE560131E2D;
-	Wed,  5 Feb 2025 08:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A802185A8;
+	Wed,  5 Feb 2025 08:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738745676; cv=none; b=jrgPAYIV+SnS/lWCTq4IooyrGSKT5h4/OJLfmgupBVjzwKnxErAkk9UKEX5/n0XkP393RTF8DYIWzeTY/ScTZCP5PBZWnQOpUUnlHxbTw1fAm3+x0iHeqXcozLzTX2r8nsrK97KJqN2Xiv+YX4qL2RpVdNNaq0m4EQrik0dYW74=
+	t=1738745812; cv=none; b=pMPdQdT0pE31p6eRPnRmp+J46R1mWAoG80xBIC0RYixAHowbxrWIjFXZpoM/0ivOaS8PxnmXxpSNfBvPyIRbregYQRgbRLMJzPcQKlh4aAynjWRQhNN2HpsEBRixlZdJ5vbbGs3RRe5vxbxQjKDTZ0WAk9Jf30wc6GxYn23AJhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738745676; c=relaxed/simple;
+	s=arc-20240116; t=1738745812; c=relaxed/simple;
 	bh=jDRflpWn/eNSVYWYsmChMhlBoAx8KSfDOFOxrHxoKr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkFov3b84vd4YyUxiI9vhtM0TZ12FKutrUBgjVM0pZYOS9DUCV5VJ+6Gp6p7eCfGSSU+LQK+cCyLjke96ngPVBcdD9m0+WyKQjDmTT7czZ8G8IzGyM7h407Zxbfjpyeu6lK1bn1192vVcIVWQ2OcxJ4ozRwgGdMTLUq+R3j47tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tc/UMR2F; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=D2b9SgtyGy1Ihf8R1QecUdREC+qIPY0iXuUds7By82aPImL823llKvYoCOCAYXZNRQMDqjE8jxjUdQxCQKe/dKrTvqZJpJam0iLF452MG7Nh6vd2huy8Z9FxVm27PhPzqPG5eML4U41suIXwrkb18nX3zrzTlB9D0XqvMAvmQBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMSlP1zt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tc/UMR2F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CAAC4CED1;
-	Wed,  5 Feb 2025 08:54:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMSlP1zt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0540CC4CED1;
+	Wed,  5 Feb 2025 08:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738745676;
+	s=k20201202; t=1738745811;
 	bh=jDRflpWn/eNSVYWYsmChMhlBoAx8KSfDOFOxrHxoKr8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tc/UMR2FRlTFRyVgYY9afrZYTS+LM9UgZhIPbWvhBkEdq50RpckoDoMsFG2Maj+Xp
-	 xQpnREgSJgAJk6owZFc7RIUFxYZ6XMGaK9ikVr3V+GX3rZRNnwawmNQrqGuwf72pp2
-	 FOLNnxXK33Mvs4CknqYG6GDUWaczasrSd10uY4pX2DcgewkSsezuzgfbwjwSZ6JxKr
-	 CHMWtN/jjvrIQHZtZe+pSujeJtrETJ2gvLolt/b7+RxL524dZ1Xd395O97XC6+Xvg/
-	 KuHpmUxhJX3odtIxR7SFQCK6xzWD/0CHny2bDFC0FQ42H/8Kpbl6QE0kQolyHb+DGP
-	 3KJ4U6pgJpb0w==
-Date: Wed, 5 Feb 2025 09:54:32 +0100
+	b=BMSlP1ztsEQ6urNcvZNA5LG4TmjqcVVFSqEmeOSjDrESzJZNO1oxJvblv8TodUMiU
+	 R6413G/mmomrMVFAsyr/c/jxrDbubulBDssRG796vFMpUqYBRklhxfoOIXNxWK5256
+	 /g+5HdjX08Opk7C/rVYaFxP4SrgpyAVp3aod4SgvN6wUvU2+Lr42bIK5Val/qGRG69
+	 989H0jpSNzdQBOyJ09htb446gC5YHaQb62BSj6j3W/RWS//qpBPxLqrBP52meOGVR6
+	 5dOHUnMbbujMt4eHY+7X0JzupJ+WI7ycN7P1ltK49yAExZJCYCb+y4hczpJ9duUxVU
+	 1H9i6UOY80maw==
+Date: Wed, 5 Feb 2025 09:56:48 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: Vinod Koul <vkoul@kernel.org>, 
@@ -38,7 +38,7 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	devicetree@vger.kernel.org
 Subject: Re: [PATCH 3/4] dt-bindings: phy: samsung,usb3-drd-phy: add
  exynos7870-usbdrd-phy compatible
-Message-ID: <20250205-sturdy-emerald-gaur-953deb@krzk-bin>
+Message-ID: <20250205-honest-versatile-bettong-9c4c0e@krzk-bin>
 References: <20250204-exynos7870-usbphy-v1-0-f30a9857efeb@disroot.org>
  <20250204-exynos7870-usbphy-v1-3-f30a9857efeb@disroot.org>
 Precedence: bulk
