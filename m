@@ -1,43 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9838C22A1C5;
-	Wed,  5 Feb 2025 08:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBB7219A6E;
+	Wed,  5 Feb 2025 08:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738745045; cv=none; b=KzQIDLXCK8LF17zlVWETXia15YckvG7DNDTp+dLqum3rdJUehtt0Dy/L3xG2PQke8oMhcH/4iFRnoOk3m4owBoJVHGSy31B92l4mswNOQQNARnU691aHjUfx1UBnCpMvD9/w8MK4T+cjTJLrvcIN3h6omgY79f0gXGXc+yW23uY=
+	t=1738745243; cv=none; b=G0SlsNWbPlrhHiBcJ83b5WrUxuPVA87g148NjjBCCO0Q65mTQ6+QgSMEeqZj1XooDzIeYgZhtkSD6pEB1AYR16ID/UI+DJY5HwljjlbOEvAdwj4VhfxDKBVTQ5k0HXkyiXKCNaL6V0MwcBNimGKdrcmhjRHo2nSOZxYDczos6kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738745045; c=relaxed/simple;
-	bh=DVZfcrbv7vSC0Qw/vD+hsLybGCwDpGP5oB9YoF6ZEYU=;
+	s=arc-20240116; t=1738745243; c=relaxed/simple;
+	bh=uneNg+O/MbXGyjnuoovNGs4oaGpveM8WtUe65AIHv6Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KmVsQtVt02zBuCOv7rZArCFAnKNnEls4fuwsuK7WkJFb83/eWJn6AbFFjf7XZHiVMiWMGW+VfSYu1fKSsHpe9vX+e0rgLMIlyouf+iqH4J3IgZyJMJ24gH7av5ypvin+FN3WG5DTMkDuxM8i98gbwI+3YGXpPhrZc7i8nWvb+AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mA2aBluE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1G23zkhPmRtktttpR5kOLN6dWC9KtM5ICUjTvyiBSV1WX8Zazi4wev56rw+8Dy9FENKyGOE4ze88cqKdAw2CHhtGbyr/DbDBiSXMLIZT+vwVMORT5+Q+2/YpYxp3u0CjDyJ6rgKZs867RYNlxTPbEM1L31MbG9p6aEBzwSOccI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyTw/sdD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mA2aBluE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15857C4CED1;
-	Wed,  5 Feb 2025 08:44:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyTw/sdD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BEDFC4CED1;
+	Wed,  5 Feb 2025 08:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738745045;
-	bh=DVZfcrbv7vSC0Qw/vD+hsLybGCwDpGP5oB9YoF6ZEYU=;
+	s=k20201202; t=1738745243;
+	bh=uneNg+O/MbXGyjnuoovNGs4oaGpveM8WtUe65AIHv6Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mA2aBluE+Ucem9uUonit6rVkY9Wjgqbez75BUeNNZp3nNPUA4hTj9vi6Y82qMlXju
-	 JiQKGjN5bubglCBaMd/jkn0BlNwVk/2QjtZs3UERW1hXfi8zAaWUxfmjIZ5yoz8kr6
-	 3NBNW1/Pj1l1qRrMhp7jO4DwszNo0/EOJCIhu6S7edJlml1XiKOunInPK/DgKlGtsO
-	 BZ2FuSE81E21lHMSetvGXbhqBFY7rB4kGfdfusnG3cTLMAm1GzQrSN/35RiSMDP1gA
-	 3Taew7BzQvpCE43q8GRIISTFS+SAmcghSY1oqnt4ZBMTrwZfKoeV8FNg5LJ8vNF1qF
-	 1Vc5lfO8xR3pg==
-Date: Wed, 5 Feb 2025 09:44:01 +0100
+	b=DyTw/sdDiOx7NIo9rTHCia+SRptdfIeprG4LZHe0P1Qh5WKSCALQMPLxEzqVrJ84m
+	 wrt5OYQRa2DnuGE6Xlg7uetNaaE5zva7jyZ6t3VOfPrYyEsznS9L4gvOZUQ7ZJr/7E
+	 sjMl9HMDyYxJyIUyepFzzW6thdIleLPMh5jixajDMshZa/VbFsWC3PgYtlT40zEfmz
+	 e+UlB9oQyxO64HCJG7i8pF89xxcoAv0CDl82XB9uS/HoPlflBv9+zMbJ2OdYMJuieA
+	 bfYrfsRBFXQMlDOPtXWe+maVtbaDCm1TOE75rnT09dGd4JGVpnmGdDClAt6SVbiefd
+	 U1JyNeODHG7oA==
+Date: Wed, 5 Feb 2025 09:47:19 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sergey Lisov <sleirsgoevy@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] tty: serial: samsung: add support for exynos7870
-Message-ID: <20250205-artichoke-gibbon-of-management-e9c5fc@krzk-bin>
-References: <20250204-exynos7870-uart-v1-0-06be6aa96284@disroot.org>
- <20250204-exynos7870-uart-v1-2-06be6aa96284@disroot.org>
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Sergey Lisov <sleirsgoevy@gmail.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: dwc3: exynos: add support for exynos7870
+Message-ID: <20250205-eager-ibex-of-pleasure-61e3bb@krzk-bin>
+References: <20250204-exynos7870-usb-v1-0-a7753f8183a4@disroot.org>
+ <20250204-exynos7870-usb-v1-2-a7753f8183a4@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -46,34 +46,36 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250204-exynos7870-uart-v1-2-06be6aa96284@disroot.org>
+In-Reply-To: <20250204-exynos7870-usb-v1-2-a7753f8183a4@disroot.org>
 
-On Tue, Feb 04, 2025 at 02:08:46AM +0530, Kaustabh Chakraborty wrote:
-> Add serial UART support for Exynos7870. The FIFO sizes are not defined
-> in the driver, and they must be provided in the devicetree with the
-> samsung,uart-fifosize property.
+On Tue, Feb 04, 2025 at 02:09:30AM +0530, Kaustabh Chakraborty wrote:
+> Exynos7870 devices have a DWC3 compatible USB 2.0 controller.
+> Add support in the driver by:
+>  - Adding its own compatible string, "samsung,exynos7870-dwusb2".
+>  - Adding three USBDRD clocks named "usbdrd20", "usbdrd20_ctrl_clk", and
+>    "usbdrd20_ref_clk", to be controlled by the driver.
 > 
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  drivers/tty/serial/samsung_tty.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 210fff7164c138e315d20ccaa4a29ce6a7bb2dfe..c8607633fea40df2ec221cfd3653c726094127cb 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -2493,6 +2493,12 @@ static const struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
->  	.fifosize = { 64, 256, 16, 256 },
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index f5d963fae9e069e1bd145ff5bd1b704da89fb74c..34f2b9e8529303cd2a957baed5819a45cbcf3309 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -163,6 +163,12 @@ static const struct dwc3_exynos_driverdata exynos7_drvdata = {
+>  	.suspend_clk_idx = 1,
 >  };
 >  
-> +static const struct s3c24xx_serial_drv_data exynos7870_serial_drv_data = {
-> +	EXYNOS_COMMON_SERIAL_DRV_DATA,
-> +	/* samsung,uart-fifosize must be specified in the device tree. */
-> +	.fifosize = { 0 },
-> +};
+> +static const struct dwc3_exynos_driverdata exynos7870_drvdata = {
+> +	.clk_names = { "usbdrd20", "usbdrd20_ctrl_clk", "usbdrd20_ref_clk" },
 
-I don't see any difference against Exynos8895, so they look compatible.
-Use Exynos8895 as fallback compatible, even though it is a bit reversed.
+We already stopped this mad downstream pattern, so don't reintroduce it.
+Use proper names describing the purpose of the clock, not the source
+name. See Exynos850 or GS101.
+
+This is probably bus_early, "something?" and finally ref.
 
 Best regards,
 Krzysztof
