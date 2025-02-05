@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C3A229B0D;
-	Wed,  5 Feb 2025 08:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00BE20E004;
+	Wed,  5 Feb 2025 08:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738744087; cv=none; b=BgK+Gk8hQyIbGoDvoJKLZR3KSYg8aIN9ASBz4sKfq3camKYdfSglqO21/ZxmHqHta2ST6/vxNFL9FCx851kTo9twyWgs5fFrsTwRQCF5VieYPEs21OmCxYX6h//00G8WxGC5bPxDdpj6V8shKkIepNSF7V5wOdOHvtaTfV2SmXc=
+	t=1738744339; cv=none; b=ha86TkaeazTimjQN+Akous7wvZ/fwusRqQObrjWWfBltziq4x1sUYj3OSw4bT3KNIhXv5qZJUOakDO4vojFETGoF1Y7WQJ2oPxn+dOOgvk/JUY+gyOqUxStEram1dvpnutXHttEGWvusiiDz1u4f1PTe2xmx6+2AP7LObJ4CQwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738744087; c=relaxed/simple;
-	bh=CFd1at/8SMlmUXn2NDq5TSXadPYqd3iQolIPX3ikTW0=;
+	s=arc-20240116; t=1738744339; c=relaxed/simple;
+	bh=360XsXFC8a0bmc8nVSRguqSpVLsU19VNluBf1b07lFo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhMR9ksN8Kt7Op/tN6CsDen9QOfpsU0Cu9/MmMUANYVWfuIqcUgnNLkNr6l0mUjZLt4TaT0TWEL2PHSUgaUCmsMJIVpOIGEipJ8rMQWnnz/i3aFTET2aKtNkKnSO1iuOl5Jb+UZ2lBX+ToZmElLHujBX9yRhsoxgC9KjjhDWEKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1ljhnKd; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDX1BXlTtAnrsMtyhada2dmvOtoo5hnvBO5znZmvI0X/uIoH+Q9GUBdhbRJ7EHRAEoAdA+HvukObdbB/AlvAn1p97dDz7N4EsQYQVIsHt6RSbkrpowimGN2+j4RL8GG84umq2FBWo2MZ86GGuroNo/FSmiiZt3eYqk9asTOefT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpwqb7rL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1ljhnKd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECA3C4CED1;
-	Wed,  5 Feb 2025 08:28:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpwqb7rL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2E8C4CED1;
+	Wed,  5 Feb 2025 08:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738744087;
-	bh=CFd1at/8SMlmUXn2NDq5TSXadPYqd3iQolIPX3ikTW0=;
+	s=k20201202; t=1738744338;
+	bh=360XsXFC8a0bmc8nVSRguqSpVLsU19VNluBf1b07lFo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M1ljhnKdJD2LM6Y2LHYGv/OgPP/cMZvit0Le2OZiUh/BUyNouNO7USToUdfesOqCm
-	 lUcJZoG8EHYVrp1qCDEHhr76Z/vZy/aBTFYmt1Ucz//PY2dffDTNbAYtirDrGvyxjX
-	 W8jn4G6ovDJzfcwTjr5l0Fyh6d6DUqDJKKKbcntE1fn09q8M+Abs+l1sbSdZrvABpu
-	 c02lpKSbOWb0aBH0hnGfuKjPIkQlQekU9wYSWFn2vVbSDuUbjtdXMwhzb1lQE6Pmdw
-	 Kpx04iKAMY8HP4VEKe0tm8RI5plUYq/6lgMc38G6pkJHNRdg4cChz6prQ2FGl62x5k
-	 pliAN73c+a9cw==
-Date: Wed, 5 Feb 2025 09:28:04 +0100
+	b=lpwqb7rL9eL13McmUWvB4orYyQDFqyl/MnWpCnsTT/Qy/czo1muPAYkVGzszRorVa
+	 KfyW+NXwC94hhwKELBkKxNeubeN0eMaxsvqkB1jVZb79AJFV0hlKuKBUooxTgskNC+
+	 WwYyb8Ca4FKyiYsGJZy5RuyvWAaDWeFG9D5K21NDwf+2lGRFC7iu5CoYN+Ljt46/lI
+	 K65qkceL5MApjDX8nuUXEiTopERdbnEUKI06Nhiqt+LIaOG/7Am0u+SZwn5YPEdJEh
+	 Ce0rVfaNmODv9Ic+DAUbh2eI0LsIcHH37cg2DXPpj0vlHBnDJBOHGXvCCj6kRBPg/x
+	 Nd+qJBfrqHSLg==
+Date: Wed, 5 Feb 2025 09:32:15 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Sergey Lisov <sleirsgoevy@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: mmc: samsung,exynos-dw-mshc: add
- exynos7870 support
-Message-ID: <20250205-premium-cuttlefish-of-strength-506a7d@krzk-bin>
-References: <20250204-exynos7870-mmc-v1-0-c87cfc72be4a@disroot.org>
- <20250204-exynos7870-mmc-v1-1-c87cfc72be4a@disroot.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Sergey Lisov <sleirsgoevy@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] regulator: dt-bindings: add documentation for
+ s2mpu05-pmic regulators
+Message-ID: <20250205-keen-taupe-loon-35e0de@krzk-bin>
+References: <20250204-exynos7870-pmic-regulators-v1-0-05adad38102c@disroot.org>
+ <20250204-exynos7870-pmic-regulators-v1-1-05adad38102c@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,18 +46,52 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250204-exynos7870-mmc-v1-1-c87cfc72be4a@disroot.org>
+In-Reply-To: <20250204-exynos7870-pmic-regulators-v1-1-05adad38102c@disroot.org>
 
-On Tue, Feb 04, 2025 at 02:04:16AM +0530, Kaustabh Chakraborty wrote:
-> Document the compatibles for Exynos7870's DW MMC driver, for both
-> non-SMU and SMU variants.
+On Tue, Feb 04, 2025 at 02:06:26AM +0530, Kaustabh Chakraborty wrote:
+> S2MPU05 is a PMIC found in Exynos7870 devices, which controls voltage
+> regulators (21 LDOs and 5 BUCKs). Provide documentation for devicetree
+> definitions, regulator naming patterns, etc.
 > 
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  Documentation/devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../bindings/regulator/samsung,s2mpu05.yaml        | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpu05.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpu05.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0a968fe79d44dbcb6720a7d1da698f9460e25521
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpu05.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/samsung,s2mpu05.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung S2MPU05 Power Management IC regulators
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Not me, I don't have this device nor its datasheet.
+
+> +
+> +description: |
+> +  This is a part of device tree bindings for S2M and S5M family of Power
+> +  Management IC (PMIC).
+> +
+> +  The S2MPU05 provides buck and LDO regulators.
+> +
+> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
+> +  additional information and example.
+> +
+> +patternProperties:
+> +  # 21 LDOs
+> +  "^LDO([1-9]|10|2[0-9]|3[0-5])$":
+
+Why is there a gap in LDOs?
 
 Best regards,
 Krzysztof
