@@ -1,63 +1,63 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9692A214A90;
-	Wed,  5 Feb 2025 22:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53F221579F;
+	Wed,  5 Feb 2025 22:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738794323; cv=none; b=YguBiNlkzStVfPj+G/8qb8LfBcLriDVM+iquxGSgTLe8XNyAFy8uCvRsjOS0UTcbRD4Xx51MEs0wR88nEGKNwyaTSryESBMnxiavtSmx0jN98wSQqZDaz1yn8XyVkACFg9bFmPYMg+VSvt0/JzlpPNatp/P1s5Eh3qwVTs1YEbs=
+	t=1738794325; cv=none; b=KO4EgufaBE4/w1JFGan4CfV49LnkdlxMmpcZ9/W3gYeRMIzSyUiT1na8+7YqLz+6V+QQOoqpp3xjnizuLOm3d6/M0zgaIWi4yWfi0uDZjlllweDJgFH4HJ6Zo8hlfRj2OdEwNjzExwBOFrr1JN3HUNDrRGrodmsOIfLHDBar/QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738794323; c=relaxed/simple;
-	bh=431rXLg/ur+/6lVZcKp3TZ0VL+PF9RTqkqPkp1Vq3xU=;
+	s=arc-20240116; t=1738794325; c=relaxed/simple;
+	bh=pitFpjySXIuepfva3Qsw3uz7CcztBnMEVlZ37PJKssE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CJp9H4+X109qFiLyYADUa+wva3/XUZ+iIAaPTbCaB5L1BAW+Ok23Rb2vDZLLIvwyA/j9acTy9+m1U3w8MX6I44DRgZ62e6AUgRPpHZWBu4m3GqYSHdQ8zr3vGMkb/860LMa0YtWyjanw0yAgh4p/oKCfXO6ypqQRFXfw988OUSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VvBCWW0k; arc=none smtp.client-ip=209.85.221.175
+	 MIME-Version; b=ceWmmzSIiPytfYUqvmrmW3KhGwmCE2FpLCJVYHnk4QWPMJH3xNCrSiJS9QveXF8+D0bqZagWmy4V4C6Mnw93gBQzhG6wWhqM4jpUsjm/Jc1VAKGGH2wUuCXLi3zwYTMyCJNGbML9PjppAaomFaU9D7lQ1c4TNw2MMgogfWhORGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZwYPZmCb; arc=none smtp.client-ip=209.85.217.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VvBCWW0k"
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51f2127a438so50583e0c.2;
-        Wed, 05 Feb 2025 14:25:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwYPZmCb"
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4afe6a8d2e1so151488137.1;
+        Wed, 05 Feb 2025 14:25:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738794320; x=1739399120; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738794322; x=1739399122; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gJTKfLilyHPLx3eObPNpy3DS6ZtIlktsSD9MZI8c8bs=;
-        b=VvBCWW0kbYzfyExHTatAOMaHio07l2LAnn3/dEbbbbR0F1C2VL69/pzkrIZ4L3eNNm
-         Ft6xUOJktM3XgQEXHAutvbrfURl/1OL5C6azc2CXbkI0UKM2b8IdO/CTFm4JJ9mV0tZx
-         /okx7cIZZMQGfHEpHLjEBdLixQeorZG9xFtN7hnurPBcGC2FHpmvMvVglig0HVf0/0vh
-         CLnM1yhCFoArDlBCDkvcimJYx7C0fkt3tWFlHQCYA9vPloZ7mFdagkIbNLhnrCaP/qkw
-         hU/2RGlPZm4MW/wMLcD38MA1kvAv2wBF2eSoHyL3Eqt22ccbJxAIhcRWuvEpPsrwTjHS
-         zmfg==
+        bh=lLGSgDdl5g9MmO62+ZaKTd5URN0HQgATTN7adUAMeJ4=;
+        b=ZwYPZmCb9PC5fyY4QKADSrXF5MJY5q4qmOlO8xDWO4n/DLBlkc8gbxlrlU4ghpr5IW
+         mj/iZujGpDCCXt8N1CtDbdSTzK8UHHONSD+w5ITJKMHtwnJavi+u/uYajtyFsfipRqm3
+         XxRc+J9XHpFLhFRLzw8tR543jQVl67YGe7FcMNdxrgl4uPXxBY2sfwy+nPrLoddBvMYo
+         +hHi8mED6T/zx2DJdUHX8WAh1TpJa274iJXz/t0tue8mMF8VUoF+a4u96BbfVYQLW5Yq
+         0vKysj/FOoX65d9X4DwsBKoB04ycMl9FO6IsbrLtGlXz4hBRCvz8iI89omlF5Xu69WnK
+         ERsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738794320; x=1739399120;
+        d=1e100.net; s=20230601; t=1738794322; x=1739399122;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gJTKfLilyHPLx3eObPNpy3DS6ZtIlktsSD9MZI8c8bs=;
-        b=Cr2kmRG5B5Fr1zZcVFbnKJquf2r20Z/6niuvBaFZXeFQUPb1iRNBoaQuwbRC6+Jgaw
-         oxk8AjosKTQJj+S44OLQIglgyD14uZts3949tTDztjmliQLi9hRdd+O95GLVxYcKsdtC
-         QGpqDSDnHWwEpGbBEXTT8lRpCrq278b7+Gvd/6TmIYI7391MWv8/QdQGH3oesoJkQ26q
-         Clx/mtRtYU1kJ7mlh3nabIcNkrAy+0aNm1+c96adW9nzzSY8VDoMqJGL8RYZZDTSnY+8
-         ajOrKJBx0D5d3sHTV85xJ30mMKbpdcaPmAzWf7SU/iAjRapWf6UNF3LZUyThd6K8liPN
-         +R0A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+S78YzXRX76mLo8OsCLdjfwDjKBRyQNBhdrv3ip3pNXAZWKYje3qYl2DRZEl01sWKqUl66hQAq6Ah3bavkUJKzw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwhJsxRHW9++MIiQoV+t/3FWGOVVhWd53N5IN2zcl/N4mgHRcm
-	rk6JvVLxNfMG41+6+7SiDChR1W3gEqyq8VOEAeuqmeJ6ScRRRhtz
-X-Gm-Gg: ASbGncuoXW4bwIyhL1kQhsmIhyjJX/rNN/TKAD6lwtOfkwPPHr+Bwkt6/y5V8QGGK89
-	9lnWpb6f9OcbTFCXd9H4yDxrPZR6j49qR3PfS09tNEAxt/l8AZ6QO2XdEoyY7fdmDUotzuZQ4HT
-	9hQ+HZ06cJiy8Nhe4uptbNZ3YigbaqpFHCzsIyPAe/ccPxvH5aNQuCP4Rj9dhMF6VSDYBUFh+fI
-	rsDzDbLMUshq0iX+PWE78YTrwzI97xpil4dN/WKPbHn5E9Bv5QI7YguCbg2s1g6IckJHmqVwmCq
-	M1JCiCa+TqpTZSHNJJlE7pLSDbTajQTWimRogvpmRSbkBIgXINHC3OdveIT77pgLwq9OMOx6N0c
-	9Cw==
-X-Google-Smtp-Source: AGHT+IETBHJFgsxv08BokD07Ze3sD9qMnzxrSwYE0FIosYhyygsNEboJYxXQI1epDJdsv5iLBBxyfA==
-X-Received: by 2002:a05:6102:5e89:b0:4b6:d108:cac0 with SMTP id ada2fe7eead31-4ba478b11d3mr3790967137.3.1738794320247;
-        Wed, 05 Feb 2025 14:25:20 -0800 (PST)
+        bh=lLGSgDdl5g9MmO62+ZaKTd5URN0HQgATTN7adUAMeJ4=;
+        b=WKKIhzo4qIxERxKDH2ngclUdz1xe9EnXVSAUq8X0uLINVbTlzT9htF+iN+LiGTqGaK
+         4G105I3ihgodkpRZeRmeDEYH3DLfJgPlPThVZDQOlqdoa/QQvgdrc1TpT2I4ohlii++1
+         n2Xhrnf6417W0284qX/UHffFR4uUwpGAbbcp2VhCWDmSFezb28VonWFOPJbASyvAa7tA
+         sYDjvhO6vA3hJVIPyRj1Hiu7Y3HFFtZvatbYo84v9fftmNAAP4jNATFlOK56M1i8n2ui
+         SHRheS9k+sIrDBmeqW9NjFY7MhBx49HKaLXHNnyZJlZD7MEMLFx5FGDyukF0TFbx3TNH
+         11JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLqkhYd7tKUKkW11L4daFmx5UxkccAyaBanC5W+anyIJWN7sCTRAy95Pftf/BDoddoozVAz3hFsSth9TCS0cY2Og==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1bR6gMxAHktbtErY6DGoiLFMB56Sb/JRWofMny20xZBLg5AQC
+	3zcsnEj9ZwWfqi6YTMpbL7O/CirKt17SEi7Q6xOXKFOqL9raeNos
+X-Gm-Gg: ASbGncvlDRryo2mW82YmkYutjpHoD3Bbji5NNNG/Cboj/iZ8MYZLkGhObogTqd4iyRL
+	MNS+X0D3nGSuV7zZetY5XKBZX9llTXguiv6tojePBtPDwTI1TWvYpijk7OLdcV1G+74+PnFyYj+
+	QjK6PCz6YrIsAIE1ci56PW114sawmg6wq7ayC6BuPYhnT1P2vVYSq9oOlbMpAD4LqRME5uf24Dj
+	7RTdZbMmPWSQmmNvalHXY8sbzrAn4tdTTfIUlOCjaZETeuTTU057sdRkc8JAVD6f/R0m1665byv
+	mwa2dyAORTLpe2XQK38IYBPWYtdl+lHfT2ozCCEQGVu44bKlS/mc9BYm3VcDOakvBuxtdUzauu+
+	KNQ==
+X-Google-Smtp-Source: AGHT+IE0tEZegMQHIWkk0mn6LCcU2W7qerUiRb0uNn6UQq7E/4NmKo29oH1zA0GoKMQe8I67Cz1aug==
+X-Received: by 2002:a05:6102:82d2:b0:4b5:c302:37b3 with SMTP id ada2fe7eead31-4ba71f8cffcmr740160137.5.1738794322551;
+        Wed, 05 Feb 2025 14:25:22 -0800 (PST)
 Received: from localhost.localdomain ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-866941edbefsm2475354241.28.2025.02.05.14.25.17
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-866941edbefsm2475354241.28.2025.02.05.14.25.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 14:25:19 -0800 (PST)
+        Wed, 05 Feb 2025 14:25:22 -0800 (PST)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
 To: krzk@kernel.org,
 	alim.akhtar@samsung.com
@@ -65,9 +65,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: [PATCH v1 1/9] dt-bindings: clock: samsung,exynos990-clock: add PERIC0/1 clock management unit
-Date: Wed,  5 Feb 2025 22:22:15 +0000
-Message-Id: <20250205222223.613-2-wachiturroxd150@gmail.com>
+Subject: [PATCH v1 2/9] dt-bindings: i2c: exynos5: add samsung,exynos990-hsi2c compatible
+Date: Wed,  5 Feb 2025 22:22:16 +0000
+Message-Id: <20250205222223.613-3-wachiturroxd150@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250205222223.613-1-wachiturroxd150@gmail.com>
 References: <20250205222223.613-1-wachiturroxd150@gmail.com>
@@ -79,243 +79,26 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dt-schema documentation for
-the Connectivity Peripheral 0 / 1 (PERIC0/1) clock management unit.
+Add samsung,exynos990-hsi2c dedicated compatible
+for representing I2C of Exynos990 SoC.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
- .../clock/samsung,exynos990-clock.yaml        |  24 +++
- include/dt-bindings/clock/samsung,exynos990.h | 178 +++++++++++++++++-
- 2 files changed, 201 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml
-index 9e7944b5f..6b053d1bc 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml
-@@ -30,6 +30,8 @@ description: |
- properties:
-   compatible:
-     enum:
-+      - samsung,exynos990-cmu-peric1
-+      - samsung,exynos990-cmu-peric0
-       - samsung,exynos990-cmu-hsi0
-       - samsung,exynos990-cmu-top
- 
-@@ -55,6 +57,28 @@ required:
-   - reg
- 
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos990-cmu-peric1
-+              - samsung,exynos990-cmu-peric0
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (26 MHz)
-+            - description: Connectivity Peripheral 0/1 bus clock (from CMU_TOP)
-+            - description: Connectivity Peripheral 0/1 IP clock (from CMU_TOP)
-+
-+        clock-names:
-+          items:
-+            - const: oscclk
-+            - const: bus
-+            - const: ip
-+
-   - if:
-       properties:
-         compatible:
-diff --git a/include/dt-bindings/clock/samsung,exynos990.h b/include/dt-bindings/clock/samsung,exynos990.h
-index 307215a3f..97cb5e8d2 100644
---- a/include/dt-bindings/clock/samsung,exynos990.h
-+++ b/include/dt-bindings/clock/samsung,exynos990.h
-@@ -233,4 +233,180 @@
- #define CLK_GOUT_HSI0_CMU_HSI0_PCLK			21
- #define CLK_GOUT_HSI0_XIU_D_HSI0_ACLK			22
- 
--#endif
-+/* CMU_PERIC0 */
-+#define CLK_MOUT_PERIC0_BUS_USER			1
-+#define CLK_MOUT_PERIC0_USI00_USI_USER			2
-+#define CLK_MOUT_PERIC0_USI01_USI_USER			3
-+#define CLK_MOUT_PERIC0_USI02_USI_USER			4
-+#define CLK_MOUT_PERIC0_USI03_USI_USER			5
-+#define CLK_MOUT_PERIC0_USI04_USI_USER			6
-+#define CLK_MOUT_PERIC0_USI05_USI_USER			7
-+#define CLK_MOUT_PERIC0_USI_I2C_USER			8
-+#define CLK_MOUT_PERIC0_UART_DBG			9
-+#define CLK_MOUT_PERIC0_USI13_USI_USER			10
-+#define CLK_MOUT_PERIC0_USI14_USI_USER			11
-+#define CLK_MOUT_PERIC0_USI15_USI_USER			12
-+#define CLK_DOUT_PERIC0_USI00_USI			13
-+#define CLK_DOUT_PERIC0_USI01_USI			14
-+#define CLK_DOUT_PERIC0_USI02_USI			15
-+#define CLK_DOUT_PERIC0_USI03_USI			16
-+#define CLK_DOUT_PERIC0_USI04_USI			17
-+#define CLK_DOUT_PERIC0_USI05_USI			18
-+#define CLK_DOUT_PERIC0_USI_I2C				19
-+#define CLK_DOUT_PERIC0_UART_DBG			20
-+#define CLK_DOUT_PERIC0_USI13_USI			21
-+#define CLK_DOUT_PERIC0_USI14_USI			22
-+#define CLK_DOUT_PERIC0_USI15_USI			23
-+#define CLK_GOUT_PERIC0_GPIO_PCLK			24
-+#define CLK_GOUT_PERIC0_SYSREG_PCLK			25
-+#define CLK_GOUT_PERIC0_CMU_PCLK			26
-+#define CLK_GOUT_PERIC0_BUSP_CLK			27
-+#define CLK_GOUT_PERIC0_OSCCLK_CLK			28
-+#define CLK_GOUT_PERIC0_USI00_USI_CLK			29
-+#define CLK_GOUT_PERIC0_USI_I2C_CLK			30
-+#define CLK_GOUT_PERIC0_USI01_USI_CLK			31
-+#define CLK_GOUT_PERIC0_USI02_USI_CLK			32
-+#define CLK_GOUT_PERIC0_USI03_USI_CLK			33
-+#define CLK_GOUT_PERIC0_USI04_USI_CLK			34
-+#define CLK_GOUT_PERIC0_USI05_USI_CLK			35
-+#define CLK_GOUT_PERIC0_UART_DBG_CLK			36
-+#define CLK_GOUT_PERIC0_LHM_AXI_P_CLK			37
-+#define CLK_GOUT_PERIC0_USI13_USI_CLK			38
-+#define CLK_GOUT_PERIC0_USI14_USI_CLK			39
-+#define CLK_GOUT_PERIC0_D_TZPC_PCLK			40
-+#define CLK_GOUT_PERIC0_USI15_USI_CLK			41
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_4			42
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_4			43
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_5			44
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_6			45
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_7			46
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_8			47
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_9			48
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_10			49
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_11			50
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_12			51
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_13			52
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_14			53
-+#define CLK_GOUT_PERIC0_TOP0_PCLK_15			54
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_5			55
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_6			56
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_7			57
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_8			58
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_9			59
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_10			60
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_11			61
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_12			62
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_13			63
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_14			64
-+#define CLK_GOUT_PERIC0_TOP0_IPCLK_15			65
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_0			66
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_3			67
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_4			68
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_5			69
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_6			70
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_7			71
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_8			72
-+#define CLK_GOUT_PERIC0_TOP1_PCLK_15			73
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_0			74
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_3			75
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_4			76
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_5			77
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_6			78
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_7			79
-+#define CLK_GOUT_PERIC0_TOP1_IPCLK_8			80
-+
-+/* CMU_PERIC1 */
-+#define CLK_MOUT_PERIC1_BUS_USER			1
-+#define CLK_MOUT_PERIC1_UART_BT_USER			2
-+#define CLK_MOUT_PERIC1_USI_I2C_USER			3
-+#define CLK_MOUT_PERIC1_USI06_USI_USER			4
-+#define CLK_MOUT_PERIC1_USI07_USI_USER			5
-+#define CLK_MOUT_PERIC1_USI08_USI_USER			6
-+#define CLK_MOUT_PERIC1_USI09_USI_USER			7
-+#define CLK_MOUT_PERIC1_USI10_USI_USER			8
-+#define CLK_MOUT_PERIC1_USI11_USI_USER			9
-+#define CLK_MOUT_PERIC1_USI12_USI_USER			10
-+#define CLK_MOUT_PERIC1_USI18_USI_USER			11
-+#define CLK_MOUT_PERIC1_USI16_USI_USER			12
-+#define CLK_MOUT_PERIC1_USI17_USI_USER			13
-+#define CLK_DOUT_PERIC1_UART_BT				14
-+#define CLK_DOUT_PERIC1_USI_I2C				15
-+#define CLK_DOUT_PERIC1_USI06_USI			16
-+#define CLK_DOUT_PERIC1_USI07_USI			17
-+#define CLK_DOUT_PERIC1_USI08_USI			18
-+#define CLK_DOUT_PERIC1_USI18_USI			19
-+#define CLK_DOUT_PERIC1_USI12_USI			20
-+#define CLK_DOUT_PERIC1_USI09_USI			21
-+#define CLK_DOUT_PERIC1_USI10_USI			22
-+#define CLK_DOUT_PERIC1_USI11_USI			23
-+#define CLK_DOUT_PERIC1_USI16_USI			24
-+#define CLK_DOUT_PERIC1_USI17_USI			25
-+#define CLK_GOUT_PERIC1_GPIO_PCLK			26
-+#define CLK_GOUT_PERIC1_SYSREG_PCLK			27
-+#define CLK_GOUT_PERIC1_CMU_PCLK			28
-+#define CLK_GOUT_PERIC1_BUSP_CLK			29
-+#define CLK_GOUT_PERIC1_USI06_USI_CLK			30
-+#define CLK_GOUT_PERIC1_USI07_USI_CLK			31
-+#define CLK_GOUT_PERIC1_USI08_USI_CLK			32
-+#define CLK_GOUT_PERIC1_USI09_USI_CLK			33
-+#define CLK_GOUT_PERIC1_USI10_USI_CLK			34
-+#define CLK_GOUT_PERIC1_USI_I2C_CLK			35
-+#define CLK_GOUT_PERIC1_UART_BT_CLK			36
-+#define CLK_GOUT_PERIC1_USI12_USI_CLK			37
-+#define CLK_GOUT_PERIC1_USI18_USI_CLK			38
-+#define CLK_GOUT_PERIC1_LHM_AXI_P_CLK			39
-+#define CLK_GOUT_PERIC1_USI11_USI_CLK			40
-+#define CLK_GOUT_PERIC1_D_TZPC_PCLK			41
-+#define CLK_GOUT_PERIC1_USI16_USI_CLK			42
-+#define CLK_GOUT_PERIC1_USI17_USI_CLK			43
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_4			44
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_10			45
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_11			46
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_12			47
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_13			48
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_14			49
-+#define CLK_GOUT_PERIC1_TOP0_PCLK_15			50
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_4			51
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_10			52
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_11			53
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_12			54
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_13			55
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_14			56
-+#define CLK_GOUT_PERIC1_TOP0_IPCLK_15			57
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_1			58
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_0			59
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_2			60
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_3			61
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_4			62
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_5			63
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_6			64
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_7			65
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_9			66
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_10			67
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_0			68
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_1			69
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_2			70
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_3			71
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_4			72
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_5			73
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_6			74
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_7			75
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_9			76
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_10			77
-+#define CLK_GOUT_PERIC1_OSCCLK_CLK			78
-+#define CLK_GOUT_PERIC1_LHM_AXI_P_CSIS_CLK		79
-+#define CLK_GOUT_PERIC1_XIU_P_ACLK			80
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_12			81
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_12			82
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_13			83
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_14			84
-+#define CLK_GOUT_PERIC1_TOP1_PCLK_15			85
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_13			86
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_14			87
-+#define CLK_GOUT_PERIC1_TOP1_IPCLK_15			88
-+#define CLK_GOUT_PERIC1_USI16_I3C_PCLK			89
-+#define CLK_GOUT_PERIC1_USI16_I3C_SCLK			90
-+#define CLK_GOUT_PERIC1_USI17_I3C_SCLK			91
-+#define CLK_GOUT_PERIC1_USI17_I3C_PCLK			92
-+
-+#endif /* _DT_BINDINGS_CLOCK_EXYNOS990_H */
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+index 70cc2ee9e..b05d1e9e2 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+@@ -36,6 +36,7 @@ properties:
+           - enum:
+               - google,gs101-hsi2c
+               - samsung,exynos850-hsi2c
++              - samsung,exynos990-hsi2c
+           - const: samsung,exynosautov9-hsi2c
+       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+         deprecated: true
 -- 
 2.47.1
 
