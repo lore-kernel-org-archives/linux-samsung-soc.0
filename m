@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5613C225782;
-	Thu,  6 Feb 2025 07:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43F01FDA8C;
+	Thu,  6 Feb 2025 07:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738827707; cv=none; b=p3CpMWpcBM93H/tpqFdxpIOjf2R0I6Y9zzSgAeIpWw3hcVYZOKhhsC1TrZX+vyOp0ZmSZz6udVGPKIW284Ydb/GGaSG4AnRM4otJGjeXpanCficScVhYsvu9r/2kn3EKiODYey/POXs2XjuUvKX+KBX/Pn6dsTcsMRi/Voh7gQM=
+	t=1738827754; cv=none; b=ERG+W2JCwMePxxqURlPDLV8x49DUlspl2RwQC+/65hVk02WRHcIzQ8Mn8UTiGErbQegfxzjT+0gA6BpU4isfVPtrHS+TaO5rSwTaAqg8Fh2mUONL395hbivNL3tQ7mBONsPcG7NPLw52FiQ2Gm5d1xVJrTDBcjB45JYM2ta2Q5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738827707; c=relaxed/simple;
-	bh=nY9aN4VnSUiFqElBq4AQ12dHlVn267Zo9tlZ/3dLj1k=;
+	s=arc-20240116; t=1738827754; c=relaxed/simple;
+	bh=7kxUhdWmD1gTP2jQDXWhACeDDquzaV725UVF7SrXVuQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GxjSLppeSv8bSYGt9Uaex1BDLBFaqhndeXLtAtqnO99ZoFr/tYkruaJLSUc76MM/b4CZWK2x3VLKouVM6Ql0jHzzdXz884FHDIussGnEzmgWSWzwd99hneYR0qgnrJGH+NSHz5OnVkoG6PwhdxvYb0PPXYU75fQncP9G7TM49N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxCAZ5M6; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=deN/JMhYNk1eBRv7b+z+w63PqXcP5du0YxWTV0d9oyXCXQQUjuqaQhVQEY71cJBUNDAkxoTfjcI+x/oqEUKXY+qjnyVU2iRv7KP0q/eIcT43YX2DiFZ+z9iqkIxh59ikOBcCjuaMWoqcvavoI9H8Oqeoe5r3dpc5brpHaPK1ZZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYUviLZm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxCAZ5M6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51355C4CEDD;
-	Thu,  6 Feb 2025 07:41:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYUviLZm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B271C4CEDD;
+	Thu,  6 Feb 2025 07:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738827706;
-	bh=nY9aN4VnSUiFqElBq4AQ12dHlVn267Zo9tlZ/3dLj1k=;
+	s=k20201202; t=1738827754;
+	bh=7kxUhdWmD1gTP2jQDXWhACeDDquzaV725UVF7SrXVuQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PxCAZ5M6nUT7VGMd1YRlYsnkYhMicW3/G8KQD2B/lYSYjy2gh7yuTa1mGufnHtZ9p
-	 C+eeqGqb6b20KH+4sk2PW38QAoPp/Bgl0vPzkZzosSfphRLYq8ewnLFg8chxoq7dlL
-	 UVZld+ONW8+jQqdVzZSls9f0MibTluAU1mrJDfKZhFtBfvGZgpf4Ks6UH45WW+eeu5
-	 y4o+QZwNGIoiuOhtgXGyqhIzY4Wu1BOLdmVFF+f1oq6iQMv/Rv4xsBH0bEmZjKb10k
-	 vCfhaWRI1Fdd/hyDtvkL+rV8lb+mLQRP9h5wu1Ff+MyyFC7cYCYVhYRbvvnobrdIbN
-	 KChZesegvCzWQ==
-Message-ID: <28db20ed-a490-47f2-99fa-b665317999b3@kernel.org>
-Date: Thu, 6 Feb 2025 08:41:43 +0100
+	b=EYUviLZmRHMDr07oMQRNTEGsEE+CO6Q/gRcmD3ADS0Nvc1pEcjH5mYVYymp44S7Gj
+	 uzoPy2v9OyeThfvh5Xjq83Si80uwfKjt+hSITu8gs/ITJeo94CoYQt5kw//qyZ4htB
+	 fbc6FBGtoWd/dRdBb/xmJnOB2+1RX9ru0phaRWayAyQgtQarZjvm340thDA8lynQ5I
+	 OPP1veE2rqfj6xhUCt1vtpMSvi8g/ga6LLEF5bbZlYaA3ZY19hRFpfCZxhteBED0r5
+	 4udLeivJ27mNlNkrXSjiYNtUb8JrwJpZePaCBstCOc3DEWZFnwLN+Ix0dk5z7Q0X4X
+	 OaHLy++xxIccw==
+Message-ID: <09ffafe9-97e4-42a8-8da2-fe7b17cf20ed@kernel.org>
+Date: Thu, 6 Feb 2025 08:42:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,13 +35,13 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/9] dt-bindings: i2c: exynos5: add
- samsung,exynos990-hsi2c compatible
+Subject: Re: [PATCH v1 3/9] dt-bindings: serial: samsung: add Exynos990
+ compatible
 To: Denzeel Oliva <wachiturroxd150@gmail.com>, alim.akhtar@samsung.com
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org
 References: <20250205222223.613-1-wachiturroxd150@gmail.com>
- <20250205222223.613-3-wachiturroxd150@gmail.com>
+ <20250205222223.613-4-wachiturroxd150@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,16 +87,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250205222223.613-3-wachiturroxd150@gmail.com>
+In-Reply-To: <20250205222223.613-4-wachiturroxd150@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/02/2025 23:22, Denzeel Oliva wrote:
-> Add samsung,exynos990-hsi2c dedicated compatible
-> for representing I2C of Exynos990 SoC.
+> Add samsung,exynos990-uart compatible. It falls back to
+> samsung,exynos8895-uart since FIFO size is defined in DT.
 > 
 > Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> ---
+
+Your CC list is really incomplete. If you do not send patch to
+maintainers, they will not see it and they will not take it.
+
 <form letter>
 Please use scripts/get_maintainers.pl to get a list of necessary people
 and lists to CC. It might happen, that command when run on an older
