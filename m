@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83406224B06;
-	Thu,  6 Feb 2025 07:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615F51547E9;
+	Thu,  6 Feb 2025 07:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738827761; cv=none; b=VrcsmGICgGivnJ9ippE7/ugCOKz1frP415eMvZuinxT4fdSiLObSnSsWnnBCw3MHwKkYqu0Qito4YJl6coHyjppLkmzI+ry9M+wdLbYZmYxd/SvtnczcfaZYaFVZMgIPBNYjABKOguznP4sx14aGdV9RVB44b/liL3E/rjb/S+s=
+	t=1738827934; cv=none; b=bJurnkuLq6nplyN8j0DuxBAePcXb3cI8eGb/ubqHG4cu8nzCGd2Ap8DuEWVgrtCgs2AWBasG1HGH+mbC5bbZBxM6PMkw0Oo/EJU35gnkp0XQmuPr+3Dz3SUTcTFDyC56El79wKpMTuqxWpvH4JZNvpfmIYKTt/r7zzTmRwslFzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738827761; c=relaxed/simple;
-	bh=O5290eTZVCm7uwuI5E8jAfGJ2seQdNU2kjjYxqFEkEE=;
+	s=arc-20240116; t=1738827934; c=relaxed/simple;
+	bh=VMElEO1lAAPOMM82o0jEQzZz7g+TiKwKRSpBKqmdnz4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E8Kd0fOQjzGYKzToT2Gqz03uUSjONHlPwdnz5UifJyO02Z1GE0HSjMYLEU421CXNVjGo8I9ukvzrF9/wXROJHespMqmUdOYyq/e0fkxCMvYbhLQY9T9B/2oXuOMuMpJ2kF33iA8DVOhLKpmLQQDwKYxbwKRfOhK8ny16Bz5gdD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLIBkopQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=fKUk4bl4bt9R+Mqu5R2wkh3urmzDy4BBiXbDWOLkL/gsCHVcDh3ZqrMZ8JL/vSg6+T0cDYZtN1Kfmyh5g13Pt469P3dB445ta6aI0juk7EwmVy26uir6LSFh+kwG2buuiN7MrQbi42SWLR2oVBhXPu/FkJl09RhDPMU0w9J4MwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDBDQUHn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLIBkopQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A64BC4CEE0;
-	Thu,  6 Feb 2025 07:42:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDBDQUHn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 676E3C4CEE0;
+	Thu,  6 Feb 2025 07:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738827761;
-	bh=O5290eTZVCm7uwuI5E8jAfGJ2seQdNU2kjjYxqFEkEE=;
+	s=k20201202; t=1738827933;
+	bh=VMElEO1lAAPOMM82o0jEQzZz7g+TiKwKRSpBKqmdnz4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QLIBkopQBHu7+X/2RzpYEeEf9zcGZgPS+Hgs+wAoLtJOs9JDMyyqMywAoqHPXEFXW
-	 itEhzzUcTEgsIZIvbKUk3rJA5Pblx92fjbZVJp2znhpbr/2rmzpQrkUD2Tp7xwFVOx
-	 MO8wpyiSqKJBIuInBBhL3arNkTfD2ByKiDjMB/WkZFVAL3KUap6F21iR6fdFFAzEwA
-	 8p3tga3kauRcV+KhV5wv8b22iQIguOIdDqbgSM31br9JM9shQFNKiLLGNJNKwasfRY
-	 UDNTFRrA3wYs6r4Z76rWzEu3vTq1b3p64RT+RUa0aU0OueZE+A0Uas7sD7R0NfbSis
-	 ueTd12ixWW2xw==
-Message-ID: <dbee624b-f9e4-4bd6-9829-a0071857efa6@kernel.org>
-Date: Thu, 6 Feb 2025 08:42:39 +0100
+	b=CDBDQUHnp0wezjjaXy9iB1+GdI1WE6fuDIDOvPFH3njhcJ5JRptF7KJh5Npy5ProS
+	 HiV6ykww8bRJLAQURrZF0MOVwqtg9UZepL3xGZv3vK6hqCNz8PDRbpyISDDZtbSQ3J
+	 br3BfotqxOpgITIJtluDFskmtKIbVurryK9oaGSUqEyg1V8V6PIgJuAeHJ9efrn1Yd
+	 S78ZCTWx4x0lpWZ24IwqsArbSyAUzKxXpnEJCiMpf6ey2Egxxt42lhV9lafRxLMpKF
+	 m+U7t7f0HgSANooFwvI7EzM8llBEhN6PSLZMpBtQad//2QVRs8+CyZkzval/p+DC4z
+	 gthM4LM4z8SHA==
+Message-ID: <26d8a9c6-be03-4a86-83c7-336d38fc2bcf@kernel.org>
+Date: Thu, 6 Feb 2025 08:45:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,13 +35,11 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/9] spi: dt-bindings: samsung: add
- samsung,exynos990-spi compatible
+Subject: Re: [PATCH v1 0/9] Add PERIC0/1 support for Exynos 990
 To: Denzeel Oliva <wachiturroxd150@gmail.com>, alim.akhtar@samsung.com
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org
 References: <20250205222223.613-1-wachiturroxd150@gmail.com>
- <20250205222223.613-6-wachiturroxd150@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,37 +85,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250205222223.613-6-wachiturroxd150@gmail.com>
+In-Reply-To: <20250205222223.613-1-wachiturroxd150@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/02/2025 23:22, Denzeel Oliva wrote:
-> According to the Exynos 990 downstream kernel,
-> almost all of them do not use the same 64 bytes depth.
-> Some SPI nodes using a depth of 256 bytes (SPI 9/8/10).
-> But in the end these nodes work.
+> This patch series introduces support for
+> the PERIC0 and PERIC1 blocks in the Exynos 990 SoC.
+> It includes devicetree bindings, clock definitions,
+> and driver support for the following components:
 > 
-> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> ---
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Same comments as for 7870.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+https://lore.kernel.org/lkml/54d9a2ef-baaa-4d09-afc8-974bd9bd9daa@kernel.org/
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+Additionally for all your patches:
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
 Best regards,
 Krzysztof
