@@ -1,168 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7769E1EB1AF;
-	Fri,  7 Feb 2025 15:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FC61EEA2A
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Feb 2025 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738941692; cv=none; b=bNqwbi9If+zLvH+FXCWe4g/vbT0frqM20KuT0Herrv6D7CCZgowjPRC1kK3WHAzgbXI/OuCpqejQVdE61G+eXwAvOE789W/svOkrOtljUNA+mNkWaafW3WeJ/YK5LoHgvSZD4N9FZIfwjJoQ3S3cKItWhdkDAnjf9WI1sr8cIkU=
+	t=1738942197; cv=none; b=pxUuc8mprmza+0gxVcclpC5EboQrI8snbmTKk4GxBuTcv1Jp59lj5LHa1UHzZSCp3P4aEdfoLLzxcWBfOt3a6tiSX5qvcRd47XeqW/2Pn27RDxVPk2t76HFd0qtlMWAIzBGbhJ72O1+hHsjMUNdmWBDM61V5a6piIxzNIhycqD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738941692; c=relaxed/simple;
-	bh=yCywyCvmmAZbWHiGvWpcFa1ywJvGn1bqilunL8XHMqM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ZeItYxDz5EG2h/xg3rsNQrhv+bewqSw6KCmv5C+K7ldAfSUb8I6iYte7HI8enwcmqodd7s1Tmoj22i25yDtcp/4FOVqw4+8msy5A/xFfydU4Q4vec9A81TIT/5cDcqVu3eBXnAUCAadGIjRGsznI0lhaZdD9deXFogvQYrMwmRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A800cHhp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738942197; c=relaxed/simple;
+	bh=V7ZhEkTlDjAWx4+eB5Cx9IjkVRaezyIIl4x2rGpDimw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pUIA8IrL81s6FIqsSTU1gTttV7WpTFa97XiJJfy0uMaCJDNXCjbdTgiW6p3PMAyjItRbpqli4n2hoS0OMLgcX3mcQj7B7Cq3r2it1Dt7PoqXNQoMBSAFJdx1pMaXzbzba5mXDOLZnU2L3oMLFBg/A5XTRD05G+ejmzX/Z1KByDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SjqWuqCI; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A800cHhp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FF2C4CEDF;
-	Fri,  7 Feb 2025 15:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738941692;
-	bh=yCywyCvmmAZbWHiGvWpcFa1ywJvGn1bqilunL8XHMqM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=A800cHhpOmGzb0NkAxQm5wuE8IJ+Qgmm5pX3QYF9ACwfZUs8xnR9wCHSGlq9P4hAi
-	 n2jXNmLF4y5K5sPyUc02ORy2DEMs6M9B92C5gsyLVp3cZSBKRmJbK7WYkSN6xmRR4j
-	 DQC3Lmf81Y4aUw4TvF+qruS2MaH1y4atrYAimL22ja0G4iDkp2uMryoMzKx6DHQvGa
-	 HKFiFI5s9GwyZujRsJcNIfHZC3GpsmI7btMRIiHiG3BikwdYoWRrvEzFalVdQje/68
-	 AQO94MuvgcLXBndNMXvgIVrvYRnN/Sj05rxp+kOAxkGt+81RM28j6I85PmhOGy+uch
-	 jXoU/G3bEd2qg==
-Date: Fri, 07 Feb 2025 09:21:30 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SjqWuqCI"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso13433135e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Feb 2025 07:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1738942193; x=1739546993; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+NkZO69thNDcfaAG3NbtxaUIPk7UAb9CQ7DP0haQo+g=;
+        b=SjqWuqCI4g/5R8qxRzCfVKzUxZ9rZ61WqmRJLbaxM6J2CL78wCMyjlScHaNQ9DYCJC
+         hAtQCTISxsg02JWnamAMeIolTrrf//tZjqtmADVeqaf78D2YfMh2MX/XfPMac7xGvDHe
+         MQ01GukCyrSHRuOnZ5uFl9Y/bZqbbyGVSfsU0wPtguFx6Cj/YpIEuq42ifgdcg3U/P+b
+         YukT3seFzKrTwrQSre6Amw4q9J78cTXgDJCCY+KuMXTzIixgpi2my7VJIZZFb8S2rw6x
+         QwS826Tmbh00f93fn8pVkWOTmAneyF0mBf4ahY9/hVKzeLA/ZlqbIH8vEVn7uKvxAvZJ
+         ylmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738942193; x=1739546993;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+NkZO69thNDcfaAG3NbtxaUIPk7UAb9CQ7DP0haQo+g=;
+        b=Mc/PhIRb9w5OYoMVpSj+qac+J83MtCwQDIJ0y1MCFPyj67sWjlBf3Xxv4gKscsRf8A
+         4TIlXRg2YuP/qDXyOrOh5NHliLwcmeDH9quUFaw8YovYmako3iaDCPQeSHSi4yQIq3n8
+         iCnzSVrwzX0y1JGFA6v2lrAxP3JXs5yN3A7YwbYVs99XsSXmY+1TOcXIfM/Mrjfh43aX
+         fbGhJGSi5OpF1SjVtyGwytYR+LQHeNdg9rV7k229mLSJQ+D58lzslVScbjyorWtBcpSb
+         Fys6J6Ji0KLqKCPXONBd4y9pqMiC48peRrlZbaaPgX3hhnvXyMqIMteQiwY48bqF3l8K
+         xmag==
+X-Forwarded-Encrypted: i=1; AJvYcCV+A+UKqoy5h3OaGeLIjLPC3mKKp1xm9XQrd0WxpBRnkv/qFYxqb16Pum0lJcY3oQ2GwWnoR35oYKosPWf4DsTCew==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/dKHCrtXekRQiNABelG3+1dsKK1s3dawv5ky199Fi4Qkw7Cd0
+	6eejR0eaooglXE/U2WEjyAXRHq0wV09/mYJlmxzcplHoGNfe2D8/icb7JR/ZZYE=
+X-Gm-Gg: ASbGncv1bipY1zdCD5/sKJ8t9hoR5qOPv/PyT8Q/Ep3Xy7R6CQa9d+avQo26e1BpBIN
+	XPcrBvzSfpC9lixHug+h0iaVxdZLbQvIQVeANUxd1zdEJZmOC0jZhgdHg7vubnJ2AWFSOhMJEmA
+	S9N4GnGJaVk0wa4QXV5YbMcVmJHlCMh/B+WcnujMwwEd+gzuVx964AbBC2serXh1EcEt3ZcbMwq
+	Iu9KU+ikg3MNRnWoadnoMeKo9Oels8KMoGtvMLyNshOGKGALxWm8Q7wOlNqkorAIG8CmsLfpxz4
+	hZLJuDcm1ul1eGk8T3w3kvLj5Xxv7G3JvBwzaKsuerPFuj+1sU3/cfOpYzs8BM5FADKdFrE=
+X-Google-Smtp-Source: AGHT+IGeQisxWwVjKLpLxc81XidOEmaj/9PkpKcRmfg/FautVUd5O56htUIcsiEZRQHq7y6VAI6+bQ==
+X-Received: by 2002:a05:600c:3c96:b0:436:1b86:f05 with SMTP id 5b1f17b1804b1-439255b81e1mr25888635e9.11.1738942193266;
+        Fri, 07 Feb 2025 07:29:53 -0800 (PST)
+Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4391dc9ffd8sm57141905e9.10.2025.02.07.07.29.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2025 07:29:52 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Fri, 07 Feb 2025 15:29:47 +0000
+Subject: [PATCH v7 1/3] dt-bindings: firmware: add google,gs101-acpm-ipc
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250207-gs101-acpm-v7-1-ffd7b2fb15ae@linaro.org>
+References: <20250207-gs101-acpm-v7-0-ffd7b2fb15ae@linaro.org>
+In-Reply-To: <20250207-gs101-acpm-v7-0-ffd7b2fb15ae@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- alim.akhtar@samsung.com, krzk@kernel.org, 
- linux-arm-kernel@lists.infradead.org
-To: Denzeel Oliva <wachiturroxd150@gmail.com>
-In-Reply-To: <20250205222223.613-1-wachiturroxd150@gmail.com>
-References: <20250205222223.613-1-wachiturroxd150@gmail.com>
-Message-Id: <173894150599.330679.9502300326719327262.robh@kernel.org>
-Subject: Re: [PATCH v1 0/9] Add PERIC0/1 support for Exynos 990
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+ peter.griffin@linaro.org, daniel.lezcano@linaro.org, 
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1738942191; l=2122;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=V7ZhEkTlDjAWx4+eB5Cx9IjkVRaezyIIl4x2rGpDimw=;
+ b=xPUvF+VVaql0+WFwyO78FZrctDRJ3K5bgzTZVoVvCOUptqjae9NCBxYAsf6FZ1nQ/oQMsb/BG
+ TUGInsgGHopCIptyOe0/vC2gzHMsGe8LKcPAXQ0IasExUenWkpiR42j
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
+Add bindings for the Samsung Exynos ACPM mailbox protocol.
 
-On Wed, 05 Feb 2025 22:22:14 +0000, Denzeel Oliva wrote:
-> This patch series introduces support for
-> the PERIC0 and PERIC1 blocks in the Exynos 990 SoC.
-> It includes devicetree bindings, clock definitions,
-> and driver support for the following components:
-> 
-> - Universal Serial Interface (USI):
->   - Adds samsung,exynos990-usi compatible
->     for defining USI nodes in PERIC0/1.
->   - Supports UART, SPI, and I2C modes.
->   - Defines all 18 USI nodes in the Exynos 990 device tree.
-> 
-> - SPI (Serial Peripheral Interface):
->   - Adds `samsung,exynos990-spi` compatible.
->   - Implements SPI port configuration data.
->   - Some controllers (SPI 8, 9, and 10) use a 256 bytes FIFO depth
->     instead of the usual 64 bytes.
-> 
-> - HSI2C (High-Speed I2C):
->   - Adds `samsung,exynos990-hsi2c` compatible for Exynos 990.
-> 
-> - Clock Management Unit (CMU) for PERIC0/1:
->   - Adds clock definitions for USI and I2C peripherals.
->   - CMU_PERIC0/1 clocks are not marked as critical.
-> 
-> This has been tested on the Samsung Galaxy S20 FE (r8s),
-> where USI and SPI interfaces are confirmed to be functional.
-> 
-> Denzeel Oliva (9):
->   dt-bindings: clock: samsung,exynos990-clock: add PERIC0 / 1 clock
->     management unit
->   dt-bindings: i2c: exynos5: add samsung,exynos990-hsi2c compatible
->   dt-bindings: serial: samsung: add Exynos990 compatible
->   dt-bindings: samsung: usi: add exynos990-usi compatible
->   spi: dt-bindings: samsung: add samsung,exynos990-spi compatible
->   dt-bindings: soc: samsung: exynos-sysreg: add compatibles peric0/1
->     sysreg for Exynos990
->   clk: samsung: exynos990: add support for CMU_PERIC0/1
->   spi: s3c64xx: add support exynos990-spi to new port config data
->   arm64: dts: exynos990: define all PERIC USI nodes
-> 
->  .../clock/samsung,exynos990-clock.yaml        |   24 +
->  .../devicetree/bindings/i2c/i2c-exynos5.yaml  |    1 +
->  .../bindings/serial/samsung_uart.yaml         |    6 +
->  .../bindings/soc/samsung/exynos-usi.yaml      |    1 +
->  .../soc/samsung/samsung,exynos-sysreg.yaml    |    2 +
->  .../devicetree/bindings/spi/samsung,spi.yaml  |    1 +
->  arch/arm64/boot/dts/exynos/exynos990.dtsi     | 1711 +++++++++++++++++
->  drivers/clk/samsung/clk-exynos990.c           | 1079 +++++++++++
->  drivers/spi/spi-s3c64xx.c                     |   16 +
->  include/dt-bindings/clock/samsung,exynos990.h |  178 +-
->  10 files changed, 3018 insertions(+), 1 deletion(-)
-> 
-> --
-> 2.47.1
-> 
-> 
-> 
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+new file mode 100644
+index 000000000000..982cb8d62011
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright 2024 Linaro Ltd.
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/firmware/google,gs101-acpm-ipc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos ACPM mailbox protocol
++
++maintainers:
++  - Tudor Ambarus <tudor.ambarus@linaro.org>
++
++description: |
++  ACPM (Alive Clock and Power Manager) is a firmware that operates on the
++  APM (Active Power Management) module that handles overall power management
++  activities. ACPM and masters regard each other as independent hardware
++  component and communicate with each other using mailbox messages and
++  shared memory.
++
++  This binding is intended to define the interface the firmware implementing
++  ACPM provides for OSPM in the device tree.
++
++properties:
++  compatible:
++    const: google,gs101-acpm-ipc
++
++  mboxes:
++    maxItems: 1
++
++  shmem:
++    description:
++      List of phandle pointing to the shared memory (SHM) area. The memory
++      contains channels configuration data and the TX/RX ring buffers that
++      are used for passing messages to/from the ACPM firmware.
++    maxItems: 1
++
++required:
++  - compatible
++  - mboxes
++  - shmem
++
++additionalProperties: false
++
++examples:
++  - |
++    power-management {
++        compatible = "google,gs101-acpm-ipc";
++        mboxes = <&ap2apm_mailbox>;
++        shmem = <&apm_sram>;
++    };
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250205222223.613-1-wachiturroxd150@gmail.com:
-
-Error: arch/arm64/boot/dts/exynos/exynos990.dtsi:225.20-21 syntax error
-FATAL ERROR: Unable to parse input tree
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos990-x1slte.dtb] Error 2
-Error: arch/arm64/boot/dts/exynos/exynos990.dtsi:225.20-21 syntax error
-FATAL ERROR: Unable to parse input tree
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos990-r8s.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos990-r8s.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos990-r8s.dtb] Error 2
-Error: arch/arm64/boot/dts/exynos/exynos990.dtsi:225.20-21 syntax error
-FATAL ERROR: Unable to parse input tree
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos990-c1s.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos990-c1s.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos990-c1s.dtb] Error 2
-Error: arch/arm64/boot/dts/exynos/exynos990.dtsi:225.20-21 syntax error
-FATAL ERROR: Unable to parse input tree
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos990-x1s.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos990-x1s.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos990-x1s.dtb] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
-
-
-
-
+-- 
+2.48.1.502.g6dc24dfdaf-goog
 
