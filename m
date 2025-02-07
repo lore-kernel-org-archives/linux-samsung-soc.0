@@ -1,65 +1,64 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FC61EEA2A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5AB1EB1A8
 	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Feb 2025 15:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738942197; cv=none; b=pxUuc8mprmza+0gxVcclpC5EboQrI8snbmTKk4GxBuTcv1Jp59lj5LHa1UHzZSCp3P4aEdfoLLzxcWBfOt3a6tiSX5qvcRd47XeqW/2Pn27RDxVPk2t76HFd0qtlMWAIzBGbhJ72O1+hHsjMUNdmWBDM61V5a6piIxzNIhycqD4=
+	t=1738942197; cv=none; b=h4JYpUQZ6BCwvpLDp/JOY1LB+y3GdK5mdOrGQpvAwirWM/KFoMqz5l0gCft1CYorlIoejnC9Fro/ci+ENwbw5bYXw+OYBsWaKJgOAt8gwvqPNtZN4Cjs4DveqMmaDvOIre2ZIyS4gPz8ce8qe4dU0dURVMu5oNa8y+aSu7Wvvz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738942197; c=relaxed/simple;
-	bh=V7ZhEkTlDjAWx4+eB5Cx9IjkVRaezyIIl4x2rGpDimw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pUIA8IrL81s6FIqsSTU1gTttV7WpTFa97XiJJfy0uMaCJDNXCjbdTgiW6p3PMAyjItRbpqli4n2hoS0OMLgcX3mcQj7B7Cq3r2it1Dt7PoqXNQoMBSAFJdx1pMaXzbzba5mXDOLZnU2L3oMLFBg/A5XTRD05G+ejmzX/Z1KByDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SjqWuqCI; arc=none smtp.client-ip=209.85.128.44
+	bh=AyOjqptG1CCXHI+5Rg2T5T4EjrErcQnovY1byDNXtb8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KwlAqD9xeTSRVQeJXup1oZvJEpmXnBG3l7usXMGpACn9mlVf0KWQQyeqR/Aa4U+OVk5MjRmDUr/d+aW0Zj/iA7ow2hjd8t7ZjCSOstu4BiT8sjL9Bb5vSuIamAk9QLAUbNyDyLmUI8SkcOrvVTfpUXhgOu8jAGwV7S+kKcdU65U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oouuDkjL; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SjqWuqCI"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso13433135e9.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oouuDkjL"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4363dc916ceso20260055e9.0
         for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Feb 2025 07:29:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1738942193; x=1739546993; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+NkZO69thNDcfaAG3NbtxaUIPk7UAb9CQ7DP0haQo+g=;
-        b=SjqWuqCI4g/5R8qxRzCfVKzUxZ9rZ61WqmRJLbaxM6J2CL78wCMyjlScHaNQ9DYCJC
-         hAtQCTISxsg02JWnamAMeIolTrrf//tZjqtmADVeqaf78D2YfMh2MX/XfPMac7xGvDHe
-         MQ01GukCyrSHRuOnZ5uFl9Y/bZqbbyGVSfsU0wPtguFx6Cj/YpIEuq42ifgdcg3U/P+b
-         YukT3seFzKrTwrQSre6Amw4q9J78cTXgDJCCY+KuMXTzIixgpi2my7VJIZZFb8S2rw6x
-         QwS826Tmbh00f93fn8pVkWOTmAneyF0mBf4ahY9/hVKzeLA/ZlqbIH8vEVn7uKvxAvZJ
-         ylmQ==
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EuYjo4JUI+V0W3/HuzUdoJL4i7PKJSWth5jlL0TRFTk=;
+        b=oouuDkjLti1xXLvs9+8UWe9XhK11p9CLgX59HXYHT3eEBC1kKQXpuDd+sG7u4Cqf0m
+         TtjQbchAI52NgpUR56VR82B3AritfdUJ9v1MJ8oEDyfXhvJ0ArMNpSAhtcMwT4YjwqGf
+         G7a8lUz2tGnDLx29jdrrhwj9aOq+fp1BgiWrubdn+tr9TPpBxULwOiby5M4yAJgxeSZQ
+         LIyX4mFPEVjgGe42SEl2RNdiDbEp6BZAJTpUou4F3Xw1nq4S2c68cyyDfKYwt17BldNV
+         T+J1umkryFJfQ5DHbglCkuTZtHy/MHl8jAZCleBJJDn/mYkpILrBrzQq4wjHhX8EspOj
+         Btdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1738942193; x=1739546993;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+NkZO69thNDcfaAG3NbtxaUIPk7UAb9CQ7DP0haQo+g=;
-        b=Mc/PhIRb9w5OYoMVpSj+qac+J83MtCwQDIJ0y1MCFPyj67sWjlBf3Xxv4gKscsRf8A
-         4TIlXRg2YuP/qDXyOrOh5NHliLwcmeDH9quUFaw8YovYmako3iaDCPQeSHSi4yQIq3n8
-         iCnzSVrwzX0y1JGFA6v2lrAxP3JXs5yN3A7YwbYVs99XsSXmY+1TOcXIfM/Mrjfh43aX
-         fbGhJGSi5OpF1SjVtyGwytYR+LQHeNdg9rV7k229mLSJQ+D58lzslVScbjyorWtBcpSb
-         Fys6J6Ji0KLqKCPXONBd4y9pqMiC48peRrlZbaaPgX3hhnvXyMqIMteQiwY48bqF3l8K
-         xmag==
-X-Forwarded-Encrypted: i=1; AJvYcCV+A+UKqoy5h3OaGeLIjLPC3mKKp1xm9XQrd0WxpBRnkv/qFYxqb16Pum0lJcY3oQ2GwWnoR35oYKosPWf4DsTCew==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/dKHCrtXekRQiNABelG3+1dsKK1s3dawv5ky199Fi4Qkw7Cd0
-	6eejR0eaooglXE/U2WEjyAXRHq0wV09/mYJlmxzcplHoGNfe2D8/icb7JR/ZZYE=
-X-Gm-Gg: ASbGncv1bipY1zdCD5/sKJ8t9hoR5qOPv/PyT8Q/Ep3Xy7R6CQa9d+avQo26e1BpBIN
-	XPcrBvzSfpC9lixHug+h0iaVxdZLbQvIQVeANUxd1zdEJZmOC0jZhgdHg7vubnJ2AWFSOhMJEmA
-	S9N4GnGJaVk0wa4QXV5YbMcVmJHlCMh/B+WcnujMwwEd+gzuVx964AbBC2serXh1EcEt3ZcbMwq
-	Iu9KU+ikg3MNRnWoadnoMeKo9Oels8KMoGtvMLyNshOGKGALxWm8Q7wOlNqkorAIG8CmsLfpxz4
-	hZLJuDcm1ul1eGk8T3w3kvLj5Xxv7G3JvBwzaKsuerPFuj+1sU3/cfOpYzs8BM5FADKdFrE=
-X-Google-Smtp-Source: AGHT+IGeQisxWwVjKLpLxc81XidOEmaj/9PkpKcRmfg/FautVUd5O56htUIcsiEZRQHq7y6VAI6+bQ==
-X-Received: by 2002:a05:600c:3c96:b0:436:1b86:f05 with SMTP id 5b1f17b1804b1-439255b81e1mr25888635e9.11.1738942193266;
-        Fri, 07 Feb 2025 07:29:53 -0800 (PST)
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EuYjo4JUI+V0W3/HuzUdoJL4i7PKJSWth5jlL0TRFTk=;
+        b=ClH/POtfWPJgNEBm8D1fkMdhxInFaShFt5hmYdlSMe7z8pHBigPPIwG/0MuHR7hx0Q
+         7NwnLKoVFrEthPoJSO7ZLBMs7flpdaKD5e0wmrlA7iYMsCQ4cBieRNg2BVFI6iLKgYTL
+         76giA9RhG/3IiNhHxUf14K6w/tj5jmesARrvnaS5a6N9/uyF23Ne83qX7cNVNyu2XFR4
+         yPyO6p00bGFRQjiWEiXYk1o7PfShqOdrS6GaClGIO0i9Fa8nGaAh/HP1NCJfC5+ABcYZ
+         bm+9LE49ZUMyqKfbUaSCTPZesALInVcKyD3UI24l/SHCKjS8ZYfPv/jBCoRSqqRXFIB0
+         WZWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZdq5hP5fXqrO6kixhyMlBk6i108+jyGKUt1B+7L2jzqV2rqypTsUMswtNapnrEitixNxplyP690/FeBFz0mSjbQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPE844hKCFxh4DPLayGzZPPETaFO3ovfsV1fJWUbyok7nlLlEl
+	gU7u9pp/UIFxe4++M9PiaezU3Ycr0Dyh71Xc38KsoCeRyniVJLIC4wy1AnWXD2o=
+X-Gm-Gg: ASbGncsHRDL5IaKCbgn9+oNJp3w+0XqS3/ewu5VS9l20fkog8gBLBMAS3EfoEVZyllZ
+	na0kcmvsKoJO/8J2ww9Q7s/jbzTxvSEFxCmoYMGM13Af2NvDsD3U/cpzl1/4L6pNzXYotPzon9s
+	EA73X72ip+d23Ze+mEfHd9i0U58QAc0MWaRpypH+WhVaIct5mTqTy1+KM9hjksND4pGdMZiYp3f
+	OhdmsZq6xl3xNonPk+z6LDFTdIYPQN6Y+YhmNVMmg/AocQQvBbF5p8F7jr7XpZSC2QMQDq26QOu
+	H0WUPst++twYDuoW9tFPxFePwNKsa+5dhe8711f5c3WmPZeEto8u0R71g1o+jMfF9rumWKs=
+X-Google-Smtp-Source: AGHT+IEyrqdIiXOe3BZgpVf7BRpZeU8Rj8m6AcURTfGve5w+fnKmbz6AYm2NAheZilOv2kTd5uUz2Q==
+X-Received: by 2002:a05:600c:1f0b:b0:434:9e17:190c with SMTP id 5b1f17b1804b1-4392529f3a2mr23842345e9.0.1738942192661;
+        Fri, 07 Feb 2025 07:29:52 -0800 (PST)
 Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4391dc9ffd8sm57141905e9.10.2025.02.07.07.29.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 07 Feb 2025 07:29:52 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 07 Feb 2025 15:29:47 +0000
-Subject: [PATCH v7 1/3] dt-bindings: firmware: add google,gs101-acpm-ipc
+Subject: [PATCH v7 0/3] firmware: add Exynos ACPM protocol driver
+Date: Fri, 07 Feb 2025 15:29:46 +0000
+Message-Id: <20250207-gs101-acpm-v7-0-ffd7b2fb15ae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,9 +67,10 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250207-gs101-acpm-v7-1-ffd7b2fb15ae@linaro.org>
-References: <20250207-gs101-acpm-v7-0-ffd7b2fb15ae@linaro.org>
-In-Reply-To: <20250207-gs101-acpm-v7-0-ffd7b2fb15ae@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAOompmcC/23MSwrCMBSF4a2UjI3c3OaBjtyHOEhq0l7QpiQSl
+ NK9mxYcFByeA98/s+wT+czOzcySL5QpjnWYQ8O6wY6953SvmyGgFIjA+yxAcNtNTw7SnBCtk1p
+ JVsGUfKD3Frve6h4ov2L6bO2i1vdvpigOXAbUzgTXBhUuDxptiseYerZ2iv5ZBULondXV+taiF
+ 7YFMN3OLsvyBYfQUbPhAAAA
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -83,79 +83,133 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1738942191; l=2122;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1738942191; l=5811;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=V7ZhEkTlDjAWx4+eB5Cx9IjkVRaezyIIl4x2rGpDimw=;
- b=xPUvF+VVaql0+WFwyO78FZrctDRJ3K5bgzTZVoVvCOUptqjae9NCBxYAsf6FZ1nQ/oQMsb/BG
- TUGInsgGHopCIptyOe0/vC2gzHMsGe8LKcPAXQ0IasExUenWkpiR42j
+ bh=AyOjqptG1CCXHI+5Rg2T5T4EjrErcQnovY1byDNXtb8=;
+ b=S+mD91AuVIpuztF1IMBzbkM/81nYBhcVkeCR34Ma7BXeUmhZDzTtNJRVCBui+wkGCmG6g3JOb
+ ftFUxk2iibhAsFlC06/nMU6HWH37p3jIwL9V9gcRBoVxs6dLjY6QUKs
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Add bindings for the Samsung Exynos ACPM mailbox protocol.
+Alive Clock and Power Manager (ACPM) Message Protocol is defined for
+the purpose of communication between the ACPM firmware and masters
+(AP, AOC, ...). ACPM firmware operates on the Active Power Management
+(APM) module that handles overall power activities.
+
+This protocol driver provides the interface for all the client drivers
+making use of the features offered by the APM. Add ACPM protocol support.
+
+Changes in v7:
+- drop device_node cleanup because it missed initializer and didn't make
+  things much smaller. Call of_not_put() after we're done with the dn.
+- pass the property name containing the phandle as argument to
+  acpm_get_by_phandle(). This lets consumers define their bindings 
+  later on, when introduced.
+- fix typo, s/acpm_dvfs_set_xfer/acpm_pmic_set_xfer.
+- now that the exynos mailbox driver is in v6.14-rc1, use the
+  exynos-message format for the message passed to the mailbox
+  controller.
+- Link to v6: https://lore.kernel.org/r/20250116-gs101-acpm-v6-0-e3a2e1a3007c@linaro.org
+
+Changes in v6:
+- Kconfig: s/depends on EXYNOS_MBOX/depends on MAILBOX, build time
+  dependency.
+- exynos-acpm-pmic: constify tx buf, make acpm_chan_id unsigned int,
+  u32 cmd[4] instead of u32 *cmd on function params.
+- exynos-acpm:
+  - drop acpm_memcpy_{from,to}io32 wrappers of __io{read, write}32_copy.
+    Right now unailgned accesses can not happen because the only
+    protocol implemented (PMIC), uses on stack u32 buffers.
+  - constify xfer to make it clear that the caller keeps ownership and
+    must ensure it is valid memory through the entire xfer time.
+  - rework acpm_get_by_phandle() and use try_module_get and device links.
+    With the device links, when acpm is unbind, its consumers are unbind
+    first. Thus the acpm drvdata will be destroyed after there are no
+    consumers alive, there's no need for kref. try_module_get() is used
+    because we'd like to be able to delete the acpm module only when
+    there are no consumers left.
+  - make 'struct acpm_xfer' private (move it in
+    drivers/firmware/samsung/exynos-acpm.h). Get rid of 'struct acpm_msg'
+    and use 'const u32 *txcmd'
+- bindings: add Krzysztof's R-b tag
+- Link to v5: https://lore.kernel.org/r/20241220-gs101-acpm-v5-0-4f26b7fb3f5f@linaro.org
+
+Changes in v5:
+- depends on:
+  - Link: https://lore.kernel.org/all/20241220-acpm-v4-upstream-mbox-v6-0-a6942806e52a@linaro.org/
+  - it uses the newly introduced mbox_request_channel_by_args() API
+- dt-bindings:
+  - drop redundant binding word from the commit subject
+  - remove extra blank line and update example with by complying to
+    #mbox-cells = <0>;
+  - drop Krzysztof's R-b tag as the example was updated.
+- driver:
+  - channel identifiers are discovered at runtime, use
+    mbox_request_channel_by_args() instead of specifying them in DT.
+  - don't call mbox_free_channel() for PTR_ERR or NULL channels.
+  - introduce common method to init xfer
+  - rename guard name from __EXYNOS_ACPM_MFD_H__ to __EXYNOS_ACPM_PMIC_H__
+  - stop exporting devm_acpm_get_by_phandle(). We'll export the symbol
+    once a client is introduced.
+- rebase on top of v6.13-rc3
+- Link to v4: https://lore.kernel.org/r/20241212-b4-acpm-v4-upstream-firmware-v4-0-3f18ca64f1b9@linaro.org
+
+Changes in v4:
+- rename bindings filename based on compatible
+- bindings: drop nodename
+- bindings: drop mboxes description
+- bindings: remove initdata-base prop, and define it based on compatible
+- bindings: move additionalProperties after the required block
+- bindings: drop firmware node from examples
+- bindings: drop unused label in examples
+- bindings: rename node to power-management
+- driver: switch 2 macros to inline functions for readability
+- driver: add checl to avoid shift overflow on these inline functions
+- driver: use ktime_to_ms(ktime_get()) to record ktime
+- driver: use the default non-relaxed IO accessors
+- driver: remove atomic handling
+- driver: remove stray of_match_ptr()
+- driver: move header in include/linux/firmware
+- driver: make sure to, from are 32-bit aligned and count is a 32bit
+  quantity before calling __{ioread, write}32_copy
+- driver: reject IRQ channels (not supported yet_ at the top of do_xfer,
+  instead of when waiting for response.
+
+Changes in v3:
+- decouple the mailbox controller driver from the ACPM protocol driver
+- address Krzysztof's eview comments
+- add ACPM PMIC protocol helpers
+
+v2:
+https://lore.kernel.org/linux-arm-kernel/20241017163649.3007062-1-tudor.ambarus@linaro.org/
+
+v1:
+https://lore.kernel.org/linux-arm-kernel/20241004165301.1979527-1-tudor.ambarus@linaro.org/
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Tudor Ambarus (3):
+      dt-bindings: firmware: add google,gs101-acpm-ipc
+      firmware: add Exynos ACPM protocol driver
+      MAINTAINERS: add entry for the Samsung Exynos ACPM mailbox protocol
 
-diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-new file mode 100644
-index 000000000000..982cb8d62011
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright 2024 Linaro Ltd.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/firmware/google,gs101-acpm-ipc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos ACPM mailbox protocol
-+
-+maintainers:
-+  - Tudor Ambarus <tudor.ambarus@linaro.org>
-+
-+description: |
-+  ACPM (Alive Clock and Power Manager) is a firmware that operates on the
-+  APM (Active Power Management) module that handles overall power management
-+  activities. ACPM and masters regard each other as independent hardware
-+  component and communicate with each other using mailbox messages and
-+  shared memory.
-+
-+  This binding is intended to define the interface the firmware implementing
-+  ACPM provides for OSPM in the device tree.
-+
-+properties:
-+  compatible:
-+    const: google,gs101-acpm-ipc
-+
-+  mboxes:
-+    maxItems: 1
-+
-+  shmem:
-+    description:
-+      List of phandle pointing to the shared memory (SHM) area. The memory
-+      contains channels configuration data and the TX/RX ring buffers that
-+      are used for passing messages to/from the ACPM firmware.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - mboxes
-+  - shmem
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    power-management {
-+        compatible = "google,gs101-acpm-ipc";
-+        mboxes = <&ap2apm_mailbox>;
-+        shmem = <&apm_sram>;
-+    };
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  50 ++
+ MAINTAINERS                                        |  10 +
+ drivers/firmware/Kconfig                           |   1 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/samsung/Kconfig                   |  14 +
+ drivers/firmware/samsung/Makefile                  |   4 +
+ drivers/firmware/samsung/exynos-acpm-pmic.c        | 229 ++++++
+ drivers/firmware/samsung/exynos-acpm-pmic.h        |  29 +
+ drivers/firmware/samsung/exynos-acpm.c             | 771 +++++++++++++++++++++
+ drivers/firmware/samsung/exynos-acpm.h             |  23 +
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  49 ++
+ 11 files changed, 1181 insertions(+)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20241220-gs101-acpm-047922ab4654
 
+Best regards,
 -- 
-2.48.1.502.g6dc24dfdaf-goog
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
