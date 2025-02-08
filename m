@@ -1,125 +1,121 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1792623C8BA
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Feb 2025 15:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602D1248192;
+	Sat,  8 Feb 2025 15:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738943812; cv=none; b=UZFQgOwK1w0TUyq6GywOUbiDHoXs9CFgYMuCq9yJWzbXVYZJzZlOjOTi1rr8CHw9Obi2cZy7saTkw6FY+16mIr3ic6hD7nboJYdeh0Cm6zya89d/dCX8Y0T/o/MXMIMCe9uzj3uAy4/GePu74xfzjWueSKnbf19cxedARu9vPh0=
+	t=1739026877; cv=none; b=YrgoTRRF6hToCW8gc9iZd9Y6Xh03Sf5YBGVBo7PlBJNdsmK8YqAXoetaiwLLpaD33tmWGmiAec+TAXV7iWMFfCmnI4Uu2IWd0T2fqs3AXj2u1KUEViTiMdl41a0bfEZ5MpFfaRj8G+DhAckVEN4eTSqL3R/0NBRIH9tZBvy0mms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738943812; c=relaxed/simple;
-	bh=LqA0TnpriX6BG6wFMMTRQwjG15Mb4xWdLzul4jT3ckw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bNCQY7la+cihqI+v73xLhEc1p3+0cNwMKw1XHS1SYlJR+Mtrgn5MoWakukq+IikDL9EZ5gPC2Eat3D9VKBdt8jivqN7v7/ClnX2oUKr7vB061kcPeanvqcjH+OlBqulSPK8jdwMvwtSYcAV7D4OEMBOxwUocNbIzEGinB2IMV/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l5gIOqbg; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739026877; c=relaxed/simple;
+	bh=oUdNE/knSRZTMNI0GM2ibbe2wOyiIi4OxLXFL6CD6aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGpLgiYYKT7uarFz2veCkqGwToAJfBYBKK4cz78maj39FvZtBjuo6Qh+wUEi071yGSMv91IW+bxL6rdTvLZxQ4RvPwCngRDrb5eOAWUzzo+fKf2BnZ3XIYp0+b47rssv7zd9MnYuNF/pFU+fbo968AeePgDkFYSRW4Bth4wNuvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NYgawEa/; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l5gIOqbg"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dc1dfd9f2so1178924f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Feb 2025 07:56:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738943809; x=1739548609; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z3dWOoof3Xw/2OHGbRzCfoAg04gz2ejhFyHKSGYevMQ=;
-        b=l5gIOqbgTayffTKPLM73X3/pubPi7dP9/lqBtshxn/FtF9r5n4U+yiGCgZXB9jbZ4L
-         ej3OwBcyXr/K3gcNoSafoOGUJ/zFfva/PdGy/X2jPB2wfshmZpgCI7kHWglZyTl7QqvF
-         4ZW7iqVRWGDHRq6qJQMwnnnfvdru3xzMe8AUuGNgcnyD/hg7XRSACwdicmz4WZ5z9u/Q
-         Kz1uPxJwYs7ojZjV8BeFtgDARMJiNFkb7uHuZlYrXyHofct2MWQqVWjgMyGnkWqqghTc
-         OYfm4cL7Xjq+05OXLJYIqN/euuXu4xDzCclVq5F+Z1iSidnMxuzYekiXDD4GcuHT/G6s
-         jFPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738943809; x=1739548609;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z3dWOoof3Xw/2OHGbRzCfoAg04gz2ejhFyHKSGYevMQ=;
-        b=VBZJif0QzZfHWmUqhepQYlZVFa1AMCuFen3RtoP0xphw5fJNXK8O4p/YDPT4BF1iMG
-         /q37UcTBf6aChZRpQfz4Kf3+HsM72faF9uzbo4nt4yU/bWbHlA6pCaqAAsmaHXlbAyJ3
-         OxDf0kLcis8J5XrZn/92kIUQHtEvT3z8Y4dQO8kfUmZAG8ODj4TLUegAqSHGTLEL3qqE
-         Gqk07S6dDWZ93o5pNo79extttIBLr6Z1o2zoPg9c7gelaJ8owonD/NHYh1FCi5fRNuTB
-         f/loH4hwNt2N5okU7qz6QsIYTjMYV+8y7Rnzim5SByo61xyOUtiN2vn6JZofTbMj4OEr
-         8Uvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxF4Ck94gJ1SGoyuicTxc3xsvfOFUwzD2Uuuhlm4wxnveWKqJLatuwggs5gMwMcTeGEIv5qL+pJb90Irb7Cd59vw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YytX6wBnU/I7dicl75cce4u3Gny9hnbEGWD+W9wYBsEwK3rCk/H
-	qlsuy9eMUNt1AdG/1/g1C95kp095cdgj7XcBuqySd+Xz7PQgt0jGizGvejb/Qh0=
-X-Gm-Gg: ASbGncsaifgk05sz4l3iog85pVe/dC2t4w+YrhJgcCLPvB/MOzQKe04U9+pPIYgmhFJ
-	HzHBYKrnxwmm89Rsvn5iqHjWwgBHMoyI5/mQaQQh/u/H5TU/Gd6+CvS06lX0mPXlt1CQUv9ITgG
-	9bzIsq6WfN6VyQ8iJWb6dAYa7A9h46C3mTE1xj4sMuPXqaYrR2UTE/G2Doh1JA6BeRZnK+/9SkQ
-	17t2wvwPgUq+E11hvn1j6f46GpKoOEYpdNgndQJvLudKJMODk6pegdf6AGs9YEbN9dIDwxJEmL/
-	VeGt61P1mRLUoAvStTtWA4wdKvfSbw0xodHjOFFJxHInMgmff0WuF0vn2C6twGJgGmJpbko=
-X-Google-Smtp-Source: AGHT+IHi7d+qk0bKlKvNvtjux0Ae8ZnowO4Boe9Bx+bhD4ZewXY1Ic6zG9Cm+U7d/qkhyLu5UCqFyg==
-X-Received: by 2002:a5d:6c66:0:b0:38c:2745:2dd8 with SMTP id ffacd0b85a97d-38dc9138771mr2372188f8f.37.1738943807901;
-        Fri, 07 Feb 2025 07:56:47 -0800 (PST)
-Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc09fc2d9sm4197507f8f.6.2025.02.07.07.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 07:56:47 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 07 Feb 2025 15:56:45 +0000
-Subject: [PATCH v4 3/4] arm64: dts: exynos: gs101: add ACPM protocol node
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NYgawEa/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739026876; x=1770562876;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oUdNE/knSRZTMNI0GM2ibbe2wOyiIi4OxLXFL6CD6aw=;
+  b=NYgawEa/j1TzddNBB1uH3f9r0A1NqBj9OqfEvwZWbpt+pie7G2OvcbQe
+   bqB1jqcQGtkPEnQk2/rXyindzgLnhJBB5j1Wb4/GWsB+GDjTaHGo5WgvO
+   qVFEQXqpxVkWqPUJ23kcrY9s6j3ipjJZ3EeyuWHkfix7geLMJ90IFAZxF
+   CfJXNMT9+TVZGhRNa0wei7u+groeYpgm8KPqXPY08mz0meaXxBTxyOiAh
+   plC/BPLJEWVj8wZGgJidS3sQ655y5QiKZ+EKjRVvbqkqWg0cZB2VvCHgN
+   Ci/GmYePUbBwfWI7qjSgR+CYfu/hDuP3TjUZhO4ETE7ED02iVwKcYNLBJ
+   g==;
+X-CSE-ConnectionGUID: wwLvPCWMQSCTJ+OarSolrA==
+X-CSE-MsgGUID: tdokEJTrQ3GFpcuIYLuiGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11339"; a="39783860"
+X-IronPort-AV: E=Sophos;i="6.13,270,1732608000"; 
+   d="scan'208";a="39783860"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2025 07:01:15 -0800
+X-CSE-ConnectionGUID: cFMuT3VZQoi7gUylQgT/aA==
+X-CSE-MsgGUID: 6RgaP+1PQOuJ1OaQbZZftg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,270,1732608000"; 
+   d="scan'208";a="111613881"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Feb 2025 07:01:09 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tgmKQ-00109B-1f;
+	Sat, 08 Feb 2025 15:01:06 +0000
+Date: Sat, 8 Feb 2025 23:00:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
+	kernel-team@android.com, willmcvicker@google.com,
+	peter.griffin@linaro.org, daniel.lezcano@linaro.org,
+	vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
+Message-ID: <202502082233.qjIDyD3Z-lkp@intel.com>
+References: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250207-gs101-acpm-dt-v4-3-230ba8663a2d@linaro.org>
-References: <20250207-gs101-acpm-dt-v4-0-230ba8663a2d@linaro.org>
-In-Reply-To: <20250207-gs101-acpm-dt-v4-0-230ba8663a2d@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- peter.griffin@linaro.org, daniel.lezcano@linaro.org, 
- vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
- Jassi Brar <jassisinghbrar@gmail.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1738943805; l=954;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=LqA0TnpriX6BG6wFMMTRQwjG15Mb4xWdLzul4jT3ckw=;
- b=DWBaLZg5xR+Gle2U+lAVVq/Oxzacpni3Vbk3bF4m1w4g94PpWCXFJwkjJtFjtSG95lUHggbvy
- nnlqQIL2mvZBPYsiLt7N1rZwTwLCF/sYW5PVuaCUUv14pSHoqCEgTg3
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
 
-Add the ACPM protocol node. ACPM protocol provides interface for all
-the client drivers making use of the features offered by the
-Active Power Management (APM) module.
+Hi Tudor,
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 25ba262e3b3c..cc97c08fa9b2 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -277,6 +277,14 @@ apm_sram: sram@2039000 {
- 		ranges = <0x0 0x0 0x2039000 0x40000>;
- 	};
- 
-+	firmware {
-+		acpm_ipc: power-management {
-+			compatible = "google,gs101-acpm-ipc";
-+			mboxes = <&ap2apm_mailbox>;
-+			shmem = <&apm_sram>;
-+		};
-+	};
-+
- 	soc: soc@0 {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+[auto build test WARNING on 2014c95afecee3e76ca4a56956a936e23283f05b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tudor-Ambarus/dt-bindings-firmware-add-google-gs101-acpm-ipc/20250207-233333
+base:   2014c95afecee3e76ca4a56956a936e23283f05b
+patch link:    https://lore.kernel.org/r/20250207-gs101-acpm-v7-2-ffd7b2fb15ae%40linaro.org
+patch subject: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250208/202502082233.qjIDyD3Z-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250208/202502082233.qjIDyD3Z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502082233.qjIDyD3Z-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/firmware/samsung/exynos-acpm.c:646: warning: expecting prototype for acpm_put_handle(). Prototype was for acpm_handle_put() instead
+
+
+vim +646 drivers/firmware/samsung/exynos-acpm.c
+
+   640	
+   641	/**
+   642	 * acpm_put_handle() - release the handle acquired by acpm_get_by_phandle.
+   643	 * @handle:	Handle acquired by acpm_get_by_phandle.
+   644	 */
+   645	static void acpm_handle_put(const struct acpm_handle *handle)
+ > 646	{
+   647		struct acpm_info *acpm = handle_to_acpm_info(handle);
+   648		struct device *dev = acpm->dev;
+   649	
+   650		module_put(dev->driver->owner);
+   651		/* Drop reference taken with of_find_device_by_node(). */
+   652		put_device(dev);
+   653	}
+   654	
 
 -- 
-2.48.1.502.g6dc24dfdaf-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
