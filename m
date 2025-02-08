@@ -1,121 +1,110 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602D1248192;
-	Sat,  8 Feb 2025 15:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAB313EFE3;
+	Sat,  8 Feb 2025 15:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739026877; cv=none; b=YrgoTRRF6hToCW8gc9iZd9Y6Xh03Sf5YBGVBo7PlBJNdsmK8YqAXoetaiwLLpaD33tmWGmiAec+TAXV7iWMFfCmnI4Uu2IWd0T2fqs3AXj2u1KUEViTiMdl41a0bfEZ5MpFfaRj8G+DhAckVEN4eTSqL3R/0NBRIH9tZBvy0mms=
+	t=1739028697; cv=none; b=f+2+aMxoFj+N09I1Nz4RzA3qoPFAXodPaVuX9rGw1oinwSKp6n/d+ptL+APbndolpSBZKDXaC9eJZccbJMVntJ2ywdWWtw8eTQ8H96K6TukYxat0h0ezSkVbuW06M9PLg09dco41TN3Z8H1d7Q6w0IfjWEsV8G1ALlKeWoUNotI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739026877; c=relaxed/simple;
-	bh=oUdNE/knSRZTMNI0GM2ibbe2wOyiIi4OxLXFL6CD6aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGpLgiYYKT7uarFz2veCkqGwToAJfBYBKK4cz78maj39FvZtBjuo6Qh+wUEi071yGSMv91IW+bxL6rdTvLZxQ4RvPwCngRDrb5eOAWUzzo+fKf2BnZ3XIYp0+b47rssv7zd9MnYuNF/pFU+fbo968AeePgDkFYSRW4Bth4wNuvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NYgawEa/; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1739028697; c=relaxed/simple;
+	bh=xUEyeDJYNR6Ucl+LArrtXhSHez6IpDdlM3WRuVS2+go=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=d4wDXCTJ41JaNm4vcIh5HOinGSDn0JX+75SHvvuQirTsjhsTlh1Y0CCJNIDkLen87MoX+If4y28sQHLTfUAiERWFdfip3WEDGVq4Y/7fbrTHPvYW1Sycn3gq2d0jLl5uoVHyntmspGmeqD7kIvL5lRjol+QMwgVh5VZWIfsYJV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OTJYcSmQ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NYgawEa/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739026876; x=1770562876;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oUdNE/knSRZTMNI0GM2ibbe2wOyiIi4OxLXFL6CD6aw=;
-  b=NYgawEa/j1TzddNBB1uH3f9r0A1NqBj9OqfEvwZWbpt+pie7G2OvcbQe
-   bqB1jqcQGtkPEnQk2/rXyindzgLnhJBB5j1Wb4/GWsB+GDjTaHGo5WgvO
-   qVFEQXqpxVkWqPUJ23kcrY9s6j3ipjJZ3EeyuWHkfix7geLMJ90IFAZxF
-   CfJXNMT9+TVZGhRNa0wei7u+groeYpgm8KPqXPY08mz0meaXxBTxyOiAh
-   plC/BPLJEWVj8wZGgJidS3sQ655y5QiKZ+EKjRVvbqkqWg0cZB2VvCHgN
-   Ci/GmYePUbBwfWI7qjSgR+CYfu/hDuP3TjUZhO4ETE7ED02iVwKcYNLBJ
-   g==;
-X-CSE-ConnectionGUID: wwLvPCWMQSCTJ+OarSolrA==
-X-CSE-MsgGUID: tdokEJTrQ3GFpcuIYLuiGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11339"; a="39783860"
-X-IronPort-AV: E=Sophos;i="6.13,270,1732608000"; 
-   d="scan'208";a="39783860"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2025 07:01:15 -0800
-X-CSE-ConnectionGUID: cFMuT3VZQoi7gUylQgT/aA==
-X-CSE-MsgGUID: 6RgaP+1PQOuJ1OaQbZZftg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,270,1732608000"; 
-   d="scan'208";a="111613881"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 08 Feb 2025 07:01:09 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tgmKQ-00109B-1f;
-	Sat, 08 Feb 2025 15:01:06 +0000
-Date: Sat, 8 Feb 2025 23:00:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
-	kernel-team@android.com, willmcvicker@google.com,
-	peter.griffin@linaro.org, daniel.lezcano@linaro.org,
-	vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
-Message-ID: <202502082233.qjIDyD3Z-lkp@intel.com>
-References: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OTJYcSmQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739028668; x=1739633468; i=markus.elfring@web.de;
+	bh=7smLfTFL5BKYAZQkazi7scNRCK0L6bFwsDahCQSasH4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OTJYcSmQXnJ28ne+zJmF6sLLBOptrLx32EOeU3FkEeHE/fASP5Eox2XGtb7+ncld
+	 yQSdqQOgj6SstGmXeXNKCCdcUfhnTxqb8IO4bigyzGKGJp0VaU7JOcCXVOKDQzt6g
+	 1dlBhC+zk6V3a+bVfvQyNRSqYEtwLMVoL8bBBrMnqZBr8QYseV/bhicAbvOGCpQ8d
+	 MDcTGiBtJjEqSk2Uk4AsQb8mQNO+BHJTs/nAeZwRVCMMh4qCr6c2RnQrPOXgEKSi1
+	 bOq2iXySPtsuAskQ2tJLbD3P36vJoJhblc/tSnrHw+iJwt5xeNsj6vV8L7RqNlcRu
+	 SBy/6spmRo0tjdoX+Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLRUX-1txUjf1q67-00TWna; Sat, 08
+ Feb 2025 16:31:08 +0100
+Message-ID: <e1fffd3b-d3dd-4f46-b7b6-1f03f934dd30@web.de>
+Date: Sat, 8 Feb 2025 16:31:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Will McVicker <willmcvicker@google.com>
+References: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
+Subject: Re: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
 In-Reply-To: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:41VPE8YHUwhgvBJ+GjhA+69xcvqt1/dXMka1JYXhGwdWO2uxU0+
+ 7/tUEhDlca6pJpreqOxT0yc/2G/pKFSQk8NqsO5zPkOwc4nOZXKtDDL69ehUZu0GpAS81OU
+ 39aVyHgvoCaT4xVlWeAtznFQTeDWQTehi/JwsFJUoLHGcrnkRVilv49G07dM7mLxhlhmWIF
+ +3qOlG8VmFmL3NQOo14qA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+Z9MQ63j70M=;uZzfcpFuhUOZtbmhzft5U8Jbey4
+ oW3o5TdOkWPhufzVXoEqHrHgOXYQ8NpDuKZb4xpCXgiS6Qyo4AuvUCgTe7BZbVu4WAi4N/JH0
+ zGr+STweUFR1vfLD1QhQHFMITyWEwOVUpgMFVTXMpaMQ64mbr4vm8s8izDP6pzSCR1O5NhQwV
+ AK4b8btFxk9umsrQ0/npcAH/y5gTeSMUm8Xg27MhXrMR2JoJ7Bg98sYuF+lXU/Lg8Dn4WbmQu
+ 9kv5wBwWDa2VuDvPr5VtqWvIQGmyUBrqeNbwQeRmfk4jVYhpFpWeOhiuE5C0bzxPbEL8eJbj6
+ 8xzl/LwSeSNqDltqHg3ypRCSYCEOHKKSj8Q/Im3KE7QIaw5+tx4J+bg4PexXvv45pEuVKKrCp
+ +tGvJj0oJt90uCAyZEmLe4b18AeMBj9swUVTNGccuhLRpZyvX2LGZroc0TxPjSER5c5ekYjxP
+ LtNsMmEPP9312NhQc2Hc+VpErdKURktZ5ExFWlkFoSFKXjTcfNgsWFBqcE7C3sXQtyFskYrKq
+ Bs6Jcu8NJWrZuu6qefCMkXMHrUgbEg+lyLGNg7v9/zUnZJPftE97bC3CQYqH81R2GAc9FzE4/
+ bY1q0TAat7MiBJIL0MMv1/4fvXM69Lkh34TmaDPzNemx39PpiNGeCF6id+bD0s6ua7TAGUeOR
+ 84nDWnnhRap3ZD06RhIQQALB5bgkWA675BjFZrPR0kZl4pxtJcbTrCC4zfbMCeVOTwH/cqxZd
+ C0ebnUnggHraL7/ayhiDebCZhmAc5MdWs63W4amaTV54WRUyHM6p8GfLzaw/8FxtZjvS0SQLR
+ d2g6drU5YREC0PJnlfvSgB8Onne5cnINZFr4t7TKqPSzZ3YHjICz3qb9JT5MXPRrkJzBRfyYu
+ psXOvWzMkXFHGz/SNa5J6f76smmSwDOlruZOrIopD+AENAAfbpmHSvh5zqNQtmTDUfseI2KWa
+ 3zNCPBdwsawfyxNXPk2a755BNZZjzrvEsLye9EXdllqhVJtQCY2CLgd24foxFwyWDumZ6UYM2
+ ieLaAmbfHVwAiNTWJC8Gq/RmbBFM9qnmhRkoXYbaeg5gU5xJqKmsEPPsUesXyXMacp2m2PZ4b
+ ab8mzmhmaYTxDjzw5nTlg6spCC16Kq8l+NR6LRZsBZrA6VdW5z1jMR1BYpjnqCgriMIKuvNdP
+ J5lL8/sjouxpw4+2eOIHUXjxAoee+6DKC1A9BYNCRuwuFDPkE5VbJuS9QPZQ62TXJBS3Pyxsk
+ WZ5PPQxbgGDHfzh7p0tNbIHclpu/M/suXyG8m3MrnGPodUSHHT8XP+88JbDVilxTAv9ek1Ws6
+ wJ6sua0IP8dbmq/ZnnyihOJuA71AB0fDvrxJou7h4spXl5S1R55LV9BJYK+B8OxU+EeRifYXV
+ Xggs3O4ztBhwqsWXygWmLH90ptIRKVbmYQTkZZhyDkA9BVwIinOHhs75tosNloZrGp55rp87A
+ NZmER3mT0QMIGakfNHiH4dgDRVHI=
 
-Hi Tudor,
+=E2=80=A6
+> +++ b/drivers/firmware/samsung/exynos-acpm.c
+> @@ -0,0 +1,771 @@
+=E2=80=A6
+> +static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+> +				   const struct acpm_xfer *xfer)
+> +{
+=E2=80=A6
+> +	do {
+> +		mutex_lock(&achan->rx_lock);
+> +		ret =3D acpm_get_rx(achan, xfer);
+> +		mutex_unlock(&achan->rx_lock);
+=E2=80=A6
 
-kernel test robot noticed the following build warnings:
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&achan->rx_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.13.1/source/include/linux/mutex.h#L201
 
-[auto build test WARNING on 2014c95afecee3e76ca4a56956a936e23283f05b]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tudor-Ambarus/dt-bindings-firmware-add-google-gs101-acpm-ipc/20250207-233333
-base:   2014c95afecee3e76ca4a56956a936e23283f05b
-patch link:    https://lore.kernel.org/r/20250207-gs101-acpm-v7-2-ffd7b2fb15ae%40linaro.org
-patch subject: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250208/202502082233.qjIDyD3Z-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250208/202502082233.qjIDyD3Z-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502082233.qjIDyD3Z-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/firmware/samsung/exynos-acpm.c:646: warning: expecting prototype for acpm_put_handle(). Prototype was for acpm_handle_put() instead
-
-
-vim +646 drivers/firmware/samsung/exynos-acpm.c
-
-   640	
-   641	/**
-   642	 * acpm_put_handle() - release the handle acquired by acpm_get_by_phandle.
-   643	 * @handle:	Handle acquired by acpm_get_by_phandle.
-   644	 */
-   645	static void acpm_handle_put(const struct acpm_handle *handle)
- > 646	{
-   647		struct acpm_info *acpm = handle_to_acpm_info(handle);
-   648		struct device *dev = acpm->dev;
-   649	
-   650		module_put(dev->driver->owner);
-   651		/* Drop reference taken with of_find_device_by_node(). */
-   652		put_device(dev);
-   653	}
-   654	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Markus
