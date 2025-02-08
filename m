@@ -1,110 +1,121 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAB313EFE3;
-	Sat,  8 Feb 2025 15:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB51241129;
+	Sat,  8 Feb 2025 19:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739028697; cv=none; b=f+2+aMxoFj+N09I1Nz4RzA3qoPFAXodPaVuX9rGw1oinwSKp6n/d+ptL+APbndolpSBZKDXaC9eJZccbJMVntJ2ywdWWtw8eTQ8H96K6TukYxat0h0ezSkVbuW06M9PLg09dco41TN3Z8H1d7Q6w0IfjWEsV8G1ALlKeWoUNotI=
+	t=1739041228; cv=none; b=Ruqy12DtdSyDf7+YCwpg2Fc65H5nmjXLoKFcRUQ7h7ZawpdARYfvEQS6nLWrb85Z85E8CfLoHvfvAQOiiTMFIM4CDSPj5FrTcGCMNDWYZ/FFAkb3kmc8tnJliKuSnhLtsepj9keKS9rJJVQiCHB3BtRl78AS67XzuTzf4oGowmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739028697; c=relaxed/simple;
-	bh=xUEyeDJYNR6Ucl+LArrtXhSHez6IpDdlM3WRuVS2+go=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=d4wDXCTJ41JaNm4vcIh5HOinGSDn0JX+75SHvvuQirTsjhsTlh1Y0CCJNIDkLen87MoX+If4y28sQHLTfUAiERWFdfip3WEDGVq4Y/7fbrTHPvYW1Sycn3gq2d0jLl5uoVHyntmspGmeqD7kIvL5lRjol+QMwgVh5VZWIfsYJV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OTJYcSmQ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1739041228; c=relaxed/simple;
+	bh=alWLYF/9OcbBa/I1+7yBqk1Z5iaf+prVR/oyQI0H9G4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PZ6zuiZPiLxwMF6CV5AS7tW6FDgzcieAxk7PPimB/UW6UgGPrX4qKozsm+Pdt1Eo5Ri0yemGWR87AIiweiUVzCOB+j6PtvfqrJPF4Q4vPrmxE87vOfFGLgc8i+jaLSFcJN3LPIcNk21ZhUsHiXl31eX1xqLZpFR4LO3lxaAvlpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=DOC4jBhf; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OTJYcSmQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739028668; x=1739633468; i=markus.elfring@web.de;
-	bh=7smLfTFL5BKYAZQkazi7scNRCK0L6bFwsDahCQSasH4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OTJYcSmQXnJ28ne+zJmF6sLLBOptrLx32EOeU3FkEeHE/fASP5Eox2XGtb7+ncld
-	 yQSdqQOgj6SstGmXeXNKCCdcUfhnTxqb8IO4bigyzGKGJp0VaU7JOcCXVOKDQzt6g
-	 1dlBhC+zk6V3a+bVfvQyNRSqYEtwLMVoL8bBBrMnqZBr8QYseV/bhicAbvOGCpQ8d
-	 MDcTGiBtJjEqSk2Uk4AsQb8mQNO+BHJTs/nAeZwRVCMMh4qCr6c2RnQrPOXgEKSi1
-	 bOq2iXySPtsuAskQ2tJLbD3P36vJoJhblc/tSnrHw+iJwt5xeNsj6vV8L7RqNlcRu
-	 SBy/6spmRo0tjdoX+Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLRUX-1txUjf1q67-00TWna; Sat, 08
- Feb 2025 16:31:08 +0100
-Message-ID: <e1fffd3b-d3dd-4f46-b7b6-1f03f934dd30@web.de>
-Date: Sat, 8 Feb 2025 16:31:00 +0100
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="DOC4jBhf"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D2ADB25D01;
+	Sat,  8 Feb 2025 20:00:16 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 55FrgB_ujl9K; Sat,  8 Feb 2025 20:00:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1739041215; bh=alWLYF/9OcbBa/I1+7yBqk1Z5iaf+prVR/oyQI0H9G4=;
+	h=From:Date:Subject:To:Cc;
+	b=DOC4jBhf/haJGplx2K8eiCjySQ5qbgEtpmkQ3ImmkbEXeHtImVv7v4Q3fGLF0mGE7
+	 7L/OdfBlNBQCIssAqszLDs+H4f+GEskwUBTuThpvWz4DJLpyk7I13rv35duIoF0HIj
+	 /ouUMNy8JwCqopdtjG2jKBi+M1Fz2V4bgJc+EjHZjbLHKZwwqgVa8OK2pNlc6PYcRI
+	 bdf8ePyZCdfuXsUrTZK+3FShLaP30618vZcaABPPC4Wj/AXXguL7RKve5Pv6ZLbikK
+	 xhalBciwDPH2s3/BZF79OXtG5DhHBeu/ojLzG2MQiAuJxWsx6zjhIDh4f/1dvtDzSL
+	 biy7RX9N2lDew==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Sun, 09 Feb 2025 00:29:30 +0530
+Subject: [PATCH] phy: exynos5-usbdrd: fix MPLL_MULTIPLIER and SSC_REFCLKSEL
+ masks in refclk
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Will McVicker <willmcvicker@google.com>
-References: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
-Subject: Re: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:41VPE8YHUwhgvBJ+GjhA+69xcvqt1/dXMka1JYXhGwdWO2uxU0+
- 7/tUEhDlca6pJpreqOxT0yc/2G/pKFSQk8NqsO5zPkOwc4nOZXKtDDL69ehUZu0GpAS81OU
- 39aVyHgvoCaT4xVlWeAtznFQTeDWQTehi/JwsFJUoLHGcrnkRVilv49G07dM7mLxhlhmWIF
- +3qOlG8VmFmL3NQOo14qA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+Z9MQ63j70M=;uZzfcpFuhUOZtbmhzft5U8Jbey4
- oW3o5TdOkWPhufzVXoEqHrHgOXYQ8NpDuKZb4xpCXgiS6Qyo4AuvUCgTe7BZbVu4WAi4N/JH0
- zGr+STweUFR1vfLD1QhQHFMITyWEwOVUpgMFVTXMpaMQ64mbr4vm8s8izDP6pzSCR1O5NhQwV
- AK4b8btFxk9umsrQ0/npcAH/y5gTeSMUm8Xg27MhXrMR2JoJ7Bg98sYuF+lXU/Lg8Dn4WbmQu
- 9kv5wBwWDa2VuDvPr5VtqWvIQGmyUBrqeNbwQeRmfk4jVYhpFpWeOhiuE5C0bzxPbEL8eJbj6
- 8xzl/LwSeSNqDltqHg3ypRCSYCEOHKKSj8Q/Im3KE7QIaw5+tx4J+bg4PexXvv45pEuVKKrCp
- +tGvJj0oJt90uCAyZEmLe4b18AeMBj9swUVTNGccuhLRpZyvX2LGZroc0TxPjSER5c5ekYjxP
- LtNsMmEPP9312NhQc2Hc+VpErdKURktZ5ExFWlkFoSFKXjTcfNgsWFBqcE7C3sXQtyFskYrKq
- Bs6Jcu8NJWrZuu6qefCMkXMHrUgbEg+lyLGNg7v9/zUnZJPftE97bC3CQYqH81R2GAc9FzE4/
- bY1q0TAat7MiBJIL0MMv1/4fvXM69Lkh34TmaDPzNemx39PpiNGeCF6id+bD0s6ua7TAGUeOR
- 84nDWnnhRap3ZD06RhIQQALB5bgkWA675BjFZrPR0kZl4pxtJcbTrCC4zfbMCeVOTwH/cqxZd
- C0ebnUnggHraL7/ayhiDebCZhmAc5MdWs63W4amaTV54WRUyHM6p8GfLzaw/8FxtZjvS0SQLR
- d2g6drU5YREC0PJnlfvSgB8Onne5cnINZFr4t7TKqPSzZ3YHjICz3qb9JT5MXPRrkJzBRfyYu
- psXOvWzMkXFHGz/SNa5J6f76smmSwDOlruZOrIopD+AENAAfbpmHSvh5zqNQtmTDUfseI2KWa
- 3zNCPBdwsawfyxNXPk2a755BNZZjzrvEsLye9EXdllqhVJtQCY2CLgd24foxFwyWDumZ6UYM2
- ieLaAmbfHVwAiNTWJC8Gq/RmbBFM9qnmhRkoXYbaeg5gU5xJqKmsEPPsUesXyXMacp2m2PZ4b
- ab8mzmhmaYTxDjzw5nTlg6spCC16Kq8l+NR6LRZsBZrA6VdW5z1jMR1BYpjnqCgriMIKuvNdP
- J5lL8/sjouxpw4+2eOIHUXjxAoee+6DKC1A9BYNCRuwuFDPkE5VbJuS9QPZQ62TXJBS3Pyxsk
- WZ5PPQxbgGDHfzh7p0tNbIHclpu/M/suXyG8m3MrnGPodUSHHT8XP+88JbDVilxTAv9ek1Ws6
- wJ6sua0IP8dbmq/ZnnyihOJuA71AB0fDvrxJou7h4spXl5S1R55LV9BJYK+B8OxU+EeRifYXV
- Xggs3O4ztBhwqsWXygWmLH90ptIRKVbmYQTkZZhyDkA9BVwIinOHhs75tosNloZrGp55rp87A
- NZmER3mT0QMIGakfNHiH4dgDRVHI=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250209-exynos5-usbdrd-masks-v1-1-4f7f83f323d7@disroot.org>
+X-B4-Tracking: v=1; b=H4sIAJGpp2cC/x3MQQ5AMBBA0avIrE1SjVKuIhboYCJKOiFE3F1j+
+ Rb/PyAUmATq5IFAJwtvPiJLExjmzk+E7KJBK22UVhbpuv0mBg/pXXC4drIIllRRUVkz5L2FmO6
+ BRr7+bdO+7wekWIFpZgAAAA==
+X-Change-ID: 20250208-exynos5-usbdrd-masks-7e9e6985c4b8
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739041209; l=2085;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=alWLYF/9OcbBa/I1+7yBqk1Z5iaf+prVR/oyQI0H9G4=;
+ b=u7SS0kBpPe4GLUkdpGBcrXSlzjYQ5lTUc9poNrKPxjumtkDDCLanuInoWrIfZdaYIYKdJwsQ8
+ spQArA691vLAEsK3NzHrFjhY0s2A0LvAotGppdNelchuuQ1ZOtDXhue
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-=E2=80=A6
-> +++ b/drivers/firmware/samsung/exynos-acpm.c
-> @@ -0,0 +1,771 @@
-=E2=80=A6
-> +static int acpm_dequeue_by_polling(struct acpm_chan *achan,
-> +				   const struct acpm_xfer *xfer)
-> +{
-=E2=80=A6
-> +	do {
-> +		mutex_lock(&achan->rx_lock);
-> +		ret =3D acpm_get_rx(achan, xfer);
-> +		mutex_unlock(&achan->rx_lock);
-=E2=80=A6
+In exynos5_usbdrd_{pipe3,utmi}_set_refclk(), the masks
+PHYCLKRST_MPLL_MULTIPLIER_MASK and PHYCLKRST_SSC_REFCLKSEL_MASK are not
+inverted when applied to the register values. Fix it.
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&achan->rx_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.13.1/source/include/linux/mutex.h#L201
+Cc: stable@vger.kernel.org
+Fixes: 59025887fb08 ("phy: Add new Exynos5 USB 3.0 PHY driver")
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Patch picked up from:
+https://lore.kernel.org/all/20250204-exynos7870-usbphy-v1-1-f30a9857efeb@disroot.org/
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index c421b495eb0fe4396d76f8c9d7c198ad7cd08869..4a108fdab118c0edd76bd88dc9dbf6a498e064b3 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -488,9 +488,9 @@ exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
+ 	reg |=	PHYCLKRST_REFCLKSEL_EXT_REFCLK;
+ 
+ 	/* FSEL settings corresponding to reference clock */
+-	reg &= ~PHYCLKRST_FSEL_PIPE_MASK |
+-		PHYCLKRST_MPLL_MULTIPLIER_MASK |
+-		PHYCLKRST_SSC_REFCLKSEL_MASK;
++	reg &= ~(PHYCLKRST_FSEL_PIPE_MASK |
++		 PHYCLKRST_MPLL_MULTIPLIER_MASK |
++		 PHYCLKRST_SSC_REFCLKSEL_MASK);
+ 	switch (phy_drd->extrefclk) {
+ 	case EXYNOS5_FSEL_50MHZ:
+ 		reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
+@@ -532,9 +532,9 @@ exynos5_usbdrd_utmi_set_refclk(struct phy_usb_instance *inst)
+ 	reg &= ~PHYCLKRST_REFCLKSEL_MASK;
+ 	reg |=	PHYCLKRST_REFCLKSEL_EXT_REFCLK;
+ 
+-	reg &= ~PHYCLKRST_FSEL_UTMI_MASK |
+-		PHYCLKRST_MPLL_MULTIPLIER_MASK |
+-		PHYCLKRST_SSC_REFCLKSEL_MASK;
++	reg &= ~(PHYCLKRST_FSEL_UTMI_MASK |
++		 PHYCLKRST_MPLL_MULTIPLIER_MASK |
++		 PHYCLKRST_SSC_REFCLKSEL_MASK);
+ 	reg |= PHYCLKRST_FSEL(phy_drd->extrefclk);
+ 
+ 	return reg;
+
+---
+base-commit: df4b2bbff898227db0c14264ac7edd634e79f755
+change-id: 20250208-exynos5-usbdrd-masks-7e9e6985c4b8
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
