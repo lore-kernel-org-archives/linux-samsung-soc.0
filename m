@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0FF15F41F;
-	Sun,  9 Feb 2025 10:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129E7190692;
+	Sun,  9 Feb 2025 11:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739096461; cv=none; b=kvskDDnWsSqlgIF+VxAwnSbTs8WwkZt5NtHa+wzNktiQQEq9I6cmjwQRWkJnWdXSjDCFFRyawpbGp/5/xC6cz3NEts0/m/VCgxHcXR3FkZbX8j57TwY+PD5XAeFPjLKWBYwnrkoj9OIM3si3DTCqdYixDgvQBDdQzMCTEVzL3k0=
+	t=1739099676; cv=none; b=mSlLNf/OoXMDA3O0WPmzE+gA12uJ+3VNO3VQ4GpXtg2yDYhGSy3DIqrsErnbU4JYT23y48p9v9UJiNRMHVFOWqIhlWhH8JKKkUzmoqIfjblZ/Jssyyv7zjUPzhoESmJeoi7BG9D7Lj/snu45+9Czs64q+n0SDUi0safZ+xWz0xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739096461; c=relaxed/simple;
-	bh=LFuMQ4UgWG8YSWjIlrC5vefd4PBC0Gtl6amry8OzKDY=;
+	s=arc-20240116; t=1739099676; c=relaxed/simple;
+	bh=ocv0UjbmcfD9SuKMb0cD8T7cTc8xs0ptkGTn6SyS3eM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BivLYbs/rUKjRZtFHgyAZZIPGZriPTOBUatgZTy/mMEaA/aMKYIUFVmReXl9ZQFSt1gfW/fi54HH0135gaYrpDNo6RZVaSZEWnhzx2bLhpXyxMYLG1Edrk4672RKh6JlstBJ3Kk4dqtD/LtkrI8/qD2WXR2uI8tTF7QVToBVA0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8F9rLv4; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=DEe0xxXVeH5aIRv43LBweB/HXBdjwv9334lbQISkXD34zoip9REa6DMDLIZ/JcJCdCegCTigsHy16zFWxbtH2l52fcyezGUHaUX5hB+gRDw1CuDIDTXFhDClP0T+xI6cBOv9foQb8RfjUXv40Sdj4qVEWMyGQtwKUDYBqApUc7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYkTCqtI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8F9rLv4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 198D9C4CEDD;
-	Sun,  9 Feb 2025 10:20:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYkTCqtI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21817C4CEDD;
+	Sun,  9 Feb 2025 11:14:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739096460;
-	bh=LFuMQ4UgWG8YSWjIlrC5vefd4PBC0Gtl6amry8OzKDY=;
+	s=k20201202; t=1739099675;
+	bh=ocv0UjbmcfD9SuKMb0cD8T7cTc8xs0ptkGTn6SyS3eM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R8F9rLv4dzb4/aPoO3+YjSmHqr+wsAXPV/atfVn/LM9WRzxs+PBucLXOWq5Bf7LSK
-	 BjSIN2kxC97Za2E7fiqMg/lo6+ZrniEI6CJgtSLfvYzdkoIQW7KW19yUV/vfnLVvch
-	 oQm/b3K4YLGXDv7a3jBYf6B5d48ZnmULkYj+XEbkOqaTbbCBHdMLrhsikQ6F46jY71
-	 wi6pk9MljGOT/xs4Ko7PA8xTgB76FHc6SinnX2KiRAAV8Q38cyd2IhekZQH8ncgPub
-	 8AF2U+EuLEPAbhOAGwceN6AbV2iudiDocIOSVMKpLCQvFMsP09y2dLXeQAo7NqXEC7
-	 7VOB5KquKtN+g==
-Message-ID: <fbd06330-ccf3-485b-800f-83f624a7c90e@kernel.org>
-Date: Sun, 9 Feb 2025 11:20:54 +0100
+	b=UYkTCqtI4zAMdmBBDCGI10ZaJXtmFgy2Vbfnl439v8k8LlndsIjvO+M+c/PBCIf6i
+	 p2s1WH1nKKBeKqqSIua5vLA+UeSRLvCUjKm3kKXd2CRIbEe0aCrZdSx5KMBSU6fuEf
+	 2ajgpEYtDP2souDD3ijIt1kbhfiIftNTLAWzt923UdHot84WCC6IneiReIpzh9WDlU
+	 TTdIpQpW/CBf1amDP23+V4l7ZFs3Tm+fzwnR+4GmHE9oxtIDAe0ESmrHUoi6BL0Ok3
+	 B+o6q98Gt7LjkuXVvLxtBICU0X4mgEn0B0dLLuOgSUNatGsuyhTP01X5yKQPG729aA
+	 WrZeXJuW4fY8A==
+Message-ID: <9142e874-cefb-404b-8932-3e712b2d8bf0@kernel.org>
+Date: Sun, 9 Feb 2025 12:14:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 9/9] arm64: dts: exynos990: define all PERIC USI nodes
-To: Denzeel Oliva <wachiturroxd150@gmail.com>,
- Umer Uddin <umer.uddin@mentallysanemainliners.org>
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20250205222223.613-10-wachiturroxd150@gmail.com>
- <D7NB1L54MHGG.MHALKBC8531M@mentallysanemainliners.org>
- <CABeP6EGt1vOyxbc=vnCjBSimERLTV5_QV5Ph8p3SP4vc_z2=nQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: timer: exynos4210-mct: Add
+ samsung,exynos990-mct compatible
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20250104-cmu-nodes-v1-0-ae8af253bc25@mentallysanemainliners.org>
+ <20250104-cmu-nodes-v1-1-ae8af253bc25@mentallysanemainliners.org>
+ <076daca7-55e0-40d4-8ea5-93254ecd19b8@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,18 +92,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CABeP6EGt1vOyxbc=vnCjBSimERLTV5_QV5Ph8p3SP4vc_z2=nQ@mail.gmail.com>
+In-Reply-To: <076daca7-55e0-40d4-8ea5-93254ecd19b8@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/02/2025 20:39, Denzeel Oliva wrote:
-> Yes, I know that, I just wanted to show my patches and I still have more.
-So this is unmergeable? Then why this is not marked appropriately, e.g. RFC?
+On 08/01/2025 17:40, Daniel Lezcano wrote:
+> On 04/01/2025 21:54, Igor Belwon wrote:
+>> Add a dedicated compatible for the MCT of the Exynos 990 SoC.
+>> The design for the timer is reused from previous SoCs.
+>>
+>> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+>> ---
+> 
+> Applied patch 1/2
+> 
 
-Don't send unfinished, unbuilldable work as normal patches because it
-wastes out time.
+Hi Daniel,
 
-I drop all your patches from my queue.
+Did this really happen? You replied month ago, but linux-next still does
+not have this patch and now we got new warnings on next:
+
+https://lore.kernel.org/all/202502070055.P29PYKEE-lkp@intel.com/
 
 Best regards,
 Krzysztof
