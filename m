@@ -1,143 +1,114 @@
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC1F19CD01
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 06:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B5C1B6547
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 08:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739168626; cv=none; b=GcecCeTDsHI3iossN0dOA8ec9ZVRn+0FgPPV9dHXAF6752n4gPG1nTPL4eZpuRxJ1ZM5UPtrovwJpnQwPGs4uggkE2U6DupPsh1IrLtIEftfoOXSn5cyTVxTG8XUEPY0tHlADPgpUgdrq9bh7uD+VwxxBvdYFcI7WV4R8rrw++s=
+	t=1739177951; cv=none; b=FdDrsrPpP7utsrZPCDisWbh8DTgfUgbAk9Cv4FnFb6mW7Wx9q0P/Qor+WoZVt+EqiEUM+Yute7i4Yoy85K18TtSgTdYt2EREHEk+EcBxoALgPv2iOkllG182r0Qd/f5iXMU00RnGsuH34gO33HioTiqkJqhygZvKm53KjGPUwUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739168626; c=relaxed/simple;
-	bh=sSWmWND7PMCagtRzqn+MwQqanUhItf4e7rsAwo9DNSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qrtGtITa2X+RByb17eRpUWN3/b/DADuvcTaJeulyIeLLEV/5AgDmtGcDGL4+iw75AYllyxw6YbEhiDfUdyVDtbXgrk6iLch+WAk7kKenpu5BtIOszkjtb5i7x5EW6ZKUtfmWSB2K3HJW0ThiyoufRk1RUl5Eifw/zEffa43fpYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+5ftA69; arc=none smtp.client-ip=209.85.160.54
+	s=arc-20240116; t=1739177951; c=relaxed/simple;
+	bh=r9kfscMu2nQ0HRBU8e9l53pIAaPhrUF5mA9gkyOUvGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fxZCBUvzMioAHDaQv6yTyxMHS5I9uo4eQ/Hsruhb4CZN3tkT5FfAa4dgU6QlooHdqVFoWKOTgMWjf/HYO22A7+VnFBvkxYlFnCfSFxBXREsp8MnJLkDl+MQfzk6xLLQWtB/VIquDNCoBoyTxjDwk3JTPDoKskS3fkB8SquZM5Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QKQz9lJh; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+5ftA69"
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2b85cad3ac5so972493fac.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Feb 2025 22:23:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKQz9lJh"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38dcb97e8a3so2201641f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 00:59:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739168623; x=1739773423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FDzwE1C9OW6aHE1z2WW5gUQXUKZ/REkoyeXBwX2ZCXo=;
-        b=J+5ftA69lCY9REWqPPJFTtih8kmxBOcA1knbCG1JqiHq2KDeYxBSBkWVLelSPkRH2c
-         XdvMPQsn4VQGDHGeCb8jZnge0nW+i/vm5VG4hEoFTjQPvwKbcB6RjWInEP7Epg0hF8vF
-         IpWWE3plpkTLWmB0phvYe/CzOjRdVouy9TR5KOnGcAQXNlLFNBt/HgCwlxuwugYR3wvU
-         ZmkiIO0G/EeOVbfZfxfDg8L1/7og24NDzv1BtWd6BB1ji+gUatrrdCvn853VZwcuSiP8
-         PZ/6k45v8ma0fOLlNbKjgOeT4Co38yzefA9KPP5iYRaTLTs9z8+amhSUEvJcegDcOCyx
-         vaMg==
+        d=linaro.org; s=google; t=1739177947; x=1739782747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hgguTSFnjwWEUxBDa2C5Pf4WCfOFI/5UFo5VErVUJi0=;
+        b=QKQz9lJh4MU4d7M+yyZEL3U+fQY/fZe7sKfb1tWuatdbn/tbxwx31c8q8S4Cvc/IdJ
+         4H2RgNasN2geJh+pWXv3I6FXwTffx9T2SpweypnvLKQ7nQUarr2sZrNZ8FQLhv7jzfde
+         hev4NIWOf1iprkZbItLcR0ynUBiCPMLPoNGUocwu3I+GEekr7420rdfP9y5saow3ekuc
+         FHGvQ/hOo3fyDEzfpjhWvulSguero1dQiYg57qQ/DwvWKgXnDWUyeSnJIgIQ926mozve
+         F9Ms0+kQCfn6KsWqfIndBEveIe1Ovb6Tc4dtR6HaLd5+SlGL9A3TdsKRcWMXvu22zND1
+         vhOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739168623; x=1739773423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FDzwE1C9OW6aHE1z2WW5gUQXUKZ/REkoyeXBwX2ZCXo=;
-        b=GfuusT71qpY7R+kOfFK6Pg2UWA+QaTsI8p5peivYWSS84dfB/En1Co+h7tJQo6U8cQ
-         deEsDREFsUGcyvyDcZRbT2Fedja7bpUcFNvX5IXabTwU+nWEfkUYBxkiyJ4+nkvy1jkb
-         tModdhieoYucWOes211YyTwrNEbxJCKjqj7eDpfbbuefKs3qGC364WhfNIWIqeez2pth
-         OaSPfnZq/TK66jNowYf3tPm5hah/SWy+0S+o+5pARKixunvZ1zMiRFNZwNXdnheBcwLp
-         CojROASCad+kJjBdCkboDl/R192wBv7u8O1O635zh04QZ5jnuiurnOmxTorcSpDsSP4i
-         CBbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCcI2sApn506/y3ZuhzS1THGkSs/YjQvu8rGnRRjVGqK4cVqCVx8sPslmJe3KP1GQBpY5X8IdwYkOl6Ofsxg4Edw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjO5VSssH48g1ylF/Ro1+0XMwbEUvJmtWO3Tx8UD6WV8mbM4Nr
-	NCbsHzNPKASCOeYFSHhhifzY8q4nNU5HaN3dJvmtvIH6iJmNvKaIvlY9nchtVOEhE68ZALQIavS
-	QV02dnslrTTqSvTGYICb2RZTMPFInphgqE5XuHSokaKUYlQHwKXU=
-X-Gm-Gg: ASbGncuW20F/MlW9I9glFR7aIJbhI6X0eHRaIcOaunzNnyjlo66DXOTLnJStQtoKH/g
-	qxPwCnLz5tDYQQfdhWD3D0kETTtUCNy+WMXMhYbWw1XWVWHFsImkGmcbdjqM3ohERNNbab7VcWA
-	==
-X-Google-Smtp-Source: AGHT+IGZ70BM5o0FsBd1A+vRr7iVndFCpaXO8wXRz7nxGxTT6qFDFTzE/2SfzxTsCk6ZlSydNNQa9XmNNdh8W4sa/LE=
-X-Received: by 2002:a05:6871:628b:b0:2b7:5726:c931 with SMTP id
- 586e51a60fabf-2b84015e5bcmr7187697fac.5.1739168623404; Sun, 09 Feb 2025
- 22:23:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739177947; x=1739782747;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hgguTSFnjwWEUxBDa2C5Pf4WCfOFI/5UFo5VErVUJi0=;
+        b=k48VrjZmJ2SmBhjNSQNTEC6B93G4Knwl2oxFmKGI5IIwljcSy7Yrw4qmOODZYHp9TE
+         Qqu01pZfbCB5/JWTi47HID5JgoiOgJUxNnbG+91X4VycW7pt8q4/avdRU7zQrZnDrfkW
+         T90cN2UirgY8g84Y2agvL+ES8vI+UkO3tU/BNlxIOUQ+XJZzP3+IDasZEEbldmQRwL2j
+         UNZtuh6vlA8PaBq7CEq2yB253u93z3acMbpkVDj0VxpR51AA7w+4KaDQl0V3LM4tiv21
+         yxR5EbnGrx25IdCBphpZpPM6mmRIM1G9X8Cja27OKC67HttIQWV17tvXWPqZhkdkOR01
+         7rjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA8KLYa/8xIcGxacGKvQlIQBbZ93lQEuq8+0iDxyEjQDxFwBmXcKsvf29en89rJB8Gv241Tyg2kH5xDW1KAEcgag==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX1rBV8zelIUscQvATQE/0L/BZVAUwGu+REtQH1/EBQWYw/zeT
+	RL2VcmJ90n6fgucbebBnOHzkHN6VZkTJh4bLLVZA7fGoVU7BxcjxAP7VSB8e+WI=
+X-Gm-Gg: ASbGnctN/0VaDmMiODwyosuV2ZkD8nZeuNBr3+Y/kESpC85SYeIUia2kX3/y4QJNITf
+	89R7HDDGCOtaoA4GB7Pci6W0w9zRUJzQ/fM7CGDQ5WZuCO3bzqW+cGBaQfBaPm6/ya+6LC7r+nC
+	xunKJhTGs9h6UdMU15/7YRRKms+4wWHJBOGlrGaLkCMGLR2X2xDE/IIlGkFVmIhJ2dTvgCpYqIb
+	SfMGFiC34Zjt71McQCLRHcMDgAe+V+fzwcMI0Hu2Btlr96XlTmGAYriSkXvydJcHYj+YVzx8FRP
+	BiMQaHtn/AHyQU87qZXiRg2Y
+X-Google-Smtp-Source: AGHT+IHW35O2w+OVAfjf6xNzfb+RSzDit7DIG4eCcKdu75kyP3tGrbONMFt1iHptvel8q6LbiT3P3Q==
+X-Received: by 2002:a5d:6d8d:0:b0:38d:dac3:482f with SMTP id ffacd0b85a97d-38ddac34a13mr3776794f8f.20.1739177946954;
+        Mon, 10 Feb 2025 00:59:06 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd4d826c6sm6159674f8f.69.2025.02.10.00.59.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2025 00:59:06 -0800 (PST)
+Message-ID: <503b7ec9-e0b1-4351-aa34-3089b2055eb9@linaro.org>
+Date: Mon, 10 Feb 2025 08:59:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206-gs101-renppt-dts-v1-0-cdfe993fb3c5@linaro.org> <20250206-gs101-renppt-dts-v1-2-cdfe993fb3c5@linaro.org>
-In-Reply-To: <20250206-gs101-renppt-dts-v1-2-cdfe993fb3c5@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 10 Feb 2025 06:23:31 +0000
-X-Gm-Features: AWEUYZkw_qqo6LotzQULApj6C-Fj8yrQyxpjnxhL_NjpfmlxfYtcYPkHgHvpKlk
-Message-ID: <CADrjBPr9k7QnkFzrY_4Q8A-yrQjErVBaHv1x=oOYacCamn4BuA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: exynos: gs101: align reboot and poweroff
- writes with downstream
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andr=C3=A9,
-
-Thanks for your patch.
-
-On Thu, 6 Feb 2025 at 13:08, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> For power off, downstream only clears bit 8 and leaves all other bits
-> untouched, whereas this here ends up setting bit 8 and clearing all
-> others, due to how sysconf-poweroff parses the DT.
-
-That indeed sounds like a bug.
-
->
-> For reboot, downstream writes 0x00000002 whereas this here ends up
-> setting bit 1 only and leaving all others untouched.
-
-For SYSTEM_CONFIGURATION register Bit[0] and bit[31:2] are reserved
-and say "type R" (rather than RW for bit[1] so it seems correct to be
-leaving the other bits untouched?
-
-regards,
-
-Peter
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/3] firmware: add Exynos ACPM protocol driver
+To: Markus Elfring <Markus.Elfring@web.de>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Will McVicker <willmcvicker@google.com>
+References: <20250207-gs101-acpm-v7-2-ffd7b2fb15ae@linaro.org>
+ <e1fffd3b-d3dd-4f46-b7b6-1f03f934dd30@web.de>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <e1fffd3b-d3dd-4f46-b7b6-1f03f934dd30@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
->
-> I noticed this discrepancy while debugging some reboot related
-> differences between up- and downstream and it's useful to align the
-> behaviour here.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/bo=
-ot/dts/exynos/google/gs101.dtsi
-> index e78dcd506a5c..4f45bfeb33c0 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -1401,13 +1401,13 @@ pmu_system_controller: system-controller@17460000=
- {
->                         poweroff: syscon-poweroff {
->                                 compatible =3D "syscon-poweroff";
->                                 offset =3D <0x3e9c>; /* PAD_CTRL_PWR_HOLD=
- */
-> -                               mask =3D <0x100>; /* reset value */
-> +                               mask =3D <0x00000100>;
-> +                               value =3D <0x0>;
->                         };
->
->                         reboot: syscon-reboot {
->                                 compatible =3D "syscon-reboot";
->                                 offset =3D <0x3a00>; /* SYSTEM_CONFIGURAT=
-ION */
-> -                               mask =3D <0x2>; /* SWRESET_SYSTEM */
->                                 value =3D <0x2>; /* reset value */
->                         };
->                 };
->
-> --
-> 2.48.1.362.g079036d154-goog
->
+
+On 2/8/25 3:31 PM, Markus Elfring wrote:
+> …
+>> +++ b/drivers/firmware/samsung/exynos-acpm.c
+>> @@ -0,0 +1,771 @@
+> …
+>> +static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+>> +				   const struct acpm_xfer *xfer)
+>> +{
+> …
+>> +	do {
+>> +		mutex_lock(&achan->rx_lock);
+>> +		ret = acpm_get_rx(achan, xfer);
+>> +		mutex_unlock(&achan->rx_lock);
+> …
+> 
+> Under which circumstances would you become interested to apply a statement
+> like “guard(mutex)(&achan->rx_lock);”?
+> https://elixir.bootlin.com/linux/v6.13.1/source/include/linux/mutex.h#L201
+
+I'll replace the open-coded mutex handling with cleanup.h guard(mutex)
+and scoped_guard(mutex, ...), thanks.
+
+Cheers,
+ta
