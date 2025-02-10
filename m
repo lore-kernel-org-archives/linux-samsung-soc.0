@@ -1,127 +1,120 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C871C5D7C;
-	Mon, 10 Feb 2025 11:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F05221D85
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 12:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739186436; cv=none; b=nBVOyWFRByfBpBGUB4dtVUFZIouuSjuqNEhFTZKOvCSDHOeYO7sginn0o6YvI4AGePEHtejDTEAxdh6cPSKk6er6Yep0eEf/igpJXt16XDnuF5OQWbI42c36ZXtMdSh2K3Pv2JjB/YT2OzMBvTbz5lQadH1apXRUGsaxQwUrT6I=
+	t=1739191926; cv=none; b=u7+JOGubOrqasl4ix8x7DOwQs/+5aLLBnN7Ou8qkbTsML6rmaQoWfZgLYIYLhafPoR4a2Oecmp6XQgmKYJeCk8RV1G2P7j6gKshougXJRSe9Sh4VFEhreIDJ/qcDjfm/eSyPUMWCSgLstgLiIIjjUF58tNOSvNevrYRTURYqEW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739186436; c=relaxed/simple;
-	bh=UmhTdp0yOp0xOBa0fKhmJv6Yjngb6GLcstrvhe0JLRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GAC36KRFPzk22ZIkidABlIwoIATKb77hHy8WWJ8jNRovHxvEqIb2oNFPxipyr8YrQ06PkxwmJYM6DyGzviFBbm79zVGnmpBC13eqbJ5d37hYK74YRrW/c7e8Cw4TDA8xB92NUHe20acfzrWG6JX+pFnh8Ma525HnwGiYl98xxro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoaDYg4q; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739191926; c=relaxed/simple;
+	bh=Lpe/i5C+5b5vZQpv9IAlGMgPvHSa+dmXip2VQoCAS0w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NFHS3nD8rRz1NIqyBn47rwZQ984Dhro0JSxgPY0a5cbXKyYOhCnZAQjCxl+HOj1s+hGHUhGTyM/MxGBz8csb05qri6ax1DlR1Mmxdsw6lECbPAkYYkczEobdPB6PDniZIk43LzMtkIPvL4PKJwrUze3hIMIVw+HFa1t3BItQNFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P8ae7rQr; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoaDYg4q"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43944181e68so8225205e9.0;
-        Mon, 10 Feb 2025 03:20:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P8ae7rQr"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab7c81b8681so114956266b.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 04:52:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739186433; x=1739791233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWk1tmUv6R6ofIovz55Q8Qebo6k6REo/VNEY88i+dbU=;
-        b=JoaDYg4qxgz800Lg+yvzpTkVY0vr0J875cw7/mRmzoCcyjuEWN29hEEUwVFV7LpSmL
-         oNh3WffRe3IthUItPBNaJFBPNNgltHNfMeKi+diaogw/aN/jnvr13Rk4biB6Z1VBABeC
-         C0zvTT34SGu+cRJ+bLxqnCHxViI3RWGHyHp4Sh+3zdwg0GrzVl8u8V7XtZ8XDMp98J65
-         kk/ClnMrnbBOrn+ftWBdcs7tFuYQ8tPLqOTFPc5mc1msJJ2h5sX+eSULUnS9snxWrthf
-         JBXWFn+5uD0m1zwwia8bkA0MXw64DIglQmgrF7jbPrzntGKcjASrcVa8rHAyZ3RHrX0t
-         fSxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739186433; x=1739791233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1739191923; x=1739796723; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nWk1tmUv6R6ofIovz55Q8Qebo6k6REo/VNEY88i+dbU=;
-        b=AziOAg88xpc1O5vPBBUc1piKIKAtZzlxluAet7in2/Ja20SeIMMBmz8M1NpBlzMBVg
-         JxZwKOoCZX8Uun3NwAPpWCZJzgjMftMPWyuUdm6kPCeD+kniP1ATGoJl1NbRLtFW2crw
-         8ZgzJV1GMs6U5EUFXIx/1t9FmnVZ99H/4ZAWzKaHU/TsHY7SnuJewt7kZPvfosNlG+PI
-         npYICKK6mFRavvG8xXMI715nopw4K+D2JKJPngU/XKbJ02vapbt/vpBjUZWcqSiRXwgG
-         CJazXVZ1BemvtOxs6XxzhB3MWvOMsKaBDq5xhRGnRrOA0GeUuyrtZSYCH2L+KMFnyxTR
-         JULw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAoeityrKuStlY3fTcweoROJ9pa86/kytrT3aSd7aotUfyO4rPbOkaPuf0E27i//tXs/qWN4GArsjKKs4L@vger.kernel.org, AJvYcCVgFSwqZGFQ13/V+9sVw2gvIu4FKHJCvqEz5eZMMcK3ywuZ1tK+gsbcHad9MV+xx4ZwwQuzae05p7Hcmv++kGg=@vger.kernel.org, AJvYcCVhjlDITYQ5LDmljVKAQBwQ3FevAesdi1rHf5UhqK/G6GhVt1Ew1YCPSTGnrMUPrG2J5NtfZw/YcaFHqgVTNHTnqEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5xqmvm8KOegHlwZ2aN7/D5NB8HkVwdYPKNeXoLTTfei5mmgk2
-	f3+nj+NNjS2kMGnXJvJbvwY40P7eSfmCQ3Oyn86n1cuCf8vosGj6UO8ygWbw
-X-Gm-Gg: ASbGncui5adyDuwhhxCIuqTaI7zBS5o9s6xg+W+CFdRlnO/tUiHPandK5Kg4bYEXnCE
-	mQAl86brM9jOeBw7GzjIIPurR1/+kgkGIFjYd6Ps9eG5bHEpwRam9pNLycAV/1qUJg3i5OL9T6U
-	KepNqCw4Tf2ytXxeCjuPP2p7FFWMv938KeuTqgHTX+LWTxVJ/tcVK8qsShyoSujPwA85AqXi9xQ
-	X3cffolan7Ig+1ulU/JDaJ9PoTmkEsPYLNjK9bAOH1R3Wax4e0bJuoNJqTbp3B2chP2VtYNAXik
-	NX/xC/YT/B5Z
-X-Google-Smtp-Source: AGHT+IGbRwLLu9tR/y2eBa/u7toSv7se05o3znHII8V/vw85Z3xbe+EWFjbGzJGpwzoJnEMDsZOF7A==
-X-Received: by 2002:a05:600c:3503:b0:434:f817:4492 with SMTP id 5b1f17b1804b1-439249cddf9mr124532365e9.31.1739186432404;
-        Mon, 10 Feb 2025 03:20:32 -0800 (PST)
-Received: from void.void ([141.226.169.178])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dbdd1af07sm12174656f8f.15.2025.02.10.03.20.31
+        bh=jYPmCXNJ61WHCfUsNhpxuN9G44+VJ9mze8mbSqmqrmI=;
+        b=P8ae7rQrhLXqSrf+iW4zq87i+o6WOmdPeQUQyzn2Kmi0c4pZQ8tUg825eDvI8nUHrP
+         K9M58f0LLqn8tVgrXyHdYpBvnxGZoYBhu5H2nXUHKKngjqMGJQa3Xyb0edp89TYmKliX
+         JSqRvxxCLaJSYnqq2p8Tp+WXGedkJQbeLMGcJRKJV5vpNvIIJmFhvmc3vqP9iA0BbYr4
+         iEPQIZvs0BIfoi5XpBbS6Fw2B0m697IZ4aZRQlDL68lMmnhdbudKjUViDG4n3GvQVdUS
+         If5a98F8eUtiW5mhm0AySPpD7Kpv2RIFVOOwYKUsPVT76JeIBhxuLahMNWl9hBTl6NaX
+         nGqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739191923; x=1739796723;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jYPmCXNJ61WHCfUsNhpxuN9G44+VJ9mze8mbSqmqrmI=;
+        b=ERrOjesgwicH1Hdv2G+BcmQ3ooEsuj4zrvNivZNvWOiugSRV8uIMW7KjxwUyKPeM1U
+         iunTsgnjyGyTCmnF+D2rtHgi+ZRQ2PATLJYskXLI54iGWkFCppdL3j/yPIi3oqx+ZlFg
+         cR1P/j1Pg5CHPVPZg2gIOBDLOuu2MXc3TNlKykNc1sEDwCCTjo6kU3be4N3ZEmmzHAlc
+         1P08OE+0TcM9v+sCPdDqYN0bxwWqFIZ+Uosdw+eMUrgtnoQjOZlHMoz6ZY4qBJv8+1/r
+         +NkErTpaSEX5sQ//9bVx/zj4JWbjP+FSOjvpRvK3omcurevmSe3pII6v+wRNz2d/uV45
+         JDaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWG5xAknzOBehFB9Bo2knTfEIlkxz69fE7r9lbW/GzidOCOGD5yD19hB18CsdHiLMUACvU9pcGZ6RjcC/mLkCdHGA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1qcc+QIW21mxxaTWrvuzKghjGbrik8VgucCflY+caqVLv/WyO
+	QAw/AXaGEieM8IoeMfP8ATag54qKM+A/l5djER2RsqimvcFFnWkdEV/+rT77djI=
+X-Gm-Gg: ASbGncvaieX127xj/hITCuJB8OJ+0AaS3gpKI/A70KmMP1CbJTxE1UrnZifFCZU+BVn
+	X4IbeO1xFUBxmhu8Ny9fjnqH0flTc5DXCTOR3IK82sXkvq8LXnGprdl5wgk13TWLKCRHcPh43N6
+	Gdsby6MO5BE+KSrUmWNoDAzjJWAuHcNi3a0/zWNFbnfQvRnxl/4wAVxsNSN59DNHRCH8uyCaXFc
+	/08GpJpZBk3TlutBlDLcnnZatAPfZQuKstGui49RPiomCC8SlCEiArQCJmrO/LhOcaJQeXo3Pv/
+	QZ6OM1qHEfhpS4FgYIGy/Ko9Oz4FHoSWKBlf9yxldCUb+pwiJKdLFIYEHqsmEfjaN2WKcC6TK4c
+	=
+X-Google-Smtp-Source: AGHT+IH+NgzE2gbAq1itQhugXDlHXIYig8ArxGegZBDP7bul7fijUmgra+TzZrMkLOQO6b5p+6Fjqw==
+X-Received: by 2002:a17:907:6d23:b0:ab7:5fcd:d4de with SMTP id a640c23a62f3a-ab789c50af4mr1427309466b.50.1739191923425;
+        Mon, 10 Feb 2025 04:52:03 -0800 (PST)
+Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7ceae3a3bsm85819266b.129.2025.02.10.04.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 03:20:32 -0800 (PST)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] iommu/exynos: Fix typos
-Date: Mon, 10 Feb 2025 13:20:04 +0200
-Message-ID: <20250210112027.29791-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.48.1.268.g9520f7d998
+        Mon, 10 Feb 2025 04:52:03 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Mon, 10 Feb 2025 12:52:02 +0000
+Subject: [PATCH v2 1/3] arm64: dts: exynos: gs101: drop explicit regmap
+ from reboot nodes
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250210-gs101-renppt-dts-v2-1-fb33fda6fc4b@linaro.org>
+References: <20250210-gs101-renppt-dts-v2-0-fb33fda6fc4b@linaro.org>
+In-Reply-To: <20250210-gs101-renppt-dts-v2-0-fb33fda6fc4b@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-There are some typos in comments/messages:
- - modyfying -> modifying
- - Unabled -> Unable
+The regmap property for syscon-poweroff and syscon-reboot is unneeded
+here because the poweroff and reboot nodes are children of syscon
+already. It also is deprecated.
 
-Fix them via codespell.
+We can just drop it to simplify the DT.
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/iommu/exynos-iommu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index c666ecab955d..69e23e017d9e 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -249,7 +249,7 @@ struct exynos_iommu_domain {
- 	struct list_head clients; /* list of sysmmu_drvdata.domain_node */
- 	sysmmu_pte_t *pgtable;	/* lv1 page table, 16KB */
- 	short *lv2entcnt;	/* free lv2 entry counter for each section */
--	spinlock_t lock;	/* lock for modyfying list of clients */
-+	spinlock_t lock;	/* lock for modifying list of clients */
- 	spinlock_t pgtablelock;	/* lock for modifying page table @ pgtable */
- 	struct iommu_domain domain; /* generic domain data structure */
- };
-@@ -292,7 +292,7 @@ struct sysmmu_drvdata {
- 	struct clk *aclk;		/* SYSMMU's aclk clock */
- 	struct clk *pclk;		/* SYSMMU's pclk clock */
- 	struct clk *clk_master;		/* master's device clock */
--	spinlock_t lock;		/* lock for modyfying state */
-+	spinlock_t lock;		/* lock for modifying state */
- 	bool active;			/* current status */
- 	struct exynos_iommu_domain *domain; /* domain we belong to */
- 	struct list_head domain_node;	/* node for domain clients list */
-@@ -746,7 +746,7 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
- 	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
- 				dev_name(dev), data);
- 	if (ret) {
--		dev_err(dev, "Unabled to register handler of irq %d\n", irq);
-+		dev_err(dev, "Unable to register handler of irq %d\n", irq);
- 		return ret;
- 	}
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index 813f96089578..e78dcd506a5c 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -1400,14 +1400,12 @@ pmu_system_controller: system-controller@17460000 {
  
+ 			poweroff: syscon-poweroff {
+ 				compatible = "syscon-poweroff";
+-				regmap = <&pmu_system_controller>;
+ 				offset = <0x3e9c>; /* PAD_CTRL_PWR_HOLD */
+ 				mask = <0x100>; /* reset value */
+ 			};
+ 
+ 			reboot: syscon-reboot {
+ 				compatible = "syscon-reboot";
+-				regmap = <&pmu_system_controller>;
+ 				offset = <0x3a00>; /* SYSTEM_CONFIGURATION */
+ 				mask = <0x2>; /* SWRESET_SYSTEM */
+ 				value = <0x2>; /* reset value */
+
 -- 
-2.48.1.268.g9520f7d998
+2.48.1.502.g6dc24dfdaf-goog
 
