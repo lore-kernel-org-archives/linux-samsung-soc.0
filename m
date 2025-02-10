@@ -1,95 +1,127 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF061B414F;
-	Mon, 10 Feb 2025 10:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C871C5D7C;
+	Mon, 10 Feb 2025 11:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739182156; cv=none; b=nxeJ+gr5AYZ/J34Nd02HbIi5kZz1EbaZITtK8stQV2MV/IqYM16U3TOZE9w+q2P/CPb/hZOBBDRPwVne5Y9hsmVU/DC1niooJXAwPG5rUTDNisMyt9Zqm9DYxhvfgxn36Q74G0JcoQKfTC4xxtgyb0vsj6Jn2swfDmqchIrE0+c=
+	t=1739186436; cv=none; b=nBVOyWFRByfBpBGUB4dtVUFZIouuSjuqNEhFTZKOvCSDHOeYO7sginn0o6YvI4AGePEHtejDTEAxdh6cPSKk6er6Yep0eEf/igpJXt16XDnuF5OQWbI42c36ZXtMdSh2K3Pv2JjB/YT2OzMBvTbz5lQadH1apXRUGsaxQwUrT6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739182156; c=relaxed/simple;
-	bh=5dzyKtWqZnepXYQlMsqs3T0zFLasKzwLYo+Yn/dRQyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLnDLas9bREASpuIhNgVuxbXiMs8qNIluaWB9iMqCvveaAHZBGIZEoeL5slil5JLrAqkXpebgSIXGbMGeytfnigZJs2N4w0b6p09dpNXgVWIJaCDkGmrwoJyoJYtD0aqWR8r62RmU1T/VpBYJZd6U2yjHmTRWpFch8FGQ4AND1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lpgejfv6; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1739186436; c=relaxed/simple;
+	bh=UmhTdp0yOp0xOBa0fKhmJv6Yjngb6GLcstrvhe0JLRc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GAC36KRFPzk22ZIkidABlIwoIATKb77hHy8WWJ8jNRovHxvEqIb2oNFPxipyr8YrQ06PkxwmJYM6DyGzviFBbm79zVGnmpBC13eqbJ5d37hYK74YRrW/c7e8Cw4TDA8xB92NUHe20acfzrWG6JX+pFnh8Ma525HnwGiYl98xxro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoaDYg4q; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lpgejfv6"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5de4d3bbc76so4900011a12.3;
-        Mon, 10 Feb 2025 02:09:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoaDYg4q"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43944181e68so8225205e9.0;
+        Mon, 10 Feb 2025 03:20:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739182152; x=1739786952; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dzyKtWqZnepXYQlMsqs3T0zFLasKzwLYo+Yn/dRQyU=;
-        b=Lpgejfv6On9powqxnvhWENz+KFE38JVDUyEQ2Tz/Df9UwJDUVzjcK3+Jf6/wq7Z6H/
-         uoCobHj0cP9AMwxrplTbacGO4dnoAsLw1i6HeZ7pQtyTDXcZQshCH1ppgZjfMnHiOJNL
-         G88CamyxSTPdVegHkdzdtW3z6ncKLIcqps1c7mQ4HZ0/l4mdAjk4RAb44mNqarci5oIe
-         0HuL61NbZNSFF7hnkoFwRMYi1f4TBGy7UOeq4OTsDKFrNWSW7Al+jgWSN8+c2oylNFbi
-         0VzCFCkEhLvRTwIW5e18J6cp+TOqWVpdo2MniOEAAMu5Z7H0CYLmenpFuHpRYCUNu2iC
-         1Zmw==
+        d=gmail.com; s=20230601; t=1739186433; x=1739791233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWk1tmUv6R6ofIovz55Q8Qebo6k6REo/VNEY88i+dbU=;
+        b=JoaDYg4qxgz800Lg+yvzpTkVY0vr0J875cw7/mRmzoCcyjuEWN29hEEUwVFV7LpSmL
+         oNh3WffRe3IthUItPBNaJFBPNNgltHNfMeKi+diaogw/aN/jnvr13Rk4biB6Z1VBABeC
+         C0zvTT34SGu+cRJ+bLxqnCHxViI3RWGHyHp4Sh+3zdwg0GrzVl8u8V7XtZ8XDMp98J65
+         kk/ClnMrnbBOrn+ftWBdcs7tFuYQ8tPLqOTFPc5mc1msJJ2h5sX+eSULUnS9snxWrthf
+         JBXWFn+5uD0m1zwwia8bkA0MXw64DIglQmgrF7jbPrzntGKcjASrcVa8rHAyZ3RHrX0t
+         fSxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739182152; x=1739786952;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739186433; x=1739791233;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5dzyKtWqZnepXYQlMsqs3T0zFLasKzwLYo+Yn/dRQyU=;
-        b=e+/WhpMFNoAbOjTJDWqi7ZiYc70N4NqAvS4PNCtdfeYIyzbrjy271TVih+r3+C0CnA
-         iyCN+YaU3XF5mHeRrdwrgE1b20V1WlXJ8g+XfpebBfE6QkjIft4peO5hxmPU3R+y090k
-         VtIuDETqS1g+IuOCvhFdB+XefECcO8L9M7v235q+/fc8+6jA3hLSthMgU9T70moqkWbL
-         JpemKi12hM8S5dCq2VFSyvNkxbPSCgSHLGymM0Tfm7+3iwwVbvTkWMgytzuftLjkl+4Q
-         g0HBiSLH549s8/GsDmYQ116sb/AYzT0XgeKESonB7AyzbiyKtuvpj3FbztrZeLXtUdsa
-         7nrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwf2Sk+0fkHg5s5ODw8u2RJpWy4R+JxO4cp9DR4+gR6gJVJMnoi9qh7LK3JkWImw5BCwSia76q@vger.kernel.org, AJvYcCXI9i9QtFq0hJGpg3Eq/EjWy6mPIk7NSRy31BLI4PtEcyMjhvIwk0mwDAvD4E5QinUWN8A1KxFEGr2hCxc=@vger.kernel.org, AJvYcCXPVEm+c2s73Z4G/j4DcweokSrXjHeABwS5T449yb9YjNU1yjWjmzOqQ4LKN+b7Vdc6mShMFkhm0rYKLFCifl5AY+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZhymV3pIbZTsnqhf0X7qPuKXaLYYPNKZTqXE0WvppkjqmT2Z4
-	n3O+MXZcNx4d++nGQb2jKWc2rVDcjoypSD675zBlqGpEQkyHEQQQbNV4deXTLRTwkAQaYPjQJXt
-	A7QozIyQYL5H3XkHgZSMr8Qi7Pvo=
-X-Gm-Gg: ASbGncuux88gdgY4niWul+JSZR3SluEgCeWbrWPml93YRUdeQLKzagl1THha3DQ4N98
-	8K0Yc4rLedAIdVrZX5OnfCs5LQCkbkRnDyev7za6YMebRXDqgJqya5v61DNI68TuuplxSqg6J
-X-Google-Smtp-Source: AGHT+IH05m3EGDv37NgCHa7r72kurcQ8bsVSV4tB6ZTwaZHVAXVKJd9j8KrWy0sZ6Kd7oDJwTcHKTTZ7neMq4xpHZUE=
-X-Received: by 2002:a05:6402:42ce:b0:5dc:73fc:2693 with SMTP id
- 4fb4d7f45d1cf-5de45023654mr16526726a12.18.1739182152139; Mon, 10 Feb 2025
- 02:09:12 -0800 (PST)
+        bh=nWk1tmUv6R6ofIovz55Q8Qebo6k6REo/VNEY88i+dbU=;
+        b=AziOAg88xpc1O5vPBBUc1piKIKAtZzlxluAet7in2/Ja20SeIMMBmz8M1NpBlzMBVg
+         JxZwKOoCZX8Uun3NwAPpWCZJzgjMftMPWyuUdm6kPCeD+kniP1ATGoJl1NbRLtFW2crw
+         8ZgzJV1GMs6U5EUFXIx/1t9FmnVZ99H/4ZAWzKaHU/TsHY7SnuJewt7kZPvfosNlG+PI
+         npYICKK6mFRavvG8xXMI715nopw4K+D2JKJPngU/XKbJ02vapbt/vpBjUZWcqSiRXwgG
+         CJazXVZ1BemvtOxs6XxzhB3MWvOMsKaBDq5xhRGnRrOA0GeUuyrtZSYCH2L+KMFnyxTR
+         JULw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAoeityrKuStlY3fTcweoROJ9pa86/kytrT3aSd7aotUfyO4rPbOkaPuf0E27i//tXs/qWN4GArsjKKs4L@vger.kernel.org, AJvYcCVgFSwqZGFQ13/V+9sVw2gvIu4FKHJCvqEz5eZMMcK3ywuZ1tK+gsbcHad9MV+xx4ZwwQuzae05p7Hcmv++kGg=@vger.kernel.org, AJvYcCVhjlDITYQ5LDmljVKAQBwQ3FevAesdi1rHf5UhqK/G6GhVt1Ew1YCPSTGnrMUPrG2J5NtfZw/YcaFHqgVTNHTnqEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5xqmvm8KOegHlwZ2aN7/D5NB8HkVwdYPKNeXoLTTfei5mmgk2
+	f3+nj+NNjS2kMGnXJvJbvwY40P7eSfmCQ3Oyn86n1cuCf8vosGj6UO8ygWbw
+X-Gm-Gg: ASbGncui5adyDuwhhxCIuqTaI7zBS5o9s6xg+W+CFdRlnO/tUiHPandK5Kg4bYEXnCE
+	mQAl86brM9jOeBw7GzjIIPurR1/+kgkGIFjYd6Ps9eG5bHEpwRam9pNLycAV/1qUJg3i5OL9T6U
+	KepNqCw4Tf2ytXxeCjuPP2p7FFWMv938KeuTqgHTX+LWTxVJ/tcVK8qsShyoSujPwA85AqXi9xQ
+	X3cffolan7Ig+1ulU/JDaJ9PoTmkEsPYLNjK9bAOH1R3Wax4e0bJuoNJqTbp3B2chP2VtYNAXik
+	NX/xC/YT/B5Z
+X-Google-Smtp-Source: AGHT+IGbRwLLu9tR/y2eBa/u7toSv7se05o3znHII8V/vw85Z3xbe+EWFjbGzJGpwzoJnEMDsZOF7A==
+X-Received: by 2002:a05:600c:3503:b0:434:f817:4492 with SMTP id 5b1f17b1804b1-439249cddf9mr124532365e9.31.1739186432404;
+        Mon, 10 Feb 2025 03:20:32 -0800 (PST)
+Received: from void.void ([141.226.169.178])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dbdd1af07sm12174656f8f.15.2025.02.10.03.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 03:20:32 -0800 (PST)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] iommu/exynos: Fix typos
+Date: Mon, 10 Feb 2025 13:20:04 +0200
+Message-ID: <20250210112027.29791-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.48.1.268.g9520f7d998
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250209-exynos5-usbdrd-masks-v1-1-4f7f83f323d7@disroot.org>
-In-Reply-To: <20250209-exynos5-usbdrd-masks-v1-1-4f7f83f323d7@disroot.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 10 Feb 2025 15:38:57 +0530
-X-Gm-Features: AWEUYZl-ymjB7hMb8tRQlI4jusE7F1xxvFV_L9geMxys9qNgTR3hdyKQc5pas2k
-Message-ID: <CANAwSgQAfwq2tmqB=+896YGhFFa1hJ18W-cAes2o2bseJiLUsQ@mail.gmail.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix MPLL_MULTIPLIER and
- SSC_REFCLKSEL masks in refclk
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Vivek Gautam <gautam.vivek@samsung.com>, linux-phy@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Kaustabh,
+There are some typos in comments/messages:
+ - modyfying -> modifying
+ - Unabled -> Unable
 
-On Sun, 9 Feb 2025 at 00:30, Kaustabh Chakraborty
-<kauschluss@disroot.org> wrote:
->
-> In exynos5_usbdrd_{pipe3,utmi}_set_refclk(), the masks
-> PHYCLKRST_MPLL_MULTIPLIER_MASK and PHYCLKRST_SSC_REFCLKSEL_MASK are not
-> inverted when applied to the register values. Fix it.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 59025887fb08 ("phy: Add new Exynos5 USB 3.0 PHY driver")
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fix them via codespell.
 
-Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/iommu/exynos-iommu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index c666ecab955d..69e23e017d9e 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -249,7 +249,7 @@ struct exynos_iommu_domain {
+ 	struct list_head clients; /* list of sysmmu_drvdata.domain_node */
+ 	sysmmu_pte_t *pgtable;	/* lv1 page table, 16KB */
+ 	short *lv2entcnt;	/* free lv2 entry counter for each section */
+-	spinlock_t lock;	/* lock for modyfying list of clients */
++	spinlock_t lock;	/* lock for modifying list of clients */
+ 	spinlock_t pgtablelock;	/* lock for modifying page table @ pgtable */
+ 	struct iommu_domain domain; /* generic domain data structure */
+ };
+@@ -292,7 +292,7 @@ struct sysmmu_drvdata {
+ 	struct clk *aclk;		/* SYSMMU's aclk clock */
+ 	struct clk *pclk;		/* SYSMMU's pclk clock */
+ 	struct clk *clk_master;		/* master's device clock */
+-	spinlock_t lock;		/* lock for modyfying state */
++	spinlock_t lock;		/* lock for modifying state */
+ 	bool active;			/* current status */
+ 	struct exynos_iommu_domain *domain; /* domain we belong to */
+ 	struct list_head domain_node;	/* node for domain clients list */
+@@ -746,7 +746,7 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
+ 				dev_name(dev), data);
+ 	if (ret) {
+-		dev_err(dev, "Unabled to register handler of irq %d\n", irq);
++		dev_err(dev, "Unable to register handler of irq %d\n", irq);
+ 		return ret;
+ 	}
+ 
+-- 
+2.48.1.268.g9520f7d998
 
--Anand
