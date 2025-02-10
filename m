@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CECA2580DF;
-	Mon, 10 Feb 2025 16:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689D92580DF;
+	Mon, 10 Feb 2025 16:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739204560; cv=none; b=PPYX9WehzHq4KiSC1bAqSJTjZC0cqFMZjbB4JwNlG1JprD0CVk1oNJK8eMKvuEMbwJ3X6fcAjXWGGUrotrL6zWycM//rBxP73ZVP5CsHsdAuyAhf4h9i6b9CLuTd+U1u8Ha9jLpR+X9h97jcV8T9TEBaXkJ0OZdUvbSOvVvmXeA=
+	t=1739204563; cv=none; b=Z0Dr169XqnRtJnA/SYmy8sEUTbZb3QCTsHUOkVw9HTgB7MO95JYiJ7M8iOvM66y1/dTGo6ast+xR7fViOtwrnzmXrxwJLlGMnNAX/RkiXlRMDcqqfhTVMIbW5//LzfHJ6clTfpm3R396RQ64jIJW5xpmMVNLT9bYbwILUsTe9mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739204560; c=relaxed/simple;
-	bh=UT/78BR2tAyyzFGH2npZWxW5hNSCyp7d3rnhQpVN6iI=;
+	s=arc-20240116; t=1739204563; c=relaxed/simple;
+	bh=Y1OOCtRvUNohjRycrQGn3/19JARUQT+ztyHsw66KdYU=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=OJsA/Rq3XoXgT8Kk4wfTDeqfEW3wMzzc1LT3h0IBsUWzw9Jh1H3PwEECPVcBKJW42CU62LPl/YaH3RG85+dQm1f8l3k+SzVB577GKTP/rWUgaqzyVxzUbVCqELm00iqMvw/un/n0oFVVPk2WCjLw1qsmgKvvW2irRL3xYybqW/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7n6IUv7; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=ARqIDQ2V7POwCk29r125+X/pMAkhbUfVQnVTXhR6Iy9j4BTKh8xPtsRjfhm0j2wmM97u8HaPp930U2V/HEMuyGuNwtGVSAD11Ch+USDOKiFhaiKSgtuQ4lz1LNynOqeuLOX84dH+mdcoT4VEBi+Mtk/ppZ6UbOdw9zkYa1+K7vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MT53VQ63; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7n6IUv7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F2BC4CEE6;
-	Mon, 10 Feb 2025 16:22:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MT53VQ63"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9480BC4CEE9;
+	Mon, 10 Feb 2025 16:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739204559;
-	bh=UT/78BR2tAyyzFGH2npZWxW5hNSCyp7d3rnhQpVN6iI=;
+	s=k20201202; t=1739204562;
+	bh=Y1OOCtRvUNohjRycrQGn3/19JARUQT+ztyHsw66KdYU=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=b7n6IUv72dkvCZEDwaA47QdPLbfeIfJaR0lwF/ejKiMkPdSsK5qABjH3YjdW6QcXA
-	 Kun3rTfRL9iEVrb0nU6aor0O4R6j76DmG28rbFsDLmWRFHDroh4Jbd6t7asgD2DFFb
-	 RDzZVLbXR+MfyUoqeopqJ4c0hY55LWYHjC9tn9SOYtUp+TNLGi0ud0zHnaSpio+AJF
-	 +oCTW+nrNWOLbdZrtw5qVJihdrwDThykyFdPas+NqFcYhjyYYiWXcVEYrC5OJUUzTV
-	 x4FVXKv/PyLWGrUeTB25wNrJl4L5aLLE6Npf0BI/T6AJZW+Uw9V9utzKkdiXBawQo3
-	 4I9SOP9geB2hQ==
-Date: Mon, 10 Feb 2025 10:22:38 -0600
+	b=MT53VQ63spjltB3IjE28c+jp5XYU5yyjmOq/2XWN6kNxuPSrycJdosq4l9xGt+pyS
+	 RaKJQlQeXnS3rHYyk+pua3uZDvHLcTAz3D2WE7TNnx7JgdgeCTBvEDDDkLpSHnA8XE
+	 BvASKbClyz5cwfK0Z+/5LngpaN1cinqMpYDzcstAyhMs4Z7DVRL4zHLHKKUC5LkLpX
+	 TTRv5M3yf/9f6lvxldzHUAMzIElRa6fW9LzKJ0gl5KcFKrub05ooecGZZqzBTo/umv
+	 ofRzkBszwaDsKzAAA/hTp6pIsmAfGru6kNcFd8tbrBsVvJ0w98dpy4o7rU+dgGP67N
+	 wnNaayei6oANg==
+Date: Mon, 10 Feb 2025 10:22:41 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,71 +36,37 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, 
- daniel.lezcano@linaro.org, devicetree@vger.kernel.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, peter.griffin@linaro.org, 
- vincent.guittot@linaro.org, Conor Dooley <conor+dt@kernel.org>, 
+Cc: Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, willmcvicker@google.com, 
- linux-samsung-soc@vger.kernel.org, andre.draszik@linaro.org, 
- Catalin Marinas <catalin.marinas@arm.com>, ulf.hansson@linaro.org, 
- Peter Griffin <peter.griffin@linaro.org>, Will Deacon <will@kernel.org>, 
- arnd@arndb.de, kernel-team@android.com
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250207-gs101-acpm-dt-v4-0-230ba8663a2d@linaro.org>
-References: <20250207-gs101-acpm-dt-v4-0-230ba8663a2d@linaro.org>
-Message-Id: <173920411592.476427.15574016492470186426.robh@kernel.org>
-Subject: Re: [PATCH v4 0/4] arm64: exynos: gs101: add ACPM related nodes
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-samsung-soc@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250209132043.3906127-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20250209132043.3906127-1-ivo.ivanov.ivanov1@gmail.com>
+Message-Id: <173920411901.476943.11749535762195189252.robh@kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: exynos: update all samsung,mode
+ constants
 
 
-On Fri, 07 Feb 2025 15:56:42 +0000, Tudor Ambarus wrote:
-> Define SRAM, mailbox and ACPM protocol in device tree.
-> Enable the mailbox and ACPM protocol in defconfig.
+On Sun, 09 Feb 2025 15:20:43 +0200, Ivaylo Ivanov wrote:
+> Update all samsung,mode property values to account for renaming USI_V2
+> constants to USI_MODE in the bindings.
 > 
-> Bindings for google,gs101-acpm-ipc are proposed at:
-> Link: https://lore.kernel.org/linux-samsung-soc/20250207-gs101-acpm-v7-0-ffd7b2fb15ae@linaro.org/T/#mb557ee342de628b1a8e462d4fb7c3ac6eb8be4e4
-> 
-> Changes in v4:
-> - rebase on top of v6.14-rc1.
-> - describe in the cover letter where are the ACPM bindings.
-> - Link to v3: https://lore.kernel.org/r/20241220-gs101-acpm-dt-v3-0-642d64daa5d1@linaro.org
-> 
-> Changes in v3:
-> - ACPM: don't specify the channel ID and type in DT: the channel ID is
->   discovered at runtime and the channel type is always DOORBELL for the
->   ACPM interface.
-> - mbox: update #mbox-cells = <0>;
-> - rebase on top of v6.13-rc3
-> - Link to v2: https://lore.kernel.org/r/20241212-b4-acpm-v4-upstream-dts-v2-0-91b7a6f6d0b0@linaro.org
-> 
-> Changes in v2:
-> - update nodes based on the bindings updates
-> - update mailbox and power-management (mailbox client) nodes to specify
->   channel type (doorbell or data) and channel ID.
-> 
-> v1:
-> Link: https://lore.kernel.org/linux-arm-kernel/20241205180200.203146-1-tudor.ambarus@linaro.org/
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > ---
-> Tudor Ambarus (4):
->       arm64: dts: exynos: gs101: add SRAM node
->       arm64: dts: exynos: gs101: add AP to APM mailbox node
->       arm64: dts: exynos: gs101: add ACPM protocol node
->       arm64: defconfig: enable ACPM protocol and Exynos mailbox
+> Patch picked from [1] and rebased on linux-next
 > 
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 25 +++++++++++++++++++++++++
->  arch/arm64/configs/defconfig                 |  2 ++
->  2 files changed, 27 insertions(+)
+> [1] https://lore.kernel.org/all/20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com/
 > ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20241220-gs101-acpm-dt-6dcde166530a
-> 
-> Best regards,
-> --
-> Tudor Ambarus <tudor.ambarus@linaro.org>
-> 
-> 
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 14 +++---
+>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi  | 48 +++++++++----------
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi |  2 +-
+>  .../dts/exynos/google/gs101-pixel-common.dtsi |  4 +-
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi  |  2 +-
+>  5 files changed, 35 insertions(+), 35 deletions(-)
 > 
 
 
@@ -118,9 +84,49 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250207-gs101-acpm-dt-v4-0-230ba8663a2d@linaro.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250209132043.3906127-1-ivo.ivanov.ivanov1@gmail.com:
 
-arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: /firmware/power-management: failed to match any schema with compatible: ['google,gs101-acpm-ipc']
+Error: arch/arm64/boot/dts/exynos/exynos850.dtsi:654.20-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos850-e850-96.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/exynos850-e850-96.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos850-e850-96.dtb] Error 2
+Error: arch/arm64/boot/dts/exynos/exynosautov920.dtsi:309.20-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynosautov920-sadk.dtb] Error 2
+Error: arch/arm64/boot/dts/exynos/exynosautov9.dtsi:445.20-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynosautov9-sadk.dtb] Error 2
+Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:828.20-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
+make[3]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/google/gs101-oriole.dtb] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
+make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
 
 
 
