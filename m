@@ -1,67 +1,67 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40826222563
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 12:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA42A22330F
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 12:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739191928; cv=none; b=NGEBLkmfXLaVdJbagnAyCT8NPIFj183+YbD2CuoJ+b7PMzcyrKsrTMLnfmvWRYzJIBbJ8bORt+NnS4jv2ZLWLIGO9sZgmuQFFHezI5BvLwacsf5eEv6R8weTv5eGjEAe3owSRzo53fT/QXQzY083vjwhNB1UHZWvcOK38FCv4nQ=
+	t=1739191928; cv=none; b=CKtNCicE685Hug0dCXEhOHfNrkbIogx7ojjyxOchQej9ZZo271ZzEIm/8dtLDljADSPQMgFuO2MuAUKdY08fOKjiz+rxrSXSj+3yKVjaX/JJy7eLOf6AeVvLm6myJK76m9ICR8MLtoZDaez1jrw3jFRthQonMDvTfBFPr3RMOeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739191928; c=relaxed/simple;
-	bh=DOgwB2o78HqwOMGNZ/JwWJJka3ZJ5jZHlvRUFck92Rg=;
+	bh=vV55kam7n89g+tJ4rn0KN8LW0wJxU903cCYlBxbrzus=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f3wrbBeUppdAy2e5+Jc25RoDXBR9N2QOfJ58F1+zi9BXbsyWGhZX0boAhiFqcWpXsVuGk4qp24Fkff6C/Xlz8b8tZioSN9MNoBKDDBukxnR1fUmCql6a4hvcVYAkhoCocKkffrLmPJnHNEP7XpVt6ZXSzmIuGW0dHGv6DjOaF34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VFfVvc4Q; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:To:Cc; b=V0/zPpBYApYuvLMtj8szE8U5LGaPASpLz0dA6jJwIorhKv4mX/XW4EImzhk6qLPsJS019D07Uag1ny2GPJx+nyPOL+7Oj/+r6VQ0legZO2SynPqe9+JSY5Rrz+0ZxEyRobtlsySGLXPgyxLvwqPTkLxRFgf/5l2xmeAx0hWYVYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cKdY4cam; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFfVvc4Q"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso702312466b.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cKdY4cam"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7b7250256so195843266b.0
         for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Feb 2025 04:52:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1739191924; x=1739796724; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=frAoU9FSbapFrq+HpklqCcJQ3Ks77Q8uuZdWNADgS9o=;
-        b=VFfVvc4QLCYP+vuqR3XidDRe+rupwrrB5NJkt3weXOFrSWsLPfF3C30zwNo7WPVdnY
-         JxYJ1OZ4E9yFeZY/jpl+CJEB+hqleKBOfa5T7pI3/tjULkGNb1lau5nQS6AKFyjt6vs8
-         rbddsjFWo3Cti3pRGgL/Pt0iocoLDnIhth9f213RfZrr6+QGh+CnndugOb9qZAU7XOXj
-         PpuRpfuBH1U99NZIljgrIL3ll8xdMXCdwhX27enWc36fZa8qMdZPtPt5LDNT1FklRipz
-         6+AeifHvkfC+zTEIst5w1W+9+v6Qlfj44h4KQLJHaioH8MuQjrW+cIrpXyTQlAigQQPK
-         mSUA==
+        bh=zqD1g4YKIN7d8Jic4AmC6WlJ69pwzDTn8w0IL9Ra7Bs=;
+        b=cKdY4camDS2OqMDEMCO/C/SYIfgfGgISDn16nz32JNJjbUDmYT1fd43kteB7hjr5Sn
+         TrK3vSj519TU1G6n/UqFRj0EOtzJujDPv4O4SM3mbkssE8tTbRuComl9QWM9udMAvLyG
+         9arzXHQjZED7DlTkHDt2oCKZ5WDWazv0GmWc02/xQyhfNLypWq4ZOjin1OgpdrIxM5wU
+         9qm9//KrbtLp2DpTC7Sqq7Zli0GAPV2rSRyk8eJBKpjFrcWrCC13DbRuJZnTmTJN7+I7
+         Vr4ajG5QjaZW5mvK5Qn0E1jxmp5xAiRXjzxaDa4wZvugj0PzJqYqxg4CkD42tj7UpTox
+         iJfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1739191924; x=1739796724;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=frAoU9FSbapFrq+HpklqCcJQ3Ks77Q8uuZdWNADgS9o=;
-        b=vTsraXAXkR193ZMQgp8sicbsHQP5txWiv1757CUyTRacpo69J0DzglTdL3WoCge4l5
-         XWQRD4AxcArvlW3JYXf8IW54NeNllmuEjj6hD894/N/Y5n9RQPPIS9hL9xrIXcfZ0eUn
-         y6SWhXbTyFyJ5nVIrileHE4A/93+dpVs8rqczaD8ylcroddTNFhSk7pcwF3TzSX19Szb
-         YkEYTJXu2FBTz6QlrigBM2d4QAt/Eg2PqW5L0SFXYb8rnMycHxXQVQOVpf4yIeoB1v+O
-         ge/zrp0nuFRHKXJ2qSdVJ3v1hOBhXhMv5rNILaSYj5Vg4NSOwGQvtC496A5BSgvAD7FH
-         nDqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrI3NKVc4Je2XRurM6rZk0aIf5z5KdkrKXQGlGwobrWRyHyXiAeaxAmuucOZlxzKRxVr2V+XCMeKtiD/mVMbrieg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDzU+Nbm/geYSDCT3rS6hPpQycuHDNelrZxJovq7TgYZW+7YWM
-	RYkCu2UIoh+kwYkFppIyP8Pbwlpecj9pKqC4Xt9szEuEYOiMqC9667LDnzXgn9U=
-X-Gm-Gg: ASbGncvkdWcLNUcykrk7VsY48Mw9ikeDio1ZMizjBq9C8qDM91gFqjPsur/SLq5QUpL
-	4EDMuqqCehHVdMpo59Dmadkry+Oz1dlFWXD1QXL7ICTN057g+OSpt6IRD43AjAsU3yInuYdt5PG
-	dKHoFTv4Xqm553oacYOnvtdm1yBQJ/+MjrfrADr6zjcox0k1AvSnPoeEMWi5kndQs77BGrHeus1
-	E7Nb8AJDhXk4Hpbo7vclEVYPNrjultaovNw6Bmsd1P7rhLIJGX2cSVIKsNLxL3bqIlms4eGI2o+
-	2aGR9Y98WpKPz9goPzUkEhJfhjJ3lXw/pENxamDK9wRK+9kypngFd8H6u9ZZIqf5zgxZI+2OS/U
+        bh=zqD1g4YKIN7d8Jic4AmC6WlJ69pwzDTn8w0IL9Ra7Bs=;
+        b=fUXLWebgz3rlTIXflWj07pF10ScExMBazduHqKdXBXYk1BMfSAAgV8hxRpaIfXLdgS
+         JZSWczX7/5UQwM8Xkn77pnRYsfB6LLA/ZKOzoLyWeWSggErDXXlx0QhoV+QAiHjs6Nhi
+         X6vxFizRr/05YIzaB/Y+FL9jfOE0CIzjVbxJbB83gEr55b55fThwBXhbZqtA7KUBFNeJ
+         Y9LZTR0Pfx9hjTn+Zz1Pdxj+a0uHu86t5fzW4qh8LJQ2GkXTTQcK1jTwLLf17vwztZuu
+         QfZd2o2x18guSGVNKjVnKlZMS6Gg6vE0KIPUQe32NpABiOf30aYkUDRv+0ujREZF05jI
+         wtKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVA75C//fMlBCDig+k+I5kFViy9iWmVwtrL4mmK0PbO/1yukD3Alueb1JzBFQCUZQ149m/WDi8M4WkiCAMo6dx7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykw0Oc/GKpXfhs7Is34VcLaos8a/gzInJaFczaKGecdguhjaQk
+	h056Om5LkdifcILpyjop9OYD1MwH1xsQv6ZhSFApBHbk6JR5Yle8IMN9Wbg6vzM=
+X-Gm-Gg: ASbGncuX5M+8tWBqjtFrYhm/XLLpoHJrqquAglI2HKGqhqe3SehzYeIdrNNjdDPVKWV
+	+udJpfBURdU2kwMLbiWig6kdZZUcBUuXszogQcDRUcB+XB1qyxhR1X9Ctj0Nj3AkFOEqdggkHEu
+	hOYx76wkFFrhygEntgiSaLactAtZm8DrIgypHj2zKUW3cGeJTQfoh3XgqwC9aSKAMVKYOeKz9Aa
+	dU9+sBZc61MRflbo//b9fuhgVkmTpWon6KrUjS8XVHl1Twvl50M4SsrnIxUnntcpET2pQgk7w6p
+	sd3sGy+QS1u+37h6RZOW+3deHRh+P3vyyhQOfqS7pEnRR+zlu+RWwK7Y+fvXM1d4sQ73J7UMwTw
 	=
-X-Google-Smtp-Source: AGHT+IHlPw1KLXMN75TVclRX8S/qE4XVwnFHG0ZCFXVtVKAbnSQdsY2Nvm1erECM0CzNh8K85VHXjg==
-X-Received: by 2002:a17:906:4fd6:b0:aab:d7ef:d44 with SMTP id a640c23a62f3a-ab789aecd06mr1234271566b.24.1739191924470;
-        Mon, 10 Feb 2025 04:52:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEcs4lV823LwIXgoykf1sI1un5zsoFBvpa5yONNWVKm+6SAtdOLZFSfcwD/mDii+zqT48mO9A==
+X-Received: by 2002:a17:907:2cc6:b0:ab7:cf4d:9b2d with SMTP id a640c23a62f3a-ab7cf4d9d89mr171928666b.30.1739191923919;
+        Mon, 10 Feb 2025 04:52:03 -0800 (PST)
 Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7ceae3a3bsm85819266b.129.2025.02.10.04.52.04
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7ceae3a3bsm85819266b.129.2025.02.10.04.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 04:52:04 -0800 (PST)
+        Mon, 10 Feb 2025 04:52:03 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 10 Feb 2025 12:52:04 +0000
-Subject: [PATCH v2 3/3] arm64: dts: exynos: gs101: add reboot-mode support
- (SYSIP_DAT0)
+Date: Mon, 10 Feb 2025 12:52:03 +0000
+Subject: [PATCH v2 2/3] arm64: dts: exynos: gs101: align poweroff writes
+ with downstream
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250210-gs101-renppt-dts-v2-3-fb33fda6fc4b@linaro.org>
+Message-Id: <20250210-gs101-renppt-dts-v2-2-fb33fda6fc4b@linaro.org>
 References: <20250210-gs101-renppt-dts-v2-0-fb33fda6fc4b@linaro.org>
 In-Reply-To: <20250210-gs101-renppt-dts-v2-0-fb33fda6fc4b@linaro.org>
 To: Peter Griffin <peter.griffin@linaro.org>, 
@@ -83,60 +83,37 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-syscon-reboot-mode can be used to indicate the reboot mode for the
-bootloader.
+For power off, downstream only clears bit 8 and leaves all other bits
+untouched, whereas this here ends up setting bit 8 and clearing all
+others, due to how sysconf-poweroff parses the DT.
 
-While not sufficient for all boot modes, the boot loader does use
-SYSIP_DAT0 (PMU + 0x0810) to determine some of the actions it should
-take. This change helps it deciding what to do in those cases.
+I noticed this discrepancy while debugging some reboot related
+differences between up- and downstream and it's useful to align the
+behaviour here.
 
-For complete support, we'll also have to write the boot mode to an
-NVMEM storage location, but we have no upstream driver for that yet.
-Nevertheless, this patch is a step towards full support for the boot
-mode.
+Note: for reboot downstream seems to be incorrectly writing 0x00000002
+and not just setting bit 1 (which is the only R/W bit in this
+register), so we keep that one as-is here.
 
-Note1: Android also uses 'shutdown,thermal' and
-shutdown,thermal,battery', but that can not be described in DT as ','
-is used to denote vendor prefixes. I've left them out from here for
-that reason.
-
-Note2: downstream / bootloader recognizes one more mode: 'dm-verity
-device corrupted' with value 0x50, but we can not describe that in DT
-using a property name due to the space, so it's been left out from here
-as well. This string appears to come from drivers/md/dm-verity-target.c
-and should probably be changed there in a follow-up patch, so that it
-can be used in reboot-mode nodes like this one here.
-
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 86741994bb7c..d60e6a8e8723 100644
+index e78dcd506a5c..86741994bb7c 100644
 --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
 +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1411,6 +1411,19 @@ reboot: syscon-reboot {
- 				mask = <0x2>; /* SWRESET_SYSTEM */
- 				value = <0x2>; /* reset value */
+@@ -1401,7 +1401,8 @@ pmu_system_controller: system-controller@17460000 {
+ 			poweroff: syscon-poweroff {
+ 				compatible = "syscon-poweroff";
+ 				offset = <0x3e9c>; /* PAD_CTRL_PWR_HOLD */
+-				mask = <0x100>; /* reset value */
++				mask = <0x00000100>;
++				value = <0x0>;
  			};
-+
-+			reboot-mode {
-+				compatible = "syscon-reboot-mode";
-+				offset = <0x0810>; /* EXYNOS_PMU_SYSIP_DAT0 */
-+				mode-bootloader = <0xfc>;
-+				mode-charge = <0x0a>;
-+				mode-fastboot = <0xfa>;
-+				mode-reboot-ab-update = <0x52>;
-+				mode-recovery = <0xff>;
-+				mode-rescue = <0xf9>;
-+				mode-shutdown-thermal = <0x51>;
-+				mode-shutdown-thermal-battery = <0x51>;
-+			};
- 		};
  
- 		pinctrl_gpio_alive: pinctrl@174d0000 {
+ 			reboot: syscon-reboot {
 
 -- 
 2.48.1.502.g6dc24dfdaf-goog
