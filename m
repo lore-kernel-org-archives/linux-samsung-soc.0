@@ -1,110 +1,100 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07F31F8BCB
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2025 11:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F591FA165
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2025 12:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739275033; cv=none; b=GYJatv+Q4FOzIYEuQ/90rONXe7wFUNQZUvJ02ROgoIdxi/dzQTEMo2K97MTGKvrQZBRPVYG7oJfTtFUMnAuhj4+HdkJhn1sOOmOot7siDBS9d6JsA1LuS3VSBOopLIAhG29qMxGXbanyH8nbFHT2Dq+yrW2eRa/vU54KYtOh1tk=
+	t=1739275334; cv=none; b=R8zJ0pIJUTwgfUmldoEXimKeRfJq69+17I2AzQpI9vMI+zVR54xL9biQDZuye2kFACjUiINGXaXlv8R7kDIMf8UF0PTAgrjO2qu76U1DgIj6O/NdLeUnjEUZcDqw7TqsutsUAORFDnEsOpMZ7JmYzlctUYjYSsVvgem2bIkRXE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739275033; c=relaxed/simple;
-	bh=vpI+yV0dwbmZFIhRaRGyW8a5HVtO/K90AaYY0HmkYxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0njscVrczYzzeAO9xXFlhG1OroGxQEbcJiu+VP5uj+yeQITPWNG61sEfCpr2lIUv1pUZuUfkCxfw8ahdBEQoeNsOJotoxHCz6aF23PjIfmxbYqkpa9OcH8smS24NWOKK6fmOmOkKqH/j9GmZSn1h/HqmZWfPK9oxv0wqVbgxTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AIyPVGkJ; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1739275334; c=relaxed/simple;
+	bh=7d1Icmn2h5Xxh5nmwHTuvBMLWdYe0yLTSL1YV7Y8f1c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QDYmFCVX4qD/ODV9Oaugj1uWiw5nlGG4Q6niJTmr8/PlFJDHo+8O1aO6ZaWgp8IytG5HdblUg7bxgCFPl6HAFP0gdLhhVizpxj+xc5vIZYgxVrngfDG4MPX97j8ok1boVJlqO8D4Vxv7TouHBVSXP8MZs0fdC/jYoUHUd/Ec1+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mpFkwPJ7; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AIyPVGkJ"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso2837831f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2025 03:57:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mpFkwPJ7"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso17515735e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2025 04:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739275030; x=1739879830; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x+/rKU8hND2RosjvAKGWInz1qgNkLNHLXSblj/1XFjg=;
-        b=AIyPVGkJlgcML6BtskWNgRrGfUuf9CBdc6cgkcsCoa3i+KMlwVsOueaISXXdmgZcDZ
-         0sTXWYKKIBPGT4hPQFRacfzfSE25L0sysAGAYvi395QM7JVcmuZYRDRhckGII+KrZP7R
-         2uF//yw2DEXlSY5SmpOpJUdBEKTvAp6/ZmfWE3S6wF8HtOC1BeJrN3P42cHtK+UoAYFK
-         hJQ5boYIUIUz8mIr/Mcb0NNHccZ3Skd6fJlAahADpL4HANcN+rId25PuFwEBTntX+/iM
-         dcJCf88NGq80TBAMoqJehV/iBPum2qpifWIpfW63refMjwOHU8RxNrk4bIVaAzU/mFL2
-         Wnmw==
+        d=linaro.org; s=google; t=1739275331; x=1739880131; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7d1Icmn2h5Xxh5nmwHTuvBMLWdYe0yLTSL1YV7Y8f1c=;
+        b=mpFkwPJ7y20a6lPApLn6SzITArBSsaH5pBArRBOEefk8y0P5Wv9W7mmGjJ06nyXYA8
+         J1Y1plBk1jexaaMiexzfKrUsVEUbKCRPMPtlWS3wsn6hoieZQ57VR5TccuEzL9AT/kH0
+         BGjG4CfnzPyS/FV9l0ZZ4e8RBvHYqS1UwnXu+IC8ufmR2LIe614KLHNeJqYjTK8PGs79
+         Rvx29Rg/Tmm3SA6D8QAt1Yiq5O04BpiSz57DPxghJv396rdzdq+V1l2hoxJT2H8pvA2n
+         /ntCbxtHyBw5MuU6OZDgrBLQubYUUMLPQZ24gs+v796uKYvduWwDtjZSB98lR6vfBHeX
+         gT6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739275030; x=1739879830;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x+/rKU8hND2RosjvAKGWInz1qgNkLNHLXSblj/1XFjg=;
-        b=KiaPhLTcy7yEIi+iWihiN4h30p6fAcKcNUTWCLbvrRZHzWnUGSR6NAzDDQeBKkRdPF
-         WbsD8E4xTKhP72hozKsj8+4DtvscKXzUZ8ixACGcJaZugd1w5m8DkDRbIi3RQSfep3Uu
-         IxMY2ITzAFHe0LyDI1iTEiK2UQbE3HzPdemfXHsHjahYMchEMYvHJ8iD2Mb+xhcxrxjp
-         kheUIo0MvdtC/N1m70CTOjXL8G+GQzPQ7AaKJn9UdMHiNGwoZ74FTEXFoR0VaOJ5Sq/e
-         lZ32oH3bNR7mx0oO19H7Wt8rP7B4ke08VjZhWOolye07/waLeWTYI1tloulAj01J7x2o
-         /zZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMrZcMHYFQA667e+vd3pfyH+lxLoE+rCQXmdRkaHOjYbn/pzk0YOMWM4kYoIG4FpWKEB4ocqQ0luTDALKQ2gNeoA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuj4533FyUQNYNUmws19vkHiqOwC7uFme/+L7uyUX2I+UMz+NE
-	6i+W/sKcw4pz3z17zul32rYA1JkJeAEZJ3q+eqLeYJpZxq7XMlhPqbEEiOporCA=
-X-Gm-Gg: ASbGnctrCZohVtj1v7WaCZfJRQDzpdTJsPgIxS8ZTfm4F73FwF4zO+mDbWPRdDYyPHC
-	QyrtEQvpjzMSQqHfnX5QgffyR2f4eLaMwY6aSsgpR5Ohos0BOLnJN5cN8sa2hss14XbExWWI6ZX
-	ZShUF82RfVXlmxNYQwXbR0ZUl1EEqZAE8xUPf1mgq2uH8sqUqefJd2oFsBpXxMpe0yKRS5kV0xR
-	EXBvzFMUuoSi3sA2BHXLHbYIfpts4eg3KU9zh3ygIoiE3f3IzjFLyM72ikpWu+UlpZFNItS5Qdl
-	p5DJTJNFFO55OOtdqtiVbyF8
-X-Google-Smtp-Source: AGHT+IGEDbZ4F+KtHnkoF3QqtYj/Mv0BkaXQoyniQIaUjtGof6BuGlXWqpwnecn1thdzCU0aThGJqw==
-X-Received: by 2002:a5d:64af:0:b0:38d:d0ca:fbd5 with SMTP id ffacd0b85a97d-38dd0cb6a75mr11977488f8f.22.1739275030079;
-        Tue, 11 Feb 2025 03:57:10 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc0c5a894sm14314088f8f.95.2025.02.11.03.57.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 03:57:09 -0800 (PST)
-Message-ID: <bad87f30-0483-48c1-b263-02cc752c77e6@linaro.org>
-Date: Tue, 11 Feb 2025 11:57:07 +0000
+        d=1e100.net; s=20230601; t=1739275331; x=1739880131;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7d1Icmn2h5Xxh5nmwHTuvBMLWdYe0yLTSL1YV7Y8f1c=;
+        b=Aj09Fez/JQ4Jmd+ieQ4arazfL3uDPS3HwryxZ4Op0dJDn6URenXnPhrE+Z8n9oAHDI
+         IXOWJnC8plwmUhfalCdihU5OrWQfqNrbWtti5vt9fD/6NqOmF6oxiGb3rkGqFao6ybK6
+         +4StVyB1Q8ip6tTXjdzQK/z1+Vz1tbM5mEJaTpe3ByKG/ebE6vlRHhSHvW+Ij0D29BXG
+         f7wVv/b2aTyAljNHOP672DISuEor4uax8wM64cEHMPy3d6EfGw2fEdQH0zg8o9+ewDMp
+         PJ7vmL4O7s7jaKgp3VTjFhOWBvC3PHJrYC7ThO6Yk6IvyyN0sz+tJ7NB1nZhEUbeMl0P
+         v6UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIG7KOq8kb5+vekE8CiMDmTvw3uFQNR01m81fkhmvpQRcxZG6rv7Enyk2z99+qZ2DFfXiEfKq9sp/gKoEygb8P7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeOescScipc7XhDn+8MRFbfz1pYaXjtEKpiJyuBjw43bwpi8+0
+	6mydXgu67dWJkFax9SWEvqNJ+CMf+dyyRAOapiMthoNpI5TL5JAj8Ml1BWszbtA=
+X-Gm-Gg: ASbGncvIz2niQ7DaPBM8yC6c5iUVvpBKhzqlXpQuDPDl8v8dK2CK5CD3uvHcQ2Ms0u4
+	OOp9JAtqPSvCEmSGPe5/2DVhfmLTUpquK3xjtskG699YHYOYvbVvY7VeSJ/X+8sKnOpMa/Y/MtC
+	qTAe7Ls+lJLOy2z5968bfeGQ+vEiUAKafj6cgSwfnG5ijWqgExabczrjjj1qgTkecsKD0dR+Ens
+	JbUBKo/iOP31E7IeSGIUHJupKSZcIPzw/uxqZKrReRoOvqo1yQmW5GqM+B9mlJWq4do53HTEfeA
+	Tc7ZtsooTcT16eTjjy0=
+X-Google-Smtp-Source: AGHT+IEpNALrmIL66un9ZFpaSjUj/Foh/XSYreR+C2qRnL/fyZnSvShvXFiOPXFezhCRGB+4CDDdQA==
+X-Received: by 2002:a7b:c7d8:0:b0:437:c453:ff19 with SMTP id 5b1f17b1804b1-4394cf0825fmr25778995e9.14.1739275330727;
+        Tue, 11 Feb 2025 04:02:10 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dcf35b15bsm11149599f8f.64.2025.02.11.04.02.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 04:02:10 -0800 (PST)
+Message-ID: <a740a0211c82aaaa55940e2f07e1d1b53c23ddd8.camel@linaro.org>
+Subject: Re: [PATCH v8 1/3] dt-bindings: firmware: add google,gs101-acpm-ipc
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Diederik de Haas
+ <didi.debian@cknow.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Jassi
+ Brar <jassisinghbrar@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ kernel-team@android.com, willmcvicker@google.com, peter.griffin@linaro.org,
+  daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+ ulf.hansson@linaro.org,  arnd@arndb.de, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Date: Tue, 11 Feb 2025 12:02:08 +0000
+In-Reply-To: <bad87f30-0483-48c1-b263-02cc752c77e6@linaro.org>
+References: <20250211-gs101-acpm-v8-0-01d01f522da6@linaro.org>
+	 <20250211-gs101-acpm-v8-1-01d01f522da6@linaro.org>
+	 <D7PJTD3PSP78.27N2S94J2CNZG@cknow.org>
+	 <bad87f30-0483-48c1-b263-02cc752c77e6@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2-2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/3] dt-bindings: firmware: add google,gs101-acpm-ipc
-To: Diederik de Haas <didi.debian@cknow.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
- peter.griffin@linaro.org, daniel.lezcano@linaro.org,
- vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250211-gs101-acpm-v8-0-01d01f522da6@linaro.org>
- <20250211-gs101-acpm-v8-1-01d01f522da6@linaro.org>
- <D7PJTD3PSP78.27N2S94J2CNZG@cknow.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <D7PJTD3PSP78.27N2S94J2CNZG@cknow.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+Hi Tudor,
 
+On Tue, 2025-02-11 at 11:57 +0000, Tudor Ambarus wrote:
+> And then I shall s/MODULE_LICENSE("GPL");/MODULE_LICENSE("GPL v2");/
+> everywhere as "GPL" indicates [GNU Public License v2 or later].
 
-On 2/11/25 10:36 AM, Diederik de Haas wrote:
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> Shouldn't this be ``(GPL-2.0-only OR BSD-2-Clause)`` ?
-> 
-> AFAIK it's the recommended form since SPDX 3.0:
-> https://spdx.dev/license-list-3-0-released/
+No, please don't, see Documentation/process/license-rules.rst.
 
-It should, it's a copy-paste error.
+Cheers,
+Andre'
 
-Looking in the driver patch, I shall update
-include/linux/firmware/samsung/exynos-acpm-protocol.h to GPL-2.0-only as
-well.
-
-And then I shall s/MODULE_LICENSE("GPL");/MODULE_LICENSE("GPL v2");/
-everywhere as "GPL" indicates [GNU Public License v2 or later].
-
-I'm going to respin everything to fix the License mismatch in the set.
-
-Thanks!
-ta
