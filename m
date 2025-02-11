@@ -1,105 +1,113 @@
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590A91F4E59;
-	Tue, 11 Feb 2025 10:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B7C1E5721
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2025 11:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739270184; cv=none; b=SMsAlm5H+CxuWzXmr5Y+XCM7u+lDkFeUUu/VtAlqg8krQN5h5Xreyn0r4/lcZ/7ItX7VS2EolP9MLknFfORRnvQYVekn9QKBmYEL4vEiRFgkUQURBObEucnDVsbiXnaMG3rIzDBiIibd/tRGqTwv7nza9DvOEeZ3nSfyh1qW/8E=
+	t=1739273466; cv=none; b=ObeftFDCnVpwxZoeQPJ5Q632pzjeSfbDSwt7ENHmtw+VeJ+oyzOTjs1jSNeSoJdM84ktGCpiV9Cl/IwdibADcjG0xK4a7OEb9RtRrNzlUsaueFzJcxfCRu5Nz9yiUZUJQUUmm7NS7vTo6WSMmlSGN2+P7m+hKVML7wvo0y28X9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739270184; c=relaxed/simple;
-	bh=C89/EB8mmtsdyrj/MjwziHxzIoUNyfaZgxVWRxruzCU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=NQ81IQdcpbkxwTrl+Ktti23jG1CM8vHTsRWWFpLxrmy4WIeqrGE0vckIfR7PZM4w3wmAL54l8VLRrCTLkLR+CvLIt9j75lPAGCMh0nHesJfkdUStbapmV2dNQNSVio2iklsJBo95xs5kehbmKBXNSwld6ng1bNLh4SRgPx+/7zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=C59jdT1R; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1739273466; c=relaxed/simple;
+	bh=SxRO+2V18543uuVvqtYarJpvwbWlhVTPdjSnXR1nptc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hd9nSaVjFuFa07JITPyra/eys3YY8WTkXkFKnObE0NXuvHkprPZiCc3Xg8icFQjK12A39pGWbZD/j0/8MubkEZq1sUdPEi578eA/Ynldsg6KKG+Tssqr6k7E749JdopzjUWbqqMmp0KUqou5mByiZe2TgcErlFuK4e09PYSaSzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FWrRX0Sm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="C59jdT1R"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FWrRX0Sm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739273464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XkXaSMBOnMyZHKLeyMgqeVTTrgOxiy57mT/LG6mdTOI=;
+	b=FWrRX0SmdDzGc/FLo37O/Kv1uqj/TtZVseuOg1822C+Ap9yn/Y28qJLtqtX770UbWkUWzR
+	YLbdDhvVMScl9e7QuBhJu4d2JFeHSRVu5VMSq4QuS7uA0D8uqtEgaV+en06Wpg1zxY0w9x
+	aVAllel3CnMIBk+IsSMpmcJnwi3yTtM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-WU_W0IofMpOI0N1QH0_MEQ-1; Tue, 11 Feb 2025 06:31:02 -0500
+X-MC-Unique: WU_W0IofMpOI0N1QH0_MEQ-1
+X-Mimecast-MFC-AGG-ID: WU_W0IofMpOI0N1QH0_MEQ
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38dda790cfbso1889549f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2025 03:31:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739273461; x=1739878261;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XkXaSMBOnMyZHKLeyMgqeVTTrgOxiy57mT/LG6mdTOI=;
+        b=jiNfu14p+Km106qDctLBwZ8mLLuekvhIc9wSCPgAmizSeHzGw5XjAsq5jDKeb+Sau6
+         YMcHroEnVTNT6JyNeQxwLjQ2GhU3Vj/GgoJe+YY6cnDxjEEB3j4ugDws5rDBTjWYQlf2
+         DaUQ6L2JYhT7b5xakW27DjU0IPrrkS9wV5vlhU+R+F8BUERMe7ZBTSPLd7yi4WZ76q0W
+         jDkQUGMlJ8nVETsCKPjFIHSyjIY/v2Cyqm6cLdnv46UTFwIV5iJP+H6/45/gdIJuZ0w1
+         N9XhEuQbqe+Eh+/CJ/EbjiWxda/rnar6sEtvPEI0aX8s36pb7cFycm3ntROg9FapLDFq
+         A+bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK88BpqqGPQpUEFMuUGAqitZed0PeWdnGwS++b0d+/V4pFOoMEvcjQ980jQHj7rXYdfEm48+gteXuPfhLSVXpmRw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDqO7Slray/ZvCNo71BKOY1fXffnUoI0EzDXLY3JBPkgydWqg6
+	QU98XZBwfuAiXdGZYQlMV7xWHgHVUDH7QU8vUalAqlgiDPKkEUQXb3daWT27zlfTHUukgf6kHDO
+	MXTen+vQuVB5X4ek01UfJ8SUyeScvsICCE9HxPci/pfWFCc4EFs0b/cu92BGQLnIpCUup
+X-Gm-Gg: ASbGncsTsUTdYcRq3uXBqJTrKV0dSmmqHs1trlnxlhSMnHDDjjgXWPU+KgJE+MA5Q24
+	sars9Ecwbju6mME5Vnzg0NwAexltHrB2hz4cqR2F+S01PK0REIGHht8xBh+1hC9jOkIBdR9LT6B
+	Q4+rTmyXwMIBRh47e5XRBQYOg7scKDblBJQtDq9QkjRsC7wi9/W2zTehV1QhvUMNUhqWpNx2FmU
+	edv/OvwkfJBnzGPwfxIMBSd2vQSrkjmkNunhY55zjaCYoPTg/Z5DIc/DBfXqQEziaDzV374Sk9D
+	H197rXu8gWwM5Ng0ysC8vVgBKWHrQZNKSBA=
+X-Received: by 2002:a5d:5846:0:b0:38d:def8:8307 with SMTP id ffacd0b85a97d-38ddef88639mr6802167f8f.55.1739273461479;
+        Tue, 11 Feb 2025 03:31:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHayBvfNx73SbQMhbxNkafqfD+FDlmMiZt8eb9H+FDR01lT95RUPwq8zXQKROFW+H5GCWVS0g==
+X-Received: by 2002:a5d:5846:0:b0:38d:def8:8307 with SMTP id ffacd0b85a97d-38ddef88639mr6802140f8f.55.1739273461119;
+        Tue, 11 Feb 2025 03:31:01 -0800 (PST)
+Received: from [192.168.88.253] (146-241-31-160.dyn.eolo.it. [146.241.31.160])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43941ddc8e9sm68421845e9.26.2025.02.11.03.30.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 03:30:59 -0800 (PST)
+Message-ID: <6abfb27a-8116-4b15-9485-39e5b1f98c2f@redhat.com>
+Date: Tue, 11 Feb 2025 12:30:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1739270170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CcTbLEBt8Y8NL7Kz0HYgBsKXaJfzSyxWtZz03umu0us=;
-	b=C59jdT1Rz5cXS3dKHVt50NdxmADlu7Jr7oR5TXqWBvD9eotDotwsX6qx5acCpRaKspa4Kl
-	Wu/B42fkg6rZ2ksFucijVxaK3HJiAx8WPt1czeqIvpkMHEVxT4tT4TTvxI0TclXsg9i1ux
-	E7Qhli9KsHW9z3ImUGE5HaoW7CpnLsWDZ26wvTdIBYZpLWJ6JaLGk7CpSATbMTn4/klTKC
-	5QF92Es4Sr05iaT36VoIJyKMnd3RjZTJkhnEP5yxTP7PvWqeExfP966m5A6CtNi876j6Jj
-	IHw1mwLE2EdhFGvNsj48OynBuHxVEcvTwBcYlGWZYxPdLOKEXfleySraBMVNAA==
-Content-Type: multipart/signed;
- boundary=5ee4ceb31c3782666c51f1eeeb5c1812fd7b0e7a1f16d9d041a97c2c76ff;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Tue, 11 Feb 2025 11:36:00 +0100
-Message-Id: <D7PJTD3PSP78.27N2S94J2CNZG@cknow.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <andre.draszik@linaro.org>, <kernel-team@android.com>,
- <willmcvicker@google.com>, <peter.griffin@linaro.org>,
- <daniel.lezcano@linaro.org>, <vincent.guittot@linaro.org>,
- <ulf.hansson@linaro.org>, <arnd@arndb.de>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v8 1/3] dt-bindings: firmware: add google,gs101-acpm-ipc
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>, "Jassi Brar"
- <jassisinghbrar@gmail.com>
-References: <20250211-gs101-acpm-v8-0-01d01f522da6@linaro.org>
- <20250211-gs101-acpm-v8-1-01d01f522da6@linaro.org>
-In-Reply-To: <20250211-gs101-acpm-v8-1-01d01f522da6@linaro.org>
-X-Migadu-Flow: FLOW_OUT
-
---5ee4ceb31c3782666c51f1eeeb5c1812fd7b0e7a1f16d9d041a97c2c76ff
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: stmmac: refactor clock management in EQoS driver
+To: Swathi K S <swathi.ks@samsung.com>, krzk@kernel.org, robh@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ conor+dt@kernel.org, richardcochran@gmail.com, treding@nvidia.com,
+ Jisheng.Zhang@synaptics.com, ajayg@nvidia.com, Joao.Pinto@synopsys.com,
+ mcoquelin.stm32@gmail.com, andrew@lunn.ch, linux-fsd@tesla.com
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ alexandre.torgue@foss.st.com, peppe.cavallaro@st.com, joabreu@synopsys.com,
+ ssiddha@tesla.com, xiaolei.wang@windriver.co, si.yanteng@linux.dev,
+ fancer.lancer@gmail.com, halaney@redhat.com, pankaj.dubey@samsung.com,
+ ravi.patel@samsung.com, gost.dev@samsung.com
+References: <CGME20250207122130epcas5p1857043fa03e7356dc8783f43a95716ef@epcas5p1.samsung.com>
+ <20250207121849.55815-1-swathi.ks@samsung.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250207121849.55815-1-swathi.ks@samsung.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue Feb 11, 2025 at 9:52 AM CET, Tudor Ambarus wrote:
-> Add bindings for the Samsung Exynos ACPM mailbox protocol.
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 50 ++++++++++++++++=
-++++++
->  1 file changed, 50 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm=
--ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ip=
-c.yaml
-> new file mode 100644
-> index 000000000000..982cb8d62011
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+On 2/7/25 1:18 PM, Swathi K S wrote:
+> Refactor clock management in EQoS driver for code reuse and to avoid
+> redundancy. This way, only minimal changes are required when a new platform
+> is added.
+> 
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
 
-Shouldn't this be ``(GPL-2.0-only OR BSD-2-Clause)`` ?
+For unclear (to me) reasons, our CI failed to pick this patch. I guess
+the too wide recipients list confused the CI, I suggest re-spinning
+including only the ML reported by get_maintainers output and adding the
+target tree ('net-next') in the subj prefix.
 
-AFAIK it's the recommended form since SPDX 3.0:
-https://spdx.dev/license-list-3-0-released/
+Thanks,
 
-Cheers,
-  Diederik
+Paolo
 
---5ee4ceb31c3782666c51f1eeeb5c1812fd7b0e7a1f16d9d041a97c2c76ff
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ6soEwAKCRDXblvOeH7b
-bv7bAP96aaDz5VKPTEX57iUB5lisLvy1Dhsnq/V3RPglNv0N+gEAhyLe6ZIqyYQk
-/7mKqroOKZdEWb4BTUOWoix6bNhI5w0=
-=Mg55
------END PGP SIGNATURE-----
-
---5ee4ceb31c3782666c51f1eeeb5c1812fd7b0e7a1f16d9d041a97c2c76ff--
