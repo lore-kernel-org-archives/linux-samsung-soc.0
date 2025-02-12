@@ -1,113 +1,103 @@
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0585421772B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2025 18:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE44E260A4E;
+	Wed, 12 Feb 2025 19:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739385180; cv=none; b=Fdaism8iLb83A4aDqzpOY+SLXwi1plXZBKmRbs76oiQLKOBIKXAHdqgcN17c0KZtRFvL70Z9q5V8RoEfrpMPmqJ4IHZqlR2gxhA42oei3zLXkaOgpOLb2dgWLYy60+PA25LvvBPp+PUWTng/cXrvw5glnvPTtkUshN6qfrWhG10=
+	t=1739387581; cv=none; b=gCErc5nKlMTVVfbmE6O00nsFJrdTq+6j7tNYKMGmRMnw+zJx7x0BTwGuZgbGNYwrgndgXkFSs11PpiFMF13rOSF7D+C2DleneotDR/0ILs/IL01wol27FbYcqtcb2D0opI0QeWzD8CjG2nKrmY4yIoQMw/IqGkC9X93qJkj6lpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739385180; c=relaxed/simple;
-	bh=DScHAAMLHvU4xu4O0WcfNhf84lXVnZDNRB2q3PdUj1M=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qE5/LqYKLCIgL/VToO3K4//YgyYsskZrMt1Fgh5KfDJ9yftkUYemQiV/HMEwDHWbzg0A8cPaHVlmLt8p2J9FN/tUzFS9BF5IjHAbvj+aXgxzHmaN70438zmE4LqS//o5D56tOy7F6KOcynM47jFBd0KHw5HTG0gHynCmT2C3z/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=az8W7Jtv; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
+	s=arc-20240116; t=1739387581; c=relaxed/simple;
+	bh=3cDWoSwBQOyNLtotcBMDIyPVqfoM25U3lFmXWIfhTHk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZxI+4J0O0BfRRxJR3bYnujlf2BSoHouQR8mmX0I8N8dAbKPpnQlvjp/ssRcBq/qNoC2ljQTxFXxiUZDqqpAc+57nbLRpoO/tfAKTQWhZZ1dv2XfzkCg1NtlrAXR6+P4o1KZCEvu0M+Q522d4V1U3QDPyhYSLocmahw6f+4vUqfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j1OdSolp; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="az8W7Jtv"
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21fb94c7fc6so44643835ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2025 10:32:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1OdSolp"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21f7f03d7c0so83995ad.3;
+        Wed, 12 Feb 2025 11:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739385178; x=1739989978; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iYmiCJ+R7Juy7BxO4gHWUFDYWab8Kg8RAmIlcH74Szk=;
-        b=az8W7Jtv/DJtnL1epuGG+ZQiIdarzAKDUm/H/k6smcA0DM/eJikQFF8dKqXotbugUx
-         p1VJyL0xYJgB460ioVaLlJfLER9wnHM7rTkBeBASXm5XQRLSF0ygGnTLp6ZxcYkz6VrH
-         dNaHwLjUmEliH9e01MGo4bh2x/T++GDUX5v1SFJUr/lU8cCQi/p87S8gXStATBw8XV6K
-         m3SgdgBQhuG3/MThSZgNLmo8ejN6sOimSBG6dgY61PejtzWjeGkUq/wZ2tUwDmn/4UK0
-         M+Ag6jjyltrn+34xhMgHirHOK8yJxtRMMdhxkzhaB5pFkGI42EQ07TnOtrnEb3+VUF52
-         dOyA==
+        d=gmail.com; s=20230601; t=1739387579; x=1739992379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOqaSz1QymNVqvSoXI2MUMGj2cHYyqzoo6sZSnsPqGQ=;
+        b=j1OdSolpPNE13DVjbA2uMtDF00tnzUQ5iYVUkmopklaqeS0DTjb9F+fCZ1tAjdUilB
+         kBq2TrRkbq5z6XvZjVkPROr4M/G5phbrw+y0DHdexpl0MOUxLW4qktGumJDMAtdEqgN8
+         pEHhnu2qowgKDyQL4BdMtwvcyL2BBuG5PH8j2/KMaEybXMqZqB6Kgprs2d3U75MtoVmE
+         3UTg2mUBI0VzBsoWxe3l9Q1pZbF4WE+xOI4FUWnkP23f/V2fqDGIsxPCA8EjqUgwWE7n
+         hdFq3R8fPFkgPEp+53Yvj1JLaUd4KOTek3RDrZeyATfY/0IaoCW3GMnr8KFJ/RVxZzJf
+         OjrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739385178; x=1739989978;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iYmiCJ+R7Juy7BxO4gHWUFDYWab8Kg8RAmIlcH74Szk=;
-        b=WVjaI7TaiMNaDLlYJRJD8vws+bfuH2HkmRtGub7CUOcJEs1agRKWSKtGkfhTEBzrPV
-         CTvQc1s9lT9UP0jqekwiIWWYV0legLnzY3vKh43NnLzZRH34qoMCcUgtugmIoJD65YZj
-         AjCrg5XUbypECCqEBUTCJNu4pkNqIfrwJcbKGm6dqv3I9F+FLm5AmxZ6bwA+l8WISkQj
-         tvqVJ6ybtvUrNbFVpAXTpT+0c0/xgTatgU5L4QPCHpW20Bdr1bo9iqgQjWHHIotp16DA
-         Pw5w/6lDsLzhLX4Bc4fQ6Klj9R40yswPQ3XqRCcYHl3ncp03p/FJsS4HwptQR8/kcxAH
-         3qag==
-X-Forwarded-Encrypted: i=1; AJvYcCWkFjptczOEkVxBS81S1ZEq/mfQuwimPiR/WVzjiHvt7Z40nxpWYm4+yYDVLHf8Ph7+H5pSMIhGu/GG4RyXm2yhqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1G+gLUfDKRikFQ2MOo/2FjI6V147SOiN+onLTJmPCrNAH61YV
-	R6GGMj3SSVTS0d38iE8HR94AS83YPt/HeVXxEdRY7iXXgQODROrLNdQoeAULo4Fo8juUGSrDGDr
-	W6Qqms5vsf3gQP3FHrF5iCOzt/A==
-X-Google-Smtp-Source: AGHT+IECDfJK531HNRGV3syvC/DgBgcGWiTf33LlelsMxeULH9/uMoeKotioRlyy2DZQ3lTimCD19P4P0Lz7bGElf8A=
-X-Received: from plbmn14.prod.google.com ([2002:a17:903:a4e:b0:21f:44cd:af62])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef52:b0:220:cd9f:a186 with SMTP id d9443c01a7336-220d1afdd64mr7208785ad.0.1739385178165;
- Wed, 12 Feb 2025 10:32:58 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:32:52 -0800
+        d=1e100.net; s=20230601; t=1739387579; x=1739992379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mOqaSz1QymNVqvSoXI2MUMGj2cHYyqzoo6sZSnsPqGQ=;
+        b=lIWf2thhu5TMkGURHQrB3/qNa7VGRHmagV+5zOnAIm2EIcpFAUG4Kw77KNK7xt2XFG
+         V/A+mMcxW0hENyEZ7ig9iHpilJRHdMIO9sxD7KEUv4wGVWZtMDJybALevIOdkKXhU68h
+         6R9KgNyBQFvn32XVu8o3ISLL8j8/vhAQO6F/aRKJRU8Her8hu0j61547jmSuBPmFskCz
+         FurjmeAel6tPQi8bzTko4v/NCWSGuaLpP3OegJPHe9RYz7bL8FCXb3ft7tyAjKiUV+A6
+         coti+vASvZihor6dwhVFtoLtZJzjE0bCN2Po6gcIK8wvJagd6/520vKYTYgrwYrX4qIW
+         ZeDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfp0JAAY4i15zUmLpbuu7L1csW0yngav+PtX0lcvgU+0JmECSXcyxnhB3L9QXzYmLukvYwUGPj3v7sUCdpPXqLxeY=@vger.kernel.org, AJvYcCW1Jf4s5r0lF+j6i9hWiYmJpARgrLeTtWhY2LBuTTA3m6SRPmBDeDE4fPP5yDEQCkCS7bnKYErxE678@vger.kernel.org, AJvYcCWN7S/jgCR3x7eut9sO4dYkdg3S7s1Aas2iSmAOvIKj9Pj5dHqbtriANcykfIvZ43YrBJPME/WmgiE41SIk@vger.kernel.org, AJvYcCWmMAKVkeDF2BwLiMqLmM1PXAFvuvC1bdXidF+7E3VTrb7XHnonD1x4f9gXhTnXtJy5DOZ97dRSuM6o@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4pkFcGNkRcygbcGJWoqTeA8BusMqBLRKxWBD5BnpkfRpXH6pL
+	6NwZy7CxGRPRqrYi2KR9KG76SK2zExRE91pBXexJBW/6/28bhIAb5OnnwuWl
+X-Gm-Gg: ASbGnctC1gZlMvmtxBJjqwAB9iNdnQ1x9D8aGiH8L+dW5mAwE3DBaAzFE/NeuNgUdKK
+	pfRxCQcwRom2pg3lKKCzHrArecTlf4OtpkuzGFq4dGJWLdGUZEA/VfWSqV3BfcPdgn3rrVrWW9Q
+	rCi7wmyF+kBCzAqJEQhsVlf+LVZrgzzpnuRifLl3LyD4qOjN0BT4dz+2/qC3EuESQa0JxHx/j2W
+	5YcY8BYx6BiZ0QWafACJO8DqhptmiaZju2Al2XzcIGw4MLI21yPKbEIEEgW3do1rLjwBfBlsYci
+	XJSTRb2iVxMSJtOnzoZuOUCuOlJTKFNt0ZdTSSA2jE/pVtB9E3fcRn7nnQdPWdiMOtmsIUv1iS2
+	TIg==
+X-Google-Smtp-Source: AGHT+IGicZoPXxTU+S/YqxVcCZyaJIpp3N0yw2wFvTf/7eomyrPkUvq5yeOuzReT4CyOnDWYxlOxSg==
+X-Received: by 2002:a05:6a00:1709:b0:730:99cb:7c2f with SMTP id d2e1a72fcca58-7322c383fb3mr6100608b3a.6.1739387578796;
+        Wed, 12 Feb 2025 11:12:58 -0800 (PST)
+Received: from localhost.localdomain ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048ae7f79sm11536944b3a.77.2025.02.12.11.12.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 11:12:58 -0800 (PST)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: andi.shyti@kernel.org,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alim.akhtar@samsung.com,
+	peter.griffin@linaro.org,
+	andre.draszik@linaro.org,
+	tudor.ambarus@linaro.org,
+	linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v1 0/2] spi: s3c64xx: add support for samsung,exynos990-spi
+Date: Wed, 12 Feb 2025 19:12:39 +0000
+Message-Id: <20250212191241.280-1-wachiturroxd150@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Message-ID: <20250212183253.509771-1-willmcvicker@google.com>
-Subject: [PATCH] clk: samsung: Fix UBSAN panic in samsung_clk_init()
-From: Will McVicker <willmcvicker@google.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Stephen Kitt <steve@sk2.org>, 
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-With UBSAN_ARRAY_BOUNDS=y, I'm hitting the below panic due to
-dereferencing `ctx->clk_data.hws` before setting
-`ctx->clk_data.num = nr_clks`. Move that up to fix the crash.
+The Exynos990 SPI controller shares similarities with
+the GS101 (Google Tensor) SPI implementation,
+but introduces specific hardware requirements such as
+32-bit register access and variable FIFO depths depending on
+the SPI node where it will have to be specified in DT (Device Tree).
 
-  UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
-  <snip>
-  Call trace:
-   samsung_clk_init+0x110/0x124 (P)
-   samsung_clk_init+0x48/0x124 (L)
-   samsung_cmu_register_one+0x3c/0xa0
-   exynos_arm64_register_cmu+0x54/0x64
-   __gs101_cmu_top_of_clk_init_declare+0x28/0x60
-   ...
+Denzeel Oliva (2):
+  spi: dt-bindings: samsung: add samsung,exynos990-spi compatible
+  spi: s3c64xx: add support exynos990-spi to new port config data
 
-Fixes: e620a1e061c4 ("drivers/clk: convert VL struct to struct_size")
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- drivers/clk/samsung/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/spi/samsung,spi.yaml    |  1 +
+ drivers/spi/spi-s3c64xx.c                       | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 283c523763e6..8d440cf56bd4 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -74,12 +74,12 @@ struct samsung_clk_provider * __init samsung_clk_init(struct device *dev,
- 	if (!ctx)
- 		panic("could not allocate clock provider context.\n");
- 
-+	ctx->clk_data.num = nr_clks;
- 	for (i = 0; i < nr_clks; ++i)
- 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
- 
- 	ctx->dev = dev;
- 	ctx->reg_base = base;
--	ctx->clk_data.num = nr_clks;
- 	spin_lock_init(&ctx->lock);
- 
- 	return ctx;
-
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
 -- 
-2.48.1.502.g6dc24dfdaf-goog
+2.48.1
 
