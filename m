@@ -1,129 +1,113 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86F5250BF1;
-	Wed, 12 Feb 2025 16:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0585421772B
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2025 18:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376007; cv=none; b=auA2OxyFsDoJWGZA1A2MuDQghnfHBBHTAb2S522UXnRUuTKMDNmYEfGbNNJUwu6Ug/gKbKzlJONUfnzp5Q3zknUfCj7uEzFf+zYgcyhLZZ1Vx0lEbNK4nOMduKSLrH7sPIgM6VtrlhL3FZqPIDn+KzkXoJeeQQojSlC2waTMapw=
+	t=1739385180; cv=none; b=Fdaism8iLb83A4aDqzpOY+SLXwi1plXZBKmRbs76oiQLKOBIKXAHdqgcN17c0KZtRFvL70Z9q5V8RoEfrpMPmqJ4IHZqlR2gxhA42oei3zLXkaOgpOLb2dgWLYy60+PA25LvvBPp+PUWTng/cXrvw5glnvPTtkUshN6qfrWhG10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376007; c=relaxed/simple;
-	bh=YVN0bSDpktbU6iMj8+ynC1jzK6p3jFXx/L4DWfsrgig=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JrP5Ee3WGi7E3JXBT/8fl2QXHqD1EGSlWyi2sJWaofEfwfpArprCNmUPpxnHXLW24cwLLpaXs3VciMoVJoiOPfUuQYmVeMPkzpWAAR0CcclmLEN31InzS4SCGGMPBKnTLjPA4BN+EFJDnMpS8Rtd813RFsy+nYFF5iBfr+4n458=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auF1pqAC; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739385180; c=relaxed/simple;
+	bh=DScHAAMLHvU4xu4O0WcfNhf84lXVnZDNRB2q3PdUj1M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qE5/LqYKLCIgL/VToO3K4//YgyYsskZrMt1Fgh5KfDJ9yftkUYemQiV/HMEwDHWbzg0A8cPaHVlmLt8p2J9FN/tUzFS9BF5IjHAbvj+aXgxzHmaN70438zmE4LqS//o5D56tOy7F6KOcynM47jFBd0KHw5HTG0gHynCmT2C3z/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=az8W7Jtv; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auF1pqAC"
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86712bc0508so1447581241.2;
-        Wed, 12 Feb 2025 08:00:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="az8W7Jtv"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21fb94c7fc6so44643835ad.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2025 10:32:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739376005; x=1739980805; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vUTQ/y+vc12sFk3R0yRBFfSrcmurNaqNh41K8Y1JKsk=;
-        b=auF1pqACwo4wr07jsU46HHKXsFDrv1dGVe1Tlj8Kcqn7wm61+bvqRETDjFP29RrZha
-         uky9eyfAkCyN0k23oIZQ5TRUwH7YHpjTHluoUSqTKUCbhARNlD+dvKWljGzrURsypp50
-         3NRpbSUB+Y4rf7VYjCuzSm2witEdEzJH5lejKFn1RimMuyvDj3yPXB9k+SYutnA3G1gh
-         rN8jMEURjDmbHWLDCTKp3Y5opvYX4TqoMsvaorc4SYCdKaO+flkzctUcGyKmpzY1LU3R
-         7G4MEsAscCNcQRUPQXIf2B04wyb2JtebuAt31KK4ERBOw9lL+FxLDSk0FlmTvF0DNEXU
-         Vqmw==
+        d=google.com; s=20230601; t=1739385178; x=1739989978; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iYmiCJ+R7Juy7BxO4gHWUFDYWab8Kg8RAmIlcH74Szk=;
+        b=az8W7Jtv/DJtnL1epuGG+ZQiIdarzAKDUm/H/k6smcA0DM/eJikQFF8dKqXotbugUx
+         p1VJyL0xYJgB460ioVaLlJfLER9wnHM7rTkBeBASXm5XQRLSF0ygGnTLp6ZxcYkz6VrH
+         dNaHwLjUmEliH9e01MGo4bh2x/T++GDUX5v1SFJUr/lU8cCQi/p87S8gXStATBw8XV6K
+         m3SgdgBQhuG3/MThSZgNLmo8ejN6sOimSBG6dgY61PejtzWjeGkUq/wZ2tUwDmn/4UK0
+         M+Ag6jjyltrn+34xhMgHirHOK8yJxtRMMdhxkzhaB5pFkGI42EQ07TnOtrnEb3+VUF52
+         dOyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739376005; x=1739980805;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vUTQ/y+vc12sFk3R0yRBFfSrcmurNaqNh41K8Y1JKsk=;
-        b=vDQLhV8LgzAkys9t8JD5iC6uHM7yvfqrOCZd2AlIZpU82645GHJSDOj1vtLy36195D
-         hRO3dW7tYKLM7iae7Ql80u0yuWFeJGe7QCaFClEzTwidKwvG20pISeUgv09kzzkCLNY7
-         b2CP69XdgVmmINSfnR4MIsCbSoikuyxRW6uTdI+Li0jyxI9CxCulxbbEp7JrvLKLcmS9
-         ToGIspdqqZmyjV5A1ojv3tevcqRFJgJBxrrGlvS9KaEKWmijRBVVMDeK3MFWuHGehqAp
-         DRwyHNnkH2xMzaSDOO7Rulx2niUsevD3nB4aWCEaCVi7L5IxlblCp8T/gXQe2IeTPuB7
-         Fjig==
-X-Forwarded-Encrypted: i=1; AJvYcCVuUnC01SND0XDgnMH/YAnxZteh6pr1ZkBYMb6eLXa+EbGbJLPZhSJG4tvYkj1brgI6oNsD3+MMFfVYEm+6@vger.kernel.org, AJvYcCWUrL0xgQFz5gsB9Y0XNiwLKTlJQdPFppQA0Sa4EUJGxOCj7MjIx7mLsyMIvfOPRoxBbE4JZfCx47n/@vger.kernel.org, AJvYcCWt72hwtP96B9uS7kWzh/b6GovKyOgN40XPeZWtoCnvVeLpxlLflKPzWCkokM7l1sZ005ydp0qah88UlkgPAh38atE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn2itUpu5PF8iGTDLJXL36UdUCaEl0QlgmL4O2YGbU6PvPhlap
-	BT72WZ7iIv95YehLPX9Q3yQOJCBIksgmiSQs5at0WLQESQLSJ01x
-X-Gm-Gg: ASbGncv3KJRHYR9zS+E+3YEb/rwZMw1/PxSUFX7V4Hyf/QIT54EGVvko26RtNcrYyl5
-	BqzVBRSlTXAHdFnAO+056lVke2MYib26K7wvmPmJ4ICyYlvDPJHmO6oXF9uq7aGMtqpzdop8k39
-	xvOOxtxiSQ4yAxa2jd3U8C/b8WQfsVTc8yqdSmKtEgrKYcQNtvMLVFMlrsinXSwwtUBN6y0YxF7
-	foofdPcyEov68mPOZ3GRBF4kKqYrWg8pBrpiaB2LNsYJmun/32vQPGaVbsb/obTe4i98LjCT/ID
-	knDpPtsI0nS/0W3rHtncuxdySu2bgBei3HSMluJ2Wsbx71UTNCIMWz28zH56U5LBJg5qlTj25e2
-	dUg==
-X-Google-Smtp-Source: AGHT+IEgr0hm73Trz7viRT6b5fEU+HyboLMwNQtkSJQWi6mRSEmY4HU10MDnQcwDYPy7Yx2+iJNaXQ==
-X-Received: by 2002:a05:6122:468c:b0:520:6773:e5bf with SMTP id 71dfb90a1353d-52067c31106mr3019717e0c.1.1739376004523;
-        Wed, 12 Feb 2025 08:00:04 -0800 (PST)
-Received: from localhost.localdomain ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-866f9636904sm2335213241.3.2025.02.12.08.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:00:04 -0800 (PST)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: [PATCH v1 2/2] arm64: dts: exynos990: Add the peric0/1 sysreg node
-Date: Wed, 12 Feb 2025 15:59:43 +0000
-Message-Id: <20250212155943.269-2-wachiturroxd150@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250212155943.269-1-wachiturroxd150@gmail.com>
-References: <20250212155943.269-1-wachiturroxd150@gmail.com>
+        d=1e100.net; s=20230601; t=1739385178; x=1739989978;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iYmiCJ+R7Juy7BxO4gHWUFDYWab8Kg8RAmIlcH74Szk=;
+        b=WVjaI7TaiMNaDLlYJRJD8vws+bfuH2HkmRtGub7CUOcJEs1agRKWSKtGkfhTEBzrPV
+         CTvQc1s9lT9UP0jqekwiIWWYV0legLnzY3vKh43NnLzZRH34qoMCcUgtugmIoJD65YZj
+         AjCrg5XUbypECCqEBUTCJNu4pkNqIfrwJcbKGm6dqv3I9F+FLm5AmxZ6bwA+l8WISkQj
+         tvqVJ6ybtvUrNbFVpAXTpT+0c0/xgTatgU5L4QPCHpW20Bdr1bo9iqgQjWHHIotp16DA
+         Pw5w/6lDsLzhLX4Bc4fQ6Klj9R40yswPQ3XqRCcYHl3ncp03p/FJsS4HwptQR8/kcxAH
+         3qag==
+X-Forwarded-Encrypted: i=1; AJvYcCWkFjptczOEkVxBS81S1ZEq/mfQuwimPiR/WVzjiHvt7Z40nxpWYm4+yYDVLHf8Ph7+H5pSMIhGu/GG4RyXm2yhqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1G+gLUfDKRikFQ2MOo/2FjI6V147SOiN+onLTJmPCrNAH61YV
+	R6GGMj3SSVTS0d38iE8HR94AS83YPt/HeVXxEdRY7iXXgQODROrLNdQoeAULo4Fo8juUGSrDGDr
+	W6Qqms5vsf3gQP3FHrF5iCOzt/A==
+X-Google-Smtp-Source: AGHT+IECDfJK531HNRGV3syvC/DgBgcGWiTf33LlelsMxeULH9/uMoeKotioRlyy2DZQ3lTimCD19P4P0Lz7bGElf8A=
+X-Received: from plbmn14.prod.google.com ([2002:a17:903:a4e:b0:21f:44cd:af62])
+ (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ef52:b0:220:cd9f:a186 with SMTP id d9443c01a7336-220d1afdd64mr7208785ad.0.1739385178165;
+ Wed, 12 Feb 2025 10:32:58 -0800 (PST)
+Date: Wed, 12 Feb 2025 10:32:52 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
+Message-ID: <20250212183253.509771-1-willmcvicker@google.com>
+Subject: [PATCH] clk: samsung: Fix UBSAN panic in samsung_clk_init()
+From: Will McVicker <willmcvicker@google.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Stephen Kitt <steve@sk2.org>, 
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add sysreg nodes for the PERIC0 and PERIC1 domains.
-These system registers are used for peripheral configuration
-and control in Exynos990.
+With UBSAN_ARRAY_BOUNDS=y, I'm hitting the below panic due to
+dereferencing `ctx->clk_data.hws` before setting
+`ctx->clk_data.num = nr_clks`. Move that up to fix the crash.
 
-Each sysreg node includes its base address, register size, and clock
-dependencies.
+  UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
+  <snip>
+  Call trace:
+   samsung_clk_init+0x110/0x124 (P)
+   samsung_clk_init+0x48/0x124 (L)
+   samsung_cmu_register_one+0x3c/0xa0
+   exynos_arm64_register_cmu+0x54/0x64
+   __gs101_cmu_top_of_clk_init_declare+0x28/0x60
+   ...
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+Fixes: e620a1e061c4 ("drivers/clk: convert VL struct to struct_size")
+Signed-off-by: Will McVicker <willmcvicker@google.com>
 ---
- arch/arm64/boot/dts/exynos/exynos990.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/samsung/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-index 843587b17..aa056fdae 100644
---- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-@@ -242,6 +242,12 @@ cmu_peric0: clock-controller@10400000 {
- 			clock-names = "oscclk", "bus", "ip";
- 		};
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 283c523763e6..8d440cf56bd4 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -74,12 +74,12 @@ struct samsung_clk_provider * __init samsung_clk_init(struct device *dev,
+ 	if (!ctx)
+ 		panic("could not allocate clock provider context.\n");
  
-+		sysreg_peric0: syscon@10420000 {
-+			compatible = "samsung,exynos990-peric0-sysreg", "syscon";
-+			reg = <0x10420000 0x10000>;
-+			clocks = <&cmu_peric0 CLK_GOUT_PERIC0_SYSREG_PCLK>;
-+		};
-+
- 		pinctrl_peric1: pinctrl@10730000 {
- 			compatible = "samsung,exynos990-pinctrl";
- 			reg = <0x10730000 0x1000>;
-@@ -259,6 +265,12 @@ cmu_peric1: clock-controller@10700000 {
- 			clock-names = "oscclk", "bus", "ip";
- 		};
++	ctx->clk_data.num = nr_clks;
+ 	for (i = 0; i < nr_clks; ++i)
+ 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
  
-+		sysreg_peric1: syscon@10720000 {
-+			compatible = "samsung,exynos990-peric1-sysreg", "syscon";
-+			reg = <0x10720000 0x10000>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_SYSREG_PCLK>;
-+		};
-+
- 		cmu_hsi0: clock-controller@10a00000 {
- 			compatible = "samsung,exynos990-cmu-hsi0";
- 			reg = <0x10a00000 0x8000>;
+ 	ctx->dev = dev;
+ 	ctx->reg_base = base;
+-	ctx->clk_data.num = nr_clks;
+ 	spin_lock_init(&ctx->lock);
+ 
+ 	return ctx;
+
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
 -- 
-2.48.1
+2.48.1.502.g6dc24dfdaf-goog
 
