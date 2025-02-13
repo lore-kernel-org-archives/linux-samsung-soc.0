@@ -1,109 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA122222B5;
-	Thu, 13 Feb 2025 17:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9390328A2BF;
+	Thu, 13 Feb 2025 18:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739467351; cv=none; b=etvg/oGMoXJO7QL8CwQHlgglBRU9OxYGUH++uZVsx1YZ+mfXkq5xPP/YCs8i1o6o0coYnT4gAiqVU15Gtkga/mOV0UZ7jHeXbZnDnJSImVOm9He51M6TSIZiaPb2uN7KdE48ZOvIGoHKMuxoh5c7+VK0+K1THXYLMwMVW9CaklU=
+	t=1739470620; cv=none; b=TkSNCpnaZDXGOGOBzKbiSHKAbIKUJ4Hjx4/6Bgs3R3i9FL9JmyV/5+tJdczCwzb22tXORumSfmYtRebHdWqJ8wfRdwN2u8CvEI92iiGVurV2QxJh8FYECncn26bc799OQ3j8nh5SfN3CIq7GuxBwJyiTDdvZaxSLtGuLRvOM8zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739467351; c=relaxed/simple;
-	bh=S0OhMDWIGff52utNObwPzkVUWW6web7D0hUEz9SRg7I=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=FfJa2AQtff8s8g/j1x4Nt7U2RJU68UGzZ6xhwkVAKHtMxdHX6clPnpYfLZBGJBvA22DwSzwmX4GNNc+LYSBNZOqAhpy7Ql+MGXuFfid9jvtH8ieKybMMa6YiMIGG0mvtSxDhYskYhQZKpvRZjktedqAx8EhbwSEc+okCJwK5qbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH16R/H2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739470620; c=relaxed/simple;
+	bh=QLZRApTrn4O2R9Ogb2JhlUkm/5ex8J5sTyiNSk7EKzY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kT2uxq9SCxz42eU4B1movddAghjX7XiPt9QH3AC6Y6jCIRKTMksczJocy66SH7WWFswehRraF7nPWuCkQJHNpMIK0n21Z14kLvYSkjsw+8ztGVYiPb0VRkPvsSibCGXS6cW5bF+S++JCf40fP0UPGqVafPTULbsCXHS/b7P5BAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAvQM0YQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH16R/H2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBAEC4CEE5;
-	Thu, 13 Feb 2025 17:22:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAvQM0YQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEE0C4CED1;
+	Thu, 13 Feb 2025 18:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739467351;
-	bh=S0OhMDWIGff52utNObwPzkVUWW6web7D0hUEz9SRg7I=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=FH16R/H28sbPKn7EPgQPJsfz+nmj0y3nzBbR0EjMfaCwbetXv0ivK1A13IlWN4KYn
-	 xxh3mjPC0v273p7AuQPftFcvd8uxlNddFF8xf+N6cwk+/Wa22aeIXWXylmbbz+3k+1
-	 V4rf78TrK2EGyVh8M+OWZ105e0mtLiRIuntBfBvii2sqzsJ3PoBVxhwQrtzHVHyuEe
-	 DFT9W2L+P2eBWhOZMeCIuA8ryD97qx9iHlWx/vDPxYRiJqEG0HiQNHEPLQCzxJeycx
-	 QfmCplKmvyQI3L6/Q8R4xYTb2NFl637T3OBXR6MlUmQiLMzJtQlUN5bioH6BPvt9ir
-	 cucz4MO8FK2aQ==
-Date: Thu, 13 Feb 2025 11:22:29 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1739470620;
+	bh=QLZRApTrn4O2R9Ogb2JhlUkm/5ex8J5sTyiNSk7EKzY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FAvQM0YQ8e1kNEkDs7XTsZeSyNoMSVt2pjlJ7sOfzTT/SCVjI5jgV17A5FCdhmTed
+	 8z1F4uT5DPqUR8QRmx/+plKomU8Kx4nzCDjyrQ3/UkimOgannIQBYyFMb6zkepjGOf
+	 XDdhZstfdnaKv86qW0+J+MlRPGX7qT9DuzbnZD/SrQGnF5heZOnEwApBCsOXRqsiV1
+	 L0pUqS3MEXZA5yFw6K3agIhYwJSnzJ80YHALS76pzL/6IO0U4d/b3T81qeyKXXr9VR
+	 islrjn+Ln23J2TlHIe5NsP/QHweIFsy1p9huv2qy7DRo+vnsCxzQlFORW2oK+CVGCG
+	 oD5NS+XE8WHZw==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
+References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
+Subject: Re: [PATCH v4 0/7] USB31DRD phy updates for Google Tensor gs101
+ (orientation & DWC3 rpm)
+Message-Id: <173947061417.294083.6730012157242194658.b4-ty@kernel.org>
+Date: Thu, 13 Feb 2025 23:46:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, 
- linux-samsung-soc@vger.kernel.org, krzk+dt@kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- conor+dt@kernel.org
-To: Denzeel Oliva <wachiturroxd150@gmail.com>
-In-Reply-To: <20250213000226.277-1-wachiturroxd150@gmail.com>
-References: <20250213000226.277-1-wachiturroxd150@gmail.com>
-Message-Id: <173946704422.3328564.13834631635241088489.robh@kernel.org>
-Subject: Re: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and
- aliases
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
 
-On Thu, 13 Feb 2025 00:02:26 +0000, Denzeel Oliva wrote:
->  - usi_uart: Main UART interface, required for debugging or
->    communication.
->  - usi_bt_uart: UART interface for Bluetooth connectivity.
->  - Added serial0 and serial1 aliases for standard UART access.
+On Fri, 06 Dec 2024 16:31:00 +0000, André Draszik wrote:
+> This series enables USB3 Type-C lane orientation detection and
+> configuration on platforms that support this (Google gs101), and it
+> also allows the DWC3 core to enter runtime suspend even when UDC is
+> active.
 > 
-> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 23 ++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+> For lane orientation, this driver now optionally (based on DT)
+> subscribes to the TCPC's lane orientation notifier and remembers the
+> orientation to later be used during phy_init().
 > 
+> [...]
 
+Applied, thanks!
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+[1/7] dt-bindings: phy: samsung,usb3-drd-phy: add blank lines between DT properties
+      commit: 642b1ed4cd184d5c2e5814c220bb93453492644d
+[2/7] dt-bindings: phy: samsung,usb3-drd-phy: gs101: require Type-C properties
+      commit: c38528812c2e9b05fe8b5fd1f66cf4c75835a38e
+[3/7] phy: exynos5-usbdrd: convert to dev_err_probe
+      commit: ee064390b82329df7fd8e0c48da03a8fee7d46ce
+[4/7] phy: exynos5-usbdrd: fix EDS distribution tuning (gs101)
+      commit: 21860f340ba76ee042e5431ff92537f89bc11476
+[5/7] phy: exynos5-usbdrd: gs101: configure SS lanes based on orientation
+      commit: 0bccdcb3eea93e087887027ff374dac5c3de36cd
+[6/7] phy: exynos5-usbdrd: subscribe to orientation notifier if required
+      commit: 09dc674295a388e71192430b6f9c3c5cb0eb47da
+[7/7] phy: exynos5-usbdrd: allow DWC3 runtime suspend with UDC bound (E850+)
+      commit: f4fb9c4d7f94dabef4abf2209cf840dd1c9ca11e
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250213000226.277-1-wachiturroxd150@gmail.com:
-
-Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:122.1-10 Label or path usi_uart not found
-Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:127.1-10 Label or path serial_0 not found
-Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:131.1-13 Label or path usi_bt_uart not found
-Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:136.1-10 Label or path serial_1 not found
-FATAL ERROR: Syntax error parsing input tree
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos990-r8s.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos990-r8s.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos990-r8s.dtb] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
-
-
-
+Best regards,
+-- 
+~Vinod
 
 
