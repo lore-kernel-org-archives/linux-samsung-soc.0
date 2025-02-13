@@ -1,75 +1,69 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F90D1C32;
-	Thu, 13 Feb 2025 00:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAE078F26
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2025 00:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739404996; cv=none; b=gtWj8wacI4cUzZmA3xwiK1d+r1StmVxPoXWlUZAqrBpwzOFDbpH89VMiN0sze8s0mg3VzRWwCkdQZ5OBt/a3Ej+SLMatKAEnsWGE8UvKotGL685DopY8bueBsxO/X5qfc/lE2wyrGLjNwZD918NNq7PXtaRCvXlSST/KyLyNeNU=
+	t=1739407449; cv=none; b=UUU7+H3dN0jG0RzhBrLy6L0GUXKfQJ+lrQZRwspj49iimRYK2oD9oorU/AIuUnrHC8hyalyxg08NFaXd7TN+jG9w3Rsm/1yFhx84Yba2cV8x34ojV+0N6nNlH/KjwQBgOgdoAz6fVSNc4ACMBx/iu81NC/J0Etdtsgt6+IqKUGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739404996; c=relaxed/simple;
-	bh=nzfWYzJlyuRlm5J2Rlgp13zIeb+QFhxyooqdwa5e8k4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cGsH0+lLVCfx1pOYAZztzIyg43RRqX1NnqI5lz4ZGOUJOn9ixsFU7+ueHIT+oRBABJ5lg1Ed/gLHQ8/lje4SvSGrrIwusm0XVIyicqCevN8wtdEN0gyykzURbfEuB+Ejr/ANTkjEY/3xHP4wIqCMIA321BHkbt2/KTJ3mdVi8HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRVhe6Xw; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739407449; c=relaxed/simple;
+	bh=kNMNh8c15ufMq2hOdDy+f201l80OHrU6gDtUHgb/Pjg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=gUy9qQtQw1IniiO1pOnKcCCATni6SxMHZtosHnfWB0f9rmR8DrDRBVw/NGPC6D2IGhaG22YtVV1Ge29GMGB7ucLcto5QWxwAtt4ZxR36WU3yX91RBGAGEnWJQg6JJjVfRk3CteatDZiBDj5gICK+g5lHMZaZmTvILEykQzgqLvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nj/kPgnA; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRVhe6Xw"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21f818a980cso3308565ad.3;
-        Wed, 12 Feb 2025 16:03:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739404994; x=1740009794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lgGYLAXMTiBSQm8B4s04dx6tu5EKRE0LsYmfPrbRJeM=;
-        b=iRVhe6XwiO1nHnLTqiAFFeR74o3Mlna4xvRr04kwhbW9SdXU+p50eMtxIXR6KYybP9
-         hvCNtRtbDcOyzy0e2z7DYBISqLkEpzaL8s9UKwiK7jZsFhnY5ee4ICwMKVT1OkqmJtD6
-         WdE5L83TvvkJQ+Q4aq+lXmjQ0pPXcleCUQGFJRtBpbyX8Dw53a9xtBa1yWxR/eBsdLPJ
-         Hby1384ylxsZx8QaF8lC3cd21skA027VOZCZrNcZ2lUqR4gYn2lravC5RoVApNPUTbW5
-         WwyvMPrRCeO4AhidKGcX/GBIX1DyN48nBX1E/ElqnopKU/oMIy1xCNl1WYdc5xZ98L/J
-         GwXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739404994; x=1740009794;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lgGYLAXMTiBSQm8B4s04dx6tu5EKRE0LsYmfPrbRJeM=;
-        b=oK+35KqtQBE4bCNy8+ewmQ/wxpAjvWrw/YeSGVBlzsseeCb+etI11IEtNF2vvBAzyc
-         3g0sC0kQrD39xofIA/fB2QztHM7Zgu1oOKWLSArWwAzyP+qOjfCwP3Few3AbLDPqpzgq
-         FjbzTNwB8RuWO/AwZB5izepPHnSYJU6qjrphR/nSVSUBGbOx/PHSKhRC7wCRqFhUyKIy
-         uMVBrx6jG+9VN7rPRRfY0U3Nj1tncof1VKMsVKalVkYU4B7PzVIwfkO0MpZKI9izYyrA
-         VvMdlDnW4QKrQDFdvZoZrrUJgLnPrjrNcuAuUcsZnVdhTQ7HsmJ2YlpGvunTS5f/zESO
-         yGLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJYeEcWCdiEHer+WW4pQt5ugxHUG6RPz4vkwI44etNYe5Qjl3e+rFFNVlknRa9U+Uw9TskXNHu5z2e@vger.kernel.org, AJvYcCWdfUzF28FQiE37Q9rtFNN/2xcMRrPYtwRnWw/2G/f8Z0E+a0G/gpUo3sLp9/AoNE9AN3lk1gyIyCYtJPKoSFGmgak=@vger.kernel.org, AJvYcCWhcHuW43BkWCOhe23R4mD4SIaJym6lVfLG8Y9MVPZ54T1WvTL+oEWBtuC/AWbWGKhT4FnKNntFpcTuzwou@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6/ltfBNATwcE7l1gvJCybqVGQzyhpW5RGqGmJiDOViTgSck2C
-	yH2qE/c1UqMDZZcbm+xgNap8FGNJdSTQ3JW0S3pjxuzBCwZXFwbD
-X-Gm-Gg: ASbGncsYu3Hc59xiS+rlxOWpAR4hwBw7kpxgEvJJ//M86S6Qr8x8/ZvPCKudfLjkpYQ
-	RXXvOtV/EhKy2YOTDjarhPq486v+Yv1yr/SgleIwk9ranEgPMZwhP0+cgBvm5qr6jSHeonZxI2Z
-	1wzXteYrDLuz5zAaf9LaJjMh3xKxLfHycH+DBX/6o9NInwm5NVqMgpwsEUionddky0iAyO9yp2G
-	xJTRdNDkK8puverMxdcHl8KDIGzpUIPavCgey6YRtUlbTEXoMVlx5L91khKio9XRkjYKZbFvG4f
-	C17oKhI8KUQP/kZCUBxjV/wMZC/2GcmcoIfOxeGZP88Wtcg/15IVYKNaLn0bJcEMvxtEKUeblVe
-	uwg==
-X-Google-Smtp-Source: AGHT+IF+D2Xb6/P+MeaJ+t2rpv7ibEkX8ds1s2CaO1BKsO9476v6xLKYDYjvadIojErLW8nWiv0E0w==
-X-Received: by 2002:a05:6a21:3382:b0:1db:915b:ab11 with SMTP id adf61e73a8af0-1ee5c796586mr9410564637.24.1739404964623;
-        Wed, 12 Feb 2025 16:02:44 -0800 (PST)
-Received: from localhost.localdomain ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e4a0sm28014b3a.120.2025.02.12.16.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 16:02:44 -0800 (PST)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and aliases
-Date: Thu, 13 Feb 2025 00:02:26 +0000
-Message-Id: <20250213000226.277-1-wachiturroxd150@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nj/kPgnA"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250213004404epoutp0416f541f171c1ca27a5f72dff21edaadc~jndrWIIgU0198001980epoutp04M
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2025 00:44:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250213004404epoutp0416f541f171c1ca27a5f72dff21edaadc~jndrWIIgU0198001980epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1739407444;
+	bh=qbsRW+rPGG7sOyzmINLAUZ6n+49WHNhTA0JmCyA9gd0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Nj/kPgnAIPEHbsCUiBDAMy8HhDpJMmRmob26t5NUgGsZ1R+eMr5VDM9nQnK1FXsvN
+	 BgG0+L3ghibl632WzsF/sht6GMMcAgX/9d2KmZM8LvKupD/sL/BHvl7KhYAYX0fPoA
+	 naPLF2fgRDySUlAIbTYYypEufYNoJooVjJu0QpQ8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20250213004403epcas2p1fd64379ec227f4747d2b7869ff563cb5~jndqx7TXN3215432154epcas2p1o;
+	Thu, 13 Feb 2025 00:44:03 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.98]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Ytbz70dnhz4x9Pq; Thu, 13 Feb
+	2025 00:44:03 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F3.45.22094.2504DA76; Thu, 13 Feb 2025 09:44:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0~jndpwXQh31412714127epcas2p3n;
+	Thu, 13 Feb 2025 00:44:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250213004402epsmtrp135a32c55cf064ad1d4c0242b0595a572~jndpvmMWf1131811318epsmtrp11;
+	Thu, 13 Feb 2025 00:44:02 +0000 (GMT)
+X-AuditID: b6c32a48-e72eb7000000564e-c3-67ad4052a3ba
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F4.80.18729.2504DA76; Thu, 13 Feb 2025 09:44:02 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250213004402epsmtip127a07f22bedc87064fa6ed47580ccf53~jndphlQjr2674526745epsmtip1Z;
+	Thu, 13 Feb 2025 00:44:02 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Kyunghwan Seo
+	<khwan.seo@samsung.com>, Sangwook Shin <sw617.shin@samsung.com>
+Subject: [PATCH] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+Date: Thu, 13 Feb 2025 09:41:04 +0900
+Message-Id: <20250213004104.3881711-1-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -77,55 +71,105 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmuW6Qw9p0g/PrbSwezNvGZjG//RKj
+	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWMxafZLN4/PIfswOXx6ZVnWweK9es
+	YfXYvKTeY+f3BnaPvi2rGD0+b5ILYIvKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0
+	tDBXUshLzE21VXLxCdB1y8wBukxJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2Be
+	oFecmFtcmpeul5daYmVoYGBkClSYkJ1xf0sXW8EewYqHDQYNjPf5uhg5OSQETCTO/7vH2sXI
+	xSEksINRYsrES4wQzidGiWt7W6Ey3xglZh75wAjT8mr7JTBbSGAvo8SEf95wHQuvTWMHSbAJ
+	6EhM/3ebBcQWEYiSOLhjGTtIEbPAHUaJff9fMIMkhAXCJB5+WMMGYrMIqErMeX8WbCqvgK3E
+	ouMH2SG2yUvMvPSdHSIuKHFy5hOwocxA8eats5lBhkoIfGSXmPR/KQtEg4tE74ErUKcKS7w6
+	vgVqkJTEy/42IJsDyM6XOPVEGKK3gVHiXfN7Nogae4lFZ36C1TALaEqs36UPUa4sceQW1Fo+
+	iY7Df6Gm8Ep0tAlBNKpIdPzczAqz6OiZB1BLPST6p+5hBSkXEoiVWLcqeAKj/Cwkv8xC8sss
+	hLULGJlXMYqlFhTnpqcWGxWYwKM0OT93EyM4aWp57GCc/faD3iFGJg7GQ4wSHMxKIrwS09ak
+	C/GmJFZWpRblxxeV5qQWH2I0BYbuRGYp0eR8YNrOK4k3NLE0MDEzMzQ3MjUwVxLnrd7Rki4k
+	kJ5YkpqdmlqQWgTTx8TBKdXAFKIjenFiw/QT+upal1qvvFbcvCqCacfl5esc7FnniHvVb6o5
+	7xPnJ2ao9fDBRl+PgulxE59kfD7OZXr1nneZh/E7t0ULzosZ6ZuIFQuJsARu2rwtkYXpaMDx
+	a/6W2s7ix24UNS165f5KaU2iVVqPPEfkrv3X48vaLSxjvkjO7jPyFL9cPEXhl3mZzyXd3fce
+	LenNUjjNGbQza9fS28yLhXKzFib5sd6+HeJ34uXvV4JzWc5tnnzbK2X1ajU2KdstrTuPzo+0
+	NJCY53P7sJb0bwGtPu3sC5Xv7+3tOpBevfr4O/HkE5++Lzr2a1lW1vQ9CdOmW8ssjjyXKy/5
+	1D2ysevvoY711W6Wx7M9WZRfK7EUZyQaajEXFScCANojCCgjBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSnG6Qw9p0g72zZS0ezNvGZjG//RKj
+	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWMxafZLN4/PIfswOXx6ZVnWweK9es
+	YfXYvKTeY+f3BnaPvi2rGD0+b5ILYIvisklJzcksSy3St0vgyri/pYutYI9gxcMGgwbG+3xd
+	jJwcEgImEq+2X2LsYuTiEBLYzSix9FsDcxcjB1BCSuLdM0uIGmGJ+y1HWCFqPjBK3F21mA0k
+	wSagIzH9320WEFtEIE7iWPtmZpAiZoFHjBJnb0xiBkkIC4RIrD56jgnEZhFQlZjz/iwjiM0r
+	YCux6PhBdogN8hIzL31nh4gLSpyc+QRsKDNQvHnrbOYJjHyzkKRmIUktYGRaxSiZWlCcm55b
+	bFhgmJdarlecmFtcmpeul5yfu4kRHMpamjsYt6/6oHeIkYmD8RCjBAezkgivxLQ16UK8KYmV
+	ValF+fFFpTmpxYcYpTlYlMR5xV/0pggJpCeWpGanphakFsFkmTg4pRqY9n4WTj3mO7tuj8HB
+	z2o1nxlT178PKXlnvO6Lx6x5z5Z8q9Z9/VGidIHSERmWKXrCncoGU5652LEfbvt8uH6ViZe/
+	+84pD678r22Wmhiz8bNPnapbQKOo6L3MKXzXlJdYl5eIHqne9uHwgWu6m3Sf/jtQKic1Pd86
+	b/mirez/9r/cPP2BlFDHupc5Wyw0Hpx6wl/66SbvMq1Ztx7skNGZucF4elOoUG3Os3W12377
+	81oEX3JNcfi8xqaiOoFx2ZmJG0y2OvF9S6lIX2+3Re0Fy+LuZ/O25Nk13Llz9iuzssq6M93h
+	Mc3LNrw88ezYeVfzkq37bLysFA/1/6hq5K+Tfv9TsrWu9IViUYNjaS3fTSWW4oxEQy3mouJE
+	AJaJ723UAgAA
+X-CMS-MailID: 20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0
+References: <CGME20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0@epcas2p3.samsung.com>
 
- - usi_uart: Main UART interface, required for debugging or
-   communication.
- - usi_bt_uart: UART interface for Bluetooth connectivity.
- - Added serial0 and serial1 aliases for standard UART access.
+From: Kyunghwan Seo <khwan.seo@samsung.com>
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+Fix the PMU register bits for the ExynosAutoV920 SoC.
+This SoC has different bit information compared to its previous
+version, ExynosAutoV9, and we have made the necessary adjustments.
+
+rst_stat_bit:
+    - ExynosAutoV920 cl0 : 0
+    - ExynosAutoV920 cl1 : 1
+
+cnt_en_bit:
+    - ExynosAutoV920 cl0 : 8
+    - ExynosAutoV920 cl1 : 8
+
+Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
+Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-index 6bae3c0ec..049b40af2 100644
---- a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-@@ -18,6 +18,11 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 30450e99e5e9..bdd81d8074b2 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -72,6 +72,8 @@
+ #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
+ #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
+ #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
++#define EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT	0
++#define EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT	1
  
-+	aliases {
-+		serial0 = &serial_0;
-+		serial1 = &serial_1;
-+	};
-+
- 	chosen {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -113,3 +118,21 @@ key_volup: key-volup-pins {
- 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
- 	};
- };
-+
-+&usi_uart {
-+	samsung,clkreq-on; /* needed for UART mode */
-+	status = "okay";
-+};
-+
-+&serial_0 {
-+	status = "okay";
-+};
-+
-+&usi_bt_uart {
-+	samsung,clkreq-on; /* needed for UART mode */
-+	status = "okay";
-+};
-+
-+&serial_1 {
-+	status = "okay";
-+};
+ #define GS_CLUSTER0_NONCPU_OUT			0x1220
+ #define GS_CLUSTER1_NONCPU_OUT			0x1420
+@@ -312,9 +314,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
+ 	.mask_bit = 2,
+ 	.mask_reset_inv = true,
+ 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+-	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
++	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT,
+ 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
+-	.cnt_en_bit = 7,
++	.cnt_en_bit = 8,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+ 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+ 		  QUIRK_HAS_DBGACK_BIT,
+@@ -325,9 +327,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
+ 	.mask_bit = 2,
+ 	.mask_reset_inv = true,
+ 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+-	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
++	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT,
+ 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
+-	.cnt_en_bit = 7,
++	.cnt_en_bit = 8,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+ 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+ 		  QUIRK_HAS_DBGACK_BIT,
 -- 
-2.48.1
+2.40.1
 
