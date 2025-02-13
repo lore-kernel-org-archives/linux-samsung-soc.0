@@ -1,64 +1,76 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FA428A2BE;
-	Thu, 13 Feb 2025 19:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07478201100;
+	Thu, 13 Feb 2025 19:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739473299; cv=none; b=haIz5iL7HD1OOptYt7vZVLQbBB1kag/lZ6XFi9LQ2LBUD6eIEeqzYp7wRR6LTX+9oiSNDAHKi/Vln+t7J/JewPfq2/ZvBMWtMuFD9NpZfLm2JFhHvbb7kP/uv6IUAl6fT52nop/ngJsl+GRDdwkXU/SBQKIL2lPHFu5hQojnfkk=
+	t=1739476079; cv=none; b=U6uz4HCJj/NAnRcdJgw/GEngc0o9KWSu9BlKzZlK9rF6X1U/BFAIKEBjxLbn178tskBnjVQh27nPgQzVf0HhTjgtdVoqBGXGvfayXFkNxn3z60sTYbMHe4zZX0QblilVFHtxSg3hel+H4pe+4/iCzQHlzt4WLlTRSIYkVnQ2hao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739473299; c=relaxed/simple;
-	bh=Q+9A+XPhqjom/iRBeDIijWx64bo72hPGQfck4ws9+vI=;
+	s=arc-20240116; t=1739476079; c=relaxed/simple;
+	bh=WkGskC06wVsS+V4YhoGHGuUZXjLzmZ72ZPFNMA/fYbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mq2zlx6c5Wd0YJu5Yd7NWfUSb4P+Co/wr5SynI6LfU5bgVV4E5s1EtcXVlfeLri1LAF4lr0SCf8RmIIs62OfhMaOs0XSH3Jw14x1teWw6aEOd9k3xzH1Z+k1qLXSBXutUilnzUEDQRJWFX7uTV0VAlkJMVQE1HP7cCc/gIRESlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DRtoWhRN; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPWDf0gIwJenf/4bYTKlTy9s0kEu4Tg8GtNuUtAADKVoyuKs7bRm4hQj1X93wLk9Lj3FuV6uq7inrk6jchEP+LOkOILLNQNqRmkQmtz6MiHAve12h+r9jFrrxBNkaGy2cuV/0dklnpxhSvo7rThhjgiqRis9hjgFQsNgJ99Ns9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPGAOqBg; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DRtoWhRN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739473298; x=1771009298;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q+9A+XPhqjom/iRBeDIijWx64bo72hPGQfck4ws9+vI=;
-  b=DRtoWhRNFHUxFczFYfCam/DS7CzeJKUJYXqqQAC9pqv7fNpRzwEULaXv
-   orodGSNWzl7rdxYbfiMpFAebdB0tbbs36phri7snAXwOXNAhMuLzH3vf0
-   EAOOCu7TF8rCMuAG/tFld5ijirBWdUzLlHlOdiJoHFG0HVfe2gxpQJPgE
-   MRMwTA3BtETmQCBKahxlZM6jW0pGhJVC9XYPj24/bZuflyn3p8izP/OrB
-   2nIHnUeII7UXvA+nNDPnLBKhG+fOSq3nOXv0OPYica2t/9hgbhhA1mGgD
-   6LVyKBG08f9ISgqQRzyaZ+YMvJ9QbNiC9OtBcB0plnEcELmR/O8GGOG61
-   w==;
-X-CSE-ConnectionGUID: Keux1IiyRVCQbxbaQWx/3Q==
-X-CSE-MsgGUID: WuH8RpykTxO3tD5h4W0Hhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39904417"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="39904417"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:01:38 -0800
-X-CSE-ConnectionGUID: 5CWKBrssRMGyGx6vOVkWSA==
-X-CSE-MsgGUID: 6oLgLwqdRvqCFTMmNE6hwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113208216"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Feb 2025 11:01:15 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tieSX-0018bj-14;
-	Thu, 13 Feb 2025 19:01:13 +0000
-Date: Fri, 14 Feb 2025 03:00:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Denzeel Oliva <wachiturroxd150@gmail.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and
- aliases
-Message-ID: <202502140220.nEdgzjof-lkp@intel.com>
-References: <20250213000226.277-1-wachiturroxd150@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPGAOqBg"
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2b86e13e978so698915fac.2;
+        Thu, 13 Feb 2025 11:47:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739476077; x=1740080877; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wgc8m2ffW0K8m7hNVPYrvZDbb5H5c3q0ozQ5Jpfyw6M=;
+        b=ZPGAOqBgYo2ZrsanuHX1hAZS2S4oVYK8bfNaAno8FM6tMjgs1gcCrCcJcHyeAuK8jj
+         vff/V4QHKFdLjy2uE8JjniTS9n6m9K9L1kJJtb9voz12+uNs62nVHR5by80aNCJc0cKg
+         v6s+aytgFQvUm518nXKxN0WFQprN7uL9cb1UQl2U/7O1eoKcdx2vxpFYF1PMcTvSMu02
+         H2FXbM2Vssirbz1bbfizIPMA5Ij0pz3Thv/pfe74W4OsbWm6IvSJSybQC4buaFwRfmgd
+         WFi8QN50XRfcci5GmOKPzCBe9CbSDi0PQjbN9XTxuqlLvV+umnIX0yx1TKe05X3yR0Ku
+         l55g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739476077; x=1740080877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wgc8m2ffW0K8m7hNVPYrvZDbb5H5c3q0ozQ5Jpfyw6M=;
+        b=Zj2q4Fd6cPyH2/74bxLyj9vLe79/J/arxJZEoTZDvl0eS5GpvawL1zzDc4TGusDAic
+         DMG7Losb+JuBPE/CrakNhudyP02ExPlEyIHJBP5ZmKsT9CgheTtO2VVO0a2VMskA+zqg
+         4/fvPDyIe8UxgLLw9izONcX8SOhznV+LUd1R3auncryCi5yseEAoar8GiEQ/MM7pn+ie
+         KpwpsnENzR2VkhFFWSuo6r0K9ttKMEORO/HS1ZvHXUNOsRCtLboMcYI6RK+JZhFnVu26
+         jchHxBxH9hFpP6k/2DynZwLfnTEwA4uaqeYTQEjbNypQkFVo0Mt/vsrsMH4TKBXXRvSa
+         t0vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUR1falV+Dn9RcUEzzV+EgCHsCivjr7Sj50WUMfPnh/lbuC0f/5a0Ll9bHlXooHpjaseu7qz6PcvBuJ@vger.kernel.org, AJvYcCUfHDOl7lAoZerKWGqdGzzGL8Qp0zkhH2DaNVy5oczkyFMRBO7y/+d9VqPncL5VbqshTwd5vAysXQP5@vger.kernel.org, AJvYcCUl4vpO6qZYbzFPMWMtDgouUzHQZBRGfkIPQHzN9IRw/kJegjm/63xXWjqnnuymkvePhc4pQXpWSuaXz62l@vger.kernel.org, AJvYcCWq//PtxqXN2D+Kd1HdkGFsqEsObvNUkGzVlLPdD83eDwrwinkdVPGNOL3BuzNlMZ7hvYkA9E5nXIxJtjV3UMh0iYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtRlU7eH9f/biwEi0HWvU+5o5PRCjh7J+9Yor/HAiC0fDtZGjC
+	xPc58Y/DGpZGY/CKzcEk1fXz819FFXXO9pdcAExISSZaUJWXHAFV
+X-Gm-Gg: ASbGncsKJs/H1omvTbkP0JcHHXzRSQZKR1c6aEiTMx9fJlRXLK4WjgROb2BfIQ+XSWS
+	k6r5zt+LUrtowDVzvysVWaYQtaCjfzaDp1GkZPaf6VussCBtBukgzQr4W/xXz0Ry0cxS/uYScbI
+	mE5edmfbFCY69vEFYhGEF8w+J/wdyRP3g5siczz78YM4XKfJGh3vjKezUIBHODPZ7rYQnA+cgGV
+	io88QasjgeQKEoswAeN5BVTgYyXKaTz2WeLeurpAf6pI61FswhKMWFg90ajDQdkOOHHS13iMuwp
+	dHqoFYi5GMLHmnjz8Rj89lbvoYlhj9ZF7m5/wS1B4/2vlnRdIzQvT0MkjKjHwQ==
+X-Google-Smtp-Source: AGHT+IH40VRoRAnhhkBrdBVL3wpw5PZCEeEg4F12l8trpqePnOjbk6m3KtGHvVNpBjAdLQge2XaEhA==
+X-Received: by 2002:a05:6871:7b0a:b0:284:ff51:58ad with SMTP id 586e51a60fabf-2b8daf08a71mr5152420fac.27.1739476076940;
+        Thu, 13 Feb 2025 11:47:56 -0800 (PST)
+Received: from droid-r8s ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b95a6bf7b3sm1049692fac.32.2025.02.13.11.47.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 11:47:56 -0800 (PST)
+Date: Thu, 13 Feb 2025 19:47:45 +0000
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: alim.akhtar@samsung.com, andi.shyti@kernel.org,
+	andre.draszik@linaro.org, broonie@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	peter.griffin@linaro.org, robh@kernel.org,
+	wachiturroxd150@gmail.com
+Subject: Re: [PATCH v1 0/2] spi: s3c64xx: add support for
+ samsung,exynos990-spi
+Message-ID: <Z65MYSNuDdCFNlv6@droid-r8s>
+References: <20250212191241.280-1-wachiturroxd150@gmail.com>
+ <bad7b5b6-c61b-4e93-9415-6476976c8e81@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,39 +79,31 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213000226.277-1-wachiturroxd150@gmail.com>
+In-Reply-To: <bad7b5b6-c61b-4e93-9415-6476976c8e81@linaro.org>
 
-Hi Denzeel,
+On Thu, Feb 13, 2025 at 07:05:22AM +0000, Tudor Ambarus wrote:
+> gs101 mandates 32-bit accesses too.
 
-kernel test robot noticed the following build errors:
+Also in exynos990 [0]
 
-[auto build test ERROR on krzk/for-next]
-[also build test ERROR on linus/master v6.14-rc2 next-20250213]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > the SPI node where it will have to be specified in DT (Device Tree).
+> 
+> gs101 has some USI nodes that can work only in uart mode and indeed the
+> fifosize there is 256. Does downstream define SPI nodes with 256 bytes
+> FIFOs? Can you please point me the the downstream code?
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Denzeel-Oliva/arm64-dts-exynos-r8s-enable-UART-interfaces-and-aliases/20250213-080512
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250213000226.277-1-wachiturroxd150%40gmail.com
-patch subject: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and aliases
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20250214/202502140220.nEdgzjof-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140220.nEdgzjof-lkp@intel.com/reproduce)
+Yes, Exynos990 has SPI nodes with 256-byte FIFOs, and you can see this in
+the downstream kernel. Here are some relevant references:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502140220.nEdgzjof-lkp@intel.com/
+- SPI8: [1]
+- SPI9: [2]
+- SPI10: [3]
 
-All errors (new ones prefixed by >>):
+Best regards,
+Denzeel
 
->> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:122.1-10 Label or path usi_uart not found
->> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:127.1-10 Label or path serial_0 not found
->> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:131.1-13 Label or path usi_bt_uart not found
->> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:136.1-10 Label or path serial_1 not found
-   FATAL ERROR: Syntax error parsing input tree
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[0] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/drivers/spi/spi-s3c64xx.c#L767
+[1] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/arch/arm64/boot/dts/exynos/exynos9830-usi.dtsi#L1641
+[2] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/arch/arm64/boot/dts/exynos/exynos9830-usi.dtsi#L1662
+[3] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/arch/arm64/boot/dts/exynos/exynos9830-usi.dtsi#L1683
