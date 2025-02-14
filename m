@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9A021D596;
-	Fri, 14 Feb 2025 08:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81931215F50;
+	Fri, 14 Feb 2025 08:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739521211; cv=none; b=TAzDkpPdaxzqQFUT44NxQmeaLESgFKQ6Ye20z0XQZ8QHNthSazxCtmf31LOYAljFuq3/WZAeSNGJQutMg/1Neg397U3Mu7lGHtTlNSgrE/5MO2caiPqv197AZt/wbGphwjnGwPEZ8mFNidWOk/IzZQM4uA9wm+UdVQ23S37lI4U=
+	t=1739521483; cv=none; b=c7Ig2QOvrd0PQMeUM+SZB3Cv2oAGbfHJlD+dh9bugMJpzWkYdISqFugKWpIK8uHJQfqbQCHNm0ADvvZHwck/35yu8cxoTfS+usuH8eCchL2lIyQHLa4zTWxbmY8iIw7Ky2mrXL9dGfL2Jt2M7nIN4taHIcnn1FWS5HyeP7BcvZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739521211; c=relaxed/simple;
-	bh=l3d7+f9am+xBLGmJCl5j/Fb6FENfVLplkXQBhd0J6OE=;
+	s=arc-20240116; t=1739521483; c=relaxed/simple;
+	bh=KtWOTT1e+g7TTppBX/eZh3sRe5PM+CeT6bO9PnLwM+s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eOkFwhHkWWBPye9e3smewrgu67BSrxlJ0a58xSNF3gOZsESzoC8vh8oiuUBJ0mRsq7cxaZIPvr49yQLn6y3M7i1Hh0NTHnS5S0CPeYYQzNE3sCDmXIrOJPx28d3qzSC6Yvg9qkW1tB0GPrOvH57kpk9tZeA3DAz9Ri3q+eAvdHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rICpngcC; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=e3G9LDWdaBDMF2S9fcZb0ZCnHFGO5E0sGGVUl4fOqwm1xUgtqZTU/vm3LzRlV7CkoLbCVYeOtruW6+Lq1pa/GhM90j1+cZZBbdTeDE1Wjj2DFLYqYqiBDdXXF8g+2vLBY/ykrYhUi6paB2jwT5SqTOFO2Q4Kl8H4lpDG+Qt+nBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5CJGSy4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rICpngcC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4A0C4CEDF;
-	Fri, 14 Feb 2025 08:20:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5CJGSy4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 685E2C4CED1;
+	Fri, 14 Feb 2025 08:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739521211;
-	bh=l3d7+f9am+xBLGmJCl5j/Fb6FENfVLplkXQBhd0J6OE=;
+	s=k20201202; t=1739521483;
+	bh=KtWOTT1e+g7TTppBX/eZh3sRe5PM+CeT6bO9PnLwM+s=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=rICpngcCqbZ81bPMy9k3RcRogSt1rEuaAiUlIksVfIGUmYhXLantm8kyjRIBwI3Io
-	 2syYbM0NUWZFHxCmMVsL3oUwq3gH+tCtwrAuTMw4JNP7YOpjol+N0QRgaQjdWLs5BW
-	 2BlEYz+Qmm8a3KfymCSb8OmDgnomY3qyxAs5Bybh8+qVihYYVDOyRZrFgsUSx+x3Mi
-	 wh+jALi49uZd1bqOkOAD82pdkcmvYSxSOzAhE3dEqVeq78W8FWc39GkEGRqLFNlAUA
-	 KLasxDiPJMqvZxBp6qQ2jXL/tZdrqsI/gn/fFhX3Uh1DiNR1MnmEMPcEB5e9ugba88
-	 VmsSqPEty8brg==
-Message-ID: <11b9864c-56a7-48c2-9dc9-9567ca24d975@kernel.org>
-Date: Fri, 14 Feb 2025 09:20:06 +0100
+	b=t5CJGSy4HiRPiH8vNQtZuSZwsO964YIu1gx4R/CvgT+ucz/2XnZkgAUWL/KuZKwUe
+	 8V7XAMucl7JBu+KlZAe2wQVd6hMf2iA3u2A+WYIwWif4dXszmnVfttr9ftSDbdybJd
+	 dH2fpluPZiMsgR+ny3Ljgiu7A3hOvtTAMyPDTHe1nAXQbl9vAmhxP8OADXCI0V8mcj
+	 9L6NvTND1nw+0gCeYiMtlsk+uJ3MNHGwwitY85rP6Zh9TI/1kcIZcj+xANj1NIRQWE
+	 FNA7V1mlHM8GxvuTizSj1kYAw1s2tcGS8JVxZnx349spZuabGP861OzkKFHzaUooK5
+	 E8WGoBY8ZQc5w==
+Message-ID: <835a1381-1dd2-4928-b929-efc0078e30f3@kernel.org>
+Date: Fri, 14 Feb 2025 09:24:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,13 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] arm64: dts: exynos990: define all PERIC0/1 USI
- nodes
-To: Denzeel Oliva <wachiturroxd150@gmail.com>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, semen.protsenko@linaro.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: exynos-sysreg: add
+ compatibles peric0/1 sysreg for Exynos990
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250212234034.284-1-wachiturroxd150@gmail.com>
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250212155943.269-1-wachiturroxd150@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,35 +87,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250212234034.284-1-wachiturroxd150@gmail.com>
+In-Reply-To: <20250212155943.269-1-wachiturroxd150@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/02/2025 00:40, Denzeel Oliva wrote:
-> This series adds device tree bindings and nodes for the
-> Universal Serial Interface (USI) and UART controllers on
-> Samsung Exynos990 SoC.
+On 12/02/2025 16:59, Denzeel Oliva wrote:
+> Downstream from the Exynos990 kernel source it has more sysreg in
+> flexpmu, but for now only those two will be added.
 > 
-> The Exynos990 USI block supports multiple protocols (UART, SPI, I2C)
-> through shared hardware resources.
-> 
-> And also add dt-schema for USI and UART compatibility.
-> 
-> Denzeel Oliva (3):
->   dt-bindings: samsung: usi: add exynos990-usi compatible
->   dt-bindings: serial: samsung: add Exynos990 compatible
->   arm64: dts: exynos990: define all PERIC USI nodes
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+>  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml           | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Within  few days you sent more than one patchset targeting soc, but this
-one also targets serial.
+Why is this a v1 while v1 was here:
+https://lore.kernel.org/all/20250205222223.613-7-wachiturroxd150@gmail.com/
 
-1. Split your patchsets per subsystem.
-2. Don't send one DTS patch each day, but collect them and send one
-patchset with all of them. At least within some time frame.
+and both patches differ?
 
-You also got comment on your previous v1 (and this is v2? any
-changelog?) that all this looks unmergeable, but nothing in commit msg
-explained that. I don't know how to treat the rest of your submissions.
+Where is the changelog?
 
 Best regards,
 Krzysztof
