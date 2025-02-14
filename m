@@ -1,77 +1,76 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F4210E3;
-	Fri, 14 Feb 2025 05:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1299138DD8;
+	Fri, 14 Feb 2025 05:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739510182; cv=none; b=X6c2ltrFjd09mCPiBGIYpjZ//d9Qm2fFeASn6J6ONfEH3/kn101ruiuLq28MUAas+am1VhItDnJ14YH+rpmdm2TI7s6mVQPq1C5zgbHsnMHXGe6s9LGZWdH8ViWgZtEoz0Fi6WdQLntdp9fjuPvE5PEi4I6Dnb8dO824H2CVX4Q=
+	t=1739511115; cv=none; b=OyzR7roCNNNUEN5PDl17uVmgeqsjPu0PlYYchM0lyEJyNFqxLvlkxfIT39XP1jcSPTNUVndldexQ+8a5nOjNEot96uzt1BJiwTrMJm8yj2ts6Tprqrs5T8eO1J9OvhUe6P5z20PvOHfdcubdplg6Ey0H86DAGqVprBkPPQPZI3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739510182; c=relaxed/simple;
-	bh=mJPCGK5odp/3F1yq1vx2hbjH1X5QwRdLiHWGZIvwguQ=;
+	s=arc-20240116; t=1739511115; c=relaxed/simple;
+	bh=PWdi6RI9ZpMEHCMQdxFK9SYtxmQLCjjX0rIzfCofw7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfIim0OO3V5jImjG1HSvcFiRs4fLBM0QmwBAdLuKs/Vly7SjyKRjUJNrFD6PTjj561ff4CsgiSHn3sIJC59S56Nf6C3bgr2dUC/hlAkeiYoFl0pznUo4UfbL892EyzW4GY6d1/EFztLvbk8cmeb4aEVKS+tWRQ57SVFf+OdX1YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqa+OrjF; arc=none smtp.client-ip=209.85.221.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNEyRX92MrMrqcpwkgskd3OCrJ/OsefMt+QV1bgk/amV8xgvoC+Mme9imS7PCiezmBTr+o/fmZeGf8jtUHfnSM+H4TV5HHtBX8XL2uNTs8o+Wwtmla1pvsH3WY35/Y49SyiVjLx3DQ23KY8XvsjRG5QB4nKD7dVUvMgt41lfojM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=icJjvdQ9; arc=none smtp.client-ip=209.85.217.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqa+OrjF"
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52067a2ca31so884690e0c.0;
-        Thu, 13 Feb 2025 21:16:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icJjvdQ9"
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4bbbaef28a5so531936137.0;
+        Thu, 13 Feb 2025 21:31:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739510179; x=1740114979; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739511113; x=1740115913; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJPCGK5odp/3F1yq1vx2hbjH1X5QwRdLiHWGZIvwguQ=;
-        b=dqa+OrjFNDta23Kly5sQkwiESy+rkoxiDoAAg2Kf1qdlh8qKl5NeCC/+ftO3cLVu6c
-         p+tK4LmACOOLDdlg8uHRUe74w0JGM1YkfPybxQHMfQwzJ36Hjwzakqf1a2KWMgKRA/mb
-         IwWKiuH0JIx6QUxP5xuj5oUBeaX8RivzMVlmsVw619ok+xKYgArbKUpOm9iKqjI2evHg
-         4TQP0NMWgy7BM/MLHqOcSUwdjFLinS9rhH5DP3kSQAj5npU2Z0k0V65JWnKVH2RD0u1J
-         0xL3y+FGYmc5ujE0raoeMblJ8hRJe6DeNm7wKVCN0QQ3oFejH1ZOMQ8zPpQ+j77rpqNs
-         KvLg==
+        bh=fjd7hfsfd8muVVZ7aQvyk8gZxPAzOHt7LsUJD0zUuLw=;
+        b=icJjvdQ92sSogabhlKMJ1JWRIf5b1NZrKVSTN6HdGYd+hsiyCZFhL3JpsAkv/V/WEi
+         ecWD4YQMteAZotcn4AXMy5Mj3W5oUzsrxeLp2FbKQwqAmPrPr48aLoYLLwt96P+Dtbl+
+         XZvpxefncPKBckVtla9XwlMoeZusA91HasxxNivo6gmlYzdPp4VMksoZgqcAax56FixZ
+         thZd4ezk9FzNual6dcg4dIvEsC1t3p4pm1ht0LrE6tM1cjO5Y4O1SgpqVefnZXFYKZzt
+         SfuQdQq7DRuBy0UZOFh4dQOKKxzPv7coSaTiTC3GKLVH054dSE0QSlEvS3WbMNTSgaBI
+         B3vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739510179; x=1740114979;
+        d=1e100.net; s=20230601; t=1739511113; x=1740115913;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mJPCGK5odp/3F1yq1vx2hbjH1X5QwRdLiHWGZIvwguQ=;
-        b=dra4uCBGbnkXnrsuJDvpy50yze5onz568e/kAv24LtrmeVP46JsfnefqL+7uLXn7rX
-         XD3Dg73jzE33eVbZMxHXT8zFJQrLucS78PfyC36y63F7bWcnekuSWX/2k5iIvcWP6cyn
-         gpUyiRglwZAi3zybdDfu6oBdy71fFoFMK2zk/z5hYrhnLSGgXRGsLId8srqD3ouq8604
-         NB9Nvt/opwHf1Vcsztj1hJopqccJ2gBuknIR3bVgJ3+LMnVJZS0cEpsEkjDmugP/K2Ws
-         T/ieCj7PTxrX72jukgNiIa+yc2lVBzhJBO8q5tp3PvGj798VrXvQvbc+vfxRjZ8xxQ+D
-         kgzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrWxCTdjoT78wfvhYuxOxFpBtiuE9HTJxvS08cO13JGddKiIFy+naZEu+gzCoTX4hJAcVFnqAQh1uzVB3TVGHXSmI=@vger.kernel.org, AJvYcCX0NH1r1BRz09B0ZDTxKBsmnQp7wHr40iL54wVsDMTJ9SnKTv5FzDiG7KCuTmI4YZ6Nnq7ffy9n/gY7@vger.kernel.org, AJvYcCX7wcFwS4t9L0tZS6jITMDJiytVCwZxnA2QKKZTLh7wx+WerJedX+q17DcZZkmtyZvI8GJ8FNdS1EuN3ShO@vger.kernel.org, AJvYcCXq8pHO0jDCy060Wmd5N8esiiH/7XNuiL3UYL4Zz/EuxSoDsiAGTgQsG5KoFoTfgP3jJoRLVs87Nc/vUsNj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZidiuyPEshwL+C8/ocwjj/hCjyppxlD3Vo0JoyTHCwfnb48tC
-	zTGGQo9H+ASkeT6tmjZyN1nC9/CLqWblkxZjkInazCCm+rqckIeptmH62fSf
-X-Gm-Gg: ASbGncsq7mI77CdPHNls9hqSIQ9W+dTveF5Qxf4XGKr8kezNUEYMHIPI6InrJej6gb2
-	njcJfCZD5ssvhmwNqBfwCmMv58Be5ALKgaYqAxY9XjbzTmOa0pYIm1MRPOIgjcnfN284dC5tGp2
-	7Jco3XKBxktHAPGeqgCTaA6/3qEcSkbcLawhatOdwLt6WrbtalApL74+vYKUYMB798VWJ/c9gFv
-	esVlqkxLoocn55cV+ViYlhy1woOJ9JwFwNH8Exw+v13v2trsnRWHDTuRbKgOF2uRnprcKFf3G4M
-	EdM5k054dKVHfMdyVJS9snv8K5+Zwu6sxZHDQOdevVJLRqHoIgfEV+BEGameRQ==
-X-Google-Smtp-Source: AGHT+IEX/WNSDCKa8Dsz6ngWsn6DG/0ewhNCAlkMgc4RIwRsVlbZHvPWOyn7kEIjyOMg4W7RwOqfFA==
-X-Received: by 2002:a05:6122:c97:b0:520:61ee:c821 with SMTP id 71dfb90a1353d-52067b68446mr9334990e0c.3.1739510179222;
-        Thu, 13 Feb 2025 21:16:19 -0800 (PST)
+        bh=fjd7hfsfd8muVVZ7aQvyk8gZxPAzOHt7LsUJD0zUuLw=;
+        b=HaUR9u1Dhq7vYCEAUXG3vAy9XUL8M6c6zEU5ygXtX6Es4cMAzCctBT4nRRj/MOk1OQ
+         cDx/3aBfddE4AIQUX47YieBKK3MK7E0YvOuvABnMydcOvcrnS48bT2Un2+MXDVx/Vmw3
+         9xCTYhyoGylAEsGBZhdZmBL2YtAECZZvWyLYCht84OjrJVemqPeMfxyfSWQ1sukxI99K
+         ahJ9HdprLbYwKUFZDOrYrs2KuZSl+d4V/pKt84rv3CkFknO+S8CL7HlywVpS+ps3CN7W
+         ULcZGNpCEnvGuvfEr+wvWWuRU7z31YS0YZzTCBYzGQCTFL4FfSkpYEhYB3I0kHFfWU/X
+         13Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCV2kD1z7XGszoMXA5oGCePs7qgYyNHby9aA1Vtr0bM97qxXaYvb3fbclqEPJp+WsIskgE4+PxrGj+8u@vger.kernel.org, AJvYcCV4wT2a2mFPNEU/YWWGyUi/GCP4LuRNOH18nILl3J/dH2ctfbzmUtkXE3nF/DMXcX15XZhaa+PBv9sLyfyg@vger.kernel.org, AJvYcCVHvFm5siZFJVVXMauNYJF3BBANbbu+o1Q7i3tzejSEBbeGFyrH4BNQPzPVt/Kkux9wZgUsnuzgzT/8@vger.kernel.org, AJvYcCVy9xF09r5Vazg+DpUAQOOj0HbdUWh81cXX4FjMG21C6GCIB+mSz0bAtPCnBFQ5IoSE1GuprXcKRfFgH6mK4m08TMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh11iy8/oVp90Z27BOdAAVLALoQubrEtwyd9+fYReWDXkdYN91
+	15bPSJixzbrvzCZwrFmPqu3VAZwKU7IHsRf9BLaDiVlB8S8T3Qe+ayDKgXDO
+X-Gm-Gg: ASbGnctm+oS2IZxBvu7OEp361c4MqnBGxLuiZOAfz0Ieirb/u39v17XCUyDFcVuaXqF
+	N7l4rLCbo53Wf3K2cRyDBOCZOgr3+nZqDP8Jxkq/YdNDmVxDJUVEI+uik+94MfC4SLt63DEw63P
+	WVyzgbn44XDYuFdM1tw/0DnHo3y24yQhKsjIPLEvQ5Fj8wDki6ePcLFRBedrvcvRY82QMYwBIxA
+	e/eFCKAefJAmcTVeATOK+wKiXB1xc+M1ZvzzaUScB5CqL8PVjYjRsgh7hCNqeB1llBMyMSOxRA7
+	0E1sPnplsIkquV6daip8doQd/feP4hC3W7AOmOWkPyVBoJF+OM1i9oqX08A5Rg==
+X-Google-Smtp-Source: AGHT+IFgHjSNeoBNptiiEbwluBRQ3IXW3sqx+kBS5+5e/IvlWs4t7RMLzUKV4L4Hb4cfDBGmOWGE+Q==
+X-Received: by 2002:a05:6102:162b:b0:4bb:ba51:7d64 with SMTP id ada2fe7eead31-4bc037433efmr4855118137.17.1739511112688;
+        Thu, 13 Feb 2025 21:31:52 -0800 (PST)
 Received: from droid-r8s ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5207aa3ffa9sm459940e0c.8.2025.02.13.21.16.14
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc07961654sm406029137.19.2025.02.13.21.31.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 21:16:18 -0800 (PST)
-Date: Fri, 14 Feb 2025 05:16:11 +0000
+        Thu, 13 Feb 2025 21:31:52 -0800 (PST)
+Date: Fri, 14 Feb 2025 05:31:43 +0000
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, krzk+dt@kernel.org,
+To: andi.shyti@kernel.org, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: alim.akhtar@samsung.com, andi.shyti@kernel.org, broonie@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-	robh@kernel.org, semen.protsenko@linaro.org,
-	wachiturroxd150@gmail.com
-Subject: Re: [PATCH v1 2/3] dt-bindings: serial: samsung: add Exynos990
- compatible
-Message-ID: <Z67Rm0HoEqGsiL/F@droid-r8s>
-References: <20250212234034.284-1-wachiturroxd150@gmail.com>
- <20250212234034.284-3-wachiturroxd150@gmail.com>
- <fc341dbf-3add-4728-9ec5-7291ad3bcbe9@linaro.org>
+	linux-spi@vger.kernel.org, robh@kernel.org
+Subject: Re: [PATCH v3 0/3] spi: s3c64xx: add support exynos990-spi to new
+ port config data
+Message-ID: <Z67VP6zMwFcqFurH@droid-r8s>
+References: <20250214043343.263-1-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -80,14 +79,24 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc341dbf-3add-4728-9ec5-7291ad3bcbe9@linaro.org>
+In-Reply-To: <20250214043343.263-1-wachiturroxd150@gmail.com>
 
-On Thu, Feb 13, 2025 at 07:20:22AM +0000, Tudor Ambarus wrote:
-> doesn't the 32 bit register restriction apply to uart as it applies to
-> SPI? If so, you shall probably fallback to gs101.
+On Fri, Feb 14, 2025 at 04:33:40AM +0000, Denzeel Oliva wrote:
+> Changes in v3:
+> - Reordered fifo_depth handling in s3c64xx_spi_probe() so that the DT
+>   property takes precedence over the default value in port_config.
+>   This allows node-specific FIFO depths to be applied correctly while
+>   preserving a fallback.
 
-Of course not, downstream of the UART serial driver there is nothing
-specified about 32-bit access restriction, nothing explicitly
-in the driver. [0]
-
-https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/drivers/tty/serial/samsung.c#L1543
+Showing evidence:
+[    0.339111] s3c64xx-spi 10920000.spi: spi bus clock parent not specified, using clock at index 0 as parent
+[    0.339119] s3c64xx-spi 10920000.spi: number of chip select lines not specified, assuming 1 chip select line
+[    0.339467] s3c64xx-spi 10920000.spi: registered host spi0
+[    0.339589] s3c64xx-spi 10920000.spi: Samsung SoC SPI Driver loaded for Bus SPI-0 with 1 Targets attached
+[    0.339597] s3c64xx-spi 10920000.spi:        IOmem=[[mem 0x10920000-0x1092002f]]     FIFO 256bytes
+-------------------------------------------------------------------------------------------------------------
+[    0.587452] s3c64xx-spi 10650000.spi: spi bus clock parent not specified, using clock at index 0 as parent
+[    0.587462] s3c64xx-spi 10650000.spi: number of chip select lines not specified, assuming 1 chip select line
+[    0.587847] s3c64xx-spi 10650000.spi: registered host spi1
+[    0.587986] s3c64xx-spi 10650000.spi: Samsung SoC SPI Driver loaded for Bus SPI-1 with 1 Targets attached
+[    0.587997] s3c64xx-spi 10650000.spi:        IOmem=[[mem 0x10650000-0x1065002f]]     FIFO 64bytes
