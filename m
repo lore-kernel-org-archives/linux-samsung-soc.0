@@ -1,214 +1,98 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328791802AB;
-	Fri, 14 Feb 2025 06:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3A5153803
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Feb 2025 06:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513860; cv=none; b=T7yDo3fM/ia2lydtoOI7QChhdcXBF4eaYs00bCskrjM0HjvZE2jZPg3krLMjzxrLKtXz6kW959RTnqVsychhTOiv7W+c1nLSybG6uESs00XK8dDEcVSw7KghHo1Zdt2Scs96AiDPTvx2eB9CrhAG/HRt9NS1fCTuG+9sheefq1U=
+	t=1739514683; cv=none; b=EPaGXqdnabG56GbeqPlolfTk1atJU7/wUyZ/6dvKULgF33GcF8SY8kpEGsOzI2VGepeK4UCx+IjsSwA4PgEApDTW2S3XgSO1Xlh/LS6AvsRXJiN9MMrWQuz506kqe08XNcrP2WxWyRUJGNxLr1N9BppWogaAQyOJp2IzwKFDjow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513860; c=relaxed/simple;
-	bh=w25nGQtVxpWFNfJEW6tc8GMGWH8yPyXxGTlraUkS5FM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5hSFCxEcB3FwkPzeK0F6/lIzm+YzAxsVQ6lfBCx2+/TcSRX0+/bHh8WjAsi8RqG70UCDp+wEwAzCihI3RvaKUUxGwKehydALy1u6RVaki4QbFo+pEpuZtsJ6qT/Ch6MisXZBhoa3nLtC/y6MaGbDxpiU1V5+HBQ4m3sEiWwCZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEqqZRoh; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739514683; c=relaxed/simple;
+	bh=bd3Ix1OlxqfISy3/YXIyFe4/qznReagdpNKuiCq9fzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jXLB2Kf8tdzKc+no2dZmbcDQDHNVYN3vlkqN238flJwBAO5aVJi6FFSh7baVQxrqQNe62jlwMwiRsboawTrgzcZl/0qSfhqeK+x9cUIcbMe/KwEKjf4L0dVHYTFbvG6NVldzDvK1KKoBqQrM00IQVbmURtd3kBDdP5/gXPI/QWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GTq+bIyv; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEqqZRoh"
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51f405fce23so524825e0c.0;
-        Thu, 13 Feb 2025 22:17:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GTq+bIyv"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7e9254bb6so259378866b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2025 22:31:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739513858; x=1740118658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sIcvxrX099LtAxbJT25rmi+yeCJ3k33A3mIelkkExA=;
-        b=GEqqZRohimFNTPQ4qW5Jqedur6g0DIoYs4pbZBMKb5Bt64ZTt/skcQxVoy2vOqwgqP
-         NVCD+Ky9EcyaaAovid9E3u+oyoaSYv2g5znReSjg+29f0tDA0/odAZ7iFoLQ6FErEtFk
-         9HqnoCQXLJQBNytduKY737VL2oIQmOkVrWV41cnrmv0YPQLWwK+Moh1e7lOlk2I3SajK
-         3B21FcMxEC0ylsHMLzdVgdppF4T8W/dWIzYkNsYbf0P8I7P7Smx3FUFzcyxgOEV27zeg
-         b+zdkOlLu9mKxyFn1CSXz9yVPVZupq59YCdtme0PgLZY5FzZQ207MCkjdbd+872VuLvO
-         4p/g==
+        d=linaro.org; s=google; t=1739514680; x=1740119480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RS4NhYdSKIq0ZCVoddU4UM3ba+/5N5wTfgewbJrHpVM=;
+        b=GTq+bIyvVaCw26jlpZ9dhBnWI1Scr3lEuVZhWSEHpar+mQi4qnTNxJiM18DPvM44V5
+         vLaw7lAvoZ5HT3MgnNDZ+q8apl0N2jj1zU22I8OME9DaKcylJ6ZnlQj+wFErF/xYxlf0
+         hdEKG9Q5ZagUhG2331Ixj6hSuLvKgOUuLP4GFD6J7846BqgHTFxwIyALqhU2rBb6dQw1
+         1YHCAthQuli0sOuix8qqKsIbotyIr9QvNu5Ubrl6/0NtYxoTi6FaRsslYgaKK1BAf7ww
+         B7xcpEItFgdl8g3zGMsYD09bL3PBGyl2OpQaVJevPjB0hKqs19dtkStQyxAIOs6c81ji
+         OyqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739513858; x=1740118658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4sIcvxrX099LtAxbJT25rmi+yeCJ3k33A3mIelkkExA=;
-        b=MhuDQeIHSJFEb7DualpK+c4WvhZ1WEreXT3rNPfAACtQ8PSuvsc3v3knAeB4jdrrtB
-         7Q7sp64+DgmmdthDfkoYg2/qeL/YBc8N4zUMNzBBrdqqf50z+jziluTYZhqvJcOsSioG
-         sj9ecjgZ4bks2fDQ9d0TspZE4e6TFOvXHTkrvI6kVNnmJOR6120CS7/VSq7yAxkmsM5h
-         YrRwc+Ws0dKH5/vq+ms7QSepqwT1XCG5vbioN0brkmK3BCbxqd1ZCBd5AYbUqqXjji3h
-         B4o15g67BDUjHB3uYeGFsjI+cJ9QnMTRczkG82LyGeumfOd0IFHjrquWxzHx9Ir8h4ZE
-         Bnhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8rF17IMXQIA0JSaHJsgjETImdpfgSbZQw0vaVVwTODTW9K4XGII+ayWan43QtqM+gDLLTyPjyeZLE@vger.kernel.org, AJvYcCUjPxiYKiOhLTsKsFZyt08RYnUr+gCAWZIVFo8yiWpKLEI6X1MXwgbBWMf4cJsJOt3g0Jv9atKFwSjlkcxN@vger.kernel.org, AJvYcCWT+P2SDe0EXmbIHF4rh7xrGxrYVBYN0TebZW2UtSr17wlXmFudbwZ+yiuUw0ziIw2Cbi+5xRVPRjYagw+F@vger.kernel.org, AJvYcCXdNkdAWAONq4VEwAm3KpYQFnPHGj8mUXku+TNsend168Uy4KlfbktCzSNW2ks00NKgHOpYwcRP7iSS6wcGCPeiHB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwZ9H0TrngndxZO5yUyS+WegOLV9vGf6qyhT6efrBWQ1z13wJl
-	qQbPHFGgVaGhgm/ekgk04UPcGbNjnewaHVui6to5Q0pbNlHxyRn1
-X-Gm-Gg: ASbGncsp9gDUv4THdttGYA1pGHqRTx1MV5v8/QFzZGRnIsz3m9j4JErP/01BnkLziTa
-	kiTOnNUJ8FikraLkdtMan8Rm7A30zlm8bhY9GYM9ZmN0oa9hvpERLO5tZhfLVWt5s6y7zl5Zy06
-	WT0TZlTP7gCMTFgVrNDQ/HK/7VWaIhrBoX1xFYhYmz6J04IjujIZjGuGvKob2w0MvQ6aBH8FZ1f
-	E7tL1Ki+D/b4ByHuSwuknm0XbqVJKXNda4G+VhYSti40WyAup4Moc9HGyUwv/k3J36saYwvb0Gt
-	+roFycllziLxtmkQoAgBFxJ/8n61O8cMGwkiVWfp0lT+aiTmodVQU3igPWNptQ==
-X-Google-Smtp-Source: AGHT+IHRLYoJKdwZm1YCd9aBf7aEL7V8Zsi2JM2MJI5ygyPB2inPNLw5h4kckPoKN1ULpGO4ZArePw==
-X-Received: by 2002:a05:6122:8c0c:b0:51f:405e:866e with SMTP id 71dfb90a1353d-52077dbf86dmr3546146e0c.1.1739513857884;
-        Thu, 13 Feb 2025 22:17:37 -0800 (PST)
-Received: from droid-r8s ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5207ab4fc73sm487086e0c.36.2025.02.13.22.17.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 22:17:37 -0800 (PST)
-Date: Fri, 14 Feb 2025 06:17:30 +0000
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-	robh@kernel.org, semen.protsenko@linaro.org,
-	wachiturroxd150@gmail.com
-Subject: Re: [PATCH v1 3/3] arm64: dts: exynos990: define all PERIC USI nodes
-Message-ID: <Z67f+lDxISVubiJJ@droid-r8s>
-References: <20250212234034.284-1-wachiturroxd150@gmail.com>
- <20250212234034.284-4-wachiturroxd150@gmail.com>
- <40370a0e-775b-42e3-bb6c-8cacaa0482cf@linaro.org>
+        d=1e100.net; s=20230601; t=1739514680; x=1740119480;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RS4NhYdSKIq0ZCVoddU4UM3ba+/5N5wTfgewbJrHpVM=;
+        b=X2WSnKh90cbFL59JjI3o1nhvF/bjT0y5JeyIVlwutqYMtu6PemR/wqSsq6wIdzT+u9
+         rnqOx1KE+IjmGyjnE5Pzyey58iKGdf2tNDBR0fLsPKHQCc1fCZ+VZU07Xm5Yi/JfADbH
+         /bbIeEfnn3B8pa5+7vD9pJxCZk8itn3mJlCS7jKhdUE+lFv7gHNOn27nS8na2KqJ8uYJ
+         bI+5LLzQ4tPLbRHzHO2avelmsVJgUatmaca0WSFBSkyKr4lZSD4rDRatYMeoa2D/VXL7
+         H3lhX7ctcfYiTuffukTKdGqLxfNwNg1lnNT0PCecTte6FEvFAtwYHhTIr0CVECYC1E7C
+         sZCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvHWs1XNLZT0Zg2PRIzRNmn/qJM50zg5ISGd67r8Y7zShsxdvFc8GvFVcInd9db65t2XduEl4iZwSGLPby3t8mWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybJr6gWNFkFVktMWN7sz2TP05c2dLWy5mF69oYVjd5q8nxxRae
+	EFpAItl46aLL8cLHhodKhcL+XXbPAF4hUAxoZgSdNLNzmtUl9qF034PcFcs+rh0=
+X-Gm-Gg: ASbGnctCrW7pSiA4SS8Gqd9R560V/Pt1qOrVebG53QnYArxzMfU44zVMyADoHP2xlgm
+	MT6BsbhgfDlylB75prXCJfJRZxh15QiJQsFkQ5ZzaXeJObFX2jhVadI0wSgL5h/sKpcWBZnGVR7
+	t0pMB4blnf3i3F42Qf9XLwnvSq0pF9bA5YZWG1HC2gaGHujNJXIcuJNAMZB9qYdAyQsHLbuoU8Z
+	Vda2MmYIZICl66g2Reji8i4a80L97gJ5TyjEVVxfA05A+G0W4IbNY+UNyS08ngbR2LJSLNeuQOx
+	pcDniPNyTOj1h0P0mtTeSb++
+X-Google-Smtp-Source: AGHT+IEN/RRE5hxQ5xNZNtT7rJsPTV3GPjWwm8qrFkScK0MAqhU1b09AXyINMIOW8g0Zg6OABiY4tw==
+X-Received: by 2002:a17:907:3da8:b0:aa6:79fa:b47d with SMTP id a640c23a62f3a-ab7f336d454mr924285066b.1.1739514680163;
+        Thu, 13 Feb 2025 22:31:20 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.124])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece288e38sm2350948a12.79.2025.02.13.22.31.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 22:31:18 -0800 (PST)
+Message-ID: <49ce4bf7-fec2-4d1a-aff0-e342b31c4f57@linaro.org>
+Date: Fri, 14 Feb 2025 06:31:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40370a0e-775b-42e3-bb6c-8cacaa0482cf@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] spi: s3c64xx: add support exynos990-spi to new
+ port config data
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, andi.shyti@kernel.org,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250213204044.660-1-wachiturroxd150@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250213204044.660-1-wachiturroxd150@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 07:38:35AM +0000, Tudor Ambarus wrote:
-> > +		usi_uart: usi@105400c0 {
-> > +			compatible = "samsung,exynos990-usi", "samsung,exynos850-usi";
-> > +			reg = <0x105400c0 0x20>;
-> > +			samsung,sysreg = <&sysreg_peric0 0x1000>;
-> > +			samsung,mode = <USI_V2_UART>;
-> > +			#address-cells = <1>;
-> > +			#size-cells = <1>;
-> > +			ranges;
-> > +			clocks = <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_PCLK_4>,
-> > +				 <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_4>;
-> > +			clock-names = "pclk", "ipclk";
-> > +			status = "disabled";
-> > +
-> > +			serial_0: serial@10540000 {
-> > +				compatible = "samsung,exynos990-uart",
-> > +					     "samsung,exynos8895-uart";
-> > +				reg = <0x10540000 0xc0>;
-> > +				interrupts = <GIC_SPI 391 IRQ_TYPE_LEVEL_HIGH>;
-> > +				pinctrl-names = "default";
-> > +				pinctrl-0 = <&uart0_bus>;
-> > +				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_PCLK_4>,
-> > +					 <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_4>;
-> > +				clock-names = "uart", "clk_uart_baud0";
-> > +				samsung,uart-fifosize = <256>;
-> > +				status = "disabled";
-> 
-> node properties shall be specified in a specific order. Follow similar
-> nodes that are already accepted, gs101 is one.
 
-Not all Exynos SoCs will follow the same order
 
-> <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_4>;
+On 2/13/25 8:40 PM, Denzeel Oliva wrote:
+> - Added a default "fifo_depth = 64" to prevent crashes when "fifo-depth"
+>   is missing in the device tree (avoids divide-by-zero issues).
 
-Is
+no, you shouldn't use fifo_depth as a fallback, it's misleading.
+fifo_depth shall be used only if all your SPI instances use the same
+FIFO size. If that's not the case, as in yours, you specify the FIFO
+depth via DT.
 
-GATE(CLK_GOUT_PERIC0_TOP0_IPCLK_4, "gout_peric0_top0_ipclk_4",
-     "dout_peric0_uart_dbg",
-     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_IPCLK_4,
-     21, 0, 0), [Mainline CLK]
+You need to determine whether your IP works with 0 sized FIFOs and if
+not, make the the DT fifo-depth mandatory and check that its value is > 0.
 
-You can find it in the cmucal-node.c driver downstream of the kernel. [0]
-
-> > +			};
-> > +		};
-> > +
-> > +		usi0: usi@105500c0 {
-> 
-> cut
-> 
-> > +
-> > +			hsi2c_0: i2c@10550000 {
-> 
-> cut
-> 
-> > +
-> > +			spi_0: spi@10550000 {
-> 
-> cut
-> 
-> > +			serial_2: serial@10550000 {
-> 
-> why not serial_0 since you're in USI0.
-
-Because it is simply displayed in the exynos9830-usi.dtsi [1]
-
-> > +		};
-> > +
-> > +		usi_i2c_0: usi@105600c0 {
-> > +			compatible = "samsung,exynos990-usi", "samsung,exynos850-usi";
-> > +			reg = <0x105600c0 0x20>;
-> > +			samsung,sysreg = <&sysreg_peric0 0x1008>;
-> > +			samsung,mode = <USI_V2_I2C>;
-> > +			#address-cells = <1>;
-> > +			#size-cells = <1>;
-> > +			ranges;
-> > +			clocks = <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_PCLK_6>,
-> > +				 <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_6>;
-> > +			clock-names = "pclk", "ipclk";
-> > +			status = "disabled";
-> > +
-> > +			hsi2c_1: i2c@10560000 {
-> > +				compatible = "samsung,exynos990-hsi2c",
-> > +					     "samsung,exynosautov9-hsi2c";
-> > +				reg = <0x10560000 0xc0>;
-> > +				interrupts = <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>;
-> > +				pinctrl-names = "default";
-> > +				pinctrl-0 = <&hsi2c1_bus>;
-> > +				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_6>,
-> > +					 <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_PCLK_6>;
-> > +				clock-names = "hsi2c", "hsi2c_pclk";
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +				status = "disabled";
-> > +			};
-> 
-> shouldn't you define serial and SPI too?
-
-As shown in the node it only uses i2c which
-corresponds to the exynos9830-usi.dts. [2]
-
-> > +		};
-> > +
-> 
-> cut
-> 
-> > +			spi_8: spi@108e0000 {
-> > +				compatible = "samsung,exynos990-spi";
-> > +				reg = <0x108e0000 0x30>;
-> > +				interrupts = <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>;
-> > +				pinctrl-names = "default";
-> > +				pinctrl-0 = <&spi8_bus>;
-> > +				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_TOP0_PCLK_14>,
-> > +					 <&cmu_peric1 CLK_GOUT_PERIC1_TOP0_IPCLK_14>;
-> > +				clock-names = "spi", "spi_busclk0";
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +				fifo-depth = <256>;
-> 
-> that's a first. Does downstream define any SPI node with 256 bytes
-> FIFOs? Would you please point me to the downstream sources?
-
-Here :) [3]
-
-> Cheers,
-> ta
-
-[0] https://github.com/ExtremeXT/android_kernel_samsung_exynos990/blob/69515fbb7a4395898c05a8624f76a12afbac11c5/drivers/soc/samsung/cal-if/exynos9830/cmucal-node.c#L2719
-[1] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/arch/arm64/boot/dts/exynos/exynos9830-usi.dtsi#L1954
-[2] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/arch/arm64/boot/dts/exynos/exynos9830-usi.dtsi#L170
-[3] https://github.com/pascua28/android_kernel_samsung_s20fe/blob/3be539e9cd22b89ba3cc8282945a0c46ff27341d/arch/arm64/boot/dts/exynos/exynos9830-usi.dtsi#L1638
+If the IP works with 0 sized FIFOs, you need to update the driver to
+allow that and let the fifo-depth property optional in DT.
