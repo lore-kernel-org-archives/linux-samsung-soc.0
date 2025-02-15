@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C20802;
-	Sat, 15 Feb 2025 09:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2A81373;
+	Sat, 15 Feb 2025 09:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739611486; cv=none; b=hGewdXT1bzqWMQJJagVX3uHmovE49UJHSfBRef3hl27du2RIieC58G4ltDpYiyblpqJXp3X8WQcIsy2gC4UhzuqNtt2IgB2EUBgIR9/JUbcO00bCjRFyvG8TXKSahdtCMTp2M8Yy1pK7bEgwdjLepTvLBx/64hu3k8D3tigqSzc=
+	t=1739612091; cv=none; b=rZObyLxsReP5oAvAlALcQkS7myEctDexbafKCMCosQO6fOoi3TLNjUbmJuPYpAhbWfLVHcQUjQyMTyZFv98A5ZKPH+WSVuNidkd0buFUWeDxgyb0RqbagjkcDIFiEOna67rSYizUGaMRcCr6ikBp1iHdBSbakyfW0KGxXQRoowo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739611486; c=relaxed/simple;
-	bh=qLlpdx2XZpTJthdJqVOlO6CbXRLajGkyRyRoDG6/yCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hboo404Pt06HODNkx6gRmPK4kkXuCKZVphcGGESG+WG7fub6KOcWcCZS4lZR6yXQB0Mm2x5lm/3H7eXbcGLL5+4LOF2efM5MuqIlGS9dNfLAzuoUfZ/CcCtMPUYzsaiZYh+ByXG+4ZuaiH4E8nX3BetLc9J0w48XA85ncHiWcTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nW8R+LGE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739612091; c=relaxed/simple;
+	bh=IKAZ62FsF2gjnJ9KpMdbt5Jkq3UapRnpVvowqhjkAOo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=km7YCXEE5kEeSZHRbZxOdQY85ij4/rFduW3cSEQ+9Lm5KYBwgvXEXTnu83x0IREeATOO/RKbv3H5JW1m24TJ4NPzZvOtYDsMz5hPD9qidkE6M4eoV+x4GTZeX9ypfF3GUDApr/g2UN/IqiPVV2fkobCpatUCfa/c/RW3sokCPz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNcOfGt0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nW8R+LGE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B917C4CEDF;
-	Sat, 15 Feb 2025 09:24:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNcOfGt0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F8AC4CEDF;
+	Sat, 15 Feb 2025 09:34:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739611485;
-	bh=qLlpdx2XZpTJthdJqVOlO6CbXRLajGkyRyRoDG6/yCM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nW8R+LGErP81EkTm12pzbj36ijQzll9GIptmlmba3ws12mcaVoSGp50PONuhy0TOz
-	 s6j4giqwOgx08ZfXn5K9ZfFX36DVUwQnMhOcYDDfFJSm0aeFG3+TdEXgq+IBRLDX6K
-	 92SN0CElkDT09ulfUDautEHpgbtEZZBdM/qH0IXRHoHtZtXpUkkX7q7R3KNn7h709b
-	 rX7JmFtVyQ+1OyBm+N0HPbeMu/8wM5zp1q23joFUHmIQa1cakvod2pklJ+nhMxvKfd
-	 /TkBBcI3NIldzQmNvo+vjJGIPiYbLmLO8o1zcuZ2aPLYDT1fzrBL2UamlOTTYOuE2x
-	 5Q+qcYG+fUYjg==
-Message-ID: <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
-Date: Sat, 15 Feb 2025 10:24:36 +0100
+	s=k20201202; t=1739612091;
+	bh=IKAZ62FsF2gjnJ9KpMdbt5Jkq3UapRnpVvowqhjkAOo=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=CNcOfGt0rxUkBNBm2E0As9dDWfXXhIRglO86RMgEibzqtVCQchSuQaW1JQl14+hkQ
+	 3/TfLDOsp8kStnE7U2/5xHjjSEHKH8EMMBQ/HDOAF8sxo3TZLSMTR9KH/e/1i2CNn0
+	 5H9sw4vTmRqLpn/+I9ROob9REWWUKgFBboCS872BI4eLzZe7necRoVi9GJWYfw+MSF
+	 mXY65hmU+oz3cY2BGvoxH08iSm6d3k2fe5ilrtUxDFukPyq2e3AZh6rKOqATaBlph2
+	 boHxM2ynaEtNlo8VmyYEVfZqN3y/Eent85/MvhOqZg7mB9Zj8zzf8tJiUA2LGbbhxa
+	 FwsRdfXrmq4Hg==
+Message-ID: <0198b64c-c0d1-465c-a1e7-85b7732d6268@kernel.org>
+Date: Sat, 15 Feb 2025 10:34:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
  notifier if required
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -55,7 +56,7 @@ References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.o
  <CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
  <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
  <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -100,78 +101,81 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
+In-Reply-To: <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/02/2025 20:30, Marek Szyprowski wrote:
-> On 06.12.2024 17:31, André Draszik wrote:
->> gs101's SS phy needs to be configured differently based on the
->> connector orientation, as the SS link can only be established if the
->> mux is configured correctly.
->>
->> The code to handle programming of the mux is in place already, this commit
->> now adds the missing pieces to subscribe to the Type-C orientation
->> switch event.
->>
->> Note that for this all to work we rely on the USB controller
->> re-initialising us. It should invoke our .exit() upon cable unplug, and
->> during cable plug we'll receive the orientation event after which we
->> expect our .init() to be called.
->>
->> Above reinitialisation happens if the DWC3 controller can enter runtime
->> suspend automatically. For the DWC3 driver, this is an opt-in:
->>      echo auto > /sys/devices/.../11110000.usb/power/control
->> Once done, things work as long as the UDC is not bound as otherwise it
->> stays busy because it doesn't cancel / stop outstanding TRBs. For now
->> we have to manually unbind the UDC in that case:
->>       echo "" > sys/kernel/config/usb_gadget/.../UDC
->>
->> Note that if the orientation-switch property is missing from the DT,
->> the code will behave as before this commit (meaning for gs101 it will
->> work in SS mode in one orientation only). Other platforms are not
->> affected either way.
->>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->>
->> ---
->> v3:
->> * drop init to -1 of phy_drd->orientation (Vinod)
->> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
->>    CONFIG_TYPEC
->>
->> v2:
->> * move #include typec_mux.h from parent patch into this one (Peter)
->> ---
->>   drivers/phy/samsung/Kconfig              |  1 +
->>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
->>   2 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index f10afa3d7ff5..fc7bd1088576 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->>   	tristate "Exynos5 SoC series USB DRD PHY driver"
->>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>   	depends on HAS_IOMEM
->> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
->>   	depends on USB_DWC3_EXYNOS
->>   	select GENERIC_PHY
->>   	select MFD_SYSCON
-
-
-So that explains why on recent next some of my boards don't boot. I was
-about to dig over the weekend.
-
+On 15/02/2025 10:24, Krzysztof Kozlowski wrote:
+> On 14/02/2025 20:30, Marek Szyprowski wrote:
+>> On 06.12.2024 17:31, André Draszik wrote:
+>>> gs101's SS phy needs to be configured differently based on the
+>>> connector orientation, as the SS link can only be established if the
+>>> mux is configured correctly.
+>>>
+>>> The code to handle programming of the mux is in place already, this commit
+>>> now adds the missing pieces to subscribe to the Type-C orientation
+>>> switch event.
+>>>
+>>> Note that for this all to work we rely on the USB controller
+>>> re-initialising us. It should invoke our .exit() upon cable unplug, and
+>>> during cable plug we'll receive the orientation event after which we
+>>> expect our .init() to be called.
+>>>
+>>> Above reinitialisation happens if the DWC3 controller can enter runtime
+>>> suspend automatically. For the DWC3 driver, this is an opt-in:
+>>>      echo auto > /sys/devices/.../11110000.usb/power/control
+>>> Once done, things work as long as the UDC is not bound as otherwise it
+>>> stays busy because it doesn't cancel / stop outstanding TRBs. For now
+>>> we have to manually unbind the UDC in that case:
+>>>       echo "" > sys/kernel/config/usb_gadget/.../UDC
+>>>
+>>> Note that if the orientation-switch property is missing from the DT,
+>>> the code will behave as before this commit (meaning for gs101 it will
+>>> work in SS mode in one orientation only). Other platforms are not
+>>> affected either way.
+>>>
+>>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+>>>
+>>> ---
+>>> v3:
+>>> * drop init to -1 of phy_drd->orientation (Vinod)
+>>> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
+>>>    CONFIG_TYPEC
+>>>
+>>> v2:
+>>> * move #include typec_mux.h from parent patch into this one (Peter)
+>>> ---
+>>>   drivers/phy/samsung/Kconfig              |  1 +
+>>>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
+>>>   2 files changed, 57 insertions(+)
+>>>
+>>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+>>> index f10afa3d7ff5..fc7bd1088576 100644
+>>> --- a/drivers/phy/samsung/Kconfig
+>>> +++ b/drivers/phy/samsung/Kconfig
+>>> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
+>>>   	tristate "Exynos5 SoC series USB DRD PHY driver"
+>>>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>>>   	depends on HAS_IOMEM
+>>> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+>>>   	depends on USB_DWC3_EXYNOS
+>>>   	select GENERIC_PHY
+>>>   	select MFD_SYSCON
 > 
-> I've just noticed that the above disables Exynos DRD PHY driver in the 
-> default exynos_defconfig for arm 32bit. Enabling CONFIG_TYPEC is 
-> exynos_defconfig probably is the easiest way to fix this. I will send a 
-> patch then.
-
-No, it's just wrong. Nothing here depends on typec and ARMv7 does not
-have Typec.
+> 
+> So that explains why on recent next some of my boards don't boot. I was
+> about to dig over the weekend.
+> 
+>>
+>> I've just noticed that the above disables Exynos DRD PHY driver in the 
+>> default exynos_defconfig for arm 32bit. Enabling CONFIG_TYPEC is 
+>> exynos_defconfig probably is the easiest way to fix this. I will send a 
+>> patch then.
+> 
+> No, it's just wrong. Nothing here depends on typec and ARMv7 does not
+> have Typec.
+> 
+I'll send a fix for this.
 
 Best regards,
 Krzysztof
