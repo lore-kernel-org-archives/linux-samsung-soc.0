@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05DA1A262D;
-	Sat, 15 Feb 2025 13:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584DF1D5AD3;
+	Sat, 15 Feb 2025 13:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739626179; cv=none; b=fxWR99j2k1kUkBXkXLRES69d0gOSWruLepIb7K/6x6RVmVon4bfscGNVqNM+RgZ1+nMKVmZW30uIdoS2hmXZ5Ao9nJIhSc9lDQTdBIL7JRy3jGStS9nzmpS/+Aj7aMPbdb9Um7W8QEcsAEikAv3e+XHDKOMRsoATmh8lQ8q9ONE=
+	t=1739626182; cv=none; b=MZvZkcgs0PEA5nbDrLMuZcnR7ZqiEMse+WoB0yBtVDHjGBxEQWeY2oO3pN740KTIgX2URU7YUSc+0ub9SH9XuBkE0Fv33U6Y/75dtzIazZpeBiyQ5jaeXPc1DGXwkeZaZXxeVOaNxiD8BBVwQXuCvXbs+8vw7UJ52k+N1E05uOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739626179; c=relaxed/simple;
-	bh=k40pzK1X79s+z6fpQsmQlU2BYJ+/ZjGGtejZR++BQ+Q=;
+	s=arc-20240116; t=1739626182; c=relaxed/simple;
+	bh=v07NLwnORgC/H0e++oVg4DTMt03GjGLqNa/Cm3BNWRA=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=jKtcyS8xvI/Nv0COUA41lgQxSsLFIW6buOrfwH1ho64pd+XrQCjTZ6MEU541SFfadhaZX8l+gz3/Ehqjveh0frtSyHux9/x/RgXO2pJL3uVRa8lTXRjpwuUUgdw75xLFJCJ88gSfNmxnEgzXpEf+m4KtxZ/T/Uo/n+OeCcnqHEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWLWWDkj; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=Dk0ac56FhqkZD+Lad8oFmRuDYoQila2yp1Ga9NXc6ePuuXgtW42BngOlOvaIsB9j9MT0fOLxgI4VXsidpB0FgXtm9P93gc22q0Z+F13EUsT255f9JNC4WainZTtOp4QGubytPJvA4yuO9Yn8ETQfTwpCNVTvAbgDk0fXzFKPQeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hb0Pa/AE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWLWWDkj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A27C4CEDF;
-	Sat, 15 Feb 2025 13:29:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hb0Pa/AE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F6B3C4CEE6;
+	Sat, 15 Feb 2025 13:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739626179;
-	bh=k40pzK1X79s+z6fpQsmQlU2BYJ+/ZjGGtejZR++BQ+Q=;
+	s=k20201202; t=1739626180;
+	bh=v07NLwnORgC/H0e++oVg4DTMt03GjGLqNa/Cm3BNWRA=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ZWLWWDkjTgH38wQ58i+33SPUXdx2MkdONt7xOanhGnnvhKaz88Rvbm4IrB36h0DjM
-	 FovtO81IQDykZ2khWnojpXM4eqNI9FeOmqQvpP9BLSApZsP4OcgP1Cxpf6b1Yu1Hmt
-	 nx73NRuXCkX7OUp/aEnQGuDp0BTRqj55Uev1q0hCxNSpZylgGjtSTFrR3MI9XXeVI0
-	 gUpDdFkzLwtv+8s6SGbuXKg9ZVvgIPPHnOTsMHyf9xnAfMJS7EbO5hFPfNQggxDdwt
-	 aXMOfSwNXMKIb3RuhjRR9dOLY7W7enw7mzHQTzSt0EWOyIIncys2Zd1kCAktD30qei
-	 zEwa86Tgif6KQ==
-Date: Sat, 15 Feb 2025 07:29:38 -0600
+	b=Hb0Pa/AE/uEFOEjiqZQqXCQIC6iezuOQhOzemPZ8XUsa5o4VY+JOmYPsL3Sm8DIh0
+	 13vDy57PVgWJ6X+DD+cWu8y518LiatTqdJOWgr/KZKNRM5jCcITxRFGzU2ch5+agCO
+	 SAlNCYI6yJjmpRCS5hE43b3jfFSDbyeYmH0mp5Ps0wmioKjbnhMpBYatTjYXN9vm6F
+	 Sk8hoQ2ZJw9xRD3Gff1tY95k19SjFLW9syR2qKbIfv7bAiCHkhQrXtnqW9wP5yyfAr
+	 ACPenKhj8hhU/XVkkA1RX0UYniYSkGvjfIBMW8WVmj+szM57d3EEVQyLiVzDh7wMIq
+	 9ZAlGsSAoV18A==
+Date: Sat, 15 Feb 2025 07:29:39 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,30 +36,31 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, devicetree@vger.kernel.org, 
- Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ linux-phy@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
 To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250215122409.162810-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com>
 References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-2-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <173962617692.765204.2321221334905169840.robh@kernel.org>
-Subject: Re: [PATCH v1 1/4] dt-bindings: phy: add
- samsung,exynos2200-snps-eusb2-phy schema file
+ <20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com>
+Message-Id: <173962617803.765517.17948286888997426214.robh@kernel.org>
+Subject: Re: [PATCH v1 2/4] dt-bindings: phy: add
+ samsung,exynos2200-usbcon-phy schema file
 
 
-On Sat, 15 Feb 2025 14:24:06 +0200, Ivaylo Ivanov wrote:
-> The Exynos2200 SoC uses Synopsis eUSB2 PHY. Add a dt-binding schema
-> for the new driver.
+On Sat, 15 Feb 2025 14:24:07 +0200, Ivaylo Ivanov wrote:
+> The Exynos2200 SoC has a USB phy controller block that controls the
+> usage of USB phys. Add a dt-binding schema for the new driver.
 > 
 > Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > ---
->  .../samsung,exynos2200-snps-eusb2-phy.yaml    | 75 +++++++++++++++++++
->  1 file changed, 75 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.yaml
+>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 70 +++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -67,18 +68,11 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.example.dts:18:18: fatal error: dt-bindings/clock/samsung,exynos2200.h: No such file or directory
-   18 |         #include <dt-bindings/clock/samsung,exynos2200.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250215122409.162810-2-ivo.ivanov.ivanov1@gmail.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
