@@ -1,81 +1,76 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE41A5B92;
-	Sat, 15 Feb 2025 12:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746B11A8401;
+	Sat, 15 Feb 2025 12:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739622263; cv=none; b=IzxVGqts4HABY/mbG00V4JSLbR1nIBcdMRsD8g7FwLS+KS1rtgS5gDGF2qD9dFpla+cEuneRQC9ec9cnR3q/kE3CbXBmJpehWeC8jvvIz1WfMEpK45xsWwW2dyPyPErrGAg+fq17yfGWaW8xQlF3/vQqSvo8SsDMKuKTY+Ruohk=
+	t=1739622900; cv=none; b=tPB+VnNJaaAkQ2tsboMP3vPOpwUgHMXYhtDhxN6EamaNBeiPwPmBuvnKISNm3160hMYLYVp+YxIidvYJctiETJtj0+raoY1/KfANesFezzbFs0xxJ/Ux1DtUVntyF5Sv2fC4/pt4ND9EF4h0O54kBIsloDyXecstOTxvbzCou+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739622263; c=relaxed/simple;
-	bh=9uszAYVJtwngcnEE0dgojClRftNwRdSh8kdBlRNtphE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kha3E+Jl+rL/ysR/2y327ez06cjAZ4ht/gl9SgItx1kOhLNjk0wVuEDdEll1s3qv5+19pQrlwk535gi8GA9L5Jjt6qqgIzHVueka0kHL2ajIAsaswXfpwLLtHth8tF8i4bhk9bR4vMN3aDTAvZEp1h1S7wRX02CgLhSWqJKNkeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJykW9GP; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1739622900; c=relaxed/simple;
+	bh=f0+fTG9za/9bbevKQFo+26uPRWzCeT9Jd5N2XbxKmfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j7OWhQ8wtUN9ftjH0RhiVURIkc6WjVgCFqnJo0qgAp431J7eUaID8j1vODLdiy56A48UmHm9ZdICkyJ74jZXZdr3WdpBekwlgWCR9/4ZfMTFsrRAvtd+tI648+wUvWd2PdmR1LJQMvyWrUvAzdmOfOcmUlO5Km3nryCSWaHgrvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4u5hKr5; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJykW9GP"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38f26a82d1dso1260253f8f.2;
-        Sat, 15 Feb 2025 04:24:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4u5hKr5"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43978ae8d4fso782255e9.3;
+        Sat, 15 Feb 2025 04:34:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739622255; x=1740227055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TvM8beBW0+j4a9DqUfRhNLS0/sPUgWj2CrOTeza38CI=;
-        b=UJykW9GPi9BOXQYFUSJdyXWS2WNjWBXneCDG3uJKm7K2rmlcJS6hCJVbqW+ce6sW2i
-         tviKh5MiMfVvRz8+9i+t3bOPQu7kqMdhIpTUjImOEV1LoUG8ETCnJLSXK20yPPH/Z86g
-         Kl8VATqDtqN+JirF13jDOZF8Qiages0Qdz2/myG5Zh9/UefDgJJaEkQCeQfHeCap2ZCr
-         yl3fwUFSZq6N58jLZ3QzJVv4W8FMuiaH2SdZNf85irpbTK+83hReNZzfU9jg4TzrPbyt
-         vffJW5jBio+g+FrHdLKIfZf5OOiRoynV2R1h9hJcpAX2Tu+0oJ7KHFftKrv7BO2ixGd9
-         Jb2Q==
+        d=gmail.com; s=20230601; t=1739622897; x=1740227697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CKe4QYdGATEkp08y+n3JYFYApI5cWyhfV2vUJ+ZTwQQ=;
+        b=j4u5hKr5FRDuBack6HM36oZ6JXg3ghr3h8em8mEjeNUMgwVloIePDeNXkfCKU7qGpt
+         qnLeojO3LUAVp7ETLq3A2HpAObMz8rg/PMvbMwKqLZlo1gdN71dWJPflMfE6Fy0UciTu
+         bAW8KQxAoU4prHN2Zw22cAicqpMfM1KAEtQQaY1aVFkMIOtDaNZVmhiXumvbqP1uJcVc
+         XUMLlAT38PFNTQh/FcGmsV++5jVGtmtFV7IH6Yle4aIgjOvfq+N/2rOZwFlk9sIUbPN7
+         f9tYdGSyX+PbWbvHOebOWl96GIajmV1ctyZLtm0AKGWwNiylApJ1SquocFM+aTlWFZ/r
+         tizg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739622255; x=1740227055;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TvM8beBW0+j4a9DqUfRhNLS0/sPUgWj2CrOTeza38CI=;
-        b=gw8ysKbENHwXmSnGWAWpmeNhWT7j0jVdowTj1C07ZX2wZWmNwcuBC0JVj0tig8+T+P
-         PgUDlei+rXjmqxwZpdxai1fbDxpaWxY67JNsPfY0qWaqIbKzh5wmqMrmDCU8ggEzDLbd
-         OpiGYP/Uk5CLTvwVPE+3Uw5EYNLm4MrkT0tSHgiwyZPaPk5g/ZCzzo2X05hLEDXx1ORm
-         PEOBPCsqDk/5bar205Z8WEqjjU5NpFPDrVSg3HVnlNOtop3vC4gaS5+HITVAngCkLkqO
-         ExugxpxONS8YotZyh7UMvELMU4iKKF2uRwY/xfxzccEGq46oVROARQNMGTEGRIsTTyU/
-         AvzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBO1y5jH7p2EeAfLnHA73x0w/jj9UUAASPngCsv3WUpDGzextYHlxjMLCud1ieV5gTjN9undfF0m3sI70x@vger.kernel.org, AJvYcCVanowBY8eb5flm4p6/ZPU4voQDCifMlVKkz08/qiSybk9bFqcIHoBl6fd8h2L3Zp1CtDw1IWKmfbSlH79ha3l+tdA=@vger.kernel.org, AJvYcCXQjkHfcVkjtDf6uKmA9ZfpG6OJWCM+xSaHntn8MG1W1tTOECjW+G1zzdxavYawYgJhvufUa69J3N1V@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoCQEFVY+eR/wUsjG3p+4M8w/XYgfg7R1GofXBEF5FPQXV41NI
-	xsYjd+talpEjq/86llL8tcjiVEa4WWEIRTUDy9bl4kUsDznjc+tv
-X-Gm-Gg: ASbGnct1VNDjCWDOtueY7J/Q0HMGZVsXszHMivMdlwJfJnKcY415spcYZdOVJI8cHBP
-	xfXAfFLGFpKhlLVeyx+oi39vRkcQSdMA44fUfef4lsr1534Q1ySQjXeomnZj1CBGZWJV7Z4fiA7
-	rzIQRt5joi9nsdv4zDwtY6G8GwXsaTvcQoR5QH20+6DVwiVb1fKgKkBzwlrYv4BCij1vAdNqQ52
-	HRhebCuAPf85Sm5Oxu9quk89yjZV83f6UIGdjXZ7aJSpEwdgDL8JKnfwxSTdyqHc/qCzZ/HQO7I
-	JDKtqBkZQv9d50FbxCtMYkWp1iIl0jCNQ+a/QwggEZx2AjUhh7IyhfCDnUNvzPxYCbo=
-X-Google-Smtp-Source: AGHT+IHRj3ctJwmFgu0FqPPD2xs6RgkuS/hjPZ4U863BoKmIKTy4qe9wWajhFwMjyim4BV4BthvZRA==
-X-Received: by 2002:a05:6000:18a9:b0:38c:5dcb:312e with SMTP id ffacd0b85a97d-38f33e7f9a9mr4019150f8f.0.1739622255398;
-        Sat, 15 Feb 2025 04:24:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739622897; x=1740227697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CKe4QYdGATEkp08y+n3JYFYApI5cWyhfV2vUJ+ZTwQQ=;
+        b=ToiVHBsIvzjA0aCKRB1vG3bO6WENez2n0ob5oZFcyVE591cGCCu3WyiQF9alaMSikG
+         ONso41CulldE0GBU8qnj/AZak8Ji49drhgZZ+BjjutV8kgPrEt2zH1zX53jLwfPRcDRh
+         zS57m6CuKQ0giIJOKuEXQAj/jBibOnBIu+O5I1rxYDM8fNVHUHsPhDdR+2TcLQjESOl9
+         wtg4EkCqHunx2ttiX41VNQgto4r1B73ASE51MABXszXDBGZ44769r8cRRE6DSM5X6zmS
+         +KpsS7g5GnLhCQqozLKZOctlla/3TtmnVgOc8DnnBvy9Ri5zVCIpKXAdC2HVFC3MEUBe
+         rJIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU71d4fVyqW1NQ3znjfNpwKKSOi3hAJ1jDOPz/IgSmJwRpIggYST4rSrHdcqodTbgltp05o+wSmHFeG0Mlbv7kZDAQ=@vger.kernel.org, AJvYcCUjZrgUzx6aJep4GM5X35bWY7HNE/WI187DtT+O/F9sX9RXYO5jn1CxgA4kjpisMUy5qABqn+PSAB27@vger.kernel.org, AJvYcCX9QsRvYXcWARTYz9RNeKIOxzFAoCIAFOgSPWuO2HHN6+uwghXpZgbIBtY//LcxAH7tzht80Koa6KU68LZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv+DHtf4gSGg0ZhHl2iqmR5MPi4Lzlz4vId+ZjJsM3OmDspjHe
+	PKJp0SVziqlrakYQvvx7d+DQN+htzWkHjiwk20F33hj8sfX/jWiu
+X-Gm-Gg: ASbGncuvVxJKP/04N6cv8ZTs1O0uTY+ey+/42YkV9lG25Jgcv94e4w6BWU8Vgxv5vt4
+	Y3W7spX86u178piqtF3aVlO+9p4lfpIvtvi37tBBm2J7ZQ7EaIDMCOcpnZaPxkfq7AO+CNPDFGl
+	WRT2STOw8B05+GBZUWz90a4QRPKfyzUHnXAUtYXg1mG/2KoWxckl0oIJknEzUmqzECyYuo7UYDv
+	EHtpwBuhWloGbIcLZObM19XkgCRwrH6ppP6c4mwas4EwBxEopUOeUGlAym0dNt53OuQBiN1xASW
+	y2RlTdQl2yq++Kl2VMyiouFluSGVMPaceAov2r02hZg/MEGVJA6a7kP+uFYSaph768I=
+X-Google-Smtp-Source: AGHT+IFUBWZsXU82RxSy96RoGb0/0g4JAb4YfWMt6GwiDByMiJh3slbtaSZj/gS6aBzPWbV508Vxgg==
+X-Received: by 2002:a05:600c:1c94:b0:439:685e:d4c8 with SMTP id 5b1f17b1804b1-4396e6fa130mr38307765e9.15.1739622896632;
+        Sat, 15 Feb 2025 04:34:56 -0800 (PST)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5b40sm7188175f8f.68.2025.02.15.04.24.14
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439615e543asm70846685e9.0.2025.02.15.04.34.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 04:24:15 -0800 (PST)
+        Sat, 15 Feb 2025 04:34:56 -0800 (PST)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/4] dt-bindings: phy: add samsung,exynos2200-usbcon-phy schema file
-Date: Sat, 15 Feb 2025 14:24:07 +0200
-Message-ID: <20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 0/2] usb: dwc3: exynos: add support for Exynos2200 variant
+Date: Sat, 15 Feb 2025 14:34:51 +0200
+Message-ID: <20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -84,91 +79,23 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Exynos2200 SoC has a USB phy controller block that controls the
-usage of USB phys. Add a dt-binding schema for the new driver.
+Hey folks,
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- .../phy/samsung,exynos2200-usbcon-phy.yaml    | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+This patchset adds support for the Exynos 2200 to the exynos-dwc3 glue
+code. It takes one clock - the link_aclk, and the dwc3 refclk is passed
+to the dwc3 subnode, as with gs101.
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-new file mode 100644
-index 000000000..468dc1560
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Exynos2200 USB controller phy
-+
-+maintainers:
-+  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+
-+description:
-+  USB controller manages phy selecton for UTMI and PIPE3
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos2200-usbcon-phy
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#phy-cells":
-+    const: 0
-+
-+  clocks:
-+    items:
-+      - description: APB clock
-+
-+  clock-names:
-+    items:
-+      - const: apb
-+
-+  samsung,pmu-syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: phandle for PMU system controller interface, used to
-+                 control PMU registers bits for USBCON PHY
-+
-+  vdd1p9-supply:
-+    description:
-+      Phandle to 1.9V regulator supply
-+
-+  vdd3-supply:
-+    description:
-+      Phandle to 3V regulator supply
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#phy-cells"
-+  - clocks
-+  - clock-names
-+  - samsung,pmu-syscon
-+  - vdd1p9-supply
-+  - vdd3-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/samsung,exynos2200.h>
-+
-+    usb_con_phy: phy@10aa0000 {
-+        compatible = "samsung,exynos2200-snps-eusb2-phy";
-+        reg = <0 0x10aa0000 0 0x10000>;
-+        clocks = <&cmu_hsi0 CLK_MOUT_HSI0_NOC>;
-+        clock-names = "apb";
-+        #phy-cells = <0>;
-+        samsung,pmu-syscon = <&pmu_system_controller>;
-+    };
+Best regards,
+Ivaylo
+
+Ivaylo Ivanov (2):
+  dt-bindings: usb: samsung,exynos-dwc3: add exynos2200 compatible
+  usb: dwc3: exynos: add support for Exynos2200 variant
+
+ .../bindings/usb/samsung,exynos-dwc3.yaml         | 15 +++++++++++++++
+ drivers/usb/dwc3/dwc3-exynos.c                    |  9 +++++++++
+ 2 files changed, 24 insertions(+)
+
 -- 
 2.43.0
 
