@@ -1,134 +1,134 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615D51A239B
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 09:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DFB19049B;
+	Sat, 15 Feb 2025 09:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739612489; cv=none; b=j4/mw5SDwjjV+R71oNQqmP1Yh5o1ZThiPbKnENzDRTlvczZEy5pIeCAX5lGdYRruyoGXZikpXJVJcO2LbDJQsa0JkUXxfM9MrGa/dxy+z6qDZshknivhfAYYShAHe/eJkeoSbrUK0ZnjExOBCM9Bvdmbs8Mn4mgyZNFsL+Be4Bw=
+	t=1739613058; cv=none; b=U8E7uuttlMUptD9Nc5ZZwV8M+VTrhQG33CUKtPheMnNxhXYWtNgdMc2Md4UKUG2o+vAzI99pHmm2/ZAEMQ1byFxFY5jjC3HDpDTiwqrUpMJz1qOyBQEve0QRVvPoKfSWz3e8Cc2fP5UZcm9GxNlxzkCNA65pfrgAM4uAMaG9gPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739612489; c=relaxed/simple;
-	bh=vbjMydOojPbZwEg4Yl/004JI6Zw+1S1y0lku0U/6zp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bPfzMfd+6Gujzub4Y8o0s4bywdtR+ZZNO6vhqFPnLWC573lS/KLrOOV1T2XkMAA+gro18kxhenpgyyINHk78lSQir20qrJ1RACXYM3JdXntkrm5D7SjD6DeFAtpBd+eK0euStzdk1mp16dRp606vJZt3YEazI7qo3cr02LDNxb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rRqhU7iJ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739613058; c=relaxed/simple;
+	bh=MYtye3mXOSgmjNVwAdiLAWnVTAT6ccam/tc+AZHY5DU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bI9SJ5p0ZBEREI59bk8sSppOj0jtPaF28bUBg/U+dRf9WCwvYsrmx8EGvoF/jRLm9B/Yn/yqWl0wizttx630v2BRPtMICqQh5PideF8zQ5b0FpGHqsqwMmRNvHp/omOBvQjJo60NZLYDCyHR38TPZ4tRurqtI5jXLYpTDWbfqdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZn57gNs; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rRqhU7iJ"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4396444e4dfso1355135e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 01:41:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739612486; x=1740217286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5SxoWr2vFLkloiiVYCn5S11j3T2lrQAUOXkKWdINmvg=;
-        b=rRqhU7iJvsUgnJHIEbAhhABg+yOqeNB3JGQf8zjRr0cI8CLsfcAkGB+eiLRY3THhlB
-         eNk37upV9IFLwlZ5PKwjcPL5/b33toNLJmZiAbPLLVkH9MvdlhsbTmgGOH3TKXfgNKHX
-         rkPSXWCoHxtOU7eB1LGeOgNLa/RXcjRtCJx2dQMvZSgG4bL6SZ3BEisaBlfl4BSVyeHx
-         vULRa+eGOwwLGorJggNM/KzzEGtoPHhtxohojQ5VyCMg1TJkvwrYNVeAESy7QtV8iylL
-         1RzA1pymMd1V3mv+El0oxTcAtiHUL6OUUxGmiNgH/mDezI1fj/x+fcVH/ILf8dlhCrP5
-         QGCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739612486; x=1740217286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5SxoWr2vFLkloiiVYCn5S11j3T2lrQAUOXkKWdINmvg=;
-        b=KUQsW/a16w/vK/yVJmP4bylwUSF/x6ei2a2tWVrZzZc/vAAaMg4heiv4uIuF+kiFBP
-         R5z2Q/j72nLn3WvywESAkj+gyH9kP3MbFa7kIfv9BaD+U9JsktBN7rOhoAsSdhSq66fh
-         xEIgNfENlnMfc/8rSHIF8Q5wfgvaGU9rqrYipXUxA+nq9Ychid2QZ/SqcFDso19QpjtI
-         o6BOywOdzpY3kMaS+dJSJHtXYueStFE/7pjl4PTtyjrauDu7hZTY2N0aXJMK2zUiaG09
-         ttm7bMHVRMKwotO+OOmLJ0T26CZw9RsUDVNrafltcW3c7+u3v+AOsIbbxa/+vaNysbWI
-         2vJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVz63yDszqU51cRIvQuY+mTesJvE0gerwwGpLLnbZQ1S+ln0/G4da34eRrDy5j+FVMRLHudUQ9ZCKAJt3ReINYPrQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6FdZ2SpmoeSrDVKTccr8xZBbc6ooX5ov5d+oS4Nx6FXnDsv0C
-	1UVywcOXGqpvQfS1BKtarKekyzG4tHiIUvXdIMPeEER5amsD8JJbKpIlB++qeAU=
-X-Gm-Gg: ASbGncvpbj3TfYW7qsnD+2UXDwxuAlYDzSmHxR06+SZ4++9Kw1Pu57alCDHxysSKVLh
-	XRllMx2re+snDfxzPheLtbN4NWUuwziHTYLgkCHshYIgDzQ/mCVYP8K+aQOihKMWDrnY5etcJ+E
-	uOGm9rtuKeCwGA1Blp+GaCowTWjnEeVN+aNk2bWFhy3u3OpAt2WGWTeylXuB+4E9ahzadv7hIUu
-	p8kBzks2EvB2+BHTLeHRZJINP+qMkGggHKdur2nCDOXLddPk+vK2YHtkVXMfz+X83TIg0owbxnf
-	BEM+d/e3b8DDiiJddtBb7cE9eyWW7g==
-X-Google-Smtp-Source: AGHT+IF2PoXxZGft4S7bEaK90H7os4Iev7h+v97AgdpzM5GZ1g5ZH5opiwmuf7Drdh8bXm5uHZBgtA==
-X-Received: by 2002:a05:600c:3ba5:b0:439:6538:c979 with SMTP id 5b1f17b1804b1-4396e781fa7mr9169255e9.3.1739612485654;
-        Sat, 15 Feb 2025 01:41:25 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b8471sm97985345e9.37.2025.02.15.01.41.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 01:41:24 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] phy: exynos5-usbdrd: Fix broken USB on Exynos5422 (TYPEC dependency)
-Date: Sat, 15 Feb 2025 10:41:22 +0100
-Message-ID: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZn57gNs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739613057; x=1771149057;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MYtye3mXOSgmjNVwAdiLAWnVTAT6ccam/tc+AZHY5DU=;
+  b=HZn57gNsQtn06a0haQdzAuFtqZhobhpWGh6XiRpmGXK3QA4wm1CMPmq9
+   2gNgp5x5lpZRza1uIKTo6vOlrVGfgR0QsDsLZZFOCEdtuCuE65XhRkcP8
+   1DaIPYwQa/v+SYyNc/KOMu/cDTZQMSAUSn61xT+EqfylVNwnj6d5CkDCO
+   IYR2WBsvmrNcAhqZK55NeqTxE28vscLRcAO6YhBVPxpr4e0UZFjcybX34
+   ArOxQa7MUjCQj2A2WmMZmBv1PwpAxS/34oysCXHDn5ovzC7Lv1pZbkU8D
+   acq2ub7Y7cyDf5Mf5kbb4TRCSotXA1KYdVwcozvNGS5kQVvnc2nxzrDJS
+   w==;
+X-CSE-ConnectionGUID: LxHxY5KYQ76LRgr4Nmk9QQ==
+X-CSE-MsgGUID: MEtolS2URVWQwa09VSFuLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="62830872"
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="62830872"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:50:56 -0800
+X-CSE-ConnectionGUID: Wx9nhBKeSyWUiDCwEGa+UA==
+X-CSE-MsgGUID: tBrnDxKzSJ2qq/G5C/lSng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="113858921"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:50:48 -0800
+Message-ID: <d66e555b-8054-4f73-8077-201b51139773@linux.intel.com>
+Date: Sat, 15 Feb 2025 17:47:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 23/23] iommu/pages: Remove iommu_alloc_pages_node()
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <23-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <23-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Older Exynos designs, like Exynos5422, do not have USB Type-C and the
-USB DRD PHY does not really depend on Type-C for these devices at all.
-Incorrectly added dependency on CONFIG_TYPEC caused this driver to be
-missing for exynos_defconfig and as result Exynos5422-based boards like
-Hardkernel Odroid HC1 failed to probe USB.
+On 2/15/25 01:07, Jason Gunthorpe wrote:
+> diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+> index dd980808998da9..1036ed0d899472 100644
+> --- a/drivers/iommu/intel/iommu.h
+> +++ b/drivers/iommu/intel/iommu.h
+> @@ -493,14 +493,13 @@ struct q_inval {
+>   
+>   /* Page Request Queue depth */
+>   #define PRQ_ORDER	4
+> -#define PRQ_RING_MASK	((0x1000 << PRQ_ORDER) - 0x20)
+> -#define PRQ_DEPTH	((0x1000 << PRQ_ORDER) >> 5)
+> +#define PRQ_SIZE	(SZ_4K << PRQ_ORDER)
+> +#define PRQ_RING_MASK	(PRQ_SIZE - 0x20)
+> +#define PRQ_DEPTH	(PRQ_SIZE >> 5)
+>   
+>   struct dmar_pci_notify_info;
+>   
+>   #ifdef CONFIG_IRQ_REMAP
+> -/* 1MB - maximum possible interrupt remapping table size */
 
-Drop incorrect dependency and rely on module to be reachable by the
-compiler.
+Can we keep this line of comment,
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Closes: https://krzk.eu/#/builders/21/builds/6139
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
-Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+and move it ...
 
----
+> -#define INTR_REMAP_PAGE_ORDER	8
+>   #define INTR_REMAP_TABLE_REG_SIZE	0xf
+>   #define INTR_REMAP_TABLE_REG_SIZE_MASK  0xf
+>   
+> diff --git a/drivers/iommu/intel/irq_remapping.c b/drivers/iommu/intel/irq_remapping.c
+> index d6b796f8f100cd..735e26498ee9f2 100644
+> --- a/drivers/iommu/intel/irq_remapping.c
+> +++ b/drivers/iommu/intel/irq_remapping.c
+> @@ -538,11 +538,10 @@ static int intel_setup_irq_remapping(struct intel_iommu *iommu)
+>   	if (!ir_table)
+>   		return -ENOMEM;
+>   
+> -	ir_table_base = iommu_alloc_pages_node(iommu->node, GFP_KERNEL,
+> -					       INTR_REMAP_PAGE_ORDER);
+> +	ir_table_base =
 
-Patch for issue in linux-next
----
- drivers/phy/samsung/Kconfig              | 1 -
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+... here?
 
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index 7fba571c0e2b..e2330b0894d6 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -81,7 +81,6 @@ config PHY_EXYNOS5_USBDRD
- 	tristate "Exynos5 SoC series USB DRD PHY driver"
- 	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
- 	depends on HAS_IOMEM
--	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
- 	depends on USB_DWC3_EXYNOS
- 	select GENERIC_PHY
- 	select MFD_SYSCON
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index ff2436f11d68..e8a9fef22107 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1456,7 +1456,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
- {
- 	int ret;
- 
--	if (!IS_ENABLED(CONFIG_TYPEC))
-+	if (!IS_REACHABLE(CONFIG_TYPEC))
- 		return 0;
- 
- 	if (device_property_present(phy_drd->dev, "orientation-switch")) {
--- 
-2.43.0
+> +		iommu_alloc_pages_node_sz(iommu->node, GFP_KERNEL, SZ_1M);
+>   	if (!ir_table_base) {
+> -		pr_err("IR%d: failed to allocate pages of order %d\n",
+> -		       iommu->seq_id, INTR_REMAP_PAGE_ORDER);
+> +		pr_err("IR%d: failed to allocate 1M of pages\n", iommu->seq_id);
+>   		goto out_free_table;
+>   	}
 
+Thanks,
+baolu
