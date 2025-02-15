@@ -1,77 +1,76 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C45F1C84AB;
-	Sat, 15 Feb 2025 11:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B5A194C61;
+	Sat, 15 Feb 2025 11:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739618854; cv=none; b=Vf5Kby0RlfrOKCfs4ONeAMtTDBYkT7CsVJZVZYNIH/xRYQ5XJM9Jcy8D+LWESfQDX8abLZO8gh3gDp9s384r/LGU70iwQS/HAv6VIs3C3orCBlirWi743Bxxg+CnUG0SgpHWVoJQ0otVA21K8mqmtYAdPYWq4D1ZKgXwcyaXoYc=
+	t=1739619188; cv=none; b=ECk7NrGChb+90d/cjzcY74s8I1u9ru/+h23GM/w/AmOjAfWD0Wdn1YRX8rawrQjdx+743ElbWggmVvEy8A2kIE2+EHzRa+5GaVJfi9T4HX4ffTgwPnv+Gbp+1g9SqsEWkMcWRxJIin7I4AUvlQURHQ2PcrJ+4mSK6uS6uFuF7Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739618854; c=relaxed/simple;
-	bh=z+xM18OleGA+5ueD7UggFmdimFCDHSF8tAGHutwYlSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bD6ECDDN0L0xulPEQyuN00C/kSoP7CYeXK8tCEvBobN+/pBfd/0FR0En9bR0QBLvFnWOn52l6QsZk/z9EFMi0JDib2KY24/SYRdvhvujdibwSXwNS3cqXy/9SUEDCn77/YERStitj4YzzifMXNGVWzqNli0iAeKNO7WMpTh2j9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hqk1Uo6g; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1739619188; c=relaxed/simple;
+	bh=0aXkkETEfzydD+wuCQodo9EH259mIY564Np1Y3qqLlI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HYsCjPZ06yeG6utIsadC3BhfcqFn+3lC2Jbgre4aAk95aggJLvt9l19vDpvcCHijK4h1bnPGV2zlxufLfmXLHPCQvqG7ulruwKdnJzeMRKezOYWEbpiULeOOJeb0NPC6qtLHaeORvZjWlJBAFJS3G8vG0B6Shgc/D79aj/ulnFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7q3HGDn; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hqk1Uo6g"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso2456848f8f.0;
-        Sat, 15 Feb 2025 03:27:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7q3HGDn"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4396e9ee133so2619805e9.0;
+        Sat, 15 Feb 2025 03:33:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739618851; x=1740223651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lQN/bMgjVGfwRUkyGr0NCKJga9lw/it44spHsjm1iCc=;
-        b=Hqk1Uo6gnXrktGaVquyYykeN4uid4HgLDaO8cp3CU4JZ1i8VM5Trymhq8l9ZNkV8hB
-         ZU1Py7AEDIClKNj6WM/PBIq2X8hhCp12bhxTPWNpot+LLeArcP9oGexSBGs3g3EE94Zn
-         cOMjz9gpaFIqShUSSUNfa+dMWKPLutMq1B5ppATbGehJ/e5FkPo2TTPsPbkFn/VBNfWx
-         3Q8abL/AXcwqSNU/4KT0sQ9X7PBgEq5rh8GRKb07e+2F1VuarV6XlbqU2vsUfilV51ox
-         s7uW1vnTEKVSGQjNlB8mOmMNlyRWcTXvGi5RnvSrnmEn0L+cwJLj2/OfWuhlmaEmYlqj
-         H6PA==
+        d=gmail.com; s=20230601; t=1739619185; x=1740223985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aZ4h7/VfporGRJI05sMYLRTIp37UC/VZX1ejowPlgvU=;
+        b=B7q3HGDnRXgSIKyZH4EDJA7gadPpu3dY95jb0osG8xYItplL0aY8IwbHraSAL8JfN7
+         kB+xrwAG0+bDFZfQ0ZiJ9U/pBn4tiaI3Re4DGWMS95wdJk95jwRUkrkdGobBGPuCiA9z
+         itvt7ZjLw4PKAaru/HhSJuHcWy6+lMmvCL0PpDtdo5gqzzXsOXnrmRNXS2WIZiTGFCVD
+         bCL+lmFuxAGvp9ATRNT9XNZkxmXHvbq0xKmylsCKFMMh3xTGSHr0x9otz+PuWPtolL0b
+         Hbeo96eZBWxp6x/B/phmKCpcqJSS78Xi41tNDv6T/1qiH1nQmGSBA8Qzhyj6d2nAZyc1
+         +BNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739618851; x=1740223651;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lQN/bMgjVGfwRUkyGr0NCKJga9lw/it44spHsjm1iCc=;
-        b=QOYnxi5A2IikJltOb9F1dPfTOTXOliJYwsa+7LuOpfXuirJDJ3HVarTbZkLZ390jxk
-         nVlMDNFcP4L8Nv+eOdnC/KKVywQtUcOT4S1d4sCy7Ud3n3pDUbrk3kVX4lLJGe50IJUj
-         zJYDukH2Xm11ILADbOjwKZU3pmm9KFKUVdjcHwPJJDuns4N0TRBAJGVvWsBedRxvgQO3
-         4tvzP/qFlbGtsmIEKZ8olEcm6sHW/b9ALmd6C1U7fIg/ZLw8fd8rqVklSc6E/Ve3SL6u
-         WbzjrElA9us2/Bw0LAmWNqOsDpm5nzIa4gwGoHjQTvt0LwEqP/HTO3N+Li6MphVOJEAc
-         WbOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvApjg3TpfMwuJnIObpJ3sVZjJnN/pJtYeo6wIIEBFkgLuFbLrLvja89IelwlhCeDQnt7XmEfCt6mi@vger.kernel.org, AJvYcCXJdwmFrJckey2707WfGhXc0+VvIGmMLnNK8OSSZNroMLXqmrYaCnJHn3FjOEC414kKKP65MQECQyZCfihj@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ3Ft2PI3pjO8xAW8Vw1vJbntcCl/MtZGxPRgtOppbOWRQW+8u
-	33VKbSRRj0v4NxWCxQ5lGU0Z7UJUgBYG2Z3y5SfTlixVFhL37+vM
-X-Gm-Gg: ASbGncvy4puSUP5d4yISN2tqrq8htgAotF1OWwyH5OZsbe8curWQ6MbwC4t95sBNQSd
-	81r1LMTroYah8TyIaLEz6aywFLZeUscBzCFO6IptSV+z1vYkqgB1rXGcczYJXmdVezkLDep5Fw5
-	4bmk7udVmkGlevEqrRSx3PxdkBsTzg83mvrPYsmcDGfRMjnBb3ZAnqjyXjpQXE0Sdg5lDviwY9e
-	qIurgvm5GwpGNtuVGlaBgqX8oJyhMllcOIPvQs5MLm0OQ2rZ7w142ax+t1U6sbLCIjnD58S1iCC
-	z8RuzQCUJrBN59ryBu6WVwPhbpmjwGSZYO5QSv5+IqcsCJsoiQ8F5aRIFgb7JuLJm0g=
-X-Google-Smtp-Source: AGHT+IFg4nTLIznOmcCMhlH+TnSI8qUzjkBmAfYef1pfpNZSAHDfsvS8VTnrtO0ZfrE4sW8fKQtgEA==
-X-Received: by 2002:a05:6000:1fa2:b0:38d:c74f:4234 with SMTP id ffacd0b85a97d-38f33c312dfmr2410960f8f.29.1739618850817;
-        Sat, 15 Feb 2025 03:27:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739619185; x=1740223985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aZ4h7/VfporGRJI05sMYLRTIp37UC/VZX1ejowPlgvU=;
+        b=F2gHjJXzlc4XjsYM0nEVaATFinBcm4vHSixrmz0upP6HxqeKr61Q+9Y2Gfgh+u0uGR
+         bAKKN99MvYFMAqMjmAxp8kiIwhIpE0SYyhvzmY9OZ99AQl5MjkrLz+LJj4GqotB/p8YK
+         nf0dWsh0ca2Y7eE6Qlkv+4PmEn9t8Cj608zVeNSeCi8kAV/DcwDGkPqAZE6TgHz2L6Nj
+         aGlPEz+hsItDGF/LFxReSKbzK6FfWnSLyIYhU595AJLVqr0ZpYctUbP0PPsmw6fAF5VC
+         ie0ocuqaBJYoJVlq120rH8oh+9dmsdBRhRITcOn/GVkgP+KHTcUdmjBvVW/P97zLU+ZL
+         7s0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVySIDLl2WmI90PjnBO6DVLhozaGUm3yT61aziYUZH/eTejD5Mw/99ICrCjy+2B9uPzMOuctoa6ob5gp3T1@vger.kernel.org, AJvYcCWIkWhc0lCvSg12ZY7R3mO65j/nUfKxjmd78ham43g3Bz0nFXJMrNimiHjowMw8TeE+htALzNAX9NEReXch2XlsxOM=@vger.kernel.org, AJvYcCXtrlfpzO3tGAvOz6LKXdD24PDllqSGFEkdq6T3DQ8HXlZVHMRBzJCALFmm4ZnBUoAGsezAXGwD6XL+6w==@vger.kernel.org, AJvYcCXwB3jzAgvKYfp73C3D5uyOsElBS0OARXTV/YQTUKygBOmNgMjy9pkKgailvTyICMWiZ3KZCGURBpnn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI9ZrxpJjIiEpVcsAzSlL4wtk2CEWn9TG2K2LN4iLfDfGdGAyF
+	EU8UVaJD6s2iXr0+kZI94rEoKGxMDggWQeKLbZDKHArLIy82lMsV
+X-Gm-Gg: ASbGnctHfR6ejQ5H/6eiMvbnItbtCRekkDc8IvPWAw3CH3bNsG3+QZELD2/EoyslEzV
+	DlcB7DLxyIqCDVp60YEGE5aUIVCR4n9cvSLIR2Xe4UAhuQcjFfbC781hWpMHIFAUeRG/VK3s1et
+	teXIRxVWHOw5VJUfvNXQ4nlEfSZya0NsZDTmbnhuGvRKqvn9U8FrNPSdHcewd8y+u000YrEhG2A
+	WcuccgwPKYQtGF5IRNiibAudxCE8DUIWCvMTogVm0mjMiYjVj+g5/I/BrirSZsqXJvQ7nNVpsqC
+	oqnSu6JVs9P3Fg06lv7+vBnFtTkc+QUWct4pPzaiYsDsjOolziRj8LSxVBjo1xi3qVg=
+X-Google-Smtp-Source: AGHT+IFYiWapyROaWFGJrtPpnydYDug7fSPS0XbGrBAzQyfn9wLIe9lWK3e/1ZvQx9E1whB4ioWIbQ==
+X-Received: by 2002:a05:600c:46ce:b0:439:5fbd:19d2 with SMTP id 5b1f17b1804b1-4396ec7c92amr28910915e9.10.1739619184524;
+        Sat, 15 Feb 2025 03:33:04 -0800 (PST)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b410dsm7018841f8f.5.2025.02.15.03.27.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5e9esm7147538f8f.61.2025.02.15.03.33.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 03:27:29 -0800 (PST)
+        Sat, 15 Feb 2025 03:33:03 -0800 (PST)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] soc: samsung: exynos-chipid: add exynos2200 SoC support
-Date: Sat, 15 Feb 2025 13:27:16 +0200
-Message-ID: <20250215112716.159110-5-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 0/3] pinctrl: samsung: add exynos2200 SoC pinctrl configuration
+Date: Sat, 15 Feb 2025 13:32:45 +0200
+Message-ID: <20250215113248.159386-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -80,26 +79,26 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add EXYNOS2200 information to soc_ids tables. This SoC product id
-is "0xE9925000".
+Hey folks,
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- drivers/soc/samsung/exynos-chipid.c | 1 +
- 1 file changed, 1 insertion(+)
+This patchset adds support for pinctrl of Exynos 2200, as well as
+documents the pinctrl and wakeup-eint compatibles for that SoC.
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index e37dde1fb..855bd2a75 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -56,6 +56,7 @@ static const struct exynos_soc_id {
- 	{ "EXYNOS5800", 0xE5422000 },
- 	{ "EXYNOS7420", 0xE7420000 },
- 	/* Compatible with: samsung,exynos850-chipid */
-+	{ "EXYNOS2200", 0xE9925000 },
- 	{ "EXYNOS7885", 0xE7885000 },
- 	{ "EXYNOS850", 0xE3830000 },
- 	{ "EXYNOS8895", 0xE8895000 },
+Best regards,
+Ivaylo
+
+Ivaylo Ivanov (3):
+  dt-bindings: pinctrl: samsung: add exynos2200-wakeup-eint compatible
+  dt-bindings: pinctrl: samsung: add exynos2200 compatible
+  pinctrl: samsung: add exynos2200 SoC pinctrl configuration
+
+ .../samsung,pinctrl-wakeup-interrupt.yaml     |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |   1 +
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 168 ++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+ 5 files changed, 173 insertions(+)
+
 -- 
 2.43.0
 
