@@ -1,152 +1,109 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7841DFD9A
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 16:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541B8158DC4;
+	Sat, 15 Feb 2025 17:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739636421; cv=none; b=ORbvIzdE8Ef9DIa03iCXpqGyDP8OXP+Typ5sBXbe22xeoQSnvjrfMnTDKJMmeloQzhs7C0C0V7HqKKSNw9xkNquVbm89kdiS5uq0ZCcHifp4xo48NsHRmtESdCwakjcP3Pdy5B6tV/GNEwl6qtYCP/y5haCJ1g7ZWdG3p4fMiU0=
+	t=1739639775; cv=none; b=oKXDnXwdKullD05qEzoaxHlb/kaF5w3qvKO8NaUm0NN2qkMr4YaEJRd683nRB9c2N10Oy60fsbQUjkKnvGoQMYBnkTbmEVn8iSPN61sgqDHeU+F6c/ZjOrnFTwtWGm+fPZZk7L649l3WWvAm4a015TCm6TsuXaIo2VtDVaOQHX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739636421; c=relaxed/simple;
-	bh=jTkCjPq93a+S+y5RPdqqAWXGTvwpwXWa/3j5eqTS1yg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Nro/vsGTb957wDW/rAZUOdu/8fx0fQ/IGl1SXGXijXNfuN/j1LNYPh2uTIRaSgGAa4XysccekFUAkd/H24aSjS3wkTXaOPN6OkvktVQpYQwRXe0BO0tmeZvpSgqSvod/POIbHZABrQxUjWe7KCIJT2/DyiBzvoH+KM//4vlrEqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B/Cg6/z6; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739639775; c=relaxed/simple;
+	bh=Equsm08FQ5ieBMbjiGQm0NyEsM2olvsgtLG0zKJlMKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJjw14GM2p74EzhszkU7cuPLDbH/gF40xidz+dEY/VN1tXNpn33JNEMZ2Nl7F4j+n0jMcJINQGxVPns8E2HXye4loAW4I6CIxKXETIZVB2/o4Zc7/TZhh9v7Xn6zLrVajoj5jhAYOzp8BTCC1x5fqiO9kMjQmIj/Lxqsf6/ViXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4VpjfNk; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/Cg6/z6"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43967004304so12014595e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 08:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739636418; x=1740241218; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dNyoNFfqH0PsydSjFbFoobKDexjUlMZLc47JqJwFJrk=;
-        b=B/Cg6/z6xdUmMA9On+vj/agiswEFLLcyy3T4d6JnGzqlsegzBkfO+ALYWzefYMBnYK
-         27evObyomKvxaDSOFiRXxQodeAekss0XZAiCmkCYdxm875iqPYKo8dPOesi2M+LoUATw
-         2WShgbcjpfC90VEWMKDuc0QK1jpJwTEr/4yHAEVKdK6UI6PlfImUemS7dtvq2tLAA1sH
-         j5GUJzAMG5YnbceR9RvVF4mwWYySL9/QIHgRCcIHTWf8rJ0uJUgiib/7naJLXvyThm9G
-         rLXugRAeUQSVW9TxBJrh5lDnZatbXHMiOFQlxpbR9rOeUhv2vwLHFjVO2NZ7klRqYZu3
-         pNIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739636418; x=1740241218;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dNyoNFfqH0PsydSjFbFoobKDexjUlMZLc47JqJwFJrk=;
-        b=qdDUakswOMQEJsqiCHEpG7NBVKAd8LGNb/PsVEAaOdIN3RYjYcStPFqhAo/YY7uq/M
-         lgFejIwzpSvrVw6UbJdJG8KcoKJ6QtJ62wWiT6bZDjkUW2T4hoNgJClD8uYx6peNbw5h
-         4fg0PI0g/uNsSRNO6DBCvDQVdoxDX2B9/nDiECR4L+aGB1NwuIHTI4zlsGMgr5DiIi0e
-         i+Or1xw1xzDg9AxH3RkPdkRasRqbIPx9mIs+FA7iL/W5tmVIjeb5hPbFy4f2+viB33No
-         GeUBJ4w1KZPxbLEhXb5j/zw0eXSYtmEzuXsGsTIWYgfkSo51WIIk+EGUeDnCscR0olad
-         pziA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ZWTwvopDk9sQJFnLbQRIRiVkiD4zqNnSKnaQtxtAw0z0MGzM5k54HNhBldhV3jc5TM+z7nFEwztrbWsQiADclQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjCJCvzXOmZFxKLbuSyyKUpMrjEoVFvNRvvFYEitdLKqsE7MQI
-	WY5o31qaRkywTeILIxTkG0rN4kI5Pbxi9O5ZDUd4DQ7UAfpxVU6KNht/ItctY0k=
-X-Gm-Gg: ASbGnct/USjcqmi8p0s9TnwklqNEZzuJBReAPgzEYWQcjC3EVRtYWHppELMrwYsms9t
-	td/3h083fq9/msVdVHFyF9rPWsP77i8WTt/K0mTZ1fuSrhtrE1fjYn8iLjppo+4g0KKfbWPuDqx
-	Ki27QFYEe5YxqtQutSn5TokInWx/eoZc+QMIKrnhfZTWQePz9Shq+cbIWSXLSUbsdepxe2Mh1/F
-	bCiufUoMM3y0Rh8Kg+mwKsoaQdyiLz3E4PwKKnzwtE4pHo+5EOC/ORpxCX3jdvs2VjlsIyxWfmV
-	MOwMyV3RtP76iE6pfgA=
-X-Google-Smtp-Source: AGHT+IG1iRvsBX6PLkvzMs5VpNDDf9z76BCIL+JAkXGVtBLduGXf6zEIP0vw/72qC+rgRgHoj9P1ew==
-X-Received: by 2002:a05:6000:1561:b0:38a:888c:679c with SMTP id ffacd0b85a97d-38f33f52fd8mr4562539f8f.42.1739636418355;
-        Sat, 15 Feb 2025 08:20:18 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa1esm7483252f8f.100.2025.02.15.08.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 08:20:18 -0800 (PST)
-Message-ID: <bc292f121afaacb29fdc7d600c72cb3008b6b56a.camel@linaro.org>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Fix broken USB on Exynos5422
- (TYPEC dependency)
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter
- Griffin <peter.griffin@linaro.org>, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Sat, 15 Feb 2025 16:20:17 +0000
-In-Reply-To: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
-References: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2-2 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4VpjfNk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739639773; x=1771175773;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Equsm08FQ5ieBMbjiGQm0NyEsM2olvsgtLG0zKJlMKo=;
+  b=l4VpjfNkSNwuaTcR0Pxvss4+9dfbJx+EqVrSadMv3SX7//LiHfIi13sr
+   a/zy2x+DHGUD+bpEE/RsNNFPrNOzfEjAFkuOICFe/h4Kqm9Ycbtvif651
+   NqUgV+5U3hGxhcZg7w1v1lKqXd4K+EcdBq685nfpVX2Kv/iatY2Rl1T2R
+   yvGkVqiPUHJad/ngRr/j7NNNRYajaHp5wXKdv39A6mHg/4zWw4ReYt42q
+   tkfyhm60w7riUEX7oj79d8VcS+l8bpT6N5mYcwrgPD/ffOGiepe018lUq
+   trb9F7KXZw1PqPU4w6ETFzJlaAS21S5ABn6VNfjPetZK+MUPOP1vWU3wO
+   Q==;
+X-CSE-ConnectionGUID: pPoMEHllQE27/H1nZL+vKQ==
+X-CSE-MsgGUID: 4yQv5bnlQoSii68tLT6a1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40403678"
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="40403678"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 09:16:12 -0800
+X-CSE-ConnectionGUID: Yd7RnQbmTgWJdCCXOEjokw==
+X-CSE-MsgGUID: Dzd1IWb1TXSPnX7Q8e5WhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="144654676"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 15 Feb 2025 09:16:10 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjLlw-001B1v-0e;
+	Sat, 15 Feb 2025 17:16:08 +0000
+Date: Sun, 16 Feb 2025 01:16:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+Message-ID: <202502160050.nTezfbL3-lkp@intel.com>
+References: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
 
-Hi Krzysztof,
+Hi Ivaylo,
 
-On Sat, 2025-02-15 at 10:41 +0100, Krzysztof Kozlowski wrote:
-> Older Exynos designs, like Exynos5422, do not have USB Type-C and the
-> USB DRD PHY does not really depend on Type-C for these devices at all.
-> Incorrectly added dependency on CONFIG_TYPEC caused this driver to be
-> missing for exynos_defconfig and as result Exynos5422-based boards like
-> Hardkernel Odroid HC1 failed to probe USB.
->=20
-> Drop incorrect dependency and rely on module to be reachable by the
-> compiler.
->=20
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Closes: https://krzk.eu/#/builders/21/builds/6139
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@=
-samsung.com/
-> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notif=
-ier if required")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->=20
-> ---
->=20
-> Patch for issue in linux-next
-> ---
-> =C2=A0drivers/phy/samsung/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 -
-> =C2=A0drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
-> =C2=A02 files changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index 7fba571c0e2b..e2330b0894d6 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -81,7 +81,6 @@ config PHY_EXYNOS5_USBDRD
-> =C2=A0	tristate "Exynos5 SoC series USB DRD PHY driver"
-> =C2=A0	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
-> =C2=A0	depends on HAS_IOMEM
-> -	depends on TYPEC || (TYPEC=3Dn && COMPILE_TEST)
+kernel test robot noticed the following build warnings:
 
-This line ensures that PHY_EXYNOS5_USBDRD changes to M if
-TYPEC is M.
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.14-rc2 next-20250214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> =C2=A0	depends on USB_DWC3_EXYNOS
-> =C2=A0	select GENERIC_PHY
-> =C2=A0	select MFD_SYSCON
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsu=
-ng/phy-exynos5-usbdrd.c
-> index ff2436f11d68..e8a9fef22107 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -1456,7 +1456,7 @@ static int exynos5_usbdrd_setup_notifiers(struct ex=
-ynos5_usbdrd_phy *phy_drd)
-> =C2=A0{
-> =C2=A0	int ret;
-> =C2=A0
-> -	if (!IS_ENABLED(CONFIG_TYPEC))
-> +	if (!IS_REACHABLE(CONFIG_TYPEC))
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/MAINTAINERS-add-entry-for-Samsung-Exynos2200-SoC/20250215-210923
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250215130702.170851-1-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+reproduce: (https://download.01.org/0day-ci/archive/20250216/202502160050.nTezfbL3-lkp@intel.com/reproduce)
 
-On arm64, the defconfig has TYPEC as module (while PHY_EXYNOS5_USBDRD
-defaults to y above), and therefore all following code is becomes
-disabled with your change on arm64.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502160050.nTezfbL3-lkp@intel.com/
 
-Can we find a different solution to unbreak arm32 and keep arm64
-defconfig working as intended?
+All warnings (new ones prefixed by >>):
 
-Cheers,
-Andre'
+   Warning: Documentation/hwmon/isl28022.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/isl,isl28022.yaml
+   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/clock/samsung,exynos2200-clock.yaml
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.yaml
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+   Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
+   Using alabaster theme
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
