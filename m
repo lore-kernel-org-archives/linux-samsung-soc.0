@@ -1,77 +1,74 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FAE1A83F8
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 13:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8DC1ACED7
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 13:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739626976; cv=none; b=g4oo9PNZ+2ZSgEdBkhJQ6d+KP5wOT3NrBpfIkj85jL2UK6mILbdk1HCAg4GzcEuGfiNUAIKzUxUL2alpgca0ETJlKbq/f/U7UY/9QRENytWA88fn+Xxvr7nw1mvLduFjrv6lk0xM7E3+7u8D9o5y+Mg07jq2a07HU1XFUT5ynb0=
+	t=1739626978; cv=none; b=hJqiJC3ZaXfuI5NPufRfZQX32d38inloA12C3ptL7MBEzNzn5poXy8HMRTdJQipDHEf9kMewjsB6bj85oO9sytR2/hKy/UAIzx1ONYkDL2yT31sobykfhF+kqVrWPPfN+95/AMIeBw3KMOk6SDZTd+d6Jm9akTaPXZsgBmcJdOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739626976; c=relaxed/simple;
-	bh=8u9nr5FRgOHoWSar9IPoRBpRxyWBfCzeKcQuS3h5YJs=;
+	s=arc-20240116; t=1739626978; c=relaxed/simple;
+	bh=B5G7i3ixrYG9/fNbWmw5bNg42KOUv3/6jvQJNxtOKiI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VKjQtQdO9T55jKTPZSQfm7Y537NitReAgaFIXouG3cI8uEYgi18d9we/fj8pQcKK2KsafgwIZ+QcaBa41LI4nk6gzhF3evKQw4YRkEDu7aZP3/9VAbYX6jJ/7r6sGoOG38Kl4up9IFKCHkmHryMgjmtAjJT7ku+6+wo+ymp4/p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yqEEbsgy; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version:Content-Type; b=XfwY5Ju7YFwFX5D9f0WSn9Y9a/5ffJNH6MsxMjtDMoTLMYBGOI+dJSl85gwoeBuXCj+wl1NQ+ntKVn9jiZxJnJ7Tes8RUw0+MbzXKs9APXj71IdM1xYTEUw7Fy/cIgvtacZWYhpJM86ViQumW7xFb3Uhc3eftKpWi0BjK1WSLtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wtRd1PZg; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yqEEbsgy"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38e1cad9e27so366579f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 05:42:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wtRd1PZg"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f2b3e7baeso277770f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 05:42:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739626973; x=1740231773; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739626975; x=1740231775; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H9bUNgNxjXLAmLIe9VuTDeyH0e/ktEVFp6QB6bUy4rI=;
-        b=yqEEbsgypFkVVrazq9FXVjbu26sme3nDfzG7mcuXa0NhZfMcUqYKDvPg/B/tX79y48
-         m6wA6EOMQgm5c0LsMBj+nKtgV2M/WOwm8j7NB8ZkRIWYQYoMUVwp/K0uOE44PLqA+bvY
-         nGkx1pYFFnljRwHNNFBVH4H0amMTIvClk69VWsFpT4V1K1neqjhK7CBwFOP0VCBO0U9N
-         QZOU0h4t5JNnQHBeTPf+QrXOwFGWFVOoJEVj7imsbidfp7+gMCW1tYLTfnL9hX0/fs4+
-         bDq86aB4boTwfPQfNLdTeMEtyQU9JeDvA5B0OxQCFfJ4hIWfHZlr6WTR1vBGhld1sxfa
-         1Cbg==
+        bh=Bzb9KoEVAxpceRAqAhOtXPFddy5YM0ujKSt02fGNR/I=;
+        b=wtRd1PZgmsyreHIrgo3S84qyMn71Dx1kQ9tkOsJ/TsnRimIrn84ihavQ65v2BWfZWe
+         8yqEcYXSnNVau1S8pz3e3ZZjfIM4qcwIbQX7E6syiiI9v2UBkLMR73yPav9eUrDjON0K
+         AVLQUz78R6hBH2JWfOVoCQtpQvn9KTVKETFkNZ8GvssRGmtUjyQ/ZtDGIlMx0wk1+T/K
+         uX0btv+slYZI5DK7pyg6SVKP8RN5uh3V+iOY343rDxsCEjtZT53ed1rRsXq3e9PW7ZJu
+         Yg1pfVBOmhHdlJS+6mZarfJ3gAE0QB838HQL6gziTGAWO1MR8Ml7Nd6lcq5nQ0Q8URIi
+         rJgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739626973; x=1740231773;
+        d=1e100.net; s=20230601; t=1739626975; x=1740231775;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H9bUNgNxjXLAmLIe9VuTDeyH0e/ktEVFp6QB6bUy4rI=;
-        b=GTTI++6wadzIH0CuL1p97r5PEcxdTBvZX+PjAN6HFMleb6nM2qTKXJX2V8qhqvLi33
-         GJxQbanDwOV5x2Y5jP8QMk6zMLbAndKqLqryjB1s8KaO1mCFNgVsobLYD8f35xlAsaVz
-         4ovNvgKtpBCCCJSAaPILwDSW6VNz0VKtvYwhgSwEkoWZbB66AXjgumeF+MHBKU1D5FqT
-         ET7bg4Z/tSwP4sTI3wf2htjzAsPFSAzMIgg3s44LEBdx/07xWvpMse5fRUimdOnlbJYh
-         zYb8NZ8yX1rRLm5rmUCBG9RysvDQVYv73/H1xieNZHFG1uIaqOe3clsXvgP1qFsrolyH
-         YqBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgMlEFgkw/8XfyeYGp0Tmh8vygzAGDbCJEXbkZUmB8Iuu1JGqcfwNuvllyXkoJs33w+U+egWyCi9nP6zobAerxnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1BtDcWJhPlUuSCzFo9ASePk8fi/DMfpvGeJkV9OfaKPcRUJkW
-	/L3gsbTn9y4UvhF4h3aq/Zy1uCO5rVLABzQhd5AuSMos0V91Q6JD3cewI+SRSfc=
-X-Gm-Gg: ASbGncsD0ATWUvHl2qfxncymAYv5I9GFZj/u4kiYqXD7UyRdUctQUuYyevIAx//okAU
-	9C0a1WW7iN6WmnoTKC+TT+zw7TFdvQVrzQ+nj9fngQIjiJXBEf3wAcscR+Mtw8+Pub7+HRsvbnK
-	B2fkLJvfyWF3LB+vNh+PKZGjjDOq9PoidgFFDO5zP4RcVkFeIwMAR4fBtoGmD1G3I/uG+7+jsvg
-	b3ykMHhfdfG+ZFF1mMtRxb0WWfpCIHAtoazzfW80AFaUbdzNJiFBZFe9+tGqegEf+GQdJChNJlK
-	BVuCrOi10nK5dapcZ5qjwZqXOkytfBM=
-X-Google-Smtp-Source: AGHT+IHMxDo2wTuV3RGHOn8oJ+HNcqupAs51y/sqm5Bh1EezBPlgRPt7QMuWXQaOwvAdxUJsc4b5fA==
-X-Received: by 2002:a05:600c:4711:b0:439:614a:8bee with SMTP id 5b1f17b1804b1-4396e730a4emr14755285e9.5.1739626973256;
-        Sat, 15 Feb 2025 05:42:53 -0800 (PST)
+        bh=Bzb9KoEVAxpceRAqAhOtXPFddy5YM0ujKSt02fGNR/I=;
+        b=mJGACNiEbEK2yMbH7aURbrsw+7TF9wPvOK2txTKNsPXXSVU6MMFOtLa7M9D1b9IDEX
+         ZceICQ1+X6K/cuxRf/eKsWVmie4fyaMzQKMX9/O5stpFUJC6dSRQx/9lTYr7t9khwGD1
+         KMoAYuMGlRoNlF5QBv5oCdaQZeK6Agnuyunvtw9LRUonQBkDHeUG3IaPORzoh0sVMMyL
+         97KiiV00nQa4lXeCQUOxWF/skU2HvMTg4wuNcJYkCZQAszTpFs5YCpLrGT7grU/PTwnQ
+         ZuLFOSg0CQAQgTw6SB32J3RVpLOg/CD6Y6o9YPVxDiSZfJQeMldIfYRywTWWATQG1K1Y
+         6Aag==
+X-Forwarded-Encrypted: i=1; AJvYcCUdjF2GWLdDM//jKms115X2uXYFfXc0RWSFy69rBEW02N9MzlB1KXx3/RwJ9wAKyfg79FFVKxZZ751wOZ/Od4x3fw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT9A+JKH0qjF8T3XuzdKHApFXdYBo2fhWE7pZ0vu6e+T98lzWy
+	hyhFDyTzjEeJ1Hn8+fcJiNXCxizrULgV9iuDzfqcV+gqWskmZkR0Mraz2XfNg73qU7o7IzKDell
+	s
+X-Gm-Gg: ASbGncvJNN8JnHn/06h/2iRIOR2fZU0MjvNPY1J+ay5yN41KFpEaitiIu0wlP+vBg5L
+	Dy0ixwaZ8HkhYpTkUK49xbacHBhDJhXRdSgnO1bXI5w4QiyekYy26TKc20coSsT1ZxaXVCHfkpg
+	6C5h3++JTfSrc0z/uxwjhvV0kw5OimnXYHfwQPmS4AmZ1jxjrZhZYuzbNo8+A/2pdSAu/eCo8ha
+	FFIsfIG0gMuv+DROD8I9nW2CjAkVpAASZLeWLsQ902MneWdApKZl1F8d+EGWAA76tB6SBAyZhqg
+	Zkn8/U6NpbUCy7rLSLB4Mgak48MoXP4=
+X-Google-Smtp-Source: AGHT+IGDxXB1E+X6jTSdESQDd36Tzc/wr84k6EKAU8sGUlvYMhjz/DzYT3hbSvKe0KicE5yIGLmyJQ==
+X-Received: by 2002:a05:600c:3ba5:b0:439:5a37:814e with SMTP id 5b1f17b1804b1-4396e78789emr14566145e9.7.1739626974755;
+        Sat, 15 Feb 2025 05:42:54 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396181026fsm69929005e9.18.2025.02.15.05.42.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396181026fsm69929005e9.18.2025.02.15.05.42.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 05:42:51 -0800 (PST)
+        Sat, 15 Feb 2025 05:42:54 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Stephen Kitt <steve@sk2.org>, 
- "Gustavo A. R. Silva" <gustavo@embeddedor.com>, 
- Will McVicker <willmcvicker@google.com>
-Cc: kernel-team@android.com, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250212183253.509771-1-willmcvicker@google.com>
-References: <20250212183253.509771-1-willmcvicker@google.com>
-Subject: Re: [PATCH] clk: samsung: Fix UBSAN panic in samsung_clk_init()
-Message-Id: <173962697098.235665.12602558292611832915.b4-ty@linaro.org>
-Date: Sat, 15 Feb 2025 14:42:50 +0100
+To: krzk@kernel.org, alim.akhtar@samsung.com, richardcochran@gmail.com, 
+ Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+In-Reply-To: <20250212213518.69432-1-chenyuan0y@gmail.com>
+References: <20250212213518.69432-1-chenyuan0y@gmail.com>
+Subject: Re: [PATCH] soc: samsung: exynos-chipid: Add NULL pointer check in
+ exynos_chipid_probe()
+Message-Id: <173962697359.235665.7938168679485045244.b4-ty@linaro.org>
+Date: Sat, 15 Feb 2025 14:42:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -83,27 +80,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 12 Feb 2025 10:32:52 -0800, Will McVicker wrote:
-> With UBSAN_ARRAY_BOUNDS=y, I'm hitting the below panic due to
-> dereferencing `ctx->clk_data.hws` before setting
-> `ctx->clk_data.num = nr_clks`. Move that up to fix the crash.
+On Wed, 12 Feb 2025 15:35:18 -0600, Chenyuan Yang wrote:
+> soc_dev_attr->revision could be NULL, thus,
+> a pointer check is added to prevent potential NULL pointer dereference.
+> This is similar to the fix in commit 3027e7b15b02
+> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
 > 
->   UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
->   <snip>
->   Call trace:
->    samsung_clk_init+0x110/0x124 (P)
->    samsung_clk_init+0x48/0x124 (L)
->    samsung_cmu_register_one+0x3c/0xa0
->    exynos_arm64_register_cmu+0x54/0x64
->    __gs101_cmu_top_of_clk_init_declare+0x28/0x60
->    ...
+> This issue is found by our static analysis tool.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: samsung: Fix UBSAN panic in samsung_clk_init()
-      https://git.kernel.org/krzk/linux/c/d19d7345a7bcdb083b65568a11b11adffe0687af
+[1/1] soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe()
+      https://git.kernel.org/krzk/linux/c/c8222ef6cf29dd7cad21643228f96535cc02b327
 
 Best regards,
 -- 
