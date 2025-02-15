@@ -1,101 +1,115 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8DC1ACED7
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 13:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA881A83F8;
+	Sat, 15 Feb 2025 13:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739626978; cv=none; b=hJqiJC3ZaXfuI5NPufRfZQX32d38inloA12C3ptL7MBEzNzn5poXy8HMRTdJQipDHEf9kMewjsB6bj85oO9sytR2/hKy/UAIzx1ONYkDL2yT31sobykfhF+kqVrWPPfN+95/AMIeBw3KMOk6SDZTd+d6Jm9akTaPXZsgBmcJdOA=
+	t=1739627067; cv=none; b=esgEBYAV9ShEz/bIQp9yxQKA+w//PuxCxo+x4217bgKPqg+nkYJ7UQwJ6KsaaMhcktO/tEjtllvB3LOOgNA2+vxd3TZkv+OVGHzfGca4RZPeJEhVt4dnseFzt77W6XqnvogE4B9bp6DjOQbzl6O5SwL+zmqv4XAWHmZ9/mb8MIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739626978; c=relaxed/simple;
-	bh=B5G7i3ixrYG9/fNbWmw5bNg42KOUv3/6jvQJNxtOKiI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XfwY5Ju7YFwFX5D9f0WSn9Y9a/5ffJNH6MsxMjtDMoTLMYBGOI+dJSl85gwoeBuXCj+wl1NQ+ntKVn9jiZxJnJ7Tes8RUw0+MbzXKs9APXj71IdM1xYTEUw7Fy/cIgvtacZWYhpJM86ViQumW7xFb3Uhc3eftKpWi0BjK1WSLtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wtRd1PZg; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739627067; c=relaxed/simple;
+	bh=5X9O1V615LQC2ynrpFns9PJxRgb0MBKRB5TEyBxo1GQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cepKPwwmX9WGwaKpEWfwCedSO1CBiiB1xlCbufX1gUYseRuiyOQHJRssmQuCEthNfX3wMwzQ7Lab0TDT4EBUXvOr3nPE5l1rJUz/etSBzm/wO9Ih8Illvg1IXd5T4zSznXabiwkUvZP1facahG4edaP4qqrp0lsxEAzUOXKk4Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgVFFKEi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wtRd1PZg"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f2b3e7baeso277770f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Feb 2025 05:42:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739626975; x=1740231775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bzb9KoEVAxpceRAqAhOtXPFddy5YM0ujKSt02fGNR/I=;
-        b=wtRd1PZgmsyreHIrgo3S84qyMn71Dx1kQ9tkOsJ/TsnRimIrn84ihavQ65v2BWfZWe
-         8yqEcYXSnNVau1S8pz3e3ZZjfIM4qcwIbQX7E6syiiI9v2UBkLMR73yPav9eUrDjON0K
-         AVLQUz78R6hBH2JWfOVoCQtpQvn9KTVKETFkNZ8GvssRGmtUjyQ/ZtDGIlMx0wk1+T/K
-         uX0btv+slYZI5DK7pyg6SVKP8RN5uh3V+iOY343rDxsCEjtZT53ed1rRsXq3e9PW7ZJu
-         Yg1pfVBOmhHdlJS+6mZarfJ3gAE0QB838HQL6gziTGAWO1MR8Ml7Nd6lcq5nQ0Q8URIi
-         rJgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739626975; x=1740231775;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bzb9KoEVAxpceRAqAhOtXPFddy5YM0ujKSt02fGNR/I=;
-        b=mJGACNiEbEK2yMbH7aURbrsw+7TF9wPvOK2txTKNsPXXSVU6MMFOtLa7M9D1b9IDEX
-         ZceICQ1+X6K/cuxRf/eKsWVmie4fyaMzQKMX9/O5stpFUJC6dSRQx/9lTYr7t9khwGD1
-         KMoAYuMGlRoNlF5QBv5oCdaQZeK6Agnuyunvtw9LRUonQBkDHeUG3IaPORzoh0sVMMyL
-         97KiiV00nQa4lXeCQUOxWF/skU2HvMTg4wuNcJYkCZQAszTpFs5YCpLrGT7grU/PTwnQ
-         ZuLFOSg0CQAQgTw6SB32J3RVpLOg/CD6Y6o9YPVxDiSZfJQeMldIfYRywTWWATQG1K1Y
-         6Aag==
-X-Forwarded-Encrypted: i=1; AJvYcCUdjF2GWLdDM//jKms115X2uXYFfXc0RWSFy69rBEW02N9MzlB1KXx3/RwJ9wAKyfg79FFVKxZZ751wOZ/Od4x3fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT9A+JKH0qjF8T3XuzdKHApFXdYBo2fhWE7pZ0vu6e+T98lzWy
-	hyhFDyTzjEeJ1Hn8+fcJiNXCxizrULgV9iuDzfqcV+gqWskmZkR0Mraz2XfNg73qU7o7IzKDell
-	s
-X-Gm-Gg: ASbGncvJNN8JnHn/06h/2iRIOR2fZU0MjvNPY1J+ay5yN41KFpEaitiIu0wlP+vBg5L
-	Dy0ixwaZ8HkhYpTkUK49xbacHBhDJhXRdSgnO1bXI5w4QiyekYy26TKc20coSsT1ZxaXVCHfkpg
-	6C5h3++JTfSrc0z/uxwjhvV0kw5OimnXYHfwQPmS4AmZ1jxjrZhZYuzbNo8+A/2pdSAu/eCo8ha
-	FFIsfIG0gMuv+DROD8I9nW2CjAkVpAASZLeWLsQ902MneWdApKZl1F8d+EGWAA76tB6SBAyZhqg
-	Zkn8/U6NpbUCy7rLSLB4Mgak48MoXP4=
-X-Google-Smtp-Source: AGHT+IGDxXB1E+X6jTSdESQDd36Tzc/wr84k6EKAU8sGUlvYMhjz/DzYT3hbSvKe0KicE5yIGLmyJQ==
-X-Received: by 2002:a05:600c:3ba5:b0:439:5a37:814e with SMTP id 5b1f17b1804b1-4396e78789emr14566145e9.7.1739626974755;
-        Sat, 15 Feb 2025 05:42:54 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396181026fsm69929005e9.18.2025.02.15.05.42.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 05:42:54 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, alim.akhtar@samsung.com, richardcochran@gmail.com, 
- Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-In-Reply-To: <20250212213518.69432-1-chenyuan0y@gmail.com>
-References: <20250212213518.69432-1-chenyuan0y@gmail.com>
-Subject: Re: [PATCH] soc: samsung: exynos-chipid: Add NULL pointer check in
- exynos_chipid_probe()
-Message-Id: <173962697359.235665.7938168679485045244.b4-ty@linaro.org>
-Date: Sat, 15 Feb 2025 14:42:53 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgVFFKEi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554CEC4CEDF;
+	Sat, 15 Feb 2025 13:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739627066;
+	bh=5X9O1V615LQC2ynrpFns9PJxRgb0MBKRB5TEyBxo1GQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hgVFFKEipKD3T+y8lktbpqhBIy+FGV9xzgSEls0FI4lb8OiLOfXZCD07W+llDFGIJ
+	 HPE0lSbUc7aE9cjJfTZUUD/5SGRrm0PJDxSVQJHQUiSl8zrn0vNYABs8aIgf3O8ZjM
+	 odUGql7krwRTrt90w79JnL8qV29IUbluqrzLG1YHlUi5s7LRZMx9mACIsn3dZgm1qS
+	 4H8+A51dOb2JLmiFG0TyZ1Q6t6JNtYsVfRS6pY0kr4LVe/Kxk0DYTBkY5lFt2rDVkp
+	 BfY5p1ULMiRJCL14vJhIT+22VDaP17i6AjFfBBlIt2SslMzVrcM4HrHnQcXJ1KtGw1
+	 R9ILkXi3/z4JA==
+Message-ID: <9c468342-b5c4-4bc4-b6cd-9f25d2ce99aa@kernel.org>
+Date: Sat, 15 Feb 2025 14:44:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] gs101 reboot updates (DT)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250210-gs101-renppt-dts-v2-0-fb33fda6fc4b@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250210-gs101-renppt-dts-v2-0-fb33fda6fc4b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On Wed, 12 Feb 2025 15:35:18 -0600, Chenyuan Yang wrote:
-> soc_dev_attr->revision could be NULL, thus,
-> a pointer check is added to prevent potential NULL pointer dereference.
-> This is similar to the fix in commit 3027e7b15b02
-> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
+On 10/02/2025 13:52, André Draszik wrote:
+> Hi,
 > 
-> This issue is found by our static analysis tool.
+> These patches update some of gs101's reboot / power off DT nodes to
+> bring them in line with downstream / bootloader / EL3 monitor
+> expectations.
 > 
-> [...]
+> In particular:
+> * an unnecessary property is removed from the DT
+> * the shutdown SMC call is aligned with downstream now
+> * we now implement the requested boot mode as a notification for the
+>   boot loader 
+> 
 
-Applied, thanks!
-
-[1/1] soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe()
-      https://git.kernel.org/krzk/linux/c/c8222ef6cf29dd7cad21643228f96535cc02b327
+Thanks, applied
+(lost b4 tracking so no commit hashes)
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Krzysztof
