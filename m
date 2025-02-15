@@ -1,57 +1,50 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8FF2AF16
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Feb 2025 19:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBBF18A93F;
+	Sat, 15 Feb 2025 08:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739561436; cv=none; b=MJqP3t+bDTBvKwwaFgA9OQtYHfne/TCz9aQZPrQaz5zkZTrW5T7BuW74aTjHTIA1QImuPGzKZPvbYrcdLfNw02vubjJhB8Ln11z+XBZZndSOCF8R1fdGsjCimnPAZh72CpwbT1L9Yybn0j+Wuxf9giudnGsKKTJZ4ZAL0Sfwfdo=
+	t=1739609474; cv=none; b=MGrLKfDtm7h1lqfWwbpMJBLwXq/cg8eiDBC3ZJMsmZW0YoYKPKB9o+MDuIYvB2GcWMhFRuYNZlJIL2WM7nZawxwQcCBvBp8EDpRmkyopUNKNCC52BqMqaJinbSM/qfWe9Gv8hL4W0zkr71qBFE4C90WPPjBBPK9LDGhVNXfkUMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739561436; c=relaxed/simple;
-	bh=tll7QiChnR4Z0P6dJPFYh+IOg4XrPfzt7I/PhYn9m/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=ZMx6qSNBFE/RvQwaangpNQVDNktJl3nCkPCDS2tGd61oygT3nk9fIb0KOISxYLk0Hdi9mHIU0ErpWCiuggvE5jsw9BgDm3Y5nII12IbFxjLpDCOl5DBw7IrJSOTf/txPsoceNW64Oj+i88kVpfghnDAHCWL47BXW38vQrKT00VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A2MuRTuu; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1739609474; c=relaxed/simple;
+	bh=bOL7hyxwdyA5NZF7YWFX1w7MgDLf45Pn8T+oWqiAy80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzZS1Pe5I3yyjM3HyfuqitCWc191AddOmELMcFl2kytrSuV7nEky31t7LoMzEJj1sdlDMQv66gkphx/DAK6Gxj2ar1UdBdcoFShO7tgNx5MVMWOdjCOyVhryrOyfMWx1qz5ljTC9EWY3CE5WpxDUewJky7dXutGk7J7QdDsSRkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j/luwkOS; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A2MuRTuu"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250214193025euoutp0179edc30d4fb0a2d3a7b8c8b30f15136d~kKeZ27Srm2367723677euoutp01b
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Feb 2025 19:30:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250214193025euoutp0179edc30d4fb0a2d3a7b8c8b30f15136d~kKeZ27Srm2367723677euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739561425;
-	bh=AQddq/dEL5k/xrRBPmEqe0CS+ih6MIApenU4d2OGycI=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=A2MuRTuu4ahRzTDk2HUlvMjCoBzKMD5HOQvu3EGRlgFiAZ2asAaeVwmLWzHQgec73
-	 E+ugzYjYYL8r2VdxEwl6Ro024dhdVHpEzsez7b3LOsnPAXQFmd2DZeeUeGBrIHEdOH
-	 8/f+aP+TbqmhNxdAP5gFfBRXtWko1lNBBtz9pKdU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250214193024eucas1p251af6a3ef901ef48f2d639fbfe9f6883~kKeYoxOjE1279312793eucas1p2B;
-	Fri, 14 Feb 2025 19:30:24 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id AA.13.20821.0D99FA76; Fri, 14
-	Feb 2025 19:30:24 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250214193023eucas1p26cdb1079f9847b3bfc9c897718206c97~kKeXUpHXX1280412804eucas1p2B;
-	Fri, 14 Feb 2025 19:30:23 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250214193023eusmtrp1af21e5b448ee7388ba69db3fcf7dbcba~kKeXTzM_O1138611386eusmtrp1E;
-	Fri, 14 Feb 2025 19:30:23 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-2d-67af99d05b42
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 4D.08.19654.EC99FA76; Fri, 14
-	Feb 2025 19:30:22 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250214193020eusmtip1fb59377c383c77449d4cb499844b3263~kKeVQ3ahA0079000790eusmtip1A;
-	Fri, 14 Feb 2025 19:30:20 +0000 (GMT)
-Message-ID: <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-Date: Fri, 14 Feb 2025 20:30:19 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j/luwkOS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739609473; x=1771145473;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bOL7hyxwdyA5NZF7YWFX1w7MgDLf45Pn8T+oWqiAy80=;
+  b=j/luwkOSeWKokaacvlHoaKSz3XIbxKaT6KNpBc5knprsH0FtP37rKKL1
+   XFWJvygAVK6VUJ2te4RxpxNsNc6G1WWDld4wInPhbiKa1COPqs18F8FvX
+   LRV9suf+ry+Zr8HrGUJgckqbO9m9T7i1zVEUVnNTLC3yRedkW2SR52zs9
+   X2MQQg6hfIQKllFzNbWOAuz8wd8Cog7vzgqOLYCjn5DkNYUBZ5D0jh6UI
+   N0U/T9gOBRgqcoQQqv/5M/Sd2kh5fL8ZcW7H0cilsUsBoJBkBay9VuyJ7
+   JPu0zJjZ28oWX0pW5mLmV1eR2cGwmUy/gEY8wDlibnSEsQS8+yiV8dK9Q
+   g==;
+X-CSE-ConnectionGUID: 2yyRVp7eRUmmfqZYf8bZhw==
+X-CSE-MsgGUID: WV4BwruJTpqgc3yytYHkNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57764820"
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="57764820"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:51:12 -0800
+X-CSE-ConnectionGUID: /r+F0jx4RVKMBSVF09lU6w==
+X-CSE-MsgGUID: r0L1deRvR9Cz9JN551mbGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="114287640"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:51:04 -0800
+Message-ID: <84fd4500-a12c-40d6-a532-e2956ed1c35e@linux.intel.com>
+Date: Sat, 15 Feb 2025 16:48:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,226 +52,132 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Vinod Koul
-	<vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim
-	Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, Will
-	McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
-	kernel-team@android.com, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 07/23] iommu/pages: De-inline the substantial functions
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <7-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7djP87oXZq5PN+g/J23xYN42Nostrzaz
-	WKzZe47JYv6Rc6wWO7aLWBxt/c9s8XLWPTaLTY+vsVpc3jWHzWLCqm8sFjPO72Oy2DDjH4vF
-	/z072C3aG06xWRx+085q8bwPKPHpVpzFzjsnmC1WffrP6CDssW33NlaPBZtKPTat6mTzuHNt
-	D5vH5iX1Hn1bVjF6fN4kF8AexWWTkpqTWZZapG+XwJXx+sF/1oILuhXPls1lbGBcrtLFyMkh
-	IWAisflLE3sXIxeHkMAKRolfP1uYIJwvjBInPx9igXA+M0pMOH2ODabl1eKbjBCJ5YwSczre
-	QVV9ZJTo+DCTHaSKV8BOYv+pX6wgNouAqsTCVdvZIOKCEidnPmEBsUUF5CXu35oBVi8skCDR
-	df0V2CARgYtMErvfnAdbwSzQyyyx4cUpZpAqZgFxiVtP5jOB2GwChhJdb7vApnIKhEh0T77E
-	AlEjL9G8dTYzSLOEwG5OiQO3lgI1cAA5LhKd30shfhCWeHV8CzuELSNxenIPC0R9O6PEgt/3
-	mSCcCYwSDc9vMUJUWUvcOfeLDWQQs4CmxPpd+hBhR4lFmxqZIebzSdx4KwhxA5/EpG3TocK8
-	Eh1tQhDVahKzjq+DW3vwwiXmCYxKs5DCZRaSL2ch+WYWwt4FjCyrGMVTS4tz01OLDfNSy/WK
-	E3OLS/PS9ZLzczcxApPh6X/HP+1gnPvqo94hRiYOxkOMEhzMSiK8EtPWpAvxpiRWVqUW5ccX
-	leakFh9ilOZgURLnXbS/NV1IID2xJDU7NbUgtQgmy8TBKdXANKOwxr9Ys/6+61++7YG9jT+9
-	K11LDgWn1W4+fjXYsq6yvfk5u/LzRRpORQ1/XoX5l0/80OZ4693sORPit3160XBuWkvwQo4/
-	TOIFkofDVl+40WYdmXTuuZKTapUje3oK97Xdu9ysD/A5CP58+kbo863of2q2vO+nRYn9k/Or
-	9DlSlKOxcGKuysUPIX+cPGpSSy8K3n92tel2QfPRf6m7FTbuLbbS/sR8yGmN2A3OPzJTzFa9
-	O/BAOfzSEc2bcp5H3i3lmlWuM2FBdfLiH1c3pHPUzeX9cfeP0UqztHorWX5OiQtqJvH5WjIr
-	D5R0J8gsPCxou731qO/2Dk9PVofm+spHapLZbgt/ml2fpPpUiaU4I9FQi7moOBEAVDlLM/UD
-	AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRmVeSWpSXmKPExsVy+t/xu7rnZ65PNzhgavFg3jY2iy2vNrNY
-	rNl7jsli/pFzrBY7totYHG39z2zxctY9NotNj6+xWlzeNYfNYsKqbywWM87vY7LYMOMfi8X/
-	PTvYLdobTrFZHH7TzmrxvA8o8elWnMXOOyeYLVZ9+s/oIOyxbfc2Vo8Fm0o9Nq3qZPO4c20P
-	m8fmJfUefVtWMXp83iQXwB6lZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRv
-	Z5OSmpNZllqkb5egl/H6wX/Wggu6Fc+WzWVsYFyu0sXIySEhYCLxavFNxi5GLg4hgaWMEpM2
-	rGeBSMhInJzWwAphC0v8udbFBlH0nlFi3ddOsASvgJ3E/lO/wGwWAVWJhau2s0HEBSVOznwC
-	NkhUQF7i/q0Z7CC2sECCRNf1Vywgg0QELjNJLO/bxQriMAv0M0scPdTJDLHiI6PEpskNTCAt
-	zALiEreezAez2QQMJbredoGt4BQIkeiefIkFosZMomtrFyOELS/RvHU28wRGoVlILpmFZNQs
-	JC2zkLQsYGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERj924793LKDceWrj3qHGJk4GA8x
-	SnAwK4nwSkxbky7Em5JYWZValB9fVJqTWnyI0RQYHBOZpUST84HpJ68k3tDMwNTQxMzSwNTS
-	zFhJnJftyvk0IYH0xJLU7NTUgtQimD4mDk6pBibOg4ynikIDExhallkKThWcMK360qMIh2+C
-	9Q9jNn9qOLDgmbpbjVz4rN1nr+/x26gjy83dX3XLgenip7tf5U33tDzRLrfnnpcd4WvkfiFv
-	fnIwY9HDc0tUJfpE1YRtXitpHg7/9bJOosPlIP+Mk85BV/PdWKb3J90QfPPPSbpt/5ELHBLe
-	LNVcDErpZ1YsuRdx5IGcRCifQ6iGpM9i/yLbT2JTS3Ya72pbfKLy0cJJlx3tUzp3Scal+bE2
-	GvyJuHT/U6SS+solt3QCVfZvz3s39aJ52SRexq4tags9pT/I305+w7Vzjdk6xiPH7C+utIot
-	Zvzg39x8hf/Qw63fFcouTL6mbNPAHLAt7Ni5MCWW4oxEQy3mouJEACpowR2HAwAA
-X-CMS-MailID: 20250214193023eucas1p26cdb1079f9847b3bfc9c897718206c97
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
-	<CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
-	<20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <7-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 06.12.2024 17:31, André Draszik wrote:
-> gs101's SS phy needs to be configured differently based on the
-> connector orientation, as the SS link can only be established if the
-> mux is configured correctly.
->
-> The code to handle programming of the mux is in place already, this commit
-> now adds the missing pieces to subscribe to the Type-C orientation
-> switch event.
->
-> Note that for this all to work we rely on the USB controller
-> re-initialising us. It should invoke our .exit() upon cable unplug, and
-> during cable plug we'll receive the orientation event after which we
-> expect our .init() to be called.
->
-> Above reinitialisation happens if the DWC3 controller can enter runtime
-> suspend automatically. For the DWC3 driver, this is an opt-in:
->      echo auto > /sys/devices/.../11110000.usb/power/control
-> Once done, things work as long as the UDC is not bound as otherwise it
-> stays busy because it doesn't cancel / stop outstanding TRBs. For now
-> we have to manually unbind the UDC in that case:
->       echo "" > sys/kernel/config/usb_gadget/.../UDC
->
-> Note that if the orientation-switch property is missing from the DT,
-> the code will behave as before this commit (meaning for gs101 it will
-> work in SS mode in one orientation only). Other platforms are not
-> affected either way.
->
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->
+On 2/15/25 01:07, Jason Gunthorpe wrote:
+> These are called in a lot of places and are not trivial. Move them to the
+> core module.
+> 
+> Tidy some of the comments and function arguments, fold
+> __iommu_alloc_account() into its only caller, change
+> __iommu_free_account() into __iommu_free_page() to remove some
+> duplication.
+> 
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
 > ---
-> v3:
-> * drop init to -1 of phy_drd->orientation (Vinod)
-> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
->    CONFIG_TYPEC
->
-> v2:
-> * move #include typec_mux.h from parent patch into this one (Peter)
-> ---
->   drivers/phy/samsung/Kconfig              |  1 +
->   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
->   2 files changed, 57 insertions(+)
->
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index f10afa3d7ff5..fc7bd1088576 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->   	tristate "Exynos5 SoC series USB DRD PHY driver"
->   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->   	depends on HAS_IOMEM
-> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
->   	depends on USB_DWC3_EXYNOS
->   	select GENERIC_PHY
->   	select MFD_SYSCON
+>   drivers/iommu/Makefile      |   1 +
+>   drivers/iommu/iommu-pages.c |  84 +++++++++++++++++++++++++++++
+>   drivers/iommu/iommu-pages.h | 103 ++----------------------------------
+>   3 files changed, 90 insertions(+), 98 deletions(-)
+>   create mode 100644 drivers/iommu/iommu-pages.c
+> 
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 5e5a83c6c2aae2..fe91d770abe16c 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   obj-y += amd/ intel/ arm/ iommufd/ riscv/
+>   obj-$(CONFIG_IOMMU_API) += iommu.o
+> +obj-$(CONFIG_IOMMU_SUPPORT) += iommu-pages.o
+>   obj-$(CONFIG_IOMMU_API) += iommu-traces.o
+>   obj-$(CONFIG_IOMMU_API) += iommu-sysfs.o
+>   obj-$(CONFIG_IOMMU_DEBUGFS) += iommu-debugfs.o
+> diff --git a/drivers/iommu/iommu-pages.c b/drivers/iommu/iommu-pages.c
+> new file mode 100644
+> index 00000000000000..dbf7205bb23dcc
+> --- /dev/null
+> +++ b/drivers/iommu/iommu-pages.c
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024, Google LLC.
+> + * Pasha Tatashin<pasha.tatashin@soleen.com>
+> + */
+> +#include "iommu-pages.h"
+> +#include <linux/gfp.h>
+> +#include <linux/mm.h>
+> +
+> +/**
+> + * iommu_alloc_pages_node - Allocate a zeroed page of a given order from
+> + *                          specific NUMA node
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * Returns the virtual address of the allocated page. The page must be
+> + * freed either by calling iommu_free_page() or via iommu_put_pages_list().
 
-I've just noticed that the above disables Exynos DRD PHY driver in the 
-default exynos_defconfig for arm 32bit. Enabling CONFIG_TYPEC is 
-exynos_defconfig probably is the easiest way to fix this. I will send a 
-patch then.
+nit: ... by calling iommu_free_pages() ...
 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 61e0de4b3d4b..8fc15847cfd8 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -24,6 +24,7 @@
->   #include <linux/regulator/consumer.h>
->   #include <linux/soc/samsung/exynos-regs-pmu.h>
->   #include <linux/usb/typec.h>
-> +#include <linux/usb/typec_mux.h>
->   
->   /* Exynos USB PHY registers */
->   #define EXYNOS5_FSEL_9MHZ6		0x0
-> @@ -394,6 +395,7 @@ struct exynos5_usbdrd_phy_drvdata {
->    * @extrefclk: frequency select settings when using 'separate
->    *	       reference clocks' for SS and HS operations
->    * @regulators: regulators for phy
-> + * @sw: TypeC orientation switch handle
->    * @orientation: TypeC connector orientation - normal or flipped
->    */
->   struct exynos5_usbdrd_phy {
-> @@ -415,6 +417,7 @@ struct exynos5_usbdrd_phy {
->   	u32 extrefclk;
->   	struct regulator_bulk_data *regulators;
->   
-> +	struct typec_switch_dev *sw;
->   	enum typec_orientation orientation;
->   };
->   
-> @@ -1397,6 +1400,55 @@ static int exynos5_usbdrd_phy_clk_handle(struct exynos5_usbdrd_phy *phy_drd)
->   	return 0;
->   }
->   
-> +static int exynos5_usbdrd_orien_sw_set(struct typec_switch_dev *sw,
-> +				       enum typec_orientation orientation)
-> +{
-> +	struct exynos5_usbdrd_phy *phy_drd = typec_switch_get_drvdata(sw);
-> +
-> +	scoped_guard(mutex, &phy_drd->phy_mutex)
-> +		phy_drd->orientation = orientation;
-> +
-> +	return 0;
-> +}
-> +
-> +static void exynos5_usbdrd_orien_switch_unregister(void *data)
-> +{
-> +	struct exynos5_usbdrd_phy *phy_drd = data;
-> +
-> +	typec_switch_unregister(phy_drd->sw);
-> +}
-> +
-> +static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
-> +{
-> +	int ret;
-> +
-> +	if (!IS_ENABLED(CONFIG_TYPEC))
-> +		return 0;
-> +
-> +	if (device_property_present(phy_drd->dev, "orientation-switch")) {
-> +		struct typec_switch_desc sw_desc = { };
-> +
-> +		sw_desc.drvdata = phy_drd;
-> +		sw_desc.fwnode = dev_fwnode(phy_drd->dev);
-> +		sw_desc.set = exynos5_usbdrd_orien_sw_set;
-> +
-> +		phy_drd->sw = typec_switch_register(phy_drd->dev, &sw_desc);
-> +		if (IS_ERR(phy_drd->sw))
-> +			return dev_err_probe(phy_drd->dev,
-> +					     PTR_ERR(phy_drd->sw),
-> +					     "Failed to register TypeC orientation switch\n");
-> +
-> +		ret = devm_add_action_or_reset(phy_drd->dev,
-> +					       exynos5_usbdrd_orien_switch_unregister,
-> +					       phy_drd);
-> +		if (ret)
-> +			return dev_err_probe(phy_drd->dev, ret,
-> +					     "Failed to register TypeC orientation devm action\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
->   	{
->   		.id		= EXYNOS5_DRDPHY_UTMI,
-> @@ -1786,6 +1838,10 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->   	if (ret)
->   		return dev_err_probe(dev, ret, "failed to get regulators\n");
->   
-> +	ret = exynos5_usbdrd_setup_notifiers(phy_drd);
-> +	if (ret)
-> +		return ret;
-> +
->   	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
->   
->   	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+and
 
+  s/page/pages/g in above comments?
+
+> + */
+> +void *iommu_alloc_pages_node(int nid, gfp_t gfp, unsigned int order)
+> +{
+> +	const unsigned long pgcnt = 1UL << order;
+> +	struct page *page;
+> +
+> +	page = alloc_pages_node(nid, gfp | __GFP_ZERO | __GFP_COMP, order);
+> +	if (unlikely(!page))
+> +		return NULL;
+> +
+> +	/*
+> +	 * All page allocations that should be reported to as "iommu-pagetables"
+> +	 * to userspace must use one of the functions below. This includes
+> +	 * allocations of page-tables and other per-iommu_domain configuration
+> +	 * structures.
+> +	 *
+> +	 * This is necessary for the proper accounting as IOMMU state can be
+> +	 * rather large, i.e. multiple gigabytes in size.
+> +	 */
+> +	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, pgcnt);
+> +	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, pgcnt);
+> +
+> +	return page_address(page);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_alloc_pages_node);
+> +
+> +static void __iommu_free_page(struct page *page)
+
+It's more readable if renaming it to __iommu_free_pages()?
+
+> +{
+> +	unsigned int order = folio_order(page_folio(page));
+> +	const unsigned long pgcnt = 1UL << order;
+> +
+> +	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, -pgcnt);
+> +	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, -pgcnt);
+> +	put_page(page);
+> +}
+
+Thanks,
+baolu
