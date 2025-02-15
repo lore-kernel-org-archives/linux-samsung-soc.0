@@ -1,173 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8CF19258E;
-	Sat, 15 Feb 2025 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7191A239D;
+	Sat, 15 Feb 2025 11:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739614077; cv=none; b=G+LbHFT2bDkfZQ8Ep4ebDmiRA34psjrwuuX+S0ExBGuarPyPZ0jFt4s3mt7XD3jWfmVvzASlrNq/GOfvwvFL964xfotkKGIwtjkPDzf8/O2zx+Tcm+2bd1uGW63BKcEMnswpqxKna23q/uwVO44IQnhYjtkfhgs10047roaEwZw=
+	t=1739618848; cv=none; b=jmrAyiX4J8MloF7zjwRfm3pluqTOnOn5+BB280ApuVqKRNUk5COobJTTE+NBmMl5tGd4Lf4aLeHW5QAsYzpJLeybDPL7865Eak326Pvd7bO0ovEVK6VyGQrV7LOQOooiD5+IAZZDpSEmQYphjfOrR267MQMY/hweHClb23RXjss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739614077; c=relaxed/simple;
-	bh=tIDU56jo1s+8ObGKmjKkETRM71pM0ipfljqXskOq1B8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYL4/Pi4I0C+fWEEGI5zm+lyJFLAuPDjd5YvHESwr+EY0xyOhY3DUVAH78mPezyCkZUrpYLZMcCbtgEGx7aL2xtJ3ouPwFDFfAxLmDKfbKA+lmsTpoUeIGHCpjlpn7OL2COdI+ane5BQrba0cWfAtEp7GFCMYVIDliwD+VeiJME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qi/k3+A5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739618848; c=relaxed/simple;
+	bh=wVTyDbsmQoowJxwjm0tMIIltbOCFa4YRjIXh930fzMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ppLwvvQb+K/N1Fd/94kNoHWzT93FL000c4iBS17watKSTFO2PsgzHpKvkIVfgajPOEH7aojZKQsbRPzRMqpWdGThfkT1Fbt+TNx6U0IQkh0uCjnkAEcUE8mMxFmRhhwXOxObRew1QXOGN7dSMbOgl/tSjHCe3rgcgBbk0YJWpBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGY/yNb7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qi/k3+A5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 536A4C4CEDF;
-	Sat, 15 Feb 2025 10:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739614074;
-	bh=tIDU56jo1s+8ObGKmjKkETRM71pM0ipfljqXskOq1B8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qi/k3+A5Xa5039kXxfQKobZt5SEFykpdULmJVuAdf4Ztgd36omY3Lf+bxJhlx/VbV
-	 WRsJpETiz1GYv450e5jyBRJ0e36rg68oYKFoBG11lZUzzgoyBfHdZfgtXurhXNocCt
-	 dDOavZy8T4laQniqN+x2AsMc+C5lJ4t1VjWjKH0pZGZsJFJaLZApzg2Abu6wwbYsqj
-	 39x2PBOWshqbq0xE7dylOxaEeUyaSrgJ85bpdCVQIqfB+kRAzNuV8jPB/1M4iUkZ0f
-	 E++o3Rzp1T3cGznja9cbYRX/irFPEtl2BO//q+2Tbh1CKpAmMAjBMfKN3wJQw7yUvq
-	 QYrckA0bbRP+g==
-Message-ID: <7c0dcf24-187c-4dc8-aa4a-4a8f814775b2@kernel.org>
-Date: Sat, 15 Feb 2025 11:07:45 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGY/yNb7"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43967004304so11084425e9.2;
+        Sat, 15 Feb 2025 03:27:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739618845; x=1740223645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yVS2DxvHD6yUudCrkjHs6rrK9Ytf0bOkYEFiIp/66CA=;
+        b=WGY/yNb7lGiP5BR8O47jmx0u8G6bVh+OOZ2MgLAZkOHNr4Xve2YHIBFdzHYcNgndYR
+         BTaZWayyGNmLY/Mftj6L6r5NPkKdreIk/IwKGRxB04IYgfOuTvukR26zNOjtVpe6d1sN
+         L90V0K6LcV9r+g2ExfozROsgJWHJtSIQ9b9RtCoVExllIqKdyNZrLTSn5Y2nWUFQ/NM7
+         XgGzvzL8hcfoUwiw3OEvRZ+thPAtAtfEteY3MeG0l2oEl6gDQpV6SP+Rju9l4luA/DuZ
+         N1nQrcQ13MRNJ/Sd0G+7VH43Jy1Z7lCvogGQ9MJTLFWsNx326VHJDNt0z4d0CyRnaexu
+         4qdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739618845; x=1740223645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yVS2DxvHD6yUudCrkjHs6rrK9Ytf0bOkYEFiIp/66CA=;
+        b=XNo5srxSw51RmlOJyqCLwUGtrY8GehE2xU+pnbW/Rc38SXDd5erKMY32vbts9I6UqE
+         sgSell0TH4yu+cP4ikMwnkv7H1PlJsoAIuxPxb3DR3VYkzC1+NBqZWZW2cUMMECfKyPd
+         4MHodZhnuFS2+SnyXm3ICuPx12TtB2rytKr38VYqNXbI11wedzwbvFYphEpqvNojoAtV
+         k/BtaMZMCzVg1zWb9W9u4FkQmbPMG3S98HM5iVBPEuSBImUcHpIkkN8x2ExXMhqXfiDK
+         8U2hOpmLfbHN56IUv4/AkuhdxHYJm75lt/pQ6lPS5lYQG53oruJZvxr386Mk4FfazR91
+         vfXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh+NlNSWDCP/7ytMU9U+zGuR3o9ctqJYHG63gVdz/vXesG75DDQeLhO9n8Rit0j8rvs7YX0K2FKcxbNf7g@vger.kernel.org, AJvYcCXqT9ZDC7qFk/qnEGky9zKCu/yhqMfR8R7bowWmYBmKb/ubGWaFH3dSsLhqi/N/yzlIhq7oNJ8eudFk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoqyOJlKJYTr94gRg3BfLN2H6bqNauEtfrMbcditm5+jnI9JZn
+	AyBGoz59wriHAl52RL5sZ0mnODsqkjSynIMTwZKBzgPhP3qngXRM
+X-Gm-Gg: ASbGncuQAAIFi/uT96VgZzYqsbJW2M8sMIzlxQ/UcObZ43lauPg6TSW8+2+Et0vOygS
+	IAId93dnv2h+75yAyMWXqcMKTdB9d2rtWdgec/t6L3K5VKNmpGULGmWXxf3F4o/+Iol1KUHUA4T
+	TtqK+pv5ZyZbNnsECh68EQPadJDdXOAceYDyw36L9Dr81k3+G8DfR7u2gqvoG6M5Em/QUSaPngA
+	3XYvoY9YSpmhQNBflogiAWmIDDAjKuKMU5lhqlt8kfQ9Ne2IuK4H9JvBTNHDR+15vo83YcKKxrK
+	XxhoyPt086LZebuv98dZ+5zI0vYv//SWkHF5AJxK0v3PvlC6Fihr99563Sc2fuEKtFI=
+X-Google-Smtp-Source: AGHT+IHqBZSYw3B766xIjrp2tq1OGtdCNjggCpIhHlT6iS+NJOby53CON5BZSmUwfo5u1sxNGPAgvA==
+X-Received: by 2002:a5d:6da1:0:b0:38b:d824:df3 with SMTP id ffacd0b85a97d-38f33f2e90bmr2976717f8f.24.1739618845304;
+        Sat, 15 Feb 2025 03:27:25 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b410dsm7018841f8f.5.2025.02.15.03.27.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 03:27:24 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] dt-bindings: soc: samsung: sysreg, pmu, chipid for 2200
+Date: Sat, 15 Feb 2025 13:27:12 +0200
+Message-ID: <20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
- <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
- <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/02/2025 20:30, Marek Szyprowski wrote:
-> On 06.12.2024 17:31, André Draszik wrote:
->> gs101's SS phy needs to be configured differently based on the
->> connector orientation, as the SS link can only be established if the
->> mux is configured correctly.
->>
->> The code to handle programming of the mux is in place already, this commit
->> now adds the missing pieces to subscribe to the Type-C orientation
->> switch event.
->>
->> Note that for this all to work we rely on the USB controller
->> re-initialising us. It should invoke our .exit() upon cable unplug, and
->> during cable plug we'll receive the orientation event after which we
->> expect our .init() to be called.
->>
->> Above reinitialisation happens if the DWC3 controller can enter runtime
->> suspend automatically. For the DWC3 driver, this is an opt-in:
->>      echo auto > /sys/devices/.../11110000.usb/power/control
->> Once done, things work as long as the UDC is not bound as otherwise it
->> stays busy because it doesn't cancel / stop outstanding TRBs. For now
->> we have to manually unbind the UDC in that case:
->>       echo "" > sys/kernel/config/usb_gadget/.../UDC
->>
->> Note that if the orientation-switch property is missing from the DT,
->> the code will behave as before this commit (meaning for gs101 it will
->> work in SS mode in one orientation only). Other platforms are not
->> affected either way.
->>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->>
->> ---
->> v3:
->> * drop init to -1 of phy_drd->orientation (Vinod)
->> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
->>    CONFIG_TYPEC
->>
->> v2:
->> * move #include typec_mux.h from parent patch into this one (Peter)
->> ---
->>   drivers/phy/samsung/Kconfig              |  1 +
->>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
->>   2 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index f10afa3d7ff5..fc7bd1088576 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->>   	tristate "Exynos5 SoC series USB DRD PHY driver"
->>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>   	depends on HAS_IOMEM
->> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+Hey folks,
 
-BTW, this syntax never made any sense - it did not work. The optional
-dependency is expressed as:
-	depends on TYPEC || !TYPEC
-
-but what it epxressed is that it is possible to build it without typec
-only for compile test, which is odd if this was meant to be optional.
-And further code:
-	if (!IS_ENABLED(CONFIG_TYPEC))
-
-clearly suggests this should be optional.
-
+This patchset adds support for chipid of Exynos 2200, as well as
+documents sysreg, pmu and chipid compatibles for that SoC.
 
 Best regards,
-Krzysztof
+Ivaylo
+
+Ivaylo Ivanov (4):
+  dt-bindings: soc: samsung: exynos-sysreg: add sysreg compatibles for
+    exynos2200
+  dt-bindings: soc: samsung: exynos-pmu: add exynos2200 compatible
+  dt-bindings: hwinfo: samsung,exynos-chipid: add exynos2200 compatible
+  soc: samsung: exynos-chipid: add exynos2200 SoC support
+
+ .../devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml    | 1 +
+ .../devicetree/bindings/soc/samsung/exynos-pmu.yaml          | 1 +
+ .../bindings/soc/samsung/samsung,exynos-sysreg.yaml          | 5 +++++
+ drivers/soc/samsung/exynos-chipid.c                          | 1 +
+ 4 files changed, 8 insertions(+)
+
+-- 
+2.43.0
+
