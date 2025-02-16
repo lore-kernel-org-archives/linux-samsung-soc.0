@@ -1,154 +1,114 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D115319CC0C;
-	Sun, 16 Feb 2025 18:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F7919A288;
+	Sun, 16 Feb 2025 19:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739730365; cv=none; b=FFyJhGQGz+itneIXl+AL3T4xAoYJwjqwLsLu+Ba8OptN+qDgHCZll9cUozi+rPihKgmQISm1B/pGI1WAt0kcmGSzfLetRr7P2EZFoN1ganlGBr/CeNW48lkpXIFEOhy+odqnkjWSeK++FGfBPL9Qozb6MHXfHpXQmgwzxiqyyIY=
+	t=1739735949; cv=none; b=Q0wcfab0rRUa4Fq34qxf91fDwYVS4zk8RtEm3erU4HgtXUDeGHIhucDflcfqxu0KdWWqNu/J4Fyj5vLiokZ2InOJT9mX0gidLc0EcpwzWiQL0xfSdn0IXG1YFiAzOgckOUdndozbzeXpC8rltrpzxWFn0eMlYUYJCYNgrIFiVRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739730365; c=relaxed/simple;
-	bh=wr+XCAgPgbGifaV9zuo3NuEbKxQ2q/ycgpn4NRzl2+s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Az896elNg31gppilXasUnBEmP8iob0x1lEqLCOQZigm+oUTXp8Gda7g7cAGp0vzeiQ3cpIAFmL39Gu4z/tjLJ1QdfaRKIR4462uSV1O1zCJDLtXQEj5MxrJOD2CfrwWojMJ21m204dUThswS3AGCbRj9YFDV4wNG3IhnZqTHko4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6MrxurJ; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1739735949; c=relaxed/simple;
+	bh=cTMuuylMI862Cc++KtvKBCfdFHJAlVM1DcH159YbnMk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nWSJL+wH/Svzsjld+8wEyLX6RImeihHxJVqe2XsuGcZHrpmmaIRnyKBcQtEUyGKAUBLrZ3zsoW3PjmEFbn0sV0jFPADkfy4xNG9Auu+7bijjf7n3JO/CFIU9nw3+skZ5jy2wx7ZLc1/x2cBr9N6jzXL8WlOuhwjSAVUzcHWcjgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpGsK7HK; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6MrxurJ"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f2b7ce319so1919510f8f.2;
-        Sun, 16 Feb 2025 10:26:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpGsK7HK"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2211cd4463cso10391905ad.2;
+        Sun, 16 Feb 2025 11:59:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739730362; x=1740335162; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G6THbQSx/8fAHe9PzsDdfiskI2J1Cdkq06AblUO8EgA=;
-        b=N6MrxurJjN8z8buRiZs72gexX7Um31Ns03LeMVyANjz9u0yCaVste/cQ0ZGuRsae9t
-         dD0jVzVSVR+XU10gk6GjDqPIvNaGAK3nybcgfYGJ5trlixnMnfyaAJP8tUM8X6ttI0rE
-         bHDDc4cbymx71lXCIzXq7GcpEp6NaY9hkWVCX8CkfbVvtryqCJIoQlNb32zyO/XmMppJ
-         jzUy4zaQUeVFqTI4Ek2EOZ23tUdUDwFYGbpr+dvR7mLEfiaiWWGNzSl+Or8j/VfBtDca
-         Ub25IXCz8wrgo1JwxfAaeJtsMe6zIonkoIU6F3+n0m0Tkq8CoeCXElFWNwmVtVRSfsw+
-         EDZw==
+        d=gmail.com; s=20230601; t=1739735947; x=1740340747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Re0gzQApO9EfPmEDRqpFe0xqY2fs/XQmv0KA/vyOfOw=;
+        b=KpGsK7HK3GGN43z0XTz3TXh72HZF3RICh75IhbHIfUuKUmcWdMUfIvsqVOv46eqmXo
+         MnoIbjmev1wI+8ZpHAPTPy/1CCM6Z7019WCIFgxu8vmYLGq5j5zAZH9KzcYVylX2Jcmh
+         vYN5LEm+vlDJj2XcmjRj2WVAGRlXu7m7DP7QtTKfZIq/1icRQHqZToCgFnGwe6dyyk6M
+         sJs22A3Rr9xI7zEDTSHr5+TuaCte/iYIy/J9olEHP+TL0Pe67acvMThlcSLAMbymDu97
+         jx+jtqI4SCf4d0aC0hAJtOeH66NJ4oW/upbzPD3HNhNEcvl7jv+95jgvWrXxSEkr4ZnS
+         PGgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739730362; x=1740335162;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6THbQSx/8fAHe9PzsDdfiskI2J1Cdkq06AblUO8EgA=;
-        b=IkoxBRo4PDws3lQYmska8SR/BbUcC/zzv4soIPB6DE6aF7Ygc3hJEy9TsJSxEvoYWc
-         ZNA8k2wMVNIXT3yBgZWH5BYpAvqPSaFWCzCSRWasuBGPl/Ispl8aRL33UiSmEdM9S7fX
-         wp8psA+IM5iXxzI8CovmKMnQQUHMnJESA+k4jllVaeAZG4kuOznHzP1vuD4gC/xSyUuV
-         DSN/mICzDqe1OxvregSr2NWPFaLrTj8j25oCtMUX/Z3glQBIoGhx2nq2hYq1UfnRRNzK
-         MiN8oyskz2B5fZB9mc45M1onUoqUKlx/he5Osz30cCuOnRFCCXD1hkDoQ18cTec1No+l
-         R76g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxr8XcJaIrSYbbHed8qWlP1k+Nudd8K22BRZkskQQeAHOID67aIa0yNQ+Ok9/kw0b9RNL+I7PQXHSZ@vger.kernel.org, AJvYcCWc7OHeyHpHobzwcbJEheGEv0Kykze73FSHXb2cVBeQx+g62ztRH0s96FggqxKJAfopEiHYxwCPZErNKw1nw7Btfes=@vger.kernel.org, AJvYcCWfNG0M7deqsPIv4qN5kEO3ftCi0eEwu2GBXJht6PCaAOoXQhNY9LNuQeE6+cW49M5CWDerGcCt0Kb8FFDI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo5KjupfA9/F2iLKnngsdttBcHfWPlGaLGGxJtdfeNhUe7UFMQ
-	HGNKZYHp4jtyoBg8n+pOUjSxrPRFPcUA6+GhxuNsV0mpnyIvJsKd
-X-Gm-Gg: ASbGncuieaXeU6S+UPmx9kkdTgEvHpdzkWeTpvxIqFsGv+EpWFLE6cqjitHInQ3kyxK
-	k538sSBUwk6SgklF6lAW93Ss2mcKV018prtqVvayMNVGcJpJ/Z7Tjv+CPRV1U/u6VSTQpl4VboY
-	SEc5PA3tQ1CDF2hn16VSTvE9GCdW2N2mTsZl3WAiBj2OhoByTzq0npBoB0d6pdBZFZnRWkbM3Nv
-	kmqASqm3Or206qrDx8g+/tMUECM2BwhOMKz/umtiiiSQjGxQE0jsvbaJ4nVkH3Kgvx/PuTA8n4X
-	/bUPgm+r4XWZgLXXJhINUxDh4FVv4vxr20rwq/o2rnSu5UragrNs0n8FXeibz7AK54kfsA==
-X-Google-Smtp-Source: AGHT+IGr42oNfHQVVm7EhzTuFuuHWgflwzxpqf7PlmDhyAn8X5YOs8yIU+uV1nWQeu6T0SPpjYT2CA==
-X-Received: by 2002:adf:f9cc:0:b0:38f:231a:635e with SMTP id ffacd0b85a97d-38f33f2c2cbmr6494370f8f.25.1739730361813;
-        Sun, 16 Feb 2025 10:26:01 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7df2sm10192625f8f.84.2025.02.16.10.26.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 10:26:01 -0800 (PST)
-Message-ID: <aede22df-8930-4854-8269-6cb12b8fb2b8@gmail.com>
-Date: Sun, 16 Feb 2025 20:25:59 +0200
+        d=1e100.net; s=20230601; t=1739735947; x=1740340747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Re0gzQApO9EfPmEDRqpFe0xqY2fs/XQmv0KA/vyOfOw=;
+        b=I00VkLfIWwrVeVnSSU8k4LxWSyjYP/yOt4CYknciYqRjAPNjjkiRThnVKzwRhoP9DR
+         u3Z8K/WlaIsQG1QC/+4VZiJViOxM/3wjXiojxoSWNXrK3BxHoh3QvoddKVHQ9UMMsVxq
+         PW+SJk+Csb27jlnxHr9KbV5jWRLJPnSn7W4C6sFDQxvyKN4/KB+BS4tBMJbWGfjJs1Qs
+         kiaTUUBSPxXbA1VfGwiDepQo06E1kD6SS5788Lc+WM0G3P8W0+NxupexeyNyFSuuRDbP
+         oOIv7fkGhcTWWPyIP/FP5t5TeTmL14fLbfBA4wLcjXQXye1cJx1JfTJgUQ70MizK58GE
+         kW+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVN5+0eyuICYf4he2YhjX2kUF9YvCv9OXB1N4yrKeGRTbFHUpsJ5tX2h4cJpJ2rUJ2mC6VP2bKjEi4=@vger.kernel.org, AJvYcCWUfgn/T7eHBEwxn0cgQ0MFV1TnuRTnH5YvvqaLVFp4sVEMwqqP1HDTIP1NBCkrF7wgBBZUdy6sghutNYmK3DMY2hA=@vger.kernel.org, AJvYcCX4tCxB9iXaN8OQsXeHJMdUL1qJ34X4gpmpuIRTcupvCDKVtc8Lz1h/cZiVYDxkIVrRyLcI7+awvFBaODU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUEhp4VJxaqKYnf57g1/AEgZXloSI0moz1ElxgjmFIqxVp16Fi
+	EAg4Fomz5ewmKQLn42lUbC91eS2yWEqMt4gNGGhUEsehVLjbgfyM
+X-Gm-Gg: ASbGnctiMKCeMX/ohyJqorYA8VSLAsTLszsup1M5ENKkpTmur/MohZDgmHNkXP8yTNU
+	wjmZxKC8y6Ml7ykkgqsRk8opkFPQWv/TTxb+44wV8rUpr6YnVmhhnxuvpTLxKRchY8vSQiAD7sM
+	d+/HlO8daV8WH39MhY2MSZvGCO96ToXskxAlSBdpP5uaSXrnFsHLzQIrSWxgzvMmqk71ZqzSH2Y
+	x25dx+Aopj1z5C7lYTGkwiH2sEFSMYTexrEikAoX2eiG5Eb3vo7lpma2FlRhiqkR5pNWhxUbtvo
+	HI5W6v9mTfO8ZOc6K8sXfswj/hEg+Q==
+X-Google-Smtp-Source: AGHT+IFpRIUUjMumU1yZigYYXeQpl6ouiiG6kA3Wzy5akHaiQ9Q9WMcDvpoWIzUd5821ktni1tvZvw==
+X-Received: by 2002:a05:6a21:b97:b0:1d4:fc66:30e8 with SMTP id adf61e73a8af0-1ee8cb098cbmr11194774637.10.1739735947571;
+        Sun, 16 Feb 2025 11:59:07 -0800 (PST)
+Received: from localhost.localdomain ([110.44.101.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73265098570sm3023559b3a.22.2025.02.16.11.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 11:59:07 -0800 (PST)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-pm@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
+	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v3 0/4] Exynos Thermal code improvement
+Date: Mon, 17 Feb 2025 01:28:33 +0530
+Message-ID: <20250216195850.5352-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
- <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
- <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
- <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
- <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
- <065ea296-480c-4ac4-bb4a-0fc2915b59f1@kernel.org>
- <cc6fc19e-cdcb-42bb-ba68-555cb8a9cbf5@gmail.com>
-In-Reply-To: <cc6fc19e-cdcb-42bb-ba68-555cb8a9cbf5@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/16/25 15:57, Ivaylo Ivanov wrote:
-> On 2/16/25 15:19, Krzysztof Kozlowski wrote:
->> On 16/02/2025 10:51, Ivaylo Ivanov wrote:
->>>>>>  You need to
->>>>>> integrate the changes, not create duplicated driver.
->>>>> I can do that, but it would be come a bit cluttered, won't it? Depends on
->>>>> if we want to follow the current oem-provided initialization sequence, or
->>>>> try and fully reuse what we have in there.
->>>> I think it duplicates a lot, so it won't be clutter. We have many
->>>> drivers having common code and per-variant ops.
->>> So the approach to take here is to make a common driver?
->> For example: one common module and two modules per each soc, because I
->> assume some per-soc stuff might be needed. But maybe even these two
->> modules are not necessary and everything could be in one driver.
-...
->
-> So, Exynos2200 has a much simpler eusb initialization sequence than what
-> is present in mainline for QCOMs. I still don't really think the drivers
-> should be merged, as we aren't really duplicating code per-say.
->
-> I've already started working on merging them, and my current idea is to
-> not redefine the registers once again for 2200, but rather make an enum
-> that defines if the SoC is a QCOM or EXYNOS, and select the register
-> offsets dynamically
+Hi All,
 
-Never mind. That's a bad idea - after more digging way too much bits differ
-not just the register layout. I'll implement the init/exit sequence in the
-qcom driver separately. Sadly I can't reuse much code.
+This patch series is a rework of my previous patch series [1],
+where the code changes were not adequately justified.
 
-Best regards,
-Ivaylo
+In this new series, I have improved the commit subject
+and commit message to better explain the changes.
 
->  - similarly as how I did with USIv1. If a register
-> offset is not present, it'd just not do the write. My guess is that this
-> will make it work with the qualcomm init sequence as well, so it'd result
-> in even less redundant code (apart from the eUSB tuning, which can be
-> omitted for now).
->
->>> What about the current modelling scheme, as-in taking the phandle to
->>> the usbcon phy and handling it?
->> What about it? 
-> As I said in the commit description, I'm passing the USBCON phy as a
-> phandle to the eusb2 node and enabling/disabling it when needed. I'm
-> not 100% sure it would be adequate to include that in a common snps EUSB
-> driver, as it seems to more of a quirk with the exynoses. But then how
-> can I model it so that it's correctly described according to how the
-> hardware works (as-in usbcon "muxing" between child phys, in this case
-> eUSB and snps USBDP combophy)
->
-> Regarding repeaters, I still don't have the TI repeater implemented.
->
-> Best regards,
-> Ivaylo
->
->> Did you look at the bindings of qcom snps eusb2? Are you
->> saying you do not have here repeater? If so, then this phy phandle might
->> not be correct.
->>
->>
->>
->> Best regards,
->> Krzysztof
+Tested on Odroid U3 amd XU4 SoC boards.
+
+[1] https://lore.kernel.org/all/20220515064126.1424-1-linux.amoon@gmail.com/
+[0] https://lore.kernel.org/lkml/CANAwSgS=08fVsqn95WHzSF71WTTyD2-=K2C6-BEz0tY0t6A1-g@mail.gmail.com/T/#m77e57120d230d57f34c29e1422d7fc5f5587ac30
+
+Thanks
+-Anand
+
+Anand Moon (4):
+  drivers/thermal/exynos: Refactor clk_sec initialization inside
+    SOC-specific case
+  drivers/thermal/exymos: Remove redundant IS_ERR() checks for clk_sec
+    clock
+  drivers/thermal/exymos: Fixed the efuse min max value for exynos5422
+  drivers/thermal/exymos: Use guard notation when acquiring mutex
+
+ drivers/thermal/samsung/exynos_tmu.c | 78 ++++++++++++++--------------
+ 1 file changed, 39 insertions(+), 39 deletions(-)
+
+
+base-commit: ba643b6d84409e8a9057d5bdd6dd99255b1a88fe
+-- 
+2.48.1
 
