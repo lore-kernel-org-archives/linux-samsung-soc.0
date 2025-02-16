@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BD5290F;
-	Sun, 16 Feb 2025 09:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42737197A7A;
+	Sun, 16 Feb 2025 09:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739698936; cv=none; b=hsb2huDcJEiMbZIOg4dT19PGhhB2nXRFX5eanreHTfSgCjCGgBDXw5bNxWrZJY5eM+DGMN2q7ppxFRfoCZTcO0qMaj5oD4DgFkWZ6ZDTYOjIxo5THYQZPbum8S5wc6mFXavxAIKr7nPTM18G8d2gzd5QULX9G5dgAaGdwtzwWC4=
+	t=1739699056; cv=none; b=gjjk6XFKez8J6FH/UVaMrW7MpMVfLhdGEdJq7XuUkmoydMWxY4/9cazFq5E3MRA/8R4VFCa0ESBUGz/zz2D26f0otDN3OTdoDpCaM3bzmFMtwk5utxFNUw9GjxTgKiy8FDEwcBMJj3lZ3qKvceNhnxszdKf0kPWWYQdRRzA/z5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739698936; c=relaxed/simple;
-	bh=yPuBCMN9XIdBvxrumsPxF5C26IdTv+mfG7ZX3zZkuFY=;
+	s=arc-20240116; t=1739699056; c=relaxed/simple;
+	bh=zD0KT9CZGcw7t13T9u3q2BqVesbZ0W0Wa6rgYZKhLmA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uWcQa8EH1AvVfW5j7BnZSU09WJtyOq7kq3yjXjb4CkXuV3EKT4xVAazrZ9mHqNpcNw5ujr9VN4ywpJOzUp6t3Zbqmq87gBSBgqjmHUqcsARtIkiEgHeHr8y8wUEdRqs95o1Jxzt6RxXECx5PHxbJ1+nk1QuzBkx/ckD0ax/B5zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjst3Uod; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qk72vfm95IeF3u1rbOoxpcRmtEfzR9W9xT/WyPk3vfTOr59Pny6mQsL0+B3yKuZxSCCTPGz+3uEXfwudCSw+Yqj/m8QGTH8e4O7AusSn8InK79rsi8t3CMCdWoj9pbSGt2VSmaq6W9QCOuYAevb9QKsGXdyhfrmPkRoQ1S57Xzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFbKd6S/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjst3Uod"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE51C4CEDD;
-	Sun, 16 Feb 2025 09:42:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFbKd6S/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8BFC4CEDD;
+	Sun, 16 Feb 2025 09:44:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739698936;
-	bh=yPuBCMN9XIdBvxrumsPxF5C26IdTv+mfG7ZX3zZkuFY=;
+	s=k20201202; t=1739699055;
+	bh=zD0KT9CZGcw7t13T9u3q2BqVesbZ0W0Wa6rgYZKhLmA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hjst3Uod31p29bdXJF46wjboMwy7VAccbIbkN2SEXbtG5KYbQeZ9IDhG/pCqdl3aM
-	 qqRbvN3mc+KkDkODLopTCA/CkBLZrLQIA8e3DFamaFrbCzbgrGzPfV/VBu0pVwlDuI
-	 Xw/AEATN8OG3cfg8XstDFiDHVOqDEirYdNfseozYvHGtElsy+IiaeMTM4Qxsj0lgp7
-	 baFWpaMDgWugc2+1jR/QipKxJRI3k/0MG3QIWiOA6XvjwW6e0NpDATjkKeaVu+9oqA
-	 M/Qm/r8cvvkn7GJiGHApUxKdQVkgWXOZajLQhsPCUYaWRrBM56cBZi04WDbuWK9HCy
-	 N98RWxIV9niAg==
-Message-ID: <23e8f626-e512-4e80-b6b8-8ff073bd37e6@kernel.org>
-Date: Sun, 16 Feb 2025 10:42:09 +0100
+	b=UFbKd6S/vwLqDQywKStuwPzw8ZvHttgL+NliLzZHxFxnFyX9gqse06lNgH1ZCixPN
+	 jeEOJmEQnjSy6ShWpLf+4s3l/6RtyySfPuY5to3R747CykItS6lV0SY1eT3eEg10oQ
+	 uABtZFs3CKsBBCOGRKgQ1Gf9hGBy4DN+4gBEEliQ8eCJV52PXAdCAemOERqacZao0m
+	 WVKMpK32v04pFq6wI5ZxrZE3Dhxl9CpzXKncjIFG6OG6gIKy3CR0nW7NiX94JurHqH
+	 aC7SHlW+W1TdUTePxORhnxRWOO7rjwQCl2zchxPOBPZuwrYlu4cX0NscGZW6oYY5KG
+	 3z3OAgL22RWGg==
+Message-ID: <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
+Date: Sun, 16 Feb 2025 10:44:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Fix broken USB on Exynos5422 (TYPEC
- dependency)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
  Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
- <bc292f121afaacb29fdc7d600c72cb3008b6b56a.camel@linaro.org>
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
+ <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
+ <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,90 +93,94 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <bc292f121afaacb29fdc7d600c72cb3008b6b56a.camel@linaro.org>
+In-Reply-To: <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 15/02/2025 17:20, André Draszik wrote:
-> Hi Krzysztof,
-> 
-> On Sat, 2025-02-15 at 10:41 +0100, Krzysztof Kozlowski wrote:
->> Older Exynos designs, like Exynos5422, do not have USB Type-C and the
->> USB DRD PHY does not really depend on Type-C for these devices at all.
->> Incorrectly added dependency on CONFIG_TYPEC caused this driver to be
->> missing for exynos_defconfig and as result Exynos5422-based boards like
->> Hardkernel Odroid HC1 failed to probe USB.
+On 16/02/2025 10:41, Ivaylo Ivanov wrote:
+> On 2/16/25 11:26, Krzysztof Kozlowski wrote:
+>> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
+>>> The Exynos2200 SoC uses Synopsis eUSB2 PHY for USB 2.0. Add a new
+>>> driver for it.
+>>>
+>>> eUSB2 on Exynos SoCs is usually paired alongside a USB PHY controller.
+>>> Currently the driver is modelled to take and enable/disable the usb phy
+>>> controller when needed.
+>>>
+>>> The driver is based on information from downstream drivers.
+>>>
+>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>> ---
+>>>  drivers/phy/samsung/Kconfig                   |  13 +
+>>>  drivers/phy/samsung/Makefile                  |   1 +
+>>>  .../phy/samsung/phy-exynos2200-snps-eusb2.c   | 351 ++++++++++++++++++
+>>>  3 files changed, 365 insertions(+)
+>>>  create mode 100644 drivers/phy/samsung/phy-exynos2200-snps-eusb2.c
+>>>
+>>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+>>> index e2330b089..f62285254 100644
+>>> --- a/drivers/phy/samsung/Kconfig
+>>> +++ b/drivers/phy/samsung/Kconfig
+>>> @@ -77,6 +77,19 @@ config PHY_S5PV210_USB2
+>>>  	  particular SoC is compiled in the driver. In case of S5PV210 two phys
+>>>  	  are available - device and host.
+>>>  
+>>> +config PHY_EXYNOS2200_SNPS_EUSB2
+>>> +	tristate "Exynos2200 eUSB 2.0 PHY driver"
+>>> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>>> +	depends on HAS_IOMEM
+>>> +	depends on USB_DWC3_EXYNOS
 >>
->> Drop incorrect dependency and rely on module to be reachable by the
->> compiler.
+>> How does it depend? What are you using from DWC3?
+> 
+> Can drop, I guess.
+> 
 >>
->> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Closes: https://krzk.eu/#/builders/21/builds/6139
->> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
->> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> +	select GENERIC_PHY
+>>> +	select MFD_SYSCON
+>> Where do you use it?
+> 
+> Remained from USBCON driver.
+> 
 >>
->> ---
->>
->> Patch for issue in linux-next
->> ---
->>  drivers/phy/samsung/Kconfig              | 1 -
->>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
->>  2 files changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index 7fba571c0e2b..e2330b0894d6 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -81,7 +81,6 @@ config PHY_EXYNOS5_USBDRD
->>  	tristate "Exynos5 SoC series USB DRD PHY driver"
->>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>  	depends on HAS_IOMEM
->> -	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+>>> +	default y
+>>> +	help
+>>> +	  Enable USBCON PHY support for Exynos2200 SoC.
+>>> +	  This driver provides PHY interface for eUSB 2.0 controller
+>>> +	  present on Exynos5 SoC series.
+>>> +
+>>>  config PHY_EXYNOS5_USBDRD
+>>>  	tristate "Exynos5 SoC series USB DRD PHY driver"
+>>>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>>> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
+>>> index fea1f96d0..90b84c7fc 100644
+>>> --- a/drivers/phy/samsung/Makefile
+>>> +++ b/drivers/phy/samsung/Makefile
+>>> @@ -14,5 +14,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
+>>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+>>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+>>>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+>>> +obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
+>> Entire driver looks like repeating existing qcom-snps-eusb2.
 > 
-> This line ensures that PHY_EXYNOS5_USBDRD changes to M if
-> TYPEC is M.
+> It's the same IP, but implemented differently on a different platform. At
+> the very least, the register layout is different.
 
 
-I know what it does. But it is not the correct way to express optional
-dependency. COMPILE_TEST makes no sense here. Unless this was not meant
-to be optional dependency, but then it is wrong because none of older
-(or many other) devices depend on typec.
-
-> 
->>  	depends on USB_DWC3_EXYNOS
->>  	select GENERIC_PHY
->>  	select MFD_SYSCON
->> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
->> index ff2436f11d68..e8a9fef22107 100644
->> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
->> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
->> @@ -1456,7 +1456,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
->>  {
->>  	int ret;
->>  
->> -	if (!IS_ENABLED(CONFIG_TYPEC))
->> +	if (!IS_REACHABLE(CONFIG_TYPEC))
-> 
-> On arm64, the defconfig has TYPEC as module (while PHY_EXYNOS5_USBDRD
-> defaults to y above), and therefore all following code is becomes
-> disabled with your change on arm64.
-
-In terms of defconfig, this could be fixed as simple as changing it to
-module. This should be module for arm64, anyway.
-
-In terms of users, that's indeed tricky runtime debugging issue, so
-probably we need separate USBDRD_WITH_TYPEC symbol.
+I checked few registers, looked very the same. Same blocks from synopsys
+have the common register layouts.
 
 > 
-> Can we find a different solution to unbreak arm32 and keep arm64
-> defconfig working as intended?
+>>  You need to
+>> integrate the changes, not create duplicated driver.
 > 
-> Cheers,
-> Andre'
-> 
+> I can do that, but it would be come a bit cluttered, won't it? Depends on
+> if we want to follow the current oem-provided initialization sequence, or
+> try and fully reuse what we have in there.
 
+
+I think it duplicates a lot, so it won't be clutter. We have many
+drivers having common code and per-variant ops.
 
 Best regards,
 Krzysztof
