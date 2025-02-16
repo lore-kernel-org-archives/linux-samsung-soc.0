@@ -1,187 +1,110 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9B290F;
-	Sun, 16 Feb 2025 09:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA914B959
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Feb 2025 10:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739699944; cv=none; b=FaTkavjcNv7+SaGz0fJyXBfIarpiMEMDriOhff0+dTymrbfWNp1IjZn+k5V8/6aiF2AgNwvneeYoiFhVHiBMeCdQElz+16gMIUG8oonniFMoxH9wRKp+TEsLw7fqTr2kzLZl1AksdNgph66LkrrIXis7mvdRSV+/ENqhRJk95PM=
+	t=1739703589; cv=none; b=A1qWbJzr8gCMyufgD7aUHpD9wFG2SlVNskmma3KFplxNY2GXCopxpDOcYn6FaMh6yDLFZydJeMTkhmnyx85KrSMey+KOmu8uzqKEuv5MyWeYtc2NMydc5BeAVFuOpabF/G9udxfJb7VkFusQ6aAa7aT4BgYap8gGsyIEuhceKRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739699944; c=relaxed/simple;
-	bh=aL+04xZVulicpTdrxisp1JEl4Klmtg3++whjLvtr2xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eOHV46mCk6JE0iRqckbVc4j+x2cVXUCatIgzeFrq6m4agx+11tMgRV9HM94DdK4KymuvJ+zApvV1UhMxPB8d0Uj+E7QOCChNs2vVMP3Bvp8C+eUatjD0ZvHBJQ8hHpG9L4z1aO6OOfRVQscVQLcULWZ1Pq6vzlnV8aXOlmZWj20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSvmUUZG; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739703589; c=relaxed/simple;
+	bh=LrTPNkbzHbVWVKeLoyuVqqR2fLoUWxZ3lfDMYLwSTAo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ONZ7psz930kDC4BPgZ63BiVlG2bimDMjfE1TGQ177znKgJdWv4HbwMAhqTq7v1ZyZhZRqR/ZzBpC/zwNH4MJstUzGcUA4vtN5dYRTYG+eJioIxJ7nA8gsu9HOamZm7p4Sil1VkcPMBjK2hGfljz6THRqovli3zCrNp7Wak3IiKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oq2Y+Ggp; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSvmUUZG"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f3ac22948so248501f8f.0;
-        Sun, 16 Feb 2025 01:59:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oq2Y+Ggp"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abad214f9c9so30133166b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Feb 2025 02:59:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739699941; x=1740304741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Pv2ab+l4k/GmIjg6UFnNL/02FoWRRTFcUTIE2g9NS0=;
-        b=jSvmUUZGbEkC0OqOgrBd7RkDRwQ8vFKizGOknw6ShBfgs9snx+WOZ3UUHZgsvSmBL0
-         4r45YHwVI7VBQTcBQeaiXoaNwDO0wQY3oBDhDxFPWH9QT2fniMS1wJxusLFSFtPmDQsa
-         W4DIG+o8w+lxssBhVebgWKMbIM69gXng8IVqWVTYTDccWh8txh3WTFdHaclxwQdMIUmg
-         M5bZhGYxnN0wWjKXdUDECN4yEjeDhB7hSb8UGGrrJeQFcoo7A0j3Cj5dL82V1xvawRZu
-         HEfeSKQcGMrfDFA90LjOLE6e7VC6ohZI10Zq1IYJhbQiHyWX73uepqlLCS9sEaq3+2B0
-         WBPA==
+        d=linaro.org; s=google; t=1739703586; x=1740308386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D1AyJU2SefZmjgW51aej4VtriM7oYS4pHdsrSQl/DNw=;
+        b=Oq2Y+GgpHCdm3y5cQkdOnI3q9d9KO+crbDaDVOUTz9zrlu3u00Q+cr+p9HnTcLnwnA
+         7KXzMmegIrvpWvCX2gphAuAbSV/2AyEIbKl/rPWJhixp11WlkGrvs+oxjo2e9cm2UEFH
+         AWCJnAJoeI8qxhFxZt3ioX5JCjpo3hdAjCi9MXp3TiPb6WP7nB5HA5fXe6OKkmnU83sT
+         D5tEahy+BWTDBLnXogkoULx0FP/0nsWDWq4HNc90ltgnOeHj34b0AmfE6awjUp34usoI
+         i4qGZVnakqnUVmqoCcojLryKLlft7g+9qzSfryTTMquX/iv/eYgvl6f3v4Yasdo1DKXu
+         9jwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739699941; x=1740304741;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Pv2ab+l4k/GmIjg6UFnNL/02FoWRRTFcUTIE2g9NS0=;
-        b=gRRS6WzrzDkIyYPvcJ3UVNVKygog9fE6pBKB8OVX131Yp+lrltYoxGTkQLaFUltGt/
-         8Ayn74WfcxYAWtFaSNSj8UHS6RdARhoKx4O/9Ij9RQf7Mwbay5qnnnsjU7kzzTCJtZmf
-         isl6HZthWJflNeDLDh5Wx7gQ6Dj2K+vIj4T7VoHU7OAVT4yIWA6GIrqfZ9PU9jWkhqoS
-         wCIUcDCcLpL0adcwROd8VTmIlcc/+7orHJvpw5Iqp1jCz8hQ27DWM+W8vURGJ7sJEWo7
-         Gs5+M2cdOK4YIOZuugKqxH6wqyIq95t/wmq+g5tvrtShlUiTjalouKSBV8k3YI8yRK7Y
-         8F2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRn4l9VidYrQD3Nj2duzG3/4lGoK6jDl09t1rUewMGEyfMHKnl1PHTNs3RcNqnQHOLLLixL7ZUHOfYmqXO@vger.kernel.org, AJvYcCX7aw1ra+Xym5NZpvyYAHvDww9QGOIRmK/97GI/yIJetuGt0rH4aF3+qrzE8Gd5EkPTNGlJ/dh6AJxFOFI4UABE1Uk=@vger.kernel.org, AJvYcCXmtwcQitFJ9gkiaohH+XbJ6sGcQjJ9VIJUPpG9cm/pN8eEB3S6EaEO2TJCcIuXmJLA+tH1NwOa1pTj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlA2HazfHsFAz1VbJuqktIX4ihuGsH9buPhjAS0n5gPAQEmXsi
-	lcfPoKC5U9b1OjfsMLVbPGiDEaFqHeSzDChHIuCUnPrkJY6Lqsvy
-X-Gm-Gg: ASbGncs1Dua4qrIHWAWAsfI7vUjxM0Tp4uvN7FZjRJ5WPSSAW8Jhze3muYhhdJ5gBx3
-	NE0z6nBTLLFZibsXxVCUW6+aQn9nQ8tNzmjP+mlWZjNMK8UKgrfJvmKpD4JOGdzvJPKGEcebgXh
-	6DPYpZlQGaKAdG2jU6yD9lJOjpVosjjk4s2i3OzG2iLRBQrnUchpaFQm1l7iuZXknyQbU9oJI/1
-	eyViMLny2UXp3j+HFzbKnga948HQYYUn3Psb/QAsHYeNglsPnQt4bM5WVDpdN0sSETYZ8eZnhe0
-	dXlxkgYU50KIRW8wkecc8ChOPminlYf8Y0XkbzNKCby2ykCrXw2e1OZK9qhCzZ6rhJ424A==
-X-Google-Smtp-Source: AGHT+IHZgNqHyHCv5yT6p4apSYBg8SJTvge1/YRU31W+9aRlNzcxZQY9QQK2OBKvkkzXkaKW1nJebA==
-X-Received: by 2002:a5d:59af:0:b0:385:ee40:2d88 with SMTP id ffacd0b85a97d-38f33f117d1mr4534496f8f.3.1739699941089;
-        Sun, 16 Feb 2025 01:59:01 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm9144911f8f.43.2025.02.16.01.58.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 01:59:00 -0800 (PST)
-Message-ID: <9451f339-c8ff-4be2-9cde-1aaf78fa8e7b@gmail.com>
-Date: Sun, 16 Feb 2025 11:58:59 +0200
+        d=1e100.net; s=20230601; t=1739703586; x=1740308386;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D1AyJU2SefZmjgW51aej4VtriM7oYS4pHdsrSQl/DNw=;
+        b=t7ByOArViYdsqxNG9INqymcvPcwL+pQq7/JoUAjtsfkQuR8ndGH23/4QApaDiVQLrJ
+         A72hw0+Cdr5//CYuryJKTraP6NcDVBc8AIDXA8yVAhjoNitql3I8DUjIqRn7XZUIHaIP
+         8aRt2ZRxgEv4JgXZOo1yMMAWm2QyK/paePIXz5CnEuckLtCBuCbDjEmCrWyRg0S8J5EP
+         L8S+P27P5roFQMuKUkUmX+BxlZMXnHW6f1btO0imc1ojGnW88KGkBPtBxaXze1vnrMA/
+         nA34aaxjXNPD72GoOPVhNcrBOyNZkEBpbVp5GKhpBy+pW/G2pA+T/mPacnVX1zJyroTa
+         4lMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFu8ilEP96oTEbHcF4AhgnZZGo1YcIoIsT8K11w6SWrySRL07DFHfLq7bKtM7280dF1KRxNvi83Q+Q3bhY3ZN6Eg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkdUCdDEWxqp2ryoYkrpyGQJMrbF0W77ND3Ec5b5NgmYrkM0ne
+	NauqiSJdGOsNHWthJnE+J8lIxX8DEdrHUpeLyu8Ao5UBoaHfKcSRVNePbVUb7cE=
+X-Gm-Gg: ASbGnctx4JO8xNNkhb/p8SC0raQYOeu3D48T95HFfuZZ0MRhAKvCqP++wiHGVuFOGXZ
+	+ohFfdIGnUKS7hFk8MjmS/WYfeT78v3GMycOYNaYMUW3rOoSVSDEPIuHzjOH/BNtgYaAyuEXrex
+	t2pI6xyvfzXKm5byQaLEOfHyx4r7zyXQHXgEcLsr9nk5We8fpZrKgLx4ufKMMfdDk6E735BspBM
+	jmGFW46njkogmP2/NJmlVqTW9PRrot6YN7FLQQNper1HGZZJhaLTzSTH2Xq36d1PH7IuBoWi4cI
+	MG54BGYf89LTR+fy/YzN7G/0//hPRXk=
+X-Google-Smtp-Source: AGHT+IFefTV39A1neLhgECtLBQWnWdC3L7ZVJ1cd5nkHx/8W7pKyxsOQB1ZeilaYCi+pwtC4N7wgZg==
+X-Received: by 2002:a17:907:d8b:b0:aa6:6792:8bce with SMTP id a640c23a62f3a-abb709319d6mr218337366b.3.1739703585852;
+        Sun, 16 Feb 2025 02:59:45 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb6f13b11esm310849266b.71.2025.02.16.02.59.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 02:59:45 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+ peter.griffin@linaro.org, daniel.lezcano@linaro.org, 
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
+In-Reply-To: <20250213-gs101-acpm-v9-0-8b0281b93c8b@linaro.org>
+References: <20250213-gs101-acpm-v9-0-8b0281b93c8b@linaro.org>
+Subject: Re: [PATCH v9 0/3] firmware: add Exynos ACPM protocol driver
+Message-Id: <173970358411.40124.822612928338453939.b4-ty@linaro.org>
+Date: Sun, 16 Feb 2025 11:59:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] phy: samsung: add Exynos2200 usb phy controller
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-5-ivo.ivanov.ivanov1@gmail.com>
- <32b67c56-9331-4391-90ad-031e0388434f@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <32b67c56-9331-4391-90ad-031e0388434f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 2/16/25 11:36, Krzysztof Kozlowski wrote:
-> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
->> The Exynos2200 SoC comes with 3 PHYs - snps eUSB2, snps USBDP combophy
->> and a cut-off phy that origins from exynos5-usbdrd. The latter is used
->> for link control, as well as pipe3 attachment and detachment.
->>
->> Add a new driver for it.
->>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> ---
->>  drivers/phy/samsung/Kconfig                 |  13 ++
->>  drivers/phy/samsung/Makefile                |   1 +
->>  drivers/phy/samsung/phy-exynos2200-usbcon.c | 241 ++++++++++++++++++++
->>  include/linux/soc/samsung/exynos-regs-pmu.h |   3 +
->>  4 files changed, 258 insertions(+)
->>  create mode 100644 drivers/phy/samsung/phy-exynos2200-usbcon.c
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index f62285254..47e9b9926 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -90,6 +90,19 @@ config PHY_EXYNOS2200_SNPS_EUSB2
->>  	  This driver provides PHY interface for eUSB 2.0 controller
->>  	  present on Exynos5 SoC series.
->>  
->> +config PHY_EXYNOS2200_USBCON
->> +	tristate "Exynos2200 USBCON PHY driver"
->> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->> +	depends on HAS_IOMEM
->> +	depends on USB_DWC3_EXYNOS
-> How? What are you using from DWC3?
 
-Will drop.
+On Thu, 13 Feb 2025 13:05:13 +0000, Tudor Ambarus wrote:
+> Alive Clock and Power Manager (ACPM) Message Protocol is defined for
+> the purpose of communication between the ACPM firmware and masters
+> (AP, AOC, ...). ACPM firmware operates on the Active Power Management
+> (APM) module that handles overall power activities.
+> 
+> This protocol driver provides the interface for all the client drivers
+> making use of the features offered by the APM. Add ACPM protocol support.
+> 
+> [...]
 
->
->> +	select GENERIC_PHY
->> +	select MFD_SYSCON
->> +	default y
->> +	help
->> +	  Enable USBCON PHY support for Exynos2200 SoC.
->> +	  This driver provides PHY interface for USB controller present
->> +	  on Exynos2200 SoC.
->> +
->>  config PHY_EXYNOS5_USBDRD
->>  	tristate "Exynos5 SoC series USB DRD PHY driver"
->>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
->> index 90b84c7fc..f70e12ddf 100644
->> --- a/drivers/phy/samsung/Makefile
->> +++ b/drivers/phy/samsung/Makefile
->> @@ -15,5 +15,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
->>  obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
->> +obj-$(CONFIG_PHY_EXYNOS2200_USBCON)	+= phy-exynos2200-usbcon.o
->>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
->>  obj-$(CONFIG_PHY_EXYNOS5250_SATA)	+= phy-exynos5250-sata.o
->> diff --git a/drivers/phy/samsung/phy-exynos2200-usbcon.c b/drivers/phy/samsung/phy-exynos2200-usbcon.c
->> new file mode 100644
->> index 000000000..7968c9792
->> --- /dev/null
->> +++ b/drivers/phy/samsung/phy-exynos2200-usbcon.c
->> @@ -0,0 +1,241 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2025, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> + */
->> +
->> +#include <linux/bitfield.h>
-> Are you using this header?
->
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/iopoll.h>
-> And rhis?
->
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <linux/reset.h>
-> And this?
+Applied, thanks!
 
-Nope, it's a leftover I forgot to drop. Same with the above
-
-...
-> Same comments as on previous patch.
-
-Alright. Thanks for the feedback!
+[1/3] dt-bindings: firmware: add google,gs101-acpm-ipc
+      https://git.kernel.org/krzk/linux/c/97b9ee2972bc0060cfb4d456118699942a6847ff
+[2/3] firmware: add Exynos ACPM protocol driver
+      https://git.kernel.org/krzk/linux/c/a88927b534ba18019b0440cf3d7f068407b5250c
+[3/3] MAINTAINERS: add entry for the Samsung Exynos ACPM mailbox protocol
+      https://git.kernel.org/krzk/linux/c/8e9faeb642511ac90b8b4f6a136ca1046958a1d2
 
 Best regards,
-Ivaylo
-
->
->
->
-> Best regards,
-> Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
