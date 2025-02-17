@@ -1,32 +1,31 @@
 Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36D3238D50
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Feb 2025 19:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161021ACEB7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Feb 2025 21:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739822331; cv=none; b=Wi4a+ajHGDymecatAzgrzfl35RuI1K2YrFBagPhI1XBZBq41HZYqc89qMeNmn9tsBMYPsy0vdjIedHzjrCiTYopFFNDwAuaQI2oDb3bPGGBWcPNWsX0lbQvFV7nrmNO0bm8WIfLNlZpUtN5sOuXLWnkRWlOmwmQzwjvhV7ZyAi8=
+	t=1739827963; cv=none; b=PsI+Yc5/cwfI5FD/PbZYAl7bkK/PYlGgGFhUlO5uK763WwM5vno88mvvGIEXiqnMQZupaeWPRwpO9EcSq6je9VeajW4Miwmu17tGL+JSlPwi0QEC9FQcvhjmvx2UExD64FSoOmIWWZ14+vrrAL21+/rjf9Dqg4nr99OZ7cnG8jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739822331; c=relaxed/simple;
-	bh=ooAfCtIBB4Gn/GKkD7UJYql1T65TueuYbZ/OTNt6n3I=;
+	s=arc-20240116; t=1739827963; c=relaxed/simple;
+	bh=qgDOk7ldMzPb3j2kj6nz6o9DIKmpFktmmEBU5U0AflM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a+UNfCsH+95jJLXwjqdOmuOVfLqyxvkTps3WT0WrT9T8Z9jZaO6Wbom5weefgSieVLw2Di8CFYIPPQgcHg9MbR6fcLDYPcAr3tneopFcjRKLgQPq9G/DewwUWUp80GnxcpGYE27Jb1c0pgr/y2aHuYJyVkl8iyniGm2mfopWqpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=YsUHYEBq; arc=none smtp.client-ip=34.202.193.197
+	 In-Reply-To:To:Cc; b=qHMBeOLLFbsSwCXyo5Zgn0d8XsrNy2uEmoLDKcOqKy81mK6+t3nUDuy3WY+GhPfxKQbrOTRB5+gSqe5UkVy9XlpVHfVCJDHneSBp13vlkc0NVPAAm5ohtJyzGFvXK/l2CEBi6xbSQpvbI9VTs0sntuF9V522JrBraf5ynlg9Nek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=g0p+iRUu; arc=none smtp.client-ip=34.202.193.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="YsUHYEBq"
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="g0p+iRUu"
 Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=YsUHYEBqnxMEobTv7HlWmBaKlcrr1cs+IXxXJVoDeqT3d7s2DahFvuMq+gpK3/lsJbo/PVe6CjMgEglD1saqASi/Sazb/n7faF5sO/A0vnhEVwG5JpVDhLMw53a+cPUmRhUbrmFa3pd2CnCbJHMChZW39PZDUtHnsuwTAvPNPyOaKYvszEEmENSeA+6i2+e8pXcO4mE/j3Tf93hlBbPipSrDYNwr8BmzSUM2FTAzufouSFwz3HDAIH5PdQtNaLnVLzkoD6kifZTY0sBgQot3Ke1vLtEuWwV3GDd8FQ7UXgML3nLKV9FOJZqDK89NDO7Isks4FeS9JA93b/7+yQoFVQ==; s=purelymail3; d=purelymail.com; v=1; bh=ooAfCtIBB4Gn/GKkD7UJYql1T65TueuYbZ/OTNt6n3I=; h=Feedback-ID:Received:From:Date:Subject:To;
+DKIM-Signature: a=rsa-sha256; b=g0p+iRUuoZnUVXfktRhis8fC9qRVU18v/gVPXqud0rbn3QgjEocpiPUXkSI+F0xE30+KXefDMrHrP7RLEofcBD3ZZB9Ji57Y1px3d+dUtJSVA9h5rkVRrj7zT8hSbK5vqMXCchIM9US3MvGor1TkRTn/GQcivdNNW+afm1q5qnaXvAkj6J5qjCzojUL4VpzBMfpMjchf7CiGFNrW0fuMVZsPXFKOTxV38ONnNNfffq0mC6yZPugwXK4myY81d+2yLnS9QfFB65IUMfIy77R8m9xa6g+o0jKCdm4X6HubE5F7RtwCNbARg+SfiNT9pA9iLyBeXcOScANRyVZJ2QmKNg==; s=purelymail3; d=purelymail.com; v=1; bh=qgDOk7ldMzPb3j2kj6nz6o9DIKmpFktmmEBU5U0AflM=; h=Feedback-ID:Received:From:Date:Subject:To;
 Feedback-ID: 68247:10037:null:purelymail
 X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 234657940;
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 42194286;
           (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 17 Feb 2025 19:58:20 +0000 (UTC)
+          Mon, 17 Feb 2025 21:32:34 +0000 (UTC)
 From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Date: Mon, 17 Feb 2025 20:57:39 +0100
-Subject: [PATCH v2 2/2] watchdog: s3c2410_wdt: Add exynos990-wdt compatible
- data
+Date: Mon, 17 Feb 2025 22:32:03 +0100
+Subject: [PATCH 1/5] arm64: dts: exynos990: Enable watchdog timer
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,113 +34,66 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-exynos990-wdt-v2-2-3eb4fbc113f4@mentallysanemainliners.org>
-References: <20250217-exynos990-wdt-v2-0-3eb4fbc113f4@mentallysanemainliners.org>
-In-Reply-To: <20250217-exynos990-wdt-v2-0-3eb4fbc113f4@mentallysanemainliners.org>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+Message-Id: <20250217-exynos990-dt-changes-febuary-v1-1-99935218cbf4@mentallysanemainliners.org>
+References: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+In-Reply-To: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-watchdog@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Igor Belwon <igor.belwon@mentallysanemainliners.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739822294; l=3489;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739827951; l=1586;
  i=igor.belwon@mentallysanemainliners.org; s=20241206;
- h=from:subject:message-id; bh=ooAfCtIBB4Gn/GKkD7UJYql1T65TueuYbZ/OTNt6n3I=;
- b=4WxC88dcLDK8WkNH0UZB7vrjj47/wza9Jee7ptYJBYz/1GFhGu53S+uUz2tQwigSn7A8UcjZo
- u0+yjiBuYCuD6ZGNWIcjQiRm8EOUf/43/MHXMyb5hI0D5aedh/dAZl+
+ h=from:subject:message-id; bh=qgDOk7ldMzPb3j2kj6nz6o9DIKmpFktmmEBU5U0AflM=;
+ b=jTqHwUcADANqg3+1rFaDQe65F8DeCfF1Dws5Ykg64WRdK/bdE6bLM1a4IZDzGzoEbTV/AV053
+ KbegePrAtyZCFyDRG+OmIjml7leUaHPjK6eI19wijLShxvTWfqDIeWx
 X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
  pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-The Exynos990 has two watchdog clusters - cl0 and cl2. Add new
-driver data for these two clusters, making it possible to use the
-watchdog timer on this SoC.
+Enable the two watchdog timer clusters (cl0, cl2) present
+on the Exynos990 SoC.
 
 Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 39 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/exynos/exynos990.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 30450e99e5e9d40b5596e2f87cc47c80ccbd2ddd..8f406e08d848646348dafabced5bc0f2bbcf49df 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -80,6 +80,10 @@
- #define GS_CLUSTER2_NONCPU_INT_EN		0x1644
- #define GS_RST_STAT_REG_OFFSET			0x3B44
+diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+index dd7f99f51a75412f5c3b91c3425a63652546fa5e..4446a1a54ba2de56879353c9c4a898b1d697fc13 100644
+--- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+@@ -211,6 +211,30 @@ timer@10040000 {
+ 				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
-+#define EXYNOS990_CLUSTER2_NONCPU_OUT		0x1620
-+#define EXYNOS990_CLUSTER2_NONCPU_INT_EN	0x1644
-+#define EXYNOS990_CLUSTER2_WDTRESET_BIT		23
++		watchdog_cl0: watchdog@10050000 {
++			compatible = "samsung,exynos990-wdt";
++			reg = <0x10050000 0x100>;
++			interrupts = <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peris CLK_GOUT_PERIS_WDT_CLUSTER0_PCLK>,
++				 <&oscclk>;
++			clock-names = "watchdog",
++				      "watchdog_src";
++			samsung,syscon-phandle = <&pmu_system_controller>;
++			samsung,cluster-index = <0>;
++		};
 +
- /**
-  * DOC: Quirk flags for different Samsung watchdog IP-cores
-  *
-@@ -257,6 +261,32 @@ static const struct s3c2410_wdt_variant drv_data_exynos850_cl1 = {
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
- };
- 
-+static const struct s3c2410_wdt_variant drv_data_exynos990_cl0 = {
-+	.mask_reset_reg = GS_CLUSTER0_NONCPU_INT_EN,
-+	.mask_bit = 2,
-+	.mask_reset_inv = true,
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT,
-+	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
-+	.cnt_en_bit = 7,
-+	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT,
-+};
++		watchdog_cl2: watchdog@10060000 {
++			compatible = "samsung,exynos990-wdt";
++			reg = <0x10060000 0x100>;
++			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peris CLK_GOUT_PERIS_WDT_CLUSTER2_PCLK>,
++				 <&oscclk>;
++			clock-names = "watchdog",
++				      "watchdog_src";
++			samsung,syscon-phandle = <&pmu_system_controller>;
++			samsung,cluster-index = <2>;
++		};
 +
-+static const struct s3c2410_wdt_variant drv_data_exynos990_cl2 = {
-+	.mask_reset_reg = EXYNOS990_CLUSTER2_NONCPU_INT_EN,
-+	.mask_bit = 2,
-+	.mask_reset_inv = true,
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = EXYNOS990_CLUSTER2_WDTRESET_BIT,
-+	.cnt_en_reg = EXYNOS990_CLUSTER2_NONCPU_OUT,
-+	.cnt_en_bit = 7,
-+	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT,
-+};
-+
- static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
- 	.mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN,
- 	.mask_bit = 2,
-@@ -348,6 +378,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
- 	  .data = &drv_data_exynos7 },
- 	{ .compatible = "samsung,exynos850-wdt",
- 	  .data = &drv_data_exynos850_cl0 },
-+	{ .compatible = "samsung,exynos990-wdt",
-+	  .data = &drv_data_exynos990_cl0 },
- 	{ .compatible = "samsung,exynosautov9-wdt",
- 	  .data = &drv_data_exynosautov9_cl0 },
- 	{ .compatible = "samsung,exynosautov920-wdt",
-@@ -676,7 +708,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
- 	if (variant == &drv_data_exynos850_cl0 ||
- 	    variant == &drv_data_exynosautov9_cl0 ||
- 	    variant == &drv_data_gs101_cl0 ||
--	    variant == &drv_data_exynosautov920_cl0) {
-+	    variant == &drv_data_exynosautov920_cl0 ||
-+	    variant == &drv_data_exynos990_cl0) {
- 		u32 index;
- 		int err;
- 
-@@ -698,6 +731,10 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
- 			else if (variant == &drv_data_exynosautov920_cl0)
- 				variant = &drv_data_exynosautov920_cl1;
- 			break;
-+		case 2:
-+			if (variant == &drv_data_exynos990_cl0)
-+				variant = &drv_data_exynos990_cl2;
-+			break;
- 		default:
- 			return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
- 		}
+ 		gic: interrupt-controller@10101000 {
+ 			compatible = "arm,gic-400";
+ 			reg = <0x10101000 0x1000>,
 
 -- 
 2.47.2
