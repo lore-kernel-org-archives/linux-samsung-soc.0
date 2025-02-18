@@ -1,41 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0DE1E521C;
-	Tue, 18 Feb 2025 19:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B3126F440;
+	Tue, 18 Feb 2025 19:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905437; cv=none; b=AQNnR4DbOxd5QEkRzNWj477IMyIgf2y/zhGGde2kIEmoucl0J6Yu0y4o3a8JtOaN8N/Pd08BxRymrlsej3D0r2qnUpPryjqIXlcnYFjCmmAgIz5xvzr1CdDS5wkWikggnWDQ50VST+FfB6O/gylX0NhA9dOU8xMbYyLZMCklcr0=
+	t=1739905441; cv=none; b=MKppzcE5lO1VN4frJ9AwxuIqOG90a8wfySZAx0y06QmCRJlbP9O3qbHT2Wnaeldr2aFse6wjsQ5mBuLsPW6JwyUjaHfd5Wr6mVLfIFWj7RI2jafwezUHThQOSd3/3N5kJd9fXKYCk9xXPdaB8s+wVzByaK+VJqQy5R7hFi1QXOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905437; c=relaxed/simple;
-	bh=rn9baAKmyjlLutADSxQ9BFJcAwJNMgiRNTgHRQpBPKM=;
+	s=arc-20240116; t=1739905441; c=relaxed/simple;
+	bh=cKeb4Q3zjzoX1lV2p6fkcHZ42nUiiWSUSr5T6FY95yI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J1716Xvf9GaPuLubcyQyHe0JpBGzjYzJQy/XcWva+P3BoZEHZpH04zBcaRyf7v1Rx8VXoJa1IMb6+1Ky7nbQl3t3koqdl9/nJFYqSBKGgKCNHoC1RcyqVgoVUoRCLOkoigX/WyDJMELCM+UKsA59PEWlSaXLtKGu1WAEQNIUfIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=G+2+bi6M; arc=none smtp.client-ip=178.21.23.139
+	 In-Reply-To:To:Cc; b=GM5Qm5JcDTwtELkgdyEtJfx3CVJcDYZ5ad930FGbOznOSskiLywMkT+AKsIpCv0OdPiKHI7CimFf4Hel2dFhYKIhUHFdp8fSjXE0e55zyIjQIzugKs4nbn3rdy1rnLDcu7WALMTaNpxMjxjKeQM3s5j+efGM03Orr+TjyE1C4e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=k01g4yoQ; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="G+2+bi6M"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="k01g4yoQ"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 4D15225FBD;
-	Tue, 18 Feb 2025 20:03:54 +0100 (CET)
+	by disroot.org (Postfix) with ESMTP id 3151725F0C;
+	Tue, 18 Feb 2025 20:03:58 +0100 (CET)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id G9Gnftup6573; Tue, 18 Feb 2025 20:03:53 +0100 (CET)
+ id FH0AztNAEVIX; Tue, 18 Feb 2025 20:03:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1739905428; bh=rn9baAKmyjlLutADSxQ9BFJcAwJNMgiRNTgHRQpBPKM=;
+	t=1739905432; bh=cKeb4Q3zjzoX1lV2p6fkcHZ42nUiiWSUSr5T6FY95yI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=G+2+bi6MADcNLaytdJ66n+HdZQ2SiD5avdJ4arTNjJOzQAXCvUOB0VulexRS4w/x/
-	 5WC2chSPzdCVisfDCOdab9/JWaubF2J7Uchw/1oXdnJhCWy0sD2HIyIok55Qeda9+r
-	 QIROk1ZeKNRD4hWIVb83XT0usSF0H+J9vcHxVWwOyFMIc1Z0FOeFqX2e43IeOg+3XO
-	 gglDKxYQd10uu0I+FK2EaHy7/iw1oTLJjv1J79GK5nckUqM8dkMhTSPn4Tz/u/UNkO
-	 Qshd1GzX1h28An/hmuPfCRqNR9X+D25KXso9p8n2P5xPFjTyH0NX1y+bVpgaUwFdl9
-	 c6YyMdV2coE4Q==
+	b=k01g4yoQ4hYZVvxqE/vfYpcVpJ+Plk1iKI7hHz/gD3wbUlU43AfQXlOT5LXPzqUck
+	 faYhsAEWj0YitGoa3cT8UFQ34IZ2Y/BbNMLdslktxA3mw7kNH1qHg7IFa/VxR1sMG7
+	 NtZAmChqrHLqIRYM4UMjB02fD3EwsAhd/jvrUgFV0cKcGr5xryJ77OGS/hiA/kmpaw
+	 kHFvG485BR3oPajS0dmjIaBbYLtOp2/uYAUmFNdwja2sKumdqxhX8xV40cXce8ps9c
+	 ifihKIIEacg1Yd172NE9179/3uZLXDBOIh9n3TtwGs5hduRLHTlFeFVLhe7jyX6+iX
+	 9WAAQjzAwtADg==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 19 Feb 2025 00:33:11 +0530
-Subject: [PATCH v3 1/7] dt-bindings: hwinfo: samsung,exynos-chipid: add
- exynos7870-chipid compatible
+Date: Wed, 19 Feb 2025 00:33:12 +0530
+Subject: [PATCH v3 2/7] dt-bindings: arm: samsung: add compatibles for
+ exynos7870 devices
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
+Message-Id: <20250219-exynos7870-v3-2-e384fb610cad@disroot.org>
 References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
 In-Reply-To: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -56,33 +56,44 @@ Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
  Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739905418; l=992;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739905418; l=1423;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=rn9baAKmyjlLutADSxQ9BFJcAwJNMgiRNTgHRQpBPKM=;
- b=MhZoQxfIOkbfoArXnAAHVh2wW0jmsogr1O5PtZNQne5jOivUKS6saBPKzIvEz/9Y2BZqrpaVg
- 93WHHQpWk1OD6K+qKu/w3lualM9P4qpld9UKxXJe+rugiTZQjRWM+cO
+ bh=cKeb4Q3zjzoX1lV2p6fkcHZ42nUiiWSUSr5T6FY95yI=;
+ b=ZomranXZKYALnG6J/QaNVuGlIwaT3myYXLshEsI3IljEC082ErbTPZTuB4633rSeGNKgL/Bih
+ Pi9Gqu0lvLqD03KpgC0/cZZ462rJJC9VliU6JTT3hvVpkm60491PtDK
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Document the compatible string "samsung,exynos7870-chipid". The
-registers are entirely compatible with "samsung,exynos4210-chipid".
+Document the compatible string for Exynos7870 - "samsung,exynos7870".
+
+The following devices are also added:
+ - Galaxy A2 Core       ("samsung,a2corelte")
+ - Galaxy J6            ("samsung,j6lte")
+ - Galaxy J7 Prime      ("samsung,on7xelte")
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
-index 385aac7161a0db9334a92d78a57a125f23ca1920..9105ad48563a42ecaeb3dbca37df734d5b93f52c 100644
---- a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
-+++ b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
-@@ -19,6 +19,7 @@ properties:
-           - enum:
-               - samsung,exynos5433-chipid
-               - samsung,exynos7-chipid
-+              - samsung,exynos7870-chipid
-           - const: samsung,exynos4210-chipid
-       - items:
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index fab29f95d8e62f5ea75bb0819a9d514e54f88d3c..b3be184c7e563478aa37eb16a69c08ff7f70af29 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -212,6 +212,14 @@ properties:
+               - samsung,exynos7-espresso        # Samsung Exynos7 Espresso
+           - const: samsung,exynos7
+ 
++      - description: Exynos7870 based boards
++        items:
++          - enum:
++              - samsung,a2corelte               # Samsung Galaxy A2 Core
++              - samsung,j6lte                   # Samsung Galaxy J6
++              - samsung,on7xelte                # Samsung Galaxy J7 Prime
++          - const: samsung,exynos7870
++
+       - description: Exynos7885 based boards
+         items:
            - enum:
 
 -- 
