@@ -1,714 +1,307 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03532272925;
-	Tue, 18 Feb 2025 19:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB201E8338;
+	Tue, 18 Feb 2025 19:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905466; cv=none; b=pjZfQHeo4t8QXvlZLS/FKXjnOnrqUlv6JxehMj4a7ISkUaGbSXMRK7zKagovhZEEaB5idv8MqJtROA1zPCjrRl6GIQDYqm5onNnyrCERGfRJryqSJHyvGb93HBcxvdhajql9TKxv8inEseUmGDyMMucixwcfqvFSYskiEnm2AbM=
+	t=1739907168; cv=none; b=UyzqLvAhiSGyZWCUmzC3CUi51KgbvEgEiT8LlMgixh2uRiZvJ3a/vw9zp5bOHx+hq8UqhuT+qDVodKMmjwwE59VXG48wtMNdng57B/VdRMcOr0oYCHjD44iJQtjyyoo6scB5mz4GJGuT02eQ3SOR36Cx3pvtDgD3g7DlsDjywOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905466; c=relaxed/simple;
-	bh=BW+R1CxBPNHKEugfocotEN6oIyo8WLJXg+kF7LVX81Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dMGAZV4alygywFs1uUtz6i9bCpmueorYjxdLSMWB2lSLttx2eBN2RorI+cp8xnuBDp8aApfOIKbYpw2Bm4RqP0rtU5NYUoorDDrTgidXbP6CwcffHYFv6bBPO2k+yTnUX2elZsMrCoYoB+ckdxV7gA3oUgYX8rwZpJg/BiSToCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=V2jFeeIX; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="V2jFeeIX"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 7FE81251D7;
-	Tue, 18 Feb 2025 20:04:22 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 4bY-6aUnLGqp; Tue, 18 Feb 2025 20:04:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1739905461; bh=BW+R1CxBPNHKEugfocotEN6oIyo8WLJXg+kF7LVX81Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=V2jFeeIXXnpqMVMEOPTVBan4TBJCf9ljuNzKGmjTQwX2mZ/D5gucAWlaB2kM9QWO5
-	 Y2pvFaF+Kzl3J3J/W2g11LKaQSzA4ENPDir6Lc2RtLyxouzgeUu9OaK3wWEbEWjBQl
-	 aAqmVegiHpyql3BtmBFuoVD6JVrMXn3ifj8pnX/Hb8oD6CJvwl79QETrNksaq0iA5P
-	 lRQhkWYo+pWl7XH7gUf1tF1V87UCgnnNoFZ4f3jqk8dTUJw2+W4STj5DFJX+HqfjuN
-	 Lh8qgj7T+U5kSlJv+U4mMjju1MdbCzhGODs96RY5LoDS9Qb1Ruaf5/xZ2bSHDJZq+K
-	 5PujQcBKnru8w==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 19 Feb 2025 00:33:17 +0530
-Subject: [PATCH v3 7/7] arm64: dts: exynos: add initial support for Samsung
- Galaxy J6
+	s=arc-20240116; t=1739907168; c=relaxed/simple;
+	bh=K639qySusfhqWVzkmR1NrpWaIuD4POoCyjA6d1Oq07g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PEM3ujJTjd8p5N7bTjkcrU/Pyxzt8WJJTCsgF3KEKD736RRUseltnnZ5ZPD9LmjBbixxBBYkdihtqkFHDW/BWRWDUR52kHx0hWfy3ph++wNzYN6rS5oyg0XaJBJ+wfAGbbOYLz9JKj6WXQarQf8JEQe/s5kItEAlh2CZqNlMzl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5209ca3e9a6so1115450e0c.2;
+        Tue, 18 Feb 2025 11:32:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739907163; x=1740511963;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yb7jRjd6uguB9cG41rTvHpSN+ZVtgW/KmSvyau5JmeE=;
+        b=rjqWmTb+726NERGirauhqdhJ1ECVSMt9jfS6SsjzkyMzDoUQBGnTr0pXzbwep6OO4T
+         7qwusH/fPj8BGaxDwm3ZZL5p1Usq4UEIObOl1PC7sSFV7a7GpT1cXDwXbV1vkH430nSN
+         OIFC69T2H/KMNZZW+HMu7XZSGciY582HyVpvHr04LYQtpJmolW4zYncYF8TXd07GS3Dc
+         xTirNPNeKcpGBcgqhr6OWsTnBm8zDV79DIFMYld+JZTz3jZKpHUVZrksyUudEspXdHFG
+         3eiQJW3di/uaza3yWv1OUtG8s5nCbIdcNYlBBTQ5NS0ufTL255sk681EbRH/7xOTD3MR
+         yXIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvmij3GiYOl2dOcjFQpJoPc8+VF4VMBVvezIpqW4lMpCmV+bCnMXW6mWwEbo4aaj70PQTU3wnwn5ovv4I=@vger.kernel.org, AJvYcCVH2wW3TKGxiWLNWEFFQXLkOAGSiG4K401bc+kHHjUVuC9BMZGR8SEisOzxBaP1hDFBMGot2O8KcTmsdAeSaQ46wsY=@vger.kernel.org, AJvYcCWFS4x3ESDE1cDV/VoL4KDdTF2v45RVmrlVN7gpJU24+05/kyvE1ymTYX07fdZ2qxdgCDCxWs7k9z2xG7LA4rPYJWg=@vger.kernel.org, AJvYcCXae97kRmIs1JQ9xDD7d3CtdekMLTzp6PlyJJ+NJGOuEB+tjqUBeWHe8DFWVCLbarM9XYjnA46ATvvycmbh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1SiVVbr79f7LwN0h1jcFMOjUcIuq8ym3gHlTspcM3auFm2CEI
+	yWQZuL6Y+pusr9el9LJoeJKXtM3JL/ov08b9KxlorSnwvIBHS7bzYPE3bfwZ
+X-Gm-Gg: ASbGncs2b8gk+p1Lv36jX93BvRbWEAOGkJsSlE58hOXgmZqmsbvllI78fRNokfib+ni
+	39zA0uLKxlqfEuYGtK5bsvVO72g9Jbx8eYQp2ccq6SJoApErgOyHbSsglINsL+zCk2PaX/qUtfv
+	aQjmDywSRo72EqSSiKiDpERwCFUto4dUvQsWxVhHoE+LGMbPM/7zzwlhR/cdgd0+0r5yMH2hw78
+	3lfuxBOpQJoyeMADv/fj/n5SzACghhxPg7iqalaNXcrM5VhhaP//P3ZG0NnX12n/Gn+9fl26V+Y
+	TDabG+yveHupj3yqVp7aw6MGuwunl/zayiqDPwc5FHFHtj5fpORe8g==
+X-Google-Smtp-Source: AGHT+IGfJAwFjAoDydTJzePAPfD6wVMVF3T64exnojHFQGgbaybg3dZcYd0IBnNW70mT4MJT0woGkg==
+X-Received: by 2002:a05:6122:218d:b0:520:62ce:990f with SMTP id 71dfb90a1353d-521c4694818mr547033e0c.11.1739907161646;
+        Tue, 18 Feb 2025 11:32:41 -0800 (PST)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52098805834sm2222249e0c.26.2025.02.18.11.32.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 11:32:40 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4be5b33ff91so631733137.1;
+        Tue, 18 Feb 2025 11:32:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUbrIXYcc+mqlqWNdTBrpAAtPxPRoCOcwoUYupKK0AHfWhxI1FkYOvvSjhuJgd0KMeu4+1Uz4MIuyHqkjMT@vger.kernel.org, AJvYcCWDGGIWDShcWf52HRFdXaQu/o3p/9c1uOA8ARE7rzyesBBcfApUA6jnSXMYOtHdtP2rI5tOK4XeHUGo9pDWeQE0TGg=@vger.kernel.org, AJvYcCXEAdinysuxI3FcT2jT1B49zR966bncMWEEAueN5rhm9P7qAYlpHiIVB5EKwo21qRtJbxM6IWHFWjTpxKU9cc0eSz0=@vger.kernel.org, AJvYcCXoWZwWQcZQ3JZKakY5CBn0ZAciNayE4Eo9Mr2HqOqzJV2jxIyDYvI7QDlt/b/IkXmOpLcXVvzYkn5kNL8=@vger.kernel.org
+X-Received: by 2002:a05:6102:b10:b0:4bb:d394:46c5 with SMTP id
+ ada2fe7eead31-4be85bb8970mr656557137.9.1739907160582; Tue, 18 Feb 2025
+ 11:32:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-exynos7870-v3-7-e384fb610cad@disroot.org>
-References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
-In-Reply-To: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739905418; l=16230;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=BW+R1CxBPNHKEugfocotEN6oIyo8WLJXg+kF7LVX81Y=;
- b=7d6EzkA+6OGsBgO0zXcuaGZWL5qJXp2lUdodSmhMxXNfsMMvHhB8A0eCaaF9I4f6nzySYCK0g
- C1S6likgtw8CK0TMPFeQot2C/fociD8cN42LsgU1p+85+FDMMZ2Z+Ez
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+References: <20250218142542.438557-1-tzimmermann@suse.de> <20250218142542.438557-3-tzimmermann@suse.de>
+In-Reply-To: <20250218142542.438557-3-tzimmermann@suse.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Feb 2025 20:32:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV939ibJTRSaO-oW2Jz4zbkXGRpUYrmA7e=yQfF7W-k_g@mail.gmail.com>
+X-Gm-Features: AWEUYZnARFSxvjPUxC-uDBDfMGz-IvL-HNvEMBPwKo8soOA7GylWEHj75pA7v34
+Message-ID: <CAMuHMdV939ibJTRSaO-oW2Jz4zbkXGRpUYrmA7e=yQfF7W-k_g@mail.gmail.com>
+Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
+ and size
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com, 
+	simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add initial devicetree support for Samsung Galaxy J6 (codename: j6lte),
-an Exynos7870 device.
+Hi Thomas,
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- arch/arm64/boot/dts/exynos/Makefile             |   1 +
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts | 617 ++++++++++++++++++++++++
- 2 files changed, 618 insertions(+)
+On Tue, 18 Feb 2025 at 15:26, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Add drm_modes_size_dumb(), a helper to calculate the dumb-buffer
+> scanline pitch and allocation size. Implementations of struct
+> drm_driver.dumb_create can call the new helper for their size
+> computations.
+>
+> There is currently quite a bit of code duplication among DRM's
+> memory managers. Each calculates scanline pitch and buffer size
+> from the given arguments, but the implementations are inconsistent
+> in how they treat alignment and format support. Later patches will
+> unify this code on top of drm_mode_size_dumb() as much as possible.
+>
+> drm_mode_size_dumb() uses existing 4CC format helpers to interpret
+> the given color mode. This makes the dumb-buffer interface behave
+> similar the kernel's video= parameter. Current per-driver implementations
+> again likely have subtle differences or bugs in how they support color
+> modes.
+>
+> The dumb-buffer UAPI is only specified for known color modes. These
+> values describe linear, single-plane RGB color formats or legacy index
+> formats. Other values should not be specified. But some user space
+> still does. So for unknown color modes, there are a number of known
+> exceptions for which drm_mode_size_dumb() calculates the pitch from
+> the bpp value, as before. All other values work the same but print
+> an error.
+>
+> v3:
+> - document the UAPI semantics
+> - compute scanline pitch from for unknown color modes (Andy, Tomi)
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index e0da4c4972c7344cf957e00ef701d6405a16bdcb..89c90564c3d86a268ea46492b67d72fa69ad3e95 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos5433-tm2e.dtb		\
- 	exynos7-espresso.dtb		\
- 	exynos7870-a2corelte.dtb	\
-+	exynos7870-j6lte.dtb		\
- 	exynos7870-on7xelte.dtb		\
- 	exynos7885-jackpotlte.dtb	\
- 	exynos850-e850-96.dtb		\
-diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..d77c2adff09ef1843a186e620c353467f5f640a8
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-@@ -0,0 +1,617 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung Galaxy J6 (j6lte) device tree source
-+ *
-+ * Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
-+ */
-+
-+/dts-v1/;
-+#include "exynos7870.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy J6";
-+	compatible = "samsung,j6lte", "samsung,exynos7870";
-+	chassis-type = "handset";
-+
-+	aliases {
-+		mmc0 = &mmc0;
-+		mmc1 = &mmc1;
-+		mmc2 = &mmc2;
-+		serial0 = &serial0;
-+		serial1 = &serial1;
-+		serial2 = &serial2;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		stdout-path = &serial2;
-+
-+		framebuffer@67000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			width = <720>;
-+			height = <1480>;
-+			stride = <(720 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	gpio-hall-effect-sensor {
-+		compatible = "gpio-keys";
-+		label = "GPIO Hall Effect Sensor";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hall_irq>;
-+
-+		event-hall-effect-sensor {
-+			label = "Hall Effect Sensor";
-+			gpios = <&gpa1 3 GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LID>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		label = "GPIO Keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-+
-+		key-power {
-+			label = "Power Key";
-+			gpios = <&gpa0 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+		};
-+
-+		key-voldown {
-+			label = "Volume Down Key";
-+			gpios = <&gpa2 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+
-+		key-volup {
-+			label = "Volume Up Key";
-+			gpios = <&gpa2 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x3d800000>;
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x40000000>;
-+	};
-+
-+	pwrseq_mmc1: pwrseq-mmc1 {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpd3 6 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	/* mmc2: vmmc */
-+	vdd_fixed_mmc2: regulator-fixed-mmc2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_fixed_mmc2";
-+		regulator-max-microvolt = <2800000>;
-+		regulator-min-microvolt = <2800000>;
-+		gpio = <&gpc0 0 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@46e00000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0x46e00000 0x8000>;
-+			console-size = <0x4000>;
-+			pmsg-size = <0x4000>;
-+		};
-+
-+		framebuffer@67000000 {
-+			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			no-map;
-+		};
-+	};
-+
-+	vibrator {
-+		compatible = "regulator-haptic";
-+		haptic-supply = <&vdd_ldo32>;
-+		min-microvolt = <3300000>;
-+		max-microvolt = <3300000>;
-+	};
-+};
-+
-+&gpu {
-+	status = "okay";
-+};
-+
-+&hsi2c0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	status = "okay";
-+
-+	pmic@66 {
-+		compatible = "samsung,s2mpu05-pmic";
-+		reg = <0x66>;
-+		interrupt-parent = <&gpa0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq>;
-+
-+		regulators {
-+			vdd_buck1: BUCK1 {
-+				regulator-name = "BUCK1";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck2: BUCK2 {
-+				regulator-name = "BUCK2";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck3: BUCK3 {
-+				regulator-name = "BUCK3";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck4: BUCK4 {
-+				regulator-name = "BUCK4";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck5: BUCK5 {
-+				regulator-name = "BUCK5";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2100000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo1: LDO1 {
-+				regulator-name = "vdd_ldo1";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* mmc2: vqmmc */
-+			vdd_ldo2: LDO2 {
-+				regulator-name = "vdd_ldo2";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo3: LDO3 {
-+				regulator-name = "vdd_ldo3";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo4: LDO4 {
-+				regulator-name = "vdd_ldo4";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo5: LDO5 {
-+				regulator-name = "vdd_ldo5";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo6: LDO6 {
-+				regulator-name = "vdd_ldo6";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo7: LDO7 {
-+				regulator-name = "vdd_ldo7";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* usbdrd: vdd33 */
-+			vdd_ldo8: LDO8 {
-+				regulator-name = "vdd_ldo8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3375000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo9: LDO9 {
-+				regulator-name = "vdd_ldo9";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo10: LDO10 {
-+				regulator-name = "vdd_ldo10";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo25: LDO25 {
-+				regulator-name = "vdd_ldo25";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* mmc0: vmmc */
-+			vdd_ldo26: LDO26 {
-+				regulator-name = "vdd_ldo26";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3375000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			/* mmc0: vqmmc */
-+			vdd_ldo27: LDO27 {
-+				regulator-name = "vdd_ldo27";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo29: LDO29 {
-+				regulator-name = "vdd_ldo29";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo30: LDO30 {
-+				regulator-name = "vdd_ldo30";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo31: LDO31 {
-+				regulator-name = "vdd_ldo31";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* vibrator: haptic */
-+			vdd_ldo32: LDO32 {
-+				regulator-name = "vdd_ldo32";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo33: LDO33 {
-+				regulator-name = "vdd_ldo33";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* touchscreen: vdd */
-+			vdd_ldo34: LDO34 {
-+				regulator-name = "vdd_ldo34";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			vdd_ldo35: LDO35 {
-+				regulator-name = "vdd_ldo35";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c5 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-max-bus-freq = <400000>;
-+
-+	status = "okay";
-+
-+	accelerometer@1d {
-+		compatible = "st,lis2ds12";
-+		reg = <0x1d>;
-+		interrupt-parent = <&gpa2>;
-+		interrupts = <3 IRQ_TYPE_EDGE_RISING>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&accel_irq>;
-+
-+		mount-matrix = "-1", "0",  "0",
-+				"0", "1",  "0",
-+				"0", "0", "-1";
-+
-+		st,drdy-int-pin = <1>;
-+	};
-+};
-+
-+&i2c6 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-max-bus-freq = <400000>;
-+
-+	status = "okay";
-+
-+	touchscreen@20 {
-+		compatible = "zinitix,bt532";
-+		reg = <0x20>;
-+		interrupt-parent = <&gpa0>;
-+		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touch_irq>;
-+
-+		touchscreen-size-x = <720>;
-+		touchscreen-size-y = <1480>;
-+
-+		vdd-supply = <&vdd_ldo34>;
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+
-+	vmmc-supply = <&vdd_ldo26>;
-+	vqmmc-supply = <&vdd_ldo27>;
-+
-+	fifo-depth = <64>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	non-removable;
-+
-+	status = "okay";
-+};
-+
-+&mmc1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus1 &sd1_bus4>;
-+
-+	mmc-pwrseq = <&pwrseq_mmc1>;
-+
-+	bus-width = <4>;
-+	fifo-depth = <64>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	non-removable;
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+
-+	status = "okay";
-+
-+	wifi@1 {
-+		compatible = "brcm,bcm43430a1-fmac", "brcm,bcm4329-fmac";
-+		reg = <0x1>;
-+		interrupt-names = "host-wake";
-+		interrupt-parent = <&gpa2>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+		reset-gpios = <&gpd3 6 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4 &dwmmc2_irq>;
-+
-+	vmmc-supply = <&vdd_fixed_mmc2>;
-+	vqmmc-supply = <&vdd_ldo2>;
-+
-+	bus-width = <4>;
-+	fifo-depth = <64>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	non-removable;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	disable-wp;
-+
-+	status = "okay";
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	accel_irq: accel-irq-pins {
-+		samsung,pins = "gpa2-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	dwmmc2_irq: dwmmc2-irq-pins {
-+		samsung,pins = "gpa0-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	fuel_irq: fuel-irq-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	hall_irq: hall-irq-pins {
-+		samsung,pins = "gpa1-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa0-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa2-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa2-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	pmic_irq: pmic-irq-pins {
-+		samsung,pins = "gpa0-2";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR4>;
-+	};
-+
-+	touch_irq: touch-irq-pins {
-+		samsung,pins = "gpa0-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	wlan_hostwake: wlan-hostwake-pins {
-+		samsung,pins = "gpa2-2";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+	};
-+};
-+
-+&pinctrl_top {
-+	bt_enable: bt-enable-pins {
-+		samsung,pins = "gpd4-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+	};
-+
-+	wlan_enable: wlan-enable-pins {
-+		samsung,pins = "gpd3-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR4>;
-+		samsung,pin-val = <0>;
-+	};
-+};
-+
-+&serial1 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm43430a1-bt";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_btwake &bt_hostwake &bt_enable>;
-+
-+		device-wakeup-gpios = <&gpa1 2 GPIO_ACTIVE_HIGH>;
-+		host-wakeup-gpios = <&gpa1 6 GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpd4 0 GPIO_ACTIVE_HIGH>;
-+
-+		max-speed = <3000000>;
-+	};
-+};
-+
-+&serial2 {
-+	status = "okay";
-+};
-+
-+&usbdrd {
-+	vdd33-supply = <&vdd_ldo8>;
-+
-+	status = "okay";
-+};
+Thanks for your patch!
+
+> --- a/drivers/gpu/drm/drm_dumb_buffers.c
+> +++ b/drivers/gpu/drm/drm_dumb_buffers.c
+> +/**
+> + * drm_mode_size_dumb - Calculates the scanline and buffer sizes for dumb buffers
+> + * @dev: DRM device
+> + * @args: Parameters for the dumb buffer
+> + * @pitch_align: Scanline alignment in bytes
+> + * @size_align: Buffer-size alignment in bytes
+> + *
+> + * The helper drm_mode_size_dumb() calculates the size of the buffer
+> + * allocation and the scanline size for a dumb buffer. Callers have to
+> + * set the buffers width, height and color mode in the argument @arg.
+> + * The helper validates the correctness of the input and tests for
+> + * possible overflows. If successful, it returns the dumb buffer's
+> + * required scanline pitch and size in &args.
+> + *
+> + * The parameter @pitch_align allows the driver to specifies an
+> + * alignment for the scanline pitch, if the hardware requires any. The
+> + * calculated pitch will be a multiple of the alignment. The parameter
+> + * @size_align allows to specify an alignment for buffer sizes. The
+> + * returned size is always a multiple of PAGE_SIZE.
+> + *
+> + * Returns:
+> + * Zero on success, or a negative error code otherwise.
+> + */
+> +int drm_mode_size_dumb(struct drm_device *dev,
+> +                      struct drm_mode_create_dumb *args,
+> +                      unsigned long pitch_align,
+> +                      unsigned long size_align)
+> +{
+> +       u64 pitch = 0;
+> +       u32 fourcc;
+> +
+> +       /*
+> +        * The scanline pitch depends on the buffer width and the color
+> +        * format. The latter is specified as a color-mode constant for
+> +        * which we first have to find the corresponding color format.
+> +        *
+> +        * Different color formats can have the same color-mode constant.
+> +        * For example XRGB8888 and BGRX8888 both have a color mode of 32.
+> +        * It is possible to use different formats for dumb-buffer allocation
+> +        * and rendering as long as all involved formats share the same
+> +        * color-mode constant.
+> +        */
+> +       fourcc = drm_driver_color_mode_format(dev, args->bpp);
+> +       if (fourcc != DRM_FORMAT_INVALID) {
+> +               const struct drm_format_info *info = drm_format_info(fourcc);
+> +
+> +               if (!info)
+> +                       return -EINVAL;
+> +               pitch = drm_format_info_min_pitch(info, 0, args->width);
+> +       } else if (args->bpp) {
+> +               /*
+> +                * Some userspace throws in arbitrary values for bpp and
+> +                * relies on the kernel to figure it out. In this case we
+> +                * fall back to the old method of using bpp directly. The
+> +                * over-commitment of memory from the rounding is acceptable
+> +                * for compatibility with legacy userspace. We have a number
+> +                * of deprecated legacy values that are explicitly supported.
+> +                */
+> +               switch (args->bpp) {
+> +               default:
+> +                       drm_warn(dev, "Unknown color mode %d; guessing buffer size.\n",
+
+%u
+
+> +                                args->bpp);
+> +                       fallthrough;
+> +               case 12:
+> +               case 15:
+> +               case 30: /* see drm_gem_afbc_get_bpp() */
+> +               case 10:
+
+Perhaps keep them sorted numerically?
+
+> +               case 64: /* used by Mesa */
+> +                       pitch = args->width * DIV_ROUND_UP(args->bpp, SZ_8);
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (!pitch || pitch > U32_MAX)
+> +               return -EINVAL;
+> +
+> +       args->pitch = pitch;
+> +
+> +       return drm_mode_align_dumb(args, pitch_align, size_align);
+> +}
+> +EXPORT_SYMBOL(drm_mode_size_dumb);
+> +
+>  int drm_mode_create_dumb(struct drm_device *dev,
+>                          struct drm_mode_create_dumb *args,
+>                          struct drm_file *file_priv)
+> diff --git a/include/drm/drm_dumb_buffers.h b/include/drm/drm_dumb_buffers.h
+> new file mode 100644
+> index 000000000000..6fe36004b19d
+> --- /dev/null
+> +++ b/include/drm/drm_dumb_buffers.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: MIT */
+> +
+> +#ifndef __DRM_DUMB_BUFFERS_H__
+> +#define __DRM_DUMB_BUFFERS_H__
+> +
+> +struct drm_device;
+> +struct drm_mode_create_dumb;
+> +
+> +int drm_mode_size_dumb(struct drm_device *dev,
+> +                      struct drm_mode_create_dumb *args,
+> +                      unsigned long pitch_align,
+> +                      unsigned long size_align);
+> +
+> +#endif
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index c082810c08a8..eea09103b1a6 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -1058,7 +1058,7 @@ struct drm_mode_crtc_page_flip_target {
+>   * struct drm_mode_create_dumb - Create a KMS dumb buffer for scanout.
+>   * @height: buffer height in pixels
+>   * @width: buffer width in pixels
+> - * @bpp: bits per pixel
+> + * @bpp: color mode
+>   * @flags: must be zero
+>   * @handle: buffer object handle
+>   * @pitch: number of bytes between two consecutive lines
+> @@ -1066,6 +1066,50 @@ struct drm_mode_crtc_page_flip_target {
+>   *
+>   * User-space fills @height, @width, @bpp and @flags. If the IOCTL succeeds,
+>   * the kernel fills @handle, @pitch and @size.
+> + *
+> + * The value of @bpp is a color-mode number describing a specific format
+> + * or a variant thereof. The value often corresponds to the number of bits
+> + * per pixel for most modes, although there are exceptions. Each color mode
+> + * maps to a DRM format plus a number of modes with similar pixel layout.
+> + * Framebuffer layout is always linear.
+> + *
+> + * Support for all modes and formats is optional. Even if dumb-buffer
+> + * creation with a certain color mode succeeds, it is not guaranteed that
+> + * the DRM driver supports any of the related formats. Most drivers support
+> + * a color mode of 32 with a format of DRM_FORMAT_XRGB8888 on their primary
+> + * plane.
+> + *
+> + * +------------+------------------------+------------------------+
+> + * | Color mode | Framebuffer format     | Compatibles            |
+> + * +============+========================+========================+
+> + * |     32     |  * DRM_FORMAT_XRGB8888 |  * DRM_FORMAT_XBGR8888 |
+> + * |            |                        |  * DRM_FORMAT_RGBX8888 |
+> + * |            |                        |  * DRM_FORMAT_BGRX8888 |
+> + * +------------+------------------------+------------------------+
+> + * |     24     |  * DRM_FORMAT_RGB888   |  * DRM_FORMAT_BGR888   |
+> + * +------------+------------------------+------------------------+
+> + * |     16     |  * DRM_FORMAT_RGB565   |  * DRM_FORMAT_BGR565   |
+> + * +------------+------------------------+------------------------+
+> + * |     15     |  * DRM_FORMAT_XRGB1555 |  * DRM_FORMAT_XBGR1555 |
+> + * |            |                        |  * DRM_FORMAT_RGBX1555 |
+> + * |            |                        |  * DRM_FORMAT_BGRX1555 |
+> + * +------------+------------------------+------------------------+
+> + * |      8     |  * DRM_FORMAT_C8       |  * DRM_FORMAT_R8       |
+
++ DRM_FORMAT_D8? (and 4/2/1 below)
+
+And DRM_FORMAT_Y8, if/when Tomi's series introducing that is accepted...
+
+> + * +------------+------------------------+------------------------+
+> + * |      4     |  * DRM_FORMAT_C4       |  * DRM_FORMAT_R4       |
+> + * +------------+------------------------+------------------------+
+> + * |      2     |  * DRM_FORMAT_C2       |  * DRM_FORMAT_R2       |
+> + * +------------+------------------------+------------------------+
+> + * |      1     |  * DRM_FORMAT_C1       |  * DRM_FORMAT_R1       |
+> + * +------------+------------------------+------------------------+
+> + *
+> + * Color modes of 10, 12, 15, 30 and 64 are only supported for use by
+> + * legacy user space. Please don't use them in new code. Other modes
+> + * are not support.
+> + *
+> + * Do not attempt to allocate anything but linear framebuffer memory
+> + * with single-plane RGB data. Allocation of other framebuffer
+> + * layouts requires dedicated ioctls in the respective DRM driver.
+>   */
+>  struct drm_mode_create_dumb {
+>         __u32 height;
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.48.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
