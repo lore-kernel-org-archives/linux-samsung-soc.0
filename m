@@ -1,40 +1,40 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26E1E51EE;
-	Tue, 18 Feb 2025 18:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321021F582E;
+	Tue, 18 Feb 2025 18:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904695; cv=none; b=jJxrg8Oti3KxaolsP4hlRLzqj6ATp8AfGDLb+/yjRTbU/tVNjXk7R5RW0D3GCg5WnLHa1o1GAo2aJbcrd7+x3ZURlOxQov4+N8Wy2lvZB/WgI38T4grZkWh1t8syWs9F3wI7Jh4MnQsRP1c5Dm/fuGRCO0g9IaBUrHKFASu7DFE=
+	t=1739904919; cv=none; b=hw15Vo2drH6+keaJPoEEoivYuCfqrAuwockWUXHkFVEPOYgAo/c+wazzAqn7EOwdEBPof38UTnMAJOy+gcQ+8ZRHpvBMfF10uOsQUQYdnzeqlKMJEv5rSETx3sN+ezLNOKcs3c7YOv1oZolqvsnh1+B2Myv8GtzFNeta2I9WfXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904695; c=relaxed/simple;
-	bh=lAxk04RlD+P8Ozzai5gybNotO8RPm2IxU0A+S7knrzg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oK3PM1OClB40Z1KJ1wo+HcgRcy2DxiUF+WjrLLnNBmMx+uIrhe5zyvbSO5U5dmBflRRoH0+kpYuLw/kKtXVb6hDScnGCJdLq7mKrXlcM/ZCJTf+BAR1OP7lMd3eW003xyfFWfVPXQp5jVgj94ebmsULsQF6NH8oAEINVzlrLYkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UplHpz/l; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1739904919; c=relaxed/simple;
+	bh=BxR9jFPEiAwMiqt5QfVjfx6zF42bwqi4ug6psMIP9Ls=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bxp/YOnY7vmKDOR/wqgQzQ8ZELvaTCCHA2cuISNtJe+Wy6Y0AczCRAwYpshXqsvt46cfP1W7nZrAvjXyMe/gYywAHrarJg6gsnxy/+J5nSbFjJGZL0RqPMmhA+j5n2BAjIfRtG23B5sEg7KF8/Hu/Jv5ETdJXiGI+ZKpE86rf9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=d93Dyk8W; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UplHpz/l"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="d93Dyk8W"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 2C17725238;
-	Tue, 18 Feb 2025 19:51:32 +0100 (CET)
+	by disroot.org (Postfix) with ESMTP id A11C925F3D;
+	Tue, 18 Feb 2025 19:55:14 +0100 (CET)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Nf0up5s3SQFp; Tue, 18 Feb 2025 19:51:27 +0100 (CET)
+ id d5LHm9JJqCpk; Tue, 18 Feb 2025 19:55:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1739904687; bh=lAxk04RlD+P8Ozzai5gybNotO8RPm2IxU0A+S7knrzg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=UplHpz/lNdkdG5iWDlvvSkHfsOV8boPdkiMoa02+tFheflLeVZcdKur+A3BJT8P4x
-	 lz7K3hqiM5t5J9gQ5Mj0kijSLPIJL6CGqbBCsOmc+Md4xv6fkGDYr9QLzJ5f+Oehix
-	 T37umopUao2Je3IIve3keko17YjI26YotemfExmzHX5/sCZ/UQFngB3dik8la5+5p1
-	 vIt2awlFC5RZ+0dH90jCUUFTpqfwSg+bPv/AImCn6oCEiL8h17WPyqTUdCJrR1FX5/
-	 cSI4rV29+m1IOwcXTKA6RpPXF8kgB6iw+m42wE0wCg+ODraxrME4i22nhlGJBr2JGq
-	 ozRo6jfKCYoEw==
+	t=1739904910; bh=BxR9jFPEiAwMiqt5QfVjfx6zF42bwqi4ug6psMIP9Ls=;
+	h=From:Subject:Date:To:Cc;
+	b=d93Dyk8Wa+n8vyZdIO1QSVsiuODg9kHdqbXykEq9cs9EgWmlIqp38Mgt2/I7a5kvC
+	 pX6ehS9RyqbhpRjQNiZHBuYIlLazXWRrw7hGIScZOvtIEq6TYIdm18KrDr6DaguPK2
+	 /ekKn0XDLWxqgSJc8TALoz8RVJNFYPeVDSk6g8d0xGYjBb8bLwgYpg3ZgxKYJI4wqg
+	 Xte9vPq2Fkb/wtA61EbkJARftGqzD6PvXMAVhN5C+O7/t0+3MeiK9BqWZBQw7hL+4h
+	 WM0imfqFQeuZKTOjOdftdmeS9Tu8YT5nvA4/bJWycCvXrvLtP3A4m2/SGwyorV/8CB
+	 4ecjGV8PLA9OQ==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 19 Feb 2025 00:20:32 +0530
-Subject: [PATCH v3 5/5] clk: samsung: add exynos7870 CLKOUT support
+Subject: [PATCH v2 0/2] Introduce DWC3 support for Exynos7870
+Date: Wed, 19 Feb 2025 00:24:41 +0530
+Message-Id: <20250219-exynos7870-usb-v2-0-1de41a89c9d4@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,51 +43,50 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
-In-Reply-To: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
+X-B4-Tracking: v=1; b=H4sIAHHXtGcC/13MQQ6DIBCF4auYWZcGQQJ25T0aF7QOOhtpGEs0x
+ ruXmnTT5f+S9+3AmAgZbtUOCTMxxbmEulTwnPw8oqChNCipjFRSC1y3ObJ1Voo3P0QbtDc4WMT
+ WQDm9EgZaT/Del56Il5i208/1d/1RzT+VayGFt9bo4GqnfdMNxCnG5RrTCP1xHB/ptOaYrgAAA
+ A==
+X-Change-ID: 20250203-exynos7870-usb-9f3a5ed7ee95
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739904648; l=841;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739904902; l=905;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=lAxk04RlD+P8Ozzai5gybNotO8RPm2IxU0A+S7knrzg=;
- b=R4UsGuQHOnJi5OrVwA2SQghzy7AexOBZ3mXaQzIBNSBHoCSV/gvsQ1xdHkXcPqYIhPvXHgpYX
- sy1SONeTq0uAcWDivRJCVJD/DmZn75uo024qiNmA9ncVjMfZN1Ot1wD
+ bh=BxR9jFPEiAwMiqt5QfVjfx6zF42bwqi4ug6psMIP9Ls=;
+ b=DD2ZhpEVbRcVE/PLP/ud3pf1ys+uU6rHRIfm3V2I8G99ZjAnCM7Lrmvc4KxOJ7/oFGSipmE/c
+ tkZAAuXzt0XC3LZhemTjcrp0tf1oP7xnZUknXdr4igOhwNjiSUDVb0D
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Exynos7870's CLKOUT registers are the same as Exynos5's. Add the PMU
-compatible to the existing CLKOUT ID list.
+This patch series is a part of Exynos7870 upstreaming.
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v2:
+- Change compatible string (s/dwusb2/dwusb3).
+- Rename clocks to "bus_early", "ctrl", and "ref".
+- Set 3.0V regulator as mandatory.
+- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-usb-v1-0-a7753f8183a4@disroot.org
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 2ef5748c139b37ca5429b9071ee0e06f44fcf28e..9a31b1c311b45096f1d680b6724571854c08725c 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -75,6 +75,9 @@ static const struct of_device_id exynos_clkout_ids[] = {
- 	}, {
- 		.compatible = "samsung,exynos5433-pmu",
- 		.data = &exynos_clkout_exynos5,
-+	}, {
-+		.compatible = "samsung,exynos7870-pmu",
-+		.data = &exynos_clkout_exynos5,
- 	}, { }
- };
- 
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: usb: samsung,exynos-dwc3: add exynos7870 support
+      usb: dwc3: exynos: add support for exynos7870
 
+ .../bindings/usb/samsung,exynos-dwc3.yaml          | 28 +++++++++++++++++++++-
+ drivers/usb/dwc3/dwc3-exynos.c                     |  9 +++++++
+ 2 files changed, 36 insertions(+), 1 deletion(-)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250203-exynos7870-usb-9f3a5ed7ee95
+
+Best regards,
 -- 
-2.48.1
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
