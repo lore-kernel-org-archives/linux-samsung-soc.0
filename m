@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8545C14;
-	Wed, 19 Feb 2025 00:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B474145C14;
+	Wed, 19 Feb 2025 00:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739925739; cv=none; b=iDdtzwStNawu/NsdEuD/3yNo9yfosC+srtULt4ip6Iknw9LRj1JUEiH+1qcMW4Ix2UGLv5RewcZ+fALsLPlYivra0+T+WvBcq8GhTm2NVDC7+nYDlRkU6f8TQRVVGRsKixXp5T4uDecvxTgZn8V3XtiQRYsN3vFJVQdblHdjPjE=
+	t=1739925742; cv=none; b=nSN4tEWVE8tKtBxI0C7/mlYsPSEdroiXCJ0RecT8YS4Kny4lrRle6VeSLaOdZsnRltAcyNzNKVt3iCmU4kNZghh882r7/MiySvNt7WdN/ECVbD+DLApmO9dHVxei4jkEiKM5p7/XHmaHwzssBdr6/ClaXjy5Ylbz8Msq3axVWd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739925739; c=relaxed/simple;
-	bh=zG+3d+jK2sUhaf8drQjlMDVNhtlQCiLoKQFWapDKXGA=;
+	s=arc-20240116; t=1739925742; c=relaxed/simple;
+	bh=9unwMkTo5UzoNGzJpdWJnYAWLU/BdNqcqKXaLoMLxPY=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=nAwQcagq7l5caXkXSl9TxLAVTPCqW3kka7tKRc1pbYAa/7ZdACq6LE19Zk4bgpeNAD9HPIVoYLpFTwMlTKdltsA7lZDi6Dw5icHMdmWpb55IWlT2/MJpPdlbutJg713+RvOM00k8bg3ZOesvb8+r4KdQYBURhsm5Icx+zlADaBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kg5wj8at; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=F+pwCwGHmbQq7xbTmophjs7RH6/zFysNWT0iX2BfUg7UtjmsaeuMnI0RegW8osfaILSyfp0JvnVk2avAyS8g3P+01pkY8vSTqDw1ibbeDOXEUKCQuYb7hNGPXtIZjVTTkpO+YaY+VeA/zx3v9qRFAfkE35Ux83aDIPngSajv8dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDtpfjec; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kg5wj8at"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F67C4CEE6;
-	Wed, 19 Feb 2025 00:42:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDtpfjec"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CFAFC4CEEC;
+	Wed, 19 Feb 2025 00:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739925738;
-	bh=zG+3d+jK2sUhaf8drQjlMDVNhtlQCiLoKQFWapDKXGA=;
+	s=k20201202; t=1739925742;
+	bh=9unwMkTo5UzoNGzJpdWJnYAWLU/BdNqcqKXaLoMLxPY=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=kg5wj8at0QfyxVSxM5v0s37Toag4HrP7YhdZGI4jyeTWCytxNB+gLfkwGHou8Iu/7
-	 /1nkDrJ3uMvZXZDHubtlZS6VxK1SGBALtfzmA3cJIMx7xsBMmbQHrVX+kwI4wS6Nkz
-	 jwm2qsTyPdnhFQyjFJCUCHWKk7xcsjk3itb9fz0cTkPGKKj54faHYW8RjTZRZkMLUz
-	 xZweDRxsQ74XODQUx1EQulOdLuGy/hUPlXlomXX4Q0QrhQSPbEGSmhfX8dMlCabEWv
-	 zOYJF0WyprOtCZ6DScEOvg0owrlwsm3DinhDAtKZaLDxaQjYF1ZQzeDsFwOLRJpJJB
-	 AqF0cWswNDBRg==
-Date: Tue, 18 Feb 2025 18:42:17 -0600
+	b=QDtpfjec+UbdsvZgwOPX2TIRpWCkD+eEOCskMLvCj+QA1av3cxtOrpadPyroDfI7p
+	 WeHeEZH5r/cE0RT9cdDGYQdf4y0Q5s/tUDiaHMFx+Yu0goDplFJ8n7b7o2bccsj+3K
+	 1fxadS+JuqKQHGVDTZ1an60l4xDF/yDme1b6x8h6YifQR6NLAjk90eM78sL1OoJb7F
+	 gAAI7zGkZTFNZaY4+Kdb2OY8t7UKB+X4VVbF0jFeejPcPd76720kYUNOjN2cZGNTfi
+	 9R0uMZcUFiS3a5nCEp42AHG1s5mBV8qOotxILzU8TB59bjYonQjEpM/uiow0IkGsZl
+	 d99CrK7nS5UPw==
+Date: Tue, 18 Feb 2025 18:42:21 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,76 +36,61 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250215130500.170738-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250215130500.170738-1-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <173992515772.2065079.17786828935224873560.robh@kernel.org>
-Subject: Re: [PATCH v1 0/3] arm64: dts: exynos: add initial support for
- Samsung Galaxy S22+
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+In-Reply-To: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+References: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+Message-Id: <173992516472.2065416.7202033506643575073.robh@kernel.org>
+Subject: Re: [PATCH 0/5] Add watchdog and USB nodes for the Exynos990 SoC
 
 
-On Sat, 15 Feb 2025 15:04:57 +0200, Ivaylo Ivanov wrote:
-> Hey folks,
+On Mon, 17 Feb 2025 22:32:02 +0100, Igor Belwon wrote:
+> Hi all!
 > 
-> This patchset adds device tree files for Exynos 2200 and Samsung
-> Galaxy S22+.
+> This series adds the nodes to enable the watchdog and USB support for
+> the Exynos990 SoC.
 > 
-> Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
-> (r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
-> including psci, pmu, chipid, architecture timer and mct, pinctrl,
-> clocks and usb.
+> The watchdog consists of two clusters (cl0 and cl2). Unsure why Samsung has
+> skipped cl1 on this SoC. Both are enabled and working - tested on a
+> device from the -x1s family.
 > 
-> The devices using this SoC suffer from an issue caused by the stock
-> Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
-> needed to hardcode the adequate frequency in the timer node,
-> otherwise the kernel panics.
+> The USB controller of this SoC supports full-speed, high-speed and
+> super-speed operation modes. Due to my inability to get any of my
+> Exynos990 devices to enumerate as super-speed (even under the vendor
+> kernels) only the UTMI+ setup is done - as such, only the high-speed
+> mode is enabled. Dummy regulators are used in place of PMIC provided
+> ones until we implement PMIC.
 > 
-> Another issue is that cpu2 and cpu3 fail to come up consistently, which
-> leads to a hang later in the boot process. As A510 cores are clustered
-> by two, it makes sense for both of these cpus to fail if there is a
-> power issue. Disable them until the problem is figured out.
+> This series depends on the following series:
+> - Watchdog commit: https://lore.kernel.org/all/20250217-exynos990-wdt-v2-0-3eb4fbc113f4@mentallysanemainliners.org
+> - USB commits:
+> 	- https://lore.kernel.org/all/20250217-exynos990-bindings-usb3-v2-1-3b3f0809f4fb@mentallysanemainliners.org/
+> 	- https://lore.kernel.org/all/20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org/
 > 
-> Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
-> 2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
-> 1080x2340 Dynamic AMOLED display.
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> ---
+> Igor Belwon (5):
+>       arm64: dts: exynos990: Enable watchdog timer
+>       arm64: dts: exynos990: Add USB nodes
+>       arm64: dts: exynos990-x1s-common: Enable USB
+>       arm64: dts: exynos990-c1s: Enable USB
+>       arm64: dts: exynos990-r8s: Enable USB
 > 
-> Further platform support will be added over time.
-> 
-> I expect [1], [2], [3], [4], [5], [6] to be merged before this patchset
-> because it relies on the aforementioned series for drivers and device
-> tree bindings.
-> 
-> [1] https://lore.kernel.org/all/20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com/
-> [2] https://lore.kernel.org/all/20250215113248.159386-1-ivo.ivanov.ivanov1@gmail.com/
-> [3] https://lore.kernel.org/all/20250215115433.161091-1-ivo.ivanov.ivanov1@gmail.com/
-> [4] https://lore.kernel.org/all/20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com/
-> [5] https://lore.kernel.org/all/20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com/
-> [6] https://lore.kernel.org/all/20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com/
+>  arch/arm64/boot/dts/exynos/exynos990-c1s.dts       | 16 +++++++
+>  arch/arm64/boot/dts/exynos/exynos990-r8s.dts       | 16 +++++++
+>  .../boot/dts/exynos/exynos990-x1s-common.dtsi      | 16 +++++++
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi          | 55 ++++++++++++++++++++++
+>  4 files changed, 103 insertions(+)
+> ---
+> base-commit: 783ef70f458b28640a63dda599ae8628c3c7aa2e
+> change-id: 20250217-exynos990-dt-changes-febuary-fbc184e8049d
 > 
 > Best regards,
-> Ivaylo
-> 
-> Ivaylo Ivanov (3):
->   dt-bindings: arm: samsung: document g0s board binding
->   arm64: dts: exynos: add initial support for exynos2200 SoC
->   arm64: dts: exynos: add initial support for Samsung Galaxy S22+
-> 
->  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
->  arch/arm64/boot/dts/exynos/Makefile           |    1 +
->  arch/arm64/boot/dts/exynos/exynos2200-g0s.dts |  178 ++
->  .../boot/dts/exynos/exynos2200-pinctrl.dtsi   | 1765 +++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos2200.dtsi    |  560 ++++++
->  5 files changed, 2510 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> 
 > --
-> 2.43.0
+> Igor Belwon <igor.belwon@mentallysanemainliners.org>
 > 
 > 
 > 
@@ -125,34 +110,40 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250215130500.170738-1-ivo.ivanov.ivanov1@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org:
 
-In file included from arch/arm64/boot/dts/exynos/exynos2200-g0s.dts:9:
-arch/arm64/boot/dts/exynos/exynos2200.dtsi:8:10: fatal error: dt-bindings/clock/samsung,exynos2200.h: No such file or directory
-    8 | #include <dt-bindings/clock/samsung,exynos2200.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos2200-g0s.dtb] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
 
 
 
