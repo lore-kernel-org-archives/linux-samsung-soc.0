@@ -1,60 +1,62 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFF41CAA68
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 08:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272891DDC35
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 08:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955453; cv=none; b=Ul1+fWpTqA9LeiggoinZ723UlLX9W1JozMGb+pyf7BXTcTf2w6bTR1uOXV76fAc4/DLvA+B5KC+Jc2osagTA5eMr/hEiWHc3tUf+kpfoYAclwym7OEkA4VZttGBTsD3f6vMJCtHdYyIxgq5GrdNbLoAfYIKv8EXUoeo5J7C/pZA=
+	t=1739955456; cv=none; b=bePIoJcEmmbtEmM27i3vKQs8jyI75oygDiqWQL3eqqSNbPb8xYbqeopN83g77JO+xYBxmFYLP5qHDLcVXC4Tuo2jqAZXhdt67gDB+jZtQxrZuGBZ41CEpD2cfycPjYzekiRR52DSQTp6ys5ivPdnMbWLfPFrKczCXwLTHu/1HKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955453; c=relaxed/simple;
-	bh=5feNgE4Z0VyR3BH4VrqG8+EjOe3cq6YlQsxGTVhOkJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=atMPJZ4jafEOgjBntSk8FfHtefGSq0HU0HGhLUh/w/46jWjvy6qO+uum362EsuA5mTFc75wFe6qmaSQM/e5UqSS/6NxwW18IB5Va5XvZEU7qQxkUi4DC9NgXpaoGypA89qK6iJ7IrrS2jnDOpFKK4ThR/o70lZFmpwdwKy9R1bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ru22cKO3; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1739955456; c=relaxed/simple;
+	bh=XGZ6u2IRBOTO0vTt4hFrZXu+pM/Ns3vHyH1GrUC+VEg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ea0cLVJYq7/fmGEE3UZdV6U8FQE5QOXoLpBRAmBbHaxl6fPJjk09Npacn1SnAcwRrNSsqxy2uIu5jsSFb6MX4CAZJMBqhuP4WSit03E18/NmkhPsQYOh/vt1JO1MYW8qyoADh2Bgf3cZFO4JMn18fuAHTaLuoav+huT0OoY2IaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hkOJBkMg; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ru22cKO3"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439990502bdso1432915e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 00:57:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hkOJBkMg"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4397185cfa9so3642295e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 00:57:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739955450; x=1740560250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PRDH7JUOK4Qt3XrdNtvjAwI3P3XDa0EtyA9y0a/Ff1Y=;
-        b=Ru22cKO3w1Sh0ozJfXUZIxGEOZn4+WRiegUhdLUzv2SHaFP8p12AXeoJt68okNKW6A
-         W9aV0Rzg2wjDmUQjOw26HUNTSeey2bztSRGjvHR6LAKVwWUbBRdxSSUy/YCZvm2PvLSh
-         8AxjQs47pPn2IF+q3RXiJzQV6r+t3ROMLtfydeefkYWdOAxjeyl+tEKrngfWEAFtBQta
-         zgQOv0FtTv0p6dYtbQmulhW1qP1MseQuOVWjrKUGUBvykDVkmYCQ4M//yrpxpnVsHrL8
-         uvlHiVMFAw3MioS7ChN0kG1IkalZF5dUYOPH/vPEibB5ORqsTPsyf/8loUePcefk1yzJ
-         AIhQ==
+        d=linaro.org; s=google; t=1739955452; x=1740560252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mmpBa7eMuH+mFF2ncMukFi4gUmii0gteNirg9Prls7g=;
+        b=hkOJBkMgFmfntpkqClpP8e4K1k1SznYq2FpNObMcSx7gQerVqoNWxTxIZUcN7D5Eym
+         tRggyJe51kU1b/LtO8HBxmkG8YLazKBFOMbwsA+8pA2arfdYL1SNbwzt/aUeHXNdaFq7
+         0mLJCzBa109hQGAKKipKV27kQ2lN/cl63PeUd1YtSZEV4OUzF9O6UgN0PWih3WD2X+GU
+         1Bwuqvr6tQf3S8NbvXGY7q7U7Wy9Rmosp/ZBkOZXUInX8TD7winXJcvZ6quQ09TfeOGc
+         xjUbgYhYf8BtoWHNT30Mm+wqZWTz+kMD8JRirD96oRWJ6gHJ0KSexWD+QAN2uFrswPpk
+         ppjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739955450; x=1740560250;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PRDH7JUOK4Qt3XrdNtvjAwI3P3XDa0EtyA9y0a/Ff1Y=;
-        b=M1pUZpkrnoqgmfU+mAas3GzmNn/BaAtANzXmZh0f/ifuy8AcJJ4Q9Z4H22KrD3+qXH
-         fDPFy1pap3tuBII7t1C816tzRhV5HZhrI2YBO85z1Jndro8lTDZLzwrYe5LSb8naHl98
-         Dt13MeqUHf8nMVz/LBU0uwNy09SA1bl3oQ/I2x94jR+a2SiX2FSVhwa+Ui7AHIa/+GBP
-         /DOOGVqQzBPzn4U6XJHnaLGDzOypCd+j64tdgU5iRirnuU/xn4G17B2Q0mjyRI+6/FBA
-         Fl6jFI+71MdhU0JSCZfRUyK69hc2a+P+Zhdr8cAe0jgqQb7rwUjy43qfcCUk/V8YaFnO
-         VUMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVETcFpS5f/HgcheuAyYphL7a73wXcP4FLx1RGUIKG9giuWDtx9tafwMPFDXWek+/1Th+FDXxw0qabeE4BhZLhsfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGlqlMROjupmM9vjwLEkkqDR7H9c/sXlK13GnajsdodBfHMCEY
-	XF0PNRauSjtlDt8vxt8qWOm+v+Pkcw23SCZElxUIl5JVY3bcdPo/scFIJzIwrcs=
-X-Gm-Gg: ASbGncvuI3/ZGz8wcz6H2mo9D1HGhQC/8eZpY8/4+Bg/kgUHR0a8qDY+UUdv6mQ1SEJ
-	1fNFgQsTDGa5u5egoUi96vovhWs9Lb1FFfORUDr64/2ys4gzfMweACATlRYMGOA3yuO7nqMA5jV
-	N0janGInp248/MrOOMZVj/m4E9E/5FGZKb+WshGnJ7vLgdHwNk+SCm77kGdOVzKKf2Qkjw6fRb4
-	ZAVvpj4tZWQ3pOU5nKt6zZg7ysDIOFjLQ+EUixzz/HYefTE/pJLtP8HyvL864XjV1IOPaGFQgt5
-	x+7DSqfCZ2As70Oyw/QN1G/87Ba/cw==
-X-Google-Smtp-Source: AGHT+IGb1jEC7y+Y7Rl+PioMxXoJSfQnw0OF7LzA+zc795fUjhCn+RhDum3IRhMvx+QUGzwJ/XfnIA==
-X-Received: by 2002:a05:600c:2d04:b0:439:84d3:f7fd with SMTP id 5b1f17b1804b1-43984d3fb0bmr37040725e9.4.1739955449623;
-        Wed, 19 Feb 2025 00:57:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739955452; x=1740560252;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mmpBa7eMuH+mFF2ncMukFi4gUmii0gteNirg9Prls7g=;
+        b=KTkOYZFL/zt8mvjg+n7GRPSIyZnxhfnDAlBHpF/vzuUGcctBbCp727Gdmud2WNq+4c
+         gdTkX+ZF4M0FJNGt0XxE4aQZ+Xt/Ehb2vSFs3X8y1dz1QVxb3Xg1XDAoMIeWeOmfXMe4
+         PA2lsS4iOk30z7c55+GlPekN7VKS0FIKcbrjiMkE4FIzNLrHA+ukEluluhrNXVd3dfbV
+         WT7sg1TsrVkqUfwlDNW0EjOM5tJUm6Kx5EllaU6IfNm2Up7BzDqLwPHO9z137aCVgeZL
+         gQ5O08OG/zuCHqzZnbtmPmrkHhCtMX0MwP+j30IW0HvSH6rgw52jC3Oma0+QbOnKnYW9
+         nNnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoLuGhLx/hlBVJhsWyjNvMhG6EpjkJC4eJJI2T1/W0EErCm4SSoG/Kg47BgTylFzaU/ZW9t+dFaX2ArLXNtvqiXQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbDqte8bu3P8tlGQIOiaIn/JgLP0/wDRREfQo2cjZJ1lfa7DKO
+	64T3IGs7MvSzmPj32AdMfDz0bZaZ2yoFDyU4DVgRYrTMPJnyWnOFL0IWs+eFmss=
+X-Gm-Gg: ASbGncuaBeghrues5xqppiFWDKNK2OFDa5pUmkFxiaQ66il7DJIczw7dV6i4KlK6j/j
+	fOcULtKwKbytP8DKN/rTWo+OBnkM4R+i7LPSfVNTLLKggE/WyNJ7Z3I7YXHCqDwh09LykGY3VX+
+	o4G4h4BdMCNuiFu0oZwjaQZ5Ba6npA5mLYvdDoWauuqiB+9KC8UMDiRu02BM85IwUSYngfskYhQ
+	iv9NzkJmIuYdRnBAybcsZsPy7p4kZ8nPvLyLDHCioVHc+14Ysx3M7qSPNTsRbLIar2rph0kXdmI
+	eXIf4R/te/+5/HRVGYKrGuslX2J3Vw==
+X-Google-Smtp-Source: AGHT+IHMgGpLmNZh2KOBXIVt5Xtg6SHJM16bLaqEQLg+J9+rGOfQPsKNJHHPFxgxlEla7/c81KlrTA==
+X-Received: by 2002:a5d:5850:0:b0:385:edd4:1242 with SMTP id ffacd0b85a97d-38f33f50c0fmr6700963f8f.10.1739955452455;
+        Wed, 19 Feb 2025 00:57:32 -0800 (PST)
 Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399beadf31sm10007375e9.0.2025.02.19.00.57.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399beadf31sm10007375e9.0.2025.02.19.00.57.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 00:57:29 -0800 (PST)
+        Wed, 19 Feb 2025 00:57:31 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Peter Griffin <peter.griffin@linaro.org>,
 	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
@@ -69,10 +71,12 @@ To: Peter Griffin <peter.griffin@linaro.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/2] arm64: dts: exynos: gs101: Change labels to lower-case
-Date: Wed, 19 Feb 2025 09:57:25 +0100
-Message-ID: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/2] arm64: dts: tesla: Change labels to lower-case
+Date: Wed, 19 Feb 2025 09:57:26 +0100
+Message-ID: <20250219085726.70824-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+References: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -86,112 +90,130 @@ Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 22 ++++++++++----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/tesla/fsd.dtsi | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 813f96089578..80c1af3a8836 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -73,7 +73,7 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0000>;
- 			enable-method = "psci";
--			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
-+			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
- 		};
-@@ -83,7 +83,7 @@ cpu1: cpu@100 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0100>;
- 			enable-method = "psci";
--			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
-+			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
- 		};
-@@ -93,7 +93,7 @@ cpu2: cpu@200 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0200>;
- 			enable-method = "psci";
--			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
-+			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
- 		};
-@@ -103,7 +103,7 @@ cpu3: cpu@300 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0300>;
- 			enable-method = "psci";
--			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
-+			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
- 		};
-@@ -113,7 +113,7 @@ cpu4: cpu@400 {
- 			compatible = "arm,cortex-a76";
- 			reg = <0x0400>;
- 			enable-method = "psci";
--			cpu-idle-states = <&ENYO_CPU_SLEEP>;
-+			cpu-idle-states = <&enyo_cpu_sleep>;
- 			capacity-dmips-mhz = <620>;
- 			dynamic-power-coefficient = <284>;
- 		};
-@@ -123,7 +123,7 @@ cpu5: cpu@500 {
- 			compatible = "arm,cortex-a76";
- 			reg = <0x0500>;
- 			enable-method = "psci";
--			cpu-idle-states = <&ENYO_CPU_SLEEP>;
-+			cpu-idle-states = <&enyo_cpu_sleep>;
- 			capacity-dmips-mhz = <620>;
- 			dynamic-power-coefficient = <284>;
- 		};
-@@ -133,7 +133,7 @@ cpu6: cpu@600 {
- 			compatible = "arm,cortex-x1";
- 			reg = <0x0600>;
- 			enable-method = "psci";
--			cpu-idle-states = <&HERA_CPU_SLEEP>;
-+			cpu-idle-states = <&hera_cpu_sleep>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <650>;
- 		};
-@@ -143,7 +143,7 @@ cpu7: cpu@700 {
- 			compatible = "arm,cortex-x1";
- 			reg = <0x0700>;
- 			enable-method = "psci";
--			cpu-idle-states = <&HERA_CPU_SLEEP>;
-+			cpu-idle-states = <&hera_cpu_sleep>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <650>;
- 		};
-@@ -151,7 +151,7 @@ cpu7: cpu@700 {
+diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
+index 690b4ed9c29b..9951eef9507c 100644
+--- a/arch/arm64/boot/dts/tesla/fsd.dtsi
++++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+@@ -92,7 +92,7 @@ cpucl0_0: cpu@0 {
+ 				reg = <0x0 0x000>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -108,7 +108,7 @@ cpucl0_1: cpu@1 {
+ 				reg = <0x0 0x001>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -124,7 +124,7 @@ cpucl0_2: cpu@2 {
+ 				reg = <0x0 0x002>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -139,7 +139,7 @@ cpucl0_3: cpu@3 {
+ 				compatible = "arm,cortex-a72";
+ 				reg = <0x0 0x003>;
+ 				enable-method = "psci";
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -156,7 +156,7 @@ cpucl1_0: cpu@100 {
+ 				reg = <0x0 0x100>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -172,7 +172,7 @@ cpucl1_1: cpu@101 {
+ 				reg = <0x0 0x101>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -188,7 +188,7 @@ cpucl1_2: cpu@102 {
+ 				reg = <0x0 0x102>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -204,7 +204,7 @@ cpucl1_3: cpu@103 {
+ 				reg = <0x0 0x103>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -221,7 +221,7 @@ cpucl2_0: cpu@200 {
+ 				reg = <0x0 0x200>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -237,7 +237,7 @@ cpucl2_1: cpu@201 {
+ 				reg = <0x0 0x201>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -253,7 +253,7 @@ cpucl2_2: cpu@202 {
+ 				reg = <0x0 0x202>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -269,7 +269,7 @@ cpucl2_3: cpu@203 {
+ 				reg = <0x0 0x203>;
+ 				enable-method = "psci";
+ 				clock-frequency = <2400000000>;
+-				cpu-idle-states = <&CPU_SLEEP>;
++				cpu-idle-states = <&cpu_sleep>;
+ 				i-cache-size = <0xc000>;
+ 				i-cache-line-size = <64>;
+ 				i-cache-sets = <256>;
+@@ -291,7 +291,7 @@ cpucl_l2: l2-cache0 {
  		idle-states {
  			entry-method = "psci";
  
--			ANANKE_CPU_SLEEP: cpu-ananke-sleep {
-+			ananke_cpu_sleep: cpu-ananke-sleep {
+-			CPU_SLEEP: cpu-sleep {
++			cpu_sleep: cpu-sleep {
  				idle-state-name = "c2";
  				compatible = "arm,idle-state";
- 				arm,psci-suspend-param = <0x0010000>;
-@@ -160,7 +160,7 @@ ANANKE_CPU_SLEEP: cpu-ananke-sleep {
- 				min-residency-us = <2000>;
- 			};
- 
--			ENYO_CPU_SLEEP: cpu-enyo-sleep {
-+			enyo_cpu_sleep: cpu-enyo-sleep {
- 				idle-state-name = "c2";
- 				compatible = "arm,idle-state";
- 				arm,psci-suspend-param = <0x0010000>;
-@@ -169,7 +169,7 @@ ENYO_CPU_SLEEP: cpu-enyo-sleep {
- 				min-residency-us = <2500>;
- 			};
- 
--			HERA_CPU_SLEEP: cpu-hera-sleep {
-+			hera_cpu_sleep: cpu-hera-sleep {
- 				idle-state-name = "c2";
- 				compatible = "arm,idle-state";
- 				arm,psci-suspend-param = <0x0010000>;
+ 				local-timer-stop;
 -- 
 2.43.0
 
