@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B1C17A2F0;
-	Wed, 19 Feb 2025 07:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290D2DF42;
+	Wed, 19 Feb 2025 07:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739950308; cv=none; b=b+0Ygn8X9PJLOriXqo2Jtvb1b3esoxeYz4ZcvzFPF2g8qFGWPEjSazERT4x+vZ4WV+bJI0Bt+US0fHLFnqJ1HdU+1i9lbzqp4no5HBwxQ++OcpQ3xpMoZspeR/ysZaj9tTjrychiUNbfP43xcufKyHbktRE13aNLqbJNkGvDYGY=
+	t=1739950632; cv=none; b=P0BWJUek5IfnIHmbBwSQbwHkse0NBn/+OpHAGLzPQ01xionq6wzsIaopvA3pS2hntmHhBI6Yw5MYnREfz+K+Xm94qg8k98PAJrmgphn0tHY0/3NxjBhxm9BDw4K0vdsgkezJcZr+rr1BV1nyw2uZFaaeCh3lNouRxHzlpIsAFwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739950308; c=relaxed/simple;
-	bh=cxAT0ceE2wLTrNYv8eY/CEz1rQUPy7iHSg5zXmpc9n8=;
+	s=arc-20240116; t=1739950632; c=relaxed/simple;
+	bh=x9/qovFKSIHMvPM21K/JGZ95Y1kS3BPfX8MyNhsSuWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lmxZyCoFP5oMT6TVclZGEvyWp9KsuOWPSD4eRDBHo0xxjE7vv2ZzE/WVwu+zc5zOcFw7jo+IHwF407Eq+7VIB+9VSJkRhk5OzoXNUdIvKGUTs9qq+gf6poCVtJotF7eH1Ej882dtIfCNm1nkaswCQ5jptWt24Kfg/Vh+Z/iRqpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uaxkr/R9; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=dHJPQYXmTS2sYpVyLgowfoPXkI56C0xXvu4pyehFwNB56q8RsybZ0U9rLq+x1iRJo9OD8x4Ckxbgv7ZOwjjzW7tFCyJ1xCsxB4ktN6sxMnxxd/PB7sn0ahuEOUEI54XIpSsW+UyX5C1VKVCmX8pASvZoI6xDnAznPtkIUe0QQp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaBGHvZW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uaxkr/R9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15317C4CED1;
-	Wed, 19 Feb 2025 07:31:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaBGHvZW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9092BC4CED1;
+	Wed, 19 Feb 2025 07:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739950307;
-	bh=cxAT0ceE2wLTrNYv8eY/CEz1rQUPy7iHSg5zXmpc9n8=;
+	s=k20201202; t=1739950631;
+	bh=x9/qovFKSIHMvPM21K/JGZ95Y1kS3BPfX8MyNhsSuWM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Uaxkr/R9E8VISGogaXUl3S39rxJYlScQTItOVGAGXOm82J+uw/6b8O0xNkBskHLfj
-	 BaopC4Kkdbt19FXX9DGC+0VR1o9LKXUle/V3+ZhwFRYs50DGUWH9WTvXF0cqEE5C3j
-	 dsSkOiARUplDbDxJV4u6CmABulSrYYBYdIoteyHI/OdJr2KSAusM9jq3f1bZFKWcSi
-	 N04viYHJHD+jrNmHH3f77vQ0aH4v37hhJY3gqRHFp3aEL7lzJHR1xsnN7WujVROr2D
-	 HowKXKxkdGrcO2lFLG44n1t67zqMxST8/mE+5zd9L1NpwjT9wy0E/BPVKr/kabx+7e
-	 nL7yN5GiLJruw==
-Message-ID: <61b658bd-be0f-4f1d-a1ee-56660dd2810d@kernel.org>
-Date: Wed, 19 Feb 2025 08:31:40 +0100
+	b=eaBGHvZWcbVaK2tdrBBMoiwEBY+jRiyOq24JjNsqoHMXFefIuG3fTOgInwvzKrAyg
+	 b+UUyI7RocKXxRDPHyQynVlUEGwcmfXa/qn0vv3gh78Qo6MqYliyGIMECRutQ/GDvo
+	 TgC5Zsv8XF83qiZcFjkfTm9NUsB3G/KvkCSD64iP8FWibLigNgrRI7ia0i4BBgT/5P
+	 iKl+y7cetfNTOrDcfA/T4sC69JM93CDh/t9nFBnAZOrA9Tk9kUZfwT84Kk5JbAwfsQ
+	 jxBLFh96+yRMPI5OG/AaJVM/0R3ACyo21Ml/XNVf76i9/mOeyHvLb5+9xW+mou2R5i
+	 wTHF9mqnmE+qg==
+Message-ID: <b0e0db3c-2a06-4c14-939f-fa60d7433434@kernel.org>
+Date: Wed, 19 Feb 2025 08:37:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos990
- usbdrd phy
+Subject: Re: [PATCH v2] dt-bindings: usb: samsung,exynos-dwc3 Add exynos990
+ compatible
 To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
- <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250217-exynos990-bindings-usb3-v2-1-3b3f0809f4fb@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,19 +90,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
+In-Reply-To: <20250217-exynos990-bindings-usb3-v2-1-3b3f0809f4fb@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/02/2025 18:21, Igor Belwon wrote:
-> The Exynos990 usbdrd PHY is a combo PHY which supports USB SS, HS and
-> DisplayPort outputs. This commit adds support only for UTMI+ (USB HS).
+On 17/02/2025 20:44, Igor Belwon wrote:
+> Add a compatible for the exynos990-dwusb3 node. It's compatible with the
+> exynos850 variant when using the highspeed mode.
 > 
 > Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 > ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 32 +++++++++++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
->  2 files changed, 35 insertions(+)
+> The Exynos990 SoC embeds a DWC3 USB3 DRD controller.
+> 
+> The controller's design is compatible with the Exynos850 design
+> for high-speed mode.
+> 
+> This patchset adds in the new exynos990-dwusb3 compatible.
+> ---
+> Changes in v2:
+> - bindings: re-check, fix picking the dwusb3 compatible
+> - Link to v1: https://lore.kernel.org/r/20250214-exynos990-bindings-usb3-v1-1-3e5d2721c98c@mentallysanemainliners.org
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
