@@ -1,68 +1,194 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975EA192B66;
-	Wed, 19 Feb 2025 08:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156A41C54B2
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 08:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739952569; cv=none; b=B5y75UOyv8BMtADo3M6XlHcYgMHmGfTrwswKmTHyVfLNHbVKNxayGtEtr8W4IrQvyvYsj4wuO8w/fwhOyG6gpvUc6BSTPoseZ8Kx+RQOaITrE3sWmq9fusgjqEC+krRRr2TOrwU2lMIVsauwK03sL7PMhL5//920jp8/qfkLqJ8=
+	t=1739952602; cv=none; b=Hyn2YpMIdQEhJ8S+K2gpOkeczKEV9hYL3wjD6UtmjVoDaz0lJNsu4ATV/7armosuwHHXsumvHI94lG4T4UllL0Ejt6uJAOyHvbGKhbUqHdL2puUKn8mr1q3OcPdfeCgCVNojJ5pp/ox0sUaoBh6aHM+wOzQuZ74pL7soIjLzp4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739952569; c=relaxed/simple;
-	bh=M7Q2P6Nbyqxbqn82NDOiFMTGHBZa2DrnxUtGtE5Yto8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ek3QlesswK8WlZ0sg+ovocwyXKWGEAypgXB7q7bqXdVxh6WKPReJ5UtFsJzzfqeMik+5FLL6lWVV5ldQZHSy5QVkSj8AjHj1jtcuMJqGQJlm3eabAcwwS3RqbDX1NCtYdD2XPv7eUXmeIn3h3H5OUmgj4iWmUR0fChkJrW19/PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOXkBjOu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739952602; c=relaxed/simple;
+	bh=c2Q0P13UZz4aWmHg7pSHLaZiCbXWTYiI29CLyzh8Cdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N2NozIc9Z0qypbObguBKb0v9CU2foDOdBccprIfQSoRoEbVNEtqFGBmxIDn/X3+ZmbB/+bDjTZ6f6p4qifjfB1efmtivqM+C2E7kOiHiWwqDefg6WePFYZUr5VQY91F2xkbkG0eoK57e/1pRUJ9DqXXD+KjM+UsmcQt3Lslntak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dKPf/W8O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MeWi0m6i; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dKPf/W8O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MeWi0m6i; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOXkBjOu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59152C4CED1;
-	Wed, 19 Feb 2025 08:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739952569;
-	bh=M7Q2P6Nbyqxbqn82NDOiFMTGHBZa2DrnxUtGtE5Yto8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XOXkBjOuRvzrlVQU1kpv4rPNC2Vcpz+CkX5vI9Locy7zX59WHDb+L1wef4GiF4lcG
-	 IYvLZsHO8fuly+6YD84mOvNaZsnj4nNXSVje9LVFWMDvmweWGiut9DG0ntkQmjhNqJ
-	 +ThpiI4CA+fKti9esaiLQ2xpHVUSbrjLFPwAzFXm+SItLTEwty5QX6In2sRfdslgBE
-	 0jQkWoYsFTSmp7bZ2TLEGDIuEjbs77Ll1meQxG1+ymLhnxK1rN/rX3tMeC4SphhMj7
-	 062Qd1KMSGWpsPA4PQbhGwmmIYZgN90UeFX0l2Z3S+OtzLLi3fte90A8xs4p139HNW
-	 Prd4RnqClPtaw==
-Date: Wed, 19 Feb 2025 09:09:25 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/5] dt-bindings: soc: samsung: exynos-pmu: add
- exynos7870-pmu compatible
-Message-ID: <20250219-functional-brown-fennec-8d55ea@krzk-bin>
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
- <20250219-exynos7870-pmu-clocks-v3-3-0d1e415e9e3a@disroot.org>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dKPf/W8O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MeWi0m6i";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dKPf/W8O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MeWi0m6i"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1D76821940;
+	Wed, 19 Feb 2025 08:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739952599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
+	b=dKPf/W8OQXbxt6ftlFfGpxSgQu7gVp2dstzZ3XzqVgl5Z357Tinp+N+mnS5eZMNrmbpIct
+	ERkIgZLFbCqLer2bR/7cT4Nal5dezMobDUN5PBm/4ffPV3aQDn17w9FIeMBLCA5L6STVWi
+	Fu675OecpkfIKo5+vbkkfz5g/IUDu/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739952599;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
+	b=MeWi0m6iVBnfg747H1LUoCuWVrL86D9smnRpv47ULAXeqgfodW1nBInmL14qgH8vx7K4fX
+	EIRt6Mg5pinhPRCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="dKPf/W8O";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MeWi0m6i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739952599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
+	b=dKPf/W8OQXbxt6ftlFfGpxSgQu7gVp2dstzZ3XzqVgl5Z357Tinp+N+mnS5eZMNrmbpIct
+	ERkIgZLFbCqLer2bR/7cT4Nal5dezMobDUN5PBm/4ffPV3aQDn17w9FIeMBLCA5L6STVWi
+	Fu675OecpkfIKo5+vbkkfz5g/IUDu/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739952599;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
+	b=MeWi0m6iVBnfg747H1LUoCuWVrL86D9smnRpv47ULAXeqgfodW1nBInmL14qgH8vx7K4fX
+	EIRt6Mg5pinhPRCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93F3213806;
+	Wed, 19 Feb 2025 08:09:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id p5PBItaRtWd5FwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 19 Feb 2025 08:09:58 +0000
+Message-ID: <0b68b63f-a826-45f5-8845-11db9b46757d@suse.de>
+Date: Wed, 19 Feb 2025 09:09:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250219-exynos7870-pmu-clocks-v3-3-0d1e415e9e3a@disroot.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/25] drm/armada: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
+ linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org,
+ xen-devel@lists.xenproject.org
+References: <20250218142542.438557-1-tzimmermann@suse.de>
+ <20250218142542.438557-7-tzimmermann@suse.de>
+ <Z7St0O3A_mXEYK49@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <Z7St0O3A_mXEYK49@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1D76821940
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.xenproject.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Wed, Feb 19, 2025 at 12:20:30AM +0530, Kaustabh Chakraborty wrote:
-> Document the compatible string for the Exynos7870 PMU. It's compatible
-> with the Exynos7 PMU design. It handles syscon reboot, syscon reboot mode,
-> as well as other system control registers (i.e registers for the USB PHY).
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
->  1 file changed, 1 insertion(+)
+Hi
 
-I don't understand why did you send SoC patch to clock. I asked to split
-by subsystem.
+Am 18.02.25 um 16:57 schrieb Russell King (Oracle):
+> On Tue, Feb 18, 2025 at 03:23:29PM +0100, Thomas Zimmermann wrote:
+>> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
+>> buffer size. No alignment required.
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Cc: Russell King <linux@armlinux.org.uk>
+> armada_pitch() does have some special alignment (it aligns the pitch to
+> 128 bytes). I've no idea what drm_mode_size_dumb() does. Can you check
+> whether it does the same please?
+>
+> If it doesn't, then this patch is incorrect.
 
-Best regards,
-Krzysztof
+Indeed, I should have noticed. Will be fixed in the next iteration. 
+Thanks for the review.
+
+Best regards
+Thomas
+
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
