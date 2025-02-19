@@ -1,105 +1,196 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C151A1D61BC
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 11:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF0121858A;
+	Wed, 19 Feb 2025 18:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739965564; cv=none; b=QK1nkuq88FnSHvRPxHQZaKJzUWn0fxNqQz9owHoGphxHSaXUPRGS92uT1OVNn71Eh6ovFzwiGsx2nxVDeEbb9mtARbAA/SFeShwdWlzJ6fdR5vpCabhMgM9dXoL5d+kr/T+nh5YBdMCS6pAVQHVJVcCSAnczJpjBiFFwzjeBldA=
+	t=1739989471; cv=none; b=CWi+9/9f7EIvcfayAbMl2YIfoI3d3pfRTFZoKk8elXeNVQjoZrKvIfr/dWpxxqFg4S+KRLBOgjbOuu1rcBIwR+DiiRAhfWmGYHtKm8Xa4WeAPPGAApPByzyOlKDxv3kvpdyyS8NuX6sRAUy9Aqt9QYtDnBUQQvRFafRPNWylLTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739965564; c=relaxed/simple;
-	bh=iVVfLZ/Xexilj6DGdqpQ7mA+qvUkkMr2moH3ow9D3GE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TTHi7NeiiPw44lOMEXWEagkqToKMbxLhBYeAcaLfLpPKb7deF+zdugtEyAf5fY03qz9NBeczpJ6gNh+BxlWyNJCZp6BFgYGi5yp1BnDkywMmIqU6eNziKWpbt0ym3j9qvihQQIvSlh8xTqqmpuFxx5jbRDpr5PrweEgbwhLy2jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YKkTuZqD; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739989471; c=relaxed/simple;
+	bh=HOiG+O4t1HfyKMWrjgRzX33QT2jP4GmEeXBmoU0A50Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GblpZumGVTWtQV4sLnVPNZx6K2cl9+CEsu8bsRMbGm+tFgBYHT7fpIL/pNWHp8lwB9fJDJZli5b+vLkgFd7L5zLIjGsUjgbSGZhm1hLcWUqhpvjndqNK5gcDLt/TANJFOLrLLEb6g54vtumkK5GlvFwaaMStM4r9iCYel1adxIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPJrzJKy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKkTuZqD"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4396a4d5e3bso49845895e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2025 03:46:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739965561; x=1740570361; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=grVqY1qROVcqXbe9nYwk1uHL1rEHylCVGnje1QZKs3g=;
-        b=YKkTuZqDO+eHlwH7hL+meqItmH/zuWnx/Wtl6j02Aq/s8b5chOnCJ1snpEo7kY4iKX
-         2rzAw1SJc6IrBuFo4vQd+S37abp74kvo2ca/nKtXPEmKcnDBwcPUV8prvpy8SzaWXxmr
-         a+6yvJqXK3n7PBxQSf8UVK9liFsrgyQxXYN6EgkFiXjxncUHxx+jkYeci/PDADTh259c
-         wqieq4/9/o/T9NnGWyuW0CXfpYdjWsiFHQSeqGsUolYVEuKciPVApEbcKpEFR+9R/u1D
-         c30vqNvnEWYNaZsbmevkk+woO9ltFWmrm71wSEHdG9KdXGOgu9QxaQwLjCj26z8dSRS3
-         mObw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739965561; x=1740570361;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=grVqY1qROVcqXbe9nYwk1uHL1rEHylCVGnje1QZKs3g=;
-        b=STFIbjVPvMy19RGqMlIT3dSHLm3Kat5kKHMP6G8nSKBQ5PSOE4zalGrHwk2h/YIAnJ
-         6bvV27mToXY+npL9DV3/UGlRah6GFn9h6pKNdRDrpQSn8gG32kRfPYcmQa3kF5UdE3R1
-         VYvru1VmTPetOXRnYCQrZh02XrEhaQKfeUMd/hKkYPnGhHcv6FI5ZFwr3MxZmxeRi5YL
-         IIOPSRpSKPx+yqvIfuMUy0q3BeqSh0rLz2NYtVtvt4mf13+WOGTWZCMbMFVVd9pSMO/D
-         GY5TUzKMyS+/7dVL9QLOifhy3L9Vfp6yaCVoUh227l+anX3FKPKB3zmziATgpu4A3V0+
-         ZTMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWR8KsQfw95SpuYhxlaan0ab9+I5suRD5sgz8FCQsztY1BZvFw9QUiH1kZgsY7nF8ub0oRouuRpXF2bil5X99iLg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwp/FYopHakqT77+DjW21Nhg6ucUHj2HAb9Wb/405wsMt5MiwZ
-	NIt4KpZEC8mm441WPE279SEavS95qCgQyY2wTleohAuvuH0IgXS/NT+zoQaLoV0=
-X-Gm-Gg: ASbGnctin1k575aFm1JP1GBduwtinBnY0QqbEVtckJnte1oYR4WNuVdaoWVX5x82bf3
-	g1tFEwwalC0Pu5bqoBAfytE0utkVw2vHlRthwEs9cP46zjds1t6NFETWnAU5seQ+Xy30gEMBFL3
-	2BD/5qG/W+6aL6Dhdy2jiDg36lFVInPJhsMnVTVr2VULzAiVnf5ULz/7QvRG3SKFtJCPK8Fnkvj
-	Nxa6XVktVOJsU1Y7kkTJa+7kCLYPBpEFUuOy4fslo0Wmziv9hcae2aKdhYZLc8jIjciOkJWnHTO
-	q6N149FfDeouGwCUPirb+NDos3uuRvxfxrEVT3Q9hyiishyJmFfUUGo=
-X-Google-Smtp-Source: AGHT+IEPrAp7TfB1wuRgwHmXZYaORWGATsE4Btm3PHkL+64VjJn57We6CAzaMyjRJEOlvwankmW89w==
-X-Received: by 2002:a05:600c:3110:b0:439:9985:6984 with SMTP id 5b1f17b1804b1-43999de0cc2mr33956895e9.30.1739965561108;
-        Wed, 19 Feb 2025 03:46:01 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43989087517sm77002015e9.8.2025.02.19.03.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 03:46:00 -0800 (PST)
-Message-ID: <47c11da5-6235-4e13-ab91-580cfef508c2@linaro.org>
-Date: Wed, 19 Feb 2025 12:46:00 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPJrzJKy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A27C4CEE7;
+	Wed, 19 Feb 2025 18:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739989470;
+	bh=HOiG+O4t1HfyKMWrjgRzX33QT2jP4GmEeXBmoU0A50Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IPJrzJKyTjzzW5651CV6n/FmWiHbbrYHJPlpLGR8jJjga6vogmJH80C1lBCe9WRr7
+	 taoB9Ut8ch1UHalGw161IFk3yGolguEinnhPeMhWbJtwKNdpcZOf03QY8v2VWCKy18
+	 fl9Q/nm2nnPj0/DD/ZB4oR57O6iSB9SowtWLX0rIpnVgQ5y2xZtzJaEvBzspy0mDh3
+	 rOiZ3dJvv+NI6cLgfUQdyvb9NY5PRGzCVQhXqFllHugz5unoeIhlQ2jRJT4KaQx+dw
+	 WU+BFK+3dM71cjDW6FctN6r6mBtLf7y4Ef3xztvb9h3hbC1sWkUzoaBIapd+sobwoE
+	 xDuzG1poSqe7A==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 12/19] crypto: s5p-sss - use the new scatterwalk functions
+Date: Wed, 19 Feb 2025 10:23:34 -0800
+Message-ID: <20250219182341.43961-13-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250219182341.43961-1-ebiggers@kernel.org>
+References: <20250219182341.43961-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: timer: exynos4210-mct: add
- samsung,exynos2200-mct-peris compatible
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 15/02/2025 13:39, Ivaylo Ivanov wrote:
-> Whilst having a new multicore timer that differs from the old designs in
-> functionality and registers (marked as MCTv2 in vendor kernels),
-> Exynos2200 also keeps an additional multicore timer connected over PERIS
-> that reuses the same design as older exynos socs.
-> 
-> Add a compatible for the legacy multicore timer of Exynos2200. Rather
-> than differentiating it based on the block version, mark it as the
-> one connected over PERIS.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
+From: Eric Biggers <ebiggers@google.com>
 
-Applied, thanks
+s5p_sg_copy_buf() open-coded a copy from/to a scatterlist using
+scatterwalk_* functions that are planned for removal.  Replace it with
+the new functions memcpy_from_sglist() and memcpy_to_sglist() instead.
+Also take the opportunity to replace calls to scatterwalk_map_and_copy()
+in the same file; this eliminates the confusing 'out' argument.
 
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ drivers/crypto/s5p-sss.c | 38 +++++++++++---------------------------
+ 1 file changed, 11 insertions(+), 27 deletions(-)
 
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 57ab237e899e3..b4c3c14dafd5c 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -456,34 +456,21 @@ static void s5p_free_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist **sg)
+ 
+ 	kfree(*sg);
+ 	*sg = NULL;
+ }
+ 
+-static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
+-			    unsigned int nbytes, int out)
+-{
+-	struct scatter_walk walk;
+-
+-	if (!nbytes)
+-		return;
+-
+-	scatterwalk_start(&walk, sg);
+-	scatterwalk_copychunks(buf, &walk, nbytes, out);
+-	scatterwalk_done(&walk, out, 0);
+-}
+-
+ static void s5p_sg_done(struct s5p_aes_dev *dev)
+ {
+ 	struct skcipher_request *req = dev->req;
+ 	struct s5p_aes_reqctx *reqctx = skcipher_request_ctx(req);
+ 
+ 	if (dev->sg_dst_cpy) {
+ 		dev_dbg(dev->dev,
+ 			"Copying %d bytes of output data back to original place\n",
+ 			dev->req->cryptlen);
+-		s5p_sg_copy_buf(sg_virt(dev->sg_dst_cpy), dev->req->dst,
+-				dev->req->cryptlen, 1);
++		memcpy_to_sglist(dev->req->dst, 0, sg_virt(dev->sg_dst_cpy),
++				 dev->req->cryptlen);
+ 	}
+ 	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
+ 	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
+ 	if (reqctx->mode & FLAGS_AES_CBC)
+ 		memcpy_fromio(req->iv, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), AES_BLOCK_SIZE);
+@@ -524,11 +511,11 @@ static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
+ 		kfree(*dst);
+ 		*dst = NULL;
+ 		return -ENOMEM;
+ 	}
+ 
+-	s5p_sg_copy_buf(pages, src, dev->req->cryptlen, 0);
++	memcpy_from_sglist(pages, src, 0, dev->req->cryptlen);
+ 
+ 	sg_init_table(*dst, 1);
+ 	sg_set_buf(*dst, pages, len);
+ 
+ 	return 0;
+@@ -1033,12 +1020,11 @@ static int s5p_hash_copy_sgs(struct s5p_hash_reqctx *ctx,
+ 	}
+ 
+ 	if (ctx->bufcnt)
+ 		memcpy(buf, ctx->dd->xmit_buf, ctx->bufcnt);
+ 
+-	scatterwalk_map_and_copy(buf + ctx->bufcnt, sg, ctx->skip,
+-				 new_len, 0);
++	memcpy_from_sglist(buf + ctx->bufcnt, sg, ctx->skip, new_len);
+ 	sg_init_table(ctx->sgl, 1);
+ 	sg_set_buf(ctx->sgl, buf, len);
+ 	ctx->sg = ctx->sgl;
+ 	ctx->sg_len = 1;
+ 	ctx->bufcnt = 0;
+@@ -1227,12 +1213,11 @@ static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
+ 		int len = BUFLEN - ctx->bufcnt % BUFLEN;
+ 
+ 		if (len > nbytes)
+ 			len = nbytes;
+ 
+-		scatterwalk_map_and_copy(ctx->buffer + ctx->bufcnt, req->src,
+-					 0, len, 0);
++		memcpy_from_sglist(ctx->buffer + ctx->bufcnt, req->src, 0, len);
+ 		ctx->bufcnt += len;
+ 		nbytes -= len;
+ 		ctx->skip = len;
+ 	} else {
+ 		ctx->skip = 0;
+@@ -1251,13 +1236,12 @@ static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
+ 			xmit_len -= xmit_len & (BUFLEN - 1);
+ 
+ 		hash_later = ctx->total - xmit_len;
+ 		/* copy hash_later bytes from end of req->src */
+ 		/* previous bytes are in xmit_buf, so no overwrite */
+-		scatterwalk_map_and_copy(ctx->buffer, req->src,
+-					 req->nbytes - hash_later,
+-					 hash_later, 0);
++		memcpy_from_sglist(ctx->buffer, req->src,
++				   req->nbytes - hash_later, hash_later);
+ 	}
+ 
+ 	if (xmit_len > BUFLEN) {
+ 		ret = s5p_hash_prepare_sgs(ctx, req->src, nbytes - hash_later,
+ 					   final);
+@@ -1265,12 +1249,12 @@ static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
+ 			return ret;
+ 	} else {
+ 		/* have buffered data only */
+ 		if (unlikely(!ctx->bufcnt)) {
+ 			/* first update didn't fill up buffer */
+-			scatterwalk_map_and_copy(ctx->dd->xmit_buf, req->src,
+-						 0, xmit_len, 0);
++			memcpy_from_sglist(ctx->dd->xmit_buf, req->src,
++					   0, xmit_len);
+ 		}
+ 
+ 		sg_init_table(ctx->sgl, 1);
+ 		sg_set_buf(ctx->sgl, ctx->dd->xmit_buf, xmit_len);
+ 
+@@ -1504,12 +1488,12 @@ static int s5p_hash_update(struct ahash_request *req)
+ 
+ 	if (!req->nbytes)
+ 		return 0;
+ 
+ 	if (ctx->bufcnt + req->nbytes <= BUFLEN) {
+-		scatterwalk_map_and_copy(ctx->buffer + ctx->bufcnt, req->src,
+-					 0, req->nbytes, 0);
++		memcpy_from_sglist(ctx->buffer + ctx->bufcnt, req->src,
++				   0, req->nbytes);
+ 		ctx->bufcnt += req->nbytes;
+ 		return 0;
+ 	}
+ 
+ 	return s5p_hash_enqueue(req, true); /* HASH_OP_UPDATE */
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.48.1
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
