@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4540C1DE2D7;
-	Wed, 19 Feb 2025 08:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A23E1A841F;
+	Wed, 19 Feb 2025 08:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739953121; cv=none; b=dV6STaA3zJnklqNrIpTRvcrM13hXsLPbkkrCVM6E9+k+NJGccuAUc7PsRkSTxcR1YF6LAUNFTvWJS2dBvdNTsbIdeKK9Zoo5iQB+mhDLXE9+C5V2JOFeh7gS+dAjZmXxgI2RrXqHVN2RYca55vEK8S0BKihmqUH4MIMggmQzF6Q=
+	t=1739953814; cv=none; b=e5s3aC3f3f7KxN+TjQ6bLAHnvitjyOL9OD36Hs64SCdzpN02o5Ntu18tivrz+LAUL6Drspb5jb0tYihGrB7AHgZV9NuhO3B3QrvrvpMbhJr63jjhY7iqMiThA5QKnCoru7GFzFVrFvvpKKJDsP9F1uLkWa7w4/88HuCKR3jiFfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739953121; c=relaxed/simple;
-	bh=WqEKBnyEkHQ73lgupTaRV9Iut2Yqv2v4HTlipND17w8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SGvpxPOfB4E6oG0aAHD61vA4S8BfoXEF6zywn5ICxVh1mTjTt/CSoBItw6sn7BTDdizdK1y7+fAYnwz07OLX+RS4UqeCyc+oWokBXhK7VbmmZeePxHuN88P1qiv0nqdtifro/npZ1ilWcFAd+JEcMl/RhDFDPi3BZw9Oi0ZctiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxiyD6Wf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739953814; c=relaxed/simple;
+	bh=lhAa+e9wcUQo4VfoWAssmEnM3Fw58OItbIP0fxLWT20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1prz86Tu+UqY5hCdLVCkj/VB+2lnMPd/opCzZFiYnCYeaHVP2qOGHGnrt+QquGp7Rl0Owil74uVFOkC5Z5L+x4rBNaAP4xkUxMdljls/5w+zpkTW+4rQC2Jfq/WhALcI47GMljCSrz2MWO42gO66zOWVWbibz9HbxoqgtTYrFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQqiMM1k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxiyD6Wf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 785ADC4CEE9;
-	Wed, 19 Feb 2025 08:18:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQqiMM1k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C63C4CED1;
+	Wed, 19 Feb 2025 08:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739953119;
-	bh=WqEKBnyEkHQ73lgupTaRV9Iut2Yqv2v4HTlipND17w8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=uxiyD6WfZCx4hWbrr4Dpom0lFZ4mnRcwCq0mvjeWqCI5UtJLrsmSQW+DaKMNQb8gU
-	 C16HP1i3kf4pVVsWBI2RGILmytfyCtAIzpNTM17v5zBMUG3VeIsCcKflUUEViCKODj
-	 whDSLV0N31/oOniXMbfC8qOiSMvP85ImFBgUIs4wxsDbFCDIaHWNhEMMvbhqF3fWe4
-	 39y4YuofkqrWSwYt9272mRLyu/llpT+RhBcc450Zwx9CNl6CJ0csddEF+1IP16hIW0
-	 7HeLBoUBrSvKMYtiJ7E80BQvAjMCEjAqU9VDW423VjDXM1ucp1s1FhvSlOlpB9I1Ta
-	 mRSkRdVzJ7C1Q==
-Message-ID: <8572e77a-f5bd-4fe1-a613-f8564a61f48d@kernel.org>
-Date: Wed, 19 Feb 2025 09:18:33 +0100
+	s=k20201202; t=1739953813;
+	bh=lhAa+e9wcUQo4VfoWAssmEnM3Fw58OItbIP0fxLWT20=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pQqiMM1kJI8m7ohEeTdkkQuRKPExrPct3zs86XWoHcMyJEIMpBkPOrgKtmuGmxDI+
+	 Zsd8g9NU9hVD8M39NolRNMHHSogKMdfnHgngHgseRiFSDNsliFcrTEdBgSBTXFOwHn
+	 3HOqIM31UilShEHX9ofOxY5XOdNGZfzEDY9yKslqnOGTR54OacRjdf7oQ1/8m90YjK
+	 J9De11Z/o67Ar7NmhLmnyz3R8obzvkuA7Lm6+0bmZeOqq/LHdzHiWc1iK8pOImqD9z
+	 zIF8VUmRYpnKqnYVWW4+7KOs167bd/2onAd8vuLpEHIcPsjlh4utdWCJpuHZeEM1vN
+	 GCGoUH9Z8pnBA==
+Message-ID: <b3db80a3-6d1e-4c75-b899-33f1d5b5306f@kernel.org>
+Date: Wed, 19 Feb 2025 09:30:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,21 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: soc: samsung: exynos-pmu: add
- exynos7870-pmu compatible
+Subject: Re: [PATCH v1 1/3] dt-bindings: pinctrl: samsung: add
+ exynos2200-wakeup-eint compatible
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215113248.159386-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215113248.159386-2-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
- <20250219-exynos7870-pmu-clocks-v3-3-0d1e415e9e3a@disroot.org>
- <20250219-functional-brown-fennec-8d55ea@krzk-bin>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -94,27 +93,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250219-functional-brown-fennec-8d55ea@krzk-bin>
+In-Reply-To: <20250215113248.159386-2-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/02/2025 09:09, Krzysztof Kozlowski wrote:
-> On Wed, Feb 19, 2025 at 12:20:30AM +0530, Kaustabh Chakraborty wrote:
->> Document the compatible string for the Exynos7870 PMU. It's compatible
->> with the Exynos7 PMU design. It handles syscon reboot, syscon reboot mode,
->> as well as other system control registers (i.e registers for the USB PHY).
->>
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
->>  1 file changed, 1 insertion(+)
+On 15/02/2025 12:32, Ivaylo Ivanov wrote:
+> Add a dedicated compatible for exynos2200.
 > 
-> I don't understand why did you send SoC patch to clock. I asked to split
-> by subsystem.
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml       | 1 +
 
-I guess because of clkout driver. I don't want to grow the clkout OF
-device ID table with compatible entries, but I also have doubts that it
-is compatible and that you actually tested it.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
