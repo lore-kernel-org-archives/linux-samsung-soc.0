@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A77A1BD9D3;
-	Wed, 19 Feb 2025 07:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B1C17A2F0;
+	Wed, 19 Feb 2025 07:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739950159; cv=none; b=lCgN+6ghUi3YFHejlhN5o8oB5+FCij4uSM/PMEAbDoNbQOnxgpw7lx3UCyd8wg5AAHiLF8iroj425y2jtkcw8EEykbDmvQnwJBmreZ8bwHyPDIWeKPr7fN2cmtGpKn2FqViTGPpB3LQNwIOpbcA1BuEjt28fakjHNf4bBkV8SRc=
+	t=1739950308; cv=none; b=b+0Ygn8X9PJLOriXqo2Jtvb1b3esoxeYz4ZcvzFPF2g8qFGWPEjSazERT4x+vZ4WV+bJI0Bt+US0fHLFnqJ1HdU+1i9lbzqp4no5HBwxQ++OcpQ3xpMoZspeR/ysZaj9tTjrychiUNbfP43xcufKyHbktRE13aNLqbJNkGvDYGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739950159; c=relaxed/simple;
-	bh=CUX3qWyu+kCwpSNNjXJ2UuvoY+B0uVOZpFYPU9CcQe0=;
+	s=arc-20240116; t=1739950308; c=relaxed/simple;
+	bh=cxAT0ceE2wLTrNYv8eY/CEz1rQUPy7iHSg5zXmpc9n8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmxsZHdR6b13yRPgKC9FCcRzitn9Atq2Li693brdIBs17zpdQTolLBIwJhqee3uxOPNZYQybdrLdMnh0walZQDzK28JJRSo++XZWBEjQcQOXR+SRp6UhIcg1kWtHi3JuZw1fvS8OAaTlp1bZPolbXAnUGAjCvsu7I5A1kHxTKxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TECpRYMU; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=lmxZyCoFP5oMT6TVclZGEvyWp9KsuOWPSD4eRDBHo0xxjE7vv2ZzE/WVwu+zc5zOcFw7jo+IHwF407Eq+7VIB+9VSJkRhk5OzoXNUdIvKGUTs9qq+gf6poCVtJotF7eH1Ej882dtIfCNm1nkaswCQ5jptWt24Kfg/Vh+Z/iRqpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uaxkr/R9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TECpRYMU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81639C4CED1;
-	Wed, 19 Feb 2025 07:29:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uaxkr/R9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15317C4CED1;
+	Wed, 19 Feb 2025 07:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739950159;
-	bh=CUX3qWyu+kCwpSNNjXJ2UuvoY+B0uVOZpFYPU9CcQe0=;
+	s=k20201202; t=1739950307;
+	bh=cxAT0ceE2wLTrNYv8eY/CEz1rQUPy7iHSg5zXmpc9n8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TECpRYMUDKz/0g5Mm9MvUBtApM3IYl7z4qfZfAngkFaVAiorMnTM70z3RJgmmAOZA
-	 NZ7Ex4K7LZd9sOFVy9N20uUs63H7O5RYbq8SywSwLj3rofzrPa76swRGrfHx/mxY+w
-	 S5JbZeCZdnkwj0KocafqIlOmhu/3ZEw888kS0GSY1LiQktFKivpfbkvpqSrpSPJJ4w
-	 4kyfh1ZhaQfxKFiX4tAGuFumQfMB+SSazyulELo2jeUsdsIxYfU//OYNP3EKTsLCBO
-	 SVdaPnMBgSmaXn5Wm0vNdJqbCJLTrMVTkme3aerN9MWlNIouGbT2Uv/cvRDVcEt+9B
-	 ihJb9NkCl6pAQ==
-Message-ID: <7b92c6be-5812-4887-8e97-4d2102f0bab9@kernel.org>
-Date: Wed, 19 Feb 2025 08:29:12 +0100
+	b=Uaxkr/R9E8VISGogaXUl3S39rxJYlScQTItOVGAGXOm82J+uw/6b8O0xNkBskHLfj
+	 BaopC4Kkdbt19FXX9DGC+0VR1o9LKXUle/V3+ZhwFRYs50DGUWH9WTvXF0cqEE5C3j
+	 dsSkOiARUplDbDxJV4u6CmABulSrYYBYdIoteyHI/OdJr2KSAusM9jq3f1bZFKWcSi
+	 N04viYHJHD+jrNmHH3f77vQ0aH4v37hhJY3gqRHFp3aEL7lzJHR1xsnN7WujVROr2D
+	 HowKXKxkdGrcO2lFLG44n1t67zqMxST8/mE+5zd9L1NpwjT9wy0E/BPVKr/kabx+7e
+	 nL7yN5GiLJruw==
+Message-ID: <61b658bd-be0f-4f1d-a1ee-56660dd2810d@kernel.org>
+Date: Wed, 19 Feb 2025 08:31:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: phy: samsung,usb3-drd-phy: Add exynos990
- compatible
+Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos990
+ usbdrd phy
 To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
  Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -48,7 +48,7 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org
 References: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
- <20250214-exynos990-dwusb-v1-1-d68282c51ba8@mentallysanemainliners.org>
+ <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,19 +94,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250214-exynos990-dwusb-v1-1-d68282c51ba8@mentallysanemainliners.org>
+In-Reply-To: <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/02/2025 18:21, Igor Belwon wrote:
-> Add a compatible for the exynos990-usbdrd-phy. The PHY is compatible
-> with the older exynos5420 design (two clocks) when running in highspeed mode.
+> The Exynos990 usbdrd PHY is a combo PHY which supports USB SS, HS and
+> DisplayPort outputs. This commit adds support only for UTMI+ (USB HS).
 > 
 > Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 > ---
->  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 32 +++++++++++++++++++++++++++++
+>  include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
+>  2 files changed, 35 insertions(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
