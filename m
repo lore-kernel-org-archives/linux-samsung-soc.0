@@ -1,103 +1,140 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D86205E16
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Feb 2025 09:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8779E1F9F70;
+	Fri, 21 Feb 2025 09:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130920; cv=none; b=K5ygtMySD0MKL8BROcpBKI4MxRzCNLljGG28E+GinPt+YIF+mLQz8jlVahyjcHQz4LVU4aaGJkUZSiIzLcOVc89JGvM8hvzr1HZqSLn5rN8Q1sDV/Gb0WtXuPdYPCrjDmFVGS+CZgulYD7w9ixh8dspRYaJmo7b0XvjSdglwNTc=
+	t=1740131870; cv=none; b=LPkXZCzda28aGIozJFQDYlI6wH2wEbzUEfUfPG6JVyjdDejPqbd9aRD+/eYjaGUCq/4Rq977LvhYRI5/jjDWN4exhlsOrWtfAlTk8PX1PHSmb0iaFt0sCacxUKLxDeFrlvyNuAYUs2o1ghCVuW1Apv2bsiLWU0tCvkSqb03iawQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130920; c=relaxed/simple;
-	bh=IKR/9VGhkFlJ1I5hTuDF78Fb+ATo1J45kT4X3heZ8gs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FvxEHerqJqgzoQmtHd2mc+hB9FFvmvbRtir6Tx56ShLrAN82ZqFk9mEJfx5dkoMcZIZlPMExY0J9GzAE3J7omAOhW6JMkjKVLgYYCijA8iDxKERDzYZvwlNe060X6RuG2U9TJpSUed8hBk0hErgGDQcz11obabJxLrO7cOh25/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sktPy6l0; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sktPy6l0"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ded7cb613eso325093a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Feb 2025 01:41:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740130916; x=1740735716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vdXYR/I62+aZcxW37aH9KmdUU3jeSFhaY6J6vyoXK9Q=;
-        b=sktPy6l0ghLaloebH3iJRPfolp5lpZWD7oWeG5/ZeYcIMJmoqwJpwQhyG2KLzNHw4f
-         R9+U1pKHOhmXHb8g1okQ1UIwiq55Lfw53P2qHqflLhvcAq5KH3b+TmeBNg2HAHFUfHXe
-         U+FtlolvhldLC2sMySbv0aZybiC/n/9nVIUn36yOnbHPWHLyZEvvuZI7jm1u2RC3oQcL
-         m1BuuMOb/3Y8TPN8zj9Vb3K90lUqXgL6Gv0t9026M7pFPFEdBzd0freII3az3dWx1vc3
-         7gudrR+8sJGlQk580BV3BsovdHc2Q8iTdBevhetclD8a0mT7ADmR2R3zHhVV3zhOXI/K
-         HRPw==
+	s=arc-20240116; t=1740131870; c=relaxed/simple;
+	bh=bsAk0fKMy1E3IDw29e4DwX52DVtBpITBlP4ScSN0CWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EjfBhb7LH4bE8G/MXMITy+tdVYNvvUx7VLBxyRLgnHXYL6N2y2NOWzO+CIK9PcPHVmLlgxTPzXf8jGjo70GFWjITXJwZhDhGqG+YIHUI8dvH96FwK4VKFI+Gwh9lZJ+j7U/4BGNwDvD/e18ol3K2FpC+HqlMeJRZXGCvS7V/jvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4bfb4853c29so418298137.0;
+        Fri, 21 Feb 2025 01:57:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130916; x=1740735716;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vdXYR/I62+aZcxW37aH9KmdUU3jeSFhaY6J6vyoXK9Q=;
-        b=TUer6ik3inE8ZUOY30wHoZtm/WmXIe6W5u0+U9HPDd0fpq5yYjMAn6RXZn2RqYrNhs
-         bFAZ4qeoKVhDAomfUJRJRcfoReA9NDLpLE5q0FWWA34gAY6pKbXMXd5JnpauvnCwVlrP
-         qOAo7B87SdOFisnhMaYZxmiJmGBdj9nZgTCkrZrF5n9QV2w9sQhdndJ+/vTjQ2906GSD
-         +iL055W+G8F0/VBYSz1LCVctCXPyTjKBZ+KTaTEVBDag53kVtGnWaYD2Xa2v5pUimilZ
-         Z9mg9/WuDmGBz1VgnCkuxS6grpbmij0sTovWS+3gmh3dr/n0kwy5QE37ktgazZlqulE1
-         5E1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXsvU0qlrQ8/06YknsIMaFWZ/+npdnFVL3Tplp2alUGpKY/PFDXeUoGppJqDNqPDUAxkNDsYtumdcErtkIMAt7LXA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/fQfI1Ktb3ip59pYNhJMv5YNvcCIdsoaCjMXLXiQo7wnogYSv
-	USOil+pgiG2TF4fv1slukQos1vFmkJzaQPblvLEbH3ib9kVWlPGxhO5UbmzM7jM=
-X-Gm-Gg: ASbGncsYbEAs6UYr6STegkH+tXq/VvzL77kw59fQlJRMC6YLZ1KlwxOenIqwnfMoCm7
-	zRoqgkLkWmMcIkqjr2FIoEwrCN+/ZD6nVwuSfgzjQTiVHnuy1QoPnCzcEkGOLEh+mq26Exkgr/o
-	esqn7bjLaMGdoYYsXD9RIKvAxU0a2q3DN9FVMfd6tkPJboQW7UlSwfKNgEj6+qzDH4if1gS7MKp
-	sV8NFMeFuvqOO3vnRkzRbBsUYx8LlF8gLN9CHd8wl+f2T7FsRQFIkE6J5GmtiLiy4Oi8ihE1b51
-	hZyU9wyLVeatH+4PgRqSbsYEnUcEX2ny1M7keykn0EyV8EJXKJuxPFA5Y0kCy1gVLiQ1/UDTcCm
-	b
-X-Google-Smtp-Source: AGHT+IFL/lM+F0ktUjddFj5OzpJ2DJG7fI8Z19V6vvQBBy7jA2Fb4GY7EiIh5I5iCTTx716z+h+jMQ==
-X-Received: by 2002:a05:6402:34c6:b0:5e0:8275:e9dc with SMTP id 4fb4d7f45d1cf-5e0b70bc3c3mr703304a12.1.1740130915955;
-        Fri, 21 Feb 2025 01:41:55 -0800 (PST)
-Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5323226asm1617470366b.8.2025.02.21.01.41.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 01:41:55 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-In-Reply-To: <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
-References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
- <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
-Subject: Re: (subset) [PATCH v3 1/7] dt-bindings: hwinfo:
- samsung,exynos-chipid: add exynos7870-chipid compatible
-Message-Id: <174013091442.25434.11831404613747395475.b4-ty@linaro.org>
-Date: Fri, 21 Feb 2025 10:41:54 +0100
+        d=1e100.net; s=20230601; t=1740131866; x=1740736666;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VRmDUg88sJqiPwLbbhmS638djtZJpa1TX+xwhTJhivE=;
+        b=dHG+DGxRXef/+EPV+gkgSU47bKhUr0Zt6089UL3ii+ov7+2Bq7AowR0NyDeW5grfaD
+         7hGpIq2DGKGAqVQp2m0rdoddkQv/eDbjuIOxDdprV60TuOKgsTKe72e4GNHGZyOcP0kw
+         06b+4V6wLRnjkNZb9yUeJxtg8LOxoPy/OMGd85QLQKpcSQCbkPn11SMFoWmDRFtaJJxx
+         7gkOgVscnjObbxB16fo2EZ2AKIEq7iS0CvTUjhHzR/m6cG5Lj2bi2gwVuNBcGmOR/i8P
+         j1UlbtcDjZ6nNMocd+odWgC1K3ZA2W6JvI/npUR3aPfj9qes2JbxdHz4GscRPyi2Qo5k
+         E3HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcghH35+eSZus5NgQTi1b3fEB2GmYeLTNzu2HHfA1+DbsjUb+QTLlwTU+KBXPRVGGrEGRe9tYZfLSxaXto@vger.kernel.org, AJvYcCWlFXzAwxvDM6dUcP8ecfLs72XsCap+Fa7hCsjuyJBhABSA/Wgxeg0PZylRjLN+swETPpN/nWO9ueaKNMA=@vger.kernel.org, AJvYcCXJAZinVsoQs3w4vCupkyeOHzEfp5PTRAbOnVFvjdte2026kO8YwELRjP6t5xfzp96fFTWgIystKTJmNlsPpA+vhOM=@vger.kernel.org, AJvYcCXPAZ3ri3tH2z14mxiluzWOW4hLpcibXD59LNonbmLql5qFljWGGl/Z7qrfV10nHS0MvgDLfzdepLHL/KMpEeKvm9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdZsKinLKVkRLDTxGSxX16ZxOcO1+tciEZnq6/rG8bYtOO/yB1
+	4Gsuj/9ioHvmIwLuguDT1kGUYmC9B+3x1q0bvp2+tOMbLJhyoWWEwyJOzeSv
+X-Gm-Gg: ASbGncuAgeeP7z+//P9MsvHFRSz4tBn+5MEj7IsoQPUX9zYz7rhpuhdqBQtq6oiX02C
+	xBdZvpIrO0Ls4FlU8dMhVJo//cld8EsJqG2iX/Flpr3cHqnM1X+5kcSOFSlj/jQlPWAqrKb1OrL
+	vqRu8SH7oGqW6euT3/P+Ox9jS2D8Cumr6Wt+KgXTWuuVM0fTGrCwu7ccniLCRx0jdm6xv7KG5tX
+	XCnVKY0JoU9cU6HtwerTFaCef8S1GXc1k7YdUxjDipP82SvuphGqB76gXcjJeEO2bqgwkzekuGI
+	4XUWDGCh81hm+UDItENyH4E9coDYdGpzhcMxShnaILmFS1epdFYE1UNyXactsqIdI3e3
+X-Google-Smtp-Source: AGHT+IG/fJQCFTZ/33ZBXhi5dXdleZCeKsLQ8TZdVcZ3jN+OyY84+ll8ZDMp3tK3UR5CrJoQzNoZvQ==
+X-Received: by 2002:a05:6102:2acb:b0:4bb:d062:43e with SMTP id ada2fe7eead31-4bfbfdc459emr1766234137.0.1740131866209;
+        Fri, 21 Feb 2025 01:57:46 -0800 (PST)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4be5343d084sm2410070137.29.2025.02.21.01.57.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 01:57:45 -0800 (PST)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-52096b4e163so514471e0c.1;
+        Fri, 21 Feb 2025 01:57:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUe2G2Our3HZr1l9tn59pSlfGSY3dXSUoyAyvwx7YOrgDcnMoqw9tfhnALNATcS8DW441ot9JKz0EF7Vv/BrmPtLSY=@vger.kernel.org, AJvYcCVnxpRv/mnYM1Eww2HDGTcmZI+sbfiIyh5wh/UGngt7ebM/gawSJoMbhpDGAS+EShMlv3B5GT7t12Cq+TXB@vger.kernel.org, AJvYcCW9p5pvB8UR0yU3cUIDqTL8qBolVMIcNG6FR4cixJ4TMJFSybQyfASluRbQTXIgmYeuvwRivnNtThzxVkE+KKqnGuk=@vger.kernel.org, AJvYcCWvREXeW7bSPCvTwpdgdE/9Fnu8pmNmWEb8/zoSFwWLYgP03Rz0zYjTi6E+LjkWTaMK3InByFP9o+QOsdc=@vger.kernel.org
+X-Received: by 2002:a05:6102:441c:b0:4b1:1eb5:8ee3 with SMTP id
+ ada2fe7eead31-4bfc0277734mr1360564137.22.1740131865660; Fri, 21 Feb 2025
+ 01:57:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250218142542.438557-1-tzimmermann@suse.de> <20250218142542.438557-3-tzimmermann@suse.de>
+ <dcd59a75-7945-4a2e-99f9-3abbb3e9de14@ideasonboard.com> <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
+ <596b960e-71f8-4c2c-9abe-058206df1dfb@ideasonboard.com> <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
+In-Reply-To: <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Feb 2025 10:57:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVnZTj-8bqsbbZdhp0H7Bwib8GkEuXPcKNZjdo_jRRXgg@mail.gmail.com>
+X-Gm-Features: AWEUYZnV-ULUCYHgs2rYqHTa6wPlfKvTAAqMyxRQ0em_d1IVN8Mw0n8NQD9eWqI
+Message-ID: <CAMuHMdVnZTj-8bqsbbZdhp0H7Bwib8GkEuXPcKNZjdo_jRRXgg@mail.gmail.com>
+Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
+ and size
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, virtualization@lists.linux.dev, 
+	spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Thomas,
 
-On Wed, 19 Feb 2025 00:33:11 +0530, Kaustabh Chakraborty wrote:
-> Document the compatible string "samsung,exynos7870-chipid". The
-> registers are entirely compatible with "samsung,exynos4210-chipid".
-> 
-> 
+On Fri, 21 Feb 2025 at 10:19, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Am 20.02.25 um 11:53 schrieb Tomi Valkeinen:
+> > This change also first calls the drm_driver_color_mode_format(), which
+> > could change the behavior even more, but afaics at the moment does not.
+>
+> Because currently each driver does its own thing, it can be hard to
+> write user space that reliably allocates on all drivers. That's why it's
+> important that parameters are not just raw numbers, but have
+> well-defined semantics. The raw bpp is meaningless; it's also important
+> to know which formats are associated with each value. Otherwise, you
+> might get a dumb buffer with a bpp of 15, but it will be displayed
+> incorrectly. This patch series finally implements this and clearly
+> documents the assumptions behind the interfaces. The assumptions
+> themselves have always existed.
+>
+> The color modes in drm_driver_color_mode_format() are set in stone and
+> will not change incompatibly. It's already a user interface. I've taken
+> care that the results do not change incompatibly compared to what the
+> dumb-buffer ioctl currently assumes. (C1-C4 are special, see below.)
+>
+> > Although, maybe some platform does width * DIV_ROUND_UP(bpp, 8) even
+> > for bpp < 8, and then this series changes it for 1, 2 and 4 bpps (but
+> > not for 3, 5, 6, 7, if I'm not mistaken).
+>
+> True. 1, 2 and 4 would currently over-allocate significantly on some
+> drivers and the series will reduce this to actual requirements. Yet our
+> most common memory managers, gem-dma and gem-shmem, compute the sizes
+> correctly.
+>
+> But there are currently no drivers that support C4, C2 or C1 formats;
+> hence there's likely no user space either. I know that Geert is
+> interested in making a driver that uses these formats on very low-end
+> hardware (something Atari or Amiga IIRC). Over-allocating on such
+> hardware is likely not an option.
 
-Applied, thanks!
+Note that the gud and ssd130x drivers do support R1, and I believe
+work is underway to add grayscale formats to ssd130x.
 
-[1/7] dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
-      https://git.kernel.org/krzk/linux/c/0a86ea5534a9e4ae988a2e174e741b102d8a8691
+> The other values (3, 5, 6, 7) have no meaning I know of. 6 could be
+> XRGB2222, but I not aware of anything using that. We don't even have a
+> format constant for this.
 
-Best regards,
+Yeah, e.g. Amiga supports 3, 5, 6, and 7 bpp, but that is using
+bitplanes.  There is already some sort of consensus to not expose
+bitplanes to userspace in DRM, so limiting to 1, 2, 4, and 8 bpp
+(which can be converted from C[1248]) is fine.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
