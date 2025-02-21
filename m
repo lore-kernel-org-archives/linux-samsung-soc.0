@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9482046B6;
-	Fri, 21 Feb 2025 09:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA3F205AC6;
+	Fri, 21 Feb 2025 09:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130749; cv=none; b=K37evrlB2oY03iiNbDb2jCQ0797LGTLU70WutTdBFXShN2uKg15oQJaHl7FMKQk5WJfY5DdQyokY15f2/dAvXYn++Tq67r9uvRzUeXC1VqXl7Zj5SRzuIiorQN7bJlTrieuYBvFCRnu8tgd0PGo4O287xHJH61zCQ/DJxFR6avk=
+	t=1740130841; cv=none; b=Na7ySGeJd6J+ovUE8YDOViIBX/hW7aHmYWtgnwzEZGIenjFm3vt8O+LUCdLeVnmKIo7YKqgH0PgLqkM6Bl31M6fq1gAJB3LHGl5j530PoNMbchKL5z0ff6yVNTNXfX+EgAqdttyfRu+f++sTr1AnT82zPD5u0v82C1AQd6e0c1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130749; c=relaxed/simple;
-	bh=7iSC6jX/BBYZhH5CaMvHMaDMArGW/YNl+vqAADY7Ryo=;
+	s=arc-20240116; t=1740130841; c=relaxed/simple;
+	bh=ATXQuhcsU1yRD4J9xK/fW6XCIpw54vLXsQ7cbzLGCDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUfUFALNz7pk5urY/S82cguHPGIfd0+c+4Fy13QdPm+rdds/ibR+UxvENAPZd5LOpxvKJz60cjoVlGJl/EzARlXUQHUsCuOGNpB4fJGtVfp6iMICTjl5BSh5o1zy8xjJs2WxnNxMInWhI/9W8bmzR9bPFHM6ruQBI5lG1V0olGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPYUgpNU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHJgOUrfWHpAUEAI3LrT3nxqJyUtMGMkwk/fgCDAWBvPgpEM9PMNQpLEwwlWZwmZ4CRupXiVUID/DelsVcmKv6Ziw1qhmFzfItdXHYYAIpSex8V5Vh4wMwDgOhy406L2vDF93Y7HO+RIdpBJRLPTuilWw10R/BWvkRAbSV+DVCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gstzdaJD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPYUgpNU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41675C4CED6;
-	Fri, 21 Feb 2025 09:39:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gstzdaJD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B503AC4CED6;
+	Fri, 21 Feb 2025 09:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740130748;
-	bh=7iSC6jX/BBYZhH5CaMvHMaDMArGW/YNl+vqAADY7Ryo=;
+	s=k20201202; t=1740130841;
+	bh=ATXQuhcsU1yRD4J9xK/fW6XCIpw54vLXsQ7cbzLGCDQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LPYUgpNUY6pSswlFIBr7Sc7Jt7au5PvMrBxeQRljl90tC9FK685BZQaXbYqm8lk0+
-	 G05lEdamwdcfC9P5awa+51GjhhSHmY5kXPfyE++ev9CVcuFS91FVc6qGCzCtw3u3kq
-	 DVXcvlbu8SPq0RLTGPnamPS8F5eywE0BT1MDl/i+kl0R6iNZr3AuNuR0oeTj0jI+dC
-	 BgQNxQTQy2dbIXAPv6HNdxmsQ9XCZZc9qtq1I+BK/XQ/bASOz+9DMrv4jl/SFc19Pc
-	 ku+synFWgrAeQQGcAmJcnkYIY4sL2hmx+/UemrDn4BdzT6i7/gaPHczw5Kj9hGSYBd
-	 4pTbZdSAlFJdQ==
-Date: Fri, 21 Feb 2025 10:39:06 +0100
+	b=gstzdaJDHFaz8EX/LddhLXI1wdgZpBxj5pUIAuDJrI0nej4P6ecZonO1bHnvfEx/2
+	 b4zXWuRN+CVxu01lEH+lI1tMgyYVf9K5Und7+DMtIE68SfpAM0ui9PJWYF2GCidtrn
+	 GWI4sb057Gdejb9Yadk8ENx1uinX/2nn8eLWfQgN3BXYcRtgF4Pz+p+VbrrlEh5Xw2
+	 zoS9ffu28SIlQxOcGUfcTWZl3DHvW+Zwehy5IUlmkqJig0goJMkYvk4lmyA7VsbVE5
+	 7d9aaz8d6NzpToDhANs41odryQmDhsZEoUTrmsXxA+FnQFZUy7uSwxgw6re/kTinjO
+	 KzLGhUAGAdEPw==
+Date: Fri, 21 Feb 2025 10:40:38 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -35,11 +35,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] soc: samsung: exynos-chipid: add support for
- exynos7870
-Message-ID: <20250221-stimulating-sophisticated-armadillo-0a72bb@krzk-bin>
+Subject: Re: [PATCH v3 1/7] dt-bindings: hwinfo: samsung,exynos-chipid: add
+ exynos7870-chipid compatible
+Message-ID: <20250221-independent-oxpecker-of-piety-4fb305@krzk-bin>
 References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
- <20250219-exynos7870-v3-3-e384fb610cad@disroot.org>
+ <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,18 +48,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219-exynos7870-v3-3-e384fb610cad@disroot.org>
+In-Reply-To: <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
 
-On Wed, Feb 19, 2025 at 12:33:13AM +0530, Kaustabh Chakraborty wrote:
-> Add the product ID of Exynos7870 (S5E7870) to the existing list.
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  drivers/soc/samsung/exynos-chipid.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Wed, Feb 19, 2025 at 12:33:11AM +0530, Kaustabh Chakraborty wrote:
+> Document the compatible string "samsung,exynos7870-chipid". The
+> registers are entirely compatible with "samsung,exynos4210-chipid".
 
-This does not apply anymore - conflict. Please rebase and resend.
+A bit odd (exynos7885 is compatible with 850), but I guess you really
+checked that.
 
 Best regards,
 Krzysztof
