@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B791FCFC6;
-	Sun, 23 Feb 2025 10:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC048202C42;
+	Sun, 23 Feb 2025 10:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740306799; cv=none; b=FY0O8E4Zp8N4kr5yoh2dFx+A6X2ekDmonuG9Sts8WNcMoNGvydjYUt1lSr24Oa7vq00pS1RTsL+hbRxSubUV/rkDNo4esdVPWzAe7h/3jSGXhvJtA8gaRlS2bZlU6mvuEfty3Rcl5wHSN5nCBXHjTe+09wXR8C+EVUknA4LXlyc=
+	t=1740307099; cv=none; b=lmrSWqM0DlNc7YLxZfWSO5XeKcjg7qlQ29JagMpjcMbLVoO3Yesj0PHA6sFKOakxnT/IaYhHNz11XkuQrrr+Sr4S5hJ3OFTMkDmKawxqoSgutUSLnQRAWFyptD8wNS2p1c0mckdQfmEBUsw7JhdR3foG09tbF6mkR4nceLMAhcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740306799; c=relaxed/simple;
-	bh=FLirW3ftLfXRJNxdSRNnrqsyTaGJiadECUqG3czTtBs=;
+	s=arc-20240116; t=1740307099; c=relaxed/simple;
+	bh=07Dn81j06J77TY1dn92m8Y0hsNLe/4IuS4Hznl621gQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AlwDJTyxq9qgO1U/Er72aIT6vliph4P3l87BdqQ67WWUVnzIOsC8yk3uCkxeU7/SVK5JKqEMrN7OVlb0JG/j5Sgz8MKFDGHvtvs+bwdcVBhRqvQrdBqnbPDV4OYetbqon//w6aNHlSrNyUfpoR4IZPIoYLEHLsCUA89BRv7IsCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+gd4JXl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueIe0eLdHHyfHkwhH2hQgEJXwXBp5Sj4EsrokamzueZM+CBWJvnRV2Y2wjKhWzVhvHU1UKB97W2okhX8Bn+XhJzXJtDlp4xCSSffpkoE0zRTGdBc3S19PRyw/KEVX/aJxS9uAEsjkVT5UO1rqVwHCbCz5taED2xXmRp1xVY/Hdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fw2icCAT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+gd4JXl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC8DC4CEDD;
-	Sun, 23 Feb 2025 10:33:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fw2icCAT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D067CC4CEDD;
+	Sun, 23 Feb 2025 10:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740306797;
-	bh=FLirW3ftLfXRJNxdSRNnrqsyTaGJiadECUqG3czTtBs=;
+	s=k20201202; t=1740307096;
+	bh=07Dn81j06J77TY1dn92m8Y0hsNLe/4IuS4Hznl621gQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V+gd4JXlabh+DhfEPBhrqC28xt0zFouB40fJznlRA8WX25vNK4NpubB/XTu9wdohm
-	 TUGFxqw3M5vfgiYGMVDeJw93JSRd0+pzHg6bwb+p0POjtkPZpR5FBWvKR2IvCGFgaL
-	 qvfBnula+H7SpAGtgz43ix3B2A63IznR0saRl7T6fbhv1GcpsyGBhmvHW1cTVA244W
-	 rg87/ohN6zauB+kSi9VAq9DWeT/OGUIZPAGBc9I5O/Be2KEd2VuJDI+LjdGCFO5oUG
-	 k/iZVR2YHYsJobPDLZlBWjG6i258UqwoEIDZWqNSALq65CSxUM4RClCltHUPSDyfQ4
-	 ml4X5nhorGRMQ==
-Date: Sun, 23 Feb 2025 11:33:14 +0100
+	b=fw2icCATmdrCAmXPKXrIn+QHTgePRi9yhSLXMwCNGeUkb9m/gHohY34SNn8wiSocX
+	 5jSug4jytjUNFCUo5UpDbwsJWM+zq2vMNP750zpMOTk4k5fhZNqvnMSNkd6K7wWq+0
+	 3LqswCuTu3d8zW70a/f7ObAqyAb3cYyY8pnvHoGdL26u/QD1UQUc37ov2t+oeY7DQy
+	 LHft+X0zR8HDSubBowWcrMVaC7XnJ4wNR28zflS2/KiO/uZ1y7kAsPWM5IXADn+K8g
+	 OWud7VZ3D7DmxXmMxNWpOxacSjsFOtuqU/yvT5ohDO/+AB+ar6lCDkjrgPMcHqDAzx
+	 0WvPBt7E6GzOA==
+Date: Sun, 23 Feb 2025 11:38:13 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] pinctrl: samsung: add support for exynos7870
- pinctrl
-Message-ID: <20250223-peculiar-coati-of-gallantry-6556ee@krzk-bin>
-References: <20250219-exynos7870-pinctrl-v2-0-1ff9b10bf913@disroot.org>
- <20250219-exynos7870-pinctrl-v2-3-1ff9b10bf913@disroot.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] regulator: dt-bindings: add documentation for
+ s2mpu05-pmic regulators
+Message-ID: <20250223-mysterious-infrared-civet-e5bcbf@krzk-bin>
+References: <20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org>
+ <20250219-exynos7870-pmic-regulators-v2-1-1ea86fb332f7@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,41 +45,40 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219-exynos7870-pinctrl-v2-3-1ff9b10bf913@disroot.org>
+In-Reply-To: <20250219-exynos7870-pmic-regulators-v2-1-1ea86fb332f7@disroot.org>
 
-On Wed, Feb 19, 2025 at 12:18:59AM +0530, Kaustabh Chakraborty wrote:
- +
-> +/* pin banks of exynos7870 pin-controller 2 (ESE) */
-> +static const struct samsung_pin_bank_data exynos7870_pin_banks2[] __initconst = {
-> +	EXYNOS7870_PIN_BANK_EINTG(5, 0x000, "gpc7", 0x00),
-> +};
+On Wed, Feb 19, 2025 at 12:19:49AM +0530, Kaustabh Chakraborty wrote:
+> +description: |
+> +  This is a part of device tree bindings for S2M and S5M family of Power
+> +  Management IC (PMIC).
 > +
-> +/* pin banks of exynos7870 pin-controller 3 (FSYS) */
-> +static const struct samsung_pin_bank_data exynos7870_pin_banks3[] __initconst = {
-> +	EXYNOS7870_PIN_BANK_EINTG(3, 0x000, "gpr0", 0x00),
-> +	EXYNOS7870_PIN_BANK_EINTG(8, 0x020, "gpr1", 0x04),
-> +	EXYNOS7870_PIN_BANK_EINTG(2, 0x040, "gpr2", 0x08),
-> +	EXYNOS7870_PIN_BANK_EINTG(4, 0x060, "gpr3", 0x0c),
-> +	EXYNOS7870_PIN_BANK_EINTG(6, 0x080, "gpr4", 0x10),
-> +};
+> +  The S2MPU05 provides buck and LDO regulators.
 > +
-> +/* pin banks of exynos7870 pin-controller 4 (MIF) */
-> +static const struct samsung_pin_bank_data exynos7870_pin_banks4[] __initconst = {
-> +	EXYNOS7870_PIN_BANK_EINTG(2, 0x000, "gpm0", 0x00),
-> +};
+> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
+> +  additional information and example.
 > +
-> +/* pin banks of exynos7870 pin-controller 5 (NFC) */
-> +static const struct samsung_pin_bank_data exynos7870_pin_banks5[] __initconst = {
-> +	EXYNOS7870_PIN_BANK_EINTG(4, 0x000, "gpc2", 0x00),
-> +};
-> +
-> +/* pin banks of exynos7870 pin-controller 6 (TOP) */
-> +static const struct samsung_pin_bank_data exynos7870_pin_banks6[] __initconst = {
-> +	EXYNOS7870_PIN_BANK_EINTG(4, 0x000, "gpb0", 0x00),
+> +patternProperties:
+> +  # 21 LDOs
+> +  "^LDO([1-9]|10|2[5-9]|3[0-5])$":
 
-Why do you need this new macro? Isn't this the same as existing
-exynos8895? Maybe just rename exynos8895 driver bits/structs/types into
-7870?
+I forgot last time, my bad, this should be lowercase.
+
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +    description:
+> +      Properties for single LDO regulator.
+> +
+> +      LDOs 11-24 are used for CP, and they're left unimplemented due to lack
+> +      of documentation on these regulators.
+> +
+> +    required:
+> +      - regulator-name
+> +
+> +  # 5 bucks
+> +  "^BUCK[1-5]$":
+
+same here
 
 Best regards,
 Krzysztof
