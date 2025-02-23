@@ -1,97 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D6E205E31;
-	Sun, 23 Feb 2025 13:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567057603F;
+	Sun, 23 Feb 2025 17:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740318149; cv=none; b=rw0DngkZVOb0ryH1LUwhDABF06ilt78T11MXjHNBnx9ia3yHif3ANEBjS0qHWc3KAsO6KoR682ykhLCrVOeF3a9NO2czQJZQrC6hzVTNyDc44RQSu27agoWwfBapXh2tUclTZgqhxcYEGyfqXPTMx1UyZqWnvuTMyBrpmpbZFAg=
+	t=1740330074; cv=none; b=cLeGNINrSa4NRur42zRyao2Xp0DpdmVgKJ/cLU92ChkFv2+gzPPpLCCqGoMIUl504Oqz3RcinKtALp3Zv5XJGFiO04fO+j6XH9BJO1hCgJUdRyA2wx3f3MLXK5lY5hKNI3tjRrZK8EUxWjqC9DmJpkPmkRJxDhpScP18DHqvvvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740318149; c=relaxed/simple;
-	bh=jwn6l1jyxsK/cyBjr2VSFnuiR+pFjsZ0dp+FXBN4EKk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=KVWh9EjNZKi0hhYlmxsE5sStXoil1tahyRAEoseb8Y3z12ZFd7E83aV2jW4amXfdZBXKag6Pwu0DvZIpGH7p7YOY0rhOmCyGI4keeCE73jm0fZ+Aro4ZlaO5VYoWKocMlBVyeN0lpMKjHUMoOhtppFD2foxTY6pn5z6xkWy3Yy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOvT3YKM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740330074; c=relaxed/simple;
+	bh=hce+YrPGmrSFkOORUi3xYv5tzmbWodZaL3ZsXnTZWtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pl+VsR56bfREU/xD7zUujn92F9gUn8CjqOr9kPGs5b7SSWvcIvpVNskfVl8TGkWKXfzlKgT/pflmJsK2pYZf2DRvmuel4IQ9HzstnBIfI3dtRtyhnrYMPAGyOf9yjokZcBmx2VTCnqCXQyf6dWxtNMFo7/ZpNO7aY+VNfe7pqnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XiXDHEr3; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOvT3YKM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40BD3C4CEDD;
-	Sun, 23 Feb 2025 13:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740318148;
-	bh=jwn6l1jyxsK/cyBjr2VSFnuiR+pFjsZ0dp+FXBN4EKk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=VOvT3YKM+eQXCjRRFCLOAagcaYsSs5wa1B8tqegM6X9ADvs0gZKCNKE+rZilru1J/
-	 i4DJn5BI6aHcO5IgQcZpbDb86ceSV3Ggq+usy+L1e/99m6F71L3OhOCCjHMK0IBHDr
-	 V5HpUmjnaQ9lPJY1VfK1J6F0MiedheykIXvVwKK+WIjB+zFay5LaliiRTDZG4Y3bfR
-	 1BvnlL02+nVY7f+gORG02yX3dXP65Z2XJ3K4pSb8tNAkpbAMlS8y385ce2gv4xzoTy
-	 o5vwp7Hui2MHDxOt5YJFkGdrZfPxAz+27/uVLfIvoPTJkwUA/uvDubZ+6NJwivYpM9
-	 +1jPMY8oF0sHw==
-Date: Sun, 23 Feb 2025 07:42:26 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XiXDHEr3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740330073; x=1771866073;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hce+YrPGmrSFkOORUi3xYv5tzmbWodZaL3ZsXnTZWtQ=;
+  b=XiXDHEr3d3JvkDEa9sPwmjhHqJYLWWSHCOLIRMuAJY03WNHoHS8/Khw9
+   KQRew84sb/xj4cehG4ED+XOYX0yRbODsdHx4KPCqyR6Iy6qKcPh4l0W12
+   1RWkdwRL5o/18qMIt2G+PQtuVMlqdz1bDgF1QpC8lfOofSyji7pVGlH4M
+   7dXvuU9dHGii+ZwzKt/HXoEGmWcvRkZyPVSHKDDYiZ4JFSJ8LAggJ14I7
+   ZtswQFz6SxQKfLx8MLkTfXxRxJCu4eREo0hKQ5P1ECr8K53JGvyFsHp+Z
+   OMCZ7WJ5AQu4ZnhdgPMuQDP7NXOSA2ENtAgoA8DK81D4oIZVLiVT1z0WL
+   w==;
+X-CSE-ConnectionGUID: jSos5SuhTkeub1TTp5tneg==
+X-CSE-MsgGUID: bqmabwlzToO+ZMyWgWOzwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="63557680"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="63557680"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 09:01:11 -0800
+X-CSE-ConnectionGUID: pt1LIXu7QMCp6BV5jQiC4w==
+X-CSE-MsgGUID: dtvLSN++Sc+fPbZlSCdwpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="116360702"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 23 Feb 2025 09:01:07 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tmFLk-0007T1-38;
+	Sun, 23 Feb 2025 17:01:04 +0000
+Date: Mon, 24 Feb 2025 01:00:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+Message-ID: <202502240019.JZE1rcyX-lkp@intel.com>
+References: <20250223123044.725493-5-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-phy@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <174031814650.3676571.3567229546810248196.robh@kernel.org>
-Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
- samsung,exynos2200-usbcon-phy schema file
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250223123044.725493-5-ivo.ivanov.ivanov1@gmail.com>
 
+Hi Ivaylo,
 
-On Sun, 23 Feb 2025 14:22:22 +0200, Ivaylo Ivanov wrote:
-> The Exynos2200 SoC has a USB controller PHY, which acts as an
-> intermediary between a USB controller (typically DWC3) and other PHYs
-> (UTMI, PIPE3). Add a dt-binding schema for it.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-> 
+kernel test robot noticed the following build warnings:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+[auto build test WARNING on krzk/for-next]
+[also build test WARNING on robh/for-next krzk-dt/for-next pinctrl-samsung/for-next linus/master v6.14-rc3 next-20250221]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-yamllint warnings/errors:
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-arm-samsung-document-g0s-board-binding/20250223-203243
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250223123044.725493-5-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v2 4/4] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+reproduce: (https://download.01.org/0day-ci/archive/20250224/202502240019.JZE1rcyX-lkp@intel.com/reproduce)
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.example.dts:18:18: fatal error: dt-bindings/clock/samsung,exynos2200-cmu.h: No such file or directory
-   18 |         #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502240019.JZE1rcyX-lkp@intel.com/
 
-doc reference errors (make refcheckdocs):
+All warnings (new ones prefixed by >>):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com
+   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/clock/samsung,exynos2200-cmu.yaml
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
+   Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
+   Using alabaster theme
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
