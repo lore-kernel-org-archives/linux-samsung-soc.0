@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37561C863A;
-	Sun, 23 Feb 2025 09:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAEB28F4;
+	Sun, 23 Feb 2025 10:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740304644; cv=none; b=qkW+LrVj7X/m8a1tzDjYr+gi445MYE4qorLh5s5InxLJ4dAg5CNSxf7kSLBitZfCe/8l8GDnjgf7YyLwiXQszs4f/ZBXJPrV6WVY/SwfjlW9hEa0IuDks/JlPsuyw60USWwNQxeV+UE8TisxifOqSitDqMplsjgE+YjXwDjaSuo=
+	t=1740305822; cv=none; b=KL3BjVcjZwVo3XAMquY9ksNxSgwFv/SsCfbtzpi1DRb2R1/vwaHARPeEomiiWe85MKYGJfpuWBFjP6w3QyuXhWM634S3m+MFp6SmlK/gHy8gKwRCutmuU4DlT/UT9FSvE8GP2xm5EgGlQTONVLV903XCCfW/2PMMoE7fv9cHUNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740304644; c=relaxed/simple;
-	bh=JJ/5kg2fJoqJeDK3oO+dWfiu8sG5fIVw8kskBX7yy4c=;
+	s=arc-20240116; t=1740305822; c=relaxed/simple;
+	bh=PdL/hRhsO0gx/0YHDB05i2/ZUTqfxN5Dx9Zq0dI5Ayk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5RIFDYEGmo8GwVs/R6f1zWyAiga9m6y/H7SPBzH6TOetpJKP1fkhh+a50OoHnEFn9OsV+V6mzInxrOCfL7a66j7KtQJFEm0jqFC76tINBNzL9BRRr96DJ3xaWdXbUsTCmgvyOvdtST5t8UitTbfJAW9RJkYw4xYvuENPOK0zZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWC24kSQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Vzag1kU7m/srMbELJG80UbdzWfRMaWlu76EkJRwM4naS9faPa50QzVs5RGsEg/QxWGf9IkIkFk7fqz1yw7C97vCL9Xfz8e1Waj1E+u3uBWDpYmWGsws2mDn4PX/SE0gxBEQoCWGIpzFbb9r/PlwyOVZNIjl3WkWmVXaDn4BDOFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWQ3uEts; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWC24kSQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48616C4CEDD;
-	Sun, 23 Feb 2025 09:57:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWQ3uEts"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060D8C4CEDD;
+	Sun, 23 Feb 2025 10:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740304643;
-	bh=JJ/5kg2fJoqJeDK3oO+dWfiu8sG5fIVw8kskBX7yy4c=;
+	s=k20201202; t=1740305821;
+	bh=PdL/hRhsO0gx/0YHDB05i2/ZUTqfxN5Dx9Zq0dI5Ayk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SWC24kSQqwSsT7vd0uWDsqcnqNPganH2w+wOs12yJtcjH5f6N1KSYpOaWnJrap64u
-	 nruouOjAGst819VCOWl+PiTj/tiJrVWE1i63B1eZdaiC3IpchRW4cU7Rji0P5osQB/
-	 nUKg5Wmm6FqShE7wpBH4Yr5G6ziXw/8poJvaP+3ztGuous80Q+k69UPLkFNt9NWJ1+
-	 lTMfkUF0OQXOz3FIFzMr5dXq7lXWF7fKzJ4sHxS3ASHQljRRld9xn3oazkgNpw7fPZ
-	 7oM5POPsuGl/cTcckZS4JoEV99c4dTfA1vYPPWr2hNNAkqq0uhpe40qQOeq5W7STGE
-	 3qFsRPMlgFhJg==
-Message-ID: <a2ea77cc-90d8-40b8-b9f0-5823ece0db33@kernel.org>
-Date: Sun, 23 Feb 2025 10:57:17 +0100
+	b=NWQ3uEtshzV/EO70tpXYVXFxd+Ztfw4e4tG1xjq/3x2D4LAodKM8jKYzitqsGPJaN
+	 l9F5vjv+bL6SZAaugkuy3R23vRRq387O/Rv9G6VJIGEERNdiloVv4WmqH3gIn33unl
+	 jRAZ0LfUn2Aonl9cB7A/ZAiB4ujD1lfGNMp3/rfsCl77H26Bq1KgW09/r0zcEsTnw0
+	 LsxDpU0U4Cq06daeJ4u/a9VrZ/Wd/xqgRJyMFLuAsd0TcCqytG6c+/1teyCkmuZlwU
+	 FbuaLJXjktcNnz+heNAhkvQbjXE9xGInq/E0QAzOKgXniZ8H8CQGiyyPlWy7UzcaRN
+	 j/ToJXWSx6lnw==
+Message-ID: <38b2f870-9965-4fd7-b9f1-dde8cbeed41e@kernel.org>
+Date: Sun, 23 Feb 2025 11:16:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] dt-bindings: clock: add clock definitions for
- exynos7870 CMU
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: add Exynos2200 SoC
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
- <20250219-exynos7870-pmu-clocks-v3-1-0d1e415e9e3a@disroot.org>
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250215115433.161091-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215115433.161091-2-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,20 +93,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250219-exynos7870-pmu-clocks-v3-1-0d1e415e9e3a@disroot.org>
+In-Reply-To: <20250215115433.161091-2-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/02/2025 19:50, Kaustabh Chakraborty wrote:
-> Add unique identifiers for exynos7870 clocks for every bank. It adds all
-> clocks of CMU_MIF, CMU_DISPAUD, CMU_G3D, CMU_ISP, CMU_MFCMSCL, and
-> CMU_PERI.
+On 15/02/2025 12:54, Ivaylo Ivanov wrote:
+> Provide dt-schema documentation for Exynos2200 SoC clock controller.
+> Add device tree clock binding definitions for the following CMU blocks:
+> - CMU_ALIVE
+> - CMU_CMGP
+> - CMU_HSI0
+> - CMU_PERIC0/1/2
+> - CMU_PERIS
+> - CMU_TOP
+> - CMU_UFS
+> - CMU_VTS
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > ---
->  include/dt-bindings/clock/exynos7870.h | 324 +++++++++++++++++++++++++++++++++
+>  .../clock/samsung,exynos2200-clock.yaml       | 247 ++++++++++
+>  .../dt-bindings/clock/samsung,exynos2200.h    | 431 ++++++++++++++++++
 
-Filename matching compatible. Look at other latest submissions.
+
+Let's unify the naming from now on to match compatible:
+
+samsung,exynos2200-cmu.yaml
+amsung,exynos2200-cmu.h
 
 
 Best regards,
