@@ -1,223 +1,154 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF15026982C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Feb 2025 13:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6834626983E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Feb 2025 13:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490134; cv=none; b=fe8HUAifKmK3TPeoh7727QolcnivK5Qx2zTNZB+l2mmbAthtGkTBinJGYk0Xdq4lz1LwBzV6r1meslpxLJFv40ADxRdwe7aPkQeshkC/IncvBwzPRE5ywQfwD5fdscb04QU1dJ6zqrw5PtTNw+OnyEjdGBjl2JK2Wh9C6ZSPsIk=
+	t=1740490147; cv=none; b=SvPvU+u8faO4uKOJyU7zJ8shmjbgfhi2g1rY29IInClkhJgQUoC/dzukPyWZkrzrhIhBXEzGewYuT+Qg2ycwSIHuyt3X4jDVHSHN3wcVbVx4di4LbEYsv9eCiOpI3984kMiCGMd86bNek4KgYOcpucMr/+fc3t/D0sTSUSCaTrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490134; c=relaxed/simple;
-	bh=PoDtDtnLOgdOhhX8B8E6bkJ3+Eabd005Zke25eUtRBI=;
+	s=arc-20240116; t=1740490147; c=relaxed/simple;
+	bh=v9Qsz54UX2sSgijSuzcDKRcq8piDRum228xBYvlKgr0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=h2Yt2YQY6kdqYu8LPE00JpzLYFXWKfwch1Gl4ha9cx/qSSs/kYDYDHyaYefbuNc6PhhhMLUki0CpSYe4rHV9rg6rne2X39uAA7mE15uXGCt4e5Yl5+rlBcecgT7gm+9jlsfVpTqm795HmKxwxY9rPeJIfrfz+DpDm18CR40IBj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fT4D40Xo; arc=none smtp.client-ip=203.254.224.34
+	 References; b=XRaqrc5rSR6i2w4L0R9jOTtofbuDUD2WA1dLzJzd4Y94zr+T1H4OMOdNWf9ONrjyvYVmGCNAzZZFoMr77ufLfSF1QE6lYt1K0iMfc0sQ+W7nHVToPwc1NpU0Vj8+ARJOgecEV3c4ih1xSpsVpLvV1akEpQeSg67EXDDId+HfTZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CZsN1oNe; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fT4D40Xo"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250225132849epoutp046aac27606c7ef3842be9c1246c10c671~ndo06Z3J51843118431epoutp043
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Feb 2025 13:28:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250225132849epoutp046aac27606c7ef3842be9c1246c10c671~ndo06Z3J51843118431epoutp043
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CZsN1oNe"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250225132857epoutp0376834d89a2b5a22ffeab54426b522c59~ndo7oAhQC1565815658epoutp03k
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Feb 2025 13:28:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250225132857epoutp0376834d89a2b5a22ffeab54426b522c59~ndo7oAhQC1565815658epoutp03k
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740490129;
-	bh=iByPpyU+f6q9fpMqiXBgPWh/Orb61g/26dgeOYhx3TE=;
+	s=mail20170921; t=1740490137;
+	bh=2MAJzguUYhBfDEljgxRB6xfhBZs+MafQSb669WMeyxY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fT4D40XodcGQ/BInDMaUUgZErfU241Aet2hS1Uwp4kCQIg6rIfJf/b04N/xoWnbJb
-	 62WqRRSdLXXBhqzbQ1Ma0quw8bN3akubgpkOLVQF3wErsGwYUJJnR4ybKzY2Rk7YIx
-	 nPa4wF/yuCnfHr9TfOc7j6WOfEA3aAm3EF6vgv/o=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20250225132849epcas5p3122a8cb82b3aae631e363ba60cb98475~ndo0b3sgd1848618486epcas5p3_;
-	Tue, 25 Feb 2025 13:28:49 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Z2JMz28Qsz4x9Pw; Tue, 25 Feb
-	2025 13:28:47 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	47.45.19933.F85CDB76; Tue, 25 Feb 2025 22:28:47 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	b=CZsN1oNeGXBmm1SlgXmF6oVXCJQtQADBRLU2rvOCF8tRQ+9HnkdbvXkLJyn33Yok9
+	 uKHbYWLNie6nNGOq12L5apalg7DXSE4OyYH5ZwHpiBCx/jPWh73YksA2tDyGvWQuAl
+	 BM0ygObAqsuiwsON/sBmGmnIQiTlVw74DIMz3aJ4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250225132856epcas5p4c00e3f2c4785a8c34a3d92831b28c9d9~ndo674h1D2353323533epcas5p4O;
+	Tue, 25 Feb 2025 13:28:56 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z2JN65Tbtz4x9Pr; Tue, 25 Feb
+	2025 13:28:54 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9D.2F.19710.695CDB76; Tue, 25 Feb 2025 22:28:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
 	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250225132447epcas5p4576a3dac624edbd5edc0a047e008de05~ndlS8_KGV0676106761epcas5p4k;
-	Tue, 25 Feb 2025 13:24:47 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250225132447epsmtrp131ecfea8029ff60e824f546e6ae84125~ndlS8LYen2478624786epsmtrp1q;
-	Tue, 25 Feb 2025 13:24:47 +0000 (GMT)
-X-AuditID: b6c32a4a-c1fda70000004ddd-64-67bdc58fb93c
+	20250225132507epcas5p455347acbd580b26ee807e467d3a6a05e~ndllaSuq30676506765epcas5p4J;
+	Tue, 25 Feb 2025 13:25:07 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250225132507epsmtrp2cc1f0ed3025eda297d65637b9082b286~ndllZUgWT1195711957epsmtrp2N;
+	Tue, 25 Feb 2025 13:25:07 +0000 (GMT)
+X-AuditID: b6c32a44-363dc70000004cfe-d3-67bdc5966a7b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FC.DA.33707.F94CDB76; Tue, 25 Feb 2025 22:24:47 +0900 (KST)
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	24.C2.18729.2B4CDB76; Tue, 25 Feb 2025 22:25:06 +0900 (KST)
 Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250225132441epsmtip2e358945fc21168f55389f2090fe7b0b9~ndlNcADRW1998219982epsmtip2D;
-	Tue, 25 Feb 2025 13:24:40 +0000 (GMT)
+	20250225132503epsmtip25254faae58fd31792ae09430c3351f4a~ndliPTjwt1947719477epsmtip2o;
+	Tue, 25 Feb 2025 13:25:03 +0000 (GMT)
 From: Varada Pavani <v.pavani@samsung.com>
 To: krzk@kernel.org, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
 	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
 	mturquette@baylibre.com, sboyd@kernel.org,
 	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>
-Subject: [PATCH v2 1/2] clk: samsung: Use samsung CCF common function
-Date: Tue, 25 Feb 2025 18:49:17 +0530
-Message-Id: <20250225131918.50925-2-v.pavani@samsung.com>
+Cc: gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 2/2] clk: samsung: update PLL locktime for PLL142XX used
+ on FSD platform
+Date: Tue, 25 Feb 2025 18:49:18 +0530
+Message-Id: <20250225131918.50925-3-v.pavani@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250225131918.50925-1-v.pavani@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmum7/0b3pBivu8Fo8mLeNzeLQ5q3s
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTU3fa0b3pBh/2qVk8mLeNzeLQ5q3s
 	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
-	d20ji8WG3lfsDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM6Y/Na24Lhyxc4zd5gaGPvl
-	uxg5OSQETCTWbb7L0sXIxSEksJtR4vXi46wQzidGiakNx9jgnEt7drLDtCz9MJ0ZIrGTUWLi
-	1/1QzhdGifYL7cwgVWwCWhKrpy5nBbFFBI4wSfw5kQpiMwvYSayfOhesRljAVWLhjGdsIDaL
-	gKpE15+TjCA2r4ClxNWlV5kgtslLrN5wAKyeU8BK4tqPd+wgyyQEvrJLXL68AOhyDiDHRaJ5
-	pi1EvbDEq+NboC6VknjZ38YOUZIs0f6JGyKcI3Fp9yqo8fYSB67MAZvCLKApsX6XPkRYVmLq
-	qXVMEBfzSfT+fgJVziuxYx6MrSSxc8cEKFtC4unqNWwQtofEk7VnGSFB0ssosXTaW+YJjHKz
-	EFYsYGRcxSiZWlCcm55abFpglJdaDo+z5PzcTYzglKjltYPx4YMPeocYmTgYDzFKcDArifBy
-	Zu5JF+JNSaysSi3Kjy8qzUktPsRoCgy+icxSosn5wKScVxJvaGJpYGJmZmZiaWxmqCTO27yz
-	JV1IID2xJDU7NbUgtQimj4mDU6qBiTvj2TvZtzzGPuGLNyWdZjc2E9x05bBc8sF+V4W/RzxT
-	js5eUX9I7o37Az7PORpv9T4cDfd/GbyizirBfyarXv41RretzOWzTjo+jK0PX3coj3/uHLsV
-	Bb33Vmgf7RJuDeHlZzisFhqtoXZD5SHzp0X/DNl7uDrvLQ5Vnve36vJkT9k0t8sbX2o81fzn
-	Ul60xHGusKnMh87Gpmb/PToxc1X3bC0Xb3WccmIBa03M5HlSVtua1/688OlJ2y/DyEAXC/8d
-	b5eKmGtpxOhU6rTYNfoeFF0ilZbZu57Ta7uA6OIpFa/OdjSkm9hI36lXEtHsC2VP+Kj/4nLh
-	3fjmX4xxLTPu7WZQmWVtvNf/5VwlluKMREMt5qLiRAAXegEaEgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsWy7bCSvO78I3vTDXZf57V4MG8bm8WhzVvZ
-	La5/ec5qcfPATiaL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8ni4ilXi0Vbv7BbHH7Tzmrx
-	79pGFosNva/YHfg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgypj8
-	1rbguHLFzjN3mBoY++W7GDk5JARMJJZ+mM7cxcjFISSwnVHi1qGf7BAJCYmd31qZIWxhiZX/
-	nrNDFH1ilHg7bQEjSIJNQEti9dTlrCAJEYFLTBIHjjwB62YWcJC4ePYJC4gtLOAqsXDGMzYQ
-	m0VAVaLrz0mwZl4BS4mrS68yQWyQl1i94QDYNk4BK4lrP96BzRECqjn0/RPbBEa+BYwMqxhF
-	UwuKc9NzkwsM9YoTc4tL89L1kvNzNzGCA1YraAfjsvV/9Q4xMnEwHmKU4GBWEuHlzNyTLsSb
-	klhZlVqUH19UmpNafIhRmoNFSZxXOaczRUggPbEkNTs1tSC1CCbLxMEp1cCU33NN7tLXuAdp
-	8QVmKmeE0yfmz1/yO2rqR97PNTHxSe/ybhzsXHez2TkqRvVLSMGTBGF1pvrjJtN+sYQlzUze
-	/ouzZMqDmKnJdT6KcnJd04Jz/BWDz2+/tGgpzwKnc6VmXD+qNE6Z+RhemPKIe2fxKw6FRQuZ
-	ecUvnajYWVwfmLVqlk+KyYa+WpbVqt171mr+XLPvhbtY2s006euXfnrVMS/3re+UPFiVF37O
-	lNnr2ZRJ7ArKEkwHdKY4Cf2QZhfZf8DnWliD8JlZ5vKvVi7Se+l7SPqZeYh98J3U04luC4JW
-	zb+xYVHZc5Wb955s/NC4V4dHc89SHe77+bXi7s8XXH3cUiHx6W3zllnXJ7crsRRnJBpqMRcV
-	JwIAm5Z1MscCAAA=
-X-CMS-MailID: 20250225132447epcas5p4576a3dac624edbd5edc0a047e008de05
+	d20ji8WCjY8YLTb0vmJ34Pd4f6OV3WPTqk42j81L6j36tqxi9Pi8SS6ANSrbJiM1MSW1SCE1
+	Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoWCWFssScUqBQQGJxsZK+
+	nU1RfmlJqkJGfnGJrVJqQUpOgUmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsa9qdIFOzkrPq5d
+	xNzA+IS9i5GTQ0LAROLJm7esILaQwG5GiZbW2i5GLiD7E6PE8oPn2SGcb4wS85qnssB0XHn4
+	mREisZdRYv2Ew2wQzhdGifeHNrOBVLEJaEmsnrocbK6IwBEmiT8nUkFsZoEIiV2NN8FqhAVi
+	Jf4eawKbyiKgKtG04A9YPa+ApcTH89Oh7pOXWL3hADOIzSlgJXHtxzuwkyQE/rJLPO37zQZR
+	5CLR8+kfI4QtLPHq+BaoZimJz+/2AtVwANnJEu2fuCHCORKXdq9igrDtJQ5cmcMCUsIsoCmx
+	fpc+RFhWYuqpdUwQJ/NJ9P5+AlXOK7FjHoytJLFzxwQoW0Li6eo1UNd4SLT13WWFhEkvo8T0
+	td2MExjlZiGsWMDIuIpRMrWgODc9Ndm0wDAvtRweZ8n5uZsYwclRy2UH4435//QOMTJxMB5i
+	lOBgVhLh5czcky7Em5JYWZValB9fVJqTWnyI0RQYfhOZpUST84HpOa8k3tDE0sDEzMzMxNLY
+	zFBJnLd5Z0u6kEB6YklqdmpqQWoRTB8TB6dUA9OTzFqF2DOT6/wfLj+7WGxOZ0z90kKZ3Ybm
+	ZwNbLDQ0k+KWx/kFc/C9vWkw2UmMdcdp37cyLgd6w05Nsdqs5zPVadX1wixWO7P9cs9Ub74+
+	svHolvbrXzdali2XnrNqruOfb1Y/Cvcv1OjKY/+w96w2S9y6bZFuP1UsueskXHX+PqnQm/Vq
+	vfemFWn6TVEfDF93Td2dfb657HECf/z53JNT57yebh5YZOxjMeFtbKTtHDNzDd2covz5aW/Y
+	fosdylEptQ26JafWILjVsjxm3ZUJj8WLtk4R2xF3ISEn5Km1hWc7X+752X2LM4Vj1+4w+a00
+	51/R5igzc6aFtjLu5w73/36363j8/jn119zX6yixFGckGmoxFxUnAgCZA5atFwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSvO6mI3vTDQ5wWDyYt43N4tDmrewW
+	1788Z7W4eWAnk8X58xvYLTY9vsZq8bHnHqvF5V1z2CxmnN/HZHHxlKvFoq1f2C0Ov2lntfh3
+	bSOLxYKNjxgtNvS+Ynfg93h/o5XdY9OqTjaPzUvqPfq2rGL0+LxJLoA1issmJTUnsyy1SN8u
+	gSvj3lTpgp2cFR/XLmJuYHzC3sXIySEhYCJx5eFnxi5GLg4hgd2MElPPPYRKSEjs/NbKDGEL
+	S6z895wdougTo8TL9kY2kASbgJbE6qnLWUESIgKXmCQOHIEYyywQJfG6dSUjiC0sEC0xe+Nl
+	MJtFQFWiacEfVhCbV8BS4uP56VDb5CVWbzgAto1TwEri2o93YHEhoJpD3z+xTWDkW8DIsIpR
+	MrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIziAtTR3MG5f9UHvECMTB+MhRgkOZiURXs7M
+	PelCvCmJlVWpRfnxRaU5qcWHGKU5WJTEecVf9KYICaQnlqRmp6YWpBbBZJk4OKUamE7Hsrk4
+	7HvzgCVx0/nSKWlMKmcvihQH2fjlOQh6VO7x0v6xjduM6aDIwxfdej8eal2bfnzB62/mx5TE
+	XfSzTpg+a2QukZOM35vyyXq2D9Pv3bde9trftFBPObIpKcuK73Aqk97niRcVxGuXXmI5vHvf
+	tpytj1/673+e80cz3v0FY1+W8YE9qgvj59qYWTbyPjozpXXLU6m0Yl85Zaf72jLPgjxPrPxf
+	Xr5yq0ZCy8vZb5/8m7oxwKhTd8+l0D1COwNk/xYpnRdbaVfy4MNK9bxD4dt1uqeucPqoc/H1
+	q76DxRnV6+p5rBVuzQs/3v5HYcGRdRcnWXZt72HedUFW4pjltqbN3Gzf3ug/aZ/myaLEUpyR
+	aKjFXFScCAC2dwDCzwIAAA==
+X-CMS-MailID: 20250225132507epcas5p455347acbd580b26ee807e467d3a6a05e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250225132447epcas5p4576a3dac624edbd5edc0a047e008de05
+X-CMS-RootMailID: 20250225132507epcas5p455347acbd580b26ee807e467d3a6a05e
 References: <20250225131918.50925-1-v.pavani@samsung.com>
-	<CGME20250225132447epcas5p4576a3dac624edbd5edc0a047e008de05@epcas5p4.samsung.com>
+	<CGME20250225132507epcas5p455347acbd580b26ee807e467d3a6a05e@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 
-Use samsung CCF function which registers multiple clock providers using
-single function call samsung_cmu_register_clocks().
+Currently PLL142XX locktime is 270. As per spec, it should be 150. Hence
+update PLL142XX controller locktime to 150.
 
+Cc: stable@vger.kernel.org
 Signed-off-by: Varada Pavani <v.pavani@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 78 +++++++++++++++++--------------
- 1 file changed, 44 insertions(+), 34 deletions(-)
+ drivers/clk/samsung/clk-pll.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 16be0c53903c..ca5036ba45b9 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1269,6 +1269,45 @@ static const struct samsung_cpu_clock exynos4412_cpu_clks[] __initconst = {
- 		CPUCLK_LAYOUT_E4210, e4412_armclk_d),
- };
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 2e94bba6c396..023a25af73c4 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -206,6 +206,7 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
+  */
+ /* Maximum lock time can be 270 * PDIV cycles */
+ #define PLL35XX_LOCK_FACTOR	(270)
++#define PLL142XX_LOCK_FACTOR	(150)
  
-+static const struct samsung_cmu_info cmu_info_exynos4 __initconst = {
-+	.mux_clks		= exynos4_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(exynos4_mux_clks),
-+	.div_clks		= exynos4_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(exynos4_div_clks),
-+	.gate_clks		= exynos4_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(exynos4_gate_clks),
-+	.fixed_factor_clks	= exynos4_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4_fixed_factor_clks),
-+	.fixed_clks	= exynos4_fixed_rate_clks,
-+	.nr_fixed_clks	= ARRAY_SIZE(exynos4_fixed_rate_clks),
-+};
-+
-+static const struct samsung_cmu_info cmu_info_exynos4210 __initconst = {
-+	.mux_clks		= exynos4210_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(exynos4210_mux_clks),
-+	.div_clks		= exynos4210_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(exynos4210_div_clks),
-+	.gate_clks		= exynos4210_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(exynos4210_gate_clks),
-+	.fixed_factor_clks	= exynos4210_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4210_fixed_factor_clks),
-+	.fixed_clks	= exynos4210_fixed_rate_clks,
-+	.nr_fixed_clks	= ARRAY_SIZE(exynos4210_fixed_rate_clks),
-+	.cpu_clks		= exynos4210_cpu_clks,
-+	.nr_cpu_clks		= ARRAY_SIZE(exynos4210_cpu_clks),
-+};
-+
-+static const struct samsung_cmu_info cmu_info_exynos4x12 __initconst = {
-+	.mux_clks		= exynos4x12_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(exynos4x12_mux_clks),
-+	.div_clks		= exynos4x12_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(exynos4x12_div_clks),
-+	.gate_clks		= exynos4x12_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(exynos4x12_gate_clks),
-+	.fixed_factor_clks	= exynos4x12_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4x12_fixed_factor_clks),
-+};
-+
- /* register exynos4 clocks */
- static void __init exynos4_clk_init(struct device_node *np,
- 				    enum exynos4_soc soc)
-@@ -1322,41 +1361,12 @@ static void __init exynos4_clk_init(struct device_node *np,
- 					ARRAY_SIZE(exynos4x12_plls));
+ #define PLL35XX_MDIV_MASK       (0x3FF)
+ #define PLL35XX_PDIV_MASK       (0x3F)
+@@ -272,7 +273,11 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
  	}
  
--	samsung_clk_register_fixed_rate(ctx, exynos4_fixed_rate_clks,
--			ARRAY_SIZE(exynos4_fixed_rate_clks));
--	samsung_clk_register_mux(ctx, exynos4_mux_clks,
--			ARRAY_SIZE(exynos4_mux_clks));
--	samsung_clk_register_div(ctx, exynos4_div_clks,
--			ARRAY_SIZE(exynos4_div_clks));
--	samsung_clk_register_gate(ctx, exynos4_gate_clks,
--			ARRAY_SIZE(exynos4_gate_clks));
--	samsung_clk_register_fixed_factor(ctx, exynos4_fixed_factor_clks,
--			ARRAY_SIZE(exynos4_fixed_factor_clks));
-+	samsung_cmu_register_clocks(ctx, &cmu_info_exynos4);
+ 	/* Set PLL lock time. */
+-	writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
++	if (pll->type == pll_142xx)
++		writel_relaxed(rate->pdiv * PLL142XX_LOCK_FACTOR,
++			pll->lock_reg);
++	else
++		writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
+ 			pll->lock_reg);
  
--	if (exynos4_soc == EXYNOS4210) {
--		samsung_clk_register_fixed_rate(ctx, exynos4210_fixed_rate_clks,
--			ARRAY_SIZE(exynos4210_fixed_rate_clks));
--		samsung_clk_register_mux(ctx, exynos4210_mux_clks,
--			ARRAY_SIZE(exynos4210_mux_clks));
--		samsung_clk_register_div(ctx, exynos4210_div_clks,
--			ARRAY_SIZE(exynos4210_div_clks));
--		samsung_clk_register_gate(ctx, exynos4210_gate_clks,
--			ARRAY_SIZE(exynos4210_gate_clks));
--		samsung_clk_register_fixed_factor(ctx,
--			exynos4210_fixed_factor_clks,
--			ARRAY_SIZE(exynos4210_fixed_factor_clks));
--		samsung_clk_register_cpu(ctx, exynos4210_cpu_clks,
--				ARRAY_SIZE(exynos4210_cpu_clks));
--	} else {
--		samsung_clk_register_mux(ctx, exynos4x12_mux_clks,
--			ARRAY_SIZE(exynos4x12_mux_clks));
--		samsung_clk_register_div(ctx, exynos4x12_div_clks,
--			ARRAY_SIZE(exynos4x12_div_clks));
--		samsung_clk_register_gate(ctx, exynos4x12_gate_clks,
--			ARRAY_SIZE(exynos4x12_gate_clks));
--		samsung_clk_register_fixed_factor(ctx,
--			exynos4x12_fixed_factor_clks,
--			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
-+	if (exynos4_soc == EXYNOS4210)
-+		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4210);
-+	else {
-+		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4x12);
- 		if (soc == EXYNOS4412)
- 			samsung_clk_register_cpu(ctx, exynos4412_cpu_clks,
- 					ARRAY_SIZE(exynos4412_cpu_clks));
+ 	/* Change PLL PMS values */
 -- 
 2.17.1
 
