@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FF41DDA18;
-	Mon, 24 Feb 2025 19:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5F62153EB;
+	Tue, 25 Feb 2025 08:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424708; cv=none; b=CSISbyaLz15doR0Q5Suc9VhxhpdbjicD62PwLOXjonKxdyXifPGu4E1ldV82ovnlg3K6/6rAAuW42gMqJpvITJTFTxebTPbRnGGnuS2Ow4E+dVOHGKMS6hMBnh6AG9c8U0hLVdZgqSzQBWz/uLEVVn7fDddqMnMSGvSUZFUzVwo=
+	t=1740471085; cv=none; b=kpSrsdHqtgqPHEaMQb+fcmCffsH+X98ndt8zrFeszueMy/WI8OYHummp+RGsntrnR+uPAeCTY7/3vxVOrAF/P7VcRRUfQirPYo8jaQ/50Cj9P+3uT85iOf+3asNmDu6+9ZctpMqdhWEPlQnRtGPWaC9O715psfa0lZSNHwiyG5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424708; c=relaxed/simple;
-	bh=Y7LpKdOZpE6vLuGaoob7TtO0b8fwsQMhZuGERwiToe8=;
+	s=arc-20240116; t=1740471085; c=relaxed/simple;
+	bh=aLquZf07TT12h1ddFK/vUtibJHM+LwbHdlfjiJfmXKo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MgUaywZPRDv/FhCXMy6kaxQVLwETbul+y+/ViTZOncpHSTL8SaHL1b2QzmwVzhWLiNA6iKzqBYtKJNXvBbKXiuqf8zyZ6kMIJ70eO9FQ76CG2+NXFCC9PxicDlBRu0UXwSqDquizB+qYWQOxIpEb8Z8x/DyAdSzQh46EugryJCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIVBXxV9; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hul/nf8jYbqJb2SgqmPwMQJVQSfXPTX/Bbh98pOYFYav0BZGePkj1rgneDHbwPSo9XzHF2xhjG36FNioknZyTGEdrDvsvff6RW2oOEasyWDULYak/b3Ff0SsLB81ZzVdc12pr/8qhAwlub4kO1KXd5j1HoUPV7Q8agkDdsDU3UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvGsygq9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIVBXxV9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35981C4CED6;
-	Mon, 24 Feb 2025 19:18:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvGsygq9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9453C4CEDD;
+	Tue, 25 Feb 2025 08:11:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740424707;
-	bh=Y7LpKdOZpE6vLuGaoob7TtO0b8fwsQMhZuGERwiToe8=;
+	s=k20201202; t=1740471084;
+	bh=aLquZf07TT12h1ddFK/vUtibJHM+LwbHdlfjiJfmXKo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lIVBXxV9Vr8fpN8d7EzfFCqg+1ixKLFdoos1C2lyayMOfz/qN7m5kR5ZF6Dh7Oozl
-	 cpDysEnHbgtw7rd5juOfy7iXDA7gd/pExNUyjKhr3f0ril5zXBP96iHImhy/XwaCzg
-	 YOxCtImsvQ0D6HURsgQoRYphvvDW21xe9WATkYlelaXit4NAXkeqmu/CWr37M44RKJ
-	 V3XI+xph+m3MVdHvG4+gLSr3B3xr2+qjhoDaFLTg9RDFHdke/NnxBpUuhbnP5+tbem
-	 Gs0V/UFvmzAFCjDrKChOjlk55zAURyS+qdJsJkKGHpKNTtE84zllENyRqaTnrYtiMw
-	 sU3okbZqwf0Pg==
-Message-ID: <07634537-0750-4616-9c88-800d1672dcfc@kernel.org>
-Date: Mon, 24 Feb 2025 20:18:23 +0100
+	b=EvGsygq9wqCVlTBUSN6xE6f4CrZsYmf7CLTK5P2BU4TjqRECnR6QMxOakWWb+fdGS
+	 s0HKJWy99e21ibkWrl9I7glsYYtdr8KCeHxcdtQ6JND8f4XSJbO+/9CkJNWSTlKM6z
+	 NgFr9kV/QoiQfY35WX6eH+IW9rYKCoHqF5cSb8PksFNW+FO732KedeJvK+iYQcg/rk
+	 dm5YiNM3Qqnd4iOh/Hm09TMSD/dKscNbezJdSIWU8CCwG/HiqpBXasw3hXkkJWITby
+	 3yRL11Mi3wqPycMQKUnPkdD5uN9w0SQb45LnIuosLClFP/GK+IwgbTdqcgV6QqpTKs
+	 NTatOsoQOIcBA==
+Message-ID: <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
+Date: Tue, 25 Feb 2025 09:11:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mfd: sec: add support for S2MPU05 PMIC
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org>
- <20250219-exynos7870-pmic-regulators-v2-2-1ea86fb332f7@disroot.org>
- <20250223-outrageous-bizarre-hedgehog-8a3bbd@krzk-bin>
- <11387d3d0478d7fa1899ee3d0409541b@disroot.org>
+Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
+ samsung,exynos2200-usbcon-phy schema file
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
+ <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
+ <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,47 +95,90 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <11387d3d0478d7fa1899ee3d0409541b@disroot.org>
+In-Reply-To: <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/02/2025 18:37, Kaustabh Chakraborty wrote:
-> On 2025-02-23 16:10, Krzysztof Kozlowski wrote:
->> Please run scripts/checkpatch.pl and fix reported warnings. After that,
->> run also 'scripts/checkpatch.pl --strict' and (probably) fix more
->> warnings. Some warnings can be ignored, especially from --strict run,
->> but the code here looks like it needs a fix. Feel free to get in touch
->> if the warning is not clear.
+On 24/02/2025 11:48, Ivaylo Ivanov wrote:
+> On 2/24/25 10:56, Krzysztof Kozlowski wrote:
+>> On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
+>>> The Exynos2200 SoC has a USB controller PHY, which acts as an
+>>> intermediary between a USB controller (typically DWC3) and other PHYs
+>>> (UTMI, PIPE3). Add a dt-binding schema for it.
+>>>
+>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>> ---
+>>>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
+>>>  1 file changed, 76 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>> You have undocumented dependencies which prevent merging this file.
+>> First, dependencies have to be clearly expressed.
+> 
+> They are, in the cover letter.
+
+Where? I read it twice. Dependencies is the most important thing and
+should scream at beginning of the cover letter, so if you bury them
+somewhere deep it also would not matter - just like they were missing.
+
+> 
+>> Second, you should
+>> rather decouple the code from header dependencies, otherwise this cannot
+>> be merged for current release (just use clocks with long names, without IDs).
+> 
+> Sure
+
+
+> 
 >>
->> Missing bindings.
+>>> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>> new file mode 100644
+>>> index 000000000..7d879ec8b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>> @@ -0,0 +1,76 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Exynos2200 USB controller PHY
+>>> +
+>>> +maintainers:
+>>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>> +
+>>> +description:
+>>> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
+>>> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
+>> Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
 > 
-> Bindings have been applied in v1.
+> It's not (I think). There's a few reasons I've decided to make this separate
+> from the usb3-drd-phy bindings and exynos5-usbdrd driver:
+> 
+> 1. This PHY does not provide UTMI and PIPE3 on its own. There's no tuning
 
-Heh, I see email from Lee now but mainline does not have them, next from
-19th Feb neither.
+USBDRD phy does not provide UTMI and PIPE on its own either if you look
+at diagram - they call it phy controller.
 
-BTW, what happened with all the review tags? Nothing in cover letter nor
-changelog explains dropping reviews.
+> for them, and all that is needed from it is to disable HWACG, assert/
+> deassert reset and force bvalid/vbusvalid. After that SNPS eUSB2
+> initialization can be done and USB2 works. If the USBCON phy is not set
+> up before the eUSB2 one, the device hangs, so there is definitely a
+> dependancy between them. For PIPE3 we'd need to control the pipe3
+> attaching/deattaching and then initialize the synopsys USBDP combophy.
+
+Does it mean there is no USB DRD phy controller as before?
+
+Anyway the problem is you have DWC3 -> PHY -> PHY. Looks one phy too many.
+
 
 > 
->> BTW, don't combine independent patches from different subsystems into
->> one patchset. It's not helping anyone especially without explaining
->> dependencies/merging in the cover letter or here in changelog.
-> 
-> Alright I'm a bit lost here. The binding patch (the one you enquired
-> for above) referenced the regulator bindings, whereas the regulator
-> driver is including the S2MU005 PMIC header which defines the
-> register addresses, etc.
+> 2. With the way it's modelled, we need to parse phandles from eUSB2 and
+> USBDP to the controller. Adding that to the usbdrd driver would be...
+> weird. It makes more sense to model it as a separate driver, because
+> it functions in a different way.
 
-You have entire cover letter to explain dependencies and merging... If
-you target specific subsystem - write.
-
-> 
-> So it seems like patches from both subsystems are inter-dependent
-> on each other, and hence both are put together in a single series.
-> 
-> What should I do then? Should I explicitly mention this in the cover
-> letter? Or split into two? Or...?
+Just to be clear: we don't talk about drivers here.
 
 
 Best regards,
