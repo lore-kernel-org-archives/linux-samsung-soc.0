@@ -1,94 +1,166 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483FF2686BE;
-	Wed, 26 Feb 2025 06:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EEB269896
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Feb 2025 06:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740552395; cv=none; b=FHj1kTgFZMojxSoCIpCk75RTcV0iPifmAuYIKFGBHrQnL3NdbvnHwh/mUWZcvH5lULdoGwIVHGjDm4areCkl6eAjlrZJw6Qo/yd2GVoax35cvm9fj2dqpH+vzU4rnh6kWe9KGOlRRKp3cLuuHxJolC7uGOX998gKBLA6dwyEER8=
+	t=1740552758; cv=none; b=UKn1TphcA1787nYUsWV6GsZna4ZK4jLmQG02bG3EeMO6pw9LcdOByEENkYlAYdqfMHYiJC5t4p117Zeq5y4gmhjPGalxVYm9mZYNyw49eyBDTaiDvxuSnrjGhdoiXIUa9griIzRXyKyU+KTkLlPJC6UzXzdybzy7md7Zf5qphRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740552395; c=relaxed/simple;
-	bh=DcJW8rnikbMnBHMjyLqT5C+TmnYl/QP63LXAKlFTjQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q8wNwN2vG5LAy2/G7ugY51fucEvEOR4qpks2J0ugSsWusLspQ+HvKCckkqW77DbNGOT4ivwZncieMgueahhW3GcRJ0YoaUHpsWROmpfq21kuuY/la2I9ZC76pC45bKLpRm2kSSevoqvWyUN+lvRQooHbl6HcWDCRF4DDnKxl+18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KeKA8mn9; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740552758; c=relaxed/simple;
+	bh=4rxfz2RBs0i2KkyJbIivqlEYb7DDjtpkcjg98g6MAhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=LZGFT4IBuG+X4ClrsLwu3KHx6++k+vIzMXJAWZIx6KFMKzpdNOZQ4RbROL18fQsCY4VMDdO8seQfYJ+iwVfpuAdfgUyioGHmhnjBsa+UOJohcFd+XxKgmj2LkctD/ftgU8yv46fe63uWGMnWs+SW1lA9cQbF5B03VmTk9QfbuTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i0ZxCpgD; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KeKA8mn9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740552395; x=1772088395;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DcJW8rnikbMnBHMjyLqT5C+TmnYl/QP63LXAKlFTjQA=;
-  b=KeKA8mn9/yko5cO/ZXhr0n15l9jRRSwSjBZP7eLNUrTdH1xp/ztMcFAk
-   7CSpjD0O0YfJK1E0vKDvK365wMGhOay1i/2lol9gyjeUyHKtfns6zmfFS
-   vNfdyYXgw6BiRs6P2Aq8UIfiyJcHVyoyQ10q1aOjZIJurxo1uHrCSNuUV
-   ezV1ZqAK1Soc+DAoDilNqynGmbxsPmhe1tj2knbxO7/CWeIj2slew3Xrq
-   uRGzfQ/r4uNlAPui3jTbPDSla1B8Ee53/7a4sRlcQ8wSCRPzzUP+ueixH
-   r6OUZE+oBCkMOb5tOPSlyZcmrWPkSgR4HQXKAXPx4xlAkslEZ3zNnigw/
-   Q==;
-X-CSE-ConnectionGUID: ZtLhuwwJRA+Fn+oTuT48qg==
-X-CSE-MsgGUID: w/B3HED5Toqle27RgFolzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41300215"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="41300215"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:46:33 -0800
-X-CSE-ConnectionGUID: vhSj9HPxQdixfCU6Udz2DQ==
-X-CSE-MsgGUID: f6KHA8H/TGKMHtiGBJpThQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="147528550"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:46:24 -0800
-Message-ID: <cdab4b5f-f943-4091-a03c-252769221fcd@linux.intel.com>
-Date: Wed, 26 Feb 2025 14:43:08 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i0ZxCpgD"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250226065228epoutp0243e30521a251dc75bdf00b6bef866b09~nr4DR2nkU1160811608epoutp02Y
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Feb 2025 06:52:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250226065228epoutp0243e30521a251dc75bdf00b6bef866b09~nr4DR2nkU1160811608epoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740552748;
+	bh=VMxy5Fqms/eEj6SG3Fa4iJMOIvJ3Wms8fcLlQ4UDdm4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=i0ZxCpgDq43DKlyT2L+4Tztm/w2bFSKxw+DECGAs7J5kIKZ2UG7RA2WwdTTxmTX4Q
+	 6MOUyvYw28/GCxuYJ39PmKzm2G82+LWLeunGKF6SFGv027I5PAGSPoHBrkXe2Btwk0
+	 ueKl5smHGvinfzGvQc3ktlbLfR7ZgrD3yA55v69U=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20250226065215epcas2p4a1ff08b37e5b659501c8ccc7cce0781f~nr33D6qDX1242012420epcas2p4a;
+	Wed, 26 Feb 2025 06:52:15 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z2lWz0cVbz4x9Q6; Wed, 26 Feb
+	2025 06:52:15 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6D.46.23368.D1ABEB76; Wed, 26 Feb 2025 15:52:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e~nr31N9Bw71726517265epcas2p3V;
+	Wed, 26 Feb 2025 06:52:13 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250226065213epsmtrp1b54a53bd8e040101c302fe1b3a39480c~nr31NNhbx2283422834epsmtrp1X;
+	Wed, 26 Feb 2025 06:52:13 +0000 (GMT)
+X-AuditID: b6c32a45-db1ed70000005b48-8d-67beba1d77ea
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.10.18729.D1ABEB76; Wed, 26 Feb 2025 15:52:13 +0900 (KST)
+Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250226065213epsmtip2b95aa7fc901ce29e0b96a6a873f6b97f~nr31CCl9Q0556105561epsmtip2I;
+	Wed, 26 Feb 2025 06:52:13 +0000 (GMT)
+From: <sw617.shin@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, <krzk@kernel.org>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "'Kyunghwan Seo'" <khwan.seo@samsung.com>
+Subject: [PATCH V1 RESEND] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+Date: Wed, 26 Feb 2025 15:52:13 +0900
+Message-ID: <000001db881a$f7364da0$e5a2e8e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/23] iommu/pages: De-inline the substantial functions
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
- Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
- David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <7-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <7-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AduIGjfKeJ5dyM0LTxaz6ymXUsgWdA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmha7crn3pBvv2MFs8mLeNzWJ++yVG
+	i/PnN7BbbHp8jdXi8q45bBYzzu9jsrixbh+7xZOFZ5gsHr/8x+zA6bFpVSebx8o1a1g9Ni+p
+	99j5vYHdo2/LKkaPz5vkAtiism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
+	EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YW
+	l+al6+WlllgZGhgYmQIVJmRnvF05kamgka/i5/enLA2MZ7m7GDk5JARMJLbf+MbSxcjFISSw
+	g1Hi5+4j7BDOJ0aJLx/aoJxvjBIzfp1ng2npWXmACSKxl1Hi/4rXUM5LRokHsx6xglSxCchJ
+	LO1vYwGxRQSKJHb++Aq2hFngAKPEn5bpYEXCAgkSS6dPYAKxWQRUJe4sbwezeQUsJc7duMcK
+	YQtKnJz5BGwQs4C8xPa3c5ghzlCQ+Pl0GSvEAj2JLQt7oGpEJGZ3tjGDLJMQmMghca+zjxGi
+	wUWiecYOKFtY4tXxLewQtpTEy36QRzmA7HyJU0+EIXobGCXeNb+H+tleYtGZn2A1zAKaEut3
+	6UOUK0scuQW1lk+i4/BfqCm8Eh1tQhCNKhIdPzezwiw6euYB1FIPiSvX21knMCrOQvLkLCRP
+	zkLyzCyEvQsYWVYxiqUWFOempxYbFRjCYzs5P3cTIzjBarnuYJz89oPeIUYmDsZDjBIczEoi
+	vJyZe9KFeFMSK6tSi/Lji0pzUosPMZoCg30is5Rocj4wxeeVxBuaWBqYmJkZmhuZGpgrifNW
+	72hJFxJITyxJzU5NLUgtgulj4uCUamBK+huS8X9aqBhLsh3XGdW1CTvuhZucvrlPY6Xvoqcz
+	tu30ef3vbBmHwOYezt2+y2f+/fn1CefEFU8LNM5eOfevk3XLtqdlk76s1rl77uqMiR8+HV/z
+	/eyC9sLo5usbFrUYMFRtCU5b5ZrSor9EKPZG3hzlhR1Gu0+fkH+cH/eg7tOTCpEZEtUPHn/f
+	W7N0/vO0rWdCuO5u2VTpNeFHRmh+9vG/q2JTjlRbFMyLMMlzbXe5fTZxsZ6b/rkNeY6cOorV
+	N9YsqDzo+cr4HPOkVf9UHzqpzArSK34zscSr5zxDydMrZ/KsL7M41hdO/PWnc+6CzmPbDu4K
+	Fehbcfh2qNPxzSfM27dWR2j4W/VKrXlel6XEUpyRaKjFXFScCABROjBpOQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvK7srn3pBi131SwezNvGZjG//RKj
+	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
+	e+z83sDu0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBlvV05kKmjkq/j5/SlLA+NZ7i5GTg4J
+	AROJnpUHmLoYuTiEBHYzSnTP2sjSxcgBlJCSePfMEqJGWOJ+yxFWiJrnjBKtr1eygiTYBOQk
+	lva3sYDYIgJlElsbtzKD2MwCRxglZnwGaxYWiJNoe7CaEcRmEVCVuLO8nQnE5hWwlDh34x4r
+	hC0ocXLmExaIXm2JpzefQtnyEtvfzmGGOEJB4ufTZawQu/QktizsgaoRkZjd2cY8gVFwFpJR
+	s5CMmoVk1CwkLQsYWVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgRHjpbmDsbtqz7o
+	HWJk4mA8xCjBwawkwsuZuSddiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTU
+	gtQimCwTB6dUA9OOlQssf7+4N12fcW7wLbkpaYzFgt2fSu6/SC/t43b27e7JZEn2mBd6Vv6K
+	nMyke4G95eVr5S6Yz3Qx9vgx951Qp6RSmKxZd0WbeUbZ3+17BD49XPFRR3LVzdr3r4/09xx7
+	8XWNo+PPRO0+9vLXxy6uPnJM5vcH78fvouYonuA3b73QfGTLgY0nOfs1pz54/nGiwap/Pm+d
+	HNwTTJK+T1bf4KA2d8uFdzcirfY2N9W1WG1mnBihxr2R/8LOOcf0BA9s6fCZ6pZyeXbE8Q+e
+	7at2H7bozDvbcCGRf9HkR+VMWf25T08uO//yjlj4heSLzku/d30pXXA3i+neJPuKjLVlivNX
+	zFvrJpt+6evNo73zlFiKMxINtZiLihMBm2ZU5wsDAAA=
+X-CMS-MailID: 20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e
+References: <CGME20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e@epcas2p3.samsung.com>
 
-On 2/26/25 03:39, Jason Gunthorpe wrote:
-> These are called in a lot of places and are not trivial. Move them to the
-> core module.
-> 
-> Tidy some of the comments and function arguments, fold
-> __iommu_alloc_account() into its only caller, change
-> __iommu_free_account() into __iommu_free_page() to remove some
-> duplication.
-> 
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+This is a friendly reminder for this patch.
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+> Sent: Thursday, February 13, 2025 1:56 PM
+> To: 'Sangwook Shin' <sw617.shin@samsung.com>; krzk@kernel.org; wim@linux-
+> watchdog.org; linux@roeck-us.net
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
+> kernel@vger.kernel.org; 'Kyunghwan Seo' <khwan.seo@samsung.com>
+> Subject: RE: [PATCH] watchdog: s3c2410_wdt: Fix PMU register bits for
+> ExynosAutoV920 SoC
+> 
+> Hello Sangwook
+> 
+> > -----Original Message-----
+> > From: Sangwook Shin <sw617.shin@samsung.com>
+> > Sent: Thursday, February 13, 2025 6:11 AM
+> > To: krzk@kernel.org; alim.akhtar@samsung.com; wim@linux-watchdog.org;
+> > linux@roeck-us.net
+> > Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> > soc@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Kyunghwan Seo <khwan.seo@samsung.com>;
+> > Sangwook Shin <sw617.shin@samsung.com>
+> > Subject: [PATCH] watchdog: s3c2410_wdt: Fix PMU register bits for
+> > ExynosAutoV920 SoC
+> >
+> > From: Kyunghwan Seo <khwan.seo@samsung.com>
+> >
+> > Fix the PMU register bits for the ExynosAutoV920 SoC.
+> > This SoC has different bit information compared to its previous
+> > version, ExynosAutoV9, and we have made the necessary adjustments.
+> >
+> > rst_stat_bit:
+> >     - ExynosAutoV920 cl0 : 0
+> >     - ExynosAutoV920 cl1 : 1
+> >
+> > cnt_en_bit:
+> >     - ExynosAutoV920 cl0 : 8
+> >     - ExynosAutoV920 cl1 : 8
+> >
+> > Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
+> > Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> > ---
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> 
+> 
+
+
