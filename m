@@ -1,33 +1,57 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B374149C6F;
-	Wed, 26 Feb 2025 07:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E22036EB;
+	Wed, 26 Feb 2025 09:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740555834; cv=none; b=sOWd+ZKxky++nijuWkwudDcu51SiyMD3UFCb6KlxnDTUFrE/2kfpPfw1PP+crrPw0FkOVGijk15X/MFdKXqND+TbuqPbsSq84cTxTbcQgmuFPE2oj0++XB5d+9/PvGtqomb90RNfhrlWJBl1rEAOXciUsKgo6+vY6cawMtLcN9I=
+	t=1740561362; cv=none; b=KsVk72lzdTsingQjpoM3MiX4lWUOMwdMZ+h3gX5km4zqYD01GheEFOoefo/gXzygkGJ/kaZGlHuwcgbRhdOPEsT8bWnWF0R8ebO8/lhiBpGFKiAVaRM1pxEMCPfUM8iUGm0A3divKQ2S0rBmQ8M9eT/jasadM3BR7ej33bL2uL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740555834; c=relaxed/simple;
-	bh=TlotOXl+MlcuWgcpW7R/wM9IAru7nzqbanYYiDA0BX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eytmxsNNcfwiq0LLpWix3vEfhrza1fX5HzofZHbuv/o+aVmAfYklZBveN9mAqCI+uIHl4IzxAo+gkq3iT4dnnU+kMYEA5KpurBw5LHIimsDQLI17oI4DEwBEuMFDEZs3dNo9GbenZotEymnqXehCVRZc6xoVWgKr/Vfn7UE1Jg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JegS85JW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740561362; c=relaxed/simple;
+	bh=HmmdzVTTi/DjoKLcmrxW1fMIoviGanIxaCaW6zxswLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=lM6QbtjS/VosFiKvstSycQs4ZNkECaPC+JCcWdXFiRcThHzrX+bAJDRNrZjCQapx6BlTO0v0LcLY6rkA8ezMRtacHxikRj5FKdqo3PYVkn6bkHtFQjVsY5V3LpQaDmSqiLQqsOc7VQSdvhI7nF2zH6r78FPhbaG49KlAYCqnjd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pd0qKB6S; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JegS85JW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1440CC4CED6;
-	Wed, 26 Feb 2025 07:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740555833;
-	bh=TlotOXl+MlcuWgcpW7R/wM9IAru7nzqbanYYiDA0BX8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JegS85JWKA51Szg3RS4UflboG3VFRSSTRphuZZPUthDC5T2rzXVfr61kbar4UyQj0
-	 FahDSOYOPKjAw4p29A8xVs99h9cAbTzotScnxwQuGeQoHZFOLZu4JiwOx+Sga+wh+e
-	 dCEl+gL4XwnBMDwrsqBEdfUNg+/98TwdpHZ44S3Cb9gkJY1RobBhoQJ/GN6kVWoouD
-	 Ka5C0Qh66f4JS84YBZRthLmmCrUlBJTsQ8M+V4K7w7qbPZyQTYTONw7SEsgYL9jPOH
-	 paLl21uTD95tea23OL3EhocYMs4daInWl+tw1RXJHXcMPCvkviyhIpHTPpukbmdsJ+
-	 /q1sXkdaBtMSQ==
-Message-ID: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
-Date: Wed, 26 Feb 2025 08:43:49 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pd0qKB6S"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250226091557euoutp0161733e589313a5d360143bf659ed2ac4~nt1UUMSFJ0235702357euoutp018;
+	Wed, 26 Feb 2025 09:15:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250226091557euoutp0161733e589313a5d360143bf659ed2ac4~nt1UUMSFJ0235702357euoutp018
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740561357;
+	bh=jfJCJyoMIpaltaIU+7lWbslcg8FIPqfxsGd8Aa/3U4g=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=pd0qKB6SEv3qSWA5608B8oO2iGWR7WjfUjY2eZgAJKutotBUbf09dxzRJ6HokEIfl
+	 SENoGO7kGj+s5+5W9pcnL1jlx+tZjJeceP8qzzOTwn25j197LEY2e5ro61VeUURHeg
+	 tpP39Yc9WB7YuWNRDkkxYYqX3jPJHhQLSkY8WSSc=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250226091556eucas1p29db20e03f1f9ea1782103d1167564e1b~nt1T3fxAv0815308153eucas1p2U;
+	Wed, 26 Feb 2025 09:15:56 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id B1.88.20397.CCBDEB76; Wed, 26
+	Feb 2025 09:15:56 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250226091555eucas1p1320cf0ed08b514c5259710476a930e60~nt1TNvpGD1197611976eucas1p1P;
+	Wed, 26 Feb 2025 09:15:55 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250226091555eusmtrp1d211ba6163f39cbff93c4ff3e854775d~nt1TMYUVW3155431554eusmtrp1P;
+	Wed, 26 Feb 2025 09:15:55 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-b0-67bedbccae7f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 40.E0.19920.BCBDEB76; Wed, 26
+	Feb 2025 09:15:55 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250226091552eusmtip1c4c7761f98c6c76160fa00aed2a5042b~nt1QGGXF83166531665eusmtip1L;
+	Wed, 26 Feb 2025 09:15:52 +0000 (GMT)
+Message-ID: <1a6f693d-5ebe-46f5-be89-5edc0e77e316@samsung.com>
+Date: Wed, 26 Feb 2025 10:15:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,106 +59,207 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 RESEND] watchdog: s3c2410_wdt: Fix PMU register bits
- for ExynosAutoV920 SoC
-To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
- wim@linux-watchdog.org, linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kyunghwan Seo <khwan.seo@samsung.com>
-References: <CGME20250226072535epcas2p46d41cb5cdd7ece18c898657c3c66a219@epcas2p4.samsung.com>
- <20250226072151.2123990-1-sw617.shin@samsung.com>
+Subject: Re: [PATCH v3 21/23] iommu/pages: Remove iommu_alloc_page/pages()
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+	asahi@lists.linux.dev, Lu Baolu <baolu.lu@linux.intel.com>, David Woodhouse
+	<dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>,
+	iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan
+	Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Krzysztof
+	Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, Hector Martin <marcan@marcan.st>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Robin Murphy <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, Sven Peter
+	<sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>, Tomasz
+	Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu
+	Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev, David
+	Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250226072151.2123990-1-sw617.shin@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <21-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVBUVRjGO/fevbsws3BlKY5Wg22YxQRCinMaya9JvUMzGs1kTM0oK1wX
+	AlbbZROKmdD4WlAEwYKLLjvm8CEbrCxugYTthrBAgkAZ8hFfWwQIhECwLLKxXCz++z3v+5zz
+	vO+ZOQLcbYjcJIiUxTJymSRaTDoThgZrq8/PPXVSv3N5G9GA2kCiqpZMgG7ZWD6y/uqCLp8F
+	SJ99i0TZpTk4sg+N89DiLEIjheUA/bJcC1ASe41AqgIdH+U0X8VQW9sKVQ4/4CHDTBKJHg/Y
+	cZTXVoeh3LoaEqlmWRK1PNDw0WjneRw1WxNQp7kDoBTWFaVcv4kh498WHhoZUq3kLWgAWuqx
+	Y8haoybQbFEqQJk/vIespjYMJfUGINvCFXLvFtpiVGN0cscTktaqtYDWDZXx6EejowT9U9os
+	n65m+/i0plJJ60u86cobKpJWNwXT+utf0H/p8wH9TVE1SV/4cpKku9iQdzd+6BwYzkRHfsrI
+	t+0OdY4wTzwEp9u3xjWNDfISQfLmdOAkgNQOqG9IxNOBs8CNKgGwbzIHcGIWwLQ7lXxOzACo
+	q1nkPT1iaDWuuYoBNKdp18Q0gAU1D/kOl5DaDTPU7atMUFugyngb5+obYFO+hXDws5Qn7O/O
+	W/WIqCCoKrBjjovcKZsADo2WrzZwqg/AcZU3xx6w21KIOZik/GH6RDrpYCdqPzSXZGKcxxN+
+	N3FldSNILTjD5OoLODf327CvW7fGIjjWWMXn+AXYknOe4A6kAqix9WOcyAIwcaQbcK5dsLd1
+	cSVOsBLxGqyo2caV98Hi0mrMUYaUC+ya2MAN4QIvGb7GubIQpqW4ce5XINtY/l+s8X4HngXE
+	7Lp3Ydetya5bh/0/VwOIG8CDUSpipIxiu4w546uQxCiUMqlv2KmYSrDyDVqWG+e+ByVj074m
+	gAmACUABLnYXOkXWSt2E4ZL4zxj5qeNyZTSjMIHnBYTYQ3jtTrLUjZJKYpkohjnNyJ92MYHT
+	pkRMlHD74uay6SP5J94kXpW9tEBdMvZOZsyFNptkP0Lvk4qLuQcihkVhHTfvBum3nhz+pP+P
+	R74fHTv3VsjH/kvyg/mHXvynwbCdbfxgyis8v6Ki+J7yeNbv0aHio7Ga4GH7y/cfl9aH7Aya
+	yhApc+Ldz8abeDqZX2B7SsBcqDbsOXNQXPAOs6g06mjC8J9qS175VOoemesRUS6e0aWNzD4s
+	sN39bXDc6/CMPevqt4EZFwP2uN7r8fCMTjzIjyt8Y2R/lnC+VqeNaqvau9PPph4QaZrGijo/
+	T0ga/KrlgNd81644TeSJqqVn6oURRv93fLqMGt/3LcfOzE+yh163Lvvsq39SNiAVE4oIib83
+	LldI/gU/varkdQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMKsWRmVeSWpSXmKPExsVy+t/xu7qnb+9LNzi3StfiwbxtbBZbTvcx
+	Wmz9PYvd4udVPoupjYwWmyduZbOYuHIys8X/R69ZLX59sbB4Pn8do8WVf3sYLVpmLWKx6Jy9
+	gd1i8qm5TBbnzwNZmx5fY7XY9rmFzeLTg//MFjPO72OymLJvF5tF55dZbBanry1gt3h5uYfZ
+	4tTPGovLJy4xWrTN4rdoW7KRyeLghyesFs8fdQLt+7GA0eLP7f9MFj93zWOx+LKsndGib2+Q
+	xc9D55ksWu6YWvz+MYfNQdXjycF5TB6tl/6yeayZt4bRY8Oj1aweb16+ZPE43PGF3WPnrLvs
+	Hgs2lXpsXqHlsWlVJ5vHvJOBHpuX1Hu82DyT0WPxsp1sHr3N79g8bsyKCJCM0rMpyi8tSVXI
+	yC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Ms48fYmY8FF9YqTrx6y
+	NjC2KnQxcnJICJhIbDt3kLGLkYtDSGApo0T/l8vsEAkZiZPTGlghbGGJP9e62CCK3jNKLLw8
+	nQUkwStgJ9E97yJYA4uAqkTnwd3MEHFBiZMzn4DViArIS9y/NQOsRljAS6Jz9n8mEFtE4C+H
+	xMR+b5ChzAJ3GSUOLV7PBpIQEpjKKHFslQ+IzSwgLnHryXywBjYBQ4mut11gNZwCThInVvQx
+	QdSYSXRt7WKEsOUltr+dwzyBUWgWkjtmIRk1C0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfm
+	pesl5+duYgSmvm3Hfm7ewTjv1Ue9Q4xMHIyHGCU4mJVEeDkz96QL8aYkVlalFuXHF5XmpBYf
+	YjQFBsZEZinR5Hxg8s0riTc0MzA1NDGzNDC1NDNWEud1u3w+TUggPbEkNTs1tSC1CKaPiYNT
+	qoFpXur+pXc6TXhT/bYZpk0InGB9IsTsWvpbcd5APuNKY8XdpYqxy5mNlbWz12b3d7e+k19p
+	122ov7wzeJZ7k5jY0+vafy7qLDWZrPbX2VNdL2X9dt/WZ+/aP2Y5GNXynNZmaF5UUaMT717x
+	x+1sn6iJl987u/dO8QzW0Q/chWOyVv5rdziy5/jmKtmTd86xBtwN1rG8slGg40SSzZsbS2d/
+	S7jv5fn8WCFv08TYphK3SYaC3IvfddqdmSN2VrdNONatdf/9n8s/KU7SOh65djPjDTWuGT7C
+	Da1igRmrC5b/9me7vDX/7Skdmx3pZQZbZPz2nNXaHrJ7donPvNAYafP3J0vXRH8+t/yUsMIi
+	ayWW4oxEQy3mouJEAGWS78wGBAAA
+X-CMS-MailID: 20250226091555eucas1p1320cf0ed08b514c5259710476a930e60
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51
+References: <CGME20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51@eucas1p1.samsung.com>
+	<21-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
 
-On 26/02/2025 08:21, Sangwook Shin wrote:
-> From: Kyunghwan Seo <khwan.seo@samsung.com>
-> 
-> Fix the PMU register bits for the ExynosAutoV920 SoC.
-> This SoC has different bit information compared to its previous
-> version, ExynosAutoV9, and we have made the necessary adjustments.
-> 
-> rst_stat_bit:
->     - ExynosAutoV920 cl0 : 0
->     - ExynosAutoV920 cl1 : 1
-> 
-> cnt_en_bit:
->     - ExynosAutoV920 cl0 : 8
->     - ExynosAutoV920 cl1 : 8
-> 
-> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+On 25.02.2025 20:39, Jason Gunthorpe wrote:
+> A few small changes to the remaining drivers using these will allow
+> them to be removed:
+>
+> - Exynos wants to allocate fixed 16K/8K allocations
+> - Rockchip already has a define SPAGE_SIZE which is used by the
+>    dma_map immediately following, using SPAGE_ORDER which is a lg2size
+> - tegra has size constants already for its two allocations
+>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+For exynos-iommu:
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>   drivers/iommu/exynos-iommu.c   |  4 ++--
+>   drivers/iommu/iommu-pages.h    | 26 --------------------------
+>   drivers/iommu/rockchip-iommu.c |  6 ++++--
+>   drivers/iommu/tegra-smmu.c     |  4 ++--
+>   4 files changed, 8 insertions(+), 32 deletions(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 1019e08b43b71c..74337081278551 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -902,11 +902,11 @@ static struct iommu_domain *exynos_iommu_domain_alloc_paging(struct device *dev)
+>   	if (!domain)
+>   		return NULL;
+>   
+> -	domain->pgtable = iommu_alloc_pages(GFP_KERNEL, 2);
+> +	domain->pgtable = iommu_alloc_pages_sz(GFP_KERNEL, SZ_16K);
+>   	if (!domain->pgtable)
+>   		goto err_pgtable;
+>   
+> -	domain->lv2entcnt = iommu_alloc_pages(GFP_KERNEL, 1);
+> +	domain->lv2entcnt = iommu_alloc_pages_sz(GFP_KERNEL, SZ_8K);
+>   	if (!domain->lv2entcnt)
+>   		goto err_counter;
+>   
+> diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
+> index 3c4575d637da6d..4513fbc76260cd 100644
+> --- a/drivers/iommu/iommu-pages.h
+> +++ b/drivers/iommu/iommu-pages.h
+> @@ -100,20 +100,6 @@ static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp,
+>   	return iommu_alloc_pages_node_sz(nid, gfp, 1 << (order + PAGE_SHIFT));
+>   }
+>   
+> -/**
+> - * iommu_alloc_pages - allocate a zeroed page of a given order
+> - * @gfp: buddy allocator flags
+> - * @order: page order
+> - *
+> - * returns the virtual address of the allocated page
+> - * Prefer to use iommu_alloc_pages_lg2()
+> - */
+> -static inline void *iommu_alloc_pages(gfp_t gfp, int order)
+> -{
+> -	return iommu_alloc_pages_node_sz(NUMA_NO_NODE, gfp,
+> -					 1 << (order + PAGE_SHIFT));
+> -}
+> -
+>   /**
+>    * iommu_alloc_pages_sz - Allocate a zeroed page of a given size from
+>    *                          specific NUMA node
+> @@ -141,16 +127,4 @@ static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
+>   	return iommu_alloc_pages_node_sz(nid, gfp, PAGE_SIZE);
+>   }
+>   
+> -/**
+> - * iommu_alloc_page - allocate a zeroed page
+> - * @gfp: buddy allocator flags
+> - *
+> - * returns the virtual address of the allocated page
+> - * Prefer to use iommu_alloc_pages_lg2()
+> - */
+> -static inline void *iommu_alloc_page(gfp_t gfp)
+> -{
+> -	return iommu_alloc_pages_node_sz(NUMA_NO_NODE, gfp, PAGE_SIZE);
+> -}
+> -
+>   #endif	/* __IOMMU_PAGES_H */
+> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+> index 798e85bd994d56..5af82072b03a17 100644
+> --- a/drivers/iommu/rockchip-iommu.c
+> +++ b/drivers/iommu/rockchip-iommu.c
+> @@ -730,7 +730,8 @@ static u32 *rk_dte_get_page_table(struct rk_iommu_domain *rk_domain,
+>   	if (rk_dte_is_pt_valid(dte))
+>   		goto done;
+>   
+> -	page_table = iommu_alloc_page(GFP_ATOMIC | rk_ops->gfp_flags);
+> +	page_table = iommu_alloc_pages_sz(GFP_ATOMIC | rk_ops->gfp_flags,
+> +					  SPAGE_SIZE);
+>   	if (!page_table)
+>   		return ERR_PTR(-ENOMEM);
+>   
+> @@ -1064,7 +1065,8 @@ static struct iommu_domain *rk_iommu_domain_alloc_paging(struct device *dev)
+>   	 * Each level1 (dt) and level2 (pt) table has 1024 4-byte entries.
+>   	 * Allocate one 4 KiB page for each table.
+>   	 */
+> -	rk_domain->dt = iommu_alloc_page(GFP_KERNEL | rk_ops->gfp_flags);
+> +	rk_domain->dt = iommu_alloc_pages_sz(GFP_KERNEL | rk_ops->gfp_flags,
+> +					     SPAGE_SIZE);
+>   	if (!rk_domain->dt)
+>   		goto err_free_domain;
+>   
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index 844682a41afa66..a9c35efde56969 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -295,7 +295,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
+>   
+>   	as->attr = SMMU_PD_READABLE | SMMU_PD_WRITABLE | SMMU_PD_NONSECURE;
+>   
+> -	as->pd = iommu_alloc_page(GFP_KERNEL | __GFP_DMA);
+> +	as->pd = iommu_alloc_pages_sz(GFP_KERNEL | __GFP_DMA, SMMU_SIZE_PD);
+>   	if (!as->pd) {
+>   		kfree(as);
+>   		return NULL;
+> @@ -695,7 +695,7 @@ static struct tegra_pt *as_get_pde_page(struct tegra_smmu_as *as,
+>   	if (gfpflags_allow_blocking(gfp))
+>   		spin_unlock_irqrestore(&as->lock, *flags);
+>   
+> -	pt = iommu_alloc_page(gfp | __GFP_DMA);
+> +	pt = iommu_alloc_pages_sz(gfp | __GFP_DMA, SMMU_SIZE_PT);
+>   
+>   	if (gfpflags_allow_blocking(gfp))
+>   		spin_lock_irqsave(&as->lock, *flags);
 
-Resending while ignoring all previous emails, so we should do the work
-twice. If you ever wonder why your patches are not applied, you got answer.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-
-Best regards,
-Krzysztof
