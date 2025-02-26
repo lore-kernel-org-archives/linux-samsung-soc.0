@@ -1,121 +1,150 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626CC271800
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Feb 2025 22:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF4F1E5207
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Feb 2025 03:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740607477; cv=none; b=gRJUaYxfAPs73ryCcv5mFi+N3LrMulZw4oFY4Ravdt7kL9JD3P3OpcDp7S+L5MGQLvGAu0uA4rf+VrSOnM8ILnBRsHp5XWjENPzoF2yXVkOGdLW8CJvoBvz5xQCrnQNCGV/oI6QoECCBbvpJXG6mWUF9lwoKr17NUgUdPG3HJvI=
+	t=1740627434; cv=none; b=PmAv5tp8LyLkBkamrITrWvkV899FLoEDY0qRnx3WuRmthXALuKS+eansBpTxGvTGKERa4sy2R5TRMp3Hikn6veSCVzjxMJCcKYShowEUKMomZzs5Fe9uTTTH5kAQ1uQBSY/OqAfU7TRVOkiIr+bgSbxOtapkoIMYb/cMeFyFrVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740607477; c=relaxed/simple;
-	bh=qiJ5NgMCW+3w1jlKpr4Qxl9Za0XkMmw59lyuniMavhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sR3OOFjZmD/npAxhWYeKeEmSst3LcWvCOBkC5LVEde8/rftntpaVd6SAhfHshJELsobtcpkDiY81WSOtM2pCesnPbuXblHXpakyp2YhOJH3ATWsJi4S0pp52yqm9DgZMeZkmxYOiDdsOqbsJqb6/BJ7Wz4vFrIc9fMZOpuduX1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j+I8pKwq; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740627434; c=relaxed/simple;
+	bh=HUaL4jXzzmc7ZqOCVHB/3Wvc8pEz9pQtEipGVeSpP+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=W96O5AIcL8qI2cMSmFP/BAxSvpIwVJjZ9FiVotjo0jjnftYVAGUKiZErTiZE/37lNeHWgBOx3sebYA2+869ZW9DTH8ZVYZAY+lIBWjawnOnIICWPMPO325FxnzpXnKpC0yIXP228dgzl4HskC2vnxc5p26elwiDdCbZCKtgPn64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hd/aLA87; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+I8pKwq"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220ecbdb4c2so5382395ad.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Feb 2025 14:04:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740607471; x=1741212271; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZVSwZvqHp4KclUxAlGtZReiZmGLJRUAId7nnJAavdso=;
-        b=j+I8pKwqaYJqCfqWZPsBRXvs4z07NZzQ09hIeY4Ya4cnMLbZIoBpftqQcXWk9D3lV3
-         +THBIzqAdjZR3tRWr2IshtH4m/jE5BAPazAzQPgbLAjzCUsJcVtxeep0gGDxGbmx2gFL
-         UsjaQDjc6/OhoIQc1vTilF8BBbcyJ8NER0ukGUsIElskI2DclsMoaeK+i0pe9H1zXmNx
-         wCfQhldsdjvTSryXVjap7/PH7/i9M+/pzMMNd1rM+yklqTwoM+qX4a6SAsuY889St56l
-         1kXXOWoLOMOIQKT4RD8SNdfqT6A/+oRLo35+WtXfd54sCr+s/+KLcHR2gb1wNqeM5UcH
-         MMjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740607471; x=1741212271;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZVSwZvqHp4KclUxAlGtZReiZmGLJRUAId7nnJAavdso=;
-        b=INE+1rlNzlLAdLR2/TvNy278KATIyaRzsoEtosa0Dtoz42JdPfuXkK1yXxYdTG6HXc
-         /mqHSKst9630F2D26Ybu84gBSe84+NlTjmSFJN8Dsofn561r82o1USLCOohEtErGnaKl
-         WH5Ym+gfmeAwdO4zLna0FYGdIdK9N9f0breL+rpANwCoZlLutbMga35+7SlA3cT4ADuV
-         WhI/8CSYYl4g1oE5103PUtulclvS8APMrZ+//tE5uol8CFvLd8IZKBLGgPndxR4j025P
-         wLTsM0ar/n3/Qqz89V208iZeQRQYyl1CrBBLHD9GmuWvUd8oqrKdq2Kh0QIwN3VugI7S
-         heoA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+kSFtqflabHq28Drkg38c5b2BzvYR+PowYiTyqpZFZ1wkfkYfALtF+wOIfPlEyl5HPSuxhEy6PFts1bfMRnB7/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzgupo5FwlTSYmMWNyrLFm9tOpSlhUX/x3DrHyW4uJP20tud7J
-	qNlvGkvpn+wqIByINdSkKrwj61mc6qhYb7CVuV6D5Yp5XkNcy+xAWti+b7Npy3I=
-X-Gm-Gg: ASbGncsljvMPPJCWiXZR08ZA8hLB0/aY02xsDGoLL+5QDSJowdjW+CXAOSMhxGhxG2O
-	iZq/5LR428EMrtK1XSGBOZZ/3wA9mWEoe5/Lx0glZTCvlGq0Lmgg9FEZ10/Mq0jxKS7ImqJLl3k
-	nPUwwa1NUzH93c0eGT9JcnyX558CYormk22fp+u2qe8A6tBGMishfO5eLes8gn+vKaVhnWLz1ZP
-	5QM+ljFMxurWBncGIFsncYUvLliNegQ+ojAtyg/zqq/cHk77pCAya4cvAd8z7TeWi7RW1nkSllk
-	LizbZ31pCX329nADnA2Ey5k8GKFtg+tJX56OBw1cFeFd+Clhp1RykuXu
-X-Google-Smtp-Source: AGHT+IHv2DLo5yokOufzr6ieTPFjBCf/BVk00fjUAV4YbzWaoAbBY7sSAOQrP6QEylsN4Iqip6zQ3Q==
-X-Received: by 2002:a17:902:d2c9:b0:221:f61:14c3 with SMTP id d9443c01a7336-221a0ed8294mr315855585ad.18.1740607471584;
-        Wed, 26 Feb 2025 14:04:31 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([104.134.203.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350534004sm1044145ad.252.2025.02.26.14.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 14:04:31 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: alim.akhtar@samsung.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	krzk@kernel.org
-Cc: linux-scsi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	willmcvicker@google.com,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	ebiggers@kernel.org,
-	bvanassche@acm.org,
-	kernel-team@android.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 6/6] scsi: ufs: exynos: put ufs device in reset on .exit() and .suspend()
-Date: Wed, 26 Feb 2025 22:04:14 +0000
-Message-ID: <20250226220414.343659-7-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-In-Reply-To: <20250226220414.343659-1-peter.griffin@linaro.org>
-References: <20250226220414.343659-1-peter.griffin@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hd/aLA87"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250227033709epoutp02fb482a040df013fd47f84999c7d7c19d~n82zfpc_i0040300403epoutp023
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Feb 2025 03:37:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250227033709epoutp02fb482a040df013fd47f84999c7d7c19d~n82zfpc_i0040300403epoutp023
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740627429;
+	bh=8qpJCAdMbp5JmaXKzVJ75C3QSwF3Nen3LlJUVevvP3A=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hd/aLA87jezeV38kovpbA/d/x/CiWANPO/DzkB9ewgjXAJJsNp4pcD6yAaPRQ04FZ
+	 z2eddlZj8SYrDA9eN4GputqwcVCMFxwuVQzE1grMfoFdSbPOJskn+fxd/5msqrmKU+
+	 HzqUbI+CfoCU3/iZYcKJ0ZwMDpWba+s9TE21SpqU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20250227033709epcas5p2a660339d8d1342c9e4deb76d58e34b7a~n82zB_3hT0231602316epcas5p2w;
+	Thu, 27 Feb 2025 03:37:09 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Z3H8M5DPZz4x9Q2; Thu, 27 Feb
+	2025 03:37:07 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6F.33.29212.3EDDFB76; Thu, 27 Feb 2025 12:37:07 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef~nu0EWhdBB2952329523epcas5p3c;
+	Wed, 26 Feb 2025 10:27:49 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250226102749epsmtrp1e2e7ebc583d047cad490833fb912e42a~nu0EVt4mP1973819738epsmtrp1r;
+	Wed, 26 Feb 2025 10:27:49 +0000 (GMT)
+X-AuditID: b6c32a50-7ebff7000000721c-74-67bfdde3d4ba
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8B.2C.18949.5ACEEB76; Wed, 26 Feb 2025 19:27:49 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250226102747epsmtip2e91ed84807afc306cf7127cc44eeb79d~nu0CkZLAL0603906039epsmtip2s;
+	Wed, 26 Feb 2025 10:27:47 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [Patch v2] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
+Date: Wed, 26 Feb 2025 15:52:51 +0530
+Message-Id: <20250226102251.9040-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmuu7ju/vTDd5eV7Z4umMmq8X9xZ9Z
+	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jou1R+6yWyzb9IfJ
+	YtHWL+wOvB6L97xk8ti0qpPN4861PWwem5fUe/RtWcXo8XmTnMepr5/ZA9ijsm0yUhNTUosU
+	UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgK5VUihLzCkFCgUkFhcr
+	6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnnGwtLjjPW9H7
+	LamB8R53FyMnh4SAicTFYyfZQWwhgT2MEqd+F3cxcgHZnxglDux+zQThfGOUuH/rJgtMx8vz
+	d9kgEnsZJY5f/c8O4XxhlGidfhGoioODTUBX4uz2HJAGEYFUiVfr1rKC1DALLGGSWHTkGRNI
+	QljAVWLhg3vMIDaLgKrE3V/3WEFsXgEbiU9n30Ntk5dYveEAM0izhMBbdokXL1rZIRIuErtW
+	9LFC2MISr45vgYpLSbzsb4OykyUeL3rJDGHnSKzfMwVqqL3EgStzwA5lFtCUWL9LHyIsKzH1
+	1Dqw25gF+CR6fz9hgojzSuyYB2OrScy58wNqrYzE4dVLGSFsD4mNew9DwzFWomV3G+MERtlZ
+	CBsWMDKuYpRKLSjOTU9NNi0w1M1LLYfHU3J+7iZGcBrUCtjBuHrDX71DjEwcjIcYJTiYlUR4
+	OTP3pAvxpiRWVqUW5ccXleakFh9iNAUG2kRmKdHkfGAiziuJNzSxNDAxMzMzsTQ2M1QS523e
+	2ZIuJJCeWJKanZpakFoE08fEwSnVwFRe/v9D6Exl9tBbPvaMoq7MO9RjNTTFEgxKVu2w7dk1
+	a8nm1L8CS9o9Dl7QmPKe6YSm8k81lS+ZXQ0GmznP/1rNp9ohFaw47fOHabI1GYyfXcr/XftS
+	nrSrZuU+vWks/advlirpW3+93XP3qeDLg84cS7Wzav2nvv3+9hiPV5v7ssk/fLpcZ0munC9x
+	TnRJ167ZIecOn+PTV7ulonzBnCVtGQfjrSfrsqXT1y0y4ig6LCqhd45d3GLHOoH12dOLk3bv
+	vF83W/Nr0Qezq4X584tMvt0QqzsnUsQ4a1eMY8vLR1xexRUeSas7mZ+dLm88UdXbqGj39/ma
+	W7ypDO3qQRqdkXEHbCLcXabnqoceUmIpzkg01GIuKk4EAIB/vNQMBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvO7SN/vSDZr3clg83TGT1eL+4s8s
+	Foc2b2W3uHlgJ5PFxZl3WSz6Xjxkttj0+BqrxeVdc9gsejZsZbWYcX4fk8XaI3fZLZZt+sNk
+	sWjrF3YHXo/Fe14yeWxa1cnmcefaHjaPzUvqPfq2rGL0+LxJzuPU18/sAexRXDYpqTmZZalF
+	+nYJXBknW4sLzvNW9H5LamC8x93FyMkhIWAi8fL8XbYuRi4OIYHdjBJ/t+1jg0jISPxvO8YO
+	YQtLrPz3nB2i6BOjxP91G1m7GDk42AR0Jc5uzwGpERFIl5h05ysLSA2zwDomiZ0rJ7KCJIQF
+	XCUWPrjHDGKzCKhK3P11DyzOK2Aj8ensexaIBfISqzccYJ7AyLOAkWEVo2RqQXFuem6xYYFR
+	Xmq5XnFibnFpXrpecn7uJkZwQGpp7WDcs+qD3iFGJg7GQ4wSHMxKIrycmXvShXhTEiurUovy
+	44tKc1KLDzFKc7AoifN+e92bIiSQnliSmp2aWpBaBJNl4uCUamC68Ddq5QnFdeKBn6s3+KrZ
+	nct68Nup60ml8ralt8xydde7772be3eW+8kq7StPns6crWkw2031Yv9h/YbJ/X4MTpIVW5/W
+	1XXOcXtkV5kxN2tms2q3/f/pBxc93JuZGPy3mWXfxjSG6vqnS4OXBv/f3szmyR8u4DDlfOCR
+	CDNtBa0s3kdORsy/ZP2uxba/lWyzDJSKrFyxyfNAZ4VIGs8+94gio/xW67zqScxMP9fVy/PM
+	O5Z16kzYVm/dtgOqCr7XZy/PUY+rVZBXP9W7dVqhGe+UHdFl59wD/Hk4Mze+u/3rzb79/5a8
+	87i8zfdx/vLD26Y8n3nzRVf04wz7kOITzjlT1H1i9x+xZvj97JMSS3FGoqEWc1FxIgCA2WvN
+	twIAAA==
+X-CMS-MailID: 20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef
+References: <CGME20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-GPIO_OUT[0] is connected to the reset pin of embedded UFS device.
-Before powering off the phy assert the reset signal.
+There is a possibility of getting page fault if the overall
+buffer size is not aligned to 256bytes. Since MFC does read
+operation only and it won't corrupt the data values even if
+it reads the extra bytes.
+Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
+and V4L2_PIX_FMT_NV21M pixel format.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
 ---
- drivers/ufs/host/ufs-exynos.c | 3 +++
- 1 file changed, 3 insertions(+)
+changelog:
+v1->v2
+Patch link: https://patchwork.kernel.org/project/linux-media/patch/20240806115714.29828-1-aakarsh.jain@samsung.com/
+Removed duplicate code and aligned luma and chroma size
+to multiple of 256bytes as suggested by Hans.
+ drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 4c3e03a3b8d9..64e2bf924213 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1517,6 +1517,7 @@ static void exynos_ufs_exit(struct ufs_hba *hba)
- {
- 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
- 
-+	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
- 	phy_power_off(ufs->phy);
- 	phy_exit(ufs->phy);
- }
-@@ -1700,6 +1701,8 @@ static int exynos_ufs_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
- 	if (status == PRE_CHANGE)
- 		return 0;
- 
-+	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-+
- 	if (!ufshcd_is_link_active(hba))
- 		phy_power_off(ufs->phy);
- 
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+index 73f7af674c01..0c636090d723 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -549,8 +549,9 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+ 		case V4L2_PIX_FMT_NV21M:
+ 			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+ 			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+-			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
+-			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
++			ctx->luma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height, 16), 256);
++			ctx->chroma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height / 2, 16),
++					256);
+ 			break;
+ 		case V4L2_PIX_FMT_YUV420M:
+ 		case V4L2_PIX_FMT_YVU420M:
 -- 
-2.48.1.658.g4767266eb4-goog
+2.17.1
 
