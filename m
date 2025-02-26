@@ -1,57 +1,80 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E22036EB;
-	Wed, 26 Feb 2025 09:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9463C24DFE1
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Feb 2025 10:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561362; cv=none; b=KsVk72lzdTsingQjpoM3MiX4lWUOMwdMZ+h3gX5km4zqYD01GheEFOoefo/gXzygkGJ/kaZGlHuwcgbRhdOPEsT8bWnWF0R8ebO8/lhiBpGFKiAVaRM1pxEMCPfUM8iUGm0A3divKQ2S0rBmQ8M9eT/jasadM3BR7ej33bL2uL0=
+	t=1740565002; cv=none; b=T6xhPeJXfCE2eFSaor7AsZcJtz7iUHyU+kAdHVEmfOcPc4anx13cvpDmaF+MyZfpLzapZvUsneGeGnr1n5ahWGYNPm8VKFYdL/UJjLNIJ9KBK3cDYXQO5K+cpy9E8CbDeQ9p0UGMejilSokNoq13PoouFHaiKGx2K0c2+/ZrfYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561362; c=relaxed/simple;
-	bh=HmmdzVTTi/DjoKLcmrxW1fMIoviGanIxaCaW6zxswLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=lM6QbtjS/VosFiKvstSycQs4ZNkECaPC+JCcWdXFiRcThHzrX+bAJDRNrZjCQapx6BlTO0v0LcLY6rkA8ezMRtacHxikRj5FKdqo3PYVkn6bkHtFQjVsY5V3LpQaDmSqiLQqsOc7VQSdvhI7nF2zH6r78FPhbaG49KlAYCqnjd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pd0qKB6S; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1740565002; c=relaxed/simple;
+	bh=dIedMb4lwQBVScSxDRpIfkc8+JevTX/YCTTblYgJwRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3rmShDYCEwAAtkFLfE1VWny58BaaDKyi5sG8u838R9ZyGoBg/0C9bHvNiUD3zlTWsLn8mojn0WFvFx3myAABm3awlWke4MCm1zLzLxfrzTl5LJ8Ah+mTWbCQxZ4SKBrKeceeKFOMbsu26YPvqFvKo9TMtANVxoQHoCWD1kHxx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CYhMLnp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=py/wyHhe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CYhMLnp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=py/wyHhe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pd0qKB6S"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250226091557euoutp0161733e589313a5d360143bf659ed2ac4~nt1UUMSFJ0235702357euoutp018;
-	Wed, 26 Feb 2025 09:15:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250226091557euoutp0161733e589313a5d360143bf659ed2ac4~nt1UUMSFJ0235702357euoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740561357;
-	bh=jfJCJyoMIpaltaIU+7lWbslcg8FIPqfxsGd8Aa/3U4g=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=pd0qKB6SEv3qSWA5608B8oO2iGWR7WjfUjY2eZgAJKutotBUbf09dxzRJ6HokEIfl
-	 SENoGO7kGj+s5+5W9pcnL1jlx+tZjJeceP8qzzOTwn25j197LEY2e5ro61VeUURHeg
-	 tpP39Yc9WB7YuWNRDkkxYYqX3jPJHhQLSkY8WSSc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250226091556eucas1p29db20e03f1f9ea1782103d1167564e1b~nt1T3fxAv0815308153eucas1p2U;
-	Wed, 26 Feb 2025 09:15:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id B1.88.20397.CCBDEB76; Wed, 26
-	Feb 2025 09:15:56 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250226091555eucas1p1320cf0ed08b514c5259710476a930e60~nt1TNvpGD1197611976eucas1p1P;
-	Wed, 26 Feb 2025 09:15:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250226091555eusmtrp1d211ba6163f39cbff93c4ff3e854775d~nt1TMYUVW3155431554eusmtrp1P;
-	Wed, 26 Feb 2025 09:15:55 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-b0-67bedbccae7f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 40.E0.19920.BCBDEB76; Wed, 26
-	Feb 2025 09:15:55 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250226091552eusmtip1c4c7761f98c6c76160fa00aed2a5042b~nt1QGGXF83166531665eusmtip1L;
-	Wed, 26 Feb 2025 09:15:52 +0000 (GMT)
-Message-ID: <1a6f693d-5ebe-46f5-be89-5edc0e77e316@samsung.com>
-Date: Wed, 26 Feb 2025 10:15:51 +0100
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CYhMLnp7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="py/wyHhe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CYhMLnp7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="py/wyHhe"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B800B1F388;
+	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740564996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=CYhMLnp7q0zfIxH8iu3DNheOYB4NL+Nf+4CwGTh2xeQ6XaiMe2y/w5C4nc6bW9xz7RbgAw
+	8ryL8T8ngv+vFjbcTTbAftFmRhYB2lclHddKns9vVCLWfBZDzJSvvQlUKLgV5Wmz5BH8cQ
+	v3TWwB2RQtT2+I3JBCLYix3NLqlliWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740564996;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=py/wyHhesHkF3t5R/Yc8G+Nte20Q0gW31h5UiRetlboW695aUKEXNBzADKuVjVvPuLRL9V
+	oWrCKyFxSZ0u4RBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740564996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=CYhMLnp7q0zfIxH8iu3DNheOYB4NL+Nf+4CwGTh2xeQ6XaiMe2y/w5C4nc6bW9xz7RbgAw
+	8ryL8T8ngv+vFjbcTTbAftFmRhYB2lclHddKns9vVCLWfBZDzJSvvQlUKLgV5Wmz5BH8cQ
+	v3TWwB2RQtT2+I3JBCLYix3NLqlliWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740564996;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=py/wyHhesHkF3t5R/Yc8G+Nte20Q0gW31h5UiRetlboW695aUKEXNBzADKuVjVvPuLRL9V
+	oWrCKyFxSZ0u4RBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3ED391377F;
+	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8GvYDQTqvmfDagAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 10:16:36 +0000
+Message-ID: <97832f2b-ea2f-4fec-990b-bbd5ccaa9a91@suse.de>
+Date: Wed, 26 Feb 2025 11:16:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,207 +82,266 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 21/23] iommu/pages: Remove iommu_alloc_page/pages()
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
-	asahi@lists.linux.dev, Lu Baolu <baolu.lu@linux.intel.com>, David Woodhouse
-	<dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>,
-	iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan
-	Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Hector Martin <marcan@marcan.st>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Robin Murphy <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, Sven Peter
-	<sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>, Tomasz
-	Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu
-	Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev, David
-	Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
+ and size
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20250218142542.438557-1-tzimmermann@suse.de>
+ <20250218142542.438557-3-tzimmermann@suse.de>
+ <dcd59a75-7945-4a2e-99f9-3abbb3e9de14@ideasonboard.com>
+ <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
+ <596b960e-71f8-4c2c-9abe-058206df1dfb@ideasonboard.com>
+ <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
+ <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <21-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVBUVRjGO/fevbsws3BlKY5Wg22YxQRCinMaya9JvUMzGs1kTM0oK1wX
-	AlbbZROKmdD4WlAEwYKLLjvm8CEbrCxugYTthrBAgkAZ8hFfWwQIhECwLLKxXCz++z3v+5zz
-	vO+ZOQLcbYjcJIiUxTJymSRaTDoThgZrq8/PPXVSv3N5G9GA2kCiqpZMgG7ZWD6y/uqCLp8F
-	SJ99i0TZpTk4sg+N89DiLEIjheUA/bJcC1ASe41AqgIdH+U0X8VQW9sKVQ4/4CHDTBKJHg/Y
-	cZTXVoeh3LoaEqlmWRK1PNDw0WjneRw1WxNQp7kDoBTWFaVcv4kh498WHhoZUq3kLWgAWuqx
-	Y8haoybQbFEqQJk/vIespjYMJfUGINvCFXLvFtpiVGN0cscTktaqtYDWDZXx6EejowT9U9os
-	n65m+/i0plJJ60u86cobKpJWNwXT+utf0H/p8wH9TVE1SV/4cpKku9iQdzd+6BwYzkRHfsrI
-	t+0OdY4wTzwEp9u3xjWNDfISQfLmdOAkgNQOqG9IxNOBs8CNKgGwbzIHcGIWwLQ7lXxOzACo
-	q1nkPT1iaDWuuYoBNKdp18Q0gAU1D/kOl5DaDTPU7atMUFugyngb5+obYFO+hXDws5Qn7O/O
-	W/WIqCCoKrBjjovcKZsADo2WrzZwqg/AcZU3xx6w21KIOZik/GH6RDrpYCdqPzSXZGKcxxN+
-	N3FldSNILTjD5OoLODf327CvW7fGIjjWWMXn+AXYknOe4A6kAqix9WOcyAIwcaQbcK5dsLd1
-	cSVOsBLxGqyo2caV98Hi0mrMUYaUC+ya2MAN4QIvGb7GubIQpqW4ce5XINtY/l+s8X4HngXE
-	7Lp3Ydetya5bh/0/VwOIG8CDUSpipIxiu4w546uQxCiUMqlv2KmYSrDyDVqWG+e+ByVj074m
-	gAmACUABLnYXOkXWSt2E4ZL4zxj5qeNyZTSjMIHnBYTYQ3jtTrLUjZJKYpkohjnNyJ92MYHT
-	pkRMlHD74uay6SP5J94kXpW9tEBdMvZOZsyFNptkP0Lvk4qLuQcihkVhHTfvBum3nhz+pP+P
-	R74fHTv3VsjH/kvyg/mHXvynwbCdbfxgyis8v6Ki+J7yeNbv0aHio7Ga4GH7y/cfl9aH7Aya
-	yhApc+Ldz8abeDqZX2B7SsBcqDbsOXNQXPAOs6g06mjC8J9qS175VOoemesRUS6e0aWNzD4s
-	sN39bXDc6/CMPevqt4EZFwP2uN7r8fCMTjzIjyt8Y2R/lnC+VqeNaqvau9PPph4QaZrGijo/
-	T0ga/KrlgNd81644TeSJqqVn6oURRv93fLqMGt/3LcfOzE+yh163Lvvsq39SNiAVE4oIib83
-	LldI/gU/varkdQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMKsWRmVeSWpSXmKPExsVy+t/xu7qnb+9LNzi3StfiwbxtbBZbTvcx
-	Wmz9PYvd4udVPoupjYwWmyduZbOYuHIys8X/R69ZLX59sbB4Pn8do8WVf3sYLVpmLWKx6Jy9
-	gd1i8qm5TBbnzwNZmx5fY7XY9rmFzeLTg//MFjPO72OymLJvF5tF55dZbBanry1gt3h5uYfZ
-	4tTPGovLJy4xWrTN4rdoW7KRyeLghyesFs8fdQLt+7GA0eLP7f9MFj93zWOx+LKsndGib2+Q
-	xc9D55ksWu6YWvz+MYfNQdXjycF5TB6tl/6yeayZt4bRY8Oj1aweb16+ZPE43PGF3WPnrLvs
-	Hgs2lXpsXqHlsWlVJ5vHvJOBHpuX1Hu82DyT0WPxsp1sHr3N79g8bsyKCJCM0rMpyi8tSVXI
-	yC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Ms48fYmY8FF9YqTrx6y
-	NjC2KnQxcnJICJhIbDt3kLGLkYtDSGApo0T/l8vsEAkZiZPTGlghbGGJP9e62CCK3jNKLLw8
-	nQUkwStgJ9E97yJYA4uAqkTnwd3MEHFBiZMzn4DViArIS9y/NQOsRljAS6Jz9n8mEFtE4C+H
-	xMR+b5ChzAJ3GSUOLV7PBpIQEpjKKHFslQ+IzSwgLnHryXywBjYBQ4mut11gNZwCThInVvQx
-	QdSYSXRt7WKEsOUltr+dwzyBUWgWkjtmIRk1C0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfm
-	pesl5+duYgSmvm3Hfm7ewTjv1Ue9Q4xMHIyHGCU4mJVEeDkz96QL8aYkVlalFuXHF5XmpBYf
-	YjQFBsZEZinR5Hxg8s0riTc0MzA1NDGzNDC1NDNWEud1u3w+TUggPbEkNTs1tSC1CKaPiYNT
-	qoFpXur+pXc6TXhT/bYZpk0InGB9IsTsWvpbcd5APuNKY8XdpYqxy5mNlbWz12b3d7e+k19p
-	122ov7wzeJZ7k5jY0+vafy7qLDWZrPbX2VNdL2X9dt/WZ+/aP2Y5GNXynNZmaF5UUaMT717x
-	x+1sn6iJl987u/dO8QzW0Q/chWOyVv5rdziy5/jmKtmTd86xBtwN1rG8slGg40SSzZsbS2d/
-	S7jv5fn8WCFv08TYphK3SYaC3IvfddqdmSN2VrdNONatdf/9n8s/KU7SOh65djPjDTWuGT7C
-	Da1igRmrC5b/9me7vDX/7Skdmx3pZQZbZPz2nNXaHrJ7donPvNAYafP3J0vXRH8+t/yUsMIi
-	ayWW4oxEQy3mouJEAGWS78wGBAAA
-X-CMS-MailID: 20250226091555eucas1p1320cf0ed08b514c5259710476a930e60
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51
-References: <CGME20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51@eucas1p1.samsung.com>
-	<21-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.990];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 25.02.2025 20:39, Jason Gunthorpe wrote:
-> A few small changes to the remaining drivers using these will allow
-> them to be removed:
+Hi
+
+Am 25.02.25 um 14:45 schrieb Tomi Valkeinen:
+> Hi,
 >
-> - Exynos wants to allocate fixed 16K/8K allocations
-> - Rockchip already has a define SPAGE_SIZE which is used by the
->    dma_map immediately following, using SPAGE_ORDER which is a lg2size
-> - tegra has size constants already for its two allocations
+> On 21/02/2025 11:19, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 20.02.25 um 11:53 schrieb Tomi Valkeinen:
+>>> Hi,
+>>>
+>>> On 20/02/2025 12:05, Thomas Zimmermann wrote:
+>>>> Hi
+>>>>
+>>>> Am 20.02.25 um 10:18 schrieb Tomi Valkeinen:
+>>>> [...]
+>>>>>> + * Color modes of 10, 12, 15, 30 and 64 are only supported for 
+>>>>>> use by
+>>>>>> + * legacy user space. Please don't use them in new code. Other 
+>>>>>> modes
+>>>>>> + * are not support.
+>>>>>> + *
+>>>>>> + * Do not attempt to allocate anything but linear framebuffer 
+>>>>>> memory
+>>>>>> + * with single-plane RGB data. Allocation of other framebuffer
+>>>>>> + * layouts requires dedicated ioctls in the respective DRM driver.
+>>>>>
+>>>>> According to this, every driver that supports, say, NV12, should 
+>>>>> implement their own custom ioctl to do the exact same thing? And, 
+>>>>> of course, every userspace app that uses, say, NV12, should then 
+>>>>> add code for all these platforms to call the custom ioctls?
+>>>>
+>>>> Yes, that's exactly the current status.
+>>>>
+>>>> There has been discussion about a new dumb-create ioctl that takes 
+>>>> a DRM format as parameter. I'm all for it, but it's out of the 
+>>>> scope for this series.
+>>>>
+>>>>>
+>>>>> As libdrm's modetest currently supports YUV formats with dumb 
+>>>>> buffers, should we remove that code, as it's not correct and I'm 
+>>>>> sure people use libdrm code as a reference?
+>>>>
+>>>> Of course not.
+>>>>
+>>>>>
+>>>>> Well, I'm not serious above, but I think all my points from the 
+>>>>> earlier version are still valid. I don't like this. It changes the 
+>>>>> parameters of the ioctl (bpp used to be bits-per-pixel, not it's 
+>>>>> "color mode"), and the behavior of the ioctl, behavior that we've 
+>>>>> had for a very long time, and we have no idea how many users there 
+>>>>> are that will break (could be none, of course). And the 
+>>>>> documentation changes make the current behavior and uses wrong or 
+>>>>> legacy.
+>>>>
+>>>> Before I go into details about this statement, what use case 
+>>>> exactly are you referring to when you say that behavior changes?
+>>>
+>>> For every dumb_buffer allocation with bpp that is not divisible by 
+>>> 8, the result is different, i.e. instead of DIV_ROUND_UP(width * 
+>>> bpp, 8), we now have width * DIV_ROUND_UP(bpp, 8). This, of course, 
+>>> depends on the driver implementation. Some already do the latter.
+>>
+>> The current dumb-buffer code does a stride computation at [1], which 
+>> is correct for all cases; although over-allocates sometimes. It's the 
+>> one you describe as "width * DIV_ROUND_UP(bpp, 8)". It's in the ioctl 
+>> entry point, so it's somewhat authoritative for all driver's 
+>> implementations. It's also used by several drivers.
+>>
+>> The other variant, "DIV_ROUND_UP(width * bpp, 8)", is used by 
+>> gem-dma, gem-shmem and others. It can give incorrect results and 
+>> possibly OOBs. To give a simple example, let's allocate 15-bit 
+>> XRGB1555. Bpp is 15. With a width of 1024, that would result in 1920 
+>> bytes per scanline. But because XRGB1555 has a filler bit, so the 
+>> pixel is actually 16 bit and a scanline needs to be 2048 bytes. The 
+>> new code fixes that. This is not just a hypothetical scenario: we do 
+>> have drivers that support XRGB1555 and some of them also export a 
+>> preferred_depth of 15 to userspace. [2] In the nearby comment, you'll 
+>> see that this value is meant for dumb buffers.
+>>
+>> Rounding up the depth value in user space is possible for RGB, but 
+>> not for YUV. Here different pixel planes have a different number of 
+>> bits. Sometimes pixels are sharing bits. The value of bits-per-pixel 
+>> becomes meaningless. That's why it's also deprecated in struct 
+>> drm_format_info. The struct instead uses a more complicated per-plane 
+>> calculation to compute the number of bits per plane. [3] The 
+>> user-space code currently doing YUV on dumb buffers simply got lucky.
+>>
+>> [1] https://elixir.bootlin.com/linux/v6.13.3/source/drivers/gpu/drm/ 
+>> drm_dumb_buffers.c#L77
+>> [2] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
+>> drm_mode_config.h#L885
+>> [3] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
+>> drm_fourcc.h#L83
+>>
+>>>
+>>> This change also first calls the drm_driver_color_mode_format(), 
+>>> which could change the behavior even more, but afaics at the moment 
+>>> does not. 
+>>
+>> Because currently each driver does its own thing, it can be hard to 
+>> write user space that reliably allocates on all drivers. That's why 
+>> it's important that parameters are not just raw numbers, but have 
+>> well- defined semantics. The raw bpp is meaningless; it's also 
+>> important to know which formats are associated with each value. 
+>> Otherwise, you might get a dumb buffer with a bpp of 15, but it will 
+>> be displayed incorrectly. This patch series finally implements this 
+>> and clearly documents the assumptions behind the interfaces. The 
+>> assumptions themselves have always existed.
 >
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-For exynos-iommu:
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/iommu/exynos-iommu.c   |  4 ++--
->   drivers/iommu/iommu-pages.h    | 26 --------------------------
->   drivers/iommu/rockchip-iommu.c |  6 ++++--
->   drivers/iommu/tegra-smmu.c     |  4 ++--
->   4 files changed, 8 insertions(+), 32 deletions(-)
+> This is perhaps where the biggest gap in understanding/view is: I have 
+> always thought dumb-buffer's "bpp" to mean bits-per-pixel, where, for 
+> more complex formats, "pixel" is not necessarily a visible pixel but a 
+> container unit of some kind. So bpp * width = stride.
 >
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 1019e08b43b71c..74337081278551 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -902,11 +902,11 @@ static struct iommu_domain *exynos_iommu_domain_alloc_paging(struct device *dev)
->   	if (!domain)
->   		return NULL;
->   
-> -	domain->pgtable = iommu_alloc_pages(GFP_KERNEL, 2);
-> +	domain->pgtable = iommu_alloc_pages_sz(GFP_KERNEL, SZ_16K);
->   	if (!domain->pgtable)
->   		goto err_pgtable;
->   
-> -	domain->lv2entcnt = iommu_alloc_pages(GFP_KERNEL, 1);
-> +	domain->lv2entcnt = iommu_alloc_pages_sz(GFP_KERNEL, SZ_8K);
->   	if (!domain->lv2entcnt)
->   		goto err_counter;
->   
-> diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-> index 3c4575d637da6d..4513fbc76260cd 100644
-> --- a/drivers/iommu/iommu-pages.h
-> +++ b/drivers/iommu/iommu-pages.h
-> @@ -100,20 +100,6 @@ static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp,
->   	return iommu_alloc_pages_node_sz(nid, gfp, 1 << (order + PAGE_SHIFT));
->   }
->   
-> -/**
-> - * iommu_alloc_pages - allocate a zeroed page of a given order
-> - * @gfp: buddy allocator flags
-> - * @order: page order
-> - *
-> - * returns the virtual address of the allocated page
-> - * Prefer to use iommu_alloc_pages_lg2()
-> - */
-> -static inline void *iommu_alloc_pages(gfp_t gfp, int order)
-> -{
-> -	return iommu_alloc_pages_node_sz(NUMA_NO_NODE, gfp,
-> -					 1 << (order + PAGE_SHIFT));
-> -}
-> -
->   /**
->    * iommu_alloc_pages_sz - Allocate a zeroed page of a given size from
->    *                          specific NUMA node
-> @@ -141,16 +127,4 @@ static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
->   	return iommu_alloc_pages_node_sz(nid, gfp, PAGE_SIZE);
->   }
->   
-> -/**
-> - * iommu_alloc_page - allocate a zeroed page
-> - * @gfp: buddy allocator flags
-> - *
-> - * returns the virtual address of the allocated page
-> - * Prefer to use iommu_alloc_pages_lg2()
-> - */
-> -static inline void *iommu_alloc_page(gfp_t gfp)
-> -{
-> -	return iommu_alloc_pages_node_sz(NUMA_NO_NODE, gfp, PAGE_SIZE);
-> -}
-> -
->   #endif	/* __IOMMU_PAGES_H */
-> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-> index 798e85bd994d56..5af82072b03a17 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -730,7 +730,8 @@ static u32 *rk_dte_get_page_table(struct rk_iommu_domain *rk_domain,
->   	if (rk_dte_is_pt_valid(dte))
->   		goto done;
->   
-> -	page_table = iommu_alloc_page(GFP_ATOMIC | rk_ops->gfp_flags);
-> +	page_table = iommu_alloc_pages_sz(GFP_ATOMIC | rk_ops->gfp_flags,
-> +					  SPAGE_SIZE);
->   	if (!page_table)
->   		return ERR_PTR(-ENOMEM);
->   
-> @@ -1064,7 +1065,8 @@ static struct iommu_domain *rk_iommu_domain_alloc_paging(struct device *dev)
->   	 * Each level1 (dt) and level2 (pt) table has 1024 4-byte entries.
->   	 * Allocate one 4 KiB page for each table.
->   	 */
-> -	rk_domain->dt = iommu_alloc_page(GFP_KERNEL | rk_ops->gfp_flags);
-> +	rk_domain->dt = iommu_alloc_pages_sz(GFP_KERNEL | rk_ops->gfp_flags,
-> +					     SPAGE_SIZE);
->   	if (!rk_domain->dt)
->   		goto err_free_domain;
->   
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 844682a41afa66..a9c35efde56969 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -295,7 +295,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
->   
->   	as->attr = SMMU_PD_READABLE | SMMU_PD_WRITABLE | SMMU_PD_NONSECURE;
->   
-> -	as->pd = iommu_alloc_page(GFP_KERNEL | __GFP_DMA);
-> +	as->pd = iommu_alloc_pages_sz(GFP_KERNEL | __GFP_DMA, SMMU_SIZE_PD);
->   	if (!as->pd) {
->   		kfree(as);
->   		return NULL;
-> @@ -695,7 +695,7 @@ static struct tegra_pt *as_get_pde_page(struct tegra_smmu_as *as,
->   	if (gfpflags_allow_blocking(gfp))
->   		spin_unlock_irqrestore(&as->lock, *flags);
->   
-> -	pt = iommu_alloc_page(gfp | __GFP_DMA);
-> +	pt = iommu_alloc_pages_sz(gfp | __GFP_DMA, SMMU_SIZE_PT);
->   
->   	if (gfpflags_allow_blocking(gfp))
->   		spin_lock_irqsave(&as->lock, *flags);
+> It would not occur to me to allocate XRGB1555 dumb-buffer with 15 bpp, 
+> but 16 bpp, as that's what a pixel takes. I have never seen the 
+> dumb-buffer bpp connected directly to the pixel format (that's what 
+> the ADDFB brings in).
+>
+> I may be alone with that thinking, but afaics the documentation leans 
+> a bit on my interpretation (instead of considering bpp as a "color 
+> mode"), although admittedly the docs also don't really say much so 
+> this may be fully just my interpretation:
+>
+> https://man.archlinux.org/man/drm-memory.7.en
+
+Agreed, this could be read in the way you do. Is this being generated 
+from source somehow? The information is not incorrect, but how did they 
+get to this interpretation? It would definitely need an update with this 
+patch series applied. Citing from the man page:
+
+   "/bpp/ is the number of bits-per-pixel and must be a multiple of 8."
+
+That's what currently works on all drivers. But nothing enforces that it 
+"must by a multiple of 8". Doing so would prevent C1/C2/etc pixel 
+formats without over-allocation.  OR bpp is not bits-per-pixel but just 
+some factor that controls the buffer size. This is how you use it for 
+YUV formats.
+
+   "You most commonly want to pass 32 here."
+
+That's also just semi-true. 32 is simply what mostly works in practice 
+IFF you interpret it as XRGB8888. Userspace should read the formats from 
+the primary plane, or at least look at the driver-provided 
+preferred_depth field.
+
+>
+> https://cgit.freedesktop.org/drm/libdrm/tree/include/drm/drm_mode.h#n1055
+
+This one doesn't say anything specific AFAICT. Bpp is somewhat pointless 
+information without a known pixel and framebuffer layout, as I've 
+outlined before.
+
+>
+> I (mostly) understand all the complexities around here, thanks to your 
+> replies, and I think I'm ok with the series as it doesn't break 
+> anything (need to test the v3, though).
+
+Thank you so much.
+
+>
+> I still don't like it though =). And I would be happier with the 
+> simpler "bpp" interpretation that I mentioned above, instead of it 
+> being a color mode. But we can't have it both ways, and perhaps it's 
+> better to unify the code and have the behavior explained explicitly as 
+> you do in this series, even if the explanation only covers some RGB 
+> formats.
+
+No worries. The intention is not to break anything and existing code 
+will continue to work.
 
 Best regards
+Thomas
+
+>
+>  Tomi
+>
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
