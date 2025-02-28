@@ -1,131 +1,200 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA4725A2C0
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Feb 2025 14:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB7A27181C;
+	Fri, 28 Feb 2025 15:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740753939; cv=none; b=QQblnfkU06LvmeINZscNW3l+f3N/945DWdLA5/hUjZi4SXSETDEt9PROc5zMoqiEDP4d2cQf/8DL3uahrjq24QjVySySFy4tw8mNr9rDD2hlQjOKZTaFEq+R3f3hwVKuBoSuTcXT3o7FjBpQ1JYOV1NGEz6mNlH7A6dPFGBSoTQ=
+	t=1740755966; cv=none; b=Dti4t/fCEHS+o6+qIXCHXfpE5NZcNzyB+788RV1AXAjQJAyMkt7s4kxh6b287BrhA9NxMFf3HTP2juX3HZjKBnbhwvt88jEaU8Q70Eup3USWUIhWdnkVj0muHSgbWzn39A4REtl6+wzT1+vhDQGZuYYGkKGiJ5UgFNLEjnPnBKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740753939; c=relaxed/simple;
-	bh=au8sBRE5mBCqJi5w2IwoBc9mkXkseL6XNqfDVOtZ8Bs=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=f6vsAJRzA5+6XFgb9mh2ccphzc4rBAc+OpBwvuaivo4yIq5oHVxPN6dQr+DMsmDCfD+Zu8RRN0baghj1Dy2SdNWRQJQFiz62Q0YLbQ+4KcvOhscmi3PbiJX0pg/JeDb1gzHu7Dv71gOfsVcA1hAcjOOXbB68P006GsfWwddr300=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ttd+pUnc; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1740755966; c=relaxed/simple;
+	bh=F8YT766/SjESb7HVqHUcjI5vFvf6sDNhEKkzd0Xmkzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pK36BgB6o2vXyX4vM1Y2KMpPD2lYIaBy8RX+vYSn72W6LxkrPmiZkXvEYPamjlaUCKv7ZKAaCrc/iyG3CmovBDGO/YvnygGHu85ERFdE1O18r9WoAK4TFN5SokZWq360hVV8QhcQjL+ttg+ZXdMsTpEenfuWy9RkpupiSMw/0vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpGnAg0J; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ttd+pUnc"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250228144535epoutp027e75a493d66e540162ba252787112545~oZnsjfmsB1747217472epoutp02Z
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Feb 2025 14:45:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250228144535epoutp027e75a493d66e540162ba252787112545~oZnsjfmsB1747217472epoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740753935;
-	bh=rHvKJLvygA9GD0SeTmwciLbo162z0lSbgYmgI1PHUcE=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=ttd+pUnciB9kSxRVB67Jw8fPbw5Ppj2UG6Vwb/uhyl7OqEuLsCZpKqrI4EBEupfbd
-	 sK5zE/o2Sr5gqmAaZSn3mZWI++TFHIISKLNITwYXZjawWlD/0cHGbJa9LN43ERSlsk
-	 Pm1pa4ypJuZ+NKaDQyf/gJEuRPGQcizjzzyoOQxs=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20250228144533epcas5p1366a164956bc530c046b29a778e0fc84~oZnrj4LXE0649806498epcas5p1M;
-	Fri, 28 Feb 2025 14:45:33 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z49x80ytDz4x9Pp; Fri, 28 Feb
-	2025 14:45:32 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9B.6A.20052.C0CC1C76; Fri, 28 Feb 2025 23:45:32 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228144531epcas5p217fab73da682601a89e208fff5a3775e~oZnpQO48S1123011230epcas5p2G;
-	Fri, 28 Feb 2025 14:45:31 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250228144531epsmtrp2c9ba04d92e99f0522ffdc7b96ac4ccb3~oZnpPn-q82769427694epsmtrp2W;
-	Fri, 28 Feb 2025 14:45:31 +0000 (GMT)
-X-AuditID: b6c32a49-3d20270000004e54-52-67c1cc0ccff4
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1D.C6.23488.B0CC1C76; Fri, 28 Feb 2025 23:45:31 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.6]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250228144530epsmtip15c4a6355b383e399ecdc8d3e5da32266~oZnoLHFPS1886718867epsmtip1e;
-	Fri, 28 Feb 2025 14:45:30 +0000 (GMT)
-From: Anindya Sundar Gayen <anindya.sg@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com,
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com
-Subject: [PATCH] drm/exynos: fixed a spelling error
-Date: Fri, 28 Feb 2025 19:32:57 +0530
-Message-Id: <20250228140257.75045-1-anindya.sg@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7bCmui7PmYPpBudPsFo8mLeNzeLQ5q3s
-	Fle+vmezOH9+A7vFpsfXWC0u75rDZjHj/D4mB3aPTas62Tzudx9n8ti8pN6jb8sqRo/Pm+QC
-	WKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOArlBS
-	KEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUm
-	ZGf07L7AVrCHo2Ltnh/MDYwt7F2MnBwSAiYSE7ZPYOti5OIQEtjNKPGvbQ8ThPOJUeLO+svM
-	EM43RomNV3vgWg7e+8kEYgsJ7GWU+PZEB6KomUniw8PTLF2MHBxsAsYSbQ8qQWpEBHYwSvTf
-	zgSxmQVkJFZc2soIYgsDlSxp+g42k0VAVWLxt+lgM3kFrCW+z+pmg9glL7F6wwGwIyQEVrFL
-	rFiyAeoIF4mXHd2MELawxKvjW6DiUhKf3+1lA7lBQiBfYsnZbIhwjsSB5Q+YIGx7iQNX5oCd
-	ySygKbF+lz7EaXwSvb+fMEF08kp0tAlBmCoSEztYYGbP/rGDGcL2kFi9s50FEgixEqdOzmWZ
-	wCgzC2HmAkbGVYySqQXFuempxaYFhnmp5fCISc7P3cQITkxanjsY7z74oHeIkYmD8RCjBAez
-	kgjvrNgD6UK8KYmVValF+fFFpTmpxYcYTYGBNJFZSjQ5H5ga80riDU0sDUzMzMxMLI3NDJXE
-	eZt3tqQLCaQnlqRmp6YWpBbB9DFxcEo1MK07yKm1pOt5zcTCVcmlHxzSfu3RPB9cHPCWYW9s
-	yLP0VS9CLpzLyHs5/bmzdkTAHakbYneOTrm5vvqDxgbl391sVjkna2OyJngs9uAomapUHW4w
-	rbiK9dPpy76xtaoPjihnWDUzXKnkyDS6mxZ1fbGH3msnhdUnZSzeHZuSM8f66GP3T/Jp3Ct+
-	XI2eELTj4c3O+P+WO1JnHriyp33KhX01DME2d10+7Xgz23VimoBFQdbBTz12Mxu0FWvLhZ4/
-	tSiuP37p9QN1M1/nBVVJp+JKWreICv7S3x25oVj7qf3EvlrdysQ/h6S3h+1vNv39S+vBF29d
-	vR7nbQJ3pU/deTbXerlQ0lFRY98je8/paSqxFGckGmoxFxUnAgB6Y1/B1QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHJMWRmVeSWpSXmKPExsWy7bCSnC73mYPpBv//SFg8mLeNzeLQ5q3s
-	Fle+vmezOH9+A7vFpsfXWC0u75rDZjHj/D4mB3aPTas62Tzudx9n8ti8pN6jb8sqRo/Pm+QC
-	WKO4bFJSczLLUov07RK4Mnp2X2Ar2MNRsXbPD+YGxhb2LkZODgkBE4mD934ydTFycQgJ7GaU
-	uPxqGhtEQkri9v9ORghbWGLlv+fsEEWNTBL7T24D6uDgYBMwlmh7UAkSFxHYxyix+8BUsKnM
-	AjISKy5tBWsWBqpZ0vQdLM4ioCqx+Nt0JhCbV8Ba4vusbqhl8hKrNxxgnsDIs4CRYRWjZGpB
-	cW56brJhgWFearlecWJucWleul5yfu4mRnAQaWnsYHz3rUn/ECMTB+MhRgkOZiUR3lmxB9KF
-	eFMSK6tSi/Lji0pzUosPMUpzsCiJ8640jEgXEkhPLEnNTk0tSC2CyTJxcEo1MPVe4/D7vfvV
-	ty/+ZRw2kSFlqRmM8495uSq1zvbo8X3XWv1hkezNqwtWrjrOLqvOpOm4dfIBvzXqrC1y9Rv3
-	CYS92rhcY0Wf2IxJySme3222tlcmnOkt/tebK7pF9amR4elKO2HxSZn/9RveXnfPi+GNV8rj
-	6i5YyvuecbJjCfvynAXFt20XP7n4S+tVZJnPw+uJL1uzFENCtsssmenx9OCt+bsEf2c77nqQ
-	VtC1tOe+ySXpxTGB//0ZHjbEtHtZO9y/XPr6osXPOxJiJjlN51tTYnfaSq73Pfk44f2KNw4W
-	kZ7fUiIyU68rLyhYGTk31nHT5EQT7kWxy34krtWK1H6zKP6c8tV5ItZ+v5PUlFiKMxINtZiL
-	ihMBp1UOxJECAAA=
-X-CMS-MailID: 20250228144531epcas5p217fab73da682601a89e208fff5a3775e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250228144531epcas5p217fab73da682601a89e208fff5a3775e
-References: <CGME20250228144531epcas5p217fab73da682601a89e208fff5a3775e@epcas5p2.samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpGnAg0J"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abf48293ad0so21733166b.0;
+        Fri, 28 Feb 2025 07:19:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740755963; x=1741360763; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7oY7BYAEv4W8+02LYZ2YxpBYCsfW/J7/vInnek1u5o=;
+        b=WpGnAg0JdqFR9O4GyPPcGAUaQIpUYXnp9mdbfZdp5eU/RegYPEQC+035w44/U3e9bG
+         daB2x9HCWZT1NlUIZdV6KsqWYAoOJcX2z1LQCb2KcHieOTYK9gvGSvn7D0d1XDEVx9Z2
+         nKuvh0Yu0Tbu5YGzNQQ/sBe1eoao1ok6ppQYcX52/sV7S+unTLizRxRxA6GGgB/mB+53
+         cc+mmkLpXHiWR7krHLq3kb2jIp1gCZzQa4WyiDFvFfPb4AwOeo7aZUa/Ucha3RVlopDc
+         pjrMohu+nM88DmsWYPFW+EC27wwsrrktZGx3tCurSOPS5qrnPy8GX65lDx98Vu0jdM+e
+         /zFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740755963; x=1741360763;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P7oY7BYAEv4W8+02LYZ2YxpBYCsfW/J7/vInnek1u5o=;
+        b=pLuYK3q8w79gnBzd8VsWpkkPID+hrNwU37GlG/c/pAyQkaNSH32bx4nGNeff5YAPid
+         rp2N+GS51d9JMgEcTUIpQVDQJ1tcpOdz1wZG0mp+xP1x3dHjAOXdsPUDhPoxUY6e3cyi
+         QX3r6RF/80mggb74c8tvwgpZhKnNBJHsT8cad1W9LFOmQdnBqFkQI3UzyMakrnYOgN1k
+         lgWzOxmYaUAPNYDKzoettzOKwAUKX+nl0QSDlzPlJ63h59X5neUW1UUo8+1xKWn7cLVP
+         x95z4v+UADjS/k+jOuapclLJYdgb7/6MMu+unGNV+WEKkSzrIeXW7pdf0S4Wl6qc1qMG
+         +w+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVIkaOYVFN2R5+8IrYOijI65zBDR4OeUstLC5LhOjWAA4sNqFs6sT42x3wY/BLwTjAfWootr+tRpW8=@vger.kernel.org, AJvYcCW4dynuutYS26z4wBQ6c5X5tApebtfXvbzcG7+aM+ER5zBektrXNUJPZ1qz5iEM8ItFm2zrqGA4VblUW6c=@vger.kernel.org, AJvYcCWqoWaLpGkL7nrTpt8AokN6Rlpn8XRzaZMOTsQaWZGooe6YSxgqrtE+JZvRRa6EBV0HKQah69HvPBfBi68ot0gl1To=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkiYDY/aXEkwWAz0YKFbRx7+Q4g+GecU4a7kRO42OSEb8/WzA5
+	pY52ZKfkM5JCZfkhBda5Db8c9eme5/jw+BgAPnISletb7KRPHr+rZYBKNhnpDK0ku3Er5KbZEHH
+	7e7jON/Cf84iJzGAWphx8kJtkZ/mrMw==
+X-Gm-Gg: ASbGncuTtGTM9WxAeCC3vVcUPOi3ilNDzhgDIecCxNpVk0JD9/LQR0rHkyzxmtXPyZQ
+	QYMUwDyL+VdoM3xbrq0LNSJGBdvQFC3FDmBfCBxwqgFN6Ibjk6AkB6XYyOo0c6xs1pM0CqkZfRv
+	EBjUZxnPs=
+X-Google-Smtp-Source: AGHT+IFtBraPIaQpBiymetsznsOvIzlEwuqrLSWFnfSvCpGcicRJBeGr4DA/338qPZgAwfUuoxlTMZWNYQWkG+jYe1A=
+X-Received: by 2002:a17:906:f592:b0:ab7:d06d:b4bf with SMTP id
+ a640c23a62f3a-abf265a3614mr422762466b.39.1740755962545; Fri, 28 Feb 2025
+ 07:19:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250216195850.5352-1-linux.amoon@gmail.com> <20250216195850.5352-2-linux.amoon@gmail.com>
+ <e101aff2-a08e-4fed-8e38-df1aea44d23e@arm.com>
+In-Reply-To: <e101aff2-a08e-4fed-8e38-df1aea44d23e@arm.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 28 Feb 2025 20:49:04 +0530
+X-Gm-Features: AQ5f1Jq85EQ9ba5HWSGuaxxOFszs6piXmm_ai8qdDjz-7jgZDC6Fo3Zgq3faa6E
+Message-ID: <CANAwSgRq+EjR70kVnh8AYZ6ZTSzV0uVwuF9E+_mpdG-6je-a8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] drivers/thermal/exynos: Refactor clk_sec
+ initialization inside SOC-specific case
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Corrected a spelling mistake in the exynos_drm_fimd driver to improve code
-readability. No functional changes were made.
+Hi Lukasz,
 
-Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your review comments
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 1ad87584b1c2..c394cc702d7d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -731,7 +731,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
- 	/*
- 	 * Setting dma-burst to 16Word causes permanent tearing for very small
- 	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
--	 * plane size is not recommended as plane size varies alot towards the
-+	 * plane size is not recommended as plane size varies a lot towards the
- 	 * end of the screen and rapid movement causes unstable DMA, but it is
- 	 * still better to change dma-burst than displaying garbage.
- 	 */
--- 
-2.17.1
+On Fri, 28 Feb 2025 at 20:07, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+> Hi Anand,
+>
+> On 2/16/25 19:58, Anand Moon wrote:
+> > Refactor the initialization of the clk_sec clock to be inside the
+> > SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
+> > is only initialized for the specified SOC and not for other SOCs,
+> > thereby simplifying the code.
+>
+> So IIUC there was no need to init that clock for other types of SoCs...
+> Do we know that for sure (e.g. from other TRMs)?
+This clock (clk) is utilized for the Thermal Management Unit (TMU) and
+the GPU in the Exynos 542x,
+as specified in the user manual.
+>
+> If that was the case, then simplification here can go further, but after
+> some fixes.
+>
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > v3: improve the commit message
+> > ---
+> >   drivers/thermal/samsung/exynos_tmu.c | 26 +++++++++++++-------------
+> >   1 file changed, 13 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 47a99b3c5395..9c138772d380 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -1040,19 +1040,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+> >       if (IS_ERR(data->clk))
+> >               return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
+> >
+> > -     data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> > -     if (IS_ERR(data->clk_sec)) {
+> > -             if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
+> > -                     return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> > -                                          "Failed to get triminfo clock\n");
+> > -     } else {
+> > -             ret = clk_prepare(data->clk_sec);
+> > -             if (ret) {
+> > -                     dev_err(dev, "Failed to get clock\n");
+> > -                     return ret;
+> > -             }
+> > -     }
+> > -
+> >       ret = clk_prepare(data->clk);
+>
+> Here the data->clk is now used in different order.
+Ok.
+>
+> >       if (ret) {
+> >               dev_err(dev, "Failed to get clock\n");
+> > @@ -1060,6 +1047,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+> >       }
+> >
+> >       switch (data->soc) {
+> > +     case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> > +             data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> > +             if (IS_ERR(data->clk_sec)) {
+> > +                     return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> > +                                          "Failed to get triminfo clock\n");
+>
+> Then here you shouldn't simply copy the old code. Now the data->clk
+> is first, so should be 'clk_unprepare()' before return of the function.
+>
+> > +             } else {
+>
+> You can get rid of this 'else' above and still be safe in your
+> refactoring.
+>
+> > +                     ret = clk_prepare(data->clk_sec);
+> > +                     if (ret) {
+> > +                             dev_err(dev, "Failed to get clock\n");
+> > +                             return ret;
+> > +                     }
+>
+> Here you can further simplify this to something like:
+> -----------------------8<-------------------------------------
+>
+> +       case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +               data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> +               if (IS_ERR(data->clk_sec)) {
+> +                       clk_unprepare(data->clk); ///// <----
+> +                       return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> +                                            "Failed to get triminfo clock\n");
+> +               }
+> +               ret = clk_prepare(data->clk_sec);
+> +               if (ret) {
+> +                       dev_err(dev, "Failed to get clock\n");
+> +                       clk_unprepare(data->clk); ///// <----
+> +                       return ret;
+> +               }
+> +
+> +       break;
+Ok
+>
+> --------------------------->8---------------------------------
+>
+> Or with better 'goto' flow.
+>
+> > +             }
+> > +     break;
+> >       case SOC_ARCH_EXYNOS5433:
+> >       case SOC_ARCH_EXYNOS7:
+> >               data->sclk = devm_clk_get(dev, "tmu_sclk");
+>
+>
+> Also, you should revisit the 'goto' cleanup section at the bottom.
+Thanks. I will recheck and update the code for the next version.
+>
+> Regards,
+> Lukasz
 
+Thanks
+-Anand
