@@ -1,228 +1,123 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F6727CCC5;
-	Fri, 28 Feb 2025 18:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7831F4CA9;
+	Fri, 28 Feb 2025 19:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767791; cv=none; b=IfGhDYkJiVmwP8P94nCmApzTWHNzjm7H5OPcterKSkVvYT2JeLIU6VaDN1WEkntdT2ss4K5uGuwuqyAEuJv4Y0yvtPxxUFA+9jDEpRSgPEgBPF6JCoU9qSJkRPNnU8shxvdfs8sR+0FIFdkoejU+nKmVBXjusHSMRCxU8V0o2jg=
+	t=1740769645; cv=none; b=EJohH0kSdGpw14I8GO+1rEKeWeUpL5fhGDHSDUr7PxPa4m0XfQS4b//tira8QouUWs1EhZp6DxXwTTW0qK1eQ3wdwZg/parHNdXDk8aqgcf/PZCQ4SQAKEJVvkVAO3X66eC9mN70wI2JnDj16a6DuBrh3qYxVFULmzy+IBoBVKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767791; c=relaxed/simple;
-	bh=FOo85UWm0LlESU87rNVLWaSKK4QP39SCLtxM0G1y7aY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QwyJs7v5PUrM4QVvh/6RhMoYcLDKpD1pdCFrkVpHmaqofzFAGnna7HJSWR+ImuKsbiUepvJ8Y+FreqLeQ5aZs2iIJ8a06h5wf/SYCND8VWS2XpLx6z/BsVfrggSPGt9J6EtABNBSnqCxz6BJroixFKPgS+jzVQx60FQx+/m7Mcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcFQLij8; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1740769645; c=relaxed/simple;
+	bh=la6q/fnJJDn/FlTPNLsSOFcZAtqFjxAsMo5jIsCdjqc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rrvLElxUaquF6MMZNaVvMUJj6FOmup6EIphq9O2gSNEMvnEd+k9dU73AXnHe/t+bicQmfHirC5+vUzUAq8nSmU75pkK5fzlkpobvhTkzQhSqnFhKiltqtvGfv1ZhLl5tob8Wdmo8uBOu8a8dh1pcI6PM9XKBU2NHpszwqPdopNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3CKOcE6; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcFQLij8"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ded6c31344so3006511a12.1;
-        Fri, 28 Feb 2025 10:36:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3CKOcE6"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaec111762bso435345266b.2;
+        Fri, 28 Feb 2025 11:07:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740767788; x=1741372588; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bcOciFev494FQi+ie3YAuQXZTVFD/MHMZEBQgtl8Sq4=;
-        b=kcFQLij8BHSltIoBPK3w2aYRv42zty8tn8wsDj4Og4z0d9t58dqmgSpdfN3ozZQFcH
-         bd5Pj9LWZoyHE2feg+fZLM8vTczLpLIEiEFL+1J6vbH5kANjHfcIViwxs1qL5t6bSY3g
-         VnxfvyCwt5fRiNNCXQ8E2Q8SwyO4qtxbzCW3nGfBaC/ztA103jb/MgK0HIdW17rfuul0
-         zYmWGZjkAxKTZQaiFBSv96BtKTgsQDkafC9HveVBH6el5mdOXZZp3WQgS6B/yx2hucRr
-         geq33gvEoNv3aXXql/8AhIl9F+Up1xHMfm9+BEolQGeCUcdYOsuCbI5vql8HuW5y/wHl
-         CvwA==
+        d=gmail.com; s=20230601; t=1740769641; x=1741374441; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=la6q/fnJJDn/FlTPNLsSOFcZAtqFjxAsMo5jIsCdjqc=;
+        b=Y3CKOcE68xmGKTqQizb2vbjVYBWoHmY2pmcrG6AUw0cBm6tWXuPWev8/SRWjeKLdDa
+         GqtgU+TJvNYerPDKpbCNy//pW/F9ffhrhZKe8ZGDOKeWBLZ3mb9dor6kASfd2cnyQuDg
+         pa6CPzj4ZfMqa7Suxi5Wq3PY1jfFMKxrluN2cHpZ81NEqkW2/jptUn8sPeQSK9urI8bD
+         GPywWsq+jtbaauRhALJ4AGH82jir3qPLJpRJE57SsayQOBf4j+7GWjCFhQMOHv+DwhRS
+         JBt/vsSZPOvuH4EvNrFwYU+YEi2JM8H9HqVM50WinMtyzueaq0sF2wzZMDHswm+AMfC7
+         AiJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740767788; x=1741372588;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bcOciFev494FQi+ie3YAuQXZTVFD/MHMZEBQgtl8Sq4=;
-        b=gcXfTji0D8fpRRuBfjOOjnOy7kSbkwsj6D+3JOh/GZDGL0g5lgH17N3R1hyqXLl7ci
-         mG31Nova51EC4w0+dZO5H9X6XdBc2cod14aOEwDzOyc9OlfaYHIIEwhoreB3aZLsGlpV
-         /k578AKsH2xXbQxzY6Zex3IMD9SRebfKIMOFFKw0Gc9kmNsuyKpHgQ3unapShlc2K6dQ
-         tdGtYTl6eiDtJrUQmBtmAOxqjJsMoLYJKuB17LgxHJcDNELkZqwUrioQLpOyVSyvJI1O
-         pG7zLCtO5jEafaW4r5IUjsDchKTKNgusYqg4gNne7pcBwzoeVMUQdqSoqW3RVujRCAyz
-         memw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmJ58h6RTDNCeCRkwnW7xcuWe2SY1J/h2hqh5bNNpUOivIEt2+gA0hGqJGF+HZOIpn/u9pfme/7iH4JDc=@vger.kernel.org, AJvYcCW/+ZwdZCcUo7lKkx/zBxGjxmTlG3mSujCM9Wbsy373xXXipdoV4alyNYQKD6I/BKmE8faShza63Q0=@vger.kernel.org, AJvYcCXP2Wu3TNEV40FSzD3TXgOxB2XO/0mdqWts7Q4yqtCVie0yMIkKP0vc8GO3fTP2KyiyEeeMYtoGkJU3unsqdqUbq+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb7LYHQKrvz2Nt2DE982pYgAAzUZ7owOPSfj0I5laen7fyEo9h
-	gyFvAO/zvuaaIupDiVmA0wqn3AYiy6tlS8OtLK1Zd7N8RXnp1pj39/OCpHtvSqW3cG+QfHowycz
-	zzzPRRTCI1IDIVSQ/KdenjIOubcU=
-X-Gm-Gg: ASbGncsjLb3Uh5xkflU2WRrXtnO8DLlHDfgb+9QnQJ3TEDky176u8KhowxE4b0d96uE
-	PbVWIn+qw44DEdeevudBSPqI9PzxeqAMWS0U7BPgu9JfEjmVrxGpWb/aaLXRGhmFPnqvW4+pepM
-	I2qeoOJKI=
-X-Google-Smtp-Source: AGHT+IFE3G2KjHi8I1VMEUvtVVJytNjP0/8SzMhjPmWtNq41A0r54s3RwgOnWAEJT6u1F3AfT20PzYxSV85X9vtUhfM=
-X-Received: by 2002:a05:6402:51c6:b0:5dc:5ada:e0c7 with SMTP id
- 4fb4d7f45d1cf-5e4d6b4c2edmr8497667a12.26.1740767787540; Fri, 28 Feb 2025
- 10:36:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740769641; x=1741374441;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=la6q/fnJJDn/FlTPNLsSOFcZAtqFjxAsMo5jIsCdjqc=;
+        b=IHCjCxZdK2l5+Q57G5ocQ6HZGWHYnW34OceOARH8V8xMzwZGV5bCJiwZNiO6OwipMd
+         ExB3cZzRUXKu1T1JMQ2KBImR00vpNdCENLxnBNGTSJG0W1b7EPr1xYbSJB6e0M3NZFNT
+         +B427izD/YX8+bh7ZbkTPq85CLbVIjbTddf6AFq3IVRnE57qBOl49Hjmxqxv7LucLo8e
+         jyu83jNnpcdQaIV5Lcb0euoMvB29QoCT+1zRRfZ4ZgVr/9hua+KlrTtgPBmqc+PyUqOY
+         +sryESw1E/pYL+3ziZKehZ5lRUXHNSVaTE+MGUexYe9GKoMHsBWrSCtl04omY7uLuUPz
+         NI1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUa6Hm0sBJEQqaEzDKphG92wHEA1RfQ3TUa+kaIMOtAUslaKUdwMX8x9z9m2wvzMv2k3sblZJchse8UVmIuNrqc5YM=@vger.kernel.org, AJvYcCW6T49Gm7HqN/KSb8P/N5eVfF1Bxjsv0RtX33Z9vqyRQkHfCdHVK5DmSyDJK1O0HvJ0FfyMeg9dR5+q@vger.kernel.org, AJvYcCX6mjUJ5HA2BHSQUPZ84oTr875XJZjSVkBgJcT0tzgMBKfzZXoHPTMuS/NbCnPvDIa7Kv3ksJZrMBKo@vger.kernel.org, AJvYcCXcnrJtq8EkBWbPhgMsXs/yIajQct1HOVuc8InLhQIIm9N5ilk6vQnNxHwBYpFV9AG96glHKaV8pq6l2gdu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxkKbiJiwcxWlt7QtfNHqsynMPRv+g4ZttQg+rrbuRIm6IF5fX
+	oapcDC4rNWxdtP9PdEd8ZpLwYcTiZXsrmvPoJWJimnZK3s2+lSMo
+X-Gm-Gg: ASbGnct4BFszY1WJtPnoVhvV3iYSAFazY1oIw9MTGfFy4anj5LT9vRUL9brk5eYygSX
+	eDM+iwXcGShcdguHqc7PJhkOiiuA+0ZzAEok0v5m+yaQ58RK1fr9ZMA965v2fx0T5ePQ+SSQAZR
+	GLPdSDfQRtIVXY8kXeDozuhY1q0spRcpai/bWxEEEmhyZ+p7SoEOibfLLSh6aWki2f/u4kTYIpb
+	giVY3ucebhkkl6tv8ulG5UrFlxMTb8GRRVq8RF6+x3tPABBTwzM/QITg8B2WsTtQO3ux0R0IrUn
+	7XEYN8w1HyAE7Nk51xr2DAY09AmfLoh7lY2wq9eOMhgqyX7AAbMifvacKL5ZPaobgMBN8F4MpuI
+	W1Wup
+X-Google-Smtp-Source: AGHT+IFCCnuArvXOTMmII9xA75C+BNMRa1V96w0SJJTrjh/9BJpW3iD91h/vTUlZoY42/F91EKCmeg==
+X-Received: by 2002:a17:906:7310:b0:ab7:bb93:56ef with SMTP id a640c23a62f3a-abf25fa9fb3mr478547766b.19.1740769641246;
+        Fri, 28 Feb 2025 11:07:21 -0800 (PST)
+Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b99a6sm339502266b.13.2025.02.28.11.07.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 11:07:20 -0800 (PST)
+Message-ID: <31cad1da1a02aaf0935d35e9b56357fcea9320fa.camel@gmail.com>
+Subject: Re: [PATCH v3 5/5] clk: samsung: add exynos7870 CLKOUT support
+From: David Virag <virag.david003@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kaustabh Chakraborty
+	 <kauschluss@disroot.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi	
+ <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+ Herring <robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Fri, 28 Feb 2025 20:07:15 +0100
+In-Reply-To: <5670d992-71f4-4791-94ff-4fadc1fb5993@kernel.org>
+References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
+	 <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
+	 <20250219-discerning-affable-chital-1fdff4@krzk-bin>
+	 <e2ebd4503100ddbbe8d7e21290329e38@disroot.org>
+	 <5670d992-71f4-4791-94ff-4fadc1fb5993@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216195850.5352-1-linux.amoon@gmail.com> <20250216195850.5352-5-linux.amoon@gmail.com>
- <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com>
-In-Reply-To: <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 1 Mar 2025 00:06:10 +0530
-X-Gm-Features: AQ5f1JrCuLXPNSAWoUTKE1NaVm2ihsuQ5JSDdwiiFIEGBSN_Yr_bdvM8NVPBMWc
-Message-ID: <CANAwSgTpV_kGFEU-ND0N+OEtT6+j4ceq37xAoLyC7iHPWAuLjg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Lukasz,
+On Mon, 2025-02-24 at 20:13 +0100, Krzysztof Kozlowski wrote:
+> On 24/02/2025 18:47, Kaustabh Chakraborty wrote:
+> > >=20
+> > > I wonder why do we need to keep growing this list? All devices
+> > > are
+> > > compatible, aren't they?
+> >=20
+> > Well, there are two variants of compatibility having different mask
+> > values.
+> >=20
+> > > Do you use clkout, BTW?
+> >=20
+> > Using the clocks defined by clkout? No. I added it as downstream
+> > had it too. And the devices work fine without it. If you want me
+> > to remove this patch and send the PMU patch to its respective
+> > series I'll do that then (unless you object or suggest something
+> > else).
+>=20
+> clkout is a testing tool and I doubt you can use it on a phone -
+> finding
+> the actual clkout pins to connect the oscilloscope is tricky.
 
-On Fri, 28 Feb 2025 at 22:58, Lukasz Luba <lukasz.luba@arm.com> wrote:
->
->
->
-> On 2/16/25 19:58, Anand Moon wrote:
-> > Using guard notation makes the code more compact and error handling
-> > more robust by ensuring that mutexes are released in all code paths
-> > when control leaves critical section.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > v3: new patch
-> > ---
-> >   drivers/thermal/samsung/exynos_tmu.c | 21 +++++++--------------
-> >   1 file changed, 7 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > index fe090c1a93ab..a34ba3858d64 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -256,7 +256,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >       unsigned int status;
-> >       int ret = 0;
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >       clk_enable(data->clk_sec);
-> >
-> > @@ -270,7 +270,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >
-> >       clk_disable(data->clk_sec);
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >
-> >       return ret;
-> >   }
-> > @@ -292,13 +291,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
-> >               return ret;
-> >       }
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >
-> >       data->tmu_set_crit_temp(data, temp / MCELSIUS);
-> >
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >
-> >       return 0;
-> >   }
-> > @@ -325,12 +323,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
-> >   {
-> >       struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >       data->tmu_control(pdev, on);
-> >       data->enabled = on;
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >   }
-> >
-> >   static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
-> > @@ -645,7 +642,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
-> >                */
-> >               return -EAGAIN;
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >
-> >       value = data->tmu_read(data);
-> > @@ -655,7 +652,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
-> >               *temp = code_to_temp(data, value) * MCELSIUS;
-> >
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >
-> >       return ret;
-> >   }
-> > @@ -720,11 +716,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
-> >       if (temp && temp < MCELSIUS)
-> >               goto out;
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >       data->tmu_set_emulation(data, temp);
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >       return 0;
-> >   out:
-> >       return ret;
-> > @@ -760,14 +755,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
-> >
-> >       thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >
-> >       /* TODO: take action based on particular interrupt */
-> >       data->tmu_clear_irqs(data);
-> >
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >
-> >       return IRQ_HANDLED;
-> >   }
-> > @@ -987,7 +981,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-> >   {
-> >       struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
-> >       clk_enable(data->clk);
-> >
-> >       if (low > INT_MIN)
-> > @@ -1000,7 +994,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-> >               data->tmu_disable_high(data);
-> >
-> >       clk_disable(data->clk);
-> > -     mutex_unlock(&data->lock);
-> >
-> >       return 0;
-> >   }
+Actually, jackpotlte uses one of the clkout pins (7885 has two) to feed
+it's NFC chip with a clock.=20
 
-Thanks for your review comments.
->
-> IMO you should be able to even use something like we have
-> core framework:
->
-> guard(thermal_zone)(tz);
->
-> Your mutex name is simply 'lock' in the struct exynos_tmu_data
-> so you should be able to leverage this by:
->
-> guard(exynos_tmu_data)(data);
->
-> Please try that.
+Not sure if any 7870 (or any other Exynos) devices use it for something
+similar but here we have at least one example of a non-debug use for
+it. I will avoid it on 7885 though until it's actually needed and I can
+test the functionality (and when I have the time to work on 7885
+again).
 
-Ok, I will check this
+Best Regards,
+David
 
-Thanks
--Anand
