@@ -1,40 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FDD23F399;
-	Sat,  1 Mar 2025 03:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E4C23F399;
+	Sat,  1 Mar 2025 03:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740801461; cv=none; b=fHKFuB5+4aYfaJitM34JYI0tn/311kUdlnW6tNmANQZpwIKoWC92hXSL+q/CkLm1z/19XpGv2tOAX4/qFpi8ssE9dXitnpk5zPXHoA/Tml+hPhePdBzU7ehZeB4Ptyu3LfmJm+I3AcPopiXFu5lBI/K+7jsNCQuIFDthT2Sf454=
+	t=1740801471; cv=none; b=oK2/LuFYW5AQchD95qGUj4Qf6n9zA+rqMu5abMHTIGrfcKOKEi/K0MIf62M1xpxm7hLs1pNZ5w46cMDCVYpPZHwSi4BhHu4VnrTP1hl6inBLuw9+cA1bInd8VpCBJP7evN5fdSLyzH/kwEJzxBHna3S8RpriZ9u9hwy3e+T48Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740801461; c=relaxed/simple;
-	bh=rEHaf4maxyiGGOMN1IF2sOa3FpT4ACpF4a9JkiIWSt8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PbUewxnUvWvkHEqHLaOczbjoaadgFBSmTRLYDmL3KHNoWa8ufbnfunNemedcKTBvWL9YZAfGVc+cgzA7Otl5Cu3JhWISHeV+4Xwl62yzuJ0FtHdBLykDIsU7X6I5lSeVGvE4PQ3oQ6B1FnzUQabLamjUPDQb86RQO7u0Jig5LuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Em96SsLL; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1740801471; c=relaxed/simple;
+	bh=CtxHLLsie/bOEiK3PUfshu29QbiU3zvmBgwi8pgWO3E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IZB6toivlmY9CTGCiqw8NF5z+hRCYJbU0qYDtgkHibzhkWzxhY/Ha56i3vSLu4BVtELkAB5xZufNPcfMV7ol4NCoipwBRI5jn5MLJAZ2Xpl8fpNaswgeaEXOu4MNx52XbQLwcO0Ix36wVcBv6KfWUk5V6+zGiTcJgcRr8Jt53As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fVOjbRg0; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Em96SsLL"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fVOjbRg0"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 63C7E25F0B;
-	Sat,  1 Mar 2025 04:57:35 +0100 (CET)
+	by disroot.org (Postfix) with ESMTP id C24A425C41;
+	Sat,  1 Mar 2025 04:57:47 +0100 (CET)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id V-yxFxoy9gdi; Sat,  1 Mar 2025 04:57:34 +0100 (CET)
+ id uqHMHgERkbgO; Sat,  1 Mar 2025 04:57:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740801454; bh=rEHaf4maxyiGGOMN1IF2sOa3FpT4ACpF4a9JkiIWSt8=;
-	h=From:Subject:Date:To:Cc;
-	b=Em96SsLLK3JE0voTXKEtlh2B1s35FP/WwdY8OEFy+JYsArqkr+MlBGDTtjD4ZsuJO
-	 3PnuYqNR7CYabtK2nP0UPImD+xOIhJEBxb5e6imz2MNd56nWcgbjc7N7QGirJp9Rmj
-	 GAHsnOA+Ggf+E7qq52HQ4rRhjqkeoNOzqxvWj9QNO4qKrRZcHxSdqIOPJINGvf1Vph
-	 pMqtDs+sO7/ovusCmZM+49Px0zkXTRJMw3TIg4X2dcCIJm8ixfiJK7jq+5ImMgIg6N
-	 Exsd4XxFlqAvzo6azbKBN+bV15x9uSSRwIOKi9n7hRSUrNDueD3avU+FfEesUXLjBc
-	 oeMGgH8mOLnQA==
+	t=1740801462; bh=CtxHLLsie/bOEiK3PUfshu29QbiU3zvmBgwi8pgWO3E=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=fVOjbRg0pUB8QMl2q8h5/cbE9a0cbjztZY0zz3BTDHfKPu42/F2iuoGxEhtoTLrzr
+	 pXlfG6Ss7ATOAYdZVPR30Yol6d2/xT+v2ahgIdAO/XJicePyNzigQaVhl7qiMhLz+R
+	 tGRSsswtygPRwdAKPtevCV0FVT6jd/59YpFGWT2dKSUR2//1SNRDBIR/QDnLZG8349
+	 4afLrdiOuDJj20QSfTJPWmf2GIuwHjRD0aJORos2Tj2oNlNW1f4tyeV30isLQfBfzE
+	 Djyf/pOC8ONxs9TvzNGL/4uW1UvAQoTavzBzq1mG/bWc5T8adv8wHLe3NxqZF2tMpN
+	 O6RixeMJl/lbA==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Subject: [PATCH v5 0/2] Introduce support for Exynos7870 clocks
-Date: Sat, 01 Mar 2025 09:27:11 +0530
-Message-Id: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org>
+Date: Sat, 01 Mar 2025 09:27:12 +0530
+Subject: [PATCH v5 1/2] dt-bindings: clock: add clock definitions and
+ documentation for exynos7870 CMU
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,11 +44,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJeFwmcC/3XNQQrCMBCF4auUrI1MOg2xrryHuEia0Qa1KYkGS
- +ndTQVRkS7/B/PNyCIFR5Fti5EFSi463+WQq4I1re5OxJ3NzUooJZSAnB5D56PaKOD99c6bi2/
- OkVswiFArIK1Yvu0DHd3j5e4PuVsXbz4MrzdJzOtbrBbEJDhwjYCgSRojcWddDN7f1j6c2Gwm/
- HJEveRgdsAKqoSkmlD/O9XHQRBLTjU7RySFRoA16teZpukJ68xDzkwBAAA=
-X-Change-ID: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+Message-Id: <20250301-exynos7870-pmu-clocks-v5-1-715b646d5206@disroot.org>
+References: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org>
+In-Reply-To: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -57,76 +56,588 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740801448; l=2719;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740801448; l=20925;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=rEHaf4maxyiGGOMN1IF2sOa3FpT4ACpF4a9JkiIWSt8=;
- b=UoI5gUYpp/4io6yU8aYNLdhMOhmNT64JGVnwQXQ3FZWV6ZbYTsbxDzPz5RstcQpMzgFknW08c
- vkVYlaNEjwCCgcFk+h/SLVmnQH7NAnmqniUxQoZs1CyylIE0U3wT0Qt
+ bh=CtxHLLsie/bOEiK3PUfshu29QbiU3zvmBgwi8pgWO3E=;
+ b=y5MCSuiDpRD1SAoYBpwPj6rWShBysC5bA4A5XvfC5Dnk30oP2Squ0F9uiVwcXUsyJM2GlvXF+
+ ToHvcB5aPNfD54xkfadxLq6Zxk7Z/aehg9DMwOMJSBM2sEcj1QdmA27
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Add a CMU driver for Exynos7870 devices. It handles the following
-clock banks:
- * CMU_MIF
- * CMU_DISPAUD
- * CMU_FSYS
- * CMU_G3D
- * CMU_ISP
- * CMU_MFCMSCL
- * CMU_PERI
-
-This patch series is a part of Exynos7870 upstreaming.
+Add unique identifiers for exynos7870 clocks for every bank. It adds all
+clocks of CMU_MIF, CMU_DISPAUD, CMU_G3D, CMU_ISP, CMU_MFCMSCL, and
+CMU_PERI. Document the devicetree bindings as well.
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-Changes in v5:
-- Fix dt_binding_check errors and fix dt example.
-- Link to v4: https://lore.kernel.org/r/20250301-exynos7870-pmu-clocks-v4-0-0f3e73b10db7@disroot.org
+ .../bindings/clock/samsung,exynos7870-cmu.yaml     | 227 +++++++++++++++
+ include/dt-bindings/clock/samsung,exynos7870-cmu.h | 324 +++++++++++++++++++++
+ 2 files changed, 551 insertions(+)
 
-Changes in v4:
-- Fix clock dt-binding description and ordering in properties:required.
-- Change filenames of clock dt-binding and header to match the compatible.
-- Squash the following patches from v3 into one:
-  [1/5] dt-bindings: clock: add clock definitions for exynos7870 CMU
-  [2/5] dt-bindings: clock: document exynos7870 clock driver CMU bindings
-- Drop the following patches from v3:
-  [3/5] dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
-  [5/5] clk: samsung: add exynos7870 CLKOUT support
-- Link to v3: https://lore.kernel.org/r/20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..3c58712f12b9fe33890687fb0a70dc1b8015b78b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml
+@@ -0,0 +1,227 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/samsung,exynos7870-cmu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos7870 SoC clock controller
++
++maintainers:
++  - Kaustabh Chakraborty <kauschluss@disroot.org>
++
++description: |
++  Exynos7870 clock controller is comprised of several CMU units, generating
++  clocks for different domains. Those CMU units are modeled as separate device
++  tree nodes, and might depend on each other. The root clock in that root tree
++  is an external clock: OSCCLK (26 MHz). This external clock must be defined
++  as a fixed-rate clock in dts.
++
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All clocks available for usage
++  in clock consumer nodes are defined as preprocessor macros in
++  include/dt-bindings/clock/samsung,exynos7870-cmu.h header.
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos7870-cmu-mif
++      - samsung,exynos7870-cmu-dispaud
++      - samsung,exynos7870-cmu-fsys
++      - samsung,exynos7870-cmu-g3d
++      - samsung,exynos7870-cmu-isp
++      - samsung,exynos7870-cmu-mfcmscl
++      - samsung,exynos7870-cmu-peri
++
++  clocks:
++    minItems: 1
++    maxItems: 10
++
++  clock-names:
++    minItems: 1
++    maxItems: 10
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - "#clock-cells"
++  - reg
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-mif
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++
++        clock-names:
++          items:
++            - const: oscclk
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-dispaud
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_DISPAUD bus clock (from CMU_MIF)
++            - description: DECON external clock (from CMU_MIF)
++            - description: DECON vertical clock (from CMU_MIF)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: decon_eclk
++            - const: decon_vclk
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-fsys
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_FSYS bus clock (from CMU_MIF)
++            - description: USB20DRD clock (from CMU_MIF)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: usb20drd
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-g3d
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: G3D switch clock (from CMU_MIF)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: switch
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-isp
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: ISP camera clock (from CMU_MIF)
++            - description: ISP clock (from CMU_MIF)
++            - description: ISP VRA clock (from CMU_MIF)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: cam
++            - const: isp
++            - const: vra
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-mfcmscl
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: MSCL clock (from CMU_MIF)
++            - description: MFC clock (from CMU_MIF)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: mfc
++            - const: mscl
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos7870-cmu-peri
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_PERI bus clock (from CMU_MIF)
++            - description: SPI0 clock (from CMU_MIF)
++            - description: SPI1 clock (from CMU_MIF)
++            - description: SPI2 clock (from CMU_MIF)
++            - description: SPI3 clock (from CMU_MIF)
++            - description: SPI4 clock (from CMU_MIF)
++            - description: UART0 clock (from CMU_MIF)
++            - description: UART1 clock (from CMU_MIF)
++            - description: UART2 clock (from CMU_MIF)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: spi0
++            - const: spi1
++            - const: spi2
++            - const: spi3
++            - const: spi4
++            - const: uart0
++            - const: uart1
++            - const: uart2
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/samsung,exynos7870-cmu.h>
++
++    cmu_peri: clock-controller@101f0000 {
++      compatible = "samsung,exynos7870-cmu-peri";
++      reg = <0x101f0000 0x1000>;
++      #clock-cells = <1>;
++
++      clock-names = "oscclk", "bus", "spi0", "spi1", "spi2",
++                    "spi3", "spi4", "uart0", "uart1", "uart2";
++      clocks = <&oscclk>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_BUS>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI0>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI1>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI2>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI3>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI4>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_UART0>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_UART1>,
++               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_UART2>;
++    };
++
++...
+diff --git a/include/dt-bindings/clock/samsung,exynos7870-cmu.h b/include/dt-bindings/clock/samsung,exynos7870-cmu.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..57d04bbe342d835abbba34df542671dbdea427b5
+--- /dev/null
++++ b/include/dt-bindings/clock/samsung,exynos7870-cmu.h
+@@ -0,0 +1,324 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
++ * Author: Kaustabh Chakraborty <kauschluss@disroot.org>
++ *
++ * Device Tree binding constants for Exynos7870 clock controller.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_EXYNOS7870_H
++#define _DT_BINDINGS_CLOCK_EXYNOS7870_H
++
++/* CMU_MIF */
++#define CLK_DOUT_MIF_APB				1
++#define CLK_DOUT_MIF_BUSD				2
++#define CLK_DOUT_MIF_CMU_DISPAUD_BUS			3
++#define CLK_DOUT_MIF_CMU_DISPAUD_DECON_ECLK		4
++#define CLK_DOUT_MIF_CMU_DISPAUD_DECON_VCLK		5
++#define CLK_DOUT_MIF_CMU_FSYS_BUS			6
++#define CLK_DOUT_MIF_CMU_FSYS_MMC0			7
++#define CLK_DOUT_MIF_CMU_FSYS_MMC1			8
++#define CLK_DOUT_MIF_CMU_FSYS_MMC2			9
++#define CLK_DOUT_MIF_CMU_FSYS_USB20DRD_REFCLK		10
++#define CLK_DOUT_MIF_CMU_G3D_SWITCH			11
++#define CLK_DOUT_MIF_CMU_ISP_CAM			12
++#define CLK_DOUT_MIF_CMU_ISP_ISP			13
++#define CLK_DOUT_MIF_CMU_ISP_SENSOR0			14
++#define CLK_DOUT_MIF_CMU_ISP_SENSOR1			15
++#define CLK_DOUT_MIF_CMU_ISP_SENSOR2			16
++#define CLK_DOUT_MIF_CMU_ISP_VRA			17
++#define CLK_DOUT_MIF_CMU_MFCMSCL_MFC			18
++#define CLK_DOUT_MIF_CMU_MFCMSCL_MSCL			19
++#define CLK_DOUT_MIF_CMU_PERI_BUS			20
++#define CLK_DOUT_MIF_CMU_PERI_SPI0			21
++#define CLK_DOUT_MIF_CMU_PERI_SPI1			22
++#define CLK_DOUT_MIF_CMU_PERI_SPI2			23
++#define CLK_DOUT_MIF_CMU_PERI_SPI3			24
++#define CLK_DOUT_MIF_CMU_PERI_SPI4			25
++#define CLK_DOUT_MIF_CMU_PERI_UART0			26
++#define CLK_DOUT_MIF_CMU_PERI_UART1			27
++#define CLK_DOUT_MIF_CMU_PERI_UART2			28
++#define CLK_DOUT_MIF_HSI2C				29
++#define CLK_FOUT_MIF_BUS_PLL				30
++#define CLK_FOUT_MIF_MEDIA_PLL				31
++#define CLK_FOUT_MIF_MEM_PLL				32
++#define CLK_GOUT_MIF_CMU_DISPAUD_BUS			33
++#define CLK_GOUT_MIF_CMU_DISPAUD_DECON_ECLK		34
++#define CLK_GOUT_MIF_CMU_DISPAUD_DECON_VCLK		35
++#define CLK_GOUT_MIF_CMU_FSYS_BUS			36
++#define CLK_GOUT_MIF_CMU_FSYS_MMC0			37
++#define CLK_GOUT_MIF_CMU_FSYS_MMC1			38
++#define CLK_GOUT_MIF_CMU_FSYS_MMC2			39
++#define CLK_GOUT_MIF_CMU_FSYS_USB20DRD_REFCLK		40
++#define CLK_GOUT_MIF_CMU_G3D_SWITCH			41
++#define CLK_GOUT_MIF_CMU_ISP_CAM			42
++#define CLK_GOUT_MIF_CMU_ISP_ISP			43
++#define CLK_GOUT_MIF_CMU_ISP_SENSOR0			44
++#define CLK_GOUT_MIF_CMU_ISP_SENSOR1			45
++#define CLK_GOUT_MIF_CMU_ISP_SENSOR2			46
++#define CLK_GOUT_MIF_CMU_ISP_VRA			47
++#define CLK_GOUT_MIF_CMU_MFCMSCL_MFC			48
++#define CLK_GOUT_MIF_CMU_MFCMSCL_MSCL			49
++#define CLK_GOUT_MIF_CMU_PERI_BUS			50
++#define CLK_GOUT_MIF_CMU_PERI_SPI0			51
++#define CLK_GOUT_MIF_CMU_PERI_SPI1			52
++#define CLK_GOUT_MIF_CMU_PERI_SPI2			53
++#define CLK_GOUT_MIF_CMU_PERI_SPI3			54
++#define CLK_GOUT_MIF_CMU_PERI_SPI4			55
++#define CLK_GOUT_MIF_CMU_PERI_UART0			56
++#define CLK_GOUT_MIF_CMU_PERI_UART1			57
++#define CLK_GOUT_MIF_CMU_PERI_UART2			58
++#define CLK_GOUT_MIF_CP_PCLK_HSI2C			59
++#define CLK_GOUT_MIF_CP_PCLK_HSI2C_BAT_0		60
++#define CLK_GOUT_MIF_CP_PCLK_HSI2C_BAT_1		61
++#define CLK_GOUT_MIF_HSI2C_AP_PCLKM			62
++#define CLK_GOUT_MIF_HSI2C_AP_PCLKS			63
++#define CLK_GOUT_MIF_HSI2C_CP_PCLKM			64
++#define CLK_GOUT_MIF_HSI2C_CP_PCLKS			65
++#define CLK_GOUT_MIF_HSI2C_IPCLK			66
++#define CLK_GOUT_MIF_HSI2C_ITCLK			67
++#define CLK_GOUT_MIF_MUX_BUSD				68
++#define CLK_GOUT_MIF_MUX_BUS_PLL			69
++#define CLK_GOUT_MIF_MUX_BUS_PLL_CON			70
++#define CLK_GOUT_MIF_MUX_CMU_DISPAUD_BUS		71
++#define CLK_GOUT_MIF_MUX_CMU_DISPAUD_DECON_ECLK		72
++#define CLK_GOUT_MIF_MUX_CMU_DISPAUD_DECON_VCLK		73
++#define CLK_GOUT_MIF_MUX_CMU_FSYS_BUS			74
++#define CLK_GOUT_MIF_MUX_CMU_FSYS_MMC0			75
++#define CLK_GOUT_MIF_MUX_CMU_FSYS_MMC1			76
++#define CLK_GOUT_MIF_MUX_CMU_FSYS_MMC2			77
++#define CLK_GOUT_MIF_MUX_CMU_FSYS_USB20DRD_REFCLK	78
++#define CLK_GOUT_MIF_MUX_CMU_ISP_CAM			79
++#define CLK_GOUT_MIF_MUX_CMU_ISP_ISP			80
++#define CLK_GOUT_MIF_MUX_CMU_ISP_SENSOR0		81
++#define CLK_GOUT_MIF_MUX_CMU_ISP_SENSOR1		82
++#define CLK_GOUT_MIF_MUX_CMU_ISP_SENSOR2		83
++#define CLK_GOUT_MIF_MUX_CMU_ISP_VRA			84
++#define CLK_GOUT_MIF_MUX_CMU_MFCMSCL_MFC		85
++#define CLK_GOUT_MIF_MUX_CMU_MFCMSCL_MSCL		86
++#define CLK_GOUT_MIF_MUX_CMU_PERI_BUS			87
++#define CLK_GOUT_MIF_MUX_CMU_PERI_SPI0			88
++#define CLK_GOUT_MIF_MUX_CMU_PERI_SPI1			89
++#define CLK_GOUT_MIF_MUX_CMU_PERI_SPI2			90
++#define CLK_GOUT_MIF_MUX_CMU_PERI_SPI3			91
++#define CLK_GOUT_MIF_MUX_CMU_PERI_SPI4			92
++#define CLK_GOUT_MIF_MUX_CMU_PERI_UART0			93
++#define CLK_GOUT_MIF_MUX_CMU_PERI_UART1			94
++#define CLK_GOUT_MIF_MUX_CMU_PERI_UART2			95
++#define CLK_GOUT_MIF_MUX_MEDIA_PLL			96
++#define CLK_GOUT_MIF_MUX_MEDIA_PLL_CON			97
++#define CLK_GOUT_MIF_MUX_MEM_PLL			98
++#define CLK_GOUT_MIF_MUX_MEM_PLL_CON			99
++#define CLK_GOUT_MIF_WRAP_ADC_IF_OSC_SYS		100
++#define CLK_GOUT_MIF_WRAP_ADC_IF_PCLK_S0		101
++#define CLK_GOUT_MIF_WRAP_ADC_IF_PCLK_S1		102
++#define CLK_MOUT_MIF_BUSD				103
++#define CLK_MOUT_MIF_CMU_DISPAUD_BUS			104
++#define CLK_MOUT_MIF_CMU_DISPAUD_DECON_ECLK		105
++#define CLK_MOUT_MIF_CMU_DISPAUD_DECON_VCLK		106
++#define CLK_MOUT_MIF_CMU_FSYS_BUS			107
++#define CLK_MOUT_MIF_CMU_FSYS_MMC0			108
++#define CLK_MOUT_MIF_CMU_FSYS_MMC1			109
++#define CLK_MOUT_MIF_CMU_FSYS_MMC2			110
++#define CLK_MOUT_MIF_CMU_FSYS_USB20DRD_REFCLK		111
++#define CLK_MOUT_MIF_CMU_ISP_CAM			112
++#define CLK_MOUT_MIF_CMU_ISP_ISP			113
++#define CLK_MOUT_MIF_CMU_ISP_SENSOR0			114
++#define CLK_MOUT_MIF_CMU_ISP_SENSOR1			115
++#define CLK_MOUT_MIF_CMU_ISP_SENSOR2			116
++#define CLK_MOUT_MIF_CMU_ISP_VRA			117
++#define CLK_MOUT_MIF_CMU_MFCMSCL_MFC			118
++#define CLK_MOUT_MIF_CMU_MFCMSCL_MSCL			119
++#define CLK_MOUT_MIF_CMU_PERI_BUS			120
++#define CLK_MOUT_MIF_CMU_PERI_SPI0			121
++#define CLK_MOUT_MIF_CMU_PERI_SPI1			122
++#define CLK_MOUT_MIF_CMU_PERI_SPI2			123
++#define CLK_MOUT_MIF_CMU_PERI_SPI3			124
++#define CLK_MOUT_MIF_CMU_PERI_SPI4			125
++#define CLK_MOUT_MIF_CMU_PERI_UART0			126
++#define CLK_MOUT_MIF_CMU_PERI_UART1			127
++#define CLK_MOUT_MIF_CMU_PERI_UART2			128
++#define MIF_NR_CLK					129
++
++/* CMU_DISPAUD */
++#define CLK_DOUT_DISPAUD_APB					1
++#define CLK_DOUT_DISPAUD_DECON_ECLK				2
++#define CLK_DOUT_DISPAUD_DECON_VCLK				3
++#define CLK_DOUT_DISPAUD_MI2S					4
++#define CLK_DOUT_DISPAUD_MIXER					5
++#define CLK_FOUT_DISPAUD_AUD_PLL				6
++#define CLK_FOUT_DISPAUD_PLL					7
++#define CLK_GOUT_DISPAUD_APB_AUD				8
++#define CLK_GOUT_DISPAUD_APB_AUD_AMP				9
++#define CLK_GOUT_DISPAUD_APB_DISP				10
++#define CLK_GOUT_DISPAUD_BUS					11
++#define CLK_GOUT_DISPAUD_BUS_DISP				12
++#define CLK_GOUT_DISPAUD_BUS_PPMU				13
++#define CLK_GOUT_DISPAUD_CON_AUD_I2S_BCLK_BT_IN			14
++#define CLK_GOUT_DISPAUD_CON_AUD_I2S_BCLK_FM_IN			15
++#define CLK_GOUT_DISPAUD_CON_CP2AUD_BCK				16
++#define CLK_GOUT_DISPAUD_CON_EXT2AUD_BCK_GPIO_I2S		17
++#define CLK_GOUT_DISPAUD_DECON_ECLK				18
++#define CLK_GOUT_DISPAUD_DECON_VCLK				19
++#define CLK_GOUT_DISPAUD_MI2S_AMP_I2SCODCLKI			20
++#define CLK_GOUT_DISPAUD_MI2S_AUD_I2SCODCLKI			21
++#define CLK_GOUT_DISPAUD_MIXER_AUD_SYSCLK			22
++#define CLK_GOUT_DISPAUD_MUX_AUD_PLL				23
++#define CLK_GOUT_DISPAUD_MUX_AUD_PLL_CON			24
++#define CLK_GOUT_DISPAUD_MUX_BUS_USER				25
++#define CLK_GOUT_DISPAUD_MUX_DECON_ECLK				26
++#define CLK_GOUT_DISPAUD_MUX_DECON_ECLK_USER			27
++#define CLK_GOUT_DISPAUD_MUX_DECON_VCLK				28
++#define CLK_GOUT_DISPAUD_MUX_DECON_VCLK_USER			29
++#define CLK_GOUT_DISPAUD_MUX_MI2S				30
++#define CLK_GOUT_DISPAUD_MUX_MIPIPHY_RXCLKESC0_USER		31
++#define CLK_GOUT_DISPAUD_MUX_MIPIPHY_RXCLKESC0_USER_CON		32
++#define CLK_GOUT_DISPAUD_MUX_MIPIPHY_TXBYTECLKHS_USER		33
++#define CLK_GOUT_DISPAUD_MUX_MIPIPHY_TXBYTECLKHS_USER_CON	34
++#define CLK_GOUT_DISPAUD_MUX_PLL				35
++#define CLK_GOUT_DISPAUD_MUX_PLL_CON				36
++#define CLK_MOUT_DISPAUD_BUS_USER				37
++#define CLK_MOUT_DISPAUD_DECON_ECLK				38
++#define CLK_MOUT_DISPAUD_DECON_ECLK_USER			39
++#define CLK_MOUT_DISPAUD_DECON_VCLK				40
++#define CLK_MOUT_DISPAUD_DECON_VCLK_USER			41
++#define CLK_MOUT_DISPAUD_MI2S					42
++#define DISPAUD_NR_CLK						43
++
++/* CMU_FSYS */
++#define CLK_FOUT_FSYS_USB_PLL				1
++#define CLK_GOUT_FSYS_BUSP3_HCLK			2
++#define CLK_GOUT_FSYS_MMC0_ACLK				3
++#define CLK_GOUT_FSYS_MMC1_ACLK				4
++#define CLK_GOUT_FSYS_MMC2_ACLK				5
++#define CLK_GOUT_FSYS_MUX_USB20DRD_PHYCLOCK_USER	6
++#define CLK_GOUT_FSYS_MUX_USB20DRD_PHYCLOCK_USER_CON	7
++#define CLK_GOUT_FSYS_MUX_USB_PLL			8
++#define CLK_GOUT_FSYS_MUX_USB_PLL_CON			9
++#define CLK_GOUT_FSYS_PDMA0_ACLK_PDMA0			10
++#define CLK_GOUT_FSYS_PPMU_ACLK				11
++#define CLK_GOUT_FSYS_PPMU_PCLK				12
++#define CLK_GOUT_FSYS_SROMC_HCLK			13
++#define CLK_GOUT_FSYS_UPSIZER_BUS1_ACLK			14
++#define CLK_GOUT_FSYS_USB20DRD_ACLK_HSDRD		15
++#define CLK_GOUT_FSYS_USB20DRD_HCLK_USB20_CTRL		16
++#define CLK_GOUT_FSYS_USB20DRD_HSDRD_REF_CLK		17
++#define FSYS_NR_CLK					18
++
++/* CMU_G3D */
++#define CLK_DOUT_G3D_APB		1
++#define CLK_DOUT_G3D_BUS		2
++#define CLK_FOUT_G3D_PLL		3
++#define CLK_GOUT_G3D_ASYNCS_D0_CLK	4
++#define CLK_GOUT_G3D_ASYNC_PCLKM	5
++#define CLK_GOUT_G3D_CLK		6
++#define CLK_GOUT_G3D_MUX		7
++#define CLK_GOUT_G3D_MUX_PLL		8
++#define CLK_GOUT_G3D_MUX_PLL_CON	9
++#define CLK_GOUT_G3D_MUX_SWITCH_USER	10
++#define CLK_GOUT_G3D_PPMU_ACLK		11
++#define CLK_GOUT_G3D_PPMU_PCLK		12
++#define CLK_GOUT_G3D_QE_ACLK		13
++#define CLK_GOUT_G3D_QE_PCLK		14
++#define CLK_GOUT_G3D_SYSREG_PCLK	15
++#define CLK_MOUT_G3D			16
++#define CLK_MOUT_G3D_SWITCH_USER	17
++#define G3D_NR_CLK			18
++
++/* CMU_ISP */
++#define CLK_DOUT_ISP_APB				1
++#define CLK_DOUT_ISP_CAM_HALF				2
++#define CLK_FOUT_ISP_PLL				3
++#define CLK_GOUT_ISP_CAM				4
++#define CLK_GOUT_ISP_CAM_HALF				5
++#define CLK_GOUT_ISP_ISPD				6
++#define CLK_GOUT_ISP_ISPD_PPMU				7
++#define CLK_GOUT_ISP_MUX_CAM				8
++#define CLK_GOUT_ISP_MUX_CAM_USER			9
++#define CLK_GOUT_ISP_MUX_ISP				10
++#define CLK_GOUT_ISP_MUX_ISPD				11
++#define CLK_GOUT_ISP_MUX_PLL				12
++#define CLK_GOUT_ISP_MUX_PLL_CON			13
++#define CLK_GOUT_ISP_MUX_RXBYTECLKHS0_SENSOR0_USER	14
++#define CLK_GOUT_ISP_MUX_RXBYTECLKHS0_SENSOR0_USER_CON	15
++#define CLK_GOUT_ISP_MUX_RXBYTECLKHS0_SENSOR1_USER	16
++#define CLK_GOUT_ISP_MUX_RXBYTECLKHS0_SENSOR1_USER_CON	17
++#define CLK_GOUT_ISP_MUX_USER				18
++#define CLK_GOUT_ISP_MUX_VRA				19
++#define CLK_GOUT_ISP_MUX_VRA_USER			20
++#define CLK_GOUT_ISP_VRA				21
++#define CLK_MOUT_ISP_CAM				22
++#define CLK_MOUT_ISP_CAM_USER				23
++#define CLK_MOUT_ISP_ISP				24
++#define CLK_MOUT_ISP_ISPD				25
++#define CLK_MOUT_ISP_USER				26
++#define CLK_MOUT_ISP_VRA				27
++#define CLK_MOUT_ISP_VRA_USER				28
++#define ISP_NR_CLK					29
++
++/* CMU_MFCMSCL */
++#define CLK_DOUT_MFCMSCL_APB		1
++#define CLK_GOUT_MFCMSCL_MFC		2
++#define CLK_GOUT_MFCMSCL_MSCL		3
++#define CLK_GOUT_MFCMSCL_MSCL_BI	4
++#define CLK_GOUT_MFCMSCL_MSCL_D		5
++#define CLK_GOUT_MFCMSCL_MSCL_JPEG	6
++#define CLK_GOUT_MFCMSCL_MSCL_POLY	7
++#define CLK_GOUT_MFCMSCL_MSCL_PPMU	8
++#define CLK_GOUT_MFCMSCL_MUX_MFC_USER	9
++#define CLK_GOUT_MFCMSCL_MUX_MSCL_USER	10
++#define CLK_MOUT_MFCMSCL_MFC_USER	11
++#define CLK_MOUT_MFCMSCL_MSCL_USER	12
++#define MFCMSCL_NR_CLK			13
++
++/* CMU_PERI */
++#define CLK_GOUT_PERI_BUSP1_PERIC0_HCLK		1
++#define CLK_GOUT_PERI_GPIO2_PCLK		2
++#define CLK_GOUT_PERI_GPIO5_PCLK		3
++#define CLK_GOUT_PERI_GPIO6_PCLK		4
++#define CLK_GOUT_PERI_GPIO7_PCLK		5
++#define CLK_GOUT_PERI_HSI2C1_IPCLK		6
++#define CLK_GOUT_PERI_HSI2C2_IPCLK		7
++#define CLK_GOUT_PERI_HSI2C3_IPCLK		8
++#define CLK_GOUT_PERI_HSI2C4_IPCLK		9
++#define CLK_GOUT_PERI_HSI2C5_IPCLK		10
++#define CLK_GOUT_PERI_HSI2C6_IPCLK		11
++#define CLK_GOUT_PERI_I2C0_PCLK			12
++#define CLK_GOUT_PERI_I2C1_PCLK			13
++#define CLK_GOUT_PERI_I2C2_PCLK			14
++#define CLK_GOUT_PERI_I2C3_PCLK			15
++#define CLK_GOUT_PERI_I2C4_PCLK			16
++#define CLK_GOUT_PERI_I2C5_PCLK			17
++#define CLK_GOUT_PERI_I2C6_PCLK			18
++#define CLK_GOUT_PERI_I2C7_PCLK			19
++#define CLK_GOUT_PERI_I2C8_PCLK			20
++#define CLK_GOUT_PERI_MCT_PCLK			21
++#define CLK_GOUT_PERI_PWM_MOTOR_OSCCLK		22
++#define CLK_GOUT_PERI_PWM_MOTOR_PCLK_S0		23
++#define CLK_GOUT_PERI_SFRIF_TMU_CPUCL0_PCLK	24
++#define CLK_GOUT_PERI_SFRIF_TMU_CPUCL1_PCLK	25
++#define CLK_GOUT_PERI_SFRIF_TMU_PCLK		26
++#define CLK_GOUT_PERI_SPI0_PCLK			27
++#define CLK_GOUT_PERI_SPI0_SPI_EXT_CLK		28
++#define CLK_GOUT_PERI_SPI1_PCLK			29
++#define CLK_GOUT_PERI_SPI1_SPI_EXT_CLK		30
++#define CLK_GOUT_PERI_SPI2_PCLK			31
++#define CLK_GOUT_PERI_SPI2_SPI_EXT_CLK		32
++#define CLK_GOUT_PERI_SPI3_PCLK			33
++#define CLK_GOUT_PERI_SPI3_SPI_EXT_CLK		34
++#define CLK_GOUT_PERI_SPI4_PCLK			35
++#define CLK_GOUT_PERI_SPI4_SPI_EXT_CLK		36
++#define CLK_GOUT_PERI_TMU_CLK			37
++#define CLK_GOUT_PERI_TMU_CPUCL0_CLK		38
++#define CLK_GOUT_PERI_TMU_CPUCL1_CLK		39
++#define CLK_GOUT_PERI_UART0_EXT_UCLK		40
++#define CLK_GOUT_PERI_UART0_PCLK		41
++#define CLK_GOUT_PERI_UART1_EXT_UCLK		42
++#define CLK_GOUT_PERI_UART1_PCLK		43
++#define CLK_GOUT_PERI_UART2_EXT_UCLK		44
++#define CLK_GOUT_PERI_UART2_PCLK		45
++#define CLK_GOUT_PERI_WDT_CPUCL0_PCLK		46
++#define CLK_GOUT_PERI_WDT_CPUCL1_PCLK		47
++#define PERI_NR_CLK				48
++
++#endif /* _DT_BINDINGS_CLOCK_EXYNOS7870_H */
 
-Changes in v3:
-- Fix incorrect versioning (Link to v2: is labelled as v1).
-- Fix formatting issues in clk-exynos7870 DT docs (from v1).
-- Add myself as maintainer for clk-exynos7870.
-- Change clock name definitions in clk-exynos7870 DT docs.
-- Fix line wrapping in commit message of exynos7870-pmu DT docs.
-- Change a few ordinals of PERI* clocks in the clk-exynos7870 driver.
-- Take over ownership of patches by the co-author, upon their request.
-- Link to v2: https://lore.kernel.org/r/20250204-exynos7870-pmu-clocks-v1-0-a3030ae5bb53@disroot.org
-
-Changes in v2:
-- Drop all patches from v1 except:
-  - dt-bindings: clock: add clock definitions for exynos7870 CMU
-  - dt-bindings: clock: document exynos7870 clock driver CMU bindings
-- Add patch for adding appropriate PMU compatible.
-- Add patches for CMU and CLKOUT drivers.
-- Link to v1: https://lore.kernel.org/all/20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org/
-
----
-Kaustabh Chakraborty (2):
-      dt-bindings: clock: add clock definitions and documentation for exynos7870 CMU
-      clk: samsung: add initial exynos7870 clock driver
-
- .../bindings/clock/samsung,exynos7870-cmu.yaml     |  227 +++
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-exynos7870.c               | 1830 ++++++++++++++++++++
- include/dt-bindings/clock/samsung,exynos7870-cmu.h |  324 ++++
- 4 files changed, 2382 insertions(+)
----
-base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
-change-id: 20250203-exynos7870-pmu-clocks-d0b330970ea7
-
-Best regards,
 -- 
-Kaustabh Chakraborty <kauschluss@disroot.org>
+2.48.1
 
