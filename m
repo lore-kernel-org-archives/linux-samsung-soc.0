@@ -1,114 +1,172 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA7E1AB52D;
-	Sat,  1 Mar 2025 09:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F961D90AD
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  1 Mar 2025 11:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740820107; cv=none; b=UbXWS9t0laG9s5JAm9JDTaUzVdMvSNSFx0CvP0lTXo7ZLElWlNLnfahRZPQrTknnxCk3mJ6dscl+4nk+MUHuYbHAkZQcHwfiLY4iZVnZPx9HZzwciGuZeH6nPzfcLXWkPGEHzrvrECGS2E12Dhf2PuoEtRPM1hx6ngpsoIlQ5do=
+	t=1740829427; cv=none; b=aiie7wEERcvLzdQZFvkLciHfzdptP48XZtVIVjmKUGGNlUDr0b4zcNdEa9RYFN+Qe77Uc1AxMSeOIqPzfSWG8REFMVDetpYXwMQGeqnHzf8C3/L2QLS6vHQiCcVQ9mmcdR98sJrJnK+ufHoDcv/MG1jAci8PQczSJDKhP0xU/rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740820107; c=relaxed/simple;
-	bh=bQUvH/LR1KxS95c+RJnGjDSETbksb7G0/CS5aZy0gsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wsx1lNBYinqUi17L9eS6aZiC6q6APBFha/U99VJD+QbpuDeGq8/v9FXMnIDHl1FU+8By/pzdoUKXVdZdUIyXa3djFDZXmg7Fis9xo/9woNaV9W5f6fi/MKV4rqW9244Ft00bNgmV1AFhGBdi5ZVq5G0oceFqoyAZr6ePda7j0dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eS66Wmqz; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1740829427; c=relaxed/simple;
+	bh=evUvX4RMBfKC8FqkgyOYIu49UpyYWqsRchzfwT3wFVE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hnP1IjmZzw4vkhleJh1CVMQfuINNZ/5mGdUN5cL02kkbfzmSXCISlUJJjYc3lD+NZyvBq6+7BR8dqeAv1ICJSG1bgsrYOVTAv2mcEQz53peZYwzgvifLoePJkAzs4KeEsosy4/P+s4N8qm6FQFX2I9/MycvOTg4fvcyExxdYwtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKAZzmvE; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eS66Wmqz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740820106; x=1772356106;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bQUvH/LR1KxS95c+RJnGjDSETbksb7G0/CS5aZy0gsA=;
-  b=eS66WmqzNQGui6u5SSmjvn/tGera2jVFrNENpiAUILwc+JVTBr+C7woa
-   ViojhBWaUltF3RAoSHW/SNxVN+694OvExiC8ayJ5eJ0+7DyD7uzHA/lyl
-   NFO+NHQnDh9QwwVT77818rsKQRqGD2K2CU1ZDic65gvLvJVhsEsuB4k7y
-   +En5No2sKJKV/gU6hfzpBs7vHi1I2/JLe4VlXvgJx739571qR5zPJsGSm
-   S9gzqks8yYCWgOf7kd8qaP8GjtkWx/7PWrsU2L5J+mjW5tV8k9y0LkN9O
-   0nes7JiWy0T6CCVhovyfmbGti/cmUQ7BmHyDV0+LiCggK/pKBwQUmWdPw
-   A==;
-X-CSE-ConnectionGUID: nJcmozVSSx2Hu2GwQjNrfg==
-X-CSE-MsgGUID: zkTdSru0RF6DgqGS9D5NRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41596833"
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="41596833"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 01:08:25 -0800
-X-CSE-ConnectionGUID: hUwnSczhT5aCxc0MFFZ1sQ==
-X-CSE-MsgGUID: 4nOe0TxbSYe4812Pe2RycA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="117564427"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 01 Mar 2025 01:08:22 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toIpX-000G4Q-2G;
-	Sat, 01 Mar 2025 09:08:19 +0000
-Date: Sat, 1 Mar 2025 17:07:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: add initial support for
- Samsung Galaxy S22+
-Message-ID: <202503011651.Vto3vDw7-lkp@intel.com>
-References: <20250223123044.725493-4-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKAZzmvE"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so19046605e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Mar 2025 03:43:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740829423; x=1741434223; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZbaxd2WRcoQQt1caRaFSEAx+9Lny/NjRCBroTTZogk=;
+        b=BKAZzmvEnRwuhsv9v4/KVlBMZnCpKTqe54ZB754nB34LVLjvwh9yquL6RlB1ZlWf0r
+         F5Fem34fjyR8qWVS9AzF0tjVl3pv0RTfcoatq3z0ORs2iax9g2u/1Ybn9CcJJtvwfsuS
+         q8gTMSyS2C0mcpmuU8I9ZlW4yWcm2RHFef96B0nVLLVnwAJ81ZtKTosArCZLlGxQhGux
+         rkjlkdLAcQUP+wSTE/8PzfkoRTa4aE6tndAn+N1QNJynh5EODK05MxWZMzjSA7sbr6dr
+         KPPpcnj0VvO8TAMH+m5W2WPmOmK+s4aPxqbyVzznxQ7nv7lJdHfYZlB9dBfcoXAgTKYa
+         nlxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740829423; x=1741434223;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nZbaxd2WRcoQQt1caRaFSEAx+9Lny/NjRCBroTTZogk=;
+        b=iE29OnL5i6/v0Tc7IYttFC+wZctXSrMQi5WgCes0R3t0mJluvJw31tBda4BVV3EUTm
+         gb6Fy34Tfmgx3GcKZ8ExZPgS8SnVBc7WgF0UusqJY31BNSPY5wCcMHrNk/QztYYZ89YP
+         D3t+YCbHVb5X2RPDkPED0yrpFHqHo10AXFK7C/xYhLK+iY8XUBSdSdTQTwGBEYoqKyQf
+         G5ndjTeQIeObi9TMUAuUs1MUOf/6J3ewE57MtLm+wtOFCcsaiATZ4W/la4e3cNDjuA8e
+         FlXhu99ldkGgAyF5RpAtdP4J5j0P9Y2+7uCKBTHKl/REHsRUzY3Ht3j3SEyvEHVbUPhl
+         Ubvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUedegVViWLNQR2bVKAF1sR6vbiUoIOiOLzNeyOw232fqgYuiGe2BgqqRtYset5DDhbl2DerggutG3mkeezE6KmSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynCuQXEIccFlbCCYsyUWfxxFd9Q/e/0TS90lnlbQgBl1vjRRCd
+	8kPGraKcVyDIiHuWhz7Tf1Epq8E6Bm/DTMwKfrXCRqxipC5Z/KUrFktRd9//Oqk=
+X-Gm-Gg: ASbGncsuU4iDWRkZoHKxFeIaLSUFYuc/AssDosivdOPu9T63YHHVV6plr6HpyG31l5G
+	Y7VTzOe5xB+RoZAgcm9oW8K+Oo2gyJyrbv8N0AmaNrEMwbAWI7b6VNIBCGJK/WXMJ968U3fTKKc
+	2LBn0z9NYQ5yRFZeErgcmgzf6UOp3lOcMx1kr4XGZpskJhJTPv7Uq+CqNPGe0MuFkMIbwJZOS6d
+	JaMoMmRrwfAnep4YVHS+Tu0Eeq4sST9/fjkY/1dCBBMqGdm2gJOx6lBFL0wBv70AlQCNigF8xP0
+	OL2NN5KsU/xzQZEURE1+yJJEtyt5aMfw+JJH8VbJp1rgUNmZ2l51tEWZ6a2AX+IYmCTENjrREUg
+	=
+X-Google-Smtp-Source: AGHT+IHj61UYuOocbWw/qWMpr+RAho3zm2+puTeioLvnRLnuw4Nm2xW7pb1mJ8SKDz4411HtZ7isXQ==
+X-Received: by 2002:a05:6000:1a86:b0:38d:dc4d:3473 with SMTP id ffacd0b85a97d-390eca384b1mr5985832f8f.51.1740829423579;
+        Sat, 01 Mar 2025 03:43:43 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.23])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796600sm8002871f8f.20.2025.03.01.03.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 03:43:43 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/4] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Sat, 01 Mar 2025 11:43:18 +0000
+Message-Id: <20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223123044.725493-4-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANfywmcC/4WNTQ6CMBBGr0Jm7Zj+QFBX3sOwqGWASUhLpkg0p
+ He3cgGX7yXf+3ZIJEwJbtUOQhsnjqGAOVXgJxdGQu4Lg1GmUdooXDj4VWYc5tXHgOmVFgo9Gmu
+ t07b1dV9DGS9CA7+P8KMrPHFao3yOn03/7N/kplEhte1Vqadxl6a+zxycxHOUEbqc8xc35uC0v
+ QAAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2738;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=evUvX4RMBfKC8FqkgyOYIu49UpyYWqsRchzfwT3wFVE=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnwvLngUxy+MXzTvUcVPQf/Vn4XqYkl8kM3dwFf
+ DmYVxaFXSaJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8Ly5wAKCRDO6LjWAjRy
+ ur9qEACDSxzR9tumJKwuhzgEo08hXMNwYrOiJWy/GhOTxgmk29YjAovMmjaayFfJqUgF7V6beFA
+ RS8OXsLqcO17SXY0d8+7nvES0yXgElnsfTy5oWlfypPngGZBMH+Biq/7EvmLugypVzKweBk1eQL
+ iRIFYE2ni3ce+dpFxDC5nTUXJ0B11DYR9t6EIP8Dct0YsYZ4NaCR9MWefbPleW80/Tk95sAaRdg
+ kbOPiWLJbRUC6OMqxC4wv9KlsjaHY2QnUfMhbX3bekG2kSoZW3pr7oEB5wr1ZQfvzV4BF4rpJWy
+ w/gz8M1oJe+mW43GReWWF1qlsMcmKbVFTbwSGOlnRZlrC7H6XA7MEm73BoNnV/dm4ujVKqez6KA
+ tNTQbdaQz5/Arem/o4eNCTdcR7bAixbuhs59y5uF+iIL2ShlzZGtjYTfhHK3XpvmcS5Clwfws1J
+ PKbznYWGc1YodbsuGi3reJJAAsT8vLDmSWc6HBTpWchXnF4OTcU5aDkMKwJSEvd2KlbNNQac021
+ Xd+aKXq0mvd9gUZZUCUeUrC7itF/yLQNy3yHdDNVR4VJihubXy94XNjCiX58Phmy3rMgSq976Kj
+ M5h01vqEECANqtD0xLX/F6NP9ybFg+t7xohWnoLPZGokCX5v/EcMtf5UFUh5VxBM33oUaPSV+zK
+ CfwOuaI8VtCo3lw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi Ivaylo,
+Hi folks,
 
-kernel test robot noticed the following build errors:
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
 
-[auto build test ERROR on krzk/for-next]
-[also build test ERROR on robh/for-next krzk-dt/for-next pinctrl-samsung/for-next linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-arm-samsung-document-g0s-board-binding/20250223-203243
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250223123044.725493-4-ivo.ivanov.ivanov1%40gmail.com
-patch subject: [PATCH v2 3/4] arm64: dts: exynos: add initial support for Samsung Galaxy S22+
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250301/202503011651.Vto3vDw7-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503011651.Vto3vDw7-lkp@intel.com/reproduce)
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503011651.Vto3vDw7-lkp@intel.com/
+regards,
 
-All errors (new ones prefixed by >>):
+Peter
 
-   In file included from arch/arm64/boot/dts/exynos/exynos2200-g0s.dts:9:
->> arch/arm64/boot/dts/exynos/exynos2200.dtsi:8:10: fatal error: 'dt-bindings/clock/samsung,exynos2200-cmu.h' file not found
-       8 | #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
 
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
 
-vim +8 arch/arm64/boot/dts/exynos/exynos2200.dtsi
+---
+Peter Griffin (4):
+      pinctrl: samsung: add support for eint_fltcon_offset
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
 
-b661f5fc96c5e9 Ivaylo Ivanov 2025-02-23  @8  #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
-b661f5fc96c5e9 Ivaylo Ivanov 2025-02-23   9  #include <dt-bindings/interrupt-controller/arm-gic.h>
-b661f5fc96c5e9 Ivaylo Ivanov 2025-02-23  10  
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 150 ++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 293 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  51 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  12 +-
+ 5 files changed, 321 insertions(+), 197 deletions(-)
+---
+base-commit: f7da3699c901aea6a009d38116d24c67a4c9662e
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
 
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Peter Griffin <peter.griffin@linaro.org>
+
