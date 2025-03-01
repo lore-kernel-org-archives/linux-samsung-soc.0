@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BAE249F9;
-	Sat,  1 Mar 2025 13:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C01E522;
+	Sat,  1 Mar 2025 13:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740835186; cv=none; b=Pw3G0Wa0F2fdDYUIGrzxT2GDW8j4LxItuumRrPCtdx61X7E6pbtmg76vVzO9V0jnjNkpR711GJ5LRJWPsJt9IPmScaWdaGQyiDP3rDw7csHM4avpNqBHaOYaZuL7y/0mCyXmgokW45428+vWxKtfpsAmo5qS4WUoaqqvou2r9No=
+	t=1740837374; cv=none; b=kVdb7BSl2lwbm4Y1dPknI1M1KfpAfNcrtyzwbzVFgE3BtvYnBgF975njdN3j0AnxPeHzxK56ruOY9eu0jQ3EKAPgO50dSjcSBp6pkHN++R3iuKes+c9nRwpl3qCmqemWsDwFkvvPx1JgwCoAMhpQBZohnpQ8jE79Km9ZOrESkGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740835186; c=relaxed/simple;
-	bh=q3Pps1JqWekoYzJLc3BnskzmORQHX3a6nTesaP3DU9U=;
+	s=arc-20240116; t=1740837374; c=relaxed/simple;
+	bh=BWrrOoF3IGMQNY48tCuiwV9PVgilEYBkKPd1dGjEiok=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gOVzZMTwSj4dqff6FIzYDGm+cPKD32UpOJfnz8VMzyrKdSMILmoA5gEF2lzEfHIIGiMD6s4OpaNoXO35dqyYYb5CCUivhr/hBtuQYsDJ3j7b9iiP1t40b1etIn5jNHF94UsNLKq1ZdnJonYVfe/cmfSN2UuCABL5ByZ/WkjF6x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMHrvaEO; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=mN3XnJt1dWHbb+GWvEimdsVUe0qdXA0ri58bfEEcbN7oHac8R/FcneABjlIwqKRnllpL1aj87aUBvLpsjWsbuQdL6epthxPl7xc17vqPU75Aw1Z59f3etSqqob9HGfZmPnyGC9bii2YfygkaCHfxL0lBsjvbWJEvnGx1Xdg+9A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWw51Fjp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMHrvaEO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A3D9C4CEDD;
-	Sat,  1 Mar 2025 13:19:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWw51Fjp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A480AC4CEDD;
+	Sat,  1 Mar 2025 13:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740835186;
-	bh=q3Pps1JqWekoYzJLc3BnskzmORQHX3a6nTesaP3DU9U=;
+	s=k20201202; t=1740837374;
+	bh=BWrrOoF3IGMQNY48tCuiwV9PVgilEYBkKPd1dGjEiok=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qMHrvaEOxGfim3FVWrzhplnji6ptU9tvEyKdSc0GHzniu3W7HjJPCCuMOw9GJZcJm
-	 krf4bpsCsmkPoEmYgaQwfBnVjrejc1/ANuppIjItG/cUVErfLHhRYtsu6PPv2hIxnP
-	 lmk7bcI57rCeOs59JSNIZkksLBFOl8upjm3A54ZV8lx+bhGJcLLDjkHHWUcLKL9YqF
-	 CUutk8/UwCB0DsiPU6uDlC/aD9mijEbjlUW6cJ7yaxToXuN20rgDeRntguClGVPXPG
-	 dkaCdwX79bp6f4xZAsUQjXjM1wVk/g2Sw7XQSK0vnJk4SKixKXjXTGj4KWDy4T3lje
-	 ZWTgLV+4zt30w==
-Message-ID: <d11ddca7-2569-431e-b34c-74739832f7f4@kernel.org>
-Date: Sat, 1 Mar 2025 14:19:37 +0100
+	b=QWw51Fjp/oRQSv6aIA0CmUaV6dSc/Mj0HLps4es1RsJgkN0cMvJoYNueeG+F3Ih9f
+	 9vuH896mJRyz1Y/seplnworuv9I3vxfpCShdoA3wxXDFNWPlUNPGY63msaLyt0QOHZ
+	 /E0U0UgFqtKk8YeHuy5XnkmiPopm241nTzQoEpWuL2vQxf5AQ16RU0pcjbdzkle0eb
+	 C58/sD9sS9C+IqiaKrQVqWZ0Wsi2Sp6XY0oOeLz/hX+G/ls8aRCcv+EKLIaDpxeVmV
+	 wbIjPaIDNkvBKMxotHiGFnjyI9MWx26xtPIG8sY8Hj5dOiNVAbCDW1L7syrLnKNOaS
+	 d5Y3bLptd8CLg==
+Message-ID: <cba16ab1-cd5c-4a00-81ac-896de2b4c2ad@kernel.org>
+Date: Sat, 1 Mar 2025 14:56:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,24 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/18] rtc: s5m: convert to dev_err_probe() where
- appropriate
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Hans Ulli Kroll <ulli.kroll@googlemail.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- =?UTF-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>,
- Dianlong Li <long17.cool@163.com>
-Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org
-References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
- <20250228-rtc-cleanups-v1-18-b44cec078481@linaro.org>
+Subject: Re: [PATCH 1/5] arm64: dts: exynos990: Enable watchdog timer
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+ <20250217-exynos990-dt-changes-febuary-v1-1-99935218cbf4@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,20 +88,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250228-rtc-cleanups-v1-18-b44cec078481@linaro.org>
+In-Reply-To: <20250217-exynos990-dt-changes-febuary-v1-1-99935218cbf4@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 15:07, André Draszik wrote:
-> dev_err_probe() exists to simplify code and harmonise error messages,
-> there's no reason not to use it here.
+On 17/02/2025 22:32, Igor Belwon wrote:
+> Enable the two watchdog timer clusters (cl0, cl2) present
+> on the Exynos990 SoC.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 > ---
->  drivers/rtc/rtc-s5m.c | 50 +++++++++++++++++++++------------------------
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+> index dd7f99f51a75412f5c3b91c3425a63652546fa5e..4446a1a54ba2de56879353c9c4a898b1d697fc13 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+> @@ -211,6 +211,30 @@ timer@10040000 {
+>  				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+>  
+> +		watchdog_cl0: watchdog@10050000 {
+> +			compatible = "samsung,exynos990-wdt";
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I don't see bindings in the next, so I am dropping this patch from my
+queue. Please resend when they hit the next.
 
 Best regards,
 Krzysztof
