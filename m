@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30031DF986;
-	Sat,  1 Mar 2025 14:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072223597B;
+	Sat,  1 Mar 2025 14:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740840610; cv=none; b=mOx5k637wt34vJpqwWEImbtv4p5m+ANJhXMQdnTd1eus3pHJ26SDpqEfgofbH5ym7jDouukfaZiV6dMXtx7Ekv9coQINsK31DnrvxNPCmzflPH03XKsw2YNRJVJCYc9TDRfGMgfHLLaLo5UrmNVvVeRB0CrkTD/SHR33X9799tw=
+	t=1740840953; cv=none; b=fNo8p5zIYSE0iIlMAYBqnntSTTLa7usbyuN4v6O2/hGN6A6uNQOtPTmjR7jkfzhJxQ53cwtqUXNa6V6T4g12FgC2G+CwLyxLvO79ddi8sN2NRDqPiStVbbpzNsdxovIWX5UUvVWkmrJ852Vq6mqAsxcNrPLvE3gkwnEdx5eshEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740840610; c=relaxed/simple;
-	bh=dv6x0iYtgHNQ2ns9yHnsJFTE8xqU4p8nlVAKsdKx4Xw=;
+	s=arc-20240116; t=1740840953; c=relaxed/simple;
+	bh=xuUflLmChbtO3f8iwcRNnR3XetVtPZ6uxN5XZuq2Y+Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1lhHE5i4awL00/NpxlFeLJZ1buXcKBMzKWpiErUfbURJ2SxLZbzHYtp4HOKEJ3FILR2lH2MfAQkOktvjyyJrByqGDa1REarBBda9YeyxhC+8KMjjho7Xgznft6RuPA9wTTt109QonhlvKQkX2ghkIvDe3ZHsLxn9Rc4NUrz078=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tv0DE8Sb; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=UaeKAa3yU8zOqsCsJ5mvQlYpgHrSwR2G3zgCptiKuB6D8n7XYbs1pz+lvol8jPjh/N2YjpVSuQC+5pcfDa3tJ6YZOoh879h7mvubJ/2LSy+yFzSzM6mt9Is2WXEC6qRf1ZgXQS3zldnkN57SrnDMcnxV1gn686yqOM/HkgU7yp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCzZBF8S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tv0DE8Sb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FCCC4CEDD;
-	Sat,  1 Mar 2025 14:50:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCzZBF8S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 400C6C4CEE2;
+	Sat,  1 Mar 2025 14:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740840609;
-	bh=dv6x0iYtgHNQ2ns9yHnsJFTE8xqU4p8nlVAKsdKx4Xw=;
+	s=k20201202; t=1740840952;
+	bh=xuUflLmChbtO3f8iwcRNnR3XetVtPZ6uxN5XZuq2Y+Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Tv0DE8SbU2QXAMEqip5cL2lbVT6xFD3q9xX8RfadIMDcBw00+f5b6/Ew+22qYEm8A
-	 ylulnSRt2tKpVGIC18KazaMLIAoL+CF7pIvhdh3S/SwtzjwTSMJih07IDm0U1glzbm
-	 zQ9j/5HzyI3spU/Cly8qqndz5a4tyGkd4W83x6CezsPUGo9BhrP2FUPdmkU3sfpxx3
-	 2WswbIuLqHvpW/HkSDmI46gBCu668l1no73tIDX1bmdsJB1h09mqngBIZFBAdWX2DG
-	 J0JBsre7jnDr2EY25S/UdC0hac1jXjKxhUA5CDxyypae7h6k+j/0KLKwqeCrbHp5tN
-	 37TiC46dS9T3Q==
-Message-ID: <7cd3bc4c-318e-4327-a00d-bfe42d4504c9@kernel.org>
-Date: Sat, 1 Mar 2025 15:50:03 +0100
+	b=MCzZBF8Sg4J01XumogCf8t8zMiCe/Eox8EedvQhyw1Q9rb17NNWs+ik7Cwz9+7Q8v
+	 FPP1wXV1W4VTLiJ2CVkwVHtz6hNvUwC0mwtoNa7fHhIGsR9qPYSbi+PzH6oZbLoelV
+	 iIUuQweWdUjc2UUmIfx43+RAVmsC79cor7Zk/fxdWLScP74iXMdyx7Lc3niix2BqJZ
+	 MbrGfTHQ2SOLSZk10/7pdb8Ye0gB15rZgwNwyTeD+fIZgy6elFdZt/Gu/z9tJsijH5
+	 6YXsVcdKEFAIXBkYPoSuv9yaU2qZfoluV6FkKqAdupfhVBua+fxD/UOs1BAWLcSyxL
+	 c36nS1oJkG/ug==
+Message-ID: <e4c83aa1-5da0-4420-a43a-bc7e91414da6@kernel.org>
+Date: Sat, 1 Mar 2025 15:55:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+Subject: Re: [PATCH v2 0/4] arm64: dts: exynos: add initial support for
+ Samsung Galaxy S22+
 To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20250223123044.725493-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223123044.725493-5-ivo.ivanov.ivanov1@gmail.com>
-Content-Language: en-US
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -88,38 +88,47 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250223123044.725493-5-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250223123044.725493-1-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 23/02/2025 13:30, Ivaylo Ivanov wrote:
-> Add maintainers entry for the Samsung Exynos2200 SoC based platforms.
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  MAINTAINERS | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
+> 2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
+> 1080x2340 Dynamic AMOLED display.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e4f5d8f68..7da20faf7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20937,6 +20937,18 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
->  F:	Documentation/devicetree/bindings/sound/samsung*
->  F:	sound/soc/samsung/
->  
-> +SAMSUNG EXYNOS2200 SoC SUPPORT
-> +M:	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/clock/samsung,exynos2200-cmu.yaml
-> +F:	Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-> +F:	arch/arm64/boot/dts/exynos/exynos2200*
-> +F:	drivers/clk/samsung/clk-exynos2200.c
-> +F:	drivers/phy/samsung/phy-exynos2200-usbcon.c
+> Further platform support will be added over time.
+> 
+> I expect [1], [2], [3], [4], [5], [6] to be merged before this patchset
+> because it relies on the aforementioned series for drivers and device
+> tree bindings.
+> 
+> [1] https://lore.kernel.org/all/20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com/
 
-Please add separate entry for the PHY driver.
+This was already merged. Update your dependencies once they are not a
+dependency for documented binding anymore.
+
+> [2] https://lore.kernel.org/all/20250215113248.159386-1-ivo.ivanov.ivanov1@gmail.com/
+
+This too.
+
+> [3] https://lore.kernel.org/all/20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com/
+> [4] https://lore.kernel.org/all/20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com/
+
+This looks not, so patchset will wait.
+
+> [5] https://lore.kernel.org/all/20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com/
+> [6] https://lore.kernel.org/all/20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com/
+
+BTW, you mixed dependencies here - like clock headers - with documenting
+bindings. Clearly separate what is the dependency and where are the
+bindings, if they are not merged at the time of sending this patchset.
+
+> 
+> Best regards,
+> Ivaylo
+> 
 
 
 Best regards,
