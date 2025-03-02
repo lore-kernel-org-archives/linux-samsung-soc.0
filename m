@@ -1,198 +1,189 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C824E288CC;
-	Sun,  2 Mar 2025 02:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA631C695;
+	Sun,  2 Mar 2025 09:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740881346; cv=none; b=TS6f+umKwfvtS12ErMyp3YDf72uYRbjqMXj3pUzjv5Zt7QSsn8ZmhTCAw/JbELzTyHP9OTq80sNs3m4AyfBk6y/0VidTAFIMg0LfZWkm4FSTaGUnni/Lm7rtJEEbPHyHcdorOgQL+PohfGXkkDtEHkZh4C4z7gk2WJJidYtA34g=
+	t=1740907004; cv=none; b=YJvsWRb6papDzna2BRRUqk9lZf2bGjGRMRMMANWB3EAeRSaLS6B21dQlLPPNlmIS5mpFGdvwELIdzkvhG++TeSU3GbZ3B2qd8BRx3pc695o+y2hR5r3YehnlovaKTP80SJfkwpuLn9SNy9/2jZ7IoJXNz9YpCt/dUfBVWnf8pE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740881346; c=relaxed/simple;
-	bh=N6bdO5ufvOU4UlMfcbW1V2iVFg9S7pViFB0B1Dp885U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTySZq4jiQbUDh00nXqwqwnrpLuVRaQ3YNR0kuaQQUIMSlZKEAGgTpLI9wK+HHtwrBAHOOvqrcKx09bzEvNK0SnrMj1cxyFCEo688YiXvud4r4vK0N2xlmnZatccMU3RVk+mfUaLAAeAOeMMal8kmEFAVrGWWhJucUIRT6/hb7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VtK3+Hr6; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1740907004; c=relaxed/simple;
+	bh=H44sFfK1LqDLlQt24Q6gB7Vof+guX4WP72Q4KQ0UZj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ugTtw3YvVCFWRBsNGYRNFEbB1uElRUqOvdNt8dWLFsV155lDt797DlUcgJf2FWQFUrF3ZqvJou4P5YZr2AneigG3k5pqCQrRVaIpa/o4tZ4ztEReRwYM5+ltYuF9vbN412+icKfmcxZbK1jCWCC15SXtX48bSrLdNYkjFUPIuIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqtUrY5n; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VtK3+Hr6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740881345; x=1772417345;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N6bdO5ufvOU4UlMfcbW1V2iVFg9S7pViFB0B1Dp885U=;
-  b=VtK3+Hr6GoB1APXb8wX6bO63AhRY6CZQrgfh2SRMToX2nLi5wRuXPPFP
-   cxsYaH6aUkh19WXgCC7jeUEu/M9zUNUlei9KSnc9E8z9cCPHGiIVZ3BZZ
-   9LrolL3jTZZ0nYL5mLh20ifASIsS4/DMGRljwjVcfbBNS7fP1R0tmdW/0
-   Gy6C+/vJHnKJJfuHHM5wmESDznZmuIOvVqbMmBei1WW9s7DCtC/R3uKxv
-   EObSEc4IdvznWoNOlpiEblrvYrAGgweEoZAvN/tcSbNWYT9GpkMG9IScz
-   pEoEvnBZeJ8iv66P5iB2LkSwa1WDdbOYT9YoCupOYyiBO9GPEofxWFTHA
-   g==;
-X-CSE-ConnectionGUID: Xfh2t+UaQQeNsX3APORpbA==
-X-CSE-MsgGUID: T1iRVskiQNSRuvs6R9mLnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="44596033"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="44596033"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 18:09:04 -0800
-X-CSE-ConnectionGUID: kJyzAyBiQCmiU86YmGf5mA==
-X-CSE-MsgGUID: EX0HUutsR06iMNtitEBQkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117696253"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 01 Mar 2025 18:09:00 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toYlF-000GxG-1r;
-	Sun, 02 Mar 2025 02:08:57 +0000
-Date: Sun, 2 Mar 2025 10:08:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] phy: phy-snps-eusb2: make repeater optional
-Message-ID: <202503020920.Kw0H8Acs-lkp@intel.com>
-References: <20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqtUrY5n"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so6296559a12.0;
+        Sun, 02 Mar 2025 01:16:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740907001; x=1741511801; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gt4e/Q1bzVAKDz/zUzGYf19qKql6n2SPXCwUMfSa3zM=;
+        b=VqtUrY5nnlS3Aa0vP/29A123vZXDlxGeVwUcqGepPVvQ0po5F6rAhby2K4gBfbfibH
+         uYEMTA05VtesO8Cp2mHTLNBOL+toWjmZK6AWKDLPWRHQSkln66+35ccHnWIQBlz70+3n
+         7IoECgvmrYYWkfTZMqjmTTnhVq+BCJEZeZbeNDiLNgC0EhoQnK5ddIfAG2WI6nhX0GEs
+         PU+hzwhcwfB48S6GQCN4xUPYwIoeP51dmulyUvljsR3EsW34ywhsCcXCb5ICxturaI5p
+         Ur3oleq2EnqA24bfMtGZlJq4PcLB+iaOPJAEmSeBFz0ySv9Hrfhgo/OvruGhAZ7VqnWj
+         k5DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740907001; x=1741511801;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gt4e/Q1bzVAKDz/zUzGYf19qKql6n2SPXCwUMfSa3zM=;
+        b=TSYjuwipiE0xp4T3wNDfNmhA6PIM8O74QzWo5e3pz26VLiexyfiTzHRI7dmvlfX0Pp
+         VSr52wMsnlMCwCQT66TCa1/rOivzwxavrHxS7JtQmkz7Gs9EAIZzS1tcOpk30fx7JJYR
+         LXv4tPrvRxdXlBDr+HrgvtWMk7+MdxeB/krC7wxR12O5CedwXOdrc9oec7AeqXnJvEEa
+         YqKwN9lQPH9+u7fIu1w4dRmzxTUdaeRanQ0xjLlpRsDQOzBOOnvDJWADuXPIadmFO77x
+         CvUcyqC/kWhSX1XhV11afUJXbrXqEPl3L13+6vXgT5aWVMgYosTAnKTCCY7+pLvomlKc
+         p2XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUC0a/o3NqZpUMeN4awjJalGTvHi/GUOEJ58eNF367PgSmkhSQeJAshV8zCXbsQEQSgwYERRUAeGVAjwmJ9tQ==@vger.kernel.org, AJvYcCUVo9ipuNnuNp7jwfEut/XC8bpymJteYr79IvWyeYgvbRwyoRWIa2PK62b/hT344QxeMaCT3jhikEia@vger.kernel.org, AJvYcCUq3oDlGDGjdjYgJPViYmEwVPYiZYhNvkChWwTOSX24ZA2eOTrVLzwuwWG2vZE7uXZ6aJxuYdq6tfXFdRql@vger.kernel.org, AJvYcCXNWumUJqiVJ3cjvXtw97Ksexd4VTCHb29UbdHMtxClamEQ7IbWyIm14/fPeEGDaM5nesEe5gVn1LGtlnLddmW0m1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJNScHIaVjV0XMM2/WOtT4rvXgr0Yf5oH/l3KjoNh9Bb4FrZmA
+	WwDjibAf1DM+MgdEEcEx7odYYqWQ8NO7G6OWybKAANiOPADWe2/HluWLqA==
+X-Gm-Gg: ASbGnctZtldh1S7J2dc6p5Kh9AxfN6+9L3CMU7e5lvdkZAqGGS6VkjkyXBii55UgvjX
+	mEpSwO3JsjEfNs543l9FIb95lnIce7Z3l7fbLPLJ83pDBoUwmbGplmEMZxMI65QxM1NsU8A85tc
+	FyhEJQxF4ZS2iX6iUZs29Mhz9Q1/pU0lS+GOFZ6VEm9JuaTmc/3zxwjz9viscnffmxZiXIEkSe7
+	KsQhuIXEfCOMUQs8uHOmeF6mLuF+uqdcF3dRS02scQFKsM5AQHn0EkutzUdSD50U/1MWZzrBvuw
+	Ewmbygx1sxF6otwlKNNiig+q6sU268PDd/3+Xxs91wKbMsw1sUNr4yBv2Xj6TV2AESOQOcm/Cuz
+	8okVaE34F643xhLSzEjlbfNI=
+X-Google-Smtp-Source: AGHT+IEYSDw2sP7Dh+Z2pA1UtfA1dKfkOfTidFVCkHLXhYUdHVMwVkHLto91nPU2C2aCCuTbWanVJQ==
+X-Received: by 2002:a17:907:3f22:b0:abe:c3a8:7aa2 with SMTP id a640c23a62f3a-abf268228c1mr1096068066b.46.1740907000673;
+        Sun, 02 Mar 2025 01:16:40 -0800 (PST)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6ee49dsm624648366b.105.2025.03.02.01.16.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 01:16:39 -0800 (PST)
+Message-ID: <4502b578-96e6-49e0-8f3b-54f6e5640c55@gmail.com>
+Date: Sun, 2 Mar 2025 11:16:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
+ samsung,exynos2200-usbcon-phy schema file
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
+ <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
+ <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
+ <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Ivaylo,
+On 2/25/25 10:11, Krzysztof Kozlowski wrote:
+> On 24/02/2025 11:48, Ivaylo Ivanov wrote:
+>> On 2/24/25 10:56, Krzysztof Kozlowski wrote:
+>>> On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
+>>>> The Exynos2200 SoC has a USB controller PHY, which acts as an
+>>>> intermediary between a USB controller (typically DWC3) and other PHYs
+>>>> (UTMI, PIPE3). Add a dt-binding schema for it.
+>>>>
+>>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>>> ---
+>>>>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
+>>>>  1 file changed, 76 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>> You have undocumented dependencies which prevent merging this file.
+>>> First, dependencies have to be clearly expressed.
+>> They are, in the cover letter.
+> Where? I read it twice. Dependencies is the most important thing and
+> should scream at beginning of the cover letter, so if you bury them
+> somewhere deep it also would not matter - just like they were missing.
+>
+>>> Second, you should
+>>> rather decouple the code from header dependencies, otherwise this cannot
+>>> be merged for current release (just use clocks with long names, without IDs).
+>> Sure
+>
+>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>>> new file mode 100644
+>>>> index 000000000..7d879ec8b
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>>> @@ -0,0 +1,76 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Exynos2200 USB controller PHY
+>>>> +
+>>>> +maintainers:
+>>>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>>> +
+>>>> +description:
+>>>> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
+>>>> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
+>>> Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
+>> It's not (I think). There's a few reasons I've decided to make this separate
+>> from the usb3-drd-phy bindings and exynos5-usbdrd driver:
+>>
+>> 1. This PHY does not provide UTMI and PIPE3 on its own. There's no tuning
+> USBDRD phy does not provide UTMI and PIPE on its own either if you look
+> at diagram - they call it phy controller.
 
-kernel test robot noticed the following build warnings:
+Ughm. What? So in most exynos cases, there's a combination of multiple phys?
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+>> for them, and all that is needed from it is to disable HWACG, assert/
+>> deassert reset and force bvalid/vbusvalid. After that SNPS eUSB2
+>> initialization can be done and USB2 works. If the USBCON phy is not set
+>> up before the eUSB2 one, the device hangs, so there is definitely a
+>> dependancy between them. For PIPE3 we'd need to control the pipe3
+>> attaching/deattaching and then initialize the synopsys USBDP combophy.
+> Does it mean there is no USB DRD phy controller as before?
+>
+> Anyway the problem is you have DWC3 -> PHY -> PHY. Looks one phy too many.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-phy-rename-qcom-snps-eusb2-phy-binding-to-snps-eusb2-phy/20250223-202709
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250223122227.725233-6-ivo.ivanov.ivanov1%40gmail.com
-patch subject: [PATCH v2 5/8] phy: phy-snps-eusb2: make repeater optional
-config: microblaze-randconfig-r123-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020920.Kw0H8Acs-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250302/202503020920.Kw0H8Acs-lkp@intel.com/reproduce)
+So...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020920.Kw0H8Acs-lkp@intel.com/
+DWC3 -> USBDRD (USBCON) -> PHYs?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/phy/phy-snps-eusb2.c:464:59: sparse: sparse: Using plain integer as NULL pointer
+...with usbdrd controller connecting and controlling the USB2 and USB3
+phys, as well as dual role mode? Well, where is the DRD part in the exynos5
+driver?
 
-vim +464 drivers/phy/phy-snps-eusb2.c
+I guess it does perfectly fit the job of a usbdrd controller then (if it
+even deals with DRD). But then again,  this brings up two questions:
+1. Should this driver even be named exynos2200-usbcon and not, for
+example, exynos2200-usbdrd?
+2. Are the exynos5-usbdrd phys really only USBDRD, or do they implement
+USB speed functionality? What is the UTMI/PIPE3 setup for then?
 
-   398	
-   399	static int snps_eusb2_hsphy_probe(struct platform_device *pdev)
-   400	{
-   401		struct device *dev = &pdev->dev;
-   402		struct device_node *np = dev->of_node;
-   403		struct snps_eusb2_hsphy *phy;
-   404		struct phy_provider *phy_provider;
-   405		struct phy *generic_phy;
-   406		const struct snps_eusb2_phy_drvdata *drv_data;
-   407		int ret, i;
-   408		int num;
-   409	
-   410		phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-   411		if (!phy)
-   412			return -ENOMEM;
-   413	
-   414		drv_data = of_device_get_match_data(dev);
-   415		if (!drv_data)
-   416			return -EINVAL;
-   417		phy->data = drv_data;
-   418	
-   419		phy->base = devm_platform_ioremap_resource(pdev, 0);
-   420		if (IS_ERR(phy->base))
-   421			return PTR_ERR(phy->base);
-   422	
-   423		phy->phy_reset = devm_reset_control_get_exclusive(dev, NULL);
-   424		if (IS_ERR(phy->phy_reset))
-   425			return PTR_ERR(phy->phy_reset);
-   426	
-   427		phy->clks = devm_kcalloc(dev,
-   428					 phy->data->num_clks,
-   429					 sizeof(*phy->clks),
-   430					 GFP_KERNEL);
-   431		if (!phy->clks)
-   432			return -ENOMEM;
-   433	
-   434		for (int i = 0; i < phy->data->num_clks; ++i)
-   435			phy->clks[i].id = phy->data->clk_names[i];
-   436	
-   437		ret = devm_clk_bulk_get(dev, phy->data->num_clks,
-   438					phy->clks);
-   439		if (ret)
-   440			return dev_err_probe(dev, ret,
-   441					     "failed to get phy clock(s)\n");
-   442	
-   443		phy->ref_clk = NULL;
-   444		for (int i = 0; i < phy->data->num_clks; ++i) {
-   445			if (!strcmp(phy->clks[i].id, "ref")) {
-   446				phy->ref_clk = phy->clks[i].clk;
-   447				break;
-   448			}
-   449		}
-   450	
-   451		if (IS_ERR_OR_NULL(phy->ref_clk))
-   452			return dev_err_probe(dev, PTR_ERR(phy->ref_clk),
-   453					     "failed to get ref clk\n");
-   454	
-   455		num = ARRAY_SIZE(phy->vregs);
-   456		for (i = 0; i < num; i++)
-   457			phy->vregs[i].supply = eusb2_hsphy_vreg_names[i];
-   458	
-   459		ret = devm_regulator_bulk_get(dev, num, phy->vregs);
-   460		if (ret)
-   461			return dev_err_probe(dev, ret,
-   462					     "failed to get regulator supplies\n");
-   463	
- > 464		phy->repeater = devm_of_phy_optional_get(dev, np, 0);
-   465		if (IS_ERR(phy->repeater))
-   466			return dev_err_probe(dev, PTR_ERR(phy->repeater),
-   467					     "failed to get repeater\n");
-   468	
-   469		generic_phy = devm_phy_create(dev, NULL, &snps_eusb2_hsphy_ops);
-   470		if (IS_ERR(generic_phy)) {
-   471			dev_err(dev, "failed to create phy %d\n", ret);
-   472			return PTR_ERR(generic_phy);
-   473		}
-   474	
-   475		dev_set_drvdata(dev, phy);
-   476		phy_set_drvdata(generic_phy, phy);
-   477	
-   478		phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-   479		if (IS_ERR(phy_provider))
-   480			return PTR_ERR(phy_provider);
-   481	
-   482		dev_info(dev, "Registered Snps-eUSB2 phy\n");
-   483	
-   484		return 0;
-   485	}
-   486	
+ps: dealing with this without any documentations sucks.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Ivaylo
+
+>
+>
+>> 2. With the way it's modelled, we need to parse phandles from eUSB2 and
+>> USBDP to the controller. Adding that to the usbdrd driver would be...
+>> weird. It makes more sense to model it as a separate driver, because
+>> it functions in a different way.
+> Just to be clear: we don't talk about drivers here.
+>
+>
+> Best regards,
+> Krzysztof
+
