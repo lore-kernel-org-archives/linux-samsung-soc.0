@@ -1,150 +1,198 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE1182D7;
-	Sat,  1 Mar 2025 20:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C824E288CC;
+	Sun,  2 Mar 2025 02:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740861434; cv=none; b=MRRC/JLqTWAxj9SJDDmv1VaQFHov0QWhPe+Yg9kv1dKSL4DAb+Kk7lGBjZwEeiPG77lmXoQsgST01EwqEEEaKq8VPICLPUHbVtIhlinjtM2yV4vvMn4NWbQA0yrjHBtLmWsNzKQ6g5mt0HZglAyYT7S/KJJQQN/FB1/h3zpmCv0=
+	t=1740881346; cv=none; b=TS6f+umKwfvtS12ErMyp3YDf72uYRbjqMXj3pUzjv5Zt7QSsn8ZmhTCAw/JbELzTyHP9OTq80sNs3m4AyfBk6y/0VidTAFIMg0LfZWkm4FSTaGUnni/Lm7rtJEEbPHyHcdorOgQL+PohfGXkkDtEHkZh4C4z7gk2WJJidYtA34g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740861434; c=relaxed/simple;
-	bh=bS075K6RDLoIA2kHkCsy0JdsUrdTU7jF2LvyzphOjsA=;
+	s=arc-20240116; t=1740881346; c=relaxed/simple;
+	bh=N6bdO5ufvOU4UlMfcbW1V2iVFg9S7pViFB0B1Dp885U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7u0ZDJOAvo3IE1FnSrzxq3Oy6DR2t/ZL2iALZxqIFwcu30JlsFDKZNRu6teK8OOK+PhslePKP4vlTmdU8FKPJoSSckmz6QHb8XUXt8dkRs7zASbK5ROaKaOIu6wH0k5wz8A+FUDpE2JHHvI+8akNTYPgnfVvDzLJ46waFy2Ips=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j0W8ax/u; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTySZq4jiQbUDh00nXqwqwnrpLuVRaQ3YNR0kuaQQUIMSlZKEAGgTpLI9wK+HHtwrBAHOOvqrcKx09bzEvNK0SnrMj1cxyFCEo688YiXvud4r4vK0N2xlmnZatccMU3RVk+mfUaLAAeAOeMMal8kmEFAVrGWWhJucUIRT6/hb7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VtK3+Hr6; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j0W8ax/u"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C9EDE20453;
-	Sat,  1 Mar 2025 20:36:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740861424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Acc0tGYBakmOPZLGuJmU2rnhFl+Tc281npjtzbe/74=;
-	b=j0W8ax/uRquO/giWNgJhf4H4p4dxfIxzFW6MO4OZsXaQhJo+e7YlrfmfwuwO8z8CykjSQD
-	0U7Afy7/Ba2WJ6ueUqpasO3bhRsmWK8p1CSKWQJLxASlHZTVaGb200Xak05pxb0hXPgbBk
-	sT9SJIRG4qLHlanaDO5mFlJjeg4NV4xNVcAt6A5IcLajDdg4v3tw1PgIh8R9k5YlEQBuhG
-	dfXSaVruN9RLuzUSlpcs4F7JA1n4iAXoEgtPn0uxly/CwiwCzgGYpZ/+vFDZKpgSjsOMi0
-	+ATKulcM1AzPZZmNwSQMXP1nZ5IL536rUVUy1TzC5EytwvQM/AGNSzQr14PTEA==
-Date: Sat, 1 Mar 2025 21:36:58 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VtK3+Hr6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740881345; x=1772417345;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N6bdO5ufvOU4UlMfcbW1V2iVFg9S7pViFB0B1Dp885U=;
+  b=VtK3+Hr6GoB1APXb8wX6bO63AhRY6CZQrgfh2SRMToX2nLi5wRuXPPFP
+   cxsYaH6aUkh19WXgCC7jeUEu/M9zUNUlei9KSnc9E8z9cCPHGiIVZ3BZZ
+   9LrolL3jTZZ0nYL5mLh20ifASIsS4/DMGRljwjVcfbBNS7fP1R0tmdW/0
+   Gy6C+/vJHnKJJfuHHM5wmESDznZmuIOvVqbMmBei1WW9s7DCtC/R3uKxv
+   EObSEc4IdvznWoNOlpiEblrvYrAGgweEoZAvN/tcSbNWYT9GpkMG9IScz
+   pEoEvnBZeJ8iv66P5iB2LkSwa1WDdbOYT9YoCupOYyiBO9GPEofxWFTHA
+   g==;
+X-CSE-ConnectionGUID: Xfh2t+UaQQeNsX3APORpbA==
+X-CSE-MsgGUID: T1iRVskiQNSRuvs6R9mLnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="44596033"
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="44596033"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 18:09:04 -0800
+X-CSE-ConnectionGUID: kJyzAyBiQCmiU86YmGf5mA==
+X-CSE-MsgGUID: EX0HUutsR06iMNtitEBQkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="117696253"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 01 Mar 2025 18:09:00 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toYlF-000GxG-1r;
+	Sun, 02 Mar 2025 02:08:57 +0000
+Date: Sun, 2 Mar 2025 10:08:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	=?iso-8859-1?Q?T=F3th_J=E1nos?= <gomba007@gmail.com>,
-	Dianlong Li <long17.cool@163.com>, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 00/18] a few rtc driver cleanups
-Message-ID: <20250301203658839d5482@mail.local>
-References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] phy: phy-snps-eusb2: make repeater optional
+Message-ID: <202503020920.Kw0H8Acs-lkp@intel.com>
+References: <20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelgedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveduvefhvdehlefgieelfeetudeugfehgfeugfekleejueefueettdffueetiedvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeejjedrudehtddrvdegiedrvdduheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejjedrudehtddrvdegiedrvdduhedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtoheprghnughrvgdrughrrghsiihikheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptgiftddtrdgthhhoihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhovghlsehjmhhsrdhiugdrrghupdhrtghpthhtoheprghnu
- ghrvgifsegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruhdprhgtphhtthhopehulhhlihdrkhhrohhllhesghhoohhglhgvmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com>
 
-On 28/02/2025 14:07:13+0000, André Draszik wrote:
-> Hi,
-> 
-> While looking at RTC, I noticed that various drivers are keeping
-> pointers to data that they're not using themselves throughout their
-> lifetime.
-> 
-> So I took the liberty to drop these pointers and this series is the
-> result.
-> 
-> The last two patches also convert two drivers to using dev_err_probe(),
-> as I looked slightly closer into those two. They don't exactly fit the
-> general subject of removal of unneeded pointers, but I wanted to share
-> them anyway, since they're ready.
-> 
-> All of this was compile-tested only.
-> 
-> Cheers,
-> Andre'
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
-> André Draszik (18):
->       rtc: max77686: drop needless struct max77686_rtc_info::rtc member
->       rtc: s5m: drop needless struct s5m_rtc_info::i2c member
->       rtc: aspeed: drop needless struct aspeed_rtc::rtc_dev member
->       rtc: ds2404: drop needless struct ds2404::rtc member
->       rtc: ep93xx: drop needless struct ep93xx_rtc::rtc member
->       rtc: ftrtc010: drop needless struct ftrtc010_rtc::rtc_dev member
->       rtc: m48t86: drop needless struct m48t86_rtc_info::rtc member
->       rtc: meson: drop needless struct meson_rtc::rtc member
->       rtc: meson-vrtc: drop needless struct meson_vrtc_data::rtc member
->       rtc: pl030: drop needless struct pl030_rtc::rtc member
->       rtc: rx8581: drop needless struct rx8581::rtc member
->       rtc: s35390a: drop needless struct s35390a::rtc member
->       rtc: sd2405al: drop needless struct sd2405al::rtc member
->       rtc: sd3078: drop needless struct sd3078::rtc member
+Hi Ivaylo,
 
-My main concern with this is that as soon as we introduce irq support,
-we are going to need the rtc pointer back in the struct. But I guess
-that most of them are old enough to say that nobody is interested in irq
-support.
+kernel test robot noticed the following build warnings:
 
->       rtc: rx8581: drop needless struct rx8581
->       rtc: sd3078: drop needless struct sd3078
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.14-rc4 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I guess you could squash those two with the previous ones touching the
-respective drivers because you are the one removing the last remaining
-struct member.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-phy-rename-qcom-snps-eusb2-phy-binding-to-snps-eusb2-phy/20250223-202709
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250223122227.725233-6-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v2 5/8] phy: phy-snps-eusb2: make repeater optional
+config: microblaze-randconfig-r123-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020920.Kw0H8Acs-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250302/202503020920.Kw0H8Acs-lkp@intel.com/reproduce)
 
->       rtc: max77686: use dev_err_probe() where appropriate
->       rtc: s5m: convert to dev_err_probe() where appropriate
-> 
->  drivers/rtc/rtc-aspeed.c     | 16 ++++-----
->  drivers/rtc/rtc-ds2404.c     | 14 ++++----
->  drivers/rtc/rtc-ep93xx.c     | 16 ++++-----
->  drivers/rtc/rtc-ftrtc010.c   | 17 +++++----
->  drivers/rtc/rtc-m48t86.c     | 14 ++++----
->  drivers/rtc/rtc-max77686.c   | 37 +++++++++----------
->  drivers/rtc/rtc-meson-vrtc.c | 12 +++----
->  drivers/rtc/rtc-meson.c      | 16 ++++-----
->  drivers/rtc/rtc-pl030.c      | 14 ++++----
->  drivers/rtc/rtc-rx8581.c     | 85 +++++++++++++++++++-------------------------
->  drivers/rtc/rtc-s35390a.c    | 22 ++++++------
->  drivers/rtc/rtc-s5m.c        | 58 +++++++++++++-----------------
->  drivers/rtc/rtc-sd2405al.c   | 16 ++++-----
->  drivers/rtc/rtc-sd3078.c     | 71 +++++++++++++++---------------------
->  14 files changed, 183 insertions(+), 225 deletions(-)
-> ---
-> base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
-> change-id: 20250228-rtc-cleanups-12c0b5123ea4
-> 
-> Best regards,
-> -- 
-> André Draszik <andre.draszik@linaro.org>
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020920.Kw0H8Acs-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/phy/phy-snps-eusb2.c:464:59: sparse: sparse: Using plain integer as NULL pointer
+
+vim +464 drivers/phy/phy-snps-eusb2.c
+
+   398	
+   399	static int snps_eusb2_hsphy_probe(struct platform_device *pdev)
+   400	{
+   401		struct device *dev = &pdev->dev;
+   402		struct device_node *np = dev->of_node;
+   403		struct snps_eusb2_hsphy *phy;
+   404		struct phy_provider *phy_provider;
+   405		struct phy *generic_phy;
+   406		const struct snps_eusb2_phy_drvdata *drv_data;
+   407		int ret, i;
+   408		int num;
+   409	
+   410		phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
+   411		if (!phy)
+   412			return -ENOMEM;
+   413	
+   414		drv_data = of_device_get_match_data(dev);
+   415		if (!drv_data)
+   416			return -EINVAL;
+   417		phy->data = drv_data;
+   418	
+   419		phy->base = devm_platform_ioremap_resource(pdev, 0);
+   420		if (IS_ERR(phy->base))
+   421			return PTR_ERR(phy->base);
+   422	
+   423		phy->phy_reset = devm_reset_control_get_exclusive(dev, NULL);
+   424		if (IS_ERR(phy->phy_reset))
+   425			return PTR_ERR(phy->phy_reset);
+   426	
+   427		phy->clks = devm_kcalloc(dev,
+   428					 phy->data->num_clks,
+   429					 sizeof(*phy->clks),
+   430					 GFP_KERNEL);
+   431		if (!phy->clks)
+   432			return -ENOMEM;
+   433	
+   434		for (int i = 0; i < phy->data->num_clks; ++i)
+   435			phy->clks[i].id = phy->data->clk_names[i];
+   436	
+   437		ret = devm_clk_bulk_get(dev, phy->data->num_clks,
+   438					phy->clks);
+   439		if (ret)
+   440			return dev_err_probe(dev, ret,
+   441					     "failed to get phy clock(s)\n");
+   442	
+   443		phy->ref_clk = NULL;
+   444		for (int i = 0; i < phy->data->num_clks; ++i) {
+   445			if (!strcmp(phy->clks[i].id, "ref")) {
+   446				phy->ref_clk = phy->clks[i].clk;
+   447				break;
+   448			}
+   449		}
+   450	
+   451		if (IS_ERR_OR_NULL(phy->ref_clk))
+   452			return dev_err_probe(dev, PTR_ERR(phy->ref_clk),
+   453					     "failed to get ref clk\n");
+   454	
+   455		num = ARRAY_SIZE(phy->vregs);
+   456		for (i = 0; i < num; i++)
+   457			phy->vregs[i].supply = eusb2_hsphy_vreg_names[i];
+   458	
+   459		ret = devm_regulator_bulk_get(dev, num, phy->vregs);
+   460		if (ret)
+   461			return dev_err_probe(dev, ret,
+   462					     "failed to get regulator supplies\n");
+   463	
+ > 464		phy->repeater = devm_of_phy_optional_get(dev, np, 0);
+   465		if (IS_ERR(phy->repeater))
+   466			return dev_err_probe(dev, PTR_ERR(phy->repeater),
+   467					     "failed to get repeater\n");
+   468	
+   469		generic_phy = devm_phy_create(dev, NULL, &snps_eusb2_hsphy_ops);
+   470		if (IS_ERR(generic_phy)) {
+   471			dev_err(dev, "failed to create phy %d\n", ret);
+   472			return PTR_ERR(generic_phy);
+   473		}
+   474	
+   475		dev_set_drvdata(dev, phy);
+   476		phy_set_drvdata(generic_phy, phy);
+   477	
+   478		phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+   479		if (IS_ERR(phy_provider))
+   480			return PTR_ERR(phy_provider);
+   481	
+   482		dev_info(dev, "Registered Snps-eUSB2 phy\n");
+   483	
+   484		return 0;
+   485	}
+   486	
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
