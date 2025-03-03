@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE1212B93;
-	Mon,  3 Mar 2025 07:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E981DE3A4;
+	Mon,  3 Mar 2025 08:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986661; cv=none; b=rFLgIQ3ah9Y7hYb3lLbMin1wESpjKObR/m/kH9WKOzEMfMivM7FHp2W45S4zlGhzpSYShJn6Px/pNdrtBvGyxnc2tu6xX7z9w0pCgSqhybtb9EaHJDvFjDBpMQrH8VwXTOK7L0lHIgQgRfeFrVUalwBrL/m7x16bC8wJRONaC9k=
+	t=1740990570; cv=none; b=IsIL6Q+MdipDfdDUqUI3wHgWmtech38persq2c4IHa0qE7pK4PR50/3xphm0wdC1Q4GMRhEe7nA7LwQph4NLqm5I3LV/sWpV8oaNPEE8fYO5gN7lcrrRHosI9O7QSFTdpXlg+X+nNyDIfjsVXBJUfPo27aMa8bpPPSDtLvHX/Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986661; c=relaxed/simple;
-	bh=VySOvvJYVOXMBNDZlPELZwP+g8cJ/Y6sF/YKn/PvvDk=;
+	s=arc-20240116; t=1740990570; c=relaxed/simple;
+	bh=obB2ljcIPGtP0VJhm54WRUhHb1nNmOp3J/J2QdoPBuo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=efDOi8jLCCqIst4DrtXOy3L7IUWSRDOo0StuYP0ZQDPXXYIKTfZM/eK81y/+wATf/QcglUGlo5og35yxW5o1OJE5V+882EBN/mZ7g0o4hFvvEyffyBhs727MKNMBdxYVtm1377dU1oWNSYw0JFBaEv6VbHzUFulYUxCsa5PP0lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HbA7VZDt; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=jEe06paRKu/FfVdJsxB7pXJzdjfDKuHautoxv3Tptnto/jhFbevIu+UU0gHd+rnVCw506TnhWvICjO7/9YEtsFCF4jAdWUFLBfML/dw+qfTz81Dy6pcszprNrh8ugjKkirSQ78g9M6irHtnZMyxsn1Vx4y9mwAZlKSNc/oF3tFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5Fsc1d+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbA7VZDt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB72C4CED6;
-	Mon,  3 Mar 2025 07:24:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Fsc1d+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6C8C4CED6;
+	Mon,  3 Mar 2025 08:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740986660;
-	bh=VySOvvJYVOXMBNDZlPELZwP+g8cJ/Y6sF/YKn/PvvDk=;
+	s=k20201202; t=1740990569;
+	bh=obB2ljcIPGtP0VJhm54WRUhHb1nNmOp3J/J2QdoPBuo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HbA7VZDtl/TNWqG62oFhLMl+naJrz6RHcKCe2eecOjSTmvNSgowWBBPxsqrF0Xutl
-	 Dh+A/xjoB+v7Ap3lvHzUuCe135CCplLe/N1S07bo2GYI6gkcl1AMINuRjrRBxE5//N
-	 j9I48zLi8ourbw6TRjONfcLqJdrhGI03lmYfyk0cy6xI9QGn6ituRFuS2RzH2yBl7b
-	 WWcnGOrM78y2AmOp5XWTzwjEhwuBAXYPo9EIBdC4yIS+8lfVThl/2HnWcYCR8N2m3t
-	 PyiITAnhBIZMCHJYkm99gtdy4ktesE9VcdxGvtqjWuJHQg7BI1X7JHUT+QqLIyL5K7
-	 OfjucJD27eRog==
-Message-ID: <354d6100-311f-44d7-b8a5-1fd671b651e3@kernel.org>
-Date: Mon, 3 Mar 2025 08:24:13 +0100
+	b=L5Fsc1d+BT3zlKoAvBi301/7lNQasBdGMjxy/bahG5gw9C2PhtdMds2Iks/K0vAYe
+	 Iv51saEZ1KNYkpulm9MfT97RNhx7uBEcsBq8cO6fnYfbb18iAtRpkxUUUILC23eiEF
+	 d9LScttTam79NgrVIW0q45mfu2FygdvM8Y3cw9bmAopH1YSHHeuzxsAT0rEpffJRU5
+	 xCmxo+7bkBn8/2sN4t0RZ/i+76ZscytuML7vdooupcPLSgOHIsthFQ5dMje/vZo+PS
+	 iK0PIUtlo1r0LV3k94CYaUrv9HLaJ3VA1EtNIUt1E18nlNPVmhAKZw0epCkQ3UvgF/
+	 Y3A0gihRihCyA==
+Message-ID: <929ed565-f842-49e6-9c7a-6d1df5266a62@kernel.org>
+Date: Mon, 3 Mar 2025 09:29:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,25 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
- samsung,exynos2200-usbcon-phy schema file
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
- <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
- <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
- <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
- <4502b578-96e6-49e0-8f3b-54f6e5640c55@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: usb: samsung,exynos-dwc3: add
+ exynos7870 support
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250301-exynos7870-usb-v3-0-f01697165d19@disroot.org>
+ <20250301-exynos7870-usb-v3-1-f01697165d19@disroot.org>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -97,114 +92,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <4502b578-96e6-49e0-8f3b-54f6e5640c55@gmail.com>
+In-Reply-To: <20250301-exynos7870-usb-v3-1-f01697165d19@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 02/03/2025 10:16, Ivaylo Ivanov wrote:
-> On 2/25/25 10:11, Krzysztof Kozlowski wrote:
->> On 24/02/2025 11:48, Ivaylo Ivanov wrote:
->>> On 2/24/25 10:56, Krzysztof Kozlowski wrote:
->>>> On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
->>>>> The Exynos2200 SoC has a USB controller PHY, which acts as an
->>>>> intermediary between a USB controller (typically DWC3) and other PHYs
->>>>> (UTMI, PIPE3). Add a dt-binding schema for it.
->>>>>
->>>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>>> ---
->>>>>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
->>>>>  1 file changed, 76 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>>> You have undocumented dependencies which prevent merging this file.
->>>> First, dependencies have to be clearly expressed.
->>> They are, in the cover letter.
->> Where? I read it twice. Dependencies is the most important thing and
->> should scream at beginning of the cover letter, so if you bury them
->> somewhere deep it also would not matter - just like they were missing.
->>
->>>> Second, you should
->>>> rather decouple the code from header dependencies, otherwise this cannot
->>>> be merged for current release (just use clocks with long names, without IDs).
->>> Sure
->>
->>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>>>> new file mode 100644
->>>>> index 000000000..7d879ec8b
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>>>> @@ -0,0 +1,76 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: Exynos2200 USB controller PHY
->>>>> +
->>>>> +maintainers:
->>>>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>>> +
->>>>> +description:
->>>>> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
->>>>> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
->>>> Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
->>> It's not (I think). There's a few reasons I've decided to make this separate
->>> from the usb3-drd-phy bindings and exynos5-usbdrd driver:
->>>
->>> 1. This PHY does not provide UTMI and PIPE3 on its own. There's no tuning
->> USBDRD phy does not provide UTMI and PIPE on its own either if you look
->> at diagram - they call it phy controller.
+On 28/02/2025 20:40, Kaustabh Chakraborty wrote:
+> Document compatible string for Exynos7870 DWC3-compatible USB 2.0
+> driver. The devicetree node requires three clocks, named "bus_early",
+> "ref", and "ctrl".
 > 
-> Ughm. What? So in most exynos cases, there's a combination of multiple phys?
-
-
+> Unlike other variants, Exynos7870's USB controller requires a single
+> 3.0V regulator. Assert that the other 1.0V regulator requirement is
+> enforced on variants individually other than Exynos7870's.
 > 
->>
->>> for them, and all that is needed from it is to disable HWACG, assert/
->>> deassert reset and force bvalid/vbusvalid. After that SNPS eUSB2
->>> initialization can be done and USB2 works. If the USBCON phy is not set
->>> up before the eUSB2 one, the device hangs, so there is definitely a
->>> dependancy between them. For PIPE3 we'd need to control the pipe3
->>> attaching/deattaching and then initialize the synopsys USBDP combophy.
->> Does it mean there is no USB DRD phy controller as before?
->>
->> Anyway the problem is you have DWC3 -> PHY -> PHY. Looks one phy too many.
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  .../bindings/usb/samsung,exynos-dwc3.yaml          | 28 +++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
 > 
-> So...
-> 
-> DWC3 -> USBDRD (USBCON) -> PHYs?
 
-No, drop last phy. You just wrote the same as me - two phys, because
-usbdrd is the phy. In all existing designs there is no such controllable
-object from the point of view of operating system.
-
-> 
-> ...with usbdrd controller connecting and controlling the USB2 and USB3
-> phys, as well as dual role mode?
-
-Yes.
-
-> Well, where is the DRD part in the exynos5
-> driver?
-
-DRD? I believe it is part of DWC3, the same as in every other standard
-implementation of Synopsys DWC3.
-
-> 
-> I guess it does perfectly fit the job of a usbdrd controller then (if it
-> even deals with DRD). But then again,  this brings up two questions:
-> 1. Should this driver even be named exynos2200-usbcon and not, for
-> example, exynos2200-usbdrd?
-
-Are you sure we talk about the same thing? USBDRD is IP block in the
-Exynos and a device driver. Call your device as appropriate it is -
-based on datasheet or downstream sources.
-
-> 2. Are the exynos5-usbdrd phys really only USBDRD, or do they implement
-> USB speed functionality? What is the UTMI/PIPE3 setup for then?
-
-Dunno, I don't get what you mean by "exynos5-usbdrd phys really only
-USBDRD". USBDRD is just the name of the device.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
