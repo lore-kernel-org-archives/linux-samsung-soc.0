@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E981DE3A4;
-	Mon,  3 Mar 2025 08:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC08E1DE3A4;
+	Mon,  3 Mar 2025 08:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990570; cv=none; b=IsIL6Q+MdipDfdDUqUI3wHgWmtech38persq2c4IHa0qE7pK4PR50/3xphm0wdC1Q4GMRhEe7nA7LwQph4NLqm5I3LV/sWpV8oaNPEE8fYO5gN7lcrrRHosI9O7QSFTdpXlg+X+nNyDIfjsVXBJUfPo27aMa8bpPPSDtLvHX/Ms=
+	t=1740990592; cv=none; b=a10WMaCC/dGnQoQMLYFO+ZC8HJR6YMUYLB4lM/vhXKcVXHP/TcrfZ6VV5bvmnWIClBwLGd2w31MW3WcXWjSZJrMztGBNsL4VtAIGDq0H2lKeeLlx2W6nwegRcs6F+tjAUDACvDrdw760J1RdlkN5L12XRPhPnCtvYpApcAdq9y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990570; c=relaxed/simple;
-	bh=obB2ljcIPGtP0VJhm54WRUhHb1nNmOp3J/J2QdoPBuo=;
+	s=arc-20240116; t=1740990592; c=relaxed/simple;
+	bh=RqR9SRihLmzQt5O9ZRulN4EEyCvBsTXEDH7wWXh5EFA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jEe06paRKu/FfVdJsxB7pXJzdjfDKuHautoxv3Tptnto/jhFbevIu+UU0gHd+rnVCw506TnhWvICjO7/9YEtsFCF4jAdWUFLBfML/dw+qfTz81Dy6pcszprNrh8ugjKkirSQ78g9M6irHtnZMyxsn1Vx4y9mwAZlKSNc/oF3tFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5Fsc1d+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=I1NnWqkGHbqM5iuvIN9pq4Z2X9azdBo+MyGK2KcM1zyTuqPYSS/qITSL9J84LYebZgbbgDjZOj75g/+J49W4pq4uaIyB/50douEMBV5bSdg4NOmLdg5dZjk2fHOygrVaVvvcokusijMgAJ7kWjCwcLnmn4mfLs1aBfJXlpCm3hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4lJv7Sn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Fsc1d+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6C8C4CED6;
-	Mon,  3 Mar 2025 08:29:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4lJv7Sn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEFC8C4CED6;
+	Mon,  3 Mar 2025 08:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740990569;
-	bh=obB2ljcIPGtP0VJhm54WRUhHb1nNmOp3J/J2QdoPBuo=;
+	s=k20201202; t=1740990591;
+	bh=RqR9SRihLmzQt5O9ZRulN4EEyCvBsTXEDH7wWXh5EFA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L5Fsc1d+BT3zlKoAvBi301/7lNQasBdGMjxy/bahG5gw9C2PhtdMds2Iks/K0vAYe
-	 Iv51saEZ1KNYkpulm9MfT97RNhx7uBEcsBq8cO6fnYfbb18iAtRpkxUUUILC23eiEF
-	 d9LScttTam79NgrVIW0q45mfu2FygdvM8Y3cw9bmAopH1YSHHeuzxsAT0rEpffJRU5
-	 xCmxo+7bkBn8/2sN4t0RZ/i+76ZscytuML7vdooupcPLSgOHIsthFQ5dMje/vZo+PS
-	 iK0PIUtlo1r0LV3k94CYaUrv9HLaJ3VA1EtNIUt1E18nlNPVmhAKZw0epCkQ3UvgF/
-	 Y3A0gihRihCyA==
-Message-ID: <929ed565-f842-49e6-9c7a-6d1df5266a62@kernel.org>
-Date: Mon, 3 Mar 2025 09:29:23 +0100
+	b=A4lJv7SnaDrdF/findgqea45v5k2Vuiv6jVvJFp1wx+o7KQ4Y8jbnXXDUzzY3b6X1
+	 iLjN6N391Xd3laMGtIIeegVr9x6rodyv3/a/vS/DXBEGi7BPIjkCHrBxDuYzNDwx0y
+	 U6n99ryeLRn4ppAccSq7SIPhOVe0zFW/XoKflnV1ykNB21jue4+3XKAhEKboWeS677
+	 74DaBDEITyg7qXOitt3QiYoMKQp7Mda7QnZ74o0za3DIdTW2lacVaUoD9RI/fo8cJ/
+	 jg4QJz1kUSk86X4y7whWjbbgX+/6xQ0RCyXKcZOgg3Rt55U8kUMxtkOu5/QeP13eWe
+	 HmDvZsbBrScfg==
+Message-ID: <edbbd971-1bd8-42cb-89fe-c844d582a361@kernel.org>
+Date: Mon, 3 Mar 2025 09:29:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: usb: samsung,exynos-dwc3: add
- exynos7870 support
+Subject: Re: [PATCH v3 2/2] usb: dwc3: exynos: add support for exynos7870
 To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -46,9 +45,9 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250301-exynos7870-usb-v3-0-f01697165d19@disroot.org>
- <20250301-exynos7870-usb-v3-1-f01697165d19@disroot.org>
-Content-Language: en-US
+ <20250301-exynos7870-usb-v3-2-f01697165d19@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -92,24 +91,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250301-exynos7870-usb-v3-1-f01697165d19@disroot.org>
+In-Reply-To: <20250301-exynos7870-usb-v3-2-f01697165d19@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/02/2025 20:40, Kaustabh Chakraborty wrote:
-> Document compatible string for Exynos7870 DWC3-compatible USB 2.0
-> driver. The devicetree node requires three clocks, named "bus_early",
-> "ref", and "ctrl".
-> 
-> Unlike other variants, Exynos7870's USB controller requires a single
-> 3.0V regulator. Assert that the other 1.0V regulator requirement is
-> enforced on variants individually other than Exynos7870's.
+> Exynos7870 devices have a DWC3 compatible USB 2.0 controller.
+> Add support in the driver by:
+>  - Adding its own compatible string, "samsung,exynos7870-dwusb3".
+>  - Adding three USBDRD clocks named "bus_early", "ref", and "ctrl", to
+>    be controlled by the driver.
 > 
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 > ---
->  .../bindings/usb/samsung,exynos-dwc3.yaml          | 28 +++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
