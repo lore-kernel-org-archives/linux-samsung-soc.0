@@ -1,67 +1,68 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37F02BF120
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Mar 2025 17:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37722BF137
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Mar 2025 17:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107946; cv=none; b=E4u/3kNihsO/qkKPBaEpU0a0UIFh22B1HmP/27hzh/xpw3CTtTP4nFtBycyarTVYhHVkTlDKNA3f+pLWe2yM02SdN+QqUOu5iOd9dh9Nx2aouhzybzDE4M3x+SrlyzzdeWTRls7iPEfw9VIgfCgVvxIs0yM4XG6EWfoftWOXVDE=
+	t=1741107948; cv=none; b=XmwZEuCVw0WKqeUdH3niTKg/1naX+YdOSywVZr7RL3FidnVBHZEzY56H/r5lCj3OfSYiV4dUjOiegy8Et/LBGhuiNxwEUMehVXQjSIr6ov4l8zz1VZZIz0e9SjVKRjtPKHv+v1+6Nw9dYVXijoGeQMO5sXRPAYFEDsxGnOy5Jlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107946; c=relaxed/simple;
-	bh=REGjPiVOjqVZBOjhJUgX7G6ANaxzAPJnC5dNaRot8Ec=;
+	s=arc-20240116; t=1741107948; c=relaxed/simple;
+	bh=1+UZb0QJk2ChT7YBKoTmCJG5wrAK+GA3H4NxSsqsqCU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p4yLyOfNvnWSElFXbyEiZUY8OZLjstU8YUthPhYNhY3g3VFNXGbAxyVNC7G1Z6sf8xpIxVnCu1A9oTliHzxo/5/Laz8GqNaWTbMxpcRUUMLcLL6ujZ1ONzFVdQxkifIHw8q+aUwMpviVln0t5xaQJrNoMPppg9pdVZWhZ00rngA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yi69Q1Mb; arc=none smtp.client-ip=209.85.208.50
+	 In-Reply-To:To:Cc; b=j9AbA728qRJ7+4Ht9Pvyfmi2gglZg6F/TiqtRqa+pgNItBDgrOW7AwzZxqcNrs1AlsCTJe1zhozMMK5astFue705uv+Jsw8PCipMOl2giDA2YLo0T4e8NmPGhJ6ojA6kRrLjRahCFqhJogN/+O/QekgI84gYtXCjcpJlQitbjD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3oco5Em; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yi69Q1Mb"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so6844675a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Mar 2025 09:05:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3oco5Em"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abf5358984bso537646166b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Mar 2025 09:05:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741107941; x=1741712741; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741107942; x=1741712742; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jDySvxIgslRZrTqVd7bcfGaor7CHMjwsKayUWf5uR70=;
-        b=yi69Q1Mbb1GkjLEkC7jzKQv1xUdlusqv87QLBkdgvqCAx3CnAQrv1jpGc/bDIFqX/Y
-         yGdr2jngu80ttpJmYLHwqJMKS/3cky1zgiecRkteFQUpOQ3CcJnILv4GLF5uMeJtOiAl
-         TAu6rx1ocIguFuTz0RXsT5Wyp/WXPPVQRUiWSPyCgSiTCdZ/5a132G0y26FOWVtsB/E2
-         utVsUxE1O73TNJRqF4RVDRo12oWzrFGWkgr1drWvYtBgt578P46KQeRBHR4ouzoxAuSC
-         TmbpiyA2qbGQXrkLyR4IEZLgbASIR8eljgxN19gtenJ+HAPeKu4XmSVa/QjXz60JJXcB
-         kXbQ==
+        bh=dKiEbfv2wxdcP+dRwBnTiew8ux2INId3e+zLxFho3GE=;
+        b=d3oco5Em6LpOvP0G9jtoTAJeG32NkODP1cxZWrmD2Dvc1pQj0TvHv1OqugA/e/+qY6
+         QYY3pspflFFEXZMkD1EfJ4ZLZ1WN0pvlKUp3MuSGP7GBS/4lMMHw42SFEEZrgeHgE5o/
+         k57vTk++rBCCGzoWPv8ZhZRbnVX+GWF9yZ2qt9mwEamr84NPJ1fht5uzeiymeM/sGPai
+         ETDC5rNMNoy1cW6BxAwhUPg6iEJi+CKGChHkMJC8zpyV9C62UYDpe5sTIsE2YVqMoTo6
+         3/SYAjE8orpFqrPhfKtL0JG1JAOJoQYYftiIyqeaEvya6Ss7c4VRbbclz9iLRYA/1Bdl
+         mGyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741107941; x=1741712741;
+        d=1e100.net; s=20230601; t=1741107942; x=1741712742;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jDySvxIgslRZrTqVd7bcfGaor7CHMjwsKayUWf5uR70=;
-        b=aBVCT00VeeP/fsUgVEjxQlRg81alxiCdG26kBsD3pP00HzFvZkax77Su06bkWT570k
-         FF4f2h1OE/Ny74F/i5wYW5HmSMUiJ/me9rw61D4df/2B07+5LKB5ShZZWEYxBkFiwmhF
-         8skeS3GVXWE/dw3/w3F57DrthPeSCDZeUUX1QisX+pyMJ+XCuTDNe7mAvngAs7MmBD86
-         1/XUhCu4smgRop8qwB9j4pAv3IumOZFst+050HYVp7YGUDIhtGPia5vDZP/vULzluChS
-         WMUbhbY0VBkgmKoXU+xY9N+RociAs53no9LedU4moJDyGWkEYLbTDbIvI7xgLRJfcosv
-         RwsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjOv4/A1SNDJcoxVqQlFIO1UyNX9D7dX6MzR4llswB2as0l80h7NktQxNJQc2bo16lF/hAcpH+mK6ISgPOvAOTvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDRaKqfzeoSpnCHUe8m5xysgYSJ61bcVxqbd62AWiFF2qaUEts
-	vo+lIuKCopsDM+ufDmzL+pzwNBKPjW1+/F72meFlY2PhxwJG+I+5D6oqOyVCwQJL5pHOmszWQGI
-	E85M=
-X-Gm-Gg: ASbGncu5efd2PBfRwmsXvxecpg4FkgPbkNG1+Wq0WhdBcqlXS9aGrNNJGPKIPN08vIz
-	mZeTFPz9W5ghEB5J2YAFeGs4cM840jhIh822hgjH56hCV9SNkJNLBQuOf8oVHxuLgv6NJ31Y5PT
-	jMA/RlgBLNWQhmcDmaLZLsGdM0fjsgzUuAB9M3qiqWM4rgKa+AixcT+FlOrWFpmmfPnfU/pFV0T
-	OIl/no+LoJ3jnQkf5TENnBTZgrB8lJJ2Gc9nm+kqS2QD8PU++E76pJ9Vq2EvdyuOuouhcfPe6w3
-	sfk1OTlremFfCX/mS9fQNiK6X8C2m7gqjbWlen6wWX9QAA/DpBwPd1XDOfCN2V55VRf3atJbc5O
-	fXQkrSrsJNr6fZo4Ob3TTnFLrqVe3
-X-Google-Smtp-Source: AGHT+IGw6DMujSSlMe4X/Gi0vjiilArq9AgwOJMWr49ZazH2bLzcdxFw+AmPTscolQ+3wmW3ZQIPiA==
-X-Received: by 2002:a05:6402:50d4:b0:5e5:9543:fc0d with SMTP id 4fb4d7f45d1cf-5e59543fd82mr4097180a12.31.1741107940802;
-        Tue, 04 Mar 2025 09:05:40 -0800 (PST)
+        bh=dKiEbfv2wxdcP+dRwBnTiew8ux2INId3e+zLxFho3GE=;
+        b=Cbdr4iAhXjbUShBqFEatDeQgrioeTMMxB7O2X+UDpbz5yvui7Qz5gUYy+nNForr7Un
+         vUvsZbQUratdmnems3tRvDso6S6iWSYvPfpN2udRgOXePELl6e9sr1FQL8R1xW8Z58Ye
+         CvJHCiOH+rJLrVCzGSEgj4fphMuLEflMRSY/wEY9gMZ7fvjZ7eeIZRZh8rlmiufEp5m2
+         aLmhBLqnGt9aBLw8isu6BQLHLqWdvU9pIJLKBc4OpfDms75F5j5Ubcr4JXSopolydq2b
+         dfytx8YKijk1J+c8cv1t9if2ps8uKNLkXqzVwmh/LQQkOvdIfb7N913cqDos6ReJDH6c
+         lrSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyQ7BYj6EE8Er9GE85lx6oHAn1Y69tyJLgKKDdHASDLGBJ6amJIIx5YMQCAAp+4KDMESkoN2F2qsj36HnBF4Zk+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ZbvkkxjmR+/Sp6074zD/eEqtuguofOiedIeNPnqLpMRyM0DW
+	u/C9MOGUAcm/qnu3KFOt1CIr+AO6xp8N4Ss+76heo62Nqp2HowhCywPs4I54DGHn+i+ET+8GSjC
+	7H6s=
+X-Gm-Gg: ASbGncsWLh48vO9o2jo9BPevUB9Ck2IuwX70r1CLrYtO6vmW6iFXSDo2Z2oYw/iHOko
+	Ss//yg0HdIZsZf5PN3OM+KE7hcnXiDc77AjWq0zentQz0vZlmzIFIsO5UTvCyc3WppFnodWcBos
+	RdaLbmeBZPTEzfxv2Ddl8mUIB2tvICKUdN9AR34tZkZZVoMu/DSV2SSQtxNcRLjFyJQhMvXbvlm
+	lLcqvuMUtpApHHL0uYrH8YWNJZx9ncf0DT5JMUieFNsGCqzDhaMG9VIpwTeLuJzTJH1MGRb2xoq
+	Z1jQQVTAV9LzTfhAJwEMs1sg5fO3NMxEF5TPs7C87GgFeFldmSrV9EhZt9vCnAI+3euGdI2obWN
+	XasP2phj0G2l2JB0rHwdyTZt1vzwJ
+X-Google-Smtp-Source: AGHT+IFbhvINfL30hs3YpvAxvNGhpuF08a7SPp+ErND7dZCCpi05AobDmHrT2jaUznfQQ+NeOSHQXw==
+X-Received: by 2002:a17:907:2d0d:b0:abf:777d:fb7a with SMTP id a640c23a62f3a-ac20da97c7dmr2947466b.46.1741107942351;
+        Tue, 04 Mar 2025 09:05:42 -0800 (PST)
 Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf795ba15esm367589066b.131.2025.03.04.09.05.40
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf795ba15esm367589066b.131.2025.03.04.09.05.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 09:05:40 -0800 (PST)
+        Tue, 04 Mar 2025 09:05:41 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 04 Mar 2025 17:05:42 +0000
-Subject: [PATCH v2 14/16] rtc: sd3078: drop needless struct sd3078
+Date: Tue, 04 Mar 2025 17:05:44 +0000
+Subject: [PATCH v2 16/16] rtc: s5m: convert to dev_err_probe() where
+ appropriate
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250304-rtc-cleanups-v2-14-d4689a71668c@linaro.org>
+Message-Id: <20250304-rtc-cleanups-v2-16-d4689a71668c@linaro.org>
 References: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
 In-Reply-To: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
 To: Chanwoo Choi <cw00.choi@samsung.com>, 
@@ -90,178 +91,107 @@ Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org, 
  llvm@lists.linux.dev, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
 
-The memory pointed to by the ::rtc member is managed via devres, and
-no code in this driver uses it past _probe().
+dev_err_probe() exists to simplify code and harmonise error messages,
+there's no reason not to use it here.
 
-We can drop it from the structure and just use a local temporary
-variable, reducing runtime memory consumption by a few bytes.
-
-Since this now means that the structure has just one member only left,
-there  is no need anymore to allocate data for it and pass that around
-via the various callbacks, just to extract that one member.
-
-Instead, we can just pass that one member and avoid the extra memory
-allocation for the containing struct, reducing runtime memory
-consumption.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/rtc/rtc-sd3078.c | 71 +++++++++++++++++++-----------------------------
- 1 file changed, 28 insertions(+), 43 deletions(-)
+ drivers/rtc/rtc-s5m.c | 50 +++++++++++++++++++++-----------------------------
+ 1 file changed, 21 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/rtc/rtc-sd3078.c b/drivers/rtc/rtc-sd3078.c
-index fe27b54beaad1c06b70bf7f22e44c3f6da087267..10cc1dcfc7748144f51ef674939506feee1fb471 100644
---- a/drivers/rtc/rtc-sd3078.c
-+++ b/drivers/rtc/rtc-sd3078.c
-@@ -36,11 +36,6 @@
-  */
- #define WRITE_PROTECT_EN	0
- 
--struct sd3078 {
--	struct rtc_device	*rtc;
--	struct regmap		*regmap;
--};
--
- /*
-  * In order to prevent arbitrary modification of the time register,
-  * when modification of the register,
-@@ -49,14 +44,11 @@ struct sd3078 {
-  * 2. set WRITE2 bit
-  * 3. set WRITE3 bit
-  */
--static void sd3078_enable_reg_write(struct sd3078 *sd3078)
-+static void sd3078_enable_reg_write(struct regmap *regmap)
- {
--	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL2,
--			   KEY_WRITE1, KEY_WRITE1);
--	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
--			   KEY_WRITE2, KEY_WRITE2);
--	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
--			   KEY_WRITE3, KEY_WRITE3);
-+	regmap_update_bits(regmap, SD3078_REG_CTRL2, KEY_WRITE1, KEY_WRITE1);
-+	regmap_update_bits(regmap, SD3078_REG_CTRL1, KEY_WRITE2, KEY_WRITE2);
-+	regmap_update_bits(regmap, SD3078_REG_CTRL1, KEY_WRITE3, KEY_WRITE3);
- }
- 
- #if WRITE_PROTECT_EN
-@@ -69,14 +61,11 @@ static void sd3078_enable_reg_write(struct sd3078 *sd3078)
-  * 2. clear WRITE3 bit
-  * 3. clear WRITE1 bit
-  */
--static void sd3078_disable_reg_write(struct sd3078 *sd3078)
-+static void sd3078_disable_reg_write(struct regmap *regmap)
- {
--	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
--			   KEY_WRITE2, 0);
--	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
--			   KEY_WRITE3, 0);
--	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL2,
--			   KEY_WRITE1, 0);
-+	regmap_update_bits(regmap, SD3078_REG_CTRL1, KEY_WRITE2, 0);
-+	regmap_update_bits(regmap, SD3078_REG_CTRL1, KEY_WRITE3, 0);
-+	regmap_update_bits(regmap, SD3078_REG_CTRL2, KEY_WRITE1, 0);
- }
- #endif
- 
-@@ -85,11 +74,10 @@ static int sd3078_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	unsigned char hour;
- 	unsigned char rtc_data[NUM_TIME_REGS] = {0};
- 	struct i2c_client *client = to_i2c_client(dev);
--	struct sd3078 *sd3078 = i2c_get_clientdata(client);
-+	struct regmap *regmap = i2c_get_clientdata(client);
- 	int ret;
- 
--	ret = regmap_bulk_read(sd3078->regmap, SD3078_REG_SC, rtc_data,
--			       NUM_TIME_REGS);
-+	ret = regmap_bulk_read(regmap, SD3078_REG_SC, rtc_data, NUM_TIME_REGS);
- 	if (ret < 0) {
- 		dev_err(dev, "reading from RTC failed with err:%d\n", ret);
- 		return ret;
-@@ -123,7 +111,7 @@ static int sd3078_rtc_set_time(struct device *dev, struct rtc_time *tm)
- {
- 	unsigned char rtc_data[NUM_TIME_REGS];
- 	struct i2c_client *client = to_i2c_client(dev);
--	struct sd3078 *sd3078 = i2c_get_clientdata(client);
-+	struct regmap *regmap = i2c_get_clientdata(client);
- 	int ret;
- 
- 	rtc_data[SD3078_REG_SC] = bin2bcd(tm->tm_sec);
-@@ -135,10 +123,10 @@ static int sd3078_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	rtc_data[SD3078_REG_YR] = bin2bcd(tm->tm_year - 100);
- 
- #if WRITE_PROTECT_EN
--	sd3078_enable_reg_write(sd3078);
-+	sd3078_enable_reg_write(regmap);
- #endif
- 
--	ret = regmap_bulk_write(sd3078->regmap, SD3078_REG_SC, rtc_data,
-+	ret = regmap_bulk_write(regmap, SD3078_REG_SC, rtc_data,
- 				NUM_TIME_REGS);
- 	if (ret < 0) {
- 		dev_err(dev, "writing to RTC failed with err:%d\n", ret);
-@@ -146,7 +134,7 @@ static int sd3078_rtc_set_time(struct device *dev, struct rtc_time *tm)
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index 88aed27660348a05886f080a2848fcabbf9666d0..db5c9b641277213aa1371776c63e2eda3f223465 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -626,11 +626,10 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
  	}
  
- #if WRITE_PROTECT_EN
--	sd3078_disable_reg_write(sd3078);
-+	sd3078_disable_reg_write(regmap);
- #endif
+ 	info->rtc_24hr_mode = 1;
+-	if (ret < 0) {
+-		dev_err(info->dev, "%s: fail to write controlm reg(%d)\n",
+-			__func__, ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		return dev_err_probe(info->dev, ret,
++				     "%s: fail to write controlm reg\n",
++				     __func__);
  
- 	return 0;
-@@ -166,36 +154,33 @@ static const struct regmap_config regmap_config = {
- static int sd3078_probe(struct i2c_client *client)
- {
- 	int ret;
--	struct sd3078 *sd3078;
-+	struct regmap *regmap;
-+	struct rtc_device *rtc;
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
- 		return -ENODEV;
- 
--	sd3078 = devm_kzalloc(&client->dev, sizeof(*sd3078), GFP_KERNEL);
--	if (!sd3078)
--		return -ENOMEM;
--
--	sd3078->regmap = devm_regmap_init_i2c(client, &regmap_config);
--	if (IS_ERR(sd3078->regmap)) {
-+	regmap = devm_regmap_init_i2c(client, &regmap_config);
-+	if (IS_ERR(regmap)) {
- 		dev_err(&client->dev, "regmap allocation failed\n");
--		return PTR_ERR(sd3078->regmap);
-+		return PTR_ERR(regmap);
+ 	return ret;
+ }
+@@ -669,26 +668,21 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		alarm_irq = S5M8767_IRQ_RTCA1;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev,
+-				"Device type %lu is not supported by RTC driver\n",
+-				platform_get_device_id(pdev)->driver_data);
+-		return -ENODEV;
++		return dev_err_probe(&pdev->dev, -ENODEV,
++				     "Device type %lu is not supported by RTC driver\n",
++				     platform_get_device_id(pdev)->driver_data);
  	}
  
--	i2c_set_clientdata(client, sd3078);
-+	i2c_set_clientdata(client, regmap);
+ 	i2c = devm_i2c_new_dummy_device(&pdev->dev, s5m87xx->i2c->adapter,
+ 					RTC_I2C_ADDR);
+-	if (IS_ERR(i2c)) {
+-		dev_err(&pdev->dev, "Failed to allocate I2C for RTC\n");
+-		return PTR_ERR(i2c);
+-	}
++	if (IS_ERR(i2c))
++		return dev_err_probe(&pdev->dev, PTR_ERR(i2c),
++				     "Failed to allocate I2C for RTC\n");
  
--	sd3078->rtc = devm_rtc_allocate_device(&client->dev);
--	if (IS_ERR(sd3078->rtc))
--		return PTR_ERR(sd3078->rtc);
-+	rtc = devm_rtc_allocate_device(&client->dev);
-+	if (IS_ERR(rtc))
-+		return PTR_ERR(rtc);
+ 	info->regmap = devm_regmap_init_i2c(i2c, regmap_cfg);
+-	if (IS_ERR(info->regmap)) {
+-		ret = PTR_ERR(info->regmap);
+-		dev_err(&pdev->dev, "Failed to allocate RTC register map: %d\n",
+-				ret);
+-		return ret;
+-	}
++	if (IS_ERR(info->regmap))
++		return dev_err_probe(&pdev->dev, PTR_ERR(info->regmap),
++				     "Failed to allocate RTC register map\n");
  
--	sd3078->rtc->ops = &sd3078_rtc_ops;
--	sd3078->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
--	sd3078->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+	rtc->ops = &sd3078_rtc_ops;
-+	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	rtc->range_max = RTC_TIMESTAMP_END_2099;
+ 	info->dev = &pdev->dev;
+ 	info->s5m87xx = s5m87xx;
+@@ -696,11 +690,10 @@ static int s5m_rtc_probe(struct platform_device *pdev)
  
--	ret = devm_rtc_register_device(sd3078->rtc);
-+	ret = devm_rtc_register_device(rtc);
- 	if (ret)
- 		return ret;
+ 	if (s5m87xx->irq_data) {
+ 		info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
+-		if (info->irq <= 0) {
+-			dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
+-				alarm_irq);
+-			return -EINVAL;
+-		}
++		if (info->irq <= 0)
++			return dev_err_probe(&pdev->dev, -EINVAL,
++					     "Failed to get virtual IRQ %d\n",
++					     alarm_irq);
+ 	}
  
--	sd3078_enable_reg_write(sd3078);
-+	sd3078_enable_reg_write(regmap);
+ 	platform_set_drvdata(pdev, info);
+@@ -724,11 +717,10 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		ret = devm_request_threaded_irq(&pdev->dev, info->irq, NULL,
+ 						s5m_rtc_alarm_irq, 0, "rtc-alarm0",
+ 						info);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+-				info->irq, ret);
+-			return ret;
+-		}
++		if (ret < 0)
++			return dev_err_probe(&pdev->dev, ret,
++					     "Failed to request alarm IRQ %d\n",
++					     info->irq);
+ 		device_init_wakeup(&pdev->dev, true);
+ 	}
  
- 	return 0;
- }
 
 -- 
 2.48.1.711.g2feabab25a-goog
