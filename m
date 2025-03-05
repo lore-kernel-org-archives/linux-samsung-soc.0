@@ -1,119 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4B92580DF
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Mar 2025 21:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C3C2E3373;
+	Wed,  5 Mar 2025 22:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211259; cv=none; b=ND7bbH+gjCRIeAT5s4Z/QBidVqJWFvMz5vJBzL15Q72GdqDLwbfxytsnIyi6zYh+EHqCtg6ghsGbfbvOpZsbnsduqqP2Jaj6skfDt5BpD9LliVwBcB/OeLOpc+EK/+rWXd0xvrjSJAvgsXR+CY6VD7Qf/P2nfAlmtYbuvWWXnm8=
+	t=1741212608; cv=none; b=tOwsOO14upkv/Lsc9GAhGlGv8F5p/r1BxS8BrtsAVN64RAxtnHKOJBLS8w1RtOnS6Bx9z9yN0CepaNLgjq2CGq5PDJwx10QeWPaJvobL9GiR/FZcYcMMIxRsHH+9O9Zy6BBdpTlmzv3HRARtGwOcE39vLOlqTdu4S8pnC9p3jCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211259; c=relaxed/simple;
-	bh=xK5gK312NkoDLHDGHNfOJuLIvyM0oc/giLLc/aXjeZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MDcLxgoHGJqYIgtDA4MV9z47giU3b7ZmfGXPTjBR1QmSFYfuZ4VedFmKTxPYWZGeZqKrpaz0Ok+sLejsl9dXSx3o2GO+/iqPv/hDeOylvfjYlAzbr0Ly3b7EnMXN+NfxgzSH0BBKMNLXH3zxSXHQJk4iAlWWEiYaMk2JJxxpDz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b0sAUOBb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741212608; c=relaxed/simple;
+	bh=hBZBxTEgtDt23D4tUG+xQtrqWjao2dZor4U0b7bBpwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HFCp+umKcILQ9gcw/6YT05YnC6qevheEtAQeVYEdtYRh96034vYwLFSd5Q066BlYcFjmDs83JMvuLF7ER59jfKE3JvhPjOKrso4WlB6OtxIcpYTazLuvKGB2wNQhS9koVCbRMkZ4JoEhErXhtVMZWKHU03v+QpPYY1if3Go/1Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BURAVwy3; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b0sAUOBb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7E0C4CEE7;
-	Wed,  5 Mar 2025 21:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741211259;
-	bh=xK5gK312NkoDLHDGHNfOJuLIvyM0oc/giLLc/aXjeZM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=b0sAUOBb4AH91xKQAoSRqbXN1fbuqUBAKxu+bwYT+YL9b/c0sLC3zy9GmbgRR1mgw
-	 giHPzrdoBv1oGRLnDORX+G0jZd5SwiQ6JXhcLZQbCGnkUkdSPXpO2mRbJH4At/tGKf
-	 RzKvQXyJiaMesLHry2aaYeP3AODCobzgquxeg483SI3/hByj55ihvyhTAAGK412c2v
-	 uPmrYtma6WJbMEB4YhdtGf8uKYaCQPk7nYSeMExfQMRINlefWZpu6wZxOuyiRMFe8W
-	 KWIO99GHHyIcaHF1lpq8qbYHk6NanELRdjatKLUY56hmLNMa1uEqdcq1GkcQKYJ7mm
-	 b9+q7S6uHMByw==
-Message-ID: <651f7d3b-6ccd-43cf-af60-a5b5259bbae0@kernel.org>
-Date: Wed, 5 Mar 2025 22:47:32 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BURAVwy3"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0AA2D44469;
+	Wed,  5 Mar 2025 22:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741212604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AIx1VQixGZHJpDEIrcnLOu+mYSZBxUUbpmpOdkPkxX8=;
+	b=BURAVwy3hip3jon9IM98b5vAbuZx8dmIVhljcBdpP9XPooBB9x17yAD7mn/0M2kAn1p8By
+	woFRKzD245+DnNCjtQ7o6LF0PX0S+BASIoZ3EG9eHGaSS6+ZEBYcAQJ78thkXVkUtB3BzK
+	1fd6X+OUiIUBCG3V5Ht/wQ7VyXWg3QLgNXNCUgj5cfxx673xa69fxR4P/SB0QwSK51Vnbk
+	43t7fjIwRIkYEyQt3ZAkt9kg4DaTd2AJ5hZycFk8ZNUVahz0ml0z7nJE20eLLgLqkFMu9H
+	PUen+OK6ikHnvbPugQHCGpZSoR9V6SsZM+DOwn8jbGVfSNi2odFfmCi09ey7bw==
+Date: Wed, 5 Mar 2025 23:10:01 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	=?iso-8859-1?Q?T=F3th_J=E1nos?= <gomba007@gmail.com>,
+	Dianlong Li <long17.cool@163.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-amlogic@lists.infradead.org, llvm@lists.linux.dev,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 00/16] a few rtc driver cleanups
+Message-ID: <174121255394.1152777.11765502116426784970.b4-ty@bootlin.com>
+References: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Any pending patches on me for Samsung SoC? Closing applying cycle
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Kaustabh Chakraborty <kauschluss@disroot.org>,
- Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Denzeel Oliva <wachiturroxd150@gmail.com>
-References: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
- <942684f8-39ac-4966-96f8-74feb9e9bde5@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <942684f8-39ac-4966-96f8-74feb9e9bde5@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdeitddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgffeiiefffeefvdegtdejvdfhvdehfedtuddtteeffedvleehieevkeeguedtudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeejjedrudehtddrvdegiedrvdduheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejjedrudehtddrvdegiedrvdduhedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtoheptgiftddtrdgthhhoihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhovghlsehjmhhsrdhiugdrrghupdhrtghpthhtoheprghnughrvgifsegtohguvggtohhnshhtrhhutghtrdgto
+ hhmrdgruhdprhgtphhtthhopehulhhlihdrkhhrohhllhesghhoohhglhgvmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 05/03/2025 22:07, Ivaylo Ivanov wrote:
->>
->> 5. arm64: dts: exynos: update all samsung,mode constants: will wait one
->> cycle
->>
->> Did I miss anything? Is there something still pending on me?
+On Tue, 04 Mar 2025 17:05:28 +0000, André Draszik wrote:
+> While looking at RTC, I noticed that various drivers are keeping
+> pointers to data that they're not using themselves throughout their
+> lifetime.
 > 
-> Hey Krzysztof,
+> So I took the liberty to drop these pointers and this series is the
+> result.
 > 
-> Thanks for your work! I just noticed that there's an inaccuracy in [1]
-> where instead of setting only BIT(2), all bits in the register are getting
-> flipped except BIT(2), and it forces clock request state. Is there any
-> room left for me to send out a bugfix tomorrow?
+> [...]
 
+Applied, thanks!
 
-Yes, no problem, bugfixes can keep going. I am closing my tree (usually
-around rc5 or rc6) for new features and non-bugfix patches.
+[01/16] rtc: max77686: drop needless struct max77686_rtc_info::rtc member
+        https://git.kernel.org/abelloni/c/6c9405fd2581
+[02/16] rtc: s5m: drop needless struct s5m_rtc_info::i2c member
+        https://git.kernel.org/abelloni/c/afe5f9f94d11
+[03/16] rtc: aspeed: drop needless struct aspeed_rtc::rtc_dev member
+        https://git.kernel.org/abelloni/c/d19111dff9c2
+[04/16] rtc: ds2404: drop needless struct ds2404::rtc member
+        https://git.kernel.org/abelloni/c/1b625aaf335a
+[05/16] rtc: ep93xx: drop needless struct ep93xx_rtc::rtc member
+        https://git.kernel.org/abelloni/c/5d0ad519f503
+[06/16] rtc: ftrtc010: drop needless struct ftrtc010_rtc::rtc_dev member
+        https://git.kernel.org/abelloni/c/a55d44807b63
+[07/16] rtc: m48t86: drop needless struct m48t86_rtc_info::rtc member
+        https://git.kernel.org/abelloni/c/013df5bdf8b4
+[08/16] rtc: meson: drop needless struct meson_rtc::rtc member
+        https://git.kernel.org/abelloni/c/a0470062748f
+[09/16] rtc: meson-vrtc: drop needless struct meson_vrtc_data::rtc member
+        https://git.kernel.org/abelloni/c/38c7aaeab8b8
+[10/16] rtc: pl030: drop needless struct pl030_rtc::rtc member
+        https://git.kernel.org/abelloni/c/3d5d0fe1cb82
+[11/16] rtc: rx8581: drop needless struct rx8581
+        https://git.kernel.org/abelloni/c/3b87c6872aed
+[12/16] rtc: s35390a: drop needless struct s35390a::rtc member
+        https://git.kernel.org/abelloni/c/cd2a7052482e
+[13/16] rtc: sd2405al: drop needless struct sd2405al::rtc member
+        https://git.kernel.org/abelloni/c/d94bc2bbf8d9
+[14/16] rtc: sd3078: drop needless struct sd3078
+        https://git.kernel.org/abelloni/c/6158c6b82444
+[15/16] rtc: max77686: use dev_err_probe() where appropriate
+        https://git.kernel.org/abelloni/c/e6403ae59ce1
+[16/16] rtc: s5m: convert to dev_err_probe() where appropriate
+        https://git.kernel.org/abelloni/c/0c57c2e72c5d
 
 Best regards,
-Krzysztof
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
