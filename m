@@ -1,101 +1,125 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352121E5B91
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Mar 2025 19:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AC4252919;
+	Wed,  5 Mar 2025 19:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741201560; cv=none; b=g02vd7dWzubW/iWym2+rgRie1D6gxM0JC8BV2LiBSg17dWuOKRADXmMJSq841sE/gSs23xRycofhxRmaJFg6s7wffyLBwWjq48LDbapmhss7uXMFX9KWDrlxFwIIETzgwLfGSEofUIv32XHW6kF0gbiIA5swK1TDypmUKOf/5pE=
+	t=1741201695; cv=none; b=VoQFAFRS9hUSnfMlQJNkQxLgU/YQXmH1R4CbTvdU/3pNUlz2JGZiJAw3VS0OhuK/qrFZ007QdcCHm/j1jsZHMVPjAsDJ8u10OkgISK8NcehaVJFfUrFHVKNY2z1IcmHnPeo8S/Fofxz+vEudeKqXh3PQucHoBIi4b2PCFXLItlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741201560; c=relaxed/simple;
-	bh=Z7PsFIVvWNKCnh0FhMc2FHab1fDB2A1BFAq30W1FyJw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dG/z7j15oBE8PdubNFxcwAQjEmULFz7QXAWc7tv1nO1JOor0WweW4+kV1chhdMx3TsDMrkV/Ft3RoohHb9ftbleOEPpW2jONDrU4dVPAWSjGbgAzDXZk5LY4gdzgFv3qDEDgggsCIWoaCeWSaF3eL9Z6mBAz/3tbkFH4WXkMbh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W0rYW1jX; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741201695; c=relaxed/simple;
+	bh=6CcsKwqJSLiz7bjMLQJBZiu3LQBJjQXJQ7zQz3/16Y4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D0YrDykfI1kZtZrWphFiM3zyzeNRrfsQIGjnB2X/2ZviWVN5vsaLh2foIZ5Vo98TnT6JJ+79KpGrc7y/tJvoKKfqV91abRwcsguVyDMVJ0QAfeL9onXKQnvBnJLqp4gmPfYYB1J3eLXee0H9wVzdc//FIAih+OG9KthsYipcLcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XddcZiJn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W0rYW1jX"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bc2f816daso4558335e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2025 11:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741201556; x=1741806356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g/7bb++1x3K8R82/vHvBTybNECeoo2FfhBX5a5/oxy4=;
-        b=W0rYW1jXDQJiajUA0+vAUhWKmKL/ox5kpwIaj7ALWnpMMka52oZ+dUEvGzrrRH8oQV
-         hsq35tRmCvkFnKCnQ0Bb5Gdz/5wClngYyJP5Hq857LD4CxkaiVE3VRUcuukncFq03m/b
-         6AB7K6fd+MzdGm0lCBLakRmObjx7IJsZ11cnheCmcugotEvm5jrelBzqzRsJP22WEDSL
-         YSGKsaZfAmNjUIdWbOliOkRiozbbKmUIt71XX5AerPl4OwoDDi1oKrq1p5oJciUDfp3S
-         ORSBVkby6Ryvm2PzE5JWqb+UB6mbaqphWZ+wrNz98cnqWxPPzHCQtRBDk510xnT7fOCa
-         QMWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741201556; x=1741806356;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g/7bb++1x3K8R82/vHvBTybNECeoo2FfhBX5a5/oxy4=;
-        b=S5l+r98pvIxp7XHkdRyGWjcZtiozXZ7Ae8UESsYEIcGLIls2VsxDj0m1LZfpaNY6zc
-         If1t/gwtOZWpW1QeR0uApcm3jH8kM6sDCkZpVx4mwtQ37JeXAKccnleohH7hZEtmWxbM
-         nw/jdRjW8zykUyo2ID517kIitKrstdJ6mqlww/KjgKz8flSGxKnML/hZHoF4eVaDzCy5
-         R5ZPcA6n76K6L7ueME1oYlMIY5FbNMHJFZglwtkewxnq5QCZPPzrVRncsIvM1xhtX+gf
-         xNfITWTGUa+SJuIqSDK66l7POz7q+593Gg9HS/RTQ4OhBzlrDGzEZAaMzvJTdR5wRm88
-         nY0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVyzAlAGreC2Ci1n4UZLePQGIXMi+3luM9qzFu9uiRKyknHygM//PdyLz1v+1AwYaoCtLzQKK+r2sr9alNxmNALOQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAbnXFfGjlJkjXM+pbwnB4hE3OgEGWygaTWVGYnh4zgp1W2mSM
-	vDZfUGQbMqU28qzYowEuLkCmwXzmpFcSJi6vGpQJrQCRQGPSqRaRf1x+Gb8aDoo=
-X-Gm-Gg: ASbGnct5BBvmJMbPDlR1M5oP+R1YY7IdPffeBpc9bm/qFiBM9SyWsBeLEie/S7tu2XH
-	4nCJ9NanrId7dRnppe6hixut6j8GuM7MYEf2Y50HOYw/yrbH+YxzGYbbJW6WNCtKZsTUv3YB/kG
-	OwSEzuZZl5KyBXrnktL9lH3F6h8QX0yfnfIC9ZIWmvEs0TiYXZZH5K/IaEfNULa+8G7vYmrBpnI
-	P4yDQCkfzzdtbyT3HFX2CyTO4be+hkCTVgFrWqUe/dmbUzKs7TbloMpDVKaLTEjftD3XTRDBn7f
-	kM8KtZbZafgMghsyAH2hwTPPapOCUAXwCILfCgCa71BC6o8/cjUgXmUJsGAH
-X-Google-Smtp-Source: AGHT+IG2bHpjMm5lR3ttmKg8e6SD4XfgjQ/Sq+OZGDiXmqknlKp3DfcVARj9uD/iCvt9N4GVLWP9Hg==
-X-Received: by 2002:a5d:59a4:0:b0:390:d8ec:1779 with SMTP id ffacd0b85a97d-3911f7bedf1mr1576634f8f.12.1741201556285;
-        Wed, 05 Mar 2025 11:05:56 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965e8sm21491662f8f.1.2025.03.05.11.05.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 11:05:54 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-In-Reply-To: <20250301-exynos7870-v4-3-2925537f9b2a@disroot.org>
-References: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
- <20250301-exynos7870-v4-3-2925537f9b2a@disroot.org>
-Subject: Re: (subset) [PATCH v4 3/7] soc: samsung: exynos-chipid: add
- support for exynos7870
-Message-Id: <174120155205.74217.13161571019009381202.b4-ty@linaro.org>
-Date: Wed, 05 Mar 2025 20:05:52 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XddcZiJn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69017C4CED1;
+	Wed,  5 Mar 2025 19:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741201694;
+	bh=6CcsKwqJSLiz7bjMLQJBZiu3LQBJjQXJQ7zQz3/16Y4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XddcZiJnKr6JIV1Cds47liqbB8dr41V/PUj0oa7tvjGCyfRO9PprWSbPkpxMy8VrP
+	 UU27MT8Fnyn+bjKPC7tbBM9vuRR6psmGEqhRRApJ+BpSpIjtKfnlefN67GluABHnlI
+	 /ONnDcyKvgXR/GZkUxPX0L1g3ic/jTvPyaLC+Q3E+RbJTx9q55jUFO/h81Qn7c7Nlq
+	 bDgB6XakVp5jJz3i65+ZHa1w1C40HZVEMPX7fMjA0WFZewFrL9ThXYgYxS5aZYWUNZ
+	 bRRF2I/xh8O/Lw0aDLxzfrA79MxmXcCy71UtyDJVb082d4mt9Ky98suJrA/j12PIC4
+	 9XwYru3n1k28w==
+Message-ID: <de3cc07a-e2f2-475d-9418-2621cb0a5d2c@kernel.org>
+Date: Wed, 5 Mar 2025 20:08:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Add support for the Exynos7870 SoC, along with
+ three devices
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-
-On Sat, 01 Mar 2025 01:16:51 +0530, Kaustabh Chakraborty wrote:
-> Add the product ID of Exynos7870 (S5E7870) to the existing list.
+On 28/02/2025 20:46, Kaustabh Chakraborty wrote:
+> Additional features implemented in this series include:
+>  * I2C	- touchscreen, IIO sensors, etc.
+>  * UART	- bluetooth and serial debugging
+>  * MMC	- eMMC, Wi-Fi SDIO, SDCard
+>  * USB	- micro-USB 2.0 interface
 > 
+> Build dependencies are in these sub-series:
+>  * bootmode	  	- https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+>  * pmu-clocks		- https://lore.kernel.org/all/20250301-exynos7870-pmu-clocks-v4-0-0f3e73b10db7@disroot.org/
 > 
+> Other related sub-series:
+>  * gpu			R https://lore.kernel.org/all/20250204-exynos7870-gpu-v1-1-0db4c163a030@disroot.org/
+>  * i2c	      		A https://lore.kernel.org/all/20250204-exynos7870-i2c-v1-0-63d67871ab7e@disroot.org/
+>  * mmc			- https://lore.kernel.org/all/20250219-exynos7870-mmc-v2-0-b4255a3e39ed@disroot.org/
+>  * pinctrl	  	- https://lore.kernel.org/all/20250301-exynos7870-pinctrl-v3-0-ba1da9d3cd2f@disroot.org/
+>  * pmic-regulators	- https://lore.kernel.org/all/20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org/
+>  * uart			R https://lore.kernel.org/all/20250219-exynos7870-uart-v2-1-c8c67f3a936c@disroot.org/
+>  * usb			- https://lore.kernel.org/all/20250301-exynos7870-usb-v3-0-f01697165d19@disroot.org/
+>  * usbphy		- https://lore.kernel.org/all/20250219-exynos7870-usbphy-v2-0-b8ba4e7a72e9@disroot.org/
+> (Legend: [R]eviewed, [A]pplied)
 
-Applied, thanks!
 
-[3/7] soc: samsung: exynos-chipid: add support for exynos7870
-      https://git.kernel.org/krzk/linux/c/13a24175005fad410464bee482ed58af144ba250
+Seems this will have to wait for the next cycle. I saw also some
+checkpatch warnings, which anyway need fixing.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Krzysztof
