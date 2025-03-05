@@ -1,287 +1,103 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA0E250C00;
-	Wed,  5 Mar 2025 15:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AF42528F6
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Mar 2025 19:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190388; cv=none; b=uQaYBD+ijeB/914o2aEy2BFcqL+uskfBufjFHZlZMqIRgNo+P12a8yhHToRKNSU3ztGy7BqXX9isqMTgX5vRtEPHfKyCem4RfC3tn6DwF9pS/ZXIYtT6oDCWfn6DRW/qCP+VS/yoXo1CfihHymzqi4oZAnHWuipPNsNjnUE+t9k=
+	t=1741201558; cv=none; b=Wj9SnzfopXJBh5GIABNfJvdD3DGsWZpgp9WjfaEYkIv+jXDqyxSCVliIEtLyP0ko7inCvQo8ePp9G/3fpaM35YXM9Ai8tei+UhIC2lTHvRlm8shZG4k65k7C3qRzU3mIvpdsD3YIgDTdNPLPm5TeKk1qg/Mwe/ezPMhjb3meTE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190388; c=relaxed/simple;
-	bh=8Lry4w9TtWnkMmRqsKKK53yfuSzcXmAgYv1wuSz41hE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MYdzjji0fpqj6EKzazJM0MQzVhs2z9pLk6hqFHiv3GoWkCfFUEkIwqOiBz1k6bjEEeE+Z6bZGBtFwCKf9i2fl8/3BZ4n99mGH9G+3JSjfLHInuC+M3y4GPPZGpf8G9q9XymAy/q6GYZsIqsSUBlqyaQPiQgszgae6Og+OoBxBlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHDbr9f1; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741201558; c=relaxed/simple;
+	bh=k657FxCWzDpdSCjqG1OpdeS9FGRaWIIzPSLgP8iEB8U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nZZdPkOCC7M4tV4OklJK0D58TooybnWTMkxLf6X6A8/5LxbktPdsNeh9Ei8yQO2oUaJICSj0MeUpSUy6TvqhAz1k88TaQ1zHIHRXecq766gRUluetCG7o69o141T0LCsqwOYAwCPP8n2Ld4FQuxrYuOq15UbH8vK0wpfuY3zGMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RQVgtHsZ; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHDbr9f1"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf4802b242so832926466b.1;
-        Wed, 05 Mar 2025 07:59:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RQVgtHsZ"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bc2f816daso4558225e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2025 11:05:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741190384; x=1741795184; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tNHkJmXM07+1xGaDRSJ0A5BITf+LecZD5bdaeHjapZk=;
-        b=FHDbr9f18utWU61jHtKmjL03Ct4pykYFVDdzHls4YJ3eDBsJtnrXDiahLUeYIUKI1W
-         UWSyJ4VhgXi1iC4xDMSiAiPkwF+BY5DJQJFnQeZlM9UqmuhqCJjcr1gReC6BEKL6pTFA
-         0aB07Hwztvg0dppVlhXhsxCwptHKJJItM+/b7/ApTlyZamXb71WWn+MY1rJ6nBqlAyl2
-         nwjfx9LJh3+TWlauSnUKheOcx0agbHZ2OpmEX+zuK3qkUIvC71EgeWiILRYiX3GN4ts2
-         waIvA6Y2AVCZV19sOqbW3VObYsQJ1+1hd3TIMOuUNQNfDBw4EbVvyJvshit5V6mcJTQw
-         vyOg==
+        d=linaro.org; s=google; t=1741201555; x=1741806355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SXwlkhSlbVtwXogPWWcb08IskVMbUMqFwrxRMdg6+Ow=;
+        b=RQVgtHsZDjG8c4C/5yd7aPX+D5oNCtBX3uN7//eE6rIs4/3W6U+inhwcriB7y+x9X3
+         pHfw56hvP1FHgzRLyHBJ6VaxEL31PheSI34E3wVkg8qfU7xDpbg1kbNCPHi6ZZbMgsCK
+         nlfz7S4D7FJSp856HeiKI5S8lF3yAWRxIQKhvKhP1Uhi+0sQXSKRgWptRlRUzXd6z6t0
+         sUJyI8PKtF8g4kDdG2Bfl8EYzeN2sOzFpkHH0DUzc/9HlU9fxYb4fv2DolHvkmdkKX9V
+         Bzsl4Efqh24PCYORYaMM6KP2HtM9bmgMLxYwjc/JeYQTvOnMaMzSsyGwaI8j0bpjaEjg
+         bwsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741190384; x=1741795184;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tNHkJmXM07+1xGaDRSJ0A5BITf+LecZD5bdaeHjapZk=;
-        b=epn2+ijPC71klyvx8zl/R2vZo7avZLn3O/EivWQnQv+cFlzP/mOzzlRBDut/zpwUQK
-         SSK8EoHrWBdmCfxqZwo7RYEmGUHYPiR6r3jPh0YxDvLu+1VRaLToTnxfoA+XawWCWobq
-         aa/GJCpBaMWsnlfknBmw9j34YvwjovfTLoWndeAvDQNQ8X9WYlapbz2oMGQ1NNSzjY3p
-         qgYhkBjqniE8yNTi5oVEBkJhBl8Im1Kybsz/UXGwX2T9nwgfEnGD3CA+M4FATy0fPeGp
-         LGpnhY/+/IoJKFNVk7dwyWElRIwIKBO07nD9v/Ur1CnbzddZpulCcxwQ+noidla0gNW+
-         PUew==
-X-Forwarded-Encrypted: i=1; AJvYcCUGY/o8WGgZALR5X43vkIEQhS1j4QMTue9pcT+greh+Q9CtWjP1D4A1TsQa/DTZmgH/UQCjHZ8VgtbfATc=@vger.kernel.org, AJvYcCUoVbiQXakDpIFpkMKm+i4FzK0lSNSLOsR0EFKAAVMqbjBevq4fCUWdO86hjkp+zRjYI5rjDGb/Jgzy3UX54yiTM7I=@vger.kernel.org, AJvYcCVgzLZG7J03VQF7l2MMw9IEDSF1M1brgADKmJuWJYmvEwAUsAvo4LeZukPHNgeIiLB09Av2uXJLzNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCzNm3hG/KkVCU16skJUuZ9vv3wjXOB+rHv/KtpJekz5hH9xXi
-	hlIsPBMMfKXUuPqIaBhyMizKKOBNFPhWqCVqCX/Gn5YjM6Csttktnqx6veDrYStCmCDNZlui4+n
-	5lC8RZzLqYNLiXbDMm5v4hAQGBhw=
-X-Gm-Gg: ASbGncv1ctRvBYhgr7SJHoahOF6/vKW03DFC+DO3fnVwnqBa6MP2Qpjr+yRujCKt/o7
-	dW07E9nlFzw0Xy0YFoeiU3YwusPcwBNv4d8RC8d6Y/yfqAnQe5iEA88Cu8sw8jGLjcff2EqrZUu
-	5beVmsdV3+oGXYTQZ9RPOnGXYObw==
-X-Google-Smtp-Source: AGHT+IEQsE+pLAIU3v/ec4405Kg+m90JUNpfZqni22hhxiIr9/+iCpzkVrVUlAcAB0YbRMMiuvNnCzik/ivWF3/YwMM=
-X-Received: by 2002:a17:907:da6:b0:ac1:fa0d:756 with SMTP id
- a640c23a62f3a-ac20d943124mr375609766b.34.1741190384124; Wed, 05 Mar 2025
- 07:59:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741201555; x=1741806355;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SXwlkhSlbVtwXogPWWcb08IskVMbUMqFwrxRMdg6+Ow=;
+        b=lNAmc79oeymMfFBmHIgEnNw7BQGkvGNXe7+M1LycT6b+R1i010Pr69IlHrDqmbXabI
+         vpbCySiYWNHT8ZlI80QsUVhArlkRx8af4u96w3TYk0d6wpA3NgkXRzOStdkk7XuBmZTm
+         T0EicX1YQZwKKt5SMViOQIf0PxzPTy7uUHgeMbyQVY5k9gx/AdyTG94YvSktseIae5aT
+         v4D86AV7KBer2NNNnPjFSHs6X0/HgOCPxKcU0T5asf3Yp4dVnrMlSHwobx2CZDrVL65f
+         jShzUNWmy13LZeW7Wk/RaACFC5lyUpmQf7cDS2Xaka6t3ux9YpkKV+3fl98ygbcyNhoM
+         TPew==
+X-Forwarded-Encrypted: i=1; AJvYcCWSePEqB2NpVWVxGvUw7xyOPF6byyAI2VLvMR70CLZfEna3kE5NnFHIE18jxOfy1YxMmV2BU2vobtB4QVkvbTVA0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyluQCgeaQ3BiDk2u4UD9DgZF1yT54QZRzeEV4iLo2NppLWYHVc
+	bAsv/dsUOIUoFUblmK7KWRvWcr9qHvcZMg+bKywWvREzN0SObYV2Fqt4smY1IYo=
+X-Gm-Gg: ASbGnctRd8AD7thd6uowx4z7hT1O5jn9Vid9GrICV3+sR9lEcDoP1wWoBL2T/OUtn5b
+	vdjHWAJb1v7T3duIfBcxpOZc0qXd3y9ClRTnaov434LvyOhNcZsCx+nU6CBBBOIDosKjhsuov7B
+	oEutyszMXHHvsOJrm6Z6i+d054xCNWudfWMg7ALIf3VvNKThg1yRsPC1TE8ETazMeSvVgItbZdH
+	xFl8BxKLH0/iZbyTPVKmgFX7RKtnkl8W52Z4eSr9hqr3OdXVrbTCc6imoTnrO5jmEvSthi85TLU
+	vrHeh1lAdGfu0ACUEnfZBKqr6pxZawZUBwEPEsRJajZxcLeTv24L4xDm7lgr
+X-Google-Smtp-Source: AGHT+IE3IjJeSMhwhYFQVkJODS8A0V92GzgNUXihhvb00RZvzc5AMKy+de2oOq6U0u17cQDNCmp+YA==
+X-Received: by 2002:a5d:5391:0:b0:391:2886:d9bd with SMTP id ffacd0b85a97d-3912886dbaamr319116f8f.3.1741201553557;
+        Wed, 05 Mar 2025 11:05:53 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965e8sm21491662f8f.1.2025.03.05.11.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 11:05:53 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+In-Reply-To: <20250301-exynos7870-v4-1-2925537f9b2a@disroot.org>
+References: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
+ <20250301-exynos7870-v4-1-2925537f9b2a@disroot.org>
+Subject: Re: (subset) [PATCH v4 1/7] dt-bindings: soc: samsung: exynos-pmu:
+ add exynos7870-pmu compatible
+Message-Id: <174120155027.74217.562001377328469243.b4-ty@linaro.org>
+Date: Wed, 05 Mar 2025 20:05:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216195850.5352-1-linux.amoon@gmail.com> <20250216195850.5352-5-linux.amoon@gmail.com>
- <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com> <CANAwSgTpV_kGFEU-ND0N+OEtT6+j4ceq37xAoLyC7iHPWAuLjg@mail.gmail.com>
- <CANAwSgSWf_YxSi-pzWPaRoiJx7RLrWUz+HTWx5hf+E2x1ZGmoQ@mail.gmail.com> <7a1cac10-b065-4b4c-b048-10d6b4132f3d@arm.com>
-In-Reply-To: <7a1cac10-b065-4b4c-b048-10d6b4132f3d@arm.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 5 Mar 2025 21:29:27 +0530
-X-Gm-Features: AQ5f1JppO4fhzc2dkKI1ZBSO1ZKK5PQ7WMoG06FmWIv-xqH6vpAXgcWpPGM7iIg
-Message-ID: <CANAwSgQErDnKfaBOkpEwpJsoyUMhNTC2TJNW-eQYHgHu46poCA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Lukasz,
 
-On Wed, 5 Mar 2025 at 14:12, Lukasz Luba <lukasz.luba@arm.com> wrote:
->
->
->
-> On 3/4/25 12:20, Anand Moon wrote:
-> > Hi Lukasz,
-> >
-> > On Sat, 1 Mar 2025 at 00:06, Anand Moon <linux.amoon@gmail.com> wrote:
-> >>
-> >> Hi Lukasz,
-> >>
-> >> On Fri, 28 Feb 2025 at 22:58, Lukasz Luba <lukasz.luba@arm.com> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 2/16/25 19:58, Anand Moon wrote:
-> >>>> Using guard notation makes the code more compact and error handling
-> >>>> more robust by ensuring that mutexes are released in all code paths
-> >>>> when control leaves critical section.
-> >>>>
-> >>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >>>> ---
-> >>>> v3: new patch
-> >>>> ---
-> >>>>    drivers/thermal/samsung/exynos_tmu.c | 21 +++++++--------------
-> >>>>    1 file changed, 7 insertions(+), 14 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> >>>> index fe090c1a93ab..a34ba3858d64 100644
-> >>>> --- a/drivers/thermal/samsung/exynos_tmu.c
-> >>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> >>>> @@ -256,7 +256,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >>>>        unsigned int status;
-> >>>>        int ret = 0;
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>        clk_enable(data->clk_sec);
-> >>>>
-> >>>> @@ -270,7 +270,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >>>>
-> >>>>        clk_disable(data->clk_sec);
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>
-> >>>>        return ret;
-> >>>>    }
-> >>>> @@ -292,13 +291,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
-> >>>>                return ret;
-> >>>>        }
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>
-> >>>>        data->tmu_set_crit_temp(data, temp / MCELSIUS);
-> >>>>
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>
-> >>>>        return 0;
-> >>>>    }
-> >>>> @@ -325,12 +323,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
-> >>>>    {
-> >>>>        struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>        data->tmu_control(pdev, on);
-> >>>>        data->enabled = on;
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>    }
-> >>>>
-> >>>>    static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
-> >>>> @@ -645,7 +642,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
-> >>>>                 */
-> >>>>                return -EAGAIN;
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>
-> >>>>        value = data->tmu_read(data);
-> >>>> @@ -655,7 +652,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
-> >>>>                *temp = code_to_temp(data, value) * MCELSIUS;
-> >>>>
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>
-> >>>>        return ret;
-> >>>>    }
-> >>>> @@ -720,11 +716,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
-> >>>>        if (temp && temp < MCELSIUS)
-> >>>>                goto out;
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>        data->tmu_set_emulation(data, temp);
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>        return 0;
-> >>>>    out:
-> >>>>        return ret;
-> >>>> @@ -760,14 +755,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
-> >>>>
-> >>>>        thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>
-> >>>>        /* TODO: take action based on particular interrupt */
-> >>>>        data->tmu_clear_irqs(data);
-> >>>>
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>
-> >>>>        return IRQ_HANDLED;
-> >>>>    }
-> >>>> @@ -987,7 +981,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-> >>>>    {
-> >>>>        struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-> >>>>
-> >>>> -     mutex_lock(&data->lock);
-> >>>> +     guard(mutex)(&data->lock);
-> >>>>        clk_enable(data->clk);
-> >>>>
-> >>>>        if (low > INT_MIN)
-> >>>> @@ -1000,7 +994,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-> >>>>                data->tmu_disable_high(data);
-> >>>>
-> >>>>        clk_disable(data->clk);
-> >>>> -     mutex_unlock(&data->lock);
-> >>>>
-> >>>>        return 0;
-> >>>>    }
-> >>
-> >> Thanks for your review comments.
-> >>>
-> >>> IMO you should be able to even use something like we have
-> >>> core framework:
-> >>>
-> >>> guard(thermal_zone)(tz);
-> >>>
-> >>> Your mutex name is simply 'lock' in the struct exynos_tmu_data
-> >>> so you should be able to leverage this by:
-> >>>
-> >>> guard(exynos_tmu_data)(data);
-> >>>
-> >
-> > If I introduce the guard it creates a compilation error
-> >
-> > amoon@anand-m920q:~/mainline/linux-exynos-6.y-devel$ vi
-> > drivers/thermal/samsung/exynos_tmu.c +306
-> > amoon@anand-m920q:~/mainline/linux-exynos-6.y-devel$ make -j$(nproc)
-> > ARCH=arm CROSS_COMPILE=arm-none-eabi- LOCALVERSION=-u3ml dtbs zImage
-> > modules
-> >    CALL    scripts/checksyscalls.sh
-> >    CHK     kernel/kheaders_data.tar.xz
-> >    CC      drivers/thermal/samsung/exynos_tmu.o
-> >    CC [M]  drivers/md/raid10.o
-> > In file included from ./include/linux/irqflags.h:17,
-> >                   from ./arch/arm/include/asm/bitops.h:28,
-> >                   from ./include/linux/bitops.h:68,
-> >                   from ./include/linux/kernel.h:23,
-> >                   from ./include/linux/clk.h:13,
-> >                   from drivers/thermal/samsung/exynos_tmu.c:14:
-> > drivers/thermal/samsung/exynos_tmu.c: In function 'exynos_tmu_update_bit':
-> > ./include/linux/cleanup.h:258:9: error: unknown type name
-> > 'class_exynos_tmu_data_t'
-> >    258 |         class_##_name##_t var
-> > __cleanup(class_##_name##_destructor) =   \
-> >        |         ^~~~~~
-> > ./include/linux/cleanup.h:309:9: note: in expansion of macro 'CLASS'
-> >    309 |         CLASS(_name, __UNIQUE_ID(guard))
-> >        |         ^~~~~
-> > drivers/thermal/samsung/exynos_tmu.c:338:9: note: in expansion of macro 'guard'
-> >    338 |         guard(exynos_tmu_data)(data);
-> >        |         ^~~~~
-> > drivers/thermal/samsung/exynos_tmu.c:338:9: error: cleanup argument
-> > not a function
->
-> [snip]
->
-> Right, you're missing the definition at the begging, like:
->
-> DEFINE_GUARD(exynos_tmu_data, struct exynos_tmu_data *,
-> mutex_lock(&_T->lock),
->               mutex_unlock(&_T->lock))
->
-> below the struct exynos_tmu_data definition.
->
-> Also, make sure you include the cleanup.h (it might not complain,
-> but it would be explicit and more clear)
+On Sat, 01 Mar 2025 01:16:49 +0530, Kaustabh Chakraborty wrote:
+> Document the compatible string for the Exynos7870 PMU. It's compatible
+> with the Exynos7 PMU design. It handles syscon reboot, syscon reboot mode,
+> as well as other system control registers (i.e registers for the USB PHY).
+> 
+> 
 
-Thanks for this tip.
-However, incorporating guard(exynos_tmu_data)(data); results
-in a recursive deadlock with the mutex during initialization, as this
-data structure is common to all the code configurations of Exynos TMU
+Applied, thanks!
 
-Thanks
--Anand
+[1/7] dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
+      https://git.kernel.org/krzk/linux/c/bf869ecfb8d3d0fef07ed2752df93c977cc257b6
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
