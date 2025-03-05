@@ -1,25 +1,63 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C477C1FC10C;
-	Wed,  5 Mar 2025 08:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F74F24E4A0
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Mar 2025 14:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741164139; cv=none; b=RfHZAnaIrpPI0VLDv/YEnPIMIb1K6YihWrcHbpVnbjnaxBT1Csv3H7S/EupLuYCeszC98xqv0i+ZnGKZw3H03ocjlm6WiQNLk0DOuOqEp3ere20lpiW7ym9jJ4EO1IAFs0Cx4WKyAUOrNqa7CRqsSXWXmsGV8kfA1BZ0Z+9HcWE=
+	t=1741184591; cv=none; b=sa/eXzNNFEVpT3CRBhSNJumhFE3kN5OXr8lzDTnDueJeTiZh7HyOkqld9LsVOh2Z2xDR5m0ipeYsmrged9tSdOZgSS3NxwWodXO28s1se90DXbIkaV/TPn6xFmjjaiXi3UPvWUxEFqxFPMLLyMJJJxZU5GH2bscIu4MwWlT0Lsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741164139; c=relaxed/simple;
-	bh=ip+xY+hrtB8A1Wl/yTyq2dvEsFrmdQG6g+oTOPZIVoE=;
+	s=arc-20240116; t=1741184591; c=relaxed/simple;
+	bh=Y3p4LBE9WXSBmze6nc8QffxaOmv0qMigh53x+CI5U90=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FfW8ZYFup3XNBBBoIE2KBWtfQyu7TkfZUPchsHj85sEvKzfj7CtFCxPO32RyGKtUbIAvm/0Tct1W/kKkal3Iyj9xkJWP7p/hvNBFkBHs8nDlEpYB9OphJzU9XxBWC+JusQQgnHhYcZfOzrvZSkY2WdPMFUP3Zwl/VpvuzMMGdro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED9E4FEC;
-	Wed,  5 Mar 2025 00:42:28 -0800 (PST)
-Received: from [10.57.64.200] (unknown [10.57.64.200])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D35A3F66E;
-	Wed,  5 Mar 2025 00:42:13 -0800 (PST)
-Message-ID: <7a1cac10-b065-4b4c-b048-10d6b4132f3d@arm.com>
-Date: Wed, 5 Mar 2025 08:42:11 +0000
+	 In-Reply-To:Content-Type; b=WovbLlqvHMrRfKbqKwG2sDYVemCoc+LHws6GJ264Qgey6wCfGwLw4y96L9ziXAKusNP+eSJLPlANnSjekwhrMHrngkem1XnurxniYyvS1Jb5kXHlwpQwXbw+zg9F4Eny6XkCZYWTId5YriO3OWvl3clRUgGBkSqbKa9D30NmauQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qhaz8w7H; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qhaz8w7H"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390ec449556so5807235f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2025 06:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741184588; x=1741789388; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u/EDlj+KCqtnghUmkpWYPx5sg24VjMYJxMv5mgQVSzE=;
+        b=qhaz8w7HsRDtH+dkmhm9PBNSqGoI97u9DRw49x6aDnMBZf6b0QAOuIIgOR+Q6XvVTi
+         awhGgCajPHYfPhVf1qaOd5OLEU9wGla1S/kjG6hnti/fmUikOA3A6qlw5gjld7LfxfrB
+         NJqp6ozipLtNw9XMI7rUp9Irra8QqUMF2tQCoMLorYg9pKhuViRox33GNQabR4FjQv4+
+         j48eBQk4mdbXxhQzsruci6D7lZatVuIsDePJwGJQavbDd/UkraEaXo93g55+t409O6Bi
+         JltHX8SoKoVLKeEYChK19hjDxa77ZZRM9b+kGS4qLfZcCg37GZCS0C6we8bVVncfK3Fz
+         5R0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741184588; x=1741789388;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/EDlj+KCqtnghUmkpWYPx5sg24VjMYJxMv5mgQVSzE=;
+        b=ikhh/U8qHYlW/20dh9Z7kiip+NC7MsMCar8gHizZkiZwXc/GL5DZj4pkF+VMlIIX+z
+         YR8oRwrJtvmE7Lt/Gcdfb1z7d4Bxtk1rv17q9vzVME0CAPNIeWBNkEe7RNIycj5UK8Pq
+         7CbkMsWV61WqFYB6epl6SumJhnELiKx59KNjccB9XqZ2athWAGFZtXgak7GrTFTdXCgw
+         oIVqcXOAtvyrtlan/XTbUKI+/RCLlJklTvXl73dDIvPlFl/i+JnfgJUcm//g9soSx55R
+         gk1yVWuF2Zpq0kz1CJrgqQmvuevmHfDTEO1o8IEIMUx+oqwfY/ThSsKqi3w7mhHkpMbu
+         cDTw==
+X-Gm-Message-State: AOJu0YwdSCWUbOiqGd78b4z2h5PP9ss4dxhe7YScMuN+bzuc0jNIEFjd
+	Ng7Ts+74zYKXRn0v80PqN6DAfW+g66m03cFOfQS1naklBMkQvINGKWc09z883Dc=
+X-Gm-Gg: ASbGncsD8hzFwUcjN8z0f5cx03UgdAhogcAzCy6HlIkYnskWljCSQqYF8+meUeFumHF
+	Xp7McM0njYGHxLgjt0bpGE3flHBRh8yp6i6EM1fDgif4n+XCNHaKBnBatdZLOnZNinl9WJemrIz
+	IvlIbDN5oSKHLVnLnEXuAIqIBeLoSG0/3F1P2QLT8Uzc+5X0s9aCMJkXHrOYGKyKADWxk2VpShs
+	TEDMa1SI0cwSw70+NlAC2oId1TmgY579fc5VPZwybVhyRHcSTpm8TF6F8l2g6rAL8ickvo+Z0Pz
+	UQ5ngcqWW1nrzwuchYRATHF4SfHWZBPICSPChCAaqDv7MFp0OAWj7w==
+X-Google-Smtp-Source: AGHT+IFhtHEtHPZDbikFBxfqwSObZ6We/RGoyHTAtxKyvh9iiCUNxXuSQTE/D9Gy3GIUTiWcaX07Kg==
+X-Received: by 2002:a5d:5886:0:b0:391:2e7:67ff with SMTP id ffacd0b85a97d-3911f724d55mr2796904f8f.10.1741184587814;
+        Wed, 05 Mar 2025 06:23:07 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm21390361f8f.57.2025.03.05.06.23.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 06:23:07 -0800 (PST)
+Message-ID: <9063abd1-b417-4623-b44d-fcb18f3c71b7@linaro.org>
+Date: Wed, 5 Mar 2025 14:23:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -27,223 +65,62 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>, Zhang Rui <rui.zhang@intel.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>
-References: <20250216195850.5352-1-linux.amoon@gmail.com>
- <20250216195850.5352-5-linux.amoon@gmail.com>
- <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com>
- <CANAwSgTpV_kGFEU-ND0N+OEtT6+j4ceq37xAoLyC7iHPWAuLjg@mail.gmail.com>
- <CANAwSgSWf_YxSi-pzWPaRoiJx7RLrWUz+HTWx5hf+E2x1ZGmoQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Add missing mod_devicetable.h header
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250304-clk-samsung-headers-cleanup-v1-0-81718e38246e@linaro.org>
+ <20250304-clk-samsung-headers-cleanup-v1-1-81718e38246e@linaro.org>
 Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CANAwSgSWf_YxSi-pzWPaRoiJx7RLrWUz+HTWx5hf+E2x1ZGmoQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250304-clk-samsung-headers-cleanup-v1-1-81718e38246e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 3/4/25 12:20, Anand Moon wrote:
-> Hi Lukasz,
-> 
-> On Sat, 1 Mar 2025 at 00:06, Anand Moon <linux.amoon@gmail.com> wrote:
->>
->> Hi Lukasz,
->>
->> On Fri, 28 Feb 2025 at 22:58, Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>
->>>
->>>
->>> On 2/16/25 19:58, Anand Moon wrote:
->>>> Using guard notation makes the code more compact and error handling
->>>> more robust by ensuring that mutexes are released in all code paths
->>>> when control leaves critical section.
->>>>
->>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>> ---
->>>> v3: new patch
->>>> ---
->>>>    drivers/thermal/samsung/exynos_tmu.c | 21 +++++++--------------
->>>>    1 file changed, 7 insertions(+), 14 deletions(-)
->>>>
->>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>>> index fe090c1a93ab..a34ba3858d64 100644
->>>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>>> @@ -256,7 +256,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->>>>        unsigned int status;
->>>>        int ret = 0;
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>        clk_enable(data->clk_sec);
->>>>
->>>> @@ -270,7 +270,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->>>>
->>>>        clk_disable(data->clk_sec);
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>
->>>>        return ret;
->>>>    }
->>>> @@ -292,13 +291,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
->>>>                return ret;
->>>>        }
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>
->>>>        data->tmu_set_crit_temp(data, temp / MCELSIUS);
->>>>
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>
->>>>        return 0;
->>>>    }
->>>> @@ -325,12 +323,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
->>>>    {
->>>>        struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>        data->tmu_control(pdev, on);
->>>>        data->enabled = on;
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>    }
->>>>
->>>>    static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
->>>> @@ -645,7 +642,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
->>>>                 */
->>>>                return -EAGAIN;
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>
->>>>        value = data->tmu_read(data);
->>>> @@ -655,7 +652,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
->>>>                *temp = code_to_temp(data, value) * MCELSIUS;
->>>>
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>
->>>>        return ret;
->>>>    }
->>>> @@ -720,11 +716,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
->>>>        if (temp && temp < MCELSIUS)
->>>>                goto out;
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>        data->tmu_set_emulation(data, temp);
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>        return 0;
->>>>    out:
->>>>        return ret;
->>>> @@ -760,14 +755,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
->>>>
->>>>        thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>
->>>>        /* TODO: take action based on particular interrupt */
->>>>        data->tmu_clear_irqs(data);
->>>>
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>
->>>>        return IRQ_HANDLED;
->>>>    }
->>>> @@ -987,7 +981,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
->>>>    {
->>>>        struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
->>>>
->>>> -     mutex_lock(&data->lock);
->>>> +     guard(mutex)(&data->lock);
->>>>        clk_enable(data->clk);
->>>>
->>>>        if (low > INT_MIN)
->>>> @@ -1000,7 +994,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
->>>>                data->tmu_disable_high(data);
->>>>
->>>>        clk_disable(data->clk);
->>>> -     mutex_unlock(&data->lock);
->>>>
->>>>        return 0;
->>>>    }
->>
->> Thanks for your review comments.
->>>
->>> IMO you should be able to even use something like we have
->>> core framework:
->>>
->>> guard(thermal_zone)(tz);
->>>
->>> Your mutex name is simply 'lock' in the struct exynos_tmu_data
->>> so you should be able to leverage this by:
->>>
->>> guard(exynos_tmu_data)(data);
->>>
-> 
-> If I introduce the guard it creates a compilation error
-> 
-> amoon@anand-m920q:~/mainline/linux-exynos-6.y-devel$ vi
-> drivers/thermal/samsung/exynos_tmu.c +306
-> amoon@anand-m920q:~/mainline/linux-exynos-6.y-devel$ make -j$(nproc)
-> ARCH=arm CROSS_COMPILE=arm-none-eabi- LOCALVERSION=-u3ml dtbs zImage
-> modules
->    CALL    scripts/checksyscalls.sh
->    CHK     kernel/kheaders_data.tar.xz
->    CC      drivers/thermal/samsung/exynos_tmu.o
->    CC [M]  drivers/md/raid10.o
-> In file included from ./include/linux/irqflags.h:17,
->                   from ./arch/arm/include/asm/bitops.h:28,
->                   from ./include/linux/bitops.h:68,
->                   from ./include/linux/kernel.h:23,
->                   from ./include/linux/clk.h:13,
->                   from drivers/thermal/samsung/exynos_tmu.c:14:
-> drivers/thermal/samsung/exynos_tmu.c: In function 'exynos_tmu_update_bit':
-> ./include/linux/cleanup.h:258:9: error: unknown type name
-> 'class_exynos_tmu_data_t'
->    258 |         class_##_name##_t var
-> __cleanup(class_##_name##_destructor) =   \
->        |         ^~~~~~
-> ./include/linux/cleanup.h:309:9: note: in expansion of macro 'CLASS'
->    309 |         CLASS(_name, __UNIQUE_ID(guard))
->        |         ^~~~~
-> drivers/thermal/samsung/exynos_tmu.c:338:9: note: in expansion of macro 'guard'
->    338 |         guard(exynos_tmu_data)(data);
->        |         ^~~~~
-> drivers/thermal/samsung/exynos_tmu.c:338:9: error: cleanup argument
-> not a function
+On 3/4/25 6:45 PM, Krzysztof Kozlowski wrote:
+>  drivers/clk/samsung/clk-exynos-audss.c   | 1 +
+>  drivers/clk/samsung/clk-exynos-clkout.c  | 1 +
 
-[snip]
+drivers/clk/samsung/clk-exynos2200.c can benefit of the inclusion too.
 
-Right, you're missing the definition at the begging, like:
+>  drivers/clk/samsung/clk-exynos3250.c     | 2 +-
 
-DEFINE_GUARD(exynos_tmu_data, struct exynos_tmu_data *, 
-mutex_lock(&_T->lock),
-              mutex_unlock(&_T->lock))
+drivers/clk/samsung/clk-exynos4.c too
 
-below the struct exynos_tmu_data definition.
+>  drivers/clk/samsung/clk-exynos4412-isp.c | 1 +
 
-Also, make sure you include the cleanup.h (it might not complain,
-but it would be explicit and more clear)
+drivers/clk/samsung/clk-exynos5-subcmu.c too
+
+>  drivers/clk/samsung/clk-exynos5250.c     | 1 +
+>  drivers/clk/samsung/clk-exynos5420.c     | 1 +
+>  drivers/clk/samsung/clk-exynos5433.c     | 1 +
+
+drivers/clk/samsung/clk-exynos7870.c too
+
+>  drivers/clk/samsung/clk-exynos7885.c     | 1 +
+>  drivers/clk/samsung/clk-exynos850.c      | 1 +
+>  drivers/clk/samsung/clk-exynos8895.c     | 1 +
+>  drivers/clk/samsung/clk-exynos990.c      | 1 +
+>  drivers/clk/samsung/clk-exynosautov9.c   | 1 +
+>  drivers/clk/samsung/clk-exynosautov920.c | 1 +
+>  drivers/clk/samsung/clk-fsd.c            | 1 +
+>  drivers/clk/samsung/clk-gs101.c          | 1 +
+>  drivers/clk/samsung/clk-s5pv210-audss.c  | 1 +
+
+drivers/clk/samsung/clk.c and drivers/clk/samsung/clk.h too.
+
+With that:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+>  16 files changed, 16 insertions(+), 1 deletion(-)
+
+
