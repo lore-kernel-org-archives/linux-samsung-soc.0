@@ -1,99 +1,129 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585AA1DE4EC
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 18:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABAD19E99E;
+	Thu,  6 Mar 2025 19:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741286281; cv=none; b=HA0+WrSDDBhTHujCyTROZr04C8OblzxSzi7BpoHD89G34OYObcq9H01qpBODMd3teocDWL5KpN6C/c34KfEZbH1g/3XoJZ35+ih2C8qo1agbw07kF4OEXcswhHx2kGQWf/PtJ1avsE8idkcaSCR8dlIfktkd59B/AhOcuTuS+zQ=
+	t=1741289201; cv=none; b=mB8+nb0ScNtwIwiloXnr/q2zjieXMWv02+9vNLwEhkcU2XmuCev32hnRWpRA02NGOMJvV95pKBrSU0QsU3VmtmKuYN6n+V/ywzBpvkWApkJAcwEbOzcu7Ov3h9Ai7H07XA4qK7DshgHbsiD30x02kh0A1yRO6e7hHytMeE+df+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741286281; c=relaxed/simple;
-	bh=8QVrITdl2Uss2YsW7o3dCB5CWPCmg9xpYKs6EZXoUMQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=aRcQwemtY4DgbP3ngYiZ4AR57obVBhDbR/qVGWgnAGm8HXsBMJ9pB54F9dh6OKu2R5UE+TKuZUnQjlgBGq2vM6kpVj+tRe8rpv+mXObsrpfKm225zo62eMZDmCILhvO+YZzQOel2j02HzmATnhELDd895FUEmoBD+2nVgg08yEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UIi8Mm7d; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1741289201; c=relaxed/simple;
+	bh=TYNF5uSYA4qLy4+0N6piNIXODyphiWdbD9W6y3Or87U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XVrgnweYfy5WDzrVT/GpRZfh8KaaIk6XsMHnHQhwC/4qixo1kWurzftzWlVmp3xt6vpv1JcMKSofJKHCs7xDIkY1rYgF3yuZIzUOZ1mUPS1AdB97rlSqiOIE7HpIzt7IRJSXi9AFF4iZtyIjYyQbilCSrSKqZjUXB9Jxr3JO6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1JK4ZGc; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UIi8Mm7d"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9F3C5252B1;
-	Thu,  6 Mar 2025 19:37:56 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id rKhYPEc0xzgL; Thu,  6 Mar 2025 19:37:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741286268; bh=8QVrITdl2Uss2YsW7o3dCB5CWPCmg9xpYKs6EZXoUMQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=UIi8Mm7dWejnL6lex9HGKbNaDBOpXgzQG51Fkx6YNjHcaRHlKtqu+EV1uMWtZGVd3
-	 57TSkZX+vR98jI2L4i9NwY4YZDyVdsU0pJb0dLuyUc7+Wk2GSxx2tF0woPdJRMXU+9
-	 fw7dKpjEzMkhS0PhrOGPfmM6CsbmAuZZisjYL03oWvhvqg9NefPBBD+6/5NzkxVbDH
-	 O5WBESv+7Hd6O0dZ5kdRbMCQBN1irbIJnhvU9HraeM8I/izvSlHT9ytugoCWyq2iJH
-	 Rn+D/4XXxpSNgLGfE5FfMP59HGjFZTD22tkff4oE1axrNsEk9GaGf5XMMP6tiSaBX2
-	 P7P1qnOnanyNw==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1JK4ZGc"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390eebcc371so745665f8f.0;
+        Thu, 06 Mar 2025 11:26:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741289198; x=1741893998; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yNcfgkruRbdQ2LTcDlb82l2rtv263h9UvbuoZgmPSdM=;
+        b=I1JK4ZGcAtVb29v5t0FDfTebEUcYbgrsY5gfo8ahBj4fnlgRs//Ju85g6KpHETmbTh
+         /xBbaKWxHKJRGJC5xifE/PT5ARyIdp92VBM1Sz9WCfsYeB1yl015skta/qlm5o/jNx/t
+         HsM93nh+A47Ra+yNfuyexV5TiMaIXuJEgnrlid+bMopSgZLW+pW5/3HD/I/355ZOmg20
+         hhzK38EGIfPhbc9k5fVw8uJpYsE+Z4iF+KZ4+r+mD6Y0Xr+I4B8OaHly1AJz2+vLCisG
+         tKZWLfXD/UD0o/cM72zAxFwFF5IVn+cuCN+lNhAqxmrmWex48vOClSOlxxw2QyojS4wD
+         KE2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741289198; x=1741893998;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yNcfgkruRbdQ2LTcDlb82l2rtv263h9UvbuoZgmPSdM=;
+        b=Ffe29ERr2AsalFS9M1SXo7Pm0B0CO7OEGIel9ggZAnf1/FwZS4/6HGKLsDghIQ3z2O
+         B2Ex6lHTwP4OyfOU1VU/vNO2ZDb8UnkeJny7/aFKEGSzhKZyd9YxJHWWZIAu23G6o8BK
+         MOJcnDLh747p5OmK7SKHknojGRlQHShO9YllgOTD2Ovk0Y95JLNjIdeYe2oxrAzdD48A
+         zt0xdfu1IkP1XzsQZ3BflqG/bUcxPNPmkBjA2QLRmm/1K/ObrkwFN0Ux12WU+JXkAjt0
+         WiskPswa0JU6Sh7PxteZC828Na4M8Y7bWTD/fVh3VtDsrLpJLT/sBWIUkA4HYW9gLG4Z
+         xeAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCaERr5ZORQKY9xr+sAs9i6I2lF6w7kjIKEbGSXb40JWwHrg6+1QVeuj84lYsE18Lemr0Y747+W8PtjFC3@vger.kernel.org, AJvYcCWReqQ4KnmTdn22h7L1c7WXRL+8hSrYee1GhJuDtVwswvfbIYmmMhDZ/uSo7Z0l5gq/0jL1KVSkowQnsGGWUs1LDhk=@vger.kernel.org, AJvYcCWXXnNIOUJ+cyKiJvubaxNUkYqNXAsmPSWrq4Smg21twb0f4qghKiz6Lq/+mf8wDaEpulVMOL+9dlm0B1Ji+RdYId0=@vger.kernel.org, AJvYcCX9LPtmEF6m0Qd/u3+PYB75+hxfVr7n56BE3xq2ICkZTcr0QTzcJTDCyuej62PcKjEU71j1VgxfQNSO6bs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxahazkZ0zdM6IWaR2KoQOK6irfTYMtBPKyfRCOPjHDcPMUuZ6G
+	u3xfgvd2Jb4L0UM7o7HuFn8EAY/4eRe87yYagJ6x87z/hETAHloj
+X-Gm-Gg: ASbGnct84UT2Ge6lBC6At6b522N0DWQR0BocaDabdHJzUvXZ9BKJU9ui62zEJ2+PqjN
+	E95nNx2I0aTPX28Hl+wzSi44aqY4Buhvndlh16zexTbWYobjqXiAjmG3ZJ3sHzYKOul+N/v3kxe
+	j/tBZa7mJPD5kWtBd3isjFnfKkfDc2HziQ8tNRM+Wkvl0aYwFdpjagFjQBh+uHoiyn8fTARPKmb
+	Y3Muyq87S+hfEvAWCjn6bX2iC3mhSHSEq601AGWlmARveHpn0og6cuxO2f8Cwtrc+sFW48nvQqD
+	UmzdqjnoWOxPi5Fz4zu0o5mfYXVG3zG+p/r369v0prJrcNzVHyjryN1P/ItaxD9NqZdTtmqBf+S
+	aB2M+l5apnuI477vdiKGWFL1lMy0kAYU=
+X-Google-Smtp-Source: AGHT+IGse2HrwvQit3ez+Tb+IZmcWPgul6Oz1Of3MncB8IKv5GiNEYehZwUGHa/gmdRGfttFwUyGrw==
+X-Received: by 2002:a5d:5f45:0:b0:390:eebc:6f32 with SMTP id ffacd0b85a97d-39132da8fecmr291664f8f.48.1741289198054;
+        Thu, 06 Mar 2025 11:26:38 -0800 (PST)
+Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e1d67sm2905872f8f.74.2025.03.06.11.26.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 11:26:36 -0800 (PST)
+Date: Thu, 6 Mar 2025 20:26:33 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v3 20/25] drm/tegra: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+Message-ID: <mtsi7lohn4nq75y3mdzk7eomloxvswjn4blsmruutpejhppd5i@wexuiu7yfea3>
+References: <20250218142542.438557-1-tzimmermann@suse.de>
+ <20250218142542.438557-21-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 06 Mar 2025 18:37:48 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Ivaylo Ivanov
- <ivo.ivanov.ivanov1@gmail.com>, Igor Belwon
- <igor.belwon@mentallysanemainliners.org>, Denzeel Oliva
- <wachiturroxd150@gmail.com>
-Subject: Re: Any pending patches on me for Samsung SoC? Closing applying cycle
-In-Reply-To: <10311a34-7774-42dd-92d5-37da57d8bfcb@kernel.org>
-References: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
- <55501e08b586c9bb1178be658299207b@disroot.org>
- <10311a34-7774-42dd-92d5-37da57d8bfcb@kernel.org>
-Message-ID: <b1a18ae129de8515435b3adbb14bd0d2@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="y6cp6aqkj6w24xiu"
+Content-Disposition: inline
+In-Reply-To: <20250218142542.438557-21-tzimmermann@suse.de>
 
-On 2025-03-06 18:07, Krzysztof Kozlowski wrote:
-> On 06/03/2025 15:03, Kaustabh Chakraborty wrote:
->> On 2025-03-05 19:45, Krzysztof Kozlowski wrote:
->>> Hey,
->>>
->>> I went through my inbox and cleared my queue because I am approaching
->>> end of applying cycle. I think I dealt with everything and pending
->>> things are:
->>>
->>> 1. Exynos7870 SoC: waits for bindings,
->> 
->> Is this possible to be merged? [1]
->> It's over a month old at this point, seemingly left untouched.
-> 
-> I don't have it in my inbox for some reason. Regardless, you want it to
-> be a binding, so is it going to be used also by U-Boot?
 
-Don't have any plans with u-boot at the moment, though I'll likely consider
-it later. The macros are used with syscon-reboot-mode which helps switching
-modes from userland.
+--y6cp6aqkj6w24xiu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 20/25] drm/tegra: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+MIME-Version: 1.0
 
-> 
->> 
->> This one's also a build dependency for [2], as mentioned in its cover
->> letter.
->> 
->> [1] https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
->> [2] https://lore.kernel.org/all/174100756283.1496281.12555971793250210333.robh@kernel.org/
-> 
-> Then it should not have been sent separately. Patchset should be split
-> by subsystem, so this belongs to soc with the rest.
+On Tue, Feb 18, 2025 at 03:23:43PM +0100, Thomas Zimmermann wrote:
+> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
+> buffer size. Align the pitch according to hardware requirements.
+>=20
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/gpu/drm/tegra/gem.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 
-Hmm, getmaintainer didn't report it as part of the soc subsystem, although
-the file path does have 'soc' in it. And thus I decided to kept it
-separate.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> 
-> Best regards,
-> Krzysztof
+--y6cp6aqkj6w24xiu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfJ9ukACgkQ3SOs138+
+s6GThw/9F553EWmmWz8ONopI5pY7Fy+Pu8kzqsU5bhKSKO2aqJ8y4PFOQAzaacO8
+2HuvhLXsP6l91B+R49oebJTWnbgcl9ThzcA4njgdKRFc7yZU/EZUEUGdwDkU6qsh
+/rkDnM+a+MzIAd3Z31B0Kvb0tUsl4e0UBueDHmjfP554dbtnMr94eIHuqLVRb1/D
+LB6ddm8DbZVoDKT9Ji2gLQpW84oFuIzRZPOV8JmPe+wE8Xf6A9sLloqJndErnvHg
+B8X2K8PzxkNNJGaZtQMUpiJ+S1oDNZnnKtzt0Wb+b9itJqUgykve29vGBDBImsb5
+8JLFlkdPFdKpFsbAvGyHv8b+F2rDVu4Oelg88WWDUSMc9Ut274u5/a2DTUOwF806
+DtCADAFUOOcIyDZKfPpeQuWDPeScN3/ANW8iQMlyPaNO5fBKlisFjiF1Bh0gS+vQ
+shkKb74wChg/4jgq1+M+I4DPdCQRe0kGIqbNZ4yK71owOjoSE6WIxxEt0UUKxPwh
+XZyf8ZF2O9TCPMigN6Qw2AGUhaC3HsAG9KbhOTSeUAsOwohFtYY+3B6Hkb8SQHEM
+i05OutqXEhtdSZgBK+HuweZtYWCBfy/BcMeD99Rkg01C+aMZcNPGVLpvGqpryNaB
+Ga0hQwFdIjbnMbXxjzyfJfs7GqNyTAJtpiqBO3uDhWH2LxJHZ7M=
+=2m1E
+-----END PGP SIGNATURE-----
+
+--y6cp6aqkj6w24xiu--
