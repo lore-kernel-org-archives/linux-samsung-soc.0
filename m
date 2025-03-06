@@ -1,118 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613AD33FD;
-	Thu,  6 Mar 2025 13:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F0014A088
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 14:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741269072; cv=none; b=lT4Su9z+snZZ4dnBNnuvQXB5+wF4na0T+ggF7AQW5xKZxhI1ibHiSkmmI4W7zXM8oldOGuXGiiB6vjsL9J7OHHLjeyBl3oguGBGq0Gw7m4nvpggV9kGJWYtvVYkoD1ZCxm2efST3uFS27ltXrxUB9Fai9QncctYSI2h73DmHmcg=
+	t=1741269879; cv=none; b=hPeewrlew3HXQNYLba6mb3cFWWxjxr5yEE4SDeH+fR1AfF4Ic66q4rLxnmdExPw7yH7S7IQhRcWcaeMcWc6meDFntMXJ6muwy5vv1oy6F9PqYcSGlToZT2Sr3iPOQC+LlPzapGBdhYBH/WDz2TkXm9DHwc4ndukw+eZS4vuyzKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741269072; c=relaxed/simple;
-	bh=MDHqWx3qK8RGM3fr6S9WaYEhaVQkVBdZ75ZCdRSLAdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kzHdMR7+Rkp6gSMy3SqsDaCwn0G2JoAR2V/ZhwP05qGU0L25eExyf6viF7xJU/U6E/8CH/30ZF3ynsRvi/+MTb5LnRILycG21KtDNjctCyZ5bigU1jNuj/AAA8J3Zf8luWLIj1RCU0LoMyWYmdSCoSnBBhnuFhUHPCP15bH67Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CY5IBsiF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741269879; c=relaxed/simple;
+	bh=pasKBVsmjYIxWktl12dwQ+tenmQ5xY3lIwtH9DCArpE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=JDMHekOGX7tvtu+L4IiYYWjYkzTwywl/13l/GJLusJd54evr7tehtteNCiol9uLiMkTsFWr8iYufo1N4heWVRAIOb9qdBMuxDSeLYwuQsG3HevCEcC0n77WvzIE0vJ4JAEymaJhPCbZ1T+dhWAIrLBrYW4BU6gXKcm5S72zmiyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=e4R+47p6; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CY5IBsiF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3D6C4CEE4;
-	Thu,  6 Mar 2025 13:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741269071;
-	bh=MDHqWx3qK8RGM3fr6S9WaYEhaVQkVBdZ75ZCdRSLAdY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CY5IBsiFS9eBDNIWJ7sQjbryFpiM2GgSdUyXXiqGdWXk8uyLplvdlIkMSTgkEJfEl
-	 oIbo4qRtoLfrO/QJIs7+mdUyKWhMU7elEfrNasigeMs09OkxxC4Tj1zSL4PDsh7d15
-	 3B4MfCcLZgca4I+d7qvBH7bLyT6mG9aN7unQL7SEM+uejp2HsetY636RFHmAd+HUqz
-	 E1KfN4g9Mk3Ufe40wVwhVmVMRmaWmssNWvf9uajzHFaVM5dG6TUyDn2FVyoTDhXoTS
-	 dvk7Xnb1rGlGn9g64KmHOd22Kg3m+FJOxBVuDNQLlCR27sEGy0lLWtWVn/038Io9cB
-	 TeN3yHfWu+D6g==
-Message-ID: <ab483a68-40a8-4b44-ad73-d8a34bd32c69@kernel.org>
-Date: Thu, 6 Mar 2025 14:51:05 +0100
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="e4R+47p6"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5D57625C3E;
+	Thu,  6 Mar 2025 15:04:29 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id uajyCdZurwM2; Thu,  6 Mar 2025 15:04:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741269813; bh=pasKBVsmjYIxWktl12dwQ+tenmQ5xY3lIwtH9DCArpE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=e4R+47p6TmClghkaexMBYaHlx1HHxNDlv1Z3TIL/r62JZOMGf73EDGaAIr7mfabWt
+	 cmiU+nAQPHxU8DCo7W2FuBJJsjHtRljMrF7tnLecpfDWlZbOV5ghCPgXK17/wxRPBv
+	 PMOWH2w1LUlKehvvHfAsz7lh8IPir0CEjiMOAs8RmRGHmvYMDlNqtWEwAappowaZXB
+	 in+RNODmcoKFmI+D2hx6EN5wmlyJwlNuVaWzIDdOqq9B0hDc60B8LssHPlKIWFxEb3
+	 TtdQRd5W1a9ytxQ2t6kAmiaKp/SEeJG9sFp/1Z0X9A2XTdRZ6QWm4mNjkA6thRJkcg
+	 8Qr5agPmXVy2w==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: memory-controllers:
- samsung,exynos4210-srom: Enforce child props
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Bjorn Andersson <andersson@kernel.org>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250306085849.32852-1-krzysztof.kozlowski@linaro.org>
- <CAL_JsqKODHZcrpqskA2aeK6EqGNx9aGNuPqGzhcZ_Nqiu+Ccww@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAL_JsqKODHZcrpqskA2aeK6EqGNx9aGNuPqGzhcZ_Nqiu+Ccww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Mar 2025 14:03:32 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Ivaylo Ivanov
+ <ivo.ivanov.ivanov1@gmail.com>, Igor Belwon
+ <igor.belwon@mentallysanemainliners.org>, Denzeel Oliva
+ <wachiturroxd150@gmail.com>, Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: Re: Any pending patches on me for Samsung SoC? Closing applying cycle
+In-Reply-To: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
+References: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
+Message-ID: <55501e08b586c9bb1178be658299207b@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 06/03/2025 14:39, Rob Herring wrote:
-> Why do we need this? Any child node should have a schema which needs
-> to include mc-peripheral-props.yaml if any properties from it can be
-> used.
+On 2025-03-05 19:45, Krzysztof Kozlowski wrote:
+> Hey,
+> 
+> I went through my inbox and cleared my queue because I am approaching
+> end of applying cycle. I think I dealt with everything and pending
+> things are:
+> 
+> 1. Exynos7870 SoC: waits for bindings,
 
-From correctness point of view, you are right, we don't need it. However:
+Is this possible to be merged? [1]
+It's over a month old at this point, seemingly left untouched.
 
-1. Convention was so far to have in every controller. I think this also
-is easier to understand whenever one reads the bindings - clear
-documentation what children on this bus should look like.
+This one's also a build dependency for [2], as mentioned in its cover
+letter.
 
-2. To clearly document from where samsung,srom-timing comes in the
-required block:
-
-https://web.git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/tree/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml?h=dt/next#n50
-Otherwise for me it is a bit confusing to require a property which is
-nowhere here defined.
-
-
-Best regards,
-Krzysztof
+[1] https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+[2] https://lore.kernel.org/all/174100756283.1496281.12555971793250210333.robh@kernel.org/
