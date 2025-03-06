@@ -1,129 +1,150 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABAD19E99E;
-	Thu,  6 Mar 2025 19:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0511A3146
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 19:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741289201; cv=none; b=mB8+nb0ScNtwIwiloXnr/q2zjieXMWv02+9vNLwEhkcU2XmuCev32hnRWpRA02NGOMJvV95pKBrSU0QsU3VmtmKuYN6n+V/ywzBpvkWApkJAcwEbOzcu7Ov3h9Ai7H07XA4qK7DshgHbsiD30x02kh0A1yRO6e7hHytMeE+df+Q=
+	t=1741290137; cv=none; b=D6wRUzlSPtWZPaJ1muges0eGEqiLXpbw8rMtBUo9NoVhWkI4YAdLuwNNFJEXAzMA1Lt/Jx0Zs3OBXsLRhHWG11bhyiQCdICr8rzJt8PzbjvGkmzd4L7/q8OdfNdfTH1Cf/HdOcnCozxOJxzzgRl+fxNMCYp2F/Y297KzVdr6IaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741289201; c=relaxed/simple;
-	bh=TYNF5uSYA4qLy4+0N6piNIXODyphiWdbD9W6y3Or87U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVrgnweYfy5WDzrVT/GpRZfh8KaaIk6XsMHnHQhwC/4qixo1kWurzftzWlVmp3xt6vpv1JcMKSofJKHCs7xDIkY1rYgF3yuZIzUOZ1mUPS1AdB97rlSqiOIE7HpIzt7IRJSXi9AFF4iZtyIjYyQbilCSrSKqZjUXB9Jxr3JO6B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1JK4ZGc; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741290137; c=relaxed/simple;
+	bh=Z77xBBrUfH5ZPRljobWVKHffHWydKur5O6jls5w/Alg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XU9mWlxcIP8d78VGvyc7YJ9D80uMXSIeRf7ThD9SprNfLNOP1F690bcmH+xwvPGliBUgMEvFeukOjJ2Vxo/lXkbEml4SqA4Is/coXM0K+e+quCXjwzQ/D1cQYlRTJtd5CNZJxc0hkwUZSKp33Zl/ZkbO5bYU/ZlB1o3xl6oRcHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULrBsknf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1JK4ZGc"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390eebcc371so745665f8f.0;
-        Thu, 06 Mar 2025 11:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741289198; x=1741893998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yNcfgkruRbdQ2LTcDlb82l2rtv263h9UvbuoZgmPSdM=;
-        b=I1JK4ZGcAtVb29v5t0FDfTebEUcYbgrsY5gfo8ahBj4fnlgRs//Ju85g6KpHETmbTh
-         /xBbaKWxHKJRGJC5xifE/PT5ARyIdp92VBM1Sz9WCfsYeB1yl015skta/qlm5o/jNx/t
-         HsM93nh+A47Ra+yNfuyexV5TiMaIXuJEgnrlid+bMopSgZLW+pW5/3HD/I/355ZOmg20
-         hhzK38EGIfPhbc9k5fVw8uJpYsE+Z4iF+KZ4+r+mD6Y0Xr+I4B8OaHly1AJz2+vLCisG
-         tKZWLfXD/UD0o/cM72zAxFwFF5IVn+cuCN+lNhAqxmrmWex48vOClSOlxxw2QyojS4wD
-         KE2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741289198; x=1741893998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yNcfgkruRbdQ2LTcDlb82l2rtv263h9UvbuoZgmPSdM=;
-        b=Ffe29ERr2AsalFS9M1SXo7Pm0B0CO7OEGIel9ggZAnf1/FwZS4/6HGKLsDghIQ3z2O
-         B2Ex6lHTwP4OyfOU1VU/vNO2ZDb8UnkeJny7/aFKEGSzhKZyd9YxJHWWZIAu23G6o8BK
-         MOJcnDLh747p5OmK7SKHknojGRlQHShO9YllgOTD2Ovk0Y95JLNjIdeYe2oxrAzdD48A
-         zt0xdfu1IkP1XzsQZ3BflqG/bUcxPNPmkBjA2QLRmm/1K/ObrkwFN0Ux12WU+JXkAjt0
-         WiskPswa0JU6Sh7PxteZC828Na4M8Y7bWTD/fVh3VtDsrLpJLT/sBWIUkA4HYW9gLG4Z
-         xeAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCaERr5ZORQKY9xr+sAs9i6I2lF6w7kjIKEbGSXb40JWwHrg6+1QVeuj84lYsE18Lemr0Y747+W8PtjFC3@vger.kernel.org, AJvYcCWReqQ4KnmTdn22h7L1c7WXRL+8hSrYee1GhJuDtVwswvfbIYmmMhDZ/uSo7Z0l5gq/0jL1KVSkowQnsGGWUs1LDhk=@vger.kernel.org, AJvYcCWXXnNIOUJ+cyKiJvubaxNUkYqNXAsmPSWrq4Smg21twb0f4qghKiz6Lq/+mf8wDaEpulVMOL+9dlm0B1Ji+RdYId0=@vger.kernel.org, AJvYcCX9LPtmEF6m0Qd/u3+PYB75+hxfVr7n56BE3xq2ICkZTcr0QTzcJTDCyuej62PcKjEU71j1VgxfQNSO6bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxahazkZ0zdM6IWaR2KoQOK6irfTYMtBPKyfRCOPjHDcPMUuZ6G
-	u3xfgvd2Jb4L0UM7o7HuFn8EAY/4eRe87yYagJ6x87z/hETAHloj
-X-Gm-Gg: ASbGnct84UT2Ge6lBC6At6b522N0DWQR0BocaDabdHJzUvXZ9BKJU9ui62zEJ2+PqjN
-	E95nNx2I0aTPX28Hl+wzSi44aqY4Buhvndlh16zexTbWYobjqXiAjmG3ZJ3sHzYKOul+N/v3kxe
-	j/tBZa7mJPD5kWtBd3isjFnfKkfDc2HziQ8tNRM+Wkvl0aYwFdpjagFjQBh+uHoiyn8fTARPKmb
-	Y3Muyq87S+hfEvAWCjn6bX2iC3mhSHSEq601AGWlmARveHpn0og6cuxO2f8Cwtrc+sFW48nvQqD
-	UmzdqjnoWOxPi5Fz4zu0o5mfYXVG3zG+p/r369v0prJrcNzVHyjryN1P/ItaxD9NqZdTtmqBf+S
-	aB2M+l5apnuI477vdiKGWFL1lMy0kAYU=
-X-Google-Smtp-Source: AGHT+IGse2HrwvQit3ez+Tb+IZmcWPgul6Oz1Of3MncB8IKv5GiNEYehZwUGHa/gmdRGfttFwUyGrw==
-X-Received: by 2002:a5d:5f45:0:b0:390:eebc:6f32 with SMTP id ffacd0b85a97d-39132da8fecmr291664f8f.48.1741289198054;
-        Thu, 06 Mar 2025 11:26:38 -0800 (PST)
-Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e1d67sm2905872f8f.74.2025.03.06.11.26.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 11:26:36 -0800 (PST)
-Date: Thu, 6 Mar 2025 20:26:33 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v3 20/25] drm/tegra: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-Message-ID: <mtsi7lohn4nq75y3mdzk7eomloxvswjn4blsmruutpejhppd5i@wexuiu7yfea3>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-21-tzimmermann@suse.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULrBsknf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5916BC4CEE0;
+	Thu,  6 Mar 2025 19:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741290135;
+	bh=Z77xBBrUfH5ZPRljobWVKHffHWydKur5O6jls5w/Alg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ULrBsknfP4yE/U2ctm3grW0ne1Lj6Ngm5LQrYUbjUz8gkXUJUOa77IWvbhUI/PIjo
+	 dY+XyqeAEMwtkbIZdX6TonLzTNFZP2uJOPeYdacQ6SzIV4HItAZbUT4sfHygx3sqkz
+	 AxDEeT6qaTRoLjM0dTlY5xoIR3YD22Q6vK0uMXkiBXk9zNzacN7mbm22sFSpA3FSGg
+	 qD9FgsmhT49538Pwk79g+MtYqOrzo2My74PnAO2wubPCEkVLDXEudoIOrJ2rr1Q0zk
+	 39BAthEhEpWQ+cp5F6bZuaS4ujv6Qa4YUseU2+keL6UHco+2LYpu1mIezEJ0DlKzDj
+	 cwHOfQ5KEcJZw==
+Message-ID: <9020d114-1f6b-4e2b-be3f-76608ad14a8d@kernel.org>
+Date: Thu, 6 Mar 2025 20:42:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="y6cp6aqkj6w24xiu"
-Content-Disposition: inline
-In-Reply-To: <20250218142542.438557-21-tzimmermann@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Any pending patches on me for Samsung SoC? Closing applying cycle
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Denzeel Oliva <wachiturroxd150@gmail.com>
+References: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
+ <55501e08b586c9bb1178be658299207b@disroot.org>
+ <10311a34-7774-42dd-92d5-37da57d8bfcb@kernel.org>
+ <b1a18ae129de8515435b3adbb14bd0d2@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b1a18ae129de8515435b3adbb14bd0d2@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 06/03/2025 19:37, Kaustabh Chakraborty wrote:
+> On 2025-03-06 18:07, Krzysztof Kozlowski wrote:
+>> On 06/03/2025 15:03, Kaustabh Chakraborty wrote:
+>>> On 2025-03-05 19:45, Krzysztof Kozlowski wrote:
+>>>> Hey,
+>>>>
+>>>> I went through my inbox and cleared my queue because I am approaching
+>>>> end of applying cycle. I think I dealt with everything and pending
+>>>> things are:
+>>>>
+>>>> 1. Exynos7870 SoC: waits for bindings,
+>>>
+>>> Is this possible to be merged? [1]
+>>> It's over a month old at this point, seemingly left untouched.
+>>
+>> I don't have it in my inbox for some reason. Regardless, you want it to
+>> be a binding, so is it going to be used also by U-Boot?
+> 
+> Don't have any plans with u-boot at the moment, though I'll likely consider
+> it later. The macros are used with syscon-reboot-mode which helps switching
+> modes from userland.
+
+Exynos Auto added first binding for that, but I am not sure if we need
+to keep going. Binding describes the interface, so for whom do you
+describe it here? I can imagine downstream bootloader, but that is I
+don't believe it is worth adding bindings for downstream.
+
+If you it is not for downstream then it has to be for some other
+upstream project. Which one?
 
 
---y6cp6aqkj6w24xiu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 20/25] drm/tegra: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-MIME-Version: 1.0
+> 
+>>
+>>>
+>>> This one's also a build dependency for [2], as mentioned in its cover
+>>> letter.
+>>>
+>>> [1] https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+>>> [2] https://lore.kernel.org/all/174100756283.1496281.12555971793250210333.robh@kernel.org/
+>>
+>> Then it should not have been sent separately. Patchset should be split
+>> by subsystem, so this belongs to soc with the rest.
+> 
+> Hmm, getmaintainer didn't report it as part of the soc subsystem, although
+> the file path does have 'soc' in it. And thus I decided to kept it
+> separate.
+Yes, that's a missing path.
 
-On Tue, Feb 18, 2025 at 03:23:43PM +0100, Thomas Zimmermann wrote:
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-> buffer size. Align the pitch according to hardware requirements.
->=20
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/gem.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---y6cp6aqkj6w24xiu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfJ9ukACgkQ3SOs138+
-s6GThw/9F553EWmmWz8ONopI5pY7Fy+Pu8kzqsU5bhKSKO2aqJ8y4PFOQAzaacO8
-2HuvhLXsP6l91B+R49oebJTWnbgcl9ThzcA4njgdKRFc7yZU/EZUEUGdwDkU6qsh
-/rkDnM+a+MzIAd3Z31B0Kvb0tUsl4e0UBueDHmjfP554dbtnMr94eIHuqLVRb1/D
-LB6ddm8DbZVoDKT9Ji2gLQpW84oFuIzRZPOV8JmPe+wE8Xf6A9sLloqJndErnvHg
-B8X2K8PzxkNNJGaZtQMUpiJ+S1oDNZnnKtzt0Wb+b9itJqUgykve29vGBDBImsb5
-8JLFlkdPFdKpFsbAvGyHv8b+F2rDVu4Oelg88WWDUSMc9Ut274u5/a2DTUOwF806
-DtCADAFUOOcIyDZKfPpeQuWDPeScN3/ANW8iQMlyPaNO5fBKlisFjiF1Bh0gS+vQ
-shkKb74wChg/4jgq1+M+I4DPdCQRe0kGIqbNZ4yK71owOjoSE6WIxxEt0UUKxPwh
-XZyf8ZF2O9TCPMigN6Qw2AGUhaC3HsAG9KbhOTSeUAsOwohFtYY+3B6Hkb8SQHEM
-i05OutqXEhtdSZgBK+HuweZtYWCBfy/BcMeD99Rkg01C+aMZcNPGVLpvGqpryNaB
-Ga0hQwFdIjbnMbXxjzyfJfs7GqNyTAJtpiqBO3uDhWH2LxJHZ7M=
-=2m1E
------END PGP SIGNATURE-----
-
---y6cp6aqkj6w24xiu--
+Best regards,
+Krzysztof
