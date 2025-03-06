@@ -1,150 +1,182 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0511A3146
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 19:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF7518BC26
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 20:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290137; cv=none; b=D6wRUzlSPtWZPaJ1muges0eGEqiLXpbw8rMtBUo9NoVhWkI4YAdLuwNNFJEXAzMA1Lt/Jx0Zs3OBXsLRhHWG11bhyiQCdICr8rzJt8PzbjvGkmzd4L7/q8OdfNdfTH1Cf/HdOcnCozxOJxzzgRl+fxNMCYp2F/Y297KzVdr6IaE=
+	t=1741293786; cv=none; b=n/TY1mQWj2g0TW4KhP8KtqeLd4fuN1SuUil2ohBcJl+fxN1eYUCbSlwdfujVqQ7QWrWwYDn2byduTurBkat2Bs6ZhijWVNCJ9QFgbkb+8zTumfJdWoEWzeQSldPzrCOt66+VI0RzA5uDriFy4rinmZMphgwN0Uro9e5/CMn48Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290137; c=relaxed/simple;
-	bh=Z77xBBrUfH5ZPRljobWVKHffHWydKur5O6jls5w/Alg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XU9mWlxcIP8d78VGvyc7YJ9D80uMXSIeRf7ThD9SprNfLNOP1F690bcmH+xwvPGliBUgMEvFeukOjJ2Vxo/lXkbEml4SqA4Is/coXM0K+e+quCXjwzQ/D1cQYlRTJtd5CNZJxc0hkwUZSKp33Zl/ZkbO5bYU/ZlB1o3xl6oRcHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULrBsknf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741293786; c=relaxed/simple;
+	bh=3I8CBekQ5y/NxfRFNZcDsBWqJ6pOTtgFdlfo4wG1dyw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=A5t7leMkG+eKZaExpOxiu38gLNf46bi5RxRhIHxXM2AwVKZcebVidZMJ63ySwybgTaLXzp+qSYoOIUwff4R0BVK4xMYZ65N2YmJtgxTy3qsZNPV36XhjKHLzYiwSxzKwO4MZYalevYQQPT97Gk1rq1GbwS5oH7JVGWmL/gI49WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hq/FEjdg; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULrBsknf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5916BC4CEE0;
-	Thu,  6 Mar 2025 19:42:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741290135;
-	bh=Z77xBBrUfH5ZPRljobWVKHffHWydKur5O6jls5w/Alg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ULrBsknfP4yE/U2ctm3grW0ne1Lj6Ngm5LQrYUbjUz8gkXUJUOa77IWvbhUI/PIjo
-	 dY+XyqeAEMwtkbIZdX6TonLzTNFZP2uJOPeYdacQ6SzIV4HItAZbUT4sfHygx3sqkz
-	 AxDEeT6qaTRoLjM0dTlY5xoIR3YD22Q6vK0uMXkiBXk9zNzacN7mbm22sFSpA3FSGg
-	 qD9FgsmhT49538Pwk79g+MtYqOrzo2My74PnAO2wubPCEkVLDXEudoIOrJ2rr1Q0zk
-	 39BAthEhEpWQ+cp5F6bZuaS4ujv6Qa4YUseU2+keL6UHco+2LYpu1mIezEJ0DlKzDj
-	 cwHOfQ5KEcJZw==
-Message-ID: <9020d114-1f6b-4e2b-be3f-76608ad14a8d@kernel.org>
-Date: Thu, 6 Mar 2025 20:42:09 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hq/FEjdg"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso7105175e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Mar 2025 12:43:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741293782; x=1741898582; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4GimjoaXXladrZg38HxX+WEY/YSmPMUaXL9bgDFdsYs=;
+        b=Hq/FEjdgnCAWesbkOC4IhhELsB0SHZoHhzLo7uX056AxRKqgNeC0VGmJjIl7RpeAKo
+         xgX24Sy5zh0CFhZaGuNjFPDGZu4M08IIg8eQqyYNQeA8Bib3dhgoJ0ZluEfrsGEA6XBW
+         Chm8GzrXpN8XpaNHSmtJCLhXUMlNDdGKoYZxmRmBE5ocsyTxuO8zqwi/XMaJTL7J/2Xh
+         /yHbemj8Z/7WWUh/ZVb/jrFhj4o6uQ1e/4uKABaBvuosVOoayuAhFmNmE2H1sLk94/tq
+         kLGBtpHOp1MR4VNLNWajM905FM+ol2P5vD+i/IyhhAETfqPGlE/QUDemXAq3cwAhWLHq
+         Fv5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741293782; x=1741898582;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4GimjoaXXladrZg38HxX+WEY/YSmPMUaXL9bgDFdsYs=;
+        b=upbylWhYma51QHyilu9RaSFtme2NNj7FVLzEJEw8bYKQkEPKFnZOVymBR9Bw7AhzuB
+         Onb7RZthNb2g8h/7l0M8gRkZDbKnsxK3h+bP0E2eR6HMIXpWwNpxg9FhI2JxX+2w0ZNa
+         6iPo6LVrVrDLVjlGulnAzLeDT3gci7n5n7Ncw0zJjxO9oKNRMFv8jOpelt6zuVbceYw5
+         lEKHZCSAKspe62brrgVJvWiwgrvrxp2h/ec2+rmbLhNhec92tffs2zampZak79eg14OQ
+         csiAGsgojfzdeyNrm/RGF3RnN5CwssIUXMKQlBPa8RVU9NtHUzccGanyGmiW9HDBR4Yp
+         1viw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWe9XjOKPQlbvTo44X+dGwQxfKW5ORlIsmVMEYvPgsIJr9dpmMaal3gxeJh+AFnxFOpbkgN7nppKLAXJtmybK8HA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywssi88ckLpsXXRaZM4O6YfS2dxqyPqKeVfAO/ypz95I58oHgOK
+	AicNIOdR1i+9hIypXZcBkjbXfcZPtf9gTOsFWUZ4tuePW0oUWC/5tKUnpMIDZY0=
+X-Gm-Gg: ASbGnctmGEgQ+RPdkrIDVchdAbssK+M5FjzCL5egEZW9v0GHAmEjub5OLib1Hw0/qjV
+	73+a53zCwW0fXUcf+TWTo17ttUKZtJIl2IM2FSmvkVKwEn1KDIug1QxrQLzaXhTjC24IvZyidom
+	C0FQ1aQ5SfOCxXSBOFeDhorAH5Z7oorA5yzBXJYxQHRMfumPMIqu0SZMZadm2p62AzeZMIAJiGF
+	1HiOHaWaM1x1zlDlBU7GPcYIgxxrKuXUvzN9VlUhgpOUbHlWIOKDs6n6AkxQ1jogi09oSBQ1sfV
+	oM0YJmRbbULFHm/YlnzUyJNiyfFAck3XXOyPe77IwU2JnQwM0/D655dmbC1fOZ8Aij+17Ipoa+k
+	=
+X-Google-Smtp-Source: AGHT+IFFBM1ec0+y9QOjsWkRze+N/TMmKsFw2dds6E7/MII8+8XfXYdGTXLu56qK+wFv8awCozTznQ==
+X-Received: by 2002:a05:600c:4450:b0:43b:d531:ca9a with SMTP id 5b1f17b1804b1-43c68702906mr6559645e9.31.1741293782422;
+        Thu, 06 Mar 2025 12:43:02 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.67.211])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd9470e2sm30081715e9.33.2025.03.06.12.43.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 12:43:01 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v3 0/4] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Thu, 06 Mar 2025 20:42:34 +0000
+Message-Id: <20250306-pinctrl-fltcon-suspend-v3-0-f9ab4ff6a24e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Any pending patches on me for Samsung SoC? Closing applying cycle
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Denzeel Oliva <wachiturroxd150@gmail.com>
-References: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
- <55501e08b586c9bb1178be658299207b@disroot.org>
- <10311a34-7774-42dd-92d5-37da57d8bfcb@kernel.org>
- <b1a18ae129de8515435b3adbb14bd0d2@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b1a18ae129de8515435b3adbb14bd0d2@disroot.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALoIymcC/4XNTQqDMBCG4atI1k3Jn6R25T1KF0kcdUASSWxoE
+ e/e6KZ0Ubp8P5hnVpIgIiRyrVYSIWPC4EvIU0XcaPwAFLvSRDBRMy4YndG7JU60nxYXPE2PNIP
+ vqJBSGi61U50i5XiO0OPzgG/30iOmJcTX8Sfzff1LZk4ZBa0bxqwwl1q1E3oTwznEgexmFh9HM
+ v7TEcUxGqBvrFVK2i9n27Y3yVaqygUBAAA=
+X-Change-ID: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3165;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=3I8CBekQ5y/NxfRFNZcDsBWqJ6pOTtgFdlfo4wG1dyw=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnygjO1FoQGjv5WeO6HKLDs5Z3pU7BeLco3mKZb
+ JrQPhD83pGJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8oIzgAKCRDO6LjWAjRy
+ uh6CD/0e3PFcWK5hQCDVm8D0hG5a9L0DcyFK5AY5V3V0os/VHVy2PDL9bwNHCbiYme2oPf3lFCg
+ O3SG6AThUsy/5ubHJaGkVCguuXbGbTO6Hi1M1jeCRAOOzKvIdlDoUYTOKoIX9BLHeKC5rS/FUof
+ WY2MG8jqRDAG6S0GP6RdP0Ga//cBzApEUskyLgdXr2K8woZSlleQ+B662bOYVm3II9KKQgVG82O
+ VVg9rifHPa/l+cnI4lL98o12pWcTPWK9UD8krJrkDS3UTl+Eu4xWRywSmYFjYVdgEQF7lbDZvNd
+ s6flonruKPVDDZAG4HLihYFFsNNFEhtyc52qhVeRmkFJxHkJo3HkSxU4roq7+OcPbFsPsLvXh/T
+ lO6qnJwxhH20G9U0KxvgeFILR63k9kpMu9e+zZ9gBra2KkcSzu/3IOb6rrmV0qS+G/Wwh+eWPFC
+ NBTMdz0XExh1O/4p2sAZWGz2VyaivgdjLD930JNziBmYMih4K1Ne1usDgT8tL/F2U0gXifuv1dy
+ AWrH6RtSZShQ6Of3ulZoa1m1bvz4offCkKbz4PFEyv/91U2p+OoOhO5v2xTLPYmXhbZ3yrc0yr1
+ 6wZY26wW2kq6kgCCejZsiRw41CaXv2e53F77BEf887Vxga8RVIdHQRtyWgAACNgZNYz+W0vyAPb
+ MefopIujLpsI7nA==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On 06/03/2025 19:37, Kaustabh Chakraborty wrote:
-> On 2025-03-06 18:07, Krzysztof Kozlowski wrote:
->> On 06/03/2025 15:03, Kaustabh Chakraborty wrote:
->>> On 2025-03-05 19:45, Krzysztof Kozlowski wrote:
->>>> Hey,
->>>>
->>>> I went through my inbox and cleared my queue because I am approaching
->>>> end of applying cycle. I think I dealt with everything and pending
->>>> things are:
->>>>
->>>> 1. Exynos7870 SoC: waits for bindings,
->>>
->>> Is this possible to be merged? [1]
->>> It's over a month old at this point, seemingly left untouched.
->>
->> I don't have it in my inbox for some reason. Regardless, you want it to
->> be a binding, so is it going to be used also by U-Boot?
-> 
-> Don't have any plans with u-boot at the moment, though I'll likely consider
-> it later. The macros are used with syscon-reboot-mode which helps switching
-> modes from userland.
+Hi folks,
 
-Exynos Auto added first binding for that, but I am not sure if we need
-to keep going. Binding describes the interface, so for whom do you
-describe it here? I can imagine downstream bootloader, but that is I
-don't believe it is worth adding bindings for downstream.
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
 
-If you it is not for downstream then it has to be for some other
-upstream project. Which one?
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
 
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
 
-> 
->>
->>>
->>> This one's also a build dependency for [2], as mentioned in its cover
->>> letter.
->>>
->>> [1] https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
->>> [2] https://lore.kernel.org/all/174100756283.1496281.12555971793250210333.robh@kernel.org/
->>
->> Then it should not have been sent separately. Patchset should be split
->> by subsystem, so this belongs to soc with the rest.
-> 
-> Hmm, getmaintainer didn't report it as part of the soc subsystem, although
-> the file path does have 'soc' in it. And thus I decided to kept it
-> separate.
-Yes, that's a missing path.
+regards,
+
+Peter
+
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v3:
+
+- Ensure EXYNOS_FLTCON_DIGITAL bit is cleared (Andre)
+- Make it obvious that exynos_eint_set_filter() is conditional on bank type (Andre)
+- Make it obvious exynos_set_wakeup() is conditional on bank type (Andre)
+- Align style where the '+' is placed first (Andre)
+- Remove unnecessary braces (Andre)
+- Link to v2: https://lore.kernel.org/r/20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org
+
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
+
+---
+Peter Griffin (4):
+      pinctrl: samsung: add support for eint_fltcon_offset
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
+
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 150 ++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 294 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  50 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  12 +-
+ 5 files changed, 318 insertions(+), 200 deletions(-)
+---
+base-commit: 0761652a3b3b607787aebc386d412b1d0ae8008c
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
 
 Best regards,
-Krzysztof
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
