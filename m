@@ -1,103 +1,99 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2392220297F
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 18:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585AA1DE4EC
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Mar 2025 18:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284677; cv=none; b=WlLBGikccXkcw2Hq8wVvLIpSuneMKkMzVRgFh+R/AnBDIcPYeELzcImro9a3/HN4bG8CReZ6Gtc1gIieW/omHerWyblQeefAE1H0oNs4/gDYgjpaa/VYIsWcO9ySvFMGN35tmltKadTUPB99aZC+8zk9o4uIiWe9yXCmJ19BG7o=
+	t=1741286281; cv=none; b=HA0+WrSDDBhTHujCyTROZr04C8OblzxSzi7BpoHD89G34OYObcq9H01qpBODMd3teocDWL5KpN6C/c34KfEZbH1g/3XoJZ35+ih2C8qo1agbw07kF4OEXcswhHx2kGQWf/PtJ1avsE8idkcaSCR8dlIfktkd59B/AhOcuTuS+zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284677; c=relaxed/simple;
-	bh=JbH8xjfsf6P7OmD9axfTwXfSPdYjRzKgiAuZzz5MlcU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aEWNXSVROhk61hBchcLU6UpIb9jrrIz2OypmspA91/Wt25Rp504mzlpYkozJPPXMyn8HcFFrzO0ozjBlprqIpoQgmhBmnhbuxkB8a2ynmWnaoCzQ/+G4R2KmUdBITCITADvqk4AMKvswhlw3Q2kS+lXLz0jawHXDrxU80XCFU8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qWy2UugF; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741286281; c=relaxed/simple;
+	bh=8QVrITdl2Uss2YsW7o3dCB5CWPCmg9xpYKs6EZXoUMQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=aRcQwemtY4DgbP3ngYiZ4AR57obVBhDbR/qVGWgnAGm8HXsBMJ9pB54F9dh6OKu2R5UE+TKuZUnQjlgBGq2vM6kpVj+tRe8rpv+mXObsrpfKm225zo62eMZDmCILhvO+YZzQOel2j02HzmATnhELDd895FUEmoBD+2nVgg08yEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UIi8Mm7d; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qWy2UugF"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394944f161so899095e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Mar 2025 10:11:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741284674; x=1741889474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1AnLds6lWEOgctovP8rZZIFlWYH7eclRkLDrgHTySwE=;
-        b=qWy2UugF1tUw8XPDYhoHYbJrl0VOPngWhUtJ5xH+7o6fmMcFqmJteyg7MoWekPmjpe
-         Ch0Xo8SF3N51fyqdn5fAUEZopgiT2PBuKrROUTyLNfJcktapgs2f31kkgDNZ4Ahn9nx2
-         RPlJ++L22oSc4MiIv2dY6NgDbWbvkqf2ITqMXbzPGfAVm37f3kz41msk9jEhzH1pswK2
-         RK4RXceUXLS3gHPZVE3WkzekX/G1+ciDEDvD2kSXCFGFD0MbGkaqXEoCXl8C6MsxuawJ
-         7pWLWW0zUzueVBBSZFD/rMhRxMW+0ZL/ygPVvJ4nJEGXKGc7g7K0kTh70I+oNxKQc8eR
-         VF+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741284674; x=1741889474;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1AnLds6lWEOgctovP8rZZIFlWYH7eclRkLDrgHTySwE=;
-        b=cGK6JaImzr2RSfOKzB9QBKY8bxM826dZJYvw8BCmKdx04JfyYZnZWyG46K2Lx1J0c4
-         rKmCdoIFJ1xrnhfhu1S5GGwIDq+1/xGwu6TGt4+GovQRDVjJMo2x/7SRkFaqjbkv2Ji1
-         ow7leNW69caJq3T4w8FAGuyoeZnOELaY9D1U0lVpBw0FUxLM7Gv7ZZVKjzufti0BtL19
-         wVEa5jiqm9BavNhNXxi6cYP+rpVxoh+J1Wp7ePSE7toun/akls9p6/v+eO4zd7BK3J3u
-         jZ1oS3B5LjsyzmaRdwaRDG08QLrxXap+9TDQ8Q7rMUS5UdTlDRoDns3ThzUYB2c3DQZr
-         JQSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtww8d+MT24BNafzPY9ajnJgdPPfWvF1sB+XqelVC8IQ6PwdVxOk/AhRYWtEccLC0V5gHxEU950eTHfpQJzTEaRg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu2DkE1OPVjz7mi2i08vvDqAzzJxtZ4iGVqUWPRRlPq5Wg+TyM
-	6AAFf13u9GhQiGB4AbvB6vWyZef+8cyCb/xxYL8u9KLehp1tcn/Ivp4402oVj1I=
-X-Gm-Gg: ASbGncs49zyWCA4g8XYkMJy4k1XfFOBOt1Tir3uSGAxdsTDAJ812z+EzLyxF1w2MISN
-	f35IFVSl+edItUouneQ6N9baG8EGTfkPg9BsaN36lorDOBJog8gKW+FtK2WRqluBKVC/s40Gjvy
-	1XxmLqHV4tn+zgUX59MeJ4vNQVNXlEwMoRYe4banF8ESUpmR9et/fll6s+If1xAL4I+jPxrzPyL
-	hZZmznhzRE6guy9JA1DCnVR1D4OuKMVeYlRuK76Dn7QEBQWyX7ZaWVzhM6BsPfume2f8rx76MlF
-	NROmhrvFOTUmoZhNbHBTpIL92mVQBcQlZzcxHCe6Px604KCiifBxEVtIrFKT
-X-Google-Smtp-Source: AGHT+IFFRvwmZacRwHe9yk3mbn6KEKhfILWjskick/fV1fIsJkk5zhEz8ZiB5cRx3bewoTl4Sqa/eA==
-X-Received: by 2002:a5d:6d8c:0:b0:38e:48a6:280f with SMTP id ffacd0b85a97d-39132d93f92mr48151f8f.9.1741284674274;
-        Thu, 06 Mar 2025 10:11:14 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1027d3sm2716967f8f.83.2025.03.06.10.11.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 10:11:13 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@kernel.org>
-Cc: soc@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250305211446.43772-1-arnd@kernel.org>
-References: <20250305211446.43772-1-arnd@kernel.org>
-Subject: Re: [PATCH] soc: samsung: include linux/array_size.h where needed
-Message-Id: <174128467279.252750.12742713284242817976.b4-ty@linaro.org>
-Date: Thu, 06 Mar 2025 19:11:12 +0100
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UIi8Mm7d"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9F3C5252B1;
+	Thu,  6 Mar 2025 19:37:56 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id rKhYPEc0xzgL; Thu,  6 Mar 2025 19:37:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741286268; bh=8QVrITdl2Uss2YsW7o3dCB5CWPCmg9xpYKs6EZXoUMQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=UIi8Mm7dWejnL6lex9HGKbNaDBOpXgzQG51Fkx6YNjHcaRHlKtqu+EV1uMWtZGVd3
+	 57TSkZX+vR98jI2L4i9NwY4YZDyVdsU0pJb0dLuyUc7+Wk2GSxx2tF0woPdJRMXU+9
+	 fw7dKpjEzMkhS0PhrOGPfmM6CsbmAuZZisjYL03oWvhvqg9NefPBBD+6/5NzkxVbDH
+	 O5WBESv+7Hd6O0dZ5kdRbMCQBN1irbIJnhvU9HraeM8I/izvSlHT9ytugoCWyq2iJH
+	 Rn+D/4XXxpSNgLGfE5FfMP59HGjFZTD22tkff4oE1axrNsEk9GaGf5XMMP6tiSaBX2
+	 P7P1qnOnanyNw==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Thu, 06 Mar 2025 18:37:48 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Ivaylo Ivanov
+ <ivo.ivanov.ivanov1@gmail.com>, Igor Belwon
+ <igor.belwon@mentallysanemainliners.org>, Denzeel Oliva
+ <wachiturroxd150@gmail.com>
+Subject: Re: Any pending patches on me for Samsung SoC? Closing applying cycle
+In-Reply-To: <10311a34-7774-42dd-92d5-37da57d8bfcb@kernel.org>
+References: <56288828-c767-4198-8f5c-a891d169b6cd@kernel.org>
+ <55501e08b586c9bb1178be658299207b@disroot.org>
+ <10311a34-7774-42dd-92d5-37da57d8bfcb@kernel.org>
+Message-ID: <b1a18ae129de8515435b3adbb14bd0d2@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-
-On Wed, 05 Mar 2025 22:14:02 +0100, Arnd Bergmann wrote:
-> This does not necessarily get included through asm/io.h:
+On 2025-03-06 18:07, Krzysztof Kozlowski wrote:
+> On 06/03/2025 15:03, Kaustabh Chakraborty wrote:
+>> On 2025-03-05 19:45, Krzysztof Kozlowski wrote:
+>>> Hey,
+>>>
+>>> I went through my inbox and cleared my queue because I am approaching
+>>> end of applying cycle. I think I dealt with everything and pending
+>>> things are:
+>>>
+>>> 1. Exynos7870 SoC: waits for bindings,
+>> 
+>> Is this possible to be merged? [1]
+>> It's over a month old at this point, seemingly left untouched.
 > 
-> drivers/soc/samsung/exynos3250-pmu.c:120:18: error: use of undeclared identifier 'ARRAY_SIZE'
->   120 |         for (i = 0; i < ARRAY_SIZE(exynos3250_list_feed); i++) {
->       |                         ^
-> drivers/soc/samsung/exynos5250-pmu.c:162:18: error: use of undeclared identifier 'ARRAY_SIZE'
->   162 |         for (i = 0; i < ARRAY_SIZE(exynos5_list_both_cnt_feed); i++) {
->       |                         ^
+> I don't have it in my inbox for some reason. Regardless, you want it to
+> be a binding, so is it going to be used also by U-Boot?
+
+Don't have any plans with u-boot at the moment, though I'll likely consider
+it later. The macros are used with syscon-reboot-mode which helps switching
+modes from userland.
+
 > 
-> [...]
+>> 
+>> This one's also a build dependency for [2], as mentioned in its cover
+>> letter.
+>> 
+>> [1] https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+>> [2] https://lore.kernel.org/all/174100756283.1496281.12555971793250210333.robh@kernel.org/
+> 
+> Then it should not have been sent separately. Patchset should be split
+> by subsystem, so this belongs to soc with the rest.
 
-Applied, thanks!
+Hmm, getmaintainer didn't report it as part of the soc subsystem, although
+the file path does have 'soc' in it. And thus I decided to kept it
+separate.
 
-[1/1] soc: samsung: include linux/array_size.h where needed
-      https://git.kernel.org/krzk/linux/c/4c57930f68d90e0d52c396d058cfa9ed8447a6c4
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+> 
+> Best regards,
+> Krzysztof
