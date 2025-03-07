@@ -1,103 +1,115 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26CE21B9F7
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Mar 2025 15:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF8C221540
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Mar 2025 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359991; cv=none; b=HpCiBIva7pd9CXIOQtiwWh4t7GNRwRhRDTb+GUhGdUMtO3YabiNhzginOpq8XwWXW9prvb9K6fnW4OU/MkEmRknA7rarbeYP9mUr7puu6pE4DgiaPfr+Fu6rCSStDQJUZXyQR2J+LwH2c8VosI0PLbmtqjzS8/j31vXkPQRKc7M=
+	t=1741360248; cv=none; b=kwUHytyIWwr8BsIqx4qmAm6fV1Upz0wE33aaiH6TvZ7EWXPzTjUqDBMsDUpeIW23y2zbYdsfgqc6yyLz5zwLh1LM5SEURjxdDxJsJJNGu9kwSPRJTa8Co1mvezpBcDvRGynpK1XguhBVW1VOnbWDqM2TZmH8II6uwjvb2QqGpaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359991; c=relaxed/simple;
-	bh=9Y/Y73m9zuvLRA6vGtkNTS7BPX54Zx9NPuwy9xoTbQo=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m79GHlrQ8V0m1r3gbWPAH/8RcNWz6JqoWvu9lGqikc9DoWq4M56Okx+wsQS8tvi/nithiIvtn15pnR0LYidnqXAZ17BCOpN2/K+MaEqsiizvjBT3rLckWnpt4TJK8s8hDS5NmgLu1hol88liNV20bdxu4ZofgTY4uZHe61HxNPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wxd9Q4Ml; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1741360248; c=relaxed/simple;
+	bh=7vPM66wrqA8ItOal1m7QS909J6dZMJbGOzOQwE8gVyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YjJ4gHwFEY8uQYEDv5h0tLGzKLl2oXsZ6C0JjMlnQpZHFTpKBjRCixf3X+SE/3695zC+0BbH+0CFwOAcK+1NQTm8Fbrj0o5AA90HbJI5CCD5wQW8hM9KLMw1jzZDbMO9bcKWSC88Ef+t3TlK74HiiAZgkKVG2KXq1+VdviiFqxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uWjUvTN6; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wxd9Q4Ml"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3912a28e629so66616f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Mar 2025 07:06:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uWjUvTN6"
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5fe8759153dso739019eaf.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Mar 2025 07:10:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741359988; x=1741964788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iArDif38+fZWZHkgSuOxfgSy+rEDqBvDc+u/YR4aXK4=;
-        b=Wxd9Q4MlVmNFiwwtrfqzzFBBOnHB7G46pBet8K0p9sePNyrr6/7UwxCZQQEV7OlTuO
-         qR83GWnJ7XYmaK/ecey4kFtw0xG/+H70Xq9jZoXcDeU8SFH5OFyR46M7ep0RFez4Dc1w
-         pZKHEX7BxLg5kNIkmyASxTi89/lr5hEMDZkCpXDFHlB1Eqgfd33DSVoGxRDECSfFZtTN
-         xVHMABYa7cj5GLnUjb+TujiurC+PNun83ubzA1DINnvS7aMWh/N//TNXUfSWmWL8zBv+
-         RJjq4hvbwr1SWz//MwkvsiSbCu4hIYFRnrbOdlCEmmnkKzQaqeEKf9E1sef9q67rRwzR
-         oekQ==
+        d=linaro.org; s=google; t=1741360246; x=1741965046; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GaMH1NOSXXEyX+4I+PnYIXnBgRaLQ5ST8GTB4hff2uQ=;
+        b=uWjUvTN6EX4c+P6aUMdpQ43KsDrmqLeNu4sCncwPyem00Z1g+HI/xWEBkr4dFJdHpK
+         TNH0hXx0f3UoH43rXHSDalHKIXhUHAC3ENvuawUDmEus0ME5Xub6k9ZGTHGYrCIXPhrX
+         89wAD6qQsx0sS9L3mwOHeQg0PE0ZPNktI0SWmt9BZek3zMTGVFdUDs9V5PPKsPDP8Lt5
+         0Q3CtQlbPPa7a9N2dFgnArlZ/85+krAiwR6eFfidcqh8KJScz3g9hkivLPdwGkye3LTE
+         lYYnUm45dF+wNyEBujgUNWIXn8AjDMak/HwScGunaYFpyrOsRWcJN/VPoYycb2cZ2MlD
+         x27A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359988; x=1741964788;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iArDif38+fZWZHkgSuOxfgSy+rEDqBvDc+u/YR4aXK4=;
-        b=TzaNfR5YqCjsgsDxlavlRIZoGVp5SKsXfXBSjC6+HInhnWKfw3YQoIxQ/sc72Xrcr/
-         T1J/K42J47vQI2S0sGZ/OooXB74ISWN2A1Xm8dLCdTGy/aQBeYInjrsTOSv842qUNFo8
-         d8hUw0bPeubCkZ/YmXgcZEBtunf3M82Aj/AOhgotbQC/y6tqPR9XKzrlzEjhL6YzRx9P
-         5HCR4qVq4qHcIDZpZChquGsLkZ5FQWGuBozM6rkqYZu9DNhk6HoXBsuKEqvrym33RBkK
-         N5WrmL7DPxs+sEncPVkz5CwEmmQx9jvq6BA31HnOjUlmizaD1hqkNGSbwIQIaBX3Ssb1
-         beWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWO9vHOFIKtMpuUu9oVYLnrCK0Is8VnwhDVCrbtxL+1BGUEVLbMqhFoC1cTMntTOqxYTQ4NPWiF5bcJxHCn6U975Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/2CEz/Pqmpp0uL5npkYORM4Xjraawi+P0SDb2z1HZqpl+74Ze
-	O1wiW/S6k9qnJpdbCjqHQpETpMP+exj83XQ1c24vs6CtxYpFdjUHUn1evoR8tpk=
-X-Gm-Gg: ASbGncsEaNSXWirrpk6R6bgfnbWmrBZNn7PVyofBPkUdXx7IZe8p7RCsFc6ufMEnSgP
-	q3fyODK9Ytpce/is/zBZGB59cn49oFo9o0IN6oQr1Je1NRl6u1XsYbZYXomEQYVkpYlhI+Oyvzt
-	Yk/G+g7v9qZRITgfQf0Wi/2d4wA6YwNZ9plbjYl0TH8lJAxBteb+6naGhhJNq0+USG3qj0UA5hu
-	ac6TcZf1aARQsnX1chRzDqql4XJfRT7ThHJ4884QTTO+lAuZVFdVL//A4n2cBJBjSz0L0avIN4S
-	9ic0ZUznMGBHlvsECWjXWhTH+sak85uW4ir+gWwZSmHk3Uoy8+2mlm2zUhO+
-X-Google-Smtp-Source: AGHT+IEepjQ7imgYoD7q4HWijAiTHHIHKB+RaF8r7Ya6WdH9B4Go9g4Q6bd0zl6386Q12ZEaV7KLTg==
-X-Received: by 2002:a5d:5f92:0:b0:38f:2b3c:569e with SMTP id ffacd0b85a97d-3913a8b4205mr53814f8f.11.1741359988167;
-        Fri, 07 Mar 2025 07:06:28 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e4065sm5694633f8f.62.2025.03.07.07.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 07:06:27 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- linux-fsd@tesla.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
-References: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: dts: exynos: gs101: Change labels to
- lower-case
-Message-Id: <174135998630.202917.16887190642980215810.b4-ty@linaro.org>
-Date: Fri, 07 Mar 2025 16:06:26 +0100
+        d=1e100.net; s=20230601; t=1741360246; x=1741965046;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GaMH1NOSXXEyX+4I+PnYIXnBgRaLQ5ST8GTB4hff2uQ=;
+        b=jUsn+wEwB0ocS6vsNzzkFQskFtZ1mlzyzfS65RCJBqccwm0Knrg2WmcU/xuSFEwp3m
+         PGBreud6VNBXYALZ/P+lswUYOwOcnU1AojZ47CFWSkvI+nFAyPAhlTfttWSW/Ph90Ikg
+         xU/v6+Fc/uNhTHGNfOCYiadYJMLgBn9VdXGK9nSmID+YeYV41KCE6FkHyo61napvWFzG
+         SiyPS1sw3vlioBf3jMm87XkIT9XMJ5btb5axj2956qhzfUy8krSrN/eJsAzkYMl2xois
+         HFxJHu4icZpNsvQuYLtN/nqDi1Pf8glpDN8+d6lpHNnfSa/ZPDyudO++vrrqs3fOoSlh
+         Z+3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXR4pp5RVYnPOPY/R7YHNzXVRQavP9Oh0ZQb0Na30k5RIm2Be5+mmaUb3zn/7KgFlB+r0909gFWRZZsiP4R04g8rw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf/PtQpxfiBomU28Kjj8dPnTrKnC05K3EX5kW1tju/cG/Yextw
+	ijCR3qjT7WIk7Ovr4QjfyAY8nE4mkj+b38xRiPmwGdxHDgMhkg8TCOJCE7ZRRJcN6xCI7wXRQHV
+	TuQk2/99B++emNLJtPJwYu1LomvHE+WL/iTUrKQ==
+X-Gm-Gg: ASbGncvYLH6i4fT9+U0RzjL6PmLnHhGY1Vz09H4iBlq1K0dVWdkCnm+sqSZTKK5bKEJ
+	Qa4Sfsupi9an3+UROQ6nHvytvFtCB0yWuPMr93lPAAgdpr9wJ24LTxQudE7Tqkoiq5sazcVGfre
+	wFco1WGU3KUZoPbGvFYB+2mOOggpk=
+X-Google-Smtp-Source: AGHT+IGmSI6uKhyqp0Lz6umulak1/qdCrknOZ1BwGtVXVr7Hw1ALnj7JKNyxJ8z0WKOu5JKZrR6BgmZGuCc1usZ1pxU=
+X-Received: by 2002:a4a:ec46:0:b0:5fc:f3b8:78c2 with SMTP id
+ 006d021491bc7-6004aaf90aemr2063696eaf.3.1741360244995; Fri, 07 Mar 2025
+ 07:10:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250226220414.343659-1-peter.griffin@linaro.org>
+ <20250226220414.343659-5-peter.griffin@linaro.org> <20250305024020.GC20133@sol.localdomain>
+In-Reply-To: <20250305024020.GC20133@sol.localdomain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 7 Mar 2025 15:10:33 +0000
+X-Gm-Features: AQ5f1JrG484DP9qv6Qb4pGd14bkBMzxvaPSxEwh5c_p71wnvCQXfRvFkoiXZo_U
+Message-ID: <CADrjBPpju3MmZbNy1uaPzAWTWrmNHx0nT+03DmkM3p5qFEUHdA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] scsi: ufs: exynos: Enable PRDT pre-fetching with UFSHCD_CAP_CRYPTO
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
+	martin.petersen@oracle.com, krzk@kernel.org, linux-scsi@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, willmcvicker@google.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, bvanassche@acm.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Eric,
 
-On Wed, 19 Feb 2025 09:57:25 +0100, Krzysztof Kozlowski wrote:
-> DTS coding style expects labels to be lowercase.  No functional impact.
-> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
-> 
-> 
+Thanks for your review feedback.
 
-Applied, thanks!
+On Wed, 5 Mar 2025 at 02:40, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Wed, Feb 26, 2025 at 10:04:12PM +0000, Peter Griffin wrote:
+> > PRDT_PREFETCH_ENABLE[31] bit should be set when desctype field of
+> > fmpsecurity0 register is type2 (double file encryption) or type3
+> > (file and disk excryption). Setting this bit enables PRDT
+> > pre-fetching on both TXPRDT and RXPRDT.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>
+> I assume you mean that desctype 3 provides "support for file and disk
+> encryption"?
 
-[1/2] arm64: dts: exynos: gs101: Change labels to lower-case
-      https://git.kernel.org/krzk/linux/c/73fd2bb607387a77b2dde43a2c47db2b71c65a96
-[2/2] arm64: dts: tesla: Change labels to lower-case
-      https://git.kernel.org/krzk/linux/c/056106b030b73c7d53749469bd1cdbc89b4d2daf
+Yes, the PRDT_PREFETCH_ENABLE description in the commit message I
+copied from the datasheet. But I can re-word it like you suggest if
+you think that it's clearer? I notice now there is also a typo with
+the word 'encryption' which I can also fix.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This patch came about whilst comparing UFS SFR register dumps of
+upstream and downstream drivers. I noticed that PRDT_PREFETCH_ENABLE
+is enabled downstream but not upstream, and after checking the
+datasheet description it seemed like we should set this if
+exynos_ufs_fmp_init() completed and set CFG_DESCTYPE_3.
 
+> The driver does use desctype 3, but it only uses the "file
+> encryption".  So this confused me a bit.  (BTW, in FMP terminology, "file
+> encryption" seems to mean "use the key provided in the I/O request", and "disk
+> encryption" seems to mean "use some key the firmware provided somehow".  They
+> can be cascaded, and the intended use cases are clearly file and disk encryption
+> respectively, but they don't necessarily have to be used that way.)
+
+Thanks for the additional context :)
+
+Peter
