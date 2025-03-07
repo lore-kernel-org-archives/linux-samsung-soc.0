@@ -1,250 +1,377 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E6A211464
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Mar 2025 10:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4DB219EAD
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Mar 2025 13:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343374; cv=none; b=BWgVkGq7m8+7MpwNDPEzt73QI8H5nYfjCu/NbamhNRg48fa/uLibRTshBOpFumbnAEv+x8noPM8199DatbkLyg4Jd6p0aBA7NsEqpgc4svIBK4dEBFol4wKPLyOkwGjKYtFaWHSGV07Lu8W49cStsc+uAaFLfjnZQwQM2nRaUxc=
+	t=1741353560; cv=none; b=idroXRBZI6BX/EoX0MuubdUMQXCmpeaZ8EbWFwUxva+fLJeTRL6UDboyoFLnv20z03RBd7jjDneX/haAkkuZC54miu4qJkslwbgmlINT7soDmF1mEELpz22ctoiLLg+Sy+PZhIYBg8kqC1CDRUAY5qNFQhmHPBXhKpHp334smmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343374; c=relaxed/simple;
-	bh=0g0PL41FvwddA+yzjOccP1eOi8+XeiX+2I7QmRbycHw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X9ICVE2CjNStBRVzU+pdPbsDmmBvpiAYJgO9vAsLpUFYIrNPv+HE7S1g6Bf5JGpn/I0O1PGUDZlWUIulJlx3hkY07dRhYwfckbSljmKgLYKYa7RmLAlBK+sTqlPjj1KN9ZetW2OOUrRnrZrwEsBrha3yK0OOq7OL7c/vL3rcFHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s0Pi0z4Y; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741353560; c=relaxed/simple;
+	bh=jt+9rA9ZPCCaYRIrwyfR3Op0oyoIsDZhOFigxKin82U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoW/OdDdlJiB+3zEQQVszWQoBp/NUlzOHocMfli/rF8XEOnPbXGz3dvJifNN0IVBsOK4XAXH0ASGOt1IIpRcKimHrXdzhCqkV9uNvho6pvmhelRYbquP4u0cb0X8ntEAVDQsm0bUZpdf8FIG7ZxVITn+uhzLQvKNf5Qgi/q3+rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=VOvmr3uN; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s0Pi0z4Y"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f403edb4eso915484f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Mar 2025 02:29:31 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VOvmr3uN"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf57138cfaso346660466b.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Mar 2025 05:19:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741343370; x=1741948170; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XpHtfXZMtovgp9ILU8zfEF7HMKzE1ti5rdjRAjVazZg=;
-        b=s0Pi0z4YJotKOZAvZ/eDQZMWcQNFIXcwJ4rDEV88zvI/Facab9Ska/WmEiSLbGVRRg
-         /kyiJMWAzyAezk39zGOLHkuMwyGvo2oKOuMK7Akymfq6KRgVHpHT6hvAw/JG2qfZZ4SE
-         PFL8d8pkr0hKD5CnTIFS0vzh4RQyBKirwCYmDGHRcJGF7x9XCRg4h5w2peTtKY2kS/l6
-         BNo+08gmGopvAiRurGqz27fG2EF+2WBGG7n9Z0fqHTO3DkZmBnBbvMpO2VwZAjycEWBD
-         ++he67e36s4E5gMw49poNH7u20H7wvBi7l4xQTdub6AcofsbBnyQ7gL8hByPeOldY+v3
-         AiYg==
+        d=ffwll.ch; s=google; t=1741353556; x=1741958356; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmXXr/GHvAGv2swMlIkbl+Www19HcX8d7ze1AMoIM9w=;
+        b=VOvmr3uN5yuFAP7jsmQaIjjt6EjSI5vHPJ2bPVQurpz/9bFA9L4kY7Dug9TNe4h/Z2
+         SJPn0UXR+ZjajyDBuAgUz9pbLvf37vos0vGtOMxpRVrS5sZmT4h6RAg0aNEr8+dtwpum
+         P4s7CyJJ6uiK1iN35KtAMuA0oUBZj/O0pFHm8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741343370; x=1741948170;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XpHtfXZMtovgp9ILU8zfEF7HMKzE1ti5rdjRAjVazZg=;
-        b=HRaqvH8ddQct7pNezs4+3G6JuWBpp5JysxwyRzaBjDYQjvDiMe99rUGazWQN7CNewo
-         ovHzRsboMtOdg+NifIxltRalh97BgaOCMN//7H6GuoRMzgXn0R7KrLCCR01Zh9+sHjQf
-         2yHS75S5eMJFE9q6HZbecPyMaag6wjE0QGP5f6wx4ZTZ87OVgUmjLhphO+7mf5XOktGi
-         v6FtetWQtPuNj04HH17A6kfS4Qq21dWECj3j+p06H2PlF6uPeUbo6d1giYbgYnREi1Kw
-         SMoFWsRULSRXM++FLHWDK/Mvabxt9U04x/W/abI2BAKI0/8Jbk7MpNtlivmH82qpaKq4
-         BfWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAz6Ky1KS3T8a51Ke72MI15uloF+JUab6e+ijpywOwN0pt8PfCoBOIFn1tmxxGqpNLS6cjvJs0UHfbx/3cGL8vag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjCbmsKlwqbaKzuTCxTmPIbGe0cJwicsD5AX53991BOxWro7cD
-	KtdBE1WIOmsIhoA6Ufc+vFmHRK3ybuJL9rsAg7fs1Th7HpkfpF/qz5ALcJQ4r5w=
-X-Gm-Gg: ASbGncuKra9rO+An2w5cosOIRAa0bh/sNjgpJ8Zn4VR9C/MlIJv8Dek53mZOAg9ljxu
-	OHD/A5F+LJXaaamhIPOpKW8Evkj9h1L59/Iq4ofS44j6dSJJbKL/MSzJiaFCetlyvvcEYyRxc7h
-	a0kWy+oV1ZwpRisAVQfl9l7FnSC0uv2AzKfiPWFV9Tn1UABowMCnSzUlMPzDpGwwNMJJflMWQWk
-	GbJuFucyu6aYKjn+qZlsmr86K874o1XQ1BmG13tf3H2+Hf4yaxuDhVT5X0wWMzZsFKVFXmC45RN
-	ILmGeRRRva3s3NYx6sSaa0ZNHkIvmQtSK5bSbqObG/whidA+t5/NnvplPRt7glIH09AOh8xLKbg
-	=
-X-Google-Smtp-Source: AGHT+IELqpVmd0fvvLrbeGlBslX14EFMXRP9VSs8vnkHH4WGNHv+xxIo63qhgA6uSenseZlnpH1JeQ==
-X-Received: by 2002:a05:6000:4112:b0:391:d52:d042 with SMTP id ffacd0b85a97d-39132d883f3mr1316285f8f.32.1741343369573;
-        Fri, 07 Mar 2025 02:29:29 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.90.122])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8b0461sm49192955e9.4.2025.03.07.02.29.28
+        d=1e100.net; s=20230601; t=1741353556; x=1741958356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GmXXr/GHvAGv2swMlIkbl+Www19HcX8d7ze1AMoIM9w=;
+        b=gWUmgbbXsWekOgK4H2kHHbmdb6bOrwNJIaMgwcF0mN4kyxAaTIOacdfeGaNkOyY09i
+         n0U+viETj1DeMmGXneaS9GTHNupRger6zHV+c/p8Xnwv7T6MXT1mjeubz0cRrgZWCox8
+         +yEy5JJSDLWeAjr8zIbVuocju2dBeUwPaTtNV4yeKZqKC3bSZ/99mp8AuYRO4bfU1Jkk
+         +fRWxlBVQqnmMIv9MIWL6Fu0/mmfUGPXDPS0CCtTnIekKWS8Llk2vl6YDjKGTpB8zFfv
+         ENGX769tCMt0TzG+YYBOi+DIsK0YyID0ttJJSRxk2ghn5QvbFcR3Id9qdMXl4MjwbCuX
+         r3Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrvjgVJHEc7I1fE7i6fBSJDPveyumC0uGDiSkJezYz/rKRxixMaBTTNP9sew2GtIHvlwbPtt1/SWt8a2KfvOmyXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1SezsfOMcV8JuPbTLt4i2Lvkho8HUxYyMevCXvyQnjpMk/KLE
+	BwQ/zZd6M+G7dBDZvK0Dzy46kO4QW0dDW11YH/lHcc98ZFDndBTs63684nRUEao=
+X-Gm-Gg: ASbGncvZDxvRcrDJj5tyydB/1zzNJs8/ex4EmHTiUsYBi5SKYJwzDSevk/RYwUYKood
+	pz8gSew+KwO7iU9nMF9zkCaWNmOAODNOZ8VT0PaZHYaLEWrSGQ16FvKNRJ3Fn4ZNs5tOQLkAh0d
+	BGYkiT2u0HEwpgAe8cJMEXETYep7q8KkZMVRaNxZ+79IsYpeq/5TUIBuI7/PAoYovYb0fbAeB03
+	c1RWR5veurvQ133ACuTXIGtnejCsWIaX9fek2SVKlMvYCdZZvL2sIEMQGua9Qcoqmcj0alntYb8
+	mYDluKGKv1t6k2opG8yTurT7nfQQcdU6PMrZnKicb6FMX0z6YKQSa2bq
+X-Google-Smtp-Source: AGHT+IGWJEXpT4oFObUhXEX1baZSA5ka+RDW0BObeZF31pqEHYIrQhNdRsTwmr/EHhhCwd6ldgP0tQ==
+X-Received: by 2002:a17:907:7ea9:b0:abf:6b30:7a94 with SMTP id a640c23a62f3a-ac252f4c9eamr387695566b.45.1741353555414;
+        Fri, 07 Mar 2025 05:19:15 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2399d2dd8sm272788966b.166.2025.03.07.05.19.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 02:29:29 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 07 Mar 2025 10:29:08 +0000
-Subject: [PATCH v4 4/4] pinctrl: samsung: Add filter selection support for
- alive bank on gs101
+        Fri, 07 Mar 2025 05:19:14 -0800 (PST)
+Date: Fri, 7 Mar 2025 14:19:12 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
+ and size
+Message-ID: <Z8ryUGgxqVTEw9pe@phenom.ffwll.local>
+References: <20250218142542.438557-1-tzimmermann@suse.de>
+ <20250218142542.438557-3-tzimmermann@suse.de>
+ <Z8qxcTIcD4W5OGwL@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250307-pinctrl-fltcon-suspend-v4-4-2d775e486036@linaro.org>
-References: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
-In-Reply-To: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
- semen.protsenko@linaro.org, kernel-team@android.com, 
- jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5749;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=0g0PL41FvwddA+yzjOccP1eOi8+XeiX+2I7QmRbycHw=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnysqBWYKPT3JlFe3EPL9ZQ4Cxe9Oo6QkFzQ3J3
- g/okGUam0KJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8rKgQAKCRDO6LjWAjRy
- utzhD/9SPJA0sK/S5QY+aQ2jbKWzDSNcZLzygXB/AH06vQGgCdMyqqV4uA5fnVT/7UQvweoR8jx
- TwEWWZEPyFhTyVinHXgBNc674T4NE1hHF5KYtVgU7GYV+j+Fpm3PfbJPKvvHzHncNmvE+l654Nu
- YqdVf8q3Y8+gMPqtL+C+tR/9sLO471lzqCm3qXZO95ZFSFXz9XMjCBOcAI3wS4rHq/2ydG94tZw
- 02PGCPpj1gHbSOEKlwQ84OVEC8aVsWKpbF+b1Jrz1Hhd+4lpxb0SC0CbZPFFRWM38iNUFj9rihp
- d0HjNZ789nCTQR58nAAYndk62BVkK/YNKBTRDeNVl1h4IBQvFTRTP/QJjRPmWA5fUz6NpgFwmLY
- XYj0h4xhtHsNtS+6+UBwtDzyEv8ZwzT6zcxkNzTlDKqqThUcQ3sgp9cBdP1EevUWAqhj48mog4w
- 3RalHQj7D5sedV0N9l1tOzwF+hW63cdSwegrbCWleLUy+ATb3W3opbrTbpquFExfx2XTYC/9QDr
- 9eHpuqsNZGx4X+GnM9VMqiRWbRf8MiB/NV64I9BNzx1b6mg4LV7FuyP8+5la26T58ddcAhoLeq5
- 3IvWYWer8IQ6sECPJTX6FznWnZ0eRq+8ZvOYiW0IbEkaCcnPxNhQXG2oRgAM58nFtMaop1qDPWH
- OyUnDN56Ht4kWOA==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8qxcTIcD4W5OGwL@phenom.ffwll.local>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-Newer Exynos based SoCs have a filter selection bitfield in the filter
-configuration registers on alive bank pins. This allows the selection of
-a digital or analog delay filter for each pin. Add support for selecting
-and enabling the filter.
+On Fri, Mar 07, 2025 at 09:42:25AM +0100, Simona Vetter wrote:
+> On Tue, Feb 18, 2025 at 03:23:25PM +0100, Thomas Zimmermann wrote:
+> > Add drm_modes_size_dumb(), a helper to calculate the dumb-buffer
+> > scanline pitch and allocation size. Implementations of struct
+> > drm_driver.dumb_create can call the new helper for their size
+> > computations.
+> > 
+> > There is currently quite a bit of code duplication among DRM's
+> > memory managers. Each calculates scanline pitch and buffer size
+> > from the given arguments, but the implementations are inconsistent
+> > in how they treat alignment and format support. Later patches will
+> > unify this code on top of drm_mode_size_dumb() as much as possible.
+> > 
+> > drm_mode_size_dumb() uses existing 4CC format helpers to interpret
+> > the given color mode. This makes the dumb-buffer interface behave
+> > similar the kernel's video= parameter. Current per-driver implementations
+> > again likely have subtle differences or bugs in how they support color
+> > modes.
+> > 
+> > The dumb-buffer UAPI is only specified for known color modes. These
+> > values describe linear, single-plane RGB color formats or legacy index
+> > formats. Other values should not be specified. But some user space
+> > still does. So for unknown color modes, there are a number of known
+> > exceptions for which drm_mode_size_dumb() calculates the pitch from
+> > the bpp value, as before. All other values work the same but print
+> > an error.
+> > 
+> > v3:
+> > - document the UAPI semantics
+> > - compute scanline pitch from for unknown color modes (Andy, Tomi)
+> > 
+> > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > ---
+> >  drivers/gpu/drm/drm_dumb_buffers.c | 116 +++++++++++++++++++++++++++++
+> >  include/drm/drm_dumb_buffers.h     |  14 ++++
+> >  include/uapi/drm/drm_mode.h        |  46 +++++++++++-
+> >  3 files changed, 175 insertions(+), 1 deletion(-)
+> >  create mode 100644 include/drm/drm_dumb_buffers.h
+> > 
+> > diff --git a/drivers/gpu/drm/drm_dumb_buffers.c b/drivers/gpu/drm/drm_dumb_buffers.c
+> > index 9916aaf5b3f2..600ab281712b 100644
+> > --- a/drivers/gpu/drm/drm_dumb_buffers.c
+> > +++ b/drivers/gpu/drm/drm_dumb_buffers.c
+> > @@ -25,6 +25,8 @@
+> >  
+> >  #include <drm/drm_device.h>
+> >  #include <drm/drm_drv.h>
+> > +#include <drm/drm_dumb_buffers.h>
+> > +#include <drm/drm_fourcc.h>
+> >  #include <drm/drm_gem.h>
+> >  #include <drm/drm_mode.h>
+> >  
+> > @@ -57,6 +59,120 @@
+> >   * a hardware-specific ioctl to allocate suitable buffer objects.
+> >   */
+> >  
+> > +static int drm_mode_align_dumb(struct drm_mode_create_dumb *args,
+> > +			       unsigned long pitch_align,
+> > +			       unsigned long size_align)
+> > +{
+> > +	u32 pitch = args->pitch;
+> > +	u32 size;
+> > +
+> > +	if (!pitch)
+> > +		return -EINVAL;
+> > +
+> > +	if (pitch_align)
+> > +		pitch = roundup(pitch, pitch_align);
+> > +
+> > +	/* overflow checks for 32bit size calculations */
+> > +	if (args->height > U32_MAX / pitch)
+> > +		return -EINVAL;
+> > +
+> > +	if (!size_align)
+> > +		size_align = PAGE_SIZE;
+> > +	else if (!IS_ALIGNED(size_align, PAGE_SIZE))
+> > +		return -EINVAL;
+> > +
+> > +	size = ALIGN(args->height * pitch, size_align);
+> > +	if (!size)
+> > +		return -EINVAL;
+> > +
+> > +	args->pitch = pitch;
+> > +	args->size = size;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * drm_mode_size_dumb - Calculates the scanline and buffer sizes for dumb buffers
+> > + * @dev: DRM device
+> > + * @args: Parameters for the dumb buffer
+> > + * @pitch_align: Scanline alignment in bytes
+> > + * @size_align: Buffer-size alignment in bytes
+> > + *
+> > + * The helper drm_mode_size_dumb() calculates the size of the buffer
+> > + * allocation and the scanline size for a dumb buffer. Callers have to
+> > + * set the buffers width, height and color mode in the argument @arg.
+> > + * The helper validates the correctness of the input and tests for
+> > + * possible overflows. If successful, it returns the dumb buffer's
+> > + * required scanline pitch and size in &args.
+> > + *
+> > + * The parameter @pitch_align allows the driver to specifies an
+> > + * alignment for the scanline pitch, if the hardware requires any. The
+> > + * calculated pitch will be a multiple of the alignment. The parameter
+> > + * @size_align allows to specify an alignment for buffer sizes. The
+> > + * returned size is always a multiple of PAGE_SIZE.
+> > + *
+> > + * Returns:
+> > + * Zero on success, or a negative error code otherwise.
+> > + */
+> > +int drm_mode_size_dumb(struct drm_device *dev,
+> > +		       struct drm_mode_create_dumb *args,
+> > +		       unsigned long pitch_align,
+> > +		       unsigned long size_align)
+> > +{
+> > +	u64 pitch = 0;
+> > +	u32 fourcc;
+> > +
+> > +	/*
+> > +	 * The scanline pitch depends on the buffer width and the color
+> > +	 * format. The latter is specified as a color-mode constant for
+> > +	 * which we first have to find the corresponding color format.
+> > +	 *
+> > +	 * Different color formats can have the same color-mode constant.
+> > +	 * For example XRGB8888 and BGRX8888 both have a color mode of 32.
+> > +	 * It is possible to use different formats for dumb-buffer allocation
+> > +	 * and rendering as long as all involved formats share the same
+> > +	 * color-mode constant.
+> > +	 */
+> > +	fourcc = drm_driver_color_mode_format(dev, args->bpp);
+> > +	if (fourcc != DRM_FORMAT_INVALID) {
+> > +		const struct drm_format_info *info = drm_format_info(fourcc);
+> > +
+> > +		if (!info)
+> > +			return -EINVAL;
+> > +		pitch = drm_format_info_min_pitch(info, 0, args->width);
+> > +	} else if (args->bpp) {
+> > +		/*
+> > +		 * Some userspace throws in arbitrary values for bpp and
+> > +		 * relies on the kernel to figure it out. In this case we
+> > +		 * fall back to the old method of using bpp directly. The
+> > +		 * over-commitment of memory from the rounding is acceptable
+> > +		 * for compatibility with legacy userspace. We have a number
+> > +		 * of deprecated legacy values that are explicitly supported.
+> > +		 */
+> > +		switch (args->bpp) {
+> > +		default:
+> > +			drm_warn(dev, "Unknown color mode %d; guessing buffer size.\n",
+> > +				 args->bpp);
+> > +			fallthrough;
+> 
+> We cannot let userspace trigger dmesg warnings (or anything else really
+> that spams logs). Also I think for future proofing it would be good if we
+> just reject anything we don't currently know about instead of silently
+> letting this mess become worse. Hence my vote is to reject unknown bpp
+> hack values.
+> 
+> > +		case 12:
+> > +		case 15:
+> > +		case 30: /* see drm_gem_afbc_get_bpp() */
+> 
+> This is a bit too cryptic to me, I think if you want to do comments I'd
+> just put a long-form one above each value that explains where we've found
+> it and why it happens. I'm also assuming these all have depth = 0, which I
+> guess is something we should check just to keep this as strict as
+> possible? Or do they have matching depth?
 
-On suspend we set the analog filter to all pins in the bank (as the
-digital filter relies on a clock). On resume the digital filter is
-reapplied to all pins in the bank. The digital filter is working via
-a clock and has an adjustable filter delay flt_width bitfield, whereas
-the analog filter uses a fixed delay.
+Correction from irc: Thomas pointed out that there's no depth in the
+create_dumb ioctl, I was mixing this up with addfb and failed to check. So
+please disregard this part, I was fabricating stuff out of some very thin
+air (and probably not enough coffee in the brain too).
+-Sima
 
-The filter determines to what extent signal fluctuations received through
-the pad are considered glitches.
-
-The code path can be exercised using
-echo mem > /sys/power/state
-And then wake the device using a eint gpio
-
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-
-Changes since v2:
-* Ensure EXYNOS_FLTCON_DIGITAL bit is cleared (Andre)
-* Make it obvious that exynos_eint_set_filter() is conditional on bank type (Andre)
-
-Changes since v1:
-* Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
-* Move filter config comment to header (Andre)
-* Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
-* Remove misleading old comment (Andre)
-* Refactor exynos_eint_update_flt_reg() into a loop (Andre)
-
-Note: this patch was previously sent as part of the initial gs101/ Pixel 6
-series and was dropped in v6. This new version incorporates the review
-feedback from Sam Protsenko here in v5.
-
-Link: https://lore.kernel.org/all/20231201160925.3136868-1-peter.griffin@linaro.org/T/#m79ced98939e895c840d812c8b4c2b3f33ce604c8
-
-Changes since previous version
-* Drop fltcon_type enum and use bool eint_flt_selectable (Sam)
-* Refactor and add exynos_eint_update_flt_reg() (Sam)
-* Rename function to exynos_eint_set_filter() for easier readability (Sam)
-* Remove comments and `if bank->fltcon_type != FLT_DEFAULT)` checks and indentation (Sam)
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 37 +++++++++++++++++++++++++++++++-
- drivers/pinctrl/samsung/pinctrl-exynos.h | 20 +++++++++++++++++
- 2 files changed, 56 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 5f0045d03346600557fa6735bad709897c71935c..1d2a4f4b825fce4be3f3d337145f2a4128315f0b 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -369,6 +369,37 @@ struct exynos_eint_gpio_save {
- 	u32 eint_mask;
- };
- 
-+static void exynos_eint_update_flt_reg(void __iomem *reg, int cnt, int con)
-+{
-+	unsigned int val, shift;
-+	int i;
-+
-+	val = readl(reg);
-+	for (i = 0; i < cnt; i++) {
-+		shift = i * EXYNOS_FLTCON_LEN;
-+		val &= ~(EXYNOS_FLTCON_DIGITAL << shift);
-+		val |= con << shift;
-+	}
-+	writel(val, reg);
-+}
-+
-+/*
-+ * Set the desired filter (digital or analog delay) and enable it to
-+ * every pin in the bank. Note the filter selection bitfield is only
-+ * found on alive banks. The filter determines to what extent signal
-+ * fluctuations received through the pad are considered glitches.
-+ */
-+static void exynos_eint_set_filter(struct samsung_pin_bank *bank, int filter)
-+{
-+	unsigned int off = EXYNOS_GPIO_EFLTCON_OFFSET + bank->eint_fltcon_offset;
-+	void __iomem *reg = bank->drvdata->virt_base + off;
-+	unsigned int con = EXYNOS_FLTCON_EN | filter;
-+
-+	for (int n = 0; n < bank->nr_pins; n += 4)
-+		exynos_eint_update_flt_reg(reg + n,
-+					   min(bank->nr_pins - n, 4), con);
-+}
-+
- /*
-  * exynos_eint_gpio_init() - setup handling of external gpio interrupts.
-  * @d: driver data of samsung pinctrl driver.
-@@ -828,8 +859,10 @@ void gs101_pinctrl_suspend(struct samsung_pin_bank *bank)
- 				 bank->name, save->eint_fltcon1);
- 		pr_debug("%s: save    mask %#010x\n",
- 			 bank->name, save->eint_mask);
--	} else if (bank->eint_type == EINT_TYPE_WKUP)
-+	} else if (bank->eint_type == EINT_TYPE_WKUP) {
- 		exynos_set_wakeup(bank);
-+		exynos_eint_set_filter(bank, EXYNOS_FLTCON_ANALOG);
-+	}
- }
- 
- void exynosautov920_pinctrl_suspend(struct samsung_pin_bank *bank)
-@@ -883,6 +916,8 @@ void gs101_pinctrl_resume(struct samsung_pin_bank *bank)
- 			writel(save->eint_fltcon1, eint_fltcfg0 + 4);
- 		writel(save->eint_mask, regs + bank->irq_chip->eint_mask
- 		       + bank->eint_offset);
-+	} else if (bank->eint_type == EINT_TYPE_WKUP) {
-+		exynos_eint_set_filter(bank, EXYNOS_FLTCON_DIGITAL);
- 	}
- }
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index 773f161a82a38cbaad05fcbc09a936300f5c7595..66acbd08d3445ca6ee7358d3c4a6cb2be5d82842 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -52,6 +52,26 @@
- #define EXYNOS_EINT_MAX_PER_BANK	8
- #define EXYNOS_EINT_NR_WKUP_EINT
- 
-+/*
-+ * EINT filter configuration register (on alive banks) has
-+ * the following layout.
-+ *
-+ * BitfieldName[PinNum][Bit:Bit]
-+ * FLT_EN[3][31] FLT_SEL[3][30] FLT_WIDTH[3][29:24]
-+ * FLT_EN[2][23] FLT_SEL[2][22] FLT_WIDTH[2][21:16]
-+ * FLT_EN[1][15] FLT_SEL[1][14] FLT_WIDTH[1][13:8]
-+ * FLT_EN[0][7]  FLT_SEL[0][6]  FLT_WIDTH[0][5:0]
-+ *
-+ * FLT_EN	0x0 = Disable, 0x1=Enable
-+ * FLT_SEL	0x0 = Analog delay filter, 0x1 Digital filter (clock count)
-+ * FLT_WIDTH	Filtering width. Valid when FLT_SEL is 0x1
-+ */
-+
-+#define EXYNOS_FLTCON_EN		BIT(7)
-+#define EXYNOS_FLTCON_DIGITAL		BIT(6)
-+#define EXYNOS_FLTCON_ANALOG		(0 << 6)
-+#define EXYNOS_FLTCON_LEN		8
-+
- #define EXYNOS_PIN_BANK_EINTN(pins, reg, id)		\
- 	{						\
- 		.type		= &bank_type_off,	\
+> 
+> Cheers, Sima
+> 
+> > +		case 10:
+> > +		case 64: /* used by Mesa */
+> > +			pitch = args->width * DIV_ROUND_UP(args->bpp, SZ_8);
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	if (!pitch || pitch > U32_MAX)
+> > +		return -EINVAL;
+> > +
+> > +	args->pitch = pitch;
+> > +
+> > +	return drm_mode_align_dumb(args, pitch_align, size_align);
+> > +}
+> > +EXPORT_SYMBOL(drm_mode_size_dumb);
+> > +
+> >  int drm_mode_create_dumb(struct drm_device *dev,
+> >  			 struct drm_mode_create_dumb *args,
+> >  			 struct drm_file *file_priv)
+> > diff --git a/include/drm/drm_dumb_buffers.h b/include/drm/drm_dumb_buffers.h
+> > new file mode 100644
+> > index 000000000000..6fe36004b19d
+> > --- /dev/null
+> > +++ b/include/drm/drm_dumb_buffers.h
+> > @@ -0,0 +1,14 @@
+> > +/* SPDX-License-Identifier: MIT */
+> > +
+> > +#ifndef __DRM_DUMB_BUFFERS_H__
+> > +#define __DRM_DUMB_BUFFERS_H__
+> > +
+> > +struct drm_device;
+> > +struct drm_mode_create_dumb;
+> > +
+> > +int drm_mode_size_dumb(struct drm_device *dev,
+> > +		       struct drm_mode_create_dumb *args,
+> > +		       unsigned long pitch_align,
+> > +		       unsigned long size_align);
+> > +
+> > +#endif
+> > diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> > index c082810c08a8..eea09103b1a6 100644
+> > --- a/include/uapi/drm/drm_mode.h
+> > +++ b/include/uapi/drm/drm_mode.h
+> > @@ -1058,7 +1058,7 @@ struct drm_mode_crtc_page_flip_target {
+> >   * struct drm_mode_create_dumb - Create a KMS dumb buffer for scanout.
+> >   * @height: buffer height in pixels
+> >   * @width: buffer width in pixels
+> > - * @bpp: bits per pixel
+> > + * @bpp: color mode
+> >   * @flags: must be zero
+> >   * @handle: buffer object handle
+> >   * @pitch: number of bytes between two consecutive lines
+> > @@ -1066,6 +1066,50 @@ struct drm_mode_crtc_page_flip_target {
+> >   *
+> >   * User-space fills @height, @width, @bpp and @flags. If the IOCTL succeeds,
+> >   * the kernel fills @handle, @pitch and @size.
+> > + *
+> > + * The value of @bpp is a color-mode number describing a specific format
+> > + * or a variant thereof. The value often corresponds to the number of bits
+> > + * per pixel for most modes, although there are exceptions. Each color mode
+> > + * maps to a DRM format plus a number of modes with similar pixel layout.
+> > + * Framebuffer layout is always linear.
+> > + *
+> > + * Support for all modes and formats is optional. Even if dumb-buffer
+> > + * creation with a certain color mode succeeds, it is not guaranteed that
+> > + * the DRM driver supports any of the related formats. Most drivers support
+> > + * a color mode of 32 with a format of DRM_FORMAT_XRGB8888 on their primary
+> > + * plane.
+> > + *
+> > + * +------------+------------------------+------------------------+
+> > + * | Color mode | Framebuffer format     | Compatibles            |
+> > + * +============+========================+========================+
+> > + * |     32     |  * DRM_FORMAT_XRGB8888 |  * DRM_FORMAT_XBGR8888 |
+> > + * |            |                        |  * DRM_FORMAT_RGBX8888 |
+> > + * |            |                        |  * DRM_FORMAT_BGRX8888 |
+> > + * +------------+------------------------+------------------------+
+> > + * |     24     |  * DRM_FORMAT_RGB888   |  * DRM_FORMAT_BGR888   |
+> > + * +------------+------------------------+------------------------+
+> > + * |     16     |  * DRM_FORMAT_RGB565   |  * DRM_FORMAT_BGR565   |
+> > + * +------------+------------------------+------------------------+
+> > + * |     15     |  * DRM_FORMAT_XRGB1555 |  * DRM_FORMAT_XBGR1555 |
+> > + * |            |                        |  * DRM_FORMAT_RGBX1555 |
+> > + * |            |                        |  * DRM_FORMAT_BGRX1555 |
+> > + * +------------+------------------------+------------------------+
+> > + * |      8     |  * DRM_FORMAT_C8       |  * DRM_FORMAT_R8       |
+> > + * +------------+------------------------+------------------------+
+> > + * |      4     |  * DRM_FORMAT_C4       |  * DRM_FORMAT_R4       |
+> > + * +------------+------------------------+------------------------+
+> > + * |      2     |  * DRM_FORMAT_C2       |  * DRM_FORMAT_R2       |
+> > + * +------------+------------------------+------------------------+
+> > + * |      1     |  * DRM_FORMAT_C1       |  * DRM_FORMAT_R1       |
+> > + * +------------+------------------------+------------------------+
+> > + *
+> > + * Color modes of 10, 12, 15, 30 and 64 are only supported for use by
+> > + * legacy user space. Please don't use them in new code. Other modes
+> > + * are not support.
+> > + *
+> > + * Do not attempt to allocate anything but linear framebuffer memory
+> > + * with single-plane RGB data. Allocation of other framebuffer
+> > + * layouts requires dedicated ioctls in the respective DRM driver.
+> >   */
+> >  struct drm_mode_create_dumb {
+> >  	__u32 height;
+> > -- 
+> > 2.48.1
+> > 
+> 
+> -- 
+> Simona Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
 -- 
-2.49.0.rc0.332.g42c0ae87b1-goog
-
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
