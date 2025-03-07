@@ -1,206 +1,115 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3024291C
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Mar 2025 17:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D78717B500;
+	Fri,  7 Mar 2025 19:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369136; cv=none; b=FUxlAkg3GisWz1sP4DqsbdprQOg4vo6NvIdNXNHF5jgJko5WXWY23r7sjeblflGkR7fxvp5f0+W+vqb2pznbxo8k5rAXPcxhCtpVO9SLokZqw343IaCv7Pf3aOu9EQqbb+fse2wjDWAfNNwPtrAUt/r716jnqXkzysGa1gXqHbs=
+	t=1741374266; cv=none; b=NGF/ONOzf8nT5SBTEQoHr6DcFaB9eZVNrqPn9yxiqhdv5eV4zvdRz/f/YYJMpp5ZFW3ldWj043eeRU0vlZovyibKXown/wd4NhUm6P1ZBk7JLXD1h8SOXluq/38I0ICDPtTSHgqImfQknqMGpp13Bi4sass2nq000pi/O6/xMnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369136; c=relaxed/simple;
-	bh=A6iritQzi/XyfqabjcET0S9R6vuI/pOfYHbEPn2e2YE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aXktq6zD4+uZxgGYNeEeGUHPmm9wTgkvofxDVOLsroYrCzR6MTcaC66j8FoGQ6AwfDv+5aIkh36sQ6YQq+6tYa/Rl5bTm4KwpTUiUNYikWvNZz70MoyVhjW8fSsQ/ZQa+WBCg2O8QY1JysMUmIKNZJVpdKv7+3GK+nXFv8nHnNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ahRr3CYs; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741374266; c=relaxed/simple;
+	bh=LZxlQy480B8XB9W2bL3qE02TAbT/sG5jtfYMZ1zrq+o=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=sVZaL0wWv9myyG2AwWiD9IVO/RTGGMMxqClpEvVVoYSOEQ5oy7a2JlrTcHw4YXGKs+NL/kGDnD1GrQz1bmI4/eBa6orXpf0/8GLf3uky+AJIIZcDSQCJEHVXRG+aFv1AUv9kAFg2Hra2L1Uw1CvnzATiKTEUT1VNjfLGVaS1in8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyXqhtQZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ahRr3CYs"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bdcd0d97dso12651015e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Mar 2025 09:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741369132; x=1741973932; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gbhsOaksWfSrIW8u1uBJdU7SRRrY2hqIxanWZ0O00C8=;
-        b=ahRr3CYs24Iyo6V9CCY26oAoIkSM9ekouEQt3jsr07fexZEhXRbFHiPYUsRJaVpZNx
-         5YtI3a+fXVXVQgL8GZWXM8mz+hQNnibl5AjHN9Y7UR3G6VT/z45yR9MH/KUpylRMRgrt
-         G0jsCWPyuL2DZ4q99D+kW5NYo1wUC0UdAVfdjDdy2NUWi0X9gI1UNMvxhXl7Z89ByQLe
-         gU8zbFHzOOkr55FyJehIyFv3wjpM9mG9UiwN66sJAv08IuCoX2dPPxWQjIlZ4FydeUUY
-         gdyvpX2PcX46geFLjmRV0ZuL824uEnC/FELr8efvtj0Dx/n8is/6FuOv1ZysZZGgmOM5
-         2mkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741369132; x=1741973932;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gbhsOaksWfSrIW8u1uBJdU7SRRrY2hqIxanWZ0O00C8=;
-        b=OT0h7PBv5LLQAQy33tvV2QbOcXsURXf4qluKfB5x0iMUNyUqXER5fQbDRtcvfAuUbs
-         PF6vldrv8wJCCGjlsxTAL4dQGDCC3+aLa9gEHq1dMrHBZCCf2U44EFnQatcU/3w3elLy
-         jEPcl2//xT1IVJ+qd77K9bmzEVpa7f3GpoKgthWrLH0djnKILnTCozhM6ulTpdao5hSB
-         d9bf0vO2YdXVAeXH19ig0ZStP4ERcGnbnm5YAl1I15VfLRdJHS61m1zzaADecOmgUk17
-         01UceVjGxdv2IOx7DgXd8UuiRdbP1pfjRFrwyLDWzIhrhji5qujDywieukhl0O5VxaSj
-         lkoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ9G1AWyYBD7VKh7yS2uze3+krLcMHWrNFu1WSgWw8TpM5SOuEeOg8hHfc7qhYV7PGD5oM1AMEJlFzWyiOyQDrBw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzch24uahyh/x/j1w5RAKElTUhaBqwGMBJvzHmSknIDZaJoZvbM
-	nsPHnXedQDRFjPo6xV8kaMblXRNBo5fjvObN6+D6KnMtkH/HFKyCO+3nh2iIhNg10qzsmQ1sFXL
-	y
-X-Gm-Gg: ASbGncvyadpla5jGyXr3N1lnnNfkiLCUNn3W41KGrvIfP0vlELfV9tdjBb5Td/7ghUW
-	oWRls42tCkYzhA8M/9TVT1r/qHIl8Gt5twDFnUFdNS38apREJZdCTCdU2h0ShDJkYNUkmdKYskw
-	Bh1Oqgrd6Ow7XgSSNTz6f8FSrrHF6UmodEUegP/VKKfsOqyRaOv9LkTdOc6ckswR5MV2vh5pkfV
-	fEOMhIU+8i16n13f9oabb9Rro8AkKqvVqMvVqAglC9HaeZe/22iNqr58ctiEu/DXKZ1XuVRzxfU
-	IEcQb6fKGmoNbAPY7pTSkoQWN37rgnYRxbXQUbL1QSk3Dulibw==
-X-Google-Smtp-Source: AGHT+IGjlugzKmmxYS6YdwzXxtlXE4bzioPLgN5lZda7k+mvVXrIjN3iK1ETSrhFkaR7AXVaN1i8cA==
-X-Received: by 2002:a05:600c:4f11:b0:439:9f97:7d67 with SMTP id 5b1f17b1804b1-43c601e1173mr37208455e9.16.1741369132091;
-        Fri, 07 Mar 2025 09:38:52 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd42c6203sm87520795e9.24.2025.03.07.09.38.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 09:38:51 -0800 (PST)
-Date: Fri, 7 Mar 2025 20:38:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] phy: move phy-qcom-snps-eusb2 out of its vendor
- sub-directory
-Message-ID: <551a7b8d-1f2d-429f-b7fd-c8ea1afdcf25@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyXqhtQZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FC4C4CED1;
+	Fri,  7 Mar 2025 19:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741374265;
+	bh=LZxlQy480B8XB9W2bL3qE02TAbT/sG5jtfYMZ1zrq+o=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=RyXqhtQZ5KUWy0AhGDI964MIE339CWMEPxfiMElmViRFSYblTU12jNzw1zu3p6wY9
+	 oHok6mKCkgxMWYDEEkRVkfAgVHLn3M4X8YvEpl1BysA7aCj164Mwv6b6VifZXNdDj/
+	 GUWojKq1i3mhDolSUK9Hw+DzaI/kK20wmPa8ag+GD06/sP3BQRF68WOcSnrZKyBOSR
+	 mZe5N7gGZm5PZHQqaXu5PRJiGxTn8rxn3fxBdHcJJ5Mbb4qWfCX47CpWdW91GafZ72
+	 icT+hCw9/wm4PcXL+HlmPF6OYT6GwOVUlytw/WkSJlP4eEFf0BaMhPmjXk4lrKoEUN
+	 64eIPl4R+jWYw==
+Message-ID: <725811bfa06a86f47a90f84ade2d1461.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223122227.725233-5-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
+References: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org> <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
+Subject: Re: [PATCH RFC/RFT 00/12] clk: samsung: Use platform_driver_probe() to avoid __refdata
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Fri, 07 Mar 2025 11:04:23 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Hi Ivaylo,
+Quoting Andr=C3=A9 Draszik (2025-03-07 06:29:18)
+>=20
+> I've tried this on top of next-20250225, and it doesn't work on gs101
+> either and OOPSes several times during boot in different places, but
+> I can not dig deeper right now.
+>=20
+> [   11.502919][   T58] Unable to handle kernel paging request at virtual =
+address ffffbfe2ab25cc30
+> [   11.503128][   T58] Mem abort info:
+> [   11.503202][   T58]   ESR =3D 0x0000000096000007
+> [   11.503295][   T58]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+> [   11.503419][   T58]   SET =3D 0, FnV =3D 0
+> [   11.503498][   T58]   EA =3D 0, S1PTW =3D 0
+> [   11.503579][   T58]   FSC =3D 0x07: level 3 translation fault
+> [   11.503695][   T58] Data abort info:
+> [   11.503769][   T58]   ISV =3D 0, ISS =3D 0x00000007, ISS2 =3D 0x000000=
+00
+> [   11.503896][   T58]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+> [   11.504058][   T58]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D=
+ 0
+> [   11.504288][   T58] swapper pgtable: 4k pages, 48-bit VAs, pgdp=3D0000=
+00008208c000
+> [   11.504570][   T58] [ffffbfe2ab25cc30] pgd=3D0000000000000000, p4d=3D1=
+000000082a58003, pud=3D1000000082a59003, pmd=3D1000000082a5d003,
+> pte=3D0000000000000000
+> [   11.505079][   T58] Internal error: Oops: 0000000096000007 [#1] PREEMP=
+T SMP
+> [   11.505346][   T58] Modules linked in:
+> [   11.505495][   T58] CPU: 6 UID: 0 PID: 58 Comm: kworker/u32:1 Tainted:=
+ G                T  6.14.0-rc4-next-20250225+ #12
+> [   11.505902][   T58] Tainted: [T]=3DRANDSTRUCT
+> [   11.506061][   T58] Hardware name: Raven (DT)
+> [   11.506230][   T58] Workqueue: events_unbound deferred_probe_work_func
+> [   11.506477][   T58] pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -S=
+SBS BTYPE=3D--)
+> [   11.506768][   T58] pc : __device_attach_driver+0x18/0x254
+> [   11.506978][   T58] lr : bus_for_each_drv+0xfc/0x154
+> [   11.507168][   T58] sp : ffff8000803abc00
+> [   11.507321][   T58] x29: ffff8000803abc10 x28: ffff00ed403363d0 x27: f=
+fff00ed40336400
+> [   11.507620][   T58] x26: 0000000000000000 x25: ffff00ed4002380d x24: f=
+fff00ed40028000
+> [   11.507919][   T58] x23: ffffbfe2aba26000 x22: 0000000000000000 x21: f=
+fff00ed409f8400
+> [   11.508219][   T58] x20: ffff8000803abca8 x19: ffffbfe2a9a4cf4c x18: 0=
+000000000000040
+> [   11.508518][   T58] x17: 0000000000000001 x16: 0000000000000001 x15: 0=
+000000000000010
+> [   11.508817][   T58] x14: 0000000000000010 x13: 0000000000000093 x12: 0=
+000000000000002
+> [   11.509117][   T58] x11: ffffffffff6070d2 x10: 0000bef56a420260 x9 : 0=
+000000100000000
+> [   11.509416][   T58] x8 : 0000000100000000 x7 : ff7f7f7f7f7f7f7f x6 : 4=
+55242436f53531d
+> [   11.509715][   T58] x5 : 1d53536f43425245 x4 : 0000000000000000 x3 : e=
+8c6e6e4bec6c65a
+> [   11.510015][   T58] x2 : 0000000000000062 x1 : ffff8000803abca8 x0 : f=
+fffbfe2ab25cc28
+> [   11.510315][   T58] Call trace:
+> [   11.510436][   T58]  __device_attach_driver+0x18/0x254 (P)
+> [   11.510644][   T58]  bus_for_each_drv+0xfc/0x154
+> [   11.510819][   T58]  __device_attach+0x100/0x1cc
+> [   11.510996][   T58]  device_initial_probe+0x14/0x20
+> [   11.511182][   T58]  bus_probe_device+0x94/0x100
+> [   11.511359][   T58]  deferred_probe_work_func+0xa0/0xfc
 
-kernel test robot noticed the following build warnings:
-
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-phy-rename-qcom-snps-eusb2-phy-binding-to-snps-eusb2-phy/20250223-202709
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250223122227.725233-5-ivo.ivanov.ivanov1%40gmail.com
-patch subject: [PATCH v2 4/8] phy: move phy-qcom-snps-eusb2 out of its vendor sub-directory
-config: sh-randconfig-r073-20250307 (https://download.01.org/0day-ci/archive/20250307/202503072305.Osodtcnk-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202503072305.Osodtcnk-lkp@intel.com/
-
-smatch warnings:
-drivers/phy/phy-snps-eusb2.c:452 snps_eusb2_hsphy_probe() warn: passing zero to 'PTR_ERR'
-
-vim +/PTR_ERR +452 drivers/phy/phy-snps-eusb2.c
-
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  399  static int snps_eusb2_hsphy_probe(struct platform_device *pdev)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  400  {
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  401  	struct device *dev = &pdev->dev;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  402  	struct device_node *np = dev->of_node;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  403  	struct snps_eusb2_hsphy *phy;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  404  	struct phy_provider *phy_provider;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  405  	struct phy *generic_phy;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  406  	const struct snps_eusb2_phy_drvdata *drv_data;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  407  	int ret, i;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  408  	int num;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  409  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  410  	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  411  	if (!phy)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  412  		return -ENOMEM;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  413  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  414  	drv_data = of_device_get_match_data(dev);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  415  	if (!drv_data)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  416  		return -EINVAL;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  417  	phy->data = drv_data;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  418  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  419  	phy->base = devm_platform_ioremap_resource(pdev, 0);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  420  	if (IS_ERR(phy->base))
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  421  		return PTR_ERR(phy->base);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  422  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  423  	phy->phy_reset = devm_reset_control_get_exclusive(dev, NULL);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  424  	if (IS_ERR(phy->phy_reset))
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  425  		return PTR_ERR(phy->phy_reset);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  426  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  427  	phy->clks = devm_kcalloc(dev,
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  428  				 phy->data->num_clks,
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  429  				 sizeof(*phy->clks),
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  430  				 GFP_KERNEL);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  431  	if (!phy->clks)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  432  		return -ENOMEM;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  433  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  434  	for (int i = 0; i < phy->data->num_clks; ++i)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  435  		phy->clks[i].id = phy->data->clk_names[i];
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  436  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  437  	ret = devm_clk_bulk_get(dev, phy->data->num_clks,
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  438  				phy->clks);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  439  	if (ret)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  440  		return dev_err_probe(dev, ret,
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  441  				     "failed to get phy clock(s)\n");
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  442  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  443  	phy->ref_clk = NULL;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  444  	for (int i = 0; i < phy->data->num_clks; ++i) {
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  445  		if (!strcmp(phy->clks[i].id, "ref")) {
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  446  			phy->ref_clk = phy->clks[i].clk;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  447  			break;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  448  		}
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  449  	}
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  450  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  451  	if (IS_ERR_OR_NULL(phy->ref_clk))
-15a1981f608b0f Ivaylo Ivanov 2025-02-23 @452  		return dev_err_probe(dev, PTR_ERR(phy->ref_clk),
-
-PTR_ERR(phy->ref_clk) is success.
-
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  453  				     "failed to get ref clk\n");
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  454  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  455  	num = ARRAY_SIZE(phy->vregs);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  456  	for (i = 0; i < num; i++)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  457  		phy->vregs[i].supply = eusb2_hsphy_vreg_names[i];
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  458  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  459  	ret = devm_regulator_bulk_get(dev, num, phy->vregs);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  460  	if (ret)
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  461  		return dev_err_probe(dev, ret,
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  462  				     "failed to get regulator supplies\n");
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  463  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  464  	phy->repeater = devm_of_phy_get_by_index(dev, np, 0);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  465  	if (IS_ERR(phy->repeater))
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  466  		return dev_err_probe(dev, PTR_ERR(phy->repeater),
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  467  				     "failed to get repeater\n");
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  468  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  469  	generic_phy = devm_phy_create(dev, NULL, &snps_eusb2_hsphy_ops);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  470  	if (IS_ERR(generic_phy)) {
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  471  		dev_err(dev, "failed to create phy %d\n", ret);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  472  		return PTR_ERR(generic_phy);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  473  	}
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  474  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  475  	dev_set_drvdata(dev, phy);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  476  	phy_set_drvdata(generic_phy, phy);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  477  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  478  	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  479  	if (IS_ERR(phy_provider))
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  480  		return PTR_ERR(phy_provider);
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  481  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  482  	dev_info(dev, "Registered Snps-eUSB2 phy\n");
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  483  
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  484  	return 0;
-15a1981f608b0f Ivaylo Ivanov 2025-02-23  485  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+platform_driver_probe() is incompatible with deferred probe. It
+should have set drv->prevent_deferred_probe to true so the driver must
+have gotten onto the deferred probe list somehow when it shouldn't have.
