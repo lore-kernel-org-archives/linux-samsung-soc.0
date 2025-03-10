@@ -1,121 +1,111 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B96C202C27
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  9 Mar 2025 18:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616B1170A11;
+	Mon, 10 Mar 2025 02:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741546575; cv=none; b=L/2Gm5Q/NDUV/z7WTOzGEpwhMgiVycFUEy95jsEvKl7Ut0bPW5B/xDMiBB+QTgFCc2vjndew7laaLN4cXXLnZUBDSfop9AEalYGyq7kBjA9+N+lYaGUXl1gq6yPtT5rPb1vY0iyqHQiCeQfvNczCvvoRj4AIJAImWA7pL3hXApQ=
+	t=1741573464; cv=none; b=Ia8x0eyx3PaS50CWTp741XS/yGU4UhHVvX7cdqu+21+WW4sAM8SS0Sju2YR1XVXOtI0e55rNgteD/ZgbHIZOLtNT6sOq0h3D3wVUlUjrG4OmvhUIKK2GwnslqK5TnVDcibT+I/biqqLZ0djAy9xPpVBGPqT6HGo683zhbLAw+vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741546575; c=relaxed/simple;
-	bh=uvZ2+a6S6JpYckvLd3vN4y/XaCLyyGT9gNpQQ8dNmeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YLURa2LWOzpPy4DXqeESJRTVZ/VmItu6fohFihEcAMbUmFRi3Xw3Dsod/8ttorBgFdGHBd7wxXps3uqbhk9lKNfxGBf3WSg3+rYWop7K9Rg/R48Rnxf5AaPEdY5VdnfU3qui5klJfnGWf9/Id0kxgQhVvhrPlAjh2KfOevEFjiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DBaHtTha; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741573464; c=relaxed/simple;
+	bh=WKFaRGNbm41ygiDOYwuZyQiHlC64X9yBshoJhOG//8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=plM+0vTpOJsF2xYBz2EYtmpY2YP5YJgecABIeWJU4ESBXlC/gijMZ0+zkMsMs4+9Tmgu6mp9FnSwXawT5q88OZp4GLef2kqRl2OuIZ2Jox28zCofYONYcGUusJTttH0T3EVOzKt0SoKXIDISNJVfBX3XmVEUg/dWFVbURuhNRnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jnMlHSSF; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DBaHtTha"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3913290f754so151721f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Mar 2025 11:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741546572; x=1742151372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrmBWLsc0A2hxy4AAIuONWnJt2T5epZ91diVlTxUCPM=;
-        b=DBaHtTha2b/oWM/5kev9UR3vSTFF7JN5KsUd+aOeu5Kh6l8CFDshFMMB/uVBYqcG/e
-         EL8maSl4wz4adQgxLK0/n1X4EBpUSfyIRRiJHHGH3hY5al7zIkqrgFihNlpZoTwNxkLG
-         +7gGfGHMzqq3L0E8Hw/TKr3bZuMPvuKax9qoOI6cvVcfaAFtWlqJ01CfYNOPrXaSEFWI
-         rnr98X2PznkqveXqJELLbG3s28TcZVvOEcSjiBdEd2CnZGyQDvIGmtXXAwC/YHPGJbLM
-         /0hOTnpSsuwcfh/1zTT4yUELdJnJBTmk/EmoKg+v3APt4xQ77awktHN0szbx6iT2btSt
-         BxRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741546572; x=1742151372;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MrmBWLsc0A2hxy4AAIuONWnJt2T5epZ91diVlTxUCPM=;
-        b=rYpfmYYRbIB16dQnWVfMfgHKpismhWT9oE+DUhRmDoJl31kT/Mj1y0O6SqPSt+CTcf
-         71wXHtsexc3Zz4hG9MME2Y77Q77nDsOcPK0inHPTRI3Y3RPSV9J8pUjjHktBf2ENkhsC
-         WuoyG83WntnGEVqzDubKFaqc250++TbuWeYcnQltwNwN2qEfORgYyE9u/k6Ewg7Htb0a
-         4vKzXcpg1+fHgotbwTYs5e0wnIoqFK9/cgmF3O5/NhUu84piO0xfxKwo/2UuK76d8Ozw
-         9b57NGC+SphSpKSRIkdZF0YcjoZP1fvrW4BKrNAeHlypLjfEkPuc820YQZj3YTKM4RUQ
-         a/TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiiaQbl9zAT33ryte7PqXsGGfPij8li2CQ64kxYFyiBrMxtMnIPbyQlgJ/okcKTNHbINVttksdFrQKpqwso/bq7w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxffuEPKAF0VWWr23lpGuHP0I7gHTvZZjv8YeIa9XsEWuiLnvxm
-	UNubKlZVUVQu9RL8zqaUdV/5nv0GpcutCmD59D1lAP+aPgrrRlxSxNsigG/w+pk=
-X-Gm-Gg: ASbGncubwbgjxCz7eWUFHhPenlCRRNKGW1dnqh5owBDOqVnluQTTwDOg4b0u8icLQvy
-	8j3br03vYBXSLKj+2MTQGdJlvY5UlyYKC5Q4eivh6lB0N6MoW81bSvPMN3VKwM50cwyMQUYTtkr
-	V2hzsdwhLUJdreq4oQp5IWM17f3QMLwsl/MFyEigrAkN/2wKVXUaawqrqN1x5J8pv2C8+mWH5yV
-	0adYVa7dw3GWXq0xfDmkPEhJsTIqnS/XxHXAcYyG9sicVXU8dlyjC80FWmCBg3ZxRkDQbPnqpYi
-	T6k6EEK2pv/UL5t6kJeFvw4Psgpu3+hyy/GjYCp3zonDEkNcvxw/VhQi3io=
-X-Google-Smtp-Source: AGHT+IEKpRHbbGfEM98G+jT1dTf4FeQB+l3gBVL1qFl0csub7dukLp0ucTCxODN6l+bL/aW/iBduNQ==
-X-Received: by 2002:a05:600c:5122:b0:43b:c0fa:f9e5 with SMTP id 5b1f17b1804b1-43ce6eb5ab2mr15192015e9.4.1741546571601;
-        Sun, 09 Mar 2025 11:56:11 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cee22c13fsm44263945e9.40.2025.03.09.11.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 11:56:11 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	soc@lists.linux.dev
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL 4/4 PATCH] arm64: defconfig: enable ACPM protocol and Exynos mailbox
-Date: Sun,  9 Mar 2025 19:55:58 +0100
-Message-ID: <20250309185601.10616-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
-References: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jnMlHSSF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741573463; x=1773109463;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WKFaRGNbm41ygiDOYwuZyQiHlC64X9yBshoJhOG//8I=;
+  b=jnMlHSSFwCSoSxg9WKFmeAiZG8gycT6bCJQWCDO/I3IFI8KD34U7WPFX
+   iCxurxqJG2A4DewW6JddKpHXppSP6lsaygkVRoO5fr8+WLIMUowBffZST
+   uZdKjJ5oEC7AEo4ad8uhXQihb1dVjoPVeXtx30NhissLz8CEBEb/1tKdA
+   +lrKAziR77JL6d158ktQ70dxxypsPmhyut2+WS63XJrAuanGTiRZocCXK
+   KP/KhJ6ja4HvBdwOW1GzJzpmOTJQTXFTbMw4TbCFHQ/+84ODELq50NuWH
+   y5UpVeTr2kgO5nYOtoMeN2ZFdL/ueEk3P8coAyLVn8GZXZok4qKwjTavv
+   Q==;
+X-CSE-ConnectionGUID: Sx9VJylFTDOGQ93ijgqBHg==
+X-CSE-MsgGUID: v9DqswfPS4WJ623Mg+xtOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="65000956"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="65000956"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:24:22 -0700
+X-CSE-ConnectionGUID: EBcI4p/gQFCFWXYHUd2zOQ==
+X-CSE-MsgGUID: kuyCE67oS6CBdcD22w3xyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="124459380"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:24:15 -0700
+Message-ID: <2db8d0c9-f6df-48f3-8bbb-4592e86d92fa@linux.intel.com>
+Date: Mon, 10 Mar 2025 10:21:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/23] iommu/vtd: Use virt_to_phys()
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <8-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <8-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
+On 2/26/25 03:39, Jason Gunthorpe wrote:
+> If all the inlines are unwound virt_to_dma_pfn() is simply:
+>     return page_to_pfn(virt_to_page(p)) << (PAGE_SHIFT - VTD_PAGE_SHIFT);
+> 
+> Which can be re-arranged to:
+>     (page_to_pfn(virt_to_page(p)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT
+> 
+> The only caller is:
+>     ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT)
+> 
+> re-arranged to:
+>     ((page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT) << VTD_PAGE_SHIFT
+> 
+> Which simplifies to:
+>     page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT
+> 
+> That is the same as virt_to_phys(tmp_page), so just remove all of this.
+> 
+> Reviewed-by: Lu Baolu<baolu.lu@linux.intel.com>
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   drivers/iommu/intel/iommu.c |  3 ++-
+>   drivers/iommu/intel/iommu.h | 19 -------------------
+>   2 files changed, 2 insertions(+), 20 deletions(-)
 
-Enable the Samsung Exynos ACPM protocol and its transport layer, the
-Exynos mailbox driver. Samsung Exynos platforms implement ACPM to
-provide support for PMIC, clock frequency scaling, clock configuration
-and temperature sensors.
+Queued this cleanup patch for iommu/vt-d.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Link: https://lore.kernel.org/r/20250207-gs101-acpm-dt-v4-4-230ba8663a2d@linaro.org
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb7da4415599..18f96796298c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -264,6 +264,7 @@ CONFIG_IMX_SCU=y
- CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
- CONFIG_QCOM_QSEECOM=y
- CONFIG_QCOM_QSEECOM_UEFISECAPP=y
-+CONFIG_EXYNOS_ACPM_PROTOCOL=m
- CONFIG_GNSS=m
- CONFIG_GNSS_MTK_SERIAL=m
- CONFIG_MTD=y
-@@ -1403,6 +1404,7 @@ CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
- CONFIG_RENESAS_OSTM=y
- CONFIG_ARM_MHU=y
-+CONFIG_EXYNOS_MBOX=m
- CONFIG_IMX_MBOX=y
- CONFIG_OMAP2PLUS_MBOX=m
- CONFIG_PLATFORM_MHU=y
--- 
-2.43.0
-
+Thanks,
+baolu
