@@ -1,111 +1,81 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616B1170A11;
-	Mon, 10 Mar 2025 02:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F313C690;
+	Mon, 10 Mar 2025 08:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741573464; cv=none; b=Ia8x0eyx3PaS50CWTp741XS/yGU4UhHVvX7cdqu+21+WW4sAM8SS0Sju2YR1XVXOtI0e55rNgteD/ZgbHIZOLtNT6sOq0h3D3wVUlUjrG4OmvhUIKK2GwnslqK5TnVDcibT+I/biqqLZ0djAy9xPpVBGPqT6HGo683zhbLAw+vc=
+	t=1741595217; cv=none; b=WD5TMcT8xrMxZuadTTiH+7igzRWDATB3LixxbGwsVWu14EN4useQZSGQ3GQf6Fndz4jDOs5S623TeariIqdkI0ZDXoEvR9dLWi4qE12a0JK6UZrJqIlT3mdHFyZ1l8PqAxnz3BusRZtEnDDATrYH7v566Ldy0QX5AFWlwzZEK0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741573464; c=relaxed/simple;
-	bh=WKFaRGNbm41ygiDOYwuZyQiHlC64X9yBshoJhOG//8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=plM+0vTpOJsF2xYBz2EYtmpY2YP5YJgecABIeWJU4ESBXlC/gijMZ0+zkMsMs4+9Tmgu6mp9FnSwXawT5q88OZp4GLef2kqRl2OuIZ2Jox28zCofYONYcGUusJTttH0T3EVOzKt0SoKXIDISNJVfBX3XmVEUg/dWFVbURuhNRnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jnMlHSSF; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jnMlHSSF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741573463; x=1773109463;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WKFaRGNbm41ygiDOYwuZyQiHlC64X9yBshoJhOG//8I=;
-  b=jnMlHSSFwCSoSxg9WKFmeAiZG8gycT6bCJQWCDO/I3IFI8KD34U7WPFX
-   iCxurxqJG2A4DewW6JddKpHXppSP6lsaygkVRoO5fr8+WLIMUowBffZST
-   uZdKjJ5oEC7AEo4ad8uhXQihb1dVjoPVeXtx30NhissLz8CEBEb/1tKdA
-   +lrKAziR77JL6d158ktQ70dxxypsPmhyut2+WS63XJrAuanGTiRZocCXK
-   KP/KhJ6ja4HvBdwOW1GzJzpmOTJQTXFTbMw4TbCFHQ/+84ODELq50NuWH
-   y5UpVeTr2kgO5nYOtoMeN2ZFdL/ueEk3P8coAyLVn8GZXZok4qKwjTavv
-   Q==;
-X-CSE-ConnectionGUID: Sx9VJylFTDOGQ93ijgqBHg==
-X-CSE-MsgGUID: v9DqswfPS4WJ623Mg+xtOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="65000956"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="65000956"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:24:22 -0700
-X-CSE-ConnectionGUID: EBcI4p/gQFCFWXYHUd2zOQ==
-X-CSE-MsgGUID: kuyCE67oS6CBdcD22w3xyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="124459380"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:24:15 -0700
-Message-ID: <2db8d0c9-f6df-48f3-8bbb-4592e86d92fa@linux.intel.com>
-Date: Mon, 10 Mar 2025 10:21:03 +0800
+	s=arc-20240116; t=1741595217; c=relaxed/simple;
+	bh=4bqibF+pyk6rtMGUAI6R0xqJ7JY5Wx46sZY/br36NbI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RMxZSg1eGvYPaPXzGHqwl2oPHSgIOqAo/xm1AqCn+MlrfyQa4jk2JjcjewnPfJB4TPeYusPzAS8HYlx7i8wTJccRdidxnNMfbAZaWuHCBInq2OJ5IRb2dY4CUaqPjtCEU3QPTneiiMkv5OQ9FhI7WujNaYYZtXotbRaHIc6SjXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowACXnw9Dos5nDkXkEw--.39080S2;
+	Mon, 10 Mar 2025 16:26:44 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: tudor.ambarus@linaro.org,
+	jassisinghbrar@gmail.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] mailbox: Remove unneeded semicolon
+Date: Mon, 10 Mar 2025 16:26:28 +0800
+Message-Id: <20250310082628.845544-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/23] iommu/vtd: Use virt_to_phys()
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
- Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
- David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <8-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <8-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXnw9Dos5nDkXkEw--.39080S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DXFWDtr1kZrb_yoWfJrc_u3
+	Z3XF17Wrn0vFyYvwnxt3yruw1jva4rZwnaga92qFZxZ348Zr4jqry2vrsYy343ArWkZF1a
+	ka4UJw1Fkw1UZjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
+	W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r1q6r43MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUyE__UUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 2/26/25 03:39, Jason Gunthorpe wrote:
-> If all the inlines are unwound virt_to_dma_pfn() is simply:
->     return page_to_pfn(virt_to_page(p)) << (PAGE_SHIFT - VTD_PAGE_SHIFT);
-> 
-> Which can be re-arranged to:
->     (page_to_pfn(virt_to_page(p)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT
-> 
-> The only caller is:
->     ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT)
-> 
-> re-arranged to:
->     ((page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT) << VTD_PAGE_SHIFT
-> 
-> Which simplifies to:
->     page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT
-> 
-> That is the same as virt_to_phys(tmp_page), so just remove all of this.
-> 
-> Reviewed-by: Lu Baolu<baolu.lu@linux.intel.com>
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
-> ---
->   drivers/iommu/intel/iommu.c |  3 ++-
->   drivers/iommu/intel/iommu.h | 19 -------------------
->   2 files changed, 2 insertions(+), 20 deletions(-)
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-Queued this cleanup patch for iommu/vt-d.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/mailbox/exynos-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-baolu
+diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
+index 20049f0ec5ff..2320649bf60c 100644
+--- a/drivers/mailbox/exynos-mailbox.c
++++ b/drivers/mailbox/exynos-mailbox.c
+@@ -57,7 +57,7 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+ 	if (msg->chan_type != EXYNOS_MBOX_CHAN_TYPE_DOORBELL) {
+ 		dev_err(dev, "Unsupported channel type [%d]\n", msg->chan_type);
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
+ 
+-- 
+2.25.1
+
