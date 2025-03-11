@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63182641D7;
-	Tue, 11 Mar 2025 19:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225862641D8;
+	Tue, 11 Mar 2025 19:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721578; cv=none; b=kidyBCwVV1z2fXb6flezy2+O4W8OnhjtQ8VWnIrLGRInURSZVBZv77PU/DrBaQ0Z9oUcQJuLTSGgO9dFxnC6hylGLUBWNML9mbKL44gR8urvAd9lArUuS8HZ0mf7mDWCWW4lWItRBc2tEG0TvgVrs1PJTiBsyKXoSIo6YAFEEDE=
+	t=1741721793; cv=none; b=p/4U4oXz27tjtqvftN1pcRmeSFUkt+rnQo3N6tkgkeT0/oOERHmoY4KKZ64F+o2KIVI9jsH4Sy1Xcer0dqQKplJTMP2J+RxuuRDTwVSNoN3ba1QQZOXLNF9fkPgkUxrbB53d8DdENIsocHdqh2I+OV7z/6Vuy5CqWuZNGHvlAGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721578; c=relaxed/simple;
-	bh=Wxt9plsY76hBns2l6MjcqJuJ40OKk7QprTRvYCqzogs=;
+	s=arc-20240116; t=1741721793; c=relaxed/simple;
+	bh=HzBNDlXMTztZoutzNhdPP6DcQ+A1fzUrUCvrBZMcus4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JFqNI0YgT7QRIhR7hx1GmeHYm/UUAy3enO7o+5td7ccshQzUCQQr1wcErhUy6kZ6ddWP0zf6FLmAl+gNi3YtYaBjFATDaOpQhaUJ7nQS/TML/Fv02LYpBuaSx/Rj1GhK1WAkP36AfylqWruB6o1lPwHAkGvWWTPx644V1Jbbw3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLbLn+j1; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=nNLEw/FwHp8B9gd40LBPhktcJNWJj3Y3Vzj21dzIcgxYorT+3xy1XRRPZ4CUL3kMBdeHOY6ROez1MkHXWibw6STaoCzLCokH8XAr7BhMeIQLqojMrNkAdxcrC0ReDmcynO6+rOR4UUZJ5l1vw59fL5Bc34h53ECaioGMlruUPzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxdC68on; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLbLn+j1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40690C4CEE9;
-	Tue, 11 Mar 2025 19:32:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxdC68on"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC05C4CEE9;
+	Tue, 11 Mar 2025 19:36:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741721578;
-	bh=Wxt9plsY76hBns2l6MjcqJuJ40OKk7QprTRvYCqzogs=;
+	s=k20201202; t=1741721792;
+	bh=HzBNDlXMTztZoutzNhdPP6DcQ+A1fzUrUCvrBZMcus4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SLbLn+j1kXoKbh1UW+AgREKRKt2XTzF3SpnlVXJDCJog0MZUtwXU+P/GjLLFT/jMd
-	 uFeHq7WdvKhWfIN3XwhtV/fxtqFxCSSYTy3ZYHxUyexg9svxLKWj92muJ5cbyccchd
-	 LEQPMBr1eAzdxS7oA3exHBJbaO7I1pizhNfWih3ht7CcEAhWncGb+gs2IX45bA3Wyu
-	 62B8SqydwDl/kmsHvy30oyQBKwIwoHyL2inYJcR7gX+xhB3J7/6Jn+J8+u9RGqVZdH
-	 k/vXIAsxCp05zz07xxe+BK1K7JkdnCY/spbfpAep6UytmBHCs6tbs1MMrMw4iStLIG
-	 R/HQ5xRTyrQVw==
-Message-ID: <c2e2c78c-e85e-406a-90a7-07d5b4fa82a6@kernel.org>
-Date: Tue, 11 Mar 2025 20:32:50 +0100
+	b=VxdC68onNvMSFdA0jMYGsDR36mn7TceaTkqhc7sM3+znQU7VNMqJiFMPp177ICwyH
+	 sAeaFVFMRD+6bkUoEpbUqhVSx5iQ8Lp8q9Wyz/45vGAmj4uXST6tPKOWySjltSzxc5
+	 90tG+TSoS5lkHXvq4ytuTrBe1vMMcjAZ1R3kUbkryItzo7p4Rr1tCiJQLaIAiT5jDn
+	 roz+nNjNCYD28L6bvK7EfJ1mwQIS+tshFt9XH+Y7FH4XfZWNwovKaFtZ7gN6V8V91y
+	 DetS5l2xs/kZsIEcPnwfDW9KbWfb97K1a0vv0X+e92otmakn7+Ei6qOI3qelmMBZ7K
+	 3GEPHzvdgPEPg==
+Message-ID: <59a1a6eb-d719-49bd-a4b5-bfb9c2817f08@kernel.org>
+Date: Tue, 11 Mar 2025 20:36:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] pinctrl: samsung: add dedicated SoC eint
+Subject: Re: [PATCH v4 3/4] pinctrl: samsung: add gs101 specific eint
  suspend/resume callbacks
 To: Peter Griffin <peter.griffin@linaro.org>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -44,9 +44,10 @@ To: Peter Griffin <peter.griffin@linaro.org>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
  andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, kernel-team@android.com, jaewon02.kim@samsung.com
+ semen.protsenko@linaro.org, kernel-team@android.com,
+ jaewon02.kim@samsung.com, stable@vger.kernel.org
 References: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
- <20250307-pinctrl-fltcon-suspend-v4-2-2d775e486036@linaro.org>
+ <20250307-pinctrl-fltcon-suspend-v4-3-2d775e486036@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,36 +93,69 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250307-pinctrl-fltcon-suspend-v4-2-2d775e486036@linaro.org>
+In-Reply-To: <20250307-pinctrl-fltcon-suspend-v4-3-2d775e486036@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 On 07/03/2025 11:29, Peter Griffin wrote:
-> gs101 needs it's own suspend/resume callbacks to use the newly
-> added eint_fltcon_offset for saving & restoring fltcon0 & fltcon1
-> registers. It also differs to previous SoCs in that fltcon1
-> register doesn't always exist for each bank.
+> gs101 differs to other SoCs in that fltcon1 register doesn't
+> always exist. Additionally the offset of fltcon0 is not fixed
+> and needs to use the newly added eint_fltcon_offset variable.
 > 
-> exynosautov920 also has dedicated logic for using eint_con_offset
-> and eint_mask_offset for saving & restoring it's registers.
-> 
-> Refactor the existing platform specific suspend/resume callback
-> so that each SoC variant has their own callback containing the
-> SoC specific logic.
-> 
+> Fixes: 4a8be01a1a7a ("pinctrl: samsung: Add gs101 SoC pinctrl configuration")
+> Cc: stable@vger.kernel.org
+
+It looks this depends on previous commit, right? That's really not
+optimal, although I understand that if you re-order patches this code
+would be soon changed, just like you changed other suspend/resume
+callbacks in patch #2?
 
 
-> Additionally we now call drvdata->suspend() & drvdata->resume()
-> from within the loop that iterates the banks in
-> samsung_pinctrl_suspend() and samsung_pinctrl_resume().
->
-> This simplifies the logic, and allows us to remove the
-> clk_enable() and clk_disable() from the callbacks.
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> Changes since v2:
+> * make it clear exynos_set_wakeup(bank) is conditional on bank type (Andre)
+> * align style where the '+' is placed (Andre)
+> * remove unnecessary braces (Andre)
+> ---
 
-Can you make this a separate commit? This would be nicely self-contained
-and without any functional impact.
+...
 
-Getting own suspend/resume would be the next commit.
+> +void gs101_pinctrl_suspend(struct samsung_pin_bank *bank)
+> +{
+> +	struct exynos_eint_gpio_save *save = bank->soc_priv;
+> +	const void __iomem *regs = bank->eint_base;
+> +
+> +	if (bank->eint_type == EINT_TYPE_GPIO) {
+> +		save->eint_con = readl(regs + EXYNOS_GPIO_ECON_OFFSET
+> +				       + bank->eint_offset);
+> +
+> +		save->eint_fltcon0 = readl(regs + EXYNOS_GPIO_EFLTCON_OFFSET
+> +					   + bank->eint_fltcon_offset);
+> +
+> +		/* fltcon1 register only exists for pins 4-7 */
+> +		if (bank->nr_pins > 4)
+> +			save->eint_fltcon1 = readl(regs +
+> +						EXYNOS_GPIO_EFLTCON_OFFSET
+> +						+ bank->eint_fltcon_offset + 4);
+> +
+> +		save->eint_mask = readl(regs + bank->irq_chip->eint_mask
+> +					+ bank->eint_offset);
+> +
+> +		pr_debug("%s: save     con %#010x\n",
+> +			 bank->name, save->eint_con);
+> +		pr_debug("%s: save fltcon0 %#010x\n",
+> +			 bank->name, save->eint_fltcon0);
+> +		if (bank->nr_pins > 4)
+> +			pr_debug("%s: save fltcon1 %#010x\n",
+> +				 bank->name, save->eint_fltcon1);
+> +		pr_debug("%s: save    mask %#010x\n",
+> +			 bank->name, save->eint_mask);
+> +	} else if (bank->eint_type == EINT_TYPE_WKUP)
+> +		exynos_set_wakeup(bank);
+
+Missing {}. Run checkpatch --strict.
 
 
 Best regards,
