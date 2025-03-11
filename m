@@ -1,124 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41CC263881;
-	Tue, 11 Mar 2025 19:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CC51F09B4;
+	Tue, 11 Mar 2025 23:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741722032; cv=none; b=jr+egZWlb4rFhL3vQn/CJ6tRiLgTGElaHhzIqf1JEVZH00XHzPFiO3UDLCoGLW3Zp7alYKME1M/4Dyw5XuOyBy2tJAvldL4dTpMR8DBZy5Mxqy0S6+p+lpEWH3RqedNiQeko1vh94DOsxS3KCE7F06a8elA82z3Jl+pMUJ5dViw=
+	t=1741734798; cv=none; b=V2fPvgfRkmruXTpe/b20+82QctCvW8T+UJmYdc+d4hqLTkvTQ0GGe/PfcAE20dtAT37lVdOG1XHmcl6M0Jk48zfL9d+SPJY27RIcAkQu+XlLL7MR5LiRSJEBotzuKnlVf38lr8VS2QiLlMARs4ktgQbCJvdSOexgZfuHbSO/ZG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741722032; c=relaxed/simple;
-	bh=K/fwgyv7nW8Nr81zy6wIiSf6CaXY+MgzKWwDUR+eRRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5/ZAm84KeAwDL8a4rrxWubrecnbaMKX+MOqAU8ppGDfHucbYUJF22WU84336NgqMInET8EQkNE+K1lNNeifDkG8xFvqxF4jJbWaPtmFcEIporLulGJP0fqxIn+LNBF0e1QrT4+w5yZTDEPbT5cmF9NFvBLI+InsfxyLpJVi8V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+Gs5cps; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741734798; c=relaxed/simple;
+	bh=8zqqrE6NewUBWLpJZUQ9TW4QDanmnleqtNEBYnbMVTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kz4kQIth44eu4/G8nI4VFV3RApnFQiiIHYMr7ZImpjPFXvWDvtpgtz14NLn53/NQzm0nelyjZTlxBBVjPRx8XBXpQZnvu9+lJ7fsMtKwZZP9UNiUZmVrMTpLJVsZSLM6lDqt7ADeytEIaLGOJTm6fpwFk7rY4WBixgyTrJ4BPOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n72wMNa3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+Gs5cps"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8650AC4CEE9;
-	Tue, 11 Mar 2025 19:40:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n72wMNa3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16C4C4CEE9;
+	Tue, 11 Mar 2025 23:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741722031;
-	bh=K/fwgyv7nW8Nr81zy6wIiSf6CaXY+MgzKWwDUR+eRRY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J+Gs5cpshqlTPxtbovaqmc6mrZ+J9x4ZIP0slOYQq+QVZC54lOHx2sV95cVJHWsfJ
-	 7eSf5ipkOogDsNYuTdMDbL6aXKOlrkd9/ptUch+XtMiDScy6c5xCGhw4WxeBinR3ml
-	 iyHiynmMFtN8rqqyyYj33ypcFjQ5KLuwjIKxsFlBz4q5Y+KF256E4b0kEhsdwRXcKD
-	 m1iGusRsDgKCMfqcmYKLrd+bY55mH276+DNx0GPaQs39wVtkuDrjVfKhsR/p+Ni4Ff
-	 NUvK741D2MtrBMDngRFmxU1pDwMr7khl1phrlszkFaej5DhVmjGCtXzWqO88KJKXom
-	 mEhc344cl2dow==
-Message-ID: <4f3c4249-5e20-4b5d-a6ab-72c79274cb49@kernel.org>
-Date: Tue, 11 Mar 2025 20:40:24 +0100
+	s=k20201202; t=1741734797;
+	bh=8zqqrE6NewUBWLpJZUQ9TW4QDanmnleqtNEBYnbMVTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n72wMNa3Jz0xhi592qwthWXHm9rUyqJmj8Nr/TkskBp7IiNe3/ds1wy404etUxux9
+	 vrkb8V8GqZiLBtTp4iWf9eCS2DEjEIA5LZNHJm4XsihtynVTav9pS1J/91Nue4CjS5
+	 EEiLv0EXT7CYCs8sSFH4FHo3QIKJfBcN0L48Bzvj8YvVuXYJ/rAYO7hZaVJ1H8EVEJ
+	 yxX9Ay8U1ETzjuP5dEx+uQ/Rc8ZDnKckGE/XmgV0/NtGAg4bqfubeKfaSdyI7PwDUS
+	 QqHWh6Qn0PJROsbHrVf+0f1b5mwlQMgPasICv6DpmpyTjYFsuK6PZIBU3F9/eBBC7I
+	 x6O1Hqzg4nGkw==
+Date: Wed, 12 Mar 2025 00:13:09 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, igor.belwon@mentallysanemainliners.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Add PERIC0/1 support for Exynos 990 and hsi2c
+ compatible
+Message-ID: <jwihm4ahyjluillz5szgvwj3ntjypqekjf43g4c2poa7r3v7ar@5uka5xftxjzf>
+References: <20250212004824.1011-1-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] gs101 max77759 enablement (DT)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250306-b4-max77759-mfd-dts-v1-0-9fe8b0eb8123@linaro.org>
- <b70f17589b91730ecf6080c626492368283ce7a1.camel@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b70f17589b91730ecf6080c626492368283ce7a1.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212004824.1011-1-wachiturroxd150@gmail.com>
 
-On 06/03/2025 11:57, André Draszik wrote:
-> On Thu, 2025-03-06 at 10:14 +0000, André Draszik wrote:
->> Hi,
->>
->> This series enables the recently submitted Maxim max77759 driver and
->> updates the DT for the Google Pixel 6 / Pro (oriole / raven) boards
->> accordingly.
->>
->> !!! Dependency note !!!
->>
->> This series depends on the corresponding driver and DT bindings
->> proposed in
->> https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
->>
->> Note that in that series bindings and gpio driver are accepted, but mfd
->> and nvmem drivers are still waiting for review comments.
+Hi Denzel,
+
+On Wed, Feb 12, 2025 at 12:48:20AM +0000, Denzeel Oliva wrote:
+> This patch series enables the PERIC0/1 (Peripheral Connectivity)
+> and compatible hsi2 for Exynos990:
 > 
-> To avoid ambiguity... with 'accepted' I meant reviewed, but not merged!
+> - PERIC0/1 feeds HSI2C, SPI and UART
+> 
+> This part tests one by one to see which clock hangs without
+> the CLK_IGNORE_UNUSED flag.
+> 
+> Changes v2:
+>  - Remove other unnecessary patches which is nothing related
+>    to linux shipping style.
+> 
+> Denzeel Oliva (4):
+>   dt-bindings: clock: samsung,exynos990-clock: add PERIC0/1 clock
+>     management unit
+>   dt-bindings: i2c: exynos5: add samsung,exynos990-hsi2c compatible
+>   clk: samsung: exynos990: add support for CMU_PERIC0/1
+>   arm64: dts: exyno990: enable cmu-peric0/1 clock controller
 
+what is the future of this series? Are you planning a v2?
 
-Thanks for letting me know. This must wait till bindings get applied to
-subsystem tree, so probably will miss this merge window. Anyway, please
-ping me when bindings get applied.
-
-Best regards,
-Krzysztof
+Andi
