@@ -1,235 +1,231 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB90D22D799;
-	Mon, 10 Mar 2025 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C93F23817F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Mar 2025 15:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617327; cv=none; b=sQXwFQ6l1+k1K1Pw802cWuW7HGQg8R3YE4g6EEGZbvEZid0zlfhExgKMNi2iEELChdnOPNusOlJonOiggty5Z2M9nznypb0zJrinB5G/KW4HO/5RYGkuQJEmmeOI5qxg8/v/MtpuUxGmwbZ9fv/FtwOZ0qJZzYErkhxwgPwlLNw=
+	t=1741708491; cv=none; b=XZOvU5oP/x27LElf1overIwNs8GiiVZ5F426birj3aOO9wJE9zH6zNsAYvfUaMHuTQh5vdCPCGt+BS7ehd/eIJAqz19bD8lhIAjGTDnQb4JY6WXy4/MEfjlobV7aqj8nvYeyT5NfGz9K1Ma7UTOrBPAAX7D2MKEWY6QjPVCaYOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617327; c=relaxed/simple;
-	bh=Rgk1KHQBs1SxsiATAGYhTal7QoOm4Z7AqmiLmcjUZ00=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QlTQJkjE5ipP+VsZ9zXQUvauoF5ahbWw8HMCzOSgqsQXcfyHkqZRajurrDOIqbMftA6C+koshQexGhU99+L9iQ+0tUKW3Y9WZVH6X2lr64QCYg+D78C9WoYGgcSE/kfFO/2Vda3zGWrlQRBgaaWP6TQ04NaD1IqgJL3BXEnfPdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzSkuC0R; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741708491; c=relaxed/simple;
+	bh=80kTZ4d+H91EHYN4BVAQWiEg7RslAy7UDKnNF0oPoRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R4pK3RVwEtriX8ZGNJnNqQA1NcG1F5mEz357HRjGZj4B4mESyFdnc589nhjuJT92h/AJTz2YORKqbLxCXRWJc7tgw9qDdHlid6e5sWelTuF3Sr/56QRXD6mQLQyWkKr2FZg/xMt3/0duu6DFRC8AzB+rjuY7duhQHvrN3yLKQ6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BGoZODh9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/2RlqKuG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BGoZODh9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/2RlqKuG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzSkuC0R"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22337bc9ac3so81816175ad.1;
-        Mon, 10 Mar 2025 07:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741617325; x=1742222125; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZPurFq/fNhKB6tsK5KqiD0Uogf6Ze1eS/AV3KtY1Z/8=;
-        b=IzSkuC0Rx4VKC8WqeBZ7gKoRP+giHexitGt9iRW2B2tZ0AKBG/eDd12lBTkFVNjXfU
-         dIVnUHBJuLr0mw1U1WWqO3LWPkFI5fjyIrHG61CfwNCzgLYFwiFV/p2YRa4wNIRZ6WYY
-         A5qbmzb+3elABYEw46xOROZ+5lkQG9XI9vjW5wChG76GukJao24VCnRuCQhJqMCi8lDV
-         2aeO7KVS84OAXh63J36UuEwxMt+Bn+nMWr0ZxV6OGdgsDFY/CxAN+eehrMl9ctS/fNd9
-         LQZgByKAeP3qOmXoR/LoEyyHupWCZ4GhH4JnF61YSqtNQ8cS+ghTJZGcdVSsGKUJog9n
-         wu7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741617325; x=1742222125;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZPurFq/fNhKB6tsK5KqiD0Uogf6Ze1eS/AV3KtY1Z/8=;
-        b=P7fWmoqAkQrq2tXtrfXSiaqIEcOiGn9HEAKtNBKGzuMnQwg4KhHbRGsohX1yT6Fka6
-         FZ7kqiY2tkFJTg4vFP2jLaZxesggUIscFtbw4ZzS9bfhK6WPUmKpVERstANBG1Xh+x4R
-         gCLoLLTTDoG7jHQqlKkzvgRoG5wVNrTc8MgL+AnGIIwoQTasN4hI5b67mwLqy7HZ0jzN
-         rNwNv3FPO8296Hk6kxNXpZVl6wBFoYnZUkUirRUfE+Z+AW+SIlBnh22/SFhnApmBtrUC
-         h2ViUNuk2a8ooT+e3TLcmVytJmSn9D8d20Orhu/rbFout1DWEhTBLOLzgn3AMeeiKvmu
-         tAcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9HmdS6bGzXnCQR6nq09SuBx3AlaindFFUfFVXLpZkYQy0OIBbd/tNgWcZPCL7nnzFeZ6h8DVHVzBnGpI=@vger.kernel.org, AJvYcCV/zz58CJCAe11eeTwYUsy0y50bBy/BhBqioCw3togSEn6uZDcRMJUSDa/bM4pk3Rc9dWUC7SWYoESBw9Yr6FWwo+M=@vger.kernel.org, AJvYcCWhZEC7kOAXX54pE94sLuqfRPX4W7PihLhI0L2bsgw3veR3Q/wEfTLTUO6eiJ7cqM5JUe9nAVJ0zmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtCr6QiLBWCc1RxF7c2wrKDe7NXepiqvS7BUPra6YDaPskiSSO
-	SgVDydUoR4OAODjL+OjpKHf9B6GYo6bPoKn7tM9nmdZ9zpNcdG2t
-X-Gm-Gg: ASbGnctVALVBe66l6ajkC9ypqLtvJRsJ+kPnoFD56opYYi/kxaXhRldT9y8FTEhUblg
-	10qaFNVPdus5nYFrTce5em2ODrPxE2DhdK2pyWrQvtnEKcz/3Nu83fKNflcBidAQtaeyhJs71lk
-	ZOnMX4gOitHtmFU/cAr92VETWeOmoogZgZisyYzWywZDCjNLyNfIEIBGgXmDGVMG9G1Pb69x2cd
-	HVyVaukXFdVobsco1KUZPWueyo8VB2S6HhaMX7sI/BDlrcH48dLYpRaKipc+J/gFnGgEBvn62hE
-	2zbF1i4DcMhNRgXi5GHmXtNkUVWtTEcaM8Hgjt31++uBPbnXu0DZMYqIxjky4If1aslHAg==
-X-Google-Smtp-Source: AGHT+IFlxn30vbYNMpCGqOkZQC/33f6L8EuwlU4MuG+cJmyHdrmp3tS4C+2fi8L46Nfo+WlDit4hVA==
-X-Received: by 2002:a05:6a21:618f:b0:1f5:6b36:f574 with SMTP id adf61e73a8af0-1f58cbdd3e9mr5565637.38.1741617324889;
-        Mon, 10 Mar 2025 07:35:24 -0700 (PDT)
-Received: from localhost.localdomain ([103.221.69.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281096763sm7785900a12.30.2025.03.10.07.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:35:24 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-pm@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when acquiring mutex
-Date: Mon, 10 Mar 2025 20:04:45 +0530
-Message-ID: <20250310143450.8276-5-linux.amoon@gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BGoZODh9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/2RlqKuG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BGoZODh9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/2RlqKuG"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B15E8210F4;
+	Tue, 11 Mar 2025 15:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741708487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gtRbDS6fDgM8XxC/AJXySQKuvpMlmaYYWC0kn/IkeIg=;
+	b=BGoZODh98b6GhN3Bz2SpP/ZKwjqeurg03noBYn8Gctwq4S8uceZjTxlXC5lxNyRSowPPWu
+	FsF/N5qS6BciXPxaHIooDQdLnT7sSETAvN27PeFZxjpfO6TeyZatwDabYXWYOiOiPnOSNq
+	gsDCmYcCN4VFuBXQieJpP6iz/cbIy7E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741708487;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gtRbDS6fDgM8XxC/AJXySQKuvpMlmaYYWC0kn/IkeIg=;
+	b=/2RlqKuG8buhgFxNjGATCt4+IrPiXxDTF9ghcLzNxss9u3SJFmzGKghROw7/HyPi4svMiE
+	rIRSxbQoH+g78ZAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=BGoZODh9;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/2RlqKuG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741708487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gtRbDS6fDgM8XxC/AJXySQKuvpMlmaYYWC0kn/IkeIg=;
+	b=BGoZODh98b6GhN3Bz2SpP/ZKwjqeurg03noBYn8Gctwq4S8uceZjTxlXC5lxNyRSowPPWu
+	FsF/N5qS6BciXPxaHIooDQdLnT7sSETAvN27PeFZxjpfO6TeyZatwDabYXWYOiOiPnOSNq
+	gsDCmYcCN4VFuBXQieJpP6iz/cbIy7E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741708487;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gtRbDS6fDgM8XxC/AJXySQKuvpMlmaYYWC0kn/IkeIg=;
+	b=/2RlqKuG8buhgFxNjGATCt4+IrPiXxDTF9ghcLzNxss9u3SJFmzGKghROw7/HyPi4svMiE
+	rIRSxbQoH+g78ZAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22E68134A0;
+	Tue, 11 Mar 2025 15:54:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P6cZB8dc0GdUdQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 11 Mar 2025 15:54:47 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: simona@ffwll.ch,
+	airlied@gmail.com,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	geert@linux-m68k.org,
+	tomi.valkeinen@ideasonboard.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	nouveau@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	spice-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	intel-xe@lists.freedesktop.org,
+	xen-devel@lists.xenproject.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v4 00/25] drm/dumb-buffers: Fix and improve buffer-size calculation
+Date: Tue, 11 Mar 2025 16:47:04 +0100
+Message-ID: <20250311155120.442633-1-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250310143450.8276-1-linux.amoon@gmail.com>
-References: <20250310143450.8276-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B15E8210F4
+X-Spam-Score: -2.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[ffwll.ch,gmail.com,kernel.org,linux.intel.com,linux-m68k.org,ideasonboard.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Using guard notation makes the code more compact and error handling
-more robust by ensuring that mutexes are released in all code paths
-when control leaves critical section.
+Dumb-buffer pitch and size is specified by width, height, bits-per-pixel
+plus various hardware-specific alignments. The calculation of these
+values is inconsistent and duplicated among drivers. The results for
+formats with bpp < 8 are sometimes incorrect.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v4: used DEFINE_GUARD macro to guard exynos_tmu_data structure.
-    However, incorporating guard(exynos_tmu_data)(data); results
-    in a recursive deadlock with the mutex during initialization, as this
-    data structure is common to all the code configurations of Exynos TMU
-v3: New patch
----
- drivers/thermal/samsung/exynos_tmu.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+This series fixes this for most drivers. Default scanline pitch and
+buffer size are now calculated with the existing 4CC helpers. There is
+a new helper drm_mode_size_dumb() that calculates scanline pitch and
+buffer size according to driver requirements.
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index a71cde0a4b17e..85f88c5e0f11c 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -12,6 +12,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/cleanup.h>
- #include <linux/io.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-@@ -199,6 +200,9 @@ struct exynos_tmu_data {
- 	void (*tmu_clear_irqs)(struct exynos_tmu_data *data);
- };
- 
-+DEFINE_GUARD(exynos_tmu_data, struct exynos_tmu_data *,
-+	     mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
-+
- /*
-  * TMU treats temperature as a mapped temperature code.
-  * The temperature is converted differently depending on the calibration type.
-@@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	unsigned int status;
- 	int ret = 0;
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 	clk_enable(data->clk_sec);
- 
-@@ -270,7 +274,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 
- 	clk_disable(data->clk_sec);
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return ret;
- }
-@@ -292,13 +295,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	data->tmu_set_crit_temp(data, temp / MCELSIUS);
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return 0;
- }
-@@ -325,12 +327,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 	data->tmu_control(pdev, on);
- 	data->enabled = on;
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- }
- 
- static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
-@@ -645,7 +646,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
- 		 */
- 		return -EAGAIN;
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	value = data->tmu_read(data);
-@@ -655,7 +656,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
- 		*temp = code_to_temp(data, value) * MCELSIUS;
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return ret;
- }
-@@ -720,11 +720,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
- 	if (temp && temp < MCELSIUS)
- 		goto out;
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 	data->tmu_set_emulation(data, temp);
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 	return 0;
- out:
- 	return ret;
-@@ -760,14 +759,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
- 
- 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	/* TODO: take action based on particular interrupt */
- 	data->tmu_clear_irqs(data);
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return IRQ_HANDLED;
- }
-@@ -987,7 +985,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
- {
- 	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	if (low > INT_MIN)
-@@ -1000,7 +998,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
- 		data->tmu_disable_high(data);
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return 0;
- }
+The series fixes the common GEM implementations for DMA, SHMEM and
+VRAM. It further changes most implementations of dumb_create to use
+the new helper. A small number of drivers has more complicated
+calculations and will be updated by a later patches.
+
+v4:
+- improve UAPI documentation
+- document bpp special cases
+- use drm_warn_once()
+- add TODO lists
+- armada: fix pitch alignment
+v3:
+- document UAPI semantics
+- fall back to bpp-based allocation for unknown color modes
+- cleanups
+v2:
+- rewrite series
+- convert many individual drivers besides the shared GEM helpers
+
+Thomas Zimmermann (25):
+  drm/dumb-buffers: Sanitize output on errors
+  drm/dumb-buffers: Provide helper to set pitch and size
+  drm/gem-dma: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/gem-shmem: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/gem-vram: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/armada: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/exynos: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/gma500: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/hibmc: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/imx/ipuv3: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/loongson: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/mediatek: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/msm: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/nouveau: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/omapdrm: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/qxl: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/renesas/rcar-du: Compute dumb-buffer sizes with
+    drm_mode_size_dumb()
+  drm/renesas/rz-du: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/rockchip: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/tegra: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/virtio: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/vmwgfx: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/xe: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/xen: Compute dumb-buffer sizes with drm_mode_size_dumb()
+  drm/xlnx: Compute dumb-buffer sizes with drm_mode_size_dumb()
+
+ Documentation/gpu/todo.rst                    |  28 +++
+ drivers/gpu/drm/armada/armada_gem.c           |  16 +-
+ drivers/gpu/drm/drm_dumb_buffers.c            | 172 ++++++++++++++++--
+ drivers/gpu/drm/drm_gem_dma_helper.c          |   7 +-
+ drivers/gpu/drm/drm_gem_shmem_helper.c        |  16 +-
+ drivers/gpu/drm/drm_gem_vram_helper.c         |  89 +++------
+ drivers/gpu/drm/exynos/exynos_drm_gem.c       |   8 +-
+ drivers/gpu/drm/gma500/gem.c                  |  21 +--
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  25 ++-
+ drivers/gpu/drm/imx/ipuv3/imx-drm-core.c      |  29 ++-
+ drivers/gpu/drm/loongson/lsdc_gem.c           |  29 +--
+ drivers/gpu/drm/mediatek/mtk_gem.c            |  13 +-
+ drivers/gpu/drm/msm/msm_gem.c                 |  27 ++-
+ drivers/gpu/drm/nouveau/nouveau_display.c     |   7 +-
+ drivers/gpu/drm/omapdrm/omap_gem.c            |  15 +-
+ drivers/gpu/drm/qxl/qxl_dumb.c                |  17 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c |   7 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  |   7 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c   |  12 +-
+ drivers/gpu/drm/tegra/gem.c                   |   8 +-
+ drivers/gpu/drm/virtio/virtgpu_gem.c          |  11 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c       |  21 +--
+ drivers/gpu/drm/xe/xe_bo.c                    |   8 +-
+ drivers/gpu/drm/xen/xen_drm_front.c           |   7 +-
+ drivers/gpu/drm/xlnx/zynqmp_kms.c             |   7 +-
+ include/drm/drm_dumb_buffers.h                |  14 ++
+ include/drm/drm_gem_vram_helper.h             |   6 -
+ include/uapi/drm/drm_mode.h                   |  50 ++++-
+ 28 files changed, 449 insertions(+), 228 deletions(-)
+ create mode 100644 include/drm/drm_dumb_buffers.h
+
 -- 
 2.48.1
 
