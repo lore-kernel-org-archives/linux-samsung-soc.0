@@ -1,115 +1,124 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F622641D6
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Mar 2025 19:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41CC263881;
+	Tue, 11 Mar 2025 19:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721927; cv=none; b=WVQOXGp0XVxP1cQH7vUdst+r2SBLubSfL4ks+Oiw9nrE1zPdMOl8Q0ZPrezD+purNXu/T1yWewOnxhwN/hKH3VBCvgBeGPARsltYaXjFAK0/dGXAc0KyE6Q8tjI2NkaGa+4Npg0W6NvHIyIVg1Om1sny8mJs4fBwp1A7PCHvYZo=
+	t=1741722032; cv=none; b=jr+egZWlb4rFhL3vQn/CJ6tRiLgTGElaHhzIqf1JEVZH00XHzPFiO3UDLCoGLW3Zp7alYKME1M/4Dyw5XuOyBy2tJAvldL4dTpMR8DBZy5Mxqy0S6+p+lpEWH3RqedNiQeko1vh94DOsxS3KCE7F06a8elA82z3Jl+pMUJ5dViw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721927; c=relaxed/simple;
-	bh=B1uh6rYksykV9cmassOV5zLeR8dCezQN4Xwwx+1rMT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=urcg7fOOCokhV5zOEAZKilT66GXi1hu6x04SPgKWCs/HZnDmFcCU+te5tpMrg2LEuDxdIV0Erwo+WsHNuDKavErrP+1Cd/fnuSYJWgJIPT/d+sowuelnYNQRYtqNr6kRVvTZes1tR/LxqlkJDX67QIvAZPz63F5SVn9647r9jMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fQG9Xq9E; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741722032; c=relaxed/simple;
+	bh=K/fwgyv7nW8Nr81zy6wIiSf6CaXY+MgzKWwDUR+eRRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5/ZAm84KeAwDL8a4rrxWubrecnbaMKX+MOqAU8ppGDfHucbYUJF22WU84336NgqMInET8EQkNE+K1lNNeifDkG8xFvqxF4jJbWaPtmFcEIporLulGJP0fqxIn+LNBF0e1QrT4+w5yZTDEPbT5cmF9NFvBLI+InsfxyLpJVi8V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+Gs5cps; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQG9Xq9E"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf861f936so2892905e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Mar 2025 12:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741721923; x=1742326723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hk8/jRHxFdOn9j6NilUq3fYq1U2KDGu3FX6e3aC3Pvk=;
-        b=fQG9Xq9Ec3q3EaxbKAjirOsEhIOKcVuAn5acIoCjjGiTx+Y8KSrJipiaMMHh9M0+eK
-         o6GH/s7IYsroeALZLhWzVpr0idJz2+Y2nQgsl05OoHgTIlPVD9c1I/d8GK3ZGu9YZFOd
-         SPj9o1g3b1UubQpe05ysJN2Y2G7koucdyf3pPmDf7MR33LMHEdiUtElRb24GfMcwrmXE
-         OM0LtjMwPErWkSAeevEDusdBLro8LRFlXJJ6XLC+TI4l8s+FLPvOfWFK7FeXvcFpftzC
-         1jJoInrUv2PTnU6bIcbz6EW22l1OUIE/LZnFjW3ilqxfCpISG+TocmYh8DXB+hhZ0Iab
-         lSog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741721923; x=1742326723;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hk8/jRHxFdOn9j6NilUq3fYq1U2KDGu3FX6e3aC3Pvk=;
-        b=uf1xpDd1BA+XH4smqzReu1h95cpOALoXPPVJ8ZrTldULPzX1HDVEEYrCL9FUjTvjS3
-         ChU+KY7HIpZmycqWhWH7kiLRBqQ961NB/pPRZen5jxI8iclTQaVoX7ZxTs04CxRe5m4l
-         UEwFBDk/cjBmYWeFOIEzmCKRw+IrN2ZE6OhIxKYuEDbUXtryzNIMUCu8f1TmHc6DCzHT
-         zP7s/690UhqtXzez2e6qahYDjtgNyrHd3y0r27+TqFcUq4ffc9mAig3Ri4aOkblBz6qV
-         +HRMd30Hg+fAzmSVfV+ixjwUep+UUYFLOTApgVAM+qM5aRq/8Lqft4EvubgGDWROGdAT
-         SW0w==
-X-Forwarded-Encrypted: i=1; AJvYcCULFFRG4r9SN9FduVx83q3+VJAM5t3+JIryyigoxwjLofevNAcq0VZJuf6wZOd7XblD4iZoTH1fF5yqy3v5ypf6yw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFpHtUFLK5SA5YXsB+1HxzJny/7bw0AGTxCYZ2Gyi48zf2Bw3c
-	6YzLhwH+O25VNDIoMWvs2pXQq6IOCWYw6TXyToRyJP62p6ygi89LAE6uhOV4HPc=
-X-Gm-Gg: ASbGncsIDv4+zb2sfwe9QJFRQcf1LkqQ6hI3qI3Eo5dZNGyGHmJwP3/TXO9BR4BM3yy
-	IfTZ9XyTSmMzjRvTT8n9xSVGeMwiwWCPk+rdGdTsecKZLnui7xxVTIyOiJWINwP5GgmQmUlwii9
-	d51KmaAZEZU4om40xnGtOUPUZHObkzvssGGGxEZPYp7m0zTAY6+ueDSZrnYbf91Cja2pFqiQwSS
-	L+MaGllJgLk8XXHZ7jqYtLJbt3ovbb7OZwOKKhPxPWS0zO7jQFWbggcf+zoqdavYs8FwT01YqTL
-	so5mmujcp3e5TxDax7fBcgMGLIxhNTun4JpmyNbx3NMEtcQXnuwBbNirwQ==
-X-Google-Smtp-Source: AGHT+IEEGrtv+WVqplhsyAIOJvjlmuBCpHGGUDzZq6EETtMUE4CHGK002+5IMzV1Oj/aRdFt9ZT1FA==
-X-Received: by 2002:a05:600c:548c:b0:439:8294:2115 with SMTP id 5b1f17b1804b1-43d01c2b40bmr22475345e9.8.1741721922987;
-        Tue, 11 Mar 2025 12:38:42 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cf892d380sm81727225e9.24.2025.03.11.12.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 12:38:42 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org,
-	tudor.ambarus@linaro.org,
-	willmcvicker@google.com,
-	semen.protsenko@linaro.org,
-	kernel-team@android.com,
-	jaewon02.kim@samsung.com,
-	stable@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 1/4] pinctrl: samsung: add support for eint_fltcon_offset
-Date: Tue, 11 Mar 2025 20:38:38 +0100
-Message-ID: <174172189759.119514.8325135286672051459.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250307-pinctrl-fltcon-suspend-v4-1-2d775e486036@linaro.org>
-References: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org> <20250307-pinctrl-fltcon-suspend-v4-1-2d775e486036@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+Gs5cps"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8650AC4CEE9;
+	Tue, 11 Mar 2025 19:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741722031;
+	bh=K/fwgyv7nW8Nr81zy6wIiSf6CaXY+MgzKWwDUR+eRRY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J+Gs5cpshqlTPxtbovaqmc6mrZ+J9x4ZIP0slOYQq+QVZC54lOHx2sV95cVJHWsfJ
+	 7eSf5ipkOogDsNYuTdMDbL6aXKOlrkd9/ptUch+XtMiDScy6c5xCGhw4WxeBinR3ml
+	 iyHiynmMFtN8rqqyyYj33ypcFjQ5KLuwjIKxsFlBz4q5Y+KF256E4b0kEhsdwRXcKD
+	 m1iGusRsDgKCMfqcmYKLrd+bY55mH276+DNx0GPaQs39wVtkuDrjVfKhsR/p+Ni4Ff
+	 NUvK741D2MtrBMDngRFmxU1pDwMr7khl1phrlszkFaej5DhVmjGCtXzWqO88KJKXom
+	 mEhc344cl2dow==
+Message-ID: <4f3c4249-5e20-4b5d-a6ab-72c79274cb49@kernel.org>
+Date: Tue, 11 Mar 2025 20:40:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] gs101 max77759 enablement (DT)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250306-b4-max77759-mfd-dts-v1-0-9fe8b0eb8123@linaro.org>
+ <b70f17589b91730ecf6080c626492368283ce7a1.camel@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b70f17589b91730ecf6080c626492368283ce7a1.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-On Fri, 07 Mar 2025 10:29:05 +0000, Peter Griffin wrote:
-> On gs101 SoC the fltcon0 (filter configuration 0) offset
-> isn't at a fixed offset like previous SoCs as the fltcon1
-> register only exists when there are more than 4 pins in the
-> bank.
+On 06/03/2025 11:57, André Draszik wrote:
+> On Thu, 2025-03-06 at 10:14 +0000, André Draszik wrote:
+>> Hi,
+>>
+>> This series enables the recently submitted Maxim max77759 driver and
+>> updates the DT for the Google Pixel 6 / Pro (oriole / raven) boards
+>> accordingly.
+>>
+>> !!! Dependency note !!!
+>>
+>> This series depends on the corresponding driver and DT bindings
+>> proposed in
+>> https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
+>>
+>> Note that in that series bindings and gpio driver are accepted, but mfd
+>> and nvmem drivers are still waiting for review comments.
 > 
-> Add a eint_fltcon_offset and new GS101_PIN_BANK_EINT*
-> macros that take an additional fltcon_offs variable.
-> 
-> [...]
+> To avoid ambiguity... with 'accepted' I meant reviewed, but not merged!
 
 
-Re-wrapped commit msg to match wrapping style.
-
-Applied, thanks!
-
-[1/4] pinctrl: samsung: add support for eint_fltcon_offset
-      https://git.kernel.org/pinctrl/samsung/c/701d0e910955627734917c3587258aa7e73068bb
+Thanks for letting me know. This must wait till bindings get applied to
+subsystem tree, so probably will miss this merge window. Anyway, please
+ping me when bindings get applied.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
