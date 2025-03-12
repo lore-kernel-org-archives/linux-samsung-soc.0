@@ -1,463 +1,139 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C78241672
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Mar 2025 11:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6690A241C8B;
+	Wed, 12 Mar 2025 11:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779869; cv=none; b=KUIIFOpgGMhjQQu1sr4cikaxUM+6IIOLrTkfaZBXa80rvLXAo6vhiDpUb73z2f7SjIt5oMBwRrWdE1qX1vlWISelAXTt1YBj16NnYLK6NobHvlN5ev1lBamZR9nhjevA8aN1ny4JuHo4FtWLD8jR9XZeB5ij9tPw/KQmay8D3NA=
+	t=1741780582; cv=none; b=XZarz9GOwKVmtEUwbASjk64wqmgJtg9PbyHC5wy/0BIho9eOz/vdgfuIDB9fjjiU24k2jU7e6IuU7MZcGFzT30Lv4OEpzLXZL6Pl/cbQfPpOYmU+geo9ndbFIqVHtZBYotiEYUek+lK3BpR//x8BNGBVeN1e0Z9oP/s+FEDsjmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779869; c=relaxed/simple;
-	bh=P0NPEuvXehyb3R0NE0N+AWhENmnBjnIVY29yhuJ+xh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bigaREsq8sywzXi6ZxQt22mUaChW7tmuyfzhXA6fGzgXVA95NKYUviF3j0EKqwMyIPFcTU1b5fjcfkgfMYMA9dLavkutWMtiww+L4Q+0ubY1MPCnGZf7Y8zTran4clt6F2EzvZq4dpKFgLsA4Gq+8R0vccNXC9EVUZy6lHfvBbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O2VizzWr; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1741780582; c=relaxed/simple;
+	bh=VETkLINRI8hcNJRpuez892xea1lFBVqg7ZWvjLXYyZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uh8B9+QPdLC6tRTWeu53zaTZHPC9sBuuEmJRqB3w7rC+wkSbTrwgz81SHKEn6+V5OHu9kh3WnZJCFryh1MPJjEkXLWSLIV3SHP/f+q2YBkWii7qkJK14ed9qplcdQozQyVDVgn7S0Gexk4TUmydh4JRbgm/1HItLS/IKLFh+hvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlQrrYbc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O2VizzWr"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso41045e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Mar 2025 04:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741779865; x=1742384665; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ztC6TyGPn8HN7qvx3r0adwSfOw9X1SdqpmyY8+RWC3k=;
-        b=O2VizzWrOmV0omtUXcfeXWebFdbJwUW0oOcIn3CVW8qw3Oiqe4kn/qEj73O2Kv25HM
-         ap2jY+Vy1Rtj5vmNOUS83EL8F3+w81i4eDFaUXNhIr8KGRP3Zb3soQFIGdeSPMkJAbkQ
-         bBCCcsN62wFFVfK1VBFSBBhDJqkgZqPOj29ueexJ+tPF3xWTRYPd6iUVkHXD4yTPnyqS
-         hpiwpsg0QgneNFddc0Vo/6VIzSnoiPbKgIh6f38VfGlBUwZtV74/4xPERukb5nUhuQ1h
-         sdrwrgnn4qJ3/CAbtxPcOjxkgyITV2phtZsh6fIyAKsiDlUEy8PElGwRSPRIIlPsOPm8
-         YOJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741779865; x=1742384665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ztC6TyGPn8HN7qvx3r0adwSfOw9X1SdqpmyY8+RWC3k=;
-        b=ZaKcRYBIo5SbWxCAF+Mn3BZtRBf6k2Mec442d/TZQ85e1KdBR1eqXlp9tdDxb1Bmi+
-         FaiXpq5/ceDlAPnwRW0FoDXiAGkFXzkn3JBAtjQHHTLkZebhHvtxiD42Vfizhdobu4A0
-         KdvfztLA+1ZkGRdV6z2/gPbMR3wJVXit2qtBh6IM1RP35ntttf6VL6xi9WeRog99xu/c
-         gepB57RbVdyLpGTfmSB6g0mZtWGBYl2QDMGlWan+l4IuSJ2/2SIxRiFBysLhMNgVJf3q
-         sOPgIKQgwbepo8SqJcc34b5AguhcwRSFmKBww1ErrKicuDD50RnsquKSQeNR3nLAMZI/
-         AIzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhDIzL3B9e3HHB/R19DXDLE1hpY0m8qgPOeU/8T3PVdn/BdZVB3A4ynCARLLADDj5mF5w9m1IlUUtenbEuFnRlTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YylHfPTjxRgvwCg9G7nF+HW2EQoDLVbagnqgS8+SVNhDPzRUoNM
-	rNBnh48wyWuTTv2Q/8UN5RaMJ48El8Bux7HJTVUmjVvnBD+WURae1s7TKJ4SYQ==
-X-Gm-Gg: ASbGncux1u7z8Gi415+XaF5MlzAwPY9oI1ylztCSFle5WWZgeQ9mpUgC66RVPCGNEZW
-	y2lcDN+onOHsqmI7myImWoOVaQfyh+YKSGEG2DgwHSrTBmK0hX8lwlq+JEYI7PfGlwFh5F7VO4R
-	YznUK5LRfeh3rMLNXhGaCgwk88eXgSO2gmMf9sfXrP7W2QjA1ncRRvwvN8R2cz0+TkZlDzIY33c
-	NiReRaS+VhESzEu9dzlHrWqSDDp5Y27dRsvlBQO4dw8E82LLRkP70tXkp5dTbW7XMjFxqa064Eb
-	71uinZCHY0jyYxAbZY/JtZxlPTaPHo8D6f/v9dOAwN3RA9NKU4ccPd9ZXAh1NtDmnizgzfY+zsa
-	PgNjK
-X-Google-Smtp-Source: AGHT+IFOC+WzkzIkaDYmFvYURyzlmZIIdd06+VT8kwhTpj+efwMx5qrVlyUWLRP/E95iBlLvUPXLVA==
-X-Received: by 2002:a05:600c:c84:b0:43b:c396:7405 with SMTP id 5b1f17b1804b1-43d0a5fd606mr1026575e9.7.1741779865249;
-        Wed, 12 Mar 2025 04:44:25 -0700 (PDT)
-Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a72ea88sm19001575e9.7.2025.03.12.04.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 04:44:24 -0700 (PDT)
-Date: Wed, 12 Mar 2025 11:44:20 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Hector Martin <marcan@marcan.st>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tomasz Jeznach <tjeznach@rivosinc.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
-	Will Deacon <will@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
-	David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 06/23] iommu/pages: Remove iommu_free_page()
-Message-ID: <Z9FzlCfkRzDnvHuJ@google.com>
-References: <0-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
- <6-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlQrrYbc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1805AC4CEED;
+	Wed, 12 Mar 2025 11:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741780581;
+	bh=VETkLINRI8hcNJRpuez892xea1lFBVqg7ZWvjLXYyZI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RlQrrYbc+mQyR0zAoC1RAtoBY1ZqSo2cq+DOkxMfK52zQgeQNc4eaaZlndSyJ2pJD
+	 GHNEw7huNhJZ/HRlvyZ60LLbota9C9dhT3hyhvbbj/v0g+OoRfnNsghuLZI53rt8EW
+	 RLVchYzwI5o0Gt4tVKxP0oqeilv/wj/d+t7Iv0KMu6iPrWjFyUaP7p7WG9FDoJ1OMN
+	 hvHyNmC6q3HOTMmDMpRlnEVL8lIPtkLBeT47QfyLOgU7RjW5vO+Irp3VaGWPd0b7Vb
+	 zGiL/igrRb+UaFG3dSuaTaWRhxm3t+eEdd/05hLLPc0Jc0gQogNKGnICZpbAc1ydif
+	 vS+ZeT5X+hw3w==
+Message-ID: <328d89da-4246-4c75-a277-b06934e4a9d9@kernel.org>
+Date: Wed, 12 Mar 2025 12:56:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] pinctrl: samsung: add gs101 specific eint
+ suspend/resume callbacks
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, kernel-team@android.com,
+ jaewon02.kim@samsung.com, stable@vger.kernel.org
+References: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
+ <20250307-pinctrl-fltcon-suspend-v4-3-2d775e486036@linaro.org>
+ <59a1a6eb-d719-49bd-a4b5-bfb9c2817f08@kernel.org>
+ <CADrjBPqYoHckqr43y1z8UtthZ9DOG15TJWSv_707Jbyf1yforw@mail.gmail.com>
+ <CADrjBPqSSbt=xM7u12BU2nsF2xvyXe_+bLSCxCPBTfCc07VpuQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CADrjBPqSSbt=xM7u12BU2nsF2xvyXe_+bLSCxCPBTfCc07VpuQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 03:39:23PM -0400, Jason Gunthorpe wrote:
-> Use iommu_free_pages() instead.
+On 12/03/2025 12:39, Peter Griffin wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Mostafa Saleh <smostafa@google.com>
+> On Wed, 12 Mar 2025 at 11:31, Peter Griffin <peter.griffin@linaro.org> wrote:
+>>
+>> Hi Krzysztof,
+>>
+>> Thanks for the review feedback.
+>>
+>> On Tue, 11 Mar 2025 at 19:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>
+>>> On 07/03/2025 11:29, Peter Griffin wrote:
+>>>> gs101 differs to other SoCs in that fltcon1 register doesn't
+>>>> always exist. Additionally the offset of fltcon0 is not fixed
+>>>> and needs to use the newly added eint_fltcon_offset variable.
+>>>>
+>>>> Fixes: 4a8be01a1a7a ("pinctrl: samsung: Add gs101 SoC pinctrl configuration")
+>>>> Cc: stable@vger.kernel.org
+>>>
+>>> It looks this depends on previous commit, right?
+>>
+>> Yes that's right, it depends on the refactoring in the previous patch.
+>> To fix the bug (which is an Serror on suspend for gs101), we need the
+>> dedicated gs101 callback so it can have the knowledge that fltcon1
+>> doesn't always exist and it's varying offset.
+> 
+> and also dependent on the first patch that adds the eint_fltcon_offset :)
 
-> ---
->  drivers/iommu/amd/init.c          |  2 +-
->  drivers/iommu/amd/io_pgtable.c    |  4 ++--
->  drivers/iommu/amd/io_pgtable_v2.c |  8 ++++----
->  drivers/iommu/amd/iommu.c         |  4 ++--
->  drivers/iommu/intel/dmar.c        |  4 ++--
->  drivers/iommu/intel/iommu.c       | 12 ++++++------
->  drivers/iommu/intel/pasid.c       |  4 ++--
->  drivers/iommu/iommu-pages.h       |  9 ---------
->  drivers/iommu/riscv/iommu.c       |  6 +++---
->  drivers/iommu/rockchip-iommu.c    |  8 ++++----
->  drivers/iommu/tegra-smmu.c        | 12 ++++++------
->  11 files changed, 32 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-> index f47ff0e0c75f4e..73ebcb958ad864 100644
-> --- a/drivers/iommu/amd/init.c
-> +++ b/drivers/iommu/amd/init.c
-> @@ -955,7 +955,7 @@ static int __init alloc_cwwb_sem(struct amd_iommu *iommu)
->  static void __init free_cwwb_sem(struct amd_iommu *iommu)
->  {
->  	if (iommu->cmd_sem)
-> -		iommu_free_page((void *)iommu->cmd_sem);
-> +		iommu_free_pages((void *)iommu->cmd_sem);
->  }
->  
->  static void iommu_enable_xt(struct amd_iommu *iommu)
-> diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-> index f3399087859fd1..025d8a3fe9cb78 100644
-> --- a/drivers/iommu/amd/io_pgtable.c
-> +++ b/drivers/iommu/amd/io_pgtable.c
-> @@ -153,7 +153,7 @@ static bool increase_address_space(struct amd_io_pgtable *pgtable,
->  
->  out:
->  	spin_unlock_irqrestore(&domain->lock, flags);
-> -	iommu_free_page(pte);
-> +	iommu_free_pages(pte);
->  
->  	return ret;
->  }
-> @@ -229,7 +229,7 @@ static u64 *alloc_pte(struct amd_io_pgtable *pgtable,
->  
->  			/* pte could have been changed somewhere. */
->  			if (!try_cmpxchg64(pte, &__pte, __npte))
-> -				iommu_free_page(page);
-> +				iommu_free_pages(page);
->  			else if (IOMMU_PTE_PRESENT(__pte))
->  				*updated = true;
->  
-> diff --git a/drivers/iommu/amd/io_pgtable_v2.c b/drivers/iommu/amd/io_pgtable_v2.c
-> index c616de2c5926ec..cce3fc9861ef77 100644
-> --- a/drivers/iommu/amd/io_pgtable_v2.c
-> +++ b/drivers/iommu/amd/io_pgtable_v2.c
-> @@ -121,10 +121,10 @@ static void free_pgtable(u64 *pt, int level)
->  		if (level > 2)
->  			free_pgtable(p, level - 1);
->  		else
-> -			iommu_free_page(p);
-> +			iommu_free_pages(p);
->  	}
->  
-> -	iommu_free_page(pt);
-> +	iommu_free_pages(pt);
->  }
->  
->  /* Allocate page table */
-> @@ -159,7 +159,7 @@ static u64 *v2_alloc_pte(int nid, u64 *pgd, unsigned long iova,
->  			__npte = set_pgtable_attr(page);
->  			/* pte could have been changed somewhere. */
->  			if (!try_cmpxchg64(pte, &__pte, __npte))
-> -				iommu_free_page(page);
-> +				iommu_free_pages(page);
->  			else if (IOMMU_PTE_PRESENT(__pte))
->  				*updated = true;
->  
-> @@ -181,7 +181,7 @@ static u64 *v2_alloc_pte(int nid, u64 *pgd, unsigned long iova,
->  		if (pg_size == IOMMU_PAGE_SIZE_1G)
->  			free_pgtable(__pte, end_level - 1);
->  		else if (pg_size == IOMMU_PAGE_SIZE_2M)
-> -			iommu_free_page(__pte);
-> +			iommu_free_pages(__pte);
->  	}
->  
->  	return pte;
-> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-> index b48a72bd7b23df..e23d104d177ad9 100644
-> --- a/drivers/iommu/amd/iommu.c
-> +++ b/drivers/iommu/amd/iommu.c
-> @@ -1812,7 +1812,7 @@ static void free_gcr3_tbl_level1(u64 *tbl)
->  
->  		ptr = iommu_phys_to_virt(tbl[i] & PAGE_MASK);
->  
-> -		iommu_free_page(ptr);
-> +		iommu_free_pages(ptr);
->  	}
->  }
->  
-> @@ -1845,7 +1845,7 @@ static void free_gcr3_table(struct gcr3_tbl_info *gcr3_info)
->  	/* Free per device domain ID */
->  	pdom_id_free(gcr3_info->domid);
->  
-> -	iommu_free_page(gcr3_info->gcr3_tbl);
-> +	iommu_free_pages(gcr3_info->gcr3_tbl);
->  	gcr3_info->gcr3_tbl = NULL;
->  }
->  
-> diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-> index 9f424acf474e94..c812c83d77da10 100644
-> --- a/drivers/iommu/intel/dmar.c
-> +++ b/drivers/iommu/intel/dmar.c
-> @@ -1187,7 +1187,7 @@ static void free_iommu(struct intel_iommu *iommu)
->  	}
->  
->  	if (iommu->qi) {
-> -		iommu_free_page(iommu->qi->desc);
-> +		iommu_free_pages(iommu->qi->desc);
->  		kfree(iommu->qi->desc_status);
->  		kfree(iommu->qi);
->  	}
-> @@ -1714,7 +1714,7 @@ int dmar_enable_qi(struct intel_iommu *iommu)
->  
->  	qi->desc_status = kcalloc(QI_LENGTH, sizeof(int), GFP_ATOMIC);
->  	if (!qi->desc_status) {
-> -		iommu_free_page(qi->desc);
-> +		iommu_free_pages(qi->desc);
->  		kfree(qi);
->  		iommu->qi = NULL;
->  		return -ENOMEM;
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index cc46098f875b16..1e73bfa00329ae 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -571,17 +571,17 @@ static void free_context_table(struct intel_iommu *iommu)
->  	for (i = 0; i < ROOT_ENTRY_NR; i++) {
->  		context = iommu_context_addr(iommu, i, 0, 0);
->  		if (context)
-> -			iommu_free_page(context);
-> +			iommu_free_pages(context);
->  
->  		if (!sm_supported(iommu))
->  			continue;
->  
->  		context = iommu_context_addr(iommu, i, 0x80, 0);
->  		if (context)
-> -			iommu_free_page(context);
-> +			iommu_free_pages(context);
->  	}
->  
-> -	iommu_free_page(iommu->root_entry);
-> +	iommu_free_pages(iommu->root_entry);
->  	iommu->root_entry = NULL;
->  }
->  
-> @@ -744,7 +744,7 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
->  			tmp = 0ULL;
->  			if (!try_cmpxchg64(&pte->val, &tmp, pteval))
->  				/* Someone else set it while we were thinking; use theirs. */
-> -				iommu_free_page(tmp_page);
-> +				iommu_free_pages(tmp_page);
->  			else
->  				domain_flush_cache(domain, pte, sizeof(*pte));
->  		}
-> @@ -857,7 +857,7 @@ static void dma_pte_free_level(struct dmar_domain *domain, int level,
->  		      last_pfn < level_pfn + level_size(level) - 1)) {
->  			dma_clear_pte(pte);
->  			domain_flush_cache(domain, pte, sizeof(*pte));
-> -			iommu_free_page(level_pte);
-> +			iommu_free_pages(level_pte);
->  		}
->  next:
->  		pfn += level_size(level);
-> @@ -881,7 +881,7 @@ static void dma_pte_free_pagetable(struct dmar_domain *domain,
->  
->  	/* free pgd */
->  	if (start_pfn == 0 && last_pfn == DOMAIN_MAX_PFN(domain->gaw)) {
-> -		iommu_free_page(domain->pgd);
-> +		iommu_free_pages(domain->pgd);
->  		domain->pgd = NULL;
->  	}
->  }
-> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-> index 00da94b1c4c907..4249f12db7fc43 100644
-> --- a/drivers/iommu/intel/pasid.c
-> +++ b/drivers/iommu/intel/pasid.c
-> @@ -96,7 +96,7 @@ void intel_pasid_free_table(struct device *dev)
->  	max_pde = pasid_table->max_pasid >> PASID_PDE_SHIFT;
->  	for (i = 0; i < max_pde; i++) {
->  		table = get_pasid_table_from_pde(&dir[i]);
-> -		iommu_free_page(table);
-> +		iommu_free_pages(table);
->  	}
->  
->  	iommu_free_pages(pasid_table->table);
-> @@ -160,7 +160,7 @@ static struct pasid_entry *intel_pasid_get_entry(struct device *dev, u32 pasid)
->  		tmp = 0ULL;
->  		if (!try_cmpxchg64(&dir[dir_index].val, &tmp,
->  				   (u64)virt_to_phys(entries) | PASID_PTE_PRESENT)) {
-> -			iommu_free_page(entries);
-> +			iommu_free_pages(entries);
->  			goto retry;
->  		}
->  		if (!ecap_coherent(info->iommu->ecap)) {
-> diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-> index 88587da1782b94..fcd17b94f7b830 100644
-> --- a/drivers/iommu/iommu-pages.h
-> +++ b/drivers/iommu/iommu-pages.h
-> @@ -122,15 +122,6 @@ static inline void iommu_free_pages(void *virt)
->  	put_page(page);
->  }
->  
-> -/**
-> - * iommu_free_page - free page
-> - * @virt: virtual address of the page to be freed.
-> - */
-> -static inline void iommu_free_page(void *virt)
-> -{
-> -	iommu_free_pages(virt);
-> -}
-> -
->  /**
->   * iommu_put_pages_list - free a list of pages.
->   * @page: the head of the lru list to be freed.
-> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> index 1868468d018a28..4fe07343d84e61 100644
-> --- a/drivers/iommu/riscv/iommu.c
-> +++ b/drivers/iommu/riscv/iommu.c
-> @@ -1105,7 +1105,7 @@ static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
->  	if (freelist)
->  		list_add_tail(&virt_to_page(ptr)->lru, freelist);
->  	else
-> -		iommu_free_page(ptr);
-> +		iommu_free_pages(ptr);
->  }
->  
->  static unsigned long *riscv_iommu_pte_alloc(struct riscv_iommu_domain *domain,
-> @@ -1148,7 +1148,7 @@ static unsigned long *riscv_iommu_pte_alloc(struct riscv_iommu_domain *domain,
->  			old = pte;
->  			pte = _io_pte_entry(virt_to_pfn(addr), _PAGE_TABLE);
->  			if (cmpxchg_relaxed(ptr, old, pte) != old) {
-> -				iommu_free_page(addr);
-> +				iommu_free_pages(addr);
->  				goto pte_retry;
->  			}
->  		}
-> @@ -1393,7 +1393,7 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
->  	domain->pscid = ida_alloc_range(&riscv_iommu_pscids, 1,
->  					RISCV_IOMMU_MAX_PSCID, GFP_KERNEL);
->  	if (domain->pscid < 0) {
-> -		iommu_free_page(domain->pgd_root);
-> +		iommu_free_pages(domain->pgd_root);
->  		kfree(domain);
->  		return ERR_PTR(-ENOMEM);
->  	}
-> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-> index 323cc665c35703..798e85bd994d56 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -737,7 +737,7 @@ static u32 *rk_dte_get_page_table(struct rk_iommu_domain *rk_domain,
->  	pt_dma = dma_map_single(dma_dev, page_table, SPAGE_SIZE, DMA_TO_DEVICE);
->  	if (dma_mapping_error(dma_dev, pt_dma)) {
->  		dev_err(dma_dev, "DMA mapping error while allocating page table\n");
-> -		iommu_free_page(page_table);
-> +		iommu_free_pages(page_table);
->  		return ERR_PTR(-ENOMEM);
->  	}
->  
-> @@ -1086,7 +1086,7 @@ static struct iommu_domain *rk_iommu_domain_alloc_paging(struct device *dev)
->  	return &rk_domain->domain;
->  
->  err_free_dt:
-> -	iommu_free_page(rk_domain->dt);
-> +	iommu_free_pages(rk_domain->dt);
->  err_free_domain:
->  	kfree(rk_domain);
->  
-> @@ -1107,13 +1107,13 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
->  			u32 *page_table = phys_to_virt(pt_phys);
->  			dma_unmap_single(dma_dev, pt_phys,
->  					 SPAGE_SIZE, DMA_TO_DEVICE);
-> -			iommu_free_page(page_table);
-> +			iommu_free_pages(page_table);
->  		}
->  	}
->  
->  	dma_unmap_single(dma_dev, rk_domain->dt_dma,
->  			 SPAGE_SIZE, DMA_TO_DEVICE);
-> -	iommu_free_page(rk_domain->dt);
-> +	iommu_free_pages(rk_domain->dt);
->  
->  	kfree(rk_domain);
->  }
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index c134647292fb22..844682a41afa66 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -303,7 +303,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
->  
->  	as->count = kcalloc(SMMU_NUM_PDE, sizeof(u32), GFP_KERNEL);
->  	if (!as->count) {
-> -		iommu_free_page(as->pd);
-> +		iommu_free_pages(as->pd);
->  		kfree(as);
->  		return NULL;
->  	}
-> @@ -311,7 +311,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
->  	as->pts = kcalloc(SMMU_NUM_PDE, sizeof(*as->pts), GFP_KERNEL);
->  	if (!as->pts) {
->  		kfree(as->count);
-> -		iommu_free_page(as->pd);
-> +		iommu_free_pages(as->pd);
->  		kfree(as);
->  		return NULL;
->  	}
-> @@ -608,14 +608,14 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
->  		dma = dma_map_single(smmu->dev, pt, SMMU_SIZE_PT,
->  				     DMA_TO_DEVICE);
->  		if (dma_mapping_error(smmu->dev, dma)) {
-> -			iommu_free_page(pt);
-> +			iommu_free_pages(pt);
->  			return NULL;
->  		}
->  
->  		if (!smmu_dma_addr_valid(smmu, dma)) {
->  			dma_unmap_single(smmu->dev, dma, SMMU_SIZE_PT,
->  					 DMA_TO_DEVICE);
-> -			iommu_free_page(pt);
-> +			iommu_free_pages(pt);
->  			return NULL;
->  		}
->  
-> @@ -656,7 +656,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
->  
->  		dma_unmap_single(smmu->dev, pte_dma, SMMU_SIZE_PT,
->  				 DMA_TO_DEVICE);
-> -		iommu_free_page(pt);
-> +		iommu_free_pages(pt);
->  		as->pts[pde] = NULL;
->  	}
->  }
-> @@ -707,7 +707,7 @@ static struct tegra_pt *as_get_pde_page(struct tegra_smmu_as *as,
->  	 */
->  	if (as->pts[pde]) {
->  		if (pt)
-> -			iommu_free_page(pt);
-> +			iommu_free_pages(pt);
->  
->  		pt = as->pts[pde];
->  	}
-> -- 
-> 2.43.0
-> 
+
+That would be fine because it's a fix as well. Ah, well, let's keep the
+dependency, but then I think syntax would be:
+
+Cc: <stable@vger.kernel.org> # depends on the previous three patches
+
+
+Best regards,
+Krzysztof
