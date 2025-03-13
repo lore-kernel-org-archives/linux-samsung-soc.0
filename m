@@ -1,112 +1,117 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA7416BE17;
-	Thu, 13 Mar 2025 10:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408D442052;
+	Thu, 13 Mar 2025 12:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862139; cv=none; b=d+3I1YyRDGQwFsf9tZpoBqAgH+CY2wSc4Ct6DkeTkKsjWVN1EcSMxljpPhlfunNfCUW+qerB+8PbHOk+eqHu7H+jzDujTPJchY3zPZe8A3+0XaQh91tWNef4u4mDb5/5TqHFZBScmfnjMdLEzIVctE2exorVwAJtmks1cUOweCs=
+	t=1741870020; cv=none; b=idv/BUvzp+tsyfS47ezF+QCOtUAN/Nvgk7tEI1H6E1jwjrfoma2d2M/nzVZBulBKXZn5jHR/rZhtLSwkRWrC5tqJclzPEWB72kskGVaHc+eYtym4GQqNDoQ38QsKNy/3MawsBaN3DR7nI76ac3SxxGG1stzg4PDRfdYVjXd9HwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862139; c=relaxed/simple;
-	bh=Npgx+feD9B5ju6h0vSLbNEvVLPehQS1oYhr9YCjF7/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N5Pv1B0pzo2nujJbHCwpJeGURh1SIcCHf21bcJwVauVrEy9/atrQAuo8SCWGx/neC5uFrljD9I5RZBZjr3VPUKvLuulFnaBnkHZk79LZNU3EC+4WCoVEMi2KwUtMBA4uLAbRbq7ANW+vB7AjZDdmRScMyDOu6q1kFu7upxo8ryc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSI3nUBW; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741870020; c=relaxed/simple;
+	bh=VqBuO17pl29b/mkdF8heRUrB5SFzPUHE+ouSwBXTJ5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmOPVsDtUvMUAhPu0JfQFSBvvgcgM1ngPRcr/gIRm+YBAZ6NF16NOilDYmBVxi+TvAzks7izDhWxISrz7k/V2PsIJ24wq8OECMug04wvP9DCqnek1oRz8PdRyqRcSyBLMr/WEGQuH5OAiGaWI2w76oURWZfS8Dugm5X0jVkujKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTxxhWK+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSI3nUBW"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac29af3382dso130466366b.2;
-        Thu, 13 Mar 2025 03:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741862136; x=1742466936; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UNbbqeHoDPt7k8hD93XF4WARB2PnI7whAsDobeRau8o=;
-        b=ZSI3nUBW0KxQVJXsXwckcupNAfSVggqQBYjYxhnYvD7N/z87Cku0ihzwSrl1Npf2ob
-         e5nk5103wo/r4rwjj8UHmtbYJX4lIlFEE9cLP5j2ulN4XjPfaWICE3t00O58tr2La/5j
-         hUkk2sOVIilEOKbpfv7S7rJIou0LpDhVuvA/6jqON7Fnp/nko9083J5XSJdAxE95d4lo
-         DURHGfsSrYtcAIkm4F0qROzPmN9eyza5kZ1ilpzhiAmBb4DVxHfDljeRA0mEmUoHGBy3
-         E8WAqr2bQ5E4pE/WyjEpCCeLONOST4Q+WrQAe/d2CwaC7FuHAhwCVPTfd12YBdevYCIp
-         4FTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741862136; x=1742466936;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UNbbqeHoDPt7k8hD93XF4WARB2PnI7whAsDobeRau8o=;
-        b=vHBRXog58CFI8k3vaOxmDnc7KIBQaGZdt9p1h9fo+BMF4YbmBGuwXIqAbKZsXz8gUw
-         IMGLvzQwtmmYEWiibbHHyPRavzK8dri2hqqIyZ2KIvBJpP/aaqRDaBeo9ks/e7aoQQ8r
-         3im/s8NyA5f8l1PhiyGmFXKOIr8S9GGT1YaVJst0qI2HwVso1JewWA2dLBi9xZn0nPqL
-         3g23ui5ItSSTNRtq4uzh6MVjIA6Mu1XM1DYwl4zX5eQL672zt7Fuj7EJe3nMH7ENJHFw
-         Qm78gNvKuHM1D6aIW8bD+Rotzl3Evk0yKm8qKGcHx6QSQsRbZ48NJ5yF3bVoHvLAzMUZ
-         ZQXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9PqC19M6PF94GG9D6Ed9podM14Lf2PM4WYRb9pMs60KrMSb2Hk3LSYNCCHKzPSRlnUwTMaAKJcw86Fh4=@vger.kernel.org, AJvYcCX/rL2b+vAZf+q63hAeyAHKoJ4+jpFskIUA56uUqsEBOeLavKEoyiCsp6BeIL9zEXn9cAww3vnnsYs=@vger.kernel.org, AJvYcCX3brVwidG4whySLPJ3W13LWun2VQxnkr3JEKhsY9EgF7lj4SqYjNoxVxFz2swodYnb1q4IwTwVna6e01gpgXuPxPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjQ8PuwahkuN15WMIc07H7Uwk+UG+wv54haklRwDFK8lMjOThP
-	UI0MkTyWj8azPGkEKdASVuiscw/d5Cpa4pWcIHJRw0ZODpWAMA/h55A21zCQENKsFTyEMWgVA7k
-	/a8jqpv6pOcIBIjSbzZwUmH2JRf2ziA==
-X-Gm-Gg: ASbGncuTDHZYGTy1MwmR8TK3TZ1O3NX2UWsO8gpy5+Fm4vfqMaL7VIxv+/4pZiQCQfj
-	yApJKs+TtjkTyx+heh1Ws8IExBqmbNRpeJNV98AFkKOPsXyjnc23H9lBRULOAB9BcIj0hr3tlFy
-	BNoZdf1S3D0c445w/odPKmAcbbow==
-X-Google-Smtp-Source: AGHT+IGVDv1pE4BCE3Na+yhBb8R0foRSsykxpcDNkCfJpVC2H375ipT8Y9+Iaqn+hyKEC5XYMz497CWVlxAo0aZojpo=
-X-Received: by 2002:a17:907:890:b0:abf:768f:9a1f with SMTP id
- a640c23a62f3a-ac252f5ad70mr2132021166b.42.1741862135398; Thu, 13 Mar 2025
- 03:35:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTxxhWK+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC11C4CEEB;
+	Thu, 13 Mar 2025 12:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741870019;
+	bh=VqBuO17pl29b/mkdF8heRUrB5SFzPUHE+ouSwBXTJ5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RTxxhWK+8hW2wd5kyTgn1URPiP6HIC9f2US+F+12U4PfbasZMRsEVOB0rVUBlr2Aw
+	 fsJXbJkbiOjgWhoqb0/Tsi7mtzmQIXPgSC3uP9v8WWyDFHwFFHQyTWHMI3RRzxoc2m
+	 xVSEdt40Tonk82Ofwgk5qVm9Iq2x5kJZnm7JAf7GAdb/FXM+9nKbRUKAW9G7rI2TQn
+	 WP1c4u7NyynohapNlxjro4TqEuu/OoFezKz27D7PxSktuU6BMZaXFCzsSCCs/xujnd
+	 poc2tlsiHt2wqDv7kD5HXTVqSwrsgMtqUdxP37MUtHtLqu/ZtDBhLjHa3VO0KhUJ/s
+	 w8xt0J13olXgw==
+Date: Thu, 13 Mar 2025 12:46:55 +0000
+From: Lee Jones <lee@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Introduce support for Exynos7870's S2MPU05 PMIC
+ and its regulators
+Message-ID: <20250313124655.GA3616286@google.com>
+References: <20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310143450.8276-1-linux.amoon@gmail.com> <20250310143450.8276-5-linux.amoon@gmail.com>
- <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org> <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
- <43506f83-13d7-46c5-b022-473ac78f0cab@kernel.org>
-In-Reply-To: <43506f83-13d7-46c5-b022-473ac78f0cab@kernel.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 13 Mar 2025 16:05:18 +0530
-X-Gm-Features: AQ5f1JogTFqIfMNUkGXZqHbmGpfdP1dSo4ev8vVzdcAwRmde2Tjv4RErgvCNJmA
-Message-ID: <CANAwSgQeE0NQp_xwWcYBgZVQnm1N4PaQbaoMXGyFK4KKWAzxNw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org>
 
-Hi Krzysztof,
+On Sat, 01 Mar 2025, Kaustabh Chakraborty wrote:
 
-On Thu, 13 Mar 2025 at 13:19, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 12/03/2025 15:59, Anand Moon wrote:
-> >>
-> >>> +          mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
-> >>> +
-> >>>  /*
-> >>>   * TMU treats temperature as a mapped temperature code.
-> >>>   * The temperature is converted differently depending on the calibration type.
-> >>> @@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >>>       unsigned int status;
-> >>>       int ret = 0;
-> >>>
-> >>> -     mutex_lock(&data->lock);
-> >>> +     guard(mutex)(&data->lock);
-> >>
-> >> Which you do not use... Please don't use cleanup.h if you do not know
-> >> it. It leads to bugs.
-> >>
-> > Ok, I will drop this include of cleanup.h.
->
-> So the guards as well...
->
-Ok I will drop this patch thanks.
-
+> Exynos7870 devices use Samsung S2MPU05 as its primary PMIC. Add support
+> for it in the existing PMIC driver. Additionally, also add support for
+> voltage regulators which can be accessed and controlled from the PMIC
+> itself.
+> 
+> Patches from mfd and regulator subsystems have been placed together in
+> this series. Here, both patches from both subsystems depend on the other:
+> 1. The regulator driver patch includes a header file which describes the
+>    PMIC registers. This header is introduced in a PMIC patch.
+> 2. The PMIC dt-binding patch references the regulator documentation.
+> 
+> Note that 1. is a build dependency, but 2. is not.
+> 
+> This patch series is a part of Exynos7870 upstreaming.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+> Changes in v3:
+> - Lowercase "ldo" and "buck" in regulator dt-bindings and driver patches.
+> - Add back missing Reviewed-by: tag in [PATCH v2 2/3].
+> - Link to v2: https://lore.kernel.org/r/20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org
+> 
+> Changes in v2:
+> - Drop applied [PATCH 2/4].
+> - Added myself as maintainer in s2mpu05-pmic DT docs.
+> - Edited LDO description to explain missing LDOs.
+> - Added all missing regulator control registers intended for CP.
+> - Modify regulator_desc_s2mpu05_ldo* macros to allow choosing register
+>   suffixes (CTRL, CTRL1, etc). Subsequently, drop Reviewed-by: tag in
+>   [PATCH 4/4].
+> - Take over ownership of patches by the co-author, upon their request.
+> - Link to v1: https://lore.kernel.org/r/20250204-exynos7870-pmic-regulators-v1-0-05adad38102c@disroot.org
+> 
+> ---
+> Kaustabh Chakraborty (3):
+>       regulator: dt-bindings: add documentation for s2mpu05-pmic regulators
+>       mfd: sec: add support for S2MPU05 PMIC
+>       regulator: s2mps11: Add support for S2MPU05 regulators
+> 
+>  .../bindings/regulator/samsung,s2mpu05.yaml        |  47 ++++++
+>  drivers/mfd/sec-core.c                             |  12 ++
+>  drivers/mfd/sec-irq.c                              |  34 ++++
+>  drivers/regulator/Kconfig                          |   4 +-
+>  drivers/regulator/s2mps11.c                        |  92 ++++++++++-
+>  include/linux/mfd/samsung/core.h                   |   1 +
+>  include/linux/mfd/samsung/irq.h                    |  44 +++++
+>  include/linux/mfd/samsung/s2mpu05.h                | 183 +++++++++++++++++++++
+>  8 files changed, 414 insertions(+), 3 deletions(-)
+> ---
+> base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
+> change-id: 20250203-exynos7870-pmic-regulators-26512b79a29b
+> 
 > Best regards,
-> Krzysztof
+> -- 
+> Kaustabh Chakraborty <kauschluss@disroot.org>
 
-Thanks
--Anand
+Applied the set.
+
+I'll send out a pull-request if all goes well with build testing.
+
+Note to self: ib-mfd-regulator-6.15
+
+-- 
+Lee Jones [李琼斯]
