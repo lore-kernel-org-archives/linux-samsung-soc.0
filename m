@@ -1,125 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5693A8D2;
-	Thu, 13 Mar 2025 07:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA7416BE17;
+	Thu, 13 Mar 2025 10:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852183; cv=none; b=tTPgznD9L0pjvlTrpLVZPxqhPXQF/vNbFphLXx/FsZ+iGUjKJ2m0Kid6El6/WvseyDr368dnvA96zmD2hTOBk6OxZkwM6wNcNrwQJSqD7mIzx1+x3xlX/jmpSgDqgFlfSLHFwv6Aeqhfa/7XO5pgmQBEzIpKtV9kMzMY2yqAfqU=
+	t=1741862139; cv=none; b=d+3I1YyRDGQwFsf9tZpoBqAgH+CY2wSc4Ct6DkeTkKsjWVN1EcSMxljpPhlfunNfCUW+qerB+8PbHOk+eqHu7H+jzDujTPJchY3zPZe8A3+0XaQh91tWNef4u4mDb5/5TqHFZBScmfnjMdLEzIVctE2exorVwAJtmks1cUOweCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852183; c=relaxed/simple;
-	bh=o35p9Z9/CQVaHsgcveY0IeFK4hZ0kI/IIcoIsnG4WNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMa/rpsRAO/jvMVViyha5L6N5sgFvEZyleQTbG7FDF166UUp4F0V0IDsUPMDqqkDH0uyNpPCgEhutCNw1D678yd30Qj2B7QCLJ9TFOhvhQJyHyN3m4/zVlTcbuq4iOGvnRhpuGGlDplw9EBtlNoAUitJXpn/AsblhlzVpevIzUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pclCVUex; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741862139; c=relaxed/simple;
+	bh=Npgx+feD9B5ju6h0vSLbNEvVLPehQS1oYhr9YCjF7/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N5Pv1B0pzo2nujJbHCwpJeGURh1SIcCHf21bcJwVauVrEy9/atrQAuo8SCWGx/neC5uFrljD9I5RZBZjr3VPUKvLuulFnaBnkHZk79LZNU3EC+4WCoVEMi2KwUtMBA4uLAbRbq7ANW+vB7AjZDdmRScMyDOu6q1kFu7upxo8ryc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSI3nUBW; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pclCVUex"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF2AC4CEDD;
-	Thu, 13 Mar 2025 07:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741852182;
-	bh=o35p9Z9/CQVaHsgcveY0IeFK4hZ0kI/IIcoIsnG4WNA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pclCVUexl34Sf4d3JYaDM/8vCMr/osk+VJZQa2J0jsc0lJyOAKq+cTjqnO+9sjZrH
-	 dZ/yOleRG7/CB7WVKFaciJpVkpYw+27pMCq3G3St/+3hn+195RV5nStx5VteaYCQfH
-	 NFo9lqG8j9w5SyB+4P25d8q8Bi5GCmobTeM3iycVMVsGOoazer8RJcI/8kEjTrwNTo
-	 PYJI20UhNvWbJm0+jBqqVN8xxQ89yk3jsP7D9SqU9xExUJSQTUezFYq1ZeMQJwfpn+
-	 WcF4hAC4E6XKo7yt+cRUnOHFvYQZnjSu4S9H93lRQL2BZhaVHn0cNiMQz66RFXEwhH
-	 7JkuwdgMEiExw==
-Message-ID: <43506f83-13d7-46c5-b022-473ac78f0cab@kernel.org>
-Date: Thu, 13 Mar 2025 08:49:36 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSI3nUBW"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac29af3382dso130466366b.2;
+        Thu, 13 Mar 2025 03:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741862136; x=1742466936; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UNbbqeHoDPt7k8hD93XF4WARB2PnI7whAsDobeRau8o=;
+        b=ZSI3nUBW0KxQVJXsXwckcupNAfSVggqQBYjYxhnYvD7N/z87Cku0ihzwSrl1Npf2ob
+         e5nk5103wo/r4rwjj8UHmtbYJX4lIlFEE9cLP5j2ulN4XjPfaWICE3t00O58tr2La/5j
+         hUkk2sOVIilEOKbpfv7S7rJIou0LpDhVuvA/6jqON7Fnp/nko9083J5XSJdAxE95d4lo
+         DURHGfsSrYtcAIkm4F0qROzPmN9eyza5kZ1ilpzhiAmBb4DVxHfDljeRA0mEmUoHGBy3
+         E8WAqr2bQ5E4pE/WyjEpCCeLONOST4Q+WrQAe/d2CwaC7FuHAhwCVPTfd12YBdevYCIp
+         4FTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741862136; x=1742466936;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UNbbqeHoDPt7k8hD93XF4WARB2PnI7whAsDobeRau8o=;
+        b=vHBRXog58CFI8k3vaOxmDnc7KIBQaGZdt9p1h9fo+BMF4YbmBGuwXIqAbKZsXz8gUw
+         IMGLvzQwtmmYEWiibbHHyPRavzK8dri2hqqIyZ2KIvBJpP/aaqRDaBeo9ks/e7aoQQ8r
+         3im/s8NyA5f8l1PhiyGmFXKOIr8S9GGT1YaVJst0qI2HwVso1JewWA2dLBi9xZn0nPqL
+         3g23ui5ItSSTNRtq4uzh6MVjIA6Mu1XM1DYwl4zX5eQL672zt7Fuj7EJe3nMH7ENJHFw
+         Qm78gNvKuHM1D6aIW8bD+Rotzl3Evk0yKm8qKGcHx6QSQsRbZ48NJ5yF3bVoHvLAzMUZ
+         ZQXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9PqC19M6PF94GG9D6Ed9podM14Lf2PM4WYRb9pMs60KrMSb2Hk3LSYNCCHKzPSRlnUwTMaAKJcw86Fh4=@vger.kernel.org, AJvYcCX/rL2b+vAZf+q63hAeyAHKoJ4+jpFskIUA56uUqsEBOeLavKEoyiCsp6BeIL9zEXn9cAww3vnnsYs=@vger.kernel.org, AJvYcCX3brVwidG4whySLPJ3W13LWun2VQxnkr3JEKhsY9EgF7lj4SqYjNoxVxFz2swodYnb1q4IwTwVna6e01gpgXuPxPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjQ8PuwahkuN15WMIc07H7Uwk+UG+wv54haklRwDFK8lMjOThP
+	UI0MkTyWj8azPGkEKdASVuiscw/d5Cpa4pWcIHJRw0ZODpWAMA/h55A21zCQENKsFTyEMWgVA7k
+	/a8jqpv6pOcIBIjSbzZwUmH2JRf2ziA==
+X-Gm-Gg: ASbGncuTDHZYGTy1MwmR8TK3TZ1O3NX2UWsO8gpy5+Fm4vfqMaL7VIxv+/4pZiQCQfj
+	yApJKs+TtjkTyx+heh1Ws8IExBqmbNRpeJNV98AFkKOPsXyjnc23H9lBRULOAB9BcIj0hr3tlFy
+	BNoZdf1S3D0c445w/odPKmAcbbow==
+X-Google-Smtp-Source: AGHT+IGVDv1pE4BCE3Na+yhBb8R0foRSsykxpcDNkCfJpVC2H375ipT8Y9+Iaqn+hyKEC5XYMz497CWVlxAo0aZojpo=
+X-Received: by 2002:a17:907:890:b0:abf:768f:9a1f with SMTP id
+ a640c23a62f3a-ac252f5ad70mr2132021166b.42.1741862135398; Thu, 13 Mar 2025
+ 03:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20250310143450.8276-1-linux.amoon@gmail.com> <20250310143450.8276-5-linux.amoon@gmail.com>
+ <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org> <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
+ <43506f83-13d7-46c5-b022-473ac78f0cab@kernel.org>
+In-Reply-To: <43506f83-13d7-46c5-b022-473ac78f0cab@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 13 Mar 2025 16:05:18 +0530
+X-Gm-Features: AQ5f1JogTFqIfMNUkGXZqHbmGpfdP1dSo4ev8vVzdcAwRmde2Tjv4RErgvCNJmA
+Message-ID: <CANAwSgQeE0NQp_xwWcYBgZVQnm1N4PaQbaoMXGyFK4KKWAzxNw@mail.gmail.com>
 Subject: Re: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when
  acquiring mutex
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250310143450.8276-1-linux.amoon@gmail.com>
- <20250310143450.8276-5-linux.amoon@gmail.com>
- <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org>
- <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/03/2025 15:59, Anand Moon wrote:
->>
->>> +          mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
->>> +
->>>  /*
->>>   * TMU treats temperature as a mapped temperature code.
->>>   * The temperature is converted differently depending on the calibration type.
->>> @@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->>>       unsigned int status;
->>>       int ret = 0;
->>>
->>> -     mutex_lock(&data->lock);
->>> +     guard(mutex)(&data->lock);
->>
->> Which you do not use... Please don't use cleanup.h if you do not know
->> it. It leads to bugs.
->>
-> Ok, I will drop this include of cleanup.h.
+Hi Krzysztof,
 
-So the guards as well...
+On Thu, 13 Mar 2025 at 13:19, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 12/03/2025 15:59, Anand Moon wrote:
+> >>
+> >>> +          mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
+> >>> +
+> >>>  /*
+> >>>   * TMU treats temperature as a mapped temperature code.
+> >>>   * The temperature is converted differently depending on the calibration type.
+> >>> @@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >>>       unsigned int status;
+> >>>       int ret = 0;
+> >>>
+> >>> -     mutex_lock(&data->lock);
+> >>> +     guard(mutex)(&data->lock);
+> >>
+> >> Which you do not use... Please don't use cleanup.h if you do not know
+> >> it. It leads to bugs.
+> >>
+> > Ok, I will drop this include of cleanup.h.
+>
+> So the guards as well...
+>
+Ok I will drop this patch thanks.
 
-Best regards,
-Krzysztof
+> Best regards,
+> Krzysztof
+
+Thanks
+-Anand
