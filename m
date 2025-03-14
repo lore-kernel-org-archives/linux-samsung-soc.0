@@ -1,67 +1,67 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7234202F9F
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Mar 2025 16:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B0F2036F3
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Mar 2025 16:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970407; cv=none; b=uZbvBcHJ46/UX3sbwAr4d1tqhjGk23llJZEVIyKaMIMX38Mm7G59idgg9q7bGQHzHVBaVJBZcZORKK3oWQVxljnYn15FHRMKZ3f9G/ypSYDVGDYu8N6uIn2FMezm8JXL1mMPg16x6frmIYaeWLGTt1+WUzn/sSLLEHXPE09ais0=
+	t=1741970408; cv=none; b=H3qYMU2D8PYsFkZOvfi9TNkjc+lRSnGvcnMf3SxLOfYWjyV7rSaTYuePK/k9nP/O5+HktwK68iWB2LVDypYmaXZu2n1jtVBBQngGCXtRAP2uWLZkQJFA1NCu569PUWgRSqKN3kRuHD9h58PPH32WltiDd8rCAU64aCLCQpub1iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970407; c=relaxed/simple;
-	bh=EMglvuwJCM4I+POaB0pzqrwXSchddeRXR/kp58h7CKE=;
+	s=arc-20240116; t=1741970408; c=relaxed/simple;
+	bh=W7OrtNale60JOsrxsaBAlHsDJ4WH3rrsx+Tnb7U2MME=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WA4F5Z9gWSAkmRGLniqI2qD9RPa03DOfEf/qA4J/QFGOnNtlaSIIks2pW2F4CNs90pp1vllA4c03bQdZcz13tg0igV0Zm3A2R+iNrQlcR5193kDqh3UvfE98t3PRx2i3mVRr1m8BiBlk2FUGhgqPGrosD20RKcC/A5GdLPZHVoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NJ5jXlQZ; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:To:Cc; b=gTTDazBG7KlkMfDOgf9udPa4oKk+HL2ypiG1T0l7ydTLpuR1wOFN83PRD4Y5J5MDP82HsaE8FYkYEMbTqo/wmiIfjiA9kwZ5wQ98SVlY4nWfgZsjxbkquoj6Y9WDPR2IvQ4WD+I2wOc7syz/pN2gaeZi/PM0TFJEdm4YI6/pqwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UND6oMNs; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJ5jXlQZ"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e686d39ba2so4594074a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Mar 2025 09:40:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UND6oMNs"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e686d39ba2so4594093a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Mar 2025 09:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1741970404; x=1742575204; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5EHw6xE0g+7qki2CSo1YJpVOxoekKA/7CSCBUCVC664=;
-        b=NJ5jXlQZ/hwOScFX95HnPdPZdRXXVjjSgVkMwG7ssFH1eqkLQIRUbgc0nMuS87m1oS
-         g3Cn4lBDh2LPa7M1joLd+XqeCyi9QalVuRvyg0l58HoDf4mdZM4uoqc2iyAWaxyDlQ8F
-         dvaKx1yAYkI+l5RfCToIcZPH+PrqXT5JGxYyVOivCrts7R/bHe7PT95ddKaN2YuuyeBC
-         tLU+yP+1Mbb2x1E2W4G3i23n5j8Sk8+vGjF7GtQ4owmeEX9VUHnmnOuoNe5yH9OvO4rI
-         J4ZGpHxj6oXg0M3oMhorFGLDbLHMUABpDllL3fCFdsDT7rXvk1pOIOTIy88iD8ddGL55
-         Te8w==
+        bh=FqlKsxagPbT76Z6CLNAsMWFx/025f7qb7NuOScguaQY=;
+        b=UND6oMNsPyx969ds3VEUYTRVcHo0xohPWHSOWKyD0LAMM1xJO+h777IilgNxOefsWl
+         qkiPetbmfP3YUrr6nfVezMjIweY97GHkrvNUjLFNPujSx2ucXeOiuhZ3HU9sn+pSWpsf
+         R0Ji6fu0WvFFTg0GCx1hY1Dws3CsaJDSEGw/KZvHDZ/BZMrfL06iDH+BTn9YpCjKdekG
+         866WO/Oo+iMhfYzlyxv3kRA6uq+J7OAYd90WkBqwUESSMtvf0yjxBJeCvRnwFz5JeUUc
+         uyfntCkdEiFIw0RR0fc7cKpnqcaUjXT5dnveLaT10OeG3W4oA51I8N7L1445pq4QvBeW
+         cUwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1741970404; x=1742575204;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5EHw6xE0g+7qki2CSo1YJpVOxoekKA/7CSCBUCVC664=;
-        b=QurQEF4WqYPb5pRPv5xcGVIEF2Xwy1tV5vecKzw4l7shS+RPGXCLC4p/9T1Lov3Gc7
-         3uCg6ljYHuKdcbBNVBByTimpoJVTt4jw0Y/c8O2BmsRSf5Ht9vETsNWqVDiMhRfHlsyb
-         G88Xnzt0gLVijDzxeTvRmMuubJAQUw02LjWA4BgmRt8jASOV2GXNrodCdL9czQYDztP4
-         AD6DNdQYN4Vgn9QUwCezJlvC42hVv8p+hNVjCpbTBmUEWDoS2auZCUu/7/Y08wrm1WRJ
-         BSK0hVHrUvicGAbRNP8z2fHrZk1azSsLfXdoPVc3YWd7iWv3FuW2KU5NcRh0QeF8+U5L
-         ntzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZnASt28H1to7i7gSclxs+KIn9pZZwcxr6mqyfhMPAWKbwE5Nes6m3AVq/lOZkQOqH+qs/P+au4zPUNabZPm/N8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFk/ZQoEdHPA8eKyD9weBL1QOCK4IpHDZ/YYZM5xTsul1lyqTa
-	1VwW8FWIUWd7kP9i8c6XJHAx7FNPvUefekQ2h7xHL0F5fVEgb/eXHi0zt68xL2M=
-X-Gm-Gg: ASbGncsrPnOPaHHjikN58Ldb3N/RrBzVJstTMeuh/OoaD02nkDPll3hj6bL4bG+uO3W
-	V+GBqjHBugX/UOBwcZrdNnpFcxgjvtc1bgl5CM0AeMyb+wVQ+fanYpJQJQWyUo4AIZG5Z45KL3P
-	G9+kXvjIHrNUNJDrP8IO8Asg1Rmo7/F9ZjXZVCM1bt7WwKBWsqGFuX2xMQTOPBEOll9S/4GAeXQ
-	Y7SLOAhX2LoJC1JfPmjERSpHy0XynJlgbN8W5CLmrpydG7lYOxgSnqMhgCWWfsmAM5jZRb5zZmI
-	an334wHVszdc5kGQRqVIbBPlIIJYhXhqu5xbT5UZ3ET9g4fYRpHkqi345/9HgCCzFN40OzS0Zyl
-	6tZKU39LRYaj7655GZ27UJrDdb+n70wIBMohRQvs=
-X-Google-Smtp-Source: AGHT+IFm72MRO+sabSmFs08xZRpk0IIZks2PIM2q02CRV+JCE7zgfN2FDEwb9GyApg/KaKdRxs7krQ==
-X-Received: by 2002:a05:6402:3550:b0:5e7:aeb9:d0cc with SMTP id 4fb4d7f45d1cf-5e89e6afc19mr3874499a12.3.1741970403936;
-        Fri, 14 Mar 2025 09:40:03 -0700 (PDT)
+        bh=FqlKsxagPbT76Z6CLNAsMWFx/025f7qb7NuOScguaQY=;
+        b=dXSIWiWBlvhsuRCRBPKv7lDfbYxvziVPm3cWFZdDuP6Mk276c5Zw6Us9EPyitrkiKj
+         2qX8+8XUGsY3i5okwHK+7vXgbfYvWkZE0oIzr5rEWcbboEMseKxAPafqIg6ePjK5jHEf
+         Pwf9qswYOkr5sGZ7GvdW4lhwGrfdgGvHnXe7WX9SmAVeaHjjl6Y3BWFaLqYEKdAxZ0uZ
+         UnREwdPLC9xqHSP//w/3/xTo2Vadz5WNR9E0mnCOF2Xzx8KnoBpkpSSW7kUWiDY2Jb0I
+         wkwTC2yRmOALhd3r0/6avvaZx8M18sPnqTFDbUYgtySz3Yv7Tn20k2kvbf6Bm7IUvuKD
+         7GRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLzWaYNCtmnq3zdoLWmn9jjw59afq1pM4M9KC2iSuwy2KkWaGVWh7lpDO5+f6+k0AOu2rKjygKcr5Y+aVE1ad76A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+996oA6EkdgDUBB5eIMRMcJJ6mX1/Vo5PCbozSB7x4QchTySw
+	bGWQgNn48Al5kDCVfwGR/ad/NnED/HZhIH9vZPxu4IzsTXrX1E8FML7PQeeJeXE=
+X-Gm-Gg: ASbGncsh7iOh6BK1reV10JgmBiPLq4xNbIu1lzVzxg0re0ys5rlRuRLMOROxBpVKZEe
+	M+w2hBqCrTM7vrpACAF6c6zYG5MMpzTXnfcUHkSKEj9XKBDm7Gd4rc2g+uclYli0fcKLUBKveAm
+	w2m2x2GQlcmoq/qZAFE2zJGXwSa8lNrKxx5m7Gfm975vLdtFlVH4vcr7cAy7FPZSRSA5dSCA5BV
+	YFV33ZGrMaP5kKmtnsebswSEPUI7ZHpjdDx8nUOc9wiixwxTAftrS8oPmVVuS+hz3hUyZqM4By7
+	a2vRoEaVe28N8kH6Gz60zAXmq3zaeCp/6esYN32Bb+XG5h7LF1KZzONodLyoL4zE3BHJcgawK1l
+	l0fE0bSj0OAb3es93LB2zQBf+UeAW
+X-Google-Smtp-Source: AGHT+IHLsxwF/DHZEPhOyEzlgmcKjsoUUujUnQwnbW8+qgc574E5shkDM/HanOkkYGXBGqTnr36IXw==
+X-Received: by 2002:a05:6402:254d:b0:5e6:267c:a6bd with SMTP id 4fb4d7f45d1cf-5e8a051fdf9mr4301988a12.28.1741970404463;
+        Fri, 14 Mar 2025 09:40:04 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816968cd8sm2115727a12.18.2025.03.14.09.40.03
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816968cd8sm2115727a12.18.2025.03.14.09.40.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 09:40:03 -0700 (PDT)
+        Fri, 14 Mar 2025 09:40:04 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 14 Mar 2025 16:40:02 +0000
-Subject: [PATCH 2/3] firmware: exynos-acpm: silence EPROBE_DEFER error on
- boot
+Date: Fri, 14 Mar 2025 16:40:03 +0000
+Subject: [PATCH 3/3] firmware: exynos-acpm: convert to dev_err_probe() in
+ client API
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250314-acpm-fixes-v1-2-ab03ca8e723f@linaro.org>
+Message-Id: <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
 References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
 In-Reply-To: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -84,42 +84,40 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-This driver emits error messages when client drivers are trying to get
-an interface handle to this driver here before this driver has
-completed _probe().
+dev_err_probe() exists to simplify code and unify error messages by
+using its message template.
 
-Given this driver returns -EPROBE_DEFER in that case, this is not an
-error and shouldn't be emitted to the log, so just remove them.
+Convert the remaining dev_err() in acpm_get_by_phandle() to
+dev_err_probe().
 
-Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
 ---
-issue is in linux-next only afaics at this stage, as driver is not
-merged into Linus' tree yet
----
- drivers/firmware/samsung/exynos-acpm.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/firmware/samsung/exynos-acpm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index a85b2dbdd9f0d7b1f327f54a0a283e4f32587a98..48f1e3cacaa709ae703115169df138b659ddae44 100644
+index 48f1e3cacaa709ae703115169df138b659ddae44..03f907a95c6acd66d89cd8af2f52e7c6dadf492a 100644
 --- a/drivers/firmware/samsung/exynos-acpm.c
 +++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -690,14 +690,11 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
+@@ -701,12 +701,14 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
  
- 	acpm = platform_get_drvdata(pdev);
- 	if (!acpm) {
--		dev_err(dev, "Cannot get drvdata from %s\n",
--			dev_name(&pdev->dev));
+ 	link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+ 	if (!link) {
+-		dev_err(&pdev->dev,
+-			"Failed to create device link to consumer %s.\n",
+-			dev_name(dev));
++		int ret = -EINVAL;
++
++		dev_err_probe(&pdev->dev, ret,
++			      "Failed to create device link to consumer %s.\n",
++			      dev_name(dev));
  		platform_device_put(pdev);
- 		return ERR_PTR(-EPROBE_DEFER);
+ 		module_put(pdev->dev.driver->owner);
+-		return ERR_PTR(-EINVAL);
++		return ERR_PTR(ret);
  	}
  
- 	if (!try_module_get(pdev->dev.driver->owner)) {
--		dev_err(dev, "Cannot get module reference.\n");
- 		platform_device_put(pdev);
- 		return ERR_PTR(-EPROBE_DEFER);
- 	}
+ 	return &acpm->handle;
 
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
