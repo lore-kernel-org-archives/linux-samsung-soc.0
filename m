@@ -1,215 +1,136 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E2AEBE;
-	Mon, 17 Mar 2025 13:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218509; cv=fail; b=BemLwff3wnLeZS4ibjPs2iQmD/rwzJIUe+/UmCFPchbY6JBu+DQYMMkTV0VdpSuxByptLbH4NIJrfdCa00DO2+musxQbmueDezkKJn29HRgjyYQiqB2bOkGoPqpqU0bb9uCJcrvItK74zmo4a85iScApb0RQmoiF/NPjyVLEnkI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218509; c=relaxed/simple;
-	bh=Y5M8+csDZQ3aHOaNzP56HHpXXSYM7jkj6oh2WGwaMk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DKLwm3nAldaC6bI0Rl34VCtfJjlmbxRjsX3ltM8KyuJmJuOKG/aAOuYLVQJzEdrnd18uUdNURVvD2pYtkjatNwmoFKAbUYBCPrs9Syq9S7+DKGikqt2aoaGFQsi5k5hEMfOfu5TQr8DhJMFsbiKGpFJLopxQBANLrffJSlokZSw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dh5TA+Cr; arc=fail smtp.client-ip=40.107.92.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C52124291F;
+	Mon, 17 Mar 2025 14:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742221439; cv=none; b=EeaLeqdP2WK6MXZrkxt9VXKq4YpoFKo41s05cjRDZuKdG1c+lDYXI5IZiY2usHgfX/FsgOu1hh0a00uWUtZtJ+QBoJ8oAHGHo0sI6jAXbKadUNRB3/kuHA31+lY0kFWjtr8smmuSZyTgNexTB8jIThFpjJIzqcee2/ApjE2T3U4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742221439; c=relaxed/simple;
+	bh=bGVpXdopmBe2cylHrDEfMEXNLompQYGUMWrvVrieX0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kwxTmVwBiTowIejnRnPATTcoRmLGjsj/3KvKYtQuQ9OFaaTzxeTO+JIDi9BcpAUJfwdqHx0oxItJy8vPEJClI4ftMVRva1etySznh4zgV1+lUijufrj+ubEOxOiGyJTnxQL7FmT4ne8Vv1wART3XGXLrWu4m9aR1gW9jaaQOAPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTkLWRKZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dh5TA+Cr"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R4JFDgbB+/rDELzQmoUMSKdSTaebqjnt8r+g07pcdde106csMgIPYA/UbJrL8unzN9k1ObhS7AUV9jCHWTd2XUV7AfhKifqFji6npQv2Fh+IDGIoplqB9ovS4OIwWs6oAyMMf/rALEAlqfv8U0qJwyDAMmLz9OYvoW7oBikQZipkW4z8Q1G0J4C1R5mCP4i6vmF1f4zBSkQeHH7BGQjm5sJ7Ict3GOOwPoAn2edvVz3ltzFruM1+c9c4epc4T5ISBDr3JCEkzojVImN7RfvAMoeAchzyXZOzyZNjsqqDW4n9oWZ8x4VOt6qXiIG2WzruYt8pgSo3Rt6eLcp/VmEMkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QVpmREWUg9a8YZJByOGNqEoHBBTPLjNhi5JntbtUWso=;
- b=yUung9teO2WkWBkKvZLc2bey32SwnmYzQ5UuxviRV+IC53NFLwNiWf2qKj785GU37eLNw7u5IppfLeudI/Q6N/L6WgpD1dFwYMR7tzSYUCTkNA95CjTjihL313AXChTvJa2q1QfBH2slKiVrXq9OmJRVAzZcDnN/s+77KbmI4aK80xIoM/F/lP130NzBJUKULRMCNHqcWjvCybpZrPVldJRZ80JUrG1uYdqUXujLh6gX1ZKVoCFrIUF6nlqB7y+BtGr5tqMhztCfoovH5wxiOVqZ0dP8fIxUHOumFIghUc0Bs4hhmbzmZlFU1rCrlOG7DUNPOG1Zs5uM/xCRh/fXcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QVpmREWUg9a8YZJByOGNqEoHBBTPLjNhi5JntbtUWso=;
- b=dh5TA+CrMpG8lvyAa6MPyfAnUBsCguXEvGpY4XwIgA8eoMVWnVZFNUeY29m04Bh0m5ai9sPEAv1Ish4g9QKoqrVWZSCGw2r4mzk6273+xbYdlMG8AFGYcz+isuECBe9If42bCk2tWu6A8ZMeADjpZ6KrRlAslKnu8AAyt/qnWjwMlQAPQA26bgJLPLvAfJLZkZUqezO+R37lmEAl3wVDM/RfDA3BtU+Q5p/pG3QUSsbS8oDvO85YJN4bSQdSpXyZy7BtQk1ydgZWtdzYkMib93atgvD6ohojDhvwTchJgY9bExOtjpX+o9SZIjjCsuyAsoA1B0SbQshkFWN8vvDmoQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH8PR12MB6698.namprd12.prod.outlook.com (2603:10b6:510:1cd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 13:35:01 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 13:35:01 +0000
-Date: Mon, 17 Mar 2025 10:35:00 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Hector Martin <marcan@marcan.st>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tomasz Jeznach <tjeznach@rivosinc.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
-	Will Deacon <will@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
-	David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 20/23] iommu: Update various drivers to pass in lg2sz
- instead of order to iommu pages
-Message-ID: <20250317133500.GC9311@nvidia.com>
-References: <0-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
- <20-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
- <Z9GFFBvUFg7a9WEg@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9GFFBvUFg7a9WEg@google.com>
-X-ClientProxiedBy: BN9PR03CA0490.namprd03.prod.outlook.com
- (2603:10b6:408:130::15) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTkLWRKZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E5BC4CEE3;
+	Mon, 17 Mar 2025 14:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742221438;
+	bh=bGVpXdopmBe2cylHrDEfMEXNLompQYGUMWrvVrieX0k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KTkLWRKZ81fEfBmFQKPqM/O1sLvfmcbuBkWauO0JOZE4V256OeTKzeTu1A4co6wSX
+	 rr5t9A/nbmr9GDHwC7MwymfGJijiyInuq5IJr6T2XUdK5kVYyCDVHspkQTqjGcWzAk
+	 +WhpRoAGmZL/wPxMExPQwsN7VBzPkrBg+7hYKg/5iOlf5FXaozsmNVh98NgSaWuBl7
+	 sZ/crBdNlVbFGtEmIt0UIATp+HWxYBBQEvHGfCRFJKXLBlQgv8WAKKAydOdP3fo1cy
+	 3vlJHX5VgnQ5qZkykonx8VPqVVmmbtPW3pw68KpzAhTe6Yqs+tRaW7lP3zvcwDkqbj
+	 CssJmAJb/F1qg==
+Message-ID: <3a25e4f5-e017-4d30-92cc-62b9ebef1d5a@kernel.org>
+Date: Mon, 17 Mar 2025 15:23:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH8PR12MB6698:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8864a866-d4a2-49c2-7c3a-08dd65588462
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dm2wKysOZKcS2iA9ccaDPOlpmobmsYLHBSFHXDqYq0YPtUux89H70gfzutxN?=
- =?us-ascii?Q?P3IGyYPpP5GNZezRYcuFAc+GBulXK02g0bT6xNbQHZz13sKWtWHILYILvtS8?=
- =?us-ascii?Q?YPJkowhYJC9YbA0LwGIq6IzkfXAtH9QC4C0CerQQabu1K7jVViMH9fkU1f8n?=
- =?us-ascii?Q?ROlEOC9ZUNPb9KZvCheE3ZIz2JbzD/WMIHw1GlJ0pykFp4xnpJWEseHc10PO?=
- =?us-ascii?Q?k+ewbt7eBmHvH5/aUJibP/YVq27OU6bw66SCZXB6drdAnSCRbleR9fq/AD9r?=
- =?us-ascii?Q?TbEdQ4INcEKz1JPqTmwaVWTiNkLVbA8q6A7Pw1NdH7s2olbK1359tJq9dq9B?=
- =?us-ascii?Q?8qZEF8Wad6mA1xf8iEDgX188mr5hF4zSowC8oKg9dzkRzdcGLhXe+OL4rLPV?=
- =?us-ascii?Q?bOH0I6406gj1AjrMHq5LApCooUC1khCpTkm6sRPdhejm28VRefjeyuXgnQOf?=
- =?us-ascii?Q?710t8Eu0UOa/M/3X2wz92sQjF50DTfluCRx1JqHhAEfmTwaxkLlmCEqzIanR?=
- =?us-ascii?Q?Z6oji9UOTNQIA4VFAI58kuCaJ9mmEwWIX/JV0M44QCN+NJzDmcwpQ4MElDF1?=
- =?us-ascii?Q?BFbB06HQ5ek3wm7ZTn7Cz3M20NLA7X2yI7ogBN+MqfrrfoafP2WvuKs+iELP?=
- =?us-ascii?Q?AYOQUV/uS5iEdwsM/iUo1+c3XHBDmSU1Rq2MAruL1/cA1aZpA1S5d7IMKlNT?=
- =?us-ascii?Q?QVseLHJmFJQ/mQ9hx6Mkj103XvARFOigat0bnxkeL+2Xew81edryaOeP5fdH?=
- =?us-ascii?Q?/icGKXnMg0FY/5o73L5yTz5jEqhK2BhI/yAVrtz5bihv6Xy83ZxTB8Xpo42R?=
- =?us-ascii?Q?aqmZiebzVKgkVta+zBA1HEvWdG4ook0Pu92c0YrX9qE7hV0fYzY2UzEtviJN?=
- =?us-ascii?Q?6hpcW3PaSVwwUTMocqMQQSHlhL0ML54TZyqu7v52O1PlT7RDs4efebaYG0t+?=
- =?us-ascii?Q?4ZwFVafeDUhccrYVXYFy4KqGjrIR3DCe0ZUTKpIniO410k0y8DUchGq/i05O?=
- =?us-ascii?Q?JFB8C3k24CwZVdv7keZZHu6MhDuDNm3h53f0mRiJzaDpIl2P2ehgWvwoVoRO?=
- =?us-ascii?Q?oPf09w80ryiWKPHWPs1OHUvld+fve6ISO3m6OEUU5T8S5x7Gy/hd3LMv5PrL?=
- =?us-ascii?Q?qkcspGY7y8vSSRqtClZ+DRPqrYtw7hXvNLfMt63G0nB3jYIqnGgpP1z0qIEB?=
- =?us-ascii?Q?ujHAAFH1crIUws7C00XjHTFlYmV/UoRV/lwgXvarK/XKXMau/o8mlHfl4y+V?=
- =?us-ascii?Q?PdKO9/IKMHTvDEDO7IoGxMoqPYIBi1eVwt7SVP7Ay5lOK5kXvXv4Hg29n26v?=
- =?us-ascii?Q?w5pcRoxR/b01Om8CN/boKEhzyDftRQUtSMy9L3lDJSTt80YDOxPUyGRxiLuW?=
- =?us-ascii?Q?bvvC/pg2E4Jp+IH3NUfX7M4DzyJL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9/tYovh1Sd1Pp5AsYoyo0sVnNIob+XlG72pHIw05rRevClzz8gOQoTc0/Mg2?=
- =?us-ascii?Q?jbYlsR6T86UFEhb66QJMwbJ58vp5VpAj9jJrKk//LehJ/VFFqBndDErqeVSb?=
- =?us-ascii?Q?7/KE9JeSRxP1a8oHllJMae6lPoqcXU6h8402pLhWW9vCBPmqpQENfT+ej4fc?=
- =?us-ascii?Q?bRW5wxP9jbTmMh/relrVcb8Es1Gj60IxMJfGgqi0C4ykO9AIGxuZlam/p3wa?=
- =?us-ascii?Q?piHOJhxcPPSsHCiJJSw+NQi36bnEF4doFcmyliLGwtNRZCCWkYLb6M2STupZ?=
- =?us-ascii?Q?p9amCjJTFtUunRqDYiGu0NH8A6R4GAEnKju9/8c5arFQs7U2ItwMrZ6MaBBk?=
- =?us-ascii?Q?9Pb2KNmCr8M38CBe9UXgbHlsOIJnWPpkRnygSLUqNK7qNt8rlM3UjezeUqYv?=
- =?us-ascii?Q?vMA49cfBfQ8WJqGUvC4wumnY/0Z/E19QDDNHVngKvzMPg2PRZFVJCEVO1Wv+?=
- =?us-ascii?Q?i4TyoWHWJJhT+CIT2F2utqWIguOfmeBZ799RmZVCPPgsgKSoeORVUnuhFIwx?=
- =?us-ascii?Q?oYd0AuhThvpbECCK8CqeBwJumDoNi3QmjlBIRx2xdiG3xJK1iJ3qakPCD7+U?=
- =?us-ascii?Q?GYgTWz6ISLR06hIEHR5SuwI7v9DVQCFGJ4oA5x4+yLAnZeAxdyuxXXf6x8X8?=
- =?us-ascii?Q?IA5Ru52sQ7uJrNGsK64M+OyJ67ihWL3eqlXTblorbQfewFRbZZnGE4w821xS?=
- =?us-ascii?Q?DsWcflOisZFZrASO3Dq5sIhvzLH+xTGnEiVooe/7FGXwyMgHpZwflJZSD/FC?=
- =?us-ascii?Q?zRTHENdmSImwEY+bbsEf3tWofWQBUYN42fZfUvEbCgRmDsXcqMAOaygAZgex?=
- =?us-ascii?Q?K1QGIgSK6huN6bAC60jka4Yy5SP13b+qJ27AC+gZbvNIBPAvGvPj5F9dmNfT?=
- =?us-ascii?Q?DkRd2bRTSSBr4itTUjaCe6x3s/+O8ftFacLnZKEzlAFf2eIiKDz7Y5fa4HY5?=
- =?us-ascii?Q?XCpj7dFF31SpXvTT+IxmkmuL0NcxK2jroHMpX6KovSQMFGpKdXt+30Kccime?=
- =?us-ascii?Q?MSixvAqU8V0PhE6yB7oKOcj0yp+VKyOZneOz72EYyqz6nf1PVKjInPmXFg72?=
- =?us-ascii?Q?RkIomuVEJg5oDYd1/xs5d3BEHVNOl6C0PCngSEuCoIOGWKfgFwA36PqNJHIu?=
- =?us-ascii?Q?MBSsJSQs/q/kO8NQI1X+7a5wmzU+Cf2/zjEFJT6AQXvIRDD/SM3SrG/u88xN?=
- =?us-ascii?Q?yzvFoPRrOzkNYXjQdtA6dXB8BC+YzTEzGIWnjVvMQkMD6FDFvZfiF89XebOn?=
- =?us-ascii?Q?U2/Es4gDDh8at5xMfRg4Ihrhp4+MdOTI2/VJiylDKAiBaAH8UOGdj+ID13FW?=
- =?us-ascii?Q?OHPThQ4lJKhX8fQNcKB3Vk5+ezDB5onyx5VeKWrhSoJjANpukhU9iKwI1Oq4?=
- =?us-ascii?Q?eeyyWWLbg5kgPruhiTTNcXEjX2cHx8ywG4gjkg6rpzbQUyulqHgQ1mo1WCc6?=
- =?us-ascii?Q?m115uU9QJqdwqlFYwXGFiesQJoSO/oti4VYTBZ+Tzd5Jo8AsSrCbU4ZY/p6M?=
- =?us-ascii?Q?jyEXUfAeWr3dOp2WTndCuQ9lnt+74cvJpSOXEd5Ww/U2no6/HVOw0Y5TNE50?=
- =?us-ascii?Q?XVbGt1c0ZhqR2KTuGZc=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8864a866-d4a2-49c2-7c3a-08dd65588462
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 13:35:01.1663
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1r79D9N92GH0VlXTY8ANVxs948ij5kn6KL+g7m/TOO2O74FKbytqc+bBw2qwIdfd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6698
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] firmware: samsung: add ACPM debugfs support
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: andre.draszik@linaro.org, peter.griffin@linaro.org,
+ willmcvicker@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
+ <20250224-acpm-debugfs-v1-3-2418a3ea1b17@linaro.org>
+ <005424c2-7fb7-48db-b38c-c62f9f8b3897@kernel.org>
+ <696494b8-14e9-4b9b-bf26-2a94a915b2ec@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <696494b8-14e9-4b9b-bf26-2a94a915b2ec@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 12, 2025 at 12:59:00PM +0000, Mostafa Saleh wrote:
-> > --- a/drivers/iommu/io-pgtable-arm.c
-> > +++ b/drivers/iommu/io-pgtable-arm.c
-> > @@ -263,14 +263,13 @@ static void *__arm_lpae_alloc_pages(size_t size, gfp_t gfp,
-> >  				    void *cookie)
-> >  {
-> >  	struct device *dev = cfg->iommu_dev;
-> > -	int order = get_order(size);
-> >  	dma_addr_t dma;
-> >  	void *pages;
-> >  
-> >  	if (cfg->alloc)
-> >  		pages = cfg->alloc(cookie, size, gfp);
-> >  	else
-> > -		pages = iommu_alloc_pages_node(dev_to_node(dev), gfp, order);
-> > +		pages = iommu_alloc_pages_node_sz(dev_to_node(dev), gfp, size);
+On 12/03/2025 08:11, Tudor Ambarus wrote:
 > 
-> Although, the current implementation of iommu_alloc_pages_node_sz() would round
-> the size to order, but this is not correct according to the API definition
-> "The returned allocation is round_up_pow_two(size) big, and is physically aligned
-> to its size."
+>>> +		dev_info(acpm->dev, "[ACPM_FW] : %llu id:%u, %s, %x\n", time,
+>>> +			 log_entry->plugin_id, (char *)&msg, log_entry->data);
+>>
+>>
+>> I don't think these should be printed to dmesg - these are not system
+>> logs. You either return the contents to the caller's read() on debugfs
+>> entry or, if this is anyhow crashdump related, it goes to
+>> pstore/minidump once triggered. Or to ramoops.
+>>
+>> Depends what these logs are (so please also explain what do you find
+>> there in the commit msg).
+>>
+>> Maybe something like CHROMEOS_PSTORE?
+>>
+>> IOW, if enabled, this should go to ramoops/pstore unconditionally. For
+>> runtime debugging this should be returned somehow to the userspace
+>> reading the file. I think usually debugfs and sysfs is not expected to
+>> provide more than PAGE_SIZE data, so this second part has to be
+>> rethinked still.
+>>
+> 
+> This is a logging feature, it's not oops/panic related. These logs are
+> referred to as "block logs". A "block" is the start of a mailbox command
+> to its end, so it logs every ACPM mailbox command issued to the
+> firmware. After each end of a block, we see the state of all regulators,
+> frequencies and devices up/down extracted from the block.
+> 
+> These are indeed system logs, and using the dmesg ring buffer seems fine
+> as we typically care about the recent logs, we don't care if the ring
+> starts all over again.
 
-Yes.. The current implementation is limited to full PAGE_SIZE only,
-the documentation imagines a future where it is not. Drivers should
-ideally not assume the PAGE_SIZE limit during this conversion.
+I claim these are not system logs, but firmware logs, thus dmesg ring
+buffer is not suitable for them. Where do the other vendors log remoteprocs?
 
-> I'd say we can align the size or use min with 64 bytes before calling the
-> function would be enough (or change the API to state that allocations
-> are rounded to order)
 
-OK, like this:
-
-	if (cfg->alloc) {
-		pages = cfg->alloc(cookie, size, gfp);
-	} else {
-		/*
-		 * For very small starting-level translation tables the HW
-		 * requires a minimum alignment of at least 64 to cover all
-		 * cases.
-		 */
-		pages = iommu_alloc_pages_node_sz(dev_to_node(dev), gfp,
-						  max(size, 64));
-	}
-
-Thanks,
-Jason
+Best regards,
+Krzysztof
