@@ -1,115 +1,206 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812D8198E91;
-	Tue, 18 Mar 2025 10:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295477; cv=none; b=YEu1wp3ht2FF54zRURLyas/w6pkanKZnST/D51RZ9GbI8aN99Aj8lpBrdLzrbQUX0l9NO9VaiiHS+cTQ7WosqyYJ7d4koIR7pAZ8BkrdFQZ6319qdXvOW8Rkn3k0I2CsjIWH08VIcoPG1wRJAp3p+1iwHwbSoAxhKdKPrYPSTjI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295477; c=relaxed/simple;
-	bh=ZWxPY0B7EGIVdFzO8GxKTzEp2DolBgnuCP4upl6RN8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUusz/jKN/9Ky0R53EVv8xba6JAbRisHvnZLk2K+6wlK7xGnCOkGcgxskklDLEjAf0InBDCHC7KRZWtkHemlZVIfguW3YudGYN3CtEWfMrJYlnTT9lKJ17LBRBjBMjQ/pz5ROAkk0sewg2yX+WuLN3p8mMU7cHxc8fGR3MY/9mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ADA713D5;
-	Tue, 18 Mar 2025 03:58:03 -0700 (PDT)
-Received: from [10.57.40.187] (unknown [10.57.40.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC01D3F63F;
-	Tue, 18 Mar 2025 03:57:48 -0700 (PDT)
-Message-ID: <b956d9d0-d169-4deb-9b7e-cbec95363214@arm.com>
-Date: Tue, 18 Mar 2025 10:57:47 +0000
+Received: from AM0PR83CU005.outbound.protection.outlook.com (unknown [40.93.65.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E652620C46B;
+	Tue, 18 Mar 2025 12:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.65.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742301501; cv=fail; b=PLPMcbocRTf0baDhbeW39a8yawTYav+fC3aR7zYV3USdCghCUeY8pniiXR4EjEZH4e7tfNViyp/Tl2IFuH6gBHHyb74StqWolEsC7wAGNsviRiKdf9E7gHCxL4vW2uw7R8CgSAuZExnu6SJgBhFos1I7QJtpZWynxqmzrVIrYWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742301501; c=relaxed/simple;
+	bh=OY6DuL6eOO7eZn4f/kBRjW4wLqrwqh3nR/2LQ/8gpkQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XDIwhGirHeZRqR+eX8Jamt3aaLnE901PNYVggpyrEWTB8HeH5x+ccA5XJw9H48vCPXC8cjKTT7ypdBSap+RU4inBb+uO0Y13zNsa6dMhaDIIdUio6eVUGI0jif56LuUF3hHX0apWl2LAuNk1FD3waB7Hi1glLoTjCX1Uyfn33vc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jPSDI6/l; arc=fail smtp.client-ip=40.93.65.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jPSDI6/l"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KNV7X1chliQWFYFPR+IHUi4VaDj1hgDZGF27Xufk96ERkSFfBM2K9T4QBb+p/nD5cHOvBCvz7QYH425LzxBenfKUNsWWa4/zt8FCcumcPuE7qXW7ZhB8Wx0v9VLUabCWX9orQOUI51bunT/BwLFugkoMcf5aF7jX17JU+Cv1XIV4evyK+mXiVXHGkKlHiepqJCuAntUP8qnEj0hi7bJLbH+EGCpciwBBo30LkiYwY+9xMEFDsvYVdwLlcIur0/us/5bl3eJ9URk+5+7ATFJnqrqJ03g6rnBfcfm1SjvO6XUhqvJpUBsCuFFdMqQWyhZoTaRSm4yGNg/pzNWwMCTx6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KcwGUAOTTRcTaQa9YWI6M7ix+hqqQ9PXOut7XJGKFqs=;
+ b=hwT3pPDkmy7fqpkPmz3xl/MjSx92RCw3gjtGzBKgRddCdzTl0CQmf/J9w3qXhVMxDmlT/7nBFS+37bMqRSF9joR9Z9GMZ672fLxsKfe3rC47WE3tYguRsoSL+cl44saSgtFSr8PE+u1IrdH8qhyMj86hY6gH/MdmRBn0tEg09QGAd731UEE/VHz0rN1Zpc86W4flgD6E8CpXnlB1q3eAd7p5YTRkXdyDmalP+n705h62j8q1CdEGc7bz7bbYAsAofpevKJ3eWBQW6Hzlomgu/dqnXSeB4lpuPzJHuVSb1sH601KEv8at+fGyHdDhfOHEmhUxFk62bITKzmGyE3eKxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KcwGUAOTTRcTaQa9YWI6M7ix+hqqQ9PXOut7XJGKFqs=;
+ b=jPSDI6/lA+WabRs/fEWhchvfUkRvrfmA12MuOuLKMW597XY2KV1Sk9coH4kPmsdglF3G2mNp0Mjahgz3jy10rWIDYifO0EXRk5pyootGJ0RxSbp82dqByiR/7KJu1ByZ0Ol0wmUtOh3j5jFQvSuLJue/iGD0FoHVdM72XnGAG4CvHlNUb5Ak9/iMv0oS01SgAXvE+vTYACsDxWuuz7SsTl19RgK+ZNERypnzbgT7MC6fjqJZLHvgigPEkTprbnEWfmNxMJItep+3WSgsXhSZR8iktlowy+5C96SD6dWslYplK7Qm9F3QnPA+HeOkSvTeLSbAJzo6fN5sXlpRGMrqLw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM9PR04MB8195.eurprd04.prod.outlook.com (2603:10a6:20b:3b7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 12:38:16 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 12:38:15 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: "krzk@kernel.org" <krzk@kernel.org>, "lgirdwood@gmail.com"
+	<lgirdwood@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>, "brgl@bgdev.pl"
+	<brgl@bgdev.pl>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>
+Subject: RE: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+Thread-Topic: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+Thread-Index: AQHbl8aNtQhQNM9MgkKKKzIX+U7Uq7N4r1yAgAAjdTA=
+Date: Tue, 18 Mar 2025 12:38:15 +0000
+Message-ID:
+ <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+ <Z9lJETLh2y27934q@black.fi.intel.com>
+In-Reply-To: <Z9lJETLh2y27934q@black.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM9PR04MB8195:EE_
+x-ms-office365-filtering-correlation-id: 04485906-9432-4fa7-3522-08dd6619c131
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?OsXyRh80swJidBizcGkodnHt3IfScGzmI5EFJ9koyuiXorzFyQuZRS219ddl?=
+ =?us-ascii?Q?tudpl9z/ivmnk+FpC5bz/PcLtuRzCO+rGWdFByH1kXTwvgZLls8vY0kx/vd9?=
+ =?us-ascii?Q?JGyff7eHrgySaOXODsk+WAw+2WokW5mVqFYQL/rUX+rR4oEr+WJGsOrlxc4Q?=
+ =?us-ascii?Q?cl/BWHP+YmyB8NJeo0Mcbod98eGnZX4dtmqyE4lKdPjwJvFvqKdGQHn/xQKx?=
+ =?us-ascii?Q?6WjcQz/3lq9f4D6X2FSxHekq/j4OHNOHvfOkE2SDjjkMNcMVif9zoQnZAK5e?=
+ =?us-ascii?Q?LNWceRIwLh5W57EhuqEhlCyjT/mZXgjg4KYPY6IUuEvvxa1xkz+DtUqQeiP2?=
+ =?us-ascii?Q?/OZxA0FVoXHYQLW71SSHEGEt0nnw5b9pYTWBWf1Vy4x56v3TJ3qzGkMdAXQK?=
+ =?us-ascii?Q?kXaJhrYDtmbeCM2nNkqPrrpUZZQCMz/mXHr865QQZO3Os5+dKajU4IM8qEom?=
+ =?us-ascii?Q?QgQMlG4fSkksMLvpdUQoYHGmx3DOc+d5mqd9FJDlWQQ8mLmQHhlp2UpAuZs8?=
+ =?us-ascii?Q?/I1kcWse3DTESNFUb07YiYKwK9uzlK9brYQCrI81rRBQva3kiiQwBQZjdhCa?=
+ =?us-ascii?Q?fJIwYpGBtg6pOq50a5bbQXn0QX7qznHtxCy+mSTchRiYMFGWWYFZjcMCOf98?=
+ =?us-ascii?Q?Su5xzRlQWItHcrQoqtctl55qjJSDeZx4PRcxVqhQ/0LzIbvsRzkmIcq/1r5u?=
+ =?us-ascii?Q?9GKDRro42BQBpy3UtWzh5aHwN8t1uZ149a9Z4+WiREc1PzcAGiWC2+V3y7qp?=
+ =?us-ascii?Q?W6ZSbprsXuJPdLJDiK2QcCw7hkrPo/AR+78cKVV23QBUZ9x1NZd0HVbF0ZoI?=
+ =?us-ascii?Q?RsPzmbD/vs4Hjbva8PSLfeTEeN3lcAKbYR8TFXdV/BZWc9rI3oQiPn6NvxaB?=
+ =?us-ascii?Q?ZFukW+ayPiW5bIK3DP77U6SQm90JxUn4QGIjBeWco6npnRZDnS9LM+Da2v4f?=
+ =?us-ascii?Q?Nw8A5ydD+9A33+yYja2Mgreg9D3U6IcCpf5XCUVH9VkZEC3Awk3imayfVJq4?=
+ =?us-ascii?Q?oHz1FvFnZ1+h2udbVPZY09bkfuJHylQudQjj+Da0CPH3lrmt8nN889EtV3fE?=
+ =?us-ascii?Q?hLpb9BUxGPk1JcPzDmSWt41hBbtVQdT98l3pl/BwA+yNzE86K0kQgEK5NDkK?=
+ =?us-ascii?Q?FRloqhyUV3ypgloxSoTPbLZRwyJuB7wrwrXUP7GCf/HULjjEoft1s9CKN4YA?=
+ =?us-ascii?Q?clP/sKht/O2oG8PE5dEuTe3d9KdgIeFOPk2wYKWIWJbz7CkxDG1q5SKAhiPS?=
+ =?us-ascii?Q?nVcfVB+kRU7BU0S7ipfMSPWtDq5A63JWcAoTlw4vfQkfpyF2IhuMjReuDkmR?=
+ =?us-ascii?Q?gZ4XkIVw1PRnh1X/qCWabt7Ch0Io+bABsG44LdrJuncdWDXuSM5ShbB03PL2?=
+ =?us-ascii?Q?f8XaEZF6vBTS982UCXGP7P2+TN1B5clYIg2iI8Jw32/ier2qrZvEiDQtsYEi?=
+ =?us-ascii?Q?euSnjf6sU4OAi7tUT53s4BDSRpfd1OCv?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Kmysx404uKNvY/tt9NP1Q4UqUkKt/2TDC+90k6/phuoB2pZrjfqz/hikc6Xz?=
+ =?us-ascii?Q?LOi7S3uW7YseTU6/xNZ8SjG/QV3xlymOPhuLQLNd+sEZAlF5aV+MsqXsEhbl?=
+ =?us-ascii?Q?PUmOeOLl6g5WkK21uloCGVBxLWJWKYhcfXEZtKkHoISxjy+WkHxmnvMnc4Ox?=
+ =?us-ascii?Q?PyTX44sLMEWzXbylHeNOBNCKkW7LqsHRWRMVzz+4lHeB3i/GCc2HRJRq8f1t?=
+ =?us-ascii?Q?TNU8Tpme8gqbSpdxMNwFPVAnoigt7UVgtBUS0Qqq/4HJvuoFzUWjYR/GxBj/?=
+ =?us-ascii?Q?Ah0UDgIiPlq74FIlilQS14jjwUWJnIdZOhGU4KjqwV1rhiBgmi8CdYrjoaep?=
+ =?us-ascii?Q?SurzAKnFdldo8PgRgxgqU7S32YE8CSBE8RLCQkJnrwU+bHxHxiEs6qy1XEpO?=
+ =?us-ascii?Q?gHph4wNzLdklBw102KoLzD7QIA1Xbjh2b+pGOSHrOVa7RzDouaMnstLxVdbe?=
+ =?us-ascii?Q?KYeOhHjvk+h+plvZkNQYxFFtbQcJysSschgDhk8ooOGn1yfQTpXLvgg9vTBI?=
+ =?us-ascii?Q?WCSQ8yUlgfdvZf0UTvjupiME1OTJZ60H7+yZwyH2KCtPOweMEfZc26SgEHUv?=
+ =?us-ascii?Q?uUqlBSckmOkjtxwYR24gHuSGYZPHCwp6drFn96uoKdRTw8dh66q1mH8PoUWK?=
+ =?us-ascii?Q?jFVmY61e9h3SYXbKjrSf2z9bq769CuP32XireQW3wbo+a7UYhI9K0xPaBmyw?=
+ =?us-ascii?Q?2HOzcEuogBSbNUEA7GBObpR7YuXbnQ3P67ujxNWvRUufxNZ/afhXKRCF21ia?=
+ =?us-ascii?Q?wXlyhpz81LPw04d1eZUvCjpRhZyvmHjnxK00zt8jOm15ZMu2w25Uhw/JRBH5?=
+ =?us-ascii?Q?cUsMCXJpoFxDXczAFqCDE0Qtsi6sYbesBf6SIgSUBSFO2a6rDjo4+Uiqim4C?=
+ =?us-ascii?Q?3ABfXQroFAgXPCsAvgMnlBew7nF4Dv7wPMbu2ZwMD46vip4HMVc7XYkWNRUH?=
+ =?us-ascii?Q?WRAgOyP8XZGY35UoUx7Du7pF2ymH/3gWehZcr4gHNfWcpebNK+2kigs2gHRn?=
+ =?us-ascii?Q?+yp/0byPGiRmXiLIGoCIKYsZOWZGTOsA0vuByXhkJU14XwVZJo/ggsMYqxXQ?=
+ =?us-ascii?Q?KwGILSbguBY+KfXY0YgIHkXMffv8KhQKe2vcua15ntFvJ83C0L9dkhaHbC81?=
+ =?us-ascii?Q?gf18AkhfV+N/1vOJWdNzvhjLuMujanTAOK+QZN9H3ARQx3nWca+NRScnDlCN?=
+ =?us-ascii?Q?dnDcNBcWCh+bm5hKfUrYXTbyz6nyNfrv+cPDMVqDoLgOdEM8wiC8jRVHGmtG?=
+ =?us-ascii?Q?yCZM1lzEWgGO6g4LRJ1DFsvU8SmxvmIXBUql1OikxfFdmvDnnDafPmryUnoN?=
+ =?us-ascii?Q?IpgKW5/UU/2BIb2wcSg9N5j/CH41LY48/MwmIRM8Iad6wjsXg3XZeFlNAG+V?=
+ =?us-ascii?Q?8eYH0YHOAALnUlBedsxfdTs7fxGxASr/WgZNcOgfCDqA0geAqYue2bq1rtOm?=
+ =?us-ascii?Q?u94F0zVoq8AxNzYD0GjgWEDZnLgP7HqDW6cuLGZJjiphycYncBmCrZHjz5v8?=
+ =?us-ascii?Q?oPArqOqeN388EiAVtZ13XR9p5sMMPQyhd/TFMTwWTJnrwOoiddP0a64sEIzq?=
+ =?us-ascii?Q?aQgRjNpYWRfqsMyOgVI=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 20/23] iommu: Update various drivers to pass in lg2sz
- instead of order to iommu pages
-To: Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, Lu Baolu <baolu.lu@linux.intel.com>,
- David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>,
- iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
- David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <0-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
- <20-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
- <Z9GFFBvUFg7a9WEg@google.com> <20250317133500.GC9311@nvidia.com>
- <Z9lO-viudk9YGakl@google.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <Z9lO-viudk9YGakl@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04485906-9432-4fa7-3522-08dd6619c131
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 12:38:15.7324
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JWmubZ5IB9CB7AIY8zc6JjWf2yB6gtjS1rmgcWmzL4mzSiHPw1hf6xZFm/cGCshYOF8zSNUYeKB1PLk1JDyRxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8195
 
-On 2025-03-18 10:46 am, Mostafa Saleh wrote:
-> On Mon, Mar 17, 2025 at 10:35:00AM -0300, Jason Gunthorpe wrote:
->> On Wed, Mar 12, 2025 at 12:59:00PM +0000, Mostafa Saleh wrote:
->>>> --- a/drivers/iommu/io-pgtable-arm.c
->>>> +++ b/drivers/iommu/io-pgtable-arm.c
->>>> @@ -263,14 +263,13 @@ static void *__arm_lpae_alloc_pages(size_t size, gfp_t gfp,
->>>>   				    void *cookie)
->>>>   {
->>>>   	struct device *dev = cfg->iommu_dev;
->>>> -	int order = get_order(size);
->>>>   	dma_addr_t dma;
->>>>   	void *pages;
->>>>   
->>>>   	if (cfg->alloc)
->>>>   		pages = cfg->alloc(cookie, size, gfp);
->>>>   	else
->>>> -		pages = iommu_alloc_pages_node(dev_to_node(dev), gfp, order);
->>>> +		pages = iommu_alloc_pages_node_sz(dev_to_node(dev), gfp, size);
->>>
->>> Although, the current implementation of iommu_alloc_pages_node_sz() would round
->>> the size to order, but this is not correct according to the API definition
->>> "The returned allocation is round_up_pow_two(size) big, and is physically aligned
->>> to its size."
->>
->> Yes.. The current implementation is limited to full PAGE_SIZE only,
->> the documentation imagines a future where it is not. Drivers should
->> ideally not assume the PAGE_SIZE limit during this conversion.
->>
->>> I'd say we can align the size or use min with 64 bytes before calling the
->>> function would be enough (or change the API to state that allocations
->>> are rounded to order)
->>
->> OK, like this:
->>
->> 	if (cfg->alloc) {
->> 		pages = cfg->alloc(cookie, size, gfp);
->> 	} else {
->> 		/*
->> 		 * For very small starting-level translation tables the HW
->> 		 * requires a minimum alignment of at least 64 to cover all
->> 		 * cases.
->> 		 */
->> 		pages = iommu_alloc_pages_node_sz(dev_to_node(dev), gfp,
->> 						  max(size, 64));
->> 	}
-> 
-> Yes, that looks good.
+Hi Andy,
 
-Although for completeness it really wants to cover both paths, so an 
-unconditional "size = max(size, 64);" further up would be even better.
+> Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+>=20
+...
+
+> > +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2)
+> & 0x1);
+>=20
+> Can be simply done as !!(temp_index & BIT(2)).
+>=20
+> > +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1)
+> & 0x1);
+> > +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+>=20
+> Ditto.
+>=20
+> ...
+>=20
+> > +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+> > +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1)
+> & 0x1);
+> > +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2)
+> & 0x1);
+>=20
+> As per above.
+>=20
+> ...
+>=20
+> Also the commit message doesn't tell anything about the existing DTS
+> files.
+> Do we have this device described in any in the kernel? Do we have any
+> googled examples? Why I'm asking because often the issue is the
+> incorrect setting of the polarity, which needs to be carefully checked,
+> esp. for the voltage regulators case.
+
+
+Under arch/arm/boot/dts/samsung/, a few dtsi files have the property=20
+with results from output of
+`grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
+
+Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
+Others use GPIO_ACTIVE_HIGH.
+
+The current changing to using GPIO descriptors should be ok per
+my understanding.
+
+Not able to find any public datasheet for this pmic (:
+
+>=20
+> ...
+>=20
+>=20
+Other non-replied comments are accepted, I will address them in v2.
 
 Thanks,
-Robin.
+Peng.
