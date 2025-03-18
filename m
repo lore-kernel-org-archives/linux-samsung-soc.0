@@ -1,98 +1,184 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CAB2080D0
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2025 10:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03926206F18;
+	Tue, 18 Mar 2025 10:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292673; cv=none; b=ASFNlBT0Dt14qm5Wk8JRDSwudDqlGThVt6Ac2LnNB/PcedMw5W/WgMTasOnrHfGAw9CwkPPDmx56FhDaM5XmKMczE5QhYtDGswIugtGrxLIWXbxlPJyA3vSkbch1/kdOuFIazmEdtuo75/f2XItECNlnd+T4htMUeHxPLMncv3I=
+	t=1742293275; cv=none; b=hUiw55ounf8E3KiklVQ2UMelqCc+OSyt5WmMIYeovCrRFCDiM28iqZsLoTDXvx7avyfmjXJlJ9lVzn/+APGhfWdOD3KRvxptOvme4rpEE1v2VhO1rqCcyx40XYj+p787WBS4QMJSbocEvAQWTDdLmoPGERSpXmUssLLxUz3Sl6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292673; c=relaxed/simple;
-	bh=yKQqeVn0btUdtS+qPzT5gdetvTkb3UZO+pyG1ZeZ+mo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bz4gLnqbB+TiDf6Tna83phcuKxpiB1Pbx/NUCYLT9rpBNHRSLtE2JMElGKjvWOW1Oq+UaLs/UjoeuiDxoXljoBVKHiJMuotNu/xrsWsBqRKa0x2H66kVi2rvFDfl8Uk0TDEgjGddybs7vanSyYKf/fKfcseoaLA0aJa1sLYokC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UXikAOnb; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742293275; c=relaxed/simple;
+	bh=1gPhGppPtEU1UQcFojFgftE6iivSmorJZxJbxThHDHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+65c5nOprfCQNz5zuUD0cg/prIB8RWj03GdeP5GkBljV8kc0o1/dl0c/bihdSnn4+6iW/ejc4GY8TUyA2B41SIDA3X+fQIMUyZHo8JvxY6UCwTYacsd+mC7z5iGb0NJtXFuvQ2baSGU9fEO+Y9mYU7ZaHoLsbFxGozEJYQi66w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FI2zPbc1; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UXikAOnb"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5498c742661so5970494e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2025 03:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742292669; x=1742897469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qVUpvtTBLHRQ7RrqjSGWWvP5ToHEThWrbkH7ADEWZ7k=;
-        b=UXikAOnbm8TH+gFEHGyCBEvUGM/HaqI6axbdWnHLn3fyHyBj9MoFp9LMdEq6pirp9X
-         x6kOfOqeediFjUcwlkumwAklWCmmXh3A7Cy11obEaf0AEhcqLAdP+o6nP1rFkyKejdjz
-         UIoq8tsWfsTz9xaJPRV1LEUp8ARev/47Id7BQtooL/c5eX+otuZUqBCSCcbK1Y8o+Yau
-         unW0JUcBVa7UK23weMWrk68j5p24dBoeRgzqXj4VXf58Y2DxeLFT0HbQLc688Nlje4L+
-         QsLG09iy37qXf4xU89EiJsNwX6Tlhx5TAogG6gtb8AiPIeapfNDp/e+zHufjFmcEKzyq
-         /7Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742292669; x=1742897469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qVUpvtTBLHRQ7RrqjSGWWvP5ToHEThWrbkH7ADEWZ7k=;
-        b=EFbkFeWZNiOP/dmIDXv9VQMegFNYlztVwrZfrE91ARiO9cJV0ipejpjUaWeAOpmRJK
-         YKKBapIBUynzs0LcvA1o21HF24oBDnG3Q4f1TbYSdBBA666sLHu3mxt58/HVZBVaV5vk
-         wvpLlw1Ofav6L8mMvfJGrV1yB2e2BjSQrOuta5AwVMbI51/3gAeFZYdeE/a1yhqZuNnJ
-         LYWtSDp4enK8fggambFd+qyHoYCWAnTDqoK5AcFQFY2ycBGAl4YiMejZQRA94sGcohK0
-         geHG5vpLjtDuSLMbXzqw/1KIf1ez/BsG1L83anggowI2vMWwZIrBER49Me8cgcbonreT
-         i/8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWE9DPMYnkr8qR6Ig/lEXUxPgQYUH/lYtrghc2QbATjvX1J8QG9HnMfV2f6CYtlFxIGJ42dGytb4Kl5eH/3/uV+4g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzowXSokDVQkTmKZYgcNWP8FBrR5+KO7LzPEpFfYzRmJ7usFy1u
-	UkVvPtJvVbgdtQa8ylf90+9bmL4QiQq35v53bOgTxI0drnoULZ9PQAW4OV++eWydOoG4inYQ0ME
-	sqBSektkd1+1se5LxlhMdjRCAJMS3f3T93odAwg==
-X-Gm-Gg: ASbGncssLQ4/OXq7DxPsgIKXrfr7wXir0pKownEwERAsGBHiAIbCM4aVvqayDBfUWm2
-	AmUDeQcJn5Dn8FhFusVNGiH9ahONe5Y63ISawRtZxh+WRkcVICjkEctvhWvh/9eTVmsWrIkRDeK
-	9LZN5fRNoooPju9bOVCYEb7vZkfw==
-X-Google-Smtp-Source: AGHT+IGaqrncYYUr4sfyRfLFzOEWIoUn1i0mOansd4z1qNbCCAzVBUKQPVLdXhHFFByp6tsLCBEDJwkAWjabnBVbVpk=
-X-Received: by 2002:a05:6512:3b99:b0:549:b0f3:439f with SMTP id
- 2adb3069b0e04-54a03ba664emr2114093e87.25.1742292668868; Tue, 18 Mar 2025
- 03:11:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FI2zPbc1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742293270; x=1773829270;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1gPhGppPtEU1UQcFojFgftE6iivSmorJZxJbxThHDHA=;
+  b=FI2zPbc1dbBUeWC7GwsY0jGqDDcZN7ZflzDrENI/l0Rz489TqX5Mcp+h
+   xdcNASrQH6WnrZKt6X4O97FLhc+btKEJVlSkaIMqxRoE8R3hqMPtnOE1h
+   aY2U0/0r2Daxdhxf/Pv+tptkM/cGQJLtA8sdKKl2E+5chym/H2z+MpAMI
+   fo7B6bvgg8JoQf8vk5I8qf3BD8vMSLUtmIFDrhPTy1NAW/7ZLlqysa+ad
+   nXJ4zJETUk97d48ra2mN5PRT9OoramSwDE6qDn4DesMYvTq4oblTIdAJR
+   fbI7EGKtYdUf8rBMh5M9weSb+VMauqTsPzH4c+ZTSUc/756WpGHp22v7v
+   g==;
+X-CSE-ConnectionGUID: fmiK3fNrRlWK4+kjdwF7Og==
+X-CSE-MsgGUID: U5HMXTtqSwWLdxZEfP6TjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54054880"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="54054880"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 03:21:09 -0700
+X-CSE-ConnectionGUID: mZ2ne34kQa+pJONi9B0N6A==
+X-CSE-MsgGUID: UuTlPGtySMWV9KA/Icg2Nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="122382913"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 18 Mar 2025 03:21:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C1E7A17B; Tue, 18 Mar 2025 12:21:05 +0200 (EET)
+Date: Tue, 18 Mar 2025 12:21:05 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: krzk@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+Message-ID: <Z9lJETLh2y27934q@black.fi.intel.com>
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316143108.17045-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250316143108.17045-1-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 18 Mar 2025 11:10:57 +0100
-X-Gm-Features: AQ5f1JpKJfFS7YVV371lRPx1Y2xc562AW9pLo6dBt2VW6OJo1Hlc7eGeR9sMzjI
-Message-ID: <CACRpkdac0zZtB=85Y+Fu=TYwf9qTjNog90-P4SBjQ-oB7X5Vag@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.15
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Mar 16, 2025 at 3:31=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Tue, Mar 18, 2025 at 01:27:09PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Update the driver to fetch buck_gpio and buck_ds as gpio descriptors.
 
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
-s/samsung-pinctrl-6.15
->
-> for you to fetch changes up to 701d0e910955627734917c3587258aa7e73068bb:
->
->   pinctrl: samsung: add support for eint_fltcon_offset (2025-03-11 20:37:=
-29 +0100)
+GPIO
 
-Pulled in, thanks for taking care of the Samsung drivers!
+> Then drop the usage of 'of_gpio.h' which should be deprecated.
 
-Yours,
-Linus Walleij
+s/should/is/
+
+> Take commit 84618d5e31cf ("regulator: max8997:
+
+s/Take/Based on/
+
+> Convert to GPIO descriptors") as a reference to make the changes.
+
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+
+Can be done via --to parameter to git-send-email.
+
+...
+
+> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+
+Can be simply done as !!(temp_index & BIT(2)).
+
+> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+
+Ditto.
+
+...
+
+> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+
+As per above.
+
+...
+
+Also the commit message doesn't tell anything about the existing DTS files.
+Do we have this device described in any in the kernel? Do we have any googled
+examples? Why I'm asking because often the issue is the incorrect setting of
+the polarity, which needs to be carefully checked, esp. for the voltage regulators
+case.
+
+...
+
+> +	const char *gpiods_names[3] = {"S5M8767 DS2", "S5M8767 DS3", "S5M8767 DS4"};
+> +	const char *gpiodvs_names[3] = {"S5M8767 SET1", "S5M8767 SET2", "S5M8767 SET3"};
+
+Add spaces after { and before }.
+
+...
+
+> +		for (i = 0; i < 3; i++) {
+> +			enum gpiod_flags flags;
+>  
+> +			if (s5m8767->buck_gpioindex & BIT(2 - i))
+> +				flags = GPIOD_OUT_HIGH;
+> +			else
+> +				flags = GPIOD_OUT_LOW;
+> +
+> +			s5m8767->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
+> +								      "s5m8767,pmic-buck-dvs",
+> +								      i,
+> +								      flags);
+
+i and flags can be located on the same line, or I would rather move i to
+the line with the con_id.
+
+			s5m8767->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
+								      "s5m8767,pmic-buck-dvs", i,
+								      flags);
+
+> +			if (IS_ERR(s5m8767->buck_gpios[i])) {
+> +				ret = PTR_ERR(s5m8767->buck_gpios[i]);
+> +				return dev_err_probe(iodev->dev, ret, "invalid gpio[%d]: %d\n",
+> +						     i, ret);
+
+ret will be printed twice. This should be as simple as
+
+			if (IS_ERR(s5m8767->buck_gpios[i]))
+				return dev_err_probe(iodev->dev, PTR_ERR(s5m8767->buck_gpios[i]),
+						     "invalid gpio[%d]\n", i);
+
+> +			}
+>  
+> +			gpiod_set_consumer_name(s5m8767->buck_gpios[i], gpiodvs_names[i]);
+> +		}
+
+...
+
+> +	for (i = 0; i < 3; i++) {
+
+Both comments as per above apply here, in this for-loop.
+
+> +		s5m8767->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
+> +							   "s5m8767,pmic-buck-ds",
+> +							   i, GPIOD_OUT_LOW);
+> +		if (IS_ERR(s5m8767->buck_ds[i])) {
+> +			ret = PTR_ERR(s5m8767->buck_ds[i]);
+> +			return dev_err_probe(iodev->dev, ret, "can't get GPIO %d (%d)\n",
+> +					     i, ret);
+> +		}
+> +		gpiod_set_consumer_name(s5m8767->buck_ds[i], gpiods_names[i]);
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
