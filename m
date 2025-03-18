@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE9621420E;
-	Tue, 18 Mar 2025 19:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B4F1DF247;
+	Tue, 18 Mar 2025 19:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742325831; cv=none; b=LppWeA4aWnUhKEuNnjUOK6ym9FG1f3c6tyawtwXRm4XVmMhY+sA3C9uuilRq29x7D029WuZqg1ZZoJU68mdIz2p5mI+jA3WCjNed8yx7CmZJn/XSX+ZsWs5Brbc7mfc/Ic4IASFgyjBJgrLFU/whMPJeLa+eaPGjPlSMID5qhyQ=
+	t=1742326113; cv=none; b=IUJWPmdsmTWrkCBlgHlA/ADfTdzJCZRP8ukT8CpJdArCV84J7eflPLdiW18blFxTsTyybyqa4szBlK93bT3t3jMK5LiYfFP8k+VlDdQrYHkxXnbByAIsd1CTW2KTO8fnHlMO08cHB281qRi6SPVpCwi8PaYIFmFz1jxCn1oDkFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742325831; c=relaxed/simple;
-	bh=aEaSGfzM9ylAw097c2HqkTs7HwbH+PzXcdB1WlxBoug=;
+	s=arc-20240116; t=1742326113; c=relaxed/simple;
+	bh=7LYIJU9zrIeD7qsda5EeEl4d9QdiYjSeLPX6TOyN8g8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bn21p0iqCmlvyfveh4s6Ntu+eziLArvFY8DjK2OwxOrUfOqVlxmJM856lr3gj0M+1bWslXtblIhOuG182uS9p5VMync/TgfSVTMmvQrUFOizEdpXYYCDcCo7it257d7DYhzRm7QzMckTl/bKcYR7pv6CqYkXF0xUY8OqFvJYCL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3eJiPil; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=U8ObTWn9Hm6/yFdorfNOUfYlO31GMM3n560YN/iz9QOShl+1TYDeS3kNsOdiMns9WArtBsPBzp5CnXtlOA9Dqa944iHWhAKlQOYjCfpZS+hs3uAJy5YqQ2C6TQAO4LNt4IvZFsz6GhgKR6F0HNNnCi0cqhzAMiCup6wfuypPXQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANb1eiUm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3eJiPil"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CCBC4CEDD;
-	Tue, 18 Mar 2025 19:23:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANb1eiUm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657A8C4CEDD;
+	Tue, 18 Mar 2025 19:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742325831;
-	bh=aEaSGfzM9ylAw097c2HqkTs7HwbH+PzXcdB1WlxBoug=;
+	s=k20201202; t=1742326113;
+	bh=7LYIJU9zrIeD7qsda5EeEl4d9QdiYjSeLPX6TOyN8g8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f3eJiPil8JHds6pfyZPMkQujCckTxMnqcqWu3Ld1+OJBYSUnSQoMvn7KzMMpzWPaP
-	 JHSoURDgjzi5BUwvhFkrp20XiTb50Rlc+Nx2KGKl1YVr7qDXfjW9KwSCbouP+nlRnO
-	 Ezd9BEEu+0R7Na2lsBPnjMEqHFsxF77R7q12LLW+YLO3QM2giHCA690qgRtzX8NcZl
-	 OSo6gVCNt3ydw0UFafxSZ8BYNWAeLxsYU1u1Y4nfAQ01wWSXrCHPdcIHn9TlXNL8oH
-	 ICKRcUlAHZ1kaLBicWT4eiVRFsz4YeEcPD7v5aZ2CaRbXY+uJL2BDVlkFhYf6K9p81
-	 AP702Jzq34oVg==
-Message-ID: <801a9754-cd57-42c6-9569-16d9a99bfed9@kernel.org>
-Date: Tue, 18 Mar 2025 20:23:44 +0100
+	b=ANb1eiUm4N1G9x3vbVWxGgqTcYRI24OwlIH8eP79gnwO8lrYGDLYwtUByJpyVYHSw
+	 oUO3/hytdx1DlFTDl+pMGJVsIpcZOdvVUv9VBwDzR+b4+mYY3BFXkHznNBz4LPL7E/
+	 TaaJpuP66U+hngKaXysTWmI5Mw8Y6mpsxOrRQaZw+hPbH42uBfm29hUYIsPDJuIf8m
+	 wSAWOiRsUeqy+3SqAV3hIAWmDq4yrAV4ztcKPboJwT5DQHKx/5Z3HKWISpr30glM6x
+	 qm1dVGqIj2RFcoDlE89TKx9tVOUmtdq3ieBcvtm3pAcT2mC8/WQ1UeaKtT6snBTUzj
+	 EDoL/JKeakfAg==
+Message-ID: <40eb446b-6531-4a73-b47b-55e609fb4d64@kernel.org>
+Date: Tue, 18 Mar 2025 20:28:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] firmware: exynos-acpm: convert to dev_err_probe() in
- client API
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
- <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
+Subject: Re: [PATCH v5 1/5] pinctrl: samsung: add support for
+ eint_fltcon_offset
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, kernel-team@android.com,
+ jaewon02.kim@samsung.com, stable@vger.kernel.org
+References: <20250312-pinctrl-fltcon-suspend-v5-0-d98d5b271242@linaro.org>
+ <20250312-pinctrl-fltcon-suspend-v5-1-d98d5b271242@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,44 +93,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
+In-Reply-To: <20250312-pinctrl-fltcon-suspend-v5-1-d98d5b271242@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/03/2025 17:40, André Draszik wrote:
-> dev_err_probe() exists to simplify code and unify error messages by
-> using its message template.
+On 12/03/2025 22:58, Peter Griffin wrote:
+> On gs101 SoC the fltcon0 (filter configuration 0) offset
+> isn't at a fixed offset like previous SoCs as the fltcon1
+> register only exists when there are more than 4 pins in the
+> bank.
 > 
-> Convert the remaining dev_err() in acpm_get_by_phandle() to
-> dev_err_probe().
+> Add a eint_fltcon_offset and new GS101_PIN_BANK_EINT*
+> macros that take an additional fltcon_offs variable.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> This can then be used in suspend/resume callbacks to
+> save and restore the fltcon0 and fltcon1 registers.
+> 
+> Fixes: 4a8be01a1a7a ("pinctrl: samsung: Add gs101 SoC pinctrl configuration")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  drivers/firmware/samsung/exynos-acpm.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-> index 48f1e3cacaa709ae703115169df138b659ddae44..03f907a95c6acd66d89cd8af2f52e7c6dadf492a 100644
-> --- a/drivers/firmware/samsung/exynos-acpm.c
-> +++ b/drivers/firmware/samsung/exynos-acpm.c
-> @@ -701,12 +701,14 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
->  
->  	link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
->  	if (!link) {
-> -		dev_err(&pdev->dev,
-> -			"Failed to create device link to consumer %s.\n",
-> -			dev_name(dev));
-> +		int ret = -EINVAL;
-> +
-> +		dev_err_probe(&pdev->dev, ret,
-> +			      "Failed to create device link to consumer %s.\n",
-> +			      dev_name(dev));
 
-I do not see how it is simpler. Three lines (statement) is now 5 lines
-with two statements.
-
-What's more important, dev_err_probe is supposed to be used only in
-probe context, while this could be called in other contexts.
+Please rebase on next and send incremental patch fixing previous, if needed.
 
 Best regards,
 Krzysztof
