@@ -1,67 +1,67 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AF31D90C8
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Mar 2025 15:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E131DDC36
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Mar 2025 15:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742398237; cv=none; b=uG/+rDFcMXcjVsaXmHPGedzuWBWYCHjft25eNGQGbdEFWN8JnmT3SJf6tFERwJY95yyDLDHjkHZsaddSFr3GEALXiixw9g8GgfTG3QJnQ8pPbgd1oXWHDPCATOfEczjhZZxy0XRXVmGpm0KKOp09NH9gC098eikupZ8zZuv1u7M=
+	t=1742398238; cv=none; b=So7ztc7WGa8qVseSq65gbyZnAtep2MR/dZ2T2tbnLDulufYpsHZm89E9JEfj0ybt6shiBv+dYK1hSP8ZWnjjXDcPdpPbIVBap8hfm/MvFRma64Z9uB8s6rSN2KU8yHvyDFtS0obeHNvPlfck59AztilPGT0N6Xab5h/l+1tO7eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742398237; c=relaxed/simple;
-	bh=Jb70gmFrO795pq6l4lVz8akO7b7EaG1IPq1SXiJvoDo=;
+	s=arc-20240116; t=1742398238; c=relaxed/simple;
+	bh=3SI4bC7ybL3N2FRvbuwPacvlxHEWeD8IolpWQSN1KPw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NeLzoML7haROykzP6paCdXYTgZr9tFn/hnCiWJYjEgawf7qzmeJuRnwCL+UnC5PZOzSmBlxKJ1gsRRJkQJnVVt3uMwA5kBCwSbFAGLjJX2ZmPJoXrPV3HmxtL3Z/edVHq/w+GISddieVSYbOoVaf2fsM1HsdsYvq6pS0PaPoTD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yGa41IL3; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=tkke2+f6L4EnlQhW+9/FW0p4oKIw2b8CRwH3YoPLqkCuC4BmESnmfTZXKBO11olekyc7lPDfWFiq/Et1e3EgTIIPA/h1ZeJmSJYhFvZGwS2ETIEOl29LRnpDqU2EJyR8b7hdOzmAQmNT4W3bdJ7DhxFQ+dJuIx0aOVKA9kuUGB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lwz2QgCP; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGa41IL3"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso32438445e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Mar 2025 08:30:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lwz2QgCP"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso32438875e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Mar 2025 08:30:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742398233; x=1743003033; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742398235; x=1743003035; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xvO2MTCEp0zB1O4o3Tqb0ypgsyFb3UygQBlr47/GWsw=;
-        b=yGa41IL3dgwVabl7wjk5518EIUb3wtjo/7fGb3XYBGidBM30QdEC0t/DCtPqDN3CUs
-         e1IocQbb4RR2GgOrAioIQzukrREpCQwnU7NlJRmMJhxA+kNaPnH5kD5rN4LLhN+bcr5W
-         5soKtWBj0v6y0YYJjQiVhubTC6AmeN8sPLPeBgCyqIAv4GXPT62A9ffhrkiqSqCjRqAs
-         vj56JZblloOHmGb2QM/h1XMSh4CBEE3bqLC29aSep3ymVkfV0HI27hPh2Ij9m4gq9p3L
-         f7DwnCjN7ntwI69FbUgayBATDfWcM4K+uUOoE25JMfvxCdaJ9BV2BOCFTuzEOTvpJagM
-         zJVw==
+        bh=MFAUALr8nAtye3+ZWjuqCa8ix3cqHAZ7WDjEfM5Mp+M=;
+        b=Lwz2QgCP1fjGoso0X3obFi84svUz3wxpvDYJClyOKcINmg5oCz+CeXEIkCe+NMhhGQ
+         2/qSltYMBzqhhpUltVXwVq/ibTUe/rzR0YmCpTxPez6H8ZEXLeFPDWfGDqAKJM21keSO
+         +iyy6283eg8hhB6y7acMUFnR7cQ57voY0RFiQNTmKX8gvPYXhILT9augvTauZ1A1PBBj
+         S2orWYkMrbkplGpcH3nyLy6FhrBfEYRAmI8bEjv47H584asEIaPciO/K+NZJPLc8B2dW
+         C+akQoz1IkUjMJWCdKPeSRdl9jmxrC1yGE7y4tgJLIgeD8OAuI3/7JFDJ4PSCwNDh4pM
+         N1RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742398233; x=1743003033;
+        d=1e100.net; s=20230601; t=1742398235; x=1743003035;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xvO2MTCEp0zB1O4o3Tqb0ypgsyFb3UygQBlr47/GWsw=;
-        b=V0N+4wf7ry/yxXqZFr4OcVyAQ0Nr4Ec99Lvzf19VYj/eaKXWzF6LGafE5MQAJxveNl
-         ThUUxyPeaJWpSRCoYpBsWLgRe4/N/lLNghbTTzsFx6OFWhWrFURcb8wnCUNKOCoSohL+
-         VFpHVPAU2AGOpNbNJXvfxp50AquB88d6ICOTjbUkRWPMpqWXRJb2P6R28LTkTsNC1MTf
-         QjeKuxyPmjlRmg1uXBNuvOcalbG/FIw8vOP40xEQTW0cX/8YRIym2rjwgKr6N1GkAK9J
-         4rjS6JIhSuDvdgMjYzpBQNkfP884PCcD4e3zdwle9WLRf72En0V7YnrKYos3nIJuT0jl
-         dPKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnNZ7YwOW9AxN4yYH6qiYX6/CntCyNznnEnbbcp+1neFmzigi7OcN6LQoKyIStPEeck9LpQLVtGnIiP0zOmVlPew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsFQ9VvEGjZeAtjp2Zh+WcI5lA2YXCAkzl1oP5eOtGCWYEaAZs
-	NoIgwagoNANLXUNSBgtnKyDp9B+ty+Z5D+z9zJniLXzOf+B6gX3LrP7TKPAVBQ8=
-X-Gm-Gg: ASbGncuJoG6pMGeH1HMSHAk4Zk6WKRuao+mBUYEeLKUZPYu6se/NWzvM88VGanYGtT4
-	vQi/1I2wiwej6kVHS8XSYz0n+k2PFEkQgiLOrFMJ5ZKmSbXyVhTT0dsHgxWWlpZv4ppSmQ1zwyb
-	evYn0eYXzy7NDCMpC4I5qR/LOsW/Z42s62Dj/EeckXD2yaQpbcnVDLy1FkWHJw9yoa5AHs/r5ji
-	jqRC4TNTO74vmVWVH3uslSqb0BizIVGSmycnpXjAKfflQuAX0MoavS5RXYxlP0zZnDUADSqzVcE
-	gnXzkP96yz+dGz+5BNP4ezfsKYDAJr0R+aIYOXqE9nUkZKe2G8A7h2AQFiHKB/jGrWalBe0F79I
-	c
-X-Google-Smtp-Source: AGHT+IEck0zvlF4mA6c/4a1WmAWWk69t4E90tBTeEQDggA6Dvagy19sFXvzCIF2qVQD5IG+HaMrWDA==
-X-Received: by 2002:a05:600c:4f86:b0:43d:42b:e186 with SMTP id 5b1f17b1804b1-43d4378b49bmr26833505e9.8.1742398233118;
-        Wed, 19 Mar 2025 08:30:33 -0700 (PDT)
+        bh=MFAUALr8nAtye3+ZWjuqCa8ix3cqHAZ7WDjEfM5Mp+M=;
+        b=JLF6zb4qiVlhSIpogkYX2dZ5395V2HQcH3mDRfP3QKRvRRsXxmN+JrUNldpUPsy+h9
+         AAI3Ry5Rulyx8mAsqqwP9EN9Nv88KI7B8Rp18AWGSQTYp3fXWee89vC1utSmwe6oqd29
+         WqQaeCeTQeG5PFpwfKZMTC0VgPXzU1knTAe5Qwu8CctCCXwNu27E7JCQLMHjQF//6qBj
+         Q0oPRBfUNhWOLHOCxUCrE9wRZqLOSy8n0jBCMZfFituTsQWQcBhFAzxcNbrSyPCzYUl2
+         beAMNtaENGkjI2UmvT1/lkvRW38O4/25MURiOA2mHLyyuM5UDEjk9bKHEKhYN6zdVJVx
+         9z6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDM2PTGcxiZ5KGlND0NnFcPlf+JOxn1mkINQFN2/XQfoVpK6NmT8WcOxjWC7eRZJ6X9o1AIY4Lqv6/TabyllRWVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxRZS4buGaL98qao1OTZgPNmKdEFRWdqBEnm2lOEO3mvJCV7fd
+	dRDx9rcwn9EYEhxFE6wN5v9LGPTB9JbWWxxK4DB6zyKqWTNwDXPQVhowl4cPVhI=
+X-Gm-Gg: ASbGncsudW8oYCoObTJipM16F5KVRBdHl8qnyVjbBvwqt4rgV748uYrnDOwVp/kBvXX
+	P/No41OKFOx21lYnlwFvVsXLz7GP7JqTKr7KlOnCO54cHdy5rJNTXfMmhULZMrIxxnlhq9XEoGJ
+	H9oqOfiGqKE4n56Yzu+NLSaSy68XYGRCO7l9MpmJK28LXiZMYY9hj+Li1CS6tPWMhQJt6pUW1fi
+	F6BH3BZhtpFhoZo0Nie4gSvf4aTmBqiAhVsHRSvM5JISIlW99oPt85WT9EevqC5cSOLj5lob8pT
+	auy3P4ULZZuMCGfav2qV8ptSMvPb2nfliFinTv/zDEMlVkvR7gs/ElzqZKkxX3swukCUliumGdJ
+	LPs6NcZb6ctg=
+X-Google-Smtp-Source: AGHT+IEHXtC0EIKTh5C5yDLtKnopzR+kKj3o5MrwB8zEIjbuESCbAMxGj1QGIrHhGz+ceqR8jXdneA==
+X-Received: by 2002:a05:600c:3509:b0:43d:79:ae1b with SMTP id 5b1f17b1804b1-43d437a9541mr31446495e9.14.1742398234649;
+        Wed, 19 Mar 2025 08:30:34 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([212.105.145.136])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43fdaca8sm22590635e9.28.2025.03.19.08.30.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43fdaca8sm22590635e9.28.2025.03.19.08.30.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 08:30:32 -0700 (PDT)
+        Wed, 19 Mar 2025 08:30:34 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 19 Mar 2025 15:30:20 +0000
-Subject: [PATCH v2 3/7] scsi: ufs: exynos: disable iocc if dma-coherent
- property isn't set
+Date: Wed, 19 Mar 2025 15:30:21 +0000
+Subject: [PATCH v2 4/7] scsi: ufs: exynos: ensure consistent phy reference
+ counts
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-exynos-ufs-stability-fixes-v2-3-96722cc2ba1b@linaro.org>
+Message-Id: <20250319-exynos-ufs-stability-fixes-v2-4-96722cc2ba1b@linaro.org>
 References: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
 In-Reply-To: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
 To: Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -86,94 +86,56 @@ Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  andre.draszik@linaro.org, Peter Griffin <peter.griffin@linaro.org>, 
  stable@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2684;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1228;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=Jb70gmFrO795pq6l4lVz8akO7b7EaG1IPq1SXiJvoDo=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBn2uMQZjsaOtKjGo7lobraBsTsDeP+7mpJ30581
- SJ5trpIFZCJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ9rjEAAKCRDO6LjWAjRy
- ukYxEACIl1Ea5bUkcLZGzc6ZA0OO/h7+Se39yd6wIuAMUSpmswvUV3Qb0bAsYwxo3+GplmGD4NC
- GE0K+EJwXJuPeUC/bM5ws5vvl3Ju9VuaX1q4tdZQsTbxv+b6Zkh+Xecklhh0JbEe5a+M9cB0ck1
- kcSm4RaJv/yfB/lfK4pKQhEBXXnORI/uRSVOylkEJt5gQydTgTACqAfeAdtvjnkRortPSkWWouh
- 16SPfnBNlmtgTfvG0oqjMupL1ahKe7xKGiCZiV1X3XMIiQpHO3/wAphY6NQXltTyPWK327QWomm
- /nlVikpDZgWmlV3R3bqfvMZYe4XLX1nYDy2gwi3Nt6mQUCLundOtLwLz6l1M+1T++1nZsaD7fD+
- 5Vw7NKpj1PHyr5Yo4XT9B33Ee/qzk41FZYpKyAecvFYKOfL3/yXTk90uWYYSUJsL3E75OVNuhhf
- hneoGmsPvUdFJj5PULxpS41lQJoZX6Iy6vCHrD0dzYZ1LvJj/6MWlbpT9FMl4Gd1QdM6D+L/+VE
- xZgKHQ0B6p0p82l+KF4ix/ccLMRt9zCxMgSHLekM23BMkxVjNl6QBKV1J9+iZoZM8JyucNtpKNp
- wvMMpaHQI2jWkUPHCVJKfszB/96IMvpxk2DJk5m19jR8BRYl0hdfT4NtIC2kUY2/R1BTJmispT3
- F7l81PGxEltoqgw==
+ bh=3SI4bC7ybL3N2FRvbuwPacvlxHEWeD8IolpWQSN1KPw=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBn2uMR7Gt6GMiUHhQ9tNeB1ryvfLXf0f6hKBg7Z
+ AIUaxYvoPqJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ9rjEQAKCRDO6LjWAjRy
+ uhgZD/44yhmeYZZzFKVFFjq28rha6NHqeREb1/qoxysPC7HrGnjsYlpYk7SLWHWWcyjtwhG/gMt
+ O1lVZxIDu8c7fSHM8+Z80aiXDkcsmEARfOUrD7rvRCij6LS61K5swgmRoawpJUwVvovpsoSW0g5
+ ABdLqjCx+iqyCQMidJfzV25UAHL4ymc/kVXCFeiVTBnnTndKQIathuUUcIEm/D2p1t+jRbp1ouj
+ psGLVwlAg4zg8pKpXLOUq9qzcfjC45NB8RsIepMMqtHXKaJISGMHXLd5hVa/TNrEeTA/cPK42UC
+ gzzSTMDl+u11SC4wzQJW1pGjPumuXTS5esnkGul/VvG0fkXHdp3YuGBE3rnUUwFqjGqOmH5yoXs
+ Y70vVU28KnxP2Fnhhl1lONhMkR2STrszNmC6huHjeZtsh4TFCSmXHmLJh0xpisMoQmlN/30pOcl
+ RRN4m1DK7nUiauvbcCVaPdj5P6RmbOYJtDqUCqON9M/eQo7wP4JYkQZi5YQHNXvOx1YZ7jHq5jc
+ mfPzh2Tq80p/hi0O56Kgz0Ehub3xxNXIikH/CGYwVORuo/Gmg8U1YYHcER1HhltRaAp1JQPrDw/
+ c1f/EAeGILL0PZnv5PKrNi3kkPLIv224YLEkUbnDCaWb9v3eW95YQeb7mFh8wcQGHiwEF+mqTl6
+ hymvqaPAm/4Doyw==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-If dma-coherent property isn't set then descriptors are non-cacheable
-and the iocc shareability bits should be disabled. Without this UFS
-can end up in an incompatible configuration and suffer from random
-cache related stability issues.
+ufshcd_link_startup() can call ufshcd_vops_link_startup_notify()
+multiple times when retrying. This causes the phy reference count
+to keep increasing and the phy to not properly re-initialize.
 
-Suggested-by: Bart Van Assche <bvanassche@acm.org>
-Fixes: cc52e15397cc ("scsi: ufs: ufs-exynos: Support ExynosAuto v9 UFS")
+If the phy has already been previously powered on, first issue a
+phy_power_off() and phy_exit(), before re-initializing and powering
+on again.
+
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Cc: Chanho Park <chanho61.park@samsung.com>
+Fixes: 3d73b200f989 ("scsi: ufs: ufs-exynos: Change ufs phy control sequence")
 Cc: stable@vger.kernel.org
 ---
- drivers/ufs/host/ufs-exynos.c | 17 +++++++++++++----
- drivers/ufs/host/ufs-exynos.h |  3 ++-
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ drivers/ufs/host/ufs-exynos.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index f393d42a659f821225e67e3e5d323478456ca3af..61b03e493cc1ddba17179a9f22e5b59ece02458b 100644
+index 61b03e493cc1ddba17179a9f22e5b59ece02458b..34e16e198830d086cbdb6cb0b027ca92687b2ae6 100644
 --- a/drivers/ufs/host/ufs-exynos.c
 +++ b/drivers/ufs/host/ufs-exynos.c
-@@ -214,8 +214,8 @@ static int exynos_ufs_shareability(struct exynos_ufs *ufs)
- 	/* IO Coherency setting */
- 	if (ufs->sysreg) {
- 		return regmap_update_bits(ufs->sysreg,
--					  ufs->shareability_reg_offset,
--					  ufs->iocc_mask, ufs->iocc_mask);
-+					  ufs->iocc_offset,
-+					  ufs->iocc_mask, ufs->iocc_val);
+@@ -962,6 +962,12 @@ static int exynos_ufs_phy_init(struct exynos_ufs *ufs)
  	}
  
- 	return 0;
-@@ -1173,13 +1173,22 @@ static int exynos_ufs_parse_dt(struct device *dev, struct exynos_ufs *ufs)
- 		ufs->sysreg = NULL;
- 	else {
- 		if (of_property_read_u32_index(np, "samsung,sysreg", 1,
--					       &ufs->shareability_reg_offset)) {
-+					       &ufs->iocc_offset)) {
- 			dev_warn(dev, "can't get an offset from sysreg. Set to default value\n");
--			ufs->shareability_reg_offset = UFS_SHAREABILITY_OFFSET;
-+			ufs->iocc_offset = UFS_SHAREABILITY_OFFSET;
- 		}
- 	}
- 
- 	ufs->iocc_mask = ufs->drv_data->iocc_mask;
-+	/*
-+	 * no 'dma-coherent' property means the descriptors are
-+	 * non-cacheable so iocc shareability should be disabled.
-+	 */
-+	if (of_dma_is_coherent(dev->of_node))
-+		ufs->iocc_val = ufs->iocc_mask;
-+	else
-+		ufs->iocc_val = 0;
+ 	phy_set_bus_width(generic_phy, ufs->avail_ln_rx);
 +
- 	ufs->pclk_avail_min = PCLK_AVAIL_MIN;
- 	ufs->pclk_avail_max = PCLK_AVAIL_MAX;
- 
-diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
-index 17696b3768debd641188b5089585b6d303de7451..a345809af79dc528ad518d3572fe8be034341ee0 100644
---- a/drivers/ufs/host/ufs-exynos.h
-+++ b/drivers/ufs/host/ufs-exynos.h
-@@ -231,8 +231,9 @@ struct exynos_ufs {
- 	ktime_t entry_hibern8_t;
- 	const struct exynos_ufs_drv_data *drv_data;
- 	struct regmap *sysreg;
--	u32 shareability_reg_offset;
-+	u32 iocc_offset;
- 	u32 iocc_mask;
-+	u32 iocc_val;
- 
- 	u32 opts;
- #define EXYNOS_UFS_OPT_HAS_APB_CLK_CTRL		BIT(0)
++	if (generic_phy->power_count) {
++		phy_power_off(generic_phy);
++		phy_exit(generic_phy);
++	}
++
+ 	ret = phy_init(generic_phy);
+ 	if (ret) {
+ 		dev_err(hba->dev, "%s: phy init failed, ret = %d\n",
 
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
