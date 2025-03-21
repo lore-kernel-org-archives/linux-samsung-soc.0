@@ -1,188 +1,217 @@
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E2219D067
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2025 13:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561A018E2A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Mar 2025 07:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742476686; cv=none; b=VKvnqf2KJFsBgE0nYO7TRu0g9uMdnKpA1MAWPNzE8W5PAt7pzSCw22V+VcpHicudBA4Bu9feMEUUm66p8c+2vwBT8sGJ4Z87kgbIGZ95TwPphrmmhlLTfHm8gWCOWl0b32rtqhK8MFGLOGCIfk0p6WCfIfnRlgSM+HyMv7O4Uuo=
+	t=1742542521; cv=none; b=owQ4xpxnDLu48oRoUr8ADBfG7KkgRACMF/dkESAAfE7plW6PJAXe3vboQ3FhSlGeuZCLit6dkoPe6jY0vJO3wpP00AAv7dY2EwZB0vcifF4Ti5JvOYXPQO2RqV9e0ZWmkNZmuS+1TXTEdPMZ4pReDv1gqBRsJe/2mKR5F5DAJV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742476686; c=relaxed/simple;
-	bh=21DqpUGodccfEY/ZfoWYzc7r5EAcAprM67s5qKGMtuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0x5O0XS62i88xyTWNo8QNLGWElN35pDkVkpVVWHbqEaoJ7EtPIZ/4rQcbohGLOU/ZB1qPbH1HKD/wPbmFcbjzZWGUExqrBRgW+ZltfQcQvI0Oytm5PwsHmvskC0eCB/xS4ZB8X6MeJhm+r9y4z6QOfzQTc3M+wZAXQFlvsmO3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P+w94z9M; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742542521; c=relaxed/simple;
+	bh=hE1ZbLJtOcGq8vIQnfdUNQUhHalbIHMTnkMNeWlLdtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=IrDWJHK2XaqtRNF0YOP2yQJrr7RyVVpmmggpichYyPFIm3dOP0JeAFNoirGcZ7lGIZw4w+lvdweR/mxyr8Exv16h5fiPQXspPBJxJxyXB1HkspA4F1epMnsC6ABxxeKCfV7iTEnxKGW83RMqscI4csWyxRJsIXEvGJo0DiRbK9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Wk2T5wi6; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+w94z9M"
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-601a4e037a5so327884eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2025 06:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742476684; x=1743081484; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O12nadUsyPqdQjwO9PDc6yNGkFbb7eWIfLGfjGH84dE=;
-        b=P+w94z9MX246o72PiKE+6ES6ISinsCbyniE0GZznGZE+ph5oqsbeBHmwehsquowj3L
-         oMt3Fp1qwSUYea/w2wOI7F80gMoZ26MGM5n+M2yidKXbtH//Vv2FJeLSkCQ1quHbBVmF
-         SbWOyi1dfakZuE3pFthNYysL2R52iRCY4a+HPhWY9Q5e8MthfRw4mFGLY/KGp8bf5MdP
-         xMFE0Dj3BWXlV4lqN+1QIs+u87trw0R4V7xDZU/fq1CS3nz6FNOMqZ6So0F1HCOgIePD
-         3/at7KkIvMN5ouNrFeyP5zN8vfROrp8m2kgs5UTDE8yl2tx/jTaPzCZlSp+7uyeuRcf9
-         yeIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742476684; x=1743081484;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O12nadUsyPqdQjwO9PDc6yNGkFbb7eWIfLGfjGH84dE=;
-        b=QorBOq9pxeXgS+x7BvHeU4Shw7vvlQ73bGcS1biuGg8kpJX8026+qPybS5Rm34tf3W
-         VoR4pHrJXatkRkiwS0iVinrCZ3HvfT8Ydx693tbKIKC+u9ER1KqFRk+sDwji5Qr0ft16
-         wNcSZALPslWvhWC/xfxpcKH8qXsp6cRmR2tTS0el1ISM1cz2o7+zGFQfI3leVYq9OcnW
-         uOI3l0jBKgeMsYbN54sIkYdZrbYNKtEhaGcQQGvf8IeKu62XhlYsAEjNT843l+bmBTNv
-         MZJS+vZYs3JyC2wI3EVUBH23wJBjkr4mRFXVBD28SCZFDJ0KSOzs16fv01t6dQ4nVN9v
-         WQHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXabT1LgQWeHrOv1v1/8zvfcOTS//MFIVYioIiBjrsJpb9RruNVfk+ANjqZT38aBWOG3gmEMtW3lTiC0AY/anRrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTmtarjbAPjxp3DE1zyEi+SFmCjsxyNVrfpF2rfQD8oUFRr3Fr
-	8KTYiioP+HNJoAqfINTCjg4TkknzpHL0OtYGnMZ/87jtE3gvs/fGPnt0mJjoqb/WgpTvA7XgzsR
-	At2BCYC32RFuuRw12Lg8H3EszEPahKmGQaU56Pw==
-X-Gm-Gg: ASbGnct8DYNNWOGBia0779dKFwgW3/RXLNsE80dgCIvoeMKvKY3D6+Q25wEetCaSvoI
-	VY8BI2pPTySyYOr2cjmNuytVMnGgL9be141KVd09AYgvV3UNxTiJd4IyKxUAuo7BmiowF5yIi0O
-	z5TuWJpftugyeXUJAnY6oZM9h0sSIaJbWYpJKQPTg=
-X-Google-Smtp-Source: AGHT+IG6aW5Q3y/RnifIpaEjK5ULxNior0oiMNhU0YpdBqJfjRMwWIEcYmRkJPDhVpVmvt+kqwBSuw6+FqH3T0ivSDo=
-X-Received: by 2002:a05:6820:610b:b0:602:2bd5:121c with SMTP id
- 006d021491bc7-6022bd5268bmr902498eaf.3.1742476684008; Thu, 20 Mar 2025
- 06:18:04 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wk2T5wi6"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250321073516euoutp02c682bd0f98c77b59c4f9c654d2a6d757~uwS_2k8t01688616886euoutp02W
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Mar 2025 07:35:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250321073516euoutp02c682bd0f98c77b59c4f9c654d2a6d757~uwS_2k8t01688616886euoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742542516;
+	bh=RNT2K+m2Kh9/ubJRwFMhjD+xp03X8faLotIucQNMpuY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Wk2T5wi6fc8xAAP+Ppr/A09DLPnizHp67Vho323sdruyK2f2C9jAs2MVpgnbXVHOy
+	 YzyqPghiW3uBrL2+F4NFNgPDGIakpovvtYE0eRP6YnYq2XezDWI28GzgznwX0dgKmd
+	 EUkylQWz4DJWNluj1an7QeSulTSMU8A05VvPbsz0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250321073512eucas1p11fdbdc3bb672b6d124a475eca48b8a29~uwS6y3A103203332033eucas1p1M;
+	Fri, 21 Mar 2025 07:35:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 20.C5.20821.0B61DD76; Fri, 21
+	Mar 2025 07:35:12 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250321073511eucas1p11f3d9353bf52d6b9649cef6ebcd9d158~uwS6VJS080774107741eucas1p1J;
+	Fri, 21 Mar 2025 07:35:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250321073511eusmtrp2efd006670188e1b672aafd657dd59bcc~uwS6T9Ob80551005510eusmtrp2J;
+	Fri, 21 Mar 2025 07:35:11 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-54-67dd16b0f438
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 6A.D4.19920.FA61DD76; Fri, 21
+	Mar 2025 07:35:11 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250321073510eusmtip2a2a7ebc40cc109cc0d2489a526313c41~uwS5bWPkf0030000300eusmtip22;
+	Fri, 21 Mar 2025 07:35:10 +0000 (GMT)
+Message-ID: <33f85cd5-8387-4358-b2d4-29f8877a7e2e@samsung.com>
+Date: Fri, 21 Mar 2025 08:35:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312-pinctrl-fltcon-suspend-v5-0-d98d5b271242@linaro.org>
- <20250312-pinctrl-fltcon-suspend-v5-2-d98d5b271242@linaro.org> <5ff8d26d-65bd-4b99-90b1-ae01f0ee9eb7@kernel.org>
-In-Reply-To: <5ff8d26d-65bd-4b99-90b1-ae01f0ee9eb7@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 20 Mar 2025 13:17:53 +0000
-X-Gm-Features: AQ5f1JrZuFp1AMZqE3M2XuIbs3bdr_wxjPoi_Wqa3MiIrQKNXKZzHtSEuRK2C30
-Message-ID: <CADrjBPqPRR+yH=B_pSFNMTqqvQaHZPckw=OaeGZa34icb0WbFw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] pinctrl: samsung: refactor drvdata suspend &
- resume callbacks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
-	tudor.ambarus@linaro.org, willmcvicker@google.com, semen.protsenko@linaro.org, 
-	kernel-team@android.com, jaewon02.kim@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2] media: s5p-mfc: Support for handling
+ RET_ENC_BUFFER_FULL interrupt
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	krzysztof.kozlowski+dt@linaro.org, linux-samsung-soc@vger.kernel.org,
+	gost.dev@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250305055308.111300-2-aakarsh.jain@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIKsWRmVeSWpSXmKPExsWy7djPc7obxO6mG7TNY7V4umMmq8X9xZ9Z
+	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jotlm/4wWSza+oXd
+	gcdj8Z6XTB6bVnWyedy5tofNY/OSeo++LasYPT5vkvM49fUzewB7FJdNSmpOZllqkb5dAldG
+	z8KXrAUNihX9Wx6wNjB+l+5i5OSQEDCRODFtFnMXIxeHkMAKRokdL06yQzhfGCVuTZzEBOF8
+	ZpQ4cu4qK0zLrzUvmEFsIYHljBJt+4ogij4ySsx4dosJJMErYCdxccNBFhCbRUBV4sTn38wQ
+	cUGJkzOfgMVFBeQl7t+aAbSOg0NYIEbi6aQkkDkiAhMYJa5/PMUC4jAL3GWUmLXoOdhmZgFx
+	iVtP5oMtYBMwlOh628UGYnMK2EvcfDOLHaJGXmL72zlgD0kITOeUmNByhB3ibBeJxe0tULaw
+	xKvjW6BsGYn/O+czQTS0M0os+H0fygG6o+H5LUaIKmuJO+d+sYHcyiygKbF+lz5E2FGi6c8n
+	VpCwhACfxI23ghBH8ElM2jadGSLMK9HRJgRRrSYx6/g6uLUHL1xinsCoNAspXGYheXMWkndm
+	IexdwMiyilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzCVnf53/NMOxrmvPuodYmTiYDzE
+	KMHBrCTCK9JxO12INyWxsiq1KD++qDQntfgQozQHi5I476L9relCAumJJanZqakFqUUwWSYO
+	TqkGpowJhU7rTaL4DVOP68gsXaw9+ehDp7Za1rISs0Vn2KY0LJOfJyucdXnCQuOmjstmP9Zo
+	/v96P/f4VB6Tp18Ez9r6rZPdHbWsvdPez6bi9nLW1KNCpyNmec1fyaidtXHGJ23HdaXenlcm
+	7/GPM2JLDK3WmZV+S+vASVXjHdnvNDIypdMnb16zwv9E+z3lkobdcfPKZG0NnrvtehCvlHTh
+	SKDJDvklfFdZ4vYlVbcLbV915Pm0JT6chY5Ou61/JLftOfpVr/BP65RLP62uqSSpqjXontiy
+	nfOV4K3ofPmWq7deXpr99lHA6pxbKckFDv3W37jt9ZKEog93nvz/0W7KKdPq3yufrT0udvuW
+	a0rhNiWW4oxEQy3mouJEABAoJ5/UAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7rrxe6mG5x5rGjxdMdMVov7iz+z
+	WBzavJXd4uaBnUwWF2feZbHoe/GQ2WLT42usFpd3zWGz6NmwldVixvl9TBbLNv1hsli09Qu7
+	A4/H4j0vmTw2repk87hzbQ+bx+Yl9R59W1YxenzeJOdx6utn9gD2KD2bovzSklSFjPziElul
+	aEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MnoUvWQsaFCv6tzxgbWD8Lt3F
+	yMkhIWAi8WvNC+YuRi4OIYGljBIvV7UyQyRkJE5Oa2CFsIUl/lzrYoMoes8o0fryCxNIglfA
+	TuLihoMsIDaLgKrEic+/mSHighInZz4Bi4sKyEvcvzWDvYuRg0NYIEbi6aQkkDkiAhMYJU6/
+	m8EIUsMscJdR4l+vL8SC44wSz+/+Z4VIiEvcejIfbBmbgKFE11uQKzg5OAXsJW6+mcUOUWMm
+	0bW1C2qQvMT2t3OYJzAKzUJyxywko2YhaZmFpGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT8
+	3E2MwNjdduzn5h2M81591DvEyMTBeIhRgoNZSYRXpON2uhBvSmJlVWpRfnxRaU5q8SFGU2Bg
+	TGSWEk3OByaPvJJ4QzMDU0MTM0sDU0szYyVxXrfL59OEBNITS1KzU1MLUotg+pg4OKUamNiv
+	LP25JnSJYP7R2SXrryx+XLshUzBUQPJQf2Bxp++Mp28spsy10OjX1/lT+Tp3Aa99p0Du59jb
+	nTzGfpfPXEzyDC69v+D7nc7wEOG/rznPCpXW+1/lOdQ9h9vPYPpMG36nFqttPInaJ1je6dpk
+	P/j7oKrYTL0m+U/Tywuf36xXn1i8JO3T9msVb0MXfhNmlkvy0A/dJv6i55eUXPGH4hnX5h7a
+	feJTBZtx2t+X4SeeLHYXYQ36urXp2ZW29QFdx77Lf5Aw+hg2eXPwFnMjaf5JK+W9jmv+ejIt
+	m3kHR8Kt2V2GfYwWLzdt+D3pm8e3mQ+0fyV9u5kXnvskcb1yzJR3u7w3OLz7nWtbk3Y48qsS
+	S3FGoqEWc1FxIgCkdWUJZgMAAA==
+X-CMS-MailID: 20250321073511eucas1p11f3d9353bf52d6b9649cef6ebcd9d158
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250305055908epcas5p222e192cc21512ac178543445184a2519
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250305055908epcas5p222e192cc21512ac178543445184a2519
+References: <20250305055308.111300-1-aakarsh.jain@samsung.com>
+	<CGME20250305055908epcas5p222e192cc21512ac178543445184a2519@epcas5p2.samsung.com>
+	<20250305055308.111300-2-aakarsh.jain@samsung.com>
 
-Hi Krzysztof,
+On 05.03.2025 06:53, Aakarsh Jain wrote:
+> When output encoded buffer size provided by userspace
+> is insufficient with current encoding parameters, it
+> leads to RET_ENC_BUFFER_FULL interrupt which was not
+> handled in IRQ handler.
+>
+> On handling of RET_ENC_BUFFER_FULL interrupt leads to
+> NAL_ABORT command from host to risc which in turn leads
+> to RET_NAL_ABORT interrupt. On receiving RET_NAL_ABORT
+> driver clears workbit and VB2 queues for cleaner closing
+> of MFC instance.
+>
+> When user encounters "Call on DQBUF after unrecoverable
+> error", userspace should close fd and restart with larger
+> output encoder buffer size.
+>
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> changelog:
+> v1->v2
+> Patch link: https://patchwork.kernel.org/project/linux-media/patch/20250228065952.14375-1-aakarsh.jain@samsung.com/
+> Fixed build errors reported by Media CI robot.
+>   .../media/platform/samsung/s5p-mfc/regs-mfc-v6.h   |  1 +
+>   drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   | 14 ++++++++++++++
+>   .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  1 +
+>   .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c      |  5 +++++
+>   4 files changed, 21 insertions(+)
+>
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
+> index fa49fe580e1a..075a58b50b8c 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
+> +++ b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
+> @@ -45,6 +45,7 @@
+>   #define S5P_FIMV_H2R_CMD_WAKEUP_V6		8
+>   #define S5P_FIMV_CH_LAST_FRAME_V6		9
+>   #define S5P_FIMV_H2R_CMD_FLUSH_V6		10
+> +#define S5P_FIMV_H2R_CMD_NAL_ABORT_V6		11
+>   /* RMVME: REALLOC used? */
+>   #define S5P_FIMV_CH_FRAME_START_REALLOC_V6	5
+>   
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+> index 5f80931f056d..e764cab2485c 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+> @@ -739,6 +739,20 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+>   		ctx->state = MFCINST_RUNNING;
+>   		goto irq_cleanup_hw;
+>   
+> +	case S5P_MFC_R2H_CMD_ENC_BUFFER_FUL_RET:
+> +		ctx->state = MFCINST_NAL_ABORT;
+> +		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
+> +		set_work_bit(ctx);
+> +		WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
+> +		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
+> +		break;
+> +
+> +	case S5P_MFC_R2H_CMD_NAL_ABORT_RET:
+> +		ctx->state = MFCINST_ERROR;
+> +		s5p_mfc_cleanup_queue(&ctx->dst_queue, &ctx->vq_dst);
+> +		s5p_mfc_cleanup_queue(&ctx->src_queue, &ctx->vq_src);
+> +		goto irq_cleanup_hw;
+> +
+>   	default:
+>   		mfc_debug(2, "Unknown int reason\n");
+>   		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
+> index 3cc2a4f5c40a..86c316c1ff8f 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
+> @@ -141,6 +141,7 @@ enum s5p_mfc_inst_state {
+>   	MFCINST_RES_CHANGE_INIT,
+>   	MFCINST_RES_CHANGE_FLUSH,
+>   	MFCINST_RES_CHANGE_END,
+> +	MFCINST_NAL_ABORT,
+>   };
+>   
+>   /*
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> index 4cf12f33d706..356adfddcfcf 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -2229,6 +2229,11 @@ static void s5p_mfc_try_run_v6(struct s5p_mfc_dev *dev)
+>   		case MFCINST_HEAD_PRODUCED:
+>   			ret = s5p_mfc_run_init_enc_buffers(ctx);
+>   			break;
+> +		case MFCINST_NAL_ABORT:
+> +			mfc_write(dev, ctx->inst_no, S5P_FIMV_INSTANCE_ID_V6);
+> +			s5p_mfc_hw_call(dev->mfc_cmds, cmd_host2risc,
+> +					dev, S5P_FIMV_H2R_CMD_NAL_ABORT_V6, NULL);
+> +			break;
+>   		default:
+>   			ret = -EAGAIN;
+>   		}
 
-Thanks for the review feedback.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-On Tue, 18 Mar 2025 at 19:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 12/03/2025 22:58, Peter Griffin wrote:
-> > Move the call of drvdata->suspend()/resume into the loop which is
-> > iterating drvdata for each bank.
->
->
-> Side effect is that now each drvdata->suspend will be called before
-> saving registers. Please mention it here and this lead me to one more
-> comment.
-
-Yes drvdata->suspend() gets called slightly earlier after this patch.
-I can mention that in the commit message
-
->
-> > This allows the clk_enable() and clk_disable() logic to be removed
->
->
-> For suspend path - yes. For resume path - nothing changed, because
-> drvdata->resume(drvdata) was called with clock enabled.
-
-The clk_enable() / clk_disable() has been removed from both the
-drvdata->suspend() and drvdata->resume() callbacks
-
->
-> > from each callback, and also avoids iterating the same loop again
-> > in the next function.
->
-> ...
->
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > index 963060920301ec90affb2ee6d758d3d602ffb4a9..375634d8cc79d6533603e3eed562452181e2ee25 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > @@ -1349,6 +1349,9 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
-> >               const u8 *widths = bank->type->fld_width;
-> >               enum pincfg_type type;
-> >
-> > +             if (drvdata->suspend)
-> > +                     drvdata->suspend(bank);
->
-> Here suspend() is called before saving common register state (was
-> *after*)...
->
-> > +
-> >               /* Registers without a powerdown config aren't lost */
-> >               if (!widths[PINCFG_TYPE_CON_PDN])
-> >                       continue;
-> > @@ -1373,8 +1376,6 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
-> >
-> >       clk_disable(drvdata->pclk);
-> >
-> > -     if (drvdata->suspend)
-> > -             drvdata->suspend(drvdata);
-> >       if (drvdata->retention_ctrl && drvdata->retention_ctrl->enable)
-> >               drvdata->retention_ctrl->enable(drvdata);
-> >
-> > @@ -1406,9 +1407,6 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
-> >               return ret;
-> >       }
-> >
-> > -     if (drvdata->resume)
-> > -             drvdata->resume(drvdata);
-> > -
-> >       for (i = 0; i < drvdata->nr_banks; i++) {
-> >               struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
-> >               void __iomem *reg = bank->pctl_base + bank->pctl_offset;
-> > @@ -1416,6 +1414,9 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
-> >               const u8 *widths = bank->type->fld_width;
-> >               enum pincfg_type type;
-> >
-> > +             if (drvdata->resume)
-> > +                     drvdata->resume(bank);
->
-> But this is not symmetrically reversed now - resume() is before
-> restoring from saved state.
->
-> Maybe this change is intentional, but then it should be expressed in
-> commit msg and in commit why this was chosen.
->
-> I guess you decided to do that way only because of code:
->         if (!widths[PINCFG_TYPE_CON_PDN])
-
-Yes exactly it was the above line, and trying to avoid iterating the
-loop a second time.
-
-> This code should be symmetrically reversed, otherwise it just raises
-> questions. For saving register state, it does not really matter, but in
-> general if we assume driver-specific suspend callback is run the last,
-> then driver-specific resume callback should be first, no?
-
-As you say it's just saving/restoring some registers so I don't
-believe the ordering matters. But if you would like it to be kept
-symmetrically reversed I could switch back to calling it in almost the
-same place as before this patch (just moving it a couple lines up
-before the clk_disable() and iterate the loop again.
-
-for (i = 0; i < drvdata->nr_banks; i++)
-    drvdata->suspend(bank);
-
-and similar for drvdata->resume(). Then the ordering should be exactly
-the same as prior to this patch.
-
-Thanks,
-
-Peter
