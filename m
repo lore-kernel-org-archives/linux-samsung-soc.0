@@ -1,67 +1,67 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3011DA617
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Mar 2025 22:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54791DB128
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Mar 2025 22:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742769574; cv=none; b=lvErr+/YIVXuCk89F6FGidC2J0LRBuIV/dZUOWIiuUXExgAt+n7tNuF/VfVoPNbpxeXR6GIPDytW16B3kBqfWmYEkX12fR48dBphnXhB+7xHEtS18wleywDGHEvsxVXZ1ZSsa1DPZMrSUSeNkBi1HPtrxY8WA1ia5ckzaQ02veE=
+	t=1742769576; cv=none; b=LRcWXPNcFS2Dy2yRx9ndBhMQdGbtCrkWcOfGSESsUZDItW0pKm1h3z9gZY8xGVdex3tb/jWYfBiPt7jBIocO8d5UHPjtU2GLIl/xrDHKNPpbmtzNfyPTolAjct++L76jcvdeJB+bGRIYBiuJdoCuID2d4Y17LYDwHvtynhRZ0kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742769574; c=relaxed/simple;
-	bh=aNL2ZMIsaWDhYzyM225HQs3M+JBebedfnAV5JfLB8LU=;
+	s=arc-20240116; t=1742769576; c=relaxed/simple;
+	bh=vhmwcNLdq/vAk/57/nIwHgfUXmRE5veIwzqtkTfIDCM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u2LfmksdcilxAdjPqqlRNgiCBq/S7HjEdL+XnG6c304sBtFIyZ95TmMM9AVQf5Rk5NwjhcidzhBnAacDGs0m65IpdJO8d0J/0QA1xmlZVbqkbMMFw/ZjdnTGUwq/x3JVLvAczM9k48wkKhNirPdNxWB4xeG2eEd+Nx4OCs1U3gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqH2k5Wb; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:To:Cc; b=Z7ZGJcLIoHlHnKLAeMT0hd4gumlUbSYvQ0sNOoeP9LrSYW9Qfodf1rWBmbwnyDcVPqNC3WfEn3W2WikPfuHeXTAY7bVsS5/ypvNdAY4Lj6CnT5FuugDW7ZzaHZKTzPs9nQLHsKfEoaRcEzpVGoO6nMb3Wx5S7i8Rtrl6E7+9krI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=evgXH92t; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqH2k5Wb"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso776693466b.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Mar 2025 15:39:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="evgXH92t"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac345bd8e13so673815566b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Mar 2025 15:39:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742769569; x=1743374369; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742769570; x=1743374370; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PkErzt1Ss+Bkd54SXbmEFKlCZnBrxlDz3Xe8Bme42SE=;
-        b=bqH2k5WbpvoGhXCbaaGdtiyVBP2hZ8kMKQgAIxWxRiwhSejhXehUQCMhSmRSiyALDr
-         VT3FIr3b9MoUZtqqDEQB2rfTPsII/q0fbva1yRX3xx+SZR36rGKpI6jUQyQmXaYLerRY
-         mMbkZbSXgOYzr0EZlRYaDJS6NCu26n9d790TfwhqufvnUFbFp4JrNbszyTw8bt9XnbOr
-         O1W0UjEA/l4LN79gT07zi+Sf+npmBIxzRxFO+WuXme/YPcCAlUeL7dK54p6m1OG52X/G
-         X1ElnOccaR0fYrM5iBUmSn+r0Q6flBswUryzkpmWEIgW+HtSDugvkGCKfdyI/GrSsdqd
-         Jo7Q==
+        bh=UPaIY3x3VVrMkB4/G8kk/a/tWB9/OjPG56rBALdlvrQ=;
+        b=evgXH92tqHyJLaExNh4ZZ8xmGgq54s0dUHli9+RWyVVeMQgxKwBPqgNUNz0NTbUKmt
+         X4nhCb8UtjXIROlwBJrVveHFIKsHis4G5uEl1/7Acxh9QIiC6kQX7TJiZgX0p5diHZOV
+         iJL0kLCMz5v5paf4P1xrwduIoXzK5eIpNYZDwQQsG4nCsRR8mZu8XLdMOUbz9SgpNut/
+         sX90rblFd5gfW4jk0iinBQPRvGGsXH3u1AhRjMA331+a8JdABeHlrzOy7Mj+BV69FpGy
+         47Az53jUg/1QoF2F+L0D+n+DDFucYPdV8DShGzY0JJiw203ZlWQQsZ6Z1sXAN6JjEx3r
+         w/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742769569; x=1743374369;
+        d=1e100.net; s=20230601; t=1742769570; x=1743374370;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PkErzt1Ss+Bkd54SXbmEFKlCZnBrxlDz3Xe8Bme42SE=;
-        b=Zg+wAjxCfPMWzJOciLKHgyRARwpK2+gwOwbr+fQ574KDVs7ZG8IwIF3XzX6ntPs/wL
-         cMBgz1nipKzEKGawsckJKyCrlkCG6fhIt9Ggt+Rrtg+RK8IOCTmSGG8msroLgjIqeBfm
-         gqHaQiLj3Z7KULRMuLAI6wjtg8u1iqKyytwRnIF1CWBbgE9LTD7S5JjkSkjZjbKTUVpH
-         Qae8Cf8I1zwKteWEimiBRVsouV03TJcs9awlAnfeMsLjBio6Cl+p2egcd6Kv3q5AjAvL
-         VKLGHwZMrz7DVRUVX7ePeq74eeE/zO/esatwRQUluqJisQ7nOPajY166zp/KNym+enVU
-         cEUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+PtV7m0LSHGok5exgrkSvn0Sb6bJGUiO+P5lj1HPQO+L0ZbLhCdN3GiwMZTXshV/mkwClEtKqKBG/uL5TVRTrPA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWxhokwoqvbX6rmcfKepmMnBUe7NPr232RHd0Lilkj6hOU7jPn
-	vlVsy6BFEuoUndS4rxQtRrqLgQBwLXboY51K1Vj1NKDq55f8ESxg80aKRG6QfXg=
-X-Gm-Gg: ASbGncueXQU0UjeZTvM8W7//OMNvO3Vhwgb/g7xlqjvAPBIQ9RuW5wBfx7CW2scANxj
-	R84MCR/UiOYWCk4Uz1tIiuEpgtSxukJM8PN+t9KgYa/dNbYmGxgzpoAaEnC6nwOYnjMc7YlSFcD
-	tdTsL2DZJDtdigaHrm+cyEEeAnOujZVixbP7BGRYktGt+xDBpcNATEZ28bbEjB4PMqu/99Rc94t
-	MDH0QkytNrshGIE21LaPi4XrrtFYl8SdLv6+ex6pbCsgFRF84KqrhfJU7waMXAoiH+9Tk4vH/TG
-	HBdcumAkwjsu+ijfVy2CBmtdMh/CkxUceluOPx+3PdnnYHiJvKfkiDfDlZ2oczbXbi24n1F2nox
-	UrPr2VAkKGoZG3ImMjN1UJ9ktxOXL
-X-Google-Smtp-Source: AGHT+IGAFdzsUecxR0Ot+aNtVjqQT9dbvewdjFSLK22DE4stZjNqeNVzWwfh7T1/N7CaL7vQgLskZA==
-X-Received: by 2002:a17:907:ba0c:b0:ac2:4db0:1d22 with SMTP id a640c23a62f3a-ac3f251f16emr1170254266b.42.1742769568705;
-        Sun, 23 Mar 2025 15:39:28 -0700 (PDT)
+        bh=UPaIY3x3VVrMkB4/G8kk/a/tWB9/OjPG56rBALdlvrQ=;
+        b=goUu66C55qELl0qc+12iGjKYYDOYsMMqXIoFfZhMce6LNbuSXdkv9PHG5BJJnP714U
+         GuXSezZbZJbc3hIqmdwlqCFY115I5BySsErn4hclf2K37ZwEgBZlUhNkx3HORr9RNu25
+         QC22NxxxemjF7IcOv+MHZblea6Tkun1f9iVXtTyFNODbR1Rj7+UlQevv1724J83Y1MEs
+         ozkcVas3Khf+HtHuMd0c2Qct0yMShKSjFY6EPZEZMQGWGPHkID8E7kGVi7JtQoop855i
+         zbi84pD7cfaoQWXUvjSwXDc3PZ4N2nDujsOzlSZOxISrLG1fIFr4jBScpluLc1EeuuEK
+         hTlg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4cOI6Vlz0/ZzM5A92tWh9EKEjDHu1my9mgAxGKdhpoJ2o3rXrtmOwJF+eF/Oy5v1Vl+lBnQ4okeTxPmejHoBUDA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAzcSJfE5or2xELrmn0RsIugR2ePeDxOPWwwDI4uTPeSVsUEuO
+	oh4bTBFeDN7v2Vdx5Ow4jCa6Bxk8ER13I0t3Da29wuOTapqxJYHThdjxJFS6l/Q=
+X-Gm-Gg: ASbGncuu6lhdDFdWlXAbBMigwxuaIOKcEnP+Yyhzmu7A57RmF6f7Ns4T0ufz5HhxXb8
+	TBifiS3rvkAUHMdGe9HVopFNDMWwhHZqrjH3oDMvhBXedyVVwQlDIJXZBEWqQNapiBUR2oMyXf5
+	ap7xoHEuwQ8JPwCdZeftA9mRgF9PGefz4AAa5ewGcIfmYvy00rn6yP8zuXVBNmuBRs3ifWg7nkb
+	Ljhoe0FZXx/xkEkdoP0OV2ULQG/i9c3ByNVv3DX/kXk71kfhCOTUzaWX/tcZxI4gHPQqPUMuvTr
+	rSk+LMLLM7LiRmAxsLBfcyESa62eELHUhVqyC7H4lHHLfSSKWP9VT9r3ca+Uc6IJpp5SfQNmEsS
+	rdRP29roFN9r6DpzqKCyirwe34ZRX
+X-Google-Smtp-Source: AGHT+IFPXn5kuydsVZ5juxiG+97RkmMKn/3aV6ozY9UpbUvRFJV9i4K4wAS7EARyuWbOU8je237GtQ==
+X-Received: by 2002:a17:907:7293:b0:abf:fb78:673a with SMTP id a640c23a62f3a-ac3f22b0fb0mr895769166b.29.1742769569876;
+        Sun, 23 Mar 2025 15:39:29 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef86e44dsm559686666b.31.2025.03.23.15.39.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef86e44dsm559686666b.31.2025.03.23.15.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 15:39:28 -0700 (PDT)
+        Sun, 23 Mar 2025 15:39:29 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Sun, 23 Mar 2025 22:39:25 +0000
-Subject: [PATCH 09/34] mfd: sec: slightly rework runtime platform data
- allocation
+Date: Sun, 23 Mar 2025 22:39:27 +0000
+Subject: [PATCH 11/34] defconfigs: rename CONFIG_MFD_SEC_CORE to
+ CONFIG_MFD_SEC_I2C
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250323-s2mpg10-v1-9-d08943702707@linaro.org>
+Message-Id: <20250323-s2mpg10-v1-11-d08943702707@linaro.org>
 References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
 In-Reply-To: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -90,81 +90,69 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-As a preparation for adding support for Samsung's S2MPG10, which is
-connected via SPEEDY / ACPM rather than I2C, we're going to split out
-(move) all I2C-specific driver code into its own kernel module, and
-create a (common) core transport-agnostic kernel module.
-
-Transport drivers will have to do device tree parsing, and the core
-driver will allocate its own additional memory as needed.
-
-In preparation for that change, separate out runtime platform data
-allocation from device tree parsing.
-
-Having this change will create less churn in the upcoming split of the
-transport-specific parts.
+We are adding support for Samsung PMICs that aren't using I2C and
+therefore had to rename the Kconfig symbol.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/mfd/sec-core.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+ arch/arm/configs/exynos_defconfig   | 2 +-
+ arch/arm/configs/multi_v7_defconfig | 2 +-
+ arch/arm/configs/pxa_defconfig      | 2 +-
+ arch/arm64/configs/defconfig        | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index b931f66f366571d93ce59c301265fe1c9550b37d..9c514f4b5f853ec2b4e234c578935ffad145cd4b 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -262,27 +262,16 @@ static void sec_pmic_configure(struct sec_pmic_dev *sec_pmic)
-  * Only the common platform data elements for s5m8767 are parsed here from the
-  * device tree. Other sub-modules of s5m8767 such as pmic, rtc , charger and
-  * others have to parse their own platform data elements from device tree.
-- *
-- * The s5m8767 platform data structure is instantiated here and the drivers for
-- * the sub-modules need not instantiate another instance while parsing their
-- * platform data.
-  */
--static struct sec_platform_data *
--sec_pmic_i2c_parse_dt_pdata(struct device *dev)
-+static void sec_pmic_i2c_parse_dt_pdata(struct device *dev,
-+					struct sec_platform_data *pd)
- {
--	struct sec_platform_data *pd;
--
--	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
--	if (!pd)
--		return ERR_PTR(-ENOMEM);
--
- 	pd->manual_poweroff =
- 		of_property_read_bool(dev->of_node,
- 				      "samsung,s2mps11-acokb-ground");
- 	pd->disable_wrstbi =
- 		of_property_read_bool(dev->of_node,
- 				      "samsung,s2mps11-wrstbi-ground");
--	return pd;
- }
- 
- static int sec_pmic_probe(struct i2c_client *i2c)
-@@ -303,11 +292,16 @@ static int sec_pmic_probe(struct i2c_client *i2c)
- 	sec_pmic->i2c = i2c;
- 	sec_pmic->irq = i2c->irq;
- 
--	pdata = sec_pmic_i2c_parse_dt_pdata(sec_pmic->dev);
--	if (IS_ERR(pdata)) {
--		ret = PTR_ERR(pdata);
--		return ret;
--	}
-+	/*
-+	 * The s5m8767 platform data structure is instantiated here and the
-+	 * drivers for the sub-modules need not instantiate another instance
-+	 * while parsing their platform data.
-+	 */
-+	pdata = devm_kzalloc(sec_pmic->dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return -ENOMEM;
-+
-+	sec_pmic_i2c_parse_dt_pdata(sec_pmic->dev, pdata);
- 
- 	sec_pmic->device_type = (unsigned long)of_device_get_match_data(sec_pmic->dev);
- 	sec_pmic->pdata = pdata;
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 7ad48fdda1dac69a4a9612eabb573729bed7b3a6..251f45be6c14af59263373f21b27b15f42ec7f61 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -167,7 +167,7 @@ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+ CONFIG_MFD_MAX8997=y
+ CONFIG_MFD_MAX8998=y
+-CONFIG_MFD_SEC_CORE=y
++CONFIG_MFD_SEC_I2C=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_STMPE_I2C=y
+ CONFIG_MFD_TPS65090=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index ad037c175fdb0ec8601c9b3607aca0c0e5f3c145..7d06ac5369b1a2f325462f2cf5b54fe22061ca77 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -612,7 +612,7 @@ CONFIG_MFD_QCOM_RPM=y
+ CONFIG_MFD_SPMI_PMIC=y
+ CONFIG_MFD_RK8XX_I2C=y
+ CONFIG_MFD_RN5T618=y
+-CONFIG_MFD_SEC_CORE=y
++CONFIG_MFD_SEC_I2C=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index de0ac8f521d7612704ce327e9ac16ab9e999f3d3..064e79baf20da809c9ab1f1fa18282aaba11a41f 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -335,7 +335,7 @@ CONFIG_MFD_MAX77693=y
+ CONFIG_MFD_MAX8907=m
+ CONFIG_EZX_PCAP=y
+ CONFIG_UCB1400_CORE=m
+-CONFIG_MFD_SEC_CORE=y
++CONFIG_MFD_SEC_I2C=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+ CONFIG_MFD_TPS6586X=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e8dfbe22db68d9aa24df5af0786a2eeb8f33bf3c..cc4dc330cfe82d11ca0c4c9ba8cac4b14decdeab 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -769,7 +769,7 @@ CONFIG_MFD_MT6397=y
+ CONFIG_MFD_SPMI_PMIC=y
+ CONFIG_MFD_RK8XX_I2C=y
+ CONFIG_MFD_RK8XX_SPI=y
+-CONFIG_MFD_SEC_CORE=y
++CONFIG_MFD_SEC_I2C=y
+ CONFIG_MFD_SL28CPLD=y
+ CONFIG_RZ_MTU3=y
+ CONFIG_MFD_TI_AM335X_TSCADC=m
 
 -- 
 2.49.0.395.g12beb8f557-goog
