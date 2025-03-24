@@ -1,123 +1,157 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3332E337F;
-	Mon, 24 Mar 2025 05:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A19825D545;
+	Mon, 24 Mar 2025 08:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742793089; cv=none; b=usmjCr/5xmoMevfvCt7zcqNj8GHHjctiR+CSIWLxip76Hqk2QC7WDFMdCsSznMRwoTzlMMtG7FiLjno2IC5B92iISLZ/WnWpfBmwzPe5/RwGZV5AAWEG6IuAwdK1NkqN2Pba9gPNzG+QYCoze7kMYzswFxu5EjciAcZgqz/OhTw=
+	t=1742805948; cv=none; b=ZxvfXLs2blXBIAKPD3lFdPV3dRB8+SwU394zZSlMll4J5xnvJbixeIP5WR8DbJ9n+l9mVIpE4xOZCmEVMyFUAh78CKZYMLrlzza817xfih4Ie6NG1kNuqIMrJpMap/ZUYC3EkirKbkHwU7o3IjFATKTbHqjpjnTZao6c14UyTow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742793089; c=relaxed/simple;
-	bh=OGe21FZmth7HYF72oeDzQkXP1oyokZOoHTNNZQgVbus=;
+	s=arc-20240116; t=1742805948; c=relaxed/simple;
+	bh=My3iW3rQTVfHmWaiaXBjl0AqO8eaZeyr5K3v+jogMwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyXOsvxQRvmogc4xsD9KLMQiTlEhXAZT5uHoWcuTXYO/zEbf994qY/yixi8/qoS/zsRXkiiV3O96hXJaVpWvq0Ck43Nbpd7Vf53LtNe4LK9nmLrxE9EoCHR61awkVjlMdUXRnL84Oeb5y6387yRzDmqWmxm3U3+jmvo8CK2pnC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LamXcB8Y; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdqYM3iNIflmLKpRsP3Ja4NbqJ0kDxLvjTdBaR0B7/NCbkkeMQyxDt1AjinsNDBgw+Pta1935aBhDiJsnHwq28pXHkdpShxGEYAiGXD0URp/KbdosRgzdhEZ/ol4MiGpCZe7zeATW4SSeBNoWKzcr+q4R7HmsSyDVdNrPeLTCGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m23E7Swc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LamXcB8Y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742793087; x=1774329087;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=OGe21FZmth7HYF72oeDzQkXP1oyokZOoHTNNZQgVbus=;
-  b=LamXcB8YW6rmozyzLQPnYXDbBxZpLPX+YWZ0MW392UKD0TXE1shUdUZ1
-   Y8jvlyevU5NZ4k2AtTbu44M9jdSFSR1gdkbuQ2FrzUuadPV2UTtLkkVJI
-   P5mDUH3QbLkIOpv0kdnNZqnal4Z+eH2Y0PVVQMi+k70x5Ct6s+WWQ/6zn
-   EWvw3BXZ6UefhWoRcW696BLSy7P7fCglOoI1q+2oJubKj8Rd4r0E2G8Eg
-   YD0woSycbCG93XxHZhiDtXvunQl8KkQuR0SjzWRcqBSmZamtrSbP07dxA
-   ywoAVElNYPSN6EE+mQE+z5cDZtoCtTyy8fM1XMbPxlizi/76gPqjgX/jz
-   g==;
-X-CSE-ConnectionGUID: T5eLVAc8Tj6mEQoo6mZHtA==
-X-CSE-MsgGUID: aertAvjWRYShfZiuWAOCYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="43707322"
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="43707322"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 22:11:27 -0700
-X-CSE-ConnectionGUID: lvb+ApYzQ2CS7iUwR+4IJg==
-X-CSE-MsgGUID: 6mngPGWLRXuxrTOUlhKXlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="124388459"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Mar 2025 22:11:21 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twa5W-0003Hk-22;
-	Mon, 24 Mar 2025 05:11:03 +0000
-Date: Mon, 24 Mar 2025 13:09:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: oe-kbuild-all@lists.linux.dev, Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Subject: Re: [PATCH 20/34] mfd: sec: rework platform data and regmap
- instantiating
-Message-ID: <202503241201.amdeUwuc-lkp@intel.com>
-References: <20250323-s2mpg10-v1-20-d08943702707@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m23E7Swc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DC8C4CEDD;
+	Mon, 24 Mar 2025 08:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742805947;
+	bh=My3iW3rQTVfHmWaiaXBjl0AqO8eaZeyr5K3v+jogMwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m23E7Swc3Q6IX3VQrsQq4knOxscSc5QpOFtZ2VF/UvbAZOfdos4/gk8U+FUyF0VcQ
+	 h4mmvs44GI80VAM6JsHSbN4wb82izFA0vTkrKBwSsq/KuPgbF+vxBYka1ZD+UiN7XA
+	 91KeVY8qL3V9iH0P67xZbSp/VkXwOIJSbmIbx8K8aBuVSDC75x7MCQS2v4vfY6vCcn
+	 N2k14OMys6gTKMuUydqJclmb5R8DCSR2JAYE65mvU3x+Ozd4hUVzT5dtfnjYhA70Lv
+	 T0pJJn93/P14Vsx70udZPNdd7MRXteSVJGEga6RqGWB3U2moP51+sl7B4W+7WJq3NP
+	 ZzTxEBIsk8WZA==
+Date: Mon, 24 Mar 2025 09:45:43 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: phy: add exynos2200 eusb2 phy
+ support
+Message-ID: <20250324-important-kangaroo-of-prowess-0d2c30@krzk-bin>
+References: <20250321135854.1431375-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250321135854.1431375-2-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250323-s2mpg10-v1-20-d08943702707@linaro.org>
+In-Reply-To: <20250321135854.1431375-2-ivo.ivanov.ivanov1@gmail.com>
 
-Hi André,
+On Fri, Mar 21, 2025 at 03:58:45PM +0200, Ivaylo Ivanov wrote:
+>  description:
+> -  eUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+> +  eUSB2 controller supports LS/FS/HS usb connectivity.
+>  
+>  properties:
+>    compatible:
+> @@ -23,6 +23,7 @@ properties:
+>                - qcom,x1e80100-snps-eusb2-phy
+>            - const: qcom,sm8550-snps-eusb2-phy
+>        - const: qcom,sm8550-snps-eusb2-phy
+> +      - const: samsung,exynos2200-snps-eusb2-phy
 
-kernel test robot noticed the following build warnings:
+These two entries is just an enum.
 
-[auto build test WARNING on c4d4884b67802c41fd67399747165d65c770621a]
+>  
+>    reg:
+>      maxItems: 1
+> @@ -31,12 +32,12 @@ properties:
+>      const: 0
+>  
+>    clocks:
+> -    items:
+> -      - description: ref
+> +    minItems: 1
+> +    maxItems: 3
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Draszik/dt-bindings-mfd-samsung-s2mps11-add-s2mpg10/20250324-064418
-base:   c4d4884b67802c41fd67399747165d65c770621a
-patch link:    https://lore.kernel.org/r/20250323-s2mpg10-v1-20-d08943702707%40linaro.org
-patch subject: [PATCH 20/34] mfd: sec: rework platform data and regmap instantiating
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250324/202503241201.amdeUwuc-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250324/202503241201.amdeUwuc-lkp@intel.com/reproduce)
+I am still not conviced that creating one schema for these devices
+brings benefits. If this is going to be one binding, then keep the list
+here with three items and add minItems, so the list is the same for all
+variants.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503241201.amdeUwuc-lkp@intel.com/
+>  
+>    clock-names:
+> -    items:
+> -      - const: ref
+> +    minItems: 1
+> +    maxItems: 3
 
-All warnings (new ones prefixed by >>):
-
->> drivers/mfd/sec-i2c.c:206:48: warning: 's2mps14_data' defined but not used [-Wunused-const-variable=]
-     206 | static const struct sec_pmic_i2c_platform_data s2mps14_data = {
-         |                                                ^~~~~~~~~~~~
+Keep the list here with three items and add minItems.
 
 
-vim +/s2mps14_data +206 drivers/mfd/sec-i2c.c
+>  
+>    resets:
+>      maxItems: 1
+> @@ -62,7 +63,52 @@ required:
+>    - clock-names
+>    - vdd-supply
+>    - vdda12-supply
+> -  - resets
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sm8550-snps-eusb2-phy
+> +
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
 
-   205	
- > 206	static const struct sec_pmic_i2c_platform_data s2mps14_data = {
-   207		.regmap_cfg = &s2mps14_regmap_config,
-   208		.device_type = S2MPS14X,
-   209	};
-   210	
+Not much improved, my comment is still valid.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+> +
+> +        clocks:
+> +          items:
+> +            - description: ref
+
+maxItems: 1
+
+> +
+> +        clock-names:
+> +          items:
+> +            - const: ref
+
+maxItems: 1
+
+> +
+> +      required:
+> +        - resets
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos2200-snps-eusb2-phy
+> +
+> +    then:
+> +      properties:
+> +
+
+Drop blank line.
+
+and the clocks get here minItems: 3
+
+Best regards,
+Krzysztof
+
