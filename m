@@ -1,104 +1,56 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B145C25C6FA
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Mar 2025 13:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67071EDA3E;
+	Tue, 25 Mar 2025 15:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908204; cv=none; b=ldYKa/gaUPTJmr4JoMAN2VGEbHK9kw/Bib3JNdGLTTOIK1jWMFnDsHmjjGiotoGHgOupiGEc2l2oAeyVQQI54UuOENQZPqjkph4ptoBvJO2/DlfBFCFHIO8AP6Tx4MO+sf20ie/FWrjl6/KhZcpFj2x5UU3tu6duZL1j6f57pUs=
+	t=1742915498; cv=none; b=YfN4V0j4Iuhx6lq0rsUM3rfpf04IToqcgfij1JPikLYAB4ga1tJw/A6aI14C9zq7FQ05eWZQ0K69kaBYu3lQWWk/OCLrLmG/4mPQ2IEuxo7pnnAJWHNBjVd0om7VlSEWhdWNeUeOjF1wDU4YkLxV5Ha2TxWwdlnXy3BuzGjg018=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908204; c=relaxed/simple;
-	bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKkw91jN04qA1g81TXYZYr5brzgEfD4jqY+X8ZyHoIFu40429RuNtCLtZ9/EqgZpLBFiHiWaqlSVo2dAphVM5oM3BPPyWnTwrp23GRp3ToLePGBlTJteM62owPoamU7pwlxWEgmu5aNaSFHc4VHlZZgeRFjr2pZs4SoeBjrmBpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkgL+9dj; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742915498; c=relaxed/simple;
+	bh=31T3cY8R212Z8aHTs5rhNTvbbB/uMz7MjuMUCXin76Y=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=D+mGxUAIKHdBVnvuBS3TZn6II2ESXj+pZpurN8gC9qBYQngCZpAQjfHVler83FWxcUSz2LYf+PpFCjpOfX5YlxI/WXeIo92wmYJRNf3Ln575hdju+TZVlNxQ/91ZIste/xMZ7C+bY4LllR8lC9Jjimgvx/Aq8F8Wve1Gl6aDgFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apa/Xgsn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkgL+9dj"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so6328779e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Mar 2025 06:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742908201; x=1743513001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
-        b=wkgL+9djV4oUk8AeK2bW9Bpxi9jE88XeNszTTIS0hjfCYy+t95RHuHjmIM7THhnMcB
-         w+1ayyJU+LVdBWfs1RKwcmqiTwYDIdyBZuhTI63VvRyAzHYMTh6NkbPsojI3F7r/Mg/6
-         Ug8x/ZGu92v1oEmS/eMIM2MFowZoBrKejnFePJ2ZmoARJEn0r22udhvOyYohh3YiSD+E
-         cyohYJs6SHZcSP8Ot3tWHSg6aBLs9erDUPtDo4ixv3jOJBHpCXkYGrWldNQDeyFL4fkr
-         nu7g8G3wpDImCShJoWYwxdf0W9bZcaOmlxZIfOb2qJYU2AqP3cqUVfH037/UssWpMgfc
-         SFXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742908201; x=1743513001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
-        b=uqgBqvPkAxn2k+SNDNMgbGg3XMkcAFAPHTpivf+RSQvmj6MlUnmuckmYQSiaGI+GN4
-         mG3WigCHnLfFcfyAMKxlqDuCybWafHsF8OFVwIujV5aJqOn1QacRu/1ES7tZgRLX4Tzk
-         NHTIhFXWdmtP37Le4o17j48mOCrGQV/CBtzKAOzW8gZ0DyrfucTBEnFMCQDcZQWkv7bm
-         7xOeZgEXL7h/XEDSI4qTIjv0O/abiFg/cOHEQkP7UoV4cWeVszjcXAy4LDiT9gQeZ+r6
-         dpRAIJRGNIpHKPTyVvMlblRUaOv87A5iknrjlZtfr/JRmgQnCIcwOz6s3MTKQ7lOUAQS
-         GuOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnwGXu7R6od1+367vTbMvVYN1ay4JVxOoUcGiO1z2QmJ9RIk4iOvhS5qFm9iQ3jcXcAcFOvqFiqBEYUIcVWbTsdg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD6kCxgNxo0l/lNf+3x9K8BXZJWeVPELT1uh09sgU3RT7vNLxP
-	m0jmIgsLWegN2S6jmd5IGkJ9VGKKvCQFdquKa/PUQUB/GJ07XRE9hRIGLaomBrKe/+laQPb5KRf
-	9zb8IEkxb0CzMAIUPlsVj2HY25kcqE/QT/0+yGQ==
-X-Gm-Gg: ASbGncuBlYRgU8RIcdn0Sk2KIS2hNYN27QrLVUfJc0eXRY6fgZDm4oMy7Eh0YxiAwYB
-	Vzmb2SHB0oz0kJDBKmVxw2uWtIjl8tSlWmVBvdaLcMhVhCt/GwarHj+Onjym9lRPPxhQA4hXmoT
-	OAPljPCvkXgs2FJgYVeRI/Wv0=
-X-Google-Smtp-Source: AGHT+IEA8eZg1F5rTtYtGgxFGDqJ7eNk3ccgMGnZd3pLrENcTaD8LN6KiUTpuvzO7iXkBw9qPrcSIjiZ+Ib/g7be7BA=
-X-Received: by 2002:a05:6512:1314:b0:54a:cbfb:b62e with SMTP id
- 2adb3069b0e04-54ad64f6791mr6320883e87.35.1742908200694; Tue, 25 Mar 2025
- 06:10:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apa/Xgsn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C688C4CEE4;
+	Tue, 25 Mar 2025 15:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742915497;
+	bh=31T3cY8R212Z8aHTs5rhNTvbbB/uMz7MjuMUCXin76Y=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=apa/XgsnwVd9nOb104wW3rJPdy4fsX4KHS7YuNwZNx7IXRYb2rMvZpWyh3H96xzkl
+	 HD7zsjTZAzj0u2HBcFWHipwm96K6sLdM9o2s6qs1e2NSekXo7yhuH03nuzSEsCfcy6
+	 3PqXuCLLAr5vVcB6mjV9xUXT+LifQtVX8zzRDG0EU6HiXOvl1fIkq9UkUNFxQneKkx
+	 VbH+xCdBzG+XWvJvO/E/3nADw72B42cTxghDKAMX/JhmJ2fNEMTpKuxHO9VFDRWQy3
+	 cMsy/zmsiAVnRNRZaZSqyer7kk3IAEgxTBgXt/S18OD4aj2uAjTWvvHgHb3GL8bNrU
+	 d9HfLvCQylkFw==
+Message-ID: <a3c5e4c369397efcf92dfb4ab6b0fb34@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
- <Z9lJETLh2y27934q@black.fi.intel.com> <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org> <20250324033038.GA9886@nxa18884-linux>
- <7f22be3e-908d-4036-ab92-97c6b0427d26@kernel.org> <PAXPR04MB8459BDF97DAA5FC1A3A8B7AA88A72@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB8459BDF97DAA5FC1A3A8B7AA88A72@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 25 Mar 2025 14:09:48 +0100
-X-Gm-Features: AQ5f1JrTRSKcnNRqr9tDe943HyISqe1Jb1O_0dxGZ5xxZb_T1URcA8bYen_No_M
-Message-ID: <CACRpkdYCgkwuOm5vw8oOSnu7ZVLsC3FDJoA2695gAufwp4NQVQ@mail.gmail.com>
-Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, 
-	"broonie@kernel.org" <broonie@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250323-s2mpg10-v1-26-d08943702707@linaro.org>
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org> <20250323-s2mpg10-v1-26-d08943702707@linaro.org>
+Subject: Re: [PATCH 26/34] clk: s2mps11: add support for S2MPG10 PMIC clock
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Date: Tue, 25 Mar 2025 08:11:35 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-On Tue, Mar 25, 2025 at 12:26=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
-> > On 24/03/2025 05:21, Peng Fan wrote:
-> > > On Tue, Mar 18, 2025 at 02:48:05PM +0100, Krzysztof Kozlowski
+Quoting Andr=C3=A9 Draszik (2025-03-23 15:39:42)
+> Add support for Samsung's S2MPG10 PMIC clock, which is similar to the
+> existing PMIC clocks supported by this driver.
+>=20
+> S2MPG10 has three clock outputs @ 32kHz: AP, peri1 and peri2.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-> > > To keep DTS unchanged, we need update polarity in gpiolib to force
-> > > GPIO_ACTIVE_LOW.
-> >
-> > How are you going to achieve it if one DTS has LOW and other has
-> > HIGH?
->
-> With this gpiolib-of change, to fix polarity as HIGH.
-
-Yep those quirks is what we have done to handle legacy cases,
-mostly from old devicetrees using bindings where proper polarity
-wasn't enforced or properly used because the drivers would
-override it anyway.
-
-Ideally the bindings schema should enforce consumers to use
-GPIO_ACTIVE_LOW but I don't know if that is possible, but maybe
-Krzysztof has ideas!
-
-Yours,
-Linus Walleij
+Acked-by: Stephen Boyd <sboyd@kernel.org>
