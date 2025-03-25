@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005B7149E13;
-	Tue, 25 Mar 2025 08:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC31A2389;
+	Tue, 25 Mar 2025 09:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890060; cv=none; b=U4KwnV6BBbBw7X5OBjzpMvu5lnhaTygs4P1GiKMr+Q5rT/uNzn7Uz07Bog4CMxcy6dM1B6nZlDWjYw+vKgIs7DEUQYEiVM/IodzNCTZmxosUgijtzQZs8+k5fNn3ze2NXdLsWJlPOZrMOIMqQNYdSfoHJxA57lHjGIWpVGb/2hA=
+	t=1742895023; cv=none; b=dgFoW3M5cnIH/v8sdUpUv8UFXjIDvH4JBwkSHfmUPWBnMbSKzSKw4+/biyow2eB3WhADPLwMpi5Zy8XjqO2+TRFfNs4dPq6xMwvwEpuyh92h6qQeh8gjJrcqgwMWlGQ7KETK4OpqPQcUBRWbRcuWzAvN43CGLJOXNoDN59AQ48U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890060; c=relaxed/simple;
-	bh=52zyLFG2TvCbXGWeu7jwjKlgPApCjRDfZRYPLHcf0kA=;
+	s=arc-20240116; t=1742895023; c=relaxed/simple;
+	bh=69sFJAE3YpNj/ZaxEAAUkXjPxt7C54lTaFbX1GYT9lw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUCHVMMyj3AUsoMV3HI/wOaTgi+dmd0jHW9+vmygXhx3YFDM5+in8j1JJcBr3zXT/edCqL6IxqbCrmFwxPvZaELnV0iKwKnGK00R1Lbtwc0qunIhdCwLqzNR2s6pF1jiUizhA3FCUHCaVS4rY286DiYKlijosB17W8JU6vkAeeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGWLAPQI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Y5LSMLDcxjgy2nTpafHW9C1pnhuUFILuUQofVrfWY17GMwYJmvTBx7lLQPXUgv8To/X/1ZYjtw/0yVBS+KsY195HEkSpU1Lf6xiuwybAVFSKW7xbmiuYl03t6x7xp4RO7wGr3ujHsiR0Z22r22DSSwFtPsrlzqkkNqVQeu8EnCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXJjEiId; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGWLAPQI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 425BEC4CEE8;
-	Tue, 25 Mar 2025 08:07:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXJjEiId"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A2AC4CEE4;
+	Tue, 25 Mar 2025 09:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890059;
-	bh=52zyLFG2TvCbXGWeu7jwjKlgPApCjRDfZRYPLHcf0kA=;
+	s=k20201202; t=1742895022;
+	bh=69sFJAE3YpNj/ZaxEAAUkXjPxt7C54lTaFbX1GYT9lw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XGWLAPQIxAyQzTTYb9FHs6cVINnm2qZCLgunp6BJ9ro3NYEq4tZr0S8Jn95XW5B7u
-	 1e8mwQdbKe61PmUmf6LIB8RMT68k7fLA4wHZGPs3Zg2d4A08WbZYuxkBuCPQ30oAon
-	 r/u5VpDBZOcJF6JiapyN8jGszWlQik3UNmr5kvuttzbtgN6Fn05mvVunzAvq+hUMgU
-	 6ck7UJPDJPHIL25DOVUu8n0+3NTtFk5VVGiBzp++Em/ubrvtOTY215KGzYtZe08hoQ
-	 68Ogxmc0pKw2sufmyjblMID/pFKF9kjcP8HTBN655co24v+TVhMivyQJj1sXI0lMy/
-	 sncDrAB0DNPnw==
-Message-ID: <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
-Date: Tue, 25 Mar 2025 09:07:33 +0100
+	b=VXJjEiIdO+zP4+eKoD5WJbXgbF3jorSV2bwVEYegmhktl+ojoGaKTjMj2ggARzGgG
+	 yFL528uP1NFd2I8Aze2YQx6hrGN9x8uXxZKG1WxCiBoXo1r4b89Bb8FU1pCoAYcubM
+	 dg7dFzUSieoHzutLQdGx+KyeI09/ySZi5JvIOolSynn1F711GzKUvhSbobCxkwykMJ
+	 BGO4V0wA8+K67WAH2Y08NtkiZ2Sc9TvTFc74jBJgaHS2KSKjw2R67/aTwEbS0lSm6Y
+	 LIiwyw1S7PRvYcX1DPwHc+ECPzU5bxz3q4f6zkw/ykEZTJBdXQXxpX9adLA36m/gEh
+	 bZMVcQEDJosJA==
+Message-ID: <7f22be3e-908d-4036-ab92-97c6b0427d26@kernel.org>
+Date: Tue, 25 Mar 2025 10:30:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
- shutdown
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
- <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
- <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
- <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
+Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Andy Shevchenko
+ <andriy.shevchenko@intel.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "brgl@bgdev.pl" <brgl@bgdev.pl>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+ <Z9lJETLh2y27934q@black.fi.intel.com>
+ <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org>
+ <20250324033038.GA9886@nxa18884-linux>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,55 +95,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
+In-Reply-To: <20250324033038.GA9886@nxa18884-linux>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 25/03/2025 09:01, André Draszik wrote:
-> Hi Krzysztof,
+On 24/03/2025 05:21, Peng Fan wrote:
+> On Tue, Mar 18, 2025 at 02:48:05PM +0100, Krzysztof Kozlowski wrote:
+>> On 18/03/2025 13:38, Peng Fan wrote:
+>>>> Also the commit message doesn't tell anything about the existing DTS
+>>>> files.
+>>>> Do we have this device described in any in the kernel? Do we have any
+>>>> googled examples? Why I'm asking because often the issue is the
+>>>> incorrect setting of the polarity, which needs to be carefully checked,
+>>>> esp. for the voltage regulators case.
+>>>
+>>>
+>>> Under arch/arm/boot/dts/samsung/, a few dtsi files have the property 
+>>> with results from output of
+>>> `grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
+>>>
+>>> Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
+>>> Others use GPIO_ACTIVE_HIGH.
+>>>
+>> These are old devices and not many people are actually providing tests,
+>> so you need to preserve existing ABI. IOW, if previously GPIO flags were
+>> ignored, meaning "1" is ACTIVE_HIGH, then you must preserve this behavior.
 > 
-> On Tue, 2025-03-25 at 08:57 +0100, Krzysztof Kozlowski wrote:
->> On 24/03/2025 16:34, André Draszik wrote:
->>> +static bool acpm_may_sleep(void)
->>> +{
->>> +	return system_state <= SYSTEM_RUNNING ||
->>> +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
->>> +}
->>> +
->>>  /**
->>>   * acpm_dequeue_by_polling() - RX dequeue by polling.
->>>   * @achan:	ACPM channel info.
->>> @@ -300,7 +314,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
->>>  			return 0;
->>>  
->>>  		/* Determined experimentally. */
->>> -		usleep_range(20, 30);
->>> +		if (!acpm_may_sleep())
->>> +			udelay(10);
->>> +		else
->>
->> ... and what do you do if IRQs get disabled exactly in this moment? This
->> is just racy. You cannot check for a condition and assume it will be
->> valid for whatever time you want it to be valid.
->>
->> What happens if system_state is changed to shutdown in this particular
->> moment? How did you prevent this from happening?
-> 
-> Yes, and that's also what the I2C subsystem is doing, AFAICS, see
-> i2c_in_atomic_xfer_mode() and its use. This is to make a very
-> specific corner case work, similar to I2C which has to deal with
-> the same issue during shutdown.
+> Per google,
+> Manual Reset function is for Hardware reset in the Active mode.
 
-But they don't have a choice so they try to do the best to avoid
-sleeping. And it is a subsystem, not a driver, which means their
-patterns are sometimes special. Drivers should not replicate subsystem
-workarounds.
+Why are you mentioning the reset functions? Which properties are these?
+
+
+> If MR1B and MR2B is kept low during the VLDO3 is active state, the
+> system makes all internal presetting registers as default in the
+> active mode (automatic power on sequence). If this hardware reset
+> function is not required, connect MRB pin to high.
+> 
+> So the reset is ACTIVE LOW if my understanding is correct.
+> 
+> To keep DTS unchanged, we need update polarity in gpiolib to
+> force GPIO_ACTIVE_LOW.
+
+How are you going to achieve it if one DTS has LOW and other has HIGH?
 
 > 
-> Would you have a better suggestion?
+> please see whether this is ok for you.
 
-Yes, you have a choice, you can always use udelay. Driver code is
-supposed to be always correct.
+I don't understand how this is related to the issue I raised.
 
 Best regards,
 Krzysztof
