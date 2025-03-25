@@ -1,148 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC31A2389;
-	Tue, 25 Mar 2025 09:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F5B198A29
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Mar 2025 09:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895023; cv=none; b=dgFoW3M5cnIH/v8sdUpUv8UFXjIDvH4JBwkSHfmUPWBnMbSKzSKw4+/biyow2eB3WhADPLwMpi5Zy8XjqO2+TRFfNs4dPq6xMwvwEpuyh92h6qQeh8gjJrcqgwMWlGQ7KETK4OpqPQcUBRWbRcuWzAvN43CGLJOXNoDN59AQ48U=
+	t=1742895973; cv=none; b=ISPnvHpa0VTfw4YWRT/v/CLKA9VQZH4qqANaMZ6Ahy4f6WppaGe0AAIN+mDuoWF2/7ANsKhjmDTo2DkgEebDaqNq+o92mxDIeiFqzgVZoN/a/ISr0N4p8+GKV0Mb6YNfpx5tbO1uwPR2cVwpNSkWvy3MowMyKdimQoatnGO6304=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895023; c=relaxed/simple;
-	bh=69sFJAE3YpNj/ZaxEAAUkXjPxt7C54lTaFbX1GYT9lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5LSMLDcxjgy2nTpafHW9C1pnhuUFILuUQofVrfWY17GMwYJmvTBx7lLQPXUgv8To/X/1ZYjtw/0yVBS+KsY195HEkSpU1Lf6xiuwybAVFSKW7xbmiuYl03t6x7xp4RO7wGr3ujHsiR0Z22r22DSSwFtPsrlzqkkNqVQeu8EnCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXJjEiId; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742895973; c=relaxed/simple;
+	bh=KxaPfmUvSFnV3Byq3QqC+CSZjErbzsYdDMoKikjwIGo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X5dkceO0JPjSti1h58ruFFJUlg7bgZdCzkSXfeg2P1D2JhECbywp+tYjGEptSxWXtovxJ7bCGItO5tRKQRa91C7sC2mvOFxlOWUcnqHTl6Z/urR2UkyJ/HJrqo1WAcjJ4EBtlFAnyuPIjL3pIEmsmUOOPihC4qoVLPwMomQUFB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z4rZA/qg; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXJjEiId"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A2AC4CEE4;
-	Tue, 25 Mar 2025 09:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742895022;
-	bh=69sFJAE3YpNj/ZaxEAAUkXjPxt7C54lTaFbX1GYT9lw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VXJjEiIdO+zP4+eKoD5WJbXgbF3jorSV2bwVEYegmhktl+ojoGaKTjMj2ggARzGgG
-	 yFL528uP1NFd2I8Aze2YQx6hrGN9x8uXxZKG1WxCiBoXo1r4b89Bb8FU1pCoAYcubM
-	 dg7dFzUSieoHzutLQdGx+KyeI09/ySZi5JvIOolSynn1F711GzKUvhSbobCxkwykMJ
-	 BGO4V0wA8+K67WAH2Y08NtkiZ2Sc9TvTFc74jBJgaHS2KSKjw2R67/aTwEbS0lSm6Y
-	 LIiwyw1S7PRvYcX1DPwHc+ECPzU5bxz3q4f6zkw/ykEZTJBdXQXxpX9adLA36m/gEh
-	 bZMVcQEDJosJA==
-Message-ID: <7f22be3e-908d-4036-ab92-97c6b0427d26@kernel.org>
-Date: Tue, 25 Mar 2025 10:30:16 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z4rZA/qg"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e686d39ba2so10474367a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Mar 2025 02:46:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742895970; x=1743500770; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IbefRUQKW2oql/88hpKv3fFad6yESLUR8BZTv5IsOP0=;
+        b=z4rZA/qgUpvD2iU+efBlQ7bWMsQvXwDh2o5un+PKtQvZc8aTSsof0v2flPdwM724+O
+         2JA7X8MZaBslhCKvsowbHJzXSkkRcKeM6JjTPIlKh5HPyxq1JQIpPrj12zyB1Lz4XOhV
+         Wd1dFbxrDhFVMssT//qUw1XUL4jPLSjk+SL+eLNEs+Apnw0lDV8WwsXYnhg57zo/mrkI
+         VUk+jAriuRX9YXG/VUez/t+mw19/G6ZPKbqPlVLHJHv2Q6TfbP/FoWriLVQno7QkpC+j
+         9m+dkmX1WOwoi5//KqdxlBrv2lpZ+NU4AEOeCSVI3jZYpT0cAKR61MT+IV2Ji2ap5YFa
+         p9Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742895970; x=1743500770;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IbefRUQKW2oql/88hpKv3fFad6yESLUR8BZTv5IsOP0=;
+        b=r9Wg4jhzXzP6yIC4iVaMvcaFWEofk9q1L3UURaBcpjGho3A5gHSdi1f/SaTpeqdsQk
+         8hHg9iUv2hD08AnVcMII5jeTyBkLtRH1zqCz/MpUfYvWQlFHcvHqO1OjV67Kskgs/28f
+         xv1s3nNDVMcdcCGIptYF2b5/qNc2XcKG1sgx7vUD1tC5YSJ3GtkghLlZf/jI100whaOL
+         5xsRzDDuhhn4FoPPYb0iNSm2lJEiY8msfdWcHzh3HRHc+KP/CBdWYpm+TRpsrMah4hfl
+         o8qGF3n7xz6aUnEyNe2sL8jGsjDLjN8o0QMBE9n9ZiG8kIyk7+sj0PF/W9GSnsiLMmlK
+         IFHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCmP0NfC5fFpAg2sKiB/vW01UCIP4NeyPvNyAG99PiEUdEAEQNHRv539LoV0KHICCyiCseKoqO0qrmEBGz/d5kEg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9cXB1EzEUUZrpZ/HwrZYUrDgTzqKwIlKFREazaLhevFIYWtA3
+	HX7kIBzOcMAbuQ7r8PBb8z/xy01rURfUFcx2SEIQx054vMe0gVDSY5ejP9FSoX8=
+X-Gm-Gg: ASbGncsjxsfPmU32AByPdyHEAvHc0LpgYssStGodk9aGOcLKusf81jqPa6n2nOGZ51m
+	ZP+CTiVfFay4ZbJHA2jPbOD7W7uKBkvJXr1HTS19cGV+dEf3E30O+Xr5zjw3+0+8MwZtRDFyP4Y
+	h0/56Teqc4ZOxTQm4GgV5JD5Hj9gutb0DC+vpd0DLx8htnqxtJxZQhkvrmyQlaVTt8aAIsJi543
+	nWSvILrLrG+sKfPws4DD3AEEymvuXNJNU+X0eCNpFpKWjlKiO19glDJZqZyCh3GpnbkOP8l4bVz
+	ov1qN5OAQWJzrlTOlADjg48XgPntHZHwmVux8mFbMwrpLEVvH9KoKGOV9t+cZiYOoKz+qYPckxT
+	BdMilmff9vVBA+5KV4q7LKTuKDHZo
+X-Google-Smtp-Source: AGHT+IFYMNqZbEEZU24hSgKcW3m5RLIViDlNIgnffwEY/e9N3Ve3Ev3qTdJRHo9n8Lr2y8eJMqGUHg==
+X-Received: by 2002:a17:907:972a:b0:ac3:cff:80f1 with SMTP id a640c23a62f3a-ac3f258cee9mr1765840966b.54.1742895969537;
+        Tue, 25 Mar 2025 02:46:09 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e509dsm832834566b.68.2025.03.25.02.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 02:46:09 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v3 0/2] firmware: exynos-acpm: allow use during system
+ shutdown
+Date: Tue, 25 Mar 2025 09:46:06 +0000
+Message-Id: <20250325-acpm-atomic-v3-0-c66aae7df925@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Andy Shevchenko
- <andriy.shevchenko@intel.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "brgl@bgdev.pl" <brgl@bgdev.pl>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
- <Z9lJETLh2y27934q@black.fi.intel.com>
- <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org>
- <20250324033038.GA9886@nxa18884-linux>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250324033038.GA9886@nxa18884-linux>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF574mcC/23MSwqDMBSF4a1Ixk3Jw3ilo+6jdBDjVS9UI4mEF
+ nHvjY4qdHgOfP/KIgbCyG7FygImiuSnPPSlYG6wU4+c2ryZEsoIrSS3bh65XfxIjgutAUwjjMS
+ OZTEH7Oh91B7PvAeKiw+fI57k/v7vJMkF75q6hqZFwEreXzTZ4K8+9GwPJfWLyzNWGUNbA5QVS
+ qjMCW/b9gWJkyPp5AAAAA==
+X-Change-ID: 20250321-acpm-atomic-033775b051ef
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On 24/03/2025 05:21, Peng Fan wrote:
-> On Tue, Mar 18, 2025 at 02:48:05PM +0100, Krzysztof Kozlowski wrote:
->> On 18/03/2025 13:38, Peng Fan wrote:
->>>> Also the commit message doesn't tell anything about the existing DTS
->>>> files.
->>>> Do we have this device described in any in the kernel? Do we have any
->>>> googled examples? Why I'm asking because often the issue is the
->>>> incorrect setting of the polarity, which needs to be carefully checked,
->>>> esp. for the voltage regulators case.
->>>
->>>
->>> Under arch/arm/boot/dts/samsung/, a few dtsi files have the property 
->>> with results from output of
->>> `grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
->>>
->>> Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
->>> Others use GPIO_ACTIVE_HIGH.
->>>
->> These are old devices and not many people are actually providing tests,
->> so you need to preserve existing ABI. IOW, if previously GPIO flags were
->> ignored, meaning "1" is ACTIVE_HIGH, then you must preserve this behavior.
-> 
-> Per google,
-> Manual Reset function is for Hardware reset in the Active mode.
+One user of this ACPM driver is a PMIC driver that needs to communicate
+with the PMIC during late system shutdown [1] and at that time we are
+not allowed to sleep anymore.
 
-Why are you mentioning the reset functions? Which properties are these?
+This series address this by switching the code to using udelay() in the
+specific case of system shutdown. This approach was inspired by I2C's
+i2c_in_atomic_xfer_mode(), which has to deal with a similar corner
+case.
 
+Link: https://lore.kernel.org/all/20250323-s2mpg10-v1-29-d08943702707@linaro.org/ [1]
 
-> If MR1B and MR2B is kept low during the VLDO3 is active state, the
-> system makes all internal presetting registers as default in the
-> active mode (automatic power on sequence). If this hardware reset
-> function is not required, connect MRB pin to high.
-> 
-> So the reset is ACTIVE LOW if my understanding is correct.
-> 
-> To keep DTS unchanged, we need update polarity in gpiolib to
-> force GPIO_ACTIVE_LOW.
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v3:
+- switch to unconditional udelay() (Krzysztof)
+- Link to v2: https://lore.kernel.org/r/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org
 
-How are you going to achieve it if one DTS has LOW and other has HIGH?
+Changes in v2:
+- add missing ktime.h include
+- switch to ktime_before() instead of !ktime_after()
+- add link to user requiring this change to cover letter
+- collect Tudor's Rb
+- Link to v1: https://lore.kernel.org/r/20250321-acpm-atomic-v1-0-fb887bde7e61@linaro.org
 
-> 
-> please see whether this is ok for you.
+---
+André Draszik (2):
+      firmware: exynos-acpm: use ktime APIs for timeout detection
+      firmware: exynos-acpm: allow use during system shutdown
 
-I don't understand how this is related to the issue I raised.
+ drivers/firmware/samsung/exynos-acpm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250321-acpm-atomic-033775b051ef
 
 Best regards,
-Krzysztof
+-- 
+André Draszik <andre.draszik@linaro.org>
+
