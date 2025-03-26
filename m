@@ -1,81 +1,84 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BBD1AAE08
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 09:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEE31A5BAE
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 09:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742980559; cv=none; b=niLVzM1w3VvHUH970BoWcbxpBTORVATem3cmcS3H7OxLdZ7g4zU4tjVzvBjmCjo7NqxfwjN9pZXD6eB3Mo2kQe3VNBvrTLZ75KT3JOIAbPR+cnk0O4gspJfT893TYMrkYnOM0mEPHF4MTUKhjihpYtH7t7CscN1i3mbjoo2pw98=
+	t=1742980798; cv=none; b=BZb62UXayZHMamymJsZsWkCq1dWjYX6TA5rJz4GJTP6t/7rpSlG3pI4oGxsOzoTYFi4qKSkt4mA7ekLnIWxhmoaANZ4M9N5MRXPjrAbu5lw0hPO6vxci1EKHnoPCeY9xAqGkjRrDlpgQbenx3aD2vi5KImNfCcCOxW4mw4R7PIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742980559; c=relaxed/simple;
-	bh=GCIY2no7DhEyS/En3sT102mrkSnOI0nEyW7oK9Gl+sQ=;
+	s=arc-20240116; t=1742980798; c=relaxed/simple;
+	bh=vv+ysNhuxY3ikjLOktcTQGdujTO/tv4t8ztEeTYdJ4I=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RIx1PqKNfwpnbvcglxSCfvv9nLNqnGc/m0twdvmA4yHshctKIZNNR8LPiRFKV60G8iSrOiyUtvr0YRKCbmSM7PUYIj9L1zRT07c585l6Yg9hJBY4AfN4G5BSUdYq7IncsBgImBT3lU83uQqDDpDWjcHABcouXBNDSD2naglaZIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECOOSvfo; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:MIME-Version; b=kcVsSjVOpMCTU96SpNR85AD0yzTCd2NKJ2xNlwR0Iz3dKQr71OUsm6HObIla1K4/TSMB55wegCEKoIbo1BIDSv9FPm1m0UVcsSIvIbNjxL9V+8mv/n55lbs6mNS3LIyCyRNh2XxUBXOjWWkaIeQOo2AsAtEE9TvvwPMTKmR1PI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jqbjhubh; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECOOSvfo"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so42426385e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 02:15:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jqbjhubh"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39143200ddaso3770204f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 02:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742980556; x=1743585356; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742980795; x=1743585595; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=GCIY2no7DhEyS/En3sT102mrkSnOI0nEyW7oK9Gl+sQ=;
-        b=ECOOSvfoEEF8pkqswQ5Mc4QmCM2WPl+0IPR4WP4vGZJsPFKXp1asAqFJ//yE1Y9rav
-         tmjZHluE0Iy2Z0e+UMmEhZQEH5UY0ocfuEqFgf6niTGjcfi7g9ynFAUvNFbMUhFcUu2r
-         qQyO2kmhm/eQRRY/7VhU4yl8GttPku6CkGQ5b4DlTwzl7pstjSYFThVr6iaWYs1S2lT5
-         29zxspyUpwMh5xfwcTHw7U9+tZhoo9RFRQ2LBlWjl3Sm1VXED2XNF8Ra7tiEb3DIDlrc
-         ceAz4MxqRJN4FXWEO3osJdHD03dOznbJbPW78wHBTYIGFThIcIYNeRtOlBHGWwFihkXE
-         Yf1Q==
+        bh=xQ0qjLT5jo3q/gpm8poDUSRXpTxAB+PQfhlD12KVxh4=;
+        b=JqbjhubhfeEfIMNzE2UY81wFJ4/6cyejFr+EjI0Lm1FuPPwpd9AEv15RSMf09NbrcD
+         OSG26KV0C7eMU3CDWiEsdm4asvFvLKNNRxnCSENqsOaLfCP0O+sPai2b7KWwwMJFY6Wv
+         ekk2BGni5kNRLNPtcT6i+Hu3Hh5f6fOhmqYIXKvGR/ROCOemuQ9raoKg08JrefYFd5zi
+         DIb8XMhd5Jlxmw8CMw5ybCqqIOl+U10u4w3Fl3TEN45+r/IBO4+fB138SLtM6nwHlcLJ
+         qKZkYOLCgE7GQlz4m9UUE9oeoigmThHZbhDW4fDg1/FfvPD4RYPuGzkn0jC8mI1w/M3P
+         /vPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742980556; x=1743585356;
+        d=1e100.net; s=20230601; t=1742980795; x=1743585595;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GCIY2no7DhEyS/En3sT102mrkSnOI0nEyW7oK9Gl+sQ=;
-        b=WdXUR3LuqVPqiMir4mIXhjGauceTbHWdYtEBgNSW9JDJwRyw4QtawFC7vxc3VJRfqP
-         KQCBQNf4ZuLRBV58MmKNJUBjTFiAjU1qj2Xv0DGecxDiG/u4S0CeCSBvKSDSE36+fggW
-         bJTxwjMSrUAZ4wZI2bLI5Uogk+/OY1iXGD+AyuXmDijAa5xPpdl/M7oMb+cxckujX88U
-         OphKvEpkEmWv5zIPcTUmswa1PuPXlmAt35jty1EeRJwz1c85haz4ZefkDy1P50aw41DB
-         HCMArGhItJey0sxcjF3vs7kxDh6eXTJmqF9EpDslkbq7rTZOdGuTRK4si013WTU9WpnC
-         5o7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWUuPDoYLhuw/3Y8cIdUycMGeiHvPJdOpxuN7iVaML1HrLTaY9RXpwLOOJMzUQCoNCsZhEkwEuNsPvmJrdDmEGVKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHRqKQW+MnaWgDCKf+Wp51vraoBpAg7MGs6t8Chj29KD2xC+QC
-	OHv2Ko6jvovaYPhMt2AC0vWK/IVJcvbEpfBu+ZGxHsu1b+ft0z4daXKLtE7H+5E=
-X-Gm-Gg: ASbGnctqvePsvDRnUKEhoxKuScKcJAa0Xgw0V6/xfSsbwGxN8/ipOToVJkyGPq4mhRk
-	Ry0jIGeI7Ve3Er88he9RwGzKSuAJMEvgruT5eG6PvRsPRf/lbcSrY3a33Kbfqj9mRscnmZaKW/v
-	+b2XFc9UbheiX/XxipX5c9aSnrLUk4KPI+UyjbcKsXPu0R9FiGFPTCmAq6qv9v3I1b8e+OTTkZQ
-	2+qoDpTR93N/KTonrhdRUTWXsSad6pQKMX03dnH9E4WI5OeQ2q+A07cCFZguU8FbpjYfXdnTn4J
-	gK8gnZCv4kLQpH7kIWGGqMtAJ0gXNEX/euOwvZrAeY45/4I3eg==
-X-Google-Smtp-Source: AGHT+IGx7e5C+Sh+HHT4ZLhJxYeCSMGqOs/VS4VI7TohJ8fgltfofFctJegQ4k3N2nPlKvOkPunClA==
-X-Received: by 2002:a05:600c:3ba3:b0:43c:f8fc:f686 with SMTP id 5b1f17b1804b1-43d6ce18becmr59665045e9.3.1742980555577;
-        Wed, 26 Mar 2025 02:15:55 -0700 (PDT)
+        bh=xQ0qjLT5jo3q/gpm8poDUSRXpTxAB+PQfhlD12KVxh4=;
+        b=DQUV9E1XSs1LURkIGX6yNY61VyxnU29tCMoVVN5Q4u7qD+5CuoV74uQTTFqCbvqWDB
+         XE9mmznUZdfDPhBQljvbkC8CAu6vDg5lABHwBJwjlMFukNiTeppDj+jR/Fu1fsoYl4Aj
+         AmJFJABGALS6Z8QxEfR+RdEEGYZU2WNV4shjA5HwcevFjtQzz1stonEozUrbHOM2QF9P
+         GepIpYZWYEwYVEb3S5vWUpeoEuIylW3dJSEZRzSx2NH1KoFOYgeNUp82v/G1EiBPn1jj
+         NaetCkg01Tp7lB4L1RN0lMN+VDXPot3FnNd6vd+tNNfCVCoiAu3cCMtXxyhVtt6CJfd9
+         g/LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpkS8n1nTlbMeL67sPPc5Kbs/+YtPHo7W54aSh+LYBIA1Sr2gkYGfK/afkJfcXz+9FVWNkJuMg5jggtP1cQ0c2Qw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2KMoAeejbMtWxvLdbRbIzNJd8Cj+EwWvi7aepC66L3INZ175Y
+	UP1wfCqTMcgdAHhUQ9QQz8y+3cYLvIa3QQx5LeBlZ+qzRKP+z/DUMzUVsCfO/rg=
+X-Gm-Gg: ASbGnctnf2Wesve5ihrr4qyi3dTkExaVoHfi6/s5AZxweo4wzNJoi15Bos3TnZi238j
+	IkNZU1oI5ZQPPHnGN5a0jGaNfpUAildO/0VLXzVSCmHfvuxEzDMokgV3GkWgpHo+BOTV6KBoJan
+	ezjNekQsW3aKlrb5TshEkx9WuHWx8FFXMdrUweVhoAoy+tGZZ9lqmFvpPulhhEUK2xN74uB9ZqI
+	FqoW/3bR93M6umMfiLSNYtDED+YA5BBMuvpvuSJ5jsqnfmLgOXkCO/oID5YTRSQVCVcCG0rExGB
+	Y73Ve82oHWzltO9yHe8Qpyd6iXImT4Ocrjv7OsT9lvBHoMNUZw==
+X-Google-Smtp-Source: AGHT+IHdYeX3HXK3HliuVZenB8pY2eBivucP0XkMIaG7LHTPqNsbiA+5ps8ir+J/tmMzC0VVoMgrVA==
+X-Received: by 2002:a05:6000:4027:b0:397:8ef9:9963 with SMTP id ffacd0b85a97d-3997f93d54dmr19401353f8f.55.1742980795153;
+        Wed, 26 Mar 2025 02:19:55 -0700 (PDT)
 Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd9e960sm175393475e9.29.2025.03.26.02.15.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed5e0sm224956845e9.37.2025.03.26.02.19.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 02:15:55 -0700 (PDT)
-Message-ID: <a4928b0f7b54fc6e3e80f7130b466d5d493b0aa2.camel@linaro.org>
-Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
- shutdown
+        Wed, 26 Mar 2025 02:19:54 -0700 (PDT)
+Message-ID: <8c167b83a469d24373486af5936b466d44319409.camel@linaro.org>
+Subject: Re: [PATCH 03/34] firmware: exynos-acpm: export
+ devm_acpm_get_by_phandle()
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Wed, 26 Mar 2025 09:15:54 +0000
-In-Reply-To: <4f2252fb-841e-46e0-942a-5db9767db89f@kernel.org>
-References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
-	 <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
-	 <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
-	 <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
-	 <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
-	 <42905f72-100b-432a-becb-7e1f835e518e@linaro.org>
-	 <4f2252fb-841e-46e0-942a-5db9767db89f@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
+ Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester
+ Nawrocki	 <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Alim Akhtar	 <alim.akhtar@samsung.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Russell King
+ <linux@armlinux.org.uk>, Catalin Marinas	 <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Alexandre Belloni	 <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rtc@vger.kernel.org
+Date: Wed, 26 Mar 2025 09:19:53 +0000
+In-Reply-To: <f1e24507-7cf3-4e0d-8989-05ef3aaa2708@kernel.org>
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
+	 <20250323-s2mpg10-v1-3-d08943702707@linaro.org>
+	 <f1e24507-7cf3-4e0d-8989-05ef3aaa2708@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.53.2-1 
@@ -86,55 +89,38 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-03-26 at 08:36 +0100, Krzysztof Kozlowski wrote:
-> On 26/03/2025 08:24, Tudor Ambarus wrote:
-> > > > >=20
-> > > > > What happens if system_state is changed to shutdown in this parti=
-cular
-> > > > > moment? How did you prevent this from happening?
-> > > >=20
-> > > > Yes, and that's also what the I2C subsystem is doing, AFAICS, see
-> > > > i2c_in_atomic_xfer_mode() and its use. This is to make a very
-> > > > specific corner case work, similar to I2C which has to deal with
-> > > > the same issue during shutdown.
-> > >=20
-> > > But they don't have a choice so they try to do the best to avoid
-> > > sleeping. And it is a subsystem, not a driver, which means their
-> > > patterns are sometimes special. Drivers should not replicate subsyste=
-m
-> > > workarounds.
-> > >=20
-> > > >=20
-> > > > Would you have a better suggestion?
-> > >=20
-> > > Yes, you have a choice, you can always use udelay. Driver code is
-> > > supposed to be always correct.
+On Wed, 2025-03-26 at 08:03 +0100, Krzysztof Kozlowski wrote:
+> On 23/03/2025 23:39, Andr=C3=A9 Draszik wrote:
+> > The upcoming Samsung S2MPG10 PMIC driver will need this symbol to
+> > communicate with the IC.
 > >=20
-> > Using udelay() is good enough for now. I see that downstream uses a
-> > usleep_range(50, 100) and I'm concerned that we're going to waste lots
-> > of cpu cyles once more and more clients get added.
->=20
->=20
-> If this is going to be the case, then we can revisit it with some
-> numbers. Especially if this ACPM turns out to be a bus driver.
->=20
+> > Export it.
 > >=20
-> > If there's no concurrency on the ACPM queue mutexes at late system
-> > shutdown, would it work to pass the don't sleep requirement from the
-> > client to ACPM and use udelay only then?
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0drivers/firmware/samsung/exynos-acpm.c | 1 +
+> > =C2=A01 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/=
+samsung/exynos-acpm.c
+> > index a85b2dbdd9f0d7b1f327f54a0a283e4f32587a98..7525bee4c6715edb964fc77=
+0ac9d8b3dd2be2172 100644
+> > --- a/drivers/firmware/samsung/exynos-acpm.c
+> > +++ b/drivers/firmware/samsung/exynos-acpm.c
+> > @@ -741,6 +741,7 @@ const struct acpm_handle *devm_acpm_get_by_phandle(=
+struct device *dev,
+> > =C2=A0
+> > =C2=A0	return handle;
+> > =C2=A0}
+> > +EXPORT_SYMBOL_GPL(devm_acpm_get_by_phandle);
 >=20
->=20
-> You mean the client will choose what sort of delay it expects (sleeping
-> or not)? That would work, but can you actually control it from the
-> client side?
+> If binding changes to parent-child relationship, this might not be needed=
+.
 
-I can know this requirement from the RTC driver indeed
-https://lore.kernel.org/all/20250323-s2mpg10-v1-29-d08943702707@linaro.org/
-but a) I'm not sure how to do that with regmap, I'll have to have a look an=
-d
-b) if the concern is that system_state is changed to shutdown while one
-of the (other) drivers is using the ACPM (as per your earlier email), then
-having a different API wouldn't help I believe.
+Indeed, I've instead added devm_acpm_get_by_node(), and clients are meant t=
+o
+pass the parent node pointer into it.
 
 Cheers,
 Andre'
+
