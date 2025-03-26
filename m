@@ -1,64 +1,33 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8336199FC1
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 07:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D314F170A37;
+	Wed, 26 Mar 2025 07:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742973869; cv=none; b=mupF+r+QWDPpd1fknusWVQ7SeGJwvDisv4SPa2Z0GNI1sevFXH7ac5i79FfeA3A2Ae0YJfpm9S82+eNibHNBQqYUqEju1cFcSTF9g+y25eSTDMOrTWcKRYHQISymi63P3VnRlrgaIWzG4StsjRWz4rNuNDrGERviz/KZdKg9JrE=
+	t=1742973883; cv=none; b=dsrohPkZU0nJQRrKmayTafdhKi46/RQ9Z43gOigpUxNS5mWOUHD+fIcFXiHyN6hnj9kTNfgzqEIYjT2DJNrDBROPS822/SF3nV0w24km5di/DhUlAuWt025LTAi24MyxWx6bF0TfVE9IwbZuntrivr/1ednP7lf56G9JETtI+Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742973869; c=relaxed/simple;
-	bh=54cd63a34vf2HcC+TZzb0ZdkVJCZUFfzB+6Lus/qZbk=;
+	s=arc-20240116; t=1742973883; c=relaxed/simple;
+	bh=vBPa+PfaBJFraxGm6Tyeais+n0mMhPTmkO+23plxVc0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jx+6IroMxra58Jj1AXzTvnMB1JOfd4efGqfrXIKTRFgPb7UuvXwyDy4hpw+xkeXjv5hoGD/OzJYE3U6tM+CMvynWM7uCf/T/cCIdyA6RHEuYl+K8MoG3EGr84ixGCHBNBIigN7c3J/+c6vfh/J3Et0F6PXH2naYH/coeLy7EHBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5enOoIX; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=Qf0oJyxWv0cCh6OP07u/08I9likKomwhepCjl/KOsKirMM2gEIlffo7/2Jm97urrAaHuRUfP2GF7bBoLGQtXnPY36WUe9QT5rt64alKUUMTYV1u/bA5bB3+Yk9yy5DG1WERME4Har+1UmFV/6LLYEvf1GB4bxU/UDC0lBDqhWHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCUF72Ct; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5enOoIX"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso29293135e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 00:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742973865; x=1743578665; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3WjwjGLl32A3KiDt34QpamT6Oni1xHmFU/Px0IbQnoY=;
-        b=q5enOoIX3ClvgYIOx7oHhP6r8eJZs2dy7CqCLCuNXBhvXkua6ccO42b/rjvc3SoNFK
-         ELMUZk8jVHNpUZjkrXLTqBBstf6KX7COGkV8+pYhexBS/1R2X/WKb56OlRQd5Cd5p9hP
-         SNqehENewhuJh3wt8rwqQ2iTMSY3bmb1423enMaObtX/SviCD5szvmq5UgFsfIMv3lkc
-         ccFb7UPWLSXpTBz6DQS4i56RYXRQkO6BD8nTIUtZhtpTqZcwJB1ZijU/HSn6mVpP3kLQ
-         74+e5pPkdrK/nimqJMdNxggXzXYDMH4ZYpyI78qoqphP/hbwT1X1p2keEvi36bZ/rCbE
-         O+BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742973865; x=1743578665;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3WjwjGLl32A3KiDt34QpamT6Oni1xHmFU/Px0IbQnoY=;
-        b=j818W9r8NDf6zN7NLC2ZfuBh5wUEl9UQAw6LTDFLJyZFedL+CdHcvmsV678igPWVvY
-         2gR6XeaHgecM16fjzVbHBCHgbW/+P7/aZpN5cxVX3Dp0XYN2DVbPuBEWY/QWNtbu9H2V
-         DjQ1Ud1SQU6Bl6BNLyj7FQZMDtxApa82yzIiVI0f4ACyXXi9ua1KCVU9BXvRYlDSpUxR
-         iVuh82t44foyffI1KkT2Qkx1fiugkx1uDNimxn0VHfguSVK97to5DxDBePnb/xa7ATLI
-         RasWeCQkTX8BgeL1h2rRn1CUmoSCopdizU36+yQfFHsBtD2U03u18tmILfyoHXj1cEn8
-         HU1w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/ZFLgyy4mZ1uF91sEdCBbImAD1p7Okixxh1zKCTmMKddmceXRUSUAnvR6xsl6a6Uz/o5BssaNxk5duS6f2E/S1g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2tgAtUuCc4gLKP+hwMFTABJ2rUzlXagacq5RGvWxl7LtqkFnK
-	c5jr6GyMEyEGjvROElD1puux/TFZ79DK2CyDVJsjnHX4lOF0OdL0QYoWmv1qLKM=
-X-Gm-Gg: ASbGncu3Y3YegSvuBkoiiffxTlx2Q4XokriE8csFRSlsLD+SDvUzotxzGA+tD5Ntwdj
-	KJOYGspdWxyNbY9xoo4uFQck5OcP2JkfyWc0aFURsNW8I5SZamqJi1bIhPSVaS7Y30SINKFxa9i
-	zhiYZbxBE9ZsF15ltygRALiewlWXl8FAAxrCmWpC0FXv22ghiC0aeTANFfkCKccPGy9lLxVowvR
-	hi5oJcyT+HlPhnHgpqEmy5sgJC91ZiSooZh8sXD8JsHBpqVM+nR1VBFbyGoCbpHwcM27qfwqBtv
-	T1q3US1Tr952amKwjygEyzj/U8moR+WIWOCxXcJ48wFNiyn5CN31xQw=
-X-Google-Smtp-Source: AGHT+IFV7fd+M/H9BFgJClv0I0A4YnOUCaUBe1bBC0ZrrT9wb1YxMcUrftw6F8ycCV7VPua/wYkfPw==
-X-Received: by 2002:a05:600c:4747:b0:43d:2313:7b4a with SMTP id 5b1f17b1804b1-43d509e43e3mr184235705e9.3.1742973864876;
-        Wed, 26 Mar 2025 00:24:24 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f33242sm225247215e9.5.2025.03.26.00.24.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 00:24:23 -0700 (PDT)
-Message-ID: <42905f72-100b-432a-becb-7e1f835e518e@linaro.org>
-Date: Wed, 26 Mar 2025 07:24:22 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCUF72Ct"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E11C4CEE2;
+	Wed, 26 Mar 2025 07:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742973882;
+	bh=vBPa+PfaBJFraxGm6Tyeais+n0mMhPTmkO+23plxVc0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OCUF72CtvPwfx71JJtUeh03uXsprTiSyoLugGtZvZ5aOtnyDn1x1YsLDviOIb18Kb
+	 arynQfObXWinc10CrTpLLb/ptcCaebKzlm/std/+SA7IW4EdBtfxoWo5x2C6YxyGn8
+	 LemycJ3x8pE9yMz0mqeQLcP0dntDFf72oPQguQ6N7a7N/wzHR+s97p3sUtlf1NIy5d
+	 OZ09SAw5T/B37HUlyDEVQmtLV0JHCvkWxjYX3qG3J3QEb7mIBv1u6HjJ1HxM+3lKo5
+	 Wrt1D8AOgMX3F80EuMgFP4lWiqISGOXrzLMQbzb1fvHCC9WMRtXhNIJRJ0L9A+Cpee
+	 C98r+xVJZa3cA==
+Message-ID: <e3dee29a-dcee-40b5-8bf4-22a6a8a7993a@kernel.org>
+Date: Wed, 26 Mar 2025 08:24:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -66,82 +35,86 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
- shutdown
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 15/34] mfd: sec: use dev_err_probe() where appropriate
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
  Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
- <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
- <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
- <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
- <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
+ <20250323-s2mpg10-v1-15-d08943702707@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250323-s2mpg10-v1-15-d08943702707@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 3/25/25 8:07 AM, Krzysztof Kozlowski wrote:
-> On 25/03/2025 09:01, André Draszik wrote:
->> Hi Krzysztof,
->>
->> On Tue, 2025-03-25 at 08:57 +0100, Krzysztof Kozlowski wrote:
->>> On 24/03/2025 16:34, André Draszik wrote:
->>>> +static bool acpm_may_sleep(void)
->>>> +{
->>>> +	return system_state <= SYSTEM_RUNNING ||
->>>> +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
->>>> +}
->>>> +
->>>>  /**
->>>>   * acpm_dequeue_by_polling() - RX dequeue by polling.
->>>>   * @achan:	ACPM channel info.
->>>> @@ -300,7 +314,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
->>>>  			return 0;
->>>>  
->>>>  		/* Determined experimentally. */
->>>> -		usleep_range(20, 30);
->>>> +		if (!acpm_may_sleep())
->>>> +			udelay(10);
->>>> +		else
->>>
->>> ... and what do you do if IRQs get disabled exactly in this moment? This
->>> is just racy. You cannot check for a condition and assume it will be
->>> valid for whatever time you want it to be valid.
->>>
->>> What happens if system_state is changed to shutdown in this particular
->>> moment? How did you prevent this from happening?
->>
->> Yes, and that's also what the I2C subsystem is doing, AFAICS, see
->> i2c_in_atomic_xfer_mode() and its use. This is to make a very
->> specific corner case work, similar to I2C which has to deal with
->> the same issue during shutdown.
+On 23/03/2025 23:39, André Draszik wrote:
+> dev_err_probe() exists to simplify code and harmonise error messages,
+> there's no reason not to use it here.
 > 
-> But they don't have a choice so they try to do the best to avoid
-> sleeping. And it is a subsystem, not a driver, which means their
-> patterns are sometimes special. Drivers should not replicate subsystem
-> workarounds.
+> While at it, harmonise some error messages.
 > 
->>
->> Would you have a better suggestion?
-> 
-> Yes, you have a choice, you can always use udelay. Driver code is
-> supposed to be always correct.
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Maybe such cleanups should be before you start moving the code and
+splitting modules into i2c/core/acpm.
 
-Using udelay() is good enough for now. I see that downstream uses a
-usleep_range(50, 100) and I'm concerned that we're going to waste lots
-of cpu cyles once more and more clients get added.
+Anyway:
 
-If there's no concurrency on the ACPM queue mutexes at late system
-shutdown, would it work to pass the don't sleep requirement from the
-client to ACPM and use udelay only then?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Cheers,
-ta
+Best regards,
+Krzysztof
