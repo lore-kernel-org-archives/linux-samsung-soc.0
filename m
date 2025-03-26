@@ -1,64 +1,64 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822A815381A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 09:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54F91A8412
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 09:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981723; cv=none; b=H1dd1V/CvsnRgKhc4vviaGFDAyul0MRo8v7LF3/JdiAo2KsHb5b2BT3md0S3dN0jguTSFeeUIWZBFOndgHyE0LdUpUmJspGJ6jsYjuPpdMpDeFFCLRjpJGNcgqhQwO2ViqFnAAznwH+TBBhJ5R7jxi0YM2+6ffC1oRdxead+lp4=
+	t=1742982170; cv=none; b=GVGnhjvkia6vfi+4nHoql0clggYMk7HJsjLyDO+vSAqJU9OwfObJp0sSAPzzGTl9aevustmxCjtOu1gR7t4o74jw51ohQj7q4frPFIQ9hQ5ZNDbpzRD57t0I8vfnzOTLBRoyC4AYGuAiRHGsx5qUaaHXpm6M4hTIoi3kXc7mtA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981723; c=relaxed/simple;
-	bh=mO7U4m0oTja17D3RFzqvynDUKnVhiYqxVxjxnWasqbo=;
+	s=arc-20240116; t=1742982170; c=relaxed/simple;
+	bh=oK9w0PHHeYSQoiTSBw6ii01fBfUomipWqhc0pGmOdEs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ExONWOb8GIQbfFvXSM4jLQCfk7yMpsMLSfSGOesXWFg/l2PAyTG6OQiTVYzJaRp2OHlZ2/BMrwPb/vsj1qL9A16i0cGukaA60W2UR6vYezqqg32PYV1qQPEQOC3HbElJGVGHyAvvIwa2inFhjUweaQrLfI16zG1hZdptIiO5ewk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Meadw21h; arc=none smtp.client-ip=209.85.128.44
+	 Content-Type:MIME-Version; b=fRvuHm3bBUrk58Kq3IQR4Eu7aO/RTkI5X+KImJ3AtLQ85pY/kJoATdsei8HxhfuXbsL/5b3IR0UbgAAbHxj/uEeWHHgOdhBlrg+THnZelNioWU88GVs4DDnKbtHbBlZ0dtG6YvbumA71rObTc8m4j9cGe2zp+CIgBQe96G7j7RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zqjeVpyr; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Meadw21h"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0782d787so45925315e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 02:35:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zqjeVpyr"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-394780e98easo3765096f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Mar 2025 02:42:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742981720; x=1743586520; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742982167; x=1743586967; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=mO7U4m0oTja17D3RFzqvynDUKnVhiYqxVxjxnWasqbo=;
-        b=Meadw21hAJAbPxHWIvE2IdbDLH8Iu3gP2LwW1a7LUKHThLlqX6CsngMPJQR3Q8jmMi
-         Y/eXaeJ2x7qmckOmGM+Jt76QXYznKk6sayGrFiGmC3p4f12N30t7L+d30z9E2Q8aBkXP
-         iQ9hoRNkYoHeidu7iB/Di4Nb87PM8VkZiIUZy8lIkD+LLt/igq+9XyvPqk1gxuPfoNxl
-         az/n99XmR9iXn/FKMzOJ5s0zKA/MJzY5VQAMMlW+2epY2do+caRJMfrvEs7M1EEfVSIC
-         BfJkoIRfkPD63mUG+g0R72X73Y+mHNCvriWSWpX1id9Hr4XFD9b76gm+Vt2PfVNWG7gs
-         QRsA==
+        bh=oK9w0PHHeYSQoiTSBw6ii01fBfUomipWqhc0pGmOdEs=;
+        b=zqjeVpyrhgQ/NXGty1PgUN3b8mwx56PVRJzxDHl4Ock4WqFoi73/XTjZ0yMA2yGROM
+         nJHE7xet4YKfMUS4U1/t8DktJHik+cttkZ+x3CZzDXWd2wzIB/JlvsvevgJMj6NMoCrV
+         GVw1nag1t9U5b6r2H18ZqB3HquVxcwr6sO3qS0gdw3kL+Vd/4v0fR23qVSZERRq/hjDr
+         YFMsw4ULzqT4HhK/pRkwhtPYJW881jF+5yaeABRjneatqdKAq/TVWfSYTCgfDL7TaI0i
+         2l0uPOn+yEea31cxsVGhvUoO2GhphEGl9wqrQ07X5p+fTdiJxmjar+h3MHwXGb2S76+C
+         nfRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742981720; x=1743586520;
+        d=1e100.net; s=20230601; t=1742982167; x=1743586967;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mO7U4m0oTja17D3RFzqvynDUKnVhiYqxVxjxnWasqbo=;
-        b=lTwxbFS5gn1VSH0obtMnCatMRXJOK2kRGIb34r8JuJv+XwbovMPXNtbI00I4Y8JpTs
-         r5fT5j0I0gE2gICZ2D/g5NAzm49qlwFsBtXYlzvvDsDUEiF92N08OFoKuq0wSHs4phEI
-         iooSDZdOLnujj9CWgfyCssMKL+d3dIQSGtQhsEmLaObdxyPHfuo4nw0JrU9e7cVKUCbS
-         q53e0vp7AwWra4UgwHjS0aLNXKYTOp6xi6RSVjoiUb+8wepgFnfIDKWKRSO8q6lTF550
-         FyrXrAqSKjC0jORfdoNeX408/1iVi1wTogKV8xP3YYQocqiPsj0fQuXIGtukCNe5B3hM
-         i8Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVv62Q6A/I70t2ZW0Jl15HAfnGdj0pMvu1RsO2DO1+SqLaQQHzD5yvekMiSxwEH2CNPTBe2GYeDqdB6oiWlT8AGdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1UouHIbeUNrMuTAW1sxr2bgkfQFQjAipQzRBdpda6DO4AQJ6s
-	MLEgcTpdLip59BDrheBRWy8N40jodPv+UwenpMH+EFDy64AwvTtSOMR61UIM+qw=
-X-Gm-Gg: ASbGncvXvnSPu29K4MeDnrK7ynBswtGyRplFTtaUueAG83xZbMOLhJ9/0RwKmv+gFKt
-	+SfBEuvq/SMuVdiyKBD7J5NeJyd1jcYO72gj9Xx/G4794JDhuXOXz/VJ4AgRIBwXkqrjUR5/fuf
-	hReuwlWMQPU+FLn52ancFfj6IFNRPlK/X2fg2GdC0Tel6PJAZU4m5YWjlKXH5KAGaApcpZlT82k
-	/OHD5/GMJJupGWKxyFRiYiypYKFePqaP++W4gfzlwTPtikEQnimfzl+MxBBjqlP4OI4ijpppFJl
-	DCj00OiUc31m/9u2r7PrlzeaHTu6aeCeMKtPIsUzihrNGge9hQ==
-X-Google-Smtp-Source: AGHT+IGcfQ6I4FNrJirurd36EI4HsUJuWVwi1KHS1E2yEYqjMI56gm6awQtr8PEUURenI12KJk6YUQ==
-X-Received: by 2002:a05:600c:c0d:b0:43d:738:4a9 with SMTP id 5b1f17b1804b1-43d50a33d03mr152636725e9.27.1742981719714;
-        Wed, 26 Mar 2025 02:35:19 -0700 (PDT)
+        bh=oK9w0PHHeYSQoiTSBw6ii01fBfUomipWqhc0pGmOdEs=;
+        b=bf4m+wdNb3m7PAwl0fGE563HL1TFSGYw2Mm8KnRfn5l9BSoYlmq0AeOpH6VCv+gqiX
+         GMW4a7wUKL/g0ssMn36zNd3JthHFlbC6ont0aGLdESA9lM8NYR2xyWdn4H3CidaaY4u3
+         HND18nif0QEat35n5iM5VE3nC+Mn/Cpgt0JAyTDczCJmiwn9sI+X9TzYxOh+dYJXnB3u
+         iaJ2SnTVt42c/PilDCDmPVKHOjnxbQpoDB1DbEnpPGl4VBkvgWjh2kv1aMDUbplxGuRs
+         1YssvgUAfyb+Gz961/BpnR3KG+/gQMtMYIjkWMMZJpsZ/IcswXYBgP+fSQk2wOvfWLDX
+         QJow==
+X-Forwarded-Encrypted: i=1; AJvYcCUl/d+JlFhrf5Z7exybWj8N+YSFlBXZP7DDiBtQ+YjDOfnUeJnbfxs9SXgwaynBjJv+3afgz2bFcfX/aLNzrunTUw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGJrTWmWrwBVz+Rxk76SwlVvWdg4ebothIjwyxcp0wRhnKOCQ0
+	3tyEkwwwQEoD8v2efvcRNgt8GUArN/xnsr9JYAogAWITLbIMiua04WMu1B/uV3E=
+X-Gm-Gg: ASbGnctvPIjtdxpTkh/hFWLYIlrecebRgJnMMw7Ku5VpmqO+2H4do/Tkp+UhntvLT7l
+	u92VE5//BhlIONZ2cfkck8noS8bYIgLmmyAvfz73Fka/VKJMxXlv365aoBKjIT9hHhHPHJyLEEw
+	5jy1mieHD729WvCeEBvRH8lWrqNkpmkn7W92S1L9cDPMD09r4C38ZEsIsgHXj6un88fjQj4BS7f
+	nCmyhSwoqnXS4tEqcbW8qCO0ephldqxE4sE5dQpKtVa0y9uO9DkJKX1ZnuHWMqyYauFE3Mz03Ks
+	kQnJRqpOix4x8Q1qAGObHSz04nCni74WT9OGGgpH+krj2ktQ+Q==
+X-Google-Smtp-Source: AGHT+IFPYFB/K6M208ce6TYKpgzYD2gbxBVrga6S1jcpfDNM/sLdTcLlHMBJoMx/mLpGmNEqFLCYBQ==
+X-Received: by 2002:a5d:64a2:0:b0:391:2c0c:1270 with SMTP id ffacd0b85a97d-3997f8ed9d4mr17888571f8f.1.1742982166969;
+        Wed, 26 Mar 2025 02:42:46 -0700 (PDT)
 Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f32fcdsm232615235e9.7.2025.03.26.02.35.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f995778sm16406564f8f.11.2025.03.26.02.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 02:35:19 -0700 (PDT)
-Message-ID: <40a8d82aab764669cf755adbabac80a5c0044a5e.camel@linaro.org>
-Subject: Re: [PATCH 12/34] mfd: sec: add support for S2MPG10 PMIC
+        Wed, 26 Mar 2025 02:42:45 -0700 (PDT)
+Message-ID: <53e7fd763da3748dbc7a5205b4f93cdf9476aded.camel@linaro.org>
+Subject: Re: [PATCH 15/34] mfd: sec: use dev_err_probe() where appropriate
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
  Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester
@@ -73,11 +73,11 @@ Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
 	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-rtc@vger.kernel.org
-Date: Wed, 26 Mar 2025 09:35:18 +0000
-In-Reply-To: <25eb9c47-96ba-4037-b320-af16e0226f4c@kernel.org>
+Date: Wed, 26 Mar 2025 09:42:44 +0000
+In-Reply-To: <e3dee29a-dcee-40b5-8bf4-22a6a8a7993a@kernel.org>
 References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
-	 <20250323-s2mpg10-v1-12-d08943702707@linaro.org>
-	 <25eb9c47-96ba-4037-b320-af16e0226f4c@kernel.org>
+	 <20250323-s2mpg10-v1-15-d08943702707@linaro.org>
+	 <e3dee29a-dcee-40b5-8bf4-22a6a8a7993a@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.53.2-1 
@@ -88,32 +88,27 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-03-26 at 08:22 +0100, Krzysztof Kozlowski wrote:
+On Wed, 2025-03-26 at 08:24 +0100, Krzysztof Kozlowski wrote:
 > On 23/03/2025 23:39, Andr=C3=A9 Draszik wrote:
-> > Add support for Samsung's S2MPG10 PMIC, which is a Power Management IC
-> > for mobile applications with buck converters, various LDOs, power
-> > meters, RTC, clock outputs, and additional GPIOs interfaces.
+> > dev_err_probe() exists to simplify code and harmonise error messages,
+> > there's no reason not to use it here.
 > >=20
-> > Contrary to existing Samsung S2M series PMICs supported, communication
-> > is not via I2C, but via the Samsung ACPM firmware.
-> >=20
-> > This commit adds the core driver.
+> > While at it, harmonise some error messages.
 > >=20
 > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> >=20
-> > ---
-> > Checkpatch suggests to update MAINTAINERS, but the new file is covered
-> > already due to using a wildcard.
-> > ---
+> Maybe such cleanups should be before you start moving the code and
+> splitting modules into i2c/core/acpm.
+
+Sure, I can re-order them. I didn't want the new PMIC to depend on
+all that cleanup, as I believe that had been previous feedback (but
+maybe I misremember :-), and also to avoid the new PMIC being blocked
+on potentially contentious earlier cleanup patches, if any.
+
+
+> Anyway:
 >=20
-> I did a quick look and seems fine, but I suspect small rework when PMIC
-> becames child of ACPM, so full review later.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks Krzysztof! And yes, there'll be a small change to support that appro=
-ach
-instead.
-
-
-Cheers,
+Thanks!
 Andre'
 
