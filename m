@@ -1,130 +1,116 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB88D204F70
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Mar 2025 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45C720B209
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Mar 2025 08:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743065717; cv=none; b=r7QxAwOQUAP4JyzpSXm+FtPsYJlBoTXguOlUlfuk5ShqWdruMaXuBNrqhdpnmzd3ciCBWhztCJMS+oSbyZcS0gVyvcu0QCi0pXKNn4K0ZwJf14Eacfji2PUtlL6uQrylvmGxsh/wXUTXpJTqKEDP/ksIWoFsu3x959D0wjQh2Hg=
+	t=1743065808; cv=none; b=Mek+slwuSutwiAktL17HRYKpvOMa1R001dgME3ImRzNGMW8J1Snkncnkg/l/3RYI4khVdIH7pIvIeK3+OTO8xqUXImUpu6QUdcjmesTjB7Tsd6GrSVJNYsaP9Vj8g6tqspjOFu7EN/X68ikxdhyDWF/aT8Zc2NRuMFpL8Icz+OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743065717; c=relaxed/simple;
-	bh=+uDTvw0NAiJshNKjCFWBDchrHudSaZlgESjIlq6pqXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pq0kbv8rDMFmRTsNSv5lJqz8uVSEgez8CmwSlvqS8zugr1TNnDX36Es8PAYmsquiuN779i1VXe/p99IXJvnFa4VH8OgG4FuJ2qw+TnMcCq8CK+pO8DxCFdd/o7M6+K+ePNq+JObawHcVNrUU4uRyV+RTa9m4dUlZ2Lukn1Rl+M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IqdVU7g1; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1743065808; c=relaxed/simple;
+	bh=FIYwhtEw1euleTwTcbZCNX9K84qUUjXQZZcm3DuTqE0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LYFubAK8DaxIswev430twVjbqRuNXGvdhthZ+xKu39rPCN682aKbxNWrOFzkQbdT8F1cH5skAUBHEHObwm7XWuNeVgkWt3JcwRI+UYR9KITkhLIUhGPn7Cl+LXGVYDCewIWZj5kcF4IEDQAw0UTRbD+V9z6FHDzHU1vsg4/yPl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f9EIa3z+; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IqdVU7g1"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bfed67e08so7393651fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Mar 2025 01:55:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f9EIa3z+"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso537432f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Mar 2025 01:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743065714; x=1743670514; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xX7zOJmIvIc+c8CVP1kOsZxrERdgtODAYGQ6WCW63GA=;
-        b=IqdVU7g1Xz13ZgqO4JK3tYrV8oHwpXhJZ7ooi7U6/PSoq05JIDqIpAM4dapKpQ5+8T
-         /tpZpdolEnH4zF+0nT0WBLqr6olcKJrHc/r/j6FlrMmBGY+IVKqRO7qFobJ4opyr5IhM
-         v7sTOeRrZbE7n5WPRwEYLlZjfpcrIP+/NsekQJrYM6PlC+vyMRWBa0Xs1M4zGJWm4PZG
-         36J45HDizuCsbovrtn/C2XooJuCi2JUPBpJR7tUNsuiWBMVRsVaKlqyShE5kRL7//vLZ
-         g/msJu1E7DtiTKQZ3HlUQL5nlRWcZ6xgQyHE1VWgGsIc7ADcIctoU3e6ZmC0fr0fmP2i
-         S37g==
+        d=linaro.org; s=google; t=1743065804; x=1743670604; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FIYwhtEw1euleTwTcbZCNX9K84qUUjXQZZcm3DuTqE0=;
+        b=f9EIa3z+WG3ihErGNo5scvrjbc3TWVbr1yXum03sHB5O1vlZwZJ2LWsWhi9c/Erpyz
+         pDHBJrhhg/kl1JYkoUW2DvVwv5zXmNrBIpnoGDK7t3r0LErmLGK4mt+b9oDq6dR/ACbT
+         h3yO8ewgkhjzo0ULTYzEeX8AMKfEHWN7uiMOQO2OBcBuoNEPW537c7kP9L0EFehXJC+w
+         W6mFwVOxXIgUVd8FY1GafWAdg+kfCix8vS7Uk9nkAh/cjjiBIfLxT1r/4JL0eE02Uf9R
+         pWb9MJag9OwNf9ymAFuL7xvWnOhlwPATHgmw4mihphDFXarzPumdjSnZ4nnOVPSwxr1s
+         xpTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743065714; x=1743670514;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xX7zOJmIvIc+c8CVP1kOsZxrERdgtODAYGQ6WCW63GA=;
-        b=WmC5QHunmjJqGriXs0aZWRsaDRvIF13sa7rJQ0XaeFGeed3ZH3bWZeUSdFovRZrVXl
-         AvUAIfP5tKtW0fNzcYAA4WID6MgSdhPtRh3QAvp244T1kr1XfdbZmbz4o1hpNwei7jGg
-         uNiLVZYasSVuapu8g3hlAD5skiZntnzpgTMHnxh/IlbhXAZtqDL0oPreWwpqRPpnEiVG
-         Ta97wygdpQHVnI61u2IIoJRXjY9T8QSYZZoeqC3TnQa4wRS7iMm10WfMkztv/eWRs4Di
-         i7unRyj4+/BDpj3hJf2qBjn6vBgrzv2LJluFnG2XK0O1lEcLp4gMy9mD4vDoueEmoZow
-         ryuw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cp5tlWDaPVxnZg7OOIkwInZ/KiVHodWpG+vKlE2j+CenhoXPMBtf0KiB01QkNIbGPrqip8fOFQQ8jjgDpqzBRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCzASFZUMQIHtKJYxWh5GDr9YpHZnUpoLHqAwjgqyBW+gV7jOs
-	X+4VChHCTaTxutqmjGhwoCoBl8uCUNYLRLvYfaavP4gN/nUAm1VAI9YJ8bgWfIpmxIGbznLh5FO
-	DWTfaio1uyaFNzhF5ezq3SSkaCbBBkNZqiqsMLRaMuUW0xR6n
-X-Gm-Gg: ASbGncsBBSA7oT8MiwQ5MBbVgYs9z9tovugwwvwRfvlls8ggiQpQUlu07EwCG3oCxEW
-	cBYz6prcyjys9lTphaOrs0mMcd8UniIB1s//Hg30RZBYrPsLOLGMI43D1znaxi3E+LaCaoqB0OI
-	ga8ZMcW+R3UiQH/khms/sqTldJxO2aH8w2EoGLH9vNHfGqG6hcIHJW+bEtKw==
-X-Google-Smtp-Source: AGHT+IHuWctoQSNtfRvqowbNw6/p2JfMs654EQsPOQDnh4CHiSDaXjQHp2k71yGY5aW9byJLFzlKPfX/Zmi4wUmU4J0=
-X-Received: by 2002:a2e:a548:0:b0:30b:ee81:9622 with SMTP id
- 38308e7fff4ca-30dc5f45824mr11654211fa.31.1743065714014; Thu, 27 Mar 2025
- 01:55:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743065804; x=1743670604;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FIYwhtEw1euleTwTcbZCNX9K84qUUjXQZZcm3DuTqE0=;
+        b=VDkQx0LYw+jsxkMma+Op0dU5Pp8LeXZ39GWSh4ZaIQr4x4w5cHwodo7HmN2CeOCumP
+         QkTHh0myAl66SueqtWsH8z0+Ni3FuQ5JiEo0zdmUhPDIyQMPONavEZxTf1FGR7cwKrh5
+         tZUhIu1OTcHDleKxdnZMOauFp+0cApFJ7JFC/rsZ8U7iKMjyyHko9wwHyspd8AsY4tEv
+         GaCDRfK4kGQ/4r1Ex7ee3fexsZlF7961iYc9YfvtZKySsMoVFT/ssN5IO0XzvGj3dX0o
+         I5XHoriycXMHzpy2F83IjcRsfJaqMJssosWxkpl0xJr+oSOBO+VFFsB9QoNVP63fsfE2
+         YzuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzggd9LvmQAoVhZQcdls7F2QUD5EdrnEYrzYM5nIfzn9jNHC1x8/ZEEe9FevO87g9wW0qepDJr3XUfN32+x0BCEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQfa8dKzZUJjbRJn0htuCj6BkJHT2cwweEtTz6fmsTbTfYcjjY
+	zJZN/WUrhWnRYnbUBkXxRBWaOk49NOV4zEmcM415E4kLGijVvYkb0xiUePUrbZA=
+X-Gm-Gg: ASbGncv1kM5WDCW5DiKC1dt6kHwrlFY95krlgneiLmP/iObf6p2gU3UM3pqapqoiCJS
+	x5fP2GZB9lYO++ly1EkAZFwi1evJemW1r+fRNQKe/F6UWXEWgbu8HgCN8UmmEE37F3IYu4+YUJp
+	U8wYiOipjWx4GUeOMXNCcZthrB/3dsdgTcnfICjcNeILnR/NAg+NFQs34Fg5Wspqc+7cvm8Jkyd
+	CEOGmkdJFOEczU4sx7HaEQyfMaTiHdx1a+E/kNW5GBti5vkdmzD9CSQkW6ebZNXkdMvxLCK4Vb4
+	Yj0Xixvn5VVF2jHhGxkEjrZYdVXS1R2DahKx7Q+7mGdKFkOcGA==
+X-Google-Smtp-Source: AGHT+IFYnqDl6ib4NKqjPWss5rPeynt8Vendp/W2yLiXx4uK7gmEAWHDdxKjvkNq1tkjNGSpWl64yQ==
+X-Received: by 2002:a5d:59a7:0:b0:38d:eb33:79c2 with SMTP id ffacd0b85a97d-39ad174e4famr1984580f8f.32.1743065803956;
+        Thu, 27 Mar 2025 01:56:43 -0700 (PDT)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82f1bb80sm30629875e9.28.2025.03.27.01.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 01:56:43 -0700 (PDT)
+Message-ID: <62bf00c37566964d6be794ed12a34cd057d9bb1d.camel@linaro.org>
+Subject: Re: [PATCH 11/34] defconfigs: rename CONFIG_MFD_SEC_CORE to
+ CONFIG_MFD_SEC_I2C
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
+ Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester
+ Nawrocki	 <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Alim Akhtar	 <alim.akhtar@samsung.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Russell King
+ <linux@armlinux.org.uk>, Catalin Marinas	 <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Alexandre Belloni	 <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rtc@vger.kernel.org
+Date: Thu, 27 Mar 2025 08:56:41 +0000
+In-Reply-To: <b733eff2-171e-4ab6-8546-565d87d5ba84@kernel.org>
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
+	 <20250323-s2mpg10-v1-11-d08943702707@linaro.org>
+	 <b733eff2-171e-4ab6-8546-565d87d5ba84@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327004945.563765-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20250327004945.563765-1-peng.fan@oss.nxp.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 27 Mar 2025 09:55:03 +0100
-X-Gm-Features: AQ5f1JrNDKi6eoVNVGn9D2px89ZzGel4NmYjoMJzgLZI_iKwInQJa47frSxKq4I
-Message-ID: <CAMRc=Me8YdNcU1CHH23Bsi8yp33OL8a00-MiMNwA7skD7S0Jbw@mail.gmail.com>
-Subject: Re: [PATCH V2 1/2] gpiolib: of: Add polarity quirk for s5m8767
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, broonie@kernel.org
-Cc: linus.walleij@linaro.org, krzk@kernel.org, lgirdwood@gmail.com, 
-	andriy.shevchenko@intel.com, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 27, 2025 at 1:50=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
-m> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> This is prepare patch for switching s5m8767 regulator driver to
-> use GPIO descriptor. DTS for exynos5250 spring incorrectly specifies
-> "active low" polarity for the DVS and DS line. But per datasheet,
-> they are actually active high. So add polarity quirk for it.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->
-> V2:
->  New patch
->
->  drivers/gpio/gpiolib-of.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index eb667f8f1ead..83559dd24f32 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -222,6 +222,15 @@ static void of_gpio_try_fixup_polarity(const struct =
-device_node *np,
->                  */
->                 { "lantiq,pci-xway",    "gpio-reset",   false },
->  #endif
-> +#if IS_ENABLED(CONFIG_REGULATOR_S5M8767)
-> +               /*
-> +                * According to S5M8767, the DVS and DS pin are
-> +                * active-high signals. However, exynos5250-spring.dts us=
-e
-> +                * active-low setting.
-> +                */
-> +               { "samsung,s5m8767-pmic", "s5m8767,pmic-buck-dvs-gpios", =
-true },
-> +               { "samsung,s5m8767-pmic", "s5m8767,pmic-buck-ds-gpios", t=
-rue },
-> +#endif
->  #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
->                 /*
->                  * DTS for Nokia N900 incorrectly specified "active high"
-> --
-> 2.37.1
->
+On Wed, 2025-03-26 at 08:16 +0100, Krzysztof Kozlowski wrote:
+> On 23/03/2025 23:39, Andr=C3=A9 Draszik wrote:
+> > We are adding support for Samsung PMICs that aren't using I2C and
+> > therefore had to rename the Kconfig symbol.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0arch/arm/configs/exynos_defconfig=C2=A0=C2=A0 | 2 +-
+> > =C2=A0arch/arm/configs/multi_v7_defconfig | 2 +-
+> > =C2=A0arch/arm/configs/pxa_defconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 =
++-
+> > =C2=A0arch/arm64/configs/defconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 2 +-
+> > =C2=A04 files changed, 4 insertions(+), 4 deletions(-)
+> defconfigs go separate tree, so this must not be in the middle of the
+> patchset. Bisectability, as for defconfig, is anyway broken in previous
+> change, so no benefit of putting this in the middle anyway.
 
-Mark,
+OK. Should it still be part of this series, e.g. at the start, after
+the binding changes, or a completely separate stand-alone patch with
+a reference to this series?
 
-Once v6.15-rc1 is tagged, I'd like to pick it up and provide you with
-an immutable tag so that you can take the corresponding regulator
-patch through your tree, does it sound good to you?
+Cheers,
+Andre'
 
-Bartosz
