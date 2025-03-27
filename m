@@ -1,202 +1,114 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852AE20E310
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Mar 2025 12:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D37A1CAB3;
+	Thu, 27 Mar 2025 16:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743080073; cv=none; b=HHv7ZDfPbcDCw40H7FC4YP9rtnFB8BXAAQG3FmQEfOvQZSE1vqX2aqO9+JYkG+yaKSOdHpP5Ditm1zeMkQRR9eJZMS5CzoJjEnBIojWgyiSLKj+AKAXQZuW7jwBAyd/yAug97wE4q4zz/+pPqOPVuxXwVvf0XAsFWH5t/quVcXk=
+	t=1743094454; cv=none; b=Dj802AJjl3gcjGPaEuo1dID4GeDADsoydLppbjg9rZL5Q4GAKmx2uKsoUkSMn04J0lpU04aVB330kEP69k/F1X4hx2UO33WW9gEVlG8L0cz7sXuqI6q8VmOJ6UOfvLf6Q9Ro/iPd1dAK09cn1eHERgl/mwbq7hbL8a1NQzHfbP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743080073; c=relaxed/simple;
-	bh=Q/5u5XDcHF4BLyFYlsm+A+d8gAmcv4kixLqtMrXfRJY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O68U9qkEvQxuw2kt4UPw07WnwW0AR7RQsyNM7mJKfpQHyicgR9ZnA4TcSSkxm32WxGcfUWCijN2Dad/+KVRN4AkHFFZ/InyobNUIFdPZ1MZhm7FvHjoTZneXUy30qsnA5zvIeRNu7fWeCX92NEI4ySusJ3DTfQAeoS9bQaJPHsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ip2J9jAs; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1743094454; c=relaxed/simple;
+	bh=9x35lKaViaXKIJrXrwOfwSmFs1d9byoGs6WlSmhWDHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BK8eJTNE5WaoK+cc3EjOuJpiOlJXY8X0fK3gOA2dZ68sGATNZCEu9Kl5EHEJbczfOSsk1xWsB0+v7sHoYqY+4bi347TUjreylDip9kcweOiNGcwbQGdh8n7aof+q2ISDJoxISQSNZsfQL0XKwcoH2MSta9oQkgmy+tSZy8ru8Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uemiTHcR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ip2J9jAs"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso192028366b.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Mar 2025 05:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743080070; x=1743684870; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2qo/hHt79rE3VZLJ7TZ98QyZq8pgpS3gSu0z1hicTW8=;
-        b=Ip2J9jAsdTkbogEbPhYL3B4pqvlYDxer8hLMnUFidQSEYf5s+VIv0wpR5JCO7+C6QD
-         QS7Veuv99iEmy7p5PYNNnRM4tx0IuwHoAEEKvBeIdlPyqQsZEcoLHzZmjG44c7V/D74h
-         7rH3yPZB8hG1XZtpIwaOvr2Wp6nT6f2HktqVzImFAHCgEJVL5bEOhLIUKze91I6gByFm
-         g2SGwfowgIBuVFFIrs7NuqgFkkakBTQCCOPAE69OT7J4EeAGQoFGZBVSIU2fjmKZe5qm
-         Kz6UpKK7jccXiPp1cwHu1WvrxrAIQ1MWRgR+VovFrChNOgx5+QpZKoElIA8BWUPzh/8Q
-         P1SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743080070; x=1743684870;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2qo/hHt79rE3VZLJ7TZ98QyZq8pgpS3gSu0z1hicTW8=;
-        b=QZTeljG70S8n8KOrJGQom3QIIAECfWNZ/pUFz4Dtie9se59DG9QROAR7LBvj2YjCJH
-         rYoRAsezcgGsZy1/5g/VhGussQ/GHPtJiU7XdOOmOC94rfHkDpJWKb9Bm2sSBNbwAd6+
-         oleOC4Qw93VKU0IeCUkktq67guBRk1gqDc97/rK4kR9PDaEq183Bmp17U3det5g22WMP
-         Z9QhcIGsgN4oZbEmPs5YLyqTTgLOiXdnI6oBSBi+7Yn+5g9vENkCmJBGLti1vxfMkOE2
-         i4qKfQ5TydRUaA5SWsco6OP4n0+rwbDOrptXUWHkdZwDB+HkIzRqO0SnB7HI685A19Sk
-         5C7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdnDnuYhDkNRbRcvBHlUwzJ7IkovdFBvRaA7CGAkl59aGVupgu06DzlDzCOCJMLVFw1AnBaRqIVEbB72JefgR/zQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVjR+bgvU94i05cnFY662R0QoVlHZtJwlNOjsUOjXdpIA2qLAX
-	YIGI4dX/6mlhJj0+UQdDENHCO3f4LL6swkIZDp2BheWMkIu7n/199UiK5d0zRbY=
-X-Gm-Gg: ASbGncvcMv4VAYtq5tdOeffhDDZdMetDx0SGdHO8QmgdQzDtkOMPds0QOgaYFSQhi16
-	wUjn7Z6mYebKhTdLt+K0nYhyLJMp6+5oqPauhabf2sxjSWChSYy9lo9UIz0F07AbgG/1hw7QsGh
-	KXWsURMClkO5uqoYyq8l+80WWwhIEdkSz1tzkZ4L1SbjzKdwTZho5ogO7hD8lZ38LTYvS8jejAD
-	KV+0t6eqiEW1sIUCITwX1Zk1h51ETtipWsBCWqByynicdqePGG7sh5oe09Yk+aloVYnR4wDevMS
-	/5svZMMllgUQa5Wi21vUQ0C6m1L+xM+hwTSz4HTkAorvSFsRrCqRxQYIYc7fRqf5z2FNAuadnJq
-	PaQemLyUW6l5SZHCPRzNc0VUlGPEw
-X-Google-Smtp-Source: AGHT+IG8jc0XBjcqIGUvrW/gcmDgiKrcGkSXoJocsWny8eep3O/qi28YUXPgBj4BwkE0yMd/1FYIUA==
-X-Received: by 2002:a17:907:2d10:b0:ac2:49de:45c1 with SMTP id a640c23a62f3a-ac6fb173f7amr271477766b.50.1743080069724;
-        Thu, 27 Mar 2025 05:54:29 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd47e9dsm1205410266b.167.2025.03.27.05.54.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 05:54:29 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 27 Mar 2025 12:54:28 +0000
-Subject: [PATCH 2/2] firmware: exynos-acpm: introduce
- devm_acpm_get_by_node()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uemiTHcR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4920C4CEDD;
+	Thu, 27 Mar 2025 16:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743094453;
+	bh=9x35lKaViaXKIJrXrwOfwSmFs1d9byoGs6WlSmhWDHE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uemiTHcRv5VErA3Xd/5cHTT/Wa5eX6WiqfdTpu24fPbEOGnLgBiKpMBtflaKgQ4Q9
+	 KqyZv57v0EaMPOfk69/X8k5Ublt6K6bL54/m7+TWiE1WnT/+K4LuT1DHlBkur45BTe
+	 36r2GnjXsiNhJHSH/2Gjp4R+LHTepQYWjb+C/llgZPT+HLfi8iYp48d0WgSjjTiB+b
+	 SbaK/QokbtnWKlyYka+EfWFWO2ev2e/Ar8+cqSDLo4JQ0aQnxmNNz42M61bOmrWS7K
+	 t9ti32vZjhJ5wtdOsMBRZz5FpV/0nV297OIGriCdlpTZDPY05hg5QNhIW2zF5WSap9
+	 LDLCW/JrQaoIw==
+Message-ID: <1d2bc8a4-2708-41ce-9576-87573459c3d1@kernel.org>
+Date: Thu, 27 Mar 2025 17:54:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250327-acpm-children-v1-2-0afe15ee2ff7@linaro.org>
-References: <20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org>
-In-Reply-To: <20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] regulator: s5m8767: Convert to GPIO descriptors
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, linus.walleij@linaro.org,
+ brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org,
+ andriy.shevchenko@intel.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+References: <20250327004945.563765-1-peng.fan@oss.nxp.com>
+ <20250327004945.563765-2-peng.fan@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250327004945.563765-2-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To allow ACPM clients to simply be children of the ACPM node in DT,
-they need to be able to get the ACPM handle based on that ACPM node
-directly.
+On 27/03/2025 01:49, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Update the driver to fetch buck_gpio and buck_ds as GPIO descriptors.
+> Then drop the usage of 'of_gpio.h' which should be deprecated.
+> Based on commit 84618d5e31cf ("regulator: max8997:
+> Convert to GPIO descriptors") as a reference to make the changes.
+> 
+> With the quirk fix for s5m8767 in of_gpio_try_fixup_polarity,
+> the polarity will be active-high, even if exynos5250 spring DTS
+> wrongly use active-low polarity. So using GPIO descriptors,
+> it should work as before.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Add an API to allow them to do so, devm_acpm_get_by_node().
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-At the same time, the previous approach of acquiring the ACPM handle
-via a DT phandle is now obsolete and we can remove
-devm_acpm_get_by_phandle(), which was there to facilitate that. There
-are no existing or anticipated upcoming users of that API, because all
-clients should be children of the ACPM node going forward.
-
-Note that no DTs have been merged that use the old approach, so doing
-this API change in this driver now will not affect any existing DTs or
-client drivers.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
----
-devm_acpm_get_by_node it is being exported to modules in this commit,
-because there will be an immediate user of this API as of v2 of
-https://lore.kernel.org/all/20250323-s2mpg10-v1-0-d08943702707@linaro.org/
----
- drivers/firmware/samsung/exynos-acpm.c             | 23 +++++++++-------------
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |  6 ++++--
- 2 files changed, 13 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 7873cdda127e4f1b6b2febccd054ba27aeaf9b28..74f0ed9b5c0f73393932c46ab6341716745a0df4 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -667,20 +667,14 @@ static void devm_acpm_release(struct device *dev, void *res)
-  *
-  * Return: pointer to handle on success, ERR_PTR(-errno) otherwise.
-  */
--static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
--						     const char *property)
-+static const struct acpm_handle *acpm_get_by_node(struct device *dev,
-+						  struct device_node *acpm_np)
- {
- 	struct platform_device *pdev;
--	struct device_node *acpm_np;
- 	struct device_link *link;
- 	struct acpm_info *acpm;
- 
--	acpm_np = of_parse_phandle(dev->of_node, property, 0);
--	if (!acpm_np)
--		return ERR_PTR(-ENODEV);
--
- 	pdev = of_find_device_by_node(acpm_np);
--	of_node_put(acpm_np);
- 	if (!pdev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
-@@ -709,14 +703,14 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
- }
- 
- /**
-- * devm_acpm_get_by_phandle() - managed get handle using phandle.
-- * @dev:        device pointer requesting ACPM handle.
-- * @property:   property name containing phandle on ACPM node.
-+ * devm_acpm_get_by_node() - managed get handle using node pointer.
-+ * @dev: device pointer requesting ACPM handle.
-+ * @np:  ACPM device tree node.
-  *
-  * Return: pointer to handle on success, ERR_PTR(-errno) otherwise.
-  */
--const struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev,
--						   const char *property)
-+const struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
-+						struct device_node *np)
- {
- 	const struct acpm_handle **ptr, *handle;
- 
-@@ -724,7 +718,7 @@ const struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev,
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	handle = acpm_get_by_phandle(dev, property);
-+	handle = acpm_get_by_node(dev, np);
- 	if (!IS_ERR(handle)) {
- 		*ptr = handle;
- 		devres_add(dev, ptr);
-@@ -734,6 +728,7 @@ const struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev,
- 
- 	return handle;
- }
-+EXPORT_SYMBOL_GPL(devm_acpm_get_by_node);
- 
- static const struct acpm_match_data acpm_gs101 = {
- 	.initdata_base = ACPM_GS101_INITDATA_BASE,
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index 76255b5d06b1228bb8579d32aaa478036a5c344e..f628bf1862c25fa018a2fe5e7e123bf05c5254b9 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -11,6 +11,7 @@
- #include <linux/types.h>
- 
- struct acpm_handle;
-+struct device_node;
- 
- struct acpm_pmic_ops {
- 	int (*read_reg)(const struct acpm_handle *handle,
-@@ -44,6 +45,7 @@ struct acpm_handle {
- 
- struct device;
- 
--const struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev,
--						   const char *property);
-+const struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
-+						struct device_node *np);
-+
- #endif /* __EXYNOS_ACPM_PROTOCOL_H */
-
--- 
-2.49.0.472.ge94155a9ec-goog
-
+Best regards,
+Krzysztof
