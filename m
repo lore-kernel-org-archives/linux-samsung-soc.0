@@ -1,66 +1,67 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAC1199235
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 13:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F4B19D060
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 13:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168659; cv=none; b=F2N3K0ubj3MKdm+pHmd7AnM6GmEbzBdIes3phKHUeKNONtD3PZqLtF88X4X6s2MZZyFh0r92Tq7y6ggD38VEPHcbjoKaC3SNERsaQ2zfLvWnVMTkHEhvlIS/+Fx7a+9SQ9BT6rrYGJmm/rZj/kaJmFzx2OgpO9NR/S2IlRPe0vw=
+	t=1743168660; cv=none; b=OTAhxvhNMB1pxNRR7NKqedQyG/SMXByN8x5EnfeKbkhl7V/4SUrsdrBotCKulYtf3nhKXQSj/+zwQA0/EDofcVdY7197WIycESb9FtRHU3fyHCyFUj1s3vgO0Xy5kx780eGH00WDJAJ8LswrwSXyvnEpUvcXvXb7bTNSuFnP8tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168659; c=relaxed/simple;
-	bh=/kKGbU72t6bcG/MbYzH1J9IMMY6h3yl6j4n9mpTc+Io=;
+	s=arc-20240116; t=1743168660; c=relaxed/simple;
+	bh=qCh6oRLfLTgTThIJ6lv+09+QKw9X55onfRfdQJjsxHI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CkHUlbMGODma0M73A8mgEnV/yD9IJwSxp5mGp2zhJJ07edSADqjKlg8th0CG1HhqTfxcfihsCoN4nceIK5584vPtYsrVg7ILzUGBGBL20Rd/7uoTpAL1+6n0BaJB6S8D3ueApVOMz2Eegq/EwEbCDOdpM7i7RBlUS0bbwmA8Udg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hyKyol9i; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:To:Cc; b=rPTByhpfO1l/Q6yagu4KYjkfqmlEALEjOAerj00pVvQAfr//lOp9xhj3w8AZC6QEdSNsxjyvPmSqe2kkNq4wrcJduVUsBewRovMfyRknnHvQJF/hS7C5vm88kfsKuXqbug1q/80CwUlvmnifGiDzx0Py6WzhAxnh2dvxKuAoLwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IUsUDsty; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hyKyol9i"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so3842140a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 06:30:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IUsUDsty"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac29fd22163so372143566b.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 06:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743168654; x=1743773454; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743168655; x=1743773455; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bj8t/d7ZCz8V074ZRQQT4KdwjDhZIZlUROdEW2RBy3s=;
-        b=hyKyol9ijjj+RrmL1I93avp8cuFSZS67KKQ2D/viflQtzvyrSlTZci4wsLN+NmuEZf
-         W03aMMNHATJZUjNKccmwPuTGZsdpbSZfw73FqhJQmPwJ5r5dS1c8Idq5+xZhQKg2wDxm
-         ioWlg5+qIV/OJy2C0BTr/gMmt9Sbdje0s/ajYKEuBJGXAV6GyG6nuWsY1Y2GvJfgxfxZ
-         LaSFtH29lG2NFTI4NLsJX9FBqEDPKPxZ8M/KuLK5kMJzwcFp/ORjZzqtv7Vlg26bthxa
-         DudUFOthi72zo8MOw98E6dn+b5t0qSGbjo4crnhpKIyxVYNDMsRf79Yay+qw4vj03HRz
-         yffg==
+        bh=E1w11rlVw/TNBQvhMqe/HobIw1/0AFB8/Oe+GpWOJoY=;
+        b=IUsUDsty209X8KDYmlOHZZUCwwfH3dNQZN6IEd8gF0m+DviV3e0ysaK43kubxQ+4iu
+         yP2d3C5+5d/f1X1oIWNwHxlEew9DaKhyJFQi6y5Y/M6YIVEyvYoLtZezW6H7DmlhZk72
+         Ih5D3imEE1lSKmtAG9UBX3DbnApu1w/3nLb51YLY3iQnja4Nh+6g4bkzia1nET8C2E3O
+         t9/IC5yPqM3vDw3BiPO8qkuOuxWn6C9oV2OpZ6woFpcAzUnLgHMKCSpZpU/9FsvvouZt
+         33ACMOHxhBGHr/MQZqLPEJtOImI2V53474tN0AhzQ+7CtbIcZFHFZGO6BwDEUl8fxV1w
+         T00g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743168654; x=1743773454;
+        d=1e100.net; s=20230601; t=1743168655; x=1743773455;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bj8t/d7ZCz8V074ZRQQT4KdwjDhZIZlUROdEW2RBy3s=;
-        b=eeQCSztFO8WiyFseI7gBGNGJRQYWYWB2uRGv9UlHioNnqI6Q52kFYWhQtKEpkA/Uzp
-         xuzXin+VjIx6iwGp5fLluetaoHVsRcqGCAUhEL2/cw0mOpXeaxPbT5tug5D5ppVKQTBN
-         6IN2wNt0b6Tpwp8zgvSSahAgvsJp2WjyKOk7gi0RUZ1IE3b7r120rDmXw6DM1ADGx8m7
-         uJsuEz4SwbbdjHt5sUWxe82OrwyYI12jM1DSmbazzWoLPdU/is6tanM2CkHHUuXetwLd
-         5EawLKeRkB6ziMKG4/oFGyvt+2av7fVe3bkqH95sOL7EjlW/koWpo7rQO5cUpTWbDsMU
-         drwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUf2ZLWc3EYZsv8jUsV805S22LG/eJuw0wukQoRzFD7oTrGWyaQjfMS2rLoDNQx1D9xW+8cRvia3BU6uA0fkoeHSw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQT4Es/iPXPo6yiTzOOOppLebXoUjsp31bUTvPiILhvtP35beo
-	VIxj+NUTBgL+Xt5zQfOeIKMO6fszjppWwKuWK3V+IXdnyMIRq+ZBHouH2Oyp6Jw=
-X-Gm-Gg: ASbGncsyPsNrS02LhsdOpUxsWBktifpIoJYlod5mvB0+J2py6TMtqVG7tB23qQJtnNP
-	WblF20pFpV7Zp+bnhohADHS4brPKoEP5Tkg84m0fKsVdMv4X5k+S20Jsk87Eu7xIacoYilVRV4A
-	U/h0WpdqkrbdntA2+Z+ho3Pl7C/WERYbwCTXWG4Gr2N0tFG0XEXsT6XXsVhI37/M6fl0UrxUP0d
-	0POi2u4onXo/WSVqAUU8MybdO/y1Zmpay+VLlZQDrDJz/pX04vxcSsYDR9sKSoIywQsq99ff7Mn
-	O30ObdRtRknkpGelBp+LsPfsG85DVl5JNVsxQ5zFRVRExR8SYpNtreTIIi9YDUJwiNwldZ1BBMr
-	gvLmXGZVhr0IT4mj9m/M7J290cprh
-X-Google-Smtp-Source: AGHT+IG5iLE7r81td49W0bBe07yr5W+PK4WyVyGMbJeUq+YUB/jGY98HLwkEVGj4tkqcJ2fbAud1Ig==
-X-Received: by 2002:a05:6402:27ca:b0:5dc:63d:b0c1 with SMTP id 4fb4d7f45d1cf-5ed8f5f7241mr7187353a12.29.1743168653567;
-        Fri, 28 Mar 2025 06:30:53 -0700 (PDT)
+        bh=E1w11rlVw/TNBQvhMqe/HobIw1/0AFB8/Oe+GpWOJoY=;
+        b=p2di+niOfvq8Y8fcgUzpnCnKwylFIM02MFDoPHCqQtti/a4ZvwYKgBn5FLB5LXysoL
+         NbvsfBsVztQyc/v9dPxjiJKsyr1lf126TymnzxQoHduNM4jw5bRyx6RcVvQdM+3BtEKA
+         ZgHSCFZk1zMurbbPuLcSKAujrYyXeX5UOuKU16ObhBTsYSimddRWWpaVrvzAhaQdm6Fv
+         fav/eKiKNy9MLt5hbaj+ziW1FSYVK+xq7iaEAhsrXELvZAWZPLIMRVacNGOScrNhAw5X
+         Uu5IvrhYYzpN38QyipnKxMENycZS0XoY76no4e8iusx4pJRCkSURbU0YhsGd3PUBldkv
+         kmfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWu7iiel8VYIHNO2sizbGpEzYbBlMBveKpLk8jTAto+L/LDZFS7rhvMOJlod8rQeWjw/AYsknNZSN2EZRreHYVQg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcpxe702+6oDIV7+D5OkvNzqkKEVwORpg1Eq2FIF05FrUvaeOo
+	kt+aGpdPMXtPT/G6Hz2XkV3znM55FF01w+d8tkEndL3D01toTSN9OdwEmsnZqps=
+X-Gm-Gg: ASbGncu4LPRo1DmSKUJ2IuSs/efcWJ3EerHq1SClYfNtzcfBHfpK4LTgFLjvlWecojD
+	RWOFPXDLJ5NdmQSRlpjlBWj6ZQKDGduE4TH1rU3YYhoriLo0kLEY+WLIy4FpXtGF8lAlemcsEJb
+	z9UXsvyBnCQvnNo9B+xu8ImZVIRg8Kai8VgC9tHde2boEH2fbdGHzAlycsF6Xhh2kCNGKiS3LHw
+	8WPG6xJAGCl0GuZiYO6x3nVTq6QsqiWJv0Wp6yV7PPOl9T13MjDJamaYZTBH3stlRD0QOgW4qi6
+	wtKv0xTinVfTif4THuaNgzDmpy1mEj4WC5GTZCmLB+heYPzmTh1DSymw8F00/WgE/8yhMBs4nya
+	UbmnqkWSuAlRe8Q62pWgxWZgz6hYI
+X-Google-Smtp-Source: AGHT+IEq06ryYPSRFnijp9zBT7TVwvuxmad5wvipQF5Or+uJmUZMEkHYbtpAEod3NTnJDeU/8eOeEA==
+X-Received: by 2002:a17:907:7b99:b0:ac2:7ec8:c31d with SMTP id a640c23a62f3a-ac6faea0f0amr608739366b.17.1743168654961;
+        Fri, 28 Mar 2025 06:30:54 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17e01f7sm1355284a12.79.2025.03.28.06.30.52
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17e01f7sm1355284a12.79.2025.03.28.06.30.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 06:30:53 -0700 (PDT)
+        Fri, 28 Mar 2025 06:30:54 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 28 Mar 2025 13:28:47 +0000
-Subject: [PATCH v2 01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+Date: Fri, 28 Mar 2025 13:28:49 +0000
+Subject: [PATCH v2 03/32] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ PMIC child node
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
+Message-Id: <20250328-s2mpg10-v2-3-b54dee33fb6b@linaro.org>
 References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
 In-Reply-To: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -89,93 +90,51 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-The Samsung S2MPG10 PMIC is similar to the existing PMICs supported by
-this binding.
-
-It is a Power Management IC for mobile applications with buck
-converters, various LDOs, power meters, RTC, clock outputs, and
-additional GPIOs interfaces.
-
-Unlike other Samsung PMICs, communication is not via I2C, but via the
-Samsung ACPM firmware, it therefore doesn't need a 'reg' property but
-needs to be a child of the ACPM firmware node instead.
-
-S2MPG10 can also act as a system power controller allowing
-implementation of a true cold-reset of the system.
-
-Support for the other components like regulators and power meters will
-be added in subsequent future patches.
+The PMIC is supposed to be a child of ACPM, add it here to describe the
+connection.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
 ---
-v2:
-* drop ACPM phandle 'exynos,acpm-ipc', and expect this to be a child
-  node of ACPM directly instead
-* allow, but still don't enforce, regulators subnode, to ease adding it
-  in the future
-* deny 'reg' property, it's incorrect to optionally have it for S2MPG10
-* enforce 'interrupts' or 'interrupts-extended' property. S2MPG10 can
-  not work without. Note this is done as-is using the oneOf, because
-  dtschema's fixups.py doesn't handle this nesting itself
----
- .../devicetree/bindings/mfd/samsung,s2mps11.yaml   | 28 ++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml        | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-index ac5d0c149796b6a4034b5d4245bfa8be0433cfab..62d0e9f8a4d39add50a986af1836cfdcf065ad48 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-@@ -20,6 +20,7 @@ description: |
- properties:
-   compatible:
-     enum:
-+      - samsung,s2mpg10-pmic
-       - samsung,s2mps11-pmic
-       - samsung,s2mps13-pmic
-       - samsung,s2mps14-pmic
-@@ -58,16 +59,39 @@ properties:
-       reset (setting buck voltages to default values).
-     type: boolean
+diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+index 2cdad1bbae73bb1795eccf47e1a58e270acd022c..5524f2af5bda2d29b5113f8fe14ece7f02366a60 100644
+--- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
++++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+@@ -27,6 +27,16 @@ properties:
+   mboxes:
+     maxItems: 1
  
-+  system-power-controller: true
++  pmic:
++    description: Child node describing the main PMIC.
++    type: object
++    $ref: /schemas/mfd/samsung,s2mps11.yaml
++    unevaluatedProperties: false
 +
-   wakeup-source: true
++    properties:
++      compatible:
++        const: samsung,s2mpg10-pmic
++
+   shmem:
+     description:
+       List of phandle pointing to the shared memory (SHM) area. The memory
+@@ -43,8 +53,15 @@ additionalProperties: false
  
- required:
-   - compatible
--  - reg
--  - regulators
- 
- additionalProperties: false
- 
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,s2mpg10-pmic
-+    then:
-+      properties:
-+        reg: false
-+        samsung,s2mps11-acokb-ground: false
-+        samsung,s2mps11-wrstbi-ground: false
+ examples:
+   - |
++    #include <dt-bindings/interrupt-controller/irq.h>
 +
-+      oneOf:
-+        - required: [interrupts]
-+        - required: [interrupts-extended]
+     power-management {
+         compatible = "google,gs101-acpm-ipc";
+         mboxes = <&ap2apm_mailbox>;
+         shmem = <&apm_sram>;
 +
-+    else:
-+      properties:
-+        system-power-controller: false
-+
-+      required:
-+        - reg
-+        - regulators
-+
-   - if:
-       properties:
-         compatible:
++        pmic {
++            compatible = "samsung,s2mpg10-pmic";
++            interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
++        };
+     };
 
 -- 
 2.49.0.472.ge94155a9ec-goog
