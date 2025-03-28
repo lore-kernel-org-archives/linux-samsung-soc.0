@@ -1,66 +1,67 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41DB1B87E2
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 15:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12935288A5
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 15:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743174926; cv=none; b=R2c4+mFncvN9rTC9qzjEzQONOsDh0CIRrUkOCZhWulTvf4vTDUrt48uUQRfV+v3SXoPZEW3w/rTdpLfWRar2lEZ/Ha+Y5LX5EHzsMyqUyXw55Nwpe6O9oJV7cwwh8ahQ2bbGCDI1WXiJ3BcUsHb6zq9HKxacHyY7RkG53Pureik=
+	t=1743174926; cv=none; b=GIOiPnLY+vdkr8js9+HWJktFYBI1/nEDZisVSkNex+nDjpPFtge9gD2HJyd4CUlxVyj8+VqfXI/c6rZ/fL3r91mjvKs/JKUGUCXujAshZL+Or4x+kfVjvtyFZhHDLXgRNqLvIl0OsISQX6jk4ly6a4kna0jKZ40W5cThN2bu+O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743174926; c=relaxed/simple;
-	bh=LbrjVDuqcQ+iJXIRRIvMyE403IP8vZQPi2Qzf0eMaKo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S5YrNRctoa/n9KwAh+bCyYDRW3WF5+30uNLF8uB7ipXx/f3ysfVuMYF5uqJ5VVgWDESpeOvrOs8Qf/iWOEkOaq6NKlnn81aQXXwTESTgayNLljCqWiNy0qIimX60cFoXFvP77VvZBqJ9K+7RhSXq1AUixkrlNV3jhC0WP95IeY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GII7KUtn; arc=none smtp.client-ip=209.85.218.44
+	bh=MYogVCHGeRc42nAQYUSM9/OiTxNHcGg1Ng9UgC1OpPQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qvjXL3CdZBT2jKZ0GlHKQ+deH5WTjVNXZBaTgXQymYowqG/ghXmPpVIV5OYTkB0HFqBZ/JHCugfJPXWnCzHVnBAOL0eShYMaOSAJ4Rq4gTC9fhPc591PFDM74wSXqcY3sawR8eI/tEhsHGv451UmbDZCepUkKbNOEdrr57afFNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tmeZpGCf; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GII7KUtn"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2c663a3daso439871366b.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 08:15:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tmeZpGCf"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac29fd22163so390473666b.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2025 08:15:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743174921; x=1743779721; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTb/6m+cqxX8FWirPINl0MalDPq0y5qkx5epBIXmSTQ=;
-        b=GII7KUtnOJJIpKDV2bom+1EiSjVTlu7/ZgGV8xWmMR174LSUwc5YppJfFFBOKx7dtV
-         sPr+aJRiiQbK7dKzAvCJVWbcjy9Jm1uDgUC9FNiFf4A6b4EzbiLEDee6OrKThNH2cN4i
-         zfgMvrqPclWaC8K4iNLQHX/TO611aKdaoohvmn4BzpQzO+dV7Ytm0bEkhpQ/7QkRwO1Z
-         padjk4wGtYyPGdhDI/RNUmsmvubzb9j0ntlKztBMB5ILI4LOojfJ0Ekcm/3Hol5ujWkH
-         dbmkeWwHLNkNjxWnwYrRu56m/ynsXg6MHh38yKq3bjNAj9BKemEJu2dOLcT6qqH8FAi1
-         AKUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743174921; x=1743779721;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1743174922; x=1743779722; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CTb/6m+cqxX8FWirPINl0MalDPq0y5qkx5epBIXmSTQ=;
-        b=OF5aP3LCPIEAkDQHl5DrhjrE1OZdRK73pkkfW0hNy84EBYoXlMBH1Iu1vFYZqxQEBk
-         ypPXeFCGyNJpUyLqCH9ExaAdfc6pAFcfO/c8USSB4BhxRISnbw1Kl7XDcBQ6otgKEfFw
-         +8NNbHWO5rFVrcOyVBUf2yveaBw1BufKtGb8AzM3INcB1QI8FSd4sM4mq+ZlhA5sHQpo
-         KKuyEGnMlQx9VywomNWwItYq37bAr/RP9Xy2IUGttPiZhFIqMMn5R25UOziSbGGjelOk
-         T8OpPZEOckODjaXn2uF9yX4FT/BuCttNV4SYUQWyE3yhhL3OYo5KFuYTZs4pwk61Ltaf
-         IZ9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdCXqkUnLCZwEN6hgXHGVoXnb1XkN90DXwVhybSwgfvU5UflDzlqDFQswa/tfMGJjJKZFdXaS8rIICDW7SRNB4LQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyolQQvuWu65kt6XZgDau2ZxSzEX7sKnuIu1Y6k0fqPmI4ZUhRV
-	Lo9kWVdIW1PKMWaJUKkcgi9vs2DSuRMcrHJzYB7CvPlp3SphUqfp+QaqeIEbQ0Y=
-X-Gm-Gg: ASbGnct3xgS2OxSSrwaosGZf9E4QeUftWht99IFjLEeJq/gDKgXkLorywjM1qZaEkZw
-	/zK/hXHbEZD5vH2UjlE8ZztTnwp3m3Tr7xzLNzpk0e4IdrDdfx4RO2uwELmfD68lsd8Z0JBoawl
-	18Q485W/dVt83EligIBW1G1rB6NJ0jtP0cOOWeEPLr8ueVS2B64rewznAZvOSX8Q0jfVaik3gEd
-	UUeXBhx6npkf43plP5RzAIv4tkHnwl7vDT3vgqaaCqs50SAmhmzi4UvZIRd3ncv8y5CHWYWE88o
-	m1AGgq/nVBNvvGkIAWhD0mP0UZ6dlBeYFfsE3CXuwOSnDQN7c/vpiexUGrWAk6Inju03MTRJHB/
-	uEkeQ+mz3LAbQpM/JEQPROesVRCHe
-X-Google-Smtp-Source: AGHT+IGx/OKAyGwvOZBy0ZMKJFwNxxrxi+pIE6CmLb9aaW4fvxERRLfNh9G8DBj8v5e+gDV9fv4WjQ==
-X-Received: by 2002:a17:907:7f0f:b0:abf:6e6a:885c with SMTP id a640c23a62f3a-ac6faf14d75mr574320366b.23.1743174921074;
-        Fri, 28 Mar 2025 08:15:21 -0700 (PDT)
+        bh=QbMd9XdkWBLdkj8rOcFnOleEDKh/N4y+bdq1J1Qswv0=;
+        b=tmeZpGCfl8lhxL5Fd7vl8SGWNrVdVyvoR9W1/Cxg8jnajCBXeDfyJpMpOWo/SpAsCJ
+         hgaXF+f38FZYCPgWGW0TKzqrjdQFmJXnHguqHGO5zE5/ArmYdyJ13+RkWx634X1PsiEi
+         f+SgSPJEBfckCVM5teUwFKxlndRQ1jXFBjfbqbI11l5w4gt2YWfVe/E8djU3438mC1ze
+         YkyJS45JUiphANiHnFWH559sf4xHl51ujWyWZyiiIIsNOxHhAYh6qsi+Nq8pjUyfUhau
+         oYGcJjRVyugdRiIs4elgbn8XMlmiNTcV3Gb0Hn+ySnwklSzHnFEpFSAqbAsoQxhcTAjy
+         Q/Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743174922; x=1743779722;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QbMd9XdkWBLdkj8rOcFnOleEDKh/N4y+bdq1J1Qswv0=;
+        b=c0UY+vN71GSHj6PlATX1zaVQMh5Wwg9pgAzmz1DvPhNQH7/zN92g3IzDulHvB2oXFx
+         XAu5N9NgYj+z5B+Iim5U4q/lHALZCN7/NqlxcySITIpmjd7DpSsH6e1hhhrskhjxaG6R
+         6FAQNXMsc0yXB2csgi25UKtQnXPBjn5osvxVIIeEwHr9YfrcRPZ7+SsRd7YdVrCZ8Kq0
+         TnyFYh2ioFpiJhGM3/kM5eR3XzmYHLGYMyRFE0HunRCkjUWU6ktpLSz8ulpvYyF2BZL0
+         xegmFCvRaUjA6XMppcl+++dgn7UMLDhxhihp0HzDdd+ID3r+IPbiwUYrvEAUxkiLk/qK
+         VmwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFWNcI4s1IrTZaTQlp5oiSR3afDOzXNDgx2q3E5ryDzqEJPjSDX7R1y+D3Lrk43n8xZwpTO62sP8D0JoT27bB0Hg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YywJEGbgrNIUpQ/Fs292iYoGv/6YD0s2DNupS6F5283ah0gtACx
+	bggibLpSaxiPsJcDXOxi78R1GjqR4yggVnC9NqyidlG33K8wv9SckQQOu7wWIFQ=
+X-Gm-Gg: ASbGnctkKCdsjAISGUm1OFY81Wp9vS91IiWQgsv9JTgjD5kWKQJr345unxCpWNcA8u0
+	beWr7yqFvQeWoqYkD79GMiwpvA6OLkp8uAPH7Vr8mpN2wHJo35Lw62SAEga0PzdnZGKsZf0XKzk
+	cJn9ZkTxnU9Dk9YzynIOVBp69oRXwDvI1ievhmD/UHu89IjohmFkHGwYj4l63WjN+SXTQpWJK5q
+	I89h+2zLI5gyCA5cCe/xGWAW51R2106BttsfA9wFQ6qgYdeRjcvDxyDb9PtjoOnzF07s1HL6lPl
+	71ZQovEU6qMuahnm/9Rpu6Eo89kh97K1tpNKBc2ARpKliduHgC1mnfWnqAem+IAn3tckJGNi/Oh
+	CyVZFQzY8zajM5ynz2X20R2euLeXQ
+X-Google-Smtp-Source: AGHT+IHlWUcyOlOhaiUcfzknimHxQgiCSYmuaKhmBSK+QhakuXA6Sp7y7IZq0RbnF2cO1nyQaKeRzw==
+X-Received: by 2002:a17:907:971d:b0:ac4:3e0:7ca3 with SMTP id a640c23a62f3a-ac6fae9bf5bmr718303266b.18.1743174922099;
+        Fri, 28 Mar 2025 08:15:22 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b742sm178789266b.65.2025.03.28.08.15.20
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b742sm178789266b.65.2025.03.28.08.15.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 08:15:20 -0700 (PDT)
+        Fri, 28 Mar 2025 08:15:21 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v4 0/3] support Linux reboot modes in syscon-reboot on
- gs101 (Google Pixel)
-Date: Fri, 28 Mar 2025 15:15:18 +0000
-Message-Id: <20250328-syscon-reboot-reset-mode-v4-0-77ba57703ace@linaro.org>
+Date: Fri, 28 Mar 2025 15:15:20 +0000
+Subject: [PATCH v4 2/3] dt-bindings: soc: samsung: exynos-pmu: update reset
+ for gs101
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,11 +70,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAa95mcC/43OywrCMBAF0F8pWRvJo3nUlf8hLpJ02ga0kaQES
- +m/m3alCOJquAP3zCwoQfSQ0KlaUITskw9jCfWhQm4wYw/YtyUjRpggjEmc5uTCiCPYEKYyEkz
- 4HlrAQkqhtdW1AopK/RGh88+dvlxLHnyaQpz3S5lu2z/QTDHBDXXUSkalNHC++dHEcAyxR5ua2
- b8SK1KnidaSK2Kt+pL4u6R+SHz7STTGCe441+ZDWtf1BevceLhVAQAA
-X-Change-ID: 20250226-syscon-reboot-reset-mode-566588b847e1
+Message-Id: <20250328-syscon-reboot-reset-mode-v4-2-77ba57703ace@linaro.org>
+References: <20250328-syscon-reboot-reset-mode-v4-0-77ba57703ace@linaro.org>
+In-Reply-To: <20250328-syscon-reboot-reset-mode-v4-0-77ba57703ace@linaro.org>
 To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
@@ -86,75 +85,55 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-This series updates syscon-reboot to support warm/soft and soft/hard
-reboot on gs101-based boards (Google Pixel 6 and Pixel 6 Pro).
-
-Linux supports a couple different reboot modes, but syscon-reboot
-doesn't distinguish between them and issues the same syscon register
-write irrespective of the reboot mode requested by the kernel.
-
-This is a problem when platforms want to do a cold reboot most of the
-time, which could e.g. wipe RAM etc, but also want to support rebooting
-while keeping RAM contents in certain cases.
-
-On gs101, this can be implemented using different syscon register
-writes.
-
-As Rob pointed out in [1], register access shouldn't be encoded into
-DT, though. At the same time, at least on gs101, the difference is just
-different register values in different registers. Therefore these
-patches:
-
-    * add a specific binding for gs101 reset
-    * update the generic syscon reset driver to support this new
-      compatible 'google,gs101-reboot'. In this case, and as suggested
-      in [1], the syscon writes are then deducted from the compatible,
-      rather than parsing them from DT.
-
-The existing generic syscon-reboot driver seems like a suitable place
-to add support for that, given all of this is straight forward and
-simple and similar to the existing code. If the preference is to have a
-separate driver copying much of the existing generic syscon-reboot
-driver code instead, please let me know.
-
-Link: https://lore.kernel.org/all/20250227132644.GA1924628-robh@kernel.org/ [1]
+Add the gs101-specific reset node, allow it on gs101, and disallow it
+on !gs101. Similarly, disallow the generic 'syscon-reboot' on gs101, as
+we want the specific one in that case.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-Changes in v4:
-- Rob:
-  - don't add more properties to existing 'syscon-reboot' compatible /
-    binding
-  - add specific binding for 'google,gs101-reboot' compatible and
-    related driver changes
-- Link to v3: https://lore.kernel.org/r/20250227-syscon-reboot-reset-mode-v3-0-959ac53c338a@linaro.org
+ .../devicetree/bindings/soc/samsung/exynos-pmu.yaml | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Changes in v3:
-- support <reset-mode>-reg in driver, not just in binding, doh...
-- correctly parse <reset-mode>-offset
-- add a comment for all the BUILD_BUG_ON() checks
-- Link to v2: https://lore.kernel.org/r/20250226-syscon-reboot-reset-mode-v2-0-f80886370bb7@linaro.org
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index 204da6fe458d2d4bfeee1471ebc5c38247477ae2..8c7362cf3eeab11f6bb13a27eb295d5ee6721b71 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -97,6 +97,12 @@ properties:
+     $ref: /schemas/phy/samsung,dp-video-phy.yaml
+     unevaluatedProperties: false
+ 
++  gs101-reboot:
++    $ref: /schemas/power/reset/google,gs101-reboot.yaml#
++    type: object
++    description:
++      Node for gs101-specific reboot method
++
+   interrupt-controller:
+     description:
+       Some PMUs are capable of behaving as an interrupt controller (mostly
+@@ -136,6 +142,21 @@ required:
+ additionalProperties: false
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-pmu
++    then:
++      properties:
++        gs101-reboot: true
++        syscon-reboot: false
++
++    else:
++      properties:
++        gs101-reboot: false
++        syscon-reboot: true
++
+   - if:
+       properties:
+         compatible:
 
-Changes in v2:
-- fix whitespace issues in binding
-- Link to v1: https://lore.kernel.org/r/20250226-syscon-reboot-reset-mode-v1-0-91c1b62166ae@linaro.org
-
----
-André Draszik (3):
-      dt-bindings: power: reset: google,gs101-reboot: add Google GS101 specific reset
-      dt-bindings: soc: samsung: exynos-pmu: update reset for gs101
-      power: reset: syscon-reboot: add gs101-specific reset
-
- .../bindings/power/reset/google,gs101-reboot.yaml  | 32 +++++++
- .../bindings/soc/samsung/exynos-pmu.yaml           | 21 +++++
- MAINTAINERS                                        |  1 +
- drivers/power/reset/syscon-reboot.c                | 98 +++++++++++++++++-----
- 4 files changed, 131 insertions(+), 21 deletions(-)
----
-base-commit: db8da9da41bced445077925f8a886c776a47440c
-change-id: 20250226-syscon-reboot-reset-mode-566588b847e1
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.49.0.472.ge94155a9ec-goog
 
