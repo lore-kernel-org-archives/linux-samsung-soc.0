@@ -1,37 +1,37 @@
 Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2106718C02E
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Mar 2025 07:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145721581F9
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Mar 2025 07:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743234437; cv=none; b=EodJ6BpSMGrZlI3/gEQa5PPBBApwwNVnjUD96v72+HLtgLDOXs2V+gF2QkMr/cSWOpMVRE5teftoiJZP0oA09S+OoYXWf2DPOYrv2SP3cTEevpJRZVlUmgZIfQwuFRQUsfjqV0E9Ch4uCZy+8S0GdMlJZv1+Rgvx+UErX94O50k=
+	t=1743234444; cv=none; b=e0yAYRhNsF5Nrb6O5ioKt+jZrtljSsnPfXPpkO6lqWQlCFjHhld/aH/3uqFZihJlLbEpQLTX2237dCPNK50axbFdDVZVNmrXTUOl0QPKlQGfGrSCG4dA6y8sTT3DSr7qXqnclOxVL2zUrZb5V2o8I3sPqescRMdzVuusp8PmzZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743234437; c=relaxed/simple;
-	bh=gdAiGcHA9ACA8gEU5ZV3breg3WLc8uWPyOoly+XVgws=;
+	s=arc-20240116; t=1743234444; c=relaxed/simple;
+	bh=m8V0vELosjMEi2lRQu+v2yxrgQPQu+IsVPQcDAhIlyY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rrTwrEKsUoKVO9Cuu2oOXsy+hLGD+boi9tGBYqw7SQRS8PGIoWpN2ZsyPyNxFLgLuPXuJKzVrUDwakp7GWDSfHE0icI47n7KNEuaH3rXnK0kGa45jiOSHE8IFZaTS8kA8DNGjo8rwVdBcRq4fWgEpFlCpogCcBhO0wtMuWWoKwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a7IGOrxC; arc=none smtp.client-ip=80.12.242.25
+	 MIME-Version; b=nJz1aXp8HuFrIifvzu/z9g10mBSSzNzBLFVinD6IP8zwcOiRvU7upqb+dnF/xuO6A+j3lUjMH/oX6Mkxez7Sl2FayIQJNHfZ80Y219x2K/fLMCA7/lpb624VYZfM93KbVrV8EyWQGCMa8AqK8OshVedvVsDSoxY2KSmzz7vNtBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sMjhG3sp; arc=none smtp.client-ip=80.12.242.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a7IGOrxC"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sMjhG3sp"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id yQtAtsN3Ol9slyQtPteVWL; Sat, 29 Mar 2025 08:46:11 +0100
+	id yQtAtsN3Ol9slyQtWteVbm; Sat, 29 Mar 2025 08:46:18 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743234371;
-	bh=lxG5GpmIEqwoUGwr9bKBwNL+mtU3l6sCszbqj7Kxf5k=;
+	s=t20230301; t=1743234378;
+	bh=4LCH57c1dhGxYdF7fm0yxki2rBXjTc81wlG/k7Z0uK0=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=a7IGOrxC3ED9Gj0NKMZBuUpb3nmtMAW5WTnV5xDlQida/pNILs6MYQAfcCUYl8jQM
-	 HfhLvVpPiVOa65RHj8V97d82otML7mK/Agj6jM1g/GbYix2BhHCk06AmNZ8ZS35N5E
-	 i0Dab7gM3eqHYuAHh0pQqEMy1EACDJ5TR0cGvsM2laAi16LGag3xSdGI5o8VZHs0ie
-	 dblxMUNIl8nkxDiCiftaPx+yCk1iz3XGYyl+xaym2Xr0XQxjy7grz0hFjFLpxsgIs2
-	 LvU6T4Yfs1eeXMX1tRVZeX1eq849X2xJbjUH8TVGamh+KvvSL4s/mHXcYiD4Duknyr
-	 ALJWB3QkNN4OA==
+	b=sMjhG3spoP5M9YlmLwCgPiXoJqJF1CR7rIox5NYC/4EAvamy48n3GDFo9h18XDntW
+	 qy7VzK5ylsU0Tgjhy6IibuKBn4NXsA6b9RfJbttybLasOH2IzcVRpuA5sMfTcdkv7w
+	 Rfo/OH0yvtZskUtmdzpPYFx61DbhilXCGa1+oTl5ZvKzPkor9hqFabVo+FLkQNPMre
+	 AIL9J2zw3o2rtOLUna0p8pwbcAVVskCpFRkLItryc89W3ocu49ZockyT533meijGV7
+	 teWA6pB+UaO1DIX5HyLjL2w19nvUC38ztb9whV9ZAWHIQqO+yPRmgQhnShsCu00xB9
+	 JGzzFin6gEStw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Mar 2025 08:46:11 +0100
+X-ME-Date: Sat, 29 Mar 2025 08:46:18 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: lee@kernel.org,
@@ -45,9 +45,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/4] mfd: exynos-lpass: Fix an error handling path in exynos_lpass_probe()
-Date: Sat, 29 Mar 2025 08:45:45 +0100
-Message-ID: <d125cbc479f1fa838ed0ff25f0e11d25f382e9d4.1743231856.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 2/4] mfd: exynos-lpass: Avoid calling exynos_lpass_disable() twice in exynos_lpass_remove()
+Date: Sat, 29 Mar 2025 08:45:46 +0100
+Message-ID: <ee6241d024c4cb68622dde9d65d8712016f4205e.1743231856.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
@@ -59,46 +59,29 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful regmap_init_mmio(), regmap_exit()
-should be called as already done in the .remove() function.
+exynos_lpass_disable() is called twice in the remove function. Remove
+one of these calls.
 
-Switch to devm_regmap_init_mmio() to avoid the leak and simplify the
-.remove() function.
-
-Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
+Fixes: 90f447170c6f ("mfd: exynos-lpass: Add runtime PM support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-The .remove function was added in commit c414df12bdf7 ("mfd: exynos-lpass:
-Add missing remove() function")
-
 Compile tested only.
 ---
- drivers/mfd/exynos-lpass.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/mfd/exynos-lpass.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 6a585173230b..6b95927e99be 100644
+index 6b95927e99be..a2785ceea8bf 100644
 --- a/drivers/mfd/exynos-lpass.c
 +++ b/drivers/mfd/exynos-lpass.c
-@@ -122,8 +122,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	if (IS_ERR(lpass->sfr0_clk))
- 		return PTR_ERR(lpass->sfr0_clk);
+@@ -141,7 +141,6 @@ static void exynos_lpass_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
  
--	lpass->top = regmap_init_mmio(dev, base_top,
--					&exynos_lpass_reg_conf);
-+	lpass->top = devm_regmap_init_mmio(dev, base_top,
-+					   &exynos_lpass_reg_conf);
- 	if (IS_ERR(lpass->top)) {
- 		dev_err(dev, "LPASS top regmap initialization failed\n");
- 		return PTR_ERR(lpass->top);
-@@ -145,7 +145,6 @@ static void exynos_lpass_remove(struct platform_device *pdev)
+-	exynos_lpass_disable(lpass);
  	pm_runtime_disable(&pdev->dev);
  	if (!pm_runtime_status_suspended(&pdev->dev))
  		exynos_lpass_disable(lpass);
--	regmap_exit(lpass->top);
- }
- 
- static int __maybe_unused exynos_lpass_suspend(struct device *dev)
 -- 
 2.49.0
 
