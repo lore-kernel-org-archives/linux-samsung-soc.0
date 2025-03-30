@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5281F1876;
-	Sun, 30 Mar 2025 10:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADEB1876;
+	Sun, 30 Mar 2025 10:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743328965; cv=none; b=AMkUWfo+B0Ph6ohUu5AYb0bq5GuBJpF3/nRJNbP8MYQFEsuBe4Z9mxNFaMhqKZf6rgywnh+gbOHcSFTdxnnAgs41oJCfurwn2slfzWddiEQw/+F0tCrkA0LIj9qy/CmqsQS2Mm3ZHHQYozEJqHnovJf7p5jNVsWvqkl1YkZOzl8=
+	t=1743329037; cv=none; b=LNPyd6uVnS5QcN2iVKsrso0/9C78Hx9aLjkJfFeqnGSDzcGjTBaG2JMeIRauoYuuYbRqwDXJ7SQ9pDL9UmRDc0kgyB6bgXGBQSH6Dk5XfHIs6dFaZbbJzSzRiU/NBhxebfMggpS/3MsC9ikFga5KklSCFK3iD1FDbvNkyAaCFzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743328965; c=relaxed/simple;
-	bh=YcdQy4Ji/fU1aIpQhZ/UuN3fD4aDwRL7aQ35DnJnF8Q=;
+	s=arc-20240116; t=1743329037; c=relaxed/simple;
+	bh=tELWz1CgLMb04Ng2nHha8G5QYQ5lPfuKUCmYVP2U3fs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qhRPPTvh/0FAuVzD9BnCnOF6vGf6pQtlDcxg1wJFnUmSCOg+JHXOR4YULNZavefu9lgaiXSl23ebXzoUfhB6rc8bv/bdK3uxVE4t5n1gX1rSq8zD3/OO8CLkHQJAN6NCR1EsDnKcXreX4uCAAelWDd8wUiD0JzdVcQtWVF8brIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geY2MU4j; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=nyvoSUCNe4mbXnYZpUtbn/xu+HiSR3R5rzWWGK6f3YRCN0HtZ5HutORh9YhtU8hmxOdVTx2eaITrfqK44VpGj8CEfREzMwr0KckxmQKmEX1O/dtjJ5aYPD8IQHUOQtALfIngDdXjQe6muOAuVlQzqSoIYQ4QO8P5dDaFvc2Ogek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVKjak5d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geY2MU4j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13710C4CEDD;
-	Sun, 30 Mar 2025 10:02:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVKjak5d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714ABC4CEDD;
+	Sun, 30 Mar 2025 10:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743328964;
-	bh=YcdQy4Ji/fU1aIpQhZ/UuN3fD4aDwRL7aQ35DnJnF8Q=;
+	s=k20201202; t=1743329036;
+	bh=tELWz1CgLMb04Ng2nHha8G5QYQ5lPfuKUCmYVP2U3fs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=geY2MU4jO7So4QCfEfw9IcfQ29p/+2sqpgP/MSMrWC413FoKkqQQMAK3qTHwcKj/F
-	 eaPRncc0iIX2SVrmtpGUWc2y/GKqsns433/cU2vszbAM6DqeFsosh/GH9UIQQ+kRLz
-	 SV52zOu0mENJP7aFFDeXF2YcZv4uA5Gg57oRRwtVW8tgixlxbTBXvGf5/QTS6HkG18
-	 JkgpLoMxqAqqU7PM2W4vdZvpsxWFRN93QezJJjGtN5yfWmIQp75gII8POyexqWsd+d
-	 JjZUiwy2p2qkWvJmxPUKGXtlfum3dbMvsB7ZrrffBWtX+S11UwtX30K2kJW8ineSzM
-	 lKgvQ8s7JWi3g==
-Message-ID: <d2dc6a8d-8843-4c25-9e6c-a8a67bd76367@kernel.org>
-Date: Sun, 30 Mar 2025 12:02:38 +0200
+	b=UVKjak5dUF+4s0uBMBUjHmMraGxafRvEF15YnhOD5UzQpdNatY5lPt328gJl2C9GS
+	 M9FG1UVj/w7uR6MGrBOZes8mqZ/2C3Naf+NQFHYuFrNekvlyOLnGs67vUJ1JtIcKHQ
+	 GG/EzjYBsUvZ2VmhAjrhe97ktf79uGB8I9F/9WckoW9y0iuYQDDBVnpMW4Oy/j+VQx
+	 sFiCqA1v4wuCtlCp6m5j3geRMmTEqlKwd+CATt3OnmjEQTDBXjRVucwwAwFO+mgcDL
+	 sCVJCE3jdo1UXlo1U2sLhedXNAWYNcdLkAorOQ5OUiyOmvKpNp+Pzea3dKVQV4foe9
+	 jq6sOLpzLmtYw==
+Message-ID: <2724ab2e-2ce0-4240-bbb7-804efd031dd7@kernel.org>
+Date: Sun, 30 Mar 2025 12:03:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] mfd: exynos-lpass: Move exynos_lpass_remove()
+Subject: Re: [PATCH 4/4] mfd: exynos-lpass: Fix another error handling path in
+ exynos_lpass_probe()
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lee@kernel.org,
  alim.akhtar@samsung.com, s.nawrocki@samsung.com, beomho.seo@samsung.com,
  ideal.song@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
- <1de670e6b9fa33cb81a34e5f882e79b80e479490.1743231856.git.christophe.jaillet@wanadoo.fr>
+ <d224865a16b50498279b044a819e1e187d01bb28.1743231856.git.christophe.jaillet@wanadoo.fr>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,21 +89,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1de670e6b9fa33cb81a34e5f882e79b80e479490.1743231856.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d224865a16b50498279b044a819e1e187d01bb28.1743231856.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/03/2025 08:45, Christophe JAILLET wrote:
-> In order be able to call exynos_lpass_remove() from the error handling
-> path of the probe, it first needs to be moved before the probe.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+>  	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
+>  	if (!lpass)
+> @@ -143,7 +144,15 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+>  	pm_runtime_enable(dev);
+>  	exynos_lpass_enable(lpass);
+>  
+> -	return devm_of_platform_populate(dev);
+> +	ret = devm_of_platform_populate(dev);
+> +	if (ret)
+> +		goto err_remove_exynos_lpass;
+> +
+> +	return 0;
+> +
+> +err_remove_exynos_lpass:
+> +	exynos_lpass_remove(pdev);
 
-This change makes no sense on its own. There is no point in moving the
-code just for moving the code. That's not the goal.
-
-Squash it.
+You should have here standard unwinding, not calling remove. Or better
+just convert everything to devm, because mixing devm and non-devm is
+error prone.
 
 Best regards,
 Krzysztof
