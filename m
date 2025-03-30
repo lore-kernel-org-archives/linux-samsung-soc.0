@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E379E555;
-	Sun, 30 Mar 2025 10:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5281F1876;
+	Sun, 30 Mar 2025 10:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743328933; cv=none; b=hACvJ6EyCBzNaVD8chB3tZDD9hNXFbyLTijcXNdI1bbpruAn04ZhtQ8kdB7R/VZFeVwHKb82CD976rL3i1sBeruemfSdw5PwJNWwJT6dhquasZv2movusUoys9Jl0w+XYhFIKxW9ZPw/kaH4sWMbbeNJI+BtexRcFLzlEFBUS3k=
+	t=1743328965; cv=none; b=AMkUWfo+B0Ph6ohUu5AYb0bq5GuBJpF3/nRJNbP8MYQFEsuBe4Z9mxNFaMhqKZf6rgywnh+gbOHcSFTdxnnAgs41oJCfurwn2slfzWddiEQw/+F0tCrkA0LIj9qy/CmqsQS2Mm3ZHHQYozEJqHnovJf7p5jNVsWvqkl1YkZOzl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743328933; c=relaxed/simple;
-	bh=mBqjySh/X58SN5mLlMcc4wfYIVF4f09YpfipxT9DpnQ=;
+	s=arc-20240116; t=1743328965; c=relaxed/simple;
+	bh=YcdQy4Ji/fU1aIpQhZ/UuN3fD4aDwRL7aQ35DnJnF8Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NhIqNU5JmnmSFNdqUhbr+hATkbh8qJ99fr646uEPNvIWT2bcyhYafHi/JSFb6I3iJxW79Fa3RWQm8cwFeKJrd1Nxuu+gtq5JiAiBn4L5PiqUws6aMQ2erWB28K1emGBJ3zr64TogA0etxXKH3QV4F9mDXgWd3LdBlf80T1UHONg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjshFVSb; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qhRPPTvh/0FAuVzD9BnCnOF6vGf6pQtlDcxg1wJFnUmSCOg+JHXOR4YULNZavefu9lgaiXSl23ebXzoUfhB6rc8bv/bdK3uxVE4t5n1gX1rSq8zD3/OO8CLkHQJAN6NCR1EsDnKcXreX4uCAAelWDd8wUiD0JzdVcQtWVF8brIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geY2MU4j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjshFVSb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4245C4CEDD;
-	Sun, 30 Mar 2025 10:02:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geY2MU4j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13710C4CEDD;
+	Sun, 30 Mar 2025 10:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743328932;
-	bh=mBqjySh/X58SN5mLlMcc4wfYIVF4f09YpfipxT9DpnQ=;
+	s=k20201202; t=1743328964;
+	bh=YcdQy4Ji/fU1aIpQhZ/UuN3fD4aDwRL7aQ35DnJnF8Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fjshFVSbkgFzLfwiMDt2Oizpc1ImUTsafj/gygfAFatncqFbpWu63hMFxmn6AcQTi
-	 vIh+y0euMVofmRHx1h/nTFVYYs8WnvzfJ4Qz6yUUDjikPOj7/JL1CrtlrxRwm4jtIH
-	 soCkD+PgGThobex1ztgxN0aKYYal8u2qoQieSWZc6as1+aYG5ZAEIIBLwae2uYmkpm
-	 Tq9obEIZbFlZtu1A9R4m5Cs7NW2KFY9loEdo0CdIvJJamCwHF4Cw9o9MvEVGhXQnB8
-	 wEB9B1+sH+tUVQSvBJTVp+dV0enAL1IwHAW74fRN6BdgIZSfV3ZxWjcFL7L3YV/S+o
-	 vniPrdkDf6iHw==
-Message-ID: <3d7c8b46-1193-44bb-b58b-841e358cdd12@kernel.org>
-Date: Sun, 30 Mar 2025 12:02:06 +0200
+	b=geY2MU4jO7So4QCfEfw9IcfQ29p/+2sqpgP/MSMrWC413FoKkqQQMAK3qTHwcKj/F
+	 eaPRncc0iIX2SVrmtpGUWc2y/GKqsns433/cU2vszbAM6DqeFsosh/GH9UIQQ+kRLz
+	 SV52zOu0mENJP7aFFDeXF2YcZv4uA5Gg57oRRwtVW8tgixlxbTBXvGf5/QTS6HkG18
+	 JkgpLoMxqAqqU7PM2W4vdZvpsxWFRN93QezJJjGtN5yfWmIQp75gII8POyexqWsd+d
+	 JjZUiwy2p2qkWvJmxPUKGXtlfum3dbMvsB7ZrrffBWtX+S11UwtX30K2kJW8ineSzM
+	 lKgvQ8s7JWi3g==
+Message-ID: <d2dc6a8d-8843-4c25-9e6c-a8a67bd76367@kernel.org>
+Date: Sun, 30 Mar 2025 12:02:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] mfd: exynos-lpass: Avoid calling
- exynos_lpass_disable() twice in exynos_lpass_remove()
+Subject: Re: [PATCH 3/4] mfd: exynos-lpass: Move exynos_lpass_remove()
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lee@kernel.org,
  alim.akhtar@samsung.com, s.nawrocki@samsung.com, beomho.seo@samsung.com,
  ideal.song@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
- <ee6241d024c4cb68622dde9d65d8712016f4205e.1743231856.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
+ <1de670e6b9fa33cb81a34e5f882e79b80e479490.1743231856.git.christophe.jaillet@wanadoo.fr>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -89,21 +88,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ee6241d024c4cb68622dde9d65d8712016f4205e.1743231856.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1de670e6b9fa33cb81a34e5f882e79b80e479490.1743231856.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/03/2025 08:45, Christophe JAILLET wrote:
-> exynos_lpass_disable() is called twice in the remove function. Remove
-> one of these calls.
+> In order be able to call exynos_lpass_remove() from the error handling
+> path of the probe, it first needs to be moved before the probe.
 > 
-> Fixes: 90f447170c6f ("mfd: exynos-lpass: Add runtime PM support")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Compile tested only.
-> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This change makes no sense on its own. There is no point in moving the
+code just for moving the code. That's not the goal.
+
+Squash it.
 
 Best regards,
 Krzysztof
