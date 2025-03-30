@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CA4E555;
-	Sun, 30 Mar 2025 10:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E379E555;
+	Sun, 30 Mar 2025 10:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743328905; cv=none; b=kJRvpNzNKX+393rgHYqwlBG2Pc36WH5npmenqNOeaTwaTvvHBD2zpdtch5HWGQRtY1h0VKZ+akmwADXjAqMzvK0XRkdZ8EHj09nMfH3CTZrdJt3u+I9ccAg8Aap6nPFow14DUu/3eD9MFweHuDXeMOV60MXYRKn3OLVw9zQ/p9Q=
+	t=1743328933; cv=none; b=hACvJ6EyCBzNaVD8chB3tZDD9hNXFbyLTijcXNdI1bbpruAn04ZhtQ8kdB7R/VZFeVwHKb82CD976rL3i1sBeruemfSdw5PwJNWwJT6dhquasZv2movusUoys9Jl0w+XYhFIKxW9ZPw/kaH4sWMbbeNJI+BtexRcFLzlEFBUS3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743328905; c=relaxed/simple;
-	bh=EjDNBXG2DmcUlUVr68/7qpmOcnGVYmdLRlTwYvvTG8o=;
+	s=arc-20240116; t=1743328933; c=relaxed/simple;
+	bh=mBqjySh/X58SN5mLlMcc4wfYIVF4f09YpfipxT9DpnQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gIBPaBiqgo/h7QoK0fczE2KmGQ/QxjwGX5BS3MxnNG5YMzG0TTkAhsDhlzFr7LV4IJ9DSO9dACxYigwDWxDA1TRhHnsTrBJkMcPqxmN4vhpBJ3EwEhW6OKUs6vEqWgS23/jQ58mPorZ4KyeT1HaW8roarq8lpCfl30ilWGP6rJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLVpTqdY; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=NhIqNU5JmnmSFNdqUhbr+hATkbh8qJ99fr646uEPNvIWT2bcyhYafHi/JSFb6I3iJxW79Fa3RWQm8cwFeKJrd1Nxuu+gtq5JiAiBn4L5PiqUws6aMQ2erWB28K1emGBJ3zr64TogA0etxXKH3QV4F9mDXgWd3LdBlf80T1UHONg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjshFVSb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLVpTqdY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C70FC4CEDD;
-	Sun, 30 Mar 2025 10:01:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjshFVSb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4245C4CEDD;
+	Sun, 30 Mar 2025 10:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743328904;
-	bh=EjDNBXG2DmcUlUVr68/7qpmOcnGVYmdLRlTwYvvTG8o=;
+	s=k20201202; t=1743328932;
+	bh=mBqjySh/X58SN5mLlMcc4wfYIVF4f09YpfipxT9DpnQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RLVpTqdYbGIVwatoEMnaI9UMoMnnLqVGRecScnwUHK/5jnBy7/7dd3D9icOV67aCR
-	 bzu8vbOgAd+5X76lT6kvhTyUK4tpugKP0qLd7pSNpHKapFAABJ15Mz+X2qoH6GN0fd
-	 GjymOmzzK1zK5zL59tsopvKyWGj12pAGiHi186FeicEjVWsH/xtygs6nEtPXiTGKlN
-	 k392bq7LaiSr/rgi5aiU2fw1U9SKvkk1W1m15z9GabsDwPYEHd+FfZGpHE3z/VVcGu
-	 fEzg7akoQDKky7bi0UTtRvJzoeyDf0WsqJvyXP2SjcjF5HoTK0qPa2G+VT/jspeHzT
-	 FMMYW1i00zJ5A==
-Message-ID: <9ab41f16-c672-4352-a296-0ff1765a8656@kernel.org>
-Date: Sun, 30 Mar 2025 12:01:37 +0200
+	b=fjshFVSbkgFzLfwiMDt2Oizpc1ImUTsafj/gygfAFatncqFbpWu63hMFxmn6AcQTi
+	 vIh+y0euMVofmRHx1h/nTFVYYs8WnvzfJ4Qz6yUUDjikPOj7/JL1CrtlrxRwm4jtIH
+	 soCkD+PgGThobex1ztgxN0aKYYal8u2qoQieSWZc6as1+aYG5ZAEIIBLwae2uYmkpm
+	 Tq9obEIZbFlZtu1A9R4m5Cs7NW2KFY9loEdo0CdIvJJamCwHF4Cw9o9MvEVGhXQnB8
+	 wEB9B1+sH+tUVQSvBJTVp+dV0enAL1IwHAW74fRN6BdgIZSfV3ZxWjcFL7L3YV/S+o
+	 vniPrdkDf6iHw==
+Message-ID: <3d7c8b46-1193-44bb-b58b-841e358cdd12@kernel.org>
+Date: Sun, 30 Mar 2025 12:02:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mfd: exynos-lpass: Fix an error handling path in
- exynos_lpass_probe()
+Subject: Re: [PATCH 2/4] mfd: exynos-lpass: Avoid calling
+ exynos_lpass_disable() twice in exynos_lpass_remove()
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lee@kernel.org,
  alim.akhtar@samsung.com, s.nawrocki@samsung.com, beomho.seo@samsung.com,
  ideal.song@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
- <d125cbc479f1fa838ed0ff25f0e11d25f382e9d4.1743231856.git.christophe.jaillet@wanadoo.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <ee6241d024c4cb68622dde9d65d8712016f4205e.1743231856.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -89,25 +89,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <d125cbc479f1fa838ed0ff25f0e11d25f382e9d4.1743231856.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ee6241d024c4cb68622dde9d65d8712016f4205e.1743231856.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/03/2025 08:45, Christophe JAILLET wrote:
-> If an error occurs after a successful regmap_init_mmio(), regmap_exit()
-> should be called as already done in the .remove() function.
+> exynos_lpass_disable() is called twice in the remove function. Remove
+> one of these calls.
 > 
-> Switch to devm_regmap_init_mmio() to avoid the leak and simplify the
-> .remove() function.
-> 
-> Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
-
-c414df12bdf7 should be fixed instead, I think.
-
+> Fixes: 90f447170c6f ("mfd: exynos-lpass: Add runtime PM support")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> The .remove function was added in commit c414df12bdf7 ("mfd: exynos-lpass:
-> Add missing remove() function")
+> Compile tested only.
+> ---
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
