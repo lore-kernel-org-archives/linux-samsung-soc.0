@@ -1,45 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8542E3395;
-	Mon, 31 Mar 2025 07:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394861C3BEE;
+	Mon, 31 Mar 2025 07:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743405320; cv=none; b=rIzKm8ZGZtPbE911xYuveEGBvcK4wvDxwiNNfwKYi/fddR/mXVFaj+8bDF0gd0geFaRoJzeiAVR3u2ywUcPVn14hUKTWC/p5/DSCF5a6eo6NJZq2s5mwQ6vIZFcwYSbLKwYtYnfquqGi7frHef3tanVoScJRFsVJzje7tasLHkk=
+	t=1743406474; cv=none; b=GsZ09ZEz36ZNro6YuEJcJ5e2qrhgomAbBdS18IgzcBdF0SCFIFRTuklgX/QuSi3izSvhyG873GVBfS5jluiYwXOZaydXfye+6H2FD//cVsGBqUO8+6p6HUijoN3oLIOpDEwd0Ss2BHjnUt7l5OTFXLWTZlDTX4miO/Z4Evt0sbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743405320; c=relaxed/simple;
-	bh=U9WwColyPjE0PpqjI7kbqYiBlOxCoADRrn2LMrMsr6k=;
+	s=arc-20240116; t=1743406474; c=relaxed/simple;
+	bh=tGc0yZ9S56lmGZ8X3yzmu/RRoHPLD+50b87kiWJPefo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZ2fyXkbeY7gr964vctrzjOCMG1U3kjjpAtBBsAOzmDHmuWxj/JKI7hhlRzO8AznjB3jhxRPnqlpKk8WJ/XLPKFzNfJi3Xun9Ec6pQJywVR5hSVx5FYPhGYWkB4OxZh12DjKUbW8/aeU1fHr6LgySQNjbMaGNqdWYob9a0t/P4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ay1EarCv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXavvwHUz434sCQ4vRUHUs8m5ZWxYv5P7TLp4VO2xHpgB9bzBvqg4GxSWlYEnFKx8tC8oxjbrLHrxxq4GoKd8QrqT30JjM31vctmMXxNWFt0B4YEQV2WvqzvzWDDHOcY9XuuKGgokYiGAi3EXRaB1ELlbmkM4PBjlHdGyzws1bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JA7vlAxJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ay1EarCv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1769C4CEE3;
-	Mon, 31 Mar 2025 07:15:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JA7vlAxJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2EBC4CEE3;
+	Mon, 31 Mar 2025 07:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743405319;
-	bh=U9WwColyPjE0PpqjI7kbqYiBlOxCoADRrn2LMrMsr6k=;
+	s=k20201202; t=1743406473;
+	bh=tGc0yZ9S56lmGZ8X3yzmu/RRoHPLD+50b87kiWJPefo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ay1EarCvuM4L667uBXmzflmFp6Gpw+QkTMwL8AEnelkr5h9Rs4pnLyMNxJc5fSia0
-	 4P4suRMQCzZ+F8Lc7OkB7/Rr5+rbsfMR2kBNvnds9HXdtBvtI9qA+WzMag1hTEqquc
-	 f/pJOOT6/cn0u2zA9zcQlMvuaroEopWI8xLGcy9BWxH1FmCn6HGtbBWYvsVnPr39MR
-	 bXBE5Qi6jJl2cIDHP1pxKjTv9Fu1ShNBolIxr0srHHjSAU9i+ugaoxv3EdGT2PVzKn
-	 9LMt9OvneCmz8DWaLTBbD4q26Fmf2Ag2naHinrAmsxsfLPCktVsx80hdSdvyuhkLwj
-	 MvCmukjMnIfWg==
-Date: Mon, 31 Mar 2025 09:15:16 +0200
+	b=JA7vlAxJVj2TwXGWhCabmFcSVxMEKKF3aRsKpopNTz2ticno+FLbcLVgFcmtf0Vas
+	 By1vbkN+enGJyD3jRzncriHofarLHaGjIhoFKZyShCdI5FtUWgrXcSXJsDtDLfDrQ0
+	 uc9oOBml+OtZAGgKPKGXE/aCQjL40uyFJfZcD2jhzFITcAe1IHQBckm7qwXfEUD49l
+	 ON3EokiRJBeugtYhk2p7WaksPBaPuPVH9drZe1+KBb+NISycPFJoLzFPTzuyyTTTcG
+	 U4ZMY5iPH/D8YR+QspDyTmmZG7d7IgiU0EGZx+X7xuBhF+RtBvshoTqg2ZsiXzF7vo
+	 ckgiVFefF4O7A==
+Date: Mon, 31 Mar 2025 09:34:29 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] dt-bindings: soc: samsung: exynos-pmu: update
- reset for gs101
-Message-ID: <20250331-curvy-daring-urchin-aeafa8@krzk-bin>
-References: <20250328-syscon-reboot-reset-mode-v4-0-77ba57703ace@linaro.org>
- <20250328-syscon-reboot-reset-mode-v4-2-77ba57703ace@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+Message-ID: <20250331-prophetic-convivial-dinosaur-efb1af@krzk-bin>
+References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
+ <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -49,49 +52,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250328-syscon-reboot-reset-mode-v4-2-77ba57703ace@linaro.org>
+In-Reply-To: <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
 
-On Fri, Mar 28, 2025 at 03:15:20PM +0000, Andr=C3=A9 Draszik wrote:
-> Add the gs101-specific reset node, allow it on gs101, and disallow it
-> on !gs101. Similarly, disallow the generic 'syscon-reboot' on gs101, as
-> we want the specific one in that case.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->  .../devicetree/bindings/soc/samsung/exynos-pmu.yaml | 21 +++++++++++++++=
-++++++
->  1 file changed, 21 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yam=
-l b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> index 204da6fe458d2d4bfeee1471ebc5c38247477ae2..8c7362cf3eeab11f6bb13a27e=
-b295d5ee6721b71 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> @@ -97,6 +97,12 @@ properties:
->      $ref: /schemas/phy/samsung,dp-video-phy.yaml
->      unevaluatedProperties: false
-> =20
-> +  gs101-reboot:
+On Fri, Mar 28, 2025 at 01:28:47PM +0000, Andr=C3=A9 Draszik wrote:
+>  allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,s2mpg10-pmic
+> +    then:
+> +      properties:
+> +        reg: false
+> +        samsung,s2mps11-acokb-ground: false
+> +        samsung,s2mps11-wrstbi-ground: false
+> +
+> +      oneOf:
+> +        - required: [interrupts]
+> +        - required: [interrupts-extended]
 
-syscon-reboot
+Drop, you should require only interrupts.
 
-> +    $ref: /schemas/power/reset/google,gs101-reboot.yaml#
-
-=2E.. which leads us to the existing node. Just use oneOf:
-
-oneOf:
-  - $ref: /schemas/power/reset/syscon-reboot.yaml#
-  - $ref: /schemas/power/reset/google,gs101-reboot.yaml#
-
-or actually better:
-
-additionalProperties: true
-properties:
-  compatible:
-    enum:
-      - syscon-reboot
-      - google,gs101-reboot
+OTOH, why regulators subnode is not needed? Commit msg mentions they
+exist, so they should be required. Binding does not change because you
+added or did not add yet some driver support.
 
 Best regards,
 Krzysztof
