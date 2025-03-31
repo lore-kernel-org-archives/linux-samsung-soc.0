@@ -1,95 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436F318CBE1;
-	Mon, 31 Mar 2025 07:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6992110;
+	Mon, 31 Mar 2025 09:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743406536; cv=none; b=PMGxLC3g/Q9aW5/t9NAsXHHTJS4TfYkCKkXyy7c+AU7ttTBpmv5r80v7XsAp0XbfLqI5yRnMyxP1Cb6Xmzr8f5gTNHaMmamSy7+zt3QD+sZHshCQ1m25nBVtwVsGmfAntJXtfegWZ1QpCst+mDG7LZ2CXcfS83LtR97UqSMRQug=
+	t=1743413818; cv=none; b=LkWtO2hTvcIGSn2751KoDHxPSs2gHYVf38UW2ba+p1cQwbQkwNXNkq0ZfBLEQ24TpeZNfUSJYanoKB6zG1rcdKK06Q9kM63tUPMSeV7thNGPgoqmE5+Gt7R9GvmH6omHZHHSq+UkZJtxvmYo1o8DItIutelCTAOAsW4kKz/Pqoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743406536; c=relaxed/simple;
-	bh=A9Gk5MXC1bSvKeS45s1VhPpZ/lnbaWeef++2Cj5TGAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZmxELzayAT9HwZN3k22UHBh8tBLwZ3TrIGBeBd8OEiWZ01CZpnBZC41Vz5zOHqYWc9E8z/13B6qgmRVmGC0nFBrW3QyXfxM/9mPLoEKhM2HEw2pErPPa2nLJRM2QvtblzQs6OWde6ZlGumXO2FB1RagWjxdVMTrtL4//EPcF08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pilpS5yB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743413818; c=relaxed/simple;
+	bh=dWMf0zWm9DMcuVxBQ2kWb+B/eofdaEh5V43hOzHRsX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OVZORzD8rp4wJyv3PZHuPu7wjOKyNQWaQglIWl0TFXxkBrrem8FQYq++8Dwkm1QXuZAdVr6YUzL5Dx/SnytYBhDYjicSiM89fdWghhfBtmOF2hRqVBK3/e8fNBJtlIHOrdmTaHnj46RfSL5j6OEX4oI0f4JYEzMLygi6uNc6ZWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSgq/Gsf; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pilpS5yB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBB2C4CEE3;
-	Mon, 31 Mar 2025 07:35:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743406535;
-	bh=A9Gk5MXC1bSvKeS45s1VhPpZ/lnbaWeef++2Cj5TGAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pilpS5yB/toibhVDR8rY0m7ycyfC5hawxGsTGDW/VPp0f1Xd6BKxY29kHD/DvmCYU
-	 dl/xdf0J5NUGnUy2vgBGU+5ggVuvsJNmRIltssUaNxPpa2576LurQgH766ty9dK6re
-	 vi9L7PFdeQy0uoon7VQQrgw6uIJuEIVETMXoGTiAPreGmDr19lUNY7MCVkTf0amHfk
-	 7eUmO703he7zl/995od8Qe/sqSJAn5WKM6XP3ylOxWa5vb3YrpWtPNim6evjS8sxuJ
-	 6jvitXsd411vVm+0fGLlsT/ZyCjycmWTgmUfyScux49+i5TYl1lqeN6PWwejHha3Yj
-	 tgqxnHr1lczdQ==
-Date: Mon, 31 Mar 2025 09:35:32 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 03/32] dt-bindings: firmware: google,gs101-acpm-ipc:
- add PMIC child node
-Message-ID: <20250331-shaggy-mutant-scallop-cb4866@krzk-bin>
-References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
- <20250328-s2mpg10-v2-3-b54dee33fb6b@linaro.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSgq/Gsf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743413817; x=1774949817;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dWMf0zWm9DMcuVxBQ2kWb+B/eofdaEh5V43hOzHRsX4=;
+  b=BSgq/Gsf4erxAEl6QsmK56tlUQlCsLcyk6bIfh2TRvl3SwYau271N79U
+   3+/guPSGiLEBYSV0H7BnREXVKaJuIzjPlRQFHtx0U2wlOA0HyuZFsL9wn
+   6feDANxJKExgsjQ25swj/WA9HXXKTEuE7xaGdHGE1qVVWlI4p+QMm5niy
+   4L6azDgCg45s1daSVq3bhmQ1uP1d1CkdwOBV9O+4Rm3kEfROG1BMRIR+b
+   AoKVjG9yb32JVjVi7fqgoJY9DIuufNp02yPynDYD7yJqzo/qdStBUDU8u
+   ka6DPbz/LMHk+Z0mPHXD8vUpeB92Y3yRTgSnfCBlrlbwzTmdNgbSTW//9
+   g==;
+X-CSE-ConnectionGUID: uKMq8hwSTdKi3LnNN0OSLg==
+X-CSE-MsgGUID: SyEWMNz/QL6fLnIqykn8Mg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11389"; a="44581829"
+X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
+   d="scan'208";a="44581829"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 02:36:56 -0700
+X-CSE-ConnectionGUID: hstVzWFBRcO4ohhrEvb02A==
+X-CSE-MsgGUID: Ddp38qlwR5uOkKn7Dt6a4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
+   d="scan'208";a="125856501"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 31 Mar 2025 02:36:54 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 817FF1CE; Mon, 31 Mar 2025 12:36:53 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v1 1/1] ARM: s3c: stop including gpio.h
+Date: Mon, 31 Mar 2025 12:36:50 +0300
+Message-ID: <20250331093650.4028999-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250328-s2mpg10-v2-3-b54dee33fb6b@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 28, 2025 at 01:28:49PM +0000, Andr=C3=A9 Draszik wrote:
-> The PMIC is supposed to be a child of ACPM, add it here to describe the
-> connection.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->  .../bindings/firmware/google,gs101-acpm-ipc.yaml        | 17 +++++++++++=
-++++++
->  1 file changed, 17 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm=
--ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ip=
-c.yaml
-> index 2cdad1bbae73bb1795eccf47e1a58e270acd022c..5524f2af5bda2d29b5113f8fe=
-14ece7f02366a60 100644
-> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> @@ -27,6 +27,16 @@ properties:
->    mboxes:
->      maxItems: 1
-> =20
-> +  pmic:
-> +    description: Child node describing the main PMIC.
-> +    type: object
-> +    $ref: /schemas/mfd/samsung,s2mps11.yaml
-> +    unevaluatedProperties: false
+The driver does not use legacy GPIO API, stop including this header.
 
-Drop these two and use "additionalProperties: true".
-> +
-> +    properties:
-> +      compatible:
-> +        const: samsung,s2mpg10-pmic
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/arm/mach-s3c/gpio-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/mach-s3c/gpio-samsung.c b/arch/arm/mach-s3c/gpio-samsung.c
+index 87daaa09e2c3..79fdb52c4a6b 100644
+--- a/arch/arm/mach-s3c/gpio-samsung.c
++++ b/arch/arm/mach-s3c/gpio-samsung.c
+@@ -11,9 +11,9 @@
+ // Samsung - GPIOlib support
+ 
+ #include <linux/kernel.h>
++#include <linux/gpio/driver.h>
+ #include <linux/irq.h>
+ #include <linux/io.h>
+-#include <linux/gpio.h>
+ #include <linux/init.h>
+ #include <linux/spinlock.h>
+ #include <linux/module.h>
+-- 
+2.47.2
 
