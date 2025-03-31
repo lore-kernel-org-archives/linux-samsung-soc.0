@@ -1,91 +1,137 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6992110;
-	Mon, 31 Mar 2025 09:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A807E107
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Mar 2025 09:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743413818; cv=none; b=LkWtO2hTvcIGSn2751KoDHxPSs2gHYVf38UW2ba+p1cQwbQkwNXNkq0ZfBLEQ24TpeZNfUSJYanoKB6zG1rcdKK06Q9kM63tUPMSeV7thNGPgoqmE5+Gt7R9GvmH6omHZHHSq+UkZJtxvmYo1o8DItIutelCTAOAsW4kKz/Pqoc=
+	t=1743414624; cv=none; b=OsgK4CfTuBT3SBXgESwHXZU1O3w+VD6k8gI1hg9fKA4WJA36VZrmNnQQJDyykYgcsU+uAAogLHS4UChdXPXY5LkFXzQujHG5MgUPs/STX6XtblHkIo64n2fTHCeBQZJ/GtLmH7oTkErJlDa2Udmfl//4RKMjYyFAViJjxt844t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743413818; c=relaxed/simple;
-	bh=dWMf0zWm9DMcuVxBQ2kWb+B/eofdaEh5V43hOzHRsX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OVZORzD8rp4wJyv3PZHuPu7wjOKyNQWaQglIWl0TFXxkBrrem8FQYq++8Dwkm1QXuZAdVr6YUzL5Dx/SnytYBhDYjicSiM89fdWghhfBtmOF2hRqVBK3/e8fNBJtlIHOrdmTaHnj46RfSL5j6OEX4oI0f4JYEzMLygi6uNc6ZWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSgq/Gsf; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1743414624; c=relaxed/simple;
+	bh=WfQTWTf6PwJHc84otuP/3Oag7lcNdI1Qagn5HFWHEVA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IBXhXjJiKciyZGnq08s8jQ03NMdPEzjGmESyLH0/FyeDkJC8iv4g+Jf/VkSrpLWDK+UWSiPsgbLGrtqRN9DhM0wK2weukCa44ig+0Vw9P/drAK1NcfJV3/k0XPYo32bTkq4yLnn+/q2ZIWC9noiG+GKOP+UYrSZXbklFy1EhOrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sUU6uazw; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSgq/Gsf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743413817; x=1774949817;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=dWMf0zWm9DMcuVxBQ2kWb+B/eofdaEh5V43hOzHRsX4=;
-  b=BSgq/Gsf4erxAEl6QsmK56tlUQlCsLcyk6bIfh2TRvl3SwYau271N79U
-   3+/guPSGiLEBYSV0H7BnREXVKaJuIzjPlRQFHtx0U2wlOA0HyuZFsL9wn
-   6feDANxJKExgsjQ25swj/WA9HXXKTEuE7xaGdHGE1qVVWlI4p+QMm5niy
-   4L6azDgCg45s1daSVq3bhmQ1uP1d1CkdwOBV9O+4Rm3kEfROG1BMRIR+b
-   AoKVjG9yb32JVjVi7fqgoJY9DIuufNp02yPynDYD7yJqzo/qdStBUDU8u
-   ka6DPbz/LMHk+Z0mPHXD8vUpeB92Y3yRTgSnfCBlrlbwzTmdNgbSTW//9
-   g==;
-X-CSE-ConnectionGUID: uKMq8hwSTdKi3LnNN0OSLg==
-X-CSE-MsgGUID: SyEWMNz/QL6fLnIqykn8Mg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11389"; a="44581829"
-X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
-   d="scan'208";a="44581829"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 02:36:56 -0700
-X-CSE-ConnectionGUID: hstVzWFBRcO4ohhrEvb02A==
-X-CSE-MsgGUID: Ddp38qlwR5uOkKn7Dt6a4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
-   d="scan'208";a="125856501"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 31 Mar 2025 02:36:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 817FF1CE; Mon, 31 Mar 2025 12:36:53 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v1 1/1] ARM: s3c: stop including gpio.h
-Date: Mon, 31 Mar 2025 12:36:50 +0300
-Message-ID: <20250331093650.4028999-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUU6uazw"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf848528aso38103855e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Mar 2025 02:50:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743414621; x=1744019421; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WfQTWTf6PwJHc84otuP/3Oag7lcNdI1Qagn5HFWHEVA=;
+        b=sUU6uazwkA8HHrSIhWW0uNQTB0VUfOY2iGiD1yr3zKrJq6Q5qz6eJD2ixgC6PhSW20
+         h7JbOgEGrXvNmf4uwQJRL19QH+U/v6LzXmlbrM6dK/nO8rklxpZjjXk+OYy8vO/z7BwV
+         qFijTuMGEE4MK22fGGoACtnhOObmOubIOMXev5K5lRIlkTzfnltNisDwVv1j1X5/qA3G
+         EC/lTyZDPlKHNOCR0hZFl1CeUbBGsjILXNp+Qu5QcOEIuZzJNeLHUjcIClNURtbWaIX1
+         DrGqTbzGSGgjWTKjZgYqSw7dJCGvPZNz6cT9xvUF0NfZcQOyx6qQdspn7zLxemIWAJav
+         hFjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743414621; x=1744019421;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WfQTWTf6PwJHc84otuP/3Oag7lcNdI1Qagn5HFWHEVA=;
+        b=DZYW/qKlA9vuwZY4qyIySwlVG29CHoiv+8d/H++glh5sEWHJCSbKA7BcdNc1+9NS25
+         +WTqUEH+RY/K2vb5sPTwBNr4j37YongRsJrXpfYIEjFfCej4gBgiAiegPKuoixJPYKHl
+         96pq9QzcRtU9P2+Ou6/SiIcCJfXr9dTgTxI4us3voj8F5+hGuAch6ZzTniPWuYF5ClT6
+         qsBixKGA4lm3jhpdRzUVI2BaDJOlkFZvY6CLj9ypeyk9Af6JkPhIVXuKDHJKXxvE6+S7
+         rJSsNErjbXa1IDkBRERxiuBBNtxfttl61Ag+KWUM+3ZWHsiaHNGrkFsuq5+V5ozg7YuE
+         4M/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIRfvOJgZOZ7J2RoBDVOfXrlDeeeZTYTXyra8odpGtnyOrf4YhaSSv4PT7ckXr+qEgNHb2k78VVlo0zo8iuMHB1g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpcUQg9dfPUUqq24CszQ1s0LKw1jAst6QvBu3FOWtyRJ2hV3wc
+	YN4QhV//r2xTY/FaaovwzTUENeUeDiEymvB1atdrEm0pD+nIEcPk1dhvmWLcHH4=
+X-Gm-Gg: ASbGnctxHPXEQOzV6L7lv3HiZSPvVJG9JlI1B1jdpiwp5cz6jFf/J7mxpyuqo6qElss
+	rvKGMuXS+U+81/QDoVcgWOwJ3ZJf2n4oVNabc4aZ7/dGhoYF8eTml+3Ez8qEvEDyQZlTRGH66BW
+	GdAqpzhE1cvzkGNm1j/rDoFaosSZbZoWH3EqIuPLhaFbmjXEaLNIIGCZThLIbvG+LidyiebSVq9
+	P6TG5M9+1rxCaLnqIHSR1CqGVdUPwywD84IThMhkg5H6DD5N/u/ljgFZaCP+J2qFOLoAfPFtHNa
+	DqIfozCQU8He5na/rWEPr0fpZ28ZAOvbw5TcfovEBePm7qnh
+X-Google-Smtp-Source: AGHT+IF3CJoa5gLjBiJodD+/fcAKbJi9kK8EPGZgsz0yOn8C5Pq2tbjitNJRw36ftrGGInm9OE4Ezw==
+X-Received: by 2002:a5d:47c5:0:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-39c120dec24mr6778714f8f.13.1743414621425;
+        Mon, 31 Mar 2025 02:50:21 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8ff03715sm117091365e9.31.2025.03.31.02.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 02:50:21 -0700 (PDT)
+Message-ID: <4d8d0d479a1ff19bc3e3a8f5832d924ab822f13a.camel@linaro.org>
+Subject: Re: [PATCH v2 01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo
+ Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King	 <linux@armlinux.org.uk>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker	 <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Date: Mon, 31 Mar 2025 10:50:19 +0100
+In-Reply-To: <20250331-prophetic-convivial-dinosaur-efb1af@krzk-bin>
+References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
+	 <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
+	 <20250331-prophetic-convivial-dinosaur-efb1af@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The driver does not use legacy GPIO API, stop including this header.
+Hi Krzysztof,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- arch/arm/mach-s3c/gpio-samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 2025-03-31 at 09:34 +0200, Krzysztof Kozlowski wrote:
+> On Fri, Mar 28, 2025 at 01:28:47PM +0000, Andr=C3=A9 Draszik wrote:
+> > =C2=A0allOf:
+> > +=C2=A0 - if:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
+st: samsung,s2mpg10-pmic
+> > +=C2=A0=C2=A0=C2=A0 then:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg: false
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-acokb-groun=
+d: false
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-wrstbi-grou=
+nd: false
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 oneOf:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - required: [interrupts]
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - required: [interrupts-ext=
+ended]
+>=20
+> Drop, you should require only interrupts.
 
-diff --git a/arch/arm/mach-s3c/gpio-samsung.c b/arch/arm/mach-s3c/gpio-samsung.c
-index 87daaa09e2c3..79fdb52c4a6b 100644
---- a/arch/arm/mach-s3c/gpio-samsung.c
-+++ b/arch/arm/mach-s3c/gpio-samsung.c
-@@ -11,9 +11,9 @@
- // Samsung - GPIOlib support
- 
- #include <linux/kernel.h>
-+#include <linux/gpio/driver.h>
- #include <linux/irq.h>
- #include <linux/io.h>
--#include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/spinlock.h>
- #include <linux/module.h>
--- 
-2.47.2
+As mentioned in the commit message comments, it doesn't work with
+just interrupts. It appears that dtschema's fixups.py doesn't
+handle this case. With just interrupts, DT validation will fail
+if the DT uses interrupts-extended. There was at least one other
+binding that specified interrupts in the same way, so I went with
+the same approach.
+
+> OTOH, why regulators subnode is not needed? Commit msg mentions they
+> exist, so they should be required. Binding does not change because you
+> added or did not add yet some driver support.
+
+I wanted to avoid DT validation errors, because we haven't started
+working on regulators yet, and it might take a little while until
+everything is in place.
+
+I'll make it required in the next version.
+
+Thanks!
+
+Andre'
 
