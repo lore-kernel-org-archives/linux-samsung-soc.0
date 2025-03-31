@@ -1,137 +1,106 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A807E107
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Mar 2025 09:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93E82AEE1;
+	Mon, 31 Mar 2025 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743414624; cv=none; b=OsgK4CfTuBT3SBXgESwHXZU1O3w+VD6k8gI1hg9fKA4WJA36VZrmNnQQJDyykYgcsU+uAAogLHS4UChdXPXY5LkFXzQujHG5MgUPs/STX6XtblHkIo64n2fTHCeBQZJ/GtLmH7oTkErJlDa2Udmfl//4RKMjYyFAViJjxt844t0=
+	t=1743419293; cv=none; b=LLR8NeHFkZE+9kNCgetJJBJ3Vi93U/Q06kLcg7ljkZjMvsNkfH5OK35sBANE7WTLSskUTBmOt3q4Sw0QZm+P6uIfNpbHk/86z9VK8xxn7QTv+NCUbSTa+IwbTibowISeZV+hfIiXKcz+dvKNCdzmotGPgsMTvLBJHHKQrJLkR/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743414624; c=relaxed/simple;
-	bh=WfQTWTf6PwJHc84otuP/3Oag7lcNdI1Qagn5HFWHEVA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IBXhXjJiKciyZGnq08s8jQ03NMdPEzjGmESyLH0/FyeDkJC8iv4g+Jf/VkSrpLWDK+UWSiPsgbLGrtqRN9DhM0wK2weukCa44ig+0Vw9P/drAK1NcfJV3/k0XPYo32bTkq4yLnn+/q2ZIWC9noiG+GKOP+UYrSZXbklFy1EhOrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sUU6uazw; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1743419293; c=relaxed/simple;
+	bh=ABbYmkdZot2xo1j9ZE43O5qMAIZuh7Wo1WZXf7p9nQ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HPDyAWi2JmSFEZvabpuwiMZgdJUZI70GAGR4OOS/1l2qD+83/U8IIhL7vcdYiEr0D6JYUWIJM9OZU6scdO/2KLENOndp1YySv1fOaxqbsq6k8DR0JYxfBZhqU31nw3zvFKbU7CH6FHbLJ8speQh/4q273XRqMWLvHPyp+85+gnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwAhWdBb; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUU6uazw"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf848528aso38103855e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Mar 2025 02:50:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwAhWdBb"
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2240b4de12bso55787585ad.2;
+        Mon, 31 Mar 2025 04:08:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743414621; x=1744019421; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WfQTWTf6PwJHc84otuP/3Oag7lcNdI1Qagn5HFWHEVA=;
-        b=sUU6uazwkA8HHrSIhWW0uNQTB0VUfOY2iGiD1yr3zKrJq6Q5qz6eJD2ixgC6PhSW20
-         h7JbOgEGrXvNmf4uwQJRL19QH+U/v6LzXmlbrM6dK/nO8rklxpZjjXk+OYy8vO/z7BwV
-         qFijTuMGEE4MK22fGGoACtnhOObmOubIOMXev5K5lRIlkTzfnltNisDwVv1j1X5/qA3G
-         EC/lTyZDPlKHNOCR0hZFl1CeUbBGsjILXNp+Qu5QcOEIuZzJNeLHUjcIClNURtbWaIX1
-         DrGqTbzGSGgjWTKjZgYqSw7dJCGvPZNz6cT9xvUF0NfZcQOyx6qQdspn7zLxemIWAJav
-         hFjQ==
+        d=gmail.com; s=20230601; t=1743419291; x=1744024091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NQQM3Yu8f39BKq2Mg/PjZ0Uv+SRmBe59/r9UjuQMsco=;
+        b=KwAhWdBb9yClGr6oBYYq7h0Uce6u9C/fr4gs6276sgoisCEJoEHRjimA+0U+fCfutp
+         TxBLzlXr1BWHhKLRffUxWUD0yJ+2TVS2NF792s4DFrysWmFWvgy6EhM5mctCihOPaaYm
+         gbSQJlEvQLoeoFC7B/cWAz3yV+MaNPiwJovyqDwRGARGGoHtHfcLqSw6U7IcT315iWZZ
+         esPNmqjnUlbWqYde0+Ud2+RFR04/+QR4OGPHQoii5nyeikGWsMQHeXv6zBbBUk5Sx7ns
+         KbPSRm4Cz2vzZbnsHr3kaUYv5H+WgJu3rufmoVk8hJuOUS8V28pyi+RHAbC9nGs324WF
+         +oKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743414621; x=1744019421;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WfQTWTf6PwJHc84otuP/3Oag7lcNdI1Qagn5HFWHEVA=;
-        b=DZYW/qKlA9vuwZY4qyIySwlVG29CHoiv+8d/H++glh5sEWHJCSbKA7BcdNc1+9NS25
-         +WTqUEH+RY/K2vb5sPTwBNr4j37YongRsJrXpfYIEjFfCej4gBgiAiegPKuoixJPYKHl
-         96pq9QzcRtU9P2+Ou6/SiIcCJfXr9dTgTxI4us3voj8F5+hGuAch6ZzTniPWuYF5ClT6
-         qsBixKGA4lm3jhpdRzUVI2BaDJOlkFZvY6CLj9ypeyk9Af6JkPhIVXuKDHJKXxvE6+S7
-         rJSsNErjbXa1IDkBRERxiuBBNtxfttl61Ag+KWUM+3ZWHsiaHNGrkFsuq5+V5ozg7YuE
-         4M/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXIRfvOJgZOZ7J2RoBDVOfXrlDeeeZTYTXyra8odpGtnyOrf4YhaSSv4PT7ckXr+qEgNHb2k78VVlo0zo8iuMHB1g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpcUQg9dfPUUqq24CszQ1s0LKw1jAst6QvBu3FOWtyRJ2hV3wc
-	YN4QhV//r2xTY/FaaovwzTUENeUeDiEymvB1atdrEm0pD+nIEcPk1dhvmWLcHH4=
-X-Gm-Gg: ASbGnctxHPXEQOzV6L7lv3HiZSPvVJG9JlI1B1jdpiwp5cz6jFf/J7mxpyuqo6qElss
-	rvKGMuXS+U+81/QDoVcgWOwJ3ZJf2n4oVNabc4aZ7/dGhoYF8eTml+3Ez8qEvEDyQZlTRGH66BW
-	GdAqpzhE1cvzkGNm1j/rDoFaosSZbZoWH3EqIuPLhaFbmjXEaLNIIGCZThLIbvG+LidyiebSVq9
-	P6TG5M9+1rxCaLnqIHSR1CqGVdUPwywD84IThMhkg5H6DD5N/u/ljgFZaCP+J2qFOLoAfPFtHNa
-	DqIfozCQU8He5na/rWEPr0fpZ28ZAOvbw5TcfovEBePm7qnh
-X-Google-Smtp-Source: AGHT+IF3CJoa5gLjBiJodD+/fcAKbJi9kK8EPGZgsz0yOn8C5Pq2tbjitNJRw36ftrGGInm9OE4Ezw==
-X-Received: by 2002:a5d:47c5:0:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-39c120dec24mr6778714f8f.13.1743414621425;
-        Mon, 31 Mar 2025 02:50:21 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8ff03715sm117091365e9.31.2025.03.31.02.50.20
+        d=1e100.net; s=20230601; t=1743419291; x=1744024091;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NQQM3Yu8f39BKq2Mg/PjZ0Uv+SRmBe59/r9UjuQMsco=;
+        b=PrbdtSBxBTdvy8AoZWUh1GPEb/wxnzuQgUQZI4gOfRoFdO1aMNCtGSg7CBqbx8/i11
+         LmKEUNUci/d4hmf0z8oZNIHbIuTjVJUaQieG3s4yxakYa8YuYGdUXh9q1JRegFT04h8Q
+         s/ggBA30uNjKoFBkWlPuc90L3UKn5YsR9jwja+RLd4EZUKhZBlFNdVGAr4uuohsPVTFX
+         Knt9TfMdBJrElC6QKOUAm60iMtjnuYKymmReqYFms9tl/9TrriejYBcxX3QDu4I7ythw
+         HnY8H1N1krLIQD5oossitbmQkTrfN0MdN8RSapmb7iSXUOH6Oezg066+eeW31nyVt8Zv
+         XrKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4h8dDwjdG2z+7mGTtPAczcXDanXwBCtNxMz1X77gHGZE7mv5pT04NZEDk2QariRFXDNvoqHm0mrjkSSsoaIrFEhE=@vger.kernel.org, AJvYcCWc/dovgWD6Ld/kTGB3hLzfJZ1IC94SCpoxfz+qR7+02pxQrwHHa2j533YIGqczx3fwtc3s0PEXCyxVW8o=@vger.kernel.org, AJvYcCXYc5veThWirG4Lhvo0wB4703gkMQxO17y5Ptjnkbd0LRfeVgu/lAz/3GmwxX/41cstoNs7D8oenq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz22YuOsE6xo/bp7d2xGqCriCsrOhD/fzWnMTcDXRNGhvQT8ZaT
+	8lPsGzhA32Njk3tuhIYD+YXCDUHuuVV/HS01ATq2MnuFYekg3hgw
+X-Gm-Gg: ASbGnctrc3OQDlmNR9vFMxRPv9FFEeIyCqZWT9srtXqjtlhJP8ojWnanK3gfGW10HOu
+	7Fqpka0R/XiReuWK2jljCwe1Y8dYCxfBmfhhWtuY0WwgbRpp4Ddfq0PZOeIbwbT0uNS5mIDSJad
+	59lu+4UOE5T6fuL/Q3vZNumAPp/Nq1L+UWt186uyv33TLHi2Q0TbCpgk71fbaVukW4o/W9JPLxp
+	iMOe22oTw+D4uc+Z6dtP3q6HQdX3RKOwQz9WCE9QtkaiUesbWTfCwyeYEicFo+cNSYiPfsktJIy
+	iAAFxdQKUKnbQ0cv0Kgr0arRdevLe9xRzUuHqMOCAArt5IUxCokfE8hVw7kcoV+y3D8jlyg=
+X-Google-Smtp-Source: AGHT+IEfDTgHboSZ6iP2dwOP4vEW2XdDO0sbdpyybIi/mimcrNizy0gR6Y/LkkD3gFM65fgc+CAQ5Q==
+X-Received: by 2002:a17:902:c408:b0:220:cb6c:2e30 with SMTP id d9443c01a7336-2292fa010cemr150564165ad.49.1743419290986;
+        Mon, 31 Mar 2025 04:08:10 -0700 (PDT)
+Received: from henry.localdomain ([111.202.148.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1dfbb4sm66890615ad.198.2025.03.31.04.08.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 02:50:21 -0700 (PDT)
-Message-ID: <4d8d0d479a1ff19bc3e3a8f5832d924ab822f13a.camel@linaro.org>
-Subject: Re: [PATCH v2 01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo
- Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King	 <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>, Alexandre
- Belloni <alexandre.belloni@bootlin.com>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Date: Mon, 31 Mar 2025 10:50:19 +0100
-In-Reply-To: <20250331-prophetic-convivial-dinosaur-efb1af@krzk-bin>
-References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
-	 <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
-	 <20250331-prophetic-convivial-dinosaur-efb1af@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2-1 
+        Mon, 31 Mar 2025 04:08:10 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: djakov@kernel.org,
+	krzk@kernel.org
+Cc: s.nawrocki@samsung.com,
+	a.swigon@samsung.com,
+	alim.akhtar@samsung.com,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Henry Martin <bsdhenrymartin@gmail.com>
+Subject: [PATCH] interconnect: Add NULL check in exynos_generic_icc_probe
+Date: Mon, 31 Mar 2025 19:08:02 +0800
+Message-Id: <20250331110802.9658-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+When devm_kasprintf() fails, it returns a NULL pointer. However, this return value is not properly checked in the function exynos_generic_icc_probe.
 
-On Mon, 2025-03-31 at 09:34 +0200, Krzysztof Kozlowski wrote:
-> On Fri, Mar 28, 2025 at 01:28:47PM +0000, Andr=C3=A9 Draszik wrote:
-> > =C2=A0allOf:
-> > +=C2=A0 - if:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
-st: samsung,s2mpg10-pmic
-> > +=C2=A0=C2=A0=C2=A0 then:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-acokb-groun=
-d: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-wrstbi-grou=
-nd: false
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 oneOf:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - required: [interrupts]
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - required: [interrupts-ext=
-ended]
->=20
-> Drop, you should require only interrupts.
+A NULL check should be added after the devm_kasprintf() to prevent potential NULL pointer dereference error. This is similar to the commit 050b23d081da.
 
-As mentioned in the commit message comments, it doesn't work with
-just interrupts. It appears that dtschema's fixups.py doesn't
-handle this case. With just interrupts, DT validation will fail
-if the DT uses interrupts-extended. There was at least one other
-binding that specified interrupts in the same way, so I went with
-the same approach.
+Fixes: 2f95b9d5cf0b3 ("interconnect: Add generic interconnect driver for Exynos SoCs")
+Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+---
+ drivers/interconnect/samsung/exynos.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> OTOH, why regulators subnode is not needed? Commit msg mentions they
-> exist, so they should be required. Binding does not change because you
-> added or did not add yet some driver support.
-
-I wanted to avoid DT validation errors, because we haven't started
-working on regulators yet, and it might take a little while until
-everything is in place.
-
-I'll make it required in the next version.
-
-Thanks!
-
-Andre'
+diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
+index 9e041365d909..3dccc84f72cf 100644
+--- a/drivers/interconnect/samsung/exynos.c
++++ b/drivers/interconnect/samsung/exynos.c
+@@ -134,6 +134,8 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+ 	priv->node = icc_node;
+ 	icc_node->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn",
+ 					bus_dev->of_node);
++	if (!icc_node->name)
++		return -ENOMEM;
+ 	if (of_property_read_u32(bus_dev->of_node, "samsung,data-clock-ratio",
+ 				 &priv->bus_clk_ratio))
+ 		priv->bus_clk_ratio = EXYNOS_ICC_DEFAULT_BUS_CLK_RATIO;
+-- 
+2.34.1
 
