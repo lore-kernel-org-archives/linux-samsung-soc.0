@@ -1,198 +1,159 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47021194C96
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Apr 2025 16:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0515420485F
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Apr 2025 20:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743526239; cv=none; b=ug7C4dkPpt87PTnfqj1GRww2HSiUhoNB9qpoJj7/Xa93Bg84H1pQoTWuqX/4FefvzTt3S//lMpXYxeHNN+FwD+NDMVeV5HlOqq3gphSwBtf+aqZ/RIdlssZdkc8PFjlyn+k5R4j/UTbcMCURCVNWlqS+2CXOEenXcW19327BMEg=
+	t=1743539293; cv=none; b=Mbpq/qj0WF7YEo8ao03HYTh8I1tBs984pBAtQxYYcUWKCKINAYbOmp/1+F41BbrYkPpW0bbVSsSM/Nrb+AahNueT9au0vRG4LC14skPFRfrhogl3lA5Waq0BHlALm6zLuT+NhTVtEdEpSbGb8gmcddATwyzf6b9iQKKpHgoRQiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743526239; c=relaxed/simple;
-	bh=qUk1PicXzRoPMh0+3kY+HECr2cFI/+cjTJrezXFM1+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jn08JmY/iPCwhmhDrLEo2w6NJSFpe0sIIc5JR2pysWkip4XBS4SLesUYNi5C20szmMZdlKaUdz3TUaZBKnYMVUwH6KQyjtQrmwH8X5eq5smvKwTgsVwnqNmDhLL46TCkmfrTaAQH911d2KtHCsfmaWxI7h91JvkOPHJruHcut64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K3Px5ldr; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1743539293; c=relaxed/simple;
+	bh=gfNYtL4kwsYVs3rpsJEQFskmbVwirI4GjWshKJ5OVc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=rC2x1y9OLZr/tm/QXH15f+9C4xWn86219pd9LVSiiDP4q/0kkH54smHxcLsXiX/VvCCEt8lHVNZy5MDijIOljByzuUXgQyyxIbyIg9XmeUkodjme+OMIDag0FHZTMLJXuEW7eGpPJSt5bd1MB+isAbBYZ4mroaKf43jzscMW65E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HK4Vhytr; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K3Px5ldr"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-226185948ffso112985455ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Apr 2025 09:50:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743526236; x=1744131036; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2rzQkn+3Vspwxp8Ah2PANQpg8+55TnFG5qd193VBWCM=;
-        b=K3Px5ldr2tqCtmLMEyUBmaJhKS1ZCtwKue6Bilu+rQDpOi0FNC66/45c0XdYA0PVGE
-         fieEQ4rB9cFilf2+2IoL61XmkhPKbRskthSzG8NAxpzBAafMmAqLtK6l0KA2f92Wxdv/
-         RkwvS+8GSq9lEDQZcARlgzs2hVO8PZSJ7sk0+OHDs6BG4f8Gxeeaf7v3qoYl9o3Qkd+D
-         oTD/rS4mUwg4X32RQV8j+qIRq0TSVGYkw7oagUgiiykzMOvgqKs2fUlowHotfmL+nzaD
-         kvIrfi5FmaIIMrUStUa3ONwxrQ1AjO27Yo9Uh8X4AlczUKq4Ujip2bN4jpfbLZl45VI8
-         y58A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743526236; x=1744131036;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2rzQkn+3Vspwxp8Ah2PANQpg8+55TnFG5qd193VBWCM=;
-        b=HqStl5bVIqHpFLhfuBtkcf06JzLbHcqpXebUr2+ziiqOhl8T3AwEiDOj8wP4GQOHqa
-         b9rTD4w3wXts69cyM6Vla5W0h/oU+N+ThNfDos1yt6bej4N9WeHbVOUG/RkTuNS09pt5
-         VPpPNg+di4VFIyXSl2wWrvxxaP1aFHQ77wv25LqUs1JdsImImmWuerZGp5gmE0JbF8sH
-         O4CmWSd/XyvAbyHS17F5d8t0uLl4Zpb9d8usUB+I0cqHPoLksWCvqu7LxLJ7CPtVad64
-         DvaDK5UsJsUYjOEN4kvGLTZj+VWNtJLxxrgakFXv+ad2T4DOqzR4B1kgBjxiyq+i/3cQ
-         5bOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrIVHpb+tBufm+f9Q3ttT86XRipnCKzSfl0DjrK6+5W198g6gxQIMTOf4OFdgdtoJxqxt+T3dJMV8YjYD/xgC2CQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKL1sb/NZXTNhMmX3mYkwhiYmQLvdK7bH8GCpO1MWPk0PdFvq6
-	lUCm+SbfpDEVYkMrRewfdTYjGimbZK/ddh4jWJhKjAN1WNydjAixQ2RjfjLS3Q==
-X-Gm-Gg: ASbGncsgDinsC27gjlFujVA/FwXeJtP/T5/YRQrOXfQaGiIWlu47k6IsGURDT8O5pD3
-	Llm9+MyoXiSpwwRi2jDz2O87Aka3wcYjG6ldE0+CYOTkkudOmQrytXKKHIHBhd+68rWmHKFIfsw
-	OQTi675bNwkyNp7WHcVRJKxaHfKymrhdRo47KsdY3l7IwofhrGFjlscvSFfcaUjioe4DDt5MoDD
-	EacIM8WLX8GgMSTwQWWv3bS3IFvsz1WHnX6xAcd2YMpgYtzfu2HIGh3o3osl9K4fGmOZdOEvPso
-	8v4GPKzLUYQzVZvx5veGBQiNz2CSPRvYvT0pNYnd+UDNDo9XlHJ+Q8K1zK+2KX4GhKEyzm8Unww
-	sVgBmOQZBtA1jXIM=
-X-Google-Smtp-Source: AGHT+IHM3XGbPCmTj9kap2GPt7VppdYLhbKxPnzq9elvCQi+To2CYT1dVqErhbVf2M9uMVGsgotWZg==
-X-Received: by 2002:a17:903:178b:b0:223:47d9:1964 with SMTP id d9443c01a7336-2292f9e6322mr233271015ad.34.1743526236330;
-        Tue, 01 Apr 2025 09:50:36 -0700 (PDT)
-Received: from google.com (198.103.247.35.bc.googleusercontent.com. [35.247.103.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7397106ad9bsm9161077b3a.117.2025.04.01.09.50.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 09:50:35 -0700 (PDT)
-Date: Tue, 1 Apr 2025 09:50:31 -0700
-From: William McVicker <willmcvicker@google.com>
-To: John Stultz <jstultz@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Donghoon Yu <hoony.yu@samsung.com>,
-	Youngmin Nam <youngmin.nam@samsung.com>
-Subject: Re: [PATCH v1 2/6] clocksource/drivers/exynos_mct: Don't register as
- a sched_clock on arm64
-Message-ID: <Z-wZV3RCXKPzpZGl@google.com>
-References: <20250331230034.806124-1-willmcvicker@google.com>
- <20250331230034.806124-3-willmcvicker@google.com>
- <CANDhNCrxTTkeq3ewos=07jD67s3t6rXOv=u=_qV6d+JEVoXeUA@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HK4Vhytr"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250401202809euoutp01adc194ca055e52a6ab55be3ae91d77a4~yS7712pix1873718737euoutp01B
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Apr 2025 20:28:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250401202809euoutp01adc194ca055e52a6ab55be3ae91d77a4~yS7712pix1873718737euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743539289;
+	bh=eZbA7qwbD0L+jiCUxvoRvf44D7eR7R+L9wIpeMQLFC8=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=HK4VhytrxclQj7jRmVSNKQdjrLLLuWKRnTAbff+uFBfkR9hwyIknQ8vaglgV3Uv1v
+	 0IqPQ/9dPO+yJQ/fNxf44SP864+g6D5MWE4LaDways2z2wFEGaBQhA+TAaiiHEYgSW
+	 xBla261hNdXivbcppcmrxX9mvN5PoHHk0iJ6QBxA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250401202808eucas1p1cbde4ad5d798800f4a42896a7566c582~yS77QXEcI2655026550eucas1p1z;
+	Tue,  1 Apr 2025 20:28:08 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 5E.57.20397.85C4CE76; Tue,  1
+	Apr 2025 21:28:08 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250401202808eucas1p2d2db882c5b7e39bca39e0cf8d7696ca5~yS76t8r0c2324323243eucas1p2J;
+	Tue,  1 Apr 2025 20:28:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250401202808eusmtrp1a30c07f7ab3fc440c9cebcce7ddeb856~yS76tZl_33253532535eusmtrp1P;
+	Tue,  1 Apr 2025 20:28:08 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-a0-67ec4c58fbd9
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8E.71.19654.75C4CE76; Tue,  1
+	Apr 2025 21:28:07 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250401202807eusmtip2ac2c6ec18eaf968e8cbe8fb5590c3d2e~yS76G8IA-2881128811eusmtip2m;
+	Tue,  1 Apr 2025 20:28:07 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel
+	<joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar
+	<jsnitsel@redhat.com>
+Subject: [PATCH] iommu/exynos: Fix suspend/resume with IDENTITY domain
+Date: Tue,  1 Apr 2025 22:27:31 +0200
+Message-Id: <20250401202731.2810474-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCrxTTkeq3ewos=07jD67s3t6rXOv=u=_qV6d+JEVoXeUA@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djPc7oRPm/SDc63qVg8mLeNzeLXFwuL
+	mTNOMFp0zt7AbvF4+Wxmi/PngaxNj6+xWsw4v4/JYu2Ru+wWBz88YbVouWPqwO3x5OA8Jo81
+	89Ywemxa1cnmsXlJvceLzTMZPd7vu8rm0bdlFaPH501yHls/32YJ4IzisklJzcksSy3St0vg
+	ynh75xpLwTK+ilsb3rM2MDbwdDFyckgImEg07XrG2sXIxSEksIJRYsX12WwQzhdGiQVPmxlB
+	qoQEPjNKfJqnDdPx+ccDFoii5YwSW1ceRejYdf8QK0gVm4ChRNfbLqAEB4eIQIrE5ze5IDXM
+	AhuZJJava2EHqREWcJM4uncqE0gNi4CqxPlOb5Awr4C9xN7785ghlslL7D94lhkiLihxcuYT
+	FhCbGSjevHU2M8hMCYEbHBIL/p5ggWhwkbi16gEbhC0s8er4FnYIW0bi9OQeFoiGdqDXft9n
+	gnAmMEo0PL/FCFFlLXHn3C+wq5kFNCXW79KHCDtK3H77lB0kLCHAJ3HjrSDEEXwSk7ZNZ4YI
+	80p0tAlBVKtJzDq+Dm7twQuXoH7xkGjqnsUKCdBYid/7NzJPYFSYheS1WUhem4VwwwJG5lWM
+	4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiBSev0v+NfdzCuePVR7xAjEwfjIUYJDmYlEd6I
+	ry/ThXhTEiurUovy44tKc1KLDzFKc7AoifMu2t+aLiSQnliSmp2aWpBaBJNl4uCUamDyePfn
+	5rT4pT1Wb64K3Q6q3bnX7oKqv3FY5aGt3JI7dP5wT46U8lxeuYN52S7+pTZh37n9puskmHzx
+	Ni7Iaft9nl9VOnPrK5st8xw3/EyU7ZLne6Af0sLx5gtX1Z5v0woTdXsrm5Tk1/60XHZzQ86H
+	JvHagOdfUksT57y5dbbz98bLcjyrb+5gv5si2Cpc//S9y+4jjUVPnuc9OBejskNmE5OO8dLs
+	Cq/+5Y3F/9z3z6xKnx5qlXHx6MrWnrs3Mn+z3Tmxa9aCSf/D1QqTeKydE+J/9fnWfZuvtHjd
+	0n/rjV9HbXYwmHbju3d2QNbmabJxS/SMIoVnLG//u1vOZKcSlx9nmuCMA92bfgXK8BQosRRn
+	JBpqMRcVJwIApIvy0ckDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42I5/e/4Pd0InzfpBh9dLB7M28Zm8euLhcXM
+	GScYLTpnb2C3eLx8NrPF+fNA1qbH11gtZpzfx2Sx9shddouDH56wWrTcMXXg9nhycB6Tx5p5
+	axg9Nq3qZPPYvKTe48XmmYwe7/ddZfPo27KK0ePzJjmPrZ9vswRwRunZFOWXlqQqZOQXl9gq
+	RRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlvL1zjaVgGV/FrQ3vWRsYG3i6
+	GDk5JARMJD7/eMDSxcjFISSwlFFixey7jBAJGYmT0xpYIWxhiT/Xutggij4xSsx8v5EdJMEm
+	YCjR9RYkwckhIpAmMbG9AWwSs8B2JokDk56BdQsLuEkc3TuVqYuRg4NFQFXifKc3SJhXwF5i
+	7/15zBAL5CX2HzzLDBEXlDg58wkLiM0MFG/eOpt5AiPfLCSpWUhSCxiZVjGKpJYW56bnFhvp
+	FSfmFpfmpesl5+duYgRGy7ZjP7fsYFz56qPeIUYmDsZDjBIczEoivBFfX6YL8aYkVlalFuXH
+	F5XmpBYfYjQFOm8is5Rocj4wXvNK4g3NDEwNTcwsDUwtzYyVxHnZrpxPExJITyxJzU5NLUgt
+	gulj4uCUamDaskBA4N7ruyvL0i8sP5Pbf6ksfWNpp87nAP/D4qL7t3JdrYxlkNCrCjFsv2c2
+	aX419/uvOcy7rVbXfPZV+brlWcvnuIkXV7++ecwo/E7y/ccZ/+/Oe6Gxrdz4n3vlTnGHZydb
+	J1wzd69+pVww4Z53e0rQuan2s632hd7fFL/sZP/1aWdUvivXRGs5Wa5Q8i1ZtX7FXRYRRtNc
+	XuXH0Zm8yYVlvqn5vw8qZq0x35zmpb8islZH/ukpZtXzTnXmnR8q7nW6/RUM/yY6i59R9KrT
+	7BzmjRP+ek95NZ8/Mu7y8mtbhd/1TeecNYFj63y7L0eO/atZ/5cvb5qZ55XD7syxs0XstPQn
+	/b7UaL5vyaUUJZbijERDLeai4kQAhqKveR8DAAA=
+X-CMS-MailID: 20250401202808eucas1p2d2db882c5b7e39bca39e0cf8d7696ca5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250401202808eucas1p2d2db882c5b7e39bca39e0cf8d7696ca5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250401202808eucas1p2d2db882c5b7e39bca39e0cf8d7696ca5
+References: <CGME20250401202808eucas1p2d2db882c5b7e39bca39e0cf8d7696ca5@eucas1p2.samsung.com>
 
-On 03/31/2025, John Stultz wrote:
-> On Mon, Mar 31, 2025 at 4:00 PM 'Will McVicker' via kernel-team
-> <kernel-team@android.com> wrote:
-> >
-> > When using the Exynos MCT as a sched_clock, accessing the timer value
-> > via the MCT register is extremely slow. To improve performance on Arm64
-> > SoCs, use the Arm architected timer instead for timekeeping.
-> 
-> This probably needs some further expansion to explain why we don't
-> want to use it for sched_clock but continue to register the MCT as a
-> clocksource (ie: why not disable MCT entirely?).
+Commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe
+path") changed the sequence of probing the SYSMMU controller devices and
+calls to arm_iommu_attach_device(), what results in resuming SYSMMU
+controller earlier, when it is still set to IDENTITY mapping. Such change
+revealed the bug in IDENTITY handling in the exynos-iommu driver. When
+SYSMMU controller is set to IDENTITY mapping, data->domain is NULL, so
+adjust checks in suspend & resume callbacks to handle this case
+correctly.
 
-Using the MCT as a sched_clock was originally added for Exynos4 SoCs to improve
-the gettimeofday() syscalls on ChromeOS. For ARM32 this is the best they can do
-without the Arm architected timer. ChromeOS perf data can be found in [1,2]
+Fixes: b3d14960e629 ("iommu/exynos: Implement an IDENTITY domain")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This fixes random issues observed on various ARM 32bit Exynos SoC based
+boards, like Odroid-XU3.
 
-[1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
-[2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ drivers/iommu/exynos-iommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think it's valid to still register the MCT as a clocksource to make it
-available in case someone decides they want to use it, but by default it
-doesn't make sense to use it as the default clocksource on Exynos-based ARM64
-systems with arch_timer support. However, we can't disable the Exynos MCT
-entirely on ARM64 because we need it as the wakeup source for the arch_timer to
-support waking up from the "c2" idle state, which is discussed in [3].
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 69e23e017d9e..317266aca6e2 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -832,7 +832,7 @@ static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
+ 		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
+ 
+ 		mutex_lock(&owner->rpm_lock);
+-		if (&data->domain->domain != &exynos_identity_domain) {
++		if (data->domain) {
+ 			dev_dbg(data->sysmmu, "saving state\n");
+ 			__sysmmu_disable(data);
+ 		}
+@@ -850,7 +850,7 @@ static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
+ 		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
+ 
+ 		mutex_lock(&owner->rpm_lock);
+-		if (&data->domain->domain != &exynos_identity_domain) {
++		if (data->domain) {
+ 			dev_dbg(data->sysmmu, "restoring state\n");
+ 			__sysmmu_enable(data);
+ 		}
+-- 
+2.34.1
 
-[3] https://lore.kernel.org/linux-arm-kernel/20210608154341.10794-1-will@kernel.org/
-
-> 
-> > Note, ARM32 SoCs don't have an architectured timer and therefore
-> > will continue to use the MCT timer. Detailed discussion on this topic
-> > can be found at [1].
-> >
-> > [1] https://lore.kernel.org/all/1400188079-21832-1-git-send-email-chirantan@chromium.org/
-> 
-> That's a pretty deep thread (more so with the duplicate messages, as
-> you used the "all" instead of a specific list). It might be good to
-> have a bit more of a summary here in the commit message, so folks
-> don't have to dig too deeply themselves.
-
-Ah, sorry about the bad link. The above points should be a good summary of that
-conversation with regards to this patch.
-
-> 
-> > Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> > [Original commit from https://android.googlesource.com/kernel/gs/+/630817f7080e92c5e0216095ff52f6eb8dd00727
-> > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > ---
-> >  drivers/clocksource/exynos_mct.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> > index da09f467a6bb..05c50f2f7a7e 100644
-> > --- a/drivers/clocksource/exynos_mct.c
-> > +++ b/drivers/clocksource/exynos_mct.c
-> > @@ -219,12 +219,12 @@ static struct clocksource mct_frc = {
-> >         .resume         = exynos4_frc_resume,
-> >  };
-> >
-> > +#if defined(CONFIG_ARM)
-> 
-> I'd probably suggest adding a comment here explaining why this is kept
-> on ARM and not on AARCH64 as well.
-
-Sure, I can add my comments above here in v2.
-
-> 
-> >  static u64 notrace exynos4_read_sched_clock(void)
-> >  {
-> >         return exynos4_read_count_32();
-> >  }
-> >
-> > -#if defined(CONFIG_ARM)
-> >  static struct delay_timer exynos4_delay_timer;
-> >
-> >  static cycles_t exynos4_read_current_timer(void)
-> > @@ -250,12 +250,13 @@ static int __init exynos4_clocksource_init(bool frc_shared)
-> >         exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
-> >         exynos4_delay_timer.freq = clk_rate;
-> >         register_current_timer_delay(&exynos4_delay_timer);
-> > +
-> > +       sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
-> >  #endif
-> >
-> >         if (clocksource_register_hz(&mct_frc, clk_rate))
-> >                 panic("%s: can't register clocksource\n", mct_frc.name);
-> >
-> > -       sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
-> >
-> >         return 0;
-> 
-> Otherwise, this looks ok to me.
-> 
-> thanks
-> -john
-
-Thanks for taking the time to review!
-
-Regards,
-Will
