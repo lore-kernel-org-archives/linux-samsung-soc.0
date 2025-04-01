@@ -1,67 +1,67 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11271F03DE
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Apr 2025 10:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7617B1F0982
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Apr 2025 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743502273; cv=none; b=JAOzAk3/GPJ2kbi6tMFuj0KqxMkuhajxLv04yjo6yLo8D5ovHy7ux5r+nLR3/7KddAt0cchDrpO4lUsmAOKOblvq0a+4ez8ZFplR69ce90+NQdPlDN9ID4bVEHWQqOaROoYIn1CFI2rrUJGCg+S1kr9sWmIbwCOTl1nQJRxhvzg=
+	t=1743502274; cv=none; b=cNfxZFo2eIg/oJJel7msutU8+C4h51V9uB/qmEb/bvuBA0O9y9vwKBNXEa157vnnLhBzlxb7q0Mok3hBKmmvw4ERpzumqbZhlHJAcB0XTmUeTQ4ISmina/TmM2125cpObDbc9+W2BKu0rxngRGtHvGYslXY5Jl8ZxK/zuP+cPIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743502273; c=relaxed/simple;
-	bh=ri0c6XAKIbAL5r1pMx1YsjfpBuk6BBaZV7LqaDJixho=;
+	s=arc-20240116; t=1743502274; c=relaxed/simple;
+	bh=HRG8oyx+Mi+MU4biPMgGQvsmz+b2lSbgekhPGs2M778=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rHPJnUVqA0SVdoy+ncScWzkBB9e6Iz3+1H+TPG5VhwYT8qyQUm7RgiYv5gIaSY6UEYyyM47uqHn68w+IW5MmhgPGqw4UKM1fp23CBCM0EfwrzEGf0XcWWLewp/XCfRF6sYZyLrdCcFDWaL0AgfDQ+2bf2xQi8E/5RWkgDBcxKQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kAQ9TJw9; arc=none smtp.client-ip=209.85.218.43
+	 In-Reply-To:To:Cc; b=kp3g2XQlOSTprp//BOLEm4hNLMEKUxZttsVeBqpaqA0lnFdSft5inO32Q01GL26K3ani6rzOhDIeKLG2B3QuVtXqJaNVCJDqtna5C6WTveSo4bxcvBzCGu4Ft2QZUpFAWH3EQtQ0acoHY07e0XZSU2DWRvpsRIGI4W6jaLRMyg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yGVnOt1H; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kAQ9TJw9"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac29fd22163so898526866b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Apr 2025 03:11:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGVnOt1H"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2aeada833so1029734766b.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Apr 2025 03:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743502270; x=1744107070; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743502271; x=1744107071; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f0fLcWG3xRCCoczcLQcRJk5lZ+cdqHvZLEk7m94iuVA=;
-        b=kAQ9TJw9GuspSLgSC2f2kFrc8YWz0y5QB39dvHfXL0rItj4MT9bhCXIoc5qUBjzjnY
-         z7CWPKC9TX3sRuJZVJ6+cRTsN/rJUW0dJ4zuaOo/odFW9qnhOP40aUG1c4bDc6556KYz
-         2tU4m+dENAgd4Bd+bvu09Oqm9nQ2fqa5kgMtwwUmuu9IYCK3TRefc/vy9Ou/KmCaAuvZ
-         DhAFSqzE+Il4/WLCvtYT/NV5FFHft5nfbVXfdB7snNgSyObEe30iKWIbWyJI5P7jKAWu
-         BjCFirZ59QKtCE3PansEfCPvqxccFTCBt2lG7eYruN4/MHRXWKok+JaZHM818haualK8
-         MFhw==
+        bh=tSsT7QLwFrGtJXgYzLTDttFLB1HtTy9nHcX9oWhHWK8=;
+        b=yGVnOt1HGOcMEujFQdJiNC7MZmS3VlF5OT05LEG6wZchwxsIvyHnPGqdQATkHzKivs
+         oNHjxkwo42l1kJFmf7ZNqAFCNqYPYlDOpNhwYEhZ1l9TWrirf6xD3O3Y+wNwV6TNP9iM
+         Hr2hDTvMVxIWDKSHirh4+OXFSORBgQYmPtCcccOKPtSBz0YBvA6U2iG3HaxqpapdPO50
+         sRlxdrYySX+yYDOZmJpdIioD8Uf52353I8Shq31ZEZd/gpl7MGXX8CAx0k1oHaW63uQr
+         kQorHGGGLK0d89xzSxdorwrmeNKQqs0y6OBAqo29Vyy60E1yJBnbbrgvVpjTGidisH7a
+         gfhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743502270; x=1744107070;
+        d=1e100.net; s=20230601; t=1743502271; x=1744107071;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f0fLcWG3xRCCoczcLQcRJk5lZ+cdqHvZLEk7m94iuVA=;
-        b=kBncuUnswjxfCj9LSqR4417a7UksZRWNKKxKyfjgDJBV4wioHdpKrNdsvLV+ePInQd
-         5RZ2x+VegSAGMmcurV0McGaAdJyJcWfwJ12t1r2vHqerCN8ki6EDLsubwSXy6zb7ptRM
-         HQvC5hnFy8CLnoAZCn6iliFmJsUIYY93jhPu3EKenvM5zd2X9njZw+vocewP/N3ECV+T
-         03I2/D+xswUGFHj/lB/c9zWZUqYqQDCtYAdFPoG3npCtQUO+ciOKBmy6jfBqKe0Gygzk
-         pvmGsEWITd0Nk1fEPsbI0w2Tk/J662r1aOFP+Q9yH8svtHhimOMebWG7aS+lFCM9CIft
-         lJFg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Uor33ygPiSQHX3zLbrVKMd1Se/bBflFIVTbvElX4GqpFBIgQMjCFsIS9Wi0rpmY4al53TXNsaxmVOqEIU+mo0Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzszl0j0K1odsz476+RuCpjv02m0Mo6EEY5W+O6tJXMTmQbC8BA
-	Z9PNy2K9oHuqup71+2t6i7+iKI+15hDSlCosqkDqcriORu76jmuIi2fAcz3j+qE=
-X-Gm-Gg: ASbGncucAIDrKWwrjtPYjXoWB6drgT62qvzpjWWCFZVpMHiMxlzdUX2ks6lLeUcF23/
-	KhAmCZxsBoNrqQ+g8/GkPmxe2lwoZYxcD+wUw+rPUV/JxDFTubSdAcWV2bjs/86ds6KQtWlzT/I
-	7+WKfOlIkiTZccPvIv8JSepZ5vReqWoB4tQsnDlXjf/QGBRlYtoY4arvpuYrKzP+WUG5zT9777B
-	7BYtXSsnmB6Au6ZsA4TzlleAYqPlaFx6OQZMEGjssI5VeKA2Vo60+5kH5pKTOdXvZmGb81FzRtG
-	avjYD5knAttyVKPs+LyaB5DbCPG78BC8GnX0XGjaXL40bmWLuOoYMZZqk7ZDOO/EKbH0vhVUtbL
-	tNKxeg/2l3O8lgy6RJWmaWEV4V381
-X-Google-Smtp-Source: AGHT+IELZUBLM5q9YYlt+lD2I0tWCOgW2YPV6e8Gm9HIS3wyPkKW8jVGcaajvDyvq1766HKI/b1QYg==
-X-Received: by 2002:a17:907:7eaa:b0:ac3:45c6:a1ec with SMTP id a640c23a62f3a-ac738a841a3mr1407550166b.25.1743502269931;
-        Tue, 01 Apr 2025 03:11:09 -0700 (PDT)
+        bh=tSsT7QLwFrGtJXgYzLTDttFLB1HtTy9nHcX9oWhHWK8=;
+        b=UDaZlj5LN6wJRVGWDGy85Vwzzb8NFav6U8DmKWL2h113gdOVMmt0hg40RtkzEz9IcF
+         nMV3MJww22ToDhpS23VdUyYHIhr+KF0jJvPDUM+ZWG02uDVobQkol2JQP24ykLuSCbsq
+         bSMOPOe3Lgl41vojM97h8LUAXsW2qubACWXqUiIDmufLSp5GZfN531s6a+GONuym3wHR
+         dVeSJXufss+rT5Lg45sDmY3EOC3JFNQyuQ52R8vV8SUc7KGECtNEeiA9519SrPtGV2lC
+         mjNIBNzrA1Xn8LPVT3kgRCYA2bHOXUqpfzcNRe8b8h464KRKSMAAI0LfJZJS6l7i29rl
+         asRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYszHqZ4gy4tb/A9DDqvZJgt3Z9UZ4jdzxmXqZtjv5Ri4bqu0l0kPkotjD642R+ojbPKptyp+60fvPzYLZbOQE5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF9HdI9EdGafhE+c61KiO4xWiQNk6R8brlEyBUAHq605cKffB3
+	+2FzcErLFJbIwTN3DvqYDT7DgQI3G75MMmzDXmtuJ+KQb9g+87rxPtjURMx0kmc=
+X-Gm-Gg: ASbGncsj8rflkz7cggJDtgEVMCRmp/zqYV++HwMO0jJ68iH9wuQewJayZfffvJbVyDN
+	aARzh1+ZpD3XIgSXoBj7roKoIjUxuRIhVnsHmCF8fTRwypOV4766LG2EfhpekzqR0PsjfUNJRRj
+	KmLa4pODBqY6eNDh9Q6Q2pMIUQg3MHZ7akJ4k3NGrccm57S9Vbb1NzHI8PNkfvGaKPHANRuayoK
+	bRGCzeOGxwe77YgOUOcOmB7w9T3HKZuvnvGyjiTkliUoQsDYuIqDa+81JHfJqkxGFhzLSH5I4Me
+	hC1ztcqAAl/5JNncZJH2w3kbmBDJK7V97+Mzucdl07fzD9aTjrmrmCTwjn1lWgLJWk21vIButs3
+	KmvVVYMyFRJHBMlEXLQgPf4R5l9/r
+X-Google-Smtp-Source: AGHT+IGNz7sYkiZJ5SyCXOSh3R3E7uqsbcgG7MH73jgfKQy0aOMK7a6G6QNeK4q3SoREpDx6w1RXWQ==
+X-Received: by 2002:a17:907:9482:b0:ac1:e45f:9c71 with SMTP id a640c23a62f3a-ac73670d581mr1256026066b.1.1743502270478;
+        Tue, 01 Apr 2025 03:11:10 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71967ffcdsm757406966b.140.2025.04.01.03.11.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71967ffcdsm757406966b.140.2025.04.01.03.11.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 03:11:09 -0700 (PDT)
+        Tue, 01 Apr 2025 03:11:10 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 01 Apr 2025 11:11:02 +0100
-Subject: [PATCH v5 1/2] dt-bindings: reset: syscon-reboot: add
- google,gs101-reboot
+Date: Tue, 01 Apr 2025 11:11:03 +0100
+Subject: [PATCH v5 2/2] power: reset: syscon-reboot: add gs101-specific
+ reset
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250401-syscon-reboot-reset-mode-v5-1-5b9357442363@linaro.org>
+Message-Id: <20250401-syscon-reboot-reset-mode-v5-2-5b9357442363@linaro.org>
 References: <20250401-syscon-reboot-reset-mode-v5-0-5b9357442363@linaro.org>
 In-Reply-To: <20250401-syscon-reboot-reset-mode-v5-0-5b9357442363@linaro.org>
 To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -85,89 +85,172 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-GS101 supports a couple different reset types via certain registers in
-the SYSCON register map.
+Linux supports a couple different reset modes, but this driver here
+doesn't distinguish between them and issues the same syscon register
+write irrespective of the reset mode requested by the kernel.
 
-Add a compatible for it. When in effect, all register values and offsets
-are implied, hence they shall not be specified in that case.
+Since DTs should not encode register writes (see e.g. [1]), update this
+driver to support different reset modes based on DT compatible match.
 
+At the same time, add support for Google GS101, which does support
+cold, hard, warm, and soft.
+
+As an example why this is useful, other than properly supporting the
+Linux reboot= kernel command line option or sysfs entry, this change
+allows gs101-platforms to default to a more secure cold-reset, but also
+to warm-reset in case RAM contents needs to be retained across the
+reset.
+
+Link: https://lore.kernel.org/all/20250227132644.GA1924628-robh@kernel.org/ [1]
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- .../bindings/power/reset/syscon-reboot.yaml        | 42 +++++++++++++++-------
- 1 file changed, 30 insertions(+), 12 deletions(-)
+ drivers/power/reset/syscon-reboot.c | 98 +++++++++++++++++++++++++++++--------
+ 1 file changed, 77 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
-index 19d3093e6cd2f7e39d94c56636dc202a4427ffc3..ccd5558700943ef56f5e1c866400bcc21c0115f0 100644
---- a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
-+++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
-@@ -21,7 +21,9 @@ description: |+
+diff --git a/drivers/power/reset/syscon-reboot.c b/drivers/power/reset/syscon-reboot.c
+index d623d77e657e4c233d8ae88bb099bee13c48a9ef..2e2cf5f62d733c7c07110f3052583607e25afd5d 100644
+--- a/drivers/power/reset/syscon-reboot.c
++++ b/drivers/power/reset/syscon-reboot.c
+@@ -14,11 +14,24 @@
+ #include <linux/reboot.h>
+ #include <linux/regmap.h>
  
- properties:
-   compatible:
--    const: syscon-reboot
-+    enum:
-+      - syscon-reboot
-+      - google,gs101-reboot
- 
-   mask:
-     $ref: /schemas/types.yaml#/definitions/uint32
-@@ -49,12 +51,6 @@ properties:
-   priority:
-     default: 192
- 
--oneOf:
--  - required:
--      - offset
--  - required:
--      - reg
--
- required:
-   - compatible
- 
-@@ -63,12 +59,29 @@ additionalProperties: false
- allOf:
-   - $ref: restart-handler.yaml#
-   - if:
--      not:
--        required:
--          - mask
-+      properties:
-+        compatible:
-+          contains:
-+            const: google,gs101-reboot
-     then:
--      required:
--        - value
-+      properties:
-+        mask: false
-+        offset: false
-+        reg: false
-+        value: false
+-struct syscon_reboot_context {
+-	struct regmap *map;
++struct reboot_mode_bits {
+ 	u32 offset;
+-	u32 value;
+ 	u32 mask;
++	u32 value;
++	bool valid;
++};
 +
-+    else:
-+      if:
-+        not:
-+          required:
-+            - mask
-+      then:
-+        required:
-+          - value
++struct reboot_data {
++	struct reboot_mode_bits mode_bits[REBOOT_SOFT + 1];
++	struct reboot_mode_bits catchall;
++};
 +
-+      oneOf:
-+        - required: [offset]
-+        - required: [reg]
++struct syscon_reboot_context {
++	struct regmap *map;
++
++	const struct reboot_data *rd; /* from of match data, if any */
++	struct reboot_mode_bits catchall; /* from DT */
++
+ 	struct notifier_block restart_handler;
+ };
  
- examples:
-   - |
-@@ -78,3 +91,8 @@ examples:
-         offset = <0x0>;
-         mask = <0x1>;
-     };
+@@ -28,9 +41,21 @@ static int syscon_restart_handle(struct notifier_block *this,
+ 	struct syscon_reboot_context *ctx =
+ 			container_of(this, struct syscon_reboot_context,
+ 					restart_handler);
++	const struct reboot_mode_bits *mode_bits;
 +
-+  - |
-+    reboot {
-+        compatible = "google,gs101-reboot";
-+    };
++	if (ctx->rd) {
++		if (mode < ARRAY_SIZE(ctx->rd->mode_bits) &&
++		    ctx->rd->mode_bits[mode].valid)
++			mode_bits = &ctx->rd->mode_bits[mode];
++		else
++			mode_bits = &ctx->rd->catchall;
++	} else {
++		mode_bits = &ctx->catchall;
++	}
+ 
+ 	/* Issue the reboot */
+-	regmap_update_bits(ctx->map, ctx->offset, ctx->mask, ctx->value);
++	regmap_update_bits(ctx->map, mode_bits->offset, mode_bits->mask,
++			   mode_bits->value);
+ 
+ 	mdelay(1000);
+ 
+@@ -42,7 +67,6 @@ static int syscon_reboot_probe(struct platform_device *pdev)
+ {
+ 	struct syscon_reboot_context *ctx;
+ 	struct device *dev = &pdev->dev;
+-	int mask_err, value_err;
+ 	int priority;
+ 	int err;
+ 
+@@ -60,24 +84,33 @@ static int syscon_reboot_probe(struct platform_device *pdev)
+ 	if (of_property_read_s32(pdev->dev.of_node, "priority", &priority))
+ 		priority = 192;
+ 
+-	if (of_property_read_u32(pdev->dev.of_node, "offset", &ctx->offset))
+-		if (of_property_read_u32(pdev->dev.of_node, "reg", &ctx->offset))
+-			return -EINVAL;
++	ctx->rd = of_device_get_match_data(dev);
++	if (!ctx->rd) {
++		int mask_err, value_err;
+ 
+-	value_err = of_property_read_u32(pdev->dev.of_node, "value", &ctx->value);
+-	mask_err = of_property_read_u32(pdev->dev.of_node, "mask", &ctx->mask);
+-	if (value_err && mask_err) {
+-		dev_err(dev, "unable to read 'value' and 'mask'");
+-		return -EINVAL;
+-	}
++		if (of_property_read_u32(pdev->dev.of_node, "offset",
++					 &ctx->catchall.offset) &&
++		    of_property_read_u32(pdev->dev.of_node, "reg",
++					 &ctx->catchall.offset))
++			return -EINVAL;
+ 
+-	if (value_err) {
+-		/* support old binding */
+-		ctx->value = ctx->mask;
+-		ctx->mask = 0xFFFFFFFF;
+-	} else if (mask_err) {
+-		/* support value without mask*/
+-		ctx->mask = 0xFFFFFFFF;
++		value_err = of_property_read_u32(pdev->dev.of_node, "value",
++						 &ctx->catchall.value);
++		mask_err = of_property_read_u32(pdev->dev.of_node, "mask",
++						&ctx->catchall.mask);
++		if (value_err && mask_err) {
++			dev_err(dev, "unable to read 'value' and 'mask'");
++			return -EINVAL;
++		}
++
++		if (value_err) {
++			/* support old binding */
++			ctx->catchall.value = ctx->catchall.mask;
++			ctx->catchall.mask = 0xFFFFFFFF;
++		} else if (mask_err) {
++			/* support value without mask */
++			ctx->catchall.mask = 0xFFFFFFFF;
++		}
+ 	}
+ 
+ 	ctx->restart_handler.notifier_call = syscon_restart_handle;
+@@ -89,7 +122,30 @@ static int syscon_reboot_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++static const struct reboot_data gs101_reboot_data = {
++	.mode_bits = {
++		[REBOOT_WARM] = {
++			.offset = 0x3a00, /* SYSTEM_CONFIGURATION */
++			.mask = 0x00000002, /* SWRESET_SYSTEM */
++			.value = 0x00000002,
++			.valid = true,
++		},
++		[REBOOT_SOFT] = {
++			.offset = 0x3a00, /* SYSTEM_CONFIGURATION */
++			.mask = 0x00000002, /* SWRESET_SYSTEM */
++			.value = 0x00000002,
++			.valid = true,
++		},
++	},
++	.catchall = {
++		.offset = 0x3e9c, /* PAD_CTRL_PWR_HOLD */
++		.mask = 0x00000100,
++		.value = 0x00000000,
++	},
++};
++
+ static const struct of_device_id syscon_reboot_of_match[] = {
++	{ .compatible = "google,gs101-reboot", .data = &gs101_reboot_data  },
+ 	{ .compatible = "syscon-reboot" },
+ 	{}
+ };
 
 -- 
 2.49.0.472.ge94155a9ec-goog
