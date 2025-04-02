@@ -1,66 +1,68 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353041F4C90
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Apr 2025 21:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD40E5BAF0
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Apr 2025 22:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743631178; cv=none; b=LUQALqSoHfWAPcsTvtR3w6Hm8ddhFfQY1LIB0rtzRH5lyr+KIEntFOxL3wU1g4KzcdnYBh/klhh+gRoRkVy3WWQvszPiNXqUPUPiR13aPE32gEXOZmOvRZPUkE6WgURz9kIrMWC1UYzBngGSqjstuBnWyCQsfP5cJCewuRZYqv0=
+	t=1743633592; cv=none; b=N3CPScrbjAxnCPXrssjhrNtuqol/UQ6ZP5SBqGdrYbBAf4/bBx0uIBAyGmPSrNBjOh4bD/8xLlbDZyRAL9y9+X1T1rv724lTRxk77Y4/50kFYsHgmfgEngY5dDlTg+8QWa1GmRU2suGwnuG/Gyop5oHlUGV60TatkVtakOzPYVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743631178; c=relaxed/simple;
-	bh=Z/xOV2Rb8NgoEvjLqYQw+xu9IJFae4Mb5dAPjpppXrk=;
+	s=arc-20240116; t=1743633592; c=relaxed/simple;
+	bh=xc8WF1r2PaAcb8sbNqj7gu3aFa+IW8ItfCQ2FmH/4X8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SHdhWz3vwjJ7joRyxdrsbpjhnGuuDoPuH14T7H+v6p9kS7wuInz/FqB7glnJXzhUJTXIYPkO3SFOMDs4Mwv4MGWRphaMjBHLQM/wvYMu6WBbzGjpfawId2Aec0mEy5uS+eOL0uGeVwl/tYZ080jzORGjK7ggYRTX2aqBbKokxP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xZq14Bl/; arc=none smtp.client-ip=209.85.214.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKeIDle8zzTUwFr3fl8yCvoiME+hATnPWwB+XhXt6vlRT7uHRV0ct+GX6erHcGjZSBtmraY+Acl8F+nik173kqRRadpzl9efHYJe+knkWXVPm+j05+I82vt+Y2SGJ/X2tb3nRvvyC+tVskKRNNdiyjqguTnjD6CCVlftr0QAqj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A3M8PtdR; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xZq14Bl/"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22548a28d0cso3488585ad.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Apr 2025 14:59:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A3M8PtdR"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2295d78b45cso4275295ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Apr 2025 15:39:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743631176; x=1744235976; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WqllMbVSzlYmSg4e9MsN3Hg5U+KXq66OHOKXxPOPhW8=;
-        b=xZq14Bl/GyyNlhPUpwTuaLjWoGIgqv8F1cDdpDwbEEPnjy94s6VIJDUB7F3K0h7fAD
-         5jDL17EWS1I8eaxbcoII1dKiCgWRqojvygllrZXFwBs2FXIZQI6L/+DW9j0w3vl3nf7/
-         ZQfWi1jQfSv+DnahlIPTKf04gFEIIvU0YdH7y8dYh9oRMOz6AbJvbRlt02LTWSt0MMlb
-         QWszKp4Qiz7zh1mhYqXSinmUx925sejMoBPCQ0clziuF+bwmkyQrmxz36O3BExFwWg+c
-         jRM0cp7PZwkPPzBWMFjO8a7YLfEd8Wnatl2/Tsp2fSi8uJZMEkJHBoDIzQN4gLcpoxMG
-         znEA==
+        d=google.com; s=20230601; t=1743633590; x=1744238390; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RCUdSZJKo+DfCb7L1u9uIyzdzgr+hzjdGkAPqeN8dwI=;
+        b=A3M8PtdRIA/fEFqlfooGWTdDn/Q85hJVVjT8g94tWbRC1B3GVqZlIa7GJCFXX67M3e
+         GLgv/a3JfeurBbNvfatECeMj8WLq6UQjWPE6ctYETQ6HWRrN4XRc/MggWuW33mJIniOf
+         hE98pwY5Eh1Rqmis3AlVVsowG9jJoHZ53kpUrwQN/q8e8kNxQtmv/9XFTbC1hlal+yuq
+         yErad4hsGOLajAjV9UGsIftDc0Vz/7OXnIpukQKxtcWzxtEpniXVADeOzGlwaOBy2st+
+         IuHl0VWI3OO6l7atSGpB7SCznNZv32XByBeUHCIPlX0H1ogfNtWt3fe6cN1D8Vnp5i67
+         ZHiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743631176; x=1744235976;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WqllMbVSzlYmSg4e9MsN3Hg5U+KXq66OHOKXxPOPhW8=;
-        b=N3MoFoC4UkLPKudt6opF38lgfoeMKK+DTOay1JoBC6aiCKUj/mxbXQWbA2nkxfxd0J
-         O9KwHGnQG0kVbbEK+zkSoKRlVASZH/xzXoZBzSUVNW73jLb/+MB94EjddOEoF3X/4KmD
-         +40wq7HdgEVQ7pndeN2J6BcpOrTRammXLstwQbphnR3CVh+/RfvY7MYy//DlP6NYvZ9Z
-         mRv/VV49HgoOakE9lLAPS5nFvoXEJq7KRHoZCbpoC+pYAXC2/Qr0x8tl46at5Sqv1FIn
-         gfOehp3D6sl/OVaJCMTRefjQncGOrMleqODviHZozaQ2gsGOHnO/ouAWs/SgFd+kNUZB
-         iEYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVV5dfQv4fVm13Xn58dMoIK8oKmxJYXAO8Tl2B/LCtPAqo7DLKY/9098dNbOuerXszpcd1MyEgiSaQnT8Swyw83Ng==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqy7dqabVsat9OKJzOIvGbETrd9SiRgxyOewoGgQls4/O2OCFU
-	5DxKBb7MvimJgtCOxy2AAJg1ZcL2KjCV243fQer6Qja8apAwJfSpFu0EJipP1A==
-X-Gm-Gg: ASbGncuCu6Co3YLa2BT6BGfOaKyKEXuM2kACAc0i9MldFLpKiT1zEKOEVZtu7mo/TSX
-	lxjL22DS6vifFSyHXcWK4fNewVrUfRQvxRzunFCVKZh2AYZpyg5ucXJY9T6PQREIKx4uiE1kIcJ
-	pgQ48bAHqkcXrZWpZBMf2JO7AVJyVw80uxuaRpGpNW8gWPtaZ6tf58FSuRbudbTPVyuVonCLswa
-	wWvZg7HzWM/53eZobMobtlY5x3asGdpPQnpFfh1MYm6m7e0La7siIAkwtF6NdgBUPTfavPoQnTl
-	IxNDN+9BhMKdLJkIn7LBcrPiZGsUAtbjd/xFvJRBctRnCKwWCOu5bRBpx7AZLgfFEXVZkcZvf7P
-	RLGYfijNyAXfftw4=
-X-Google-Smtp-Source: AGHT+IHteXxFO7jbKx3k3Jy9PnUQzjVaQtKgEm+NOfEcxdPjDfCVTFwPG/5wPWOnq7Eh2M3nBNvUdw==
-X-Received: by 2002:a17:902:ea03:b0:223:536d:f67b with SMTP id d9443c01a7336-2292f9f607fmr329229995ad.38.1743631176289;
-        Wed, 02 Apr 2025 14:59:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743633590; x=1744238390;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCUdSZJKo+DfCb7L1u9uIyzdzgr+hzjdGkAPqeN8dwI=;
+        b=YWpNyckY0x8yViJG09PZjwwQoDzlPxV8ShaTwBnUlK5SnZ0kplIMDc6Kcviegm6Jwc
+         5copgVvP4h6eAjTjDoIu3MwUSaLhibKd7zZZpjGds9x3sKmdOzMOb2ybxrteDpdJzNSF
+         VzGwE4dDUwjoNiWEJcGRScjBDfLslGicB+nfbvZvgsRF6W9u/BzP2GKJ5HSP/h/48+tO
+         x3CK6KTydkS/m0L4/XCoMkv/jLTXZm0ReXmt1CDsbQwHH+4ZlJN1VlidDPiFpcdP9K9E
+         +XwebtTciA0Fw8B1CzgpjcDnWSIbQK5ii31pg0VGwYcJFJg3SdUEDkUO49ANJ0TYqUx0
+         VTAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgKg71qKpLyuTSN1tpAOLj6AT4mF0X2/the3PtIMhVUxwdyFrC1t6bTg8mu93WqYpDRoMYxF6wgDRIA+mL2Kq++Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6rFd+KGpHWwJSK0GAwD0DwYxCJCx0ZZ9HeYEJoFsUza84LZ76
+	giDxuTARYBhrloxAM9sAr0NzT3vVKIvC4HP3vdc/J1vtnRQOBMNJstjTJG4fzw==
+X-Gm-Gg: ASbGncsV0evGp03jQZxczqKe0RMh/8S4SYzMHJCu7MzFTpYAA/YRlHiCbzUNW5qBxMC
+	H6QzoTqftYAYjdr+JhVvGTpIkw8kiBDXLMqzpDS3QoffnFyh6jHu+u5Z44/mIVEDd+Y9smqnPTx
+	n1+GhfCQML5BujUzysSvTU/EkpRuNUHB8N05TteUxtpXbm19DJtcWU+Wl8q2Uc95vfwOcf/otf/
+	siIvOq3vhOMDyqtfT01kFzJjwPZNJwGtHI7xcHOC0QKG5PwR5GAysfwEZrzBZ+1e4+0EoTltNFD
+	S4+pwE18fAUaeW2WvK8J2BxN+9XlW+WLUCy0UNSPWs5+1DeTK504Jk4IewW22JiAjpIxy2oG6ty
+	eVRnIyZ40vDSK+KQ=
+X-Google-Smtp-Source: AGHT+IF4gwMOCkgD1NLc9h9zDKSDNadcDgyOK8y59bXpjfWPpkP3E5OcoZpIKL40ijcRHOF0nPIbcQ==
+X-Received: by 2002:a17:902:b683:b0:224:1609:a74a with SMTP id d9443c01a7336-22977deaf3cmr4975415ad.34.1743633589886;
+        Wed, 02 Apr 2025 15:39:49 -0700 (PDT)
 Received: from google.com (198.103.247.35.bc.googleusercontent.com. [35.247.103.198])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c2791sm636175ad.80.2025.04.02.14.59.35
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866efb5sm921995ad.201.2025.04.02.15.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 14:59:35 -0700 (PDT)
-Date: Wed, 2 Apr 2025 14:59:31 -0700
+        Wed, 02 Apr 2025 15:39:49 -0700 (PDT)
+Date: Wed, 2 Apr 2025 15:39:45 -0700
 From: William McVicker <willmcvicker@google.com>
 To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
+Cc: John Stultz <jstultz@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
@@ -71,94 +73,79 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+	Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, kernel-team@android.com,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Will Deacon <willdeacon@google.com>
-Subject: Re: [PATCH v1 4/6] arm64: dts: exynos: gs101: Add 'local-timer-stop'
- to cpuidle nodes
-Message-ID: <Z-2zQ-PcvxFTBc6M@google.com>
+	tigersoundkim@gmail.com
+Subject: Re: [PATCH v1 3/6] clocksource/drivers/exynos_mct: Set local timer
+ interrupts as percpu
+Message-ID: <Z-28sR02GhsNMnlg@google.com>
 References: <20250331230034.806124-1-willmcvicker@google.com>
- <CGME20250331230151epcas2p486a7c6d7153737f4168cfef74249742f@epcas2p4.samsung.com>
- <20250331230034.806124-5-willmcvicker@google.com>
- <Z+y4zxfifkQqLxKF@perf>
+ <20250331230034.806124-4-willmcvicker@google.com>
+ <CANDhNCqNqXfGgvo8vNof1qi3E3jejk5KBD=oedZp2_p8RKZdjw@mail.gmail.com>
+ <CGME20250401163914epcas2p1a16e2b7a6ecac9f010ef6eb4c8efc6fb@epcas2p1.samsung.com>
+ <Z-wWA-46L08V89qK@google.com>
+ <Z+yh2UUwxUz/vRbK@perf>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z+y4zxfifkQqLxKF@perf>
-
-Hi Youngmin,
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z+yh2UUwxUz/vRbK@perf>
 
 On 04/02/2025, Youngmin Nam wrote:
-> On Mon, Mar 31, 2025 at 04:00:26PM -0700, Will McVicker wrote:
-> > From: Will Deacon <willdeacon@google.com>
+> On Tue, Apr 01, 2025 at 09:36:19AM -0700, William McVicker wrote:
+> > On 03/31/2025, John Stultz wrote:
+> > > On Mon, Mar 31, 2025 at 4:00 PM 'Will McVicker' via kernel-team
+> > > <kernel-team@android.com> wrote:
+> > > >
+> > > > From: Hosung Kim <hosung0.kim@samsung.com>
+> > > >
+> > > > The MCT local timers can be used as a per-cpu event timer. To prevent
+> > > 
+> > > Can be used, or are used?  If it's an option, is this change important
+> > > in both cases?
+> > > 
+> > > > the timer interrupts from migrating to other CPUs, set the flag
+> > > > IRQF_PERCPU.
+> > > 
+> > > Might be work expanding this a bit to clarify why the interrupts
+> > > migrating to other cpus is undesired.
 > > 
-> > In preparation for switching to the architected timer as the primary
-> > clockevents device, mark the cpuidle nodes with the 'local-timer-stop'
-> > property to indicate that an alternative clockevents device must be
-> > used for waking up from the "c2" idle state.
+> > Let me dig into this further to figure out if the IP has a limitation where the
+> > interrupts need to be handled by the CPU the timer was triggered on or if this
+> > is just an optimization.
 > > 
-> > Signed-off-by: Will Deacon <willdeacon@google.com>
-> > [Original commit from https://android.googlesource.com/kernel/gs/+/a896fd98638047989513d05556faebd28a62b27c]
-> > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > ---
-> >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 3 +++
-> >  1 file changed, 3 insertions(+)
+> > Any chance you know this @Youngmin?
 > > 
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > index 3de3a758f113..fd0badf24e6f 100644
-> > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > @@ -155,6 +155,7 @@ ananke_cpu_sleep: cpu-ananke-sleep {
-> >  				idle-state-name = "c2";
-> >  				compatible = "arm,idle-state";
-> >  				arm,psci-suspend-param = <0x0010000>;
-> > +				local-timer-stop;
-> >  				entry-latency-us = <70>;
-> >  				exit-latency-us = <160>;
-> >  				min-residency-us = <2000>;
-> > @@ -164,6 +165,7 @@ enyo_cpu_sleep: cpu-enyo-sleep {
-> >  				idle-state-name = "c2";
-> >  				compatible = "arm,idle-state";
-> >  				arm,psci-suspend-param = <0x0010000>;
-> > +				local-timer-stop;
-> >  				entry-latency-us = <150>;
-> >  				exit-latency-us = <190>;
-> >  				min-residency-us = <2500>;
-> > @@ -173,6 +175,7 @@ hera_cpu_sleep: cpu-hera-sleep {
-> >  				idle-state-name = "c2";
-> >  				compatible = "arm,idle-state";
-> >  				arm,psci-suspend-param = <0x0010000>;
-> > +				local-timer-stop;
-> >  				entry-latency-us = <235>;
-> >  				exit-latency-us = <220>;
-> >  				min-residency-us = <3500>;
-> > -- 
-> > 2.49.0.472.ge94155a9ec-goog
+> > Thanks,
+> > Will
 > > 
+> 
 > Hi Will.
 > 
-> Are you using this property in production?
-> If so, have you noticed any performance improvements?
+> Yes. In downstream, we’ve been using MCT as the clock event timer instead of the ARM timer.
+> Setting this flag allows each CPU to handle its own clock events, such as scheduling interrupts.
 
-On Pixel 6, I have only recently switched to using the arch_timer as the
-default clocksource. I haven't noticed any major perf improvements to the main
-benchmarks, but also haven't seen any regressions. Based on the ChromeOS perf
-analysis in [1,2], there was a significant perf difference found.
+Thanks for the explanation! I'll integrate this into the commit text.
 
-[1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
-[2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
-
-If it helps, I found that Pixel 8 and 9 devices (didn't check Pixel 7)
-are already using the arch_timer with this 'local-timer-stop' as the default
-clocksource in the production kernel.
-
-Thanks,
+Regards,
 Will
 
-[...]
+> 
+> > > 
+> > > > Signed-off-by: Hosung Kim <hosung0.kim@samsung.com>
+> > > > [Original commit from https://android.googlesource.com/kernel/gs/+/03267fad19f093bac979ca78309483e9eb3a8d16]
+> > > > Signed-off-by: Will McVicker <willmcvicker@google.com>
+> > > 
+> > > thanks!
+> > > -john
+> > 
+> > 
+
+
