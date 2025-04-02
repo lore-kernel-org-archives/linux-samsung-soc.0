@@ -1,84 +1,71 @@
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8BD22A4F1;
-	Wed,  2 Apr 2025 06:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE0D1519A6;
+	Wed,  2 Apr 2025 06:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743575295; cv=none; b=LoNj0HdKfdMuGnSzpv7pmgD05wjx2CAEaAD16XtCU74nikO+0Rdz9ek+GZQK9H5mlbgntBAsZ7BGw3eODG8QWTNTAPuWrIQnReR/oYd3dyVd631/Tak8C7qP5/pIo9RZ8oSh4suGRvN4hc9MaSBF9EsfOFf+QRjZKSyeXhChtQE=
+	t=1743576500; cv=none; b=rrEcLZgXgpiJVIeMO1Ldav0k8fAy5Mg+0BEWTCawE8mhxQsRCAnipyRiLU7Gr4zygj29sh3ekTLEbM01UfGrmxQ18S4tEDS4UxAKpZy+j991hb5p1Yq2BBS4FxRr+KQNvCmL4L4FQzWnb0j8CXo55ZtDJnGjUgz5hRKTB1KXAfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743575295; c=relaxed/simple;
-	bh=O37j3GYErRypi0GWWgfx6sbrClKTgTAhv6qUKuKZozY=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=BFnAaGNB4/cEV7EQs8glV6kaevjcPER46+1/RVl+aBi4zjsZTZWfYh2kCjtSdn6Q2nSmmeyuEOSBWQ9q6tvtiJ39rJ3A8nZOXBhkAbgywamTp34MmuRb3WP4yW1TXte+f26ZMkfJ29vOg4JFSdRu3MH7ce39bM/1jBR6Sys/XAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZSFL15sRGz5B1J6;
-	Wed,  2 Apr 2025 14:28:09 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 5326S1af020652;
-	Wed, 2 Apr 2025 14:28:01 +0800 (+08)
-	(envelope-from jiang.peng9@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Wed, 2 Apr 2025 14:28:03 +0800 (CST)
-Date: Wed, 2 Apr 2025 14:28:03 +0800 (CST)
-X-Zmail-TransId: 2afb67ecd8f3796-43267
-X-Mailer: Zmail v1.0
-Message-ID: <20250402142803400kEFf9oOyQ7Y4Gq456dQg4@zte.com.cn>
-In-Reply-To: <d9a60a75-14f1-46df-b22e-6afb768a4381@kernel.org>
-References: 202504020933293306VVVuy_8HVKbwBOL2PFjW@zte.com.cn,d9a60a75-14f1-46df-b22e-6afb768a4381@kernel.org
+	s=arc-20240116; t=1743576500; c=relaxed/simple;
+	bh=E1bV+ZSAUuEQxNhPyLIPtvTt5fbU6mA00CBvGzT+XXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NsdEqXLXgw6mzRGkxyMAUIWPikaxWi7o/U4SYcRpCYqwbvoQuVDmr9J1y9w6Bl2bZiMjpOxfvK77xJ5hgXmfZhREb7Sq7wZqVu5oaFsTOcODpJql8pvZq5cW12OTw8Cah03pLmHRc9tqJZMY18lto0MmKhX/2ZWRVE/zYzdsVYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvagkUC6; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvagkUC6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39574C4CEDD;
+	Wed,  2 Apr 2025 06:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743576498;
+	bh=E1bV+ZSAUuEQxNhPyLIPtvTt5fbU6mA00CBvGzT+XXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HvagkUC67o2ypNjUUh+4D2kPj9fGjt+0nISzb3fMqrUvA9z/rYl1hikGj7RhwIcqI
+	 yFlqDmikkd27f5hKYORYnpXqizAUN+gQ07VimUCux7O36KkCVeCpZilDUvVvWAuNna
+	 A7z6NWDYhzxnw2bdHK/Ju+wrEGIC42ykOb5mGq3rZ/ruhMaE+qYBI35cGeppxwDCVO
+	 4+0MzhpuVs4JskxVf7wiuja4hKQ+Llvmr2SxzM6fm+urYpNtDbDMz86vJDNx+L+uc7
+	 Es9bi1JXfZz20Jw4dcX32e8yqrL/xqS2Taioni9cZ1ep7AIm3Jkih7sS/jCU2589Sw
+	 UStw8qqu989IQ==
+Date: Wed, 2 Apr 2025 08:48:14 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: reset: syscon-reboot: add
+ google,gs101-reboot
+Message-ID: <20250402-imperial-grasshopper-of-weather-2ff12a@krzk-bin>
+References: <20250401-syscon-reboot-reset-mode-v5-0-5b9357442363@linaro.org>
+ <20250401-syscon-reboot-reset-mode-v5-1-5b9357442363@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.peng9@zte.com.cn>
-To: <jirislaby@kernel.org>
-Cc: <krzk@kernel.org>, <shao.mingyin@zte.com.cn>, <alim.akhtar@samsung.com>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>, <gregkh@linuxfoundation.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gdHR5OiBzZXJpYWw6IHNhbXN1bmc6IEZpeCBwb3RlbnRpYWwgYnVmZmVyIG92ZXJmbG93IGluIGNsa25hbWU=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 5326S1af020652
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67ECD8F9.004/4ZSFL15sRGz5B1J6
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250401-syscon-reboot-reset-mode-v5-1-5b9357442363@linaro.org>
 
->>> Same comments as with other patches, not possible, IMO. Plus this patch
->>> looks actually worse - commit msg is hardly readable.
->>>
->>> Best regards,
->>> Krzysztof
->> 
->> Hi Krzysztof,
->> Thank you for your feedback. Let me briefly re-explain the change:
->> The issue:
->> When building with W=1, we get a format-overflow warning because "clk_uart_baud%d" could write 15-17 bytes >(14 chars + 1-3 digits) into a 15-byte buffer.
-> 
-> Hi,
-> 
-> how did you come to "1-3 digits"?
+On Tue, Apr 01, 2025 at 11:11:02AM +0100, Andr=C3=A9 Draszik wrote:
+> GS101 supports a couple different reset types via certain registers in
+> the SYSCON register map.
+>=20
+> Add a compatible for it. When in effect, all register values and offsets
+> are implied, hence they shall not be specified in that case.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+>  .../bindings/power/reset/syscon-reboot.yaml        | 42 +++++++++++++++-=
+------
+>  1 file changed, 30 insertions(+), 12 deletions(-)
 
-Hi jirislaby,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks for the follow-up! Let me clarify:
+Best regards,
+Krzysztof
 
-Since num_clks is an unsigned char, it could technically go up to 255. The compiler’s analysis seems to align with this.
-
-While I’m not sure if real-world usage ever needs 3-digit values (like 100+), addressing the warning proactively seems worthwhile.
-
-The change eliminates the compiler warning while adding minimal overhead. Better safe than sorry!
-
-Happy to refine this further if you’d prefer a different approach.
-
-Best regards
-Peng Jiang
