@@ -1,151 +1,171 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD40E5BAF0
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Apr 2025 22:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819B21EB1A7
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Apr 2025 23:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743633592; cv=none; b=N3CPScrbjAxnCPXrssjhrNtuqol/UQ6ZP5SBqGdrYbBAf4/bBx0uIBAyGmPSrNBjOh4bD/8xLlbDZyRAL9y9+X1T1rv724lTRxk77Y4/50kFYsHgmfgEngY5dDlTg+8QWa1GmRU2suGwnuG/Gyop5oHlUGV60TatkVtakOzPYVc=
+	t=1743636865; cv=none; b=eZDdyWF6rGrNq1zdEa2GPMYljT6Kdh+IKN5Ofb7yfaK8+FqUJ/6poNFG8V9CTadPgrzYZ6ngA2OrImDzbtsYIIxd0UG1yjv8ZWnl5SB2Z/BM7I9cbKJ9DweENFxAwZquymH7smgyfiibA1zidGNv3igPCfHgCRmhCew6jDZ3v/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743633592; c=relaxed/simple;
-	bh=xc8WF1r2PaAcb8sbNqj7gu3aFa+IW8ItfCQ2FmH/4X8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKeIDle8zzTUwFr3fl8yCvoiME+hATnPWwB+XhXt6vlRT7uHRV0ct+GX6erHcGjZSBtmraY+Acl8F+nik173kqRRadpzl9efHYJe+knkWXVPm+j05+I82vt+Y2SGJ/X2tb3nRvvyC+tVskKRNNdiyjqguTnjD6CCVlftr0QAqj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A3M8PtdR; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1743636865; c=relaxed/simple;
+	bh=aZvczYfKaJF4cNqcRzosp+W7t0cH8E2U2PIdZ7jOXF0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZtcF/sxVe9G5ni4jDOeSe74jworvJ222RhRnb4GC+SEEo6dOeQg33GX09JmX8rJPkY3vVDZnzua9EVrDuaYUWGfx6A8GEdLgSZ4VgA5nkHuPBuqK1/MtO6y/IuSZEWV0hrw1Nsf8GPGaOObapl079M6Q8RLapRCp3Sut3jC8+7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G0fjEFrr; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A3M8PtdR"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2295d78b45cso4275295ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Apr 2025 15:39:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G0fjEFrr"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff58318acaso513574a91.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Apr 2025 16:34:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743633590; x=1744238390; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RCUdSZJKo+DfCb7L1u9uIyzdzgr+hzjdGkAPqeN8dwI=;
-        b=A3M8PtdRIA/fEFqlfooGWTdDn/Q85hJVVjT8g94tWbRC1B3GVqZlIa7GJCFXX67M3e
-         GLgv/a3JfeurBbNvfatECeMj8WLq6UQjWPE6ctYETQ6HWRrN4XRc/MggWuW33mJIniOf
-         hE98pwY5Eh1Rqmis3AlVVsowG9jJoHZ53kpUrwQN/q8e8kNxQtmv/9XFTbC1hlal+yuq
-         yErad4hsGOLajAjV9UGsIftDc0Vz/7OXnIpukQKxtcWzxtEpniXVADeOzGlwaOBy2st+
-         IuHl0VWI3OO6l7atSGpB7SCznNZv32XByBeUHCIPlX0H1ogfNtWt3fe6cN1D8Vnp5i67
-         ZHiw==
+        d=google.com; s=20230601; t=1743636862; x=1744241662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uhm3xVklIWTKuMJm0mSzjGk571zlKSg++5EFQ/Jj698=;
+        b=G0fjEFrrewe58o0O/dIPGFRJ2Q5DJPwfvc7yh2BlwCoKldlMegeoETlTRoUZO5LxuE
+         BSpb8p0VQjz3pV1qPeSi3Ftfy/527wf2nhRIRZa59v/4qMT6VvI3Jbq1ebD9QI8dp18M
+         mj4WdsAHKit4Co2BQ4vPTGIDm5gFVWsugefxmEynC7AyBTR6IcsexiXIAdvgC1gnAWPN
+         3e5RaZB6rBCbtWyta27xrVkbqbma+NSQQztWsBXBxAT3AlOIYPXlefXRPf7gbOE41URL
+         MRDAA5t8nIpPG92h/M/tUciCnL2SVk6f7A+NlKuHHxdnEg3W+FYC+BJyohRZvftPsJck
+         ZzmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743633590; x=1744238390;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCUdSZJKo+DfCb7L1u9uIyzdzgr+hzjdGkAPqeN8dwI=;
-        b=YWpNyckY0x8yViJG09PZjwwQoDzlPxV8ShaTwBnUlK5SnZ0kplIMDc6Kcviegm6Jwc
-         5copgVvP4h6eAjTjDoIu3MwUSaLhibKd7zZZpjGds9x3sKmdOzMOb2ybxrteDpdJzNSF
-         VzGwE4dDUwjoNiWEJcGRScjBDfLslGicB+nfbvZvgsRF6W9u/BzP2GKJ5HSP/h/48+tO
-         x3CK6KTydkS/m0L4/XCoMkv/jLTXZm0ReXmt1CDsbQwHH+4ZlJN1VlidDPiFpcdP9K9E
-         +XwebtTciA0Fw8B1CzgpjcDnWSIbQK5ii31pg0VGwYcJFJg3SdUEDkUO49ANJ0TYqUx0
-         VTAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgKg71qKpLyuTSN1tpAOLj6AT4mF0X2/the3PtIMhVUxwdyFrC1t6bTg8mu93WqYpDRoMYxF6wgDRIA+mL2Kq++Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6rFd+KGpHWwJSK0GAwD0DwYxCJCx0ZZ9HeYEJoFsUza84LZ76
-	giDxuTARYBhrloxAM9sAr0NzT3vVKIvC4HP3vdc/J1vtnRQOBMNJstjTJG4fzw==
-X-Gm-Gg: ASbGncsV0evGp03jQZxczqKe0RMh/8S4SYzMHJCu7MzFTpYAA/YRlHiCbzUNW5qBxMC
-	H6QzoTqftYAYjdr+JhVvGTpIkw8kiBDXLMqzpDS3QoffnFyh6jHu+u5Z44/mIVEDd+Y9smqnPTx
-	n1+GhfCQML5BujUzysSvTU/EkpRuNUHB8N05TteUxtpXbm19DJtcWU+Wl8q2Uc95vfwOcf/otf/
-	siIvOq3vhOMDyqtfT01kFzJjwPZNJwGtHI7xcHOC0QKG5PwR5GAysfwEZrzBZ+1e4+0EoTltNFD
-	S4+pwE18fAUaeW2WvK8J2BxN+9XlW+WLUCy0UNSPWs5+1DeTK504Jk4IewW22JiAjpIxy2oG6ty
-	eVRnIyZ40vDSK+KQ=
-X-Google-Smtp-Source: AGHT+IF4gwMOCkgD1NLc9h9zDKSDNadcDgyOK8y59bXpjfWPpkP3E5OcoZpIKL40ijcRHOF0nPIbcQ==
-X-Received: by 2002:a17:902:b683:b0:224:1609:a74a with SMTP id d9443c01a7336-22977deaf3cmr4975415ad.34.1743633589886;
-        Wed, 02 Apr 2025 15:39:49 -0700 (PDT)
-Received: from google.com (198.103.247.35.bc.googleusercontent.com. [35.247.103.198])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866efb5sm921995ad.201.2025.04.02.15.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 15:39:49 -0700 (PDT)
-Date: Wed, 2 Apr 2025 15:39:45 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: John Stultz <jstultz@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	tigersoundkim@gmail.com
-Subject: Re: [PATCH v1 3/6] clocksource/drivers/exynos_mct: Set local timer
- interrupts as percpu
-Message-ID: <Z-28sR02GhsNMnlg@google.com>
-References: <20250331230034.806124-1-willmcvicker@google.com>
- <20250331230034.806124-4-willmcvicker@google.com>
- <CANDhNCqNqXfGgvo8vNof1qi3E3jejk5KBD=oedZp2_p8RKZdjw@mail.gmail.com>
- <CGME20250401163914epcas2p1a16e2b7a6ecac9f010ef6eb4c8efc6fb@epcas2p1.samsung.com>
- <Z-wWA-46L08V89qK@google.com>
- <Z+yh2UUwxUz/vRbK@perf>
+        d=1e100.net; s=20230601; t=1743636862; x=1744241662;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uhm3xVklIWTKuMJm0mSzjGk571zlKSg++5EFQ/Jj698=;
+        b=Dd/0XnkxuPWKwsvwz14SLYg+Jw/PtrGi8oY3GfZi7iX6edhqIAc0R4TN+jcUmapL5h
+         WbyGa+DtS2h5lNOiDR6yL87jSulY1EeN1IFfJyjMaxPlty4JsroR+crQvwDlk7GbOXOB
+         gO4Ezjm3dlq0OxNlO6NgNNv06TrGoTHYHsxWnQiHNh7lgvrcaylxxZ6DLrJf6zDrJEgi
+         DX1qrDiSH/aDjxTwuWcUn38ABcU45aCC4oL7Y1xA+VWn2xYKZ2su2je5q/y2Q0GMJnKr
+         XRQc6A5fqWEZ936oHYFpixSOVy0mp/45+M4KoisfIJiuFMgLZ9oPpuFLX6EKfTjzQvCx
+         9kNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV+6b/Izt1f9PTEuyuZBfdWwvmeXuE00IoieCi/uZ5N5Ky/uXAo+xMM34caFs25HPE723k4S4Rte2TXiSB+FP2qg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw85DnNxB85XNmi/eFR5HKsf64XjznOsBBpdOkWy8Mv80p1v97L
+	14UQXr5Iyz1OZffmkBhQdA/NoSND0KxFKzGe/1wTngQMw4nnSSRcwmYs9+LJvZ+nxmXlpd0nF+S
+	rnYziTks9k8Msk1fJKwXCh8h/hA==
+X-Google-Smtp-Source: AGHT+IHt2tBE/ySgcrK/aC6qisiJrm0y2T2ylyFoUuqW/+VzNsS93Xv/9MgD55Nz7V6Ag3uAgbyOVnY+ensGH6+wQbU=
+X-Received: from pjyf12.prod.google.com ([2002:a17:90a:ec8c:b0:2f9:dc36:b11])
+ (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4c0d:b0:2fe:b8ba:62de with SMTP id 98e67ed59e1d1-3053215e814mr25102035a91.25.1743636861828;
+ Wed, 02 Apr 2025 16:34:21 -0700 (PDT)
+Date: Wed,  2 Apr 2025 16:33:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z+yh2UUwxUz/vRbK@perf>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+Message-ID: <20250402233407.2452429-1-willmcvicker@google.com>
+Subject: [PATCH v2 0/7] Add module support for Arm64 Exynos MCT driver
+From: Will McVicker <willmcvicker@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan <saravanak@google.com>
+Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>, 
+	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Youngmin Nam <youngmin.nam@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/02/2025, Youngmin Nam wrote:
-> On Tue, Apr 01, 2025 at 09:36:19AM -0700, William McVicker wrote:
-> > On 03/31/2025, John Stultz wrote:
-> > > On Mon, Mar 31, 2025 at 4:00 PM 'Will McVicker' via kernel-team
-> > > <kernel-team@android.com> wrote:
-> > > >
-> > > > From: Hosung Kim <hosung0.kim@samsung.com>
-> > > >
-> > > > The MCT local timers can be used as a per-cpu event timer. To prevent
-> > > 
-> > > Can be used, or are used?  If it's an option, is this change important
-> > > in both cases?
-> > > 
-> > > > the timer interrupts from migrating to other CPUs, set the flag
-> > > > IRQF_PERCPU.
-> > > 
-> > > Might be work expanding this a bit to clarify why the interrupts
-> > > migrating to other cpus is undesired.
-> > 
-> > Let me dig into this further to figure out if the IP has a limitation where the
-> > interrupts need to be handled by the CPU the timer was triggered on or if this
-> > is just an optimization.
-> > 
-> > Any chance you know this @Youngmin?
-> > 
-> > Thanks,
-> > Will
-> > 
-> 
-> Hi Will.
-> 
-> Yes. In downstream, we’ve been using MCT as the clock event timer instead of the ARM timer.
-> Setting this flag allows each CPU to handle its own clock events, such as scheduling interrupts.
+This series adds support to build the Arm64 Exynos MCT driver as a module. =
+This
+is only possible on Arm64 SoCs since they can use the Arm architected timer=
+ as
+the clocksource. Once the Exynos MCT module is loaded and the device probes=
+,
+the MCT is used as the wakeup source for the arch_timer to ensure the devic=
+e
+can wakeup from the "c2" idle state.
 
-Thanks for the explanation! I'll integrate this into the commit text.
+These patches are originally from the downstream Pixel 6 (gs101) kernel fou=
+nd
+at [1] and have been adapted for upstream. Not only has the Exynos MCT driv=
+er
+been shipping as a module in the field with Android, but I've also tested t=
+his
+seris with the upstream kernel on my Pixel 6 Pro.
 
-Regards,
+Thanks,
 Will
 
-> 
-> > > 
-> > > > Signed-off-by: Hosung Kim <hosung0.kim@samsung.com>
-> > > > [Original commit from https://android.googlesource.com/kernel/gs/+/03267fad19f093bac979ca78309483e9eb3a8d16]
-> > > > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > > 
-> > > thanks!
-> > > -john
-> > 
-> > 
+Note1, instructions to build and flash a Pixel 6 device with the upstream k=
+ernel
+can be found at [2].
 
+Note2, this series is based off of linux-next/master commit 405e2241def8 ("=
+Add
+linux-next specific files for 20250331").
+
+[1] https://android.googlesource.com/kernel/gs/+log/refs/heads/android-gs-r=
+aviole-5.10-android12-d1
+[2] https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main=
+/README.md?ref_type=3Dheads
+
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>
+Cc: Hosung Kim <hosung0.kim@samsung.com>
+Cc: kernel-team@android.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+
+---
+Changes in v2:
+- Re-worked patch v1 5 based on Rob Herring's review to use the compatible =
+data
+  for retrieving the mct_init function pointer.
+- Updated the Kconfig logic to disallow building the Exynos MCT driver as
+  a module for ARM32 configurations based on Krzysztof Kozlowski's findings=
+.
+- Added comments and clarified commit messages in patches 1 and 2 based on
+  reviews from John Stultz and Youngmin Nam.
+- Fixed an issue found during testing that resulted in the device getting
+  stuck on boot. This is included in v2 as patch 5.
+- Collected *-by tags
+- Rebased to the latest linux-next/master.
+
+---
+Donghoon Yu (1):
+  clocksource/drivers/exynos_mct: Add module support
+
+Hosung Kim (1):
+  clocksource/drivers/exynos_mct: Set local timer interrupts as percpu
+
+Will Deacon (1):
+  arm64: dts: exynos: gs101: Add 'local-timer-stop' to cpuidle nodes
+
+Will McVicker (4):
+  of/irq: Export of_irq_count for modules
+  clocksource/drivers/exynos_mct: Don't register as a sched_clock on
+    arm64
+  clocksource/drivers/exynos_mct: Fix uninitialized irq name warning
+  arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
+
+ arch/arm64/Kconfig.platforms                 |  1 -
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi |  3 +
+ drivers/clocksource/Kconfig                  |  3 +-
+ drivers/clocksource/exynos_mct.c             | 73 ++++++++++++++++----
+ drivers/of/irq.c                             |  1 +
+ 5 files changed, 67 insertions(+), 14 deletions(-)
+
+--=20
+2.49.0.472.ge94155a9ec-goog
 
