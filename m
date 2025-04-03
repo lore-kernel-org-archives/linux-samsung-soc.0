@@ -1,66 +1,66 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6318A2475CE
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Apr 2025 08:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB6A24C08C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Apr 2025 08:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743670763; cv=none; b=r9ZH6VJCRvZbVJ1NC3aSo0O6A6vLPuJkMDXhLkbsqjJdYDcI0+dDcliu/UPO6LZMTQhJnUYgnMGi0qfRkl4RGZ3iE3OLsRNNmcfEy00DO0UKUVAqsrWb8zzWjvdRaSzP3hST8wblA3kYzxox0bK+AQL4+KBre3iAa6Zi0cjIhA8=
+	t=1743670766; cv=none; b=sNfvzUXZ/rUC44d4XhhBHY3VeySqa6pR2iMaS0p8Z03IiucoAKbkGxu9FQTYw0fZ1lc8OnjXzcCPIq+ciFSGqunSc9/e15e8uDGtZa/T2S4jbuINF+lwBF9fzsnrC4d6HrI7IXqhG4x4hIySg5ErzAR/R/KPpYNvH6qccoTGMWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743670763; c=relaxed/simple;
-	bh=kEDFa+8UVBQzgPmv5eunRw1YTfTPcSizj/QHfDecNE8=;
+	s=arc-20240116; t=1743670766; c=relaxed/simple;
+	bh=sbOiK9Z/f00bA00NdDdv7dxhs7NOGeZKoor5kyfk8Ho=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kE3jxIySJf4xCjpXhNB5YScxMXIdp6oxioz0N+r0ynsl7uj7p2TicHG2V6hn6XKyYiVyxQHzulfxMnKP7at7gvV/xs7vR2DIPCF01icPxaMo4SjnnwFsbifaydAys7IfME6yqnARxN2auIyyQD5loi45OttTBrm/GUgEJcn9MWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f8WdtEU9; arc=none smtp.client-ip=209.85.208.45
+	 In-Reply-To:To:Cc; b=IJW1NWuBH/N+9rmpMQxiZ6VV6Qjr9BYFLXmBbyK/TgvZA7kYrZ9UoBkWnegWZ7/LATnFnGbdk27CiCH+TKGwLabqH1KnBWFr+lMNXK9heD1v6TE/1dZL6VN8tll09Vwb/qkhLPKCoGKR6z+EXmCbzyKu1/80sRead2B5KGWdplU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rVFmg+Vy; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f8WdtEU9"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso1296095a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Apr 2025 01:59:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rVFmg+Vy"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso892086a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Apr 2025 01:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743670754; x=1744275554; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743670757; x=1744275557; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zep9f0d4foFUFHvL7+wCfhcQlnrOmBCem8a0X84Q4jI=;
-        b=f8WdtEU9vO+BsAgldDW/lpOndPTa42kz0y+sHYdaQf5AqJBGzuENzPhiGdb/7TBlNg
-         mcqbzmsZtGLzYoH4qkKw/ExxjDY4a5fUn4BV9S9QYinkUtXM8l76t3vncInOVTJVe3sO
-         lavU/MyOYretXqAtBUsyfhuHHNjLOSWi5Wo5se+z+aEie9xvjLSjeMIIBSWdAIwwxWRA
-         70O7G+LSOdBauY6bI5R/b8Fur/ZZZ9cMJ8jMBOW1hDLNxp3PTG1WzgONdtnr8XCxvgfU
-         64tEBAQdjG2T3CVsPYwXzklq0C8S6haeaw7sWLWC9Mgr6BgzoY7V4pKlW3WDuEpdYWC3
-         nctA==
+        bh=RKjSO+JBCZWmTR2KI3Lfut4sG9sU0pAz1iqONtK29C8=;
+        b=rVFmg+VyKzAk5QLjyChTYgfPRekK4WenzUvJ7mVXRfVE+xZISBqFq2BDbyo5ePSO/i
+         b6UFl8BEfdBBenn5GFtYriyK8o8E1voPDl5bBlWgyhLtBgXU3bQoxCHffp2TDC3CES6M
+         AOihCczzHCz2rZcyyLf7JW3DDjApWgnqPqZrquyI1VMh+bvUbOomVIUyk7tOXSgaLKzN
+         3ttkcgunBYQ5xFPX+YeZbM9AXNYDjdkjj68hSDh1tFE9PoywQXULvxFF496aVnLSXlXP
+         EcK8DpIsj/tfUO9nadYQuYXaioZ9Z0J7xb9DIGT9njOQ8iTCalhXA7JIHz0hSe762MXd
+         urqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743670754; x=1744275554;
+        d=1e100.net; s=20230601; t=1743670757; x=1744275557;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zep9f0d4foFUFHvL7+wCfhcQlnrOmBCem8a0X84Q4jI=;
-        b=tIjpivNPX9gqbnazn2J+zgzxaQCXnWFHjfMnJZBT3yO1Iwnr3ZXFniNORB7OJO1P5b
-         A/rDO6Dnj0l2ODwo6F6jt3B6TLq1GIrYhqW8ENWV+TmKOAfgfmfSkI2nfihr1tXQk+wo
-         gOOyqPI6+s8pNeR+NXy8yiWVz1ZuguP6qhush6Op+v0EcsId5yalIjCEPtdDYoJE3aeV
-         umJeuvb9oeJQnjZK416+wFS9W9jTEbVuQaWJ1aUeaWBaeKLjme0xa8FJRWuxPMY25n3z
-         i8ElzTNavd3LXrrWxmL5pqJMai3Nr0VSLr7/7U9JnPrOnk5dL8oSQrweEH6s0v6GnNj0
-         /c/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUto0ofBwsmXB0q3nUU2eNq3M7mpoHCInM7DfN4gq9plFotBP+bxp24WabLCQQNbInlpnstgWBKGNTBQNV+t4M7zQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRI6V6sPHeEWVoFEoI0zKRUWqNtV0RTnIGQ2s+hqe5gMlAAr3W
-	0wYDyarIoAl006gVLus/8aJ7hTdK71cNNpbLuUDgAuBMEoUf8UBNzeXAlv1ceBE=
-X-Gm-Gg: ASbGncuyM0QJyDR5ucix11X2/T0OinT/h0mo/62d/aT/AMRc2mYC/zD3qF5eSbzH9m7
-	VKYk54n3AZr4utuTTuiH6UqApiETfVMPNHP/HTffQm4B5y3Y7gpYvo4pDOzlrpISDjpcWX5IA1g
-	m8f92WH5MSzmEx9K0p6knFi40nZ7fT7fUx5ik92nYV7p6GYN+F1atTTd7sQqEU6JfH/FEAw1Okf
-	KlV+Z0sTP6xnsOFyAFVpuw719QpFpARWhitLxZyzAayo/GUoIjlkGjrmVz/ysoESihRHOjLyqqm
-	Z0myZT60LWo901sjG6oq4PIwQne+PcoMjSFmiAV/hblegJAHUb0vF25oi+fhmdbJvjhsC14HnlA
-	3znXRW4ExNZZJwL7+vHHv42Axjkut
-X-Google-Smtp-Source: AGHT+IHPaEYedqVEDLo93ujbRrtVNCm/mxpEYABRhJlFkwLFXs8WrbrWDofWHLr/5jqHegGOehX8ag==
-X-Received: by 2002:a05:6402:5112:b0:5e6:17e6:9510 with SMTP id 4fb4d7f45d1cf-5edfcbe92b8mr15687119a12.6.1743670754243;
-        Thu, 03 Apr 2025 01:59:14 -0700 (PDT)
+        bh=RKjSO+JBCZWmTR2KI3Lfut4sG9sU0pAz1iqONtK29C8=;
+        b=vKvsK/QyXmR8Dk1B1EDGapFShYSCWQDawlShG7+j26a3zFlM0fOTJSMJqpGdLUhdNq
+         MoNIorra1DZWSNEEbpdEJQ3KDh08BxK6dF19My4TVL8KJ/szCyG0ETl+1KvMgNeU3+aV
+         nTlzrqVjDp9XfLoMFXFP4dgjTKfjS11czJfLyGi7bLtNjEHL9vMW526S/+vB5fwIGb3a
+         +YBdOdUfZWF6OU5f85vFuXNaxPF0ZtgxjqVErWi/tjcFxyKnQojUK6jUD0dksgp2ocug
+         L2kdBfgBrf1o2mS0uejniZ+AtV8cZR2CVDpJw//yF04LsYbvNYLOiOdy4fUgUNNP6TDD
+         QK4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV00BafHs7hvPmISblLitM080CNCA1/jrdMZTYIReu/Hpes846tvtiODylLxL53xh0Y9NEro1ycHDvH28nPuWdb6g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDpU5cmfS5xdZGYakZP0q+MOnLnGy12BNK+QQasiIHw1kTHPRN
+	QynoherzVlqIQyGljAo7G5zUUH897G/eAIE+QI5PbDUuxPahu6AzLEh4u76vNww=
+X-Gm-Gg: ASbGnctTMY4Pjo4EC3Tw3u1f4dzwhdAIHz/MYGcUlEiDgUVyDib2ESz39avhYrO6JBN
+	6SmTvUQ4FP8rpkxh2NZ0fe5m1an6MPv9YPGVUxyarK3d0Fb6tVzxAFFUt3f1IXxp7M1mWktA5a3
+	E2x7Kw00NCYTl5YLME+Nm36hnxcDh2qc4JIuc2NV/UVQT/So1DfWwCMldrFo+kPvaUpH4Tsy+T+
+	dCYRYthFdBwyIy+indI2QSsDIwuDRAwdHaxiRKkg5mNIJyuGR7Ic3OSMgjI2X765lPnWjiShmdz
+	evUDboCDthWHpFyQfzsqvo1kFu07jFPti2QRuBFFrBUufOFIbDPsQ1upe+DX09m/rxzZyDsJeZR
+	+msm+Q2Q6ibjjfsjed09rNnkpjrtp
+X-Google-Smtp-Source: AGHT+IF6fx+pJv4iCabB+Gq0Y1FWCxO1y1Kv+NIBC2jENVtzdFZG3oNJuULm8j69u/Q8i/sO7cV86g==
+X-Received: by 2002:a05:6402:3204:b0:5f0:82cd:500b with SMTP id 4fb4d7f45d1cf-5f082cd5216mr2775019a12.19.1743670756751;
+        Thu, 03 Apr 2025 01:59:16 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f0880a535fsm637614a12.80.2025.04.03.01.59.13
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f0880a535fsm637614a12.80.2025.04.03.01.59.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 01:59:13 -0700 (PDT)
+        Thu, 03 Apr 2025 01:59:16 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 03 Apr 2025 09:59:15 +0100
-Subject: [PATCH v3 23/32] mfd: sec: add myself as module author
+Date: Thu, 03 Apr 2025 09:59:19 +0100
+Subject: [PATCH v3 27/32] rtc: s5m: add support for S2MPG10 RTC
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250403-s2mpg10-v3-23-b542b3505e68@linaro.org>
+Message-Id: <20250403-s2mpg10-v3-27-b542b3505e68@linaro.org>
 References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
 In-Reply-To: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -89,39 +89,197 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-Add myself as module author, so people know whom to complain to about
-after the recent updates :-)
+Add support for Samsung's S2MPG10 PMIC RTC, which is similar to the
+existing PMIC RTCs supported by this driver.
+
+S2MPG10 doesn't use I2C, so we expect the core driver to have created a
+regmap for us.
+
+Additionally, it can be used for doing a cold-reset. If requested to do
+so (via DT), S2MPG10 is programmed with a watchdog configuration that
+will perform a full power cycle upon watchdog expiry.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/mfd/sec-common.c | 1 +
- drivers/mfd/sec-i2c.c    | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/rtc/rtc-s5m.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
-index 448300ab547c10d81f9f2b2798d54c8a03c714d8..05658f05cb857a784c7d01b1cf25de4870e1a95e 100644
---- a/drivers/mfd/sec-common.c
-+++ b/drivers/mfd/sec-common.c
-@@ -293,6 +293,7 @@ static int sec_pmic_resume(struct device *dev)
- DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops, sec_pmic_suspend, sec_pmic_resume);
- EXPORT_SYMBOL_GPL(sec_pmic_pm_ops);
- 
-+MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
- MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>");
- MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
-diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
-index 2ccb494c8c024361c78e92be71ce9c215757dd89..74fd28a6bc9a42879fc1eb05546777f60e0062e9 100644
---- a/drivers/mfd/sec-i2c.c
-+++ b/drivers/mfd/sec-i2c.c
-@@ -233,6 +233,7 @@ static struct i2c_driver sec_pmic_i2c_driver = {
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index 86ccf666c68059408907c97f2647716ffaad10c6..0d8783577bab4f4ebe61050dbd68387d970773bd 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -11,6 +11,7 @@
+ #include <linux/i2c.h>
+ #include <linux/bcd.h>
+ #include <linux/regmap.h>
++#include <linux/reboot.h>
+ #include <linux/rtc.h>
+ #include <linux/platform_device.h>
+ #include <linux/mfd/samsung/core.h>
+@@ -53,6 +54,7 @@ enum {
+  * Device     | Write time | Read time | Write alarm
+  * =================================================
+  * S5M8767    | UDR + TIME |           | UDR
++ * S2MPG10    | WUDR       | RUDR      | AUDR
+  * S2MPS11/14 | WUDR       | RUDR      | WUDR + RUDR
+  * S2MPS13    | WUDR       | RUDR      | WUDR + AUDR
+  * S2MPS15    | WUDR       | RUDR      | AUDR
+@@ -99,6 +101,20 @@ static const struct s5m_rtc_reg_config s5m_rtc_regs = {
+ 	.write_alarm_udr_mask	= S5M_RTC_UDR_MASK,
  };
- module_i2c_driver(sec_pmic_i2c_driver);
  
-+MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
- MODULE_DESCRIPTION("I2C driver for the Samsung S5M");
- MODULE_LICENSE("GPL");
++/* Register map for S2MPG10 */
++static const struct s5m_rtc_reg_config s2mpg10_rtc_regs = {
++	.regs_count		= 7,
++	.time			= S2MPG10_RTC_SEC,
++	.ctrl			= S2MPG10_RTC_CTRL,
++	.alarm0			= S2MPG10_RTC_A0SEC,
++	.alarm1			= S2MPG10_RTC_A1SEC,
++	.udr_update		= S2MPG10_RTC_UPDATE,
++	.autoclear_udr_mask	= S2MPS15_RTC_WUDR_MASK | S2MPS15_RTC_AUDR_MASK,
++	.read_time_udr_mask	= S2MPS_RTC_RUDR_MASK,
++	.write_time_udr_mask	= S2MPS15_RTC_WUDR_MASK,
++	.write_alarm_udr_mask	= S2MPS15_RTC_AUDR_MASK,
++};
++
+ /* Register map for S2MPS13 */
+ static const struct s5m_rtc_reg_config s2mps13_rtc_regs = {
+ 	.regs_count		= 7,
+@@ -238,6 +254,7 @@ static int s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
+ 		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+ 		val &= S5M_ALARM0_STATUS;
+ 		break;
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -300,6 +317,7 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+ 	case S5M8767X:
+ 		data &= ~S5M_RTC_TIME_EN_MASK;
+ 		break;
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -351,6 +369,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8767X:
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -374,6 +393,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8767X:
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -411,6 +431,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8767X:
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -449,6 +470,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8767X:
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -487,6 +509,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8767X:
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -524,6 +547,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8767X:
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -604,6 +628,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 		ret = regmap_raw_write(info->regmap, S5M_ALARM0_CONF, data, 2);
+ 		break;
+ 
++	case S2MPG10:
+ 	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+@@ -634,6 +659,25 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 	return ret;
+ }
+ 
++static int s5m_rtc_restart_s2mpg10(struct sys_off_data *data)
++{
++	struct s5m_rtc_info *info = data->cb_data;
++	int ret;
++
++	if (data->mode != REBOOT_COLD && data->mode != REBOOT_HARD)
++		return NOTIFY_DONE;
++
++	/*
++	 * Arm watchdog with maximum timeout (2 seconds), and perform full reset
++	 * on expiry.
++	 */
++	ret = regmap_set_bits(info->regmap, S2MPG10_RTC_WTSR,
++			      (S2MPG10_WTSR_COLDTIMER | S2MPG10_WTSR_COLDRST
++			       | S2MPG10_WTSR_WTSRT | S2MPG10_WTSR_WTSR_EN));
++
++	return ret ? NOTIFY_BAD : NOTIFY_DONE;
++}
++
+ static int s5m_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *s5m87xx = dev_get_drvdata(pdev->dev.parent);
+@@ -689,6 +733,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		if (IS_ERR(info->regmap))
+ 			return dev_err_probe(&pdev->dev, PTR_ERR(info->regmap),
+ 					     "Failed to allocate regmap\n");
++	} else if (id->driver_data == S2MPG10) {
++		info->regs = &s2mpg10_rtc_regs;
++		alarm_irq = S2MPG10_IRQ_RTCA0;
+ 	} else {
+ 		return dev_err_probe(&pdev->dev, -ENODEV,
+ 				     "Unsupported device type %lu\n",
+@@ -735,6 +782,18 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		device_init_wakeup(&pdev->dev, true);
+ 	}
+ 
++	if (of_device_is_system_power_controller(pdev->dev.parent->of_node) &&
++	    info->device_type == S2MPG10) {
++		ret = devm_register_sys_off_handler(&pdev->dev,
++						    SYS_OFF_MODE_RESTART,
++						    SYS_OFF_PRIO_HIGH + 1,
++						    s5m_rtc_restart_s2mpg10,
++						    info);
++		if (ret)
++			return dev_err_probe(&pdev->dev, ret,
++				       "Failed to register restart handler\n");
++	}
++
+ 	return devm_rtc_register_device(info->rtc_dev);
+ }
+ 
+@@ -766,6 +825,7 @@ static SIMPLE_DEV_PM_OPS(s5m_rtc_pm_ops, s5m_rtc_suspend, s5m_rtc_resume);
+ 
+ static const struct platform_device_id s5m_rtc_id[] = {
+ 	{ "s5m-rtc",		S5M8767X },
++	{ "s2mpg10-rtc",	S2MPG10 },
+ 	{ "s2mps13-rtc",	S2MPS13X },
+ 	{ "s2mps14-rtc",	S2MPS14X },
+ 	{ "s2mps15-rtc",	S2MPS15X },
 
 -- 
 2.49.0.472.ge94155a9ec-goog
