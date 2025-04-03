@@ -1,222 +1,248 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918292581
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Apr 2025 03:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D1E24113C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Apr 2025 08:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743652554; cv=none; b=Ju1UyF4VHAzsKApvsSJY4H9udGIBmc9YTBVo5GXd2TSVo6RulQ2gHTjrISxcCPpPAT8SJdU3ABW8N02g356e8BYgsSc/uXq7M+9yFFK/f4ck3HwytUFdSpg28ldOs1aUPVaIgmS8UdChm4RqivHstQVNSvR4CR9d/Q5zRiqruVA=
+	t=1743670742; cv=none; b=alTdl9gElEWhVt5iUOESoMxGn5TgEw+/z0/IHOiQyHqgOBsOIQczGEZvXn22kdVI0tAn3XiGaoFsPflMHpRgWf4tiN87Wr0fFZTjWe1NiCyLxaMKx2HuCPFwK0aUVAQYydXbe/+5spHqFGCMSw6km5kh4deMZBWgv7GTqfoKOt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743652554; c=relaxed/simple;
-	bh=nqVB5uOqiFKCdpWccwDNjTPjd4j3yLd4tllbjZgjjLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=LTMslrsKgi1/CLtHW6qrPz996MOQ0RruftCgT+S2VRq5y65vmbZgBhUjf5mTNRv5JcpNWeBXI/pJAU/+Ex5yjBpM8i0mnq2ftOm3TXnakH9JushueXI684ZxxzE+f4byjtZwGURrzBdt0fqZAXl6Htk37xDGNmwiwYSq9c8PMz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rTSlV94Q; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1743670742; c=relaxed/simple;
+	bh=9YIl0Ri7MGJi7xiDDdu1R4iy16Dhc3dSJ/+St09TRdA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MMLSO66xsMtFKV2QnxAw3RbADAfCgvZDBtoewXOt4Bwe2ndTzd+ebz/whTQnDjoJb0JBvc2P4ggi0VHI8ymBrH3mGorsrkC/Aw6LnJM/8XDCVx/ZesVI+9M8faEVpdApwymrwM2gXJ/Z0ATie8yppmfiZbiQ01+pabPUdlnd6LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wWFGaMMT; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rTSlV94Q"
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250403035544epoutp03adce819b16ed2ec6f0ef5700bb37ab70~yssBbkDs10069400694epoutp03d
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Apr 2025 03:55:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250403035544epoutp03adce819b16ed2ec6f0ef5700bb37ab70~yssBbkDs10069400694epoutp03d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1743652545;
-	bh=Ej6k3ZLWQF+05g7feuaoptHbKWegrmPgWjF8rs/7NXY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rTSlV94QRiaBjdMyRMI6WMQNRVVqeSCgMnBhmnBKB5ZENFjdIngWy9b98jCYPn6fh
-	 A4uZUjHHheJ8WzwPFlhlscNxGVzYH43TUj5FB+feDHNLLxsmVq1wul4FCHm01bcDKx
-	 Kdrdy2Av+9paiVxwqCfzc+iIfl3oqDOtkr7tAiPA=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250403035544epcas2p3c55ebdc995a32e86804f8b0b2caaf468~yssA2RRGP2105821058epcas2p3P;
-	Thu,  3 Apr 2025 03:55:44 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.100]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZSnvg4Yzkz3hhT8; Thu,  3 Apr
-	2025 03:55:43 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8E.F1.09780.FB60EE76; Thu,  3 Apr 2025 12:55:43 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250403035542epcas2p2da512aa29b7d9c68ad698399264e0d05~ysr-MEXyv2358523585epcas2p2o;
-	Thu,  3 Apr 2025 03:55:42 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250403035542epsmtrp11d576aabebb09abda82ace4d6ca4cbaf~ysr-KwEhN2942429424epsmtrp1t;
-	Thu,  3 Apr 2025 03:55:42 +0000 (GMT)
-X-AuditID: b6c32a43-9b7fe70000002634-99-67ee06bf3b1c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	78.8C.08766.EB60EE76; Thu,  3 Apr 2025 12:55:42 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250403035542epsmtip1b91f8b8759e4cc8898b6b6c78a09a97e~ysr_6KM960228602286epsmtip1g;
-	Thu,  3 Apr 2025 03:55:42 +0000 (GMT)
-Date: Thu, 3 Apr 2025 12:59:57 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: William McVicker <willmcvicker@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
-	<will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Saravana
-	Kannan <saravanak@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Will Deacon
-	<willdeacon@google.com>, Youngmin Nam <youngmin.nam@samsung.com>
-Subject: Re: [PATCH v1 4/6] arm64: dts: exynos: gs101: Add
- 'local-timer-stop' to cpuidle nodes
-Message-ID: <Z+4Hve9pQoLeh9sZ@perf>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wWFGaMMT"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso1321953a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Apr 2025 01:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743670738; x=1744275538; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qeT474o+P1WLytoJHvSVOFMjU1o1C8S5UpX9/onC+/Y=;
+        b=wWFGaMMTSDdIaYVXWUCnroeTnZ6pErge3BcYTNlZB/0wxRtvaaVaiMUg4S5Q2R75AZ
+         mjU6S2mjnhCmLbolEd4M7ys36/jac1XxQ8R0RIWhOCVkHIYr7v6WMcI8zBRLBMFAnaon
+         srgbl/1suQ3ckkzHUcFEVqQbU+yW/7Z6L7QbEOucxHwwupjKR5E3NQVUA+4egcSxlv17
+         Beffx/E5Ex4zyJQ9d0WRUd10wPstWC59lwV0v7WboHMWwWUnRoIbUvCkJ3F/e1ysDs0y
+         7wrUesHS6AVpKnHgSErC/Y4Fe21kzeSUb1F5NfZk6Dkk0FlzKMVbaCj40yUXTJNug9jH
+         i7Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743670738; x=1744275538;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qeT474o+P1WLytoJHvSVOFMjU1o1C8S5UpX9/onC+/Y=;
+        b=qQAAJdoq+bg9H8HB54qz5sg/HO+Ci0x12FPYXiCOOKG7b5Vii5WO6Nirs02av/Hclc
+         ZtaHYQMs7b0Pwz0L6yMtipqbmvgD8Cau+ZmkBB5TGTiiqAzn5Z3pdEThHCmsyWe1Xr+i
+         L4pE4qdFjNHCVZzSedkQTaD4C+M6ki1oz4ps+4rKQ6/3+hYOrY8lpaNI1WRnGgxmqndD
+         kpPiUA2FmU8BWSHrneGThEC+7PxskmmSNdoMXWOuH2xX2Vtcvx4nVavswp2v2dvtxF+h
+         QsMWbVAbgUPGvjpRX3GXEfTPzT9r0YiuWuLSMm7I0OGLjKZJhzzGjWTAn+DMzIJ5jXzw
+         ME7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX07gyilgcMd6df23QjXf8tS81C+tKsDVrtr3+Wh0hFNuJVLC4pmexs/m6K06nk6m+4qMqYpsYmNhUyDfaENjMeCg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKcvcQC2wYgqi4Fe0MzMTyFnz7hfwyg7FrVEcIB+chh6zz3pyT
+	Ss3LruTPM+ZfVS8RrNYAYHulNsVbsdWyPB+re/zcZ12bfo22XPk0OLupMSVv8t4=
+X-Gm-Gg: ASbGncsVdir4IB0MYu6ZWLcCN4aJ+EcAkn5lW3AkgTyI7Va+GvUwCvQHYcF3I7k168J
+	/gNNStijRqbPppcwJQ5NOenDTeKay+WY/9ujySPBRQ454cj6lR1TF+ky+w6+ZZ+9CRnwMGwQwRQ
+	EcSaNYoE6KfqLhFj8Gg/RMQyYGUnMcoFRmKbIVXW8xUGZvg3nGOKSC2OJqBN4akhN8GDjvaTdnT
+	hVIlfigRE+QWQKgV9rt1H09KZ7TSXy+uJ84e5OBpO4OAHek8Ly1aF4pr+LsNdQwnQPyNsLH3/5U
+	1beun7sPnomYTNFOMczCQ+N3o92uktrOGv3n8P+nhQ4DGosfDqO9hx7dxs7YhKPC5fgmKvUaFtm
+	VSiSAr6LhwF+FGYJkr5E/zQyUzyaY
+X-Google-Smtp-Source: AGHT+IFcqnBTtWNtxVdQnxCbmWWWf9RXOD/EtzwnHUDSkLa3WrzSs3GfyFiYhJY/Wa5602oPG/K0KQ==
+X-Received: by 2002:a05:6402:27d4:b0:5e7:c782:ba94 with SMTP id 4fb4d7f45d1cf-5f0931f76dcmr1184582a12.13.1743670738358;
+        Thu, 03 Apr 2025 01:58:58 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f0880a535fsm637614a12.80.2025.04.03.01.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 01:58:57 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v3 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+Date: Thu, 03 Apr 2025 09:58:52 +0100
+Message-Id: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z-2zQ-PcvxFTBc6M@google.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTHd/teX1/R6hsyvWGDsMfCBhmlRaAXoUQjP+rmHyRblm0o0LVv
-	LWlpS18LssTJJhOpG8IU0YYUHDAdMnEFShXBpZDA3KgjW2Ajjun8EagburIZRAtrebr43+ec
-	+/3ec88995JY+C9EJFlisDBmg1JPE2G4azgeJV4i5jWS824aXXO4CNTr68HR3S8/Bahr0MtD
-	joUo1DLi5SN3fwSas88QyHljko9+utBMoONXhnjo3PFlHK1cdAuQzRMgUI+zEUP+6UJUfTUV
-	1Ty4g6NO/wpAbd/6BVsjFK4BF1/R5egCilanVeHsrCUUVycvEop5r1eg6Gnfp6jr7QSKBWd0
-	vvBdXaaWUaoZcwxjUBnVJQaNnH79jaLtRalpEmmiNB3J6BiDspSR09k78xNzS/TBruiYcqXe
-	GkzlK1mWTsrKNButFiZGa2QtcpoxqfUmmUnMKktZq0EjNjCWLVKJJDk1KCzWaTv8Dbjp16g9
-	Cw92V4H7m2yAJCGVAq+4C2wgjAyn3AAunFjkc4EfQN/ElMAGhMHgPoCOWvMTQ1NAw2kGAfx4
-	aJDHBdcBPP+PAwsZcOolaHPdIUJMUInQNbYMQuYISgwffbInpMeoOT6sc82CkGYDVQwnhnz8
-	EIuoWNj8hZ/g+Fn43YmbeIiFVAL87VETCJkhNUtCn61n1QCpbHh4fITH8QboG+0VcBwJ5w4f
-	eMwsrPp9GuPM1QBenprFuIXN0H67ZvUUGKWFrmsTGNdmLByZxrn0OnhwOCDg0iJ48EA454yD
-	S0fPAY5fgANtpx/vqIB9Ky6Cu5QAgN9/8xCrB9H2p/qxP1WN41dh64CfsAdLYNTz8NQyyWE8
-	7L6Q1Ar4nWAjY2JLNYwq2ST9f7wqY6kTrD7xhO1u8HPLstgDeCTwAEhidISoLOEvTbhIraz8
-	gDEbi8xWPcN6QGpwOA1Y5HMqY/CPGCxF0pR0SUpamlSWnCqR0ZtEnr9vacIpjdLC6BjGxJif
-	+HikMLKKl5FmF93LKz+082561o8Sf/ylk+m5vMWKwEq1bFBEyq2LyYP98/va6u/pZIXOJDtR
-	836Bs6/2lSN5Hc3r+zdP3soOHMstbP8o8NnwM853dhQf2zKrut43HCj7M/brioeVom2qxu5F
-	+RE8J2djx9tzayQnp9ZWlGTERXkv94mLDuF5r/0QtvZme1ymsCFrvLpgfq9OUyleChuLq3Ps
-	cAhbG2+fbmz50JdztgCs7Goor19TfjZrf9TM1ow/0Hqc9+KbdflTZ6rYM1FhevM69UKTN/ut
-	vdHjL9e3qkfz/zWdQkdndnWTnqVAuXXs8/2ewq9wcWGatWwRvndjW/WEWNA8Cty7aZzVKqUJ
-	mJlV/gddt0+8awQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSnO4+tnfpBi/eSVk8mLeNzWLLq80s
-	Fu+X9TBarNl7jsli3mdZi/lHzrFa7NguYvFy1j02i02Pr7FaXN41h81ixvl9TBYbZvxjsfi/
-	Zwe7Rdehv2wWmzdNZbb4dCvOouWOqUX7z9csFqs+/We0WHzgE7uDiMe23dtYPdbMW8PosWBT
-	qcemVZ1sHneu7WHzeHfuHLvH5iX1Hn1bVjF6fN4kF8AZxWWTkpqTWZZapG+XwJWx/OZStoKZ
-	0hXdf46wNTCeF+1i5OCQEDCRmP43vYuRi0NIYDejxMy9J9m6GDmB4jISt1deZoWwhSXutxxh
-	hSi6zyjxbOp9FpAEi4CKRNe212ANbAK6EttO/GMEGSoioCfxp7UCpJ5Z4DOrxNaOo8wgNcIC
-	CRKXOm4zgdi8AsoScxZ9YoMY+p9R4uXdPVAJQYmTM5+ALWAW0JK48e8lE8hQZgFpieX/OEDC
-	nEDhu3+mM05gFJiFpGMWko5ZCB0LGJlXMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIE
-	R6KW5g7G7as+6B1iZOJgPMQowcGsJMJbqPU2XYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv+Ive
-	FCGB9MSS1OzU1ILUIpgsEwenVAMTa0723LM2WRcbVtzZz71RTCcrROzgC2azaxddOV6kvg+e
-	2ROhdfP0fXtZn7JLP/ucrjccf5PxbUb8pc/nqp1eLzc++lZq1kbbWabS7dsFlBgUkyUvb4k6
-	cLqENytlRcgpTzNVtodz39rt0G9qVJlb82Lu1LsMN3svpq7e/CfvQsuE1fdNHn+7fy2r7ki3
-	c6Wrxjf1r7O4qw1u/39fmrCpb0LnW+4pyzLrPnRMr1/WdeXttPl9xRUvqlLa2UT4+7cUT74g
-	ETWjr/pImUcXe2DL0llTc4QjPukfPRjrP9WZgT0s2bShV/bK9T2cf1JezPKrtLLQsLNKimE3
-	np3QlHD1/Ez32d8mcGZPcjrwtnmjEktxRqKhFnNRcSIAx5ywPTMDAAA=
-X-CMS-MailID: 20250403035542epcas2p2da512aa29b7d9c68ad698399264e0d05
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250331230151epcas2p486a7c6d7153737f4168cfef74249742f
-References: <20250331230034.806124-1-willmcvicker@google.com>
-	<CGME20250331230151epcas2p486a7c6d7153737f4168cfef74249742f@epcas2p4.samsung.com>
-	<20250331230034.806124-5-willmcvicker@google.com> <Z+y4zxfifkQqLxKF@perf>
-	<Z-2zQ-PcvxFTBc6M@google.com>
-
-------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Wed, Apr 02, 2025 at 02:59:31PM -0700, William McVicker wrote:
-> Hi Youngmin,
-> 
-> On 04/02/2025, Youngmin Nam wrote:
-> > On Mon, Mar 31, 2025 at 04:00:26PM -0700, Will McVicker wrote:
-> > > From: Will Deacon <willdeacon@google.com>
-> > > 
-> > > In preparation for switching to the architected timer as the primary
-> > > clockevents device, mark the cpuidle nodes with the 'local-timer-stop'
-> > > property to indicate that an alternative clockevents device must be
-> > > used for waking up from the "c2" idle state.
-> > > 
-> > > Signed-off-by: Will Deacon <willdeacon@google.com>
-> > > [Original commit from https://android.googlesource.com/kernel/gs/+/a896fd98638047989513d05556faebd28a62b27c]
-> > > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > > ---
-> > >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > index 3de3a758f113..fd0badf24e6f 100644
-> > > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > @@ -155,6 +155,7 @@ ananke_cpu_sleep: cpu-ananke-sleep {
-> > >  				idle-state-name = "c2";
-> > >  				compatible = "arm,idle-state";
-> > >  				arm,psci-suspend-param = <0x0010000>;
-> > > +				local-timer-stop;
-> > >  				entry-latency-us = <70>;
-> > >  				exit-latency-us = <160>;
-> > >  				min-residency-us = <2000>;
-> > > @@ -164,6 +165,7 @@ enyo_cpu_sleep: cpu-enyo-sleep {
-> > >  				idle-state-name = "c2";
-> > >  				compatible = "arm,idle-state";
-> > >  				arm,psci-suspend-param = <0x0010000>;
-> > > +				local-timer-stop;
-> > >  				entry-latency-us = <150>;
-> > >  				exit-latency-us = <190>;
-> > >  				min-residency-us = <2500>;
-> > > @@ -173,6 +175,7 @@ hera_cpu_sleep: cpu-hera-sleep {
-> > >  				idle-state-name = "c2";
-> > >  				compatible = "arm,idle-state";
-> > >  				arm,psci-suspend-param = <0x0010000>;
-> > > +				local-timer-stop;
-> > >  				entry-latency-us = <235>;
-> > >  				exit-latency-us = <220>;
-> > >  				min-residency-us = <3500>;
-> > > -- 
-> > > 2.49.0.472.ge94155a9ec-goog
-> > > 
-> > Hi Will.
-> > 
-> > Are you using this property in production?
-> > If so, have you noticed any performance improvements?
-> 
-> On Pixel 6, I have only recently switched to using the arch_timer as the
-> default clocksource. I haven't noticed any major perf improvements to the main
-> benchmarks, but also haven't seen any regressions. Based on the ChromeOS perf
-> analysis in [1,2], there was a significant perf difference found.
-> 
-> [1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
-> 
-> If it helps, I found that Pixel 8 and 9 devices (didn't check Pixel 7)
-> are already using the arch_timer with this 'local-timer-stop' as the default
-> clocksource in the production kernel.
-> 
-> Thanks,
-> Will
-> 
-> [...]
-> 
-
-Hi Will,
-
-Thanks for sharing the status of Pixel devices.
-
-I agree that using the arch_timer as a clock source device brings significant benefits.
-The links you shared are definitely related to that.
-
-However, I would also like to know whether arch_timer is used as a clock event device in Pixel production.
-
-Thanks,
-Youngmin
-
-------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAM1N7mcC/1WMyw6CMBBFf4V0bc20UwRd+R/GBbUDTKKUtKbRE
+ P7dQuJreW7uOZOIFJiiOBSTCJQ4sh8y4KYQl74ZOpLsMgsNugTUSkZ9GzsFktrSKbIOwaDI7zF
+ Qy4+1dDpn7jnefXiu4aSW9d3ATyMpCdJBvTdYga6gOl55aILf+tCJJZL0r1h/RZ1FWxpHhNjan
+ f0T53l+AWNqK8/YAAAA
+X-Change-ID: 20250321-s2mpg10-ef5d1ebd3043
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
+This series adds initial support for the Samsung S2MPG10 PMIC using the
+MFD framework. This is a PMIC for mobile applications and is used on
+the Google Pixel 6 and 6 Pro (oriole / raven).
 
-------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_--
+*** dependency note ***
+
+To compile, this depends on the Samsung ACPM driver in Linux next with
+the following additional patches:
+https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
+https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+
+*** dependency note end ***
+
++++ Kconfig update +++
+
+There is a Kconfig symbol update in this series, because the existing
+Samsung S2M driver has been split into core and transport (I2C & ACPM)
+parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+
+This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+talk via I2C, but via the Samsung ACPM firmware.
+
++++ Kconfig update end +++
+
+This series must be applied in-order, due to interdependencies of some
+of the patches. There are also various cleanup patches to the S2M
+drivers. I've kept them ordered as:
+  * DT bindings (patches 1 ... 3)
+  * s2m mfd prep for adding S2MPG10 support (patches 4 ... 7)
+  * split S2M mfd driver into s2m-core and s2m-i2c, including the
+    kconfig symbol update (patch 8)
+  * S2MPG10 core driver (patch 9)
+  * s2m mfd driver cleanup patches (patches 10 ... 23)
+  * S2MPG10 clock driver (patch 24)
+  * s2m RTC prep for adding S2MPG10 (patch 25 ... 26)
+  * S2MPG10 RTC driver (patch 27)
+  * s2m RTC cleanup patches (patches 28 ... 31)
+
+I realise these are many, but since some prep-work was required to be
+able to add S2MPG anyway, I wanted to get the cleanup patches in as
+well :-) Let me know if I should postpone them to a later date instead.
+
+The S2MPG10 includes buck converters, various LDOs, power meters, RTC,
+clock outputs, and additional GPIOs interfaces.
+
+This series adds support in the top-level device driver, and for the
+RTC and clock. Importantly, having the RTC driver allows to do a proper
+reset of the system. Drivers or driver updates for the other components
+will be added in future patches.
+
+This will need a DT update for Oriole / Raven to enable this device. I
+will send that out separately.
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v3:
+- Krzysztof:
+  - keep 'regulators' subnode required even for s2mpg10
+  - drop '$ref' and 'unevaluatedProperties' from pmic subnode, use
+    'additionalProperties' instead
+  - add some regulators to examples since s2mpg10 requires them as of
+    v3
+- sec-acpm:
+  - use an enum for struct sec_acpm_bus_context::type
+  - consistent name space for all functions sec_pmic_acpm_... to be
+    similar to i2c and consistent in this file
+- Link to v2: https://lore.kernel.org/r/20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org
+
+Changes in v2:
+- Rob:
+  - make PMIC node a child of ACPM, and all related changes (binding,
+    driver)
+- Krzysztof:
+  - merge defconfig updates into patch changing the symbols (patch 8)
+  - split MODULE_AUTHOR update into a separate patch
+  - better alignment fix (patch 11)
+  - merge two s2dos05/s2mpu05 related patches into one (patch 14)
+- myself:
+  - keep PMIC DT parsing in core, not in transport driver
+  - several updates in sec-acpm.c, see separate entries in patch 9
+  - fix typo in patch 17
+  - collect tags
+- Link to v1: https://lore.kernel.org/r/20250323-s2mpg10-v1-0-d08943702707@linaro.org
+
+---
+André Draszik (32):
+      dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+      dt-bindings: clock: samsung,s2mps11: add s2mpg10
+      dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
+      mfd: sec: drop non-existing forward declarations
+      mfd: sec: sort includes alphabetically
+      mfd: sec: update includes to add missing and remove superfluous ones
+      mfd: sec: move private internal API to internal header
+      mfd: sec: split into core and transport (i2c) drivers
+      mfd: sec: add support for S2MPG10 PMIC
+      mfd: sec: merge separate core and irq modules
+      mfd: sec: fix open parenthesis alignment (multiple)
+      mfd: sec: sort struct of_device_id entries and the device type switch
+      mfd: sec: use dev_err_probe() where appropriate
+      mfd: sec: s2dos05/s2mpu05: use explicit regmap config and drop default
+      mfd: sec: s2dos05: doesn't support interrupts (it seems)
+      mfd: sec: don't ignore errors from sec_irq_init()
+      mfd: sec: rework platform data and regmap instantiating
+      mfd: sec: change device_type to int
+      mfd: sec: don't compare against NULL / 0 for errors, use !
+      mfd: sec: use sizeof(*var), not sizeof(struct type_of_var)
+      mfd: sec: convert to using MFD_CELL macros
+      mfd: sec: convert to using REGMAP_IRQ_REG() macros
+      mfd: sec: add myself as module author
+      clk: s2mps11: add support for S2MPG10 PMIC clock
+      rtc: s5m: cache value of platform_get_device_id() during probe
+      rtc: s5m: prepare for external regmap
+      rtc: s5m: add support for S2MPG10 RTC
+      rtc: s5m: fix a typo: peding -> pending
+      rtc: s5m: switch to devm_device_init_wakeup
+      rtc: s5m: replace regmap_update_bits with regmap_clear/set_bits
+      rtc: s5m: replace open-coded read/modify/write registers with regmap helpers
+      MAINTAINERS: add myself as reviewer for Samsung S2M MFD
+
+ .../devicetree/bindings/clock/samsung,s2mps11.yaml |   1 +
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  35 ++
+ .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  26 +-
+ MAINTAINERS                                        |   3 +-
+ arch/arm/configs/exynos_defconfig                  |   2 +-
+ arch/arm/configs/multi_v7_defconfig                |   2 +-
+ arch/arm/configs/pxa_defconfig                     |   2 +-
+ arch/arm64/configs/defconfig                       |   2 +-
+ drivers/clk/clk-s2mps11.c                          |   8 +
+ drivers/mfd/Kconfig                                |  35 +-
+ drivers/mfd/Makefile                               |   5 +-
+ drivers/mfd/sec-acpm.c                             | 465 ++++++++++++++++++++
+ drivers/mfd/sec-common.c                           | 301 +++++++++++++
+ drivers/mfd/sec-core.c                             | 481 ---------------------
+ drivers/mfd/sec-core.h                             |  23 +
+ drivers/mfd/sec-i2c.c                              | 239 ++++++++++
+ drivers/mfd/sec-irq.c                              | 460 +++++++-------------
+ drivers/rtc/rtc-s5m.c                              | 197 ++++++---
+ include/linux/mfd/samsung/core.h                   |   7 +-
+ include/linux/mfd/samsung/irq.h                    | 103 +++++
+ include/linux/mfd/samsung/rtc.h                    |  37 ++
+ include/linux/mfd/samsung/s2mpg10.h                | 454 +++++++++++++++++++
+ 22 files changed, 2024 insertions(+), 864 deletions(-)
+---
+base-commit: f58dd835f82a5dda6c9d3895ee6f15016431fb1f
+change-id: 20250321-s2mpg10-ef5d1ebd3043
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
