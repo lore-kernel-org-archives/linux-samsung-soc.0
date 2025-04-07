@@ -1,169 +1,87 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB15A222587;
-	Mon,  7 Apr 2025 19:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A86224236;
+	Mon,  7 Apr 2025 22:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744054069; cv=none; b=sJI6nE72atTxmpLbLmWTmNwZjPTWqykZAWOOF4gMppAW0n9N7yGbdy1N0DMOpv97MULvqq0l/GhE6lohh/4T9IlzaEvruCtPX7bK7xg/oi2qOXgh44x3XR2pVuow5/l9FcE8bzwCek2kYZH8j9cGNd5/dgtbR6hMMnt2fgsC6YA=
+	t=1744064103; cv=none; b=Agvf+iZgGcnrAr+qrIbpZGW/BvkoVP5Nw/2aS4or2cHOI/yOFY+izZ4+xCR/w3ZsuRB65lkx1I52SiY4zl2LmCSHoUGaIQKlqawHlLl6hWnRus2DsOUj8p5wnElRmPd2mSPxnOPE9MJn4FyO+aCaWbx0ZHWC6YceQYENhS6yPRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744054069; c=relaxed/simple;
-	bh=nWMPJiZ/C1me5It7a1cdWkDqp5i0FTr20WskxIIMaYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WSkKuzsv67Hu3rIkvH+mzsasjSXFweQV9rIV5SgDuZ6P0fbqVtC0/jFQVgPBznljvDr26FsloK/1WrTPDYBAFfPilOIBLQmImCQt/MOIvWPmsu18IYMdiYjfi3pTGFhGLL5jegfS5D+Abq6HdPcEHb3FLLuszv2mNMizV4+KQIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gi+8MJKk; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1744064103; c=relaxed/simple;
+	bh=VSVFpQj3hn1f1mOYrZD1BOgazgCdpZCs00LueNXdzzQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JOVeEZ+o9H03NF9PpaLXBFeg3eQ2D+HxvJgVL4ew0uqAEkqE2B+wZciZhwEmVrssjBNeS8tMF5sGhcyg6/u+SNyhNVoDBYSTFTTaJWNzhz1/wWBkbS34MrKN21YHiXVsKemrT+8SEZvrzbGHVPm8zoAMT2P9m4460BISLWsna4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJuWELVU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gi+8MJKk"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 37D604421F;
-	Mon,  7 Apr 2025 19:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744054065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cjEt/IPzaAdKLiLHC8nJ5ihJ1fjZFnzeMJstnBzp7XQ=;
-	b=Gi+8MJKk54bvu0U11jHOJw08NvtnpAzunZzJXO4mlFlnzsLVy8DFQIv5f1cwemOl31f/in
-	yXq1Um8EF62nuW+7K5/FANGhJKfIDt3FpxkAeF2Uw52NGHGgsgSLt5hId5UF1i3v6U7LiQ
-	QV71SvnJzRB4Bv9Y0pBT6LtPqcjAci3aXj9uPyPUUIhwMeK2lXlaYCBe0svd+nHK7Htak4
-	/9HotCk7aCwdmAu+N82j0bdVIG/9XNextLdkUXD3MPHCRUDF3rNzBb5f+B2kzx0rN1agcB
-	y2M7EU6B7HGxiOcK1BDKg9fGTg+UZIk8/GVGNr8AJuzWT4pQ2/Cw+JF6m2DEKA==
-Date: Mon, 7 Apr 2025 21:27:39 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
- =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, LKML
- <linux-kernel@vger.kernel.org>, chrome-platform@lists.linux.dev,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede
- <hdegoede@redhat.com>
-Subject: Re: [PATCH 02/34] platform: arm64: acer-aspire1-ec: convert to
- devm_drm_bridge_alloc() API
-Message-ID: <20250407212739.1e991b6a@booty>
-In-Reply-To: <a9000632-a6d1-d369-c317-9ee73aa645dc@linux.intel.com>
-References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
-	<20250407-drm-bridge-convert-to-alloc-api-v1-2-42113ff8d9c0@bootlin.com>
-	<a9000632-a6d1-d369-c317-9ee73aa645dc@linux.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJuWELVU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 690FBC4CEDD;
+	Mon,  7 Apr 2025 22:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744064102;
+	bh=VSVFpQj3hn1f1mOYrZD1BOgazgCdpZCs00LueNXdzzQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XJuWELVUhqQI8860xY5NNgWNmLZ/iEIuwT3i4O4xBmSd+gEver/RHjgXSMdguCUwo
+	 /HOlrnvMI6jEUOAxTwJTMfNTOzN38f0kCUyEwyPLMBZMrdehC6SfR+qRPowJoaDre3
+	 bXTlmo3tACC/54sWNlCYN9n+5ktc3PLUTSzE0UY4dKnmL3Ait/lDs7Oh8MfANZu+mz
+	 87HptC9AAu6YTDk6jjYu2xxBbV6hyznNjX05DQYx54Tm8fkyXx+6Rw/FkWBXmGI51D
+	 17M37eFe5Lh23GhWllcKmr5NgezNU6aMI0grfKKSP/WdtbPne3MKh/DyUIDnAvASeb
+	 pKy3IlIe4BkNg==
+From: Mark Brown <broonie@kernel.org>
+To: linus.walleij@linaro.org, brgl@bgdev.pl, krzk@kernel.org, 
+ lgirdwood@gmail.com, andriy.shevchenko@intel.com, 
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20250327004945.563765-1-peng.fan@oss.nxp.com>
+References: <20250327004945.563765-1-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH V2 1/2] gpiolib: of: Add polarity quirk for s5m8767
+Message-Id: <174406410013.1124451.2033233013803863409.b4-ty@kernel.org>
+Date: Mon, 07 Apr 2025 23:15:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddutdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvddtuedtfefgueehiefhjeeiffekudfhgfdtledvffekhfegteduieejveevteehnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeefpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigr
- dhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-Hello Ilpo,
+On Thu, 27 Mar 2025 08:49:44 +0800, Peng Fan (OSS) wrote:
+> This is prepare patch for switching s5m8767 regulator driver to
+> use GPIO descriptor. DTS for exynos5250 spring incorrectly specifies
+> "active low" polarity for the DVS and DS line. But per datasheet,
+> they are actually active high. So add polarity quirk for it.
+> 
+> 
 
-On Mon, 7 Apr 2025 19:46:59 +0300 (EEST)
-Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+Applied to
 
-> On Mon, 7 Apr 2025, Luca Ceresoli wrote:
->=20
-> > This is the new API for allocating DRM bridges.
-> >=20
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> >=20
-> > ---
-> >=20
-> > Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-> > Cc: "Ilpo J=C3=A4rvinen" <ilpo.jarvinen@linux.intel.com>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > ---
-> >  drivers/platform/arm64/acer-aspire1-ec.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/platform/arm64/acer-aspire1-ec.c b/drivers/platfor=
-m/arm64/acer-aspire1-ec.c
-> > index 958fe1bf5f85bb69ac7962f217de9f0b40cde9a1..438532a047e68799ac53a16=
-a4c813fc16be997b9 100644
-> > --- a/drivers/platform/arm64/acer-aspire1-ec.c
-> > +++ b/drivers/platform/arm64/acer-aspire1-ec.c
-> > @@ -452,9 +452,9 @@ static int aspire_ec_probe(struct i2c_client *clien=
-t)
-> >  	int ret;
-> >  	u8 tmp;
-> > =20
-> > -	ec =3D devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-> > -	if (!ec)
-> > -		return -ENOMEM;
-> > +	ec =3D devm_drm_bridge_alloc(dev, struct aspire_ec, bridge, &aspire_e=
-c_bridge_funcs);
-> > +	if (IS_ERR(ec))
-> > +		return PTR_ERR(ec);
-> > =20
-> >  	ec->client =3D client;
-> >  	i2c_set_clientdata(client, ec);
-> > @@ -497,7 +497,6 @@ static int aspire_ec_probe(struct i2c_client *clien=
-t)
-> >  	fwnode =3D device_get_named_child_node(dev, "connector");
-> >  	if (fwnode) {
-> >  		INIT_WORK(&ec->work, aspire_ec_bridge_update_hpd_work);
-> > -		ec->bridge.funcs =3D &aspire_ec_bridge_funcs;
-> >  		ec->bridge.of_node =3D to_of_node(fwnode);
-> >  		ec->bridge.ops =3D DRM_BRIDGE_OP_HPD;
-> >  		ec->bridge.type =3D DRM_MODE_CONNECTOR_USB; =20
->=20
-> Hi Luca,
->=20
-> It took a while to locate where the code for the new helper is. I suggest=
-=20
-> if you need send another version of the series directly linking to the=20
-> commit in the cover letter so that it won't take multiple hoops to find i=
-t=20
-> if one wants to review the code and is not having all drm trees easily at=
-=20
-> hand. Here it is for the benefit of other pdx86 people:
->=20
-> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b=
-715ea3d1ba537ef2da95eec
-
-Apologies, indeed you have a good point. I added the link to the cover
-letter so it will be in v2, if any.
-
-> Acked-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-> I assume you want this to go through the drm tree where the helper alread=
-y=20
-> is?
+[1/2] gpiolib: of: Add polarity quirk for s5m8767
+      (no commit info)
+[2/2] regulator: s5m8767: Convert to GPIO descriptors
+      commit: 16b19bfd80402bb98135c4b65344e859883766ec
 
-MY best guess is that drm-misc-next is the appropriate branch, and it
-is where the helper is already present, but I'll let maintainers decide
-what is most appropriate.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Luca
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
