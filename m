@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B3051C5A;
-	Sun,  6 Apr 2025 18:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398122423A;
+	Mon,  7 Apr 2025 06:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743964551; cv=none; b=c/Xkwqa/qNlsNzGWZSU2lKxSLyaV7izuWTeMFpTtkTJ6iK5ZcJZ5P+JrN9m0XmPCE27dHqDhYxhgNoSiv6OkcuxNfFQzZ93jhJXDxufKlt5Ji5zQGsTkjHJOpZQ84hBUch746i2GvXtijo41flp48IJD4S78KRFPXGAqwuXjMwk=
+	t=1744005902; cv=none; b=Z+ZABvSh+3fW/q7o9ysrbOvzWCjKkL73ooP3OJVMo8/69xtajlk9r4aZcd0roAK1PykYHS5kRX7OZ/xntCQ2jlBWdf+sQyQl9BqDTbayLnz4wR+pEqnHY5hxlBbx3pDRY6IsBInuMRI5H/vQP7AZyc4SjF+k4ODeoqS2/C39R9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743964551; c=relaxed/simple;
-	bh=rrw6C9PxD3dEvPohcjb1eyJDWWnjgkEsQK+28Yte3ck=;
+	s=arc-20240116; t=1744005902; c=relaxed/simple;
+	bh=QdlPTuGFDzHLTqGSHvpyqeL+wyYF1szxTKJZUAoSyAs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QS7h4BidAPagOYD/TlbIgNMS8hcEcX4XX5Fzx+Av/qk/WS6E3Xp10xLUl6glTjNuU+3LdBZRZ6RGZK13MrnzaMtHBwPAw0tnq/CZx14l9r6362naBBwSLZLHBZO7nQ7cbLP82LrZqdA3qWpLf19/VlQNVggMpDy0dc3V/WYi7AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwVimBnD; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=PM/cnrdzoURnsgkt53FSwMe5AaY5y69EFbuh4bf2Bv9iEDgL8LQ0RZq9CUA1vbaAutoj+xaIddVJSWw+Hd3T3y0SO0n3OC/0j3QE4kTEZ64N2txgiBIU80UDUPJGQxPFaVg2OtVaPPjHfo4Qu9hooXy4LZn0efsQPlBzfB2qvsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLHkWsYj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwVimBnD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B4CFC4CEE3;
-	Sun,  6 Apr 2025 18:35:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLHkWsYj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A1E6C4CEDD;
+	Mon,  7 Apr 2025 06:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743964551;
-	bh=rrw6C9PxD3dEvPohcjb1eyJDWWnjgkEsQK+28Yte3ck=;
+	s=k20201202; t=1744005902;
+	bh=QdlPTuGFDzHLTqGSHvpyqeL+wyYF1szxTKJZUAoSyAs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lwVimBnDyzmabhTpR2luPs9LR0LS7Q2uJKf615xRwIpGJpSbPBVlZ4bDfalaROpFE
-	 B634jly0rS3iBPNm/lcpTTI4QqcayvPJ/FpSCkbDEAANk2vYL53LAZlRvcVRbWCEPE
-	 9spcEK4p0G58SMzNCp+KCSuoMR/cXYlT1/1AtJp0sBl+a0basDfQT/Z5UK8ds7yZib
-	 kOw+nDJtoro4T4PA2h9omS3cYOGYY0GTMWdQvRMyGsXLDAWjrO9rOt8JgnTzcZuTFl
-	 y0bMR5Jyer4fOL/qPNP1BafmRQ7F8fPtLpt0HH2pYj5aCeehTarh8NhUTqg3SCCI8Z
-	 t8uS/iCeRPLSA==
-Message-ID: <453f4691-d581-4187-be34-f0b004a856ba@kernel.org>
-Date: Sun, 6 Apr 2025 20:35:44 +0200
+	b=lLHkWsYj5spzqNUuH90Xd8qyXgoOZloNmjJ0gHK4EvJvTCrNLAwG+3nIJ1Y0l7CuZ
+	 8mUzIFqjh6IqSYAnZFL1cUspFhtUhYFTsJ7Dja2j9XI2Gg20dwN9Dyx2uxZrv1fQRZ
+	 2gcqVR2csGTopegBDIC3qjkr4RVCKJOGV4m/9voKS8eYYavf86BKA7FFRwKTnKznK2
+	 /rDyDVzfe/HHv7a42+Iuw4CxJRwpkRSe3JU8w96H5SsHCwSHvGktXSzNUeEwdWC63c
+	 w9V+Q4gQkFmABRMbrJbUEiNiHKAR8X4QFDRjrgiQOswgD1hY1YXbrtt+okKtKsU7gn
+	 oCjUqy44ya8Kg==
+Message-ID: <befe7d30-1727-4540-9072-f21ef96ea504@kernel.org>
+Date: Mon, 7 Apr 2025 08:04:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,25 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 30/32] rtc: s5m: replace regmap_update_bits with
- regmap_clear/set_bits
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
- <20250403-s2mpg10-v3-30-b542b3505e68@linaro.org>
+Subject: Re: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
+To: Faraz Ata <faraz.ata@samsung.com>, alim.akhtar@samsung.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rosa.pila@samsung.com, dev.tailor@samsung.com, suyash.bitti@samsung.com
+References: <CGME20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80@epcas5p3.samsung.com>
+ <20250318075635.3372599-1-faraz.ata@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,17 +88,48 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250403-s2mpg10-v3-30-b542b3505e68@linaro.org>
+In-Reply-To: <20250318075635.3372599-1-faraz.ata@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 03/04/2025 10:59, André Draszik wrote:
-> The regmap_clear_bits() and regmap_set_bits() helper macros state the
-> intention a bit more obviously.
-> 
-> Use those.
+On 18/03/2025 08:56, Faraz Ata wrote:
+> +
+> +		usi_17: usi@10d800c0 {
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Messed order. Keep nodes sorted by unit address (see DTS coding style).
+
+> +			compatible = "samsung,exynosautov920-usi",
+> +				     "samsung,exynos850-usi";
+> +			reg = <0x10d800c0 0x20>;
+> +			samsung,sysreg = <&syscon_peric1 0x1040>;
+> +			samsung,mode = <USI_V2_UART>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
+> +				 <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
+> +			clock-names = "pclk", "ipclk";
+> +			status = "disabled";
+> +
+> +			serial_17: serial@10d80000 {
+> +				compatible = "samsung,exynosautov920-uart",
+> +					     "samsung,exynos850-uart";
+> +				reg = <0x10d80000 0xc0>;
+> +				interrupts = <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&uart17_bus>;
+> +				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
+> +					 <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
+> +				clock-names = "uart", "clk_uart_baud0";
+> +				samsung,uart-fifosize = <64>;
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+>  		pwm: pwm@109b0000 {
+>  			compatible = "samsung,exynosautov920-pwm",
+>  				     "samsung,exynos4210-pwm";
+
 
 Best regards,
 Krzysztof
