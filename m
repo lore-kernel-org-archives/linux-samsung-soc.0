@@ -1,165 +1,111 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA0C22AE76
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Apr 2025 11:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A875F2F28;
+	Mon,  7 Apr 2025 13:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744025354; cv=none; b=QyYrzLHCwMOC0y46d5RMohZoPMy7cOa2YPbVPLCJkh+GezkfYZhPTeF5oarZ1/Xw28NbXH6EcDl3Vm6VVebrbAZJnYouCcoqlQMhyEmQzcosg0TzXwS7jMCEtHt4PTvsUQXQsAvkFn49vgxIUFh1aDZY5GdfYCEWFIa5hWBUn74=
+	t=1744032628; cv=none; b=p4Hfcw1TAPfL4XEomRL6xyY6z23hSaWGN/y1oplucaChLCjDIovdxCtjGK2w8HUoeE65fO77vhFC29FQPVq0yvZQ2nfO4FQtQT70CQxRBe6DNPWX0Y4yunh1A8nVnAqa0wd4PhPNPpI524Bf1QGaYJIY74THGY5Im8PsRXk1TuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744025354; c=relaxed/simple;
-	bh=H2FKZXIS+hwA9vu7ou/PvLDYV8ymkbl31adVzvN6naI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b4/utQ3YVYKGLCbeiVmOBlYk3dGupxnL23MWdsSq776yvFSUjAlKqLTlvKGiBIb815ooUAzse0Vv2O75ahcnoWPSEG8M3wHlPJPH67xWp8nhURvf2irHZVEKPqEWnqkit344lwNEL+sgGkS8MQ8+gBBnXpfWWG8Gp6L8fF+BHuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VdRiM1KN; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744032628; c=relaxed/simple;
+	bh=bMkDnrpgB53COTXJIOwa1sm01i03pN4G2gkZQfx7rYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HEw3LhkJ6m/TJtZpsPODoZ03Yj7Kaf5MYTiQIe4qWiHHS9fUW/5Uy/sKWtxwYYnn2IuNBc5uT8i3vNMQ4S38MjJrf0gfFFWycxdpbC7xUnYUgPZkiXDkKsPCGp4/73qIED/mrxi/fqnLi6WOYgrLH4c4iW3VXVHU7/JdznFCjSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qqo/lMTi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VdRiM1KN"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso27238435e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Apr 2025 04:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744025351; x=1744630151; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3ERzJBk8IPAt2EVC29UOPORnzeO9/Agn8egECrfbp4E=;
-        b=VdRiM1KN3k56gGv/Zn79b5fCDlcQnSqwuAhYuoSvXBRIu6mnFsgKHzQ9kEmZmIc5An
-         4njIiXTw+v+rksLV9lmeVw4YJefwPUVP3fsBg8Rnk6gE/WrYz39iuzXTUBqc+O5wKeco
-         qEM/sm5CxxLpuewRsjDZfFIYyNnbZacJbcFIt5NlkVltPvCsQZAWBahAZMGeoNq5ox3R
-         9F6EsKzj0KXcj7s+NsHGAqUtCDWx+jKjVqtfRqHOartUyR31qFdGR+ty4ZdnfKrgVj+i
-         yozKtOON4+el+vX50KES/fgGIktrZLzduPXMfMRzYtS/YGdXmFDAsOby2gz25nwTwli+
-         R9kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744025351; x=1744630151;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ERzJBk8IPAt2EVC29UOPORnzeO9/Agn8egECrfbp4E=;
-        b=oWUfgDoxJRDI2Ttmh99CHXuskQF4qlrTkdhAT6ZgQpkSS4L7Jg81itMDFF7KPSGthg
-         w8FhuzZik4hW+MF9wObeqVLHldgKMdSfEUqHJvTfq9W0p8rvLYOFrTUup1T2wasGKe01
-         CbbQFQ7Ve8/eu4vvvs8GZX024IWlkdeVxfi37FJ0HQl5ISffiPAp3CXCzOoMItChl/Xm
-         A0IaR37Cq50B0xG0lLIvNtfrmlKMqIcubsq/0qXujUHjrkHsXE/kZDdF6+S6mb7eSeLZ
-         BQ8DRznN58NgtWrj8PtXmZknKXGXMFv9oPThHEZ9HDZLD0h/QNyP47bn9lQC7k5+2sM+
-         3Y9w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1yofA0nAABFi3m8XWFpZ/TlEdwOyZPOsxNfWyjsMGCgGP4U1nkTmXFpsY0UafWwdpRnMNtpViESgxqq3Cfrc/7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/s+KI0GbkZRo4yVe2JMdUej839zYttfg2j+dgiSHH4rk1M56V
-	vfXiZo9oXIDyLQ7MgSZ+VhXWtQTuIH4WyrTGpi5a7sThxW0ARWNYL/1KRMchL1A=
-X-Gm-Gg: ASbGncv6Qv/vs8xnffRsKJv9tPskuswEIX0kF5/wxkZKBl5F4dBACZG67vvm8d7XQXz
-	6hK27A9M/Z1UL5DNi+ABa/88th/a2w7wJRB88thvdTkKFzgfZisIvh9vEkZRjiluJRmafVcbzGa
-	zZPMzUA/mqKScXEq/GNpqOA4/ULcMFc4QwG0kPFs03WBjs5OlJOee8HHd7VTPr/wMg96a+kN5wK
-	008ATdvUTxTlLvEr8SXr1GZuvJzeg7E1E7mEhAn1WC0t4EbhefgT0OIrZes4ci+RjDatq8AMyA4
-	G82ZbK/pjWSfyEI/+8TLLjHY+ORNCNFNXFRclz9jOWfNcgtYZQ==
-X-Google-Smtp-Source: AGHT+IHtEoJKmUalkAqnYfLWQZZGYmoLGxJQg28JsvyBQ+EeaUcWAKIPYLpm04Je/UzWyzE9mqSY3Q==
-X-Received: by 2002:a05:600c:4e8f:b0:43b:cb12:ba6d with SMTP id 5b1f17b1804b1-43ecf81be20mr130447345e9.3.1744025350842;
-        Mon, 07 Apr 2025 04:29:10 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a79bfsm12098345f8f.36.2025.04.07.04.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 04:29:10 -0700 (PDT)
-Message-ID: <9264729152cb70ec910b391ab4ced82dc62f953c.camel@linaro.org>
-Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel
- gauge
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	t.antoine@uclouvain.be
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau
- <dima.fedrau@gmail.com>, Catalin Marinas	 <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, 	linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-samsung-soc@vger.kernel.org
-Date: Mon, 07 Apr 2025 12:29:09 +0100
-In-Reply-To: <ocx5n42h25ztwo5twlir5zoajavpcxce2ra5jjyl6ae4qg6c3e@akhc3dylsprm>
-References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be>
-	 <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
-	 <ocx5n42h25ztwo5twlir5zoajavpcxce2ra5jjyl6ae4qg6c3e@akhc3dylsprm>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2-1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qqo/lMTi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE0FCC4CEDD;
+	Mon,  7 Apr 2025 13:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744032628;
+	bh=bMkDnrpgB53COTXJIOwa1sm01i03pN4G2gkZQfx7rYA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Qqo/lMTi+R0L1wxT5SaVVkcjoPFzPcq+/EIFsTA+YxLhOWGVPXIwgpe1ErfCaEE3g
+	 o0Bw5DosXaP85gpGSouT4mYZCsKNYDIhSLAyrdGmAQzgXistQXyUIsC7mgLiK77+zP
+	 wNZAwn0bNhYg0X4MMOCq/r76GzcyyjSxjESq80a+hDi67Ap5XfLvw0c23aeALMvB/D
+	 ZoV08+zXL+B0wz7q5Bf/JnuG+mRxAyi/ZB580WVIppeOB8XbpEtndgavwAGilVmDtc
+	 febG0KqXUgkc5gNBweO2hHoGr1xlK7dMnnFCD0WnKTsvZzxJ2RnAJ2HenzVptKkfTd
+	 yun3RPzTRKVcQ==
+Message-ID: <d07e4e1a-2b83-461a-b259-91c7e80e0ed8@kernel.org>
+Date: Mon, 7 Apr 2025 15:30:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] media: platform: exynos4-is: Use
+ of_get_available_child_by_name()
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ Biju Das <biju.das.au@gmail.com>
+References: <20250407110516.41124-1-biju.das.jz@bp.renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250407110516.41124-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sebastian,
+On 07/04/2025 13:05, Biju Das wrote:
+> Simplify fimc_md_is_isp_available() by using
+> of_get_available_child_by_name().
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v2->v3:
+>  * Fixed CHECK: Comparison to NULL could be written "child" reoported by
+>    [1] https://linux-media.pages.freedesktop.org/-/users/patchwork/-/jobs/74116132/artifacts/report.htm
+>  * Dropped Rb tag from Krzysztof.
+And what is the reason? Minor tweak for checkpatch? Really?
 
-On Wed, 2025-01-15 at 22:30 +0100, Sebastian Reichel wrote:
-> Hi,
->=20
-> On Thu, Jan 02, 2025 at 12:15:03PM +0100, Thomas Antoine via B4 Relay wro=
-te:
-> > From: Thomas Antoine <t.antoine@uclouvain.be>
-> >=20
-> > The interface of the Maxim max77759 fuel gauge has a lot of common with=
- the
-> > Maxim max1720x. The major difference is the lack of non-volatile memory
-> > slave address. No slave is available at address 0xb of the i2c bus, whi=
-ch
-> > is coherent with the following driver from google: line 5836 disables
-> > non-volatile memory for m5 gauge.
-> >=20
-> > Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68=
-c36bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
-> >=20
-> > Other differences include the lack of V_BATT register to read the batte=
-ry
-> > level and a difference in the way to identify the chip (the same regist=
-er
-> > is used but not the same mask).
-> >=20
-> > Add support for the max77759 by allowing to use the non-volatile
-> > memory or not based on the chip. Also add the V_CELL regsister as a
-> > fallback to read voltage value in the case where read of V_BATT fails.
-> >=20
-> > The cast is necessary to avoid an overflow when the value of the regist=
-er
-> > is above 54975 (equivalent to a voltage around 4.29 V).
-> >=20
-> > The regmap of the max77759 will lead the read to fail for V_BATT and to
-> > correctly use V_CELL instead. This regmap was proposed by Andr=C3=A9 Dr=
-aszik in
-> >=20
-> > Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a=
-116.camel@linaro.org/
-> >=20
-> > Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> > ---
->=20
-> Please add output from to the cover letter to allow easily verifying
-> that all values are correctly scaled.
->=20
-> ./tools/testing/selftests/power_supply/test_power_supply_properties.sh
->=20
-> > +static const struct regmap_access_table max77759_write_table =3D {
-> > +	.yes_ranges =3D max77759_registers,
-> > +	.n_yes_ranges =3D ARRAY_SIZE(max77759_registers),
-> > +	.no_ranges =3D max77759_ro_registers,
-> > +	.n_no_ranges =3D ARRAY_SIZE(max77759_ro_registers),
-> > +};
->=20
-> Drop the yes_range from the write table. It is wrong and confusing.
+Please follow closely submitting patches about review tags.
 
-Can you please clarify why having yes_ranges is wrong? Without yes_ranges,
-all registers not in no_ranges are allowed to be written to.
-
-Here, max77759_registers already specifies all the registers that exist
-(and is also used in the max77759_read_table), and for write-access this is
-further limited by the read-only registers in no_ranges.
-
-As an example, register 0x50 doesn't exist, and without yes_ranges this
-would allow write access to it.
-
-If yes_ranges was dropped, all the information about non-existing registers
-would have to be duplicated into no_ranges by inversing max77759_registers.
-We already know the non-existing registers, and inversing that list just to
-add to no_ranges seems non-ideal, error-prone, and just duplicated informat=
-ion.
-
-
-Cheers,
-Andre'
-
+Best regards,
+Krzysztof
