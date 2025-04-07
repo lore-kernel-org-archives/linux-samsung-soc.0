@@ -1,135 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398122423A;
-	Mon,  7 Apr 2025 06:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1058F14B950
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Apr 2025 06:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744005902; cv=none; b=Z+ZABvSh+3fW/q7o9ysrbOvzWCjKkL73ooP3OJVMo8/69xtajlk9r4aZcd0roAK1PykYHS5kRX7OZ/xntCQ2jlBWdf+sQyQl9BqDTbayLnz4wR+pEqnHY5hxlBbx3pDRY6IsBInuMRI5H/vQP7AZyc4SjF+k4ODeoqS2/C39R9s=
+	t=1744008404; cv=none; b=Olt21WIHVTvjKzADNt9VFaN+zMityRrKy9ztCq8I1vqUulOcUIt+v8A1k1gany7WgmdJUTOoRBFvtt6Is0kRdn+ZPgs/t6JaM5G0D2Z+BX4tBchjkU6A2yTjRo7YvPc5dxh6WXAeKiAvn4yiAeMWUwK+dBMDuSiRyurcvjsbP38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744005902; c=relaxed/simple;
-	bh=QdlPTuGFDzHLTqGSHvpyqeL+wyYF1szxTKJZUAoSyAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PM/cnrdzoURnsgkt53FSwMe5AaY5y69EFbuh4bf2Bv9iEDgL8LQ0RZq9CUA1vbaAutoj+xaIddVJSWw+Hd3T3y0SO0n3OC/0j3QE4kTEZ64N2txgiBIU80UDUPJGQxPFaVg2OtVaPPjHfo4Qu9hooXy4LZn0efsQPlBzfB2qvsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLHkWsYj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744008404; c=relaxed/simple;
+	bh=QIQBNikOm9JQVuL2m9gPJaSBOUZpZSxyQALLn5fWLdg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gKmQbuGfJmkofAUgmkHd1BbH7+LG9DjRZ0p2ekF2wwOwQK1KIHENbbtFxCbZ86Ma3IsCIM5B2gszcVOuf7m/Crq+8QLp7etJJT9SRnIOgr8wIP+YWh2QxKxOQ4CB+fI8kh2ehGSl5PfU3XziIb4mCazXAA0Dhs1JCwJMS7e8Vfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SGxs1oDo; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLHkWsYj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A1E6C4CEDD;
-	Mon,  7 Apr 2025 06:04:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744005902;
-	bh=QdlPTuGFDzHLTqGSHvpyqeL+wyYF1szxTKJZUAoSyAs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lLHkWsYj5spzqNUuH90Xd8qyXgoOZloNmjJ0gHK4EvJvTCrNLAwG+3nIJ1Y0l7CuZ
-	 8mUzIFqjh6IqSYAnZFL1cUspFhtUhYFTsJ7Dja2j9XI2Gg20dwN9Dyx2uxZrv1fQRZ
-	 2gcqVR2csGTopegBDIC3qjkr4RVCKJOGV4m/9voKS8eYYavf86BKA7FFRwKTnKznK2
-	 /rDyDVzfe/HHv7a42+Iuw4CxJRwpkRSe3JU8w96H5SsHCwSHvGktXSzNUeEwdWC63c
-	 w9V+Q4gQkFmABRMbrJbUEiNiHKAR8X4QFDRjrgiQOswgD1hY1YXbrtt+okKtKsU7gn
-	 oCjUqy44ya8Kg==
-Message-ID: <befe7d30-1727-4540-9072-f21ef96ea504@kernel.org>
-Date: Mon, 7 Apr 2025 08:04:57 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SGxs1oDo"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39973c72e8cso440398f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Apr 2025 23:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744008401; x=1744613201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5u5FktG9IlugroLpcsECtmu752LY+bRbkT7BdZa6KAc=;
+        b=SGxs1oDobn8d4axzhEnRMDpTuLsdRfpIfco69wNiXFiCi86DJS69/POirupHAxw2CH
+         8MSGEy9oR7ORBEKpRu41AGyxPstfsHt7Jo59VAgOTV2OrnUh9BapfEMBsDPrQ6iNlVJK
+         LI3OMxl1OoUgnKQMsMIyIZSuls+gwSnIx9yW1ycUt5i6w4enZKHRTg7/iMHPDcZIDB3+
+         ps6DSHgdidPydMP6LxmzZuZoZVp/uukfAebiZstmhwbDkSsw7FjfVhf3Umn4eeF+syji
+         gTO/KTRz22w2oASggXDj7t3o0qlespUhXNU4qdSOyiJZHktc7MxhKaFaOPC3BowdbggO
+         n/QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744008401; x=1744613201;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5u5FktG9IlugroLpcsECtmu752LY+bRbkT7BdZa6KAc=;
+        b=AoiDYxL3Djyd1XiQLqEpWlyiStuRtmHxkKCQJ+VZmHiHJqWArDYc2PEHKEeXqY3Rcj
+         ZG2ZcurFMI2BfNyQhh5mZkxBeLzDjwtRoqOu2kGxU/d71H5QaLvB7sYXxjigNAkNsvGr
+         1Q8AkKVz98ZgRydtN3i7ZeGPbxnHaBV2TrLkwdxgORU1b75PuUJkFbI9pMGyUgHsS8Ww
+         Lm3fmSqA/Kb3cU+fdVgm0lJONkdE9U0mVeOXvUfIUTYdCoqLsN0LAzBPT4oeFW6QQg50
+         NgHy4d5iZ7lx+H7O6sccAk2CQNQaD7iUyTRMZQCH1400W5RYvAkmm+mnhh9NimNkDxca
+         4tJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzDH7GR7kI0augJGw7zc3Vo8HbI75v8rQDBklUznHKs63bldHyXy44GlaF308/iDiZilhbvS3wOywlOELvUq+A6w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy0tTJDTsriri08P0qBE3gapsrcRHRD6fYzs5b59RjEP335+LP
+	bq4z1dY7/P+h8D1Mo+xTCuhFZMqcvR3Wlv+Kj5OFvd3dC+9Syv5JCKgEEgDeVJw=
+X-Gm-Gg: ASbGncslhwzwA+XuKyWW6+5IsXjLDgorbGH9O96RiWLgEgsRTbvhajz+yg0zIojIiHt
+	pm8AtjnVsnVnc1jmKzLrfsiINkO5wy5Ois/9N3rNtZ2TLrt3zp33P5mgsnlQsY1+AUvyYMf/PJR
+	indmLzdpCPthFplenqVC0/PPw046LAA6lt0gDh9Lb6gegbL57HkrOg4LnHKoIdyskOqCdUL3aSu
+	Zywzsnhku4ST/zIlWrjqOUUFwDgDlVc/RzcbG+Y5m0WGZ442dB/tyN8V84A51mmpXCDPullDyuz
+	94ngYVJrL7iO3rFXHEF/0DtQ2uw7BK85DjNDX/7nB7nqEPFxd/TIrH6o7sZ/6AQ=
+X-Google-Smtp-Source: AGHT+IGqmlxqnNGM23w6BRI1UAXmI3OhloB05XrhhY8e+PLrXg++1wpTvBi0oPkEaf9kaYA6FPVh9Q==
+X-Received: by 2002:a05:6000:1445:b0:39c:cc7:3d3b with SMTP id ffacd0b85a97d-39cb35aca60mr3056611f8f.8.1744008401279;
+        Sun, 06 Apr 2025 23:46:41 -0700 (PDT)
+Received: from [192.168.1.26] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226a12sm11031276f8f.83.2025.04.06.23.46.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Apr 2025 23:46:40 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com
+In-Reply-To: <20250324-acpm-drained-rx-queue-v1-1-577774335151@linaro.org>
+References: <20250324-acpm-drained-rx-queue-v1-1-577774335151@linaro.org>
+Subject: Re: [PATCH] firmware: exynos-acpm: check saved RX before bailing
+ out on empty RX queue
+Message-Id: <174400839995.38188.1104536537739192922.b4-ty@linaro.org>
+Date: Mon, 07 Apr 2025 08:46:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
-To: Faraz Ata <faraz.ata@samsung.com>, alim.akhtar@samsung.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, suyash.bitti@samsung.com
-References: <CGME20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80@epcas5p3.samsung.com>
- <20250318075635.3372599-1-faraz.ata@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250318075635.3372599-1-faraz.ata@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 18/03/2025 08:56, Faraz Ata wrote:
-> +
-> +		usi_17: usi@10d800c0 {
 
-Messed order. Keep nodes sorted by unit address (see DTS coding style).
+On Mon, 24 Mar 2025 12:35:41 +0000, Tudor Ambarus wrote:
+> When we're polling for responses and get a response that corresponds to
+> another request, we save the RX data in order to drain the RX queue.
+> 
+> If the response for the current request is not found in the request's
+> iteration of the queue, or if the queue is empty, we must check whether
+> the RX data was saved by a previous request when it drained the RX queue.
+> 
+> [...]
 
-> +			compatible = "samsung,exynosautov920-usi",
-> +				     "samsung,exynos850-usi";
-> +			reg = <0x10d800c0 0x20>;
-> +			samsung,sysreg = <&syscon_peric1 0x1040>;
-> +			samsung,mode = <USI_V2_UART>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-> +				 <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
-> +			clock-names = "pclk", "ipclk";
-> +			status = "disabled";
-> +
-> +			serial_17: serial@10d80000 {
-> +				compatible = "samsung,exynosautov920-uart",
-> +					     "samsung,exynos850-uart";
-> +				reg = <0x10d80000 0xc0>;
-> +				interrupts = <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>;
-> +				pinctrl-names = "default";
-> +				pinctrl-0 = <&uart17_bus>;
-> +				clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
-> +					 <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
-> +				clock-names = "uart", "clk_uart_baud0";
-> +				samsung,uart-fifosize = <64>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +
->  		pwm: pwm@109b0000 {
->  			compatible = "samsung,exynosautov920-pwm",
->  				     "samsung,exynos4210-pwm";
+Applied, thanks!
 
+[1/1] firmware: exynos-acpm: check saved RX before bailing out on empty RX queue
+      https://git.kernel.org/krzk/linux/c/2908ffa53f8ed487ab4285635c79d4911cced93c
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
