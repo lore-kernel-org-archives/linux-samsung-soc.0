@@ -1,65 +1,65 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE4B225403
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Apr 2025 07:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442BF227BA9
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Apr 2025 07:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744009772; cv=none; b=UOLKm14plk+V09zebGulw2DtAKb7cKNmqF3Q8ZNQAF02JLvACFAa8lDqSfnulq6ko55YDfZ+t3QLyCBGyNSCE4AzwT9Hytsopnqmde6+q/lcZu1T6StVPy9I4yM6PQ0IcXuRPrWaXcWNDz/hAyHAaHX8dct51AFhPltX6nnoHpY=
+	t=1744009776; cv=none; b=us52HcKfONhg0G0IDUz6ekklkCljoO7mFkoNwYzPgqqbWFJaedbHXnK26P5/CYpOZJIdfdDdlsvhr36auo0Sd7hRAoLWpys9JMrpbmZXsBP612oPheCH01xAUm+AfJJkQTtdPndZ5gZE+PhapsidzasM717Gid1d616cF+C0/sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744009772; c=relaxed/simple;
-	bh=rI3gM6wyr+LS8B0fWYZHHkyFOI/0ZbvX5npXKPrWiT8=;
+	s=arc-20240116; t=1744009776; c=relaxed/simple;
+	bh=Xs8kT13TgDgVr1qQQSggiPnN5GRLN0/V9PojPokFU8s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IWZgXu3+eGXPOa237jOMT91RtnZCIaA2FNeQFc5zZRX37RFZCfOqYgQQ1Df4XjJKDKQs02PtzZmcLuLYymA+CgtLhypYTN/BeovbZqLgQLiTT0fX+O14Ii0HQZX2NcksLrbJL1AkWZVU/NP73+a+pzhEQxKtbR2BeDTnwcz0QYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KHgeipwt; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:To:Cc; b=JT/NQJaAX7BbF9pGLUcLDND2riaajQL6qNSRrDegWIoEsz3REBsxsF+VENSacYnt7NTUxNC1OGnhFrJKps8ubsemcRbjABJUTLzOSOSpJwCVYnsV8+TMW7H0e+gX3bZn1wlrsxRSBilNv87Cc6isRctbq+PclFvz4t+/zr9bYDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=y9qsAOZE; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KHgeipwt"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39c1efbefc6so2168795f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Apr 2025 00:09:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="y9qsAOZE"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so25552705e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Apr 2025 00:09:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744009768; x=1744614568; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744009772; x=1744614572; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mKHBQhlPmU3j6804TJoiY+lijz2sviuHoc3u/Cr+n0I=;
-        b=KHgeipwtVFv3mYwiYWPvfhiHqpBJmAGyZfKFvXY8oZkzOgMy/QO2HRRh1+K18Qcfc5
-         xdcoa1i4hh5T891v7nCR3UpuFpBuV0Y89WtlwTKBnL4XS+kkDE+BISts2656qHUN+kaS
-         NHG+AAYXRyz/iLZ0EYtZbggOUdLNOfpyS2r9obCIGRnPa45IkwFLu2ej+wtMzu3Bu2Cd
-         OzAJYNvP0ouX1784XnNg8UNuX3kDY2LpiOJvvVQ2H3ImA6yYdiDXmftsMG1m+gLXxWuo
-         IXOzDijckEorrxQ+61Rvs6o59ij1qSc76q6+H5OcXzS5Sl0manicJrTdd4Wi3BtjSLK0
-         OFjA==
+        bh=HsaSC2HaVJRroJP0HwzWYTmvmXosq879cETOeyvqI4E=;
+        b=y9qsAOZE3aXcGVeE+keirS7xSue1e0qBvX6PiZvBhYZ5MnHNWyETOlBiSah0TbqTzZ
+         +aPBX2p+irUYpJUmgTd0GhOtp6GhjzgcU/409BQumWNt1/3lPu+NqkL2vy7l4WWKp99J
+         BQ7IVAy1R6bCTbsUSJhzcfWfJKtedUrszE8IMZ2/k0Ips8k1/NBFhftdhilQWc09pwOa
+         aywRrHm6qwqaHXfGiWQaeQlq5y2vUZMjtrX/02MdvgLpzk9TBquOg2lIVZyv5IYbncvo
+         DjXmNapHLAptvOqew2jVZgtCAbHRRFGurCL48sAN8bKQ5kxSAaMFPLNuFmO0MkGGsumn
+         JSvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744009768; x=1744614568;
+        d=1e100.net; s=20230601; t=1744009772; x=1744614572;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mKHBQhlPmU3j6804TJoiY+lijz2sviuHoc3u/Cr+n0I=;
-        b=ivLsTosiORDiygbgWxWeTBH0D/S59aP+E0xXUkMPOJPJrITaNAsuQzLnVsI8siqxse
-         QB+7Xe1E/bKRZfwh9Mn0o95YDOzoFlU+OPJX0Db3IZaG+hSPx0W08+CKPU5snPNSdm2e
-         XLXM0Vid3DaxLohYScr9XaBg5iHaD4OwB2NK5kKSFoeCXOJJE83TmFTcxXuGjgIyW/uS
-         /XxavwjdQhm8L3Mg3+1WPZvS38ZzFLjrVpw3t/pPa+QMOHjLD3cpgfyFzA5RHQVylA7a
-         rGei3EVYsN2vNlBlyUG+4yt0UfgeppfB2JVvZ3SAy/ehQVS/ymGOIho4phAf/bSyRPB1
-         6M6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWlAvmZsdKkWIozOWPCQjI2VehfidGVj3Xr043oVMDuEX+sS/jBP6ICi/+nbIExr6yZPCow1HfdWOBsqpUU7Edz3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVqmp45GpIieJtSpzn2LXLHVp+fdN0HrMSU8RnuI5+yN/Gszs/
-	nSl33U7VPGaOr4FXZmmk1XjxewbzNz6O1x7GwxWHr27KuMLBJCEfgWK4ViGsr8w=
-X-Gm-Gg: ASbGncsCHUC+uOwNsbH8yFVxn3tj/WHzLjkkrB2yw3qdT1eQhwu7TLdCc221NFgRpI7
-	d2pMazVBSZRcTkeMMxRf2DarbGOgqBrk/XzkS+VAzSrNx2MBlikeY2nfxpQpKx7FaENXtCdSjPj
-	bhct+8nX2FBNK3dlVVLChXUaLyOKuXNr8F2S/cpnlY2he17eQbY1LkLNB4m9Fu/uRZMtrPIfQ36
-	BhatUWLVvClXubpmEVtGJfUNfRl3DEURJ0yCsjF8b1txDdm3iGaVDWnYGiN+XqrIAmidsWsZ2kB
-	lLoMOfIFzE02UNWn3jZy2h4RI16S4EWIGBA1JyKdN2H/uTxn
-X-Google-Smtp-Source: AGHT+IEOVwEvDvK/VaX877azSHwhGwB+qG3k0uZPl7enDJ5MXPhr/6Jl2r6haw04RdA5keAMOfMCAQ==
-X-Received: by 2002:a05:6000:440d:b0:399:7f44:5c74 with SMTP id ffacd0b85a97d-39d6fd06920mr4321098f8f.55.1744009768449;
-        Mon, 07 Apr 2025 00:09:28 -0700 (PDT)
+        bh=HsaSC2HaVJRroJP0HwzWYTmvmXosq879cETOeyvqI4E=;
+        b=gMwvyutnjfK9FJZm1sol7+SmncLlq7jWYy0PLPOz0hLcg16lAtfQeM9zkZIUi4wejt
+         L1Yp+o/KE+gGQHJFDqaBiOStElq45Ua0q4ymSPeBnl4NM30gEPh6SV4vh3itw3mdstA8
+         iiGq64B9nI1Vp/s8Blq+br7VJFzyjaGebojpDF7YOsKHyTdf6fJEgETMILTnqUKgpNDI
+         o5aIQE+2izTVSha/TEPwYqqUdp2XMEIj34dU4mCvVd9dZWcLYLT8EGCANh5MYhiKfrdQ
+         pSVCdmT0+K4vE5W6xnLLtpVlJT75Lq5NN/YB6mBm5olxGtgxjMCxFmXK31V4PYnonkyw
+         MnAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXItL6fPrg8bHP9RaFmWIqVZqc9kMsxdt5v7lpZb1aW+XHiv3Ape7KkEtbWJimeSnHa56ks7ETDgd6tczC7+yBQlw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ+Qtw98quOrzGgNiUX4wG678+VJO3uHkSGDDF0Gx26g4jk698
+	Go6dlF31CJzJI0M4bq1AX1fLRPrNCNXnFC+O8zoWbRglPI1vYLE0HPCP1fh9UeQ=
+X-Gm-Gg: ASbGnct4Ur9DrVvB493+ho6Rno3OgxJB+qd1/u00CaurJNgr8gG8z8m9HKNLFlY4b4X
+	kChb1mPWkEP6AUtXRqO2cYbKU7s1XLGf0cwXQ2fy9p55nwBbZlTyOn7pBW3aEYf7EIXFVxtGRiW
+	hvYqbvKAvfzHN5rVpmc5WpzkVyeGF0MKmeAGR/ebWx+bYq0uY8cvXrWyuptJyej4aIhue4BdEms
+	2/cq3jahqYMoox0Qa8yfl32gMVzbZ7qEPvRMprmxgDVNWgis/D0h+Ead//zMqi/Q61vNj92AxM2
+	GqLcrcADmL/BgIbi80KaESRqXbAezdvfXxHUhg==
+X-Google-Smtp-Source: AGHT+IFoq+Y3x3L+TzUAPfnpayxhMl0EXTH8ChvoeKZsiBjolFAg72wzCsqeqv6HGqtEWqKDzyAzpA==
+X-Received: by 2002:a05:600c:5394:b0:43e:bdf7:7975 with SMTP id 5b1f17b1804b1-43ed0db4aa5mr81239825e9.32.1744009769231;
+        Mon, 07 Apr 2025 00:09:29 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1663060sm124622795e9.14.2025.04.07.00.09.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1663060sm124622795e9.14.2025.04.07.00.09.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:09:27 -0700 (PDT)
+        Mon, 07 Apr 2025 00:09:28 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 07 Apr 2025 09:09:20 +0200
-Subject: [PATCH 3/4] ARM: scoop/gpio: use new line value setter callbacks
+Date: Mon, 07 Apr 2025 09:09:21 +0200
+Subject: [PATCH 4/4] ARM: s3c/gpio: use new line value setter callbacks
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-gpiochip-set-rv-arm-v1-3-9e4a914c7fd4@linaro.org>
+Message-Id: <20250407-gpiochip-set-rv-arm-v1-4-9e4a914c7fd4@linaro.org>
 References: <20250407-gpiochip-set-rv-arm-v1-0-9e4a914c7fd4@linaro.org>
 In-Reply-To: <20250407-gpiochip-set-rv-arm-v1-0-9e4a914c7fd4@linaro.org>
 To: Andrew Lunn <andrew@lunn.ch>, 
@@ -82,21 +82,21 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1649;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1523;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=ehKRyvYg5rUoJTMfe9/Qu0Sq86m2y/6ATgEJ9xwP4+c=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn83ok4MKKf0abAA3OAYKfP6+RbRvjSZlJeEPjq
- onYoqwKNmOJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N6JAAKCRARpy6gFHHX
- cg+gEACBTJJGVlRuVE35u0vd0TPLco/EUqtFuji2MMq9tgOsFcm+6EyEyHEQWYwVXELmtyi+pgs
- v47ssFCyjuUpRiTQuoDAiz+kNGhhbedC/Y81QS9HhmIiqRr7+4or1ntC0EF6w5bDaCJ8czd5b1u
- r+uHTdRr3K0PH7leknEkF03e2e8FaUoC6DfVhGDgiKSNujP+zHMI7CTLP1CCLMw6Vni4z5rnZ+B
- DTtwtPu/nStaMeYbGVVXdRHMfuzLqGHhT/vURx7RlT8x4ozmQCC+hRgjMeokIALearKmc9fxYGB
- 6mLjyWbGDqlKg7ewiYLhs4/hVQqxrveH8fwxGUhqb9gu761NA6BXH6uqRGupXN1Yfb9bQBJDv0U
- 8egk07IK/MjZ3r1pBfvICWR7mPPe+WPaiEIZYJdVU0FZr3n5qbj5Cvx3cxDbMawDkChProIlGKB
- La8MSZeeryoNdDhNqBCuTQDl5LzdUCQEZgr6a750ft2Lx8NJRckIBa9+xlwydt5/Sed6G5FqBtj
- mb8BBh21dARgYpr76EntXsciH5RifmwOuKMO8WhVzLwM920GOuBCc0KnVZjgE3BBSRyLZnjsLEj
- S6Uy6Iibd+lHLM8ACyvhERmG9VK2xhyBVzAKzEjp7D8UMlGaSjXznkrvHdePu3ybRMH4hftvDol
- VtUkDFktum4jREg==
+ bh=abv30zYA5XuyGwoeP1ru48ZEwjgixTtNG3nmu6YE3a4=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn83oktedBQx8pZUxbFWhdPQr1mhvAceAMNekvM
+ eg9/SFm5bCJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N6JAAKCRARpy6gFHHX
+ cr4uD/920+W4HTn/DythHwMtCVrHef5JpB0YFglUyOJ4l+wrZNhV0VZcDRiw3F4l9uygDSEhyso
+ biZUtfnWodZkYBVGq/dILl7oXl7vF8oWyBJBOzWK3dQxlFdzjiwjxS61wFDTiJtDqrwoHDBGvTP
+ cdZzcOKwYrcWrxD1m8tsHEr4sYBaocCBaMA2DwOBsmTMuwLcnEhYE5HaoI7qjMdz+F5QjH+F5lT
+ F4ogzhuGDbEZ6J5R06tmUkVr48izLrPyCCplJRhaREIq62mx+mTilrFqFpqxB2iDdfr46vmCzuJ
+ 7xIvHs5P4COrgPm6/I5bKr+h3+1VzO7HQFBoDKY2Xuzejttwa3sTTD2RzFuKJiHYYkQM0Oxw178
+ Evb4gwQE/VxyQWocnlavibF52tIaBu3yLnHlf677OVaESjEllEOiw4lWfYVjj0vfVMDeR1OMO1/
+ +KBoC+MsYFiv2hkzvDRonuAMQITxCp1ygc3x2w6s9X7KYWS1CkudDWlCs/NRSMobunZUcYUkspl
+ nsvorsS0oxCLJ07Oetc1JL7Q7A9uln5YELWlRQEIIT8hUBtLX7zVdJtvH6QwPqg5flDaNLjrTz/
+ O4tqaQq1mIozfl75z4Xn3k4+O6OudAZzvKN7VnXBJAK8HhrKrll2cDu2DajhxBcH61elXnqtFyn
+ KFr7Ne2L2ryXdeA==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
@@ -108,41 +108,42 @@ them.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/arm/common/scoop.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm/mach-s3c/gpio-samsung.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/common/scoop.c b/arch/arm/common/scoop.c
-index 0b08b6621878..2d3ee76c8e17 100644
---- a/arch/arm/common/scoop.c
-+++ b/arch/arm/common/scoop.c
-@@ -63,7 +63,8 @@ static void __scoop_gpio_set(struct scoop_dev *sdev,
- 	iowrite16(gpwr, sdev->base + SCOOP_GPWR);
+diff --git a/arch/arm/mach-s3c/gpio-samsung.c b/arch/arm/mach-s3c/gpio-samsung.c
+index 87daaa09e2c3..ea496958f488 100644
+--- a/arch/arm/mach-s3c/gpio-samsung.c
++++ b/arch/arm/mach-s3c/gpio-samsung.c
+@@ -430,8 +430,8 @@ static int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
+ 	return 0;
  }
  
--static void scoop_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-+static int scoop_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			  int value)
+-static void samsung_gpiolib_set(struct gpio_chip *chip,
+-				unsigned offset, int value)
++static int samsung_gpiolib_set(struct gpio_chip *chip, unsigned int offset,
++			       int value)
  {
- 	struct scoop_dev *sdev = gpiochip_get_data(chip);
- 	unsigned long flags;
-@@ -73,6 +74,8 @@ static void scoop_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	__scoop_gpio_set(sdev, offset, value);
+ 	struct samsung_gpio_chip *ourchip = to_samsung_gpio(chip);
+ 	void __iomem *base = ourchip->base;
+@@ -447,6 +447,8 @@ static void samsung_gpiolib_set(struct gpio_chip *chip,
+ 	__raw_writel(dat, base + 0x04);
  
- 	spin_unlock_irqrestore(&sdev->scoop_lock, flags);
+ 	samsung_gpio_unlock(ourchip, flags);
 +
 +	return 0;
  }
  
- static int scoop_gpio_get(struct gpio_chip *chip, unsigned offset)
-@@ -215,7 +218,7 @@ static int scoop_probe(struct platform_device *pdev)
- 		devptr->gpio.label = dev_name(&pdev->dev);
- 		devptr->gpio.base = inf->gpio_base;
- 		devptr->gpio.ngpio = 12; /* PA11 = 0, PA12 = 1, etc. up to PA22 = 11 */
--		devptr->gpio.set = scoop_gpio_set;
-+		devptr->gpio.set_rv = scoop_gpio_set;
- 		devptr->gpio.get = scoop_gpio_get;
- 		devptr->gpio.direction_input = scoop_gpio_direction_input;
- 		devptr->gpio.direction_output = scoop_gpio_direction_output;
+ static int samsung_gpiolib_get(struct gpio_chip *chip, unsigned offset)
+@@ -515,7 +517,7 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
+ 	if (!gc->direction_output)
+ 		gc->direction_output = samsung_gpiolib_2bit_output;
+ 	if (!gc->set)
+-		gc->set = samsung_gpiolib_set;
++		gc->set_rv = samsung_gpiolib_set;
+ 	if (!gc->get)
+ 		gc->get = samsung_gpiolib_get;
+ 
 
 -- 
 2.45.2
