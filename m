@@ -1,71 +1,71 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264EB26988C
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Apr 2025 11:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C06326A1A1
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Apr 2025 11:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744113575; cv=none; b=T3LOD+lnfMp2Vyv1WurTMEdnw6ZnhPHafoRpdDysBha3OfyeM3jkMT11EQpaU4tQFdgt9b97zv0B/GFAvufb67WxMcz05u3C/qD0iZg76QlqpbqtZwo/ZUfl4N7Kh/iS0TM8ZFuK28JBDVLfsR5H5zGLo+Xa0Up9VZ0KuoGq+QY=
+	t=1744113593; cv=none; b=vDIiG9D1TYQ16E0JfwiHvF1XM51pYPtvtmKQZ0/WwvUasUHwj5yhOPm7s9j0cCRnN1LV+hTGfOKc9Prj/2/MDeld1a7FfRR4njDIju6iA2RkjHMNEiwfSPX6CPnt/HEI0OcvMLBs2rO//3WL3OoAJnAi36otcBKkPKmFQNGYzeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744113575; c=relaxed/simple;
-	bh=6Q4B7GpyPTFBkWAifzFqT2Yt0K6BppXaJfVIu5w/IjI=;
+	s=arc-20240116; t=1744113593; c=relaxed/simple;
+	bh=O/+jAgGAxbyjXO4PAZC5MX8LL4I1nO1tb+Jf+oRpypY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4Klf60MQClkVKrH/ZnYDZWhUWLCsIYbStM8j9nyy2zeY45JbfQuGIZNbJGyoa/OYCNOFe+/rw8N2mPiIeI5WqQrtCaslIcJfh0jXDP/L0wY9k1wWoKr2MQ80k5GxaXq3us4ddI5NDJ6hpCZUWXFY23rUTufOjEse9wscvU2sew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xklge4he; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=IG6MgVn6fjfgO5xu3iaHpmZ2zxLqiQaIQODj9Fw2KG6cA2hLEKh9T4/HQyyEYbyHrQMhVEZpCie6vIvAe1n25Fa2PElAb0x5Mk/hKARPe/f9NhhNHDGnru6Vx6PtRi9EQAJaME7XWThKnFm3Jd0Y+P3vIFu4HKELW2e8PSWxehM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kAsOPgkP; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xklge4he"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538BliNe020165
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 8 Apr 2025 11:59:32 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kAsOPgkP"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538AxoMH027665
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 8 Apr 2025 11:59:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=NEuaNgipirFcEWokWSaWAS/H
-	yieGaYJXo6f7MVJMQQ8=; b=Xklge4heqEb6htj8B5O7IHd428xO57ftGWanUiIw
-	mR4/sOdbi8VjXnwUa/ND193G+DoZbkPHxW2lv0gGqWArKaC4QvbiMDqbKNYNn0RF
-	QVwRWcIUMVSe9xonU831+uYGwXOTZ17u7ZTIoMDhD7tO1bEtxkzMZZ39nOSo7AwW
-	w3Wg1ispeItWnd1UvoIbgN1aDTOo/NYdJhqKlDXO0EFK5isRGO7hg2LaSSEawevu
-	ftk6T7ByD0kTjgLBRvUix5cFS0MPr2WbshmO3ILW20l4gSXfoXM3mfraDwCcXWXJ
-	fQytu+NoPZiBJqSR3yhMlc9oLW4/uxFhMHFSFd23bIDFqQ==
+	:references:subject:to; s=qcppdkim1; bh=J5UKc7ae/UXmKHiunvfff8Ov
+	kaw6Ua5MEgH+S/e5ZyQ=; b=kAsOPgkPIbWTYpxxLnV2o/tiI/3bdehvaBEoCyZ0
+	dKGf+6HEMV+mOXtQg3TKew5ae8DTSn+qdcXvJtxK8ge+EnSr0tx+sCis1veuSQzg
+	3edDDEClKZRUG3Frlttq3EXW9eGg6Cq4X/qOzYcAUEzeYFIgmgXGz/jg2tCX0Qeh
+	VWNmF31+A/CHv5/qZ4QGp8dwZPB7U8WGPeLlfGkV1qCdeh+Pr9a3vvCkTGjqRHjf
+	xF2zmMvSqSQDEiIKdecpulOEdxi8iAwxtfFzVa7K2HvKyiTWyAFBTNH+DWP29d2W
+	vg8Y4qTFoI8b2c5ttNqjBRTpAkdNMdU6PF+BTUhr0+c3xA==
 Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twd2qn40-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcyynwe-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2025 11:59:32 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5c77aff78so1607419685a.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2025 04:59:32 -0700 (PDT)
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2025 11:59:49 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c54767e507so919044685a.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2025 04:59:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744113571; x=1744718371;
+        d=1e100.net; s=20230601; t=1744113589; x=1744718389;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NEuaNgipirFcEWokWSaWAS/HyieGaYJXo6f7MVJMQQ8=;
-        b=ncleXW/dXK+xqorV05brrXWF096XD5/SXzoww37VawkqWVEdw3nvSHT3/igboglt8A
-         VfFQl0iLRqHtZ9tAjYEIAunBVLa6OenKbC2MwFg3ThzEa6Lqn1y53slwEo2e5p+RUquT
-         Sff8hpy2MQxdjGv6zwg/IBMSd3chspRwth/vYfqRfZ3mDt/GSSVaUHxXzyteV5fyZtga
-         W648wkD3Z44HQe4R6r6T50tE9h/zm3OkcBro7ON+APNQ5HvuskO8DEe7139yaCiDCZr5
-         YPIzxovpddW+TSYKJrNZm2MA3o9kpUark22o0a2gNpUKCG2wfCfrcrKHibq88FkdM5ds
-         ZV0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXO1XTiQtAOPupX+mCCD6pwCAtQZODSLkGQduefBv3RVy6D++Nk10sl4gOq5gUsa6/GiZT63zChLRokrirFiF2oYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlNMaKJNZNISBALT1MuvbiGSZfhAq/6p0jFZy6QWlnYT19h1WJ
-	yKj2jje5Qd8mzLquHkuXvaoU80fcOTuKbc1qwIbLZxxcw22YdU1PNEv5esQivNXFqzEBLWjw0zr
-	VTr68jQw4ZiWUCFOxZvG7zsACbQsw/Myby0NTEOKF96R5H8GetMjjdUZKHJojwggWtVBGDg==
-X-Gm-Gg: ASbGncvDEWuOLmtWnu+FUtirHU7nD8R6m9g4ZhsRQMrvw9XnPTsuy7xEznB+pDBqRxv
-	HBdc8G8KVJWSJbXDSCXMy6/6zbmGZQgiEZlcGUMP6KdQ/zrtZCi0aCGve0QTlz1iWJ3SYvPa6Kq
-	CIqle4jmqFOYE+36PJWV89JSQcZ8nYJf7igbArCZDcxdDm7jlFFYFhSINDLXOg+IN+TfH64huZK
-	ijeYQ5k7hQ8qnP5WiVaaStFmRo1NM3Xyef0Z1/bAZsBqasU5dsUJOYweqsIvVikoSJOqUKIFLe3
-	lbix1+gu5BGnt/jtKL3bJBeXK+6RuJpXJ/jRJeINC8K0YqxFnutNKIj1eMqikJoi44I/7CRD216
-	4v7M=
-X-Received: by 2002:a05:620a:4452:b0:7c5:5d4b:e63b with SMTP id af79cd13be357-7c774dd611emr2077709585a.38.1744113570947;
-        Tue, 08 Apr 2025 04:59:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEO0pdqrUOojsKZC0LUZebfwayX/lBneIGD6ckCJRsQXTk8bZ4JOWxGmFcuR+OIU3QqcGFMkQ==
-X-Received: by 2002:a05:620a:4452:b0:7c5:5d4b:e63b with SMTP id af79cd13be357-7c774dd611emr2077706885a.38.1744113570585;
-        Tue, 08 Apr 2025 04:59:30 -0700 (PDT)
+        bh=J5UKc7ae/UXmKHiunvfff8Ovkaw6Ua5MEgH+S/e5ZyQ=;
+        b=MKHvVm+VFukU2A6+6aT/OxyDtuwLmEpp91V0G8gdEYAJRtIyKsH1J8S0D6nE5fhUG7
+         bzOFkM+n6d48AipKMBTJPwtDkjJMrJktlqVgP35AgUSx2m9XTPRPnYsMP0lzkXOkIbFd
+         z/rOIqMTTa21LI6fghkhL+FX1Mv0q/WVh+0XVx7aUiza67neFC+kH8BsGDCjteOs/OIW
+         eqo27X6uKyIENUJeTWsJ2va4II07q87x0fZefM0yBJX0Z7hHsC3kVnG/Uzg9pN0rXalx
+         W0tjQnghqjbLKRWM/X+Mth9fKD0cttCywBxmiy7wdb7cj9ax0DDo67XqJOFr6TBsGHan
+         TTYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsV9sGGkw16T/YdxO5yzIotu04FFEd7o56k8zQNOjGAQztfCA7Ee9HGHemkfkXamTJQnhfrQNiR6W9uS76XHU+lw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQwJo45dv7/PpL5JAjX05Ad5duYwxDLY+RsNmX/DTkl6w1Y+DW
+	b0hmKEjOS83UCGXAB3IN4B1jGdc1WebL3vR3bl8RpIrbcdc4hUGOiHEeKBKhaC31YKGzCgYd5g/
+	dmrkIcJCeAVZshtGHjP3ufVAxKO8AC/BmBG20pXZPLJKq0E0l42wjWdOKBNzhSxug2haqyg==
+X-Gm-Gg: ASbGncvGfYu3HUv+Zfznoua5OPIATgUJ36Or1xALn+EGDKO5Z/CArZMklJM45aXIlnb
+	Y7+rSh8WHGZvaEruEAe33AlMMStfL+fHf5ylna3RDLxq8UEyvKUygD3B1cbNYBqiUGpG6m2JR9/
+	8YzShv7k8j99Wb2iILWVF8woOWscxMrzQ3NUqjd4da0mNi02h4gM7zwHdaVoyIFMqyJV/2+YFQl
+	oL9DDExhgGGtxDB3i4TcRTJD8FC2bQbDbwK3rhtQMUaWI+2EOvERweCYXn3O8EGiqNP3H6b/Fbk
+	RvlokOXawAhMSt9LeGgN/bS70e8LWve2riQfixnY9Hd5LnfyvnYWtg4zFpGrlZgEwmzI+v3oLeW
+	IMd4=
+X-Received: by 2002:a05:620a:3189:b0:7c5:a513:1fd2 with SMTP id af79cd13be357-7c7759e8788mr2682365185a.6.1744113589026;
+        Tue, 08 Apr 2025 04:59:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLjG0AgWeS1WAQhJR3SCJI5Qh4YJ14xwCKURGmhWqtrP5XHH87RDOupWg+DezPfWGcaUO7og==
+X-Received: by 2002:a05:620a:3189:b0:7c5:a513:1fd2 with SMTP id af79cd13be357-7c7759e8788mr2682358785a.6.1744113588696;
+        Tue, 08 Apr 2025 04:59:48 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e5ab4e1sm1507877e87.23.2025.04.08.04.59.26
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e6370ebsm1479003e87.130.2025.04.08.04.59.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 04:59:28 -0700 (PDT)
-Date: Tue, 8 Apr 2025 14:59:25 +0300
+        Tue, 08 Apr 2025 04:59:47 -0700 (PDT)
+Date: Tue, 8 Apr 2025 14:59:46 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -101,12 +101,13 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         freedreno@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
         Marijn Suijten <marijn.suijten@somainline.org>,
         Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH 17/34] drm/msm/dsi: convert to devm_drm_bridge_alloc() API
-Message-ID: <megx72fwv3xljmimtftryg6ueusjd2f3wv37u2lstdrjt2vlyf@3w32pt3ozivr>
+Subject: Re: [PATCH 16/34] drm/msm/dp: convert to devm_drm_bridge_alloc() API
+Message-ID: <s5uvbdcv7pqogwg7gyy42vfxv3ubffj4ww7nili6sd3y67kdf5@byctauuurvwe>
 References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
- <20250407-drm-bridge-convert-to-alloc-api-v1-17-42113ff8d9c0@bootlin.com>
+ <20250407-drm-bridge-convert-to-alloc-api-v1-16-42113ff8d9c0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -115,22 +116,22 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407-drm-bridge-convert-to-alloc-api-v1-17-42113ff8d9c0@bootlin.com>
-X-Proofpoint-ORIG-GUID: HL-JSewXvZROHH_QzyO8klIEfylPi9zo
-X-Proofpoint-GUID: HL-JSewXvZROHH_QzyO8klIEfylPi9zo
-X-Authority-Analysis: v=2.4 cv=NaLm13D4 c=1 sm=1 tr=0 ts=67f50fa4 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=P-IC7800AAAA:8 a=COk6AnOGAAAA:8 a=tVI0ZWmoAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
- a=MqdoT2xZwiyagvIbdbwA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=d3PnA9EDa4IxuAV0gXij:22 a=TjNXssC_j7lpFel5tvFf:22 a=-BPWgnxRz2uhmvdm1NTO:22
+In-Reply-To: <20250407-drm-bridge-convert-to-alloc-api-v1-16-42113ff8d9c0@bootlin.com>
+X-Proofpoint-ORIG-GUID: jZdNJLxHSkLYNDUG7IwISVj-ApxLX7ow
+X-Authority-Analysis: v=2.4 cv=Q4vS452a c=1 sm=1 tr=0 ts=67f50fb5 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=P-IC7800AAAA:8 a=COk6AnOGAAAA:8 a=tVI0ZWmoAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=Yq7wtpIrRiHUN6cIw-cA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=d3PnA9EDa4IxuAV0gXij:22 a=TjNXssC_j7lpFel5tvFf:22 a=-BPWgnxRz2uhmvdm1NTO:22
+X-Proofpoint-GUID: jZdNJLxHSkLYNDUG7IwISVj-ApxLX7ow
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-08_04,2025-04-08_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=878 clxscore=1015 phishscore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504080085
 
-On Mon, Apr 07, 2025 at 04:23:32PM +0200, Luca Ceresoli wrote:
+On Mon, Apr 07, 2025 at 04:23:31PM +0200, Luca Ceresoli wrote:
 > This is the new API for allocating DRM bridges.
 > 
 > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
@@ -138,12 +139,13 @@ On Mon, Apr 07, 2025 at 04:23:32PM +0200, Luca Ceresoli wrote:
 > ---
 > 
 > Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Cc: Bjorn Andersson <quic_bjorande@quicinc.com>
 > Cc: Marijn Suijten <marijn.suijten@somainline.org>
 > Cc: Rob Clark <robdclark@gmail.com>
 > Cc: Sean Paul <sean@poorly.run>
 > ---
->  drivers/gpu/drm/msm/dsi/dsi_manager.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>  drivers/gpu/drm/msm/dp/dp_drm.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
