@@ -1,79 +1,99 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3210B1C3BEB;
-	Thu, 10 Apr 2025 05:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258861D9A54;
+	Thu, 10 Apr 2025 06:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744264359; cv=none; b=sjIDJgk7lCg4yfxNcj0Tv//GQBW3rSZgONbIApqhUQXQ3RxJ6ewIG2EYidSUyidASidBfYYMSHSqf09HHN5xOJU5DS10r3Ue3ZJB604y52A3mOzjnvII9l/Od+0vqR+kPurTb4mejUpvczGtVNo7gEhGu/e8n6yyDkGpFIqFjj0=
+	t=1744265916; cv=none; b=QDADwOVoYL26Ih6f2ygIqjST0CDlSxUsrCZS/JTpJO/07EgOhBiVe8oVH0Uf2b808VkW+4lPH+RDfwLVVoYOU2GORC7QOSyZKiy+dvhfFr8Ozolc5pSrUFMPL7M6Kqcfz0pRQKahgHRxe9jWvwZwN2CeKKltGKIdwkBi5WjxMNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744264359; c=relaxed/simple;
-	bh=LUW3f/3ooEUC5Ii2dNvbQ3vnVQNTFhnSLEa05vIJ+iE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j/beWCwPSEcdxuLZwPqh3K3d1qEaha7vgsFzMpOgb7stqU+YW91wJBLGbBNCwNA2SmEsW3r8WUQaQtZNutAvU2OseRAWhoUA2GC62sWyapXwPuqOtd/N7J1jZfa8/csebXfmVOzBrM/OOVd33D6ZHjqfzlcSJRBueM3pa64SiTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: As0fnxYxSp+ksbv7bZCSmA==
-X-CSE-MsgGUID: rFEIlZNZR8+GjXdpmE5CoQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Apr 2025 14:52:29 +0900
-Received: from localhost.localdomain (unknown [10.226.92.117])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9C797419AE41;
-	Thu, 10 Apr 2025 14:52:26 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4] media: platform: exynos4-is: Use of_get_available_child_by_name()
-Date: Thu, 10 Apr 2025 06:52:21 +0100
-Message-ID: <20250410055223.5048-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744265916; c=relaxed/simple;
+	bh=N/Eq3oO6cAKqd4CF4xM3K5jQF+XUdMLxEdRDr+rjO6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kkm8Ishd46sm9PWR4xCcpvK6FCtu3w3j7/yMQ6crfavA7uv5JmRe6oHR7rrVulR/y3IniyEUnGMFg3wVve/OvwIV9EbkOcrMOewv4PK7T3Vmqu2tVDuofHCFO2XVE7Eu6DrP3mC+14BDZq3VBtZt0XL/HTXQAjVcWGftehRcqAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgzaIHlH; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgzaIHlH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF988C4CEDD;
+	Thu, 10 Apr 2025 06:18:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744265914;
+	bh=N/Eq3oO6cAKqd4CF4xM3K5jQF+XUdMLxEdRDr+rjO6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OgzaIHlHHtE0k8XMPIzNNeKxfWMEWFu7Fb7zdKLcQserP3WkyzcrpRmhCueuk2Rlv
+	 M7RQlkWqOlBxJl/Okb0KGD1CfZyFjcANp0maFk15EgzE94lmCUe8QW6syR9i6rP/fs
+	 19IBb8kqDrFCAE4RnLNRegJp45caw01cAbwgibsXB8BlIEfE4i8QAmr/Pisxur8TqH
+	 c6ct+7hdJVB7RhLaqvRTePLViGfRT44QLIAY0bCnSGkedQ0vjy9MNTGiFeFWVkNZfD
+	 jCMG+6SVA/KaBUrW41KOowuiwPqc8AamB4drQgT1T2I0rnBUEY9YFuh68hERIRpzbt
+	 d9I4YXgKYqkkg==
+Date: Thu, 10 Apr 2025 08:18:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+Message-ID: <20250410-dancing-free-peacock-536c24@shite>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 
-Simplify fimc_md_is_isp_available() by using
-of_get_available_child_by_name().
+On Wed, Apr 09, 2025 at 09:37:21PM GMT, Andr=C3=A9 Draszik wrote:
+> This series adds initial support for the Samsung S2MPG10 PMIC using the
+> MFD framework. This is a PMIC for mobile applications and is used on
+> the Google Pixel 6 and 6 Pro (oriole / raven).
+>=20
+> *** dependency note ***
+>=20
+> To compile, this depends on the Samsung ACPM driver in Linux next with
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v3->v4:
- * Readded Rb tag from Krzysztof as it is trivial change.
-v2->v3:
- * Fixed CHECK: Comparison to NULL could be written "child" reoported by
-   [1] https://linux-media.pages.freedesktop.org/-/users/patchwork/-/jobs/74116132/artifacts/report.htm
- * Dropped Rb tag from Krzysztof.
-v1->v2:
- * Rebased to next as the dependency patch hits on 6.15-rc1.
----
- drivers/media/platform/samsung/exynos4-is/media-dev.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Are you sure these are build time dependencies? Do not look like. Also,
+if they are, the patchset will wait for quite some time.
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.h b/drivers/media/platform/samsung/exynos4-is/media-dev.h
-index a50e58ab7ef7..ea496670d4b5 100644
---- a/drivers/media/platform/samsung/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/samsung/exynos4-is/media-dev.h
-@@ -179,8 +179,8 @@ int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
- static inline bool fimc_md_is_isp_available(struct device_node *node)
- {
- 	struct device_node *child __free(device_node) =
--		of_get_child_by_name(node, FIMC_IS_OF_NODE_NAME);
--	return child ? of_device_is_available(child) : false;
-+		of_get_available_child_by_name(node, FIMC_IS_OF_NODE_NAME);
-+	return child;
- }
- #else
- #define fimc_md_is_isp_available(node) (false)
--- 
-2.43.0
+> the following additional patches:
+> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro=
+=2Eorg/
+> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.=
+org/
+> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@lina=
+ro.org/
+>=20
+> *** dependency note end ***
+>=20
+> +++ Kconfig update +++
+>=20
+> There is a Kconfig symbol update in this series, because the existing
+> Samsung S2M driver has been split into core and transport (I2C & ACPM)
+> parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+> the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+>=20
+> This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+> talk via I2C, but via the Samsung ACPM firmware.
+>=20
+> +++ Kconfig update end +++
+>=20
+> This series must be applied in-order, due to interdependencies of some
+> of the patches. There are also various cleanup patches to the S2M
+> drivers. I've kept them ordered as:
+
+They should not depend... although actually not my trees, except the
+firmware.
+
+Best regards,
+Krzysztof
 
