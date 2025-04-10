@@ -1,142 +1,96 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799FE204588;
-	Thu, 10 Apr 2025 06:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B531DF97F;
+	Thu, 10 Apr 2025 08:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744267111; cv=none; b=mzirZ3Ys4XeDDvYfGom3LeNtWIHu4KI1JMci5cy12wjeTd8gx+i5xnmwpGwf5cbuMi18Lqru9tDwU+jRKUSYoTk9CzGY3yIUL9s692zNzyWdMWvfwI7rPKlHl/6PLJsgAFljaICJSLIVZZ05tG/JHAsawuxW4V9vYqKKF9VSdFM=
+	t=1744273934; cv=none; b=nGkxAdobdPtCnM90mY72A74YIat/ziaxTsB2OJH7iOR2H/vJa2VRod68yBI4lb32d3ZzflNmim+FJ41Fq8gBZZpFijItSnvWka3f/lMrE8kwXmT5XpofgQ1jMNTHqhAX8TmMlXJ7UAVvT/tWHI0aXDqzvbjhaibPrzrI28+wjFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744267111; c=relaxed/simple;
-	bh=dSHRhmk880+LUvoNTvzX98ByhUndNuKtjnVonbl/qlY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q2Uqdx/VSR7XYhYIRU2d2Py8Anyp3ZukodBW/vTDYvrB7LUJ/IX6o9GpjD0zmWxmua3MbckrpGFzuqKRMiIU8lKPuEIBI2KwZ4oh5vxVvVl/fwCCaqOD/Ba4tHq7mKz1+lgxb7VaXxuJHQfiAA2v3dl5qIPTdYOsoWpcEYd9Tqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5r8k8MZ; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744273934; c=relaxed/simple;
+	bh=lGmY4p1VRzYFACIa5FUQnatEVrtfwJ9hMuMP3qnvkpg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TQ2Sj5gqM3695JRAWGQXR3lPU7DeDALL20zv/o/mc4JgJsGPxHdKJgNKQL6n9LWqjIt/EAVRffqDHkUOE3RkEkIjfQPMsDTzuTeMf2UN7wHlWT/Xb9FIxQl88+xsQUOEhT06sVsN4t8xxlF1U4em5Bs6oixVgESf41l4ILLHE7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ddlbP/ht; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5r8k8MZ"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af50f56b862so371513a12.1;
-        Wed, 09 Apr 2025 23:38:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744267110; x=1744871910; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pwBWVtKLvZUX90IaL1GXJa6X4Osy8NtQPUZg6YVkZI8=;
-        b=X5r8k8MZEDb9xBVZY2h5NjFvpecFFuwO8eavTrJUX1rA8kTgzdS5Wtw58qSwt1SIOU
-         M1Ande5GVRI0nRIsDNuy7RMdWDJJ2c62nvmYnt6OzE4jjebLTWhhfEkStO+9XDH+Skiz
-         fMT3WBlAjxanIqRWaxsScQPIxNkFk2UpcMA18qX0muXhGWR7BmRTVNTAMmlTCOjVgedD
-         k+lokIuKXZ7ye6Z6p+cAKWBbCwzzEsNEkRJYMPnVlT9Zo5qn3u6lmN/qlB4emxhDMUSv
-         x+FYL/GZV0yXIYkqRa4fOFNvaV4wM01A/zrjNQ6BTpzSB7FVpuKIUuVDg+5uYmdK0RRL
-         V/lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744267110; x=1744871910;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pwBWVtKLvZUX90IaL1GXJa6X4Osy8NtQPUZg6YVkZI8=;
-        b=sJwgVPK09UaGSPsDvZNYWDzt3yINnoRSuNFkXXVf3CyxB2wp5G9mbYSpMf8WUg3Ylo
-         QS6Ze5fuZVJcAlrkQXZB9c02p/iaIBHmOd+/WlzO2sq0JmqPmw7Gw9zeim3T4y0ddj8s
-         Edi/g7jqSy4gB6PZvOEnYI6NgPELIu36jVjlnUiXGN9mKex3HRGgbDdqdgpmVl0K7kJq
-         enXdsmRbIgoMDEc3UJT1g4Cg5GzQQFf324UWnn8/+YfV5BVHgu6jptuwW4WDz6LdeTxf
-         nU02alddW6iJHVJxG/rOF1OzkVEfevdQ3PDKaeL4GLm70wZqu3uor30b2tBd6DyK8bv6
-         QMmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUklbX/1oVU/OL1BecUfo0z2LtFF2jOmL19DwOSibS2Vu6o7Q2f9D3XuV0Ud+D+/UTreNMKsIsbjVejAwtSGDUfC0M=@vger.kernel.org, AJvYcCUmVN2FqTen98jA/fkQ2B0CCM8CoSsuKGZ93xL1/zJjH5MEVPDq7qPH7SK/tqC24yq92wLdi2jylRvZ094=@vger.kernel.org, AJvYcCVGVrBt8JBdO2EMpcCEQygVMWnwuWRc2tTJoqWnxvPgTBmAYPUzR35JtROBAhUJNEKFmQ/7E5xE+k4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/LrBLr4+8WzSRtgSIp2g+QsDDdqEw7gePUd8w4Lo2SlVU5Oy1
-	tUjXTceVr8dahXgP5QuQy+nBKRt9BYYXjXnuUTMfs2Kolhi4+sMT
-X-Gm-Gg: ASbGncvuc3UcHy2XTQ6QoWNdIWidxWBBQIihTQW/jN+Xi3S8ZqkiBhismcFfydfFrPk
-	zd25oSSXK52fuMAnaaY8boJcL9MGw/Daje2TzoOFpv7taL2PnHe9htfVUxofunA7clo0XTtK42b
-	NAIh2mcxlPsus4pv2ahZwfxV1Vy5t/xlbQfDTOzlvRAJrIogPVN9ziQjfzT258B6fa9uodBzdLZ
-	sNoQrMiNJH+K9d+nnMNJpnKiC72dBAfAy8Ja99vmgf+f7SGZn8tNHTvS/xdrgMBWtJEEOYUb33T
-	MMlsi1j/1c1oFPaRfg9VgF1x55qwK12tys55S5XIfXggGgdccro61CY=
-X-Google-Smtp-Source: AGHT+IHqaItgHXzm5GD1OOSPTM/mlSU8yR/6mCWuApDW+XD5J+FRkiOjtHdGHPDLxBBGTZ1nuFcFiw==
-X-Received: by 2002:a17:90b:56c3:b0:305:5f25:fd30 with SMTP id 98e67ed59e1d1-30718b5408dmr2785207a91.4.1744267109577;
-        Wed, 09 Apr 2025 23:38:29 -0700 (PDT)
-Received: from localhost.localdomain ([103.221.69.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd57865csm973145a91.2.2025.04.09.23.38.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 23:38:28 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-pm@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list),
-	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v5 3/3] drivers/thermal/exymos: Fixed the efuse min max value for exynos5422
-Date: Thu, 10 Apr 2025 12:07:50 +0530
-Message-ID: <20250410063754.5483-4-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250410063754.5483-1-linux.amoon@gmail.com>
-References: <20250410063754.5483-1-linux.amoon@gmail.com>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ddlbP/ht"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 28A0525C00;
+	Thu, 10 Apr 2025 10:32:03 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 42vApmXQL7iW; Thu, 10 Apr 2025 10:32:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1744273922; bh=lGmY4p1VRzYFACIa5FUQnatEVrtfwJ9hMuMP3qnvkpg=;
+	h=From:Subject:Date:To:Cc;
+	b=ddlbP/ht9FPdCFW5yrI6r+WfmjExvlpGOzUueTMpiwMhUWo/COHleqPJ5YAvK4uFz
+	 r7x95elhGJ8kTBvy1o59oZZJHWMQdg0Ta1SKiTxa1s0v99ORW8qzG/JzuEsaNCP782
+	 4Umv2tSNM9V7tAR3FijLEZGqTPqeksK5pdXbud4T/qztkSfd3bMLZ2v6huLIQI28C6
+	 SyJzqlPHQiRwHmihyInpKUZ48rqTQ06v86qWyhdxI8H2qYCPnfNswRhkqpOSiGM8xM
+	 ndQawIXmd5HBV/VU5fdXWfREUl7NImmNmTLw5BJEQicO0GIn5MyZMrc/7LuQWukkQu
+	 c8DTg7aeekhRQ==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH RESEND v2 0/3] Introduce USBDRD-PHY support for Exynos7870
+ SoC
+Date: Thu, 10 Apr 2025 14:01:11 +0530
+Message-Id: <20250410-exynos7870-usbphy-v2-0-2eb005987455@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744273913; l=1208;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=lGmY4p1VRzYFACIa5FUQnatEVrtfwJ9hMuMP3qnvkpg=;
+ b=+G9OHWZP6035gJvZmvayt6lvoP55fp/X+4NQwi/yUhYw7uO75Tr3CSRsxo/4aciRnT70/QRbk
+ 7NdfJ58nXlqBCeghauPts0VWnWuRXy8HXWCiZLfoe8vOsfTdIb+APOD
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-As per Exynos5422 user manual e-Fuse range min~max range is 16~76.
-if e-Fuse value is out of this range, then thermal sensor may not
-sense thermal data properly. Refactors the efuse value
-initialization logic within exynos_map_dt_data function by
-replacing the nested if-else statements with a switch statement.
-Ensures proper initialization of efuse values based on the SOC type.
+Apart from introducing driver support and documentation, this patch series
+also introduces a masking fix and non-functional changes.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+This patch series is a part of Exynos7870 upstreaming.
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-v5: None
-v4: None
-v3: Improve the logic to convert if/else to switch
----
- drivers/thermal/samsung/exynos_tmu.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Changes in v2:
+- Do away with [PATCH 1/4] from v1 as it was sent separately.
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-usbphy-v1-0-f30a9857efeb@disroot.org
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index ac3b9d2c900c..a71cde0a4b17 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -899,12 +899,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->gain = 8;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 55;
--		if (data->soc != SOC_ARCH_EXYNOS5420 &&
--		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
-+		data->max_efuse_value = 100;
-+		switch (data->soc) {
-+		case SOC_ARCH_EXYNOS3250:
-+		case SOC_ARCH_EXYNOS4412:
-+		case SOC_ARCH_EXYNOS5250:
-+		case SOC_ARCH_EXYNOS5260:
- 			data->min_efuse_value = 40;
--		else
-+			break;
-+		case SOC_ARCH_EXYNOS5420:
-+		case SOC_ARCH_EXYNOS5420_TRIMINFO:
-+			data->min_efuse_value = 16;
-+			data->max_efuse_value = 76;
-+			break;
-+		default:
- 			data->min_efuse_value = 0;
--		data->max_efuse_value = 100;
-+			break;
-+		}
- 		break;
- 	case SOC_ARCH_EXYNOS5433:
- 		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
+---
+Kaustabh Chakraborty (3):
+      phy: exynos5-usbdrd: use GENMASK and FIELD_PREP for Exynos5 PHY registers
+      dt-bindings: phy: samsung,usb3-drd-phy: add exynos7870-usbdrd-phy compatible
+      phy: exynos5-usbdrd: add exynos7870 USBDRD support
+
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |   2 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 407 +++++++++++++++++----
+ include/linux/soc/samsung/exynos-regs-pmu.h        |   2 +
+ 3 files changed, 339 insertions(+), 72 deletions(-)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250203-exynos7870-usbphy-6b98936f441d
+
+Best regards,
 -- 
-2.49.0
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
