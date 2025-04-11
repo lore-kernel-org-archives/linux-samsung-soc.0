@@ -1,41 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EAE221F15;
-	Fri, 11 Apr 2025 16:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DB1221F03;
+	Fri, 11 Apr 2025 17:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744389953; cv=none; b=CA+CP944Euzw3KMMnZyaNY76sgGeFVQuL253CMUaFPIbX30gsFwChQz5NQCyrtLsZ8DRK0g9FL9rrniejOaUeXj5GSfLHT0aVS6ijv/AADVjrN+AKUxRVhqJsFhH08iZsrFtLPYDYwATQUSfGXSwIjLMD1K8v7ifRlGcZFGpwGY=
+	t=1744390955; cv=none; b=IEiTqEidtpG+tw6wDV9wfaeG5AsBB58YSuY2uz+vrwNtdJ3ZEpT3fQ1ETis/UX8RSBK++7bDT0INfMSWtB/eppQg6HEznMA3ndfKowgQ13p11kqA2+9d46g3AVDj7h2ZSQAPbgKnyeXl83/l/UfcemKRvhvHATxX/CV+ebUKY5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744389953; c=relaxed/simple;
+	s=arc-20240116; t=1744390955; c=relaxed/simple;
 	bh=V3sxT0qWZ/R8AKqPO0IIuyuOMKHgyM1WtuhpqaQCYEA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iNyxb4M6LvK9SyRlpC2gemWELZQV3CkvyY97HU9Kg/xWRrBQqdrQ7kU4Wwu847Zu8NB87SoaIAyLJatZKS4DsiOWWte24ZmP70qtzeRCFrco0VvSqFFDZSaLL3XLcQTqEiAJvyIiuz4Lj+UMF/s0s5x23PcOPOr3zgoc71dM+Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=NAwYElFp; arc=none smtp.client-ip=178.21.23.139
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q5AxFRE+Hz0KB7lea9aiiWwjVK0y4THwSwFYeFTIvPQ7p4OwXsXT56UkwItf++NtV78HBfUVaYd2U+0FPM9GdOtKA64TzUYIYTM4BCED4pCiNqlCvEWnXT6HQPhzWoyrwaF7QY4an4uehJ0J9cD2dQ8jFPFdKFuUZ/ULgNloIBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=X0vNAYjD; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="NAwYElFp"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="X0vNAYjD"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A35B225F49;
-	Fri, 11 Apr 2025 18:45:42 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 5DF8025E06;
+	Fri, 11 Apr 2025 19:02:31 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id xvqhbX4tnDXa; Fri, 11 Apr 2025 18:45:41 +0200 (CEST)
+ id AK5N2RrPEfcD; Fri, 11 Apr 2025 19:02:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1744389941; bh=V3sxT0qWZ/R8AKqPO0IIuyuOMKHgyM1WtuhpqaQCYEA=;
+	t=1744390950; bh=V3sxT0qWZ/R8AKqPO0IIuyuOMKHgyM1WtuhpqaQCYEA=;
 	h=From:Subject:Date:To:Cc;
-	b=NAwYElFpo0iol0/zFsohXnhlAPzzFBZEmTZFfToU4i8W9UuCH1YYwHefvLtT5tJ+s
-	 evjy7lZKmaCmbVZdKoo1xAU3X76MfsjOlqbDVQEnJPwNnObgnCGEnbkyFaZwdmCu06
-	 QrhLlup+jYxNF3UkVMAZB2hSU30Gk0QufLcoTNAHCs/XskkWvVbQoMXl+QYkRgno3P
-	 AoJ+22M3sPYjZMTt++IiKE5awT8aYSxnGytdkSBhyF/pMlWhSJ1yRKgKSE7fp4U5nq
-	 26DxdrbTuNP41QR5uVoxjGdT3UPoyUQn+JmkE0JQPDNQVR7SB53HaSNMFRHaz5b/3u
-	 PxwIVUJ82PHsw==
+	b=X0vNAYjDuRRPudtiC8McVNMTOQUsMRP6MUBC5MjlwQTmr8pONjvs4xQ60VDN9EciF
+	 TuRkiHzyxhwyutz2mkH5nJmCMjwD7cUrgsD3zwH7t+a7hXFlOkCO63Aq7LMS6etSrr
+	 dqSlor4Q+A056mxWPRR8mJlf7sLEb+EehqzTxbqbbhrTk5QWz3XbMHsAk97QkZEtyI
+	 TTwZkuCkpKuAHTLYclukpfxZ1uivMBnm+SUSJgAmkTnsjUb1reVSS+fu5EKtP9yppA
+	 Ov/uRsCRiMu8MA4avB5t9mZJ7omEGaUwYC+zOol+p0rmbi9J2zlEPUNqZ9Pjj0F4RU
+	 HkKx5QeMwiePg==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Subject: [PATCH v5 0/5] Add support for the Exynos7870 SoC, along with
- three devices
-Date: Fri, 11 Apr 2025 22:15:26 +0530
-Message-Id: <20250411-exynos7870-v5-0-6b319ae36c36@disroot.org>
+Subject: [PATCH RESEND v5 0/5] Add support for the Exynos7870 SoC, along
+ with three devices
+Date: Fri, 11 Apr 2025 22:32:14 +0530
+Message-Id: <20250411-exynos7870-v5-0-fa297a7ce41a@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,11 +44,6 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACZH+WcC/2XPTQ7CIBCG4asY1mIGhp/WlfcwLtoyKJtioCEa0
- 7tLTYxtXH4kz5vhxTKlQJkddy+WqIQc4liH3u/YcOvGK/Hg6mYSpAYJgtPjOcZsGwscVKsbS6q
- 3zrMK7ol8eHxi50vdt5CnmJ6fdhHL6zeD60wRHLjsjfPKmg49nFzIKcbpENOVLaEi11htsKxYG
- xQojCYPwz/GFRbtBmPFhI3yvREwdO4fqx/G7e+LWs5updZofdvLbovneX4D4tN85l0BAAA=
-X-Change-ID: 20250201-exynos7870-049587e4b7df
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
  Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
@@ -58,11 +53,11 @@ Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
  Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744389935; l=4583;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744390944; l=4583;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
  bh=V3sxT0qWZ/R8AKqPO0IIuyuOMKHgyM1WtuhpqaQCYEA=;
- b=o+VuDB2WheNDUMCGnoZ2gElnKolyJ2/lIWMiqlill+FlNKlquXCo55nvISPflRj0cTOuGaQkb
- c+ACMSG7PlLAZxrzpH4NDni4P4AsuXOIt2NAR9H+t6oK98rKddwnjCY
+ b=JXtJGHF4KMvnwj22OtSv9uSZp6Mm9v77sN4DY1c0vdG5heA/87k0PMyHakpDQje+FXTkBpl63
+ /Fi7dwwL9/HAOVMorJKFyNAxOr5V4TKHia09QuDDhoNpAVi/QBeNPVG
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
