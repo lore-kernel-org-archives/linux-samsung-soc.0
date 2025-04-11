@@ -1,101 +1,110 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B56622B8CB;
-	Fri, 11 Apr 2025 17:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6661F236E;
+	Fri, 11 Apr 2025 17:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744390961; cv=none; b=qNwtJunb16OUPKGhBbe0QxfH974gstHsbXEOOP4JQtb+7L3C1VQoa6KlRRctLCinkT17EE9iakv+BgQlwG+vfDiePnIZSN8DN4eC4hDNFHARQmh0IOZRC+Yp+6Uz1uUVxpl5zI6xXjX25cIAsimmgAJdewM/V3EbbXANN/IfVdQ=
+	t=1744393648; cv=none; b=nrQqv1iA0XKO2VVm6wQeDKg+paVWMc3v4MqE4r1o15SdozffLexbxDlIW0lNH4MPm2WO97Vp9u0bwxROYFze2UnlXVrDNQ5d681i33n0T5O9orpqVfyJgMT+o/h8tyXrGVnpQQ7vMIaQC5lQCbuasrjbtlM+z+fBjA+HNUxFV5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744390961; c=relaxed/simple;
-	bh=FReu7ujzly8pZap8rq/c03boQMmt8+KCe6FrmfH2yCE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=edwyI/9Nc1G3BBzmPmmUzg+Gb2eQE7kW0SMmYmgBvllw6Py0ZlgVXrDzBXN5uHb0US7bSJXRszB08RsRgxjCePBR2ekbctd8A+F7a0nV+pByk16hTbGWwd/ImEKykGjENKkr7YYqqG+Df+3Ocqptl1aS+UXogwmS7ZZCQ2GoQZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=F5vPahNg; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1744393648; c=relaxed/simple;
+	bh=0MLX+FBHtCEjzvR9W+kUND4AuM/q7MtU84jtYxyA+qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZuN8/AJg7/EpOg1dU6XseN0F2xuaWp5OqF8jINImBX2B8eNN3GnQN+AoNQc68nnDmnfy3EtRXegfeGtnYcHHO5yxTGrHhZHvn/XW8K+N062Af9IwU5YEsLOJitrrrpqt2BE3J6YeM59L/t/Ud2fGFeuc2rKAI6cEIMNVRSYUa3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3q0ZZxf; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="F5vPahNg"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id EDF6B25EF5;
-	Fri, 11 Apr 2025 19:02:36 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Uj5Ld-3HANVK; Fri, 11 Apr 2025 19:02:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1744390956; bh=FReu7ujzly8pZap8rq/c03boQMmt8+KCe6FrmfH2yCE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=F5vPahNg/nAYYi1lVowWzm4EjJ0fnt0pPdSfACZCfyOZ74ZjHqF+ZmA/cdi2m4Qtf
-	 Kp1ih0QCLg5cRmbJz5/QSPpXqs19k/9Mi3Vc9kFtyvnJvj1QD4OAi+X9aADtiArdqb
-	 OlgUWQtlnhC9YV+qM3oCeeW7bGNY+64VfYQF5C+eA0YZ4d79TKde06oex5/eL4cQke
-	 xzfRfOtmrciuYJ4wMNQSiSn0oYpkFTYVb2NCiOgksMdormhBQmSxy/uX2GapZ1NxyU
-	 uBn8DVyLKUthP9q5lS6+MaT2MUi9SmYWMtqItZtSxUGHvBBLyHNKfcJiVa+hnfcZrb
-	 2XnWb4x0XA9fA==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Fri, 11 Apr 2025 22:32:15 +0530
-Subject: [PATCH RESEND v5 1/5] dt-bindings: arm: samsung: add compatibles
- for exynos7870 devices
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3q0ZZxf"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so16922905e9.0;
+        Fri, 11 Apr 2025 10:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744393645; x=1744998445; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s2fznhoTGlfhy6bwDHoklI2QzmN6aCONWUMAdXUv1oM=;
+        b=e3q0ZZxfwrFpsgJQSf5GaXN56x5jIZFoERxcJkNgtIu2YYwOgdGkHWs26a2XUuv+HJ
+         OdkD8EzfGrQHOcLB/TuhTv95d7jPogPts94Lahs52yfC5EmKMldzOlK/CpvgzlTbnmpg
+         hI1l3NCYVHkN333gWp8D8shOuCvzy4WrVyBuI0CdFLCfxvsxnlNPBF1Pt+6tMhw9SaC5
+         62whqOWbmXUvzC2faFHzkb30eO70xo+TkPoDySAr70Xh1X61RQ+No0eus6YBu6j9uRT3
+         5igpRFOFI92D/hghL6QrmC8mCzauxRASz+n5mqkNOZGpu0H1AXV0Jphcdr0ogDq+3PEa
+         SZ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744393645; x=1744998445;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s2fznhoTGlfhy6bwDHoklI2QzmN6aCONWUMAdXUv1oM=;
+        b=d6TtM9hIJU5ZthMBUDNTD3DJNfkVqBf/1PwJI58lL2Ge5p2ZsJPMnAaAgSETvFF/pp
+         5J2mAWhMJ6zaZRpDb9xrj/KTQDDy+iTZwLYjpRi3bKlsUdPz6qkokzxnNVhW4sCqzYUe
+         gFwwaWYQ+8LUoT0PI8dBXkvfMgCrwvZRVdByxVY6GLb3BeQOQZR78efO0NtBhcvBbAq2
+         lSpcYPvmq09Te6v+9vM1rmRClmpG6JWK8fclMBXr0vGoXXSMo9k3763KKN6ldsGYSLtd
+         pMjjrZwfblPodcFJrj/Uq4ndvIjH1DhjnJpEjOWGRjuteT1lZYwPejwiJx0Jdi9ssVvF
+         t5MA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBhrR2q6jPk8m2CSeKXKptS8P5y9AvyW1sioDJZmReEvjXwbz5WbN1i94cSM/oqxK9/9I1as8KWFrnDLYBEIVNu4k=@vger.kernel.org, AJvYcCWHTYztK7KDoNHsU3LHE+NlsU13Tjm2Eo/KwsWfifNNi6mUo4K18oRKGP4f2FWxIjISwN/NUxhVsWLg@vger.kernel.org, AJvYcCWQI9e4npWeXSss/LEtCv5eySrj+N/WVp1JZ4DS7rj2DtixfMYPIva+V7yknGOv86DWldQ36/ujDxgK@vger.kernel.org, AJvYcCWa2io+kqMCL1PVLO7bS+t9vClB41mM0djOGtRfcvBtLZrQjn2/1HzIyr+lMMJC2f/pwQzZwk7kduX284QK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUD2WKu+69bMt/vX/n6ny+xvsCfG2JeoRg6ydNFHyY7MtiO4pP
+	6oo1b8HktDzPhCw1z0FwHHwsZ3XTqQ20VTzCZQqSLhQ9j7lN6Umg
+X-Gm-Gg: ASbGncv257sU4c55VIXfceCJFp6iMLc3IlkjLWowynKu0fuBD2kOT0wCXa7S+OpXDOE
+	CKt8K5H6Xb7UbmXL87yBTNvHDcVxnZK2Z6iqohanz6o56pY1Ao70wJMkicqOi6aenLMoHh6nVMK
+	88HqDqy9+W9Vu+CLnJR8BuaJEWKhKbYIThbUp6+viGgyxnfaR5fV8odhYZ/XuHe59qCzXc1G8/7
+	yT4KN1GL21jJlDanQaZ/Syz0jBH+n1VG/aHTR4trEmrMhtjzW6ygy9uTGVGdhsBlUAuFqoaY3OV
+	R1CJzHI7x1uiVyba9ZfI4PJk8ZhgOCUy9H5l2JXtKZ8tmhxgjALeCp8VxkFeR43mQNxNhjKb2LX
+	0BRzi3l+bHwFxFOErBvY=
+X-Google-Smtp-Source: AGHT+IHKgxGk7ctx/4csBqrnqZpUz6mKKVmeIDv4j+S1OVFBpZaUYqHi1No3wJ+Lyfqa9wjViAwAPQ==
+X-Received: by 2002:a05:6000:22c7:b0:39a:c9ac:cd3a with SMTP id ffacd0b85a97d-39eaaecbdefmr3169374f8f.51.1744393644804;
+        Fri, 11 Apr 2025 10:47:24 -0700 (PDT)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf445713sm2624289f8f.85.2025.04.11.10.47.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Apr 2025 10:47:24 -0700 (PDT)
+Message-ID: <7b5ef003-7a3f-4ffd-b563-b4b7f77ab011@gmail.com>
+Date: Fri, 11 Apr 2025 20:47:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: usb: samsung,exynos-dwc3: add
+ exynos2200 compatible
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, devicetree@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20250321144804.1435502-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250321144804.1435502-2-ivo.ivanov.ivanov1@gmail.com>
+ <2025041157-stilt-sculptor-c978@gregkh>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <2025041157-stilt-sculptor-c978@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250411-exynos7870-v5-1-fa297a7ce41a@disroot.org>
-References: <20250411-exynos7870-v5-0-fa297a7ce41a@disroot.org>
-In-Reply-To: <20250411-exynos7870-v5-0-fa297a7ce41a@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744390944; l=1423;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=FReu7ujzly8pZap8rq/c03boQMmt8+KCe6FrmfH2yCE=;
- b=n3DVVdTxLcOTPgeGPZDGzqWPHizT6+up66cJ7p48g5MmqPz0kcKuLTLB3I73LdCZdUkcJpJJG
- 4Nok1mGLQREBXL4/Bznaj7+k9zj+a73SoqMiXtJvPmR8atgTJpj+QK0
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Document the compatible string for Exynos7870 - "samsung,exynos7870".
 
-The following devices are also added:
- - Galaxy A2 Core       ("samsung,a2corelte")
- - Galaxy J6            ("samsung,j6lte")
- - Galaxy J7 Prime      ("samsung,on7xelte")
+On 4/11/25 16:42, Greg Kroah-Hartman wrote:
+> On Fri, Mar 21, 2025 at 04:48:02PM +0200, Ivaylo Ivanov wrote:
+>> The Exynos2200 SoC has a DWC3 compatible USB controller and can reuse
+>> the existing Exynos glue. Update the dt schema to include the
+>> samsung,exynos2200-dwusb3 compatible for it.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  .../bindings/usb/samsung,exynos-dwc3.yaml          | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+> This doesn't apply to my tree, can you rebase it and resend the series?
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Yes, I will rebase this tomorrow because I'm a bit sick right now.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-index fab29f95d8e62f5ea75bb0819a9d514e54f88d3c..b3be184c7e563478aa37eb16a69c08ff7f70af29 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-@@ -212,6 +212,14 @@ properties:
-               - samsung,exynos7-espresso        # Samsung Exynos7 Espresso
-           - const: samsung,exynos7
- 
-+      - description: Exynos7870 based boards
-+        items:
-+          - enum:
-+              - samsung,a2corelte               # Samsung Galaxy A2 Core
-+              - samsung,j6lte                   # Samsung Galaxy J6
-+              - samsung,on7xelte                # Samsung Galaxy J7 Prime
-+          - const: samsung,exynos7870
-+
-       - description: Exynos7885 based boards
-         items:
-           - enum:
+Best regards,
+Ivaylo
 
--- 
-2.49.0
+>
+> thanks,
+>
+> greg k-h
 
