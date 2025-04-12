@@ -1,126 +1,207 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0B4192D77;
-	Sat, 12 Apr 2025 10:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACFE347A2;
+	Sat, 12 Apr 2025 20:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744452683; cv=none; b=Ierr5H0hCBIDkaeE++t7DAb4dJt26gK4pp4X2aMN4Jv3TTKpamSLEM4mx4JSLTNZe0ai4KuMuzq2jOR1c7t88K3BGE/hLSLq6oa0qZSG7qkKMJ9X7kg4RNXHwQFdVAOUqUjMqKCbVseNdDEX+IypGHATsZ2iXFZWD4uYdswpEW4=
+	t=1744489619; cv=none; b=oreOy5kbhoqKZ0yGcIWZRUVOo1i4Uwor5zmUJmOtKVPXpXXGCNdgmR2p+Nnc5HxszTXD3kBNKnL6T/Bv87Xojgd3nOIAbpUUdRBaR7WhWYZzIRhOYaaO3YskbWs/SHs3h5NoVdNq/D7KQmgxb/LLcev4Wv4wNT7JIJLyiA3XJv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744452683; c=relaxed/simple;
-	bh=RNflmceC0PXkskPu8wmVlsRy34v1ud7Y93OVVupX/Vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vv/UjSv4r/BKryBMPH1k73kmIM0kon+nFlWpaj+g503Xwhs7MmZuz5vcNsnC5PjFftYYMr5ZMNR63vFqdwbnP5KrpkCbl7ACrIRBF44A31cm0UEQD3qmX2mrxh/SrlPNeloclhe89XtPpzedYJ/22uVV85Vk9e6yr3B+qr82hGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S91cKhCF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744489619; c=relaxed/simple;
+	bh=NTZ+FTmF0S9Ef6nt1Sc+I/jGKIvA4f8+bAajP42rhG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rq0Oubv7ngQcQ2z1Bz/hZCZUm2rTwU9221V2h4YC+RfMc9+xgONEmy2xt5abB57UZUCNAcNX6utdCV/SeMAN7qdWp40dVifmYX4UVk5uljlbaCfwCdaGiQ5HTNrGZvRnnvjp44UAX3U0IlyxwvLMoC0Tz9ZSI1nzXfLWDXwK0Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5R1cKlz; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S91cKhCF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 983D2C4CEE3;
-	Sat, 12 Apr 2025 10:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744452682;
-	bh=RNflmceC0PXkskPu8wmVlsRy34v1ud7Y93OVVupX/Vk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S91cKhCF3WenA0c8+gv8j+s5O7CFNwdzbVaieyIuBXfkFVs15UH8oDyCMJFYqdT9L
-	 8oScioMe+9JLVQZiJlK/ozFTcAdKelwxHWSuJR0U/x33nx4CkNTvK2FD7n+DQrUzA0
-	 9SOGGDAoZltouDjaYL3CEVjeDMFaFaPbV1+DO/+iyfSQPSp3MXpfV3L30aBIpNdlN1
-	 JyAvFIed7WpLqMiNvuSwa0VwbD9zC+eRZfVp1+GZzYTgiuAySdV7Cd9qb28eZQZcuA
-	 YSfnC50bsyJ/XS3idOTPeeezyQX5LNaQ2N6uK8NtJjy/yBOWAXOQ706oTUMGzmbTOy
-	 qKAPG+iVTaKnA==
-Message-ID: <a52969f2-8ea2-41e5-b4c8-8a03220cbf51@kernel.org>
-Date: Sat, 12 Apr 2025 12:11:17 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5R1cKlz"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso2837476f8f.1;
+        Sat, 12 Apr 2025 13:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744489616; x=1745094416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pt8x7MsG2eaE/5Lv28czLfNqjIaR0J4hccDPHzanxb8=;
+        b=I5R1cKlzFncBNQdFBwdGMBk1q7qxFgAv3t3Am88TzSP0Cael4LUd5cma2wWh3RJDvp
+         hhpb874SKBWHJ4OMSIzLF3qhtmzNNazDDCN8xyjW5ooOLs5+eB4ykTDHdH0VpAHeJzRq
+         sHO5BogddMXN0Uv2DBzM/G/U9p/yBPCaKOux/IR8xtaUMhhSdyrbdAxfKXWn4JlOYTbB
+         RlbKkFnazS8LMZLx3qEOPSFWV4DDNPEGuorMDOJ2zTsX3Cq6Rd0H8XeQ3m+jrnzJs3og
+         8UQdWB1jJUZfhOGC+LOUvNMu/aaAywafSo6ZT9C1/9V5VlgtYLICWVxEwgKXtkhVrew9
+         2o1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744489616; x=1745094416;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pt8x7MsG2eaE/5Lv28czLfNqjIaR0J4hccDPHzanxb8=;
+        b=dSiOUvbbdtyye8sufkWlQP59rTQSmt/g86mL+yKJRbJKma/dz9JNhR8KL39HG5HwQj
+         KUspiVgSYUvSfPfpH+63zq67i2DAwQ03SPMhaoKqEz76M+PMcFq+ZF61i/IUOIm0KYz5
+         GzUJjkRJbHt9qLAV1aHo7FzdltV+aKAy1U5SFYjHLmawVBvhyHCLvICizY7UUAAMTOS1
+         /uZPPmyAfAqE5zi/otDfqTYfj23tkmE9wScj8E5zZDTuDCBzSCIDzjb/xvtyhhMysK85
+         EFhFaCNeO3lNNa8qApaVpefBjwFJt+o6NIOXdxIJz+v+RcBontYPt//AAR8xCSNRDLk4
+         7kZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCXyj358wObvzgcN8yr6QbgBbOJckRWkQl7LcPHNGx7C0CcFi8JeIIzJpGZWmc1omlNbwrdUS/90lB@vger.kernel.org, AJvYcCUt89b5QAhZuJHyYm4SFtUlOzwOCwdEjS+MYQywFHz+4rsdFoHp4sRSerbGRZO8pOtOA5lOg3MIysib9SH2Vg==@vger.kernel.org, AJvYcCV4zMElxeXOCYB5LgygsiytkVbswKCi+/3xm8mGeK5yMEV9HjI6LtpWR0YbJIZqCQCdvEqKChfugEpv+cZw@vger.kernel.org
+X-Gm-Message-State: AOJu0YySMC8rcQ9kaP1MC3gNK8UxLLKIzrSYQvUu+r+UbJpjxERZX+3y
+	Rms62QcvdjynccbjssFO30ZCN5LIi+D66mtbJeKPV0M4i/VcLx23
+X-Gm-Gg: ASbGncup5z9Iib0Rh6FunhkcpPe7k4JotA4lW4zWk88Zx0tMw8mQQb70DIHwrZjPOsu
+	2lXF1PEULLjhs66VsNulWDNW9tBll7ariFvolgPbJs8EOcHE8KUbpLuE1oCx2PA748fBHvjFWZA
+	jhZanJyQOXmuxNMDTj2JUXgzaknSvV9uVzvLsEIsSkPfd/UJAiGHJ2vMhvCdyVih3jZB3MmSa4P
+	Qif5fuxY6JuD2O7UDvngknA7T2wcA2HInNEjJwLVrvk1KKU93Z+EP1fZ1mAfaoN3mJvrgaZnrae
+	N9Rz9qh4H7GXE2HeAPZIzHzsXtroQ0GIMFJRjYIVB6Gw28HcgS4I39ZzP48d9vU80jBHly18WOu
+	cwWJOBqsyE3yZ+GK4
+X-Google-Smtp-Source: AGHT+IFTVjJVaiqOWTJvgSlXy0IDFIlrMIPfubQkZClUTft4KlMYZTec77RN03cNec003jQi0G1xXg==
+X-Received: by 2002:a05:6000:4022:b0:38d:e0a9:7e5e with SMTP id ffacd0b85a97d-39d8f2676a3mr8510788f8f.6.1744489615366;
+        Sat, 12 Apr 2025 13:26:55 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2338d802sm131797845e9.1.2025.04.12.13.26.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Apr 2025 13:26:54 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH v4 00/10] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+Date: Sat, 12 Apr 2025 23:26:10 +0300
+Message-ID: <20250412202620.738150-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
-To: Faraz Ata <faraz.ata@samsung.com>, alim.akhtar@samsung.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, suyash.bitti@samsung.com
-References: <CGME20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80@epcas5p3.samsung.com>
- <20250318075635.3372599-1-faraz.ata@samsung.com>
- <befe7d30-1727-4540-9072-f21ef96ea504@kernel.org>
- <03e501dbaab0$65bb47a0$3131d6e0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <03e501dbaab0$65bb47a0$3131d6e0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/04/2025 09:07, Faraz Ata wrote:
-> Hello Krzysztof
-> 
->> Subject: Re: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
->>
->> On 18/03/2025 08:56, Faraz Ata wrote:
->>> +
->>> +		usi_17: usi@10d800c0 {
->>
->> Messed order. Keep nodes sorted by unit address (see DTS coding style).
->>
->>
-> Thanks for your review
-> Based on the DTS coding style, it is acceptable to group nodes
-> of the same type together, even if it breaks the unit address ordering.
+Hey folks,
 
-That's accepted alternative because some subsystems do that way. I don't
-think we ever applied such rule to Samsung? Do you have any prior
-reference about this? I accepted mess in the past, but that does not
-mean that mess is the rule.
+This patchset adds Exynos2200 support to the existing eUSB2 phy driver,
+as well as USBDRD support for that SoC.
 
-> https://docs.kernel.org/6.12/devicetree/bindings/dts-coding-style.html
-> Please let me know your opinion on this.
-> Do you mean I should move all the USI_ node after pwm node?
+The SoC features the same (as far as I can tell from comparing code)
+USBDRD 3.2 4nm block that Exynos2400 has, hence the common denominator.
+It consists of a SEC USB link controller, Synopsys eUSB2 and Synopsys
+USBDP combophy, which are independent underlying hardware blocks of
+the USBDRD controller.
 
-Please it according to sorting by unit address.
+In the vendor kernel, everything is handled in the usbdrd controller
+driver, with helpers for underlying hardware block functions outside it.
+Clocks and regulators are specified and enabled in one node, which makes
+it difficult to separate what clocks and regulators go where without
+access to schematics or TRMs. The following gates are defined for USB:
 
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBSUBCTL_APB_PCLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBDPPHY_CTRL_PCLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBDPPHY_TCA_APB_CLK
+
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBLINK_ACLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USB32DRD_REF_CLK_40
+
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_EUSB_CTRL_PCLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_EUSB_APB_CLK
+CLK_BLK_HSI0_UID_AS_APB_EUSBPHY_HSI0_IPCLKPORT_PCLKM
+CLK_BLK_HSI0_UID_RSTNSYNC_CLK_HSI0_EUSB_IPCLKPORT_CLK
+
+The vendor kernel specifies 4 regulators, 2 of which are for eUSB
+and the other 2 for the repeater. The rest of the PHYs and the dwc3
+controller are on a single power domain (hsi0), so they're most likely
+sharing power rails.
+
+As Qualcomm is also using the eUSB2 IP, the approach taken here is to
+rename the driver so that it can be used by other SoC vendors as well
+while keeping compatibles SoC-vendor prefixed (different vendors have
+different implementations of the IP with different register maps),
+add support for exynos2200 in it and implement support for exynos2200
+in the existing exynos5-usbdrd driver (with link controller init).
+
+A new USBDP driver will be added later on, so that super-speed can be
+configured.
+
+Bindings have been tested:
+
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j4 dt_binding_check DT_SCHEMA_FILES="Documentation/devicetree/bindings/phy/samsung,snps-eusb2-phy.yaml"
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml: ps-cancellation-current-picoamp: missing type definition
+  CHKDT   ./Documentation/devicetree/bindings
+  LINT    ./Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/phy/samsung,snps-eusb2-phy.example.dts
+  DTC [C] Documentation/devicetree/bindings/phy/samsung,snps-eusb2-phy.example.dtb
 
 Best regards,
-Krzysztof
+Ivaylo
+
+Changes in v4:
+EUSB2 changes:
+- make a new separate binding for eusb2 ip found in samsung socs
+- fix order of tags in 03/10
+- change 'SNPS' to 'Synopsys' in the MODULE_DESCRIPTION in 04/10
+- simplify code around device_get_match_data in 05/10
+USBDRD changes:
+- drop double colons and 'phandle to' in binding
+
+Changes in v3:
+USBCON changes:
+- drop the driver and introduce it all in existing exynos5-usbdrd driver
+EUSB2 changes:
+- split changes into multiple commits with clear diff
+- add a commit to do table-based lookup for refclk
+- clean up here and there
+- correct the cover letter according to my new knowledge of how the
+  hardware functions
+- change commit message of the optional repeater patch
+
+Changes in v2:
+USBCON changes:
+- drop unused header includes
+- sanitize the binding
+- proper init and exit power management
+- shorten some variables
+- unrelax reads and writes
+- update commit description
+- remodel to take other phys
+- drop specified regulators as these are for the repeater
+- make the kconfig description better
+- general cleanup
+EUSB2 changes:
+- merge the previous separate driver into the qualcomm one
+- drop the previous model of taking usbcon phandle
+
+Ivaylo Ivanov (10):
+  dt-bindings: phy: add exynos2200 eusb2 phy support
+  dt-bindings: phy: samsung,usb3-drd-phy: add exynos2200 support
+  phy: move phy-qcom-snps-eusb2 out of its vendor sub-directory
+  phy: phy-snps-eusb2: refactor constructs names
+  phy: phy-snps-eusb2: split phy init code
+  phy: phy-snps-eusb2: make repeater optional
+  phy: phy-snps-eusb2: make reset control optional
+  phy: phy-snps-eusb2: refactor reference clock init
+  phy: phy-snps-eusb2: add support for exynos2200
+  phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm controller
+
+ .../bindings/phy/samsung,snps-eusb2-phy.yaml  |  79 +++
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    |  38 +-
+ drivers/phy/Kconfig                           |   8 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/phy-snps-eusb2.c                  | 627 ++++++++++++++++++
+ drivers/phy/qualcomm/Kconfig                  |   9 -
+ drivers/phy/qualcomm/Makefile                 |   1 -
+ drivers/phy/qualcomm/phy-qcom-snps-eusb2.c    | 442 ------------
+ drivers/phy/samsung/phy-exynos5-usbdrd.c      | 227 ++++++-
+ include/linux/soc/samsung/exynos-regs-pmu.h   |   3 +
+ 10 files changed, 964 insertions(+), 471 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung,snps-eusb2-phy.yaml
+ create mode 100644 drivers/phy/phy-snps-eusb2.c
+ delete mode 100644 drivers/phy/qualcomm/phy-qcom-snps-eusb2.c
+
+-- 
+2.43.0
+
