@@ -1,81 +1,71 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9BB221290;
-	Sat, 12 Apr 2025 20:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E467BAEC;
+	Sun, 13 Apr 2025 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744490004; cv=none; b=WzLemww/mCvipuFIl9CIFLrulyF5MXaXmXHeOehhvmQIXu7zmsqu75NOVwJKwyE6GACySJAOnjQTLpvpRpaMKpO46yLk5de3H5LPQdw4b/14JznFobLx+MNUQUQdg/anN1dqUs81uHwuxTqP1E68H5HiMWFlyNlacG/0frlvgro=
+	t=1744562282; cv=none; b=Tbw5NRAxY2ogHwJuNNr33246q5+sJCxipXthkhcbRItzGYdKtkN4uaJ1sXqJg3f2Y9IDsbZIqdqkgRSVpODJwlQ7iU/UawrcoFh+fovvYOAab/xQwJe2Cxinw+NSgzEO5/KmDND6kB6i/NrU8vQ2n+FkubK0NFfi0EbM275Jzhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744490004; c=relaxed/simple;
-	bh=7dCg5tzUQj/4mVhPpQnuYyPbXZOifNhDVZSE5I8JtdE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qdQCLbgW8YVOrmuB8UQkQhXGveRVCguoF1XJ7hILGlM5Qmt+ZmCEgvoC6ORS9Vzyh/Fc1M3vzkWmC3k90FmVesSR8NoxQNpQKG4WohXyHHYQL8Q6VXkeel/rDXxFgB2y15fdeh8f4jO+i0k4Qr3S4JlbmGR/AP8gg57yRjYBoRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VExILugT; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1744562282; c=relaxed/simple;
+	bh=7DlJV8tOAZo87ABvIk51jkGWVfIUC2F0UrGIz+A3Flk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InDDtP+L8oiuN5NYGFfyT49Yw0GTcKJMK74tL3zeYUrWeCXltygInSw184bYNSdP7MG9D1JsefTOSJ2ahXbvZsGmuw+cXw3NleNIa55IYryXFq9FcxxDfj3n5e7Bx1Tzv7IkNPMmSQa/u3e9U3m4vvironFJPri0u5XqDJlIcrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddxfOWgk; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VExILugT"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-391342fc0b5so2337739f8f.3;
-        Sat, 12 Apr 2025 13:33:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddxfOWgk"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-391342fc0b5so2775467f8f.3;
+        Sun, 13 Apr 2025 09:38:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744490001; x=1745094801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5KGnOL6zOW5X0ya7fBxl7f8BKxT9nw74oMzFAvnhYmo=;
-        b=VExILugTM++2fkAoATkCPpuf9mHUXweBZ+2B7v1+Ln7oLd8acviCbUh/qXSZdzKg3K
-         CTBoE4wvE9/oeJ0vvpaFhSP38fcXzLeWWAcm5FIViMvUB9tc+w4izawnCzZHzOJKBybU
-         zDBoB4Hl297tPqwNcqPE4lgQKP7cdcFQvi5itBwoLmtXNJ8ETOOr0qy+CKP8gqM0LbgX
-         Wu0clb6uQbS5kIF209DYOd7IsuxiNNRoH813b0A5VuC5+cehCpDSNkRBEV3zfPJjHqMZ
-         C+AriOP0yz18v5NUScZzYwWQq2Zlt78CJDGnQ+SHDO44quaoyPcaPKuKOWug/cIDiknV
-         lThw==
+        d=gmail.com; s=20230601; t=1744562278; x=1745167078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2A9Dcjes/+32sERoSUov+ch9amtIj6eI646E87CQPts=;
+        b=ddxfOWgkWgbU7y50pPv9N+6xU/nh2xjVDdA/SUy8JR3zD4NtrlIPrHCq9hCRaW2T1G
+         tQzCX97u9CAWZSXPPX5sL6q9hS2I8Y+g6ruU2q1H/Za+E0AiaU7YF9BGjA1b4/G6nqus
+         3JqR1BPmCYKUpS/jkZPwibkL38xMzVhEwFm6ym7GA0GvRmL+md7g4FAB6ftf8OtVU/ZX
+         e3BqdKEx3r+5P4vHrAznbG9O4WoO60gtX/rEusplCDc+E5m3G6OKIvZIGh1pJ9zqfxwC
+         k4A2VmqbOTE3ddJ2aG+uGlsA8KXrnOa1yLE7YgfgJrlzgjijY6LtCMR3Rr4NQPCdGfOq
+         wHbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744490001; x=1745094801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5KGnOL6zOW5X0ya7fBxl7f8BKxT9nw74oMzFAvnhYmo=;
-        b=dt//n9j/CoJLOKCebpTXgMgFOsw3PLgDIHg++BjIlHNW5swbsNLaTCWI0mimlUbEnf
-         m1jPBlkgB+DTnlh2UfIXBCia7rW76riT1ve5rBLYBZ0T2PojfPBpMJCCfVJwGhgVuJR9
-         TeR473mE8PMaqqGA7zYACSkkNQ4wXAnoCwR5DVm0ovgE2r2vHsIVvQ2vIC6iDAEvGKsj
-         lSHAiHf99MQL7NT7MkgEmoe9i7DuiuNv6GRhXTmdVTsCFQ/59nHT88zz56EPDg5xZZSn
-         WA19fPRy8RIOyNrOpbOQSIPidQwDNqPwZ7CQkS8AQRNYdc1Sp7UtBzQ8Klje57S1kofY
-         j9oA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCro2+GiWDxuPClRWS+zM8+6wnNtLR3tBLluCHsABexKpW6heWvFW9I9dgFteXE9rKQM+/fiJt+nNj@vger.kernel.org, AJvYcCWGs9/5Ub5ume43TtZm2l/F11jc27Y0hXfdiN9Fr3JWT6974F42k5QcK83zw2RyGM/fLPwdtihV4HMDtEqk@vger.kernel.org, AJvYcCWw8sYG+383h/YpW7BPRSz3Gzm3YZh4JkrvOF60r1BpQSrECIVlxdEqPkktln9t0ukfCd49cabXxY3B@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoZGGT9Zr6I2EvBAPjQQT3VKrj5gx/l3vsFAll60dIGnMGFSFq
-	2rIItu+OJABfaCvjfkOlk77xtA+VL+NBJQg5kfy9r9WkqYnsXgtY4GYuig==
-X-Gm-Gg: ASbGncu06QYmf8E8DalRKdmaVcSgVsEkzyKciF/HGGc9o/f/ttu/SYsW+F10gsm7kx0
-	KzQ2VcGqtyPQ6wFHDe0OMKk3CA0vBpRdL4N3ErVI7O+MOQkmDHZdl/FqHfIqclqxQ9aqnxcqdvT
-	qEY4hct6wWuMm6kB2dIJrEFHJf4S7hng04bJT25DXn3N4X3DxaS+Pk2lVfJS9RSFbMMNt3TwTCZ
-	uhpM7xare8tJqLi1Q099kJt3LwkOP3K2bAUgUeff8TTfGscWkQn81WlPp/WYydp6MmVpc92+LFM
-	Xzxv5W06HK7u/Cf4CsPmuQ8Kru60im70SqUlC+297Mo8mto2/lEtvEaPv5A6xBPRmj66PYK3MOO
-	euKsjRsAeK4C23sjY
-X-Google-Smtp-Source: AGHT+IG5LOI1pesFPQmRAVlPiYfeXozU198XAF8Q6TGdiddjdZMVjob+wqLzV6mTW9QqbhDA2VY/iA==
-X-Received: by 2002:a5d:5f53:0:b0:390:e7c1:59c4 with SMTP id ffacd0b85a97d-39ea5206aeemr5751863f8f.13.1744490001327;
-        Sat, 12 Apr 2025 13:33:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744562278; x=1745167078;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2A9Dcjes/+32sERoSUov+ch9amtIj6eI646E87CQPts=;
+        b=Vdovn2Bjzl8c05H17BloXYjWs1D4MY2HpozdqLnaMCpvnPMUyYjEXSZXQuY/ZVXc44
+         QWFVxpbfQOvOnT59ADrbJDKUHCznt7f595yVHikGqEZez0c8rzOiOFVTCn1T1eJEoL22
+         CYXiUbxBHCVNSSvy4S7yNf4FacQbRy5hStEJFWHj4UtEIaINYPeCN/UOFi5jiBlfaic7
+         lMn8r/ra9ZC7REcBy+d0ah7G62MZaHSDvKbywIt7Y3+u2AbQL8HY5HF9YiGRjISIo/bD
+         JjJPdjpuRkzXlZtKbqjQRnX29jYuY18bHurtxkJY94fJcneI4bDP1Cd+eBwHYBlMYb6D
+         b21Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUouV+bvP2RC/1G/7CbtWH4Rla9ee51V3IHtil3qKQh4+B0P7d7ndqfp/sBMyoOz2S7Z0+ivzKcFx+0lrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/5WKosvNRe7At0gGPWmBtg+cupS/W3xzJQ/79V4IQRDaInap5
+	Ze36M5++YqSNba+859XS9zcp27fBHqkjK0JjIl3iBRKgS1+NpUMI
+X-Gm-Gg: ASbGncuPzy+PXjJilZqU3s+Ww7HuvlPaZjdm3ia76N5HwBu1F0YnOkPW5JZ9PZZeoY5
+	9ppEAV01+6E4QPZ2XlxpoXQx1WDWI0O6jMAioTvxA2aawVRCagnQHfpqnRqgFO9FzuoDt0wW0mG
+	pnJNuau55EHyElWp9h02Snm1sm/+1nfH/Pbj7db0Qsj2+NB3Mr2aH3gb7B7MKkqhEp2FmeVjF5x
+	Gdjcq3rdClO03cewVZS2WENk8QZ0av4ZZKoYOxbwogV+offzTImNbgLq9r0JYa9GUnaxjQDTVGq
+	FrOrV5BPof8OwJsQ74xbMN+wOPaelswDbaW9hh/TCfQYmMyd6xiSRTA/es5XbL21SCN0Z6xQlCT
+	45YPv5eFuBnEwbhmg
+X-Google-Smtp-Source: AGHT+IFhCxopziJZlWQ179r6LZuAG9+1Kj/1Hh1QH+FwbKfdGfTQzhiAIMLXVWuSTeTyxw0yzNXQqQ==
+X-Received: by 2002:a5d:588a:0:b0:39a:c9b3:e1d7 with SMTP id ffacd0b85a97d-39ea634bf9amr6390646f8f.29.1744562278315;
+        Sun, 13 Apr 2025 09:37:58 -0700 (PDT)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cb29sm5941896f8f.76.2025.04.12.13.33.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c49f7sm147450895e9.17.2025.04.13.09.37.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 13:33:20 -0700 (PDT)
+        Sun, 13 Apr 2025 09:37:57 -0700 (PDT)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] usb: dwc3: exynos: add support for Exynos2200 variant
-Date: Sat, 12 Apr 2025 23:33:13 +0300
-Message-ID: <20250412203313.738429-3-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1] soc: samsung: usi: prevent wrong bits inversion during unconfiguring
+Date: Sun, 13 Apr 2025 19:37:55 +0300
+Message-ID: <20250413163755.788907-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250412203313.738429-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250412203313.738429-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -84,43 +74,30 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Exynos2200 compatible string and associated driver data. This SoC
-requires a Link interface AXI clock.
+Instead of setting bit 1 (USI_OPTION_CLKSTOP_ON) during USI unconfiguring,
+all the other bits in the USI_OPTION register get inverted, which
+should not happen as that means the clock will keep getting provided
+to the USI IP. Remove the unnecessary tilde.
 
+Fixes: 11e77776b58a ("soc: samsung: usi: add a routine for unconfiguring the ip")
 Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 ---
- drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/soc/samsung/exynos-usi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index de686b9e6..20abc6a4e 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -145,6 +145,12 @@ static void dwc3_exynos_remove(struct platform_device *pdev)
- 	regulator_disable(exynos->vdd10);
- }
+diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
+index c5661ac19..5f7bdf3ba 100644
+--- a/drivers/soc/samsung/exynos-usi.c
++++ b/drivers/soc/samsung/exynos-usi.c
+@@ -233,7 +233,7 @@ static void exynos_usi_unconfigure(void *data)
+ 	/* Make sure that we've stopped providing the clock to USI IP */
+ 	val = readl(usi->regs + USI_OPTION);
+ 	val &= ~USI_OPTION_CLKREQ_ON;
+-	val |= ~USI_OPTION_CLKSTOP_ON;
++	val |= USI_OPTION_CLKSTOP_ON;
+ 	writel(val, usi->regs + USI_OPTION);
  
-+static const struct dwc3_exynos_driverdata exynos2200_drvdata = {
-+	.clk_names = { "link_aclk" },
-+	.num_clks = 1,
-+	.suspend_clk_idx = -1,
-+};
-+
- static const struct dwc3_exynos_driverdata exynos5250_drvdata = {
- 	.clk_names = { "usbdrd30" },
- 	.num_clks = 1,
-@@ -183,6 +189,9 @@ static const struct dwc3_exynos_driverdata gs101_drvdata = {
- 
- static const struct of_device_id exynos_dwc3_match[] = {
- 	{
-+		.compatible = "samsung,exynos2200-dwusb3",
-+		.data = &exynos2200_drvdata,
-+	}, {
- 		.compatible = "samsung,exynos5250-dwusb3",
- 		.data = &exynos5250_drvdata,
- 	}, {
+ 	/* Set USI block state to reset */
 -- 
 2.43.0
 
