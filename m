@@ -1,71 +1,71 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C127B51C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2025 08:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378E2820DD
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2025 08:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705739; cv=none; b=JigyIY5TlJXZfHW/24ycP9LyNKYV0Vn1jAU3epQ4NCXG3KwLZilJ8KnZhZG+m9LGbpkGwcXSA6RPdYFY8JgmfIrEfANHE/lCja9+JmA6iSNxAfxHtAn+66sXF6UsSoOpghQxjIf+25GJWhmg4uCDi+AnKFMbhq0FMmCdcainhaU=
+	t=1744705752; cv=none; b=KKVWaJz2wfSevFBA6FgHwsClljcrp96Vh8aBxrGl+rWEY1rwPXWDm9ev5hYq0OdnXPVBtSar7zetZnS8bbkTVe8qqyL8giDgfZlCsdhyOPheHvIsRSZDV4dpSzFkaJXd9s3fxi6T3TRRKo2bRmgGWZk6kfm2o7XC73rZ1Or+590=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705739; c=relaxed/simple;
+	s=arc-20240116; t=1744705752; c=relaxed/simple;
 	bh=kbC+rbiQeXAmTKOdQ5ekU8ntNo3bts/iVzbE7GMiRTY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sU5PNdAVWy+kHRKrXyIBg5qr1blHHZicAkAdsGP0M+qF/A/jfawFw5uPuYdr6Ch02q1yZHNIV9+dFvHDPk5r3zTjBJ7LDJP2oEVuD5uDzv6vfnGHxJ+NFR/lRU+9M8arLTiGlIeu3srvTRgoZMWz+qnUCtHrvqXWMcFge1sW8iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l2Nxzd/d; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=jSOdvdT9VpwpcP0UXNJYPAclFRU1/+VeoBb/u32Gg00RtCFcJkHOVYhBlg1PMxYS0xM6A8xpv8Y2daHPiDokOBQcdxpsWZz0FvOk0UEoXf8OOxQAvKvjz88Y//WiUpVcSxwo1upJbAk69jmydTlnEaIPGthaSDzvEo8FprgUxbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x+nM67dS; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l2Nxzd/d"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54b10594812so6143461e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2025 01:28:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x+nM67dS"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30c416cdcc0so47027831fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2025 01:29:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744705735; x=1745310535; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744705749; x=1745310549; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
         bh=kbC+rbiQeXAmTKOdQ5ekU8ntNo3bts/iVzbE7GMiRTY=;
-        b=l2Nxzd/doT8Rqhxa6oEYVZxmArAkE1Ihc/bsrDpV1OlOPMbDCkYxTj/Q82bHjMu+M2
-         1ZRD/sOcbxOlDVFP+q2//Ez51ZI9VBtkCCM49gbherZHwCEGP6QjmGWgaaBmoCkC+bQH
-         eXnAAHthvnZJYS+3i9SaJnqbbyO2YZwCFoR7mFxZW8DzUS3RxRF9SK0PzuAou68XV9A2
-         IJeFW4K4vPOyXcbunAQA5u+fQKthtXS6A90JieFkSP2c+44DMc2r1LnSd06Of4pY8PuI
-         Ag2pAQ895bDyfXn/41dstcjPKtBbkGAM7cN47kXYnnc1BA8FTmaW+dM5YmiYHo4BZYm9
-         SIEw==
+        b=x+nM67dSH24BKBD6gI01oiwRKdOyXeKhCywonH5cBtRo/IZj0UNWF7FVoZIJNb0Pzl
+         F5XJR7RJ80n3lY79jkPI3tlkI8Duz0UusarNUWrT8ynsvjUabQOgsbMFULZ0o8fnUTGC
+         NHMQxTlB7qmQriDnVBwFy6ZAg/O05qUsEIDXm20LWsKrGgAkWV+PIptDxKtvUYCZb5m6
+         eawkDQ0aKSDUqIrpvIXzDiVRezeV9x1EMkHr1X6RGplA9bsEqW8Scxxz1twUZDHljDUW
+         rgt+g/wfeD0gxVeB2FDryevNZ7X/B+9wSvlVCmlIYFWlDEQzmumrxdwGli+kwHZTmacM
+         g+cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744705735; x=1745310535;
+        d=1e100.net; s=20230601; t=1744705749; x=1745310549;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
         bh=kbC+rbiQeXAmTKOdQ5ekU8ntNo3bts/iVzbE7GMiRTY=;
-        b=bRF1FrvR9tGkt9cs/1foshDur/P7I/ie1zDNgeYjsTbQ3tBDbly7DKRpptMP+Ql0VU
-         eoE3GHRGCAtV8e33u/XBiZ6sQgG0NBoyJBBVrJmU1gLj431Fv6ZfC2ROEOcZalCcIPM9
-         txFqHEpf+v4EAMDUxd+mvzgcidRLY8zVvbNmi7RLhaHDuvJsqwEPh8fgyD2a0dJWWfC8
-         B1S84DRAVgzw6g0/iJiT5e5Jmd3GNOUlq6dfwK9KiljprHSTtk4mxKhQhVrUi2mY6WVE
-         Ghs8wj7hQ9YAGf1d5M95nL2uNBASx9yD6MMJnXka9YW5UaECLxYZSUc9MflHbEIrrkED
-         SgUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5iM9HYeSw4Gng4vrewsALIh9ZRi85UB8TeSxRFgvNaPKkDqy0trEe2aT2eem9bTVaPtMFb8qIwGpg8RAjj7Pa4g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKRjxQ4zNGEKSjGRGKTUlBhZMJRN7Va5c48Qpu2TpYygRwcYgs
-	/L8+f704YyzBZog+ydJRgKOD6s6f2R7ayEOqDlvWv8Er9w9XwTlMc9mFNw/xac9B+EX4fM6SFeL
-	gvxSEi28lYGeGG3ocSJBeCS563tIEwV6UOUi9hQ==
-X-Gm-Gg: ASbGnctaDNFUCvCmYQiZCZ8A78dEdsP0g/Rmd+k0moendGB+uAkaRGIHvVtW5igXvUc
-	2xuORM19ioW0dyckZ7/btx5drHygkqHW1oHVO2XNh4f5vaeMqYrf0XCkh05VQem1VxGKu5o2qmN
-	gVxBQIeEC8juW1mlAPhN+rJQ==
-X-Google-Smtp-Source: AGHT+IEBR/Eqg1kLWWGKh12iJhnCpJzO1zCgcGoecoiMf/umaHeT6TJC5jiC6GTZwtMV/nPtynCgaCpBpVXSKQksMUI=
-X-Received: by 2002:a05:6512:3f12:b0:549:5802:b32d with SMTP id
- 2adb3069b0e04-54d4528b940mr5354403e87.3.1744705735088; Tue, 15 Apr 2025
- 01:28:55 -0700 (PDT)
+        b=wpabHhiH/OSiCk5G9HyFwZRSKfFX9isQa340gG1uq/L8SP2Qm+sPFCr++CTA/X+udn
+         I+HjLQl7wzjWXfonve5SKBK5r3rJXHcZDpQvC9WPNjxc/HNEAFwJWGlX819BHTUxBNbK
+         OiblTGQn4sHqFCJdkvGUHzHZQ2VyBegJMO6FnGOZCm8tE7ca+VF8tjR8ktDk/2UJILNM
+         /IXUvaPmI8piwp//ZjJd1VuBr595tgAzI34ERT+kpivRiENirvT7c2OKH0dhTqRb+BSZ
+         hNXKCvG5b/SWKmgeuc6M1XuJdYdZGDQ1rSGvmo5PJIKXoabktv/5W+oSHx5mFh5FyMaU
+         Y9yA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9FRr+JR3F34t7A4Hkab7GNXtwLtGkNfpKFZJHbVEGo/uYlZGd70uwg7yeagg0VtJGtbiL7UJyxO0cKaIjJc8+9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT/usEyVOq7t5OlSeJQhbncSTXsDmU/+wMXPYI8pDc39tDcA8B
+	5/eA9mavCeaCGixBmxfyoYjYr8bHa983g41xlrIeYNSG5JcLpyTTsPJ4AnY7qStv0LMBk4yPCH1
+	OTUpofJBW+gjC6EUAtcpVjzp0VWEJL2+guuHFlw==
+X-Gm-Gg: ASbGnctvJSEIjRIA8bD2q5bKxqlR8ftROt8rHg452WCs72q3Lxy2qB10i7ktBWGYCz+
+	luPVsuOf65XIdJ1aRBs1IFsiUt/VLC5aDWhA1fM0Ch9/1zWcnpFIWMR42EYwe5hpoKy/hWYIExN
+	g1PwB3f2+G5DrfxIy9U3ToUw==
+X-Google-Smtp-Source: AGHT+IEldvSloEtUxO9vAvr6pIUF6+6mI//GyNNWKS45SYnCGnbYk7X+AjHq8bg3bqosme6qdruAqr1basQdBWgZhUQ=
+X-Received: by 2002:a05:651c:30d4:b0:30d:e104:b594 with SMTP id
+ 38308e7fff4ca-31049aaef6fmr47714041fa.40.1744705748864; Tue, 15 Apr 2025
+ 01:29:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407-gpiochip-set-rv-arm-v1-0-9e4a914c7fd4@linaro.org> <20250407-gpiochip-set-rv-arm-v1-3-9e4a914c7fd4@linaro.org>
-In-Reply-To: <20250407-gpiochip-set-rv-arm-v1-3-9e4a914c7fd4@linaro.org>
+References: <20250407-gpiochip-set-rv-arm-v1-0-9e4a914c7fd4@linaro.org> <20250407-gpiochip-set-rv-arm-v1-2-9e4a914c7fd4@linaro.org>
+In-Reply-To: <20250407-gpiochip-set-rv-arm-v1-2-9e4a914c7fd4@linaro.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Apr 2025 10:28:43 +0200
-X-Gm-Features: ATxdqUF6Upkgm7Rf-JBAXjYSrKlpy1hvmNwsxlcKu33EviWPUC1nvmMY22JHIys
-Message-ID: <CACRpkdYbcbcbLz5K4H=dKdGfao68LgacASLnVF-bSYAsmhL6iw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] ARM: scoop/gpio: use new line value setter callbacks
+Date: Tue, 15 Apr 2025 10:28:58 +0200
+X-Gm-Features: ATxdqUFq-Vl9qhescQDJ20ocPhYf75xWr8mTBKZ04eLcprRDa-HJLgwcNWmq4o0
+Message-ID: <CACRpkdYN4wZcnmxjh9KGCa7i_K_hKtzvFgBzywbVAfK46A2fKQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: sa1100/gpio: use new line value setter callbacks
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
 	Gregory Clement <gregory.clement@bootlin.com>, Russell King <linux@armlinux.org.uk>, 
