@@ -1,25 +1,33 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C651C9B9B;
-	Tue, 15 Apr 2025 08:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2854288CA3;
+	Tue, 15 Apr 2025 09:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744706855; cv=none; b=tbP71i9+yGLzeBSMdKtrmLxfk0UmlmePBaxgfLQw7DiRdC20gSBR0Kk57kwv3soHEauA0TCLyxc72lNmVrYl6i/jzAF12aCXHF9KzSySquRQfw1DWwBkSm19StO+uE4WJzulJT1o/hGerO0QqdaMYi9gULA3HWdA7V++lobfpqc=
+	t=1744710126; cv=none; b=ZhyOT2BKehIlZOaTHN+Az8n/MRYb8eOrdSii/qhBkAGp8ftLSruL59rT8LyUbfUXLLj7Xm+XL/SwOUeXRXipnzPBBnHIBfSP8+p2M5UeCUW7mksLElfnv8fYCXei2KzAlSpAouseAN7OcEyHAuELjfSJQrwYoHcR9YzXPOYF6e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744706855; c=relaxed/simple;
-	bh=6aaXfc25NEvE47B9WK+pF4wB4Ka8W/SaAt16XdAIFWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=pFrM6lFkxHozEr4HbIsw7VO4UhJAlPHmFBRVOL50NjRiHZCpKeCKvHbFqEZNSeFg9WSSHR/UpFRh58f/PoupX1nGit1yYggm+S8ApqMgvMM2yMqGhu+byD3frg3SIiIVYTzfQiA+NXu4nAZEfJvVtB6ejLUK4yl1CciimK6Edlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AF55339;
-	Tue, 15 Apr 2025 01:47:31 -0700 (PDT)
-Received: from [10.57.68.100] (unknown [10.57.68.100])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0AF53F694;
-	Tue, 15 Apr 2025 01:47:29 -0700 (PDT)
-Message-ID: <0658a7d4-3048-4078-af14-574b87e4122a@arm.com>
-Date: Tue, 15 Apr 2025 09:47:27 +0100
+	s=arc-20240116; t=1744710126; c=relaxed/simple;
+	bh=CQSjKDExE3J8/5hHOD6Z1H7t+qB3GpL03Du/n1h/gmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AlxjTzlUNLUuKXvQjemIElS9ojpouDvC303AVgAYhP3JnpLs0MpbRRHlf10dAuEgh1DHdJF1JWxw4wOPDLc8NmhuLiR1FwnyhnJjeHab+O+EfEZV590i2Mkhim9sYl+JQdjB3AMRUILDlvGhfRephsS6cyr1z6duIqmp5XyRaxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sO/njxVW; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sO/njxVW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645E0C4CEE9;
+	Tue, 15 Apr 2025 09:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744710126;
+	bh=CQSjKDExE3J8/5hHOD6Z1H7t+qB3GpL03Du/n1h/gmk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sO/njxVWW//BVlTBPmCgk/9dUXxO9r2aKotUgmn8+nmaH1K73sPhOxVgB862jY82A
+	 ufiTJ68nIPsndz5JRUNAC6mo8QBHQ83L+rLHldQ65qDiZvsGsIV1x1n3tMemVX4ElC
+	 8U42WMfbO7l60RnaCPVcX1soQZUhvdoaCIVqRRoez8g+XFaT/z7S5EH7o4NwxjAOLt
+	 yG0fDkKLx7rI6ulMrkEAUzyeOQh+Zd0hvZDeg8u/4JeEP9GtiA3SgG/1KvHmx8XMeU
+	 jENxKwYzT9WjRiA4rJJh6IcyEzKfJyc2hVgVotlNSlIp+x1nWzmCp09fVCvLRJmjuA
+	 PQs2VoEsVZfsg==
+Message-ID: <976c39c0-18b8-4411-b9a3-ac31a3f4473a@kernel.org>
+Date: Tue, 15 Apr 2025 11:42:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -27,129 +35,99 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] drivers/thermal/exynos: Refactor clk_sec
- initialization inside SOC-specific case
-To: Anand Moon <linux.amoon@gmail.com>
-References: <20250410063754.5483-1-linux.amoon@gmail.com>
- <20250410063754.5483-2-linux.amoon@gmail.com>
+Subject: Re: [PATCH] regulator: s5m8767: add support for GPIO descriptors
+To: He Yong <hyyoxhk@163.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250415081231.904289-1-hyyoxhk@163.com>
 Content-Language: en-US
-Cc: open list <linux-kernel@vger.kernel.org>,
- Justin Stitt <justinstitt@google.com>, Bill Wendling <morbo@google.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>,
- "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
- <llvm@lists.linux.dev>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>, Nathan Chancellor
- <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250410063754.5483-2-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250415081231.904289-1-hyyoxhk@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 4/10/25 07:37, Anand Moon wrote:
-> Refactor the initialization of the clk_sec clock to be inside the
-> SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
-> is only initialized for the specified SOC and not for other SOCs,
-> thereby simplifying the code. The clk_sec clock is used by the TMU
-> for GPU on the Exynos 542x platform.
+On 15/04/2025 10:12, He Yong wrote:
+> This patch converts the S5M8767 PMIC driver to use GPIO descriptors
+> instead of the legacy GPIO interface. The changes include:
 > 
-> Removed redundant IS_ERR() checks for the clk_sec clock since error
-> handling is already managed internally by clk_unprepare() functions.
+> 1. Replace integer GPIO numbers with struct gpio_desc pointers in the
+>    platform data structure
+> 2. Use devm_gpiod_get_index() to get GPIO descriptors from device tree
+> 3. Replace gpio_set_value() with gpiod_set_value() for GPIO control
+> 4. Remove manual GPIO request and direction setting code
+> 5. Simplify GPIO error handling
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v5: None
-> v4: Fix the aligment of code clk for clk_prepare in proper if/else block.
->      update the commit for clk_sec used.
->      checked to goto clean up all the clks are proper.
->      drop IS_ERR() check for clk_sec.
-> v3: improve the commit message.
-> ---
->   drivers/thermal/samsung/exynos_tmu.c | 37 ++++++++++++++--------------
->   1 file changed, 18 insertions(+), 19 deletions(-)
+> The conversion to GPIO descriptors provides several benefits:
+> - Better integration with the device tree
+> - Automatic GPIO resource management
+> - More consistent GPIO handling across the kernel
+> - Reduced boilerplate code
 > 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 47a99b3c5395..3657920de000 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1037,29 +1037,30 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->   		return ret;
->   
->   	data->clk = devm_clk_get(dev, "tmu_apbif");
-> -	if (IS_ERR(data->clk))
-> +	if (IS_ERR(data->clk)) {
->   		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
-> -
-> -	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
-> -	if (IS_ERR(data->clk_sec)) {
-> -		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
-> -			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
-> -					     "Failed to get triminfo clock\n");
->   	} else {
-> -		ret = clk_prepare(data->clk_sec);
-> +		ret = clk_prepare(data->clk);
->   		if (ret) {
->   			dev_err(dev, "Failed to get clock\n");
->   			return ret;
->   		}
->   	}
->   
-> -	ret = clk_prepare(data->clk);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to get clock\n");
-> -		goto err_clk_sec;
-> -	}
-> -
->   	switch (data->soc) {
-> +	case SOC_ARCH_EXYNOS5420_TRIMINFO:
-> +		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
-> +		if (IS_ERR(data->clk_sec)) {
-> +			ret = dev_err_probe(dev, PTR_ERR(data->clk_sec),
-> +					    "Failed to get clk_sec clock\n");
-> +			goto err_clk;
-> +		}
-> +		ret = clk_prepare(data->clk_sec);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to prepare clk_sec clock\n");
-> +			goto err_clk_sec;
-> +		}
-> +		break;
->   	case SOC_ARCH_EXYNOS5433:
->   	case SOC_ARCH_EXYNOS7:
->   		data->sclk = devm_clk_get(dev, "tmu_sclk");
-> @@ -1112,11 +1113,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->   
->   err_sclk:
->   	clk_disable_unprepare(data->sclk);
-> +err_clk_sec:
-> +	clk_unprepare(data->clk_sec);
->   err_clk:
->   	clk_unprepare(data->clk);
-> -err_clk_sec:
-> -	if (!IS_ERR(data->clk_sec))
-> -		clk_unprepare(data->clk_sec);
->   	return ret;
->   }
->   
-> @@ -1128,8 +1128,7 @@ static void exynos_tmu_remove(struct platform_device *pdev)
->   
->   	clk_disable_unprepare(data->sclk);
->   	clk_unprepare(data->clk);
-> -	if (!IS_ERR(data->clk_sec))
-> -		clk_unprepare(data->clk_sec);
-> +	clk_unprepare(data->clk_sec);
->   }
->   
->   #ifdef CONFIG_PM_SLEEP
+> This change maintains backward compatibility with existing device trees
+> while modernizing the driver to use the preferred GPIO interface
 
-It looks good. I've missed the v4 where you addressed my comments.
+There are already patches on the lists for this or something similar, so
+double check if you are not duplicating effort.
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+In any case:
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+</form letter>
+
+Best regards,
+Krzysztof
