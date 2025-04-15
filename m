@@ -1,93 +1,109 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378E2820DD
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2025 08:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C411D618A;
+	Tue, 15 Apr 2025 08:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705752; cv=none; b=KKVWaJz2wfSevFBA6FgHwsClljcrp96Vh8aBxrGl+rWEY1rwPXWDm9ev5hYq0OdnXPVBtSar7zetZnS8bbkTVe8qqyL8giDgfZlCsdhyOPheHvIsRSZDV4dpSzFkaJXd9s3fxi6T3TRRKo2bRmgGWZk6kfm2o7XC73rZ1Or+590=
+	t=1744706224; cv=none; b=NVsnQs8wC+cwJogAd5P/+LeUrn3g25EjtzqNAhby2oAXbARWVsJmlG4x2SMlMpxmo2sEUKNxvwkfDfOlDw/yCe6DjcEsjix8FrPWu9O6yX72msom0tFU+8kogfehWJLWbjcBcVn65+Bw3oOQ1nBSTzIUiuMt/p625ojfsmJTMC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705752; c=relaxed/simple;
-	bh=kbC+rbiQeXAmTKOdQ5ekU8ntNo3bts/iVzbE7GMiRTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jSOdvdT9VpwpcP0UXNJYPAclFRU1/+VeoBb/u32Gg00RtCFcJkHOVYhBlg1PMxYS0xM6A8xpv8Y2daHPiDokOBQcdxpsWZz0FvOk0UEoXf8OOxQAvKvjz88Y//WiUpVcSxwo1upJbAk69jmydTlnEaIPGthaSDzvEo8FprgUxbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x+nM67dS; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x+nM67dS"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30c416cdcc0so47027831fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2025 01:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744705749; x=1745310549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kbC+rbiQeXAmTKOdQ5ekU8ntNo3bts/iVzbE7GMiRTY=;
-        b=x+nM67dSH24BKBD6gI01oiwRKdOyXeKhCywonH5cBtRo/IZj0UNWF7FVoZIJNb0Pzl
-         F5XJR7RJ80n3lY79jkPI3tlkI8Duz0UusarNUWrT8ynsvjUabQOgsbMFULZ0o8fnUTGC
-         NHMQxTlB7qmQriDnVBwFy6ZAg/O05qUsEIDXm20LWsKrGgAkWV+PIptDxKtvUYCZb5m6
-         eawkDQ0aKSDUqIrpvIXzDiVRezeV9x1EMkHr1X6RGplA9bsEqW8Scxxz1twUZDHljDUW
-         rgt+g/wfeD0gxVeB2FDryevNZ7X/B+9wSvlVCmlIYFWlDEQzmumrxdwGli+kwHZTmacM
-         g+cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744705749; x=1745310549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kbC+rbiQeXAmTKOdQ5ekU8ntNo3bts/iVzbE7GMiRTY=;
-        b=wpabHhiH/OSiCk5G9HyFwZRSKfFX9isQa340gG1uq/L8SP2Qm+sPFCr++CTA/X+udn
-         I+HjLQl7wzjWXfonve5SKBK5r3rJXHcZDpQvC9WPNjxc/HNEAFwJWGlX819BHTUxBNbK
-         OiblTGQn4sHqFCJdkvGUHzHZQ2VyBegJMO6FnGOZCm8tE7ca+VF8tjR8ktDk/2UJILNM
-         /IXUvaPmI8piwp//ZjJd1VuBr595tgAzI34ERT+kpivRiENirvT7c2OKH0dhTqRb+BSZ
-         hNXKCvG5b/SWKmgeuc6M1XuJdYdZGDQ1rSGvmo5PJIKXoabktv/5W+oSHx5mFh5FyMaU
-         Y9yA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9FRr+JR3F34t7A4Hkab7GNXtwLtGkNfpKFZJHbVEGo/uYlZGd70uwg7yeagg0VtJGtbiL7UJyxO0cKaIjJc8+9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT/usEyVOq7t5OlSeJQhbncSTXsDmU/+wMXPYI8pDc39tDcA8B
-	5/eA9mavCeaCGixBmxfyoYjYr8bHa983g41xlrIeYNSG5JcLpyTTsPJ4AnY7qStv0LMBk4yPCH1
-	OTUpofJBW+gjC6EUAtcpVjzp0VWEJL2+guuHFlw==
-X-Gm-Gg: ASbGnctvJSEIjRIA8bD2q5bKxqlR8ftROt8rHg452WCs72q3Lxy2qB10i7ktBWGYCz+
-	luPVsuOf65XIdJ1aRBs1IFsiUt/VLC5aDWhA1fM0Ch9/1zWcnpFIWMR42EYwe5hpoKy/hWYIExN
-	g1PwB3f2+G5DrfxIy9U3ToUw==
-X-Google-Smtp-Source: AGHT+IEldvSloEtUxO9vAvr6pIUF6+6mI//GyNNWKS45SYnCGnbYk7X+AjHq8bg3bqosme6qdruAqr1basQdBWgZhUQ=
-X-Received: by 2002:a05:651c:30d4:b0:30d:e104:b594 with SMTP id
- 38308e7fff4ca-31049aaef6fmr47714041fa.40.1744705748864; Tue, 15 Apr 2025
- 01:29:08 -0700 (PDT)
+	s=arc-20240116; t=1744706224; c=relaxed/simple;
+	bh=R/ubAIoevAV3mGWYv95flteGTRaTDejxRF0LQgRjdpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=WuGPL+mTE+rDfSHt9C8/h6ppC4A9v5edG+L5JnpjuJz1CsV72Zfs8I91Z1a3yscwe7MrGuBUqnseIZOypJkvt0nqdWGFzvvwoqZdk1+Q9fqmISl8pR674KzhCMWn5lTCeOvUu+j1P1WGKDPbHMFczzdQe9sCMSW2NWciMvGmi00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95EBF339;
+	Tue, 15 Apr 2025 01:37:00 -0700 (PDT)
+Received: from [10.57.68.100] (unknown [10.57.68.100])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58BBB3F694;
+	Tue, 15 Apr 2025 01:36:59 -0700 (PDT)
+Message-ID: <6abf897b-bbde-4586-941d-9915f15f1934@arm.com>
+Date: Tue, 15 Apr 2025 09:36:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407-gpiochip-set-rv-arm-v1-0-9e4a914c7fd4@linaro.org> <20250407-gpiochip-set-rv-arm-v1-2-9e4a914c7fd4@linaro.org>
-In-Reply-To: <20250407-gpiochip-set-rv-arm-v1-2-9e4a914c7fd4@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Apr 2025 10:28:58 +0200
-X-Gm-Features: ATxdqUFq-Vl9qhescQDJ20ocPhYf75xWr8mTBKZ04eLcprRDa-HJLgwcNWmq4o0
-Message-ID: <CACRpkdYN4wZcnmxjh9KGCa7i_K_hKtzvFgBzywbVAfK46A2fKQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] ARM: sa1100/gpio: use new line value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Russell King <linux@armlinux.org.uk>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] drivers/thermal/exymos: Fixed the efuse min max
+ value for exynos5422
+To: Anand Moon <linux.amoon@gmail.com>
+References: <20250410063754.5483-1-linux.amoon@gmail.com>
+ <20250410063754.5483-4-linux.amoon@gmail.com>
+Content-Language: en-US
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ Justin Stitt <justinstitt@google.com>, Bill Wendling <morbo@google.com>,
+ Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
+ <llvm@lists.linux.dev>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250410063754.5483-4-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 7, 2025 at 9:09=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 4/10/25 07:37, Anand Moon wrote:
+> As per Exynos5422 user manual e-Fuse range min~max range is 16~76.
+> if e-Fuse value is out of this range, then thermal sensor may not
+> sense thermal data properly. Refactors the efuse value
+> initialization logic within exynos_map_dt_data function by
+> replacing the nested if-else statements with a switch statement.
+> Ensures proper initialization of efuse values based on the SOC type.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> v5: None
+> v4: None
+> v3: Improve the logic to convert if/else to switch
+> ---
+>   drivers/thermal/samsung/exynos_tmu.c | 19 +++++++++++++++----
+>   1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index ac3b9d2c900c..a71cde0a4b17 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -899,12 +899,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>   		data->gain = 8;
+>   		data->reference_voltage = 16;
+>   		data->efuse_value = 55;
+> -		if (data->soc != SOC_ARCH_EXYNOS5420 &&
+> -		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
+> +		data->max_efuse_value = 100;
+> +		switch (data->soc) {
+> +		case SOC_ARCH_EXYNOS3250:
+> +		case SOC_ARCH_EXYNOS4412:
+> +		case SOC_ARCH_EXYNOS5250:
+> +		case SOC_ARCH_EXYNOS5260:
+>   			data->min_efuse_value = 40;
+> -		else
+> +			break;
+> +		case SOC_ARCH_EXYNOS5420:
+> +		case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +			data->min_efuse_value = 16;
+> +			data->max_efuse_value = 76;
+> +			break;
+> +		default:
+>   			data->min_efuse_value = 0;
+> -		data->max_efuse_value = 100;
+> +			break;
+> +		}
+>   		break;
+>   	case SOC_ARCH_EXYNOS5433:
+>   		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
 
-Yours,
-Linus Walleij
+I should have added that in earlier version: LGTM,
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
