@@ -1,133 +1,238 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2854288CA3;
-	Tue, 15 Apr 2025 09:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2258F5E;
+	Tue, 15 Apr 2025 16:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710126; cv=none; b=ZhyOT2BKehIlZOaTHN+Az8n/MRYb8eOrdSii/qhBkAGp8ftLSruL59rT8LyUbfUXLLj7Xm+XL/SwOUeXRXipnzPBBnHIBfSP8+p2M5UeCUW7mksLElfnv8fYCXei2KzAlSpAouseAN7OcEyHAuELjfSJQrwYoHcR9YzXPOYF6e0=
+	t=1744732940; cv=none; b=t0t5vTqfNAy4eOrJ+LZiqStyGqp7z5fEzYjAIMVx9t441cCSU9sbc0awlsvXGEbC1l8Q/dtU2gTW1Fyci7CUAhfpcu181J6S1gQsNgNsFCiQZJsL0ZpAG0xznmmcvfAcfNPpkJTQimBSQwe++LsI97rmZnAWycmRnsXtcgqCrS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710126; c=relaxed/simple;
-	bh=CQSjKDExE3J8/5hHOD6Z1H7t+qB3GpL03Du/n1h/gmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AlxjTzlUNLUuKXvQjemIElS9ojpouDvC303AVgAYhP3JnpLs0MpbRRHlf10dAuEgh1DHdJF1JWxw4wOPDLc8NmhuLiR1FwnyhnJjeHab+O+EfEZV590i2Mkhim9sYl+JQdjB3AMRUILDlvGhfRephsS6cyr1z6duIqmp5XyRaxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sO/njxVW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744732940; c=relaxed/simple;
+	bh=7Rmh8vV6GpjW8tGOLmzMipD5iUxBweVFlC56ryJ2b3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvx2vWv49ptr+vthDshvcYaPY0YEz3NfZ4gtKQcKPCCC97UrPO2r9lVBAs2gEHpMaNqvzgY8ftg/N6eeYlRM9oVc/RsC0eaKv1Tiu6sWAQzBENrlGm/tpyvoR9fcyK/3wo9dfUBIGcT6jkCuUW6qAglQ35CwORchl/XQqiWuoUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aANLp776; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sO/njxVW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645E0C4CEE9;
-	Tue, 15 Apr 2025 09:42:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aANLp776"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DCFC4CEEB;
+	Tue, 15 Apr 2025 16:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744710126;
-	bh=CQSjKDExE3J8/5hHOD6Z1H7t+qB3GpL03Du/n1h/gmk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sO/njxVWW//BVlTBPmCgk/9dUXxO9r2aKotUgmn8+nmaH1K73sPhOxVgB862jY82A
-	 ufiTJ68nIPsndz5JRUNAC6mo8QBHQ83L+rLHldQ65qDiZvsGsIV1x1n3tMemVX4ElC
-	 8U42WMfbO7l60RnaCPVcX1soQZUhvdoaCIVqRRoez8g+XFaT/z7S5EH7o4NwxjAOLt
-	 yG0fDkKLx7rI6ulMrkEAUzyeOQh+Zd0hvZDeg8u/4JeEP9GtiA3SgG/1KvHmx8XMeU
-	 jENxKwYzT9WjRiA4rJJh6IcyEzKfJyc2hVgVotlNSlIp+x1nWzmCp09fVCvLRJmjuA
-	 PQs2VoEsVZfsg==
-Message-ID: <976c39c0-18b8-4411-b9a3-ac31a3f4473a@kernel.org>
-Date: Tue, 15 Apr 2025 11:42:01 +0200
+	s=k20201202; t=1744732939;
+	bh=7Rmh8vV6GpjW8tGOLmzMipD5iUxBweVFlC56ryJ2b3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aANLp776GKPJr5pXAnfPCvusHmJYG8nzy62olk0fqthF3OToJIaIlkaCECG05ghZ8
+	 Un00ln3T/UclXpdbp+IwVgad5hUelMoCgjZ3JLblQuDGZosgZlH/w+UmFazy/FcEQe
+	 QKCKWF0mFzEG9r2zEcWuheOQPeBVknSgquyecaSIgfO+nu2Oopa/Afub5Z31RQXzl9
+	 SYCRm9kl1WT275bzi0f487LXy0Kb8n2F2RLBY9uAq23ZrZqlQDGdMNBpTkhr2yFx+T
+	 mO2GEdOLLSGBD0mgsJFep3vPLvT29DE/BOI1TWKCvdyOagM0TqAo+QPFE2K9xRtJLj
+	 HXdR/+0rgoqvQ==
+Date: Tue, 15 Apr 2025 17:02:12 +0100
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+Message-ID: <20250415160212.GA372032@google.com>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: s5m8767: add support for GPIO descriptors
-To: He Yong <hyyoxhk@163.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250415081231.904289-1-hyyoxhk@163.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250415081231.904289-1-hyyoxhk@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 
-On 15/04/2025 10:12, He Yong wrote:
-> This patch converts the S5M8767 PMIC driver to use GPIO descriptors
-> instead of the legacy GPIO interface. The changes include:
+On Wed, 09 Apr 2025, André Draszik wrote:
+
+> This series adds initial support for the Samsung S2MPG10 PMIC using the
+> MFD framework. This is a PMIC for mobile applications and is used on
+> the Google Pixel 6 and 6 Pro (oriole / raven).
 > 
-> 1. Replace integer GPIO numbers with struct gpio_desc pointers in the
->    platform data structure
-> 2. Use devm_gpiod_get_index() to get GPIO descriptors from device tree
-> 3. Replace gpio_set_value() with gpiod_set_value() for GPIO control
-> 4. Remove manual GPIO request and direction setting code
-> 5. Simplify GPIO error handling
+> *** dependency note ***
 > 
-> The conversion to GPIO descriptors provides several benefits:
-> - Better integration with the device tree
-> - Automatic GPIO resource management
-> - More consistent GPIO handling across the kernel
-> - Reduced boilerplate code
+> To compile, this depends on the Samsung ACPM driver in Linux next with
+> the following additional patches:
+> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
+> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
 > 
-> This change maintains backward compatibility with existing device trees
-> while modernizing the driver to use the preferred GPIO interface
+> *** dependency note end ***
+> 
+> +++ Kconfig update +++
+> 
+> There is a Kconfig symbol update in this series, because the existing
+> Samsung S2M driver has been split into core and transport (I2C & ACPM)
+> parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+> the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+> 
+> This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+> talk via I2C, but via the Samsung ACPM firmware.
+> 
+> +++ Kconfig update end +++
+> 
+> This series must be applied in-order, due to interdependencies of some
+> of the patches. There are also various cleanup patches to the S2M
+> drivers. I've kept them ordered as:
+>   * DT bindings (patches 1 ... 3)
+>   * s2m mfd prep for adding S2MPG10 support (patches 4 ... 7)
+>   * split S2M mfd driver into s2m-core and s2m-i2c, including the
+>     kconfig symbol update (patch 8)
+>   * S2MPG10 core driver (patch 9)
+>   * s2m mfd driver cleanup patches (patches 10 ... 23)
+>   * S2MPG10 clock driver (patch 24)
+>   * s2m RTC prep for adding S2MPG10 (patch 25 ... 26)
+>   * S2MPG10 RTC driver (patch 27)
+>   * s2m RTC cleanup patches (patches 28 ... 31)
+> 
+> I realise these are many, but since some prep-work was required to be
+> able to add S2MPG anyway, I wanted to get the cleanup patches in as
+> well :-) Let me know if I should postpone them to a later date instead.
+> 
+> The S2MPG10 includes buck converters, various LDOs, power meters, RTC,
+> clock outputs, and additional GPIOs interfaces.
+> 
+> This series adds support in the top-level device driver, and for the
+> RTC and clock. Importantly, having the RTC driver allows to do a proper
+> reset of the system. Drivers or driver updates for the other components
+> will be added in future patches.
+> 
+> This will need a DT update for Oriole / Raven to enable this device. I
+> will send that out separately.
+> 
+> Cheers,
+> Andre'
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+> Changes in v4:
+> - various updates to sec-acpm (patch 9, Lee)
+> - cache enum type in patch 25 (Krzysztof)
+> - collect tags
+> - Link to v3: https://lore.kernel.org/r/20250403-s2mpg10-v3-0-b542b3505e68@linaro.org
+> 
+> Changes in v3:
+> - Krzysztof:
+>   - keep 'regulators' subnode required even for s2mpg10
+>   - drop '$ref' and 'unevaluatedProperties' from pmic subnode, use
+>     'additionalProperties' instead
+>   - add some regulators to examples since s2mpg10 requires them as of
+>     v3
+> - sec-acpm:
+>   - use an enum for struct sec_acpm_bus_context::type
+>   - consistent name space for all functions sec_pmic_acpm_... to be
+>     similar to i2c and consistent in this file
+> - Link to v2: https://lore.kernel.org/r/20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org
+> 
+> Changes in v2:
+> - Rob:
+>   - make PMIC node a child of ACPM, and all related changes (binding,
+>     driver)
+> - Krzysztof:
+>   - merge defconfig updates into patch changing the symbols (patch 8)
+>   - split MODULE_AUTHOR update into a separate patch
+>   - better alignment fix (patch 11)
+>   - merge two s2dos05/s2mpu05 related patches into one (patch 14)
+> - myself:
+>   - keep PMIC DT parsing in core, not in transport driver
+>   - several updates in sec-acpm.c, see separate entries in patch 9
+>   - fix typo in patch 17
+>   - collect tags
+> - Link to v1: https://lore.kernel.org/r/20250323-s2mpg10-v1-0-d08943702707@linaro.org
+> 
+> ---
+> André Draszik (32):
+>       dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+>       dt-bindings: clock: samsung,s2mps11: add s2mpg10
+>       dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
+>       mfd: sec-core: Drop non-existing forward declarations
+>       mfd: sec: Sort includes alphabetically
+>       mfd: sec: Update includes to add missing and remove superfluous ones
+>       mfd: sec: Move private internal API to internal header
+>       mfd: sec: Split into core and transport (i2c) drivers
+>       mfd: sec: Add support for S2MPG10 PMIC
+>       mfd: sec: Merge separate core and irq modules
+>       mfd: sec-common: Fix multiple trivial whitespace issues
+>       mfd: sec-i2c: Sort struct of_device_id entries and the device type switch
+>       mfd: sec: Use dev_err_probe() where appropriate
+>       mfd: sec-i2c: s2dos05/s2mpu05: Use explicit regmap config and drop default
+>       mfd: sec-irq: s2dos05 doesn't support interrupts
+>       mfd: sec-common: Don't ignore errors from sec_irq_init()
+>       mfd: sec-i2c: Rework platform data and regmap instantiating
+>       mfd: sec: Change device_type to int
+>       mfd: sec: Don't compare against NULL / 0 for errors, use !
+>       mfd: sec-common: Use sizeof(*var), not sizeof(struct type_of_var)
+>       mfd: sec-common: Convert to using MFD_CELL macros
+>       mfd: sec-irq: Convert to using REGMAP_IRQ_REG() macros
+>       mfd: sec: Add myself as module author
+>       clk: s2mps11: add support for S2MPG10 PMIC clock
+>       rtc: s5m: cache device type during probe
+>       rtc: s5m: prepare for external regmap
+>       rtc: s5m: add support for S2MPG10 RTC
+>       rtc: s5m: fix a typo: peding -> pending
+>       rtc: s5m: switch to devm_device_init_wakeup
+>       rtc: s5m: replace regmap_update_bits with regmap_clear/set_bits
+>       rtc: s5m: replace open-coded read/modify/write registers with regmap helpers
+>       MAINTAINERS: add myself as reviewer for Samsung S2M MFD
+> 
+>  .../devicetree/bindings/clock/samsung,s2mps11.yaml |   1 +
+>  .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  35 ++
+>  .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  26 +-
+>  MAINTAINERS                                        |   3 +-
+>  arch/arm/configs/exynos_defconfig                  |   2 +-
+>  arch/arm/configs/multi_v7_defconfig                |   2 +-
+>  arch/arm/configs/pxa_defconfig                     |   2 +-
+>  arch/arm64/configs/defconfig                       |   2 +-
 
-There are already patches on the lists for this or something similar, so
-double check if you are not duplicating effort.
+>  drivers/clk/clk-s2mps11.c                          |   8 +
 
-In any case:
+>  drivers/mfd/Kconfig                                |  35 +-
+>  drivers/mfd/Makefile                               |   5 +-
+>  drivers/mfd/sec-acpm.c                             | 442 +++++++++++++++++++
+>  drivers/mfd/sec-common.c                           | 301 +++++++++++++
+>  drivers/mfd/sec-core.c                             | 481 ---------------------
+>  drivers/mfd/sec-core.h                             |  23 +
+>  drivers/mfd/sec-i2c.c                              | 239 ++++++++++
+>  drivers/mfd/sec-irq.c                              | 460 +++++++-------------
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+>  drivers/rtc/rtc-s5m.c                              | 197 ++++++---
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
+MFD parts look okay to me now.
 
-Best regards,
-Krzysztof
+With Acks from the Clk and RTC maintainers, I can merge all of the
+driver stuff together and submit a PR for others to pull from.
+
+>  include/linux/mfd/samsung/core.h                   |   7 +-
+>  include/linux/mfd/samsung/irq.h                    | 103 +++++
+>  include/linux/mfd/samsung/rtc.h                    |  37 ++
+>  include/linux/mfd/samsung/s2mpg10.h                | 454 +++++++++++++++++++
+>  22 files changed, 2001 insertions(+), 864 deletions(-)
+> ---
+> base-commit: f58dd835f82a5dda6c9d3895ee6f15016431fb1f
+> change-id: 20250321-s2mpg10-ef5d1ebd3043
+> 
+> Best regards,
+> -- 
+> André Draszik <andre.draszik@linaro.org>
+> 
+
+-- 
+Lee Jones [李琼斯]
