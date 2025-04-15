@@ -1,25 +1,25 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B741D618A;
-	Tue, 15 Apr 2025 08:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C651C9B9B;
+	Tue, 15 Apr 2025 08:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744706298; cv=none; b=cOOKjsQXyvTo7CNcyc3ANXN4HlJnBnYuzibSmTQa3IwvLX3nk58kLDFX+AFRyx7bB4GCBsFhfWvdvFhC3D8xXnAEZ8tLmkZWAVvqgUEeaaZ9WLqDRe+fgK/+y+mADvnK2OYLqU+LGbLCtB3TND6rP9ljx38Qfsc9QP/6V3W1Ur0=
+	t=1744706855; cv=none; b=tbP71i9+yGLzeBSMdKtrmLxfk0UmlmePBaxgfLQw7DiRdC20gSBR0Kk57kwv3soHEauA0TCLyxc72lNmVrYl6i/jzAF12aCXHF9KzSySquRQfw1DWwBkSm19StO+uE4WJzulJT1o/hGerO0QqdaMYi9gULA3HWdA7V++lobfpqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744706298; c=relaxed/simple;
-	bh=6nyT0B2Wu/FJxNO/grPfVw0tV/iEqvAx/3v/1AOBHWQ=;
+	s=arc-20240116; t=1744706855; c=relaxed/simple;
+	bh=6aaXfc25NEvE47B9WK+pF4wB4Ka8W/SaAt16XdAIFWI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=UkMNHK6+59R1l1iZaYP/NYVIFrTh+kVyinmCdOILYPkR3/8BrXwp1XcYy29leDVWiwQcAu3RTaiO+BsERJN5ziy649ZunxvJBE01iYsbCGooO5dsGvdggwBMLohBnvIIaT2zhKS5fAEOASvdETeLnHd3bnwm8YWazqKWoLy79YY=
+	 In-Reply-To:Content-Type; b=pFrM6lFkxHozEr4HbIsw7VO4UhJAlPHmFBRVOL50NjRiHZCpKeCKvHbFqEZNSeFg9WSSHR/UpFRh58f/PoupX1nGit1yYggm+S8ApqMgvMM2yMqGhu+byD3frg3SIiIVYTzfQiA+NXu4nAZEfJvVtB6ejLUK4yl1CciimK6Edlc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17008339;
-	Tue, 15 Apr 2025 01:38:14 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AF55339;
+	Tue, 15 Apr 2025 01:47:31 -0700 (PDT)
 Received: from [10.57.68.100] (unknown [10.57.68.100])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB1983F694;
-	Tue, 15 Apr 2025 01:38:12 -0700 (PDT)
-Message-ID: <9d73c1e0-d60d-4c3e-91ff-e38cc2cd1b98@arm.com>
-Date: Tue, 15 Apr 2025 09:38:10 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0AF53F694;
+	Tue, 15 Apr 2025 01:47:29 -0700 (PDT)
+Message-ID: <0658a7d4-3048-4078-af14-574b87e4122a@arm.com>
+Date: Tue, 15 Apr 2025 09:47:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -27,72 +27,129 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] drivers/thermal/exymos: Remove redundant IS_ERR()
- checks for clk_sec clock
+Subject: Re: [PATCH v5 1/3] drivers/thermal/exynos: Refactor clk_sec
+ initialization inside SOC-specific case
 To: Anand Moon <linux.amoon@gmail.com>
 References: <20250410063754.5483-1-linux.amoon@gmail.com>
- <20250410063754.5483-3-linux.amoon@gmail.com>
+ <20250410063754.5483-2-linux.amoon@gmail.com>
 Content-Language: en-US
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+Cc: open list <linux-kernel@vger.kernel.org>,
  Justin Stitt <justinstitt@google.com>, Bill Wendling <morbo@google.com>,
- Nathan Chancellor <nathan@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, open list <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>,
  "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
  <llvm@lists.linux.dev>,
  "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250410063754.5483-3-linux.amoon@gmail.com>
+In-Reply-To: <20250410063754.5483-2-linux.amoon@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 4/10/25 07:37, Anand Moon wrote:
-> Remove unnecessary IS_ERR() checks for the clk_sec clock,
-> the clk_enable() and clk_disable() functions can handle NULL clock
-> pointers, so the additional checks are redundant and have been removed
-> to simplify the code.
+> Refactor the initialization of the clk_sec clock to be inside the
+> SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
+> is only initialized for the specified SOC and not for other SOCs,
+> thereby simplifying the code. The clk_sec clock is used by the TMU
+> for GPU on the Exynos 542x platform.
+> 
+> Removed redundant IS_ERR() checks for the clk_sec clock since error
+> handling is already managed internally by clk_unprepare() functions.
 > 
 > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
 > v5: None
-> v4: drop IE_ERR() for clk_unprepare() as its handle in earlier code.
+> v4: Fix the aligment of code clk for clk_prepare in proper if/else block.
+>      update the commit for clk_sec used.
+>      checked to goto clean up all the clks are proper.
+>      drop IS_ERR() check for clk_sec.
 > v3: improve the commit message.
 > ---
->   drivers/thermal/samsung/exynos_tmu.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
+>   drivers/thermal/samsung/exynos_tmu.c | 37 ++++++++++++++--------------
+>   1 file changed, 18 insertions(+), 19 deletions(-)
 > 
 > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 3657920de000..ac3b9d2c900c 100644
+> index 47a99b3c5395..3657920de000 100644
 > --- a/drivers/thermal/samsung/exynos_tmu.c
 > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -258,8 +258,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> @@ -1037,29 +1037,30 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>   		return ret;
 >   
->   	mutex_lock(&data->lock);
->   	clk_enable(data->clk);
-> -	if (!IS_ERR(data->clk_sec))
-> -		clk_enable(data->clk_sec);
-> +	clk_enable(data->clk_sec);
->   
->   	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
->   	if (!status) {
-> @@ -269,8 +268,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->   		data->tmu_clear_irqs(data);
+>   	data->clk = devm_clk_get(dev, "tmu_apbif");
+> -	if (IS_ERR(data->clk))
+> +	if (IS_ERR(data->clk)) {
+>   		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
+> -
+> -	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> -	if (IS_ERR(data->clk_sec)) {
+> -		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
+> -			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> -					     "Failed to get triminfo clock\n");
+>   	} else {
+> -		ret = clk_prepare(data->clk_sec);
+> +		ret = clk_prepare(data->clk);
+>   		if (ret) {
+>   			dev_err(dev, "Failed to get clock\n");
+>   			return ret;
+>   		}
 >   	}
 >   
-> -	if (!IS_ERR(data->clk_sec))
-> -		clk_disable(data->clk_sec);
-> +	clk_disable(data->clk_sec);
->   	clk_disable(data->clk);
->   	mutex_unlock(&data->lock);
+> -	ret = clk_prepare(data->clk);
+> -	if (ret) {
+> -		dev_err(dev, "Failed to get clock\n");
+> -		goto err_clk_sec;
+> -	}
+> -
+>   	switch (data->soc) {
+> +	case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> +		if (IS_ERR(data->clk_sec)) {
+> +			ret = dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> +					    "Failed to get clk_sec clock\n");
+> +			goto err_clk;
+> +		}
+> +		ret = clk_prepare(data->clk_sec);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to prepare clk_sec clock\n");
+> +			goto err_clk_sec;
+> +		}
+> +		break;
+>   	case SOC_ARCH_EXYNOS5433:
+>   	case SOC_ARCH_EXYNOS7:
+>   		data->sclk = devm_clk_get(dev, "tmu_sclk");
+> @@ -1112,11 +1113,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
 >   
+>   err_sclk:
+>   	clk_disable_unprepare(data->sclk);
+> +err_clk_sec:
+> +	clk_unprepare(data->clk_sec);
+>   err_clk:
+>   	clk_unprepare(data->clk);
+> -err_clk_sec:
+> -	if (!IS_ERR(data->clk_sec))
+> -		clk_unprepare(data->clk_sec);
+>   	return ret;
+>   }
+>   
+> @@ -1128,8 +1128,7 @@ static void exynos_tmu_remove(struct platform_device *pdev)
+>   
+>   	clk_disable_unprepare(data->sclk);
+>   	clk_unprepare(data->clk);
+> -	if (!IS_ERR(data->clk_sec))
+> -		clk_unprepare(data->clk_sec);
+> +	clk_unprepare(data->clk_sec);
+>   }
+>   
+>   #ifdef CONFIG_PM_SLEEP
 
+It looks good. I've missed the v4 where you addressed my comments.
 
 Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
