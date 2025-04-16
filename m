@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11618D63E;
-	Wed, 16 Apr 2025 07:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7F72DFA4E;
+	Wed, 16 Apr 2025 07:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744788026; cv=none; b=o7qB88CTECYfB9L9BoTePOMlSpsDKwrTGLzSiDF7BjzECY10oS+RtBog5XYiFQ9aT9VkNYFy+BZmJAPB1/HEV7qcAZXkwQ31XInS1Px0e+6M/upWeX5bdEfjIINEOq9WqSPom0TDZb4mAy6RIpT+391CELaB19V1OtUdSc+jVDI=
+	t=1744788501; cv=none; b=twvmjNHwl76rWXYhYjsko7dA2kT6MSTWIpr2U34/9rFBTORpRhuyO8NeE1gRKdKBswdWnJm735SaySJeksJ45yWMzZmkJoMuU49INPOr8MQnQ1IqVFkWxft9ST+PS1FdoAVi+N5QHSOuGlwHbMJAq+zGbONg2eB8dx2PGeOmgW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744788026; c=relaxed/simple;
-	bh=GJEGgKU6X6Hb+9PlVpjjXZwzlwrwbX8sDV3NX910M5A=;
+	s=arc-20240116; t=1744788501; c=relaxed/simple;
+	bh=HIk3I9wzakt85jAXOpCYym+UKIgHZ9FhR06F2xOAwBs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uefH4HnuRfd495tQM/uRMiXMikYsulzafKba/Kllj0LuZCs+QlCPoSmmsS0wlk1rc+giU7RYesAyGZT1TD6YKOdApruUzbmp1DUwdecSnxw4k6dy0rHtfB+ElTYydifZmaQya7wnVS2TgbkDjFW5eYA/mcxq3v+wszJYoRWknXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK2vyt6S; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=D0HWAxd819LAq6vM85h0IpR+NtVM+81sxgiCdRsDU8qn1+mAqVFE9HCXxQCpDHC6rHwXPsdOkr2bWsvA4V8Z/hiyrxk9Ec1RxeYwt+I3dl3doCMiBDOW6SV/1BpdEkmzQ29G9Sy1Y7bcvlsJg2eoIxstCborA4GlEmy1lwqL/WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSm0hHpj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK2vyt6S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C817EC4CEE2;
-	Wed, 16 Apr 2025 07:20:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSm0hHpj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CC2C4CEE2;
+	Wed, 16 Apr 2025 07:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744788026;
-	bh=GJEGgKU6X6Hb+9PlVpjjXZwzlwrwbX8sDV3NX910M5A=;
+	s=k20201202; t=1744788499;
+	bh=HIk3I9wzakt85jAXOpCYym+UKIgHZ9FhR06F2xOAwBs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YK2vyt6Sotc84JvntPqwjeH4eX67MecNamziufXfcoc0LVefxDpe7dcqYT8oy82BI
-	 IwiAnkrUFkzEF3bG9lof66Hgt5SCjUc8ynAzBA0SDFIosyKF5KNPwNR9D1g3qYvLgA
-	 IpLQ/wPyCneXCKjL3Z9Dt6I9rbFDwJLatPlPCrJkBx2wGvNOmeQYMQLyMGV6wTPc5m
-	 BCo12LhgYnYK5SiIrUDG708JKq0Cm/fqLu7PmBvzI47IznGBdpf3wZDIapJYskWRS6
-	 AIInB6/2J81XqVVYxUdt9Q273ISb7taxaKGBDfK5jZuuLy1zEH1czhWNmHK8fiQJma
-	 cxbjleZvF3ASQ==
-Message-ID: <dda1bb8c-66e7-4398-ae78-c2b21749e5c4@kernel.org>
-Date: Wed, 16 Apr 2025 09:20:23 +0200
+	b=jSm0hHpjOsvl1cJZdOTBmGEIHkc6ZGCh60vrjEweW/RCtdX44k7jHXbwo4ZQuITMG
+	 cXG92T59+JxPUYlZuoyVYY+drNbVxN+pogsubPy17BFhkodiYpB/gvf/JPAH1evqky
+	 t0OG4Zok3wKW3QVGzgXVv2oixrB2RTkcKOgKE0l2M+lPtgGryzcpiN/Qx2x32ISkUF
+	 R7UCQofA1aM9H9BX5fhvp7SvRbnDki9SV7C7mYIjxUKuLQlZyGBr3+vPNH0oLINKaL
+	 1+eRUcyx8KqmovuDPOLVDepvTp49HqLqnC4ozmRgOaZdPFwiLKyVY+ReCci3mimKk8
+	 b8nVz71nBgvaA==
+Message-ID: <1f813896-0be6-42bd-9e99-2e0a4895fbd9@kernel.org>
+Date: Wed, 16 Apr 2025 09:28:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] arm64: dts: exynos: add initial support for
+Subject: Re: [PATCH v3 3/4] arm64: dts: exynos: add initial support for
  Samsung Galaxy S22+
 To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
  Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
@@ -43,6 +43,7 @@ To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
 Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250321145556.1436201-4-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,45 +89,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250321145556.1436201-4-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/03/2025 15:55, Ivaylo Ivanov wrote:
-> Hey folks,
-> 
-> This patchset adds device tree files for Exynos 2200 and Samsung
-> Galaxy S22+.
-> 
-> Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
-> (r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
-> including psci, pmu, chipid, architecture timer and mct, pinctrl,
-> clocks and usb.
-> 
-> The devices using this SoC suffer from an issue caused by the stock
-> Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
-> needed to hardcode the adequate frequency in the timer node,
-> otherwise the kernel panics.
-> 
-> Another issue is that cpu2 and cpu3 fail to come up consistently, which
-> leads to a hang later in the boot process. As A510 cores are clustered
-> by two, it makes sense for both of these cpus to fail if there is a
-> power issue. Disable them until the problem is figured out.
-> 
-> Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
-> 2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
-> 1080x2340 Dynamic AMOLED display.
-> 
-> Further platform support will be added over time.
-> 
-> I expect [1], [2] and [3] to be merged in next before this patchset
-> because it depends on the aforementioned series for drivers and device
-> tree bindings.
+> +
+> +	/*
+> +	 * RTC clock (XrtcXTI); external, must be 32.768 kHz.
+> +	 *
+> +	 * TODO: Remove this once RTC clock is implemented properly as part of
+> +	 *       PMIC driver.
+> +	 */
+> +	rtcclk: clock-rtcclk {
+> +		compatible = "fixed-clock";
+> +		clock-output-names = "rtcclk";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <32768>;
+> +	};
+> +
+> +	/*
+> +	 * cpu2 and cpu3 fail to come up consistently, which leads
+> +	 * to a hang later in the boot process.
+> +	 *
+> +	 * Disable them until the issue is figured out.
+> +	 */
+> +	cpus {
+> +		/delete-node/ cpu@200;
+> +		/delete-node/ cpu@300;
 
-Please document dependencies at the top - this is the most important
-part of cover letter.
+status = "fail"
+does not work?
 
-Ping me when dependencies get merged.
-
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				/delete-node/ core2;
+> +				/delete-node/ core3;
+> +			};
+> +		};
+> +	};
+> +
 Best regards,
 Krzysztof
