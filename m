@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E49B2DFA5C;
-	Wed, 16 Apr 2025 07:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11618D63E;
+	Wed, 16 Apr 2025 07:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744787755; cv=none; b=RT4145croSchGFUpGKmRJ6Xp1ZN0bY5Fdv1TEdBSkIVB4Focr7UJ7NNBBIFS4e/r8F+d7dKnUfM0njU/GhD+0V9VZFLA8ZO0gAHfU9SI477tZFvAai9LtxcIxRPbx6dsh4yvQe6gnUHFWBLD4TyjM956Ki9WBuVDrzddNh8Vwx4=
+	t=1744788026; cv=none; b=o7qB88CTECYfB9L9BoTePOMlSpsDKwrTGLzSiDF7BjzECY10oS+RtBog5XYiFQ9aT9VkNYFy+BZmJAPB1/HEV7qcAZXkwQ31XInS1Px0e+6M/upWeX5bdEfjIINEOq9WqSPom0TDZb4mAy6RIpT+391CELaB19V1OtUdSc+jVDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744787755; c=relaxed/simple;
-	bh=O7NeWb4hRL+v6GegfMRWzmm5CQt/BYUNuJRAt83Zy20=;
+	s=arc-20240116; t=1744788026; c=relaxed/simple;
+	bh=GJEGgKU6X6Hb+9PlVpjjXZwzlwrwbX8sDV3NX910M5A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VGbb68AIG28LtXPqIHgnoS103WdtPIefktY/B92dAC46vt7xcLjtXKTTo++WRg5Y0TPQz1tO4mhmpS3uQbsH9Qru27eqmJxW6Zbl19swPRaAgrZ+zIfhIgi8JazCaXl0y7sBJwC5QPApj9k0hZpS7VQLWEiwJoWiLw2drm31UKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQAcbGOX; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=uefH4HnuRfd495tQM/uRMiXMikYsulzafKba/Kllj0LuZCs+QlCPoSmmsS0wlk1rc+giU7RYesAyGZT1TD6YKOdApruUzbmp1DUwdecSnxw4k6dy0rHtfB+ElTYydifZmaQya7wnVS2TgbkDjFW5eYA/mcxq3v+wszJYoRWknXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK2vyt6S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQAcbGOX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745CBC4CEE2;
-	Wed, 16 Apr 2025 07:15:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK2vyt6S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C817EC4CEE2;
+	Wed, 16 Apr 2025 07:20:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744787754;
-	bh=O7NeWb4hRL+v6GegfMRWzmm5CQt/BYUNuJRAt83Zy20=;
+	s=k20201202; t=1744788026;
+	bh=GJEGgKU6X6Hb+9PlVpjjXZwzlwrwbX8sDV3NX910M5A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WQAcbGOXai0E98KBkRRHrQL9ZEl7JmemAKBVIr/Soakg79DJFfrHc2z6VQKTdEzAt
-	 JekDTI6yCrPYynNGfp7iDYB9V48izGqsDDqgdVL551+JG7hj2yXZwKC4mfzH+eE3o0
-	 hq40pPq9z5G2fZqASmmTkSjMkk6xaCSP5JuTxF3drUfSkSh5CFoxt6Ik4aV75WYzHY
-	 6JgmvefvUXHrNxOUh7vrJL9GMe5Wa8hlWS4mddEzAZ8IasbqdryrehAUv9i08B1X85
-	 f1Ww9ZrEGQTKvMXUUdTrl86d83UdWSMTIp4UZvM1TIq08PtM6oDUXAv8tXN8gdllP7
-	 GFGIP3mwaP5qQ==
-Message-ID: <9362d6b4-890a-4364-8e51-71ad6fc1e107@kernel.org>
-Date: Wed, 16 Apr 2025 09:15:47 +0200
+	b=YK2vyt6Sotc84JvntPqwjeH4eX67MecNamziufXfcoc0LVefxDpe7dcqYT8oy82BI
+	 IwiAnkrUFkzEF3bG9lof66Hgt5SCjUc8ynAzBA0SDFIosyKF5KNPwNR9D1g3qYvLgA
+	 IpLQ/wPyCneXCKjL3Z9Dt6I9rbFDwJLatPlPCrJkBx2wGvNOmeQYMQLyMGV6wTPc5m
+	 BCo12LhgYnYK5SiIrUDG708JKq0Cm/fqLu7PmBvzI47IznGBdpf3wZDIapJYskWRS6
+	 AIInB6/2J81XqVVYxUdt9Q273ISb7taxaKGBDfK5jZuuLy1zEH1czhWNmHK8fiQJma
+	 cxbjleZvF3ASQ==
+Message-ID: <dda1bb8c-66e7-4398-ae78-c2b21749e5c4@kernel.org>
+Date: Wed, 16 Apr 2025 09:20:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/5] Add support for the Exynos7870 SoC, along with
- three devices
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250414-exynos7870-v6-0-039bd5385411@disroot.org>
+Subject: Re: [PATCH v3 0/4] arm64: dts: exynos: add initial support for
+ Samsung Galaxy S22+
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,37 +88,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250414-exynos7870-v6-0-039bd5385411@disroot.org>
+In-Reply-To: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/04/2025 20:58, Kaustabh Chakraborty wrote:
-> Samsung Exynos 7870 (codename: Joshua) is an ARM-v8 system-on-chip that was
-> announced in 2016. The chipset was found in several popular mid-range to
-> low-end Samsung phones, released within 2016 to 2019.
+On 21/03/2025 15:55, Ivaylo Ivanov wrote:
+> Hey folks,
 > 
-> This patch series aims to add support for Exynos 7870, starting with the
-> most basic yet essential components such as CPU, GPU, clock controllers,
-> PMIC, pin controllers, etc.
+> This patchset adds device tree files for Exynos 2200 and Samsung
+> Galaxy S22+.
 > 
-> Moreover, the series also adds support for three Exynos 7870 devices via
-> devicetree. The devices are:
->  * Samsung Galaxy J7 Prime	- released 2016, codename on7xelte
->  * Samsung Galaxy J6		- released 2018, codename j6lte
->  * Samsung Galaxy A2 Core	- released 2019, codename a2corelte
+> Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
+> (r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
+> including psci, pmu, chipid, architecture timer and mct, pinctrl,
+> clocks and usb.
 > 
-> Additional features implemented in this series include:
->  * I2C	- touchscreen, IIO sensors, etc.
->  * UART	- bluetooth and serial debugging
->  * MMC	- eMMC, Wi-Fi SDIO, SDCard
->  * USB	- micro-USB 2.0 interface
+> The devices using this SoC suffer from an issue caused by the stock
+> Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
+> needed to hardcode the adequate frequency in the timer node,
+> otherwise the kernel panics.
 > 
-> Build dependencies are in these sub-series:
->  * pmu-clocks		A https://lore.kernel.org/all/20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org/
+> Another issue is that cpu2 and cpu3 fail to come up consistently, which
+> leads to a hang later in the boot process. As A510 cores are clustered
+> by two, it makes sense for both of these cpus to fail if there is a
+> power issue. Disable them until the problem is figured out.
+> 
+> Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
+> 2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
+> 1080x2340 Dynamic AMOLED display.
+> 
+> Further platform support will be added over time.
+> 
+> I expect [1], [2] and [3] to be merged in next before this patchset
+> because it depends on the aforementioned series for drivers and device
+> tree bindings.
 
-So this patchset waits? Ping me or resend when your dependencies are
-merged. If resending then of course explain why and update dependencies
-list.
+Please document dependencies at the top - this is the most important
+part of cover letter.
+
+Ping me when dependencies get merged.
 
 Best regards,
 Krzysztof
