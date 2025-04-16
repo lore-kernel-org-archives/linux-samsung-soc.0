@@ -1,173 +1,204 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AF16FBF;
-	Wed, 16 Apr 2025 12:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889FC221735
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2025 13:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744806711; cv=none; b=jlHzfWE0VaDHwwUJHPyzAxs4Q1t9ECtWCV0G/vv6vqNIedydFUJoTl0Y/saUcwIdQaxZHJb4C9iIMKz4I49rTc3yt3tL/GMhR2FQCFJ3XOXnxu2lIbkKPCTktDSV/V1i6HvJ0HVL30A7e4zxnMiN/BV/D1OBt/LKAo4nX6SgCwI=
+	t=1744811172; cv=none; b=rcoBm1hcPH8vLo50mPY/WysZeD79sr/7DBtHhvzhCrVPFln9aFq5sIwbGxR0ssfd7PTgbO6ozCJmHhrbPNaATU4ylI1Rw1WguCkxdB7PkgJlRTrqEXLko9BlHKLoxQMPvxmgx19aTlIXzhyZ1Lq6pMVmcocgvECzVAwYL2U7O4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744806711; c=relaxed/simple;
-	bh=UaYSwtDIOR2KEFn7Bxifq9gF3Xa/uzc4yutRRCguLc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSOMvqXsWqAdTEUlniaJJt0dr6ahWYUDmkvqi3qzuyALG2ymvVVXppvs3DavBizIMAyCClX9lEOlFoaxB20HGPIGN6eSGhn59sV66I70TwVHZ42KNiTr8pXnOYTU1j9NPOOeUNbVenhF74ZPCVeJYgs3cETNvk9vlPw5WkDQJEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VrRiyVBy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1744811172; c=relaxed/simple;
+	bh=t+jlbKBTkg3+/hs9ZVICnnlmyrYUYqdcHWmZM6Rv6hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hh9ddTqo/CXFKXm3REaqesu9uSLcXPYNa4Ql4bbCSoDDTJLd3HLzXJd4AQiwG27sp/fC7do5eaM3Fqh+oYe2e4cCkuP+w3flZTgVW5cRpW+H1FB1mVWjN54jFRMJWIRbs98+e0o6yNBe8J8LEa3b8noNG6UR9Nu+71udM552fp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kfrbmt2/; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VrRiyVBy"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B0841D21;
-	Wed, 16 Apr 2025 14:29:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1744806583;
-	bh=UaYSwtDIOR2KEFn7Bxifq9gF3Xa/uzc4yutRRCguLc0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VrRiyVBy3dHHM9xMgih7iENisph7dICEf+Mz9mPyQSdyc2vBKgn4heu7T8Ndpq5GK
-	 P3LNuPe/FuGXnqQ1oXaiHlFZFRSRqE+BW7ZAoBxyF8WLCzpwat9H8kFyxWSUGwSEwO
-	 nbIsrZGOa7CI4yG2HJGiJ9Zl19t6H5MuEw0XTn4s=
-Message-ID: <6b699329-8ed4-4be6-81bb-17b4bf800d34@ideasonboard.com>
-Date: Wed, 16 Apr 2025 15:31:41 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kfrbmt2/"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39d83782ef6so530979f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2025 06:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744811169; x=1745415969; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/VGTw2OCtCwNoikhMS1xSw/P9HzEaDz2YmQHVZNP6Cw=;
+        b=kfrbmt2/S6WL/ORkdeYnxwAB5fjVRitH+4VwLe0WRFFvLCMScgXZYPnDsZWoDIdXLL
+         5pDRHAiPZvrGS4y/1WDiJ1JYOaZ1Ghq2d/rAyMGPvbiMSqBiIlnvECQASlzf4sB9fYNq
+         ULNxxhOE+nNsyTpgsY/l5/a46kFMQoabTofnQNq7UF86CjvjKxoxoRTTg3KBM8Py7CJe
+         02CweFMYJYCXQmo7oxTIbXsnWqp5FI3kzXP92K7je/GlgPahaPT/CKTm7uxgUTx6ba5H
+         QSAYCi8AcWwYUALdJbTb6kxL9GFQCI85U7EKuxK1alJxKVXCkb+AOdVmCzjQKB4RBh+t
+         GR0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744811169; x=1745415969;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VGTw2OCtCwNoikhMS1xSw/P9HzEaDz2YmQHVZNP6Cw=;
+        b=ngBM2X1woxTcilq/uW9bgAnoH7BOya8baHdyH1WgzAciyTDeFBebuP6YrJEkVE0w/w
+         hW4zgVlUZF9R8si3at+DoSGiug0Ym+OdxbEyS6Uvy+c2bxntVMMMWlVuONFJh7JLmlDn
+         3kaHlzYsiMmb6ZIq3vuDCP1wCnl81ykVjIBg6ng+ccnyco0M896abAupZzMHweheknbR
+         +VjJNdWewVaVmkeAfdol23hmwXDL7b10CUkJITO64rOsP8Vc+/kyFoVGoRawq3ztHy06
+         BRBHE/lZG7+3Vm9pRqor8D3w3d476wdFJIEAZnUTRf8MJXzVw2qFfuDkGtGDG0cSuZ96
+         rThQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRCVsHrj23E7o/2BGvYQi+vHZCUQFWT49oM9RbF4eR6E7+YkTUmz9zVPKvqPdSwe8hnXd7zb620dLuWeaHyDrPEw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD+Fek+hb+TcQgGHEecT7VFxW15La+Qvsm/S9jT5DcoLevcyZ1
+	kHZKFEDhfIDrF1iQTUu7+/8tEnGolgGRaObVhipXOuEwshGpZM5lH/S/gIJpzz4=
+X-Gm-Gg: ASbGnctH6K1L8eCxaIJY827X9bAP336EkkngOZxFFvG3GHprvUaq7KKWYN5E+sDF2Q8
+	hi3E2zcKmUUD8qfjfW0MnQ3VXryI2FrtNiKE8sUcHvFPDXxW7/Qkg0RGBAxxT1H2KsqPTMjkc/A
+	i1iy/A0f2GPWSAxHgZhk+viW0FQ/TihElwMgxn44oETmdrS0FREIKB8J/G4gCoS5RqkncJ6XaP6
+	kGG4U5YcERVTtA7IfoQ1CLn1bQHgXzk2oYkY/oNuGM9fHkwIQJiiIrG7ueihtRJUzY6UFBG7Xl6
+	tmUC0Nk1qlpYApnzGD3RyYzY3rvQtlYf6ReGFo1EkLBW5Obvdoq63uVkjM1qS9APRIuZX/HZxwr
+	H3Aw=
+X-Google-Smtp-Source: AGHT+IE4YAl2mZjXep57P1NBcGIHNuPRNP7vshUejNnQtQU0uCb6wkLBjcmMTW/advV5IiWmlcYETQ==
+X-Received: by 2002:a05:6000:2901:b0:39c:30f7:b6ad with SMTP id ffacd0b85a97d-39ee5ee2546mr1463106f8f.18.1744811168641;
+        Wed, 16 Apr 2025 06:46:08 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf44579bsm16937709f8f.87.2025.04.16.06.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 06:46:08 -0700 (PDT)
+Date: Wed, 16 Apr 2025 15:46:05 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: John Stultz <jstultz@google.com>
+Cc: Will McVicker <willmcvicker@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Donghoon Yu <hoony.yu@samsung.com>,
+	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Youngmin Nam <youngmin.nam@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
+Message-ID: <Z_-0nX3Z-DLPjL_j@mai.linaro.org>
+References: <20250402233407.2452429-1-willmcvicker@google.com>
+ <20250402233407.2452429-7-willmcvicker@google.com>
+ <Z_6OZHYfC0bC5289@mai.linaro.org>
+ <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 29/34] drm: zynqmp_dp: convert to devm_drm_bridge_alloc()
- API
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Anusha Srivatsa <asrivats@redhat.com>,
- Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
- =?UTF-8?Q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>,
- Hui Pu <Hui.Pu@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
- linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
- Michal Simek <michal.simek@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
- <20250407-drm-bridge-convert-to-alloc-api-v1-29-42113ff8d9c0@bootlin.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20250407-drm-bridge-convert-to-alloc-api-v1-29-42113ff8d9c0@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
 
-Hi,
+On Tue, Apr 15, 2025 at 05:48:41PM -0700, John Stultz wrote:
+> On Tue, Apr 15, 2025 at 9:50 AM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+> > On Wed, Apr 02, 2025 at 04:33:57PM -0700, Will McVicker wrote:
+> > > From: Donghoon Yu <hoony.yu@samsung.com>
+> > >
+> > > On Arm64 platforms the Exynos MCT driver can be built as a module. On
+> > > boot (and even after boot) the arch_timer is used as the clocksource and
+> > > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
+> > > source for the arch_timer.
+> >
+> > From a previous thread where there is no answer:
+> >
+> > https://lore.kernel.org/all/c1e8abec-680c-451d-b5df-f687291aa413@linaro.org/
+> >
+> > I don't feel comfortable with changing the clocksource / clockevent drivers to
+> > a module for the reasons explained in the aforementionned thread.
+> 
+> I wasn't CC'ed on that, but to address a few of your points:
+> 
+> > I have some concerns about this kind of changes:
+> >
+> >   * the core code may not be prepared for that, so loading / unloading
+> > the modules with active timers may result into some issues
+> 
+> That's a fair concern, but permanent modules (which are loaded but not
+> unloaded) shouldn't suffer this issue. I recognize having modules be
+> fully unloadable is generally cleaner and preferred, but I also see
+> the benefit of allowing permanent modules to be one-way loaded so a
+> generic/distro kernel shared between lots of different platforms
+> doesn't need to be bloated with drivers that aren't used everywhere.
+> Obviously any single driver doesn't make a huge difference, but all
+> the small drivers together does add up.
 
-On 07/04/2025 17:23, Luca Ceresoli wrote:
-> This is the new API for allocating DRM bridges.
-> 
-> This driver has a peculiar structure. zynqmp_dpsub.c is the actual driver,
-> which delegates to a submodule (zynqmp_dp.c) the allocation of a
-> sub-structure embedding the drm_bridge and its initialization, however it
-> does not delegate the drm_bridge_add(). Hence, following carefully the code
-> flow, it is correct to change the allocation function and .funcs assignment
-> in the submodule, while the drm_bridge_add() is not in that submodule.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
-> ---
-> 
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Michal Simek <michal.simek@amd.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->   drivers/gpu/drm/xlnx/zynqmp_dp.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> index 11d2415fb5a1f7fad03421898331289f2295d68b..de22b6457a78a7a2110f9f308d0b5a8700544010 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> @@ -2439,9 +2439,9 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
->   	struct zynqmp_dp *dp;
->   	int ret;
->   
-> -	dp = kzalloc(sizeof(*dp), GFP_KERNEL);
-> -	if (!dp)
-> -		return -ENOMEM;
-> +	dp = devm_drm_bridge_alloc(&pdev->dev, struct zynqmp_dp, bridge, &zynqmp_dp_bridge_funcs);
-> +	if (IS_ERR(dp))
-> +		return PTR_ERR(dp);
->   
->   	dp->dev = &pdev->dev;
->   	dp->dpsub = dpsub;
-> @@ -2488,7 +2488,6 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
->   
->   	/* Initialize the bridge. */
->   	bridge = &dp->bridge;
-> -	bridge->funcs = &zynqmp_dp_bridge_funcs;
->   	bridge->ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID
->   		    | DRM_BRIDGE_OP_HPD;
->   	bridge->type = DRM_MODE_CONNECTOR_DisplayPort;
-> 
+Yes, I agree.
 
-To add to my last mail, this clearly cannot be right, as it changes 
-kzalloc call to devm_* call, without removing the kfree()s...
+So the whole clockevent / clocksource drivers policy would have to be making
+impossible to unload a module once it is loaded.
 
-  Tomi
+Do you have any ideas how to ensure that the converted drivers follow this
+rule without putting more burden on the maintainer?
 
+> >  * it may end up with some interactions with cpuidle at boot time and
+> > the broadcast timer
+> 
+> Do you have more details as to your concerns here? I know there can be
+> cases of issues if the built in clockevent drivers are problematic and
+> the working ones don't load until later, you can have races where if
+> the system goes into idle before the module loads it could stall out
+> (there was a recent issue with an older iMac TSC halting in idle and
+> it not reliably getting disqualified before it got stuck in idle). 
+
+Yes, that is that kind of issue I suspect.
+
+> In
+> those cases I could imagine folks reasonably arguing for including the
+> working clock as a built in, but I'm not sure I'd say forcing
+> everything to be built in is the better approach.
+
+When the first driver converted as a module will be accepted, I'm pretty sure
+there will be a wave of patches to convert more drivers into modules. 
+
+What tool / use cases / tests can we put in place to ensure it is not breaking
+the existing platforms for the different configurations?
+
+> > * the timekeeping may do jump in the past [if and] when switching the
+> > clocksource
+> 
+> ? It shouldn't. We've had tests in kselftest that switch between
+> clocksources checking for inconsistencies for awhile, so if such a
+> jump occurred it would be considered a bug.
+
+But in the context of modules, the current clocksource counter is running but
+what about the clocksource's counter related to the module which will be
+started when the driver is loaded and then switches to the new clocksource. Is
+it possible in this case there is a time drift between the clocksource which
+was started at boot time and the one started later when the module is loaded ?
+ 
+> >  * the GKI approach is to have an update for the 'mainline' kernel and
+> > let the different SoC vendors deal with their drivers. I'm afraid this
+> > will prevent driver fixes to be carry on upstream because they will stay
+> > in the OoT kernels
+> 
+> I'm not sure I understand this point?  Could you expand on it a bit?
+> While I very much can understand concerns and potential downsides of
+> the GKI approach, I'm not sure how that applies to the submission
+> here, as the benefit would apply to classic distro kernels as much as
+> GKI.
+
+Ok let's consider my comment as out of the technical aspects of the changes. I
+can clarify it but it does not enter into consideration for the module
+conversion. It is an overall feeling about the direction of all in modules for
+GKI policy. I'm a little worried about changes not carried on mainline because
+it is no longer an obstacle to keep OoT drivers. The core kernel is mainline
+but the drivers can be vendor provided as module. I understand it is already
+the case but the time framework is the base brick of the system, so there is
+the risk a platform is supported with less than the minimum functionality.
+
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
