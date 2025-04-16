@@ -1,58 +1,58 @@
 Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07E51547C0
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2025 19:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C352D1AB6C8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2025 21:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744832952; cv=none; b=cHl0lPQJW0FTNogIgYUPKENFncirOXKRqS/3L++iZcIPkdOLWCyO76aHDwwnKpt77dAmzwYCPaQF4nQclj93ZlHYMl075HR00CIy2/BlaAUoci2aXwUNvZ3Odj3P6pHfBsc0CXG4KEzQrhCfXVgnyaoCJEpvWfTCQp6qeoS7TcE=
+	t=1744837241; cv=none; b=PJ3yVNYVdW4y7z25YZTGEggUySSET+u3ZJDQVOcJ1bTN93oGDFxC02Y5MZwjX5CvuPoYDz3LPggaT/YUzkz+1l2lAkE7+oLAXSvGCFke7QDu6zVivvlcPksbySKOrzPB0H/1aMh69ByMKAGhk0iKmNfdgy35VqM4+hXERp4pGbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744832952; c=relaxed/simple;
-	bh=0QtCXBFLssMe6mP3r7XXqmWHMBiSSUr/S1vpa0rbx+4=;
+	s=arc-20240116; t=1744837241; c=relaxed/simple;
+	bh=sXjuke0/1XVuLNfiPlV5GEJxawgB3CfnH2aaqTJFQXc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBrMH8uwkuCp+F4+orSYjmYa5hoCbYJEjMyKSoeM8h7C9ZGKZowrklQjiVGokkA3ymKWXyfbNV8xKGDLmTVu/NmMtLhopHV3nc62IxGtqt9nrpNmRBp/n7K11yT7GGnXlMKge9IQ2XwApGAIvBNPduJCDnpz+pCmAO5jLa1miFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MekUp0bZ; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=lijhSQKtr8Zb3qmwXAZqy7WBFl90RqEdhwGRDDHj1jZF0TP+d0/O/VG3uajf7CvRNUFK43IDBeKnXq1DLfLkHkR29lwZOhLgoLL90ePvrLsB6azjIz3y4VV0IU82wcHZZL3dJUA4iET8ihdqI5kYcqViaZ2P8RGoAys3fKspapg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWqyRNDF; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MekUp0bZ"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54d65eb26b2so24073e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2025 12:49:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWqyRNDF"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54addb5a139so111831e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2025 14:00:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744832948; x=1745437748; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744837238; x=1745442038; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3TC4Zrs0RXqB1dUPW23QEFn3OTq38f66De7spKPbcIQ=;
-        b=MekUp0bZtlT7Z+u6+g906dR/t8xLENRp0bF2171q+nDQeDIAWxsPCotStZFNHzfeYa
-         At0rgILsyR1MGxkXrnHEKqQpitGoN+MF0blPZ5ptheimNhDX7cER3Una7//i9mIXLC9D
-         U1KIENUNl/iOngX89M4sJDjP66+BSeckgiBSuP+LZwSdflwn7Ds/n3Z387CptMxICuqg
-         lEoGCuFREa9Rs47gp4GeUFfyuQ7fQXGzZujc90FlN3sE+vWQzHNyVO4eRTmncKUudiLp
-         CAvhySUMZwMm/bj3RgI7JXOGDKNaEcUzODt3miAOuLN++w30nW2zAj1WFAKulNuCsGWF
-         bVhg==
+        bh=sXjuke0/1XVuLNfiPlV5GEJxawgB3CfnH2aaqTJFQXc=;
+        b=dWqyRNDFYNYZG2I79JBccuGjWRO3erl5pZhj+DwBAhF8STFVP569vI2iwgGytANhUb
+         14aRWZoWTYnNU6vXOv7fWxukDs/ubORZZnxlDO7xptGNEC+JrvOPHzWM1Bn9/WJXUL1+
+         daN+rU9E+bgpTgpn9XReIcqJ8n38gU6W6dPbcDKKK/idfnBpNh2UwovcD14OJlJqlFuC
+         DVU52OX31aUkI0N7XuUdJa5Nc0nQzf6BYgMgvoe4kAY2NhjUsneEzBygPL6EcrtGR3ZN
+         i1/jDy6NZTKIaBwzSXA290lYBTyPojymexx7us3U12MXqjM69xXInb4Hv78dLpysYKtp
+         5srA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744832948; x=1745437748;
+        d=1e100.net; s=20230601; t=1744837238; x=1745442038;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3TC4Zrs0RXqB1dUPW23QEFn3OTq38f66De7spKPbcIQ=;
-        b=XpUbNUDM/YPBPORsBfHFeEOppBGOoFMl5irazXISRsN8XxS/c7VQ83Pig04ci5aBTb
-         4wEr5BivW/krSxJy1H+babBU3t1NWJQWk7GSLF6YDML2FNdqasaQuis6On2lzwU7Nnvw
-         Wg4OiSN927ZpO4DT2JSY9pXbe7yo0U6mk2BoKCLYKSlF5sWWo44Uik0mm3rciS6n9eTa
-         49JQZq5oDQAE2bWCjLVoxgfg8jYqnm7NKJC2l+6A4G35XgM4I4MnUDL+4ivEFMNhSFIW
-         v1GvHAC6G8t8jfh0GsT1vHQykyScDX/IVIwQNzcHaQ9AnzEEY0B5lAOvq4jwKXE6vnA6
-         v5Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpfHh5imiIfc7s7EStupNLi4SyiZkdaBY521Razcn83/ZQxE/m309RfctN3pa+T5u22jpwVsIvx4DhFFYqQYqV8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn3UcJRpDyJa3Ep4p+zR8RhuGPL7TIY1aP+Zgfgxozc5xaW8US
-	jyXpOP4z/AjOuzSbROeKFhZF0L4q8cw9hylkeHujCLARGPm8G4vZtRnEIN5nsgKQG+EyItgx7+1
-	Jf410fLBe/t0i1e9zjFyY+8zQcZ0SvEV4tws=
-X-Gm-Gg: ASbGncvxX/asVSUBQIhRE52lFoPm7ljdHmGrcIso02KFfRtAXJ2eMBBYucPtFCTu74Z
-	Vt5RySbNSUTxX3XyayxDJbXGUjCOHxoAg4LnpmSbeXRh+/MriJRTat6llP2vFcN+Fj6/CyVbXU7
-	WKQyBreLq3KgewPoIRFaSzsrbk7B/fshYL04w63o1a5HlIMnPDswg=
-X-Google-Smtp-Source: AGHT+IENZff/EwFgqH5CaojFFud4BOKJc5fnWdYHR640ZJfapthbsLkQ3339oAJkdcXWdGqjdKbkWAeQlGaLeHlHPtI=
-X-Received: by 2002:a05:6512:686:b0:54a:cc25:dbe9 with SMTP id
- 2adb3069b0e04-54d64aa9f25mr1006781e87.26.1744832947769; Wed, 16 Apr 2025
- 12:49:07 -0700 (PDT)
+        bh=sXjuke0/1XVuLNfiPlV5GEJxawgB3CfnH2aaqTJFQXc=;
+        b=GirQ0ioPqRxx4yIB15Ns8pX0V5jfeEzSaX/ecLPd6soMm8yMwYbc5wRLGitEAKzVPg
+         1X+fRu+vzyW1T4IuNn+oHFz5tQB31em4ordPHrAvDYYdXz+Gs3mcUrJeMk610UgXqBAI
+         O7UCRifBmZManZhzUZuLWMFejynlvMij5gWgiHI1h8iyWfhvvhU0HPr013m/KmDo+z4i
+         hjOJPzTbQ0NQHtl0VcDF2AMeULvqel++JQs+VQ2dNeriVleA8NUBB8A+ar8mClxfIAAX
+         bkRRh/DdNIZAyHdsd2tEFv6ar3yTdwXIiv8Rf7vxYQHJMattOpcdIXuJ8tpMR9L5Dj3e
+         FKbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBMm5kq/Qm70PPGf72MqGv1gc1S+LSGMc4JvLQDDvi2RIqcqylJaS1Uns0EeHbPoN+5Mjr/dm0cYWUlgqgTQotwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhBCMFaTsHelyA0XmAlYMU+XsK2o5MGdFnxK/fRrFPlCPO+l1J
+	lm9E9xoY5ZIoTe5V30+hIQEjv0kkKoNAKVGvzEAuyu52OBSLbXMbesdjDaIbKadaqxAtnS274D2
+	I7aAZjpDDV6K+xaYEAwl33ogpcwxmicbsQS8=
+X-Gm-Gg: ASbGncvB3lvaEnQ8arF+1BFWy218FZRK+UKztIA1B0ezRduYj2fLEzXPO/Vt71g7ARE
+	7Jd//Qt6K96EMWAWf4yY8JMTT7IoC6qgdG1KTj8k2/zwW3zho6s9IL86ZdqJUtw1fW/927qIWOq
+	/E1Sg8mH2gfXsnGNr0UEe/QQ==
+X-Google-Smtp-Source: AGHT+IG9hAb/RqcUyMjum4adu8+LeKj3lYKNlalqPEWwBfkfUt2vnhzCuPcvV73P/EQrHGM4wuLbO44GnaPBGO/0zi8=
+X-Received: by 2002:a05:6512:308c:b0:549:4e79:dd5f with SMTP id
+ 2adb3069b0e04-54d64aea488mr984588e87.37.1744837237634; Wed, 16 Apr 2025
+ 14:00:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,12 +61,13 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250402233407.2452429-1-willmcvicker@google.com>
  <20250402233407.2452429-7-willmcvicker@google.com> <Z_6OZHYfC0bC5289@mai.linaro.org>
- <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com> <Z_-0nX3Z-DLPjL_j@mai.linaro.org>
-In-Reply-To: <Z_-0nX3Z-DLPjL_j@mai.linaro.org>
+ <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
+ <Z_-0nX3Z-DLPjL_j@mai.linaro.org> <CANDhNCr5n+HtHQEqCq0ZxbvX-nC3u9ewJ1_fj0h1gFQZ3nB8iA@mail.gmail.com>
+In-Reply-To: <CANDhNCr5n+HtHQEqCq0ZxbvX-nC3u9ewJ1_fj0h1gFQZ3nB8iA@mail.gmail.com>
 From: John Stultz <jstultz@google.com>
-Date: Wed, 16 Apr 2025 12:48:56 -0700
-X-Gm-Features: ATxdqUGIHpJvogsXv77cbd-uWZLFBRe1FimucafM0Ov8s0XThKAvFusqPM44Q1k
-Message-ID: <CANDhNCr5n+HtHQEqCq0ZxbvX-nC3u9ewJ1_fj0h1gFQZ3nB8iA@mail.gmail.com>
+Date: Wed, 16 Apr 2025 14:00:25 -0700
+X-Gm-Features: ATxdqUFzpyQW831S9hdAwTuoas7KRwwuK39VUOIcXhttpaGT_PCdnsoFhEv7ehg
+Message-ID: <CANDhNCo-UF7uVWWMPEYyCzT0R7BTHb+uLq4d8ZfxURuk5r2AwQ@mail.gmail.com>
 Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
 To: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Will McVicker <willmcvicker@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
@@ -83,159 +84,33 @@ Cc: Will McVicker <willmcvicker@google.com>, Catalin Marinas <catalin.marinas@ar
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 6:46=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
-> On Tue, Apr 15, 2025 at 05:48:41PM -0700, John Stultz wrote:
-> > On Tue, Apr 15, 2025 at 9:50=E2=80=AFAM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> > > I have some concerns about this kind of changes:
-> > >
-> > >   * the core code may not be prepared for that, so loading / unloadin=
-g
-> > > the modules with active timers may result into some issues
+On Wed, Apr 16, 2025 at 12:48=E2=80=AFPM John Stultz <jstultz@google.com> w=
+rote:
+> On Wed, Apr 16, 2025 at 6:46=E2=80=AFAM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+> > So the whole clockevent / clocksource drivers policy would have to be m=
+aking
+> > impossible to unload a module once it is loaded.
 > >
-> > That's a fair concern, but permanent modules (which are loaded but not
-> > unloaded) shouldn't suffer this issue. I recognize having modules be
-> > fully unloadable is generally cleaner and preferred, but I also see
-> > the benefit of allowing permanent modules to be one-way loaded so a
-> > generic/distro kernel shared between lots of different platforms
-> > doesn't need to be bloated with drivers that aren't used everywhere.
-> > Obviously any single driver doesn't make a huge difference, but all
-> > the small drivers together does add up.
+> > Do you have any ideas how to ensure that the converted drivers follow t=
+his
+> > rule without putting more burden on the maintainer?
 >
-> Yes, I agree.
+> Permanent modules just don't have a module_exit() hook, so that is
+> pretty easy to look for.
+> Obviously, I don't want to add more burden to the maintainership.
 >
-> So the whole clockevent / clocksource drivers policy would have to be mak=
-ing
-> impossible to unload a module once it is loaded.
->
-> Do you have any ideas how to ensure that the converted drivers follow thi=
-s
-> rule without putting more burden on the maintainer?
+> From a given clockevent driver (or maybe a function pointer), we could
+> check on the registration by calling __module_address(addr) [thanks to
+> Sami Tolvanen for pointing that function out to me] on one of the
+> function pointers provided, and check that there isn't a module->exit
+> pointer.
 
-Permanent modules just don't have a module_exit() hook, so that is
-pretty easy to look for.
-Obviously, I don't want to add more burden to the maintainership.
-
-From a given clockevent driver (or maybe a function pointer), we could
-check on the registration by calling __module_address(addr) [thanks to
-Sami Tolvanen for pointing that function out to me] on one of the
-function pointers provided, and check that there isn't a module->exit
-pointer.
-
-For clocksources we already have an owner pointer in the clocksource
-struct that the driver is supposed to set if it's a module, but
-clocksources already handle the get/puts needed to prevent modules
-unloading under us.
-
-> > > * the timekeeping may do jump in the past [if and] when switching the
-> > > clocksource
-> >
-> > ? It shouldn't. We've had tests in kselftest that switch between
-> > clocksources checking for inconsistencies for awhile, so if such a
-> > jump occurred it would be considered a bug.
->
-> But in the context of modules, the current clocksource counter is running=
- but
-> what about the clocksource's counter related to the module which will be
-> started when the driver is loaded and then switches to the new clocksourc=
-e. Is
-> it possible in this case there is a time drift between the clocksource wh=
-ich
-> was started at boot time and the one started later when the module is loa=
-ded ?
-
-The clocksource code already has support for modules, and will do the
-module_get and call enable hooks before switching to the new
-clocksource. So the clocksource from the module has to be functioning
-and running before timekeeping switches to using it.
-
-By drift, its true changing clocksources can change the underlying
-crystal so NTP has to begin again to determine any long-term frequency
-adjustment needed, but we signal that properly.  And there should be
-no time inconsistency during the switch as we accumulate everything
-from the current clocksource and read a new base value from the new
-clocksource. If there is, it's a bug.
-
-> > >  * the GKI approach is to have an update for the 'mainline' kernel an=
-d
-> > > let the different SoC vendors deal with their drivers. I'm afraid thi=
-s
-> > > will prevent driver fixes to be carry on upstream because they will s=
-tay
-> > > in the OoT kernels
-> >
-> > I'm not sure I understand this point?  Could you expand on it a bit?
-> > While I very much can understand concerns and potential downsides of
-> > the GKI approach, I'm not sure how that applies to the submission
-> > here, as the benefit would apply to classic distro kernels as much as
-> > GKI.
->
-> Ok let's consider my comment as out of the technical aspects of the chang=
-es. I
-> can clarify it but it does not enter into consideration for the module
-> conversion. It is an overall feeling about the direction of all in module=
-s for
-> GKI policy. I'm a little worried about changes not carried on mainline be=
-cause
-> it is no longer an obstacle to keep OoT drivers. The core kernel is mainl=
-ine
-> but the drivers can be vendor provided as module. I understand it is alre=
-ady
-> the case but the time framework is the base brick of the system, so there=
- is
-> the risk a platform is supported with less than the minimum functionality=
-.
-
-So separately from this patch submission, I agree that the GKI
-approach does not enforce vendor participation upstream. But there is
-no rule *anywhere* that makes folks participate, and with the old
-vendor trees it was definitely worse.
-
-The GKI does result in vendors having a common interest in the
-*actual* common portions of the kernel to be working well, so we can
-make sure things like bug fixes, etc are submitted upstream first.
-That is a clear benefit over separate vendor trees, but it's not a
-magic tool to get everyone submitting all of their code upstream.
-
-Trying to cajole upstream participation via barriers (not supporting
-modular drivers upstream to try to enforce vendors submit patches to
-add built in drivers for support) won't really work because they will
-just be enabled as modules anyway out of tree. And it's hard to argue
-against, as there isn't really a technical benefit to the GKI
-requiring lots of SoC specific hardware support be built in.  So it
-only ends up being another reason to not bother with upstream.
-
-<Sorry, I'm getting a bit soap-boxy here>
-I personally think the best tool we have to improve participation and
-collaboration with the community is to do what we can to make it a
-positive/beneficial/worthwhile experience. Every time I've submitted
-patches and had bugs pointed out or fixes suggested, is a huge value
-to me, and I have tremendous appreciation for folks sharing their
-knowledge and expertise. And every time a patch I send gets merged or
-a bug I reported ends up being fixed, there is a real sense of pride
-in the contribution made to such an important project. Then, to get to
-a point of a maintainership, and to be able to consider these amazing
-influential developers as (relative)peers feels like such a career
-accomplishment!  As an individual, those moments feel awesome and
-motivate me over and over to want to reach out and share patches or
-issues or thoughts.
-
-And yes, there are organizations that focus more on how to exploit the
-community for their benefit without contributing, and I get the
-protective reaction that maintainers have to that. But I also know
-there is *a lot* of amazing expertise inside the heads of
-*individuals* who don't participate because they don't feel the "us vs
-them" combative interactions are worth it. I think we/the community
-are missing out, and those folks are the ones we should be trying to
-welcome and include in order to build up our community.
-
-Maintainers and the community need to keep high technical standards
-and make the right long term choices, and developers won't agree all
-the time on what those are, and I think that's all fine! But I think
-if we want to grow the community and have more participation (as well
-as growing folks into maintainers), I think we'll have more success
-focusing on the honey than the vinegar.
+Saravana also pointed out to me another approach that the irqchip code
+uses: macros to populate an owner field with THIS_MODULE so that one
+can easily get to the module struct
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/inc=
+lude/linux/irqchip.h#n41
 
 thanks
 -john
