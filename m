@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D4A229B02;
-	Wed, 16 Apr 2025 07:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E49B2DFA5C;
+	Wed, 16 Apr 2025 07:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744787692; cv=none; b=FTtn3w0RW0TsFQkGXSfXuj5cBtHiFiVEH3yhuv4a/CZKfeFtQjSdFwLv6TIOopmcDw9OZ7nbS/NbAlRETrtWS++xOHZhLUTh51IGiH5J0bYHMq1BhgZzhCfN3FcyVjGb1VOnup7NThkt6QsxIWltq9i2YmGj+AX3MpQ67vaGqxM=
+	t=1744787755; cv=none; b=RT4145croSchGFUpGKmRJ6Xp1ZN0bY5Fdv1TEdBSkIVB4Focr7UJ7NNBBIFS4e/r8F+d7dKnUfM0njU/GhD+0V9VZFLA8ZO0gAHfU9SI477tZFvAai9LtxcIxRPbx6dsh4yvQe6gnUHFWBLD4TyjM956Ki9WBuVDrzddNh8Vwx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744787692; c=relaxed/simple;
-	bh=xF6PsLMmPgmr1v5TguY+yXouQOHNvNH/VcEL1T2xkTk=;
+	s=arc-20240116; t=1744787755; c=relaxed/simple;
+	bh=O7NeWb4hRL+v6GegfMRWzmm5CQt/BYUNuJRAt83Zy20=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bwTHsd638oo04RUTYRPmRuhEZbl+YvebndcnCputFjGBzOeV+6PN5+6miQ80T/6juKTkua+Ur+5xxAdQDDYWHaXXLzDAFdIRSySzUXhwJ6NxwjPHKOO5r2Z+ijIZau9OH6pNM9PQkFAMkU7UD0QDnLtzokJ9cpiRvnxjYbbOebk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+tfxDbA; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=VGbb68AIG28LtXPqIHgnoS103WdtPIefktY/B92dAC46vt7xcLjtXKTTo++WRg5Y0TPQz1tO4mhmpS3uQbsH9Qru27eqmJxW6Zbl19swPRaAgrZ+zIfhIgi8JazCaXl0y7sBJwC5QPApj9k0hZpS7VQLWEiwJoWiLw2drm31UKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQAcbGOX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+tfxDbA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78900C4CEE2;
-	Wed, 16 Apr 2025 07:14:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQAcbGOX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745CBC4CEE2;
+	Wed, 16 Apr 2025 07:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744787691;
-	bh=xF6PsLMmPgmr1v5TguY+yXouQOHNvNH/VcEL1T2xkTk=;
+	s=k20201202; t=1744787754;
+	bh=O7NeWb4hRL+v6GegfMRWzmm5CQt/BYUNuJRAt83Zy20=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W+tfxDbA/0zmes1Ir7E8uvaR9LBIY/RAqGbxEsemJzbOaY+D0xA2gZxDzNhgCjQhw
-	 ajgjN7fTKU2w7KH47Uf0bFoiSxxx1hajNoKzELr4E3dYAFjSqbUVqZopHQReUv1BKe
-	 jTXWMgjXniSIO9woe95dWfAGiSLBJouugUMXPn5+Cz+1Se2wYAGLRJIXevRutqql9b
-	 cpovayRIhyzEereGtHmTJsBJl6TcqgWccola4bJNbC0vW6Q5vKXBafeAsoAX0VAPFy
-	 e5l9m2ynQGDZtGXQ8Z/C4uL9aiEJOQiVtM2yd1FKa2x6vrhPK/I11U1LBGzxNcgMDe
-	 qaAwylM7DgeFw==
-Message-ID: <22b58ea6-0416-461f-b1b3-b2c7a3e87b1e@kernel.org>
-Date: Wed, 16 Apr 2025 09:14:41 +0200
+	b=WQAcbGOXai0E98KBkRRHrQL9ZEl7JmemAKBVIr/Soakg79DJFfrHc2z6VQKTdEzAt
+	 JekDTI6yCrPYynNGfp7iDYB9V48izGqsDDqgdVL551+JG7hj2yXZwKC4mfzH+eE3o0
+	 hq40pPq9z5G2fZqASmmTkSjMkk6xaCSP5JuTxF3drUfSkSh5CFoxt6Ik4aV75WYzHY
+	 6JgmvefvUXHrNxOUh7vrJL9GMe5Wa8hlWS4mddEzAZ8IasbqdryrehAUv9i08B1X85
+	 f1Ww9ZrEGQTKvMXUUdTrl86d83UdWSMTIp4UZvM1TIq08PtM6oDUXAv8tXN8gdllP7
+	 GFGIP3mwaP5qQ==
+Message-ID: <9362d6b4-890a-4364-8e51-71ad6fc1e107@kernel.org>
+Date: Wed, 16 Apr 2025 09:15:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -118,28 +118,10 @@ On 13/04/2025 20:58, Kaustabh Chakraborty wrote:
 > 
 > Build dependencies are in these sub-series:
 >  * pmu-clocks		A https://lore.kernel.org/all/20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org/
-> 
-> Other related sub-series:
->  * gpu			A https://lore.kernel.org/all/20250318-exynos7870-gpu-v1-1-084863f28b5c@disroot.org/
->  * i2c	      		A https://lore.kernel.org/all/20250204-exynos7870-i2c-v1-0-63d67871ab7e@disroot.org/
->  * mmc			A https://lore.kernel.org/all/20250219-exynos7870-mmc-v2-0-b4255a3e39ed@disroot.org/
->  * pinctrl	  	A https://lore.kernel.org/all/20250301-exynos7870-pinctrl-v3-0-ba1da9d3cd2f@disroot.org/
->  * pmic-regulators	A https://lore.kernel.org/all/20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org/
->  * uart			A https://lore.kernel.org/all/20250318-exynos7870-uart-v2-1-b9dcf145ae87@disroot.org/
->  * usb			A https://lore.kernel.org/all/20250301-exynos7870-usb-v3-0-f01697165d19@disroot.org/
->  * usbphy		A https://lore.kernel.org/all/20250410-exynos7870-usbphy-v2-0-2eb005987455@disroot.org/
-> (Legend: [R]eviewed, [A]pplied)
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
-> Changes in v6:
-> - Append the following trailers:
->   [v5 1/5] dt-bindings: arm: samsung: add compatibles for exynos7870 devices
->     Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> - Link to v5: https://lore.kernel.org/r/20250411-exynos7870-v5-0-6b319ae36c36@disroot.org
-This is not the reason to send new version. It only creates unnecessary
-traffic and more effort on my side to filter out versions. Read
-submitting patches regarding handling the tags.
+
+So this patchset waits? Ping me or resend when your dependencies are
+merged. If resending then of course explain why and update dependencies
+list.
 
 Best regards,
 Krzysztof
