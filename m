@@ -1,28 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D409152532;
-	Thu, 17 Apr 2025 18:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0AC263C7B;
+	Thu, 17 Apr 2025 18:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744913442; cv=none; b=p5cwK8Q27XaIPbCCoK44J95sfpfs1dQY/NWAJoCpA4rN9Y7AF3/HPp/OA3qg3D3Pqltz8gBDnDvSS1owONi3Qz/IHUc5/FtPY8OxjOIwzmQ9vcIo4GptDdYYV8WK4nuAkcIHWAuAPLva3/CAfb7t6c424oVGTcnZFWwl0RCAaUQ=
+	t=1744914809; cv=none; b=NZR93j4kIb3omIgMJriwbIticxdtiJsyt+ihMOScDMhvU7KfedP3bc6RxZ4stBQhM+QHVE+t3KLNnwODbDQf/Vz4Vi9cpWq0/yty84N4cDLIU2G/fjLfnWI2AjzI5ZxozT9yy1KIrDKv2Eh7wLnW1O+h+moYlFVe6BKJWpEBCEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744913442; c=relaxed/simple;
-	bh=rTs86itJLPxp9kyMzUv6qxKC83UEq2ZjsgbRujBTqis=;
+	s=arc-20240116; t=1744914809; c=relaxed/simple;
+	bh=Km2icXNqXx7o4xq6KE28SzZPWTGc5lNPBFy4x6Ap7EU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mYEQ9jvxogUwuvyKzY09641qZQxnOO1k3/EXqJ/DE5W5G2tCp9AY6EoRLl3s0zkYKDfLQ2CBPFDMmF+QqgeoP015gmYEHJV79pLdMIYte/JQZlRZLPcGkFyBIvOXvWAGHqsz6Mm+nykiniOdEnml/L25wAqYW1kQzJs9WwpfHeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s3EMX1KT; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=nDDtMrCO9VOWLoEo5WfDgXls8RWZOJYZXUSI4Cry+dXQi3kRu6l0jKVURIuvfdzb6nD9SSvevB2GWbxn6aTOCZIsgeC6OoYAk6VxoPjM9+VH3DCiY7Gwy9wClseyQ5ifGC7FVBxKHfBcGPIdrfSoy8i7aYUwt06XD7v+tsugDks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cQnCTOcd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s3EMX1KT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F24E5C4CEE4;
-	Thu, 17 Apr 2025 18:10:41 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cQnCTOcd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD737C4CEE4;
+	Thu, 17 Apr 2025 18:33:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744913442;
-	bh=rTs86itJLPxp9kyMzUv6qxKC83UEq2ZjsgbRujBTqis=;
+	s=korg; t=1744914809;
+	bh=Km2icXNqXx7o4xq6KE28SzZPWTGc5lNPBFy4x6Ap7EU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s3EMX1KTjF+Idi+RH7c/SIs3YDr3OiXwxaHMPkg+UMVuxwdeMnWqxPfiq+SrA93Wu
-	 DolY8RI6J0HgC1YVCRbwx3zjSGvsqLR0incqlxmLydEPpICQIbeQVHlKiacnyiuKdR
-	 IqVzNrehqYHHS+JwpQfzjhacDuffL5CjWspJRQ64=
+	b=cQnCTOcd/YdhA4019iU8AxnJ8X761CfmfDxs1MzpLdZerZladc00/U9sg7AbYDpds
+	 SL5L9PGa8W9phwB2xU/cfSFErqMB/kKs7yD6yNjRaLUuUIUxy052BIc0XIACLPuIqu
+	 eWCaE+aKc4miOtN6wKNdiSbz2WRgVHNufywT8eRk=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org,
 	Rob Herring <robh@kernel.org>,
@@ -41,12 +41,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	kernel-team@android.com,
 	willmcvicker@google.com,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 6.14 341/449] arm64: dts: exynos: gs101: disable pinctrl_gsacore node
-Date: Thu, 17 Apr 2025 19:50:29 +0200
-Message-ID: <20250417175131.922393961@linuxfoundation.org>
+Subject: [PATCH 6.13 310/414] arm64: dts: exynos: gs101: disable pinctrl_gsacore node
+Date: Thu, 17 Apr 2025 19:51:08 +0200
+Message-ID: <20250417175123.902965434@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250417175117.964400335@linuxfoundation.org>
-References: <20250417175117.964400335@linuxfoundation.org>
+In-Reply-To: <20250417175111.386381660@linuxfoundation.org>
+References: <20250417175111.386381660@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.14-stable review patch.  If anyone has any objections, please let me know.
+6.13-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -96,7 +96,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
 +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1454,6 +1454,7 @@
+@@ -1451,6 +1451,7 @@
  			/* TODO: update once support for this CMU exists */
  			clocks = <0>;
  			clock-names = "pclk";
