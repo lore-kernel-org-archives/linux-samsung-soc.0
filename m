@@ -1,97 +1,108 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A8A253B7B;
-	Thu, 17 Apr 2025 15:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D409152532;
+	Thu, 17 Apr 2025 18:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744904583; cv=none; b=YvtvvB/MyHZ1Ilb4rnLUb57LhTp2BvJVVqOGUty4yc+880kSNM3+5OvAAVeM6mDOjhFsYeBOM1xFhYdSS5+Aol2NW+C+jznze2Ax8J8rQix5a6WNdZY9ExFozjRglwlLrKGg72u+f75r+quO9+eQZfs6CCezjS3wSTr6DCajnwk=
+	t=1744913442; cv=none; b=p5cwK8Q27XaIPbCCoK44J95sfpfs1dQY/NWAJoCpA4rN9Y7AF3/HPp/OA3qg3D3Pqltz8gBDnDvSS1owONi3Qz/IHUc5/FtPY8OxjOIwzmQ9vcIo4GptDdYYV8WK4nuAkcIHWAuAPLva3/CAfb7t6c424oVGTcnZFWwl0RCAaUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744904583; c=relaxed/simple;
-	bh=YJ8LpTKQW+D2AUqysghHq+yImGwgrWT7DRfZaQ/LtWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aEtVrGxiM3fI9LwQsN0fvUZ0qJLmNvrr7FkWs2CGcZ77tRXRYJeQEc2dAKr5CRjCxjs0rsWpsmvPxRMXO8+edA4flAxXrBhnq73yMPnYYVPMsltaZ17puOrrGjTEmp0W46qtc/ITmvNLeI5Qtr4AS35RgnbpPdcoM8gEC7naBiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m38jqekq; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1744913442; c=relaxed/simple;
+	bh=rTs86itJLPxp9kyMzUv6qxKC83UEq2ZjsgbRujBTqis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mYEQ9jvxogUwuvyKzY09641qZQxnOO1k3/EXqJ/DE5W5G2tCp9AY6EoRLl3s0zkYKDfLQ2CBPFDMmF+QqgeoP015gmYEHJV79pLdMIYte/JQZlRZLPcGkFyBIvOXvWAGHqsz6Mm+nykiniOdEnml/L25wAqYW1kQzJs9WwpfHeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s3EMX1KT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m38jqekq"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D9C8A439AE;
-	Thu, 17 Apr 2025 15:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744904579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LZp/NeDHcn4kz4i8YEhiZ7BJXzOynMSoJ4YpajxDv9Y=;
-	b=m38jqekqN4LLyjuSzkr9b68XeNZ/fLMNDbqHEZyi3Gj55qmnrcebhrmp1ePWxiXt8rPd00
-	yA5xxuF8w6OYc9xjjtalMIDVipq+edkpI59JeI/V1jX6PRwLKyq4Q/z2WZcuXeIlNwmb3V
-	7FTk22k2WZ1Uywvzo7gQNRbKs/XL0RvFnM5ZlXKvwH280acGfoV38tDvXnJevaUr0SDTQ1
-	s1bGigazo7VVOyfVMoQq8fiGn+J8vgJmlx9MswhLPH7aayxQuaXLqNLF+zrN/wrIUksvP8
-	uM902u8R+jbUo2bfD6sKSMz11oOjrVFLY54bxE1G6PsDdSZgVcyCKFWMDLVwZA==
-Date: Thu, 17 Apr 2025 17:42:56 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Lee Jones <lee@kernel.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s3EMX1KT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F24E5C4CEE4;
+	Thu, 17 Apr 2025 18:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744913442;
+	bh=rTs86itJLPxp9kyMzUv6qxKC83UEq2ZjsgbRujBTqis=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=s3EMX1KTjF+Idi+RH7c/SIs3YDr3OiXwxaHMPkg+UMVuxwdeMnWqxPfiq+SrA93Wu
+	 DolY8RI6J0HgC1YVCRbwx3zjSGvsqLR0incqlxmLydEPpICQIbeQVHlKiacnyiuKdR
+	 IqVzNrehqYHHS+JwpQfzjhacDuffL5CjWspJRQ64=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
 	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-Message-ID: <2025041715425693974c6d@mail.local>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
- <20250415160212.GA372032@google.com>
+Subject: [PATCH 6.14 341/449] arm64: dts: exynos: gs101: disable pinctrl_gsacore node
+Date: Thu, 17 Apr 2025 19:50:29 +0200
+Message-ID: <20250417175131.922393961@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250417175117.964400335@linuxfoundation.org>
+References: <20250417175117.964400335@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415160212.GA372032@google.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdelieehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiudeuteehhfekgeejveefhfeiudejuefhgfeljefgjeegkeeujeeugfehgefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdegpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgdrughrrghsiihikheslhhinhgrrhhordhorhhgpdhrtghpthhtohepkhhriihksehkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhnrgifrhhotghkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegtfidttddrtghhohhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheprghlihhmrdgrkhhhthgrrhesshgrmhhsuhhnghdrtghomh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 15/04/2025 17:02:12+0100, Lee Jones wrote:
-> >  drivers/mfd/Kconfig                                |  35 +-
-> >  drivers/mfd/Makefile                               |   5 +-
-> >  drivers/mfd/sec-acpm.c                             | 442 +++++++++++++++++++
-> >  drivers/mfd/sec-common.c                           | 301 +++++++++++++
-> >  drivers/mfd/sec-core.c                             | 481 ---------------------
-> >  drivers/mfd/sec-core.h                             |  23 +
-> >  drivers/mfd/sec-i2c.c                              | 239 ++++++++++
-> >  drivers/mfd/sec-irq.c                              | 460 +++++++-------------
-> 
-> >  drivers/rtc/rtc-s5m.c                              | 197 ++++++---
-> 
-> MFD parts look okay to me now.
-> 
-> With Acks from the Clk and RTC maintainers, I can merge all of the
-> driver stuff together and submit a PR for others to pull from.
-> 
+6.14-stable review patch.  If anyone has any objections, please let me know.
 
-I don't think the RTC part depends on the MFD one so I was going to
-apply the patches in my tree if this is fine for everyone.
+------------------
+
+From: Peter Griffin <peter.griffin@linaro.org>
+
+commit 168e24966f10ff635b0ec9728aa71833bf850ee5 upstream.
+
+gsacore registers are not accessible from normal world.
+
+Disable this node, so that the suspend/resume callbacks
+in the pinctrl driver don't cause a Serror attempting to
+access the registers.
+
+Fixes: ea89fdf24fd9 ("arm64: dts: exynos: google: Add initial Google gs101 SoC support")
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: tudor.ambarus@linaro.org
+Cc: andre.draszik@linaro.org
+Cc: kernel-team@android.com
+Cc: willmcvicker@google.com
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20250106-contrib-pg-pinctrl_gsacore_disable-v1-1-d3fc88a48aed@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -1454,6 +1454,7 @@
+ 			/* TODO: update once support for this CMU exists */
+ 			clocks = <0>;
+ 			clock-names = "pclk";
++			status = "disabled";
+ 		};
+ 
+ 		cmu_top: clock-controller@1e080000 {
 
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
