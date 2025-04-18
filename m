@@ -1,64 +1,64 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327672571B2
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Apr 2025 08:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF131A2658
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Apr 2025 08:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744963883; cv=none; b=j8OdySokLnIBfJOVJSmCdfRZEuSq6F1k4Cq1OllO4l7FkA/KlTORxBKIjn9jEhUopo02PIllGFizu+N+FVscl7KNdPv6RdkXjEeEJugy/OqWd0O+Z7f4dRQldYrWxDAHbD0KZeodtit1aIbmwgwYHyAVAVE1EV9mP72ICQ2M0sc=
+	t=1744964377; cv=none; b=nhQYLDJHfsjJy+wB7Vwlq3D6RCgrMLKq7tgdkz5b6+tvo8wYXn19KnDbzwIGFNxCC6QCi8kZ0C1C66mPz/dLp8+TEmKN1VPiW5aHkWC7rfJze8aTEx6QijEHq2pPvUwoYCoNQYOAjtau2WF1Hkw1CtbVq0Os4hIBk94+RjX5p5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744963883; c=relaxed/simple;
-	bh=JTfpzxPO7tlw1FRlN8arOMR/8L4Ql6vMZq9I1vDRuzw=;
+	s=arc-20240116; t=1744964377; c=relaxed/simple;
+	bh=OyANNumqNGehMqydbT5YMfLr7i8JOGPuL+legh4Nnyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nl0KM+0kNwj6bwvMT2C+v0/6i/5jvuB5kq0baqvHNZqjnuD8fP4eM+Nn8zxl1xycHlNIS8z+eVLtSjoDfpnsLxq7899bAkH0T7Xyux/LAtlf/cy5MscGdyhs/GOJvB1ShIGWydkVn79lt0U+6JCdW1hfNhPOnlQf9lLkA7nHGsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WMLkeJl9; arc=none smtp.client-ip=209.85.128.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=JvGptbRI1oQjELurUQdjUn9A2PYGXy0lVf52hj5Caa9XRwcclbraIKGHOL/MYg5kilVCvGB2Bod7569OZ6wgJEpAleInpqw28ENJid54px9FSdBxn1GYztOj4c36Q9YejSecas2YAQ+D/OKJUZW7uif+sKOCvaaJLf9c81zFLdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YcTBS4l6; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WMLkeJl9"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43690d4605dso12162775e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Apr 2025 01:11:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YcTBS4l6"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso8047865e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Apr 2025 01:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744963878; x=1745568678; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744964373; x=1745569173; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hBAVQUSIG8/FVcTA2w6Be8v3FlriNZP6ZHZpLpZIhIc=;
-        b=WMLkeJl9lZabsHs40IjQE+sxYfoS3TbFdDZ3RKrWXzxn/WMLfVPnXQWr+Nlby4D2+W
-         TqURlXHe5M9V0icpM7CVVk9tlE8u1JphMBEb46tFjmQIWqpm4YYtBXHmYmv2gyr0FdIe
-         RRDKGzxHieIwOCx/2ayR+LGNkzEdtmTvzVSqVtWUrEuKoUfsLT0iHVAUCY7mJR65jqui
-         9Hwr+t9UTnMmsdS2KDWOCqDpBY+CmBabonpfZvIFs5gqLPj1YYU6qqSC3Q3lAU4pC4qo
-         0hv2qroh1ax7fQxqKCgaPasGBUATg95TpanneKTUhI2ue67pvU086ne0Le+9KEf6ZTws
-         aH+A==
+        bh=L630Qky/UZ9kI7H0yEROeZ3XG2IusjzeuDyDM/AGMdw=;
+        b=YcTBS4l6O3ZSPlDTtRF+jrzXv5lAIuT1X2lVKW5Sk5v1I4R4gi/8eIjsqyHymN6wZ9
+         u5YzPyLDu3YXvOijF6POiBJvZ4DofWDfCHfz+/dxd653CUggHyKf5QIjN7FSrvUCdfi0
+         x2CMz4ei3FTmVkLHcBto55wrwVdTWqAA76u2I+yV4GJNgb1bSTeoEL9C5PbrsYOOmqrO
+         9E5VrCGu40v2eQrKj+gdgyRRU4BJLUBs/4SPRmejtt2ZcR/gbLDb2r5aC1f/iE2DEjfl
+         Ga+0Ljm52RQ5sNzyuXO1vjsVkdQD7Ar4Me+4d3QuqX4Dd1V4OqPNgVys1+xkqy/KJREH
+         36eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744963878; x=1745568678;
+        d=1e100.net; s=20230601; t=1744964373; x=1745569173;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hBAVQUSIG8/FVcTA2w6Be8v3FlriNZP6ZHZpLpZIhIc=;
-        b=jCJtZW49EZJijCWyOFLa1wKZcHwL7guf3do9P6OfbzmUpdHLnWpvSolhBfxKugK5Sz
-         nw3r+F2F50qXpxab8VtaI9FeGvW4lDhNb9PzDJGJXAuaaGc795P6VaFaHIKaVuyO6/e9
-         dnnVmaVVKdbJPaLaQllDpKENEaTfFhq2+ExWdmkZO9ve2ZyoLIcI01dgWCL+sGi9EZty
-         Kg0DGP61tMmoO7HqgzflgBZ4CvXyiqerYZmaHy9BgAd318RCzCmJzMLnWulaDOA5BGor
-         c4vLnoRt1oDsjbesQJ+mArWx8+K9OdkPUhVpKduji/OgSfSfpox53xB7ZwfGchoGjtsm
-         mf9g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1nK0fgpmorsOwTPzhKVdXINRKPQfLhGZcCcccyKO0BwB+JvcO5lviT2wiWHsjneJ/mNuc9wiYBnfwT4nLoMbDow==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3f1zlU/E/IN/18FoQN9hhlkh2XdBU0FmcsQtrf4esGflxo1g7
-	5esM5Rw4xAHtRGwm+bY1385ZtjC7i8+tdaJL80SU7H0Xnf+qpfeAxhxpWjfL/SY=
-X-Gm-Gg: ASbGnctVEWIBU2gbJoRUErZVscVUilclTzM7LtNplnpeRWASHiDHeIZqtB0W8PGtnWi
-	jxnKPCjGWNJB7pN3qOqPk8HNm7+rM9BMmMAzDXr48405e535SUXf55DJf+6M+XDL5j/j4Z5VdLA
-	4F8majTNA5ePez/KfqATz75q8liy+oWI5PZWxdlc9kvd89V6QdRGCayOzRMoNyrBltPaNYryk0f
-	NFA/1OpFUNP+krBnGklWlu16MuiBJnad70FTlhQeyvU7yyWs6gtWasynA1uSEIlFCyH9aHYGfXV
-	Psywq6MfM6Vtgr2Y1UahhHBrRZFh7mWE84VeVjzCoxY+qP6aLJj3pvgZzrph3qkcZMhR1/e4ewG
-	vLOJECnUa0pctPw==
-X-Google-Smtp-Source: AGHT+IEqy72HPc2JLxk7cwyoLf4zIk+ZCEFJN86qbQUa/AJZooBD3mTTOHD22C31nQiUieXQmKAm3g==
-X-Received: by 2002:a05:600c:4ecc:b0:43c:eeee:b70a with SMTP id 5b1f17b1804b1-4406ac0aec8mr10500975e9.22.1744963878336;
-        Fri, 18 Apr 2025 01:11:18 -0700 (PDT)
+        bh=L630Qky/UZ9kI7H0yEROeZ3XG2IusjzeuDyDM/AGMdw=;
+        b=GK/S7BYe9RSqGh7XI4jLb1j3rHTSZKkk476+HFYNMyBFQtH/criwDnYChhzBvbcE0q
+         +9mm5fiwt9Xwj8iDTfzT7PyGdNH3i56UUzL/wubpBArzTOrn5Y/RYpYlsJMIwiAOy0Sd
+         a2Pp5b+4/gJzUaKtWtATShbvirUksXQGYj9bz6i2ePYvrlbw8mlLpceM4LWCpFkIPFIe
+         F7oI61X730FzFJoQO1Bl5KILaqowBBL8JcQRSXnj3Oo3e3Kebur7FuIGjZxZx4h81wTP
+         Da//+NmCCTjHVcjUcbhM+SaOGX3agmgy5ykW9wdvSkBhVFHyZRds8uT4lSE7nfNRaUZQ
+         oCnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvTKhoYP+cHrFEiRRafnToUu4UdNU1m2kyA8U6oe9fQLfnNs9ThYqW1XK15ZZjemmKacwPRljOuBo786/g+n9v8Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq/UJugjRvO3Hr3vtnTsHm1nh/cqN+KhwXLAseaeUdy0y6VZYC
+	wZ+/ZVAzJ9abms/r+9llDmIsImxrklZ1jqDW34LUPrLHBFY7SlEX7gfYkU2/hKA=
+X-Gm-Gg: ASbGncs+lLOKMXOO/e3tlcZKoES+CJSt7ajqGOQIkZQdUrX/aXTyBX9VuY0w0y/M9ix
+	IuL1pFvWUioD48SNoaehX+NL67uwwXse+VmRzaOLjuGJPUgVZbp7sosrhp2vtpSxNu52RXTvU86
+	HQg45el4imqzSD0zp+d1n8AV92aYfRBphYZ92QWhv5bvJoCgNUwyI7cpcj56VoKdncq4FNETVBI
+	lhpeVLygmJD+6vdFL0oNxUDg1wRF3LHghMvpdvrUQ3g2dJaZb/D2u1k0cjgCq9VUFnSXCoAZ3zq
+	ZCd7Q7Qz5wCyKXnUiuqP51QHa/Iwi824Yd6KnJIIPqCjVdg0/rV98wkyW9uVtzpm+5jAbDGbhAk
+	bssk=
+X-Google-Smtp-Source: AGHT+IHprYn4MpD5iVpcM5XtKPgBCL4PbwyZvt4l+PuNDtvWyynJ4XbaF2lxnyotFbTDZATgIX8ZLA==
+X-Received: by 2002:a05:600c:35c9:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-4406ac412f2mr11115405e9.33.1744964373510;
+        Fri, 18 Apr 2025 01:19:33 -0700 (PDT)
 Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5bbd12sm12743035e9.20.2025.04.18.01.11.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa433354sm2079318f8f.32.2025.04.18.01.19.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 01:11:17 -0700 (PDT)
-Date: Fri, 18 Apr 2025 10:11:16 +0200
+        Fri, 18 Apr 2025 01:19:32 -0700 (PDT)
+Date: Fri, 18 Apr 2025 10:19:31 +0200
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 To: Anand Moon <linux.amoon@gmail.com>
 Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
@@ -75,11 +75,11 @@ Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>,
 	open list <linux-kernel@vger.kernel.org>,
 	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Subject: Re: [PATCH v5 2/3] drivers/thermal/exymos: Remove redundant IS_ERR()
- checks for clk_sec clock
-Message-ID: <aAIJJKGif3i3-97g@mai.linaro.org>
+Subject: Re: [PATCH v5 3/3] drivers/thermal/exymos: Fixed the efuse min max
+ value for exynos5422
+Message-ID: <aAILE01SjRR874jc@mai.linaro.org>
 References: <20250410063754.5483-1-linux.amoon@gmail.com>
- <20250410063754.5483-3-linux.amoon@gmail.com>
+ <20250410063754.5483-4-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -89,56 +89,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250410063754.5483-3-linux.amoon@gmail.com>
+In-Reply-To: <20250410063754.5483-4-linux.amoon@gmail.com>
 
-On Thu, Apr 10, 2025 at 12:07:49PM +0530, Anand Moon wrote:
-> Remove unnecessary IS_ERR() checks for the clk_sec clock,
-> the clk_enable() and clk_disable() functions can handle NULL clock
-> pointers, so the additional checks are redundant and have been removed
-> to simplify the code.
+On Thu, Apr 10, 2025 at 12:07:50PM +0530, Anand Moon wrote:
+> As per Exynos5422 user manual e-Fuse range min~max range is 16~76.
+> if e-Fuse value is out of this range, then thermal sensor may not
+> sense thermal data properly. Refactors the efuse value
+> initialization logic within exynos_map_dt_data function by
+> replacing the nested if-else statements with a switch statement.
+> Ensures proper initialization of efuse values based on the SOC type.
 > 
 > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-Typo in the subject: s/exymos/exynos/
+Same subject typo: s/exymos/exynos/
 
 > ---
 > v5: None
-> v4: drop IE_ERR() for clk_unprepare() as its handle in earlier code.
-> v3: improve the commit message.
+> v4: None
+> v3: Improve the logic to convert if/else to switch
 > ---
->  drivers/thermal/samsung/exynos_tmu.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  drivers/thermal/samsung/exynos_tmu.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 3657920de000..ac3b9d2c900c 100644
+> index ac3b9d2c900c..a71cde0a4b17 100644
 > --- a/drivers/thermal/samsung/exynos_tmu.c
 > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -258,8 +258,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> -	if (!IS_ERR(data->clk_sec))
-> -		clk_enable(data->clk_sec);
-> +	clk_enable(data->clk_sec);
->  
->  	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
->  	if (!status) {
-> @@ -269,8 +268,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  		data->tmu_clear_irqs(data);
->  	}
->  
-> -	if (!IS_ERR(data->clk_sec))
-> -		clk_disable(data->clk_sec);
-> +	clk_disable(data->clk_sec);
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
+> @@ -899,12 +899,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>  		data->gain = 8;
+>  		data->reference_voltage = 16;
+>  		data->efuse_value = 55;
+> -		if (data->soc != SOC_ARCH_EXYNOS5420 &&
+> -		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
+> +		data->max_efuse_value = 100;
+> +		switch (data->soc) {
+> +		case SOC_ARCH_EXYNOS3250:
+> +		case SOC_ARCH_EXYNOS4412:
+> +		case SOC_ARCH_EXYNOS5250:
+> +		case SOC_ARCH_EXYNOS5260:
+>  			data->min_efuse_value = 40;
+> -		else
+> +			break;
+> +		case SOC_ARCH_EXYNOS5420:
+> +		case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +			data->min_efuse_value = 16;
+> +			data->max_efuse_value = 76;
+> +			break;
+> +		default:
+>  			data->min_efuse_value = 0;
+> -		data->max_efuse_value = 100;
+> +			break;
+> +		}
+>  		break;
+>  	case SOC_ARCH_EXYNOS5433:
+>  		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
 
-To be replaced by devm_clk_get_enabled() ?
+Thanks for taking care of cleaning up this portion of code. IMO, it would be
+interesting to go a bit further in the house keeping by replacing this big
+switch with a set of structures stored as __init sections. The initialization
+finds the right structure and does a structure copy to 'data'.
 
->  
-> -- 
-> 2.49.0
-> 
+It is up to you to do this change or not.
 
 -- 
 
