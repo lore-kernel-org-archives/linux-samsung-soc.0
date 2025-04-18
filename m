@@ -1,106 +1,243 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF6A2749D7;
-	Fri, 18 Apr 2025 13:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7038F20767E;
+	Fri, 18 Apr 2025 13:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744981630; cv=none; b=MA4/xqR19vAwDfdcYhH+1ZvmTCAgXlmOQofEa8mAdf/iEMkJ3uakgGhQDm1Niqo6AddlbpjsopRl4LlU3rvfZcVIbTeLEEYT4f8ew6Aj2eRyWxFFY4s+TBOLfXd/6Nec0A+0SozQhDADVZtK3r8INONhWOB4uSOBEc/nPIolnbs=
+	t=1744983110; cv=none; b=HCS0ZatgnszRnHu4zZif6kfpdVTth+fgtiNuMupozcxSA5p6KLpXB+vBGRc92G3Alwmu+J6MQqeZJQmgMKZCBCIlGG5fr4eXy2aQXLuaPTWrpu7DUrMgi0X8flIBwQhj5o5S1Yy3mpfbIJcLwiBW6hrQ6qJLwspnSZiQyue/AkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744981630; c=relaxed/simple;
-	bh=wUE4dWHvSCik/3H0N3jXNmiIywoqHZpP04FIL16opA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hAnwFxfc0qg8qHcLou3RPiy9SbtTylFbJZxipLMyYVwjcrP7e6COjLpTaO/8gM1xXft7gjF91H0tR7sMtSzylh4oGvD9uq7FpjyZT09wAzLy8wYJxFex0kCOeGuh9LDLq0tCPAucwe/Ap+u5AYAB7lwnO27W22wKGCzSvmPRhtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRcd2+Z5; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1744983110; c=relaxed/simple;
+	bh=+ipEq0DN1psmNTdr4XRWkkXLvcwAD4hbAap9lZ1Syy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NLCP4uzex/vcgGYPRos7HO7ySZ5zUpnVJhYhg22vgT/eroX+zkNrj+8c3pIF37HR1z1viHdU4E2H8MfIg9TVbr3VuBNr0spGIrkqO7xWVgLhM/p6Ez3SdumNdp+E+48KinwhJP2TlVZd1A3eM7uTmm8pnRuQ9DvRi+miNyBQ19Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gE4/Cx0d; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRcd2+Z5"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso17901905e9.2;
-        Fri, 18 Apr 2025 06:07:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gE4/Cx0d"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so71279a12.1;
+        Fri, 18 Apr 2025 06:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744981627; x=1745586427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPmaDVcyCN8xn5x/2E/HujSFy+Zs3h3dzceOeOvtskU=;
-        b=mRcd2+Z5NFIGMiqm6QsNJPzVq1vbfK8eOWkRhvH3DHkfgND92pS8AEdZNGdwl6VMQd
-         7KmaVsDjYom57/qqNwF2E8R44QB5QkQLBQKbtXC69Nmt+1VmVOSUNAkHtGiN97vJBTMe
-         kqSvXZH3wiZ9TelT/Xt/CXQtA4OF1FldC4B19HKu8DEdiZRsXQKa/J8gdvK9j6lJmX2m
-         vCgZiTW8v2oZhu1eAlvczoAtC5fh9BGQq3hdtVqcelNQAc1XFkVk/EKTazf/ae74ID23
-         tQgKLogkvU/GG70awKCTJlVmnimZQWjgzfMDxQQd/ceFBId0fCUwtJDuCALCe/buCje3
-         y9rg==
+        d=gmail.com; s=20230601; t=1744983107; x=1745587907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VW/r+Xskypu97YYD6KF6jc5zwux2QZnn2gKuuTUWqVE=;
+        b=gE4/Cx0dYk9em6Y0NJOfavwg7aCSmA2Rk/X0hErzcjPsYchSnkXb444UVqpDnIfr/n
+         nyphkiRildA9GTrKlcPgYPzO7QzRABd7dciHPk1uz/6PD97IJbU6W2SO7KtFI9VrN3o3
+         Fff0spJnyQt2afzdgEu/gprbpaaN37t4aAu45Sh1UXKHI7TFCdjW6T7IgHV5y5Knb81l
+         5MkLl9ikM9ODWavwKTyCTt3EaCVjVRYilziOEyuGNYA08wHFFtF5UjgOHRFDs4mI/vsH
+         q6bG4CK2mZTouBJlc1UjSIgGk25eddzAxBsj1Cjovy+k9Dz6at/5cp2NXT8a0JA70WEu
+         Iiqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744981627; x=1745586427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fPmaDVcyCN8xn5x/2E/HujSFy+Zs3h3dzceOeOvtskU=;
-        b=oqklzvlGmDyfyUU9PRDH8NA5wkQAe5nYUB8Y0RiYiLX7TbV3w1aADZANxAQIZKkwSs
-         WWoReAVBbw6tmPzcFOYMouifUpumyj050wHYL3aRCtGcTaB6DwMNSrggZIe3swDxEcNe
-         qOwQ9lyrsAzu63FYbUqcYnD0y+u3T2lGIgTqGdmh5ncAk9FwqmRB/8HxNyTIU2Lvunrk
-         zHayvfiDbGEdO97XBcma8+WwKhCd+QHHERsmEMv1/dKEtoM8ImlwyT8/mSN+Lft7XJxA
-         4m9KS8xPFWdHs4XlYkw6zQXWsHZ24lkC+CpOJDzw6DRbFaAsKIjgNc+FFTcXe78gikir
-         dzfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCCy9OICNLQ5BkgMkEjpPrGAb89C+JU2nuI2/P0MadzBHvlmcmuqzhp9GpQ30YA13l+Hox0lVVS3DbDuQDmktft6k=@vger.kernel.org, AJvYcCWpkCETRi2yYIxDMYSdsSpGjFG3/WJqPOZlJolsJAaKZ7fIIeaeMJtbLbUTxI28TBsYtJNQH0qiebeSNyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHoyENvxm6l78aC1BbVLQrPjXQX1CkAvECBQ2pfkIsAufW7QRy
-	viGTOvGpMgJAebAy1Swg4irM38LjQ0UkO4MmyBlvOSiqdDdH7oEv
-X-Gm-Gg: ASbGncuJLAAHo9M4aUxAJl6VlaguXMV2W4TX9YC2iox7ehtDViGRmJ6vSxArbGnWFNp
-	kVKn2XhOMMggwEILPl/s0qlSpxaDG7CRJ7LiERU2YPbihpioOQ1XzEWIJjvXtscpTkQ971OK5DR
-	yi10vQqbHtMmRpnLRNbqD+L4f377uXu/LKJwYi7ciwB/XsQePMVRkjA/GKVfkmws7BL+KHAT9Fb
-	SEJ7fY0qA+D2rQ3mVNYsNIzwjTRx+UA8CKJjdMaFT1/hD0phG+IfS7V9hfTmBcV4VCkoXg8k8r3
-	Hkthzc/UwTrFhHAX/YWwLZPDsAuu9/spdIa07EaBZg==
-X-Google-Smtp-Source: AGHT+IExMbsAQz7Mwc12HiLkpWeb7K2O1dS/WK/atDtpdKNgEq1aIQw+33yHgxXO3RSHnYFs46ICbA==
-X-Received: by 2002:a05:600c:1547:b0:43c:e481:3353 with SMTP id 5b1f17b1804b1-4406ababea3mr21349975e9.17.1744981626906;
-        Fri, 18 Apr 2025 06:07:06 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4330d8sm2796501f8f.33.2025.04.18.06.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 06:07:06 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/exynos: Fix spelling mistake "enqueu" -> "enqueue"
-Date: Fri, 18 Apr 2025 14:07:00 +0100
-Message-ID: <20250418130700.540590-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1744983107; x=1745587907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VW/r+Xskypu97YYD6KF6jc5zwux2QZnn2gKuuTUWqVE=;
+        b=VcfgX+TnAdHxTZ27GuqfHgnw7RSzjAnBng1cNzOwqORJew5nXx1n6eugF4RAJWkGML
+         /lLehEB+VEUun6iU/N68fim00+RYNWhrlOHUgKe69nqvR7HIDmSCiVXzbzuQrx7fXRql
+         sAufGyyXU8Zo9zvoOfB4+IUVc0xJ0EEhnm2Sl2ZK9BIDew8LDR059iA8t3/SlzAmdeR+
+         kbb1+yhGu+0/zovDyYvH1soiZM0UWT70q6X7IO86gdBtrd1mnt8hj7mW2/BAB39db5ds
+         jF3ZWwHsPnqeWLVwgl2Z44mNDn9KL9N2ubwX+PZEfZwkKf057AXXLamwrg2uAJfxfkVd
+         V1Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVie4nK3AYGvW3LlTSTlQE75qk73IGHipe6J4dq2jZOYEamndGybY/LOEmApGxcP+VYCzg1yFayfNbqwrtXez2o8A8=@vger.kernel.org, AJvYcCWt4i/mhbEn3ySZCSw7gmRDY6SyV12/zQV7OOggWJbQP1fBAdjcbHd0rlJQDQfIPXsCTq2LBVaHu4g=@vger.kernel.org, AJvYcCXIS3jo1qjJ3zlliRveB7qTTh91yewW7opGp9YjCEZLVJ38l6oSRMIoFJ7WW2ARhcYULSOsPpjZZFhGgDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYbf1UbPoNpE2bhcjeo2m6+BBfkl9fGIcUUfnOA36IgaklSbOH
+	9sIYTa8AP8jB0WYy6tTged5MyPxUx5fb/udCwD8aQu7VY+y2O49JAc49vqRcjSg7kOcPDVRMqd3
+	Op1pkTw5Pqkh4f0biwqUN40Wjr4rm3+5+
+X-Gm-Gg: ASbGncv97miwI7viGXgaSwX5Ee17bMea1GWzKk1J+XdTnQNYiAeLtF4gaP4CEOhc4fb
+	z6CdRuanuqqUGFROoBh3ng2GeKv5aNb+utiRcfGEGAuFCG1NJqa7eCcYdws5qboQilqEKdNRtbo
+	k5IcZK9XQwgvzRA47HxKDJ
+X-Google-Smtp-Source: AGHT+IE+R7I4dVbYwOWf8/dydNM3ras0vM8Hcd1dtJhxh5iLeMMP4/GOg7s0W+7aCQ1EW35HU9YjtmFodyE+MqjWPmY=
+X-Received: by 2002:a17:906:e208:b0:acb:85f2:f032 with SMTP id
+ a640c23a62f3a-acb85f31115mr5753166b.13.1744983106327; Fri, 18 Apr 2025
+ 06:31:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250410063754.5483-1-linux.amoon@gmail.com> <20250410063754.5483-2-linux.amoon@gmail.com>
+ <aAIIH7H1oQH8cf-6@mai.linaro.org>
+In-Reply-To: <aAIIH7H1oQH8cf-6@mai.linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 18 Apr 2025 19:01:29 +0530
+X-Gm-Features: ATxdqUEh1pZaqB8ipWBIif6O9726dyogwx9y_IR39XM-ncpaQF8skGDo78Oz4mw
+Message-ID: <CANAwSgS_OnEv=r7S4CetLkW4vo-QdFAKTbqRK9H-Q0dq5VDYLA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] drivers/thermal/exynos: Refactor clk_sec
+ initialization inside SOC-specific case
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a DRM_DEV_DEBUG_KMS message. Fix it.
+Hi Daniel,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 18 Apr 2025 at 13:36, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On Thu, Apr 10, 2025 at 12:07:48PM +0530, Anand Moon wrote:
+> > Refactor the initialization of the clk_sec clock to be inside the
+> > SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
+> > is only initialized for the specified SOC and not for other SOCs,
+> > thereby simplifying the code. The clk_sec clock is used by the TMU
+> > for GPU on the Exynos 542x platform.
+> >
+> > Removed redundant IS_ERR() checks for the clk_sec clock since error
+> > handling is already managed internally by clk_unprepare() functions.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > v5: None
+> > v4: Fix the aligment of code clk for clk_prepare in proper if/else bloc=
+k.
+> >     update the commit for clk_sec used.
+> >     checked to goto clean up all the clks are proper.
+> >     drop IS_ERR() check for clk_sec.
+> > v3: improve the commit message.
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 37 ++++++++++++++--------------
+> >  1 file changed, 18 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
+sung/exynos_tmu.c
+> > index 47a99b3c5395..3657920de000 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -1037,29 +1037,30 @@ static int exynos_tmu_probe(struct platform_dev=
+ice *pdev)
+> >               return ret;
+> >
+> >       data->clk =3D devm_clk_get(dev, "tmu_apbif");
+> > -     if (IS_ERR(data->clk))
+> > +     if (IS_ERR(data->clk)) {
+> >               return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to =
+get clock\n");
+>
+> As this branch returns, the else block can be removed.
+>
+>         if (IS_ERR(data->clk))
+>                 return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to =
+get clock\n");
+>
+>         ret =3D clk_prepare(data->clk);
+>         if (ret) {
+>                 ...
+>         }
+>
+Earlier I got this review comment on this.
+[0] https://patchwork.kernel.org/project/linux-samsung-soc/patch/2025021619=
+5850.5352-2-linux.amoon@gmail.com/
+I will try to fix this in next vrsion.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index b150cfd92f6e..09e33a26caaf 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -908,7 +908,7 @@ static void fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
- 	u32 buf_num;
- 	u32 cfg;
- 
--	DRM_DEV_DEBUG_KMS(ctx->dev, "buf_id[%d]enqueu[%d]\n", buf_id, enqueue);
-+	DRM_DEV_DEBUG_KMS(ctx->dev, "buf_id[%d]enqueue[%d]\n", buf_id, enqueue);
- 
- 	spin_lock_irqsave(&ctx->lock, flags);
- 
--- 
-2.49.0
+> May be worth to group both calls with devm_clk_get_enabled()
 
+Earlier, I attempted to change the clock ABI, but it didn't work.
+
+[1] https://lore.kernel.org/all/20220515064126.1424-2-linux.amoon@gmail.com=
+/
+If you're okay with changing this, I'll update it in the next version.
+
+> > -
+> > -     data->clk_sec =3D devm_clk_get(dev, "tmu_triminfo_apbif");
+> > -     if (IS_ERR(data->clk_sec)) {
+> > -             if (data->soc =3D=3D SOC_ARCH_EXYNOS5420_TRIMINFO)
+> > -                     return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> > -                                          "Failed to get triminfo cloc=
+k\n");
+> >       } else {
+> > -             ret =3D clk_prepare(data->clk_sec);
+> > +             ret =3D clk_prepare(data->clk);
+> >               if (ret) {
+> >                       dev_err(dev, "Failed to get clock\n");
+> >                       return ret;
+> >               }
+> >       }
+> >
+> > -     ret =3D clk_prepare(data->clk);
+> > -     if (ret) {
+> > -             dev_err(dev, "Failed to get clock\n");
+> > -             goto err_clk_sec;
+> > -     }
+> > -
+> >       switch (data->soc) {
+> > +     case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> > +             data->clk_sec =3D devm_clk_get(dev, "tmu_triminfo_apbif")=
+;
+> > +             if (IS_ERR(data->clk_sec)) {
+> > +                     ret =3D dev_err_probe(dev, PTR_ERR(data->clk_sec)=
+,
+> > +                                         "Failed to get clk_sec clock\=
+n");
+> > +                     goto err_clk;
+> > +             }
+> > +             ret =3D clk_prepare(data->clk_sec);
+>
+> Same comment, devm_clk_get_enabled()
+If you're okay with changing this, I'll update it in the next version.
+>
+> > +             if (ret) {
+> > +                     dev_err(dev, "Failed to prepare clk_sec clock\n")=
+;
+> > +                     goto err_clk_sec;
+> > +             }
+> > +             break;
+> >       case SOC_ARCH_EXYNOS5433:
+> >       case SOC_ARCH_EXYNOS7:
+> >               data->sclk =3D devm_clk_get(dev, "tmu_sclk");
+> > @@ -1112,11 +1113,10 @@ static int exynos_tmu_probe(struct platform_dev=
+ice *pdev)
+> >
+> >  err_sclk:
+> >       clk_disable_unprepare(data->sclk);
+> > +err_clk_sec:
+> > +     clk_unprepare(data->clk_sec);
+> >  err_clk:
+> >       clk_unprepare(data->clk);
+> > -err_clk_sec:
+> > -     if (!IS_ERR(data->clk_sec))
+> > -             clk_unprepare(data->clk_sec);
+>
+> With devm_ variant those labels should go away
+Correct.
+
+Thanks
+-Anand
+>
+> >       return ret;
+> >  }
+> >
+> > @@ -1128,8 +1128,7 @@ static void exynos_tmu_remove(struct platform_dev=
+ice *pdev)
+> >
+> >       clk_disable_unprepare(data->sclk);
+> >       clk_unprepare(data->clk);
+> > -     if (!IS_ERR(data->clk_sec))
+> > -             clk_unprepare(data->clk_sec);
+> > +     clk_unprepare(data->clk_sec);
+> >  }
+> >
+> >  #ifdef CONFIG_PM_SLEEP
+> > --
+> > 2.49.0
+> >
+>
+> --
+>
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
