@@ -1,171 +1,129 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC683277817;
-	Fri, 18 Apr 2025 13:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B54B214232
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Apr 2025 19:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744983159; cv=none; b=UZ1Jc7SCX0wWK3jAwICscsCSTIAgB15t5+dc3Ba5JRap2c8e7VsfcI5M+NUEophfCO/4UuQ8ODebdzXOUuuW5Ik+WI0aHITBwd21rOD/sDyH48st+pbRATAyb176J67BGXGOCQ4SRv2a2U8G8JpCSZLOiSbE3to3M/rTG89zFO8=
+	t=1745175679; cv=none; b=i092XSJQzJtPswIPnKrb181xxFYB4jgnsbOm6JWhs5RrqECgIdC9NZkwWflFY4Zowsu5SStn7wjIFTarmFBFQ554HfyirrqMGurn/qolWuEJUm4EcIk+XI2vpQeosUNI6JytB10t6VzXzio1Ph/0BF8Oj6iOWviv754GlLZzEpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744983159; c=relaxed/simple;
-	bh=7eowmYUF0pclok0D9/mq1P0map8wOZ69347Wa9sCHNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FOmPcsWKBQKUmfvEzt11wuIkr/TE3rUgzX4KWp0+WmpYD/grf5dmgfR7fcncbUnhdBcWs7PoRduid3nsDgoueMyLDmUqUiQOarBkaolyl94xI6UPxmpTwLSstZ+Yey4bCCzPPQDJ9vFJ/M3qlm/GVHnM3Fh0b9tZOLpwkyQyC+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mABcdzp/; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745175679; c=relaxed/simple;
+	bh=ZzqEnrc2GwGD0LJJxzv/EFLw7i0OZpVSmt6FN5Jh0zE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SXCc0rfwJuK6vThdZP3xc06LEMm3MWM6amEFRbGlbgzusWuq9qKB2ZwSFv6bk80WUU/OxKfbzZzq/PFljmLmyFGfLxkn3g+D0Z9LGYLEICyZ0mm54lqHB8gpdfTA4euzy+2vI46cxfgAjo9EQOTGzrJjqSY6T2JfROBoE6Meh4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=LIR/K4Rk; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mABcdzp/"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so2691395a12.2;
-        Fri, 18 Apr 2025 06:32:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744983156; x=1745587956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GXZIWWM8mZYdiQktFqPI0+JPo4B/dX6RUUwchm1Zb5I=;
-        b=mABcdzp/nxhrHSoGB+Ngv2wEIbGjFA9MyAfutbOaFo71RblvJqPLwMDxt1+dEgJ/h3
-         oPjsTd2dieTlSCB6g4KUwsLo3mDDx3S8XvZiwLRo/GbNY7JfysswMFbevuDCe47ZrErv
-         AljF5uEwpMpWN7aaUyPlM0zIDObTvsaSXWXDyUTZDVjPKJbQW3ikVg3ckBU9Yxrajp2W
-         K1WSSBEvvngNETL5Pyj4hTKXpXrS6/8xU1u9wzwuH+DQffC8A4dXqgxNou7I7x1qCBXK
-         4rfc6K5V4T/eZS8J5Cbx5iZLliwb2RlIgwXPG1LGp7/dw2G9Mc9z5JDWs2i94+fAruk2
-         70pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744983156; x=1745587956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GXZIWWM8mZYdiQktFqPI0+JPo4B/dX6RUUwchm1Zb5I=;
-        b=vxw5WGpOZeEbvAID9sw7IFar7t464wNwfZmw2CaUsdRZzWtiE5mHD63Kogicl8GICE
-         aTbMWvPu1w0HMLXm6/Fpr50UI4po9qhpqbtRt9mS1LxA/ZRpeEUUt5PXVa07ZqCIfTE6
-         N+2QJbr1qVbqM/dtDXmbLzYdegixcPWTiL8LJsGAYVoL9hOGFkTLTA/MfQyq501/nYho
-         qsLbtOTANQYVo7E5l5o+nfsg1BNEB6ADquuk+gLirfhwLvUEVhdqyrptyFPv4bsNRS6v
-         J+WGzpglQYv1LYRqunKNYoy4nTInTfizUvLdtfOD4Hp0Fsj3rUeHvsbepIoSgCmRaPJw
-         el+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUiEuq18CnbKlF5lkVbhxRnC6Dsx57a4swdGfTr0GVZclgmyQJiWN2mYDFEpNmJb50Db83TN8+1JC8=@vger.kernel.org, AJvYcCX2ecAKFKaBDwFW466WjNknHHU5Z0qpSLtiIVzUrWMWbvi4WSImKyGT39Fz86AYttHVPof9fKTKpvbJFvA=@vger.kernel.org, AJvYcCXKYJAsJerFRemfq4diYDJMzdiKqpKYaXVFYz8Kq43Hsc+ecce9nG1X+OLhTfIyzVQomQz10nu7WHqR0RpiHHJwmsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKcpOEYW8DZp0l3N43L/Xqgrl1Y9sgZEJNfXtz5bnHq30oV0zE
-	Ny/Gvm1VVGOJKyFT/6NiM2nQjwL5m5ndRBVOOczjgXEVZyrqqcXttVeNpKpbG+/lmynLMTdwbtg
-	CY5+6dNmZnY9HkCls2k1wiIF7Bk0=
-X-Gm-Gg: ASbGncu87KWTonln75ULy5G+IoUjHfoDjy/32om69yJNfhOdeTj/64BND6WsXNhXk1m
-	nLVT1ISFIM9wrKm4QVqxY92XmZKDYnNns8Rwv7XbqLQQ/+1REbfifW9YEZRcgQExGv9bThs0k9c
-	SMNrsuImcgSGI5zxrLjsCz
-X-Google-Smtp-Source: AGHT+IEf1FP4PE+QPrL3TzSuKDCTAio1byV8qwIANyIcWwl3yMCy7oqqmZBQNjRLb7+OZ1bOcdJO2NJMrjzSMyIelCY=
-X-Received: by 2002:a17:907:6090:b0:abf:4b6e:e107 with SMTP id
- a640c23a62f3a-acb74b52090mr242322666b.25.1744983155938; Fri, 18 Apr 2025
- 06:32:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="LIR/K4Rk"
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=LIR/K4RkD+zKs/VeUcFutsQxHIxd0wjdIHb6Q7CDJQi4rfE1g9MsoYS85D9m+ngOxrDStx7rhS1eA+cO84LDB0ohGNHqmKp62+uKHB8cJimZjbvUcm8EzYtIYyi5l94++GC2VOGz8YVSanleIaknZbiebGJ1Ad++g9kxmPEz+PN0eWPdy2c2D+UuDZv5un5ezLDigKIfpaUN3ZLFztawpmMZiJndXnnDFZ23GI7+zP72BR9PYg6HLNxwSRi7XC7c6ZkmUREzyIbFR3zn2kIvTICpiuy1BZBNrtth08allgcgBd96d3MNoi11rmMjlSOK0U6ka0KMPkPBisZpDXdbxA==; s=purelymail3; d=purelymail.com; v=1; bh=ZzqEnrc2GwGD0LJJxzv/EFLw7i0OZpVSmt6FN5Jh0zE=; h=Feedback-ID:Received:From:Date:Subject:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1640089901;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sun, 20 Apr 2025 19:00:43 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Date: Sun, 20 Apr 2025 21:00:38 +0200
+Subject: [PATCH 1/2] dt-bindings: watchdog: samsung-wdt: Add exynos990-wdt
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410063754.5483-1-linux.amoon@gmail.com> <20250410063754.5483-4-linux.amoon@gmail.com>
- <aAILE01SjRR874jc@mai.linaro.org>
-In-Reply-To: <aAILE01SjRR874jc@mai.linaro.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Fri, 18 Apr 2025 19:02:18 +0530
-X-Gm-Features: ATxdqUHbJXVdHhwcS0IwraNdsY4dmTwIZsNctwmfdNkH6lfYcXleJugDkxPs4Aw
-Message-ID: <CANAwSgRK5ONpBM35U7DG=wtHv9N-9kRpbveqyGsVORnJiS5mmg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] drivers/thermal/exymos: Fixed the efuse min max
- value for exynos5422
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250420-wdt-resends-april-v1-1-f58639673959@mentallysanemainliners.org>
+References: <20250420-wdt-resends-april-v1-0-f58639673959@mentallysanemainliners.org>
+In-Reply-To: <20250420-wdt-resends-april-v1-0-f58639673959@mentallysanemainliners.org>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-watchdog@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745175638; l=2884;
+ i=igor.belwon@mentallysanemainliners.org; s=20241206;
+ h=from:subject:message-id; bh=ZzqEnrc2GwGD0LJJxzv/EFLw7i0OZpVSmt6FN5Jh0zE=;
+ b=l3whzqZEDIVwIoZNOtSEIAdPsHfbI3xwrAn2qclEOxST3fnd30CM+CTztr4C+eQvzowAGgHQD
+ 3hFXaF1Y2PJCHH7G8jU5ZoQ5EZ1wNnwDKnfgF+kItJ/pr18r5FzdIBt
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-Hi Daniel,
+Add a dt-binding compatible for the Exynos990 Watchdog timer.
+This watchdog is compatible with the GS101/Exynos850 design, as
+such it requires the cluster-index and syscon-phandle properties
+to be present. It also contains a cl2 cluster, as such the
+cluster-index property has been expanded.
 
-On Fri, 18 Apr 2025 at 13:49, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
-ote:
->
-> On Thu, Apr 10, 2025 at 12:07:50PM +0530, Anand Moon wrote:
-> > As per Exynos5422 user manual e-Fuse range min~max range is 16~76.
-> > if e-Fuse value is out of this range, then thermal sensor may not
-> > sense thermal data properly. Refactors the efuse value
-> > initialization logic within exynos_map_dt_data function by
-> > replacing the nested if-else statements with a switch statement.
-> > Ensures proper initialization of efuse values based on the SOC type.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->
-> Same subject typo: s/exymos/exynos/
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+ Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Thanks for your review comments.
-Opps, I will fix this next version it got skipped.
+diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+index d175ae9683366d33b1f9d9d820501d1e7c5964bd..53fc64f5b56d33f910395d32b35e0905b8b9aa53 100644
+--- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+@@ -25,6 +25,7 @@ properties:
+           - samsung,exynos5420-wdt                # for Exynos5420
+           - samsung,exynos7-wdt                   # for Exynos7
+           - samsung,exynos850-wdt                 # for Exynos850
++          - samsung,exynos990-wdt                 # for Exynos990
+           - samsung,exynosautov9-wdt              # for Exynosautov9
+           - samsung,exynosautov920-wdt            # for Exynosautov920
+       - items:
+@@ -49,14 +50,14 @@ properties:
+   samsung,cluster-index:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+-      Index of CPU cluster on which watchdog is running (in case of Exynos850
+-      or Google gs101).
++      Index of CPU cluster on which watchdog is running (in case of Exynos850,
++      Exynos990 or Google gs101).
+ 
+   samsung,syscon-phandle:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       Phandle to the PMU system controller node (in case of Exynos5250,
+-      Exynos5420, Exynos7, Exynos850 and gs101).
++      Exynos5420, Exynos7, Exynos850, Exynos990 and gs101).
+ 
+ required:
+   - compatible
+@@ -77,6 +78,7 @@ allOf:
+               - samsung,exynos5420-wdt
+               - samsung,exynos7-wdt
+               - samsung,exynos850-wdt
++              - samsung,exynos990-wdt
+               - samsung,exynosautov9-wdt
+               - samsung,exynosautov920-wdt
+     then:
+@@ -89,6 +91,7 @@ allOf:
+             enum:
+               - google,gs101-wdt
+               - samsung,exynos850-wdt
++              - samsung,exynos990-wdt
+               - samsung,exynosautov9-wdt
+               - samsung,exynosautov920-wdt
+     then:
+@@ -102,7 +105,7 @@ allOf:
+             - const: watchdog
+             - const: watchdog_src
+         samsung,cluster-index:
+-          enum: [0, 1]
++          enum: [0, 1, 2]
+       required:
+         - samsung,cluster-index
+     else:
 
->
-> > ---
-> > v5: None
-> > v4: None
-> > v3: Improve the logic to convert if/else to switch
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 19 +++++++++++++++----
-> >  1 file changed, 15 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
-sung/exynos_tmu.c
-> > index ac3b9d2c900c..a71cde0a4b17 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -899,12 +899,23 @@ static int exynos_map_dt_data(struct platform_dev=
-ice *pdev)
-> >               data->gain =3D 8;
-> >               data->reference_voltage =3D 16;
-> >               data->efuse_value =3D 55;
-> > -             if (data->soc !=3D SOC_ARCH_EXYNOS5420 &&
-> > -                 data->soc !=3D SOC_ARCH_EXYNOS5420_TRIMINFO)
-> > +             data->max_efuse_value =3D 100;
-> > +             switch (data->soc) {
-> > +             case SOC_ARCH_EXYNOS3250:
-> > +             case SOC_ARCH_EXYNOS4412:
-> > +             case SOC_ARCH_EXYNOS5250:
-> > +             case SOC_ARCH_EXYNOS5260:
-> >                       data->min_efuse_value =3D 40;
-> > -             else
-> > +                     break;
-> > +             case SOC_ARCH_EXYNOS5420:
-> > +             case SOC_ARCH_EXYNOS5420_TRIMINFO:
-> > +                     data->min_efuse_value =3D 16;
-> > +                     data->max_efuse_value =3D 76;
-> > +                     break;
-> > +             default:
-> >                       data->min_efuse_value =3D 0;
-> > -             data->max_efuse_value =3D 100;
-> > +                     break;
-> > +             }
-> >               break;
-> >       case SOC_ARCH_EXYNOS5433:
-> >               data->tmu_set_low_temp =3D exynos5433_tmu_set_low_temp;
->
-> Thanks for taking care of cleaning up this portion of code. IMO, it would=
- be
-> interesting to go a bit further in the house keeping by replacing this bi=
-g
-> switch with a set of structures stored as __init sections. The initializa=
-tion
-> finds the right structure and does a structure copy to 'data'.
->
-> It is up to you to do this change or not.
+-- 
+2.47.2
 
-I'll be sure to check this out.
-
-Thanks
--Anand
->
-> --
->
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
