@@ -1,142 +1,104 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8999B1CAA79
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2025 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC92513FEE;
+	Mon, 21 Apr 2025 18:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745247665; cv=none; b=NepgJZC9goXfnlh58732m3thNpb1oCoSx8QsY+3ZRjEetwEy7kZWYhDIVJn5phz+/YZw34fqSjI5EAu0YchskWdkE8nQwk5bdwpHaqZnLN4jLTArtn/exenmZdPr5aTEe7Py0CfzVIyTp6IFOIZKiAiCB7UL1ZvBCqKh59Y5Rek=
+	t=1745259232; cv=none; b=JARbEae3M6kOdfB4votXY9uB9uK92pQQqJqKSb6UUJJa7KW8AvRaM6Ms+ITmiHOT6G2fo7fmDTQmtOaz9v+VOtQmOGMK68ip1SmnAIxsmWKua6UH+ja6ZcKN75ZzVACc0msZ+8XcmcrcPoMOb9aY30tmZL7JqMvvZMeKehDeb3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745247665; c=relaxed/simple;
-	bh=cqLBh8RKoyai0rDZ0YwoYN2gy4BTTtKqU1IFkhEjhcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HfTxT9kui5Exc3GJ9pgvUO/GcBXr7y+m+oVSIzQgEnjIaPifCBVpiiQxTJ7W1rj2+67zDY28ANnqXylUlIHhwpXTqavYZgW3FSsgSzEQi5pXpMUcBsxgZGefIVB8wnUOaeO8lENPjqsoRnKSfPO+bLTn1jF871xJrTMvz5FHyf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TMDdinCe; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1745259232; c=relaxed/simple;
+	bh=qLNiRYeO1WrYRKo8XFM+0fZQHMTw04xZoCDiG8GmDBg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OjIbgUcphheDVf1szgM9DMORzDNA3EU1X5soUeYQ9Jyhp74WZcH+jzrqimppF+ImDFzxZq0j/zGhn/GOO+uaB2wDCdrX4xdMTAWfcbCb4gl0YEIMcf8tdLl6gFOxyC9Hkaj+8kQVgmq4TnbYREXAlTJkVXd3UBXHVMcu6/z+dIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXZN4It5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TMDdinCe"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 6sdZuvbDkiSFB6sdouVInx; Mon, 21 Apr 2025 17:01:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1745247660;
-	bh=lDiD6i5z74Svk8ayjFfG3byf2okiGeHcsi0aPvSYhp4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=TMDdinCevHrGlNSotraIExhYUUGQae64ddIrEp6bd0XSCA1+Jk0m7bu3F9FznLspd
-	 y22+b3pTuyNWNdACISmjM9k3ZUa3BF0OP1kK5PQJ9Bcq8EKricbp/p1aM6WMKiAAtg
-	 XTfdIlF+Vz7/Zj48lwAl4z1ZjfH6Y8wbpGGBQFQhmSiXMaR9f9bSPjyoDmMC4Ow7Cf
-	 CGxOamH4eLNFL84D/KzE+HXEqAhDgMBh9RW9DPnEkzcuQgMja6tk68ORJc8iX7qoer
-	 ozv6aqr3iIBSAcibvCrDYp0/C8TYO+8d/HShNSpC2xz/+fAhKotH/kNBQG1xWHYD+O
-	 PECPhzQemEurQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 21 Apr 2025 17:01:00 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: lee@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	m.szyprowski@samsung.com,
-	ideal.song@samsung.com,
-	beomho.seo@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 3/3] mfd: exynos-lpass: Fix another error handling path in exynos_lpass_probe()
-Date: Mon, 21 Apr 2025 17:00:35 +0200
-Message-ID: <69471e839efc0249a504492a8de3497fcdb6a009.1745247209.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1745247209.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1745247209.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXZN4It5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4898FC4CEEB;
+	Mon, 21 Apr 2025 18:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745259232;
+	bh=qLNiRYeO1WrYRKo8XFM+0fZQHMTw04xZoCDiG8GmDBg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=sXZN4It5CoVbu+OFug+hdtrBYsJ3ABLNezPEEECPrirns47aHT24loReSHa+2qYrH
+	 2wYs5ydRVKPrfJFumbGF6xY69LWwSx9iUWQPm58NtUJspZENj62juJd+dNjonpm763
+	 OSTloKFD0dzg+y+EnsfcV1CESgcW4/JmuNBex+5Zz+IQzNUTh8a5VuqbLmq+c+y+T7
+	 E//xOICSGvlO4FqZhVuVD2F6IRxYsqh77QA8BcWcfU25cW1/2daJTXDvSXzbsSZbkk
+	 kvCfCoCchtTrVjk0RB4uZRKYVotFgS9rhxOjPDM21UJR2l+vYA2sUMhxCVD5hY429z
+	 F0iJlc0i4zdow==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BECDC369D3;
+	Mon, 21 Apr 2025 18:13:52 +0000 (UTC)
+From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
+Date: Mon, 21 Apr 2025 20:13:32 +0200
+Subject: [PATCH v3 1/5] power: supply: correct capacity computation
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250421-b4-gs101_max77759_fg-v3-1-50cd8caf9017@uclouvain.be>
+References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
+In-Reply-To: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
+To: Rob Herring <robh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745259219; l=1114;
+ i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
+ bh=f0NuHuCRsvILdEaz0eCkw58+qM2h+TcqXwhJ2/+YcfI=;
+ b=2QR0PUOyqJGIF5HEIdjTYZyFYYeQnngQYuyDt+nv/btdJkhzALfgAMD1J0icELmwKr0JiNUky
+ 0R5GJtFjQUqBeNnjC0fKbxcnRbsF0CXgPli970QT//VV9COBsfu71j7
+X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
+ pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
+X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
+ auth_id=289
+X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
+Reply-To: t.antoine@uclouvain.be
 
-If devm_of_platform_populate() fails, some clean-up needs to be done, as
-already done in the remove function.
+From: Thomas Antoine <t.antoine@uclouvain.be>
 
-Add a new devm_add_action_or_reset() to fix the leak in the probe and
-remove the need of a remove function.
+From the datasheet of the MAX17201/17205, the LSB should be
+"5.0μVh/RSENSE". The current computation sets it at 0.5mAh=5.0μVh/10mOhm
+which does not take into account the value of rsense which can be
+different from 10mOhm.
 
-Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Change the computation to fit the specs.
+
+Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
 ---
-Compile tested only.
+ drivers/power/supply/max1720x_battery.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Changes in v2:
-  - Use a new devm_add_action_or_reset() to fix the leak in the probe
-    and remove the need of a remove function.
-  - Update the commit description accordingly
-
-v1: https://lore.kernel.org/all/d224865a16b50498279b044a819e1e187d01bb28.1743231856.git.christophe.jaillet@wanadoo.fr/
----
- drivers/mfd/exynos-lpass.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index a2785ceea8bf..44797001a432 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -104,11 +104,22 @@ static const struct regmap_config exynos_lpass_reg_conf = {
- 	.fast_io	= true,
- };
- 
-+static void exynos_lpass_disable_lpass(void *data)
-+{
-+	struct platform_device *pdev = data;
-+	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+	if (!pm_runtime_status_suspended(&pdev->dev))
-+		exynos_lpass_disable(lpass);
-+}
-+
- static int exynos_lpass_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct exynos_lpass *lpass;
- 	void __iomem *base_top;
-+	int ret;
- 
- 	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
- 	if (!lpass)
-@@ -134,16 +145,11 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	pm_runtime_enable(dev);
- 	exynos_lpass_enable(lpass);
- 
--	return devm_of_platform_populate(dev);
--}
--
--static void exynos_lpass_remove(struct platform_device *pdev)
--{
--	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
-+	ret = devm_add_action_or_reset(dev, exynos_lpass_disable_lpass, pdev);
-+	if (ret)
-+		return ret;
- 
--	pm_runtime_disable(&pdev->dev);
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		exynos_lpass_disable(lpass);
-+	return devm_of_platform_populate(dev);
+diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
+index ea3912fd1de8bfd0d029c16f276316d06e1b105c..cca5f8b5071fb731f9b60420239ea03d46cb1bf3 100644
+--- a/drivers/power/supply/max1720x_battery.c
++++ b/drivers/power/supply/max1720x_battery.c
+@@ -288,9 +288,10 @@ static int max172xx_voltage_to_ps(unsigned int reg)
+ 	return reg * 1250;	/* in uV */
  }
  
- static int __maybe_unused exynos_lpass_suspend(struct device *dev)
-@@ -183,7 +189,6 @@ static struct platform_driver exynos_lpass_driver = {
- 		.of_match_table	= exynos_lpass_of_match,
- 	},
- 	.probe	= exynos_lpass_probe,
--	.remove	= exynos_lpass_remove,
- };
- module_platform_driver(exynos_lpass_driver);
+-static int max172xx_capacity_to_ps(unsigned int reg)
++static int max172xx_capacity_to_ps(unsigned int reg,
++				   struct max1720x_device_info *info)
+ {
+-	return reg * 500;	/* in uAh */
++	return reg * (500000 / info->rsense);	/* in uAh */
+ }
  
+ /*
+
 -- 
 2.49.0
+
 
