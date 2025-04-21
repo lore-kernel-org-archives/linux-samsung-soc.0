@@ -1,142 +1,200 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AAA14883F;
-	Mon, 21 Apr 2025 18:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA4E1D95A3;
+	Mon, 21 Apr 2025 21:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745260145; cv=none; b=DRqgNEFPfqmcGaGJ//18saPTUT1wECf2qyK7mBiDkB4+9nYJBFaBkoI+YtZEvQy+Lp1pk7yiWQD4ujFsk44xLFjy8PqRsNdvFfx9Ng7RZNKLnL+8+ndVVygWR64fE7Lm73JyMuFt/OHGidV/G/9fRUn/FNOIaidgji6Bhr4F54E=
+	t=1745272439; cv=none; b=cbFlcqChQ/0Hleh2sGa3DgTa/E7+062tCkGNqHQLEE9kepWDtGfOx2fu5ysUSS29oKSSDGy4gsTRYKLWzOT6FywsY+ww25W1tDK5N61FEjnkUpBlnX8r4dhqMcYUFpnxXC6qHae5+yS0Nwog6vuNVdaNsKtE++0YEQm3lvsZR0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745260145; c=relaxed/simple;
-	bh=RKZeGBfLf2qtqFtq3zPZmyB/nlO3RinSRchjjFTJcv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBEnT9PnVUJBf9aIimUnR/DCp9Of7zLnZ63OVuVMBglFWk4TWbruU3RPOGf8RqPl/C09FKsKEX3U3e6W05AYnDBfPkKhLbMb+xVEgBmHKQew8Sawh8oyE6UHu+GTvW/hkhZdYBGeCr7+dZvTDj1lcIoBooJrIhQaQL00w1S07fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ThdijOIP; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745272439; c=relaxed/simple;
+	bh=Vm6Hkxbe37lldY/TsbKzLITo18iBkisy8BO+yd9b7/Y=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=fSBCkU+CnoabH3orYh9mjZAOvHMvEHNSLGDFx8Vua3AVm6hAYH2v277cQZ04n0sh1TZziSHxVINdXcsZz6eo6rrlQl0ny847Xx70xbxuGxefdffKw1fmEX+GgGV6v/Tvxh5o0v+eOwrRHANlIXK9Bb66PLLuPUUhAYBIBLMplrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugb/cgBn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThdijOIP"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-739be717eddso3189684b3a.2;
-        Mon, 21 Apr 2025 11:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745260143; x=1745864943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=LEkfejIw1pTO7xQTKbeC6S3IuRHAGhwYTjYXnJBC6zE=;
-        b=ThdijOIPdbEt9oy2eetK9BEUUPuLb63cW8GkFY889IGqK7TdM982LPLPudBI5sij5y
-         em6faz+AQ3B8wgHleIZ1H2hX9q3sSq7DLf8RvUtHxc09yD/XcG//ojltpShfGVZIuqMV
-         a9V8x7ZEFplC5pj7Ne9Vpxeii8A9RDI2zIKbmVzMo9IbcaDa5U7EsnzxGmSQSm7q/4/K
-         Mo2RkrJw43hVcasMiENQjpozHXC2yUinw0OD9iHNhY878TjsFl4hDOjoBSDVFS2FFzZ9
-         67fvl99cJ4l8lug1SuA3ltEGAhZ5otUzsL3cqt66LGOg5wGrkMukyRieGbgwiChsh6ql
-         8hxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745260143; x=1745864943;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LEkfejIw1pTO7xQTKbeC6S3IuRHAGhwYTjYXnJBC6zE=;
-        b=a3ulCIS+FN5Hfx5Re5TrpV86TdXlFYRiDFOqFPLjwA0xxlxUWPv/U3DZJ+5EFyapkO
-         jG7Rnk+YlkuGuXi0J+4P43W6TBwXqC2eXPxQJdilqbdTaTm420Hq05T7v96LGIx3akpG
-         mKkzBP+94ONjHcdq/qxomVwIc7WbW4ZT5Ni8V1eussNMOfwPJq3vNS7QO9QX/UYmYv8C
-         1RLV8d7gFL8uCBnFkDDYsAMRW9Vc++r93eIPOYzhUXUyG+jc7xEb++t70Ee2Om/XTCNH
-         19r1ZQOfe6Po9G6UJV9VFsq7hLiOL2FGMM59f7u+CVr7jP0oKBvFnRdASDebCmzIWQqu
-         zIyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDtaKI6LWBi2o2xvLWMhYvikOZkrPMP9rxfOQg/ixy2CsFoHD6UUxWREowHydzOsNzRktDl5egqB2t1Qn44oIq8uc=@vger.kernel.org, AJvYcCUnlJCqbh/4uXkK7n7vqXf9rxcDncLq98U2cezeelilx6WK3kSDCMMILw14koDBvN2Ol+mZghpdn00IbEIQ@vger.kernel.org, AJvYcCWj3L2PQyKkncdhdsi+KZL+32rhBvgvunMk22af/F42M+CQkPhdz7i1FUPqMOHj8YnRlMvcVfrHBkAftJbGe4g=@vger.kernel.org, AJvYcCXzVESWBp3MA02134YPKXFO+gzdxF28xufFvoRd0Z85d/iLKpnLlKi8lpOBYNrzR3Xz2Ax+JPfZiNin@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwBi8MtRAtpnAC7k3NqmzR6jwTvN7AZdsRdOYWbi9MFmFTzgH5
-	bbbP7dISDNZW01tN5Rm0ZsvKF8JMljS01+XDdgCNQ6Lcm0oQNp8V
-X-Gm-Gg: ASbGncssPKUdSOXtyFBL3JnG4+a9sO4WYhIvN1aSL6O84ExO/4SXjjZMARnD6QElET1
-	hfOrbWG3N9Ck8kvCVo+M4OO2yNxc7zcG/MKSdrS+IL/bxXDzVQGqrwO3tNAOaBL1hwMwj/x1Tpg
-	8moEFRCq9zib8dRjhxkKSG3KECcgDYtQ8bUGv9MCHuqRdFajIpop6+nVSSjvwPczp5jIbOP8vJd
-	D8l42Kdyen/rlVt82gmKGrI1dRi9+QwJDt0JrSVwbcmaDR1cexfo2bOZp42psjE0scd3KDlufG8
-	2xUB+nk2UDXkTLOxJwWp7wfMN7yvsDdDvssEuZ/Hk9wANEso5K3WcBhSK5yio+txphKLk2cgxPn
-	nF0TjyXDHyhhvnyBn/Y71Ks3o
-X-Google-Smtp-Source: AGHT+IHZ7aaJiKwDHEgBaIUKXOY9XmDU1DAmhPjLIz0F50JBRbZvABqt/8IIpKMjegOYyi51WnyVuw==
-X-Received: by 2002:aa7:9306:0:b0:736:d6da:8f9e with SMTP id d2e1a72fcca58-73dc119fb18mr17166388b3a.0.1745260143068;
-        Mon, 21 Apr 2025 11:29:03 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf901187sm6940807b3a.76.2025.04.21.11.29.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Apr 2025 11:29:02 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a6b7948e-3143-4836-b9bd-81c652a08aab@roeck-us.net>
-Date: Mon, 21 Apr 2025 11:29:01 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugb/cgBn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8FCFC4CEE4;
+	Mon, 21 Apr 2025 21:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745272439;
+	bh=Vm6Hkxbe37lldY/TsbKzLITo18iBkisy8BO+yd9b7/Y=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Ugb/cgBn9+QWTEBsbA4mE3sdjXkL/4OThNwXfUOeiJh8hqn9WlhgAQ/jeECsp/eOD
+	 U/59hlDa72oTvZs241K/6kHa0g0q0rkHf9QgS/UcYIFHKSk8+txKl5VGiseNmlK825
+	 cB9Zj2I8h7wKsZ87RNaeUmj8pgEN2afnoZByYR1t6xfF4BPTrgxeX6YrHTH5d6EPEO
+	 55HBN47bnCd7cN61PYHrjp/00JBQUGNi+JnJF16YBXqcf4RzWri3Nh4DKAZiX4yQRH
+	 3tWYmSnUtGnHAXXD4tDwiq+41DS+K8PvDfujHBxaGk2djSwCceakvjPje54SIPF0vS
+	 E11WaaDo19yHQ==
+Date: Mon, 21 Apr 2025 16:53:57 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] watchdog: s3c2410_wdt: Add exynos990-wdt compatible
- data
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250420-wdt-resends-april-v1-0-f58639673959@mentallysanemainliners.org>
- <20250420-wdt-resends-april-v1-2-f58639673959@mentallysanemainliners.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250420-wdt-resends-april-v1-2-f58639673959@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Will Deacon <will@kernel.org>, 
+ devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
+To: Thomas Antoine <t.antoine@uclouvain.be>
+In-Reply-To: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
+References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
+Message-Id: <174527239330.2996733.2164044396415620097.robh@kernel.org>
+Subject: Re: [PATCH v3 0/5] Google Pixel 6 (oriole): max77759 fuel gauge
+ enablement and driver support
 
-On 4/20/25 12:00, Igor Belwon wrote:
-> The Exynos990 has two watchdog clusters - cl0 and cl2. Add new
-> driver data for these two clusters, making it possible to use the
-> watchdog timer on this SoC.
+
+On Mon, 21 Apr 2025 20:13:31 +0200, Thomas Antoine wrote:
+> The Google Pixel 6 has a Maxim MAX77759 which provides a fuel gauge with
+> an interface with a lot in common with the Maxim max1720x.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> Modify the Maxim MAX1720x driver to be compatible with the Maxim MAX77759
+> and enable it for the gs101-oriole board.
+> 
+> The voltage, current, capacity, temperature and charge have all been
+> tested and show coherent results. The charge full design and capacity
+> equal the ones seen on android, the ratio between average charge and
+> average current does predict pretty accurately the time to empty under
+> a constant workload and temperature is coherent with the dynamic state
+> of the device.
+> 
+> Health is not enabled as it always reports overheating. The time to empty
+> is wrong by about a factor 2 and is thus also disabled.
+> 
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> 
+> ---
+> Changes in v3:
+> - Update base tree to avoid conflicts
+> - Fix capacity computation for max1720x
+> - Add separate properties for the max7759 to disable non-functional ones
+> - Take TASKPERIOD into account for voltage computation of max77759
+> - Simplify vcell computation (Dimitri Fedrau)
+> - Switch has_nvmem to bool and keep it only in chip_data (Dimitri Fedrau)
+> - Drop the yes_range from the write table (Sebastian Reichel)
+> - Add test_power_supply_properties.sh to cover letter (Sebastian Reichel)
+> - Switch back some changes to binding and actually use allOf:if: to
+>   restrict constraints (Krzysztof Kozlowski)
+> - Fix style errors
+> - Link to v2: https://lore.kernel.org/r/20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be
+> 
+> Changes in v2:
+> - Add fallback for voltage measurement (André Draszik)
+> - Add regmap for the max77759 (André Draszik)
+> - Add chip identification for the max77759 (André Draszik, Peter Griffin)
+> - Move RSense value to a devicetree property shunt-resistor-micro-ohms
+>   (Dimitri Fedrau, André Draszik)
+> - Use allOf:if to narrow binding per variant (Krzysztof Kozlowski)
+> - Remove binding example (Krzysztof Kozlowski)
+> - Change defconfig order to follow savedefconfig (Krzysztof Kozlowski)
+> - Fix style errors
+> - Link to v1: https://lore.kernel.org/r/20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be
+> 
+> tools/testing/selftests/power_supply/test_power_supply_properties.sh:
+> ok 1 max77759-fg.exists
+> ok 2 max77759-fg.uevent.NAME
+> ok 3 max77759-fg.sysfs.type
+> ok 4 max77759-fg.uevent.TYPE
+> ok 5 max77759-fg.sysfs.usb_type # SKIP
+> ok 6 max77759-fg.sysfs.online # SKIP
+> ok 7 max77759-fg.sysfs.present
+> ok 8 max77759-fg.sysfs.status # SKIP
+> ok 9 max77759-fg.sysfs.capacity
+> ok 10 max77759-fg.sysfs.capacity_level # SKIP
+> ok 11 max77759-fg.sysfs.model_name
+> ok 12 max77759-fg.sysfs.manufacturer
+> ok 13 max77759-fg.sysfs.serial_number # SKIP
+> ok 14 max77759-fg.sysfs.technology # SKIP
+> ok 15 max77759-fg.sysfs.cycle_count # SKIP
+> ok 16 max77759-fg.sysfs.scope # SKIP
+> ok 17 max77759-fg.sysfs.input_current_limit # SKIP(Dimitri Fedrau)
+> ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
+> ok 19 max77759-fg.sysfs.voltage_now
+> ok 20 max77759-fg.sysfs.voltage_min # SKIP
+> ok 21 max77759-fg.sysfs.voltage_max # SKIP
+> ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
+> ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
+> ok 24 max77759-fg.sysfs.current_now
+> ok 25 max77759-fg.sysfs.current_max # SKIP
+> ok 26 max77759-fg.sysfs.charge_now # SKIP
+> ok 27 max77759-fg.sysfs.charge_full
+> ok 28 max77759-fg.sysfs.charge_full_design
+> ok 29 max77759-fg.sysfs.power_now # SKIP
+> ok 30 max77759-fg.sysfs.energy_now # SKIP
+> ok 31 max77759-fg.sysfs.energy_full # SKIP
+> ok 32 max77759-fg.sysfs.energy_full_design # SKIP
+> ok 33 max77759-fg.sysfs.energy_full_design # SKIP
+> 
+> ---
+> Thomas Antoine (5):
+>       power: supply: correct capacity computation
+>       power: supply: add support for max77759 fuel gauge
+>       dt-bindings: power: supply: add max77759-fg flavor
+>       arm64: defconfig: enable Maxim max1720x driver
+>       arm64: dts: exynos: gs101-oriole: enable Maxim max77759 fuel gauge
+> 
+>  .../bindings/power/supply/maxim,max17201.yaml      |  34 ++-
+>  .../boot/dts/exynos/google/gs101-pixel-common.dtsi |  10 +
+>  arch/arm64/configs/defconfig                       |   1 +
+>  drivers/power/supply/max1720x_battery.c            | 271 ++++++++++++++++++---
+>  4 files changed, 280 insertions(+), 36 deletions(-)
+> ---
+> base-commit: e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
+> change-id: 20241202-b4-gs101_max77759_fg-402e231a4b33
+> 
+> Best regards,
+> --
+> Thomas Antoine <t.antoine@uclouvain.be>
+> 
+> 
+> 
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be:
+
+arch/arm64/boot/dts/exynos/google/gs101-raven.dtb: fuel-gauge@36 (maxim,max77759-fg): reg: [[54]] is too short
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
+arch/arm64/boot/dts/exynos/google/gs101-raven.dtb: fuel-gauge@36 (maxim,max77759-fg): reg-names: ['m5'] is too short
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
+arch/arm64/boot/dts/exynos/google/gs101-raven.dtb: fuel-gauge@36 (maxim,max77759-fg): Unevaluated properties are not allowed ('reg-names' was unexpected)
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
+arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: fuel-gauge@36 (maxim,max77759-fg): reg: [[54]] is too short
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
+arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: fuel-gauge@36 (maxim,max77759-fg): reg-names: ['m5'] is too short
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
+arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: fuel-gauge@36 (maxim,max77759-fg): Unevaluated properties are not allowed ('reg-names' was unexpected)
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
+
+
+
+
 
