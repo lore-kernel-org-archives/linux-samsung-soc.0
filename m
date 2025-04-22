@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1816925F98B;
-	Tue, 22 Apr 2025 02:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954D0267F4C;
+	Tue, 22 Apr 2025 02:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288284; cv=none; b=kiko6bQ4qzg0G+Cs2mvehk87wcHUwreliUO+a9AZTR8xuptg/uF6sDFh0bY1s64Gcx/ipSj/khTdkmnyvpNfdKJUHjLtP5ZCZ+F3WAN4Q3tmq0Cqf3D2l9oK5Mb1qF0tCMFb5ISBftyyrynp/g4OTKomVvAiLSwJFpj9XxziZGU=
+	t=1745288310; cv=none; b=QAy2O9vXMF2E8dLFAB38aD8VVhDrUoX5spG2J52i9FBOWH7yJGxiNe9+rzEFPMvHOj15iMz9lY8PbyMd2LTRN6dXuZH9lMiJYS3/DHWirfrqULGINvGIumv9bHE575i3X8y/NQ5xPPJOFz/9Nifc/xX51K1w3R5mjQefMflOuw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288284; c=relaxed/simple;
-	bh=L3/HcG6wXKyGIPN+AAPEjXN6F2jJXbxSsfwJd+Pgyqo=;
+	s=arc-20240116; t=1745288310; c=relaxed/simple;
+	bh=iTTR50UEs+yrc/reCuVPmDh42fZK32s3XImxX3rVRIg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VBVT8PXY7TzgSuZwhxyOsBtzBvIlOaTR1zWUfwFPrn1wQIccOipJ0EVsVAxcj3HLwyoCsqrKEpD5kli1aOOF+KtP8yFWlE5m7tCvvOBtJvqqsZnoIFMIitbEVxFgwG8f4XkMHgRJnTj22Y5fsWC/09yEuBfYrKIAlf5tGOYrTQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAFN661f; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=lw9u9BEDFjuyJGSQM5d8pX6tSsiQuMnaVIRNPTO/FR89QkP25OMJU9/nGlhSnv/p59UOO0cmyh0YeehHr50nK1TD1sRnL3u3t5oB2pkXbr33a5sUChK6SsjZrQ1xDx/Q0Xv4Zo/N+8XhmdDtv8yzlSPCNSXSe0utRUN84lBuZxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDxjbC9n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAFN661f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D79C4CEEE;
-	Tue, 22 Apr 2025 02:18:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDxjbC9n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24125C4CEED;
+	Tue, 22 Apr 2025 02:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288284;
-	bh=L3/HcG6wXKyGIPN+AAPEjXN6F2jJXbxSsfwJd+Pgyqo=;
+	s=k20201202; t=1745288310;
+	bh=iTTR50UEs+yrc/reCuVPmDh42fZK32s3XImxX3rVRIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tAFN661fW85LmZDdDVS/o4M9xgnFv7g5hka301AZeVwAxK+KWMwSHNKMyJ4t9nAUb
-	 5Ix6OMqlNLAkaR/aN8zLBFd+HVj0lHhX4h5L6dICIeSdqLeZ658SZkE/JgO7Pu3g/e
-	 Pf20PdYkczu9Cly1QhgfZbfGh7VyQ+dyCWAKM+WrKh0V5R4qsWu45cSI3YgBZop++r
-	 StIM/o8X3yhSeAZVag5AyHaNj2Si9B16KJ49qYYgL0+z8eXcmLmAR2/TwHdunXPZ08
-	 IIUywN9OWph5e4DHvruP+3JOjZyPsw20I2HfN5mTtpzn0Ocv+pNwg0NShRy45WXhvf
-	 mzgUKFpglSTFA==
+	b=XDxjbC9nWQSMxkn/J39Sk6V4V0+ei+dOvlNtxJy+XTE6D6KnlkCCtN7wqYl8JNZqK
+	 eMsniPVD1M2TUvp7pWtUmVOOh0z1UxWkzO7lbNW/RhD53OZhiQltzQUtBF7A1vLr41
+	 QYO6LVYE4JWrjvGJiM5NQtlspuRXFAesXyb+v6YJfWgEWZS4nKSvdC7KUSX0GsET/D
+	 fSKr074fS5SMCZUQp7pe+4Sk/E7/QtSpJ7P0uJK/jZ6b5GoTwvqDlBBN+rY2xo3mmh
+	 ztjKAUTPC5gwtL3fSWQe1dQXdwqm0pmodK0pRLnKD5Wr/nQlrSC+/6sRu+LIpSk9ty
+	 2QaWmjb62LTaQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
 	linux-scsi@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 02/15] scsi: ufs: exynos: Ensure pre_link() executes before exynos_ufs_phy_init()
-Date: Mon, 21 Apr 2025 22:17:46 -0400
-Message-Id: <20250422021759.1941570-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 02/12] scsi: ufs: exynos: Ensure pre_link() executes before exynos_ufs_phy_init()
+Date: Mon, 21 Apr 2025 22:18:16 -0400
+Message-Id: <20250422021826.1941778-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021759.1941570-1-sashal@kernel.org>
-References: <20250422021759.1941570-1-sashal@kernel.org>
+In-Reply-To: <20250422021826.1941778-1-sashal@kernel.org>
+References: <20250422021826.1941778-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.87
+X-stable-base: Linux 6.1.134
 Content-Transfer-Encoding: 8bit
 
 From: Peter Griffin <peter.griffin@linaro.org>
@@ -75,7 +75,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 268189f01e15b..76703a7fa5717 100644
+index c0030a03dd34d..3c10029723c79 100644
 --- a/drivers/ufs/host/ufs-exynos.c
 +++ b/drivers/ufs/host/ufs-exynos.c
 @@ -984,9 +984,14 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
