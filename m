@@ -1,110 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954D0267F4C;
-	Tue, 22 Apr 2025 02:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973F1EEA5C;
+	Tue, 22 Apr 2025 07:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288310; cv=none; b=QAy2O9vXMF2E8dLFAB38aD8VVhDrUoX5spG2J52i9FBOWH7yJGxiNe9+rzEFPMvHOj15iMz9lY8PbyMd2LTRN6dXuZH9lMiJYS3/DHWirfrqULGINvGIumv9bHE575i3X8y/NQ5xPPJOFz/9Nifc/xX51K1w3R5mjQefMflOuw4=
+	t=1745308461; cv=none; b=BRowAJAwyihIINnvj4O9w6ny8lSv/wYJKuA+f08BYb7DeBI8lxtMyVe0+c/BdSyqDPs3oNxo9esHbu6WCm3iU30htbkXu1mZIGY7iculmjD/oYqkEm7DLCVdsZKPeXJUmunGSJLDM3+mZ8DsaNYuPwDyfWf9dlJm3QzFfcW7hfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288310; c=relaxed/simple;
-	bh=iTTR50UEs+yrc/reCuVPmDh42fZK32s3XImxX3rVRIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lw9u9BEDFjuyJGSQM5d8pX6tSsiQuMnaVIRNPTO/FR89QkP25OMJU9/nGlhSnv/p59UOO0cmyh0YeehHr50nK1TD1sRnL3u3t5oB2pkXbr33a5sUChK6SsjZrQ1xDx/Q0Xv4Zo/N+8XhmdDtv8yzlSPCNSXSe0utRUN84lBuZxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDxjbC9n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745308461; c=relaxed/simple;
+	bh=OQNwaf3owJm8HUcBOJNFd8lymmXZ3QEafQN9fN49b7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GMUEARkwQn0fr4NfFb6RrhYOyTa6uA4y7vdV1bHWCl9q/PuVxjTyO6t9P8j4dW4tdruvW8qc5fVSj8WTDxzFewduItQQQ8fjRvCJiygJa+d4Wneu3Zp8QQR4WSuJ7tESb6+5d4OLnQkgk1ge8AOCRmMtsQtwOS65dnSqQoOuf6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAGHDrOk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDxjbC9n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24125C4CEED;
-	Tue, 22 Apr 2025 02:18:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAGHDrOk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CA9C4CEE9;
+	Tue, 22 Apr 2025 07:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288310;
-	bh=iTTR50UEs+yrc/reCuVPmDh42fZK32s3XImxX3rVRIg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XDxjbC9nWQSMxkn/J39Sk6V4V0+ei+dOvlNtxJy+XTE6D6KnlkCCtN7wqYl8JNZqK
-	 eMsniPVD1M2TUvp7pWtUmVOOh0z1UxWkzO7lbNW/RhD53OZhiQltzQUtBF7A1vLr41
-	 QYO6LVYE4JWrjvGJiM5NQtlspuRXFAesXyb+v6YJfWgEWZS4nKSvdC7KUSX0GsET/D
-	 fSKr074fS5SMCZUQp7pe+4Sk/E7/QtSpJ7P0uJK/jZ6b5GoTwvqDlBBN+rY2xo3mmh
-	 ztjKAUTPC5gwtL3fSWQe1dQXdwqm0pmodK0pRLnKD5Wr/nQlrSC+/6sRu+LIpSk9ty
-	 2QaWmjb62LTaQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	alim.akhtar@samsung.com,
-	James.Bottomley@HansenPartnership.com,
-	krzk@kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 02/12] scsi: ufs: exynos: Ensure pre_link() executes before exynos_ufs_phy_init()
-Date: Mon, 21 Apr 2025 22:18:16 -0400
-Message-Id: <20250422021826.1941778-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021826.1941778-1-sashal@kernel.org>
-References: <20250422021826.1941778-1-sashal@kernel.org>
+	s=k20201202; t=1745308460;
+	bh=OQNwaf3owJm8HUcBOJNFd8lymmXZ3QEafQN9fN49b7k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GAGHDrOkwFIwffCOhkL91d2DcxXEGu7QN8Mdwz/8QaY6K4RHr179dlUqYbJl93oL1
+	 hIzkVS3kBUY29U/Iq9xoQ3mZcBB8dzgUWEHq8Hf7mMr+bgVk/v5O5eOPWzeY8ch4Ds
+	 bbHQi66JzLQyRksBD2DVBCNRwgfdN2FsT0iuBByHm+wDeD3nE1j8qrqi+6fi7Jf/Jw
+	 lCeTPkZNdkBaqnjzzS/1QRtI91oK9fKEo45mCgCZZXdwrU1qqt7YHYUzAFo7PexUge
+	 vZPd6bKLop+QZd5FL4NnjtgjxanbFBhzmXuRvKhbxxQFLvFk7GTgkosHULMNhIoVBD
+	 PH9f/9avTNoaA==
+Message-ID: <b5ada346-94e7-41f2-852b-6372f02b4122@kernel.org>
+Date: Tue, 22 Apr 2025 09:54:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.134
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov920: add cpucl0 clock
+ definitions
+To: Shin Son <shin.son@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250418061500.1629200-1-shin.son@samsung.com>
+ <CGME20250418061515epcas2p3d2dd703db7eb645f4866dcb01cc288fc@epcas2p3.samsung.com>
+ <20250418061500.1629200-2-shin.son@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250418061500.1629200-2-shin.son@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Peter Griffin <peter.griffin@linaro.org>
+On 18/04/2025 08:14, Shin Son wrote:
+> Add cpucl0 clock definitions.
 
-[ Upstream commit 3d101165e72316775947d71321d97194f03dfef3 ]
+... and cpucl0 is? Describe the hardware in the commit msg in the future.
 
-Ensure clocks are enabled before configuring unipro. Additionally move
-the pre_link() hook before the exynos_ufs_phy_init() calls. This means
-the register write sequence more closely resembles the ordering of the
-downstream driver.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Link: https://lore.kernel.org/r/20250319-exynos-ufs-stability-fixes-v2-1-96722cc2ba1b@linaro.org
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/ufs/host/ufs-exynos.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index c0030a03dd34d..3c10029723c79 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -984,9 +984,14 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
- 	exynos_ufs_config_intr(ufs, DFES_DEF_L4_ERRS, UNIPRO_L4);
- 	exynos_ufs_set_unipro_pclk_div(ufs);
- 
-+	exynos_ufs_setup_clocks(hba, true, PRE_CHANGE);
-+
- 	/* unipro */
- 	exynos_ufs_config_unipro(ufs);
- 
-+	if (ufs->drv_data->pre_link)
-+		ufs->drv_data->pre_link(ufs);
-+
- 	/* m-phy */
- 	exynos_ufs_phy_init(ufs);
- 	if (!(ufs->opts & EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR)) {
-@@ -994,11 +999,6 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
- 		exynos_ufs_config_phy_cap_attr(ufs);
- 	}
- 
--	exynos_ufs_setup_clocks(hba, true, PRE_CHANGE);
--
--	if (ufs->drv_data->pre_link)
--		ufs->drv_data->pre_link(ufs);
--
- 	return 0;
- }
- 
--- 
-2.39.5
-
+Best regards,
+Krzysztof
