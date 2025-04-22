@@ -1,85 +1,110 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D297B29CE8;
-	Tue, 22 Apr 2025 02:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F294419D07B;
+	Tue, 22 Apr 2025 02:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288084; cv=none; b=bIVsEcGf7MeU9CRZXWMnP3W6TN0sHezBLYQoEUSpXuyfsyo9I1WpoiHKCZtPU45+WSwH2DEj5MN6aP/ut7PQQIzi5hwMt8yZMApDTn4rDHvh8BJiEiWByO+WqozgANu/497qxcJLSL1QCDsHJ6FFZo8sWgasFUQN92UtK0WBu4I=
+	t=1745288155; cv=none; b=m92UziP32I9egMDqFM7/gq3O5/4oaxeHc7J3SncXfyDMTFRVh/eiuMh0TyGa6f7EfjohsSmPuggcy2r/jYzw+sR0PuGnyZ/1C9KIQj8BgF2ijVRwwg8KeTqfMyjK9vbZyKIr4OGmLzGDG91ryu7TJb/E1NNvz/NM4B7Hr5o+VFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288084; c=relaxed/simple;
-	bh=khWE9cX70xPph8s7rn9jBXuJtbTTleSYbDejswZO7ds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzgtsQls4MmTMjb1EsJoA7s7RR4UYpvzeW9hXUrxpAZv10gqaGtq9GaWjs8/2jfIcwwK1gRRSCZunh5BkwO2GyIuptcxsOucUd+kHdh8l/H8iiloGGytYXwXdEpBgXyynPfJNbkIONhri04O5yzoOZ+7b8q3tCC06jwkhMbb820=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowABH8gKG+wZo6rIACw--.6724S2;
-	Tue, 22 Apr 2025 10:14:34 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: s.nawrocki@samsung.com,
-	mchehab@kernel.org,
+	s=arc-20240116; t=1745288155; c=relaxed/simple;
+	bh=xuHqTLQebAAopWVn5AUK4tRlpH7mCDuNmspy6Gj3EgQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=M1dIR0LmQCcvrhAOMXY74OpapAw87IwP4Pe8fafh2gX51UFSz2gW1uFl2pxq3wMUucNmV6pj8HIHLQlmwRa5N8XZgA9RluD7MAD59B/qsIxPSJVN1gjbTEyvrVwOviWnUaHztbVWYn8xsvMER6hHYU44OsYq5uulTtVT7UvnZdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6h0Hqb3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6h0Hqb3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F8DC4CEED;
+	Tue, 22 Apr 2025 02:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745288154;
+	bh=xuHqTLQebAAopWVn5AUK4tRlpH7mCDuNmspy6Gj3EgQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=e6h0Hqb3FDIuv4ZRd+24yCxARKd6x8tTmK8LMVTXJ3DeGsX1D7rbxbLYkKKdIVH+O
+	 cENIjaTKJsyH28KwG18xA4X1n2tGSBw9d9FXyDKQK74zCi8fOLxxIWwuZnAl9G8Ogb
+	 mhwI48YomlyW1XXVEftU+9cHP2KuhK4HUBAZuD5bcNaVtrbLV9xz4YwlyrWQqQh2yW
+	 QDvcUT2SPVTUheUzNOfdJIT/xUydZz0jH6dW44pEk++kCR94fX6cTWtBvu4mPUX3Xv
+	 uqPNwG4zirQryDIfGagIxlsNyazgZJf9f+DEtMyGRcAV6GRSrNT14VyzlU8Vk1Hy73
+	 oITtUuOptNd9Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	alim.akhtar@samsung.com,
+	James.Bottomley@HansenPartnership.com,
 	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-scsi@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH RESEND] media: platform: Add hardware sync wait to fimc_is_hw_change_mode()
-Date: Tue, 22 Apr 2025 10:13:45 +0800
-Message-ID: <20250422021345.1940-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.14 02/30] scsi: ufs: exynos: Ensure pre_link() executes before exynos_ufs_phy_init()
+Date: Mon, 21 Apr 2025 22:15:22 -0400
+Message-Id: <20250422021550.1940809-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250422021550.1940809-1-sashal@kernel.org>
+References: <20250422021550.1940809-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14.3
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABH8gKG+wZo6rIACw--.6724S2
-X-Coremail-Antispam: 1UD129KBjvPXoW8tF43KF17AFyUtr4rWr45p5X_Gr13JoW8JF
-	yaka1xtr4UXwnIgrnru3yfAwsrurW3KrWF9FZ0gryqq3W3A3W5W393Xr4agF1YkFn5Xry5
-	Gw13AF4xJa4xn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3AaLa
-	J3UjIYCTnIWjp_UUUYa7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_
-	Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M2
-	8EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_
-	Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
-	6r43MxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43
-	ZEXa7VU1IeHPUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4AA2gGfIH+HgABs2
 
-In fimc_is_hw_change_mode(), the function changes camera modes without
-waiting for hardware completion, risking corrupted data or system hangs
-if subsequent operations proceed before the hardware is ready.
+From: Peter Griffin <peter.griffin@linaro.org>
 
-Add fimc_is_hw_wait_intmsr0_intmsd0() after mode configuration, ensuring
-hardware state synchronization and stable interrupt handling.
+[ Upstream commit 3d101165e72316775947d71321d97194f03dfef3 ]
 
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Ensure clocks are enabled before configuring unipro. Additionally move
+the pre_link() hook before the exynos_ufs_phy_init() calls. This means
+the register write sequence more closely resembles the ordering of the
+downstream driver.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Link: https://lore.kernel.org/r/20250319-exynos-ufs-stability-fixes-v2-1-96722cc2ba1b@linaro.org
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/ufs/host/ufs-exynos.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-index 366e6393817d..5f9c44e825a5 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-@@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
- 	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
- 		return -EINVAL;
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index 13dd5dfc03eb3..cd750786187cd 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -1049,9 +1049,14 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
+ 	exynos_ufs_config_intr(ufs, DFES_DEF_L4_ERRS, UNIPRO_L4);
+ 	exynos_ufs_set_unipro_pclk_div(ufs);
  
-+	fimc_is_hw_wait_intmsr0_intmsd0(is);
- 	mcuctl_write(cmd[is->config_index], is, MCUCTL_REG_ISSR(0));
- 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
- 	mcuctl_write(is->setfile.sub_index, is, MCUCTL_REG_ISSR(2));
++	exynos_ufs_setup_clocks(hba, true, PRE_CHANGE);
++
+ 	/* unipro */
+ 	exynos_ufs_config_unipro(ufs);
+ 
++	if (ufs->drv_data->pre_link)
++		ufs->drv_data->pre_link(ufs);
++
+ 	/* m-phy */
+ 	exynos_ufs_phy_init(ufs);
+ 	if (!(ufs->opts & EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR)) {
+@@ -1059,11 +1064,6 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
+ 		exynos_ufs_config_phy_cap_attr(ufs);
+ 	}
+ 
+-	exynos_ufs_setup_clocks(hba, true, PRE_CHANGE);
+-
+-	if (ufs->drv_data->pre_link)
+-		ufs->drv_data->pre_link(ufs);
+-
+ 	return 0;
+ }
+ 
 -- 
-2.42.0.windows.2
+2.39.5
 
