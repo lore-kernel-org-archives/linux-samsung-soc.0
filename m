@@ -1,200 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA4E1D95A3;
-	Mon, 21 Apr 2025 21:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D297B29CE8;
+	Tue, 22 Apr 2025 02:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745272439; cv=none; b=cbFlcqChQ/0Hleh2sGa3DgTa/E7+062tCkGNqHQLEE9kepWDtGfOx2fu5ysUSS29oKSSDGy4gsTRYKLWzOT6FywsY+ww25W1tDK5N61FEjnkUpBlnX8r4dhqMcYUFpnxXC6qHae5+yS0Nwog6vuNVdaNsKtE++0YEQm3lvsZR0I=
+	t=1745288084; cv=none; b=bIVsEcGf7MeU9CRZXWMnP3W6TN0sHezBLYQoEUSpXuyfsyo9I1WpoiHKCZtPU45+WSwH2DEj5MN6aP/ut7PQQIzi5hwMt8yZMApDTn4rDHvh8BJiEiWByO+WqozgANu/497qxcJLSL1QCDsHJ6FFZo8sWgasFUQN92UtK0WBu4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745272439; c=relaxed/simple;
-	bh=Vm6Hkxbe37lldY/TsbKzLITo18iBkisy8BO+yd9b7/Y=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fSBCkU+CnoabH3orYh9mjZAOvHMvEHNSLGDFx8Vua3AVm6hAYH2v277cQZ04n0sh1TZziSHxVINdXcsZz6eo6rrlQl0ny847Xx70xbxuGxefdffKw1fmEX+GgGV6v/Tvxh5o0v+eOwrRHANlIXK9Bb66PLLuPUUhAYBIBLMplrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugb/cgBn; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugb/cgBn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8FCFC4CEE4;
-	Mon, 21 Apr 2025 21:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745272439;
-	bh=Vm6Hkxbe37lldY/TsbKzLITo18iBkisy8BO+yd9b7/Y=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Ugb/cgBn9+QWTEBsbA4mE3sdjXkL/4OThNwXfUOeiJh8hqn9WlhgAQ/jeECsp/eOD
-	 U/59hlDa72oTvZs241K/6kHa0g0q0rkHf9QgS/UcYIFHKSk8+txKl5VGiseNmlK825
-	 cB9Zj2I8h7wKsZ87RNaeUmj8pgEN2afnoZByYR1t6xfF4BPTrgxeX6YrHTH5d6EPEO
-	 55HBN47bnCd7cN61PYHrjp/00JBQUGNi+JnJF16YBXqcf4RzWri3Nh4DKAZiX4yQRH
-	 3tWYmSnUtGnHAXXD4tDwiq+41DS+K8PvDfujHBxaGk2djSwCceakvjPje54SIPF0vS
-	 E11WaaDo19yHQ==
-Date: Mon, 21 Apr 2025 16:53:57 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1745288084; c=relaxed/simple;
+	bh=khWE9cX70xPph8s7rn9jBXuJtbTTleSYbDejswZO7ds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzgtsQls4MmTMjb1EsJoA7s7RR4UYpvzeW9hXUrxpAZv10gqaGtq9GaWjs8/2jfIcwwK1gRRSCZunh5BkwO2GyIuptcxsOucUd+kHdh8l/H8iiloGGytYXwXdEpBgXyynPfJNbkIONhri04O5yzoOZ+7b8q3tCC06jwkhMbb820=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowABH8gKG+wZo6rIACw--.6724S2;
+	Tue, 22 Apr 2025 10:14:34 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH RESEND] media: platform: Add hardware sync wait to fimc_is_hw_change_mode()
+Date: Tue, 22 Apr 2025 10:13:45 +0800
+Message-ID: <20250422021345.1940-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Will Deacon <will@kernel.org>, 
- devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
-To: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
-References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
-Message-Id: <174527239330.2996733.2164044396415620097.robh@kernel.org>
-Subject: Re: [PATCH v3 0/5] Google Pixel 6 (oriole): max77759 fuel gauge
- enablement and driver support
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABH8gKG+wZo6rIACw--.6724S2
+X-Coremail-Antispam: 1UD129KBjvPXoW8tF43KF17AFyUtr4rWr45p5X_Gr13JoW8JF
+	yaka1xtr4UXwnIgrnru3yfAwsrurW3KrWF9FZ0gryqq3W3A3W5W393Xr4agF1YkFn5Xry5
+	Gw13AF4xJa4xn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3AaLa
+	J3UjIYCTnIWjp_UUUYa7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_
+	Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M2
+	8EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_
+	Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43
+	ZEXa7VU1IeHPUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4AA2gGfIH+HgABs2
 
+In fimc_is_hw_change_mode(), the function changes camera modes without
+waiting for hardware completion, risking corrupted data or system hangs
+if subsequent operations proceed before the hardware is ready.
 
-On Mon, 21 Apr 2025 20:13:31 +0200, Thomas Antoine wrote:
-> The Google Pixel 6 has a Maxim MAX77759 which provides a fuel gauge with
-> an interface with a lot in common with the Maxim max1720x.
-> 
-> Modify the Maxim MAX1720x driver to be compatible with the Maxim MAX77759
-> and enable it for the gs101-oriole board.
-> 
-> The voltage, current, capacity, temperature and charge have all been
-> tested and show coherent results. The charge full design and capacity
-> equal the ones seen on android, the ratio between average charge and
-> average current does predict pretty accurately the time to empty under
-> a constant workload and temperature is coherent with the dynamic state
-> of the device.
-> 
-> Health is not enabled as it always reports overheating. The time to empty
-> is wrong by about a factor 2 and is thus also disabled.
-> 
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> 
-> ---
-> Changes in v3:
-> - Update base tree to avoid conflicts
-> - Fix capacity computation for max1720x
-> - Add separate properties for the max7759 to disable non-functional ones
-> - Take TASKPERIOD into account for voltage computation of max77759
-> - Simplify vcell computation (Dimitri Fedrau)
-> - Switch has_nvmem to bool and keep it only in chip_data (Dimitri Fedrau)
-> - Drop the yes_range from the write table (Sebastian Reichel)
-> - Add test_power_supply_properties.sh to cover letter (Sebastian Reichel)
-> - Switch back some changes to binding and actually use allOf:if: to
->   restrict constraints (Krzysztof Kozlowski)
-> - Fix style errors
-> - Link to v2: https://lore.kernel.org/r/20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be
-> 
-> Changes in v2:
-> - Add fallback for voltage measurement (André Draszik)
-> - Add regmap for the max77759 (André Draszik)
-> - Add chip identification for the max77759 (André Draszik, Peter Griffin)
-> - Move RSense value to a devicetree property shunt-resistor-micro-ohms
->   (Dimitri Fedrau, André Draszik)
-> - Use allOf:if to narrow binding per variant (Krzysztof Kozlowski)
-> - Remove binding example (Krzysztof Kozlowski)
-> - Change defconfig order to follow savedefconfig (Krzysztof Kozlowski)
-> - Fix style errors
-> - Link to v1: https://lore.kernel.org/r/20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be
-> 
-> tools/testing/selftests/power_supply/test_power_supply_properties.sh:
-> ok 1 max77759-fg.exists
-> ok 2 max77759-fg.uevent.NAME
-> ok 3 max77759-fg.sysfs.type
-> ok 4 max77759-fg.uevent.TYPE
-> ok 5 max77759-fg.sysfs.usb_type # SKIP
-> ok 6 max77759-fg.sysfs.online # SKIP
-> ok 7 max77759-fg.sysfs.present
-> ok 8 max77759-fg.sysfs.status # SKIP
-> ok 9 max77759-fg.sysfs.capacity
-> ok 10 max77759-fg.sysfs.capacity_level # SKIP
-> ok 11 max77759-fg.sysfs.model_name
-> ok 12 max77759-fg.sysfs.manufacturer
-> ok 13 max77759-fg.sysfs.serial_number # SKIP
-> ok 14 max77759-fg.sysfs.technology # SKIP
-> ok 15 max77759-fg.sysfs.cycle_count # SKIP
-> ok 16 max77759-fg.sysfs.scope # SKIP
-> ok 17 max77759-fg.sysfs.input_current_limit # SKIP(Dimitri Fedrau)
-> ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
-> ok 19 max77759-fg.sysfs.voltage_now
-> ok 20 max77759-fg.sysfs.voltage_min # SKIP
-> ok 21 max77759-fg.sysfs.voltage_max # SKIP
-> ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
-> ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
-> ok 24 max77759-fg.sysfs.current_now
-> ok 25 max77759-fg.sysfs.current_max # SKIP
-> ok 26 max77759-fg.sysfs.charge_now # SKIP
-> ok 27 max77759-fg.sysfs.charge_full
-> ok 28 max77759-fg.sysfs.charge_full_design
-> ok 29 max77759-fg.sysfs.power_now # SKIP
-> ok 30 max77759-fg.sysfs.energy_now # SKIP
-> ok 31 max77759-fg.sysfs.energy_full # SKIP
-> ok 32 max77759-fg.sysfs.energy_full_design # SKIP
-> ok 33 max77759-fg.sysfs.energy_full_design # SKIP
-> 
-> ---
-> Thomas Antoine (5):
->       power: supply: correct capacity computation
->       power: supply: add support for max77759 fuel gauge
->       dt-bindings: power: supply: add max77759-fg flavor
->       arm64: defconfig: enable Maxim max1720x driver
->       arm64: dts: exynos: gs101-oriole: enable Maxim max77759 fuel gauge
-> 
->  .../bindings/power/supply/maxim,max17201.yaml      |  34 ++-
->  .../boot/dts/exynos/google/gs101-pixel-common.dtsi |  10 +
->  arch/arm64/configs/defconfig                       |   1 +
->  drivers/power/supply/max1720x_battery.c            | 271 ++++++++++++++++++---
->  4 files changed, 280 insertions(+), 36 deletions(-)
-> ---
-> base-commit: e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
-> change-id: 20241202-b4-gs101_max77759_fg-402e231a4b33
-> 
-> Best regards,
-> --
-> Thomas Antoine <t.antoine@uclouvain.be>
-> 
-> 
-> 
+Add fimc_is_hw_wait_intmsr0_intmsd0() after mode configuration, ensuring
+hardware state synchronization and stable interrupt handling.
 
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be:
-
-arch/arm64/boot/dts/exynos/google/gs101-raven.dtb: fuel-gauge@36 (maxim,max77759-fg): reg: [[54]] is too short
-	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
-arch/arm64/boot/dts/exynos/google/gs101-raven.dtb: fuel-gauge@36 (maxim,max77759-fg): reg-names: ['m5'] is too short
-	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
-arch/arm64/boot/dts/exynos/google/gs101-raven.dtb: fuel-gauge@36 (maxim,max77759-fg): Unevaluated properties are not allowed ('reg-names' was unexpected)
-	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
-arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: fuel-gauge@36 (maxim,max77759-fg): reg: [[54]] is too short
-	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
-arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: fuel-gauge@36 (maxim,max77759-fg): reg-names: ['m5'] is too short
-	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
-arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb: fuel-gauge@36 (maxim,max77759-fg): Unevaluated properties are not allowed ('reg-names' was unexpected)
-	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17201.yaml#
-
-
-
-
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+index 366e6393817d..5f9c44e825a5 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+@@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
+ 	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
+ 		return -EINVAL;
+ 
++	fimc_is_hw_wait_intmsr0_intmsd0(is);
+ 	mcuctl_write(cmd[is->config_index], is, MCUCTL_REG_ISSR(0));
+ 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
+ 	mcuctl_write(is->setfile.sub_index, is, MCUCTL_REG_ISSR(2));
+-- 
+2.42.0.windows.2
 
