@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756D31EEA40;
-	Tue, 22 Apr 2025 07:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470A11E2606;
+	Tue, 22 Apr 2025 08:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745308756; cv=none; b=d/18Qvs2qh/D57yU2X/2/qwBd21XXb700DGrlfovbVIFNLhXvYlol1oYnQ1OjbdpGKhw6O9ZK/eetmX8EPk7xxhm4PDnSnSa6ms1+ASVz9umIfZ5xJbISOvhEpk65RMoma99WjJUyR4tXEm79WbPyxwACRAaYnvIxAcEymJh6Ug=
+	t=1745308822; cv=none; b=c2BC+j40bIX8IuI2OKSeb5AHMSacZ48JCIkTkoWldj0vJ4PElRp4XQ969XH6gSFCysQuiGeWs4pO3El4QI8QIrCOjuRnn9pDv3ss3TUwR9LHEcmKI+V1SGf0yOB2eYlBVzdVXDm+h4KvkE+rPUuWzqFOyvMXn3v33y3q9FLyCZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745308756; c=relaxed/simple;
-	bh=UAPA1cBdJuhl2cpNWrYkJ/eaemaqFe7c4XOIf1O/9k0=;
+	s=arc-20240116; t=1745308822; c=relaxed/simple;
+	bh=jaxJK59OTML++sk4AtUDpd+IXlIfwL+WQMTTmzt9MSU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uHPyNKVvtDznH7lyR5IYmB8PLYIZl+/7+auUia9WQyo85J0Z1mbWMCZp4Q/WmGdHaWD9AL7Ssrsr3e0dHgVf877/1i60PrSAaHjFi6JcVpOGTFYeN6NJu8ZBjzmRuycl6+lzVqInrz1G53ZNxt1urHWDrf0QwQn5h3IaZRgO1MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmoZVKWT; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Ocq36PVIPWMYDl23ButG71EJWagjOCqJpSloMNr8ustM+CrLlhmrfkcyVyEa6fXkrA4nkG+nC7pigp6gGpLtG7Q9RKUo27mgm/Rv/3hx8qWgV/FmWH2shzgqSis0nJ9auu/VAi5t4Ujj87hbEAxilA/12PthUBRjv7K+Lw48vrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7TqoSEX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmoZVKWT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60ECC4CEEA;
-	Tue, 22 Apr 2025 07:59:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7TqoSEX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C923C4CEE9;
+	Tue, 22 Apr 2025 08:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745308756;
-	bh=UAPA1cBdJuhl2cpNWrYkJ/eaemaqFe7c4XOIf1O/9k0=;
+	s=k20201202; t=1745308821;
+	bh=jaxJK59OTML++sk4AtUDpd+IXlIfwL+WQMTTmzt9MSU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cmoZVKWTflUAR9TEvpZN8KuqhtxZtJzEpcDyfMZkO5IQeX8fXKlq8BaEnwWHJWlp0
-	 wjKq/SCQA2OkRKtpThVKw1D9OhdUFTf3NS52oYku+aicOrcecoFUsqR/Yc5PUCsS9R
-	 1qfzjWUQHopXAwgDWlk5c7OBI1BOoaVTEOaJcKf3keSv9xgKHGL85GSPARxYAFi/N2
-	 9Izydx/TbO3dkkwWse/l/L294yKz6gS6Y3Tt4A/kC6umOa+T5gld9pMcLl74bsYMUi
-	 glH5oc9VJ6SyF+5mGGSs5wBRAsHlkLmfwAQB5G+8eUxVy1xd86k5XADpy6tCrcMS0H
-	 y/DGnxAnoIMwA==
-Message-ID: <6de6030a-af26-4fda-8d49-fa8ac65a672f@kernel.org>
-Date: Tue, 22 Apr 2025 09:59:06 +0200
+	b=t7TqoSEXJUjrvnV18qgufzw3xkIOI2Hu04y+KTBlwBmjxOIOWkkS1MnxSvJHuftUW
+	 suiFV1Gaz+1R4iBW8BSyzBsOnmBtTMyd+M7xOruZjEBUkEtWPY5MJtGTNzh1Mg3kCR
+	 4aQGJComuxot6I3e9nZMcMfih5JV/4AEHujVL6PadQlGvRf5bdrwmF6Pdf0IZc3E1a
+	 9sMmHAdKifbdki2ennJm3+p20TFuWRxTuo/wbaBXoW6TBWVWsqBgxRvLOsPL/Z56Qu
+	 IrgG/GIlsYAltwdZdOtlW4IhKRKvK+QgISYK9vd6uGsD9JWtJcDrhQ3eCUGyHLneQ6
+	 QitEE0jEvQerg==
+Message-ID: <bc7a33de-9c8c-4377-a813-562da18ab314@kernel.org>
+Date: Tue, 22 Apr 2025 10:00:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add cpucl0 clock
- support
+Subject: Re: [PATCH 3/3] arm64: dts: exynosautov920: add cpucl0 clock DT nodes
 To: Shin Son <shin.son@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -47,8 +46,8 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20250418061500.1629200-1-shin.son@samsung.com>
- <CGME20250418061515epcas2p138fa2f5edacbfba8f73b40182fb8d83f@epcas2p1.samsung.com>
- <20250418061500.1629200-3-shin.son@samsung.com>
+ <CGME20250418061515epcas2p4b57102967b07d665051a6297ab451a3c@epcas2p4.samsung.com>
+ <20250418061500.1629200-4-shin.son@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,17 +93,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250418061500.1629200-3-shin.son@samsung.com>
+In-Reply-To: <20250418061500.1629200-4-shin.son@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/04/2025 08:14, Shin Son wrote:
-> Register compatible and cmu_info data to support clock CMU_CPUCL0,
-> this provides clock for CPUCL0_SWTICH/DBG/CLUSTER.
+On 18/04/2025 08:15, Shin Son wrote:
+> Add cmu_cpucl0 clocks for switch, cluster, and dbg domains respectively.
 > 
+> Signed-off-by: Shin Son <shin.son@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index fc6ac531d597..d1528633adfe 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -582,6 +582,21 @@ pinctrl_aud: pinctrl@1a460000 {
+>  			compatible = "samsung,exynosautov920-pinctrl";
+>  			reg = <0x1a460000 0x10000>;
+>  		};
+> +
+> +		cmu_cpucl0: clock-controller@1ec00000 {
+> +			compatible = "samsung,exynosautov920-cmu-cpucl0";
+> +			reg = <0x1EC00000 0x8000>;
 
-Explain why this is needed as clk of declare, instead of platform driver.
+Lowercase hex.
+> +			#clock-cells = <1>;
+> +
+> +			clocks = <&xtcxo>,
+> +				<&cmu_top DOUT_CLKCMU_CPUCL0_SWITCH>,
 
+This looks misaligned.
 
 
 Best regards,
