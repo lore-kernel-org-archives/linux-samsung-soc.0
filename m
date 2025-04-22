@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D62B1B21B4;
-	Tue, 22 Apr 2025 02:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A759D2580D0;
+	Tue, 22 Apr 2025 02:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288160; cv=none; b=MvJaR39QaZqnxdf0Own0nl3knGe7CevchO+cg01APJq4estwNmm2WI7jnjExgOQUThj8NwfVPCdZdIMIgd13uUO1NLiS7jzbujGW2eiylXzNbuMtTZA/0+AqUBfmEK34pRZKKk9LrNnAxJOv7P9w6MSuB2Wxz93O6e4q3K5aKx0=
+	t=1745288227; cv=none; b=E2JjFH2IaHs6gbEUB98IdjW44u80IAh8lxRBFz40Gh5JPARQTx7n0J/GD8bM5ZwkhEicKrpORtUdGCDwkJP7hNot0s+EnO+G3VEzXRpyS3b/SOhLfhMWlxamMfNIx5FRkhofiOAD/cvS04nDysaRRlQ+noBvTH2tFW+ovHFA960=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288160; c=relaxed/simple;
-	bh=64S55Wp/QtDgHMVcIX6Kuwk3Q6J/rIvQxrvoN50VHqQ=;
+	s=arc-20240116; t=1745288227; c=relaxed/simple;
+	bh=snEszN9H4QLgMQM2SqmIYzOCYIhvNPiJcDWlBiTwL8w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iJOYd1OZKyScHH285odBeF6c0fkXXzCW0N68j3xXIXT6b8b0mMuInFqhWQEKRo1h0eHMJzUJSJbarkKfEYCVtTHsTqaHEdt2qDlUQ7qaZiODGq97th9fiWmc8Oyff8XssFlzjQj1ehM9I8WjfByS3NzhtoPba6ReFYrTDrl7xWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIh9ZD6O; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=T3/4eS9vxd09z5i45TiU3cen3qZy1MMy7AX/a3REwRc2gpwkQbWeETVUASFl2RoHZzGf8Ts32vQTgE4fea6XvTcfQuAnt1RwMnyzpzMrECA9LCfwVD8Vm+z0mO3ypAB4B4y5NbIRPYRyGTBDf2CkVo+dM9GmMUn3CK3G/HGkm2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/k0zpeX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIh9ZD6O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543DBC4CEEC;
-	Tue, 22 Apr 2025 02:15:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/k0zpeX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D3BC4CEE4;
+	Tue, 22 Apr 2025 02:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288159;
-	bh=64S55Wp/QtDgHMVcIX6Kuwk3Q6J/rIvQxrvoN50VHqQ=;
+	s=k20201202; t=1745288227;
+	bh=snEszN9H4QLgMQM2SqmIYzOCYIhvNPiJcDWlBiTwL8w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YIh9ZD6OHLeDPEtsnNNWa3EUE5cv0+G87xYcrPfXRhc9ks3IMnAWlqbh8NR6nWLA2
-	 YwyC4cscuWQ3svVTRUXJxY1hqtyifepzNPof86iccwFEJbStJJ97qexvOk+qILNRXB
-	 aaz6SqdNoXYXKjLUMPmT0ANJZgS2uiAQtDR1co6Fa87yu8EkNWlsU3nG0AaGzNi8lG
-	 jz//HdZG7AoNJA8VGbojwhEV0K/Sdgyuw6QxaWAaWUlAzdXiLBl9mAQzb8CIBUD5Ux
-	 adB/la8gW0yd/XLocPkui5Iav8kJNftnZF/lzE9PWnANrSgxgAGhTFbFv+t6sC1cXZ
-	 ut4RfAPOowUvg==
+	b=d/k0zpeXMhfh1fL/Nq4HcknXq7U3W4nJNsw4nWk8xhM9dkdoIFQDaokjzJyT7G3Nn
+	 rAnlC6iDughan3d1PmiTXo3+anfUXQJnV2YMOtXEOsBpFSKoJffX6xT9IUXfq/pHaT
+	 tyT0fHAHEOFvdIAwejR7cJoEnqg+QsqRgHSc5ybo8eUcKQzPxdnEuT5mlWsj87W6zg
+	 +FooJJgp8tZs6xED02ZMYkUnQqpPOzLmK87MIaSOx/Boxv6X7Hl15TqE+eqytRbTp8
+	 tR7kXGzlDHB5Swfx/oj7iO35oIW2R7LD297el6b511v1+Gb09iKy1XFnYOtqexm/sh
+	 fisQof2F5i2AQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
 	linux-scsi@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.14 05/30] scsi: ufs: exynos: gs101: Put UFS device in reset on .suspend()
-Date: Mon, 21 Apr 2025 22:15:25 -0400
-Message-Id: <20250422021550.1940809-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 02/23] scsi: ufs: exynos: Ensure pre_link() executes before exynos_ufs_phy_init()
+Date: Mon, 21 Apr 2025 22:16:42 -0400
+Message-Id: <20250422021703.1941244-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021550.1940809-1-sashal@kernel.org>
-References: <20250422021550.1940809-1-sashal@kernel.org>
+In-Reply-To: <20250422021703.1941244-1-sashal@kernel.org>
+References: <20250422021703.1941244-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,76 +53,58 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.3
+X-stable-base: Linux 6.12.24
 Content-Transfer-Encoding: 8bit
 
 From: Peter Griffin <peter.griffin@linaro.org>
 
-[ Upstream commit cd4c0025069f16fc666c6ffc56c49c9b1154841f ]
+[ Upstream commit 3d101165e72316775947d71321d97194f03dfef3 ]
 
-GPIO_OUT[0] is connected to the reset pin of embedded UFS device.
-Before powering off the phy assert the reset signal.
-
-This is added as a gs101 specific suspend hook so as not to have any
-unintended consequences for other SoCs supported by this driver.
+Ensure clocks are enabled before configuring unipro. Additionally move
+the pre_link() hook before the exynos_ufs_phy_init() calls. This means
+the register write sequence more closely resembles the ordering of the
+downstream driver.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Link: https://lore.kernel.org/r/20250319-exynos-ufs-stability-fixes-v2-7-96722cc2ba1b@linaro.org
+Link: https://lore.kernel.org/r/20250319-exynos-ufs-stability-fixes-v2-1-96722cc2ba1b@linaro.org
 Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ufs/host/ufs-exynos.c | 10 ++++++++++
- drivers/ufs/host/ufs-exynos.h |  1 +
- 2 files changed, 11 insertions(+)
+ drivers/ufs/host/ufs-exynos.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index e5c101480f09d..c593d6b73c4c7 100644
+index 98505c68103d0..7689617aa3f3c 100644
 --- a/drivers/ufs/host/ufs-exynos.c
 +++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1679,6 +1679,12 @@ static void exynos_ufs_hibern8_notify(struct ufs_hba *hba,
+@@ -1007,9 +1007,14 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
+ 	exynos_ufs_config_intr(ufs, DFES_DEF_L4_ERRS, UNIPRO_L4);
+ 	exynos_ufs_set_unipro_pclk_div(ufs);
+ 
++	exynos_ufs_setup_clocks(hba, true, PRE_CHANGE);
++
+ 	/* unipro */
+ 	exynos_ufs_config_unipro(ufs);
+ 
++	if (ufs->drv_data->pre_link)
++		ufs->drv_data->pre_link(ufs);
++
+ 	/* m-phy */
+ 	exynos_ufs_phy_init(ufs);
+ 	if (!(ufs->opts & EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR)) {
+@@ -1017,11 +1022,6 @@ static int exynos_ufs_pre_link(struct ufs_hba *hba)
+ 		exynos_ufs_config_phy_cap_attr(ufs);
  	}
+ 
+-	exynos_ufs_setup_clocks(hba, true, PRE_CHANGE);
+-
+-	if (ufs->drv_data->pre_link)
+-		ufs->drv_data->pre_link(ufs);
+-
+ 	return 0;
  }
  
-+static int gs101_ufs_suspend(struct exynos_ufs *ufs)
-+{
-+	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-+	return 0;
-+}
-+
- static int exynos_ufs_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
- 	enum ufs_notify_change_status status)
- {
-@@ -1687,6 +1693,9 @@ static int exynos_ufs_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
- 	if (status == PRE_CHANGE)
- 		return 0;
- 
-+	if (ufs->drv_data->suspend)
-+		ufs->drv_data->suspend(ufs);
-+
- 	if (!ufshcd_is_link_active(hba))
- 		phy_power_off(ufs->phy);
- 
-@@ -2147,6 +2156,7 @@ static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
- 	.pre_link		= gs101_ufs_pre_link,
- 	.post_link		= gs101_ufs_post_link,
- 	.pre_pwr_change		= gs101_ufs_pre_pwr_change,
-+	.suspend		= gs101_ufs_suspend,
- };
- 
- static const struct of_device_id exynos_ufs_of_match[] = {
-diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
-index 9670dc138d1e4..b981cfa08b596 100644
---- a/drivers/ufs/host/ufs-exynos.h
-+++ b/drivers/ufs/host/ufs-exynos.h
-@@ -191,6 +191,7 @@ struct exynos_ufs_drv_data {
- 				struct ufs_pa_layer_attr *pwr);
- 	int (*pre_hce_enable)(struct exynos_ufs *ufs);
- 	int (*post_hce_enable)(struct exynos_ufs *ufs);
-+	int (*suspend)(struct exynos_ufs *ufs);
- };
- 
- struct ufs_phy_time_cfg {
 -- 
 2.39.5
 
