@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1042C28DEEA;
-	Wed, 23 Apr 2025 15:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689FBEEAB;
+	Wed, 23 Apr 2025 16:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421082; cv=none; b=NiRIvBLOqLGzsU83foLhiBK53h62VdDLJSUf1AoSG6OwwzAK7BOuB4I6G0i2tj/pXVRJBfpt8OcWQ3ykWb/28tC1UBPMQWvUR44GofSIbONV9efXXT4jODx8Hzd+0K7HoOFIO8MF7gY63mGdypA1F/Pr/pLH0a6yNJ8bqYqQVAI=
+	t=1745426034; cv=none; b=CWusHeHQ/yWh3gyrT0afk4Jdg5HzxDsp4GIwaMIgiHH3grL8rkOxOa4tD9SYzeAj0iFCCcjbjN4qPOCHBqZjTJdFtkSBo5T+yBOYu6wFCGwCbZ+WJolZhtFgOmLx4nwXFqgciHBgj9u3yNONgw6XSTNmnc4mlrj4TPeGsSIPxz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421082; c=relaxed/simple;
-	bh=Tt0HiJfb+wVciTetjSuEPJJuvsCtECqC5J7G/1L1SOU=;
+	s=arc-20240116; t=1745426034; c=relaxed/simple;
+	bh=hOyUu0pImrYreJA4V4WZnnkWM6YpzzOiZblnlSREHVo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0pd4irOHrA4eVsQIMIfXx7N8WctUrGz486PDU1uvGLfDu2IHpDgonrU0op+Tn3wrPjHxlWNKrP8KdmZXFzS5E5HhLHYKT1E74J2kwY+UCRKvE94UK/sUrQy4xPILTS8GFizPF/P5rJDr0Me7IxR8wFiR3PGIrqIPhh0wqHMShI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBWG/m0f; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=gDsne3mEFu9I3IZz4JStbnvJb5eI6KiYSznYsNeyFkEqq4qlbHG/dSGQnted3soog+H1Nhc2sy8sZpbZjOmBrz+t5mV0NPcq5ShJzLeuFA7cBMkNSJxi6t3i8EOigrqKb6ElQc22RqLfyiBFP/ElAOJB6GoiYaNZQlIKonySMyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cv4HlPyR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBWG/m0f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07956C4CEE2;
-	Wed, 23 Apr 2025 15:11:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cv4HlPyR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E997C4CEE2;
+	Wed, 23 Apr 2025 16:33:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745421081;
-	bh=Tt0HiJfb+wVciTetjSuEPJJuvsCtECqC5J7G/1L1SOU=;
+	s=k20201202; t=1745426033;
+	bh=hOyUu0pImrYreJA4V4WZnnkWM6YpzzOiZblnlSREHVo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TBWG/m0fbeEFmjbCQ89c2kv9m8z78XaJ99uv+3it9vZLLLi4x2whCHZWX9cOMc2oT
-	 s9eWcVzQvtzlwD4FQRsThqZuJqmiJZOV1ACSnYz36VVrO5fw/W+9++7kfKZOnZOgCI
-	 ISnKH7TXixp1X/Y3MFt2AIe3ZxL/iW66NEeTMBUrFNweX5WtH09zvq9wRInOchNgA9
-	 UaifIAQ1tpjFKfewMKQy/GriX9c342U75IeRqRJQKIyiLKG/vXySc76YDkd0jnMF1a
-	 fSNCZ/p+5Th1fiuDC2VO28+rNH1KauTdETT7tHGj/krwUyZLrIzFcIov9nQmzq4bf0
-	 U5hgDcG2ClynA==
-Message-ID: <73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
-Date: Wed, 23 Apr 2025 17:11:17 +0200
+	b=cv4HlPyRr3sTKmq/NqoIDVmRJhecyaGyqg/TW7+zcFXNMJp73s2y9HE9nJrxn9kiS
+	 tNrpF1bVfnnJRhW7XejEVfjiXkNLxwDpznGtsHtRXJxI7r9BH0vPo2BV9Th0bH3ewy
+	 3Vamoa95BGd+A17FxlSZMLg0EA8O6COhw6Mgz3ICs68BGa+kTuM2u1KlsRkiv6tI9e
+	 /F5idRG2nBqU5wbfRg3ZDgkZsZ97Z/+YJ3zmABI8FU7yNO0O1qa6xqhG1yHYQH3V6t
+	 xOhtnSU2Xu9M8z2/xWdGLzLz2wjzZd/Dc1JOqnm5vT50PK9dY5c9ozP2OiMKcmm5Au
+	 5OFqrPRns7xDA==
+Message-ID: <6af9145e-2682-43d6-8315-223c26c69e18@kernel.org>
+Date: Wed, 23 Apr 2025 18:33:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynos: Added the ethernet pin configuration
-To: Yashwant Varur <yashwant.v@samsung.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: cs0617.lee@samsung.com, g.naidu@samsung.com, niyas.ahmed@samsung.com
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
- <20250423060034.973-1-yashwant.v@samsung.com>
+Subject: Re: [PATCH v2 3/3] mfd: exynos-lpass: Fix another error handling path
+ in exynos_lpass_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lee@kernel.org,
+ alim.akhtar@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com,
+ ideal.song@samsung.com, beomho.seo@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <cover.1745247209.git.christophe.jaillet@wanadoo.fr>
+ <69471e839efc0249a504492a8de3497fcdb6a009.1745247209.git.christophe.jaillet@wanadoo.fr>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,43 +89,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250423060034.973-1-yashwant.v@samsung.com>
+In-Reply-To: <69471e839efc0249a504492a8de3497fcdb6a009.1745247209.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/04/2025 08:00, Yashwant Varur wrote:
-> This patch adds the ethernet pin configuration.
-
-
+On 21/04/2025 17:00, Christophe JAILLET wrote:
+> If devm_of_platform_populate() fails, some clean-up needs to be done, as
+> already done in the remove function.
 > 
-> Signed-off-by: Yashwant Varur <yashwant.v@samsung.com>
-> Signed-off-by: Changsub Lee <cs0617.lee@samsung.com>
-
-Incorrect chain or confusing. Who was the author? What is the meaning of
-the last SoB?
-
-
+> Add a new devm_add_action_or_reset() to fix the leak in the probe and
+> remove the need of a remove function.
+> 
+> Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  .../dts/exynos/exynosautov920-pinctrl.dtsi    | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> Compile tested only.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> index 663e8265cbf5..778584d339d5 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> @@ -166,6 +166,24 @@ gph6: gph6-gpio-bank {
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
->  	};
-> +
-> +	eth0_pps_out: eth0_pps_out {
+> Changes in v2:
+>   - Use a new devm_add_action_or_reset() to fix the leak in the probe
+>     and remove the need of a remove function.
+>   - Update the commit description accordingly
 
-Please follow DTS coding style carefully. This applies to all commits
-you try to send from your downstream/vendor code.
-
-What is more important, I don't really understand why you are doing this
-- there is no user of these entries - and commit msg does not help here.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
