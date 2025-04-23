@@ -1,418 +1,141 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98D1624E1;
-	Tue, 22 Apr 2025 18:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90CA1758B
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2025 00:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745347687; cv=none; b=FZTUU+PUTgeVxlw/OLDZJ+44+yNic9FGUO2J4AtrtxOhDrTn5sJY9e+wM3HyFG9vGgAgs7wdyWIpSJLdf0LhuR8IUJF0WEILJ/NyCTOfoNsNQS5A3fNXVhtK+vezZZKGeNmz1NgRHxVg1EtMTdiXsrs3nyi0hF/eGXWlTXGGYWI=
+	t=1745369169; cv=none; b=oz/TfnOlx18np55wkWfr0/Esuz2cPfDXRg85Uqc3OE5ysLxwsuQcVn7ywECB+cyVaMhF8tDv2L60WL7R4GtDksmJ+RbDo5gTGqVDcr/INVnOSq5G9Y2ipGjZVv4/SObjVj3RO2DR9gjUvUXzABauKQr7fa+pT4jopq0+VlysAos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745347687; c=relaxed/simple;
-	bh=vY2FFP8JNh045CJf3kl8GcWU+sAiyXl95+ZsVTPFyT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxV9Sa1aq4XkTQ4Z5dvEuvZDxFIT9Go/KyUCB3CwSkLcTK1Ep092iQUW/kcU+ckEAxKx9iND2TRPPSkxBFeDL5SsDfQw+X4Co8EocrBPXldIwjc2vZA8V78jHd1MzNeBVzP4ebTX+9SGvIs3VmEg0oRILwjqZYYcWfaWgQx1/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhSxWrGe; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745369169; c=relaxed/simple;
+	bh=/ELxdJsrw9LyX4PHEBuOWIwkMrF2oZbj1XoKIPsTJrY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=TajtOQSRx3oxx3JQD/p09j6CsWnj3o79FQcX0dNBm4zv7JjdZo8hV85iLQEtm4b5dRi7ALU8PBNHw1+RfE2NYPRrfJkbfCcsTwUEK6hDMrh8T77OS3hNHbps2NGGUguuYonPXpFwF8x03HsdJzcbVbGGBR5yD2DZtvG9C74Ntss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=M0SusGMq; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhSxWrGe"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso38920885e9.1;
-        Tue, 22 Apr 2025 11:48:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745347684; x=1745952484; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/k3taZkFmb1E65Ysug6YAb3iu1BOXVPDS/i79D+w5w4=;
-        b=PhSxWrGe5TCdygbepdXFBDtqBtu8FGcpyQx37dyaTwXGIGKXyuWXsmbibf14kSJSm5
-         a8cE6xHLpWDSSavNEHsbFl2mq2uqRP6rc5MtZD1FSmzpk+6UiuH4IPUJYLl6nacMGHGQ
-         MWzbt5U/NTZL6n+hg3JBIFLCWeFCb7BqBYgDo0shiqN84C9do480jUterFPbU1mtZirS
-         UgV6sgqYQvXrUzZiOEm0x4++Xn847HgXNEoml1ahvXPKW0dOSdI2oc1QD48/oFoVR0os
-         jAQRP6ySPlMjItxQEgxrYiX7x2U//WQiY+ad26FzzPPIlWsB/IhCDZ2R5Qo4AxuK5z6b
-         r1ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745347684; x=1745952484;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/k3taZkFmb1E65Ysug6YAb3iu1BOXVPDS/i79D+w5w4=;
-        b=ubNbf0ZlU4bg/14R25WoY+XrnWd3IMphiDx6/CzUQ8wGc2kPjt6vHsPFEmo2uS1BMQ
-         Pqkm7q9YeaP5SMS0oq589FVKtjpCk81kGPRQN/au/XwLs40GvcX5eu2CXPFv8K4txRYH
-         92I2FemkI77+/bbk29XyIegr5rk7lPq7oy6BFY65YzJqJzvdEMqMXEDplfGKqG6gX00p
-         P2XKWKIrTQFot4e37rnIDWixDZc9FJNHk9QWsfAOIVv4CsNyRBFMOSuIXjKKYV6trIsB
-         Wktx7ABem0BOJOyf9jUvzJa4GlOA/vBFotfziWDFwWBGk8J2RhAeiHgR2i7OUSlXTYBV
-         mvMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnXOtFZzNYdIZVxJ8ZhEX2MDcT3viQYD/vnTSklKczI2V5UV8HDTwW4vhfxfCkqPadli+HaH724Ug=@vger.kernel.org, AJvYcCXaX2myCcxqJp1RIpilvZWMezb+6nVcQbpYa8+twrml/ihlksMsUmj717aJtAAXvSmDTegKnG1dycqJwrziVBEN6F4=@vger.kernel.org, AJvYcCXbhzhINlSejMWK4JOIrrIudDKmCkfX8IojgUL2r56xwSV5q0mVPvo1dL08IfvW32zo9rlCsmFj3GkP@vger.kernel.org, AJvYcCXvfdEdVqaKNsshKh26J2JTr0QRU3y7gJfPy2Ver2Slb0SxY9NX5GQ4jJq/leNswVFw2XMBOIOkoYnYJYDx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycc7XXOyk/CC5T8+dqbT1zYoMxMJhHSStfaJIqBR2hif5rct1y
-	Lo3ah7CVCei/bS7UsEhDwlfN5KxlVQAd0TXpUkcAMPYQzo2FVsgS
-X-Gm-Gg: ASbGncsA/TWKp28mWOUTTzmZfJYzoyorOzhcpOYTCJt2IyOeOC6VHXD+7j3yL2hmEo3
-	1ZtQaEuUTd10LTqD98fV4T8tqZN4HmBTba6rSlbqF1NSlarHuwfY/3L4gavW5najzLwZhN6LMTb
-	5uT0J7gTUer/juJq5coAu4gBLF8GlD6VKmCMFEq81oHUebj+Ba1WxWxjmRNPGRijr9V7NRWQEiz
-	WLqGSMt2QKlt7H/iiDR4vgSkdXmF0utvs60SbugD0UQZgMsL9EIg1RnJ+9DnaOT5OHBRX9ZSTIt
-	OWCrhoKuhLFobXSGrIh25Xordwsxe1+INAY6d50=
-X-Google-Smtp-Source: AGHT+IG2j3VHoVL2M2AJ10p+sbssgxi4HaLuJQ31gFdOBcHjdA9awEAW09YZ0ryNYevSH+x3j+8Hxg==
-X-Received: by 2002:a05:600c:3583:b0:43c:f689:dd with SMTP id 5b1f17b1804b1-4406abb3bd9mr125898075e9.19.1745347683820;
-        Tue, 22 Apr 2025 11:48:03 -0700 (PDT)
-Received: from legfed1 ([2a00:79c0:6a3:c300:22ea:3d6a:5919:85f8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5acc9esm187337825e9.13.2025.04.22.11.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 11:48:03 -0700 (PDT)
-Date: Tue, 22 Apr 2025 20:48:01 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: t.antoine@uclouvain.be
-Cc: Rob Herring <robh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] power: supply: add support for max77759 fuel gauge
-Message-ID: <20250422184801.GA395455@legfed1>
-References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
- <20250421-b4-gs101_max77759_fg-v3-2-50cd8caf9017@uclouvain.be>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M0SusGMq"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250423004600epoutp01597ea2959ed5e6f11f2f788c54e30565~4zAD710v33239632396epoutp01c
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2025 00:46:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250423004600epoutp01597ea2959ed5e6f11f2f788c54e30565~4zAD710v33239632396epoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745369160;
+	bh=/ELxdJsrw9LyX4PHEBuOWIwkMrF2oZbj1XoKIPsTJrY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=M0SusGMq/BQwHoYwTv/W71NY/wIcU5/BEt6/WhizDMkuKCp2UNwb15KBuW4hLL7nB
+	 JJssMGpplatZ3aRN+W9nNaT0d9mOqovYB77jtpyC8elHj4/EfLm4cB6GNpVLRtXaFh
+	 fR+koQ6BGXTGfMqaDvbp524DIrftp1fKL3I53E0g=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250423004559epcas2p499bd55fcdc74816f52962571c129f06f~4zADUj31j0829508295epcas2p4N;
+	Wed, 23 Apr 2025 00:45:59 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.101]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4Zj0lW1GfJz3hhTD; Wed, 23 Apr
+	2025 00:45:59 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250423004558epcas2p38dfcde1d8068cc8951ced6cf3a864ee1~4zACYlcxy2792927929epcas2p3c;
+	Wed, 23 Apr 2025 00:45:58 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250423004558epsmtrp1327cc1b294aa654f2ccfab0953ef1afa~4zACXcAYE1547415474epsmtrp1p;
+	Wed, 23 Apr 2025 00:45:58 +0000 (GMT)
+X-AuditID: b6c32a52-41dfa70000004c16-f7-6808384621fe
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3D.8D.19478.64838086; Wed, 23 Apr 2025 09:45:58 +0900 (KST)
+Received: from KORCO115296 (unknown [12.36.150.221]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250423004558epsmtip13565d4e756b1ba4cabfa90c306997e2d~4zACKZQas0157801578epsmtip1S;
+	Wed, 23 Apr 2025 00:45:58 +0000 (GMT)
+From: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Sylwester Nawrocki'"
+	<s.nawrocki@samsung.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim
+ Akhtar'" <alim.akhtar@samsung.com>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
+ Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
+	"'Sunyeal Hong'" <sunyeal.hong@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <b5ada346-94e7-41f2-852b-6372f02b4122@kernel.org>
+Subject: RE: [PATCH 1/3] dt-bindings: clock: exynosautov920: add cpucl0
+ clock definitions
+Date: Wed, 23 Apr 2025 09:45:50 +0900
+Message-ID: <003601dbb3e9$141c6a40$3c553ec0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250421-b4-gs101_max77759_fg-v3-2-50cd8caf9017@uclouvain.be>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQGPEGrsijGqefHqKZlvX6MGGm+h1AGzlWR9ARm/BD0BPmLVd7QpU1qg
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSnK6bBUeGwcaP0hYP5m1js1iz9xyT
+	xfUvz1kt5h85x2px/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVq8X/PDnaLw2/aWS3+
+	XdvIYtG0bD2TA5/H+xut7B6bVnWyeWxeUu/Rt2UVo8fnTXIBrFFcNimpOZllqUX6dglcGX/7
+	9zIWfOOoWD1pPXsD4yH2LkZODgkBE4mO2U9ZQGwhge2MEqc/K0HEJSQOz5jACGELS9xvOcIK
+	UfOcUWLCMUUQm03AUGLVj+1MXYxcHCICE5klLn24wALiMAtsYpQ4t/smG0THe0aJMyc8uhg5
+	ODgF7CS+3gZbJiwQKfFp3T+wBSwCqhKfjv4Bi/MKWEp0Xb/BCGELSpyc+QQsziygLdH7sJUR
+	xl628DUzxHEKErs/HQU7TkTATeLQtHNQNSISszvbmCcwCs9CMmoWklGzkIyahaRlASPLKkbR
+	1ILi3PTc5AJDveLE3OLSvHS95PzcTYzgONQK2sG4bP1fvUOMTByMhxglOJiVRHh/ubFnCPGm
+	JFZWpRblxxeV5qQWH2KU5mBREudVzulMERJITyxJzU5NLUgtgskycXBKNTAF3SrOXRCh2JqY
+	Z3cx42rJLTvz9BXL52/in/v77/boT2GvKp/J8BpFGKmI3X/V95bbMTG+u/vCjiN9V84xxDYz
+	fL3wNcRp9w2L5vSTJ3rWPTT7fLOsfLZfiFpi6ZG7BieWVN1enOPTWeo6hz+yQWgm18dlXNKy
+	TmVZTJ5fPqd8VPB/yrnqpnJPiNpf/gyWu2rSMx84bctVFlW5ZlNVVyvx/l2Fz6KGP+fnGf+5
+	xCVSnnH+xxS9+jVsglfbr/z6aF8V+blB7N+fiulndnxKmiPKZFG2RDd5QwQfU4Te64dnqhqn
+	Vnaej1n5ySCD9/DT8qwYga9bGyP5tCeIrRQ6sr7Ryd7F4in7/OuOl6bOPaXEUpyRaKjFXFSc
+	CAAtn+zcMgMAAA==
+X-CMS-MailID: 20250423004558epcas2p38dfcde1d8068cc8951ced6cf3a864ee1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250418061515epcas2p3d2dd703db7eb645f4866dcb01cc288fc
+References: <20250418061500.1629200-1-shin.son@samsung.com>
+	<CGME20250418061515epcas2p3d2dd703db7eb645f4866dcb01cc288fc@epcas2p3.samsung.com>
+	<20250418061500.1629200-2-shin.son@samsung.com>
+	<b5ada346-94e7-41f2-852b-6372f02b4122@kernel.org>
 
-Hi Thomas,
+Hello Krzysztof Kozlowski,
 
-On Mon, Apr 21, 2025 at 08:13:33PM +0200, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
-> 
-> The interface of the Maxim MAX77759 fuel gauge has a lot of common with the
-> Maxim MAX1720x. A major difference is the lack of non-volatile memory
-> slave address. No slave is available at address 0xb of the i2c bus, which
-> is coherent with the following driver from google: line 5836 disables
-> non-volatile memory for m5 gauge.
-> 
-> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
-> 
-> Other differences include the lack of V_BATT register to read the battery
-> level. The voltage must instead be read from V_CELL, the lowest voltage of
-> all cells. The mask to identify the chip is different. The computation of
-> the charge must also be changed to take into account TASKPERIOD, which
-> can add a factor 2 to the result.
-> 
-> Add support for the MAX77759 by taking into account all of those
-> differences based on chip type.
-> 
-> Do not advertise temp probes using the non-volatile memory as those are
-> not available.
-> 
-> The regmap was proposed by André Draszik in
-> 
-> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org/
-> 
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> ---
->  drivers/power/supply/max1720x_battery.c | 270 ++++++++++++++++++++++++++++----
->  1 file changed, 237 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
-> index cca5f8b5071fb731f9b60420239ea03d46cb1bf3..969d3a7c2baa7e1d23c5175942d975b277c8554c 100644
-> --- a/drivers/power/supply/max1720x_battery.c
-> +++ b/drivers/power/supply/max1720x_battery.c
-> @@ -37,6 +37,7 @@
->  #define MAX172XX_REPCAP			0x05	/* Average capacity */
->  #define MAX172XX_REPSOC			0x06	/* Percentage of charge */
->  #define MAX172XX_TEMP			0x08	/* Temperature */
-> +#define MAX172XX_VCELL			0x09	/* Lowest cell voltage */
->  #define MAX172XX_CURRENT		0x0A	/* Actual current */
->  #define MAX172XX_AVG_CURRENT		0x0B	/* Average current */
->  #define MAX172XX_FULL_CAP		0x10	/* Calculated full capacity */
-> @@ -50,19 +51,32 @@
->  #define MAX172XX_DEV_NAME_TYPE_MASK	GENMASK(3, 0)
->  #define MAX172XX_DEV_NAME_TYPE_MAX17201	BIT(0)
->  #define MAX172XX_DEV_NAME_TYPE_MAX17205	(BIT(0) | BIT(2))
-> +#define MAX77759_DEV_NAME_TYPE_MASK	GENMASK(15, 9)
-> +#define MAX77759_DEV_NAME_TYPE_MAX77759	0x31
->  #define MAX172XX_QR_TABLE10		0x22
-> +#define MAX77759_TASKPERIOD		0x3C
-> +#define MAX77759_TASKPERIOD_175MS	0x1680
-> +#define MAX77759_TASKPERIOD_351MS	0x2D00
+> -----Original Message-----
+> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
+> Sent: Tuesday, April 22, 2025 4:54 PM
+> To: Shin Son <shin.son=40samsung.com>; Sylwester Nawrocki
+> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>; Alim
+> Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
+> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob Herri=
+ng
+> <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>; Sunyeal Hong
+> <sunyeal.hong=40samsung.com>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH 1/3=5D dt-bindings: clock: exynosautov920: add cpuc=
+l0
+> clock definitions
+>=20
+> On 18/04/2025 08:14, Shin Son wrote:
+> > Add cpucl0 clock definitions.
+>=20
+> ... and cpucl0 is? Describe the hardware in the commit msg in the future.
+>=20
+>=20
+> Best regards,
+> Krzysztof
 
-I think it would be more readable if MAX77759_ defines are separated to
-the MAX172XX defines instead of mixing them up.
-
->  #define MAX172XX_BATT			0xDA	/* Battery voltage */
->  #define MAX172XX_ATAVCAP		0xDF
->  
->  static const char *const max1720x_manufacturer = "Maxim Integrated";
->  static const char *const max17201_model = "MAX17201";
->  static const char *const max17205_model = "MAX17205";
-> +static const char *const max77759_model = "MAX77759";
-> +
-> +enum chip_id {
-> +	MAX1720X_ID,
-> +	MAX77759_ID,
-> +};
->  
->  struct max1720x_device_info {
->  	struct regmap *regmap;
->  	struct regmap *regmap_nv;
->  	struct i2c_client *ancillary;
->  	int rsense;
-> +	int charge_full_design;
-
-Don't see charge_full_design is used somewhere besides reading it from
-device-tree and it isn't part of the bindings. If not needed, remove it.
-
-> +	enum chip_id id;
->  };
->  
-> 
-
-[...]
-
-> +static int max172xx_cell_voltage_to_ps(unsigned int reg)
-> +{
-> +	return reg * 625 / 8;	/* in uV */
-> +}
-> +
->  static int max172xx_capacity_to_ps(unsigned int reg,
-> -				   struct max1720x_device_info *info)
-> +				   struct max1720x_device_info *info,
-> +				   int *intval)
->  {
-> -	return reg * (500000 / info->rsense);	/* in uAh */
-> +	int lsb = 1;
-> +	int reg_val;
-
-The naming of reg_val is somehow confusing because of reg. Better rename
-it to something like reg_task_period or similar and reg_val should be of
-type unsigned int. 
-
-> +	int ret;
-> +
-> +	if (info->id == MAX77759_ID) {
-> +		ret = regmap_read(info->regmap, MAX77759_TASKPERIOD, &reg_val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		switch (reg_val) {
-> +		case MAX77759_TASKPERIOD_175MS:
-> +			break;
-> +		case MAX77759_TASKPERIOD_351MS:
-> +			lsb = 2;
-> +			break;
-> +		default:
-> +			return -ENODEV;
-> +		}
-> +	}
-> +	*intval = reg * (500000 / info->rsense) * lsb;	/* in uAh */
-> +	return 0;
-
-nit: add newline before return.
-
->  }
->  
->  /*
-> @@ -306,6 +420,28 @@ static int max172xx_temperature_to_ps(unsigned int reg)
->  	return val * 10 / 256; /* in tenths of deg. C */
->  }
->  
-> +static const char *max1720x_devname_to_model(unsigned int reg_val,
-> +					     union power_supply_propval *val,
-> +					     struct max1720x_device_info *info)
-> +{
-> +	switch (info->id) {
-> +	case MAX1720X_ID:
-> +		reg_val = FIELD_GET(MAX172XX_DEV_NAME_TYPE_MASK, reg_val);
-> +		if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17201)
-> +			return max17201_model;
-> +		else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
-> +			return max17205_model;
-> +		return NULL;
-
-nit: return NULL in else case.
-
-> +	case MAX77759_ID:
-> +		reg_val = FIELD_GET(MAX77759_DEV_NAME_TYPE_MASK, reg_val);
-> +		if (reg_val == MAX77759_DEV_NAME_TYPE_MAX77759)
-> +			return max77759_model;
-> +		return NULL;
-
-nit: return NULL in else case.
-
-> +	default:
-> +		return NULL;
-> +	}
-> +}
-> +
->  /*
->   * Calculating current registers resolution:
->   *
-> @@ -390,19 +526,31 @@ static int max1720x_battery_get_property(struct power_supply *psy,
->  		val->intval = max172xx_percent_to_ps(reg_val);
->  		break;
->  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> -		ret = regmap_read(info->regmap, MAX172XX_BATT, &reg_val);
-> -		val->intval = max172xx_voltage_to_ps(reg_val);
-> +		if (info->id == MAX1720X_ID) {
-> +			ret = regmap_read(info->regmap, MAX172XX_BATT, &reg_val);
-> +			val->intval = max172xx_voltage_to_ps(reg_val);
-> +		} else if (info->id == MAX77759_ID) {
-> +			ret = regmap_read(info->regmap, MAX172XX_VCELL, &reg_val);
-> +			val->intval = max172xx_cell_voltage_to_ps(reg_val);
-> +		} else
-> +			return -ENODEV;
->  		break;
->  	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
->  		ret = regmap_read(info->regmap, MAX172XX_DESIGN_CAP, &reg_val);
-> -		val->intval = max172xx_capacity_to_ps(reg_val);
-> +		if (ret)
-> +			break;
-
-I would keep max172xx_capacity_to_ps as it was before and add the
-calculation for the MAX77759 after handling the MAX1720X case. Creating
-a function max77759_capacity_to_ps that further processes the value
-calculated by max172xx_capacity_to_ps or just inline this code.
-Otherwise the naming of the function is somehow confusing.
-
-> +		ret = max172xx_capacity_to_ps(reg_val, info, &val->intval);
->  		break;
->  	case POWER_SUPPLY_PROP_CHARGE_AVG:
->  		ret = regmap_read(info->regmap, MAX172XX_REPCAP, &reg_val);
-> -		val->intval = max172xx_capacity_to_ps(reg_val);
-> +		if (ret)
-> +			break;
-> +
-
-Same as above.
-
-> +		ret = max172xx_capacity_to_ps(reg_val, info, &val->intval);
->  		break;
->  	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
->  		ret = regmap_read(info->regmap, MAX172XX_TTE, &reg_val);
-> +		pr_info("RAW TTE: %d", reg_val);
-
-Remove pr_info.
-
->  		val->intval = max172xx_time_to_ps(reg_val);
->  		break;
->  	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
-> @@ -423,17 +571,15 @@ static int max1720x_battery_get_property(struct power_supply *psy,
->  		break;
->  	case POWER_SUPPLY_PROP_CHARGE_FULL:
->  		ret = regmap_read(info->regmap, MAX172XX_FULL_CAP, &reg_val);
-> -		val->intval = max172xx_capacity_to_ps(reg_val);
-
-...
-
-> +		if (ret)
-> +			break;
-> +		ret = max172xx_capacity_to_ps(reg_val, info, &val->intval);
->  		break;
->  	case POWER_SUPPLY_PROP_MODEL_NAME:
->  		ret = regmap_read(info->regmap, MAX172XX_DEV_NAME, &reg_val);
-> -		reg_val = FIELD_GET(MAX172XX_DEV_NAME_TYPE_MASK, reg_val);
-> -		if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17201)
-> -			val->strval = max17201_model;
-> -		else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
-> -			val->strval = max17205_model;
-> -		else
-> -			return -ENODEV;
-> +		val->strval = max1720x_devname_to_model(reg_val, val, info);
-
-Wouldn't it be better to just inline this function ?
-
-> +		if (!val->strval)
-> +			ret = -ENODEV;
->  {
-
-[...]
-
->  	struct power_supply_config psy_cfg = {};
->  	struct device *dev = &client->dev;
->  	struct max1720x_device_info *info;
->  	struct power_supply *bat;
-> +	const struct chip_data *data;
-> +	const struct power_supply_desc *bat_desc;
->  	int ret;
->  
->  	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
->  	if (!info)
->  		return -ENOMEM;
->  
-> +	data = device_get_match_data(dev);
-> +	if (!data)
-> +		return dev_err_probe(dev, -EINVAL, "Failed to get chip data\n");
-> +
->  	psy_cfg.drv_data = info;
->  	psy_cfg.fwnode = dev_fwnode(dev);
-> -	psy_cfg.attr_grp = max1720x_groups;
-> +	switch (data->id) {
-> +	case MAX1720X_ID:
-> +		psy_cfg.attr_grp = max1720x_groups;
-> +		bat_desc = &max1720x_bat_desc;
-> +		break;
-> +	case MAX77759_ID:
-> +		bat_desc = &max77759_bat_desc;
-> +		break;
-> +	default:
-> +		return dev_err_probe(dev, -EINVAL, "Unsupported chip\n");
-> +	}
-
-nit: add empty line
-
->  	i2c_set_clientdata(client, info);
-> -	info->regmap = devm_regmap_init_i2c(client, &max1720x_regmap_cfg);
-> +
-> +	info->id = data->id;
-> +	info->regmap = devm_regmap_init_i2c(client, data->regmap_cfg);
->  	if (IS_ERR(info->regmap))
->  		return dev_err_probe(dev, PTR_ERR(info->regmap),
->  				     "regmap initialization failed\n");
->  
-> -	ret = max1720x_probe_nvmem(client, info);
-> +	if (data->has_nvmem) {
-> +		ret = max1720x_probe_nvmem(client, info);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
-> +	}
-> +
-> +	ret = of_property_read_u32(dev->of_node,
-> +				   "charge-full-design-microamp-hours", &info->charge_full_design);
-> +	if (ret)
-> +		info->charge_full_design = 0;
-> +
-> +	ret = max1720x_get_rsense(dev, info, data);
->  	if (ret)
-> -		return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
-> +		return dev_err_probe(dev, ret, "Failed to get RSense\n");
->  
-> -	bat = devm_power_supply_register(dev, &max1720x_bat_desc, &psy_cfg);
-> +	bat = devm_power_supply_register(dev, bat_desc, &psy_cfg);
->  	if (IS_ERR(bat))
->  		return dev_err_probe(dev, PTR_ERR(bat),
->  				     "Failed to register power supply\n");
-> @@ -613,7 +816,8 @@ static int max1720x_probe(struct i2c_client *client)
->  }
->  
->  static const struct of_device_id max1720x_of_match[] = {
-> -	{ .compatible = "maxim,max17201" },
-> +	{ .compatible = "maxim,max17201", .data = (void *) &max1720x_data },
-> +	{ .compatible = "maxim,max77759-fg", .data = (void *) &max77759_data },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, max1720x_of_match);
-> 
-> -- 
-> 2.49.0
-> 
-> 
+Thanks for the feedback.
+I'll update the commit message to include a brief description of the hardwa=
+re.
 
 Best regards,
-Dimitri Fedrau
+Shin Son
+
