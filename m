@@ -1,143 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599F142A82;
-	Wed, 23 Apr 2025 13:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411F175BF
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2025 14:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415937; cv=none; b=mOW9FYqYvgzxKR9Rwq2NVOHERngv1Lengq0IPzNVDMqY8odB8avrW2Ecge5yLVf5D4stKXv3B3k3v3AtwPbLL1TJkNoQtaSV5jxiZmzOXMKWhcHknJKR5VTVZAFLluG5SCPsKqxnKOvltLISwlqdfFxh9SrzMmMJnyKx1uGAPMQ=
+	t=1745418655; cv=none; b=kSbJO1lCfgOLM2AWN27l+PeGr0pFTLrExf6upbMDIvEncm1/CG/oXh4eebrmjuYKr8SraYhukccP/+8q1IDjtQ7IEp/HpoZgfWQM1Y+xLrqIarxmGQ6XT0PKQPVaOny6I53pXU9D5c1LSl569/HmnFfVjR9nb+Bd0+SHrsZsYGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415937; c=relaxed/simple;
-	bh=GgKaY3nvJvl8Pnx+naiX9cewCOdVlr2qGF7PVJYlj2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AiN136iWFOnbCtmQzdUk414mxiDVDVjO8Mku8j/rrf7ClLzSNjZ/UFMHWdjqh1u20+3mNLVJyUVn7o0+kfzcVQpuBYkBaXXVIgY90HVAQMJNr40inhKoqKaKG68CHQQS3SNAZ3X6eOgqImMp9cWiEntRxx+EApfNeLmOKTR1hCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=el8Ebtk+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745418655; c=relaxed/simple;
+	bh=fVcG4XFaJq/iJE173RxYpdBiDmVQAGMoY6BJ/JwZHSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d4Gg7ofp41wPj3Emy/yMKZodRnbXGcsq6BgPQ0ZVlGGPRtvuirEMtzk3ed/DCqToFZOgKh5vOPyVXBJW5Gai74OlPzGRH5XXOY32EYiDvHQieyStceHivyeKOcZUs1DEBnahEO5D/1lD8Mnhd2+rRWU267L7lLxyIn/a79hteoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBvOnuho; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="el8Ebtk+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39A2C4CEE2;
-	Wed, 23 Apr 2025 13:45:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745415936;
-	bh=GgKaY3nvJvl8Pnx+naiX9cewCOdVlr2qGF7PVJYlj2o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=el8Ebtk+btNYZ3jhd1sJfuYz4rm6YijO5k5WzIp68T6aorASEW2L+DCv79pIbp4SM
-	 lQCNwsFFc49C9rXY4OIijhyiDsKOGmiocFlIBuplkKchn2LQjviRD++KREc2MYK5Sx
-	 NbyMJA7x5UtGeGw2TMuIn2sh/5Brp0vI15VOXgk9liPGw8LVVo1tQ8+h7IM0hvP98j
-	 EKtNe15EYR9pI5rO4UV8TioRaiKPxiOhsZ8un0FqE0Yvlv2KiCZJ4IOugiXCraI70X
-	 igkr6Wg8Ii0+yeCSPl11GGUJx3u8W51Qx5MmzpeNqfaA5M39Gsdx8fwTIymggctz2F
-	 hwNX7+xE8r1fg==
-Message-ID: <8dce8a71-cd99-43eb-8003-b7c4f9a4cdfe@kernel.org>
-Date: Wed, 23 Apr 2025 15:45:30 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBvOnuho"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22c336fcdaaso72290905ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2025 07:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745418649; x=1746023449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaQX08B2+8x266QyJ6QuzOwzOJ8c1UJqUK6mYtewD40=;
+        b=cBvOnuhoKg/v5XCwoOSMEIW0WaXisQnlzLMcYUmeYxVhDTGo3XyEpeDDF8Je9I6/pq
+         xgWjCzEei9dTSEKkGPJHjMPU+FQTqTFDPjG66Ct96jy5d7X8rQLeAiMWKlpEJNEIlFdR
+         N0VPxtv94FlcNmSMsIIMXIPtE9nXp0Ohzjr7J8fPcjN1LILuwCF/diiv2b3a7GiNLeyr
+         +ZHy3vZgC5e1i6wiophZekEjI+MiBjAH8hcQCLai0xKpj8jaI3z1hT2G2/9qQp93ojVo
+         P8d1wt1IunOXm6CFi0vnEV4dT8gEAfCm+TzFneddeZrjlUPSfR4rFPmVQbDpw7qwlysn
+         BZ5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745418650; x=1746023450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gaQX08B2+8x266QyJ6QuzOwzOJ8c1UJqUK6mYtewD40=;
+        b=Mj7tazR6T5ZGQM48J1M4yvFE54AieIJuxpzMt/y8Ie9ti9Bky06X+fJ/YA5J6zfti7
+         VzEag88nlpu5B3jKiZcbLWSXM3D73ExKAiHcxaF2fBSsvkg7qD1CYTUPqljZY637ZhxV
+         z6RZonfiOSe9UfAjipeQUs6Y67YIPuhTX9Vm2+NTM+3muI3VCq42aL+9U76vjikksF04
+         DX8aEQFQ2ahn3xFoqPtZeRilFo0EtDL45vBk0OpQuMZfryLjb1XgnAzFoEiynD5+l3Zh
+         J4WaMmPkbEKSdC9VOdVJaZVoEZPoazM7UFFNA0DUCrZfMHZF0C1ZjNxJ53kLrdi9c3hf
+         e01g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfQZVKJmaOxXVZK//LZ34k12pYMNCerAxoC1/RwvajdmN+dpR+VC40N71I+W/EhbtSyz62XhZEiAgXYMn95agXeA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5Fn9jkZ3nyH/1f0eP1CW1ORpaOVAyyOKlpsdrFYbvnOjigeRW
+	qFGrwPfXScRFAw8vQnTN0orCdyXi4uAKTaLYewEA4qdjiS/Hh6fBkrGI8/LQ
+X-Gm-Gg: ASbGncvXIHKKDENgO3ig2pnBcKgxF/5rTN1vfx+lLzKIEo1qUv3dLeBWAoPDdjRJuNZ
+	nkaQbLW5l72QIce09/fIKciyGQ6xXTpYHSNUQhsATbwUGd2+BJzLLjklQ2WHRquJRHDYWlOnADg
+	W5vuVNtdCLONxM8mPGDdyBpbCf57TQYSu36R6J43DhZNJSpytHnMDb7of8sEjJgSwSUTKgGAAf4
+	4qMi0zjBKtqKN2iUWW7sPPsSkI7dSSLVaD3zOAtfKW95CN90B7HvqfMAg3VSswXD+LH+g+HE6ni
+	jHEPe+j4ZUwfEU6LhssDg0qU+VFsOMQc2i6WYxb+AC1jzoDSkR19VaCVxFW735Cuqzvk/vvZQfo
+	HxJhQSDvYDSkIE0xYtjaD
+X-Google-Smtp-Source: AGHT+IH4v/tQKdMaHFAFk0yNJ2N0GNG1N9zIvOuNxHaZ9ts2MjhK6ik5G1JhmRDmwinwBCgqB4Hu5w==
+X-Received: by 2002:a17:903:110c:b0:223:66bb:8993 with SMTP id d9443c01a7336-22c5362e04bmr303908445ad.43.1745418649550;
+        Wed, 23 Apr 2025 07:30:49 -0700 (PDT)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb5349sm105397745ad.157.2025.04.23.07.30.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 07:30:49 -0700 (PDT)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Wed, 23 Apr 2025 23:30:44 +0900
+Message-Id: <20250423143044.46165-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: power: supply: add max77759-fg flavor
-To: Thomas Antoine <t.antoine@uclouvain.be>
-Cc: Rob Herring <robh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
- <20250421-b4-gs101_max77759_fg-v3-3-50cd8caf9017@uclouvain.be>
- <20250422-tireless-swine-of-fascination-6eba8b@kuoka>
- <57bb1dfd-02dd-4aa4-a560-264875ded33c@uclouvain.be>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <57bb1dfd-02dd-4aa4-a560-264875ded33c@uclouvain.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/04/2025 10:05, Thomas Antoine wrote:
-> On 4/22/25 12:05, Krzysztof Kozlowski wrote:
->> On Mon, Apr 21, 2025 at 08:13:34PM GMT, Thomas Antoine wrote:
->>> +allOf:
->>> +  - $ref: power-supply.yaml#
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - maxim,max17201
->>> +    then:
->>> +      properties:
->>> +        reg:
->>> +          minItems: 2
->>> +          maxItems: 2
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - maxim,max77759-fg
->>> +    then:
->>> +      properties:
->>> +        reg:
->>> +          items:
->>> +            minItems: 1
->> If there is going to be resend, drop minItems.
->>
-> Will drop it in v4.
-> 
-One more thing - your reg-names are now incorrectly constrained - where
-are their constraints?
+Hi Dave and Daniel,
 
-You need to test your bindings and DTS before you post. If by any chance
-community robots found more issues (e.g. you sent something untested),
-you should address it.
+   Just minor fixups and cleanup.
 
+   Please kindly let me know if there is any problem.
 
-Best regards,
-Krzysztof
+Thanks,
+Inki Dae
+
+The following changes since commit 0467145fab3b3a7a1efd221722310fe32329b3da:
+
+  Merge tag 'drm-msm-fixes-2025-04-18' of https://gitlab.freedesktop.org/drm/msm into drm-fixes (2025-04-19 15:09:29 +1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.15-rc4
+
+for you to fetch changes up to c171ad1e8166ff8b3ab9ac94bad2574167b41f66:
+
+  drm/exynos: Fix spelling mistake "enqueu" -> "enqueue" (2025-04-23 23:07:28 +0900)
+
+----------------------------------------------------------------
+Several fixups
+- fix spelling error
+- remove redundant error handling in exynos_drm_vidi.c module.
+- marks struct decon_data as const in the exynos7_drm_decon driver since it is only read.
+
+Cleanup
+- Remove unnecessary checking in exynos_drm_drv.c module
+
+----------------------------------------------------------------
+Anindya Sundar Gayen (1):
+      drm/exynos: fixed a spelling error
+
+Colin Ian King (1):
+      drm/exynos: Fix spelling mistake "enqueu" -> "enqueue"
+
+Guoqing Jiang (1):
+      drm/exynos: Remove unnecessary checking
+
+Krzysztof Kozlowski (1):
+      drm/exynos: exynos7_drm_decon: Consstify struct decon_data
+
+Wentao Liang (1):
+      drm/exynos/vidi: Remove redundant error handling in vidi_get_modes()
+
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_drv.c    | 3 +--
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 3 ---
+ 5 files changed, 5 insertions(+), 9 deletions(-)
