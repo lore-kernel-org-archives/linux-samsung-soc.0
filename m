@@ -1,94 +1,143 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CA3188CB1;
-	Wed, 23 Apr 2025 13:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599F142A82;
+	Wed, 23 Apr 2025 13:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415460; cv=none; b=DA7CARRUSxzUbj2w+xgCyvh/JRzeIt2ULG+ZUsQjADpRvKt9gKIjQP+twLkK9O5hTcCR7RrqiauVE0lFjRQV+OippxexUTsvgZme869U/zPNL5zv5J+L/SQ6USHlr/ok3QrnRY8gQbINlqSLKrk2f4VNLabillT9zWo19SUy49E=
+	t=1745415937; cv=none; b=mOW9FYqYvgzxKR9Rwq2NVOHERngv1Lengq0IPzNVDMqY8odB8avrW2Ecge5yLVf5D4stKXv3B3k3v3AtwPbLL1TJkNoQtaSV5jxiZmzOXMKWhcHknJKR5VTVZAFLluG5SCPsKqxnKOvltLISwlqdfFxh9SrzMmMJnyKx1uGAPMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415460; c=relaxed/simple;
-	bh=KhlYkEqRWOy+NUA8qYmqopvVILH6QfgOFe66Bi46DeE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dUq8/kwRsnoCZud7OQmZHK1xnipmEtPfNbCnrcDgf6n5wgPYFq8qQGh6I4fisVssGIFUFt/dmj1SZ5bRzN3ZGoS8m49zazCRYMpyBJZCAVIbmkf7ntzMpuvbqntCJ5fhqx39cgFz9kzPzbly7eGGR5Qn37Y57B7QzhFZdW6Q2Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhyAb8iG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745415937; c=relaxed/simple;
+	bh=GgKaY3nvJvl8Pnx+naiX9cewCOdVlr2qGF7PVJYlj2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AiN136iWFOnbCtmQzdUk414mxiDVDVjO8Mku8j/rrf7ClLzSNjZ/UFMHWdjqh1u20+3mNLVJyUVn7o0+kfzcVQpuBYkBaXXVIgY90HVAQMJNr40inhKoqKaKG68CHQQS3SNAZ3X6eOgqImMp9cWiEntRxx+EApfNeLmOKTR1hCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=el8Ebtk+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhyAb8iG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F384CC4CEE2;
-	Wed, 23 Apr 2025 13:37:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="el8Ebtk+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39A2C4CEE2;
+	Wed, 23 Apr 2025 13:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745415460;
-	bh=KhlYkEqRWOy+NUA8qYmqopvVILH6QfgOFe66Bi46DeE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=JhyAb8iG4C5NZlsDnjgyvBm9RfxuzisolYd5qChiFgNy83amnUcie66wIdpJCGLlK
-	 fET0xRvjHri7RkCPDSs2bZPs0cBvmYH8gJmWVUennym0MjSW+UbxqHG1k28jRNHdIa
-	 zo7R3dRCV4G8W8+eGzAv3zgkclx/N4linJyyF0xTz9yooRzsdXstxXsx8OAiCyuYiY
-	 q3A/yI1kbBIEmhW1Zv3skfAHcwzhp1r5W8uFJiHkmOzeWAV0aZ8xJd/vJeeH8H2g6O
-	 ZlAX+3/LYpD2KHyyykyHl6Bv+DnM/uj1Myx4Cb++9GOc1RQ+ejno2d91gZqVCp1nDs
-	 PHzV5qiQpxc0w==
-Date: Wed, 23 Apr 2025 08:37:38 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1745415936;
+	bh=GgKaY3nvJvl8Pnx+naiX9cewCOdVlr2qGF7PVJYlj2o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=el8Ebtk+btNYZ3jhd1sJfuYz4rm6YijO5k5WzIp68T6aorASEW2L+DCv79pIbp4SM
+	 lQCNwsFFc49C9rXY4OIijhyiDsKOGmiocFlIBuplkKchn2LQjviRD++KREc2MYK5Sx
+	 NbyMJA7x5UtGeGw2TMuIn2sh/5Brp0vI15VOXgk9liPGw8LVVo1tQ8+h7IM0hvP98j
+	 EKtNe15EYR9pI5rO4UV8TioRaiKPxiOhsZ8un0FqE0Yvlv2KiCZJ4IOugiXCraI70X
+	 igkr6Wg8Ii0+yeCSPl11GGUJx3u8W51Qx5MmzpeNqfaA5M39Gsdx8fwTIymggctz2F
+	 hwNX7+xE8r1fg==
+Message-ID: <8dce8a71-cd99-43eb-8003-b7c4f9a4cdfe@kernel.org>
+Date: Wed, 23 Apr 2025 15:45:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
- niyas.ahmed@samsung.com, linux-kernel@vger.kernel.org, g.naidu@samsung.com, 
- devicetree@vger.kernel.org, krzk+dt@kernel.org, cs0617.lee@samsung.com, 
- linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com
-To: Yashwant Varur <yashwant.v@samsung.com>
-In-Reply-To: <20250423060034.973-1-yashwant.v@samsung.com>
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
- <20250423060034.973-1-yashwant.v@samsung.com>
-Message-Id: <174541475597.315167.13886111857775924354.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: exynos: Added the ethernet pin
- configuration
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] dt-bindings: power: supply: add max77759-fg flavor
+To: Thomas Antoine <t.antoine@uclouvain.be>
+Cc: Rob Herring <robh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
+ <20250421-b4-gs101_max77759_fg-v3-3-50cd8caf9017@uclouvain.be>
+ <20250422-tireless-swine-of-fascination-6eba8b@kuoka>
+ <57bb1dfd-02dd-4aa4-a560-264875ded33c@uclouvain.be>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <57bb1dfd-02dd-4aa4-a560-264875ded33c@uclouvain.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 23 Apr 2025 11:30:34 +0530, Yashwant Varur wrote:
-> This patch adds the ethernet pin configuration.
+On 23/04/2025 10:05, Thomas Antoine wrote:
+> On 4/22/25 12:05, Krzysztof Kozlowski wrote:
+>> On Mon, Apr 21, 2025 at 08:13:34PM GMT, Thomas Antoine wrote:
+>>> +allOf:
+>>> +  - $ref: power-supply.yaml#
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - maxim,max17201
+>>> +    then:
+>>> +      properties:
+>>> +        reg:
+>>> +          minItems: 2
+>>> +          maxItems: 2
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - maxim,max77759-fg
+>>> +    then:
+>>> +      properties:
+>>> +        reg:
+>>> +          items:
+>>> +            minItems: 1
+>> If there is going to be resend, drop minItems.
+>>
+> Will drop it in v4.
 > 
-> Signed-off-by: Yashwant Varur <yashwant.v@samsung.com>
-> Signed-off-by: Changsub Lee <cs0617.lee@samsung.com>
-> ---
->  .../dts/exynos/exynosautov920-pinctrl.dtsi    | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
+One more thing - your reg-names are now incorrectly constrained - where
+are their constraints?
+
+You need to test your bindings and DTS before you post. If by any chance
+community robots found more issues (e.g. you sent something untested),
+you should address it.
 
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250423 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250423060034.973-1-yashwant.v@samsung.com:
-
-arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: pinctrl@10830000 (samsung,exynosautov920-pinctrl): 'eth0_pps_out0', 'eth0_pps_out1', 'eth_extpll_avb', 'eth_phy_reset' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: pinctrl@16c10000 (samsung,exynosautov920-pinctrl): 'eth0_mdc_mdio', 'eth0_pps_out', 'eth0_rgmii' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-
-
-
-
-
+Best regards,
+Krzysztof
