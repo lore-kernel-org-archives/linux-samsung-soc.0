@@ -1,128 +1,130 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411F175BF
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2025 14:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1042C28DEEA;
+	Wed, 23 Apr 2025 15:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745418655; cv=none; b=kSbJO1lCfgOLM2AWN27l+PeGr0pFTLrExf6upbMDIvEncm1/CG/oXh4eebrmjuYKr8SraYhukccP/+8q1IDjtQ7IEp/HpoZgfWQM1Y+xLrqIarxmGQ6XT0PKQPVaOny6I53pXU9D5c1LSl569/HmnFfVjR9nb+Bd0+SHrsZsYGI=
+	t=1745421082; cv=none; b=NiRIvBLOqLGzsU83foLhiBK53h62VdDLJSUf1AoSG6OwwzAK7BOuB4I6G0i2tj/pXVRJBfpt8OcWQ3ykWb/28tC1UBPMQWvUR44GofSIbONV9efXXT4jODx8Hzd+0K7HoOFIO8MF7gY63mGdypA1F/Pr/pLH0a6yNJ8bqYqQVAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745418655; c=relaxed/simple;
-	bh=fVcG4XFaJq/iJE173RxYpdBiDmVQAGMoY6BJ/JwZHSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d4Gg7ofp41wPj3Emy/yMKZodRnbXGcsq6BgPQ0ZVlGGPRtvuirEMtzk3ed/DCqToFZOgKh5vOPyVXBJW5Gai74OlPzGRH5XXOY32EYiDvHQieyStceHivyeKOcZUs1DEBnahEO5D/1lD8Mnhd2+rRWU267L7lLxyIn/a79hteoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBvOnuho; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745421082; c=relaxed/simple;
+	bh=Tt0HiJfb+wVciTetjSuEPJJuvsCtECqC5J7G/1L1SOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f0pd4irOHrA4eVsQIMIfXx7N8WctUrGz486PDU1uvGLfDu2IHpDgonrU0op+Tn3wrPjHxlWNKrP8KdmZXFzS5E5HhLHYKT1E74J2kwY+UCRKvE94UK/sUrQy4xPILTS8GFizPF/P5rJDr0Me7IxR8wFiR3PGIrqIPhh0wqHMShI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBWG/m0f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBvOnuho"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22c336fcdaaso72290905ad.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2025 07:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745418649; x=1746023449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaQX08B2+8x266QyJ6QuzOwzOJ8c1UJqUK6mYtewD40=;
-        b=cBvOnuhoKg/v5XCwoOSMEIW0WaXisQnlzLMcYUmeYxVhDTGo3XyEpeDDF8Je9I6/pq
-         xgWjCzEei9dTSEKkGPJHjMPU+FQTqTFDPjG66Ct96jy5d7X8rQLeAiMWKlpEJNEIlFdR
-         N0VPxtv94FlcNmSMsIIMXIPtE9nXp0Ohzjr7J8fPcjN1LILuwCF/diiv2b3a7GiNLeyr
-         +ZHy3vZgC5e1i6wiophZekEjI+MiBjAH8hcQCLai0xKpj8jaI3z1hT2G2/9qQp93ojVo
-         P8d1wt1IunOXm6CFi0vnEV4dT8gEAfCm+TzFneddeZrjlUPSfR4rFPmVQbDpw7qwlysn
-         BZ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745418650; x=1746023450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gaQX08B2+8x266QyJ6QuzOwzOJ8c1UJqUK6mYtewD40=;
-        b=Mj7tazR6T5ZGQM48J1M4yvFE54AieIJuxpzMt/y8Ie9ti9Bky06X+fJ/YA5J6zfti7
-         VzEag88nlpu5B3jKiZcbLWSXM3D73ExKAiHcxaF2fBSsvkg7qD1CYTUPqljZY637ZhxV
-         z6RZonfiOSe9UfAjipeQUs6Y67YIPuhTX9Vm2+NTM+3muI3VCq42aL+9U76vjikksF04
-         DX8aEQFQ2ahn3xFoqPtZeRilFo0EtDL45vBk0OpQuMZfryLjb1XgnAzFoEiynD5+l3Zh
-         J4WaMmPkbEKSdC9VOdVJaZVoEZPoazM7UFFNA0DUCrZfMHZF0C1ZjNxJ53kLrdi9c3hf
-         e01g==
-X-Forwarded-Encrypted: i=1; AJvYcCWfQZVKJmaOxXVZK//LZ34k12pYMNCerAxoC1/RwvajdmN+dpR+VC40N71I+W/EhbtSyz62XhZEiAgXYMn95agXeA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5Fn9jkZ3nyH/1f0eP1CW1ORpaOVAyyOKlpsdrFYbvnOjigeRW
-	qFGrwPfXScRFAw8vQnTN0orCdyXi4uAKTaLYewEA4qdjiS/Hh6fBkrGI8/LQ
-X-Gm-Gg: ASbGncvXIHKKDENgO3ig2pnBcKgxF/5rTN1vfx+lLzKIEo1qUv3dLeBWAoPDdjRJuNZ
-	nkaQbLW5l72QIce09/fIKciyGQ6xXTpYHSNUQhsATbwUGd2+BJzLLjklQ2WHRquJRHDYWlOnADg
-	W5vuVNtdCLONxM8mPGDdyBpbCf57TQYSu36R6J43DhZNJSpytHnMDb7of8sEjJgSwSUTKgGAAf4
-	4qMi0zjBKtqKN2iUWW7sPPsSkI7dSSLVaD3zOAtfKW95CN90B7HvqfMAg3VSswXD+LH+g+HE6ni
-	jHEPe+j4ZUwfEU6LhssDg0qU+VFsOMQc2i6WYxb+AC1jzoDSkR19VaCVxFW735Cuqzvk/vvZQfo
-	HxJhQSDvYDSkIE0xYtjaD
-X-Google-Smtp-Source: AGHT+IH4v/tQKdMaHFAFk0yNJ2N0GNG1N9zIvOuNxHaZ9ts2MjhK6ik5G1JhmRDmwinwBCgqB4Hu5w==
-X-Received: by 2002:a17:903:110c:b0:223:66bb:8993 with SMTP id d9443c01a7336-22c5362e04bmr303908445ad.43.1745418649550;
-        Wed, 23 Apr 2025 07:30:49 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb5349sm105397745ad.157.2025.04.23.07.30.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 07:30:49 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Wed, 23 Apr 2025 23:30:44 +0900
-Message-Id: <20250423143044.46165-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBWG/m0f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07956C4CEE2;
+	Wed, 23 Apr 2025 15:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745421081;
+	bh=Tt0HiJfb+wVciTetjSuEPJJuvsCtECqC5J7G/1L1SOU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TBWG/m0fbeEFmjbCQ89c2kv9m8z78XaJ99uv+3it9vZLLLi4x2whCHZWX9cOMc2oT
+	 s9eWcVzQvtzlwD4FQRsThqZuJqmiJZOV1ACSnYz36VVrO5fw/W+9++7kfKZOnZOgCI
+	 ISnKH7TXixp1X/Y3MFt2AIe3ZxL/iW66NEeTMBUrFNweX5WtH09zvq9wRInOchNgA9
+	 UaifIAQ1tpjFKfewMKQy/GriX9c342U75IeRqRJQKIyiLKG/vXySc76YDkd0jnMF1a
+	 fSNCZ/p+5Th1fiuDC2VO28+rNH1KauTdETT7tHGj/krwUyZLrIzFcIov9nQmzq4bf0
+	 U5hgDcG2ClynA==
+Message-ID: <73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
+Date: Wed, 23 Apr 2025 17:11:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: exynos: Added the ethernet pin configuration
+To: Yashwant Varur <yashwant.v@samsung.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: cs0617.lee@samsung.com, g.naidu@samsung.com, niyas.ahmed@samsung.com
+References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
+ <20250423060034.973-1-yashwant.v@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250423060034.973-1-yashwant.v@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dave and Daniel,
+On 23/04/2025 08:00, Yashwant Varur wrote:
+> This patch adds the ethernet pin configuration.
 
-   Just minor fixups and cleanup.
 
-   Please kindly let me know if there is any problem.
+> 
+> Signed-off-by: Yashwant Varur <yashwant.v@samsung.com>
+> Signed-off-by: Changsub Lee <cs0617.lee@samsung.com>
 
-Thanks,
-Inki Dae
+Incorrect chain or confusing. Who was the author? What is the meaning of
+the last SoB?
 
-The following changes since commit 0467145fab3b3a7a1efd221722310fe32329b3da:
 
-  Merge tag 'drm-msm-fixes-2025-04-18' of https://gitlab.freedesktop.org/drm/msm into drm-fixes (2025-04-19 15:09:29 +1000)
+> ---
+>  .../dts/exynos/exynosautov920-pinctrl.dtsi    | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+> index 663e8265cbf5..778584d339d5 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+> @@ -166,6 +166,24 @@ gph6: gph6-gpio-bank {
+>  		interrupt-controller;
+>  		#interrupt-cells = <2>;
+>  	};
+> +
+> +	eth0_pps_out: eth0_pps_out {
 
-are available in the Git repository at:
+Please follow DTS coding style carefully. This applies to all commits
+you try to send from your downstream/vendor code.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.15-rc4
+What is more important, I don't really understand why you are doing this
+- there is no user of these entries - and commit msg does not help here.
 
-for you to fetch changes up to c171ad1e8166ff8b3ab9ac94bad2574167b41f66:
 
-  drm/exynos: Fix spelling mistake "enqueu" -> "enqueue" (2025-04-23 23:07:28 +0900)
-
-----------------------------------------------------------------
-Several fixups
-- fix spelling error
-- remove redundant error handling in exynos_drm_vidi.c module.
-- marks struct decon_data as const in the exynos7_drm_decon driver since it is only read.
-
-Cleanup
-- Remove unnecessary checking in exynos_drm_drv.c module
-
-----------------------------------------------------------------
-Anindya Sundar Gayen (1):
-      drm/exynos: fixed a spelling error
-
-Colin Ian King (1):
-      drm/exynos: Fix spelling mistake "enqueu" -> "enqueue"
-
-Guoqing Jiang (1):
-      drm/exynos: Remove unnecessary checking
-
-Krzysztof Kozlowski (1):
-      drm/exynos: exynos7_drm_decon: Consstify struct decon_data
-
-Wentao Liang (1):
-      drm/exynos/vidi: Remove redundant error handling in vidi_get_modes()
-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 4 ++--
- drivers/gpu/drm/exynos/exynos_drm_drv.c    | 3 +--
- drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 3 ---
- 5 files changed, 5 insertions(+), 9 deletions(-)
+Best regards,
+Krzysztof
