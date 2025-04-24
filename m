@@ -1,126 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6280117A30A;
-	Thu, 24 Apr 2025 15:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D0E14F9EB;
+	Thu, 24 Apr 2025 15:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745507490; cv=none; b=ptEEZF1vlvMgqcP9fxUsQ/9vXzB5u+VY5tsIsD5e3Vs1gLoBL+OsV9/OBSoJBDCdCj3icKZUBSB3QcWRR1zvBUxPJRoHasAWAYmzxkOJ/jzskfpmHc0IItBWyAbyDp14BAhc1B+kXFdzs5b6z6VS08Hq2VEgmmp41sgEbzsQnEI=
+	t=1745507928; cv=none; b=f67fAfih1sdbHwMUc6y+fhvn9WjZc5GMju2eJ4Q3DmdjvXHzfHulkSrjpaVgEUz5RZk56VwSfMtz709VCcJa/JjcOK+qpU3wAjhLspGc3XUVENOqNmdKKtx8/flAjSuG1riWl3tI7Eo6/c/99iqIfjuRiEPaO1++huZr4FHxIs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745507490; c=relaxed/simple;
-	bh=BaigLKgi67/CVqkot7IIPq3EJQR29/Gk6ouHiFoFK2E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=t7em4VqOqWJMMDrkoIwmtOiCrS95vyoHx+eV8OMZryDAxB/48k57mxsPhwq+t/MFIt+J9+NbKcCv/4bFK249boA0Xt/18iRKH6/bmeEfBIfmsDUEEri18NJLQiBBSZH28lrwy4+NGWRos2Fmc95thojWeO7vQCAFGyFUX5VGEBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeY03B1T; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745507928; c=relaxed/simple;
+	bh=Cfwo3zn+LUVCR2Nba2kjhqU4b8JvbapZ+dJDwNIQvR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EpAfHHM/cZW7QZDcODT5v0gXgGQUq9JGpQnUL0jhw5qEFqJ3uxspALMaQT6hra1eHfVdreNJzdhQRVZRFYMCvUXs+zH/Rs2a3P1+iZzGqNOQmTdRiApqYiXlpAcvye58xJPlbxrLFaQhvgd6N4CLZtLGe84wVeDr+SCL2c+w8Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FtyAuiP8; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeY03B1T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C47DC4CEE3;
-	Thu, 24 Apr 2025 15:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745507489;
-	bh=BaigLKgi67/CVqkot7IIPq3EJQR29/Gk6ouHiFoFK2E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JeY03B1TWTc8tOQ1C9dlZuITJhFQrFeGVy6Uq2qfuk5n5BKK63mEq4v+xjtxaRWwm
-	 zYcxzm6rZtgEKx13PKAxb8Ghk39ZIP6GxHp8/G5sZ7pN17imkZBppQIGSGVb40O0SG
-	 yiIqZlTvRgJY9XS9y1h9Vt7hy6vF62mGYsZm5Abm6tV39Q00uBoPzJBnG+QFOVej1d
-	 MmtRb4yZusQ+HbJBU32nPOqndEBs9V8I/WMWWw5SDCa3hyyb2krUmif/76l29o0P2y
-	 sgBpBGi/jn6iDifBnU/9PIGo5YS5Rwjb6pQrpxoeZ3KfRs8DqEg8/daA1h/IZgAfO6
-	 h05i4tAQoEupg==
-From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-Subject: Re: (subset) [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based
- drivers
-Message-Id: <174550748501.1452626.16896113997247650772.b4-ty@kernel.org>
-Date: Thu, 24 Apr 2025 16:11:25 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FtyAuiP8"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4481743B2E;
+	Thu, 24 Apr 2025 15:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745507923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8IVmwrk7aGTZcp/7NN8zrGIfqqXduX0J3M9hpB/pHPA=;
+	b=FtyAuiP8ARUUv2xs4PPtC4FuRrb5XYgrq7nTPDnp6BcGNmDvjt3hiUhZJ4gakGWOTMm285
+	izxLY19qRdbJgJHFDSKAmWuF147STQIQIY3Vvwl7qEaG7qJvaXjNpLiY9Vfya0P+MRrZDU
+	AaSSvmPNKnk2zfXYGcIo6csHPDBpesNfnl+mfWjAWossSdTGC2MKU8egwvpd6GBwyGo54M
+	fRZ/GwgbtAhX6Rj0x9SRnbLCNylZJ2rKp10NgYWNfJY6XoWyZWuZlAVflEcsvXYf2Mdzcj
+	OQ1uc5DdEPbXp2iO9ebp0rO3bbg1DWD4/1SRv2zche6VhM3c2W8AAxGm0SHemw==
+Date: Thu, 24 Apr 2025 17:18:38 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Douglas Anderson
+ <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
+ Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
+ =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 34/34] drm/bridge: panel: convert to
+ devm_drm_bridge_alloc() API
+Message-ID: <20250424171838.21a95d80@booty>
+In-Reply-To: <20250408-thankful-husky-of-weather-355cae@houat>
+References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
+	<20250407-drm-bridge-convert-to-alloc-api-v1-34-42113ff8d9c0@bootlin.com>
+	<20250408-thankful-husky-of-weather-355cae@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-510f9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeelkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedtpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrn
+ hhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Wed, 09 Apr 2025 21:37:21 +0100, André Draszik wrote:
-> This series adds initial support for the Samsung S2MPG10 PMIC using the
-> MFD framework. This is a PMIC for mobile applications and is used on
-> the Google Pixel 6 and 6 Pro (oriole / raven).
+Hi Maxime,
+
+On Tue, 8 Apr 2025 17:51:08 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
+
+> Hi,
 > 
-> *** dependency note ***
+> On Mon, Apr 07, 2025 at 05:27:39PM +0200, Luca Ceresoli wrote:
+> > This is the new API for allocating DRM bridges.
+> > 
+> > The devm lifetime management of this driver is peculiar. The underlying
+> > device for the panel_bridge is the panel, and the devm lifetime is tied the
+> > panel device (panel->dev). However the panel_bridge allocation is not
+> > performed by the panel driver, but rather by a separate entity (typically
+> > the previous bridge in the encoder chain).
+> > 
+> > Thus when that separate entoty is destroyed, the panel_bridge is not
+> > removed automatically by devm, so it is rather done explicitly by calling
+> > drm_panel_bridge_remove(). This is the function that does devm_kfree() the
+> > panel_bridge in current code, so update it as well to put the bridge
+> > reference instead.
+> > 
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+[...]
+
+> > --- a/drivers/gpu/drm/bridge/panel.c
+> > +++ b/drivers/gpu/drm/bridge/panel.c
+> > @@ -287,15 +287,14 @@ struct drm_bridge *drm_panel_bridge_add_typed(struct drm_panel *panel,
+> >  	if (!panel)
+> >  		return ERR_PTR(-EINVAL);
+> >  
+> > -	panel_bridge = devm_kzalloc(panel->dev, sizeof(*panel_bridge),
+> > -				    GFP_KERNEL);
+> > -	if (!panel_bridge)
+> > -		return ERR_PTR(-ENOMEM);
+> > +	panel_bridge = devm_drm_bridge_alloc(panel->dev, struct panel_bridge, bridge,
+> > +					     &panel_bridge_bridge_funcs);
+> > +	if (IS_ERR(panel_bridge))
+> > +		return (void *)panel_bridge;
+> >  
+> >  	panel_bridge->connector_type = connector_type;
+> >  	panel_bridge->panel = panel;
+> >  
+> > -	panel_bridge->bridge.funcs = &panel_bridge_bridge_funcs;
+> >  	panel_bridge->bridge.of_node = panel->dev->of_node;
+> >  	panel_bridge->bridge.ops = DRM_BRIDGE_OP_MODES;
+> >  	panel_bridge->bridge.type = connector_type;
+> > @@ -327,7 +326,7 @@ void drm_panel_bridge_remove(struct drm_bridge *bridge)
+> >  	panel_bridge = drm_bridge_to_panel_bridge(bridge);
+> >  
+> >  	drm_bridge_remove(bridge);
+> > -	devm_kfree(panel_bridge->panel->dev, bridge);
+> > +	devm_drm_put_bridge(panel_bridge->panel->dev, bridge);
+> >  }
+> >  EXPORT_SYMBOL(drm_panel_bridge_remove);  
 > 
-> To compile, this depends on the Samsung ACPM driver in Linux next with
-> the following additional patches:
-> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
-> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
-> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+> I'm fine with it on principle, but as a temporary measure.
 > 
-> [...]
+> Now that we have the panel allocation function in place, we can just
+> allocate a bridge for each panel and don't need drm_panel_bridge_add_*
+> at all.
+> 
+> As I was saying before, it doesn't need to happen right now, or before
+> the rest of your work for hotplug goes in. But this needs to be tackled
+> at some point.
 
-Applied, thanks!
+I totally agree this needs to be handled eventually, and also to get
+there in steps.
 
-[01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-        commit: 702ac7e59d9bf018126d51a2a3c7708e35afd8b0
-[04/32] mfd: sec-core: Drop non-existing forward declarations
-        commit: faaad8c7fa7aca377cb0a2ec2b4a64c0bda6f451
-[05/32] mfd: sec: Sort includes alphabetically
-        commit: 3e18fe35ea16640b53e41e963fb50f8dbd80e004
-[06/32] mfd: sec: Update includes to add missing and remove superfluous ones
-        commit: e4f9f9942e80bc512da2a2ecacf294b603e6f4a8
-[07/32] mfd: sec: Move private internal API to internal header
-        commit: 60ab5a460717ebe8306535cce8a4abba4df99b3c
-[08/32] mfd: sec: Split into core and transport (i2c) drivers
-        commit: 286ee42bcd9b64bf13190769e705620e1d11efb6
-[09/32] mfd: sec: Add support for S2MPG10 PMIC
-        commit: e60189f7863bc47cbdccd8cca235cc159cb153c6
-[10/32] mfd: sec: Merge separate core and irq modules
-        commit: 494fb2908480664ea95c5bff26a174dcb8b072eb
-[11/32] mfd: sec-common: Fix multiple trivial whitespace issues
-        commit: ee5114413def30a79e1892eafe9194c06124e9dd
-[12/32] mfd: sec-i2c: Sort struct of_device_id entries and the device type switch
-        commit: 742d53cd4487792c2d70d5b5ccc8468a7c4bcc33
-[13/32] mfd: sec: Use dev_err_probe() where appropriate
-        commit: a745673725d2a63aef8c8c62b2496e345c5f3b78
-[14/32] mfd: sec-i2c: s2dos05/s2mpu05: Use explicit regmap config and drop default
-        commit: a0164e4ed50bf0cb05d2692a866276a11db0dfa4
-[15/32] mfd: sec-irq: s2dos05 doesn't support interrupts
-        commit: a5ee21c891befdf9b695f17222f246fda14ec580
-[16/32] mfd: sec-common: Don't ignore errors from sec_irq_init()
-        commit: 12933bcf7119ec1b75b8d43f17cb7ed4797aba21
-[17/32] mfd: sec-i2c: Rework platform data and regmap instantiating
-        commit: c206953656074edeabfdf44bbb2bdf89daf6bbe5
-[18/32] mfd: sec: Change device_type to int
-        commit: edd2e1784f620e1302b660e68578aa353253fa2b
-[19/32] mfd: sec: Don't compare against NULL / 0 for errors, use !
-        commit: 079b0fe8185c5a6995b3d3c80a6098f857702048
-[20/32] mfd: sec-common: Use sizeof(*var), not sizeof(struct type_of_var)
-        commit: df7abb6bbc6a75aa0b7829d39f1fe8499d9580c4
-[21/32] mfd: sec-common: Convert to using MFD_CELL macros
-        commit: d4bddf7d284d61331964d5e46405b7afe0e98bf6
-[22/32] mfd: sec-irq: Convert to using REGMAP_IRQ_REG() macros
-        commit: c0d96474f496db3fe286fe8ae2072c321205629e
-[23/32] mfd: sec: Add myself as module author
-        commit: d2bae7c2b23185a71a22f85079461f22143f9b64
-[32/32] MAINTAINERS: add myself as reviewer for Samsung S2M MFD
-        commit: 8a0542753218d260e23c77311cd909f7b38e6daa
+The current status of this driver is not ideal, so I paid attention to
+not make it unnecessarily worse when writing this patch. Do you think
+the current patch is OK for the next step? I'm going to send v2 in a
+few hours, so don't hesitate to mention any improvements you deem
+necessary.
 
---
-Lee Jones [李琼斯]
+Luca
 
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
