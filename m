@@ -1,149 +1,144 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E101F1936;
-	Thu, 24 Apr 2025 20:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111E421A45D
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 20:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745525499; cv=none; b=ntX1bIanxYAIxQNB95InLWtVqIwXlLgxw33zS6gObSsal0s5u5MhzwcLQZSBIOJENxK1FuRe3XrxO7UR5t9NJteQV9t6K6wp3GFkDa90o7ZYbxho/MNitSHjyOYp8M0mnwxFDLgrOvM32WFUh2h3vm1YgtR9xOx9ui/dZ5xhTPk=
+	t=1745526800; cv=none; b=Cd0vyq5AyqYL4dYpBhiKJj6hUsmbzcKfvxv6pntPU3FZ+o9O6EgyJ2FBNnPnLsnoipNnkb+MYm8wvLKu0qmhz4QqGsjhQFcAfVTMaNlEU6V+bSoVqHnSAL7caGUsXttRd0ZAFgaISBsKS+lHqFPC318MEozL3LT6cs+h2M130R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745525499; c=relaxed/simple;
-	bh=HCCurbCpdf2762GuvXifcOsixY7BzzcVytS+CUWVOyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A06fZle+MGsxgkJZZBpPv2RfSWhZLF/9EBu5TvecoaazL9MRq5fezIyEVhURzc4mo4hX+zcQYSGAW9XpYpt2dSiWDKr3Lcb6tuX4UUyRibvFn6s760xp5zDPsTuXtGsNgku4wPAEKTk8jOL3DVHggSL7lWn4weKrFdWx/tFtyrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MDQiMXwM; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1745526800; c=relaxed/simple;
+	bh=4QeWTXypptQJXSP2hw72WicyVT12KyhEiOJC2dhD6mA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JPZU7dwdvue+E+AyZMzlzxOH0SMLOhj0rU98EpoYAsXkMUeLfq2yNqXuKjz3MEETyXi6z6lFjKexh2t8MvfCfjEg8O8aYrQGXqQ+aF8pc83/TrfXHR1r1hqvdcWM9LQzRFJLySzMPLZy52zhfWOAaPeNWp0TDbzBfLbg/d38c6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y2yYW7JQ; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MDQiMXwM"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8F2A043A53;
-	Thu, 24 Apr 2025 20:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745525494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=09PG+fxuKesOM/kP22ajuEbhOQfehjAeduUbezP82Mg=;
-	b=MDQiMXwM5Q6Bw/oa/uvytc0mvtbv7DY7eO7AgzCRzcWizRHKKKcSnyc0iJLbNVTw3Wsr6J
-	lTOqEIBpBUTVqeWYByUkK9Vr4B1fufwPqZl7YxYRoWAyaBP1xMe1FKuin1fkR2amiI8dF0
-	g4m6ihEA5Sz5uKfTe90sT+P+hHpzDS0N1w8Eup2LzDQrQMZHVyRc/xdFInUSbca9eev8lk
-	S91hJDIYFe8zBrsqAHK0miPfASgOMYTye6Z7W6eIE6MEXvKIMHHApCEBVFDrzlDwCSVoJ3
-	qsOh05OZ4XanGRLXUXv1Kzadf2o8Wr2tXbrVszd0YlKh6k3OKd9EvxoaBkoDbQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Anusha Srivatsa <asrivats@redhat.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Hui Pu <Hui.Pu@gehealthcare.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	dri-devel@lists.freedesktop.org,
-	asahi@lists.linux.dev,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y2yYW7JQ"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39d94327297so173538f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 13:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745526797; x=1746131597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=idgVGL6g4QaZWwBvT7pD7vd7IkM4X5ShmrP8Se1lMVw=;
+        b=y2yYW7JQUyirdQS3zK7xAjyaIl/xp21D351k7p5bhQjnHgspU7DI/RY50jXCYpb/In
+         WM/W47bfdwJi7j3UQJIl6kf2FrNaKN97OkICpzw0QVH3yMFHSN8AMxm1paqDuU6S2Yyz
+         06ijdj4u87+27maAS1ZPEz+Wej1HrZU91EEslcWWb3+Ryns1VtQKzvC669JlEn6cwlYh
+         njVumXc+tkwBCmQXfHPRNHhbyLZDF7EtOH+z1LomYKMxUkAr15wzloF+tXkzozS9jZkp
+         38/SsLJy94+R5h4TMP4RsYerbj+a5gsv5ahhlXZUMSRCSZMx414DL7ry3CQ0e8xzcR9k
+         lRdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745526797; x=1746131597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=idgVGL6g4QaZWwBvT7pD7vd7IkM4X5ShmrP8Se1lMVw=;
+        b=vTag1iQ3rOtt7Vdp5UMA9at5AFlakiq/yos5joGDkt0FGmDMI84oc8DzR+BT91hrwP
+         T3FtKCkyhUaKu//alG/dNWQKpqiI3ayrflZ3LMPHFHZCsDvUqyjMiqPj87PEceghxoW8
+         YDNsYXYhsoXE9LZGnAXLJy7pSF5ZqZvdkJnuUu5AdKwLW8I7JWK8/N+YXBO7ZjODIQVA
+         YevKzedktX3u3rIhNEJFcNAvXwp0H9wrfHNSA6G9snIYUdRFZoCzGBIYyxYDdlhRUVAk
+         JCgQSALmyPXCm5cQeUbdDDhM+7zE0I5xqCWpIdYzWLbf2IZ2JqrlVYZ+hOqs/OYKbwC0
+         wGvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoAMYzQm9xo/WuUlbDD07XgFC7XQ6rNTXJfeKyB5XNEc59+fgLmT1hRSm2hHqTjUQWKEQOFgA4+n55NRPOR+C/ug==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/kuuiEIk/846/vJeROORWgbVe6hk4+3XUwZwhN3dLB6wudLRH
+	lwEJ8f3ZMseD8Ym3E51BFMz6+PKiUh4WrNEFuChn+hcwXSj+lFcP+m80y8dB7W8=
+X-Gm-Gg: ASbGnctIR4HbA5MipTu7UIzT2SdGR0VVS/DgkCpNbMS0tVjqYeroKSnp+OjZqaeoOiC
+	97Yvv+QxqQNdSTm2AlgnmJ8Lznh8VJciGgnwVMU2J8tqStkxxDoI77EkOUvLohiZgMdsCK9Go2Z
+	BWX6K6qqwPFrkdyRG5gyy3m0Q1JZbXN3icB+u3mno1BLGiExcnjzeVQsDTulHFjaU1Qm0Adp2Fe
+	7MceasiaK1cvdtkd8uCqJ8V40HYFdekwGiIGCjkEUCbdcnDjlCkiBmWjaCEnUj3WxtzCR5ctD5K
+	c/EbOGd8IssNdAyIWPONSJ43iwQ1Ao6POVwkLZuTtfd1wWHfOw==
+X-Google-Smtp-Source: AGHT+IE5Mc9hxBHCR2InV+3GYjWm+yX48MSznxSGfJQ+nJnypxIRQDaL1uLviaLHAXTFGuG4bu8Mbw==
+X-Received: by 2002:a05:600c:198f:b0:43d:745a:5a49 with SMTP id 5b1f17b1804b1-4409bd77f64mr15358405e9.4.1745526797180;
+        Thu, 24 Apr 2025 13:33:17 -0700 (PDT)
+Received: from kuoka.. ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a53870f9sm797625e9.33.2025.04.24.13.33.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 13:33:16 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 34/34] drm/bridge: panel: convert to devm_drm_bridge_alloc() API
-Date: Thu, 24 Apr 2025 22:05:49 +0200
-Message-ID: <20250424-drm-bridge-convert-to-alloc-api-v2-34-8f91a404d86b@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
-References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+	linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] firmware: exynos-acpm: Correct kerneldoc and use typical np argument name
+Date: Thu, 24 Apr 2025 22:33:09 +0200
+Message-ID: <20250424203308.402168-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2015; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=4QeWTXypptQJXSP2hw72WicyVT12KyhEiOJC2dhD6mA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoCqAE1H7molI2SrPDwvMlO3UDSVTRVDm+gevDd
+ knoDzWIWGyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaAqgBAAKCRDBN2bmhouD
+ 11FzEACRaBawm3jRXDBKOuAGgA7XIz7w2537aCM6EOBi6nKWKvWSPJeGtPKK+sAXHBvWzom7pxw
+ pdsqKgUW9MVmcs6W/nIUTPKdyy78eyx4luOQLpXbNjQOTY1qoxUWJvF4Niwaj4oqlobww//yOo1
+ 0sQs0QbiLddmFdBjNdaLj1pPG2ojQwnsfKZcfS2G8IXqnc6EYKw75xkwoazdQvrdizqmJ0C32Pu
+ Kcb8qYpr22iEqmc+rpKZhGoz7Pe0MSJlYwNuMsd0JhtEm0geN2l8b/bmqXrNGNKZ+CUbjPKcldJ
+ ad9h6C2syO0/kA8akIOy9kM0VPb6nDup8gqmxVHugYGvVP3gc4R16BNMklOV3GU0f2+BKtmAHOh
+ f0EdX5gz14N4wiE0Q2gWaNYRxdORLjPrx1MiJrnL8E/8pE1wB0K12jIKIrsaqEN5B6hOpkDIbno
+ jE7+odrH+wztsqozQoDuzPhA+Wn/eRpfwSRNeb691pM2N86mbE6UDaGEpzFG5OJZzEs1URFPMUe
+ Lr5k+RH6GmaB3TpoQMjoyACrwkIqglxwZAoFb4znIBOH7jtBVKJ6fhxD51HXH4TVS2IuqcwCuXb
+ B7+L3G37ogeJzckbACLv6cRtBxByNsMZxrxhv3NekNF6FuCpsmhQqae5r3GM3YDSxbdIa9NyUUi gXCBG3mKlOq5AYg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvhedtfeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfgggtoffgsehtkeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudffiefgvdfftdffkeejjefhffduleejleeuieetieetgeehtefhjedtgeegieegnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhdphhgvlhhopegsohhothihrdhfrhhithiirdgsohigpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeelpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdru
- ggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-This is the new API for allocating DRM bridges.
+Correct kerneldoc warnings after commit a8dc26a0ec43 ("firmware:
+exynos-acpm: introduce devm_acpm_get_by_node()") changed the function
+prototype:
 
-The devm lifetime management of this driver is peculiar. The underlying
-device for the panel_bridge is the panel, and the devm lifetime is tied the
-panel device (panel->dev). However the panel_bridge allocation is not
-performed by the panel driver, but rather by a separate entity (typically
-the previous bridge in the encoder chain).
+  exynos-acpm.c:672: warning: Function parameter or struct member 'acpm_np' not described in 'acpm_get_by_node'
+  exynos-acpm.c:672: warning: expecting prototype for acpm_get_by_phandle(). Prototype was for acpm_get_by_node() instead
 
-Thus when that separate entoty is destroyed, the panel_bridge is not
-removed automatically by devm, so it is rather done explicitly by calling
-drm_panel_bridge_remove(). This is the function that does devm_kfree() the
-panel_bridge in current code, so update it as well to put the bridge
-reference instead.
+While touching the lines, change the name of device_node pointer to
+'np' to match convention.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Fixes: a8dc26a0ec43 ("firmware: exynos-acpm: introduce devm_acpm_get_by_node()")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202504222051.7TqaSQ48-lkp@intel.com/
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/gpu/drm/bridge/panel.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/firmware/samsung/exynos-acpm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
-index 79b009ab9396048eac57ad47631a902e949d77c6..ddd1e91970d09b93aa64f50cd9155939a12a2c6f 100644
---- a/drivers/gpu/drm/bridge/panel.c
-+++ b/drivers/gpu/drm/bridge/panel.c
-@@ -287,15 +287,14 @@ struct drm_bridge *drm_panel_bridge_add_typed(struct drm_panel *panel,
- 	if (!panel)
- 		return ERR_PTR(-EINVAL);
- 
--	panel_bridge = devm_kzalloc(panel->dev, sizeof(*panel_bridge),
--				    GFP_KERNEL);
--	if (!panel_bridge)
--		return ERR_PTR(-ENOMEM);
-+	panel_bridge = devm_drm_bridge_alloc(panel->dev, struct panel_bridge, bridge,
-+					     &panel_bridge_bridge_funcs);
-+	if (IS_ERR(panel_bridge))
-+		return (void *)panel_bridge;
- 
- 	panel_bridge->connector_type = connector_type;
- 	panel_bridge->panel = panel;
- 
--	panel_bridge->bridge.funcs = &panel_bridge_bridge_funcs;
- 	panel_bridge->bridge.of_node = panel->dev->of_node;
- 	panel_bridge->bridge.ops = DRM_BRIDGE_OP_MODES;
- 	panel_bridge->bridge.type = connector_type;
-@@ -327,7 +326,7 @@ void drm_panel_bridge_remove(struct drm_bridge *bridge)
- 	panel_bridge = drm_bridge_to_panel_bridge(bridge);
- 
- 	drm_bridge_remove(bridge);
--	devm_kfree(panel_bridge->panel->dev, bridge);
-+	devm_drm_put_bridge(panel_bridge->panel->dev, bridge);
+diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+index b3afb2069fd1..e02f14f4bd7c 100644
+--- a/drivers/firmware/samsung/exynos-acpm.c
++++ b/drivers/firmware/samsung/exynos-acpm.c
+@@ -677,20 +677,20 @@ static void devm_acpm_release(struct device *dev, void *res)
  }
- EXPORT_SYMBOL(drm_panel_bridge_remove);
  
-
+ /**
+- * acpm_get_by_phandle() - get the ACPM handle using DT phandle.
+- * @dev:        device pointer requesting ACPM handle.
+- * @property:   property name containing phandle on ACPM node.
++ * acpm_get_by_node() - get the ACPM handle using node pointer.
++ * @dev:	device pointer requesting ACPM handle.
++ * @np:		ACPM device tree node.
+  *
+  * Return: pointer to handle on success, ERR_PTR(-errno) otherwise.
+  */
+ static const struct acpm_handle *acpm_get_by_node(struct device *dev,
+-						  struct device_node *acpm_np)
++						  struct device_node *np)
+ {
+ 	struct platform_device *pdev;
+ 	struct device_link *link;
+ 	struct acpm_info *acpm;
+ 
+-	pdev = of_find_device_by_node(acpm_np);
++	pdev = of_find_device_by_node(np);
+ 	if (!pdev)
+ 		return ERR_PTR(-EPROBE_DEFER);
+ 
 -- 
-2.49.0
+2.45.2
 
