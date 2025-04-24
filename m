@@ -1,177 +1,105 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C16B2253EE
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 08:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26664222574
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 08:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745483764; cv=none; b=ThjGFop/IWG8vqzTTSNzqF/bdTnTqpyIJigGGHVInNRwD4m6HAgdOZA01asztLGA6kYfWP8Z+sm36YkzTXifr5iW6sh4ms9PH3/phOMf2MR6wIBy84MyUJuMgUPWuwvNY43gZyetqQDbzcXseQEJ0ZtSiA88sBDENW2ifbA+nHw=
+	t=1745484423; cv=none; b=aX5GTwu/bILqFUhirbYZB+5BpqQnCk4aBuWu7Vyt3UeRG0JDNZonrKkXMfRR4IihzEbzTJAXowqrAvI4Qd6L5joKeVE1yXbpKm34xwjkIRmnIIEDDRPWW3dpsgmAypkrBUyBLbXgVMye51eeedGi6+IwL8R4NKx8P9KGzmx40/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745483764; c=relaxed/simple;
-	bh=iJgBNsG6lNFWVLQiSa+DhOTeGMwUTZl4FTd44fGqDV0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HLIc0L+n0g0MUe9z12vxaHL8ZSQ62cMGNAp9nEaCoK5KJsVz0OWvsCDS9bRa5MUr5CW7ZhBVxJsk/hG513TE4burTPxtgc6YtGOhbxo+gxIL3iz9apoNy7nZ6YCI1WxrS2E9EW1Gy7FnsrtxPtHlfQocgHvPCVjO+HMxZlR8yKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RPtK9kC4; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1745484423; c=relaxed/simple;
+	bh=I97E3x+4QGH3F8HH8iKxf6zuq25b9jMkkXtPCrx861w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBXxm/JMBfmA04VvZyaEXTUaiUEU42xaer55ITDglbrT1DTwWvgOcbHzVXbWOre6LVkwI2XahJxnU0LBRSQOlTt5Jo2so69hiudKfVAJB1k6ZwrPnkCVAelmjXMeSKmNPVNrOwlL2nMQbY7nVb8Fk0WKLaPYG6prMuWHka156rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XvE4Yyni; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RPtK9kC4"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so6013545e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 01:36:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XvE4Yyni"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac73228ea73so7196666b.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 01:47:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745483760; x=1746088560; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wyD1ibYwZZNQjABTauO+kWeZmIcgNLsOAbjC6l1tSrA=;
-        b=RPtK9kC4LjSXD1qQFOsA0rKWaD0QeJc64AIgG33BrCZCJmOAxZ52LrclzBfUqrrXtm
-         mA9trdleq54MLvugQI59/uqHVrgHOnDwAJB26qU9VCLDSSbCyD9+SgMwVaH9UsRUK/uo
-         u9H6AfGBahjDSZXIrVd0/owWqf8hLb5BwAHxEM8IAcbtNqx09s8NXM4/H2+uJomieZeV
-         GcsN1KnhTxxjys9o1NYmtY26rvOd5IXOFSANNydM2cHpUWt+WUAVVbtA3u8CwGg1yRLg
-         J6eLDLijB25QuitRErqmqkrM9HuU/ANu4Fvv40MMTU9yCUAEYgih6eSxdpcwdkPlgpNB
-         Hu9Q==
+        d=linaro.org; s=google; t=1745484419; x=1746089219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=InmVeShwvVjzvGgHpHUKVWXO3tEYZy+95XoB/RnU86Y=;
+        b=XvE4YyniX733luBoLe6//HxXMZzjXCzCRNZ7H+PNRDotYycGEw5VfU+a3Grss7jU6A
+         cjvdWgqHYbrQ5Yl+nTieVDuaJNvVdaASkpbBu3HQtA28DoYmxS14LZbdgZ6LPMxnJbp7
+         eVnZTeAOiFyl1Z5eFtz3h+pSFZ+vGPf3iQxe9Ir8rdk1WVAj+ycxJZirCA1LSuVMOFo9
+         tSY3n4FFx0bVb4otbPEJ3Ace/Pn/c8/QdxZUv1FV/W5FRkKrRErwCYyUM8FuEiv2+RVB
+         CLznchfIvkb5KYmmEHW1rVM6BeIOsbDYMXV46zHEpwgwlFzi4RyOIvbhQapyOa/qZOGh
+         UxaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745483760; x=1746088560;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wyD1ibYwZZNQjABTauO+kWeZmIcgNLsOAbjC6l1tSrA=;
-        b=PGmGwOYFr+mn01FYFsVXXSIduA/1r1VvTqKoo3dnW53+3WPqpcHRjGxcEHJ09dVDCs
-         nRUqWxjHZ28SAGC5o6S5hdEor3Us40fVXIAt/uaBYGhnbER96Dsv6/ViTE26rsQ2CNz6
-         egmsxaNAZkPAFW2vJPi9X3x8XVajix+WtF1X0komV9L07tr6b7QjXw+k9cYdBr9V+0OX
-         ALLOeA6HiAWqwLSO1cCry7Oz/PsSEHE2lqT+ortnv6vZS6kORc6VC6jGvOCMGV7pF28U
-         TXha5fNAKlD6uvpspNJVOjTJdaRn83tmFiy98IZK8WVmZ5MuT+8HwmmpQG2VaOB11u/a
-         QGLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc2GEaylnvDGygwIDtnNBZxsmSSXJLa0Ah/M5gZaSBGXVDbkdlhvnYI/5Bo9EuhnE6SSbOR3/RDhi6Q9yAXJdUlg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YziuBlpaQ7RkZECsMtMfR97ZsmFVdPirKY2zhWhVvB2mPduShzk
-	cpcwunlQ6V2TM9RWWRSNpu8le3FsaMvKPmXbgcvaf4+cOWzuSNFOWq90fV/aO3g=
-X-Gm-Gg: ASbGnctjcYF8COjlFJYNTFfTMzE8pPUx+Dm3jnCHlyRODsEsMeVGHBUkre7QmQafgev
-	DqgYkbmJ3NX99IueRh4PEPtdhmm6XM/N/pMliWg4SG4hfVEIuDLGVW0+OwbLfadEtanA4LLtP1S
-	bZxNPzjzuKqfnxomg3XWXy3ag1dDLRvDb+18hoDdY+vr8cGsGHRavpusBcXkWKHF53YErF+UqZD
-	XIgTf7EeRQ1XQT5wOb78iid34QPkcR7EYq3H4z1oNOepYh32NFQX1IHXUULotGYC/G3udaUmE2e
-	z2AFXlWUKXJ5U9ImUiOphjwUXonPuJmGfpRwvTlcy88k
-X-Google-Smtp-Source: AGHT+IH6QOMYk+VJrhRN0zGGVgIfy1D2k+1MN8UGZUw2MzoHJ3Lm78KvUsSoh9H7JaBXZAa1kpHpxw==
-X-Received: by 2002:a05:600c:1d02:b0:43c:fbbf:7bf1 with SMTP id 5b1f17b1804b1-4409bdb032cmr18240795e9.30.1745483760212;
-        Thu, 24 Apr 2025 01:36:00 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6266:7750:57ce:7cb4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d54ee11sm1295376f8f.97.2025.04.24.01.35.59
+        d=1e100.net; s=20230601; t=1745484419; x=1746089219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=InmVeShwvVjzvGgHpHUKVWXO3tEYZy+95XoB/RnU86Y=;
+        b=Qtrw1CXZNmjxqVsfFxQVsiH2DqzLRMvcm+uN9HPgMH2CLZoU2Lo4Hn4b6Y3PGwuoqE
+         D8ENATWKO89kjWM8pqiprRRh10ZlyviYYAdG1pdaXWGsRr5XOzrYk8Y9P+DP1seurI8t
+         elQTEh2ooShTv2fbO/DCTlRi+/7Nx7W1Hq8iu91e3SdUhSRJHcvNgnG7Vs0o/XeonHcP
+         8QJe1XndQMSZlBCe0a4s74f59hyqROzBKoud40pL/fJ5PNntDDLWARLZLp3zQmvzO+BC
+         XnyWdw2f8qad7fGxFWcc2Ee5/tXxk3QvLWMvPb0K+8LaMWtbGZ6ZuNJwk1eLoFz4ebp5
+         rZtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFqZxMj0UOUvimxCJ2/pJzx08itJl/d/I29qBOp0XvgdUJVTc3B0DVUmb3+XyWI2dWT9bq2wRM376+xxOWx6yxkw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7pCtnruxsaWkFRO6aB3RPU9MzqNXarpT5C3Qgq7AMlCakKfP7
+	JfgmNXz3SaAKYRUQH+ABDjZ6JQNlN8KABpXBvNamL08BLR5Roumnq09yThE3LYo=
+X-Gm-Gg: ASbGnctw4Qb4jtRbKtjMsCFN4RiAVYMk8Fann5yTChWsy70dHUsQ0oPkMN8qkyoiDz0
+	H7C3Vy6UweI9h2/lVrNgTG6DCwE+6eBbS3Tl0ZM/dneu/bL7ddVv2x83ujXmfcCabeeZyOkcjCQ
+	UMb5Au/L7OXhriT5oiDr3X3URMLnig/+Cb7hUyQ0SdNvJbGpdboILhdHAaKTU7AUI+Cn7MfUojF
+	e99j5+meu0M70bm/DS/syAByQOjzUYJEjqo9WswtmPpL2a9DEvgf8ypVX1XDHHyNCooA91dgVWO
+	Ox9VSyCtAqFXhG/TnUdubw72uY58FAn+H1L9kzPuP/6D/cP5yg==
+X-Google-Smtp-Source: AGHT+IE9+DPre4j2x6keFqgEO7PT+Wn5fGJGtZZ61C/F7fDAucCVLJyYO32bRzby6KLv1OyEu9lE/w==
+X-Received: by 2002:a17:907:3f87:b0:ac2:6d40:1307 with SMTP id a640c23a62f3a-ace57429fe2mr61424966b.13.1745484419430;
+        Thu, 24 Apr 2025 01:46:59 -0700 (PDT)
+Received: from kuoka.. ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace594b63ecsm73139266b.0.2025.04.24.01.46.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 01:35:59 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 24 Apr 2025 10:35:35 +0200
-Subject: [PATCH 12/12] pinctrl: samsung: use new GPIO line value setter
- callbacks
+        Thu, 24 Apr 2025 01:46:58 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ARM: dts: samsung: sp5v210-aries: Align wifi node name with bindings
+Date: Thu, 24 Apr 2025 10:46:55 +0200
+Message-ID: <20250424084655.105011-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-gpiochip-set-rv-pinctrl-part2-v1-12-504f91120b99@linaro.org>
-References: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
-In-Reply-To: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
-To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Chen-Yu Tsai <wens@csie.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Steen Hegelund <Steen.Hegelund@microchip.com>, 
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
- Ludovic Desroches <ludovic.desroches@microchip.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>, 
- Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
- linux-mips@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1963;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=eG2KW5x0cqyXDN96Y9D3KPo3rE0JJ5CGRPpl+iXxy5M=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoCffdVG5Ygxdkgp3G4S/J2z4z5Tlan+vD7V30h
- TZ7h0V/5sqJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaAn33QAKCRARpy6gFHHX
- cjrUD/4wlY3EyRbxHX7pcMIAP/3DRyfsZNReCKH3ZrZK01gpg0foFUc8R9H0I7tpjEjSAcAY76v
- HT6Cav5kSBB36HXaJHFnbS5jDeLX1My/AARxYsg4hUeZMPsEdhdyug5NLPV4v9U5qGYyscWQJyQ
- IwWtL5S1/tZAIxzE73GS7fBnvaLvxdKHbO+ihsBKDN+CICZsABKHeqmX8HC/mpf/Pn3VZDLdxw/
- v370ttF11vBuDqxQFqucfxlUgG44NsRTH7slXcpLFqsmYFiyQ+60Kr8qtR4uG0wjgcD84YTAWTA
- jnMOBMJyWoX60aJoqOu+7ntHGuUA7AfUId1TflJw4qGZZhayvH7YZWSFpZChBh+R4GzP2lrJnH1
- /l3WSICXjyuCbO00KEg0M/ETEdHzDfqcXsC++m0uUp+XVVbx+NvevmZ076l6BhVpake9w8udGP+
- Y6lwhiWZ8sd+/nec1W16T+R/feEwjS3Uv+zzSP+uImKmEA6Rt/EFeZ0kppvf1XgXTXagAHYRfnq
- AX4Z1SXHpFfCHXYrPNMxv8w2uM1/eIljOwRAW3Xye5WYWe5bWWR/tmOB8O64R331D1+UTdeTv/x
- ZuaGKlVB7ySPckXnPWzWBP1UHZQiR7DAHXC2juTTX1w+v4NAGx137CcqLE/rrfEgbdhjBoA9iFy
- +HWM7daAr7IScLg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Since commit 3c3606793f7e ("dt-bindings: wireless: bcm4329-fmac: Use
+wireless-controller.yaml schema"), bindings expect 'wifi' as node name:
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+  s5pv210-fascinate4g.dtb: wlan@1: $nodename:0: 'wlan@1' does not match '^wifi(@.*)?$'
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/pinctrl/samsung/pinctrl-samsung.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/samsung/s5pv210-aries.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ef557217e173..fe1ac82b9d79 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -570,15 +570,18 @@ static void samsung_gpio_set_value(struct gpio_chip *gc,
- }
+diff --git a/arch/arm/boot/dts/samsung/s5pv210-aries.dtsi b/arch/arm/boot/dts/samsung/s5pv210-aries.dtsi
+index f628d3660493..153514e80c9a 100644
+--- a/arch/arm/boot/dts/samsung/s5pv210-aries.dtsi
++++ b/arch/arm/boot/dts/samsung/s5pv210-aries.dtsi
+@@ -855,7 +855,7 @@ &sdhci1 {
+ 	assigned-clock-rates = <0>, <50000000>;
+ 	assigned-clock-parents = <&clocks MOUT_MPLL>;
  
- /* gpiolib gpio_set callback function */
--static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
-+static int samsung_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			    int value)
- {
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
- 	unsigned long flags;
-+	int ret;
- 
--	if (clk_enable(drvdata->pclk)) {
-+	ret = clk_enable(drvdata->pclk);
-+	if (ret) {
- 		dev_err(drvdata->dev, "failed to enable clock\n");
--		return;
-+		return ret;
- 	}
- 
- 	raw_spin_lock_irqsave(&bank->slock, flags);
-@@ -586,6 +589,8 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	clk_disable(drvdata->pclk);
-+
-+	return 0;
- }
- 
- /* gpiolib gpio_get callback function */
-@@ -1062,7 +1067,7 @@ static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- static const struct gpio_chip samsung_gpiolib_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
--	.set = samsung_gpio_set,
-+	.set_rv = samsung_gpio_set,
- 	.get = samsung_gpio_get,
- 	.direction_input = samsung_gpio_direction_input,
- 	.direction_output = samsung_gpio_direction_output,
-
+-	wlan@1 {
++	wifi@1 {
+ 		reg = <1>;
+ 		compatible = "brcm,bcm4329-fmac";
+ 		interrupt-parent = <&gph2>;
 -- 
 2.45.2
 
