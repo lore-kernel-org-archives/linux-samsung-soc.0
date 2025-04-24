@@ -1,169 +1,126 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E042701C1;
-	Thu, 24 Apr 2025 15:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6280117A30A;
+	Thu, 24 Apr 2025 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745507128; cv=none; b=YNed1wQUxbFy4MYyJArjfss69djIlCIAu2vkq61pEF/LQqzmAoOkRLjyaHL1B+fVCl2cNXaZ2QCaKMFRYY7Uq5kvjXd4sZJHbY+7bMtDjgHzJG6qUY4ocbZR0tgNT2DZDT67HrzuqdT1MOGbDLfddpLs9EYJklSueE4xTzvBCNg=
+	t=1745507490; cv=none; b=ptEEZF1vlvMgqcP9fxUsQ/9vXzB5u+VY5tsIsD5e3Vs1gLoBL+OsV9/OBSoJBDCdCj3icKZUBSB3QcWRR1zvBUxPJRoHasAWAYmzxkOJ/jzskfpmHc0IItBWyAbyDp14BAhc1B+kXFdzs5b6z6VS08Hq2VEgmmp41sgEbzsQnEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745507128; c=relaxed/simple;
-	bh=DZadV4dYY/zC+SdX3Ciq88DCbQxa2Avy7+9rB/BkoX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MgAgUIeqzR8MVBKcpLxYXzcgwuBhfoIBeB3XxfoyNYhBw8R0xvonUanCpOljlUGio5Er/0wRnJm93ntd4DjtoerXdcixSAAYyXRmJXVys6kAsRCE8bvpXTjrIFiPZaFn0Z6l0ZCCZCMX3vVtYHAJIVgAZ1b1e5BPFO0RvsNkFNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bGNZrkbg; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1745507490; c=relaxed/simple;
+	bh=BaigLKgi67/CVqkot7IIPq3EJQR29/Gk6ouHiFoFK2E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t7em4VqOqWJMMDrkoIwmtOiCrS95vyoHx+eV8OMZryDAxB/48k57mxsPhwq+t/MFIt+J9+NbKcCv/4bFK249boA0Xt/18iRKH6/bmeEfBIfmsDUEEri18NJLQiBBSZH28lrwy4+NGWRos2Fmc95thojWeO7vQCAFGyFUX5VGEBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeY03B1T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bGNZrkbg"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53OBPMk1019163;
-	Thu, 24 Apr 2025 17:04:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	EbzdNbMuPcQgyg/32v679V2kcITSnqgFdSJKF+onCu4=; b=bGNZrkbgM7hP0A4d
-	0huWCtfENxlTtZ2hD9QWgmb98DIFXK5fBmBupMzY6axYs0FrA/0LWmfz0WhsStka
-	AUXFj0pYsKuCM2wNw3Noz8aYCKXGStw8mUCIHn1PU8SS3MuLYegugGWwOdnCglQS
-	so57zD+/Q1kPH+lUcNiN2fR6/+s7xU5O1AjiWYlDUID34TOZerwOJJCOsxm/73wD
-	AKWfN54uWLHEgaWECt+7UHmgOfzc5a9lH3nXnAz3hT37RZh9W27f0QUDHzBg/F3h
-	2H+eskpgY2tz9SOoLS7XLLDm437GAqrqDrmqZ4wiJvlEm8NsT0+VsUGPYke1l5R3
-	kW1R0Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jjvg1q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Apr 2025 17:04:21 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7BB1040046;
-	Thu, 24 Apr 2025 17:01:47 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A4E6D9C40B5;
-	Thu, 24 Apr 2025 16:59:49 +0200 (CEST)
-Received: from [10.48.86.196] (10.48.86.196) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Apr
- 2025 16:59:48 +0200
-Message-ID: <fe3323d0-161c-498d-92e8-7a723f8d9780@foss.st.com>
-Date: Thu, 24 Apr 2025 16:59:47 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeY03B1T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C47DC4CEE3;
+	Thu, 24 Apr 2025 15:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745507489;
+	bh=BaigLKgi67/CVqkot7IIPq3EJQR29/Gk6ouHiFoFK2E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JeY03B1TWTc8tOQ1C9dlZuITJhFQrFeGVy6Uq2qfuk5n5BKK63mEq4v+xjtxaRWwm
+	 zYcxzm6rZtgEKx13PKAxb8Ghk39ZIP6GxHp8/G5sZ7pN17imkZBppQIGSGVb40O0SG
+	 yiIqZlTvRgJY9XS9y1h9Vt7hy6vF62mGYsZm5Abm6tV39Q00uBoPzJBnG+QFOVej1d
+	 MmtRb4yZusQ+HbJBU32nPOqndEBs9V8I/WMWWw5SDCa3hyyb2krUmif/76l29o0P2y
+	 sgBpBGi/jn6iDifBnU/9PIGo5YS5Rwjb6pQrpxoeZ3KfRs8DqEg8/daA1h/IZgAfO6
+	 h05i4tAQoEupg==
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+Subject: Re: (subset) [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based
+ drivers
+Message-Id: <174550748501.1452626.16896113997247650772.b4-ty@kernel.org>
+Date: Thu, 24 Apr 2025 16:11:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux-stm32] [PATCH 03/12] pinctrl: stmfx: use new GPIO line
- value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Basavaraj Natikar
-	<Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?=
-	<afaerber@suse.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Steen Hegelund
-	<Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Ludovic Desroches
-	<ludovic.desroches@microchip.com>,
-        Nicolas Ferre
-	<nicolas.ferre@microchip.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>
-CC: <linux-samsung-soc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-actions@lists.infradead.org>, <linux-mips@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
- <20250424-gpiochip-set-rv-pinctrl-part2-v1-3-504f91120b99@linaro.org>
-Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <20250424-gpiochip-set-rv-pinctrl-part2-v1-3-504f91120b99@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-24_06,2025-04-24_01,2025-02-21_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-
-
-On 4/24/25 10:35, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, 09 Apr 2025 21:37:21 +0100, André Draszik wrote:
+> This series adds initial support for the Samsung S2MPG10 PMIC using the
+> MFD framework. This is a PMIC for mobile applications and is used on
+> the Google Pixel 6 and 6 Pro (oriole / raven).
 > 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
+> *** dependency note ***
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> To compile, this depends on the Samsung ACPM driver in Linux next with
+> the following additional patches:
+> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
+> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+> 
+> [...]
 
-Reviewed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Applied, thanks!
 
-> ---
->   drivers/pinctrl/pinctrl-stmfx.c | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
-> index aae01120dc52..f4fdcaa043e6 100644
-> --- a/drivers/pinctrl/pinctrl-stmfx.c
-> +++ b/drivers/pinctrl/pinctrl-stmfx.c
-> @@ -115,14 +115,14 @@ static int stmfx_gpio_get(struct gpio_chip *gc, unsigned int offset)
->   	return ret ? ret : !!(value & mask);
->   }
->   
-> -static void stmfx_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
-> +static int stmfx_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
->   {
->   	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
->   	u32 reg = value ? STMFX_REG_GPO_SET : STMFX_REG_GPO_CLR;
->   	u32 mask = get_mask(offset);
->   
-> -	regmap_write_bits(pctl->stmfx->map, reg + get_reg(offset),
-> -			  mask, mask);
-> +	return regmap_write_bits(pctl->stmfx->map, reg + get_reg(offset),
-> +				 mask, mask);
->   }
->   
->   static int stmfx_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-> @@ -161,8 +161,11 @@ static int stmfx_gpio_direction_output(struct gpio_chip *gc,
->   	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
->   	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
->   	u32 mask = get_mask(offset);
-> +	int ret;
->   
-> -	stmfx_gpio_set(gc, offset, value);
-> +	ret = stmfx_gpio_set(gc, offset, value);
-> +	if (ret)
-> +		return ret;
->   
->   	return regmap_write_bits(pctl->stmfx->map, reg, mask, mask);
->   }
-> @@ -694,7 +697,7 @@ static int stmfx_pinctrl_probe(struct platform_device *pdev)
->   	pctl->gpio_chip.direction_input = stmfx_gpio_direction_input;
->   	pctl->gpio_chip.direction_output = stmfx_gpio_direction_output;
->   	pctl->gpio_chip.get = stmfx_gpio_get;
-> -	pctl->gpio_chip.set = stmfx_gpio_set;
-> +	pctl->gpio_chip.set_rv = stmfx_gpio_set;
->   	pctl->gpio_chip.set_config = gpiochip_generic_config;
->   	pctl->gpio_chip.base = -1;
->   	pctl->gpio_chip.ngpio = pctl->pctl_desc.npins;
-> 
+[01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+        commit: 702ac7e59d9bf018126d51a2a3c7708e35afd8b0
+[04/32] mfd: sec-core: Drop non-existing forward declarations
+        commit: faaad8c7fa7aca377cb0a2ec2b4a64c0bda6f451
+[05/32] mfd: sec: Sort includes alphabetically
+        commit: 3e18fe35ea16640b53e41e963fb50f8dbd80e004
+[06/32] mfd: sec: Update includes to add missing and remove superfluous ones
+        commit: e4f9f9942e80bc512da2a2ecacf294b603e6f4a8
+[07/32] mfd: sec: Move private internal API to internal header
+        commit: 60ab5a460717ebe8306535cce8a4abba4df99b3c
+[08/32] mfd: sec: Split into core and transport (i2c) drivers
+        commit: 286ee42bcd9b64bf13190769e705620e1d11efb6
+[09/32] mfd: sec: Add support for S2MPG10 PMIC
+        commit: e60189f7863bc47cbdccd8cca235cc159cb153c6
+[10/32] mfd: sec: Merge separate core and irq modules
+        commit: 494fb2908480664ea95c5bff26a174dcb8b072eb
+[11/32] mfd: sec-common: Fix multiple trivial whitespace issues
+        commit: ee5114413def30a79e1892eafe9194c06124e9dd
+[12/32] mfd: sec-i2c: Sort struct of_device_id entries and the device type switch
+        commit: 742d53cd4487792c2d70d5b5ccc8468a7c4bcc33
+[13/32] mfd: sec: Use dev_err_probe() where appropriate
+        commit: a745673725d2a63aef8c8c62b2496e345c5f3b78
+[14/32] mfd: sec-i2c: s2dos05/s2mpu05: Use explicit regmap config and drop default
+        commit: a0164e4ed50bf0cb05d2692a866276a11db0dfa4
+[15/32] mfd: sec-irq: s2dos05 doesn't support interrupts
+        commit: a5ee21c891befdf9b695f17222f246fda14ec580
+[16/32] mfd: sec-common: Don't ignore errors from sec_irq_init()
+        commit: 12933bcf7119ec1b75b8d43f17cb7ed4797aba21
+[17/32] mfd: sec-i2c: Rework platform data and regmap instantiating
+        commit: c206953656074edeabfdf44bbb2bdf89daf6bbe5
+[18/32] mfd: sec: Change device_type to int
+        commit: edd2e1784f620e1302b660e68578aa353253fa2b
+[19/32] mfd: sec: Don't compare against NULL / 0 for errors, use !
+        commit: 079b0fe8185c5a6995b3d3c80a6098f857702048
+[20/32] mfd: sec-common: Use sizeof(*var), not sizeof(struct type_of_var)
+        commit: df7abb6bbc6a75aa0b7829d39f1fe8499d9580c4
+[21/32] mfd: sec-common: Convert to using MFD_CELL macros
+        commit: d4bddf7d284d61331964d5e46405b7afe0e98bf6
+[22/32] mfd: sec-irq: Convert to using REGMAP_IRQ_REG() macros
+        commit: c0d96474f496db3fe286fe8ae2072c321205629e
+[23/32] mfd: sec: Add myself as module author
+        commit: d2bae7c2b23185a71a22f85079461f22143f9b64
+[32/32] MAINTAINERS: add myself as reviewer for Samsung S2M MFD
+        commit: 8a0542753218d260e23c77311cd909f7b38e6daa
+
+--
+Lee Jones [李琼斯]
+
