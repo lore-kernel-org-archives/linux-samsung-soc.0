@@ -1,129 +1,318 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ADF1DF988
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 18:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC76214B06C;
+	Thu, 24 Apr 2025 18:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745520948; cv=none; b=WEEHjnJwEnRaFkUF2L1NQ6p3ERISQmrX+elIqBKqW5WydO3JZ6Bmd0ZLNQVMNebmt3j+1DicYnCuXzqPykUH26xAQ8cz28uDRNaR5CozTn0KZIhowsOlVsdB4ID1LaXG0g5RuJjUwgv9BkPr/LL5wTtyuMODQnam+k74i8Rb7hQ=
+	t=1745521178; cv=none; b=O2ZzA7Z6yOoBNUPf/aml+mNamEaR2mAOIqhfbtrSEclu6mfVnjZaG8IHG9qrU23i6G3In6+VGeKcK3aAigN47TVg9Btsqek4NeEzB94cBzLTVq86DVwetHIPcZC9T9QApo+o28PtPAAy8df6/uyrNf4mebqPGvLpE2tYUCMmlT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745520948; c=relaxed/simple;
-	bh=rZUxyELSfnVXwreNQjwJQoaXQJWZ9fkMyqWksLWMfUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S+0pE9RI8TuAENw1WQzXJn4TLVEMt2x4fFrXJPGVvMoQfCMTNGZZpdn9kKAjytERV31Mae57Wt9YHO8PL2sICCZHcwdN9QRiKapwqY9Mq4zX8Q2XWYEofUyGBHT5uiQI+H/GjDyFX0WDCeqJ90PGkJC+YrxyfbQjLi1Yr2TBHQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oOadD6Sr; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1745521178; c=relaxed/simple;
+	bh=RW4xhX93+JT95Vyb6geExU0WR7HNFums/bOT98BQOBw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HI06GndJrBxUOez3g7GfP+yYLm0XkmQ68btd7zgRG8uUSyS1vDaVJN2Mt8/bVFlrpghxPn9dMs+z0i82bWmTvKAive3Khl0qfvODJwKorZU+VCopDRUD1p+8NTmI/XY3wOC2P9U81oIBu0eyF4pI9nGWtLRWHK3Chle7NeXLIKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DuH1TtsB; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oOadD6Sr"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30f30200b51so16714261fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 11:55:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745520945; x=1746125745; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pvz3PmaQFn+0EBBAKUfs2w07bVJpHkRF9qQc8oVPxCg=;
-        b=oOadD6SrYOVFwX3+5Y/nBEQ75lMAcd2yH7FAWOvxmqnt72wQttKx3za/ShKG8zuUtu
-         +BgZ+4D2eYfAWxZUZKLcQ07UDxHZNaSzgtPHMo9wniXRY+5aLY29WVQF8yXW8Wz+XXm7
-         FObeRCk94n07XxsX+kH1KoyVJYtSOomeFCt+P92tN6yjta8ZvbMlq3p/GuV/JMS8l/UV
-         Hk9EyJHxZ1NmBDZvJkcoDjBpmCEc/Y+7CW1JN2fMMRObLvMv5GTWeBeD0iPjbTiiDp1z
-         MQ1KVB+3w0TcD2ScrARSQgzuzMnOu0zfLEarYO/SrPVZKs/D6DYjLtaDs6hdCrfMrKvl
-         Waig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745520945; x=1746125745;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pvz3PmaQFn+0EBBAKUfs2w07bVJpHkRF9qQc8oVPxCg=;
-        b=wbAODAmiiPyNFaCB+yYLmswovwcZwDg8giK6I/dgh6zRXFAe+kZh0/uq9wyTGH7tdf
-         MnpRgM5LbcunEqjZOFO4sPNx3ELu7TZrdGLEYPJD4S+pomh9RwbgEPCSIcex3kTe9unv
-         OVavgyOiwO2nR7c5C8cQ2S+WzHV899zB8d9/CXZD7hlQ4ZNlbXJMAjGHK2tzaC2YD/rD
-         YGI2jQjHFiNlaIWpLsgDw4pp6Pb7jdmD76OhXQkpQgUyUZy0wPga9xSJXMX3+8AaA/w8
-         XEpvuUSIjAIAJ4UAvOhcQB/xbUOKBhOzJG6JEmDl8ayIzeq05DRghs463ah6XuYrGnu4
-         +Z5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXsRJBIMCRZUotPVp7cA/mdiAoi5Vd3n3QPvCq3sCGPJOrFQwhlxCiWkoH2fnl1b6OHZBhOPjfQQ9U3H2hW3nbugA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ9qUi/E76j3/bVj79Ww3Wh+m/QdF03JjL+NnFwGkoVsxdaopp
-	SrQb7LgGmImpTBbXm3qQhQiuTXqcvSswKYJ5S3k1B5o+3dqvvbzffn2oIyLROw0TEhx1k1SpXlV
-	qVJhMmmxBx8lj25EGLl+YHkwfCb/NfFs2E35kIw==
-X-Gm-Gg: ASbGnctgiaKPbUw0C9SXkj6HA0KLiyRj/X22HOrElq9QgdPBhTZoEiu4qFkHccS0Ft/
-	x1JZY/hqz6HQe32A0E/1JIUrT0XEaIjOe3/NDktjv85FayBeTRuSpUuyWqKrk2aZq1rjkVsrX6l
-	hULcvR9Ym4lPxyw5vfukPbnCQcCUkF664ZnMtP+Wyi2bYmdRMT3csX/w==
-X-Google-Smtp-Source: AGHT+IE0c8VGEk3/LwHw0m2axs8IZ9HjpeBp8o188g75mkoErRBNX5c5KptrxgTjbE1qe+vTvqn/BpVZsaupGVwBUJc=
-X-Received: by 2002:a05:651c:210f:b0:30b:bfca:bbf2 with SMTP id
- 38308e7fff4ca-318a7b0b7f5mr2808701fa.7.1745520944675; Thu, 24 Apr 2025
- 11:55:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DuH1TtsB"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 049FD4438B;
+	Thu, 24 Apr 2025 18:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745521167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KvmqyVutPv+zs9lLb//iILWr2+AjUBSEyKFNcut/mes=;
+	b=DuH1TtsBtBbKx8xuQFCItEVS7BlmRIhjrHT7qP3EZimFwTj+wdEQM7JxUOjbCjBX2wsdbp
+	EMg22kKKTv/1tOD4aGC3ida2gGCYznBRttzpWQQmXV6HwuNMuLhmKySApyai+eLRdRvwsz
+	aM/t2dcwAZpqLO/yKIDKagKPk5sjX0DZERY89Txi+ZuJdeIud5RPiMYe28LVRdx73KDSX+
+	uxlAAhrU8kHXUIwEz0dgsQOImxPYADvpTF0101tN/YUA8GXoKtzmrsF4yiMTp5G0q/ALC9
+	cBkKKZSSO99GpKjedDde7I6hwEsoIRyAi54/QUP432M9VcMUS5ZmUdCOBgX7UA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v2 00/34] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Date: Thu, 24 Apr 2025 20:59:07 +0200
+Message-Id: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
- <20250424-gpiochip-set-rv-pinctrl-part2-v1-2-504f91120b99@linaro.org> <CAGb2v67jH2G_i51fg3T7qu2dDtj7FqUO7q9pBJJw_uKhdGV6uQ@mail.gmail.com>
-In-Reply-To: <CAGb2v67jH2G_i51fg3T7qu2dDtj7FqUO7q9pBJJw_uKhdGV6uQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 24 Apr 2025 20:55:33 +0200
-X-Gm-Features: ATxdqUGQRJTk1Y9jikLuWRcOSvqi5BIyaHo-9YdHMReWW67MF95w4__wq5ceBqw
-Message-ID: <CAMRc=McmRB8iNPrTztoSLbEXX2WxNp5d3t5--AAqzqU2LQ+FGw@mail.gmail.com>
-Subject: Re: [PATCH 02/12] pinctrl: axp209: use new GPIO line value setter callbacks
-To: wens@csie.org
-Cc: Basavaraj Natikar <Basavaraj.Natikar@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Paul Cercueil <paul@crapouillou.net>, 
-	Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
-	UNGLinuxDriver@microchip.com, 
-	Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPyJCmgC/4WNywrCMBBFf6Vk7UgSY7Wu/A/pos3DDrSZkoSgl
+ Py7seDa5bkXztlYtAFtZLdmY8FmjEi+gjw0TE+Df1pAU5lJLs9ccQUmLDAGNPXR5LMNCRLBMM+
+ kYVgRWqFGq10rZadYtazBOnzthUdfecKYKLz3YBbf9ee+/HVnARyUFOLk3NV0mt9HojSjP2paW
+ F9K+QDlZd8A0AAAAA==
+X-Change-ID: 20250404-drm-bridge-convert-to-alloc-api-614becf62294
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Adam Ford <aford173@gmail.com>, 
+ Adrien Grassein <adrien.grassein@gmail.com>, 
+ Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Christoph Fritz <chf.fritz@googlemail.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Liu Ying <victor.liu@nxp.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Sugar Zhang <sugar.zhang@rock-chips.com>, 
+ Sui Jingfeng <sui.jingfeng@linux.dev>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Vitalii Mordan <mordan@ispras.ru>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ "Rob Herring (Arm)" <robh@kernel.org>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+ Pin-yen Lin <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
+ Aradhya Bhatia <a-bhatia1@ti.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@ge.com>, 
+ Martyn Welch <martyn.welch@collabora.co.uk>, 
+ Peter Senna Tschudin <peter.senna@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Herve Codina <herve.codina@bootlin.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Helge Deller <deller@gmx.de>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvhedtvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejjefhgfffleevhefhfeduhedtfedttedtkefgkeeuieehtdeifeduveejffevgeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddutddprhgtphhtthhopegthhhfrdhfrhhithiisehgohhoghhlvghmrghilhdrtghomhdprhgtphhtthhopegslhgvuhhnghestghhrhhomhhiuhhmrdhor
+ hhgpdhrtghpthhtohepuggvthhlvghvrdgtrghsrghnohhvrgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhdorhgvnhgvshgrshesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepughhrghrmhgrrdgssehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtodhrvghnvghsrghssehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrthgvkheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehfrhgvvggurhgvnhhosehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Apr 24, 2025 at 7:43=E2=80=AFPM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Thu, Apr 24, 2025 at 4:35=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > struct gpio_chip now has callbacks for setting line values that return
-> > an integer, allowing to indicate failures. Convert the driver to using
-> > them.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
-> >         /* AXP209 has GPIO3 status sharing the settings register */
-> >         if (offset =3D=3D 3) {
-> > -               regmap_update_bits(pctl->regmap, AXP20X_GPIO3_CTRL,
-> > -                                  AXP20X_GPIO3_FUNCTIONS,
-> > -                                  value ? AXP20X_GPIO3_FUNCTION_OUT_HI=
-GH :
-> > -                                  AXP20X_GPIO3_FUNCTION_OUT_LOW);
-> > -               return;
-> > +               return regmap_update_bits(pctl->regmap, AXP20X_GPIO3_CT=
-RL,
-> > +                                         AXP20X_GPIO3_FUNCTIONS,
-> > +                                         value ?
-> > +                                               AXP20X_GPIO3_FUNCTION_O=
-UT_HIGH :
-> > +                                               AXP20X_GPIO3_FUNCTION_O=
-UT_LOW);
-> >         }
->
-> I guess you could also drop the curly braces, but otherwise
->
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->
+devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+bridge, and the only one supported from now on. It is also necessary for
+implementing reference counting and thus needed to support removal of
+bridges from a still existing DRM pipeline without use-after-free.
 
-Right. Linus: can you remove them while applying?
+This series converts all DRM bridges to the new API.
 
-Bart
+Patch 1 uses a coccinelle semantic patch to mass-convert some of those
+drivers -- thanks Maxime for having suggested the patch that served as a
+starting point for me. I was unable to come up with a better patch
+converting more drivers though, so I converted all others manually. Most of
+them were trivial. I left the non-trivial ones at the end of the series to
+help reviewers know where to look at more carefully.
+
+Due to the large number of touched files, the list of recipients generated
+by get_maintainers (b4 actually) was huge, 60~70 people (not counting
+mailing lists), so I took the liberty of trimming the list as reasonably as
+I could to DRM maintainers and frequent contributors, and added all other
+recipients individually per-patch. I hope this is fine. Don't hesitate to
+suggest more people which should be Cc-ed in a future series, or a better
+Cc policy.
+
+Current plan and status of the DRM bridge refcounting work:
+
+ A. ✔ add new alloc API and refcounting -> (now in drm-misc-next)
+ B. ➜ convert all bridge drivers to new API (this series)
+ C. … documentation, kunit tests, debugfs improvements (v1 under discussion)
+ D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+ E. after (B), convert accessors; this is a large work and can be done
+    in chunks
+
+Luca
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- Improved cover letter with link to commit adding devm_drm_bridge_alloc()
+- add review tags
+- fix bugs in zynqmp, vc4 patches 
+- fix patch 1 error code checking
+- Link to v1: https://lore.kernel.org/r/20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com
+
+---
+Luca Ceresoli (34):
+      drm: convert many bridge drivers from devm_kzalloc() to devm_drm_bridge_alloc() API
+      platform: arm64: acer-aspire1-ec: convert to devm_drm_bridge_alloc() API
+      drm/bridge: analogix-anx6345: convert to devm_drm_bridge_alloc() API
+      drm/bridge: anx7625: convert to devm_drm_bridge_alloc() API
+      drm/bridge: cdns-dsi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: display-connector: convert to devm_drm_bridge_alloc() API
+      drm/bridge: lt9611uxc: convert to devm_drm_bridge_alloc() API
+      drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: convert to devm_drm_bridge_alloc() API
+      drm/bridge: nxp-ptn3460: convert to devm_drm_bridge_alloc() API
+      drm/bridge: sii902x: convert to devm_drm_bridge_alloc() API
+      drm/bridge: dw-hdmi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: tda998x: convert to devm_drm_bridge_alloc() API
+      drm/bridge: ti-sn65dsi86: convert to devm_drm_bridge_alloc() API
+      drm/exynos: mic: convert to devm_drm_bridge_alloc() API
+      drm/mcde: convert to devm_drm_bridge_alloc() API
+      drm/msm/dp: convert to devm_drm_bridge_alloc() API
+      drm/msm/dsi: convert to devm_drm_bridge_alloc() API
+      drm/msm/hdmi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: dpi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: dsi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: hdmi4: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: hdmi5: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: sdi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: venc: convert to devm_drm_bridge_alloc() API
+      drm/rcar-du: dsi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: stm_lvds: convert to devm_drm_bridge_alloc() API
+      drm/vc4: convert to devm_drm_bridge_alloc() API
+      drm/sti: dvo: convert to devm_drm_bridge_alloc() API
+      drm: zynqmp_dp: convert to devm_drm_bridge_alloc() API
+      drm/bridge: imx8qxp-pixel-combiner: convert to devm_drm_bridge_alloc() API
+      drm/bridge: imx8*-ldb: convert to devm_drm_bridge_alloc() API
+      drm/bridge: tc358767: convert to devm_drm_bridge_alloc() API
+      drm/bridge: add devm_drm_put_bridge()
+      drm/bridge: panel: convert to devm_drm_bridge_alloc() API
+
+ drivers/gpu/drm/adp/adp-mipi.c                     |  8 ++--
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |  9 ++--
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |  8 ++--
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  9 ++--
+ drivers/gpu/drm/bridge/analogix/anx7625.c          |  7 ++-
+ drivers/gpu/drm/bridge/aux-bridge.c                |  9 ++--
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c            |  9 ++--
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c     |  8 ++--
+ .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |  8 ++--
+ drivers/gpu/drm/bridge/chipone-icn6211.c           |  9 ++--
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |  8 ++--
+ drivers/gpu/drm/bridge/cros-ec-anx7688.c           |  9 ++--
+ drivers/gpu/drm/bridge/display-connector.c         |  8 ++--
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  7 ++-
+ drivers/gpu/drm/bridge/imx/imx-ldb-helper.c        |  4 +-
+ drivers/gpu/drm/bridge/imx/imx-ldb-helper.h        |  3 +-
+ drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c     |  9 ++--
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pvi.c       | 10 ++--
+ drivers/gpu/drm/bridge/imx/imx8qm-ldb.c            | 32 ++++++++-----
+ drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c           | 20 +++++---
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    | 18 ++++---
+ drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c    |  8 ++--
+ drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c       |  8 ++--
+ drivers/gpu/drm/bridge/ite-it6263.c                |  9 ++--
+ drivers/gpu/drm/bridge/ite-it6505.c                |  9 ++--
+ drivers/gpu/drm/bridge/ite-it66121.c               |  9 ++--
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |  9 ++--
+ drivers/gpu/drm/bridge/lontium-lt9211.c            |  8 ++--
+ drivers/gpu/drm/bridge/lontium-lt9611.c            |  9 ++--
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c         |  7 ++-
+ drivers/gpu/drm/bridge/lvds-codec.c                |  9 ++--
+ .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   | 11 ++---
+ drivers/gpu/drm/bridge/microchip-lvds.c            |  8 ++--
+ drivers/gpu/drm/bridge/nwl-dsi.c                   |  8 ++--
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  9 ++--
+ drivers/gpu/drm/bridge/panel.c                     | 11 ++---
+ drivers/gpu/drm/bridge/parade-ps8622.c             |  9 ++--
+ drivers/gpu/drm/bridge/parade-ps8640.c             |  9 ++--
+ drivers/gpu/drm/bridge/sii902x.c                   |  7 ++-
+ drivers/gpu/drm/bridge/sii9234.c                   |  9 ++--
+ drivers/gpu/drm/bridge/sil-sii8620.c               |  9 ++--
+ drivers/gpu/drm/bridge/simple-bridge.c             | 10 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  7 ++-
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c      |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c     |  8 ++--
+ drivers/gpu/drm/bridge/tc358762.c                  |  9 ++--
+ drivers/gpu/drm/bridge/tc358764.c                  |  9 ++--
+ drivers/gpu/drm/bridge/tc358767.c                  | 56 +++++++++++++++-------
+ drivers/gpu/drm/bridge/tc358768.c                  |  9 ++--
+ drivers/gpu/drm/bridge/tc358775.c                  |  9 ++--
+ drivers/gpu/drm/bridge/tda998x_drv.c               |  7 ++-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  8 ++--
+ drivers/gpu/drm/bridge/ti-dlpc3433.c               |  9 ++--
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c              |  7 ++-
+ drivers/gpu/drm/bridge/ti-tdp158.c                 |  8 ++--
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  9 ++--
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |  9 ++--
+ drivers/gpu/drm/drm_bridge.c                       | 14 ++++++
+ drivers/gpu/drm/exynos/exynos_drm_mic.c            |  7 ++-
+ drivers/gpu/drm/mcde/mcde_dsi.c                    |  7 ++-
+ drivers/gpu/drm/mediatek/mtk_dp.c                  |  9 ++--
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |  9 ++--
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |  9 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  9 ++--
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c         | 12 ++---
+ drivers/gpu/drm/meson/meson_encoder_dsi.c          | 12 ++---
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         | 12 ++---
+ drivers/gpu/drm/msm/dp/dp_drm.c                    |  9 ++--
+ drivers/gpu/drm/msm/dsi/dsi_manager.c              |  9 ++--
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |  9 ++--
+ drivers/gpu/drm/omapdrm/dss/dpi.c                  |  7 ++-
+ drivers/gpu/drm/omapdrm/dss/dsi.c                  |  7 ++-
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c                | 26 ++++------
+ drivers/gpu/drm/omapdrm/dss/hdmi5.c                | 26 ++++------
+ drivers/gpu/drm/omapdrm/dss/sdi.c                  | 25 ++++------
+ drivers/gpu/drm/omapdrm/dss/venc.c                 | 23 ++++-----
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  9 ++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |  8 ++--
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c     | 10 ++--
+ drivers/gpu/drm/sti/sti_dvo.c                      | 29 +++++------
+ drivers/gpu/drm/stm/lvds.c                         |  7 ++-
+ drivers/gpu/drm/vc4/vc4_dsi.c                      | 34 ++-----------
+ drivers/gpu/drm/xlnx/zynqmp_dp.c                   | 31 +++++-------
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c                |  1 -
+ drivers/platform/arm64/acer-aspire1-ec.c           |  7 ++-
+ include/drm/drm_bridge.h                           |  4 ++
+ 87 files changed, 448 insertions(+), 510 deletions(-)
+---
+base-commit: 82d6ce3a9e828e73ef43b8072a89d94608ae1554
+change-id: 20250404-drm-bridge-convert-to-alloc-api-614becf62294
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
