@@ -1,62 +1,62 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE309253958;
-	Fri, 25 Apr 2025 13:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C0B2522B8;
+	Fri, 25 Apr 2025 13:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587710; cv=none; b=ofPFDD5dOuzhOUR9RqcbuCY0DuuIxhi8qC2vZ333eP4uL5/HxKvfJoPWozFABP/UTxzvqSq9vdGmBJ9fbXUCK7Evp/ayBXmYYhiga+yxOvC5L9JwNxJ/vaD0eaJjZcOTCOTV5RkqGxZt2iX8gkSalW7EHM+1v0EfrSWWMkXnhXk=
+	t=1745587719; cv=none; b=rq91cVFJ7QnliqNljRpABLo4mLEKesl5m42iMJiTQ/qchtHiJ2RC2h3QknGCYmEyj5r0UoUi7E4rmr54IWtkDKUe0vFWp4P25FcxEHofeaYXJxPLCKVhhW/0MEtV7qDKD0hp88oB65iDrSgG0GEZXcS/ZIgTQORj/gGioE1boMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587710; c=relaxed/simple;
-	bh=0e1fyakf++i6VdcFvpEfBDLtd09wqXUqu5yV4Wrph4Y=;
+	s=arc-20240116; t=1745587719; c=relaxed/simple;
+	bh=c8GlAax2t1WRUHlIvrL0lNNzECalFd5Qcvrpl6HUwQ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ky73mZXZdsxW20t3tVjYEMPWVkOIzdCiDlGPRwjaaPtSnYVI8xOMK0wFmvdj1bxfHjqluTJLjaW8PdiMU76i7cEJN/deHzUqybEF3Y11+h0PmxHWJadhtgXjfkNZoQGnQxz1V1nYb+szOThNgHz0OCCftZ+emKk6NmMTdJiiwbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hcKLuPpc; arc=none smtp.client-ip=209.85.216.49
+	 MIME-Version; b=RnecLlnFWzBTW/FaAd8MpwSqpjFRkT/XpSJoBHUlJ7LXwd+IGn/9BxenxDAfi+RMGhwzBo/+sLsLUrbVWmOjw9gk3Iz2IVrPq89F5c8PJm1yzo8dyLcxDu4ot6tw135SsAKFgnXgP2OcnBFd36cK9XxzRjoIgQZUiwUF70jq/UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkV5/CTL; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcKLuPpc"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-301e05b90caso2334818a91.2;
-        Fri, 25 Apr 2025 06:28:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkV5/CTL"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-30863b48553so3061803a91.0;
+        Fri, 25 Apr 2025 06:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745587708; x=1746192508; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745587717; x=1746192517; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l94fvJs4daZVvI5xF47uHe2QvDzbrKRGqVtD3TI8CH4=;
-        b=hcKLuPpcQLSq1+/c4rcIz6R+JDl+lmAYAL6B0QoKe606W44AOFBYUD+TFgks5DAg0j
-         rvRSQqGn8BDOU6aWQSI9Wj4t5MDyudoU92GWb5Aw62Pj5CjbN/+TUzMyN/0pxS5h/wUG
-         HOd1V5FcGvkKdAQ/BKOlqhpIWT7wpaLxD2mna/1ypb6DuIq31g3vh2JnY1QFdUSMj1sj
-         wFcz/mZjYzFETFa27wlHpPPfWn/2QkPxYYOWWrruI0KvUSft320PXnhDf86KDC7hxbDo
-         Y/HQpUYdamPZ8rrnQG1ANuqgtukpJkp7TOSG7OZwhHHVl2QctbzuanY5koCWX8mwrU6A
-         I08w==
+        bh=lFjEH3qP0dLTK5ihHzovZcinv2fwnPAf5xRz9u95KUM=;
+        b=fkV5/CTLXQQ10hyvk9A5EEMLZ9mv7CP9qBkQlK+hAgpileWQq1R3bposICzYM+sqJv
+         4CyjJXV3UuzWTH2F6ZzUacBMiuXLzhKAc7TIJ9SAYaa8SIF6J0YnSyPNzia8z9GVYLWn
+         tNQNXIAsNPOHMJ3ELMDLfL7fHBhXYrnDBFwwa1DZkEHxNmIxBv/HVnijVoFBTk6SdZT3
+         7N/U47yGOXsbhGNrOjYDOPXAnd7M579ZvA9t5LdzLU8erEMJ3vm5Rh9SdibMM6g0ZU6B
+         J631VTcjYsFkXIwkXiKoSjJEPbGDqcg2+Wt0+Zk9s8H2WadYEVnennfKpo8VdZRDoIUq
+         PY0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745587708; x=1746192508;
+        d=1e100.net; s=20230601; t=1745587717; x=1746192517;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l94fvJs4daZVvI5xF47uHe2QvDzbrKRGqVtD3TI8CH4=;
-        b=on+RHxo4T5DQ1m46dEayyXjkpAgUOkoKvb0TMxBtW6XofJINAKHQqYdBGaQ5T0svgJ
-         1YSohY0upL0+yo8f60qzeAZdQ4/hnzJfjpz36/Nf9dwCXATzUNcPn9ZAmr+OI6RU0w4u
-         kzoFFSCes3+Vzh8NU1hRnmlIEIyvh8jp3i9navGapjVKnku/vME8cfFJJsWyAKfrSKJ+
-         x9yNJTUfSlL9zx+xa9mxRYgtTJcfGT/Sp7cP8s53doBp3IIG8yAUWZR0hNckZRps6jwg
-         ZvzC0Sr4DEWTFK8nKJZOV8D2J9ZnRmL1xBlyzY0WpUcOmj5jtvSTqo22FSHbO8ggILer
-         bJ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvurxjBxw/LXBSUft1QbmfwESz34B3l/TmsrtJoJQXYG/mEIDLiO8FmCQ1mGQ3c8MK6bD1OwO2sGSikmxcYGF2DGI=@vger.kernel.org, AJvYcCWKcucqlxjg9mbHYrQpBdSn/GeoHGUwKjiEzbyicX8Exvc5AMTL0c8TbKIKMX3dG0UUQnSxBSHmlHPu@vger.kernel.org, AJvYcCXK6FcAettvXEb67uhxF1ZOF93a06NTobmTlcY90S2nHzl0XqfLvkiXoi3lRF1OwYuZ8xraT+5R7OxPhwWU@vger.kernel.org, AJvYcCXNqYqgwUaNUOS6E7Ztp1HRDOW+CY8G15DZC6yXP2zsQ/s9ePVMZZjvmFRY7uLgh4XxiX7bs6axdr7l@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/viEU8EHTEwkp4QaqhJtHDA4B4hCRKJV/gv61QztP3TL7xShN
-	7KfYOuxXwge3CSmp0fxuaIg22vrEY07ihBtyHQQa54DOXMybQ/h7
-X-Gm-Gg: ASbGncvzpXzv1iZtm6gvPR2C7f2NgI01FF4xwAUnGYqhnw7ALp2Wm6pzfwQu7ONc5Ew
-	NvQuRT/vMLv9q6Rx0YodNRQdXf/weIwqN8KUjQh68LbGQuD2JanaYRPVhAjSSOfgYrCbUhizKDg
-	BsLxiPoyXCj6CSCANzALzJR8EGW4Bxm58qI7XnUWF4pVPs8Mvc1ZuRmBCbsNKW3+gxY2Vm/WVaD
-	LFqViGOhPGyudkMPM0uWdn/LWtuixUqpud1eB/DUDYE4SkuP3IjSQyT5/bCw2DUR3BgOWLoK+iP
-	GDZXH9jOaAKqyPOsP1T6/Lpiwf4BF0NQLlbxr1DLaOBIMVqa6XyYWA==
-X-Google-Smtp-Source: AGHT+IHZk//aX1Nythqxr2CigBoZw9Zr8jeiTQwIrF2Sb5trevqSTK8qfuMg1eiI7z5y82nmYsHj7w==
-X-Received: by 2002:a17:90b:2705:b0:2ee:8ea0:6b9c with SMTP id 98e67ed59e1d1-309f7de019bmr4539523a91.12.1745587707978;
-        Fri, 25 Apr 2025 06:28:27 -0700 (PDT)
+        bh=lFjEH3qP0dLTK5ihHzovZcinv2fwnPAf5xRz9u95KUM=;
+        b=E3s07Kr7dSPsgrUX6os9v00BgQXhsdDzxlvJOAlxjO068cVkZqKldTyLFBC7EbcWoY
+         bcFkD572NPPR+tgdKLeLlJ9Xp1uell3rs0dB4LGjpTWzW52KLkw7qGmBE8W3UX3lv0Ju
+         U+u2iisIflLLF2qW2SHPSTVLMtQmsuTC7+qOD4mMv/x6DNc8z5oNxqFwVWEurV12x65V
+         R2ByYI1iyzf5WOUcUjXE+S+jXaByqx2qX06xAAuUsYLs9w8KMkj001GkIPHUNCMR2/5Q
+         kqLVEBdiy/nWbc2o1S2gEbWayzsgRXtfGlSDSpCr9tIpL4RwndSjN4pMx4kgdwXJr178
+         Aerg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8PAXXB0PHwEZXcZizaOGRO+XsHehBHltkvlruYNnApls4Ut6LTnGN69KvbmFecLDatUU5k9geRlX4bqSA@vger.kernel.org, AJvYcCWKMam7J/+PmAnhZHA4fs0zFTYbVU7lmEkL1yh72rbR4gtTg8EtHJx1uK1B7mhgkOwZ1gXvLXmAIYUul1eSvHAzKKA=@vger.kernel.org, AJvYcCX3SyvsMm57Os4NWo+fpCdOBz4yX3qa8Kn+Rj1BYQdE6qsHIJswJ9uqH9Wci7xnd+ZUrkVWTvsakEIA@vger.kernel.org, AJvYcCXYxJ0XUSiFwBS9rd/mF2a6zSOXe2VHud0GD7UHg6G5Xm82S8N8sPzxFLrzpI+pUu1N15SOgBokecAF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt3YDhLAULvA7YMJaQbOqbhIxy9MpXoBDbbvVtSi3zkD5biRnH
+	mYtwTAzsVdVZMRYNdHBK62hvIMQPUL6mdbHXlLQScyRLuD4N8bqe
+X-Gm-Gg: ASbGncungjSS78JBym6zxfmOajCdQxbw9206i/8tu5jhR+is54ueRAkmcjs0z9yRult
+	cykOk7Efwl63NB4GHl9/BGVUuy5C9F5bqsy51SAwKZygx4BOBgPpjuMOQ+7iMC6Mdw436Ufd5jO
+	j5YOhCf+RPZwHTP7Mn7+vlwOcjVG3T8RkXrrr8GuMEQl6GsCQMQ5H8Cj7TMWtB0DJd/QXOi2hPY
+	IwyAmiTiDHAcK+hzZl8eXR/Hs3UmRXS213AEBDjnNRO26XDOvAeeGG0QxwQ4riCxuQu2Yh/jrdt
+	QHBGuLNdHFQskxASYJXATV1UoHL5OWwdtG6kPFWLZ8MZc8RK5JW4cg==
+X-Google-Smtp-Source: AGHT+IGj9lR9tmU8eyR40XzFeimkdT87ngl3tdqW47D7njs1AnBF+aef9o+xkSHHj9j97MED9tFceA==
+X-Received: by 2002:a17:90b:1809:b0:2ee:9661:eafb with SMTP id 98e67ed59e1d1-309f8a07690mr3104746a91.12.1745587716944;
+        Fri, 25 Apr 2025 06:28:36 -0700 (PDT)
 Received: from localhost.localdomain ([110.44.101.8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f7752a03sm1564313a91.18.2025.04.25.06.28.23
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f7752a03sm1564313a91.18.2025.04.25.06.28.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 06:28:27 -0700 (PDT)
+        Fri, 25 Apr 2025 06:28:36 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Chanwoo Choi <cw00.choi@samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -71,9 +71,9 @@ To: Chanwoo Choi <cw00.choi@samsung.com>,
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
 	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1 05/10] ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for Exynos4412 p4note
-Date: Fri, 25 Apr 2025 18:56:25 +0530
-Message-ID: <20250425132727.5160-6-linux.amoon@gmail.com>
+Subject: [PATCH v1 06/10] ARM: dts: exynos: Update proper regulator states for suspend-to-mem for Exynos4412 p4node
+Date: Fri, 25 Apr 2025 18:56:26 +0530
+Message-ID: <20250425132727.5160-7-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250425132727.5160-1-linux.amoon@gmail.com>
 References: <20250425132727.5160-1-linux.amoon@gmail.com>
@@ -85,41 +85,92 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MAX77686A includes a crystal driver with an external load capacitance.
-When enabled, the crystal driver starts in low power mode. The
-LowJitterMode bit controls the crystal driver, allowing it to switch
-between low power mode and low jitter mode (high power mode).
-Setting the LowJitterMode bit to 1 activates low jitter mode on
-three channels simultaneously. These three 32khz buffer outputs
-(32KHAP, 32KHCP, P32KH) are independently enabled/disabled over I2C.
+The MAX77686 PMCI is able to power down and up key core supplies and other
+voltage rails via PWRREQ signal to enter / exit (deep) sleep mode.
+PWRREQ status is ignored during initial power up and down processes.
+All programming must be done before the AP enterns the sleep mode by
+pulling PWRREQ low since the AP does not have programming capability
+in (deep) sleep mode.
 
-The 32khz_ap output is typically routed to the AP Processor, while the
-32khz_cp and 32khz_pmic outputs are intended for BT, WLAN, BB,
-or peripheral chipsets.
+Update few regulator node with support suspend-to-mem node to regulator.
+dropped suspend-to-mem as MAX77686 do not support these.
+
+Regulators which can be turned off during system suspend:
+     -LDOn   :       2, 6-8, 10-12, 14-16,
+     -BUCKn  :       1-4.
+Use standard regulator bindings for it ('regulator-off-in-suspend').
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../boot/dts/samsung/exynos4412-p4note.dtsi   | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi b/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi
-index 28a605802733..ad0abe8d9e30 100644
+index ad0abe8d9e30..d0ecb1c6a922 100644
 --- a/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi
 +++ b/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi
-@@ -432,6 +432,13 @@ max77686: pmic@9 {
- 		reg = <0x09>;
- 		#clock-cells = <1>;
- 
-+		max77686_osc: clocks {
-+			compatible = "max77686-rtc";
-+			#clock-cells = <1>;
-+			clock-output-names = "32khz_ap",
-+				"32khz_cp", "32khz_pmic";
-+		};
+@@ -448,6 +448,10 @@ ldo1_reg: LDO1 {
+ 			ldo2_reg: LDO2 {
+ 				regulator-name = "ldo2";
+ 				regulator-always-on;
 +
- 		voltage-regulators {
- 			ldo1_reg: LDO1 {
- 				regulator-name = "ldo1";
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			/* WM8994 audio */
+@@ -457,10 +461,6 @@ ldo3_reg: LDO3 {
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+-
+-				regulator-state-mem {
+-					regulator-on-in-suspend;
+-				};
+ 			};
+ 
+ 			ldo4_reg: LDO4 {
+@@ -472,20 +472,24 @@ ldo5_reg: LDO5 {
+ 				regulator-name = "VCC_1.8V_IO";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+-
+-				regulator-state-mem {
+-					regulator-off-in-suspend;
+-				};
+ 			};
+ 
+ 			ldo6_reg: LDO6 {
+ 				regulator-name = "ldo6";
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo7_reg: LDO7 {
+ 				regulator-name = "ldo7";
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			/* CSI IP block */
+@@ -506,10 +510,6 @@ ldo9_reg: LDO9 {
+ 				regulator-name = "VLED_IC_1.9V";
+ 				regulator-min-microvolt = <1950000>;
+ 				regulator-max-microvolt = <1950000>;
+-
+-				regulator-state-mem {
+-					regulator-off-in-suspend;
+-				};
+ 			};
+ 
+ 			/* CSI IP block */
 -- 
 2.49.0
 
