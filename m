@@ -1,144 +1,145 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111E421A45D
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 20:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD78A1EB182;
+	Fri, 25 Apr 2025 08:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745526800; cv=none; b=Cd0vyq5AyqYL4dYpBhiKJj6hUsmbzcKfvxv6pntPU3FZ+o9O6EgyJ2FBNnPnLsnoipNnkb+MYm8wvLKu0qmhz4QqGsjhQFcAfVTMaNlEU6V+bSoVqHnSAL7caGUsXttRd0ZAFgaISBsKS+lHqFPC318MEozL3LT6cs+h2M130R8=
+	t=1745571445; cv=none; b=B/Zvp/6dGCbx7kgTPOiyrkHPN4Ax50B6CYXuo8iWWJ1zKzU7RI7eaIrMM9ZkAdhK367F9mnuWI3uN0dR8c9ahb8UL/IRwluXFukarl0rwNgxjUEqPrHY1UF2fN84VVndYUw5gKpHsTICVAMrM5IfR5T10IpjwDnZTRC+cBD2Xhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745526800; c=relaxed/simple;
-	bh=4QeWTXypptQJXSP2hw72WicyVT12KyhEiOJC2dhD6mA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JPZU7dwdvue+E+AyZMzlzxOH0SMLOhj0rU98EpoYAsXkMUeLfq2yNqXuKjz3MEETyXi6z6lFjKexh2t8MvfCfjEg8O8aYrQGXqQ+aF8pc83/TrfXHR1r1hqvdcWM9LQzRFJLySzMPLZy52zhfWOAaPeNWp0TDbzBfLbg/d38c6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y2yYW7JQ; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745571445; c=relaxed/simple;
+	bh=4OSoVjosSdcBjZotNu4R/Z3jYCJgRB1HOGSrMN18SeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cc8roQHzhjpXjYKNGmPbcZLifYH9SLXiYrC0ne6HlmoBcJdbokfwfvtz/6h5VUeOFhyPguNckjK/M8EUlpegb98dn4+mh58y/hP1Jt3KcYSMyfKfFIHSOXvmuQFtzfAIVX6WQs0ceqOwRPEeXNsV1R1xYiu81DDgQPNyT9T7gl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl; spf=pass smtp.mailfrom=jjverkuil.nl; dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b=stJOLVOW; arc=none smtp.client-ip=185.233.34.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jjverkuil.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y2yYW7JQ"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39d94327297so173538f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2025 13:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745526797; x=1746131597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=idgVGL6g4QaZWwBvT7pD7vd7IkM4X5ShmrP8Se1lMVw=;
-        b=y2yYW7JQUyirdQS3zK7xAjyaIl/xp21D351k7p5bhQjnHgspU7DI/RY50jXCYpb/In
-         WM/W47bfdwJi7j3UQJIl6kf2FrNaKN97OkICpzw0QVH3yMFHSN8AMxm1paqDuU6S2Yyz
-         06ijdj4u87+27maAS1ZPEz+Wej1HrZU91EEslcWWb3+Ryns1VtQKzvC669JlEn6cwlYh
-         njVumXc+tkwBCmQXfHPRNHhbyLZDF7EtOH+z1LomYKMxUkAr15wzloF+tXkzozS9jZkp
-         38/SsLJy94+R5h4TMP4RsYerbj+a5gsv5ahhlXZUMSRCSZMx414DL7ry3CQ0e8xzcR9k
-         lRdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745526797; x=1746131597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=idgVGL6g4QaZWwBvT7pD7vd7IkM4X5ShmrP8Se1lMVw=;
-        b=vTag1iQ3rOtt7Vdp5UMA9at5AFlakiq/yos5joGDkt0FGmDMI84oc8DzR+BT91hrwP
-         T3FtKCkyhUaKu//alG/dNWQKpqiI3ayrflZ3LMPHFHZCsDvUqyjMiqPj87PEceghxoW8
-         YDNsYXYhsoXE9LZGnAXLJy7pSF5ZqZvdkJnuUu5AdKwLW8I7JWK8/N+YXBO7ZjODIQVA
-         YevKzedktX3u3rIhNEJFcNAvXwp0H9wrfHNSA6G9snIYUdRFZoCzGBIYyxYDdlhRUVAk
-         JCgQSALmyPXCm5cQeUbdDDhM+7zE0I5xqCWpIdYzWLbf2IZ2JqrlVYZ+hOqs/OYKbwC0
-         wGvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoAMYzQm9xo/WuUlbDD07XgFC7XQ6rNTXJfeKyB5XNEc59+fgLmT1hRSm2hHqTjUQWKEQOFgA4+n55NRPOR+C/ug==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/kuuiEIk/846/vJeROORWgbVe6hk4+3XUwZwhN3dLB6wudLRH
-	lwEJ8f3ZMseD8Ym3E51BFMz6+PKiUh4WrNEFuChn+hcwXSj+lFcP+m80y8dB7W8=
-X-Gm-Gg: ASbGnctIR4HbA5MipTu7UIzT2SdGR0VVS/DgkCpNbMS0tVjqYeroKSnp+OjZqaeoOiC
-	97Yvv+QxqQNdSTm2AlgnmJ8Lznh8VJciGgnwVMU2J8tqStkxxDoI77EkOUvLohiZgMdsCK9Go2Z
-	BWX6K6qqwPFrkdyRG5gyy3m0Q1JZbXN3icB+u3mno1BLGiExcnjzeVQsDTulHFjaU1Qm0Adp2Fe
-	7MceasiaK1cvdtkd8uCqJ8V40HYFdekwGiIGCjkEUCbdcnDjlCkiBmWjaCEnUj3WxtzCR5ctD5K
-	c/EbOGd8IssNdAyIWPONSJ43iwQ1Ao6POVwkLZuTtfd1wWHfOw==
-X-Google-Smtp-Source: AGHT+IE5Mc9hxBHCR2InV+3GYjWm+yX48MSznxSGfJQ+nJnypxIRQDaL1uLviaLHAXTFGuG4bu8Mbw==
-X-Received: by 2002:a05:600c:198f:b0:43d:745a:5a49 with SMTP id 5b1f17b1804b1-4409bd77f64mr15358405e9.4.1745526797180;
-        Thu, 24 Apr 2025 13:33:17 -0700 (PDT)
-Received: from kuoka.. ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a53870f9sm797625e9.33.2025.04.24.13.33.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 13:33:16 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] firmware: exynos-acpm: Correct kerneldoc and use typical np argument name
-Date: Thu, 24 Apr 2025 22:33:09 +0200
-Message-ID: <20250424203308.402168-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b="stJOLVOW"
+Received: from smtp.freedom.nl (unknown [10.10.4.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by dane.soverin.net (Postfix) with ESMTPS id 4ZkRYS5N69z1HSD;
+	Fri, 25 Apr 2025 08:57:16 +0000 (UTC)
+Received: from smtp.freedom.nl (smtp.freedom.nl [10.10.4.107]) by freedom.nl (Postfix) with ESMTPSA id 4ZkRYS1rJ1z4Q;
+	Fri, 25 Apr 2025 08:57:16 +0000 (UTC)
+Authentication-Results: smtp.freedom.nl;
+	dkim=pass (2048-bit key; unprotected) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.a=rsa-sha256 header.s=soverin1 header.b=stJOLVOW;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jjverkuil.nl;
+	s=soverin1; t=1745571436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yf2aYlIcxVVGizSpVvZ8JYPJ5Jj59wgeBFtKAKlHX44=;
+	b=stJOLVOWx5GkguUtGMLMoFigcK95Jw2D7GXH9p6YNilXkgZ2HaaZLEwbrqoupPitn80RuM
+	DtsNM9E+wwEQl5IKo1LYO9efYKjLbE8/Av7y1g/VRID7JWJr3jbUyRdmG0xdM/7E/T6/xx
+	+HgChgF7Tq9tMxY3JJxSzYrs+oxE8ViFevb2gboYpK76PKJc00vWzfdDjvK3malUPb8RtJ
+	VL2rX4WDCpl9lFFECjL4FEY4lMYo7QJW1ncf09eBfDxaBd7xhN33KFPifK5OVZKOExbafR
+	eSJDKo/zzwywnMYCh0CApxCGMxk0HQhSgs+w5m/VlBk7xmgf50sMbVXhgoSvPQ==
+X-CM-Envelope: MS4xfGH9ubBhWtgw+qry96p0p2CY3MAqye7DnTYvFFgCU+PBQbprOMA8/jc/PvCT7GLQ/9y7TYUZl9I9bi4GLgODAMu4H+QFItiyxwBDkgn3acszxm8ZccrJ qWVoq3RzX8yvSYmPiMujJZPjuMgGifWBNb277zoeG02hBMW1bb3iohnm0nrI0aXmM7xmfxBZ3EWaFdrRXn9tWbQWGI8QH6Qo/HLt7C7O4wGUap0j0/WdH9AS KwQK+XFmnWgJrgHjQ5ds6KA/NvyrWfxrHWqh+DINtRusCrtoaETywDG6UdsRq2WTfWxr2j4fHEm28jSbtWyZwwOkcPyKHTcdJ8i6QJdTU0l/xidBUIHt4ljf kgy1GIQgTCU3lWqCG1g8eu3oxhtpj0I4wuzhJB9J5WK+nDcLjab9GQdTRUfmmZ8MxG24YqPDDVxLAofWtYelUJjHpDpNmu/9ofVtqihGMT/eA7Y4GBFU5MXe Z9DAsMrhyw1tQyrv7ADcHlNIarbpxXphHC5pfQ==
+X-CM-Analysis: v=2.4 cv=I7afRMgg c=1 sm=1 tr=0 ts=680b4e6c a=xVxOAnYOZqKVbrsbIgLjXQ==:117 a=xVxOAnYOZqKVbrsbIgLjXQ==:17 a=IkcTkHD0fZMA:10 a=xq3W2uTSAAAA:8 a=EuBBl-eGEdlqjvPoGpYA:9 a=QEXdDO2ut3YA:10 a=P5L7wpMTXyg1GfFA3Gwx:22
+Message-ID: <ab1cdc06-5fbd-420f-a917-cf9604772de1@jjverkuil.nl>
+Date: Fri, 25 Apr 2025 10:57:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2015; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=4QeWTXypptQJXSP2hw72WicyVT12KyhEiOJC2dhD6mA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoCqAE1H7molI2SrPDwvMlO3UDSVTRVDm+gevDd
- knoDzWIWGyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaAqgBAAKCRDBN2bmhouD
- 11FzEACRaBawm3jRXDBKOuAGgA7XIz7w2537aCM6EOBi6nKWKvWSPJeGtPKK+sAXHBvWzom7pxw
- pdsqKgUW9MVmcs6W/nIUTPKdyy78eyx4luOQLpXbNjQOTY1qoxUWJvF4Niwaj4oqlobww//yOo1
- 0sQs0QbiLddmFdBjNdaLj1pPG2ojQwnsfKZcfS2G8IXqnc6EYKw75xkwoazdQvrdizqmJ0C32Pu
- Kcb8qYpr22iEqmc+rpKZhGoz7Pe0MSJlYwNuMsd0JhtEm0geN2l8b/bmqXrNGNKZ+CUbjPKcldJ
- ad9h6C2syO0/kA8akIOy9kM0VPb6nDup8gqmxVHugYGvVP3gc4R16BNMklOV3GU0f2+BKtmAHOh
- f0EdX5gz14N4wiE0Q2gWaNYRxdORLjPrx1MiJrnL8E/8pE1wB0K12jIKIrsaqEN5B6hOpkDIbno
- jE7+odrH+wztsqozQoDuzPhA+Wn/eRpfwSRNeb691pM2N86mbE6UDaGEpzFG5OJZzEs1URFPMUe
- Lr5k+RH6GmaB3TpoQMjoyACrwkIqglxwZAoFb4znIBOH7jtBVKJ6fhxD51HXH4TVS2IuqcwCuXb
- B7+L3G37ogeJzckbACLv6cRtBxByNsMZxrxhv3NekNF6FuCpsmhQqae5r3GM3YDSxbdIa9NyUUi gXCBG3mKlOq5AYg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH RESEND] media: platform: Add hardware sync wait to
+ fimc_is_hw_change_mode()
+To: Wentao Liang <vulab@iscas.ac.cn>, s.nawrocki@samsung.com,
+ mchehab@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250422021345.1940-1-vulab@iscas.ac.cn>
+Content-Language: en-US, nl
+From: Hans Verkuil <hans@jjverkuil.nl>
+Autocrypt: addr=hans@jjverkuil.nl; keydata=
+ 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
+In-Reply-To: <20250422021345.1940-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spampanel-Class: ham
 
-Correct kerneldoc warnings after commit a8dc26a0ec43 ("firmware:
-exynos-acpm: introduce devm_acpm_get_by_node()") changed the function
-prototype:
+On 22/04/2025 04:13, Wentao Liang wrote:
+> In fimc_is_hw_change_mode(), the function changes camera modes without
+> waiting for hardware completion, risking corrupted data or system hangs
+> if subsequent operations proceed before the hardware is ready.
+> 
+> Add fimc_is_hw_wait_intmsr0_intmsd0() after mode configuration, ensuring
+> hardware state synchronization and stable interrupt handling.
 
-  exynos-acpm.c:672: warning: Function parameter or struct member 'acpm_np' not described in 'acpm_get_by_node'
-  exynos-acpm.c:672: warning: expecting prototype for acpm_get_by_phandle(). Prototype was for acpm_get_by_node() instead
+Just for future reference: please don't resend. If it is in
+https://patchwork.linuxtv.org/ then it will be picked up eventually.
 
-While touching the lines, change the name of device_node pointer to
-'np' to match convention.
+Also, always add the driver name in the subject line, that makes it much easier
+to identify who should pick up the patch.
 
-Fixes: a8dc26a0ec43 ("firmware: exynos-acpm: introduce devm_acpm_get_by_node()")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202504222051.7TqaSQ48-lkp@intel.com/
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/firmware/samsung/exynos-acpm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Regards,
 
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index b3afb2069fd1..e02f14f4bd7c 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -677,20 +677,20 @@ static void devm_acpm_release(struct device *dev, void *res)
- }
- 
- /**
-- * acpm_get_by_phandle() - get the ACPM handle using DT phandle.
-- * @dev:        device pointer requesting ACPM handle.
-- * @property:   property name containing phandle on ACPM node.
-+ * acpm_get_by_node() - get the ACPM handle using node pointer.
-+ * @dev:	device pointer requesting ACPM handle.
-+ * @np:		ACPM device tree node.
-  *
-  * Return: pointer to handle on success, ERR_PTR(-errno) otherwise.
-  */
- static const struct acpm_handle *acpm_get_by_node(struct device *dev,
--						  struct device_node *acpm_np)
-+						  struct device_node *np)
- {
- 	struct platform_device *pdev;
- 	struct device_link *link;
- 	struct acpm_info *acpm;
- 
--	pdev = of_find_device_by_node(acpm_np);
-+	pdev = of_find_device_by_node(np);
- 	if (!pdev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--- 
-2.45.2
+	Hans
+
+> 
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+> index 366e6393817d..5f9c44e825a5 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+> @@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
+>  	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
+>  		return -EINVAL;
+>  
+> +	fimc_is_hw_wait_intmsr0_intmsd0(is);
+>  	mcuctl_write(cmd[is->config_index], is, MCUCTL_REG_ISSR(0));
+>  	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
+>  	mcuctl_write(is->setfile.sub_index, is, MCUCTL_REG_ISSR(2));
 
