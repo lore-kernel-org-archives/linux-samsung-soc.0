@@ -1,62 +1,62 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CFF24E4A4;
-	Fri, 25 Apr 2025 13:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE21424E4A4;
+	Fri, 25 Apr 2025 13:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587674; cv=none; b=u/DWgW9TwpCkzAkvcRI1xsIL6Mo8tWRqtLCh8iujQdPooQsIAIXzjzmW/nnRW3kalVGAOiESRw7i16WSKRG8OsxJE+LxmCsjf2GeXgP9f+4ZLVaqBG/yTfD4ua0uBIm1E62DB1d0X+grpN3dl9Rg8nvceSiq3I3Xq0MrLdT6BL0=
+	t=1745587683; cv=none; b=U+dtyd87TteYSGHYIAamMERGZ3kivpl3cBXVAx89VcEoZ9SIn4+Cx6HWuZKmMDgIIYP3ehGSNkEjMqlNceFMJ/MpzpjoPLJz02Uk8GASJsKuiVKoP+IREENjQiuT2aDOgoY+PB7Fwz/cAKeXD44GaSAKH/4E9WIm4WFP5vkZAkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587674; c=relaxed/simple;
-	bh=ZkfzYmz3JkFYajGr75Njj+Gw1BtC6v129KifENwZdIc=;
+	s=arc-20240116; t=1745587683; c=relaxed/simple;
+	bh=1JKSmkNd9he2fxTMpjh+A2iImarLxUdnEFyEBZgWsoc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qhoJB4DLLeTreMJPuOE9e278+CLz/CsE9Zgoki9+0AmNAHrJRQjg0l8FCVdXwOEizuc5KvyOCCQtr8B+rDl6rzw8gd6F64FP7AKLMVJaD/F6Rj7fgZ4xmWSLTWIRsflTUSARug+Y620ClYlSEqkGH1AeaC9Oy10goNSVNPM82XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxX4zEi5; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=qgNZyPgkck63dOEUq/ZjAHq/UgmDs1geM2og2P+IlFMe3xyqRy4QiUwGuQnsG2bJi+OACQVKFg6BUqWU5noQ5FXAHyM8QA8yy/I1HURU6zpOwGJdN1z3z2/78zI097fVfgukMNHxCCTY59ShX+ZpnvYJHhyk+YO6Qb13Yxy69ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/z+HfDA; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxX4zEi5"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22c33677183so23393585ad.2;
-        Fri, 25 Apr 2025 06:27:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/z+HfDA"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb3so2431087a91.1;
+        Fri, 25 Apr 2025 06:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745587672; x=1746192472; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745587681; x=1746192481; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AC/bTYB+vaGGLBaxi2S8Pkok8Y8UeFyQeznhV9/zsFo=;
-        b=VxX4zEi5hMqhs3ENTMKzyhV/bX7YZtlLtqNokl98g63Fsfan5SYxndbnPYxyVCworz
-         sDZF6aC4wC5yXzdOvsW4eEV+B4zFPjdfGTQNgVoLKbBrT11JzShobpbjlYl/R8duM12C
-         Snqv03bPBGkYJC2K/0DRCC5ltX0LHvwN7FXufWy40OEoJe8hFhG1/gg9HEj6l21lAHGw
-         7ymM8MhPtOZivtRTw3KBrSaV5lOD/eB5NIB9zqSTtgIR326scb/eGe4A3uDsWEG2uCX9
-         rks4KkVPGZe7VvrZNrqN9vmR7cepuiZi+wideAwMe0av3H/tY/DF22C08bSjKueUKLwd
-         MyQA==
+        bh=3/rwz0LBVxX8dQciGKZqxZOjxzzbTePOJod0t/Mvhpo=;
+        b=e/z+HfDAWcNYzWdjti5DbUjhw/9rpTGkxyIKbCICeO5yxDukrb9s04vvj8jThKtoSV
+         qLDGHft0X97V0Wlw83vptdpjpSXm9hv7jAHDiaaP/kgblpRerJAhieUCxcflIwhMASEj
+         5MwQb/w2GVoPW4gyxh3q+s1AyYjxS483DhLbaabrS85Lm0WsgllO/UqZEegQSrXAZkqt
+         3QKLb+bVZhriFkV4sohm7OitggL5EpowSKnOj44MN4vZ3F7GqOgS2coSl/WJxXa/zsYU
+         1ldNJzkLzbtiFIxlr43TxFvk469N2Q6Em1EjWQ3KsGy10N/KdHQOLPDrkttBwNCx+QXj
+         yURg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745587672; x=1746192472;
+        d=1e100.net; s=20230601; t=1745587681; x=1746192481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AC/bTYB+vaGGLBaxi2S8Pkok8Y8UeFyQeznhV9/zsFo=;
-        b=hBv3g/e2v9d4bVBwDIHh8thIvWujPnLUEGfZxly1p/QL0phy8kUUygVb7lvZDTwcVq
-         ipiGkbTyMYzWw2jruAwkAcyAiuWNWOVL70kMRLpACvlgRgEIZ2ae1KTh9wCZR8gDS/pf
-         7xv+TqnQlRHUMOmWSi9A4oYqWR/1DWmz9NuHl/7yaYPeWTqf08qnGtXbmuQupbwgB4vZ
-         34wiSRX4C5qKNgTf4rwMYso6dpjvTfhl1OiKPK/b3mjQ/6+Ilqir0Hn+jo4DUzy03Zk0
-         uEr9O1VhRaLBzLNDdiucicuwm8sZRfoe5Z2dKalZoaDTX/tGd5l9ojuJ3lQJNWhbvgRw
-         nSKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOJzNpHNhU0eED69FoK8b3YqEtHDd8YpZXhM1W9o8MyrMJLRjCpvqLB5nORxP9TlyXDycTrAY562XO@vger.kernel.org, AJvYcCVXr5+7Gd106iqzETzCljsgRNvu+bVsBejW9FwVkAPXeo0M2FvA1XwqQVHsAXj5gJWmJ926JQdtKCpQrmjhDAAE67w=@vger.kernel.org, AJvYcCVoHD6lAhT99gwDAbT745etSOTa8MD0pSbJ3bXTtvfdgcNm124FcR0lCb78noP4fQfjqhJHZ9Q1RNxR@vger.kernel.org, AJvYcCX0yvsCMeFf6dCZVpYU8oTZkYiNtumAoV+MxCPNqpXdWWpK2wkyqCU4uvxYRLyPeFR28ZkNp1r3aYtAr5ry@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/ScRtyuw7YAu7OAHE1NL+umFd5vT1JkVJqKCdqUqF+RosTVTZ
-	7sxJU5SUcLWa5lCKvLgf5yhvE5+aVho/KSsHJfaCjOFKY2dL03Xg
-X-Gm-Gg: ASbGncs9RdNp+TICoG4XUh4mjw+v5ew8f3NMSCEXrq1kTbd6BMeTjXlbUrju9p8mMOf
-	Xh+ftnvcXFBOXo8WhTe2ZkVcIFAE/oQNgv7hNwuTuBnX9qxuCGwJcmJdPkEnA6+HyQdfNvQUeEu
-	JoR8etWIi5kPUaOHBx/EPH3QG0PKTO7bnEB8t70w+ehGE0uQLDniDRdgRK13MaSAJDIWtHjU3QE
-	VQUyHwJKqR7R3LXhd2HCwFEMgZEceuy3iKMYYQBU/ZDeHfTJ2ocf1jC5kmiDqdrvC6+X146rIKA
-	u+u+LnRwzYB1aMCsk0JtiggrJNevMydI8vZ9co5n8JGKp+xKmIkz4Q==
-X-Google-Smtp-Source: AGHT+IHWMSy+gCNd9b3APCkHLWMGa1W1be504gb3RjvrlpnKuAoazKcK7AEzjGj95QEQ1p5LsXvDnQ==
-X-Received: by 2002:a17:902:ceca:b0:223:67ac:8929 with SMTP id d9443c01a7336-22dbf15ccf9mr39564125ad.0.1745587671876;
-        Fri, 25 Apr 2025 06:27:51 -0700 (PDT)
+        bh=3/rwz0LBVxX8dQciGKZqxZOjxzzbTePOJod0t/Mvhpo=;
+        b=Bsuc/n6O+TjMp0dZJQSwGE2DAAXX4U7jSE5BTI8w64bkLEvcBZdFo2l6vggdpcDgqX
+         iJPfm3qwFZN4CHvIP0pgTZMxRrvL0kfvmh23Jal/4kmcAT8nOnyOJJgc3fPYFkvVCbmT
+         N2lvWyZY/DK5CTHcu9ME7KKjo0KIiZNiyJEfMlEnltbXNulOyR6Omzl2H2bfKopFZI5w
+         Gviq6G0JDa1KrvHYmElIBNzX8UnTNG4pFq5DDqUG+XeBj2lOLEJSyPE5ae2v1bnTObIN
+         mLyyX2yKSUoDID3oxaZX22exqXcdqw0w94xJbj/VxdtgEHK+y0aYMDeL4oShbe2410sd
+         sB8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+IGlcZ70jS+CidBd2nS5UB77smzSE7b82H9PYVGhAxg20SmmW4g6wqO/Vacts4lr1uPEyWY7e3feoNGUDCqxYKPA=@vger.kernel.org, AJvYcCVd5tzuc4k+ocUfy7WiOH+ShhD2VnxmkjFozOBGm1OYbwT5EmpOdluKd+fjVA2N2+6Ifa5XqEwEYle+@vger.kernel.org, AJvYcCWY/zDDvJYm7NM42ebKLZ6Ue3DPM1hwpl5oJKZwbxWLKiIMTVTrCbWDB0ljq2GmBjnmIT9cVT2Fk/Ku@vger.kernel.org, AJvYcCWnLwQe8pdbvdhdXw3reCg3Gg5dPaxnng6hChc+s7bWReL00GIkjbiKuRvtH3uMEwhkZk6BicE+S/A0uxQr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKQxvc6+/iUUpnJGYPlXGjR27W/8WPMcT2L1shjOlpMWiKeGug
+	jfmn3tSRR5K/XfQbBkvgb0juPc5O+rmyaoMTWRLAJwyFennBk0yG
+X-Gm-Gg: ASbGncs8ZPcDmelWE5HT0pM7DN+HA2Pl+LdImvfnyq6Ke0T9+cpVM98KiNB9QiTMaKb
+	pjvjU6iS5ituRoGpHVbLfQW+KTqDQSUZk17Hu61Qj4xERhEkJz9y3m5vZWAEjUnEu0ohPfHqI76
+	YAUW4CH45i2o/UmRnWRYTBlugSDxcN/SgSBi9vwbFmQcYTRr/G3YEvYtI0HktDWm/K3vnvv4l0e
+	SNKj/Wnj7IoKlZEWCWm6LGyuKNTdBf5zs7x0e75SGBGkd4VWzjJApEGmde/oXhKoFltwDfINANR
+	CIJUQ3+pkpt76KKsNuE7zXSq1nFM0oa38Tlwpmgm32LwuR7n+jZpDQ==
+X-Google-Smtp-Source: AGHT+IGykUnFwi9vJFShvrAmDEHYOLtn/JAzsUWpn67Vgk7sIGoof9b7Af7D2CTZMEiJNgM6UmdfxA==
+X-Received: by 2002:a17:90b:2b86:b0:2ee:9e06:7db0 with SMTP id 98e67ed59e1d1-309f7ddfe5fmr3852489a91.11.1745587680841;
+        Fri, 25 Apr 2025 06:28:00 -0700 (PDT)
 Received: from localhost.localdomain ([110.44.101.8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f7752a03sm1564313a91.18.2025.04.25.06.27.47
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f7752a03sm1564313a91.18.2025.04.25.06.27.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 06:27:51 -0700 (PDT)
+        Fri, 25 Apr 2025 06:28:00 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Chanwoo Choi <cw00.choi@samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -71,9 +71,9 @@ To: Chanwoo Choi <cw00.choi@samsung.com>,
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
 	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1 01/10] dt-bindings: clock: Add RTC clock binding for Maxim MAX77686
-Date: Fri, 25 Apr 2025 18:56:21 +0530
-Message-ID: <20250425132727.5160-2-linux.amoon@gmail.com>
+Subject: [PATCH v1 02/10] ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for Exynos4412 Odroid
+Date: Fri, 25 Apr 2025 18:56:22 +0530
+Message-ID: <20250425132727.5160-3-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250425132727.5160-1-linux.amoon@gmail.com>
 References: <20250425132727.5160-1-linux.amoon@gmail.com>
@@ -85,74 +85,41 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device tree schema for the RTC clock in the Maxim MAX77686
-family of PMICs. This binding defines the 32k clock generator
-block, which includes three 32.768kHz crystal clock outputs
-controllable via I2C.
+The MAX77686A includes a crystal driver with an external load capacitance.
+When enabled, the crystal driver starts in low power mode. The
+LowJitterMode bit controls the crystal driver, allowing it to switch
+between low power mode and low jitter mode (high power mode).
+Setting the LowJitterMode bit to 1 activates low jitter mode on
+three channels simultaneously. These three 32khz buffer outputs
+(32KHAP, 32KHCP, P32KH) are independently enabled/disabled over I2C.
 
-The detailed binding information can be found in the MFD DT binding
-documentation at bindings/mfd/maxim,max77686.yaml.
+The 32khz_ap output is typically routed to the AP Processor, while the
+32khz_cp and 32khz_pmic outputs are intended for BT, WLAN, BB,
+or peripheral chipsets.
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- .../bindings/clock/maxim,max77686.yaml        | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.yaml
+ arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.yaml b/Documentation/devicetree/bindings/clock/maxim,max77686.yaml
-new file mode 100644
-index 000000000000..72f11309f033
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/maxim,max77686.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
+index 93ddbd4b0a18..03943c666d11 100644
+--- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
+@@ -289,6 +289,13 @@ max77686: pmic@9 {
+ 		reg = <0x09>;
+ 		#clock-cells = <1>;
+ 
++		max77686_osc: clocks {
++			compatible = "max77686-rtc";
++			#clock-cells = <1>;
++			clock-output-names = "32khz_ap",
++				"32khz_cp", "32khz_pmic";
++		};
 +
-+title: Maxim MAX77686 family clock generator block
-+
-+maintainers:
-+  - Anand Moon <linux.amoon@gmail.com>
-+
-+description: |
-+  Binding for Maxim MAX77686 32k clock generator block
-+
-+  This is a part of device tree bindings of MAX77686 multi-function
-+  device. More information can be found in MFD DT binding
-+  doc as follows:
-+    bindings/mfd/maxim,max77686.yaml for MAX77686
-+
-+  The MAX77686 contains three 32.768khz crystal clock outputs that can
-+  be controlled (gated/ungated) over I2C. Clocks are defined as
-+  preprocessor macros in dt-bindings/clock/maxim,max77686.h.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - max77686-rtc
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  clock-output-names:
-+    maxItems: 3
-+    description: Names for AP, CP and BT clocks.
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    max77686_osc: clocks {
-+        compatible = "max77686-rtc";
-+        #clock-cells = <1>;
-+        clock-output-names = "32khz_ap", "32khz_cp", "32khz_pmic";
-+    };
+ 		voltage-regulators {
+ 			ldo1_reg: LDO1 {
+ 				regulator-name = "VDD_ALIVE_1.0V";
 -- 
 2.49.0
 
