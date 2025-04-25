@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C0128EC;
-	Fri, 25 Apr 2025 14:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE616DEB1;
+	Fri, 25 Apr 2025 14:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592406; cv=none; b=JN5qGqdLHhBCHlNXkbkpLOjDLbetLGmln4VQBqRUkRLQ7fzLBr7AzUC3gZjgcqEdZG+l9L6vMPorVRCV6vsxZ1yFS2WvRWMgG53UltzSJPuAt7jG/eSau9MblfDMFAHbFE3fMwGXB6G6Kb74Jl7KUFkPrQgQUp4p6VQGW01Onws=
+	t=1745592489; cv=none; b=KY+kDWUsZtj0c0unEJEskcf+wiaPzih95HW+t1ThCLPUwG8b4c1mazNK97iK8K2hMA5dNt/KnBzAWD3kscbeUBTIzydAyRV/m5tkslWAscC76M8WrlKgJrWzmRg2Y0lNfW5Qmt7mBsDDAwe39E78bCp7QkXQ9evkQV9NhsVLhrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745592406; c=relaxed/simple;
-	bh=KHMe3OlGoGnWcRJInhRahIcJzYzyZrBrXPmSKdqnqVU=;
+	s=arc-20240116; t=1745592489; c=relaxed/simple;
+	bh=cTn3gTkFSXujq0nxsFZya3joPkMK0fBUAanT6MYYcY8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dUx3dp6j/hlkf8JFtk9xBcp5LGf84q3VK6I2FNAKsvf1c59bPvmugrQiN4gVg8tFqm7ZEQxPHKrUtSDKs9JrVVjK6dPrf8yHbM4ztgw4s0AYQxv3civbbpkY0Bf68dqgsfK80kyrQCeuejT0GvqdrLTyFxFFrvjqYaSpJtDkS6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZZyu96I; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=pw4kQzdMgeYlnbduBKl+vzdLO2lW8vEiNTXkh1l3Y2qnyRIncyXFxXODQx4OYci6zVtxYIJAvAnVfd+Ej/Ne3dYaa20zkaYDcOQCtKts4tEVMG7FW1gIuUuv7NcilWlJ+iIBA1f0PO58XoPQQFwLiyENqy4EktRFUcDxAVXpG6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTdFEbSt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZZyu96I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1492CC4CEE4;
-	Fri, 25 Apr 2025 14:46:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTdFEbSt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7840EC4CEE4;
+	Fri, 25 Apr 2025 14:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745592405;
-	bh=KHMe3OlGoGnWcRJInhRahIcJzYzyZrBrXPmSKdqnqVU=;
+	s=k20201202; t=1745592488;
+	bh=cTn3gTkFSXujq0nxsFZya3joPkMK0fBUAanT6MYYcY8=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=GZZyu96IMNdT1z0KhNQMJNel37QXrrRT2E18XI6r5HmIC5hmAImGK8Pp2um1bZCdd
-	 VdffQwW8aPOA4Qc+dlGKODCGamFqfxtM+Gomc0J49kJzKFlxfOCAsT8/wp/JzazdX2
-	 rJcCug3m1JSCmRNuzOpMPFUE/6BCR39HPTzqd4FDsJ3xH3Z1KKtG97vNlYaZQ2DxTw
-	 gJedKQHg7jYdGNwtLMwAMAcb1g57S5zUBw0gpizufJdwELCa8mnaBLkIYoI4kiT2St
-	 y3I4Ad5Z6HsIFvqui9Ni9zWCrHPjBLN0Bm0TR4TDlF6T2hyzjaVzodbjYbl60b+cx3
-	 5H96lN2rKkmrA==
-Message-ID: <fa054136-961e-4a0f-a2cb-cdd393c3b022@kernel.org>
-Date: Fri, 25 Apr 2025 16:46:41 +0200
+	b=bTdFEbStM/ldlHxkNKYpIVly2hILH0HPSpiqal1l5+PcGenMgOjwU/TjQ7K/Jgq0R
+	 xWVpXA1NbP2+8/VBDrDfFjgcQaDPB7XLUhT63wlXAwF3ez+rPjjAe4wXd/QjNmvheh
+	 ek1+vmW0mQLD3UsyhMhUWxJ0guiAPyGWySgo7vfKWXZ5gEtLRHT7/4DfG7Wjb8EuDz
+	 JVL7yBEiqlXODCV2l2WewaTqInxAdOlcP0Mfg+3lEbknws45wvPr5hy7pZxQ/UWSGK
+	 OIlKDbwsTfNih+nwXSA6YLaF358sP8UTpGihtxrEGWn3ouqxF7JSK7xuwNjOYEp9yv
+	 itinzPCUe6muQ==
+Message-ID: <7a1e2432-46e2-40f6-84af-bff45ab79899@kernel.org>
+Date: Fri, 25 Apr 2025 16:48:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/10] ARM: dts: exynos: Add rtc clock definitions for
- MAX77686 PMIC for Exynos4412 Odroid
+Subject: Re: [PATCH v1 08/10] ARM: dts: exynos: Add proper regulator states
+ for suspend-to-mem for Exyno5250 smdk5250
 To: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -51,7 +51,7 @@ To: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
  "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
  <linux-samsung-soc@vger.kernel.org>
 References: <20250425132727.5160-1-linux.amoon@gmail.com>
- <20250425132727.5160-3-linux.amoon@gmail.com>
+ <20250425132727.5160-9-linux.amoon@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,40 +97,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250425132727.5160-3-linux.amoon@gmail.com>
+In-Reply-To: <20250425132727.5160-9-linux.amoon@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/04/2025 15:26, Anand Moon wrote:
-> The MAX77686A includes a crystal driver with an external load capacitance.
-> When enabled, the crystal driver starts in low power mode. The
-> LowJitterMode bit controls the crystal driver, allowing it to switch
-> between low power mode and low jitter mode (high power mode).
-> Setting the LowJitterMode bit to 1 activates low jitter mode on
-> three channels simultaneously. These three 32khz buffer outputs
-> (32KHAP, 32KHCP, P32KH) are independently enabled/disabled over I2C.
+> The MAX77686 PMCI is able to power down and up key core supplies and other
+> voltage rails via PWRREQ signal to enter / exit (deep) sleep mode.
+> PWRREQ status is ignored during initial power up and down processes.
+> All programming must be done before the AP enterns the sleep mode by
+> pulling PWRREQ low since the AP does not have programming capability
+> in (deep) sleep mode.
 > 
-> The 32khz_ap output is typically routed to the AP Processor, while the
-> 32khz_cp and 32khz_pmic outputs are intended for BT, WLAN, BB,
-> or peripheral chipsets.
+> Add suspend-to-mem node to regulator core to be enabled or disabled
+> during system suspend and also support changing the regulator operating
+> mode during runtime and when the system enter sleep mode (stand by mode).
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> index 93ddbd4b0a18..03943c666d11 100644
-> --- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> @@ -289,6 +289,13 @@ max77686: pmic@9 {
->  		reg = <0x09>;
->  		#clock-cells = <1>;
->  
-> +		max77686_osc: clocks {
-> +			compatible = "max77686-rtc";
+> Regulators which can be turned off during system suspend:
+> 	-LDOn   :       2, 6-8, 10-12, 14-16,
+>         -BUCKn  :       1-4.
+> Use standard regulator bindings for it ('regulator-off-in-suspend').
 
-I don't believe this works.
+I do not believe you tested this but instead send whatever you found
+somewhere without actually understanding the code. In the past you were
+sending such patches - without knowing what they do and without actually
+testing.
+
+NAK
 
 Best regards,
 Krzysztof
