@@ -1,72 +1,72 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B57B19C54E;
-	Sat, 26 Apr 2025 06:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0422917A2F0;
+	Sat, 26 Apr 2025 06:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745647920; cv=none; b=K5ADmV8cvM7x8VafsmlqEfho8ObRN1iBgob5ZyDmDD24hm68qlvm7ubSdy8GzpIt+R21Ueoxlaak5jExbt3O/Ys7/I7PuZKoQBzLhbuf0WMDcH9FPLvIHweQxN8jSz4wdkQPwQwiadCN6cj0D+Plb7R0I65jqWVBea2r2cIxWoY=
+	t=1745647947; cv=none; b=nfVBEQbkSQQaMs62SXsj27ARtlYUnOUr+ipjm7jy4Hpl6rqMGNgMA+TfIhgJ81QTZeSrKzAbgD/SIgaZNgNDzGvTUVxs1FODNZLltvFqOkptcYNk8ILNfJbvKZVYh8kGcVd1pEcCEWusvPfgCl02k43gbplQg9JUtgDKUWql29U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745647920; c=relaxed/simple;
-	bh=aT+xGUchroXRoD/b0GsZJMVUJdUJhkoUaF5UPPNynWY=;
+	s=arc-20240116; t=1745647947; c=relaxed/simple;
+	bh=ts30wuJotCKDAn6BcjJG1rAqDNg2V4mpYNEPUKSJRyE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jqpGVUWOuutQz8QVowq2u8AjYfhFLXqv/GRX/1YYbyCjDNOCNTWl4xO04WEut2GudptVhfLd5CWvsWQGy0vQHwbCzpQ6frHAzZ6eTCUozyuM8rWKQ2ztAGqcqqwcyT+XlS4NmdxMlNBz/S1RXbvZKFjebRoyQwZPuM8PCw2tdPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ckK6Tm3E; arc=none smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=cQx3F1Zj3NP525Gcn8hW8sYl/b00nzf6pp3eIO05hmz3CB/dCwd1Vaz5bS0EtNHZ/nZIeO92uMMLoe0PHwm/vl8lo882WoP0c5RC63B9djNjJLlv6ZKqOVxPG/kXTMnjukyWQuWuscypfyJy26QeEzPHZCORutTk5fZNDRDSL9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gG8pKYDb; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ckK6Tm3E"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5f4d28d9fd8so3683126a12.3;
-        Fri, 25 Apr 2025 23:11:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gG8pKYDb"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaecf50578eso455127066b.2;
+        Fri, 25 Apr 2025 23:12:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745647917; x=1746252717; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745647944; x=1746252744; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P38FO6+njKGYbNLvlE2BiPsC4uR35LU84o17Ihkf2Ts=;
-        b=ckK6Tm3EYnZhsVi23zIgs0il6x3pZNa8oEF22+4SDf65dKzBWlPWY3Di21mGKgWVdN
-         BHjFKoRUAL/usqNNAYb7HPveym7e69lXhUi8gPvb1IQRSQEcCFeSm9t8NvrtA76jwZ2L
-         0T76G01AWn81m1ycoi2/zNQJ2lm0fSlEmkNUnqR0Hd4WwQOcYcp88Iduj+J5AGI8+KFp
-         05tKmMppdC+DuKM8wsIqpZUdDMiszmeauldCZ+akgR3jUJpag1x4ganmCYLAgbySQ+6s
-         vxiv9qCIrvLLMX0bTPcwkT4hJlzTr6/b76ENVhDLeoVK3dp+WSauRdOtvj15vUvkHVeM
-         O3Jw==
+        bh=Q7AoqGRPCyCnlnI8KOQDam44EVXCyf/N7POplk+Weq8=;
+        b=gG8pKYDbyBSeewT/KB2sxg+hZXlSefcaxceQAG3onXsBdWe8hmOSOnzels47+ElYmw
+         8Lg8BP3/t09H+KCnORV5xJB5+RH1e+ATb6AyNc0LG5o8rhItG+tCJRSwgA4Ifo2unyE4
+         OX9FVg2sGDqt88vhKoCW/38Sb1oivSgfw4rHH47EqyIDeBQ96rUGltlmwogUFbRsLp5J
+         dMRT9eHHfFKz/9uNoUers4zlDgieAMlZ6Vcr8NRzdhyTSBNnBztZjJOgYOpDpkgzSfkX
+         foXm/aVhwtINwTX8rVrXkNHVKHWaf3JlkBWFcQbW3FayoFDFsDioS29fTHD4MEJ//IvV
+         mDfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745647917; x=1746252717;
+        d=1e100.net; s=20230601; t=1745647944; x=1746252744;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=P38FO6+njKGYbNLvlE2BiPsC4uR35LU84o17Ihkf2Ts=;
-        b=wKmZF+DN/2FktAeA5x5lZn8BBzcFNbGWW/p9tWGlTHkKMiPSGHi6hQrBCkEk9YWzi6
-         WnTAMKT+VDzIjPgPvG8KvdWbCO3gLoIFTiXyWHFtq84qtd4iIQMaciTkyqAtmQIVuScA
-         gIy9oMi24JyUq7KyJapWU5xRIjblB8Fzh8yVwcI8b5mG1e0CJzEc0FndTaJFIXBz38Da
-         4RO06KyOfwRyXE6AVi2Tmkq1SShlNv9YvtXztIh6DLytKREMgSJJQGxNkuSRyg9FZMNn
-         ya2CgtbwKlRVxPkGePTyKDmiYvV4JS/5xknJ2X36DTNk7QdKL1a6y2XWGtcAsQtH0AmV
-         i5Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQjmbWiQwwgw8dTtlgdMjBppH+YkP7rrCh9zdM8DA79ADWzeRiSWR1t8wGbzTPaoGgFAgHbYoYz6DR@vger.kernel.org, AJvYcCUtTVXAfO3iUuODU9KDBtyJD2VyJ45o+Mlwru9YeUACE1QrcwxfT58QgOkVwPLXetJaZr7oQ+G82tt91/5GtiFnIRU=@vger.kernel.org, AJvYcCXSfM7rx1eG1cw2HkQHA2UzpaTQryH4sDtNVxsDQCq68seUzX9sdgV8S8PhutDn1LHc4C9OLH6GyJEOQwfm@vger.kernel.org, AJvYcCXcfntMSjMFb7KuXNKyvLYJrAio1Cvo+2ZJdXL1SXrTrOV82WxTpCAUQVkRlgWYFrM+PZdPe3vWuGnS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2x48zI88s+VpWxytDzSPMK8JqQLb/dHHxHeL4Wl82zHVPHpO6
-	Ds0M+5k4VVTQufLeNWq8JIxn8jvj+PVIYmn06dP4TEpuYWCA3ERsbgXcdY1D4/fAUYh/yz1umXF
-	4MyvA1sCzr3D7UuDS6a/brPBqTC0=
-X-Gm-Gg: ASbGncvZ9Yf2yw5weGg5YeuDP2Sh0aP9jiXlSJFXeWx33TnM547ES1fA+MpbfhnTU12
-	K6trnBBMKdsKGRwnH8hD5yiY7BX+9GBxU6/UseqcaB2GlKtKhe/qA2+Z3eRDfF9irHLB9Ah7Kj4
-	JImPRn9qXhfMgs7oUeCdBl
-X-Google-Smtp-Source: AGHT+IHU2LAHVM0ylRli8MpkgrQDDetTqppf6CoDV9/WpYVkZ1mZ4e/r3+sZhdqb/QIeFysUMK1woTg4zHQWOMLWRkI=
-X-Received: by 2002:a17:907:9483:b0:acb:b5a4:ba35 with SMTP id
- a640c23a62f3a-ace848c047bmr165437266b.2.1745647916581; Fri, 25 Apr 2025
- 23:11:56 -0700 (PDT)
+        bh=Q7AoqGRPCyCnlnI8KOQDam44EVXCyf/N7POplk+Weq8=;
+        b=kCiFPjcm4jsIq7vd4N2mXDSGX0N0FzDbUzzWuExz/t/FvdLPUpKkK9Fe8EJHZZxcv9
+         zQSRXhe7GFwPUEz2Dv4uDua9HRyoHGIW50q5DAvdjlzOl1g28kDRJR6/BicH2LeDLpF4
+         JWwtjv6ef5PvDzPYH410g/6L8ovckpOnMJG09/ZW3WKnQGUyD4ircz4jSuYpEJHhW4xR
+         VQTzYU1eCXI1mWb2MXeJvV5s3ck+asJ855/iQAZ8lfR25RVZpvQkXrMOMKNwbYxOtThw
+         sv69WlcD5Su/bWTx+vFA4i6FGojX6xlCO2axdt7fqWXPmAOWhjUMmzqiXh9DUDJCYcvX
+         qCqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBE+p/rrLCU8xzVCEWO2LcvwjRNRR8/KXZU10WFdLwQSJDDRg3gE7roa6+nPwXHzXrrnTvU5v0O3J6nxUkG3ODu/s=@vger.kernel.org, AJvYcCUlRCsBwKF4ZOW8DjarT60tIErrM04M5n9wFuQeuFmt+hDqhChq78e2Vek9MxhrI4XdKIZyEI2uDyBrmmIC@vger.kernel.org, AJvYcCWxE47RDsXVApvjQh29oyPdOppZXVtAx/CZfpzydcZw/nxf5DS/Nw4crM2hmCCCGGOKsrKx5ddg9Olh@vger.kernel.org, AJvYcCWxuRFvxhgaQoR8RWWm14zz4Kc97VBDNdGC4rBMh2yZlUO9mJVg2Yq9Nh+WZqFPpAYvJAmdgp67wDXf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz03sIQoE/ft4Qak1jgpvZC09Evv8WoK4fP4kYWTA4Xj7JfFP3t
+	z5lq+QCLFCaxjrLCUp+emMbcdFbzkyhUgGJEEMQI+lF8pBaUNoRn8tV0rntCy2a4EwEGZyLNLvs
+	CCXm7qLqoswFqDrqtdrID7rG75+oXNA==
+X-Gm-Gg: ASbGncvoG6KEzNrb3E9q7LbN6YLHC0KjVgud5PyXqkLq/gPB8TJZ15iMTa6mVum73yf
+	bvbqdurOCu/R+mf84eRjrGJ44fNpjTe4ExsB51HmlHbOjX602TH9eS0abSWb3qaJ9TO3rbbYIYN
+	N8FIz7pXbr0BZDT6RthYI0
+X-Google-Smtp-Source: AGHT+IHhIwe8rU9PLpYBn4D0l6l1OxCmDLFLe9Bgm3lFBWXmThOd0XpQJqAtk/OcOVWwsd3kI1THgvNLEgb0DKDyTec=
+X-Received: by 2002:a17:906:9f88:b0:acb:b08c:76ae with SMTP id
+ a640c23a62f3a-ace710951d1mr418780966b.16.1745647943830; Fri, 25 Apr 2025
+ 23:12:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425132727.5160-1-linux.amoon@gmail.com> <20250425132727.5160-2-linux.amoon@gmail.com>
- <34087c68-442f-41ec-a6c0-dd063f6d44d1@kernel.org>
-In-Reply-To: <34087c68-442f-41ec-a6c0-dd063f6d44d1@kernel.org>
+References: <20250425132727.5160-1-linux.amoon@gmail.com> <20250425132727.5160-9-linux.amoon@gmail.com>
+ <7a1e2432-46e2-40f6-84af-bff45ab79899@kernel.org>
+In-Reply-To: <7a1e2432-46e2-40f6-84af-bff45ab79899@kernel.org>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 26 Apr 2025 11:41:39 +0530
-X-Gm-Features: ATxdqUGVUzKx6XU_cLPV7j0MBc0wnh_fXqMndtXtKNtM0VKtPEyXHniD99OhSmo
-Message-ID: <CANAwSgT+ZXacTZJzVbu0DQfYQYUUjMc41jKnn7E_E1wnhY1L6w@mail.gmail.com>
-Subject: Re: [PATCH v1 01/10] dt-bindings: clock: Add RTC clock binding for
- Maxim MAX77686
+Date: Sat, 26 Apr 2025 11:42:07 +0530
+X-Gm-Features: ATxdqUE-aSBuAto3DWag_735XNh8AilQRfbJbLa3ov7b-DirWkNhYUiBgQia2w4
+Message-ID: <CANAwSgSQrW8CCg7=rdN98EsoDZ0KsWv84DKOh3K4Jgmgz66XFQ@mail.gmail.com>
+Subject: Re: [PATCH v1 08/10] ARM: dts: exynos: Add proper regulator states
+ for suspend-to-mem for Exyno5250 smdk5250
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -80,38 +80,56 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Krzysztof,
 
-On Fri, 25 Apr 2025 at 20:14, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, 25 Apr 2025 at 20:18, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
 > On 25/04/2025 15:26, Anand Moon wrote:
-> > +
-> > +  The MAX77686 contains three 32.768khz crystal clock outputs that can
-> > +  be controlled (gated/ungated) over I2C. Clocks are defined as
-> > +  preprocessor macros in dt-bindings/clock/maxim,max77686.h.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - max77686-rtc
+> > The MAX77686 PMCI is able to power down and up key core supplies and other
+> > voltage rails via PWRREQ signal to enter / exit (deep) sleep mode.
+> > PWRREQ status is ignored during initial power up and down processes.
+> > All programming must be done before the AP enterns the sleep mode by
+> > pulling PWRREQ low since the AP does not have programming capability
+> > in (deep) sleep mode.
+> >
+> > Add suspend-to-mem node to regulator core to be enabled or disabled
+> > during system suspend and also support changing the regulator operating
+> > mode during runtime and when the system enter sleep mode (stand by mode).
+> >
+> > Regulators which can be turned off during system suspend:
+> >       -LDOn   :       2, 6-8, 10-12, 14-16,
+> >         -BUCKn  :       1-4.
+> > Use standard regulator bindings for it ('regulator-off-in-suspend').
 >
-> So you claim RTC is a clock, right? Did not even think that RTC has a
-> bit different meaning?
+> I do not believe you tested this but instead send whatever you found
+> somewhere without actually understanding the code. In the past you were
+> sending such patches - without knowing what they do and without actually
+> testing.
 >
-> But regardless, this code make no sense and was never tested. It cannot
-> work.
+> NAK
 >
-> It reminds me previous approaches with whatever patches you found in the
-> downstream...
+Thanks for your review comments,
 
-Okay, I found the MAX77686A datasheet that Hardkernel shared long
-ago and tried to interpret the information in it.
-I will remove this repo once this is done.
+All the MAX77686 control register supports On/Off Control by PWRREQ signal.
 
-[0] https://github.com/moonlinux/Samsung_user_manuals/blob/master/MAX77686A%20Datasheet%20REV00.pdf
+Once the Application Processor (AP) boots up, the AP is able to power
+down and up key
+core supplies and other voltage rails via PWRREQ signal to enter /
+exit (deep) sleep mode.
+PWRREQ status is ignored during initial power up and down processes.
+All programming must be done before the AP enterns the sleep mode by
+pulling PWRREQ l
+ow since the AP does not have programming capability in (deep) sleep mode.
 
-I have gone through MAX77686A the regulator and the datasheet
-If you have some improvements to the code plz suggest so,
+So PWRREQ has the following states for control registers
 
->
+00: OFF (regardless of PWRREQ)
+01: Output ON/OFF controlled by PWRREQ PWRREQ=H (1) : Output ON
+PWRREQ=L (0) : Output OFF
+10: unused
+11: ON (Regardless of PWRREQ)
+
+I have dome code mapping through the driver to understand this feature.
+If there is some code improvement plz suggest so.
+
 > Best regards,
 > Krzysztof
 
