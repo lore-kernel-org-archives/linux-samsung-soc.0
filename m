@@ -1,137 +1,118 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0422917A2F0;
-	Sat, 26 Apr 2025 06:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4024C1E1E1D
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2025 19:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745647947; cv=none; b=nfVBEQbkSQQaMs62SXsj27ARtlYUnOUr+ipjm7jy4Hpl6rqMGNgMA+TfIhgJ81QTZeSrKzAbgD/SIgaZNgNDzGvTUVxs1FODNZLltvFqOkptcYNk8ILNfJbvKZVYh8kGcVd1pEcCEWusvPfgCl02k43gbplQg9JUtgDKUWql29U=
+	t=1745781474; cv=none; b=AUcMcdmvXR3GbSIKnn+K7niZg+WK7nJwKWHWeVcR+Rr3g/B4SI0CNKTjnXeRdAm6Iv+FarUvASCStRNlfoc2i8Jre+CevWcnnTtYJoLdlFBgg9+vojb34bGAe1UO0v2er+NdM5wNLwIkwv6BmDXSgsiAmjaYejHn+ObMNBmMVxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745647947; c=relaxed/simple;
-	bh=ts30wuJotCKDAn6BcjJG1rAqDNg2V4mpYNEPUKSJRyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cQx3F1Zj3NP525Gcn8hW8sYl/b00nzf6pp3eIO05hmz3CB/dCwd1Vaz5bS0EtNHZ/nZIeO92uMMLoe0PHwm/vl8lo882WoP0c5RC63B9djNjJLlv6ZKqOVxPG/kXTMnjukyWQuWuscypfyJy26QeEzPHZCORutTk5fZNDRDSL9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gG8pKYDb; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745781474; c=relaxed/simple;
+	bh=6IC2F8aYqTVehjmi3m8+mzcbglCyO+wk3F4hmLvIM0Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JUZaW/t0nYav5hZ0VGBC+h/JeaX3x2I/R9LIAhsJvbvgHOJpO1Z3a5n+Jlgqp3M/yTwwr+ifqhbtZydI2pMPr/o27hUFnCOzU9Uk0viXci/IuFrV1pHFn/8M2wCy6tijUZBmNGW2GkqGZXxwGm0aky6FAPO3mXSzO0sDIgnbLSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pCUtoO0J; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gG8pKYDb"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaecf50578eso455127066b.2;
-        Fri, 25 Apr 2025 23:12:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pCUtoO0J"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5edc468a7daso643722a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2025 12:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745647944; x=1746252744; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q7AoqGRPCyCnlnI8KOQDam44EVXCyf/N7POplk+Weq8=;
-        b=gG8pKYDbyBSeewT/KB2sxg+hZXlSefcaxceQAG3onXsBdWe8hmOSOnzels47+ElYmw
-         8Lg8BP3/t09H+KCnORV5xJB5+RH1e+ATb6AyNc0LG5o8rhItG+tCJRSwgA4Ifo2unyE4
-         OX9FVg2sGDqt88vhKoCW/38Sb1oivSgfw4rHH47EqyIDeBQ96rUGltlmwogUFbRsLp5J
-         dMRT9eHHfFKz/9uNoUers4zlDgieAMlZ6Vcr8NRzdhyTSBNnBztZjJOgYOpDpkgzSfkX
-         foXm/aVhwtINwTX8rVrXkNHVKHWaf3JlkBWFcQbW3FayoFDFsDioS29fTHD4MEJ//IvV
-         mDfA==
+        d=linaro.org; s=google; t=1745781470; x=1746386270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oiImoVKJXxF5Kkx3zdXXXFlWOb+F7YBai/OtGKstv94=;
+        b=pCUtoO0JwGlhkX3yxHX55k59+tKUxZQobYv69Q+jzGU0aoRwyiAWthYBYOMpdvcy79
+         ME23KPbgERwXMCfYBuudfxYOztUfIudKYfIvG/bDCHBmHLAN38uUludkr2jOAZ1R8hpj
+         Jb5MQE9ETkm6pIFH9PZJlSrduXzedANQM84EUYGg/6hyrTsUpyZEk6eMD01U9Qd9BHXT
+         rwLZ1046xrChZS7Not6KDrRgQ/IqNWmSIubZ2KE4n/hoJE8PGHyDBu/7ZuFuXpl1ChgF
+         ZpqMfU8Bw2xs6gRjBiWGQeoQWth/QzMq2Ekeqgp+Gsxk6gvE2KTcXM/T8uKB0/1hzOr1
+         sxiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745647944; x=1746252744;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q7AoqGRPCyCnlnI8KOQDam44EVXCyf/N7POplk+Weq8=;
-        b=kCiFPjcm4jsIq7vd4N2mXDSGX0N0FzDbUzzWuExz/t/FvdLPUpKkK9Fe8EJHZZxcv9
-         zQSRXhe7GFwPUEz2Dv4uDua9HRyoHGIW50q5DAvdjlzOl1g28kDRJR6/BicH2LeDLpF4
-         JWwtjv6ef5PvDzPYH410g/6L8ovckpOnMJG09/ZW3WKnQGUyD4ircz4jSuYpEJHhW4xR
-         VQTzYU1eCXI1mWb2MXeJvV5s3ck+asJ855/iQAZ8lfR25RVZpvQkXrMOMKNwbYxOtThw
-         sv69WlcD5Su/bWTx+vFA4i6FGojX6xlCO2axdt7fqWXPmAOWhjUMmzqiXh9DUDJCYcvX
-         qCqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBE+p/rrLCU8xzVCEWO2LcvwjRNRR8/KXZU10WFdLwQSJDDRg3gE7roa6+nPwXHzXrrnTvU5v0O3J6nxUkG3ODu/s=@vger.kernel.org, AJvYcCUlRCsBwKF4ZOW8DjarT60tIErrM04M5n9wFuQeuFmt+hDqhChq78e2Vek9MxhrI4XdKIZyEI2uDyBrmmIC@vger.kernel.org, AJvYcCWxE47RDsXVApvjQh29oyPdOppZXVtAx/CZfpzydcZw/nxf5DS/Nw4crM2hmCCCGGOKsrKx5ddg9Olh@vger.kernel.org, AJvYcCWxuRFvxhgaQoR8RWWm14zz4Kc97VBDNdGC4rBMh2yZlUO9mJVg2Yq9Nh+WZqFPpAYvJAmdgp67wDXf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz03sIQoE/ft4Qak1jgpvZC09Evv8WoK4fP4kYWTA4Xj7JfFP3t
-	z5lq+QCLFCaxjrLCUp+emMbcdFbzkyhUgGJEEMQI+lF8pBaUNoRn8tV0rntCy2a4EwEGZyLNLvs
-	CCXm7qLqoswFqDrqtdrID7rG75+oXNA==
-X-Gm-Gg: ASbGncvoG6KEzNrb3E9q7LbN6YLHC0KjVgud5PyXqkLq/gPB8TJZ15iMTa6mVum73yf
-	bvbqdurOCu/R+mf84eRjrGJ44fNpjTe4ExsB51HmlHbOjX602TH9eS0abSWb3qaJ9TO3rbbYIYN
-	N8FIz7pXbr0BZDT6RthYI0
-X-Google-Smtp-Source: AGHT+IHhIwe8rU9PLpYBn4D0l6l1OxCmDLFLe9Bgm3lFBWXmThOd0XpQJqAtk/OcOVWwsd3kI1THgvNLEgb0DKDyTec=
-X-Received: by 2002:a17:906:9f88:b0:acb:b08c:76ae with SMTP id
- a640c23a62f3a-ace710951d1mr418780966b.16.1745647943830; Fri, 25 Apr 2025
- 23:12:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745781470; x=1746386270;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oiImoVKJXxF5Kkx3zdXXXFlWOb+F7YBai/OtGKstv94=;
+        b=YG9GnNAM8r0BwHpylKKXFxsxUAwiqfivDTilzo3xLwOM9M6kh98+51oJNVS8Vtyaht
+         YESndI84aUGGdw2p+cI5p0SYxiH0mmU8LnpdRvJchQVj/5+3vG0vXblXNXPZ2QOjb/u7
+         4BSDrgOYYnjQCkzFul36cUGsMpgvRCP1yTW9IkfbH3GhyLZRR+cGDRG4vfNxe6W35kVO
+         g9qT7ZGm3TuCVGkjonzqIArxeCv22J9Ruj3YtP0o8MTOyots2CNj4l2BsGoiShwydxsd
+         nKqr1q8CI7zP2CP1bXw06o+EYVgE6JOfV5RUXqziwOmQc3fInhYZZ9OLbBXEiBU4xhEe
+         0/fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBf+km4hXcr7yPTBOgqai125OGkcVlJGlgdEvPIkboyhWhKAt6KrIEwrRCq6QKyzX6FWk8W2q6koeC2QBufz/ZTg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9ibspeT714U6RFxotIrmWjjacUO+5STfFnllvaRI+vkHPCZ8J
+	/gQ5tCELhABUeD5kj/WRJk04Ecg577BQXFpnvyZblxF9agHX5/0uLMuXcDr7bHQ=
+X-Gm-Gg: ASbGncsERciSsvYIrIXmVDxyHxjObiwcRPJXELm+en4MVY00prOE8tQGpvwZN0W0TLI
+	jr7vmBXrIrAWHzOS4ZU7ZKKUSCifXGwVwJ083PLSl6nVjhSEiowqk8CJl2pPCJ7O4lRAPLtzioU
+	PvTj/e1zfACoZUVpV2ye4+0PZLA+Q64+VGYak4Ged4MyrZ1xn+2g2uuO42XyxZWZ4bnIQT8ITUp
+	yQuucCiUqESLH3CQlpHKA5+qPQmeedqDDzdQDg0SrA65izlQTJ7xMYOVYpb1SYOQp52AYZujOsK
+	EIUGzAlbBD6sXlcexP7kcYdQdNOT/qvpR9xB6kK/Nox2vsGrCh1cYjx4gRQ=
+X-Google-Smtp-Source: AGHT+IGubP2iCTuCyZ6yE7PZ7fqh1WFD1EalA/6wRofWBfLKR0gPhAxQUDuoA/JPJLBw75qeR6aCjg==
+X-Received: by 2002:a05:6402:1d49:b0:5f4:cb60:b1bf with SMTP id 4fb4d7f45d1cf-5f72297d704mr2493639a12.5.1745781470559;
+        Sun, 27 Apr 2025 12:17:50 -0700 (PDT)
+Received: from [192.168.1.28] ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f70110791bsm4547238a12.13.2025.04.27.12.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Apr 2025 12:17:49 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Steen Hegelund <Steen.Hegelund@microchip.com>, 
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Ludovic Desroches <ludovic.desroches@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
+ linux-mips@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In-Reply-To: <20250424-gpiochip-set-rv-pinctrl-part2-v1-12-504f91120b99@linaro.org>
+References: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
+ <20250424-gpiochip-set-rv-pinctrl-part2-v1-12-504f91120b99@linaro.org>
+Subject: Re: (subset) [PATCH 12/12] pinctrl: samsung: use new GPIO line
+ value setter callbacks
+Message-Id: <174578146801.16256.5835084697538702793.b4-ty@linaro.org>
+Date: Sun, 27 Apr 2025 21:17:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425132727.5160-1-linux.amoon@gmail.com> <20250425132727.5160-9-linux.amoon@gmail.com>
- <7a1e2432-46e2-40f6-84af-bff45ab79899@kernel.org>
-In-Reply-To: <7a1e2432-46e2-40f6-84af-bff45ab79899@kernel.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 26 Apr 2025 11:42:07 +0530
-X-Gm-Features: ATxdqUE-aSBuAto3DWag_735XNh8AilQRfbJbLa3ov7b-DirWkNhYUiBgQia2w4
-Message-ID: <CANAwSgSQrW8CCg7=rdN98EsoDZ0KsWv84DKOh3K4Jgmgz66XFQ@mail.gmail.com>
-Subject: Re: [PATCH v1 08/10] ARM: dts: exynos: Add proper regulator states
- for suspend-to-mem for Exyno5250 smdk5250
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	"open list:MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BO..." <linux-kernel@vger.kernel.org>, 
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Krzysztof,
 
-On Fri, 25 Apr 2025 at 20:18, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 25/04/2025 15:26, Anand Moon wrote:
-> > The MAX77686 PMCI is able to power down and up key core supplies and other
-> > voltage rails via PWRREQ signal to enter / exit (deep) sleep mode.
-> > PWRREQ status is ignored during initial power up and down processes.
-> > All programming must be done before the AP enterns the sleep mode by
-> > pulling PWRREQ low since the AP does not have programming capability
-> > in (deep) sleep mode.
-> >
-> > Add suspend-to-mem node to regulator core to be enabled or disabled
-> > during system suspend and also support changing the regulator operating
-> > mode during runtime and when the system enter sleep mode (stand by mode).
-> >
-> > Regulators which can be turned off during system suspend:
-> >       -LDOn   :       2, 6-8, 10-12, 14-16,
-> >         -BUCKn  :       1-4.
-> > Use standard regulator bindings for it ('regulator-off-in-suspend').
->
-> I do not believe you tested this but instead send whatever you found
-> somewhere without actually understanding the code. In the past you were
-> sending such patches - without knowing what they do and without actually
-> testing.
->
-> NAK
->
-Thanks for your review comments,
+On Thu, 24 Apr 2025 10:35:35 +0200, Bartosz Golaszewski wrote:
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+> 
+> 
 
-All the MAX77686 control register supports On/Off Control by PWRREQ signal.
+Applied, thanks!
 
-Once the Application Processor (AP) boots up, the AP is able to power
-down and up key
-core supplies and other voltage rails via PWRREQ signal to enter /
-exit (deep) sleep mode.
-PWRREQ status is ignored during initial power up and down processes.
-All programming must be done before the AP enterns the sleep mode by
-pulling PWRREQ l
-ow since the AP does not have programming capability in (deep) sleep mode.
+[12/12] pinctrl: samsung: use new GPIO line value setter callbacks
+        https://git.kernel.org/pinctrl/samsung/c/0a5b9be31f78898c7d6e7778377e8ab6ab0399d2
 
-So PWRREQ has the following states for control registers
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-00: OFF (regardless of PWRREQ)
-01: Output ON/OFF controlled by PWRREQ PWRREQ=H (1) : Output ON
-PWRREQ=L (0) : Output OFF
-10: unused
-11: ON (Regardless of PWRREQ)
-
-I have dome code mapping through the driver to understand this feature.
-If there is some code improvement plz suggest so.
-
-> Best regards,
-> Krzysztof
-
-Thanks
--Anand
