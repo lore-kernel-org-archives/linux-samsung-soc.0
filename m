@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F36A55;
-	Mon, 28 Apr 2025 09:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75600A55;
+	Mon, 28 Apr 2025 09:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745831585; cv=none; b=S1ofJZtUhEk/4r99mHwxijAXR2KWb2Rl/YDcXGeiRwubuCQKnDavq8T18TFXyEbrmKs/ch+fT+yU1WT53xzxjAySqS7DKEPePtoAisxzlPzL2Hh8l1NkuiHFk6dPyhevPtbBK+ZWF3l1vfMBujk0L3AwuNNVXO6LZTmKOEZhwAM=
+	t=1745831679; cv=none; b=S7dFLyrn3mXzpuF4iAk5fxla83i264Tyxdg2eIq2SLlX0mN/aTRBHljMxxYD2avIBBUety1W8oD6bHa5JmumqNG/bYHwZwKZASZ9XNIphv/VVWuAnlRDlXskqmoY/XYl71cFT4GOk1t2MTJheUwMilS36Zh4Mb4rC81MHS0SjBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745831585; c=relaxed/simple;
-	bh=8/Q6dFD+zrTw12D8hBm+NBdKWBBVcv2MlmfVZOsi7j8=;
+	s=arc-20240116; t=1745831679; c=relaxed/simple;
+	bh=3mooRQIC6lHjmcuTQZDbijgFKmau+h4oMhEwGe252X4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ny7lhXABxzBS6Ri4O483ATfeMFWzKcaxXx4Jxnm7GQCAZPs5PzUHhHOKrupXP/CNNL5G6y0FSAWSMKbYI0IKkCS+zZhk8BA+32sdCc1Eu7PDtWAZMU76zVGDFQ98SZWnmjhe0EtwTTfIUJq0wbfO6JUyjc+crY5xdtRzZ1KH7YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Un1KF/nu; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=smeQxHqlhf9M47mTYuxv7ausKAalONx2Hk4qsYZrQ3uXpdc9PzKYWADnp9v5SAit1aCnX3ptPCndO6l+ulGNRFqOJcMlwCMdgER5KXMl08j5KTBw/7Av9LsIb7vvflNzWig0JJL0ts1dqSTLObTbLLSZLZGu3FuhbZUIBtIITow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+II3cay; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Un1KF/nu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A4AC4CEE4;
-	Mon, 28 Apr 2025 09:13:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+II3cay"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE0A1C4CEE4;
+	Mon, 28 Apr 2025 09:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745831584;
-	bh=8/Q6dFD+zrTw12D8hBm+NBdKWBBVcv2MlmfVZOsi7j8=;
+	s=k20201202; t=1745831679;
+	bh=3mooRQIC6lHjmcuTQZDbijgFKmau+h4oMhEwGe252X4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Un1KF/nuaV9SmLPVWpPiCJYK3v/qOfiRJ3+xG9zjXKzANZMACtnfyxwPHCI0lIuL5
-	 iPANtUVhCWvMlbXHLStMEf1lIHhckKlsfchhPWr8zE8kEYrekeRnGkStS+hJaQjuKK
-	 XZr6zEVsLcatG3acLH16zQOrV7Qa+F9RXDAlk/H952SFWp6EyLz7D2HnOVhf30h2Zf
-	 rJdFWScj7WVnytbTb7nr682+/AjbIEXdh8PP2CW4IBIAzCYBKQ+2xhKyGoz2bzQBK7
-	 wL61nBv3V6Il6XyrotS2pAO5rFbJ5WRKsRt2e2lW9KP8wLCuoZ/hiB8sfhdgqDFXQF
-	 u7TalDhKZsPUw==
-Message-ID: <cc76fdc3-761f-4171-aec4-02f5e6013cb8@kernel.org>
-Date: Mon, 28 Apr 2025 11:13:00 +0200
+	b=X+II3cayIGgO6GRr9Ux3EeSzND6LJbGGipMPQIpkJP6Huhdgsanttzf/8p92QeSR1
+	 lNYbUYQoBm8ck8HKqy1oOyoWfGn11VovJM5TqVxBW111/9YPYuuCRB2WSDkye7sJ+V
+	 WF6ZDmjurQgLDet2+l/QKIvAWzUUfmEwDL0eA6WcesVWeTVUXyRVvwB/qtOxZlFabc
+	 m/ZR1Gbb6pIuUfQ6tRHimrS43ndhE9N7801oywPngP3tYOApkkltNrrnibGkjCDbmp
+	 Fm8grY3pEUmfx9wfnQ9sYkC1ElbNlk37aUnMeHsKAPg1YiF6u3vcNOscs7hyOE/sPu
+	 RbhWFMvMyYwgw==
+Message-ID: <a3438b8b-0fd2-454f-a539-39aa7cfcd57b@kernel.org>
+Date: Mon, 28 Apr 2025 11:14:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov920: add cpucl1/2
- clock definitions
+Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add cpucl1/2 clock
+ support
 To: Shin Son <shin.son@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -47,8 +47,8 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20250428084721.3832664-1-shin.son@samsung.com>
- <CGME20250428084728epcas2p34ffa0051a16c10ff1c358a98cc2c2fa4@epcas2p3.samsung.com>
- <20250428084721.3832664-2-shin.son@samsung.com>
+ <CGME20250428084728epcas2p17a0253f04de15c23ab6362113a0d47bb@epcas2p1.samsung.com>
+ <20250428084721.3832664-3-shin.son@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,45 +94,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250428084721.3832664-2-shin.son@samsung.com>
+In-Reply-To: <20250428084721.3832664-3-shin.son@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/04/2025 10:47, Shin Son wrote:
-> Add cpucl1 and cpucl2 clock definitions.
+> Register compatible and cmu_info data to support clock CPUCL1/2
+> (CPU Cluster 1 and CPU Cluster 2),
+> these provide clock for CPUCL1/2_SWTICH/CLUSTER.
 > 
-> CPUCL1/2 refer to CPU Cluster 1 and CPU Cluster 2,
-> which provide clock support for the CPUs on Exynosauto V920 SoC.
-
-You should have sent all cpcl0-2 together, so we see complete picture.
-
+> These clocks are required early during boot for the CPUs,
+> so they are declared using CLK_OF_DECLARE instead of being registered
+> through a platform driver.
 > 
 > Signed-off-by: Shin Son <shin.son@samsung.com>
 > ---
->  .../clock/samsung,exynosautov920-clock.yaml   | 45 +++++++++++++++++++
->  .../clock/samsung,exynosautov920.h            | 32 +++++++++++++
->  2 files changed, 77 insertions(+)
+>  drivers/clk/samsung/clk-exynosautov920.c | 208 ++++++++++++++++++++++-
+>  1 file changed, 207 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+> index 8021e0912e50..f8168eed4a66 100644
+> --- a/drivers/clk/samsung/clk-exynosautov920.c
+> +++ b/drivers/clk/samsung/clk-exynosautov920.c
+> @@ -18,7 +18,9 @@
+>  
+>  /* NOTE: Must be equal to the last clock ID increased by one */
+>  #define CLKS_NR_TOP			(DOUT_CLKCMU_TAA_NOC + 1)
+> -#define CLKS_NR_CPUCL0			(CLK_DOUT_CLUSTER0_PERIPHCLK + 1)
+> +#define CLKS_NR_CPUCL0			(CLK_DOUT_CPUCL0_NOCP + 1)
 
 
-...
+You just added that line a week ago and it is already incorrect? Then it
+needs patch on its own explaining what are you fixing.
 
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (38.4 MHz)
-> +            - description: CMU_CPUCL2 SWITCH clock (from CMU_TOP)
-> +            - description: CMU_CPUCL2 CLUSTER clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: switch
-> +            - const: cluster
-> +
-> +
-Just one blank line.
 
 Best regards,
 Krzysztof
