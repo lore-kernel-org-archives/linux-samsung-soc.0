@@ -1,156 +1,202 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D03190072
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2025 16:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C4827A911;
+	Mon, 28 Apr 2025 16:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745856470; cv=none; b=KkdLHDLai+ncLQCCuobw4j2bogcGNhq/kcEbBA+EBPm1bdsTWn3Mx9NQHajIsGLqpssU4xOY19dtmasm94POqpbKKX+S1cFYW+uFQagW32vRUCvqNu8UtNqApYjOaP+5IRSyTV99PoWpHlBU4r7PtVVdZxjJQW1XKCPOJ4g2yIo=
+	t=1745858064; cv=none; b=Mms5IfFIfarjxhqpJPgwaM9KUWso023a04/qlaDKOzzGuR5xAjuBIoMbwBfSWywhYcKX91ul1l+vJr1FOJqszWCQZDtJhvZNBYI5cYhUdig8qzLu+PCq7vYw/WquK6Q91Hvy7XzWiNWU3Xm9gr4Z/kWd4CTOL9xFfE5Fc/Wy32U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745856470; c=relaxed/simple;
-	bh=EicrIC19WAEeWMuLep/tExhmxJZcV0V/chCfiyO/yOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SUpY0OtTxVhfVDveCtUu6eXwuf3DcnxuigIIE9J5IiDU5gy75anf27UtrJxBMdxk/4KuQw1GjKg+0VDwz1WDt8G7tSSHk6YoUxqMSqWHAHVqkEqKNMDXcU0H5e1K09YLUd2+uTjKX0VTbGob/H4bwRi/2rrOaRrf5vbpLVw38oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YiGGeNAc; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745858064; c=relaxed/simple;
+	bh=XWL8UolMeNZmPHHotkwGV8h0TGYlW+ze8mtg/kLlngg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BN9+zEaAx4wJj9rvWGWrfCFvOt+uLygC6hjPTZvjfOP2sCD3mmKlyjBGFrKDWE5wYZy9vnDWLW7QvvHNR7yC9BBWWPjWLQ43H3mr0QcT7MiggKkGB6F0r+zndcedKRK8Bzl6B3ui+TddAtLOxQ4u8WMUXVTnOYy+D3mkbP5532M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A5vI5CPA; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YiGGeNAc"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-736a7e126c7so4607876b3a.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2025 09:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745856468; x=1746461268; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5sZqFf0pd/XIN1B2NzEquxW9LkBSgzNN2nMSHABe7I8=;
-        b=YiGGeNAc7GhHF8tsJDBwRNElmM1rEby89gs3Tgkw9iCN9nztCsyUG3SlaoKSsGjh6o
-         LON8tqkURoxDDXccUNHCiimnNsh8VFJp2zC0uotq6VfvtroJjnc/rfFYXY5USZFjIlNp
-         Zd39WJ+91MNHBQwbaRqXvn7asSY2RjrHkyFPaw3iy9PrdCpd6l9X741Qf+NceAsZEks7
-         C8eJGQypysijJ79nc089QJp0p4Ceteoqp7P4cQTXKipBWlEVhVH+hJytEJDnyIoBmzwy
-         mXDzQ+zf3X62/fjDpfJ5MzEN4K2dxS1YJ1LvSEF4YtvR6DH2yE1oV/O77QI5kRk6kcdG
-         dWbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745856468; x=1746461268;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5sZqFf0pd/XIN1B2NzEquxW9LkBSgzNN2nMSHABe7I8=;
-        b=pP1kE8eHXu5sDANuRWrGO1X17GxZBovcixppgWVTE4o8vlZ/oWQF7PpOdqZ8SSFVWs
-         LDPCg3vY3MS/HQV1MDtVYvbNm7l4FMPR+LAZr2k3yOBLyuIuWNhYFDOhc+keGnFytPAG
-         3MRFZEvCp/FKrdEL26DQMePQamvEolsMy0jI+vGcl0dtL8zMuK5zjZ4kiVOPd7TZqO9o
-         oDqZWHH0mBEUISettguqElw5CvixahAonhD+k3yPiQbICfKfXJ6kS3RNpVghYZibKILL
-         jX3x3uN5EBaet3pSbho7g0J/0ZnHTHEeSsajyU5yhWDMGOSbrr4malY8W3YsDu8yL1ut
-         Pe7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTzPpYH4DNZWcfj67Kdj1Smk3EfwCcZplmcm96d/NTl7X3bwtzObpJiNpbbw8IUZE21gEfUX0m0iVowgSs1ZaK1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyicGDKJW7OwwUd8Lo7ltixzmLrmsgaGcnDGYSgtxTHJQL48KKx
-	R89GqLooa2MSuJY5HxXAM0QfZTkeN8eRSpvxkghD0ALsJowgEngNIc2MPC1+ng==
-X-Gm-Gg: ASbGnctlq2QlnZDyH/IZfM0xIA1/ot1ENRCDzVZ8fQtvTMtS4Cgxmm8GUj61M5rgxFC
-	STMdLOnuui8XK2RDZbIHMrUIe++4QQJ0y5WsoFfTG8hkjziROHVkU0rWumLrnnEiWwpFiU6OEs4
-	1DxfBUNvykZ0/S/bNVO4OltHjvZp+S/iZWOhbCdIM3usmVoAuar69g8u3otESoy/P/8yNqzMFtV
-	xV2/YCUsEA8mQchFllJur3NXMI7fcg0DG++7dWxPfyho4pSvRwVSZSUEr7Cssy5pZjKDbx6Tl31
-	Vs1jUVVbO6CjnnXmL4G0SG/7komUSDdj41dqVI2N5/W5Rak37g==
-X-Google-Smtp-Source: AGHT+IF0ND+g+mFXQq9lcsG6u5nnlgozZt0EphIl6/bHv3S/p1GH2+Y4vlSstnIZ/hRGR6y3aIC3NA==
-X-Received: by 2002:a05:6a00:138e:b0:736:3c2f:acdd with SMTP id d2e1a72fcca58-73ff72d3d28mr12125481b3a.14.1745856468420;
-        Mon, 28 Apr 2025 09:07:48 -0700 (PDT)
-Received: from thinkpad ([120.60.72.74])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25acc4casm8463484b3a.172.2025.04.28.09.07.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 09:07:47 -0700 (PDT)
-Date: Mon, 28 Apr 2025 21:37:38 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, 
-	Paul Cercueil <paul@crapouillou.net>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Ludovic Desroches <ludovic.desroches@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-actions@lists.infradead.org, linux-mips@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 04/12] pinctrl: owl: use new GPIO line value setter
- callbacks
-Message-ID: <ild3eqfgiez4zgtxcha6ki3udfxzdiqeywvwzh7rfympgfps7o@m6h4v5kxhq63>
-References: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
- <20250424-gpiochip-set-rv-pinctrl-part2-v1-4-504f91120b99@linaro.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A5vI5CPA"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F39DA43962;
+	Mon, 28 Apr 2025 16:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745858053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0+W4uodyxoQUQ7gTcLqHUOqlDvIcEkj4yx+1gWHy3Mc=;
+	b=A5vI5CPAhG7Ec31vAslCrct99yDYQUT4yEVpjGag1L5A3ypdDOeM06X6a2NpNi4YWnE6mC
+	2NyQNklaS4GH5N+Y0O0KorENjPo6XmIKRUe43hr2bljZ9KcS30qPhwmXIPUFXXOTPm5XIu
+	n26mA6Au7+KoHn580KonEgnc/bZs1s5A97JkVcqC4ISpJzXNYjj+t+twS22sMPY2EzjhQZ
+	iio59hjvBN4KHAeTHadmXNHM9e/08/R+WKLujQCoy1O7rhd/OkZ8uYxTFLAP+7H0ewrqHT
+	6PMrAxpgk6up77rZyTiJAqPjC9S4tcckhsI1eEGu3LR+due+PAeNxJSMadl6Qw==
+Date: Mon, 28 Apr 2025 18:33:58 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Douglas Anderson
+ <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
+ Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
+ Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ chrome-platform@lists.linux.dev, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ linux-stm32@st-md-mailman.stormreply.com, Adam Ford <aford173@gmail.com>,
+ Adrien Grassein <adrien.grassein@gmail.com>, Aleksandr Mishin
+ <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Benson Leung
+ <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
+ Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
+ <cristian.ciocaltea@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, Dharma Balasubiramani
+ <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
+ Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
+ Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
+ Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>, Liu Ying
+ <victor.liu@nxp.com>, Manikandan Muralidharan <manikandan.m@microchip.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
+ <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
+ <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
+ Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
+ <mordan@ispras.ru>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
+ <ilpo.jarvinen@linux.intel.com>, Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Dmitry
+ Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>, Pin-yen Lin
+ <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, Aradhya Bhatia
+ <a-bhatia1@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ian
+ Ray <ian.ray@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, Peter
+ Senna Tschudin <peter.senna@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Herve Codina <herve.codina@bootlin.com>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Helge Deller
+ <deller@gmx.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre
+ <yannick.fertre@foss.st.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Michal Simek <michal.simek@amd.com>
+Subject: Re: [PATCH v2 00/34] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Message-ID: <20250428183358.4d28ca6a@booty>
+In-Reply-To: <20250428-colossal-fiery-alpaca-8c5fee@houat>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+	<20250428172457.23e23df5@booty>
+	<20250428-colossal-fiery-alpaca-8c5fee@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250424-gpiochip-set-rv-pinctrl-part2-v1-4-504f91120b99@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedugeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfetudeugfehheeliefhjeejuddvledtuddttdevledthfehgeeugfetheekgfffnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtkedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmr
+ ghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Apr 24, 2025 at 10:35:27AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Maxime,
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Mon, 28 Apr 2025 17:42:46 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-- Mani
+> On Mon, Apr 28, 2025 at 05:24:57PM +0200, Luca Ceresoli wrote:
+> > Hi Maxime, other DRM maintainers,
+> >=20
+> > On Thu, 24 Apr 2025 20:59:07 +0200
+> > Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> >  =20
+> > > devm_drm_bridge_alloc() [0] is the new API to allocate and initialize=
+ a DRM
+> > > bridge, and the only one supported from now on. It is also necessary =
+for
+> > > implementing reference counting and thus needed to support removal of
+> > > bridges from a still existing DRM pipeline without use-after-free.
+> > >=20
+> > > This series converts all DRM bridges to the new API.
+> > >=20
+> > > Patch 1 uses a coccinelle semantic patch to mass-convert some of those
+> > > drivers -- thanks Maxime for having suggested the patch that served a=
+s a
+> > > starting point for me. I was unable to come up with a better patch
+> > > converting more drivers though, so I converted all others manually. M=
+ost of
+> > > them were trivial. I left the non-trivial ones at the end of the seri=
+es to
+> > > help reviewers know where to look at more carefully.
+> > >=20
+> > > Due to the large number of touched files, the list of recipients gene=
+rated
+> > > by get_maintainers (b4 actually) was huge, 60~70 people (not counting
+> > > mailing lists), so I took the liberty of trimming the list as reasona=
+bly as
+> > > I could to DRM maintainers and frequent contributors, and added all o=
+ther
+> > > recipients individually per-patch. I hope this is fine. Don't hesitat=
+e to
+> > > suggest more people which should be Cc-ed in a future series, or a be=
+tter
+> > > Cc policy.
+> > >=20
+> > > Current plan and status of the DRM bridge refcounting work:
+> > >=20
+> > >  A. =E2=9C=94 add new alloc API and refcounting -> (now in drm-misc-n=
+ext)
+> > >  B. =E2=9E=9C convert all bridge drivers to new API (this series)
+> > >  C. =E2=80=A6 documentation, kunit tests, debugfs improvements (v1 un=
+der discussion)
+> > >  D. after (B), add get/put to drm_bridge_add/remove() + attach/detech=
+()
+> > >  E. after (B), convert accessors; this is a large work and can be done
+> > >     in chunks =20
+> >
+> > Maintaining this long series is quite painful. Do you think at least
+> > patches with a R-by or T-by tag could be merged before I send v3, so
+> > we can relieve the maintenance effort, mail servers, and everybody's
+> > inboxes? =20
+>=20
+> Yes?
+>=20
+> What's stopping you though? You have at least a colleague that can apply
+> them, and you could just as well apply for commit rights yourself.
 
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index d49b77dcfcff..86f3d5c69e36 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -598,7 +598,7 @@ static int owl_gpio_get(struct gpio_chip *chip, unsigned int offset)
->  	return !!(val & BIT(offset));
->  }
->  
-> -static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-> +static int owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
->  {
->  	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
->  	const struct owl_gpio_port *port;
-> @@ -607,13 +607,15 @@ static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
->  
->  	port = owl_gpio_get_port(pctrl, &offset);
->  	if (WARN_ON(port == NULL))
-> -		return;
-> +		return -ENODEV;
->  
->  	gpio_base = pctrl->base + port->offset;
->  
->  	raw_spin_lock_irqsave(&pctrl->lock, flags);
->  	owl_gpio_update_reg(gpio_base + port->dat, offset, value);
->  	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-> +
-> +	return 0;
->  }
->  
->  static int owl_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-> @@ -960,7 +962,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
->  	pctrl->chip.direction_input  = owl_gpio_direction_input;
->  	pctrl->chip.direction_output = owl_gpio_direction_output;
->  	pctrl->chip.get = owl_gpio_get;
-> -	pctrl->chip.set = owl_gpio_set;
-> +	pctrl->chip.set_rv = owl_gpio_set;
->  	pctrl->chip.request = owl_gpio_request;
->  	pctrl->chip.free = owl_gpio_free;
->  
-> 
-> -- 
-> 2.45.2
-> 
+OK, thanks. Will do.
 
--- 
-மணிவண்ணன் சதாசிவம்
+The reason I haven't done it is this policy in DRM still appears a bit
+unusual to me, but if it works for DRM I'm OK with it. Only, in case of
+doubt, I didn't want to risk abusing of the commit rights.
+
+Best regards,
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
