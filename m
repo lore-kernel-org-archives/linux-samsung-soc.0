@@ -1,67 +1,128 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372A7279347
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 08:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFC72BCF47;
+	Tue, 29 Apr 2025 09:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745916572; cv=none; b=fhCVjjsgluRcLDdBmFBUMndjhf8+yu76zuyM+mnkTm9mGStaCR9TaEnx0diDnEf+oNZbBehvlod4FnX3GaYnjmoQLlmzURpqbB3PC8eHcUBBoqEIvN7JZztFYDr/+QK+DUIrQqATTkmPosZ5+w9RvLvxBjsXaNByXLDeWE1cA6Q=
+	t=1745918886; cv=none; b=falFz/hRtUriEhvd7oisL35G/0GOmKP2oYRN4NH46uh8Y3SaG6J1doOX+BBjttQYk4EauBWmxfwirvOlrFisSE6x3fchnDQP5+m083UMhvBdIGE6k8XD9kES9nay0qtBXGm9KHPFEgANKzs4v/+f7nbnkKB80Ohc5uMWEQjFgus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745916572; c=relaxed/simple;
-	bh=Y+YNRUn6nDZXhgPRqJFgkRV9JHzCFOUktj/ZS6hwyk0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kWoXkCUq7sQjSvbYk7Z7SrcWX7A3P/L1KGeQabPtYsvT7BJAeIP+Ui2E2N8uouENTw6QEXtbFyUDS91fTeK+mh4kgwq0ZU7cEN1juyDiPSQ7bsyeM7AorQdboGIgOvibL+t12GNwUTP4+KhmibNCYY3iL9Ra591yLVZ7dL2NRzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+f8gO3z; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745918886; c=relaxed/simple;
+	bh=m6BH7rPvWXI4+Y9j/+D57wi/3GKOYG4eeIxYiEgU9NU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IY+qdbfYB0y55hMEE6zRW5c9wlMqhBH78XnXjFXZslRKhfPimXdrVZ08y8sdTXYavT3loEUnayw6e6PmTAWvNHZPrF2pxO1P5MChhP19MLFM1pFoBYOtZTzItonmpNdErq51tuPXnK34+slKXu0JND0fKbhTFXE3fPXcRhyE5AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=b3QffBEW; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+f8gO3z"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso11815653a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 01:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745916568; x=1746521368; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GeYXWrbDPIe582+hLadmsueMm8iAc4fIl9vPeooNz1Q=;
-        b=o+f8gO3zg86yMf7PRy/hKy3Q8QN1lyR4U0oZeFQ2kKFDDXAf8xF2EbSIthbigHdk6d
-         MDqj4DRVJFCcLGhBPFdn0ui8+43JX3xoiScFVtwQjQbHeUrTZCyrifa9XpasH0TBPvLX
-         oo5eggU/EWw9hr81wviug5HN9iXC2StIeXipa/ww//E7UX0Ow9F7Y7UVJWwb7ho9lO6J
-         03uFsTvdfH0vEqJtS4o6RaAYqZZgAodqBB+77IzFBGzBs58LUqgnwJnUM2NFQOyhvH2H
-         eSytkJTblKVj0jHwNkRk31L1cPPavxUMpilZHT69f0721R+iv6ZueShIn0+gduBYKOor
-         GQOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745916568; x=1746521368;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GeYXWrbDPIe582+hLadmsueMm8iAc4fIl9vPeooNz1Q=;
-        b=d4RQYUrNUdmeap9yX0b/pAoEII3z4AAWxwgDaT23CCtUa2JaEbh0Ur/fZSHvjB/4ri
-         5HLSorUkrV1UgJwae8tWBpIIqKtkoT6ma6VoIAJrYIhYbTPCm+tW9A9Yirq/t3Ch94r0
-         jr5jdfm8ZZXdrxYD9qqWo5UD+lzZ6foQgwiCTXFYEWHbcK0glhj3q22e50DtpM2H4ETm
-         Vgn8a4qFv70PrfrGJ4T+Qdix4yBji53vUO/grlXtRr4nbiTz9VS97hZzkRnLqJ3RlKEF
-         VVKpL1bWZWEHRfo+3YYhgI3/lcuqbWKMNQunHinws+SlspHQdUM84mE1/e3WaKjW2653
-         vWZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTyhBZ5JGFiP4Wl7i7rRKCwTRFSgsDj901HzYTUZrCdKbe1sOyTSfASuJXT9vA1qeMBkN6TTjxfQD3stDn1at9Gw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygHh39+k6l7JQ5m2f7KYIGQ901+s2lwPOoxxnOay7x1DjudHiX
-	LQaCMetaff8y4GrNXZQI5OQHm0ed4VE+JOvhp6N4XVRXhFzNbD0SElggs9Uo1Tc=
-X-Gm-Gg: ASbGncv7+kXScGMi2TcBwGq0hkwsgrGnp1vAzT7EZNcHH/v77gd4ktut/M/tj2CO2vz
-	bWOBi4ed+7SWF2Zr8uG8nItqWgi8eUEps5KSIrksqqet7El5Hfril03hdesft2dPU77cszzot/5
-	jvDozi5No1BnAdr7dxpmFSNUigrUXgp6QQ5Bp3YYhVE9XrWD6GRr55J73StQbgk7UKd3HoZ6brI
-	DinSqR1eHWDMDhvO51JPTUS/zror7ht1SbjRVpA7waL124G4FbQMOUxrWaSXOaX7K9+pz+bgqB6
-	cyEb9inq9hhzbKGxIApSlcxiZg5E1YXdY0M4D0M83X+eFjWubsysVa+GHgHAXUCCOO/Sh2LvFqa
-	ielybuc6i5yVu0ISpvOoSjsya
-X-Google-Smtp-Source: AGHT+IFzsdzLq0N4FqNybCrqo3s1JLy/WZZPcFkAEx21WO1BYxDl4k17etxA0M+ge3novFvtYXCeWA==
-X-Received: by 2002:a05:6402:2685:b0:5ed:599a:3cbe with SMTP id 4fb4d7f45d1cf-5f839224516mr2358189a12.4.1745916568451;
-        Tue, 29 Apr 2025 01:49:28 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7ec0e6331sm3546619a12.78.2025.04.29.01.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 01:49:28 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 29 Apr 2025 09:49:25 +0100
-Subject: [PATCH 2/2] phy: exynos5-usbdrd: s/FIELD_PREP_CONST/FIELD_PREP
- where appropriate
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="b3QffBEW"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9DE5D43AD6;
+	Tue, 29 Apr 2025 09:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745918880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kdpP6+IZV0QYmrFxTy58B29gyyja9aTG1LwyoYVwA54=;
+	b=b3QffBEWXOkepRbRJBAxG56ebIFGpWNAlbC+KLQo0RM4CJOdHofw9LcRaXOlQzjEbdB3RX
+	Z+03iDitY3AAR93mhf5d6WLE4XuT3QGY7QachEbLrEI4kcECt5/wn0GKM7h1OqhW4SjOpz
+	HOTdVe7S/cZE605Z0+HeFU5eI+Z3o6g8ShHK76B/FqbRAkibTMzruH5CF/IoUuGm4GYVXs
+	sFtz6X9pJP9Yj6BYgD109FXC4ES1/uz4pLgGybsGQHMDOgyJx5zG6q/WG2yh6+/TQM4XDc
+	hqGRyOgKhSdGaqn9GMqCPbl95bREdu4X3Ttbed9zcOzDQJjjJUJriSfQHcCMEg==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+ Adam Ford <aford173@gmail.com>, Adrien Grassein <adrien.grassein@gmail.com>, 
+ Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Christoph Fritz <chf.fritz@googlemail.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Liu Ying <victor.liu@nxp.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Sugar Zhang <sugar.zhang@rock-chips.com>, 
+ Sui Jingfeng <sui.jingfeng@linux.dev>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Vitalii Mordan <mordan@ispras.ru>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ "Rob Herring (Arm)" <robh@kernel.org>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+ Pin-yen Lin <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
+ Aradhya Bhatia <a-bhatia1@ti.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@ge.com>, 
+ Martyn Welch <martyn.welch@collabora.co.uk>, 
+ Peter Senna Tschudin <peter.senna@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Herve Codina <herve.codina@bootlin.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Helge Deller <deller@gmx.de>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>
+In-Reply-To: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+Subject: Re: (subset) [PATCH v2 00/34] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Message-Id: <174591887152.961603.7706063017853945511.b4-ty@bootlin.com>
+Date: Tue, 29 Apr 2025 11:27:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,210 +130,57 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250429-exynos5-phy-field-prep-v1-2-39eb279a3e0e@linaro.org>
-References: <20250429-exynos5-phy-field-prep-v1-0-39eb279a3e0e@linaro.org>
-In-Reply-To: <20250429-exynos5-phy-field-prep-v1-0-39eb279a3e0e@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieefgeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejheeiledvkeeigeeluddtleejvdfhleefleffffeitdetvdeltddttddtgfelteenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgdujedvrddukedrtddrudgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddutddprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomhdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehfnhhklhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphdriigrsggvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtp
+ hhtthhopeguvghllhgvrhesghhmgidruggvpdhrtghpthhtoheprhhgrghllhgrihhsphhouhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Commit 9b6662a0f715 ("phy: exynos5-usbdrd: use GENMASK and FIELD_PREP
-for Exynos5 PHY registers") added FIELD_PREP_CONST() in many cases
-where FIELD_PREP() would have been more appropriate. It also switched
-existing uses of FIELD_PREP() to FIELD_PREP_CONST().
 
-FIELD_PREP() is the preferred macro to use whenever possible while
-FIELD_PREP_CONST() is meant to be used in constant initialisers.
+On Thu, 24 Apr 2025 20:59:07 +0200, Luca Ceresoli wrote:
+> devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+> bridge, and the only one supported from now on. It is also necessary for
+> implementing reference counting and thus needed to support removal of
+> bridges from a still existing DRM pipeline without use-after-free.
+> 
+> This series converts all DRM bridges to the new API.
+> 
+> [...]
 
-Switch (back) to FIELD_PREP().
+Applied, thanks!
 
-Fixes: 7e6c2ffe6c22 ("phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to FIELD_PREP()")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 62 +++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 34 deletions(-)
+[02/34] platform: arm64: acer-aspire1-ec: convert to devm_drm_bridge_alloc() API
+        commit: 411465d35bc56877c33e2498ac697acfcf484e6b
+[03/34] drm/bridge: analogix-anx6345: convert to devm_drm_bridge_alloc() API
+        commit: 53ddeb25159781b029fda404226af600e76f975f
+[06/34] drm/bridge: display-connector: convert to devm_drm_bridge_alloc() API
+        commit: 4e90a3d96a6185e143041273f9867a1092dd4a71
+[07/34] drm/bridge: lt9611uxc: convert to devm_drm_bridge_alloc() API
+        commit: 6287ffd9eff6eea65865e64b9d4c45e115fa5ecf
+[11/34] drm/bridge: dw-hdmi: convert to devm_drm_bridge_alloc() API
+        commit: ed6987b674185873ebed7a619a646da6dd1a78fa
+[12/34] drm/bridge: tda998x: convert to devm_drm_bridge_alloc() API
+        commit: 7fe58bf1a9a24b533875c262a3222581a3f759e4
+[13/34] drm/bridge: ti-sn65dsi86: convert to devm_drm_bridge_alloc() API
+        commit: a4754ae9cfa76fbce79f023c268a5bac56f36321
+[14/34] drm/exynos: mic: convert to devm_drm_bridge_alloc() API
+        commit: 91c5c7b5bb2dd09b43b025bce6d790d3c79f4518
+[15/34] drm/mcde: convert to devm_drm_bridge_alloc() API
+        commit: 40c25b9ec641f43ba17c7b788ac16ec23f8daaa8
+[16/34] drm/msm/dp: convert to devm_drm_bridge_alloc() API
+        commit: b2aabe5c6b65516d88214aba4b12ce2ca78bac6c
+[17/34] drm/msm/dsi: convert to devm_drm_bridge_alloc() API
+        commit: fffc8847743e45604c4478f554d628481b985556
+[18/34] drm/msm/hdmi: convert to devm_drm_bridge_alloc() API
+        commit: e11532be87e437648521a8ed5358c56df11933b4
+[27/34] drm/vc4: convert to devm_drm_bridge_alloc() API
+        commit: 9545c91ed75ff65e114761a7729de0e1b440aec6
+[31/34] drm/bridge: imx8*-ldb: convert to devm_drm_bridge_alloc() API
+        commit: e74b84cd83962e357329a695ba348b3dfe37395c
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 4ea1fabd4d6f9c9fe412f17d4d26be07724b6361..6cbe563a7bd0449248d6b41c4f6785c91ccc47ba 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -540,8 +540,7 @@ exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
- 
- 	/* Use EXTREFCLK as ref clock */
- 	reg &= ~PHYCLKRST_REFCLKSEL;
--	reg |=	FIELD_PREP_CONST(PHYCLKRST_REFCLKSEL,
--				 PHYCLKRST_REFCLKSEL_EXT_REFCLK);
-+	reg |= FIELD_PREP(PHYCLKRST_REFCLKSEL, PHYCLKRST_REFCLKSEL_EXT_REFCLK);
- 
- 	/* FSEL settings corresponding to reference clock */
- 	reg &= ~(PHYCLKRST_FSEL_PIPE |
-@@ -549,24 +548,24 @@ exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
- 		 PHYCLKRST_SSC_REFCLKSEL);
- 	switch (phy_drd->extrefclk) {
- 	case EXYNOS5_FSEL_50MHZ:
--		reg |= (FIELD_PREP_CONST(PHYCLKRST_SSC_REFCLKSEL, 0x00) |
--			FIELD_PREP_CONST(PHYCLKRST_MPLL_MULTIPLIER,
--					 PHYCLKRST_MPLL_MULTIPLIER_50M_REF));
-+		reg |= (FIELD_PREP(PHYCLKRST_SSC_REFCLKSEL, 0x00) |
-+			FIELD_PREP(PHYCLKRST_MPLL_MULTIPLIER,
-+				   PHYCLKRST_MPLL_MULTIPLIER_50M_REF));
- 		break;
- 	case EXYNOS5_FSEL_24MHZ:
--		reg |= (FIELD_PREP_CONST(PHYCLKRST_SSC_REFCLKSEL, 0x88) |
--			FIELD_PREP_CONST(PHYCLKRST_MPLL_MULTIPLIER,
--					 PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF));
-+		reg |= (FIELD_PREP(PHYCLKRST_SSC_REFCLKSEL, 0x88) |
-+			FIELD_PREP(PHYCLKRST_MPLL_MULTIPLIER,
-+				   PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF));
- 		break;
- 	case EXYNOS5_FSEL_20MHZ:
--		reg |= (FIELD_PREP_CONST(PHYCLKRST_SSC_REFCLKSEL, 0x00) |
--			FIELD_PREP_CONST(PHYCLKRST_MPLL_MULTIPLIER,
--					 PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF));
-+		reg |= (FIELD_PREP(PHYCLKRST_SSC_REFCLKSEL, 0x00) |
-+			FIELD_PREP(PHYCLKRST_MPLL_MULTIPLIER,
-+				   PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF));
- 		break;
- 	case EXYNOS5_FSEL_19MHZ2:
--		reg |= (FIELD_PREP_CONST(PHYCLKRST_SSC_REFCLKSEL, 0x88) |
--			FIELD_PREP_CONST(PHYCLKRST_MPLL_MULTIPLIER,
--					 PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF));
-+		reg |= (FIELD_PREP(PHYCLKRST_SSC_REFCLKSEL, 0x88) |
-+			FIELD_PREP(PHYCLKRST_MPLL_MULTIPLIER,
-+				   PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF));
- 		break;
- 	default:
- 		dev_dbg(phy_drd->dev, "unsupported ref clk\n");
-@@ -590,8 +589,7 @@ exynos5_usbdrd_utmi_set_refclk(struct phy_usb_instance *inst)
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
- 
- 	reg &= ~PHYCLKRST_REFCLKSEL;
--	reg |=	FIELD_PREP_CONST(PHYCLKRST_REFCLKSEL,
--				 PHYCLKRST_REFCLKSEL_EXT_REFCLK);
-+	reg |= FIELD_PREP(PHYCLKRST_REFCLKSEL, PHYCLKRST_REFCLKSEL_EXT_REFCLK);
- 
- 	reg &= ~(PHYCLKRST_FSEL_UTMI |
- 		 PHYCLKRST_MPLL_MULTIPLIER |
-@@ -647,8 +645,7 @@ static void exynos5_usbdrd_pipe3_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
- 	/* Set Tx De-Emphasis level */
- 	reg &= ~PHYPARAM1_PCS_TXDEEMPH;
--	reg |=	FIELD_PREP_CONST(PHYPARAM1_PCS_TXDEEMPH,
--				 PHYPARAM1_PCS_TXDEEMPH_VAL);
-+	reg |= FIELD_PREP(PHYPARAM1_PCS_TXDEEMPH, PHYPARAM1_PCS_TXDEEMPH_VAL);
- 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
- 
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
-@@ -669,7 +666,7 @@ exynos5_usbdrd_usbdp_g2_v4_ctrl_pma_ready(struct exynos5_usbdrd_phy *phy_drd)
- 
- 	reg = readl(regs_base + EXYNOS850_DRD_SECPMACTL);
- 	reg &= ~SECPMACTL_PMA_REF_FREQ_SEL;
--	reg |= FIELD_PREP_CONST(SECPMACTL_PMA_REF_FREQ_SEL, 1);
-+	reg |= FIELD_PREP(SECPMACTL_PMA_REF_FREQ_SEL, 1);
- 	/* SFR reset */
- 	reg |= (SECPMACTL_PMA_LOW_PWR | SECPMACTL_PMA_APB_SW_RST);
- 	reg &= ~(SECPMACTL_PMA_ROPLL_REF_CLK_SEL |
-@@ -799,15 +796,13 @@ static void exynos5_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
- 	/* Set Loss-of-Signal Detector sensitivity */
- 	reg &= ~PHYPARAM0_REF_LOSLEVEL;
--	reg |=	FIELD_PREP_CONST(PHYPARAM0_REF_LOSLEVEL,
--				 PHYPARAM0_REF_LOSLEVEL_VAL);
-+	reg |= FIELD_PREP(PHYPARAM0_REF_LOSLEVEL, PHYPARAM0_REF_LOSLEVEL_VAL);
- 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
- 
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
- 	/* Set Tx De-Emphasis level */
- 	reg &= ~PHYPARAM1_PCS_TXDEEMPH;
--	reg |=	FIELD_PREP_CONST(PHYPARAM1_PCS_TXDEEMPH,
--				 PHYPARAM1_PCS_TXDEEMPH_VAL);
-+	reg |= FIELD_PREP(PHYPARAM1_PCS_TXDEEMPH, PHYPARAM1_PCS_TXDEEMPH_VAL);
- 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
- 
- 	/* UTMI Power Control */
-@@ -838,7 +833,7 @@ static int exynos5_usbdrd_phy_init(struct phy *phy)
- 	 * See xHCI 1.0 spec, 5.2.4
- 	 */
- 	reg =	LINKSYSTEM_XHCI_VERSION_CONTROL |
--		FIELD_PREP_CONST(LINKSYSTEM_FLADJ, 0x20);
-+		FIELD_PREP(LINKSYSTEM_FLADJ, 0x20);
- 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
- 
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-@@ -1145,8 +1140,7 @@ static void exynos7870_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
- 	/* Use PADREFCLK as ref clock */
- 	reg &= ~PHYCLKRST_REFCLKSEL;
--	reg |= FIELD_PREP_CONST(PHYCLKRST_REFCLKSEL,
--				PHYCLKRST_REFCLKSEL_PAD_REFCLK);
-+	reg |= FIELD_PREP(PHYCLKRST_REFCLKSEL, PHYCLKRST_REFCLKSEL_PAD_REFCLK);
- 	/* Select ref clock rate */
- 	reg &= ~PHYCLKRST_FSEL_UTMI;
- 	reg &= ~PHYCLKRST_FSEL_PIPE;
-@@ -1169,7 +1163,7 @@ static void exynos7870_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	else
- 		reg &= ~HSPHYPLLTUNE_PLL_B_TUNE;
- 	reg &= ~HSPHYPLLTUNE_PLL_P_TUNE;
--	reg |= FIELD_PREP_CONST(HSPHYPLLTUNE_PLL_P_TUNE, 14);
-+	reg |= FIELD_PREP(HSPHYPLLTUNE_PLL_P_TUNE, 14);
- 	writel(reg, phy_drd->reg_phy + EXYNOS7870_DRD_HSPHYPLLTUNE);
- 
- 	/* High-Speed PHY control */
-@@ -1187,7 +1181,7 @@ static void exynos7870_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	 */
- 	reg |= LINKSYSTEM_XHCI_VERSION_CONTROL;
- 	reg &= ~LINKSYSTEM_FLADJ;
--	reg |= FIELD_PREP_CONST(LINKSYSTEM_FLADJ, 0x20);
-+	reg |= FIELD_PREP(LINKSYSTEM_FLADJ, 0x20);
- 	/* Set VBUSVALID signal as the VBUS pad is not used */
- 	reg |= LINKSYSTEM_FORCE_BVALID;
- 	reg |= LINKSYSTEM_FORCE_VBUSVALID;
-@@ -1350,7 +1344,7 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 
- 	/* Set VBUS Valid and D+ pull-up control by VBUS pad usage */
- 	reg = readl(regs_base + EXYNOS850_DRD_LINKCTRL);
--	reg |= FIELD_PREP_CONST(LINKCTRL_BUS_FILTER_BYPASS, 0xf);
-+	reg |= FIELD_PREP(LINKCTRL_BUS_FILTER_BYPASS, 0xf);
- 	writel(reg, regs_base + EXYNOS850_DRD_LINKCTRL);
- 
- 	if (!phy_drd->sw) {
-@@ -1367,19 +1361,19 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg &= ~SSPPLLCTL_FSEL;
- 	switch (phy_drd->extrefclk) {
- 	case EXYNOS5_FSEL_50MHZ:
--		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 7);
-+		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 7);
- 		break;
- 	case EXYNOS5_FSEL_26MHZ:
--		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 6);
-+		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 6);
- 		break;
- 	case EXYNOS5_FSEL_24MHZ:
--		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 2);
-+		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 2);
- 		break;
- 	case EXYNOS5_FSEL_20MHZ:
--		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 1);
-+		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 1);
- 		break;
- 	case EXYNOS5_FSEL_19MHZ2:
--		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 0);
-+		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 0);
- 		break;
- 	default:
- 		dev_warn(phy_drd->dev, "unsupported ref clk: %#.2x\n",
-
+Best regards,
 -- 
-2.49.0.901.g37484f566f-goog
+Louis Chauvet <louis.chauvet@bootlin.com>
 
