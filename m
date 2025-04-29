@@ -1,129 +1,145 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359E2C2598
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AB12BD5A0
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745928405; cv=none; b=X5rbMBjA0+N91rNlWL37tfXtDOklLDVeSHxeJ/fZeHaOdcVtw4w29VkSkizTQ+21oKdBcUYAiD2+QCmBnJVUi8Ioc4YDT46a+Hrgp+p5cwROvFUEjMAeDqscjdrDgoczfGIizoKHM/wC+R4fqJ50uz1pV/XmLgL0jefEbVkHJec=
+	t=1745928582; cv=none; b=IPdSDX14uXCm8ELeQxp+6/gCPnWtFLkfupWelPp8m+geZ6CNd9LnwO8ev6ktVmYNreZfiWm6x6QCuN2baOFvHRL3pe8UfasRP373uiT7PPyH8QX7Zsr2DuTpO3wwbvP1AUrTciHhN3zZlUUSxnguHR/QdcBHWJU9kp7eU8UJGqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745928405; c=relaxed/simple;
-	bh=u6IGIBto1xpKcUHgEQL32+myYLIW4UGqnHyagSe7Bwk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=Rh5NQVuvp7tmIewqSeDbI/0WKYEg1OZnHh/36nsW5Jk+4lvMC+dAWBMR5AUn5U5wheMb4ukZkWu0QRfsrCddUVMIS/5nDMgg/xC2okjr4SKVzQqeo7TaiXfzHcLRBTiUnDHKofJcz8HRfMlYynllwVbfC5OmDnGVbCpDb8PyeVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F6A3lSBe; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1745928582; c=relaxed/simple;
+	bh=JI/M3TugvXmROCbZWvHzHoi236mkIUCGUMYXkYi7au4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+SDxwMuH4BEWalZ9OOa21if/ZEdERTj8rHS9Prj2SNhCNpLLCr3NBPjrtQ2y1RP20cnbCNFk332Ee3D4VmzD+ZGgy2OvyFOh1vNZjdaAGt39FvrvuGgfoenb5i/MpRIh4hIJCg7auFNz0AQz14PCArRbs6sfRi1nolKY+6wxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KkGLmgB1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F6A3lSBe"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250429120639epoutp025a14a7766b36ec8d89958dbedda13e19~6yKD44SGV3077330773epoutp02d
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:06:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250429120639epoutp025a14a7766b36ec8d89958dbedda13e19~6yKD44SGV3077330773epoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745928399;
-	bh=RSyKLRIDfZUqc02NXZVKLH+houRYwWh9aD2SxU7TZ8U=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=F6A3lSBe+gvEoieXDYc6jNW2TaNH7akSKj28hu5OkpvieEDc6N1UkDuQyQWBoGKCJ
-	 JxFaa6gqRAJhUTeFtyp1lWuuB2fzcSGfXefjxjY3nyKzHeRSYeao2LpqD/IpCm9z+6
-	 Qd1zsV+ejKla4KuHgtVTSpZt7kG1LZs4ZVk+4FIg=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250429120638epcas5p4b8f04554cb03b9b4817cea66fb3076ee~6yKDF0dl22706927069epcas5p4M;
-	Tue, 29 Apr 2025 12:06:38 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZmzZ42tHlz6B9m9; Tue, 29 Apr
-	2025 12:06:36 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4~6ws2Qmttv0416804168epcas5p4f;
-	Tue, 29 Apr 2025 10:19:53 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250429101953epsmtrp219cade6a3671e0473c443dd011e5dbab~6ws2PtFAG0222002220epsmtrp2q;
-	Tue, 29 Apr 2025 10:19:53 +0000 (GMT)
-X-AuditID: b6c32a28-460ee70000001e8a-d6-6810a7c9d902
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0D.23.07818.9C7A0186; Tue, 29 Apr 2025 19:19:53 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250429101951epsmtip16df3344d040194e5d7b75e331b376fdf~6ws0p8Gx50829508295epsmtip1s;
-	Tue, 29 Apr 2025 10:19:51 +0000 (GMT)
-From: Faraz Ata <faraz.ata@samsung.com>
-To: alim.akhtar@samsung.com, krzk@kernel.org, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	dev.tailor@samsung.com, rosa.pila@samsung.com, faraz.ata@samsung.com
-Subject: [PATCH v4] tty: serial: samsung_tty: support 18 uart ports
-Date: Tue, 29 Apr 2025 15:59:41 +0530
-Message-Id: <20250429102941.4138463-1-faraz.ata@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KkGLmgB1"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T9lFfr006050
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:09:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=yAp0LdgXVQkJihbVytViUFNy
+	VYiIbcoCGNDRQ8jMoF4=; b=KkGLmgB1DUQVYWqXwzauECf/oT8pq4VmjVHlEunk
+	60PS2gs7/H0DESvhb9ZkWdajJVWYBc8XZJ6+r3VBlX/PrWCpiVFsMOKOjWwsLZ4t
+	sXQTvabHEZhXvFjTVeV6ojv0tXyQyMf+4VwIdfW/+cvhKbD2+Cptb0qLFNbYBKOV
+	kCgjxc0jZnxjzNKDyp8jynZy9R89u8Wrt01rbIVpNTIlJHDyWm9hQWyDs49ffJbI
+	SEEtVDUFdikzuWOxvPwun+mTwUweeuxz304qGFE9FgTXReqbnwaHZSozHf/PX2XC
+	DS17DjEVCDPYU9BhBSG7uHOMyzzuv/3KfNKxuKl89G/dGA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468ptmmf9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:09:37 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c9255d5e8cso1036863185a.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 05:09:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745928577; x=1746533377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yAp0LdgXVQkJihbVytViUFNyVYiIbcoCGNDRQ8jMoF4=;
+        b=ryqe5Cx1PhnCaKpIqXSj0LV6Huu+RiMaLLV8PVr4veyGfL1/BynOMqgH0cdf5QDKUl
+         pssXItmYIhpMjyik3eR0ouAqAn6PNMAVCQyRU7YWxMmhXwckzNa6QJh5vydJRd0MTfUN
+         fMdvi/gJiGO9isFdksw9+kzDFsjDCJwhy+s8gzFvi+v6kutUhy4frLhwL/XhgumJUqgF
+         B/OIWcyRtq/EocTY9Ln/sz8UoAk8bBPhcFOFiPFHvxcNyf2dHLsW2sHwytnJ4nzUpoD5
+         qffm7DCLHVT0k7zTWsrq289u0oNozaZuaCKnAMlU7iP64hK48tkSE/dGxP2AFAdQb2U7
+         bMzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfrMQJbWfNP8xDnn2DKDeaf4pWWZ164p9kHkG0LbDK355Z3neba7wkQm8NNtSmVn2B1Mtg9QJQM7SKsaOE9cP4nw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/6VlU6hzD/rCLaeBTy1XOMAsZdX7k0KQA77cjynPes5dQNBEp
+	LYnLUdW7l/3gbKUuhk0tYJ3y45DJoIJoUbpjzmAseGXkfHNWF0OEeUisuAV8GeJGq/C+leptE9W
+	JvOy5FI3ohk6c5UXNMPDZiIIhjX4rDHNls1D8v7eE1cYp64V0xmJMloYhVqfSpNJBdjTP1Q==
+X-Gm-Gg: ASbGncvyfJx5QBNWxa6yg0GoQmY5+ItP+v3dWWsE17YlhI45F3F/jhDXRhLb5Xu9O1I
+	7a0a9F/lrI/3kiQUkrQqCBopl8MIxpd35bc/zRQNkQEmQXUI4nyquYYPQ90AxLI0Ax6cT9KBQYX
+	/h+SAlasgxQCmSX2xdgP9PJHhU4rb/WURh9v6rpPSbDH6uB5Jmopg4DOz/fYk1pBt/47+yEowMo
+	nXG7AitNsSZRcga5aMHDTbBPp5TVQUqntOMAXiEg4fWHcUXZtt+yEhXrZcGG7E/N143QxX+Whxm
+	Zw4WHDGeNG8tPDjfln581lSnvOjsdUsPx5ZQIYuKnk4Tj9r/R8x5hdg/VxQfmK3VH67EJEXWuTs
+	=
+X-Received: by 2002:a05:620a:8802:b0:7c7:93c7:83b8 with SMTP id af79cd13be357-7cabdd8fac8mr556720885a.31.1745928576983;
+        Tue, 29 Apr 2025 05:09:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+WiBW2dMdMKjL5rCtckyag5tI3q0y87zTTMxYAoMUgZTNEX197tRyQ4loVEQ9A423pNGqNQ==
+X-Received: by 2002:a05:620a:8802:b0:7c7:93c7:83b8 with SMTP id af79cd13be357-7cabdd8fac8mr556713685a.31.1745928576612;
+        Tue, 29 Apr 2025 05:09:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317d16a85ecsm24278761fa.72.2025.04.29.05.09.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 05:09:35 -0700 (PDT)
+Date: Tue, 29 Apr 2025 15:09:33 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Anusha Srivatsa <asrivats@redhat.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Dmitry Baryshkov <lumag@kernel.org>, Hui Pu <Hui.Pu@gehealthcare.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 07/34] drm/bridge: lt9611uxc: convert to
+ devm_drm_bridge_alloc() API
+Message-ID: <lg5hhtncppqy2vreut2z7h36mmnuzn2xhw7asrjmftqg7koaqh@as6jetr3pw3b>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+ <20250424-drm-bridge-convert-to-alloc-api-v2-7-8f91a404d86b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSnO7J5QIZBjueq1g8mLeNzeLejmXs
-	FtduLGS3aF68ns3i3VwZi/PnN7BbbHp8jdXi8q45bBYzzu9jsjizuJfd4svPB8wO3B6bVnWy
-	eeyfu4bdY/OSeo++LasYPT5vkgtgjeKySUnNySxLLdK3S+DK+D6nk61gNXfFt8MPWRsYv3N2
-	MXJySAiYSDzp+c7SxcjFISSwm1Hi3r817BAJSYnDT++yQtjCEiv/PWeHKHrLKPFz8zKwIjYB
-	dYmZN44AdXNwiAikSOy/ywRSwyxwk1Fia+tSsBphAWeJVQ8/MoLYLAKqEr+62phBbF4BG4md
-	U6YwQyyQl9h/8CxUXFDi5MwnLCA2M1C8eets5gmMfLOQpGYhSS1gZFrFKJlaUJybnptsWGCY
-	l1quV5yYW1yal66XnJ+7iREcyloaOxjffWvSP8TIxMF4iFGCg1lJhLfKgD9DiDclsbIqtSg/
-	vqg0J7X4EKM0B4uSOO9Kw4h0IYH0xJLU7NTUgtQimCwTB6dUA5PR+oOX0lM+375caTVp0Rz3
-	e59+fXd/kTXx27ziXXHZ0SuPdf27n3UhcfPXl6z7Z36L+z3765+WBHF/64bEm/f87vQ9Mniq
-	sWK/4Y1lGXpdj+VDXizNafzHanvRf+HBWfk3nnzmulf4Op3r0D873xWHPJo3u+Z8aPy1gvep
-	YSvvlE0LMg3/VldMs2RzD5DUzSpUE5HKZvntLmDlx7NYJW2Rqs6TG9EN/I2rzhk6ex350pyR
-	WPsjbL7joe3qjVwWXlPvW5534vOYZjfnh3ut1Fmr0mcbux/9Eop5o7hh6q2Xi33ddl5cFzhp
-	bXT7nvj5ch6cybOnH7iZf0vh+selEb0rub7e5F3/YFG197PASfv+KrEUZyQaajEXFScCACeH
-	nVHUAgAA
-X-CMS-MailID: 20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4
-References: <CGME20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4@epcas5p4.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424-drm-bridge-convert-to-alloc-api-v2-7-8f91a404d86b@bootlin.com>
+X-Proofpoint-ORIG-GUID: b0fUcV6gIa-19jgsJrrPqe7cBQuUZShU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA5MCBTYWx0ZWRfXx5Bw+b4gejBm eCUL3qGdWfBOYwdFumQjsTSFylmmXUXt45hq0z9XBWbIQg0MGX+DYNj+8gFOoNEogx5iV5BskZX bKpEEHn1iWmlAgbSKVb0K2YzTEM3vI7NKyLAjmIBLwBXpnWDOrq5cYxfyLM/LwSxoDrwMLNH3ML
+ HkH63nwVKqyRv4fTGrcrc6zjvYb5pAIigKnOD1QgP/3JF7/Ntg9JiOEbXqfRASrR/C+VuhFWT2c FO7RRqEu8fhrkRs02CXBklqMfmVz3QWmy9up67h359Wdz/ko6G0JaR9a3LuTXwXRzJ2CUnCG67o e1JQtEoyVEAGGruE2ed/zBsBJEntUEPlXAwrmWq8seSq9ybfnZmp5dqi0QY1W4GZhGHShYaogI0
+ pmSmK8svy33laC9Mh4yEQDE3Q8FQn5rgLxPGIu+qRmy2WeH3fUNhcJih3STNJ8iwzLOmgH/p
+X-Proofpoint-GUID: b0fUcV6gIa-19jgsJrrPqe7cBQuUZShU
+X-Authority-Analysis: v=2.4 cv=DKWP4zNb c=1 sm=1 tr=0 ts=6810c181 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=P-IC7800AAAA:8 a=iF-wyJFYdUVxq7VKmwgA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=794 clxscore=1015
+ priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290090
 
-ExynosAutov920 SoC supports 18 UART ports, update
-the value of UART_NR to accommodate the same.
+On Thu, Apr 24, 2025 at 08:59:14PM +0200, Luca Ceresoli wrote:
+> This is the new API for allocating DRM bridges.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
 
-Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
----
-Changes in v4:
-- Updated v3 change-log as discussed with Greg[2]
-- The patch itself remains unchanged, only the change logs have been updated.
-- Link to v3: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250417043427.1205626-1-faraz.ata@samsung.com/
-- Reference: [2] https://lore.kernel.org/linux-samsung-soc/2025042829-heroics-deskwork-e74d@gregkh/
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Changes in v3:
-- Added changes-log (as pointed by Krzysztof[1]
-- Link to v2: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250404135006.1263827-1-faraz.ata@samsung.com/
-- Reference: [1] https://lore.kernel.org/linux-samsung-soc/03cc01dbaaaa$4dea13f0$e9be3bd0$@samsung.com/
-
-Changes in v2:
-- Rebased on the latest linux-next and added reviewers as per get_maintainer.
-- Link to v1: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250312061932.1797993-1-faraz.ata@samsung.com/
-
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 210fff7164c1..9a5211b730fb 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -52,7 +52,7 @@
- #define S3C24XX_SERIAL_MINOR	64
- 
- #ifdef CONFIG_ARM64
--#define UART_NR			12
-+#define UART_NR			18
- #else
- #define UART_NR			CONFIG_SERIAL_SAMSUNG_UARTS
- #endif
 -- 
-2.34.1
-
+With best wishes
+Dmitry
