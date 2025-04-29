@@ -1,66 +1,67 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E4614EC5B
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 06:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59540274FE3
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 06:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745907588; cv=none; b=OFOniXW/GXvxfZMVckOsQMHcFO4+FdQlpB2np6IUz04zKV7SRMkoonicKjSFfMmozvJO6ZyjoLK/C+togL+aouxandUWM8sS9oeoqZ3OcECZrCxBQSJgw4m2QmjHVRGV3lu/+0oKnkRj3WFim05ddeqxwFM95flT6fH54mn1UuQ=
+	t=1745907589; cv=none; b=ZL2U54Oj7LJ5dPgamUrpDMZllrnb4IFoltPNuyjVQlu5PPoOQXdr2MdQAADRS8fshrq8zC73zWvX+fBD/0/OAI+dc1n1necpXhMw72TXhtG/LPq9iPHg+4KwSeRpV0BS1dgEcGxXGSifcoWymfc7eOWzTAGEYGcIcJ/rI0sQXSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745907588; c=relaxed/simple;
-	bh=Sp2ayCAa9I3PDRmWW7VLfFW+7irdC0o52an90/gAFl0=;
+	s=arc-20240116; t=1745907589; c=relaxed/simple;
+	bh=j1cZ/ama4pXQcm0lNYjPZ0pmuSUHD0UY9XZIX1D92as=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CKaaPAvJTMK23h4ZOCVHxxotqZbOe44rh/bswbm6f8Q7dvoCz1kZSZQW9BkcwEyosL1yVYOuq31hDBvVyWTD8BahBt20tNmhvGBaoiF3AC0SqHaR424rSAjNVM7CzRiJUxOOil6piBhDgQCdWPCTc97m8tcyaQOmREpd0cyblDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LQmSjLhP; arc=none smtp.client-ip=209.85.221.47
+	 In-Reply-To:To:Cc; b=s1UL5rZjh8eCVV80Wy1saKR3QU7r6LrYPLhr8dalEDryr8xRM4ojsyjvJmyUvngMXm9b8WVRGpMUAVgXAP2SKOAWOs6BoTkgAgQTj8nqN8xo/UNsI2bY8LPRF6pYjumzc0iEr27+33W8asZRlgJy6rBeSgOF+hPiOQ3YF7BCs4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fmt4JqKu; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQmSjLhP"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c30d9085aso4077963f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2025 23:19:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fmt4JqKu"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c0dfba946so4046376f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2025 23:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745907583; x=1746512383; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745907585; x=1746512385; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Jzh26vdjbG7G0Nm3rm+vVlbbhRcsrkTRgLg289ahfY8=;
-        b=LQmSjLhPhKNg8l9wW7QnuOl3eoAsAjQhwSopmOgv2JkcN5h7GiTxpTy9H9TtjAAwQL
-         mu8iC2E4tEDTD6XxK/lcH5nByteWiYWA5MfoWkmZO97OsMYmrS7NDbCasaaGUoJsNpo7
-         Jkk0KzplzIt+kwwqpq3fKS30CQ044VDUmss3bZtiTvT3D+cW+TMlFWthr96TakZS/p+1
-         l4zt1nTkQdPtu4lLP8RSyw0PwDMFdudsRDTy6Kt8FD59IJfZ879K755KYKvn8vymJfLO
-         zyslHV3Q+K+Hgy9wwYv3QYdhHSjAH7/5gYurHL9To9Hfw1jVaqNUf4eaeTTu1M4VXKAQ
-         TrHw==
+        bh=5uELk3IX0KmAe3gKWKpct9PqfIxioiMahM8zzKV5oTM=;
+        b=Fmt4JqKuBIRrgVmjue7TZ5UP41EojdrQpun2F11XlKWXLIMSWAyLZLeWmG6Lce+qih
+         yLaK4DAzKOa9dF/TKCpBWTdtniag5IbA3szLuZOy+5Qlw10VvMKAdQbnkZ/fudQY1ILT
+         m0Pbgmw97jH5Cgt1bgI59Hxmd3DDReEeAajjXEapTWCks6K8yy/NBN7Mfh8iwSukLa8G
+         unu73Ag27uPWFofcC53WSoCNW6m3heoUhFGHT9VwqtUZfXFfhattPjFAhMDht9ofoF3R
+         rv9CLY08dnd0kUt5w8mDUnjV9iNRuNFtFkNOCyLhn2Efy9dsJecJ9rWwx3oMpfZGlJCy
+         BaQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745907583; x=1746512383;
+        d=1e100.net; s=20230601; t=1745907585; x=1746512385;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jzh26vdjbG7G0Nm3rm+vVlbbhRcsrkTRgLg289ahfY8=;
-        b=oLHrXM3dGIOtsfggkUkHj1/ViOTM6NXoHR6gud2/bzrFHib1xREDMVf2rn7I2e0oFJ
-         Scz1MYKswT4uxCslk6cjXoR3GfH5A7Rsj9bB5dkMXpLlTn1MmhRo1HK9O5QqvDxUhysv
-         jnVmBY95tWYvQvp4ehvnwb9C4XvlsoIe3MexfZhrahh9wnwEaiZDpCIayrB9652NJ20/
-         NcGr7HQcY+zmVT6ki0NpCnMtC8XCVnZSB5pT7H7uC+6HVssVQkS7l8SLi22Y2akRFyuS
-         skT0A4GIvDiZRdrjQCWanpJdUL12Q3yYaDisAubY8ynrDDSNgfN9Jep49jqgu8Fp/OpQ
-         oSCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvfpyL1uHfNtZOCRyp9Rca6do7M5FgnGcSBEmJDhItBwnKVBV+yD2hKcPVMkvOs09mtvB5a7dRKGr0XYwr2sDGhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn5BHWUBZ5e75K6pMujX8IXgiEwl0J6VnCYKJBhzEIGexBUk19
-	VZb52DuWrfNj2025XgWdQtESXBqJQsQMU2oNxSX+1Rpbt1ZFDhV2QRNLLfK4sUk=
-X-Gm-Gg: ASbGnctysPtyCFWzZcB1QKc5k3aFz86hYBu6UFE+BUKT4jyWSIuupvMzOTt8MwvVz+l
-	HwALMWedbo86+DOIH7FmsR62Sfs/mcH8xDFqjpMn6mYdKLMl4JocSme7zqS7qDSwNfJVGEjlwq8
-	wrQ5tJFqSqJaXrQQEPFxbmBnXJpCnVBbupQbALtx2E0wBhgvrfnMRPdxMEHVN2Pwmfmjc+JF6A3
-	M1mztCBprcDcdjk6e1R3S28OZh87oRaQN8BbD65nlz6sfWNr0YOGnK7/Rp6cuSZ8JgY/YJspy0n
-	MvbaxHqFkI5ZSvVYQxvqgQKYaH3vrg5qytZLLXtmQDRmXtIClpqOqFkFXVJsiGuFompaJF0=
-X-Google-Smtp-Source: AGHT+IFzJb9NMtr1f92/yBh2GExm18tiJRJJXDmpFNGgqHW8ipb8xWMxgVsXCJ0bIiAyHKzGOHvZ2g==
-X-Received: by 2002:a05:6000:2483:b0:39c:13fd:ea9c with SMTP id ffacd0b85a97d-3a07ab85d86mr9231177f8f.47.1745907583567;
-        Mon, 28 Apr 2025 23:19:43 -0700 (PDT)
+        bh=5uELk3IX0KmAe3gKWKpct9PqfIxioiMahM8zzKV5oTM=;
+        b=cvrQ63NOhe5rhyM8OM0z7IzGbeLi67uMwH8IcSVD8i13l79D3+NT89Ti6Do5SE8kD9
+         FSRGXEKLDVHLc4EXPWgdCchPW4vAEMjs/csuDmFhz3N9lPUeDgDGTrt9OCP67WNcjcVm
+         xEdDwsuB/GhGXZ1+p5ol6PGh9jK++iqef9VNQIOIEFVYHMkFK/xznGSMAORLm2038FsO
+         l5K0PDeomdivdkw4SMG+3lNA7mSCzeMDuz/1KH++Ne+mxnpaxEUZUby0gyNvNag1P0So
+         SDNzFYgBWo1l6+eJnjXvyVTxoJ8iIu1w5U4dhy7AVu7WyLz78MvNq8pqqv9rclC+c4q6
+         9LPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLeTHJwBpLSEy+IbSxQz5fzraxdkyWIjY0FckNT2H5dvkQm+5A2asv/rqyKhjaBF6TRzgfJ58KiD8lwJnsi5uzDA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLwlRu7NMmUZi9J32P+KTz0ST/e07U3hvi+Vqn+kyROs9fK8Bk
+	6pc2lxdBeH5ivA+H2ykOYSD0/7WSwkjnEImBee9DmSvpcMLTog3kwDykGegeWVv6LpLUXdC+k+b
+	w
+X-Gm-Gg: ASbGncv7cOdPNailkwx1qUXLvXRYRrbDT1to6s+mmRkxsFZBJ5Kz6WyDzY/f0dHznC8
+	QPskweHkZQln5ihSibF07HOGHV6XxIbsyEz7aL9g5MC4bVgoDYy5glfLoJQJFM2wu7jeu5a02oJ
+	o1UdO/tJrcBiUUJJrNfxjubLPS/ID0NTBRSz8iylB/MDUmJeDom9ayzzGdH5uiBOzSX7T0ZDiQY
+	5MhmSNTpc7ZYMbjU7kpQrFNaEu96ylvGiPdsDqkTyRsbmd9o516EKNMnw+TXeUBuh5G/joZysHi
+	jO49+TI/TMyJPxyUrScoTiir32+NRfZLF0PgY9fp/Zax1TxG93K1E5Vggq8IkD0M9HNRwd4=
+X-Google-Smtp-Source: AGHT+IFThpMV/Hn8fv8bhLUDnjAre1JV27A3D8kJIgvlJw9xTbB+HJubAdPKRGlV07vzAa+DCEfhUA==
+X-Received: by 2002:adf:f989:0:b0:39c:2678:302b with SMTP id ffacd0b85a97d-3a07ab9be39mr7770595f8f.45.1745907585666;
+        Mon, 28 Apr 2025 23:19:45 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([145.224.90.246])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca4e50sm13302616f8f.30.2025.04.28.23.19.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca4e50sm13302616f8f.30.2025.04.28.23.19.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 23:19:43 -0700 (PDT)
+        Mon, 28 Apr 2025 23:19:45 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 29 Apr 2025 07:19:37 +0100
-Subject: [PATCH v3 1/5] dt-bindings: soc: google: Add gs101-pmu-intr-gen
- binding documentation
+Date: Tue, 29 Apr 2025 07:19:39 +0100
+Subject: [PATCH v3 3/5] MAINTAINERS: Add google,gs101-pmu-intr-gen.yaml
+ binding file
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v3-1-1bcc44fb1d55@linaro.org>
+Message-Id: <20250429-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v3-3-1bcc44fb1d55@linaro.org>
 References: <20250429-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v3-0-1bcc44fb1d55@linaro.org>
 In-Reply-To: <20250429-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v3-0-1bcc44fb1d55@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -79,76 +80,44 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
  kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1650;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=799;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=Sp2ayCAa9I3PDRmWW7VLfFW+7irdC0o52an90/gAFl0=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoEG97ya628YBjIwMAoykPzIHd++cHXjeKqJsWW
- IPBkePX5JOJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaBBvewAKCRDO6LjWAjRy
- ur4aD/42kkFmOL4mqo6f7UREpZ8b/Vc9BvXjiOZbf4+doh0jZmW7DjW3u33WYdPdjAfDgCKv7KN
- TLVrFjUNyeubXl8qc3Rp046Gl5mQ6I2653ezKjZMF5Wc35+tDnp1aLeowP9fSe1Wo6wb/mhQnr9
- zTBEuccMveKG7m5C6llUBDBo7aSLltjVtYUAFVOlhBD7oH+D0rPOVl+JfwTFcN3hcBQlk0TD1Y5
- Ng+69qVlfV4gP9cpvNQwljHzaLMbYL0AXoZmvnXCcZCZHvhp6g8PAcBNFB7H9gpy5/aZKOb2Wfm
- VRNdfsJHG7PEtBvizuKLU4c+6xkCMngPJ9F4RpmD8WZs1mPoPEQbgpqW5gVkl7Y28JmDOn+/PzO
- 3Q7qraOKkwNP5Ke/xDnqa5rJ63WbIK/bUU0ulYocgvXcdhOhbmQgjImRmjQOo7R2S/76eJj0gUY
- vKuk+jtXFw5Nwfa8Dnu5sKyK1fWDRPw1rB2zA6sM9FmUs9d8ZszZHSZ16VresfHgiofcTg+bwh4
- dOYiGFnTs7YCNVs0/fS0tM1I5WxjIs0jNRJ559oILfvda7Y+VP89DKu5pWSgffxmX/kzSEsdPHy
- lgXQOe90G0y8d3JM8f6Uh0g80mVLLV8sGuhfw6nH5o1fV0YroBRUtXbw1CItblDCfnKXkr2bzqR
- EAf5YBKHSzJnZ3g==
+ bh=j1cZ/ama4pXQcm0lNYjPZ0pmuSUHD0UY9XZIX1D92as=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoEG98RkuoPV0ry3Z4PLypiABZHhICoNaJvJmzl
+ VrD7t2Hx4iJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaBBvfAAKCRDO6LjWAjRy
+ uhJND/9CiA4POIsZpZfYrYWxI1RtoQfz0bxdT4Ik7cUrXlCIPZUvjwpWr8qmHvQTE9Pg7lWfxgj
+ qVRVNh5pAxiIfudy10QlHmK4JNGcCOazysndlC6MDImVhynvgt27JL9OKS06+DfT6sRE0emLUul
+ 9bvFPilY6FxzCFL2CzIfKKUuGoFPB1zxwiEqooCK6IrB3TlP4kR0nqFVdO4aZOGRSJSPmspBIKt
+ 24bWWDgnAD5X5gr7lrF3lD50YgRTj8bzQ+yHtwc0fIQ/cQM+KpvwHnHOg5wUCuxllkYtqkz2UAJ
+ fCII3zQzY5RwF5sFrEREDuxiu7ZtVE9PSBlYOzM4NudnuLYM+Z8wMoDC0R9vfeun3s0gqYftcB7
+ gGJ3HQzEa5sqQcb5hqyVO6Bos+bgP2UgiYAazLouAvijAHa2Qisq8up9U6AmF19nnBDLO/GMovU
+ cO8RuQysMeQV4NY9BWJLLr/azwnN0yC8Q0uVPGZAILidzoZ+rhLbAkCmFFf8PtRvvoby9ENIYo8
+ uwCUQqie6oN/8FyNwIIN/HmOqszXQ21rFyKwbtG67tAqE7EbgLcaBC2YLn0uoSjN7PAx99F9319
+ ETHgGVv12CAvIpqiUJtKp63+gWxVmqhpZYr/qWiv1OZC/dl9QLcQGd9SzUNauJktEt1LxA8eN10
+ XWjSXrReQ3prmUA==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Add bindings documentation for the Power Management Unit (PMU) interrupt
-generator.
+Add the newly added google,gs101-pmu-intr-gen.yaml file to the
+Tensor section.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Changes since v2:
- - Fix dtschema error "relative path/filename doesn't match actual path or filename" (Robs patch bot)
----
- .../soc/google/google,gs101-pmu-intr-gen.yaml      | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..2be022ca6a7d0780db3163f1b774e4825a9123fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/google/google,gs101-pmu-intr-gen.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Google Power Management Unit (PMU) Interrupt Generation
-+
-+description: |
-+  PMU interrupt generator for handshaking between PMU through interrupts.
-+
-+maintainers:
-+  - Peter Griffin <peter.griffin@linaro.org>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: google,gs101-pmu-intr-gen
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pmu_intr_gen: syscon@17470000 {
-+      compatible = "google,gs101-pmu-intr-gen", "syscon";
-+      reg = <0x17470000 0x10000>;
-+    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b2c3be5f6131432647dd01f22bbf4bf1c8bde9e6..5b2ec4c2023f39a3dd532ac61f0075a0a1555411 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10118,6 +10118,7 @@ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ C:	irc://irc.oftc.net/pixel6-kernel-dev
+ F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
+ F:	arch/arm64/boot/dts/exynos/google/
+ F:	drivers/clk/samsung/clk-gs101.c
+ F:	drivers/phy/samsung/phy-gs101-ufs.c
 
 -- 
 2.49.0.901.g37484f566f-goog
