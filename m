@@ -1,159 +1,129 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB818279347
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359E2C2598
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745919310; cv=none; b=YcVaY0f/T3ECSI4XzDPz8x4C4X8wYIwg4QYvhlyn1Yf7V4S78Y1aSK2sL1u32g2mwVNz9zi68DeciBv2eA0qhlkGnswO0QOdwmTi4XsZYWXiKyiKxVTUzqdAGpEcFL/k+CW+DKJyXZk0sldctmTpqNIQUlVwWHkggO8NroZiA7I=
+	t=1745928405; cv=none; b=X5rbMBjA0+N91rNlWL37tfXtDOklLDVeSHxeJ/fZeHaOdcVtw4w29VkSkizTQ+21oKdBcUYAiD2+QCmBnJVUi8Ioc4YDT46a+Hrgp+p5cwROvFUEjMAeDqscjdrDgoczfGIizoKHM/wC+R4fqJ50uz1pV/XmLgL0jefEbVkHJec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745919310; c=relaxed/simple;
-	bh=guAD50gmgdf8dNbOSIkbRIT3QyGj4WLIcqax997RKGg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=jTPkgrf9UaAn+hhZMHW/hp4+sK0yCRkIGLhcVsQtyFEdCtd8sQr3xrPRrlIYOFQNIWN3a+IeIDTNJJzy5fcudXPdgyzrbKbxBlcrANkWHaRHkeJzwEQM0Ik9MBssVJd6NbKBuXiOR4UfHaqbxbIqwSgheIEIQCRcMWVCCJnKSRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dKdk1vTn; arc=none smtp.client-ip=203.254.224.33
+	s=arc-20240116; t=1745928405; c=relaxed/simple;
+	bh=u6IGIBto1xpKcUHgEQL32+myYLIW4UGqnHyagSe7Bwk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=Rh5NQVuvp7tmIewqSeDbI/0WKYEg1OZnHh/36nsW5Jk+4lvMC+dAWBMR5AUn5U5wheMb4ukZkWu0QRfsrCddUVMIS/5nDMgg/xC2okjr4SKVzQqeo7TaiXfzHcLRBTiUnDHKofJcz8HRfMlYynllwVbfC5OmDnGVbCpDb8PyeVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F6A3lSBe; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dKdk1vTn"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250429093458epoutp0343a94bf81982aa48a24bbc44503be857~6wFoW1-Ku3212532125epoutp03U
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 09:34:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250429093458epoutp0343a94bf81982aa48a24bbc44503be857~6wFoW1-Ku3212532125epoutp03U
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F6A3lSBe"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250429120639epoutp025a14a7766b36ec8d89958dbedda13e19~6yKD44SGV3077330773epoutp02d
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2025 12:06:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250429120639epoutp025a14a7766b36ec8d89958dbedda13e19~6yKD44SGV3077330773epoutp02d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745919298;
-	bh=Pi/iyF0IplJUPA7d0Z7gKsd7OHUodqqvbGsperI0axM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=dKdk1vTnFVWqBAR2SqLxsvkR24HZJehguH3rUbBAEJbVDuU068FhhwprcjuoWmYVD
-	 +QxiUfdPiLYwIKGECzqtXUifHOs/dwfFmc+0I/Biz153MLGw2my1Xp+dMw74C36bFL
-	 xPFKnHHjVFszrH1obIRaxQsXlhBd7RNLs5FtKlsw=
+	s=mail20170921; t=1745928399;
+	bh=RSyKLRIDfZUqc02NXZVKLH+houRYwWh9aD2SxU7TZ8U=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=F6A3lSBe+gvEoieXDYc6jNW2TaNH7akSKj28hu5OkpvieEDc6N1UkDuQyQWBoGKCJ
+	 JxFaa6gqRAJhUTeFtyp1lWuuB2fzcSGfXefjxjY3nyKzHeRSYeao2LpqD/IpCm9z+6
+	 Qd1zsV+ejKla4KuHgtVTSpZt7kG1LZs4ZVk+4FIg=
 Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250429093457epcas5p2b0fbeb86b8e679376761a83858e6041e~6wFneFqts1952619526epcas5p26;
-	Tue, 29 Apr 2025 09:34:57 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZmwC41Dxcz6B9mH; Tue, 29 Apr
-	2025 09:34:56 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250429092957epcas5p264b0dfae6bae9179df57e520fc59f8b5~6wBQCY4K62748727487epcas5p2B;
-	Tue, 29 Apr 2025 09:29:57 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250429092957epsmtrp1a2a35e256eff10acc70d75b9a28f6bdb~6wBQBc9JQ2444424444epsmtrp1v;
-	Tue, 29 Apr 2025 09:29:57 +0000 (GMT)
-X-AuditID: b6c32a52-41dfa70000004c16-e5-68109c1514f7
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250429120638epcas5p4b8f04554cb03b9b4817cea66fb3076ee~6yKDF0dl22706927069epcas5p4M;
+	Tue, 29 Apr 2025 12:06:38 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZmzZ42tHlz6B9m9; Tue, 29 Apr
+	2025 12:06:36 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4~6ws2Qmttv0416804168epcas5p4f;
+	Tue, 29 Apr 2025 10:19:53 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250429101953epsmtrp219cade6a3671e0473c443dd011e5dbab~6ws2PtFAG0222002220epsmtrp2q;
+	Tue, 29 Apr 2025 10:19:53 +0000 (GMT)
+X-AuditID: b6c32a28-460ee70000001e8a-d6-6810a7c9d902
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FD.FD.19478.51C90186; Tue, 29 Apr 2025 18:29:57 +0900 (KST)
-Received: from INBRO002053 (unknown [107.122.2.234]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250429092955epsmtip192a33218257ecbc1e6673c37e238d0e8~6wBOVcwOw0967309673epsmtip1z;
-	Tue, 29 Apr 2025 09:29:55 +0000 (GMT)
-From: "Yashwant Varur" <yashwant.v@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <cs0617.lee@samsung.com>, <g.naidu@samsung.com>,
-	<niyas.ahmed@samsung.com>
-In-Reply-To: <73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
-Subject: RE: [PATCH] arm64: dts: exynos: Added the ethernet pin
- configuration
-Date: Tue, 29 Apr 2025 14:59:54 +0530
-Message-ID: <0ed501dbb8e9$45aa96e0$d0ffc4a0$@samsung.com>
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0D.23.07818.9C7A0186; Tue, 29 Apr 2025 19:19:53 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250429101951epsmtip16df3344d040194e5d7b75e331b376fdf~6ws0p8Gx50829508295epsmtip1s;
+	Tue, 29 Apr 2025 10:19:51 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: alim.akhtar@samsung.com, krzk@kernel.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	dev.tailor@samsung.com, rosa.pila@samsung.com, faraz.ata@samsung.com
+Subject: [PATCH v4] tty: serial: samsung_tty: support 18 uart ports
+Date: Tue, 29 Apr 2025 15:59:41 +0530
+Message-Id: <20250429102941.4138463-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI+tP5AvR0g22A5T67WLyfPVk3CYgKkYErqAxsAxq2yxm0V4A==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTld0jkCGwfVnKhYP5m1js1iz9xyT
-	xap3vBbzj5xjtdgy8zKzxctZ99gszp/fwG6x6fE1VovLu+awWcw4v4/J4smUR6wW//fsYHfg
-	8di0qpPNY/OSeo++LasYPT5vkgtgieKySUnNySxLLdK3S+DKePyvnbngJF/F31+32BsYF/N0
-	MXJySAiYSBz/+Jixi5GLQ0hgO6PE+Xsn2boYOYASUhINb8IhaoQlVv57zg5iCwk8Z5ToOSsG
-	YrMJ6Es833yNCaRXRGAxk8SXpoNgvcwCQRJfdgdCzNzLKDGvdzcLSAOngJ3E2a6HYIOEBXwl
-	dnecAbNZBFQlzk8+wgLSyytgKTHhqRpImFdAUOLkzCdgrcwC2hJPbz6Fs5ctfM0McZuCxM+n
-	y1hBbBEBJ4n9J9cyQtSIS7w8eoR9AqPwLCSjZiEZNQvJqFlIWhYwsqxiFE0tKM5Nz00uMNQr
-	TswtLs1L10vOz93ECI4zraAdjMvW/9U7xMjEwXiIUYKDWUmEt8qAP0OINyWxsiq1KD++qDQn
-	tfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qByTVe5u5+psuu9/VLDx8zV2Dd06M2
-	U/5eTdOpFhcWkyLO2j2MTFOv5Ksrsz76ZMC6Oe7E3uhFD6Ye5qo/+4/Fe2K99PLWjVbZVbOm
-	XjWt2R1u8Wzvb9m3ofMsExJ+9BpLcTItVY95vK2IiftEqvSLxvxdzuec7OI+OU6cZhUjMa23
-	2O76hv64q5esbufqpO/PVy7mVjdx9l5TN7uzK6FfPErf80bWfkeLHTU3JhxmWM5UpLBw0pTq
-	l3bJ3dcmyS/u4269orir5Dpv9KSC8iVhZa8O/Vqx/dY8rfS7zt8MGpo59/K6euTeZff64JOh
-	zi7mEff6f/1GXSvDF9slUtrunRCe+C15mlO3UMWj3/+UWIozEg21mIuKEwEo7Tz1IgMAAA==
-X-CMS-MailID: 20250429092957epcas5p264b0dfae6bae9179df57e520fc59f8b5
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSnO7J5QIZBjueq1g8mLeNzeLejmXs
+	FtduLGS3aF68ns3i3VwZi/PnN7BbbHp8jdXi8q45bBYzzu9jsjizuJfd4svPB8wO3B6bVnWy
+	eeyfu4bdY/OSeo++LasYPT5vkgtgjeKySUnNySxLLdK3S+DK+D6nk61gNXfFt8MPWRsYv3N2
+	MXJySAiYSDzp+c7SxcjFISSwm1Hi3r817BAJSYnDT++yQtjCEiv/PWeHKHrLKPFz8zKwIjYB
+	dYmZN44AdXNwiAikSOy/ywRSwyxwk1Fia+tSsBphAWeJVQ8/MoLYLAKqEr+62phBbF4BG4md
+	U6YwQyyQl9h/8CxUXFDi5MwnLCA2M1C8eets5gmMfLOQpGYhSS1gZFrFKJlaUJybnptsWGCY
+	l1quV5yYW1yal66XnJ+7iREcyloaOxjffWvSP8TIxMF4iFGCg1lJhLfKgD9DiDclsbIqtSg/
+	vqg0J7X4EKM0B4uSOO9Kw4h0IYH0xJLU7NTUgtQimCwTB6dUA5PR+oOX0lM+375caTVp0Rz3
+	e59+fXd/kTXx27ziXXHZ0SuPdf27n3UhcfPXl6z7Z36L+z3765+WBHF/64bEm/f87vQ9Mniq
+	sWK/4Y1lGXpdj+VDXizNafzHanvRf+HBWfk3nnzmulf4Op3r0D873xWHPJo3u+Z8aPy1gvep
+	YSvvlE0LMg3/VldMs2RzD5DUzSpUE5HKZvntLmDlx7NYJW2Rqs6TG9EN/I2rzhk6ex350pyR
+	WPsjbL7joe3qjVwWXlPvW5534vOYZjfnh3ut1Fmr0mcbux/9Eop5o7hh6q2Xi33ddl5cFzhp
+	bXT7nvj5ch6cybOnH7iZf0vh+selEb0rub7e5F3/YFG197PASfv+KrEUZyQaajEXFScCACeH
+	nVHUAgAA
+X-CMS-MailID: 20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
+cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
-	<20250423060034.973-1-yashwant.v@samsung.com>
-	<73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
+X-CMS-RootMailID: 20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4
+References: <CGME20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4@epcas5p4.samsung.com>
 
+ExynosAutov920 SoC supports 18 UART ports, update
+the value of UART_NR to accommodate the same.
 
+Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+---
+Changes in v4:
+- Updated v3 change-log as discussed with Greg[2]
+- The patch itself remains unchanged, only the change logs have been updated.
+- Link to v3: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250417043427.1205626-1-faraz.ata@samsung.com/
+- Reference: [2] https://lore.kernel.org/linux-samsung-soc/2025042829-heroics-deskwork-e74d@gregkh/
 
------Original Message-----
-From: Krzysztof Kozlowski <krzk=40kernel.org>=20
-Sent: Wednesday, April 23, 2025 8:41 PM
-To: Yashwant Varur <yashwant.v=40samsung.com>; robh=40kernel.org; krzk+dt=
-=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com; devicetree=
-=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-samsung-s=
-oc=40vger.kernel.org; linux-kernel=40vger.kernel.org
-Cc: cs0617.lee=40samsung.com; g.naidu=40samsung.com; niyas.ahmed=40samsung.=
-com
-Subject: Re: =5BPATCH=5D arm64: dts: exynos: Added the ethernet pin configu=
-ration
+Changes in v3:
+- Added changes-log (as pointed by Krzysztof[1]
+- Link to v2: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250404135006.1263827-1-faraz.ata@samsung.com/
+- Reference: [1] https://lore.kernel.org/linux-samsung-soc/03cc01dbaaaa$4dea13f0$e9be3bd0$@samsung.com/
 
-On 23/04/2025 08:00, Yashwant Varur wrote:
-> This patch adds the ethernet pin configuration.
+Changes in v2:
+- Rebased on the latest linux-next and added reviewers as per get_maintainer.
+- Link to v1: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250312061932.1797993-1-faraz.ata@samsung.com/
 
-
->=20
-> Signed-off-by: Yashwant Varur <yashwant.v=40samsung.com>
-> Signed-off-by: Changsub Lee <cs0617.lee=40samsung.com>
-
-Incorrect chain or confusing. Who was the author? What is the meaning of th=
-e last SoB?
->
-Sorry will correct the order.
-
-
-> ---
->  .../dts/exynos/exynosautov920-pinctrl.dtsi    =7C 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi=20
-> b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> index 663e8265cbf5..778584d339d5 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> =40=40 -166,6 +166,24 =40=40 gph6: gph6-gpio-bank =7B
->  		interrupt-controller;
->  		=23interrupt-cells =3D <2>;
->  	=7D;
-> +
-> +	eth0_pps_out: eth0_pps_out =7B
-
-Please follow DTS coding style carefully. This applies to all commits you t=
-ry to send from your downstream/vendor code.
->
-Sure, thanks
-
-What is more important, I don't really understand why you are doing this
-- there is no user of these entries - and commit msg does not help here.
->
-Understood, in v2 will add the Ethernet node as well.
-
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 210fff7164c1..9a5211b730fb 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -52,7 +52,7 @@
+ #define S3C24XX_SERIAL_MINOR	64
+ 
+ #ifdef CONFIG_ARM64
+-#define UART_NR			12
++#define UART_NR			18
+ #else
+ #define UART_NR			CONFIG_SERIAL_SAMSUNG_UARTS
+ #endif
+-- 
+2.34.1
 
