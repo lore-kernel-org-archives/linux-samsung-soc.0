@@ -1,222 +1,250 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2104.outbound.protection.outlook.com [40.107.22.104])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D772FC0B;
-	Wed, 30 Apr 2025 13:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746021112; cv=fail; b=ZgBFCE1F4Uwg93SQU67HCmuDyEYEblNlgC/7nJoJ5MwUxiVcMRrRFN1hVLNFhzZ76kYxHq8NvFueZNxdfbfrhS+OcVxNpG5oWWsIi2DPo1879/EvGFFG2B6LuCUSnCdh6RVcBR+jX6B3vZRpplTyVtwtkv/tYY7yOUVvrOflX7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746021112; c=relaxed/simple;
-	bh=2a4zwiGRN6rD5vetd6q3tRJ23nKgZpWHMQe0PaJCygM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AQEdS5YgrgWbaKz8uNZFFwY3HqppY2f/6hbQ0KLURzYAvp7zXZsbVEcWuHuMr1yjNTQ/i2SJcYEdhjw21WCRAs2sFktswxYK8EBOVsPMtxh8euzVy1RGPYTS6yQh9lD/HnwXfQcb3kP1MKEgiF91xuq68JvEJxu3XS7WNhWrlJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=jZsjfbsO; arc=fail smtp.client-ip=40.107.22.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E30BE5E;
+	Wed, 30 Apr 2025 15:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746027023; cv=none; b=g7kYlkEF52N8Ezty4RocuptxUlJ+AHW77eVasiwcGYQV87NtJbQhKvayUjhu2Zmd//bi8eWHDpbCHaqOlYMc5y2VCRsKxUdbzPTWR1Cf6QVhaOtkrEkDVsyUhZeEUICFsHZUhKnQ7vVuMs+Frvc3eR+Ko2tTFEVtNsS8Ot8CDsc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746027023; c=relaxed/simple;
+	bh=9SV4DX19yoCfEzYYIGO1BCfqztvYjLvOFhRKhsU6oAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pKkGgSFdmk+5aJYI6ygULw75Lu7wt15QxBRHy0OunF0/64SedQBVEgVF6Si5AraL33lJdRUb6Bsl0JfK4GV5fvKluu44nJv6LG2Uo0KAqM0e1Gh7R9rBKE11pTjSJtyR8YCsFAx6iVpi34O2eQ+zog+l9KZdxJ4XXD65ecjvBow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Uir+I69Q; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="jZsjfbsO"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d6JzP5nFqfMAfoVPijJQMoH8cjXWkHbCRpsSHeUaE/0z7LT0ROcYW4/7yatlBHliFB89FaEnTM6aTkLfsKHADZO/kp5JvkRgfg9O31O5BVlrAL3eRvWy3WeNhPx32AOwgUoXlLnlrq3i4KbuwkrvbU2M8s73DU4M8v+TZ/JLQbKfijOL2koc/azbyy1LU9he+cNLEAZfJoUIvlCvnbjDzAKtPCpd/bIwDYkn9z7FeYR71LfSVt50u/XONwthoqLOz9O6UDtrl8Gt7u7lxPOKZzUBMpssxtceq/vak2WNiuUL0W7KgQmSht6tLsHuMmuzx2sW0ps/H+4wMQ0bnkeScA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FeEgz8JsrWUzK4yDXCS2y2ahvaSoQVjdU0EIw060QsM=;
- b=r8XzxuoPlbbceXcflQNkCx6IBXodVFkvpn16vL+MdmuIcNe5SLZNiLQjytogFSqGeGXNmwbSTt20h/HeHgDtTkWr85jRwDoGoG/59zTcXgwciws/HUa342kDgwl2xoztyEbiaRPkg6H0kE79bMYXIEbPEWJhcCF6540rJkutmj7m8eghkim3p6/avk4gsCXia0X4MvSFhc3xNSS5/4+r67XJXLN1lhNdxa95IE36Yle9YSSbFeO2NG+9E2N6R2Md1x0QrsFpzS4GFAL/eOqhce4U9LF5542xVLwSxRk8tNe1Pkli+KsnBqIg4hyak8o0X6hF9XFiyaWh1MyziuD04Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FeEgz8JsrWUzK4yDXCS2y2ahvaSoQVjdU0EIw060QsM=;
- b=jZsjfbsOHu+ei/5GL71qbHiKdhl/7E/yfpxIkCNOdZoGvzvt2RgjT8qcJVSfzItevjOC/NPLivW+GCU0hZkVwNgdxIIqPROdTsC4b5CfbI2Zt/q32svzOzeBLB/QPm+0I/nKnOtsI65DuZTu8MChFaKf6VZSmlMkyz3EOtdLpbTXvoUXSNsCjTKcSNH0R7yoE+wBBNgnyT3FAoPTvo8slLaFdCd8xaVQLGoOWZst5lRa47scti5Y0o4O0ol4zwIgteMneVsskqqfIk5HGLDV7TD82t4F43O+qoiVlVJVOG3hs0V/eTdqUvdzBNndyFpRryKO5rdVPtlKpZZG+55X/A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by AS8PR03MB7601.eurprd03.prod.outlook.com (2603:10a6:20b:34c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 30 Apr
- 2025 13:51:48 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%5]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
- 13:51:48 +0000
-Message-ID: <a781a7bc-5dcb-4d28-9997-87404fa8c675@uclouvain.be>
-Date: Wed, 30 Apr 2025 15:51:33 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: power: supply: add max77759-fg flavor
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
- <20250421-b4-gs101_max77759_fg-v3-3-50cd8caf9017@uclouvain.be>
- <20250422-tireless-swine-of-fascination-6eba8b@kuoka>
- <57bb1dfd-02dd-4aa4-a560-264875ded33c@uclouvain.be>
- <8dce8a71-cd99-43eb-8003-b7c4f9a4cdfe@kernel.org>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <8dce8a71-cd99-43eb-8003-b7c4f9a4cdfe@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MI1P293CA0030.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:3::17) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Uir+I69Q"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 755091FCE8;
+	Wed, 30 Apr 2025 15:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746027019;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MWTikn/fQ2RO7hkcmPhgG/ZXL82CYY7laDHZMAqZbk4=;
+	b=Uir+I69QY6ooynZyuoSsowjneB2XH3l3Jk31xfvPk7NfkeG0T4UNGi5tZv+hSgbjL48SIT
+	9a/pXrag0U0RuVm9Y+XN1GZ5Ka+8SLhalf7X5Lp3hvzRqzhczzNO2E5VpaxWuLITE/ZUBu
+	f4bSIVCD3keI9rqPgY0L8j76IhX1bQsYC1pUyone7YHiu4mB/uk93Z5Xy8StTQtsjvNNXt
+	SVrVpp3+N8Fbq+6rC5hT95fFKdIUe2vOip5g5CiLSuDbzMUGQJ6OOpBxLVqT56Lyz/sqxM
+	KcEaKhuNA1cWG2UBLpWqeFrSV9D2KwzRaYA3mEAqSXFsbNlDzr8QJvYjPNsKwA==
+Message-ID: <207e2908-62ce-470f-9077-c5709d3e1a6a@bootlin.com>
+Date: Wed, 30 Apr 2025 17:30:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|AS8PR03MB7601:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fc70ed8-ebfb-4428-ef23-08dd87ee26c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXQyVmg5M3IxTFgwakM1VXBCbTk5NEJ4TUxBN0xhNG9kNUJOSW1IUG5RMmFR?=
- =?utf-8?B?UEFRSjhodk5PaXlka1FPSGhiMlBOcUdmajhXMGlwelYyYkhmanc0MW5DTGNt?=
- =?utf-8?B?cGt1VHdDYjI0T1hsTWMwSWc0ekdJcURUY0hDNHdCL1FWYTlBK1lrRUxCZHFG?=
- =?utf-8?B?LzErTDFXNVh6aU5OM3lhelo0YVJya250M2IyZ3B1L3pxSi9DNmtSMmM4SlpQ?=
- =?utf-8?B?RlZucEs0WURYbFVvVURIS1hXcFZYam1DY0MxcHlyRTd5blliWnpJSzhDdlEr?=
- =?utf-8?B?NTQyZWdXYmlOckJrVE1lVEpkYjBTNml0SG16SVgyRG50WXlXVUFhV2c4KzUw?=
- =?utf-8?B?ZWNSUWlzOVJXeW9NOTQ3MVdQVXRWMGVkNWFsR2xRcUxKdXNSSUV3QkZiUERl?=
- =?utf-8?B?NEpGOCtLb3NWRHZwMW5EZ0JjdnU5QVZaUEJRSmpDaXJKQWx5ZHpsWjNqMjJm?=
- =?utf-8?B?V2ZmVG4vVHltZG4rYXJicFNjQXlkbUVEQmYyY0VVZ2RQYWE3UVdWNWxoK0g0?=
- =?utf-8?B?bW44Y0lIQ1pvQmcvV2ZqZ2lsUmRTSnNjcXVGdEtKb041djkwTTFMMFJ0VFVB?=
- =?utf-8?B?OHFCTktxa3pBdEpQU1RudXVpSWwzZHZhdFRhb2dPTEl4Um5tRW5HVXJqa0hG?=
- =?utf-8?B?SkFLcEFsYUl6Tkt2SWQxRkpLSW5ldXJxa0RYaUhRSUt4Q1RkRUJTcnJ5ZTNv?=
- =?utf-8?B?dkYxV2dEM1c5bDNoZVRmQjVhcUp3dzJCTHFBa3IzbENyN1Q3WERXL1NpQUNw?=
- =?utf-8?B?SkxDSUlaQ2ZzeWExMnFhQ0dleExDU3dGRE1zcDUwdzhtRXpnZUhlRFVxUm5J?=
- =?utf-8?B?RzhSQnNlSFpYU3NCU1ZKRXdkMGJzeDh3U2xnZzlwbUJDb080R0dWRXI3SWQx?=
- =?utf-8?B?cE5FVmo3UWljU1l1MUY1WWZ6eTBZN0VRVk9zNkY5K0tOQ2doUkNZU3Z2VWt2?=
- =?utf-8?B?OUM5Tnd4aWNES2FHVkVLTlFKa0E5c0M3a3B1QWhlaStGeS9YT2ZETXJqR2JR?=
- =?utf-8?B?RXRUUllZYjdBNmF5OVRpdWUwd3BGWjlmQXNNVDVMZmhYSFNmSHREN2QrY0R3?=
- =?utf-8?B?WjJONVJxa09rL1lkWk9PUjA0QUdFK2Y1dkNlWEwwcmthZFE4WGF6U0s0dlZN?=
- =?utf-8?B?a3BnMDFjT3llb3p4bi9jTnNBL0hkZG9IQWlBTmV5K3ZaYmFHcjJ2Uy9aaTN0?=
- =?utf-8?B?NW4zVXhqeWt2WTRJaktTWDZFTmw4TVA3SHV3M0x2SnMzRGgzUGEyd1RhdzdV?=
- =?utf-8?B?V1N6MmhyREdaMVUrb3VlRytaVHZNVmdDT3lqMVA3UkFuc1g1TEVWcUxKcFdv?=
- =?utf-8?B?MFpadmxEZzd0VUh2STQvdlRPYkhBdFJrYVMxSkU4UVJSMXRSeGs4NGw5bUNN?=
- =?utf-8?B?d29HQVBsZTZPd0orellZSXVIV3M0VHBoSlZLaDhxR1F0UGV1VThySmtJckxz?=
- =?utf-8?B?Z2ovSHYrVkVDZHdYTXByaVZGdVFKK3dMcTZvRFRGMFFVeTIzd0UzVmYwMGZi?=
- =?utf-8?B?Q3JKL1VCL2NjZm9BcmExQmc4TU9FZ3hZR3Yxbm1mVXZFSnBZZW9BWVdyOE43?=
- =?utf-8?B?bG5lQ0E1ZU5oRW43WVFHYnRJQ0hsdmZWWmlNQWpDaUJCV3NRanlBMVg5NWZP?=
- =?utf-8?B?QXVZdmJtdmZUV3pJdzlROEFIUll3VzJzSUJLNWhLcTRFeDFjL3NkcjZOYy9P?=
- =?utf-8?B?QnNYeE1waWxGRDNUa3hCUEJkdVFRVDhEMVJyRzAxdHJwOERUbnV5N0E4c3Vo?=
- =?utf-8?B?bTVZaXl4MThqODFwcG1GVDJMVkorL0V4R2hBN1lNYnpvL1lOeEQ2SUlBeGpK?=
- =?utf-8?B?VE1vTDBxQUpuV0FWcEs5KzBmTm1HWU1MVDIvWDZzeHBLNGphY2gvbnhBZnN5?=
- =?utf-8?B?d29BT2NyaDcvU1AwWE41My9jRDgyTWJwdGtLZ3d5bWpMZlVsSENkWlB2YlRY?=
- =?utf-8?Q?37MUncbFxVU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SmViczB1VUxLZG1UNUZUT2w5QzBUbGFPUGJkNWZrV1p6MmpPMDJJZTVtaUdy?=
- =?utf-8?B?Um82U0RlZWVJSHRWSEZJTWdRNVdoVW1pMnFoaUpGUlNPZEdTQldnTUd6WWYw?=
- =?utf-8?B?UHZlQ0dDTmtxTmx0dHpCL3pzV1EzVGFXQTF6UlJtQnBhTzVBajc5b0F0T0Z2?=
- =?utf-8?B?dnhpVUFsRXlxd1BIVTJsZnUwdGVXeGkza2tGcGJmL093b0syUWg5alZBMlRs?=
- =?utf-8?B?ZmxZdGZ1WGV1OTUrRzdMTmZBQVV3dWJKYSszTldFMTkvYjhVaHpHSnV0aS9C?=
- =?utf-8?B?RXNINHJ2OEFxdTBvR1NLVmNXbnBhRWx6ODUvZkE1VWI2Y1p5ZnZPRGl5MmZq?=
- =?utf-8?B?N0pUVWlyck5Pb1BCc1ovUm9veW1vYmdzUFdzb1dzSXRWMStDRHR6aTNqcHhE?=
- =?utf-8?B?NDZVU3NEcCtBY1ozZngzcEFVOE5SU202b2RiVnhCQjUwNFF2K3JIZ0ZOSkk2?=
- =?utf-8?B?LzlJMHBqMnJMSHF5cWNpT21udUNFZWN6VEMvUzNvakl5ZGRSaVN3Mm1ZbzR2?=
- =?utf-8?B?QmxEK1NpSUJUQWVIWERYNFJ1alhSQ09EN2RDcVROMTZmUmdUaHNEQ1pESnp2?=
- =?utf-8?B?TlFaVTBBMStidHh3VUNPaktaZ21pVE5GMTlhcmJ2Z2orREtkTTF6Njhub2E5?=
- =?utf-8?B?aHM4ejYzNkxxTFFKNzN5dkRKYXdQODg4NkJaV3RwUVppL2gyQ1VNelU0VWk3?=
- =?utf-8?B?dGJUSlpqK0JrV1NRNHEvUEFjWGpnaFVFdVlRSUZOb21XVUVDL2ZxcEs3SkxC?=
- =?utf-8?B?akxiWXBwN09PalVxaHk3YktkOFcxbmFhL2FvNm90SHV4cEw1L0JJeUQ3NGZV?=
- =?utf-8?B?NjJvS1ltbFZlSjV2bkpmUlMrbWZBTnlPOUpxUmJidUw5M2R6T3U4RENyNUdQ?=
- =?utf-8?B?Vm5ac2JIaHJHZVlHWFdkeXBaVUFQc3FadDhEbSs0SHdQMFhORXpUYkJuQ21o?=
- =?utf-8?B?Uy9FWm5YWDhBbENzOVVGUlNJSnR3eEtXV0NkdVA4MHNIZ0RudVRjV3FSN2tr?=
- =?utf-8?B?NE5WL2lWbFRCVnVkSEt1Z1ZoVHMxQTl5RHBQZDVHT0ZZWk5lZmJreGpIaVVS?=
- =?utf-8?B?dlJ5K1FxZTZzTXNBcjFWZFBSYlRWMVdrTFR2N3JnVUwrUmxuMlpiNTh5SnNS?=
- =?utf-8?B?WTdvUTFBZW8ySnNyRUdVV29TTmllOEFwSlFtbEJVVkF3ZnJlQ0dNSnJBVTFq?=
- =?utf-8?B?clk2dFBhQUlnWEViYjB3T0liRjdGcFJkd043eGZ2Q3YzV0MyTkcyM3Nna295?=
- =?utf-8?B?MnZkcFZOcFN2cklxZDdWTW9IUDVVQ3doTlJMUnErRVJFeWtBZTJ2Uk9IM2tL?=
- =?utf-8?B?U0MvdWlybUlORXE0OHpyMWFzOFUzV1JVWEpRd2NYUWxBWGxLd01RWTc3NkFK?=
- =?utf-8?B?UEhRWk5RYjN2U25GYitXeHRONHUrTzlFM1Z6eU5BdUF1UGZuN3J1OUJHWjVH?=
- =?utf-8?B?cm5RYnc0SlRZendJblpWVlAxWmRKaTVjSXhwY3AvV2hKbnF4bWJTU2tZY3o1?=
- =?utf-8?B?MnhIaWVXWUtJdnFlSE5Oc3RnQTBsN05xdUdBbXZnajdwanhoZlRNakdUL25P?=
- =?utf-8?B?aTNsaXhXQVJyYzFicjJWU3RXNnowS0YwVHNqRk40Q3lIc09xWEpzSEdQRVhN?=
- =?utf-8?B?OHIzODhHZ3NSUStGWXgzRmJMb09yVFMza1lLN0c3dW9Jb2Jvek9DZEc3VDJS?=
- =?utf-8?B?WXA3ZXVVdjNXc0ZoZGxBbWp2RDJTSThwd0ZrME50enBsY3VPVStwUnk1U2pw?=
- =?utf-8?B?MjNYeXpsa0NDZlpBRGdBVTVwU25Ib1l4Zi9tcW5KN2ZZUmlMRHYrRFV5UFg1?=
- =?utf-8?B?Q09DTWxDbUdGTXNGdm1MbGcvTE5wWGVzRmt5OUdrbG5nQkhsSUlGWTNSUzc2?=
- =?utf-8?B?VFpkMUplMGd5ZW1zWkxlMlR0Wk5QbkUxenlXeXErV2tiU3FtTEUzWitBWUMv?=
- =?utf-8?B?eWZYMWJzSWdTbWREeEJaQWlsc2tEaXI1YktnajRQOW1KZ3pZS1NzZ3Q0M2RC?=
- =?utf-8?B?Z2s4RFRqU2ZUaXZDMjBPNVZQLzJmMk5oQ0V1bjJQYmNBN1k2YTdqeEx4TmtO?=
- =?utf-8?B?T3BVK25IT0JEaGtmU0czNkplQWVzTWxMYldyN2RGcjlhRXRyUlByMkp3SDlJ?=
- =?utf-8?B?RS9ZelJkUVp5WFk4MWFGeWVoTmpDRERudE5nbEcweUoxM3VSUHNDY0Yrbndw?=
- =?utf-8?Q?sf7rF6HJgPY0qJapJM6acgvCM6g6JnrbGfH8k1QxToUx?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fc70ed8-ebfb-4428-ef23-08dd87ee26c1
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 13:51:48.0940
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vpbI1QCv4AUOpZ2/QUftT9G1sZ0A5A5OjarVFWdXiljtdk6I2+EGkE7W5mB2hltRFuL4Y8kMKW9xktkLgY9nhQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7601
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH v2 00/34] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Douglas Anderson
+ <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski
+ <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
+ Hui Pu <Hui.Pu@gehealthcare.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
+ Adam Ford <aford173@gmail.com>, Adrien Grassein <adrien.grassein@gmail.com>,
+ Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Christoph Fritz <chf.fritz@googlemail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Dharma Balasubiramani <dharma.b@microchip.com>,
+ Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>,
+ Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Liu Ying <victor.liu@nxp.com>,
+ Manikandan Muralidharan <manikandan.m@microchip.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>,
+ Sasha Finkelstein <fnkl.kernel@gmail.com>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Vitalii Mordan <mordan@ispras.ru>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ "Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan
+ <yuanhsinte@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
+ Xin Ji <xji@analogixsemi.com>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@ge.com>,
+ Martyn Welch <martyn.welch@collabora.co.uk>,
+ Peter Senna Tschudin <peter.senna@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Herve Codina
+ <herve.codina@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Helge Deller <deller@gmx.de>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+ <174591887152.961603.7706063017853945511.b4-ty@bootlin.com>
+ <sdiwpe7nnhud3fvkgijjbfyenlwpchbxgehyxmsy7c5loo257h@hkfcawkjrlhd>
+ <efcf3798-9ac1-42a7-8a12-24d931cbf771@bootlin.com>
+ <20250430-scorpion-of-majestic-argument-7f59b4@houat>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
+ 5K81kIWbtQX91pD/wH5UapRF4kwMXTAqof8+m3XfYcEDVG31Kf8QkJTG/gLBi1UfJgGBahbY
+ hjP40kuUR/mr7M7bKoBP9Uh0uaEM+DuKl6bSXMSrJ6fOtEPOtnfBY0xVPmqIKfLFEkjh800v
+ jD1fdwWKtAIXf+cQtC9QWvcdzAmQIwmyFBmbg+ccqao1OIXTgu+qMAHfgKDjYctESvo+Szmb
+ DFBZudPbyTAlf2mVKpoHKMGy3ndPZ19RboKUP0wjrF+Snif6zRFisHK7D/mqpgUftoV4HjEH
+ bQO9bTJZXIoPJMSb+Lyds0m83/LYfjcWP8w889bNyD4Lzzzu+hWIu/OObJeGEQqY01etOLMh
+ deuSuCG9tFr0DY6l37d4VK4dqq4Snmm87IRCb3AHAEMJ5SsO8WmRYF8ReLIk0tJJPrALv8DD
+ lnLnwadBJ9H8djZMj24+GC6MJjN8dDNWctpBXgGZKuCM7Ggaex+RLHP/+14Vl+lSLdFiUb3U
+ ljBXuc9v5/9+D8fWlH03q+NCa1dVgUtsP2lpolOV3EE85q1HdMyt5K91oB0hLNFdTFYwn1bW
+ WJ2FaRhiC1yV4kn/z8g7fAp57VyIb6lQfS1Wwuj5/53XYjdipQARAQABzSlMb3VpcyBDaGF1
+ dmV0IDxsb3Vpcy5jaGF1dmV0QGJvb3RsaW4uY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
+ CwIEFgIDAQIeAQIXgBYhBItxBK6aJy1mk/Un8uwYg/VeC0ClBQJmlnw+BQkH8MsdAAoJEOwY
+ g/VeC0ClyhwP/Ra6H+5F2NEW6/IMVHeXmhuly8CcZ3kyoKeGNowghIcTBo59dFh0atGCvr+y
+ K9YD5Pyg9aX4Ropw1R1RVIMrWoUNZUKebRTu6iNHkE6tmURJaKLzR+9la+789jznQvbV+9gM
+ YTBppX4/0cWY58jiDiDV4aJ77JDo7aWNK4hz8mZsB+Y7ezMuS4jy2r4b7dZ+YL/T9/k3/emO
+ PkAuFkVhkNhytMEyOBsT7SjL4IUBeYWvOw9MIaXEl4qW/5HLGtMuNhS94NsviDXZquoOHOby
+ 2uuRAI0bLz1qcsnY90yyPlDJ0pMuJHbi0DBzPTIYkyuwoyplfWxnUPp1wfsjiy/B6mRKTbdE
+ a/K6jNzdVC1LLjTD4EjwnCE8IZBRWH1NVC1suOkw3Sr1FYcHFSYqNDrrzO+RKtR1JMrIe8/3
+ Xhe2/UNUhppsK3SaFaIsu98mVQY3bA/Xn9wYcuAAzRzhEHgrbp8LPzYdi6Qtlqpt4HcPV3Ya
+ H9BkCacgyLHcdeQbBXaup9JbF5oqbdtwev3waAmNfhWhrQeqQ0tkrpJ46l9slEGEdao5Dcct
+ QDRjmJz7Gx/rKJngQrbboOQz+rhiHPoJc/n75lgOqtHRePNEf9xmtteHYpiAXh/YNooXJvdA
+ tgR1jAsCsxuXZnW2DpVClm1WSHNfLSWona8cTkcoSTeYCrnXzsFNBGCG6KUBEADZhvm9TZ25
+ JZa7wbKMOpvSH36K8wl74FhuVuv7ykeFPKH2oC7zmP1oqs1IF1UXQQzNkCHsBpIZq+TSE74a
+ mG4sEhZP0irrG/w3JQ9Vbxds7PzlQzDarJ1WJvS2KZ4AVnwc/ucirNuxinAuAmmNBUNF8w6o
+ Y97sdgFuIZUP6h972Tby5bu7wmy1hWL3+2QV+LEKmRpr0D9jDtJrKfm25sLwoHIojdQtGv2g
+ JbQ9Oh9+k3QG9Kh6tiQoOrzgJ9pNjamYsnti9M2XHhlX489eXq/E6bWOBRa0UmD0tuQKNgK1
+ n8EDmFPW3L0vEnytAl4QyZEzPhO30GEcgtNkaJVQwiXtn4FMw4R5ncqXVvzR7rnEuXwyO9RF
+ tjqhwxsfRlORo6vMKqvDxFfgIkVnlc2KBa563qDNARB6caG6kRaLVcy0pGVlCiHLjl6ygP+G
+ GCNfoh/PADQz7gaobN2WZzXbsVS5LDb9w/TqskSRhkgXpxt6k2rqNgdfeyomlkQnruvkIIjs
+ Sk2X68nwHJlCjze3IgSngS2Gc0NC/DDoUBMblP6a2LJwuF/nvaW+QzPquy5KjKUO2UqIO9y+
+ movZqE777uayqmMeIy4cd/gg/yTBBcGvWVm0Dh7dE6G6WXJUhWIUtXCzxKMmkvSmZy+gt1rN
+ OyCd65HgUXPBf+hioCzGVFSoqQARAQABwsOyBBgBCAAmAhsuFiEEi3EErponLWaT9Sfy7BiD
+ 9V4LQKUFAmaWfGYFCQfwx0ECQAkQ7BiD9V4LQKXBdCAEGQEIAB0WIQRPj7g/vng8MQxQWQQg
+ rS7GWxAs4gUCYIbopQAKCRAgrS7GWxAs4gfGEACcA0XVNesbVIyvs5SJpJy+6csrH4yy233o
+ GclX2P7pcCls55wiV6ywCtRaXWFjztYmklQieaZ/zq+pUuUDtBZo95rUP20E56gYV2XFB18W
+ YeekTwH5d2d/j++60iHExWTB+sgMEv3CEGikUBj7iaMX2KtaB1k9K+3K6dx/s1KWxOClFkbJ
+ EV/tmeq7Ta8LiytQM9b4yY550tzC0pEEeFcLFXo1m5KcJauYnAqrlOVY48NFpFUd9oAZf/Pz
+ p3oEs+zn/8zK2PBrZZCD6AhrbotRy7irE5eimhxcsFm1+MG5ufnaQUWHrRYXVuFhvkSoqZ8j
+ GPgPEpFor4NjRyX/PMLglQ7S5snkvKcr3Lun44aybXEHq/1FTzW2kOh6kFHFFOPbMv1voJKM
+ IzrmDoDS+xANt/La7OwpCylCgF6t9oHHTTGfAfwtfYZbiepC66FDe/Jt/QLwkIXeIoeSS1O4
+ 6rJdGWG2kHthUM+uIbUbaRJW8AkJpzP1Mz7TieR/9jO4YPeUm9tGL5kP2yyNtzFilcoOeox1
+ NSFNAPz+zPcovVmxAaSDGcSzhQVJVlk8xPib8g4fnI8qJ3Gj7xyw8D9dzxhCR2DIFmZL84En
+ N7Rj+k4VIGY7M/cVvxL81jlbMGMERMmb96Cua9z1ROviGA1He2gbHOcp6qmLNu3nprleG8PL
+ ZRNdEAC0iZapoyiXlVCKLFIwUPnxUz5iarqIfQU8sa1VXYYd/AAAFI6Wv3zfNtGicjgHP8rN
+ CIegqm2Av1939XXGZJVI9f3hEoUn04rvxCgcDcUvn7I0WTZ4JB9G5qAGvQLXeXK6Byu77qTx
+ eC7PUIIEKN3X47e8xTSj2reVTlanDr8yeqZhxpKHaS0laF8RbD85geZtAK67qEByX2KC9DUo
+ eHBFuXpYMzGQnf2SG105ePI2f4h5iAfbTW9VWH989fx4f2hVlDwTe08/NhPdwq/Houov9f/+
+ uPpYEMlHCNwE8GRV7aEjd/dvu87PQPm4zFtC3jgQaUKCbYYlHmYYRlrLQenX3QSorrQNPbfz
+ uQkNLDVcjgD2fxBpemT7EhHYBz+ugsfbtdsH+4jVCo5WLb/HxE6o5zvSIkXknWh1DhFj/qe9
+ Zb9PGmfp8T8Ty+c/hjE5x6SrkRCX8qPXIvfSWLlb8M0lpcpFK+tB+kZlu5I3ycQDNLTk3qmf
+ PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
+ ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
+ qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
+In-Reply-To: <20250430-scorpion-of-majestic-argument-7f59b4@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefftdduueetheejledvkeetjeekudfhffduvdeugfevfeeifeehieffjeetfefgveenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleekpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughmihhtrhihrdgsrghrhihshhhkohhvsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmp
+ dhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hello,
 
-On 4/23/25 15:45, Krzysztof Kozlowski wrote:
-> On 23/04/2025 10:05, Thomas Antoine wrote:
->> On 4/22/25 12:05, Krzysztof Kozlowski wrote:
->>> On Mon, Apr 21, 2025 at 08:13:34PM GMT, Thomas Antoine wrote:
->>>> +allOf:
->>>> +  - $ref: power-supply.yaml#
->>>> +  - if:
->>>> +      properties:
->>>> +        compatible:
->>>> +          contains:
->>>> +            enum:
->>>> +              - maxim,max17201
->>>> +    then:
->>>> +      properties:
->>>> +        reg:
->>>> +          minItems: 2
->>>> +          maxItems: 2
->>>> +  - if:
->>>> +      properties:
->>>> +        compatible:
->>>> +          contains:
->>>> +            enum:
->>>> +              - maxim,max77759-fg
->>>> +    then:
->>>> +      properties:
->>>> +        reg:
->>>> +          items:
->>>> +            minItems: 1
->>> If there is going to be resend, drop minItems.
->>>
->> Will drop it in v4.
+
+Le 30/04/2025 à 12:39, Maxime Ripard a écrit :
+> On Wed, Apr 30, 2025 at 10:21:48AM +0200, Louis Chauvet wrote:
 >>
-> One more thing - your reg-names are now incorrectly constrained - where
-> are their constraints?
+>>
+>> Le 29/04/2025 à 16:42, Dmitry Baryshkov a écrit :
+>>> On Tue, Apr 29, 2025 at 11:27:51AM +0200, Louis Chauvet wrote:
+>>>>
+>>>> On Thu, 24 Apr 2025 20:59:07 +0200, Luca Ceresoli wrote:
+>>>>> devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+>>>>> bridge, and the only one supported from now on. It is also necessary for
+>>>>> implementing reference counting and thus needed to support removal of
+>>>>> bridges from a still existing DRM pipeline without use-after-free.
+>>>>>
+>>>>> This series converts all DRM bridges to the new API.
+>>>>>
+>>>>> [...]
+>>>>
+>>>> Applied, thanks!
+>>>>
+>>>
+>>> [...]
+>>>
+>>>> [16/34] drm/msm/dp: convert to devm_drm_bridge_alloc() API
+>>>>           commit: b2aabe5c6b65516d88214aba4b12ce2ca78bac6c
+>>>> [17/34] drm/msm/dsi: convert to devm_drm_bridge_alloc() API
+>>>>           commit: fffc8847743e45604c4478f554d628481b985556
+>>>> [18/34] drm/msm/hdmi: convert to devm_drm_bridge_alloc() API
+>>>>           commit: e11532be87e437648521a8ed5358c56df11933b4
+>>>
+>>> Why? These drivers are explicitly handled outside of drm-misc. Please be
+>>> more careful next time.
+>>>
+>>
+>> Sorry, I was not aware that msm also have his own repository.
+>>
+>> TBH, I was not aware that other repositories existed for drm (I should have
+>> looked at MAINTAINERS, it is totally my fault). DIM and doc[1] only list
+>> drm, drm-misc, drm-xe, drm-intel, so I just tough "intel is special", not
+>> "drm is divided in many repositories".
 > 
-> You need to test your bindings and DTS before you post. If by any chance
-> community robots found more issues (e.g. you sent something untested),
-> you should address it.
+> It's mentioned in the drm-misc section:
 > 
+> https://drm.pages.freedesktop.org/maintainer-tools/repositories/drm-misc.html
 > 
-> Best regards,
-> Krzysztof
+>> This repository consists mostly of the core drm code as well as DRM
+>> drivers that do not have a dedicated repository.
+ >
+> Feel free to send a patch to improve the doc. If you missed it, someone
+> else will.
 
-I did run the test but I obviously must have done it wrong. I will check it out
-such that it does not happen again.
+Done : 
+https://gitlab.freedesktop.org/drm/maintainer-tools/-/merge_requests/77#c304368de02d740ca751f5812ddcd0cfac40d162
 
-Best regards,
-Thomas
+I added more details for the push process, clarified the existing drm 
+repositories and added a small check in dim to warn user if the pushed 
+commits does not belong to the targeted brach.
+
+> Maxime
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
