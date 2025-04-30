@@ -1,167 +1,230 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4EE2DC771
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 08:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE321F09BF;
+	Wed, 30 Apr 2025 08:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746000593; cv=none; b=IHZAR8cmdc+93JZq8EZW2KuupjPXslZ5gcW7sh4xQ3KSQHhxWgfNa1NrFSAOPJoHyJoqsUqeaqBH8aDg32ABb8/0+8zO2PaIGr6uyGx4Q7LTOypz9TE6SoVb2XDLwmWCWxpQOO6WrX2MpTBdIcKqoCe7wfHhMc2v0lixXkK5k9A=
+	t=1746001326; cv=none; b=czSw/hoGpaC+/pFPz0OXmwQ6lmBB6+hWS7RexOTMIF4sDIpQJjXDBVV0gse6lEKPSi9s+0vLhe+aLXwybHdzJMben3fXVK1rs9PLWGNAwWiXkyo6SfJROJQqSehXR8Jfym8vK4TKO46rHkZXr6LPqottqgVoxwDGK5uD+zQIAks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746000593; c=relaxed/simple;
-	bh=jZK0QLebtMfOcEUm0h/6bxVrX1rTU7CIc+iZJypo1N8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=iyK5+whzVPmnVnKarh2knW2AcBbRPDmORbJApT7qhwvhnkXwXOVndqAmpoUbjKIV7FxuuiTsLi7as8SfPOMuPpM48ixQaNDY5Y8vRFI4Tsak/DeBe9cgCQJDJ/Z4wxqw6YNHR75Y5I4Js6AljS7wme7ThimrnYaabuwQs7JYVNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SbzC+k1y; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1746001326; c=relaxed/simple;
+	bh=bkXUjUHUjfjkSgSAJnBnwipo9etTI7QDGXD4r4v6PA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U79f8LTAx0ORRaR8ug5PL46alTEY6BAf1ymilVJHLP6pn4RVgiOIxyU7w1A+bWNXID37Ql0pV07NM6vt4VyyWHsyW37re4+qjoBsb+lfKOq7zlOyVcm4K07mLSQbJJ2i3DL0VJK7yTz+ay5pU2FrrswTczJ8TE+v4KeXm8DBels=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JAa4P8o/; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SbzC+k1y"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250430080349epoutp0451bea424898134fea2836ce6b9bdc48c~7CfVLvfVg1134711347epoutp04N
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 08:03:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250430080349epoutp0451bea424898134fea2836ce6b9bdc48c~7CfVLvfVg1134711347epoutp04N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746000229;
-	bh=r0lzQPeD0TToeRVN66QVOhI3MZ56kDdIBrvCu7NCmjw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=SbzC+k1yEJFb3FK3TVjh7wn2XicZsCZfGw1ZNk7kucXn4PPDG1tXuXG/OxWgmqsYe
-	 TE8TsWWS5PtMgQN+686m4uAk8agDj10Fi/4U7Ut5A5EZ8SHRKN5jQLyX4J1ZAVgSom
-	 ublS/E1Y1P9vFa04/dxP5Es8HKYhqKeKdZ9qxEbQ=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250430080348epcas5p29f981d5f79ac379b9a4e6f0e2eb20ea3~7CfUTQvmo1973919739epcas5p26;
-	Wed, 30 Apr 2025 08:03:48 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZnV7Q6z4Yz3hhT4; Wed, 30 Apr
-	2025 08:03:46 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250430080346epcas5p1ab9a54e2a451f0c273606be005a4c6a8~7CfSCb2ba3050630506epcas5p1v;
-	Wed, 30 Apr 2025 08:03:46 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250430080346epsmtrp2074fbc2854c58cfe9b1c566da8a38641~7CfSBjNNW2131021310epsmtrp23;
-	Wed, 30 Apr 2025 08:03:46 +0000 (GMT)
-X-AuditID: b6c32a29-55afd7000000223e-d4-6811d9622a01
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6A.08.08766.269D1186; Wed, 30 Apr 2025 17:03:46 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250430080344epsmtip1b5735d0f9aba6e2aeb8b6cb5da022a0e~7CfQAw4_x2209522095epsmtip1w;
-	Wed, 30 Apr 2025 08:03:43 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Pritam Manohar Sutar'" <pritam.sutar@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <sunyeal.hong@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	"'stable'" <stable@kernel.org>
-In-Reply-To: <20250428115049.2064955-1-pritam.sutar@samsung.com>
-Subject: RE: [PATCH] clk: samsung: correct clock summary for hsi1 block
-Date: Wed, 30 Apr 2025 13:33:42 +0530
-Message-ID: <0b1b01dbb9a6$65bdd150$313973f0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JAa4P8o/"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F39494397A;
+	Wed, 30 Apr 2025 08:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746001320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8S26NF1v3iypfP0XSKYqSPQIsQrNeQIbgRwNHSDOyE0=;
+	b=JAa4P8o/u+lfsicxaXUwTMETTwEqWM2BewUYcocpK5x3llu8h3r6gTCqmCkQG8nXuI4ign
+	jzvMo8LpkTRnnDdVdKW+ye5AepxO+30XVXD8Zr7FaRtg0UDTk8WISWzQEzaVB/0gXhU1nu
+	NVfoiMYz72aC6t1lc+Wdx9jUJA+6rrMA2LR+zOevmOH/s1ESREScUizIqRp6ys7W8HPpwJ
+	db0rliMFs22Ggw5CeV0/Zbrvwd6Wtvuzw/Sh2o+6kyc6p3qFButSz8tlO6Yvr+r3u3v1Uf
+	8iU1NtpDEBV4eXDE6gynksvcx5phnRe51EKABGpXkcojKxtGlTr+EyVBVWvc7Q==
+Message-ID: <efcf3798-9ac1-42a7-8a12-24d931cbf771@bootlin.com>
+Date: Wed, 30 Apr 2025 10:21:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJRzV9wh12IZchi0K7svot8vU81fQE18kpXssYBMwA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnG7STcEMg9/veC2uf3nOanFvxzJ2
-	i2s3FrJbnD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wjy7t4LN4svPB8wWh9+0s1r8
-	u7aRxeLT+QtsFk3L1jM58Hu8v9HK7rFpVSebx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRv
-	l8CV0fLgJmvBBdGKudM72BsYfwl2MXJySAiYSFxqXMfUxcjFISSwm1Hi97UbzBAJaYnrGyew
-	Q9jCEiv/PWeHKHrOKLH0wX1GkASbgK7EjsVtbCAJEYErjBLTfn8Fq2IWaGOSWN7fDdUykVHi
-	8Ov5LCAtnAIOEnOezgfbISzgLnFl60U2EJtFQFXi+7TvYPt4BSwlPq3uYIGwBSVOznwCZjML
-	aEv0PmxlhLDlJba/nQN1q4LEz6fLWEFsEQEriU1zVjND1IhLvDx6hH0Co/AsJKNmIRk1C8mo
-	WUhaFjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECI5QLc0djNtXfdA7xMjEwXiI
-	UYKDWUmEd0ONYIYQb0piZVVqUX58UWlOavEhRmkOFiVxXvEXvSlCAumJJanZqakFqUUwWSYO
-	TqkGpun7XDb48dduknCdL5646P2NxUnu5o/O5+iuznJ1VDzwsf3nZ3X9BttSgScmN3mu/mz5
-	9uMeo6Te9rTWRL+Vas9tAlN+Tl80/WhXBee74Msls6YETJ/6ZeH6RP61E1doxIb+UxQ+bl7c
-	Y1Vy86SDcmnel6wfHh+KKy/6fXncc35qiKzJaiEbjQvhTrHh2+dqV9YHbnxY6xjxrmuz6R25
-	OX3HXyt4mR1u63qZPyvLoL5wYYlBt4jgNa5jvWr7Q79+6Tl6dPKWcEH94hW712aHCs1iMQie
-	emTB3Kkb/NUaOE9OLxVYlXY4tXSyQVfVSweTKsc7x79adwp8NrVavYdlTwKXtFzIV1Mje812
-	1ahKJZbijERDLeai4kQAVdW7wj8DAAA=
-X-CMS-MailID: 20250430080346epcas5p1ab9a54e2a451f0c273606be005a4c6a8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f
-References: <CGME20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f@epcas5p4.samsung.com>
-	<20250428115049.2064955-1-pritam.sutar@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH v2 00/34] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Douglas Anderson
+ <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski
+ <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
+ Hui Pu <Hui.Pu@gehealthcare.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
+ Adam Ford <aford173@gmail.com>, Adrien Grassein <adrien.grassein@gmail.com>,
+ Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Christoph Fritz <chf.fritz@googlemail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Dharma Balasubiramani <dharma.b@microchip.com>,
+ Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>,
+ Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Liu Ying <victor.liu@nxp.com>,
+ Manikandan Muralidharan <manikandan.m@microchip.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>,
+ Sasha Finkelstein <fnkl.kernel@gmail.com>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Vitalii Mordan <mordan@ispras.ru>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ "Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan
+ <yuanhsinte@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
+ Xin Ji <xji@analogixsemi.com>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@ge.com>,
+ Martyn Welch <martyn.welch@collabora.co.uk>,
+ Peter Senna Tschudin <peter.senna@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Herve Codina
+ <herve.codina@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Helge Deller <deller@gmx.de>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+ <174591887152.961603.7706063017853945511.b4-ty@bootlin.com>
+ <sdiwpe7nnhud3fvkgijjbfyenlwpchbxgehyxmsy7c5loo257h@hkfcawkjrlhd>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <sdiwpe7nnhud3fvkgijjbfyenlwpchbxgehyxmsy7c5loo257h@hkfcawkjrlhd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeivdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefftdduueetheejledvkeetjeekudfhffduvdeugfevfeeifeehieffjeetfefgveenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleekpdhrtghpthhtohepughmihhtrhihrdgsrghrhihshhhkohhvsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgp
+ dhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Pritam
 
-> -----Original Message-----
-> From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> Sent: Monday, April 28, 2025 5:21 PM
-> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
-> sunyeal.hong@samsung.com
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
-> arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> rosa.pila@samsung.com; dev.tailor@samsung.com;
-> faraz.ata@samsung.com; Pritam Manohar Sutar
-> <pritam.sutar@samsung.com>; stable <stable@kernel.org>
-> Subject: [PATCH] clk: samsung: correct clock summary for hsi1 block
-> 
-> When debugfs is mounted to check clk_summary, 'mout_hsi1_usbdrd_user'
-> shows 400Mhz instead of 40Mhz. Snippet of the clock summary is given as
-> below
-> 
-> dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
->   mout_hsi1_usbdrd_user     0 0 0 400000000 0 0 50000 Y ...
->     dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
-> 
-> Hence corrected the clk-tree for the cmu_hsi1 & the corrected clock
-> summary is as mentioned below.
-> 
-May be just " correct the clk_tree by adding correct clock patent for
-mout_hsi1_usbdrd_user "
 
-see: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+Le 29/04/2025 à 16:42, Dmitry Baryshkov a écrit :
+> On Tue, Apr 29, 2025 at 11:27:51AM +0200, Louis Chauvet wrote:
+>>
+>> On Thu, 24 Apr 2025 20:59:07 +0200, Luca Ceresoli wrote:
+>>> devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+>>> bridge, and the only one supported from now on. It is also necessary for
+>>> implementing reference counting and thus needed to support removal of
+>>> bridges from a still existing DRM pipeline without use-after-free.
+>>>
+>>> This series converts all DRM bridges to the new API.
+>>>
+>>> [...]
+>>
+>> Applied, thanks!
+>>
+> 
+> [...]
+> 
+>> [16/34] drm/msm/dp: convert to devm_drm_bridge_alloc() API
+>>          commit: b2aabe5c6b65516d88214aba4b12ce2ca78bac6c
+>> [17/34] drm/msm/dsi: convert to devm_drm_bridge_alloc() API
+>>          commit: fffc8847743e45604c4478f554d628481b985556
+>> [18/34] drm/msm/hdmi: convert to devm_drm_bridge_alloc() API
+>>          commit: e11532be87e437648521a8ed5358c56df11933b4
+> 
+> Why? These drivers are explicitly handled outside of drm-misc. Please be
+> more careful next time.
+> 
 
-> dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
->   mout_clkcmu_hsi1_usbdrd   0 0 0 400000000 0 0 50000 Y ...
->     dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
->       mout_hsi1_usbdrd_user 0 0 0 40000000  0 0 50000 Y ...
-> 
-> Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto
-> v920 SoC")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynosautov920.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynosautov920.c
-> b/drivers/clk/samsung/clk-exynosautov920.c
-> index dc8d4240f6de..b0561faecfeb 100644
-> --- a/drivers/clk/samsung/clk-exynosautov920.c
-> +++ b/drivers/clk/samsung/clk-exynosautov920.c
-> @@ -1393,7 +1393,7 @@ static const unsigned long hsi1_clk_regs[]
-> __initconst = {
->  /* List of parent clocks for Muxes in CMU_HSI1 */
->  PNAME(mout_hsi1_mmc_card_user_p) = {"oscclk",
-> "dout_clkcmu_hsi1_mmc_card"};
->  PNAME(mout_hsi1_noc_user_p) = { "oscclk", "dout_clkcmu_hsi1_noc" };
-> -PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk",
-> "mout_clkcmu_hsi1_usbdrd" };
-> +PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk",
-> "dout_clkcmu_hsi1_usbdrd"
-> +};
->  PNAME(mout_hsi1_usbdrd_p) = { "dout_tcxo_div2",
-> "mout_hsi1_usbdrd_user" };
-> 
->  static const struct samsung_mux_clock hsi1_mux_clks[] __initconst = {
-> --
-> 2.34.1
+Sorry, I was not aware that msm also have his own repository.
 
+TBH, I was not aware that other repositories existed for drm (I should 
+have looked at MAINTAINERS, it is totally my fault). DIM and doc[1] only 
+list drm, drm-misc, drm-xe, drm-intel, so I just tough "intel is 
+special", not "drm is divided in many repositories".
+
+Again, sorry, for the future series I will double-check and only commit 
+what I should.
+
+[1]:https://drm.pages.freedesktop.org/maintainer-tools/repositories/index.html
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
