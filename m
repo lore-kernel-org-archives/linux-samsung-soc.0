@@ -1,162 +1,130 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583DC23A99F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 10:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EF725B66B;
+	Wed, 30 Apr 2025 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746008736; cv=none; b=VsHGpKlo9NEmZV87lS4ikFbdvz46/9jym+t1ESbXseeXKKzi9pC7VESn/U5gpyKVof4YneCokuvf000bvdd4l0Wo3xj7VsBQcFRFIZ5nCMi01jIcCvjk+lORc7OhdhnnZsCKUgLu1fbLD7GnqGw+lecdMYVk0wz6CRWFjJvH7CY=
+	t=1746009380; cv=none; b=XJKwvk0KYPQwYjqnwyEdrFev8dj1xXmNgCb4IfNaWm3haHuGB+FdFrb148I8y0AQEuCL+7pP7/jsSgVq3hmiLzaUX1Q5WNtPBX7PE2/S6316PPxVpg1Vd3M0UieBu2SsGlR0VqRUjD/RVvFRV7AOVhxNquIMEG2IkyAc+yEVdQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746008736; c=relaxed/simple;
-	bh=UyRogJQCKF4dzNdKeUnXZgi87K+PLm5TUetHnPxcySQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Jpxncn4WlBTfWSqUpw6C+nnbjlW3CPUoGaI62RcgiayxMVuIzOKXm9ci3VwMqk7r2pruGqVe9x6o5mEEB7I2TIq71wcpDUYAYWIlO6goqEgBd6w2uy5jqZ4DZJXfekQ8UiknhwtZUXhrSDK9bIswXDnBp1/3iWtHVb4wLxOY7NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KhsoNhpX; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1746009380; c=relaxed/simple;
+	bh=J4/TxkTfhpkogvnxjofoGdoiHqVxChjZyndVeFwfO5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fkn2V3spylN3TLmf+ZfMq8DArXmnGHZ3gxrNWHrsWF1yr3XxiST13rf2HIXp+9FdjWxegjPqGGfNf5b4BI+acf4b06JnQ1cOaHaP3rUO2YtbJXAIVkmzhO8yyVH14Z8r6OJnza/t7JOnkYckUMvM/eWgsy1PQUsdWrQYAv23tFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DR1nbnNE; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KhsoNhpX"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250430102531epoutp01819e59df9870fa3bea51a3c423af76db~7EbDkOtSc1070810708epoutp01B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 10:25:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250430102531epoutp01819e59df9870fa3bea51a3c423af76db~7EbDkOtSc1070810708epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746008732;
-	bh=UyRogJQCKF4dzNdKeUnXZgi87K+PLm5TUetHnPxcySQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=KhsoNhpX8FdZd1Zp+syN1TSiScguoqd/YK6aVQZH/yuwxDfhDGvP5NeKYK4IrxnU7
-	 uAr0Gj4vYJxRKlkzqUNn194gvVo4OYj1Ibtu2Ju/xECmR7SSbFFn5nfM3mJvpdy3Rq
-	 6q6uiMHfV5SFkFPUM3UPK0cMhkd1L9tkM3cOWdzw=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250430102531epcas5p159f5edae7b9d6649b91ba016fd8580cf~7EbDDY--c1745817458epcas5p1B;
-	Wed, 30 Apr 2025 10:25:31 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZnYGy28rYz6B9m9; Wed, 30 Apr
-	2025 10:25:30 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250430092538epcas5p1b6aee888ecfa27c04e01ca16a0a93d19~7DmwiV8Qt0647906479epcas5p1S;
-	Wed, 30 Apr 2025 09:25:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250430092538epsmtrp1e08dff0c1eac600a72115669d75dc488~7Dmwhcsq62304923049epsmtrp1Z;
-	Wed, 30 Apr 2025 09:25:38 +0000 (GMT)
-X-AuditID: b6c32a2a-d57fe70000002265-56-6811ec9127c4
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C5.75.08805.19CE1186; Wed, 30 Apr 2025 18:25:37 +0900 (KST)
-Received: from INBRO002053 (unknown [107.122.2.234]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250430092535epsmtip23755164dfc0ad1aef32e04bca5476327~7DmueEaSD2671426714epsmtip25;
-	Wed, 30 Apr 2025 09:25:35 +0000 (GMT)
-From: "Yashwant Varur" <yashwant.v@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <cs0617.lee@samsung.com>, <g.naidu@samsung.com>,
-	<niyas.ahmed@samsung.com>
-In-Reply-To: <b00514f2-55ca-49f0-aefb-ec1e784545d6@kernel.org>
-Subject: RE: [PATCH] arm64: dts: exynos: Added the ethernet pin
- configuration
-Date: Wed, 30 Apr 2025 14:55:34 +0530
-Message-ID: <0f6e01dbb9b1$d52519d0$7f6f4d70$@samsung.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DR1nbnNE"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 60CEE43ACD;
+	Wed, 30 Apr 2025 10:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746009368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sw7RZH8uXkQJtcp9eADpOTsFW7ewdwsHMspom6OVyU=;
+	b=DR1nbnNEQEtiK8PPunmQqt9W1Xj7ZM/jEiwqOCgctAmP0VwxUOGRIawDqTkf8B0IK00FRA
+	e4YRU+HDhv339jGc70wzPfD5wJIMGOZJtq+wQedaruk9gGiAwI9R9yAa5wEOr9vk8kxdQw
+	627rC9lZsSU3ZGLbq+C2PhsQX/bR8nvzOTRzyQl1Zf/PaIZdia9lZ4X9d0WZSkRsiJySZO
+	jFC3GpXnaiJtMzeSlCkr4lePSMQaiv7ddSajpXS7HGtEJdO9rXgHadivnaO4qHOLV9Wyr8
+	mkKsgPj/j0YjkWu1Zwp1VfbyGSF9BUtzw3Y3mrcjL4tz5tbBwc+HBbIC6E26rQ==
+Date: Wed, 30 Apr 2025 12:35:57 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu
+ <chunkuang.hu@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Anusha
+ Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>,
+ Dmitry Baryshkov <lumag@kernel.org>, Hui Pu <Hui.Pu@gehealthcare.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
+ Adam Ford <aford173@gmail.com>, Adrien Grassein
+ <adrien.grassein@gmail.com>, Aleksandr Mishin <amishin@t-argos.ru>, Andy
+ Yan <andy.yan@rock-chips.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Benson Leung
+ <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
+ Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
+ <cristian.ciocaltea@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, Dharma Balasubiramani
+ <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
+ Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
+ Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
+ Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>, Liu Ying
+ <victor.liu@nxp.com>, Manikandan Muralidharan <manikandan.m@microchip.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
+ <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
+ <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
+ Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
+ <mordan@ispras.ru>
+Subject: Re: [PATCH v2 01/34] drm: convert many bridge drivers from
+ devm_kzalloc() to devm_drm_bridge_alloc() API
+Message-ID: <20250430123557.3d8b1de4@booty>
+In-Reply-To: <CAD=FV=VmV5yb0HWWGTiKyyC8+WNPJpM7vE9PQGh5_=KPk6+HCg@mail.gmail.com>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+	<20250424-drm-bridge-convert-to-alloc-api-v2-1-8f91a404d86b@bootlin.com>
+	<CAD=FV=VmV5yb0HWWGTiKyyC8+WNPJpM7vE9PQGh5_=KPk6+HCg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI+tP5AvR0g22A5T67WLyfPVk3CYgKkYErqAxsAxq0DRO6qzAIlGw2ospyhojA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSvO7EN4IZBt1vrCwezNvGZrFm7zkm
-	i1XveC3mHznHarFl5mVmi5ez7rFZnD+/gd1i0+NrrBaXd81hs5hxfh+TxZMpj1gt/u/Zwe7A
-	47FpVSebx+Yl9R59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CV8bWpm7lgHX/F1EuzGRsYd/J0
-	MXJySAiYSFz9v4eli5GLQ0hgN6PEnkdL2LsYOYASUhINb8IhaoQlVv57zg5R85xRYvOuY6wg
-	CTYBfYnnm68xgSREBBYzSXxpOsgG0swsECTxZXcgRMNcJon9xzewgTRwCthJfOp+CNYsLOAr
-	sbvjDDuIzSKgKjH71HFmEJtXwFJi9+p+KFtQ4uTMJywgNrOAtsTTm0/h7GULXzNDXKcg8fPp
-	MrCZIgJ+Epf+zmeFqBGXeHn0CPsERuFZSEbNQjJqFpJRs5C0LGBkWcUomVpQnJueW2xYYJSX
-	Wq5XnJhbXJqXrpecn7uJERxzWlo7GPes+qB3iJGJg/EQowQHs5II76RbghlCvCmJlVWpRfnx
-	RaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1MHHvsVtVs3H+JFVlKfE9cezl
-	UiffhOy5+PfKqTmeuuyWB/N4yrhT3tzL4i3PPdm6L8v/q+7+a2wfTW2q9kpvYzz+qDjCSiJr
-	elDSXW3mjdyW278/vbVsa627kQXDgifWcr8fxu9YOmP+Y9O3ko/uRzj4HJ8gt0lQPsT80AWT
-	vo9bHHae3uS0pjC3/I+Z5ypOeRNtrX7O4wZP+aX0P9+/x1JRVvCMr1VV9FC09nXdbclfu9NO
-	OEenB2qtidm3XfBJ4LlusxNMjsIrXPo1shWyNcJucUs1Td2ztf7azZczbpz75fPfd9fdv60C
-	hYvY/kdm/5eUFOGVfpIuKCn07UmgQeCz0wudVnw84aQ27x+LvBJLcUaioRZzUXEiAE0w33oo
-	AwAA
-X-CMS-MailID: 20250430092538epcas5p1b6aee888ecfa27c04e01ca16a0a93d19
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
-	<20250423060034.973-1-yashwant.v@samsung.com>
-	<73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
-	<0ed501dbb8e9$45aa96e0$d0ffc4a0$@samsung.com>
-	<b00514f2-55ca-49f0-aefb-ec1e784545d6@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeigeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepieekpdhrtghpthhtohepughirghnuggvrhhssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghru
+ geskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Krzysztof
+Hello Doug,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Tuesday, April 29, 2025 6:37 PM
-> To: Yashwant Varur <yashwant.v=40samsung.com>; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org
-> Cc: cs0617.lee=40samsung.com; g.naidu=40samsung.com;
-> niyas.ahmed=40samsung.com
-> Subject: Re: =5BPATCH=5D arm64: dts: exynos: Added the ethernet pin confi=
-guration
->=20
-> On 29/04/2025 11:29, Yashwant Varur wrote:
-> >
-> > Please follow DTS coding style carefully. This applies to all commits y=
-ou try to
-> send from your downstream/vendor code.
->=20
->=20
-> hm?
->=20
-Got the issue, coding style says
-Node and property names can use only the following characters:
-Lowercase characters: =5Ba-z=5D
-Digits: =5B0-9=5D
-Dash: -
-I was using underscore for node name.
-> >>
-> > Sure, thanks
-> >
-> > What is more important, I don't really understand why you are doing
-> > this
-> > - there is no user of these entries - and commit msg does not help here=
-.
-> >>
-> > Understood, in v2 will add the Ethernet node as well.
->=20
-> I don't understand what is your reply here and what is quote. Use standar=
-d email
-> style, not some mySingle or Outlook output. I suggest reading typical gui=
-delines
-> how to use email based workflows (kernel also has one).
->=20
+On Mon, 28 Apr 2025 13:59:50 -0700
+Doug Anderson <dianders@chromium.org> wrote:
 
-Looks like mailer was not configured properly, hope this time it is fine.
-I am working on upstreaming Ethernet driver for exynosauto (which has a var=
-iant of STMMAC controller)
-What I wanted to reply previously was, will add pin control, along with Eth=
-ernet node(which will consume the pincontrol) and
-I realize that first dt-binding should go for this IP.
-My plan is to send Ethernet driver along with Ethernet dtsi node as well.
+[...]
 
->=20
-> Best regards,
-> Krzysztof
+> Reviewed-by: Douglas Anderson <dianders@chromium.org> # parade-ps8640
+> Tested-by: Douglas Anderson <dianders@chromium.org> # parade-ps8640
 
+Thank you for your review!
+
+However I'll be sending v3 with some differences w.r.t. v2, in order to
+fix the 3 bugs reported by Andy Yan plus a similar one I spotted. The
+fix just is replacing PTR_ERR() with ERR_CAST() in the 4 cases where the
+involved function is returning a pointer instead of an int.
+
+Your review/test tags appear global to the whole patch, thus being the
+patch different I think I cannot include your tags in v3.
+
+Let me know if you think I should do differently.
+
+Sorry about that.
+
+Best regards,
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
