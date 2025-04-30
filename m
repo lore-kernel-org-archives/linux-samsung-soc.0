@@ -1,98 +1,77 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFE5288CC;
-	Wed, 30 Apr 2025 02:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44151EC01B;
+	Wed, 30 Apr 2025 07:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745980722; cv=none; b=FwIq7yQMdnUpB4wWp2WocqFMi9Nv/b2TQPmvrpCQEK2s0wmNAHkaLcrVsMymQdH7i8+jFU8IA2+PkQHzvjWXrK7gaHXgBfjXMf/wyFR771C8k9EwAROHNSYSnirCaADq2ewvJYopVfyqzkhR62ZL0q3C3cQGBMssnTo7Hj2CiRM=
+	t=1745997988; cv=none; b=ZLKJQXEFkF/Y3hANVDXYaIqDKFmkM9dPuGJHn7aLqv+Ga/Z4KLU0nCjC+3TWN2ut4eOtYy9AEqI62fnXlAb/oRAjzgqZbnxT5HsDvYiJns62xoLrC+aqbp0aBtsmVBUusiZDvSc98CAO+TQTwtpXYepFyupGtcYy8ySao0E2T7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745980722; c=relaxed/simple;
-	bh=z6s3YPMqRWDP6hk7iOLyjE8AjXiCVoO/HzYvSsyvfgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WrLDO54jtgnHcnI3I2huvLRq6NmyFGmCd/a+7UDpqnaM3ywhRAEoEFhtfHNN6CwUAclLfGrt9TUZ3PP2FEAzkd+gDGVDGgLC8QHI+5t5KTPLK/ItshQho/HY/IQW+dBamxcmcYCYYOId5yF0PROhLcpOwoa7D8yNRUvhLtGx30c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jyBh+egf; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1745997988; c=relaxed/simple;
+	bh=t6ueMHETV9KCgJvq2360uo0bIUeF3j0Jz52z4tX26yE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVtOn2ZqafvkxInykTIlx03jORgptDUFys5j6e9JJ4YcuuK32nrzbBKXQZSsllxafCZEHEc/xrwEP7l9uXeaKF0pSZLYAdjwNK+sXA6j2wqqnjm0DJeAw2m2TI7vI48Ckyka7vyUHyQE2jAnmzkD7hPhePD70edbPCo3SnlTb5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvfeD8QQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jyBh+egf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745980721; x=1777516721;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=z6s3YPMqRWDP6hk7iOLyjE8AjXiCVoO/HzYvSsyvfgc=;
-  b=jyBh+egfB5TtqaKouTV8ZdiPsvsTM9tLTelFFyJzbIyXKWvBNmw6LHFu
-   /XrujNg+DBlAfcpFY/zzaHSz8+VFcKvXr1Nz2o3rQJzwIUMa0TVgkmseG
-   egZx7XybZcfw13PRVCFzqM5QFgIU6KvVP0Ga8Faa17pGd0VxOtIOQ85P4
-   vT3El3l/hk+MyU0u7A8BlF3DkeoOo8yjABbe+xc2PgNU7hVlllRZ42NWA
-   i7VoDwgCGCF5w4IvXm0/tnH1q90UlQMKYl0u5EMbEmUajj5RYUA/BCWDd
-   e96NrAdmtt/frkYGwJvDgNYyNvhichLK28Iy/5XazLujbpKt2HLsvmI+s
-   Q==;
-X-CSE-ConnectionGUID: g6EqXwtRSZKZoLggUM6J2A==
-X-CSE-MsgGUID: CwkHdNwWSraQGXNBsqeSlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="51445378"
-X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
-   d="scan'208";a="51445378"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 19:38:40 -0700
-X-CSE-ConnectionGUID: x1GszayAR3umhh+jpQ6E4A==
-X-CSE-MsgGUID: PISqLkxoS+KMge4QNm3Eqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
-   d="scan'208";a="134508627"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 19:38:26 -0700
-Message-ID: <75c7d479-5310-4e1d-bb0e-71ea363fcc90@linux.intel.com>
-Date: Wed, 30 Apr 2025 10:34:13 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvfeD8QQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1017C4CEE9;
+	Wed, 30 Apr 2025 07:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745997987;
+	bh=t6ueMHETV9KCgJvq2360uo0bIUeF3j0Jz52z4tX26yE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NvfeD8QQKzC0uPB03Va/ckWcaetKMqORWYU7mNHmOrEUeDNqw7jklqILFZ1yIClEn
+	 XJvO5yloSVlgk2e2ngqu0UwXSJ7osrrwPdsqPh7K2nFhr+dkViD+i3557R4wqM+guG
+	 HOeoorPCdi9p7Rpy4rLf6rYMwzwGQq9E1gl6paGPowIPqnM3CBO75H939mkoztme5q
+	 nLXboaD+iH5B7Vj46Dyh8BMFCQ8VA5eRryLiWvtoIfGrlXVGxEsSZTp6U7sSwOoSzr
+	 HZtf5Y12zNpbJ1YH0H5rxFcfJAZPFo0sEXWY3MWJQ+h1/oNkJTj08OFE6Weo0U7Bt4
+	 AzFyrj2aFg/qA==
+Date: Wed, 30 Apr 2025 09:26:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Shin Son <shin.son@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] clk: samsung: exynosautov920: Fix incorrect
+ CLKS_NR_CPUCL0 definition
+Message-ID: <20250430-wonderful-meticulous-groundhog-cbe6e1@kuoka>
+References: <20250428113517.426987-1-shin.son@samsung.com>
+ <CGME20250428113558epcas2p1f2980cbc58f71dde78a9529e2b85ac20@epcas2p1.samsung.com>
+ <20250428113517.426987-4-shin.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] iommu: Remove ops->pgsize_bitmap
-To: Jason Gunthorpe <jgg@nvidia.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
- Janne Grunau <j@jannau.net>, Jean-Philippe Brucker
- <jean-philippe@linaro.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Kevin Tian <kevin.tian@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Matthew Rosato <mjrosato@linux.ibm.com>, Neal Gompa <neal@gompa.dev>,
- Orson Zhai <orsonzhai@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Rob Clark <robdclark@gmail.com>,
- Robin Murphy <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
- Niklas Schnelle <schnelle@linux.ibm.com>, Sven Peter <sven@svenpeter.dev>,
- Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- virtualization@lists.linux.dev, Chen-Yu Tsai <wens@csie.org>,
- Will Deacon <will@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: patches@lists.linux.dev
-References: <7-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <7-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250428113517.426987-4-shin.son@samsung.com>
 
-On 4/29/25 22:34, Jason Gunthorpe wrote:
-> No driver uses it now, remove the core code.
+On Mon, Apr 28, 2025 at 08:35:16PM GMT, Shin Son wrote:
+> The CLKS_NR_CPUCL0 macro was incorrectly defined based on a wrong clock ID.
+> It mistakenly referenced CLK_DOUT_CLUSTER0_PERIPHCLK, which corresponds to
+> a cluster peripheral clock, not the last clock ID for CPUCL0 as intended.
 > 
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> This patch corrects the definition to use CLK_DOUT_CPUCL0_NOCP + 1,
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95	
+
+> properly matching the last clock ID for CPUCL0 as intended.
+> 
+> This error was due to confusion with the hardware diagram, and this patch
+> ensures that the number of clocks for CPUCL0 is correctly defined.
+
+Fixes: 59636ec89c2c ("clk: samsung: exynosautov920: add cpucl0 clock support")
+
+
+And proper order - fixes are *ALWAYS* before new features.
+
+Best regards,
+Krzysztof
+
