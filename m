@@ -1,61 +1,61 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246A20C489
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 07:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B961D95A3
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 07:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745998125; cv=none; b=gHvtQdRHafQhKaz9qWMIXZvpCV2t7MiTrO+X67T1GAGFIoSoXB+wd3yWWPDMchyw0PwFiZexeQj+kisjDcJQHLlWe0WJ0mB1foCdGjzXpBCdKwue3f2+ltQfIB+MdXGdH9YIg8DZqDAaexmOps0ZNnh209UlMWncXfwRGHr9Ak4=
+	t=1745998125; cv=none; b=cyFuFFa9i55gyYiA638rUaIfXZ8u845dfsrzv9RW4qw0FU2ZwJ6hFLvmZSFQmQwCjIQFK46Z3F4ETLaWY2rWqGyKlEw5akRqanPOvCq+go/yLwHbWUAp5Zs5tNsHFYAx1/FlTYuXezO6Mje3G4B9FwysThuGJXQVDCrzA0POmEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745998125; c=relaxed/simple;
-	bh=DMPBebC/TSzA2g62eZmB7bECxsG0d/WX1GH9o31fkOc=;
+	bh=e53RMc/o+t8G5olvYD6O3vocPg/yw7s63mJC5mGlYpo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OOWYEY6ryIVAd7ojKpxU0k6qn1Ly9VSw62Y7MkwIfHi+AVST/e0otHm/HlGWt650Ak6RYiw9Po1mrZgCt4zKeja8OutbWKH/n23EAzA3wSJyNAa5XBCyDczZ9trjGOV683E57KLNenAegfkmtxUV4pNoAmjbzKz4K2M1lMrYtog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NjXCyseA; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version:Content-Type; b=iowRKfWB+fYmskWL2VgFnNJSCVmz0SwvKtl0E6KIQaOi2DHADS1ypamwb9qxLrgaH2JCLcES6R3QsKWFdVCib7UAqAtCUQXx9iAJD2cTmzCvevJSOh731QHp9qXtRpDLNyDwEq4UI+ZSvvxSee4RtRj3tDqL++5C8pKLXVjDHGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EIzUx+jy; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NjXCyseA"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cee550af2so4753735e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 00:28:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIzUx+jy"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d16a01deaso4950905e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2025 00:28:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745998121; x=1746602921; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745998122; x=1746602922; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8p7Pv/AQU5RzinQRXhOmBpGF3PncV2+ClGXaJ1wYs8w=;
-        b=NjXCyseA36j3K8G3+mwlog4nnX7oku7uB1tA4rqjWcLYckk6TpiiT5vOskKUgUW546
-         6X46N3aogp0M2gzUfbi0w1F5OtAfN7/kQCFacxOsf4XAgEuzViN8A1TqUfIZbL1sxu8Q
-         8XVj5pzn18/hMzBhpAAUsARVmTIGqUKfPjMomS2fPcO4VkwQue/iAzZatMJAjrxfw1DH
-         WJntckLBzkAFyhx2EsdV5+A6bn5x1/N0WZJxUi3sQgQLRQOLr4tDRdL9TSOVRVV/dXvk
-         a91OJvpJAqbXEOXuF4LmTgvQFxG/UheBsgZYsZ+0W4CUYFhkGy62VX8Ahn40ccQ6v80R
-         yuGQ==
+        bh=o2GjBdyaKCtW3zYRYh1auVT0QVvykzGugn0sug1VEl0=;
+        b=EIzUx+jySSqbuv8FRZBacpgvY6f31S4d7OtYZxxn7zg9u7aLTVDAqGCeWL4/92G5eB
+         hU9cJVPHpft18eQslGTKyftmHFklemQWXzDBbwJRYGnOk56YXU0aMRS6OxPMKoFM6ZDx
+         uUp4aB3B0qc2mUkdcp5E49d8KFiLL6SmyNR/DQRHSPegYM9rp+1Y69ibegsz85DodEcW
+         X7Uu1QEvxeSCxuSwl8KIKqaugCsNknXye7iRqHhE/dW23sQb0avaXsEQueG0DUW3VlnM
+         el/KNF2CqVJ0heDHP+Qe/aeQ++EwU9Hbeynw6AfUt/hUn8g8/M1xDnxnndGbXT559YHp
+         4a1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745998121; x=1746602921;
+        d=1e100.net; s=20230601; t=1745998122; x=1746602922;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8p7Pv/AQU5RzinQRXhOmBpGF3PncV2+ClGXaJ1wYs8w=;
-        b=swkE65awECXFblZA9givaJqn6tOjkNXa08B38PiBIeoBrYUCsnuCfWGq/t3z67R2Nx
-         Xjn8yHM5BHI4YW8Q2WatXUouw9zolAPE+l5rlCv0gDfdToK7aUHXpjwhXejuPAuGXXQi
-         pjPmcXaAXVe9WOMiUPcooDuAqZ+UYnL6NowWTbAwdPM1k7GRMBvtmMGq4U3mT+sN4L7H
-         DQp9uo2IN0JoSqaRr+bqmSav+Jhm5CICRJfuc1UwF6XWE4agYqtKt3HgDQcIo5vlkizG
-         YGshF9Jh2epSF15XLP0T46kxs9Ou7Zs/msKfnoidwiOtYXDHzviWNpNCu07p+nvL+jjq
-         HrUw==
-X-Gm-Message-State: AOJu0Yxu0QDhWYz1PbhYR329zYQc161eiu1RAghQj34ixCnUaKEHIx6q
-	/eVzA8b8y/9uktDVnVnO91RtK365XU5+s5U7ibG5Xw9gE4/1yY6wOik4nfBWnl8=
-X-Gm-Gg: ASbGncuS++ARaXJUjAU+FATLp8P4lzfKIfXsN08QVvQcpIsTYqT/wJQAXWIlJmuKxE+
-	fefZaD4r7cnkGs1ELfO/NpAiwN9LqhUm3kneZ5rnqfZiFUMgP4cekThkxAVFEggL9E+vzB1noPx
-	HxWndO+/VVfv2i7rgI/Zw/NrCmyt2EHjBG60+2wfxJqrY3/dxEBt9NnwIYPYf4Rjuh49ZE9VG/Q
-	TlxB6KotqftJM2+fICAv32ZjOmEsN1GbsEh1DObdBd4m5PHqPkDlLFA8Myv8Cw20Q5tAbsLvKSF
-	g7WwUQT9Y7TbSzzqMRJ3+I+Wh/yRv+HP/pOuv89r3Rn7uSsX74hSduwr5gM=
-X-Google-Smtp-Source: AGHT+IGrVsof/wIDybs3QwM9wHFkyf2SoOTy/a2O4W4oYL7B1nHSN5cZorob92KX44pZ56YDgWr94w==
-X-Received: by 2002:a05:600c:4f07:b0:439:a3df:66f3 with SMTP id 5b1f17b1804b1-441b2df81d6mr3954545e9.6.1745998120821;
-        Wed, 30 Apr 2025 00:28:40 -0700 (PDT)
+        bh=o2GjBdyaKCtW3zYRYh1auVT0QVvykzGugn0sug1VEl0=;
+        b=ezST7hpq8rntZEIRx2rD0A7yOoTQPus5BJt15+RJrvr05WA8btoOWvdhWtJg8GyhWa
+         u96TqFRjM7npo4c80FApqSWY3uI0H3q/cADPsBLGE8MTwkOj9aVOOW1XUG521/v1K2GA
+         4RyrXorLqX8xEs4WbwiHULbAbg2+vhjc08cLuygLPi1WD9G+JIv/u9j7OsjN8mYw5TGn
+         89SrK+/wy8rodOXXL1ZMwOZ3gF5t2jFukZmmyGH1qG+01DpPXua770rNgpWvWqsvTJYs
+         Zcv8zEaXKNKsgCwDK2ov4ueUOgBG294RYV5xIBdGJDwWANySOqqXJt5L9nTd6ASCg3wD
+         DEhg==
+X-Gm-Message-State: AOJu0YwV8ZxByFZ1MGAnCTXuBV39m32eLxUe4WjxZ8bI/nQYhGoh4jpa
+	9Qor+lt22wM8pUinKv7mLfproOS2a9/3RxvwUKdx7TqL3h71qYGr2xt6sZP2yTM=
+X-Gm-Gg: ASbGncubnPAd0bZwsaW873znTJnEn5dNmrZxh1MSJE1GFe7KCAhnL4zIw0saziqWQqR
+	phVLuiT0azlYBVfRjL8QffORmEYvKan3W0+jm09RgWqKeNfQrMkxIdVl5BA8hiKLN2BcIhU8hIs
+	XDNBb338cNSeMJiYtk1wd0qau6JZSxaLo37bx6+D6W2TNlk+o21YN885hcc2SxMrAvilrbPFsup
+	FTPtJT/1KGNYNnp33gq86UPae0snYxKJOH4MOwK5V+PkIiyaOgL/nTNLmbxX6Der0L4ApvhjANC
+	RW9K4+gM6e+HVSeLpvEXCF7IW9kaOoDR5L5qtrbKvy42RcD6CiBom9EQVSE=
+X-Google-Smtp-Source: AGHT+IGwTtEZNxfD7gnxZYy8bdkJG1uCnoJXegRtohIUB9oy12vNvD806a9awgtKzyXNxJJUksNc/A==
+X-Received: by 2002:a05:600c:46c5:b0:43d:745a:5a49 with SMTP id 5b1f17b1804b1-441b2dea5cbmr3804325e9.4.1745998122329;
+        Wed, 30 Apr 2025 00:28:42 -0700 (PDT)
 Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ba4a6asm13905525e9.11.2025.04.30.00.28.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ba4a6asm13905525e9.11.2025.04.30.00.28.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 00:28:40 -0700 (PDT)
+        Wed, 30 Apr 2025 00:28:41 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
@@ -67,14 +67,14 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250428113517.426987-3-shin.son@samsung.com>
+In-Reply-To: <20250428113517.426987-4-shin.son@samsung.com>
 References: <20250428113517.426987-1-shin.son@samsung.com>
- <CGME20250428113555epcas2p2416815cf6a41e0004f56c0a26b7be5f4@epcas2p2.samsung.com>
- <20250428113517.426987-3-shin.son@samsung.com>
-Subject: Re: (subset) [PATCH v2 2/4] clk: samsung: exynosautov920: add
- cpucl1/2 clock support
-Message-Id: <174599811943.45412.14873339958379580394.b4-ty@linaro.org>
-Date: Wed, 30 Apr 2025 09:28:39 +0200
+ <CGME20250428113558epcas2p1f2980cbc58f71dde78a9529e2b85ac20@epcas2p1.samsung.com>
+ <20250428113517.426987-4-shin.son@samsung.com>
+Subject: Re: (subset) [PATCH v2 3/4] clk: samsung: exynosautov920: Fix
+ incorrect CLKS_NR_CPUCL0 definition
+Message-Id: <174599812090.45412.3776257923926441199.b4-ty@linaro.org>
+Date: Wed, 30 Apr 2025 09:28:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -86,21 +86,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 28 Apr 2025 20:35:15 +0900, Shin Son wrote:
-> Register compatible and cmu_info data to support clock CPUCL1/2
-> (CPU Cluster 1 and CPU Cluster 2),
-> these provide clock for CPUCL1/2_SWTICH/CLUSTER.
+On Mon, 28 Apr 2025 20:35:16 +0900, Shin Son wrote:
+> The CLKS_NR_CPUCL0 macro was incorrectly defined based on a wrong clock ID.
+> It mistakenly referenced CLK_DOUT_CLUSTER0_PERIPHCLK, which corresponds to
+> a cluster peripheral clock, not the last clock ID for CPUCL0 as intended.
 > 
-> These clocks are required early during boot for the CPUs,
-> so they are declared using CLK_OF_DECLARE instead of being registered
-> through a platform driver.
+> This patch corrects the definition to use CLK_DOUT_CPUCL0_NOCP + 1,
+> properly matching the last clock ID for CPUCL0 as intended.
 > 
 > [...]
 
 Applied, thanks!
 
-[2/4] clk: samsung: exynosautov920: add cpucl1/2 clock support
-      https://git.kernel.org/krzk/linux/c/84d36f26d0314a089405af3df9e213dcfb8ecbc0
+[3/4] clk: samsung: exynosautov920: Fix incorrect CLKS_NR_CPUCL0 definition
+      https://git.kernel.org/krzk/linux/c/f00aef8e2ee0b642abdb91682bec5af38532faf7
 
 Best regards,
 -- 
