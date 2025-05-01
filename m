@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFC5944F;
-	Thu,  1 May 2025 10:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D97822D4C8;
+	Thu,  1 May 2025 10:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746094407; cv=none; b=KuE7Xuvrrhc8/bYZcHZ6JmeDBsClkphAFGSNPzuRfurE/zQ2of0ptk0Q6tRPCV1v4GlK7nQnQ1vRaGuy/+X8dSLoI4vUjgQK7Dbr162mNAtFzSf2ajBd2FSq7GcM0hfG6vaofFb6ccA5Dd9xO5yodED6N2poKRXGYUzwSsHtBC0=
+	t=1746094446; cv=none; b=cKtxPcnKn8xKkj18G2U3UeqJ+VgowmQR6jQCwmj4MbG8DO4WYG7yByZxjEjYNc3mHjEqYd3iWC7vfH8/Wr7iD+55bwnSlkF80ID++DJUv+WEluQAoj6B+DaJ+NxAoMkqCJX4gzwgDiV20aziPkOJcKG6/QNAGcgzWkvhI94quxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746094407; c=relaxed/simple;
-	bh=+03unKSXrabdrK38GiVxSWI+T4JxOmLJpma/0eKTe7I=;
+	s=arc-20240116; t=1746094446; c=relaxed/simple;
+	bh=kyuY/r9iNM1jfQIK1cno+SH/Dwm+oTWbxMYT2/YFKEU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+syU6z4diM1c68/+n/k9TwDxUBniwL9btrUgc3lKEmM0Svy032NJ9jJFZh9gdXjHKJI17XSWFAuo2gJ7BOkJhP/xv4I6JeDCdJJFSnIkT6kMD1bm8eVo/lNRbvmYm/k+kM/PMkgkylJ3UANZyE5+xZ3Ht7CGnKJfJPL1+g+c74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZLkQIMj; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=f3kCC3a1+NVSTWorjk/rps8Vvl/GJna06pdDMGeY2GYCrthup8UzTAvgxptwu8BXzHDetWxDN4uYCFnm3+47YVV4QV9VPUQozcQ6+GDlprCzlJ88HTPHEutriIQ6f+5ddlt3FTE45yTWf99o9OdCjqzskRHGuLD+xWVq8uj5L/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCw+IRUU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZLkQIMj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78920C4CEE3;
-	Thu,  1 May 2025 10:13:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCw+IRUU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95525C4CEE3;
+	Thu,  1 May 2025 10:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746094406;
-	bh=+03unKSXrabdrK38GiVxSWI+T4JxOmLJpma/0eKTe7I=;
+	s=k20201202; t=1746094445;
+	bh=kyuY/r9iNM1jfQIK1cno+SH/Dwm+oTWbxMYT2/YFKEU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oZLkQIMjD+F2JjgAogz8LY0705uhigeNbL25Qgl/z3+4cIThQNKGzx6r6LxLTx7gm
-	 MXFHRnPIqRytscJjAlYo4jih9QL2ETl/OxBqDRy/UCY/QJOFRzublPnZ5fckzIRzXx
-	 4wAHV3/aIBPzVRkKRubpM9ufDyOoqBXybqdrN+mr9lutx2p4qzTYgepm9r1SG3UEMJ
-	 GzfcDVrCS3fABnC4tKGh5v8j7PvfaMNgqveAR+7KAwJEslbSlW/RIOvS668oflbFCe
-	 l0GxkfhoQAvcU3bA2ebBAXHbBXDdEG2v1qnzno8shL6I9u0MXDk8xb/jWGfh/nJeRi
-	 QJ5SteW3ZnkIA==
-Message-ID: <298d8c1f-40ca-4377-a7a5-69f81989d7ea@kernel.org>
-Date: Thu, 1 May 2025 12:13:21 +0200
+	b=lCw+IRUUCD5I58t8K2lozfcJnAnYYGs1aJ9q9H+4DB+P1b1L5VKpv5lqlp7ux6uN3
+	 Vs2B7rrsePytjLig18XQoIBXkTOiUNwEgexspOd6vFn2Da4oS6uH1RusquIz6f0g5F
+	 jPeNeg+06Ygp+/oDHizKKSIJ6ounNu6SyoQfhhbqJsCMEQW8sMt/Aa39DznmLHdgh2
+	 3hsqbzXSmvqQsVbL/w4VSKdXvzyUqyViUgFQ1bsoBYg7xf1bTRdB9eByLpp/OB8Hxz
+	 8pm/Bcl/0YOz9etetDdcjM4/4C9k2LMaO8dTVE/MLkrYnmcMjnHcTIpOCSuU7L0592
+	 VSk2/PUC3FVNg==
+Message-ID: <6aae27c8-fadc-4104-8c8b-f4143f34af14@kernel.org>
+Date: Thu, 1 May 2025 12:14:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] arm64: dts: exynos: add initial support for
- Samsung Galaxy J7 Prime
+Subject: Re: [PATCH v6 2/5] arm64: dts: exynos: add initial devicetree support
+ for exynos7870
 To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -46,7 +46,7 @@ Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 References: <20250414-exynos7870-v6-0-039bd5385411@disroot.org>
- <20250414-exynos7870-v6-3-039bd5385411@disroot.org>
+ <20250414-exynos7870-v6-2-039bd5385411@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,28 +92,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250414-exynos7870-v6-3-039bd5385411@disroot.org>
+In-Reply-To: <20250414-exynos7870-v6-2-039bd5385411@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/04/2025 20:58, Kaustabh Chakraborty wrote:
-> +		key-volup {
-> +			label = "Volume Up Key";
-> +			gpios = <&gpa2 0 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEUP>;
+> +
+> +		serial2: serial@13820000 {
+> +			compatible = "samsung,exynos7870-uart",
+> +				     "samsung,exynos8895-uart";
+> +			reg = <0x13820000 0x100>;
+> +			interrupts = <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&uart2_bus>;
+> +
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			clocks = <&cmu_peri CLK_GOUT_PERI_UART2_PCLK>,
+> +				 <&cmu_peri CLK_GOUT_PERI_UART2_EXT_UCLK>;
+> +
+> +			samsung,uart-fifosize = <256>;
+> +
+> +			status = "disabled";
 > +		};
-> +	};
 > +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x40000000 0x3e400000>;
-> +	};
 > +
-> +	memory@80000000 {
-
-Why are these two separate device nodes, instead of one for two ranges?
-Does device has somehow two independent memory controllers?
-
+If there is going to be any resend, drop redundant blank line.
 
 Best regards,
 Krzysztof
