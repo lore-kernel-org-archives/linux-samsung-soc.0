@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4B4266B50;
-	Thu,  1 May 2025 10:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFC5944F;
+	Thu,  1 May 2025 10:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746093726; cv=none; b=XwZbvYg6weHCGUf6C+YqaOaU7FsQ92tDtLDzeQtRviDPNs2BSTPwN8NJl/KpPs4Ybf1at9o+SDaPWWZWICg6bbTTaTI6WqMxCzf8P63U4LCuX/HzVAb9WgLeT9R+6XGBzVTxyXji9MtrPXtZ0IUrc8ofD2a+Axxrp1sviQ5bfYw=
+	t=1746094407; cv=none; b=KuE7Xuvrrhc8/bYZcHZ6JmeDBsClkphAFGSNPzuRfurE/zQ2of0ptk0Q6tRPCV1v4GlK7nQnQ1vRaGuy/+X8dSLoI4vUjgQK7Dbr162mNAtFzSf2ajBd2FSq7GcM0hfG6vaofFb6ccA5Dd9xO5yodED6N2poKRXGYUzwSsHtBC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746093726; c=relaxed/simple;
-	bh=kJrhm7Ly5+HdUXfcfP9m6N/UKeX0GohHs8Zj/Awy8SU=;
+	s=arc-20240116; t=1746094407; c=relaxed/simple;
+	bh=+03unKSXrabdrK38GiVxSWI+T4JxOmLJpma/0eKTe7I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+HWZ+JhNdDEVPbf+KV3CsxGHzbzHNupG5d/pt2pfefoyXlwhGZwO15R7dZxdYEd9c94VgF1UKON55N/yzy9s1C64oMQ86x24eOa8zB2zfkok4mMFXNMBlks4JkxUOD5mdmF3krwFi+chEeP6nbodDrruZrQXyUq70EPPMjIOeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcL3K7Sa; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=h+syU6z4diM1c68/+n/k9TwDxUBniwL9btrUgc3lKEmM0Svy032NJ9jJFZh9gdXjHKJI17XSWFAuo2gJ7BOkJhP/xv4I6JeDCdJJFSnIkT6kMD1bm8eVo/lNRbvmYm/k+kM/PMkgkylJ3UANZyE5+xZ3Ht7CGnKJfJPL1+g+c74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZLkQIMj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcL3K7Sa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F0A2C4CEE4;
-	Thu,  1 May 2025 10:02:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZLkQIMj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78920C4CEE3;
+	Thu,  1 May 2025 10:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746093726;
-	bh=kJrhm7Ly5+HdUXfcfP9m6N/UKeX0GohHs8Zj/Awy8SU=;
+	s=k20201202; t=1746094406;
+	bh=+03unKSXrabdrK38GiVxSWI+T4JxOmLJpma/0eKTe7I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VcL3K7SarTQDqYIj4/i31thiTTzcDni46NsYoUB9OVYjwj02YG7vU7ikJKAGtZTbv
-	 6U++YQrSi+PDX1mpF7mlQBpbcpFq9IfM5RUQAd7zVCYAwNwewijS1T+Y0TCun3WVz0
-	 4j0XbDikDg65a13osOz3VYoQt90ZP8z5qnSFNXnZsj5eoiRZ3E4nzWTBnmpcJzrcLt
-	 U/CfHLegk0cgJBIqcNj7mZFhFXzBhvN9Xunrlsq+A31/bzqDqkYqUYetIILXrjAHvl
-	 Qd5BDwyHaYD/h8ZVrmyqkhmazdyKC6NQ1KHvPluMoh5DycDwEDwOXEXRTDljGbSJVf
-	 ivJdQNwkqKwqQ==
-Message-ID: <f84a544c-2ca4-4a84-a90f-4c94146c11b7@kernel.org>
-Date: Thu, 1 May 2025 12:02:01 +0200
+	b=oZLkQIMjD+F2JjgAogz8LY0705uhigeNbL25Qgl/z3+4cIThQNKGzx6r6LxLTx7gm
+	 MXFHRnPIqRytscJjAlYo4jih9QL2ETl/OxBqDRy/UCY/QJOFRzublPnZ5fckzIRzXx
+	 4wAHV3/aIBPzVRkKRubpM9ufDyOoqBXybqdrN+mr9lutx2p4qzTYgepm9r1SG3UEMJ
+	 GzfcDVrCS3fABnC4tKGh5v8j7PvfaMNgqveAR+7KAwJEslbSlW/RIOvS668oflbFCe
+	 l0GxkfhoQAvcU3bA2ebBAXHbBXDdEG2v1qnzno8shL6I9u0MXDk8xb/jWGfh/nJeRi
+	 QJ5SteW3ZnkIA==
+Message-ID: <298d8c1f-40ca-4377-a7a5-69f81989d7ea@kernel.org>
+Date: Thu, 1 May 2025 12:13:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] firmware: exynos-acpm: clients (PMIC, clocks, etc.)
- will become children
-To: Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org>
- <174530898122.9276.5071475909293812602.b4-ty@linaro.org>
- <20250501090913.GA3627101@google.com>
+Subject: Re: [PATCH v6 3/5] arm64: dts: exynos: add initial support for
+ Samsung Galaxy J7 Prime
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250414-exynos7870-v6-0-039bd5385411@disroot.org>
+ <20250414-exynos7870-v6-3-039bd5385411@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,44 +92,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250501090913.GA3627101@google.com>
+In-Reply-To: <20250414-exynos7870-v6-3-039bd5385411@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 01/05/2025 11:09, Lee Jones wrote:
-> On Tue, 22 Apr 2025, Krzysztof Kozlowski wrote:
-> 
->>
->> On Thu, 27 Mar 2025 12:54:26 +0000, André Draszik wrote:
->>> ACPM clients (PMIC, clocks, etc.) will be modeled as children of the
->>> ACPM interface.
->>>
->>> This necessitates two changes in this driver:
->>> * child platform_devices from device tree need to be populated here
->>> * child drivers will need to be able to get the ACPM handle via a
->>>   struct device_node, not via a DT property name
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/2] firmware: exynos-acpm: populate devices from device tree data
->>       https://git.kernel.org/krzk/linux/c/636baba9489a634c956d6f02076af6bc1725c132
->> [2/2] firmware: exynos-acpm: introduce devm_acpm_get_by_node()
->>       https://git.kernel.org/krzk/linux/c/a8dc26a0ec43fd416ca781a8030807e65f71cfc5
-> 
-> Can this be made available for other subsystems to pull from please?
-> 
-> Without it MFD is currently broken.
-> 
-> Ref: https://lore.kernel.org/all/fd11ee67a3d51aef6305c477b140d911da0b2af4.camel@linaro.org/
-> 
+On 13/04/2025 20:58, Kaustabh Chakraborty wrote:
+> +		key-volup {
+> +			label = "Volume Up Key";
+> +			gpios = <&gpa2 0 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_VOLUMEUP>;
+> +		};
+> +	};
+> +
+> +	memory@40000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x40000000 0x3e400000>;
+> +	};
+> +
+> +	memory@80000000 {
 
-Yeah, I will prepare you a stable tag.
-
-While this wasn't clearly expressed when sending the patch? There is
-some "prerequisite" note in cover letter but what does that mean? What
-does the contributor expect from maintainers?
+Why are these two separate device nodes, instead of one for two ranges?
+Does device has somehow two independent memory controllers?
 
 
 Best regards,
