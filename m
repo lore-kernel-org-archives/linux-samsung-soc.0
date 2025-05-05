@@ -1,46 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B0B361957;
-	Mon,  5 May 2025 22:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC9D2ED073;
+	Mon,  5 May 2025 23:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485150; cv=none; b=tIxl4tatgmEJkgptOVTqYYi73Og0Edh7hlGOsFyjdqFNYVdeco/ti5aOJZaCP7bapGu1ATEM8WdJhX5SgN3oHK8v/V04SDlrc9ma5mgp9jLvzD9VQY6as0j0BptSQSvQWlFpAn6KCwY2EY8J+3i8RlSqjH7UvdWIFseF2ziX878=
+	t=1746486513; cv=none; b=A7AcAhVqMERBi9tuiM4o4mUoJ4AGBCxl11H+et0Kczv2ctg08uXFZX4S1M7UMFrczQXyJAp6PHi92m147aq7wyDL9Jh9tWP4N6Ov4hTkO9j5LfQFHxHD/QeV2cAJSAUbVYze7xL0vslfV9wJOwmqZwZZJVn/ybT/AjVs6jPZBEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485150; c=relaxed/simple;
-	bh=GFMjn6D0dDQc53/uChYc+vwTz+Ryp4pSn9tW/6DfemY=;
+	s=arc-20240116; t=1746486513; c=relaxed/simple;
+	bh=Kfxjcfkvpwbdn4CXyIu65kr1S72kI7LkZeWuAYJgqF0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HiDU/5SZxOl5yPDYPip3pVxMxUOFLgRYFgwqNSzHCetmG7eMd2v3mtoHnuq+0litUInRBiO/0YAtf0NRkio8LCLs661A6mI+QVKjcFz0n4YCNpJWEWoRlflSuVt4c6+ILGtta+zkOK56N5OlkjAgy/jImgCEkZ37PpanKlNLD7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLfYLvMS; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Or++XMzJUmG7SiEFgY00VNdaVDsp88r8ZLN6KZIWk/stZECB3qmDWjcKrAO13oBBMjHgOoB1NpuNXgh/HITxDbJLdiOgZrRRiPIxTZeyMenqR0OmipQGHtGPk0Sf/gRZo2zIvFeGxjJpTrybrpQIOnv5JCwDDEvVJfMKcAjpWZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgMEbSzG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLfYLvMS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2923C4CEF1;
-	Mon,  5 May 2025 22:45:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgMEbSzG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E585C4CEEF;
+	Mon,  5 May 2025 23:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485148;
-	bh=GFMjn6D0dDQc53/uChYc+vwTz+Ryp4pSn9tW/6DfemY=;
+	s=k20201202; t=1746486513;
+	bh=Kfxjcfkvpwbdn4CXyIu65kr1S72kI7LkZeWuAYJgqF0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sLfYLvMS5BKVdl2LxBrfIUJ71dkdDLassUDf68Im+Gj+3fKRtICoEWMmCkkjaEZS6
-	 XspWMxalxH+Y+fnkTCCrpu4Lqzwd3mKXjJ+3NXoI3Oj8lqnd9MlLxThdtpo/jVQY7k
-	 Td0pFCy7lmNrhUVKzVBjtyvv6TetXPAlWAh50kN4600lep7pkK3J/Weeu+QocWcy+Y
-	 7r7UwAc/m2f/U5qOcuuJ3BIcJfK0R2bO4a61/5wCLmVLOoBV2JR9Wvb/ilwyV5IJYz
-	 36FjQzgTWdgpmfy29KEnefFRLx/9aQi2UgPUxFHEYGpaQ5/mO7mARItYq6iWcHevrU
-	 tiz1vWVVgGN1A==
+	b=JgMEbSzGs6vTHkLuS9lioKJE7q9zLrV5E17Y4QVERdDaXh93GJC0WkCNwSh/Ev4LP
+	 heDJmi4SKhJKaOlf/BLOssU3FbmJjkkB4PR37aQZJi/wqxAcK8r3hYUHr9E2+LdB55
+	 ABInUedUQpyKG5LwScB/UF0jdnSHGvp8xeD4zMNIFxwHmZxcwaaYbRXHaTpN2aBqlx
+	 3wbdneJ2RLTjzPa+UuXLSbRn0hb7QQlelKJFh43kvE+wkpYt5hQHjHUTlwYrDygpJt
+	 MaaY5xdAsRxxVPQUds4BEjJg8F+VMIO75BD+1v9ZgA0Ds3SxfJoMzAkqCENeLQKy/t
+	 P2jWmxsStowgQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Cc: Kaustabh Chakraborty <kauschluss@disroot.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
+	jh80.chung@samsung.com,
 	krzk@kernel.org,
+	linux-mmc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 185/486] soc: samsung: include linux/array_size.h where needed
-Date: Mon,  5 May 2025 18:34:21 -0400
-Message-Id: <20250505223922.2682012-185-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 069/212] mmc: dw_mmc: add exynos7870 DW MMC support
+Date: Mon,  5 May 2025 19:04:01 -0400
+Message-Id: <20250505230624.2692522-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
-References: <20250505223922.2682012-1-sashal@kernel.org>
+In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
+References: <20250505230624.2692522-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -49,120 +51,175 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.26
+X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
 
-[ Upstream commit 4c57930f68d90e0d52c396d058cfa9ed8447a6c4 ]
+[ Upstream commit 7cbe799ac10fd8be85af5e0615c4337f81e575f3 ]
 
-This does not necessarily get included through asm/io.h:
+Add support for Exynos7870 DW MMC controllers, for both SMU and non-SMU
+variants. These controllers require a quirk to access 64-bit FIFO in 32-bit
+accesses (DW_MMC_QUIRK_FIFO64_32).
 
-drivers/soc/samsung/exynos3250-pmu.c:120:18: error: use of undeclared identifier 'ARRAY_SIZE'
-  120 |         for (i = 0; i < ARRAY_SIZE(exynos3250_list_feed); i++) {
-      |                         ^
-drivers/soc/samsung/exynos5250-pmu.c:162:18: error: use of undeclared identifier 'ARRAY_SIZE'
-  162 |         for (i = 0; i < ARRAY_SIZE(exynos5_list_both_cnt_feed); i++) {
-      |                         ^
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20250305211446.43772-1-arnd@kernel.org
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+Link: https://lore.kernel.org/r/20250219-exynos7870-mmc-v2-3-b4255a3e39ed@disroot.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/samsung/exynos-asv.c     | 1 +
- drivers/soc/samsung/exynos-chipid.c  | 1 +
- drivers/soc/samsung/exynos-pmu.c     | 1 +
- drivers/soc/samsung/exynos-usi.c     | 1 +
- drivers/soc/samsung/exynos3250-pmu.c | 1 +
- drivers/soc/samsung/exynos5250-pmu.c | 1 +
- drivers/soc/samsung/exynos5420-pmu.c | 1 +
- 7 files changed, 7 insertions(+)
+ drivers/mmc/host/dw_mmc-exynos.c | 41 +++++++++++++++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-index 97006cc3b9461..8e681f5195264 100644
---- a/drivers/soc/samsung/exynos-asv.c
-+++ b/drivers/soc/samsung/exynos-asv.c
-@@ -9,6 +9,7 @@
-  * Samsung Exynos SoC Adaptive Supply Voltage support
-  */
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 9f20ac524c8b8..2a5c3c822f6af 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -28,6 +28,8 @@ enum dw_mci_exynos_type {
+ 	DW_MCI_TYPE_EXYNOS5420_SMU,
+ 	DW_MCI_TYPE_EXYNOS7,
+ 	DW_MCI_TYPE_EXYNOS7_SMU,
++	DW_MCI_TYPE_EXYNOS7870,
++	DW_MCI_TYPE_EXYNOS7870_SMU,
+ 	DW_MCI_TYPE_ARTPEC8,
+ };
  
-+#include <linux/array_size.h>
- #include <linux/cpu.h>
- #include <linux/device.h>
- #include <linux/energy_model.h>
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index bba8d86ae1bb0..dedfe6d0fb3f3 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -12,6 +12,7 @@
-  * Samsung Exynos SoC Adaptive Supply Voltage and Chip ID support
-  */
+@@ -70,6 +72,12 @@ static struct dw_mci_exynos_compatible {
+ 	}, {
+ 		.compatible	= "samsung,exynos7-dw-mshc-smu",
+ 		.ctrl_type	= DW_MCI_TYPE_EXYNOS7_SMU,
++	}, {
++		.compatible	= "samsung,exynos7870-dw-mshc",
++		.ctrl_type	= DW_MCI_TYPE_EXYNOS7870,
++	}, {
++		.compatible	= "samsung,exynos7870-dw-mshc-smu",
++		.ctrl_type	= DW_MCI_TYPE_EXYNOS7870_SMU,
+ 	}, {
+ 		.compatible	= "axis,artpec8-dw-mshc",
+ 		.ctrl_type	= DW_MCI_TYPE_ARTPEC8,
+@@ -86,6 +94,8 @@ static inline u8 dw_mci_exynos_get_ciu_div(struct dw_mci *host)
+ 		return EXYNOS4210_FIXED_CIU_CLK_DIV;
+ 	else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 			priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL64)) + 1;
+ 	else
+@@ -101,7 +111,8 @@ static void dw_mci_exynos_config_smu(struct dw_mci *host)
+ 	 * set for non-ecryption mode at this time.
+ 	 */
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU ||
+-		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU) {
+ 		mci_writel(host, MPSBEGIN0, 0);
+ 		mci_writel(host, MPSEND0, SDMMC_ENDING_SEC_NR_MAX);
+ 		mci_writel(host, MPSCTRL0, SDMMC_MPSCTRL_SECURE_WRITE_BIT |
+@@ -127,6 +138,12 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+ 				DQS_CTRL_GET_RD_DELAY(priv->saved_strobe_ctrl);
+ 	}
  
-+#include <linux/array_size.h>
- #include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/mfd/syscon.h>
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index dd5256e5aae1a..c40313886a012 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -5,6 +5,7 @@
- //
- // Exynos - CPU PMU(Power Management Unit) support
++	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU) {
++		/* Quirk needed for certain Exynos SoCs */
++		host->quirks |= DW_MMC_QUIRK_FIFO64_32;
++	}
++
+ 	if (priv->ctrl_type == DW_MCI_TYPE_ARTPEC8) {
+ 		/* Quirk needed for the ARTPEC-8 SoC */
+ 		host->quirks |= DW_MMC_QUIRK_EXTENDED_TMOUT;
+@@ -144,6 +161,8 @@ static void dw_mci_exynos_set_clksel_timing(struct dw_mci *host, u32 timing)
  
-+#include <linux/array_size.h>
- #include <linux/arm-smccc.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
-index 114352695ac2b..5a93a68dba87f 100644
---- a/drivers/soc/samsung/exynos-usi.c
-+++ b/drivers/soc/samsung/exynos-usi.c
-@@ -6,6 +6,7 @@
-  * Samsung Exynos USI driver (Universal Serial Interface).
-  */
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		clksel = mci_readl(host, CLKSEL64);
+ 	else
+@@ -153,6 +172,8 @@ static void dw_mci_exynos_set_clksel_timing(struct dw_mci *host, u32 timing)
  
-+#include <linux/array_size.h>
- #include <linux/clk.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-diff --git a/drivers/soc/samsung/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
-index 30f230ed1769c..4bad12a995422 100644
---- a/drivers/soc/samsung/exynos3250-pmu.c
-+++ b/drivers/soc/samsung/exynos3250-pmu.c
-@@ -5,6 +5,7 @@
- //
- // Exynos3250 - CPU PMU (Power Management Unit) support
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		mci_writel(host, CLKSEL64, clksel);
+ 	else
+@@ -223,6 +244,8 @@ static int dw_mci_exynos_resume_noirq(struct device *dev)
  
-+#include <linux/array_size.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
- #include <linux/soc/samsung/exynos-pmu.h>
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		clksel = mci_readl(host, CLKSEL64);
+ 	else
+@@ -231,6 +254,8 @@ static int dw_mci_exynos_resume_noirq(struct device *dev)
+ 	if (clksel & SDMMC_CLKSEL_WAKEUP_INT) {
+ 		if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 			priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 			mci_writel(host, CLKSEL64, clksel);
+ 		else
+@@ -410,6 +435,8 @@ static inline u8 dw_mci_exynos_get_clksmpl(struct dw_mci *host)
  
-diff --git a/drivers/soc/samsung/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
-index 7a2d50be6b4ac..2ae5c3e1b07a3 100644
---- a/drivers/soc/samsung/exynos5250-pmu.c
-+++ b/drivers/soc/samsung/exynos5250-pmu.c
-@@ -5,6 +5,7 @@
- //
- // Exynos5250 - CPU PMU (Power Management Unit) support
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL64));
+ 	else
+@@ -423,6 +450,8 @@ static inline void dw_mci_exynos_set_clksmpl(struct dw_mci *host, u8 sample)
  
-+#include <linux/array_size.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
- #include <linux/soc/samsung/exynos-pmu.h>
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		clksel = mci_readl(host, CLKSEL64);
+ 	else
+@@ -430,6 +459,8 @@ static inline void dw_mci_exynos_set_clksmpl(struct dw_mci *host, u8 sample)
+ 	clksel = SDMMC_CLKSEL_UP_SAMPLE(clksel, sample);
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		mci_writel(host, CLKSEL64, clksel);
+ 	else
+@@ -444,6 +475,8 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
  
-diff --git a/drivers/soc/samsung/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
-index 6fedcd78cb451..58a2209795f78 100644
---- a/drivers/soc/samsung/exynos5420-pmu.c
-+++ b/drivers/soc/samsung/exynos5420-pmu.c
-@@ -5,6 +5,7 @@
- //
- // Exynos5420 - CPU PMU (Power Management Unit) support
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		clksel = mci_readl(host, CLKSEL64);
+ 	else
+@@ -454,6 +487,8 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
  
-+#include <linux/array_size.h>
- #include <linux/pm.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
- #include <linux/soc/samsung/exynos-pmu.h>
+ 	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+ 		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870 ||
++		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU ||
+ 		priv->ctrl_type == DW_MCI_TYPE_ARTPEC8)
+ 		mci_writel(host, CLKSEL64, clksel);
+ 	else
+@@ -633,6 +668,10 @@ static const struct of_device_id dw_mci_exynos_match[] = {
+ 			.data = &exynos_drv_data, },
+ 	{ .compatible = "samsung,exynos7-dw-mshc-smu",
+ 			.data = &exynos_drv_data, },
++	{ .compatible = "samsung,exynos7870-dw-mshc",
++			.data = &exynos_drv_data, },
++	{ .compatible = "samsung,exynos7870-dw-mshc-smu",
++			.data = &exynos_drv_data, },
+ 	{ .compatible = "axis,artpec8-dw-mshc",
+ 			.data = &artpec_drv_data, },
+ 	{},
 -- 
 2.39.5
 
