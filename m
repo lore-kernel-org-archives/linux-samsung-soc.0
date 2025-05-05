@@ -1,47 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D04A288C00;
-	Mon,  5 May 2025 22:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565842F0BB5;
+	Mon,  5 May 2025 22:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483773; cv=none; b=WQdVYJzsuwGpXUeBvi6jb11GXAbNsWU3g5tVtbZ166lbcsDSdE+oTP21rLf6nGH8kNcWt7Bsm7Jh6XYZpXdHMyYJrqenxBiuMyT7LttyfvA5OL1EpohEuvRZLPpiaY6aWZ7S7Armr/jVI8wee1X4a0nx28fec+ma48lFfoKlcSc=
+	t=1746483819; cv=none; b=t/6eejXR1bC7CQRlGcUwW0CJHyFGobOY8zu+YdYGlSnLINjSX/0Vmpwx18jzNaFXLL8OEIbWRhxqeBzNAwmBOlv1sjBYT+mLFTaZuMlaYwCrNf7M7CfB57z5YTiVaT77uiJRhncSvq0jCR1Jsmv56XFPkme3oEOZWcYV7DjDcig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483773; c=relaxed/simple;
-	bh=HKCS9/n2oZ0o3HcAQg9M4XIEx6PW+6r9txE6aEEV5Kk=;
+	s=arc-20240116; t=1746483819; c=relaxed/simple;
+	bh=PFmrl+mIJ8+7TyIIyqvSWh7WdwcJauVosWlhP18xpy8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j2aamvf6bW6iE3zHe0XuNApJ2MMdJECcXfStkHeEJ5mHy1A6gfwHA/QNJMy30eaTtqDip5h2cM69x3jiVDQKnoMFSBzEYqyQFZBgIQ4GSn7me9ClveLk5cYbiMN8wA/WcMY0okyTdSqJKbywV/FK5sbkLRaAz0SBY841VCc5kC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOCe2L3u; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=RVrFPsicvpOi6jwzXmNjoAJAF6yNl05BR9V+OVcMsNYcUEGYIzPSNZpxBQGDvI45+NrwrbsE0ges+U+koiz73EjV2iBRbZ8kmq5PPIUWtun25TWAJbhmUoNAoLOaCuVWiq/j9JBap1by2PcKmsda65lK805bQnbrQ6wh/TUd0dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHX8xMlX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOCe2L3u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDB9C4CEEE;
-	Mon,  5 May 2025 22:22:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHX8xMlX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A643C4CEE4;
+	Mon,  5 May 2025 22:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483772;
-	bh=HKCS9/n2oZ0o3HcAQg9M4XIEx6PW+6r9txE6aEEV5Kk=;
+	s=k20201202; t=1746483819;
+	bh=PFmrl+mIJ8+7TyIIyqvSWh7WdwcJauVosWlhP18xpy8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QOCe2L3uLr/WWdKSIaMnxeye5XNDyUj2nyLCJpxCQO+x8LMu78SnVnoRFm+8bMXpE
-	 Tcy4TznzdMWb7qbIqNIVkFPniiMOyK12Gj8E0FLyoxHbhQrgcdgrz2qtZhHiX4L3BT
-	 +jIuWQYgGDQDOHe2sYn4ojD3vmvZIldA8KyUf5OYII+mDqCIeZMaLzaeA9YMK1ap/L
-	 4HesI+CfQcFBv8YLoOUZiLIJ8lnpXU6rO3eiiJxHPTeBo1BaqXZRMK/PyiDtJ4IllV
-	 eN9uxjhd9XP/wrLfETjMLqIPs9XPWEN4w0iE16nTjB5rPvCxqvDEVwkTkENtPrtdIJ
-	 +h/ll52C6VWLA==
+	b=qHX8xMlX0sT7mFA+2odRnVnJVdCSdwKSWirhuCZzIxLwCU3a9IbLMSDMLCZLCM+A5
+	 bgJOee0rykHf7lUQxH9BzSphhI6TwBdVDuRvbAIOzahBGrzag6eF1b4pJ8BFRC4HFI
+	 RYwbyuyjBTUxmzRW2pCPns5Tu75n7bDJTImwP7dl4MqcZvkDctdx2CBob50SDSqU7f
+	 2N0BOpOkDYAj9dxAEpjYfCzo/6F6UMhIkiR0vx5nh83nh/rpamEP9WYshWAzqvVM5d
+	 7g/nNYkbUZMmHnWXHDOy4A+sNd06mgJhcAelQFb2uK2P/pQWT7rZzqiA0Lobg49mKH
+	 tvC/Q64Ou0kRg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Kyunghwan Seo <khwan.seo@samsung.com>,
-	Sangwook Shin <sw617.shin@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
 	krzk@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 211/642] watchdog: s3c2410_wdt: Fix PMU register bits for ExynosAutoV920 SoC
-Date: Mon,  5 May 2025 18:07:07 -0400
-Message-Id: <20250505221419.2672473-211-sashal@kernel.org>
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 233/642] soc: samsung: include linux/array_size.h where needed
+Date: Mon,  5 May 2025 18:07:29 -0400
+Message-Id: <20250505221419.2672473-233-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -56,71 +52,117 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Kyunghwan Seo <khwan.seo@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 480ee8a260e6f87cbcdaff77ac2cbf6dc03f0f4f ]
+[ Upstream commit 4c57930f68d90e0d52c396d058cfa9ed8447a6c4 ]
 
-Fix the PMU register bits for the ExynosAutoV920 SoC.
-This SoC has different bit information compared to its previous
-version, ExynosAutoV9, and we have made the necessary adjustments.
+This does not necessarily get included through asm/io.h:
 
-rst_stat_bit:
-    - ExynosAutoV920 cl0 : 0
-    - ExynosAutoV920 cl1 : 1
+drivers/soc/samsung/exynos3250-pmu.c:120:18: error: use of undeclared identifier 'ARRAY_SIZE'
+  120 |         for (i = 0; i < ARRAY_SIZE(exynos3250_list_feed); i++) {
+      |                         ^
+drivers/soc/samsung/exynos5250-pmu.c:162:18: error: use of undeclared identifier 'ARRAY_SIZE'
+  162 |         for (i = 0; i < ARRAY_SIZE(exynos5_list_both_cnt_feed); i++) {
+      |                         ^
 
-cnt_en_bit:
-    - ExynosAutoV920 cl0 : 8
-    - ExynosAutoV920 cl1 : 8
-
-Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20250213004104.3881711-1-sw617.shin@samsung.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20250305211446.43772-1-arnd@kernel.org
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/soc/samsung/exynos-asv.c     | 1 +
+ drivers/soc/samsung/exynos-chipid.c  | 1 +
+ drivers/soc/samsung/exynos-pmu.c     | 1 +
+ drivers/soc/samsung/exynos-usi.c     | 1 +
+ drivers/soc/samsung/exynos3250-pmu.c | 1 +
+ drivers/soc/samsung/exynos5250-pmu.c | 1 +
+ drivers/soc/samsung/exynos5420-pmu.c | 1 +
+ 7 files changed, 7 insertions(+)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 30450e99e5e9d..bdd81d8074b24 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -72,6 +72,8 @@
- #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
- #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
- #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
-+#define EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT	0
-+#define EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT	1
+diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
+index 97006cc3b9461..8e681f5195264 100644
+--- a/drivers/soc/samsung/exynos-asv.c
++++ b/drivers/soc/samsung/exynos-asv.c
+@@ -9,6 +9,7 @@
+  * Samsung Exynos SoC Adaptive Supply Voltage support
+  */
  
- #define GS_CLUSTER0_NONCPU_OUT			0x1220
- #define GS_CLUSTER1_NONCPU_OUT			0x1420
-@@ -312,9 +314,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
- 	.mask_bit = 2,
- 	.mask_reset_inv = true,
- 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
--	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
-+	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT,
- 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
--	.cnt_en_bit = 7,
-+	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
- 		  QUIRK_HAS_DBGACK_BIT,
-@@ -325,9 +327,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
- 	.mask_bit = 2,
- 	.mask_reset_inv = true,
- 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
--	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
-+	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT,
- 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
--	.cnt_en_bit = 7,
-+	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
- 		  QUIRK_HAS_DBGACK_BIT,
++#include <linux/array_size.h>
+ #include <linux/cpu.h>
+ #include <linux/device.h>
+ #include <linux/energy_model.h>
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 95294462ff211..99c5f9c80101b 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -12,6 +12,7 @@
+  * Samsung Exynos SoC Adaptive Supply Voltage and Chip ID support
+  */
+ 
++#include <linux/array_size.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/mfd/syscon.h>
+diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+index dd5256e5aae1a..c40313886a012 100644
+--- a/drivers/soc/samsung/exynos-pmu.c
++++ b/drivers/soc/samsung/exynos-pmu.c
+@@ -5,6 +5,7 @@
+ //
+ // Exynos - CPU PMU(Power Management Unit) support
+ 
++#include <linux/array_size.h>
+ #include <linux/arm-smccc.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
+index 114352695ac2b..5a93a68dba87f 100644
+--- a/drivers/soc/samsung/exynos-usi.c
++++ b/drivers/soc/samsung/exynos-usi.c
+@@ -6,6 +6,7 @@
+  * Samsung Exynos USI driver (Universal Serial Interface).
+  */
+ 
++#include <linux/array_size.h>
+ #include <linux/clk.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+diff --git a/drivers/soc/samsung/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
+index 30f230ed1769c..4bad12a995422 100644
+--- a/drivers/soc/samsung/exynos3250-pmu.c
++++ b/drivers/soc/samsung/exynos3250-pmu.c
+@@ -5,6 +5,7 @@
+ //
+ // Exynos3250 - CPU PMU (Power Management Unit) support
+ 
++#include <linux/array_size.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ #include <linux/soc/samsung/exynos-pmu.h>
+ 
+diff --git a/drivers/soc/samsung/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
+index 7a2d50be6b4ac..2ae5c3e1b07a3 100644
+--- a/drivers/soc/samsung/exynos5250-pmu.c
++++ b/drivers/soc/samsung/exynos5250-pmu.c
+@@ -5,6 +5,7 @@
+ //
+ // Exynos5250 - CPU PMU (Power Management Unit) support
+ 
++#include <linux/array_size.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ #include <linux/soc/samsung/exynos-pmu.h>
+ 
+diff --git a/drivers/soc/samsung/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
+index 6fedcd78cb451..58a2209795f78 100644
+--- a/drivers/soc/samsung/exynos5420-pmu.c
++++ b/drivers/soc/samsung/exynos5420-pmu.c
+@@ -5,6 +5,7 @@
+ //
+ // Exynos5420 - CPU PMU (Power Management Unit) support
+ 
++#include <linux/array_size.h>
+ #include <linux/pm.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ #include <linux/soc/samsung/exynos-pmu.h>
 -- 
 2.39.5
 
