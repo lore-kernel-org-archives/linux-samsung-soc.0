@@ -1,163 +1,157 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3471119D8BC;
-	Mon,  5 May 2025 12:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E7125D546;
+	Mon,  5 May 2025 14:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746448336; cv=none; b=jgji4T2UtqOZBUWHa8j8XEz1XqXRIqV1GW96ZVlqs0EQ59A0nTXdpbZ5jb6dF6Fc/8JIKHzavAF6qbysUmQiXJV2jkX3SZkptxmxP3Wc03HhReOYhYHu6JESF1+T27I5A7e5rIFVj9rXBFkV25bc18o/TMAmuP5U6wj2jIx88k4=
+	t=1746456251; cv=none; b=GNjma1v3+jiWCRTG+huN/j+8hIcgWlrKuoRqi5ogFWKXMyjLedBhiVG4Q7ynrLQ83jxL/rIt27PkdKMqoD9rd4SKgOUqYUZLOpm7SrsPcxewIdfn6wIoCVOywYSvH80U+/KHIjShmtCJNPcL77T3bvV6UqLY6ogFq78p3ESp/Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746448336; c=relaxed/simple;
-	bh=rOFXNGK/YYhTjToGtlEYHoOHEbfgPKtZr83pi5WLFVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=exwv6th1GvqurmKBdltWUX+4QRh07vAr6eE6J93ihNraVmmYlr3YJ+dkDyUlxTGa9LaGobZJlVPgbijWmsQVw5NDBNRD+dmCmJD6cVbL2nK4O2SDuINYFkPHyLimaAx2VxMHCILiLvLvsb6hPVaGfQ18BfqwTZ8cFToHSV0TcHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hjAbYQVe; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1746456251; c=relaxed/simple;
+	bh=MHUgGt1nhsM9ZnWIPLv79iXt4OuzDKXXjKrP4H9Te88=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=erWg2lCeE/qLOHjB6EtfFHnZ+t8Bjie4EbnYGEDYMO/5Ajj5bqX7O7Q2Arc2dGVFE+RTugPvB/TTFXnT+b7iRFUKqtArr4VcUms8d4tYDWKCZAf6uDze8uYYFWFeiJlE1WMf0Sz7gIvnzN7dZ/PHWOV34xeBRcvDbV3U9OoxbTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsdTpeWj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hjAbYQVe"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B6D95439CF;
-	Mon,  5 May 2025 12:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746448330;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t8GmbzWzwjKBF6Grm3MhKIQ4eVv3NPu5Y9A5XIPvDcA=;
-	b=hjAbYQVeSBenLJHyzNnH+29VE8aQu5NdvGcBu901d4KAVGGIH73+xJRtOkMBvPMxod408f
-	46cJ1FSSVEaihm6e4YRyxwK6H9vqKbZsH6FeNdjG6qHuFuPEj6MXQaHOvyeCuws3FaQ4ZJ
-	tyEO3Rm3oNF8VG/6gKRuTcpBY8uLXdkn1k8zdS9iBbYepUeyI1mPnliHP5HbYAMf8SxYgc
-	gh87HvhVyGIZKypBQt9lGmUGqhDD0V6ogc/9QAW1FprShOP2PTeLVdqhZJSU2GFelqS2IN
-	VCutWhQebpQ3qtFA8QsGOMpeGLhJbitY4xZjYFl5bgwg7lvllwMgOkM9Yioomg==
-Date: Mon, 5 May 2025 14:31:58 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Kyungmin Park
- <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Maxime Ripard <mripard@kernel.org>, Louis
- Chauvet <louis.chauvet@bootlin.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
- Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com, Adam Ford <aford173@gmail.com>,
- Adrien Grassein <adrien.grassein@gmail.com>, Aleksandr Mishin
- <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>, Benson Leung
- <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
- Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
- <cristian.ciocaltea@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dharma Balasubiramani
- <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
- Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
- Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
- Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
- Bingham <kieran.bingham+renesas@ideasonboard.com>, Liu Ying
- <victor.liu@nxp.com>, Manikandan Muralidharan <manikandan.m@microchip.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
- <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
- <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
- Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
- <mordan@ispras.ru>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
- <ilpo.jarvinen@linux.intel.com>, Bryan O'Donoghue
- <bryan.odonoghue@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, "Rob
- Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>,
- Pin-yen Lin <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>,
- Aradhya Bhatia <a-bhatia1@ti.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@ge.com>, Martyn Welch
- <martyn.welch@collabora.co.uk>, Peter Senna Tschudin
- <peter.senna@gmail.com>, Russell King <linux@armlinux.org.uk>, Herve Codina
- <herve.codina@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Bjorn Andersson
- <quic_bjorande@quicinc.com>, Marijn Suijten
- <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>
-Subject: Re: (subset) [PATCH v2 00/34] drm: convert all bridges to
- devm_drm_bridge_alloc()
-Message-ID: <20250505143158.75541d7c@booty>
-In-Reply-To: <9afd098c-edd3-44fa-8efe-99f2e9c9a525@oss.qualcomm.com>
-References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
-	<174591887152.961603.7706063017853945511.b4-ty@bootlin.com>
-	<832a9db0-cf8a-4d35-8a98-08053fbd6723@bootlin.com>
-	<20250430-arrogant-marmoset-of-justice-92ced3@houat>
-	<20250505130648.22ec8716@booty>
-	<9afd098c-edd3-44fa-8efe-99f2e9c9a525@oss.qualcomm.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsdTpeWj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B871C4CEEE;
+	Mon,  5 May 2025 14:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746456250;
+	bh=MHUgGt1nhsM9ZnWIPLv79iXt4OuzDKXXjKrP4H9Te88=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=NsdTpeWjRmMQtp6tHqzYk+nT6BZS2qpPKZfhXnkTK5pX/64nAoXk1wCTO5HKltF6B
+	 wqjvQaWizl7Q/q39dmZHo7j2jPYCq5U/n48PQ5TgdicXhRUYvT9dJjJACDRm0obadp
+	 r09HrfuwbvNeJiXkW2dxgTbGwAZljUIBAcWxldJk+WlZiFl/hAui9M9+Dsd328RSEB
+	 AXmjfw76T38THEsx93IGTr0FNNHWR8wvkrXWcLPoaCK4BibMKd2o0omUINW83nJn82
+	 E7kVq8quo28Gokl6h/4ZkFg/YTiyhJVqoJWImPlSBRiI0Utn+/hAig+Gi4Gqd4yNHJ
+	 Bg3k2WLQVQWPQ==
+Date: Mon, 05 May 2025 09:44:09 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduuddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelgedprhgtphhtthhopegumhhithhrhidrsggrrhihshhhkhhovhesohhsshdrqhhurghltghomhhmrdgtohhmpdhrtghpthhtohepihhnkhhirdgurggvsehsrghmshhunhhgrdgtohhmpdhrtghpt
- hhtohepkhihuhhnghhmihhnrdhprghrkhesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehsfidtfeduvddrkhhimhesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrlhhimhdrrghkhhhtrghrsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-GND-Sasl: luca.ceresoli@bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250504145907.1728721-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20250504145907.1728721-1-ivo.ivanov.ivanov1@gmail.com>
+Message-Id: <174645594263.1246703.7109407640870369437.robh@kernel.org>
+Subject: Re: [PATCH v4 0/4] arm64: dts: exynos: add initial support for
+ Samsung Galaxy S22+
 
-Hi Dmitry,
 
-On Mon, 5 May 2025 14:58:58 +0300
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
-
-> On 05/05/2025 14:06, Luca Ceresoli wrote:
-> > Inki, Kyungmin, Seung-Woo, Alim,
-> > 
-> > On Wed, 30 Apr 2025 10:08:14 +0200
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> >   
-> >> Inki, Kyungmin, Seung-Woo, sorry for the mishap. Do you agree with the
-> >> following patch, and it going through drm-misc?
-> >>
-> >> https://lore.kernel.org/dri-devel/20250424-drm-bridge-convert-to-alloc-api-v2-14-8f91a404d86b@bootlin.com/
-> >>
-> >> If not, we'll revert.  
-> > 
-> > Did you have a chance to have a look at the patch mentioned by Maxime?
-> > 
-> > It was applied to drm-misc-next by mistake. Not your mistake of course,
-> > but now it's there so if you don't reply anything it will have to be
-> > reverted, and then sent again to go through all the review process to
-> > be hopefully re-applied in the future.
-> > 
-> > If you agree with keeping it in drm-misc-next, that would be less noise
-> > for everybody.
-> > 
-> > I'm going to send v3 very soon, so it would be good to decide what to
-> > do before that.  
+On Sun, 04 May 2025 17:59:03 +0300, Ivaylo Ivanov wrote:
+> Hey folks,
 > 
-> For the record: even though I'm not happy with msm-related patches going 
-> through drm-misc without additional ack from our side, I think reverting 
-> those and reapplying them later will create a bigger mess. So, I'm fine 
-> with keeping drm/msm/* bridged patches in.
+> This patchset adds device tree files for Exynos 2200 and Samsung
+> Galaxy S22+.
+> 
+> [1] is a dependancy on the aforementioned series for the usb phy drivers
+> and bindings.
+> 
+> Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
+> (r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
+> including psci, pmu, chipid, architecture timer and mct, pinctrl,
+> clocks and usb.
+> 
+> The devices using this SoC suffer from an issue caused by the stock
+> Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
+> needed to hardcode the adequate frequency in the timer node,
+> otherwise the kernel panics.
+> 
+> Another issue is that cpu2 and cpu3 fail to come up consistently, which
+> leads to a hang later in the boot process. As A510 cores are clustered
+> by two, it makes sense for both of these cpus to fail if there is a
+> power issue. Disable them until the problem is figured out.
+> 
+> Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
+> 2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
+> 1080x2340 Dynamic AMOLED display.
+> 
+> Further platform support will be added over time.
+> 
+> Best regards,
+> Ivaylo
+> 
+> Changes in v4:
+> - account for compatible changes in usb phy patches
+> - use status fail instead of deleting cpu nodes
+> - add a-b tag in the 1/4 patch
+> 
+> Changes in v3:
+> - account for the usbdrd changes in the exynos2200 soc dtsi
+> - drop usbcon driver from the MAINTAINERS patch
+> 
+> Changes in v2:
+> - mention the board codename in the first patch's commit message
+> - make all reg values hex in device trees
+> - reorder usb_con above usb_dwc3
+> - drop regulators for usb_con
+> - remodel usb_con_phy to take usb_hsphy phandle
+> - include MAINTAINERS patch in this patchset
+> 
+> [1] https://lore.kernel.org/all/20250504144527.1723980-1-ivo.ivanov.ivanov1@gmail.com/
+> 
+> Ivaylo Ivanov (4):
+>   dt-bindings: arm: samsung: document g0s board binding
+>   arm64: dts: exynos: add initial support for exynos2200 SoC
+>   arm64: dts: exynos: add initial support for Samsung Galaxy S22+
+>   MAINTAINERS: add entry for Samsung Exynos2200 SoC
+> 
+>  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+>  MAINTAINERS                                   |   10 +
+>  arch/arm64/boot/dts/exynos/Makefile           |    1 +
+>  arch/arm64/boot/dts/exynos/exynos2200-g0s.dts |  169 ++
+>  .../boot/dts/exynos/exynos2200-pinctrl.dtsi   | 1765 +++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos2200.dtsi    |  561 ++++++
+>  6 files changed, 2512 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200.dtsi
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
 
-That was my understanding of your previous e-mail, but thanks for
-having made it explicit.
 
-Luca
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.15-rc4-309-g2696c4a950d5 (best guess, 2/3 blobs matched)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250504145907.1728721-1-ivo.ivanov.ivanov1@gmail.com:
+
+arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb: /soc/phy@10aa0000: failed to match any schema with compatible: ['samsung,exynos2200-usb32drd-phy']
+arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb: /soc/phy@10ab0000: failed to match any schema with compatible: ['samsung,exynos2200-eusb2-phy']
+arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb: /soc/usb@10b00000: failed to match any schema with compatible: ['samsung,exynos2200-dwusb3']
+
+
+
+
+
