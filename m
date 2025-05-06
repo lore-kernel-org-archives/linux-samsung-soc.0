@@ -1,259 +1,199 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668264B1E7A;
-	Tue,  6 May 2025 20:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691004B1E7A
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 May 2025 20:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746564459; cv=none; b=LZHg5zGWdZ/GOKIgCIbiigxyOAmr8kw++U/UdVbzOWUOhHXtmhp2Wtz1Hu4FPW1ytxxYTjaVV8iasDp+5pfgC9a7Y0b8XonSbd90Lq9VVnb+2NiCwcx8uhAe7ABprMDHtDalnvrCe6LtyHB9tN3+V9mZCD8UHVh+7rfv2k0ifYE=
+	t=1746565061; cv=none; b=u+LzN+MW1MANWHY/TC3Ey5jZjbcs3uB6+2Z87nfIQX7zw9ZvZ27ADbZ3ofiCEr9eTyLtHl6ESqoLTIU1BwxiJYrBzCd7io0J3kV47gcIETvTLHZc3fM3J9TzRvtcvF8qd6q2Yz5kq/ktjFz3ryZ7MLrPi78GtzOsV9Sk40SaavI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746564459; c=relaxed/simple;
-	bh=a6MsCRIUCeUj744FbiHdP5+JJu9CUko6eqpiqgbQ4ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WTZBkZmEZh+K5ZMWPmjkIFFzMxIAChten6Wcd3und2BuVDG8efrmEX5+FlW+yOfGW06epVet1hYOyFtATod6mLM6GRpC5xbdyS3PK3mpcxn5dFwyR6zp4UvrOn3dyHfA+lQmYDe0xXxiRRK8MX6t4JHegRQNQE9Yre6Xm2siWWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I68mv2SZ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1746565061; c=relaxed/simple;
+	bh=pyXy7Kv16xzChqAGMSwqlfI8ZzGLOqhZ2OlsFMalq1g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lMKzqaKbSrgPNcDtr80UJgom0tVoNzc4erMGMS2fyNXtr61ZhmddbQIAc0vgYRTOKT5XkVOXXaJoUzHf5ve70KEK5EO/xedx4zV3554+n4/18EawV8yRHXC1LjX2nFNkTQyFmSMdCsx68DAct3g7TZ91BnRr4XB6szPi6zf0hPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qrnmScXq; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I68mv2SZ"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DA1D1439D4;
-	Tue,  6 May 2025 20:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746564447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RriJ3sQZL+/jAERO13sfWtP2FOfOc3okEQg5B7FnAeQ=;
-	b=I68mv2SZI/aGxHCIIcxXbjxxCbHWE9FzDtUtW4PEabsIrho1orzLQHyqR3AJklkXW4/0dS
-	sHotiUtnhB37DGcdh4NYEpar2pikiAW6HTYv6TIrN84SPWuBG8+xkiYWGDI06C2IrQ6ogR
-	QEZfsdyh/gBXzyxBU6I46Qn7ke+tHyGu4UC1rv5tEOBv61wdugOUnlQfQ6wAbRndu7RuwR
-	e6tObBPlpuwkypnH5/quJLTO/9FUmfvGMJGlxu/nMapt7Mz08+7BIwiLIchjrKyUveptAn
-	jJ7yDtYArwX8GIIYPRKbfbYPujq44+9hObwSCtfPOkZ15Ae8r3K9ETKKDMJTLA==
-Date: Tue, 6 May 2025 22:47:20 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
- Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 30/34] drm/bridge: imx8qxp-pixel-combiner: convert to
- devm_drm_bridge_alloc() API
-Message-ID: <20250506224720.5cbcf3e1@booty>
-In-Reply-To: <f71d18d2-4271-4bb9-b54f-0e5a585778f3@nxp.com>
-References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
-	<20250424-drm-bridge-convert-to-alloc-api-v2-30-8f91a404d86b@bootlin.com>
-	<553d62ed-976a-4e17-9678-cdc3d40ce4a7@nxp.com>
-	<20250430112944.1b39caab@booty>
-	<f71d18d2-4271-4bb9-b54f-0e5a585778f3@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qrnmScXq"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39ac56756f6so6884013f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2025 13:57:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746565058; x=1747169858; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d3GDUlxVj2ccf8fygAExYdRMRYQk9xN/9FeFJL4KvNQ=;
+        b=qrnmScXqgxC8ZYWyI/OAStuZhvy6B/r1ZDg8XUd77GMk//pLgAdwBT2Guq/HbczKoe
+         cC3WovrBLLP8AuQOZYW3NqaOMkMmSuEfrGYjPlk/+IwQPiw7TmqBJcfyvcu1No8w2nxc
+         T4zQsdOspaF5U13UDxStb8DcDOx3SdRPLpnpho0RM+uldcAfUtdQu27FcmwEd8pM3v4M
+         Oa074Jwoja6EMJ6gtEq9reB8GJUPmee1pYGu0o6hyP3y2lMu4gPY/0xMGc6t9fK/lk4k
+         VcFFg1P1CrNeuOrUeM1YDSYGFznEx/fTKh6/unJOjvj5b8fN/7CA+SFSJfPnTgrRZ8rj
+         Fivg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746565058; x=1747169858;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d3GDUlxVj2ccf8fygAExYdRMRYQk9xN/9FeFJL4KvNQ=;
+        b=D/Q5dsAmsvweairRQsp8gmGPL5W6UrewKPiZzcRT1Hc5OLeAOIBcI5OFyrpfxDn114
+         RVA220zGdLlvPTWoWna1FI4zlU66dEkmahxjNwHVwAbzh881KrGrdo32c0d+5VoeCwjP
+         VN0gke0kznQKsF+vzU4YjyZSCZo9lv+qh+mAaEkCs5zLS7eGjbGnkSuxr4O07+vLDBo7
+         TW3fKsxMUoYrS2PEjbZs4HwqmXUFK/ssjccEpggeXWnZ1+fzaDSTWThImTMWjU20N8Vf
+         takI0X9ev2qjY4JymPSGC+Fw7HanxiOWw6hFrojwtSWhFn0wLnyd8cL3QVkSxWSCkgX/
+         DNYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5sbNaGdbPXrTMvcxXwyHy5OXYzSCU07YNHShEbwxGQ5kl3OpfiQDbp5lvWD+Uq52Tyk6CsQJeGCV0HkpB+DlqTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycwoOdySS0tEumeMzYqyp94Iq3oByv9zQy+lXO+1g2g5MipbW2
+	dTZONeGKtihizk5QLmhv4iqddaY4Wo60KTAaKZvjtFEBrN+3L4MHrbBCYRhzUhw=
+X-Gm-Gg: ASbGncvT1itWGJWqMh/uPgx4Zjjv/XXxqAYyNeh6VMfa0cR6wew5HJVKa0ncYvW3yvt
+	5UybVlkUR94n34fR1cEj2TXGz8CNzgJpsdfD0jQ/lrbRDVyrJcskXCrYlX8iPZj1VvBG42IP2O1
+	+IZlU6LRmdyZ3FvUZgl9f+1EBTNnivHH5r/d2HFeEEcOzgfnbkZxOZ08y4cg1F9UerVlbyc42D3
+	TCSmwsxHiIupbCSLVyBUhhKmjqY6AfxzpVxaV0s7wwQTcNqsrr3ijxPDWD/L6YoZb3L9r0IzpAq
+	3egLu5OnDlHozMb8fY30SOwDmbwbwFMezIaYchUS4ypJNKhgB3dafyUly5z2tZrw3rfKJ0I=
+X-Google-Smtp-Source: AGHT+IHSXoGm45WUpw3+gnrN3nF/nhYEgzhSmdR5h6fFyAHfRP8U4zc1Ueazfm9eTYC8whjoIsFoKQ==
+X-Received: by 2002:a05:6000:1acc:b0:3a0:82d4:ba90 with SMTP id ffacd0b85a97d-3a0b4a1928fmr661708f8f.21.1746565057637;
+        Tue, 06 May 2025 13:57:37 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.65.147])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b17022sm14671826f8f.89.2025.05.06.13.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 13:57:37 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 0/5] Fix gs101 CPU hotplug support
+Date: Tue, 06 May 2025 21:57:26 +0100
+Message-Id: <20250506-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v4-0-9f64a2657316@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeegleejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeelpdhrtghpthhtohepvhhitghtohhrrdhlihhusehngihprdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+X-B4-Tracking: v=1; b=H4sIALZ3GmgC/53NTWrDMBAF4KsErTNBM5LqOqveo2Qh68cWJJKQb
+ JMSfPcqgUBLVynM5s2D791YdSW4yo67GytuDTWk2ILc75iZdBwdBNsyI04SCQWYFOcSBsgjmLz
+ AlOZ8XkaoS80uWir6Aj5cXYUVAX2nrTRS9RxZE3Nxj66Bn6eWp1DnVL4e4yvev//bacfBdNR37
+ /5NdCg+ziHqkg6pjOw+tNITV1ySeg2nhntUglvXWy3pDy5+4v1ruGg4DsZI6Qe0Sv3Ct237BmR
+ ZIfyhAQAA
+X-Change-ID: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4363;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=pyXy7Kv16xzChqAGMSwqlfI8ZzGLOqhZ2OlsFMalq1g=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoGne9SAiQrXdZ6vVyg3yJu7nL1zfrXgJ+sFa1d
+ GcEK8FzesKJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaBp3vQAKCRDO6LjWAjRy
+ uvCVD/49M9qz+Y+rJVjuT9yEaySSWUKcLQaj0y4I6TMOJR81fQX5wcUmam4PbSXcM6wlbQTuLUh
+ JYFutTFpsawztRifbISHDx+tyljoXFtNi2gih7IelYb0mdOt07vgd3+hi8wl/hWo0o1ETj3/V65
+ VQBlS9ibUJZ7EiyMNKDXvRMzA5ERiC3sVLJkZcDGWbmhMS33OJ1bqw7YvmNOptGOzGORXtXJab7
+ /M0EmzSSJJ/eFojq+Zu7LnBqBNf7RGEnoXHOeloIRtBM9DD4h0E4++ybTpt94+2XA8wGO2P417j
+ zx/EFln19j4xaKtF6hrl8jfNIFHWpZWOs7vYiw2WVYJtxhamgA0b7zavPnjhls/uZU6nTJ9ucHJ
+ Q4Y2/w1E72c6AIh4Ji+iMjNKQaRb5k6/Mlmy89M1uDLWa3jgAvfxZh476FLvzszaK4C0OVdObwW
+ RHMaDeWE434MNSJ1BM51/+AeBRaTUyNLAMR6jFFKtMryIvc6V3rMHxdbiV8R19205fneiuKV3OA
+ gUqQFKelyFlTw59sr0PkWc8cqr1Sd0nCoz/ZVdLI1qHiNcC8FczDDP997kN0OMoxdpURcr487xA
+ cHtfO9/lo3GPkhFPGU6uPpVZtPHaEAS0c/Jlp6EUzBGuVC+15+6Qld5W9unPWj5Bh5pNlBiSlHd
+ RjqRlEeCfHC+6tQ==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hello Liu,
+Hi folks,
 
-thanks for your further feedback.
+As part of an effort to make suspend to RAM functional upstream on
+Pixel 6 I noticed that CPU hotplug leads to a system hang.
 
-On Tue, 6 May 2025 10:24:18 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
+After debugging and comparing with downstream drivers it became clear
+that some extra register writes are required to make CPU hotplug
+functional on these older devices which use a el3mon firmware.
 
-> On 04/30/2025, Luca Ceresoli wrote:
-> > Hello Liu,  
-> 
-> Hi Luca,
-> 
-> > 
-> > On Tue, 29 Apr 2025 10:10:55 +0800
-> > Liu Ying <victor.liu@nxp.com> wrote:
-> >   
-> >> Hi,
-> >>
-> >> On 04/25/2025, Luca Ceresoli wrote:  
-> >>> This is the new API for allocating DRM bridges.
-> >>>
-> >>> This driver embeds an array of channels in the main struct, and each
-> >>> channel embeds a drm_bridge. This prevents dynamic, refcount-based
-> >>> deallocation of the bridges.
-> >>>
-> >>> To make the new, dynamic bridge allocation possible:
-> >>>
-> >>>  * change the array of channels into an array of channel pointers
-> >>>  * allocate each channel using devm_drm_bridge_alloc()
-> >>>  * adapt the code wherever using the channels
-> >>>
-> >>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> > 
-> > [...]
-> >   
-> >>> @@ -345,8 +351,8 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
-> >>>  free_child:
-> >>>  	of_node_put(child);
-> >>>  
-> >>> -	if (i == 1 && pc->ch[0].next_bridge)
-> >>> -		drm_bridge_remove(&pc->ch[0].bridge);
-> >>> +	if (i == 1 && pc->ch[0]->next_bridge)    
-> >>
-> >> Since this patch makes pc->ch[0] and pc->ch[1] be allocated separately,
-> >> pc->ch[0] could be NULL if channel0 is not available, hence a NULL pointer
-> >> dereference here...  
-> > 
-> > See below for this.
-> >   
-> >>> +		drm_bridge_remove(&pc->ch[0]->bridge);
-> >>>  
-> >>>  	pm_runtime_disable(dev);
-> >>>  	return ret;
-> >>> @@ -359,7 +365,7 @@ static void imx8qxp_pc_bridge_remove(struct platform_device *pdev)
-> >>>  	int i;
-> >>>  
-> >>>  	for (i = 0; i < 2; i++) {
-> >>> -		ch = &pc->ch[i];
-> >>> +		ch = pc->ch[i];
-> >>>  
-> >>>  		if (!ch->is_available)    
-> >>
-> >> ...and here too.  
-> > 
-> > This is indeed a bug, I should have checked the pointer for being
-> > non-NULL.
-> > 
-> > Looking at that more closely, I think the is_available flag can be
-> > entirely removed now. The allocation itself (ch != NULL) now is
-> > equivalent. Do you think my reasoning is correct?
-> > 
-> > Ouch! After writing the previous paragraph I realized you proposed this
-> > a few lines below! OK, removing is_available. :)
-> > 
-> > [...]
-> >   
-> >> On top of this patch series, this issue doesn't happen if I apply the below
-> >> change:  
-> > 
-> > [...]
-> >   
-> >> @@ -351,7 +349,7 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
-> >>  free_child:
-> >>         of_node_put(child);
-> >>  
-> >> -       if (i == 1 && pc->ch[0]->next_bridge)
-> >> +       if (i == 1 && pc->ch[0])
-> >>                 drm_bridge_remove(&pc->ch[0]->bridge);  
-> > 
-> > Unrelated to this patch, but as I looked at it more in depth now, I'm
-> > not sure this whole logic is robust, even in the original code.
-> > 
-> > The 'i == 1' check here seems to mean "if some error happened when
-> > handling channel@1, that means channel@0 was successfully initialized,
-> > so let's clean up channel 0".
-> > 
-> > However my understanding of the bindings is that device tree is allowed
-> > to have the channel@1 node before the channel@0 node (or even channel@1
-> > without channel@0, but that's less problematic here).
-> > 
-> > In such case (channel@1 before channel@0), this would happen:
-> > 
-> >  1. alloc and init ch[1], all OK
-> >  2. alloc and init ch[0], an error happens
-> >     (e.g. of_graph_get_remote_node() fails)
-> > 
-> > So we'd reach the free_child: label, and we should call
-> > drm_bridge_remove() for ch[1]->bridge, but there's no code to do that.
-> > 
-> > To be robust in such a case, I think both channels need to be checked
-> > independently, as the status of one does not imply the status of the
-> > other. E.g.:
-> > 
-> >   for (i = 0; i < 2; i++)
-> >       if (pc->ch[i] && pc->ch[i]->next_bridge)
-> >           drm_bridge_remove(&pc->ch[i]->bridge);
-> > 
-> > (which is similar to what .remove() does after the changes discussed in
-> > this thread, and which I have queued for v3)
-> > 
-> > What's your opinion? Do you think I missed anything?  
-> 
-> The pixel combiner DT node would be added in imx8-ss-dc{0,1}.dtsi, please
-> see the case for imx8-ss-dc0.dtsi introduced by an in-flight patch[1].  As
-> channel@{0,1} child nodes always exist(DT overlay cannot effectively delete
-> any of them) and channel@0 always comes first, there is no problematic case.
+This series adds support for that programming the CPU_INFORM register
+hint required by the firmware and also adds support for the pmu-intr-gen
+register region which is now modelled as it's own syscon. With these
+changes CPU hotplug is now functional.
 
-I'm not questioning what existing and future dts files (will) contain,
-and surely I don't see a good reason someone would write channel@1
-before channel@0.
+It can be tested with commands such as
 
-My point is:
+echo 0 > /sys/devices/system/cpu/cpu6/online
+echo 1 > /sys/devices/system/cpu/cpu6/online
+[   15.880597][    T0] Detected PIPT I-cache on CPU6
+[   15.880638][    T0] GICv3: CPU6: found redistributor 600 region 0:0x0000000010500000
+[   15.880685][    T0] CPU6: Booted secondary processor 0x0000000600 [0x411fd440]
 
- - the bindings _allow_ channel1 before channel@0
- - the error management code after the free_child label won't work
-   correctly if channel1 is before channel@0 in the device tree
+This would (prior to this series) hang the system.
 
-IOW the driver is not robust against all legal device tree descriptions,
-and it could be easily made robust using the example code in my
-previous e-mail (quoted a few lines above).
+As more of a stress test, I ran a script hotplugging CPUs 1 to 7 in a
+loop 200 times which also completed suucessfully. In addition using the
+recent fuel gauge series from Thomas we can also verify that the power
+reduces once the CPU's are offlined.
 
-If you agree about this I'll be happy to send a patch doing that change.
-If you think I'm wrong, I won't fight a battle. This topic is
-orthogonal to the change I'm introducing in this patch, and I can
-continue the conversion independently from this discussion.
+Note 1: It is highly likely that similar changes are required for other
+Exynos based SoCs using el3mon. For anyone following along who is
+accustomed to looking at downstream Exynos based drivers this replaces
+register writes defined in
 
-> > Thanks for taking the time to dig into this!  
-> 
-> After looking into this patch and patch 31(though I've already provided my A-b)
-> more closely, I think the imx8qxp_pc and imx8{qm,qxp}_ldb main structures
-> should have the same life time with the embedded DRM bridges, because for
-> example the clk_apb clock in struct imx8qxp_pc would be accessed by the
-> imx8qxp_pc_bridge_mode_set DRM bridge callback.  But, IIUC, your patches extend
-> the life time for the embedded channel/bridge structures only, but not for the
-> main structures.  What do you think ?
+drivers/soc/<google|samsung>/cal-if/<socname>/flexpmu_cal_cpu_<socname>.h
 
-I see you concern, but I'm sure the change I'm introducing is not
-creating the problem you are concerned about.
+Which are used by files in the cal-if folder and exynos-cpupm.c driver.
 
-The key aspect is that my patch is merely changing the lifetime of the
-_allocation_ of the drm_bridge, not its usage. On drm_bridge_remove()
-the bridge is removed from its encoder chain and it is completely not
-reachable, both before and after my patch. With my patch it is not
-freed immediately, but it's just a piece of "wasted" memory that is
-still allocated until elsewhere in the kernel there are pointers to it,
-to avoid use-after-free.
+For the moment I've used the GS101 CPU inform register offsets directly
+but these can be moved to driver data once we've established other SoCs
+benefit from this.
 
-With this explanation, do you think my patch is correct (after fixing
-the bug we already discussed of course)?
+Note 2: To ensure older DTs which don't specify google,pmu-intr-gen-syscon
+phandle still work. The driver only issues a warning if the syscon can't
+be obtained, and the behaviour remains the same as today (system boots, but
+CPU hotplug will not be functional).
+
+Note 3: I've added the bindings doc google,gs101-pmu-intr-gen.yaml in a new
+google folder as it seemed odd to have it in the soc/samsung directory, but
+it's likely this may be re-used by other Exynos SoCs that use APM/ACPM.
+
+kind regards,
+
+Peter
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v4:
+- Add trailers
+- Fix typo with GS101_GRP1_INTR_BID_CLEAR in gs101_cpuhp_pmu_offline() (Peter)
+- Link to v3: https://lore.kernel.org/r/20250429-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v3-0-1bcc44fb1d55@linaro.org
+
+Changes in v3:
+- Fix  $id, relative path/filename doesn't match actual path or filename (Robs patch bot)
+- Link to v2: https://lore.kernel.org/r/20250425-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v2-0-f1530de9da42@linaro.org
+
+Changes in v2:
+* Use BIT macro (Kryzstof)
+* Use gs101_ prefix for cpuhp functions (Kryzstof)
+* Model pmu-intr-gen SFR region as it's own syscon (Kryzstof)
+* Use regmap_update_bits() API (Kryzstof)
+* Program hint on current processor (Peter)
+- Link to v1: https://lore.kernel.org/r/20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org
+
+---
+Peter Griffin (5):
+      dt-bindings: soc: google: Add gs101-pmu-intr-gen binding documentation
+      dt-bindings: soc: samsung: exynos-pmu: gs101: add google,pmu-intr-gen phandle
+      MAINTAINERS: Add google,gs101-pmu-intr-gen.yaml binding file
+      arm64: dts: exynos: gs101: add pmu-intr-gen syscon node
+      soc: samsung: exynos-pmu: enable CPU hotplug support for gs101
+
+ .../soc/google/google,gs101-pmu-intr-gen.yaml      | 35 ++++++++++
+ .../bindings/soc/samsung/exynos-pmu.yaml           | 15 ++++
+ MAINTAINERS                                        |  1 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  6 ++
+ drivers/soc/samsung/exynos-pmu.c                   | 80 +++++++++++++++++++++-
+ drivers/soc/samsung/exynos-pmu.h                   |  1 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        | 11 +++
+ 7 files changed, 148 insertions(+), 1 deletion(-)
+---
+base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+change-id: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
 
 Best regards,
-Luca
-
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Peter Griffin <peter.griffin@linaro.org>
+
