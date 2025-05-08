@@ -1,190 +1,99 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8162628A3E4;
-	Wed,  7 May 2025 14:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F1719DF6A
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 May 2025 05:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627207; cv=none; b=nROzYsvtxVTGYRvrKaPjKC3xeuHgcrNtEkrecUXV5ndw6d2bjvLJZI7/BFckBxPyoGlmSFFSKpghe1T05BNmxrhNzozQPc0nG2fTciIyA3X/5ORREMPutVCUctM87jTGqMHMSdRWBtRQLYXnOjZ0rnO9V3COrXebmi5tHBRKg1A=
+	t=1746681103; cv=none; b=fQoB3F4ldOrzmqxwxL71/mWqnRb8JlVXf5eCN0tpysymf8ns5yIaDa+IJ0FF9+A05WC5MezV7++LM+0IzzOefYClJ2sgnb0BHl5cTQsbe6hx+U5Q8kuq1Tz7HOKjbydnX0aKaig+2Z9JUt0KKPREz7L2Grrcu4X9pmq0+l0fpLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627207; c=relaxed/simple;
-	bh=wRvDEyGE8SyLT4eXm8S/vOTb1xNAByubplY2t+C38K8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kLbr/8CNpTmpgE7XJGmfeedCJyH6E/En/6Gb7bgFl6PBJMC+UAasFlJ6vBSlWa1LG9dAQ6fN0TD0gcZJbSQBGA1jvvH6PNaygFZfCspTOISmZEJVHJCVNOJc0uPyxogvvZTgOvW1T6YxoHgNmllE9SrtigE6skOVb4/dhne5rRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=adYesO7D; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1746681103; c=relaxed/simple;
+	bh=AQuEWPjekhThkflJFV9dZKxAkJmiFPkZ+D9N7nJgnOY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=STnoEk8BSXCT7Uxng0bfMoKW8YelL8n3FLQPaTsEBGmaahfRQit9e538PjFveMh2fcgZr7kG7Dbe4JRgvkUxFVg9e/V+AhWxAGY4qaAaB+suHUu6CevywY0kK4uImbXsZQDKeN0rgKbZJKbtP8uV2N5/EMB62kTjX3BX5WX4oYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uusqgq85; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="adYesO7D"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A7A8943A17;
-	Wed,  7 May 2025 14:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746627197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUkZFmqLpaya2SvixZMFXiK5vMoC/WgZVFpr9qlTBnY=;
-	b=adYesO7D1P7ynosW29lwbsjTgJFaCmVyHEon+flnFOa0BvpYbgiRnF+Xmpud0uAtagWCKR
-	3oskQarIGt0LOBcEzJnasoloDFldQLXTPGfiIhzFPFxQ44Bv9OhNB8OfgtRyxM7+9P43cR
-	EkU5M3wIV4eMfygkH8Z49lCMg02BGC3HtUgDaN8q7xI8pIpFMVELZovDj9NLGU/agK2QHw
-	g3CUt2Har990IGmx7V543phmv8Wv4XvzKKsAS8THOhfgcNBUADs19379Lxd8e7/I43vGMD
-	r3WqKePwg6IikvuHOAtVe8FiAWFIlf69nPFcMS8m4pDVEx1m0DuHF1UEztkH0g==
-Date: Wed, 7 May 2025 16:13:11 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
- Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 30/34] drm/bridge: imx8qxp-pixel-combiner: convert to
- devm_drm_bridge_alloc() API
-Message-ID: <20250507161311.6e434f2f@booty>
-In-Reply-To: <430d497d-45a1-436d-91fd-635854f80c9f@nxp.com>
-References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
-	<20250424-drm-bridge-convert-to-alloc-api-v2-30-8f91a404d86b@bootlin.com>
-	<553d62ed-976a-4e17-9678-cdc3d40ce4a7@nxp.com>
-	<20250430112944.1b39caab@booty>
-	<f71d18d2-4271-4bb9-b54f-0e5a585778f3@nxp.com>
-	<20250506224720.5cbcf3e1@booty>
-	<a1abf31a-7a4a-4f8d-bf48-6b826aa01197@nxp.com>
-	<20250507091244.32865a71@booty>
-	<430d497d-45a1-436d-91fd-635854f80c9f@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uusqgq85"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30ab450d918so995196a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2025 22:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746681100; x=1747285900; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+objnduDEdA6XgtoHIMnhtVVZlrAlpTMhfHb5uGFsAo=;
+        b=uusqgq85fZK7YMtOQd/EhhX5EO6PRytOwuUo4QpRjxRrFI/ItckZ3M0RYZmwwwR7xj
+         DbQfrKNX6oZXxbMjBdBbtp1FtK57uZzvY74KiLMW1dfrHyU1yPjBOETGxLqVAg/dqZtE
+         duurueQyr9IAHkypH3UrjD+i4LeHVMUbREFnfgnSQtqJXxkvksWCKD5SY4YXNwHcueE/
+         rHsQw3LeAy4f3kiJA7ec+CfbAONW9PK+7l8dDDyoc59sgA04mtXjGfabuktn58VsVfpI
+         BZt3Xj3kShFjLwcsxhbhI94DiEzpYfvyPGapJ3JVnc1/O/4+3j0TDdnr51NJauvwyg1H
+         3LMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746681100; x=1747285900;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+objnduDEdA6XgtoHIMnhtVVZlrAlpTMhfHb5uGFsAo=;
+        b=GmxvloA/NH2W2rlA90fK1B2kJ0kGYIP6aFIYUFZMPvvW7QkYbX55SvsGwHvZnQRSCe
+         DEjL7LRAOqqsl8wVUCLOa4mQzhS1xgD1XbL6f3ZHm8OTnpfWhuu6AygWbdiwJHy8K+je
+         cKAa9nawNvJnWY+JjLpe8YGZvCZCHnyHNmofOhy/PCf72HMMTTE26WZxRM2IQRa9isrI
+         SraznhgldnyqKpwb0dW3aORuE+HulE0GjZ6AM4PFfR/4Wy2MOjCVPI/YEqHdJ4/LKBwl
+         eEU0BYua8j2Tw/WOJ5FIDXFScDWD+k3A7iwPq0mn0+jLdhgQuFPt/jX9FDfnVQBS5IQ7
+         WRjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5kLr7SRqsBB6Ncon4DJ6zE6R04ASn4GjAXsaqcwjFkl5GH+1ECkRhmDZCZN6AtJ20Ed28A0dZBihrHz7Dc7fBVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4C7YJxJStRYfoHjLP4irCKbHrxwh/xoJkc2yYaEHyYLQfSQW7
+	7FKVRjha/Ns0kdOU3RLAQOtjp4dNzpudheLgrNpX02w6KoGQ8k09e+PKRgazRiTDgPThEFtNuvV
+	g2w==
+X-Google-Smtp-Source: AGHT+IGGonQAPWDxdBzLe2Ueqgy+uFD50vWf7E5zkm1R2s+R8YnCic3HHOe1DuE+B2Hm8cJPIF79XW+rfBQ=
+X-Received: from pjj15.prod.google.com ([2002:a17:90b:554f:b0:2ef:95f4:4619])
+ (user=amitsd job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a89:b0:309:fd87:820e
+ with SMTP id 98e67ed59e1d1-30b3a6d7b70mr2372936a91.26.1746681100133; Wed, 07
+ May 2025 22:11:40 -0700 (PDT)
+Date: Wed,  7 May 2025 22:08:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefledprhgtphhtthhopehvihgtthhorhdrlhhiuhesnhigphdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhto
- hepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.987.g0cc8ee98dc-goog
+Message-ID: <20250508050856.674782-1-amitsd@google.com>
+Subject: [PATCH v1 0/2] Add graph connections between tcpc & fg for Pixel 6
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: sre@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	peter.griffin@linaro.org
+Cc: andre.draszik@linaro.org, badhri@google.com, tudor.ambarus@linaro.org, 
+	alim.akhtar@samsung.com, dima.fedrau@gmail.com, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Liu,
+max77759 Type-C controller supplies VBUS into & out of (depending on the
+charging mode) the battery in Pixel 6. In order to represent this
+relationship, we use graph to connect tcpc & fuel gauge.
 
-On Wed, 7 May 2025 18:16:28 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
+Link to USB connector binding that this patchset uses:
+ - https://lore.kernel.org/all/20250507-batt_ops-v2-1-8d06130bffe6@google.com/
 
-[...]
+This patchset depends on the following:
+ - https://lore.kernel.org/all/20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be/
 
-> >>>> After looking into this patch and patch 31(though I've already provided my A-b)
-> >>>> more closely, I think the imx8qxp_pc and imx8{qm,qxp}_ldb main structures
-> >>>> should have the same life time with the embedded DRM bridges, because for
-> >>>> example the clk_apb clock in struct imx8qxp_pc would be accessed by the
-> >>>> imx8qxp_pc_bridge_mode_set DRM bridge callback.  But, IIUC, your patches extend
-> >>>> the life time for the embedded channel/bridge structures only, but not for the
-> >>>> main structures.  What do you think ?    
-> >>>
-> >>> I see you concern, but I'm sure the change I'm introducing is not
-> >>> creating the problem you are concerned about.
-> >>>
-> >>> The key aspect is that my patch is merely changing the lifetime of the
-> >>> _allocation_ of the drm_bridge, not its usage. On drm_bridge_remove()
-> >>> the bridge is removed from its encoder chain and it is completely not
-> >>> reachable, both before and after my patch. With my patch it is not
-> >>> freed immediately, but it's just a piece of "wasted" memory that is
-> >>> still allocated until elsewhere in the kernel there are pointers to it,
-> >>> to avoid use-after-free.
-> >>>
-> >>> With this explanation, do you think my patch is correct (after fixing
-> >>> the bug we already discussed of course)?    
-> >>
-> >> I tend to say your patch is not correct because we'll eventually make sure
-> >> that removing a bridge module is safe when doing atomic commit,  
-> > 
-> > I think your sentence can be rephrased as "your patch is correct with
-> > the current code base where bridges are not (yet) removable, but there
-> > will be a problem when they start to actually be removable".
-> > 
-> > Is my understanding correct? If it is, I agree on that sentence.  
-> 
-> Nope, I meant your patch should align the life times of the main structures
-> and the DRM bridges, for the sake of the kinda long term goal - remove bridge
-> driver module safely when doing atomic commit.
+Amit Sunil Dhamne (2):
+  dt-bindings: power: supply: max17201: add port property
+  arm64: dts: exynos: gs101-pixel-common: add graph property to connect
+    tcpc & fg
 
-Again, I don't think there is any bug introduced by this patch (once
-the NULL ptr deref bug we already discussed is fixed). No bridge can be
-removed as of now, with or without this patch.
+ .../bindings/power/supply/maxim,max17201.yaml      |  5 +++++
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 14 ++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-You concern that this patch would make things more complex in the
-future, when bridges will actually become removable and they could be
-during atomic updates. But about this...
 
-> > The work to have removable bridges is massive and non-trivial, so it
-> > will need to be tackled in steps. The grand plan [0] is:
-> > 
-> >  1. add refcounting to DRM bridges (struct drm_bridge)
-> >  2. handle gracefully atomic updates during bridge removal
-> >  3. avoid DSI host drivers to have dangling pointers to DSI devices 
-> >  4. finish the hotplug bridge work, removing the "always-disconnected"
-> >     connector, moving code to the core and potentially removing the
-> >     hotplug-bridge itself (this needs to be clarified as points 1-3 are
-> >     developed)  
-> 
-> I'm busy with internal things these days and cannot look into the grand
-> plan and steps closely, sorry about that.
-
-...I'll wait until you have time to look into that more closely. There
-is just no way to understand this whole topic without some dedicated
-attention, which takes time unavoidably.
-
-In the meanwhile I am going to send v3 soon with the known bug fixed,
-so the best version is available to continue this discussion.
-
-> > I am at step 1 right now. Removal during atomic updates is step 2,
-> > ideas about how to implement that are already being discussed [1],
-> > there's a practical plan proposed by Maxime with the goal of reaching
-> > removable bridges without breaking things along the path.
-> > 
-> > [0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
-> > [1] https://lore.kernel.org/all/20250106-vigorous-talented-viper-fa49d9@houat/
-> >   
-> >> which means
-> >> the main structures should have the same life time with the DRM bridges.  
-> > 
-> > The word "lifetime" mean two things for bridges:
-> > 
-> >  * the time span during which memory is allocated for a struct
-> >    drm_bridge (along with the embedding struct)  
-> 
-> Note that with your patch set the imx8*-ldb drivers and this bridge driver
-> won't allocate the DRM bridge along with the embedding struct.
-
-By "embedding struct" I mean the struct imx8qxp_pc_channel that embeds
-the struct drm_bridge. Sorry, I realize my wording was ambiguous.
-
-> This makes
-> me worry, because maybe these drivers are the only "special" ones in this
-> patch set and I don't want them to be "special" after your patch set is
-> applied.
-
-Luca
-
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+prerequisite-patch-id: 74aa0a6fc4a5c56d870bb15375fad1fe41ffc1e9
+prerequisite-patch-id: 46f968300dcf5442e12d882ca23168494249d378
+prerequisite-patch-id: 3ad83a2782819bca215bb267d36a1ff04fe557b2
+prerequisite-patch-id: 86b5207d8f44255c36b1e600ecdf4f948c5da685
+prerequisite-patch-id: a15532888ff2572696d9fa6a14775e8ebf590391
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.49.0.987.g0cc8ee98dc-goog
+
