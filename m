@@ -1,117 +1,87 @@
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54792139C4
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 May 2025 05:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE608216399;
+	Thu,  8 May 2025 06:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746681105; cv=none; b=u1rbRu13kMCgsE5fH0H5xtLaCm7LFQJb8N+GAkjGXaSnBSZyt2ik5fbQyGKzHoe/agbWN0uhOIiOKUSgsuH3aXIOLtM6jqfKCvQQAaZrr5egO0ey5wvDzD/jd7tm6y0D2Q5+JI0i3mhxl3xcb6ZcBHmgqzR2bnAUIVw2jHwdrfo=
+	t=1746684566; cv=none; b=rj/XI0kwPeLQCdtAAx9iCF5PjuccRMS5H3dpSJ42FM3hwsvpyhRmlS78SPXbcGWSc9XeRpt7uIoZGWq91cMAzSlaIZ5U5f1ZaHShyjz9IddFSctEbO/QURpnNjJ+Lg6ancnQ9EWedlMs0E31hzAdIHX5NW3ChomuS+6ke4naBfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746681105; c=relaxed/simple;
-	bh=3uw99ddUMLeQrKWsp1+1b+V8SVKL/YldYrtWvjtNYcE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=g/i+EoIwwpMXbjxo3xkxIJjobfbAo4LO5P+yK7qlttTYrc7exOdY0mxnlImWtPy91+xgzhiKGIezqVjd/3qE+gQbUgPKaNvReuPvr81DlrD++oam41gL6Z+sui3jxb7Zoqwvm+kZxssArSt2mc/AJ//CtlRrKQ6/KUn1GtDpBb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uTscQ/6z; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+	s=arc-20240116; t=1746684566; c=relaxed/simple;
+	bh=aNzIdCINKAyp+r1r0nEkypLqIzGYNhghY5XaHOpNRBo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=qtMTe96s1MRjuwK+ND8d6fUuYrAWn/iMHwlSFenZQ9enx2Rrue3gSuC38W2P9ndHx4IbLnBs0qNN7O9/ZVCQ2Uc08ZSnG8yqqB8BrXmdX12+jJKq5bz5tj0Tcbz6a4Ulb+dqRKagIvRGHpo7pV3oJYfeorK0v+ZV0kNNPibTwHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhF+i6qW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uTscQ/6z"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224364f2492so6608495ad.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2025 22:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746681103; x=1747285903; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZkuBRw05Sy7EYSCt6VyIOWdi3s1ObjekFGBZ5YExy/0=;
-        b=uTscQ/6z8RS6LYGOiHOIYrkvQ5GmGvMbtusqu8r+DucFDxeSeaVsrlex8yv2nzeACF
-         3DC4l3uCPsh6s0HQRBjcun7gbfFRxVkNWiTI1ncfp9/nlqMYS9yZhV/D4HPkafGCWqq9
-         hvAnGxafwzFj3Ks8nnVrbYZYC1OXIHy/WH5LrN4yRgGK+eEOJWXnqMsJ/9HG9FNS2F46
-         W9Pe94eSi/cQZX6fyrjNnr3o4JiTOYUP9vBvo6iMrxeOMc/fSqgLwz5jq8F576yU+zZP
-         aXLpmyEmZ/u0EDNYZI9TkrBblfWPO2SrYVbCy512VVa2RgDdEsDDMtOsI98sj4lYfNUE
-         Ih5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746681103; x=1747285903;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZkuBRw05Sy7EYSCt6VyIOWdi3s1ObjekFGBZ5YExy/0=;
-        b=DFDI+UtVJqmV6Kacbez0YfukyKm688y7DpjsWYQbh3yuZbUKqTDy5xCOmkbwHX0iKw
-         nGfNePPsKvLBRm6XnjauB3S6Gcp4JJT1vpler7Z1D4F//N4cAVvRxEIX0r1VmLLW4Zbs
-         GoBwS1GUWJwAC6nTrXvv6bquMR83bqumGwWHBJihlgsAYvDkVCEB3ZwmX9w5WtsRSTaX
-         ewsfUb3om0VGq8IfNoZGmJbjPcagKfVqe1dIx+X/PNa9octIdBGZSkr4nxunnE5xdlFb
-         L5bLOxOqq9cNHCAjRwSmVIqrtQEvOEhGTxjVyVvy5yvw0Xb9Emw08Y9k/rus/PF6+wL1
-         jO0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6SzooerBHDTzSL73agRD3GlleHgC6iOECXlxZxiFAokYCTlhAkx0OA5cLFU+MEYspQINGdiJM4MX+rY/P6xZLXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOKXroywNtBV8zrj5pnSSv/1fa88DEtckSxJaJhOSl2Wo80+77
-	bVr8CO3+tRGDdVDMue7VrEyicW787ON+2QBcdTPH601LBvXvob20PAsWY/HD3C/rupht4cTT8hs
-	pDA==
-X-Google-Smtp-Source: AGHT+IFqi/sBjRSvaoAz7eZ3j5I77pIqUeGYHqCXjKMp3cZTaUN3BhT0tP3SmQRRmwUf1j4EPXnzb1Q6Nqg=
-X-Received: from plok6.prod.google.com ([2002:a17:903:3bc6:b0:220:ea57:34e3])
- (user=amitsd job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:990:b0:22d:b240:34c9
- with SMTP id d9443c01a7336-22e5ee2cfd9mr89525335ad.53.1746681103163; Wed, 07
- May 2025 22:11:43 -0700 (PDT)
-Date: Wed,  7 May 2025 22:08:52 -0700
-In-Reply-To: <20250508050856.674782-1-amitsd@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhF+i6qW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8671DC4CEEB;
+	Thu,  8 May 2025 06:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746684565;
+	bh=aNzIdCINKAyp+r1r0nEkypLqIzGYNhghY5XaHOpNRBo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=GhF+i6qW8ZUnWN8dJpgO8wPFp4CzysEiMLcaKsUSTc4bXQ3fIW/f8W7Flv7mUM5s8
+	 Eq2NF19N2dGwdcnpr5ZqX4pe4buqsAH/KiRMQ9IjiXb3tMnT+LIx68xfQG5pIQXOh9
+	 S4onWkn0Da13dfjAIbj77/bx6KxZAfNJBGBpisqRZz65B0GAKEsb5XVkTiuMu4rU98
+	 SeZfCogDffRDlR08ZRAfQukpxQkqqscM25t3h25xczyYpUZf2iVzAeoegEz6B+uw9K
+	 HSD/xPvjUvijtVuy7vtOVQEorb66kiGAoraC0nXdQNt9RSPSC9RYdqaT52wQkAXfkH
+	 PMmpPvhSmTkJw==
+Date: Thu, 08 May 2025 01:09:24 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: andre.draszik@linaro.org, tudor.ambarus@linaro.org, krzk+dt@kernel.org, 
+ sre@kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, dima.fedrau@gmail.com, 
+ alim.akhtar@samsung.com, conor+dt@kernel.org, badhri@google.com, 
+ linux-kernel@vger.kernel.org, peter.griffin@linaro.org, 
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+To: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <20250508050856.674782-2-amitsd@google.com>
 References: <20250508050856.674782-1-amitsd@google.com>
-X-Mailer: git-send-email 2.49.0.987.g0cc8ee98dc-goog
-Message-ID: <20250508050856.674782-3-amitsd@google.com>
-Subject: [PATCH v1 2/2] arm64: dts: exynos: gs101-pixel-common: add graph
- property to connect tcpc & fg
-From: Amit Sunil Dhamne <amitsd@google.com>
-To: sre@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	peter.griffin@linaro.org
-Cc: andre.draszik@linaro.org, badhri@google.com, tudor.ambarus@linaro.org, 
-	alim.akhtar@samsung.com, dima.fedrau@gmail.com, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	Amit Sunil Dhamne <amitsd@google.com>
-Content-Type: text/plain; charset="UTF-8"
+ <20250508050856.674782-2-amitsd@google.com>
+Message-Id: <174668456195.3462769.556560233730725103.robh@kernel.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: power: supply: max17201: add port
+ property
 
-Add "port" binding to represent vbus/vchgin connection between tcpc
-connector & battery using OF graphs.
 
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
----
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On Wed, 07 May 2025 22:08:51 -0700, Amit Sunil Dhamne wrote:
+> Add port binding to represent an endpoint that connects the power line
+> from the battery to the Type-C port connector
+> 
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> ---
+>  .../devicetree/bindings/power/supply/maxim,max17201.yaml     | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index 84fc10c35629..45b079c16146 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -186,6 +186,14 @@ usbc0_role_sw: endpoint {
- 						remote-endpoint = <&usbdrd31_dwc3_role_switch>;
- 					};
- 				};
-+
-+				port@3 {
-+					reg = <3>;
-+
-+					conn_batt_vbus: endpoint {
-+						remote-endpoint = <&batt_conn_vbus>;
-+					};
-+				};
- 			};
- 		};
- 	};
-@@ -197,6 +205,12 @@ fuel-gauge@36 {
- 		interrupt-parent = <&gpa9>;
- 		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
- 		shunt-resistor-micro-ohms = <5000>;
-+
-+		port {
-+			batt_conn_vbus: endpoint {
-+				remote-endpoint = <&conn_batt_vbus>;
-+			};
-+		};
- 	};
- };
- 
--- 
-2.49.0.987.g0cc8ee98dc-goog
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250508050856.674782-2-amitsd@google.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
