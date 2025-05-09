@@ -1,178 +1,286 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F006828F52F
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 May 2025 13:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5991F26FDB9;
+	Fri,  9 May 2025 13:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797737; cv=none; b=NzoRREaA/fRFGRL6aWMVNCj6Uf8G5/N45VOh5IVa2YyW22hs4dPhaTpwxIBuhboJk1WGTR3UZLdyLTqc3d4uXGykc4y7rcxlo2PyjikUZxPP5CMu/Dh9jKsq3vGCREZcXf60lFJWCuOuBtkeBi1thjv6viO/TmYheVuB4vBq0tM=
+	t=1746798979; cv=none; b=YatZnCxOhxsuEi1+WXm9Qezg2/FIhcWO/NdR0tdhG4PiG2MW2Y51fkzEycuVw3Igx6RYhLhw7+X3XoyXgz5F39z7GtwuQBDCbR75HpYQaVzuVTAKA0q3jv35vWbsCWP1XRzZSZ5oVl1nyYG/b+dVC/EZBVvdtWQaGBwui5Lvptg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797737; c=relaxed/simple;
-	bh=HT4vGYib1vkdrhrAux+8AkJRUgQhALHudbO2KB1R0Ws=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=mR5rsu/jD4fLkmucX2uqwEELjqqdejWPnqUEAdhXKyig4KWsAWEAIjfHGbqfh96ftTx9yCT/PxuYORQmn9uUYrae/ivpPpzW0v/5WAR1rAg5KFiQv4JD5TdQWolooXzvUL6zppIATbGT4ku/N0IVxdRHICaPkMgjRahozq1BtxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i+VTSVIW; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1746798979; c=relaxed/simple;
+	bh=Jnqsjr3slJMpqG1xFTg3lBzYjoJxbPXe/oORDRv1WTU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ae5sfz/YUbO3Ci/6AE8i/Ibxdd8HKExiywuAzm8tySenv9TWal0HgvXE1kdr9HullzCi409hcRV/prSwdlQhHmir+Wmko8PUFkR8fOWjCul3HFnIuKgs3+W2D1QID5SECMISgd+MveVt3h88M0nURmesln4BN1j1q2Mm5bt5kWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lw+EQEO2; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i+VTSVIW"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250509133532epoutp03e02fbb7ec4eb1e1fcfdb52ee9b78a7ac~930iAB2IU1415214152epoutp03e
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 May 2025 13:35:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250509133532epoutp03e02fbb7ec4eb1e1fcfdb52ee9b78a7ac~930iAB2IU1415214152epoutp03e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746797733;
-	bh=uJ5xv2x3X+CRQNWp7iVnE+JtSDZ7GFWFYjczehxiho4=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=i+VTSVIWQo2OHtACmCTOYnEtFEs+AsI1FbspSS0Z7T87WOgKSxC9iL6z4WI36KPoJ
-	 lMuel5I7Kp91C1DyusZYYghlGi5ImkOSAXjN99u/UUzUX90FRpdHQPHWh2vd+ExWjX
-	 YpEswFkogWCUYH+Z9GpDft4ot7QGkueW+nYLreI8=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250509133532epcas5p21941906580941e4d09b5537939fd6155~930hZsG6t1470614706epcas5p2b;
-	Fri,  9 May 2025 13:35:32 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4Zv9423nBYz6B9m5; Fri,  9 May
-	2025 13:35:30 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250509131427epcas5p1fe29ea19cb7624dc828935d6ec47854b~93iH5KmMz0480904809epcas5p1q;
-	Fri,  9 May 2025 13:14:27 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250509131427epsmtrp11595d142fc3783a9bfbb5144812b6041~93iH4U90x3116831168epsmtrp1S;
-	Fri,  9 May 2025 13:14:27 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-87-681dffb3509c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E0.8D.19478.3BFFD186; Fri,  9 May 2025 22:14:27 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250509131425epsmtip1df3d977fb138a2f14c4f522f592f98f0~93iFuuKrU2903429034epsmtip1b;
-	Fri,  9 May 2025 13:14:25 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, sunyeal.hong@samsung.com,
-	shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Raghav Sharma <raghav.s@samsung.com>
-Subject: [PATCH v1] dt-bindings: clock: exynosautov920: add hsi2 clock
- definitions
-Date: Fri,  9 May 2025 18:54:14 +0530
-Message-Id: <20250509132414.3752159-1-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lw+EQEO2"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 06B7443B6D;
+	Fri,  9 May 2025 13:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746798971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3gLOa47Xk0ok2K33C8I47xYA9XRAOM9sF3Fq2wGIFQc=;
+	b=lw+EQEO287PssCQbUR5pbpq8hWm7h9CR05KLQtMfotqjCDKWEphI2S4R2sxAXowdZTfKdC
+	OmHerQw6VCqG7SnTf10aZAkCjuyQsOYw/0RSu2PejQEA8yGzg9SSlEIJKW/s+3Ij5kBk22
+	phDq54pI0DXGqnQrGhQkDkRMf4gSkETNGTZDTB1vhe0zaoyIZWcwRAOBomuFVhKR4YkZt0
+	YfhwQ5/k1oOGjFpg9+X4l6h2xj6L0vvc7/dNrbEF2U+7SPCCCdjVku3BCyXKN3m9jMg9kV
+	pJrsJt+IjI7h7HGimPq/bRngS2ihBVdyl4Yi8fbn8ccERhKObBh9G0PjFbOcKQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v3 00/22] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Date: Fri, 09 May 2025 15:53:26 +0200
+Message-Id: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsWy7bCSnO7m/7IZBncmmVo8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxfeVdxgt/u/ZwW5x
-	+E07q8W/axtZLCYfX8tq0bRsPZODgMf7G63sHptWdbJ5bF5S79G3ZRWjx+dNcgGsUVw2Kak5
-	mWWpRfp2CVwZvW/2shb8Eam4eeQbUwPjZf4uRk4OCQETiePzfrF3MXJxCAlsZ5TYf+8vI0RC
-	QmLf/99QtrDEyn/PoYreMkr0b53OBJJgE9CSuLL9HRuILSLwjlFi0zoxkCJmgQuMEp9e/gTq
-	5uAQFgiSmD8jC6SGRUBV4v/2yywgNq+AtcSxHe0sEAvkJfYfPMsMEReUODnzCVicGSjevHU2
-	8wRGvllIUrOQpBYwMq1iFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECA56raAdjMvW/9U7xMjE
-	wXiIUYKDWUmE93mnTIYQb0piZVVqUX58UWlOavEhRmkOFiVxXuWczhQhgfTEktTs1NSC1CKY
-	LBMHp1QDk+yeR6wrc6z2JWd49lw4XXc2Rnn6sR0M3CxLt1VN/eEt5PlsupX6rcfpa2wufn+6
-	/UB4qrqY5qwP5VJdp2X93XbIHPd3+8gv/iK8nUVafpuLUqOFs4OA9mvdG6dOO5207UjgMupp
-	+MDxKKpNZNns35wX7t3JX+j6M2v/v+7E9HtWu89/COwwvLBz3vMbDKvF18YdFDl4UWOmWMdu
-	7Qt13/+uc+JjWl3wvNrs3k0b5ZeVn0TtN/P+v+h04tyJ36+sVv38Z2ArGxLq3/0ro+BWzrVf
-	wR/zvuzUE1nCvHQul+0Tbaa36zOkfyxTuXg8LVa7IaEurqhiaePmmlXFu/afuT7vwwG/1SuZ
-	TzOdPD3b/7ESS3FGoqEWc1FxIgDhAktx6QIAAA==
-X-CMS-MailID: 20250509131427epcas5p1fe29ea19cb7624dc828935d6ec47854b
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250509131427epcas5p1fe29ea19cb7624dc828935d6ec47854b
-References: <CGME20250509131427epcas5p1fe29ea19cb7624dc828935d6ec47854b@epcas5p1.samsung.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANYIHmgC/4WNyw6CMBBFf4V07Zi2VBRW/odhAX3IJNAhbdNoC
+ P9uJXHt8tybnLOxaAPayLpqY8FmjEi+QH2qmJ4G/7SApjCTXF644gpMWGAMaMqjyWcbEiSCYZ5
+ Jw7AiNEKNVrtGylaxYlmDdfg6Co++8IQxUXgfwSy+6899/evOAjgoKUTt3M20mt9HojSjP2taW
+ L/v+wdg6Tv10AAAAA==
+X-Change-ID: 20250404-drm-bridge-convert-to-alloc-api-614becf62294
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Adam Ford <aford173@gmail.com>, Adrien Grassein <adrien.grassein@gmail.com>, 
+ Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Christoph Fritz <chf.fritz@googlemail.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Liu Ying <victor.liu@nxp.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Sugar Zhang <sugar.zhang@rock-chips.com>, 
+ Sui Jingfeng <sui.jingfeng@linux.dev>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Vitalii Mordan <mordan@ispras.ru>, "Rob Herring (Arm)" <robh@kernel.org>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+ Pin-yen Lin <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
+ Aradhya Bhatia <a-bhatia1@ti.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Ian Ray <ian.ray@gehealthcare.com>, 
+ Martyn Welch <martyn.welch@collabora.co.uk>, 
+ Peter Senna Tschudin <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>, 
+ linux-doc@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledvjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejjefhgfffleevhefhfeduhedtfedttedtkefgkeeuieehtdeifeduveejffevgeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleejpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghphhgrvghlrdhgrghllhgrihhsqdhpohhusehfohhsshdrshhtrdgto
+ hhmpdhrtghpthhtohepthhrvggrphhkihhnghestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepihgrnhdrrhgrhiesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrshhrihhvrghtshesrhgvughhrghtrdgtohhmpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Add device tree clock binding definitions for CMU_HSI2
+devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+bridge, and the only one supported from now on. It is the first milestone
+towards removal of bridges from a still existing DRM pipeline without
+use-after-free.
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+The steps in the grand plan [1] are:
+
+ 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+ 2. handle gracefully atomic updates during bridge removal
+ 3. avoid DSI host drivers to have dangling pointers to DSI devices
+ 4. finish the hotplug bridge work, removing the "always-disconnected"
+    connector, moving code to the core and potentially removing the
+    hotplug-bridge itself (this needs to be clarified as points 1-3 are
+    developed)
+
+This series is part of step 1 of the grand plan.
+
+Current tasks in step 1 of the grand plan:
+
+ A. ✔ add new alloc API and refcounting -> (now in drm-misc-next)
+ B. ➜ convert all bridge drivers to new API (this series)
+ C. … documentation, kunit tests (v1 under discussion)
+ D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+ E. after (B), convert accessors; this is a large work and can be done
+    in chunks
+ F. debugfs improvements
+
+More info about this series in the v2 cover [2].
+
+Luca
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
+[2] https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- .../clock/samsung,exynosautov920-clock.yaml   | 29 +++++++++++++++++--
- .../clock/samsung,exynosautov920.h            |  9 ++++++
- 2 files changed, 36 insertions(+), 2 deletions(-)
+Changes in v3:
+- Fixed issues reported for some patches
+- Added review tags
+- Removed patches that have been applied
+- Added revert for the exynos patch, applied by mistake
+- Update cover with grand plan info and trim some of it
+- Updated bouncing e-mail address in Cc list
+- Link to v2: https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com/
 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-index 6961a68098f4..3cbb1dc8d828 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-@@ -41,14 +41,15 @@ properties:
-       - samsung,exynosautov920-cmu-misc
-       - samsung,exynosautov920-cmu-hsi0
-       - samsung,exynosautov920-cmu-hsi1
-+      - samsung,exynosautov920-cmu-hsi2
- 
-   clocks:
-     minItems: 1
--    maxItems: 4
-+    maxItems: 5
- 
-   clock-names:
-     minItems: 1
--    maxItems: 4
-+    maxItems: 5
- 
-   "#clock-cells":
-     const: 1
-@@ -201,6 +202,30 @@ allOf:
-             - const: usbdrd
-             - const: mmc_card
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynosautov920-cmu-hsi2
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (38.4 MHz)
-+            - description: CMU_HSI2 NOC clock (from CMU_TOP)
-+            - description: CMU_HSI2 NOC UFS clock (from CMU_TOP)
-+            - description: CMU_HSI2 UFS EMBD clock (from CMU_TOP)
-+            - description: CMU_HSI2 ETHERNET clock (from CMU_TOP)
-+
-+        clock-names:
-+          items:
-+            - const: oscclk
-+            - const: noc
-+            - const: ufs
-+            - const: embd
-+            - const: ethernet
-+
- required:
-   - compatible
-   - "#clock-cells"
-diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h b/include/dt-bindings/clock/samsung,exynosautov920.h
-index 5e6896e9627f..93e6233d1358 100644
---- a/include/dt-bindings/clock/samsung,exynosautov920.h
-+++ b/include/dt-bindings/clock/samsung,exynosautov920.h
-@@ -286,4 +286,13 @@
- #define CLK_MOUT_HSI1_USBDRD_USER	3
- #define CLK_MOUT_HSI1_USBDRD		4
- 
-+/* CMU_HSI2 */
-+#define FOUT_PLL_ETH                    1
-+#define CLK_MOUT_HSI2_NOC_UFS_USER      2
-+#define CLK_MOUT_HSI2_UFS_EMBD_USER     3
-+#define CLK_MOUT_HSI2_ETHERNET          4
-+#define CLK_MOUT_HSI2_ETHERNET_USER     5
-+#define CLK_DOUT_HSI2_ETHERNET          6
-+#define CLK_DOUT_HSI2_ETHERNET_PTP      7
-+
- #endif /* _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H */
+Changes in v2:
+- Improved cover letter with link to commit adding devm_drm_bridge_alloc()
+- add review tags
+- fix bugs in zynqmp, vc4 patches
+- fix patch 1 error code checking
+- Link to v1: https://lore.kernel.org/r/20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com
+
+---
+Luca Ceresoli (22):
+      Revert "drm/exynos: mic: convert to devm_drm_bridge_alloc() API"
+      drm: convert many bridge drivers from devm_kzalloc() to devm_drm_bridge_alloc() API
+      drm/bridge: anx7625: convert to devm_drm_bridge_alloc() API
+      drm/bridge: cdns-dsi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: convert to devm_drm_bridge_alloc() API
+      drm/bridge: nxp-ptn3460: convert to devm_drm_bridge_alloc() API
+      drm/bridge: sii902x: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: dpi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: dsi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: hdmi4: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: hdmi5: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: sdi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: venc: convert to devm_drm_bridge_alloc() API
+      drm/rcar-du: dsi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: stm_lvds: convert to devm_drm_bridge_alloc() API
+      drm/sti: dvo: convert to devm_drm_bridge_alloc() API
+      drm: zynqmp_dp: convert to devm_drm_bridge_alloc() API
+      drm/bridge: imx8qxp-pixel-combiner: convert to devm_drm_bridge_alloc() API
+      drm/bridge: tc358767: convert to devm_drm_bridge_alloc() API
+      drm/bridge: add devm_drm_put_bridge()
+      drm/bridge: panel: convert to devm_drm_bridge_alloc() API
+      drm/todo: add entry to remove devm_drm_put_bridge()
+
+ Documentation/gpu/todo.rst                         | 15 ++++++
+ drivers/gpu/drm/adp/adp-mipi.c                     |  8 ++--
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |  8 ++--
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  9 ++--
+ drivers/gpu/drm/bridge/analogix/anx7625.c          |  7 ++-
+ drivers/gpu/drm/bridge/aux-bridge.c                |  8 ++--
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c            |  9 ++--
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c     |  8 ++--
+ .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |  8 ++--
+ drivers/gpu/drm/bridge/chipone-icn6211.c           |  8 ++--
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |  8 ++--
+ drivers/gpu/drm/bridge/cros-ec-anx7688.c           |  8 ++--
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  7 ++-
+ drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c     |  8 ++--
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pvi.c       |  8 ++--
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    | 27 ++++++-----
+ drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c    |  8 ++--
+ drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c       |  8 ++--
+ drivers/gpu/drm/bridge/ite-it6263.c                |  8 ++--
+ drivers/gpu/drm/bridge/ite-it6505.c                |  8 ++--
+ drivers/gpu/drm/bridge/ite-it66121.c               |  8 ++--
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |  8 ++--
+ drivers/gpu/drm/bridge/lontium-lt9211.c            |  7 ++-
+ drivers/gpu/drm/bridge/lontium-lt9611.c            |  8 ++--
+ drivers/gpu/drm/bridge/lvds-codec.c                |  9 ++--
+ .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   | 11 ++---
+ drivers/gpu/drm/bridge/microchip-lvds.c            |  8 ++--
+ drivers/gpu/drm/bridge/nwl-dsi.c                   |  8 ++--
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  9 ++--
+ drivers/gpu/drm/bridge/panel.c                     | 12 ++---
+ drivers/gpu/drm/bridge/parade-ps8622.c             |  8 ++--
+ drivers/gpu/drm/bridge/parade-ps8640.c             |  8 ++--
+ drivers/gpu/drm/bridge/sii902x.c                   |  7 ++-
+ drivers/gpu/drm/bridge/sii9234.c                   |  8 ++--
+ drivers/gpu/drm/bridge/sil-sii8620.c               |  8 ++--
+ drivers/gpu/drm/bridge/simple-bridge.c             |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c      |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c     |  8 ++--
+ drivers/gpu/drm/bridge/tc358762.c                  |  8 ++--
+ drivers/gpu/drm/bridge/tc358764.c                  |  8 ++--
+ drivers/gpu/drm/bridge/tc358767.c                  | 56 +++++++++++++++-------
+ drivers/gpu/drm/bridge/tc358768.c                  |  8 ++--
+ drivers/gpu/drm/bridge/tc358775.c                  |  8 ++--
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  8 ++--
+ drivers/gpu/drm/bridge/ti-dlpc3433.c               |  8 ++--
+ drivers/gpu/drm/bridge/ti-tdp158.c                 |  8 ++--
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  8 ++--
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |  8 ++--
+ drivers/gpu/drm/drm_bridge.c                       | 17 +++++++
+ drivers/gpu/drm/exynos/exynos_drm_mic.c            |  7 +--
+ drivers/gpu/drm/mediatek/mtk_dp.c                  |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  8 ++--
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c         | 10 ++--
+ drivers/gpu/drm/meson/meson_encoder_dsi.c          | 10 ++--
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         | 10 ++--
+ drivers/gpu/drm/omapdrm/dss/dpi.c                  |  7 ++-
+ drivers/gpu/drm/omapdrm/dss/dsi.c                  |  7 ++-
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c                | 26 ++++------
+ drivers/gpu/drm/omapdrm/dss/hdmi5.c                | 26 ++++------
+ drivers/gpu/drm/omapdrm/dss/sdi.c                  | 25 ++++------
+ drivers/gpu/drm/omapdrm/dss/venc.c                 | 23 ++++-----
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  8 ++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |  8 ++--
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c     |  8 ++--
+ drivers/gpu/drm/sti/sti_dvo.c                      | 29 +++++------
+ drivers/gpu/drm/stm/lvds.c                         |  7 ++-
+ drivers/gpu/drm/xlnx/zynqmp_dp.c                   | 31 +++++-------
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c                |  1 -
+ include/drm/drm_bridge.h                           |  4 ++
+ 72 files changed, 390 insertions(+), 379 deletions(-)
+---
+base-commit: 94c60d3c1079fc044e356a78ffc68ca7b0603039
+change-id: 20250404-drm-bridge-convert-to-alloc-api-614becf62294
+
+Best regards,
 -- 
-2.34.1
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
