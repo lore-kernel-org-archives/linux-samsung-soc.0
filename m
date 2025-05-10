@@ -1,66 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BF1E571B;
-	Sat, 10 May 2025 08:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F093C1BC073;
+	Sat, 10 May 2025 08:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746867401; cv=none; b=MHB/98HKfKPaJzlvACqNVKGSDrrQ4g4ZObMSk9pAfcPfWV8iBvJirKr8zYaqm9b8i+Io+0sSRQPdAp2BIO7J5PcgVgQym26Sch1WYdJcaeU5gA/mXTWu3nqKKwGITbmfftWrhgAIbVdeoWsopAdeaUGffp0P7qGBIsoPQIILB34=
+	t=1746867435; cv=none; b=HMu3I5Tzgrxfgw4ajV6Gkx+WSpIUYxhBiSu91Ue1584OeC8M6EycLVQg+Er8LTyb3GMMHW89GDS78ydAMW7JeRpP/FgJs04gz8O2me9qL201rPBRZcw1b8G14fKiOSU4WItAHRT3m5F9dnAkVdOMw9q2/GMi3/K8+E4Ry1j8TYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746867401; c=relaxed/simple;
-	bh=xUHNWhUmOFOgiDtHE420PZyZI+pkNsNu9bIeQueqmi0=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=UlWIb6bx/iol752GJ1sqsNKfQtxTHJnrAHGS+aTlZbyx3IcSv6NTyyL9i37WrYTMtUDk5b45Cj5CcKiEvOzclZk00hQbSnnNZehEtcuHahDwmMw/eXoGMt1I/x9fD0eHgD7dvgPv4KlZaTFTV/aV7hqkz0ZD+4yOMYH7YnBMElw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DC7nHWS9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746867435; c=relaxed/simple;
+	bh=qVqQPbhYwA9CnEWX7OYZ4feEjaspab26r13ottr7JkE=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=DyZfTB6QgmZVUOuQa/c8fR931Hg/I5/xOHn9w4Fw9Qv3umTJghkaQLJkMtfwoakL6Vnl9A0XLkZT5hFibfpmLeCdk0h+rpH3DNxCez8zYpiZRd/DLHYuKN4SH8pGigcYYJF1aJmmNE1dcrKGs21I7JIWo5Bne0T2vGEaJWnYHHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhVEDlov; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DC7nHWS9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B09C4CEE2;
-	Sat, 10 May 2025 08:56:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhVEDlov"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA6BC4CEE2;
+	Sat, 10 May 2025 08:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746867400;
-	bh=xUHNWhUmOFOgiDtHE420PZyZI+pkNsNu9bIeQueqmi0=;
+	s=k20201202; t=1746867434;
+	bh=qVqQPbhYwA9CnEWX7OYZ4feEjaspab26r13ottr7JkE=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=DC7nHWS9MM8BfITQVw3iXqUnmt72hMbohU6W1KzfmxKRQWGy7K4gCvraWhUfPEBb8
-	 P38wm1JC4FywQujssIs+INT/E+sUzQ1vmVaZtOeZx7rtoPBEKZ7sqQPdAKlCIk7UcE
-	 8jkLyoX6xH2weyUCroU0zdFChRt2LwlDq1a48APDb2X7+SXgqzfwZIRglFSUrpn1kR
-	 E20u+kueowMKxgcXIRZhvKnicc4OxCTwx9um+DwmIBhIrRDTwqhRTLtRWEH5HiNJD/
-	 2kKc7cHg092uYTxOYO4sMMlepTo73QwZ/K6PIRwFCiEqblIOzOT06LxPyZ+EVmPp/t
-	 cp0kB4enGmNvw==
-Message-ID: <46bdd0658ee475b1378a831dd0918748@kernel.org>
-Date: Sat, 10 May 2025 08:56:37 +0000
+	b=rhVEDlov9L+J/r108NFtXKxeB4Pdlq7LP7iEEVZptGdLYzku0Bbmh1m1tvQBo7nEp
+	 wDKYBpOeab+wcGAYTRXEb7zypfMas/HEeqG8wIkhUsv8ZM5S35Aa8G18k1eattrowv
+	 CtZ0iaNEDT50f7W+bNUjDL54h+N7lX1iCZsqyUb2y6dFLzuWELt+CxYUY/ZUg6lSpf
+	 bJ625ZD91408z4uBsWHbe8T4/xEvzVun354YFwfd+Ch4lJfWuCJeonn/JsIEcE5waz
+	 xGDNV83Jpuk6dW4Z02RWrtD1RLj/grawNxsIk4mBJylMFNkBXNuHij3Fltg1czl9J1
+	 sacUKeF0HCs9A==
+Message-ID: <b9d480ecdb95f59b7e9f0af7694800ef@kernel.org>
+Date: Sat, 10 May 2025 08:57:11 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v3 15/22] drm/bridge: stm_lvds: convert to
+Subject: Re: [PATCH v3 16/22] drm/sti: dvo: convert to
  devm_drm_bridge_alloc() API
-In-Reply-To: <20250509-drm-bridge-convert-to-alloc-api-v3-15-b8bc1f16d7aa@bootlin.com>
-References: <20250509-drm-bridge-convert-to-alloc-api-v3-15-b8bc1f16d7aa@bootlin.com>
-Cc: asahi@lists.linux.dev, chrome-platform@lists.linux.dev, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, imx@lists.linux.dev, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, platform-driver-x86@vger.kernel.org, "Alexandre
- Torgue" <alexandre.torgue@foss.st.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Anusha
+In-Reply-To: <20250509-drm-bridge-convert-to-alloc-api-v3-16-b8bc1f16d7aa@bootlin.com>
+References: <20250509-drm-bridge-convert-to-alloc-api-v3-16-b8bc1f16d7aa@bootlin.com>
+Cc: asahi@lists.linux.dev, chrome-platform@lists.linux.dev, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, imx@lists.linux.dev, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, platform-driver-x86@vger.kernel.org, "Alain
+ Volmat" <alain.volmat@foss.st.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Anusha
  Srivatsa" <asrivats@redhat.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "David
  Airlie" <airlied@gmail.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Douglas
  Anderson" <dianders@chromium.org>, "Fabio Estevam" <festevam@gmail.com>, "Hui
  Pu" <Hui.Pu@gehealthcare.com>, "Jagan Teki" <jagan@amarulasolutions.com>, "Jernej
  Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Krzysztof
  Kozlowski" <krzk@kernel.org>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Coquelin" <mcoquelin.stm32@gmail.com>, "Maxime
- Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Paul
- Kocialkowski" <paulk@sys-base.io>, "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Philippe
- Cornu" <philippe.cornu@foss.st.com>, "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Robert
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Paul Kocialkowski" <paulk@sys-base.io>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>, "Robert
  Foss" <rfoss@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn
  Guo" <shawnguo@kernel.org>, "Simona Vetter" <simona@ffwll.ch>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Yannick
- Fertre" <yannick.fertre@foss.st.com>
-Content-Transfer-Encoding: 7bit
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 
-On Fri, 9 May 2025 15:53:41 +0200, Luca Ceresoli wrote:
+On Fri, 9 May 2025 15:53:42 +0200, Luca Ceresoli wrote:
 > This is the new API for allocating DRM bridges.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
+>=20
+> This driver allocates the DRM bridge separately from the main driver
+> private struct, which prevents using the new devm_drm_bridge_alloc()
+> API. Simplify the code by replacing the struct drm_bridge pointer with an
+>=20
+> [ ... ]
 
 Acked-by: Maxime Ripard <mripard@kernel.org>
 
