@@ -1,92 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227FB29375A;
-	Mon, 12 May 2025 12:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145F12AD18;
+	Mon, 12 May 2025 14:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747054173; cv=none; b=KNhAZakfqPnLaHqyigpxXx3ka28ceS5o2ncVEERDYpUUR+s2aYn7A/gOlX1MbY5+FwVxCnDAFJta9zEyH5KzNwvVCfsbhmUdrnIkwofspK3dt+GQFANHBQNVMVKcZ9rHPvXevrxce41GR0hbaXBplBYooM8SpcEpkYvP4QDNUdQ=
+	t=1747058529; cv=none; b=P9f3MCXEml31ogyrl0iZWBN8lynrp0qYZv9r+M6UHcfriqPk5Th5JkSFbAJJ/nMun/PrxrghRXxLQ/Bhdf2oH4CWDU8OtNuNE5dLeA9grI1ISY5/U3EMqvsaILlN5kG+Z36cRG4jFLLR1h0XDeabCMaSGghXV4eqGf0A3GnjwUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747054173; c=relaxed/simple;
-	bh=Xul2N5TZdLPJDaY9qEes+2SrQ7lCw1Xec9sr/RkvLPI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=It0EqYWHbjOkxCMKS0wdrIjd9SZE6bL2UvUkSjBZypPKwhI+ptao4tbPO4c7Ovp3jbJ/rsxCy5gy15K1CejrLJcKBbV+1UVjwYj3KKJbksAn0VQQTzn7lL/y+BPXKwIWJAvdwj00VUaauqxFQFhqMoz9IYLHQzJkENROsj5lgHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUkjBnBP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747058529; c=relaxed/simple;
+	bh=KN51EL+e4VUtFwp7G7kO6TE/8vRbhxJnqwxzLoK8Z7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pJ6efnf+t/JZOOLMCRJRM0iqyGKWP7FwhZTa3GRsUqDIRKflzoL2QDVYmTql30nxxCwscNzLExQ+ZYJALO2+5cf8AOMFUnkxfCX7bmjyCs5rTHICGYpWqgXMFMRHMB/7JfeikUvpeHH43BeD+Rb/Z4GMeJINAunNtfZPfxlJBAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vmd870Wt; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUkjBnBP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0539C4CEE7;
-	Mon, 12 May 2025 12:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747054173;
-	bh=Xul2N5TZdLPJDaY9qEes+2SrQ7lCw1Xec9sr/RkvLPI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=HUkjBnBPVRlfJwgczJvIz95ZeTA0Zc56cGxjb8KjZS+WMVCE9EiSSeUG9GURRr1m+
-	 9AlggNLcLnqOSv15GWgnmv9xxRTneOuVXX6fhrR7bPfM4BsQqRekdx+At9paamyIjv
-	 OBbsV9kP34hDxnAuOCRI4T1d9IkMFDTpa2yFKBL6GjrBaHmU4oev+ZxBN0VrgUS/Rm
-	 b7/BE8fHI9CjGp+t+sI7MEGxHTnhtEbPFXcEth1fy7Y0wVWlwuwfH/2T8HLXq1Pjd0
-	 jyg5n0RIj1AT3WGQ+9GDOspK9Jxd6mx/ZEMzz2W+Gk5U1lwWLxIRpGNOkCzoFyjplh
-	 k4uiNPp+SJXpg==
-Date: Mon, 12 May 2025 07:49:31 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vmd870Wt"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0CC0743912;
+	Mon, 12 May 2025 14:02:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747058525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o3TRMmycxHOQ79R3VMJurcxx8hZEsQrWPdGeODqMNcc=;
+	b=Vmd870WtRHsIOA6Yr7wFlzOG4AmNyCWFvocZMUvnqrE8yWUTp27MGDROkWw1/AglWncaXv
+	+vj8GiQu90rRrZrWpiQnGj5nYeLthGJAxAyMirLdRtqA1kbVvjXXsj32yYMDVxfg2TnvNT
+	YRTdEcq8iGDdwsthMOYJinZJyPHGL6ak4+BGsiBYdNDeEq20hap0dLm7FSJLKFYknxQWo/
+	j6NMEKqWHQsdsRDjzuyjoBREAvCU+TV+4cCS+Nx3op1D9Im/DA6xYSh75ycr6Hk31DkA+N
+	a6nxiISEpD8aBsL4L5+roNOI89e6Oo7wYscVzKIbGUMk2uWhEmnSu9HERElAjg==
+Date: Mon, 12 May 2025 16:02:01 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Louis Chauvet <louis.chauvet@bootlin.com>, Dmitry
+ Baryshkov <lumag@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/22] drm: convert many bridge drivers from
+ devm_kzalloc() to devm_drm_bridge_alloc() API
+Message-ID: <20250512160201.7d0b21d8@booty>
+In-Reply-To: <4yeqvg3wnlr2bhb54zutgqpkehrodat5w5x4rr5qjlrc2ts3pz@gr2iosycclpl>
+References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
+	<20250509-drm-bridge-convert-to-alloc-api-v3-2-b8bc1f16d7aa@bootlin.com>
+	<4yeqvg3wnlr2bhb54zutgqpkehrodat5w5x4rr5qjlrc2ts3pz@gr2iosycclpl>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: netdev@vger.kernel.org, s.nawrocki@samsung.com, sboyd@kernel.org, 
- mturquette@baylibre.com, linux-clk@vger.kernel.org, alim.akhtar@samsung.com, 
- linux-samsung-soc@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, 
- richardcochran@gmail.com, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-To: Raghav Sharma <raghav.s@samsung.com>
-In-Reply-To: <20250509131016.3173048-1-raghav.s@samsung.com>
-References: <CGME20250509130035epcas5p36c784dcbbdcfb708c12fdfc67eecfb49@epcas5p3.samsung.com>
- <20250509131016.3173048-1-raghav.s@samsung.com>
-Message-Id: <174705404323.2941293.7491177381588935328.robh@kernel.org>
-Subject: Re: [PATCH v1] arm64: dts: exynosautov920: add cmu_hsi2 clock DT
- nodes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftddugeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfejhffgjeelkeeftdekfefgteekgefhleelueeijeffieekieeigefhledtffetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpfhhrvggvuggvshhkthhophdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigr
+ dhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Hi Maxime,
 
-On Fri, 09 May 2025 18:40:16 +0530, Raghav Sharma wrote:
-> Add required dt node for cmu_hsi2 block, which
-> provides clocks to ufs and ethernet IPs
-> 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
+On Sat, 10 May 2025 10:43:04 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Thanks for looking at this series!
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Unfortunately the exynos patch is still needing a decision. Quick recap
+of the story:
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+ 1. patch was sent in v2, nobody acked/reviewed it [1]
+ 2. was applied by mistake to drm-misc-next [2]
+ 3. you pinged maintainers, no reply do far -> should be reverted [3]
+ 4. Louis (fomys) asked on IRC how to handle it, no reply [4]
+ 5. in this v3 I added a revert (patch 1), no acks/reviews on it [5]
 
-  pip3 install dtschema --upgrade
+[1] https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-14-8f91a404d86b@bootlin.com/
+[2] https://lore.kernel.org/lkml/832a9db0-cf8a-4d35-8a98-08053fbd6723@bootlin.com/
+[3] https://lore.kernel.org/lkml/20250430-arrogant-marmoset-of-justice-92ced3@houat/
+[4] https://dri.freedesktop.org/~cbrill/dri-log/index.php?channel=dri-devel&highlight_names=&date=2025-05-07
+[5] https://lore.kernel.org/lkml/20250509-drm-bridge-convert-to-alloc-api-v3-1-b8bc1f16d7aa@bootlin.com/
 
+What to do? Proposed plan:
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.15-rc1-6-gaa833db4b822 (exact match)
+ 1. Louis immediately applies the revert (patch 1)
+ 2. I send v4 with the original patch to hopefully be reviewed/acked
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+Plan is OK?
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250509131016.3173048-1-raghav.s@samsung.com:
+I'm assuming Louis doesn't need an Acked/Reviewed-by for that, but I might
+be wrong, and we both would like to avoid further mess.
 
-arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: /soc@0/clock-controller@16b00000: failed to match any schema with compatible: ['samsung,exynosautov920-cmu-hsi2']
+This annoying issue is taking much more effort to be fixed than it took
+to develop it. I'd like to get past it and think about the next steps
+in bridge lifetime management.
 
+Thanks for your understanding.
 
+Luca
 
-
-
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
