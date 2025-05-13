@@ -1,133 +1,119 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64849221282
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2025 10:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A8B23909F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2025 10:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747131487; cv=none; b=dSsnkOPw3dSpuXJ9AuEXca49HZEsnrRHAhl07actpj1T5zzLOavs6kayCpSnaNK68euhJIjUay6by3EXRNSO3RbI/IRBPw/yredJzySVQK43hxZfna6DI7eYCSChWdwefVkUPSSyhRZUwEh1rfguWolQTDq4bKErqNLOA+Wi4jI=
+	t=1747132946; cv=none; b=W4eWFNFk8xTDSPCGSbEllzGjMiEYLfnqYd22u9CeSj49YUVGs9z4uiFbnG/MX2FHZyEep2ZNlgc5TIYlhIBKwizNvoEp9s7gsdnQf4WiFmGRBGxugTC/pjAO+JBNIzrBMfs7IJdbCbF1aYW78yD9HkpEvfmj5QMX9wahSu35NWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747131487; c=relaxed/simple;
-	bh=+2q8Agc8OAUp6ljVH2smijkPt4WizUEwcy8s1vXQJ20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tCY8bmc7OJwqY0AvhB2H++3RLoGkAqvFH96ioEO8vfwOfZio8Ttl2ulwhd6TCW7V61EMWYXTtFywM3uMcwJjK7YiokwuPsImydU7xIPkHKoLfaczWh/HpvHjTA1hXD6EjanGFjvcgXusDZSJJvX5I/mkUhKeqw1lts+cvvkgv9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hvngAvHZ; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1747132946; c=relaxed/simple;
+	bh=pSmfcyWrGiF4xpTJTeN86T0ysr03H5rq6eBj1nDatnc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ClgIdAktwDtWxt8bIMDp92+3pscUenrXeGY86E8BM9YFQOE0f21X24/BLZODYqS+pHRFkdTe6DQws/CTKRSw+K6B24ksu2Ar/apptm6R+CZNfgi1R25AvYrOTe/2kM04fHakLbTNvGTyQSd7yP7ZlnZwgSYR05mjsVN5VnsYDZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HwiQqqBX; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvngAvHZ"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a0b77ea855so736043f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2025 03:18:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HwiQqqBX"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43d72b749dcso6275905e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2025 03:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747131483; x=1747736283; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GpW/hDUMz7zX4tvSsgRzaXUuXymLo1IwYeqOqY+OOaY=;
-        b=hvngAvHZN5WQlPgbX0ezxnYSOavz4yIEBzt1lkt50yRPJrn8zaehjS2rfSpk1zTQ+h
-         utK3maQQ0ncICCxbLHdJmRCt7pTmSNrhhRON2SuU+quDzIaZbI73OaPIJDkCGt8uV94p
-         dnqDCoI4Rcc+i6tt3V3zWQaDDy5QbFoJPuf5vMzqC8Y5RvP/rsX84N0rY4sxJfdVBsRA
-         bIQJffHZXK6XsIfZ7DBK0LPTrkQ6aK2MfrZOYrwgrvPyXOt5QrfuOpLJcpcC2vc1hfaC
-         Z3AgqTWA6OxS+bbWFvblpehyZS31ywEzbrCG9orju/aHFyIZSfyCyOdG2lIcr2jIYAja
-         KD1A==
+        d=linaro.org; s=google; t=1747132943; x=1747737743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yg1c07mHuEVEndX1mN4EPyk/YfVVe6WLz5FXdYEWUKk=;
+        b=HwiQqqBXnSYV986xr9Y/ql/EZbdLFMd9KcUdy31uqIzZFA6jHwt2WH5SqjkWYugbZS
+         2MRTKPGLw+pS72syJeKquxHetuuGs711hmi0vHap6+jiGjNoPNhrydAvX9kO1Cb/lh6v
+         JUTXmJn9kNKaF5oY+7Ec0fwWgoKFWVoOEX0zfU5ZTBS3OdC7uajm+yMzSuMLc+xS7UYF
+         gujRgvjBH4olfF5GOouvGF+5HcfDLLjvvhQhqjTLGC/DRAZgEZnbPzSZaBgkwXbTgYQB
+         Y0JskSxisMITL8We5ZTnUoCvKatoFErhuQqJWq3KFRcqwUeSvn2kBiaIshvi534kLO8R
+         Mxyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747131483; x=1747736283;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GpW/hDUMz7zX4tvSsgRzaXUuXymLo1IwYeqOqY+OOaY=;
-        b=Bbm/WW2ezBXerdXEipXeBKX79G9/mkU9yglxwrqzj19rtstaUPqIBd3pd+0EcvtpmD
-         C3rxesn7EINl5zW9pEfnvpXiEHE005g05yUBm1xmnD74+VzfQWB/BqFs+bIwltMSlwWT
-         /R8rjHlBL6/ktkLyGOJRX3GeOzALXQ2xHDUADMr/VWjn6/6RUE36/71zctgpDJL18mtD
-         gWUGqwj03yVTmLjWHVONXePvVDrxF+kwmz6qCvFV84mg7y7xa5YCLRMCR5ThVhJ9m5dU
-         nr+PpxhO4rkXBq58SsRh8xiT9NOneDuBoWST2fu1dtWkth6vyGdLpMmEcKX96aVub6gg
-         FSWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh1rfjWULiecCGGjOPxH30IjFIXOiX1IYCtpcJYnmx+ny00WGQIe+vJzQy8AxAkyFMggxsfg+AS0XUa9eclPVqXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJUFVw9hzlGz8NSa0w8PWVL6w03o/rMbewhb1ssNrKEeQhrKxF
-	g6Wa+NiFGEpvEjZAmTtDK59O59TmWx//39qqO0IIRxF7sJuEyAxohSv9otx2TaE=
-X-Gm-Gg: ASbGncvcBy6mZ66tu6jX82/VGj68CDJZERrHrcSp9UJ2cCiUKlzVvUaw++WT/RSu8F8
-	cJSiWNBvBqlnJbkC05BnpL0xtZCpIIzqky8oIqszlqSuj/KkKN5lIcxI68WWSoBPgboaO4B7N1Q
-	gShHE/fNllJTqp1O9G1O2GQSdkafV7Iap5gY6Km5ofyOiEFOxnY7UCjcSwiBsYoUhzFzHi8VEay
-	0pxzETruQGu5mHLpj1Did1nUnbqPwdseb0Tx6YBlUkeFtG12+hhmBZ+rGh7Kavjl4bIlOnB26U+
-	CwKATypPXfB7uNkLcvd53vx6c5qjoi8TNLqX3cTcstP8RwgWlWvHCTR/b/YvbBI3WdTP0MZNUZ5
-	5jchaXoZSf5he2Gg4nHgraOmyFIOHaVuzKzInxxU=
-X-Google-Smtp-Source: AGHT+IExUE1z2q+MGTB1BjX3tNGd6iZlgfApNxaHiNcVQa6gR897h0allbxYsieVlwmVMw+6ixRyLQ==
-X-Received: by 2002:a5d:59a8:0:b0:3a0:9dd1:bb59 with SMTP id ffacd0b85a97d-3a1f64a1f8dmr4843504f8f.15.1747131482665;
-        Tue, 13 May 2025 03:18:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747132943; x=1747737743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yg1c07mHuEVEndX1mN4EPyk/YfVVe6WLz5FXdYEWUKk=;
+        b=wwWzbMqaq/q88yRagrXiu1gO9qgfJL3UGOfRQeVRy7dTahKLCuojo3rTqAxhkb/PGp
+         NO3yxFJiJideOhMtg7xU3U0vVzKMky+tlpSIWEjVI+Sis+GSRHQolucReXzoSWXJZDfT
+         xYXNhQIEgGURlnwRB0BN3QJe/ulIeIHSCOIPIGc7VGaI7zzfl92fmxK0wCNJVIaLkaYh
+         u9dW1KV0Oc5/WqIQWKaT13lsg/dpLVYcZceqJ4Hfyi1g2HXbV1qSq7o2RFsCiDVb3mbB
+         M478U4O5ZR5hpv4Vjg6OBdGnm6lPiKRvPVRTbriYG7kQ8KPWS7u1xkIQ4pvTdJlaCjwq
+         YAmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCcSwucjWh5svB29Qq2WMIiaSMVe3SOoLsqWrw4Wiue7iljViZgIDoQefvzcwcoJAWBVfn5BdKpz0X8PQ0iOg7Tw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuCrUeEMvu6F4eTV9hVeOUWdpT5HQWigDj+xBhRwaPHo3vbFer
+	LJVW06KqfPX+b+j84n0v8wqPXHkiwVCUjPGRIhWg/dEELdtv+3gvFs9fO6f53vZI73WPO+V5FW4
+	mmS4=
+X-Gm-Gg: ASbGncu5D4Ep/PW9bK8SMmNj2RfUimUfOz0ySNvss3BWbqOSXod6BdPHhpCsoOA4K9M
+	eQGgXIdNwoUVuYCtLyLOHg9cxwYMxr3ELN2BLbBZzllvngGR69p2R1FdN+euLi2xsYRlT5lNI79
+	vJShF0hw8uQEG8ytNBU9OX4hQIKtcjU8K4tyVfJ7CJX+bu8kbnIdcfYTRZP2saXcIpRCqmzeQrV
+	wcC+ndAtmySean03d/xumDF+pI3faBSdF7K5QKnFr9ezk4cjdJUylwbbcOmDKJxm95vrxMGvdVB
+	KB96cvu69UJT59gm7PL3EsOxK8pxKiLPuR3wfccuq8TNAyLx1rgf2U5JLjTsYtAqY+V+lmyrW3W
+	36q2lTaNO88cIeMd4cC1lc2TWA6+Suq/Y1aR57w0=
+X-Google-Smtp-Source: AGHT+IFoNiPxCt+CMN4614Hku32Rt1pWZtS1Ab8LgzEA8q/WGFVYaj4V1uUDGQcXU9uLbt/oeGpLVg==
+X-Received: by 2002:a5d:648f:0:b0:3a0:ba77:fde with SMTP id ffacd0b85a97d-3a1f64589camr4267133f8f.8.1747132942873;
+        Tue, 13 May 2025 03:42:22 -0700 (PDT)
 Received: from kuoka.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2d37fsm15914997f8f.68.2025.05.13.03.18.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d687ae10sm161002435e9.37.2025.05.13.03.42.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 03:18:02 -0700 (PDT)
+        Tue, 13 May 2025 03:42:22 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Arnd Bergmann <arnd@arndb.de>,
 	soc@lists.linux.dev
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH PULL 5/5] arm64: defconfig: enable ACPM protocol and Exynos mailbox
-Date: Tue, 13 May 2025 12:17:54 +0200
-Message-ID: <20250513101754.23158-2-krzysztof.kozlowski@linaro.org>
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/3] arm64: dts: Cleanup DTS for v6.16
+Date: Tue, 13 May 2025 12:42:15 +0200
+Message-ID: <20250513104216.25803-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.45.2
-Reply-To: <20250513101023.21552-5-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1161; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=FwRadgPxJRm5xEAehJ8JywumbY0idjddVQyEPezOekk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoIxxSNRzisqVNsQAPPyyKC0GMYtidRZ+mahC2q
- 7a1kCi49W+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaCMcUgAKCRDBN2bmhouD
- 1w3qD/9sV5S/8zWHdb9HmJxyJzng+j2RQ2MTrzMvGp10HAMWKOtVz9EDQHAJMQMdafDO+uf0Rcn
- +BEeZ1ux9bk0u+rnA6dUyLWCOj24BWQE1C7RdSLNJkxclO+6Hw9SGS+RXnfOTFibwP9+dVgAyXE
- VVyYEWajD26bKBNBuE3UZjRnT/6J4z6V/tOZtQHJ+13yYFIrHSjLL0btX7NYRXxET4WD4LsgWHe
- 374UyWm0OSfJSjFUbcaHZmBAnG2pRtYvt1nCQkkKFsNRnIGEwWWu7PuyUjIXpRX1f0kOwHdy2ve
- wdxqllBxYV+WuXXVdwXxE/bqEmhzRpkYpywjtbdle1n74T2y/xXSbTDrvJUSCcHC9GUl9RRZh4f
- IewbY7pR7uJz1FACllnaVt530k0XgjglyNAddTkdg/dyfCw89dXLU98eFZS1TmJAWv9BJDdkfh2
- rGF1BubmwZZlS0Fsk8W6axywjM6j8Lbnyz5R3kZlUDA/vxOC+oFkuEGljRkELxTDOh2NgoF8grQ
- YCatdNfWkqRROfgpNl4Qd3o4tD7SzQ8rRmy3/l0Ooyl1NtsYotU5osF9iYZd3CFpH1I/nfPz239
- qFYG/WtuE2OOjlNc2Mlk+acCDrCiGU7c6f2OmCM6NXc5N8LZzm03jpLphu5Wn3UQjk7XgqU2ncP zt+WBUBpI6quNpQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1132; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=pSmfcyWrGiF4xpTJTeN86T0ysr03H5rq6eBj1nDatnc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoIyII5bO9UDNY2UW41YhzGm3W79e2lPorMhsUM
+ 8laVWkGUX6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaCMiCAAKCRDBN2bmhouD
+ 18KQD/9duw6hJzlxO6+orDMVLJW8i9K8mDq48xhYYD9+R3ihDIi4P0VwpwYzTj1V9UGm62DpLQ1
+ TbVa4C+bY6Kbs9ZzECfRFcJjHsowemsuuxSTB3juYMXN6gtZmrplovDL+vSRZqtlr1kKQ8dTYB3
+ Lk2QQ1SPFsBxsAghduP0jhgtecoLh/BfM0piYXXhL2LtYaOV/ZYQVL3USecXb5gdEbBmcW8Dh4+
+ QOhSl2NTx4cKibXliq18QZa74cDUdPVOFyoJp54xu2YdlQAUTSodJs9hzZAAg+0kKOTKZisvzaQ
+ xI1Kvn16BVz2c2vAdkEDj4ldOk8MD7o5eHN0/uiZiRACZBducpnUW1fvBWGKvMlXJ6zBOmGaygf
+ DNrXGI4m/sDJKfV0YVSDH+lnWexQk6cn+3tL/kS+Nr9+xmVPEKOVry3kqlpfbPDMOW7c4XJPulJ
+ bdKm4tMUQIyxja3vOvsZbH5m5D/JLzlC5y9wEm8gqpPkS3GmCIgHf/5fOMe5W1LJbDAEnpIS6lo
+ akRuP1GMrDwesERkU7c50LPyO95SMWPIN8PFIaAiBroR326pTIAg9tugvdEoGW+dRj3Cov0JxN5
+ 8zMa/TlEt+HKeOBQdScbgr+b1yl2z3r1ODgttSs8vbjqMDv2hUqUDPoOfuTAQ8UCI0qyC8Q7PcB JLuiWgou0/eQqdg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-Enable the Samsung Exynos ACPM protocol and its transport layer, the
-Exynos mailbox driver. Samsung Exynos platforms implement ACPM to
-provide support for PMIC, clock frequency scaling, clock configuration
-and temperature sensors.
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Link: https://lore.kernel.org/r/20250207-gs101-acpm-dt-v4-4-230ba8663a2d@linaro.org
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+are available in the Git repository at:
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5bb8f09422a2..5c85e5da152f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -265,6 +265,7 @@ CONFIG_IMX_SCU=y
- CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
- CONFIG_QCOM_QSEECOM=y
- CONFIG_QCOM_QSEECOM_UEFISECAPP=y
-+CONFIG_EXYNOS_ACPM_PROTOCOL=m
- CONFIG_GNSS=m
- CONFIG_GNSS_MTK_SERIAL=m
- CONFIG_MTD=y
-@@ -1416,6 +1417,7 @@ CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
- CONFIG_RENESAS_OSTM=y
- CONFIG_ARM_MHU=y
-+CONFIG_EXYNOS_MBOX=m
- CONFIG_IMX_MBOX=y
- CONFIG_OMAP2PLUS_MBOX=m
- CONFIG_PLATFORM_MHU=y
--- 
-2.45.2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.16
 
+for you to fetch changes up to 04e7638dd64af20e4e81b7569abea9673e337098:
+
+  arm64: tegra: tegra210-p2894: Align GPIO hog node name with preferred style (2025-05-05 21:22:25 +0200)
+
+----------------------------------------------------------------
+Minor improvements in ARM64 DTS for v6.16
+
+Two cleanups which were missed on mailing lists - align GPIO node names
+with DT bindings for Mediatek mt7622 and Nvidia Tegra210-p2894.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      arm64: dts: mediatek: mt7622: Align GPIO hog name with bindings
+      arm64: tegra: tegra210-p2894: Align GPIO hog node name with preferred style
+
+ arch/arm64/boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi           | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
