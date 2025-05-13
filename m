@@ -1,261 +1,145 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD5A28D8D2;
-	Tue, 13 May 2025 13:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C956D74C14
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2025 14:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747143478; cv=none; b=Pqg7s4zjbqHRyPLqtN1HfTlqVfvuqS2pqdg4kG/JWxExrCkpd4ib6GTxdscQIkoNYBUrGOB7s95hkWkBrr1oOf5o4tt2ybLh1CxifkRpLqSYT07sslGjgNm/9ifRyNEfkU4dOylS/tqcBmC6A1Enav68LAkw82fBhnYjsC/UWCc=
+	t=1747147962; cv=none; b=mBm7vNiWJqerB7bnIa0hgmG2KcdqorAEUeVYLcN4vtrpfaNFACsyjjaxz3nQ0R468gWxNeIcXyl8aod1EgUKy0VKmedWydlklr5DmeL7+LtxKwZeGFkyyD1fH5JeDgaCQYdgM1LMBo9d1c2q8TWLnWlcvj8XHrqDZ8kveaabCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747143478; c=relaxed/simple;
-	bh=0+HtaGrGaoLqr3qhDtv2IdWE8bgfBKdmZ+r7KFwBP08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QDWmFha6OGIzq6FKlcHk3x3IVqLfUH2IjLsWYA+UexRxCAjbD8BqmYxmkGdjtUyhNcyYv/5W67/QNfUg+fYI/msIfV6CrE2GmonnbsumDDh9D4EUNV0vvIwUlQOJyA3r8cDiVRsJbwQbNvEY8fOpr/umhLxX3ZSIVwhRcGx6vvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQ11HkF6; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1747147962; c=relaxed/simple;
+	bh=7eTd/KlYKdNBE0gVtB8pRaG5SNHtwy49OeApK0fIKBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2JhWqeyORWxu3PftUvjLEXEELMndCYjanKSp3YSD0TfO48QoPKj0eh9fC8KFv4AE7uHbUNsar3Fv9cWCbNuf+s/tzApvVpXcuTeAn6pfHoKuZDXWgT3SlMQKF1bokuX1KpEHD91k3+6+PTUvY2Ynt00u10f7WR6Ba49ZtfMg1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9/YyRDf; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQ11HkF6"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74019695377so4098587b3a.3;
-        Tue, 13 May 2025 06:37:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9/YyRDf"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a0ba0b6b76so4076288f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2025 07:52:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747143475; x=1747748275; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mm3KpWP1Rf7uSeuMqKX9HM7cqL/7satZxR0/tskkBws=;
-        b=dQ11HkF6//vEbPXjVFd1+o1jzI8Y9O5J4Bm6c+mp5fWLHwoko5aB+FOml0+/jWLgkO
-         Oku+/sfbw3YyckMVcvzKqKfR8hx4NVthBuyLq+TcKw26TAS3h4ysu4uFUWMZcS665iEx
-         zchB8hsGyTfI7OFI00LoAqad7bFpaP5Jhc7ZjTOD9Jzj1iNJx7sWhQJcfkT6c/C9PZ4N
-         3rDJp0uyCeVQILI6UYNfNgwUGfttfsh63c+YYE9vjd2iKXNS2JCQlTMY/KgCF5AdyKs/
-         HOJ6JfsOPFRNhsso/X+AdyUorthucISZXVtD1MkbPUaJYF7BDqolrV6cFBY81XEGskX4
-         thWA==
+        d=linaro.org; s=google; t=1747147959; x=1747752759; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NprQZFd0msRuigKqMDzXfWDuMemIh6oSVb1Z2bS8NyY=;
+        b=M9/YyRDfc3lZmZf078fLA06/K9MYKxFgXxCBxaa+mJIosp9HlH4Wy092cubEqd+qG0
+         1A1TgLrCLcug1t/nt2RmCeTyNCkusflDweFdarSpZ/EqeCEq/PAUgmvd8yxHVaVkvgxa
+         4oj5paQzNopFRBvLQ/R4AQl/9qGLZ07mUqtt1zFb7ROfb/i0/eHtTB2XwNy3ohYgsiVk
+         /UK5pP9sh8xqGR5Yfvz17YaU+AO1AU0fj6OAioExEm2qH219EUtpbhCLppIy53KciHcd
+         gM8dQJIMAs/Rs88kAxntiNvH6cnMHNx8kIFpTPKVriNIHdSxfFzcoeYgv530U+aNAdNN
+         fvhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747143475; x=1747748275;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mm3KpWP1Rf7uSeuMqKX9HM7cqL/7satZxR0/tskkBws=;
-        b=cCFvfgePtNxc0fY5M92MJnfWmubSyOmEDxtlYFcWqnbdajjXfN+/EMLjPcez982pQ2
-         sCL1if/bq6+mgS+29cqjSfffB/C/YKWGVS3KTQ2sk0942p04w28TqJLiw6EK+6bTLn7O
-         ondnVcph8lMN+QmzHU26tVb6SuKjMPRz0v1hpuKeH3PBqcE2/ldKI5JiBUhVn0uMC2Jr
-         knQGTPH9VjX/1nyJzbfOvQ6LxMuoPwbNCZQ8RAPQAFrrOgc5L/UIWWmBYFoWv0Zkhsqm
-         6Oc3VVRq4xeLR3dzyoybfunMXurlihoxbPPg6I63YYExhEZzkVLMyXy5Fyl//6HzJxC7
-         rYCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAyJSOGCW7zctMJk3Xk0qqHS3vamVPj1IOlhhDA2ab16PxpcgHfNjykqro/JQZkbwbMPnAWxw0MRexLFA=@vger.kernel.org, AJvYcCVNaNSsxQnM46DOANesLnE7Ggsdb+c2uFh6tfmcVXyK1hU3Z004inahkaTNKqrI7d5On7h0iACKFIgajvhq93JgkUo=@vger.kernel.org, AJvYcCXX8rWeBwfwV6k5FQVVs3/7IjW5yGCF6PiAwQglNw1UvyBJvRu1eP5OBe61GDjo7TxzpPJaz+/9jQx3JYQbbUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdL6r4ByOHsmgw1Xa80a8H1Qcg4PYe31mfVyRkKcq9gyQ+tLbo
-	14geteLZKwShqG9wZ2i2IGVc6qsaJVNzz7kDjUVhXwlClG3uPeZd
-X-Gm-Gg: ASbGncub988+UUx8GxGSjxarii6/67qe66q+lruuBi6nVoyvA3jCYsypiirYa8VHwS7
-	dzoZGJ6QqqoXWJraopHYspICRiiWQri4azWlX0Hs4xip5bFMsZ5GpmrcragT+5VwUZQVV3R+D8D
-	SX+KzpVlfQGCxQVV62MV4sN5X+slu80n+Hq5wjKH3yoU5JDOaLKM70vwv+Uy9W6W0XrpMomLbMe
-	Inaa69WZwegaxclm7RCfH4acbso5iV+7W59G7hOygHTeioQuyLju7Oz/X2B0Ra6LJ5aVzKPop7O
-	lxfkZVVUectVuENzTDEHe63qHKj7Y6P+Wlf6wtSl10RIlW/5nJCiZ/Pi/HLnr0RXpf+rdmYLUYG
-	7jJwuB373EDwGUbusT7SUFN+G
-X-Google-Smtp-Source: AGHT+IHpuPjA3MNTlH9t6DnGWKdjCy50qsZI97/whW8qfdcp4muFJ2Yu3JwYtRCkGxpO+WcpLld45g==
-X-Received: by 2002:a05:6a00:4f8c:b0:736:55ec:ea8b with SMTP id d2e1a72fcca58-7423c05f1dcmr25293787b3a.24.1747143475208;
-        Tue, 13 May 2025 06:37:55 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a38bf3sm7972694b3a.133.2025.05.13.06.37.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 06:37:54 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <64390424-5c79-4354-a08b-b6ff7638903e@roeck-us.net>
-Date: Tue, 13 May 2025 06:37:53 -0700
+        d=1e100.net; s=20230601; t=1747147959; x=1747752759;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NprQZFd0msRuigKqMDzXfWDuMemIh6oSVb1Z2bS8NyY=;
+        b=plMqLZHe50fdD3MQppLuJiuxwSEh8yX9Gcx+OQT4UkE5vAuFKiWuiJ8Mum0mq/Hsev
+         0/DDNdho7NpvJbwvEb8Pg7KG5kSOu95BT9KHu6/UIjqINSg6s27Wd643WrCYmpMEhgbe
+         B25z0fSC/N5iXTAoKCJk6XsxOtabmTwzmniABmuM2YOJ/8vCdiefvxu4SKXshHbYhNz8
+         h3CErqxDvZeCQJLHzklFj9cYktCmpI38049kAwvbrwvKH1FJ+C3Xvy2w8IW1XCq2kRT1
+         YRZ01My/h+plbU4XPkF1fWNwCDqZoICMUiWUKX0swDf1Bewf9IxfW222o6RJSEkFH2Pz
+         HrcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViJdZAjnHV8P0nheMnba4BMXpPW4RuxpjXcZG6/GPel0nOyjfS2rE6bv9S6QBl0+N55GAr6PfQGswvmD25EyR5xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAqhRz1Dlvhjvi0Bjrx4PkxVQbMdA0D2piOwmQPzBjoKvYASuC
+	6OaaLNu+mxpwE3rApGzds8Y6vAWcon+X+cRfjiMZxL1mPwBTaAR5WhOOVlX9hlM=
+X-Gm-Gg: ASbGnct2XZ6ROcYcqGrEkeGTsrv2PE/htuaWdNEazfNgdh+6M5Y1nNUQIQXg+mjCt8m
+	2PNydEDLICphbGoakuXOrXjNm3ec6teCm2pP9VbVjUK5S91iuLGWmUWGpjMjJHYeHKOggGIUcDv
+	ZTxoacOslQdT7oQ8celdPrmLu1S9lEEvKoxAxuNi3AFmnLJYxy0YTap5Bpm6elbyxdQ6P9OxUFO
+	qo80PMH27qyqm4N7xP2j80jb7fEf8kyEykj7povj93TF7VwVh3QG9Sq+zZX+441v/gMQX9qqEtZ
+	v2eIwcZVGjPqwJas/xDcsvm0aR7qYT2LChr1E/H+GPy/2avoPiuxpSYyXZbZmqmpW6AJoLvAjfd
+	51qAcO0kZnYcaLw==
+X-Google-Smtp-Source: AGHT+IGYDcAG8pLfPmYFTyeqzeIaOvsHfnmcsUp0uHL3fXQ+4Wvxm5ZCV+BGXbRBT2JBatXikF9ENg==
+X-Received: by 2002:a5d:6a11:0:b0:3a1:faf3:b608 with SMTP id ffacd0b85a97d-3a1faf3b6c6mr10089134f8f.56.1747147959102;
+        Tue, 13 May 2025 07:52:39 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2ce36sm16710394f8f.71.2025.05.13.07.52.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 07:52:38 -0700 (PDT)
+Date: Tue, 13 May 2025 16:52:36 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: John Stultz <jstultz@google.com>
+Cc: Will McVicker <willmcvicker@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Donghoon Yu <hoony.yu@samsung.com>,
+	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Youngmin Nam <youngmin.nam@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
+Message-ID: <aCNctHq6K7uqFF05@mai.linaro.org>
+References: <20250402233407.2452429-1-willmcvicker@google.com>
+ <20250402233407.2452429-7-willmcvicker@google.com>
+ <Z_6OZHYfC0bC5289@mai.linaro.org>
+ <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] watchdog: s3c2410_wdt: Increase max timeout value of
- watchdog
-To: Sangwook Shin <sw617.shin@samsung.com>, krzk@kernel.org,
- alim.akhtar@samsung.com, wim@linux-watchdog.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kyunghwan Seo <khwan.seo@samsung.com>
-References: <20250513094711.2691059-1-sw617.shin@samsung.com>
- <CGME20250513095656epcas2p258caa7e4c94ff04ccce72f51b2ba81f4@epcas2p2.samsung.com>
- <20250513094711.2691059-2-sw617.shin@samsung.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250513094711.2691059-2-sw617.shin@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
 
-On 5/13/25 02:47, Sangwook Shin wrote:
-> Increase max_timeout value from 55s to 3665038s (1018h 3min 58s) with
-> 38400000 frequency system if the system has 32-bit WTCNT register.
+On Tue, Apr 15, 2025 at 05:48:41PM -0700, John Stultz wrote:
+> On Tue, Apr 15, 2025 at 9:50 AM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+> > On Wed, Apr 02, 2025 at 04:33:57PM -0700, Will McVicker wrote:
+> > > From: Donghoon Yu <hoony.yu@samsung.com>
+> > >
+> > > On Arm64 platforms the Exynos MCT driver can be built as a module. On
+> > > boot (and even after boot) the arch_timer is used as the clocksource and
+> > > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
+> > > source for the arch_timer.
+> >
+> > From a previous thread where there is no answer:
+> >
+> > https://lore.kernel.org/all/c1e8abec-680c-451d-b5df-f687291aa413@linaro.org/
+> >
+> > I don't feel comfortable with changing the clocksource / clockevent drivers to
+> > a module for the reasons explained in the aforementionned thread.
 > 
-> cat /sys/devices/platform/10060000.watchdog_cl0/watchdog/watchdog0/max_timeout
-> 3665038
+> I wasn't CC'ed on that, but to address a few of your points:
 > 
-> [    0.208763][    T1] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: count=1099511400000, timeout=3665038, freq=300000
-> [    0.208767][    T1] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: timeout=3665038, divisor=256, count=1099511400000 (fffffc87)
-> [    0.208799][    T1] s3c2410-wdt 10060000.watchdog_cl0: starting watchdog timer
-> [    0.208969][    T1] s3c2410-wdt 10060000.watchdog_cl0: watchdog active, reset enabled, irq disabled
+> > I have some concerns about this kind of changes:
+> >
+> >   * the core code may not be prepared for that, so loading / unloading
+> > the modules with active timers may result into some issues
 > 
-> If system has 32-bit WTCNT, add QUIRK_HAS_32BIT_MAXCNT to its quirk flags, then
-> it will operation with 32-bit counter. If not, with 16-bit counter like previous.
-> 
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-> ---
->   drivers/watchdog/s3c2410_wdt.c | 30 ++++++++++++++++++++++--------
->   1 file changed, 22 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index bdd81d8074b2..a13768a11f20 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -34,6 +34,7 @@
->   #define S3C2410_WTCLRINT	0x0c
->   
->   #define S3C2410_WTCNT_MAXCNT	0xffff
-> +#define S3C2410_WTCNT_MAXCNT_32	0xffffffff
->   
->   #define S3C2410_WTCON_RSTEN		BIT(0)
->   #define S3C2410_WTCON_INTEN		BIT(2)
-> @@ -119,6 +120,10 @@
->    * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting the
->    * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debug mode.
->    * Debug mode is determined by the DBGACK CPU signal.
-> + *
-> + * %QUIRK_HAS_32BIT_MAXCNT: WTDAT and WTCNT are 32-bit registers. With these
-> + * 32-bit registers, larger values to be set, which means that larger timeouts
-> + * value can be set.
->    */
->   #define QUIRK_HAS_WTCLRINT_REG			BIT(0)
->   #define QUIRK_HAS_PMU_MASK_RESET		BIT(1)
-> @@ -126,6 +131,7 @@
->   #define QUIRK_HAS_PMU_AUTO_DISABLE		BIT(3)
->   #define QUIRK_HAS_PMU_CNT_EN			BIT(4)
->   #define QUIRK_HAS_DBGACK_BIT			BIT(5)
-> +#define QUIRK_HAS_32BIT_MAXCNT			BIT(6)
->   
->   /* These quirks require that we have a PMU register map */
->   #define QUIRKS_HAVE_PMUREG \
-> @@ -378,9 +384,13 @@ static inline unsigned long s3c2410wdt_get_freq(struct s3c2410_wdt *wdt)
->   static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
->   {
->   	const unsigned long freq = s3c2410wdt_get_freq(wdt);
-> +	unsigned long max_cnt = S3C2410_WTCNT_MAXCNT;
-> +
-> +	if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
-> +		max_cnt = S3C2410_WTCNT_MAXCNT_32;
->   
-> -	return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
-> -				       / S3C2410_WTCON_MAXDIV);
-> +	return max_cnt * (S3C2410_WTCON_PRESCALE_MAX + 1)
-> +				* S3C2410_WTCON_MAXDIV / freq;
+> That's a fair concern, but permanent modules (which are loaded but not
+> unloaded) shouldn't suffer this issue. I recognize having modules be
+> fully unloadable is generally cleaner and preferred, but I also see
+> the benefit of allowing permanent modules to be one-way loaded so a
+> generic/distro kernel shared between lots of different platforms
+> doesn't need to be bloated with drivers that aren't used everywhere.
+> Obviously any single driver doesn't make a huge difference, but all
+> the small drivers together does add up.
 
-This will overflow if the build is a 32-bit build with sizeof(long) == 4.
-The previous calculation did not have that problem. If there was a secondary
-reason to change the calculation, please submit a second patch with that change
-and explanation on its own.
+Perhaps using module_platform_driver_probe() should do the trick with
+some scripts updated for my git hooks to check
+module_platform_driver() is not used.
 
-Thanks,
-Guenter
+[ ... ]
 
->   }
->   
->   static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
-> @@ -534,9 +544,10 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
->   {
->   	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
->   	unsigned long freq = s3c2410wdt_get_freq(wdt);
-> -	unsigned int count;
-> +	unsigned long count;
->   	unsigned int divisor = 1;
->   	unsigned long wtcon;
-> +	unsigned int max_cnt = S3C2410_WTCNT_MAXCNT;
->   
->   	if (timeout < 1)
->   		return -EINVAL;
-> @@ -544,7 +555,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
->   	freq = DIV_ROUND_UP(freq, 128);
->   	count = timeout * freq;
->   
-> -	dev_dbg(wdt->dev, "Heartbeat: count=%d, timeout=%d, freq=%lu\n",
-> +	dev_dbg(wdt->dev, "Heartbeat: count=%lu, timeout=%d, freq=%lu\n",
->   		count, timeout, freq);
->   
->   	/* if the count is bigger than the watchdog register,
-> @@ -552,16 +563,19 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
->   	   actually make this value
->   	*/
->   
-> -	if (count >= 0x10000) {
-> -		divisor = DIV_ROUND_UP(count, 0xffff);
-> +	if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
-> +		max_cnt = S3C2410_WTCNT_MAXCNT_32;
-> +
+-- 
 
-I think it would make sense to store max_cnt in struct s3c2410_wdt instead
-of recalculating it repeatedly during runtime.
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-> +	if (count > max_cnt) {
-> +		divisor = DIV_ROUND_UP(count, max_cnt);
->   
-> -		if (divisor > 0x100) {
-> +		if (divisor > (S3C2410_WTCON_PRESCALE_MAX + 1)) {
-
-That is another change that seems unrelated to this patch. Note that inner
-the ( ) s unnecessary.
-
->   			dev_err(wdt->dev, "timeout %d too big\n", timeout);
->   			return -EINVAL;
->   		}
->   	}
->   
-> -	dev_dbg(wdt->dev, "Heartbeat: timeout=%d, divisor=%d, count=%d (%08x)\n",
-> +	dev_dbg(wdt->dev, "Heartbeat: timeout=%d, divisor=%d, count=%lu (%08lx)\n",
->   		timeout, divisor, count, DIV_ROUND_UP(count, divisor));
->   
->   	count = DIV_ROUND_UP(count, divisor);
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
