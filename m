@@ -1,98 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E347C27D77D;
-	Wed, 14 May 2025 11:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D517319341F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 13:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747222671; cv=none; b=b3YaIXYc0EI6rN8kn5eXTOQA0fXzzsVUnfHyhxTFt90exqJ5A9Nzcg2EscyHIQulSuDSAe4mVr1Kfkeg8w2Csv5KY9yWvszdL50anNCSeVWROqXAokFwSnKGMkXrTowdeUVvlf8kaCzlL3e/Rn/qUlXljHkdt3FynfrzRobEHeM=
+	t=1747230759; cv=none; b=AzVS5+17G9Yps7ba7VcUcbOSN8FyZOy7WTAjkP0BW1iEcfIxn5//AFh+fkoqGVfgXCK6LN9WkyG6utHDNVtJTzBJKeiQc6IE1xowhlDyE2GfLK0xinGrwT1e4kUex8RTecpdUx/7QECAtfXlBLcyDVabtsdX5oDmf/1/zOOQqfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747222671; c=relaxed/simple;
-	bh=0F01DWP26YYgS1PPdTSuMQtQtJxshmUQ6mSt4A+utgY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K10D70mwe1c3H1jFXnkzG4nF139PqGI76kr8AMXLv4/pLPFe+in6Q0dEHT1mJYoqriEI93EkjPLwzl7hYDDgRQdnelmitlRtpksxqtfcXfm2XRV+gn2Oir7M4FEowKGXLGQ4QS0TUwjOosaeMJq2x2nlPR2J6CRyBb84GkDGE/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRQnb8Wf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747230759; c=relaxed/simple;
+	bh=sk9+Hmx76K9353/YSJ7f5CerbKr8aapCJIG+K320SkM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=D2PayljLWBTS0T2/+OUw3OUGtBHV1P1APV0Rj3VwPI2DlQOZhKbGlzJYYxWD6t1JG5IxGCo9EIXavIiNvuKZY8EuCvbinok7jYy6lbs5W3bLgoa+ah/nS9QLW+//DcCmoeMRX0PQwb5FDS8KLuNfoq/UZHAAGg3Owf0oqBYWEGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lLkhrenp; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRQnb8Wf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659AAC4CEF7;
-	Wed, 14 May 2025 11:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747222670;
-	bh=0F01DWP26YYgS1PPdTSuMQtQtJxshmUQ6mSt4A+utgY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BRQnb8WftKdlkP5oGSf5HoMasCRIMWeAvcu3TQDmCOC3I9ljErJZ6RTN1Tqu4i+Vs
-	 i4F2roBZZ+D9qHJGbxdxmzsmC6KD7WYptbl8TWIeHpqeoc2EH4X4yhvuyHbGOY0pj5
-	 +ILAZpFMrQ1kulgAj/8Dd+0RSQhCSyMG2OFC+fZkuKpqOh8LJQ+zc677t773QaoniU
-	 WQEO0JRWkvSUBF1O+IMYIGYw8py4zu3KxAVkyos+kgAljVYff/qYTcfUIZWwRkuJWs
-	 V4bR6U3I2USosOjHLPK/CMWSPfIcna51PUKDvLFc4SjA/bKbUbwHN+8B3mEq87Fn7L
-	 iZJmK7OEQWd2A==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-phy@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250504144527.1723980-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250504144527.1723980-1-ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: [PATCH v5 00/10] phy: samsung: add Exynos2200 SNPS eUSB2
- driver
-Message-Id: <174722266707.85510.6309026442043319817.b4-ty@kernel.org>
-Date: Wed, 14 May 2025 12:37:47 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lLkhrenp"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250514135234epoutp04d8ab634ae8bef25ced50ed596197d39f~-aR0-KCSM1329913299epoutp04P
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 13:52:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250514135234epoutp04d8ab634ae8bef25ced50ed596197d39f~-aR0-KCSM1329913299epoutp04P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747230754;
+	bh=fS6WP64nxk5RGLAeXo0j9rsjSAjpHA9bB1CIdrtYv24=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=lLkhrenpf4Ang8OJcMujjFvGUsmln4m5a0oWv9u2tKHHC8Q+egyTspbQWDmdF0+iX
+	 ZG2sijOPbFyVC0MAD4gfvJG5qqJrnqOBvgggrIh+RQSVkoGt3q2lN9Xrx1vsecUSwd
+	 qJLNgnGpZgebvt0EJedbmnQecu88JePj0s30AGEU=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250514135233epcas5p2cd9c912a0768e52b0bb584a54b97caca~-aR0NkYDl1501215012epcas5p2p;
+	Wed, 14 May 2025 13:52:33 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZyFCN0GBvz3hhT3; Wed, 14 May
+	2025 13:52:32 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250514095233epcas5p3f51037e71e60a1e690709f8497606385~-XAQ6OqjD2612726127epcas5p3Q;
+	Wed, 14 May 2025 09:52:33 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250514095233epsmtrp1fbfec6ef430e6f4547e13f7a873b93dd~-XAQ3FzyG1927519275epsmtrp1D;
+	Wed, 14 May 2025 09:52:33 +0000 (GMT)
+X-AuditID: b6c32a52-40bff70000004c16-01-682467e1cbba
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5E.35.19478.1E764286; Wed, 14 May 2025 18:52:33 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250514095230epsmtip2a60aed22479ca7753f78aa377417c155~-XAOEOn-v1808418084epsmtip2i;
+	Wed, 14 May 2025 09:52:30 +0000 (GMT)
+From: Raghav Sharma <raghav.s@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
+	sunyeal.hong@samsung.com, shin.son@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	dev.tailor@samsung.com, chandan.vn@samsung.com, karthik.sun@samsung.com,
+	Raghav Sharma <raghav.s@samsung.com>
+Subject: [PATCH v2 0/3] Add clock support for CMU_HSI2
+Date: Wed, 14 May 2025 15:32:11 +0530
+Message-Id: <20250514100214.2479552-1-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSvO7DdJUMgztrFC0ezNvGZjHhS4TF
+	mr3nmCyuf3nOanFvxzJ2i/lHzrFaNM54w2Rx/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlc
+	POVqcWyBmMX3lXcYLY6cecFs8X/PDnaLw2/aWS3+XdvIYjH5+FpWi6Zl65kcRD3e32hl99g5
+	6y67x6ZVnWwem5fUe/RtWcXo8XmTXABbFJdNSmpOZllqkb5dAlfGu8ehBW/4Kv6v2MzewLie
+	p4uRk0NCwESib/Vi1i5GLg4hge2MEl8+HWSBSEhI7Pv/mxHCFpZY+e85O0TRW0aJ9xMPMoMk
+	2AS0JK5sf8cGkhAR6GKSOPfvFVg3s8BOJomV6yVAbGEBM4llV9aCxVkEVCV6zs9kArF5Bawl
+	blzvhdomL7H/4FlmiLigxMmZT6DmyEs0b53NPIGRbxaS1CwkqQWMTKsYRVMLinPTc5MLDPWK
+	E3OLS/PS9ZLzczcxgqNFK2gH47L1f/UOMTJxMB5ilOBgVhLhvZ6lnCHEm5JYWZValB9fVJqT
+	WnyIUZqDRUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXANN8ieoat3X+PUqv5T9+yX46yWOGQ
+	HnJvxnfP13qP5IzEJe/kK+f3/F///LV+1ifVnjIPhzCxxTLMK9SX9TXuvsniW7i4ckb8HKfE
+	Td86dlj5++1SFDu6+a/woY5o3qppWdyC0u81d2gvYZSza7n7jnH/qbSjniEbeZ7f35G7YF/7
+	p2/PL+kuedCfdav5q/LXxqdVj/YWdeY0fWnxEDEXFYv3ndwz4+LiymKez22RUyNr/I13rutf
+	1MDjXnJD59acx2p/9l2ds+f+kbNq9SLOZj6vGdxv5jkk7xVpqNRpU2Y+nbFso6zfW3aZFrb9
+	LAl/XhxrrO29qHsj3n5DiczR48tvRj4ofSe7yYJp9dY5SizFGYmGWsxFxYkAP1DrSAUDAAA=
+X-CMS-MailID: 20250514095233epcas5p3f51037e71e60a1e690709f8497606385
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250514095233epcas5p3f51037e71e60a1e690709f8497606385
+References: <CGME20250514095233epcas5p3f51037e71e60a1e690709f8497606385@epcas5p3.samsung.com>
+
+This series adds clock support for the CMU_HSI2 block.
+
+Patch[1/3]: dt-bindings: clock: exynosautov920: add hsi2 clock definitions
+        - Adds DT binding for CMU_HSI2 and clock definitions
+
+Patch[2/3]: clk: samsung: exynosautov920: add block hsi2 clock support
+        - Adds CMU_HSI2 clock driver support
+
+Patch[3/3]: arm64: dts: exynosautov920: add CMU_HSI2 clock DT nodes
+        - Adds dt node for CMU_HSI2
+
+Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+---
+Changes in v2:
+- Added cover letter with the patches
+- Submit the patches as a series as they are inter-dependent
+  as pointed by Krzysztof Kozlowski
+
+Links to v1:
+[1/3]: https://lore.kernel.org/all/20250509132414.3752159-1-raghav.s@samsung.com/
+[2/3]: https://lore.kernel.org/all/20250509131210.3192208-1-raghav.s@samsung.com/
+[3/3]: https://lore.kernel.org/all/20250509125646.2727393-1-raghav.s@samsung.com/
+
+I also got warning about build failure from robot
+Link: https://lore.kernel.org/all/202505100814.gnMY3LoZ-lkp@intel.com/ 
+
+As the fix is  just a new version of
+the same patch/commit, there is NO need to add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505100814.gnMY3LoZ-lkp@intel.com/
+
+So for now, not adding Reported-by: tag
+
+Raghav Sharma (3):
+  dt-bindings: clock: exynosautov920: add hsi2 clock definitions
+  clk: samsung: exynosautov920: add block hsi2 clock support
+  arm64: dts: exynosautov920: add cmu_hsi2 clock DT nodes
+
+ .../clock/samsung,exynosautov920-clock.yaml   | 29 +++++++-
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++
+ drivers/clk/samsung/clk-exynosautov920.c      | 72 +++++++++++++++++++
+ .../clock/samsung,exynosautov920.h            |  9 +++
+ 4 files changed, 125 insertions(+), 2 deletions(-)
 
 
-On Sun, 04 May 2025 17:45:17 +0300, Ivaylo Ivanov wrote:
-> Hey folks,
-> 
-> This patchset adds Exynos2200 support to the existing eUSB2 phy driver,
-> as well as USBDRD support for that SoC.
-> 
-> The SoC features the same (as far as I can tell from comparing code)
-> USBDRD 3.2 4nm block that Exynos2400 has, hence the common denominator.
-> It consists of a SEC USB link controller, Synopsys eUSB2 and Synopsys
-> USBDP combophy, which are independent underlying hardware blocks of
-> the USBDRD controller.
-> 
-> [...]
-
-Applied, thanks!
-
-[01/10] dt-bindings: phy: add exynos2200 eusb2 phy support
-        commit: 59cf7546079e3d08d105369c48f8834970290082
-[02/10] dt-bindings: phy: samsung,usb3-drd-phy: add exynos2200 support
-        commit: e4c9a7b475e5d0d9b2440ee48f91d1364eabd6cb
-[03/10] phy: move phy-qcom-snps-eusb2 out of its vendor sub-directory
-        commit: 8d3b5f6375466ffcd2cd98a0c84d31295470fe9d
-[04/10] phy: phy-snps-eusb2: refactor constructs names
-        commit: 93dbe9b5b3a265c7e5466c7b6ada439b01577de5
-[05/10] phy: phy-snps-eusb2: split phy init code
-        commit: 3983b4e9746da1b6091f1d9083f44ed3f12717cb
-[06/10] phy: phy-snps-eusb2: make repeater optional
-        commit: d460be705ae599c0cbfc1ee4ba6a41b225525609
-[07/10] phy: phy-snps-eusb2: make reset control optional
-        commit: aba7a966b50d11deeb3e2f1a66182d150eeb7843
-[08/10] phy: phy-snps-eusb2: refactor reference clock init
-        commit: e36a5d1ecc5f2bda92e4f954f41d65d1ddd5728e
-[09/10] phy: phy-snps-eusb2: add support for exynos2200
-        commit: c4098f3e6134e79e070ec44c58976e1f00d9bfad
-[10/10] phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm controller
-        commit: cc52a697f87e8b2d88298827aca3f81398385572
-
-Best regards,
+base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
 -- 
-~Vinod
-
+2.34.1
 
