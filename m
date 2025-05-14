@@ -1,140 +1,84 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AC827E7DD
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 13:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE471B0F31
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 14:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747230766; cv=none; b=KjnH456K9qdoeSCJgVphqMFpu6k19ebcElCS1omUzJ8KkfT4AHN5MmJFbdRPvbYuL817fwUg9cN+ZbqhLtNiAS3xN+O4jROD70YQ/J1c1tdTSsGFgDZXD9lfMG88HM5a1CSmjP/mX7i3I0CKH/hROFcqNRZpydbl58Kl4IpJI70=
+	t=1747232869; cv=none; b=uw7udlE5uIRWbvDjFudrGZEc24zhVyLJ5m796vDoOR6R9S9oawx9JhXiqM8sL3LmZA0fbRRo6o2jGHFaRnTGYd72yl3KnjHYeu+cZFf71Ytjr+/yUHFRfZ9zuW/KK2bWdJ2IMErWNPBWI4+oR+/Nej5OiD4XfNnIF5XOLNpVwkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747230766; c=relaxed/simple;
-	bh=yBKN8id0e8i0mID56sBX04JKOMEpNFcKtfCE5gt4YyQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=kY+28LRPUu1c63UlF5RLVWdorna41Xz09K2xswrq5x2um0GSJYS3pNleGkVCd72+nWJl8t1bXCz8kocWNc3UCTOeD3CvzWKx5pGUBJt4VbNXwpmjGoWU52FA9VgR2iNij4PwNy7gU78APlM031bpNBhylG6kd2vTrvinTU8Ro9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PWHXu7GU; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1747232869; c=relaxed/simple;
+	bh=3cd4GYt7dt+rLooOE+rIxexrSys+8NzNZRAkEViR1/k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=XdZOX4eCA1hJg0C+m7N/SCrCZtFMlhweOVP6rWIVyD61PtE58y4sNj19Pm0FybhFZBdQyjkHqJ998oMVrAiFJGn2DVRdALBmAj1PigLytwRADLoH95NmXXM9uDDtgiAmYRszQCN6gYZwP3EnF+mD6FeiC+0tDmqb7gvBhvVXwGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=suNo2YDF; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PWHXu7GU"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250514135242epoutp04da8772437c8112a1221cf2551260cfbb~-aR8DUZSY1329913299epoutp04U
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 13:52:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250514135242epoutp04da8772437c8112a1221cf2551260cfbb~-aR8DUZSY1329913299epoutp04U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747230762;
-	bh=gCzfbZekv4htNUijIC+SbkqBGyLEFOMaleFjXJEgatk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PWHXu7GU4DodhpP21c0owWh81IqdK3akqHsSTo555BlTK6RSln4LIHHSVH0bVf+FJ
-	 0b+/niCp/EE4DH/Nslvd0KkURVvHgenmh3kfh5NIywxvPsmHACnlF+nfYTAl1I+aL4
-	 DtyVhBBhJ+QoUc4L1LJC3fBMg7CyNtAhLWvO1kLg=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250514135241epcas5p1c532029629ae732c7dd6c2ed2db26353~-aR7f6P0V0362903629epcas5p13;
-	Wed, 14 May 2025 13:52:41 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZyFCW6JtDz6B9m5; Wed, 14 May
-	2025 13:52:39 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250514095242epcas5p43aab99ca456684f1689d3e37a44b0c88~-XAZkOEZN1927219272epcas5p4H;
-	Wed, 14 May 2025 09:52:42 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250514095242epsmtrp1cf1ae3b2305367497a64be3bf5ea5ed6~-XAZi_ipV1927519275epsmtrp1a;
-	Wed, 14 May 2025 09:52:42 +0000 (GMT)
-X-AuditID: b6c32a29-55afd7000000223e-73-682467eac1b0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	11.9B.08766.AE764286; Wed, 14 May 2025 18:52:42 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250514095239epsmtip24e9d87979a0f3e94d227111f61c1db9a~-XAWwEijB1817318173epsmtip2M;
-	Wed, 14 May 2025 09:52:39 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
-	sunyeal.hong@samsung.com, shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	dev.tailor@samsung.com, chandan.vn@samsung.com, karthik.sun@samsung.com,
-	Raghav Sharma <raghav.s@samsung.com>
-Subject: [PATCH v2 3/3] arm64: dts: exynosautov920: add CMU_HSI2 clock DT
- nodes
-Date: Wed, 14 May 2025 15:32:14 +0530
-Message-Id: <20250514100214.2479552-4-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514100214.2479552-1-raghav.s@samsung.com>
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="suNo2YDF"
+DKIM-Signature: a=rsa-sha256; b=suNo2YDFmgSLo4ydebgFiEaj4a8t4p6xEVC3Tf4bf94FgpmI/tTMVPLQtlIBD8vrv0QPFq9PCI/CRyPjrb9kvjBsnI18DGRVoTdLuRDJiUeYMO2M3Ab87JsKIKobP+Zh+UhUaZOl2txJvVXZPI2/Aq6xLsvenQTLP6oPwBPQTo0QrGaIS3IjD5z8Cnw+rUqvzyZOykD+qUvGQKH9rd90wguGp8uZKTdeRrnpOp+2ZRqyQWZenLWCJuGzAY6Q15WwnmLNIaOCFzXrSTj3BuPkswhc/2R7rNl9fKVI9lDtBNniE6OyydTePzY71m9xKbbIi/rqI9CIL6HsfX7n6hoZVQ==; s=purelymail1; d=purelymail.com; v=1; bh=3cd4GYt7dt+rLooOE+rIxexrSys+8NzNZRAkEViR1/k=; h=Feedback-ID:Received:Date:Subject:From:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -502466249;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Wed, 14 May 2025 14:26:55 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LZdlhJXvdVukqGQet/E4sH87axWUz4EmGx
-	Zu85JovrX56zWtzbsYzdYv6Rc6wWjTPeMFmcP7+B3WLT42usFh977rFaXN41h81ixvl9TBYX
-	T7laHFsgZvF95R1GiyNnXjBb/N+zg93i8Jt2Vot/1zayWEw+vpbVomnZeiYHUY/3N1rZPXbO
-	usvusWlVJ5vH5iX1Hn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWxf3InW8EDzoqrvVvYGxjf
-	sncxcnJICJhI3Nk9jbGLkYtDSGA3o8T2PU+ZIRISEvv+/2aEsIUlVv57DtYgJPCWUWLFixwQ
-	m01AS+LK9ndsIM0iAl1MEuf+vWIBSTAL7GSSWLleAsQWFvCX2Lj8MFicRUBVYt32PlYQm1fA
-	WmL9zC8sEAvkJfYfPAu2mFPARuLri8vMEMusJVpezWGCqBeUODnzCdR8eYnmrbOZJzAKzEKS
-	moUktYCRaRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnCUaWnuYNy+6oPeIUYmDsZD
-	jBIczEoivNezlDOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ84q/6E0REkhPLEnNTk0tSC2CyTJx
-	cEo1MK3b/HpX2G6R0pszorWnbry2MKH1zKIbQQ9WiE7tsorvD/4puyXq89sc/wtdNiHThDel
-	Wu1++33dg0XKsU7LNWRWdkrft9meu/oo+z+rllnXFwQ/P9+7dOW7mVz8tzZJZ+Ye8BNebPaw
-	/qO4nUT+vGuSfwRiZiuozcgzUz5XJN/vtvFp3WGh+eK/ru2XS0+YtuKb7Xcd05ZnzE9/aTlv
-	Fbi2bWpJq8oiRq7983rkWxWzOd5G/Tntbt33zsvzuETqbq4e89vAuCp++6eRz/f3g5hF9aLt
-	QtY3Gn9vFKheONP6Eee77+8+nQv7s4J1yS+1XS8m972YJHvnpZy9x8PuzVuv1VuFfdZcvusN
-	41sPvTlKLMUZiYZazEXFiQD/aOo/IQMAAA==
-X-CMS-MailID: 20250514095242epcas5p43aab99ca456684f1689d3e37a44b0c88
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250514095242epcas5p43aab99ca456684f1689d3e37a44b0c88
-References: <20250514100214.2479552-1-raghav.s@samsung.com>
-	<CGME20250514095242epcas5p43aab99ca456684f1689d3e37a44b0c88@epcas5p4.samsung.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 14 May 2025 16:26:52 +0200
+Message-Id: <D9VYC98LJTR0.LJXYC1H0BAKA@mentallysanemainliners.org>
+Cc: "Kishon Vijay Abraham I" <kishon@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Krzysztof Kozlowski"
+ <krzk@kernel.org>, <linux-phy@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 0/2] USB PHY support for Exynos990 SoCs
+From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
+To: "Vinod Koul" <vkoul@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250420-usb-resends-april-v2-0-25dc7d2e6dd4@mentallysanemainliners.org> <aCRXgpD0Ld2W4lHE@vaman>
+In-Reply-To: <aCRXgpD0Ld2W4lHE@vaman>
 
-Add required dt node for CMU_HSI2 block, which
-provides clocks to ufs and ethernet IPs
+On Wed May 14, 2025 at 10:42 AM CEST, Vinod Koul wrote:
+> On 20-04-25, 21:28, Igor Belwon wrote:
+>> Hi all!
+>>=20
+>> This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
+>> This SoC has a combo PHY that supports highspeed, superspeed USB and
+>> DisplayPort, however due to my inability to test the superspeed part of
+>> the combo phy (device always enumerated as high-speed, even on the
+>> vendor kernels/bootloaders) only the highspeed part is brought up.
+>>=20
+>> These changes have been tested and confirmed working (with the USB_ETH
+>> gadget and telnet/ssh in a ramdisk) on a device from the hubble family
+>> (x1s) and also a device from the canvas family (c1s).
+>
+> I am missing the dt patch, can you pls report the whole series if you
+> would like me to review and apply this
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Hi Vinod,
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 2cb8041c8a9f..7890373f5da0 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
- 			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		cmu_hsi2: clock-controller@16b00000 {
-+			compatible = "samsung,exynosautov920-cmu-hsi2";
-+			reg = <0x16b00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC_UFS>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_UFS_EMBD>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_ETHERNET>;
-+			clock-names = "oscclk",
-+				      "noc",
-+				      "ufs",
-+				      "embd",
-+				      "ethernet";
-+		};
-+
- 		pinctrl_hsi2: pinctrl@16c10000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x16c10000 0x10000>;
--- 
-2.34.1
+I've sent the DT series a while back (before resending). Usually I
+propose DT changes through Krzysztof's tree. The patches are=20
+unchanged (they will be resent unchanged when all usb and wdt=20
+changes are merged).
 
+Here is the patchset:
+- on patchwork: https://patchwork.kernel.org/project/linux-samsung-soc/patc=
+h/20250217-exynos990-dt-changes-febuary-v1-2-99935218cbf4@mentallysanemainl=
+iners.org/
+- on the mailing list archives: https://lore.kernel.org/all/20250217-exynos=
+990-dt-changes-febuary-v1-2-99935218cbf4@mentallysanemainliners.org/
+
+Best regards
+- Igor
