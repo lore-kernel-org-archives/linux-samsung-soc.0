@@ -1,74 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C730E55B;
-	Wed, 14 May 2025 08:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0A5259CB1
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 09:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747212166; cv=none; b=SVpoRK/Hp1WpbMzCVfVWrgA6xlW/QVnZA0RsHkY+4dskVdExljbYv214US9KwhFNjg4V8zrUrIpdKGA59nS0p5tt7eVwDHk+vhxaWFcNTOT3M5O7UlbdsnSCpyWAsLtnqjCllgG1Eqmo9wN74gjr9lQcaXYUkCYCXD3/UQas7Xs=
+	t=1747216423; cv=none; b=ttohz5dpc0KwZf9FqGrVPaVMco8t/f5c5k82vVWepK8pKZrZDtX2qKKQGMQtD75YRsEhLOfwkEcT3wmIesE3Fs9+Re4XTJ6cpgIVE8O1GJW7qFvTngroq9KDqqb7oQMiZ0H9oLCJvx1V6y3TTGYZnkP12L+PqeOsKqmp4X7Q2pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747212166; c=relaxed/simple;
-	bh=huX/tfz1n6SVCqrMcxeGuPLIU7IfmSzg5HNLXYpyCjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBsATiKOKGztXbUYThzXy6z8LMCGcCYYaB4ecxXGhxvdapsNRTTfjpjKugIr6ldCNUTW8aSid/CQAoxSYIM5FIarknUrK0vtcRIbGF0NSYtMmfr+m+/QwfzEjAOUkWfxy3UJ+k1zOvxD2veS4l8FHyCFaey0EVUGzPBc8AForxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHBgj5Vx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747216423; c=relaxed/simple;
+	bh=qzfrVWIrtpfJTjmH7ep2gUq4Zq97d9cu9Umr2PFxAYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=OPXTvwsNygrmW/VyxbqD5ye/6aU5TC/lllpaDzLABCIPuEfONHx6w9bEL4C58cnJuYNgVp1GVyntzc8r7QEg+/jRILWbiX4XHG0m3Rdc/J/dffuB/Pu8WmEqwCoRdVMkFf+uRdqRMot9bTxQO4U0830CY4kVqLZFKPaajUCfN5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=N0Db7/Fo; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHBgj5Vx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E9EC4CEE9;
-	Wed, 14 May 2025 08:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747212165;
-	bh=huX/tfz1n6SVCqrMcxeGuPLIU7IfmSzg5HNLXYpyCjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nHBgj5VxstSFtIygnteUP8m0H/l2aACoxXCzfYpkbg7Tmjqeh306C4LKegIVk95ZX
-	 0W+axqzUd712og2DBkARmvW3nzegaCnAdyu7k4sd4dLlhFQBvNrzV40dsAmABSE3Qd
-	 XMY1aG1XY59JOWIpJYGn+gH4rx7llllC86K8tLLw/5Aua+50/v39oiGeENqFOPPfOz
-	 MT7i7uXwXnnnJWA/gpS11AJMkXk1730Dzl7RBCBgApW6CtA+lYM3nWTQe8zDzQdG6p
-	 elj2/Bl9Dro2aytn7YgMJ2gPfRk/2URR8q/TixZqyHDNIEgVZ/Pjj8pK/j7CJAmJ2o
-	 Ggio9B0DwolFA==
-Date: Wed, 14 May 2025 09:42:42 +0100
-From: Vinod Koul <vkoul@kernel.org>
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 0/2] USB PHY support for Exynos990 SoCs
-Message-ID: <aCRXgpD0Ld2W4lHE@vaman>
-References: <20250420-usb-resends-april-v2-0-25dc7d2e6dd4@mentallysanemainliners.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N0Db7/Fo"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250514095333epoutp02e755db46a0097097e2e2c216cc3cf058~-XBI2_PvM2571425714epoutp02m
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 09:53:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250514095333epoutp02e755db46a0097097e2e2c216cc3cf058~-XBI2_PvM2571425714epoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747216413;
+	bh=rzfjBDdCV1bMbhaN4veuqL28+nSEvMmCnFpMP9vcanM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=N0Db7/Fo5XU7Fd0VgOAREVIIj/KC/Gz7Q60spdghuJ8DJ9HNc4VL1SKh73hkQjOBU
+	 2YPF5/ZO1zGVCmgkYYltO0wTWL2iv7C5x3Du5V/rtRUq+scYXGijMP7dspBv+hubZL
+	 MlHBnh/IIoS3DotgPKeLvl7Zk8kNjfUYoDscjpMI=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250514095333epcas2p2e4f261863a747b91ce04e7400387a839~-XBIczive2406324063epcas2p2g;
+	Wed, 14 May 2025 09:53:33 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4Zy7vc5CrJz2SSKm; Wed, 14 May
+	2025 09:53:32 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250514095332epcas2p4ab71a73ab68e55f0e5e34cd9c4c7b483~-XBHdTRKJ3207832078epcas2p4W;
+	Wed, 14 May 2025 09:53:32 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250514095332epsmtrp196f32a0b5e6edcf2b367aaf70c3297f4~-XBHcl-ma1996119961epsmtrp1K;
+	Wed, 14 May 2025 09:53:32 +0000 (GMT)
+X-AuditID: b6c32a28-46cef70000001e8a-04-6824681cc9d5
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E6.C4.07818.C1864286; Wed, 14 May 2025 18:53:32 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250514095331epsmtip13fc246ce0f9b028881178be751c13600~-XBHO_1A23233232332epsmtip1S;
+	Wed, 14 May 2025 09:53:31 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
+	<sw617.shin@samsung.com>
+Subject: [PATCH v2 0/5] Increase max timeout value of s3c2410 watchdog
+Date: Wed, 14 May 2025 18:42:15 +0900
+Message-Id: <20250514094220.1561378-1-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250420-usb-resends-april-v2-0-25dc7d2e6dd4@mentallysanemainliners.org>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSnK5MhkqGwZ2zHBYP5m1jszh/fgO7
+	xabH11gtLu+aw2Yx4/w+Josb6/axWzxZeIbJYsbik2wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
+	e+z83sDu0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBk9S04yFrzhrNj60LyBcRpHFyMnh4SA
+	icSdN1vYuxi5OIQEdjNKHLrzjbmLkQMoISXx7pklRI2wxP2WI6wQNR8YJWbs/8cGkmAT0JGY
+	/u82C4gtIhAncax9MzNIEbPATkaJlum/mUESwgJuEk83vmICsVkEVCWOnL8GZvMK2EosO9LH
+	BLFBXmLmpe/sEHFBiZMzn4ANZQaKN2+dzTyBkW8WktQsJKkFjEyrGCVTC4pz03OTDQsM81LL
+	9YoTc4tL89L1kvNzNzGCA1hLYwfju29N+ocYmTgYDzFKcDArifBez1LOEOJNSaysSi3Kjy8q
+	zUktPsQozcGiJM670jAiXUggPbEkNTs1tSC1CCbLxMEp1cCUI7CbM9rVMf3F00OB5xN47lz4
+	rWsYtNbmq+f3hEtP/+0PvJCy2L6KPXTZx6LeNp3T/47+vi3YEJ7y7hGfZ35J6vPG1JunTz+K
+	KD/gs1q/V1XnqIzFmuN6vJv2fRJZNVv0meX0ZakCbkdv9AtLPNhR4LLzcF+r5MLkjy/P73nH
+	zDbz+hHdCY+fTXa3jNx8Ud/3tL7th9LPXgcv1/wuk5nsrXTDucjwjPc+gSXbFhQVcQQukDwq
+	m7Vu7x1Lg98/db9we3zrv3e48v6hnFrhdytvpTrcrNztPc/+SFh3zM2ClP0N+1ovcBidObzn
+	h5P/juk7J7Wf66qtc5yxY/Yit/W676TSPkVIck+6lHw/7T77ZCWW4oxEQy3mouJEAP5kI7DP
+	AgAA
+X-CMS-MailID: 20250514095332epcas2p4ab71a73ab68e55f0e5e34cd9c4c7b483
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250514095332epcas2p4ab71a73ab68e55f0e5e34cd9c4c7b483
+References: <CGME20250514095332epcas2p4ab71a73ab68e55f0e5e34cd9c4c7b483@epcas2p4.samsung.com>
 
-On 20-04-25, 21:28, Igor Belwon wrote:
-> Hi all!
-> 
-> This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
-> This SoC has a combo PHY that supports highspeed, superspeed USB and
-> DisplayPort, however due to my inability to test the superspeed part of
-> the combo phy (device always enumerated as high-speed, even on the
-> vendor kernels/bootloaders) only the highspeed part is brought up.
-> 
-> These changes have been tested and confirmed working (with the USB_ETH
-> gadget and telnet/ssh in a ramdisk) on a device from the hubble family
-> (x1s) and also a device from the canvas family (c1s).
+The ExynosAutoV9 and ExynosAutoV920 SoCs have a 32-bit counter register,
+but due to code constraints, only 16-bit values could be used.
+This series enables these SoCs to use the 32-bit counter.
+Additionally, it addresses the issue where the ExynosAutoV9 SoC supports
+the DBGACK bit but it was not set.
 
-I am missing the dt patch, can you pls report the whole series if you
-would like me to review and apply this
+V1->V2:
+  - Modify the max_timeout calculation considering overflow
+  - Separate tha max_timeout calculation into a separate patch
+  - Add max_cnt in struct s3c2410_wdt
+  - Set max_cnt once in probe function
+  - Add patch that uses S3C2410_WTCON_PRESCALE_MAX instead of hardcoded one
+  - Remove unnecessary inner parentheses
+  - Link to v1:
+    https://lore.kernel.org/linux-watchdog/20250513094711.2691059-1-sw617.shin@samsung.com/
+
+Sangwook Shin (5):
+  watchdog: s3c2410_wdt: Replace hardcoded values with macro definitions
+  watchdog: s3c2410_wdt: Fix max_timeout being calculated larger
+  watchdog: s3c2410_wdt: Increase max timeout value of watchdog
+  watchdog: s3c2410_wdt: exynosautov920: Enable QUIRK_HAS_32BIT_MAXCNT
+  watchdog: s3c2410_wdt: exynosautov9: Enable supported features
+
+ drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
 -- 
-~Vinod
+2.40.1
+
