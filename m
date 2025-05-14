@@ -1,110 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFDA13E41A;
-	Wed, 14 May 2025 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FCC26A0A4
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 11:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216768; cv=none; b=KrEy5u3aicTrbjN+Zj/ntmDENnsOYRBz17y6RgxjPbO2hmfgiEke2x+CwqUk5Uqpngpn6tLERpGSDW48lSyn5etx/APcCJPf4k8aqnentfIQT01bL9P/DOa5QgCUdihFg8PomXXjfcVQQpraL57bSmdbepzgQFpZrIpXxUzCYbk=
+	t=1747221837; cv=none; b=FTt+eKspp2Y7NqCPliUux9IA4WZ4P6OoIgv5p33uHoqPDS17JP3IIRLOuOiFOzXXQf2IWGgrxUQ80zgSgWEb9ZXBk3HlGZIw3UAw88M1lL1m3FyLhPrxmLngFoG1g7A7yAiUCJ4Pfy1kvMeZvgPxqePKztCxikTtyVldCqZmyb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216768; c=relaxed/simple;
-	bh=DFWBWtDSqR8SDwwJtzp31DXqPLTJtPjXKwlJ59tHuw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KxP1MPW9vYcbqvAp6v5YUNeiIbEMlqVcSzuNHMeMJqBTm+z10xv0I4S63gNPb4uUcJz2L7hXO+IJm+tJeAYujzOtds2yiekToggp0lDXq2AkILtFt2Tj0Onv4xJIQwLXQBj1SZhkd9wCempjAgSjkUx9t1SNzAb32ttkqIlXZx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNRNDZ1s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747221837; c=relaxed/simple;
+	bh=tx8YzHNBUj2kXpeOe64RZVIheqYx8JBL48xF8A/l0Vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/1g/tVcdTMcwhLXIdPdngjVj48CQMoW2Xl382wcGW/EaDrO6zjE3hl1Hv7sE9GsMDJ/FY5NgJUnS1RV4lEwcnelZCr6spyNSVhJ1q1wTZqz+YNAzLn8N1IBTG0bi6o41N77YY5+I7FepSTNenki1rtIDhtT9UXnFS9R/qzE00Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CifpsKCr; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNRNDZ1s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A79EC4CEE9;
-	Wed, 14 May 2025 09:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747216767;
-	bh=DFWBWtDSqR8SDwwJtzp31DXqPLTJtPjXKwlJ59tHuw4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eNRNDZ1saDM5pd0BO9HYUFWnKRLy0b9aOYmdqJbi8at3nCZgR97+D3U1d4HFu+/0A
-	 y3lfS/vu1MIL8619oCtOYKlyN0bl6TmC0R1eEv+4kU99pKfqEHqPbRgl+A6y4Q9lkD
-	 rHIDua7v5d5cgVb2yx6uIBCbP2FQAww5S/Q7dD8K5dJ6JFZi8EWTWYJvdQCE4mMDcZ
-	 VNoEXMrm49XLLf1X0RxU+pXlyEeulsbbedHWq7JdZqe+3UbnFscvENWuQW5X7GkxQO
-	 5suy9IcdIjvJSGLb5dknxZdHbat+JET4qMEhDvjaVxOV1H4pkYvTHJKEnX8aqajFOR
-	 b6OeVYv4M030Q==
-Message-ID: <a0c0fc86-844f-4006-851c-31a092a6bb08@kernel.org>
-Date: Wed, 14 May 2025 11:59:23 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CifpsKCr"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-442f5b3c710so3476745e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2025 04:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747221834; x=1747826634; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PqwsD7WCcNuEv2WTK4iZPHlU9QaOgxXWeL2peqyTOEE=;
+        b=CifpsKCrJBJiAVrvwso4NA8fFFwDFo94V+mnbRYznzJ0XoIprLJ3N+y5ht9jkHDViL
+         KctlCTvlv/BRnU5y1fyffDWoztowmALzV6dvBaQCs3yNX4RxGnNxM6htFnY8QQKitUEG
+         ElTRImyLAkKA6rNQpXNSbkRKw7TnQ+/3NkKvqVAMvaszbRIN/NpSVpilrE9uAaAOkARH
+         W4LN8LXN/px+KEaPkKBWJKV4n7amQcffOZpbiZQWH/QHC2sBY99SA1NLtnVlq8/SIN7d
+         Cjx1xxltAYRc8U08Ji3DK1wAi5qaM+KKL3eAi5QdK3ZIOKdGT4glG5FCVssKPjt0E+JK
+         JEXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747221834; x=1747826634;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PqwsD7WCcNuEv2WTK4iZPHlU9QaOgxXWeL2peqyTOEE=;
+        b=oMSA+kXSo40vsRVUKKQabhH3Nw5uGYMU2U65XOLZmkxKyhkJzvZJOBqAWWRmOEzJLc
+         Spk6+a0Ug7DvYAQQZSHITBQDN5ykySSMPySGQc0b/0in06mULZYmSGyEG6eWWa5W6uvR
+         XUCAR/lNCr//0qN1tTWikuyJXGB388DVuAxXp6EAMjTMTxsO284E87qyFtczo+rg0LbG
+         HYr2il2ML8P58s6ObfOuol/88QoEBmWD3prBnaY1SfyTpwyKnW7QMwKqBBKQ0vorZB68
+         GR9DzD+mIWeMxiNcO+62zsqBYRJy4Qmpsqq9IW5CKoaJLm/sk4O4jydNTOrTehCifHOK
+         uKHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEx/Fu55kQs+L7lB5HGOLQGHXZkBKyQxPr2NUN23JyrS1ULaAtFbVFTOj39US0HTT0HF31u9Pff4EXlk+/FTuPTQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLzNzwk/AW1y0XxTPBG6xh6P7wJf2eUFMYMSLJW6mStlC5Y495
+	qqqaZN4BNdyXUbR3y9TzsrrFwOpk4IVLLIpaNX8njsxj00V/eUez0t7SsQNliKQ=
+X-Gm-Gg: ASbGncvDdr4gBibTbs4yGNDq4xjUttjYrML+c4Y9CISY4ZClWILpXKLxBl0iH2TGGxd
+	EiMzaFzIOZhwK4U6b3JsQ+Armse+23xiFKxshhuI6D9Z3LSSo8rKLrsR9BjSgcFIp89BSCCw/6Q
+	G/TyBXRTohCiOHPSDnmo+cFI7frCboJ1dUeuHVelmii1/MajTSFjtI4GkKm0TVo16kiO3HiSZ7+
+	ke3+8QTHSHyHtZqfENWJDdcVBq4/NcnH/RSRRoGEBkdQ8+abgzvR3eEmi19oJj31YIRrXz1n+rC
+	w0y2gaLCeCCiCDscIvocPAliwpiv7z5yyoUTtgKx0uq0QdKdFcr+iJ9yqvLExHLVRoDon7C45D5
+	qy/nRQjf4pOFbLA==
+X-Google-Smtp-Source: AGHT+IHd28mYJHFkZ2YC/3FfmJfsWok8nxf/8sbB3FWwSEaJKR0MYxIrlFfEdGODFNdqer26tUf9qA==
+X-Received: by 2002:a05:6000:2506:b0:39c:13f5:dba0 with SMTP id ffacd0b85a97d-3a3496a48a7mr1875484f8f.13.1747221834230;
+        Wed, 14 May 2025 04:23:54 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f2b02sm19714077f8f.51.2025.05.14.04.23.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 04:23:53 -0700 (PDT)
+Date: Wed, 14 May 2025 13:23:51 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Subject: Re: [PATCH v6 0/4] Exynos Thermal code improvement
+Message-ID: <aCR9RzGMWEuI0pxS@mai.linaro.org>
+References: <20250430123306.15072-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] watchdog: s3c2410_wdt: Replace hardcoded values
- with macro definitions
-To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
- wim@linux-watchdog.org, linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kyunghwan Seo <khwan.seo@samsung.com>
-References: <20250514094220.1561378-1-sw617.shin@samsung.com>
- <CGME20250514095335epcas2p139710b146aaf4709a0a7aafcabe2f7c7@epcas2p1.samsung.com>
- <20250514094220.1561378-2-sw617.shin@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250514094220.1561378-2-sw617.shin@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250430123306.15072-1-linux.amoon@gmail.com>
 
-On 14/05/2025 11:42, Sangwook Shin wrote:
-> Modify the code to utilize macro-defined values instead of hardcoded
-> values. The value 0x100 in the s3c2410wdt_set_heartbeat function represents
-> S3C2410_WTCON_PRESCALE_MAX + 1, but it is hardcoded, making its meaning
-> difficult to understand and reducing code readability.
+On Wed, Apr 30, 2025 at 06:02:56PM +0530, Anand Moon wrote:
+> Hi All,
+
+Hi Anand,
+
+if the goal of the changes is to do cleanups, I recommend to rework
+how the code is organized. Instead of having the data->soc check all
+around the functions, write per platform functions and store them in
+struct of_device_id data field instead of the soc version.
+
+Basically get rid of exynos_map_dt_data by settings the different ops
+in a per platform structure.
+
+Then the initialization routine would be simpler to clean.
+
+> This patch series is a rework of my previous patch series [1],
+> where the code changes were not adequately justified.
 > 
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-Your DCO is not looking correct. You must be the last signing person.
-What is actually Kyunghwan's contribution here and what does his SoB
-mean? Who wrote the patch?
+> In this new series, I have improved the commit subject
+> and commit message to better explain the changes.
+> 
+> v6: Add new patch to use devm_clk_get_enabled
+>     and Fix few typo in subject as suggested by Daniel.
+> v5: Drop the guard mutex patch
+> v4: Tried to address Lukasz review comments.
+> 
+> Tested on Odroid U3 amd XU4 SoC boards.
+> Build with clang with W=1 enable.
+> 
+> [4] https://lore.kernel.org/all/20250410063754.5483-2-linux.amoon@gmail.com/
+> [3] https://lore.kernel.org/all/20250310143450.8276-2-linux.amoon@gmail.com/
+> [2] https://lore.kernel.org/all/20250216195850.5352-2-linux.amoon@gmail.com/
+> [1] https://lore.kernel.org/all/20220515064126.1424-1-linux.amoon@gmail.com/
+> [0] https://lore.kernel.org/lkml/CANAwSgS=08fVsqn95WHzSF71WTTyD2-=K2C6-BEz0tY0t6A1-g@mail.gmail.com/T/#m77e57120d230d57f34c29e1422d7fc5f5587ac30
+> 
+> Thanks
+> -Anand
+> 
+> Anand Moon (4):
+>   thermal/drivers/exynos: Refactor clk_sec initialization inside
+>     SOC-specific case
+>   thermal/drivers/exynos: Use devm_clk_get_enabled() helpers
+>   thermal/drivers/exynos: Remove redundant IS_ERR() checks for clk_sec
+>     clock
+>   thermal/drivers/exynos: Fixed the efuse min max value for exynos5422
+> 
+>  drivers/thermal/samsung/exynos_tmu.c | 100 ++++++++++-----------------
+>  1 file changed, 35 insertions(+), 65 deletions(-)
+> 
+> 
+> base-commit: b6ea1680d0ac0e45157a819c41b46565f4616186
+> -- 
+> 2.49.0
+> 
 
-Best regards,
-Krzysztof
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
