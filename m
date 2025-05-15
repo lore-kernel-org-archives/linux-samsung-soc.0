@@ -1,124 +1,151 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B681228C5D9
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 09:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FF022157B;
+	Thu, 15 May 2025 11:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747301508; cv=none; b=fdAuIFb0ZmcHYOWgfsxCLCNhkwCKJhiVCShOXL6v8nsjJQbI95tT86HjdWoN/+MrNN25D6Qq1iEcj+frKWyUuMfpihgJ/BKtUjHW+cTTZRRtCQY5pWULLo4IMIp05+me8H+IIl+ZV84gLlavelmUHZGzgRKdjwpFV678YBwj6SA=
+	t=1747307449; cv=none; b=KznxCR4ukUWbdKzUoIdd+jOhgihUqjywl7tekQECDJVK9YMSWZtxutN/+BQlnuzhKTso03brUQAJYwzAoudDvXdlfWt/G+2LX5UBwu8HL2iL1mDf3deb+4iwhoLLFvHbn9TTosOIsou/GHpiRIuSTSOxCyvylJGtJcONoBJNXMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747301508; c=relaxed/simple;
-	bh=YcwcSP4GpUhbon0JNK8WVl9Ad7krJOLYr8vo8j/dyfA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=bviOtBYtJPgZ90B3XHnkMRnshCVCMV4tmFLnmgyok/8rokXHh2GWbPnL8jCtCKY+yffGV2qys8Yv6aHkbQoOrnyzyuAcV3W8uES99PqbE4ETDei9Ti3V1+xfH7kS8ThvATVN9MNpk9MIcqpPpAO2ZZ8vjziYjcPrEpMQPuiVFD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bLTfuhwU; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1747307449; c=relaxed/simple;
+	bh=8MM7pRUzi/+tIllmEpUGU5whAaivVspfR2Lc0gn83vM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hipGmudiU4ASbTeZuOQkkuJRo8MdaSsrZHJX2XWwdxM0TgK/Rd+fwTEEokA7H+EnbK3fgqgghKBytHay7/k3HtSE2/Tl57zkymdKpwgLNjNOcIp3Ggwybc98dNHvsBciDK9VBQI0XiOPKsQpL7frXv/+hCBCtcChugEGlHAy0u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ab91m0vv; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bLTfuhwU"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250515093143epoutp04eecd24c93f3c626e5ba0f9ebecc52a94~-qXXH9_fT1528015280epoutp04Q
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 09:31:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250515093143epoutp04eecd24c93f3c626e5ba0f9ebecc52a94~-qXXH9_fT1528015280epoutp04Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747301503;
-	bh=P5VLAojzpnIxDBE6zPAULs5TyBvsQa4MKoJmkjGV5zA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=bLTfuhwUoi/ZOLE1iXg+ioM4p54mZsCMui4ElYk/ZqXxGrIR6KbgqLLl2whkcHo7A
-	 E8qrxu7SmfAVCZ6Ha+lEnud404Fk4TPK3QGdQQDa+w+aCYQjA8yAoREeppZ54DEHFk
-	 hChpcvRxgG+pWvvDL6AkdAaODuWtaDqmYcPH0Jks=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250515093143epcas5p2409f7bc212f1f6c8fbe25b72f73f6208~-qXWuzwPM1138511385epcas5p2Q;
-	Thu, 15 May 2025 09:31:43 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZylMx0zR3z3hhT8; Thu, 15 May
-	2025 09:31:41 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250515093140epcas5p1c735205578916f52954430b1db18f5e2~-qXUKreQ80539905399epcas5p18;
-	Thu, 15 May 2025 09:31:40 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250515093140epsmtrp2e3c56fd7433b4343ddad05abbccc6505~-qXUJ1cDK2264422644epsmtrp2G;
-	Thu, 15 May 2025 09:31:40 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-78-6825b47c083d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	23.34.19478.C74B5286; Thu, 15 May 2025 18:31:40 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250515093138epsmtip21ebcf2ce07b9046da78413250900fa0d~-qXR--lqR0096500965epsmtip2y;
-	Thu, 15 May 2025 09:31:38 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Pritam Manohar Sutar'" <pritam.sutar@samsung.com>,
-	<gregkh@linuxfoundation.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>
-Cc: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <20250514140741.415981-2-pritam.sutar@samsung.com>
-Subject: RE: [PATCH 1/2] dt-bindings: usb: samsung,exynos-dwc3: add
- dt-schema ExynosAutov920
-Date: Thu, 15 May 2025 15:01:37 +0530
-Message-ID: <0efe01dbc57c$29955270$7cbff750$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ab91m0vv"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad21c5d9db2so134531266b.3;
+        Thu, 15 May 2025 04:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747307446; x=1747912246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wH93pyrIEPQfVMzkjhmhq8lcyU/jh4Z97QhhnrcpdMM=;
+        b=ab91m0vvW+GbwgqSmUW7xzVzvPXLSZznSNnS9HC8QCmOcWtndqNyevTooDI0lsqbRb
+         PpJIFDRZsMITUtR6MlWHDIK1gEJ9GiiKtLtKZwY4Z3VLJ27KQ0rQ1vlNo9rR7Pou3dHZ
+         nk320qT/zxa9tMWkvtG/X1uYKdfzOjBLyCjO2ZWZhFiz7sSuJfoof+SpixX7H0/1CIDU
+         NBYcDdZ8Gj8++b0kNZ8vF2HusQjl3RE0LiuscZWCm/vMtpvcpBHUwFw57z+Vv58h0IK8
+         /Pwol50PhAIYqHK6mGSFZ8fnFUEMm/V5NK6MS92fCfY9k7aVU6i+M1lp3klHyGohtGBE
+         OY/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747307446; x=1747912246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wH93pyrIEPQfVMzkjhmhq8lcyU/jh4Z97QhhnrcpdMM=;
+        b=AilVx+ro/UzbjdmCnIiN6v8ienneLW75p0pXQaA1xcIc3iWfYO1lHeMhoOMo84bdeD
+         6JXBMECUcvtKEnWu/AlDe2mCI84NwYIbDzUWhZRw9VhVR9Uva5rpvNWU+ueJyMmQ5SQx
+         u5ZRYGUh1/MQou4UUnSP6aGEYcu93kXfpV36y6kwW1bgsVt7npc7ooODM3N0NRlouweS
+         E922DXQ+wimvX4K644KJVZ7594A2I71N6sOdyKysxrTKFab7A4FydLu6Y0n7ZURuhXD+
+         YTon3+jLOwmDZr72tq3tyPB3LM3GzSDz9I30MNPCQ9pyCHeqa7B5AYXJLJcugjKfXmrq
+         dhoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMGcCbMYRziR2V62VRoPR3CMdn0s+BslFiVuyDoKfIKs7hMXdlupZGvTR7b83rPktQeFFXMWoPWrxk9OeJe71Tp2M=@vger.kernel.org, AJvYcCUXGArjV2MqveFgv13/SE50Jpbyiv3qahGIpe/eBJU+E5Yxj52QXWoCV6SDV3spKQG8EkvDiEHTXS0To8g=@vger.kernel.org, AJvYcCW4ZADvp7eymEmeC4cVT+1qByTYq2R7NBsd0/pCcaYaQwgbN8f9+yCWn/Vc+2giP2/4Lo6wzmiIXSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQepqUD8BmxaSKw1Vh38M8Ivck3+is3atzn21q3t+xFbT2h7tt
+	RUrkaeSgHXv18ljw0tHg5WgUqBzgZTOXix13qWkAX237RnC4+oPqKC+sNkZE0SiPs6qeICZiJ/V
+	SKgktJzGROzbpB88W4XUoF4Cpm3k=
+X-Gm-Gg: ASbGncvpUoZAbF2TPQ8wG0P6mGV3jjOZsC3u6wjSeGxduQkpCmlrRoAnaRA9Qaf7a5Q
+	Gdvc0uPzk2O0VZzB2pkTvADhT9lPyDy5N6iTTaxYJI1N0RhXh/JStNomlStBupBHZVr3hJ85teQ
+	jRxqNx1nHds1WEj6Xl95buHRAQKm44Vo6oSCPs8vUSow==
+X-Google-Smtp-Source: AGHT+IE0xGxRoRc2hiMiqEaYs/R8BerbabBDK4/6SGlmW7kn9vsBtzHGwphHTBRO8aoYTAxznhm63Sb3LeSpgXFd/NQ=
+X-Received: by 2002:a17:906:730e:b0:ac7:e815:6e12 with SMTP id
+ a640c23a62f3a-ad4f717d80dmr692300366b.33.1747307445484; Thu, 15 May 2025
+ 04:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHb4atmIwpdDAkGWt442tTNHGskkAKMImHcAsHMHkuzqMU0AA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvG7NFtUMg9V9shZr9p5jsri3Yxm7
-	xfwj51gtrt1YyG7RvHg9m8XLWffYLDY9vsZqcXnXHDaLGef3MVksWtbKbHH+RRerxbN7K9gs
-	/u/ZwW7x5ecDZosjyz8yWaxacIDdQcBj06pONo/9c9ewe2xeUu/Rt2UVo8eW/Z8ZPT5vkgtg
-	i+KySUnNySxLLdK3S+DKOP5Zu2ASe0XDqj7mBsZFbF2MnBwSAiYSOyf/Zu9i5OIQEtjOKLF8
-	0nlGiIS0xPWNE9ghbGGJlf+eQxU9Z5R4cucpWBGbgK7EjsVtbCAJEYE9jBIdCx8ygjjMAvuZ
-	JKb9XsYE0XKYUeLO5vssIC2cAvYSP66dAlsuLBAj0XJuOhOIzSKgKjG56STYWF4BS4mFR9vY
-	IGxBiZMzn4D1MgtoS/Q+bGWEsOUltr+dwwxxn4LEz6fLWEFsEQEniTP7+lkhasQlXh49wj6B
-	UXgWklGzkIyahWTULCQtCxhZVjGKphYU56bnJhcY6hUn5haX5qXrJefnbmIER6tW0A7GZev/
-	6h1iZOJgPMQowcGsJMJ7PUs5Q4g3JbGyKrUoP76oNCe1+BCjNAeLkjivck5nipBAemJJanZq
-	akFqEUyWiYNTqoFpcS+zi/KnTk1PAY77wq97osJz5NcvFWjKapWe4TQleLXWlt4ZnD1iKx1c
-	+zZyzenZJ7I8JDpr+mXb2PVJT88//PW7dpe5xH7fxXEmGY0BCQLnTGL13q/+XrDw4LWvq1UF
-	Fyd6rdv5af11iwupa0Nnz5hjevjYlYgTmw7MYZ3+SfDBjL2O/7WPHCo4NP2NcMeeX35bgzP3
-	li7I5hdOXWppOe9c949G9y8fr1hXuluUSdlGNUWkNP97N2211Y7YFx+XLn6/bsnLUma7gxIy
-	28O+V66Yyv+xx7p4RkdUTtF935x1ezvcHDszzfgntf7k+jLnE/MchZjT+/ffsfkd+ulwmrUc
-	6/lVziZu+x+9OL/9lhJLcUaioRZzUXEiAPTyNRRFAwAA
-X-CMS-MailID: 20250515093140epcas5p1c735205578916f52954430b1db18f5e2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250514135755epcas5p41291579e7eb266d92b91b82621e0fa5d
-References: <20250514140741.415981-1-pritam.sutar@samsung.com>
-	<CGME20250514135755epcas5p41291579e7eb266d92b91b82621e0fa5d@epcas5p4.samsung.com>
-	<20250514140741.415981-2-pritam.sutar@samsung.com>
+References: <20250430123306.15072-1-linux.amoon@gmail.com> <aCR9RzGMWEuI0pxS@mai.linaro.org>
+In-Reply-To: <aCR9RzGMWEuI0pxS@mai.linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 15 May 2025 16:40:27 +0530
+X-Gm-Features: AX0GCFs2e1Pkh4MEeMLO4mfbxvj7Hh0TOcnvMLseg8q2U30qPhgLXLwcneYB4S8
+Message-ID: <CANAwSgSA-JHMRD7-19wijOY=TSWD-sv6yyrT=mH+wkUJuvxFAw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] Exynos Thermal code improvement
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pritam
+Hi Daniel,
 
-> -----Original Message-----
-> From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> Sent: Wednesday, May 14, 2025 7:38 PM
-> To: pritam.sutar@samsung.com; gregkh@linuxfoundation.org;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> alim.akhtar@samsung.com; Thinh.Nguyen@synopsys.com
-> Cc: linux-usb@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
-> faraz.ata@samsung.com; muhammed.ali@samsung.com;
-> selvarasu.g@samsung.com
-> Subject: [PATCH 1/2] dt-bindings: usb: samsung,exynos-dwc3: add dt-
-> schema ExynosAutov920
-> 
-> Add a dedicated compatible for USB controller found in this SoC
-> 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+On Wed, 14 May 2025 at 16:53, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On Wed, Apr 30, 2025 at 06:02:56PM +0530, Anand Moon wrote:
+> > Hi All,
+>
+> Hi Anand,
+>
+> if the goal of the changes is to do cleanups, I recommend to rework
+> how the code is organized. Instead of having the data->soc check all
+> around the functions, write per platform functions and store them in
+> struct of_device_id data field instead of the soc version.
+>
+> Basically get rid of exynos_map_dt_data by settings the different ops
+> in a per platform structure.
+>
+> Then the initialization routine would be simpler to clean.
+>
 
+Thanks, I had previously attempted this approach.
+The goal is to split the exynos_tmu_data structure to accommodate
+SoC-specific callbacks for initialization and configuration.
+
+In my earlier attempt, I tried to refactor the code to achieve this.
+However, the main challenge I encountered was that the
+exynos_sensor_ops weren=E2=80=99t being correctly mapped for each SoC.
+
+Some SoC have multiple sensor
+exynos4x12
+                    tmu: tmu@100c0000
+exynos5420
+                tmu_cpu0: tmu@10060000
+                tmu_cpu1: tmu@10064000
+                tmu_cpu2: tmu@10068000
+                tmu_cpu3: tmu@1006c000
+                tmu_gpu: tmu@100a0000
+ exynos5433
+                tmu_atlas0: tmu@10060000
+                tmu_atlas1: tmu@10068000
+                tmu_g3d: tmu@10070000
+exynos7
+                tmu@10060000
+
+It could be a design issue of the structure.or some DTS issue.
+So what I found in debugging it is not working correctly.
+
+static const struct thermal_zone_device_ops exynos_sensor_ops =3D {
+        .get_temp =3D exynos_get_temp,
+        .set_emul_temp =3D exynos_tmu_set_emulation,
+        .set_trips =3D exynos_set_trips,
+};
+
+The sensor callback will not return a valid pointer and soc id for the get_=
+temp.
+
+Here is my earlier version of local changes.
+[1] https://pastebin.com/bbEP04Zh exynos_tmu.c
+[2] https://pastebin.com/PzNz5yve Odroid U3 dmesg.log
+[3] https://pastebin.com/4Yjt2d2u    Odroid Xu4 dmesg.log
+
+I want to re-model the structure to improve the code.
+Once Its working condition I will send this for review.
+
+If you have some suggestions please let me know.
+
+Thanks
+-Anand
