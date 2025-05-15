@@ -1,151 +1,242 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FF022157B;
-	Thu, 15 May 2025 11:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBE51DF97C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 11:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747307449; cv=none; b=KznxCR4ukUWbdKzUoIdd+jOhgihUqjywl7tekQECDJVK9YMSWZtxutN/+BQlnuzhKTso03brUQAJYwzAoudDvXdlfWt/G+2LX5UBwu8HL2iL1mDf3deb+4iwhoLLFvHbn9TTosOIsou/GHpiRIuSTSOxCyvylJGtJcONoBJNXMo=
+	t=1747308269; cv=none; b=fRZanZ6Vx8JaOGW4eaPjOs3k3KoI0Q9dMW3gyAKnGSIHv9GzbYY7ywBG0G6JYaiNS0zOeivKVatR7YwsaNqrcmKfjZYCcDBLHPmZKgEFrJGHS1L+SuO0ajSJJTTr9WApt9iq0ynoJnAfh/JsJ4xOSroi2fvIyox4WEjeDLHb8is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747307449; c=relaxed/simple;
-	bh=8MM7pRUzi/+tIllmEpUGU5whAaivVspfR2Lc0gn83vM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hipGmudiU4ASbTeZuOQkkuJRo8MdaSsrZHJX2XWwdxM0TgK/Rd+fwTEEokA7H+EnbK3fgqgghKBytHay7/k3HtSE2/Tl57zkymdKpwgLNjNOcIp3Ggwybc98dNHvsBciDK9VBQI0XiOPKsQpL7frXv/+hCBCtcChugEGlHAy0u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ab91m0vv; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1747308269; c=relaxed/simple;
+	bh=ImtyEelXTfk5GFXydBAucagBXjdcQTTFKMCCmtAc0PY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Px4TITibclwuiK/fmX5OIykcwrPsURexPsw+bdOM/4R4qt+J24ZLP1eFl6VVr76q0XnG5GGJWOfsy1tzHO/WrNXJkyV3+8EAc9oaPLG11BjyneKGKI4mtwdvx4sTw6nKaftw5tRisVwem033kny5XQViV3mCT+Lk9CHmvLEGUtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9xzFHwd; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ab91m0vv"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad21c5d9db2so134531266b.3;
-        Thu, 15 May 2025 04:10:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9xzFHwd"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf848528aso6858365e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 04:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747307446; x=1747912246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wH93pyrIEPQfVMzkjhmhq8lcyU/jh4Z97QhhnrcpdMM=;
-        b=ab91m0vvW+GbwgqSmUW7xzVzvPXLSZznSNnS9HC8QCmOcWtndqNyevTooDI0lsqbRb
-         PpJIFDRZsMITUtR6MlWHDIK1gEJ9GiiKtLtKZwY4Z3VLJ27KQ0rQ1vlNo9rR7Pou3dHZ
-         nk320qT/zxa9tMWkvtG/X1uYKdfzOjBLyCjO2ZWZhFiz7sSuJfoof+SpixX7H0/1CIDU
-         NBYcDdZ8Gj8++b0kNZ8vF2HusQjl3RE0LiuscZWCm/vMtpvcpBHUwFw57z+Vv58h0IK8
-         /Pwol50PhAIYqHK6mGSFZ8fnFUEMm/V5NK6MS92fCfY9k7aVU6i+M1lp3klHyGohtGBE
-         OY/w==
+        d=linaro.org; s=google; t=1747308266; x=1747913066; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Oq3luUbNQrh4sO37NnuDYHxjHPc8/KBLQt1bSPbX55c=;
+        b=b9xzFHwdS+cqvBRrtbDl7d9CEMiaj9Z2oze/nL/Lax8YgcMjbZOQ1sevfOqL+5aqAf
+         fKV7KIzkT1l3ezSGZVKRS5kEjYhkrlJcs5O3QfiqFLdsFagTqbCSAmzvuMQAzW+uiivr
+         df4SidGUbehEi7+j4PPH39S4bioEtBeHA0CC/fAfPpQqt7wInLPVvhj3GmoVTHwVGynd
+         MZ1pBXw0CPNgcy2+0B+m+rU6UhyyoUgjNJxq5kJp36YuYco7cqQjLovCyX9Q09XTcUVy
+         XwBqlanTDplsue7KiSEMbSjrDtopGypaA4JLXEm6CVMW/6wxQD3yCuUby8LQjaGC4jUB
+         qXJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747307446; x=1747912246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wH93pyrIEPQfVMzkjhmhq8lcyU/jh4Z97QhhnrcpdMM=;
-        b=AilVx+ro/UzbjdmCnIiN6v8ienneLW75p0pXQaA1xcIc3iWfYO1lHeMhoOMo84bdeD
-         6JXBMECUcvtKEnWu/AlDe2mCI84NwYIbDzUWhZRw9VhVR9Uva5rpvNWU+ueJyMmQ5SQx
-         u5ZRYGUh1/MQou4UUnSP6aGEYcu93kXfpV36y6kwW1bgsVt7npc7ooODM3N0NRlouweS
-         E922DXQ+wimvX4K644KJVZ7594A2I71N6sOdyKysxrTKFab7A4FydLu6Y0n7ZURuhXD+
-         YTon3+jLOwmDZr72tq3tyPB3LM3GzSDz9I30MNPCQ9pyCHeqa7B5AYXJLJcugjKfXmrq
-         dhoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMGcCbMYRziR2V62VRoPR3CMdn0s+BslFiVuyDoKfIKs7hMXdlupZGvTR7b83rPktQeFFXMWoPWrxk9OeJe71Tp2M=@vger.kernel.org, AJvYcCUXGArjV2MqveFgv13/SE50Jpbyiv3qahGIpe/eBJU+E5Yxj52QXWoCV6SDV3spKQG8EkvDiEHTXS0To8g=@vger.kernel.org, AJvYcCW4ZADvp7eymEmeC4cVT+1qByTYq2R7NBsd0/pCcaYaQwgbN8f9+yCWn/Vc+2giP2/4Lo6wzmiIXSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQepqUD8BmxaSKw1Vh38M8Ivck3+is3atzn21q3t+xFbT2h7tt
-	RUrkaeSgHXv18ljw0tHg5WgUqBzgZTOXix13qWkAX237RnC4+oPqKC+sNkZE0SiPs6qeICZiJ/V
-	SKgktJzGROzbpB88W4XUoF4Cpm3k=
-X-Gm-Gg: ASbGncvpUoZAbF2TPQ8wG0P6mGV3jjOZsC3u6wjSeGxduQkpCmlrRoAnaRA9Qaf7a5Q
-	Gdvc0uPzk2O0VZzB2pkTvADhT9lPyDy5N6iTTaxYJI1N0RhXh/JStNomlStBupBHZVr3hJ85teQ
-	jRxqNx1nHds1WEj6Xl95buHRAQKm44Vo6oSCPs8vUSow==
-X-Google-Smtp-Source: AGHT+IE0xGxRoRc2hiMiqEaYs/R8BerbabBDK4/6SGlmW7kn9vsBtzHGwphHTBRO8aoYTAxznhm63Sb3LeSpgXFd/NQ=
-X-Received: by 2002:a17:906:730e:b0:ac7:e815:6e12 with SMTP id
- a640c23a62f3a-ad4f717d80dmr692300366b.33.1747307445484; Thu, 15 May 2025
- 04:10:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747308266; x=1747913066;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Oq3luUbNQrh4sO37NnuDYHxjHPc8/KBLQt1bSPbX55c=;
+        b=a2aVjKaCa+UyQPaeFclbw1BG9iNjhQhthqWonM/pauKtCdDB37dDsMjt86zwjeQw5D
+         jNpFTU2Kg6NKZDJRBb7F77nylA1KgL+RiCSm3vBhjAlcGoIce0FoDu5kEDUfbI+hZjoz
+         ky1ISfxc+A8M5LU1visX2z4kyCf/0ni6szlKJZK6bRm+eguFU1IEif+rf55D+m9zJD5T
+         YxgzvPhUzCEeccBuMdPc00klsV4ihlMQn8FWOplGHLY+jJJyU5BEfQgZvW9qvbcmUOFR
+         69xdZS/BT6i04q7CTLWbD0vwgpbqbJK3+bPPi4aSPk/KSOwdEPyLeRIjklHqUQsfOvRk
+         BlYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVotKNn32ZqaSq0VeWxJ9C3J4+roPUmH35yZ42UAmq41wVjnG6iZyV/VhYvqQP5Zh5d+tbgGmOUuoC8NT9hQG8G2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlu6BMpfihiWjOkCgfASXdpuPcRr5YYwoG0tnuE24KXpI96Ynk
+	bPsm3vQYEiZoNehA0VozXpLthar/wmeTAZ8WBA0nMVwiTNDpAbUDU+8tjL5ZTJ0=
+X-Gm-Gg: ASbGncsF3Htj4Pprn0WDVQ+izJj489c2XovOWX4JLkjJViPqz5wfbpWyI2tosQTERJ+
+	lMAISvyPuteTv/gGmlaSnO7UC4/m661AeczNF5Km9RnJ364x9l9e5WZ/Bawqia/yND/ktdsltqa
+	TGkbYxE0HMga4Zk53aXno2Ux/j53bWx5u3zh9hfAnwA3G3i1G9I3mYBRaafSpSu0Y/mImr07Ee3
+	mhg2fK/62m/DKZFLKEF9diMYInQ0aMNOFD5d8MJm8anaTQ5E8J9Y6/yGgrHoyEt8R92gyj3v36h
+	jHAdmwZ0nCxQdwplxNWOjaxDo/dg282tw/i2VL6zeeK0JCcN8H9lK+OwvE80TLNMdj+UXCeV+O0
+	sPdeukSBL7X6N5+v672RK
+X-Google-Smtp-Source: AGHT+IHewJ1yK2km4hF4XJnukjwH9B+t5DFAbmZFcOJDYUefiqQ+fuKodfexjRPHQzwg8kOClUt6eg==
+X-Received: by 2002:a05:600c:4691:b0:43d:40b0:5b with SMTP id 5b1f17b1804b1-442f2168cc3mr58378255e9.25.1747308265655;
+        Thu, 15 May 2025 04:24:25 -0700 (PDT)
+Received: from [10.61.0.59] (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442ebd47d39sm62595095e9.1.2025.05.15.04.24.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 04:24:25 -0700 (PDT)
+Message-ID: <7cb062aefa6f8287b30c95bb12274c83ff6df34e.camel@linaro.org>
+Subject: Re: [PATCH 2/2] phy: exyons5-usbdrd: support HS phy for
+ ExynosAutov920
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org, 
+	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	alim.akhtar@samsung.com, peter.griffin@linaro.org,
+ kauschluss@disroot.org, 	m.szyprowski@samsung.com, s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, 	faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+Date: Thu, 15 May 2025 12:24:23 +0100
+In-Reply-To: <20250514134813.380807-3-pritam.sutar@samsung.com>
+References: <20250514134813.380807-1-pritam.sutar@samsung.com>
+		<CGME20250514133847epcas5p41a1c413aecefa2fab32357c6c69e999c@epcas5p4.samsung.com>
+	 <20250514134813.380807-3-pritam.sutar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.55.2-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430123306.15072-1-linux.amoon@gmail.com> <aCR9RzGMWEuI0pxS@mai.linaro.org>
-In-Reply-To: <aCR9RzGMWEuI0pxS@mai.linaro.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 15 May 2025 16:40:27 +0530
-X-Gm-Features: AX0GCFs2e1Pkh4MEeMLO4mfbxvj7Hh0TOcnvMLseg8q2U30qPhgLXLwcneYB4S8
-Message-ID: <CANAwSgSA-JHMRD7-19wijOY=TSWD-sv6yyrT=mH+wkUJuvxFAw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Exynos Thermal code improvement
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi,
 
-On Wed, 14 May 2025 at 16:53, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
-ote:
->
-> On Wed, Apr 30, 2025 at 06:02:56PM +0530, Anand Moon wrote:
-> > Hi All,
->
-> Hi Anand,
->
-> if the goal of the changes is to do cleanups, I recommend to rework
-> how the code is organized. Instead of having the data->soc check all
-> around the functions, write per platform functions and store them in
-> struct of_device_id data field instead of the soc version.
->
-> Basically get rid of exynos_map_dt_data by settings the different ops
-> in a per platform structure.
->
-> Then the initialization routine would be simpler to clean.
->
+On Wed, 2025-05-14 at 19:18 +0530, Pritam Manohar Sutar wrote:
+> This SoC has a single USB 3.1 DRD combo phy and three USB2.0
+> DRD HS phy controllers those only support the UTMI+ interface.
+>=20
+> Support only UTMI+ for this SoC which is very similar to what
+> the existing Exynos850 supports.
+>=20
+> The combo phy supports both UTMI+ (HS) and PIPE3 (SS) and is
+> out of scope of this commit.
+>=20
+> Add required change in phy driver to support HS phy for this SoC.
+>=20
+> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> ---
+> =C2=A0drivers/phy/samsung/phy-exynos5-usbdrd.c | 85 +++++++++++++++++++++=
++++
+> =C2=A01 file changed, 85 insertions(+)
+>=20
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsu=
+ng/phy-exynos5-usbdrd.c
+> index 634c4310c660..7b4b80319c5c 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -177,6 +177,9 @@
+> =C2=A0#define HSPHYPLLTUNE_PLL_P_TUNE			GENMASK(3, 0)
+> =C2=A0
+> =C2=A0/* Exynos850: USB DRD PHY registers */
+> +#define EXYNOSAUTOv920_DRD_CTRL_VER		0x00
+> +#define GET_CTRL_MAJOR_VERSION(_x)		(((_x) >> 24) & 0xff)
 
-Thanks, I had previously attempted this approach.
-The goal is to split the exynos_tmu_data structure to accommodate
-SoC-specific callbacks for initialization and configuration.
+I suggest using standard GENMASK() and FIELD_GET() for the version bits ins=
+tead.
 
-In my earlier attempt, I tried to refactor the code to achieve this.
-However, the main challenge I encountered was that the
-exynos_sensor_ops weren=E2=80=99t being correctly mapped for each SoC.
+Cheers,
+A.
 
-Some SoC have multiple sensor
-exynos4x12
-                    tmu: tmu@100c0000
-exynos5420
-                tmu_cpu0: tmu@10060000
-                tmu_cpu1: tmu@10064000
-                tmu_cpu2: tmu@10068000
-                tmu_cpu3: tmu@1006c000
-                tmu_gpu: tmu@100a0000
- exynos5433
-                tmu_atlas0: tmu@10060000
-                tmu_atlas1: tmu@10068000
-                tmu_g3d: tmu@10070000
-exynos7
-                tmu@10060000
+> +
+> =C2=A0#define EXYNOS850_DRD_LINKCTRL			0x04
+> =C2=A0#define LINKCTRL_FORCE_RXELECIDLE		BIT(18)
+> =C2=A0#define LINKCTRL_FORCE_PHYSTATUS		BIT(17)
+> @@ -1772,6 +1775,10 @@ static const char * const exynos5_regulator_names[=
+] =3D {
+> =C2=A0	"vbus", "vbus-boost",
+> =C2=A0};
+> =C2=A0
+> +static const char * const exynosautov920_clk_names[] =3D {
+> +	"ext_xtal",
+> +};
+> +
+> =C2=A0static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_ph=
+y =3D {
+> =C2=A0	.phy_cfg		=3D phy_cfg_exynos5,
+> =C2=A0	.phy_ops		=3D &exynos5_usbdrd_phy_ops,
+> @@ -1847,6 +1854,81 @@ static const struct exynos5_usbdrd_phy_drvdata exy=
+nos850_usbdrd_phy =3D {
+> =C2=A0	.n_regulators		=3D ARRAY_SIZE(exynos5_regulator_names),
+> =C2=A0};
+> =C2=A0
+> +static void exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy *p=
+hy_drd)
+> +{
+> +	u32 version;
+> +
+> +	version =3D readl(phy_drd->reg_phy + EXYNOSAUTOv920_DRD_CTRL_VER);
+> +	dev_info(phy_drd->dev, "usbphy: version:0x%x\n", version);
+> +
+> +	if (GET_CTRL_MAJOR_VERSION(version) =3D=3D 0x3)
+> +		/* utmi init for exynosautov920 HS phy */
+> +		exynos850_usbdrd_utmi_init(phy_drd);
+> +}
+> +
+> +static int exynosautov920_usbdrd_phy_init(struct phy *phy)
+> +{
+> +	struct phy_usb_instance *inst =3D phy_get_drvdata(phy);
+> +	struct exynos5_usbdrd_phy *phy_drd =3D to_usbdrd_phy(inst);
+> +	int ret =3D 0;
+> +
+> +	ret =3D clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clk=
+s);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* UTMI or PIPE3 specific init */
+> +	inst->phy_cfg->phy_init(phy_drd);
+> +
+> +	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
+> +
+> +	return 0;
+> +}
+> +
+> +static void exynosautov920_v3p1_phy_dis(struct phy *phy)
+> +{
+> +	struct phy_usb_instance *inst =3D phy_get_drvdata(phy);
+> +	struct exynos5_usbdrd_phy *phy_drd =3D to_usbdrd_phy(inst);
+> +	void __iomem *reg_phy =3D phy_drd->reg_phy;
+> +	u32 version;
+> +
+> +	version =3D readl(reg_phy + EXYNOSAUTOv920_DRD_CTRL_VER);
+> +
+> +	if (GET_CTRL_MAJOR_VERSION(version) =3D=3D 0x3)
+> +		exynos850_usbdrd_phy_exit(phy);
+> +}
+> +
+> +static int exynosautov920_usbdrd_phy_exit(struct phy *phy)
+> +{
+> +	struct phy_usb_instance *inst =3D phy_get_drvdata(phy);
+> +
+> +	if (inst->phy_cfg->id =3D=3D EXYNOS5_DRDPHY_UTMI)
+> +		exynosautov920_v3p1_phy_dis(phy);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops exynosautov920_usbdrd_phy_ops =3D {
+> +	.init		=3D exynosautov920_usbdrd_phy_init,
+> +	.exit		=3D exynosautov920_usbdrd_phy_exit,
+> +	.owner		=3D THIS_MODULE,
+> +};
+> +
+> +static const struct exynos5_usbdrd_phy_config phy_cfg_exynosautov920[] =
+=3D {
+> +	{
+> +		.id		=3D EXYNOS5_DRDPHY_UTMI,
+> +		.phy_init	=3D exynosautov920_usbdrd_utmi_init,
+> +	},
+> +};
+> +
+> +static const struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_p=
+hy =3D {
+> +	.phy_cfg		=3D phy_cfg_exynosautov920,
+> +	.phy_ops		=3D &exynosautov920_usbdrd_phy_ops,
+> +	.clk_names		=3D exynosautov920_clk_names,
+> +	.n_clks			=3D ARRAY_SIZE(exynosautov920_clk_names),
+> +	.core_clk_names		=3D exynos5_core_clk_names,
+> +	.n_core_clks		=3D ARRAY_SIZE(exynos5_core_clk_names),
+> +};
+> +
+> =C2=A0static const struct exynos5_usbdrd_phy_config phy_cfg_gs101[] =3D {
+> =C2=A0	{
+> =C2=A0		.id		=3D EXYNOS5_DRDPHY_UTMI,
+> @@ -2047,6 +2129,9 @@ static const struct of_device_id exynos5_usbdrd_phy=
+_of_match[] =3D {
+> =C2=A0	}, {
+> =C2=A0		.compatible =3D "samsung,exynos850-usbdrd-phy",
+> =C2=A0		.data =3D &exynos850_usbdrd_phy
+> +	}, {
+> +		.compatible =3D "samsung,exynosautov920-usb31drd-phy",
+> +		.data =3D &exynosautov920_usb31drd_phy
+> =C2=A0	},
+> =C2=A0	{ },
+> =C2=A0};
 
-It could be a design issue of the structure.or some DTS issue.
-So what I found in debugging it is not working correctly.
-
-static const struct thermal_zone_device_ops exynos_sensor_ops =3D {
-        .get_temp =3D exynos_get_temp,
-        .set_emul_temp =3D exynos_tmu_set_emulation,
-        .set_trips =3D exynos_set_trips,
-};
-
-The sensor callback will not return a valid pointer and soc id for the get_=
-temp.
-
-Here is my earlier version of local changes.
-[1] https://pastebin.com/bbEP04Zh exynos_tmu.c
-[2] https://pastebin.com/PzNz5yve Odroid U3 dmesg.log
-[3] https://pastebin.com/4Yjt2d2u    Odroid Xu4 dmesg.log
-
-I want to re-model the structure to improve the code.
-Once Its working condition I will send this for review.
-
-If you have some suggestions please let me know.
-
-Thanks
--Anand
