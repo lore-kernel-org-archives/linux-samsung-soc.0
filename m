@@ -1,137 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4BD1DF97C;
-	Thu, 15 May 2025 09:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7AA289E2D
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 09:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747300451; cv=none; b=mkv/gf6M3fNPJ3my4OPe83+ugYgKhmmeLswQ35QIoqCO3T0lCeOmCRgJBmTKtac9vUKLwLfRD8QAhBClDFGmTR4SvBHaPw0gf6vSuFwLrxQKVdIwyAdK8SlY2hS1kRrExjFqNFLwvQyQ9LlEPOrr2L1Yig79+34HKQ2R7EltvmQ=
+	t=1747301430; cv=none; b=ji/WTz6780l9gKsCS0mcIq6CeferD1pTXlEOdZUT9hkof1NXdhI8Ie6oZj3w2jv0bvydKbRNnw8oaf8e0UR6CDo5OziTygOMZ+ODLSTh8o/yCz9FiodojjrY8H7V0LnQl1G9wI1TtwoTD9A7xQkuMoMVjvbERp3ZyQAjYqgJHV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747300451; c=relaxed/simple;
-	bh=TYpngpH9wek5rVMicagLihZR2ENnqZib7zF2664AZ5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZW2xJjfO+m9dLZ7Tb0Odd/HBpTXZu7FZn6DGiUNEawvH+1/qNSWU7MC3j+N54zda6g4u8AtT5F0zsAxWyUCPZ6Fva7/t+4bMBp87pQdycKy/1hU9UTTPcawuXsEtw/AcdTZGUPXvE11VjKhuar3VceFC9O/3bElik/rLSt3UiHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aq68XiLN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747301430; c=relaxed/simple;
+	bh=5vqIBeLxlVgd3Xg0Cvj1EUc+Oxp9S+e2ua07s1imfH4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=GwcYpuK28EmVDDfi6fZIQzL25+WvsmJHp9QKHifQFMFwrPQT6qN3h+iI7uY6pDcN3rtMWeKlgjAIuGBaojqiUCkSictZIPAX0wso26M0Bsd3ECwVB4fcULqIeNLzLL4EHGjcE7hAv1915M9Ci0Z1gF5sWNPHIdGveRh4Qs85FxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X9iNwBAV; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq68XiLN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE238C4CEE7;
-	Thu, 15 May 2025 09:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747300451;
-	bh=TYpngpH9wek5rVMicagLihZR2ENnqZib7zF2664AZ5M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Aq68XiLNPqNdboVpmBRC3g6z4Euv9NO2rVneCHmdZNaOnZYLe1lia8RINo5qL1Sdv
-	 eeIQ8XkJqY96IaHUwpUbXpVJ8hnf4useOm7mqOWsRSLCeDdVMKxfdEgcvnSPIMIQj/
-	 /T9r0Vhujtk1xJDnSKk+GhyAge86mBtVg72wGMqDIhwJ8LSHE9ua2zXY4jqG2qpOvR
-	 CwWEwv9vo2SknClvm9Qr0yOSwR3E4zKKO9lCStLyGYTQTJGFQ4XxhPotn+dMjRcf8J
-	 hXqSCxcja/ligL+Cufz1ewbn5FrtVUPUf0nAsbpcNYUX0zuxibwhd1nfc7bsM8LAUK
-	 jFL1/nIsJ2+HQ==
-Message-ID: <ea1a7a37-031f-4f81-ba09-eaa523f70761@kernel.org>
-Date: Thu, 15 May 2025 11:14:06 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X9iNwBAV"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250515093025epoutp01a20f9d4661b4d462889fd27824a4e0b3~-qWN7sQPX2748427484epoutp01P
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 09:30:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250515093025epoutp01a20f9d4661b4d462889fd27824a4e0b3~-qWN7sQPX2748427484epoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747301425;
+	bh=LwnsrpMvLC2QSW4QUvZ69ahD/8TwjGI5Icjzo88ho0E=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=X9iNwBAVZCazsIae7aERKG95x3C1AmyvADys1Dp3fbYFdN5OGNTkqOb80OY3ZATEE
+	 y2O4+JCs479tyOVCVbGeTMX7gZUC3TBm3vq7Ooe+z0v8rRcbGLOgrjlqCHVqy0X+Un
+	 JxzM+qO78Sdo+Muo8XYpHWwcUWsPfpZZtnV4BxAA=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250515093024epcas5p1e40dc34ff2f2ca956214a06054db9ecd~-qWNVLl0H1137911379epcas5p1e;
+	Thu, 15 May 2025 09:30:24 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZylLR1RT0z6B9mR; Thu, 15 May
+	2025 09:30:23 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250515093022epcas5p2bb0e66bb225d96634bc6aacf984b8921~-qWLa5I0a2807728077epcas5p23;
+	Thu, 15 May 2025 09:30:22 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250515093022epsmtrp227032d23c4c687f60f048b99fbe39566~-qWLZ9Lgu2206622066epsmtrp2w;
+	Thu, 15 May 2025 09:30:22 +0000 (GMT)
+X-AuditID: b6c32a2a-d57fe70000002265-91-6825b42dfd88
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	41.F1.08805.D24B5286; Thu, 15 May 2025 18:30:21 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250515093019epsmtip276ad656a8729e1e80dbc116905a54ea1~-qWIpqNm70035900359epsmtip26;
+	Thu, 15 May 2025 09:30:19 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Pritam Manohar Sutar'" <pritam.sutar@samsung.com>,
+	<gregkh@linuxfoundation.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>
+Cc: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250514140741.415981-3-pritam.sutar@samsung.com>
+Subject: RE: [PATCH 2/2] usb: dwc3-exynos: add support for ExynosAutov920
+Date: Thu, 15 May 2025 15:00:18 +0530
+Message-ID: <0efd01dbc57b$faaafa00$f000ee00$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] USB PHY support for Exynos990 SoCs
-To: Vinod Koul <vkoul@kernel.org>,
- Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250420-usb-resends-april-v2-0-25dc7d2e6dd4@mentallysanemainliners.org>
- <aCRXgpD0Ld2W4lHE@vaman>
- <D9VYC98LJTR0.LJXYC1H0BAKA@mentallysanemainliners.org>
- <aCWj4cn4y+RyfGiZ@vaman>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aCWj4cn4y+RyfGiZ@vaman>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHb4atmIwpdDAkGWt442tTNHGskkAJ/U0NcARvjAqiztljokA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsWy7bCSvK7uFtUMg+szDSzW7D3HZHFvxzJ2
+	i/lHzrFaXLuxkN2iefF6NouXs+6xWWx6fI3V4vKuOWwWM87vY7JYtKyV2eL8iy5Wi2f3VrBZ
+	/N+zg93iy88HzBZHln9ksli14AC7g4DHplWdbB77565h99i8pN6jb8sqRo8t+z8zenzeJBfA
+	FsVlk5Kak1mWWqRvl8CVcX5xO3vBYbaKi5sfsTQwbmDtYuTkkBAwkXi7awJbFyMXh5DAbkaJ
+	JdvvM0MkpCWub5zADmELS6z89xzMFhJ4ziixujUBxGYT0JXYsbgNrFlEYA+jRMfCh4wgDrPA
+	fiaJab+XMUGMPcwoMfPZfLB9nAL2EpvP72IDsYUFPCX+/vkFZHNwsAioSpx/6A4S5hWwlLg/
+	vYERwhaUODnzCQuIzSygLdH7sJURxl628DXUpQoSP58uYwUZIyLgJHFzTxBEibjEy6NH2Ccw
+	Cs9CMmkWkkmzkEyahaRlASPLKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4IjV0trB
+	uGfVB71DjEwcjIcYJTiYlUR4r2cpZwjxpiRWVqUW5ccXleakFh9ilOZgURLn/fa6N0VIID2x
+	JDU7NbUgtQgmy8TBKdXAZBZRe+PH2vv7bn1ZpFAdXpO02De/gXthVNlvFibN2jP12Q7rl6tc
+	3ijE5R+3xYN9n2PPNfF7N8K9rly7rSYvPi31RbKUIO/hVz/Mal+oWy+6uMvBObNjkRFLd+Yf
+	5QN3Ul7YLBD9eFzq4W1Jrotpp7bEGMc/YxJ5vsPXcN2ugGUtDI8i/iY6V31XejL54ZHb8+oP
+	6nomXz/tpHM53npn/ROW1UHOblM6joffvfXHMLOA9cCEk39LkqvDNx47b2wRtiQx8+H6dp9n
+	t//NOqQ+g93PJv74Fm6p1rZamY4L3Xwdwk1vbrxSCgx49sb9RfmXF/9PrL3M25TG/b6wplfJ
+	KNIsQ7lsSQ9LyaE/tcxTlViKMxINtZiLihMBl9lrLUcDAAA=
+X-CMS-MailID: 20250515093022epcas5p2bb0e66bb225d96634bc6aacf984b8921
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250514135757epcas5p1aab0db4b4910b689f76ad00661f2a8e9
+References: <20250514140741.415981-1-pritam.sutar@samsung.com>
+	<CGME20250514135757epcas5p1aab0db4b4910b689f76ad00661f2a8e9@epcas5p1.samsung.com>
+	<20250514140741.415981-3-pritam.sutar@samsung.com>
 
-On 15/05/2025 10:20, Vinod Koul wrote:
-> On 14-05-25, 16:26, Igor Belwon wrote:
->> On Wed May 14, 2025 at 10:42 AM CEST, Vinod Koul wrote:
->>> On 20-04-25, 21:28, Igor Belwon wrote:
->>>> Hi all!
->>>>
->>>> This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
->>>> This SoC has a combo PHY that supports highspeed, superspeed USB and
->>>> DisplayPort, however due to my inability to test the superspeed part of
->>>> the combo phy (device always enumerated as high-speed, even on the
->>>> vendor kernels/bootloaders) only the highspeed part is brought up.
->>>>
->>>> These changes have been tested and confirmed working (with the USB_ETH
->>>> gadget and telnet/ssh in a ramdisk) on a device from the hubble family
->>>> (x1s) and also a device from the canvas family (c1s).
->>>
->>> I am missing the dt patch, can you pls report the whole series if you
->>> would like me to review and apply this
->>
->> Hi Vinod,
->>
->> I've sent the DT series a while back (before resending). Usually I
->> propose DT changes through Krzysztof's tree. The patches are 
->> unchanged (they will be resent unchanged when all usb and wdt 
->> changes are merged).
-> 
-> It makes sense to post bindings and driver togther and mostly these go
-> thru subsystem trees!
-> 
-I don't think you both speak about the same thing. DT is ambiguous here,
-so always use DTS or DT bindings... that said bindings were here in this
-patchset so if Vinod misses them, this has to be resent.
+Hi Pritam
 
-Best regards,
-Krzysztof
+> -----Original Message-----
+> From: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Sent: Wednesday, May 14, 2025 7:38 PM
+> To: pritam.sutar=40samsung.com; gregkh=40linuxfoundation.org;
+> robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+>=20
+=5Bsnip=5D
+>  static const struct of_device_id exynos_dwc3_match=5B=5D =3D =7B
+>  	=7B
+>  		.compatible =3D =22samsung,exynos2200-dwusb3=22, =40=40 -209,6
+> +215,9 =40=40 static const struct of_device_id exynos_dwc3_match=5B=5D =
+=3D =7B
+>  	=7D, =7B
+>  		.compatible =3D =22google,gs101-dwusb3=22,
+>  		.data =3D &gs101_drvdata,
+> +	=7D, =7B
+> +		.compatible =3D =22samsung,exynosautov920-dwusb3=22,
+> +		.data =3D &exynosautov920_drvdata,
+
+Should go below =22 samsung,exynos2200-dwusb3=22 entry (as already pointed =
+by Thinh)
+With that fixed
+
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+
+
