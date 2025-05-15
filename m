@@ -1,139 +1,121 @@
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109B31F4CBE
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 14:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803A91E9B2F;
+	Thu, 15 May 2025 16:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320228; cv=none; b=oLHmQ7QvrVF7NGE5w1aijHJtKm5ZX31+5U85FYMFn6SGIXiXKenrdO43m1G1aCnQBzC2xQO1o/Gms0w5mNfPhfpuYw7WdQacz5gnYHaDKE5rH71JVuS6uXNaemHAk6wYVkoT7Z7+SfixR2AihVfabyn56DV+Gl2sAC4fKalkp44=
+	t=1747326799; cv=none; b=hHgxwd6dAfhD/Xs8+obIQrhjBzIC/0bCK2pjPJiaYakrnTL84+AUUllCywHUrcXpeqDxJtzGf2icVqb3KafM/adoavA4JqFjQzzqbpWfCxX9U8Hppg6nsZcNxxxKjzlt71/ap/4CnsxBrhACokhdEym0P9d+QtPFgS1du4JYGjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320228; c=relaxed/simple;
-	bh=WVPCoGGyfPmMmWEeShsNZG/xt1N7me7E3wbQwMdON+Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yn/MrJ+Ds8UHdcikoM7bMdQZNtKMWIbwiwHlBJqawVRI3XO1Nka/ACd/EVOrtZV2fJEuFR6yFgYXSOmik9Sv23pfcuDfJ2ud2LGcs5IaSUHxbj1XStufyxH3T5doDeus6C3pJddtJEj02HZ6LpUzJuCcsChXFrxAksiEgMt6WIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=p3S5oL+l; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+	s=arc-20240116; t=1747326799; c=relaxed/simple;
+	bh=kKPojMJd9kqH6u8NArAZ+Lui+uo9ndwDNquYyy93G0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qFsyrOQMc3Okqe2XSTaMkfLCbg1F6RZfS1OT4At0Ain6h4SfcZ6AEeRx59lV/w4ku59wfRlNv+RCEmASCkB1O7z7fPs+dR2/u+xxlhuYDBjAkDkkPCFc+1ByT1eUv7Icnb2g4f8uKs6stDo34UaMe4VwYhSN4HZFi4qiN/W3LBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESjhprCJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="p3S5oL+l"
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=p3S5oL+l/Cpv09A2UkCSL/Lz/Q3hRzM3CDYT2Ts3UPEdsD0+kNqmoumyQQXTPZDWLrhdruTrKzEjehFfU5iQwG3NdQtKizno3k8CHX/Ab/wDrvOd7vQcXZ/w1Z/lXZamBwEKTYKMwqspY9IcRNwmD/E9Xk8uDRsMVrFwL1OzN8iUt7oW1//B6WIgsuifGdjNDfZE1vHjq0H4LOwvuuZMHaKtDuiqGtjB/t8RPixIDsHfVT2ioVRWzfPwIQ32UCJ+tjXMMQSDjcBfcfIj0uA+zzawepw7doh+dqy3peqta6aHXluepT6J0PGioidfm7oZRW34aGx+Ii/djOnvyUewgQ==; s=purelymail1; d=purelymail.com; v=1; bh=WVPCoGGyfPmMmWEeShsNZG/xt1N7me7E3wbQwMdON+Q=; h=Feedback-ID:Received:From:Date:Subject:To;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1985443548;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Thu, 15 May 2025 14:43:11 +0000 (UTC)
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Date: Thu, 15 May 2025 16:43:02 +0200
-Subject: [PATCH v3 2/2] phy: exynos5-usbdrd: Add support for the Exynos990
- usbdrd phy
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESjhprCJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD5EC4CEE7;
+	Thu, 15 May 2025 16:33:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747326799;
+	bh=kKPojMJd9kqH6u8NArAZ+Lui+uo9ndwDNquYyy93G0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ESjhprCJouXAhjQr0dZG6SyTXibttfDkEXUZ8Ep+z+gy7A2IEg74Pih3DzIhR92mQ
+	 Wg1fRLZ7AahHltL5KOdUISnA+OaOb/NOKa//4TXRGsVv+rtItX6BET9OvhMNCVjW8U
+	 De/WmZChNK1Me4d3LxDTawHPD0qDmGXiVYicOpf6dOYdfucJiAUxulmuYxUjdIzoNg
+	 rv5OilXcNBVStDgu4CYEBWfv8QrLAI7K0VbMfOL+gk/FQ5MrHdl540MrndCpVvuVnX
+	 7099wIC/Jq/PwBwkwpUYCjiluxA04ZhHxA2VwN2NdOyoYvtGtPBJorxsEY9l/w9orN
+	 6Z7TkSd+Kro/w==
+Date: Thu, 15 May 2025 17:33:07 +0100
+From: Will Deacon <will@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+	Janne Grunau <j@jannau.net>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>, Kevin Tian <kevin.tian@intel.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Neal Gompa <neal@gompa.dev>, Orson Zhai <orsonzhai@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tomasz Jeznach <tjeznach@rivosinc.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, virtualization@lists.linux.dev,
+	Chen-Yu Tsai <wens@csie.org>, Yong Wu <yong.wu@mediatek.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, patches@lists.linux.dev
+Subject: Re: [PATCH 0/7] Remove ops.pgsize_bitmap
+Message-ID: <20250515163307.GA12396@willie-the-truck>
+References: <0-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250515-usb-resends-may-15-v3-2-ad33a85b6cee@mentallysanemainliners.org>
-References: <20250515-usb-resends-may-15-v3-0-ad33a85b6cee@mentallysanemainliners.org>
-In-Reply-To: <20250515-usb-resends-may-15-v3-0-ad33a85b6cee@mentallysanemainliners.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747320182; l=3097;
- i=igor.belwon@mentallysanemainliners.org; s=20241206;
- h=from:subject:message-id; bh=WVPCoGGyfPmMmWEeShsNZG/xt1N7me7E3wbQwMdON+Q=;
- b=Yz61+U+8P1tH3DzDCZgtCDCblx9usfa2Uyd5GUgxBLzmBXPk5GjHxcULalzJyOqd7m55pZsWt
- R29Pnv8SWwlCVsVL87dJ1Y+famYNT4y0zVNrFqg4Tuve7OQ/sHBQctS
-X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
- pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The Exynos990 usbdrd PHY is a combo PHY which supports USB SS, HS and
-DisplayPort outputs. This commit adds support only for UTMI+ (USB HS).
+On Tue, Apr 29, 2025 at 11:34:10AM -0300, Jason Gunthorpe wrote:
+> Now that all drivers are using domain_alloc_paging() and dev is never
+> NULL, we can have all drivers correctly set domain.pgsize_bitmap during
+> their allocation function.
+> 
+> There are a few oddities that have accumulated here over past changes:
+> 
+>  - Some drivers always set domain.pgsize_bitmap during their
+>    domain_alloc_paging() call but still provide a value in ops. This is dead
+>    code, delete it.
+> 
+>  - Some drivers calculate a system global pgsize_bitmap in the ops, but
+>    it is now trivial to use the per-instance value instead. In several
+>    cases this is dead code, delete it. This also allows
+>    constifying the ops in these drivers as a hardening measure
+> 
+>  - Some drivers have a fixed pgsize_bitmap, put it next to setting up the
+>    geometry in their domain_alloc_paging() functions.
+> 
+>  - Finally a few drivers still use ops because they have a delayed
+>    finalize operation. Set the constant pgsize_bitmap in the
+>    domain_alloc_paging().
+> 
+> Then remove ops.pgsize_bitmap.
+> 
+> This is based on iommu next, and must go after the virtio
+> domain_alloc_paging() conversion.
+> 
+> Jason Gunthorpe (7):
+>   iommu/arm-smmu-v3: Remove iommu_ops pgsize_bitmap
+>   iommu/arm-smmu: Remove iommu_ops pgsize_bitmap
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c    | 32 +++++++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
- 2 files changed, 35 insertions(+)
+These two SMMU changes look correct to me:
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 917a76d584f0856f1e445630e2cf97b3c3e46b13..dd660ebe80458a13413ca9735339b4e1095af8ea 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -2025,6 +2025,35 @@ static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
- 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
- };
- 
-+static const struct exynos5_usbdrd_phy_tuning exynos990_tunes_utmi_postinit[] = {
-+	PHY_TUNING_ENTRY_PHY(EXYNOS850_DRD_HSPPARACON,
-+			     (HSPPARACON_TXVREF |
-+			      HSPPARACON_TXPREEMPAMP | HSPPARACON_SQRX |
-+			      HSPPARACON_COMPDIS),
-+			     (FIELD_PREP_CONST(HSPPARACON_TXVREF, 7) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPAMP, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_SQRX, 5) |
-+			      FIELD_PREP_CONST(HSPPARACON_COMPDIS, 7))),
-+	PHY_TUNING_ENTRY_LAST
-+};
-+
-+static const struct exynos5_usbdrd_phy_tuning *exynos990_tunes[PTS_MAX] = {
-+	[PTS_UTMI_POSTINIT] = exynos990_tunes_utmi_postinit,
-+};
-+
-+static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
-+	.phy_cfg		= phy_cfg_exynos850,
-+	.phy_ops		= &exynos850_usbdrd_phy_ops,
-+	.phy_tunes		= exynos990_tunes,
-+	.pmu_offset_usbdrd0_phy	= EXYNOS990_PHY_CTRL_USB20,
-+	.clk_names		= exynos5_clk_names,
-+	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
-+	.core_clk_names		= exynos5_core_clk_names,
-+	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
-+	.regulator_names	= exynos5_regulator_names,
-+	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
-+};
-+
- static const struct exynos5_usbdrd_phy_config phy_cfg_gs101[] = {
- 	{
- 		.id		= EXYNOS5_DRDPHY_UTMI,
-@@ -2228,6 +2257,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-usbdrd-phy",
- 		.data = &exynos850_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynos990-usbdrd-phy",
-+		.data = &exynos990_usbdrd_phy
- 	},
- 	{ },
- };
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index 1a2c0e0838f99821151661878f022f2129a0c19b..7754697e581077ec0fd60b63649728896ca145c9 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -662,6 +662,9 @@
- #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
- #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
- 
-+/* For Exynos990 */
-+#define EXYNOS990_PHY_CTRL_USB20				(0x72C)
-+
- /* For Tensor GS101 */
- /* PMU ALIVE */
- #define GS101_SYSIP_DAT0					(0x810)
+Acked-by: Will Deacon <will@kernel.org>
 
--- 
-2.47.2
+Please yell if you'd like me to pick them up separately from the rest
+of the series.
 
+Will
