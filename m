@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708682874F6;
-	Thu, 15 May 2025 09:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4BD1DF97C;
+	Thu, 15 May 2025 09:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747300108; cv=none; b=IfjSgxEHp/ASBbdik8emtyaz9IbVJzql7hK4WwahQb/RKHCe2xH1eywtIehLgrqunJMen9X1Y05ZtGePekl+qsVC/mu10wtZdWHysdrl2/Bo3m0QHsl0HiTZWAsyzUD1sTDz6GrBjvv9FJn92rMiwfeRW75QUU+JmyK9iF7OrVo=
+	t=1747300451; cv=none; b=mkv/gf6M3fNPJ3my4OPe83+ugYgKhmmeLswQ35QIoqCO3T0lCeOmCRgJBmTKtac9vUKLwLfRD8QAhBClDFGmTR4SvBHaPw0gf6vSuFwLrxQKVdIwyAdK8SlY2hS1kRrExjFqNFLwvQyQ9LlEPOrr2L1Yig79+34HKQ2R7EltvmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747300108; c=relaxed/simple;
-	bh=XFzy7WaSOUcaOMc38XVxK8vXpVMM6q+AqJl1IFqnOFQ=;
+	s=arc-20240116; t=1747300451; c=relaxed/simple;
+	bh=TYpngpH9wek5rVMicagLihZR2ENnqZib7zF2664AZ5M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FmYLvXD8CRBwyorho6YdfkFYGc28MkXKnUcQTkIDcPXeIaQ6VdcCO7MOovZ1kpVhJKsYVICrdBF3kbYgyUs2d2/+z0NMJRLI7Z0ebUtj3NeYglFbFFz21rUMEbaFm+gchigdjDkPsR90uQ49dxyOeyeLMZrO1e3HXmUF8bkSmCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApKlazq5; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ZW2xJjfO+m9dLZ7Tb0Odd/HBpTXZu7FZn6DGiUNEawvH+1/qNSWU7MC3j+N54zda6g4u8AtT5F0zsAxWyUCPZ6Fva7/t+4bMBp87pQdycKy/1hU9UTTPcawuXsEtw/AcdTZGUPXvE11VjKhuar3VceFC9O/3bElik/rLSt3UiHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aq68XiLN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApKlazq5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB226C4CEE7;
-	Thu, 15 May 2025 09:08:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq68XiLN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE238C4CEE7;
+	Thu, 15 May 2025 09:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747300107;
-	bh=XFzy7WaSOUcaOMc38XVxK8vXpVMM6q+AqJl1IFqnOFQ=;
+	s=k20201202; t=1747300451;
+	bh=TYpngpH9wek5rVMicagLihZR2ENnqZib7zF2664AZ5M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ApKlazq5I0EropczmqCcSC3T1audi5oO7wy+wgPhViuKajHe63N+QcBR0BDSgqkzh
-	 I4I2GauFdT9UCyQNDDjL4jBUnL71flul5n45Rqh5yvK9u67fNJC51/dS4nNxfGSDbp
-	 j9QARBg8lWlxjuyM4MWYHCoL2CIXquhoie3pqULAeCDsSGATqyrDW5AeEvc6/KIBnV
-	 TBw/SFqsGL5GnC53Pje046dOzz5l+gYl34Jnuem1k7RzkuODmSRZPqqAA/nlj0L18a
-	 IuCDgz6VSoINPgpY/Z/A5YIMLKTnEM4vv7tXiSRIAIzl/ODa+z/u25EETGGxb38eDm
-	 R+aTUwWzguMNg==
-Message-ID: <56fea07e-a047-47f1-9c71-1a92cad15eb0@kernel.org>
-Date: Thu, 15 May 2025 11:08:21 +0200
+	b=Aq68XiLNPqNdboVpmBRC3g6z4Euv9NO2rVneCHmdZNaOnZYLe1lia8RINo5qL1Sdv
+	 eeIQ8XkJqY96IaHUwpUbXpVJ8hnf4useOm7mqOWsRSLCeDdVMKxfdEgcvnSPIMIQj/
+	 /T9r0Vhujtk1xJDnSKk+GhyAge86mBtVg72wGMqDIhwJ8LSHE9ua2zXY4jqG2qpOvR
+	 CwWEwv9vo2SknClvm9Qr0yOSwR3E4zKKO9lCStLyGYTQTJGFQ4XxhPotn+dMjRcf8J
+	 hXqSCxcja/ligL+Cufz1ewbn5FrtVUPUf0nAsbpcNYUX0zuxibwhd1nfc7bsM8LAUK
+	 jFL1/nIsJ2+HQ==
+Message-ID: <ea1a7a37-031f-4f81-ba09-eaa523f70761@kernel.org>
+Date: Thu, 15 May 2025 11:14:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,22 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: usb: samsung,exynos-dwc3: add dt-schema
- ExynosAutov920
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
- gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, Thinh.Nguyen@synopsys.com
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v2 0/2] USB PHY support for Exynos990 SoCs
+To: Vinod Koul <vkoul@kernel.org>,
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com,
- faraz.ata@samsung.com, muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20250514140741.415981-1-pritam.sutar@samsung.com>
- <CGME20250514135755epcas5p41291579e7eb266d92b91b82621e0fa5d@epcas5p4.samsung.com>
- <20250514140741.415981-2-pritam.sutar@samsung.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250420-usb-resends-april-v2-0-25dc7d2e6dd4@mentallysanemainliners.org>
+ <aCRXgpD0Ld2W4lHE@vaman>
+ <D9VYC98LJTR0.LJXYC1H0BAKA@mentallysanemainliners.org>
+ <aCWj4cn4y+RyfGiZ@vaman>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,28 +96,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250514140741.415981-2-pritam.sutar@samsung.com>
+In-Reply-To: <aCWj4cn4y+RyfGiZ@vaman>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/05/2025 16:07, Pritam Manohar Sutar wrote:
-
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynosautov920-dwusb3
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: ref
-> +            - const: susp_clk
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 15/05/2025 10:20, Vinod Koul wrote:
+> On 14-05-25, 16:26, Igor Belwon wrote:
+>> On Wed May 14, 2025 at 10:42 AM CEST, Vinod Koul wrote:
+>>> On 20-04-25, 21:28, Igor Belwon wrote:
+>>>> Hi all!
+>>>>
+>>>> This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
+>>>> This SoC has a combo PHY that supports highspeed, superspeed USB and
+>>>> DisplayPort, however due to my inability to test the superspeed part of
+>>>> the combo phy (device always enumerated as high-speed, even on the
+>>>> vendor kernels/bootloaders) only the highspeed part is brought up.
+>>>>
+>>>> These changes have been tested and confirmed working (with the USB_ETH
+>>>> gadget and telnet/ssh in a ramdisk) on a device from the hubble family
+>>>> (x1s) and also a device from the canvas family (c1s).
+>>>
+>>> I am missing the dt patch, can you pls report the whole series if you
+>>> would like me to review and apply this
+>>
+>> Hi Vinod,
+>>
+>> I've sent the DT series a while back (before resending). Usually I
+>> propose DT changes through Krzysztof's tree. The patches are 
+>> unchanged (they will be resent unchanged when all usb and wdt 
+>> changes are merged).
+> 
+> It makes sense to post bindings and driver togther and mostly these go
+> thru subsystem trees!
+> 
+I don't think you both speak about the same thing. DT is ambiguous here,
+so always use DTS or DT bindings... that said bindings were here in this
+patchset so if Vinod misses them, this has to be resent.
 
 Best regards,
 Krzysztof
