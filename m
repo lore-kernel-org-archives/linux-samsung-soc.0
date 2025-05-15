@@ -1,171 +1,100 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC3672613
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 13:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB0817B4EC
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 14:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747315744; cv=none; b=ZUcZnm6YVXgOMmiXUA54Z7LoBtd5eOw8TahxpcQDjSP4THUQnlnkxy7SC/tbJ/J26ctw7yh8mTJcwWkT3csi+uE7BCc64POGUlfS3BHGDErRzigpvLl8Zieegy6pbzYFhetBx4Bat6MxV3hVh44ioyi8wLEXn557qXkvc+IqzVY=
+	t=1747319259; cv=none; b=aTgSQYt8dyMarn5sk/YcbHnAfmFflPwdjWF70ebS2MEvn5dC2F+VR5eYpmtwbFzgBDX5+ixVzebQkPVRQX4W/LI//0zh8Cbz940CqE7PmAx8HwPbQrJswY3S6WioKjZ1Tt18wDPOUiW08+TpfViR28Ci5s9WoJs7GsjUgj9wc08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747315744; c=relaxed/simple;
-	bh=0OxqwkoXyk4pMEZB+3Be/QzVD7EbaVm3mM/XisR5KNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cUs+b9bWeh9e/MLVDWkqNWaOY4zDrNYGcEKQCiM2eY8TZp1OobY0jtSuj9GCpymElQrSDcaYCO7fwBllbWvlgaLODLnlSqzC5zAMslqu3H6uJglcXebQO1oI/U9xB0vH7b98wjcDo43ZVUhSe+02CqroGkewzgc/UEcl3rUKOWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nd2vWg9u; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1747319259; c=relaxed/simple;
+	bh=4pgWXPFF4dO5j5XyrOv14vAHpJ4O49nfm35Y0Nv32ko=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=U+TllKJ9JLQ3z47WFs1rXKjVz1tBK0UFxBA7HaO0sh8NSRoNCfcUB3jSXBmanPWDopsPSVK7S2x9WnwCga7Z+yLvBojmLCnUA2hNkwg6nvp6CGEfiPvF1S3LgZWYeBy7LxtCN8yf3D2S7E83uPrja8fhvQs/vOY160GDcz8UcXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=ZFZILwmD; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nd2vWg9u"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-441c99459e9so6183155e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2025 06:29:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747315741; x=1747920541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gXeqa887aZIuoR48uoN7BEsLTRu+NlEEvV/bSAfKqmQ=;
-        b=Nd2vWg9uzonXvn3Ku+ahyeMH71CjBYLgnEdSYTMmCKCRYemS31Q7u3k8+JXO23jx0G
-         tZIRiuw5f1jTL09JElIeNLFxAzH8hZu/W/bD0HVUabJZy/um+XTzVEprG65dstApHKp0
-         Uzk26kgx1KunmPcYVcE5TifN0yiKLQNSs2iTNjEZE+ZfSvWdE+5bFdQEX3Fm0rxH1nZe
-         IUaPXtYONcU3PvuXZszy/et9nCs2+3ncRwEPwK0MqBIoKE7wfxccoPgwM2oHLC2cosNE
-         cUsUd/uRf4vbEVU7hEy59y67kCzzHOk6eU1ajOOOZ9mfKNTCt4EUmHJLZUpHNQXZdJNX
-         /M0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747315741; x=1747920541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXeqa887aZIuoR48uoN7BEsLTRu+NlEEvV/bSAfKqmQ=;
-        b=Y+m3+KDub0PmAhxxECLiri8EzOAoYnP6slF9DyAP1ZaO5O075imPnY/VitsEMySfmB
-         KFREYzY6s4kgLzjhZC9g3H0eLyfw+f1nrSri8m+saRKkmCDs8b3si7uupfF6ZWrk+U5+
-         BNbkMeAZKlZGyYvpp1WuZCklFU0IcUUnBFasvSc7+1HmUDsOnQkyd1KkwN2LMnVoHAP5
-         Hn3TuJOtDJ5iXVjVBLiZujUpPTVg9TAHOqpYzOcduImhC9PkpOf+/2HlEMoURdoJ2ae0
-         vk4Z2HGFwNdS+Fk0ywThg4iSnbj/TxRQlw4L1jdDxjEM+74e5d5FkLrfh/3ye0fhvim3
-         4Gcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXH2FpvKe6VzNo2FgGokLCUNIwxRODf5MqdctGaQXe9znWgSGNcCsReowOXqal1IzgQjjgNgTpID4txBbxzfFWBkA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjhaxB0iOtUjYZ7GOqZ9Fa56bePyfLh/3Akr3ZjbGDYqtygh3/
-	+SR781kcUUCoT7AfA38UfwSvfHJKc5NW4dVsflcigKecMyxHDyJn6Zb3ytMLlXU=
-X-Gm-Gg: ASbGncsJxxp+ySloJrPjG+rfoc9asUgZq9RRBIsQx/OJji6iSaaz/6HUjPnD31rEueS
-	glfww3OU3eq0bPRndh+dnbwapw1zkWCnd6y6Apg1EBtyIuxOizmuk1wlAjc6KHxuw0+oKmAk+n5
-	Gb61ba7rhKAz7JAdJyO6K7nTKaIxNTZlvyewMatM4uyHYrUg+AqIKtjOEw3x6nm+tYndHT/ZysD
-	spIr2XLQMPuDdFtowbT9+ndESyjn1YOeFvehw8t78x4neo3swWyGq6meBZwna1wwa2e6YdRLRPY
-	R62nXVNUd9Ohszno8SrQHxwJX5jIzHHSg67pOlxArq/R/Elo5/3oEkcPNUH+8p0QDi+USYKoGI9
-	EvsnW9MoF6WRTQ93kDqzGpNs=
-X-Google-Smtp-Source: AGHT+IEjQRVUhGojBwI+97YBtdmsQnt5mRPLvJ6XJl4UcLoxhfGfGLJJ2ddgeOKQqlG0CKXA5mxG9g==
-X-Received: by 2002:a05:600c:348a:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-442f20bb25dmr78852185e9.2.1747315741090;
-        Thu, 15 May 2025 06:29:01 -0700 (PDT)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442f3368d1csm73524575e9.8.2025.05.15.06.28.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 06:28:59 -0700 (PDT)
-Message-ID: <92c2949e-2fc1-40e9-9dea-e3d9f7aa571d@linaro.org>
-Date: Thu, 15 May 2025 15:28:55 +0200
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="ZFZILwmD"
+DKIM-Signature: a=rsa-sha256; b=ZFZILwmD7YC334uJWUSSaoozvnAwB/bun/UY/j4LOLszgSK7nHJHQv5OWtnsgllixenYRk9hnWg8nMlTXhGqtTh0cLgvDYwBceYvZdCPcMMBsZkQWGM4aLSfp+KHoPkcyJC/WP9LPp0Gu9b+lTP/qCKs81AWEMZUAzCwdDBlDo3zqO1teVBRUTU2hCagpLUl/jCUk5pBPZxZQNXSdjTJzuZlGtK0JBwFgkNEd/YR5CpElj31YM00Mw1sGjJ4I56jp+tNZQ7yf33ugvNPxxsJREEY9bvrR7zRqm12VM/BLoTtKRw/Xb0/C8aVOZhzx+t2ZS7+Ecrww4fd3pdzmEJt9g==; s=purelymail1; d=purelymail.com; v=1; bh=4pgWXPFF4dO5j5XyrOv14vAHpJ4O49nfm35Y0Nv32ko=; h=Feedback-ID:Received:Date:Subject:From:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1592338441;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Thu, 15 May 2025 14:26:53 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] Exynos Thermal code improvement
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 May 2025 16:26:48 +0200
+Message-Id: <D9WSYR0CJUC1.3RCB16LZ3S6P7@mentallysanemainliners.org>
+Cc: "Kishon Vijay Abraham I" <kishon@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, <linux-phy@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
- <llvm@lists.linux.dev>
-References: <20250430123306.15072-1-linux.amoon@gmail.com>
- <aCR9RzGMWEuI0pxS@mai.linaro.org>
- <CANAwSgSA-JHMRD7-19wijOY=TSWD-sv6yyrT=mH+wkUJuvxFAw@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CANAwSgSA-JHMRD7-19wijOY=TSWD-sv6yyrT=mH+wkUJuvxFAw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ <linux-samsung-soc@vger.kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 0/2] USB PHY support for Exynos990 SoCs
+From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Vinod Koul" <vkoul@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250420-usb-resends-april-v2-0-25dc7d2e6dd4@mentallysanemainliners.org> <aCRXgpD0Ld2W4lHE@vaman> <D9VYC98LJTR0.LJXYC1H0BAKA@mentallysanemainliners.org> <aCWj4cn4y+RyfGiZ@vaman> <ea1a7a37-031f-4f81-ba09-eaa523f70761@kernel.org>
+In-Reply-To: <ea1a7a37-031f-4f81-ba09-eaa523f70761@kernel.org>
 
-On 5/15/25 13:10, Anand Moon wrote:
-> Hi Daniel,
-> 
-> On Wed, 14 May 2025 at 16:53, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->>
->> On Wed, Apr 30, 2025 at 06:02:56PM +0530, Anand Moon wrote:
->>> Hi All,
->>
->> Hi Anand,
->>
->> if the goal of the changes is to do cleanups, I recommend to rework
->> how the code is organized. Instead of having the data->soc check all
->> around the functions, write per platform functions and store them in
->> struct of_device_id data field instead of the soc version.
->>
->> Basically get rid of exynos_map_dt_data by settings the different ops
->> in a per platform structure.
->>
->> Then the initialization routine would be simpler to clean.
->>
-> 
-> Thanks, I had previously attempted this approach.
-> The goal is to split the exynos_tmu_data structure to accommodate
-> SoC-specific callbacks for initialization and configuration.
-> 
-> In my earlier attempt, I tried to refactor the code to achieve this.
-> However, the main challenge I encountered was that the
-> exynos_sensor_ops weren’t being correctly mapped for each SoC.
-> 
-> Some SoC have multiple sensor
-> exynos4x12
->                      tmu: tmu@100c0000
-> exynos5420
->                  tmu_cpu0: tmu@10060000
->                  tmu_cpu1: tmu@10064000
->                  tmu_cpu2: tmu@10068000
->                  tmu_cpu3: tmu@1006c000
->                  tmu_gpu: tmu@100a0000
->   exynos5433
->                  tmu_atlas0: tmu@10060000
->                  tmu_atlas1: tmu@10068000
->                  tmu_g3d: tmu@10070000
-> exynos7
->                  tmu@10060000
-> 
-> It could be a design issue of the structure.or some DTS issue.
-> So what I found in debugging it is not working correctly.
-> 
-> static const struct thermal_zone_device_ops exynos_sensor_ops = {
->          .get_temp = exynos_get_temp,
->          .set_emul_temp = exynos_tmu_set_emulation,
->          .set_trips = exynos_set_trips,
-> };
-> 
-> The sensor callback will not return a valid pointer and soc id for the get_temp.
-> 
-> Here is my earlier version of local changes.
-> [1] https://pastebin.com/bbEP04Zh exynos_tmu.c
-> [2] https://pastebin.com/PzNz5yve Odroid U3 dmesg.log
-> [3] https://pastebin.com/4Yjt2d2u    Odroid Xu4 dmesg.log
-> 
-> I want to re-model the structure to improve the code.
-> Once Its working condition I will send this for review.
-> 
-> If you have some suggestions please let me know.
+On Thu May 15, 2025 at 11:14 AM CEST, Krzysztof Kozlowski wrote:
+> On 15/05/2025 10:20, Vinod Koul wrote:
+>> On 14-05-25, 16:26, Igor Belwon wrote:
+>>> On Wed May 14, 2025 at 10:42 AM CEST, Vinod Koul wrote:
+>>>> On 20-04-25, 21:28, Igor Belwon wrote:
+>>>>> Hi all!
+>>>>>
+>>>>> This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
+>>>>> This SoC has a combo PHY that supports highspeed, superspeed USB and
+>>>>> DisplayPort, however due to my inability to test the superspeed part =
+of
+>>>>> the combo phy (device always enumerated as high-speed, even on the
+>>>>> vendor kernels/bootloaders) only the highspeed part is brought up.
+>>>>>
+>>>>> These changes have been tested and confirmed working (with the USB_ET=
+H
+>>>>> gadget and telnet/ssh in a ramdisk) on a device from the hubble famil=
+y
+>>>>> (x1s) and also a device from the canvas family (c1s).
+>>>>
+>>>> I am missing the dt patch, can you pls report the whole series if you
+>>>> would like me to review and apply this
+>>>
+>>> Hi Vinod,
+>>>
+>>> I've sent the DT series a while back (before resending). Usually I
+>>> propose DT changes through Krzysztof's tree. The patches are=20
+>>> unchanged (they will be resent unchanged when all usb and wdt=20
+>>> changes are merged).
+>>=20
+>> It makes sense to post bindings and driver togther and mostly these go
+>> thru subsystem trees!
+>>=20
+> I don't think you both speak about the same thing. DT is ambiguous here,
+> so always use DTS or DT bindings... that said bindings were here in this
+> patchset so if Vinod misses them, this has to be resent.
+>
+> Best regards,
+> Krzysztof
 
-I suggest to do the conversion step by step beginning by 
-exynos4210_tmu_clear_irqs, then by exynos_map_dt_data as the first 
-cleanup iteration
+Hi Krzysztof, Vinod.
 
+Krzysztof: Thank you for the clarification. I assumed somehow the
+devicetree changes were necessary for the revies. Bad judgment on my part.
+Sorry.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Vinod: Sorry for the misunderstanding. I'll resend the patchset shortly.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Regards,
+Igor
