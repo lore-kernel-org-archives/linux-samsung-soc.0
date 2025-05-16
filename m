@@ -1,140 +1,209 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1253722FAC3
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2025 08:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F9C13D521
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2025 14:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747385054; cv=none; b=ciFgnJ8dY7yGyMmTBabKcfxx0Q+eGnuL77UW+IjmsAkpEM3QevTyN4yq5Yg3+TZKoEegDJ4BXebxP2mGFaXbPbfQ9PcXMeOrdqefYdYjNh5bjebPB2/ZOaZa4UNkO0JeyEG8FzZlM2SiEN1UarzZBlJW1xynhp4Uk73wqolPIKQ=
+	t=1747406726; cv=none; b=ueJRv7Mag4gTBY6+nVlRMAfPRSsH3Whaw7+tIBWB9sRJ3SQ0fJ2FqIadypnRJjwAd+2t/GjrLNBTvt0jfHRHfIthQMCpddmzAVqYM+m6fU3Ld0tJnBXC1nCBI2AVTQR2xSv1LbBsJ/Ju820K/9cmUqX7Spkb7aGw+ritP5b8TqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747385054; c=relaxed/simple;
-	bh=+yi0kl1LuLOzdvaI+BLRP21icyPViQu/wfjf0CV8SGs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=H0m581vwNbJJfNaYsR8annmVZThYNDGiVjjzFv6l2FpHL7mV0qohgMimlcMZLtKA0nzZa/t+0FuZmbjyJnbuFqO3KE8A+3FFH7HLpOuLDJMoEX80eU5MrPh0EA4HPD1CeCRnQyAHWK7peI/b8bdov7JoT1fDbw/wus6wFdNLpaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Uh2OE/LP; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1747406726; c=relaxed/simple;
+	bh=N7Liw7c36pTdZuHiUAWTD2kfaxk2DuwfaFnr0fCGPWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smLkef8amhrHyOsh39dZCqe1raRmG4XFMeVgTOeJ8xVaIIVim2W//2AToxkPAmO23tPCdPax332Eoon/z/AOMB2wKjc2BL1E7CNy/ghOpGqFydbKOS/QZqDmFU4GmBpGf3nPUsIQy6D5TWDhc5jd7ykAWoW1iAfv9zd2JaYbwlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nAwbAjAV; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Uh2OE/LP"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250516084411epoutp0230bfb04a83737f5c5ae09b6f36e83b92~-9XI4szxS2461524615epoutp02B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2025 08:44:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250516084411epoutp0230bfb04a83737f5c5ae09b6f36e83b92~-9XI4szxS2461524615epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747385051;
-	bh=724QmPNpSoqzzfv//J0Nc9L9weI98uMGfhESILwM00Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Uh2OE/LPHhq+gAGuYDtL0W1CT9XHI8cFuffGPPH/+ZSIZxuZU72FZfjxaPuFiv0Gc
-	 oWekol174p/FBfJ0OV4Y31nx/8tU/yOauXIBjQp+VeNdeTIqQHq9CZgG4Gx4AjLEP+
-	 mWu77xL0nj7rhmO/lEYVlXiGX20fe3BbMw2Lk/Xc=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250516084410epcas5p213d64ea27fb69d90dc7df7bae82de199~-9XIMlsup0158101581epcas5p2w;
-	Fri, 16 May 2025 08:44:10 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZzLGc4txZz3hhTC; Fri, 16 May
-	2025 08:44:08 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250516070441epcas5p30fe0e218557940026f54f92b90666b3a~-8ARZjask0363603636epcas5p3u;
-	Fri, 16 May 2025 07:04:41 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250516070441epsmtrp1fb84e7519a60bbe8102eab8313fcabab~-8ARYqkIF2490724907epsmtrp1M;
-	Fri, 16 May 2025 07:04:41 +0000 (GMT)
-X-AuditID: b6c32a2a-d57fe70000002265-e8-6826e38957c1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	96.57.08805.983E6286; Fri, 16 May 2025 16:04:41 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250516070439epsmtip28e6402f83e1abc9740249f18d3aa62ef~-8APHKTuV0739207392epsmtip2I;
-	Fri, 16 May 2025 07:04:39 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com, Thinh.Nguyen@synopsys.com
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com,
-	faraz.ata@samsung.com, muhammed.ali@samsung.com, selvarasu.g@samsung.com,
-	pritam.sutar@samsung.com
-Subject: [PATCH v3 2/2] usb: dwc3-exynos: add support for ExynosAutov920
-Date: Fri, 16 May 2025 12:43:33 +0530
-Message-Id: <20250516071333.3223226-3-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250516071333.3223226-1-pritam.sutar@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nAwbAjAV"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d0618746bso17792015e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2025 07:45:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747406723; x=1748011523; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8DPdNi4T7V/yvBz4It+xorfOv4L6Xc1BemGmrvImCwg=;
+        b=nAwbAjAVYXguOh2v1ojCDYJdRwpiiehEWq2Nh0DiI7BrSbLVOVFU6xhF76fJh8Z4UW
+         7et80Lk5STd/TVvdJWToEBAtE0Slkam0PSD/YLeMbLyOqhXTjt+Om8fzzJDPJLmjeGgw
+         64IMz/OpF8syIhUAaDOHLvEXWsdPVT72SccI91+nljYtqp3Q/Kdtp8TZqIXUHYjk4PKN
+         pnc1mtwqH+gKEofmerWiCyJXr8LEPtBlvD1JmHmjF6Ea7fxOlnC2ozotWHBacWRI+rUg
+         XTaX6yPrzX1EtGfK6P+oXI212smJbti15ouCktGnFoOeI2SsttKipKTrdH5ocmIYzyMR
+         OZ5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747406723; x=1748011523;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8DPdNi4T7V/yvBz4It+xorfOv4L6Xc1BemGmrvImCwg=;
+        b=uDjEFF/9M6KhRqbUzO+jv2WBKoaH7ZH5OLWlJKfXjmYFrCgqsu8Vz/EWe9HC+sy6G5
+         lmzeMkH3BvKzAiGYYFZ9KaYq2BxLM9IjDOhJSijV86q/MSJw9gkF0uAIKKEBcPzskv7W
+         6mPUmN/tqc40FL4bzlxohfUK0sai76NlLfOJm7XBYZrhHIIhzVwMGWlzNoBr52ojfVJJ
+         7EJ2p0SFI6Q7M0z3YDrfXbkdu59F8JKRaofu+KAUyn8xch2T+Zyk7Y0i5wHbEbA+Gwd3
+         NrMlfxBNLse73W8I3WVMd5MiSrXOob/NWB14HJspkKl0/6GNpVZLi1UjyZgw02/OPzHt
+         Spbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLzs7akJ6J7E3l1YkZPbab3HolMu72SKJ4clQJ0kKyMNU5ETxwJ2p0Ytd21pIBxiyfTHHd9J3XAazycwoNd9Q3oA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJBnJSWCDfY/9pkq0V3AeKNRTKcLP+jkquHI1RegH/R3qlr+t1
+	naaXkAPhgsgk2pBKd6HIs6mp5tLYKw9IeajPq2ozhBTARSYr39rD/UGYPp0+QPd27vQ=
+X-Gm-Gg: ASbGncss7hpwnejo89V3MAQMB0mo7lIIGnBYZcl5G9Vw98/bHMIUnyupjUdtJ3Yq0OC
+	D8TKACVl06721Gv3zyrptqegg7QiVPGdOO0+IqFwXNnMPx4UIrQ4J2TbKIggMsM/wZ2AF+mDrKy
+	TXV96FwZh/ijblmjLHAEYkq0CjMTxEQOS7qpnW7tNwddKTgbCQ+4HZQYBcLOtS/p+EJE2ByfqBS
+	MtSLFiuIYLNlb7MQUhV+6HwVGtb6av6r1dd1yPzpsNbIfvrKzWxR3FrumNhtFmabTirs24+kpd+
+	R/Ytll4Gywudmurb5e4HlA4jaOdEpWJRFjhRQnfdBq4czlt5IE7R9zeWz8XiTSVTwvuUpDleG9B
+	6U0SAqcjZGRU8
+X-Google-Smtp-Source: AGHT+IE+e8uUfU2U7RrsspDQy+hqfnS3XZDgVHe+ewX3FxYMCsEn5Vbv/9CZ6GBFRep73wxKvvMGnw==
+X-Received: by 2002:a05:600c:34d5:b0:43c:e7a7:1e76 with SMTP id 5b1f17b1804b1-442fefd5e7fmr30145935e9.1.1747406722689;
+        Fri, 16 May 2025 07:45:22 -0700 (PDT)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442f39e84acsm112377585e9.25.2025.05.16.07.45.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 07:45:22 -0700 (PDT)
+Message-ID: <3c44154c-7261-4b03-bd12-bddf4d493e74@linaro.org>
+Date: Fri, 16 May 2025 16:45:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/4] Exynos Thermal code improvement
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
+ <llvm@lists.linux.dev>
+References: <20250430123306.15072-1-linux.amoon@gmail.com>
+ <aCR9RzGMWEuI0pxS@mai.linaro.org>
+ <CANAwSgSA-JHMRD7-19wijOY=TSWD-sv6yyrT=mH+wkUJuvxFAw@mail.gmail.com>
+ <92c2949e-2fc1-40e9-9dea-e3d9f7aa571d@linaro.org>
+ <CANAwSgQryVLdRVd9KRBnaUcjtX8xR9w9BBTCvoqKH6funkj=2A@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CANAwSgQryVLdRVd9KRBnaUcjtX8xR9w9BBTCvoqKH6funkj=2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSvG7nY7UMgyV7DSwezNvGZrFm7zkm
-	i3s7lrFbzD9yjtXi2o2F7BbNi9ezWbycdY/NYtPja6wWl3fNYbOYcX4fk8WiZa3MFudfdLFa
-	PLu3gs3i/54d7BZffj5gtjiy/COTxaoFB9gdBD02repk89g/dw27x+Yl9R59W1YxemzZ/5nR
-	4/MmuQC2KC6blNSczLLUIn27BK6MqTfPMBZc4Ko4ND+6gfENRxcjJ4eEgInEzne3GbsYuTiE
-	BHYzSrzoesUGkZCReDRtIyuELSyx8t9zdoiit4wS3w4uZupi5OBgEzCVmLgnASQuIjCNUeJI
-	w34WEIdZ4DiTxJSVzYwg3cICHhJLm7vAJrEIqEpcXLgXbAOvgL3En1O/oTbIS+w/eJYZxOYU
-	cJA4+uY1WI0QUM2cni/MEPWCEidnPmEBsZmB6pu3zmaewCgwC0lqFpLUAkamVYySqQXFuem5
-	xYYFRnmp5XrFibnFpXnpesn5uZsYwTGkpbWDcc+qD3qHGJk4GA8xSnAwK4nwXs9SzhDiTUms
-	rEotyo8vKs1JLT7EKM3BoiTO++11b4qQQHpiSWp2ampBahFMlomDU6qBaan1p7CWI3dDH81l
-	+5kr68hjtd15hd+F7xfnLdUtKxSbfTCy88vBaVMEjRvuvf69++rrFcKTtGaY9JipGzze6nlt
-	9alZfj27Vm4KP1rDLP19k8zln7N/HDj/9eASl0U3neInNDfsXlq16f8FLw+uQ67rjrovidw9
-	3zLwu8ftq/2fpdnueqiJNhxhKngjYtixVOfKz9rmfX/Stm8QijXmjGO4LOJ9YQrzfZUj3buO
-	8gSb2AhXPU396/IljvFaQsWyF5xeJv8WrM/Xs5ojeWnK0ljbwjN3H27V/rKxzq3gnPX2q9Yu
-	EkePur97cX6H/P4uS9nX1qWz9yut4NeV2Dh5niafXNsFgeBNT7lF5L5OmaWtxFKckWioxVxU
-	nAgA6ynISBADAAA=
-X-CMS-MailID: 20250516070441epcas5p30fe0e218557940026f54f92b90666b3a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250516070441epcas5p30fe0e218557940026f54f92b90666b3a
-References: <20250516071333.3223226-1-pritam.sutar@samsung.com>
-	<CGME20250516070441epcas5p30fe0e218557940026f54f92b90666b3a@epcas5p3.samsung.com>
 
-This SoC has a DWC3 compatible controllers. It needs "ref" and
-"susp_clk" for it's operation.
+On 5/15/25 20:01, Anand Moon wrote:
+> Hi Daniel,
+> 
+> On Thu, 15 May 2025 at 18:59, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 5/15/25 13:10, Anand Moon wrote:
+>>> Hi Daniel,
+>>>
+>>> On Wed, 14 May 2025 at 16:53, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>>
+>>>> On Wed, Apr 30, 2025 at 06:02:56PM +0530, Anand Moon wrote:
+>>>>> Hi All,
+>>>>
+>>>> Hi Anand,
+>>>>
+>>>> if the goal of the changes is to do cleanups, I recommend to rework
+>>>> how the code is organized. Instead of having the data->soc check all
+>>>> around the functions, write per platform functions and store them in
+>>>> struct of_device_id data field instead of the soc version.
+>>>>
+>>>> Basically get rid of exynos_map_dt_data by settings the different ops
+>>>> in a per platform structure.
+>>>>
+>>>> Then the initialization routine would be simpler to clean.
+>>>>
+>>>
+>>> Thanks, I had previously attempted this approach.
+>>> The goal is to split the exynos_tmu_data structure to accommodate
+>>> SoC-specific callbacks for initialization and configuration.
+>>>
+>>> In my earlier attempt, I tried to refactor the code to achieve this.
+>>> However, the main challenge I encountered was that the
+>>> exynos_sensor_ops weren’t being correctly mapped for each SoC.
+>>>
+>>> Some SoC have multiple sensor
+>>> exynos4x12
+>>>                       tmu: tmu@100c0000
+>>> exynos5420
+>>>                   tmu_cpu0: tmu@10060000
+>>>                   tmu_cpu1: tmu@10064000
+>>>                   tmu_cpu2: tmu@10068000
+>>>                   tmu_cpu3: tmu@1006c000
+>>>                   tmu_gpu: tmu@100a0000
+>>>    exynos5433
+>>>                   tmu_atlas0: tmu@10060000
+>>>                   tmu_atlas1: tmu@10068000
+>>>                   tmu_g3d: tmu@10070000
+>>> exynos7
+>>>                   tmu@10060000
+>>>
+>>> It could be a design issue of the structure.or some DTS issue.
+>>> So what I found in debugging it is not working correctly.
+>>>
+>>> static const struct thermal_zone_device_ops exynos_sensor_ops = {
+>>>           .get_temp = exynos_get_temp,
+>>>           .set_emul_temp = exynos_tmu_set_emulation,
+>>>           .set_trips = exynos_set_trips,
+>>> };
+>>>
+>>> The sensor callback will not return a valid pointer and soc id for the get_temp.
+>>>
+>>> Here is my earlier version of local changes.
+>>> [1] https://pastebin.com/bbEP04Zh exynos_tmu.c
+>>> [2] https://pastebin.com/PzNz5yve Odroid U3 dmesg.log
+>>> [3] https://pastebin.com/4Yjt2d2u    Odroid Xu4 dmesg.log
+>>>
+>>> I want to re-model the structure to improve the code.
+>>> Once Its working condition I will send this for review.
+>>>
+>>> If you have some suggestions please let me know.
+>>
+>> I suggest to do the conversion step by step beginning by
+>> exynos4210_tmu_clear_irqs, then by exynos_map_dt_data as the first
+>> cleanup iteration
+>>
+> Ok you want IRQ handle per SoC call back functions?
+> so on all the changes depending on SoC id should be moved to
+> respective callback functions to reduce the code.
 
-Add required changes in exynos dwc3 glue layer to support this SoC.
+I think you can keep the same irq handler function but move the 
+tmu_intstat, tmu_intclear in the persoc structure and remove the 
+exynos4210_tmu_clear_irqs function.
 
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
----
- drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+You should end up with something like:
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index 20abc6a4e824..e934f94e8fd8 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -187,6 +187,12 @@ static const struct dwc3_exynos_driverdata gs101_drvdata = {
- 	.suspend_clk_idx = 1,
- };
- 
-+static const struct dwc3_exynos_driverdata exynosautov920_drvdata = {
-+	.clk_names = { "ref", "susp_clk"},
-+	.num_clks = 2,
-+	.suspend_clk_idx = 1,
-+};
-+
- static const struct of_device_id exynos_dwc3_match[] = {
- 	{
- 		.compatible = "samsung,exynos2200-dwusb3",
-@@ -206,6 +212,9 @@ static const struct of_device_id exynos_dwc3_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-dwusb3",
- 		.data = &exynos850_drvdata,
-+	}, {
-+		.compatible = "samsung,exynosautov920-dwusb3",
-+		.data = &exynosautov920_drvdata,
- 	}, {
- 		.compatible = "google,gs101-dwusb3",
- 		.data = &gs101_drvdata,
+static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+{
+	struct exynos_tmu_data *data = id;
+	unsigned int val_irq;
+
+	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+
+	mutex_lock(&data->lock);
+	clk_enable(data->clk);
+
+	val_irq = readl(data->base + data->tmu_intstat);
+         writel(val_irq, data->base + data->tmu_intclear);
+
+	clk_disable(data->clk);
+	mutex_unlock(&data->lock);
+
+	return IRQ_HANDLED;
+}
+
+But if the irq handler has some soc specific code, then it should be a 
+separate function
+
 -- 
-2.34.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
