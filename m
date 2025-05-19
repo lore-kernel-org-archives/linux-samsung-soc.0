@@ -1,91 +1,110 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762AB1DE2A8;
-	Mon, 19 May 2025 16:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45C92063E7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2025 18:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747672094; cv=none; b=UfSibXPO93tLVVb0xDC7+E8VoDOCyc82ZzL+29Mk1RL5gSxAsobvaRauWNSf3iDfqdf5LerblTKLyaKPxnf+u/+/vm/LvSrvlGkWXSpefSsqW1/fYTEuhUk8XqW1N7cOJ8Ywi7ohbESsQeVYQyYedv4HpFtAl8rwl6TrmunijvI=
+	t=1747680640; cv=none; b=nOvsy7+6nJOa+T2ghwb/UpWW69HwXPY+J3CmQOAq7cFvmgtLHF6gmUZ6U9V6KZX/UlwlpHYVZNeni9fvxoCCPgucmLhYnvZ2LdS3PnpHEkg4PK+841fyoeAWdVerl2qRg5xR2q3OjrF2qV8jBZ66m2ixsDQXdr/GXUQ40Mj6V/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747672094; c=relaxed/simple;
-	bh=DZ2lBbr/5MJXipV1uIEvkgdTmipyCV0YFj9m8j9Z2e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=np2NzjwYhvVpNZjEfNFcwS7nVh+9Q1N/dIMYzNX5AYQdrD/YL0Y6QH9KIDdAEImS34bcebkTLQxV73FfbUhffmOng/JWqMeZYKECXGsbhDwpmsgT1LYe0iIobVG7a0+PakgNsOX8oVHYrnTVz8oZMLNgBISW1uWFQ5m/9FPL/ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QCzgwoSz; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1747680640; c=relaxed/simple;
+	bh=/8I4SWUDCIRTZj3Sh/4b5wvaTLCOFYR5oPMTXs4Ribs=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBm5LuBcjx+5Ql+ZLQKKCAfhZR2yzRR8UqgN+u8/R3JCST4Jo3cbSL98YqJzFFksoXgWHXorRiTnyt0aipJPLEbIM6N0hBociqw+qAP+cH7oPiCyMKkaij56GP5fRV3fOGewlSzWZUa92dKIGGWMt3Km+SEtjOLwTHa1cc+9gJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DOZIW3VW; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QCzgwoSz"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7339843959;
-	Mon, 19 May 2025 16:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747672084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6URoQYvkyARkq+de1O/CjFhagN+Qpuz7SPoxi6whFsw=;
-	b=QCzgwoSzlGB5vwrvQ1ZVP9ydVTuDYM1OFRB48DoP8doFxQvmyt1ArlNphGXSwLVlmTGkcq
-	cRMLQtlcxoLyAkoHP1YycLBl3qb1V8IBZCznf8/L+rhArjrJFFB7d0BdK8F/ZOg4Kiqrur
-	fyj2PLk38D5/kiIxX81cSGAPHrdPaK4gnshejSAMrmCkzi1Cn+WD8nhmrqYkEKhcFx1Hyu
-	a6ble7i9bBUUhToQe8FeYz0j0gRMwlG/B+mVs980YRqIEbxvN6R2Laj2Ak2zbeMv24cIfa
-	Hf1iAMYHvpWzDjjhm/hzaXZOSYr8jwqI0WGWclrbf5Q2AMdB7FO68ttgUNVg7Q==
-Date: Mon, 19 May 2025 18:28:01 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DOZIW3VW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/8I4
+	SWUDCIRTZj3Sh/4b5wvaTLCOFYR5oPMTXs4Ribs=; b=DOZIW3VWJI5Ettv3r7wM
+	X+w4ad4y4+DAO9ZtCPahs8xUgOFCFzMFnLZrPoSY3IAxkDJ5rZav+V1xBWxrFq6Y
+	rDBJp149eJ7/7z4kQtK7xUMRDbksB2dDqS7iB867e7CRoSUJ26J+ajXCUl/6+Z3s
+	AjMbvbxE6aCyapWGSsQpvIRQnCkc16dJBcZQIUdKWrWeG1wA2p+wcN6GdB+XZa8t
+	F+dgHXoyB2xKmTEOPNsejNv5i+SMm78i8ayHFhneVta9xzkVsKTXc91W5057u0mN
+	tJWvOBQCVzxlK0n3XSXwtwJO/41Y0WeV6YZwPOn0vAQVbZ0AoiFmKzdB4C0hMYfs
+	nA==
+Received: (qmail 2603142 invoked from network); 19 May 2025 20:50:36 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 May 2025 20:50:36 +0200
+X-UD-Smtp-Session: l3s3148p1@vph1m4E1ONRZz6uL
+Date: Mon, 19 May 2025 20:50:35 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>
 Subject: Re: [PATCH 1/7] arm64: dts: exynos: use proper node names for GPIO
  based I2C busses
-Message-ID: <20250519182801.09263bd3@bootlin.com>
-In-Reply-To: <e5a3ce2b-4ebe-44c9-9bf5-9f460d5e7fe8@kernel.org>
+Message-ID: <aCt9e-rrOOR0C5HI@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>
 References: <20250519121512.5657-1-wsa+renesas@sang-engineering.com>
-	<20250519121512.5657-2-wsa+renesas@sang-engineering.com>
-	<006ee7d6-1289-4f4a-819d-9a5e5120db99@kernel.org>
-	<aCtD7BH5N_uPGkq7@shikoro>
-	<3f6e1b74-5d19-4194-b98b-91ab6f10446c@kernel.org>
-	<aCtK1-Yn6u8-n8mU@shikoro>
-	<e5a3ce2b-4ebe-44c9-9bf5-9f460d5e7fe8@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+ <20250519121512.5657-2-wsa+renesas@sang-engineering.com>
+ <006ee7d6-1289-4f4a-819d-9a5e5120db99@kernel.org>
+ <aCtD7BH5N_uPGkq7@shikoro>
+ <3f6e1b74-5d19-4194-b98b-91ab6f10446c@kernel.org>
+ <aCtK1-Yn6u8-n8mU@shikoro>
+ <e5a3ce2b-4ebe-44c9-9bf5-9f460d5e7fe8@kernel.org>
+ <aCtbg0_vD07g394k@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvddukeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhor
- hhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhimhdrrghkhhhtrghrsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WXFEbYeipUFU1N3a"
+Content-Disposition: inline
+In-Reply-To: <aCtbg0_vD07g394k@shikoro>
 
-On Mon, 19 May 2025 18:11:29 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> On 19/05/2025 17:14, Wolfram Sang wrote:
-> >   
-> >> ... so clearly the suffix is "-foo" or "-0", as we usually prefer. This
-> >> should be replaced into i2c-X, by dropping "gpio", instead of using less
-> >> favored suffixing (one without -).  
-> > 
-> > Hmm, I can't automate this because it will then need to be aligned with
-> > the bus numbering of other existing non-GPIO-busses. Which is highly
-> > individual per board. That means we need to drop this series?  
-> 
-> I think either we use i2c-X or commit 57138f5b8c92 ("schemas: i2c: Avoid
-> extra characters in i2c nodename pattern") from Herve was not correct
-> and needs to be fixed.
-> 
+--WXFEbYeipUFU1N3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't know if relevant for this case but Rob did the fix
-  647181a ("schemas: i2c: Allow for 'i2c-.*' node names")
-on top of my commit.
+On Mon, May 19, 2025 at 06:25:39PM +0200, Wolfram Sang wrote:
+>=20
+> > I think either we use i2c-X or commit 57138f5b8c92 ("schemas: i2c: Avoid
+> > extra characters in i2c nodename pattern") from Herve was not correct
+> > and needs to be fixed.
+>=20
+> I will look if I can fix dt-schema instead. Thanks for the pointer!
 
-Best regards,
-Hervé
+Found it! Patch sent.
+
+
+--WXFEbYeipUFU1N3a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgrfXsACgkQFA3kzBSg
+KbaZcQ//SdIH9JF6XLo4IUQMXcSxWyKNFCRI6fHKx5mLUOvqKnNbQi0zRPpssStd
+dDLZZhMIVhmnb81NdZYAhf51ZcizGpb6JhoE2Ki/Q3czg3mROel0i5M00mOI4ELV
+PUfpfTm4k4mZGsxSzaJt1rHvDJnCt4epll0PZ9zHwHmUe8QT7Tf9C5qi0F3BLx3W
+XqgqN0Tuy8HmOXLqo4ZEeX8TbiuIbI8BRD0ONGPb7TZMHMpLVS7dhDH4v0ek8/Sk
+jn1OYMI7P7ahAMJAtHp4r9JO3lw9nqiUZkYJsGiHVteuSqCRx5xsuMiRfXJr9VVg
+KfvUf+vq14MrYQiCy57tNVq+Ma4nioo5cVWf92zmlHaVxWXDxire9jVwU26H1jvt
+bfX+JnYAEe4BRck+zOzEW8RzthLEFtt+o+oqz1Eb2PbBDfGYvbYLJTr7OU6n7Snc
++1rdad/nbnFtUXFkmJUGuMghZjkLrMUv4Ok/f4XmZWvySuaBHdYtgZx+Y/AyVEbl
+Gti58GL88aL0u+SdsFBk0K0IngEfrmJoJlvzBR5/9pX5miHDK74+jEI54wzHWC44
+pldcix6/0kyzVed2HJArMJh39ytDwlsP+kNCEWQqMXddPgJVjQpHCdHUU7pGp8WP
+MSkmFPIX/fp5yq9gZd/AJErEZOiJAvCzr/Tk8IKjw7EEoEhuk3I=
+=59J0
+-----END PGP SIGNATURE-----
+
+--WXFEbYeipUFU1N3a--
