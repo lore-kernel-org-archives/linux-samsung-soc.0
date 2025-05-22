@@ -1,181 +1,85 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07688202988;
-	Thu, 22 May 2025 07:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008D870814;
+	Thu, 22 May 2025 09:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747898923; cv=none; b=dyaPhP40b84Y3ZmbYKRw9OEF50bwaW1289FyaqeI96VdaRasQiw94QbNd/VdhmpQOmK/lkC0FLO7elBLJe4LkPf2ixmSVSH5tx84ouLt/oTWlKBH2xhLlJ+ASSyH9Nxj9sG2LblVm+Ef6bBggC4T2wCLD5HfAjXqnUi/ce/ZQSE=
+	t=1747906057; cv=none; b=svmC/8OxwQffUfT/zkONCM5VGa8iiWy4+Jy1VE0hRohTFC1vE5JNFGolgc33F3iv+ZqGHklrvWs1cZC679dTMwgQIjY1Aa/Mn20JLElx5f4cuEGg8ryJruIforL4tHfXQqmryjE+JKkgX729upP/TkhY0dylZsyPkSPdtAqfJJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747898923; c=relaxed/simple;
-	bh=KZdv6Z0YK/lfcikuoIW7xyDZNHZ76Zlsa7Mknlwx1N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uBmBzH0lUyow58shdB3Cv53XSMJL+iP7lZvi5U6NenFJ7W6e6cmCxUvvdIAcd7xHfE3OIkw9D+nThFPQ1GdZmEgWcF/2kls0l9TiP/D41zz/PPfTarVuwuVttviSLg90/7jPB7UO0gKKzpIa9+SAx8PjFKCiLQp2AdX6x1c8eKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ib3yNxEs; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1747906057; c=relaxed/simple;
+	bh=sAftpgTXoshRrtSj+br63QRHVO9ufA/GYUeV/EcMd8w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dsPc63QNo0Ozq34eozh9kP3HLO50MGJxaOdMGB7b3UUPiy1TNZO1odEHJMnOHp16gaHrSHKcLU5W/A4aaWjQ6aejz/4l7KhntcWu4m1uSx2s+ThmFPis67lQJdiRUhZruAJSQvNnUSkvKJJ4a46pKSlUZbe94zCAxQnR0inidDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJsEhVNj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ib3yNxEs"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A22DF43B77;
-	Thu, 22 May 2025 07:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747898917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4JY0tOi4vZjkrIAmVNhcdxDZ/2M98xTujKUJaASQzHI=;
-	b=Ib3yNxEs/5s44AFOE1RwGqaQ3/C/qZgn2d71AFEvZWt7k9cSiTL6woWNrw80/K+W6/Z/V7
-	kPpQoV2bzFWLRmpCywhJlPQUEg2FXlo+1nPIaf5l0cpBMiAzN9raixCTiTWtHG2MAT2dvw
-	sQ/zOcBmUvR5DU4gtyDa+MzbOlcDIse1XjwVI+yIroFSWP+dFmY21GxXL7/XktKyaWOIPe
-	yff37LPcs4+KyUCuNN9KOzfcxdlETTCBb1PO57HImPoi3YGPlPgcnozmejJeah9bwmPEng
-	p+dHgqDtnYmeAW4q5nFCbFmQTz/G7k6Pz/kBamcKo+eZpnfao0DUC72lv/PdQQ==
-Date: Thu, 22 May 2025 09:28:24 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
- Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com, Louis Chauvet
- <louis.chauvet@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>, Inki
- Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>, Manikandan Muralidharan
- <manikandan.m@microchip.com>, Adam Ford <aford173@gmail.com>, Adrien
- Grassein <adrien.grassein@gmail.com>, Aleksandr Mishin
- <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>, Benson Leung
- <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
- Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
- <cristian.ciocaltea@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dharma Balasubiramani
- <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
- Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
- Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
- Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
- Bingham <kieran.bingham+renesas@ideasonboard.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
- <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
- <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
- Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
- <mordan@ispras.ru>, "Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan
- <yuanhsinte@chromium.org>, Pin-yen Lin <treapking@chromium.org>, Xin Ji
- <xji@analogixsemi.com>, Aradhya Bhatia <a-bhatia1@ti.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Martyn Welch <martyn.welch@collabora.co.uk>, Peter Senna Tschudin
- <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>, Kuninori Morimoto
- <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart
- <laurent.pinchart+renesas@ideasonboard.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre
- <yannick.fertre@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>, Michal Simek
- <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 00/22] drm: convert all bridges to
- devm_drm_bridge_alloc()
-Message-ID: <20250522092824.421e766c@booty>
-In-Reply-To: <36ade269-a590-4243-889c-006f37d9ae6e@nxp.com>
-References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
-	<20250521162216.79dd3290@booty>
-	<36ade269-a590-4243-889c-006f37d9ae6e@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJsEhVNj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0871C4CEE4;
+	Thu, 22 May 2025 09:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747906056;
+	bh=sAftpgTXoshRrtSj+br63QRHVO9ufA/GYUeV/EcMd8w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hJsEhVNjsNef0ES3kvNB09lKggIkq3qKblVH+eA7i88ZxKscu1xg9YIexPxRq643g
+	 NJ/DH8p/x73VDufrJ1yoiCZ8NyQ3WMgeaKmQDHaQ7W8NIOYDOKZ790/7SjBHpDv7zS
+	 navPrxzWpMj6zd7uAvzy/IfJhSVbdpl0rtqcQ1HNn5ehUP266NGxsDhCOtqQ5zZOvD
+	 Jb+9WOpUy5qxeawG5dIHRpvrO4U5irInczIHUe+bCKCAOE3dxl4233HlSYwZ+hyaUu
+	 KVEP0L+3JPgg2s/JIOuoDpax45WuOoJi5tAjOLDXNvLGgmWhHopwX/gnbsN124ae+R
+	 mkmnz72FWHOtQ==
+From: Mark Brown <broonie@kernel.org>
+To: andi.shyti@kernel.org, tudor.ambarus@linaro.org, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, Faraz Ata <faraz.ata@samsung.com>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ alim.akhtar@samsung.com, rosa.pila@samsung.com, dev.tailor@samsung.com
+In-Reply-To: <20250521084324.2759530-1-faraz.ata@samsung.com>
+References: <CGME20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060@epcas5p2.samsung.com>
+ <20250521084324.2759530-1-faraz.ata@samsung.com>
+Subject: Re: [PATCH v1] dt-bindings: spi: samsung: add exynosautov920-spi
+ compatible
+Message-Id: <174790605339.30110.2721459135664956247.b4-ty@kernel.org>
+Date: Thu, 22 May 2025 10:27:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdehfeeiucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjeetffdtleehgefhffffudekhfdujeeuvdefhfetleeftefgffekjeetjedtvdevnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleehpdhrtghpthhtohepvhhitghtohhrrdhlihhusehngihprdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidri
- hhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+X-Mailer: b4 0.15-dev-c25d1
 
-Hello Liu,
-
-On Thu, 22 May 2025 11:20:17 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
-
-> > If not, can we at least add a band-aid 'X:' entry for
-> > drivers/gpu/drm/bridge/imx?
-> > 
-> > I think the other matching entry is the one to consider:
-> > 
-> > DRM DRIVERS FOR FREESCALE IMX BRIDGE
-> > M:	Liu Ying <victor.liu@nxp.com>
-> > L:	dri-devel@lists.freedesktop.org
-> > S:	Maintained
-> > F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-ldb.yaml
-> > F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixel-combiner.yaml
-> > F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixel-link.yaml
-> > F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pxl2dpi.yaml
-> > F:	drivers/gpu/drm/bridge/imx/
-> > 
-> > (https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/MAINTAINERS?ref_type=heads#L7940-7948)
-> > 
-> > However it does not list any trees. I _guess_ drm-misc applies here as
-> > a fallback as well as common sense.
-> > 
-> > Liu, should this entry have a 'T:' line for drm/misc?  
+On Wed, 21 May 2025 14:13:24 +0530, Faraz Ata wrote:
+> Add "samsung,exynosautov920-spi" dedicated compatible for
+> SPI found in ExynosAutov920 SoC.
 > 
-> These bridge drivers also don't have a 'T:' line:
 > 
-> DRM DRIVER FOR CHIPONE ICN6211 MIPI-DSI to RGB CONVERTER BRIDGE
-> DRM DRIVER FOR PARADE PS8640 BRIDGE CHIP
-> DRM DRIVER FOR TI DLPC3433 MIPI DSI TO DMD BRIDGE
-> DRM DRIVER FOR TI SN65DSI86 BRIDGE CHIP
-> LONTIUM LT8912B MIPI TO HDMI BRIDGE
-> MEGACHIPS STDPXXXX-GE-B850V3-FW LVDS/DP++ BRIDGES
-> MICROCHIP SAM9x7-COMPATIBLE LVDS CONTROLLER
-> 
-> I think that they fallback to drm-misc since "DRM DRIVERS FOR BRIDGE CHIPS"
-> covers them.  I don't have strong opinion on adding a "T" line to them, at
-> least to "DRM DRIVERS FOR FREESCALE IMX BRIDGE".  Anyway, it would be good
-> to know comments from maintainers for "DRM DRIVERS FOR BRIDGE CHIPS" and
-> "DRM DRIVERS".
 
-I agree the fallback seems OK for this MAINTAINERS entry.
+Applied to
 
-The other entry (ARM/FREESCALE IMX / MXC ARM ARCHITECTURE) is another
-story.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-> >>       drm/bridge: imx8qxp-pixel-combiner: convert to devm_drm_bridge_alloc() API  
-> > 
-> > Not acked/reviewed, some discussion happened. I am resending it in v4,
-> > possibly with updates based on the discussion.  
-> 
-> I still think the main structures in imx8qxp-pixel-combiner.c and imx*-ldb.c
-> should have the same lifetime with the allocated bridges.  I added a new
-> comment on this driver in v2 just now.
+Thanks!
 
-Thanks, let's continue the conversation there.
+[1/1] dt-bindings: spi: samsung: add exynosautov920-spi compatible
+      commit: 477d16c0919e82a7f5f673a6e3ae39a17c773037
 
-Luca
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
