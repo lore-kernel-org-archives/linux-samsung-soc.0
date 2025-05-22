@@ -1,353 +1,156 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2063.outbound.protection.outlook.com [40.107.22.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844067482;
-	Thu, 22 May 2025 03:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747883948; cv=fail; b=kMkLTtGx4b92v4JEyAfmd8VbAqObByNKF9JduipVxFEHaEjgJYMzV1XewFK2I0NlUd1WdEH8XFIL3FlZs5Fe5haBoHmrQeKvYbMBbDgeWcsYr5/9DKS8F0B27/cgCR+DGD1LmUzy3Fmug0ap4I4pEOICUP0n1cODso0Ivwu8mFo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747883948; c=relaxed/simple;
-	bh=d9VuPjQT7Q60GbR3TLSTE7qhqXz3jpNB/DtnfV8kVTA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DPcLSDELX33VqpIutnQcrYVJ8bPWtxcTg32YOrqSfLaIXbnvR42/RhZI8oBtcccFB3tX+DuvZbJygfe7WRdqvkaXw/VnOqEPHU48iRlbDZ5bPa0XhAgd0p0//x5tvFRJA8OimiHEGyfHPnCREyki0AA6LJyiincLy73O3qOxjgc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cWaMYfU4; arc=fail smtp.client-ip=40.107.22.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060B78F24
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2025 07:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747898532; cv=none; b=aPd7kGn2H4j8g296N3Yb2Ad8/oXO5THS1SnKb+rI8zzlMRlLnx06baAYptp+/teUutgL1Luh6BigOrbhQJflJUXr0EZX/p/9tnsUzErFGaK3fAEPSsm4lnJd4gezU5aOUPwXFwwZuSNm+2Bz8IOvM88xUFmzv+NbsVuJqrPcMI8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747898532; c=relaxed/simple;
+	bh=5nOa+dAbTc5Ycm10lURR5yv4ZOoJaW7taXYg/Gy14n0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZKJwk+IpTz12GQhQ4qYiszJcjskJmeWYtZfu9Vdc4KXLPng1U+a1kDxcfmivA25ZckZPj4kW+jKZRPYBbeZ0ZDXI+Z51cyyhh9gdAzqUZZ4cfuDoqaQ1M50Gd14np9jgLxJC0odyue7R3BpwthYcapTl2GyUWIKuLwSTbrvijYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C9d//wAP; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cWaMYfU4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fMwmiZSRjTnajDYWFfhgWlX9ykvbopA9F5sGSYEyEpagSbbY6Hs2bGE3N9MCEkt6S/kYDZtd1D+kzL5ou9hIHq9Ve+HfKFi2FGG/DtMol9/G2CiGBfHtJhAH10Myj9q2FreZm4A8NoDikceVQFkX+V+9tDiO/cg9wM7pRU2LLqBURR5iBYmwh6Lvhs8LtqK35f87CqSDRuT9L+OsHV1cUPkmAPr3o+ISZd/CSULEhns2ZKG7LYMsiTFw3k2YYhQ41h4ggdUeMuuCJEEiW0+fpwv2OlFJKCjE/vzXy0B2sHGDfDBMZH+goDLnhFd+u/9b3MDgaXIX78dnAtAdm4+Gmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rn1lqW+1XpL2TWwCE++wIy5AgGzhrn8cH/zoEtBffH4=;
- b=kY0LQItcyUCYX8NSYUjlC+kM+dT9TmtJO4d1KATL23OX1v7jtZrJ6+AeTfkkTPinvtFHD6FaLxMzqPKU82MRgm7naSVQDJ65DV++t1CKK+G9jiV0u6QwZxtM0NfxImiY7qIz/Nr1AFTvJu92oN/G+P468luWF5DCKag2B4YCYM+ENASjwR3Iy23yHsBKT0bUtamDl2E7/RjDc3Qpa24I1IFRDvWYcrnmKgndU73L07S/UngmRPN6Oai3/6gAcnYkHTIMDVpZjSguTzATFZesPDdhjJ3DH4l3cVRTN5fZKEzQItS2dbirYrqGC80PVb2bMXG1ZEQcS+TfMdYma+PmdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rn1lqW+1XpL2TWwCE++wIy5AgGzhrn8cH/zoEtBffH4=;
- b=cWaMYfU4KladVfFxy44v86Ll+cDpb4NOHtogPZ64mROvtuPZGjUbBWU4ild1gRRN1Et8R2dZINeM4YedFgyw9DdDSD26wMZyupECi9x4P8jJVUE7WAouuP0Br7K/nqcuDnn1SpYGUBT8BEq5b75NM9CNkIQGCQDS0zl6h/siMrrUyn4lyngyFVuB804Uwy7lbJz43sAjAQPege7NDv267ODG1vEr9Kw7wLG17ZwkXTFcMPzEey4EDtHwlWfSmkfbNyC8bbHF9PMrnhr/4wpklmjyfMdXTZtyHK50/LBAVT+xFAZs2nsmzUVfO0Hb0PxKofyVkCi/h5ZpskeO1hhO+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM9PR04MB8097.eurprd04.prod.outlook.com (2603:10a6:20b:3e9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Thu, 22 May
- 2025 03:19:03 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8769.019; Thu, 22 May 2025
- 03:19:01 +0000
-Message-ID: <36ade269-a590-4243-889c-006f37d9ae6e@nxp.com>
-Date: Thu, 22 May 2025 11:20:17 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/22] drm: convert all bridges to
- devm_drm_bridge_alloc()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Anusha Srivatsa <asrivats@redhat.com>,
- Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
- Hui Pu <Hui.Pu@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
- linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
- Louis Chauvet <louis.chauvet@bootlin.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Manikandan Muralidharan <manikandan.m@microchip.com>,
- Adam Ford <aford173@gmail.com>, Adrien Grassein <adrien.grassein@gmail.com>,
- Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Christoph Fritz <chf.fritz@googlemail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>,
- Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>,
- Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>,
- Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>,
- Sasha Finkelstein <fnkl.kernel@gmail.com>,
- Sugar Zhang <sugar.zhang@rock-chips.com>,
- Sui Jingfeng <sui.jingfeng@linux.dev>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Vitalii Mordan <mordan@ispras.ru>, "Rob Herring (Arm)" <robh@kernel.org>,
- Hsin-Te Yuan <yuanhsinte@chromium.org>, Pin-yen Lin
- <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>,
- Aradhya Bhatia <a-bhatia1@ti.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Ian Ray <ian.ray@gehealthcare.com>,
- Martyn Welch <martyn.welch@collabora.co.uk>,
- Peter Senna Tschudin <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Philippe Cornu <philippe.cornu@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Yannick Fertre <yannick.fertre@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>,
- Michal Simek <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org
-References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
- <20250521162216.79dd3290@booty>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20250521162216.79dd3290@booty>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SG2P153CA0024.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::11)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C9d//wAP"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a361b8a664so5880179f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2025 00:22:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747898528; x=1748503328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yKU1imWgjnCI3avar2mUIPQzX7TLviFQtJlqfZ793SY=;
+        b=C9d//wAPcS7hINGN5bZbagwq7RfUoOIYY1smlmP4VFgYQz77dcCcmVm+OS78OEpXwc
+         liUfchLX04R1NRX8eFF8DoWvp+QZZjoPNa3ueV7KfERkCw/8VvaDMOb4mRIQAqre+sq6
+         MycUwMbaOqtClfVijjQ4zcW6paqPMaLc017OpB6AvtgUwCGPR7lCEIiFM+pc8FZIEH5G
+         sgnM47LIgZ8JPcw0K6n6+PqmlYwJLRUkDgayRt4HF2VP5C4qBhtcimxF446cNc4aK3OR
+         QqfL24DNIR8Jz/FlKVK62t+D9wiGLIEEbjK3SJSKhIzS/3TettKUP+eC3gaRT2rFuwXV
+         sBgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747898528; x=1748503328;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yKU1imWgjnCI3avar2mUIPQzX7TLviFQtJlqfZ793SY=;
+        b=D8ZAGUczGXhL+BzclRsHnu5HNreCTy0r7Hct+CglzJc5TabURSPfrhFgU2T7yAfsMa
+         Gi2xprxCvB8PFeCwHFqS3cUzY9PbF0sKp/3L0VhErLCtdrpUeZW9LqKYaAM3zfcxgcV4
+         mblWa4mO60ciOwn1P06cM2dWKPQYKSBCp7Dxyf6//R7KEUapQFpbm2NT7pp9dh4olTLN
+         XnHXg79TcD450rAb4mdDUUwfqboNGu+xUZ+Hpd3THQYFeH1LLclvjbiIjJE258UglbTr
+         TKEO3ZD2yim25xLCOnLr9/X8yAGWGxRDc8CdjC/U95NuyLIgfWTLjwS9gWjiVADHnXO4
+         aTUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPL4GwNxsZwPX9LN+C83XSq/IGkNI9PiILCBqRIioNnJGjOEUSM0Ni9sskpFHBIpCrNpJBxklCG8udtVV6ZtPiRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8OeWsW/eCXgL3UnX8bUvOjSCbgWodplvFqBV+oy5m2UqxMW/C
+	jzK9Nfixtqd5YV0/uSUFKEIYatFgQ6SPIUhfCJoJOWd5QNVNOsy54ZyjNNHAquREo8I=
+X-Gm-Gg: ASbGncvGFB0JvU395kpe27XKe3b+hqmzhEmidrvmGlae5vKeLTEGs/WXO0I1kMLlcBK
+	Dr0lN5fbxmiNOQnZPiGN591c6AgXuVErJKIyuS1nF7ba4f5RQjLPD9iE1HPjv/adTvZOYhTXupA
+	akaY2KVFa1S6mL2+Z0Rr3c0SIA7E7tY/aPs3Rp+uho5wr53FOFptfMu0YDHF3az4y+JvfHSvznN
+	4HxXyZT1MBNyu4nFGxnv51EWJ0OxvOIOu8e1C60qGKwfpvDRQzP7YaIrauvsDDordktueO10kiK
+	4YOl/4ROMkF6De2fOjgu6MmFhHodZCcm8TzpyZgnfNsvXkJynEx2+0f26Bkn49amhJ+Ik2aiJkO
+	/2obHz1WnOHRMGDwKmsHRyoRwAKS2
+X-Google-Smtp-Source: AGHT+IE3G6efsN69U61nJWH6Wm1uz9RoCxH2Y5mDFgiyh9RV68lG2Ng8GLSEqrPwcUEbVLsLRT5P9w==
+X-Received: by 2002:adf:e385:0:b0:3a3:6282:693a with SMTP id ffacd0b85a97d-3a362826998mr17022969f8f.44.1747898528052;
+        Thu, 22 May 2025 00:22:08 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:ca6a:4d93:cd32:83a5? ([2a01:e0a:3d9:2080:ca6a:4d93:cd32:83a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca6210asm21904363f8f.41.2025.05.22.00.22.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 00:22:07 -0700 (PDT)
+Message-ID: <09533aad-fbec-477d-a088-5ecbe181368b@linaro.org>
+Date: Thu, 22 May 2025 09:22:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB8097:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a96a2a8-9dd9-4a29-662f-08dd98df6634
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?NUU4MVNFb05NVVdscXQzV09rblplWFJHL2lRN1hiVC9JQnNCelpPYnU2Tmc4?=
- =?utf-8?B?eThLZzRDdUhkdG8yUkRXYUVHYTNwTnYzbGRCM2xaa0NtaVNPV0tYdVV0M3FN?=
- =?utf-8?B?Vm5GVUgwWGFCa1RsYVhvVDJsTEsrTGpsNkRQUHcwcXBRUHYwRVFLN0E1Z2VZ?=
- =?utf-8?B?MkJsYmxlNWk3QmxyelRNKy9VVEhTZnB5N09LRVBuVEJmV1k1eGRVUnFXU012?=
- =?utf-8?B?aUNwU3A1clRtcVo1SlFxOXNPbFk4NThjRDh5RDVhdzFGaFJYNm0zNnowVkJO?=
- =?utf-8?B?cHlPREZGMjRPOTV3Z29EZlBiNlQ2RU1ZUmtaM2d0VW9PS3dJUm9aaElNcXdW?=
- =?utf-8?B?SkRFTUI1R25xMVNUOHEybHpwZk05QlBxbmtob1JLWHdWTFlhK2kyMDdXbWx3?=
- =?utf-8?B?YWFiazFsQy9rbi81RExNM0FmYi9oQUJwMThSUDBka25HMzBDZ2JKWGp6bklv?=
- =?utf-8?B?bzRPWnZldEF2WENTR2NUNGNRdlhid0svU1ZFa1lTWXpZRnFBNFpDaTkwcFV5?=
- =?utf-8?B?a2RrMytXZGFrbXcrZVdpVldOZWk3elBHa1VCU1h3a0M1VUtCdUZFaUZiMGIr?=
- =?utf-8?B?Z3U3d2JwbEtTSmVpNmp6UGoyc2N3M1d1RXE0eVFob3dwNGhBVzU2ZndBRFRi?=
- =?utf-8?B?NCtDWVdpKzZmbWszeDExVGQ0NmxXUitnN042eHVmdS9NV0h1V3NmOWdzZ2tK?=
- =?utf-8?B?aUJoUHFhTExlWmMycWN3MFhMcHNORWVaVGtHT2UzWlRQTTZxaWFIVThpdXEz?=
- =?utf-8?B?SmxFNzBBSE5vajhZNG5Wd1pwUU9sZ2VBV2dVRHZ5THlMclBmbVhPdmJjZGRy?=
- =?utf-8?B?ZmtoMlpzVUl0SXBmZ1haeEJhbytpN2s3VnY0dE5HdWs5akJPSHZ1cnE5U1Ez?=
- =?utf-8?B?clhhRmJXdDV3NjJRK2o4WGFUSlE0RUhLaitEKzNSMVBKWENVUVJNQk9JNEJ1?=
- =?utf-8?B?MmZwL2NFK0NDOThvaEE0VnhORHpFbXArMHdOWW1VZUNFWjcwVmhNYnJncS9L?=
- =?utf-8?B?aFEvMDF3K3BXKzMzSzFZZXFDam1hNUpuUVV6Wjh3NDNCOC9vajlTSVFKU09O?=
- =?utf-8?B?c28rU0JXTVlST3VtTjVZQWQzQytLZmVhL3c2K0kzV3pyOWNzblBCUXhOU3hs?=
- =?utf-8?B?NlhZVDFGeW44aHhaTndBZWJkQlE3Sm9qaFBXN2VYdzFDUjFUeUo2ZG81OXdX?=
- =?utf-8?B?bE9tNU9jaGFINFBmRjdnNzYxNXhlYnhTcDRQWVI4TW1LMXRvSWc3Rk1MVUVi?=
- =?utf-8?B?UDZwRkhaQmZVTm96dkg5SUdmSGJUT2Y1WkhhL0R1bEl5RkxTSEtqd0hwOGRa?=
- =?utf-8?B?S3hkaVlFMHpUZXNsTXZua0diakIvbGkvZGg1eXJySWxyb0I5eERBZEFGOFB0?=
- =?utf-8?B?MEJqNnV3SmVVRE1McUR0Q3VZeEZhbE5LNE1ydk1SdEEzRDRYZTc3RkZtVDVV?=
- =?utf-8?B?S2RqQ2JSZHJ1NS9sOWlFRWlWQ2xEdjRGTGZXRzk2ejRYV1kxT2pVenEzc0Uw?=
- =?utf-8?B?bGQ3L0NLUXo1Z3liNjl0ZUhDSExIY2cvOURsb3FUajJIL2hiZ0U0QXVGcHNj?=
- =?utf-8?B?UEovcnBVTXFBMVg5TmtIWTZRTzNVVVJCdk1idSs5eS9FRUI1dEhIS1U2LzF0?=
- =?utf-8?B?QzJ2b3BwaXFUYkpCem1rMURYbmNqSkN6RU9PdWJwbEt4RTB6OUVLM0IvNmow?=
- =?utf-8?B?WlVIQjJiaTltM1ZIblBhSk1OVGk2Rm1WK1Z6Y0RyT21VeW9EV0JjenFZckF0?=
- =?utf-8?B?WmxNb3A5NE02dzk3TlFXQkFIQ05JR0Z5c1ZWNDZScll5ckhNWnVBTUxlSlZa?=
- =?utf-8?B?akw2b1FrR3FibHFSUUloUEM4NkRwdW44UDFGdmRYaXpodDdBTEphRFFDSDVH?=
- =?utf-8?B?Q1FlOGVEdDJiSHIzNStCT3ZCanAvZGFHVW1xOGx4ZlRuRWc9PQ==?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?ampJM3hXWndyL2tMNmlNNUNxblVlTlYyQUh5STlCeU9xRVh3b2YrbDIxQ014?=
- =?utf-8?B?K3QyV2lyU2tmaXY5UVphenYyMnJob1J5Ukg0N2dCczYxa0JNT29YcGZlVnV1?=
- =?utf-8?B?OCsvY3oyb1NUYzFxbW5nTFR0bHQ3SDE4WkxBeG1CR0lDNzVIMnA5U21UZEFW?=
- =?utf-8?B?Sk14Y1Jkb1pnOFNKYmYyZ3lhQlo0bWxJcUZtY0hMbUwxLzJIeHdoSEp1TlJ6?=
- =?utf-8?B?VHJ0RmphSGtvQ1BlWE9uSm5ySGRLaWVrVWx1Z2JYRldqOGJVVFA3N0p5MFhE?=
- =?utf-8?B?TkdjL1Q3ZExZa055VDZmaldhUTUyNmZML2tOVWJraVV3UXV3V1lzMXRaSDl4?=
- =?utf-8?B?VFM4R29pbXZLekg4TkdyMXR0a0o3L0hVMDNMUGJGZG1EUVdSV0xOQU8zcHhV?=
- =?utf-8?B?Y2lRTWl0ODRXQ3JjZEJEMmRVQkN2UzhWUDV1Q00yejJDWDZubEZxcnBTWi9E?=
- =?utf-8?B?OXpLMU9ZeXdqMzVnMVoyclBBM3dndTludDUrZkFBZm8yeEs2QUhINGFEcnNL?=
- =?utf-8?B?cys4c1IvTEd6UHlpRzdUc2ladzEwNk02RVZBK1BVMkZwekFTK1h2VzhoKzNE?=
- =?utf-8?B?eDF5RCtVSVhyTHFXMktBTGtRemZQTDVOdnJzbFVYQ2dTc3RzK0xiRC9FS0ty?=
- =?utf-8?B?c0dJSXpZK1JZbnUzbjlXTzFyd3AwL0tEK0YxOTQ4N2phRkhZVnJHV2E0RWkz?=
- =?utf-8?B?K3kzRWVBa1d1bWRJbXVoTFlkWW5oMXJWcEJtSy9QVzI0dlBvQk82ZmtKSEds?=
- =?utf-8?B?OThNZ1hXUjdrb3JaVVE5T0ZUOEhUQUdqVzFHSXNNbG1jc1h1RURzWlE4Q0Iw?=
- =?utf-8?B?aVluL05MQnpId0VqQWpJUGw4N0xQSHovcXp0bVJCV3VOYTUrUjN4Z280c2FE?=
- =?utf-8?B?bkFZbE56a1MwTCtFOWp5cnZHNnZjR0t3QnNRTngxR1J3bEVtZUoraFRiV0lC?=
- =?utf-8?B?bEhoYnlpYzBtd2h5eU9ibEJPdlpiWWVwUmI2MnlhSm9BTWV5c0Riazc1U0kv?=
- =?utf-8?B?L0pKNFJWaEZ1YXhlMno2ak5YMmppMWxReWhYQ3JhemJOYWM3TEp0OVlWeDdH?=
- =?utf-8?B?UCtTNGI1MkFrVEljcXFMN3plcTJQdFQ0QWRoWWc1NjhTMTBIeDJsYzZCVzR2?=
- =?utf-8?B?dVBsdjVXb1RwWW1LQ3FVc2RsT2lGdDc5ZmRnd214aW5XOUF0RzJvUDlRcUlO?=
- =?utf-8?B?SnFtK0UrVGV5L3ZtVk1KNkhPUS9SbnVTU2ZPSFhyK0dDM0haTXZ1S2k4d2NF?=
- =?utf-8?B?RnVDb3NJS0RzcWNwcW12eURXSkJKaFEybjlLRW9KVGJ2ejVQdEo5SmZyRnBQ?=
- =?utf-8?B?WWxLNHFXZXR4dVlIVGJVbTlob05oelp2Q21DR01nSmhoMUdLaGVNaW9NU1BW?=
- =?utf-8?B?ZFV1cUIvWEgwcE9DUVpxNHBXNUM2SGMyeDc1bXNYK0sxZHY2Tmo3MWRvaXEx?=
- =?utf-8?B?eHZoTHZLQ1V0MVl1aHYzdytvRGpZVXVQdDJqTHVVUGxta0JBYytsODd6OEpi?=
- =?utf-8?B?RjFkeDE4RzBOS3UxRCs2TzNFZzlyNWJEblVhRklzQVloZmpVb0V0Q0lkek50?=
- =?utf-8?B?TUcyWU5nVERoMEJhVWswbWNhNzFzeU5LZEhFaXNlMmgrazJhL2xiejdwWjZH?=
- =?utf-8?B?L1ltcUtNVTlTSUxJNTF3MUVJdDRFQnpwZlBpLzk2aElYa0hSQlNOZnI3WUY3?=
- =?utf-8?B?SGREZFpnK1JjekR6YWUvTnpESlZFcHpZcHdYYnVoTkVWZExFMERZbHVtNi8y?=
- =?utf-8?B?ckwwTmNSSDVCODZEcXNMaVpQTzQ4UEVDa2pRUVVKYkdDSkNQQXV5OHkxYXd2?=
- =?utf-8?B?Zlk2NzJhMlNhRlNocmZXMWptbEU3alhWSmRHMmc2ZWVpWVlralU4c2NvZHRK?=
- =?utf-8?B?bGs4M0R3YXQvd0ZxUHJPWHhMOWY0M1c2V1FCNTZIK2hZL1R2Y2drdG5qcVhj?=
- =?utf-8?B?dkpYQ0ZzZjczOEZRampVUW1zLzZxVkFjWjAzVmxtQS9xMFFjVXNROXgvMkx2?=
- =?utf-8?B?dVV1OHIwOU9IVWtHZHJ2QldIQTFBMW9zY3NGUlNkRGxlY1BYbXcyb1RzRFBl?=
- =?utf-8?B?R0kxL3BoRnE0TUswTU9rSlNuTTU2UEV2OW83K1lnRStCQnQzWURSVHNiY0k4?=
- =?utf-8?Q?hBpVouvfbZ3mzE7UpEaRn35zR?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a96a2a8-9dd9-4a29-662f-08dd98df6634
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 03:19:01.7992
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M5syaNmxZRb7Up0NH9MN/uy19cHTpw3Is1kKlwm76rHtkJ05pgyp+tGl2WWCKJfWHWX6Urv/OcJ7SNiqjEbnMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8097
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 2/2] phy: exyons5-usbdrd: support HS phy for
+ ExynosAutov920
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250516102650.2144487-1-pritam.sutar@samsung.com>
+ <CGME20250516101803epcas5p2d9403d89d840dcad88a03d437a48aceb@epcas5p2.samsung.com>
+ <20250516102650.2144487-3-pritam.sutar@samsung.com>
+ <a5c1a064-d760-4140-9e78-d74823b400a8@linaro.org>
+ <000101dbca1d$78ca5570$6a5f0050$@samsung.com>
+ <42ddb5c6-0f17-41ed-8bd4-ab58880515b1@linaro.org>
+ <bd9ab640-2469-4455-bd69-302dd3898c7b@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <bd9ab640-2469-4455-bd69-302dd3898c7b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 05/21/2025, Luca Ceresoli wrote:
-> Hello Maxime, Shawn, Liu, all,
+On 21/05/2025 14:58, Krzysztof Kozlowski wrote:
+> On 21/05/2025 14:56, 'Neil Armstrong' wrote:
+>>>> <snip>
+>>>>
+>>>>> +	}, {
+>>>>> +		.compatible = "samsung,exynosautov920-usb31drd-phy",
+>>>>> +		.data = &exynosautov920_usb31drd_phy
+>>>>
+>>>> All those new ops are only called when matching this compatible, it it really
+>>>> necessary to check the version ? is there "samsung,exynosautov920-usb31drd-
+>>>> phy" PHYs with version different from 3 in the wild ?
+>>>>
+>>>
+>>> This SoC has a single USB 3.1 DRD combo phy of version v400 (major : minor versions) and three USB2.0
+>>> DRD phy v303 (major : minor versions) controllers those only support the UTMI+ interface. Currently,
+>>> supporting only v303 phys in this patch-set, and planning v400 phy later (soon).
+>>>
+>>> Yes, there's v400 phy version that is different from v303 phy. Hence, phy version check is needed to support both the phys for same compatible.
+>>
+>> OK so add 2 compatibles, one for the usb31drd and one for the usb2drd since those are 2 difference hardware.
 > 
-> On Fri, 09 May 2025 15:53:26 +0200
-> Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> 
->> devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
->> bridge, and the only one supported from now on. It is the first milestone
->> towards removal of bridges from a still existing DRM pipeline without
->> use-after-free.
-> 
-> I applied on drm-misc-next patches 3-17,20-21 as they match all the
-> criteria:
->  - At least a Acked-by (or R-by maintainers)
->  - patch is for drm-misc
-> 
-> Being my very first commits to drm-misc, I tried to be careful, and
-> double checked all the patches with Louis (thanks!).
-> 
-> Here are the pending questions and plan for the remaining patches.
-> 
->>       Revert "drm/exynos: mic: convert to devm_drm_bridge_alloc() API"
-> 
-> This reverts the commit applied my mistake:
-> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/91c5c7b5bb2dd09b43b025bce6d790d3c79f4518
-> 
-> Neither the  original patch nor the revert has been reviewed/acked.
-> 
-> As the commit was a mistake, I'm applying the revert by the end of this
-> week (i.e. on Friday) unless there are better instructions.
-> 
->>       drm: convert many bridge drivers from devm_kzalloc() to devm_drm_bridge_alloc() API
-> 
-> This patch affects multiple drivers. Running get_maintainers.pl
-> points at Shawn Guo's repository. After reviewing the MAINTAINERS file,
-> this looks like due to the 'N:' line in:
-> 
-> ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
-> M:	Shawn Guo <shawnguo@kernel.org>
-> M:	Sascha Hauer <s.hauer@pengutronix.de>
-> R:	Pengutronix Kernel Team <kernel@pengutronix.de>
-> ...
-> T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> N:	imx
-> ...
-> 
-> (https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/MAINTAINERS?ref_type=heads#L2511-2528)
-> 
-> Here 'imx' matches the 'drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c'
-> file that is touched by the patch. That regexp appears overly generic to me.
-> 
-> Shawn, can it be fixed by making it less generic?
-> 
-> If not, can we at least add a band-aid 'X:' entry for
-> drivers/gpu/drm/bridge/imx?
-> 
-> I think the other matching entry is the one to consider:
-> 
-> DRM DRIVERS FOR FREESCALE IMX BRIDGE
-> M:	Liu Ying <victor.liu@nxp.com>
-> L:	dri-devel@lists.freedesktop.org
-> S:	Maintained
-> F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-ldb.yaml
-> F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixel-combiner.yaml
-> F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixel-link.yaml
-> F:	Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pxl2dpi.yaml
-> F:	drivers/gpu/drm/bridge/imx/
-> 
-> (https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/MAINTAINERS?ref_type=heads#L7940-7948)
-> 
-> However it does not list any trees. I _guess_ drm-misc applies here as
-> a fallback as well as common sense.
-> 
-> Liu, should this entry have a 'T:' line for drm/misc?
+> ...unless this is fully detectable hardware, then use fallbacks and only
+> one compatible in the driver.
 
-These bridge drivers also don't have a 'T:' line:
+But use proper compatible like "samsung,exynosautov92-usb-phy", but still those are
+2 very different PHYs connected to different HW blocks, I won't mix USB3.1 and USB2 PHY
+compatibles.
 
-DRM DRIVER FOR CHIPONE ICN6211 MIPI-DSI to RGB CONVERTER BRIDGE
-DRM DRIVER FOR PARADE PS8640 BRIDGE CHIP
-DRM DRIVER FOR TI DLPC3433 MIPI DSI TO DMD BRIDGE
-DRM DRIVER FOR TI SN65DSI86 BRIDGE CHIP
-LONTIUM LT8912B MIPI TO HDMI BRIDGE
-MEGACHIPS STDPXXXX-GE-B850V3-FW LVDS/DP++ BRIDGES
-MICROCHIP SAM9x7-COMPATIBLE LVDS CONTROLLER
+Neil
 
-I think that they fallback to drm-misc since "DRM DRIVERS FOR BRIDGE CHIPS"
-covers them.  I don't have strong opinion on adding a "T" line to them, at
-least to "DRM DRIVERS FOR FREESCALE IMX BRIDGE".  Anyway, it would be good
-to know comments from maintainers for "DRM DRIVERS FOR BRIDGE CHIPS" and
-"DRM DRIVERS".
-
-> 
->>       drm/bridge: imx8qxp-pixel-combiner: convert to devm_drm_bridge_alloc() API
-> 
-> Not acked/reviewed, some discussion happened. I am resending it in v4,
-> possibly with updates based on the discussion.
-
-I still think the main structures in imx8qxp-pixel-combiner.c and imx*-ldb.c
-should have the same lifetime with the allocated bridges.  I added a new
-comment on this driver in v2 just now.
-
-> 
-> But it has the same issue discussed above, with get_maintiners.pl
-> pointing at Shawn Guo's tree, so in the future I'm assuming this goes
-> to drm-misc unless there are news about that.
-> 
->>       drm/bridge: tc358767: convert to devm_drm_bridge_alloc() API
-> 
-> No feedback, resending in v4.
-> 
->>       drm/todo: add entry to remove devm_drm_put_bridge()
-> 
-> This involves documentation maintained on another tree. Where should it
-> be applied? There are two matching entries in MAINTAINERS:
-> 
->  * DRM DRIVERS -> the drm tree
->  * DRM DRIVERS AND MISC GPU PATCHES -> the drm-misc tree
-> 
-> To me it looks like the second is obviously the closest match as we are
-> dealing with DRM bridges, so I'm applying this as well on Friday unless
-> there are better instructions.
 > 
 > Best regards,
-> Luca
-> 
+> Krzysztof
 
--- 
-Regards,
-Liu Ying
