@@ -1,115 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F90713D539;
-	Fri, 23 May 2025 12:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA1413D539;
+	Fri, 23 May 2025 13:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748004725; cv=none; b=PKXl0XU2f1HbQUT8y5TuG2LorRzEbBKPjxbOAUH+wTKKAWfaU267Ky3OMv/PJKUaKgU9fCe92Ty3y0+79BbpZPaFijH9fj6elOnbjKYtzvnvEYcTwJDQTLIbLwI7HQyyhGkWhLMozcNRPUFeQS1fpYw49j2cneWfoxC1Gb7Rdlk=
+	t=1748006601; cv=none; b=V/NbF3EKrzLAVnrC3Mn+NeJeWzPo3rTWNSVGwZKAgwrEEpgWmSRgWCXuWLRu1ucC/RsJMNYR5yOYmeGe/FkwlyginUGXaVTRAi4LLIQFJvr25ukhIBGj1BuhoJKJi8cfIGVlvSsPjFhF1+0XuK8fUghFWjpK+PsT15y98bwH/n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748004725; c=relaxed/simple;
-	bh=5xEPkCKOVRabxXHHeF2mu6uzqMA218cBnnVPAnWjDKU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BgX3AuNNYQ75JCrlQfX7DnXX5h8WEfLLoZ4hPyA39g2rc6SsDlRt8DZCLHRjMK/GaNEScueBYlGv0riZEb3VDbyQJMz6hP50NqYr2q95typMjOkjiKKczJNLCQrJ0qcywkCZDLuumhhx9mdWb/EAwhQyvjmez1MOFQ55YE+Wmjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LllHz6nG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748006601; c=relaxed/simple;
+	bh=LbgV/zeaYLO0BgljQMlUUXJzitcXLpFon8HqiN2dJbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dI63iHJ0YBmu8qn9oP+XD9WAbSu4q5D4QuD3ekRn/0kRokoISfl8P1K+J+8jcb0Fa+Rk0gputqLpOt1QcI/t80h6avMONj9z86I9jg1SwgzgoRR1W4Zx/dDaAzGHqPgZMhE5Zp/vBnDbyN3/YKgMwYIu8lyoCUe+EBlaM2wfJTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mZbEGMe2; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LllHz6nG"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 095DCC4CEFC;
-	Fri, 23 May 2025 12:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748004725;
-	bh=5xEPkCKOVRabxXHHeF2mu6uzqMA218cBnnVPAnWjDKU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LllHz6nG9P0P6lqF5UTY/3f+N9k5BG0zsxSI+UQHBPVr3KNRmJyXay69LCwZkSPzt
-	 /WRBdnhVIqfaTj6h2DQimco3j992MvQbKYoTpGb4eI1+wA4xbXNM3wSm7fPzKqGaxC
-	 8jKLug/4bnD6afGxSAmj3lBZVmwREwo6iM8J/lmOw9xj6EhgFMbNht3HXcenQ9zPpn
-	 dq9AA2GOWkPa7Kgn5Oukh6gyxxekgxObSDszJ0S13qAq+VN1giK3JyzeyHGs3nTIcg
-	 1OFED0bQ5cNEXTRotL0vPMEGDie3m/4kFH8HwtQRf4LooFg34exhKtCHdTDwWE9fY9
-	 rHahyelbYV3XQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FE8C54ED0;
-	Fri, 23 May 2025 12:52:04 +0000 (UTC)
-From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
-Date: Fri, 23 May 2025 14:51:48 +0200
-Subject: [PATCH v4 5/5] arm64: dts: exynos: gs101-oriole: enable Maxim
- max77759 fuel gauge
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mZbEGMe2"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 80E3043E92;
+	Fri, 23 May 2025 13:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1748006596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PdDU2oRP8k2jUeSve/BOd06ch34w47FFumvJv+pxA64=;
+	b=mZbEGMe25lkA6a1/A5PYNbESnCSL60bu6GbmptADGVwaEkiGNBcHGN8VrT72jRA/+HNkP4
+	O/QwRUKwwl3xkt4gQ3Mrs7lKrRaKRz4fTUwt/DbNDv7ugEEzoi1dGDejSURTrPhZAOKVZL
+	UYuYChVv7ASMlrgAyMynb3Hu9Ovs5zXPwNEjo60hL8sbBVmrDkv74b2ln1iasNoULv1Ksw
+	tA2Y1gP38lTQKZNvYVM6ebTePuQP8PIROVBEJmhCXewn1NVtuepbzztVtobDhFgEQBqe6V
+	8LOSAQYNXvNBh9HNPCzuX8wiU0bL+1nw3VrunFS4/yawaszCy5VqLmvRqmwd3g==
+Date: Fri, 23 May 2025 15:23:04 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Inki Dae <daeinki@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Douglas Anderson
+ <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Liu Ying <victor.liu@nxp.com>, Anusha Srivatsa
+ <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, Dmitry
+ Baryshkov <lumag@kernel.org>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ chrome-platform@lists.linux.dev, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ linux-stm32@st-md-mailman.stormreply.com, Louis Chauvet
+ <louis.chauvet@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim
+ <sw0312.kim@samsung.com>, Manikandan Muralidharan
+ <manikandan.m@microchip.com>, Adam Ford <aford173@gmail.com>, Adrien
+ Grassein <adrien.grassein@gmail.com>, Aleksandr Mishin
+ <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Benson Leung
+ <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
+ Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
+ <cristian.ciocaltea@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, Dharma Balasubiramani
+ <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
+ Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
+ Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
+ Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
+ <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
+ <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
+ Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
+ <mordan@ispras.ru>, "Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan
+ <yuanhsinte@chromium.org>, Pin-yen Lin <treapking@chromium.org>, Xin Ji
+ <xji@analogixsemi.com>, Aradhya Bhatia <a-bhatia1@ti.com>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@gehealthcare.com>,
+ Martyn Welch <martyn.welch@collabora.co.uk>, Peter Senna Tschudin
+ <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>, Kuninori Morimoto
+ <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart
+ <laurent.pinchart+renesas@ideasonboard.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre
+ <yannick.fertre@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>,
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, Michal Simek
+ <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 00/22] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Message-ID: <20250523152304.5c66e195@booty>
+In-Reply-To: <CAAQKjZPX3iQgNhEydDZXMyC9BRuep7kL-XYEsjnkCxSt_1UsQg@mail.gmail.com>
+References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
+	<20250521162216.79dd3290@booty>
+	<CAAQKjZPX3iQgNhEydDZXMyC9BRuep7kL-XYEsjnkCxSt_1UsQg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250523-b4-gs101_max77759_fg-v4-5-b49904e35a34@uclouvain.be>
-References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
-In-Reply-To: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748004728; l=1313;
- i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
- bh=+E8KTkRWD/mhjwDdm0OrzwMI0i7bo8G/TbulwCt/cNU=;
- b=MYix6XzRqq6cT99BsYFIb7MAMuaH8dv8cWyZm+XbOlmT+uPnbhQ8flVvXyGL8f+B0C3wLpesh
- EXi+XggFsWTCoM+id863xpYa859aiKBzlF3SGv5TvKbKUBqcx8PPhB9
-X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
- pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
-X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
- auth_id=289
-X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
-Reply-To: t.antoine@uclouvain.be
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdekleeiucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvddtuedtfefgueehiefhjeeiffekudfhgfdtledvffekhfegteduieejveevteehnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleehpdhrtghpthhtohepuggrvghinhhkihesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhin
+ hhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-From: Thomas Antoine <t.antoine@uclouvain.be>
+Hello Inki,
 
-Add the node for the Maxim MAX77759 fuel gauge as a slave of the i2c.
+On Fri, 23 May 2025 00:11:24 +0900
+Inki Dae <daeinki@gmail.com> wrote:
 
-The TODO is still applicable given there are other slaves on the
-bus (e.g. PCA9468, other MAX77759 functions and the MAX20339 OVP).
+> Hello Luca Ceresoli,
+>=20
+> 2025=EB=85=84 5=EC=9B=94 21=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 11:23=
+, Luca Ceresoli <luca.ceresoli@bootlin.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
+=84=B1:
+> >
+> > Hello Maxime, Shawn, Liu, all,
+> >
+> > On Fri, 09 May 2025 15:53:26 +0200
+> > Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> > =20
+> > > devm_drm_bridge_alloc() [0] is the new API to allocate and initialize=
+ a DRM
+> > > bridge, and the only one supported from now on. It is the first miles=
+tone
+> > > towards removal of bridges from a still existing DRM pipeline without
+> > > use-after-free. =20
+> >
+> > I applied on drm-misc-next patches 3-17,20-21 as they match all the
+> > criteria:
+> >  - At least a Acked-by (or R-by maintainers)
+> >  - patch is for drm-misc
+> >
+> > Being my very first commits to drm-misc, I tried to be careful, and
+> > double checked all the patches with Louis (thanks!).
+> >
+> > Here are the pending questions and plan for the remaining patches.
+> > =20
+> > >       Revert "drm/exynos: mic: convert to devm_drm_bridge_alloc() API=
+" =20
+> >
+> > This reverts the commit applied my mistake:
+> > https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/91c5c7b5bb2dd09=
+b43b025bce6d790d3c79f4518
+> >
+> > Neither the  original patch nor the revert has been reviewed/acked.
+> >
+> > As the commit was a mistake, I'm applying the revert by the end of this
+> > week (i.e. on Friday) unless there are better instructions. =20
+>=20
+> Really sorry for late. I was made aware of it later through a
+> colleague's remark. There is no need to proceed with the revert.
+> Acked-by : Inki Dae <inki.dae@samsung.com>
 
-Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
----
- arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks for the feedback. As agreed with Maxime and approved by you, I'm
+leaving the commit as is, without reverting and reapplying. Your
+Acked-by is in the records anyway, so somehow reachable in case of need.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index b25230495c64dce60916b7cd5dcb9a7cce5d0e4e..84fc10c3562958ab1621f24644709e85a9433b9b 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/usb/pd.h>
- #include "gs101-pinctrl.h"
- #include "gs101.dtsi"
-@@ -188,6 +189,15 @@ usbc0_role_sw: endpoint {
- 			};
- 		};
- 	};
-+
-+	fuel-gauge@36 {
-+		compatible = "maxim,max77759-fg";
-+		reg = <0x36>;
-+		reg-names = "m5";
-+		interrupt-parent = <&gpa9>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		shunt-resistor-micro-ohms = <5000>;
-+	};
- };
- 
- &pinctrl_far_alive {
+Luca
 
--- 
-2.49.0
-
-
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
