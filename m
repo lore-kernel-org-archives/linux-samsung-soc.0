@@ -1,175 +1,106 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA1413D539;
-	Fri, 23 May 2025 13:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0588214286;
+	Fri, 23 May 2025 14:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748006601; cv=none; b=V/NbF3EKrzLAVnrC3Mn+NeJeWzPo3rTWNSVGwZKAgwrEEpgWmSRgWCXuWLRu1ucC/RsJMNYR5yOYmeGe/FkwlyginUGXaVTRAi4LLIQFJvr25ukhIBGj1BuhoJKJi8cfIGVlvSsPjFhF1+0XuK8fUghFWjpK+PsT15y98bwH/n4=
+	t=1748010207; cv=none; b=Rz48IgUmZmefyxlweeX4DwJdOOCvFb4vv7OngRWDXaVnxgz2NVQgV56ATmwwSoHEzxTcvnFpX2TVuY3x3whCxKOlO0HKWntq6CryiANsWefyoeTSAOfPtubdR7EDmQDJP3ZuzqogryQUI9sZ4EMotioZF8qwazUbLzxTEIv6/pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748006601; c=relaxed/simple;
-	bh=LbgV/zeaYLO0BgljQMlUUXJzitcXLpFon8HqiN2dJbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dI63iHJ0YBmu8qn9oP+XD9WAbSu4q5D4QuD3ekRn/0kRokoISfl8P1K+J+8jcb0Fa+Rk0gputqLpOt1QcI/t80h6avMONj9z86I9jg1SwgzgoRR1W4Zx/dDaAzGHqPgZMhE5Zp/vBnDbyN3/YKgMwYIu8lyoCUe+EBlaM2wfJTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mZbEGMe2; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1748010207; c=relaxed/simple;
+	bh=pR9fA4NdXQryYOB0kCjJuwhWY+v7ZXFuSKqfZ1iPpXY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=HuKqT5UaYf0xVIL3hRfoMbkUrGSEOsNrWvh527Z8yzV5TzeXsJjL/U0J0hphGKIdMM2G5wIbXHSTDGHgEDfPa1weDOeXLdhdegWO9NGEXNbNh12NtXeJ+6v0UR/uaki+Azbx4mJSF3d9hliWRiDncEUeLCoSr/kp4Z2S7jykeMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goAQq1FS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mZbEGMe2"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 80E3043E92;
-	Fri, 23 May 2025 13:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1748006596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PdDU2oRP8k2jUeSve/BOd06ch34w47FFumvJv+pxA64=;
-	b=mZbEGMe25lkA6a1/A5PYNbESnCSL60bu6GbmptADGVwaEkiGNBcHGN8VrT72jRA/+HNkP4
-	O/QwRUKwwl3xkt4gQ3Mrs7lKrRaKRz4fTUwt/DbNDv7ugEEzoi1dGDejSURTrPhZAOKVZL
-	UYuYChVv7ASMlrgAyMynb3Hu9Ovs5zXPwNEjo60hL8sbBVmrDkv74b2ln1iasNoULv1Ksw
-	tA2Y1gP38lTQKZNvYVM6ebTePuQP8PIROVBEJmhCXewn1NVtuepbzztVtobDhFgEQBqe6V
-	8LOSAQYNXvNBh9HNPCzuX8wiU0bL+1nw3VrunFS4/yawaszCy5VqLmvRqmwd3g==
-Date: Fri, 23 May 2025 15:23:04 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Inki Dae <daeinki@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Liu Ying <victor.liu@nxp.com>, Anusha Srivatsa
- <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, Dmitry
- Baryshkov <lumag@kernel.org>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com, Louis Chauvet
- <louis.chauvet@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim
- <sw0312.kim@samsung.com>, Manikandan Muralidharan
- <manikandan.m@microchip.com>, Adam Ford <aford173@gmail.com>, Adrien
- Grassein <adrien.grassein@gmail.com>, Aleksandr Mishin
- <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>, Benson Leung
- <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
- Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
- <cristian.ciocaltea@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dharma Balasubiramani
- <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
- Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
- Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
- Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
- Bingham <kieran.bingham+renesas@ideasonboard.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
- <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
- <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
- Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
- <mordan@ispras.ru>, "Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan
- <yuanhsinte@chromium.org>, Pin-yen Lin <treapking@chromium.org>, Xin Ji
- <xji@analogixsemi.com>, Aradhya Bhatia <a-bhatia1@ti.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Martyn Welch <martyn.welch@collabora.co.uk>, Peter Senna Tschudin
- <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>, Kuninori Morimoto
- <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart
- <laurent.pinchart+renesas@ideasonboard.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre
- <yannick.fertre@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>, Michal Simek
- <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 00/22] drm: convert all bridges to
- devm_drm_bridge_alloc()
-Message-ID: <20250523152304.5c66e195@booty>
-In-Reply-To: <CAAQKjZPX3iQgNhEydDZXMyC9BRuep7kL-XYEsjnkCxSt_1UsQg@mail.gmail.com>
-References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
-	<20250521162216.79dd3290@booty>
-	<CAAQKjZPX3iQgNhEydDZXMyC9BRuep7kL-XYEsjnkCxSt_1UsQg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goAQq1FS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8F2C4CEE9;
+	Fri, 23 May 2025 14:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748010206;
+	bh=pR9fA4NdXQryYOB0kCjJuwhWY+v7ZXFuSKqfZ1iPpXY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=goAQq1FSEeTn60D4goiuky385GlbCKp/cuANcZdpE55R5AzKlNc2mfFQLVwjp5yP4
+	 30ORao35sm4F03Mt0G9gMNE03eS7cQewA/JuuS8kM2wEbjRJ9gKWf4UH+gOD+maak8
+	 i3d39A84sJfy4PIq7mXK9e0FawzTOMjcb3ZvbbCN2XRXj4IKW0ka84gGbfj2Hytw2L
+	 z6jtmNQf9FfaULjoBABVQ4yU5BKGgBf649sKb+b/bMi5mZDlVsq4deWn+Swls0KjWz
+	 2xl/z7rR0jCcTwFl1vGZMC/LCPieqc5w9YTxmELuJRMqi/euLqjqTDNuIbmm4CD13S
+	 D5Py+xMQ78J8w==
+Date: Fri, 23 May 2025 09:23:23 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdekleeiucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvddtuedtfefgueehiefhjeeiffekudfhgfdtledvffekhfegteduieejveevteehnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleehpdhrtghpthhtohepuggrvghinhhkihesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhin
- hhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Will Deacon <will@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ linux-kernel@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>
+To: Thomas Antoine <t.antoine@uclouvain.be>
+In-Reply-To: <20250523-b4-gs101_max77759_fg-v4-3-b49904e35a34@uclouvain.be>
+References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
+ <20250523-b4-gs101_max77759_fg-v4-3-b49904e35a34@uclouvain.be>
+Message-Id: <174801020213.1711113.345093338339691791.robh@kernel.org>
+Subject: Re: [PATCH v4 3/5] dt-bindings: power: supply: add max77759-fg
+ flavor
 
-Hello Inki,
 
-On Fri, 23 May 2025 00:11:24 +0900
-Inki Dae <daeinki@gmail.com> wrote:
+On Fri, 23 May 2025 14:51:46 +0200, Thomas Antoine wrote:
+> The Maxim MAX77759 is an IC used to manage the power supply of the battery
+> and the USB-C. Based on drivers from google, it contains at least a PMIC,
+> a fuel gauge, a TCPCI and a charger.
+> 
+> Use max77759-fg compatible to avoid conflict with drivers for other
+> functions.
+> 
+> The Maxim MAX77759 has no non-volatile memory so it doesn't require an
+> address and instead requires a value for the current sensing resistor.
+> 
+> Keep shunt-resistor-micro-ohms optional for the MAX17201/MAX17205 as it is
+> not be used at the moment but could be in the future. (e.g. as a default
+> value to be used in case of nvmem failure)
+> 
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> ---
+>  .../bindings/power/supply/maxim,max17201.yaml      | 42 ++++++++++++++++++++--
+>  1 file changed, 39 insertions(+), 3 deletions(-)
+> 
 
-> Hello Luca Ceresoli,
->=20
-> 2025=EB=85=84 5=EC=9B=94 21=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 11:23=
-, Luca Ceresoli <luca.ceresoli@bootlin.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
-=84=B1:
-> >
-> > Hello Maxime, Shawn, Liu, all,
-> >
-> > On Fri, 09 May 2025 15:53:26 +0200
-> > Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> > =20
-> > > devm_drm_bridge_alloc() [0] is the new API to allocate and initialize=
- a DRM
-> > > bridge, and the only one supported from now on. It is the first miles=
-tone
-> > > towards removal of bridges from a still existing DRM pipeline without
-> > > use-after-free. =20
-> >
-> > I applied on drm-misc-next patches 3-17,20-21 as they match all the
-> > criteria:
-> >  - At least a Acked-by (or R-by maintainers)
-> >  - patch is for drm-misc
-> >
-> > Being my very first commits to drm-misc, I tried to be careful, and
-> > double checked all the patches with Louis (thanks!).
-> >
-> > Here are the pending questions and plan for the remaining patches.
-> > =20
-> > >       Revert "drm/exynos: mic: convert to devm_drm_bridge_alloc() API=
-" =20
-> >
-> > This reverts the commit applied my mistake:
-> > https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/91c5c7b5bb2dd09=
-b43b025bce6d790d3c79f4518
-> >
-> > Neither the  original patch nor the revert has been reviewed/acked.
-> >
-> > As the commit was a mistake, I'm applying the revert by the end of this
-> > week (i.e. on Friday) unless there are better instructions. =20
->=20
-> Really sorry for late. I was made aware of it later through a
-> colleague's remark. There is no need to proceed with the revert.
-> Acked-by : Inki Dae <inki.dae@samsung.com>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks for the feedback. As agreed with Maxime and approved by you, I'm
-leaving the commit as is, without reverting and reapplying. Your
-Acked-by is in the records anyway, so somehow reachable in case of need.
+yamllint warnings/errors:
 
-Luca
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/maxim,max17201.yaml: properties:reg: {'items': [{'description': 'ModelGauge m5 registers'}, {'description': 'Nonvolatile registers'}], 'minItems': 1, 'maxItems': 2} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/maxim,max17201.yaml: properties:reg-names: {'items': [{'const': 'm5'}, {'const': 'nvmem'}], 'minItems': 1, 'maxItems': 2} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250523-b4-gs101_max77759_fg-v4-3-b49904e35a34@uclouvain.be
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
