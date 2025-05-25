@@ -1,71 +1,72 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8EC18DB35
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2025 06:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4EC1CAA4
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2025 07:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748156395; cv=none; b=B4oVpcWO+0lyjwJCcltZYWWkA+1wzZzZ4hctcSxh8fYL6kdZ+NJalEWl2DutqD8+r/bLuYam+P/OxSAXkygecnFfztReSQnvAhITiaIW+xTcPV1xIlW/iJ/b19tSpwF7blV36wiUFhoxl3DMfcyKJ+9/q9n886W8BfxuwE3tcgY=
+	t=1748156552; cv=none; b=uJg2h9aUPdKpbr9xNMplLXlEw4Y6xriLEgOSnpLB7r1i4vhedIvxsXW64pLlYIeESYEG7okjFuIw8XK4miVMU9p4I+bWtO1ijtrLtbI58uKsJh5IahxJACGQT7wVRXxSmr1JWF+Sozqz3XUw28xp7Ksq+CpIdOK6wPQvREEOu+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748156395; c=relaxed/simple;
-	bh=n6woNA1KAB7A7cPpCh7C05v8CU7LoOLG7R9vYiUjRdA=;
+	s=arc-20240116; t=1748156552; c=relaxed/simple;
+	bh=xmVuJpzpAO9LBTZ0wqrziL7kSCWF8SNFJEq1vwbSKj8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YPHWE+rJhlvzdSy4BTBQHT45WPYEU47rDUsgW4QHnmxFloeE+juzlqMEt9Fxrx7JCdkrdEdpcf+Vj+FnEX7/zTdGRQV8AZTGEi9hiGyCyqQ3X398v7IFbzx+gT+7aT4o6VOM7sDuvf86L7W8kK7vTNasTXCjUF8hAG1T719JHWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVvhBPTP; arc=none smtp.client-ip=209.85.161.50
+	 To:Cc:Content-Type; b=FpdZHGzZirAaWcpeRxKUTK+2EaL+Ne9cnSLsK15BXPoJ7Fyfw0+VL6rvxFvZ8uFB+dDdF3NZuQOLSfX9x1Th13aYpaufd4Kc83xx2j5VJGd2QFSYUmcSQk+hYS5/IIOhYv4J/OorVGnUElx8eTHOItCNaiP4+z7KwPEC0kcTtAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PTTLued5; arc=none smtp.client-ip=209.85.167.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVvhBPTP"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-601b6146b9cso568920eaf.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 May 2025 23:59:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PTTLued5"
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-401f6513cb2so1198449b6e.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2025 00:02:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748156392; x=1748761192; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748156549; x=1748761349; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n6woNA1KAB7A7cPpCh7C05v8CU7LoOLG7R9vYiUjRdA=;
-        b=UVvhBPTP7HmOm9yKbRkz20Mr8ZEov1O9XhPd3CBuNcgADp6AM9fSJ6oB+8jCUMzaxc
-         I/LfhU0eshomUeP4sQ2NeOEC8L7AWJuCyC1fIBK9SOqPjfKQjzY9m4x/+l5M51dRNpkX
-         uhnSQY8M7p/q+JyV1kbyB3p0z2/ACL6h9k8gpn0B3krEN96Nl5rompNeIxPkSkKmwDgn
-         t8jAV/DLvnt45tIkUc0i7vfDylRDcXKNf6xEl4ap3Y0SLn2BiZFCn97oIXfcl8qU6CH7
-         yivfdGNzRpLh6UPckD1G2TRbBkrd/DtzuiKTdzS2Y4LGj5lIvfoMz5U+JT+ASN8/ZUr1
-         /bJQ==
+        bh=++2YpVIWSfdyU9wkP36ZaRD+uvghyqrOoMuB3yBAyQQ=;
+        b=PTTLued5VxluoQv5Wr4F7Q/TzluT9Kw1Yk4tFoI0uUpWnyapBoXktd4mHlTXwGdgkj
+         NrCSMmgw3ugN+42+j2oXr7PMZDlCxubplJ1mGW95tlJsJvhfRRPOJGngmj1C85O5T9Vy
+         KC8O75OfcYqGecdXNe8b9CKHPmi7tO5dcQVy8BUQoLHRmiQRuzKQC2DmxrOq/13luw9l
+         dlO1zBNWPGLbWnUw/VPthH7H5FVN7j1p5+5ntTCe8NGmT074kCTP+Je4RksblAAikVHr
+         G7vscD0y8W8P77NTXGtwMDuZLynuQtZwlHZJ04EULM5ujS0ahNh7SVFM4n3SAz/l7BA9
+         ATNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748156392; x=1748761192;
+        d=1e100.net; s=20230601; t=1748156549; x=1748761349;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n6woNA1KAB7A7cPpCh7C05v8CU7LoOLG7R9vYiUjRdA=;
-        b=ikEHjkL/H+AmFiQx9gP5sdKzwlQUm4WvPFH/3qs6iHR3PUcDWduzUWGLVR9oV8CMHA
-         fS3HJn7wDK7RqCyRSXbVBdSm6kAlgbtWoA2HLhvO2JZyDR2FZkW659kRhun47ClXA8NZ
-         U/A2D3mk+8fNeEws8XEcZI5jr/cpTrcTbC6lGR+r4AcgjZC21cB4YGeuH/xpTl+m4Pte
-         4Sm9zuJnOSiz+DzQVcjIHQgaG04ono4ro3p6aRsahTFLrSf9o/ElaZ6zxmhGvuyMECXb
-         KZF6skh9FUlDH4m8z5xFhYAmA292SN2H1/gyni1U6Zlgr4I2FN28SndTEh3KrLEEKUUl
-         om2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVmuBH/hInOrp+qVq1LOZaolzqLAPx0aNRcpR9l0DWhxA/vdlheZQxF4u4aoQais0JmAdR/fvRm4TEfLV0FgyBsQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8nwks0N133v9DqE45YqyBOy/ypb6wgRbD0jgGutKu7ueJko/V
-	FrmAmKVeDX+zqS0Cv3/BqkrTX/oyU+TCmSBDOawzJKCPBS6iHF82xFL4SQ6AqwTD6Q5pDnvf/lN
-	HvIQP/PzTCBnJPiXJbE7WmBFK0IOst5TDUg/MWOHN3A==
-X-Gm-Gg: ASbGncte6uWmPuwG0Lp3yL357uogSKIV++QIMc5FTpQfPJijY+UP3rvu7JnqHGLxU05
-	VRNL69lxNdyJS8A/FFbdIM7VUvz/o5z6XZi4+XlVO6QGu5Ce6RVxBWRGV3Xoti6GE5SDkmPP15E
-	And4xtAH1wzxXAKD6CuZ3rTnHlwaVuT1/GbPT82gXDDVu1fxRypBL+iTZFtosBNa/ebw==
-X-Google-Smtp-Source: AGHT+IFgDLGOtCqohcdRalUhWXVpC+KpngWsK/Rw8iIAXMgLPGD2nNaWQvQPUiC4kmvZXurqEyjrTqM9NmLsfftktkQ=
-X-Received: by 2002:a05:6820:450a:b0:60a:bee:497a with SMTP id
- 006d021491bc7-60b9fa62424mr2365200eaf.2.1748156391776; Sat, 24 May 2025
- 23:59:51 -0700 (PDT)
+        bh=++2YpVIWSfdyU9wkP36ZaRD+uvghyqrOoMuB3yBAyQQ=;
+        b=ZtwU3ONrc4O3FdhAc/D+C3u9lrAbmr3DgUC4pNqc2GKFRKi3ntVCkhYVq1H5eHmfD/
+         /rQ3MvXIXrfLJvNd1cpy+9BbDr6OPWuBKLK31pBtIzf2rLLl3YKWCruPdLiSNIBHV/v8
+         pGoV3LXUJE5pUB3D+WbyhdzgRc2/foE7DB9/KSqrPKTxqCxzKw3Vl2jYy5ZqWOgOSUvg
+         GOqnnRS0o9gD4ngi+/c4s43zih9Z+3LIhGTpEN07sTkQecPjhjjdVcsj31d4iPqFP98b
+         an0imOvie6oUGiNnzFkodhU7v5NFmzD0YPXfGrhUu/uFy42h7W1eNHaPhUNL8edw3zcz
+         xbqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFa6HJyWWiacPE4gtTHbeHcn4XKY3mEB+0Cn2bCCPqR9YOGxU+SoaOmN+BFhrIApkTaT0NikHOzBAtGKCeblpzzg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yynk2BEN6v5bH9tVZOUdM8EW/yGdB/UBGd5KSzDZu72TN35wwWn
+	r8/ZD7NLKNxat8DcxgEL0TFzt0EYmjeK4hOTs3XMitA1CM8Adf0tLJo4HGezLO0JmSZK8lAVIxL
+	bRFNIVDkBnStNxvFAkKCnu1m9daqn/mOrMZfKB9Tycg==
+X-Gm-Gg: ASbGncvY0QEHaAK7qTZi8BrGlOFUz4jC5MCWb/5ka1+tAOC6YjMZbozg7PucIlC1Qf0
+	2b/ToerNt7pIQCvy1SkDgVpqDu+sBHuwr6Y/v67fUhtdI+CaH1NmqvSh7YlA/0O820H4UbGEDpl
+	WY1Vqq+JLJ+QRrDJD43Z9Dkfm+5fqbCBz48V5CvCbLvtGh+fzYodk0RZn+1f2vWDFXwA==
+X-Google-Smtp-Source: AGHT+IGr/xoVtnGmyX8qGFJo5xUSZHa6jevK9WgX6XTSiHo/5DgFtJ9gSQBs5D6r1l1zV6o1b9oFwpI2DMroSyKfCf4=
+X-Received: by 2002:a05:6808:1b85:b0:400:d71c:ca26 with SMTP id
+ 5614622812f47-4063cf85609mr5281162b6e.7.1748156549522; Sun, 25 May 2025
+ 00:02:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org> <20250524-b4-max77759-mfd-dts-v2-1-b479542eb97d@linaro.org>
-In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-1-b479542eb97d@linaro.org>
+References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org> <20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org>
+In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sun, 25 May 2025 07:59:40 +0100
-X-Gm-Features: AX0GCFtzlZ4NN5rM8kQ4Ddqkxfr236WnLwsk7oYUXbS3dPkq764kPsxxis5Ykos
-Message-ID: <CADrjBPr2ie+6vNZK0oUH75whXDqX-oXdOODcrM75gMc0LmxoYg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] arm64: defconfig: enable Maxim max77759 driver
+Date: Sun, 25 May 2025 08:02:18 +0100
+X-Gm-Features: AX0GCFvvZm3ZpbAlMbK7Jst1a1IiZ6IBCab2RcTFflgx7AbbvRBIsrph-OCoOqE
+Message-ID: <CADrjBPqVJDBS1pYMhSy8L5sOEkA+UVKNc6N7oY9oiv_twUKt1A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] arm64: dts: exynos: gs101-pixel-common: add Maxim
+ MAX77759 PMIC
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
 	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -80,13 +81,31 @@ Content-Transfer-Encoding: quoted-printable
 On Sat, 24 May 2025 at 06:21, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
  wrote:
 >
-> Enable the Maxim max77759 as this is used by the gs101-oriole and
-> gs101-raven (Google Pixel 6 and Pixel 6 Pro) boards,
+> On Pixel 6 (and Pro), a MAX77759 companion PMIC for USB Type-C
+> applications is used, which contains four functional blocks (at
+> distinct I2C addresses):
+>   * top (including GPIO & NVMEM)
+>   * charger
+>   * fuel gauge
+>   * TCPCi
 >
-> The child devices' defaults are based on this MFD driver's state, so
-> this commit enables those implicitly as well.
+> This change adds the PMIC and the subnodes for the GPIO expander and
+> NVMEM, and defines the NVMEM layout.
 >
+> The NVMEM layout is declared such that it matches downstream's
+> open-coded configuration [1].
+>
+> Note:
+> The pinctrl nodes are kept sorted by the 'samsung,pins' property rather
+> than node name, as I think that makes it easier to look at and to add
+> new nodes unambiguously in the future. Its label is prefixed with 'if'
+> (for interface), because there are three PMICs in total in use on
+> Pixel 6 (Pro).
+>
+> Link: https://android.googlesource.com/kernel/google-modules/bms/+/96e729=
+a83817/max77759_maxq.c#67 [1]
 > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
 > ---
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
