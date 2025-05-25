@@ -1,94 +1,116 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86E713A3ED
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2025 07:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9CB158535;
+	Sun, 25 May 2025 08:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748156752; cv=none; b=YE1zDeW55TQomAXbPWHYqwcrmXaipBd7LX6mh6k9CTxWXZz+1A0pPZ7u+nesb33xPk2u3TWHqNAPkyR1k8EVx1oRjDQjspXjnDt+1M6UD85GZOtsrtuW9Fst/NmziN2SYSW7H6Zz6tZZui9ZZI2o2/0oUeSeRCWgR2bUK++3WQU=
+	t=1748161833; cv=none; b=EqepDxVxG5aKsfvc9VMtXF5z45Qez7VedSEB083Wsx1Oi7moEeSCWdd0IvwaRHiU0N/9Z5Sd5zFFcQbzp6ysgAuguVAZZdtw/W41V4cXRtFe/thnHkp9ylWeEkqPL+DcKT20PRFCkP+picqRC1z6DCK3CbDhc22CBuf7vz9IeC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748156752; c=relaxed/simple;
-	bh=jvhoBaZylv5JALI+/bZ2X6Rv5t1lsNh1PTJCaRNalmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cle7ES8vwAnBTtMYJMTWe/xYLdwFDT02nwTS15f8as7HY3tt+usrXDbMg8kCrjC1wb9DABdu8acla/Z9/Qia+1Aeayqokf3a7Ke8yeVCopPk/9aHQSikApNCE5Z16JVlzojqcUcXWb5zUHNudCfJxaVjY2K+Gcg4qwveINFfsHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zMcEloKP; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748161833; c=relaxed/simple;
+	bh=X+gCXOXsYKVvislAM03W3reWMCip6O0Qe6ZtQ4W/bEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OE1TjHW88I4f3BTPoLpwRz5eLdGyo/x+rYwWeG8nZ8gJ24FtHH8qJxmYav7g8aTLJ6LBSmiU3yL+H5KGyKMS5jAI8aD4g6/kC5CNW+dx65kAQElOCnG5dWcve0bsXFmcmt62Gubx+PISGfH0lCnD5NAiMz/OPyGxRXKaBsRSN/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzDtJR6u; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zMcEloKP"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-605f7d3215cso541538eaf.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2025 00:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748156750; x=1748761550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jvhoBaZylv5JALI+/bZ2X6Rv5t1lsNh1PTJCaRNalmI=;
-        b=zMcEloKPiYVWgdWwOM8+4IfmGknQltM4azGGIxnUZh0tpXmiO3BJtLilWCovoKF7QN
-         HCqa2n6yjEZxUg9jIrPl84EHVWA9SKjMI3ZxEHe85vObwZb/lBWHPwnxkzb/XNlIaxxP
-         iDvieoc3zjU/D9TPuKANDNJrgLcmVSfpi8YjAzQ8HWB8dbCekc85fZQHszb6qXnxkI5p
-         HZjecqkrpQbqS8uomjeDJWfhIv7AccpilQUx0I9IYBr/9KCDArm2wOAsSjp40m3AZoVJ
-         lBWQ+Y39GGmH4DZklc314dZmkO4JCo0iK3WbyB+SAlqvCoMtMkVik8BqY4A8EPnnNzQE
-         VwYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748156750; x=1748761550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jvhoBaZylv5JALI+/bZ2X6Rv5t1lsNh1PTJCaRNalmI=;
-        b=Dj6niKLdaNFr/AbvgsoVzLzmVV15oJE89Qkc0BwAQn0Y9TjUTmvKW4gS61d7sRtnGW
-         3N+vWHBR4J9FwYXnUQNmCsUbVHGFd/wMf8hQkqnSm1Eg+15DNTofEpNUn83NmGmS1eQb
-         GcNiMeVOgPd9jcjfcE0Xz6Aqy7eAg88ar3xUyt8kpzJfU7UIOIq4lMKC6jqpKMxHUxSM
-         T+7G0MpCofGK7Ztoe1D6gAsrSgJnuBrIskrdbTRornEBZPaLG+/+2mbVSTjz4lt3Vjry
-         +9qgUVpz1uVgtVM/9Ab9PRZvaDCCJ18sHlehzmF29k2Ci2gfiscEbvH1FSNTVR7hxCdL
-         VIcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaio2Zczo4KFw+YjZsiIBk5ncqf/j3sda1Sflt+v8cYYL4msn+Br4c98NNwNQbMYXtmjFpkK5Ck1NBQUM8DHGXSg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzapeO99El/TL0aUvHTiiEAbOyOEWS2Qc4+syEUwIwoZjzaVS+H
-	1pPM8Yk5qWolyuUV5iGshY8Kvufc5gjQatcfzWpBtV5qJKFxy1OfXuWBl2cHW2LrZmaZbxADh5V
-	e3o5GN3YvTB+YHKOFo+dpiLqjWJscyYCx+lG6fJ7ipINAgb69ypwWcqM=
-X-Gm-Gg: ASbGncvRRKLl894p5a9gS7XDaSqtJwPSKRXtbezhINtFAGlhzoJ68TqfjjyeMomgN88
-	+ASZNgmc+gV5QMC2ARH7JM+lgB+aJKMSjBQccNlWAcRj13s0v+NVFr8k+i1FEY5sk8lD0sfwW20
-	JGDE7kZefL43qqDcG1ipDX4CCb9lW3tVPBFp4y3HIbv1KWOULc9ku6BZJbsUk/HV8D0w==
-X-Google-Smtp-Source: AGHT+IGPkyRDJYTnbDg706EyGxrFrSBuZIpU6gujwRJ5t4G9MskZVR3FMKn2gTUYPOf5EomM6pt3h4XtTjZNiHOsagk=
-X-Received: by 2002:a05:6820:1b1a:b0:604:5e57:80ab with SMTP id
- 006d021491bc7-60b9f8ac9dbmr2898191eaf.0.1748156749921; Sun, 25 May 2025
- 00:05:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzDtJR6u"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748161831; x=1779697831;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X+gCXOXsYKVvislAM03W3reWMCip6O0Qe6ZtQ4W/bEY=;
+  b=HzDtJR6uTttCDplaErNBdi1osVN8PrsngmSS9xV1/PXmZHii5xxXP0KO
+   htuGZer8dmfvZ880n7KPQyL/i4kzsWYld2vRp9s6MIbVZ9pFChvToNqEQ
+   k862zaNjh/cdbFq5fotxp6qtrLVVClykKI4EIp7Zo37xBkY36+BakAFbw
+   2aVNxRV9881a/3weqc3oozJy9/xKYGvgE5QmTLv9xWGUn8BAx7en3mHfc
+   Tv7f6BsObKjSbh9mRa54uCoftVtsIJZhjwYDJ2m7+46UOxIrgfEaoeWUk
+   lL16U05f37sOCOZRRoyKGcKkXwLG3owqbj6Ocu62ifpA2w0vf6sVadoum
+   w==;
+X-CSE-ConnectionGUID: O+BBJgsjSku/4b588RnvBw==
+X-CSE-MsgGUID: 5zmitrl6T12COMprVwpnjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11443"; a="50049067"
+X-IronPort-AV: E=Sophos;i="6.15,313,1739865600"; 
+   d="scan'208";a="50049067"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2025 01:30:30 -0700
+X-CSE-ConnectionGUID: CHrzet/zQQehuzWBXCFlUw==
+X-CSE-MsgGUID: hssUZyPESOKzuGHr03rH2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,313,1739865600"; 
+   d="scan'208";a="141765201"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 25 May 2025 01:30:26 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uJ6kS-000RhQ-1E;
+	Sun, 25 May 2025 08:30:24 +0000
+Date: Sun, 25 May 2025 16:30:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	William Mcvicker <willmcvicker@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+Message-ID: <202505251653.TsYCp5Mq-lkp@intel.com>
+References: <20250524-gs101-cpuidle-v1-2-aea77a7842a6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org> <20250524-b4-max77759-mfd-dts-v2-3-b479542eb97d@linaro.org>
-In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-3-b479542eb97d@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sun, 25 May 2025 08:05:39 +0100
-X-Gm-Features: AX0GCFuYwVDbJuGWCNZYKWJexcFUkr6L5u2qT_trsMWFdA8H8nt3PvddMdXZGPc
-Message-ID: <CADrjBPq9jzuDKXE1++ds=q85eOFDfBQ2VizjE7GX9t24wMsbtQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: gs101-pixel-common: add nvmem-reboot-mode
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250524-gs101-cpuidle-v1-2-aea77a7842a6@linaro.org>
 
-On Sat, 24 May 2025 at 06:21, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> Add the 'nvmem-reboot-mode' which is used to communicate a requested
-> boot mode to the boot loader.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
-> ---
-> v2:
-> - add dm-verity-device-corrupted
-> - update commit message slightly
-> ---
+Hi Peter,
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 176e917e010cb7dcc605f11d2bc33f304292482b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/arm64-dts-exynos-gs101-Add-local-timer-stop-to-cpuidle-nodes/20250524-153138
+base:   176e917e010cb7dcc605f11d2bc33f304292482b
+patch link:    https://lore.kernel.org/r/20250524-gs101-cpuidle-v1-2-aea77a7842a6%40linaro.org
+patch subject: [PATCH 2/2] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+config: arm64-randconfig-r132-20250525 (https://download.01.org/0day-ci/archive/20250525/202505251653.TsYCp5Mq-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce: (https://download.01.org/0day-ci/archive/20250525/202505251653.TsYCp5Mq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505251653.TsYCp5Mq-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/soc/samsung/exynos-pmu.c:593:32: warning: unused variable 'cpupm_pm_ops' [-Wunused-const-variable]
+     593 | static const struct dev_pm_ops cpupm_pm_ops = {
+         |                                ^~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +/cpupm_pm_ops +593 drivers/soc/samsung/exynos-pmu.c
+
+   592	
+ > 593	static const struct dev_pm_ops cpupm_pm_ops = {
+   594		.suspend_noirq = exynos_cpupm_suspend_noirq,
+   595		.resume_noirq = exynos_cpupm_resume_noirq,
+   596	};
+   597	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
