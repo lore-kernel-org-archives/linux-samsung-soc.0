@@ -1,140 +1,213 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7DA213E69
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2025 14:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE3321421E
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748527351; cv=none; b=GeGoUvx/3YWinj+rxz2ZvP5/QFIcp52Gy6qiL3M1PkKjrT/U6vGQ6vsn1JD7J9k1OaPiJFJW++4R2L78t+6SdI/Zy/BJsKsyPQ5bKByk66tWpUDuiORlaZZ72Yn3OgmFkYHlQVdzY/oq5VvcRW+OuWnSxqYuoHCTeKHiYcXJRr8=
+	t=1748530202; cv=none; b=HNvGFN9JbgaZpsxp0B6jn14G1arkN1Npl6xOkGlrmCbsK4lMn8nq6buYxB99j905bq2do88OVCMPlbkXzvlGsZLdgPbGsiOAAjls0scwJUPFvY3R4jAzYhCKd3Fvn0/Ql5VnkiMizYT9MDXA9ne9QYX7myykvqfYOLwv7IL1kDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748527351; c=relaxed/simple;
-	bh=yBKN8id0e8i0mID56sBX04JKOMEpNFcKtfCE5gt4YyQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=QSr4Zx3w09MwtTARw26DHTy8ngJzHWJ6dDgQZmVuadEIcCk0tqAYQ/O0ocKdiCsI+BUdLPQPk8rUyb2uuGQ3FPNiS6+Yh3vv+5sHdSmj+cvzBKL0zgUlWhBaqidTBckxbWiF/RtWo1v75VUWWEX3aYUf1mYh0QNpA7rpwDIuafM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pQRhGPFo; arc=none smtp.client-ip=203.254.224.24
+	s=arc-20240116; t=1748530202; c=relaxed/simple;
+	bh=mBxBS+F3w/cyhjrDcqffZ7kyoE4diOtuM+0VdOkSmnI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=L7taonART3jDCPTRBvWkfig0RASImraNNByRTUTWOL9fkSBGtQplYfYEfBCxEHTK5PtxeTVplHx6dXxKyz5SzH4Osqc5W6ojO8DGwKD9ZLu5sCFqE0bO7HKxUxv07riaetX7gc4Y5VC4QYQov7nyqI6MiqIiYeM3nvMeys1rB20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lsIxr1nT; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pQRhGPFo"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250529140227epoutp0180349eef96b6a593b6b3c408033291c5~EBFuoeUdz2191721917epoutp01Z
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2025 14:02:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250529140227epoutp0180349eef96b6a593b6b3c408033291c5~EBFuoeUdz2191721917epoutp01Z
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lsIxr1nT"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250529144958epoutp04559015aeaf59594cb0e27615773f69e5~EBvOM8ETG2560825608epoutp04t
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2025 14:49:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250529144958epoutp04559015aeaf59594cb0e27615773f69e5~EBvOM8ETG2560825608epoutp04t
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748527347;
-	bh=gCzfbZekv4htNUijIC+SbkqBGyLEFOMaleFjXJEgatk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pQRhGPFoL+9I1NyzEAuNZMzXCCh+59SIW5X+Soj1sPdR/Kb+oC4OO89NDIUAXx9bt
-	 ojZh0s28UbNv4XP9xM/04xKAnL/ldctCENwxlKRiDy4xIWis8EmNPd5yA4pd9TafW8
-	 I91Y5viLqoNBVZxeYBKmIKzR9XDaX8GgZuZM31Pk=
+	s=mail20170921; t=1748530198;
+	bh=JoVIT/YoibxB9MFqaRb9BAFdhMoHeYYoqYbA3YWaDwU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=lsIxr1nT8d5gNFvvbFGbztnByv7dD3G0rMX/e5CCROqdCLNOYj97ql/jSZ/zMuM8N
+	 vYzJ9/UHxwl4qOQN1q9djKaM9KMZPId/oy3NkURzKFHumIu/jUFYUaVd+0jEpYJq1A
+	 oqW62/XHL8f14ceLQhrV+wvGGIdkQCMll60WGd3A=
 Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250529140226epcas5p25bdafdf609607873ca08557b6ad3a85f~EBFt-QyMW1140911409epcas5p2c;
-	Thu, 29 May 2025 14:02:26 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4b7Sjr3GW2z2SSKX; Thu, 29 May
-	2025 14:02:24 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef~D_1iJ4i-t0282202822epcas5p4D;
-	Thu, 29 May 2025 11:17:18 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250529111718epsmtrp1257cc470d2823aa85b322766527d6595~D_1iJE18d1149011490epsmtrp1p;
-	Thu, 29 May 2025 11:17:18 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-35-6838423d6874
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250529144957epcas5p121ac1b2643ce23abb26c0448e1a0d2f6~EBvNmI7t03174131741epcas5p1v;
+	Thu, 29 May 2025 14:49:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4b7Tmh2V00z2SSKX; Thu, 29 May
+	2025 14:49:56 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250529102448epcas5p1a8209b6700e2206c3bbb6669f473b28b~D_Hs54RNZ1678116781epcas5p1m;
+	Thu, 29 May 2025 10:24:48 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250529102448epsmtrp2ae0261061f58b804d19887addb119fa9~D_Hs4qBBk2330423304epsmtrp2h;
+	Thu, 29 May 2025 10:24:48 +0000 (GMT)
+X-AuditID: b6c32a29-55afd7000000223e-c2-683835f012c1
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8D.D0.19478.D3248386; Thu, 29 May 2025 20:17:17 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250529111715epsmtip16ae03b6cb035bd17825b1eb64d85c26c~D_1fb-zLZ2103321033epsmtip1G;
-	Thu, 29 May 2025 11:17:14 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
-	sunyeal.hong@samsung.com, shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	chandan.vn@samsung.com, karthik.sun@samsung.com, dev.tailor@samsung.com,
-	Raghav Sharma <raghav.s@samsung.com>
-Subject: [PATCH v3 4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock DT
- nodes
-Date: Thu, 29 May 2025 16:56:40 +0530
-Message-Id: <20250529112640.1646740-5-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250529112640.1646740-1-raghav.s@samsung.com>
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9D.C8.08766.0F538386; Thu, 29 May 2025 19:24:48 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250529102445epsmtip1d9de3beca2d4560f1d5e428ba1253ead~D_Hp7hmwq1925019250epsmtip1K;
+	Thu, 29 May 2025 10:24:45 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>, <manivannan.sadhasivam@linaro.org>,
+	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+	<bhelgaas@google.com>, <jingoohan1@gmail.com>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <arnd@arndb.de>, <m.szyprowski@samsung.com>,
+	<jh80.chung@samsung.com>, "'Pankaj Dubey'" <pankaj.dubey@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <441dd5c3-fd51-4471-86ad-337c646b1571@kernel.org>
+Subject: RE: [PATCH 09/10] PCI: exynos: Add support for Tesla FSD SoC
+Date: Thu, 29 May 2025 15:54:43 +0530
+Message-ID: <0eec01dbd083$e78c8200$b6a58600$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJTtfWySLDYOMxK4sH87axWUz4EmGx
-	Zu85JovrX56zWtzbsYzdYv6Rc6wWjTPeMFmcP7+B3WLT42usFh977rFaXN41h81ixvl9TBYX
-	T7laHFsgZvF95R1GiyNnXjBb/N+zg93i8Jt2Vot/1zayWEw+vpbVomnZeiYHUY/3N1rZPXbO
-	usvusWlVJ5vH5iX1Hn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWxf3InW8EDzoqrvVvYGxjf
-	sncxcnJICJhIvGltY+5i5OIQEtjOKHFi12dmiISExL7/vxkhbGGJlf+es0MUvWWUaO7fD5Zg
-	E9CSuLL9HRtIQkSgi0ni3L9XLCAOs8BOJom2x9vAdggL+Ess/vIKbCyLgKrEre2P2EBsXgFr
-	iS+XN7JBrJCX2H/wLFgNp4CNxN2bz1lAbCGgmo/bzzBD1AtKnJz5BCzODFTfvHU28wRGgVlI
-	UrOQpBYwMq1iFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECI4wraAdjMvW/9U7xMjEwXiIUYKD
-	WUmEt8neLEOINyWxsiq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qB
-	idvibYjTjh3t77kylfP2Bt03DHy/lcnuflfZzI6fJV6Pftw7LKM2qzA+a8Nke72v5z/9nTd1
-	u+DuQzdO7jd5YNB9WlAxd/7iz1OcfhdHMh2w8A3am/Vzts8u4/bc1WnPTDIOWcn+ivy9VVVp
-	s/xtFRWV2X/v+uelL38i+UfFLUrhRl5Mw926w1V712uGzn+Wt3lZ9C3PD1M6TsfdXlF2+s7H
-	7KvX3m2QUZZvTp6cqFQ89X/RJls//8SLHim80dsuVLP8O6GhFtuknO45qXrpPsO5cpdUr/V6
-	7+3QnM7y6hzDGaW7zb+aLcNeeqQdSEiVWv8vqDrMPkj6icty1ZNfeVf01Ur+WPmn1MTU7IRH
-	gRJLcUaioRZzUXEiAAc6exQfAwAA
-X-CMS-MailID: 20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKa2HaEso6x90WQFKmaYw3pYxuT6gLGtKN5Ag2CUBUBvBCtGwIQCop6Ao3fESGyEeNtsA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGec85O+dstDrOcO9KLBZJWlpCyRsM7aJw0ko/REUSOd3BlU7H
+	zjSNJDWtlOxihjlETeziulBTl9YaOdMuVnZZSzA1aaUh1VJLNM3YVuC3HzzP7+H/4U/jkgFi
+	Eb0/Xc/p0pVpclJEmNvlASGudUi95va4H/pQbSbRTFknheoL1Oj6/RcYqnn4QoB6po4J0NXx
+	Sgp1FM3i6Iuhn0Td3bcolHfytwCZPjoE6M3dKhI9r35EojPGXwS60G3FUOF0IYFuPOyjUF9h
+	sQDVNY9TaNbSQqHW94/xDX7s76kywLYa+ii21pTJmozFJPveYSFZp70CYxvrj7CnmoyAHTMF
+	xAv3iBQqLm1/FqdbHZEoUjtOx2knArJLnSNkHrgrKwFCGjJr4bu6m1gJENES5h6Az4oGSG8g
+	g2Ov3IGbfWHDnyHKW/oMYFd7v6dEMqug0z6Nu3khEwIbe654SjgzREDrmAt4jW4MdhbbBSWA
+	poVMBHzyYJlb8GWiYUvXd49MMMuhreaiZ1TMrIdteRW4l33gk0on4WacWQlLB4vAf758cQT3
+	XrcUTn66LPAesRPmN1b860thx+RJ/AzwNcyZMsyZMsyZMsxRagFhBDJOy2tSNHyYNiydOxjK
+	KzV8ZnpKaHKGxgQ8PxAc1ALuGF2hNoDRwAYgjcsXigsiw9USsUqZc4jTZezTZaZxvA0spgm5
+	VCwdLlVJmBSlnkvlOC2n+59itHBRHlZYbtG3S3+Ex1wZ6Ih++e2lYtYa/NwvNilAseNeSw4n
+	O26tTOKzirD7GzcnB36Nm/dz9KMttcpfYg1ZGjhfZWZiLRPnQ8RxSV8cq/tikl25raiVmSi2
+	97ADdr+uyAZqWwE++cbYuQsGrdk5tLXu4Hjidr1w+NKFTYNNk8j/m2M368JywIKnETGfm5xV
+	CTWVfG/sgw5aH2pcIYoa9RnZ/srnz0RYUJklunzLXtyyuFfaXp+x/rEqkkvonVl3wphimcqt
+	YdncEplqZNe5a6m2w5Hx2QVtoqizanPQYNSnLp867YFmujY83/xayYwqkKytvFxxNLt3eMlb
+	TqDZLCd4tTIsGNfxyr95fT+4cgMAAA==
+X-CMS-MailID: 20250529102448epcas5p1a8209b6700e2206c3bbb6669f473b28b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
+cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef
-References: <20250529112640.1646740-1-raghav.s@samsung.com>
-	<CGME20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046
+References: <20250518193152.63476-1-shradha.t@samsung.com>
+	<CGME20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046@epcas5p1.samsung.com>
+	<20250518193152.63476-10-shradha.t@samsung.com>
+	<20250521-competent-honeybee-of-will-3f3ae1@kuoka>
+	<0e2801dbcef4$78fe5ec0$6afb1c40$@samsung.com>
+	<441dd5c3-fd51-4471-86ad-337c646b1571@kernel.org>
 
-Add required dt node for CMU_HSI2 block, which
-provides clocks to ufs and ethernet IPs
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 2cb8041c8a9f..7890373f5da0 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
- 			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		cmu_hsi2: clock-controller@16b00000 {
-+			compatible = "samsung,exynosautov920-cmu-hsi2";
-+			reg = <0x16b00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC_UFS>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_UFS_EMBD>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_ETHERNET>;
-+			clock-names = "oscclk",
-+				      "noc",
-+				      "ufs",
-+				      "embd",
-+				      "ethernet";
-+		};
-+
- 		pinctrl_hsi2: pinctrl@16c10000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x16c10000 0x10000>;
--- 
-2.34.1
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 28 May 2025 12:56
+> To: Shradha Todi <shradha.t=40samsung.com>
+> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-=
+kernel=40lists.infradead.org;
+> linux-samsung-soc=40vger.kernel.or; linux-kernel=40vger.kernel.org; linux=
+-phy=40lists.infradead.org;
+> manivannan.sadhasivam=40linaro.org; lpieralisi=40kernel.org; kw=40linux.c=
+om; robh=40kernel.org;
+> bhelgaas=40google.com; jingoohan1=40gmail.com; krzk+dt=40kernel.org; cono=
+r+dt=40kernel.org;
+> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; arnd=
+=40arndb.de;
+> m.szyprowski=40samsung.com; jh80.chung=40samsung.com
+> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD SoC
+>=20
+> On 27/05/2025 12:45, Shradha Todi wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: 21 May 2025 15:18
+> >> To: Shradha Todi <shradha.t=40samsung.com>
+> >> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-a=
+rm-kernel=40lists.infradead.org;
+> linux-samsung-soc=40vger.kernel.or;
+> >> linux-kernel=40vger.kernel.org; linux-phy=40lists.infradead.org; maniv=
+annan.sadhasivam=40linaro.org;
+> lpieralisi=40kernel.org;
+> >> kw=40linux.com; robh=40kernel.org; bhelgaas=40google.com; jingoohan1=
+=40gmail.com;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> >> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; ar=
+nd=40arndb.de;
+> m.szyprowski=40samsung.com;
+> >> jh80.chung=40samsung.com
+> >> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD =
+SoC
+> >>
+> >> On Mon, May 19, 2025 at 01:01:51AM GMT, Shradha Todi wrote:
+> >>>  static int exynos_pcie_probe(struct platform_device *pdev)  =7B
+> >>>  	struct device *dev =3D &pdev->dev;
+> >>> =40=40 -355,6 +578,26 =40=40 static int exynos_pcie_probe(struct plat=
+form_device *pdev)
+> >>>  	if (IS_ERR(ep->phy))
+> >>>  		return PTR_ERR(ep->phy);
+> >>>
+> >>> +	if (ep->pdata->soc_variant =3D=3D FSD) =7B
+> >>> +		ret =3D dma_set_mask_and_coherent(dev, DMA_BIT_MASK(36));
+> >>> +		if (ret)
+> >>> +			return ret;
+> >>> +
+> >>> +		ep->sysreg =3D syscon_regmap_lookup_by_phandle(dev->of_node,
+> >>> +				=22samsung,syscon-pcie=22);
+> >>> +		if (IS_ERR(ep->sysreg)) =7B
+> >>> +			dev_err(dev, =22sysreg regmap lookup failed.=5Cn=22);
+> >>> +			return PTR_ERR(ep->sysreg);
+> >>> +		=7D
+> >>> +
+> >>> +		ret =3D of_property_read_u32_index(dev->of_node, =22samsung,syscon=
+-pcie=22, 1,
+> >>> +						 &ep->sysreg_offset);
+> >>> +		if (ret) =7B
+> >>> +			dev_err(dev, =22couldn't get the register offset for syscon=21=5C=
+n=22);
+> >>
+> >> So all MMIO will go via syscon? I am pretty close to NAKing all this, =
+but let's be sure that I got it right
+> - please post your complete DTS
+> >> for upstream. That's a requirement from me for any samsung drivers - I=
+ don't want to support fake,
+> broken downstream solutions
+> >> (based on multiple past submissions).
+> >>
+> >
+> > By all MMIO do you mean DBI read/write? The FSD hardware architecture i=
+s such that the
+> > DBI/ATU/DMA address is at the same offset.
+> > The syscon register holds the upper bits of the actual address differen=
+tiating between these 3
+> > spaces. This kind of implementation was done
+> > to reduce address space for PCI DWC controller. So yes, each DBI/ATU re=
+gister read/write will have
+> > syscon write before it to switch address space.
+>=20
+> Wrap your replies correctly to fit mailing list.
+>=20
+> No, I meant your binding does not define any MMIO at all. I see you use
+> for example elbi_base which is mapped from =22elbi=22 reg entry, but you =
+do
+> not have it in your binding.
+>=20
+> Maybe just binding is heavily incomplete and that confused me.
+>=20
+
+Got it. I think the confusion is due to the incomplete dt-bindings.
+I will fix these issues in the next version. Will post again once I get
+clarity about how to avoid redirection in patch 4/10
+
+> Best regards,
+> Krzysztof
 
