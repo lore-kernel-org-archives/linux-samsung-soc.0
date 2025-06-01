@@ -1,143 +1,134 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA6C1386DA
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2025 20:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A13727056E;
+	Sun,  1 Jun 2025 23:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748551585; cv=none; b=DFcbfrZ3yWGXsSINoRD++VW2OKoqPo/f2O3GITJltldgtWodQkJYy/XdP1mQOoEXWOBHUapdlewmWVELtN0FTnjevzcx/61bv6b/ruXuq9GDGzaJoqQCH+F2Y7rGuxr7ZacpP3ZqTv+uC3YSgdxFgZIlJMu2Odka1u7wtZSp3fM=
+	t=1748820492; cv=none; b=GB/FO5+JqSJtmfWEXTHaFF/G7ALaGJuND5zu3Nzn+PCzR6Ja+puqbIAdwENT4xgXBmKD6ew17q1PL0G2uwMnNc2xrWM8gKAgGKlixJL6wJQtgmSj70asYmZA+/MANcJUtielNPuVDEiOgBZTqyrGDV3vP1rtILcdqzSWYZd1UWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748551585; c=relaxed/simple;
-	bh=/6z1v/qNBfUFOoxicD1V48QdZQfp4IVH4S3L1yiqKHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6f3tKNj9IDGaL1OvkLsMYxXDt+aOVGL++rH0yHlNxOit1V+QMOuZEEhw9pbzyMGPFjpC2+OBp3OsHHJp1eSSl2UYfh19XRcOiYH+70GUCT8D65Sw1VQmtQzWyHZLlGAFkhHUl52dsYxtp5h8vA4ssEuFSLR/cIDfyiOtmzBlPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XIvqNns9; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	s=arc-20240116; t=1748820492; c=relaxed/simple;
+	bh=A48W80d/OvYkJUwQnKQg9w4xhc8rbidgZOgmvwELG1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6yeBt6XKnKuoN9a8GICHvH8PrG9ufXm30FDAE+8OmZxF9+sUAgznuYlCGTEMtRJrvGeRZ/pTsqeIlF56MR9bE5mz38wPbHtJ5hkl9/AF+jJxlojrzNB0meNi0pvHWJF6aHJDpF0RmfuSQAChJOIUTT7zud2Jg1Q0WSm5jt9SfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7BzAQ1B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XIvqNns9"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-311d27eb8bdso858890a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2025 13:46:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1748551581; x=1749156381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6TtaMd1HywfsuyRcNH/42AXM3iz/qus8mLnXbozVUkA=;
-        b=XIvqNns9ls/HGWvWQNu791RDA+NMA/YEPxyggEhVbL2i+z4BXfGCTpY52IwPgra9FR
-         d1nN6q5UEyqlfXLtzpmbgCycsZqlJS77ZGVQwjxfqRRxYz8/iduVhtR4rR+75I0Boa2M
-         GbIfASXNfsS8lh1k49srFIfuXeZy439ELQVnqPpABa8uTRERxvt5T3mkBvWyChbub969
-         KecqPD0gn/3PPWUqnQ8g3HIUuWYlICf833vlxY4RUNnTo4nMLlizX5sSP0GG9y++98P3
-         ocnHf7RM5v0M4SuEeJtuf6crf48EKIjY8EUO8ks+d0MjXoKoH79KiLc5SPN3uwPD70In
-         LVdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748551581; x=1749156381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6TtaMd1HywfsuyRcNH/42AXM3iz/qus8mLnXbozVUkA=;
-        b=kdn8WqPxjpcms3+tyqRiHRqAiE5mkHkVDHjL9xCtLlBwuOCNKWNhUnpYIL3ww0gazM
-         zL655wGPOFvZjCE18ujRYaAy+VfZOb3KaMMUJYLFGLlbRqeeQYwW+Un2f0NRm0qYk2JN
-         WsBJW/rrX6Jf3vrs8QtxTUiD1joo174BQo0motUBMRTSD/7tNXId+SIuHfPule9y3hSo
-         7yarnr6cbysyySIKEACls7rU4f/HcPINRH9t4ZOsXvFfkEi2SoQUm9mgQLthYKiWZAqX
-         A/qpTu0DSG1jhkqLfIeS+NXh1YdV+DckdlaV8Tx/56cCBiaQaQMl7SXJgEwbWXKfUefO
-         pUsg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6sukC3vIUxkY1QJMsxKah8+xl3H/5TL9D8j0d+FcA9oAWB5g5KI2HlAXUjxTkTT1b1TWgFFlxGSjZBCTKk2+FQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2mh6z0C43e7g1tU4sWhK88wTlgoql1M82WgKbUrGKDHyq8xN0
-	M01j5bb8fsIJjXtCysklVdSAU6L5BweuDgqcPQIhfgBg7p60LAJQ9fh/UzVljEPVDTo=
-X-Gm-Gg: ASbGncvGpeEmzgbAWncCAxrNiP2PebJp6EKC8RAn6qjaHHNG2RUymAzGNMtNdNo2Z/x
-	9yw0bfODUm3ZXEJX4PdFb408vdwdlUE5a0pfENSfOFzdTqXDAIX1lztanv4JQ2ZH7jxr80nXQsl
-	8nT3x4+alCSeVF/QxXzNCdgI14g3gem4qa2DU5NnY4UDyYqlVfOTyfE6Wwk0w8I8Sr9WTG5HlJV
-	/+0pHI9YSOQX0Vn3zu+uHVhyf5w2zIjNj9OdVDa4kf+VjV7PgsGwAAY5Im50Som/Abw31yHystL
-	ubBevhhr54k5a9HJ0GBG0k5rN9wVOx/755OECNtnnYklIgJGXpAWJkt5ghqcMeI1928Vhg==
-X-Google-Smtp-Source: AGHT+IEO8HwssTrnrLL8DGNfi7UDT2JfkJIUURFRStahz0gCmflYidew8g3m8w3QvBPF+GZDsBP2sw==
-X-Received: by 2002:a17:90b:1d89:b0:311:f99e:7f51 with SMTP id 98e67ed59e1d1-312415329famr1432137a91.18.1748551581341;
-        Thu, 29 May 2025 13:46:21 -0700 (PDT)
-Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bd9486sm16245345ad.67.2025.05.29.13.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 13:46:20 -0700 (PDT)
-Date: Thu, 29 May 2025 13:46:17 -0700
-From: Tomasz Jeznach <tjeznach@rivosinc.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-	Janne Grunau <j@jannau.net>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Joerg Roedel <joro@8bytes.org>, Kevin Tian <kevin.tian@intel.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Neal Gompa <neal@gompa.dev>, Orson Zhai <orsonzhai@gmail.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, virtualization@lists.linux.dev,
-	Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, patches@lists.linux.dev
-Subject: Re: [PATCH 3/7] iommu: Remove ops.pgsize_bitmap from drivers that
- don't use it
-Message-ID: <aDjHmR7ZVTbsSITO@tjeznach.ba.rivosinc.com>
-References: <0-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
- <3-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7BzAQ1B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF40EC4CEEE;
+	Sun,  1 Jun 2025 23:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748820492;
+	bh=A48W80d/OvYkJUwQnKQg9w4xhc8rbidgZOgmvwELG1g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O7BzAQ1B1LZX/kxrhvTgcmSXd1zf/rY/vBE756LvkPJ1NxWthxQ95tXla3eZvU9bS
+	 ZwYRctcz3wml2+HYhsUgy9MuitS2J/6HeoGpGPr4Ymanj7vh0uq8lZith9rrHj5jMn
+	 zjCRoSLSk6bZrBCcBJa3GBE8rKrepexpImGqpw0GtegG7zYm/VJLhykx1zHBV2UsN7
+	 O/4hax8WqX7HMCMst2Ow0jHa1lnsm8HjHnMIS7QIJ4UvOyj0dslGby76SDvALEeOzW
+	 igdI/i7yRacVanFJXMEKEd5fh4o3iRtOfbmKl92cnVFHt7R8g4G1j7bBg26sYcBmwI
+	 DjVbRlfSvDlJw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Wentao Liang <vulab@iscas.ac.cn>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sasha Levin <sashal@kernel.org>,
+	s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzk@kernel.org,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.15 071/110] media: platform: exynos4-is: Add hardware sync wait to fimc_is_hw_change_mode()
+Date: Sun,  1 Jun 2025 19:23:53 -0400
+Message-Id: <20250601232435.3507697-71-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250601232435.3507697-1-sashal@kernel.org>
+References: <20250601232435.3507697-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.15
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 11:34:13AM -0300, Jason Gunthorpe wrote:
-> These drivers all set the domain->pgsize_bitmap in their
-> domain_alloc_paging() functions, so the ops value is never used. Delete
-> it.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  drivers/iommu/apple-dart.c       | 1 -
->  drivers/iommu/intel/iommu.c      | 1 -
->  drivers/iommu/iommufd/selftest.c | 1 -
->  drivers/iommu/riscv/iommu.c      | 1 -
->  drivers/iommu/virtio-iommu.c     | 6 ++----
->  5 files changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> index bb57092ca90110..2d0d31ba28860a 100644
-> --- a/drivers/iommu/riscv/iommu.c
-> +++ b/drivers/iommu/riscv/iommu.c
-> @@ -1533,7 +1533,6 @@ static void riscv_iommu_release_device(struct device *dev)
->  }
->  
->  static const struct iommu_ops riscv_iommu_ops = {
-> -	.pgsize_bitmap = SZ_4K,
->  	.of_xlate = riscv_iommu_of_xlate,
->  	.identity_domain = &riscv_iommu_identity_domain,
->  	.blocked_domain = &riscv_iommu_blocking_domain,
+From: Wentao Liang <vulab@iscas.ac.cn>
 
-Reviewed-by: Tomasz Jeznach <tjeznach@rivosinc.com> # for RISC-V
+[ Upstream commit bd9f6ce7d512fa21249415c16af801a4ed5d97b6 ]
 
-Sorry for the delayed response.
-- Tomasz
+In fimc_is_hw_change_mode(), the function changes camera modes without
+waiting for hardware completion, risking corrupted data or system hangs
+if subsequent operations proceed before the hardware is ready.
+
+Add fimc_is_hw_wait_intmsr0_intmsd0() after mode configuration, ensuring
+hardware state synchronization and stable interrupt handling.
+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+Based on my analysis of the commit and examination of the kernel code,
+here is my assessment: **YES** This commit should be backported to
+stable kernel trees for the following reasons: ## Analysis of the Code
+Change The commit adds a single line
+`fimc_is_hw_wait_intmsr0_intmsd0(is);` at line 167 in the
+`fimc_is_hw_change_mode()` function in
+`drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c`. ## Why This
+Should Be Backported 1. **Clear Bug Fix**: The commit message explicitly
+states this fixes a race condition where "the function changes camera
+modes without waiting for hardware completion, risking corrupted data or
+system hangs if subsequent operations proceed before the hardware is
+ready." This is a classic hardware synchronization bug. 2. **Consistent
+Pattern**: Examining the surrounding code shows that ALL other similar
+hardware control functions (`fimc_is_hw_get_setfile_addr()`,
+`fimc_is_hw_load_setfile()`, `fimc_is_hw_stream_on()`,
+`fimc_is_hw_stream_off()`) already call
+`fimc_is_hw_wait_intmsr0_intmsd0()` before writing to hardware
+registers. The `fimc_is_hw_change_mode()` function was the only outlier
+missing this synchronization. 3. **Minimal and Safe**: The change is
+extremely small (one line) and uses an existing, well-tested
+synchronization primitive. The `fimc_is_hw_wait_intmsr0_intmsd0()`
+function implements a timeout-based wait with proper error handling. 4.
+**Critical Subsystem**: This affects camera hardware control in Samsung
+Exynos4 SoCs. Hardware synchronization issues in camera drivers can
+cause: - System hangs (as mentioned in commit message) - Data corruption
+- Unpredictable hardware state 5. **Runtime Safety**: The wait function
+has built-in timeout protection (2000 iterations with 1μs delay each),
+so it cannot cause infinite hangs even if hardware fails. 6. **Follows
+Hardware Protocol**: The pattern clearly shows the proper hardware
+protocol is: wait for ready state → write command → trigger interrupt.
+The missing wait was a protocol violation. ## Comparison with Historical
+References Looking at the provided similar commits marked "NO" for
+backporting, they were all: - Documentation/binding changes (commits #1,
+#2) - Code cleanup/feature removal (commit #3) - Architecture changes
+(commit #4) The one commit marked "YES" (commit #5) was a simple bug fix
+correcting a return value check, very similar in nature to this
+synchronization fix. This commit fits the stable tree criteria
+perfectly: it's a small, contained bug fix addressing a real hardware
+synchronization issue that could cause system instability, with minimal
+risk of regression.
+
+ drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+index 366e6393817d2..5f9c44e825a5f 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+@@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
+ 	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
+ 		return -EINVAL;
+ 
++	fimc_is_hw_wait_intmsr0_intmsd0(is);
+ 	mcuctl_write(cmd[is->config_index], is, MCUCTL_REG_ISSR(0));
+ 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
+ 	mcuctl_write(is->setfile.sub_index, is, MCUCTL_REG_ISSR(2));
+-- 
+2.39.5
+
