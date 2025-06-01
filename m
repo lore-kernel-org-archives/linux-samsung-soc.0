@@ -1,50 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8444429DBD9;
-	Sun,  1 Jun 2025 23:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E6032E303;
+	Sun,  1 Jun 2025 23:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748821302; cv=none; b=WOY7mFFC1qEBcRSumvR/PfFlVOs3UrEzEfdi8gmrOdT8C1Q2BwqJGjL0aWJOMZMLKQUdOnCZbMUy+xfEd2zLR8I9yeC6GVu4TVwn9GZmM9m7U4c0vLu100KOv+JIiAFKDa/9FU77qmhQd2peBPYxPaqY4RrMI1UpT7xNQIsmJxE=
+	t=1748821416; cv=none; b=LZbBWB0DeINcDZSV07oM8gKGXd9WK90c4sehwbFGHAIFnlShlWQfJ5LVoHYMFlJz6AAm4KH03lguQi81MO0BCmk6rfyqRtlTiuq8+EM9hcgyyrF/9oVjKHCToUiJLmWK+TRxIV38PfC4KAVTzXTZYzR2hB8a8yHrEnYjpkfmFgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748821302; c=relaxed/simple;
-	bh=A48W80d/OvYkJUwQnKQg9w4xhc8rbidgZOgmvwELG1g=;
+	s=arc-20240116; t=1748821416; c=relaxed/simple;
+	bh=lz6HZW0YPk7zKbjNFmy7h+kpF5GL+p0B2ua3GPSZIrA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VQvli0rbqMkDfj7a5a1mVy8fDtjEemE3QWRf7BDIAP0NQHRMRt9Y6yHlMjmF5vEA+M4InGiZTdAd5SAlX1UYCzdBRBUKvw0dZAngE6i/N+lkfi0E6QJBkbRDaIKPUBfo/rppfi80Aj+X+cAURpt35fvf8GxwFrI5PIY+KK5fe/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM0NVZt2; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=XNyewHdVHlKKdCavGUn9Avza8AjJZEiBZ59zektHn0qzAc8K/ZRs1IdekTFJCTnimYO2QSnDiWRne4uGqHYLSZ75cYbXmjzQBx3pFKuwbV6/vFpVDIOxNRhlCdq6SEDFVFUsZ43FqtI/FMp6NgYEMbGfTQkRV6bxFnWxGXdTfwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBG67Pj2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM0NVZt2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 187ABC4CEE7;
-	Sun,  1 Jun 2025 23:41:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBG67Pj2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA08C4CEE7;
+	Sun,  1 Jun 2025 23:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748821302;
-	bh=A48W80d/OvYkJUwQnKQg9w4xhc8rbidgZOgmvwELG1g=;
+	s=k20201202; t=1748821414;
+	bh=lz6HZW0YPk7zKbjNFmy7h+kpF5GL+p0B2ua3GPSZIrA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CM0NVZt2jVbtGaj//AM2Dv03XlH2mCsEMVHEoTU1xPoo5uBrvwE0wXgaJW7At3bJv
-	 ztacx3NfIU11MUaictjzYT9+gS9w9jEkyjZFB63zZTX0LpViKwWs2kaDyV6Eui4lsC
-	 ChXcbENEVj0xZnQXR7pWMHrihIO3KjqZ1PLXTJElH2AsdyW4XUYFJlrhT3Fv6C7Z5S
-	 3ky+EciOaJjh7qyRyilzbtRocR2/7qe037gHIssO62ejU2a5bhpDTAOEraCV/OSfW2
-	 mcQcC0jiXVlzFbCMblNYaF51aA+RSzFclbTsf7l64NM5a2P6d7ukXvIPYG/2H985Av
-	 YMM2b7uwmuzIg==
+	b=LBG67Pj2etkpi35ewIEA/CMcnmTPVWsVR8VpjVQnJT27X/L4C54yTlynsLA9H1fNb
+	 kUVTzS1rvWhBEZY+Cowuv1MDWbgdxzmZFoOd+oT03VBDknrUltZp6GO0M+RxZyrVl1
+	 7jyslTRNZoELsZNU5uUhAcQ4FX70n0pjLrPmvDeM613k4wxCVRiK65jEO+Izh36orJ
+	 qx8FnBegX+zsTLhH7a+WKhSF8H4DWe4lCPdNVV6U4D20aNF5FcdmwRN5/W86m2lVhe
+	 urL3VjDW+Hby/JzK+aqqbpxk3d+tDWRXAHWqvdxoWldq2sLqaFF5Ji0vifA611Ifmr
+	 PAFxnjdVKBs6w==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
 Cc: Wentao Liang <vulab@iscas.ac.cn>,
 	Hans Verkuil <hverkuil@xs4all.nl>,
 	Sasha Levin <sashal@kernel.org>,
-	s.nawrocki@samsung.com,
 	mchehab@kernel.org,
 	krzk@kernel.org,
 	linux-media@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 36/58] media: platform: exynos4-is: Add hardware sync wait to fimc_is_hw_change_mode()
-Date: Sun,  1 Jun 2025 19:39:49 -0400
-Message-Id: <20250601234012.3516352-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 30/43] media: platform: exynos4-is: Add hardware sync wait to fimc_is_hw_change_mode()
+Date: Sun,  1 Jun 2025 19:42:10 -0400
+Message-Id: <20250601234224.3517599-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601234012.3516352-1-sashal@kernel.org>
-References: <20250601234012.3516352-1-sashal@kernel.org>
+In-Reply-To: <20250601234224.3517599-1-sashal@kernel.org>
+References: <20250601234224.3517599-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.140
+X-stable-base: Linux 5.15.184
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -114,13 +113,13 @@ perfectly: it's a small, contained bug fix addressing a real hardware
 synchronization issue that could cause system instability, with minimal
 risk of regression.
 
- drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c | 1 +
+ drivers/media/platform/exynos4-is/fimc-is-regs.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
 index 366e6393817d2..5f9c44e825a5f 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
+--- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
 @@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
  	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
  		return -EINVAL;
