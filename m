@@ -1,133 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F64A33D2D9;
-	Sun,  1 Jun 2025 23:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1242040B6
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Jun 2025 15:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748821557; cv=none; b=Pvn//sCAG+59iLmDDNNlZshp0xtY3y4Isx93U8ysNr4cWnQT/D6YqeYl7m+ztM3nptgp4CO/yqmwqv6RC8xB6Lnyd4t6J3fPgrg6NgvY+czo23TyP1Fe0zUsks9xXb8qEyyS2HifpC50KmUtIKxnmfDvx7GNH48dCtm7A9GambU=
+	t=1748965405; cv=none; b=mFiWnKQEYbJHjHcQehf6DB1Zvx+D6SUo/i7LWfW7Z87D/MD1VdzQ59KCLZXnn0SphQG+Nnvitzwg9CrXhj9N+euka+07vEfueqK2pCgGAsoOua7Bp0r6dYzO0sF8WjzPzyPvKLLq4t1BlhBgm7m1K39yF1EDI+8b9yJYJ247ROk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748821557; c=relaxed/simple;
-	bh=lz6HZW0YPk7zKbjNFmy7h+kpF5GL+p0B2ua3GPSZIrA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FpZMMfztluUr8cu5vfwIEuIRT5qIoKrFRQKYe5zkfzt26ikUHALyz75jmpEuUFAFJKO8KLrkdbIdPIGqceMod2zIynqbIvT57BruLeV0BFHGj+84I2oc8eAdVsdG+XVg7qgqzJxOeZ5Qm+mEJ8FMjer4GfZUJukxs1855nrQxCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUZZEZO3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748965405; c=relaxed/simple;
+	bh=aKo9WNWRBL0f8HmrtPSASNW+mdOzeR3AWVqy7W4T820=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HrbuKD7XP/ag8IrUVPvBe8l5qb8GvVw0dArMQr5sXJ1P3ltucSIXPjyL7HuQhJSunUKKNekQxYHrX88CnlDKtghBuwyD4ktVsjCgRZhaR1JfLrUQITvww834bvwk7/bzTNjvrmhdQ3xTGq0y1RMYF7JJ2Kk+8NwXuOj9DK0mgn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dn5Lp0bK; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUZZEZO3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FECFC4CEEE;
-	Sun,  1 Jun 2025 23:45:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748821556;
-	bh=lz6HZW0YPk7zKbjNFmy7h+kpF5GL+p0B2ua3GPSZIrA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dUZZEZO328byVScU5w3nRGk0M6SuCJt/jO0D6UKF9/gKALH2zPv6AepgpKlte9qSi
-	 EpbhCdnkCH2lHxcxbL2OvGc9eAXMQL313Tex+xLlSezO5wVz4J+IW08R5WZtWeMAle
-	 wDQ9EktQghrRvo/NPh7LP90TMH1DCuJ2Uke5qROcnP4wTiUNPMHS1yRc0hFWuqqqHp
-	 KocQbXgdMCdzVYqEaDX3WpjLqVOXPWM+VTEqg17YAwqxYxI+6arAY6xTotP4/XKyhZ
-	 jtJbB59U0wnP8GQQYXyICCcX+Rpv9paFzy1aCM/9G+ltzBcHdbTHxqHSVAFsLCN4ov
-	 7kcMTIfrw5cEA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Wentao Liang <vulab@iscas.ac.cn>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sasha Levin <sashal@kernel.org>,
-	mchehab@kernel.org,
-	krzk@kernel.org,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 16/22] media: platform: exynos4-is: Add hardware sync wait to fimc_is_hw_change_mode()
-Date: Sun,  1 Jun 2025 19:45:07 -0400
-Message-Id: <20250601234515.3519309-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601234515.3519309-1-sashal@kernel.org>
-References: <20250601234515.3519309-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dn5Lp0bK"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad89ee255easo1053863366b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Jun 2025 08:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748965401; x=1749570201; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=172AOsAQz4QlRBaW+nRn36onwnXefgQKgc9WvkOzeXc=;
+        b=dn5Lp0bKDGpLka3BIU+PNOMDBTnjqJ6TcNBnKA9IurpOBFORDMHiLUAEjLqZeRP41o
+         Zj6fUUGPeYh/id/u7KywDsovgxjJuhM+SeRFTOS8O4uQxx4T9Hlq7teWVVH14RHccAHL
+         Od0g948M8zIZEtLNuEnq4tLUr3UNLpSWDqJIA88+8RVqcJ3BHQKCULikJ9jRbpO1AB/i
+         HtOz15pKID+N50w7l8dV6YG5ynL9aro1I1VFXxwJgmujgHhpununNuG2C2qiPp0+V61B
+         tiJNJoUh9aFI1BU3UEe1qlLuLZqV45Jah85mO1oioqLh4nF77pWv9WH3QWYLQJiBS2j2
+         h3yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748965401; x=1749570201;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=172AOsAQz4QlRBaW+nRn36onwnXefgQKgc9WvkOzeXc=;
+        b=Y0UZNQph6mF1SoxuhhvwavEH2vlMcOZeZtrR1EPxIH33MaqzMF4JeEsXhEpMyYybUY
+         L12bhcWMNV/Gy2bZz3/U2/wGF7faFsSXYxNyg2jbineUgUMzVuWcqaF2Wha04CNTQAKz
+         bRgmny3canLASiCl9KwwYKb/IDsC9rkUN2R9Gsq4Y5X4O4/t4k2cPDWPxMIyXPWQHD5N
+         uUWo6UJg50Wl9g4/y0UcbSIz6SPKv3aYfEj5zr/8rBNFmYbN16KEpmrFKUkxZu0X4/X/
+         cChfjZvRhk9FXUEVlMv27Y4PYi21ttECOVxfEl/8eTSFVh78+5ng5fYsR23e2Dmpu6V1
+         0HJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGjuOypgLeIW5ntj/ym9uU/xbXovpnycvLnVxghVTBQZjrOJlplDmbVJ7jTY4nF+CySpnXQwpmxUWE0k7wLZjvbA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6tliHkNizxMmwQ/PDHBUFiG1RmIchNGwgVH8WRMHx41I/mdgF
+	51RWAokDnd8G0vqXXgqrGyT7Nj40HCJr5+/xH4Onre0/JIN0CGPE2iHK7oYpCkVesxs=
+X-Gm-Gg: ASbGnctgFzAmCy3L/2kpBlmkLYYbRZ7++/lxpnZ9WDmPcLz4jzIAE5TKF6UhEgxO1ae
+	fEuj2pWYATvHXK0AF4HJg4jCkwnTh3ugm1vTqy99xqrsPWsxEZ8kuQ2nkS/fSI1Lt2XmsHv/J9U
+	CkUHwa4OePREdnRZLrG0mxKoGOC/I3CG+8NWqCVbO+UbXxf6LDmY8ui9TpsPg4viwz80hTjyy0i
+	jA7a1OetQob0vblpcsPivBbrsaZ3SNfbgpZGmzGVuHYttMjjGwGck4ZlsNTLkZy/ts/kmNhOV8y
+	WbOes/nzmTBUpi8+kAdEhU0GT2nRTXyK++T6tPVEj8bzJDT+Yo9UjeVji8lhoUfZmey8WrjlyO7
+	zm67hzr2RnEXZ1FtGCduMZcvkwr5ODM2+DEg=
+X-Google-Smtp-Source: AGHT+IGloNqlwgmA2JLdwpv1Sfgyhpoy3jA6UsqagxeRD/QCKnQisvHafq6ll76RsV6qpOjXtFvGFg==
+X-Received: by 2002:a17:906:478d:b0:ace:5461:81dd with SMTP id a640c23a62f3a-adb36b05802mr1654872166b.3.1748965401077;
+        Tue, 03 Jun 2025 08:43:21 -0700 (PDT)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82de9bsm959277166b.47.2025.06.03.08.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 08:43:20 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/3] clk: samsung: gs101 & exynos850 fixes
+Date: Tue, 03 Jun 2025 16:43:18 +0100
+Message-Id: <20250603-samsung-clk-fixes-v1-0-49daf1ff4592@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.293
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABYYP2gC/x3LSwqAMAwA0atI1gbqp4heRVzUmtagVmlQBPHuF
+ pePYR4QikwCXfZApIuF95BQ5BnY2QRPyFMylKrUShctitnkDB7tuqDjmwRN7fToRl3bpoL0HZH
+ +kLZ+eN8PPxlKomMAAAA=
+X-Change-ID: 20250519-samsung-clk-fixes-a4f5bfb54c73
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-From: Wentao Liang <vulab@iscas.ac.cn>
+Hi,
 
-[ Upstream commit bd9f6ce7d512fa21249415c16af801a4ed5d97b6 ]
+The patches fix some errors in the gs101 clock driver as well as a
+trivial comment typo in the Exynos E850 clock driver.
 
-In fimc_is_hw_change_mode(), the function changes camera modes without
-waiting for hardware completion, risking corrupted data or system hangs
-if subsequent operations proceed before the hardware is ready.
+Cheers,
+Andre
 
-Add fimc_is_hw_wait_intmsr0_intmsd0() after mode configuration, ensuring
-hardware state synchronization and stable interrupt handling.
-
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
+André Draszik (3):
+      clk: samsung: gs101: fix CLK_DOUT_CMU_G3D_BUSD
+      clk: samsung: gs101: fix alternate mout_hsi0_usb20_ref parent clock
+      clk: samsung: exynos850: fix a comment
 
-Based on my analysis of the commit and examination of the kernel code,
-here is my assessment: **YES** This commit should be backported to
-stable kernel trees for the following reasons: ## Analysis of the Code
-Change The commit adds a single line
-`fimc_is_hw_wait_intmsr0_intmsd0(is);` at line 167 in the
-`fimc_is_hw_change_mode()` function in
-`drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c`. ## Why This
-Should Be Backported 1. **Clear Bug Fix**: The commit message explicitly
-states this fixes a race condition where "the function changes camera
-modes without waiting for hardware completion, risking corrupted data or
-system hangs if subsequent operations proceed before the hardware is
-ready." This is a classic hardware synchronization bug. 2. **Consistent
-Pattern**: Examining the surrounding code shows that ALL other similar
-hardware control functions (`fimc_is_hw_get_setfile_addr()`,
-`fimc_is_hw_load_setfile()`, `fimc_is_hw_stream_on()`,
-`fimc_is_hw_stream_off()`) already call
-`fimc_is_hw_wait_intmsr0_intmsd0()` before writing to hardware
-registers. The `fimc_is_hw_change_mode()` function was the only outlier
-missing this synchronization. 3. **Minimal and Safe**: The change is
-extremely small (one line) and uses an existing, well-tested
-synchronization primitive. The `fimc_is_hw_wait_intmsr0_intmsd0()`
-function implements a timeout-based wait with proper error handling. 4.
-**Critical Subsystem**: This affects camera hardware control in Samsung
-Exynos4 SoCs. Hardware synchronization issues in camera drivers can
-cause: - System hangs (as mentioned in commit message) - Data corruption
-- Unpredictable hardware state 5. **Runtime Safety**: The wait function
-has built-in timeout protection (2000 iterations with 1μs delay each),
-so it cannot cause infinite hangs even if hardware fails. 6. **Follows
-Hardware Protocol**: The pattern clearly shows the proper hardware
-protocol is: wait for ready state → write command → trigger interrupt.
-The missing wait was a protocol violation. ## Comparison with Historical
-References Looking at the provided similar commits marked "NO" for
-backporting, they were all: - Documentation/binding changes (commits #1,
-#2) - Code cleanup/feature removal (commit #3) - Architecture changes
-(commit #4) The one commit marked "YES" (commit #5) was a simple bug fix
-correcting a return value check, very similar in nature to this
-synchronization fix. This commit fits the stable tree criteria
-perfectly: it's a small, contained bug fix addressing a real hardware
-synchronization issue that could cause system instability, with minimal
-risk of regression.
+ drivers/clk/samsung/clk-exynos850.c | 2 +-
+ drivers/clk/samsung/clk-gs101.c     | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+---
+base-commit: a0bea9e39035edc56a994630e6048c8a191a99d8
+change-id: 20250519-samsung-clk-fixes-a4f5bfb54c73
 
- drivers/media/platform/exynos4-is/fimc-is-regs.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
-index 366e6393817d2..5f9c44e825a5f 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
-@@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
- 	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
- 		return -EINVAL;
- 
-+	fimc_is_hw_wait_intmsr0_intmsd0(is);
- 	mcuctl_write(cmd[is->config_index], is, MCUCTL_REG_ISSR(0));
- 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
- 	mcuctl_write(is->setfile.sub_index, is, MCUCTL_REG_ISSR(2));
+Best regards,
 -- 
-2.39.5
+André Draszik <andre.draszik@linaro.org>
 
