@@ -1,50 +1,50 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C691F5619
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jun 2025 03:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6DE202C46
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jun 2025 03:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749095211; cv=none; b=M90Ac6SgHLtiPMUxkr9QYDO+5P+6s0Z/cmETtIPqkuiK6PNr1GTmtyp9X+sRIvjDdduHW7WDpUPH0CXauCVtbBferIlHwTzUjBfELN4TnE2e9xUuqLliy6ZkIIEMB4xORTxX0E/nWkyfng/t4dk1qGGopKsDhkYScUNzY6Ka264=
+	t=1749095217; cv=none; b=gQWji8/ahkx8sEgFP1MOeM2l4htS23SWK/jhcUw0lysD5KaTsbxNGO6MLu008fLkHUk6bIPxHnE8pwWYKMNb/h3CUXKvn9L4zKH2AXrlsWBjEQqZXEuFcXGUSJ5LirHyhGiH3y5uTPIUwmh2l9rPSLNAeKOichTetGjrFq1zQlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749095211; c=relaxed/simple;
-	bh=8TEfN32KZd6YJhzTAU5W2FFXyAmDYouG69xkiU/38RY=;
+	s=arc-20240116; t=1749095217; c=relaxed/simple;
+	bh=oUAUULa8xvF5LlZB5tbq87rz3uMzHi3pU21DzZn+Vdo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HiBsttPZPy/82zXTZz3rOZr082JwsG5q/uRxEMxxutcGEiQ6OvxswoohRNfSXzGpR8lqwOlq2SvuVwBUu7Fb7n2+WMETVxmJyE9ju6VQWlC4T/Uj0U9BR74b+QUvxufnenkeOlBKrmDGPCMA9l6QwQ3ZVY9GOWUlkaF4DV05OUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I9NHk/GB; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=e5MF22GindLGcyGnsr5M12qq4RcHI5iRiGrMevaHKahEhjyxfLtIVE73XOQkyWEZKDLi53IWkmFgwxLjEqJoWKULFDdk33EO7mv9XsP9tvWM1AI4voxxHUx6W2UgX1GpYH4JkJfRRKAVAZYtAo4PNZexZxoeK3v1mkBtE41nDUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KFwPncdM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I9NHk/GB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KFwPncdM"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749095208;
+	s=mimecast20190719; t=1749095215;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Xbtqvsf7BRpbL9q0tKGzMc/ghsVtwuf5Kl78Wf246CI=;
-	b=I9NHk/GBDKLOf62NhwGTSadQQGYejRbllL1n5Kci7eADPEnCB5dz2nOvKLmtQDtFDjRED3
-	UPWv+mV4p/lPPHKH08+4zb5rNF6mveyqVtUR6b4I+vI4T8I4V2MN49LIATTYgPlTmWD8W+
-	G90MfXaEQncWbg0SPvIKWVR4u/ABwTk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=G9BkRZbsm8aRk3aSpv0SfOyGwsJsIoOb67KS8j+iekY=;
+	b=KFwPncdM5swwgLfjb8c8ntfOPobCwqyLTwhQNukrSJ7tZ3c1e8ICnlzhbjVHq1bQ+8HaQw
+	LYyReCn1xhqCveJ03KBzfDWdFGP0KJnBNJHHr+FHiU7EcRwtrTqp3amPpAT7BBm7Jymyip
+	c8/aEeTVZ99PkAmVm8vPo9b98rtcSEU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-526-hSawOjZCOlCHJFa_3Q4gJg-1; Wed,
- 04 Jun 2025 23:46:45 -0400
-X-MC-Unique: hSawOjZCOlCHJFa_3Q4gJg-1
-X-Mimecast-MFC-AGG-ID: hSawOjZCOlCHJFa_3Q4gJg_1749095202
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-lSpiVRelPRG-Fwu687-Qdg-1; Wed,
+ 04 Jun 2025 23:46:50 -0400
+X-MC-Unique: lSpiVRelPRG-Fwu687-Qdg-1
+X-Mimecast-MFC-AGG-ID: lSpiVRelPRG-Fwu687-Qdg_1749095208
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BC631956087;
-	Thu,  5 Jun 2025 03:46:42 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC6811956094;
+	Thu,  5 Jun 2025 03:46:47 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.229])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6157C30002C0;
-	Thu,  5 Jun 2025 03:46:37 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B91BE30002C0;
+	Thu,  5 Jun 2025 03:46:42 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Wed, 04 Jun 2025 22:45:12 -0500
-Subject: [PATCH 3/4] drm/panel/sun4i: Keep up with refcounting
+Date: Wed, 04 Jun 2025 22:45:13 -0500
+Subject: [PATCH 4/4] drm/panel/exynos: Keep up with refcounting
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250604-of_drm_find_panel_part1-v1-3-c632e12e131d@redhat.com>
+Message-Id: <20250604-of_drm_find_panel_part1-v1-4-c632e12e131d@redhat.com>
 References: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
 In-Reply-To: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -74,11 +74,11 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
  linux-samsung-soc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749095111; l=688;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749095111; l=790;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=8TEfN32KZd6YJhzTAU5W2FFXyAmDYouG69xkiU/38RY=;
- b=hgLlqDE82iA86gpJEHX2fHQf4POVn+EIXHPqw81ubtcFdUfF7dPMQSIdXkUcX+ngUZhsvVlPw
- DGg2MsfGbjfD5ueMCo+9yUhN+O3RALKd7EZxCHZgGjVQKTML4WQ1aJ5
+ bh=oUAUULa8xvF5LlZB5tbq87rz3uMzHi3pU21DzZn+Vdo=;
+ b=m9T9DvEk7AHTO8PjuGGuJd4n+/GgbhkJzocE3hfstzW9Lp1snMcHMfDrBcDrOYExSB1as9ZkZ
+ QwCScTfjRI8C8A/wkHRdNaRhHj92TooFMlpXTThKTAStQzd5NoFTYBl
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
@@ -88,22 +88,21 @@ longer using it.
 
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index c35b70d83e53b7397c6e38dde45824bd49fdf099..36d47d7cedde1e1e3e83eb670520664100bd0a25 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -990,6 +990,8 @@ static int sun6i_dsi_detach(struct mipi_dsi_host *host,
- 
- 	drm_kms_helper_hotplug_event(dsi->drm);
- 
-+	drm_panel_put(dsi->panel);
-+
- 	return 0;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 0dc36df6ada34cd0d4544f14e616fe3c52dafc73..7b82ff7f2d2761a679fe3b319a73f7d1d4c87033 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -138,6 +138,7 @@ static void exynos_dpi_disable(struct drm_encoder *encoder)
+ 		drm_panel_disable(ctx->panel);
+ 		drm_panel_unprepare(ctx->panel);
+ 	}
++	drm_panel_put(ctx->panel);
  }
  
+ static const struct drm_encoder_helper_funcs exynos_dpi_encoder_helper_funcs = {
 
 -- 
 2.48.1
