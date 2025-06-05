@@ -1,50 +1,51 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242861C5D61
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jun 2025 03:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6C51F55FA
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jun 2025 03:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749095195; cv=none; b=Q/4nGVnrUjHfG0zwbFZvCTTeXs8YOtwq834x7C+B7MrFy9HByow0OFQ8QoW+I1vD5BewtldcoGSwpuhAAtLvnrkd+3MVUec43tvpb5RnD2uCAqeBBnfebUnIvPH5CvMa0/7SNaBHB2yTqKiZ+QNqPQfgmpZ6/rOKtqtRg8NPfpc=
+	t=1749095202; cv=none; b=iCdjfKjyIBm7otJA5QTbmcpvkdGDy94NaV/tliJODNMFdE2muRjoPq2z2yLMses1tWG5NU7an/nPInYmqREA41Axrg4oAeB2as78amFO9k1ex9kouUMLumO2DXP3sStcc1/sxie9LpUBjRl3J6J5z55vj/TD7Kyw+vCjhuwQehc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749095195; c=relaxed/simple;
-	bh=rPF1Y/Lj5T3DhXlPLFMCFyqGLjxlQBeRLLgsB6ClAEU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qoVhe16gJQ7Aqt6lKK79T5JL+swlquuGK1hNEj6MZ15fDRqNTvQFmbyfzaGT3DVreRVMenGBzCJCHgp5Ngnv7g9kI9TnBaqFS5+ytt1a8LXlr5xDzHhgg71r8/u5M+8OamTKqzGHgekCFfCnqQNVqzvIT2sW5+ZO7JcCfOdirZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NrcRNScx; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1749095202; c=relaxed/simple;
+	bh=9zlGo30GCNSbMrsJ6h0xg1RV+1gEkhPqt5tGuwTBh00=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=K4ASihDznRM+ljv2h6uzF4owmY0FJg5/EnqnHtnEojFViEp3ZtbIMx05gcR7v/5Jx5Tr2dPfmXjzUYUSb9ql0NJWnxXimUsj6HEPA6exv4WLSqKEwibsRAeq1am6IkeGhZnPlA70qNKJa/hRmc63XBlMXSrbxyb0Ed6jnIKeyfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V2j6TlpN; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NrcRNScx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V2j6TlpN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749095193;
+	s=mimecast20190719; t=1749095199;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XXvmdmmn1tFYv0uxxK5u4EJQqXxf5VTQjxQB6qyj6BY=;
-	b=NrcRNScxpyPrVmhx0TF1VypAWuv7QtdJNq6YusL6a1Sc7k11tLyGBN+n8nIU2IhGeJD/Ma
-	9kqIte2chLfw5VOBgDhm78lbKXDTXx7F30G+YbeLoMOmYUpRN096HbNwT4gWPFnp/VOEWy
-	Fg5Hi3jgIaRgNSGwBZ1vBksbUaj19Zw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZXHAO2+jY1bXsxo50PiVK4q6TUh1IfN7fKlHU0JYCOM=;
+	b=V2j6TlpN0rrE8CeeurANwNg2JYAoBkhSkzScbCMlgvOduC7XSeJKBjqNEQHUkCWpGCFLhM
+	TZ4c1EEny0EUsp2G6j9ts9b8tLqtlk6Afd3Uvh1sNZQdVDir73KzKThRV8zlGPl/mVlCCD
+	kUvo3757BL02mdEE5Ko9Fd3TsvU4mkM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-32-h8rxEJLaO1qYFezv_spyhw-1; Wed,
- 04 Jun 2025 23:46:29 -0400
-X-MC-Unique: h8rxEJLaO1qYFezv_spyhw-1
-X-Mimecast-MFC-AGG-ID: h8rxEJLaO1qYFezv_spyhw_1749095186
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-WRIv9wjSOb2byFW1NMyImQ-1; Wed,
+ 04 Jun 2025 23:46:35 -0400
+X-MC-Unique: WRIv9wjSOb2byFW1NMyImQ-1
+X-Mimecast-MFC-AGG-ID: WRIv9wjSOb2byFW1NMyImQ_1749095192
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9C3118003FD;
-	Thu,  5 Jun 2025 03:46:24 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1ED9D180035E;
+	Thu,  5 Jun 2025 03:46:31 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.229])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7EDFA30002C0;
-	Thu,  5 Jun 2025 03:46:18 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 284E630002C3;
+	Thu,  5 Jun 2025 03:46:24 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Subject: [PATCH 0/4] Integrate refcounting across of_drm_find_panel()
- callers
-Date: Wed, 04 Jun 2025 22:45:09 -0500
-Message-Id: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
+Date: Wed, 04 Jun 2025 22:45:10 -0500
+Subject: [PATCH 1/4] drm/panel: get/put panel reference in
+ drm_panel_add/remove()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,10 +54,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMUSQWgC/x2MWwqAIBAArxL7nWDag7pKhFiutVAWa0QQ3T3pZ
- 2A+Zh6IyIQRuuwBxosi7SFJkWcwLTbMKMglByVVJWtZit0bx5vxFJw5bMA1kc9CaG2Vw7FpVVV
- Dqg9GT/d/7of3/QCEmLcdaQAAAA==
-X-Change-ID: 20250604-of_drm_find_panel_part1-33a2deb79256
+Message-Id: <20250604-of_drm_find_panel_part1-v1-1-c632e12e131d@redhat.com>
+References: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
+In-Reply-To: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jessica Zhang <quic_jesszhan@quicinc.com>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -75,49 +75,46 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
  linux-samsung-soc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749095111; l=1449;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749095111; l=1068;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=rPF1Y/Lj5T3DhXlPLFMCFyqGLjxlQBeRLLgsB6ClAEU=;
- b=SeeBSMW5SkSz2m1U56oKwm8PDfWdG4toxWnKciRa8oqK8kQqUV5RtZYYVHAvOk1mvJzF3/GNs
- 3m9IvhcutyHAcccJkhr85frr56vbFC+VUXRCu9sj/CoQvwuR6Se3vYX
+ bh=9zlGo30GCNSbMrsJ6h0xg1RV+1gEkhPqt5tGuwTBh00=;
+ b=PwnWFuSL2mOqVpmilI7vyag4kWY0qQx64BLJk5k/blISrap7GAOY6KekL8K+39wUERLlVUEzo
+ r6A1ALUIQJVAHBbQoY9hPNQ3uFgAdg+lUDedlFvVmd78a7utw8mk4A0
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-With the panel refcount allocation infrastructure  merged: [1]
-and all drivers converted to use the new API: [2],[3] and [4],
-the next chunk of work involves integrating refcounting across
-different callers across various drivers.
-
-First patch was added to the original series [1] but later
-removed. Adding it here with the initial of_drm_find_panel()
-callers being updated with refcounting. This is not an exhaustive
-list. Remaining drivers to be updated will be sent in next set
-of series.
-
-[1] -> https://patchwork.freedesktop.org/series/146750/
-[2] -> https://patchwork.freedesktop.org/series/147082/
-[3] -> https://patchwork.freedesktop.org/series/147157/
-[4] -> https://patchwork.freedesktop.org/series/147246/
+Take the panel reference and put it back as required.
+drm_panel_add() and drm_panel_remove() add a panel to
+the global registry and removes a panel respectively.
+Use get() and put() helpers to keep up with refcounting.
 
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
-Anusha Srivatsa (4):
-      drm/panel: get/put panel reference in drm_panel_add/remove()
-      drm/panel/samsung-dsicm: Keep up with refcounting
-      drm/panel/sun4i: Keep up with refcounting
-      drm/panel/exynos: Keep up with refcounting
+ drivers/gpu/drm/drm_panel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/gpu/drm/bridge/samsung-dsim.c   | 1 +
- drivers/gpu/drm/drm_panel.c             | 2 ++
- drivers/gpu/drm/exynos/exynos_drm_dpi.c | 1 +
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c  | 2 ++
- 4 files changed, 6 insertions(+)
----
-base-commit: 685c407f168cb49a12cc703230d1e2d62767bfd2
-change-id: 20250604-of_drm_find_panel_part1-33a2deb79256
+diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+index fee65dc65979d6c03753967cefa6d5c4e597277d..ffa3428b5f52c599b53b1fdc0d0a9181a47c91d4 100644
+--- a/drivers/gpu/drm/drm_panel.c
++++ b/drivers/gpu/drm/drm_panel.c
+@@ -80,6 +80,7 @@ EXPORT_SYMBOL(drm_panel_init);
+  */
+ void drm_panel_add(struct drm_panel *panel)
+ {
++	drm_panel_get(panel);
+ 	mutex_lock(&panel_lock);
+ 	list_add_tail(&panel->list, &panel_list);
+ 	mutex_unlock(&panel_lock);
+@@ -97,6 +98,7 @@ void drm_panel_remove(struct drm_panel *panel)
+ 	mutex_lock(&panel_lock);
+ 	list_del_init(&panel->list);
+ 	mutex_unlock(&panel_lock);
++	drm_panel_put(panel);
+ }
+ EXPORT_SYMBOL(drm_panel_remove);
+ 
 
-Best regards,
 -- 
-Anusha Srivatsa <asrivats@redhat.com>
+2.48.1
 
