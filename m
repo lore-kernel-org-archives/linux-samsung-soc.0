@@ -1,132 +1,123 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82CB1A7264
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Jun 2025 15:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242861C5D61
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jun 2025 03:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749050815; cv=none; b=h6NdT7Ou3QD4Ns3da6HQ8MaTUsalGqWYgUtwSbrmGhoa1IyZs6rRWx4yzVdkFQ13eZNsjtpre/x/cBtmJzIuidUfaDFrL71Qfh/tEqvFHKDuzaA8mzrTyw63bvO+zlKs9VcjCwwLm5GC0g7rPmE1efxKZ/NxlQ0/bOsUzxDwNVI=
+	t=1749095195; cv=none; b=Q/4nGVnrUjHfG0zwbFZvCTTeXs8YOtwq834x7C+B7MrFy9HByow0OFQ8QoW+I1vD5BewtldcoGSwpuhAAtLvnrkd+3MVUec43tvpb5RnD2uCAqeBBnfebUnIvPH5CvMa0/7SNaBHB2yTqKiZ+QNqPQfgmpZ6/rOKtqtRg8NPfpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749050815; c=relaxed/simple;
-	bh=ydc41CzZQexP8/Sacr0EAJ3wMyyt4S73arwwMKvXBWQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P3RpYbMwS1sxPxDKEMbW6eQwPakaKBXALhJg6FMFBzD/lKWRuZnlwSXEVVmjqDPFL6Y1VpqkbqDVvfY1rq4VFZxgzccnev5JO4Vx2z5TkMRqUu3H+vIMHQYvQe0HKl//oCZ4LooVdyuNeh3HAplBfC75Y97cNNrtXjoJAGU6ubs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=myovsk6y; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1749095195; c=relaxed/simple;
+	bh=rPF1Y/Lj5T3DhXlPLFMCFyqGLjxlQBeRLLgsB6ClAEU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qoVhe16gJQ7Aqt6lKK79T5JL+swlquuGK1hNEj6MZ15fDRqNTvQFmbyfzaGT3DVreRVMenGBzCJCHgp5Ngnv7g9kI9TnBaqFS5+ytt1a8LXlr5xDzHhgg71r8/u5M+8OamTKqzGHgekCFfCnqQNVqzvIT2sW5+ZO7JcCfOdirZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NrcRNScx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="myovsk6y"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so99465e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Jun 2025 08:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749050812; x=1749655612; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ydc41CzZQexP8/Sacr0EAJ3wMyyt4S73arwwMKvXBWQ=;
-        b=myovsk6y0eaUHN1jjmHRGQB9M6ZIgguzKGKAqkcCe9z3Rs5hR1mIissMVdo1ISx3b3
-         vAnxjBWmHfqk1kwzeJGPU31+h3i+dTpSfPctX+b3agToNoClRmduwyvSWe7YYML963Oo
-         060mfrGxdY7/beWFCPRIeLJom30qSmdy2Nj+63ZZY02iGSJmyYUDi6bSK3p5ePpHfriF
-         mU6Ufh2AdEFJ+jt3nsHUbjqxxEQJswSK9o8sxxUDrMGZsOcMW7cTsNlI7ThdB3KTBrK6
-         KeDK4gJerLmRl3SlvDHsMXSSg9sI7BPDTo2tG4ilzbk+FhtluOKtqb+Ms6oSnkKpIx4j
-         Dfkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749050812; x=1749655612;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ydc41CzZQexP8/Sacr0EAJ3wMyyt4S73arwwMKvXBWQ=;
-        b=lnd2CbjKc6Zkhi9Bsb9owWu5t9R1n8sumEXLhdajS0zKyzRr9A65ajGBsf7IY8XPBj
-         bhAyAHBE/0fWKs0R4I88RRkU4HtnZGNv0di3vg73ssow5pqvFV3/MyvZiJ8mtreOhcbj
-         yu3wTwDFpnToyZF1+YRMSg4ZJe1j9U1TdjOxipvye5Q6+AQbK1Y4pW8eG9FbO54RQsCP
-         fQAoxJAdYkP+90XLplTJ6n7OathX/eYxdFtD3/DkBihgwRAh9kt2iUbcf3uX+0Y42+Iy
-         y1VPcwATrgxi0BcQyy6XHljSplYJ+w2VSs13Ba9wk9OQTBjVKws4YJF8pHkDZAFLgfZl
-         AUCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3EimoT3dPQRsBQKsmkiFz8zLFlmlte0CT7jjcW3gDz0krOd/1FM1FP0wW6l7RLIZbrFAbu+vhRX7PTqORrZn0Jg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCiEDB+MPpm9HRFTWTHW5B6pIUck996XsHDhL3463E/gQWy++k
-	AzO2+FlgWMtICMzOUhqA8ELLZZAc5KsHuDFCA7DeiG2eZ3OYGUQuUrFy1GLh3TJJ/0c=
-X-Gm-Gg: ASbGncuxRtRpqHRNQjFD6N0zCBjhfJZwPFoh0UEJ81HzYaAhLcHMm4489xDcBwn0ESL
-	H8UDvmXTIZEyAWZms7Va8wqAmB8KtSyk22O0powc12j5LDvsq4dzCAhC3HLgS5phnUHJ2M08O6q
-	zxbHJUiB3sxU3zrvv/oML/ed90laATyrpOsHL0nhZQmGhyXhzrKKlYw04Xa6fAnRLmA5ma/G23F
-	ICORqIKRp8JovGTmVrtP6zs3OYgUvdPH+Ju8G67+YaJ1k6IRQD7bbH4ifgp4Sgvtpo9W2gR2d3O
-	3a0kMrMZHF5HeV37mwA0I6wFa6MHIw6JCvVIJIcDVub4I+Xpp9Gb7yQ=
-X-Google-Smtp-Source: AGHT+IEiwU1KAlbeFjdqPSk2zSDfPInt5xOQP3jHIbi9KVFJaCIn7u8JF88wihm+L69YbxxZtvGJmw==
-X-Received: by 2002:a05:600c:8b6d:b0:43d:fa5f:7d30 with SMTP id 5b1f17b1804b1-451efed66f4mr33677765e9.16.1749050812086;
-        Wed, 04 Jun 2025 08:26:52 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a526057278sm280787f8f.63.2025.06.04.08.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 08:26:51 -0700 (PDT)
-Message-ID: <963bbf8db71efc0d729bb9141c133df2c56881fc.camel@linaro.org>
-Subject: Re: [PATCH 06/17] dt-bindings: firmware: google,gs101-acpm-ipc:
- update PMIC examples
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>, Lee
- Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,  Bartosz
- Golaszewski	 <brgl@bgdev.pl>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Date: Wed, 04 Jun 2025 16:26:50 +0100
-In-Reply-To: <20250604-s2mpg1x-regulators-v1-6-6038740f49ae@linaro.org>
-References: <20250604-s2mpg1x-regulators-v1-0-6038740f49ae@linaro.org>
-	 <20250604-s2mpg1x-regulators-v1-6-6038740f49ae@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.55.2-1 
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NrcRNScx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749095193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XXvmdmmn1tFYv0uxxK5u4EJQqXxf5VTQjxQB6qyj6BY=;
+	b=NrcRNScxpyPrVmhx0TF1VypAWuv7QtdJNq6YusL6a1Sc7k11tLyGBN+n8nIU2IhGeJD/Ma
+	9kqIte2chLfw5VOBgDhm78lbKXDTXx7F30G+YbeLoMOmYUpRN096HbNwT4gWPFnp/VOEWy
+	Fg5Hi3jgIaRgNSGwBZ1vBksbUaj19Zw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-32-h8rxEJLaO1qYFezv_spyhw-1; Wed,
+ 04 Jun 2025 23:46:29 -0400
+X-MC-Unique: h8rxEJLaO1qYFezv_spyhw-1
+X-Mimecast-MFC-AGG-ID: h8rxEJLaO1qYFezv_spyhw_1749095186
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9C3118003FD;
+	Thu,  5 Jun 2025 03:46:24 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.229])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7EDFA30002C0;
+	Thu,  5 Jun 2025 03:46:18 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Subject: [PATCH 0/4] Integrate refcounting across of_drm_find_panel()
+ callers
+Date: Wed, 04 Jun 2025 22:45:09 -0500
+Message-Id: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMUSQWgC/x2MWwqAIBAArxL7nWDag7pKhFiutVAWa0QQ3T3pZ
+ 2A+Zh6IyIQRuuwBxosi7SFJkWcwLTbMKMglByVVJWtZit0bx5vxFJw5bMA1kc9CaG2Vw7FpVVV
+ Dqg9GT/d/7of3/QCEmLcdaQAAAA==
+X-Change-ID: 20250604-of_drm_find_panel_part1-33a2deb79256
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-samsung-soc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749095111; l=1449;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=rPF1Y/Lj5T3DhXlPLFMCFyqGLjxlQBeRLLgsB6ClAEU=;
+ b=SeeBSMW5SkSz2m1U56oKwm8PDfWdG4toxWnKciRa8oqK8kQqUV5RtZYYVHAvOk1mvJzF3/GNs
+ 3m9IvhcutyHAcccJkhr85frr56vbFC+VUXRCu9sj/CoQvwuR6Se3vYX
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 2025-06-04 at 16:25 +0100, Andr=C3=A9 Draszik wrote:
-> In a typical system using the Samsung S2MPG10 PMIC, an S2MPG11 is used
-> as a sub-PMIC.
->=20
-> The interface for both is the ACPM firmware protocol, so update the
-> example here to describe the connection for both.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
-> =C2=A0.../bindings/firmware/google,gs101-acpm-ipc.yaml=C2=A0=C2=A0 | 40 +=
-+++++++++++++++++++--
-> =C2=A01 file changed, 37 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm=
--ipc.yaml
-> b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-> index 62a3a7dac5bd250a7f216c72f3315cd9632d93e1..408cf84e426b80b6c06e69fda=
-87d0f8bfc61498d 100644
-> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> @@ -36,6 +36,15 @@ properties:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: samsung,s2mpg10-p=
-mic
-> =C2=A0
-> +=C2=A0 pmic2:
-> +=C2=A0=C2=A0=C2=A0 description: Child node describing the sub PMIC.
-> +=C2=A0=C2=A0=C2=A0 type: object
-> +=C2=A0=C2=A0=C2=A0 additionalProperties: true
-> +
-> +=C2=A0=C2=A0=C2=A0 properties:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: samsung,s2mpg11-pmic
-> +
+With the panel refcount allocation infrastructure  merged: [1]
+and all drivers converted to use the new API: [2],[3] and [4],
+the next chunk of work involves integrating refcounting across
+different callers across various drivers.
 
-Since we have two PMICs here, but can not use the 'reg' property (as the
-addressing is based on software, i.e. the ACPM firmware), I've opted
-for 'pmic' (existing) and 'pmic2' (new) as nodenames.
+First patch was added to the original series [1] but later
+removed. Adding it here with the initial of_drm_find_panel()
+callers being updated with refcounting. This is not an exhaustive
+list. Remaining drivers to be updated will be sent in next set
+of series.
 
-Maybe 'pmic-main' and 'pmic-sub' would be more appropriate, but 'pmic' is a
-bit more standard I believe. I'm open for better suggestions :-)=20
+[1] -> https://patchwork.freedesktop.org/series/146750/
+[2] -> https://patchwork.freedesktop.org/series/147082/
+[3] -> https://patchwork.freedesktop.org/series/147157/
+[4] -> https://patchwork.freedesktop.org/series/147246/
 
-Cheers,
-Andre'
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+---
+Anusha Srivatsa (4):
+      drm/panel: get/put panel reference in drm_panel_add/remove()
+      drm/panel/samsung-dsicm: Keep up with refcounting
+      drm/panel/sun4i: Keep up with refcounting
+      drm/panel/exynos: Keep up with refcounting
+
+ drivers/gpu/drm/bridge/samsung-dsim.c   | 1 +
+ drivers/gpu/drm/drm_panel.c             | 2 ++
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c | 1 +
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c  | 2 ++
+ 4 files changed, 6 insertions(+)
+---
+base-commit: 685c407f168cb49a12cc703230d1e2d62767bfd2
+change-id: 20250604-of_drm_find_panel_part1-33a2deb79256
+
+Best regards,
+-- 
+Anusha Srivatsa <asrivats@redhat.com>
+
