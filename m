@@ -1,157 +1,210 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00A428A40D;
-	Tue, 10 Jun 2025 09:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDC82253F8;
+	Tue, 10 Jun 2025 11:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749546699; cv=none; b=SG3xoybcePLsCfU21RcCbf2fE1BRgb3NnM430O9ReJSsE+S9NQcATgPbrvYTmUhJT5UEi+P68qQ9fMS6ONj2cjzbKavLvUXQdZXSf/UnzJ7Tz+viY4+lMKwditFKPpe8v3CQ/qGJYABWxSHiHjNLKBbSbXY/pfjkL5ZnCN2h/mU=
+	t=1749555263; cv=none; b=kvxagPCk0yvL3AdrA4O+ZWsHYlG7/bMG9lNo3XtdOsZCwEklktnv0B9zuBlrSoNhTWCai5k+DFoFjlZxtB47uSwhq0qAbT/p4LkkdoRxBIMIfTWlJXOIsEW2KdyHZq8wDVsGFF40omt8w+beKRSVL7jQ1OGhhyhtqkDwHeOe4tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749546699; c=relaxed/simple;
-	bh=gtuGk4aRFSpL1zHBjW3pY01TZxS1XUNvzlXCe18x3zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLGjU/2RfhNIZAx09t9gZS0VpuXOypYtGkDQIWHC/iyMVKqpT8HoKVgE3Kj9dwjO/IvrhDigZfsWYLOEUIsQTybO7kqqddBWQjKxmWRS5qNhClFeiYa3f7zyo5qNdjHrONnwC0Sa6Ul6G1XfZbzKAMtxy6GPHFVmMntsYr/ydP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVHFbyf9; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVHFbyf9"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a53ee6fcd5so1565613f8f.1;
-        Tue, 10 Jun 2025 02:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749546694; x=1750151494; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/J4JSHATnk9TCsjKFzEkFQy2OXqCakBAt2qzrcv/bCo=;
-        b=XVHFbyf9jfTgu2x3aTUinhkOaN0IGwVj2iHy4Ig4n/CFRk/iT0pN3ueu5L7o5xHyZA
-         04GvFt1vySd9FAF4OAPbTdqpqb1/IRLB/cS6aqusR2vGgf37wJAM2STMEAwUf0PNdtry
-         WPs+/gFgq15fsO0Lj14O/Ufajv9bEvcfKB/6YSSqxdYWEFtCetR1DTySOj6nO+Rw3uQN
-         YI5E5/M9Sd6gG/nghSm/fB0uBUTdJ7MQ8Gtopis9A+GLQP7JPqJs5m4TLJzxKV+QBtGN
-         uSM48d9e2yUqO/4FDqkIaIb/3I47s72y4sRqgFaN2wUpX4X6qRGNRxRhZVRQvED+mFoY
-         DN4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749546694; x=1750151494;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/J4JSHATnk9TCsjKFzEkFQy2OXqCakBAt2qzrcv/bCo=;
-        b=VM3z1igABNlVOMvShCOY1po06RwmjsbAWTh2oDusIZN+JstBuFi1MMzi6h5cRZCbvP
-         UP9tPnIrOalzcXuApY65ZVYNvsnCh0gL4sjvr0rcs3spEXum6U8vc7qCtWfAu4xXg8lg
-         f/o4OnBsyrdlOfUhp7J+SqDQgmiDufqZouRF8i76CmgTGoeBprD037NoiedGxWJwuLUp
-         RFVnwShq9daWk6Hx/R5IL42XZNG6dbN3i8SLtxut+nDH2x2n+uMdPW0O5/RK1fred/Xs
-         BGUU+tv+3eRSrK5uAb6q67G+YoQKUIiTuPX/dmlgJn1HLiVBOSRCyvC6d9KATj94WQfb
-         bZew==
-X-Forwarded-Encrypted: i=1; AJvYcCUeFs6YUIxntCNQDB+GtneWRF3esLQi4mNAqJFN9fFPIthZnlx3nMon6F87YXKVaCFJpIPKNX8ErFU2bA==@vger.kernel.org, AJvYcCUgbQTniPNFEvS9i1LsvRCbtz9wpksgBX7dXedgGzYq8LM5ob44UknW3OIgbDHYgMF9qJiz5G2LwoVcj0fg@vger.kernel.org, AJvYcCUqpYdO8SaqDso2S9rLLTHi3vkqTFqpAz/U6502/uC3JAccpGozoexdwz7nHU5F+CmjCyFcd9SA66uM7SC1hOJAviM=@vger.kernel.org, AJvYcCWtguHFm3yJdkqCMKj7P7Nmd0g799wgmQF3TlwrGpkN+YdWO1mM0VGyHKY6+aub7XfNus6zy6bpzGy6sfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLeMhN7iQQOGF+CUlA8yaJBjZI+ZdtW2ZecKNr4HPpD5t3w2iH
-	FQ3meZd4/z36MEJcjEbvXkD053t+/6+SCPaAumwELd7OL3Uhk4hpdK6B
-X-Gm-Gg: ASbGncuS0V1eO2vdvMQhh5+CP5p/h/9/eUlkKQF295FmeRvaZtcx1eZalMzE/Y8+A9j
-	ywIFFZdGBbGtqUdkHIQXCli7RpEQblA51mrU9Yp+BIsxvycULG0675Ofq5G/8/Y5CPUAGuCRten
-	ExTPmqz0WI1jA0tSgsikDREAYquEHklAkdt7Jn+gKs/hA2SxXzDR8KhwnVU7gVZxvKl2LhdFKKQ
-	m3Y2QGBKq++ODNA5xcJOKgkSFcA3Tog2v9GhdHKKSuXszIVpjMY4PK/ihOH4iSn5DbD9De/KFyT
-	kGJof/KhKertpufjyfTn/S4FFPPZuC+ODU7frEs7G50b3+tv+1G1mYnTmDuKEjg3+x50t/CEjtN
-	29TIBwCamxUZtFTBv635J68XDHsyiVzdmR7yqV2LReiAel3YJ
-X-Google-Smtp-Source: AGHT+IGiaud+NmiD3BNjNEkh0KdS8oAZ8TPOqcLbBsZsD4cCdkMv4OiwbthBO25zWdPhWgZ1rXZiAA==
-X-Received: by 2002:a5d:588a:0:b0:3a4:f936:7882 with SMTP id ffacd0b85a97d-3a531ced06fmr13875069f8f.55.1749546693846;
-        Tue, 10 Jun 2025 02:11:33 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45320580af6sm6174635e9.1.2025.06.10.02.11.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 02:11:32 -0700 (PDT)
-Date: Tue, 10 Jun 2025 11:11:30 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev, 
-	Janne Grunau <j@jannau.net>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Joerg Roedel <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Matthew Rosato <mjrosato@linux.ibm.com>, Neal Gompa <neal@gompa.dev>, Orson Zhai <orsonzhai@gmail.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Samuel Holland <samuel@sholland.org>, Sven Peter <sven@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>, 
-	virtualization@lists.linux.dev, Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>, 
-	Yong Wu <yong.wu@mediatek.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>, patches@lists.linux.dev, 
-	Niklas Schnelle <schnelle@linux.ibm.com>, Sven Peter <sven@svenpeter.dev>, 
-	Tomasz Jeznach <tjeznach@rivosinc.com>
-Subject: Re: [PATCH v2 4/7] iommu: Remove iommu_ops pgsize_bitmap from simple
- drivers
-Message-ID: <zkfsgkps6z5wyjxdl3wmn2piwgir7swgml4jomuhxxkedne22d@hwzwxvcwpu3h>
-References: <0-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
- <4-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
+	s=arc-20240116; t=1749555263; c=relaxed/simple;
+	bh=cVtT3YT9Xv4eaPkI9AJRnDqFJZ/NsUmg+VTunANrekY=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=SYfS8hOe4TRcfsmDMGAx/MiES92Mb+xcC7sY71hEVEUr5Rn1hRrhO9zKbCRJbt+RbztvkaykfiLXXG3BmHWUET7KWEsZpM60DHcULsAjT4ULedd0C3a8bYQtdiYJBBpO5TXpptUUb3Gbh/ysyMRm+Qun47oydBW4x88GfyszzkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bGmsB2P7nz4y3Rt;
+	Tue, 10 Jun 2025 19:34:06 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 55ABXxDX055070;
+	Tue, 10 Jun 2025 19:33:59 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 10 Jun 2025 19:34:03 +0800 (CST)
+Date: Tue, 10 Jun 2025 19:34:03 +0800 (CST)
+X-Zmail-TransId: 2afb6848182b233-bddc4
+X-Mailer: Zmail v1.0
+Message-ID: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="noll3rebw4hmh74s"
-Content-Disposition: inline
-In-Reply-To: <4-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <ulf.hansson@linaro.org>, <changhuang.liang@starfivetech.com>
+Cc: <geert+renesas@glider.be>, <magnus.damm@gmail.com>, <heiko@sntech.de>,
+        <krzk@kernel.org>, <alim.akhtar@samsung.com>,
+        <walker.chen@starfivetech.com>, <sebastian.reichel@collabora.com>,
+        <detlev.casanova@collabora.com>, <finley.xiao@rock-chips.com>,
+        <shawn.lin@rock-chips.com>, <pgwipeout@gmail.com>,
+        <qiu.yutan@zte.com.cn>, <shao.mingyin@zte.com.cn>,
+        <linux-pm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHYyXSBwbWRvbWFpbjogVXNlIHN0cl9lbmFibGVfZGlzYWJsZS1saWtlIGhlbHBlcnM=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 55ABXxDX055070
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6848182E.001/4bGmsB2P7nz4y3Rt
 
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
---noll3rebw4hmh74s
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 4/7] iommu: Remove iommu_ops pgsize_bitmap from simple
- drivers
-MIME-Version: 1.0
+Replace ternary (condition ? "enable" : "disable") syntax and ternary
+(condition ? "on" : "off") syntax with helpers from
+string_choices.h because:
+1. Simple function call with one argument is easier to read.  Ternary
+   operator has three arguments and with wrapping might lead to quite
+   long code.
+2. Is slightly shorter thus also easier to read.
+3. It brings uniformity in the text - same string.
+4. Allows deduping by the linker, which results in a smaller binary
+   file.
 
-On Mon, Jun 09, 2025 at 05:41:28PM -0300, Jason Gunthorpe wrote:
-[...]
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 61897d50162dd7..fa0913e9346c71 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -318,6 +318,8 @@ static struct iommu_domain *tegra_smmu_domain_alloc_p=
-aging(struct device *dev)
-> =20
->  	spin_lock_init(&as->lock);
-> =20
-> +	as->domain.pgsize_bitmap =3D SZ_4K;
-> +
->  	/* setup aperture */
->  	as->domain.geometry.aperture_start =3D 0;
->  	as->domain.geometry.aperture_end =3D 0xffffffff;
-> @@ -1002,7 +1004,6 @@ static const struct iommu_ops tegra_smmu_ops =3D {
->  	.probe_device =3D tegra_smmu_probe_device,
->  	.device_group =3D tegra_smmu_device_group,
->  	.of_xlate =3D tegra_smmu_of_xlate,
-> -	.pgsize_bitmap =3D SZ_4K,
->  	.default_domain_ops =3D &(const struct iommu_domain_ops) {
->  		.attach_dev	=3D tegra_smmu_attach_dev,
->  		.map_pages	=3D tegra_smmu_map,
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+---
+v2:
+ %sable ==> %s in jh71xx_pmu_dev()
+ drivers/pmdomain/renesas/rcar-gen4-sysc.c    | 3 ++-
+ drivers/pmdomain/renesas/rcar-sysc.c         | 3 ++-
+ drivers/pmdomain/rockchip/pm-domains.c       | 3 ++-
+ drivers/pmdomain/samsung/exynos-pm-domains.c | 6 +++---
+ drivers/pmdomain/starfive/jh71xx-pmu.c       | 7 ++++---
+ 5 files changed, 13 insertions(+), 9 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+index e001b5c25bed..c8aa7538e95f 100644
+--- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
++#include <linux/string_choices.h>
 
---noll3rebw4hmh74s
-Content-Type: application/pgp-signature; name="signature.asc"
+ #include "rcar-gen4-sysc.h"
 
------BEGIN PGP SIGNATURE-----
+@@ -171,7 +172,7 @@ static int rcar_gen4_sysc_power(u8 pdr, bool on)
+  out:
+        spin_unlock_irqrestore(&rcar_gen4_sysc_lock, flags);
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH9sIACgkQ3SOs138+
-s6HNrxAAo93PCboo986Da72XguJIozPLAKyIbWbaeG0mAjcZN8YUqcSh21C3Xp4m
-qkNL3FwIbtg55H/1upzln07ZErFxc56r95b+GjnH7G4+X4608YnbKmdlZMxzkhpk
-Hiqglce9T205CGZdT2oaZeO26+zHlTeh3LBiiR4o0eurhupQldQ9evEZ5qVseZDA
-FOHY9nWWRDf0/HkM/+MpPA/8cXnNUpME3+OMZIWf6E0Fk0YJnGKS/FIj/aoYPvJI
-9cHiJLi/xs2mxDGh9xUuYDXRcapqzGw6fpsFzJM4G1dEDbYctUR9IOgvdWJ/vzNk
-zYnCdPC4tMYkkOwW85wmXbkVUkbTplxVlLUrVBDVjsou2gKfhKOj/lXWBQjWXJ2w
-PWaIHU9l+OSWsvXB3qkUtROmoqFqrf4+XA/2kV9AlRJO7rrb0hK8yj42rtjec2ix
-y5aU/5/v0Hcr+d09jaikpqhAx1miE9mHEFObqRBtOVko2pZ4l/DD6OVWBNDJyqHM
-9fX438+BucatKIy11m72MpW4m9FdBxwhPEfpyQSc79NCDtoKzoxE0wGFzxqcKyys
-EMGegmdKh0OKQke0uP2Ieo02BIp7sCoCf4m98nTRTYfOGTgfXO4kmfccAUeki59x
-5ez2fDP654E1ESVH+Xn7bWfBKtFiuw6IlaPL+CPNnjcaAxxtDUk=
-=E5td
------END PGP SIGNATURE-----
+-       pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
++       pr_debug("sysc power %s domain %d: %08x -> %d\n", str_on_off(on),
+                 pdr, ioread32(rcar_gen4_sysc_base + SYSCISCR(reg_idx)), ret);
+        return ret;
+ }
+diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
+index 047495f54e8a..dae01ca0ef6a 100644
+--- a/drivers/pmdomain/renesas/rcar-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-sysc.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
++#include <linux/string_choices.h>
 
---noll3rebw4hmh74s--
+ #include "rcar-sysc.h"
+
+@@ -162,7 +163,7 @@ static int rcar_sysc_power(const struct rcar_sysc_pd *pd, bool on)
+
+        spin_unlock_irqrestore(&rcar_sysc_lock, flags);
+
+-       pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
++       pr_debug("sysc power %s domain %d: %08x -> %d\n", str_on_off(on),
+                 pd->isr_bit, ioread32(rcar_sysc_base + SYSCISR), ret);
+        return ret;
+ }
+diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+index 4cce407bb1eb..0681c763f843 100644
+--- a/drivers/pmdomain/rockchip/pm-domains.c
++++ b/drivers/pmdomain/rockchip/pm-domains.c
+@@ -21,6 +21,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/string_choices.h>
+ #include <soc/rockchip/pm_domains.h>
+ #include <soc/rockchip/rockchip_sip.h>
+ #include <dt-bindings/power/px30-power.h>
+@@ -595,7 +596,7 @@ static int rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *pd,
+                                        is_on == on, 0, 10000);
+        if (ret) {
+                dev_err(pmu->dev, "failed to set domain '%s' %s, val=%d\n",
+-                       genpd->name, on ? "on" : "off", is_on);
++                       genpd->name, str_on_off(on), is_on);
+                return ret;
+        }
+
+diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
+index 9b502e8751d1..1a892c611dad 100644
+--- a/drivers/pmdomain/samsung/exynos-pm-domains.c
++++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/string_choices.h>
+ #include <linux/pm_domain.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+@@ -38,7 +39,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+        struct exynos_pm_domain *pd;
+        void __iomem *base;
+        u32 timeout, pwr;
+-       char *op;
+
+        pd = container_of(domain, struct exynos_pm_domain, pd);
+        base = pd->base;
+@@ -51,8 +51,8 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+
+        while ((readl_relaxed(base + 0x4) & pd->local_pwr_cfg) != pwr) {
+                if (!timeout) {
+-                       op = (power_on) ? "enable" : "disable";
+-                       pr_err("Power domain %s %s failed\n", domain->name, op);
++                       pr_err("Power domain %s %s failed\n", domain->name,
++                              str_enable_disable(power_on));
+                        return -ETIMEDOUT;
+                }
+                timeout--;
+diff --git a/drivers/pmdomain/starfive/jh71xx-pmu.c b/drivers/pmdomain/starfive/jh71xx-pmu.c
+index 74720c09a6e3..dc3e109e273a 100644
+--- a/drivers/pmdomain/starfive/jh71xx-pmu.c
++++ b/drivers/pmdomain/starfive/jh71xx-pmu.c
+@@ -12,6 +12,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
++#include <linux/string_choices.h>
+ #include <dt-bindings/power/starfive,jh7110-pmu.h>
+
+ /* register offset */
+@@ -155,7 +156,7 @@ static int jh7110_pmu_set_state(struct jh71xx_pmu_dev *pmd, u32 mask, bool on)
+
+        if (ret) {
+                dev_err(pmu->dev, "%s: failed to power %s\n",
+-                       pmd->genpd.name, on ? "on" : "off");
++                       pmd->genpd.name, str_on_off(on));
+                return -ETIMEDOUT;
+        }
+
+@@ -197,8 +198,8 @@ static int jh71xx_pmu_set_state(struct jh71xx_pmu_dev *pmd, u32 mask, bool on)
+        }
+
+        if (is_on == on) {
+-               dev_dbg(pmu->dev, "pm domain [%s] is already %sable status.\n",
+-                       pmd->genpd.name, on ? "en" : "dis");
++               dev_dbg(pmu->dev, "pm domain [%s] is already %s status.\n",
++                       pmd->genpd.name, str_enable_disable(on));
+                return 0;
+        }
+
+-- 
+2.25.1
