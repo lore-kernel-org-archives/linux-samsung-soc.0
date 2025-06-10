@@ -1,177 +1,132 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2112.outbound.protection.partner.outlook.cn [139.219.146.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2982397BE;
-	Tue, 10 Jun 2025 15:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569194; cv=fail; b=ttp8Ax4EsS5fkp5t3U8xFXMKzgOB846ufrTh3LyBkVss85aiQyhQfgHEmVO/J1yLHkvof7XGwfvaevwhEydBU2k9QWxjwDmJPmp5rvsBIDcT3qlr52WYnLSYXDJdBKW0sWNUfow/JVM6DwuRZ7ZwKXs8/sdRfLO6NmRjJwqggeg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569194; c=relaxed/simple;
-	bh=errlSDBlT7IJoXFJD0CVCYj+y6votvUITo4JMpmu83I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tA+8dkiAs+HkQ/rCAorGCwEN/XUmiS98OHEjkh11AkABxcoGgvX5QQpdQiTjCisFAbm3gBgCe7vhQOQGkslrvX1+fhzbln3/Z1ACSh2tDiJrFcD5f6BZJcPobtROXFXdygRiUwAQOI7kreTDiUGZ756UWc4Inj4dsyCZ+KPHF3g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hUMJrWeRklH17QPzDjOvxiAekNr6YgQlVDepiOfQwwnlz8azT32PDsv6VSpNytN7hY/WnmbMEQwxB/ds/GD91yJRarpmtcXNllUsH3PNXi7AVVLwuOTCHKmPTmz0YULbRHROmYw5zEJBso0e9WBI8mN1vQ7GSKdrmp+y5oDgicCW1psU1O36ge2mglrK3NzFkhGoOFyrrVulljqPHB/rmqGQTvbyNu8nDkUghnK9EcmDqFu+YHlBCEmZrUupRvF6dBj9tzREzGxcub+Kp9iUNIm2XvJ4sNAi7fht+VJoamWC0bacrDkkTSQScFEZaLkdmXKanJ0a0x+FqFBJjLxCqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=errlSDBlT7IJoXFJD0CVCYj+y6votvUITo4JMpmu83I=;
- b=Us4KvuGDS00+waDoe/uGd5do6TbQ6+vMUZYjG5G5SRUsJ470nJ7qtcJ2pIH0ReR5ZEM0mrxn4JIrGICJH5f7BTNYSBrykDFsm80OdPNdX2GgdE7Nx2LvpysrgDlAYLsVR8KTBSdd09k+zVaKlH82uXsVBrPp/5j9qVGVC0/iuTJC07/w6AJTB91M6Suw+noAWx5aybFQgOUsBPRRbW4gml1iMn/HVyUsCWoTku3PLtm/hNlhiFHOU7oBks8q9sUHWuLARu6q8e0BKvcISXmDPOF5ZwZ18XdpkWxdZ/n7C353h0Id6uTEZ9nD4FHODOcRu1KC8rhYjabI/7JzxsaUPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB0952.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.42; Tue, 10 Jun
- 2025 08:51:30 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%7])
- with mapi id 15.20.8792.038; Tue, 10 Jun 2025 08:51:30 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: "shao.mingyin@zte.com.cn" <shao.mingyin@zte.com.cn>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-CC: "geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "heiko@sntech.de"
-	<heiko@sntech.de>, "krzk@kernel.org" <krzk@kernel.org>,
-	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, Walker Chen
-	<walker.chen@starfivetech.com>, "sebastian.reichel@collabora.com"
-	<sebastian.reichel@collabora.com>, "detlev.casanova@collabora.com"
-	<detlev.casanova@collabora.com>, "finley.xiao@rock-chips.com"
-	<finley.xiao@rock-chips.com>, "shawn.lin@rock-chips.com"
-	<shawn.lin@rock-chips.com>, "pgwipeout@gmail.com" <pgwipeout@gmail.com>,
-	"qiu.yutan@zte.com.cn" <qiu.yutan@zte.com.cn>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, "yang.yang29@zte.com.cn"
-	<yang.yang29@zte.com.cn>, "xu.xin16@zte.com.cn" <xu.xin16@zte.com.cn>,
-	"yang.tao172@zte.com.cn" <yang.tao172@zte.com.cn>, "ye.xingchen@zte.com.cn"
-	<ye.xingchen@zte.com.cn>
-Subject:
- =?utf-8?B?5Zue5aSNOiBwbWRvbWFpbjogVXNlIHN0cl9lbmFibGVfZGlzYWJsZS1saWtl?=
- =?utf-8?Q?_helpers?=
-Thread-Topic: pmdomain: Use str_enable_disable-like helpers
-Thread-Index: AQHb2eK4wQmwS1os/UmiAkf/peV4eLP8FIYw
-Date: Tue, 10 Jun 2025 08:51:30 +0000
-Message-ID:
- <ZQ0PR01MB130295B1CB3568C596B12F2FF26A2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-References: <202506101634190538mcMSzfKfxQTy4LgbSpOy@zte.com.cn>
-In-Reply-To: <202506101634190538mcMSzfKfxQTy4LgbSpOy@zte.com.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB0952:EE_
-x-ms-office365-filtering-correlation-id: ce05f971-3b40-4379-f1e2-08dda7fbfe8d
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|41320700013|1800799024|7416014|38070700018;
-x-microsoft-antispam-message-info:
- /CBW8qUlCxuuxT6wEADWmekhpnF9mvFGSQa9SyaP1/f0EKf3vCcMYCz0X3FYJuu2R5CJY3eX6vu6tKS0Pwb67iZXKZaML0BTJCAhlSzw7nuienHmDO+52RNtaXq9qdURtTqx9v5KEM4LDWqT8RF+Y0/dSwsUjQ7n/X+tQcXq+utU8vs96sq/UJJTBSfsTBnT9m9J1xg7IKUaUNvw3T18Du5ZFWTk3ae5Uf6X5Pn2CpGwbF617SyHFLT+B90kpqqVMSxfFb5R27ybQC3MT1f9kYZnHTOG4jwG9Wjze16t3NJa5ETvobuY0+eCHss+N5jscmTthB/0BuVz5fpYGR5BdXB8Zsej1Qj2ZK06miZuciB45/Su2uamQexy5wo7W5vt6nHieUd9FWb0tquVM+4/BJV0562pcVEYldREF7mjNi0PaA/Bu2jRfUIamLpsw/rx7PScbY2/g/SaqxGJsEbmBTne0bsM6pQjGl/2K5fTsmy+FTiFxJPIwBvd355Ppnq5j7vGc7avouKu0q79Dh71SFbljZYczr2iZWx9NFTLdvmtDuzITnRo54ffJyvIdL098Uky28w8gsWoi5VXpJByTtOlvxbrdLtWLiEO5Bd1tmI=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(41320700013)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cjNkWEthL3EvYWZKRFNtRnd2SGdsNm1aR1JkSHhWTGRRaStZMzJrZFJyRGta?=
- =?utf-8?B?blBWV3p3T3JlYmpCQmFDNkFXRFFYdHNEWjhvR1ZEc0xNTHgxNXBiNDkxYlF5?=
- =?utf-8?B?ZzBMeHpkZU0wWUNRQ0E3MG1RQWVIajVIdVhzNjhiZkNBNDZram5YTVU5RHI2?=
- =?utf-8?B?WWRybXJrZWQzUGVtSjVFTjg3eDJ6cERWcGJOMlVGN2JRb2J5ZkZuSFJLQ2F4?=
- =?utf-8?B?bnBTbUR2dmRBdnlON1dqNGJJc0RsVUV0czNnRWVjeUY1Q2FXRG1LU05oenB1?=
- =?utf-8?B?dUpobGY3K3lnU0EvaDFGNXNtaHE1QlpHd3VzMUlKNDhtZVd4UHdCQ2o3NExN?=
- =?utf-8?B?ZEVHeTFHRXdqcnlMMVljemtKbVpkVW1DNG9PRHFqUlg5UmlMZ0tHSXdhb3ho?=
- =?utf-8?B?RXlaMWVxcSs3NE9CcUtDd3lrVzd4TGxMM25oN2Y4bVJHQWcraTFxL3hVUEJU?=
- =?utf-8?B?bkJ0VHRRMW43b2tSTGc5Ly8yOWVWU3ZheEpmVXY2eWhDRUw1bFJMMmZQVUk2?=
- =?utf-8?B?T2JJemluY1Fhb3dlREFjQ0RNS0tRemdnM0NYK2JpRUtBMHZWOER6ZVhhVjhr?=
- =?utf-8?B?REFrMEJNczVhSTNIcStKNHJSZUV1UXF1Q05lWjRqN3czR00wYi9YUWdpUzkv?=
- =?utf-8?B?Z0MyTmlXeDRqdGRXcW1WdXE4aDJqN05lQmRoM294WXA2b2ZxVmR4bHFKb0xj?=
- =?utf-8?B?MGtzeU0rRmdZZ3Z5eGhIWkdSOG5ycENwU2E0VWRDTkt3VytLbk9iSjcwRUQy?=
- =?utf-8?B?NWRlVVJxNC9kSnc1Wm5NK3V6QUxMT2VDR0JPcmFZZU8ySElnS1d2NFlPcWRI?=
- =?utf-8?B?d29XQjk3bzlpY3VrRmtvNzZJQXBiQjRKYjFQYnFyVEJ6enRCR0NuRHFYOHM3?=
- =?utf-8?B?K1BEbTBxRnpiNWMwQnR1K29qTGgwbEMvVTExR0FGQ3NDS2U2RDFqc3RKR2M5?=
- =?utf-8?B?VUx1dG5pYkZyYWcrOG9hZlFuaERBSTk5WlhvSlZROHRkWGxIaFFmclZ0RTM5?=
- =?utf-8?B?V2gxVi9hUFkzZ0MxM0tUc3JnM1Y0V2F1Y2U4S3lmaE9FRHo1WXcyY0d0VVY1?=
- =?utf-8?B?QWs3YVVRZXg3Z1N6N2l1dEg4ZVA5NzdtYXlwWHZta0FnTWhXRVdLU2I1NWwz?=
- =?utf-8?B?WEtIcDlEbWdobmNqTnpRREV4R1ZianFXYjJvTDgrWXJGd1BNcnBZejlucThy?=
- =?utf-8?B?Nyt0RnF3RjRXbTFYbTJrWFdObjNGOHZLclhWeDF2bW9WN0FLNDJsSE8xNGFV?=
- =?utf-8?B?RjhzbG9yaG1uTDlnUUd3eEUyWGVkUTRvZHZMOUw4eE0wT2oxeTlhS0hYT0Np?=
- =?utf-8?B?bk9IZnUrb0JBMFFWcWRHajkwSFJqNjFKMjI1ZWV5amdheHVlNUM0bHdZNE0x?=
- =?utf-8?B?OFdod1ZZRmhzZmpINmQ0VWhYbTAvZ1M2TVpaN0s1Zy80dDZQQTRGVWJVZW40?=
- =?utf-8?B?QVA5Z0VEVkhrdno0UnIraUh1akgwYm1PODZXdVZWWUNnL0FRUTRGYkdyU2RU?=
- =?utf-8?B?ZjFHb29TSEsyWTZMWWRobWUyb1BIM3ZqejAzQkthL01va3k1K1lDK1NGQXha?=
- =?utf-8?B?SlBCL2l5Z3FNaWtCZ04vVDc2NWxqcmZ2TWdOQlFQd01iRWQrVG5qdjRXZmFV?=
- =?utf-8?B?V2lGQTBBZEJjUHFhaFVaRFZWZTVGaEVXN2dma1I2UDhCUDJuM1NhNkVXdGc5?=
- =?utf-8?B?NkpsQ3FYUTJXL3RsNXY5ZEdQT1RpMFYxU2lDRHdkME4wanRIaGV0TjUyTTd3?=
- =?utf-8?B?QVhIdC9pL0JxbzNUdS9hWXlHZW05czg2MVd4L2RxLzM4Q3hKVEhKK1MvbzAw?=
- =?utf-8?B?ZzR0dGVDbS9JbWFrS0VaTm1RTXk4a2E1dEJMNjhJWGtYY1pLSFlRcmZHSEhm?=
- =?utf-8?B?UC8vdkNxcUJnMUJqZlhHM3JRNUd1dWdPTm9QY2t2T3N4Q1ZDd1FNYzk3U2tE?=
- =?utf-8?B?Y1hhQ292VkUyYkwvN0tabzIySFhBMUdwb0hTLy9qTy9VWGloaTRNTzhMTXNn?=
- =?utf-8?B?Tm5Wb1Rmd0s2cSt5SVdOcDY5c29TTTM1V3RZdmJmVzBtNHJRay9Ka0o4VUR5?=
- =?utf-8?B?SjBXN1k3aDZ1Tk5DbnczZmxkbDRhWjlHOVRiNnJiLzlobk5ORU0xcEd6NS9O?=
- =?utf-8?B?V0ZlcWZLcXF3Si91VUpMSU9WaWVIZWZpSUJ1SGhPNXpZY2xObm51L2V1Zk1Q?=
- =?utf-8?Q?wr5W6BFJeyJG8YFaiN+KfGg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467FA2367D0;
+	Tue, 10 Jun 2025 15:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749570122; cv=none; b=DahubWOUuOvxZ/mWB9vm++bIcbIPjDP0Esw3z7kZNMIqVYUtclp5Z9BurZ/4YSuMAg6OsXBePZm0w/0GPlKGOjuCvuRNx+6LRIViEAPb/iZA22G7godoKt1X99WgzG1fjrCdn1kkJK91Wg/tmXGqkzigjsrVCLI41po8rNk5J1A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749570122; c=relaxed/simple;
+	bh=OCX+PMXOnofivFIKf5B4TrKIDiVPaorIpAV/YEeu6NA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwujv+nL4YRZxc3PZpHl+2m2gkHi2gDgRXapcNVrZv7iI18Mu++wuONbqaLuLx1ILqqYJRky9rCavCoqyMrfQ/OSj5VzcL1Lrx5UmnPxGDnTPZUZFByAqglFDpdz1j855oAZxY5YGdPsfk1trAnpb5EXBpI0pbMuwtWx/fzqFYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpKPn/hX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpKPn/hX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98718C4CEF0;
+	Tue, 10 Jun 2025 15:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749570122;
+	bh=OCX+PMXOnofivFIKf5B4TrKIDiVPaorIpAV/YEeu6NA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qpKPn/hXTpMKHurpAOYuvdyFWF2RKykP22wfL62XAqvyfVhTvhhhMjdqLh86MKBzM
+	 JtDc746E9N3lbyUvO5In6rn6/5TGFozVl7pVSYHRPsJwz43uiPjAF3JUndZjDUveFS
+	 z8hqpNCY9qB2XTPAjvralMFelri/ZJ8VgM/WYYhXSxmSPMUVYRetzMTsT7s74pcmYt
+	 Eq/3qMMYZCHJw6AZtA0XRU4yPu0mItmnCjO8oM4aAwKcRnOH2xitVfbWl+khIC03wH
+	 WQvj/oWSLTyBY3dOQmsnDZNAdVDUQAGcSSzjtWkOsAicYMlI82HyyDlE3nioLc068R
+	 W4Flwz4eYubFw==
+Date: Tue, 10 Jun 2025 17:41:59 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/4] drm/panel/samsung-dsicm: Keep up with refcounting
+Message-ID: <20250610-wildcat-of-marvelous-modernism-e4ce27@houat>
+References: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
+ <20250604-of_drm_find_panel_part1-v1-2-c632e12e131d@redhat.com>
+ <20250606-radical-rigorous-buzzard-ca09cd@houat>
+ <CAN9Xe3Si6XwsGOesNKOx9M8PjBkMG2paWXV5gvAnujWih6sqtA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce05f971-3b40-4379-f1e2-08dda7fbfe8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2025 08:51:30.5745
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cFbq4yGYQtrNjitaxnAzOx+EEuzYGMyccxOERShYYiRyaKRqVyXqdl7oIbO/P/cZtf+g7/H2UwHNhGss9ojLZaYnxvYS1huze6lrE8cm0k0rG9hy9SqQXO8Z3KViNPqN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB0952
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="zwi57rvdrnu4faa3"
+Content-Disposition: inline
+In-Reply-To: <CAN9Xe3Si6XwsGOesNKOx9M8PjBkMG2paWXV5gvAnujWih6sqtA@mail.gmail.com>
 
-SGksIE1pbmd5aW4NCg0KVGhhbmtzIGZvciB5b3VyIHBhdGNoLg0KDQo+IEZyb206IFNoYW8gTWlu
-Z3lpbiA8c2hhby5taW5neWluQHp0ZS5jb20uY24+DQo+IA0KPiBSZXBsYWNlIHRlcm5hcnkgKGNv
-bmRpdGlvbiA/ICJlbmFibGUiIDogImRpc2FibGUiKSBzeW50YXggYW5kIHRlcm5hcnkNCj4gKGNv
-bmRpdGlvbiA/ICJvbiIgOiAib2ZmIikgc3ludGF4IHdpdGggaGVscGVycyBmcm9tIHN0cmluZ19j
-aG9pY2VzLmggYmVjYXVzZToNCj4gMS4gU2ltcGxlIGZ1bmN0aW9uIGNhbGwgd2l0aCBvbmUgYXJn
-dW1lbnQgaXMgZWFzaWVyIHRvIHJlYWQuICBUZXJuYXJ5DQo+ICAgIG9wZXJhdG9yIGhhcyB0aHJl
-ZSBhcmd1bWVudHMgYW5kIHdpdGggd3JhcHBpbmcgbWlnaHQgbGVhZCB0byBxdWl0ZQ0KPiAgICBs
-b25nIGNvZGUuDQo+IDIuIElzIHNsaWdodGx5IHNob3J0ZXIgdGh1cyBhbHNvIGVhc2llciB0byBy
-ZWFkLg0KPiAzLiBJdCBicmluZ3MgdW5pZm9ybWl0eSBpbiB0aGUgdGV4dCAtIHNhbWUgc3RyaW5n
-Lg0KPiA0LiBBbGxvd3MgZGVkdXBpbmcgYnkgdGhlIGxpbmtlciwgd2hpY2ggcmVzdWx0cyBpbiBh
-IHNtYWxsZXIgYmluYXJ5DQo+ICAgIGZpbGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTaGFvIE1p
-bmd5aW4gPHNoYW8ubWluZ3lpbkB6dGUuY29tLmNuPg0KDQpbLi4uXQ0KDQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL3BtZG9tYWluL3N0YXJmaXZlL2poNzF4eC1wbXUuYw0KPiBiL2RyaXZlcnMvcG1k
-b21haW4vc3RhcmZpdmUvamg3MXh4LXBtdS5jDQo+IGluZGV4IDc0NzIwYzA5YTZlMy4uMGU4ZmNh
-NGUyZGU5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BtZG9tYWluL3N0YXJmaXZlL2poNzF4eC1w
-bXUuYw0KPiArKysgYi9kcml2ZXJzL3BtZG9tYWluL3N0YXJmaXZlL2poNzF4eC1wbXUuYw0KPiBA
-QCAtMTIsNiArMTIsNyBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+ICAjaW5jbHVkZSA8
-bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvcG1fZG9tYWluLmg+
-DQo+ICsjaW5jbHVkZSA8bGludXgvc3RyaW5nX2Nob2ljZXMuaD4NCj4gICNpbmNsdWRlIDxkdC1i
-aW5kaW5ncy9wb3dlci9zdGFyZml2ZSxqaDcxMTAtcG11Lmg+DQo+IA0KPiAgLyogcmVnaXN0ZXIg
-b2Zmc2V0ICovDQo+IEBAIC0xNTUsNyArMTU2LDcgQEAgc3RhdGljIGludCBqaDcxMTBfcG11X3Nl
-dF9zdGF0ZShzdHJ1Y3QNCj4gamg3MXh4X3BtdV9kZXYgKnBtZCwgdTMyIG1hc2ssIGJvb2wgb24p
-DQo+IA0KPiAgICAgICAgIGlmIChyZXQpIHsNCj4gICAgICAgICAgICAgICAgIGRldl9lcnIocG11
-LT5kZXYsICIlczogZmFpbGVkIHRvIHBvd2VyICVzXG4iLA0KPiAtICAgICAgICAgICAgICAgICAg
-ICAgICBwbWQtPmdlbnBkLm5hbWUsIG9uID8gIm9uIiA6ICJvZmYiKTsNCj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgcG1kLT5nZW5wZC5uYW1lLCBzdHJfb25fb2ZmKG9uKSk7DQo+ICAgICAgICAg
-ICAgICAgICByZXR1cm4gLUVUSU1FRE9VVDsNCj4gICAgICAgICB9DQo+IA0KPiBAQCAtMTk4LDcg
-KzE5OSw3IEBAIHN0YXRpYyBpbnQgamg3MXh4X3BtdV9zZXRfc3RhdGUoc3RydWN0DQo+IGpoNzF4
-eF9wbXVfZGV2ICpwbWQsIHUzMiBtYXNrLCBib29sIG9uKQ0KPiANCj4gICAgICAgICBpZiAoaXNf
-b24gPT0gb24pIHsNCj4gICAgICAgICAgICAgICAgIGRldl9kYmcocG11LT5kZXYsICJwbSBkb21h
-aW4gWyVzXSBpcyBhbHJlYWR5ICVzYWJsZQ0KPiBzdGF0dXMuXG4iLA0KDQolc2FibGUgPT0+ICVz
-DQoNCj4gLSAgICAgICAgICAgICAgICAgICAgICAgcG1kLT5nZW5wZC5uYW1lLCBvbiA/ICJlbiIg
-OiAiZGlzIik7DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHBtZC0+Z2VucGQubmFtZSwgc3Ry
-X2VuYWJsZV9kaXNhYmxlKG9uKSk7DQo+ICAgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gICAg
-ICAgICB9DQo+IA0KDQpCZXN0IFJlZ2FyZHMsDQpDaGFuZ2h1YW5nDQoNCg==
+
+--zwi57rvdrnu4faa3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/4] drm/panel/samsung-dsicm: Keep up with refcounting
+MIME-Version: 1.0
+
+On Mon, Jun 09, 2025 at 10:45:35AM -0500, Anusha Srivatsa wrote:
+> On Fri, Jun 6, 2025 at 7:03=E2=80=AFAM Maxime Ripard <mripard@kernel.org>=
+ wrote:
+>=20
+> > On Wed, Jun 04, 2025 at 10:45:11PM -0500, Anusha Srivatsa wrote:
+> > > Put the panel reference back when driver is no
+> > > longer using it.
+> > >
+> > > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> > > ---
+> > >  drivers/gpu/drm/bridge/samsung-dsim.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> > b/drivers/gpu/drm/bridge/samsung-dsim.c
+> > > index
+> > 0014c497e3fe7d8349a119dbdda30d65d816cccf..3667855ff0d6d1b608c579573de65=
+7af7fd14388
+> > 100644
+> > > --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> > > +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> > > @@ -1748,6 +1748,7 @@ static int samsung_dsim_host_attach(struct
+> > mipi_dsi_host *host,
+> > >                       dsi->out_bridge =3D ERR_PTR(-EINVAL);
+> > >       }
+> > >
+> > > +     drm_panel_put(panel);
+> > >       of_node_put(remote);
+> > >
+> > >       if (IS_ERR(dsi->out_bridge)) {
+> >
+> > Explaining in your commit log why you think it's a good idea to put it
+> > there would be really nice. In particular, it looks super odd to me that
+> > you would put the panel reference in attach.
+> >
+> > Also, your patch doesn't work, and you have a reference inbalance. You
+> > have one taken by the panel driver, put in remove. You have one in
+> > drm_panel_add, put in drm_panel_remove. Which reference do you put here?
+> >
+> > This applies to your other patches too.
+>
+> Yes, I should get the ref in of_drm_find_panel() to put it here. With
+> that said, all callers of of_drm_find_panel() should be converted
+> instead of the small batch that this series addresses.
+
+Then do the of_drm_find_panel() conversion before, because here you will
+free up the structure despite some callers still having a reference on
+it.
+
+Maxime
+
+--zwi57rvdrnu4faa3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJQEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEhSRwAKCRAnX84Zoj2+
+dhb2AXd6k/XL3u9/OK5zj97VWmDQziONGHEsb3bDL6hJZj6l6EtMtZ9IDIPocg8T
+0UuXCwGA01sHkSg3AqDJPDYt8mzstpL8wcd8zKh9oy1niBidaedsQ6I+2mKYzaTS
+VdThoLbe
+=nzew
+-----END PGP SIGNATURE-----
+
+--zwi57rvdrnu4faa3--
