@@ -1,111 +1,212 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0F4283FE1
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2025 08:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100521D555;
+	Tue, 10 Jun 2025 08:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749543839; cv=none; b=YVECZ7Md+i6+IhcA3+5Vn+RF2ZqIhiZKz78w64Uix+5raAdgGuyyfIb7nfNRUEr8Ve6EY3SguTI2jBIChoefLuK4Yt+A5FO35nKMCD/LyDTg0f3ikJt3O06vYp263AFBuFZ8mLQ3B0mVDbp2sy4hKP764yTv4QDWXthXgYZWuKI=
+	t=1749544492; cv=none; b=E1JBgxFyFa4Ouh8WB4PXcq90vJQfcpwSCNCia/foAIBms3klreoGFDIAP0TG3HA2WKjNYugB0qPP2ysWgstgb1DMuqZGIP+pqEIMGG2ccIX2T/+LDS0LFxm9T6EY1q+A/1wqmvoLclrVkqOfdjOIpqNxqtRuGbBsnhvtI5eOjC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749543839; c=relaxed/simple;
-	bh=yyhzPDdF8NeOOeZr2SZOX9HHHQ5D7bOqPKd37iQiSFs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qyilbDhysdE1VnggXILN4D1OcTzS4NOliXcMEre7FvHPwRDj4DB401oUgz10Z7ToQkGfdp8LBYrXFlG327+27qMjGmUfQLwBO+YVK/n8CJXdHV0mkyT2S521vOaPw19PiEvordKSD9TxW5NaKEFi2/TcuwmyL/6gVr0g0i3gaM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEZC9Q1T; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEZC9Q1T"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4ebbfb18fso455464f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2025 01:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749543835; x=1750148635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9WGI4IbP//61XrnIlM+natAC7ecS9zG4vex6G78gZY=;
-        b=hEZC9Q1TgiXTu95oc+6NtCo1BRbnOHrDqPXM+MQe97jPplFgtUdf13p/+l/jivtpqn
-         AVEQjBzDe0FJXPE6Qt6a8uqrNr2fPd42ABmxo+Ea3b2F/O2bpgYVKdN+pbeS5ePPw1cm
-         akKeS/vsivEpT4A4OhOoE989960LD37RLNNrych+3AkFBsAUaYDYEI8fWIB+kyRCdOYs
-         LHNItha/qRFBQeNZEdhYjhtgiFYAGupfM9a1F8cMJL3gN3y8zWcjShQ6qS+/8UxWnLa0
-         WdUy5IvMd8OPHPs55WlLsoulOhhLt1FIAQwpR257JdBImWFyg/7ZWBilWCccOvj0herZ
-         M3CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749543835; x=1750148635;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q9WGI4IbP//61XrnIlM+natAC7ecS9zG4vex6G78gZY=;
-        b=HjRHw/DsJa5TeEIWlLxTxGV6NZVkU85XQ3AWo9cFbJnUt0W5/t/ASsni3kaMFmYVvG
-         yu467/lamGwXsYU2EHpPsdtoDdVdo9ZzGJmEuePUM2RQCz+09Cm8MPFSogMcZA5mPCMc
-         4nVTI0z22D20wclrb3qAEg/3GPDaY8qlp5FanEm94FZc2tZrmB4Xym9TSoqLa2XoMl90
-         /XlcOv8ViimRMnJCq8F5A/k7MG2S059N0dySHRN8yU9rs2ZrbRiCHBubp8d11EucsioT
-         rj4adsp3nFiNb2YFhMNBMox/Qq3QfwzTRpedyAAD1wIwOEhmPFQJKtnovEcyDTs8tl3C
-         8uUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFqeVLlXUZii/3OBJ/6jIHRdBnkFrsCxkEbl3Ks0nuzf0e2+sDSsKXG1bGS9Sp6x2fUeTVxRf9W4HP2gLkVNIBpA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpeLgPpR4NWTSiOZTs4/Q4QBmrPuGRNAghJ/4/95xYNW/58x1V
-	fTvy3R3oD8MQ0HdhxXtCvvIzQJZG+vSXlcimyroE3XWWhbdsL9/j/ykR7M+O1aX/N6U=
-X-Gm-Gg: ASbGncvFAeFDKjDuT95QySynZYDs2pzTkxyPlWlmPtWSbh14GghBGyw3462+YTfdIoB
-	xCHMqufZhWOeyRJVdbbdBIRpagq4m2PmUgQ+GmQmpZCZwph84lbAAjUC2/Z3upZP3NyTwj8AY3K
-	fyh5+ai4WdZ+8I+RTh8Gxa4bfC/keStBq9ozPDa/hORjy88w5bnnqgINBHspMVR2N8v6ylPdGkH
-	qcb4ai7pq0XJCfJddnSC5jC6IxZwiYW8H0jhx5n9UGFTSmznaAev6ogDxj6YEjE5ucDTIkYlSV3
-	Jg9gRWhmoYd+77GJ6Z1OStw4BL0V3LGmimAo78HmU8IJ9aMj9dNAH0CuAue3I3/ExIO/JQsoXuc
-	tYSoh0g==
-X-Google-Smtp-Source: AGHT+IF3umgoC1MXVewYqSd6NXb0BxRbXdgsSHg+n+0cmqeui+0FYUC+7otmqctsYZrl7Ig6A8Aq0g==
-X-Received: by 2002:a05:6000:2409:b0:3a0:782e:9185 with SMTP id ffacd0b85a97d-3a53313fa5emr4137414f8f.2.1749543835438;
-        Tue, 10 Jun 2025 01:23:55 -0700 (PDT)
-Received: from [192.168.1.28] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532450b08sm11378980f8f.80.2025.06.10.01.23.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 01:23:54 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20250603-samsung-clk-fixes-v1-0-49daf1ff4592@linaro.org>
-References: <20250603-samsung-clk-fixes-v1-0-49daf1ff4592@linaro.org>
-Subject: Re: [PATCH 0/3] clk: samsung: gs101 & exynos850 fixes
-Message-Id: <174954383375.117835.6950854237763688291.b4-ty@linaro.org>
-Date: Tue, 10 Jun 2025 10:23:53 +0200
+	s=arc-20240116; t=1749544492; c=relaxed/simple;
+	bh=btIRtQmLoXDnPdAl2vERwqdyVKMgYNNkSMM7j+ikU6Y=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=NWBL6PT7/szcW2Er/UQ4VU550JbSLd7NBwIeWutZ71bzEc7mrFqQDOwKn8hM7qQO7GV3vBJjUhBhy5qffy3n8FebLcZttcsNEskH/mORHV0ViydLOVfg33OUkIzPFU8CTu0Myp0kUnqnVTdV+wd1ZsmC/U7uBYWuvEQeEB40JEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4bGht75wDVz5Bdcy;
+	Tue, 10 Jun 2025 16:34:39 +0800 (CST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bGhsy0jvvz5DXWl;
+	Tue, 10 Jun 2025 16:34:30 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 55A8YG0C000519;
+	Tue, 10 Jun 2025 16:34:16 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 10 Jun 2025 16:34:19 +0800 (CST)
+Date: Tue, 10 Jun 2025 16:34:19 +0800 (CST)
+X-Zmail-TransId: 2afb6847ee0bffffffff9f2-c7679
+X-Mailer: Zmail v1.0
+Message-ID: <202506101634190538mcMSzfKfxQTy4LgbSpOy@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <ulf.hansson@linaro.org>
+Cc: <geert+renesas@glider.be>, <magnus.damm@gmail.com>, <heiko@sntech.de>,
+        <krzk@kernel.org>, <alim.akhtar@samsung.com>,
+        <walker.chen@starfivetech.com>, <changhuang.liang@starfivetech.com>,
+        <sebastian.reichel@collabora.com>, <detlev.casanova@collabora.com>,
+        <finley.xiao@rock-chips.com>, <shawn.lin@rock-chips.com>,
+        <pgwipeout@gmail.com>, <qiu.yutan@zte.com.cn>,
+        <shao.mingyin@zte.com.cn>, <linux-pm@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?cG1kb21haW46IFVzZSBzdHJfZW5hYmxlX2Rpc2FibGUtbGlrZSBoZWxwZXJz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 55A8YG0C000519
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6847EE1E.000/4bGht75wDVz5Bdcy
 
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-On Tue, 03 Jun 2025 16:43:18 +0100, André Draszik wrote:
-> The patches fix some errors in the gs101 clock driver as well as a
-> trivial comment typo in the Exynos E850 clock driver.
-> 
-> Cheers,
-> Andre
-> 
-> 
-> [...]
+Replace ternary (condition ? "enable" : "disable") syntax and ternary
+(condition ? "on" : "off") syntax with helpers from
+string_choices.h because:
+1. Simple function call with one argument is easier to read.  Ternary
+   operator has three arguments and with wrapping might lead to quite
+   long code.
+2. Is slightly shorter thus also easier to read.
+3. It brings uniformity in the text - same string.
+4. Allows deduping by the linker, which results in a smaller binary
+   file.
 
-Applied, thanks!
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+---
+ drivers/pmdomain/renesas/rcar-gen4-sysc.c    | 3 ++-
+ drivers/pmdomain/renesas/rcar-sysc.c         | 3 ++-
+ drivers/pmdomain/rockchip/pm-domains.c       | 3 ++-
+ drivers/pmdomain/samsung/exynos-pm-domains.c | 6 +++---
+ drivers/pmdomain/starfive/jh71xx-pmu.c       | 5 +++--
+ 5 files changed, 12 insertions(+), 8 deletions(-)
 
-[1/3] clk: samsung: gs101: fix CLK_DOUT_CMU_G3D_BUSD
-      https://git.kernel.org/krzk/linux/c/29a9361f0b50be2b16d308695e30ee030fedea2c
-[2/3] clk: samsung: gs101: fix alternate mout_hsi0_usb20_ref parent clock
-      https://git.kernel.org/krzk/linux/c/ca243e653f71d8c4724a68c9033923f945b1084d
-[3/3] clk: samsung: exynos850: fix a comment
-      https://git.kernel.org/krzk/linux/c/320e7efce30e2613c2c7877acc46a8e71192cdcd
+diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+index e001b5c25bed..c8aa7538e95f 100644
+--- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
++#include <linux/string_choices.h>
 
-Best regards,
+ #include "rcar-gen4-sysc.h"
+
+@@ -171,7 +172,7 @@ static int rcar_gen4_sysc_power(u8 pdr, bool on)
+  out:
+        spin_unlock_irqrestore(&rcar_gen4_sysc_lock, flags);
+
+-       pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
++       pr_debug("sysc power %s domain %d: %08x -> %d\n", str_on_off(on),
+                 pdr, ioread32(rcar_gen4_sysc_base + SYSCISCR(reg_idx)), ret);
+        return ret;
+ }
+diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
+index 047495f54e8a..dae01ca0ef6a 100644
+--- a/drivers/pmdomain/renesas/rcar-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-sysc.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
++#include <linux/string_choices.h>
+
+ #include "rcar-sysc.h"
+
+@@ -162,7 +163,7 @@ static int rcar_sysc_power(const struct rcar_sysc_pd *pd, bool on)
+
+        spin_unlock_irqrestore(&rcar_sysc_lock, flags);
+
+-       pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
++       pr_debug("sysc power %s domain %d: %08x -> %d\n", str_on_off(on),
+                 pd->isr_bit, ioread32(rcar_sysc_base + SYSCISR), ret);
+        return ret;
+ }
+diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+index 4cce407bb1eb..0681c763f843 100644
+--- a/drivers/pmdomain/rockchip/pm-domains.c
++++ b/drivers/pmdomain/rockchip/pm-domains.c
+@@ -21,6 +21,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/string_choices.h>
+ #include <soc/rockchip/pm_domains.h>
+ #include <soc/rockchip/rockchip_sip.h>
+ #include <dt-bindings/power/px30-power.h>
+@@ -595,7 +596,7 @@ static int rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *pd,
+                                        is_on == on, 0, 10000);
+        if (ret) {
+                dev_err(pmu->dev, "failed to set domain '%s' %s, val=%d\n",
+-                       genpd->name, on ? "on" : "off", is_on);
++                       genpd->name, str_on_off(on), is_on);
+                return ret;
+        }
+
+diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
+index 9b502e8751d1..1a892c611dad 100644
+--- a/drivers/pmdomain/samsung/exynos-pm-domains.c
++++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/string_choices.h>
+ #include <linux/pm_domain.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+@@ -38,7 +39,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+        struct exynos_pm_domain *pd;
+        void __iomem *base;
+        u32 timeout, pwr;
+-       char *op;
+
+        pd = container_of(domain, struct exynos_pm_domain, pd);
+        base = pd->base;
+@@ -51,8 +51,8 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+
+        while ((readl_relaxed(base + 0x4) & pd->local_pwr_cfg) != pwr) {
+                if (!timeout) {
+-                       op = (power_on) ? "enable" : "disable";
+-                       pr_err("Power domain %s %s failed\n", domain->name, op);
++                       pr_err("Power domain %s %s failed\n", domain->name,
++                              str_enable_disable(power_on));
+                        return -ETIMEDOUT;
+                }
+                timeout--;
+diff --git a/drivers/pmdomain/starfive/jh71xx-pmu.c b/drivers/pmdomain/starfive/jh71xx-pmu.c
+index 74720c09a6e3..0e8fca4e2de9 100644
+--- a/drivers/pmdomain/starfive/jh71xx-pmu.c
++++ b/drivers/pmdomain/starfive/jh71xx-pmu.c
+@@ -12,6 +12,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
++#include <linux/string_choices.h>
+ #include <dt-bindings/power/starfive,jh7110-pmu.h>
+
+ /* register offset */
+@@ -155,7 +156,7 @@ static int jh7110_pmu_set_state(struct jh71xx_pmu_dev *pmd, u32 mask, bool on)
+
+        if (ret) {
+                dev_err(pmu->dev, "%s: failed to power %s\n",
+-                       pmd->genpd.name, on ? "on" : "off");
++                       pmd->genpd.name, str_on_off(on));
+                return -ETIMEDOUT;
+        }
+
+@@ -198,7 +199,7 @@ static int jh71xx_pmu_set_state(struct jh71xx_pmu_dev *pmd, u32 mask, bool on)
+
+        if (is_on == on) {
+                dev_dbg(pmu->dev, "pm domain [%s] is already %sable status.\n",
+-                       pmd->genpd.name, on ? "en" : "dis");
++                       pmd->genpd.name, str_enable_disable(on));
+                return 0;
+        }
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+2.25.1
