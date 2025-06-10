@@ -1,210 +1,123 @@
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDC82253F8;
-	Tue, 10 Jun 2025 11:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1CF292936;
+	Tue, 10 Jun 2025 12:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749555263; cv=none; b=kvxagPCk0yvL3AdrA4O+ZWsHYlG7/bMG9lNo3XtdOsZCwEklktnv0B9zuBlrSoNhTWCai5k+DFoFjlZxtB47uSwhq0qAbT/p4LkkdoRxBIMIfTWlJXOIsEW2KdyHZq8wDVsGFF40omt8w+beKRSVL7jQ1OGhhyhtqkDwHeOe4tI=
+	t=1749558754; cv=none; b=dUNRqdCBdv8IebfyXRsjTvTAHn78Lq3ePba4OTqHqcFzV3m750g0skho5XCSLOcjBqAaqAuXMm6PaxrR0Cg9ILg7gF0U/MeICm7YAwu/UFrdPR9fNI2Lt7iep+g9PnNnqwFsBfV0WzhCIBYfsVlaPdBkYG+omyHqAjWNPjSdQ74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749555263; c=relaxed/simple;
-	bh=cVtT3YT9Xv4eaPkI9AJRnDqFJZ/NsUmg+VTunANrekY=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=SYfS8hOe4TRcfsmDMGAx/MiES92Mb+xcC7sY71hEVEUr5Rn1hRrhO9zKbCRJbt+RbztvkaykfiLXXG3BmHWUET7KWEsZpM60DHcULsAjT4ULedd0C3a8bYQtdiYJBBpO5TXpptUUb3Gbh/ysyMRm+Qun47oydBW4x88GfyszzkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bGmsB2P7nz4y3Rt;
-	Tue, 10 Jun 2025 19:34:06 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 55ABXxDX055070;
-	Tue, 10 Jun 2025 19:33:59 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 10 Jun 2025 19:34:03 +0800 (CST)
-Date: Tue, 10 Jun 2025 19:34:03 +0800 (CST)
-X-Zmail-TransId: 2afb6848182b233-bddc4
-X-Mailer: Zmail v1.0
-Message-ID: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+	s=arc-20240116; t=1749558754; c=relaxed/simple;
+	bh=fPHJqiUka78v/jjWTLX+dfN2eEsXYIz99TXFmh1jN3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+fbIDHgneOTodsUZ2Caqj7tb6fgpAtdAEMT2bYlKze3S1v9vSfFn7pnY0M5VE5GwwY4AQgF+E2wF9qlbr38BobYSSUjJVvK+fdJPgpq+jRB2bvtZwl2D5lK6SxJzWdWDtr5bHqyv5UJgtwAr+eGVA1+4PsvyHvEuCJSIicGiDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhN6ohOm; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhN6ohOm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B08C4CEF2;
+	Tue, 10 Jun 2025 12:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749558754;
+	bh=fPHJqiUka78v/jjWTLX+dfN2eEsXYIz99TXFmh1jN3o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YhN6ohOm4EdhfLpZCAffAhF21+YKaoev8gtAk710Q0tBb6bKoCNopI8ImhZXEEzY4
+	 2RnNsufO0aOysINIy3zoB+MAyRw0qRbvTLfL3D0oR8ohQqUVQ9EoSf4qcbgeH8nCQT
+	 ry1QjRKZQSPGWPu1Q0rNEPE2BK4WV0ady0s43yfRFBiEWwXq2+Ww6GcGClqJVbeQUn
+	 wS+Ud5kZxxqXp/1A4XDwg1lPjtNnIBudRzSd3/fuK5Fv/yvnwUz2Is83V6r1tdG43H
+	 Pz1iavSNcKygB6NQ1PASrFaLygFXMfZpDQQkS1vMhdf+gcWmEuKl4mkdOB5/yD6GkG
+	 BdgfXJE/yegpA==
+Message-ID: <6b9d5edf-7186-4d7b-814c-5c3f306c68db@kernel.org>
+Date: Tue, 10 Jun 2025 14:32:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <ulf.hansson@linaro.org>, <changhuang.liang@starfivetech.com>
-Cc: <geert+renesas@glider.be>, <magnus.damm@gmail.com>, <heiko@sntech.de>,
-        <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-        <walker.chen@starfivetech.com>, <sebastian.reichel@collabora.com>,
-        <detlev.casanova@collabora.com>, <finley.xiao@rock-chips.com>,
-        <shawn.lin@rock-chips.com>, <pgwipeout@gmail.com>,
-        <qiu.yutan@zte.com.cn>, <shao.mingyin@zte.com.cn>,
-        <linux-pm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBwbWRvbWFpbjogVXNlIHN0cl9lbmFibGVfZGlzYWJsZS1saWtlIGhlbHBlcnM=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 55ABXxDX055070
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6848182E.001/4bGmsB2P7nz4y3Rt
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] pmdomain: Use str_enable_disable-like helpers
+To: shao.mingyin@zte.com.cn, ulf.hansson@linaro.org,
+ changhuang.liang@starfivetech.com
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, heiko@sntech.de,
+ alim.akhtar@samsung.com, walker.chen@starfivetech.com,
+ sebastian.reichel@collabora.com, detlev.casanova@collabora.com,
+ finley.xiao@rock-chips.com, shawn.lin@rock-chips.com, pgwipeout@gmail.com,
+ qiu.yutan@zte.com.cn, linux-pm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, yang.yang29@zte.com.cn,
+ xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, ye.xingchen@zte.com.cn
+References: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+On 10/06/2025 13:34, shao.mingyin@zte.com.cn wrote:
+> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+> 
+> Replace ternary (condition ? "enable" : "disable") syntax and ternary
+> (condition ? "on" : "off") syntax with helpers from
+> string_choices.h because:
+> 1. Simple function call with one argument is easier to read.  Ternary
+>    operator has three arguments and with wrapping might lead to quite
+>    long code.
+> 2. Is slightly shorter thus also easier to read.
+> 3. It brings uniformity in the text - same string.
+> 4. Allows deduping by the linker, which results in a smaller binary
+>    file.
 
-Replace ternary (condition ? "enable" : "disable") syntax and ternary
-(condition ? "on" : "off") syntax with helpers from
-string_choices.h because:
-1. Simple function call with one argument is easier to read.  Ternary
-   operator has three arguments and with wrapping might lead to quite
-   long code.
-2. Is slightly shorter thus also easier to read.
-3. It brings uniformity in the text - same string.
-4. Allows deduping by the linker, which results in a smaller binary
-   file.
+So you just taken everything from the same my patch - even entire commit
+subject and commit description - and sent it as yours?
 
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
-v2:
- %sable ==> %s in jh71xx_pmu_dev()
- drivers/pmdomain/renesas/rcar-gen4-sysc.c    | 3 ++-
- drivers/pmdomain/renesas/rcar-sysc.c         | 3 ++-
- drivers/pmdomain/rockchip/pm-domains.c       | 3 ++-
- drivers/pmdomain/samsung/exynos-pm-domains.c | 6 +++---
- drivers/pmdomain/starfive/jh71xx-pmu.c       | 7 ++++---
- 5 files changed, 13 insertions(+), 9 deletions(-)
+https://lore.kernel.org/all/20250114203547.1013010-1-krzysztof.kozlowski@linaro.org/
 
-diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-index e001b5c25bed..c8aa7538e95f 100644
---- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-+++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-+#include <linux/string_choices.h>
+oh my, if doing EXACTLY the same keep original authorship - the From and
+Sob fields.
 
- #include "rcar-gen4-sysc.h"
-
-@@ -171,7 +172,7 @@ static int rcar_gen4_sysc_power(u8 pdr, bool on)
-  out:
-        spin_unlock_irqrestore(&rcar_gen4_sysc_lock, flags);
-
--       pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
-+       pr_debug("sysc power %s domain %d: %08x -> %d\n", str_on_off(on),
-                 pdr, ioread32(rcar_gen4_sysc_base + SYSCISCR(reg_idx)), ret);
-        return ret;
- }
-diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
-index 047495f54e8a..dae01ca0ef6a 100644
---- a/drivers/pmdomain/renesas/rcar-sysc.c
-+++ b/drivers/pmdomain/renesas/rcar-sysc.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/soc/renesas/rcar-sysc.h>
-+#include <linux/string_choices.h>
-
- #include "rcar-sysc.h"
-
-@@ -162,7 +163,7 @@ static int rcar_sysc_power(const struct rcar_sysc_pd *pd, bool on)
-
-        spin_unlock_irqrestore(&rcar_sysc_lock, flags);
-
--       pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
-+       pr_debug("sysc power %s domain %d: %08x -> %d\n", str_on_off(on),
-                 pd->isr_bit, ioread32(rcar_sysc_base + SYSCISR), ret);
-        return ret;
- }
-diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-index 4cce407bb1eb..0681c763f843 100644
---- a/drivers/pmdomain/rockchip/pm-domains.c
-+++ b/drivers/pmdomain/rockchip/pm-domains.c
-@@ -21,6 +21,7 @@
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/string_choices.h>
- #include <soc/rockchip/pm_domains.h>
- #include <soc/rockchip/rockchip_sip.h>
- #include <dt-bindings/power/px30-power.h>
-@@ -595,7 +596,7 @@ static int rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *pd,
-                                        is_on == on, 0, 10000);
-        if (ret) {
-                dev_err(pmu->dev, "failed to set domain '%s' %s, val=%d\n",
--                       genpd->name, on ? "on" : "off", is_on);
-+                       genpd->name, str_on_off(on), is_on);
-                return ret;
-        }
-
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index 9b502e8751d1..1a892c611dad 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -13,6 +13,7 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
- #include <linux/pm_domain.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-@@ -38,7 +39,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-        struct exynos_pm_domain *pd;
-        void __iomem *base;
-        u32 timeout, pwr;
--       char *op;
-
-        pd = container_of(domain, struct exynos_pm_domain, pd);
-        base = pd->base;
-@@ -51,8 +51,8 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-
-        while ((readl_relaxed(base + 0x4) & pd->local_pwr_cfg) != pwr) {
-                if (!timeout) {
--                       op = (power_on) ? "enable" : "disable";
--                       pr_err("Power domain %s %s failed\n", domain->name, op);
-+                       pr_err("Power domain %s %s failed\n", domain->name,
-+                              str_enable_disable(power_on));
-                        return -ETIMEDOUT;
-                }
-                timeout--;
-diff --git a/drivers/pmdomain/starfive/jh71xx-pmu.c b/drivers/pmdomain/starfive/jh71xx-pmu.c
-index 74720c09a6e3..dc3e109e273a 100644
---- a/drivers/pmdomain/starfive/jh71xx-pmu.c
-+++ b/drivers/pmdomain/starfive/jh71xx-pmu.c
-@@ -12,6 +12,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-+#include <linux/string_choices.h>
- #include <dt-bindings/power/starfive,jh7110-pmu.h>
-
- /* register offset */
-@@ -155,7 +156,7 @@ static int jh7110_pmu_set_state(struct jh71xx_pmu_dev *pmd, u32 mask, bool on)
-
-        if (ret) {
-                dev_err(pmu->dev, "%s: failed to power %s\n",
--                       pmd->genpd.name, on ? "on" : "off");
-+                       pmd->genpd.name, str_on_off(on));
-                return -ETIMEDOUT;
-        }
-
-@@ -197,8 +198,8 @@ static int jh71xx_pmu_set_state(struct jh71xx_pmu_dev *pmd, u32 mask, bool on)
-        }
-
-        if (is_on == on) {
--               dev_dbg(pmu->dev, "pm domain [%s] is already %sable status.\n",
--                       pmd->genpd.name, on ? "en" : "dis");
-+               dev_dbg(pmu->dev, "pm domain [%s] is already %s status.\n",
-+                       pmd->genpd.name, str_enable_disable(on));
-                return 0;
-        }
-
--- 
-2.25.1
+Best regards,
+Krzysztof
