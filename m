@@ -1,137 +1,192 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0685122836C;
-	Wed, 11 Jun 2025 06:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509BD2BD11;
+	Wed, 11 Jun 2025 08:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749623844; cv=none; b=BIxf/pNVtUH9getPrNTGG2unT3O4JPPEEF9454W2qadh5xannEjoSFMmiJkSYRYs+2MWa09m34F9GXzVvqsnSjO1VYUYfUl7QfgtRMPuQHXO/F5KpKnGHy9Rh8ZMsGur8gR/Mw4p69O+6iqKvHAO1qSRUxTql3fW7ssqWrUybY4=
+	t=1749632147; cv=none; b=kDCw1TAHsK8gOqPq+q7r6X1Bliq9RUeLBCI1EGLnIQYF1Fmff8dD3CbsTmROMlDlFVTAKcmPgsVR+moGhBoIW53fXrvQCci4wPDrDlaUipWf9vFN/KcxHWRMIHO5mwj7I+mdtPvISzw3LNYd3CK8jKkWSN2YpUy3QVOyYutwVjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749623844; c=relaxed/simple;
-	bh=U7VDunRvN8u8DkVZV6Ke1Eo1fqlAPBr5nu0BkTBzL6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F2N3IBCbBR4RRsP1kQ+PhQWJzV1SDiIUArDRXNhVBk+BHC3VVJIZJFPw4ynLH4ZKlDh2Mfd9XK/ZyQ5LSGMbl0ev6DCcIcLl8GwQMbxwEGs6hP9fsyh17ZxThNpzLxzECfUL6yzmvbNQBnDWNDZZxBaiI++nOyF7RdN+0Z7okJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMnm/M/o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749632147; c=relaxed/simple;
+	bh=6d/kwVtsJUb6UGpgzU7hhzpSd4al/5RJeq1TyB54wSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROO/OkfohahKc3tRn0hLndIobUhqYWoYstuJfKIiC25hLGVVsuas0u/4u74WcLWPzvBo94B0xsyu1qBMb4+nRwBEnvpRXXPpg3m1LAtqI0zNm+Wm3jxUEHIgpe5/WMPsOOba4ih6S//aRK2k/jOI4sw7PFzhk2jQXrniVPgdAjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTAE3pxw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMnm/M/o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48236C4CEEE;
-	Wed, 11 Jun 2025 06:37:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTAE3pxw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DD7C4CEEE;
+	Wed, 11 Jun 2025 08:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749623843;
-	bh=U7VDunRvN8u8DkVZV6Ke1Eo1fqlAPBr5nu0BkTBzL6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tMnm/M/ofWvG+gj1RXzMIXoKZooRqMD1QiOM9V05tTiLItocHaLEd91kfr5CuT75p
-	 UGIX5Ay64buKfThuLveRzlTFEemtYM3LDDRawZlwyYHl7wEBjpeaY6d9kcQRwvxQ5a
-	 jRSnxyVITOIzfmMI5Zl+8+GS0KxrCflCzAPzWUI915UuFvw8n+cKmIk29ncQrc/DP3
-	 ceyc6zqgYSsdXAAg50h6XJTfYXM4g8sw1+uJQCMTy+XMAwSMt0prenNtyiAfHmeJd1
-	 U0hvsTK/Znl81YAizAxFKa+UN5V4EZskJIuAVzSmiftyrWlTnANE/Zi1jPvvWOxepF
-	 N0eQiRRX+5KVQ==
-Message-ID: <ad367080-5863-4131-b395-b39e2d357fb9@kernel.org>
-Date: Wed, 11 Jun 2025 08:37:16 +0200
+	s=k20201202; t=1749632146;
+	bh=6d/kwVtsJUb6UGpgzU7hhzpSd4al/5RJeq1TyB54wSE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTAE3pxwvtwy4i4IfJxVZjwbEaCrCicfY+3E4hcOMddWrD/mECITAyNfVudOaIo30
+	 mP86ea8Hnv4ej7dXA08zjzos8wcnfJnGokEHDkXBzZh3foMZDPbMXlY774t7uP462u
+	 rDSwEv/YyF4xTeAMyiEuzywjLWxjzDxZ3z0KqWh9AhgMS4S6gdmVFsm2aCBGtqtZxZ
+	 yYMmYX89RKUOfhtFOeE+Fncm6xn4Kp3qVH57cDlaPrCfzEI5AgHytdzunab0YYNAqt
+	 +tdwjy9Jwz1q9qEMcZWJmF36fmpPnR+LHmHAQ4ImitSvIJ7R7DEZv3ABx6LURGcNkK
+	 Su7rRLQrw5Cfw==
+Date: Wed, 11 Jun 2025 10:55:44 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Peter Griffin <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 02/17] regulator: dt-bindings: add s2mpg10-pmic
+ regulators
+Message-ID: <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
+References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
+ <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pmdomain: Use str_enable_disable-like helpers
-To: shao.mingyin@zte.com.cn
-Cc: ulf.hansson@linaro.org, changhuang.liang@starfivetech.com,
- geert+renesas@glider.be, magnus.damm@gmail.com, heiko@sntech.de,
- alim.akhtar@samsung.com, walker.chen@starfivetech.com,
- sebastian.reichel@collabora.com, detlev.casanova@collabora.com,
- finley.xiao@rock-chips.com, shawn.lin@rock-chips.com, pgwipeout@gmail.com,
- qiu.yutan@zte.com.cn, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, yang.yang29@zte.com.cn,
- xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, ye.xingchen@zte.com.cn
-References: <202506111010521118VJaiO_pb0rD7b3daxqox@zte.com.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <202506111010521118VJaiO_pb0rD7b3daxqox@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
 
-On 11/06/2025 04:10, shao.mingyin@zte.com.cn wrote:
->>> From: Shao Mingyin <shao.mingyin@zte.com.cn>
->>>
->>> Replace ternary (condition ? "enable" : "disable") syntax and ternary
->>> (condition ? "on" : "off") syntax with helpers from
->>> string_choices.h because:
->>> 1. Simple function call with one argument is easier to read.  Ternary
->>>    operator has three arguments and with wrapping might lead to quite
->>>    long code.
->>> 2. Is slightly shorter thus also easier to read.
->>> 3. It brings uniformity in the text - same string.
->>> 4. Allows deduping by the linker, which results in a smaller binary
->>>    file.
->>
->> So you just taken everything from the same my patch - even entire commit
->> subject and commit description - and sent it as yours?
->>
->> https://lore.kernel.org/all/20250114203547.1013010-1-krzysztof.kozlowski@linaro.org/
->>
->> oh my, if doing EXACTLY the same keep original authorship - the From and
->> Sob fields.
->>
->> Best regards,
->> Krzysztof
-> Dear Krzysztof,
-> Thank you for your suggestions. I have carefully read your advice and
-> made adjustments to the patches accordingly. I used your patch as a
-> reference standard, not just taking everything from the same your patch.
-> 
-> Based on your suggestion, I have consolidated the series of patches for
+On Fri, Jun 06, 2025 at 04:02:58PM GMT, Andr=C3=A9 Draszik wrote:
+> The S2MPG10 PMIC is a Power Management IC for mobile applications with
+> buck converters, various LDOs, power meters, RTC, clock outputs, and
+> additional GPIO interfaces.
+>=20
+> It has 10 buck and 31 LDO rails. Several of these can either be
+> controlled via software or via external signals, e.g. input pins
+> connected to a main processor's GPIO pins.
+>=20
+> Add documentation related to the regulator (buck & ldo) parts like
+> devicetree definitions, regulator naming patterns, and additional
+> properties.
+>=20
+> S2MPG10 is typically used as the main-PMIC together with an S2MPG11
+> PMIC in a main/sub configuration, hence the datasheet and the binding
+> both suffix the rails with an 'm'.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>=20
+> ---
+> v2:
+> - drop | (literal style mark) from samsung,ext-control-gpios
+>   description
+> ---
+>  .../regulator/samsung,s2mpg10-regulator.yaml       | 147 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |   1 +
+>  .../regulator/samsung,s2mpg10-regulator.h          |  48 +++++++
+>  3 files changed, 196 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-=
+regulator.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
+0-regulator.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..82f2b06205e9bdb15cf90b1e8=
+96fe52c335c52c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-regulat=
+or.yaml
+> @@ -0,0 +1,147 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg10-regulator.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung S2MPG10 Power Management IC regulators
+> +
+> +maintainers:
+> +  - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> +
+> +description: |
+> +  This is part of the device tree bindings for the S2MG10 Power Manageme=
+nt IC
+> +  (PMIC).
+> +
+> +  The S2MPG10 PMIC provides 10 buck and 31 LDO regulators.
+> +
+> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
+> +  additional information and example.
+> +
+> +definitions:
+> +  s2mpg10-ext-control:
+> +    properties:
+> +      samsung,ext-control:
+> +        description: |
+> +          These rails can be controlled via one of several possible exte=
+rnal
+> +          (hardware) signals. If so, this property configures the signal=
+ the PMIC
+> +          should monitor. For S2MPG10 rails where external control is po=
+ssible other
+> +          than ldo20m, the following values generally corresponding to t=
+he
+> +          respective on-chip pin are valid:
+> +            - 0 # S2MPG10_PCTRLSEL_ON - always on
+> +            - 1 # S2MPG10_PCTRLSEL_PWREN - PWREN pin
+> +            - 2 # S2MPG10_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKIN=
+G_CTRL
+> +            - 3 # S2MPG10_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
+> +            - 4 # S2MPG10_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in =
+MIMICKING_CTRL
+> +            - 5 # S2MPG10_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
+> +            - 6 # S2MPG10_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bi=
+t in MIMICKING_CTRL
+> +            - 7 # S2MPG10_PCTRLSEL_CPUCL1_EN - CPUCL1_EN pin
+> +            - 8 # S2MPG10_PCTRLSEL_CPUCL1_EN2 - CPUCL1_EN & PWREN pins
+> +            - 9 # S2MPG10_PCTRLSEL_CPUCL2_EN - CPUCL2_EN pin
+> +            - 10 # S2MPG10_PCTRLSEL_CPUCL2_EN2 - CPUCL2_E2 & PWREN pins
+> +            - 11 # S2MPG10_PCTRLSEL_TPU_EN - TPU_EN pin
+> +            - 12 # S2MPG10_PCTRLSEL_TPU_EN2 - TPU_EN & ~AP_ACTIVE_N pins
+> +            - 13 # S2MPG10_PCTRLSEL_TCXO_ON - TCXO_ON pin
+> +            - 14 # S2MPG10_PCTRLSEL_TCXO_ON2 - TCXO_ON & ~AP_ACTIVE_N pi=
+ns
+> +
+> +          For S2MPG10 ldo20m, the following values are valid
+> +            - 0 # S2MPG10_PCTRLSEL_LDO20M_ON - always on
 
-I did not suggest to take everything from my patch, add one missing
-change and use as yours.
+No, use standard regulator properties - regulator-always-on
 
 
+> +            - 1 # S2MPG10_PCTRLSEL_LDO20M_EN_SFR - VLDO20M_EN & LDO20M_S=
+FR
+> +            - 2 # S2MPG10_PCTRLSEL_LDO20M_EN - VLDO20M_EN pin
+> +            - 3 # S2MPG10_PCTRLSEL_LDO20M_SFR - LDO20M_SFR in LDO_CTRL1 =
+register
+> +            - 4 # S2MPG10_PCTRLSEL_LDO20M_OFF - disable
+
+I don't think we allowed such property in the past. I don't get what is
+here the actual signal - you described registers in multiple places, not
+signals. Few of these duplicate standard properties, so this looks like
+exact copy of downstream which was doing exactly that way and that was
+exactly never upstreamed.
+
+
+> +
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 14
+> +
+> +      samsung,ext-control-gpios:
+
+enable-gpios
+
+
+> +        description:
+> +          For rails where external control is done via a GPIO, this opti=
+onal
+> +          property describes the GPIO line used.
+> +
+> +        maxItems: 1
+
+And this can be dropped.
 
 Best regards,
 Krzysztof
+
