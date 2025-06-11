@@ -1,65 +1,66 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225371624E5
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2025 09:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC13253953
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2025 09:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749632903; cv=none; b=YA7Q8OXyW3l2H3/lkc0qsuu8zgwCjr88cE4UasMQ4IjfWn9FgdBFj8OGHBjmkr9LGXnD6fz/hBNmOxw6rITtUgY06MfsJ5uEiZInD44GVqxn96oK9FNnHOQZHv9hCVGewJFJJGffCbYHQV3VTjQSO9FotpY2H4hSI4hRqudVQPQ=
+	t=1749633051; cv=none; b=ainiVfaW8HvSzq258wWQ7cAiqFtaFMAy/YFnuNBLZieCi5s8dndOu7e64rgXcwg84tDI1tUkS2ClZrtlnxSNC6jdmvSBYCgJcAZ3VcLY5exd7SqRVI431+Mt6TwbFTN9N7Q1iksRg40q8tZs2vQU7D3VvFod8UbtvpSOKeN15qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749632903; c=relaxed/simple;
-	bh=XI9MRgqXRnhIDDskprAJ7Lp7MjrJKOdvMtsvO4mRxYc=;
+	s=arc-20240116; t=1749633051; c=relaxed/simple;
+	bh=UiP7bYtAn5bOurUsut0Hn+VxUCAjht0ysMqY1OYWW78=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bqxWe+5J1hNDxJ0/trBphJaMPBKVsVQqkHBq7yw+0kY7UT29tNQhpg0JqZOCjcmiSMvDV+jvQ9akiogHpJnOZxkXQR0RactALmast8RMmKOldO72qAodReEFi1B8KU5jkWbcIUpylTpyV6/O6oqDo0BXyO0z2FsOFeQkU0z2v3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=volHhDyH; arc=none smtp.client-ip=209.85.128.41
+	 Content-Type:MIME-Version; b=UjyzU5c2OYoYlI2EeN8L+VXHJi+8aZyNNZDx3k00VsRm6NYrXxdsXJTjCBGkN40yBXXFmRoHPVfksybrpIqcdi6wWimwM4QaaNuqs3SOZd8AWoZCjh2Ns5CEO4+bQaOpEdW4fD3IMxUVYA2LSTiMeqRZnARz020ITDu0V5pxXsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j4Rx46iu; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="volHhDyH"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442ea341570so42250355e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2025 02:08:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j4Rx46iu"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so37804605e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2025 02:10:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749632899; x=1750237699; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749633048; x=1750237848; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=XI9MRgqXRnhIDDskprAJ7Lp7MjrJKOdvMtsvO4mRxYc=;
-        b=volHhDyH09v3nDkjEPsHoS4m7mTkTHd8/bUsINK0T0c5j5qXLpe4xTZanBXhOBaINA
-         JWg/megBqwymRpHiUmDyrdxbiEJFk3DlhZY711SPmcZPq1LXTim+IHquIzB7OZy/NI2Q
-         K88Bn0OUTKPi0oMl2Vuj2/iN3ZCQX3NQJjJfDpleWKRKS3Yk7DpzjQX1xQ/FtNlgqhSk
-         qQCo24+CfG/rdWdLG+b/3hqmmYlFx1DN86onnyXmH/JjTDsaSXMkVrdhPpefUG8hP8Xb
-         eRl+SYrv2zJOqFX4ns8VGxip2+iu81jLlQIo13qFt4uT/R+ECASuObjup48vD0FJ6nrW
-         IhWw==
+        bh=UiP7bYtAn5bOurUsut0Hn+VxUCAjht0ysMqY1OYWW78=;
+        b=j4Rx46iue8Mw9LvH7E+xyLUvuMAl6/xGdOy+p3OJHLO5JDHCmRJPf6xWXjl83ilxRV
+         44UXtqRSB7AmXiXKV15pTQ1oDtXy+hqSrdFJe1oo9UwvtsBpoyGmDhUcKmn6GYOkjMa0
+         IJxup2yhTFOW5yfucUj+iw3981rPviP/Hu4vp6R8zX4niVut+gZm5MqL7PtDfvhDn642
+         lxtp6S3Hv9XRFttJXj6eGsbVjqnfEEDsWjPbgRvIXQclHg0m6ZI5ScIIaUcMXCLYiBbh
+         rs/8TRYIrLrm9TNQ5+hRf+FOARMg3B12J2k7lydf+SqqJTRA8VkUA/Bsr+v/9L23pXxI
+         a3Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749632899; x=1750237699;
+        d=1e100.net; s=20230601; t=1749633048; x=1750237848;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XI9MRgqXRnhIDDskprAJ7Lp7MjrJKOdvMtsvO4mRxYc=;
-        b=xVEbeiy17UVa7ClvT2FstjaN64p3MkpHlL+7NFbYoQzAfwLccHOsBmPV7ecI1SCjRp
-         OtU5/aXMP0waeq2gR7TMossMJeSx3Bc1GrO49dlLHLORsV+ayOnt/k+YnZTFwkRwNHyU
-         8i5c2uOBVA0ixYH43OKbtEuNkZpmw3vV5Gw3i3CoieJmw+xYjJHD7KHGoiYSQCRvdRAZ
-         1Kck+wch5jVbTo5mdl4v0J1Ad9fHG2pMuKB0mQVeTae7vWW+2ENdvTZlFQON+2olezqv
-         IwOCfdbXqyBhqnZ9PFZ7bEwd2Aft0ceFLu0R0JXFLHqMemvwGUFPizRCIqPN9QYtbXKu
-         SJVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEC8WR6MuHWtGS+HDEfTT33haf9nkOKCyZqX+aCj5iP/aXSF5vyys3sb4ZPD06REtCkVvmv86hPRIvenw20MAd2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGjtTN0tK5YWzlgzBZY9u6h3wFGDtObt2rYfZdSiLeel1fEuTJ
-	ihWwEUD2J3g+Yi34IVVkvH+vzeMP8g1BUCZ7lfs06+sqKC4O91ip24GaPt+UXe/oYrc=
-X-Gm-Gg: ASbGnctYjU282rBz8PlTUc2+HtDL8pEfLFY8RJTsFA4GQz9pDrb4+XXJPmhO+0t634c
-	DYOqISxwGi9FrJj9NOwb45Ka2zi6QouSvgSfnYqH+fjOAbD3t8AlXLTb/4kQZf/A0vm2zzJwq/P
-	y6RUVZZ3nesCELHS1TULMu0IlJZdaXISdllA/EerFykeUYr+qiXgfoa0RRm3BK6YxxLAOaYbOfY
-	v21xBWht1Ic8gh9S63WhRfqaqkLpkEarteKU+La7vlmELngM4KNzz11GpaSDvEy+cSv1qDnmO/w
-	FN04Cy8QucrktkvDcF0E8vbKLoYr/5qIr3ffjuzlbImuZLzDCCHqNJWWDgge6n5Qxw==
-X-Google-Smtp-Source: AGHT+IEMk6D24rAbr4EjAYiW9bu//xAst28BwxOZGS7RIT+PIp1VlXvEeVos4jHxD+q9aHTVPlGzRA==
-X-Received: by 2002:a05:600c:4e4f:b0:450:d01e:78ee with SMTP id 5b1f17b1804b1-45324f421c8mr17677035e9.24.1749632899307;
-        Wed, 11 Jun 2025 02:08:19 -0700 (PDT)
+        bh=UiP7bYtAn5bOurUsut0Hn+VxUCAjht0ysMqY1OYWW78=;
+        b=WlxF4sYxNKqHqzsFCbkz9L+y8+oZ7a3VWoGe/sdyN+WACMQoY00/HTrrliOcz8bcr1
+         PfSZ/MM9Y8aT8inek1lnCtBUihiOexeoBQjeV2239vasi3C0CeO9rhcHIyJOWsClfcSq
+         gOYK5FF7TQYwdNlFZXUR0fE1XJfnq+V/DAeCg6HUBjsrOOcKtmQxXaf0JOTOOu+rtMkx
+         rATLdnquqsBYG6zADSINWBcXLubycYx/+2rAuvoQ/QrYjiQ0hOn+O6Vnc3kqNdWeZbe0
+         4XaVk2XLpvS8Zs7wy88Di5Jtf6vPqbw7uGGdh5AVMhP0S9UEzKaXittj8RVGzIBRT4Rp
+         hkwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXAVYcYHCYPBCcGk0TdUGkDgAuxh8/N6rpunr/1GhthfZPZ+/f4AELaSuJ/c2lEocGw7W6Lp+VhuAt68/oaQpi5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzflX14qbaHdmeGuyNQMKhQH76waIhQQe4D5bpv3qqeB0Jw4zsX
+	Yq1WKAOr749ClF9eWrA/6/4T0wa0l+qbjLStW6xV0MrJ75OeTtY6c6E8MduaOv6VU4g=
+X-Gm-Gg: ASbGnctTXAyQX/RmIKEPWysD6JUF7hsOOU9ep+yHLtc0MaUh2hGeK3RrkOk28QAgRt/
+	DqDnHLAS9F45VLbUrNXhjj2+kSRM2JbIyuN83KSltwK7SKyPeCTm4nvGobRiSPDMgUkELmRDcDn
+	/DfTypOj+xUlmMO2jVdHrD3W9phl3Z6154RPS7wAS7OPZ+RamSt7kIjMt1HUmTr3+LE7qBNCm4g
+	XSFMk0jSC2+mL+9tuE7NgjjFlvWEInGJSyJuW1y7xwvXtWF8uVFakVsRnDuFhRhofarv+AyLLtQ
+	J+GcQaBdbLY9xknBgjS727+9ZmEkJMLcyRR9ETPNhPn7WtJKJ9nr5YjZVPjw4P7I76GPfAkmjgL
+	C
+X-Google-Smtp-Source: AGHT+IEff4k+mWiP2yvcP0rIRRQnaEfv6WpI06KYTc4P4gapt1kumJr8379OhHI99yqMB4EQ/QLR2w==
+X-Received: by 2002:a05:6000:1a8c:b0:3a5:1c0f:146d with SMTP id ffacd0b85a97d-3a5586cb2f1mr1987274f8f.33.1749633047651;
+        Wed, 11 Jun 2025 02:10:47 -0700 (PDT)
 Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244e0e3sm14903832f8f.68.2025.06.11.02.08.15
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53245275esm14652654f8f.76.2025.06.11.02.10.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 02:08:16 -0700 (PDT)
-Message-ID: <013f55a0adf0b23e0836e33ee4ea0e1e7864a467.camel@linaro.org>
-Subject: Re: [PATCH v2 01/17] dt-bindings: firmware: google,gs101-acpm-ipc:
- convert regulators to lowercase
+        Wed, 11 Jun 2025 02:10:47 -0700 (PDT)
+Message-ID: <35c2381d6abc565f60208e39d0e0ce1bf019809c.camel@linaro.org>
+Subject: Re: [PATCH v2 04/17] dt-bindings: mfd: samsung,s2mps11: add
+ s2mpg10-pmic regulators
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
@@ -70,11 +71,11 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
  <willmcvicker@google.com>, kernel-team@android.com, 
 	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Date: Wed, 11 Jun 2025 10:08:14 +0100
-In-Reply-To: <20250611-robust-vehement-dog-2bf6ac@kuoka>
+Date: Wed, 11 Jun 2025 10:10:46 +0100
+In-Reply-To: <20250611-fierce-whimsical-aardwolf-6cd33b@kuoka>
 References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-	 <20250606-s2mpg1x-regulators-v2-1-b03feffd2621@linaro.org>
-	 <20250611-robust-vehement-dog-2bf6ac@kuoka>
+	 <20250606-s2mpg1x-regulators-v2-4-b03feffd2621@linaro.org>
+	 <20250611-fierce-whimsical-aardwolf-6cd33b@kuoka>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.1-1 
@@ -87,27 +88,27 @@ MIME-Version: 1.0
 
 Hi Krzysztof,
 
-On Wed, 2025-06-11 at 11:04 +0200, Krzysztof Kozlowski wrote:
-> On Fri, Jun 06, 2025 at 04:02:57PM GMT, Andr=C3=A9 Draszik wrote:
-> > Using lowercase for the buck and ldo nodenames is preferred, as
-> > evidenced e.g. in [1].
+On Wed, 2025-06-11 at 11:03 +0200, Krzysztof Kozlowski wrote:
+> On Fri, Jun 06, 2025 at 04:03:00PM GMT, Andr=C3=A9 Draszik wrote:
+> > Add a regulators node to the s2mpg10-pmic to describe the regulators
+> > available on this PMIC.
 > >=20
-> > Convert the example here to lowercase before we add any bindings
-> > describing the s2mpg1x regulators that will enforce the spelling.
+> > Additionally, describe the supply inputs of the regulator rails, with
+> > the supply names matching the datasheet.
 > >=20
-> > Link: https://lore.kernel.org/all/20250223-mysterious-infrared-civet-e5=
-bcbf@krzk-bin/=C2=A0[1]
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.=
-yaml | 4 ++--
-> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> > Note 1: S2MPG10 is typically used as the main-PMIC together with an
+> > S2MPG11 PMIC in a main/sub configuration, hence the datasheet and the
+> > binding both suffix the supplies with an 'm'.
+> >=20
+> > Note 2: The binding needs to switch from 'additionalProperties' to
+> > 'unevaluatedProperties', to allow adding the specific -supply
+> > properties for S2MPG10 only, as otherwise we'd have to resort to a
+> > global wildcard with negating inside each of the compatible matches.
 >=20
-> So this is also a dependency for the rest of the patches?
+> I think this binding is getting too complicated. Maybe s2mpgXX should
+> have their own file.
 
-My thinking was that it makes sense to have it in context with
-the other patches, but it indeed could go stand-alone if that's the
-preference.
+Will do.
 
 Cheers,
 Andre'
