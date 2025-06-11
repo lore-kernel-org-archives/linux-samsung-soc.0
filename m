@@ -1,310 +1,240 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EE4235062;
-	Wed, 11 Jun 2025 09:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6A92638A6
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2025 10:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749635200; cv=none; b=HZGpy6X2127+ei1sqGOcf+KR839HyNl9DhZoDFfVbYYqr0YAnq/KW2fyFxi95D6XUHHVGcdgTdcuiborF675L6FvYjXoeIbBHEMR/zqdPnD6w59rEZbnE2hvfR2ImkzoOBI0Lpy7UFqiDwlLID5rFefWGhDk4BM94AlahwfDn4I=
+	t=1749637453; cv=none; b=K1/ImieQhQSJtTmk7uHgO87AhrP7AdLSmsOtAqPNrmJkxxPMrwmJwAENa9r1rIMdYpZVroyMoE+wFkB4w1KJOnQn/8SZMKPGYRZiawKGuUrHSEj1G88rgb/2K56TJdQeZIfI83SNf0VT4SeAJqLlBOb8jjnxp9OIiOT/UKvRG2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749635200; c=relaxed/simple;
-	bh=1nJPffGDWp+469Tu3HLFMSVE26vvsQDrRNZ43oyrncA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Z0FWULDLgxBzXvrFL9vWDLEcaP2PUinCCVfdbo3k6V2ScdVD8iUYSARpJ7VJNAOwLlmayRMmw8EvE546jLl25CMPC1hccw9Dfb6P3QZ8BjgCTYj+mM0BM1o65f0I8f+o2WqnRXFm3FcXzhZH19Qx2glbC4WpaxC8zESI4sMg/r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=D7M0jQva; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1749637453; c=relaxed/simple;
+	bh=HcgoTLAfHeJFUpaLy0Qtf0ddGHc6Ei2KwGMl7zeFXi8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XWcDHmiAoEDG6iq83uDq6JRUgcTPHyA+fzu7sJlzoaWK++HhNbBV2A742MwINrjzrXWQT2B/4/Yi39VdkLY0FKocFh4vpezsr11bdPC+6dc59RF9X9rFcA67mUSu0nD2LCms1n2zFfoSljifbVPofV+4sSj0J6CK7bzkHHtkfsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HeQmBsr7; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D7M0jQva"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250611094630euoutp020a8d12ac42d98b28cec73e3a51148e4c~H8_91aj7i2986829868euoutp02q;
-	Wed, 11 Jun 2025 09:46:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250611094630euoutp020a8d12ac42d98b28cec73e3a51148e4c~H8_91aj7i2986829868euoutp02q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749635190;
-	bh=Xc1Rw8rxxHeqcL2S98t+3Zj03z6AtNBwZXlDz1pqDvA=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=D7M0jQva/CmleKGyjhOgJl78zjV/oPx6s5KxnXtLUYYdEaml2NNAYdEs9/7As/Eia
-	 YSQHUvoHjilQEyBpFlxkzghHuFOR7/FgJCv4co3qfOojnfgqtbKkOvhpftKuev4720
-	 5cdGTpagHumvO3lEJCpPxI6ssKCDarO+B8joe2aE=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250611094629eucas1p11c41674f1a6fcbefd14b4fd99166cae1~H8_9eZCnm1166611666eucas1p11;
-	Wed, 11 Jun 2025 09:46:29 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250611094624eusmtip20a59cf478d3dc363416fa64f5fe470b4~H8_5DJCRv0322703227eusmtip2K;
-	Wed, 11 Jun 2025 09:46:24 +0000 (GMT)
-Message-ID: <ffa49c2a-9197-4820-96b0-636b3e649cf5@samsung.com>
-Date: Wed, 11 Jun 2025 11:46:24 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HeQmBsr7"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450d668c2a1so5357905e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2025 03:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749637450; x=1750242250; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HcgoTLAfHeJFUpaLy0Qtf0ddGHc6Ei2KwGMl7zeFXi8=;
+        b=HeQmBsr7c+SkScccNJ/dlNDTisyK3tsOIHmadYsJY3DoBERaNuRCp9GvmBhOip6vol
+         vIMjyTNc/yTUSF/XmlqD4d3o7RnsvSySbIvpLHyfniikAj5Qmejqq9N5vKMV0zGXR1Gt
+         0JrJtz50R6aOkgBjGj7qMFnhLuTJMIWcfGk05JjvUv5ripqyJ/AHRS+BxJZdWVtNw5bM
+         /7BcHzoUmwlPFeUfWPPzXJlfUImHf/ztgTy1eJFsR7+EFWG7SHXN8mcZU7QE/EF6y9S0
+         0NXFxHWatrUpqdfU3KGBYDMymhrs3K+fmMd5tj9l1TFIUnFo/sSHhmZ5Q7sWi7+X7IhT
+         N5Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749637450; x=1750242250;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HcgoTLAfHeJFUpaLy0Qtf0ddGHc6Ei2KwGMl7zeFXi8=;
+        b=ZjIlhUurWQbToyMWWeDvN7qSds7rHo0zHqDT2Ffs6xxa7K8P7x+mR93ag3m4WrPhg3
+         G05xMOWU1CglXyspQZjrc5hq5k4iasTKkQEqpnW9UUjcKixXFeTBpaI6dqCi0xvKYGiw
+         twy7BTXps3/TcxuHNfx6nWY3nuVG9LJ1pmnWAXpiRALqwMqEgu8ngXCA3rf44KsSzOH7
+         TEr7qh9slpFZWe0nBMKWyXw+iWEoUz0M8G00b6C5nJmkD/L+Fb3C5PTaQQdRBJ6SiJLh
+         3ijKHdarHba7DfQlW6L2lYNyj+OYkhoBWnHvoY/3/Vle68TOdHn1Q2nJ9e6584BQBIz3
+         ZV3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmA1PUIJC63JnMXrXnT7v5AdRhZeO29djBdk5DN24UqS5lSPLM+7xH6SHYyDpTN7pm6RLFS0GHX+Ex1r4AYGvQhA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0uz9U5n6kw8mZEvwcUjLOp7B9BMOhESfB8C1+ARP9/ie5CWv7
+	9lXIJErEuHBvh9h98fKDWFqYtY7dWZ/j9Md5Cf61h7wFjbeLBWmwrc+0CdlBh9BEZtM=
+X-Gm-Gg: ASbGncsJHEIyAgXEOz12yu2F9LPS9Py9P6XLI76K4ULK7dHqEsjYqvFyDZsbnH0ZXOR
+	Y1J+9zOTkOej0rHU8F6YRVj9cuCrEEO7L7kMupZjgzwTKyCbqZImmGUobAjpeLdalVwmYa6FHeB
+	3Vzp9ck+qwhfp7G6p/cU70dt58iP+Kky/KrTGNwD72IxDtRaMpSlHCa+PuNE9KBbpHjuz48MfNf
+	kDj44lIxO5A9F+GhN6qE/e32lIDvta+dWGALcYo+3gwUt/iniJV8hJVSk0pe3iRUAmUOpMYFhKT
+	hVXRRMhQTKKtKzW09zhIRBeKItfFsq5LkUQUfHtyDTO5CW0YM+l2BTtkPjeWPNXa6Q==
+X-Google-Smtp-Source: AGHT+IG9m+kxWKjGRtPwO1sYhhzUEaX5KsBy8nQtuB2u3NbqDTwQEhMKuqK7uGhNPxTPQU1llC5yLw==
+X-Received: by 2002:a05:600c:a016:b0:450:d79d:3b16 with SMTP id 5b1f17b1804b1-453241fb5a6mr26538495e9.14.1749637449759;
+        Wed, 11 Jun 2025 03:24:09 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53229d9adsm14638751f8f.9.2025.06.11.03.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 03:24:09 -0700 (PDT)
+Message-ID: <cee62201bbebecd6082dd097b87670fcb2cdb9c7.camel@linaro.org>
+Subject: Re: [PATCH v2 03/17] regulator: dt-bindings: add s2mpg11-pmic
+ regulators
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Peter
+ Griffin <peter.griffin@linaro.org>, Will McVicker	
+ <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Wed, 11 Jun 2025 11:24:08 +0100
+In-Reply-To: <20250611-spectral-bullfrog-of-perfection-cb8e01@kuoka>
+References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
+	 <20250606-s2mpg1x-regulators-v2-3-b03feffd2621@linaro.org>
+	 <20250611-spectral-bullfrog-of-perfection-cb8e01@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] iommu: Remove iommu_ops pgsize_bitmap from
- simple drivers
-To: Jason Gunthorpe <jgg@nvidia.com>, Alexandre Ghiti <alex@ghiti.fr>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Albert
-	Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, David Woodhouse <dwmw2@infradead.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Stuebner
-	<heiko@sntech.de>, iommu@lists.linux.dev, Janne Grunau <j@jannau.net>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joerg
-	Roedel <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>, Neal Gompa <neal@gompa.dev>, Orson
-	Zhai <orsonzhai@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul
-	Walmsley <paul.walmsley@sifive.com>, Rob Clark
-	<robin.clark@oss.qualcomm.com>, Robin Murphy <robin.murphy@arm.com>, Samuel
-	Holland <samuel@sholland.org>, Sven Peter <sven@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Krishna Reddy <vdumpa@nvidia.com>,
-	virtualization@lists.linux.dev, Chen-Yu Tsai <wens@csie.org>, Will Deacon
-	<will@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Chunyan Zhang
-	<zhang.lyra@gmail.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
-	patches@lists.linux.dev, Niklas Schnelle <schnelle@linux.ibm.com>, Sven
-	Peter <sven@svenpeter.dev>, Tomasz Jeznach <tjeznach@rivosinc.com>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <4-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250611094629eucas1p11c41674f1a6fcbefd14b4fd99166cae1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250609204211eucas1p171527915cb5843e72782a02a3521d2c7
-X-EPHeader: CA
-X-CMS-RootMailID: 20250609204211eucas1p171527915cb5843e72782a02a3521d2c7
-References: <CGME20250609204211eucas1p171527915cb5843e72782a02a3521d2c7@eucas1p1.samsung.com>
-	<4-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
 
-On 09.06.2025 22:41, Jason Gunthorpe wrote:
-> These drivers just have a constant value for their page size, move it
-> into their domain_alloc_paging function before setting up the geometry.
->
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Acked-by: Niklas Schnelle <schnelle@linux.ibm.com> # for s390-iommu.c
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->   drivers/iommu/exynos-iommu.c   | 3 ++-
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com> # for exynos-iommu.c
->   drivers/iommu/ipmmu-vmsa.c     | 4 ++--
->   drivers/iommu/mtk_iommu_v1.c   | 3 ++-
->   drivers/iommu/omap-iommu.c     | 3 ++-
->   drivers/iommu/rockchip-iommu.c | 3 ++-
->   drivers/iommu/s390-iommu.c     | 2 +-
->   drivers/iommu/sprd-iommu.c     | 3 ++-
->   drivers/iommu/sun50i-iommu.c   | 3 ++-
->   drivers/iommu/tegra-smmu.c     | 3 ++-
->   9 files changed, 17 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index fcb6a0f7c08275..b62a8f35c3e851 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -925,6 +925,8 @@ static struct iommu_domain *exynos_iommu_domain_alloc_paging(struct device *dev)
->   	spin_lock_init(&domain->pgtablelock);
->   	INIT_LIST_HEAD(&domain->clients);
->   
-> +	domain->domain.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE;
-> +
->   	domain->domain.geometry.aperture_start = 0;
->   	domain->domain.geometry.aperture_end   = ~0UL;
->   	domain->domain.geometry.force_aperture = true;
-> @@ -1477,7 +1479,6 @@ static const struct iommu_ops exynos_iommu_ops = {
->   	.device_group = generic_device_group,
->   	.probe_device = exynos_iommu_probe_device,
->   	.release_device = exynos_iommu_release_device,
-> -	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
->   	.of_xlate = exynos_iommu_of_xlate,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= exynos_iommu_attach_device,
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 90341b24a81155..ffa892f6571406 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -430,7 +430,7 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
->   	 * non-secure mode.
->   	 */
->   	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
-> -	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
-> +	domain->cfg.pgsize_bitmap = domain->io_domain.pgsize_bitmap;
->   	domain->cfg.ias = 32;
->   	domain->cfg.oas = 40;
->   	domain->cfg.tlb = &ipmmu_flush_ops;
-> @@ -571,6 +571,7 @@ static struct iommu_domain *ipmmu_domain_alloc_paging(struct device *dev)
->   		return NULL;
->   
->   	mutex_init(&domain->mutex);
-> +	domain->io_domain.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
->   
->   	return &domain->io_domain;
->   }
-> @@ -882,7 +883,6 @@ static const struct iommu_ops ipmmu_ops = {
->   	 */
->   	.device_group = IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA)
->   			? generic_device_group : generic_single_device_group,
-> -	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
->   	.of_xlate = ipmmu_of_xlate,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= ipmmu_attach_device,
-> diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-> index 66824982e05fbf..496cfe37243ac2 100644
-> --- a/drivers/iommu/mtk_iommu_v1.c
-> +++ b/drivers/iommu/mtk_iommu_v1.c
-> @@ -288,6 +288,8 @@ static struct iommu_domain *mtk_iommu_v1_domain_alloc_paging(struct device *dev)
->   	if (!dom)
->   		return NULL;
->   
-> +	dom->domain.pgsize_bitmap = MT2701_IOMMU_PAGE_SIZE;
-> +
->   	return &dom->domain;
->   }
->   
-> @@ -582,7 +584,6 @@ static const struct iommu_ops mtk_iommu_v1_ops = {
->   	.probe_finalize = mtk_iommu_v1_probe_finalize,
->   	.release_device	= mtk_iommu_v1_release_device,
->   	.device_group	= generic_device_group,
-> -	.pgsize_bitmap	= MT2701_IOMMU_PAGE_SIZE,
->   	.owner          = THIS_MODULE,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= mtk_iommu_v1_attach_device,
-> diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-> index 3c62337f43c677..21c218976143ef 100644
-> --- a/drivers/iommu/omap-iommu.c
-> +++ b/drivers/iommu/omap-iommu.c
-> @@ -1584,6 +1584,8 @@ static struct iommu_domain *omap_iommu_domain_alloc_paging(struct device *dev)
->   
->   	spin_lock_init(&omap_domain->lock);
->   
-> +	omap_domain->domain.pgsize_bitmap = OMAP_IOMMU_PGSIZES;
-> +
->   	omap_domain->domain.geometry.aperture_start = 0;
->   	omap_domain->domain.geometry.aperture_end   = (1ULL << 32) - 1;
->   	omap_domain->domain.geometry.force_aperture = true;
-> @@ -1735,7 +1737,6 @@ static const struct iommu_ops omap_iommu_ops = {
->   	.release_device	= omap_iommu_release_device,
->   	.device_group	= generic_single_device_group,
->   	.of_xlate	= omap_iommu_of_xlate,
-> -	.pgsize_bitmap	= OMAP_IOMMU_PGSIZES,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= omap_iommu_attach_dev,
->   		.map_pages	= omap_iommu_map,
-> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-> index 22f74ba33a0e38..f4a5ad096343ab 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -1081,6 +1081,8 @@ static struct iommu_domain *rk_iommu_domain_alloc_paging(struct device *dev)
->   	spin_lock_init(&rk_domain->dt_lock);
->   	INIT_LIST_HEAD(&rk_domain->iommus);
->   
-> +	rk_domain->domain.pgsize_bitmap = RK_IOMMU_PGSIZE_BITMAP;
-> +
->   	rk_domain->domain.geometry.aperture_start = 0;
->   	rk_domain->domain.geometry.aperture_end   = DMA_BIT_MASK(32);
->   	rk_domain->domain.geometry.force_aperture = true;
-> @@ -1171,7 +1173,6 @@ static const struct iommu_ops rk_iommu_ops = {
->   	.probe_device = rk_iommu_probe_device,
->   	.release_device = rk_iommu_release_device,
->   	.device_group = generic_single_device_group,
-> -	.pgsize_bitmap = RK_IOMMU_PGSIZE_BITMAP,
->   	.of_xlate = rk_iommu_of_xlate,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= rk_iommu_attach_device,
-> diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-> index 433b59f435302b..9c80d61deb2c0b 100644
-> --- a/drivers/iommu/s390-iommu.c
-> +++ b/drivers/iommu/s390-iommu.c
-> @@ -557,6 +557,7 @@ static struct iommu_domain *s390_domain_alloc_paging(struct device *dev)
->   	}
->   	zdev->end_dma = zdev->start_dma + aperture_size - 1;
->   
-> +	s390_domain->domain.pgsize_bitmap = SZ_4K;
->   	s390_domain->domain.geometry.force_aperture = true;
->   	s390_domain->domain.geometry.aperture_start = 0;
->   	s390_domain->domain.geometry.aperture_end = max_tbl_size(s390_domain);
-> @@ -1158,7 +1159,6 @@ static struct iommu_domain blocking_domain = {
->   	.domain_alloc_paging = s390_domain_alloc_paging, \
->   	.probe_device = s390_iommu_probe_device, \
->   	.device_group = generic_device_group, \
-> -	.pgsize_bitmap = SZ_4K, \
->   	.get_resv_regions = s390_iommu_get_resv_regions, \
->   	.default_domain_ops = &(const struct iommu_domain_ops) { \
->   		.attach_dev	= s390_iommu_attach_device, \
-> diff --git a/drivers/iommu/sprd-iommu.c b/drivers/iommu/sprd-iommu.c
-> index 941d1f361c8cda..c7ca1d8a0b1530 100644
-> --- a/drivers/iommu/sprd-iommu.c
-> +++ b/drivers/iommu/sprd-iommu.c
-> @@ -143,6 +143,8 @@ static struct iommu_domain *sprd_iommu_domain_alloc_paging(struct device *dev)
->   
->   	spin_lock_init(&dom->pgtlock);
->   
-> +	dom->domain.pgsize_bitmap = SPRD_IOMMU_PAGE_SIZE;
-> +
->   	dom->domain.geometry.aperture_start = 0;
->   	dom->domain.geometry.aperture_end = SZ_256M - 1;
->   	dom->domain.geometry.force_aperture = true;
-> @@ -410,7 +412,6 @@ static const struct iommu_ops sprd_iommu_ops = {
->   	.probe_device	= sprd_iommu_probe_device,
->   	.device_group	= generic_single_device_group,
->   	.of_xlate	= sprd_iommu_of_xlate,
-> -	.pgsize_bitmap	= SPRD_IOMMU_PAGE_SIZE,
->   	.owner		= THIS_MODULE,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= sprd_iommu_attach_device,
-> diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
-> index 76c9620af4bba8..de10b569d9a940 100644
-> --- a/drivers/iommu/sun50i-iommu.c
-> +++ b/drivers/iommu/sun50i-iommu.c
-> @@ -697,6 +697,8 @@ sun50i_iommu_domain_alloc_paging(struct device *dev)
->   
->   	refcount_set(&sun50i_domain->refcnt, 1);
->   
-> +	sun50i_domain->domain.pgsize_bitmap = SZ_4K;
-> +
->   	sun50i_domain->domain.geometry.aperture_start = 0;
->   	sun50i_domain->domain.geometry.aperture_end = DMA_BIT_MASK(32);
->   	sun50i_domain->domain.geometry.force_aperture = true;
-> @@ -842,7 +844,6 @@ static int sun50i_iommu_of_xlate(struct device *dev,
->   
->   static const struct iommu_ops sun50i_iommu_ops = {
->   	.identity_domain = &sun50i_iommu_identity_domain,
-> -	.pgsize_bitmap	= SZ_4K,
->   	.device_group	= generic_single_device_group,
->   	.domain_alloc_paging = sun50i_iommu_domain_alloc_paging,
->   	.of_xlate	= sun50i_iommu_of_xlate,
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 61897d50162dd7..fa0913e9346c71 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -318,6 +318,8 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
->   
->   	spin_lock_init(&as->lock);
->   
-> +	as->domain.pgsize_bitmap = SZ_4K;
-> +
->   	/* setup aperture */
->   	as->domain.geometry.aperture_start = 0;
->   	as->domain.geometry.aperture_end = 0xffffffff;
-> @@ -1002,7 +1004,6 @@ static const struct iommu_ops tegra_smmu_ops = {
->   	.probe_device = tegra_smmu_probe_device,
->   	.device_group = tegra_smmu_device_group,
->   	.of_xlate = tegra_smmu_of_xlate,
-> -	.pgsize_bitmap = SZ_4K,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
->   		.attach_dev	= tegra_smmu_attach_dev,
->   		.map_pages	= tegra_smmu_map,
+Hi Krzysztof,
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks for your review!
 
+On Wed, 2025-06-11 at 10:57 +0200, Krzysztof Kozlowski wrote:
+> On Fri, Jun 06, 2025 at 04:02:59PM GMT, Andr=C3=A9 Draszik wrote:
+> > The S2MPG11 PMIC is a Power Management IC for mobile applications with
+> > buck converters, various LDOs, power meters, and additional GPIO
+> > interfaces. It typically complements an S2MPG10 PMIC in a main/sub
+> > configuration as the sub-PMIC.
+> >=20
+> > S2MPG11 has 12 buck, 1 buck-boost, and 15 LDO rails. Several of these
+> > can either be controlled via software or via external signals, e.g.
+> > input pins connected to a main processor's GPIO pins.
+> >=20
+> > Add documentation related to the regulator (buck & ldo) parts like
+> > devicetree definitions, regulator naming patterns, and additional
+> > properties.
+> >=20
+> > Since S2MPG11 is typically used as the sub-PMIC together with an
+> > S2MPG10 as the main-PMIC, the datasheet and the binding both suffix the
+> > rails with an 's'.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> >=20
+> > ---
+> > Note: checkpatch suggests to update MAINTAINERS, but the new file is
+> > covered already due to using a wildcard.
+> >=20
+> > v2:
+> > - fix commit message typos: s2mp1 -> s2mpg1
+> > - mention GPIOs in commit message
+> > ---
+> > =C2=A0.../regulator/samsung,s2mpg11-regulator.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 150 +++++++++++++++++++++
+> > =C2=A0.../regulator/samsung,s2mpg10-regulator.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 18 +++
+> > =C2=A02 files changed, 168 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
+1-regulator.yaml
+> > b/Documentation/devicetree/bindings/regulator/samsung,s2mpg11-regulator=
+.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..f2d596642501c197e2911ee=
+3b9caac189cf541a4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg11-regul=
+ator.yaml
+> > @@ -0,0 +1,150 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg11-regulator=
+.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung S2MPG11 Power Management IC regulators
+> > +
+> > +maintainers:
+> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > +
+> > +description: |
+> > +=C2=A0 This is part of the device tree bindings for the S2MG11 Power M=
+anagement IC
+> > +=C2=A0 (PMIC).
+> > +
+> > +=C2=A0 The S2MPG11 PMIC provides 12 buck, 1 buck-boost, and 15 LDO reg=
+ulators.
+> > +
+> > +=C2=A0 See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.=
+yaml for
+> > +=C2=A0 additional information and example.
+> > +
+> > +definitions:
+> > +=C2=A0 s2mpg11-ext-control:
+> > +=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,ext-control:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 description: |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 These rails can=
+ be controlled via one of several possible external
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (hardware) sign=
+als. If so, this property configures the signal the PMIC
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 should monitor.=
+ The following values generally corresponding to the
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 respective on-c=
+hip pin are valid:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0=
+ # S2MPG11_PCTRLSEL_ON - always on
+>=20
+> Use regulator-always-on
+
+Yes, the end-result would be the same. I still added this one for
+completeness, because they all describe the hardware. I can leave
+this one out and thereby force use of the regulator-always-on
+property instead.
+
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+ # S2MPG11_PCTRLSEL_PWREN - PWREN pin
+>=20
+> That's duplicating regulator in standby properties.
+
+OK, I'll double-check this.
+
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 2=
+ # S2MPG11_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKING_CTRL
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 3=
+ # S2MPG11_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 4=
+ # S2MPG11_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in MIMICKING_CTRL
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 5=
+ # S2MPG11_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 6=
+ # S2MPG11_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bit in MIMICKING_CTR=
+L
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 7=
+ # S2MPG11_PCTRLSEL_G3D_EN - G3D_EN pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 8=
+ # S2MPG11_PCTRLSEL_G3D_EN2 - G3D_EN & ~AP_ACTIVE_N pins
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 9=
+ # S2MPG11_PCTRLSEL_AOC_VDD - AOC_VDD pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+0 # S2MPG11_PCTRLSEL_AOC_RET - AOC_RET pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+1 # S2MPG11_PCTRLSEL_UFS_EN - UFS_EN pin
+>=20
+> Now I have doubts these are real signals. Are you saying that S2MPG11
+> has a pin named UFS_EN (such pin on ballmap)?
+
+Yes. I used the generic term 'external signal' in the descriptions above
+rather than the more specific pin, because some of these are bits in
+some registers, and most are indeed input pins, or a combination. Not all
+of the pins are connected to actual GPIOs on the AP, though.
+
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+2 # S2MPG11_PCTRLSEL_LDO13S_EN - VLDO13S_EN pin
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/=
+definitions/uint32
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minimum: 0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maximum: 12
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,ext-control-gpios:
+>=20
+> Same comments as previous patch.
+
+I used this one to align with s2mps14, but will switch to enable-gpios.
+
+Cheers,
+Andre'
