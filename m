@@ -1,118 +1,181 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA35922094;
-	Thu, 12 Jun 2025 15:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0141C2DECC5;
+	Thu, 12 Jun 2025 20:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743653; cv=none; b=Uke2NhumC4gkEPTdixfZ2yMN+WSuMrD1ADmUZEUIX7Tk7EIvX6xWLD6hR2+BuG5WwLBHWE9Gec/3kF4YdYPhbuEqgHBsXzxzQWB9JOQL5UqmoobYZS3B8JvFZH9+s7E5tlDD4mw3hMePuOafVEOrKbo4oETwdlc0hYnYViyewC4=
+	t=1749759150; cv=none; b=oZnZRINd+NjYO5rgD/xRWo5KvIaIDdpaSAw1N8qLt1sEzgqixYiNoHw7kW2LJOHOZ3RfIAZVkpt9YVxOKMCeFgfa4r9yahGAWkE6SVTSRWqbxBaPOlKVzSJmql9YohB0AUWjwJlPHtM/p+eTbAafToSpc/FdE2rZZf5/oPo2CL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743653; c=relaxed/simple;
-	bh=Lozr22R6CO+RNvwVhifH/eSDDg9MlLQKcOlojkNqxc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XdPRtZ+04TiEXzaDq4DThV1C333xqU4VygjfUKGnyykOEBYDm32UuzpXdo7FxR8irvLNeGIzWaWRt8+kdpaXnUsKiCbeqU5PloBzL/zHH8XSZJxmVykWMifMC0DaVhOkuBTfEZ+Ss6Wk5X1lGhLYGth00d8d1G3DVDIxGsYei0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53125ca7837so635169e0c.0;
-        Thu, 12 Jun 2025 08:54:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749743649; x=1750348449;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MCWdKGDkn0LPrrpZul9GwNXUtPRdna1q2f9cpPPTLvA=;
-        b=CJnRmZoQ0g9EeciCPu5VSgLQ6+Yp0sVzbIUuG7Hw0r3haTpYwF21HW+9STnyJy6O9c
-         ulAGUTqJFZZfKyYx/K9NAHZq9OU4XUGGSQzDF0D5+rG37dGfugK7tLcJ9ORfzhwnEdQ2
-         ti8J6zb1CBNoqI5l8cnMvtPfjuH+ukszGhAyaFPr5OHh/UeB8CYRcL6oquxChjyuBW1c
-         75JQwTuG2WmdTRREClWXwkFWny5EXotZJgDPDhfxb/VpPjOPKrPKDBDm9xXULB56wR/y
-         lvFSnQs1LIR/19ZvQ0vyI13j1dumLw5yZsi3MMq44nbsnXSUxfJ5PsmbxY6ihEIRP5TX
-         q5zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOVp7hSMWtR+LrlA6Frd0BnR/loTzLXVGb6IfRJO7daV1nKfwc2ox2u1PSzwU5k4/23/kwwAeqEMm9w3uvmGLhsmg=@vger.kernel.org, AJvYcCUkZcsR3Ss3sCr5/R3dPXHOmKXPpE59twdWjwVLTketmtnJNYDJ3kPULDU99nRe4YSVsXlAh0JNFYH4SYA=@vger.kernel.org, AJvYcCVbnRcHQmj3qmkwUVH4uDHh359MlnmZw+hxJIOKJLUIRCe8QteOwLNd3L6MdTDZ+eKj8BmX18AmuyG77/kodmX/YFI=@vger.kernel.org, AJvYcCWsUzdGiOMYf+//lkaORyRFeoFsvPxny/1EZNLGOuHbmdEiHkak0tkMBCrPcOAZESHHA/eWlS5GaNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypo7DB0NRFCzgTV2JyaYjQsPVhDNqsZD6nC0sYs4+DFYO0wRw9
-	IuOIFBrVs9ll+nasIhuD6sCSZpN4pXFZAn6GFed51DM3bval9f63U43ztnW7OMh2
-X-Gm-Gg: ASbGncthSQPf+5XFYpGw9rz9RnmwgYBPMmsSf/aO4NlXWcmxPqrPSxGDsrvwSA9nc4H
-	ggZO0xyU9NMVKfNL9/DIvmHoyCTz6LJlXydyT5ii9OKpBxwbMzA4WWWKHnEt1eOtI0xP5oqIygC
-	BXv7X5BOdhCV0UqHWyPrt92Qw7A56FZ3Qg8EVoZDF5565LsBmqC9jBMZZmi2DDcEd0eihrZDaHv
-	TC3LVQlK8rQJOJrFvxrxWMoJEl68PPviRzP6aON/dNAOtcnjNHHQ0BUfbi0eRLatc2HG+VET7T0
-	p4Cngyb27KvSLopSDYHIODbb0e/lmWwZP/BGq0WtzpTGFLKU7/woo9Ole8Kme1yukA/DyeO0Jhi
-	uLI5Vk/aaialT3Ga+tExBWS59
-X-Google-Smtp-Source: AGHT+IHPQH4Y8zIYDo7jnYGjuCCKNfPDnUxt8yyPNZacUMOEktQBFF58LQrKvZEwDw2RZYYcI0kOoA==
-X-Received: by 2002:a05:6122:81dc:b0:52d:cc6f:81a2 with SMTP id 71dfb90a1353d-5312dc21da3mr2539414e0c.6.1749743649358;
-        Thu, 12 Jun 2025 08:54:09 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01259249sm340861241.9.2025.06.12.08.54.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 08:54:08 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e7c7680591so656668137.1;
-        Thu, 12 Jun 2025 08:54:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUowVZxKTEwyQURYu7qTx9yNZ323/WGFV047Wy0s8MyKJSqJakBSpr/fIRonZdUt8U/qYz+nzu2uBpnToQ=@vger.kernel.org, AJvYcCVoNcpLFUGR19ERv5s2F4O+s4f3gt2yrCOjsUIjHjkRDU5Ku3VtOHRDbhtwC+IjSZvd/m/n1ATo8/JTQeNO69kadlQ=@vger.kernel.org, AJvYcCWqS1F10E6wubpH3w+gSsedHbklQtjSgYWni/MiuXsqtgfkDi3N7ItySzSw3ImnZ/ZtlX1LjN5gket2VllD36d9ohg=@vger.kernel.org, AJvYcCXRxK2ji42gfTE/fVcDTmDx9S+YlJO6PiHjtQMXYx+6S9XvQe4yrwGqZ8l0aJedtkRtAtuCkiclT4g=@vger.kernel.org
-X-Received: by 2002:a05:6102:5113:b0:4e4:3c3a:f163 with SMTP id
- ada2fe7eead31-4e7cd7a4049mr3737309137.7.1749743648153; Thu, 12 Jun 2025
- 08:54:08 -0700 (PDT)
+	s=arc-20240116; t=1749759150; c=relaxed/simple;
+	bh=sLxW/2gM/xqjmwMF98veHA/94KEa5ynyyYmqAzwLAQk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Dn2LwSlF6XYY+JiLGCEEkcMk67IgnPWqCz/4sCZNXnWUNUFb/YEUXMvpP1OXwBO0CAWaEjj1X3OwNRb2ItYobTmpveBlWFQOjerr6ts2beZQ9MuxrPM/6fpDqjnwOB9QmFuW0wgxc7ktKTUV4UtYo4BJRfaWi/caa+VHVpsZqoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt0LIvRF; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt0LIvRF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7DBC4CEED;
+	Thu, 12 Jun 2025 20:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749759149;
+	bh=sLxW/2gM/xqjmwMF98veHA/94KEa5ynyyYmqAzwLAQk=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Xt0LIvRFtNEdszKSMxfx0SHkf4CXLdrEB8u0VRJPpGTd5cqGqlzku5M3Qm1bPm4B/
+	 POaxPoE6fOGMo2iKzgOJkYrdJCSQlS/zCmHK37UAZj/5ob+oquaXRjIXAvxgUsC4I3
+	 L6nbpjlL4FKMIhTYg0pYm4KJSNrzrX5lz6ZwlLJfwZwddwIhS8QFe5lOn8jVwAW6vt
+	 4Xn1TqmV4LccpdsaRQ9xHa9Go/BXQzunnGrHV+WSsPv7JSfv3almt4rky4y1cxjS4y
+	 A15oJVNrVzKdF9W5pmA704lE21yKGaFignM+cYUGscM8A3GHiuNAYcWoMMzvITNLSx
+	 234fWPDag6aag==
+Date: Thu, 12 Jun 2025 15:12:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
-In-Reply-To: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 17:53:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV2Ar95nrmH=NTwY+pkrg6nD-sNoVG7MJY7ofJF4N3bNA@mail.gmail.com>
-X-Gm-Features: AX0GCFsIwHF9_aoZ54iuAPGFucIDRqFn8Tjpa14cAUcOdjFvqEv5PYmW-DjzBPU
-Message-ID: <CAMuHMdV2Ar95nrmH=NTwY+pkrg6nD-sNoVG7MJY7ofJF4N3bNA@mail.gmail.com>
-Subject: Re: [PATCH v2] pmdomain: Use str_enable_disable-like helpers
-To: shao.mingyin@zte.com.cn
-Cc: ulf.hansson@linaro.org, changhuang.liang@starfivetech.com, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, heiko@sntech.de, 
-	krzk@kernel.org, alim.akhtar@samsung.com, walker.chen@starfivetech.com, 
-	sebastian.reichel@collabora.com, detlev.casanova@collabora.com, 
-	finley.xiao@rock-chips.com, shawn.lin@rock-chips.com, pgwipeout@gmail.com, 
-	qiu.yutan@zte.com.cn, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, yang.yang29@zte.com.cn, 
-	xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, ye.xingchen@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+In-Reply-To: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
+References: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
+Message-Id: <174975871931.2916531.8899085865861205227.robh@kernel.org>
+Subject: Re: [PATCH 0/5] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
 
-Hi Mingyin,
 
-On Tue, 10 Jun 2025 at 13:34, <shao.mingyin@zte.com.cn> wrote:
-> From: Shao Mingyin <shao.mingyin@zte.com.cn>
->
-> Replace ternary (condition ? "enable" : "disable") syntax and ternary
-> (condition ? "on" : "off") syntax with helpers from
-> string_choices.h because:
-> 1. Simple function call with one argument is easier to read.  Ternary
->    operator has three arguments and with wrapping might lead to quite
->    long code.
-> 2. Is slightly shorter thus also easier to read.
-> 3. It brings uniformity in the text - same string.
-> 4. Allows deduping by the linker, which results in a smaller binary
->    file.
->
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+On Thu, 12 Jun 2025 20:53:36 +0530, Kaustabh Chakraborty wrote:
+> Exynos7870 has a IP subsystem in its architecture dedicated to display
+> management. Notably, this block includes the Display Enhancement
+> Controller (DECON), and the DSI Master (DSIM).
+> 
+> The following series and its sub-series implement all components for a
+> functioning display pipeline. All vital information which helped shaping
+> up the patches have been retrieved from Exynos7870 vendor kernel sources
+> as provided by Samsung.
+> 
+> Testing has been done on all three devices available upstream, i.e.
+> Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
+> (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte). Regrettably,
+> I've only been able to test the functionality on video mode, as none of
+> the devices have panels working in command mode.
+> 
+> This series implements changes in the SoC subsystem, which includes
+> devicetree additions. It depends on all sub-series listed below:
+> (Legend: [R]eviewed, [A]ccepted)
+> 
+> exynosdrm-decon            - https://lore.kernel.org/r/20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org
+> exynos7870-mipi-phy        - https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+> exynos7870-dsim            - https://lore.kernel.org/r/20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org
+> panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org
+> panel-synaptics-tddi       - https://lore.kernel.org/r/20250612-panel-samsung-s6e8aa5x01-v1-0-06dcba071ea6@disroot.org
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
-> v2:
->  %sable ==> %s in jh71xx_pmu_dev()
+> Kaustabh Chakraborty (5):
+>       dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
+>       arch: arm64: dts: exynos7870: add DSI support
+>       arch: arm64: dts: exynos7870-on7xelte: enable display panel support
+>       arch: arm64: dts: exynos7870-a2corelte: enable display panel support
+>       arch: arm64: dts: exynos7870-j6lte: enable display panel support
+> 
+>  .../soc/samsung/samsung,exynos-sysreg.yaml         |  6 ++
+>  .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 41 ++++++++++
+>  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 38 +++++++++
+>  arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 40 +++++++++
+>  arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 94 ++++++++++++++++++++++
+>  5 files changed, 219 insertions(+)
+> ---
+> base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+> change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
+> 
+> Best regards,
+> --
+> Kaustabh Chakraborty <kauschluss@disroot.org>
+> 
+> 
+> 
 
-Thanks for the update!
 
-While I already provided my Rb-tag on Krzysztof's original [1], your
-version is whitespace-damaged (TABs replaced by spaces), and thus
-cannot be applied.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-[1] https://lore.kernel.org/all/CAMuHMdXJ57mATWW4AnBedn+D7TQ4PadkJ642daquFtAo=wZFrQ@mail.gmail.com/
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Gr{oetje,eeting}s,
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-                        Geert
+  pip3 install dtschema --upgrade
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 0bb71d301869446810a0b13d3da290bd455d7c78
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org:
+
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: False schema does not allow {'compatible': ['samsung,exynos7870-mipi-video-phy'], '#phy-cells': 1, 'samsung,disp-sysreg': [[12]], 'samsung,cam-sysreg': [13], 'phandle': 73}
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam-sysreg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam0-sysreg' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam1-sysreg' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy:compatible:0: 'samsung,exynos7870-mipi-video-phy' is not one of ['samsung,s5pv210-mipi-video-phy', 'samsung,exynos5420-mipi-video-phy', 'samsung,exynos5433-mipi-video-phy']
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: Unevaluated properties are not allowed ('compatible', 'samsung,cam-sysreg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/system-controller@10480000/mipi-phy: failed to match any schema with compatible: ['samsung,exynos7870-mipi-video-phy']
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['syna,td4300-panel']
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: False schema does not allow {'compatible': ['samsung,exynos7870-mipi-video-phy'], '#phy-cells': 1, 'samsung,disp-sysreg': [[12]], 'samsung,cam-sysreg': [13], 'phandle': 73}
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam-sysreg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam0-sysreg' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam1-sysreg' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy:compatible:0: 'samsung,exynos7870-mipi-video-phy' is not one of ['samsung,s5pv210-mipi-video-phy', 'samsung,exynos5420-mipi-video-phy', 'samsung,exynos5433-mipi-video-phy']
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: Unevaluated properties are not allowed ('compatible', 'samsung,cam-sysreg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/system-controller@10480000/mipi-phy: failed to match any schema with compatible: ['samsung,exynos7870-mipi-video-phy']
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: False schema does not allow {'compatible': ['samsung,exynos7870-mipi-video-phy'], '#phy-cells': 1, 'samsung,disp-sysreg': [[12]], 'samsung,cam-sysreg': [13], 'phandle': 72}
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam-sysreg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam0-sysreg' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: 'samsung,cam1-sysreg' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy:compatible:0: 'samsung,exynos7870-mipi-video-phy' is not one of ['samsung,s5pv210-mipi-video-phy', 'samsung,exynos5420-mipi-video-phy', 'samsung,exynos5433-mipi-video-phy']
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: system-controller@10480000 (samsung,exynos7870-pmu): mipi-phy: Unevaluated properties are not allowed ('compatible', 'samsung,cam-sysreg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/samsung/exynos-pmu.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/system-controller@10480000/mipi-phy: failed to match any schema with compatible: ['samsung,exynos7870-mipi-video-phy']
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['syna,td4101-panel']
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['samsung,s6e8aa5x01']
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+
+
+
+
+
