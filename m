@@ -1,40 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C412DFA25;
-	Thu, 12 Jun 2025 15:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE382BF3DF;
+	Thu, 12 Jun 2025 15:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749741626; cv=none; b=kvjQD3VHdlg01MmhfmhdNwDCG19UHC2+WRRlgGQxCpnWW4ZGGmwchFZvMDFOzf8SIkkM2S8nHEFu6FDrD0/GTUhI6svtxOizoQaTzAcN6V8588HYR05e/3LWnh6b6Y/jcPpDliOxG8y7g5RxHo1utkPnzeLhn5rc2dFx0A+vCbw=
+	t=1749741843; cv=none; b=hp3beWmtYx7PyowoywzIMizYHtYNi9ptEF57w7uRCnu3SwN2uzc1NsNSWJrz6ltOIClB2FgqvASo2wdw7h/CTx1euG+CLmBgS5vp+jtcyv+ICevG9bPam0Xelz7f1HIA8BjqFuM0LEUNsZcRf5RYezVcAJ09T++32nSvFRb8hOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749741626; c=relaxed/simple;
-	bh=l4Nuu5usU3hvRSdSwV3bQf/gyHyhMjDbMhpD0WU6O88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h5+U3pn5etNbz0rSou/NWyGHA5Gh1DHs1mDtbTI7w/0qYlhVHVNVDhFS6RIBXwLT95qWZJAU8qi7iIKz5sVFUavSYzp1ldzRmms8vr3iXEhG1xaz8rW+8LY0dAzuuzN2VLHq/d+JhXq7PyB3GrkZoTge892r5gYy3U1AiWf+tkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kFFFIFT0; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1749741843; c=relaxed/simple;
+	bh=e2L+AV00TtnXw1GDXliijhYZY+VMGmWnxJeetHc99Lw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=b9qdb1qrOssI45sDrwDy7xQEIsIMKei6So8LaiyZBGbRRMCjAp5bVbujvweAg0KQKdQrkjmPFPc81Ch++EJfs+h0P92syPSQKOxe39tJFNvmSYA+38Pb7A0LmFN0WmebF/yzvnAkO6UXsiu4V6pNKNOThSLrI+Bxe2UwhHdUyzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=JoPZTG1K; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kFFFIFT0"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="JoPZTG1K"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 324B22609A;
-	Thu, 12 Jun 2025 17:20:24 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id D0EDA25C00;
+	Thu, 12 Jun 2025 17:24:00 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id hPNr3ZLvaQWh; Thu, 12 Jun 2025 17:20:22 +0200 (CEST)
+ id rzejOIWm-WrY; Thu, 12 Jun 2025 17:23:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1749741622; bh=l4Nuu5usU3hvRSdSwV3bQf/gyHyhMjDbMhpD0WU6O88=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=kFFFIFT0+KQGlDZejDKTYu8pW3aBpvHIFYD3tycWyjxc2ZRDJADepxWPL/soNwGtF
-	 YTIBgsTn3YHbaEU+Ld+MPx0R4YMy3PH6Oz1fbyHDI+Qi5hp62cL7FQTxkPa1cZZHjl
-	 TjrLpM+bnVO8ib6iKBvYZjNRaXmFdwB7ocMvIw7Yi3bEePdtYhN4HGFmu9YVCWKUdm
-	 srZsPbe1hQRI3TncwrLTLbyaXiDnprEUsJoLVA+rWz73zR/tLAoj1ftlVCt7XHqttM
-	 21ACTYm34CF5ilIasRLvJlMAn0mGaNZRaonpwcQdysr29jG7YMY3ZFdci/RFIG0/AB
-	 L3AL9XThmSkOQ==
+	t=1749741839; bh=e2L+AV00TtnXw1GDXliijhYZY+VMGmWnxJeetHc99Lw=;
+	h=From:Subject:Date:To:Cc;
+	b=JoPZTG1K6VC45U7XtfBY06ap5s93Rik5lgGujH2W+JLf3pxrnEtJV/eH/p1ys7uG/
+	 VyX6XBI4ef8t6H7fKaKACPhJpSXegVdZhYvqq+Rj1c1025y4n7efdT+oOpJjvgllun
+	 uVyl3u911sKoWhpI7iRr8ShukuAUXK7BsU8jpZEqSY/2Z128kV4+REgD/9fpL4Ainw
+	 WeicsoCcSLJ7MlTC3lIjhmBzHJklyBO9j70uPL8W0fso5rxLJPwv+dl/xkln3rot8c
+	 ULI2Y5Hc/O1lPIl+MXuvPrvkDH0Rw+/AMGAJkEJaaIIlRuESLAiubQG2gCLPtn/1Dw
+	 jNMGBjgTqUXlQ==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Thu, 12 Jun 2025 20:48:16 +0530
-Subject: [PATCH 12/12] drm/exynos: dsi: add support for exynos7870
+Subject: [PATCH 0/5] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
+Date: Thu, 12 Jun 2025 20:53:36 +0530
+Message-Id: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,71 +44,68 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-exynos7870-dsim-v1-12-1a330bca89df@disroot.org>
-References: <20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org>
-In-Reply-To: <20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org>
-To: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749741499; l=1284;
+X-B4-Tracking: v=1; b=H4sIAPjwSmgC/x3MTQ5AMBBA4avIrE1SFSmuIhb9GcxCSUeEiLtrL
+ L/Few8IJSaBvngg0cnCW8yoygL8YuNMyCEbtNKNanSNdN1xE9MahSGtGA7B1nhvnakrZzvI4Z5
+ o4uufDuP7fl9vAzZkAAAA
+X-Change-ID: 20250523-exynos7870-drm-dts-87ccab731ba9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749741830; l=2522;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=l4Nuu5usU3hvRSdSwV3bQf/gyHyhMjDbMhpD0WU6O88=;
- b=lQbb3yX2weNNjAz5shqRd54kvetuaJZEBMG9UE72Vk906suF41Yeq3NuuzkpDG0MGcm2nHTu5
- IA3fIU8kjM8C4lj/pkCLcMAqHYPccUrTi1UHBh/kqOgTtmjZu0+Y0If
+ bh=e2L+AV00TtnXw1GDXliijhYZY+VMGmWnxJeetHc99Lw=;
+ b=IvYVO6KFyABl3lbASbgkJhmTWfjQJX6zHF9WbeGzXKnrcA7VcRJxNE9s4peKlOdsfTDZmTNUH
+ c36YxJ2VAD9Dnup2Mr4nBiKF+6E+kPQClh8o/Z42pDKgHfSiBS9zGVd
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Add glue layer support for Exynos7870's DSIM IP bridge driver.
+Exynos7870 has a IP subsystem in its architecture dedicated to display
+management. Notably, this block includes the Display Enhancement
+Controller (DECON), and the DSI Master (DSIM).
+
+The following series and its sub-series implement all components for a
+functioning display pipeline. All vital information which helped shaping
+up the patches have been retrieved from Exynos7870 vendor kernel sources
+as provided by Samsung.
+
+Testing has been done on all three devices available upstream, i.e.
+Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
+(samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte). Regrettably,
+I've only been able to test the functionality on video mode, as none of
+the devices have panels working in command mode.
+
+This series implements changes in the SoC subsystem, which includes
+devicetree additions. It depends on all sub-series listed below:
+(Legend: [R]eviewed, [A]ccepted)
+
+exynosdrm-decon            - https://lore.kernel.org/r/20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org
+exynos7870-mipi-phy        - https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+exynos7870-dsim            - https://lore.kernel.org/r/20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org
+panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org
+panel-synaptics-tddi       - https://lore.kernel.org/r/20250612-panel-samsung-s6e8aa5x01-v1-0-06dcba071ea6@disroot.org
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Kaustabh Chakraborty (5):
+      dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
+      arch: arm64: dts: exynos7870: add DSI support
+      arch: arm64: dts: exynos7870-on7xelte: enable display panel support
+      arch: arm64: dts: exynos7870-a2corelte: enable display panel support
+      arch: arm64: dts: exynos7870-j6lte: enable display panel support
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 896a03639e2d9b80971d43aff540fc7fb9f005bd..c4d098ab7863890b2111742c07953c148304e4ec 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -154,6 +154,11 @@ static const struct samsung_dsim_plat_data exynos5433_dsi_pdata = {
- 	.host_ops = &exynos_dsi_exynos_host_ops,
- };
- 
-+static const struct samsung_dsim_plat_data exynos7870_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS7870,
-+	.host_ops = &exynos_dsi_exynos_host_ops,
-+};
-+
- static const struct of_device_id exynos_dsi_of_match[] = {
- 	{
- 		.compatible = "samsung,exynos3250-mipi-dsi",
-@@ -175,6 +180,10 @@ static const struct of_device_id exynos_dsi_of_match[] = {
- 		.compatible = "samsung,exynos5433-mipi-dsi",
- 		.data = &exynos5433_dsi_pdata,
- 	},
-+	{
-+		.compatible = "samsung,exynos7870-mipi-dsi",
-+		.data = &exynos7870_dsi_pdata,
-+	},
- 	{ /* sentinel. */ }
- };
- MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |  6 ++
+ .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 41 ++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 38 +++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 40 +++++++++
+ arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 94 ++++++++++++++++++++++
+ 5 files changed, 219 insertions(+)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
 
+Best regards,
 -- 
-2.49.0
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
