@@ -1,81 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC73A24EF88;
-	Thu, 12 Jun 2025 14:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9E5278E5D;
+	Thu, 12 Jun 2025 15:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749739430; cv=none; b=f9IRyimXCQnwKmMKxPii3BTwVYrp/uW/c3UrEbvAWsAX+c9i0RBHKe9Rh7hYIUICjiaTS10uYIPoi+EPQXZRTmvXI43Q1hlMqeawBuv7Cg1WL2K8BLcHLvxfo1op3fyF7tG41fSaoKr4cxkNt3QvI0D1DxL0wEx7ZkrMQUaWVfs=
+	t=1749740441; cv=none; b=oOkBoTxhhUhD9qPjr5MsEofd28iIUjpRQPoXYuS2OfnJxebnozpyOfQEOsqgKoefP2bUpiPGM7Sws+M7znsmWxp3C6v1GUxjdcKPunckqHlfn6kLXGvJ7smLNbjwBCQvXHucXaE5Y/pOQlJLO9Lvay7ISdhw32tGvpQRvapz81U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749739430; c=relaxed/simple;
-	bh=lrhWjcC1p3vpAdzkTP5scpnrJVT2HqrYXcMoc7cDr2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ivQ0da2gsf4AhBsjevyyiMjC9PnZQmH+xVz1yCA66cBzhfKPbNqn/KmMK4azHMOqlbJBKOGEQI83a8Nh3izq3H/4EDUhyq1VhXsUGXrpFFPyng4Erf0MK8gpiVuzpxbRs7poA4fZQtiE1nc/EccW7yXijauAI3OhcEXZn/YLswg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzTvcfiL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749740441; c=relaxed/simple;
+	bh=hyszOhcRbzyjfVvsWkNpk+hVLWy3Vif4GHa8XCtb/z0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mj+BQ23YtNjjYQbUYip9w5+oUZHFQ307Fkgc2TmD7prl0jId8+uryIjDal6Y2HFxxntLfTnPvU6VmsPDJ+D9710Xw9e2Im5Fb21pBEn3hQVnGxp0HyMBwUtMdnG4j0AeUQgeXX1HYhHHYFhBhdAMkVFwMH5EGKmgFY2y7xojvyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UBs+WhFP; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzTvcfiL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A74DC4CEEA;
-	Thu, 12 Jun 2025 14:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749739429;
-	bh=lrhWjcC1p3vpAdzkTP5scpnrJVT2HqrYXcMoc7cDr2E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HzTvcfiLdY7e9RyrcfxKBcFXqy5kFNwZcuFmJvfP73bDt/3Mmdsi6oJJ5yLV/Q4xi
-	 VtYreZ0IVnD8yTQD81hKk5I1nfMdoXvPZD3Z2ETh+JMSw4Giv7XqCcKnAuoukyT/D9
-	 Jjt3qW6ZSJ+ZhGsr0cpYoSxB+688QvM01DqF+P78V3UqeQGDYfHT7uUTIfp3Re44Ok
-	 /Cx6sXGz1hHc9ryM9w4hf07lVps1CtbPfuNWAuX4FUNduU87jOOrXYvj3oQ2e3MEwu
-	 VrBkgRoLIqGPynkRbK6PHAFrTStNHdrH4pDeWTukvnOwNkMPTWXPB7mZtz4jzhjiWD
-	 lXNXQBVyN1XcQ==
-Message-ID: <023f1c08-f9bb-483f-89e8-2ff5206d1f19@kernel.org>
-Date: Thu, 12 Jun 2025 16:43:45 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UBs+WhFP"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 14A5A260A0;
+	Thu, 12 Jun 2025 17:00:38 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Ma3iOkFIL4ux; Thu, 12 Jun 2025 17:00:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1749740435; bh=hyszOhcRbzyjfVvsWkNpk+hVLWy3Vif4GHa8XCtb/z0=;
+	h=From:Subject:Date:To:Cc;
+	b=UBs+WhFPGmXf10maD/KCA03fqTS+jQmw0BJes/UnNzmC3xIEuLH2la6i7Qp2XZk4N
+	 3H8QosxjTDSMl6IvaERdEF5o/9lFwU01jdjA0Po7JFJvMiyp3ZABsTzTt4d6yCBiXb
+	 yOwlZi+8sc4hHDFjd14rxmfDdpm5jWajdicBwrQoVgHycyO9FJjoAbxM4ebi1EV7sG
+	 HxXyQu0I9+eoI17KoDJCUIKGAF1MMtvRXXAbDbQHyrlSqLTeNMMTI9CDxedjW9U9zf
+	 iAmientABoTM6Z65Y4RkCs/kkdFAX3sdeN/HQXDj3qX4m2FhuoDL8gcj5zWB0Mkfsy
+	 2JIEUcWipbuaA==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v2 0/2] Samsung Exynos 7870 DECON driver support
+Date: Thu, 12 Jun 2025 20:29:18 +0530
+Message-Id: <20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: defconfig: Switch SOUND to module
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, krzk@kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Janne Grunau <j@jannau.net>, asahi@lists.linux.dev,
- linux-samsung-soc@vger.kernel.org
-References: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEbrSmgC/2WNQQ6CMBBFr0JmbU3bIIIr72FYSGeAWdgxU0Igh
+ LtbSVy5fC/572+QSJkS3IoNlGZOLDGDPxUQxmccyDBmBm99aRt3NbSsURLqyyAFiaYM3teIDn3
+ XQ169lXpejuKjzTxymkTX42B2X/trNX+t2RlrqnCpKxdc6Gx5R04qMp1FB2j3ff8Ax0hFv7AAA
+ AA=
+X-Change-ID: 20240917-exynosdrm-decon-4c228dd1d2bf
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ stable@vger.kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749740428; l=1203;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=hyszOhcRbzyjfVvsWkNpk+hVLWy3Vif4GHa8XCtb/z0=;
+ b=RBepMzepmmvN9MEFlWtkAYr8CSmXHsbMD5QHpkFVOAJxzE4dbCgTT+mxjmvjvSYo2dr+5RnEc
+ 0Fi3M5ecoAzBnDtWAjPc8ngbIx8joImgFgyZP9PLH1uivMD+tNAjOEP
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On 12.06.25 15:44, Krzysztof Kozlowski wrote:
-> Sound drivers are not essential to boot boards or mount rootfs,
-> therefore in effort to reduce the size of kernel image (and boot images)
-> switch the ASoC drivers to modules to decrease the size:
-> 
->    vmlinux: 152864 kB -> 154528 kB
->    Image: 39391 kB -> 39067 kB
-> 
-> No difference in resulting include/generated/autoconf.h, except making
-> modules: SND_SOC_SAMSUNG, SND_SOC_SDCA_OPTIONAL, SND_SOC_APPLE_MCA,
-> SND_TIMER, SND_COMPRESS_OFFLOAD, SND_PCM, SND_SOC_SOF_OF and
-> SND_DMAENGINE_PCM.
-> 
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> If patches are fine, I will take them via Samsung SoC.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Sven Peter <sven@kernel.org>
-> Cc: Janne Grunau <j@jannau.net>
-> Cc: asahi@lists.linux.dev
-> Cc: linux-samsung-soc@vger.kernel.org
-> ---
+This patch series aims at adding support for Exynos7870's DECON in the
+Exynos7 DECON driver. It introduces a driver data struct so that support
+for DECON on other SoCs can be added to it in the future.
 
-Acked-by: Sven Peter <sven@kernel.org>
+It also fixes a few bugs in the driver, such as functions receiving bad
+pointers.
+
+Tested on Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2
+Core (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte).
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v2:
+- Add a new commit to prevent an occasional panic under circumstances.
+- Rewrite and redo [v1 2/6] to be a more sensible commit.
+- Link to v1: https://lore.kernel.org/r/20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org
+
+---
+Kaustabh Chakraborty (2):
+      drm/exynos: exynos7_drm_decon: fix call of decon_commit()
+      drm/exynos: exynos7_drm_decon: add vblank check in IRQ handling
+
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+---
+base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
+change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
