@@ -1,135 +1,163 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAFA1F8753
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 10:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1401BC2A
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 13:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725960; cv=none; b=Y2XkwzaDktv71fuT8yqXcpNn0GOpvtqmZ99rH2P5D9CIorl9x9ep8jU5aoOv2RAtEyyJ9AZLnILEW+4KbLps6w4oeTO4QvuCBtbH4sKYNVQ2Pttr3PjSEpvVwM3xaov/7WRcIpFenYh2TOwwFZNnBSbx0ZcQzGIz3qI5FrhjXtI=
+	t=1749735875; cv=none; b=SmiajwPth2urOaDCOpNCwDoXRj5ZEPmWxiV2oZMx7w29GsHCNZXXQtY6AoERMra0/pTME0sIe2Roi7Sv8V2cUm8AvVo+xXoeqsNu1u6xsGMhvLUjpwrSoJur15gPu6iyW62WPwUld5GfWtA5uhD8F9LTCFOdnP/tbZt46OPogsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725960; c=relaxed/simple;
-	bh=WWPYYggyKVUIqcpZRwtY3ch16mcUxM6fvmZKKpyOsWg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mCNZ7IzDMCZPYVQQgTMhqrdURC9LGvKqPRufJotJyjhid19PJ6xrx6U9LWh/bqtI1Y2p845fvKCoz564h4u0k49Ir3WY3b3CV9ZcMtvx2y2shzlAt+Ws3UbSV47StwvGV756MrVZqdlINMyyYVEnyoqLN061p8j2O8jiV2oy1Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r6nN+AaH; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1749735875; c=relaxed/simple;
+	bh=fmLKNgtKcJwjP5FDnh9DbIUvWbuQxYQ2VpHaBRIju80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LSYmmSxy7Vgt7VmovqdCBnJPQmd3y5Ux9sP5FictfykAmCTPo1CgGk7vbk2Bou4FN1A1dSOsY3INqvpJPo/9DipBlQ0fxHGncg1XGTtX697Ja0NTygagsoOwiCgs36H/7cor38K/5hJiIdBgyoqAiQ2YIu180kKGT8emfuaeOR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXXiabof; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r6nN+AaH"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a365a6804eso484350f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 03:59:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXXiabof"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450ddb35583so1448045e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 06:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749725957; x=1750330757; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OxVFpXC9gE/NnptI7yasZSeAwdsDwjZxI1xtlSOfvvA=;
-        b=r6nN+AaH1FFt9eiD/oBB6xuxgOlHpttnmzJhBx3WCbi/KaDm+x7tLBZyac03mSdqFT
-         n75/2p6JKdJjfULVxmhhVzlSK1CoWfbvx5ZN94xlE/oCvExe7Mpg/3DrCfHFBg38SpHw
-         AZbxEyi81sDmbs6yXTlIWc7Hcf82sdtAv/myAQnpqMUwIZOHCL9FCLTX/CZYOXeeTojw
-         ckQjb0s/Su47ljH+lKQ7oMYRtYI17ATM1q1zIqJjW2rNLvK6w0QCOxZ6WTYaUmTyURZo
-         6P96e6qJ076z6uZXdapfKqBNGdoQxxjyN9Uwfwu3kSwDbprln1I3fE14n8rVDFcPp6iL
-         4A6A==
+        d=linaro.org; s=google; t=1749735871; x=1750340671; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TAPAekU/LrZe1nJf7fcuyTNybcW9G7I09lCZHvf9oYc=;
+        b=eXXiabofD51o+LER7CAup3y0CTPMzQZvEfJOfKSfntayrrx9ogu2RqBxpV8pjniYUd
+         fB8sPPdpX2FCwG5JIskkbTBtMYiIah+tzFDQOKEHbQADK0tRCyqv+iDL6jxMLj4A4o4S
+         7zaX213+uFJJvxe9XGWDFp8GjYnmCehKZpDU9VPuSuskRulVLh/Br1mf06QE/bJqyYOl
+         tldOL/TPqia6/4ZaWzgjPEn3S8aoS57eYU1buClPSCMQOrIKLQ2VtDoUXkms+52ml8JB
+         JtbWkx8F5ASsX85p3x1x2sW1F11aMW7T4/rKInmsEQoxXvYs38nfRavnY3HW4Mtc5rc3
+         v70w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749725957; x=1750330757;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OxVFpXC9gE/NnptI7yasZSeAwdsDwjZxI1xtlSOfvvA=;
-        b=l0t7Fz9hXiYnGogZnaiKBORk982O1bDYqxruCo1mbnW9RmgJBFpn+nUghHezmyw2m0
-         Hd3pBkRg/fNuAUV/EcTQQhRNOsO5cuJX5PCnFbxZ/RempcV+vRFo+P+pbJidWCyXtof4
-         8reQQvrllk7RlakD1om630xK3nrqY07OTI7uIIKALTcxwV9TNTL5/+edEYaIB5PJOEeJ
-         w4rmjjT0g+MmhsZVvwjtk+mE5V/OnFIRTEKJjpw9TIsslNr0BDyaI5njmQ3zd5H3zl1p
-         bGJ+I1rNdburRlP2Fp8NrTcURiSPuvw889LRxT1Cqcdx2ldjIJmr8jejUVu5tKw+Q6Of
-         G6SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJArsrF9ZSmNEhzJmk6f6Is60Nc50BYUdAIIfw3oWYDBguv1ZeYedPlyLGJEoZ8jO628yJjNHoyDwKoQyQoYen7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlJ/6qLmbophMCTKZgbdkv91MutfFShIauW61Ya9uLqqwrfGnL
-	ZppKFkdIOs9xWnTY96myLC3c2y0Ib6qGPvOoUpcdpqq5kVE8x/RHToQX78WpA0fhuBs=
-X-Gm-Gg: ASbGncvE5o2J58fYNrZAfkqcn20mWoqTXxRB9/YB+iMlsADoFPpTKisHX/cQeRgxmur
-	wQROiGOpTwQ1VlbdFLD7qDRF92dETNQpmLLKv7E+zxhStS33xqiJL1RDUnMseevwqy2AotP+JoI
-	O/U6oRDAV0SDpG4g4P4cIubkrTSR66Dn9b7yJT+p5/QWDgiOnALHgbMcg5OeVesZzM3XWEum/uF
-	3wKCaYPU1sFYE0iPB6o0MJpdDY+l9C1fRt9u57tJwIRRxUD9tCEZSCv3GLEaTW+fI+2JEhrmuXX
-	uhLU5ePls+fr1FrEoRKLepXpQtqDbRftmFb31Lfnp8LMP+jjSVmqE10irUDhMW8nVg==
-X-Google-Smtp-Source: AGHT+IHqd8/I6PcH/SsGO4ZHasePxLhvFKcF2xtJG5ImKC1vi9knPoEYRyrNOkQXYTNCKl3KYXGlKw==
-X-Received: by 2002:a05:6000:4028:b0:3a5:1f2:68f3 with SMTP id ffacd0b85a97d-3a5586e9764mr5499812f8f.46.1749725956635;
-        Thu, 12 Jun 2025 03:59:16 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561976a20sm1681124f8f.19.2025.06.12.03.59.15
+        d=1e100.net; s=20230601; t=1749735871; x=1750340671;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TAPAekU/LrZe1nJf7fcuyTNybcW9G7I09lCZHvf9oYc=;
+        b=rBgiusHhoMFkzup7f1Xix3sttC63xriP0d8isJ17xqTN6O9v4IjLmApXoolLyJMUdW
+         wQIBZIgSgeEWhCLsTPOiUPrxp35H9ZYlWSYbycfQCV0JMYYrGodtEXLt4TNQX7OeJ81q
+         3TcBZusvBrJwsi0CvKRPGsa83tD+WLUspOv/x4PgdNS4cNCeuiIMUiuRuUYuOTCgoFkA
+         b6PFu6NVn+3ohwp9IeKjrAw8xlPKWSqNcWWR2b8efLYFbpHT7FGUeEPEw1sT1nJk+Gwa
+         RwpC07+5tKuIXTApl6F+YIQSSPgDuZwE9BHLx6/ZW+GV/q0xfMepPZ9YZL5jGe6n+VLC
+         pr6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKeao/jzrpbyKTwoN6BHTrVKaGrTgUHl64qUZ6u+J2BiuMQqjqCXjxAouJZ8JGK8AF4El8O20WNxVtEiZxAVFObA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8T9QZP+SsnGmXkNRtVDay8E85SycVr47NG/V5dYhjrBZLQgof
+	9TPKVi/8oEzNa2kFTKJzXFJTUsvUyIk43EMyNWCmeTLdrlzhMQo7zMx0f6snPcUi6rI=
+X-Gm-Gg: ASbGnct0uF6R4RVESAJ+U+x0hrOz5VboU9RiWL25RECO4Q9+NFIXtcX4lV3OQr8FiS3
+	MbmXQ2zMB4dmxZbWXagaMvS1Nko3JqqSdXFi+naI0yvCS79REPB2vWe5K+cq/hbqIM/L/Za2DCW
+	p19vJnBfPUyEYXSbt+eoLJIO1/xoOSeJoFYTxSSb32VZQrA3dGrUOP6kn1SP/b56QCW1E5P3YTa
+	Pte3AOCKQJd28av60n8n3lKtndO5wcj/rmV/Gnhm47mEIiVqYWwdVv+6kgcsTDLTqAdfg8AxT0f
+	yOH6GUHkvO4W/pTOou06/xyRcxCHCrNqibeUlrrpu3hVzSOQ++SwyM/i2q14Yq3byY4qbRUCiXn
+	lkRMjlTID
+X-Google-Smtp-Source: AGHT+IE+fhgoMi57FWpyHSYtxYdJ8jLOUeAusqX+ark2CzDRRR4iGxpFzDQ3xzR11gn00SA1jvJm8A==
+X-Received: by 2002:a05:6000:26c1:b0:3a4:f8a9:ba02 with SMTP id ffacd0b85a97d-3a5586b8858mr2485885f8f.1.1749735871092;
+        Thu, 12 Jun 2025 06:44:31 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561976f13sm2053661f8f.4.2025.06.12.06.44.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 03:59:16 -0700 (PDT)
-Message-ID: <b090594cb2e61160a830b4cd73d7d8a529872130.camel@linaro.org>
-Subject: Re: [PATCH v2 02/17] regulator: dt-bindings: add s2mpg10-pmic
- regulators
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Peter Griffin	
- <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Thu, 12 Jun 2025 11:59:14 +0100
-In-Reply-To: <f5fcaac5-fa8e-41da-b1d2-e84197992e3c@sirena.org.uk>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-	 <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
-	 <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
-	 <f5fcaac5-fa8e-41da-b1d2-e84197992e3c@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+        Thu, 12 Jun 2025 06:44:30 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk@kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	asahi@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] arm64: defconfig: Switch SOUND to module
+Date: Thu, 12 Jun 2025 15:44:22 +0200
+Message-ID: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2107; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=fmLKNgtKcJwjP5FDnh9DbIUvWbuQxYQ2VpHaBRIju80=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoStm1fWX3mgWeCfVDeyKr/swV92niRZ1QIQm2L
+ x0clvJz/4OJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaErZtQAKCRDBN2bmhouD
+ 16UJD/4gbBqdnKUQ84IoVn0fZjjNqBAcba0ix34ZycfQc2PNtNzj0qZHfGCJGVpQOxzcgkoXOEq
+ jhWhHkYFtIo6Lsg0VwNqL/L3ekD4JJHQGo960GpnogiLCrnrbpxbshD0lwLcbDRQXIQjLWt0tQj
+ fKUm5PbsBezIb+pefiu1vvOmYAVgD32POwCeudbqt8eq6Zm2Vx2tJ6uWY+oSu5O+7pzdMNNFePK
+ 7dGjAVGZ5KCVNJozzdJhZlY1YGvqXQM5oC8q1P43A6oo4Ie9b5V0JsNahMzjraH5cludNg96ZLC
+ v/4snCT7kkqVoiOHeiPRPOSHOQ89QRyEz70ytN9gU7ZtO9wEKVq6t1uF6EIhjG+BIvELqdO/Uah
+ HFLOq6ud/MkyU+F3euRxLvrUvNotkQHr2yQyQY6BGRsJKxQi0jodb8ePJA8KOajiIE4KEUry0dy
+ Fyyasl030WAwpGABh4Hf+bd7QZYRerUBaFPYpplwas95E50QgGjNnDDMm7QbPoXiIWFmGA+Yw3K
+ xIA4t5W9xTZFf84FQgC8P4MaDrkN8qDh1d6qXTtDDkYqklXdv9bwKe2seNkDmzbY0vziJiDXXDS
+ hqBYYohbVXBdyN1IWxk1IP1NQvbo9nwur4ejDfTY9tbEJVoyaTO6gsebVFDwtW/m+FAC5Wu1SJD wDzMrRZ67JlN7Ew==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Hi Mark,
+Sound drivers are not essential to boot boards or mount rootfs,
+therefore in effort to reduce the size of kernel image (and boot images)
+switch the ASoC drivers to modules to decrease the size:
 
-On Wed, 2025-06-11 at 14:53 +0100, Mark Brown wrote:
-> On Wed, Jun 11, 2025 at 10:55:44AM +0200, Krzysztof Kozlowski wrote:
-> > On Fri, Jun 06, 2025 at 04:02:58PM GMT, Andr=C3=A9 Draszik wrote:
->=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 For S2MPG10 l=
-do20m, the following values are valid
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
- 0 # S2MPG10_PCTRLSEL_LDO20M_ON - always on
->=20
-> > No, use standard regulator properties - regulator-always-on
->=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
- 1 # S2MPG10_PCTRLSEL_LDO20M_EN_SFR - VLDO20M_EN & LDO20M_SFR
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
- 2 # S2MPG10_PCTRLSEL_LDO20M_EN - VLDO20M_EN pin
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
- 3 # S2MPG10_PCTRLSEL_LDO20M_SFR - LDO20M_SFR in LDO_CTRL1 register
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
- 4 # S2MPG10_PCTRLSEL_LDO20M_OFF - disable
->=20
-> > I don't think we allowed such property in the past. I don't get what is
-> > here the actual signal - you described registers in multiple places, no=
-t
-> > signals. Few of these duplicate standard properties, so this looks like
-> > exact copy of downstream which was doing exactly that way and that was
-> > exactly never upstreamed.
->=20
-> It looks like we can infer the configuration needed here from the
-> existing properties,
+  vmlinux: 152864 kB -> 154528 kB
+  Image: 39391 kB -> 39067 kB
 
-For this ldo20, yes, and I'll update binding+driver to do so.
+No difference in resulting include/generated/autoconf.h, except making
+modules: SND_SOC_SAMSUNG, SND_SOC_SDCA_OPTIONAL, SND_SOC_APPLE_MCA,
+SND_TIMER, SND_COMPRESS_OFFLOAD, SND_PCM, SND_SOC_SOF_OF and
+SND_DMAENGINE_PCM.
 
->  if a GPIO is provided then use value 2 otherwise
-> use value 3.
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Close :-) There is another register to say if this pctrlsel should be
-respected in the first place. Therefore if a GPIO is provided, then use
-value 2 for pctrlsel, otherwise the value doesn't matter, as pctrlsel
-will be ignored anyway. But doesn't really matter in the context of this
-discussion here, just for future reference :-)
+---
 
-Thanks for your review!
+If patches are fine, I will take them via Samsung SoC.
 
-Thanks!
-Andre'
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Sven Peter <sven@kernel.org>
+Cc: Janne Grunau <j@jannau.net>
+Cc: asahi@lists.linux.dev
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ arch/arm64/configs/defconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 62d3c87858e1..14fcd0a85f5b 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -979,12 +979,12 @@ CONFIG_BACKLIGHT_LP855X=m
+ CONFIG_LOGO=y
+ # CONFIG_LOGO_LINUX_MONO is not set
+ # CONFIG_LOGO_LINUX_VGA16 is not set
+-CONFIG_SOUND=y
+-CONFIG_SND=y
++CONFIG_SOUND=m
++CONFIG_SND=m
+ CONFIG_SND_ALOOP=m
+ CONFIG_SND_HDA_TEGRA=m
+ CONFIG_SND_HDA_CODEC_HDMI=m
+-CONFIG_SND_SOC=y
++CONFIG_SND_SOC=m
+ CONFIG_SND_BCM2835_SOC_I2S=m
+ CONFIG_SND_SOC_FSL_ASRC=m
+ CONFIG_SND_SOC_FSL_MICFIL=m
+@@ -1021,12 +1021,12 @@ CONFIG_SND_SOC_ROCKCHIP_SAI=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
+ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
+-CONFIG_SND_SOC_SAMSUNG=y
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_MSIOF=m
+ CONFIG_SND_SOC_RZ=m
++CONFIG_SND_SOC_SAMSUNG=m
+ CONFIG_SND_SOC_SOF_TOPLEVEL=y
+-CONFIG_SND_SOC_SOF_OF=y
++CONFIG_SND_SOC_SOF_OF=m
+ CONFIG_SND_SOC_SOF_MTK_TOPLEVEL=y
+ CONFIG_SND_SOC_SOF_MT8186=m
+ CONFIG_SND_SOC_SOF_MT8195=m
+-- 
+2.45.2
+
