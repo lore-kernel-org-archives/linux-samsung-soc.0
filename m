@@ -1,139 +1,135 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE25C22D793
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 09:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAFA1F8753
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 10:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749722172; cv=none; b=b5JOKuEokKkylInxBrjqsqI+vY7pvNV8gZLhMkc3mVM1wyt3Z9Tq9jjdhn21JmzXdStz8HS4obZkM3qprvXbyuf05zKw5aisWka/BrLPn8bwOR/zwL1DblFCTDixrl/75Rgb0Qg9xMcel2KY3XRhUbDmEazSqmHUViDFSGduISc=
+	t=1749725960; cv=none; b=Y2XkwzaDktv71fuT8yqXcpNn0GOpvtqmZ99rH2P5D9CIorl9x9ep8jU5aoOv2RAtEyyJ9AZLnILEW+4KbLps6w4oeTO4QvuCBtbH4sKYNVQ2Pttr3PjSEpvVwM3xaov/7WRcIpFenYh2TOwwFZNnBSbx0ZcQzGIz3qI5FrhjXtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749722172; c=relaxed/simple;
-	bh=TO01a4XfI3theHM74fPZdR2rlN2cv6ZWCZ/5/LAF5wA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cNMwuRfw441kUVxQDTc2XWGwRAG5jSQiJXh4fI7wEQjE1bP9fBd8ls7kWUFmOdfnX7O8LyVG+jrcsw3hWlS7GgeHPG7A9kimKB8LkL6kyIsfHbddtrICGA2rJbZ/eCM8qlSHZuIoWThOgvMznjOkKeYDdIG2J+vfV3DRf5oMdT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oh36tfcg; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1749725960; c=relaxed/simple;
+	bh=WWPYYggyKVUIqcpZRwtY3ch16mcUxM6fvmZKKpyOsWg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mCNZ7IzDMCZPYVQQgTMhqrdURC9LGvKqPRufJotJyjhid19PJ6xrx6U9LWh/bqtI1Y2p845fvKCoz564h4u0k49Ir3WY3b3CV9ZcMtvx2y2shzlAt+Ws3UbSV47StwvGV756MrVZqdlINMyyYVEnyoqLN061p8j2O8jiV2oy1Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r6nN+AaH; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oh36tfcg"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a4e62619afso106829f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 02:56:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r6nN+AaH"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a365a6804eso484350f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 03:59:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749722167; x=1750326967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VGWS+hFBWdcB3VYxnV3ZAvnCxB0FbDboNRXSuMWKNAE=;
-        b=oh36tfcga42MUSo3rugjuB/IDGojUziE2Xaa3vQ64zzFKuR9N5yIhUwKHBljedrdnL
-         fFPhGCkQ9Pg5rSFCi4ltMT7ijgHLessV+C51gyELeBigNuhQu8zMJICwMUK61yb8gw3/
-         cvC54pgoDAhJt7XlOb0JUxC8QEUIFMucHafPc5Ad+HFIgWLzB9zPkuOsI7M0z8yL9F1l
-         N9j8crzxFpLTBBlLOgNV8takdSpA1wVUvSlpO64+2U++LtC5dNCgngTRdBkc5sL+pWAP
-         J3GFTuLRbVuuOJLDZvjBMWNOTl3n3tZwpW4f651HLD1QBHiCsvUjcYQC15a3AaiL8Jbe
-         TwsQ==
+        d=linaro.org; s=google; t=1749725957; x=1750330757; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OxVFpXC9gE/NnptI7yasZSeAwdsDwjZxI1xtlSOfvvA=;
+        b=r6nN+AaH1FFt9eiD/oBB6xuxgOlHpttnmzJhBx3WCbi/KaDm+x7tLBZyac03mSdqFT
+         n75/2p6JKdJjfULVxmhhVzlSK1CoWfbvx5ZN94xlE/oCvExe7Mpg/3DrCfHFBg38SpHw
+         AZbxEyi81sDmbs6yXTlIWc7Hcf82sdtAv/myAQnpqMUwIZOHCL9FCLTX/CZYOXeeTojw
+         ckQjb0s/Su47ljH+lKQ7oMYRtYI17ATM1q1zIqJjW2rNLvK6w0QCOxZ6WTYaUmTyURZo
+         6P96e6qJ076z6uZXdapfKqBNGdoQxxjyN9Uwfwu3kSwDbprln1I3fE14n8rVDFcPp6iL
+         4A6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749722167; x=1750326967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VGWS+hFBWdcB3VYxnV3ZAvnCxB0FbDboNRXSuMWKNAE=;
-        b=WVtZ/DrrLgZZUeD1Yg8X9hgwx1THDUIfSQhMxoYEIPaQ85AMevMVSDT3s5nh1FqH9p
-         9EgGhd0N/Z7Emdxj5eIhbz5xpmRfmbExlQjI0N/AYw+6S39kxA0ZAu7AsrdEzZmOwohh
-         q/tdl0mN3GXV9cL69/HvHEOAspZhZR3NorHuHwemk/iOfab4wkKK8vUgUQ7jQMsNt1M3
-         KGOAY0GsrHe7mlzGdEvwbGwgFiyV/SSlBm7uOtDo/t58BOrWUULjQA125QE57IZKB/Oz
-         oxWRswqWYTTGiZ1ojC2DeTcMgD7qIwIaveYBZrRC1RcQqPc7CfkwjB2DFq7ZPFSylkFi
-         wfog==
-X-Forwarded-Encrypted: i=1; AJvYcCUozfImTNVlftwdMv20RWAGxqBr7c3Hu1bRrSJSeuiFpvMVPauQJHpbSxfGN0oBT0F8h/ngQLSujZGKwi3j9z+dyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy70erOdFxzCzaKC7v3qwNYv/LE+DAkoJf8Pre+QO2oPcMQIYRQ
-	J50qqHtKyxnPsQSyPA5Fp7mASMl04rC4cVbaLYVdW62fV2YRhglzxfRYgAIkZhzCD/IgWKXxu3x
-	dTaTw
-X-Gm-Gg: ASbGnctFqsCyY+P5VpiuThmwS9bX5MK6WNFt6p4xCglxK0/rdL+VLDirckDvnyAnhWB
-	hdK0qbB/4X0TM83FHFZCwYelSK1/BqV4+KakXgrSSYS/tNUMnkPNFMUqrOyA/rIZIa1AsKaGiNz
-	c2MpBr/sF/3XOd7xal42LesMlwkDbnITGIwpUbuskNQ67B1LiprsLuaqU8DKNlO9T5FOTrxdsOw
-	n6E0TPlIcCvMINYT2UY5+zrTwzBuzSMpVhWNnSUD7qelc2TV4FyA9y3jQZvot1rG1CwRraliGgj
-	Zs7FOBWe4TS7lSjpTeYIuzio8EaIPioarbS79KqW2/T2DFj29oA3Tm4tMybwvsTLcEm5CmE+rw=
-	=
-X-Google-Smtp-Source: AGHT+IEunL0h4aObpNd5+z2QDBp6DgiOMvQCjH0pMkcARf474VM+a0aBXZwTAGaoL6LJV3WfcEN4Sw==
-X-Received: by 2002:a05:6000:2507:b0:3a5:1306:3c30 with SMTP id ffacd0b85a97d-3a55864fb5amr1969533f8f.0.1749722167198;
-        Thu, 12 Jun 2025 02:56:07 -0700 (PDT)
-Received: from kuoka.. ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5618d6f4fsm1521857f8f.0.2025.06.12.02.56.05
+        d=1e100.net; s=20230601; t=1749725957; x=1750330757;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OxVFpXC9gE/NnptI7yasZSeAwdsDwjZxI1xtlSOfvvA=;
+        b=l0t7Fz9hXiYnGogZnaiKBORk982O1bDYqxruCo1mbnW9RmgJBFpn+nUghHezmyw2m0
+         Hd3pBkRg/fNuAUV/EcTQQhRNOsO5cuJX5PCnFbxZ/RempcV+vRFo+P+pbJidWCyXtof4
+         8reQQvrllk7RlakD1om630xK3nrqY07OTI7uIIKALTcxwV9TNTL5/+edEYaIB5PJOEeJ
+         w4rmjjT0g+MmhsZVvwjtk+mE5V/OnFIRTEKJjpw9TIsslNr0BDyaI5njmQ3zd5H3zl1p
+         bGJ+I1rNdburRlP2Fp8NrTcURiSPuvw889LRxT1Cqcdx2ldjIJmr8jejUVu5tKw+Q6Of
+         G6SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJArsrF9ZSmNEhzJmk6f6Is60Nc50BYUdAIIfw3oWYDBguv1ZeYedPlyLGJEoZ8jO628yJjNHoyDwKoQyQoYen7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlJ/6qLmbophMCTKZgbdkv91MutfFShIauW61Ya9uLqqwrfGnL
+	ZppKFkdIOs9xWnTY96myLC3c2y0Ib6qGPvOoUpcdpqq5kVE8x/RHToQX78WpA0fhuBs=
+X-Gm-Gg: ASbGncvE5o2J58fYNrZAfkqcn20mWoqTXxRB9/YB+iMlsADoFPpTKisHX/cQeRgxmur
+	wQROiGOpTwQ1VlbdFLD7qDRF92dETNQpmLLKv7E+zxhStS33xqiJL1RDUnMseevwqy2AotP+JoI
+	O/U6oRDAV0SDpG4g4P4cIubkrTSR66Dn9b7yJT+p5/QWDgiOnALHgbMcg5OeVesZzM3XWEum/uF
+	3wKCaYPU1sFYE0iPB6o0MJpdDY+l9C1fRt9u57tJwIRRxUD9tCEZSCv3GLEaTW+fI+2JEhrmuXX
+	uhLU5ePls+fr1FrEoRKLepXpQtqDbRftmFb31Lfnp8LMP+jjSVmqE10irUDhMW8nVg==
+X-Google-Smtp-Source: AGHT+IHqd8/I6PcH/SsGO4ZHasePxLhvFKcF2xtJG5ImKC1vi9knPoEYRyrNOkQXYTNCKl3KYXGlKw==
+X-Received: by 2002:a05:6000:4028:b0:3a5:1f2:68f3 with SMTP id ffacd0b85a97d-3a5586e9764mr5499812f8f.46.1749725956635;
+        Thu, 12 Jun 2025 03:59:16 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a561976a20sm1681124f8f.19.2025.06.12.03.59.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 02:56:06 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/3] arm64: dts: exynos5433: Align i2c-gpio node names with dtschema
-Date: Thu, 12 Jun 2025 11:55:50 +0200
-Message-ID: <20250612095549.77954-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250612094807.62532-3-krzysztof.kozlowski@linaro.org>
-References: 
+        Thu, 12 Jun 2025 03:59:16 -0700 (PDT)
+Message-ID: <b090594cb2e61160a830b4cd73d7d8a529872130.camel@linaro.org>
+Subject: Re: [PATCH v2 02/17] regulator: dt-bindings: add s2mpg10-pmic
+ regulators
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Peter Griffin	
+ <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Thu, 12 Jun 2025 11:59:14 +0100
+In-Reply-To: <f5fcaac5-fa8e-41da-b1d2-e84197992e3c@sirena.org.uk>
+References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
+	 <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
+	 <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
+	 <f5fcaac5-fa8e-41da-b1d2-e84197992e3c@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1582; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=TO01a4XfI3theHM74fPZdR2rlN2cv6ZWCZ/5/LAF5wA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoSqQlqR9SVbtLeGVNgV/bocU+ztoJ0ochVHCGW
- 0ZZTgt49FaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaEqkJQAKCRDBN2bmhouD
- 13yhD/9L0JG01crZn1btgo03LUraAB8RlG7s1bFXIjs7mpanEp9LFfwL3QVNQkC8Z3TBuWsX04l
- tv8RKOraPDIGnMsH3anmIMP1TZzC7gob36faKQenGQHgq7+30QpSCtXLUwYerdQm8KuGzErOiDn
- EZrzoLLfqZFD7xNAId3XJwVAm1KWFeaA5UYaVXFtIPIJ+JKegECLfavtcka9J+pjLp9jU2MUNJB
- qnLO8peY9Qzc3amwjesEABOGVRXvmUOktIqSoaZo7OYyTBkmg7nlFZi5C7FFzGaBFkjd96ZR+CF
- DizXzKK5gcLNnGnJwRdmp+X5NxHUuSWhhjAyudivR90yzQbEgbQcfpZQY8eleILOn7RANTBpaSi
- sn6++5jvP9gqLsH/wutPpNaQf48/CyqPiMK9NMqD8BefVZNeVD/bg2hsq9rJXAJiAjqUTdUxaT0
- /YQkXqAKrNCEevLQDjn1N6aZFq6pLaTKIwCYTWB2ysaeJOXiRrJ16iu933ZDdYE2s0+HeLqJ2/w
- gZsvM5pI6Y3Ja2GHXZzTGxlBNQ5GjHKvkD5kaKoh2IjD13FE5M1kHS552oyp8jnnDSXZcsFiQVV
- 5WcNhPBJRPeTO+I3+lZ8UTZ/1mSZyDZGFrbis9J3q2sn4ZeGDLUW7J+E+tAgpAk+e3L0Xt+MoCx Ymk1dDEnlah+vGw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
 
-New dtschema v2025.6 enforces different naming on I2C nodes thus new
-dtbs_check warnings appeared for I2C GPIO nodes:
+Hi Mark,
 
-  exynos5433-tm2.dtb: i2c-gpio-0 (i2c-gpio):
-    $nodename:0: 'i2c-gpio-0' does not match '^i2c(@.+|-[a-z0-9]+)?$'
-  exynos5433-tm2.dtb: i2c-gpio-0 (i2c-gpio):
-    Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'amplifier@31' were unexpected)
+On Wed, 2025-06-11 at 14:53 +0100, Mark Brown wrote:
+> On Wed, Jun 11, 2025 at 10:55:44AM +0200, Krzysztof Kozlowski wrote:
+> > On Fri, Jun 06, 2025 at 04:02:58PM GMT, Andr=C3=A9 Draszik wrote:
+>=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 For S2MPG10 l=
+do20m, the following values are valid
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
+ 0 # S2MPG10_PCTRLSEL_LDO20M_ON - always on
+>=20
+> > No, use standard regulator properties - regulator-always-on
+>=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
+ 1 # S2MPG10_PCTRLSEL_LDO20M_EN_SFR - VLDO20M_EN & LDO20M_SFR
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
+ 2 # S2MPG10_PCTRLSEL_LDO20M_EN - VLDO20M_EN pin
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
+ 3 # S2MPG10_PCTRLSEL_LDO20M_SFR - LDO20M_SFR in LDO_CTRL1 register
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=
+ 4 # S2MPG10_PCTRLSEL_LDO20M_OFF - disable
+>=20
+> > I don't think we allowed such property in the past. I don't get what is
+> > here the actual signal - you described registers in multiple places, no=
+t
+> > signals. Few of these duplicate standard properties, so this looks like
+> > exact copy of downstream which was doing exactly that way and that was
+> > exactly never upstreamed.
+>=20
+> It looks like we can infer the configuration needed here from the
+> existing properties,
 
-Rename the nodes to a generic i2c-[0-9]+ style with numbers continuing
-the SoC I2C controller indexing (3 controllers) for simplicity and
-obviousness, even if the SoC I2C controller is not enabled on given
-board.  The names anyway would not conflict with SoC ones because of
-unit addresses.
+For this ldo20, yes, and I'll update binding+driver to do so.
 
-Verified with comparing two fdt (after fdtdump).
+>  if a GPIO is provided then use value 2 otherwise
+> use value 3.
 
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Closes: https://lore.kernel.org/all/aCtD7BH5N_uPGkq7@shikoro/
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Close :-) There is another register to say if this pctrlsel should be
+respected in the first place. Therefore if a GPIO is provided, then use
+value 2 for pctrlsel, otherwise the value doesn't matter, as pctrlsel
+will be ignored anyway. But doesn't really matter in the context of this
+discussion here, just for future reference :-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 8f02de8480b6..a1fb354dea9f 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -85,7 +85,7 @@ homepage-key {
- 		};
- 	};
- 
--	i2c_max98504: i2c-gpio-0 {
-+	i2c_max98504: i2c-13 {
- 		compatible = "i2c-gpio";
- 		sda-gpios = <&gpd0 1 GPIO_ACTIVE_HIGH>;
- 		scl-gpios = <&gpd0 0 GPIO_ACTIVE_HIGH>;
--- 
-2.45.2
+Thanks for your review!
 
+Thanks!
+Andre'
