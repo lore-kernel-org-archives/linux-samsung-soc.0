@@ -1,111 +1,126 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAF3289839;
-	Thu, 12 Jun 2025 15:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB45526D4C9;
+	Thu, 12 Jun 2025 15:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749740482; cv=none; b=V73SM+H2TkjuiWNbf6Vp+igohocfgxFtGkMFMD0sAoMUT1sjS+9+2uEZtpcTSZsq6L0ph4n19fcK0ZXIZuul+cGceWOkMjpicxiaZYaQGeOL7e7U2SE1RYclExwKqmLWgdsECtPkFmdWbWQ4jn6OLS3u2PUwSds2RoQA5qO+Njg=
+	t=1749740728; cv=none; b=B1d1jcXXLNlSs5wTxA5e9W0n9aawnZ2XpyvYhXdwTHt2jDAZrGLDT79Grktm11bbeM7tc+p/hWKKva92opEClbGkrVUIs6h7AAo1VJjRbJsECQhwCqErVuSRd26jEdnS39icZTCSdEmopV+oaGFMHtw7Ikpe59t403YgTizp1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749740482; c=relaxed/simple;
-	bh=D8o5aKxiqPDfJaP/Wlra9wiusUGgyAqkKg4+LuSvXis=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R0h61lwUAWaHHCr/1VnTDAbN3Lf+IBBpxYnY16QCxhTg+d31GwsYDo8yVkJIqXrwHzIl8RFZvSk4KUKdxR4PX8qbWKwNeF74JA6Wtg2HXEZ+qa11eDMD3VPwJpQCIlrIEqrF8WTFy6xpw5FDLSI1vV07aUguQYQ3Pc/t8Hmtcds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bn6KTEPY; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1749740728; c=relaxed/simple;
+	bh=FrUyFoeakZ/6ELmKkHRpIQLhoYY54oaCXbP4semewDk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lOL+VTMQOFrjHt43JTNmuI41/ppszWTSj/YHubQnwbb10XWCVbYcm+E4KcUFqttL2bPgtf2akZFHxMZz+4/F48jboi+5poybcMZeDgS/ZMmeQum3dXQEd3Y0OrnBTRWdvb+f9EBeXLerm90udO2m6ON9wkVKTPed06gIpfZkL9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jm5Tqtx+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JVD8+Avq; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bn6KTEPY"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 175ED25F66;
-	Thu, 12 Jun 2025 17:01:19 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id cJPnsxm7-FXg; Thu, 12 Jun 2025 17:01:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1749740451; bh=D8o5aKxiqPDfJaP/Wlra9wiusUGgyAqkKg4+LuSvXis=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=bn6KTEPYJhfvaGt2QBHkIbHgJCb0CRBaJ/IOnV4I4/F+ritPtnyNle5ZETilDMpKH
-	 wlskdq4ZogKkt4ZQUyt5ACHvpcTI8ns3LoPm6eozssU35Mty+H9IrEEcjFrgUVoQXc
-	 Q0OZlDCF5bT//0HqW3WkfhdCinrYgtsZqm88DDfKzT9Q3p12/NJOoAaK4s8N8yNFLC
-	 chsw/wkVS/0aA2e3ZwErcEuwCtIBHyLLhpdeKlLMFhUGRvO80txL6l9d91prm4OS+5
-	 6u3RgLDsXztehL5tc6nx1BgdnbrIKc9//oTT0A57cT3cCZRqPhAYj0U+8dv1MBY78+
-	 JVwwxiTm0bp7w==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Thu, 12 Jun 2025 20:29:20 +0530
-Subject: [PATCH v2 2/2] drm/exynos: exynos7_drm_decon: add vblank check in
- IRQ handling
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jm5Tqtx+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JVD8+Avq"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id D44AA13805C6;
+	Thu, 12 Jun 2025 11:05:23 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Jun 2025 11:05:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749740723;
+	 x=1749827123; bh=F2brnDyX2RdfWZaowl+U6ywciKsVMQieC6WvQHg1iV8=; b=
+	Jm5Tqtx+yk1k2lGRaFOeo2qQR4+VMyseQTEKG42iSTo9P6jMwKWKxgQ9Iwqk6iI8
+	lf4fGeCpzFFE+CgHlMxYSKP7zDq3J0XJU5nE3OnUbiUXlQNC9rb8DH2Oy3ZX5JcR
+	0NFR3yQVoi9d+qzJyiSgmqMxE8EJp5E1Rb2JejI7NSlWJ4Jrn18wiLF8okqYWsVa
+	RXMQrTG2ZS9n4vnc/LqLV5cp1n4H6Yyg4GQZ7HWrboQo3Vrsf94Q3IiSeDn1oFRQ
+	7yMjlxnr4iej+yMzGhOfwJY5T2QdSwL0ut1df66NsRC11gxZnzSi/3r+F7qa02ZJ
+	aRP74315z5Sz3fwtha7yUg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749740723; x=
+	1749827123; bh=F2brnDyX2RdfWZaowl+U6ywciKsVMQieC6WvQHg1iV8=; b=J
+	VD8+AvqEq1VJvmoypW5EPfC3mFllRnFuJEfEg4zHvXlMukjVmaSZhryCTQbm3eaA
+	0Fh1XLNxOMOhIWizIcdPuTeoA4MktyLzHHdnlhpx3ostDMYmEocxybbp9dHl6qfN
+	DA0/06CZPn/GDkq6ZDNm0U4RxAnktIvU2GA9jXGAvfT8GzpW+w68gNtkQdz6D/Cd
+	KjI8ayYWSu9P+dHHezgD47utUXkDoEQQrAtvDw9xBzSJduPsz/6ppYVwz3VnrqC9
+	Cl2OoM/RSaslVa2HtpTZWoTlB/h1sFP9WkMSvOGdqjF3R0ehRw+l6iKc5c9xpvLb
+	UKcROEiF0juumr9gIrtug==
+X-ME-Sender: <xms:s-xKaH34P9m8uz7hV427SUVGaDNUksqr_CYe9SDRYAHlDcO9vnyodQ>
+    <xme:s-xKaGE3r7qLnHcKobFcB0f3aQZuhWhKHKLHHKEqFwDl28BUN8EpOcenxen5G2urQ
+    0Dm-xaUlEnI6fWY89Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduheefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprh
+    gtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskh
+    hisehlihhnrghrohdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieek
+    khdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtsh
+    drihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhl
+    ihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotges
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:s-xKaH4SKAslg6GaVk3KwslqGGvlTgs9tgucsMNFsvLValYWOnOmlQ>
+    <xmx:s-xKaM1_uFV8rVSaGmZtdIio6EoSJJr8B3qXjtCAu64uAPCFj3L6TA>
+    <xmx:s-xKaKFcoBVn_K_jB5B61X_GRyU0rPYMVnwc0v4jMwnMUleLRlCsBQ>
+    <xmx:s-xKaN-y0st34moHmInI4RYu2-ubKc-ELP3A2tpmXDnj7iR1jrQnkA>
+    <xmx:s-xKaF9tXKePnpmYLrwW5E9xrOPmpcVk5d3Z3GQFRQ9tqykg9UqvMB_n>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 186A0700065; Thu, 12 Jun 2025 11:05:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ThreadId: T0983471eb64d6916
+Date: Thu, 12 Jun 2025 17:05:02 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Sven Peter" <sven@kernel.org>, "Janne Grunau" <j@jannau.net>,
+ asahi@lists.linux.dev, linux-samsung-soc@vger.kernel.org
+Message-Id: <b8783289-6670-4254-9049-786ae7cdd6a1@app.fastmail.com>
+In-Reply-To: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
+References: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] arm64: defconfig: Switch SOUND to module
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-exynosdrm-decon-v2-2-d6c1d21c8057@disroot.org>
-References: <20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org>
-In-Reply-To: <20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org>
-To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
- Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
- stable@vger.kernel.org
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749740428; l=1467;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=D8o5aKxiqPDfJaP/Wlra9wiusUGgyAqkKg4+LuSvXis=;
- b=e+o8Wo7jtjYn2hZT25bsk7JQTuoWvuRvUzHVhB4xhIPbD24Y+LwjAiDqnP5zIbfSGS0+N8Epw
- 4T77CIPXp6GCgnmWlOdaABdsRVXGTKb/4QHtsL0yevgkRsR90EloPvb
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-If there's support for another console device (such as a TTY serial),
-the kernel occasionally panics during boot. The panic message and a
-relevant snippet of the call stack is as follows:
+On Thu, Jun 12, 2025, at 15:44, Krzysztof Kozlowski wrote:
+> Sound drivers are not essential to boot boards or mount rootfs,
+> therefore in effort to reduce the size of kernel image (and boot images)
+> switch the ASoC drivers to modules to decrease the size:
+>
+>   vmlinux: 152864 kB -> 154528 kB
+>   Image: 39391 kB -> 39067 kB
+>
+> No difference in resulting include/generated/autoconf.h, except making
+> modules: SND_SOC_SAMSUNG, SND_SOC_SDCA_OPTIONAL, SND_SOC_APPLE_MCA,
+> SND_TIMER, SND_COMPRESS_OFFLOAD, SND_PCM, SND_SOC_SOF_OF and
+> SND_DMAENGINE_PCM.
+>
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> If patches are fine, I will take them via Samsung SoC.
 
-  Unable to handle kernel NULL pointer dereference at virtual address 000000000000000
-  Call trace:
-    drm_crtc_handle_vblank+0x10/0x30 (P)
-    decon_irq_handler+0x88/0xb4
-    [...]
+Nice find!
 
-Otherwise, the panics don't happen. This indicates that it's some sort
-of race condition.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Add a check to validate if the drm device can handle vblanks before
-calling drm_crtc_handle_vblank() to avoid this.
-
-Cc: stable@vger.kernel.org
-Fixes: 96976c3d9aff ("drm/exynos: Add DECON driver")
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 43bcbe2e2917df43d7c2d27a9771e892628dd682..c0c0f23169c993ac315fc8d7bcbd09ea6ec9966a 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -636,6 +636,10 @@ static irqreturn_t decon_irq_handler(int irq, void *dev_id)
- 	if (!ctx->drm_dev)
- 		goto out;
- 
-+	/* check if crtc and vblank have been initialized properly */
-+	if (!drm_dev_has_vblank(ctx->drm_dev))
-+		goto out;
-+
- 	if (!ctx->i80_if) {
- 		drm_crtc_handle_vblank(&ctx->crtc->base);
- 
-
--- 
-2.49.0
-
+There are some nasty interactions between DRM drivers calling
+into sound drivers for HDMI audio, but I checked that this is fine
+here because of CONFIG_DRM=m.
