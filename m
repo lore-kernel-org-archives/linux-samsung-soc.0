@@ -1,112 +1,118 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EB929CB57
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 15:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA35922094;
+	Thu, 12 Jun 2025 15:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742195; cv=none; b=ULM+abxCvB7RHJWz9ZNNVbOE8T8KgdzqSka2QM/uoq0jg4Z1WOWUa+KvEOVzkjc7dGSu08yhiszPmAFX1r+KPzSgou11QTyt1ChTydOIXb1PfQDvNnINYUgJztdQBC+0ZbPUDU2zNT6hUePWzljwZ5Xse6Vm5QF7EDAjAs8Ad9U=
+	t=1749743653; cv=none; b=Uke2NhumC4gkEPTdixfZ2yMN+WSuMrD1ADmUZEUIX7Tk7EIvX6xWLD6hR2+BuG5WwLBHWE9Gec/3kF4YdYPhbuEqgHBsXzxzQWB9JOQL5UqmoobYZS3B8JvFZH9+s7E5tlDD4mw3hMePuOafVEOrKbo4oETwdlc0hYnYViyewC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742195; c=relaxed/simple;
-	bh=z0ar1hJos7ARhEgbjSSfr1bzntLG3QJmXsE49Omcdw8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=W+VrC1zhNpJilcK7HCjQdeBbRIRMd3XcltUR7mHtSteQX3Gqxpjg+QJQLokWx4O/9+tkscY4PDaHg19hdtOK3itNrHKWmeBBW9oSroQ9uabEUwhCOxfSJs3/zl4wMCprLUTESzPfUxh4BIBfzgYJEL4BjaKbazTerJtyvzNS/Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rAg/G+SW; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rAg/G+SW"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450ddb35583so1612855e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 08:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749742191; x=1750346991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DKvQ0kizkJd8CblYTjjvTx/DyqmBuLZOpwvQ/Oh9KYc=;
-        b=rAg/G+SW2txg0b7vzr6ipT/igZ8ZIsSUxWPPHeSBCfVOdSeb37vMFzo/tnXAwVYVDG
-         AjduHqrBXzcBgJQmivIkFdCh/UVcFd+Hi8xsj3ZPERGr76CSuHGbnxjF/6N0Y7D7JqRM
-         p0nSVJvXoGYwosAy4osuKRzZdwWJeoPMmT8SFkPvB5oiQx9xBg8rX4kRm94p0yGeF0vA
-         rCyWw+crKm2xq4MwJ9AtwYZ/cG4t9zn2JkCbD7AMtdqFdF+ZFm5l0mVAWt0tN57m+FVf
-         yKLkPof3O1Po4Ju08M4Qb4BVX6M67vubZmCeQmGbdDX3isCSsEAgqGNYS6JpbzOJXMlO
-         idAQ==
+	s=arc-20240116; t=1749743653; c=relaxed/simple;
+	bh=Lozr22R6CO+RNvwVhifH/eSDDg9MlLQKcOlojkNqxc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XdPRtZ+04TiEXzaDq4DThV1C333xqU4VygjfUKGnyykOEBYDm32UuzpXdo7FxR8irvLNeGIzWaWRt8+kdpaXnUsKiCbeqU5PloBzL/zHH8XSZJxmVykWMifMC0DaVhOkuBTfEZ+Ss6Wk5X1lGhLYGth00d8d1G3DVDIxGsYei0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53125ca7837so635169e0c.0;
+        Thu, 12 Jun 2025 08:54:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749742191; x=1750346991;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DKvQ0kizkJd8CblYTjjvTx/DyqmBuLZOpwvQ/Oh9KYc=;
-        b=H7HT+cz9tYWP9PNwI/NK//r51tlsdE/BP/dKKds5v7BMGQegKLc+WZ6lAK0VLjsAK2
-         vRVMauCT2MPU0PFWZE/8Ah+J63eIKr2WD7CJWiUHFdP0MzkznD9v4mf5O/dOGe4aBxck
-         DkQw8tgvYU9nsNRbBN6YDz6e4Remp45Kf9H7viuiyt6ErF417cfJzEHqhxIPqiEWqwi2
-         AACk1kYlEdYj35wpVybiVC/KCR4YmD0QloGoQ66m4yPYsDdN2iH1uUOgZYEGm4ajs7s0
-         PMECwKAh1M4W8x2WK2g+md+hKkTRC693K6tHSz2u3IbhlFSXd50HdYY1loMmot44pBXz
-         lcCg==
-X-Gm-Message-State: AOJu0YyqvJ89clr1/uWx9+nGCGih/lmxY2kcumR6lP0GXlXsiii1jJL5
-	t6dV0hssA4FbCnOOOmUnwz5v3UBmzDPN6K7R9x1cWYjJJyznzLtwo9pkS1xTaOrYIPo=
-X-Gm-Gg: ASbGncu7Chh2nDMS53oHkHlvhl0gLUVbTqAxL/c5xS8cmYAU5YqoUioW6JjYoCIEMAO
-	rEIBIxQcpdh287SA04TsJ87CHMqvE8veASRC6axTFmyLjIkNy1K37oem1jq2veVRky0sFAiGqHl
-	z8s2B1NzXdWbRVGuH2DrbmtgjIcSRaOdW42MVPZQ9fdD6lhnysRoAQAw35/nRcX23Q6MaFw7ewi
-	X3eDxyPQKeKNenqQeIg7bLwJOCMGiUpS3ETD0ligwjvsf0w33BqGNzIE0Ftd/qrBeprCj7TEmgx
-	iNbS2rxUI9WCgJ20Ns5udDecSqPUQb/heP78BwOscRGCArUQGg8pZrv92LYS6VnP+unBEGa62mn
-	B2Qd8xEQ=
-X-Google-Smtp-Source: AGHT+IHcEf5K0JeoZyRffkMk2oZLKO8IT8ky+qUldOOWFDZEO8dRcFFzDiYHDmEiK60pzDMoVYDLyQ==
-X-Received: by 2002:a05:6000:26c1:b0:3a4:f8a9:ba02 with SMTP id ffacd0b85a97d-3a5586b8858mr2648512f8f.1.1749742191063;
-        Thu, 12 Jun 2025 08:29:51 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e232e4asm23557265e9.11.2025.06.12.08.29.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 08:29:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
- alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
- robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com, 
- sunyeal.hong@samsung.com, shin.son@samsung.com, 
- Raghav Sharma <raghav.s@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- chandan.vn@samsung.com, karthik.sun@samsung.com, dev.tailor@samsung.com
-In-Reply-To: <20250529112640.1646740-1-raghav.s@samsung.com>
-References: <CGME20250529111705epcas5p25e80695086d6dc0d37343082b7392be7@epcas5p2.samsung.com>
- <20250529112640.1646740-1-raghav.s@samsung.com>
-Subject: Re: [PATCH v3 0/4] Add clock support for CMU_HSI2
-Message-Id: <174974218878.126240.878153774506566554.b4-ty@linaro.org>
-Date: Thu, 12 Jun 2025 17:29:48 +0200
+        d=1e100.net; s=20230601; t=1749743649; x=1750348449;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MCWdKGDkn0LPrrpZul9GwNXUtPRdna1q2f9cpPPTLvA=;
+        b=CJnRmZoQ0g9EeciCPu5VSgLQ6+Yp0sVzbIUuG7Hw0r3haTpYwF21HW+9STnyJy6O9c
+         ulAGUTqJFZZfKyYx/K9NAHZq9OU4XUGGSQzDF0D5+rG37dGfugK7tLcJ9ORfzhwnEdQ2
+         ti8J6zb1CBNoqI5l8cnMvtPfjuH+ukszGhAyaFPr5OHh/UeB8CYRcL6oquxChjyuBW1c
+         75JQwTuG2WmdTRREClWXwkFWny5EXotZJgDPDhfxb/VpPjOPKrPKDBDm9xXULB56wR/y
+         lvFSnQs1LIR/19ZvQ0vyI13j1dumLw5yZsi3MMq44nbsnXSUxfJ5PsmbxY6ihEIRP5TX
+         q5zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOVp7hSMWtR+LrlA6Frd0BnR/loTzLXVGb6IfRJO7daV1nKfwc2ox2u1PSzwU5k4/23/kwwAeqEMm9w3uvmGLhsmg=@vger.kernel.org, AJvYcCUkZcsR3Ss3sCr5/R3dPXHOmKXPpE59twdWjwVLTketmtnJNYDJ3kPULDU99nRe4YSVsXlAh0JNFYH4SYA=@vger.kernel.org, AJvYcCVbnRcHQmj3qmkwUVH4uDHh359MlnmZw+hxJIOKJLUIRCe8QteOwLNd3L6MdTDZ+eKj8BmX18AmuyG77/kodmX/YFI=@vger.kernel.org, AJvYcCWsUzdGiOMYf+//lkaORyRFeoFsvPxny/1EZNLGOuHbmdEiHkak0tkMBCrPcOAZESHHA/eWlS5GaNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypo7DB0NRFCzgTV2JyaYjQsPVhDNqsZD6nC0sYs4+DFYO0wRw9
+	IuOIFBrVs9ll+nasIhuD6sCSZpN4pXFZAn6GFed51DM3bval9f63U43ztnW7OMh2
+X-Gm-Gg: ASbGncthSQPf+5XFYpGw9rz9RnmwgYBPMmsSf/aO4NlXWcmxPqrPSxGDsrvwSA9nc4H
+	ggZO0xyU9NMVKfNL9/DIvmHoyCTz6LJlXydyT5ii9OKpBxwbMzA4WWWKHnEt1eOtI0xP5oqIygC
+	BXv7X5BOdhCV0UqHWyPrt92Qw7A56FZ3Qg8EVoZDF5565LsBmqC9jBMZZmi2DDcEd0eihrZDaHv
+	TC3LVQlK8rQJOJrFvxrxWMoJEl68PPviRzP6aON/dNAOtcnjNHHQ0BUfbi0eRLatc2HG+VET7T0
+	p4Cngyb27KvSLopSDYHIODbb0e/lmWwZP/BGq0WtzpTGFLKU7/woo9Ole8Kme1yukA/DyeO0Jhi
+	uLI5Vk/aaialT3Ga+tExBWS59
+X-Google-Smtp-Source: AGHT+IHPQH4Y8zIYDo7jnYGjuCCKNfPDnUxt8yyPNZacUMOEktQBFF58LQrKvZEwDw2RZYYcI0kOoA==
+X-Received: by 2002:a05:6122:81dc:b0:52d:cc6f:81a2 with SMTP id 71dfb90a1353d-5312dc21da3mr2539414e0c.6.1749743649358;
+        Thu, 12 Jun 2025 08:54:09 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01259249sm340861241.9.2025.06.12.08.54.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 08:54:08 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e7c7680591so656668137.1;
+        Thu, 12 Jun 2025 08:54:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUowVZxKTEwyQURYu7qTx9yNZ323/WGFV047Wy0s8MyKJSqJakBSpr/fIRonZdUt8U/qYz+nzu2uBpnToQ=@vger.kernel.org, AJvYcCVoNcpLFUGR19ERv5s2F4O+s4f3gt2yrCOjsUIjHjkRDU5Ku3VtOHRDbhtwC+IjSZvd/m/n1ATo8/JTQeNO69kadlQ=@vger.kernel.org, AJvYcCWqS1F10E6wubpH3w+gSsedHbklQtjSgYWni/MiuXsqtgfkDi3N7ItySzSw3ImnZ/ZtlX1LjN5gket2VllD36d9ohg=@vger.kernel.org, AJvYcCXRxK2ji42gfTE/fVcDTmDx9S+YlJO6PiHjtQMXYx+6S9XvQe4yrwGqZ8l0aJedtkRtAtuCkiclT4g=@vger.kernel.org
+X-Received: by 2002:a05:6102:5113:b0:4e4:3c3a:f163 with SMTP id
+ ada2fe7eead31-4e7cd7a4049mr3737309137.7.1749743648153; Thu, 12 Jun 2025
+ 08:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+In-Reply-To: <20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 17:53:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV2Ar95nrmH=NTwY+pkrg6nD-sNoVG7MJY7ofJF4N3bNA@mail.gmail.com>
+X-Gm-Features: AX0GCFsIwHF9_aoZ54iuAPGFucIDRqFn8Tjpa14cAUcOdjFvqEv5PYmW-DjzBPU
+Message-ID: <CAMuHMdV2Ar95nrmH=NTwY+pkrg6nD-sNoVG7MJY7ofJF4N3bNA@mail.gmail.com>
+Subject: Re: [PATCH v2] pmdomain: Use str_enable_disable-like helpers
+To: shao.mingyin@zte.com.cn
+Cc: ulf.hansson@linaro.org, changhuang.liang@starfivetech.com, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, heiko@sntech.de, 
+	krzk@kernel.org, alim.akhtar@samsung.com, walker.chen@starfivetech.com, 
+	sebastian.reichel@collabora.com, detlev.casanova@collabora.com, 
+	finley.xiao@rock-chips.com, shawn.lin@rock-chips.com, pgwipeout@gmail.com, 
+	qiu.yutan@zte.com.cn, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, yang.yang29@zte.com.cn, 
+	xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, ye.xingchen@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mingyin,
 
-On Thu, 29 May 2025 16:56:36 +0530, Raghav Sharma wrote:
-> This series sorts clock yaml and adds clock support for the CMU_HSI2 block.
-> 
-> Patch[1/4]: dt-bindings: clock: exynosautov920: sort clock definitions
->         - Sorts the compatible strings for clocks
-> 
-> Patch[2/4]: dt-bindings: clock: exynosautov920: add hsi2 clock definitions
->         - Adds DT binding for CMU_HSI2 and clock definitions
-> 
-> [...]
+On Tue, 10 Jun 2025 at 13:34, <shao.mingyin@zte.com.cn> wrote:
+> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>
+> Replace ternary (condition ? "enable" : "disable") syntax and ternary
+> (condition ? "on" : "off") syntax with helpers from
+> string_choices.h because:
+> 1. Simple function call with one argument is easier to read.  Ternary
+>    operator has three arguments and with wrapping might lead to quite
+>    long code.
+> 2. Is slightly shorter thus also easier to read.
+> 3. It brings uniformity in the text - same string.
+> 4. Allows deduping by the linker, which results in a smaller binary
+>    file.
+>
+> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+> ---
+> v2:
+>  %sable ==> %s in jh71xx_pmu_dev()
 
-Applied, thanks!
+Thanks for the update!
 
-[1/4] dt-bindings: clock: exynosautov920: sort clock definitions
-      https://git.kernel.org/krzk/linux/c/3d6470990bfc8600609177962a53201cb0640daa
-[2/4] dt-bindings: clock: exynosautov920: add hsi2 clock definitions
-      https://git.kernel.org/krzk/linux/c/da5cb65d25f747236a003b82525eb6de5d49a2e6
-[3/4] clk: samsung: exynosautov920: add block hsi2 clock support
-      https://git.kernel.org/krzk/linux/c/2d539f31ab0eb3eb3bd9491b7dcd52dec7967e15
-[4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock DT nodes
-      https://git.kernel.org/krzk/linux/c/e2016763590f571cdc3912d6a7ec848d2b61e6c2
+While I already provided my Rb-tag on Krzysztof's original [1], your
+version is whitespace-damaged (TABs replaced by spaces), and thus
+cannot be applied.
 
-Best regards,
+[1] https://lore.kernel.org/all/CAMuHMdXJ57mATWW4AnBedn+D7TQ4PadkJ642daquFtAo=wZFrQ@mail.gmail.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
