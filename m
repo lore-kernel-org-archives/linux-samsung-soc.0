@@ -1,117 +1,139 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9CF1F0E39
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 09:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE25C22D793
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749722092; cv=none; b=I345bvBiq4vDxN4HjQLTT+GAiChN0L0V4834WCvcCZg+GHeOEKpOkyyLslkyAFSwRk4M+Wr7sShQEcAQbB+uwbPhO+8brAI9aL8eIs+YqZiskJlMcXtMBh6Qcgb5zm9waJ1rokeQdCZo9nXjKufXF0H8/jq4HhiHKpmIwS9IdD4=
+	t=1749722172; cv=none; b=b5JOKuEokKkylInxBrjqsqI+vY7pvNV8gZLhMkc3mVM1wyt3Z9Tq9jjdhn21JmzXdStz8HS4obZkM3qprvXbyuf05zKw5aisWka/BrLPn8bwOR/zwL1DblFCTDixrl/75Rgb0Qg9xMcel2KY3XRhUbDmEazSqmHUViDFSGduISc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749722092; c=relaxed/simple;
-	bh=Mer6qGMAyp8EPWtGukSzsuJDZTrkYf5FnFWHqQ9ONuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIKr1/Jk1xSLU5Gd7n8iWDa1yzLueigwRzcWpMX7UN7Hc1xXZT7aX7TBAAvbkgbLplmgYVRyIJwl8dMdParYpI+4/mVB5UrQcauuF93Wid0GZyHgv8wqd2/09oY7Fv5hxc437B6QB6/yZeza7KbEewpydW1Xy7J2DtYCE7gY+bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RlPFGNvf; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1749722172; c=relaxed/simple;
+	bh=TO01a4XfI3theHM74fPZdR2rlN2cv6ZWCZ/5/LAF5wA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cNMwuRfw441kUVxQDTc2XWGwRAG5jSQiJXh4fI7wEQjE1bP9fBd8ls7kWUFmOdfnX7O8LyVG+jrcsw3hWlS7GgeHPG7A9kimKB8LkL6kyIsfHbddtrICGA2rJbZ/eCM8qlSHZuIoWThOgvMznjOkKeYDdIG2J+vfV3DRf5oMdT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oh36tfcg; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RlPFGNvf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Mer6
-	qGMAyp8EPWtGukSzsuJDZTrkYf5FnFWHqQ9ONuo=; b=RlPFGNvfMPgncelkj25I
-	qs3/7isR9NSt1VjTlfOcMicbj9GlJCRQdolbZo4N6pvDbZEvcQ3eRlON/kTRIPot
-	4KvvmCFYd11wjqg7vDgNCA5f+/eHQveyyNJiPijgnTKJYd7Slk9DkYKYncDu3X07
-	IxsXn0ArHFElnhIOM42bg1qYFPKmmwrB2WyYUdKHqgi37eA5xpxTyeBMC+mh+3Vg
-	m7ZtLlKel38jBr3x2nidl7BTHJ/Hbs07skrAi5P9FxzRq8DPAQ4Gu5SdjlBQ3GLP
-	tb+MXwSun8QiCBmcW5V/wMs4t+CwUdpIplSCwU7zCzuowqKZoXnIQdWr1Vx6yYg4
-	Sw==
-Received: (qmail 3578304 invoked from network); 12 Jun 2025 11:54:36 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jun 2025 11:54:36 +0200
-X-UD-Smtp-Session: l3s3148p1@SrHL6lw3DMUgAwDPXy2/ACpZfVCNKldR
-Date: Thu, 12 Jun 2025 11:54:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oh36tfcg"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a4e62619afso106829f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2025 02:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749722167; x=1750326967; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VGWS+hFBWdcB3VYxnV3ZAvnCxB0FbDboNRXSuMWKNAE=;
+        b=oh36tfcga42MUSo3rugjuB/IDGojUziE2Xaa3vQ64zzFKuR9N5yIhUwKHBljedrdnL
+         fFPhGCkQ9Pg5rSFCi4ltMT7ijgHLessV+C51gyELeBigNuhQu8zMJICwMUK61yb8gw3/
+         cvC54pgoDAhJt7XlOb0JUxC8QEUIFMucHafPc5Ad+HFIgWLzB9zPkuOsI7M0z8yL9F1l
+         N9j8crzxFpLTBBlLOgNV8takdSpA1wVUvSlpO64+2U++LtC5dNCgngTRdBkc5sL+pWAP
+         J3GFTuLRbVuuOJLDZvjBMWNOTl3n3tZwpW4f651HLD1QBHiCsvUjcYQC15a3AaiL8Jbe
+         TwsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749722167; x=1750326967;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VGWS+hFBWdcB3VYxnV3ZAvnCxB0FbDboNRXSuMWKNAE=;
+        b=WVtZ/DrrLgZZUeD1Yg8X9hgwx1THDUIfSQhMxoYEIPaQ85AMevMVSDT3s5nh1FqH9p
+         9EgGhd0N/Z7Emdxj5eIhbz5xpmRfmbExlQjI0N/AYw+6S39kxA0ZAu7AsrdEzZmOwohh
+         q/tdl0mN3GXV9cL69/HvHEOAspZhZR3NorHuHwemk/iOfab4wkKK8vUgUQ7jQMsNt1M3
+         KGOAY0GsrHe7mlzGdEvwbGwgFiyV/SSlBm7uOtDo/t58BOrWUULjQA125QE57IZKB/Oz
+         oxWRswqWYTTGiZ1ojC2DeTcMgD7qIwIaveYBZrRC1RcQqPc7CfkwjB2DFq7ZPFSylkFi
+         wfog==
+X-Forwarded-Encrypted: i=1; AJvYcCUozfImTNVlftwdMv20RWAGxqBr7c3Hu1bRrSJSeuiFpvMVPauQJHpbSxfGN0oBT0F8h/ngQLSujZGKwi3j9z+dyQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy70erOdFxzCzaKC7v3qwNYv/LE+DAkoJf8Pre+QO2oPcMQIYRQ
+	J50qqHtKyxnPsQSyPA5Fp7mASMl04rC4cVbaLYVdW62fV2YRhglzxfRYgAIkZhzCD/IgWKXxu3x
+	dTaTw
+X-Gm-Gg: ASbGnctFqsCyY+P5VpiuThmwS9bX5MK6WNFt6p4xCglxK0/rdL+VLDirckDvnyAnhWB
+	hdK0qbB/4X0TM83FHFZCwYelSK1/BqV4+KakXgrSSYS/tNUMnkPNFMUqrOyA/rIZIa1AsKaGiNz
+	c2MpBr/sF/3XOd7xal42LesMlwkDbnITGIwpUbuskNQ67B1LiprsLuaqU8DKNlO9T5FOTrxdsOw
+	n6E0TPlIcCvMINYT2UY5+zrTwzBuzSMpVhWNnSUD7qelc2TV4FyA9y3jQZvot1rG1CwRraliGgj
+	Zs7FOBWe4TS7lSjpTeYIuzio8EaIPioarbS79KqW2/T2DFj29oA3Tm4tMybwvsTLcEm5CmE+rw=
+	=
+X-Google-Smtp-Source: AGHT+IEunL0h4aObpNd5+z2QDBp6DgiOMvQCjH0pMkcARf474VM+a0aBXZwTAGaoL6LJV3WfcEN4Sw==
+X-Received: by 2002:a05:6000:2507:b0:3a5:1306:3c30 with SMTP id ffacd0b85a97d-3a55864fb5amr1969533f8f.0.1749722167198;
+        Thu, 12 Jun 2025 02:56:07 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5618d6f4fsm1521857f8f.0.2025.06.12.02.56.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 02:56:06 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: Re: [PATCH 1/7] arm64: dts: exynos: use proper node names for GPIO
- based I2C busses
-Message-ID: <aEqj2wS7DyGrOyY8@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-References: <006ee7d6-1289-4f4a-819d-9a5e5120db99@kernel.org>
- <aCtD7BH5N_uPGkq7@shikoro>
- <3f6e1b74-5d19-4194-b98b-91ab6f10446c@kernel.org>
- <aCtK1-Yn6u8-n8mU@shikoro>
- <e5a3ce2b-4ebe-44c9-9bf5-9f460d5e7fe8@kernel.org>
- <aCtbg0_vD07g394k@shikoro>
- <aCt9e-rrOOR0C5HI@shikoro>
- <1cea4f55-752f-4581-a003-1c9d31a36039@kernel.org>
- <aEqGtjc7F8vvY4ph@shikoro>
- <b7d4272d-c08a-4c5b-814e-9367bf858ca9@kernel.org>
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] arm64: dts: exynos5433: Align i2c-gpio node names with dtschema
+Date: Thu, 12 Jun 2025 11:55:50 +0200
+Message-ID: <20250612095549.77954-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250612094807.62532-3-krzysztof.kozlowski@linaro.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BMGydgXgrD79q+F7"
-Content-Disposition: inline
-In-Reply-To: <b7d4272d-c08a-4c5b-814e-9367bf858ca9@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1582; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=TO01a4XfI3theHM74fPZdR2rlN2cv6ZWCZ/5/LAF5wA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoSqQlqR9SVbtLeGVNgV/bocU+ztoJ0ochVHCGW
+ 0ZZTgt49FaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaEqkJQAKCRDBN2bmhouD
+ 13yhD/9L0JG01crZn1btgo03LUraAB8RlG7s1bFXIjs7mpanEp9LFfwL3QVNQkC8Z3TBuWsX04l
+ tv8RKOraPDIGnMsH3anmIMP1TZzC7gob36faKQenGQHgq7+30QpSCtXLUwYerdQm8KuGzErOiDn
+ EZrzoLLfqZFD7xNAId3XJwVAm1KWFeaA5UYaVXFtIPIJ+JKegECLfavtcka9J+pjLp9jU2MUNJB
+ qnLO8peY9Qzc3amwjesEABOGVRXvmUOktIqSoaZo7OYyTBkmg7nlFZi5C7FFzGaBFkjd96ZR+CF
+ DizXzKK5gcLNnGnJwRdmp+X5NxHUuSWhhjAyudivR90yzQbEgbQcfpZQY8eleILOn7RANTBpaSi
+ sn6++5jvP9gqLsH/wutPpNaQf48/CyqPiMK9NMqD8BefVZNeVD/bg2hsq9rJXAJiAjqUTdUxaT0
+ /YQkXqAKrNCEevLQDjn1N6aZFq6pLaTKIwCYTWB2ysaeJOXiRrJ16iu933ZDdYE2s0+HeLqJ2/w
+ gZsvM5pI6Y3Ja2GHXZzTGxlBNQ5GjHKvkD5kaKoh2IjD13FE5M1kHS552oyp8jnnDSXZcsFiQVV
+ 5WcNhPBJRPeTO+I3+lZ8UTZ/1mSZyDZGFrbis9J3q2sn4ZeGDLUW7J+E+tAgpAk+e3L0Xt+MoCx Ymk1dDEnlah+vGw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
+New dtschema v2025.6 enforces different naming on I2C nodes thus new
+dtbs_check warnings appeared for I2C GPIO nodes:
 
---BMGydgXgrD79q+F7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  exynos5433-tm2.dtb: i2c-gpio-0 (i2c-gpio):
+    $nodename:0: 'i2c-gpio-0' does not match '^i2c(@.+|-[a-z0-9]+)?$'
+  exynos5433-tm2.dtb: i2c-gpio-0 (i2c-gpio):
+    Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'amplifier@31' were unexpected)
 
+Rename the nodes to a generic i2c-[0-9]+ style with numbers continuing
+the SoC I2C controller indexing (3 controllers) for simplicity and
+obviousness, even if the SoC I2C controller is not enabled on given
+board.  The names anyway would not conflict with SoC ones because of
+unit addresses.
 
-> > https://lore.kernel.org/r/20250519184530.21845-1-wsa+renesas@sang-engin=
-eering.com
->=20
-> I see my approach of using generic i2c-X was also preferred by Rob, so I
-> guess it won't get it.
+Verified with comparing two fdt (after fdtdump).
 
-Okay, if you guys say so...
+Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Closes: https://lore.kernel.org/all/aCtD7BH5N_uPGkq7@shikoro/
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I sent patch for Samsung, with reported-by credits for you (it's also
-> reported now by my tests and earlier by Rob's as well, though).
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 8f02de8480b6..a1fb354dea9f 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -85,7 +85,7 @@ homepage-key {
+ 		};
+ 	};
+ 
+-	i2c_max98504: i2c-gpio-0 {
++	i2c_max98504: i2c-13 {
+ 		compatible = "i2c-gpio";
+ 		sda-gpios = <&gpd0 1 GPIO_ACTIVE_HIGH>;
+ 		scl-gpios = <&gpd0 0 GPIO_ACTIVE_HIGH>;
+-- 
+2.45.2
 
-I will fix the AT91-based Calao boards somewhen, and then I
-consider this case closed for me. Thank you both for guidance!
-
-
---BMGydgXgrD79q+F7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmhKo9gACgkQFA3kzBSg
-KbZ38w/+Pgyysh+5Rz9SxTN1/5OcN6oGorrscECqMPM1RTIqYe1tp0eucb1rQUTd
-g++TSOgXe9g5MBko5wyGbEDKTFda00FcmFAYJhdVjb//xbNncxB4YB+UKmgqqpRe
-Q0cEUKVl+2DOTjTv7phant58+H8f3fa72Y70SYQsdbZW117LxWZ1RGY/zMoNoY9k
-wOiGxaUm7EjG3mPh9cyCyG694h8pV9vsq+3B/xgkLiPo8tR9vR+azwZAd0Uo/3AG
-q4JaRyC4VlxQ2oSy5+5uaDwwkaWONylQIck6AhmVgf/dFksx4IPjOpKxSfvp5C/Q
-vc5nxE4Vi0UAFTxoDTB9w7Dp4AokqUsGiFXGzmPCamor8dETqCFGfzkHwzSk+Bmj
-sWPnpa+T6g6L3oPx4LsAKn+Jq9KJCF+Ms+loXSOQjoq0gxbLXM8/vC+K2a19TVFj
-ucCcgZQM0/WuX9Q4N7cSGQCHgoyuiiMdzel7i1PEVBtJ8ZZ+QGc+96d8YUPuPlpN
-aXdI7zGpmPFcsvwwMkt8KSclfZqYNoLx2rDXI52q1ERfQEPLt6TH8zVHohu/Hh4n
-hJZVco+mIvlUv2panmH6tP5qbYOilaevnyFa4ugnecpt8YfzvxknWwhdpbxwtXTw
-IjcWfwh0bshNPv8vzSt+XPRaiW1QFLH5Lipc7m/Jr4IxbRNOEXs=
-=IiEt
------END PGP SIGNATURE-----
-
---BMGydgXgrD79q+F7--
