@@ -1,68 +1,68 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107B2279DC1
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jun 2025 09:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F01279DA8
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jun 2025 09:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749805951; cv=none; b=JDneFggX0mry0PMiDaDilUTtY/v2rkVywJrqoD/s0rfWJ+RLvWzelrI47JYe8BQ6Z0LXb2xzKG7uI9z1MNvcZRyTNOvsoEmIQtmG6SC92P1ShBqc2xsKhSqWm2xTR+AzJt122Hc+E1GBi7ijHpYpJzaqx83VcZkFPNEkLOjB9GI=
+	t=1749806326; cv=none; b=ANbz88/mjgmDrwjf6wBy2y14D0BxHqSarA+WFDeKFZcZIPNo5Jg0CS9ZWv0ImW2j/YNPbvrZQj08gyC+8YTP40/47iVtDfUEm+q3cyjQMGx+pOm61EgPvyyvB23y3gux/ABMhX3LWiUt/L9EO2cYLcASNEPJnSikds0WUawkhjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749805951; c=relaxed/simple;
-	bh=rhBgtIz5rbF4vZpFi/4hzu5iAms/cKtPyMWFvJqcEMU=;
+	s=arc-20240116; t=1749806326; c=relaxed/simple;
+	bh=wNSRut0sTN6qfD7rKMY0nSX8URxRcKLIVnKCHfd9jhY=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eGLyZcO4ZhXX4T4L2A0Suce7htV5EXFQAenhcJ4eYZ3pvWlaGz8XGrzkrCQM2Hla06Mgp5LGYVKxaDTSscXQCk2aalDGYvlHuOLW8RZqWx7JpZMJS7U/KKvPGS9BHraR4RT1Kv7+8IuxUuzw/aHifxaJSFgOd/xByWpbUUXOkVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V8tlO3Sw; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=UAyJgejFCFrzn50RWRlcjmttojxfy+mDavOVEoHh1s03IsGDApfZiBKcgioGCxw6Ja5Odp98JknEbbvdqgKinDBjyD5M592nIe4pwsGJfXCvl9niZbh1Op0rXAaF7r+v6+UrTfgsVWy1g7XufJDqVDk993QfOWQteOgFKSKXRSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jvprU0rU; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8tlO3Sw"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450cf214200so16153965e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jun 2025 02:12:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jvprU0rU"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so10446145e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jun 2025 02:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749805948; x=1750410748; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749806323; x=1750411123; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yaEX4dDgKDNxKZX0+vcnih4XjDWoAZY8oCSw4SAHFH8=;
-        b=V8tlO3SwRlknI3jgXnyOSk6WaUnBTGw00l5DTX5LpBcwuZJHrn0w+R/AEUY2FKjh7i
-         0F7zqd0bRK00EWKdkW678WFj8m+bhB+nqKQUrYeyNb1roJVvsApTqAYm+w2E4nLKp5tF
-         E/qmK+Ml4eFPPnXI+jYs4W3DL3OotV8+0/ZC45gjTGNvv89XXh+CmgS6eiCLNYmclK2r
-         GegUi3G5qvpCIa2o518lst7FTjLkFX/RHL2bmuTdUtSD0aU2yGSE6VfKU9pch+Lckclc
-         fTvGuD/8ccZCAK/ikSC7zaxC/xL7iAfIwCOBYEzRrw2BLsrUIb8G+RXr3BVP1K0MHb16
-         8cVw==
+        bh=rvOAxba2/00VE8ZUtElUxztZVVpqTN92ajrYDHddxwI=;
+        b=jvprU0rUum5QMEvO+ttE7zxeIUqDplX8QeidSP5oXyyBxKGVSgAS8NmqZrMV/bZciq
+         sUhLmTEmCvx22euRnW3jcDawa2X+dN4YfGZzZ4H0P4kW5mo+j98j2da2H44RrK77BnPd
+         NgBDT5UbA2OC9D7BC4VvaXFDSK3foAZEP5qwetnKA+D0jbL4Mfp/yyqbLAT9foUXnAwM
+         ZrUD8+UBG9Q4ufhVJiDhQ2PxQGx+mu6HSp8ZPjw8/AHy/0xYbTflDHqAccz2yz7tL0oN
+         RewUZgz8qTcyPdhi0rMMy5MjTdwjb4xYnMnbAKlnoQMRdcr3JVQP/1qHUpHyO8UHGLAo
+         6jFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749805948; x=1750410748;
+        d=1e100.net; s=20230601; t=1749806323; x=1750411123;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=yaEX4dDgKDNxKZX0+vcnih4XjDWoAZY8oCSw4SAHFH8=;
-        b=tF8hI20Zl9pw3ZGak/6mnAUVDw+01rqqCHNOTJZvynI55cEjrp8UzNemJQE+J9QDBZ
-         9ib5L6jhAaXvark2zqOeFfeBUmXE8dPqCSJ+SiAKXhTe17n5aUtsKQ/8Qk2SyJA9VxdV
-         mPrXqAd6j5DLZgdNfzcRIkcyJ4mmqP0n4Ddax0igYiS71GSPE/5m0S6EUKgoBnfSKXAJ
-         S1UxnVnVw67we76pq9Gaw6/JITNSnGdve194OamMzto2lMAFFWWha1HIBaRTgdkg8+gs
-         BJ2QI9cFPMjVGyiwn0a7C3+duPx4JeZ1+DxQIpT6ak8dbYTi585B9Kg4Ekjqe0rJ78um
-         YceQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2aW89+cIrlQxUsd95qjZLFVQqzejZfpychlVQbOn7ahPxtGE6rvqbP2AcINKgmb35jI+vY/gfNCPlUk/VYVkXtQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhVUznNMoUZJWxnA6o36GzKbY56vpWcPfF7Q99YGWNz2VQ3tYR
-	Sju88m8CHl362TMQ5onnewXHLAmnD+fBwE4jfQKTsg6panQP0oT7OLqkPTt7Uuj4B2Wcw2Jxw62
-	oUlsbsY4=
-X-Gm-Gg: ASbGnctXRnwTFA5qlZy7dl/sWnc9LVTeFk5foqzmH+Gd0/+nzbCjePMnlxrmEmvhR4b
-	4ph0Zi6S4h/Sj9BvlVtcJd+a9QxzkOfZDqK/4w31mHx8lhEUC+TIDSFIKUWPm5Vqsy/lWTvDQkz
-	tS2zKlC3vBWS0HLtljGbbnpYnL3dYjLAVwHp0Ya6eU6aUvDRjdFoDqqeLbFHN97NGtiwxH7tsws
-	+ljK1ZBjsva2Thv/xfHxV+NxCaHWyOickwSj07IOmYAsZENwrDzRuW7sVrpO28RBnSC5IymaLlu
-	hyDq2YJlx/Hk6vJr5zhrHWqQ17CDjbMx6Dv3+98K/L6nxB2deOJAm1iqKlE5otziRFHXVtoxCmi
-	wBzReyBJby4N+6ZPnh/oOJn25BVzX6+WuewdoJOlgx+OGB+WUNQ==
-X-Google-Smtp-Source: AGHT+IGfNqq5N/dXfqPTy6lk5lwkJCrvfc3vLmcZOn5YDfPCKU4e2XDDXROymQQp9fqDHIQhZiR3NQ==
-X-Received: by 2002:a05:600c:34c7:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-45334ad3f41mr21047235e9.11.1749805948257;
-        Fri, 13 Jun 2025 02:12:28 -0700 (PDT)
+        bh=rvOAxba2/00VE8ZUtElUxztZVVpqTN92ajrYDHddxwI=;
+        b=hghNHRAV8IZroy00vDw8h0xzgTOs2pz7d8JDIbFERYYl+BrxDndP/qp2MVeOCIGt6B
+         CjcpfF5YtM0H3D9IG7hFEWZtAX59i1VadvvwyhRPkGpfS8O8fBNzyJp10CVrIgXXZzbO
+         5ZrFToSPk7y7LInVFDlJoTy3yRJS27BNaxu6YECyXLMnVUAUUMsvOWS3LKWIsELlvVhz
+         W6exVsH/NrCoW/u6p+AozB8RuB0gIVxNNkeUNnJvDL0l+Wey2Wn+NB7E7Y9MBCbiebVv
+         W5zRLFVp8JkZUr005V25VKWd23bPmTHQrgqIl9gPYpjN/bFHFYJmfrH/vdPHEKtH8esD
+         STLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqvtQ+lD9vw+TgNw2YDTzCR0tUzMd56qdZvQFgztA78fXHpIPflPX6jzwSKkgbjaH1rSRuT0xTk3wFbO0Vpcb0uQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxtPZR8mZ8dPQ9NsWO9d/1bH+eNgBZ4P7fdpJz1jrlAjvsz/Qp
+	WdLqowxyd3nvFsyjPK93qipXE5NwnJOAAUJFjnHWVMnmATjM9JYutipVZP21JCnAT2Q7cpmZhyJ
+	FnaP84XQ=
+X-Gm-Gg: ASbGncvJXXsheD8Al8mni56s//ioV5M0gpxdeUevbxswkg2sCe1VmhCCHF6XlQt4TCo
+	7pwbEzCl+Y7KkNkWjls3Nw8wXXrsKSbp0z8ZFr0czoEHIMk9eoVBsbi8VVV8O+KC1kUSy9wMqjF
+	IcgFKMezBHAOLKKHjmkrbA1/pJ63+dnUxkjaPoKgJ2YELMo71UthrgsWKqiTgiNsJl2wkJqJneO
+	nmm63m6qdkRXVAJK/pBCRShYvQtapAOlSA6stBxJAWuagjbUjpBT/tpZO4OPgagepLu4JdtLrwD
+	wsFCnz/wkThSOclOwjnZhLEyts8fGJ7AsOurFToXmHvQUImm+BcFkhLOI8EoY/KJOcb1SK2G0J7
+	obKydVSNPQdkL8luIhxZlIkSM+J1/d537cfDzrYs=
+X-Google-Smtp-Source: AGHT+IF88GdW/9+83jn7KWBiIwltmYkzKMHV54Iv3aLyXMYm3AtrpaFf6Fm3vYfY7PC7NerjrZzM+A==
+X-Received: by 2002:a05:600c:348a:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-45334b7a9fdmr21567635e9.29.1749806322733;
+        Fri, 13 Jun 2025 02:18:42 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae? ([2a01:e0a:3d9:2080:4144:6a84:fe1d:3aae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2446b0sm45162715e9.21.2025.06.13.02.12.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b6debasm1768202f8f.93.2025.06.13.02.18.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 02:12:27 -0700 (PDT)
-Message-ID: <9455a4e1-6352-4832-ac9f-2816f889c3a4@linaro.org>
-Date: Fri, 13 Jun 2025 11:12:26 +0200
+        Fri, 13 Jun 2025 02:18:42 -0700 (PDT)
+Message-ID: <4f30104b-aea6-4820-9b08-047297da149a@linaro.org>
+Date: Fri, 13 Jun 2025 11:18:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,21 +72,20 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: neil.armstrong@linaro.org
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3 9/9] arm64: dts: exynos: ExynosAutov920: add USB and
- USB SS combo phy nodes
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
- m.szyprowski@samsung.com, s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250613055613.866909-1-pritam.sutar@samsung.com>
- <CGME20250613055106epcas5p46a2e5e2d6f0e8811644643f6282fd9ca@epcas5p4.samsung.com>
- <20250613055613.866909-10-pritam.sutar@samsung.com>
+Subject: Re: [PATCH 2/2] phy: exynos-mipi-video: introduce support for
+ exynos7870
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org>
+ <20250612-exynos7870-mipi-phy-v1-2-3fff0b62d9d3@disroot.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -113,89 +112,107 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20250613055613.866909-10-pritam.sutar@samsung.com>
+In-Reply-To: <20250612-exynos7870-mipi-phy-v1-2-3fff0b62d9d3@disroot.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/06/2025 07:56, Pritam Manohar Sutar wrote:
-> Update the USB 3.1 DRD controller and USB31DRD phy nodes to support
-> SS combo phy for this soc.
+On 12/06/2025 17:09, Kaustabh Chakraborty wrote:
+> Add support for Exynos7870 in the existing MIPI CSIS/DSIM driver. The
+> SoC has one DSIM phy and three CSIS phys.
 > 
-> The USB 3.1 DRD controller has the following features:
-> * DWC3 compatible
-> * compliant with both USB device 3.1 and USB device 2.0 standards
-> * compliant with USB host 3.1 and USB host 2.0 standards
-> * supports USB device 3.1 and USB device 2.0 interfaces
-> * supports USB host 3.1 and USB host 2.0 interfaces
-> * full-speed (12 Mbps) and high-speed (480 Mbps) modes with USB device
->    2.0 interface
-> * super-speed (5 Gbps) mode with USB device 3.1 Gen1 interface
-> * super-speed plus (10 Gbps) mode with USB device 3.1 Gen2 interface
-> * single USB port which can be used for USB 3.1 or USB 2.0
-> * on-chip USB PHY transceiver
-> * supports up to 16 bi-directional endpoints
-> * compliant with xHCI 1.1 specification
-> 
-> USB3.1 SSP+(10Gbps) is supported in this commit and SS phy in combo
-> phy only supports PIPE3 interface and it is added in index 0 of SS phy.
-> UTMI+ and PIPE3 PHY interfaces are specified in "phys" property,
-> UTMI+ (index 0 HS phy) and PIPE3 (index 0 SS phy).
-> 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->   .../arm64/boot/dts/exynos/exynosautov920-sadk.dts |  4 ++++
->   arch/arm64/boot/dts/exynos/exynosautov920.dtsi    | 15 +++++++++++++--
->   2 files changed, 17 insertions(+), 2 deletions(-)
+>   drivers/phy/samsung/phy-exynos-mipi-video.c | 52 +++++++++++++++++++++++++++++
+>   include/linux/soc/samsung/exynos-regs-pmu.h |  5 +++
+>   2 files changed, 57 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> index a21386bd9af3..40588f7c9998 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -88,6 +88,10 @@ &xtcxo {
+> diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
+> index f6756a609a9a0774ecb6e27cf96726891683636c..b184923b9b400f0d536a913bdf32f3156c0a1854 100644
+> --- a/drivers/phy/samsung/phy-exynos-mipi-video.c
+> +++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
+> @@ -213,6 +213,55 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
+>   	},
 >   };
 >   
->   /* usb */
-> +&usbdrd31_ssphy {
-> +	status = "okay";
+> +static const struct mipi_phy_device_desc exynos7870_mipi_phy = {
+> +	.num_regmaps = 3,
+> +	.regmap_names = {
+> +		"samsung,pmu-syscon",
+> +		"samsung,disp-sysreg",
+> +		"samsung,cam-sysreg"
+> +	},
+> +	.num_phys = 4,
+> +	.phys = {
+> +		{
+> +			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
+> +			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
+> +			.enable_val = EXYNOS4_PHY_ENABLE,
+> +			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL0,
+> +			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
+> +			.resetn_val = BIT(0),
+> +			.resetn_reg = 0,
+> +			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
+> +		}, {
+> +			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
+> +			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
+> +			.enable_val = EXYNOS4_PHY_ENABLE,
+> +			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL0,
+> +			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
+> +			.resetn_val = BIT(0),
+> +			.resetn_reg = 0,
+> +			.resetn_map = EXYNOS_MIPI_REGMAP_DISP,
+> +		}, {
+> +			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
+> +			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
+> +			.enable_val = EXYNOS4_PHY_ENABLE,
+> +			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL1,
+> +			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
+> +			.resetn_val = BIT(1),
+> +			.resetn_reg = 0,
+> +			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
+> +		}, {
+> +			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
+> +			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
+> +			.enable_val = EXYNOS4_PHY_ENABLE,
+> +			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL2,
+> +			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
+> +			.resetn_val = BIT(2),
+> +			.resetn_reg = 0,
+> +			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
+> +		},
+> +	},
 > +};
 > +
->   &usbdrd31_hsphy {
->   	status = "okay";
+>   struct exynos_mipi_video_phy {
+>   	struct regmap *regmaps[EXYNOS_MIPI_REGMAPS_NUM];
+>   	int num_phys;
+> @@ -351,6 +400,9 @@ static const struct of_device_id exynos_mipi_video_phy_of_match[] = {
+>   	}, {
+>   		.compatible = "samsung,exynos5433-mipi-video-phy",
+>   		.data = &exynos5433_mipi_phy,
+> +	}, {
+> +		.compatible = "samsung,exynos7870-mipi-video-phy",
+> +		.data = &exynos7870_mipi_phy,
+>   	},
+>   	{ /* sentinel */ },
 >   };
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 4efc005cae80..5ee7fad346b9 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1048,6 +1048,17 @@ pinctrl_hsi1: pinctrl@16450000 {
->   			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
->   		};
+> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+> index 1a2c0e0838f99821151661878f022f2129a0c19b..8fd59994bca76a6bf21306337f0b47ccb5a22adc 100644
+> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+> @@ -662,6 +662,11 @@
+>   #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
+>   #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
 >   
-> +		usbdrd31_ssphy: phy@16480000 {
-> +			compatible = "samsung,exynosautov920-usb31drd-ssphy";
-> +			reg = <0x16480000 0x0200>;
-> +			clocks = <&cmu_hsi1 CLK_MOUT_HSI1_NOC_USER>,
-> +				 <&cmu_hsi1 CLK_MOUT_HSI1_USBDRD>;
-> +			clock-names = "phy", "ref";
-> +			#phy-cells = <1>;
-> +			samsung,pmu-syscon = <&pmu_system_controller>;
-> +			status = "disabled";
-> +		};
+> +/* For Exynos7870 */
+> +#define EXYNOS7870_MIPI_PHY_CONTROL0				(0x070c)
+> +#define EXYNOS7870_MIPI_PHY_CONTROL1				(0x0714)
+> +#define EXYNOS7870_MIPI_PHY_CONTROL2				(0x0734)
 > +
->   		usbdrd31_hsphy: phy@16490000 {
->   			compatible = "samsung,exynosautov920-usbdrd-hsphy";
->   			reg = <0x16490000 0x0200>;
-> @@ -1109,8 +1120,8 @@ usbdrd31_dwc3: usb@0 {
->   					 <&cmu_hsi1 CLK_MOUT_HSI1_USBDRD>;
->   				clock-names = "ref", "susp_clk";
->   				interrupts = <GIC_SPI 491 IRQ_TYPE_LEVEL_HIGH>;
-> -				phys = <&usbdrd31_hsphy 0>;
-> -				phy-names = "usb2-phy";
-> +				phys = <&usbdrd31_hsphy 0>, <&usbdrd31_ssphy 0>;
-> +				phy-names = "usb2-phy", "usb3-phy";
->   				snps,has-lpm-erratum;
->   				snps,dis_u2_susphy_quirk;
->   				snps,dis_u3_susphy_quirk;
+>   /* For Tensor GS101 */
+>   /* PMU ALIVE */
+>   #define GS101_SYSIP_DAT0					(0x810)
+> 
 
-I think at least patch 6 & 9 should be squashed.
-
-Neil
+Looks good:
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
