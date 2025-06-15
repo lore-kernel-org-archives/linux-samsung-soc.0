@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C08627A93D;
-	Sun, 15 Jun 2025 16:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2B27C158;
+	Sun, 15 Jun 2025 16:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750006344; cv=none; b=GWgGwHk5Sn4NUxmGd15/DAP0EDkvMyymPurAZijK5fht8v0Quv6KI2rwJRHbZSdp0vFfXFyPYse/hI2I+6cqGKLfbPyriWUpXZtWvxNIm8JcWIsdAsovvL2jfpgfH5VvoRYm+s/Bp4qXEmnHK7t3baX3shJo6gDlJL3xCvJDj1c=
+	t=1750006348; cv=none; b=iUZMlwrfzCUPutRVhPLCZOV4lnFP+ZQCcR8xG/zsTwkf/WwU8dFbrXCvrorAdIZP6pxyckNEA2+Sqnvrmeuz9lZw5vPw7tA6sidufEbyDkw+Nel2MoNFTzrxYI6HAQc+1nqWQkxpN8Rfp28bXSkTkvqZQLxEujeRJ0ucxkfNWCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750006344; c=relaxed/simple;
-	bh=bAvi/hc899Xx4wJEJHPJhi4z7oQVc3CAWG5FfnZi+Yo=;
+	s=arc-20240116; t=1750006348; c=relaxed/simple;
+	bh=6dx0ILj5WkvRoRHu2oDu87MNsa+P9Y+3Mn7PSQB54sA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R7AC6xgrQJmL5HTHRK07u3i7bVU1XLKUD4do2bTfFCFe12dA1/+T+T94lU26aGHob/dYoAqLF6L/xFojtKy0B3rYmUkP/xcDZhQux6GHpT6mf+MPXQc8U9XEHS/1OtcAGYBLU1C4c78wYi2J5gyxROamriQgUWyMOUJdPPGffFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFi+H/B7; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=bd+/u3LDqrhGYroYB3O/VN3CLv93WnSVZB0SDsvxK7Fk7RsqkjtUoWfoGM2pF1L5349owR4NXRQkG0q70vT0DljX6hjPptFSPuj0rPZYCYNr1Ttvwxy2qRao9c1s+VQ19i0YaFOJeI0J8EYnB1j+Pg7UuMiyxmbBTvDvp8JZyuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeFgtW+v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFi+H/B7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B69C4CEE3;
-	Sun, 15 Jun 2025 16:52:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeFgtW+v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FE8AC4CEE3;
+	Sun, 15 Jun 2025 16:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750006343;
-	bh=bAvi/hc899Xx4wJEJHPJhi4z7oQVc3CAWG5FfnZi+Yo=;
+	s=k20201202; t=1750006348;
+	bh=6dx0ILj5WkvRoRHu2oDu87MNsa+P9Y+3Mn7PSQB54sA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NFi+H/B7gtAN8b/2kL0xOSpZpe9+o725fPZ0S2gYt7fLbupKVdwUq4484g5M37VAk
-	 ZYHqnF0N6wD7GfSWM28thiPG5ySFTOGlvRlc5bFntTpHmRfngf7pqHceayBszIi83u
-	 4JH5agtj0tPwNz31Jwhu533LNML/kF0wTP6AQZYxiy2qm0gRwnKNgLVrp6veep/50E
-	 kMkSN2upTbNSqpfKQD+16EHCvmzw+xyP28J8ztnZVHbeneclVRmy21WFz02n+04HHS
-	 bSZs/I+F86vWp3VeSBXopaayFOsAenZ17EVrA/5yEIX7RpKAs79X67Vn744jtGGJIu
-	 /9S8K7io7+DQw==
+	b=JeFgtW+vDFB/ZZFYAx5DvgBl0GSqCk9ehFkrQJEAB6KuzIgSLU+DNZqS2/e9czBhY
+	 +vrcx7thVoW21LkNAJrZQEq+4tpquq3xyoDpKgq0s0Evw+Wulby2o30A6l3mNaexQF
+	 OWNDSruG5I+fATP13e/N2MZKUVoyrqhCSWT6vGoDRSjROsLgdfqhsz12crajlbbLmO
+	 2GNESTgQYW8IT1pWyq6b9xNAd32LA39Kxea6Bjc04UedolPI8hMgYZZhO0Zeyn69dO
+	 GqKHoTQ3l4syKRJtc4zl7w164eLT9JLQ3G05JLqZSlO/RGx6PjHE+zje/vmdS+TYD+
+	 FJB52x1SS381g==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -36,12 +36,13 @@ To: Kishon Vijay Abraham I <kishon@kernel.org>,
  Igor Belwon <igor.belwon@mentallysanemainliners.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
-References: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
-Subject: Re: [PATCH 0/2] USB PHY support for Exynos990 SoCs
-Message-Id: <175000633955.1180927.15897677423516410884.b4-ty@kernel.org>
-Date: Sun, 15 Jun 2025 22:22:19 +0530
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250515-usb-resends-may-15-v3-0-ad33a85b6cee@mentallysanemainliners.org>
+References: <20250515-usb-resends-may-15-v3-0-ad33a85b6cee@mentallysanemainliners.org>
+Subject: Re: [PATCH v3 0/2] USB PHY support for Exynos990 SoCs
+Message-Id: <175000634396.1180927.14227423710203816797.b4-ty@kernel.org>
+Date: Sun, 15 Jun 2025 22:22:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,7 +54,7 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Fri, 14 Feb 2025 18:21:06 +0100, Igor Belwon wrote:
+On Thu, 15 May 2025 16:43:00 +0200, Igor Belwon wrote:
 > This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
 > This SoC has a combo PHY that supports highspeed, superspeed USB and
 > DisplayPort, however due to my inability to test the superspeed part of
