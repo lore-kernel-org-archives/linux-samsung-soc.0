@@ -1,149 +1,80 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63851D6DB5
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jun 2025 14:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C08627A93D;
+	Sun, 15 Jun 2025 16:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749826374; cv=none; b=oQTDo/uNLZDd7fF2JcR9uwziFxb0RTsiYqxpRxUepfHW6musQX5GLmE+pphHjYKKNHx1bol+W88Nro4qLi+I7pr12tweXrteIN5/oB5r5yjg48JEaVJIl10viAKC1o2vUrv8kHmqOXemV4DDWiBylGoZyIRw9xrcr1GDugWZb44=
+	t=1750006344; cv=none; b=GWgGwHk5Sn4NUxmGd15/DAP0EDkvMyymPurAZijK5fht8v0Quv6KI2rwJRHbZSdp0vFfXFyPYse/hI2I+6cqGKLfbPyriWUpXZtWvxNIm8JcWIsdAsovvL2jfpgfH5VvoRYm+s/Bp4qXEmnHK7t3baX3shJo6gDlJL3xCvJDj1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749826374; c=relaxed/simple;
-	bh=uzggHLNmauKyLZnZNxfkll09fUrU/RimXTpX7sjHfFM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n/NJdy2B4c9lxKQkPX52aUKRovDAauy2ql87tWnKIdUUT8S2FJ0TxzRjp1o0ZK6KqtqtUAWQ7ADWHX+T+s/ofmyMDotN/UaspK0AmgoQbDe1P/kYfsX06JDya84oYjokxysDuqNFbZWotZARaqZdxsHQsgxWyOE+P9WDex82kFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j0dzixTX; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750006344; c=relaxed/simple;
+	bh=bAvi/hc899Xx4wJEJHPJhi4z7oQVc3CAWG5FfnZi+Yo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=R7AC6xgrQJmL5HTHRK07u3i7bVU1XLKUD4do2bTfFCFe12dA1/+T+T94lU26aGHob/dYoAqLF6L/xFojtKy0B3rYmUkP/xcDZhQux6GHpT6mf+MPXQc8U9XEHS/1OtcAGYBLU1C4c78wYi2J5gyxROamriQgUWyMOUJdPPGffFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFi+H/B7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0dzixTX"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a51d552de4so1391389f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jun 2025 07:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749826371; x=1750431171; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uzggHLNmauKyLZnZNxfkll09fUrU/RimXTpX7sjHfFM=;
-        b=j0dzixTXQjLZuCnkXsUKNjYlOy8bAUFIYvhWs7g3ncYFoM5h8UbZDC2qLfqKPL0Z21
-         QKB+7HJjdyzqfHiNEMIq+A0uVwwtuj75oDaSdsQYOVERwBhvoLLhkVaPAmqq+kF0vU3o
-         s55EFWDwcAyDnc1i4n1ZOvSaLBjUEqNYlUKnrUOjDGJZ+XntSBwI2yrhx9ZV0xvWtMoU
-         oCukR0eBpcAp5BI974S9XMIia3i4FWKzVP6NgCvfc/aOXTuzn/eBJpnBjEmcqb4x4u8D
-         bnFVf5bx5iuwajJXcUYj9uVXxxs2v6OTPXk2QiUN4LsnwCj5XT5R8ipyfy3jvTQ0BGCF
-         qeyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749826371; x=1750431171;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uzggHLNmauKyLZnZNxfkll09fUrU/RimXTpX7sjHfFM=;
-        b=U9dGLopsa6Qz77dq+Gcx0LMMzNLViA/W8KNQTFoT1ggYWj2aHbg8UHHAC8efem5EVs
-         dH+rmDUNE0VTfVCjbUddFI6Twj5O1pbgQDHEX4n+c9MI+vh5h6m1BEnsu0JlPxHP8dhr
-         KqjYK4E65r5tMe5WF54ukthZuX5/glJUiReAWGtPAQakthip19Pl3QUhT1+D57/u9N4W
-         fZnAwhIXaCTTkYPjR+QlEroFJYkBslUxtNkS0HSY1r7z7JNWfW3YtJMDZN1xNery7o+O
-         HF14vBze2PPu4PAi2HBKe8hNtLkfAEDI+x0+BsUvTw7G075bpoDirb/exoTWk1ulA+EN
-         +rQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO7nZgLYuGWzB0Wrv/HO/fhx8VwOfYQjwpHk3HtmL4SQNoawaUqmV3poQ2BHStpadUvP/Ck4pBpRD1VLWMRs+utA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd2m6ORQ44Bm99pbN/h+ihgZov06B/p0INPCamAGGK6GiShDLq
-	8h66pjwaypWB76c/Iu4jmqJ4E3BsU9iWXNPuQML9aCGLbrco51mw+L+3Ws3cz4b8dFI=
-X-Gm-Gg: ASbGncsCVcjkHjQv64gfVPhW3lKnrDmYraW5INpb87aGRcPm93EPiq4/GHOzSwOQQiG
-	l0v1FEG0yVi2BqvGqzINBp4BJer3YIg6n3UPmCcDEzX4t4zCxzTLpikIkiCY1cRf6/rOWBuC9Hh
-	oZQ7dBlBX1V+4EEGjDNMDEe6lY+l0EAY5AoYNpXjdlK3brG1W2oNi8yA7MmtC6kjcsxOJFyAoXv
-	t42lLndPz6ulAFaPT3XrY+3urtsQFk9S8rlZIFCTm84esrtrNqSp8Bm/BW88hEEX21Dk9D9GIwA
-	Rzp1CEsNCeIuTTVlwcvMmSb0ikJMDX5IWpPUsRttR3Uvg/AZ128Dl5+BckFIKBKo9g==
-X-Google-Smtp-Source: AGHT+IG2os3T69uU8xe8GheoIqFNES/C1cIVspYlMQzrl2qRtOCi+gxQL8uj3nxW1PiifYDCebD1JQ==
-X-Received: by 2002:a05:6000:4a03:b0:3a4:fc0a:33ca with SMTP id ffacd0b85a97d-3a572397d6amr13520f8f.4.1749826370906;
-        Fri, 13 Jun 2025 07:52:50 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e25e89fsm53198455e9.33.2025.06.13.07.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 07:52:50 -0700 (PDT)
-Message-ID: <17434d4ceae1e65a5151bb1308b8e49dbbdaf021.camel@linaro.org>
-Subject: Re: [PATCH 07/17] mfd: sec-common: Instantiate s2mpg10 bucks and
- ldos separately
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski	
- <brgl@bgdev.pl>, Peter Griffin <peter.griffin@linaro.org>, Will McVicker	
- <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Date: Fri, 13 Jun 2025 15:52:49 +0100
-In-Reply-To: <05b9862c9a8f11bf7d7c8afdf60ecff30716a196.camel@linaro.org>
-References: <20250604-s2mpg1x-regulators-v1-0-6038740f49ae@linaro.org>
-		 <20250604-s2mpg1x-regulators-v1-7-6038740f49ae@linaro.org>
-		 <20250613141902.GI897353@google.com>
-	 <05b9862c9a8f11bf7d7c8afdf60ecff30716a196.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFi+H/B7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B69C4CEE3;
+	Sun, 15 Jun 2025 16:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750006343;
+	bh=bAvi/hc899Xx4wJEJHPJhi4z7oQVc3CAWG5FfnZi+Yo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=NFi+H/B7gtAN8b/2kL0xOSpZpe9+o725fPZ0S2gYt7fLbupKVdwUq4484g5M37VAk
+	 ZYHqnF0N6wD7GfSWM28thiPG5ySFTOGlvRlc5bFntTpHmRfngf7pqHceayBszIi83u
+	 4JH5agtj0tPwNz31Jwhu533LNML/kF0wTP6AQZYxiy2qm0gRwnKNgLVrp6veep/50E
+	 kMkSN2upTbNSqpfKQD+16EHCvmzw+xyP28J8ztnZVHbeneclVRmy21WFz02n+04HHS
+	 bSZs/I+F86vWp3VeSBXopaayFOsAenZ17EVrA/5yEIX7RpKAs79X67Vn744jtGGJIu
+	 /9S8K7io7+DQw==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
+References: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
+Subject: Re: [PATCH 0/2] USB PHY support for Exynos990 SoCs
+Message-Id: <175000633955.1180927.15897677423516410884.b4-ty@kernel.org>
+Date: Sun, 15 Jun 2025 22:22:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Fri, 2025-06-13 at 15:49 +0100, Andr=C3=A9 Draszik wrote:
-> Hi Lee,
->=20
-> Thanks for your review!
->=20
-> On Fri, 2025-06-13 at 15:19 +0100, Lee Jones wrote:
-> > On Wed, 04 Jun 2025, Andr=C3=A9 Draszik wrote:
-> >=20
-> > > Bucks can conceivably be used as supplies for LDOs, which means we ne=
-ed
-> > > to instantiate them separately from each other so that the supply-
-> > > consumer links can be resolved successfully at probe time.
-> > >=20
-> > > By doing so, the kernel will defer and retry instantiating the LDOs
-> > > once BUCKs have been created while without this change, it can be
-> > > impossible to mark BUCKs as LDO supplies. This becomes particularly
-> > > an issue with the upcoming support for the S2MPG11 PMIC, where
-> > > typically certain S2MP10/11 buck rails supply certain S2MP11/10 LDO
-> > > rails.
-> > >=20
-> > > The platform_device's ::id field is used to inform the regulator driv=
-er
-> > > which type of regulators (buck or ldo) to instantiate.
-> >=20
-> > I'm confused.
-> >=20
-> > There is nothing that differentiates the two, so why do you need to?
->=20
-> On gs101, we have two PMICs, s2mpg10 and s2mpg11. Several s2mpg10 LDOs
-> are consumers of various s2mpg10 bucks & s2mpg10 bucks, and several
 
-Small typo, should read:
+On Fri, 14 Feb 2025 18:21:06 +0100, Igor Belwon wrote:
+> This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
+> This SoC has a combo PHY that supports highspeed, superspeed USB and
+> DisplayPort, however due to my inability to test the superspeed part of
+> the combo phy (device always enumerated as high-speed, even on the
+> vendor kernels/bootloaders) only the highspeed part is brought up.
+> 
+> These changes have been tested and confirmed working (with the USB_ETH
+> gadget and telnet/ssh in a ramdisk) on a device from the hubble family
+> (x1s) and also a device from the canvas family (c1s).
+> 
+> [...]
 
-... Several s2mpg10 LDOs are consumers of various s2mpg10 bucks & s2mpg11
-bucks...
+Applied, thanks!
 
-> s2mpg11 LDOs are also supplied by various s2mpg10 bucks & s2mpg11 bucks.
->=20
-> So we have a circular dependency here. LDOs of one PMIC depend on bucks
-> of the other.
->=20
-> If all s2mpg10 rails are handled by the same instance of the s2mpg10
-> regulator driver, probe will defer (and ultimately fail), because the
-> supplies to the LDOs can not be resolved during probe.
->=20
-> The same goes for s2mpg11.
->=20
-> The result is that neither driver can probe successfully (unless you're
-> _extremely_ lucky due to parallel probing, but we can not rely on that,
-> of course).
->=20
-> By splitting LDO and buck rails into separate instances, this circular
-> dependency is gone, the buck-instance of each respective driver can probe=
-,
-> which then allows the LDO instance of the other driver to probe.
->=20
-> Does that answer the question, or did I misunderstand it?
->=20
->=20
-> Cheers,
-> Andre'
+[1/2] dt-bindings: phy: samsung,usb3-drd-phy: Add exynos990 compatible
+      commit: 9f77d234c1f41e78a99f124bf6fee59dc2e3d46f
+[2/2] phy: exynos5-usbdrd: Add support for the Exynos990 usbdrd phy
+      commit: 385a766bed48c5bcf620061f24e864dafeca671a
+
+Best regards,
+-- 
+~Vinod
+
+
