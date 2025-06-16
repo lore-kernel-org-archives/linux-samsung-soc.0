@@ -1,243 +1,189 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A638E288526;
-	Mon, 16 Jun 2025 16:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2FF215787;
+	Mon, 16 Jun 2025 21:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091959; cv=none; b=OJ1iC0FIigQJTlv1oLireyLsa9DQdgCtIrtfCi5q0KN1QWVQSz+xaeZeQ1ATOTBSMVnsLDO56rq7Mg+KAnfQtok6lQoKhauq4rBs8kz4ecA2P2bbcY6SdaAt4Pqs0nzdGtNDu8zO1mrKKvHWmIz7biTHPVQsitNUknmu6S2hXK0=
+	t=1750110413; cv=none; b=aVcSDf9Jk1XpqJzSLfjc3taGQ2Qqa/jjSAD6Le4Zc53iLjCzOJZdk/d/wN5gEcv27ttF+RTCJhAsbkV5vUfwBAJlZkuDRVZKtX2G3n1tYsSew/sWxlk6nH+K/CVk4Z3KEKeKhO34BH+LhpnYv/6zUlNE4GFsO2pO5cvGH0oNG48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091959; c=relaxed/simple;
-	bh=5Jf/daIPASnAH44EY0GFABrkhKx0d/E/507Dge2MJxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=thpdza2EUWc5LiKDZyS+5PSZpmupUd4K8oatGLvclcebP1nGH4QWeR/O3cfiJQZQ3BiH1vZof9T83z93AVKJXYvcbJpAC0wvLLa36ti4iJdVNk8xvT6qGGOCL2NKPJNIfoDIhZoZtoxbiVSBVWi5BM5F4D+6K2B0NHu5bfco+EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWE69wHQ; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1750110413; c=relaxed/simple;
+	bh=P+l1gSKaL1N/vyV+DOT1UrSQ4fffm5IIUx8ooXOed1E=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=DB8zfgLzek1N7+HyPPb/VpjsC8/uTc/wouqm0Gq6Wvp9cGW2zTFvPpDEM2EfDfW1BkDAC12fcY0YKSPCKu3TdRmHBsaNRmBFlw2w8BgTISYN6xf7tH9Ro2H/oTbI49pAVWOZB3t7VcYJyTE9YK3D404kY2QdLMIV6edwxhoj9n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Szj//WWW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWE69wHQ"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2fc93728b2so3835447a12.0;
-        Mon, 16 Jun 2025 09:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750091957; x=1750696757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NgaiOiiIv8UyT/OK2no2aphPsCtckyR44JUNKUXKM+Y=;
-        b=VWE69wHQIJ73nOkNOwgXMHo03EIxCJvnVYQFB4iHKKV7ApHkQagUvs7SAG4mDdqtHP
-         f/dFRWuDqunTweSb4Ve9rQxYJocC56/5uP0M3DTjECjeuMF6WTaY2YgbT6677D42/PW0
-         TY98xTIKI4Gf8F3h7KUP0dsWrhWFxqsIbNI/KndWfUgjYPXO/fPuaXUkyRxbMlXwR7s7
-         VSfVsyheeTcpzuez8tuJ3laowrYWEuZpe0+tW4Va6nLmGbk90KL8LgOiJe+s04JAGIs0
-         H5kFKSqErUFxCmkNFmJgMB3/Sxl7d5ESoUH64fQDGe5z2YcH8rzgw78Welwr+OrpXSHK
-         JKQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750091957; x=1750696757;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NgaiOiiIv8UyT/OK2no2aphPsCtckyR44JUNKUXKM+Y=;
-        b=ROuSVmIY6pvKmB+u0Tt9DNmGVofAR1E9ywr2uu1pXInYpuDQxYvh2s++SCQie+HeEV
-         2LJuxA+zUPEuE2lBAkb9eLGma05ujkmRX9RoWQoFidAfAwg8bIkO+3LX7qWnI9zZsstw
-         Tumlq52LT693H9obiKvNRxgyOnnGphL+9N/9TboLbY/ZZRf3ct9B/3uwH1ty8J1pMKQK
-         CgGWBqvW5EMX32mNmbQ0d7jBu34bjdhiTXOTJ52CBEVHnQQdRM/dZp7Lwt2Bvvzdb6p8
-         5eBn3xGPM5jEE6SxZvbxpQLk62ENksNu76s5GKv6FOgI7+eKRcOmNpxJd/iTzZLTLhiu
-         /onA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQltPo/TzDFHRQYg0R9G3uU6384UiDullP8tDcsaTwpKagxoNoowPdQJn26Q6bCjnBaif7ERE1zzrYhY4=@vger.kernel.org, AJvYcCVWITIWCW3rge1TMsOZJ1yahZri8TK5G+Ha51uI7PXX0EshzUhLcHiBSlYHYY3erbuUpSXDiSHhBL8=@vger.kernel.org, AJvYcCVZSBZGAIKLp9ybk6bByjekFd3hGTUkuUPitcHSf+YS0I5UsErhzvGyGwYd9iOS9M7cBHyYsOYlv4nvnZ8UrILi6fI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDyR3koljek8pHSY9dnEV5sre8fMle6NXhrGiG7ZJaM8b2P/gQ
-	aPPhwT1T9h6nthwahGeqDXcuPqalk5eHZ36v0+OilGyLh5P1yHQYPL1FVIwrMA==
-X-Gm-Gg: ASbGncvHxX1FYts5viXxbhl4gl7P5/c7580H9NV3NFlwfzj3lgPAUFengfwX8FfCDve
-	suMSzhNBPOnueFaDCaFix15kWcCq9R0VzwpR6TJnDW14XXajZ4/1c3YJNPa98xZ+/XZnbwN81AW
-	oGZ8tBg3eEfCwkz7oMkx5VNO46X9hQOEoLe4/Qd6YBFHNBZb1/hZJj8wD3qZOQrEGByN9F0bfX0
-	n8Llc4MyIauNguHpID5PvYGEqVxtiCxF+z/LmCS/549+J2CT/TLuoIdy7aX5VCpThS3a8DpldST
-	GHq1GlqlNpm6KmV+RblmtN0TnmIM1eiB7IhWAE27Toj8T7o1zqk2ABduTSfO4pWLZorujvLGEYt
-	VacL0Ou3kAw==
-X-Google-Smtp-Source: AGHT+IHsD566uR2iJmA1x5dTinmhbSc92nzu4ptM9O+HZPszU2hE5Hk8Ch3KBvp7WkOFDhYtt71tSA==
-X-Received: by 2002:a05:6a21:4a41:b0:218:75de:d924 with SMTP id adf61e73a8af0-21fbd631648mr13177925637.19.1750091956904;
-        Mon, 16 Jun 2025 09:39:16 -0700 (PDT)
-Received: from localhost.localdomain ([45.112.0.181])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1680c6asm6067882a12.42.2025.06.16.09.39.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 09:39:16 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-pm@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [RRC v1 3/3] thermal/drivers/exynos: Refactor IRQ clear logic using SoC-specific config
-Date: Mon, 16 Jun 2025 22:08:24 +0530
-Message-ID: <20250616163831.8138-4-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250616163831.8138-1-linux.amoon@gmail.com>
-References: <20250616163831.8138-1-linux.amoon@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Szj//WWW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0563C4CEEA;
+	Mon, 16 Jun 2025 21:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750110412;
+	bh=P+l1gSKaL1N/vyV+DOT1UrSQ4fffm5IIUx8ooXOed1E=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Szj//WWWSX7Egy9IV2n6oWiSAnYoeR2NqgHnX6qjBNb51Cg9RQjsjbFnJ3zztDe8I
+	 mSliIgqysC/frhCJncjVf5IjJfwL3+RFTyNYEoeTZc9iZytlm25WR5L3oiIcwRLE+L
+	 14FRqZkbLm985wPGnXuwRIHuqcqLEwognK039s6OIv+JrYUbBhHvCSNXBgy4fxshrG
+	 v2VW/RkUuYvSAMdeiUXbcGOsntoaKQb+er/qIT3+19KN0J1w518JKZ1TbLzHQR/svV
+	 PjoC8pLV80/inUonAbTvUn4eebPmKkQqh0MMu6Bz8+PE0wAREEtES8s7Y5EeJF8Jvf
+	 7ov4q6jsw2+jw==
+Date: Mon, 16 Jun 2025 16:46:51 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: rosa.pila@samsung.com, s.nawrocki@samsung.com, 
+ linux-samsung-soc@vger.kernel.org, conor+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
+ linux-phy@lists.infradead.org, vkoul@kernel.org, krzk+dt@kernel.org, 
+ faraz.ata@samsung.com, selvarasu.g@samsung.com, kauschluss@disroot.org, 
+ ivo.ivanov.ivanov1@gmail.com, dev.tailor@samsung.com, 
+ devicetree@vger.kernel.org, kishon@kernel.org, peter.griffin@linaro.org, 
+ muhammed.ali@samsung.com, linux-arm-kernel@lists.infradead.org, 
+ alim.akhtar@samsung.com, m.szyprowski@samsung.com
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+In-Reply-To: <20250613055613.866909-1-pritam.sutar@samsung.com>
+References: <CGME20250613055037epcas5p1ce00fda1b535dbeb9a98458d1f0a28ee@epcas5p1.samsung.com>
+ <20250613055613.866909-1-pritam.sutar@samsung.com>
+Message-Id: <175011004935.2433563.8726528182523156685.robh@kernel.org>
+Subject: Re: [PATCH v3 0/9] initial usbdrd phy support for Exynosautov920
+ soc
 
-Refactors the IRQ clear logic in the Exynos TMU driver to eliminate
-redundant code and enhance maintainability. Previously, the driver
-relied on multiple SoC-specific functions or conditional branching
-based on data->soc to handle differences in IRQ register behavior.
 
-Change introduces a unified exynos_tmu_clear_irqs() function
-that adapts its behavior using SoC-specific configuration fields
-(tmu_intstat, tmu_intclear, and irq_clear_direct) defined in the
-exynos_tmu_data structure. These fields are initialized per SoC
-during device setup.
+On Fri, 13 Jun 2025 11:26:04 +0530, Pritam Manohar Sutar wrote:
+> This SoC has a single USB 3.1 DRD combo phy and three USB2.0 only
+> DRD phy controllers
+> 
+>   - Combo phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+>     compatible to the USB3.0 SS(5Gbps). 'Add-on USB2.0' phy is added
+>     to support USB2.0 HS(480Mbps), FS(12Mbps) and LS(1.5Mbps) data
+>     rates. These two phys are combined to form a combo phy as mentioned
+>     below.
+> 
+>    USB30DRD_0 port
+> 
+>      +-----------------------------------------------------+
+>      |                                                     |
+>      |           (combo) USB PHY controller                |
+>      |     +-----------------------------------------+     |
+>      |     |               USB HSPHY                 |     |
+>      |     |  (samsung,exynosautov920-usbdrd-hsphy)  |     |
+>      |     +-----------------------------------------+     |
+>      |                                                     |
+>      |   +---------------------------------------------+   |
+>      |   |               USB SSPHY                     |   |
+>      |   |   (samsung,exynosautov920-usb31drd-ssphy)   |   |
+>      |   +---------------------------------------------+   |
+>      |                                                     |
+>      +-----------------------------------------------------+
+>      |                                                     |
+>      |                USBDRD30 Link                        |
+>      |                  Controller                         |
+>      |                                                     |
+>      +-----------------------------------------------------+
+> 
+>   - USB2.0 phy supports only UTMI+ interface. USB2.0DRD phy
+>     is very similar to the existing Exynos850 support in this driver.
+> 
+>     USB20DRD_0/1/2 ports
+> 
+> 
+>       +---------------------------------------------------+
+>       |                                                   |
+>       |                USB PHY controller                 |
+>       |    +-----------------------------------------+    |
+>       |    |              USB HSPHY                  |    |
+>       |    |  (samsung,exynosautov920-usbdrd-phy)    |    |
+>       |    +-----------------------------------------+    |
+>       |                                                   |
+>       +---------------------------------------------------+
+>       |                                                   |
+>       |             USBDRD20_* Link                       |
+>       |                Controller                         |
+>       |                                                   |
+>       +---------------------------------------------------+
+> 
+> This patchset only supports device mode and same is verified with
+> as NCM device with below configfs commands
+> 
+> changelog
+> ----------
+> Changes in v2:
+> - Used standard GENMASK() and FIELD_GET() to get the major version
+>   from controller version register.
+>   link for v1: https://lore.kernel.org/linux-phy/20250514134813.380807-1-pritam.sutar@samsung.com/
+> 
+> Changes in v3:
+> - Updated dt-bindings for USB2.0 only.
+> - Added dt-bindings for combo phy.
+> - Added implementation for combo phy (SS and HS phy).
+> - Added added DTS nodes for all the phys.
+>   link for v2: https://lore.kernel.org/linux-phy/20250516102650.2144487-1-pritam.sutar@samsung.com/
+> 
+> Pritam Manohar Sutar (9):
+>   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 HS phy
+>     compatible
+>   phy: exyons5-usbdrd: support HS phy for ExynosAutov920
+>   arm64: dts: exynos: ExynosAutov920: add USB and USB-phy nodes
+>   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo HS
+>     phy
+>   phy: exyons5-usbdrd: support HS combo phy for ExynosAutov920
+>   arm64: dts: exynos: ExynosAutov920: add USB and USB HS combo phy nodes
+>   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo SS
+>     phy
+>   phy: exyons5-usbdrd: support SS combo phy for ExynosAutov920
+>   arm64: dts: exynos: ExynosAutov920: add USB and USB SS combo phy nodes
+> 
+>  .../bindings/phy/samsung,usb3-drd-phy.yaml    |   6 +
+>  .../boot/dts/exynos/exynosautov920-sadk.dts   |  53 ++
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 155 +++++
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c      | 529 ++++++++++++++++++
+>  4 files changed, 743 insertions(+)
+> 
+> --
+> 2.34.1
+> 
+> 
+> 
 
-This refactor reduces code duplication, simplifies the addition of
-new SoC support, and improves overall code clarity.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 52 +++++++++++++++++-----------
- 1 file changed, 31 insertions(+), 21 deletions(-)
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index b7522b7b1230..cd21b36674c3 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -172,6 +172,9 @@ enum soc_type {
-  *	0 < reference_voltage <= 31
-  * @tzd: pointer to thermal_zone_device structure
-  * @enabled: current status of TMU device
-+ * @tmu_intstat: interrupt status register
-+ * @tmu_intclear: interrupt clear register
-+ * @irq_clear_support: SoC supports clear IRQ
-  * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
-  * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
-  * @tmu_set_crit_temp: SoC specific method to set critical temperature
-@@ -198,6 +201,9 @@ struct exynos_tmu_data {
- 	u8 reference_voltage;
- 	struct thermal_zone_device *tzd;
- 	bool enabled;
-+	u32 tmu_intstat;
-+	u32 tmu_intclear;
-+	bool irq_clear_support;
- 
- 	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
- 	void (*tmu_set_high_temp)(struct exynos_tmu_data *data, u8 temp);
-@@ -785,28 +791,15 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
- 	return IRQ_HANDLED;
- }
- 
--static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
-+static void exynos_tmu_clear_irqs(struct exynos_tmu_data *data)
- {
- 	unsigned int val_irq, clearirq = 0;
--	u32 tmu_intstat, tmu_intclear;
--
--	if (data->soc == SOC_ARCH_EXYNOS5260) {
--		tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
--		tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
--	} else if (data->soc == SOC_ARCH_EXYNOS7) {
--		tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
--		tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
--	} else if (data->soc == SOC_ARCH_EXYNOS5433) {
--		tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
--		tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
--	} else {
--		tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
--		tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
--	}
-+	u32 tmu_intstat = data->tmu_intstat;
-+	u32 tmu_intclear = data->tmu_intclear;
- 
- 	val_irq = readl(data->base + tmu_intstat);
- 
--	if (data->soc == SOC_ARCH_EXYNOS4210) {
-+	if (!data->irq_clear_support) {
- 		writel(val_irq, data->base + tmu_intclear);
- 		return;
- 	}
-@@ -900,12 +893,15 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_initialize = exynos4210_tmu_initialize;
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4210_tmu_read;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos_tmu_clear_irqs;
- 		data->gain = 15;
- 		data->reference_voltage = 7;
- 		data->efuse_value = 55;
- 		data->min_efuse_value = 40;
- 		data->max_efuse_value = 100;
-+		data->tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
-+		data->tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
-+		data->irq_clear_support = false;
- 		break;
- 	case SOC_ARCH_EXYNOS3250:
- 	case SOC_ARCH_EXYNOS4412:
-@@ -922,7 +918,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos_tmu_clear_irqs;
- 		data->gain = 8;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 55;
-@@ -932,6 +928,14 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		else
- 			data->min_efuse_value = 0;
- 		data->max_efuse_value = 100;
-+		data->irq_clear_support = true;
-+		if (data->soc == SOC_ARCH_EXYNOS5260) {
-+			data->tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
-+			data->tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
-+		} else {
-+			data->tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
-+			data->tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
-+		}
- 		break;
- 	case SOC_ARCH_EXYNOS5433:
- 		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
-@@ -943,7 +947,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos5433_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos_tmu_clear_irqs;
- 		data->gain = 8;
- 		if (res.start == EXYNOS5433_G3D_BASE)
- 			data->reference_voltage = 23;
-@@ -952,6 +956,9 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->efuse_value = 75;
- 		data->min_efuse_value = 40;
- 		data->max_efuse_value = 150;
-+		data->tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
-+		data->tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
-+		data->irq_clear_support = true;
- 		break;
- 	case SOC_ARCH_EXYNOS7:
- 		data->tmu_set_low_temp = exynos7_tmu_set_low_temp;
-@@ -963,12 +970,15 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos7_tmu_control;
- 		data->tmu_read = exynos7_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos_tmu_clear_irqs;
- 		data->gain = 9;
- 		data->reference_voltage = 17;
- 		data->efuse_value = 75;
- 		data->min_efuse_value = 15;
- 		data->max_efuse_value = 100;
-+		data->tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
-+		data->tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
-+		data->irq_clear_support = true;
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "Platform not supported\n");
--- 
-2.49.0
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc1-6-g8a22d9e79cf0 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250613055613.866909-1-pritam.sutar@samsung.com:
+
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb@16600000 (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb@16700000 (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb@16800000 (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb@16900000 (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+
+
+
+
 
