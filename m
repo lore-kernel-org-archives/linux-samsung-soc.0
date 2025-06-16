@@ -1,104 +1,139 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C3620CCC9
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2025 09:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1421F2741B6
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2025 09:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750065092; cv=none; b=GA60eeZu6aFlgmh4IAi83jVxBSgvqJdVdBFWaBV1PQ0dXeB+gdgGhxbNpAWgxFvaacIP3Fzsrha3sukMuq7ZYiv+pL9eLcRWi2ykeYTGaICk9xkomd87fxAAUvMBBwJSIwCNQqlrlST5IM8Z52DTWWuC8z+yrU6T1pMisHHXtX4=
+	t=1750067146; cv=none; b=udKiqmmoPcep1TEguBCRQgIFjy33BchHFlrMrt1CY9ca6UHdfkhmxNKfhVFJ5HL38qLfIkH9V1mWLVf7OsWnQ33kPVa8rTfpZUajjXW09BJuFFSliU4C+sS+q6DqSeZhwnW4q7iHwiGURFHsaYbBMNe4ej+zD0odc2KR6/gY0ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750065092; c=relaxed/simple;
-	bh=vEElryBNL7zZFeTJ1s4TPhoEWiGcSxvnISjWLIlQN9U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hBvSoAT+U4TkgayOsYWLdT+OaUQ4eGjs1ugoxvoGh6LIc6JE7ZwS/PaBKDsioyqz52MY3UK9nlsE1fpDmqPizX2nTfsgyKc2Y9akU07DAE71+baiMFwidIHN/RddADpnLceCdIibUCLeY1UmkWD2yttEyFOJRGTHzeqFXuEyqU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nc9LZ5SY; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1750067146; c=relaxed/simple;
+	bh=zkQWBO37VN3NVGbjoJhPxoXCrT6Q3CmQrD7g+/aYgks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KftCRrhAgauJ6qb0KzV1ZPeSyoe/vcqLhzwZ+facEv6rgKC9t4tidkNFDzjKG9oQLMS59JzBwqWmMqUwK1+9vnABzW85SytiazcN6xWgT5frJem7hOGNgpftJHub1sxkek5/5OwTl9D5oWWETlJh2JisQYV+1JWUlXElY6uSUVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bco48ha3; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nc9LZ5SY"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45306976410so1276985e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2025 02:11:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bco48ha3"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso345690f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2025 02:45:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750065089; x=1750669889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GG2mpeuISDpXhdrt6iGw2KiNF6LC3P7QlYizdJ45M+c=;
-        b=nc9LZ5SYxVDgRVaw4/zii/NkZU5/9WimubReXFMTXQl2PcvfxGrSwjHM3QE1RiulMA
-         5B61RScbWC2deadYIBT2L/Sz7sUasDuB/7c5bFtm1gC8b7TpzCAcHCGzqNzDfvv9Plsk
-         nI2mM3mox7gr5YhWBa+3wTQz2DAFGScpJEojRL6sheOvxbL5Cef4KzaBMrtLDwejzP3o
-         gQN98MFJKig+Sle0xsLEtJUOXfOKDn5Q8KbUGiPNLixSzArzsDvAEgxNvrvwjnnjnrLq
-         Wa4sBXuJP+u9s9OpPoOcOb3zhtF6LPoi4SNx0lEwLL1J3NiHmC3JFVYt5FwasQxafj+5
-         WNBQ==
+        d=linaro.org; s=google; t=1750067143; x=1750671943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=stfq1sXWKmsRuu2Jonzta4jrsZNZk4m5C7fvRbIkSl4=;
+        b=bco48ha3LteeKVsX713f03R3hndl9dyEatmE7AQstiTZ73Io/sYhfVISraYpFmNKZD
+         0c4xEGbf1Sw0QrwbPuJf5ZLpDyHVM07oN/O/dcn42Rl0/5hYCjOzLBHRu1/w2gL85ARv
+         EKdNUzsL7MNydBFm6LzYMqU4sC9LTBDfcCelhdNjeVVlv5/dKEURFosoz/ENfR0fcmFR
+         Q760fHhokicx90+XYm/wYwqdPYzL3JyUyd9VT1HQtYEy03HfG/B8wtP1lyV2i1sqmjcm
+         WN70d7c1x8DTAKAFL9WQwTglh+uKX53WO/GjdMpcT3+znYdc6rjDQOmS/H5brbLHyA8O
+         1Y+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750065089; x=1750669889;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GG2mpeuISDpXhdrt6iGw2KiNF6LC3P7QlYizdJ45M+c=;
-        b=Q0cJHgrR+3QG6CDs1+5wi1KHYx2c2ZM6T7MERQilSVJ8kIRjzdzKfmRXLYVN90ctmu
-         xRzDrzBEp8x+ULQKFXfliBIJVJoQXKzbdUet5TpgoBhtW1JXXK50bvM0RRVJBQsix/Ew
-         PzRku8OOPAYUNF+dMTp/0tAFjKJlkJ69pTnGPYDjlf0RfqYRdmPCMjYiEVV6rUUEnLXg
-         334DNCRFCszFNgA9ezvn8k8w3C5oxt2hg5Y6rhqlGixtp6CC55hMtXuZRuCv78ILrKuf
-         hXIppDmaU9jK0U8IvpYem2H0QzpqbuLAwUFv7hE4cZrri7MZfJNQfYogSr7XYfPqh7Ya
-         8aZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuZjL70+gIB2ygxL090dgsR9FYZf118Saea4qJyjQ2d2jGVJ/lNNw6RUwYXrdLjlOqYKfEJZzOji65mi8tAt++Ww==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgi7JEe65G02kBZfGI7NexlxoJ3pvvsBezqV95nFnvXejjbBeb
-	rbauJxy8nl5S2Rybyw2vAlQpIMVFRyXKAN8VNITmvmlNE+IJO9QCqCM7ceQD19bNyr8=
-X-Gm-Gg: ASbGncunP4GiRJtE6rMKLDbKHuoZElSJiAyysGd7fIov/BeBisItyUEIVMnmnMV7TY7
-	CFKjux3IVwPZA4NcD08pnPvc8SMJcgquXzx3/3FYz2weJObaMWwGGFOsbK7H5WeOtYO1wcxQs5y
-	mr4wKmTC7AcPBvApPMiAmjTIn3cuq7hZPceEc+/qZ92nB/sHsNW+FFu/NevnjMn+3COIznxEoYG
-	PS2PSs5iFlAdntMOQBe2/bspNPjUa9Iks4vpxUu4ioQ61GDBwNcDqyUxA+CJy70EqEf4kXRtfa0
-	P/GaB7awewqHTAO1UJTCZIrYR5ZTyKTiWalGckt6Ou2/60t3Sy9yVUaZXjFyhgcnkDT/fFympEN
-	B3SoVZxE=
-X-Google-Smtp-Source: AGHT+IH1WB0/sw9sqaChH695gvNYuYsdGilhFE4QGQCFNv0A2lCd1A3eZdG1Rw5dHdNgAoDh7P85qw==
-X-Received: by 2002:a05:600c:3f9b:b0:442:fff5:5185 with SMTP id 5b1f17b1804b1-4533cab4477mr28464145e9.6.1750065089320;
-        Mon, 16 Jun 2025 02:11:29 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532dea1cc5sm142655045e9.16.2025.06.16.02.11.27
+        d=1e100.net; s=20230601; t=1750067143; x=1750671943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=stfq1sXWKmsRuu2Jonzta4jrsZNZk4m5C7fvRbIkSl4=;
+        b=S2hZNeyq09BiPoprGSpFg7hqrj6zpUvl5ihe7XsllfpM4rFmqW7DJFNyCoV/7ohDeR
+         PMl8tY+QBMJbZlGpJMSCSk9f7enNh6yhV7F5dGj9b3IPqWEx3iybgy3k8xa55aVPdeCP
+         FZ7k2SUCmF7Op3QACgpOnpA654TpWMW1chYXgs3UdtYlFuGEhujuHcY8tSB6LyHpUQTM
+         z21veJSYTE3CYYhtmf2+yMltxYKurS3Yhi/woC15hbZEt83iFJF/kU4C3Fzpg9PCDpob
+         l4pA6bnhw4YdaWnL6Le1SlyuAozqxaHVsowFxeEH7yn+oGPkWIADts22rcHFIRSd3XzV
+         fFpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOdq19y+Sx/k7585FpVzwW+4z/zwJtO/bF5Q/KyY4ZmxOaEm3dSEm7D/nwCwsfDATDOcRFhMnhNqI44CZK/6axKw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwItkGiqw3ikJ3/X1zkh26Z6ycWfyGrgzs24uS4ystsCU7ZmtVT
+	H9fFKUIeykChTWyeOPRtlPNr5kMd68ssChZYJR+cxdfMi16X9fkmsSFtMf9zMvtqU3A=
+X-Gm-Gg: ASbGnctkfxmbJa2e1w6OLvQfAntGrrKFQXDJKAmTNg8rfl+AhFb4QoA5MPi+g45qqr+
+	Zfy5CQrjdttoPAwThxdVT030s3FahT7K0D4oadWYZnvt/OUuxOS4JiB8tyOPype7wiQen6BWPqJ
+	AezdLHw+8mTEBwLoaFIGU2ulep8LQYX4KABVHbK/LcJ/HEcw/IummllP3rV7vX7FMBS3pCsFMRN
+	A7m9uddiQ8H+9uq2ELSS7VSG/0oqyBLzPT+/q91A13xHVE36w7KVFEGtRsWXNjfX3kvX67Zq3Tp
+	7CXc7/Qmevcegmv/XnABndvkuD2/Cwe5cpkyA8jdeMPR6raUtGDAtdwxEOsTcxRL6ktCTMxQIQ=
+	=
+X-Google-Smtp-Source: AGHT+IFmhUzV2REZ+armXUuBCrTN/HZvKEo4jmpES0++U9AIxkv7x67178KFZZA0J/Ne420xjaKjFg==
+X-Received: by 2002:a05:6000:2087:b0:3a4:e0e1:8dbd with SMTP id ffacd0b85a97d-3a572e7a579mr2511491f8f.11.1750067143332;
+        Mon, 16 Jun 2025 02:45:43 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a67361sm10711943f8f.30.2025.06.16.02.45.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 02:11:28 -0700 (PDT)
+        Mon, 16 Jun 2025 02:45:42 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Sven Peter <sven@kernel.org>, 
- Janne Grunau <j@jannau.net>, asahi@lists.linux.dev, 
- linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
-References: <20250612134421.95782-3-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: defconfig: Switch SOUND to module
-Message-Id: <175006508796.28664.548838572668518596.b4-ty@linaro.org>
-Date: Mon, 16 Jun 2025 11:11:27 +0200
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	andersson@kernel.org,
+	konradybcio@kernel.org
+Subject: [GIT PULL fixes] ARM: samsung: soc fixes for v6.16
+Date: Mon, 16 Jun 2025 11:45:39 +0200
+Message-ID: <20250616094538.33256-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1498; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=zkQWBO37VN3NVGbjoJhPxoXCrT6Q3CmQrD7g+/aYgks=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoT+fCBAboPqnDdMQ1PbbW1abt+tp9PiIs4J8uF
+ Zr8YV5NFt+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaE/nwgAKCRDBN2bmhouD
+ 1+wzD/9FB4y+oWO5csn0+pLRk1mm9Z+42W/TegH2R2wag3jd3cYzP86Vv4/BBQbxHc4hsGxAAZ5
+ RJsw5q0sX6vx3hDeyo1uZH1BmKQHEJASDC8WDPDPC3pYHQYhAxRYU617yNlp5UNNk6JJ9rC+25p
+ ZXvz6nLdWoj8peI4annyXHOGVlPEZ53Mn/2PBlzdYdLvUgDMX6bUwli5SWfkibYRWq9FzXrZ8FP
+ MNZtWXFU21u8GVRwWqONPdwtAkYCBVIuq+Ven2bdI7PCds9Qh04Nd5QIT/Nd+XRAV8IQBZjUd4z
+ xsdRNotZyXzhceSmHfMDHx5jFJvSRz9OrXXYvaW1uXHD7bi+b0h+xai9SkzSyHsMzRL0FX2+hB3
+ MA/GXCreM+h2UXk0QhYRP4oQTQHrJ/ZF1PxAhrHw7+7H8lgOnevjGTQ0SF1fpVS2Ve9x1XmKcKd
+ B8dODZghP92kNu7iATg0RlDsXFilqRJ9fsekxbzPbmqriNAWrQ6Ozc2sHyDPTc1kNJ881pJsHRn
+ DTkh3it/D6s8jI9+0Njc6Yl8YEK22YfjkiY5LGPe0+k/i6XgGxbMBQPkgpOD9OZsttb/J0TtHLc
+ KwAdUydr1wsCOlqvU3YluXNrJddgEq6JPnGl0er01MlMYa6C+e/F6GjLgjO1EEas12HlvlYxHV4 fpTfFw2FA9IP2GA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Thu, 12 Jun 2025 15:44:22 +0200, Krzysztof Kozlowski wrote:
-> Sound drivers are not essential to boot boards or mount rootfs,
-> therefore in effort to reduce the size of kernel image (and boot images)
-> switch the ASoC drivers to modules to decrease the size:
-> 
->   vmlinux: 152864 kB -> 154528 kB
->   Image: 39391 kB -> 39067 kB
-> 
-> [...]
+Fixes for issues introduced in this merge window.
 
-Applied, thanks!
-
-[1/2] arm64: defconfig: Switch SOUND to module
-      https://git.kernel.org/krzk/linux/c/927f1259c517ec0dc589f5014c4edbdc87591cd8
-[2/2] arm64: defconfig: Drop unneeded unselectable sound drivers
-      https://git.kernel.org/krzk/linux/c/a8365bfb249907069fb584a535d03c291157ddbb
+The defconfig change affects Qualcomm SoC, but the originating commit came from
+Samsung Soc tree and it was not yet picked up by Bjorn, thus I am sending it.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
 
+
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-6.16
+
+for you to fetch changes up to 8d2c2fa2209e83d0eb10f7330d8a0bbdc1df32ff:
+
+  firmware: exynos-acpm: fix timeouts on xfers handling (2025-06-10 10:20:16 +0200)
+
+----------------------------------------------------------------
+Samsung SoC fixes for v6.16
+
+1. Correct CONFIG option in arm64 defconfig enabling the Qualcomm SoC
+   SNPS EUSB2 phy driver, because Kconfig entry was renamed when
+   changing the driver to a common one, shared with Samsung SoC, thus
+   defconfig lost that driver effectively.
+
+2. Exynos ACPM: Fix timeouts happening with multiple requests.
+
+----------------------------------------------------------------
+Casey Connolly (1):
+      arm64: defconfig: update renamed PHY_SNPS_EUSB2
+
+Tudor Ambarus (1):
+      firmware: exynos-acpm: fix timeouts on xfers handling
+
+ arch/arm64/configs/defconfig           |  2 +-
+ drivers/firmware/samsung/exynos-acpm.c | 27 ++++++++++-----------------
+ 2 files changed, 11 insertions(+), 18 deletions(-)
