@@ -1,142 +1,101 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B0D285417;
-	Wed, 18 Jun 2025 14:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7752827FB30;
+	Wed, 18 Jun 2025 14:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256841; cv=none; b=VKMXoKl+vfbknB6hLmOzyEKcGYY64pKKI51sBPmSZqVzLfLaCHnJuBlrCns440UCEergX9Xa7n89C6w2C1Q8eJDBsdhdVZbeno2YKDNtUNWDqMyNuxGpI8oavxgSsRVt8tZNLAlmTHHU0U7mb7AHZmfKw4B4MTjz2pPTmSMzQgY=
+	t=1750257131; cv=none; b=FBAfkKVMy8iqYtHtX2UdS3cw8UQ4pBL5osqghRWdVYNbCtWNK4Tp8BHIePYLALuy2BOzcrG7UIkq1D/n+Dd5hXGLM2BSzkryGYK84QACcoANuP84kL/YKbnCT7SijAF+VwYFMwlULaCbpHjdxa/M5V4uIXVfp6t5Tow7aqhJEv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256841; c=relaxed/simple;
-	bh=UN4+r4XZNFrvRooGsjjEHC4utAW+tfGxUnWe7E/kEZg=;
+	s=arc-20240116; t=1750257131; c=relaxed/simple;
+	bh=cicdrtZh663PWbSEKE4hOM5LhEMjv/zDMK4ao90EPD4=;
 	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ufna0Hn9EP5US8r7dg3DZQCE34gQsBpFBxnunz75SXTdAmN2iYQ9Pti33jZbdKVXdaPkbsZmpYrBJT1hOmnLFLOsrjUQEUnBWyA8ImDC3CsGjuui1YWqOuXs9UpOPYnLz2x0II3rRawpOGQhZ6ECxaLXZNh9JPg9kdDlvmVUsZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RYxBhjev; arc=none smtp.client-ip=178.21.23.139
+	 Message-ID:Content-Type; b=BN3t894vEy+zDMcPx0GdSvWH5qHYUpRrYzBfYezEqDhCm7RfgffJQ2ydb4+LmO7Ux7/T/AEMNy7HYPJxNt+CxT4X6Gn3u/IE+cTISd11iLLenuqxvQEG9mo2JG87Ou1oPSg2fW4M6UJNxfRFe2ioXyah/G5tXHL9r2PGb6qPU6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bfogrMgv; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RYxBhjev"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bfogrMgv"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id CDC8925F7A;
-	Wed, 18 Jun 2025 16:27:18 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 1C8A325C7E;
+	Wed, 18 Jun 2025 16:32:08 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id UXPabypd1lfz; Wed, 18 Jun 2025 16:27:17 +0200 (CEST)
+ id 47V5HVKOwdqE; Wed, 18 Jun 2025 16:32:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750256837; bh=UN4+r4XZNFrvRooGsjjEHC4utAW+tfGxUnWe7E/kEZg=;
+	t=1750257127; bh=cicdrtZh663PWbSEKE4hOM5LhEMjv/zDMK4ao90EPD4=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=RYxBhjevfThdOLUFRzhLqaoSxQrAAJJX10YFzY/7DTzTuSQuDgSDAGeL5MqVoDyop
-	 yZKq3Z+ZQoZWeKSOTFlvOindsxL74TAJWqexbnZF7H5/f23C2c9dNCU3D3i1O1ueFQ
-	 AadAn1wP5JOAYtODFq4KaqZrsI4ykYywXaAgQnT+VOJLZONOh/jfxygQ1nKb6ZL7kO
-	 XzASPMLAxr+hlektYmjrN6iy0iXhKgUlpqEvOqhiOvpnA4bNCoy59iizB5WhKomoJ4
-	 VwtwaiqCqkR2rMWNJzxXZNHsu12JRz3WNalpMi3Ny/GZO5RUYt+y3DRnKYxQ+3w4gr
-	 92vQACA6z9Eng==
+	b=bfogrMgv7T1arQVWMn++RUlfeiHxF+VbYu+NGxeeHjNrZFMhUPNPgdxmExzqmxjps
+	 qguKkX+78TMTVDLiwMlg8YCtKV37LwBXZ29sjqAkTR6jyQpS92LfueOPPLKZBeUZp5
+	 +mhlnF+XkEqzwoIcqr4P1GkcMVYVhzl0hyFwmDZc/q7EQhgKkXCjljg6LifbEgLZLu
+	 wSSJOEmv2DctErS6/FY3ZDC8un0MLoF/yyE3xPGUFqhuDy+z3NJ2go6GLvFXqOVBo9
+	 Bbs8fyKx/DqU3jTpvwYVbo+Kx/da/ZOwZEdElCde/LRYHaxlNxe5IdCNM8aadeuABQ
+	 RGEAwDVjn+3/g==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 18 Jun 2025 14:27:17 +0000
+Date: Wed, 18 Jun 2025 14:32:07 +0000
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
- <kyungmin.park@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 10/12] dt-bindings: samsung,mipi-dsim: document exynos7870
- DSIM compatible
-In-Reply-To: <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
-References: <20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org>
- <20250612-exynos7870-dsim-v1-10-1a330bca89df@disroot.org>
- <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
-Message-ID: <9e2f29d3763ea50b30e5a493551627cd@disroot.org>
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: samsung: exynos-sysreg: add exynos7870
+ sysregs
+In-Reply-To: <7bb375c8-1a43-40e2-891c-8815c9cc94ff@kernel.org>
+References: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
+ <20250612-exynos7870-drm-dts-v1-1-88c0779af6cb@disroot.org>
+ <7bb375c8-1a43-40e2-891c-8815c9cc94ff@kernel.org>
+Message-ID: <76df5b2d6b2c8de73519e1862e105c67@disroot.org>
 X-Sender: kauschluss@disroot.org
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-06-18 10:00, Krzysztof Kozlowski wrote:
-> On 12/06/2025 17:18, Kaustabh Chakraborty wrote:
->> Add compatible string for Exynos7870 DSIM bridge controller. The
->> devicetree node requires four clock sources, named:
->> - bus_clk
->> - phyclk_mipidphy0_bitclkdiv8
->> - phyclk_mipidphy0_rxclkesc0
->> - sclk_mipi
+On 2025-06-18 09:46, Krzysztof Kozlowski wrote:
+> On 12/06/2025 17:23, Kaustabh Chakraborty wrote:
+>> Add sysreg compatible strings for the Exynos7870 SoC. Two sysregs are
+>> added, used for the SoC MIPI PHY's CSIS and DSIM blocks.
 >> 
 >> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 >> ---
->>  .../bindings/display/bridge/samsung,mipi-dsim.yaml | 26 ++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
+>>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml      | 6 ++++++
+>>  1 file changed, 6 insertions(+)
 >> 
->> diff --git a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
->> index 1acad99f396527192b6853f0096cfb8ae5669e6b..887f3ba1edd24a177a766b1b523d0c197ff1123a 100644
->> --- a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
->> +++ b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
->> @@ -24,6 +24,7 @@ properties:
->>            - samsung,exynos5410-mipi-dsi
->>            - samsung,exynos5422-mipi-dsi
->>            - samsung,exynos5433-mipi-dsi
->> +          - samsung,exynos7870-mipi-dsi
->>            - fsl,imx8mm-mipi-dsim
->>            - fsl,imx8mp-mipi-dsim
->>        - items:
->> @@ -144,6 +145,31 @@ required:
->>  
->>  allOf:
->>    - $ref: ../dsi-controller.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: samsung,exynos7870-mipi-dsi
->> +
->> +    then:
->> +      properties:
->> +        clocks:
->> +          minItems: 4
+>> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+>> index d27ed6c9d61ea9db77229eca60b6b9a0abc5d305..174bdb8ee932ff965de6fc17aef004a3cedffeb3 100644
+>> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+>> @@ -52,6 +52,12 @@ properties:
+>>                - samsung,exynosautov9-sysreg
+>>            - const: syscon
+>>          deprecated: true
+>> +      - items:
+>> +          - enum:
+>> +              - samsung,exynos7870-cam-sysreg
+>> +              - samsung,exynos7870-disp-sysreg
+>> +          - const: samsung,exynos7870-sysreg
 > 
-> maxItems: 4
-
-Will replace. maxItems == minItems implicit if maxItems present and
-minItems absent.
-
 > 
->> +
->> +        clock-names:
->> +          items:
->> +            - const: bus_clk
->> +            - const: phyclk_mipidphy0_bitclkdiv8
->> +            - const: phyclk_mipidphy0_rxclkesc0
->> +            - const: sclk_mipi
-> 
-> Does any existing driver code actually depends on the names? If not, we
-> switched in Samsung in general to names matching the input or the
-> function, not the name of provider. bus, bit (or bitdiv?), rx or esc0, sclk 
+> Drop. These are not really compatible or your commit msg is incomplete.
+> Don't use deprecated syntax and backwards compatible solutions for new
+> hardware.
 
-Yeah, Exynos5433 uses it. Code is here [1].
+Are you sure? The deprecated one is actually the item above. From what I
+understand, those are generic sysregs and don't mention their functions.
 
-Though, I could get around this if you would like to. Would need to add
-a few more patches.
+      - items:
+          - enum:
+              - samsung,exynos5433-sysreg
+              - samsung,exynos850-sysreg
+              - samsung,exynosautov9-sysreg
+          - const: syscon
+        deprecated: true
 
-PS: bitdiv8 should actually be byte. bit clock frequency used in data
-transmission divided by 8 covers a byte.
-
-[1] https://elixir.bootlin.com/linux/v6.16-rc2/source/drivers/gpu/drm/bridge/samsung-dsim.c#L227
-
-> 
 > 
 > Best regards,
 > Krzysztof
