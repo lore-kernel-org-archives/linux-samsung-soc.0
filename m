@@ -1,90 +1,142 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3928640B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B0D285417;
+	Wed, 18 Jun 2025 14:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750251497; cv=none; b=IdnaGSzQcx7EUZStt0kWqwADbm7hyz6Cs+XsdKDeh2Nz65q74Rmvr7adsDb6SlQrG67ALUAQe8glQbeJVTJ+zMQ6Hcf3ncC2uIvBQwOnBollexDGRxzb8u+zlxcsaIUk38VGyrkTXsYpe03QqokLN0zH0bD+a6+DJnNryT8RtfM=
+	t=1750256841; cv=none; b=VKMXoKl+vfbknB6hLmOzyEKcGYY64pKKI51sBPmSZqVzLfLaCHnJuBlrCns440UCEergX9Xa7n89C6w2C1Q8eJDBsdhdVZbeno2YKDNtUNWDqMyNuxGpI8oavxgSsRVt8tZNLAlmTHHU0U7mb7AHZmfKw4B4MTjz2pPTmSMzQgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750251497; c=relaxed/simple;
-	bh=oLYQh3tHQchsKx90QxqR/zEu2gUWNemVv3MveM+gyOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=SdQ87L3CBLG7uSTmaXGVE32hKBZT9ke0cTP2Srf8zvLWhqu8TN4Q2jmN2viypuTznoUZPc9u8blxhe0PoKq4T3AmL6dTVCxOwBHNWTsP5/Dz844+Vgmqybefv0UXOZplmeHClFOwAvNKGAthz/ZxkOaRRv/W0R4wjpIaYp6Cnv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HeSEi6Bo; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1750256841; c=relaxed/simple;
+	bh=UN4+r4XZNFrvRooGsjjEHC4utAW+tfGxUnWe7E/kEZg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ufna0Hn9EP5US8r7dg3DZQCE34gQsBpFBxnunz75SXTdAmN2iYQ9Pti33jZbdKVXdaPkbsZmpYrBJT1hOmnLFLOsrjUQEUnBWyA8ImDC3CsGjuui1YWqOuXs9UpOPYnLz2x0II3rRawpOGQhZ6ECxaLXZNh9JPg9kdDlvmVUsZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RYxBhjev; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HeSEi6Bo"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250618125813euoutp011e5af9ef0ec260a2b482737839e94d5b~KJHXFBUzu0174001740euoutp01L
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:58:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250618125813euoutp011e5af9ef0ec260a2b482737839e94d5b~KJHXFBUzu0174001740euoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750251493;
-	bh=fspd5e54mfMI6aa1OpsBB/dqGjkj7jaOpc4EH06UMKo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HeSEi6BoetPrdRExaNto6pbVCX9/4dRHlYYaUeUVpUQt/IGMnW06+0U4IRL4NJEIA
-	 DktiAHaJ1j+FrmFJL4mDT8NBE03hLVRdjVqs4OEwk1mLvwpt6zXMK97OteZKrGkt2E
-	 exIk0AMNabBxk1H5UpwpzPsvxNWTuV5fjr2aDmU4=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618125812eucas1p11a1ab5210d4efa95a51b3bc7c4f0924d~KJHWqi6Rd0340003400eucas1p1l;
-	Wed, 18 Jun 2025 12:58:12 +0000 (GMT)
-Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250618125812eusmtip2b1f7a7d239a1b83dd4fe9a93315b1bca~KJHWEb5oH0417004170eusmtip2Y;
-	Wed, 18 Jun 2025 12:58:12 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux.amoon@gmail.com
-Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org,
-	rui.zhang@intel.com, Mateusz Majewski <m.majewski2@samsung.com>
-Subject: Re: [RRC v1 1/3] thermal/drivers/exynos: Remove unused base_second
- mapping and references
-Date: Wed, 18 Jun 2025 14:58:06 +0200
-Message-ID: <20250618125806.2260184-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250616163831.8138-2-linux.amoon@gmail.com>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RYxBhjev"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id CDC8925F7A;
+	Wed, 18 Jun 2025 16:27:18 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id UXPabypd1lfz; Wed, 18 Jun 2025 16:27:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750256837; bh=UN4+r4XZNFrvRooGsjjEHC4utAW+tfGxUnWe7E/kEZg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=RYxBhjevfThdOLUFRzhLqaoSxQrAAJJX10YFzY/7DTzTuSQuDgSDAGeL5MqVoDyop
+	 yZKq3Z+ZQoZWeKSOTFlvOindsxL74TAJWqexbnZF7H5/f23C2c9dNCU3D3i1O1ueFQ
+	 AadAn1wP5JOAYtODFq4KaqZrsI4ykYywXaAgQnT+VOJLZONOh/jfxygQ1nKb6ZL7kO
+	 XzASPMLAxr+hlektYmjrN6iy0iXhKgUlpqEvOqhiOvpnA4bNCoy59iizB5WhKomoJ4
+	 VwtwaiqCqkR2rMWNJzxXZNHsu12JRz3WNalpMi3Ny/GZO5RUYt+y3DRnKYxQ+3w4gr
+	 92vQACA6z9Eng==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250618125812eucas1p11a1ab5210d4efa95a51b3bc7c4f0924d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618125812eucas1p11a1ab5210d4efa95a51b3bc7c4f0924d
-X-EPHeader: CA
-X-CMS-RootMailID: 20250618125812eucas1p11a1ab5210d4efa95a51b3bc7c4f0924d
-References: <20250616163831.8138-2-linux.amoon@gmail.com>
-	<CGME20250618125812eucas1p11a1ab5210d4efa95a51b3bc7c4f0924d@eucas1p1.samsung.com>
+Date: Wed, 18 Jun 2025 14:27:17 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
+ <kyungmin.park@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 10/12] dt-bindings: samsung,mipi-dsim: document exynos7870
+ DSIM compatible
+In-Reply-To: <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
+References: <20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org>
+ <20250612-exynos7870-dsim-v1-10-1a330bca89df@disroot.org>
+ <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
+Message-ID: <9e2f29d3763ea50b30e5a493551627cd@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->  	/* On exynos5420 the triminfo register is in the shared space */
-> -	if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
-> -		trim_info = readl(data->base_second + EXYNOS_TMU_REG_TRIMINFO);
-> -	else
-> +	if (data->soc == SOC_ARCH_EXYNOS5420 ||
-> +			data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
->  		trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> -
-> -	sanitize_temp_error(data, trim_info);
-> +		sanitize_temp_error(data, trim_info);
-> +	}
+On 2025-06-18 10:00, Krzysztof Kozlowski wrote:
+> On 12/06/2025 17:18, Kaustabh Chakraborty wrote:
+>> Add compatible string for Exynos7870 DSIM bridge controller. The
+>> devicetree node requires four clock sources, named:
+>> - bus_clk
+>> - phyclk_mipidphy0_bitclkdiv8
+>> - phyclk_mipidphy0_rxclkesc0
+>> - sclk_mipi
+>> 
+>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> ---
+>>  .../bindings/display/bridge/samsung,mipi-dsim.yaml | 26 ++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
+>> index 1acad99f396527192b6853f0096cfb8ae5669e6b..887f3ba1edd24a177a766b1b523d0c197ff1123a 100644
+>> --- a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
+>> +++ b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
+>> @@ -24,6 +24,7 @@ properties:
+>>            - samsung,exynos5410-mipi-dsi
+>>            - samsung,exynos5422-mipi-dsi
+>>            - samsung,exynos5433-mipi-dsi
+>> +          - samsung,exynos7870-mipi-dsi
+>>            - fsl,imx8mm-mipi-dsim
+>>            - fsl,imx8mp-mipi-dsim
+>>        - items:
+>> @@ -144,6 +145,31 @@ required:
+>>  
+>>  allOf:
+>>    - $ref: ../dsi-controller.yaml#
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos7870-mipi-dsi
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          minItems: 4
+> 
+> maxItems: 4
 
-If I understand correctly, this means that the triminfo will no longer
-be read on other SoCs calling this function (3250, 4412, 5250, 5260). Is
-this intended?
+Will replace. maxItems == minItems implicit if maxItems present and
+minItems absent.
 
-By the way, are we sure that data->base_second really is unnecessary?
-According to the bindings documentation (in
-Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml),
-the different address is necessary because the triminfo registers are
-misplaced on 5420.
+> 
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: bus_clk
+>> +            - const: phyclk_mipidphy0_bitclkdiv8
+>> +            - const: phyclk_mipidphy0_rxclkesc0
+>> +            - const: sclk_mipi
+> 
+> Does any existing driver code actually depends on the names? If not, we
+> switched in Samsung in general to names matching the input or the
+> function, not the name of provider. bus, bit (or bitdiv?), rx or esc0, sclk 
 
-Thank you,
-Mateusz Majewski
+Yeah, Exynos5433 uses it. Code is here [1].
+
+Though, I could get around this if you would like to. Would need to add
+a few more patches.
+
+PS: bitdiv8 should actually be byte. bit clock frequency used in data
+transmission divided by 8 covers a byte.
+
+[1] https://elixir.bootlin.com/linux/v6.16-rc2/source/drivers/gpu/drm/bridge/samsung-dsim.c#L227
+
+> 
+> 
+> Best regards,
+> Krzysztof
