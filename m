@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A93B286D5F;
-	Wed, 18 Jun 2025 10:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33067296153;
+	Wed, 18 Jun 2025 10:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750240823; cv=none; b=Owu2qOC0nBzLWMIbuOA8GGD9DzKGOtnVFFsVRfW2vItWDDLnaHX6B53SEm1gB/R8k9L9iGhLG2Wm7Ez8OgMcnsk9zOD/fymiw6zgBH6T12+mfgvjJZpZYawyJhkBseSPhAOyXvKXQ6RRA9YZaB2DJknpSOmpoLyuIsy8J6ul7Fg=
+	t=1750241075; cv=none; b=LbURVuI2zJ52TKpp00nd7CfcPMNADA1eEvBQft70AIGtmPESE6mYYxQGM45H6b+x5KAwOIuXj7Gzvkf007kcv6KOYZkHwcPIiuQm/Q2tTHbmRqqrw1qYMrtvrgkFfeiVzAppcS2zt5vPvUkQcYYG9zY5wfG5uEz352h6hDLhnQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750240823; c=relaxed/simple;
-	bh=MgFyQ6WDSq5FN3gR1y43PrOwSkaT4W5VAAHCxHXw3NI=;
+	s=arc-20240116; t=1750241075; c=relaxed/simple;
+	bh=4jm0oCDOO4J5YGR53n5qNlqIq1pAtKvteKDI0zUt3aI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A0rMDIAs1OZXZuftPbwj9YQNHIfQJezHLHDvnFKOVg1TtP8IcwKzF5R+NCGHga8+MSrNKeRvKgmyh/hDKrfokjUhwYIcwz41KBTbdEkEWxPONoXI4cC1ZWuQK9K6yaprgRy0Vnbebj8otVEUWE8pfMUfp5g+90lmGewULwqm/Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPr6cCab; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=GRKMutWicPEhgND9Z0hwt6TH0DkwaNJAxOy57YJT/eF34GSS3/U6WP/yalnKgGeYr46y3NuBZlEiR7zclutkVZPPwWRQyi4XJnQ1dGO/0ri9Gi3DLV0SGusJSgHuehjECTttXHt7upa80PIV3rCcCrGz3z5aI9SE84/6AcsAFLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nc2bAauk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPr6cCab"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1076CC4CEE7;
-	Wed, 18 Jun 2025 10:00:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nc2bAauk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9E3C4CEE7;
+	Wed, 18 Jun 2025 10:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750240822;
-	bh=MgFyQ6WDSq5FN3gR1y43PrOwSkaT4W5VAAHCxHXw3NI=;
+	s=k20201202; t=1750241074;
+	bh=4jm0oCDOO4J5YGR53n5qNlqIq1pAtKvteKDI0zUt3aI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hPr6cCabyYJrXgyEvuZrp5VP8X8vLmWNaSeqi73tHmTUb13yV6vMG3ma3x6XC/Xrx
-	 uSfkRM4XcbzK8sTthOCxA+kI7Slk1rtP3dzQ5ZAZ7cpgAEq9TDx+7AB43sXeWUTrvr
-	 VhZXLMD/wAbE51Yw5Na5U3jDbn5/0gLwmgnmmdhmcenRcH3t0wjKR4La6Assrft3x3
-	 y1wfSBqFQflEJe7QlAEKON92Yhm6/jEbz1F0pp7oObPvE5SwdCjnvPfrmmx7agEpw1
-	 7Pc+uwJPgANdNHL62+N7w/q0+kbpxrqNZdgVSUgsKAq1eB/F5PEO+1jgPigQ7Y/yIo
-	 n0Nxs25oJXxHg==
-Message-ID: <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
-Date: Wed, 18 Jun 2025 12:00:15 +0200
+	b=nc2bAaukKmDM0fmTG5jrMmrNO/t+sT1+RdOz8gv+N9frg3ZBqXE0NcdkiZoZySddU
+	 HIhRoDwR8uY+CapOvmJ1xG4vtfSpWg8Dx5F8mtiN2Zt+t+xeIdMcgP492Up4YeSyKU
+	 L19yP/9UVhnfLY08QVkJJQptbvDodpYuem41yusSlavrQzs5FhIau14LYUoFsiBZYp
+	 xFgqV541XFJSar5a+yCN1DiCk64m/ZTVN+cWMBw7F2H7h+lP1dPd4BL1MRANK5YYeP
+	 ecuHBhdmIsJ5ryAnD6anBH9aJkxmcYtFSf3AA36H74+FowrwI0WgG6cXBk6uzMn40H
+	 wMjJgfyEzxlaQ==
+Message-ID: <eb45924b-8d42-4b6e-8424-6400923681d2@kernel.org>
+Date: Wed, 18 Jun 2025 12:04:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,27 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/12] dt-bindings: samsung,mipi-dsim: document exynos7870
- DSIM compatible
+Subject: Re: [PATCH 2/5] arch: arm64: dts: exynos7870: add DSI support
 To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org>
- <20250612-exynos7870-dsim-v1-10-1a330bca89df@disroot.org>
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
+ <20250612-exynos7870-drm-dts-v1-2-88c0779af6cb@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,63 +88,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250612-exynos7870-dsim-v1-10-1a330bca89df@disroot.org>
+In-Reply-To: <20250612-exynos7870-drm-dts-v1-2-88c0779af6cb@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/06/2025 17:18, Kaustabh Chakraborty wrote:
-> Add compatible string for Exynos7870 DSIM bridge controller. The
-> devicetree node requires four clock sources, named:
-> - bus_clk
-> - phyclk_mipidphy0_bitclkdiv8
-> - phyclk_mipidphy0_rxclkesc0
-> - sclk_mipi
+On 12/06/2025 17:23, Kaustabh Chakraborty wrote:
+> Add devicetree nodes for MIPI PHYs, Samsung's DECON and DSIM blocks, and
+> DECON IOMMU devicetree nodes. Enables SoC support for hardware to be
+> able to drive a MIPI DSI display.
 > 
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  .../bindings/display/bridge/samsung,mipi-dsim.yaml | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
-> index 1acad99f396527192b6853f0096cfb8ae5669e6b..887f3ba1edd24a177a766b1b523d0c197ff1123a 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
-> @@ -24,6 +24,7 @@ properties:
->            - samsung,exynos5410-mipi-dsi
->            - samsung,exynos5422-mipi-dsi
->            - samsung,exynos5433-mipi-dsi
-> +          - samsung,exynos7870-mipi-dsi
->            - fsl,imx8mm-mipi-dsim
->            - fsl,imx8mp-mipi-dsim
->        - items:
-> @@ -144,6 +145,31 @@ required:
->  
->  allOf:
->    - $ref: ../dsi-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos7870-mipi-dsi
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 4
+>  arch/arm64/boot/dts/exynos/exynos7870.dtsi | 94 ++++++++++++++++++++++++++++++
+>  1 file changed, 94 insertions(+)
 
-maxItems: 4
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-> +
-> +        clock-names:
-> +          items:
-> +            - const: bus_clk
-> +            - const: phyclk_mipidphy0_bitclkdiv8
-> +            - const: phyclk_mipidphy0_rxclkesc0
-> +            - const: sclk_mipi
-
-Does any existing driver code actually depends on the names? If not, we
-switched in Samsung in general to names matching the input or the
-function, not the name of provider. bus, bit (or bitdiv?), rx or esc0, sclk
+It is never arch.
 
 
 
