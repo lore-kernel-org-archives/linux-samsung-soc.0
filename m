@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A058D27F01C;
-	Wed, 18 Jun 2025 09:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F421A5BAF;
+	Wed, 18 Jun 2025 09:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239996; cv=none; b=rJPqpOs0Jd6nplspGiXMx4KUzZzU8yi0GqA8mqH/1Pc8syFt+jWtg6oAx0s7Ke582QXHHSeAFKBHT2lL18pOLA54gPXzzxF95toIGsj0yUxIz+LkBYC+8tHmdoUwOr+jYrwT8APPZFheZlHaU/qbrKXEsgQj/FEopkM1IgYucTU=
+	t=1750240679; cv=none; b=aFEqFlEZjww9p1kgWFIjsj8DVRFe9osh/vZ3nePAA4Rh5NPPnWxNeBrZ1Trt3j5dh2kf7KnZ5zPpSSbywvVKRo0gcx0kyFTHVE9og5VnmNSNOX9maCJQY8sT2gbm+I7Tu5dvw47TmYfM2TEnGBa7wPcWDZVSJdTE4NYw3MpCg5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239996; c=relaxed/simple;
-	bh=icA8i4l8ZKZjcy0dBRrGW3a8Bg7+G+XFL+rrIP25wXg=;
+	s=arc-20240116; t=1750240679; c=relaxed/simple;
+	bh=sJZp6Cty2kULs3H72Uqi/r8D1dZGtmrOYsu2JE7gUsw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0BBgafVOsnfTWDTnCfJuFDN1OkXqJnVJJjC+xXqse4bHnXIcjmxysrwKV3hDl2pPlXcuiczvH2ZeCRtkGScc8s79C/jAORHmaL31LhZRVUqvjAYrkE5AexLZ8T7m1qfJR1WVPC8gqIZzO1ZQdf8kE4hCl2a/OjxDdx0lgaKFmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPgDL5YQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ftg+R2jnIlEVqZAQrgGwOHSH2AJBxWf3aYf0yjuzaJC9sqI7zpu3+I0sv/JthLRSYNkiExpnFnc2t2JIPjKiUGoRp5K8oQ5Lr6iuYrwdclUVwhaRmEz4AzMic/lhqMnvOzk5MpMHA5ceveP5M1sTB7TywcOxSqbZfGt6RkaX3kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/gp2DTB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPgDL5YQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB62C4CEE7;
-	Wed, 18 Jun 2025 09:46:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/gp2DTB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7274C4CEED;
+	Wed, 18 Jun 2025 09:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750239996;
-	bh=icA8i4l8ZKZjcy0dBRrGW3a8Bg7+G+XFL+rrIP25wXg=;
+	s=k20201202; t=1750240679;
+	bh=sJZp6Cty2kULs3H72Uqi/r8D1dZGtmrOYsu2JE7gUsw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vPgDL5YQlKJc2F0HIFaOcOHCRbiujXcmboYZ26D4x2Perm89UtXVjJrA6tR6oKAm2
-	 PIij+iqsUw3rRPcTKXjDfEBTz3i86UHY4wGREMatcEnUMU6X4YNdIy7SHhojbyZ1D/
-	 73mJ1x84RaMSYipHSQVARX2+wuoIfZLJX9r4DVaCGtCku0w9PO13+Am2CjsI7Y7Q4Z
-	 K+jusiOuEsJjeZB/wlaYHMGfpXV/3ktV9QHaB/VgIdyprRFO/MV4aty0aODJxrrtJE
-	 EbGE6XR52Vq3xNB7X+xQUYaYUpcvUS2q6yVHQ9QB5pWKj8aPqbaX8bb+WdLsfEhmwk
-	 zfjPHrMR649UQ==
-Message-ID: <7bb375c8-1a43-40e2-891c-8815c9cc94ff@kernel.org>
-Date: Wed, 18 Jun 2025 11:46:32 +0200
+	b=c/gp2DTBC521GSxX7SVZvNrT3kgliij0pmAbrvFV0I9l47OXf6OCD9cP12jCkVX2V
+	 amc4h0macNXFTFm1nS7La04OBKCZDvjfbj1qprBY3Z06nRcSjaPFfRglk3TDIIATeY
+	 xjPuiLNptl72owwbeySXRa1NmzpSenle0nueKa5km6uIjai32GivwIYiJ07z3nwi5W
+	 Pd/+Kt9eaS+ldM30tAAFnTJSnXhQYZt2Xy4liv5CZv6FeAbILAo3goIN5NqxY+w2LI
+	 PLal01E4wKJGe4GaCuWiN0/P2gqmqrYUoP6J7iO7WXk2UI6ST7U78MmgVlFBrWpW9B
+	 EKRBR2vLaWWcQ==
+Message-ID: <99e31fd7-e0b6-406f-bf4c-ceee8a0db93b@kernel.org>
+Date: Wed, 18 Jun 2025 11:57:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: samsung: exynos-sysreg: add exynos7870
- sysregs
+Subject: Re: [PATCH 3/5] arch: arm64: dts: exynos7870-on7xelte: enable display
+ panel support
 To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
- <20250612-exynos7870-drm-dts-v1-1-88c0779af6cb@disroot.org>
+ <20250612-exynos7870-drm-dts-v1-3-88c0779af6cb@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,37 +89,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250612-exynos7870-drm-dts-v1-1-88c0779af6cb@disroot.org>
+In-Reply-To: <20250612-exynos7870-drm-dts-v1-3-88c0779af6cb@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/06/2025 17:23, Kaustabh Chakraborty wrote:
-> Add sysreg compatible strings for the Exynos7870 SoC. Two sysregs are
-> added, used for the SoC MIPI PHY's CSIS and DSIM blocks.
+> Enable DECON and DSI nodes, and add the compatible display panel and
+> appropriate panel timings for this device. Also, disable the
+> simple-framebuffer node in favor of the panel.
+> 
+> This device has a 1080x1920 Synaptics TD4300 display panel.
 > 
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml      | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 40 ++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> index d27ed6c9d61ea9db77229eca60b6b9a0abc5d305..174bdb8ee932ff965de6fc17aef004a3cedffeb3 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> @@ -52,6 +52,12 @@ properties:
->                - samsung,exynosautov9-sysreg
->            - const: syscon
->          deprecated: true
-> +      - items:
-> +          - enum:
-> +              - samsung,exynos7870-cam-sysreg
-> +              - samsung,exynos7870-disp-sysreg
-> +          - const: samsung,exynos7870-sysreg
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts b/arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts
+> index eb97dcc415423f405d7df9b9869b2db3432fb483..86a7fc2554a137752862c37d27cf9813b3ac5514 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts
+> @@ -40,6 +40,8 @@ framebuffer@67000000 {
+>  			height = <1920>;
+>  			stride = <(1080 * 4)>;
+>  			format = "a8r8g8b8";
+> +
+> +			status = "disabled";
 
+This should be rather removed. What is the idea behind keeping disabled
+node?
 
-Drop. These are not really compatible or your commit msg is incomplete.
-Don't use deprecated syntax and backwards compatible solutions for new
-hardware.
 
 Best regards,
 Krzysztof
