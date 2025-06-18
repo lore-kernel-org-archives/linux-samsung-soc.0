@@ -1,121 +1,163 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D09D1A4E9D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD390136A
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750248415; cv=none; b=Tz8gvwugvmMctssrC6UCmFc26+4hzeN8jN0ZUCG9E0dT8zNa3nhnxirpomR5vcGej5ewzuUG68F8OQqA76CulVUYfijK3zr/7lgeLuUfPYzLQRSGR7CM4ALkcHBPqIFLYmEPEjns9FEnaXcyrx+I2ssyaFhpB9t884tbWJdhbfM=
+	t=1750249522; cv=none; b=AfM9stsOLduXkprDEH0aKhH6v1IavBP25IRlDdYyyN9bM3SyD1jxhFFDGMFV0vd7OjCNzMISBr2CclsJ14uyYIAcHEDq3WHwa+2LJKhFVJf8lsaqghqcQVwZVaWCCCNPLbYhOtu8kCVCB1J9oD6fqehjcBzzrw+t3ELjGuSfGzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750248415; c=relaxed/simple;
-	bh=DQaYXNvGAAPbiRuJgNdR4bxs0FLlR60CFote54UL7Ow=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=irh1PRg5waBdeIJTp+gamlmmcrv3pBYGewfGqxojQkKBAOeX5pMGg1mO+264SxwGUPEbEvHVL4LmQ2feeyV1jz0Tm/LyzshKcnC85bB+1Vtyig6GK6abOrysSFs4aZdTbE683ZcKNxCftlFAjB9cfcPuE4V3aELPqmYgLLEMgvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=emchsm24; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1750249522; c=relaxed/simple;
+	bh=0nR3FNXn+1+E3d/K1/+C8AowbYVXGm+n4Fr2vPjV/2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OVH3LLsesiwwcyB+XhuXfn2JEdGGhnKbcUPxRcUXUpkHX4Rakjp9i2R9/TczxlN5uW/yUDi9uZNLAgIfSt0HCyoz2Ezh4+oUrNdr/CgPubnYoloxJS+ItG4I7wYdUPxUl3jYc7CskFA0UslmEAm5EdHrzZDuFknNg6aeTuiQqZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=I7RPPAdS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="emchsm24"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250618120644euoutp025252239bfa495c1e896edd60d4c3d51a~KIaaZx8Sq1789417894euoutp02P
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:06:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250618120644euoutp025252239bfa495c1e896edd60d4c3d51a~KIaaZx8Sq1789417894euoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750248404;
-	bh=yQbhjxMIcIlV1dZtVoeXZ7q10XHOAKpTxTLfeQOo+Qc=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=emchsm24EvFl+Az3l0FTyqM0bpxcXb4XnIRfwpHIxQYrhKxQraB6OzPqY0uOg5fRC
-	 qGGwMaAdyC4VVPE8FvePk3vNBuQRc4jE0NnWmEpsQpIQXU37BT6cqyQ9zQdWcRiUmp
-	 gPUXJwm/y5sYbY+dO74PhCvl/u2rteaOjnK1iGbs=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250618120644eucas1p2b084977540772f3623f3f9e834604668~KIaZ2DC0k1376113761eucas1p2z;
-	Wed, 18 Jun 2025 12:06:44 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618120643eusmtip1fb0873e8da0a3c3ece182a135dbfd763~KIaZPP5Zf1185511855eusmtip1y;
-	Wed, 18 Jun 2025 12:06:43 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Aradhya Bhatia <a-bhatia1@ti.com>, Aradhya Bhatia
-	<aradhya.bhatia@linux.dev>, Inki Dae <inki.dae@samsung.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Andrzej Hajda
-	<andrzej.hajda@intel.com>
-Subject: [PATCH] drm/exynos: fimd: Guard display clock control with runtime
- PM calls
-Date: Wed, 18 Jun 2025 14:06:26 +0200
-Message-Id: <20250618120626.217023-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I7RPPAdS"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0B510752;
+	Wed, 18 Jun 2025 14:25:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750249505;
+	bh=0nR3FNXn+1+E3d/K1/+C8AowbYVXGm+n4Fr2vPjV/2k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I7RPPAdSROoqNF5NWanGRZyP3Ze98xYKX+U7oSOOzzLN+yiYV22mNP7AX3R2a40fQ
+	 PuKca4oJWknSj+WUpM4itQFDYu/bi8yYm6qBIVSEcubPj+3r6M0Z2NN5/VzmcruHve
+	 nPk//thUvC/4xNmnPcbP1y3UZfcN1HusoTbGGvTc=
+Message-ID: <96b92a56-028f-452d-b2dd-8362491f5a84@ideasonboard.com>
+Date: Wed, 18 Jun 2025 15:25:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250618120644eucas1p2b084977540772f3623f3f9e834604668
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618120644eucas1p2b084977540772f3623f3f9e834604668
-X-EPHeader: CA
-X-CMS-RootMailID: 20250618120644eucas1p2b084977540772f3623f3f9e834604668
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/exynos: fimd: Guard display clock control with
+ runtime PM calls
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Aradhya Bhatia
+ <a-bhatia1@ti.com>, Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+ Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>
 References: <CGME20250618120644eucas1p2b084977540772f3623f3f9e834604668@eucas1p2.samsung.com>
+ <20250618120626.217023-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250618120626.217023-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable
-and post-disable") changed the call sequence to the CRTC enable/disable
-and bridge pre_enable/post_disable methods, so those bridge methods are
-now called when CRTC is not yet enabled.
+Hi,
 
-This causes a lockup observed on Samsung Peach-Pit/Pi Chromebooks. The
-source of this lockup is a call to fimd_dp_clock_enable() function, when
-FIMD device is not yet runtime resumed. It worked before the mentioned
-commit only because the CRTC implemented by the FIMD driver was always
-enabled what guaranteed the FIMD device to be runtime resumed.
+On 18/06/2025 15:06, Marek Szyprowski wrote:
+> Commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable
+> and post-disable") changed the call sequence to the CRTC enable/disable
+> and bridge pre_enable/post_disable methods, so those bridge methods are
+> now called when CRTC is not yet enabled.
+> 
+> This causes a lockup observed on Samsung Peach-Pit/Pi Chromebooks. The
+> source of this lockup is a call to fimd_dp_clock_enable() function, when
+> FIMD device is not yet runtime resumed. It worked before the mentioned
+> commit only because the CRTC implemented by the FIMD driver was always
+> enabled what guaranteed the FIMD device to be runtime resumed.
+> 
+> This patch adds runtime PM guards to the fimd_dp_clock_enable() function
+> to enable its proper operation also when the CRTC implemented by FIMD is
+> not yet enabled.
+> 
+> Fixes: 196e059a8a6a ("drm/exynos: convert clock_enable crtc callback to pipeline clock")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index c394cc702d7d..205c238cc73a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -187,6 +187,7 @@ struct fimd_context {
+>  	u32				i80ifcon;
+>  	bool				i80_if;
+>  	bool				suspended;
+> +	bool				dp_clk_enabled;
+>  	wait_queue_head_t		wait_vsync_queue;
+>  	atomic_t			wait_vsync_event;
+>  	atomic_t			win_updated;
+> @@ -1047,7 +1048,18 @@ static void fimd_dp_clock_enable(struct exynos_drm_clk *clk, bool enable)
+>  	struct fimd_context *ctx = container_of(clk, struct fimd_context,
+>  						dp_clk);
+>  	u32 val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
+> +
+> +	if (enable == ctx->dp_clk_enabled)
+> +		return;
 
-This patch adds runtime PM guards to the fimd_dp_clock_enable() function
-to enable its proper operation also when the CRTC implemented by FIMD is
-not yet enabled.
+Does this happen, i.e. is this function called multiple times with
+enable set? If so, do you rather need ref counting here? Otherwise the
+first fimd_dp_clock_enable(enable=false) call with disable the clock,
+instead of the last (assuming the enable/disable calls are matched on
+the caller side).
 
-Fixes: 196e059a8a6a ("drm/exynos: convert clock_enable crtc callback to pipeline clock")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> +
+> +	if (enable)
+> +		pm_runtime_resume_and_get(ctx->dev);
+> +
+> +	ctx->dp_clk_enabled = enable;
+>  	writel(val, ctx->regs + DP_MIE_CLKCON);
+> +
+> +	if (!enable)
+> +		pm_runtime_put(ctx->dev);
+>  }
+>  
+>  static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index c394cc702d7d..205c238cc73a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -187,6 +187,7 @@ struct fimd_context {
- 	u32				i80ifcon;
- 	bool				i80_if;
- 	bool				suspended;
-+	bool				dp_clk_enabled;
- 	wait_queue_head_t		wait_vsync_queue;
- 	atomic_t			wait_vsync_event;
- 	atomic_t			win_updated;
-@@ -1047,7 +1048,18 @@ static void fimd_dp_clock_enable(struct exynos_drm_clk *clk, bool enable)
- 	struct fimd_context *ctx = container_of(clk, struct fimd_context,
- 						dp_clk);
- 	u32 val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
-+
-+	if (enable == ctx->dp_clk_enabled)
-+		return;
-+
-+	if (enable)
-+		pm_runtime_resume_and_get(ctx->dev);
-+
-+	ctx->dp_clk_enabled = enable;
- 	writel(val, ctx->regs + DP_MIE_CLKCON);
-+
-+	if (!enable)
-+		pm_runtime_put(ctx->dev);
- }
- 
- static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
--- 
-2.34.1
+ Tomi
 
