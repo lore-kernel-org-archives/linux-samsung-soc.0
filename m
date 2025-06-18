@@ -1,53 +1,54 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A654276059
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 11:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D09D1A4E9D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750247544; cv=none; b=NXqZuou3pF2C0Q/Jsvyumm1TXqkog5uVXNXPvgdLM3BgM5poy8wcuE9/BIUHiyuWbiDr5Yns8WFsjwFes596jMYhXF1+VzzWPQT4myuTpvJ+76a4kr0cmvbAGhkd1JHtKYvIl4TyacZpIqMJN809Ps8DmNzwGIhn1IW8tnhEhiM=
+	t=1750248415; cv=none; b=Tz8gvwugvmMctssrC6UCmFc26+4hzeN8jN0ZUCG9E0dT8zNa3nhnxirpomR5vcGej5ewzuUG68F8OQqA76CulVUYfijK3zr/7lgeLuUfPYzLQRSGR7CM4ALkcHBPqIFLYmEPEjns9FEnaXcyrx+I2ssyaFhpB9t884tbWJdhbfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750247544; c=relaxed/simple;
-	bh=S9pnGPpEopS2ae2vMlJNmzVk/y9G0wooLQGCC/s9bSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=gVYA4lm9MiXIpG5gCzKDngSsgOx9ux0kNEiUWLq3otkuEv2GuetyuW3zzLqXocZHpkBu+Fo9QmCDB1OXYIaW9dgwKoSinJMvjBUbP9ZuUFPitRxCcJgxG+NdgYNWSvmHIoJaoeBDPHq3MhrEh08GdC68ci56qjokORVUmmxkVwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Llo+EfXz; arc=none smtp.client-ip=210.118.77.12
+	s=arc-20240116; t=1750248415; c=relaxed/simple;
+	bh=DQaYXNvGAAPbiRuJgNdR4bxs0FLlR60CFote54UL7Ow=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=irh1PRg5waBdeIJTp+gamlmmcrv3pBYGewfGqxojQkKBAOeX5pMGg1mO+264SxwGUPEbEvHVL4LmQ2feeyV1jz0Tm/LyzshKcnC85bB+1Vtyig6GK6abOrysSFs4aZdTbE683ZcKNxCftlFAjB9cfcPuE4V3aELPqmYgLLEMgvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=emchsm24; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Llo+EfXz"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250618115220euoutp02d9becb2e51379fb06dad6813a2d61594~KIN12zMnf3262532625euoutp02c
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 11:52:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250618115220euoutp02d9becb2e51379fb06dad6813a2d61594~KIN12zMnf3262532625euoutp02c
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="emchsm24"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250618120644euoutp025252239bfa495c1e896edd60d4c3d51a~KIaaZx8Sq1789417894euoutp02P
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2025 12:06:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250618120644euoutp025252239bfa495c1e896edd60d4c3d51a~KIaaZx8Sq1789417894euoutp02P
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750247540;
-	bh=m79J0HkRILX18o9YHg3zwFo1BQ7buYBrq3hUc2UmA0Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Llo+EfXzP1oOgMXB4bWM18AUmwsFEtwyMYVLGKRTfVpf1E13mpK5MD3seMzN4ImiC
-	 3UER7TFNfBcA1ghElrDeQIj5A+udaRkJnHoh1Iys8bco0T0CQ4OBeCmlFB/zjoPcJB
-	 dSLPq592DzDWzpMEF5NjhjnIi7MxtFSQJes5gzF4=
+	s=mail20170921; t=1750248404;
+	bh=yQbhjxMIcIlV1dZtVoeXZ7q10XHOAKpTxTLfeQOo+Qc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=emchsm24EvFl+Az3l0FTyqM0bpxcXb4XnIRfwpHIxQYrhKxQraB6OzPqY0uOg5fRC
+	 qGGwMaAdyC4VVPE8FvePk3vNBuQRc4jE0NnWmEpsQpIQXU37BT6cqyQ9zQdWcRiUmp
+	 gPUXJwm/y5sYbY+dO74PhCvl/u2rteaOjnK1iGbs=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f~KIN1bTnxw1996919969eucas1p2k;
-	Wed, 18 Jun 2025 11:52:20 +0000 (GMT)
-Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
+	20250618120644eucas1p2b084977540772f3623f3f9e834604668~KIaZ2DC0k1376113761eucas1p2z;
+	Wed, 18 Jun 2025 12:06:44 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618115219eusmtip18897b4f23ab32963bdf77ba1539d4e47~KIN01wgHH0059000590eusmtip1T;
-	Wed, 18 Jun 2025 11:52:19 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux.amoon@gmail.com
-Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org,
-	rui.zhang@intel.com, Mateusz Majewski <m.majewski2@samsung.com>
-Subject: Re: [RRC v1 2/3] thermal/drivers/exynos: Handle temperature
- threshold interrupts and clear corresponding IRQs
-Date: Wed, 18 Jun 2025 13:52:11 +0200
-Message-ID: <20250618115211.2239335-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250616163831.8138-3-linux.amoon@gmail.com>
+	20250618120643eusmtip1fb0873e8da0a3c3ece182a135dbfd763~KIaZPP5Zf1185511855eusmtip1y;
+	Wed, 18 Jun 2025 12:06:43 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>, Thomas Zimmermann <tzimmermann@suse.de>,
+	Aradhya Bhatia <a-bhatia1@ti.com>, Aradhya Bhatia
+	<aradhya.bhatia@linux.dev>, Inki Dae <inki.dae@samsung.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Andrzej Hajda
+	<andrzej.hajda@intel.com>
+Subject: [PATCH] drm/exynos: fimd: Guard display clock control with runtime
+ PM calls
+Date: Wed, 18 Jun 2025 14:06:26 +0200
+Message-Id: <20250618120626.217023-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -55,54 +56,66 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f
+X-CMS-MailID: 20250618120644eucas1p2b084977540772f3623f3f9e834604668
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f
+X-RootMTR: 20250618120644eucas1p2b084977540772f3623f3f9e834604668
 X-EPHeader: CA
-X-CMS-RootMailID: 20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f
-References: <20250616163831.8138-3-linux.amoon@gmail.com>
-	<CGME20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20250618120644eucas1p2b084977540772f3623f3f9e834604668
+References: <CGME20250618120644eucas1p2b084977540772f3623f3f9e834604668@eucas1p2.samsung.com>
 
-Hello :)
+Commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable
+and post-disable") changed the call sequence to the CRTC enable/disable
+and bridge pre_enable/post_disable methods, so those bridge methods are
+now called when CRTC is not yet enabled.
 
-> +#define INTSTAT_FALL2	BIT(24)
-> +#define INTSTAT_FALL1	BIT(20)
-> +#define INTSTAT_FALL0	BIT(16)
-> +#define INTSTAT_RISE2	BIT(8)
-> +#define INTSTAT_RISE1	BIT(4)
-> +#define INTSTAT_RISE0	BIT(0)
-> +
-> +#define INTCLEAR_FALL2	BIT(24)
-> +#define INTCLEAR_FALL1	BIT(20)
-> +#define INTCLEAR_FALL0	BIT(16)
-> +#define INTCLEAR_RISE2	BIT(8)
-> +#define INTCLEAR_RISE1	BIT(4)
-> +#define INTCLEAR_RISE0	BIT(0)
+This causes a lockup observed on Samsung Peach-Pit/Pi Chromebooks. The
+source of this lockup is a call to fimd_dp_clock_enable() function, when
+FIMD device is not yet runtime resumed. It worked before the mentioned
+commit only because the CRTC implemented by the FIMD driver was always
+enabled what guaranteed the FIMD device to be runtime resumed.
 
-> +	/* Map INTSTAT bits to INTCLEAR bits */
-> +	if (val_irq & INTSTAT_FALL2)
-> +		clearirq |= INTCLEAR_FALL2;
-> +	else if (val_irq & INTSTAT_FALL1)
-> +		clearirq |= INTCLEAR_FALL1;
-> +	else if (val_irq & INTSTAT_FALL0)
-> +		clearirq |= INTCLEAR_FALL0;
-> +	else if (val_irq & INTSTAT_RISE2)
-> +		clearirq |= INTCLEAR_RISE2;
-> +	else if (val_irq & INTSTAT_RISE1)
-> +		clearirq |= INTCLEAR_RISE1;
-> +	else if (val_irq & INTSTAT_RISE0)
-> +		clearirq |= INTCLEAR_RISE0;
+This patch adds runtime PM guards to the fimd_dp_clock_enable() function
+to enable its proper operation also when the CRTC implemented by FIMD is
+not yet enabled.
 
-This implies that only these 6 bits are used. Is this true for all SoCs
-supported by this driver? My understanding is that Exynos 5433 in particular
-uses bits 7:0 for rise interrupts and 23:16 for fall interrupts. When I tested
-this patch (both alone and the whole series) on 5433 by running some CPU load,
-the interrupt seemed to not fire consistently:
-/sys/class/thermal/cooling_device1/cur_state would never go above 1 (which is
-consistent with the interrupt firing once, not getting cleared and never firing
-again; without this patch, it consistently went up to 6) and I got a quick
-reboot every time.
+Fixes: 196e059a8a6a ("drm/exynos: convert clock_enable crtc callback to pipeline clock")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Thank you,
-Mateusz Majewski
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index c394cc702d7d..205c238cc73a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -187,6 +187,7 @@ struct fimd_context {
+ 	u32				i80ifcon;
+ 	bool				i80_if;
+ 	bool				suspended;
++	bool				dp_clk_enabled;
+ 	wait_queue_head_t		wait_vsync_queue;
+ 	atomic_t			wait_vsync_event;
+ 	atomic_t			win_updated;
+@@ -1047,7 +1048,18 @@ static void fimd_dp_clock_enable(struct exynos_drm_clk *clk, bool enable)
+ 	struct fimd_context *ctx = container_of(clk, struct fimd_context,
+ 						dp_clk);
+ 	u32 val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
++
++	if (enable == ctx->dp_clk_enabled)
++		return;
++
++	if (enable)
++		pm_runtime_resume_and_get(ctx->dev);
++
++	ctx->dp_clk_enabled = enable;
+ 	writel(val, ctx->regs + DP_MIE_CLKCON);
++
++	if (!enable)
++		pm_runtime_put(ctx->dev);
+ }
+ 
+ static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
+-- 
+2.34.1
+
