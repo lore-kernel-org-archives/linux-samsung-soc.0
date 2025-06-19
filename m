@@ -1,124 +1,117 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A827F012
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 19:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49719247282;
+	Thu, 19 Jun 2025 20:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750360812; cv=none; b=agAanZ/duYPkftHIe6FHT/ZngZwXiGowUgyu3ZZ8X5PdwzJVKy1NBUSsC65n/buRgbnoue+ySgeZOIzTWjcwZ0YpYNHDwj9SKfhrsbmPvmp2SYY4jH5z/cW6Rd9WeQ1R6xyct5OyLxD3O5VI4QBNfCWhzH3LyePvID3YMXMWujs=
+	t=1750364568; cv=none; b=azdwvoCVjE7X10k68Artf7ODpdqvFq5QxHx5Rf3OwP8plY5GY1QXn3XE+cUBhv1bQtefe44OvYD4Dsr/vLwuHNekXv7W1xVEDpjQEgE7qlNUidxsmBPN6Fo7We6k8kG6bswqw8Db4ghECbOLAz79DZgQilqW54M64dQigB1nnmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750360812; c=relaxed/simple;
-	bh=OUGP+9Bc5zn706e0s5SjFMKump4OS0LBSwQrlzy2aP8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WXLvbVcf4po+r+Ez7zN/xi9RJLaadRA8NBQB4nbQ2QxMG0TEOHJvUynZX2UK9BsH2mND7lQ/VdZx/LZ87Alaw7k9FOQ6Q64H7OAPrHCwFEPI3hEj+xCHdgIPZQW1M3U1Cjqn1AnnnggAZBEB7eggzTs3vpNGaQXzI0cllWBCSrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cPwtr9Iq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1750364568; c=relaxed/simple;
+	bh=1306ugvPqvYx0GNhUobnRO2BRmD0tvRO5GZ6dyr69A0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D33PJxQ9Z+tuoO//AkG6dXN8bYaNIBu2TRPyMqWkIcXrFqE9DH+g1TRws/UV0UNFTCAWHIk7/umZrYp46QjH4LwSpZtprge8ziehwzyYlNcSIKvt/VFml8zApWtSwYwMA7vXtSW8JZD0UGgx6npAS0K6+t8E5x+LwphLZP+hZcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h+tgCKKi; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cPwtr9Iq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750360810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=su+KvBhgSlwSz8Qo8A5gRsBfuCg0rvVY9PlXRCR9Fas=;
-	b=cPwtr9Iqc8SnD87s/tquQQSZN2tpdgpecb3tVtW/AJ2eBSIjzaKnB/t33XMMvyPlCzWLLO
-	BVOMYFQ2uubQ8NJ8azH4/uHD49DIVyKO5X4JhB/THyPSjmBTWPPj6LycrYukI+Rc+UHIGk
-	WbqoWnHK1ImfasRPGXBo2p/xNrTFpew=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-425-BrdIiTfMN9aBDxa_eKupnA-1; Thu,
- 19 Jun 2025 15:20:06 -0400
-X-MC-Unique: BrdIiTfMN9aBDxa_eKupnA-1
-X-Mimecast-MFC-AGG-ID: BrdIiTfMN9aBDxa_eKupnA_1750360802
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C9CA18002E4;
-	Thu, 19 Jun 2025 19:20:02 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.132])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E64CC19560A3;
-	Thu, 19 Jun 2025 19:19:52 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Thu, 19 Jun 2025 14:16:08 -0500
-Subject: [PATCH v2 16/16] drm/tegra: Keep up with refcounting
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h+tgCKKi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750364567; x=1781900567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1306ugvPqvYx0GNhUobnRO2BRmD0tvRO5GZ6dyr69A0=;
+  b=h+tgCKKinRvHLtC60qB7dF2+bk2mybbl33reQHvAUpU3nrlK+zJ2j/p+
+   Rv4x5zfdy0lAIZI/QHdagMNY79SSl63sWXA2/vUVg6WrQlUs1dEw+M1RC
+   YsyXATkQltzEn0USuIVSnA6fvZzzQxY42TNBANOqWHj5GoD8NB9Qndm5d
+   1gvaxMsd1ugxGmTeNK96KIZZbV/rsk1+iY2dZaxX9XTRZ9YmZ+zSNxjpq
+   gL/Wei/JfW0s6rU2l0EM/DdgtQB+oIuz0fT9s3rM4aH0T8XUj5WCWDcJZ
+   G8/TGD3NPbuSjmpJxhtO/V3wB7bs4AL74OI17ing8alPxHDsykeRHfr+T
+   w==;
+X-CSE-ConnectionGUID: DZC/fWJMTuaCCKfVknXyow==
+X-CSE-MsgGUID: WeITPr8tSf+dnsiUpFuliw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="51852704"
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="51852704"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 13:22:47 -0700
+X-CSE-ConnectionGUID: HbfmO9QBTz2wrgvuPHbqPA==
+X-CSE-MsgGUID: fjTzpWQ/Sxa+NwOTsif4Aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="155290205"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 19 Jun 2025 13:22:41 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSLmQ-000L5G-2H;
+	Thu, 19 Jun 2025 20:22:38 +0000
+Date: Fri, 20 Jun 2025 04:22:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Will McVicker <willmcvicker@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, Will McVicker <willmcvicker@google.com>,
+	Donghoon Yu <hoony.yu@samsung.com>,
+	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	John Stultz <jstultz@google.com>,
+	Youngmin Nam <youngmin.nam@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 5/6] clocksource/drivers/exynos_mct: Add module support
+Message-ID: <202506200445.1vdWU11a-lkp@intel.com>
+References: <20250618210851.661527-6-willmcvicker@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-b4-of_drm_find_panel_part1-v2-16-0df94aecc43d@redhat.com>
-References: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
-In-Reply-To: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, Stefan Agner <stefan@agner.ch>, 
- Alison Wang <alison.wang@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750360565; l=771;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=OUGP+9Bc5zn706e0s5SjFMKump4OS0LBSwQrlzy2aP8=;
- b=avJnxiZEciA9G70sV2NKBkfKbz54xRs+P5jyouBdV0SNcLqS3cJKy0hqVYnVWDGJW/jjQRzUq
- NDWEDyAhk60CpeImtnfvwtzvcfADtJkVdF/qIT7anuYZnwLT3jZTlf5
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618210851.661527-6-willmcvicker@google.com>
 
-Put the panel reference back when driver is no
-longer using it.
+Hi Will,
 
-Patch added in v2.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- drivers/gpu/drm/tegra/dsi.c | 1 +
- 1 file changed, 1 insertion(+)
+[auto build test WARNING on tip/timers/core]
+[also build test WARNING on arm64/for-next/core robh/for-next linus/master v6.16-rc2 next-20250619]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index b5089b7722676cfaee5d28216af4ae706a47f895..830e90178302a76e7c091c92b66ce385ad26207e 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1523,6 +1523,7 @@ static int tegra_dsi_host_detach(struct mipi_dsi_host *host,
- 
- 	if (output->panel && &device->dev == output->panel->dev) {
- 		output->panel = NULL;
-+		drm_panel_put(output->panel);
- 
- 		if (output->connector.dev)
- 			drm_helper_hpd_irq_event(output->connector.dev);
+url:    https://github.com/intel-lab-lkp/linux/commits/Will-McVicker/of-irq-Export-of_irq_count-for-modules/20250619-051424
+base:   tip/timers/core
+patch link:    https://lore.kernel.org/r/20250618210851.661527-6-willmcvicker%40google.com
+patch subject: [PATCH 5/6] clocksource/drivers/exynos_mct: Add module support
+config: arm-multi_v7_defconfig (https://download.01.org/0day-ci/archive/20250620/202506200445.1vdWU11a-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250620/202506200445.1vdWU11a-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506200445.1vdWU11a-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+>> WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x164 (section: .text) -> register_current_timer_delay (section: .init.text)
+>> WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x178 (section: .text) -> sched_clock_register (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x20c (section: .text) -> register_current_timer_delay (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x220 (section: .text) -> sched_clock_register (section: .init.text)
 
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
