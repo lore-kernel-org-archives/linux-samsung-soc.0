@@ -1,164 +1,148 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD50A1D555
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 05:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15A52248AC
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 11:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750312352; cv=none; b=k6aG8Bm5xgXqBdAj/VmvkAAbq+QOjIcvd1qnMENa4t9fEOZzfHpyKnpEiG64PWAKq6r4qInCrlEBNFfHI8Esk1HO1MLA8I64u1l35E7r6FjvwPVTDskf+Pj4wBTKS7Vu1/vZECviCnYBk1G0OrikBehLik/0HO9RdpzVA6AMWEw=
+	t=1750331905; cv=none; b=KuUFuFQSeq5TQGJCdvMdull3yI0xTbaUzAXgEzCUCiNadNocPAf56iEX7b5TmRzBli9K6HYW2MUDNGhph+9By0Mx65Vv7H/IgPXwoVii5HMGCV2LAi9W/r2+9rpNnUlTwZIM9/4RHoI4eI1WqyE6QqQpuWxpthqX3yCP86HPF0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750312352; c=relaxed/simple;
-	bh=TjsuD8IF1hWPFz2yaEr1UB4Y8XoYeLDAfIyr/x6Bvsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VmReUnXu6rpOD0ydSUetJWvZZst31PdHB2aQ6SjtDxGCBQEZ0Juvupvn2PC4crj3YW99phm9QK5Ai1cetAhez4f7ItfCbq4u1pyS2PEO806yaDzeCZa/BTwipBXVS6687WYEumheOdBI6X5wTsTaVQnxCacFsnFxtLskiU66/wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Nw7bMaOF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1750331905; c=relaxed/simple;
+	bh=p1fLHj7WBxZzvDsPJQ4utwW8hjFuRfSNWUs+7XlQwHw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hBC+NNfxJkJgxDvUsulbOMQ9cJZIScClvWZY5YyXDK7BHn1k1omjThycfSe0A4qvpFzlF0al+diJ84fmQu2RaMW17kBhEm4RI1r+eGhZZqvH+ImNWKORl2FxHg8uF0S+kahMOg+OnDlahkBgCbNl1+OI4AWcf5Bxa6/o5ZSrkUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqHabYfS; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Nw7bMaOF"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 62F839CA;
-	Thu, 19 Jun 2025 07:52:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750312335;
-	bh=TjsuD8IF1hWPFz2yaEr1UB4Y8XoYeLDAfIyr/x6Bvsw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nw7bMaOF8ufYHe6MqVZzBMByfARWkJgdXpyvWH23G+2HkkUaw8FJraAxEGVvmhti8
-	 XJs5zDb2yAq0lmX5Hy1d2V0lJOy9A6j5HJUZjQd5yXz3O9MOpe+rmZS0+imqqPsLuV
-	 Z3Yb3oXkwEjk4pOzsfKYKZjBOGPsa5HkvncfP8fY=
-Message-ID: <fcf6fa86-5dcb-412f-aa18-e4079814ca1d@ideasonboard.com>
-Date: Thu, 19 Jun 2025 08:52:25 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqHabYfS"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a582e09144so486707f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 04:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750331902; x=1750936702; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0j2cSu3NdVpMVKYyw9NJm/4tDS+f0TiyVQZ6Bh9mEhs=;
+        b=lqHabYfSjuuiUwksdvNSg8Lp83ft1QgAmMNA315U1YtusY53vWWYmIKD9Np30StoZE
+         67CO/hHJNMNKTG34Hu/3IIPnFlTlgHzmJLYHdyG6eLHzxKReTah8ha5y9aX5r01MykVS
+         6c+phwHnXriuvm6wBtA7lRZOLvZZCd5VIz1fdWnVqlqwHAGsV1QNe/gl9jorx9zvB93a
+         HpXOF5SdeEOBF3Rn7aVYaA7zBgS+As6qS+TZ2sV/ArfewxpOoEEbk98UXoILTT4sHe+E
+         GPm4k0Pl/0N2jv77adW1YeKt4GXfneWo1JU/8tIYHzVKSJ6v3cRJRCjeXMt6capg3wim
+         zGPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750331902; x=1750936702;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0j2cSu3NdVpMVKYyw9NJm/4tDS+f0TiyVQZ6Bh9mEhs=;
+        b=MdCMAYw3xOZ/yOWPycfsBOdGKN20Vg0bGa1m8gEBCWNBQWsxPGRIq4iRapdUyVgaSr
+         uz11pvi+R6P8zuopvMniGdaYAo2nSObcw4XX5rnjvbsZUsleLom0swLOGuxmL6xuANyq
+         WaqvCa4PPCbtdaskmIC4s3ia8FT4PvDNuVu2WfqWnpe+ytna/piLN0dVvrWU4SmZMkjL
+         YZExGvHh15lQgNqyru18KxCKYiJDhPlYhIS0nM7RzQVhPUb0lTAcsKC760lAJ5FdAlq0
+         C4shE2J5DFlzMArsuiW1nosVd743Qx59UmF2ocwugri3PLKL+VfRhYxzleZ6MBT1maUY
+         /SJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpch0qnzqrdbLLKiuK+MNr+gpjM9TCLnlTAESrM65GXfdQY5QEhQ0myk6GtmT0yfiljDixuTbZ55DFzG5CN263wA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Pl53YSSsxuuw/Mf5LQaWr05O8c2QDIF5qXnoiMUZSyEb5QNP
+	EXTbmBCJAGV4fgYiRFW6sKXkKciZfzfytduc2pwygluy6LjZZSDesm33qNtXuEBMf9c=
+X-Gm-Gg: ASbGnctTox5FOR8NXTfvZFLILwIswT9z/oAuHBsq4TWLfVQZBPRT5OJkTrKxuz+juR7
+	t9itX1z5QBii3P0BRsu9ujVKTBb4RmTYQu64XD6dOti5i6NuZSJYhg7NDjxL+3/u/hR7boiU88t
+	2cdraqP1OcyxGCEb4w+7fb1UWdTAtDjZwzZgtzkHRVLeXKxkFn0c1yMZ+XT9IDM21GFNJuA6uhV
+	9zVheRJAmi73jas2ZnfwHV5GJ798R65nV5C8V8d7zMNW0V2Nv8BXH7Ji5URI6utaCuKOdtGE3d/
+	JQI2qPQXz/c8yEBDCLdNluY2BgnG70hlhyNy27xjkAGwt2SjelUYcgbxAYAOHlJfF94P906ARPO
+	VfWYbjmUvI3a9KjKk7taYIWCtN/s=
+X-Google-Smtp-Source: AGHT+IGwpV5p0m50gZC15PUFj3RIHD8e2fc5imI9ZePiRScXMe39Wj/psDyd7PdgqpyizfOuUnY4mA==
+X-Received: by 2002:a05:6000:2483:b0:3a4:ddd6:427f with SMTP id ffacd0b85a97d-3a5723a50dcmr17516019f8f.35.1750331902026;
+        Thu, 19 Jun 2025 04:18:22 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.65.219])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c41sm25674375e9.26.2025.06.19.04.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 04:18:21 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/2] Add support for programming gs101 EINT_WAKEUP_MASK
+ registers
+Date: Thu, 19 Jun 2025 12:18:14 +0100
+Message-Id: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/exynos: fimd: Guard display clock control with
- runtime PM calls
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Aradhya Bhatia
- <a-bhatia1@ti.com>, Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>
-References: <CGME20250618120644eucas1p2b084977540772f3623f3f9e834604668@eucas1p2.samsung.com>
- <20250618120626.217023-1-m.szyprowski@samsung.com>
- <96b92a56-028f-452d-b2dd-8362491f5a84@ideasonboard.com>
- <a89ebc1f-82a0-4bb8-87a8-71a6b373ab24@samsung.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <a89ebc1f-82a0-4bb8-87a8-71a6b373ab24@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPbxU2gC/x3MMQqAMAxA0atIZgNN0YJeRRxqjRrEKo2IIN7d4
+ viG/x9QTsIKbfFA4ktU9phBZQFh8XFmlDEbrLG1cdTgrGQIWeKJm9cVfRWInB25GRzk6kg8yf0
+ fu/59P7knebRhAAAA
+X-Change-ID: 20250619-gs101-eint-mask-a4c1162de9b6
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1479;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=p1fLHj7WBxZzvDsPJQ4utwW8hjFuRfSNWUs+7XlQwHw=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoU/H73aaGrTalZO8s2XRrswNZuD5hjSmpTXNun
+ XZqkZQxQ8KJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaFPx+wAKCRDO6LjWAjRy
+ utDjD/9jioNxxKYtV9tUtqZXI3eK7B1WKAXFLrnUVJ8PlzLQVmGj6f9fzskWxdst8bePe1CEr/K
+ +++kbEKCHhbeMXGyqspUYFtktkvBzr8sT9WWr+qByXu9eKXwsqlU33UPTt6nGz57Z1BO2t0hWlH
+ yc0ZeDxnK12Zr1q7FAUUywe5XkxUFVevz/xpCVlELbQA0TGfKcpJiOU89f9vf4InxbNc6HZmdoR
+ WP2lwAJCGDCcqVKGDLT0pI9AN0dP3oyyzSQq0JKFV0WRZettpIeXpJeW1cyh/79xJ49k47X1Pmh
+ RZbwSUTowpa7L5fN5rvBztE0zJK8WZYTfVWN5SgDFhHGchmEWNXNpcQ20dSyhTSgG4RIzjwGPM7
+ X7M7SScOZc7FxqTRLxCGi0DrQp/mcCfLW8tFSVNypVBfuzDgqO1Pu7f8qyLzCl882BUUj4lLCTI
+ ADSDwZ4H5ejUFmiauusorMeTPZDU78OWroTv8PzkahQTZ5YfmMJUjgkYPEj32UM5vlkFSy3tI/2
+ J4FXNH3bvDyORynih7Ayx4e2Om3exiitQYMg5iFMhRIpYHktqJEUeFebRxvCE57jSQSJUrQgBeo
+ TGYh8kbwD3jSIxCLTm9cBsyEbOJYK41aD4JLQXv0lSkb2+A4GJ/Q6Qacztm2XkJe0E/P72X3mdF
+ eUMFnkEhlIs6amQ==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi,
+Hi folks,
 
-On 19/06/2025 01:38, Marek Szyprowski wrote:
-> On 18.06.2025 14:25, Tomi Valkeinen wrote:
->> On 18/06/2025 15:06, Marek Szyprowski wrote:
->>> Commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable
->>> and post-disable") changed the call sequence to the CRTC enable/disable
->>> and bridge pre_enable/post_disable methods, so those bridge methods are
->>> now called when CRTC is not yet enabled.
->>>
->>> This causes a lockup observed on Samsung Peach-Pit/Pi Chromebooks. The
->>> source of this lockup is a call to fimd_dp_clock_enable() function, when
->>> FIMD device is not yet runtime resumed. It worked before the mentioned
->>> commit only because the CRTC implemented by the FIMD driver was always
->>> enabled what guaranteed the FIMD device to be runtime resumed.
->>>
->>> This patch adds runtime PM guards to the fimd_dp_clock_enable() function
->>> to enable its proper operation also when the CRTC implemented by FIMD is
->>> not yet enabled.
->>>
->>> Fixes: 196e059a8a6a ("drm/exynos: convert clock_enable crtc callback to pipeline clock")
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 ++++++++++++
->>>   1 file changed, 12 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> index c394cc702d7d..205c238cc73a 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> @@ -187,6 +187,7 @@ struct fimd_context {
->>>   	u32				i80ifcon;
->>>   	bool				i80_if;
->>>   	bool				suspended;
->>> +	bool				dp_clk_enabled;
->>>   	wait_queue_head_t		wait_vsync_queue;
->>>   	atomic_t			wait_vsync_event;
->>>   	atomic_t			win_updated;
->>> @@ -1047,7 +1048,18 @@ static void fimd_dp_clock_enable(struct exynos_drm_clk *clk, bool enable)
->>>   	struct fimd_context *ctx = container_of(clk, struct fimd_context,
->>>   						dp_clk);
->>>   	u32 val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
->>> +
->>> +	if (enable == ctx->dp_clk_enabled)
->>> +		return;
->> Does this happen, i.e. is this function called multiple times with
->> enable set? If so, do you rather need ref counting here? Otherwise the
->> first fimd_dp_clock_enable(enable=false) call with disable the clock,
->> instead of the last (assuming the enable/disable calls are matched on
->> the caller side).
-> 
-> No reference counting is needed here, as the clock enable/disable is 
-> called from runtime resume/suspend of the exynos_dp (analogix_dp_core) 
-> and there are only single calls to enable or disable. The only problem 
-> is that the first call is fimd_dp_clock_enable(enable=false), which 
-> should be skipped from the fimd runtime PM perspective, that is why I 
-> added the (enable == ctx->dp_clk_enabled) check.
+The following series adds support for programming the gs101
+EINT_WAKEUP_MASK registers for the 67 external wakeup interrupts on gpa0 to
+gpa11 (alive and far_alive). gs101 differs to previous SoCs in that it has
+3 EINT_WAKEUP_MASK registers
 
-I see. It's a bit confusing call pattern, but not related to this patch.
+EINT_WAKEUP_MASK  0x3A80 EINT[31:0]
+EINT_WAKEUP_MASK2 0x3A84 EINT[63:32]
+EINT_WAKEUP_MASK3 0x3A88 EINT[66:64]
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+This is achieved by adding gs101 specific callbacks and a dedicated
+gs101_wkup_irq_chip struct which is triggered from the existing
+google,gs101-wakeup-eint compatible.
 
- Tomi
+This code path can be tested  using:
+echo mem > /sys/power/state
+
+With the functional CPU hotplug, this brings us another step closer to
+having functional suspend to RAM upstream.
+
+kind regards,
+
+Peter
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Peter Griffin (2):
+      pinctrl: samsung: rename exynosautov920_retention_data to no_retention_data
+      pinctrl: samsung: add support for gs101 wakeup mask programming
+
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   6 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 100 +++++++++++++++++++++----
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |   4 +
+ include/linux/soc/samsung/exynos-regs-pmu.h    |   1 +
+ 4 files changed, 95 insertions(+), 16 deletions(-)
+---
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+change-id: 20250619-gs101-eint-mask-a4c1162de9b6
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
 
