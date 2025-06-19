@@ -1,67 +1,67 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112AF225762
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 11:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283242248AC
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 11:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331907; cv=none; b=a1IV4d1vSC2OLwAMRR5enFkv9t4n4rCI4zZeYMHCJWQGHzBv+yJoRSSz0Ogi8jh/kVNQT69LbUWncS3M0k9H/GEStSTAbjqZ/r8HOylfsWzSwC+zQEov9QYwtmjMCL7qPv9HNLXFTH8FvdCG2D2CXGUwQv19X7mGlHugM70IDKg=
+	t=1750331908; cv=none; b=mK7CpuEGYs16GGCOQCnZiKd2nyuFzrm7OKcKlo1cuCzIOTjXt9BN4i3Ocu0wHbogevx9UHIY/nPGKCOVZ2mt8/YXGZ/Rgp9RrflisOH3c/dsOdkqa379ruAt/f1SzBpkBhlb0AHeryffVWhCKhGyxJq1VC7ddeW2g0E2kR7BJ4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331907; c=relaxed/simple;
-	bh=3xBT1L8I6TNRRff1Q5/u26yR0koFA81Rb/IbdPbqOko=;
+	s=arc-20240116; t=1750331908; c=relaxed/simple;
+	bh=j9f4wXZ5t2XAXanEUVHD87/RaArxaKnhipZYlfXpsp0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ac8hTQ/1dtWHBBQdHy2pxKQyAOHivQ1HBYjS7scj1DULXUtFoWFKvknpCL24EhtkTs+NTArDUxc7s9V5dOfGuTFQ8H3qX3vKm1e/WDVtjIELSXJfVqVimnRVU1UfGD+wSa10U/7pvAZPNK2OnsiVsHCRGr4n+nscClJhlEt4NBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dHmd9Quk; arc=none smtp.client-ip=209.85.221.44
+	 In-Reply-To:To:Cc; b=kpI6xlNaTbAMyoXK7KO1rQN36N8RPiwppkPl22Q8jrBRmsn81PNLmcdRq022JfbUAxxUgEz8U1i0ltHx5kc/c+sY6QlsAR7Iql4Ac6a3nSx8fT0z7RRSeBVW9xfSytPTaZflGfUER1gyAOOJ6Po5H3UXZ5HQqF4YqEqJZmRvwhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ax6ozNZk; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHmd9Quk"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so422796f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 04:18:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ax6ozNZk"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-453634d8609so7085e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 04:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750331903; x=1750936703; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750331904; x=1750936704; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9Fvf7YFNk9hgZaIBMwH5Oxgd1wYDkkE9Dk+oH7pOxYY=;
-        b=dHmd9Qukj2rlQ0RVAuHFBTa5dBcvxD5RgAbajYvcLqZ4PrRI+nkWJDduMkWO1Vl9lM
-         q9uh+BrPhCHAv866weNiw+bzKpj3BPOj5Cue1LJyFLfimv0MJ4wZ9EnupsSCPsKLhPmo
-         icAE3X2fVt0kXLa//nz8dxuVlCstrZzXOii2H13uA78J3KPrslw1tEOwVFNSJcG3O51X
-         Owv/g+tZPsXF7pZsHwTG0dS19MN5wG2XTVZ0xdi0UBpvhylLBij/Mxfant7B6cypeGMG
-         aN41MVbiweyIfWnj7jiNC+Jwvv0+8gUR+o7/l7m90fgjWAoGsG9sdcU+ELFeknh+V+ZC
-         skIg==
+        bh=aMUcd+uc6x7A0V+vwngRDv9JY2fGk9HpiID8xT5aBxk=;
+        b=Ax6ozNZkEw9/kaukGmHoljLccq9kKiPYGdAPGFTQZQafEwx9dSaJ+GGW8tyKcXkfWC
+         71G40rrm3n087lY7jt7DtNJATpRHDHkmSJeYio0kgtwWmy8mYLiCc7jiotKR5400eCA6
+         PtN2yLo763ev5oLoKK4n/XEssktwx5wFgaSEicU6V1AZGBH6j0D3z9SstXOO8INUkq3G
+         +4QyeTFG1kJuQkUW3Q5Gp2HpaMvktcv/NrwiVrGxp/LbS1koAMntl7jMGwq8mM+PNkrV
+         aeCfQe1NsMTYnDQwQUTNMMpRJzLv3wK6bcKSKuQHjMRwFek9FwLYZ7SYvDEUWkceQpET
+         TI8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750331903; x=1750936703;
+        d=1e100.net; s=20230601; t=1750331904; x=1750936704;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9Fvf7YFNk9hgZaIBMwH5Oxgd1wYDkkE9Dk+oH7pOxYY=;
-        b=eUvP1rtRQ6mZB5sbEZ+2zO+PD69qFbi5pjKBnirpMULVa0v9yzfepGYyWad5DoKl+B
-         Ql+rT8Rg5NzBfeGmZjy6ohRPSEl0XRdBIWb3pKDxUjaRyda+cgB4lW4DYJNugooI6Tlj
-         NwTeBRUlRgs+YyPKtkRpS7utwA+7uK4rzk+uyoxeH9bt93bAqljQpRvUHiadS4SJqbeN
-         JUEupVRd/xcZARKRz8WyCowI0weQaKkGNl3yAfv9EZzMlht6UgT9tWI6nRo+syMI8ww0
-         YBRGyJEt8InFDjvXUEEmmfgUTTk4SaEFW7ebvf8VMWKPPVaS0A1Dt4j4bj68DUNYxM8f
-         lCQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqIPbCH33mraIYMw4zd7GFpURPShXTr8ACN02gP5MOPYQRpyXclafP/J87eN3cEA5htMX0EykIQwiHouvl1hs2fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEiTP2aS5fd2sUDdjU7tqiWjLKIv/AmO5Vv7LqYk85YjAl3aG
-	hXurvryL6+tUsAO2RdwjRGCzYzJSnU4T6L5ZBOsmoGp1ZnJRCmv+eyGRwoWQ9MW5nVQ=
-X-Gm-Gg: ASbGncvbSt1ZSaie+7nv50bJfKcaTU/0emrS6J7RU/NsUx7Dt0XvKR1kOtgp6N6xIO5
-	2Y/zBaQm+ZSVFBnoSE/x3Ot+eeefxXBH91HNjTvvZ058UZRF6HEZ1WbsxKv8uU+6qDrVSmqPc7y
-	AfVX1kAkr5Ei+pWqWZaCrSxm8ZP3hBsg4Fx0oOuxUFt29pk9kII6mXbVXVDxPXlSkqIru5E+RiB
-	VdjBeJ/WV9ADBjuZDMYFWfavozmyrNpg3BQZXDqA2YzUUrL+IhZbjzdApgs/QGLsfDl+hF6Ha9C
-	TJfq2FkeA+kId2pMTmHIN8oELw/1Q+ljcakmgtyVvfHQwUAIBfoakfTfjADi+Cmvhfc0uQqfrIp
-	PAcge1S09dr3fnSd7
-X-Google-Smtp-Source: AGHT+IEAqQjOcoAnpyzophi6mRFHajmHtj9QIjRFkm/NOIYibt3bAKSIyjkYnPLx3bhYlV5yilrOcA==
-X-Received: by 2002:a05:6000:4024:b0:3a4:f8fa:9c94 with SMTP id ffacd0b85a97d-3a5723a2907mr14065943f8f.13.1750331903200;
-        Thu, 19 Jun 2025 04:18:23 -0700 (PDT)
+        bh=aMUcd+uc6x7A0V+vwngRDv9JY2fGk9HpiID8xT5aBxk=;
+        b=nkOzNGzG6XUIh5OS6xXH43CCrayOqV5zmVp9L+doa1Kk01PY5ll0U6empupQmaP2gE
+         tKB6RwYRVSv33eOGGX0I816Hw7RJzcUkHB01BWsc9VF6EnsxedHNnFTdV+A5bUfNyrao
+         Vvm26StKa+JNhr3zrz32u5ByCw4BAgRCKd6pBs4ihXt5LaognCYSlFmzD9x+4yhsiqzG
+         vFVA2jx5hwlgHcpgOdgPNABzAhm5Tza6SIzpo69kLj9V2JX7jDFJVLtqPX6Tmdonv9UC
+         IwDbtn8+TZeefyh+2vZKh6O3sYeSXhxAKJ8FqsreEU9pDbOQVu35QhiUDC3IIc6tswlw
+         ayKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc5MD1xJeBSRhesMXNcFgJdm1oQFhutUp73ms3bTvh1nRM430UAOwjPDblzk1AYiAk7cBvlGCWceUTjbUXBrRLKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye7uwOfD8+54hm0jv07j1mfrHoj69sTryGjXG6sL6kR3R2gIpt
+	kNbIciZtsn9u4XMb82mp8SRpw1caipOTT3iCATxsDEKyQ7BLy3tTY8WvjmKqgJqbCX8=
+X-Gm-Gg: ASbGncuZVUo3E0aodFzLgnlmNAGzdIK8V8IomIPS+wqWgt6elerI92dk2V83FA3POf3
+	hJLtL9EF2ztPFnC3VJf4qeHKlp/r8DPKYO6ef3QGf0EPgiLivuypAPVEninXdtYfpNvMnl6bBRB
+	k3tcUO/kV6PtfR3PS9VtLIPjmTc8RcLfI2jUl+5KYWNwtbIG4zk3sZCjBGygFkiZXNAWth/jWXs
+	EJql4oTwutVkn9gwPlu2yvx8GD+pVKkct2clK3/B8HD7nNzJQkDOMJ/55qTaak9+MjeFgSOKbIO
+	4UU5gWExaBXw2LaxhUAAo/LnTFEKi6XTid5Q3FvHmk3gxTJU5yUch9Yv5QzE0Tr6fRbFJxJUZ39
+	CB7M7MnXUls5IRYmz
+X-Google-Smtp-Source: AGHT+IHXC9m/G66bF/j2zVUcnh79iZzXUelb2IKow1oIvzi/jXHpfEEk8DwwwTODVwdjkhjcCEbU5w==
+X-Received: by 2002:a05:600c:c16b:b0:43c:ec4c:25b4 with SMTP id 5b1f17b1804b1-4533ca4f7a8mr249968725e9.10.1750331904336;
+        Thu, 19 Jun 2025 04:18:24 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([145.224.65.219])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c41sm25674375e9.26.2025.06.19.04.18.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c41sm25674375e9.26.2025.06.19.04.18.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 04:18:22 -0700 (PDT)
+        Thu, 19 Jun 2025 04:18:23 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 19 Jun 2025 12:18:15 +0100
-Subject: [PATCH 1/2] pinctrl: samsung: rename exynosautov920_retention_data
- to no_retention_data
+Date: Thu, 19 Jun 2025 12:18:16 +0100
+Subject: [PATCH 2/2] pinctrl: samsung: add support for gs101 wakeup mask
+ programming
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-gs101-eint-mask-v1-1-89438cfd7499@linaro.org>
+Message-Id: <20250619-gs101-eint-mask-v1-2-89438cfd7499@linaro.org>
 References: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
 In-Reply-To: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -84,73 +84,314 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
  Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2297;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11274;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=3xBT1L8I6TNRRff1Q5/u26yR0koFA81Rb/IbdPbqOko=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoU/H7wfYr2rXyNKdlg6SW6TglHvBZIDQC5oY73
- 6RHG1SOE+SJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaFPx+wAKCRDO6LjWAjRy
- uieOD/9Oz+JuAQTo4NeJIF0oxjINRvPiNiF3dnirauG3D/pn3bu1nOmbTdr56fq3OuS0bhKywRD
- wwo8uSmB4R/ojhYjn2uGlFMbqwiZACJFmjq1XyRbFpkERiZ1PUtSDkA+ARJFcOt907bF/p72x1+
- XJYR4oqki+UuzHp+eEJ0b6go7rI9gmIXUo3Mcksxm4/FkbetMCdbcNF3+m/pzqdcHgkPlinMQL4
- 36rRZ4ggeeHUndmrJi+CbRGgG4SbZjwIeEJ6rTzPlULRTnRACUkOmSZkq2oS2ESHboV6p0Jf2GT
- yw4RK2dJlhc2QI6MNLH/rnNVRL4Ma45++M8EdAkOPXChF3b3PSlaNvPTCNeQSb25CI7WG7VwEVz
- dIc4aFRvUzE8MGd9eHvpPf9B1vdB0Uh8PQLjtbMqz+rOTmui/N5SUoVydOGZ5gaHcKTBWsGtXKW
- 3HAWhJPR7rR5b9LC3VdENoWL+JgYR7Ir4xZX26ze0lBo6V2X3GVWBghTFVB/kHPfsRc5HCAxEVK
- jrdZTaB1y0iJ0midI3yuxCUagEqZAWwDyvKOEWhgEIVrXb541/Xb1SXrXxHSJoI9PqOeYduOlhn
- R2ppA+niNAaR7eBDnwN1MHn3dF2SMB/iCmW1i9+zujxzh7XaMYfORrv24Bmz5jxyRsTZrPyOTR8
- LZT5Dtlb7siS0Ow==
+ bh=j9f4wXZ5t2XAXanEUVHD87/RaArxaKnhipZYlfXpsp0=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoU/H85R2STeaGxf/g8N5+OSppReVJEiMVaK+QH
+ V+YI1kMNIaJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaFPx/AAKCRDO6LjWAjRy
+ ujbtEACiHziINKlZmSDXFqQHFR0qoqADQ5IRfyK+ZbTNIiew+C3DOq6TfZ1k/Rr4FGucWWzbGkM
+ SWlqF3y5DxjKhjbFwcKiq4E/XOID/AQFmiv0N3hIAEv6oyuhWz3i9QWIZ/Sw06dY8gfDutjAIf8
+ rNFUso0BWO9sRB8sO5lOXVtTGf1dlZPte0262TQ1FeQBZmzCycMPgOT5oKJI9ekTVX4buG4YfP/
+ /OxGkQxV856LuJ9lJM2n2m8gB4xkfJOYEevdqLTwz07UF7gN9KD6wlG6Fsi71OCSf1SJqmL4fky
+ XIpS1uFw4xV325LqPk15erH1CFe3IwOtjobUh5VKgxuBzTm47p7oRjqQA4FFqIzmhD62twY+73B
+ 9svq3w+VzD/bo4IsincVxXlCTsp4uJMLegABZibE+Nh9BX+jUoW9nO6HkH7/Zy7mVD3wW6xnioI
+ /4XxLP5arVzfHx9cLDU55YlrrdzaILVLGH7e8DA7vBxJJzVdfmCL0HslDG1H2/0fM0Yjcnj1lRh
+ 7OaaXPiABRwBVSJQh2wcd0CQMhhiqXUGWszSAWFl6zkQODLbHwLIjamuYfoBLHN8PEiCjWgk5jx
+ E8Q2xdKPK3UL6DqICCjcWnGsSwXTdDhq0c3tcfpF5m47ql892DoV/MeFIXPdcL8rvtsguqj9Asm
+ /e9CFz8neGAxEwg==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-To avoid having an exact copy of this struct for gs101 rename it and use it
-for both SoCs for eint banks.
+gs101 differs to other currently supported SoCs in that it has 3 wakeup
+mask registers for the 67 external wakeup interrupt pins in alive and
+far_alive.
 
-The purpose of this for exynosautov920 and gs101 is to obtain the PMU
-syscon for writing the calculated WAKEUP_MASK register(s).
+EINT_WAKEUP_MASK  0x3A80 EINT[31:0]
+EINT_WAKEUP_MASK2 0x3A84 EINT[63:32]
+EINT_WAKEUP_MASK3 0x3A88 EINT[66:64]
+
+Add gs101 specific callbacks and a dedicated gs101_wkup_irq_chip struct to
+handle these differences.
+
+The current wakeup mask with upstream is programmed as
+WAKEUP_MASK0[0x3A80] value[0xFFFFFFFF]
+WAKEUP_MASK1[0x3A84] value[0xF2FFEFFF]
+WAKEUP_MASK2[0x3A88] value[0xFFFFFFFF]
+
+Which corresponds to the following wakeup sources:
+gpa7-3  vol down
+gpa8-1  vol up
+gpa10-1 power
+gpa8-2  typec-int
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c    | 100 ++++++++++++++++++++++++----
+ drivers/pinctrl/samsung/pinctrl-samsung.h   |   4 ++
+ include/linux/soc/samsung/exynos-regs-pmu.h |   1 +
+ 3 files changed, 91 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-index 9fd894729a7b87c3e144ff90921a1cadbde93d3d..5fe7c4b9f7bd424f396082f1b1b16bfb65f26cdf 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-@@ -1405,7 +1405,7 @@ static const struct samsung_pin_bank_data exynosautov920_pin_banks7[] = {
- 	EXYNOSV920_PIN_BANK_EINTG(8, 0x8000, "gpg1",  0x18, 0x24, 0x28),
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index f3e1c11abe55032ee4ed7eb4db861dbb1e60c2bf..5554768d465fe0d8bf6e423b2e835965cde5d8f5 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -32,18 +32,24 @@
+ #include "pinctrl-samsung.h"
+ #include "pinctrl-exynos.h"
+ 
++#define MAX_WAKEUP_REG 3
++
+ struct exynos_irq_chip {
+ 	struct irq_chip chip;
+ 
+ 	u32 eint_con;
+ 	u32 eint_mask;
+ 	u32 eint_pend;
+-	u32 *eint_wake_mask_value;
++	u32 eint_num_wakeup_reg;
+ 	u32 eint_wake_mask_reg;
+ 	void (*set_eint_wakeup_mask)(struct samsung_pinctrl_drv_data *drvdata,
+ 				     struct exynos_irq_chip *irq_chip);
  };
  
--static const struct samsung_retention_data exynosautov920_retention_data __initconst = {
-+static const struct samsung_retention_data no_retention_data __initconst = {
- 	.regs	 = NULL,
- 	.nr_regs = 0,
- 	.value	 = 0,
-@@ -1421,7 +1421,7 @@ static const struct samsung_pin_ctrl exynosautov920_pin_ctrl[] = {
- 		.eint_wkup_init	= exynos_eint_wkup_init,
- 		.suspend	= exynosautov920_pinctrl_suspend,
- 		.resume		= exynosautov920_pinctrl_resume,
--		.retention_data	= &exynosautov920_retention_data,
-+		.retention_data	= &no_retention_data,
- 	}, {
- 		/* pin-controller instance 1 AUD data */
- 		.pin_banks	= exynosautov920_pin_banks1,
-@@ -1764,6 +1764,7 @@ static const struct samsung_pin_ctrl gs101_pin_ctrl[] __initconst = {
- 		.eint_wkup_init = exynos_eint_wkup_init,
- 		.suspend	= gs101_pinctrl_suspend,
- 		.resume		= gs101_pinctrl_resume,
-+		.retention_data = &no_retention_data,
- 	}, {
- 		/* pin banks of gs101 pin-controller (FAR_ALIVE) */
- 		.pin_banks	= gs101_pin_far_alive,
-@@ -1771,6 +1772,7 @@ static const struct samsung_pin_ctrl gs101_pin_ctrl[] __initconst = {
- 		.eint_wkup_init = exynos_eint_wkup_init,
- 		.suspend	= gs101_pinctrl_suspend,
- 		.resume		= gs101_pinctrl_resume,
-+		.retention_data = &no_retention_data,
- 	}, {
- 		/* pin banks of gs101 pin-controller (GSACORE) */
- 		.pin_banks	= gs101_pin_gsacore,
++static u32 eint_wake_mask_values[MAX_WAKEUP_REG] = { EXYNOS_EINT_WAKEUP_MASK_DISABLED,
++						     EXYNOS_EINT_WAKEUP_MASK_DISABLED,
++						     EXYNOS_EINT_WAKEUP_MASK_DISABLED};
++
+ static inline struct exynos_irq_chip *to_exynos_irq_chip(struct irq_chip *chip)
+ {
+ 	return container_of(chip, struct exynos_irq_chip, chip);
+@@ -307,7 +313,7 @@ static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
+ 	.eint_con = EXYNOS_GPIO_ECON_OFFSET,
+ 	.eint_mask = EXYNOS_GPIO_EMASK_OFFSET,
+ 	.eint_pend = EXYNOS_GPIO_EPEND_OFFSET,
+-	/* eint_wake_mask_value not used */
++	/* eint_wake_mask_values not used */
+ };
+ 
+ static int exynos_eint_irq_map(struct irq_domain *h, unsigned int virq,
+@@ -467,10 +473,55 @@ __init int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+ 	return ret;
+ }
+ 
++#define BITS_PER_U32 32
++static int gs101_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	u32 bit, wakeup_reg, shift;
++
++	bit = bank->eint_num + irqd->hwirq;
++	wakeup_reg = bit / BITS_PER_U32;
++	shift = bit - (wakeup_reg * BITS_PER_U32);
++
++	if (!on)
++		eint_wake_mask_values[wakeup_reg] |= BIT_U32(shift);
++	else
++		eint_wake_mask_values[wakeup_reg] &= ~BIT_U32(shift);
++
++	dev_info(d->dev, "wake %s for irq %d\n", str_enabled_disabled(on),
++		 irqd->irq);
++
++	return 0;
++}
++
++static void
++gs101_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
++				   struct exynos_irq_chip *irq_chip)
++{
++	struct regmap *pmu_regs;
++
++	if (!drvdata->retention_ctrl || !drvdata->retention_ctrl->priv) {
++		dev_warn(drvdata->dev,
++			 "No PMU syscon available. Wake-up mask will not be set.\n");
++		return;
++	}
++
++	pmu_regs = drvdata->retention_ctrl->priv;
++
++	dev_dbg(drvdata->dev, "Setting external wakeup interrupt mask:\n");
++
++	for (int i = 0; i < irq_chip->eint_num_wakeup_reg; i++) {
++		dev_dbg(drvdata->dev, "\tWAKEUP_MASK%d[0x%X] value[0x%X]\n",
++			i, irq_chip->eint_wake_mask_reg + i * 4,
++			eint_wake_mask_values[i]);
++		regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg + i * 4,
++			     eint_wake_mask_values[i]);
++	}
++}
++
+ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ {
+-	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
+-	struct exynos_irq_chip *our_chip = to_exynos_irq_chip(chip);
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+ 	unsigned long bit = 1UL << (2 * bank->eint_offset + irqd->hwirq);
+ 
+@@ -478,9 +529,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ 		irqd->irq, bank->name, irqd->hwirq);
+ 
+ 	if (!on)
+-		*our_chip->eint_wake_mask_value |= bit;
++		eint_wake_mask_values[0] |= bit;
+ 	else
+-		*our_chip->eint_wake_mask_value &= ~bit;
++		eint_wake_mask_values[0] &= ~bit;
+ 
+ 	return 0;
+ }
+@@ -500,10 +551,10 @@ exynos_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
+ 	pmu_regs = drvdata->retention_ctrl->priv;
+ 	dev_info(drvdata->dev,
+ 		 "Setting external wakeup interrupt mask: 0x%x\n",
+-		 *irq_chip->eint_wake_mask_value);
++		 eint_wake_mask_values[0]);
+ 
+ 	regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg,
+-		     *irq_chip->eint_wake_mask_value);
++		     eint_wake_mask_values[0]);
+ }
+ 
+ static void
+@@ -522,11 +573,10 @@ s5pv210_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
+ 
+ 	clk_base = (void __iomem *) drvdata->retention_ctrl->priv;
+ 
+-	__raw_writel(*irq_chip->eint_wake_mask_value,
++	__raw_writel(eint_wake_mask_values[0],
+ 		     clk_base + irq_chip->eint_wake_mask_reg);
+ }
+ 
+-static u32 eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED;
+ /*
+  * irq_chip for wakeup interrupts
+  */
+@@ -544,7 +594,7 @@ static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst = {
+ 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
+ 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
+ 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
+-	.eint_wake_mask_value = &eint_wake_mask_value,
++	.eint_num_wakeup_reg = 1,
+ 	/* Only differences with exynos4210_wkup_irq_chip: */
+ 	.eint_wake_mask_reg = S5PV210_EINT_WAKEUP_MASK,
+ 	.set_eint_wakeup_mask = s5pv210_pinctrl_set_eint_wakeup_mask,
+@@ -564,7 +614,7 @@ static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst = {
+ 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
+ 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
+ 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
+-	.eint_wake_mask_value = &eint_wake_mask_value,
++	.eint_num_wakeup_reg = 1,
+ 	.eint_wake_mask_reg = EXYNOS_EINT_WAKEUP_MASK,
+ 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
+ };
+@@ -583,7 +633,7 @@ static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst = {
+ 	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
+ 	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
+ 	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
+-	.eint_wake_mask_value = &eint_wake_mask_value,
++	.eint_num_wakeup_reg = 1,
+ 	.eint_wake_mask_reg = EXYNOS5433_EINT_WAKEUP_MASK,
+ 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
+ };
+@@ -599,13 +649,31 @@ static const struct exynos_irq_chip exynosautov920_wkup_irq_chip __initconst = {
+ 		.irq_request_resources = exynos_irq_request_resources,
+ 		.irq_release_resources = exynos_irq_release_resources,
+ 	},
+-	.eint_wake_mask_value = &eint_wake_mask_value,
++	.eint_num_wakeup_reg = 1,
+ 	.eint_wake_mask_reg = EXYNOS5433_EINT_WAKEUP_MASK,
+ 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
+ };
+ 
++static const struct exynos_irq_chip gs101_wkup_irq_chip __initconst = {
++	.chip = {
++		.name = "gs101_wkup_irq_chip",
++		.irq_unmask = exynos_irq_unmask,
++		.irq_mask = exynos_irq_mask,
++		.irq_ack = exynos_irq_ack,
++		.irq_set_type = exynos_irq_set_type,
++		.irq_set_wake = gs101_wkup_irq_set_wake,
++		.irq_request_resources = exynos_irq_request_resources,
++		.irq_release_resources = exynos_irq_release_resources,
++	},
++	.eint_num_wakeup_reg = 3,
++	.eint_wake_mask_reg = GS101_EINT_WAKEUP_MASK,
++	.set_eint_wakeup_mask = gs101_pinctrl_set_eint_wakeup_mask,
++};
++
+ /* list of external wakeup controllers supported */
+ static const struct of_device_id exynos_wkup_irq_ids[] = {
++	{ .compatible = "google,gs101-wakeup-eint",
++			.data = &gs101_wkup_irq_chip },
+ 	{ .compatible = "samsung,s5pv210-wakeup-eint",
+ 			.data = &s5pv210_wkup_irq_chip },
+ 	{ .compatible = "samsung,exynos4210-wakeup-eint",
+@@ -688,6 +756,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++static int eint_num;
+ /*
+  * exynos_eint_wkup_init() - setup handling of external wakeup interrupts.
+  * @d: driver data of samsung pinctrl driver.
+@@ -736,6 +805,9 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 			return -ENXIO;
+ 		}
+ 
++		bank->eint_num = eint_num;
++		eint_num = eint_num + bank->nr_pins;
++
+ 		if (!fwnode_property_present(bank->fwnode, "interrupts")) {
+ 			bank->eint_type = EINT_TYPE_WKUP_MUX;
+ 			++muxed_banks;
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index fcc57c244d167db1de8c7aceffa6a9e7484bf348..1cabcbe1401a614ea33803132db776e97c1d56ee 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -141,6 +141,7 @@ struct samsung_pin_bank_type {
+  * @eint_type: type of the external interrupt supported by the bank.
+  * @eint_mask: bit mask of pins which support EINT function.
+  * @eint_offset: SoC-specific EINT register or interrupt offset of bank.
++ * @eint_num: total number of eint pins.
+  * @eint_con_offset: ExynosAuto SoC-specific EINT control register offset of bank.
+  * @eint_mask_offset: ExynosAuto SoC-specific EINT mask register offset of bank.
+  * @eint_pend_offset: ExynosAuto SoC-specific EINT pend register offset of bank.
+@@ -156,6 +157,7 @@ struct samsung_pin_bank_data {
+ 	enum eint_type	eint_type;
+ 	u32		eint_mask;
+ 	u32		eint_offset;
++	u32		eint_num;
+ 	u32		eint_con_offset;
+ 	u32		eint_mask_offset;
+ 	u32		eint_pend_offset;
+@@ -174,6 +176,7 @@ struct samsung_pin_bank_data {
+  * @eint_type: type of the external interrupt supported by the bank.
+  * @eint_mask: bit mask of pins which support EINT function.
+  * @eint_offset: SoC-specific EINT register or interrupt offset of bank.
++ * @eint_num: total number of eint pins.
+  * @eint_con_offset: ExynosAuto SoC-specific EINT register or interrupt offset of bank.
+  * @eint_mask_offset: ExynosAuto SoC-specific EINT mask register offset of bank.
+  * @eint_pend_offset: ExynosAuto SoC-specific EINT pend register offset of bank.
+@@ -201,6 +204,7 @@ struct samsung_pin_bank {
+ 	enum eint_type	eint_type;
+ 	u32		eint_mask;
+ 	u32		eint_offset;
++	u32		eint_num;
+ 	u32		eint_con_offset;
+ 	u32		eint_mask_offset;
+ 	u32		eint_pend_offset;
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index 1a2c0e0838f99821151661878f022f2129a0c19b..938c6db235fb00b1245ab2aa44a094f163b6b84b 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -669,6 +669,7 @@
+ #define GS101_CPU_INFORM(cpu)	\
+ 			(GS101_CPU0_INFORM + (cpu*4))
+ #define GS101_SYSTEM_CONFIGURATION				(0x3A00)
++#define GS101_EINT_WAKEUP_MASK					(0x3A80)
+ #define GS101_PHY_CTRL_USB20					(0x3EB0)
+ #define GS101_PHY_CTRL_USBDP					(0x3EB4)
+ 
 
 -- 
 2.50.0.rc2.701.gf1e915cc24-goog
