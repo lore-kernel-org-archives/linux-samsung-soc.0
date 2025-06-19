@@ -1,66 +1,67 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15A52248AC
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 11:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112AF225762
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 11:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331905; cv=none; b=KuUFuFQSeq5TQGJCdvMdull3yI0xTbaUzAXgEzCUCiNadNocPAf56iEX7b5TmRzBli9K6HYW2MUDNGhph+9By0Mx65Vv7H/IgPXwoVii5HMGCV2LAi9W/r2+9rpNnUlTwZIM9/4RHoI4eI1WqyE6QqQpuWxpthqX3yCP86HPF0s=
+	t=1750331907; cv=none; b=a1IV4d1vSC2OLwAMRR5enFkv9t4n4rCI4zZeYMHCJWQGHzBv+yJoRSSz0Ogi8jh/kVNQT69LbUWncS3M0k9H/GEStSTAbjqZ/r8HOylfsWzSwC+zQEov9QYwtmjMCL7qPv9HNLXFTH8FvdCG2D2CXGUwQv19X7mGlHugM70IDKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331905; c=relaxed/simple;
-	bh=p1fLHj7WBxZzvDsPJQ4utwW8hjFuRfSNWUs+7XlQwHw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hBC+NNfxJkJgxDvUsulbOMQ9cJZIScClvWZY5YyXDK7BHn1k1omjThycfSe0A4qvpFzlF0al+diJ84fmQu2RaMW17kBhEm4RI1r+eGhZZqvH+ImNWKORl2FxHg8uF0S+kahMOg+OnDlahkBgCbNl1+OI4AWcf5Bxa6/o5ZSrkUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqHabYfS; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1750331907; c=relaxed/simple;
+	bh=3xBT1L8I6TNRRff1Q5/u26yR0koFA81Rb/IbdPbqOko=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ac8hTQ/1dtWHBBQdHy2pxKQyAOHivQ1HBYjS7scj1DULXUtFoWFKvknpCL24EhtkTs+NTArDUxc7s9V5dOfGuTFQ8H3qX3vKm1e/WDVtjIELSXJfVqVimnRVU1UfGD+wSa10U/7pvAZPNK2OnsiVsHCRGr4n+nscClJhlEt4NBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dHmd9Quk; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqHabYfS"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a582e09144so486707f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 04:18:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHmd9Quk"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so422796f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2025 04:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750331902; x=1750936702; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0j2cSu3NdVpMVKYyw9NJm/4tDS+f0TiyVQZ6Bh9mEhs=;
-        b=lqHabYfSjuuiUwksdvNSg8Lp83ft1QgAmMNA315U1YtusY53vWWYmIKD9Np30StoZE
-         67CO/hHJNMNKTG34Hu/3IIPnFlTlgHzmJLYHdyG6eLHzxKReTah8ha5y9aX5r01MykVS
-         6c+phwHnXriuvm6wBtA7lRZOLvZZCd5VIz1fdWnVqlqwHAGsV1QNe/gl9jorx9zvB93a
-         HpXOF5SdeEOBF3Rn7aVYaA7zBgS+As6qS+TZ2sV/ArfewxpOoEEbk98UXoILTT4sHe+E
-         GPm4k0Pl/0N2jv77adW1YeKt4GXfneWo1JU/8tIYHzVKSJ6v3cRJRCjeXMt6capg3wim
-         zGPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750331902; x=1750936702;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1750331903; x=1750936703; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0j2cSu3NdVpMVKYyw9NJm/4tDS+f0TiyVQZ6Bh9mEhs=;
-        b=MdCMAYw3xOZ/yOWPycfsBOdGKN20Vg0bGa1m8gEBCWNBQWsxPGRIq4iRapdUyVgaSr
-         uz11pvi+R6P8zuopvMniGdaYAo2nSObcw4XX5rnjvbsZUsleLom0swLOGuxmL6xuANyq
-         WaqvCa4PPCbtdaskmIC4s3ia8FT4PvDNuVu2WfqWnpe+ytna/piLN0dVvrWU4SmZMkjL
-         YZExGvHh15lQgNqyru18KxCKYiJDhPlYhIS0nM7RzQVhPUb0lTAcsKC760lAJ5FdAlq0
-         C4shE2J5DFlzMArsuiW1nosVd743Qx59UmF2ocwugri3PLKL+VfRhYxzleZ6MBT1maUY
-         /SJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpch0qnzqrdbLLKiuK+MNr+gpjM9TCLnlTAESrM65GXfdQY5QEhQ0myk6GtmT0yfiljDixuTbZ55DFzG5CN263wA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Pl53YSSsxuuw/Mf5LQaWr05O8c2QDIF5qXnoiMUZSyEb5QNP
-	EXTbmBCJAGV4fgYiRFW6sKXkKciZfzfytduc2pwygluy6LjZZSDesm33qNtXuEBMf9c=
-X-Gm-Gg: ASbGnctTox5FOR8NXTfvZFLILwIswT9z/oAuHBsq4TWLfVQZBPRT5OJkTrKxuz+juR7
-	t9itX1z5QBii3P0BRsu9ujVKTBb4RmTYQu64XD6dOti5i6NuZSJYhg7NDjxL+3/u/hR7boiU88t
-	2cdraqP1OcyxGCEb4w+7fb1UWdTAtDjZwzZgtzkHRVLeXKxkFn0c1yMZ+XT9IDM21GFNJuA6uhV
-	9zVheRJAmi73jas2ZnfwHV5GJ798R65nV5C8V8d7zMNW0V2Nv8BXH7Ji5URI6utaCuKOdtGE3d/
-	JQI2qPQXz/c8yEBDCLdNluY2BgnG70hlhyNy27xjkAGwt2SjelUYcgbxAYAOHlJfF94P906ARPO
-	VfWYbjmUvI3a9KjKk7taYIWCtN/s=
-X-Google-Smtp-Source: AGHT+IGwpV5p0m50gZC15PUFj3RIHD8e2fc5imI9ZePiRScXMe39Wj/psDyd7PdgqpyizfOuUnY4mA==
-X-Received: by 2002:a05:6000:2483:b0:3a4:ddd6:427f with SMTP id ffacd0b85a97d-3a5723a50dcmr17516019f8f.35.1750331902026;
-        Thu, 19 Jun 2025 04:18:22 -0700 (PDT)
+        bh=9Fvf7YFNk9hgZaIBMwH5Oxgd1wYDkkE9Dk+oH7pOxYY=;
+        b=dHmd9Qukj2rlQ0RVAuHFBTa5dBcvxD5RgAbajYvcLqZ4PrRI+nkWJDduMkWO1Vl9lM
+         q9uh+BrPhCHAv866weNiw+bzKpj3BPOj5Cue1LJyFLfimv0MJ4wZ9EnupsSCPsKLhPmo
+         icAE3X2fVt0kXLa//nz8dxuVlCstrZzXOii2H13uA78J3KPrslw1tEOwVFNSJcG3O51X
+         Owv/g+tZPsXF7pZsHwTG0dS19MN5wG2XTVZ0xdi0UBpvhylLBij/Mxfant7B6cypeGMG
+         aN41MVbiweyIfWnj7jiNC+Jwvv0+8gUR+o7/l7m90fgjWAoGsG9sdcU+ELFeknh+V+ZC
+         skIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750331903; x=1750936703;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Fvf7YFNk9hgZaIBMwH5Oxgd1wYDkkE9Dk+oH7pOxYY=;
+        b=eUvP1rtRQ6mZB5sbEZ+2zO+PD69qFbi5pjKBnirpMULVa0v9yzfepGYyWad5DoKl+B
+         Ql+rT8Rg5NzBfeGmZjy6ohRPSEl0XRdBIWb3pKDxUjaRyda+cgB4lW4DYJNugooI6Tlj
+         NwTeBRUlRgs+YyPKtkRpS7utwA+7uK4rzk+uyoxeH9bt93bAqljQpRvUHiadS4SJqbeN
+         JUEupVRd/xcZARKRz8WyCowI0weQaKkGNl3yAfv9EZzMlht6UgT9tWI6nRo+syMI8ww0
+         YBRGyJEt8InFDjvXUEEmmfgUTTk4SaEFW7ebvf8VMWKPPVaS0A1Dt4j4bj68DUNYxM8f
+         lCQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqIPbCH33mraIYMw4zd7GFpURPShXTr8ACN02gP5MOPYQRpyXclafP/J87eN3cEA5htMX0EykIQwiHouvl1hs2fw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUEiTP2aS5fd2sUDdjU7tqiWjLKIv/AmO5Vv7LqYk85YjAl3aG
+	hXurvryL6+tUsAO2RdwjRGCzYzJSnU4T6L5ZBOsmoGp1ZnJRCmv+eyGRwoWQ9MW5nVQ=
+X-Gm-Gg: ASbGncvbSt1ZSaie+7nv50bJfKcaTU/0emrS6J7RU/NsUx7Dt0XvKR1kOtgp6N6xIO5
+	2Y/zBaQm+ZSVFBnoSE/x3Ot+eeefxXBH91HNjTvvZ058UZRF6HEZ1WbsxKv8uU+6qDrVSmqPc7y
+	AfVX1kAkr5Ei+pWqWZaCrSxm8ZP3hBsg4Fx0oOuxUFt29pk9kII6mXbVXVDxPXlSkqIru5E+RiB
+	VdjBeJ/WV9ADBjuZDMYFWfavozmyrNpg3BQZXDqA2YzUUrL+IhZbjzdApgs/QGLsfDl+hF6Ha9C
+	TJfq2FkeA+kId2pMTmHIN8oELw/1Q+ljcakmgtyVvfHQwUAIBfoakfTfjADi+Cmvhfc0uQqfrIp
+	PAcge1S09dr3fnSd7
+X-Google-Smtp-Source: AGHT+IEAqQjOcoAnpyzophi6mRFHajmHtj9QIjRFkm/NOIYibt3bAKSIyjkYnPLx3bhYlV5yilrOcA==
+X-Received: by 2002:a05:6000:4024:b0:3a4:f8fa:9c94 with SMTP id ffacd0b85a97d-3a5723a2907mr14065943f8f.13.1750331903200;
+        Thu, 19 Jun 2025 04:18:23 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([145.224.65.219])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c41sm25674375e9.26.2025.06.19.04.18.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c41sm25674375e9.26.2025.06.19.04.18.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 04:18:21 -0700 (PDT)
+        Thu, 19 Jun 2025 04:18:22 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 0/2] Add support for programming gs101 EINT_WAKEUP_MASK
- registers
-Date: Thu, 19 Jun 2025 12:18:14 +0100
-Message-Id: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
+Date: Thu, 19 Jun 2025 12:18:15 +0100
+Subject: [PATCH 1/2] pinctrl: samsung: rename exynosautov920_retention_data
+ to no_retention_data
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,10 +70,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPbxU2gC/x3MMQqAMAxA0atIZgNN0YJeRRxqjRrEKo2IIN7d4
- viG/x9QTsIKbfFA4ktU9phBZQFh8XFmlDEbrLG1cdTgrGQIWeKJm9cVfRWInB25GRzk6kg8yf0
- fu/59P7knebRhAAAA
-X-Change-ID: 20250619-gs101-eint-mask-a4c1162de9b6
+Message-Id: <20250619-gs101-eint-mask-v1-1-89438cfd7499@linaro.org>
+References: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
+In-Reply-To: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -84,65 +84,74 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
  Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1479;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2297;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=p1fLHj7WBxZzvDsPJQ4utwW8hjFuRfSNWUs+7XlQwHw=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoU/H73aaGrTalZO8s2XRrswNZuD5hjSmpTXNun
- XZqkZQxQ8KJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaFPx+wAKCRDO6LjWAjRy
- utDjD/9jioNxxKYtV9tUtqZXI3eK7B1WKAXFLrnUVJ8PlzLQVmGj6f9fzskWxdst8bePe1CEr/K
- +++kbEKCHhbeMXGyqspUYFtktkvBzr8sT9WWr+qByXu9eKXwsqlU33UPTt6nGz57Z1BO2t0hWlH
- yc0ZeDxnK12Zr1q7FAUUywe5XkxUFVevz/xpCVlELbQA0TGfKcpJiOU89f9vf4InxbNc6HZmdoR
- WP2lwAJCGDCcqVKGDLT0pI9AN0dP3oyyzSQq0JKFV0WRZettpIeXpJeW1cyh/79xJ49k47X1Pmh
- RZbwSUTowpa7L5fN5rvBztE0zJK8WZYTfVWN5SgDFhHGchmEWNXNpcQ20dSyhTSgG4RIzjwGPM7
- X7M7SScOZc7FxqTRLxCGi0DrQp/mcCfLW8tFSVNypVBfuzDgqO1Pu7f8qyLzCl882BUUj4lLCTI
- ADSDwZ4H5ejUFmiauusorMeTPZDU78OWroTv8PzkahQTZ5YfmMJUjgkYPEj32UM5vlkFSy3tI/2
- J4FXNH3bvDyORynih7Ayx4e2Om3exiitQYMg5iFMhRIpYHktqJEUeFebRxvCE57jSQSJUrQgBeo
- TGYh8kbwD3jSIxCLTm9cBsyEbOJYK41aD4JLQXv0lSkb2+A4GJ/Q6Qacztm2XkJe0E/P72X3mdF
- eUMFnkEhlIs6amQ==
+ bh=3xBT1L8I6TNRRff1Q5/u26yR0koFA81Rb/IbdPbqOko=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoU/H7wfYr2rXyNKdlg6SW6TglHvBZIDQC5oY73
+ 6RHG1SOE+SJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaFPx+wAKCRDO6LjWAjRy
+ uieOD/9Oz+JuAQTo4NeJIF0oxjINRvPiNiF3dnirauG3D/pn3bu1nOmbTdr56fq3OuS0bhKywRD
+ wwo8uSmB4R/ojhYjn2uGlFMbqwiZACJFmjq1XyRbFpkERiZ1PUtSDkA+ARJFcOt907bF/p72x1+
+ XJYR4oqki+UuzHp+eEJ0b6go7rI9gmIXUo3Mcksxm4/FkbetMCdbcNF3+m/pzqdcHgkPlinMQL4
+ 36rRZ4ggeeHUndmrJi+CbRGgG4SbZjwIeEJ6rTzPlULRTnRACUkOmSZkq2oS2ESHboV6p0Jf2GT
+ yw4RK2dJlhc2QI6MNLH/rnNVRL4Ma45++M8EdAkOPXChF3b3PSlaNvPTCNeQSb25CI7WG7VwEVz
+ dIc4aFRvUzE8MGd9eHvpPf9B1vdB0Uh8PQLjtbMqz+rOTmui/N5SUoVydOGZ5gaHcKTBWsGtXKW
+ 3HAWhJPR7rR5b9LC3VdENoWL+JgYR7Ir4xZX26ze0lBo6V2X3GVWBghTFVB/kHPfsRc5HCAxEVK
+ jrdZTaB1y0iJ0midI3yuxCUagEqZAWwDyvKOEWhgEIVrXb541/Xb1SXrXxHSJoI9PqOeYduOlhn
+ R2ppA+niNAaR7eBDnwN1MHn3dF2SMB/iCmW1i9+zujxzh7XaMYfORrv24Bmz5jxyRsTZrPyOTR8
+ LZT5Dtlb7siS0Ow==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi folks,
+To avoid having an exact copy of this struct for gs101 rename it and use it
+for both SoCs for eint banks.
 
-The following series adds support for programming the gs101
-EINT_WAKEUP_MASK registers for the 67 external wakeup interrupts on gpa0 to
-gpa11 (alive and far_alive). gs101 differs to previous SoCs in that it has
-3 EINT_WAKEUP_MASK registers
-
-EINT_WAKEUP_MASK  0x3A80 EINT[31:0]
-EINT_WAKEUP_MASK2 0x3A84 EINT[63:32]
-EINT_WAKEUP_MASK3 0x3A88 EINT[66:64]
-
-This is achieved by adding gs101 specific callbacks and a dedicated
-gs101_wkup_irq_chip struct which is triggered from the existing
-google,gs101-wakeup-eint compatible.
-
-This code path can be tested  using:
-echo mem > /sys/power/state
-
-With the functional CPU hotplug, this brings us another step closer to
-having functional suspend to RAM upstream.
-
-kind regards,
-
-Peter
+The purpose of this for exynosautov920 and gs101 is to obtain the PMU
+syscon for writing the calculated WAKEUP_MASK register(s).
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Peter Griffin (2):
-      pinctrl: samsung: rename exynosautov920_retention_data to no_retention_data
-      pinctrl: samsung: add support for gs101 wakeup mask programming
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   6 +-
- drivers/pinctrl/samsung/pinctrl-exynos.c       | 100 +++++++++++++++++++++----
- drivers/pinctrl/samsung/pinctrl-samsung.h      |   4 +
- include/linux/soc/samsung/exynos-regs-pmu.h    |   1 +
- 4 files changed, 95 insertions(+), 16 deletions(-)
----
-base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
-change-id: 20250619-gs101-eint-mask-a4c1162de9b6
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+index 9fd894729a7b87c3e144ff90921a1cadbde93d3d..5fe7c4b9f7bd424f396082f1b1b16bfb65f26cdf 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+@@ -1405,7 +1405,7 @@ static const struct samsung_pin_bank_data exynosautov920_pin_banks7[] = {
+ 	EXYNOSV920_PIN_BANK_EINTG(8, 0x8000, "gpg1",  0x18, 0x24, 0x28),
+ };
+ 
+-static const struct samsung_retention_data exynosautov920_retention_data __initconst = {
++static const struct samsung_retention_data no_retention_data __initconst = {
+ 	.regs	 = NULL,
+ 	.nr_regs = 0,
+ 	.value	 = 0,
+@@ -1421,7 +1421,7 @@ static const struct samsung_pin_ctrl exynosautov920_pin_ctrl[] = {
+ 		.eint_wkup_init	= exynos_eint_wkup_init,
+ 		.suspend	= exynosautov920_pinctrl_suspend,
+ 		.resume		= exynosautov920_pinctrl_resume,
+-		.retention_data	= &exynosautov920_retention_data,
++		.retention_data	= &no_retention_data,
+ 	}, {
+ 		/* pin-controller instance 1 AUD data */
+ 		.pin_banks	= exynosautov920_pin_banks1,
+@@ -1764,6 +1764,7 @@ static const struct samsung_pin_ctrl gs101_pin_ctrl[] __initconst = {
+ 		.eint_wkup_init = exynos_eint_wkup_init,
+ 		.suspend	= gs101_pinctrl_suspend,
+ 		.resume		= gs101_pinctrl_resume,
++		.retention_data = &no_retention_data,
+ 	}, {
+ 		/* pin banks of gs101 pin-controller (FAR_ALIVE) */
+ 		.pin_banks	= gs101_pin_far_alive,
+@@ -1771,6 +1772,7 @@ static const struct samsung_pin_ctrl gs101_pin_ctrl[] __initconst = {
+ 		.eint_wkup_init = exynos_eint_wkup_init,
+ 		.suspend	= gs101_pinctrl_suspend,
+ 		.resume		= gs101_pinctrl_resume,
++		.retention_data = &no_retention_data,
+ 	}, {
+ 		/* pin banks of gs101 pin-controller (GSACORE) */
+ 		.pin_banks	= gs101_pin_gsacore,
 
-Best regards,
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+2.50.0.rc2.701.gf1e915cc24-goog
 
