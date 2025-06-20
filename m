@@ -1,55 +1,55 @@
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5CC2EA16A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2025 18:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A84C2EBB8A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2025 18:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443462; cv=none; b=tDWe28sadBU1yWilr1DrQj30xtQZY7VPfCj+zCy+ifv1tq0vY5K2CFDBJ/+5egig+oFeCPS+yQflZtl/9ssBmexdiw0h0EFde7W8bfWMz5mv70x3TJTsFs3pzbbK/EvANRJucw1vUWvDXfCoUVb2vYEcE45oCYjh3twFXKxlYhQ=
+	t=1750443465; cv=none; b=LY7kJOnYiRWtk0UUob4uh677AH1RXlnAUryBqwoEz7l9D8bLqo5C+9SFfXt2n1IUuYri0p5tpsupvIPl4vTaBbNFVk/QB4qM4mky86NFbSBRAktI+3yjAzF/BrD2tuMmeLR3IqA8C2trjhFcMj9y2ST0v4xjH9WINhMlqClDkdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443462; c=relaxed/simple;
-	bh=YiB0G6F8wy6l7JvT/ZZMMGcgJTsPVM5/IR5furyk19s=;
+	s=arc-20240116; t=1750443465; c=relaxed/simple;
+	bh=E5gNelm91XMJ+AZCHJOExXs098uttzq+1BtKy9LZWyY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=T8o1oy2r+LRYF9Nt5shnYdbdr1B2+R+QDwsWvFLE3IMBGvqbwIiQPXFIRTJyg7CFVDXYT2MnWKfQlJrsHINYE2oAbwJFgV7gAbMxwlCwu97eEF44b1xpZM4lOMlypBGReM7CblXNHKC9gzICWkBd6U91Le/aiaGhBNKerj0Uk4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kEZF0ghV; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=YY/vLfBhc51ITobvixPEzosGFZa784A+cSoKt0VagK9TzuzD9ijH/KUy9RwyfLCktSYKBaWyLp8R/SdyNyUzW517Y70hgsn+DvNCQUJS7DJKno24g2h+remrQjY2XS13ZYK4Pz5Eu1Z95qbzw3DJI+rHu5v8IUfsba6s7KfcE64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FA5gbIpT; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEZF0ghV"
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7491423658cso569521b3a.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2025 11:17:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FA5gbIpT"
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748f3d4c7e7so1763729b3a.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2025 11:17:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750443460; x=1751048260; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1750443463; x=1751048263; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VIV2B0fUwqK8CLLa1kWwxVC8BX5dJhCy6gXrqz6FTh0=;
-        b=kEZF0ghVDfUQitDq23CzPHJ6pLGeasp65ZfPJQwQHE3th09nB8I6Ai2cIzZvv6Y4HK
-         8cM0gbuYCdakgx2OiwaAcGC6AKMLUNTLqgJp06JMhstPFvOHvJC46uUESDLQKOyvEQTp
-         VmF1q+9fuQWtRPV4nLqbGgLnXz8xwdgr33HUa7JnM/msd7j3aHFVVADhSguOS2e+vCAl
-         v6qhN7sZMdqVHgiBQ99BfsR0Um88hxJB+/xZGFSKwjxreLaD5k/ImFHpGJQ+Nd2pf5CF
-         Y5qHa3mNU1/lZz/zmqpJ9A2z+HAseO4H2C+LVe3Wwh+t6nX5fERwZDnlMzF7zEn6Zy7Z
-         0NvA==
+        bh=CMP7Kl6yow8Faa+m4ttvJDoB9/AivqWlJaRr2H7xdgs=;
+        b=FA5gbIpT3eGmw5TCQRoNCphA4HGwPyXSGfUyi3jfnw5gfDmi31+PKgXC6mxizVfwLZ
+         UTg4b/TtHRWSsHUAseVXbxm9uAICxsiKzbgI8aJLDRgd+l3ITvUgO/q6bpCenvhS/TMC
+         8D6wHZ9fhdMCk1v8XekthBMUafOJ4dCrtDDDNUJcBRw9MXYtVImFrmHOJKG9JkmclmeO
+         ZI3DvFerS0kJEQrpZg78U0Ojy8QVX3YO7mM2lbIy+PD+RpPpDtuA/1843dlmN087L/+w
+         +0FtaMKfv6E29NWqumfzQH0GH9yDpiWrczZfBSEiflH/xgygxeBlxLb833C60huFB9sq
+         BfGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750443460; x=1751048260;
+        d=1e100.net; s=20230601; t=1750443463; x=1751048263;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VIV2B0fUwqK8CLLa1kWwxVC8BX5dJhCy6gXrqz6FTh0=;
-        b=OYmRGFdolzOBc3Itm9IOqACUaCqE5CJS1FTDA3/YjIqoOFld/NslKKNEErnbn0TzRz
-         Q42bsXLv2De/8jzLawh1UcqMD7QhKLSNFk6vI5ksDbnyiq36mdz9njWWQCPTkwOr7s0I
-         EUmuTeB4721nJ5HoNn7cGQqPuHsC0EbtOlbrSi+GuqhJOBTAf5M6BmbS1O4+4WnzmfW/
-         BKjM27QV14kevmz8Wmt4IOdFTLmZJTKnqnJVkmoo7K7BH8sKIphKOTfSNUyVHPhfR+8E
-         CNQxuphkblhLqr05XwByhxA9jJHDP5rQ2NnCWKvsB+WbEMXZi2BuBxiGW3LMpZdPy6gR
-         iITw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4pOvCJgyVl4MdoO8UjHEA67Jjr2E7cqLCTY1SAxvENprm+M91iQ/jSyUtqCEOI8BUvz4OTqx2zFj9UMS//CsVEA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0cqEdIudTYK6hd64VYK6kLwPjMogDgxuzTM8YvAl4GsRhcRSE
-	Ni5q0uTaSWll5ZU8Yhah69S1bZ8NKQBkjWDXyfQWD1ScV+QfW9DWdbaUOuVQ2VHCRurxLGZJ7or
-	xQ8p0Wru7IaW7UJJ0v0aS9K1ujRXDLQ==
-X-Google-Smtp-Source: AGHT+IER+5ubUXb+yU0g6Y0g4aUyAkU4ur+g2SnRAtI7gYMUtRakP+WKgzwI5sAh2R7yuuPE5LK9mNIpkJ/4UWR5zIg=
-X-Received: from pgww8.prod.google.com ([2002:a05:6a02:2c88:b0:b2c:4548:13d0])
+        bh=CMP7Kl6yow8Faa+m4ttvJDoB9/AivqWlJaRr2H7xdgs=;
+        b=XVdKRPANA2fb3HcXo2lC+CfEbzkL1Hrly4IxROw/pgZMen7Qi7bdi7Mzgwn9DO3be9
+         ciG0xjs311vNXAvj7bCeNTL17hrEC4KnjDBFb62ZxWBqM5kkS+G2Hs/UWuWOyTJFUISU
+         2i3wP7RgH6Iwh0O6FF1zGEG3TLS/B+49lXF6coW45UYEOuqGcMjr53qVKTWV4w7bhyDi
+         9Ppicq6uGmsQUZ7gUXwCZCvEMgcgqVxjdM+I8p1r1MsLaudrCIrxalyg8wQDm5/usz+N
+         CKiXJA4Jke8sWEeAeGrvSiLlWZ07FR/oB5ZV7Iz3y6e0/oEOHTBhdCn0smUCRA9hcfTu
+         FrvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWN8NlUjx87qwg592zi1cVEgIIyUvgM2mHy8403GvUuZJnoIqdzhFd1GPNo9IWfz2h8VkyYHUKkdB1uYfO4QWEPkg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1azmUT2iTUpHxD8U1RexKkJ/aEx+6Fmekzk87SyYFgEfSsyTJ
+	o8X0F6tX/TwTxTy6m3TfomlzmmET/Zd7QnHU2oNP9/evYO56Fru5A8LhD4IQyV05Unnflct9nrY
+	LxPBrxxvnGJZBSpEObNuu/ELzIiy0qg==
+X-Google-Smtp-Source: AGHT+IGm/vFj5hrKzWy2Z3pEyDUaKOhhI+CR5MlaibQ4Zvsy25uFRQsZYTONpTVOibGjQMqu8859Np1afVaE2rSP3T8=
+X-Received: from pfbef10.prod.google.com ([2002:a05:6a00:2c8a:b0:749:10a2:4f64])
  (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:920e:b0:1f5:591b:4f7a with SMTP id adf61e73a8af0-22026fe7f17mr6330358637.38.1750443460127;
- Fri, 20 Jun 2025 11:17:40 -0700 (PDT)
-Date: Fri, 20 Jun 2025 11:17:04 -0700
+ 2002:a05:6a00:2da0:b0:748:6a1f:6d3b with SMTP id d2e1a72fcca58-7490d7b8df9mr5222155b3a.19.1750443463199;
+ Fri, 20 Jun 2025 11:17:43 -0700 (PDT)
+Date: Fri, 20 Jun 2025 11:17:05 -0700
 In-Reply-To: <20250620181719.1399856-1-willmcvicker@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -59,8 +59,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250620181719.1399856-1-willmcvicker@google.com>
 X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
-Message-ID: <20250620181719.1399856-2-willmcvicker@google.com>
-Subject: [PATCH v4 1/6] of/irq: Export of_irq_count for modules
+Message-ID: <20250620181719.1399856-3-willmcvicker@google.com>
+Subject: [PATCH v4 2/6] clocksource/drivers/exynos_mct: Don't register as a
+ sched_clock on arm64
 From: Will McVicker <willmcvicker@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
 	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -72,36 +73,74 @@ Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>,
 	John Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, 
 	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
 	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, 
-	Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Need to export `of_irq_count` in preparation for modularizing the Exynos
-MCT driver which uses this API for setting up the timer IRQs.
+The MCT register is unfortunately very slow to access, but importantly
+does not halt in the c2 idle state. So for ARM64, we can improve
+performance by not registering the MCT for sched_clock, allowing the
+system to use the faster ARM architected timer for sched_clock instead.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+The MCT is still registered as a clocksource, and a clockevent in order
+to be a wakeup source for the arch_timer to exit the "c2" idle state.
+
+Since ARM32 SoCs don't have an architected timer, the MCT must continue
+to be used for sched_clock. Detailed discussion on this topic can be
+found at [1].
+
+[1] https://lore.kernel.org/linux-samsung-soc/1400188079-21832-1-git-send-email-chirantan@chromium.org/
+
+[Original commit from https://android.googlesource.com/kernel/gs/+/630817f7080e92c5e0216095ff52f6eb8dd00727
+
+Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
+Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
 Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
+Acked-by: John Stultz <jstultz@google.com>
 Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
 Signed-off-by: Will McVicker <willmcvicker@google.com>
 ---
- drivers/of/irq.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/exynos_mct.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index f8ad79b9b1c9..5adda1dac3cf 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -519,6 +519,7 @@ int of_irq_count(struct device_node *dev)
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index da09f467a6bb..96361d5dc57d 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -219,12 +219,18 @@ static struct clocksource mct_frc = {
+ 	.resume		= exynos4_frc_resume,
+ };
  
- 	return nr;
++/*
++ * Since ARM devices do not have an architected timer, they need to continue
++ * using the MCT as the main clocksource for timekeeping, sched_clock, and the
++ * delay timer. For AARCH64 SoCs, the architected timer is the preferred
++ * clocksource due to it's superior performance.
++ */
++#if defined(CONFIG_ARM)
+ static u64 notrace exynos4_read_sched_clock(void)
+ {
+ 	return exynos4_read_count_32();
  }
-+EXPORT_SYMBOL_GPL(of_irq_count);
  
- /**
-  * of_irq_to_resource_table - Fill in resource table with node's IRQ info
+-#if defined(CONFIG_ARM)
+ static struct delay_timer exynos4_delay_timer;
+ 
+ static cycles_t exynos4_read_current_timer(void)
+@@ -250,12 +256,13 @@ static int __init exynos4_clocksource_init(bool frc_shared)
+ 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+ 	exynos4_delay_timer.freq = clk_rate;
+ 	register_current_timer_delay(&exynos4_delay_timer);
++
++	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
+ #endif
+ 
+ 	if (clocksource_register_hz(&mct_frc, clk_rate))
+ 		panic("%s: can't register clocksource\n", mct_frc.name);
+ 
+-	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
+ 
+ 	return 0;
+ }
 -- 
 2.50.0.rc2.761.g2dc52ea45b-goog
 
