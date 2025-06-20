@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFA027FB12;
-	Fri, 20 Jun 2025 09:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A51028D8E5;
+	Fri, 20 Jun 2025 13:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750410658; cv=none; b=m5TWL3zclouRf7UoyMLzDwwCAWS+x2nMxH30RAJMZe8hJHP+50j9BMHNU1rcHGVKx657gUPynZa6+eQfy8/nEWaubKYQVDiFiCEnGjyaGpYYo7v/9sGJfyIZo90zwBWkntJzNEKVWBYP0I/HVwKgz6eA2f2sLGJsdSU5AufQx8E=
+	t=1750426059; cv=none; b=A5JsQz8n5b8qwPdD0c4jSLUaIeIfMMPXJ/4b2htGczw9H5FxfksiD2iC5pb2U8SW2Zd/Q4i8aRqnqtQKn1FymdbD2nZLCu392pZQ86WH13cisJJWIMzHEW7KgpYk+sNOyizkUDI0xX9oouFBlUrZNaoJ3X5/3qNo5BoErKmp2gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750410658; c=relaxed/simple;
-	bh=ubDse/6nWJd5Iv7Enf1Qe9halXvlhEPQotOXpmNQr8c=;
+	s=arc-20240116; t=1750426059; c=relaxed/simple;
+	bh=7iO3Spwl78oqvR7sBJ2s9rW+W2FFODb7uMsgMUDC2CQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGxEslalpmUBPUUzZMBlVYHCT2REG5wcTilu3Fmj5KFk0qthEIRs/K7pWoIkjTckZ0nImNnRaBIYu1IZIXP63VN1cWsTo7OTh982WoR9EU3BVm9Qd3JEo6ngfbqtd/F8c+MPwePHBFI6vKVHoLj1uLQRxe8rusjC/gfsco66vYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFoufkfW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQcwkLeQtRFXIr6s5oFNbME5MNkJOJ3Glu1RYpMWC4SKbRXYOB488iPLuv/QynA5lU+WtMujTE1uNDRFtMOwwL41ZXWw6Gj6yz1azJngEHgG+33ADf81ibZDJmQdu2VZdDP3RRz77B86PbQZTbPvNdTZT15LOeyR7rcjqRucVuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOvXj3rc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFoufkfW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC72C4CEE3;
-	Fri, 20 Jun 2025 09:10:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOvXj3rc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10046C4CEE3;
+	Fri, 20 Jun 2025 13:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750410658;
-	bh=ubDse/6nWJd5Iv7Enf1Qe9halXvlhEPQotOXpmNQr8c=;
+	s=k20201202; t=1750426058;
+	bh=7iO3Spwl78oqvR7sBJ2s9rW+W2FFODb7uMsgMUDC2CQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VFoufkfWVmvGR4hpJY/Al8zDV+pMjqU8S5KnlZZKKJDa+rK9gYXqFeLUgp5fJIXxM
-	 DTmr9OKNMcUw0wR9zJ9Jj28NicciZS5MKLx7yx2/iSBjP1WhedbgYAGGBU9JDigM3I
-	 p8kPiHFdQTqSkjwqC2+wv5zvhrmodaZjLV18969Ze4x7EE4pF661yutbWN5h1b+fgw
-	 e7+zaf/5B9peqzp23Ofqy4cJ6q/MgrPph2bvjYL7HoUE1+OEmUC4xWtxqXmfayoSjq
-	 4ntOhmYVwaSkqYEbGgLL80n+jCAsLZAhdiA3vzi5modEq5+BSascCUngTnJslellWe
-	 EZ69uAy38cQmw==
-Date: Fri, 20 Jun 2025 11:10:55 +0200
+	b=fOvXj3rcFOvEn7+6z2VCgBASlxMhFXHKU0pYL1+VPMPsw2hcdVW+WTzTp5F8GHa+R
+	 u0LhsP5h1Em5JyH/IPLhFcL4OeNNPJk6899oXGLsDhgfFKRNZLVBbA9p214KlHqfOx
+	 C/Uc+tZGtio6132bYstHc81NMVl65Oi/HPNqtYCizlTw7ayFFyQr+HKWDyzmNus1xP
+	 +9QEmVgYIdUaFamjX53zwHgJOfe7SYq0yO6FQ8ChzilK5h3ygRfq09C+TQfIsF4XKv
+	 0GoONah3IfiinYalyMqwADfFD4eP1rGE3Qt87rnpopKK9/PppSeF9UU10H5hKMkfNo
+	 rZHz0DLhR+zMQ==
+Date: Fri, 20 Jun 2025 15:27:36 +0200
 From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Anusha Srivatsa <asrivats@redhat.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
 	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
 	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
 	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
@@ -50,12 +50,10 @@ Cc: Anusha Srivatsa <asrivats@redhat.com>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 01/16] drm/panel: get/put panel reference in
- drm_panel_add/remove()
-Message-ID: <20250620-conscious-purring-ant-b0a64e@houat>
+Subject: Re: [PATCH v2 04/16] drm/panel/sun4i: Keep up with refcounting
+Message-ID: <20250620-groovy-imposing-reindeer-e52ed0@houat>
 References: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
- <20250619-b4-of_drm_find_panel_part1-v2-1-0df94aecc43d@redhat.com>
- <20250620103353.5b43b86f@booty>
+ <20250619-b4-of_drm_find_panel_part1-v2-4-0df94aecc43d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,67 +61,43 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ayfn3kll3fl323i3"
+	protocol="application/pgp-signature"; boundary="bdw7jb5mvkrn4ozs"
 Content-Disposition: inline
-In-Reply-To: <20250620103353.5b43b86f@booty>
+In-Reply-To: <20250619-b4-of_drm_find_panel_part1-v2-4-0df94aecc43d@redhat.com>
 
 
---ayfn3kll3fl323i3
+--bdw7jb5mvkrn4ozs
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 01/16] drm/panel: get/put panel reference in
- drm_panel_add/remove()
+Subject: Re: [PATCH v2 04/16] drm/panel/sun4i: Keep up with refcounting
 MIME-Version: 1.0
 
-On Fri, Jun 20, 2025 at 10:33:53AM +0200, Luca Ceresoli wrote:
-> Hello Anusha,
->=20
-> On Thu, 19 Jun 2025 14:15:53 -0500
-> Anusha Srivatsa <asrivats@redhat.com> wrote:
->=20
-> > Take the panel reference and put it back as required.
-> > drm_panel_add() and drm_panel_remove() add a panel to
-> > the global registry and removes a panel respectively.
-> > Use get() and put() helpers to keep up with refcounting.
-> >=20
-> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
->=20
-> This patch is good.
->=20
-> I'd just point out that this must be applied only after all drivers
-> have been converted to the the _alloc API, otherwise with the following
-> sequence:
->=20
->   panel =3D devm_kzalloc();
->   drm_panel_init(panel);
->   drm_panel_add(panel);
->   ...
->   drm_panel_remove(panel); <-----
->=20
-> at the drm_panel_remove() you'd have a warning:
->=20
->   refcount_t: addition on 0; use-after-free.
->=20
-> So, if all panel drivers are converted:
+Hi,
 
-Not all panels are yet:
-$ rg -l drm_panel_init -- drivers/gpu/drm/panel/ | wc -l
-20
+On Thu, Jun 19, 2025 at 02:15:56PM -0500, Anusha Srivatsa wrote:
+> Put the panel reference back when driver is no
+> longer using it.
+>=20
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+
+When I asked you to provide a rationale for why you think the
+drm_panel_put() call belonged where it does, it was pretty obvious it
+needed to be done for all patches with the same issue, not just a few
+random ones.
 
 Maxime
 
---ayfn3kll3fl323i3
+--bdw7jb5mvkrn4ozs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFUlmgAKCRAnX84Zoj2+
-dkiPAYCIte+2tBryJpZRpT6kkEN41Ec91k+s449YnA84pL1ey4OrFgVdTNOesLxw
-e9unZSUBf2dd1SlD3wpyZKqM8nylg4Tzep9Jj6nmiEtL32rA/nKwRv5XVAdwV+o6
-JgigwCZp3A==
-=nfps
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFVhwQAKCRAnX84Zoj2+
+dhZ7AYDOISUO6C76OQb9MnRtqKLlnfKoNLnLbNNJpHKiYfBhR0RN5gz9giVgJRKz
+6JU4aXoBgPNzjBXU7e39cZGKgNcl1PHMh/B8GaoCK9FIE1cDbftlr/Xb8NYNNyEU
+Z311rJJ3bA==
+=G9Cw
 -----END PGP SIGNATURE-----
 
---ayfn3kll3fl323i3--
+--bdw7jb5mvkrn4ozs--
