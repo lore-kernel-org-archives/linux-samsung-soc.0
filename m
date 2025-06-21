@@ -1,105 +1,187 @@
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084062ED84A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2025 18:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38517196C7C;
+	Sat, 21 Jun 2025 07:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443477; cv=none; b=bGMD9cYXCizveLqIiOsZpdmoYFJgF6bYRKScq873OetFWWubDVfJYyHWzIkRkJ9pou6p6/zdwWN+rGeR9doRCbaLgE/N4bZuFb6K/lgPCNxW2Mmn+jGTBqS3P6AzXB5RuDib4Q05CHrk/glwahp3z6HZbsW+XR3WuQ0taV6Wp0o=
+	t=1750490235; cv=none; b=RY6TY5TdlEezJMW5E9wtUDIEtR4Ql4gNpEkVrrTDQ33FXirV/ye3ViTvZXxofziLGNLPrFon70E3JkpFxPc5kbdbXI9gHrTdOMM1Jgeim6yjRxCfntq3auUUGuJNJaz7WqrybiwIs+zFXAu4Ntk0lHIJW1MBIHnpOfCKIobvYn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443477; c=relaxed/simple;
-	bh=FXb5Ooh1SoKLFB+GF1YDuF7hepy8ALKLUWQZf6h1mvk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tVORXoATKcRbmepcOeysLAV8v7Q1zY10UeXR7RdDKx+gzyyF7ZNZdkrCbBkfOFPMDOPWe3tCiAORuV9GEXFoEEJON3YUivCnSPHFw+HppyEkuSOSDs2AKpi6V3o0Vz+F+jC+zB8Ubgy2ZldtGR41fcZ4wMsNdMNtILo3LXUIjz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s+a/oUsk; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
+	s=arc-20240116; t=1750490235; c=relaxed/simple;
+	bh=qCNENRpPK/5E6apfanAOWQrNPEygDkh+O7IA2Km3UOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i2XYimS0zOjSM6myduw7imAORoT+o9Fvb/pzFGM0C5Icp7oNGuGKbuLn1fWqjFSBuFKdT75OSxTkeitPvhGEX3/DBvkNTWuGFTAWdW43/R78KuSTOYyZwwOlJculK0Yftysg9C3KSyMZgIQY/xW0TQViGUjN/GNEEXXiWXK1F+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7F5kWa+; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s+a/oUsk"
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2eea1c2e97so1667803a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2025 11:17:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7F5kWa+"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-607cf70b00aso4514244a12.2;
+        Sat, 21 Jun 2025 00:17:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750443475; x=1751048275; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsGE8lw3KH/D0SLaONE7VxsA+KaDyJNSSOZHiKLjPmQ=;
-        b=s+a/oUskKmcHuRT2SSVKgz62vOwzlPIDfpB2UmecpycwElDkDzMHteeJ7S/IPoihGS
-         HYsbDLMELB4M2PSQyLSY+joLpN8OlXQ5RRw9+GZGvseZr4jXVEDXt5aXgc+wDoxygoO7
-         KxZUmmCAM2exo89e2d4g1DF77yiGQw4g2ZaIS0vCiLaazsGaP/qDU9k7ajMa1NhTAcgq
-         JrDSd7/VwjfyF2zqKMWK+rLUz+hW+MvoHZkLZPlGUBg8jk2Bnj0yd4XKKUCXaTpSHgP4
-         m7e8CMSj5K0gghN0QcA1BQfqBfd+gh0VHXJPPJO0LdMIQf8XXDzhH4JOzJxgZObQ8pIH
-         1NbA==
+        d=gmail.com; s=20230601; t=1750490231; x=1751095031; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/bcaFXfQWjofieOOSzrQZuk2N3r45IQ/D1htHwwGLOY=;
+        b=M7F5kWa+u/tSy1gZv1MuXB2OUNqE58vVcnakfZNmmvUu9Syy5qnpuDNA4RB+2GDSlO
+         n9yXy1zTkGvrp5Idmu2DPkQmZk3eRN1qdBdNWKS8t/zJfcTn5WvdMn8Dov+hrhBo26AT
+         xHUAyBMcgQAdqNncIYhNILFlXCLRGzfDI58lYR7jzUYP1XTJRT9d1r3bWhFss3PPxkpe
+         wU89bP5Gg2YvvG63226thoq9EIoCX/QIwZGSYw6Ny/aBrx4j4GxHsvGawTzWzpExJO7w
+         aeuTIqyACHB4pZatNUyiXC7my9ku1a+Wjai/Ms6dsEmurwE4PWsadVYGchpucSLGyLke
+         KfpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750443475; x=1751048275;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsGE8lw3KH/D0SLaONE7VxsA+KaDyJNSSOZHiKLjPmQ=;
-        b=Cump6qC8PnYYFNJ9ywqeGjZeuLg6JOdefxkSVLPcdv2IIVXI2jVDdw/lsYiajwa+k2
-         CrEiGlnu87+EDOKbO1jVPof+RChBBJFkQtfGnSRHSUxBhYAiAFp9nFrXMB8aVKCYJ5j5
-         VB7Q03Rge0kYtNgWQ76PJRKS7eTMoJY/Ccc0maoNuPVoXhPVDW2pGtPu58Nkl3RycEAI
-         irEIYwynbm0K0TAHhxwJr3ggjYKMVUtfMQk+fproBqR6uIUjyGfSS/WP+G4JE+fV46Kl
-         b2h7sLghM5B0oPNcHA6aV4/f+V/0NMT3gHRh+7zqzWct0YpMGX1mUxH41IIRZ/2lEFib
-         +zQg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0OdnD45CiksZhbkoaPSwHotpSP4mbTpwQ9klSbbM1YVS1oKJCAr2ak6FM27OJqkRiPzz3wKYvkJYhQEyoj5HWhg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3mUXNFv1z5qUuNQRSlgfhuKb6qXgNkwN96S80ZuwItehCfmkD
-	CcxJNI2+2EL0dYD7JxDnFLhBvVkj7DOli4CLV8FVIuO+e60lqApmnEKheDVM32egf+N5+rqwoJp
-	TpPdof0qfA3wsWrok9aRAGVbzJHRJ+w==
-X-Google-Smtp-Source: AGHT+IHypcBEXCfetti6ZSKrWADvOCJp2Q3YDfRe9x9eHf0/IU91QwPfM1r/wCQjgAiUHhCtBoksoPLTGqQX3VT8HmY=
-X-Received: from pfiv28.prod.google.com ([2002:aa7:99dc:0:b0:746:2ceb:2ec0])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7f8a:b0:220:eef:e8f0 with SMTP id adf61e73a8af0-22026e479cdmr6696633637.23.1750443475053;
- Fri, 20 Jun 2025 11:17:55 -0700 (PDT)
-Date: Fri, 20 Jun 2025 11:17:09 -0700
-In-Reply-To: <20250620181719.1399856-1-willmcvicker@google.com>
+        d=1e100.net; s=20230601; t=1750490231; x=1751095031;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/bcaFXfQWjofieOOSzrQZuk2N3r45IQ/D1htHwwGLOY=;
+        b=dSU/LzATuezE/ewLoYJ/eb6XPWWgOu7DxOxd8OTpXl+jwbHuXMEbLuiSopFxGK1/Y2
+         VTVMIMTC6yQ3SdkSsOpxelECTWvRo1vU0qgTeqgHSnbN9fdZ44apt31Xjf/X5C2MWJk9
+         SW239ixL3tPoX6MEjgg2WgzL2xeGzfJaJ+Kwbo8BHVm86IBQtlm6ZoikJMgW3Sh/lwC8
+         Tu9fLd3pMl+2uc1Tv/6nZGlGZfOusVzKPwX0HGyWg/ZEPLeK1MAintngZki2ZBPZkFJi
+         Vu2WJUcTdCYGHEtfwxojdUhx3ohXbkTA7Q0kUKAMdmdFGJiWiK7bgfUwQ7IYlZH+TfZG
+         zeiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXAYALwtryshxZhl5p+qXWOEL9sKjothDFcUC7+OOr7owpGBELNcZw3WsyQ8tjVhdpd4FdPYRE5FDm+38=@vger.kernel.org, AJvYcCXG2VMpnYZIaPuxdPnIP1lb9iPC4Tz5z/JYvM+vG/AllIT4MzkBum3fcdJ8uBomfK/Zg6HMJCtl9Bo=@vger.kernel.org, AJvYcCXp5OK43wytdrQuzQVQ9ha/WuTP+tvLN4IP0f7eFiO9qLLmrBQOSlAuYTC7GFc0PSEZO/N6+p4AN8aKyAm712cGghc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAJxG66d7j8NAhFphpAd4bloKrz44PzZC+aMyTm7PDECHuVlTR
+	Pe/YHtrdUjRDhCFktKAd/7Sdhzi3cv1X6ST1idg5WDDINQyC1GHQB+WJhwNF3frRz9UioGVuJxN
+	DJKb0T8uRKV+9NnFB7F0xzSbIvlAG/l4=
+X-Gm-Gg: ASbGnctJ0vGyRUSHX+UmMS1q+Ia6kbOxtjCSj6qVf6+DMJkdRY+4UUJOG+m3yQnoH8j
+	i909ziqkiNX4DI/74WAtu7FO3ku+qs/7c9rPyszAx+qeEYHzu/Lxq6W3aB71gfaxcOmLuzczRnu
+	tJUXOnlKSca8YZuDpdWmZv9bru4P+OjFkJLj/jP7F4DA==
+X-Google-Smtp-Source: AGHT+IH66doWMpGtWOMFqbeLqscHl6eWKJT3vUmx953SEzxCv+zBCKw7VBGa8S2Rn8h7FbOcfjnLkvGiGRemhUti3i0=
+X-Received: by 2002:a17:906:30cb:b0:ad2:4da6:f58c with SMTP id
+ a640c23a62f3a-ae057bdea98mr459148666b.46.1750490231238; Sat, 21 Jun 2025
+ 00:17:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250620181719.1399856-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
-Message-ID: <20250620181719.1399856-7-willmcvicker@google.com>
-Subject: [PATCH v4 6/6] arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
-From: Will McVicker <willmcvicker@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>
-Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>, 
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	John Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+MIME-Version: 1.0
+References: <CGME20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f@eucas1p2.samsung.com>
+ <20250616163831.8138-3-linux.amoon@gmail.com> <20250618115211.2239335-1-m.majewski2@samsung.com>
+ <CANAwSgRV=JT+qdAN=M46CZdWaSZnjazdw66fQETw7HeEcLSx8A@mail.gmail.com>
+In-Reply-To: <CANAwSgRV=JT+qdAN=M46CZdWaSZnjazdw66fQETw7HeEcLSx8A@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 21 Jun 2025 12:46:53 +0530
+X-Gm-Features: Ac12FXyDzDmafHO30O7tOj_g1UTTGVYFB7ldEiK1JVaf1dtCf3kj-sESMmUqQko
+Message-ID: <CANAwSgQ=G1yJXOg1LdeEf-J56epyNiohCSdNYUvs2AHNv90Hkg@mail.gmail.com>
+Subject: Re: [RRC v1 2/3] thermal/drivers/exynos: Handle temperature threshold
+ interrupts and clear corresponding IRQs
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org, 
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org, 
+	rui.zhang@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-Since the Exynos MCT driver can be built as a module for some Arm64 SoCs
-like gs101, drop force-selecting it as a built-in driver by ARCH_EXYNOS
-and instead depend on `default y if ARCH_EXYNOS` to select it
-automatically. This allows platforms like Android to build the driver as
-a module if desired.
+Hi Mateusz,
 
-Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- arch/arm64/Kconfig.platforms | 1 -
- 1 file changed, 1 deletion(-)
+On Thu, 19 Jun 2025 at 11:15, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Hi Mateusz,
+>
+> On Wed, 18 Jun 2025 at 17:22, Mateusz Majewski <m.majewski2@samsung.com> wrote:
+> >
+> > Hello :)
+> >
+> > > +#define INTSTAT_FALL2        BIT(24)
+> > > +#define INTSTAT_FALL1        BIT(20)
+> > > +#define INTSTAT_FALL0        BIT(16)
+> > > +#define INTSTAT_RISE2        BIT(8)
+> > > +#define INTSTAT_RISE1        BIT(4)
+> > > +#define INTSTAT_RISE0        BIT(0)
+> > > +
+> > > +#define INTCLEAR_FALL2       BIT(24)
+> > > +#define INTCLEAR_FALL1       BIT(20)
+> > > +#define INTCLEAR_FALL0       BIT(16)
+> > > +#define INTCLEAR_RISE2       BIT(8)
+> > > +#define INTCLEAR_RISE1       BIT(4)
+> > > +#define INTCLEAR_RISE0       BIT(0)
+> >
+> > > +     /* Map INTSTAT bits to INTCLEAR bits */
+> > > +     if (val_irq & INTSTAT_FALL2)
+> > > +             clearirq |= INTCLEAR_FALL2;
+> > > +     else if (val_irq & INTSTAT_FALL1)
+> > > +             clearirq |= INTCLEAR_FALL1;
+> > > +     else if (val_irq & INTSTAT_FALL0)
+> > > +             clearirq |= INTCLEAR_FALL0;
+> > > +     else if (val_irq & INTSTAT_RISE2)
+> > > +             clearirq |= INTCLEAR_RISE2;
+> > > +     else if (val_irq & INTSTAT_RISE1)
+> > > +             clearirq |= INTCLEAR_RISE1;
+> > > +     else if (val_irq & INTSTAT_RISE0)
+> > > +             clearirq |= INTCLEAR_RISE0;
+> >
+> > This implies that only these 6 bits are used. Is this true for all SoCs
+> > supported by this driver? My understanding is that Exynos 5433 in particular
+> > uses bits 7:0 for rise interrupts and 23:16 for fall interrupts. When I tested
+> > this patch (both alone and the whole series) on 5433 by running some CPU load,
+> > the interrupt seemed to not fire consistently:
+> > /sys/class/thermal/cooling_device1/cur_state would never go above 1 (which is
+> > consistent with the interrupt firing once, not getting cleared and never firing
+> > again; without this patch, it consistently went up to 6) and I got a quick
+> > reboot every time.
+> >
+> Thanks for the feedback,
+>
+> As per the user manual Exynos4412
+> INTSTAT and INTCLEAR have a clear mapping with bits
+> falling 20, 16, 12 and rising 8 4 0
+>
+> whereas Exyno5422 has
+> INTSTAT and INTCLEAR have a clear mapping with bits
+> falling 24, 20, 16, and rising 8 4 0
+>
+> Yes, it could differ for all the SoCs,
+> I don't have the user manual or TRM for these SoCs
+> to configure correctly.
+>
+> I tried to configure this, referring to the comment in the driver
+>         /*
+>          * Clear the interrupts.  Please note that the documentation for
+>          * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectly
+>          * states that INTCLEAR register has a different placing of bits
+>          * responsible for FALL IRQs than INTSTAT register.  Exynos5420
+>          * and Exynos5440 documentation is correct (Exynos4210 doesn't
+>          * support FALL IRQs at all).
+>          */
+>
+> By the way, I don't see Exynos5433 and Exynos7 support
+> INTSTAT and INTCLEAR registers. We are using TMU_REG_INTPEND
+>  to read and update the same register.
+>
+>         if (data->soc == SOC_ARCH_EXYNOS5260) {
+>                 tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
+>                 tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
+>         } else if (data->soc == SOC_ARCH_EXYNOS7) {
+>                 tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
+>                 tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
+>         } else if (data->soc == SOC_ARCH_EXYNOS5433) {
+>                 tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
+>                 tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
+>         } else {
+>                 tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
+>                 tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
+>         }
+>
+I don't have Exynos  Arm64 boards to test on
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index a541bb029aa4..46825b02d099 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -109,7 +109,6 @@ config ARCH_BLAIZE
- config ARCH_EXYNOS
- 	bool "Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
--	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select PINCTRL
--- 
-2.50.0.rc2.761.g2dc52ea45b-goog
+I believe the Exynos5433 and Exynos7 also use the same
+register addresses for INTSTAT and INTCLEAR.
 
+[1] https://github.com/universal5433/android_kernel_samsung_universal5433/blob/lineage-18.1/drivers/thermal/exynos_thermal.c#L854-L892
+[2] https://github.com/enesuzun2002/android_kernel_samsung_exynos7420/blob/nx-9.0/drivers/thermal/cal_tmu7420.c#L14-L221
+
+If you have details on how INTSTAT and INTCLEAR are used
+particularly regarding the update bits, please share them.
+Specifically, I'm interested in how bits [7:0] correspond to rising edge
+interrupts and bits [23:16] to falling edge interrupts
+I feel it's the same as Exynos54222.
+
+Can you test with these changes? If you have any suggestions,
+please feel free to share them
+
+Thanks
+-Anand
