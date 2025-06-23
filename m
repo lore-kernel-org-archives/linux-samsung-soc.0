@@ -1,133 +1,109 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957FE27991E;
-	Mon, 23 Jun 2025 15:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65D01F7580;
+	Mon, 23 Jun 2025 22:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691645; cv=none; b=LnlgSVeCNqV/eP1kKBTxVbv+yO9dAWzTPo1/ImUHPVrQOHOqrblJ+3KqKvqBUT6x7E1D2gyHX5yB6V/F5m6K4TyfEiFBuZm6Q/rOh+ftfadWEhUVWZqxnc4o3umA3Hl87EmsCwvjr2kSjZtje2aXPGyawwbUZoC+tSvt13x4i7I=
+	t=1750717040; cv=none; b=MkvxzHuznNtds4fwAxayOKgNwhAopQEaSz3WMT/Y8Z6dqmavr26uTJq9ffLw/9zY3wGTeqqHY9NvBEm/7+88CzqAk0WQ+KnKvwLqgL8XZfENLeEbCxnt24Y31rbWzFtxeZGtdBjSfA2QVpOK91sQhQPT/ajaJ5hjWAg8kRFEUu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691645; c=relaxed/simple;
-	bh=45lmqAUYpUykmyRNsOjFpkel3OPLmML527QXdh0o9zU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hK+7gZKYSHAqxgdGA2MlGmdFsGm1Hm1pkro6djfcz3U6LmRLqLC6cPrrJ3OttmC5wKxxbRe+Pg9QRjcd+X8inaTq6LopXZBqx65izD+Zqqkr6sHIcUSeP45S7Y2NgqZDNdk/wvn3dV5ODfIsAyaCQraBygZxuFChAxwq7N9cdx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dk4DRySe; arc=none smtp.client-ip=217.70.183.199
+	s=arc-20240116; t=1750717040; c=relaxed/simple;
+	bh=Yb2Oac6qZK2DSoUU4vrrkQAAhRRXhu/4wRFPumLI90k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSYIsm2CdC2SRGZB3xIz+n7igvCY+JOLsI0WvaF+jY3NeAQFFR83MekfGJ5NCYCFr4EaBtdWpYKPJYj0VsQa6vWdfWKh3W/GOEzRFfNil1xmTV7JJKCusybJ761sJ44v8mAg4pkIwc5xf5ps7MxisYpurN/likVlu5HugYXb2OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hjBhVmbG; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dk4DRySe"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EC94944288;
-	Mon, 23 Jun 2025 15:13:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hjBhVmbG"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B816C4316C;
+	Mon, 23 Jun 2025 22:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750691640;
+	t=1750717034;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=45lmqAUYpUykmyRNsOjFpkel3OPLmML527QXdh0o9zU=;
-	b=Dk4DRySeiEHJkC5ucZz7LZZ5UhTo8qfaM+NNpNfIAmI8eb71jZ1iyZigWxGJIVUh/eddQP
-	8Xl1XY+V1ya18+kaQTE+VfNrEVges9y6YeLXaGu/C3rRQVwdpYLIzr+sV2HHzE/5UmgjzB
-	/+xepzhCWX1cw6Sjteg1eK+SyfTf1nG848+wARLHC34oEtB0GGeHyHyWCzEjD96U8cz4ZV
-	Q9lHqj9ZKe3ogELbhBMi//RQzmrzPpFKAf5qiAiUT/AZUHomVPjE09J5Bf3w9srIdSfWcY
-	Yt4Oua24qVH3rU576TSTUWjL+lZ5mN7oW47CVCJAgdJIvxqw3/Z3LAIlRF5uqQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Pan Chuang <panchuang@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,  Daniel Lezcano
- <daniel.lezcano@linaro.org>,  Zhang Rui <rui.zhang@intel.com>,  Lukasz
- Luba <lukasz.luba@arm.com>,  Markus Mayer <mmayer@broadcom.com>,  Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-  Florian Fainelli <florian.fainelli@broadcom.com>,  Shawn Guo
- <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
- <festevam@gmail.com>,  zhanghongchen <zhanghongchen@loongson.cn>,  Yinbo
- Zhu <zhuyinbo@loongson.cn>,  Amit Kucheria <amitk@kernel.org>,  Thara
- Gopinath <thara.gopinath@gmail.com>,  Niklas =?utf-8?Q?S=C3=B6derlund?=
- <niklas.soderlund@ragnatech.se>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>,  Heiko
- Stuebner <heiko@sntech.de>,  Bartlomiej Zolnierkiewicz
- <bzolnier@gmail.com>,  Krzysztof Kozlowski <krzk@kernel.org>,  Alim Akhtar
- <alim.akhtar@samsung.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-  Alexandre Torgue <alexandre.torgue@foss.st.com>,  Vasily Khoruzhick
- <anarsoul@gmail.com>,  Yangtao Li <tiny.windzz@gmail.com>,  Chen-Yu Tsai
- <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
- Holland <samuel@sholland.org>,  Thierry Reding <thierry.reding@gmail.com>,
-  Jonathan Hunter <jonathanh@nvidia.com>,  Kunihiko Hayashi
- <hayashi.kunihiko@socionext.com>,  Masami Hiramatsu <mhiramat@kernel.org>,
-  Thomas Gleixner <tglx@linutronix.de>,  Matthias Brugger
- <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>,  Greg KH
- <gregkh@linuxfoundation.org>,  Peter Zijlstra <peterz@infradead.org>,
-  =?utf-8?Q?N=C3=ADcolas?= F. R. A. Prado <nfraprado@collabora.com>,  Conor
- Dooley
- <conor.dooley@microchip.com>,  Julien Panis <jpanis@baylibre.com>,  Arnd
- Bergmann <arnd@arndb.de>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,  Colin Ian King <colin.i.king@gmail.com>,
-  Raphael Gallais-Pou <rgallaispou@gmail.com>,  Patrice Chotard
- <patrice.chotard@foss.st.com>,  Jonathan Cameron
- <Jonathan.Cameron@huawei.com>,  "Jiri Slaby (SUSE)"
- <jirislaby@kernel.org>,  Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>,  Andrew Morton <akpm@linux-foundation.org>,
-  Costa Shulyupin <costa.shul@redhat.com>,  Yury Norov
- <yury.norov@gmail.com>,  Cheng-Yang Chou <yphbchou0911@gmail.com>,  Caleb
- Sander Mateos <csander@purestorage.com>,  linux-pm@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  imx@lists.linux.dev,  linux-arm-msm@vger.kernel.org,
-  linux-renesas-soc@vger.kernel.org,  linux-rockchip@lists.infradead.org,
-  linux-samsung-soc@vger.kernel.org,
-  linux-stm32@st-md-mailman.stormreply.com,  linux-sunxi@lists.linux.dev,
-  linux-tegra@vger.kernel.org,  linux-mediatek@lists.infradead.org,
-  Yangtao Li <frank.li@vivo.com>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v6 01/24] genirq/devres: Add
- devm_request_threaded_irq_probe() and devm_request_irq_probe()
-In-Reply-To: <20250623123054.472216-2-panchuang@vivo.com> (Pan Chuang's
-	message of "Mon, 23 Jun 2025 20:30:34 +0800")
-References: <20250623123054.472216-1-panchuang@vivo.com>
-	<20250623123054.472216-2-panchuang@vivo.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 23 Jun 2025 17:13:54 +0200
-Message-ID: <87a55ywkwd.fsf@bootlin.com>
+	bh=/wujDbdLCxL/DpdBnoqRy5zFxIIGeoL7Sk6EHzkya0U=;
+	b=hjBhVmbGcyiU0FhamaTO4mJ8fYzx9cqq5s7T/OqiVIGwK3l9XsvlKbbCpw2j686knF3DX1
+	P6ZDaxbHqy44tYfap8QsCVkqX3NeoNMbHl3OFW5wvubSbJMLHVhe/Ayj9gWLET0IYLCq0A
+	0J6lZdsUQjOxotNQWgs9Te5pRl8yw+LcspAy39/cF+NV6YjnO8ljYxSbNuobXgIElu8UQ3
+	LcGIIZfm6lOzdIJYy0QcOwZPLG/O5gQ1MDegxr0j99s3n2ubfJV3CHZ6KZzkripG1pYycz
+	dgC171lIPK8pBJU5yL3oW4Y+QA4Uo3KW7hjpmpqwvNRvEupji28KO2Kk1RqP8g==
+Date: Tue, 24 Jun 2025 00:17:12 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+Message-ID: <175071653812.1309305.11999722555032816982.b4-ty@bootlin.com>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddujeefhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedtpdhrtghpthhtohepphgrnhgthhhurghnghesvhhivhhordgtohhmpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepmhhmrgihv
- ghrsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddukedulecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfffieeiffeffedvgedtjedvhfdvheeftddutdetfeefvdelheeiveekgeeutddunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrn
+ hgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrnhgrfihrohgtkhhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheptgiftddtrdgthhhoihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrlhhimhdrrghkhhhtrghrsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Pan,
+On Wed, 09 Apr 2025 21:37:21 +0100, André Draszik wrote:
+> This series adds initial support for the Samsung S2MPG10 PMIC using the
+> MFD framework. This is a PMIC for mobile applications and is used on
+> the Google Pixel 6 and 6 Pro (oriole / raven).
+> 
+> *** dependency note ***
+> 
+> To compile, this depends on the Samsung ACPM driver in Linux next with
+> the following additional patches:
+> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
+> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+> 
+> [...]
 
-On 23/06/2025 at 20:30:34 +08, Pan Chuang <panchuang@vivo.com> wrote:
+Applied, thanks!
 
-> From: Yangtao Li <frank.li@vivo.com>
->
-> There are more than 700 calls to devm_request_threaded_irq method and
-> more than 1000 calls to devm_request_irq method. Most drivers only
-> request one interrupt resource, and these error messages are basically
-> the same. If error messages are printed everywhere, more than 2000 lines
-> of code can be saved by removing the msg in the driver.
+[25/32] rtc: s5m: cache device type during probe
+        https://git.kernel.org/abelloni/c/002cc0ee90e6
+[26/32] rtc: s5m: prepare for external regmap
+        https://git.kernel.org/abelloni/c/a57743bf009e
+[27/32] rtc: s5m: add support for S2MPG10 RTC
+        https://git.kernel.org/abelloni/c/e64180846e7e
+[28/32] rtc: s5m: fix a typo: peding -> pending
+        https://git.kernel.org/abelloni/c/972a3b47f6e1
+[29/32] rtc: s5m: switch to devm_device_init_wakeup
+        https://git.kernel.org/abelloni/c/1dd609587414
+[30/32] rtc: s5m: replace regmap_update_bits with regmap_clear/set_bits
+        https://git.kernel.org/abelloni/c/f5adb1fa04d0
+[31/32] rtc: s5m: replace open-coded read/modify/write registers with regmap helpers
+        https://git.kernel.org/abelloni/c/b1248da00836
 
-[...]
+Best regards,
 
-> So add devm_request_threaded_irq_probe() and devm_request_irq_probe(),
-> which ensure that all error handling branches print error information.
-> In this way, when this function fails, the upper-layer functions can
-> directly return an error code without missing debugging information.
-> Otherwise, the error message will be printed redundantly or missing.
-
-While I understand the goal and adhere to it, may I challenge the use of
-a yet another intermediate function that 99% of the users will anyway
-use? Wouldn't it be more straightforward to just add the error message
-in the existing functions directly? If we really want an alternative, it
-may be created and called in the few places where a dev_err_probe()
-might not be relevant.
-
-Thanks,
-Miqu=C3=A8l
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
