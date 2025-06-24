@@ -1,216 +1,133 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A19279DC8;
-	Tue, 24 Jun 2025 10:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C9129A9FA
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 13:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761607; cv=none; b=jBdUwDUNri/EOqrm5kjsjiAoJcepYN1RPBHtUPlcI+utZrX4vHGKC8JrfQu7eLk2nZeBez4VVwFHyE1Nb0oKhCptOrJFV/PR/KC60JE9i6+vB0CalgZaD4of8bzBqCRDb8zBo00+kmDjhzkKw8OBYqaEg5PQL6t1y7DxZOHmoug=
+	t=1750771166; cv=none; b=Vf1LkIFyDzsJSSwyC2N3QkGRxCDY4z7lbzy9FH0o+QiEP18tVamf+tShVP5f4fCWDDrfbeSm9BwkAf80FuRABFugcAJCL3lU9V/cwHtGHfVNBd7r0ryea0ZjNYarIgTYpNv1vw0i7qgQMEDJ54eDtI5ZMv9k/rinPOEvrDfC99E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761607; c=relaxed/simple;
-	bh=f8XsI5O1CkfkYFDeROjVLKjcyy9Tl6y4vwZNlHiFsyg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RASDgoa9P94TdrpI1W91tg257cW/56rp4OpUy1zGOud0g3K4yQHxX0S4NnDqFOXPTzt99DWWTo4mV97PZ3foJ8ibEnxBZ//EsgrT5YL4ywINwv7OWiwl33cu2UxteQ3f9FGjaOS1iko2dDIx3jJQEq8DLUa4qCf2dMEoKJLqbXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v1IFWcFr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3q5D0uT4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1750771166; c=relaxed/simple;
+	bh=3DcdRVGEsb+ACq/FtQo5TjN05SRc5Vjjh0GYhgt/kns=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JKG0bAF2vwwIs7lmiyOqmZEYEkqmho8JiDf884TM0d66y0PFnaIoKWNJS7H1S47sJ1/JBTAOHU/YmnaHKM4pcKFQVAwJ9De2UrQk5WtHlPmFnsRPuBr65KrIhhXbaWjeQGpRM2/Mqq3q3CFhfXMIddQL0RFV0BNIC4F/2CJvMTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RK79lqMZ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v1IFWcFr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3q5D0uT4"
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750761604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PmKtYLO9DDYaj9Me5RnB2od40m2nfSC9/3iVyLRTgPc=;
-	b=v1IFWcFrbObYtAZ/RT0Kppv2+R1ysQJUiAOhyBDBdBD7GRafKVhWIJlEp4M1/MAbW7r3Ca
-	o8ExT+FJNwE1MLi5ZHj7mixRk7DPF7y0JESsK+b/BXPx0H36L3GknAlPGKQ80sDZSd8kX8
-	c7tk3xzYOhkh9+PB8l0sOAqBJbObspXXOYombtNTWorYQc/dnlFuIdXCWjoZNydWHsEEfw
-	BxAB1cxurgSdDrVSKVwi91WSkw72/7/zhYIxKx2zfbMR8WyyBWVel7X/khQj5qlBzANr+W
-	waHxljQ3WDmwbOBvDQ6fj/PD/LbBRXtKBrQTzgU9iEnxcn0NlO2wYO/ak4OZtw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750761604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PmKtYLO9DDYaj9Me5RnB2od40m2nfSC9/3iVyLRTgPc=;
-	b=3q5D0uT4oSfP2VhfCp/l4dQktoBuSpc64H38sBuCNB8bE8D63GfRugryCyLDa3R+2guT87
-	o5CUyJOaQUdlplCw==
-To: Pan Chuang <panchuang@vivo.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
- <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Markus Mayer <mmayer@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- zhanghongchen <zhanghongchen@loongson.cn>, Yinbo Zhu
- <zhuyinbo@loongson.cn>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
- <thara.gopinath@gmail.com>, Niklas =?utf-8?Q?S=C3=B6derlund?=
- <niklas.soderlund@ragnatech.se>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Heiko
- Stuebner <heiko@sntech.de>, Bartlomiej Zolnierkiewicz
- <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Vasily Khoruzhick
- <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Kunihiko Hayashi
- <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Greg KH
- <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>,
- =?utf-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
- Conor Dooley
- <conor.dooley@microchip.com>, Julien Panis <jpanis@baylibre.com>, Arnd
- Bergmann <arnd@arndb.de>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,
- Colin Ian King <colin.i.king@gmail.com>, Raphael Gallais-Pou
- <rgallaispou@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, "Jiri Slaby (SUSE)"
- <jirislaby@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, Costa Shulyupin
- <costa.shul@redhat.com>, Yury Norov <yury.norov@gmail.com>, Cheng-Yang
- Chou <yphbchou0911@gmail.com>, Caleb Sander Mateos
- <csander@purestorage.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: Yangtao Li <frank.li@vivo.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Jonathan Cameron
- <Jonathan.Cameron@Huawei.com>, Pan Chuang <panchuang@vivo.com>
-Subject: Re: [PATCH v6 01/24] genirq/devres: Add
- devm_request_threaded_irq_probe() and devm_request_irq_probe()
-In-Reply-To: <20250623123054.472216-2-panchuang@vivo.com>
-References: <20250623123054.472216-1-panchuang@vivo.com>
- <20250623123054.472216-2-panchuang@vivo.com>
-Date: Tue, 24 Jun 2025 10:13:10 +0200
-Message-ID: <87h605o8vd.ffs@tglx>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RK79lqMZ"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450ccda1a6eso45691635e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 06:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750771163; x=1751375963; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tg0mRooHGRn5NykMyH/KV9HEFTTYvVA7Ojb23IHtmak=;
+        b=RK79lqMZ7RudwR1jHlCxgOjsQ5gzgPUhX6EFtQsbG5a+DNeX9Brb6onbTzvnBL5n38
+         DMhr1iFfkCMn34VG5DOFe41YVmx6LTjryGlwGeFvezCkyy/jnD/j+pG0W92VSap8OFI2
+         EIFSKJduQgzxTe5B8U7aPJlZN9XANXC/U0FFOoNDZFeNdFvRGwGETXMrplH7kH4ZBsKI
+         jhXu+2Pf+xkroX/8mdZrt4lnoT/k+ER4cjlTo/06hVMhF2fDlD7vlxnbCFAjCiSYkY7o
+         QjALxcNAkJzcL6ofZJgjtUJiBVd76UXLWm4VKdRA5TADjwvP59+O6jKPR8aMSWXlqi0V
+         besg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750771163; x=1751375963;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tg0mRooHGRn5NykMyH/KV9HEFTTYvVA7Ojb23IHtmak=;
+        b=loz3lB8yMG6gKozYCHeDVcCP2HVpD6JuHar+s9Ql3idvighJ7MgTo4xVZBZzeR4kvi
+         34cXc+Jg+xQgtIXwk0opxhakrStslrBnZtlGyTrNRPTYLEkkVnUPFUe5KVBarQ8hPaff
+         1dwVSv8+P5TkvrxTiJ5suI1jxeP7RFtTqclo9rFCc9XpD0df2bijjnRvC5Aui+8QgCVP
+         /lNGK3t0zcpQK0DpG0nJD2Zfg10/IKrw5kZSDen3EvKilbKwZDFj6x9fWw8qTW8hOXFf
+         VBa0BJVslIpbZ/c34nuGoTKfzp6bgk7Si9ke6Nst1E906veDX2xrWptGtK5p9u+IxAbB
+         kY8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVarmVZLKzpwZfAI/PIf2rRvrjshTlf1bpAqQG3XfpgyTpCkpLKC2YZxZQknK9D0k9ZaoQOu6YH5zQitFDAsT5QVQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YymdJcv6VN7QamgBa7jbiohWgMPMGbQjZueBu7oPt0mWrYIQXDb
+	jPr6teCnwoeMRLCWsGUj3p38/xVt6440yuesR9OKXAtBwKdsvZ2jg7nWsNx1fZYN8MA=
+X-Gm-Gg: ASbGnctEEGekRSF9gnAeoXEZu5tlvBAcdYeq8nzdGbd/CFIqqrNZ+k0gGyg/PZn75pv
+	S3fPF9YEmfwOMzcFaAUyf5u7yt4yirQaJrvFMZKdDfg6wsie0P8flMQzpHD6qMhtH87kk+Pw3tK
+	YkCsHrMeisWyUokLW3FW6fS0+M9SrelLKyhy9PwHDPOMumxhFC6f5vOJ3PiMm8Cn9WUo7KgkVvS
+	/HBWsy1w+Muwa1bm/4NBLanq7OzODxs/OaFQtCJ51J27un01cvySq/F/Vj05lPmMva5fzRYbo+z
+	Vp/uvPULZeiYB6n+hcyTbNhETFrxxP+SzEiWZWg1iqMMdYbKNMbwHSY=
+X-Google-Smtp-Source: AGHT+IFqVsUMNkskN7j0iU8FIkymNyWUVdq66py+zAf7HndvvTiiHB1vrcYgqEVFpM7yRp7iDODuOA==
+X-Received: by 2002:a05:6000:41c5:b0:3a0:a0d1:1131 with SMTP id ffacd0b85a97d-3a6d12c4483mr13480483f8f.7.1750771163464;
+        Tue, 24 Jun 2025 06:19:23 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:34d2:109c:3293:19e9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646fd74asm141302195e9.22.2025.06.24.06.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 06:19:22 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 24 Jun 2025 15:19:12 +0200
+Subject: [PATCH RFT 1/6] gpio: mmio: drop the big-endian platform device
+ variant
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250624-gpio-mmio-pdata-v1-1-a58c72eb556a@linaro.org>
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
+ Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, 
+ Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+ patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=738;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=z3/zra3kN9nXZTz56dedVkj+298LVjWZ5HQnjkpNGc0=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoWqXXVTocp2LRJnqJmPhyZdXYqUYB9W1Pi4/38
+ +4ka8H0AFeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFql1wAKCRARpy6gFHHX
+ cpcbEACbyOXoPzeB9I06bs0F+81Fkjgw+J37W2LT86j5na56S1eXe78vgeUNxpRU1vCPdAPW9BT
+ DcEs6ZeYowO9isB+rIP52gU9KIjpkZMce+6zcXuco/dLq/Z8nkcELA6ME2iqRAQaSpXCUg8K1Wu
+ 3DlGq8jLj1OKsMJm5P9YCfmrSKpfKeFfU0cmjjaJWaQBkuJA1lGDcmWxXI5Kt7Rk5awRVCkOIjR
+ TE5aK2FjtBwxWzedg6h6Dv9aPLQkuOTAnS+F9hCwXxJwyK8O5G0PEiXm0TQuXNtntFBJtcNp2b1
+ JUJNTO7pl7QJDvUZEfakkWGXM/SMdPBtWLm1LUMssPxlYSTNOJcoM4OKkEa8cyPFMPNhFEh08W/
+ yoQUHKJAlg50Z86zhePj0yw8bnWHksDY4EYxW7ZWpkS8spjGmA1Fa/hEThi1kEhAdrEK3uP1adA
+ jSZOy79jX/rLGhwtIh74KGqeAk7OdaUVqiGnyRDZGsUzwavHtuu5VCnzJJS2tckOMIM0el6TFwT
+ or/WaFvU9MZ8udeIcduADx1B1w5v/bhz0pYU9sQjJgnffWWWVFK7gIGeBJTBLyfbPKJf64SQQhy
+ 8KrILygqD0RYRRH9oRjFhdFUWP2nZvMfid/q28RjPJkOuEDBQjag/WQhOh9x6XaR3dMaoNkonb5
+ yRV1tuWz6xJ3kBg==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Mon, Jun 23 2025 at 20:30, Pan Chuang wrote:
-> +/**
-> + * devm_request_threaded_irq_probe - request irq for a managed device with error msg (recommended in probe)
-> + * @dev:	Device to request interrupt for
-> + * @irq:	Interrupt line to allocate
-> + * @handler:	Function to be called when the IRQ occurs
-> + * @thread_fn:	Function to be called in a threaded interrupt context. NULL
-> + *		for devices which handle everything in @handler
-> + * @irqflags:	Interrupt type flags
-> + * @devname:	An ascii name for the claiming device, dev_name(dev) if NULL
-> + * @dev_id:	A cookie passed back to the handler function
-> + * @info:	Optional additional error log
-> + *
-> + * This is a variant of the devm_request_threaded_irq function.
-> + * It will print an error message by default when the request fails,
-> + * and the consumer can add a special error msg.
-> + *
-> + * Except for the extra @info argument, this function takes the
-> + * same arguments and performs the same function as
-> + * devm_request_threaded_irq(). IRQs requested with this function will be
-> + * automatically freed on driver detach.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I really have to ask why you need the extra info argument. It's not
-providing any really value.
+There are no more users of the "basic-mmio-gpio-be" platform device ID
+in the kernel. We can safely drop it.
 
-What's important when the interrupt request fails?
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-mmio.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-    1) The device, which is identifiable by @devname and/or dev_name(@dev)
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index 08466e123818e958755fe6e7baf5a4e8b8d863c1..ffe6b6f6cc9b1e9341e1c42cf8fee917e0147bf3 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -831,9 +831,6 @@ static const struct platform_device_id bgpio_id_table[] = {
+ 	{
+ 		.name		= "basic-mmio-gpio",
+ 		.driver_data	= 0,
+-	}, {
+-		.name		= "basic-mmio-gpio-be",
+-		.driver_data	= BGPIOF_BIG_ENDIAN,
+ 	},
+ 	{ }
+ };
 
-    2) The interrupt number
+-- 
+2.48.1
 
-    3) The error code
-
-If you want to be more expressive then you can also print out the
-handler function symbols, which makes it even more useful to map back
-into the affected driver.
-
-As you cited correctly I said back then:
-
-  "So there is certainly an argument to be made that this particular
-   function should print a well formatted and informative error
-   message."
-
-This particular function is: devm_request_threaded_irq().
-
-IOW, I did not ask you should go an create a new one, right?
-
-The extra @info argument is just proliferating the nonsensical
-information which driver developers put into the output. I just looked
-through a couple of your thermal patches (hint, I had to chase them
-manually because you failed to thread them properly). While most of them
-provide NULL, the two adding 'alarm' are really not providing any useful
-information.
-
-The point is, that the information is aimed at developers and not to be
-helpful for Joe User to identify/fix a problem. If the driver
-developer/maintainer is not able to track back the information (name,
-number, error code) to the driver in question, then the added "foo" info
-is not going to make him any smarter.
-
-If that happens, then being able to map it back to the driver is only 1%
-of the problem analysis, simply because you need to decode the
-underlying problem (DT, vector exhaustion, memory exhaustion ....) to be
-able to address it.
-
-So just make devm_request.*irq() emit a uniform and informative message
-on fail and you can go and remove all the homebrewn useless error prints
-from the drivers.
-
-It does not matter at all if there are duplicated error messages for a
-release or two until all drivers have been cleaned up. This is not the
-common case and only rarely triggered. So what?
-
-> +int devm_request_threaded_irq_probe(struct device *dev, unsigned int irq,
-> +				    irq_handler_t handler, irq_handler_t thread_fn,
-> +				    unsigned long irqflags, const char *devname,
-> +				    void *dev_id, const char *info)
-> +{
-> +	int rc;
-> +
-> +	rc = devm_request_threaded_irq(dev, irq, handler, NULL, irqflags, devname, dev_id);
-
-This is just wrong as you fail to hand in thread_fn.
-
-Q: How was this code ever tested?
-A: Not at all.
-
-> Could you please consider merging the entire series into your branch? 
-
-You're seriously asking that for something which is so obviously broken?
-
-> +	if (rc) {
-> +		return dev_err_probe(dev, rc, "Failed to request %sinterrupt %u %s %s\n",
-> +				     thread_fn ? "threaded " : "", irq, devname ? : dev_name(dev),
-> +				     info ? : "");
-
-This is wrong too because devm_request_threaded_irq() allows you to hand
-in both a hard interrupt and a threaded handler and either one of them
-can be NULL.
-
-So what you want to add in devm_request_threaded_irq() is something like
-this:
-
-	if (rc < 0) {
-		return dev_err_probe(dev, rc, "request_irq(%u) %pS %pS %s\n",
-                        	     handler, thread_fn, devname ? : "");
-        }
-
-dev_err_probe() already prefixes the caller string with 'error ', so
-there is no need for a lenghty 'failed to request ....' novel.
-
-Thanks,
-
-        tglx
