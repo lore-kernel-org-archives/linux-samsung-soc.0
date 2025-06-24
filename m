@@ -1,425 +1,239 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11020077.outbound.protection.outlook.com [52.101.84.77])
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC69626CE1C;
-	Tue, 24 Jun 2025 15:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429F0307482;
+	Tue, 24 Jun 2025 16:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750779960; cv=fail; b=hUU5PMwzdQW6knmUMLKHdwXGbY4CXTnMNsptBnx+DFeEi8ZxeP72gSnGrLhov4ndirFl6FUfbJtbUNZ+tugcNQa8RSliDVLhRLYywh760LCA0VADWsbATtwmsFYl7Je70q5TL4k0RiE/B331LHPhHeg3qBZps5Ts4s4u8nEKzH4=
+	t=1750782831; cv=fail; b=R4uyOFjfuw8cUrwqZtUq8NnDHywkwQKtpkMlfN4XjdMxr8gVkKKq7MrKqzD7GPC9ZtQ0O1lz/1Tec7vdG70ncuimp+uch5TAZBRuJCZI7SC3GBkFfCmFzjFn35R+DwJfvOnUB3qYaXxK/CdSyX+gTA8Oy/oZJbDoZ6KOnKVgih4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750779960; c=relaxed/simple;
-	bh=c6jc7WEjLzifUqVTVDc5nzAZptRIvuSch01KO31SWvQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Nbw5jxy4ZJaZiUXPGcsfVnWDNGJh1FtbU/H3/tncU5s6/3oCsrmtnyDN4e9PudXA6g+Il9j85yLnQH9a4aNCd1ItlFVI92hLvIZviDtkLr594Ym/JUJXq0R4BXbOS9OMzbFopBZp5fK9k5eaYBmHsdVrxw/m5WE69/IiyTvL1vw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=L3hnoaOH; arc=fail smtp.client-ip=52.101.84.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
+	s=arc-20240116; t=1750782831; c=relaxed/simple;
+	bh=Lq02ZTJ1ZA9FOQwUAVKziSs/2ifJsCgbOI85FewAar4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KAq8nlp6RJo3lHjp+h7fv/FFgasau4mBHcam/yLwbP+TCLLq5GlCRvep75NOsXUJ6YlI/8CV/tW62P5xcwJBy6yH7xH3ZJjT3dB/NqwMn5wx64w9cuFzOF/3s57anSV0z9oe4URrhzA+fpWoPciZqVZaM0BlMct2mAz4tj3cWL4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Pm16jtSP; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=A2E1j3Dy; arc=fail smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="L3hnoaOH"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Pm16jtSP";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="A2E1j3Dy"
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OFkC2d004868;
+	Tue, 24 Jun 2025 11:33:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=d3xUs7/QH36EumsRUg
+	tEAnuG3e/09qoWa1IDz0zFh38=; b=Pm16jtSPltgWA/T8ICT5b4aHLbwxC5r0Mg
+	+U6Fg3+cjY0myiuOcxatYw5Ur+4dck6nAB+LjQTq4UxOD1usBokKGF7eh9VQBEN2
+	+vInb+DpCZZT1YHKCPRWCX9xYSD6i5/2ArGfihU7YC4RyIDn0On5xNEjTjwRFGUU
+	XpEFGgfn8JRzTnerq3ygQ/VA7swUVhJw83wC/NKnwaavyQwDtOUdDlJOvX2ZB5aD
+	jv+6+98qEIpqg3vDTZCBqgHEK8gCONhbQH8bAhOBrTp3WfRMwFcLUMWtS3UfH6sw
+	vRur6IVpPKKmiSSLPSzb7/0QRhmRvxvYyD35ZyvKMBTBN1CtmfGg==
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2115.outbound.protection.outlook.com [40.107.94.115])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 47e5tyuhxf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 11:33:16 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ygKXR9A/YneLqpnsVF1VS6WFS2P9j4HlUV7hpyi2n45w59Awpzkh4L/q5O0tDHYRdkrZuDs+yb/5cBViYrjfUTZpP1XwVOMGAiNW6QKKJrMkx34XXuAlbbq2MdxFOuKwrRHFQ/x4idcau0SMTMa+runN8Ss/0+BRIEW98kgRnmptasZfnFXTyI7MtYXvHqenPpyIge2H7CqhS03OiZ2lBshki8lXcIe16skHiWy7BjMavu18xdnNFLXTlD2g+KH4SP/WHFzYoovIC4BtVyEe9AKJEBHZsYjwiXdzVurVpG3A6I3+1QHPJzgKttx1yrzVljwlqk77ya367NU/Dw9RTQ==
+ b=NfoUosT2ZumJ01PICf4S0MuoH/1NMxPKTE1q6G5RDHf/6JuGzNAbmxYkWjnPYrl5k7IjdcntiJhuAXkqxRGLLdbGtpZCkCJUGNDvIbhpq2uTglH6Lgdfy9ls0BdJA1lsycX1NpoiQS5n2r7OByRrP/eZjk7qQLf81uN5y+qn0IGKBzp1N+rnKk30DpYXC5wguWbrUx04LklIiRRgfS6aDdpj7lfFEmG8TYzi4Z9s+QmOjsWN5RB+Gj5J6HBe1S2IH/NR0JGddh5iCTgsHtC07LAWKGBkTcvtlzwF04xmVDUdkXEeE5tbSfEy1vaiDDQuJZPVtiRP6885+7fQlbLyqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WoEsdSjzEZiEYLqPr7ngIF1UXlqYq6vibJs7zdtoOcE=;
- b=oLO8tmxn/2ElCfdgWQ8QKt1xLW7MSxGPhFJQs86HKH1DPZqj7BWhG05Tx5wDikaijsnma5fJLeiOpLGKnJX+O8KsPb62RtXoKbUwi5GVZDOvmY4quQ8Oqjekv7zA17ChE1Tvdp7CVCb14xkzYD/jpxBHJAc2yAVSpYdd6VmJ5DeRDhJSGvOGLMoUJNPPrN1sJZJDsa3vAHh7aa6r9QRMfL8k8wR1YRSqkx8XRaRnlLIJvjcmk7ER8uPkoDAlWoo+1mvKFYoIiG0n3wyfbCXsUZ9I1dkr3WrFcS+cS49QNJUo1fcFClpmxzTyH6hN+OCESVlPDc/DRiT9jCnqYMtnxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
+ bh=d3xUs7/QH36EumsRUgtEAnuG3e/09qoWa1IDz0zFh38=;
+ b=JJG4p/Op25MO3RFcE7kzdHnBE/V/wEtY5+wyCFsgWhccaZVC45dor0RwChLMpoWB1vtengTBO2KC7O8q+x2Ji5VH3Kz3DfnnqQQ7HDB+T6D6c2nM1rroziF+jtFkFTvXz9/6hAPWMwjX4z3ntvM4Sz25wPH5vav6r92b680P6rtXInbIMcLNwWTh1rjHZAazK9KUdWKUc2LyFXWmm+0A8JFy07Cp9ZXoc/yMejhdtotF8ib1RupYPSrrJxDfgGumAcvMm3GgmoHF4oDJ+xXraWYaHGsJMZ8MkAElzbIsd452hzatAo7wh7nAhoABu/Y5WusqfSiiuWcdsYvrKzHhBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=arm.com smtp.mailfrom=opensource.cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WoEsdSjzEZiEYLqPr7ngIF1UXlqYq6vibJs7zdtoOcE=;
- b=L3hnoaOHQsfR3KZD18PeszSN+ANcybA3zDoPIvj+//WltUyRLfF+DGcDSHxZG95p0SQfq1MkINx03WuajIJwMJlfcUC2jILVfUV09Y1o1SzxZgBy1mofB/FmessmgZuGAOD/+wcE6H4q1O1267MbJvxGjGEj8/wvAXsHeTO0Z9fx8uxrx9o530wjKvhzFK9AsYn7SbYK9GyUcFaz7k9DBByNSxZkqb6ep6n2Eq3zY9seMhxEd5TKFfGemuiHWuhNzbZAlIV2fEg7t9sgYFEyR5tGt/1+R0rhG6IHGFFNTewto02pxeKYz+KVIWBllzoYwOggR+SeieRRu6QUWxGNPg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by VI1PR03MB9988.eurprd03.prod.outlook.com (2603:10a6:800:1c6::16) with
+ bh=d3xUs7/QH36EumsRUgtEAnuG3e/09qoWa1IDz0zFh38=;
+ b=A2E1j3DyJASQCPDucv2DFtSQjsaGsLU4/fUPN+RkA9+1t2ZzpdkuZaZzlRQ7kYE7w9Ro2jgEBNoF4ooXLb+5K5JOMBtHn6njvZbmcH9ArHqlJ4MZ3YCWNaupTHQ7v5cIHsrZYkf2yF5Xieppq6dHl15zd+IJcu0Hl3ifJlFa8nw=
+Received: from BL1PR13CA0029.namprd13.prod.outlook.com (2603:10b6:208:256::34)
+ by IA1PR19MB8977.namprd19.prod.outlook.com (2603:10b6:208:592::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Tue, 24 Jun
- 2025 15:45:52 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%4]) with mapi id 15.20.8835.027; Tue, 24 Jun 2025
- 15:45:52 +0000
-Message-ID: <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be>
-Date: Tue, 24 Jun 2025 17:46:53 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
- <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
- <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ZR2P278CA0077.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:65::6) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.18; Tue, 24 Jun
+ 2025 16:33:06 +0000
+Received: from BL6PEPF00020E60.namprd04.prod.outlook.com
+ (2603:10b6:208:256:cafe::d6) by BL1PR13CA0029.outlook.office365.com
+ (2603:10b6:208:256::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.16 via Frontend Transport; Tue,
+ 24 Jun 2025 16:33:05 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ BL6PEPF00020E60.mail.protection.outlook.com (10.167.249.21) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.14
+ via Frontend Transport; Tue, 24 Jun 2025 16:33:04 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id E688F406541;
+	Tue, 24 Jun 2025 16:33:03 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id CB0C982024A;
+	Tue, 24 Jun 2025 16:33:03 +0000 (UTC)
+Date: Tue, 24 Jun 2025 17:33:01 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, broonie@kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-samsung-soc@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH RFT 5/6] ARM: s3c: crag6410: use generic device
+ properties for gpio-mmio
+Message-ID: <aFrTPd1qCPDjtZuo@opensource.cirrus.com>
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+ <20250624-gpio-mmio-pdata-v1-5-a58c72eb556a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-5-a58c72eb556a@linaro.org>
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|VI1PR03MB9988:EE_
-X-MS-Office365-Filtering-Correlation-Id: b107f508-706a-4a23-dcde-08ddb33632d8
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E60:EE_|IA1PR19MB8977:EE_
+X-MS-Office365-Filtering-Correlation-Id: 785992ec-5e4a-45a0-41a9-08ddb33ccb85
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|10070799003|376014|1800799024;
+	BCL:0;ARA:13230040|61400799027|376014|7416014|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RHFZTlBPVnk3Z1d3ZDdWYzlKemJmWGYzNWdkZjU1Unl5QTBlSm9sWWxpendK?=
- =?utf-8?B?czV5a3QzZzc3aDk2MHFVSjJ0QlhoZ2ZSU21TREQ0MDB6cjJCa0dVb0ErTzJF?=
- =?utf-8?B?NDY0ajR0RktJNkVxWlJENy9YMGJmK05KZjQ5VHlUejNZQ1cxQXRpbUtjbEFa?=
- =?utf-8?B?SC9UeWM5d1RsRkZsMGp5OWF4SitQYnNkb3paRjMvcjRwcVlxcVI1RDgrVExM?=
- =?utf-8?B?MmF1b3RzN1E0bHlqVGhSWUtCVERhekFIUk9BL2hub0tJVDJkN3NLQWtGWWs1?=
- =?utf-8?B?UzF4dWlMSHNRRVRidGloWFAvbnJKRHR4QjJSc1FzSnUyVlJ4Umc0YUFlK2Vk?=
- =?utf-8?B?NTJvZi9Ua0pCUzg3MWZhZEd2bkNGV05YZG94bzRYeEx4dmdhM3NHalR6bG5y?=
- =?utf-8?B?RkppbzJGQzRFWU4wcW9rdTZtY25ST3loRmtGMVViTERjV3pnR2xTNXRwUHVD?=
- =?utf-8?B?R3BQbDJnY3drU05lK2JHYkdKSnlmZFVRYTdXZnZDVUZHbXhxeTNqTXRGdFlX?=
- =?utf-8?B?TVBFcVp3TTVIYlZxYTY1VkRBZUl3TkhFNnEzdWJTdUEzZTkybnBiaVg2M1Fn?=
- =?utf-8?B?OHFBb2N5MXRwaWc5YUdPQW1mQnpWR244TXJlM1hQN2drQ0hkSTM2ZjlHYnE5?=
- =?utf-8?B?Rnd3bUlUN1hNdVhRLzJ1U3JZZDdwQXE2SG5lVnAzYzhKb1ZHb2xQWXBlRTIw?=
- =?utf-8?B?VHUrNDVaT05WelNXdHA5ekZEbjNId0tzT1hJNEUrTUF2T1BXbDFsbnNWdVBx?=
- =?utf-8?B?MmhMWG1idHRtUGxaNklWMU9IcjJHaFJnWDRFVEV0bnMzTG9TV0hGWDV2bnBx?=
- =?utf-8?B?eUE0VDFPN2JncmpkMUpGaVNLSUNzZGo3R0lvalVjVzllUTN3QXE2MnAyUDFj?=
- =?utf-8?B?UDRKRFdoVXhoY2ZpRVJFOHMvcUVadmRMdTJlajFYU3pxc2pXMDlpKzhHRm1M?=
- =?utf-8?B?K2ZqRmtuczZROW5JWFRIdVBiSWpzbVNlQjFpS3pEd2Z0SXo1aUJ3STNkNDNw?=
- =?utf-8?B?WnpQcytQeGllVU5jUzVEcytETVp5M0NubGFuQnVOdCtuWnFTVWZQNHhad2tV?=
- =?utf-8?B?TlJ4c1UyZytnaWNlNzEyRXFuYmh6YWxxaDAyT0RzVGtxNU9UR3NNNUo1N2No?=
- =?utf-8?B?TytYbldBUUZDa1oyUmd1dzFvY2NvV0NQRnBwS0lqenQxNlB3TTJLTTZCd1Y0?=
- =?utf-8?B?bWUwU1NZYlRhUGh4eEpTUHJEb3YycFJtUTRSTmk2NzljUGxOcFhmc3RMY0pT?=
- =?utf-8?B?L3A4akdXWlZzNVo4VVY1VTBjUGJyTXZmb2pTc1pGeXBSTjA2NG5hVUhqQ1d2?=
- =?utf-8?B?Mk9EbElhUXNQc25qYlN6ck5lR0dtNzk4NS9jYXd4bkJ2eUlpS3g4WktmaVpk?=
- =?utf-8?B?by9XbDZIcUNWWC91dEp3VDJiZHNMSENOMUg4czhWcEhac2lBQlBzSGVCRDJu?=
- =?utf-8?B?aFcwOWNrM0JoQW43bzdXNTZOYWRsTHo0S21QTkNpcmsvU0U2WTJtUnErV3Uv?=
- =?utf-8?B?UCtPK3RsYjV6Wm9vSEUreGpLZ0xSYXg0NGwvS0JTMjFYM1QvMEZHa3dBNmVu?=
- =?utf-8?B?UXZTdERMZnZhMVRYVnhlNDdRdHNSNjliY0VDOUxxaGV5b0RORDZWU3Yrejd5?=
- =?utf-8?B?VFFyYmFGRmw4M2hMdU1kOEZwbFFuRGtWSklzRFdFNU9xSjlVSm1MbDhIMmJF?=
- =?utf-8?B?VG54R01KTmVCR00vazNVQVBkQUFvZWZDQ1hUV20rR0I4U05xOVA0RUtUcEhJ?=
- =?utf-8?B?WkNrTndzNGM2MUFWSVhFQnFrM1U1TmZOUTVEZ2RHK2NlS2JTYUFrbTNDNUxQ?=
- =?utf-8?Q?qApWvCue0/h3yqQEJeAwPTEAtnsXd81RmLIjo=3D?=
+	=?us-ascii?Q?K3BX2UA6HZYXBf8vgybyzMD/bezGcn/s5JPLbvbLgjbA4llOeW8+S2xuogEM?=
+ =?us-ascii?Q?tbWr/S6+R0fu7Ozu1FZjr/QqDNvdOe1QVmsJS/TKlJGDew+AySBqu9TAj0Db?=
+ =?us-ascii?Q?ubgOFTT6nQuxU9q7UrojmXRjNexa7VEko/OLxUny8KmHAKFs/BfwiN6Grjz8?=
+ =?us-ascii?Q?YO6G217ugZUJoV+2NBMPrTQ/G5HlpUMKzBhCaOgaS9odxnz2pPfsFW6QzIQb?=
+ =?us-ascii?Q?gF1rfrqVmCErpAc3442BTIOAzwmAih3zQh2LvvDK7g18vwJwblKi6HIl/4Rk?=
+ =?us-ascii?Q?sj24eLNxdTpLQlN2w/Hu8CzkiNOdxTBt8GNidxgbSJJudX9quxwA2T/rQdrg?=
+ =?us-ascii?Q?0+mdp6L+CYva7puqfJQQprmf95cL/8eA2hqohGkggIBG69/U7yzabdXLUdWM?=
+ =?us-ascii?Q?LeCuLqUvmbUkIIpkxbPhr8OAlX1jf7eBBE1Xj1Jsbarie1ksycWdgG5NLSBh?=
+ =?us-ascii?Q?XwiKRt0phNvtFbkXdR7beUuHld0zf9as+Xw0VE2uxocThZNVmDJLTP196q9X?=
+ =?us-ascii?Q?4oFTHsGfhNP3RMwDN9YsUEouDXzwiJfZIOVfH6oLjFN5DfY2Iakv824yxX4+?=
+ =?us-ascii?Q?FgS56G3m1YuhsWqc+qe//1VwPLjlf1jx8Xo5rAOp84MqvO35dXjYvo9nMJjw?=
+ =?us-ascii?Q?8gQxP94WOldDZuzQW4EMMz14ztegXyVFUExy8VoAcOhUoSZwbCt7kXN2pNrN?=
+ =?us-ascii?Q?Usn/MNkU7VhSZlAe8b/Ntd1Tk5jmJhK5Go3UE5ptd8ZRW/xMHnyOqYsZqkOf?=
+ =?us-ascii?Q?cQjo98H+HkarPrWRqNsHcHNUH0bmY7sSWkvZN4SaU2PpjAUgh/Zxut8gKfAi?=
+ =?us-ascii?Q?PBqAnlDZgDNUj0JiUJatqpfiFsFjdRXp81Zo4pAhlvag9R/H1Nx5KtV3UcIK?=
+ =?us-ascii?Q?aHWS5r84zV+iJcTBHxvZEnrBFleaz1T5FHHogFGp7OTYu330w3/rkaYxN+as?=
+ =?us-ascii?Q?tng1TcJpIFeVMB+tb+Bm8+IMKONDQYVMNne4Kkahk3E9NtvO5irqtUGMsQDq?=
+ =?us-ascii?Q?YT8NVUFoM0NZBmCg9avwY45UY6S9gBydORoxXX7GxJpvIOXGCLMN7NHM3ea+?=
+ =?us-ascii?Q?kJ5t0ipruLu79og72bWD4aOe+53V6OsXkVMPnalLrPXc284Rb344VIgCphs6?=
+ =?us-ascii?Q?kepqjZBGHWSHAHryTtJT800zRrXTXpkHuO+lauN4XDgXxYfPl4qpY+Itoq9g?=
+ =?us-ascii?Q?n+IZPrawBfEFLIUM5rpVrQbFzVlRN4dMWFUvu72EvjEO5CTMOEUqIDcnogJw?=
+ =?us-ascii?Q?GxbSv5cAFfdp40zXeYIAswKL3OdHxmhvJE8T1Y7Lqys0p75jSDD02kHrgFk5?=
+ =?us-ascii?Q?hOVij4GyLXYaCcQ4e9yGgCgpPnAhegOozzpsvWppWGsKtOiPDmScrVfSRJ3K?=
+ =?us-ascii?Q?XR3IHb24gz5qEPsHP/DKhpim7lXNw9MKEaDGlrEnJAl3bqf54qTo62UvygZj?=
+ =?us-ascii?Q?kOBumMk6kw1kuoiYxlWj7ZNPRSK4dqovvsEqueZ1tnbZCjfrvqBDk/wdtzXF?=
+ =?us-ascii?Q?V9Yxa71MuXswgND9BS6DNjX1csE0S1iCoIfY?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(10070799003)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?djZvRHpBdFliSzh0Mk5ZWVM1NUszNHZaZlFnRlJpc1U0b294bWpyd25XNHo3?=
- =?utf-8?B?THNjWjRaYmZLQmJ1T3dVaUtSTHgycUFvM0JIdW9sUzJpK0tlNnY2cmUxY0dk?=
- =?utf-8?B?Sm83cHhORHNqbXUwUUNVQ2dXNUE4Z2wvRk5Qck5sYm1pUSsrdjlrYUVQZWNB?=
- =?utf-8?B?WWtiakdoQzlJT3cwZ05pSDZpb2E2R0tvbmFhNDJkQmdQLzZIUHRLcGE2ZDUx?=
- =?utf-8?B?U1BSb0hHbmRKNTBNQnhIS1huNldqaXdGZCtESjlmcjBMOC9SeWRJZHI1K1Zt?=
- =?utf-8?B?T3VQWFVObUxkS25DMEdTU3g1dzlWcnNhQmczT1ZxNzlRYUVLYUJmb2orVjNv?=
- =?utf-8?B?Q3BoMFRyeUY2TWVVcFJnVk5FS3AvcFhtNWRIbnV5M0hDV1g3SEl0TE9xbnVY?=
- =?utf-8?B?NHlkSlBYbGhlU2VMUUgwUTBodFpRN0FYOUJONHBCbEh1U2U3bFBEMmRRaWVo?=
- =?utf-8?B?bmpRRVlmSEpEcEh2em5uSnkxcDRoTzJDemZ3TWM5T3VIRG93cHlSVi9VTmVY?=
- =?utf-8?B?R3dSa21mWFljK3ZyckdkWHkrZ0RocHVYTm5pc3RTOElMVXRSNEJ1anBEemRJ?=
- =?utf-8?B?TFk4VTMzZjFQT1F4clVWOHNGMDlud0Z3cEhoWTAzbHpoYkFNZmFTWnpDUFR3?=
- =?utf-8?B?S2o0emZ3S2RndXZpVFJZcUk0eTRrYlVRU3NwOG53eWM5aUZpZVFIYjZ0RnNE?=
- =?utf-8?B?Y0VTL0VJUzVpdEFDZy9aOEYzbFJ4bVhzbzV1QmJSR0E3M0lFZlJmREtwNFJV?=
- =?utf-8?B?M1JyZndqU1Q1MXNpM0JtaDQ1NGFnRCs0N2NnTnJyUzZHN1FTZllDY2ZKRk1s?=
- =?utf-8?B?MG9QODYwUUs4bUpwVUFFRVhKN2tVY0VjbVBMMm1OOE5pWFhRWHRkd04wZm4y?=
- =?utf-8?B?UUQ0L0RSaWlqbER6NFhPcEZCaEFzNHZaQmdnTnR5UTVBakpBUlFobFBnd1F0?=
- =?utf-8?B?bE1DNFJVenpOSWxPMDArbEVreUxab2hJUzJETFJZZ1pkcFRTVTdxbUlKZFR2?=
- =?utf-8?B?TC9hMlcwQnJQMHcveGdkY3p3ZG9jUjc2VkxIL3BXd3JtblFmendPTzFyR1Yr?=
- =?utf-8?B?aGFtbTNHNUtjT2pPWGMwYTlLc21QQW1MYi8rZ0ZEV2tteUhHdzJUNk5mZHBi?=
- =?utf-8?B?eU9Wc0w3aXBCNlEwbGRmVVc0V1J2bzBjVmVTUTQ2NlA0bmlWOHBQUFAwZXlB?=
- =?utf-8?B?Rjhha1BQQkE1NFdWbTE1YktxcnpxTWIyV1M0a2hibU1GMTk1SmEzUm4xcW5q?=
- =?utf-8?B?NTVMZnNkNmFGY1piZlYzc0dCZlhQSmxyNm01L3dDWXlJMlR3ckZWVVM1NGZl?=
- =?utf-8?B?a2VUSjZXZTd0dGh5eEl4ZUIzTHdMemZybndmYzFpbDlnNklva1N1Q0hUbFFF?=
- =?utf-8?B?TGdSUUc4UXhDZ0duNkcxSFVxQ2lzVWE1RDFlRGgvVlRrK0dzM2F5VWpucnVL?=
- =?utf-8?B?bmx1LzA2QVlTdVFpeDN5UUNWOEVic25NS2RReUdncXhCK05seWFKclgwNlhW?=
- =?utf-8?B?eXhtZFdGOXdHVWZqNnN5cXBHYUNoKzIxdyt3M2xsTmlnNVdLVWtOOWYremY5?=
- =?utf-8?B?OGk5TjlMVzhhMUIxa3I2UU9JMGNvOTd1WVowcGtQdW5za1ZKaDVsYldZRG9Q?=
- =?utf-8?B?NnN6NDhobDFZSmRZM2d4NnRtM01BdXVHakZuc3VOYUJQaXVyVCs0b0YvZERi?=
- =?utf-8?B?YTJZelZreVJ1T013ZVN0SlJuUEI4R1c5VG5LSnpEaVhBQXlmR2d2SFFEQ3lM?=
- =?utf-8?B?djRiV0prRk1rQ0RkbHBnTk0wRlphMGhnTVVKUFpNZFh3UWhhM1B2WjZvQnNv?=
- =?utf-8?B?d2V2UFpTZm5RajhmQjExRDNXOXAyQlY3TjRKKzk4NEM3QW9wemlFWmVrQkNj?=
- =?utf-8?B?OWVUZVRZZlVNQnFqU0c5SythSVlHZXNEVEVjTEdPWjloS2Rja2w0alNiV3dK?=
- =?utf-8?B?Zk13cXdqd3owaW1raVdMbHVVVlMySWk0UlZqalRtZ2IxVmpTNG5nSGlva3Nu?=
- =?utf-8?B?UTYvL1VMRGJJZ2I2SGwzRHBzZHU5WXBqZEtSSzVNQk83MHpya2tyQW54bmVs?=
- =?utf-8?B?ZEMwWG0wRHg4OUFTSmRBU20rdjh4alV1aFlia3A0SHE5dW5ibG45akZLaU9U?=
- =?utf-8?B?cTJRWTZsVndHdlR0THE3RHFNMXZTQXM4OTA5aHdCMG45ZlNNMG83cGxOM3o5?=
- =?utf-8?B?T0Z5QVh4WDFmRnV1Q0N3azZ0OVA0bkxnN1c3RGpQTVFxbWNCSUlkVS9Db0M4?=
- =?utf-8?B?RVZCNG5YNU1CajlJUGh2TkJGeWZBPT0=?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: b107f508-706a-4a23-dcde-08ddb33632d8
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 15:45:52.0942
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(61400799027)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 16:33:04.8321
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yG3BeSlcDIZnOjRvl7WcmK0Gnwm5iarW2YAiNPyK5Zl37Wd9m7hcPCBmH3f3N5fQARCZEYOcqIwmymcLo7N+yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR03MB9988
+X-MS-Exchange-CrossTenant-Network-Message-Id: 785992ec-5e4a-45a0-41a9-08ddb33ccb85
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E60.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR19MB8977
+X-Proofpoint-GUID: ZQt-f-3nz8359pso-uLaADZgX12VTExO
+X-Proofpoint-ORIG-GUID: ZQt-f-3nz8359pso-uLaADZgX12VTExO
+X-Authority-Analysis: v=2.4 cv=P9E6hjAu c=1 sm=1 tr=0 ts=685ad34c cx=c_pps a=hUWYbYsE//NbN4hV8CcKzg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=KKAkSRfTAAAA:8 a=w1d2syhTAAAA:8 a=mHJfey2NssgqMvmkAUYA:9 a=CjuIK1q_8ugA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDEzOCBTYWx0ZWRfX9I7CoQVwd/PO sB8KgU4hvgDyB6KsZwhuekZUgRNJaUAps0dEIyU4C/lOx1ADvwfiU0Cy7qItqaW/5JtSlqeV8dA swau5i9YCpCF2RtWy3tjIm5oei73RSl8dp3LDVEf7WcY7RMV5F4u+x3HUjKb0hSZJHTZm8DJcDf
+ fY/7BmvGogeDknETIbWVmRDpl8zkkHaTVD6NciuNPc5NnOeaMgv7snUJDwmHtoQH+YNqzxRfyJY sbgsw1qLX8Gl/1QLrHS+t/bGBJbsVkptp6C2A7Zn6o43JNzXZyQuhAn5sS3Wwis78qI8VEg7QJx kn0+fSLot/9fKwS9aVEijpzB6/68fpwoB3lpnTGzlplOP1nl2iyzKeSs8JuezrDMiBDCvdKUUbZ
+ UZvTtciZNEkMJMis/4/EhGw7QwXpdWeM6arIt1IYmm1db4EKhWPeZawpUOEEDuj4ns7qMveh
+X-Proofpoint-Spam-Reason: safe
 
+On Tue, Jun 24, 2025 at 03:19:16PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> The GPIO device in crag6410 is registered with struct bgpio_pdata passed
+> as platform_data to the gpio-mmio driver. We want to remove the
+> bgpio_pdata from the kernel and the gpio-mmio driver is now also able to
+> get the relevant values from the software node. Set up device properties
+> and switch to using platform_device_info to register the device as
+> platform_add_devices() doesn't allow us to pass device properties to the
+> driver model.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
++ Broonie, as I think he might still use Cragganmore for testing.
 
-On 6/6/25 1:40 PM, Peter Griffin wrote:
-> Hi Thomas,
-> 
-> Thanks for your patch and working to get fuel gauge functional on
-> Pixel 6! I've tried to do quite an in-depth review comparing with the
-> downstream driver.
-Hi Peter,
+But from my side I think it looks fine to me.
 
-Thank you very much for the in-depth review!
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-> On Fri, 23 May 2025 at 13:52, Thomas Antoine via B4 Relay
-> <devnull+t.antoine.uclouvain.be@kernel.org> wrote:
->>
->> From: Thomas Antoine <t.antoine@uclouvain.be>
->>
->> The interface of the Maxim MAX77759 fuel gauge has a lot of common with the
->> Maxim MAX1720x. A major difference is the lack of non-volatile memory
->> slave address. No slave is available at address 0xb of the i2c bus, which
->> is coherent with the following driver from google: line 5836 disables
->> non-volatile memory for m5 gauge.
->>
->> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
->>
->> Other differences include the lack of V_BATT register to read the battery
->> level. The voltage must instead be read from V_CELL, the lowest voltage of
->> all cells. The mask to identify the chip is different. The computation of
->> the charge must also be changed to take into account TASKPERIOD, which
->> can add a factor 2 to the result.
->>
->> Add support for the MAX77759 by taking into account all of those
->> differences based on chip type.
->>
->> Do not advertise temp probes using the non-volatile memory as those are
->> not available.
->>
->> The regmap was proposed by André Draszik in
->>
->> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org/
-> 
-> I think it would be worth noting in the commit message this is basic
-> initial support for the M5 gauge in MAX77759, and things like loading
-> & saving the m5 model aren't implemented yet.
-> 
-> That's important as some values such as the REPSOC register value used
-> for POWER_SUPPLY_PROP_CAPACITY show the result after all processing
-> including ModelGauge mixing etc, so these values won't be as accurate
-> as downstream.
+Thanks,
+Charles
 
-I will add that to the next version.
-
->>[...]
->> +static const enum power_supply_property max77759_battery_props[] = {
->> +       POWER_SUPPLY_PROP_PRESENT,
+>  arch/arm/mach-s3c/mach-crag6410.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
 > 
-> I checked the register values match downstream - this looks correct
+> diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
+> index e5df2cb51ab27896d9dd80571f421e959db1fd1e..028169c7debf325ab6f51475d3595b92b1307189 100644
+> --- a/arch/arm/mach-s3c/mach-crag6410.c
+> +++ b/arch/arm/mach-s3c/mach-crag6410.c
+> @@ -252,14 +252,17 @@ static struct resource crag6410_mmgpio_resource[] = {
+>  	[0] = DEFINE_RES_MEM_NAMED(S3C64XX_PA_XM0CSN4, 1, "dat"),
+>  };
+>  
+> -static struct platform_device crag6410_mmgpio = {
+> +static const struct property_entry crag6410_mmgpio_props[] = {
+> +	PROPERTY_ENTRY_U32("gpio-mmio,base", MMGPIO_GPIO_BASE),
+> +	{ }
+> +};
+> +
+> +static struct platform_device_info crag6410_mmgpio_devinfo = {
+>  	.name		= "basic-mmio-gpio",
+>  	.id		= -1,
+> -	.resource	= crag6410_mmgpio_resource,
+> -	.num_resources	= ARRAY_SIZE(crag6410_mmgpio_resource),
+> -	.dev.platform_data = &(struct bgpio_pdata) {
+> -		.base	= MMGPIO_GPIO_BASE,
+> -	},
+> +	.res		= crag6410_mmgpio_resource,
+> +	.num_res	= ARRAY_SIZE(crag6410_mmgpio_resource),
+> +	.properties	= crag6410_mmgpio_props,
+>  };
+>  
+>  static struct platform_device speyside_device = {
+> @@ -373,7 +376,6 @@ static struct platform_device *crag6410_devices[] __initdata = {
+>  	&crag6410_gpio_keydev,
+>  	&crag6410_dm9k_device,
+>  	&s3c64xx_device_spi0,
+> -	&crag6410_mmgpio,
+>  	&crag6410_lcd_powerdev,
+>  	&crag6410_backlight_device,
+>  	&speyside_device,
+> @@ -871,6 +873,7 @@ static void __init crag6410_machine_init(void)
+>  
+>  	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
+>  	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
+> +	platform_device_register_full(&crag6410_mmgpio_devinfo);
+>  
+>  	gpio_led_register_device(-1, &gpio_leds_pdata);
+>  
 > 
->> +       POWER_SUPPLY_PROP_CAPACITY,
+> -- 
+> 2.48.1
 > 
-> I checked the register offset matchs downstream. The value reported
-> varies a bit versus downstream. As mentioned above that is likely due
-> to the REPSOC register reporting after mixing with the m5 model which
-> is not loaded currently. Also the application specific values and cell
-> characterization information used by the model isn't configured
-> currently (see link below in _TEMP property below for the initial fuel
-> gauge params used by downstream.
->
-
-I have dumped the model written to my phone by a userdebug stock android.
-If you think it is necessary, I can implement model loading where the
-model is passed in the devicetree for next version.
-
->> +       POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> 
-> I checked the register offset matchs downstream. Values reported look sensible.
-> 
->> +       POWER_SUPPLY_PROP_CHARGE_FULL,
-> 
-> Downstream has a slightly different implementation than upstream for
-> this property. See here
-> https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c#2244
->
-
-Indeed, the main difference seems to be to use FULLCAPNOM instead of
-FULLCAP. I will check out to see if both differ in value.
-
- 
->> +       POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-> 
-> I checked the register offset value is correct. However this is
-> reporting 3000000 and downstream reports 4524000. I checked and it's
-> just converting the register reset value of DESIGNCAP which is 0xbb8.
-> 
-> This is listed as a "application specific" value, so it maybe we just
-> need to write the correct initial value to DESIGNCAP (see TEMP section
-> below)
-> 
-
-The value  3000000 is the default value which will be set after a hardware
-reset. I was able to extract the init sequence from a stock android.
-It indeed writes the DESIGNCAP value. Here is a summary of the registers
-written to upon a hardware reset. When (DTS) is written next to it,
-it means that the value is exactly the same as given by the table in
-maxim,cos-a1-2k at the link
-https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviole-5.10-android15/arch/arm64/boot/dts/google/gs101-oriole-battery-data.dtsi
-
-  "0x05 0x0000" #REPCAP
-  "0x2a 0x0839" #RELAXCFG (DTS)
-  "0x60 0x0080" #COMMAND UNLOCK_CFG
-  "0x48 0x5722" #VFSOC0 (Value read from reg 0xff)
-  "0x28 0x260e" #LEARNCFG (DTS)
-  "0x1d 0x4217" #CONFIG (DTS)
-  "0xbb 0x0090" #CONFIG2 (DTS)
-  "0x13 0x5f00" #FULLSOCTHR (DTS)
-  "0x35 0x08e8" #FULLCAPREP
-  "0x18 0x08d6" #DESIGNCAP (DTS)
-  "0x46 0x0c80" #DPACC
-  "0x45 0x0094" #DQACC
-  "0x00 0x0002" #STATUS
-  "0x23 0x0905" #FULLCAPNOM
-  "0x3a 0xa561" #VEMPTY (DTS)
-  "0x12 0x2f80" #QRTABLE0 (DTS)
-  "0x22 0x1400" #QRTABLE1 (DTS)
-  "0x32 0x0680" #QRTABLE2 (DTS)
-  "0x42 0x0580" #QRTABLE3 (DTS)
-  "0x38 0x03bc" #RCOMP0
-  "0x39 0x0c02" #TCOMPO
-  "0x3c 0x2d00" #TASKPERIOD (DTS)
-  "0x1e 0x05a0" #ICHGTERM (DTS)
-  "0x2c 0xed51" #TGAIN (DTS)
-  "0x2d 0x1eba" #TOFF (DTS)
-  "0x2b 0x3870" #MISCCFG (DTS)
-  "0x04 0x0000" #ATRATE (DTS)
-  "0xb6 0x06c3" #CV_MIXCAP (value = 75% of FULLCAPNOM)
-  "0xb7 0x0600" #CV_HALFTIME
-  "0x49 0x2241" #CONVGCFG (DTS)
-  "0x60 0x0000" #COMMAND LOCK_CFG
-  "0xb9 0x0014" #CURVE (DTS)
-  "0x29 0xc623" #FILTERCFG (DTS)
-  "0x2e 0x0400" #CGAIN (hard coded)
-  "0xbb 0x00b0" #CONFIG2 (DTS | 0x0020)
-  "0x02 0x0780" #TALRTTH
-  "0x00 0x0000" #STATUS
-  "0x17 0x9320" #CYCLES
-
-As can be seen, most values come directly from the devicetree but some
-are not present in there or differ from the value given in the devicetree.
-
-Without a similar init, charge and temperature will be non-functional
-other values will most likely be wrong.
-The fuel gauge stays powered through reboot so it doesn't reset even
-when switching from android to linux, meaning that without any hardware
-crash (e.g. empty batterry), the chip will look perfectly initialized.
-A hardware reset of the fuel gauge can be forced by writing to
-/proc/sysrq-trigger or by writing 0xf to 0x60.
-
-I am unsure about what to do about this initalization, especially for values
-which slightly differ from the devicetree. I think for next version, I
-will have the same parameters be passed in the devicetree like android.
-(except maybe IAvgEmpty which seems to be unused in the downsteam driver?)
-
->> +       POWER_SUPPLY_PROP_CHARGE_AVG,
-> 
-> This property isn't reported downstream. The value is changing and not
-> just the reset value. I noticed REPSOC is an output of the ModelGauge
-> algorithm so it is likely not to be completely accurate.
-> 
->> +       POWER_SUPPLY_PROP_TEMP,
-> 
-> I checked the register offset value is correct. However the
-> temperature is always being reported as the register reset value of
-> 220. This is for obvious reasons quite an important one to report
-> correctly.
-> 
-> I started debugging this a bit, and it is caused by an incorrectly
-> configured CONFIG (0x1D) register. In particular the TEX[8] bit is 1
-> on reset in this register which means temperature measurements are
-> written from the host AP. When this bit is set to 0, measurements on
-> the AIN pin are converted to a temperature value and stored in the
-> Temperature register (I then saw values of 360 and the value
-> changing).
-> 
-> See here for the bits in that CONFIG register
-> https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max_m5_reg.h#403
-> 
-> In downstream all these initial register settings are taken from DT
-> here  https://android.googlesource.com/kernel/google-modules/raviole-device/+/refs/heads/android14-gs-pixel-6.1/arch/arm64/boot/dts/google/gs101-fake-battery-data.dtsi#27
-> 
-> For temperature when TEX=0, TGAIN, TOFF and TCURVE registers should
-> also be configured to adjust the temperature measurement.
-> 
-> I think it would likely be worth initialising all the fuel gauge
-> registers referenced in maxim,fg-params as that includes some of the
-> application specific values for DESIGNCAP, also some of the cell
-> characterization information, and hopefully we will get more accurate
-> values from the fuel gauge generally.
->
-
-See previous comment.
-
->> +       POWER_SUPPLY_PROP_CURRENT_NOW,
-> 
-> I checked the register offset matches downstream. Values reported look
-> reasonable.
-> 
->> +       POWER_SUPPLY_PROP_CURRENT_AVG,
-> 
-> I checked the register offset matches downstream. Values reported look
-> reasonable.
-> 
->> +       POWER_SUPPLY_PROP_MODEL_NAME,
-> 
-> This property isn't reported downstream.
-
-Is this a problem?
-
->> [...]
->>  /*
->>   * Current and temperature is signed values, so unsigned regs
->>   * value must be converted to signed type
->> @@ -390,16 +507,36 @@ static int max1720x_battery_get_property(struct power_supply *psy,
->>                 val->intval = max172xx_percent_to_ps(reg_val);
->>                 break;
->>         case POWER_SUPPLY_PROP_VOLTAGE_NOW:
->> -               ret = regmap_read(info->regmap, MAX172XX_BATT, &reg_val);
->> -               val->intval = max172xx_voltage_to_ps(reg_val);
->> +               if (info->id == MAX1720X_ID) {
->> +                       ret = regmap_read(info->regmap, MAX172XX_BATT, &reg_val);
->> +                       val->intval = max172xx_voltage_to_ps(reg_val);
-> 
-> I think MAX1720X using MAX172XX_BATT register is likely a bug as the
-> downstream driver uses MAX172XX_VCELL for that variant  see here
-> https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max1720x.h#304
->
-
-Based on the comments from Sebastian Reichel, it seems that it is
-downstream which is wrong:
-https://lore.kernel.org/all/4cahu6dog7ly4ww6xyjmjigjfxs4m55mrnym2bjmzskscfvk34@guazy6wxbzfh/
-
-> Having said that, if we do need to cope with differing register
-> offsets for the different fuel gauge variants it would be nicer to
-> abstract them in a way similar to the downstream driver. See here
-> https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max_m5.c#1235
-> I think that would be more scalable in supporting multiple variants in
-> one driver. Otherwise we will have an explosion of if(id==blah) else
-> if (id==blah) in the driver.
->
-> kind regards,
-> 
-> Peter
-
-
-I completely agree about the need for abstraction if we want to keep both
-chips in the same driver. I will try to implement that for next version.
-Best regards,
-Thomas
