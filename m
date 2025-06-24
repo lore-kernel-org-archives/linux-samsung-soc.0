@@ -1,72 +1,71 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3514B2E88B6
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 19:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1BD2E764C
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 19:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750794245; cv=none; b=Je+6Cf57jxJ3Zpmm+14R1CtHyZfwRGkJEm+9pO8j4COohAeVBmRWON61ZdxtaluXfehdOZkrONwpLljxQc9Yo0DefDY/QLGIFIGY7kY+CgegXT1niQFkhcIfhXV5IWgDmSfj6du+d4MFjlbAnJCH/+vd6w6+j6mznC3jWozIpx8=
+	t=1750794325; cv=none; b=U7ncFpDKYJs17Kj57/2BMftkVjmolmM9t6Ia8HTA2YlKUHng8R45O5kep/0xEAHXtxdMXrTUI8pF86GvK1ATTFbR56dmIBrFnA6ad33Z3Tiqxa/TBoKarXniPS4Klr8fc1B1ui5+4TI65nZNoxMKFhXjBVGQMy+DMM6UJMza3jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750794245; c=relaxed/simple;
-	bh=mEEqXQPzSi/2DYZkyERnStSQgx8nwqj2N53hxm8wTV8=;
+	s=arc-20240116; t=1750794325; c=relaxed/simple;
+	bh=30oeBRC9xhWE/gLU7A7qEMlCfCO9Q3lAAEFktP0zyns=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gRUw/2B0S8jo1B/sVarvXmxRJQYigmgKVzG2fCPwhTKKlIATlbMnOxPZ4zXz8wkv7XGOXIfhFfqvSZ+EoWJNaBoHjfIU1czhpwPD8gxJVSuHb/NHDteoUbrlvYuR7EvYW2yPiWEFhnP/B7yK7LCaMLL8ExGsDjnfOuMBg6dgj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YuweBf/D; arc=none smtp.client-ip=209.85.208.175
+	 To:Cc:Content-Type; b=cCnDUUKRNQ8cK+9NdwaGXINN0mR4Iq0BXMkoJBJoBNunJEGCJ7GRhbjQLykK9hhui6mvOfh22uV7WqLNvw7+VTreySwazMmgFSQwFGpmfJW3SO7F9HU6QzeE40eWMMRzO2pn/OhbseDKkgikQ1QeeOmKTBuZ4rkuIqhnu0g+Wpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hP/jpYyw; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuweBf/D"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b43846e8cso7812411fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 12:44:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hP/jpYyw"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553dceb345eso6387789e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 12:45:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750794241; x=1751399041; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750794320; x=1751399120; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mEEqXQPzSi/2DYZkyERnStSQgx8nwqj2N53hxm8wTV8=;
-        b=YuweBf/Dx6SZV/ES4ka0J24b0HGZJ6DKvelBic6v7vtEMuXQYaq7y7u8fsIdzd53Ug
-         T/izPE21Rs6qf2tq2ef9l32nn0rshjyM12/1vAQggoOJJNZ+5wT/XSzDBfIGyU45+pia
-         cYKgK6nMTDq0Omn85/YCoHk2NHXo9ucAb/YO1ZbukPV5STuI5bhPdPmENeK1rLamBTpU
-         Lxq+9DTSuLoIkURW1yLjC8gwIkTVtGsvZDCKcFYHVXC8rnHKsHN4/g1sN+0kkFLLWwe3
-         0LHCplcJ5T9Sktq0SRwZpWO48uR+08HPj/Uah0eoRSDuRFQB3t9jRBa4iYSnuhXlQyVn
-         apyg==
+        bh=30oeBRC9xhWE/gLU7A7qEMlCfCO9Q3lAAEFktP0zyns=;
+        b=hP/jpYywfPh1JFB9YkQ1vVGg/+/Jg0mkwd74myvKZZ5kOqxrZlk74X8dd5v4JAWT+W
+         +TYXXGddhgNvRRrlHEZfCtiWpzzVohLCJYSdrQv43nca7M7Y8hlHjkdIsEXKVEnNig9S
+         g3Qxdegcxt2ZpMlqYqxX6wK6qsdDWi4sY8yYnjp9176ycdv/YCb/9ADGmM4Tv0ztjVoh
+         eHxZm8FjnMw6nV8tUq0Wft+aCAM4N6QnenxX45+qPmgEJMwpEBuy9tkfduQyaNCz91dB
+         BsOiOK9Nj1kxneUmoh+SGxn/EIivLF3v5Uqd0X7jJHYLmY4agFo6qcEyzO1G2SX93Uon
+         Yk4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750794241; x=1751399041;
+        d=1e100.net; s=20230601; t=1750794320; x=1751399120;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mEEqXQPzSi/2DYZkyERnStSQgx8nwqj2N53hxm8wTV8=;
-        b=Cc28GYBhhCyILq7LYCD0swq7nS/fKyvzAkRMoXK4BHhh9ngCbv6s4iRCaLAYS5Tnus
-         eyhKMDPD4C6xSHvDMvqv73c93c5232yXAKov15WbP0naZqb/MJik+ofIP8QbrW2Oxpqy
-         TmeBbRb53MSb6dytGqLvWL+yjZxJ8AiarJJyhouZ94a15SqOyWsCJbxZZ3xwaz0bS/ND
-         Zr757o2VjsdKDmcNHTZ9gDhmFPYJDdv9HMY4vEmUhlGaHAvv5hGHLoxUqtAhiuFvJSsk
-         dgcPYi3Hpj4Ogl1MD63ejHNLrRheFma8ZWGEERtO8yqUEiE29/t54qIWcS9OvAwooos4
-         uZbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKT5F1fAylnr4kUD3vorsFStVt/88ZaetdLJMyH2dMVkQ3pzteWju0G2rfm9WAL+8onI2e3fPhf6veMp77zzd5tA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YykWr7uxu4bfrUfNVzu/yokShTtaA0XDpVDPksROEaVOXPuy1S2
-	+58eOltDHqBm3eeR1oeJlrBkzAdqC7fL0rVvDZhCf6nBgQaNwm8I5QcbpvPWPtJDv+PsL4s0cQP
-	DBUb3bMCy5v75W6eYqpaeU/suvXAFXfyRDFgYRnUUzg==
-X-Gm-Gg: ASbGnctyxb8080PJkfWloL4KND16fBjOkXnQA8DpEqGsKmHMRC3IV+JSiuXLVgKcSpE
-	ZKfbF2bk6PkPkhkQEFq8sT4XIEq/dzARaz/Jib/wBZCM+ltiDbfFJzaBT7xs8LeXh4K3FOTHlov
-	S65nKVphMhm9X3o69dBH8i/VUc8mj4dL55MhAsHOoZ8lM=
-X-Google-Smtp-Source: AGHT+IF2ZsZmunuKbQXBbvrJ/CF+mo6d+N7b7ivEICTBxI/GH/HmsLM4r9Hm61QzUCqDuwsN/lGUxeELXR1RoBAx8E4=
-X-Received: by 2002:a2e:9e4c:0:b0:32b:7cdb:aa4d with SMTP id
- 38308e7fff4ca-32cc657b90dmr64541fa.31.1750794241285; Tue, 24 Jun 2025
- 12:44:01 -0700 (PDT)
+        bh=30oeBRC9xhWE/gLU7A7qEMlCfCO9Q3lAAEFktP0zyns=;
+        b=Vx1yJXKtLOtE7Ce/z7G7WdaG8thahaFHgjkgyhx07Oihn3L2z+wJNLyPdgcSWk2hvz
+         L85xJlyOFfvPMLrDhieC9/4udfdsoO70VZSXsiNN630Vq2tI06ZnBquN6NZ5N54cnqLL
+         aY/lyJHGikNT3ZzYn4nguxiTuFOffLKulAi5ozQlxL1+kfG+A9e8+s707g1jbsQLHTZk
+         rBxoVeO0dYDOglDMvZBp259mvAB0rcjBok6rW+NltgLsGHOU3iR7QXJVnJjsvfIOvWnO
+         BmmfZJWg9lnKjvSW6FzJDIb324f38eAdiUhyuS6tM0slJ7qnETLd1WMdGsA+Ojx1H9fX
+         VK5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhsbiWaGuD1Ml2zHWME5JFbS/EGI0RUeMGZiV30Cnx0YVYX2di2qDQgtJrfQkgZqj7OsAmaJHDYY7rdQrOBcj3xQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFdLZk/g9O9ubLtNQfEeYdUMlfM9QllYgeoS3q7qG4fqSizd4B
+	q2r7UMh2rhkTp723TCtyOwl0He9LEeBLoQ8nQ5mbempR5BDY3WEkHK9I4JFrqQvUeMTkL8MIXnJ
+	U0xYxAIoVZhGpX8c8+YXSY4qKVHs7ek4ig7bnzIebwA==
+X-Gm-Gg: ASbGncv2tzktsFylkyTBaQx3vvoWj1mglbKDK5ZLwkxQEOWtysxNHnuxVKbPdp8Xnol
+	13t1y+A06cz6msv1jXIRj2G0jNYJcFviIi8iCsvVoEryNQR6ciFbV/4MaoL+u0DU5LjZAqXDEYb
+	3jPSqrrNWlRF/ZwS1+/Dbf+tj/qsuGoA6CS09s67g7etQ=
+X-Google-Smtp-Source: AGHT+IGHrdlGkQUWphFDOu9KYoSs8Q372bw5fsoYgco33pNU9fbGTgKUqdcWmtZRyS8Ikc4JU9SHkbRiDX4irW201y0=
+X-Received: by 2002:a05:6512:1396:b0:553:2bf7:77be with SMTP id
+ 2adb3069b0e04-554fdd0ba1dmr50743e87.22.1750794320312; Tue, 24 Jun 2025
+ 12:45:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org> <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org>
-In-Reply-To: <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org>
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org> <20250624-gpio-mmio-pdata-v1-3-a58c72eb556a@linaro.org>
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-3-a58c72eb556a@linaro.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 24 Jun 2025 21:43:50 +0200
-X-Gm-Features: AX0GCFvZTjr80iDIOZKB_55ymASKXhThtYvBCFl997kaJ5_-KuT-0OBBGsj3psE
-Message-ID: <CACRpkdavsQJTfiwn-F+ML5MK6ADtr-31bBxLA4gV7MTAYR0YGQ@mail.gmail.com>
-Subject: Re: [PATCH RFT 2/6] gpio: mmio: get chip label and GPIO base from
- device properties
+Date: Tue, 24 Jun 2025 21:45:09 +0200
+X-Gm-Features: AX0GCFu6Td3LW-_JOyLEYO7GYkA80dSGig80su6HVwjgXpS6hbnfvwIR-aklY7E
+Message-ID: <CACRpkdahd=5cdjL4Je4_PqFmV8dkSuuuRLxdPB0n0-gyFKin4w@mail.gmail.com>
+Subject: Re: [PATCH RFT 3/6] mfd: vexpress-sysreg: set-up software nodes for gpio-mmio
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Lee Jones <lee@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
 	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
@@ -85,23 +84,13 @@ On Tue, Jun 24, 2025 at 3:19=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
 
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> Ahead of removing struct bgpio_pdata support from the gpio-mmio generic
-> module, let's add support for getting the relevant values from generic
-> device properties. "label" is a semi-standardized property in some GPIO
-> drivers so let's go with it. There's no standard "base" property, so
-> let's use the name "gpio-mmio,base" to tie it to this driver
-> specifically. The number of GPIOs will be retrieved using
-> gpiochip_get_ngpios() so there's no need to look it up in the software
-> node.
+> Replace struct bgpio_pdata - that we plan to remove - with software
+> nodes containing properties encoding the same values thatr can now be
+> parsed by gpio-mmio.
 >
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This works for me.
-I wouldn't be stoked to see device trees abusing the "gpio-mmio,base"
-property all of a sudden just because it now exists as a device
-property though... I kind of wish we had a way to opt out of exposing
-this to all the sub-property paths. But it seems tiresome, so:
-
+Neat!
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
