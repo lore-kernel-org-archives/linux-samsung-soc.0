@@ -1,93 +1,108 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D8B170826
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 19:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155C31C84D6
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 19:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750792200; cv=none; b=Dr2go8Bbm/5/Safvr0wVaS+LfYSKyEay6ZIcH00z7vv7+n88R78EuaphGCyloq2e46t4Y1vXLPv1r8c64/ksTCFdcwVLUDNgGYg/LDQDyuUoxccHrqsWzOaPzXMHI1mnO+pfZ/wIE1B2kJkaCyGDA7os82i4GnSXMISlfKTqVmM=
+	t=1750792386; cv=none; b=oyv700nQJ9xXcyUO0HnyVgwQrbfnD2UEqh5qniew0h41HQ91I+/RKP8vWP6adAPZvStfH7t4DDDuaXQWI9cC3DJI8KHDWcmcfOXzRC6YWsuvuUfyMMy8SZNQ1VZVxpF4W9MqVFDw8G4L0VCYdoaA8GA4keplRLnS/uqZuQBVnD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750792200; c=relaxed/simple;
-	bh=1IoGx82bNXS8SQk73EDpLUekVy9W1YtsSOWCGgpVvuw=;
+	s=arc-20240116; t=1750792386; c=relaxed/simple;
+	bh=42g0mLF/csycd0PbqCpM2WtITkGugXfu8fIaTZhFhBc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kMrQKHEAgM9FJwZ7ksG6IBjqw1Xl6mHZJO5uiGAQsAdhBU6Kdtri19jmPHB68IT4hks0Uu77rkcrWU17J7/dzDyjNNM3iOYlzo5QHnSRfm6Q3W8W8riI3tqMn4uABZzJo25WYxTMBU/0vxPH15LseixtVMiy6L31W1CPNztW6dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZjcTzL41; arc=none smtp.client-ip=209.85.208.177
+	 To:Cc:Content-Type; b=QLidRTRJEeo9+xyZ3fPDkE0M0nSOx8JmB/8GNttXOvv+GbhJgCM0sd55n8Q1tq+OQ/ZPTP9AK8ct7ETyFwWfA6BniAjOsEN+pAKgi/NwMYkapoudEI2pxi2PONkTeTG0xHhCcrmdd5a3JMFaMdvy4/2+Od35waPm22sIG0YmF8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EcEWnDsQ; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZjcTzL41"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso8461211fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 12:09:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EcEWnDsQ"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54998f865b8so675172e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2025 12:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750792197; x=1751396997; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750792382; x=1751397182; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1IoGx82bNXS8SQk73EDpLUekVy9W1YtsSOWCGgpVvuw=;
-        b=ZjcTzL41jB/kZUDeGngOmfr8licR23+YP+SfM3Ys+9kcbEEP6bc2tIjj+s6116mnmU
-         RuDni2ms8BfQWXYh6dftypJB1I+IQqRs+x/KSVFaEe1OMt1Stmaefr0U53JT10HdA80n
-         uGIMoJew8TEQ/GGvEOnmE34ZUsYKd20dbQDCQehcpqDrDx5gec4hyUNyELwBb54yVIHf
-         CtOJtdHax65go4A9Iq5I39SMIG/WJQ8ycHbYBxg0/yakDw6WevKP48ZHE6VI5udjlTGz
-         mm71jxAMk0Ag74PY1wlTUTsVzXxEd6QtPF2978R1o8G6CDSBHCm4tbpVDh+v7ni9Mqsg
-         R5Yw==
+        bh=42g0mLF/csycd0PbqCpM2WtITkGugXfu8fIaTZhFhBc=;
+        b=EcEWnDsQfqK3E2EJB3dSSxyDt0C+Yl+uTkYLfXeSmKYzT9k+qyXXhAgorEZFjBsZLv
+         Ym0ZGZOpq2VlG8WbfzGDrgNTLZRQbANcwtIMvlechN+AUTBychff0jY3NbL4GYnNZQ0v
+         rbulk5r3iyvPqfnpSAYbtrosRJfLTnZrPapMuLJyWlRlB5BWE4fNwaNIpullHPyKRI9p
+         ddjOhwA71dlrjBeARBDS7le5jENBtbwsuy3+p6YRBPXJ9PcpFDsGHQ+elcOna52o79B4
+         HNqk3eRRco0LJE6dJPFcuSFtvtBLWk/FUBj5GoKwJs71m+U1QnwFMTJzIdTx7cA7Y0bb
+         7lRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750792197; x=1751396997;
+        d=1e100.net; s=20230601; t=1750792382; x=1751397182;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1IoGx82bNXS8SQk73EDpLUekVy9W1YtsSOWCGgpVvuw=;
-        b=v5yyKDko6I8nkK4QA8x4hYTfJVMnSDGiQvyG0tVNK//Cg9RZGK7EAymvLhlelAbwT5
-         PiOEmUnHvemkyG2Fca1draPGAQmK8xLzH7EVHJDRyp6pmtHExMOxdatwGmZHcgtA6rZP
-         HUYsmldAuaK/b11IvocrWP5FEirXqYAxbZ3OtdrKh3MLHIlleD6litViOPsAI/ksZFar
-         BPzsMQE9x9EQBPp44m7N5rsciATvQkZbUsXtG+2GFZW2tM4qidFlKd2jWu7PyQ2bneRM
-         kmJx7Z4gR1AANlmvOR7yR07jgqYQG/e7rh7pAjMZxHsjv5k1v/V9qCYOQXtsBiL88A0m
-         BSjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6qcq6EaMWoMF916Tbop1ELnO9KNrZt59keRW5hw29sVutRlUbq6RTS/AuleSgfmD0Yxfb9UIahgP0XsC3mazkfg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9DOj4wkq9QyKVscIkBvMskRsj8N0QY9tBRtAF8bVwqACba4Jh
-	nPYAfO5EEsbOM3s/eBjALwajsuYiDw6zEsFWzp1nGwLBQqYdYywPM0xCM4IR19AxHET5b1zsdEs
-	HluWoN31ELgmGax6D5GyOvwS+JuR0n3ev4JVhLhXpwA==
-X-Gm-Gg: ASbGncsy+zYB1pvwWuWtqkuFTNAipFKjJTQrz5+KEgXqtVlYzD40c0oKs3f481rUS+A
-	jeauGd1B+iOv6YkdNIa4Ai9dvVBqmW9TJSIoJIq03bKDRFYMeAJT4bBgfhUvHJ1lwL9Dbh/oIqi
-	TVrucshYHYc9FWQqLvXMNZyi5x7sPWNdUhlPfw72+q4ss=
-X-Google-Smtp-Source: AGHT+IFYV5tWfAirZ3xGznpIUaLpWBixuh3VvEydLIyjUMUfbNZ+cH8IGpZnstfzUOBltBpSOosISbHrdrVWXJsPv9I=
-X-Received: by 2002:a05:651c:4181:b0:32b:8e4a:5710 with SMTP id
- 38308e7fff4ca-32b9906d535mr47675041fa.34.1750792197208; Tue, 24 Jun 2025
- 12:09:57 -0700 (PDT)
+        bh=42g0mLF/csycd0PbqCpM2WtITkGugXfu8fIaTZhFhBc=;
+        b=tAbeYV9yqx/kSjWj3YHJD7mnGgH1Nn7B/juspA9HACLGQbeBsEEqAwGFblPQlCxO8I
+         ri6f+co+Diw53A+ChC1lAU3RyIFw5jZ4hEsHtuW+F11vgFZuVDDV7VUUSxbgqyqlWErM
+         8SQUTTidezU//Y/6T3QJV/47S5507kW2/VxZiuxiiXl4/SNxZpxg/zwBeaC8e7dMnOsc
+         c4D9qUVbwZfleP3adepp69x0t0YeAC5rR1lqt4HIyYLBdwh4y9Yv+BU8iNbyL1UEXGT/
+         fhNlq6QKNzji/1mKjZtrDIza5TELrEZqxNHzXPf9XW0iMUAQjVOthIC9YN7RjVJDC1m2
+         fJqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKHMG68DNMKQtdG9ICyUNcFCYlX3pxUbdF6BvhciiUkC0Bg/5HJkIkdFLllKcR8ys8x/+NswK3akwUPaLB4u2TnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsNqhGb3yFtsq9TyJfUnfOji3Zx9xZnjC3jcn2fLFtxni1GoB1
+	KGvp+ndAgQIvSFBZ+a4X7TJ/GZ7aN7LAsc8iB5WKB5m/yapiG4QGykmV3xMtQGmXaeOp7Ujg2AD
+	lHY0xLdjZF1PHBaqPeB9c2jylv7pRvmSzD3MSO+TiwOvPq8QsVhHJvac=
+X-Gm-Gg: ASbGncuSoyKFNLlRQjeeHxgw0J1AIaedEavet29a3WpWrP1q0RtdnlvobdLWJ5jl19T
+	e/FFLdUFBRGR51AXgY9EdH+5kQtWhskPRUFogTOc2+IaJPnJhiCPG44E3F2O3xVsZvkoxbXxK/S
+	a48fITympXBtCdHXe/vbgXpdduXc5zetgVLRz7BmdeeNY=
+X-Google-Smtp-Source: AGHT+IFcvsv4Jx0wPVU5q9HdOKD/NjVsRLZ8GzOGiSq6bCzhKJUr6IeEsytMxz0Nq3UnxW9fjOmi1xt9+Qqg6x/9RLE=
+X-Received: by 2002:a05:6512:1247:b0:553:35ad:2f45 with SMTP id
+ 2adb3069b0e04-554fdf7c090mr5733e87.50.1750792382134; Tue, 24 Jun 2025
+ 12:13:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
-In-Reply-To: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
+References: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com> <20250619-b4-of_drm_find_panel_part1-v2-14-0df94aecc43d@redhat.com>
+In-Reply-To: <20250619-b4-of_drm_find_panel_part1-v2-14-0df94aecc43d@redhat.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 24 Jun 2025 21:09:46 +0200
-X-Gm-Features: AX0GCFugxTy5C8vSywb43SRY5CIYHYmTk1VMWuSas72eq14vY73ndiufDbScINw
-Message-ID: <CACRpkdac0sg82LFV-Ub1Wnbpq2jTWgAVXZzCdTqLakV_4GkFbQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Add support for programming gs101 EINT_WAKEUP_MASK registers
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	William Mcvicker <willmcvicker@google.com>
+Date: Tue, 24 Jun 2025 21:12:50 +0200
+X-Gm-Features: AX0GCFsyGEH8PEzLkMow539_Cj69jbmDRSN9FsVHKoXlbloZW-99abb_OrCBGA0
+Message-ID: <CACRpkdZM75HEZ0DACqC3iY7S1gLurw29Z--C7TJxUVxPUTuNqA@mail.gmail.com>
+Subject: Re: [PATCH v2 14/16] drm/mcde: Keep up with refcounting
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Stefan Agner <stefan@agner.ch>, 
+	Alison Wang <alison.wang@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 19, 2025 at 1:18=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
+On Thu, Jun 19, 2025 at 9:19=E2=80=AFPM Anusha Srivatsa <asrivats@redhat.co=
+m> wrote:
 
-> The following series adds support for programming the gs101
-> EINT_WAKEUP_MASK registers for the 67 external wakeup interrupts on gpa0 =
-to
-> gpa11 (alive and far_alive). gs101 differs to previous SoCs in that it ha=
-s
-> 3 EINT_WAKEUP_MASK registers
+> Put the panel reference returned by of_drm_find_panel()
+> back when driver is no longer using it.
+>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
-Looks all right to me, I expect Krzysztof to review and queue this and
-send to me as a pull request.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
