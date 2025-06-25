@@ -1,33 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7FE20DD40;
-	Wed, 25 Jun 2025 08:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6275F2F2702
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 09:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841640; cv=none; b=j7Pte4aBq8FfXLKW762YpBqs1FB7UzVlbhWIr3wsCNxm6yzQCU/h3vxSpMAyFinuBDskKEqTB7v2W8va8x2IDNUZiISXUQa07FVxhachJsEu/gsa+xIhmR2Le6n2YqLrdKShNyaWCXUpsNO3VNEngKRYDY3aUn/kLpLVBlHBPuw=
+	t=1750843416; cv=none; b=JCbVid5XypQEsVfKfBrUwxTMQaysSnr27YlI3JLU3SAcL9lzFDBamC1MIRcq/0KpXTa/YaMWNCyeW+y7yAt4XoV3rtin3f75J6hW0x9m8Q1GvL1emo6OjNqvBfdeJmZjnoebII6PRRp80QlvKs5+uIJSWFOAun3x5NX58RTYHZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841640; c=relaxed/simple;
-	bh=uuZhIR2tDWHzY5i4Kii6kMj+ClHkikC5nTMjdfaZpKc=;
+	s=arc-20240116; t=1750843416; c=relaxed/simple;
+	bh=g+LaGvL64iYAo0KoHc4Bet/BvZRakWsZV8+qruq5TVM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0yv7qCEeAJkTc+vQODFkTAg1V/5nnRSaMEG67A79DHsInfwQr/2iEcSRTKD/bXNkwrWwgjqhIH/PH22M0qbR2In8w2/yJPnZ6vOiVaVpMvSCkffaXK3fFHfu4K5RSgx4cG7jCHsrdwH9fv9gP94AH2LnKMP6FRcJxMguubFHMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol4yIJDs; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kyjzP/OogvpHeE1ETscbQHJPjrsIQSQ5om8wsOs1RJiFZ8A6xsmPL7ED8B9kb/nDTdt+DQPJvC9iA+KHn8rizM+PHwsi7bENwoLLtSVG1MpIIIB4tS8y4q/6l2xYRu6DKUwM8kHzQFRP4AHeiQJjQRCVs0pGiRfcyKC/ttUcv8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=smjRfaD7; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol4yIJDs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61218C4CEF1;
-	Wed, 25 Jun 2025 08:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750841640;
-	bh=uuZhIR2tDWHzY5i4Kii6kMj+ClHkikC5nTMjdfaZpKc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ol4yIJDsGd34ARrjOyA0FjvR0pdgqkwoX3owHxHT0bsCNIIdd36YIojK/17i971LM
-	 wJabuwS0ZbgBMU9WZ0TqU4K2Fe1slj39BoCfsA2UmNj2XROEiJ1NWvS7/RpOpn0i7X
-	 3iD2Mv17OaghckwJ1gJ6Ur4V27T+18yx7qr49RTuCRvh7qpVAIJmgKT8pZMXlYkkIO
-	 gcbxEnprSqeIZLOG6Ha22pEguFJ5C+3u633L9i4ttQGWieVXE0wOe8TD9X92rlho4L
-	 cf8aaTRk+Q3UYCb6U+0iIw3AK3zXgBgoY5xU64RzDkZv8a3j6/u6q23b5Qwmom8WqE
-	 tYmEiRIz3Izsw==
-Message-ID: <6c64751d-67f6-4c30-a312-af289d9f432e@kernel.org>
-Date: Wed, 25 Jun 2025 10:53:53 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="smjRfaD7"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so510329f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 02:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750843406; x=1751448206; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aWH9vvPYvKOZ6jTKsIAS1U0P9BTez35YILzqoZrwOZk=;
+        b=smjRfaD7NR7deQrdCpQ64iWett6ydeLfDtvA3/bTVbdlv4EpMTqm0oZU0CNaK0n23G
+         GVmn2UO7TVNy2nyWukrG5T+X+w2+VUnk5qlv2rZWBTc+YoiWhSkr7BX1/XudyPXXmcZS
+         eK/xXFZLs3m/1kDzFhTeH9FAraz48pAwgf7cAqKiHFfmhBE3LkWJ7jA3SRo5zOHpSCrD
+         3qqtzXguaKF4q6r8bNFSI7AHPKyPz/ReI8uDt8BxuuyChcKEDbrhffsjvaRfLAQ/tPoO
+         GEbYl2p4IgFO36BiGOWw5aJqCpBhj+4g+y/DnFda67NvkMfsCCQ4YZC5TON66VsOoKGi
+         cF+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750843406; x=1751448206;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWH9vvPYvKOZ6jTKsIAS1U0P9BTez35YILzqoZrwOZk=;
+        b=vTyHHR4//Acp8cCOS4/I9hvp3uLcPEJIGQgr+oXOAz6nf1TiFexYYZckLi2CZZWxxI
+         oWV00M4595O0EukWkhpMhp3zDUU9Om0ha1C13RfMs1q6jy+oP8nclFFcBOUjZ9kw6KOc
+         ZM7Oc/MBwXzwnKgOKM6bZV4VuM10Dd5nvVruxjsgjNYmxUIn3z1c7J3lQ4d1nGZaIxAK
+         zctq2KfyXA81/Q1aidMIQHg+9XwXTM0Q3sOEdEqprruOUBJx8WRG/zXEcSTKwGqPM2of
+         cYHcDlzEwDA93P/FmKd58J/Q7Z0+A+q8xuxlEgmoGGlLNRQO95bBdud/+hYUriPLqQft
+         p/Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJZ48i+nE+7qs2CGUH5b4uZVWCtiMAhVh1BHeg3KrZV+vU/2cfOm9We1+zRtzoD1bOwHfvye1FKoq83W6U+1Nd4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqUKTrTnqMTYK4P7547vsqnmReU6wNAdSkCLnwOEaYaxSMn4cL
+	jsTlTZYlF3b8zO+uWLLwSu+b2Kgrr0BySWwfZCPY4GZcP+Iz67lorxiDYBXE1Xz+3ko=
+X-Gm-Gg: ASbGnctpiyJhg1XUjNQ25F6zzfFGHVjVA02mOPX9QFdvST4Ue6WOLCcovsdHeyOzc+C
+	DDJQaCl0xyqNFdyBPBUCEfPmvdRpaWHh7q8wVevs82sWZqLrIRXk5dQhAupKPbd7lsW/EQYmwGa
+	RHFo37f69q6TXQ34Dxq3UHdknAJ54+4FnZ7i6mgA/9NM11TP2CLXIr3iA/EQVBk8qv61ULL5GiO
+	JzroqhYLdSGW99dHSUZmEIpBa8iX3vwsvZW3L3v3COd29z13p0+Zo2aElyh2let/k8HbAi4vLcM
+	OH0AhZL6JhGfo+OlZudhE+JRr2etzwdIkT2QqujKenmCB0f++dhEtA+nUDJpi9pEFh0Fl4RGE0B
+	rF5PEm8kCSdC7XojuWjalATojRw==
+X-Google-Smtp-Source: AGHT+IFk44C1BBZqTWRdY4hcFP7t75lLhumDHg3FOCEud/iYnem/WMPerbWTZalUliYOPa9RKBhJtw==
+X-Received: by 2002:a05:6000:2081:b0:3a4:eee4:f73a with SMTP id ffacd0b85a97d-3a6ecf52ab5mr1972437f8f.22.1750843405762;
+        Wed, 25 Jun 2025 02:23:25 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a6e8113b00sm4163210f8f.96.2025.06.25.02.23.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 02:23:25 -0700 (PDT)
+Message-ID: <fdf70587-5960-4420-b1a4-4fc2f467fd06@linaro.org>
+Date: Wed, 25 Jun 2025 11:23:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,114 +67,115 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT 2/6] gpio: mmio: get chip label and GPIO base from
- device properties
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
- patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org
-References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
- <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org>
- <CACRpkdavsQJTfiwn-F+ML5MK6ADtr-31bBxLA4gV7MTAYR0YGQ@mail.gmail.com>
- <CACMJSestPPEvsUrWaqz7yZ8OxZTMEOBY7htE7c8BV-VBumj1Lw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 5/6] clocksource/drivers/exynos_mct: Add module support
+To: William McVicker <willmcvicker@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Donghoon Yu <hoony.yu@samsung.com>,
+ Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ John Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250620181719.1399856-1-willmcvicker@google.com>
+ <20250620181719.1399856-6-willmcvicker@google.com>
+ <aFqsqr7i7cdR5-I0@mai.linaro.org> <aFs4--JdpE1W3Lh8@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CACMJSestPPEvsUrWaqz7yZ8OxZTMEOBY7htE7c8BV-VBumj1Lw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <aFs4--JdpE1W3Lh8@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 25/06/2025 09:35, Bartosz Golaszewski wrote:
-> On Tue, 24 Jun 2025 at 21:44, Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> On Tue, Jun 24, 2025 at 3:19 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>
->>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+Hi Will,
+
+sorry I missed to add you in Cc but the following proposal help in the 
+module conversion:
+
+https://lore.kernel.org/all/20250625085715.889837-1-daniel.lezcano@linaro.org/
+
+
+On 25/06/2025 01:47, William McVicker wrote:
+> On 06/24/2025, Daniel Lezcano wrote:
+>> On Fri, Jun 20, 2025 at 11:17:08AM -0700, Will McVicker wrote:
+>>> From: Donghoon Yu <hoony.yu@samsung.com>
 >>>
->>> Ahead of removing struct bgpio_pdata support from the gpio-mmio generic
->>> module, let's add support for getting the relevant values from generic
->>> device properties. "label" is a semi-standardized property in some GPIO
->>> drivers so let's go with it. There's no standard "base" property, so
->>> let's use the name "gpio-mmio,base" to tie it to this driver
->>> specifically. The number of GPIOs will be retrieved using
->>> gpiochip_get_ngpios() so there's no need to look it up in the software
->>> node.
+>>> On Arm64 platforms the Exynos MCT driver can be built as a module. On
+>>> boot (and even after boot) the arch_timer is used as the clocksource and
+>>> tick timer. Once the MCT driver is loaded, it can be used as the wakeup
+>>> source for the arch_timer.
 >>>
->>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
+>>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+>>> [original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
+>>> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
+>>> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
+>>> Signed-off-by: Will McVicker <willmcvicker@google.com>
+>>> ---
 >>
->> This works for me.
->> I wouldn't be stoked to see device trees abusing the "gpio-mmio,base"
->> property all of a sudden just because it now exists as a device
->> property though... I kind of wish we had a way to opt out of exposing
->> this to all the sub-property paths. But it seems tiresome, so:
+>> ...
 >>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>> -static int __init mct_init_spi(struct device_node *np)
 >>
->> Yours,
->> Linus Walleij
+>> __init_or_module
 > 
-> That's not a problem - this property is not in any DT bindings and as
-> such is not an allowed property in DT sources. For out-of-tree DTs? We
-> don't care about those.
-That's not true, we do care about implied ABI. Try changing/breaking
-this later, when users complain their out of tree DTS is affected, and
-explaining this all to Greg.
+> Thanks, I'll update in v5.
+> 
+>>
+>>> +static int mct_init_spi(struct device_node *np)
+>>>   {
+>>>   	return mct_init_dt(np, MCT_INT_SPI);
+>>>   }
+>>>   
+>>> -static int __init mct_init_ppi(struct device_node *np)
+>>> +static int mct_init_ppi(struct device_node *np)
+>>>   {
+>>>   	return mct_init_dt(np, MCT_INT_PPI);
+>>>   }
+>>> -TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+>>> -TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
+>>
+>> Are you sure this is not going to hurt the ARM platforms ? Here the
+>> timer is enabled very early in the boot process while with this change
+>> the timer will be available later.
+> 
+> I took a second look at the TIMER_OF_DECLARE() macro and FWICT the timer will
+> only be enabled "very early" via timer_probe() if "MODULE" is not defined which
+> is only defined when this specific driver is compiled as a module. Note, this
+> "MODULE" define is not the same as the Kconfig option "CONFIG_MODULES".
+> That is why in my v1 and v2 patch [1] I had:
+> 
+>   #ifdef MODULE
+>     ...
+>     module_platform_driver(exynos4_mct_driver);
+>   #else
+>     TIMER_OF_DECLARE(...)
+>     TIMER_OF_DECLARE(...)
+>   #endif
+> 
+> However, I dropped that since Saravana mentioned that we should not be using
+> TIMER_OF_DECLARE() for drivers that can be modules. I don't have an ARM Exynos
+> device to verify dropping TIMER_OF_DECLARE() is safe. So if you and Saravana
+> agree, I can work on creating a patch to define TIMER_OF_DECLARE_MODULE() like
+> you proposed in [2] to handle this for all the drivers that are used for both ARM and
+> ARM64 SoCs.
+> 
+> Thanks,
+> Will
+> 
+> [1] https://lore.kernel.org/all/6e6b0f5f-ac60-48bb-af6c-fa58658d2639@linaro.org/
+> [2] https://lore.kernel.org/all/f2f914aa-c554-4135-afaa-f075537ed929@linaro.org/
+> 
+> <snip>
 
-Rob was/is working on tools checking this for such implied ABI, I think.
-For of_xxx() calls it is obvious, for device_xxx() or fwnode_xxx() it is
-not, therefore please add a comment that this is not allowed to be used
-by Devicetree platforms (or that this is only for
-ACPI/platform_data/whatever). I don't have any other guideline/solution
-other than a comment.
 
-Best regards,
-Krzysztof
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
