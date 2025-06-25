@@ -1,99 +1,93 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E3F2BCF65
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 17:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129C915278E;
+	Wed, 25 Jun 2025 19:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750872350; cv=none; b=WNvIB69jJdYchbeoek0ztIf8xm53lK92d5Ro0m125KiiD229P8/MpePO+F6GPLZbUFz8ACWE2DG3GebPdXWM6Ok4fRKSYOfXdgFZso1cGHvLVpM63ft8SB7M/P96HILN/m0DNXT7MppXuyugWk1yyRrH4GRUBfbZO74kYdFPGhA=
+	t=1750878227; cv=none; b=sFLm42lYeQn8krcRQYE0+paoGc6efJRQWdcIlbPl+FZV56F10v+yT7lwttIKGLlepEkp4ZBAr8lxjHsW3J6UIHq2Lni4EcqUSwSyCtoR6sCPdUQCm26OV0KLDZfyvGd6U09BXJG9WWqrLzD95hKIMX58Z9sEOmZJeoclmGa51XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750872350; c=relaxed/simple;
-	bh=6O7A/YC5TjvPF+nYhT2LrlK3lJoYuXaotH9sOdtaJq4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nUJ51IbsZusm4jbEtDe+P96aQhtpAwbn5TDGkLduhwiWrb397tM2Zg149IZi8Hq1PvRrz9ayUkggnLjR3Ld0Fqsq/fs/3YCOxZRQUH30BDKztAIbcnr0ktQr3pr/rKjZOhT5ExWJQzKl/6Fvh3hsQTJSEriJTeWT4O+cVr6aW78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jE67b83Q; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750878227; c=relaxed/simple;
+	bh=klFBqqktO+5hBILMy1Yyqcdg/qsxpTv08B4SUmcvGX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lEHKy+ELb9tbI9dBHv9RRGOCCevZFpO3+fcAffYBHEA8f1KHMIA2EhIBUaTjNwKYkiKs7UsRmZ8d14ahK8gbOAWDFxiZV4YD6f/OCplYWHkzwYL7n2ezhdMDNpv9Xvh0XTNoEssAIQjWDgO0RCn4sHR+J9COpmnvCyyE630LbdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyBBKXOw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jE67b83Q"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so60966f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 10:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750872347; x=1751477147; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6O7A/YC5TjvPF+nYhT2LrlK3lJoYuXaotH9sOdtaJq4=;
-        b=jE67b83QgwZcy6pHW8GumX2NRNDq0snQKw5l8LoV39RDzm998i1h2inlkvN5yiEyFy
-         gfEuT+a/azn6tvE37Y01vL5tzWboOreQuuWlOjKLbeUDdrc6T+T93smKTBWNuGwJBkEf
-         n9j8nHRZ6QDtb4ynm3Ydz0J898zvRpnA/Thk2bWOuRFxBIqq77SZYYqmX3DEF7HD7+Ce
-         h2i5gC9e16aNeAKjiU9xUs9bDTh2Gk8mtG55XR3VEBiLsjdpoofek7riMheJRp30r88f
-         DUm5mmvAT3lEbbq0w1Rym6B74AJfoWxOr3dplJ3AFELv42OHmCpyuDrjHr/sjHB/sVfy
-         U7Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750872347; x=1751477147;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6O7A/YC5TjvPF+nYhT2LrlK3lJoYuXaotH9sOdtaJq4=;
-        b=TkuDf8yM3kaIv14hmmVB7rmACtym4vIZMWq1t5hqUTMrdFXNDLYYXeB6f6HVaOOU/H
-         0hNssLfg/Rr/H8D0XT4hFtAAgR6OPybKoEoeolSrda9jGEzEXtJhqqfrQ3gUhkX7Pf5L
-         1wI4bqEJLdBOJcOFn3tUitt8caHqB5K5cZYpOZjSXzgSW3NE/uiqNXWMtl3P1bUvSL7J
-         Hd+MJy7PxecDxpzGryAZVMxjWDJrrZquX2EUBo4MAHTkWGKJ4+9uBoMcD4ouk7SUr2DS
-         UpIQM0Io5Chcn6z9kohCmqt7TDv80nVuJb7wRPRqSw+W8gR/nBsss29uPvIYNlSk6iUz
-         h22Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU67NW48bvule2sj3MN+pCsnAe+hHrvOf3rrrHFtBJ4NDyTx5WrOKp8eeSKyA4I99Ld0X2Z0b7LWwqmcSLbrz4u9Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Lb82AZ5QD+y6fjxvENOPRyYdB+1StaVomwpm75W1Oskjk2pj
-	znjAAWFtx3MxyHnTfukt+Cdt08G+6wVOGO4DI482mq4wB+1wTTldISrVrnko375/J0c=
-X-Gm-Gg: ASbGnctz/NE3hfS3VDLxbm3NomhP9b3/mGzIadO5Q9XWikRt1hMNWz2sJ50nkDu2flm
-	5EoGDFh2eHRHOXv2VworKp+7fEpc6zhLaC9zApLu2MeI5F2F6X5cw7MWfOqsvUn2K4ml55rj09Q
-	7UVOCzGf9KgGhCf9xGUM3kcCgfPjsO5YKfxYGfbT2L5+gM4XUZUADSEwNq6rEpXtu2runodmS/y
-	vibxXM0FP6mJuGv0Pj5N5UCAH6slXuIlJhR92kKHytaRDNRDpvg0Ji17K45dZq2NZtXbG1lqtgZ
-	VxwET9stv9CBJEr5KuOxvIv3elsRb0d1IuJzERejJa9dH15x7CHUBeyyvikIaBQ2n2JwgD+Y2om
-	G
-X-Google-Smtp-Source: AGHT+IEWqQYs8mY+5uoMYCKPajkMpm7F+LqZUiSbpYVGFaDjaB+825h/sM7EDs5jZzTatPcapcPi/g==
-X-Received: by 2002:a05:6000:4186:b0:3a5:298a:3207 with SMTP id ffacd0b85a97d-3a6ed64bdb6mr2932119f8f.48.1750872346775;
-        Wed, 25 Jun 2025 10:25:46 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823b6e9esm26240185e9.28.2025.06.25.10.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 10:25:46 -0700 (PDT)
-Message-ID: <5113e57e0475a62f2f50006a7178377c508f9403.camel@linaro.org>
-Subject: Re: [PATCH v2 0/4] gs101 max77759 enablement (DT)
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Rob Herring	 <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Date: Wed, 25 Jun 2025 18:25:45 +0100
-In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
-References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyBBKXOw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EA9C4CEEA;
+	Wed, 25 Jun 2025 19:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750878225;
+	bh=klFBqqktO+5hBILMy1Yyqcdg/qsxpTv08B4SUmcvGX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oyBBKXOwF3m96jrO7yH8LwgCWA5SYwBc31Yn+nPXckxzBV5pgCHczzrfvNf8a3f3X
+	 qw+QbmC6iZhYRqw+NXn3obFj6jUAD0HHRBF5ECGWdq3nGrHz7DofMuNemLsOT5pSEO
+	 ONA/lJe8G0ay+G95byCo06/DADOxeNMwDCR/Rt3FMyURI6oiwrkNExOKMA0LZA077P
+	 lb2Uew9edSNpcTwEW43v4aYb4QqsU7MBZ+tS6mTekTd474m0MvRYGYvE34nVzxQkUJ
+	 KwOlHWGPjPbvfgzuJStQvdykJqsz+5XZv/EcCfvAxC2cF67WPoAgk2DtdTyhq1Myxv
+	 YvsNFZEBSAoKw==
+Date: Wed, 25 Jun 2025 14:03:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 01/17] dt-bindings: firmware: google,gs101-acpm-ipc:
+ convert regulators to lowercase
+Message-ID: <20250625190344.GA2023865-robh@kernel.org>
+References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
+ <20250606-s2mpg1x-regulators-v2-1-b03feffd2621@linaro.org>
+ <20250611-robust-vehement-dog-2bf6ac@kuoka>
+ <013f55a0adf0b23e0836e33ee4ea0e1e7864a467.camel@linaro.org>
+ <1ada43bbb20b806975d6b0503e36a3b464287612.camel@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1ada43bbb20b806975d6b0503e36a3b464287612.camel@linaro.org>
 
-On Sat, 2025-05-24 at 06:21 +0100, Andr=C3=A9 Draszik wrote:
-> Hi,
->=20
-> This series enables the recently merged Maxim max77759 driver and
-> updates the DT for the Google Pixel 6 / Pro (oriole / raven) boards
-> accordingly.
->=20
-> This gives us some extra GPIOs, and enables NVMEM which is used to
-> communicate the requested boot mode to the bootloader when doing a cold
-> reset.
+On Wed, Jun 25, 2025 at 04:05:34PM +0100, André Draszik wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 2025-06-11 at 10:08 +0100, André Draszik wrote:
+> > Hi Krzysztof,
+> > 
+> > On Wed, 2025-06-11 at 11:04 +0200, Krzysztof Kozlowski wrote:
+> > > On Fri, Jun 06, 2025 at 04:02:57PM GMT, André Draszik wrote:
+> > > > Using lowercase for the buck and ldo nodenames is preferred, as
+> > > > evidenced e.g. in [1].
+> > > > 
+> > > > Convert the example here to lowercase before we add any bindings
+> > > > describing the s2mpg1x regulators that will enforce the spelling.
+> > > > 
+> > > > Link: https://lore.kernel.org/all/20250223-mysterious-infrared-civet-e5bcbf@krzk-bin/ [1]
+> > > > Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > So this is also a dependency for the rest of the patches?
+> > 
+> > My thinking was that it makes sense to have it in context with
+> > the other patches, but it indeed could go stand-alone if that's the
+> > preference.
+> 
+> Can you take just that patch as-is from this series (then it's at
+> least out of the way :-), or should I resend it separately?
 
-Friendly ping.
+No. If you take it out, then the rest of the series will have warnings.
 
-Cheers,
-Andre'
+Rob
