@@ -1,127 +1,120 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96989267F4C
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 14:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61A926981C
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 15:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750862309; cv=none; b=csJMxo1Vij2hD9DJOvvT7TkrCx18SkgUK8tYP+VGl9IGSAvHT7J0GLPQ4oUqvfUklKpS4qrTVZHPx9n9V3IPuTBxCVjQuxZxi6JUujWIp2MdejaFP4JkC3jUfCyjThTaqrgxSerU8bn3qpdLBUWOHSyNhcEaybYaSVyhZD9BOSA=
+	t=1750863941; cv=none; b=iyf0TYZNCAQ/xaHmquuhcHQX4kzALOfTy1+9wbRFdANLsDWFGkuKeL6EOX2CZ5yzfONjU7O3X64eBbLpRzejeA86oG0w6v/CymlesVOhi7yj2H7FvE+qKjbNylr49pxwKP+8XHdgaqNKNVwMOaWqIRxk8D2wulvZB6YEyRQs7UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750862309; c=relaxed/simple;
-	bh=8XoLBFN4X2J53c6WkchgBiFl2rLtXlJ2Jsji10lKYfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ZN1iNZChFeaJcwpQ9yvlseg7emoUBu3jns1+SnBiZdckUUKwVlB69CZBQP5Ge66lXNBnmC+grn1Hj45yIM8Skmqx6mYW6DghAcxS1njz7n8KvkoKrIXPtylmXBUGy28kYHxhyK5vUoqiQQiJlZ5YDFYAxfYUTS3T05X+iKMOk40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pFfPPfbC; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1750863941; c=relaxed/simple;
+	bh=wlj7HklWXe5YtCatjQKwWuAP/xP3g/dB4xsuny3pKlk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=M75eK4qcqaKGFI1LIfRxgrNUoCRn7Nr1Nb3sYkGg4n6jG5OPECeH64QVPlyCK7Urj2wHGiT13niP65CEyo4wg9JeaSkAcmw+Q6pSb2zkYaE+aJfQutR0H81LTDt8B2dusn97QAlLHXIAG6mQwLXROcidOD1UeKg5m+GTcyREZ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kKSQ+wo9; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pFfPPfbC"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250625143825euoutp011bceac2e5a1ac3e91518668c937bebb8~MT-2knFzZ1464714647euoutp01F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 14:38:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250625143825euoutp011bceac2e5a1ac3e91518668c937bebb8~MT-2knFzZ1464714647euoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750862305;
-	bh=8dqgP4LV8c4NLpBPDYGi8Zm3iZeMy9dNLyMC8hkw3Mc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pFfPPfbCvaLUthbd5ueG3UuOnIkNWM5+nnYQbrgJy/zkV7x6wH018ApoC5WRPVXVk
-	 DNqXV4XI3CTYG+bVZ6qbnlZv6X+lp5OeMpEOXB3KglVE0okmNNYHB7rZpHqlY1ijEy
-	 yKimBKL8bgumawwX1dKSSa4STJzAtrApaZ8K0Eek=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a~MT-2K9-ln3066230662eucas1p23;
-	Wed, 25 Jun 2025 14:38:25 +0000 (GMT)
-Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250625143824eusmtip2d3f64e540b8e66266a364f9237f7259e~MT-1hnkPv1779917799eusmtip2T;
-	Wed, 25 Jun 2025 14:38:24 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux.amoon@gmail.com
-Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com,
-	m.majewski2@samsung.com, rafael@kernel.org, rui.zhang@intel.com
-Subject: Re: [RRC v1 1/3] thermal/drivers/exynos: Remove unused base_second
- mapping and references
-Date: Wed, 25 Jun 2025 16:38:16 +0200
-Message-ID: <20250625143816.1146123-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <CANAwSgTBzpL+XMJGhG=38A7GOzeayZaG_2LTvsaE2=mF-pn5mg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kKSQ+wo9"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so662560f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2025 08:05:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750863937; x=1751468737; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wlj7HklWXe5YtCatjQKwWuAP/xP3g/dB4xsuny3pKlk=;
+        b=kKSQ+wo9oT4PkbrUUZKhpI+S+N4jOlQGfiE8lvJWDeGpX8dhARAQSHw6Zd5qkTLbm2
+         /rZ2srKSxSFCLeipJLGV85UllC0v60+4WdUdKmS3isHvluM8yN4kDtgZTXPd9vBQ+0xQ
+         b1kdAw0P5xPgiohw1eb0X5AZCd7OoRz3Zgm5GBJOw2DuqhJhGCuHLHEJ7IPxTdVPE01U
+         WOQhacOtW/oRcYO7YIoJYvu01RheQr5c0MZYn1zEBXmung0hdZ5XO53Vgl6QYTASHgm5
+         tF3a/cpD7F59refays/NJAGYlVtedrQg+YKWKVy21xnxMrgNolepnscnjbgHrZO61LDA
+         MY/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750863937; x=1751468737;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wlj7HklWXe5YtCatjQKwWuAP/xP3g/dB4xsuny3pKlk=;
+        b=LlBnfnRKS2Pzvzd9p4YBjDKBtSF0kKjSae+WZsLy3mMWpl7fxmuz7CQvcs02lEU42D
+         ke6UQPGyVjIsaayQzn9tTsNgmXssX2rUJIdUuRhmTOyP1b3UQDGtbMzY6FmElmjt3HAJ
+         ZSmNs238LRGeSHLQprcNXyEieW5ZXxe8YSx+DDrZ1ID92x08PYJ5CKgpRtVwtl2Q/StN
+         2JFKoC07F8N4OFrnrcnwQCEfSvvmhBmyZDGTIZDiy/tr2iC5FKTCr+XiGbuWm7OyrXBL
+         0Car+PplAirtVpWgnxn9XAo+EH/1NdjP1yYlE/5YWk7N0BbiEQtf2AmYqJGoruxIK2JY
+         RFwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXriIVvonNJmge4Nyh60rJTAJfxoVdKHJAsjYYKL7/bzBQPvCafdzBI4SLNsbNYQQQv99tn10PTahNf+WCCI7LWYg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZacZ/P5vCSLjKWmYTZKWB+OO3s8qM7/6cIAWPRgkglx6c66xQ
+	/mnz6YTkXNfBOnH0zxc8ByoqxuHN6MRZZv6ERRNH67VXSC93DwejdRPWiYxFjX8k5U0=
+X-Gm-Gg: ASbGnct9d9gsHb1Pn3R83T6Q7MZup/lemJ46XvLuTUbkfu3lMJsEcv3kYh1Wl9ofN4d
+	w5ojyVXPM0SK3ZuD1i7hbTBiH4nMuLsmujpA8gQd36ZD8I0x2oFFh7ghz28fAsXi+8RrcmwzuAP
+	Ot0zLP8XpWOIqd2yYUZc8t1i264upXXWHopdN23jJ0j5aF6IGNKEjX3OHo99tUbBcn/VCNm5U/w
+	EO0vz4UienqjAJuY7Pi63JS7KbJP/IXfbIbGSMbmXdohBG/87NSgHzIrmlOlCSY/bB9u4u5tyVi
+	jFtyyt1b7yPvmzKM7CYSQVxv0FE8JqaBDmXldSRtrJi07faB0FQ+ayimXPJeZEFFqw==
+X-Google-Smtp-Source: AGHT+IEQo60y4nSkYuBCYnImSLe6MfyhEpVaq6bM9xHgfeeGrTtXV15DQSuydeKSFGHOA76Afhx/vg==
+X-Received: by 2002:a05:6000:1882:b0:3a5:5136:bd25 with SMTP id ffacd0b85a97d-3a6e71b8792mr7030428f8f.1.1750863936643;
+        Wed, 25 Jun 2025 08:05:36 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538234957esm22170335e9.11.2025.06.25.08.05.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 08:05:35 -0700 (PDT)
+Message-ID: <1ada43bbb20b806975d6b0503e36a3b464287612.camel@linaro.org>
+Subject: Re: [PATCH v2 01/17] dt-bindings: firmware: google,gs101-acpm-ipc:
+ convert regulators to lowercase
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Peter
+ Griffin <peter.griffin@linaro.org>, Will McVicker	
+ <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Wed, 25 Jun 2025 16:05:34 +0100
+In-Reply-To: <013f55a0adf0b23e0836e33ee4ea0e1e7864a467.camel@linaro.org>
+References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
+		 <20250606-s2mpg1x-regulators-v2-1-b03feffd2621@linaro.org>
+		 <20250611-robust-vehement-dog-2bf6ac@kuoka>
+	 <013f55a0adf0b23e0836e33ee4ea0e1e7864a467.camel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a
-X-EPHeader: CA
-X-CMS-RootMailID: 20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a
-References: <CANAwSgTBzpL+XMJGhG=38A7GOzeayZaG_2LTvsaE2=mF-pn5mg@mail.gmail.com>
-	<CGME20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a@eucas1p2.samsung.com>
 
-> Can you check with with following changes
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> b/drivers/thermal/samsung/exynos_tmu.c
-> index 9fc085f4ea1a..0776801fafea 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -469,14 +469,11 @@ static void exynos4412_tmu_initialize(struct
-> platform_device *pdev)
->         ctrl = readl(data->base + EXYNOS_TMU_TRIMINFO_CON2);
->         ctrl = EXYNOS_TRIMINFO_RELOAD_ENABLE;
->         writel(ctrl, data->base + EXYNOS_TMU_TRIMINFO_CON2);
-> +       return;
->     }
-> 
-> -   /* On exynos5420 the triminfo register is in the shared space */
-> -   if (data->soc == SOC_ARCH_EXYNOS5420
-> -           data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
-> -       trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> -       sanitize_temp_error(data, trim_info);
-> -   }
-> +   trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> +   sanitize_temp_error(data, trim_info);
-> }
+Hi Krzysztof,
 
-This does seem to work (tested on 3250 and on 5420) in the sense that I
-can read the temperatures, when they increase the state of the cooling
-device gets increased, and the values look reasonable and stay in a
-reasonable range. Hard to say if the trim and the temperature values are
-correct, though.
+On Wed, 2025-06-11 at 10:08 +0100, Andr=C3=A9 Draszik wrote:
+> Hi Krzysztof,
+>=20
+> On Wed, 2025-06-11 at 11:04 +0200, Krzysztof Kozlowski wrote:
+> > On Fri, Jun 06, 2025 at 04:02:57PM GMT, Andr=C3=A9 Draszik wrote:
+> > > Using lowercase for the buck and ldo nodenames is preferred, as
+> > > evidenced e.g. in [1].
+> > >=20
+> > > Convert the example here to lowercase before we add any bindings
+> > > describing the s2mpg1x regulators that will enforce the spelling.
+> > >=20
+> > > Link: https://lore.kernel.org/all/20250223-mysterious-infrared-civet-=
+e5bcbf@krzk-bin/=C2=A0[1]
+> > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > > ---
+> > > =C2=A0Documentation/devicetree/bindings/firmware/google,gs101-acpm-ip=
+c.yaml | 4 ++--
+> > > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > So this is also a dependency for the rest of the patches?
+>=20
+> My thinking was that it makes sense to have it in context with
+> the other patches, but it indeed could go stand-alone if that's the
+> preference.
 
-(FYI I will probably have a harder time regarding the drivers from
-GitHub you linked in 2/3, so no promises on testing them.)
+Can you take just that patch as-is from this series (then it's at
+least out of the way :-), or should I resend it separately?
 
-> As per my Exynos5422 user manual and DTS mapping
-> thermal-sensor tmu@10060000 is mapped to CPU0 with tmu_apbif clock
-> thermal-sensor tmu@10064000 is mapped to CPU1 with tmu_apbif clock
-> thermal-sensor tmu@10068000 is mapped to CPU2 with tmu_apbif clock
-> thermal-sensor tmu@1006c000 is mapped to CPU3 with tmu_apbif clock
-> thermal-sensor tmu@100a0000 is mapped to GPU with tmu_triminfo_apbif clock.
-
-Hmm, I might be missing something, but I think the DTS does link to two
-adresses and two clocks, for instance for GPU (in
-arch/arm/boot/dts/samsung/exynos5420.dtsi):
-
-		tmu_gpu: tmu@100a0000 {
-			compatible = "samsung,exynos5420-tmu-ext-triminfo";
-			reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-			interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
-			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-			#thermal-sensor-cells = <0>;
-		};
-
-The manual does indeed not say anything about this, but I feel like the
-current code in essence states that the manual is not correct. We
-probably should have some evidence that the current code is wrong and
-the manual was correct all along?
-
-Thank you,
-Mateusz Majewski
+Cheers,
+Andre'
