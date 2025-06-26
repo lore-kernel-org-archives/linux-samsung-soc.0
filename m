@@ -1,40 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25ED2EF9B1;
-	Thu, 26 Jun 2025 19:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9272EF9C5;
+	Thu, 26 Jun 2025 19:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750965652; cv=none; b=rCjs6iNjn16rsnMC8+kLCXJgfyLi9cHvXyAPK+kmTGOBRlAasNtCEYe7/WxQjG13ERzB4O4PBAskU6726Q2VC+agwUw3bgiu0GSvgPa0Ic731klkhSPZskrgm4hUxaRGyesvhIlww1gepoUywN3nZWcreftzdSYQky645vhVpLI=
+	t=1750965659; cv=none; b=fKtLmQMKrqPcYwpL6ddiNoItIAQfnY78tPc/m6jsBWmSyqiHKaVHtDwPMV7v72uk1AKCp0mgTWkLaDYy7vD9oTXMCfsMvg9bcAzt4wsj3NJXTbAybeL8aOWNPsW3J/7VzlrHm6yS7zoRP2VLgNU0MHCTvLcq+gQosY9v4kb1V2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750965652; c=relaxed/simple;
-	bh=F5drME/H2x0yXDYGBijt8T+fC00BBnPVtIbKK7Wla90=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gEtrMQ1BWugEVmyvDr2nokJlJXOVBSVyEUjozawk0o3vYXp9KgO/RinrNRUxJ9yoOTlIytsNSGgL9oatmjIAHuam0riJEaZsFQhgKXHCAFzuNHqRYGGikjDVQg/+PIV/xbNS4KJuZIZ5aPnpFyrPKfu3bddHNt0btB6bpDy5sUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cfgEGIK5; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1750965659; c=relaxed/simple;
+	bh=NWDPKseR7FgqJe1BUa7IKDcIuriaLO9oc++4NoGT7So=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YiU0hPPrHAMIenE8j1LjQPLe3ORdwdeyO/GudZpmSp596oTJMAjPrcOEhWTcM2U12t8FkHRqejqA+Aq3ezZsJqMzI51owXfGTzZyTA5+6XwcrxLPn4dbpCTg6bVHj2oVdyUHuKTsmxPaCiDWcDYhfFklA7XCaV0IiEV8QZ5GENY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=LufkMeHJ; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cfgEGIK5"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="LufkMeHJ"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 43249260B3;
-	Thu, 26 Jun 2025 21:20:46 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id A711D2600B;
+	Thu, 26 Jun 2025 21:20:56 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id FrQBf9LbrxWq; Thu, 26 Jun 2025 21:20:45 +0200 (CEST)
+ id oCsJiwgKFbxM; Thu, 26 Jun 2025 21:20:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750965645; bh=F5drME/H2x0yXDYGBijt8T+fC00BBnPVtIbKK7Wla90=;
-	h=From:Subject:Date:To:Cc;
-	b=cfgEGIK5oLeB3XE1aJRZiOc/topaDddu3H+5KwtYmrpCELXS+o9lcEtdVkU6YMAqw
-	 jwdsTKis6jw+tuuMRZtX4YWEww9nbuuLr9pq/fEGTysVxfkiDFcJj6bU3uNcG+H1uy
-	 zqhehyxyYkreANKoQgePjWbulMaPTN3/lKsYblC/M7W14OybtZpQymq/si99jNYFc3
-	 mepd4mnR+W4qQFnKDY59ZpuEDP6dRdW502NUBg0aariog0pccrZCMc2/M8LtJZkfuL
-	 zexhf8751JoCiJ5a4O4EXRPTFJQxKpHqSsC+qfhX9cXhle8EGSdZug2YiH9KVMq9Re
-	 Y5eBgvwPzzO6Q==
+	t=1750965656; bh=NWDPKseR7FgqJe1BUa7IKDcIuriaLO9oc++4NoGT7So=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=LufkMeHJflu/2/hw6zQgWML1OwQT3aV93y1CJyVkN0xr8SlPhI1BueFfFavVqRMLl
+	 kql4TcXR0IT+00S+pg/ffp+NlKzPs3MHdQW2z/maueuhEonk8vSF95O55s0xUOCpwb
+	 TQ98HFTy5N1tad/phEppHUnCrOfarzsTybh6OSwrd9Bre3im2VGRDbCdHCk2kkQilj
+	 3/8Ebfu06NP/Sm+nXAePoDOKpZ7HcCKIG9qs/gVjRVRtgtR+R+8PMgH47XkAifbGO6
+	 TkATHF5Q2rp83O4pPhEzIoGt6B+WKROMEoCu+cHZ0lhUPxylADl9X1tLh5gP395/09
+	 a+8QRrrOH5ViQ==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Subject: [PATCH v3 0/3] Samsung Exynos 7870 DECON driver support
-Date: Fri, 27 Jun 2025 00:50:27 +0530
-Message-Id: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+Date: Fri, 27 Jun 2025 00:50:28 +0530
+Subject: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
+ properties for iommus and ports
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,11 +44,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHudXWgC/2XOwQqDMAyA4VeRntfRZFp1p73H2GEmVXuYHa0UR
- Xz3VcHD8PgH8iWLCMZbE8Q9W4Q30QbrhhS3Syaofw+dkZZTC1SYqxpKaaZ5cIH9R7IhN8icECt
- mYGxakba+3rR22sXnK3Vvw+j8vB+IsE0Pqz5ZEaSSmopKAwE1Kn+wDd658ep8JzYt4iEUSgOeB
- UwCa0rvAFWqKP+FdV1/pr3Nw/IAAAA=
-X-Change-ID: 20240917-exynosdrm-decon-4c228dd1d2bf
+Message-Id: <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+In-Reply-To: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
 To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
  Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
  Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -60,51 +59,47 @@ To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
- stable@vger.kernel.org
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750965633; l=1575;
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750965633; l=1210;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=F5drME/H2x0yXDYGBijt8T+fC00BBnPVtIbKK7Wla90=;
- b=P19wZTZkJiUTW4xG+909e0UrW1ziOcHgEQAG5ZPLLi/lYtIXzLuRKoE+HKtBa5MAXUQqHSErB
- WKc/kO+8Q4uBXCdO9UHxPatIed3cuAkjsV/5rglvVwj2qEQmt9ZORY1
+ bh=NWDPKseR7FgqJe1BUa7IKDcIuriaLO9oc++4NoGT7So=;
+ b=m+aG9N+L2Gn97HTnVn7EGvna1RTNUGO5iN00NlXhBtqiDuUyW3bfmzBBGQ3fbayDX3yMBnGjK
+ unsnSIaDQQDCHNl3dSJ3MC4Dc7iKGm+P7/kjxGc0dUVLCuFxpJXC7LF
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-This patch series aims at adding support for Exynos7870's DECON in the
-Exynos7 DECON driver. It introduces a driver data struct so that support
-for DECON on other SoCs can be added to it in the future.
+Similar to FIMD and Exynos5433's DECON, the Exynos7 DECON hardware:
+- May optionally require an IOMMU to initialize a display region.
+- May require a port connection to another block, say an MIC or a DSI
+  master.
 
-It also fixes a few bugs in the driver, such as functions receiving bad
-pointers.
-
-Tested on Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2
-Core (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte).
+Document these bindings in the devicetree schema.
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-Changes in v3:
-- Add a new commit documenting iommus and ports dt properties.
-- Link to v2: https://lore.kernel.org/r/20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org
-
-Changes in v2:
-- Add a new commit to prevent an occasional panic under circumstances.
-- Rewrite and redo [v1 2/6] to be a more sensible commit.
-- Link to v1: https://lore.kernel.org/r/20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org
-
----
-Kaustabh Chakraborty (3):
-      dt-bindings: display: samsung,exynos7-decon: add properties for iommus and ports
-      drm/exynos: exynos7_drm_decon: fix call of decon_commit()
-      drm/exynos: exynos7_drm_decon: add vblank check in IRQ handling
-
  .../bindings/display/samsung/samsung,exynos7-decon.yaml           | 8 ++++++++
- drivers/gpu/drm/exynos/exynos7_drm_decon.c                        | 8 ++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
----
-base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
-change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
+ 1 file changed, 8 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+index 53916e4c95d8c0369138941a556c23f5d42fbd39..1e9500c86590d555cfa6f04790e2b64da291b78b 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+@@ -80,6 +80,14 @@ properties:
+       - const: vsync
+       - const: lcd_sys
+ 
++  iommus:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++    description:
++      Contains a port which is connected to mic or dsim node.
++
+   power-domains:
+     maxItems: 1
+ 
+
 -- 
-Kaustabh Chakraborty <kauschluss@disroot.org>
+2.49.0
 
