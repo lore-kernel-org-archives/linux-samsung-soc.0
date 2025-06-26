@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9AF1552FA;
-	Thu, 26 Jun 2025 19:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565D61552FA;
+	Thu, 26 Jun 2025 19:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750967373; cv=none; b=oAP9KxcYPPyrpCqE5/g2XUGIPB5y00rszcU8Ur0Km5y/PFo/F2OE/TckPOudmbxf5fJLCkBxkceHGZzTpa3aB+rymerbGY7Ha8ijUy0ZmVscZDJlBMuj2Ta649yoWaAUq4+f9epvyCgVHz7j9O5uYDHS6AR4IfZ871kp8/yJEBY=
+	t=1750967524; cv=none; b=fvrck+TSJihXn7f1ZNerTA50qCR57BXuM6Q7tBIJR49WMxlcs/RSUYXwv3qrn6TxBIMVfpRzc4lKiAOqdyWs7LJlYInb/zXdhfLG3vmTH2+doYFr0xs6BtFfEgVQx5NMOtwkxy0W08szk/7ho3wKI2bev50itanzYp+CQww0X20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750967373; c=relaxed/simple;
-	bh=Ti0JtH7gWsysifUKFE7inIyTmQXeAlWF1XTy+gQ+yQ8=;
+	s=arc-20240116; t=1750967524; c=relaxed/simple;
+	bh=e6KViXfQD5OG2cPkIRrqtZBedg8VPapSONDCN/qM0no=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jYl8vT/htLEdnVHVAKiLh6Fb9GSxyaMPqcVbdhJmvisTJzDIFORe2L5RcJUy+lk4oVI4GXo0TsQf+cbf5HH1jpksMkA/a3ehaEsXOavccH3Avxt1WlwxvQO6TDPqyZ4MqjvJ6D5wIFy7HawWkyeh9GjgmMsPnPVMrG+WwiizPUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmZ/aCCX; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=uMT3VVy33CqvLJRmULUWg4kX6oEKdNH2R2HpbR0Xt+eMnmob26jxHWGv1h4rcQoENn1cCaH60drkIeGE+IX454xfbYYH/xrkjlAriIyLv1ZFq8j0B4R+IlPwnEF56jO1deS0ein8+PhYEDBWENubyUG6st3rSy1zdojEdfSu3wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWVN1ZT/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmZ/aCCX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B297C4CEEF;
-	Thu, 26 Jun 2025 19:49:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWVN1ZT/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011EDC4CEEB;
+	Thu, 26 Jun 2025 19:51:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750967373;
-	bh=Ti0JtH7gWsysifUKFE7inIyTmQXeAlWF1XTy+gQ+yQ8=;
+	s=k20201202; t=1750967523;
+	bh=e6KViXfQD5OG2cPkIRrqtZBedg8VPapSONDCN/qM0no=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tmZ/aCCXyEUlHiZIyKBZWtG/TH6yPgQdE3igtnR5vIKolArtQu9uaINtWeVayFooh
-	 CJMKgdOqQIA5G6clEOnO1l6KyxkygjSj+K1FP62E6xggmnepAE/s/S/M6RBotymNjC
-	 5eUocKXq0Xiuakcdagme6yJ7hfG+Ll7JsXyaOHzatRM7Ri+nDN995UZNM2/k64HDvb
-	 nvUZlpi08UuWlx0ry76O7Ou9CJC9Wt2VOKWSI5LUqZhB1tqJFKkUZLZTXNE+mNunaZ
-	 WO2sbdmbYDqW19x1zx6J3oqai8Qt0UOtsAKS4Lr99EUjXnI1UISDeO112w2Q7UX2V/
-	 bP26xtcNECRrQ==
-Message-ID: <2c491166-d8ae-4fb6-a4f7-74e823e1205d@kernel.org>
-Date: Thu, 26 Jun 2025 21:49:25 +0200
+	b=QWVN1ZT/H8yzS5oVa4d5uU1Zp59HQC+ccS/bFBDlSViJGSwLPPXumxI+vp4ynlXMg
+	 fhDxk08cD9AYXEv5WPY3eV3RcgBpMMkwBlDrOJ9NgRAv9aTejZI3icqy+fZ/wFjun+
+	 6KpwAx9vi5/FThEFsQ7mRxDk+99ZzEy4UIQbEegppvP/Qo5+SH0D1rV0Fzto5EVziM
+	 ckChEAw6K0Rg0Z9bicheFNRknUkPoISDOIcUf/JfRkMaYh/LQnj6bHUfCLBf0CfiO/
+	 qA7bA38qdYwJmPBtaMXFdQG3IZbS2NkaV3JD8UPJ7vW/iJfHgf9qQnGnceshWTbsiV
+	 TUMkxJbActFJA==
+Message-ID: <ab02736e-4d4b-4f6a-840a-d24201038b6d@kernel.org>
+Date: Thu, 26 Jun 2025 21:51:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: exynos: gs101-pixel-common: add Maxim
- MAX77759 PMIC
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
- <20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org>
+Subject: Re: [PATCH RFT 5/6] ARM: s3c: crag6410: use generic device properties
+ for gpio-mmio
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+ Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+ <20250624-gpio-mmio-pdata-v1-5-a58c72eb556a@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,32 +95,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org>
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-5-a58c72eb556a@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/05/2025 07:21, André Draszik wrote:
-> +
-> +		gpio {
-> +			compatible = "maxim,max77759-gpio";
-> +
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			/*
-> +			 * "Human-readable name [SIGNAL_LABEL]" where the
-> +			 * latter comes from the schematic
-> +			 */
-> +			gpio-line-names = "OTG boost [OTG_BOOST_EN]",
-> +					  "max20339 IRQ [MW_OVP_INT_L]";
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +
-> +		nvmem-0 {
+On 24/06/2025 15:19, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> The GPIO device in crag6410 is registered with struct bgpio_pdata passed
+> as platform_data to the gpio-mmio driver. We want to remove the
+> bgpio_pdata from the kernel and the gpio-mmio driver is now also able to
+> get the relevant values from the software node. Set up device properties
+> and switch to using platform_device_info to register the device as
+> platform_add_devices() doesn't allow us to pass device properties to the
+> driver model.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Why is this called nvmem-0, not nvmem? Is there nvmem-1? I see binding
-does it, but why?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
