@@ -1,420 +1,272 @@
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB582EB5B5
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2025 14:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504F8339A8;
+	Thu, 26 Jun 2025 18:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750948831; cv=none; b=TClhzK+Zkf8wBLOAI1Y9cKCzvPSpRbw+filv5QPwd82IKMqYfQPiFTD7qNY2PHaddoWwqZUvths15tvD5UuljXGx/g+LzN3uTfbh4ukXsQqUGDDE5Km8+FSAMpuFSDHheBvNqePCRUonR2fT/sRyeIZheIqH8dEsZI9/TKo80fU=
+	t=1750962120; cv=none; b=Wz1uW5hiBxJjLAWZ0YpMYewNHvltb56HaSp1Gvi7lYr8eqsCCNzwcvxrHMb8t2FJcOA+uy91+kvyM+uC8s0YLhuU6MNPFtPryY9xeOWqGDfJmI5EJCOy9lfW+2782sUuE9BoBvCcZXjAvdS/dMI3hd9veYSpOf56V7qdXtGEx4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750948831; c=relaxed/simple;
-	bh=aHV1jI1fkhodloHyH4Cmzv72r5jWv5VROLncg/taXkU=;
+	s=arc-20240116; t=1750962120; c=relaxed/simple;
+	bh=6vq6JVu6NcqJTw809vRqKDMRA9357KPANxyf1TFbEx4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eGnaIwyq6wfcYiBnA5gExQr02FzOLk3ZG1zdGVJmBmMvUrB8pRzMCICpWQKz6U4Fza7/dgkv03fvQ8UeE+LYWjY8tCAT3D/OQze6X+r81g9UpneQB4z5jGcvPs88+DvG1tV87a3W28qzCpKz59UL59n5TAdtqjrtuCpiXhOyn4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vWaN82d/; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 To:Cc:Content-Type; b=W9OzIj36TWilVqwSn7HDCAOv6u8LPTJXA93IguoeYEF4JjtQk/29D263/Hq1OIJHr8spwSnxBJRgQ91nmPvosq61AoB6oWGM0EcTSge2yLlt0kBfePp4QA03zQu+mSzaO3Az2pbEh/Fs8TTHiWNgYR+JWT6lLKhD5j+Ciznqsyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTB1GOsm; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vWaN82d/"
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-40af40aef06so710397b6e.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2025 07:40:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTB1GOsm"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0ccfd5ca5so218789766b.3;
+        Thu, 26 Jun 2025 11:21:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750948828; x=1751553628; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxnJ+JMAeXEe0tFyoruENV/4pmqUfnDATYgkfRCTwwk=;
-        b=vWaN82d/4v3L7a5QEPbqqEo3ZXz8m8USzJkGZUPOHQExRr6EYc+iBSFKsFj0sEpcSv
-         gzTT5/fC3f7tClqcIX8HaAnMM4JknybP6zerMsS0nbdbNV/S2o84bS7XaYHAM+XV81g5
-         iP7vb+GZ3Q7YW4DZsulR1m2y1zH0EwMhvOFtUH9PwF65GPi1aZ2goqzLhORHJZ8RI2Ow
-         joIkLKa6UFPbwH60ybf+rXR+4kguQQ9HlbbFJywAdr8MPIJa+RkfVbh1eQqjPPsmXvAw
-         YWmvPaEs++leM6XSAQTyauO0YsHHr37uCbCJEB0iPah9j4eYm/kdoVd2cWWvi5XE9/es
-         BhOQ==
+        d=gmail.com; s=20230601; t=1750962116; x=1751566916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o3+DMoHHGIgy/vebIi3Jk4k7xIG+hyANlJEXNLYgE3w=;
+        b=OTB1GOsmlbI3BzPpoH1R7aG1w0UAPz0acgFttYN7kxYfUHJLkTDBy/JKvSe6ucgMXy
+         XuwnAQI1tnhEzDGEjIaFSbgLfkFJlvWh9wekVgyciDQ47eipqsD2Q0WcIvnv1/Z4/sIm
+         FAujXs7EcxshzL6GlAAQoz9iihmA/RAir1yHm/Jg0JMgwB1WQmpb9lZ1u0F7D0q9Vt5s
+         xsjjzmSLvtV/LTh8w88V0ANUadbDQvqSb84KcdvzcyK7EbkjBdqs9Z/BHQjkI49zLgie
+         A07E2TAJ6SJt6VaNYhy8ekTvItm0YCcg6hXwl7uy8gGvMcnAlo3pFjOaxDdndveYpvkN
+         1v4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750948828; x=1751553628;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mxnJ+JMAeXEe0tFyoruENV/4pmqUfnDATYgkfRCTwwk=;
-        b=uAcOaOL+zqDOe3Mh6M4oKJobF8DI451FXc8Qy72c4MdWlr+4nQeLaUTmLU7SIj+9PE
-         9KOegXNPyX1TcDW87HM9GCq0h2SAjgSpZYFer+1uWJEajIxqld95zCSKF5IcgU4r4HKQ
-         uDpibtQCGOby/bf/3JXECjZqqvhGVKnxkchLhzWHX/UhWQ0yDKiZPd1OkwQKYUAZ/j7k
-         +fdQ1GviQ8ohyMpmsp6cvQ3lghLOK6sBEIa3i60kGP9hJ/1q/WYG6H0RNHV1qVVy2oxA
-         mPKpG36+FObDOkW+r8XO0sxVDSMUC/slxRPnmFLNW4AeiEEvc2Gu1VVw/D/K/kVJRsJG
-         AjRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoBwLIhMaOWzG70t37KbXXtpwZyPu8mQ6nUSeG4RjfJ3fw1N5GdkqlIiAWd+/0qkz7NukJpmk88/yauZiikxFwYw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ9OOEcyEzeRpelY6zDX5ALZemoUfWBzC/6/2eW7EVlZLqetBF
-	4uJwRHmx8qc//N7OTmtL+XcNs++C6hsWdMQlZMg0VZ4Bt+QWHyzYwiaOlaA0bImnZidJ6LLE3fv
-	q6bE8HnJXlFPm2aeqPTMpzF2OX0lTkU5KyVcj0a6Ctg==
-X-Gm-Gg: ASbGnct5OvvGxvqIN+7XA/oq++K8dTnNvF1YMvDVzga+uxZzxkkpruhunVYjLWqdzxE
-	ibZcRnfRXy5bF8OfvdVMhNgU5QQNq1IRz2GyAz5gc7c9W2kyrga4vSMfRGjb7jaK4eKk7eNjtAt
-	R5Ei6ZIUiXU4L8QEfuLBdFZvYo77sZ8TlB6RAvGGhvD/Ex
-X-Google-Smtp-Source: AGHT+IGHmBJjuI+jjZm5dEoJCIPgYdOyi9w4BnG28G9e5pmpEj5kPuV2QO71c3KUdTEVfpTi32Y/zFwNrd073ovM1Nk=
-X-Received: by 2002:a05:6808:4fe3:b0:401:e67c:b3be with SMTP id
- 5614622812f47-40b31c96519mr95767b6e.4.1750948827854; Thu, 26 Jun 2025
- 07:40:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750962116; x=1751566916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o3+DMoHHGIgy/vebIi3Jk4k7xIG+hyANlJEXNLYgE3w=;
+        b=E7C1zQ6Nkk0Iskqfv4XDlOLApnNA2Zu+Te/bDcByo3j6sHKMbcxtZ3X5rkRsp/LEsl
+         y5qLnRVir3elr32xX+Syi61+U5YvcwCUsQ7VFSwcts/KTtErLCZlCNyvLBv2CzfVAdFt
+         GEj3dpvTaQG9AZSjCWDH1X0SVjZbbNSlUPIb53Vc4z/NbEI2ID3rjAlCjJevmUTEo0aI
+         Mr+qBSeWUmXnORKhgyPawrU/D3gmbuLaZ63T2jm+IwkoIqaKGBwlYyU4gHcJzq1zQ7W6
+         dfUZuLZvNtfGc4rRrVWeUv9PALvWZNAZcxNdbs+KAsBqqvI2N6wqipAtsJogShGFrbTe
+         3PjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO0aoMPM2ruep6MTKO9NfN+75neHREnHIzI7/SFfWmjFCjDttMV+EmnLN96IeiHbWZb6cenJC8uHTUWv9S4bYygqw=@vger.kernel.org, AJvYcCWMhJEYrPVzMQ/k272o2k1hg5ceBDdigOlvML/O0hU+nz1YLemr/3iCDre+4xrtNxeAJePpvpyR/Ee1uZc=@vger.kernel.org, AJvYcCWux2mB/mv/0QO7Kl7fBRBN7+k5WDp3Sh+WDADRBAdyWxIqs+m9gTFP+s62MJaMbLycVbyANv7sa24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziW7xv8X23QakSdMm5xSPslohOw0RRF3ro/ZEuXIM3vxBupquy
+	aIBy2XttblKVcRRy8fd01x4Sw2VZC/hxKSx9JXPK3cIbl5SqBiBcKW05gec0r4FvEv2j4eFFluc
+	PUSp2siMp0lQ7u1OcLJ0oImW9A16MN+Y=
+X-Gm-Gg: ASbGncsSxGVymhNSbc0xZnE4QFXsUA/4Ibjrkp+5bo3UbowP+iICnD8BmZ9avVSPJ/y
+	D4y1AH7Wzc4rVp2iIftanqo5co5o2J4/TkPZD7N4cemKwLERr+TeDtRneB3yz9jD8Q9m28ZE7sV
+	2zx5dLT7sNYbNGkpK7cjAGd0FsUvC56ACZ7Bmkrseh
+X-Google-Smtp-Source: AGHT+IEsqtj8v2bEovOjiG46CLJ7UL5bwYCV8gHZttkfNpv1pJvRdrPCilDlgYCTp69vYR0Wg+ubr4UgooPkLo5BW/k=
+X-Received: by 2002:a17:907:3da5:b0:ad8:9257:571b with SMTP id
+ a640c23a62f3a-ae34fd3c530mr13268566b.16.1750962116235; Thu, 26 Jun 2025
+ 11:21:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611-gs101-cpuidle-v2-0-4fa811ec404d@linaro.org>
- <20250611-gs101-cpuidle-v2-2-4fa811ec404d@linaro.org> <4e827037-1bde-4eb3-a6f2-6416dace10b5@kernel.org>
-In-Reply-To: <4e827037-1bde-4eb3-a6f2-6416dace10b5@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 26 Jun 2025 15:40:16 +0100
-X-Gm-Features: Ac12FXyqVtwDD2H_scgEAaexOZMihIpWC1bKrXvc2_bGE_Q9OwsMvGA0M86meco
-Message-ID: <CADrjBPrWZ4JkNJ-c9Qiw=5mmMKePqg6ZW=ATwi8g-1F8Qekn=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, William Mcvicker <willmcvicker@google.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
+References: <CGME20250624075847eucas1p2db6e908f78aa603bdf6aec38b653e9af@eucas1p2.samsung.com>
+ <CANAwSgQ=G1yJXOg1LdeEf-J56epyNiohCSdNYUvs2AHNv90Hkg@mail.gmail.com> <20250624075815.132207-1-m.majewski2@samsung.com>
+In-Reply-To: <20250624075815.132207-1-m.majewski2@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 26 Jun 2025 23:51:38 +0530
+X-Gm-Features: Ac12FXwpXJBzgkh-OwnIhYXUzqm4zOFzScYoLTs9xrNJZHdZ2chXs_WiTmxz6v0
+Message-ID: <CANAwSgT2ROe77FVgk41s3xB-a+2SNwo5XWRZzrgxtC_SiooTXA@mail.gmail.com>
+Subject: Re: [RRC v1 2/3] thermal/drivers/exynos: Handle temperature threshold
+ interrupts and clear corresponding IRQs
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org, 
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org, 
+	rui.zhang@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi Mateusz
 
-Thanks a lot for your review feedback!
-
-On Wed, 18 Jun 2025 at 11:22, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, 24 Jun 2025 at 13:28, Mateusz Majewski <m.majewski2@samsung.com> wr=
+ote:
 >
-> On 11/06/2025 11:34, Peter Griffin wrote:
-> > Register cpu pm notifiers for gs101 which call the
-> > gs101_cpu_pmu_online/offline callbacks which in turn
-> > program the ACPM hint. This is required to actually
-> > enter the idle state.
+> > I tried to configure this, referring to the comment in the driver
+> >         /*
+> >          * Clear the interrupts.  Please note that the documentation fo=
+r
+> >          * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectl=
+y
+> >          * states that INTCLEAR register has a different placing of bit=
+s
+> >          * responsible for FALL IRQs than INTSTAT register.  Exynos5420
+> >          * and Exynos5440 documentation is correct (Exynos4210 doesn't
+> >          * support FALL IRQs at all).
+> >          */
 > >
-> > A couple of corner cases are handled, namely when the
-> > system is rebooting or suspending we ignore the request.
-> > Additionally the request is ignored if the CPU is in
-> > CPU hot plug.
+> > By the way, I don't see Exynos5433 and Exynos7 support
+> > INTSTAT and INTCLEAR registers. We are using TMU_REG_INTPEND
+> >  to read and update the same register.
 > >
-> > Note: this patch has a runtime dependency on adding
-> > 'local-timer-stop' dt property to the CPU nodes. This
-> > informs the time framework to switch to a broadcast timer
-> > as the local timer will be shutdown. Without that DT
-> > property specified the system hangs in early boot with
-> > this patch applied.
+> >         if (data->soc =3D=3D SOC_ARCH_EXYNOS5260) {
+> >                 tmu_intstat =3D EXYNOS5260_TMU_REG_INTSTAT;
+> >                 tmu_intclear =3D EXYNOS5260_TMU_REG_INTCLEAR;
+> >         } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
+> >                 tmu_intstat =3D EXYNOS7_TMU_REG_INTPEND;
+> >                 tmu_intclear =3D EXYNOS7_TMU_REG_INTPEND;
+> >         } else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433) {
+> >                 tmu_intstat =3D EXYNOS5433_TMU_REG_INTPEND;
+> >                 tmu_intclear =3D EXYNOS5433_TMU_REG_INTPEND;
+> >         } else {
+> >                 tmu_intstat =3D EXYNOS_TMU_REG_INTSTAT;
+> >                 tmu_intclear =3D EXYNOS_TMU_REG_INTCLEAR;
+> >         }
 >
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+> My understanding of this comment and the situation in general is like
+> this:
+>
+Thanks for clarifying this in such detail.
+> 1. On 5420, whenever there is edge interrupt, no matter if rise or fall,
+>    a bit gets set to 1 inside INTSTAT, and we clear it by setting the
+>    same bit to 1 inside INTCLEAR. The current code does not rely on the
+>    concrete bit index, it will just check the temperature after the
+>    interrupt.
+Correct
+> 2. On 4210, there is no falling edge interrupts (so
+>    exynos4210_tmu_set_low_temp is empty, we enable polling in DT etc).
+>    This is what the "Exynos4210 doesn't support FALL IRQs at all" means.
+>    However, rising edge interrupts work exactly the same as on 5420:
+>    a bit gets set to 1 inside INTSTAT, and we clear it by setting the
+>    same bit to 1 inside INTCLEAR.
+For Exynos4210, I am skipping this in the next patch.
+> 3. On 3250, 4412, 5250, 5260, it again works the same way as 5420.
+>    However, somebody had a copy of documentation that was incorrect: it
+>    said that bit indices does not match somehow, which is not true.
 
-Noted, will fix
+> 4. On 5433 and 7, it one more time works the same way as 5420, with a
+>    single change: a bit gets set to 1 inside INTPEND, and we clear it
+>    by setting it to 1 inside the same INTPEND.
+>
+> So, all we need to do to support existing SoCs is to read the 1 bit from
+> one register, and set the bit with the same index in another register
+> (which on some SoCs is the same register). We could interpret the index
+> to see what kind of interrupt is this, but we read the temperature to
+> get similar information.
+>
+> So in the end, is it helpful to interpret the INTSTAT bit index, only to
+> reset the exact same index inside INTCLEAR? I guess it could be valuable
+> if we also used the information about which interrupt it is and somehow
+> used it elsewhere (which could actually help with some issues), but that
+> is another thing to do.
+>
+correct.
+> > If you have details on how INTSTAT and INTCLEAR are used
+> > particularly regarding the update bits, please share them.
+> > Specifically, I'm interested in how bits [7:0] correspond to rising edg=
+e
+> > interrupts and bits [23:16] to falling edge interrupts
+> > I feel it's the same as Exynos54222.
+>
+> Regarding concrete indices on 5433:
+> - the 0th bit corresponds to RISE0,
+> - the 1st bit corresponds to RISE1,
+> - ...
+> - the 7th bit corresponds to RISE7,
+> - the 16th bit corresponds to FALL0,
+> - the 17th bit corresponds to FALL1,
+> - ...
+> - the 23th bit corresponds to FALL7.
+>
+Thanks, I will update this in the next version.
 
+> That is probably because this SoC supports more interrupts than others.
+> Though do note that currently, we only use part of them (one RISE, one
+> FALL if supported, and another RISE for critical temperature (one
+> supporting hardware thermal tripping if possible)). Also note that the
+> indices in INTSTAT/INTCLEAR/INTPEND match the ones in INTEN, though I
+> have not checked thoroughly if that is true for all the SoCs.
 >
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> > Changes in v2
-> >  * Add ifdef CONFIG_PM_SLEEP to avoid
-> >    Fix warning: unused variable 'cpupm_pm_ops' [-Wunused-const-variable] (0-day)
-> > ---
-> >  drivers/soc/samsung/exynos-pmu.c | 137 +++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 133 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> > index a77288f49d249f890060c595556708334383c910..7f72ecd60994f18bb639dd8e09e1c6ff6158066b 100644
-> > --- a/drivers/soc/samsung/exynos-pmu.c
-> > +++ b/drivers/soc/samsung/exynos-pmu.c
-> > @@ -8,6 +8,7 @@
-> >  #include <linux/array_size.h>
-> >  #include <linux/arm-smccc.h>
-> >  #include <linux/cpuhotplug.h>
-> > +#include <linux/cpu_pm.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_address.h>
-> >  #include <linux/mfd/core.h>
-> > @@ -15,6 +16,7 @@
-> >  #include <linux/of_platform.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/delay.h>
-> > +#include <linux/reboot.h>
-> >  #include <linux/regmap.h>
-> >
-> >  #include <linux/soc/samsung/exynos-regs-pmu.h>
-> > @@ -35,6 +37,10 @@ struct exynos_pmu_context {
-> >       const struct exynos_pmu_data *pmu_data;
-> >       struct regmap *pmureg;
-> >       struct regmap *pmuintrgen;
-> > +     spinlock_t cpupm_lock;  /* serialization lock */
->
-> serialization of what? Or rather, can it be not a serialization lock? Is
-> it possible? It's as useful as saying "protection against concurrent
-> accesses lock". No, you need to be explicit which members and/or code
-> are protected.
+As per the manuals, we have to enable each corresponding bit for RISE and F=
+ALL
 
-I can update the comment to be more verbose, but the lock is used to
-ensure the cpu online/offline sequence called from CPU hotplug
-callbacks and cpu pm notifiers are serialized.
+INTEN          0x0070    Interrupt enable register
+INTSTAT      0x0074    Interrupt status register
+INTCLEAR   0x0078    Interrupt clear register
 
->
-> > +     bool __percpu *hotplug_ing;
-> > +     atomic_t sys_suspended;
->
-> Why re-implementing own refcnt of pm suspend status?
-> pm_runtime_suspended() and others?
+When current temperature exceeds a threshold rise temperature, then
+it generates corresponding interrupt (INTREQ_RISE[2:0]).
+When current temperature goes below a threshold fall temperature, then
+it generates corresponding interrupt (INTREQ_FALL[2:0].
 
-sys_suspended is being used to detect whether a *system* wide sleep
-state is happening. I see a bunch of different drivers using a similar
-approach in the kernel to set a flag from their suspend/resume
-callback. Grep for things like system_suspending, is_suspending etc.
-An alternative approach could be to use register_pm_notifier() and set
-the flag from the callback there.
+If we correctly configure the mapping of the RISE and FALL bits along with
+INTEN, INTSTAT, and INTCLEAR, the interrupt behavior should function
+as expected.
 
-pm_runtime_suspended() tells me the runtime pm status, which is not
-what I want here.
+The following outlines the interrupt flow as described in the user manual
 
-> > +     atomic_t sys_rebooting;
-> >  };
-> >
-> >  void __iomem *pmu_base_addr;
-> > @@ -336,7 +342,7 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
-> >  #define CPU_INFORM_CLEAR     0
-> >  #define CPU_INFORM_C2                1
-> >
-> > -static int gs101_cpuhp_pmu_online(unsigned int cpu)
-> > +static int gs101_cpu_pmu_online(unsigned int cpu)
-> >  {
-> >       unsigned int cpuhint = smp_processor_id();
-> >       u32 reg, mask;
-> > @@ -358,10 +364,26 @@ static int gs101_cpuhp_pmu_online(unsigned int cpu)
-> >       return 0;
-> >  }
-> >
-> > -static int gs101_cpuhp_pmu_offline(unsigned int cpu)
-> > +static int gs101_cpuhp_pmu_online(unsigned int cpu)
->
-> This needs either renaming or comments. One is cpu_pmu_online other is
-> cpuhp_pmu_online. Sounds the same to me.
+[1} https://usermanual.wiki/Document/Exynos20441220SCPUsers20ManualVer01000=
+Preliminary0.167615881
 
-I can add some comments, but one function is specifically for CPU Hot
-Plug, which is what the 'cpuhp' part was trying to convey.
+/* Read the measured data from e-fuse */
+Triminfo_25 =3D TRIMINFO[7:0]
+/* Calibrated threshold temperature is written into THRES_TEMP_RISE
+and THRES_TEMP_FALL */
+/* Refer to 1.6.1 */
+THRES_TEMP_RISE0 =3D 0x40;
+THRES_TEMP_RISE1 =3D 0x50;
+THRES_TEMP_RISE2 =3D 0x60;
+THRES_TEMP_RISE3 =3D 0x70;
+THRES_TEMP_FALL0 =3D 0x3A;
+THRES_TEMP_FALL1 =3D 0x4A;
+THRES_TEMP_FALL2 =3D 0x5A;
+/* Parameter for sampling interval is set */
+SAMPLING_INTERVAL =3D 0x1;
+/* Interrupt enable */
+INTEN[24] =3D0x1; // for INTEN_FALL2
+INTEN[20] =3D0x1; // for INTEN_FALL1
+INTEN[16] =3D0x1; // for INTEN_FALL0
+INTEN[8] =3D0x1; // for INTEN_RISE2
+INTEN[4] =3D0x1; // for INTEN_RISE1
+INTEN[0] =3D0x1; // for INTEN_RISE0
+/* Thermal tripping mode selection */
+THERM_TRIP_MODE =3D 0x4;
+/* Thermal tripping enable */
+THERM_TRIP_EN =3D 0x1;
+/* Check sensing operation is idle */
+tmu_idle =3D 0;
+while(tmu_idle&1) {
+    tmu_idle =3D TMU_STATUS[0];
+}
+/* Start sensing operation */
+TMU_CONTROL |=3D 1;
 
->
->
-> > +{
-> > +     gs101_cpu_pmu_online(cpu);
-> > +
-> > +     /*
-> > +      * Mark this CPU as having finished the hotplug.
-> > +      * This means this CPU can now enter C2 idle state.
-> > +      */
-> > +     *per_cpu_ptr(pmu_context->hotplug_ing, cpu) = false;
->
-> Quoting docs: "Per cpu data structures are designed to be used by one
-> cpu exclusively".
->
-> ... and further about write access. Adding standard driver code using
-> "highly discouraged" practice is not something expected.
+ISR_INTREQ_TMU () {
+/* Read interrupt status register */
+int_status =3D INTSTAT;
+if(int_status[24]) {
+    ISR_INT_FALL2();
+}
+else if(int_status[20]) {
+    ISR_INT_FALL1();
+}
+else if(int_status[16]) {
+    ISR_INT_FALL0();
+}
+Else if(int_status[8]) {
+    ISR_INT_RISE2();
+}
+else if(int_status[4]) {
+    ISR_INT_RISE1();
+}
+else if(int_status[0]) {
+    ISR_INT_RISE0();
+}
+else {
+    $display("Some error occurred..!");
+}
+ISR_INT0 () {
+   /* Perform proper task for decrease temperature */
+    INTCLEAR[0] =3D 0x1;
+}
 
-I'll update this to dynamically allocate based on num_possible_cpus()
-and then read/write the flag with cpupm lock held. I didn't realize
-the docs described the per_cpu remote writes as "highly discouraged
-unless absolutely necessary", so thanks for highlighting that. The
-per_cpu variables with remote writes seem quite widely used in the
-downstream exynos-cpupm driver, but then it takes all sorts of locks
-through all the different cal layers.
-
->
->
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int gs101_cpu_pmu_offline(unsigned int cpu)
-> >  {
-> >       u32 reg, mask;
-> > -     unsigned int cpuhint = smp_processor_id();
-> > +     unsigned int cpuhint;
-> > +
-> > +     spin_lock(&pmu_context->cpupm_lock);
->
-> This does not disable interrupts...
->
-> > +     cpuhint = smp_processor_id();
->
-> ... which is a requirement here, according to docs, no? Maybe the
-> original code had an issue, though.
-
-CPU notifiers are called with interrupts disabled. We do use a similar
-pattern in the CPU hot plug path which isn't called with IRQs disabled
-though, so I'll add some locking there in the next version.
-
-Thanks,
-
-Peter
+Hey, if you=E2=80=99ve got a bit of time, could you take a look at these ch=
+anges?
+[2]  https://lore.kernel.org/all/20250430123306.15072-2-linux.amoon@gmail.c=
+om/
 
 
-
->
-> >
-> >       /* set cpu inform hint */
-> >       regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
-> > @@ -379,16 +401,89 @@ static int gs101_cpuhp_pmu_offline(unsigned int cpu)
-> >       regmap_read(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_UPEND, &reg);
-> >       regmap_write(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_CLEAR,
-> >                    reg & mask);
-> > +
-> > +     spin_unlock(&pmu_context->cpupm_lock);
-> >       return 0;
-> >  }
-> >
-> > +static int gs101_cpuhp_pmu_offline(unsigned int cpu)
-> > +{
-> > +     /*
-> > +      * Mark this CPU as entering hotplug. So as not to confuse
-> > +      * ACPM the CPU entering hotplug should not enter C2 idle state.
-> > +      */
-> > +     *per_cpu_ptr(pmu_context->hotplug_ing, cpu) = true;
-> > +
-> > +     gs101_cpu_pmu_offline(cpu);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int gs101_cpu_pm_notify_callback(struct notifier_block *self,
-> > +                                     unsigned long action, void *v)
-> > +{
-> > +     int cpu = smp_processor_id();
-> > +
-> > +     switch (action) {
-> > +     case CPU_PM_ENTER:
-> > +             /*
-> > +              * Ignore CPU_PM_ENTER event in reboot or
-> > +              * suspend sequence.
-> > +              */
-> > +
-> > +             if (atomic_read(&pmu_context->sys_suspended) ||
-> > +                 atomic_read(&pmu_context->sys_rebooting))
-> > +                     return NOTIFY_OK;
-> > +
-> > +             if (*per_cpu_ptr(pmu_context->hotplug_ing, cpu))
-> > +                     return NOTIFY_BAD;
-> > +
-> > +             gs101_cpu_pmu_offline(cpu);
-> > +
-> > +             break;
-> > +     case CPU_PM_EXIT:
-> > +
-> > +             if (atomic_read(&pmu_context->sys_rebooting))
-> > +                     return NOTIFY_OK;
-> > +
-> > +             gs101_cpu_pmu_online(cpu);
-> > +
-> > +             break;
-> > +     }
-> > +
-> > +     return NOTIFY_OK;
-> > +}
-> > +
-> > +static struct notifier_block gs101_cpu_pm_notifier = {
-> > +     .notifier_call = gs101_cpu_pm_notify_callback,
-> > +     .priority = INT_MAX     /* we want to be called first */
->
-> You should say why. Everyone wants to be the first.
->
-> > +};
-> > +
-> > +static int exynos_cpupm_reboot_notifier(struct notifier_block *nb,
-> > +                                     unsigned long event, void *v)
-> > +{
-> > +     switch (event) {
-> > +     case SYS_POWER_OFF:
-> > +     case SYS_RESTART:
-> > +             atomic_set(&pmu_context->sys_rebooting, 1);
-> > +             break;
-> > +     }
-> > +
-> > +     return NOTIFY_OK;
-> > +}
-> > +
-> > +static struct notifier_block exynos_cpupm_reboot_nb = {
-> > +     .priority = INT_MAX,
-> > +     .notifier_call = exynos_cpupm_reboot_notifier,
-> > +};
-> > +
-> >  static int exynos_pmu_probe(struct platform_device *pdev)
-> >  {
-> >       struct device *dev = &pdev->dev;
-> >       struct regmap_config pmu_regmcfg;
-> >       struct regmap *regmap;
-> >       struct resource *res;
-> > -     int ret;
-> > +     int ret, cpu;
-> >
-> >       pmu_base_addr = devm_platform_ioremap_resource(pdev, 0);
-> >       if (IS_ERR(pmu_base_addr))
-> > @@ -444,6 +539,12 @@ static int exynos_pmu_probe(struct platform_device *pdev)
-> >                        */
-> >                       dev_warn(&pdev->dev, "pmu-intr-gen syscon unavailable\n");
-> >               } else {
-> > +                     pmu_context->hotplug_ing = alloc_percpu(bool);
-> > +
-> > +                     /* set PMU to power on */
-> > +                     for_each_online_cpu(cpu)
-> > +                             gs101_cpuhp_pmu_online(cpu);
-> > +
-> >                       cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,
-> >                                         "soc/exynos-pmu:prepare",
-> >                                         gs101_cpuhp_pmu_online, NULL);
-> > @@ -451,6 +552,12 @@ static int exynos_pmu_probe(struct platform_device *pdev)
-> >                       cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-> >                                         "soc/exynos-pmu:online",
-> >                                         NULL, gs101_cpuhp_pmu_offline);
-> > +
-> > +                     cpu_pm_register_notifier(&gs101_cpu_pm_notifier);
-> > +                     spin_lock_init(&pmu_context->cpupm_lock);
-> > +                     atomic_set(&pmu_context->sys_rebooting, 0);
-> > +                     atomic_set(&pmu_context->sys_suspended, 0);
-> > +                     register_reboot_notifier(&exynos_cpupm_reboot_nb);
-> >               }
-> >       }
-> >
-> > @@ -471,10 +578,32 @@ static int exynos_pmu_probe(struct platform_device *pdev)
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_PM_SLEEP
-> > +static int exynos_cpupm_suspend_noirq(struct device *dev)
-> > +{
-> > +     atomic_set(&pmu_context->sys_suspended, 1);
-> > +     return 0;
-> > +}
-> > +
-> > +static int exynos_cpupm_resume_noirq(struct device *dev)
-> > +{
-> > +     atomic_set(&pmu_context->sys_suspended, 0);
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct dev_pm_ops cpupm_pm_ops = {
-> > +     .suspend_noirq = exynos_cpupm_suspend_noirq,
-> > +     .resume_noirq = exynos_cpupm_resume_noirq,
->
-> SET_LATE_SYSTEM_SLEEP_PM_OPS or one of other wrappers.
->
-> > +};
-> > +#endif
-> > +
-> >  static struct platform_driver exynos_pmu_driver = {
-> >       .driver  = {
-> >               .name   = "exynos-pmu",
-> >               .of_match_table = exynos_pmu_of_device_ids,
-> > +#ifdef CONFIG_PM_SLEEP
-> > +             .pm = &cpupm_pm_ops,
->
-> pm_ptr
-> > +#endif
-> >       },
-> >       .probe = exynos_pmu_probe,
-> >  };
-> >
->
->
-> Best regards,
-> Krzysztof
+> Thank you,
+> Mateusz Majewski
+Thanks
+-Anand
