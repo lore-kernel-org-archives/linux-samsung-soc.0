@@ -1,40 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B592F234D;
-	Thu, 26 Jun 2025 20:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324322ED164;
+	Thu, 26 Jun 2025 20:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750968149; cv=none; b=ELQxPq+X31Jtc3Yv5pIo/82/Po/TW8n1p+/9WHYdWt/h4AeX0dsSBIU9Eym38VQcA4yJF6BqXn+RvS6qNj2wcg1TVgqHKbGFhgb+W2g4TbapPJTtx2NLNnIB7HFt6ZKP3pL7rx6+6p4R/llo0GrV1wb7U85j9ox6j5MY9sYQDm0=
+	t=1750968834; cv=none; b=fTF7o7KgI5EnT/LGahlPMMoMdNGmETobOOD/4PEybyMqvCo7eEEKO4tiVNduKB2QLS2Yq36azpIstEqHYpw10xlKledHOLAT9xWbr3YfRXqsBWtVzgNrvf2BSkpErhO8988LfDb0kvXaUO1bnQLV0tX8hz0XD1epCkhaaaIUtFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750968149; c=relaxed/simple;
-	bh=kl8iNFIBnOgLWpvFT93EaWi/fQ7+TYZePru6lirB2A0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xj47vZcOesI1yr+10AvtpBcNWVd/tbhxx25VXvv+vwv/ThJO+VlQJP8qmqj9HHPsgHJMkuBtC3sa/z7zP0N1cYazlA1FBuigDSyP5W8j5hY9viQRWVTVoNr5lkIc/bPfzF49GYpSqkbmzw/C1SJLgwvBhoDhX3KiROeESsFn9EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=WeYCZ1YI; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1750968834; c=relaxed/simple;
+	bh=FFjnLZMfPZBAJbL96oCQnyDn/YOdEMR7wa+IGJNDeck=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VH+5KetNZRd58L8cFoyU7KY7BgKvepj6jFnxbsxuh1PlFQFsgRyLctMJCzxkSQPLxAOTpA1Y7RgrnAlc7iT2P2ioLKPqCV3lq9fhn1BPLfMZP3VVtp8U56Rdqnf0vAh+COutcLnwrsW8eY28NOb3vGjgjBZvzrRwxwj7pZv7CEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IFRi2KNL; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="WeYCZ1YI"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IFRi2KNL"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5985225E01;
-	Thu, 26 Jun 2025 22:02:26 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id BB56125EA4;
+	Thu, 26 Jun 2025 22:13:51 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id QvH0vo_XIayP; Thu, 26 Jun 2025 22:02:24 +0200 (CEST)
+ id R-5a0IuCrGJc; Thu, 26 Jun 2025 22:13:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750968144; bh=kl8iNFIBnOgLWpvFT93EaWi/fQ7+TYZePru6lirB2A0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=WeYCZ1YI/pQpQUDtKMdOVIWGMbrEj3ukq6PDmc5fOND7dvKKHien9UeyB/dYnB0NR
-	 +5d1Z24jns9j/G84OYd5V9fyuc+bi3UFrzBCTApEMDmsSlDTCYYfcZ3z0UfgeEcYSV
-	 kSkfATgpIJQb1Kz2iotPeKxgW8Zl85WNW+z/XBSOc2GdV2eov4wrwAZJLf6fPLQqo4
-	 u8RrRsM8Hd1ja3zpHPJtOxMTkTcbMZv8saxTqxqFzye3VcNz0fUhkqq5GVSzwhw+sJ
-	 2JKaQBgp0sOEx+w6QndM2FPUQurIISbtj9PuVckM2CZi2JPV3c6ipXokiSiXvIk8v7
-	 nCI3nGs8vqO9A==
+	t=1750968830; bh=FFjnLZMfPZBAJbL96oCQnyDn/YOdEMR7wa+IGJNDeck=;
+	h=From:Subject:Date:To:Cc;
+	b=IFRi2KNLmhx6brjIkFKF5BTjf55gGs5uaCXsLzKmMHR4U0/ZLHZy6X0pCuDb+Q3Ki
+	 nYPxEhVmeEHUBXDVvG9Z5JyegHbu2YPUBPaNMicMUAMrQI8IeQQvhVRoeiLBp1TC76
+	 9xQ6VppZz6vB443tf7ZeWtm3ixpXwBHPmEzxY0JsyY3ASo/D48wDjuP001LyhmdKgD
+	 pJQ+h52XN+gd17utEJJuH+22lZoM1o4c4+PFiVe3fj9akpwXnw+6oqC5dI79V1hAjC
+	 RLB6yl/JoIE9N23FzsHTuVKn/3imwpmv8TkUntBTaTMssx6856KaYV5dzH5kgyHWK6
+	 l5/1xVQbLAZBA==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Fri, 27 Jun 2025 01:31:55 +0530
-Subject: [PATCH 2/2] phy: exynos-mipi-video: allow skipping absent PHYs
+Subject: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
+Date: Fri, 27 Jun 2025 01:43:23 +0530
+Message-Id: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,306 +44,81 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-exynos7870-mipi-phy-fix-v1-2-2eefab8b50df@disroot.org>
-References: <20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org>
-In-Reply-To: <20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750968127; l=10374;
+X-B4-Tracking: v=1; b=H4sIAOOpXWgC/22NQQ6DIBBFr2Jm3WkAo2BX3qNxgYDKotLMGKMx3
+ r3Ubrt8L/nvH8CBYmB4FAdQWCPHNGdQtwLcZOcxYPSZQQlViUqVGLZ9TqyNFujphX5hNNo52+t
+ S9raBPHxTGOJ2RZ9d5inykmi/Plb5tb9cLdW/3CpRoDFOaN3YoXZ96yNTSss90QjdeZ4fQc9z/
+ LYAAAA=
+X-Change-ID: 20250523-exynos7870-drm-dts-87ccab731ba9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750968815; l=3190;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=kl8iNFIBnOgLWpvFT93EaWi/fQ7+TYZePru6lirB2A0=;
- b=dllRAVpa41utrX5agLKI6r43dJtae/TbO0r7TErIcBn11Gr/kOenhIj2D+k+HWe/PQm+CCyBa
- NL7SRwvc/DWCBYgNTtyEJHH9mKdxAaKEvaW7d3I7mFLYUvj5v5DXtr/
+ bh=FFjnLZMfPZBAJbL96oCQnyDn/YOdEMR7wa+IGJNDeck=;
+ b=c+FFNHhhOUGGsSszBnm+LZ5iHuosmtfhJ1rBmbim5EUu0xrny1B+zxCcEMsy5e1EZO6BP3Fuj
+ m5Zcm/o1wULC9QJ8vFqqom+xflF4fmC+9/iu7liBuOXXnBdp2GwW1ji
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-In Exynos7870 MIPI PHY, DSIM1 PHY is not present. The num_phys field of
-mipi_phy_device_desc when set to a value, say n, always unconditionally
-initializes the first n phys, so there is no mechanism to skip over
-these absent PHY blocks.
+Exynos7870 has a IP subsystem in its architecture dedicated to display
+management. Notably, this block includes the Display Enhancement
+Controller (DECON), and the DSI Master (DSIM).
 
-Introduce a "present" flag in all PHY descriptors which needs to be set
-to true. And instead of checking the first n PHYs, check all of them. If
-a certain PHY is not defined, the flag remains false and is skipped
-during the init phase.
+The following series and its sub-series implement all components for a
+functioning display pipeline. All vital information which helped shaping
+up the patches have been retrieved from Exynos7870 vendor kernel sources
+as provided by Samsung.
 
-The num_phys field has to go, it has no purpose as now we're checking
-all elements of the exynos_mipi_phy_desc array.
+Testing has been done on all three devices available upstream, i.e.
+Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
+(samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte). Regrettably,
+I've only been able to test the functionality on video mode, as none of
+the devices have panels working in command mode.
+
+This series implements changes in the SoC subsystem, which includes
+devicetree additions. It depends on all sub-series listed below:
+(Legend: [R]eviewed, [A]ccepted)
+
+exynosdrm-decon            - https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
+exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+exynos7870-mipi-phy-fix    - https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
+exynos7870-dsim            - https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
+panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
+panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- drivers/phy/samsung/phy-exynos-mipi-video.c | 100 ++++++++++++++++------------
- 1 file changed, 57 insertions(+), 43 deletions(-)
+Changes in v2:
+- modified compatible hierarchy to use non-deprecated syntax (krzk)
+- fixed subject prefixes of [v1 2/5], [v1 3/5], [v1 4/5], [v1 5/5] (krzk)
+- removed simplefb nodes instead of disabling it (krzk)
+- added dt-bindings patch to allow mipi-phy node under PMU
+- changed clock names of dsim node
+- Link to v1: https://lore.kernel.org/r/20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org
 
-diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
-index 1c9c340f708da0ca214639880d067706aaea8fc7..c120c4f3531661a45374793ed7d9e9f622ff3c5d 100644
---- a/drivers/phy/samsung/phy-exynos-mipi-video.c
-+++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
-@@ -37,10 +37,10 @@ enum exynos_mipi_phy_regmap_id {
- };
- 
- struct mipi_phy_device_desc {
--	int num_phys;
- 	int num_regmaps;
- 	const char *regmap_names[EXYNOS_MIPI_REGMAPS_NUM];
- 	struct exynos_mipi_phy_desc {
-+		bool present;
- 		enum exynos_mipi_phy_id	coupled_phy_id;
- 		u32 enable_val;
- 		unsigned int enable_reg;
-@@ -54,10 +54,9 @@ struct mipi_phy_device_desc {
- static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
- 	.num_regmaps = 1,
- 	.regmap_names = {"syscon"},
--	.num_phys = 4,
- 	.phys = {
--		{
--			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
-+		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
-@@ -65,8 +64,9 @@ static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_SRESETN,
- 			.resetn_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
-@@ -74,8 +74,9 @@ static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_MRESETN,
- 			.resetn_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM1,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
-@@ -83,8 +84,9 @@ static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_SRESETN,
- 			.resetn_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS1,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
-@@ -99,10 +101,9 @@ static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
- static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
- 	.num_regmaps = 1,
- 	.regmap_names = {"syscon"},
--	.num_phys = 5,
- 	.phys = {
--		{
--			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
-+		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS5420_MIPI_PHY_CONTROL(0),
-@@ -110,8 +111,9 @@ static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_SRESETN,
- 			.resetn_reg = EXYNOS5420_MIPI_PHY_CONTROL(0),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS5420_MIPI_PHY_CONTROL(0),
-@@ -119,8 +121,9 @@ static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_MRESETN,
- 			.resetn_reg = EXYNOS5420_MIPI_PHY_CONTROL(0),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM1,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS5420_MIPI_PHY_CONTROL(1),
-@@ -128,8 +131,9 @@ static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_SRESETN,
- 			.resetn_reg = EXYNOS5420_MIPI_PHY_CONTROL(1),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS1,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS5420_MIPI_PHY_CONTROL(1),
-@@ -137,8 +141,9 @@ static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
- 			.resetn_val = EXYNOS4_MIPI_PHY_MRESETN,
- 			.resetn_reg = EXYNOS5420_MIPI_PHY_CONTROL(1),
- 			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS2] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS5420_MIPI_PHY_CONTROL(2),
-@@ -162,10 +167,9 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 		"samsung,cam0-sysreg",
- 		"samsung,cam1-sysreg"
- 	},
--	.num_phys = 5,
- 	.phys = {
--		{
--			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
-+		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
-@@ -173,8 +177,9 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			.resetn_val = BIT(0),
- 			.resetn_reg = EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
-@@ -182,8 +187,9 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			.resetn_val = BIT(0),
- 			.resetn_reg = EXYNOS5433_SYSREG_DISP_MIPI_PHY,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_DISP,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
-@@ -191,8 +197,9 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			.resetn_val = BIT(1),
- 			.resetn_reg = EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
-@@ -200,8 +207,9 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			.resetn_val = BIT(1),
- 			.resetn_reg = EXYNOS5433_SYSREG_DISP_MIPI_PHY,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_DISP,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS2] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(2),
-@@ -220,10 +228,9 @@ static const struct mipi_phy_device_desc exynos7870_mipi_phy = {
- 		"samsung,disp-sysreg",
- 		"samsung,cam0-sysreg",
- 	},
--	.num_phys = 4,
- 	.phys = {
--		{
--			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
-+		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL0,
-@@ -231,8 +238,9 @@ static const struct mipi_phy_device_desc exynos7870_mipi_phy = {
- 			.resetn_val = BIT(0),
- 			.resetn_reg = 0,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_DSIM0] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL0,
-@@ -240,8 +248,9 @@ static const struct mipi_phy_device_desc exynos7870_mipi_phy = {
- 			.resetn_val = BIT(0),
- 			.resetn_reg = 0,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_DISP,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS1] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL1,
-@@ -249,8 +258,9 @@ static const struct mipi_phy_device_desc exynos7870_mipi_phy = {
- 			.resetn_val = BIT(1),
- 			.resetn_reg = 0,
- 			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
--		}, {
--			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
-+		},
-+		[EXYNOS_MIPI_PHY_ID_CSIS2] = {
-+			.present = true,
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS4_PHY_ENABLE,
- 			.enable_reg = EXYNOS7870_MIPI_PHY_CONTROL2,
-@@ -365,12 +375,15 @@ static int exynos_mipi_video_phy_probe(struct platform_device *pdev)
- 		if (IS_ERR(state->regmaps[i]))
- 			return PTR_ERR(state->regmaps[i]);
- 	}
--	state->num_phys = phy_dev->num_phys;
-+	state->num_phys = 0;
- 	spin_lock_init(&state->slock);
- 
- 	dev_set_drvdata(dev, state);
- 
--	for (i = 0; i < state->num_phys; i++) {
-+	for (i = 0; i < EXYNOS_MIPI_PHYS_NUM; i++) {
-+		if (!phy_dev->phys[i].present)
-+			continue;
-+
- 		struct phy *phy = devm_phy_create(dev, NULL,
- 						  &exynos_mipi_video_phy_ops);
- 		if (IS_ERR(phy)) {
-@@ -378,6 +391,7 @@ static int exynos_mipi_video_phy_probe(struct platform_device *pdev)
- 			return PTR_ERR(phy);
- 		}
- 
-+		state->num_phys++;
- 		state->phys[i].phy = phy;
- 		state->phys[i].index = i;
- 		state->phys[i].data = &phy_dev->phys[i];
+---
+Kaustabh Chakraborty (6):
+      dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
+      dt-bindings: soc: samsung: exynos-pmu: allow mipi-phy subnode
+      arm64: dts: exynos7870: add DSI support
+      arm64: dts: exynos7870-on7xelte: enable display panel support
+      arm64: dts: exynos7870-a2corelte: enable display panel support
+      arm64: dts: exynos7870-j6lte: enable display panel support
 
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |  2 +
+ .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 52 +++++++++----
+ arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 49 ++++++++----
+ arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 51 ++++++++----
+ arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 90 ++++++++++++++++++++++
+ 6 files changed, 206 insertions(+), 39 deletions(-)
+---
+base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
+
+Best regards,
 -- 
-2.49.0
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
