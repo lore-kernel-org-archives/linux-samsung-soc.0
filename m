@@ -1,145 +1,171 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D97D2EFD8C;
-	Thu, 26 Jun 2025 20:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7B12185AC
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2025 22:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750968883; cv=none; b=JyywXdQscM8/PbgKjjhQcmyTyDJneODfFljsRitL+Alu1AVlRGs1+etHZdbzK8jHyeE4sY9lw/zApFYoV15TvGxlr950+vxxqkAKGuNj/U7I9RqnT0ymQ1TBTDaxZUNezjqCF/hX6qTeta1FFYzJVUPt2XcKsYyy85uV34w7AgE=
+	t=1750976468; cv=none; b=DJKaxOjsTF6NpABk5MHRXZ0Mn4cu9ZaFjhcfIYIn5ByMKOjYch9AeQ4xgrXoPRlZ5dMsTl9ZQGb4cAtasOYQjKWY4Ldu4xyRxYC9sw4z4YacrYOcGPu1HbRKwBE77dOhJtlkS4v2SXeBDizwqgd2EJhCJO6p8/t9/cZF//aGUH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750968883; c=relaxed/simple;
-	bh=cg7s6ZiVvmErjdj1DTXd7oxh6Zhi0Y1dn8W/u4K8qBE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YVP2Vv+xY9FAzUUpmRukQ3ZeHvLst/RUqpPd9SLAoDdEIJczyBUfCt5WK0qvKGfDQbl+wnvvUr3S941BGXEmTbgHh8J8rP9rokyy17pVRb23/KxxfuCN7o21kQrdUG89OobnEUPrDtqGoDyqhP+e72wBE3g/uT7/1ByctgOl3/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UVaRZlgG; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UVaRZlgG"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id F33CC25F8C;
-	Thu, 26 Jun 2025 22:14:39 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ROlUM-guIM2E; Thu, 26 Jun 2025 22:14:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750968879; bh=cg7s6ZiVvmErjdj1DTXd7oxh6Zhi0Y1dn8W/u4K8qBE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=UVaRZlgG9nWYsZtd+jxjqxzTwkGvROfDUUMR780HiuU6G3dbVIKviaEvSMWhypouh
-	 OOfzEMv/cCmp+ozPpOGlea0q4rIcFlnTA6eAGKxt0Z4ePRRsdI0NNGwZaCy5RCmVuA
-	 NGBrY6nJK2vxE8A986TmFZBXVZRvnlURjE9nxMbfHozyB1dY5iXGQ+2qpn4VCbLX5H
-	 m29Mu9QLBoaioXBXAqoSg82dcU76oo7i7tU87tCGadL7uElhTfZX5SMKqkbV9DeWvF
-	 0EF7b/TMv18b93fE9rmw0IAsuWLVQDxEDQwVVhPpsBCIhtoz2L1Fzd9hK+S+x7oqQt
-	 1Zhu1Rkduaf/Q==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Fri, 27 Jun 2025 01:43:29 +0530
-Subject: [PATCH v2 6/6] arm64: dts: exynos7870-j6lte: enable display panel
- support
+	s=arc-20240116; t=1750976468; c=relaxed/simple;
+	bh=r1HSdZ6WNVEi/Mi83UVnh9NXStJTYzNzdw0G+GYtays=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=trIFgsvHKXZbJUzFJmLUXgistg9Q1QI2dd+1ny3BwBWlmTsiFa64LCSU0cLUIGkK7L152RAjFEtN3tnlAu/eI4z/rCwMCR+WVJVTHYemxY28FyDsLcoHt8WyIBgt5OhM45IPQaE7jGw9XyQQRsxWVjtwZcSBBCNDu5dibNy/3NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C5131655
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2025 15:20:48 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A6AA63F66E
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2025 15:21:05 -0700 (PDT)
+Date: Thu, 26 Jun 2025 23:20:43 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-samsung-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH RFT 3/6] mfd: vexpress-sysreg: set-up software nodes for
+ gpio-mmio
+Message-ID: <aF3Hu0bMVfkbXdFn@e110455-lin.cambridge.arm.com>
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+ <20250624-gpio-mmio-pdata-v1-3-a58c72eb556a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-exynos7870-drm-dts-v2-6-d4a59207390d@disroot.org>
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
-In-Reply-To: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750968815; l=1916;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=cg7s6ZiVvmErjdj1DTXd7oxh6Zhi0Y1dn8W/u4K8qBE=;
- b=pqzZ0zpa9IlCWMHbS2c9JInserNn+o8T+yBmHd8KRENeWQfhVP3CCni/c0jioa1iZn/kjJvHg
- 0BO5isJX0MOD5qO3IqlUcew7aAyB/kk8e0ROSIrMxEQenW54uhd6Nxq
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-3-a58c72eb556a@linaro.org>
 
-Enable DECON and DSI nodes, and add the compatible display panel and
-appropriate panel timings for this device. Also, remove the
-simple-framebuffer node in favor of the panel.
+On Tue, Jun 24, 2025 at 03:19:14PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Replace struct bgpio_pdata - that we plan to remove - with software
+> nodes containing properties encoding the same values thatr can now be
+> parsed by gpio-mmio.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This device has a 720x1480 AMOLED Samsung S6E8AA5X01 display panel.
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts | 49 ++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 13 deletions(-)
+I'm OK with this going through the GPIO tree.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-index 61eec1aff32ef397c69ee3f0cba8050755f74fc6..6d57f583d687003850f0b03bd19fa9e2f6e33332 100644
---- a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-@@ -27,20 +27,7 @@ aliases {
- 	};
- 
- 	chosen {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges;
--
- 		stdout-path = &serial2;
--
--		framebuffer@67000000 {
--			compatible = "simple-framebuffer";
--			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
--			width = <720>;
--			height = <1480>;
--			stride = <(720 * 4)>;
--			format = "a8r8g8b8";
--		};
- 	};
- 
- 	gpio-hall-effect-sensor {
-@@ -133,6 +120,42 @@ vibrator {
- 	};
- };
- 
-+&decon {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,burst-clock-frequency = <500000000>;
-+	samsung,esc-clock-frequency = <16000000>;
-+	samsung,pll-clock-frequency = <26000000>;
-+
-+	panel@0 {
-+		compatible = "samsung,s6e8aa5x01";
-+		reg = <0>;
-+
-+		width-mm = <62>;
-+		height-mm = <128>;
-+
-+		panel-timing {
-+			clock-frequency = <73094400>;
-+
-+			hactive = <720>;
-+			hsync-len = <2>;
-+			hfront-porch = <62>;
-+			hback-porch = <26>;
-+
-+			vactive = <1480>;
-+			vsync-len = <2>;
-+			vfront-porch = <12>;
-+			vback-porch = <10>;
-+		};
-+	};
-+};
-+
- &gpu {
- 	status = "okay";
- };
+Best regards,
+Liviu
+
+> ---
+>  drivers/mfd/vexpress-sysreg.c | 46 ++++++++++++++++++++++++++-----------------
+>  1 file changed, 28 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
+> index ef03d6cec9ff6927668d051ca459eb1d8ff7269e..fc2daffc4352cca763cefbf6e17bdd5242290198 100644
+> --- a/drivers/mfd/vexpress-sysreg.c
+> +++ b/drivers/mfd/vexpress-sysreg.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <linux/stat.h>
+>  
+> @@ -37,22 +38,34 @@
+>  
+>  /* The sysreg block is just a random collection of various functions... */
+>  
+> -static struct bgpio_pdata vexpress_sysreg_sys_led_pdata = {
+> -	.label = "sys_led",
+> -	.base = -1,
+> -	.ngpio = 8,
+> +static const struct property_entry vexpress_sysreg_sys_led_props[] = {
+> +	PROPERTY_ENTRY_STRING("label", "sys_led"),
+> +	PROPERTY_ENTRY_U32("ngpios", 8),
+> +	{ }
+>  };
+>  
+> -static struct bgpio_pdata vexpress_sysreg_sys_mci_pdata = {
+> -	.label = "sys_mci",
+> -	.base = -1,
+> -	.ngpio = 2,
+> +static const struct software_node vexpress_sysreg_sys_led_swnode = {
+> +	.properties = vexpress_sysreg_sys_led_props,
+>  };
+>  
+> -static struct bgpio_pdata vexpress_sysreg_sys_flash_pdata = {
+> -	.label = "sys_flash",
+> -	.base = -1,
+> -	.ngpio = 1,
+> +static const struct property_entry vexpress_sysreg_sys_mci_props[] = {
+> +	PROPERTY_ENTRY_STRING("label", "sys_mci"),
+> +	PROPERTY_ENTRY_U32("ngpios", 2),
+> +	{ }
+> +};
+> +
+> +static const struct software_node vexpress_sysreg_sys_mci_swnode = {
+> +	.properties = vexpress_sysreg_sys_mci_props,
+> +};
+> +
+> +static const struct property_entry vexpress_sysreg_sys_flash_props[] = {
+> +	PROPERTY_ENTRY_STRING("label", "sys_flash"),
+> +	PROPERTY_ENTRY_U32("ngpios", 1),
+> +	{ }
+> +};
+> +
+> +static const struct software_node vexpress_sysreg_sys_flash_swnode = {
+> +	.properties = vexpress_sysreg_sys_flash_props,
+>  };
+>  
+>  static struct mfd_cell vexpress_sysreg_cells[] = {
+> @@ -61,22 +74,19 @@ static struct mfd_cell vexpress_sysreg_cells[] = {
+>  		.of_compatible = "arm,vexpress-sysreg,sys_led",
+>  		.num_resources = 1,
+>  		.resources = &DEFINE_RES_MEM_NAMED(SYS_LED, 0x4, "dat"),
+> -		.platform_data = &vexpress_sysreg_sys_led_pdata,
+> -		.pdata_size = sizeof(vexpress_sysreg_sys_led_pdata),
+> +		.swnode = &vexpress_sysreg_sys_led_swnode,
+>  	}, {
+>  		.name = "basic-mmio-gpio",
+>  		.of_compatible = "arm,vexpress-sysreg,sys_mci",
+>  		.num_resources = 1,
+>  		.resources = &DEFINE_RES_MEM_NAMED(SYS_MCI, 0x4, "dat"),
+> -		.platform_data = &vexpress_sysreg_sys_mci_pdata,
+> -		.pdata_size = sizeof(vexpress_sysreg_sys_mci_pdata),
+> +		.swnode = &vexpress_sysreg_sys_mci_swnode,
+>  	}, {
+>  		.name = "basic-mmio-gpio",
+>  		.of_compatible = "arm,vexpress-sysreg,sys_flash",
+>  		.num_resources = 1,
+>  		.resources = &DEFINE_RES_MEM_NAMED(SYS_FLASH, 0x4, "dat"),
+> -		.platform_data = &vexpress_sysreg_sys_flash_pdata,
+> -		.pdata_size = sizeof(vexpress_sysreg_sys_flash_pdata),
+> +		.swnode = &vexpress_sysreg_sys_flash_swnode,
+>  	}, {
+>  		.name = "vexpress-syscfg",
+>  		.num_resources = 1,
+> 
+> -- 
+> 2.48.1
+> 
 
 -- 
-2.49.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
