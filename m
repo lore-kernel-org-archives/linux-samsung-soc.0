@@ -1,149 +1,154 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4672D9EEC
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 13:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC502F1FDF;
+	Fri, 27 Jun 2025 13:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751030978; cv=none; b=U06bfp6XCMRNlGrhgryoHNpXbhdTX0TDYJq1qiUyIt+N9a1rCprkxW+j9CsjU1uYRh4Y6qhe51QNnj5cgA4LpnTnqRFHiD8fi0QSQ8hyWpQwOzX15AT/0bdcxUX2tsOlTQ3IvtIAqUPjiIQ5c2/fO95bBAFkMUXMiaVhmbMS51s=
+	t=1751031580; cv=none; b=AWzuK2JMBkF4hw+Yzc2js93tNJyVmczEuHxMD0tvAT10Ee5hWzrhSzeWrtbxMs6vWFCYJwnTSRV7nr9mL6MBCI3rTerDTj+Bv+dE7KdiwPbuHU7owkl4uZ9CIr84/yH1jo0lZ9VHTfgxDheQ7pic4t6FHU6xZHbQRdStu7xsVpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751030978; c=relaxed/simple;
-	bh=3Km3fcNcSPZ2Pb31AkgSOmK8Yw3sAe9TSLDvBZGtkMI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j0sjEl5czK7oE5ielKtawLDq/ER7J/ViBqVAjLe4tq4YOep3qzE5vD80GVHeyGkGHuNfR/JgSP5DCyjRJRRwhvRuIIPTYWWeIRn8OwGxFCN4Y8AG/42uWLVXmIhzHXzHaBRrcBZ4jdnTlPi+4qrT8LNN/4eUUd6vztL9IKzYbfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o63VOEKY; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751031580; c=relaxed/simple;
+	bh=TEJGRf1FlIgDbcSTQNxCwfvvmdMjzuRrveS8ic9DKO8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=G3XexwP/QDWgG6FLVAODhh6W8fDuhzZkghpksMWMhu35nQJOqqCsQGwsauGOYX06xBZiGdIw4k8EYjS2OUlodY6ocOq/ltdVuB2Z3Vz/uIG2Ewus1H4pbnmKyIT3BS/Pj62kLuuySea0B+cluCWT+C4vLf1ATjfGSBzv9+cA/jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Gd611RXt; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o63VOEKY"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so3507614a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 06:29:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751030973; x=1751635773; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=97dsq8shbijTwl1Kc6C9X7zbEyd2fSdds/39rteFriY=;
-        b=o63VOEKYRWpqWTmMxuipc6iLDL7rnLKHXZgNtz7pjFZWNbs3r35I2aZlwspkTgzvM5
-         s/7jlLJ1k5PMUHXkdGe633aoJnEP8MF/XGo4pRS0lDcZFqwDpLVSslUfGvMviP0368YJ
-         /02aVgQZlPOOr6661zIu8DhMImKic5JtPuMRqi0az8l8ulZuhFf8Y9TZ+2TDkgYCPOB7
-         hMyNR+Ajq93ofHNYoD8gBp+KTe26j3hau6hUh3RrK7spnq9py29jIQ6zJsyJJs1tsKgq
-         Olb7kcqPDWJRQliMqH7BG+aVdbfdr8bCC6Y1DI4V67bX3897fVenEqca6LThPhE3fffD
-         x4Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751030973; x=1751635773;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=97dsq8shbijTwl1Kc6C9X7zbEyd2fSdds/39rteFriY=;
-        b=OKzzXHLrJsUPnTL13jOxjcw5qham9HkjGWTM5IVq/o11lEi977RUI95D23VDZ8NplR
-         fCdR4d9yIawr0bYdi1ta0Dd5AYLnp65F02N2blhRzooTFlskBb1ApYzeqTMjVbyntd5B
-         gUJugmxtvC8nYMVctWlxIrI2jcSWf9pfKSnpeb4w1IDwwRuTILg3WwfFFEn0GLG5gr4j
-         YpfymlzAzSMCVKt24OOyX0/VtUBexjADb64peYRYzAlQhSmxf8ad+90KsrfqJSGWporX
-         p0cB3gnDW1px1E3Ma/jD/BQjp9XkBNz6oOYHaI61oTn2kPD3s0QaNB6k4pfgAWzbH3Xl
-         OxDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXErJgyLSCjXRF3Kig/+69TUOFTC39UtMBGKunFMInBqUoM9fHnX2FMZ0VpIAUNqLwpxPMDMmY518QmdOJ/t6nPgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YynDVs5Hn2Y1v+IVISJI2pCFJK42EqY3tpDEwXYPkEz02h1+onQ
-	ItV+akG47nige2hZTzTfGzcrylhy0kC33TV4YmQCkWy6JLDw7H0YitVzmkECEtfMRb4=
-X-Gm-Gg: ASbGncuraN3YbxrDR5ia3d16e/zxXds0bTROv7Op3Y2LtLVDCCQxDLTYdQyNk7AZcnB
-	lb9QFD5iFDb9N0fiLmRPGGd7SMWVIacPlCHMjBUna4iYvMX+TJ//gdac1lSHSasip/Z2v5qL/61
-	KIWdMU9cMxMrV+JNYHzqQowa0MZUTF7WqwHiYS7D1UdQReL44vOo0NkgFUmV7ltX2+sWRKBEc+s
-	Y49N28xXXyTmsD3E3HHpNantbhwFa5Na+CdvodAqxU1bRtlPrMkHdVZtb6ZxLpdqxBFZSu8ILmr
-	wQth0bDB8mDd4hzZDCiRzkb/qLfXJ1sx/ZEOM28OgnrCLPPkWPygsxFvCQ4AAxm+7+C7qgSu1yl
-	JK2/TvZ54MU2LsolxOzGRMHrItL1KNUQh1FsWLDxeRxV8gQ==
-X-Google-Smtp-Source: AGHT+IGBgERbQ8JzXtKIK0Cr/Y2P+P8Vyd6f4ZzXNGWb2nY1h3VKwcv0VnVGjAGel1FVXEgEuaqQWw==
-X-Received: by 2002:a05:6402:40cd:b0:607:ec35:eb8e with SMTP id 4fb4d7f45d1cf-60c88e72eaamr2655542a12.20.1751030973492;
-        Fri, 27 Jun 2025 06:29:33 -0700 (PDT)
-Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c82908297sm1462702a12.26.2025.06.27.06.29.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 06:29:32 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 27 Jun 2025 14:29:31 +0100
-Subject: [PATCH 2/3] arm64: dts: exynos: gs101-pixel-common: add main PMIC
- node
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Gd611RXt"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 0C36E26091;
+	Fri, 27 Jun 2025 15:39:35 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id z_DBtCRPQosI; Fri, 27 Jun 2025 15:39:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751031574; bh=TEJGRf1FlIgDbcSTQNxCwfvvmdMjzuRrveS8ic9DKO8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=Gd611RXtDUZ0eMsj5UIbALHq5iK/naVa74b1YVOj7JFRHqo5mtjuCj6SVb4R7ZlF3
+	 E/RfVgUSG9gCG6F+kirZgVXVL9zb+soJQe6bl1bzc/g6ZKIGkJZDXd+DVbvBaTdB0k
+	 UnVLNZsgX+lWxlVHtv0hartInLi0BGjipjNH0S5tTd1EnWTIgyK8xhXMI4MHSkSfa4
+	 Q4HS5x5/4zSEQB+a59M6MQCtSUte1dl9XC3GotadKWwDod9EsyQswm32ejXt2+Koyh
+	 7UV5ld8aCL5fmXVsKpYs2lhrWdIlPUBlvO8v0jPUcphwmsqPY38Xan9OMyuLddf+NW
+	 sIF6VTF7uZIyg==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Fri, 27 Jun 2025 13:39:33 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Inki Dae <daeinki@gmail.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
+ <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor@kernel.org>, Ajay Kumar <ajaykumar.rs@samsung.com>,
+ Akshu Agrawal <akshua@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drm/exynos: exynos7_drm_decon: fix call of
+ decon_commit()
+In-Reply-To: <CAAQKjZM+++P3ozLZZYEusYepamF0qdeuOe+thDb2BevLCsab_Q@mail.gmail.com>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+ <20250627-exynosdrm-decon-v3-2-5b456f88cfea@disroot.org>
+ <CAAQKjZM+++P3ozLZZYEusYepamF0qdeuOe+thDb2BevLCsab_Q@mail.gmail.com>
+Message-ID: <c4348867644c2e1d0a4fc47f3291855b@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250627-gs101-reboot3-v1-2-c3ae49657b1f@linaro.org>
-References: <20250627-gs101-reboot3-v1-0-c3ae49657b1f@linaro.org>
-In-Reply-To: <20250627-gs101-reboot3-v1-0-c3ae49657b1f@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
 
-On Pixel 6 (and Pro), a Samsung S2MPG10 is used as main PMIC, which
-contains the following functional blocks:
-    * common / speedy interface
-    * regulators
-    * 3 clock outputs
-    * RTC
-    * power meters
-    * GPIO interfaces
+On 2025-06-27 04:06, Inki Dae wrote:
+> Hi,
+> 
+> 2025년 6월 27일 (금) 오전 4:21, Kaustabh Chakraborty 
+> <kauschluss@disroot.org>님이 작성:
+>> 
+>> decon_commit() has a condition guard at the beginning:
+>> 
+>>         if (ctx->suspended)
+>>                 return;
+>> 
+>> But, when it is being called from decon_atomic_enable(), 
+>> ctx->suspended
+>> is still set to true, which prevents its execution. decon_commit() is
+>> vital for setting up display timing values, without which the display
+>> pipeline fails to function properly. Call the function after
+>> ctx->suspended is set to false as a fix.
+> 
+> Good observation. However, I think a more generic solution is needed.
+> 
+>> 
+>> Cc: stable@vger.kernel.org
+>> Fixes: 96976c3d9aff ("drm/exynos: Add DECON driver")
+>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c 
+>> b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>> index 
+>> f91daefa9d2bc5e314c279822047e60ee0d7ca99..43bcbe2e2917df43d7c2d27a9771e892628dd682 
+>> 100644
+>> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>> @@ -583,9 +583,9 @@ static void decon_atomic_enable(struct 
+>> exynos_drm_crtc *crtc)
+>>         if (test_and_clear_bit(0, &ctx->irq_flags))
+>>                 decon_enable_vblank(ctx->crtc);
+>> 
+>> -       decon_commit(ctx->crtc);
+>> -
+>>         ctx->suspended = false;
+>> +
+>> +       decon_commit(ctx->crtc);
+> 
+> There seem to be three possible solutions:
+> 
+> 1. Remove all code related to ctx->suspended. If the pipeline flow is
+> properly managed as in the exynos5433_drm_decon.c module, checking the
+> ctx->suspended state may no longer be necessary.
+> 2. Remove the ctx->suspended check from decon_commit(). Since the
+> runtime PM resume is already called before decon_commit() in
+> decon_atomic_enable(), the DECON controller should already be enabled
+> at the hardware level, and decon_commit() should work correctly.
+> 3. Move the code that updates ctx->suspended from
+> decon_atomic_enable() and decon_atomic_disable() to
+> exynos7_decon_resume() and exynos7_decon_suspend(), respectively. The
+> decon_atomic_enable() function calls pm_runtime_resume_and_get(),
+> which ultimately triggers exynos7_decon_resume(). It would be more
+> appropriate to set ctx->suspended = false in the
+> exynos7_decon_resume() function, as this is the standard place to
+> handle hardware state changes and resume actions.
+> decon_atomic_enable() is responsible for requesting enablement of the
+> DECON controller, but actual hardware state transitions will be
+> handled within exynos7_decon_resume() and exynos7_decon_suspend().
+> 
+> 
+> Unfortunately, I do not have hardware to test this patch myself. Would
+> it be possible for you to try one of these approaches and verify the
+> behavior?
+> Option 1 would be the best solution if feasible.
 
-This change enables the PMIC itself and the RTC. We're still working on
-the remaining parts or waiting for bindings to be merged, hence only a
-small subset of the functional is being enabled.
+Yes, it works fine indeed. Thanks!
 
-The regulators fall into the same category (still being finalised), but
-since the binding requires a 'regulators' node, an empty node is being
-added to avoid validation errors at this stage.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi    | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index cd8e1b8a10b111190b984e104f749d04514d0449..c1b51f4cfb8c174852b44690f84ed1aa0b4057c2 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -100,6 +100,19 @@ cont_splash_mem: splash@fac00000 {
- 	};
- };
- 
-+&acpm_ipc {
-+	pmic {
-+		compatible = "samsung,s2mpg10-pmic";
-+		interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_int>;
-+		wakeup-source;
-+
-+		regulators {
-+		};
-+	};
-+};
-+
- &ext_24_5m {
- 	clock-frequency = <24576000>;
- };
-@@ -290,6 +303,12 @@ if_pmic_int: if-pmic-int-pins {
- };
- 
- &pinctrl_gpio_alive {
-+	pmic_int: pmic-int-pins {
-+		samsung,pins = "gpa0-6";
-+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
-+	};
-+
- 	key_power: key-power-pins {
- 		samsung,pins = "gpa10-1";
- 		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+> 
+> Thanks,
+> Inki Dae
+> 
+>>  }
+>> 
+>>  static void decon_atomic_disable(struct exynos_drm_crtc *crtc)
+>> 
+>> --
+>> 2.49.0
+>> 
+>> 
