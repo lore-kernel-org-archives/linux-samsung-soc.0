@@ -1,72 +1,72 @@
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29E11D86FF;
-	Fri, 27 Jun 2025 04:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E68213AA2F;
+	Fri, 27 Jun 2025 05:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751000205; cv=none; b=dU1uc9H32lj/uipZjB9smR8w0Nkq/fjJNJsXvolkkbJDqA/02Ic7ljGnXiw6RFKRft79nR0bhrqCdUg15lGpLTknE9ssXPY4KXIs2A7jVOhJQtlH+d4XknwyhsE48iLWm/XpSP3guS7ZxRdm4CUrf4bhSOfr0JCHPSFQ+LHBJ+I=
+	t=1751000596; cv=none; b=ApdMfYtWrg0uEhSY73lHFrxbbhjKa0LZ/cLFctDK61oOiIjvbNh4dTLM3ZAuBG8noFa7scVQp9aI/OB7zAvohp8Tt8dkQDFGZcKW5p08WguQuFtzfb0wJX11+IKS28Wy0GsklynpkJ0GFugbH4FXHA/stRV/wBgrfZWQuf8Pulo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751000205; c=relaxed/simple;
-	bh=83afpayJE6U1T0aoAEzP5u1PnMIk9sJYc8MFC9piAA0=;
+	s=arc-20240116; t=1751000596; c=relaxed/simple;
+	bh=bCxLgBWa7qh7fI3aJyT2Vs16rxfLHHiT+sd7cIbc8xM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAQoupKIhsAXw+RGSdezRaPjnGVNL8q+V/HkHlr5LY5va6eBk/oqyaLIcRe/g5XlZKTSuCV6ojbSUFzk8caJD4kjo3kwSXpyF+Dxh4UqFgheiJScB7PG/h97jT2nHR8S16AY4s1Ob8OwSgwBzcIRj2p+7X5oncRru9mu8GL2Was=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AizqWq9j; arc=none smtp.client-ip=209.85.217.48
+	 To:Cc:Content-Type; b=dFfq61ZjkdQZZGXhPenNAyKPZNQ+oLDWqWNpyMEviqVX/cexajfyhtOHIPT6FxynFXR9X3lFeDj1l4+dutWRtEdPxyE6xIxs2zE3z/L6nJ/YHBik7G1MSG5xvITKT+hoHMpkio/T4kAJCdvQ9R8SsnZk4dq5jzTQdbuZ8wsMD7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jE3vtlam; arc=none smtp.client-ip=209.85.222.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AizqWq9j"
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4e7fb730078so522610137.1;
-        Thu, 26 Jun 2025 21:56:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jE3vtlam"
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-88150e9fba7so1048840241.1;
+        Thu, 26 Jun 2025 22:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751000203; x=1751605003; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751000594; x=1751605394; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a2HGv8LGZ8DzKrZFUO2v+eei1l2wUynW3XD4JObL1Tw=;
-        b=AizqWq9jmfpAVQ3p9F0+bryXy5gdrRLRTBjknoYuEcW+5TAXm0nu5Dxc8awZAXyePE
-         4LxJCgk4r3GKkNcP1iV2fusXsg1De0dD2gJ2Z5uszU6d3Oe9jw6LmGUgbrwl+aghvRlw
-         Mn0VFcCjRWD/Xr6caegQc0YIJjFQoQJKMzk2vl+/VlOrJWZk0NTKZ6zhU5dOAk2SNjpK
-         VtiuLfdHkViJm0q+ciYlaYEfCW1KJxgJFbpOXu6/OPf4nqo/E57XQMz4QenaAibuUhn9
-         osZ7Poig5rVqoukUsv9EvyS9rQjyYfS4y4gaY1c7yGrw5/1PMGIGN4UWyBeyiU88jiKo
-         2vSg==
+        bh=Sm4hHqZdHlJKjq+/RMjrxVZ+kQH4qjoP0GpZOg4z/2c=;
+        b=jE3vtlamoDFV7/RkgghW2tuSjtPepjWeWJJd9OpGNG9vb6LrqX/ViQcNuxaEhudlgb
+         tD9TIgQoSAwzr2m/a5zmnBkd0lZkqaC6plpK5z1vzzmWdXjWRRtCiG41WbQRbPmY3nTp
+         N90XBMwsxJGNo3rkr0EmO06bFfuPZQaF7zNx1jeWeFWEavRDsi3+Z8gPrrFEIGRNjcJp
+         os3aSghE5+QeP1SkaBL8igLWZBlVIgYRiu9rqV8uqDXRLj6b3/jx5DotMOj8JYqk60ME
+         pNk6b7FbsHJ92fAV0NSRptYhwrJVVfMiPH5he+SMaif4WOS5wam9byzjOKD2kB3gcrWs
+         Cz1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751000203; x=1751605003;
+        d=1e100.net; s=20230601; t=1751000594; x=1751605394;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a2HGv8LGZ8DzKrZFUO2v+eei1l2wUynW3XD4JObL1Tw=;
-        b=jKDuGo/QMnPuI0ZObINmnWq5LnKwR4JVWRcehDxVjxZWAjGBSvgsq/+C7dG/rl8k2m
-         LEwBV3qGGAbXDwP2OTR6gpeZACj2/7/OCZbHHHQqGyiNuP5LtuARsP32RM9RVJ2pD1hz
-         PdjTUIc8V3HoFozoREzRbBVhLPdO3Fuqe4FO6mdlpgWJSbSCXhxNmZSHSaZMOdE5frSI
-         rvhzN/o+jh02pB/fczVXhimTVwIUI1TQ3uVfzR+ciQ+UAZUPw/8qPCBJmIvHNHKq0EWA
-         FN4DqV+6C73zOrHmt7OGKwKJD8D3bA3foCTSZLvKrmEZjPo6KCnzjemeaD2gatTzipir
-         Ks7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUG8daHG8TPRwysqkCMShSwkAHlqF6c3RIb4E6G341gPsGQt/CMjhWzGIYH9DfoalLw3GxbbIQJUxgi@vger.kernel.org, AJvYcCVPPblp0g0PmdFB03nOqYaJ7UsYVERYTy1Q7e/GfsaVGT+x8QgAuVb3BrLgT9B95zUxgsZenuzj@vger.kernel.org, AJvYcCVi+znc5rg5zGZsBNJ4KGqy+yU1LyQfwyT2Ke5wTu4rygr3/wBd7YakMeMRJJGF1dsDOQv9pJFREyubkmhbaKr7B8s=@vger.kernel.org, AJvYcCX+aDL5K7ZC9rE32kn2aVSN48IHN+SMxtALDKDLQQJus2/LvX7ghrKV40br6qhN0IAJByQjUtek75EUs6G0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy22Q52/M1oiU0SEeCre4vY/jUz6SFVShuj0jWKvNO0ArQJ3mld
-	eJBlGvzmxAk7sh1HIYt1yLtmsPaFrFd1KQVAnzCjW3smY71w/xLz2f4dCs5cU8Ux3zvk/5VXXlV
-	cXDz1Xznpf7GL6vPZHhyFU0j4hkZ5uvU=
-X-Gm-Gg: ASbGnctEc/7me0VPEtAuSiGHoD96I5ZmoFj/PE/ZrX4aWBz0svbol4No2mLL8zRdpsF
-	11mFyoy6MBUR0Qm7MSgYu7fqoY5/LSjYowP/U5FpQv9PLGRx6aUNC1JaY2kTgq7evT90++gkC8h
-	jE4eHG6KIAjM89cm4eQSdRaR3RPCXk4/T1juFW1tHvfg==
-X-Google-Smtp-Source: AGHT+IE+07qHBqPDCXthKdPHB/7LUX6RLsYmY1o5ORrW1h7tii2FCLcpiV2074k1N7ZSn36YN5VNYrTVJdSCyPltG5g=
-X-Received: by 2002:a05:6102:442b:b0:4e7:b728:e34b with SMTP id
- ada2fe7eead31-4ee4f57ed09mr1865136137.3.1751000202837; Thu, 26 Jun 2025
- 21:56:42 -0700 (PDT)
+        bh=Sm4hHqZdHlJKjq+/RMjrxVZ+kQH4qjoP0GpZOg4z/2c=;
+        b=ED58i52qfMiYSQtBkyBvrTzAfwgveGGODBaLu/OrEF7kDYmXwk+sLEKCQAF3Dm/965
+         GzDHK6cwb95WVbF/V6SUUcNItEB+NKvN0HbEEYV/646pY6LotTqRnvDYXLDFMSAiU3sW
+         h0IezKVa8CuLI4b/YZLMIyeMLAHeoB8N0nIzhPMm5yBd5arkPj/7cyKyZT6nbWwuCG9x
+         5ZfkIuHIJ2FkeBR/qycw564xFNi6TsQfuBig++2BkZ4ofpbPtp3F9fpsDETNmcVUiITp
+         s41ehWXiyfCssJRYIEPTlwWLcHECG6twoNr9udPOk619xDIWeooXxYZwvSC8C2xgJy3F
+         7WAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Y0Jqu4x6uUPDidKpvr1InYHu1eAji/odweVNWpjlZt1nTvjNtxD/Af5IjI1uLch8NdwToqW1wi0BDHHE@vger.kernel.org, AJvYcCUZl0L2WPA4/mgMdW4ZIq+ideu9KD0iGuOy62zvZrm34qGMOonkKuB62j1H3ixDPrEOz+G+dgzZBgKhOmpw/5yrlvg=@vger.kernel.org, AJvYcCXJ/WUXMUTpWZd5V1Oh86RnFfDdKEJBUJJQbmJX4ibpTcgae+rXbEPauFAUcZQN2bdeRvtfPvNz6EYe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7zXzaZ32ezsti6Y8lXfJiAuhqTPFDqsEleJYDtOVzOI+PYYoj
+	wQSLOipS6TlzIsPYn39tZFAvJvqjf80/SIjM9myK9+/XzgtIRKsFO+YmILIPvK2DandgqQwVVLT
+	tZqZpXWwOJiiHY83A+Ux0ov3AC/+A+bI=
+X-Gm-Gg: ASbGncuNHv1osFn77NtPetZvvDQtyQ/Dw1v8O7P5+iIrzJcddIDsKqQskFvnydwh6ru
+	VfXM5buai21WO9FJFmQKFxg8vwQn5WzLRvqVcKG+P9kXOFksT6PXSjx61fW3pJ2oK/oaGeLi9rJ
+	6c976ubKQsBckjb30SpVXIzM4hVf8q+spyC4eIQdcZOtVIY0VCKSij
+X-Google-Smtp-Source: AGHT+IF4cUJtxH83RDJft3O2FqQ5XUKOZe1zx/Bmli/7Ru2jER/I3z6z3oYtVafld19HMBo5LW8Ej/HPfe6pAovzDOo=
+X-Received: by 2002:a05:6102:2ac3:b0:4ec:e1fa:ed7b with SMTP id
+ ada2fe7eead31-4ee50a67c4bmr1229948137.9.1751000593950; Thu, 26 Jun 2025
+ 22:03:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org> <20250627-exynosdrm-decon-v3-3-5b456f88cfea@disroot.org>
-In-Reply-To: <20250627-exynosdrm-decon-v3-3-5b456f88cfea@disroot.org>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org> <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
+In-Reply-To: <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
 From: Inki Dae <daeinki@gmail.com>
-Date: Fri, 27 Jun 2025 13:56:06 +0900
-X-Gm-Features: Ac12FXyCRtmqlVxLH-ZQ8PS-fwNE9eVFG2Sf48qY_m8XFevvCiJLCVczBK1_h0o
-Message-ID: <CAAQKjZNbEAiDC_2dUMKZHyPO4nS9TM7TrdjyNx0uLcjvh=PyZw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] drm/exynos: exynos7_drm_decon: add vblank check in
- IRQ handling
+Date: Fri, 27 Jun 2025 14:02:37 +0900
+X-Gm-Features: Ac12FXz2dc5tsxsGmjdAH92okDL5yeiAijcWTCVAjDOYfNAbUY5poc38568eg-s
+Message-ID: <CAAQKjZPAsE8LGE00fWE1aPj03b6tu1rk9ScTDSN+HeKzVXMZvw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
+ properties for iommus and ports
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -77,7 +77,7 @@ Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, stable@vger.kernel.org
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -85,58 +85,48 @@ Content-Transfer-Encoding: quoted-printable
 austabh Chakraborty <kauschluss@disroot.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
 =84=B1:
 >
-> If there's support for another console device (such as a TTY serial),
-> the kernel occasionally panics during boot. The panic message and a
-> relevant snippet of the call stack is as follows:
+> Similar to FIMD and Exynos5433's DECON, the Exynos7 DECON hardware:
+> - May optionally require an IOMMU to initialize a display region.
+> - May require a port connection to another block, say an MIC or a DSI
+>   master.
 >
->   Unable to handle kernel NULL pointer dereference at virtual address 000=
-000000000000
->   Call trace:
->     drm_crtc_handle_vblank+0x10/0x30 (P)
->     decon_irq_handler+0x88/0xb4
->     [...]
->
-
-It seems that if the display is already enabled by the bootloader
-during the boot process, a vblank interrupt may be triggered before
-the initialization of drm_dev is complete. This could be the root
-cause of the issue.
+> Document these bindings in the devicetree schema.
 
 Applied.
 
 Thanks,
 Inki Dae
 
-> Otherwise, the panics don't happen. This indicates that it's some sort
-> of race condition.
 >
-> Add a check to validate if the drm device can handle vblanks before
-> calling drm_crtc_handle_vblank() to avoid this.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 96976c3d9aff ("drm/exynos: Add DECON driver")
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../bindings/display/samsung/samsung,exynos7-decon.yaml           | 8 ++=
+++++++
+>  1 file changed, 8 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm=
-/exynos/exynos7_drm_decon.c
-> index 43bcbe2e2917df43d7c2d27a9771e892628dd682..c0c0f23169c993ac315fc8d7b=
-cbd09ea6ec9966a 100644
-> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> @@ -636,6 +636,10 @@ static irqreturn_t decon_irq_handler(int irq, void *=
-dev_id)
->         if (!ctx->drm_dev)
->                 goto out;
+> diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,ex=
+ynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsun=
+g,exynos7-decon.yaml
+> index 53916e4c95d8c0369138941a556c23f5d42fbd39..1e9500c86590d555cfa6f0479=
+0e2b64da291b78b 100644
+> --- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-d=
+econ.yaml
+> +++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-d=
+econ.yaml
+> @@ -80,6 +80,14 @@ properties:
+>        - const: vsync
+>        - const: lcd_sys
 >
-> +       /* check if crtc and vblank have been initialized properly */
-> +       if (!drm_dev_has_vblank(ctx->drm_dev))
-> +               goto out;
+> +  iommus:
+> +    maxItems: 1
 > +
->         if (!ctx->i80_if) {
->                 drm_crtc_handle_vblank(&ctx->crtc->base);
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      Contains a port which is connected to mic or dsim node.
+> +
+>    power-domains:
+>      maxItems: 1
 >
 >
 > --
