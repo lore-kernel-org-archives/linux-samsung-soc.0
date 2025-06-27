@@ -1,50 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E7525CC57;
-	Fri, 27 Jun 2025 21:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D2A171092;
+	Fri, 27 Jun 2025 21:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751059043; cv=none; b=SfEkNOGsf0d912pYAFhjL1A/JdWlNbzyQq1WyLDua1iCSXXviERuQ8gjdQKrF/HaDEv6EUHKZnATRVLgz14y5OEHbNxas3ySdVk/TbLKyz4++mP6QrOMXmt/TMbkTdIpWqHtaBLutnINzAcG1XBDnZwIpM7MJ4cqb4m4+xFtFO8=
+	t=1751060465; cv=none; b=sl/RHvTLxvBKeJTYUBNz43VRwMLsX6XIsVErFMOqiMc5aKnszRvso3osmXmBEZ8Q0P5ZQhJ0bw/7F7E13HwsOv/7GCSdKgpM+Y3QGJ//DUMDzxwWMfAt3V6gVTA/LnZWvgKHgDDCPmHEXZypqNMRBHmDkEUDJ0Jixil7Rz1UZFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751059043; c=relaxed/simple;
-	bh=+EQCIEgsXVvxKsrT0WsXUC8n/w8gjOICwEyTeNeHuEk=;
+	s=arc-20240116; t=1751060465; c=relaxed/simple;
+	bh=3oXq16alLr2nxtGsTFfoEGRR7gxgyYoWYgqZxLOZzs4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6O8n/iYXTpX2qUYMJaXflwmVowZ538bkM6nvAMcUYOb457SiisWXmH+DnuOdx8RwLZQn5uWaoxN4q15/fANlWt4aigYbflE+XSI8zLg7v4PSptV99uY50FkEyFFWQ2NfvUvoWKyeqDVsjZBW8re05ZxALnDNO2wERqtUIZPshg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNaU10tM; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=U25nk5gAklc1QsfyWwWb5dxG8armI56Z41DNZls5Wk4nE8WVlh6AeIYukUY9Gs8bBH2nrIz4ZjiMvK83u2IQN2pB7+K/ugCm/MHMeQu7cm8Dfg81AYoNn1LXphF/C80YNzh39Eo70lDDxQgmg+9+7aHjjSXFdWXqqyMKvHIrTw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dN9mwFeZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNaU10tM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51DC6C4CEE3;
-	Fri, 27 Jun 2025 21:17:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dN9mwFeZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83AF9C4CEE3;
+	Fri, 27 Jun 2025 21:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751059042;
-	bh=+EQCIEgsXVvxKsrT0WsXUC8n/w8gjOICwEyTeNeHuEk=;
+	s=k20201202; t=1751060464;
+	bh=3oXq16alLr2nxtGsTFfoEGRR7gxgyYoWYgqZxLOZzs4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hNaU10tMhAYo5UGed+PugNq2z2uaOfR4n1dTptlDOnYNO+dZPouJG4Yi7JMSza6/s
-	 5D2HmCiksnZI3k3NKS68X0f5iat0pazkWRJnz8gf1+Rcp7/UAm6I5KQTZOlSTS84xH
-	 OjVKx7cbnQkX6Pgb5ZUZ4iOIJHfR39ZGpkfpqHuRiUoNFcYcIQmZA9iXzolCFVimNF
-	 LGAuVl93HL2WhaFtdwepQfKOkkKVzCyrnCVBYlAlIaZfwwm0LHIpxcNaZHFw7iA0pG
-	 A3iY4sGQpWrYP1xzEFUo2NUEIOTmjxZNoa5tFG8DLBTiJCm+yipFuAXaxh4k2MRtrC
-	 iMob9UwH57Utg==
-Date: Fri, 27 Jun 2025 16:17:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	b=dN9mwFeZPT7JwxGHE4dWUQZAF4GxPqyzFm6eryAnlLNFZfVVNmi5QK5zjzBA+Th5d
+	 g8o++TJeOe0lEoTkudPKFxP56TyZhhOZzukJM2aKk9x+DswgJkBhwdQ9B11aba7Cn/
+	 +u5ifsFlNcp5adThOkEIEtfjxVQzC+xR0979KalprhiA81vf09dK4ZFhQkR5+CKObq
+	 SIZOV0orxaK+5EfL0Moe5tQJgH41RsGfAuw6lEOlYRA4qAJYT20xMOmmaUGu6LW3rA
+	 RM6Zi5c1orSB3VPQCpNW7Bj5DvLK2ujsGgRYfs7KeQDDJIaa9e8HGDOV3ya1mn9BSX
+	 pFawy5P3w3uvw==
+Date: Fri, 27 Jun 2025 16:41:03 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>, Simona Vetter <simona@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-fsd@tesla.com,
-	manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org,
-	kw@linux.com, bhelgaas@google.com, jingoohan1@gmail.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
-	vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de,
-	m.szyprowski@samsung.com, jh80.chung@samsung.com,
-	pankaj.dubey@samsung.com
-Subject: Re: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
- FSD SoC
-Message-ID: <20250627211721.GA153863-robh@kernel.org>
-References: <20250625165229.3458-1-shradha.t@samsung.com>
- <CGME20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03@epcas5p3.samsung.com>
- <20250625165229.3458-8-shradha.t@samsung.com>
+	David Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v2 11/13] dt-bindings: samsung,mipi-dsim: document
+ exynos7870 DSIM compatible
+Message-ID: <175106045083.188354.11616800580280221197.robh@kernel.org>
+References: <20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org>
+ <20250627-exynos7870-dsim-v2-11-1433b67378d3@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,75 +63,20 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250625165229.3458-8-shradha.t@samsung.com>
+In-Reply-To: <20250627-exynos7870-dsim-v2-11-1433b67378d3@disroot.org>
 
-On Wed, Jun 25, 2025 at 10:22:26PM +0530, Shradha Todi wrote:
-> Document PHY device tree bindings for Tesla FSD SoCs.
+
+On Fri, 27 Jun 2025 01:09:00 +0530, Kaustabh Chakraborty wrote:
+> Add compatible string for Exynos7870 DSIM bridge controller. The
+> device requires four clock sources, in schema they're named as "bus",
+> "pll", "byte", and "esc".
 > 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  .../bindings/phy/samsung,exynos-pcie-phy.yaml | 25 +++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
+>  .../bindings/display/bridge/samsung,mipi-dsim.yaml | 27 ++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> index 41df8bb08ff7..4dc20156cdde 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> @@ -15,10 +15,13 @@ properties:
->      const: 0
->  
->    compatible:
-> -    const: samsung,exynos5433-pcie-phy
-> +    enum:
-> +      - samsung,exynos5433-pcie-phy
-> +      - tesla,fsd-pcie-phy
->  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
->  
->    samsung,pmu-syscon:
->      $ref: /schemas/types.yaml#/definitions/phandle
-> @@ -30,6 +33,24 @@ properties:
->      description: phandle for FSYS sysreg interface, used to control
->                   sysreg registers bits for PCIe PHY
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - tesla,fsd-pcie-phy
-> +    then:
-> +      description:
-> +        The PHY controller nodes are represented in the aliases node
-> +        using the following format 'pciephy{n}'. Depending on whether
-> +        n is 0 or 1, the phy init sequence is chosen.
 
-What? Don't make up your own aliases.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-If the PHY instances are different, then maybe you need a different 
-compatible. If this is just selecting the PHY mode, you can do that in 
-PHY cells as the mode depends on the consumer.
-
-
-> +      properties:
-> +        reg:
-> +          items:
-> +            - description: PHY
-> +            - description: PCS
-
-else:
-  properties:
-    reg:
-      maxItems: 1
-
-> +
->  required:
->    - "#phy-cells"
->    - compatible
-> -- 
-> 2.49.0
-> 
