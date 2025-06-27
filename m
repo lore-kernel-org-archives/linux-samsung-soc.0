@@ -1,155 +1,151 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086A2DE211;
-	Fri, 27 Jun 2025 14:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE621632C8;
+	Fri, 27 Jun 2025 14:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751033193; cv=none; b=itIip6SXlDTux3CJkflWYvUMsWdlmOn5XLU0Ue9DIvFxSCGRAFiPSE8Dtce1TMdMuwHt9TGPLvr+VOXLuTbUQ0lb7HtZjZWDiCCXU4KsLOrVc/j9jhrwjdg2mHzP39KI0LyTiEQBdDwwRSB9XUPUzpcMG1jhEb/fSKiIMXAZCo8=
+	t=1751035495; cv=none; b=tRc+jC2dZnJKX2o2L6KYjfMv3Xjgn8Hg/wrvQ/FkPPPZYwd9RQl7gapFz5vafSQYoWIkBMj0BpPrkTbd3bVOb56+OGyr20wqrO5efrTEe0HBqdA0mUYHQ8YozpYBekTBiUc0URiZXr2Y1+/CIcSWHr7ioy7b7njv+HJBDRmAt+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751033193; c=relaxed/simple;
-	bh=cx3cfDqYfml9hV1dbrF3BBDdYHzNauZUQLohSd44LWI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=RhRessquWG0Yun5AFotwVXQLs0m1RI5ocq780OwBUe77XTRmNqq9SgEX5bwdTrp90cLRvqjvWPzpXviBa4gpMBIxlwtRSgkAUZUZPWPNjiE2+p69yJ2/1ZJVybpwpUoQ6WwnDuooyGOcYxvMfXlvGV1f8QnYtZmnjRKY6QlfyGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLwD4NyA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751035495; c=relaxed/simple;
+	bh=BbRHpwFDS8oG4qb080zfed8GL0QZmzDg+bshXX1ksd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gb96nxx8zj73xvA3ofG6v8gD1ckF7e+ClSl5V+vevE4V+Yj62ZId4lxlUBxTS0pgP2xv894KNfgK0ldLKkGHSY/q4gbSWwBBIBwIkfidACxeP/jySzXRJMhMAA9gGweAfUlaajZIDo7ufhz2fCIGck03VE6TXj/JPkQBibvPa9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMgE3NEV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLwD4NyA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D0DC4CEED;
-	Fri, 27 Jun 2025 14:06:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMgE3NEV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0695FC4CEE3;
+	Fri, 27 Jun 2025 14:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751033192;
-	bh=cx3cfDqYfml9hV1dbrF3BBDdYHzNauZUQLohSd44LWI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=eLwD4NyAv3OzHJZbC3TUTa9zbjGqUYr0wrSJ+Tz/zfIYnIhUNr6bpoWgADe+Q5ZZi
-	 DBBgztSpx3jYcQl9m0cUhMhB4be1aLgSYnortrqAS1rH++fKo8+bhlC5LySlZ9GsXt
-	 /WdozpPW85WUFjD26uWFt4J5m7IPe9qCjGN1MG79HYauafibsM1EFX4fkytxQEOUdy
-	 myFZaDqyVQwEfGFE2PzH+SIICzk9C9W7gAFMxtwv9idi0VyiOVaOSCz4Bo6Tv73iET
-	 H3xFuQv9yP35IuZxFDmtvR1x02xNcpfd4EcuOEW7MOmzK/x0LsXIP/VjZ9H9qSUni/
-	 j+hBeg+iFzE7g==
-Date: Fri, 27 Jun 2025 09:06:32 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1751035495;
+	bh=BbRHpwFDS8oG4qb080zfed8GL0QZmzDg+bshXX1ksd0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZMgE3NEVYmuSOTFzuel/GH63fs9C0k/cIxyKvZvuBcrRW3B3x0nMJ5c/jMHzSPHeH
+	 pyBkYzlzXzkyU0TytQ76R0w4c5QXnmCTEbpBlhLnULtQ6tyJXnDXCgn2wmD3bYPHOU
+	 WXNpRQDbOrzSsG7YeixDwO+eBLfwKG4pIjZ37IF8JVwAMEP6s8l65uiH8R6jm0jXJH
+	 uoWl9X9p0ROjDy/BkV7XHU3kaic8cmfNKUX4B9jowURrG0JyKk/u5Ll31tl6dHJQ7H
+	 IkLvcLIH6UjUKWMCAP+1KsQDzD5BbzkoHFVE+38iMXdlFPGfPdE+Jo6EImb4908s7k
+	 5h5WFvUExrSog==
+Message-ID: <efa167d1-a5f3-47cd-855d-250f41a5e883@kernel.org>
+Date: Fri, 27 Jun 2025 16:44:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
+ properties for iommus and ports
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
-In-Reply-To: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
-Message-Id: <175103315202.3220613.9523717145992109827.robh@kernel.org>
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+ <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
+ <20250627-literate-talented-panda-cbac89@krzk-bin>
+ <85c3658fdfa90636caac3b3fce295915@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <85c3658fdfa90636caac3b3fce295915@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 27 Jun 2025 01:43:23 +0530, Kaustabh Chakraborty wrote:
-> Exynos7870 has a IP subsystem in its architecture dedicated to display
-> management. Notably, this block includes the Display Enhancement
-> Controller (DECON), and the DSI Master (DSIM).
+On 27/06/2025 15:44, Kaustabh Chakraborty wrote:
+>>> a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+>>> +++ 
+>>> b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+>>> @@ -80,6 +80,14 @@ properties:
+>>>        - const: vsync
+>>>        - const: lcd_sys
+>>>
+>>> +  iommus:
+>>> +    maxItems: 1
+>>> +
+>>> +  ports:
+>>> +    $ref: /schemas/graph.yaml#/properties/ports
+>>> +    description:
+>>> +      Contains a port which is connected to mic or dsim node.
+>>
+>> You need to list and describe the ports.
 > 
-> The following series and its sub-series implement all components for a
-> functioning display pipeline. All vital information which helped shaping
-> up the patches have been retrieved from Exynos7870 vendor kernel sources
-> as provided by Samsung.
+> -    description:
+> -      Contains a port which is connected to mic or dsim node.
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Input port which is connected to either a Mobile Image
+> +          Compressor (MIC) or a DSI Master device.
+
+
+If this is only one port, then just 'port' property, but I have doubts
+it should be one, because even you mentioned two - MIC could be the
+input and MIPI DSIM would be the output.
+
+Maybe if the MIC is integral part, it would not have been an input, but
+then only 'port'.
+
 > 
-> Testing has been done on all three devices available upstream, i.e.
-> Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
-> (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte). Regrettably,
-> I've only been able to test the functionality on video mode, as none of
-> the devices have panels working in command mode.
-> 
-> This series implements changes in the SoC subsystem, which includes
-> devicetree additions. It depends on all sub-series listed below:
-> (Legend: [R]eviewed, [A]ccepted)
-> 
-> exynosdrm-decon            - https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
-> exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
-> exynos7870-mipi-phy-fix    - https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
-> exynos7870-dsim            - https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
-> panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
-> panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
-> Changes in v2:
-> - modified compatible hierarchy to use non-deprecated syntax (krzk)
-> - fixed subject prefixes of [v1 2/5], [v1 3/5], [v1 4/5], [v1 5/5] (krzk)
-> - removed simplefb nodes instead of disabling it (krzk)
-> - added dt-bindings patch to allow mipi-phy node under PMU
-> - changed clock names of dsim node
-> - Link to v1: https://lore.kernel.org/r/20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org
-> 
-> ---
-> Kaustabh Chakraborty (6):
->       dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
->       dt-bindings: soc: samsung: exynos-pmu: allow mipi-phy subnode
->       arm64: dts: exynos7870: add DSI support
->       arm64: dts: exynos7870-on7xelte: enable display panel support
->       arm64: dts: exynos7870-a2corelte: enable display panel support
->       arm64: dts: exynos7870-j6lte: enable display panel support
-> 
->  .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
->  .../soc/samsung/samsung,exynos-sysreg.yaml         |  2 +
->  .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 52 +++++++++----
->  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 49 ++++++++----
->  arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 51 ++++++++----
->  arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 90 ++++++++++++++++++++++
->  6 files changed, 206 insertions(+), 39 deletions(-)
-> ---
-> base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
-> change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
-> 
-> Best regards,
-> --
-> Kaustabh Chakraborty <kauschluss@disroot.org>
-> 
-> 
-> 
+> I assume you want something like this?
+> Is the formatting correct? Should there be a space between
+> ports:$ref and ports:properties?
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 1b152eeca84a02bdb648f16b82ef3394007a9dcf
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org:
-
-arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
-arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['syna,td4300-panel']
-arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
-arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
-arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['syna,td4101-panel']
-arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
-arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
-arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['samsung,s6e8aa5x01']
-arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+Look at toshiba,tc358768.yaml or the simple-bridge (except you should
+name the input and output ports).
 
 
 
-
-
+Best regards,
+Krzysztof
