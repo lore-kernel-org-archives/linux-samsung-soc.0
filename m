@@ -1,103 +1,160 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2CB2D3A6E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 12:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA617C21C;
+	Fri, 27 Jun 2025 12:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751026560; cv=none; b=rWHvXzwACT4Fx+RKYL3Vs/8pC0adYJuW0ioC6aSjyapsxditvpcOLfg87djqJEIoY7Abxr5hlQoYkkKNSvk6sOCR1bomWwrvx4uV7mcjNsGrG1ZM6t2k5zHzSCfwsEMcWwmUpCrEPWPyW+vwuolk8eMwvCGcoymiqcJ8+LlGi6A=
+	t=1751027347; cv=none; b=J2snNB0jdmcg6UPPaawR3C3IZG++ey8TXedW1f0tLatHmtO+yaTAe2gSbz8DBQM1L/vcfQS5abTqRQ0xnKaKoyAKt0JU7MFaypkwlMcgNW+M78N74UbRcyATL940nd6GoC/iyaE8FWbX11fVl2XLOE0mZiJu1ltga4Iwy3ob5xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751026560; c=relaxed/simple;
-	bh=5bnO/bwKwvz0W9dml3PFN0tff+1CpXP9/A1In0KM8MU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IRpGFyuyjbSyccoZ7DJNp2BZwlgzi8tprCwmKGS0I2+1IFBe0/RLswu3A7BXmPpCIIWLHdOLqi5uNztlHiwUErDcf0suAr1sqxBYmXSGPcJgbBLbmjmJ6AP/BJo3dZTjqhzeMWvN4uKpy7Cj/5j3ul+5Rat0r8Rb/70vT10v9zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fh1mssCM; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751027347; c=relaxed/simple;
+	bh=EtshUSUcNz/EcdgguxC9OOdXGB2IBgMhJVAOJyuE9yY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=gwIlCuGcKi6HSHUTo+xg1d9m3Jv+NTl50yJGOO6xBWnjoIRWUAwVYZB5RPqGN8KffbCUZ5s99ZQ5BkA4xHFbW3ote7mXlWNNPKRetzrUCd36ou3GSqN9PKQviOPoGrEf03iBbTsOHzAOQTFq4mUgR1HLiwoSaMRAOiD8A7RfC4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Iz5OfdKj; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fh1mssCM"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so2085532f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 05:15:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751026557; x=1751631357; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5bnO/bwKwvz0W9dml3PFN0tff+1CpXP9/A1In0KM8MU=;
-        b=fh1mssCMbwMs6+0c8SaQ1DL4WEUjPfHl44PEovi3ImZqcHUlWw/2iokUKIo5jtlw5n
-         irNdOSQdtQp4h9+9NULTdwwfErSr5Ew+IAkMflLxbqsWHhrVg++4gARJR0OSwOWtQe9S
-         xvdYt5unnfTZ7Go4UItxHEPC7cDqTJ6asy0kBxerZtXhjbDN835E063MTNT5KYxh5MkS
-         euYZqoxK1WoMfNSnASUClEnoG6cx+RutnGcu+BaPEtw4N0kT5LSvct2rdddKBimxEyIX
-         Z5xAkH5q6zMgatVEAaX8Xx3pmtaWtujrUsLR4zjaEHt8KEPlSPp82t58dRUKlWoL2BYp
-         I0Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751026557; x=1751631357;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5bnO/bwKwvz0W9dml3PFN0tff+1CpXP9/A1In0KM8MU=;
-        b=LBCG2/XVLkJDwXoW0O9iuE9QUHCkodHmDLBuA8/LVVj+/Gkwarg6O8WDM9bs3G1CNh
-         ztJpWTYk9l/fAaDZsXC0IYg0B20RATdQ2cTF0oJ7p/EWjMwnZb1nSXL82bC/o0d2XBh2
-         ge5UZ71o8ptTevcdOoLzFlNmQN1h5jyYYUXf5ZK2BcRLiC7S8TNuVKb1ejB7E1j8HWI8
-         5u3KhDdKs65Ug1Wo7mHQ3Sl34G4xTVyNWFxmdcwdwXSQjt3PJwI1e5yBTAXvE92qaVhq
-         KCh6KcWxp3AOHpvp4wwhGVbBqSJLogdttwJEk7jaX/ixOh1ELbLVrCaJGpO99ismG3HN
-         KA3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ8LYx+SpaH0OBC0GbRd+h0Ntf9Hp8kGXUqlhJPaBAACvKUoi9RAQT7cIY+wb8Vj7yZ5LqyioxDm3Q7irHr7D6Tg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyBrvqppTk1vtkv0qFi74P2y9b3afgcwcu/kkc8yMlb19PJ7Tp
-	xcbdm/ol4sonRzKmnVUqtQN655tVtwDiEhVv7zaaeUT1GAdRvUv6KscetRbfTBMBX4U=
-X-Gm-Gg: ASbGncueveR5U8wgK+YHau8TcCn9vd1O6v0qOP3IRmdzeiqajBZsxhbxFH0UV0+Kn56
-	BaVf0pHuJ8PxOxlXvw+N1e5vSF2k+2PlId39I9mDJErrK4dWJ/io637X8uAuC05njCtBMcreecV
-	I6ugTVUTjQdWPp03Sj+xT8VCEuG3EJTeMSODTa+Ub0xxn9EUNSdTgHlVXjZ+8LAhMdQj1AumQ2P
-	Em+DmTLH0f3VAtQRX3N28lF7Yu1C2eyfGS7nqM15A24ARCguEbIUFh3oYYJMfneX97QLNam2bsb
-	zcE9XJ1FfC+Rir2S1onIOGvjqAN0YnNWBo3GgM8mXPlbEkeXFh6lQFnvq4PQJ8+29lM=
-X-Google-Smtp-Source: AGHT+IEQFM3pQCiRU5lNSKxbqFCgvUVf7e/LcmOK+L4hhlaL9cMKkmMb9g/3CGCF3L4wxugIwNImYA==
-X-Received: by 2002:a05:6000:40d9:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3a6f3162238mr7238080f8f.25.1751026556678;
-        Fri, 27 Jun 2025 05:15:56 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4076ebsm48177435e9.31.2025.06.27.05.15.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 05:15:56 -0700 (PDT)
-Message-ID: <ba42a719df8dfb74406336e8adb80b5286bd6fbc.camel@linaro.org>
-Subject: Re: [PATCH v4 02/32] dt-bindings: clock: samsung,s2mps11: add
- s2mpg10
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester
- Nawrocki	 <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Alim Akhtar	 <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Russell King
- <linux@armlinux.org.uk>, Catalin Marinas	 <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Alexandre Belloni	 <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org
-Date: Fri, 27 Jun 2025 13:15:54 +0100
-In-Reply-To: <20250409-s2mpg10-v4-2-d66d5f39b6bf@linaro.org>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-	 <20250409-s2mpg10-v4-2-d66d5f39b6bf@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Iz5OfdKj"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id BE00824CE2;
+	Fri, 27 Jun 2025 14:29:03 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id a-Vi0xHrL_L8; Fri, 27 Jun 2025 14:29:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751027342; bh=EtshUSUcNz/EcdgguxC9OOdXGB2IBgMhJVAOJyuE9yY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=Iz5OfdKj6tJy1F91PBHFqCdCfHs+sxsFQcWGG3bBiYzpqR1aPcf7Lzxm6Ff+GuGXk
+	 1OXZThqT8gFO7exnrQIQVG84R/sQd5c+Hj/B+ceIWiFssn79jGI7jweBHA0FTFLs+7
+	 /pewIt+aa0AmzeDs6lnlC6PRlMp8auU3FBSOmbB3bpIQrEkMrJHRqPhHi1n49wNBTL
+	 J9RUeRH+h2LEbUd7ZMiRaa0AQyx9D6t/VT7w4GxW/8yBaC+eyGOyQ1SRlA7NF0a2N+
+	 G1rhJBnMJxswRIYj9mNn47hmhyNPC6+x2sk+3jRfy2EB+MRYfIAXU0QEO9ra53ZmPy
+	 8mPJdvLa2xdPA==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Fri, 27 Jun 2025 12:29:01 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Inki Dae <daeinki@gmail.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
+ <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 01/13] drm/bridge: samsung-dsim: separate LINK and DPHY
+ status registers
+In-Reply-To: <CAAQKjZOHUGg8WEZxfhVxrUPS3O68BQJ6=cDnUSk6BomYjuY62Q@mail.gmail.com>
+References: <20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org>
+ <20250627-exynos7870-dsim-v2-1-1433b67378d3@disroot.org>
+ <CAAQKjZOHUGg8WEZxfhVxrUPS3O68BQJ6=cDnUSk6BomYjuY62Q@mail.gmail.com>
+Message-ID: <922117777d718b77c86be3a43e86dd7f@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-04-09 at 21:37 +0100, Andr=C3=A9 Draszik wrote:
-> The Samsung S2MPG10 clock controller is similar to the existing clock
-> controllers supported by this binding. Register offsets / layout are
-> slightly different, so it needs its own compatible.
->=20
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+On 2025-06-27 10:07, Inki Dae wrote:
+> 2025년 6월 27일 (금) 오전 4:42, Kaustabh Chakraborty 
+> <kauschluss@disroot.org>님이 작성:
+>> 
+>> Exynos7870's DSIM has separate registers for LINK and DPHY status. 
+>> This
+>> is in contrast to other devices in the driver which use a single
+>> register for both.
+>> 
+>> Add their respective entries in the register list. Devices having a
+>> single status register have been assigned the same offset for both
+>> entries.
+>> 
+>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> ---
+>>  drivers/gpu/drm/bridge/samsung-dsim.c | 15 +++++++++------
+>>  1 file changed, 9 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c 
+>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+>> index 
+>> f2f666b27d2d5ec016d7a7f47c87fcdf1377d41a..7fd4c34cdc3170d363942f98feec048097da3c06 
+>> 100644
+>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+>> @@ -30,7 +30,7 @@
+>>  /* returns true iff both arguments logically differs */
+>>  #define NEQV(a, b) (!(a) ^ !(b))
+>> 
+>> -/* DSIM_STATUS */
+>> +/* DSIM_DPHY_STATUS */
+>>  #define DSIM_STOP_STATE_DAT(x)         (((x) & 0xf) << 0)
+>>  #define DSIM_STOP_STATE_CLK            BIT(8)
+>>  #define DSIM_TX_READY_HS_CLK           BIT(10)
+>> @@ -239,7 +239,8 @@ enum samsung_dsim_transfer_type {
+>>  };
+>> 
+>>  enum reg_idx {
+>> -       DSIM_STATUS_REG,        /* Status register */
+> 
+> According to the datasheets I have, both Exynos5422 and Exynos7420 use
+> DSIM_STATUS, while Exynos8890 splits this into DSIM_LINK_STATUS and
+> DSIM_PHY_STATUS. It appears that Exynos7870 follows the same approach
+> as Exynos8890.
+> 
+> The current modification removes the legacy DSIM_STATUS_REG and adds
+> new DSIM_LINK_STATUS_REG and DSIM_DPHY_STATUS_REG. However, this
+> change causes the register names used for older SoC versions to differ
+> from those in the datasheets, so I think it is better to keep the
+> legacy name for backward compatibility.
+> 
+> How about modifying it as follows?
+> enum reg_idx {
+>     DSIM_STATUS_REG,          /* Status register (legacy) */
+>     DSIM_LINK_STATUS_REG,     /* Link status register (Exynos7870, ...) 
+> */
+>     DSIM_PHY_STATUS_REG,      /* PHY status register (Exynos7870, ...) 
+> */
+>     ...
+> };
+> 
+> static const unsigned int exynos7870_reg_ofs[] = {
+>     [DSIM_STATUS_REG] = 0x00,        /* Legacy compatibility - use
+> LINK_STATUS */
+>     [DSIM_LINK_STATUS_REG] = 0x04,   /* Link status register */
+>     [DSIM_PHY_STATUS_REG] = 0x08,    /* PHY status register */
+>     ...
+> };
+> 
+> Additionally, by configuring the hw_type field in the
+> samsung_dsim_plat_data structure like you did with the patch[1], you
+> can use the appropriate register name for each SoC as shown below:
+> if (dsi->plat_data->hw_type == DSIM_TYPE_EXYNOS7870)
 
-Friendly ping.
+I've instead added a flag to the driver data indicating the
+availability of legacy status register. In my opinion, this
+approach quickly turns cumbersome as the number of variants
+increase.
 
-Cheers,
-Andre'
+Thanks for the suggestion.
+
+>     reg = samsung_dsim_read(dsi, DSIM_LINK_STATUS_REG);
+> else
+>     reg = samsung_dsim_read(dsi, DSIM_STATUS_REG);
+> 
+> 
+> [1] [PATCH v2 12/13] drm/bridge: samsung-dsim: add driver support for
+> exynos7870 DSIM bridge
+> 
+> Thanks,
+> Inki Dae
