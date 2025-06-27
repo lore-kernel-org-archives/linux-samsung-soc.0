@@ -1,86 +1,65 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640C27F00E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 09:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4842951D2
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 09:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015739; cv=none; b=Fzwxyaw/HS/arrW1MnyfDSeF/9Ir//SCMnYHNeCU4vRkomakOPXeMpVjIs0oohlJ+2xZP89hl0KVLdnh+COKeHgU6dSsEu1ukIju4EB+NtPXzgnhZr7gFkafHWNCbyOcejdiNwl5nCJ4Ya+Umedro3qgR0fwWUTuUPzcf7jEaJc=
+	t=1751015748; cv=none; b=XNr0PnBQcRKL3B/p6bJ4In87b5DPorQ+oiYIkZCl5xKcxI4A/1y6sGIKPPn449n1mEiFNcti8EUphzR+oMfuojVSQs9xXlI2wSV6ho7assxIsIAjRfEoTtv10dAa0b9ffQb8ddJGZouTIPRlWMXuhe+NPes9LdqnzAYwS0p4QzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015739; c=relaxed/simple;
-	bh=KF6n2xzpAcKNPZgVLGNgsLKA4nfTZ74Ai1RZpgXWEGM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lv0KbSFe007fiH2OKAr6+5r++okanPa9aQFogfsk0rYXXk80qQP9YHB+SyeMFWnKeEH5VGVpRlYpboW33/AKQzIwm6eGRjyvDqnZoGxBsfnqsznyy0f3dB6LhDgL3+iKklADOgnRfV4xf3cr/iqgbSzHPNPHS9S9WuaqXWnL5nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rCWzx72O; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1751015748; c=relaxed/simple;
+	bh=yRbXyUmIWFZrQa8Jcj1B43/2CKJdjc19tHIKY4onRzk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CJgqkgF2GFyO0EFu8/oxuWJJpTiC6nGdBBCHjmXNZ6XVbWk+qaOUby/Nu4oNHcKn5mXQw7LN4DYYtELk/FGsm2i1FfvZBjl8kN7UzQVcfYLuTadJypRFxJWoph9RPv9ry66BRSKqFRJHPF0tRz2Bx+2nRYeWUmrw5EN7NWlnbnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DecnbPGr; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rCWzx72O"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4e62619afso220839f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 02:15:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DecnbPGr"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae0ccfd5ca5so312456166b.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2025 02:15:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751015735; x=1751620535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZFxJtxrx1zJ0OI4OryDjNU8Y2lTkbxgsYsKEQP0KmBE=;
-        b=rCWzx72O6a/UN6xar7UXEPSkFrL+qgRlrB+2IGTlHvzJn5GpRQz8FRgymq747EUEEN
-         fk3joCMFqCFxUxhit/KbPfIddebAYmbytvoyisYBS9fK+jh6oVWewkfdX72CHptOC5ap
-         Ilcz7GmcYqaWQJcnmIgnlrzCbQALsLSyRlhTOZR2kqBGKuChvjmliFFV3XUxcHkuUk3z
-         OF8T9/o+ONoCaFf43Q1K3MvK4E/qmBM4d98dsbJq9v/PrLGPyG0e8ZYcjXWAjlHP8hwR
-         aSg0SiybOrvUex5IuMX72CYMOE7bFXHf9IhfH3Ed4AWZNQAVM8e80SLmHA4OJYxKtQHx
-         tzGg==
+        d=linaro.org; s=google; t=1751015745; x=1751620545; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oh5XF3KCgs+rtMgIdgbTUFGPWnYOjmm+hF8Cmx6SjzE=;
+        b=DecnbPGrL3J/zPoLCX/i/NLhTi55Ntq7A2pg0zSZh7LPUoEIl7mTvko7nEpTxiPxBC
+         GnU9TxxJ3nXqIhHdjS0pXgKtyfZUcVy3sSA5kpnYkdbV1DCDG5K89T31pYDhEvxkb44k
+         yozhQ5nKDZVbI39PKDeCvGGbW6dCu7aw0yppVX/2WXm9mhAecbURcZcaAirh8DTsKBG2
+         yWBart4OYBMhAhdsTRAQh1J5BucDdd9l2F2E6lnlTFKtldqp8Jf20Zf1h00Oede91Zmp
+         fYa8OK3rhvP5GCUQ3TezLC/lsK5D2UtVilr77Ex9NJyC5FVxEwkRHkkX4a77EV/L/jSY
+         KdSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751015735; x=1751620535;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZFxJtxrx1zJ0OI4OryDjNU8Y2lTkbxgsYsKEQP0KmBE=;
-        b=I1J6wtl6SOzefCkjNqEB3O5jxTOHebSQ7ZCLsHwOU6uKMBEPL4sntyR/OUCRH5eiUN
-         H5+hb+8FfRM9N3AdSEBu1GqJGiRsM/sexJk8hT2VA/ZwjR+8MSGsoPIzno+q7qwv3Opn
-         b10yFSovNQka8goVchgHdGdCsHYsrN+EuG0FtZlzXW8VuSCTvpJeCmWEC4PqQUzAspHD
-         eBpWSlAVINyLKe3LP0wbZOzVSa8Vf4bGEkNigDQc10psze0N48IhkkRzYWS5K7D+WoGr
-         1zgZ2lX3/Wqum/zpFUZdMmvGfeK8byDG5cI26kNWZP5uMYIDJC2F7AEbcqevOpYAcxiu
-         oM9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzkQudAyQFXpmXTcn5DDmUH+lTuGG8cUXeQvaYCrhTxh6utdBBLuNOik5rGhBtLVOoLiczb5m4U8Wz/HDZKZnnTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq+45J2WH1+a7XPZbZQ9n7wNXV8R61ZGKAOwUdCN8GM8rM4jq9
-	HOEInns5VMQSQqBlAYdGqFtCUdVwK5IpfS0GOmtzhsYzaGDKxS/7aD8O8iS4e/lEOvQ=
-X-Gm-Gg: ASbGncuvMr4XxckS8b/jUZg8uNtYUYjifx+yczc2RybpPG4yqTjCBPVL0SKZKUcAHkx
-	vhKwxEwsR8lBcawDhdcL+E7fIPwltUaw3RmEAi5brsmQtMW10gCobu8q03xtA1J91hYa/fD+c38
-	hznYA8dGW7sQTWgT83yYfF1C6sGPT1k3JV+PzwNQ8jyr6tT7TBe6gH0Q2dlevLN2AadsZpm/fQp
-	aCSV+uTdH82fyX3XemKUwaC2FfenlLCtHFvfOjBYk1jIswCHxifS4oJP0cpZck5XDGjd++PbA33
-	2Ye9r+T4AVvNc5vLzuMzm4f7h3iGTRbleBWKcBYfDCLZ8sotzpVtT6sKL/9Tl4H4tdQxCNJDkfI
-	=
-X-Google-Smtp-Source: AGHT+IGWTiIfvGXjfRcFo7hTK1VN2IN646R55E8op7VekqX3OMHO9SkNO3nMyu6TsKKBy55gxvIINA==
-X-Received: by 2002:a05:6000:2006:b0:3a4:f7ea:a638 with SMTP id ffacd0b85a97d-3a90bf8150amr784917f8f.3.1751015734716;
-        Fri, 27 Jun 2025 02:15:34 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fadf3sm2198944f8f.34.2025.06.27.02.15.33
+        d=1e100.net; s=20230601; t=1751015745; x=1751620545;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oh5XF3KCgs+rtMgIdgbTUFGPWnYOjmm+hF8Cmx6SjzE=;
+        b=TN+mQ+ov5Aora8D0gQiGOxJU5IBQ4WEBgFvuNycXkcnNeL1u4/12DqpfMGSqDkm5s8
+         Ck9GoFMUsC9zP6gJhlLziC2AihIzs2+L0tokr7TepTxxneTtgJghWB+PJtl2ZMJHsrmI
+         ND7LnVIplw3NXTCnJNjnebW9yJx/dO1tXoDkAhX99NIkNNQ1zwIOYify14iy4kVCoiII
+         etM85GRZSN1romVto1Fljf41JJm1FTZCpLilZH7Mpz4NWKS2L/mfa/iW4YcQPdiUvn8h
+         qNsBT2YXwHzRKss+xLCfil/MVjtHO7vXGY2Ftq5XM1MglFZLiI2OmkgOFQaH9jXAUk/Y
+         HSwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV58TIUhoH6ZCZYXhWdmQN2lYGD48jwhacx9oY3Z9mUvp12AVRmN65lg2qmrVntBz+2Z4s877StnbS1OUKUeelMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlvkNBjJ7C1Helvw4+DoVVHYL3J49Xq8oQiPT35c63Ogdrmfwh
+	xLYI995GagGKOJhfXQcoMGqWyojHr5d96+VpWGH9btoJagDG+tDOTRsfEVMeyNvta2M=
+X-Gm-Gg: ASbGncsRiC4WszOJNsMLTpQ6/i+gjt3s6z4xyY/FmB626IlOQgmH2iBo8zRU6HiDJBH
+	YPQ5mtI1eGDvBsTCSuueqtstWRfpqvvfilLoKn9BEs/Lk2no8zX5KOQzghHXvgwIs25M0KBixZf
+	4yyDdjhqP2eSux1CUiTnukKqT03AVVzqNVjh7Yiboc47HccsYGqWduQhkekhufqoL/6ZDr9euxr
+	nHTgU6QO8lXD/aReK60DWKRpeRt1kUOqLqCQMrKDoEnankh1gFCn+lUplUHBfpa6CV3JjmA24gR
+	oW7plaJ+cMXsrfYm6wp9e5ytniabTa9glBR8sWPu7Itm3LZq9h81UFGD5vicKoDqGJHwh+xKkcL
+	W+LKlt0Bd4lla3577loOPPTK7eIRkeS4/SPDdOFPZLyh9hA==
+X-Google-Smtp-Source: AGHT+IFhjITN++PVpHqIzdq5cOL1n5hDxRXOigxjiLZBcp92L2m6wtnp42f1b5hw+aCqwkXv34ltpg==
+X-Received: by 2002:a17:907:7e93:b0:ae1:a695:a577 with SMTP id a640c23a62f3a-ae35015aecbmr181428366b.50.1751015745419;
+        Fri, 27 Jun 2025 02:15:45 -0700 (PDT)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c01506sm88904366b.109.2025.06.27.02.15.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 02:15:34 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] gs101 max77759 enablement (DT)
-Date: Fri, 27 Jun 2025 11:15:26 +0200
-Message-ID: <175101571353.155376.11773851551126179623.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
-References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
+        Fri, 27 Jun 2025 02:15:44 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 27 Jun 2025 10:15:25 +0100
+Subject: [PATCH] dt-bindings: mfd: samsung,s2mps11: add comment about
+ interrupts properties
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -88,45 +67,54 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1099; i=krzysztof.kozlowski@linaro.org;
- h=from:subject:message-id; bh=HwVHLSrS6bPiT1g1q5mvO6HejZP4ul/od1tNGw/4tBg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoXmEuSw70uHfGqcj+KJv188+R1vGosyjk5ow7X
- 7tToll+rqOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaF5hLgAKCRDBN2bmhouD
- 13QdD/9FH/OMCHHDQIpn1WzRj0sINjRlca9kK43MUnomL4QbpCJActb725g1LBV6JfBQIjdBbsk
- GfDrisMdgcktargu0V9bHbzNjRtsMpjicOzcWdoXiIxugvEPmM3LPjRaL8JgDawfnZL5v/78eRE
- AES834Bn34+FhC+dG1INlADikvKndrNaOb22sks6eEuJQM9z7sfxeQOY5ADdQZ2WeOCANOR6U7J
- M+f56kzcMqm+M3CUmFfO3pUgNTkc6PFkIlY0ODiL2ZtSlc4hJ6RpYaMnY/Xo+xA6qoo/bmafSFb
- LUn9nUD9Upjx1L7eb3TR3kZbj4XfcRR03D/DehsWG6U6NVfcsbHdaU+6VAjOZtg9v0tWiumWaq+
- RBYE/uZECEEXl4In9WcZPfE3MdaXsbNPSYwLSkjfeIUk11eeiiXND1e67vVH9n7ck7ubXQYDiF5
- ITbujp2FjOIHudJLXa3VyJt8nsJveF38yjjdX8scg/Fra3pOfPHxKwF3MYQj65BjhIthzlN5xEP
- JOOgAMYcS2MLCTu/fH/xqPIFRyhjZ53jqPxsUl1X7d+CJkNkzObQPREHo9w7n40poQ5l6SRsuA9
- 2x0BHKCfq3SDG4THWCU6e7WRP+di1kGMyAVx6YB9HArbK7w9RLPsHRKWZH6yt+vc2ShpnPlTmGa mTCOFQWPsl8KrCw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250627-s2mpg10-binding-comment-v1-1-f37e5187f0fd@linaro.org>
+X-B4-Tracking: v=1; b=H4sIACxhXmgC/x3MPQqAMAxA4atIZgM1akWvIg7+xJqhUVoRQby7x
+ fEb3nsgchCO0GUPBL4kyq4JRZ7BvI3qGGVJBjJUG0sNRvKHKwxOoouow3n3nvXEdrIljVTZmlp
+ I9RF4lfs/98P7flc8vqFpAAAA
+X-Change-ID: 20250627-s2mpg10-binding-comment-9b632a246529
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
+Document why the binding uses oneOf when specifying just one of the
+interrupt properties is supposed to be enough.
 
-On Sat, 24 May 2025 06:21:27 +0100, André Draszik wrote:
-> This series enables the recently merged Maxim max77759 driver and
-> updates the DT for the Google Pixel 6 / Pro (oriole / raven) boards
-> accordingly.
-> 
-> This gives us some extra GPIOs, and enables NVMEM which is used to
-> communicate the requested boot mode to the bootloader when doing a cold
-> reset.
-> 
-> [...]
+dtschema's fixups.py has special treatment of the interrupts and
+interrupts-extended properties, but that appears to work at the top
+level only. Elsewhere, an explicit oneOf is required.
 
-Applied, thanks!
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1/4] arm64: defconfig: enable Maxim max77759 driver
-      https://git.kernel.org/krzk/linux/c/ffdf3c776914f89dfb452e2a572e5bb7e89ccad8
-[2/4] arm64: dts: exynos: gs101-pixel-common: add Maxim MAX77759 PMIC
-      https://git.kernel.org/krzk/linux/c/8deaddf13538d68f4d7bd14a65dcd511ec0aba4e
-[3/4] arm64: dts: exynos: gs101-pixel-common: add nvmem-reboot-mode
-      https://git.kernel.org/krzk/linux/c/4292d18257c4a296f4b9e56a83ae22fecb63e727
-[4/4] arm64: dts: exynos: gs101: add dm-verity-device-corrupted syscon-reboot-mode
-      https://git.kernel.org/krzk/linux/c/17a3657e09a326b3417a46ae0044163f2c9c03ed
+diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
+index d6b9e29147965b6d8eef786b0fb5b5f198ab69ab..31d544a9c05cad878d10a0ae9b99631f08eb04a8 100644
+--- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
++++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
+@@ -81,6 +81,9 @@ allOf:
+         samsung,s2mps11-acokb-ground: false
+         samsung,s2mps11-wrstbi-ground: false
+ 
++      # oneOf is required, because dtschema's fixups.py doesn't handle this
++      # nesting here. Its special treatment to allow either interrupt property
++      # when only one is specified in the binding works at the top level only.
+       oneOf:
+         - required: [interrupts]
+         - required: [interrupts-extended]
+
+---
+base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+change-id: 20250627-s2mpg10-binding-comment-9b632a246529
 
 Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+André Draszik <andre.draszik@linaro.org>
+
