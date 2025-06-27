@@ -1,312 +1,162 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290502F1FC4;
-	Fri, 27 Jun 2025 02:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5689433CB;
+	Fri, 27 Jun 2025 04:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750989820; cv=none; b=I3/VZ53R44pTJbhunn/11EYMIoG9XxNrcz+jW7Qsl3NyNIg9hDjbCabmx/Vf0h8UP+/LkNIVlyO3o78/1co43Ulvx555PGUhCY4VUwKPXABbEjFZgdBzn27AvRQhUXgRxZcebSkBAz0mMhQHtY7LGu68Uc5SySVA0lPNxJX0YqI=
+	t=1750997245; cv=none; b=eJVwJDAVcHEoNvK/x9LoudQjSvuB+7LWe+SSJtComyebvS7AjOZGD1t2BI1LLrc0Xhz/gh8m/H2A5tOBFQZCY/U25mrabL+cyVub9LRceX4LPohPEj0uW7GTXKJgu2JrsLI1mSSqE0YvWrUnaiY/gYSYWe/ztRmv3BU94ga3Pqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750989820; c=relaxed/simple;
-	bh=Q3lLYWFRvkpLOgxfv0OXL3FmSu2du7UZLl8y9bHHdiw=;
+	s=arc-20240116; t=1750997245; c=relaxed/simple;
+	bh=8x/RnL4RpBnojU9GPPjHBfPR2BngZztTcH3VjNa1ezs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AOXdA8zL2obQLyuXC6R59OMDV64zie6OOdUqqmXWAR0NSkATo4wygYzM3rLSjaT93nxO2iYx14Zm6EcI26fOtl/NebpUW8avmbjrIZEQe7meZBTBj9H9AIZL7WBq6FRcMYGeUMbnWnAAplRhwsXDejYCY5BdwgHBa3ZRirp2jkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uo20jgFK; arc=none smtp.client-ip=209.85.221.172
+	 To:Cc:Content-Type; b=T4ZxcOGbxB3cATUcd9bw2kxUHw6q7NvekWN9gnz1O80sqUKotpiMX3Xb1z7KGLD7+ebopXovSuecTHLl45z5grdksjAueFBwffw0Gxb15GFCpVtr6tQM9GzbrFB1exbbQmVyi3imPDTHR4Po0kQt2ON8kqw3sWRa51Ikyuvg1Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKoIQOsX; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uo20jgFK"
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-532dbe71e4eso1048466e0c.2;
-        Thu, 26 Jun 2025 19:03:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKoIQOsX"
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5308b451df0so547151e0c.2;
+        Thu, 26 Jun 2025 21:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750989816; x=1751594616; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750997242; x=1751602042; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i/f/+hiyDwdHx+cA843RdLoAxbDE7w4hdsMpE4lkbXo=;
-        b=Uo20jgFKFm7qnxLptVEwTRr9Kqf42RJ2uL9WzInxSpQdc1NOjQeM95ix/TkQOrZ/0U
-         d437g6suyCtAP1z9iKZpsVL7RDfkiEQv5fnyf/IAolK0T8wI/+rXvELGuZjvLzH6sQc9
-         EVX+E4vJCistZ7/9zinRV0aS8qJTtvndH30r9i38KhXE4bT1nHR77UwFFNcAXX3s5dtV
-         ki1M7IPRhYsWPCXDUW9zprwIcTI5Njcjhe/S1EPSj6/0j//xnnrx9aw9OFGeFbp6asLD
-         dF/W6PKW7wVk3vdIjzhRYwqnBAC5lfM3rZ+nY7Y9Rqtr3ONsB4sW4pFkMPNURY4yN/dP
-         Ulzg==
+        bh=/xHMK6PQ4DMklkCsGbrG44WpM/VPBrCs6nWRyWKBBsU=;
+        b=FKoIQOsXzh+YHIGqvfiNHB7Ba/zpqT5DBTs7HlHipoHW17CsyR05zGIRmzglxS7RkT
+         x1+mj6HZ688u1EXbuLiRi5D7ASa66wQqQdh3MfhQot9f2avU5U3Z8E36W+nqtI9LbC4s
+         c+TimZo3j0PVHdRoqoNznzwjLRLbFy17t7h+5XW5tk1iJe04qiw/jne9MRtvpztfqK55
+         fF+/ukvAjqOK0zcmzeru24wZxvzp7ySDwdcf+vIrO5lEBMsI4GupXNTqpdYGyBL40Tlw
+         h/QXtAaOlZR6NxFlwlm3Voj+TennIMCFL7tx5K2QDc/Y/dIS45pH5sUCIW/3wY3gCmfl
+         OLiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750989816; x=1751594616;
+        d=1e100.net; s=20230601; t=1750997242; x=1751602042;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i/f/+hiyDwdHx+cA843RdLoAxbDE7w4hdsMpE4lkbXo=;
-        b=tKbkCf7PY/jbOhuM6+lDVg/dFAxUp8cjHDHe4gzZkftPUs6SBT+lTf5x5pZEXBbUyr
-         2+4bGJwJq17M6D2FtgzZ4pzgBGAEHw4k1yiv3Huw7W+z4q10sSr2OEz8jsyk5E4ju+ko
-         CD7BXk6dxLXEwJKGY4GIRc/XZnowvP6gmzuRn5x+ieD7wVtCT9BOJrz/S/BW/tX5Py4A
-         aGEjzuiXHGr+aFGGBb1mnOS4euO4Q7rqy+dObmR3+GCbgFLSh/Q4csbh3UJSn8HIJ+e/
-         tUMHWJHDEB/ot6tMY6R5VCMAH7eMismmxPeu8+0Q1XyVIRC9EFIpfhU2SCGqeid8ZJ4j
-         rA0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5euJzbAHeRztceJAA27BPDQq3jILSTzZDVSNywN8hEgGx2cpQVDiZOR9RRV2/kVfI1U4rJka+s2NAztoFqfSfjdE=@vger.kernel.org, AJvYcCX8ADQrjuH3NvV0Hd3k6VngU+njltUX2Xxd7SkaccMLZD3E4kQOvH4JfoMkn41uwsxYkohqe5xKsjd1DA+c@vger.kernel.org, AJvYcCXNf0kI3RuIBLfQSdPmSXkpGEeTm5TGqhHmOZ3/GsPBZNAHuNMeABfDcJY6a5ShXalE1E/sihN9CYGsLfgd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzflOVpTJEpVdD8g1n1SmeNJ1YsXQYTZjqb8HCc0uQE1e/RIrtM
-	xJywDxqspe59YFslld3LdCn+deKoVLtW3+0v4AP0hOwPCik7uq4AbhKeaOl8TVmXlexAg7T9lWF
-	C5IHOUW2/gofa0OecJ2DqnfiX9Ndmp2k=
-X-Gm-Gg: ASbGncsKjspA0L2/PLU+t6E/dTh9DIeUPGXbuf32r0SVM+b+H48awgYJg++9Oahzlqc
-	R7YBGl9xvvsCi9mP0m40c1bGgP7LXzvCDK74kJAklWhzKuh2ObQdB7KlGNTKntquJR0K05noxyO
-	DOvvtHDUSevfnnY1EfmZvUCMMOhUzkFuAHrbHfe5o6uA==
-X-Google-Smtp-Source: AGHT+IHhVsq5/VI1dr0dwY9jUchBPbEamRa2csC8XrsamXPtwwwYjcpSjiIYO02pEuPWifIo5HwkuElrIvaVqdLt0x0=
-X-Received: by 2002:a05:6122:8c1a:b0:531:2906:752e with SMTP id
- 71dfb90a1353d-5330beda07fmr1498050e0c.5.1750989815830; Thu, 26 Jun 2025
- 19:03:35 -0700 (PDT)
+        bh=/xHMK6PQ4DMklkCsGbrG44WpM/VPBrCs6nWRyWKBBsU=;
+        b=OOokBtyEzExbHsKYg0o1E2txHYQqjY0ixlTCF2V1KIgKJAHvvT6OeKt3NtlXO1gWC0
+         tzN05WfrrD37JLYVfLgqNQ0QAxHHpShdP/64Zv/Jzhk5EAbKACzsq8Na2801trGxn67j
+         Z/Y1e3T1qtUmjWK5nHWYL1lf3jo0tzKEFgXXXDdyN3HxOwyJOCyVNDSI5IzzYsILyuZ5
+         DwiWLIcd7BDBrmWY5RBsvzA/e2LYK5689Oq4eHvBNLcuzckf8+j6uaX/r2pDFc6zH4zx
+         293oQNWKhNLpK6y16NWPqbaBB5cziwpRzQHfxAnkhOAHYEh07MPmt9wv4MJ4t6acqeXN
+         8FsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKpD4W+Xv026BUtZTpeSwA3SXswrgp/YMpP6tQkGhIYArhxlKiYmbFkEVs0ygKsDssjOgYGmQmjGFfgJsx@vger.kernel.org, AJvYcCW+N/S2pFOQi3f84+B+kQ33PgDoWgZQTw+dvwWUcK3IWUnua9OI8xXBOOx5cl9aYdGocY0Qyqt7@vger.kernel.org, AJvYcCWc3YZM7nWHQSWxtwah5vAAW1LqHuUXiXGsXlrxvA5B2rX7J6ts5Osckl/+gy4MMoWXhAm1x9p5mf1e@vger.kernel.org, AJvYcCX1+ZYnca1GjlbGJuTU/0NOpM7s3UzS/jiwTLvb7t4xZcJ00KzOb3bvKOGzpUq9ZXfJAQbOKOev4tXxBi4Ko6lfn0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywye6L6YmeVKO1mILhhv+A5A/CmDyD/8Lng7dfCnlChsrAH7l9J
+	1B0fM6wtI9yMGFV7y9Vfp9tOBjD5JsjexWl7j7McXBhdnVjGwIzlAa2qdvQO4KbM1a7VGqS4Lnt
+	3NviDtVxnU1FBZi2m3hNEf/FUkzZsJclLEfsd19QzFA==
+X-Gm-Gg: ASbGncsClaZP27Rr8S3SkX1qAFjI3Vg7CSrp1d9drM+iS75g7hQw2UaoOrT+tOa8/a4
+	QxHHUjOuw6cBWnJwehqJcqEIdjOxn6ohVvUytCD1iu5vjt2ImosRgWRba3JARmvJllMsRl815m/
+	WmAZMs3SGCyz/Ya2X010wJLpmggHEf9x0h3JdtT//AbA==
+X-Google-Smtp-Source: AGHT+IHlxMc86ufSZtcL3j8P2poeXg8qzyvnAbUw4dy1htBYX9hCb5oAZgsY7er9NHUMK/7ApR5+KQERvropag7FPFQ=
+X-Received: by 2002:a05:6122:2526:b0:530:720b:abe9 with SMTP id
+ 71dfb90a1353d-5330bfbe262mr1496367e0c.7.1750997242580; Thu, 26 Jun 2025
+ 21:07:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-restricted-pointers-drm-v1-0-781e0d88cd92@linutronix.de> <20250618-restricted-pointers-drm-v1-2-781e0d88cd92@linutronix.de>
-In-Reply-To: <20250618-restricted-pointers-drm-v1-2-781e0d88cd92@linutronix.de>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org> <20250627-exynosdrm-decon-v3-2-5b456f88cfea@disroot.org>
+In-Reply-To: <20250627-exynosdrm-decon-v3-2-5b456f88cfea@disroot.org>
 From: Inki Dae <daeinki@gmail.com>
-Date: Fri, 27 Jun 2025 11:02:59 +0900
-X-Gm-Features: Ac12FXx_H-k6IjgjBdIwZwvFGVMe7aOTzmfWa57DZUuTaImbO0rimzs6HuQBV-w
-Message-ID: <CAAQKjZMBfU5pSsY9sHE3DBB1AZ1sBDp6hXiV9iXVo6acEZezWg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/exynos: Don't use %pK through printk
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+Date: Fri, 27 Jun 2025 13:06:46 +0900
+X-Gm-Features: Ac12FXwIXNh96XjcbS4nbV5KnzWbsp93XPto9lDaR0yFPoINZtMFfYL62VbDpSI
+Message-ID: <CAAQKjZM+++P3ozLZZYEusYepamF0qdeuOe+thDb2BevLCsab_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] drm/exynos: exynos7_drm_decon: fix call of decon_commit()
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
 	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+	Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-2025=EB=85=84 6=EC=9B=94 18=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 4:56, T=
-homas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+2025=EB=85=84 6=EC=9B=94 27=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 4:21, K=
+austabh Chakraborty <kauschluss@disroot.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
+=84=B1:
 >
-> In the past %pK was preferable to %p as it would not leak raw pointer
-> values into the kernel log.
-> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-> the regular %p has been improved to avoid this issue.
-> Furthermore, restricted pointers ("%pK") were never meant to be used
-> through printk(). They can still unintentionally leak raw pointers or
-> acquire sleeping locks in atomic contexts.
+> decon_commit() has a condition guard at the beginning:
 >
-> Switch to the regular pointer formatting which is safer and
-> easier to reason about.
+>         if (ctx->suspended)
+>                 return;
+>
+> But, when it is being called from decon_atomic_enable(), ctx->suspended
+> is still set to true, which prevents its execution. decon_commit() is
+> vital for setting up display timing values, without which the display
+> pipeline fails to function properly. Call the function after
+> ctx->suspended is set to false as a fix.
 
-Applied.
+Good observation. However, I think a more generic solution is needed.
+
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 96976c3d9aff ("drm/exynos: Add DECON driver")
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm=
+/exynos/exynos7_drm_decon.c
+> index f91daefa9d2bc5e314c279822047e60ee0d7ca99..43bcbe2e2917df43d7c2d27a9=
+771e892628dd682 100644
+> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> @@ -583,9 +583,9 @@ static void decon_atomic_enable(struct exynos_drm_crt=
+c *crtc)
+>         if (test_and_clear_bit(0, &ctx->irq_flags))
+>                 decon_enable_vblank(ctx->crtc);
+>
+> -       decon_commit(ctx->crtc);
+> -
+>         ctx->suspended =3D false;
+> +
+> +       decon_commit(ctx->crtc);
+
+There seem to be three possible solutions:
+
+1. Remove all code related to ctx->suspended. If the pipeline flow is
+properly managed as in the exynos5433_drm_decon.c module, checking the
+ctx->suspended state may no longer be necessary.
+2. Remove the ctx->suspended check from decon_commit(). Since the
+runtime PM resume is already called before decon_commit() in
+decon_atomic_enable(), the DECON controller should already be enabled
+at the hardware level, and decon_commit() should work correctly.
+3. Move the code that updates ctx->suspended from
+decon_atomic_enable() and decon_atomic_disable() to
+exynos7_decon_resume() and exynos7_decon_suspend(), respectively. The
+decon_atomic_enable() function calls pm_runtime_resume_and_get(),
+which ultimately triggers exynos7_decon_resume(). It would be more
+appropriate to set ctx->suspended =3D false in the
+exynos7_decon_resume() function, as this is the standard place to
+handle hardware state changes and resume actions.
+decon_atomic_enable() is responsible for requesting enablement of the
+DECON controller, but actual hardware state transitions will be
+handled within exynos7_decon_resume() and exynos7_decon_suspend().
+
+
+Unfortunately, I do not have hardware to test this patch myself. Would
+it be possible for you to try one of these approaches and verify the
+behavior?
+Option 1 would be the best solution if feasible.
 
 Thanks,
 Inki Dae
 
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gem.c |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 32 ++++++++++++++++-----------=
------
->  2 files changed, 17 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_gem.c
-> index 4787fee4696f8e6f9eecaacb1535765c246688c8..d44401a695e203bd36b3b6678=
-fdeb3572a91bfda 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> @@ -174,7 +174,7 @@ static struct exynos_drm_gem *exynos_drm_gem_init(str=
-uct drm_device *dev,
->                 return ERR_PTR(ret);
->         }
->
-> -       DRM_DEV_DEBUG_KMS(dev->dev, "created file object =3D %pK\n", obj-=
->filp);
-> +       DRM_DEV_DEBUG_KMS(dev->dev, "created file object =3D %p\n", obj->=
-filp);
->
->         return exynos_gem;
 >  }
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_ipp.c
-> index ea9f66037600e1020da4b0a9c318ca2f2266a871..03c8490af4f45447d123a2077=
-7e5362ebd933b46 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -271,7 +271,7 @@ static inline struct exynos_drm_ipp_task *
->         task->src.rect.h =3D task->dst.rect.h =3D UINT_MAX;
->         task->transform.rotation =3D DRM_MODE_ROTATE_0;
 >
-> -       DRM_DEV_DEBUG_DRIVER(task->dev, "Allocated task %pK\n", task);
-> +       DRM_DEV_DEBUG_DRIVER(task->dev, "Allocated task %p\n", task);
->
->         return task;
->  }
-> @@ -339,7 +339,7 @@ static int exynos_drm_ipp_task_set(struct exynos_drm_=
-ipp_task *task,
->         }
->
->         DRM_DEV_DEBUG_DRIVER(task->dev,
-> -                            "Got task %pK configuration from userspace\n=
-",
-> +                            "Got task %p configuration from userspace\n"=
-,
->                              task);
->         return 0;
->  }
-> @@ -394,7 +394,7 @@ static void exynos_drm_ipp_task_release_buf(struct ex=
-ynos_drm_ipp_buffer *buf)
->  static void exynos_drm_ipp_task_free(struct exynos_drm_ipp *ipp,
->                                  struct exynos_drm_ipp_task *task)
->  {
-> -       DRM_DEV_DEBUG_DRIVER(task->dev, "Freeing task %pK\n", task);
-> +       DRM_DEV_DEBUG_DRIVER(task->dev, "Freeing task %p\n", task);
->
->         exynos_drm_ipp_task_release_buf(&task->src);
->         exynos_drm_ipp_task_release_buf(&task->dst);
-> @@ -559,7 +559,7 @@ static int exynos_drm_ipp_check_format(struct exynos_=
-drm_ipp_task *task,
->                                             DRM_EXYNOS_IPP_FORMAT_DESTINA=
-TION);
->         if (!fmt) {
->                 DRM_DEV_DEBUG_DRIVER(task->dev,
-> -                                    "Task %pK: %s format not supported\n=
-",
-> +                                    "Task %p: %s format not supported\n"=
-,
->                                      task, buf =3D=3D src ? "src" : "dst"=
-);
->                 return -EINVAL;
->         }
-> @@ -609,7 +609,7 @@ static int exynos_drm_ipp_task_check(struct exynos_dr=
-m_ipp_task *task)
->         bool rotate =3D (rotation !=3D DRM_MODE_ROTATE_0);
->         bool scale =3D false;
->
-> -       DRM_DEV_DEBUG_DRIVER(task->dev, "Checking task %pK\n", task);
-> +       DRM_DEV_DEBUG_DRIVER(task->dev, "Checking task %p\n", task);
->
->         if (src->rect.w =3D=3D UINT_MAX)
->                 src->rect.w =3D src->buf.width;
-> @@ -625,7 +625,7 @@ static int exynos_drm_ipp_task_check(struct exynos_dr=
-m_ipp_task *task)
->             dst->rect.x + dst->rect.w > (dst->buf.width) ||
->             dst->rect.y + dst->rect.h > (dst->buf.height)) {
->                 DRM_DEV_DEBUG_DRIVER(task->dev,
-> -                                    "Task %pK: defined area is outside p=
-rovided buffers\n",
-> +                                    "Task %p: defined area is outside pr=
-ovided buffers\n",
->                                      task);
->                 return -EINVAL;
->         }
-> @@ -642,7 +642,7 @@ static int exynos_drm_ipp_task_check(struct exynos_dr=
-m_ipp_task *task)
->             (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_SCALE) && scale) ||
->             (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CONVERT) &&
->              src->buf.fourcc !=3D dst->buf.fourcc)) {
-> -               DRM_DEV_DEBUG_DRIVER(task->dev, "Task %pK: hw capabilitie=
-s exceeded\n",
-> +               DRM_DEV_DEBUG_DRIVER(task->dev, "Task %p: hw capabilities=
- exceeded\n",
->                                      task);
->                 return -EINVAL;
->         }
-> @@ -655,7 +655,7 @@ static int exynos_drm_ipp_task_check(struct exynos_dr=
-m_ipp_task *task)
->         if (ret)
->                 return ret;
->
-> -       DRM_DEV_DEBUG_DRIVER(ipp->dev, "Task %pK: all checks done.\n",
-> +       DRM_DEV_DEBUG_DRIVER(ipp->dev, "Task %p: all checks done.\n",
->                              task);
->
->         return ret;
-> @@ -667,25 +667,25 @@ static int exynos_drm_ipp_task_setup_buffers(struct=
- exynos_drm_ipp_task *task,
->         struct exynos_drm_ipp_buffer *src =3D &task->src, *dst =3D &task-=
->dst;
->         int ret =3D 0;
->
-> -       DRM_DEV_DEBUG_DRIVER(task->dev, "Setting buffer for task %pK\n",
-> +       DRM_DEV_DEBUG_DRIVER(task->dev, "Setting buffer for task %p\n",
->                              task);
->
->         ret =3D exynos_drm_ipp_task_setup_buffer(src, filp);
->         if (ret) {
->                 DRM_DEV_DEBUG_DRIVER(task->dev,
-> -                                    "Task %pK: src buffer setup failed\n=
-",
-> +                                    "Task %p: src buffer setup failed\n"=
-,
->                                      task);
->                 return ret;
->         }
->         ret =3D exynos_drm_ipp_task_setup_buffer(dst, filp);
->         if (ret) {
->                 DRM_DEV_DEBUG_DRIVER(task->dev,
-> -                                    "Task %pK: dst buffer setup failed\n=
-",
-> +                                    "Task %p: dst buffer setup failed\n"=
-,
->                                      task);
->                 return ret;
->         }
->
-> -       DRM_DEV_DEBUG_DRIVER(task->dev, "Task %pK: buffers prepared.\n",
-> +       DRM_DEV_DEBUG_DRIVER(task->dev, "Task %p: buffers prepared.\n",
->                              task);
->
->         return ret;
-> @@ -764,7 +764,7 @@ void exynos_drm_ipp_task_done(struct exynos_drm_ipp_t=
-ask *task, int ret)
->         struct exynos_drm_ipp *ipp =3D task->ipp;
->         unsigned long flags;
->
-> -       DRM_DEV_DEBUG_DRIVER(task->dev, "ipp: %d, task %pK done: %d\n",
-> +       DRM_DEV_DEBUG_DRIVER(task->dev, "ipp: %d, task %p done: %d\n",
->                              ipp->id, task, ret);
->
->         spin_lock_irqsave(&ipp->lock, flags);
-> @@ -807,7 +807,7 @@ static void exynos_drm_ipp_next_task(struct exynos_dr=
-m_ipp *ipp)
->         spin_unlock_irqrestore(&ipp->lock, flags);
->
->         DRM_DEV_DEBUG_DRIVER(ipp->dev,
-> -                            "ipp: %d, selected task %pK to run\n", ipp->=
-id,
-> +                            "ipp: %d, selected task %p to run\n", ipp->i=
-d,
->                              task);
->
->         ret =3D ipp->funcs->commit(ipp, task);
-> @@ -917,14 +917,14 @@ int exynos_drm_ipp_commit_ioctl(struct drm_device *=
-dev, void *data,
->          */
->         if (arg->flags & DRM_EXYNOS_IPP_FLAG_NONBLOCK) {
->                 DRM_DEV_DEBUG_DRIVER(ipp->dev,
-> -                                    "ipp: %d, nonblocking processing tas=
-k %pK\n",
-> +                                    "ipp: %d, nonblocking processing tas=
-k %p\n",
->                                      ipp->id, task);
->
->                 task->flags |=3D DRM_EXYNOS_IPP_TASK_ASYNC;
->                 exynos_drm_ipp_schedule_task(task->ipp, task);
->                 ret =3D 0;
->         } else {
-> -               DRM_DEV_DEBUG_DRIVER(ipp->dev, "ipp: %d, processing task =
-%pK\n",
-> +               DRM_DEV_DEBUG_DRIVER(ipp->dev, "ipp: %d, processing task =
-%p\n",
->                                      ipp->id, task);
->                 exynos_drm_ipp_schedule_task(ipp, task);
->                 ret =3D wait_event_interruptible(ipp->done_wq,
+>  static void decon_atomic_disable(struct exynos_drm_crtc *crtc)
 >
 > --
 > 2.49.0
