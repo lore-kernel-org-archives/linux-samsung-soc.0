@@ -1,121 +1,155 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74E12DCC09;
-	Fri, 27 Jun 2025 13:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086A2DE211;
+	Fri, 27 Jun 2025 14:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751031862; cv=none; b=a5lHR0NwicV7OpKoU4deVoSAM8xDU+tQemUaq58gQKVp4N4VTWlL57+E4WK4pkgb0nnl53/huU62RHeUmuwQvRSWBgIuY5y3rrxcyA8Bo0Ql7amPGxJilKcfuM/08wpqtgQ/gc1JfQK4vV4UmcD12VRl8UYjGGhibr+jWwLfMws=
+	t=1751033193; cv=none; b=itIip6SXlDTux3CJkflWYvUMsWdlmOn5XLU0Ue9DIvFxSCGRAFiPSE8Dtce1TMdMuwHt9TGPLvr+VOXLuTbUQ0lb7HtZjZWDiCCXU4KsLOrVc/j9jhrwjdg2mHzP39KI0LyTiEQBdDwwRSB9XUPUzpcMG1jhEb/fSKiIMXAZCo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751031862; c=relaxed/simple;
-	bh=cAEs2spaxPueJxKHXKyopePEl3MqlVBkN3UFzTPU8Sk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=N9IM0K+LFo0nEhGXb+eKDy87JedOSYZY1fzuZxM7ZZPXcvkzx1v0PlFQW2NuKaRTkyCKYwCZp7YrtaPwOvZLlmhzWk0zEsfNzm5SQEgv3Dz/PQZe2R99SFbdVswG96pGwQWKZZXT5VicjBXKOz7oWWmvRL/cW6dwSGaca/Y8Rk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YhQHA0mI; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1751033193; c=relaxed/simple;
+	bh=cx3cfDqYfml9hV1dbrF3BBDdYHzNauZUQLohSd44LWI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=RhRessquWG0Yun5AFotwVXQLs0m1RI5ocq780OwBUe77XTRmNqq9SgEX5bwdTrp90cLRvqjvWPzpXviBa4gpMBIxlwtRSgkAUZUZPWPNjiE2+p69yJ2/1ZJVybpwpUoQ6WwnDuooyGOcYxvMfXlvGV1f8QnYtZmnjRKY6QlfyGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLwD4NyA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YhQHA0mI"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 06D1620F6D;
-	Fri, 27 Jun 2025 15:44:19 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ToE2WMaHRbaz; Fri, 27 Jun 2025 15:44:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751031858; bh=cAEs2spaxPueJxKHXKyopePEl3MqlVBkN3UFzTPU8Sk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=YhQHA0mIm10roynyZHJhCDRT7tmozYKY85f/YD9X9oNofLc0mGiDLwqbKW82kVMoh
-	 w5iRZqBBZvckSbtJoKcb3DvAZ3wPtUw4J5N3d26C9Q8aRMARha+7wlfa6XofQV96de
-	 zNLP2OqqBDOhqi4KZN8CSZjwkeEiOXwxVMyOmtQ6PQeK0xlYEM4Zc4NIDew8n2xNe3
-	 Lg6CM3dmImHbDZn5gJ1hkJkjfoSxxjzJORpoLkqybzhVPenPktfkcqXa0OwQ7c3e17
-	 JGFgVVGpynhtbga0NcRNbsWvi9m/EWA1gp2YqTYx3F+ua9gG7CHv8waeTpg6JY0Jxt
-	 G0l4klyZK8V7w==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLwD4NyA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D0DC4CEED;
+	Fri, 27 Jun 2025 14:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751033192;
+	bh=cx3cfDqYfml9hV1dbrF3BBDdYHzNauZUQLohSd44LWI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=eLwD4NyAv3OzHJZbC3TUTa9zbjGqUYr0wrSJ+Tz/zfIYnIhUNr6bpoWgADe+Q5ZZi
+	 DBBgztSpx3jYcQl9m0cUhMhB4be1aLgSYnortrqAS1rH++fKo8+bhlC5LySlZ9GsXt
+	 /WdozpPW85WUFjD26uWFt4J5m7IPe9qCjGN1MG79HYauafibsM1EFX4fkytxQEOUdy
+	 myFZaDqyVQwEfGFE2PzH+SIICzk9C9W7gAFMxtwv9idi0VyiOVaOSCz4Bo6Tv73iET
+	 H3xFuQv9yP35IuZxFDmtvR1x02xNcpfd4EcuOEW7MOmzK/x0LsXIP/VjZ9H9qSUni/
+	 j+hBeg+iFzE7g==
+Date: Fri, 27 Jun 2025 09:06:32 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 27 Jun 2025 13:44:17 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alim Akhtar <alim.akhtar@samsung.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring
- <robh@kernel.org>, Conor Dooley <conor@kernel.org>, Ajay Kumar
- <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
- properties for iommus and ports
-In-Reply-To: <20250627-literate-talented-panda-cbac89@krzk-bin>
-References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
- <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
- <20250627-literate-talented-panda-cbac89@krzk-bin>
-Message-ID: <85c3658fdfa90636caac3b3fce295915@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+In-Reply-To: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
+References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
+Message-Id: <175103315202.3220613.9523717145992109827.robh@kernel.org>
+Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
 
-On 2025-06-27 07:50, Krzysztof Kozlowski wrote:
-> On Fri, Jun 27, 2025 at 12:50:28AM +0530, Kaustabh Chakraborty wrote:
->> Similar to FIMD and Exynos5433's DECON, the Exynos7 DECON hardware:
->> - May optionally require an IOMMU to initialize a display region.
->> - May require a port connection to another block, say an MIC or a DSI
->>   master.
->> 
->> Document these bindings in the devicetree schema.
->> 
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>  .../bindings/display/samsung/samsung,exynos7-decon.yaml           | 8 
->> ++++++++
->>  1 file changed, 8 insertions(+)
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml 
->> b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
->> index 
->> 53916e4c95d8c0369138941a556c23f5d42fbd39..1e9500c86590d555cfa6f04790e2b64da291b78b 
->> 100644
->> --- 
->> a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
->> +++ 
->> b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
->> @@ -80,6 +80,14 @@ properties:
->>        - const: vsync
->>        - const: lcd_sys
->> 
->> +  iommus:
->> +    maxItems: 1
->> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +    description:
->> +      Contains a port which is connected to mic or dsim node.
+
+On Fri, 27 Jun 2025 01:43:23 +0530, Kaustabh Chakraborty wrote:
+> Exynos7870 has a IP subsystem in its architecture dedicated to display
+> management. Notably, this block includes the Display Enhancement
+> Controller (DECON), and the DSI Master (DSIM).
 > 
-> You need to list and describe the ports.
-
--    description:
--      Contains a port which is connected to mic or dsim node.
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description:
-+          Input port which is connected to either a Mobile Image
-+          Compressor (MIC) or a DSI Master device.
-
-I assume you want something like this?
-Is the formatting correct? Should there be a space between
-ports:$ref and ports:properties?
-
+> The following series and its sub-series implement all components for a
+> functioning display pipeline. All vital information which helped shaping
+> up the patches have been retrieved from Exynos7870 vendor kernel sources
+> as provided by Samsung.
+> 
+> Testing has been done on all three devices available upstream, i.e.
+> Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
+> (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte). Regrettably,
+> I've only been able to test the functionality on video mode, as none of
+> the devices have panels working in command mode.
+> 
+> This series implements changes in the SoC subsystem, which includes
+> devicetree additions. It depends on all sub-series listed below:
+> (Legend: [R]eviewed, [A]ccepted)
+> 
+> exynosdrm-decon            - https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
+> exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+> exynos7870-mipi-phy-fix    - https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
+> exynos7870-dsim            - https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
+> panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
+> panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+> Changes in v2:
+> - modified compatible hierarchy to use non-deprecated syntax (krzk)
+> - fixed subject prefixes of [v1 2/5], [v1 3/5], [v1 4/5], [v1 5/5] (krzk)
+> - removed simplefb nodes instead of disabling it (krzk)
+> - added dt-bindings patch to allow mipi-phy node under PMU
+> - changed clock names of dsim node
+> - Link to v1: https://lore.kernel.org/r/20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org
+> 
+> ---
+> Kaustabh Chakraborty (6):
+>       dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
+>       dt-bindings: soc: samsung: exynos-pmu: allow mipi-phy subnode
+>       arm64: dts: exynos7870: add DSI support
+>       arm64: dts: exynos7870-on7xelte: enable display panel support
+>       arm64: dts: exynos7870-a2corelte: enable display panel support
+>       arm64: dts: exynos7870-j6lte: enable display panel support
+> 
+>  .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
+>  .../soc/samsung/samsung,exynos-sysreg.yaml         |  2 +
+>  .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 52 +++++++++----
+>  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 49 ++++++++----
+>  arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 51 ++++++++----
+>  arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 90 ++++++++++++++++++++++
+>  6 files changed, 206 insertions(+), 39 deletions(-)
+> ---
+> base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+> change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
 > 
 > Best regards,
-> Krzysztof
+> --
+> Kaustabh Chakraborty <kauschluss@disroot.org>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org:
+
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['syna,td4300-panel']
+arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['syna,td4101-panel']
+arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/dsi@14800000: failed to match any schema with compatible: ['samsung,exynos7870-mipi-dsi']
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: /soc@0/dsi@14800000/panel@0: failed to match any schema with compatible: ['samsung,s6e8aa5x01']
+arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb: decon@14830000 (samsung,exynos7870-decon): 'iommus', 'ports' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/samsung/samsung,exynos7-decon.yaml#
+
+
+
+
+
