@@ -1,95 +1,90 @@
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB15218EBA;
-	Fri, 27 Jun 2025 06:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751007400; cv=none; b=KR75RSduUkpNsUJxobrImWMeJSxAeXsHXMnLRYu1QbNscjhRkSjDah2zeODrZINspJ1vSHMaAwqxnNtlRdV8uIcCfQGgYHD0JTbUGXrdOrRjt6lKcKXTQf1q0YFgDXuB/bC7kLWt+Oe+8XTW/iye2wpGVR0pl0zabvPllQRKz7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751007400; c=relaxed/simple;
-	bh=8cyCUVLrNKS6tVu4VEKnS5rU8EEbVvMM4YBN4njzgJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OcZRh5mJwlr6jXbEsMoKvyjZTpZJEFLpuIa+HYUTnctvxw0zcuIHvyQ9nqL6LT2y2AxlHlwWSt6nxrQ1/Mr2o5rhBksNLT+vkk4XCsGmdeK2Hbw8dWtZ5tn6s4hSbrAcd+UwAonWAko3YttadjhH6Si8muhheksMvpLSJx2eiJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=XU+Ec1H6; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="XU+Ec1H6"
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id B2DBE4D686;
-	Fri, 27 Jun 2025 08:56:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1751007397;
-	bh=8cyCUVLrNKS6tVu4VEKnS5rU8EEbVvMM4YBN4njzgJc=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04ED2264A3;
+	Fri, 27 Jun 2025 07:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751010656; cv=none; b=jZoZyJoliQCwKxK1jHl1BZLJqqkk+wWruIR8GM6kQ5SCfsli2NDu8eFzm4E59HybC3u3c5k+evVdIvym2zeSXW7n4+ghDXLeUBfK4YcFg9UcMgvdbv2784fTNbyH3TB5z9IUNobsgpAI53H7bb3JVWPa31pAPN1eRU8sTTMuL6k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751010656; c=relaxed/simple;
+	bh=JbS8tm4sqaGviJ8DSlzmMGTIfieonXmx71aSWeZoU2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8bCojuhPky9m9wHTcN3epizlhpOWT+/jPka7ltd4bPOfPtml7ncMPGzlOyLv6gE2a7PW1F/7NFHMUUBBA9E1YfeiBtzATpLz6diWX8nz9zo1Z/4dzNsuGLs789Nyf/CeTT3n79en7nm52v6d6W/Sjbf5sJATkD74vaprvvxH5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeJ/n1qq; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeJ/n1qq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD34FC4CEEB;
+	Fri, 27 Jun 2025 07:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751010656;
+	bh=JbS8tm4sqaGviJ8DSlzmMGTIfieonXmx71aSWeZoU2Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XU+Ec1H6zYbpoJnBguJ7GDr9FEN9rGsre0pu8KqaKGy81Z4kSMmAWmsLnuh8C6DXX
-	 NNDbZaaw/8hi+SEmWsp5x3pevvQorZ/gnxPIioOfE8HvHGxwz1755SXHcf4LYAXtZ2
-	 4mCpj7FQzDFz6VXNwUJwKVqKYmzDv8PJ9OZQsqYZo+D5KCzC+3KXRAYaDgs30cvzbf
-	 b9rnpd2DjGQE4e7TFeqIpB49EWs2qUxIo370ZNhi4u0ii2sX+By78Bt9A5CzII9ZQu
-	 qAYA7JvY8BJ+VxyGicYP9L2BwXzRfRdSbcDYET1GuYoeHH7ug+hgwd2x2yUSyjfWiH
-	 g0r0oGD4DIalg==
-Date: Fri, 27 Jun 2025 08:56:35 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-	Janne Grunau <j@jannau.net>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Neal Gompa <neal@gompa.dev>, Orson Zhai <orsonzhai@gmail.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Holland <samuel@sholland.org>, Sven Peter <sven@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, virtualization@lists.linux.dev,
-	Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Kevin Tian <kevin.tian@intel.com>, patches@lists.linux.dev,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Tomasz Jeznach <tjeznach@rivosinc.com>
-Subject: Re: [PATCH v2 0/7] Remove ops.pgsize_bitmap
-Message-ID: <aF5Ao_yAbTGCPh3u@8bytes.org>
-References: <0-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
+	b=PeJ/n1qq3ZXWmrji1Fxkf4lxd7vQMVfta7pftk2AhMp0U/5OPSsmOlI/rtbbTfOEw
+	 Dol/fq67fZUX0i2v3/q7nFlOTOLqSvaAPSWGA5SjPTqjVETnHyv/qs3KEUdnGfnsvh
+	 skZkDQjlO4JD80YWV332VoFwQ13PB20Eu8WASTxpZI6L4VaPC0WKxhbLtA9WsYZ1Y3
+	 PAwN1EERW1oBTFy9AXcpR+jcmUpCaa6vmyIAS+qpyGKDJ8chmUj596vFhVM0MNJ7jC
+	 c/akt9A4lsLu1cwYJDTlrV/jwXz1KsWABx3G5YG8wKJQaUmmH3Dyj+2clEL95Mw0s8
+	 kQw0PlxoHltFQ==
+Date: Fri, 27 Jun 2025 09:50:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+	Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
+ properties for iommus and ports
+Message-ID: <20250627-literate-talented-panda-cbac89@krzk-bin>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+ <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
+In-Reply-To: <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
 
-> Jason Gunthorpe (7):
->   qiommu/arm-smmu-v3: Remove iommu_ops pgsize_bitmap
->   iommu/arm-smmu: Remove iommu_ops pgsize_bitmap
->   iommu: Remove ops.pgsize_bitmap from drivers that don't use it
->   iommu: Remove iommu_ops pgsize_bitmap from simple drivers
->   iommu/mtk: Remove iommu_ops pgsize_bitmap
->   iommu/qcom: Remove iommu_ops pgsize_bitmap
->   iommu: Remove ops->pgsize_bitmap
+On Fri, Jun 27, 2025 at 12:50:28AM +0530, Kaustabh Chakraborty wrote:
+> Similar to FIMD and Exynos5433's DECON, the Exynos7 DECON hardware:
+> - May optionally require an IOMMU to initialize a display region.
+> - May require a port connection to another block, say an MIC or a DSI
+>   master.
+> 
+> Document these bindings in the devicetree schema.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  .../bindings/display/samsung/samsung,exynos7-decon.yaml           | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+> index 53916e4c95d8c0369138941a556c23f5d42fbd39..1e9500c86590d555cfa6f04790e2b64da291b78b 100644
+> --- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+> +++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+> @@ -80,6 +80,14 @@ properties:
+>        - const: vsync
+>        - const: lcd_sys
+>  
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      Contains a port which is connected to mic or dsim node.
 
-Applied, thanks Jason.
+You need to list and describe the ports.
+
+Best regards,
+Krzysztof
+
