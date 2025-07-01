@@ -1,66 +1,66 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE0C274649
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jul 2025 11:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF563274665
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jul 2025 11:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370593; cv=none; b=uhttKUEzecUHwzEGFMCjk2IGHTB16CQ9Nzn9w1Xp4zK4oHqumj6W22r3GvT5QLnNIjGhJaOyi7Hn/5503TPAOlUwtL8vhlVbGwZloHCR2pZskaj1/crReO7Lym5jI/ReQNSzxBjFV6uF3ar2gwLcJpMbRwIpdfmenDgpn2sYAH4=
+	t=1751370594; cv=none; b=JSadVJJRXHrJIPoFc2WYzICcFwfbx2L2gKUW0Qa2hvZJMXkQF2/6IuXkiwY7cRdn/NGxvDh3sC/Gx4a3+nkCT19fNpYyiJ4tlxvB9OtcIQ23dzSxvw4cuRDdhGbCY1JOrQQtVzsGxkKCKTfAItsXvRbmWhNuWUOOBuET+G5/t3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370593; c=relaxed/simple;
-	bh=xYU5I7Lu+Jn3hhEIVbzF6uUlBzDo+9kqpgQz2+1XBmk=;
+	s=arc-20240116; t=1751370594; c=relaxed/simple;
+	bh=m8g10qpaHzBwCwL13B2EwAjy8RqqGFIRTWKPTOvRXes=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JjEd+yZRFwd7X+aOuaoF5/TGsDCFrrqW1cwJPpeloLB/JJxaQKhpbic+s1ZlUypmXE1ZU7cjfXbsQE9S1K6VdaEpjGrObCfz4mQX7pi/v3wa3hpICBLu7NEgF3xWlEypNMcuAE6+GmrHCQ+EZkWfoJA+JRn1WhXlicVgP0Gw81c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jy4WzMNb; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=EL4+xU4kHRciweQIyDDg6IiUpamdMMi4pCypk+9m+QmmCLAv6MZ+HOB/ntxRh+Yh+9mBjfkcpaOY8wxBtWV9yKjEKUk8Z2SatussyMpa0dY60LDaLRRznYAN20ClvpjKb+m8sjrp2bVK4yfG/+JHgSFOqwbtupu54iRMTZ7Aijk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=P1Jen1zS; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jy4WzMNb"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45310223677so22646905e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jul 2025 04:49:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="P1Jen1zS"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-451d54214adso38783625e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jul 2025 04:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751370590; x=1751975390; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751370591; x=1751975391; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dmlFoe2aym4eeL7Hz5sMKNcWh8dSGY8xkumy4xR8mSk=;
-        b=jy4WzMNbJhNkD4RoTE1xOXU3scI1qSUdUSUWSW2Q++LTXpVWKP1D1ne5JsqbUyOzzq
-         zTMxwU10OH8/s9+YREUo4b9GELH6G488und+roJPhFMoEc94m0/Z+KoA95dEmP0gzqGJ
-         W4sKZ9kqbvlRKBBrJrBZnfGweCyNwxc++P+uRBACPcVgXNm1TJ0pfzATaWnzWsuWs+4O
-         k5LCi1aJCYD1wLd5ZdAMltDuQrCm4IcMekjtJQ0BE7HSdvJd7teuXgdGBC0PTvMiMM6p
-         rNGHZnUIckOAuB08mqaGS+mfARjprVTGtjQFBXVCIJPI0w4AZVmGOskH85lRgGYGkF9o
-         HU2w==
+        bh=izGYiVRCi02r3mHWqGF4QIu9SBmrk+ZHTmWL1Vrn6tY=;
+        b=P1Jen1zSJJCf+PXCmXE5SI+6QdnIRcwfwKAVIT3l61W2ywABm1vIQYmcBHrtvmbCUt
+         yBEsTAlSTm03SUJuGIbPpvYihWr0e5+G/4wA7sg3qos+CAku3p7qFhHin0YlgTjZZ2tT
+         33k8bGxtg63GhR0ooTX/ZDpPKYK0auWqBk/vJZ49ondjq+TWBqDZ9ajtBu0Ezar74cHo
+         eDk1xfCmA0p6HWCgDmEbx3+sUGxJx9TPz4GejnrMOfgi5dOQWZ0suUKgPFg8eqAQTDeY
+         xy4v5rVdCRHfmLBwhMEEHOFv+QQWlxw5nRWWTX+lEOTctYfkqz9VzRNBL63VZsiqSBlk
+         bgag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751370590; x=1751975390;
+        d=1e100.net; s=20230601; t=1751370591; x=1751975391;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dmlFoe2aym4eeL7Hz5sMKNcWh8dSGY8xkumy4xR8mSk=;
-        b=DgozJb4bUYc3S4MKQa683t7lNp78Khm30J/rFMz7/BXoO94baIdGVFVXMrZgMCI4D9
-         VWsYaiYNGZfLK6OSPwicfV3M4EI2W41OUVoca1lp22FGutWPum2L5XF1zniAR3Lu1Kkn
-         ENbzh4hO4o/+CTugfSEuqKCabtdCW871gUOerDB+nABePWxHPUIvrcrApFRjTSIj1MBN
-         9gyF5IMzkg2++d11u0xI3upQjoh1f/qZhTwldChn2zJYUria7NY3ZoMfepqMOqUwbqPE
-         K3Lvsvnagzwlfv+1XR2j8IEoZ1a7Zqbnl5gJl6iOsf1jcB3b/6APVmrIHi3bTyIqdioD
-         T5xw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9uJczOpFDS2HS9SJwoP2DNZsz6zWVmeK8j0bUjTBKKCi2fDW+Ki9zoFffugoXw1Pb8QBG3n0ydkFSMsA9wdlU8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTOqS1dVjq9N6wummi8ve2KHAIA7bT+8DxBR8kHuwRFToC6EDW
-	T6EBU2MPf63QeiDnehGP0+qgLCAU+QNkVzcqWcJpjCKWjFIEjyPvOpsYiNiyCGi2vBI=
-X-Gm-Gg: ASbGncvryMIiqKLiWyfQbwOil+5WNfjpDO4+ILty5p8jdoCPRWvMHMIfobLQpZv5Rhv
-	Z3FqR2rW3sE01Xqn/F6eSsWG/zCdzaXKPAGyaV1Uk9OvhJNbZo28tzEPBiLRNLn6al6qdlGcZ7L
-	v4pN07r3Xp9srf6S5qPnuw8QTGTqY0VdbQtcDnW0CcIdXBl/db5qTUVd3lW6g21CONxeeDCdka6
-	ilzy6McgzXLOvH/3bczGijiEqnkSIgzWwoijcbkwKLVlkecmvzfQ9rsXu1/k3MOdWSFmi1isaz+
-	MnqN3dhR2geS9Zol3tQSij0mJQrs0eBFLot9jKhkFgmpmTZp18OHCw==
-X-Google-Smtp-Source: AGHT+IGJrN6PNufVnPsz2OChBPF0nzndAxw1Vgqz8TrakhIeBN1I20xOkzC1J1aLNxuEe6wnZRadWA==
-X-Received: by 2002:a05:600c:4e01:b0:453:6146:1172 with SMTP id 5b1f17b1804b1-4538ee4f7cfmr193139605e9.3.1751370589775;
-        Tue, 01 Jul 2025 04:49:49 -0700 (PDT)
+        bh=izGYiVRCi02r3mHWqGF4QIu9SBmrk+ZHTmWL1Vrn6tY=;
+        b=BMWuSbFH/p+1aZQYHebL8fp9s3R4QtfUaDZ1zvZZhjX1BYWLLmog2f7kvbfBy3FU+9
+         jOaQQYjAMv2UCd/dGU0t8wc5rVaPERS3QaylBDvQa0j2XxEt/JCgqxVdOHu0rEEr9aWd
+         I7EuusyKSmHBDGazes6ktP+rW4meZzI4g+tAUCC9XUuwB61vk7ICTbOrkDsm1uIR5884
+         +kSzbFCfwM4ByF+HIN/SfCReIodNLIOtYPSS+rBeaNWmIYe8jnERSuqF3gOxwpcjzWn2
+         o7UDNie8FWPkUTrU1QM1HpChSL44nbpHu26bkNoG8JESQ1oPbclF2BblemdKd/+E6ejE
+         4YnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyVUZxeyG30LI/muWxUoSDjKqCkFiG2rIrzUkPfkZpazqNs67dz0YtXAhAhbSpL/6GegFDjS2QeNqloQqZ9lE1xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+P5rF8WkgnAjQ08e4qozHjSh/L13oRR3/RtJoKdrkad43koTh
+	O4tw8e19c/CI6ri58UPGdDtxyopV8pN64fuKlYa0ZXUcfFWOJuqmsVqU529gJuiquI4=
+X-Gm-Gg: ASbGncsnmwlD+WGsEo2zG6nPdSGQ5MTavOqfT9s7+ncPLEVBe77fmFtzKDt1CKJHtF3
+	KCoWzp+hDR2UlLMB8MFaIJeW5CvECUqvd4Xyj7q17C/ZM165hMM0McCLlJpbZTRjcfGpUK/o4ZU
+	qUXwh9CZP/Sje/HcDvAxa+62D6BxvW4z8N+jbiIIBg5R9H5BysWI/iEj2lkWNW5Mp5ZNnUT1nqA
+	SttX3YmXWRfebdlqO0wEyts53QF5qTyA/ofJEl85pXTceCOXxmNNu/zejohZgKQxPRiR8M9U2Er
+	9DF0x0/ybAbZp/XJlb4WnoxIN1axVEyUygA1wNXpUugN/LdrrRf5Gw==
+X-Google-Smtp-Source: AGHT+IFrcmk0/tbiV/1dv+6YlxrA5d22+2IS83WwEoAaJRu/KYB6N6nKzdbcBuOnEP7Enr6/jTeGEg==
+X-Received: by 2002:a05:600c:1f94:b0:453:c39:d0c2 with SMTP id 5b1f17b1804b1-4538ee8562dmr175036385e9.24.1751370591152;
+        Tue, 01 Jul 2025 04:49:51 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:a387:7a32:8457:f9b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c05csm193988925e9.5.2025.07.01.04.49.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c05csm193988925e9.5.2025.07.01.04.49.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 04:49:49 -0700 (PDT)
+        Tue, 01 Jul 2025 04:49:50 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 01 Jul 2025 13:49:37 +0200
-Subject: [PATCH RFT v2 3/6] mfd: vexpress-sysreg: set-up software nodes for
- gpio-mmio
+Date: Tue, 01 Jul 2025 13:49:38 +0200
+Subject: [PATCH RFT v2 4/6] ARM: omap1: ams-delta: use generic device
+ properties for gpio-mmio
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-gpio-mmio-pdata-v2-3-ebf34d273497@linaro.org>
+Message-Id: <20250701-gpio-mmio-pdata-v2-4-ebf34d273497@linaro.org>
 References: <20250701-gpio-mmio-pdata-v2-0-ebf34d273497@linaro.org>
 In-Reply-To: <20250701-gpio-mmio-pdata-v2-0-ebf34d273497@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -85,123 +85,129 @@ Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
  patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3488;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3706;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=T6LXibepSEWSVZc5pSawHsl5dJjLPLgQMdCiAMb4Z7Q=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoY8tX3EkD2/+Qls/ylxbJqZ8GBp5rTpjE9xcMl
- GxTjsfzP0OJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaGPLVwAKCRARpy6gFHHX
- cpCvEADPfHzms9P3YOgQRuuTWhfoI9MXVAtI7MQBLr3MoBA4W0MBMbmvFXzZukdAnQlPygwowCT
- hKvSLzZzJtfL9kj2p3QlCJcsyrfKpnbFOcCODQ+ktHV9i36LEsZ1jS8SQTyY72JQbe6LYFAnmEQ
- eEZWT4f1VJbiryBn9b34dsURVsjgVR5A0lgizO/J3R2UyvESZJW1W3jEwCZ5uh3IjHqmCjKUkkh
- AMbPzmyUxq+jM6Irzj89JmFrg2kd8Au8qW6mp+UKJkVzzyvPdQuzc0PPWe0qvu83zbceJnBlGtx
- S6oila3incG4pqEoh3dlwnwArCKvEekCZZjiB2+SYsLkZwhYGYUi8n7kNJAYOZQ2swpVLm9Yt7X
- +39BMZvQTOP45spQWexcRbhFb0n1ehMOY0V5V79jpCE9RSD+Y1zNZZK5c22RNMrXXWIqDB7vQqK
- qq6k+/vydQKjL/gQSZ3CfGWshMzsNh6UHpLHJIPTo/RPcGmsoMcEZOOR/pCCDdUi6A2pCLU/XOY
- ojeStlRrT+kGuYekJyqr07U9tueX+1anJ4zBuI2z+By67Fb2ZRbe1pjMadGtU4BbyfVlw9RWUeS
- 29fMfr/NEqeDo1yqwk1rrWwGJpxNX417UDjiPK7Q90BJOOgGiI4DLH8grbYUAazW61aap7lLE5d
- 5fKD5bW1I1h8cqw==
+ bh=7iayfgJ1dAZc21AW/gMObpJaTK4Jre7W6uoH3VtFMTk=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoY8tXdkaoNLb+tPOwKTmXWO2Kc1HFqnzGAwtoq
+ Y0sJyZVX3yJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaGPLVwAKCRARpy6gFHHX
+ clDND/9BuRpZx3u9XqWNJ7hOLcErccn0sL4gSURj0Br9j+kDJJr46tueiThfMZpkPEwlYT6h3s3
+ Q47+uYZ8bV9WkhY+59KzB8otEDdNvsMP05xEdnLoD0h8C2l12eu+jAUZv5lI3ueCGW5/fxcXjT0
+ Iucu9kXJbjwq+EU/+ucAuMzRT9/GqyiP++t6Kvw9A62uldgPVPhgir3m7KMVeSNzVFXfevpsmkB
+ aIHOTAwDDGwDRferwWj/9GQlHB4BuapKCS992iP1tQgbCWhev7bMZdqdDhtYt2iYkZYndrQGdg0
+ 9Dj84j79kyzrWjE+OEDPdw3DVEg20KVvJP6SlRx8RcSpd18sT4U7bSkqkbRMo1si3/oLWgVo+ae
+ VIWNZmQjj5ZHCwvAJcjQDJNIJpnmayRzQc/ealI5muuiAzpWCl+oSjYlLevvI23fJI2dVfxSWva
+ Ut+objfa15+H2NMgDVpPkKOrMUPKsZb24Az4Rn/q7Trmk3lsx9jReF6gpCPjqb04ZDmhMWnBp3B
+ ciR4Ytq03ponzgxA90LttFx9K7+tvdAxup6UD6urmPjpT09F6vEpZTkPzqJN3L4OadivrVR+Xxx
+ DkycKLK4K5DCQhrrN7QOsoiEmCh9WYAgQhDhTMOyDjQ0jWBYddTPm4Z+LvjGqBqHOWzlfGFD5jF
+ Xc13UlKAP1cOiXw==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Replace struct bgpio_pdata - that we plan to remove - with software
-nodes containing properties encoding the same values thatr can now be
-parsed by gpio-mmio.
+The two latch GPIO devices in ams-delta are registered with struct
+bgpio_pdata passed as platform_data to the gpio-mmio driver. We want to
+remove the bgpio_pdata from the kernel and the gpio-mmio driver is now
+also able to get the relevant values from the software node. Set up
+device properties and switch to using platform_device_info to register
+the devices as platform_add_devices() doesn't allow us to pass device
+properties to the driver model.
 
-Acked-by: Lee Jones <lee@kernel.org>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/mfd/vexpress-sysreg.c | 46 ++++++++++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 18 deletions(-)
+ arch/arm/mach-omap1/board-ams-delta.c | 42 +++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
-index ef03d6cec9ff6927668d051ca459eb1d8ff7269e..fc2daffc4352cca763cefbf6e17bdd5242290198 100644
---- a/drivers/mfd/vexpress-sysreg.c
-+++ b/drivers/mfd/vexpress-sysreg.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/of_platform.h>
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index 0daf6c5b5c1cbcfd5bd15203cad119d39aa95f19..16392720296cd224732450c85419c35bbab506f6 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -19,6 +19,7 @@
+ #include <linux/mtd/nand-gpio.h>
+ #include <linux/mtd/partitions.h>
  #include <linux/platform_device.h>
 +#include <linux/property.h>
- #include <linux/slab.h>
- #include <linux/stat.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/regulator/fixed.h>
+ #include <linux/regulator/machine.h>
+@@ -175,20 +176,18 @@ static struct resource latch1_resources[] = {
  
-@@ -37,22 +38,34 @@
+ #define LATCH1_LABEL	"latch1"
  
- /* The sysreg block is just a random collection of various functions... */
- 
--static struct bgpio_pdata vexpress_sysreg_sys_led_pdata = {
--	.label = "sys_led",
--	.base = -1,
--	.ngpio = 8,
-+static const struct property_entry vexpress_sysreg_sys_led_props[] = {
-+	PROPERTY_ENTRY_STRING("label", "sys_led"),
-+	PROPERTY_ENTRY_U32("ngpios", 8),
+-static struct bgpio_pdata latch1_pdata = {
+-	.label	= LATCH1_LABEL,
+-	.base	= -1,
+-	.ngpio	= LATCH1_NGPIO,
++static const struct property_entry latch1_gpio_props[] = {
++	PROPERTY_ENTRY_STRING("label", LATCH1_LABEL),
++	PROPERTY_ENTRY_U32("ngpios", LATCH1_NGPIO),
 +	{ }
  };
  
--static struct bgpio_pdata vexpress_sysreg_sys_mci_pdata = {
--	.label = "sys_mci",
--	.base = -1,
--	.ngpio = 2,
-+static const struct software_node vexpress_sysreg_sys_led_swnode = {
-+	.properties = vexpress_sysreg_sys_led_props,
+-static struct platform_device latch1_gpio_device = {
++static const struct platform_device_info latch1_gpio_devinfo = {
+ 	.name		= "basic-mmio-gpio",
+ 	.id		= 0,
+-	.resource	= latch1_resources,
+-	.num_resources	= ARRAY_SIZE(latch1_resources),
+-	.dev		= {
+-		.platform_data	= &latch1_pdata,
+-	},
++	.res		= latch1_resources,
++	.num_res	= ARRAY_SIZE(latch1_resources),
++	.properties	= latch1_gpio_props,
  };
  
--static struct bgpio_pdata vexpress_sysreg_sys_flash_pdata = {
--	.label = "sys_flash",
--	.base = -1,
--	.ngpio = 1,
-+static const struct property_entry vexpress_sysreg_sys_mci_props[] = {
-+	PROPERTY_ENTRY_STRING("label", "sys_mci"),
-+	PROPERTY_ENTRY_U32("ngpios", 2),
+ #define LATCH1_PIN_LED_CAMERA		0
+@@ -213,20 +212,18 @@ static struct resource latch2_resources[] = {
+ 
+ #define LATCH2_LABEL	"latch2"
+ 
+-static struct bgpio_pdata latch2_pdata = {
+-	.label	= LATCH2_LABEL,
+-	.base	= -1,
+-	.ngpio	= LATCH2_NGPIO,
++static const struct property_entry latch2_gpio_props[] = {
++	PROPERTY_ENTRY_STRING("label", LATCH2_LABEL),
++	PROPERTY_ENTRY_U32("ngpios", LATCH2_NGPIO),
 +	{ }
-+};
-+
-+static const struct software_node vexpress_sysreg_sys_mci_swnode = {
-+	.properties = vexpress_sysreg_sys_mci_props,
-+};
-+
-+static const struct property_entry vexpress_sysreg_sys_flash_props[] = {
-+	PROPERTY_ENTRY_STRING("label", "sys_flash"),
-+	PROPERTY_ENTRY_U32("ngpios", 1),
-+	{ }
-+};
-+
-+static const struct software_node vexpress_sysreg_sys_flash_swnode = {
-+	.properties = vexpress_sysreg_sys_flash_props,
  };
  
- static struct mfd_cell vexpress_sysreg_cells[] = {
-@@ -61,22 +74,19 @@ static struct mfd_cell vexpress_sysreg_cells[] = {
- 		.of_compatible = "arm,vexpress-sysreg,sys_led",
- 		.num_resources = 1,
- 		.resources = &DEFINE_RES_MEM_NAMED(SYS_LED, 0x4, "dat"),
--		.platform_data = &vexpress_sysreg_sys_led_pdata,
--		.pdata_size = sizeof(vexpress_sysreg_sys_led_pdata),
-+		.swnode = &vexpress_sysreg_sys_led_swnode,
- 	}, {
- 		.name = "basic-mmio-gpio",
- 		.of_compatible = "arm,vexpress-sysreg,sys_mci",
- 		.num_resources = 1,
- 		.resources = &DEFINE_RES_MEM_NAMED(SYS_MCI, 0x4, "dat"),
--		.platform_data = &vexpress_sysreg_sys_mci_pdata,
--		.pdata_size = sizeof(vexpress_sysreg_sys_mci_pdata),
-+		.swnode = &vexpress_sysreg_sys_mci_swnode,
- 	}, {
- 		.name = "basic-mmio-gpio",
- 		.of_compatible = "arm,vexpress-sysreg,sys_flash",
- 		.num_resources = 1,
- 		.resources = &DEFINE_RES_MEM_NAMED(SYS_FLASH, 0x4, "dat"),
--		.platform_data = &vexpress_sysreg_sys_flash_pdata,
--		.pdata_size = sizeof(vexpress_sysreg_sys_flash_pdata),
-+		.swnode = &vexpress_sysreg_sys_flash_swnode,
- 	}, {
- 		.name = "vexpress-syscfg",
- 		.num_resources = 1,
+-static struct platform_device latch2_gpio_device = {
++static struct platform_device_info latch2_gpio_devinfo = {
+ 	.name		= "basic-mmio-gpio",
+ 	.id		= 1,
+-	.resource	= latch2_resources,
+-	.num_resources	= ARRAY_SIZE(latch2_resources),
+-	.dev		= {
+-		.platform_data	= &latch2_pdata,
+-	},
++	.res		= latch2_resources,
++	.num_res	= ARRAY_SIZE(latch2_resources),
++	.properties	= latch2_gpio_props,
+ };
+ 
+ #define LATCH2_PIN_LCD_VBLEN		0
+@@ -542,8 +539,6 @@ static struct gpiod_lookup_table keybrd_pwr_gpio_table = {
+ };
+ 
+ static struct platform_device *ams_delta_devices[] __initdata = {
+-	&latch1_gpio_device,
+-	&latch2_gpio_device,
+ 	&ams_delta_kp_device,
+ 	&ams_delta_audio_device,
+ 	&ams_delta_serio_device,
+@@ -697,6 +692,9 @@ static void __init ams_delta_init(void)
+ 	omap1_usb_init(&ams_delta_usb_config);
+ 	platform_add_devices(ams_delta_devices, ARRAY_SIZE(ams_delta_devices));
+ 
++	platform_device_register_full(&latch1_gpio_devinfo);
++	platform_device_register_full(&latch2_gpio_devinfo);
++
+ 	/*
+ 	 * As soon as regulator consumers have been registered, assign their
+ 	 * dev_names to consumer supply entries of respective regulators.
 
 -- 
 2.48.1
