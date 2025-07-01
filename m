@@ -1,123 +1,186 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0491B130A73;
-	Tue,  1 Jul 2025 09:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FFE272814
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jul 2025 11:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751362549; cv=none; b=sPqFAX18wSIqjexCAA3qars4pZ6f+KaTRP3Gq8FiRE5BFbQKtyjcIq9+qR2pjbz3AJqkaA7Fa+jFAoP9Cvx7sTt1Y9JOLaUPzYDHi6e8Rs1ViDWcCYRXkEZLRxtve3C3Et9IaGNoXNvo+ZotpYTuGWVpyxIoaDwL2QZ0if5+EwA=
+	t=1751368339; cv=none; b=uouickFqJXe+nJ+85VdYlhond+A0OhmhgjuXarG/w3X3hxlTz0rAil7ow/QZgEskn5GYc1wAsVrRsZbDKoHPHvY1VIZuXW9KwEFdBoFknl7ZEx7U1AcB8IVHGOo7DS++bMhPAn4ivEIqJglvEqJeSDd5RDz5GrnagEUxoUQLY+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751362549; c=relaxed/simple;
-	bh=4/yZRVhckkkdnIhk42y14ft4PKjDzeXsk8J1u4zFlxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kCzYOE7TobAaZ2sngCM73WjPDKF+wbUruYIpUC92tiMRLv4wljjVNT8xS7AZZ922sVSE4avwLLZ5Pbrrug8b3AcIV54rOb2fUeDhq1YtPVTQswk2A7K9+JP6MpsbW1Ashw3jitmWdiTOF8dUQc/37enVh02BKIE/oXXsmI2HaYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4e8088896b7so4236319137.1;
-        Tue, 01 Jul 2025 02:35:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751362544; x=1751967344;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UkC7eZA+uDX58TZWGGsjh/Z3xk06FWPrdqdvUqT03SQ=;
-        b=ZaYzJ5kQJVNwxiUVxUKEzrWJgxUDy7LqEZAzzU3sxvi2k8wZbu5545+4+TgZUfjvik
-         krh9vBuwBMk3R3w4SuKYrGQZiK/H2jRJZPlpzBLRijm9XmIrkBg/xQyhZMzsxJm2e0Z6
-         7leFOeMp/FgAGuhFhFWW6poHSYjm4s5M0UB095hwusu2zXCPGVFrm3E6kUTiv3zpk+0S
-         T5g7a2KJzMZYQXTIe/Bpq63vYip4EvDmS08H9lWCHkAnE3OpcQrxnXS41Vf6PJ/fxoLj
-         +fVLE92j7XUH9tphECH/UPK+6wQnAT5i8hWzn0xkRZZX8HIoQBbvzeXUEz0WoVGroHcx
-         4MAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTiINld3MnAEzx9XPwMncMmNTRgSLp7Rum9MFhftkIln4Zex13K/RRyy4+EidDq4P20f5yItWKy4Oy07ouKLucAmI=@vger.kernel.org, AJvYcCVw4LuD0ym/ML5ZlcwS6QOLMGgMqZzvX6NK4i39kf/0Hs23CGRfniZM+/W4cjBArQJ4XTCoHp+vWd9jrTJ9yhAVpAQ=@vger.kernel.org, AJvYcCVzwnqDRsoCUAxqc6DFcy2DeTYwshY9Y5ustBwtRJGMk3aNef0F8C16BVh2TEIIL591WcXRIUMeP80=@vger.kernel.org, AJvYcCXqjAvZNQ72KkJaGKdftz/lk1ItXvE2u+BQI2cngbS2u6T/XF6tUzt1wGELyzMLRX0j/FKxMDKsU8MjdSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAUlEPZbSQbEr2d/Ut5iN2/tzJdJx0SHJ3G/xxPS3OPYpC2a3t
-	QZjZUoPkIe/ZF6m/lKwdrqqxTuSFLv4aZUdKpdrIh55xJVGEi+oUqAdqsy8eyS3N
-X-Gm-Gg: ASbGncsRLE56fAd0ALgklIrSCiePCRphnCkuVRCOv1I+fZlnXe+/EbwgQLf7p7bG8BT
-	3n9+cBBUDMFI855s8XayxscRWJT8cQuVQgmYEGpL0T7/kKboIw6JoV31y5lfIclcghzvDOVGj3o
-	HIFsf9sKD1NkKVTfIaqi/aoufqQ0yus4O6Dqc26mJSBWJfVbwAGqrnB2Xx8tVXTKZ6ZZRssTItp
-	Er927C5DpUFYhSsyDd2xzNbSKqtGLEThHvifDvDRcCnVlDJkGJgTstnCu6pFtKgqIZGuRVztCqz
-	ETmUD06t6UkLUzjTRvQ2ebu6BGHI7n+GH2Qqqjpvrz6Tq4Mo6dWMxiKaHEkc5Tfw/LFmIthVSMY
-	3BkfJeVHbg6qwwul1ayW2frjryj5m
-X-Google-Smtp-Source: AGHT+IHN0HIvXUUXf6jV1T2+PNT+34EOQs+EDUxlGDFe64weAado3IEqoGBw3DS+TSkmuNovDGFDKA==
-X-Received: by 2002:a05:6102:548f:b0:4ec:e1fa:ed7b with SMTP id ada2fe7eead31-4f143bec2fdmr1604920137.9.1751362539179;
-        Tue, 01 Jul 2025 02:35:39 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ee4cbbad44sm1463629137.24.2025.07.01.02.35.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 02:35:38 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5315ebfd92cso3354139e0c.0;
-        Tue, 01 Jul 2025 02:35:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUkK8gWl0ez8IEUuAM6L9k6hdXryAQ3cdS3wUR4WxeoN4TyJpww9nhpOS9zQThaBMDEMfB+nnNrpTNUruo=@vger.kernel.org, AJvYcCUrN+PVrwZvFdiAY3LYuEsaagXEg6MNSDaBivjld2193yiuIN7cyXJ3KaBmiwJ/hYj/p5KBC1wjrZ/MlDK4X+NvXdQ=@vger.kernel.org, AJvYcCWMVK9fdFJQ6K+r1IO8S6/h4OK7XB2EBOaaLxtuZHDwPJK5wJCmEO/JTZkn1hbTUjIlYuIZ5KRxt16aHYA6jzgnHaE=@vger.kernel.org, AJvYcCWmXnjbOQ4i9bQXoD2im1dxD0xnQqYFAz0ENRNRD6QZl4s414xK6wvaCHqLxHaASxhifAWjPmR/2Rs=@vger.kernel.org
-X-Received: by 2002:a05:6122:811b:20b0:531:bb45:18b1 with SMTP id
- 71dfb90a1353d-53425617336mr1027771e0c.7.1751362537889; Tue, 01 Jul 2025
- 02:35:37 -0700 (PDT)
+	s=arc-20240116; t=1751368339; c=relaxed/simple;
+	bh=M+teapMDErM1luC69yUTICbimOLTsaOpUH2S/iyezF4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=a1Kq76BQeDTLFE+1y+7k1ooxHAyXK1xSUlzeLTvDRAVbCOXlhpWxEE/aCwPXVkxnvokrK0qA1mh1vHnclHeM1f38fpcnKayktlH/N05PCYnqcTLoGTlYGYVc7gc9payZcL7nKLndRvuo3T2C9dtQO1yrzAxIKgmViXFqv1TTTng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cFsEWnz4; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cFsEWnz4"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250701111209epoutp034dbb7ba1e391c1bdd067face7d9e4525~OHDda9TLj1013410134epoutp03-
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jul 2025 11:12:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250701111209epoutp034dbb7ba1e391c1bdd067face7d9e4525~OHDda9TLj1013410134epoutp03-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751368329;
+	bh=YTwebVUoQkQpDDdsDBbSlrPKaFDW2GsaHKchVaUCu5k=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=cFsEWnz4p/bZVuWOkULA+mahIAzoo6OZidUhTNxWRxbJaF+y9gxkIs+loiEtNwldd
+	 D5y+6OwXCoyM8FYJ6L+S6fZun41YKIz3yfAQs5hhiYX3YeByRJHm3vA/zzxMZL9SWP
+	 C/jE1XS81elzOdp01jtlh8gmZvDfZYVL/ys5RiaU=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250701111208epcas5p34bedc890d762054d069694d0ef399bb6~OHDcwX6uq3053630536epcas5p3U;
+	Tue,  1 Jul 2025 11:12:08 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bWgN53tLPz2SSKX; Tue,  1 Jul
+	2025 11:12:05 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250701110607epcas5p34c04a301caaf7d8c504eca2fec7f3139~OG_MoTLhB0394403944epcas5p3U;
+	Tue,  1 Jul 2025 11:06:07 +0000 (GMT)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250701110604epsmtip1b0a6d2e9ac97f7d6e2273144ea9b44df~OG_J9OoCr1403014030epsmtip1E;
+	Tue,  1 Jul 2025 11:06:04 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-fsd@tesla.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
+	<kw@linux.com>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
+	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <20250627211721.GA153863-robh@kernel.org>
+Subject: RE: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
+ FSD SoC
+Date: Tue, 1 Jul 2025 16:36:03 +0530
+Message-ID: <02af01dbea78$24f01310$6ed03930$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620160834242DDgecL4HF8b1OBLiZnnrl@zte.com.cn>
-In-Reply-To: <20250620160834242DDgecL4HF8b1OBLiZnnrl@zte.com.cn>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 1 Jul 2025 11:35:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVEkq_W99XuKA9KJW5Bm156ZBZowH2gmg2iY27y2fDFug@mail.gmail.com>
-X-Gm-Features: Ac12FXxtXuRYLmTpc7TJbisFnd7Fe3xZafLHlyEUkNhw-qkfFhNc1GHH1T18Cpo
-Message-ID: <CAMuHMdVEkq_W99XuKA9KJW5Bm156ZBZowH2gmg2iY27y2fDFug@mail.gmail.com>
-Subject: Re: [PATCH v3] pmdomain: Use str_enable_disable() and str_on_off() helpers
-To: shao.mingyin@zte.com.cn
-Cc: geert+renesas@glider.be, changhuang.liang@starfivetech.com, 
-	magnus.damm@gmail.com, heiko@sntech.de, alim.akhtar@samsung.com, 
-	walker.chen@starfivetech.com, sebastian.reichel@collabora.com, 
-	detlev.casanova@collabora.com, finley.xiao@rock-chips.com, 
-	shawn.lin@rock-chips.com, pgwipeout@gmail.com, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, yang.yang29@zte.com.cn, 
-	xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, ye.xingchen@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFUClgbainc6hQuKSBO0V8ttZVgkwGg1JXJAfs/ltABn1f9rLUC/odg
+Content-Language: en-in
+X-CMS-MailID: 20250701110607epcas5p34c04a301caaf7d8c504eca2fec7f3139
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03
+References: <20250625165229.3458-1-shradha.t@samsung.com>
+	<CGME20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03@epcas5p3.samsung.com>
+	<20250625165229.3458-8-shradha.t@samsung.com>
+	<20250627211721.GA153863-robh@kernel.org>
 
-Hi Shao,
 
-On Fri, 20 Jun 2025 at 10:09, <shao.mingyin@zte.com.cn> wrote:
-> From: Shao Mingyin <shao.mingyin@zte.com.cn>
->
-> Use str_enable_disable() and str_on_off() helper instead of open
-> coding the same.
->
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-> Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
-> v3:
-> preserve the original patch format to avoid whitespace-damaged
->  drivers/pmdomain/renesas/rcar-gen4-sysc.c    | 3 ++-
->  drivers/pmdomain/renesas/rcar-sysc.c         | 3 ++-
->  drivers/pmdomain/rockchip/pm-domains.c       | 3 ++-
->  drivers/pmdomain/samsung/exynos-pm-domains.c | 6 +++---
->  drivers/pmdomain/starfive/jh71xx-pmu.c       | 7 ++++---
->  5 files changed, 13 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> index e001b5c25bed..c8aa7538e95f 100644
-> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/types.h>
-> +#include <linux/string_choices.h>
 
-Please insert new includes alphabetically, like in Krzysztof's original [1],
-for which I already provided my Rb-tag.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 28 June 2025 02:47
+> To: Shradha Todi <shradha.t@samsung.com>
+> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-
+> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-
+> fsd@tesla.com; manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
+> bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org; conor+dt@kernel.org;
+> alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org; arnd@arndb.de;
+> m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
+> Subject: Re: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for FSD SoC
+> 
+> On Wed, Jun 25, 2025 at 10:22:26PM +0530, Shradha Todi wrote:
+> > Document PHY device tree bindings for Tesla FSD SoCs.
+> >
+> > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> > ---
+> >  .../bindings/phy/samsung,exynos-pcie-phy.yaml | 25 +++++++++++++++++--
+> >  1 file changed, 23 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> > index 41df8bb08ff7..4dc20156cdde 100644
+> > --- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> > @@ -15,10 +15,13 @@ properties:
+> >      const: 0
+> >
+> >    compatible:
+> > -    const: samsung,exynos5433-pcie-phy
+> > +    enum:
+> > +      - samsung,exynos5433-pcie-phy
+> > +      - tesla,fsd-pcie-phy
+> >
+> >    reg:
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 2
+> >
+> >    samsung,pmu-syscon:
+> >      $ref: /schemas/types.yaml#/definitions/phandle
+> > @@ -30,6 +33,24 @@ properties:
+> >      description: phandle for FSYS sysreg interface, used to control
+> >                   sysreg registers bits for PCIe PHY
+> >
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - tesla,fsd-pcie-phy
+> > +    then:
+> > +      description:
+> > +        The PHY controller nodes are represented in the aliases node
+> > +        using the following format 'pciephy{n}'. Depending on whether
+> > +        n is 0 or 1, the phy init sequence is chosen.
+> 
+> What? Don't make up your own aliases.
+> 
+> If the PHY instances are different, then maybe you need a different
+> compatible. If this is just selecting the PHY mode, you can do that in
+> PHY cells as the mode depends on the consumer.
+> 
 
-[1] https://lore.kernel.org/all/CAMuHMdXJ57mATWW4AnBedn+D7TQ4PadkJ642daquFtAo=wZFrQ@mail.gmail.com/
+FSD PCIe has 2 instances of PHY. Both are the same HW Samsung
+PHYs (Therefore share the same register offsets). But the PHY used here
+does not support auto adaptation so we need to tune the PHYs
+according to the use case (considering channel loss, etc). This is why we
+have 2 different SW PHY initialization sequence depending on the instance
+number. Do you think having different compatible (something like
+tesla,fsd-pcie-phy0 and tesla,fsd-pcie-phy1) and having phy ID as platform data
+is okay in this case? I actually took reference from files like:
+drivers/usb/phy/phy-am335x-control.c
+drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c
+who use alias to differentiate between register offsets for instances.
 
-Gr{oetje,eeting}s,
+> 
+> > +      properties:
+> > +        reg:
+> > +          items:
+> > +            - description: PHY
+> > +            - description: PCS
+> 
+> else:
+>   properties:
+>     reg:
+>       maxItems: 1
+> 
 
-                        Geert
+Will update. Thanks for the review!
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > +
+> >  required:
+> >    - "#phy-cells"
+> >    - compatible
+> > --
+> > 2.49.0
+> >
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
