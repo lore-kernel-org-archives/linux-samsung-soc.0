@@ -1,493 +1,735 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011024.outbound.protection.outlook.com [52.101.70.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDB0275850
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jul 2025 13:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751375308; cv=none; b=kRXWPuSrtOlk4vcCyOMFvBZSKZY2QLMrhO3e8CcdsVF6r7fTcahKAAUETJY9nrtcnZtru23ECRwlGX7HB7y+PrQm3rEngFKcvlj+il1qk/g1ghEHzqYjnLxMj+lxTBw/ZS7mTjbhCynmsrhzYDoNRzEqMwgWN/WfhInf2gr+25Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751375308; c=relaxed/simple;
-	bh=GsIDiGM4SIKLy61S3XbEaiNxOnRQgy88hSTIDk7bJas=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=SvS/3Fm7LrAhlhugtCdzb6XRZqsU1KD+BDUY7oyqBc8qf3oJSXBDu8BcBonYdjW35blL3vpuCFOZq+eAYny0O+6WwfGsS/Caqc7I2WZfrV0tvAJoJdHIjie60ZG9GAKKtZb7IpGLqk9cdLIny7Nae90yWShQqhV69QJf0pp9sdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BOTAPZNn; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B0E2C859;
+	Tue,  1 Jul 2025 15:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751382222; cv=fail; b=SjDIHNmupPBTYG9aUDtnJ84uBJZu1OZwSimyPnFIx0OvNI0fFROQ0QIL+5iMsXfckg+tHpuorzeaTQS7rl46PurDlF35Zh838G++1eFaJcEwxvUIHWzdo5aybVPHLBKnpvVAujGmhF+hKnB7SghMU/HdJKqLxdPibOSplZ0tNXU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751382222; c=relaxed/simple;
+	bh=uiQjawCEH2gJNa8Cg5jkQFm/sMr+glPGAN8lOF+bEGw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iCyIcsuiY5AqUse6ryGjqQY3QAmvT540bqGuraAH8jOYz8TT0DtQmUjMh/kMifxXW5/NiScJ818MRid86PJFAPjCnPUreied52jUWcsivRSxS+jsczh4n0fwLnWR0znXtlNGAnvtABoLQexfsOkHxnzCrSR7FrgDqas9rc0e9oo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=mYxOjZNJ; arc=fail smtp.client-ip=52.101.70.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BOTAPZNn"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250701130823epoutp03261386c34a5fcf117c77fc53ad90efc1~OIo8Zl0U71261912619epoutp03W
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jul 2025 13:08:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250701130823epoutp03261386c34a5fcf117c77fc53ad90efc1~OIo8Zl0U71261912619epoutp03W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751375303;
-	bh=jJ167illKN1TO8G0fjABg4r+eK06fCfby4plELWDkek=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BOTAPZNn5LylCo+g0S/V2Sz21ViRc9Bw0sq6CZSTPAjWQSzx2OhKguFIF7nrPMlkI
-	 Tpo/9y3VXibQz9Si40ZCx4+W00s9zgR/LyaOtsmKur1EIpbm5JXhrwakNlAxnUBo+4
-	 KTtHj9sNpu25vu6m+FjWOQhKPj1SjZfMj+aeJkRo=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250701130822epcas5p30fdd35c885c18e2142f3b6e3e8c81add~OIo7yr9vY0162201622epcas5p3n;
-	Tue,  1 Jul 2025 13:08:22 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bWjyD4nc9z3hhT7; Tue,  1 Jul
-	2025 13:08:20 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250701120012epcas5p4def7f4d718241407b598ad961d32c1f8~OHtaxgs2v2655426554epcas5p4F;
-	Tue,  1 Jul 2025 12:00:12 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250701120009epsmtip1f9012c673877687574ad3fd991ebdd62~OHtX5xkLN1547115471epsmtip1o;
-	Tue,  1 Jul 2025 12:00:09 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	neil.armstrong@linaro.org, kauschluss@disroot.org,
-	ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
-	s.nawrocki@samsung.com, pritam.sutar@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
-	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
-	selvarasu.g@samsung.com
-Subject: [PATCH v4 6/6] phy: exynos5-usbdrd: support SS combo phy for
- ExynosAutov920
-Date: Tue,  1 Jul 2025 17:37:06 +0530
-Message-Id: <20250701120706.2219355-7-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="mYxOjZNJ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W8MOSp7pe9k2H4V5YNRU35tsMd1sXqx6mhVs0xUQrlky3RlLkX4SxN5oX2bE7IAaFIpnLkxYxwQlw+RmLvXb6qYu7fjCkqvZjkcmztbGc08Znp78Qctuw/cwNxcFa0y1AJobiwfsfpXsk3wrUMeACpxuDU3D4IMCt9Bzf4ARVsPNpvzsu5qDB60SStb7bKSrkXHTIjnfAjNEn80ULZhnZcCrPzRcxfaLkTn+7S2dCSU8FlVEqlSWUqV0xO0nmF+pdA2sCQIHe1X5dKBAHnjZQjuJjOtsK2mTAY4nvzMXMUdX2zEO1DwvMEQZinCPUqzICd1ox0ky3DF6vnvItNTP1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9cAneGTSKATKMTpzy7/kfCOmcH/oE0TYc+IG4grBVe8=;
+ b=DKHjAFitay6diFoAXTGTagi7LuMA/kKWiIErQrqQe7yz87dEx+2STUCDQe/k7UYLuBaNoKeM3OHa8FtlnuDNaOU6QrJqY+O9O8bBUV8Jugyyq1cL9B5DAW2KGEjnbbrLg9YpCB8gf6xR+L+TIJ6fc9twdhsl7Ex37XKM8JDxSE7hqmjqOaQ2SmtjlT0CC6emBOsBhDTzgGiq2pxBRTTlv0ARNuwHV6J4GEy1GzWFmYgxsKiAXyd88Cz7BHfiWRmNn0XBDPcbSpnJPGYcCiZlpZ6fzdfPV0jRRTf277Xb4rYssA4FbDXBXnleQx13vCi0rAcEG/A83CMnD5f5lRIM3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9cAneGTSKATKMTpzy7/kfCOmcH/oE0TYc+IG4grBVe8=;
+ b=mYxOjZNJrbjF/Uae6VK6SEzC8J0Px0RJS2OT16wRZ8bWRZCdsYSiORWRyuL7rLp0lOuzTHT7WUjFw1vmAOVJIlfc5iZyeYmruM3gabjheYWjkiL3MFflZzD5S3M1DEtG1kgleaGFFMcCd2nCedRCcjwJ2glBFDNrTpWOZaNda+Q=
+Received: from PR3P191CA0019.EURP191.PROD.OUTLOOK.COM (2603:10a6:102:54::24)
+ by GV2PR02MB11370.eurprd02.prod.outlook.com (2603:10a6:150:2a2::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Tue, 1 Jul
+ 2025 15:03:34 +0000
+Received: from AMS0EPF000001A6.eurprd05.prod.outlook.com
+ (2603:10a6:102:54:cafe::b6) by PR3P191CA0019.outlook.office365.com
+ (2603:10a6:102:54::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.19 via Frontend Transport; Tue,
+ 1 Jul 2025 15:03:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AMS0EPF000001A6.mail.protection.outlook.com (10.167.16.233) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.15 via Frontend Transport; Tue, 1 Jul 2025 15:03:34 +0000
+Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 1 Jul
+ 2025 17:03:33 +0200
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>, Julien Panis <jpanis@baylibre.com>,
+	William Breathitt Gray <wbg@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Peter Rosin
+	<peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy
+ Shevchenko" <andy@kernel.org>, Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+	<Michael.Hennerich@analog.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Matteo
+ Martelli" <matteomartelli3@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>, Subhajit Ghosh
+	<subhajit.ghosh@tweaklogic.com>, Mudit Sharma <muditsharma.info@gmail.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>, Song Qiang
+	<songqiang1304521@gmail.com>, Crt Mori <cmo@melexis.com>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Karol
+ Gugala" <kgugala@antmicro.com>, Mateusz Holenko <mholenko@antmicro.com>,
+	Gabriel Somlo <gsomlo@gmail.com>, Joel Stanley <joel@jms.id.au>, "Claudiu
+ Manoil" <claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+	<kishon@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Sebastian Reichel <sre@kernel.org>,
+	=?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Jerome
+ Brunet" <jbrunet@baylibre.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Han Xu <han.xu@nxp.com>, Haibo Chen
+	<haibo.chen@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, Mark Brown
+	<broonie@kernel.org>, Avri Altman <avri.altman@wdc.com>, Bart Van Assche
+	<bvanassche@acm.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, Souradeep Chowdhury
+	<quic_schowdhu@quicinc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>, Jaroslav Kysela <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+CC: <kernel@axis.com>, <linux-iio@vger.kernel.org>,
+	<linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-input@vger.kernel.org>,
+	<linux-mmc@vger.kernel.org>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>, <sound-open-firmware@alsa-project.org>,
+	<linux-sound@vger.kernel.org>
+Subject: [PATCH] Remove error prints for devm_add_action_or_reset()
+User-Agent: a.out
+Date: Tue, 1 Jul 2025 17:03:33 +0200
+Message-ID: <pnd7c0s6ji2.fsf@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250701120012epcas5p4def7f4d718241407b598ad961d32c1f8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250701120012epcas5p4def7f4d718241407b598ad961d32c1f8
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
-	<CGME20250701120012epcas5p4def7f4d718241407b598ad961d32c1f8@epcas5p4.samsung.com>
+Content-Type: text/plain
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001A6:EE_|GV2PR02MB11370:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1c626fa-2cf1-4b9a-e4b3-08ddb8b07380
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CZ0HQPMSo5LyGmbbgk5k7hxK7WQ0xrWD7nfY85QTZjo4IFtCikp7/DAGu5lG?=
+ =?us-ascii?Q?MSMD9HQUU0PKce7iCIu6z9P1ildKGw/vC6cG4QNHgGZOr6yPVxPqWW2AAoBj?=
+ =?us-ascii?Q?c2aLgnnTCuqHlwgpb05+zDXazmv/mIoNrmwF38QbXSb6gpeXFE8Et69wyUJK?=
+ =?us-ascii?Q?OuE7enVhjjK69WhtGpR6FGNDN0kdkQD4K+nxcwiWDUJNAiN9m/StP5Q6vESy?=
+ =?us-ascii?Q?Go/Y98Vn906bzhJASIgq4Eb3pW/XysRSMRpBqxQUBI0HqgYENVBkGB5TTxC3?=
+ =?us-ascii?Q?yfAcA1pdupcpeQFot3xdin+En4EJNyFfMju2iGvGqwrRX/5vx2X3jJcoffjE?=
+ =?us-ascii?Q?ui3tiNExN5sWiHsUBwXCeGxWWdO7OnJlVEvGTYIMsqoiP4YleuNdGDAT8Gi+?=
+ =?us-ascii?Q?rpuOaJvSp3MrZK6gfE72HAZoT2RJnhevNv4AXiLUsYZjZ9gY9lWKKVNLqB+I?=
+ =?us-ascii?Q?zRdSFOdf6TjFB5kLZKOLgqSLfL/fzto/JZiXGAr1v6zFFK7BwPJeZo//XdbI?=
+ =?us-ascii?Q?Q4QUf/hkaTn7GmFIaV9+przl7qthOEqNzezR8PswWaiIhgQt6wfmDUMFzTwT?=
+ =?us-ascii?Q?fjbryFCGPhJPeXsrY0gIEkZe8Nb0y4Sk/xH7eTPiCBQ96GGhg4jzO9D8eMRA?=
+ =?us-ascii?Q?OVUWByPuJu7VvNAZfWRVzJHsrS3BqYPqC8eEePflnMvJ7w5q0cXw4Su1Ng0R?=
+ =?us-ascii?Q?I4rVR0pT8j2mXryxigBaD01BqqjH211vnVjmmd723i/H2uycKzY/hIKoyuZ2?=
+ =?us-ascii?Q?nV28LQO8dYgqTBNhwricNjMPdEm24go1hqT0PPC0CkSBkmEM5qZ/UT6hCiiO?=
+ =?us-ascii?Q?gg3anP5dkvKJsbwYj79KBEvS5ET20b54Xdg2LoMgL8V06Wxmf6ICxZ6JnKBy?=
+ =?us-ascii?Q?78wxccmXmAvy3roVVTpu3trkTrdYjPtgZZiMryCJ9a/NGU/EjhcGAL+wx9QB?=
+ =?us-ascii?Q?/IYwQfc/6ZkKYB6eBpPxnV5hKAax5HyH+9CTff1qgSBSVs/xdRsjJxuKIEc5?=
+ =?us-ascii?Q?8kZPKEXz8/Uac6wxK7gx75fiV+T3iN9Ztq2YFmdy5RhIWSisHDhSHmBQ2fZY?=
+ =?us-ascii?Q?k1m8Kqc1S4kWXykEItKlaBq2F6ci2qiB4xe8aLPV+jWjzcsM0OnD4djrwx2X?=
+ =?us-ascii?Q?QIPaMdEIzWQqnoB0g7yTAdc43eu6WjG3aARLlgx2+VYATqAyHSgiYBWDmmkW?=
+ =?us-ascii?Q?POFErlXeuch+vkldpF7T9RnPFFQZbK87JMUD2P94epugIwzCB63eeYbj8gd/?=
+ =?us-ascii?Q?5Pqa/iNrwr4YGqojPOx/d2pVy1dalA5QqUeXysHsZEuhTgIINNBqu7P2H2t/?=
+ =?us-ascii?Q?2U1DGVwRXzcNq/kjevVTB7HXrmXiFHX8C9hfMD/avjWTGSH+e/NEk7SshWDU?=
+ =?us-ascii?Q?746CI2cN7jdmskfpYv6b0xYh3iIfSChCb4Psd4yTCVvWj+eCIyriS+PaPnAw?=
+ =?us-ascii?Q?Di3mXonOfn9+g4krYinftFFk2mBEkRqt6KihXGPJNy9kVP+Ss6isndsZ9XKO?=
+ =?us-ascii?Q?gUq0hGDO1nGPF9A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 15:03:34.7469
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1c626fa-2cf1-4b9a-e4b3-08ddb8b07380
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001A6.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR02MB11370
 
-This SoC has a DWC3 compatible link controller and single USB 3.1 DRD
-combo phy that supports both UTMI+ (HS) and PIPE3 (SS) and three USB2.0
-DRD HS phy controllers those only support the UTMI+ (HS) interface.
+When `devm_add_action_or_reset()` fails, it is due to a failed memory
+allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
+anything when error is `-ENOMEM`. Therefore, remove the useless call to
+`dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
+return the value instead.
 
-Combo phy is combination of two phys. Among these phys, one supports
-USB3.1 SSP+(10Gbps) protocol and is backwards compatible to the
-USB3.0 SS(5Gbps). 'Add-on USB2.0' phy is required to support
-USB2.0 HS(480Mbps), FS(12Mbps) and LS(1.5Mbps) data rates.
-
-Add required change in phy driver to support combo SS phy for this SoC.
-
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c    | 327 +++++++++++++++++++-
- include/linux/soc/samsung/exynos-regs-pmu.h |   1 +
- 2 files changed, 324 insertions(+), 4 deletions(-)
+This patch was inspired from a discussion from another patch:
 
+  https://lore.kernel.org/all/pndqzz07v0j.fsf@axis.com/
+
+The calls were identified with
+
+  rgrep -A10 "devm_add_action_or_reset(" | grep -B10 dev_err_probe
+
+The resulting output was then parsed semi-manually and the changes
+created with the help of Emacs macros.
+
+ drivers/counter/ti-ecap-capture.c                | 2 +-
+ drivers/gpio/gpio-twl4030.c                      | 4 +---
+ drivers/i2c/muxes/i2c-mux-mule.c                 | 3 +--
+ drivers/iio/accel/msa311.c                       | 2 +-
+ drivers/iio/adc/ad4130.c                         | 3 +--
+ drivers/iio/adc/ad7124.c                         | 2 +-
+ drivers/iio/adc/ad7173.c                         | 3 +--
+ drivers/iio/adc/mt6577_auxadc.c                  | 3 +--
+ drivers/iio/adc/pac1921.c                        | 3 +--
+ drivers/iio/adc/rockchip_saradc.c                | 3 +--
+ drivers/iio/adc/ti-ads1119.c                     | 3 +--
+ drivers/iio/adc/ti-ads7924.c                     | 6 ++----
+ drivers/iio/frequency/adf4350.c                  | 3 +--
+ drivers/iio/light/al3000a.c                      | 2 +-
+ drivers/iio/light/apds9306.c                     | 2 +-
+ drivers/iio/light/bh1745.c                       | 3 +--
+ drivers/iio/light/opt4001.c                      | 3 +--
+ drivers/iio/light/opt4060.c                      | 3 +--
+ drivers/iio/magnetometer/als31300.c              | 2 +-
+ drivers/iio/magnetometer/tmag5273.c              | 2 +-
+ drivers/iio/proximity/vl53l0x-i2c.c              | 3 +--
+ drivers/iio/temperature/mlx90635.c               | 6 ++----
+ drivers/input/touchscreen/zforce_ts.c            | 3 +--
+ drivers/mmc/host/litex_mmc.c                     | 3 +--
+ drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 3 +--
+ drivers/phy/samsung/phy-exynos5-usbdrd.c         | 3 +--
+ drivers/power/supply/mt6370-charger.c            | 4 ++--
+ drivers/power/supply/rt9467-charger.c            | 8 ++++----
+ drivers/pwm/pwm-meson.c                          | 3 +--
+ drivers/spi/spi-nxp-fspi.c                       | 2 +-
+ drivers/ufs/core/ufshcd.c                        | 3 +--
+ drivers/usb/misc/qcom_eud.c                      | 3 +--
+ sound/soc/sof/imx/imx-common.c                   | 2 +-
+ 33 files changed, 39 insertions(+), 64 deletions(-)
+
+diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+index 3faaf7f60539..114f2d33f193 100644
+--- a/drivers/counter/ti-ecap-capture.c
++++ b/drivers/counter/ti-ecap-capture.c
+@@ -528,7 +528,7 @@ static int ecap_cnt_probe(struct platform_device *pdev)
+ 	/* Register a cleanup callback to care for disabling PM */
+ 	ret = devm_add_action_or_reset(dev, ecap_cnt_pm_disable, dev);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to add pm disable action\n");
++		return ret;
+ 
+ 	ret = devm_counter_add(dev, counter_dev);
+ 	if (ret)
+diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+index 0d17985a5fdc..172e7a6283dc 100644
+--- a/drivers/gpio/gpio-twl4030.c
++++ b/drivers/gpio/gpio-twl4030.c
+@@ -596,9 +596,7 @@ static int gpio_twl4030_probe(struct platform_device *pdev)
+ 
+ 		ret = devm_add_action_or_reset(&pdev->dev, gpio_twl4030_power_off_action, d);
+ 		if (ret)
+-			return dev_err_probe(&pdev->dev, ret,
+-					     "failed to install power off handler\n");
+-
++			return ret;
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/i2c/muxes/i2c-mux-mule.c b/drivers/i2c/muxes/i2c-mux-mule.c
+index 284ff4afeeac..617ca058d2c9 100644
+--- a/drivers/i2c/muxes/i2c-mux-mule.c
++++ b/drivers/i2c/muxes/i2c-mux-mule.c
+@@ -91,8 +91,7 @@ static int mule_i2c_mux_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_add_action_or_reset(mux_dev, mule_i2c_mux_remove, muxc);
+ 	if (ret)
+-		return dev_err_probe(mux_dev, ret,
+-				     "Failed to register mux remove\n");
++		return ret;
+ 
+ 	/* Create device adapters */
+ 	for_each_child_of_node(mux_dev->of_node, dev) {
+diff --git a/drivers/iio/accel/msa311.c b/drivers/iio/accel/msa311.c
+index c31c53abc3d0..f18b06832c0a 100644
+--- a/drivers/iio/accel/msa311.c
++++ b/drivers/iio/accel/msa311.c
+@@ -1197,7 +1197,7 @@ static int msa311_probe(struct i2c_client *i2c)
+ 	 */
+ 	err = devm_add_action_or_reset(dev, msa311_powerdown, msa311);
+ 	if (err)
+-		return dev_err_probe(dev, err, "can't add powerdown action\n");
++		return err;
+ 
+ 	err = pm_runtime_set_active(dev);
+ 	if (err)
+diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
+index 6cf790ff3eb5..ff778a44323f 100644
+--- a/drivers/iio/adc/ad4130.c
++++ b/drivers/iio/adc/ad4130.c
+@@ -2035,8 +2035,7 @@ static int ad4130_probe(struct spi_device *spi)
+ 
+ 	ret = devm_add_action_or_reset(dev, ad4130_disable_regulators, st);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Failed to add regulators disable action\n");
++		return ret;
+ 
+ 	ret = ad4130_soft_reset(st);
+ 	if (ret)
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index 92596f15e797..fd86470bd838 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -1306,7 +1306,7 @@ static int ad7124_probe(struct spi_device *spi)
+ 		ret = devm_add_action_or_reset(&spi->dev, ad7124_reg_disable,
+ 					       st->vref[i]);
+ 		if (ret)
+-			return dev_err_probe(dev, ret, "Failed to register disable handler for regulator #%d\n", i);
++			return ret;
+ 	}
+ 
+ 	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+index b3e6bd2a55d7..a7f67d8ee9e0 100644
+--- a/drivers/iio/adc/ad7173.c
++++ b/drivers/iio/adc/ad7173.c
+@@ -1707,8 +1707,7 @@ static int ad7173_fw_parse_device_config(struct iio_dev *indio_dev)
+ 
+ 	ret = devm_add_action_or_reset(dev, ad7173_disable_regulators, st);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Failed to add regulators disable action\n");
++		return ret;
+ 
+ 	ret = device_property_match_property_string(dev, "clock-names",
+ 						    ad7173_clk_sel,
+diff --git a/drivers/iio/adc/mt6577_auxadc.c b/drivers/iio/adc/mt6577_auxadc.c
+index 3343b54e8e44..fe9e3ece3fda 100644
+--- a/drivers/iio/adc/mt6577_auxadc.c
++++ b/drivers/iio/adc/mt6577_auxadc.c
+@@ -297,8 +297,7 @@ static int mt6577_auxadc_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_add_action_or_reset(&pdev->dev, mt6577_power_off, adc_dev);
+ 	if (ret)
+-		return dev_err_probe(&pdev->dev, ret,
+-				     "Failed to add action to managed power off\n");
++		return ret;
+ 
+ 	ret = devm_iio_device_register(&pdev->dev, indio_dev);
+ 	if (ret < 0)
+diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+index 72aa4ca2e5a4..35433250b008 100644
+--- a/drivers/iio/adc/pac1921.c
++++ b/drivers/iio/adc/pac1921.c
+@@ -1279,8 +1279,7 @@ static int pac1921_probe(struct i2c_client *client)
+ 	ret = devm_add_action_or_reset(dev, pac1921_regulator_disable,
+ 				       priv->vdd);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-			"Cannot add action for vdd regulator disposal\n");
++		return ret;
+ 
+ 	msleep(PAC1921_POWERUP_TIME_MS);
+ 
+diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockchip_saradc.c
+index 325e3747a134..02d7bf137f2e 100644
+--- a/drivers/iio/adc/rockchip_saradc.c
++++ b/drivers/iio/adc/rockchip_saradc.c
+@@ -529,8 +529,7 @@ static int rockchip_saradc_probe(struct platform_device *pdev)
+ 	ret = devm_add_action_or_reset(&pdev->dev,
+ 				       rockchip_saradc_regulator_disable, info);
+ 	if (ret)
+-		return dev_err_probe(&pdev->dev, ret,
+-				     "failed to register devm action\n");
++		return ret;
+ 
+ 	ret = regulator_get_voltage(info->vref);
+ 	if (ret < 0)
+diff --git a/drivers/iio/adc/ti-ads1119.c b/drivers/iio/adc/ti-ads1119.c
+index d280c949cf47..bf23b7beb5f8 100644
+--- a/drivers/iio/adc/ti-ads1119.c
++++ b/drivers/iio/adc/ti-ads1119.c
+@@ -780,8 +780,7 @@ static int ads1119_probe(struct i2c_client *client)
+ 
+ 	ret = devm_add_action_or_reset(dev, ads1119_powerdown, st);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Failed to add powerdown action\n");
++		return ret;
+ 
+ 	return devm_iio_device_register(dev, indio_dev);
+ }
+diff --git a/drivers/iio/adc/ti-ads7924.c b/drivers/iio/adc/ti-ads7924.c
+index b1f745f75dbe..46255c530cb4 100644
+--- a/drivers/iio/adc/ti-ads7924.c
++++ b/drivers/iio/adc/ti-ads7924.c
+@@ -399,8 +399,7 @@ static int ads7924_probe(struct i2c_client *client)
+ 
+ 	ret = devm_add_action_or_reset(dev, ads7924_reg_disable, data->vref_reg);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "failed to add regulator disable action\n");
++		return ret;
+ 
+ 	ret = ads7924_reset(indio_dev);
+ 	if (ret < 0)
+@@ -414,8 +413,7 @@ static int ads7924_probe(struct i2c_client *client)
+ 
+ 	ret = devm_add_action_or_reset(dev, ads7924_set_idle_mode, data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "failed to add idle mode action\n");
++		return ret;
+ 
+ 	/* Use minimum signal acquire time. */
+ 	ret = regmap_update_bits(data->regmap, ADS7924_ACQCONFIG_REG,
+diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
+index 47f1c7e9efa9..6665409a9a87 100644
+--- a/drivers/iio/frequency/adf4350.c
++++ b/drivers/iio/frequency/adf4350.c
+@@ -673,8 +673,7 @@ static int adf4350_probe(struct spi_device *spi)
+ 
+ 	ret = devm_add_action_or_reset(&spi->dev, adf4350_power_down, indio_dev);
+ 	if (ret)
+-		return dev_err_probe(&spi->dev, ret,
+-				     "Failed to add action to managed power down\n");
++		return ret;
+ 
+ 	return devm_iio_device_register(&spi->dev, indio_dev);
+ }
+diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
+index 6f301c067045..9871096cbab3 100644
+--- a/drivers/iio/light/al3000a.c
++++ b/drivers/iio/light/al3000a.c
+@@ -94,7 +94,7 @@ static int al3000a_init(struct al3000a_data *data)
+ 
+ 	ret = devm_add_action_or_reset(dev, al3000a_set_pwr_off, data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to add action\n");
++		return ret;
+ 
+ 	ret = regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CONFIG_RESET);
+ 	if (ret)
+diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
+index e9b237de180a..7d2f3738b967 100644
+--- a/drivers/iio/light/apds9306.c
++++ b/drivers/iio/light/apds9306.c
+@@ -1305,7 +1305,7 @@ static int apds9306_probe(struct i2c_client *client)
+ 
+ 	ret = devm_add_action_or_reset(dev, apds9306_powerdown, data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to add action or reset\n");
++		return ret;
+ 
+ 	ret = devm_iio_device_register(dev, indio_dev);
+ 	if (ret)
+diff --git a/drivers/iio/light/bh1745.c b/drivers/iio/light/bh1745.c
+index 56ab5fe90ff9..613561dd4083 100644
+--- a/drivers/iio/light/bh1745.c
++++ b/drivers/iio/light/bh1745.c
+@@ -816,8 +816,7 @@ static int bh1745_init(struct bh1745_data *data)
+ 
+ 	ret = devm_add_action_or_reset(dev, bh1745_power_off, data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Failed to add action or reset\n");
++		return ret;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/iio/light/opt4001.c b/drivers/iio/light/opt4001.c
+index ba4eb82d9bc2..95167273bb90 100644
+--- a/drivers/iio/light/opt4001.c
++++ b/drivers/iio/light/opt4001.c
+@@ -428,8 +428,7 @@ static int opt4001_probe(struct i2c_client *client)
+ 					opt4001_chip_off_action,
+ 					chip);
+ 	if (ret < 0)
+-		return dev_err_probe(&client->dev, ret,
+-				     "Failed to setup power off action\n");
++		return ret;
+ 
+ 	return devm_iio_device_register(&client->dev, indio_dev);
+ }
+diff --git a/drivers/iio/light/opt4060.c b/drivers/iio/light/opt4060.c
+index f4085020e03e..e2f42d87760a 100644
+--- a/drivers/iio/light/opt4060.c
++++ b/drivers/iio/light/opt4060.c
+@@ -1301,8 +1301,7 @@ static int opt4060_probe(struct i2c_client *client)
+ 
+ 	ret = devm_add_action_or_reset(dev, opt4060_chip_off_action, chip);
+ 	if (ret < 0)
+-		return dev_err_probe(dev, ret,
+-				     "Failed to setup power off action\n");
++		return ret;
+ 
+ 	ret = opt4060_setup_buffer(chip, indio_dev);
+ 	if (ret)
+diff --git a/drivers/iio/magnetometer/als31300.c b/drivers/iio/magnetometer/als31300.c
+index f72af829715f..928e1378304c 100644
+--- a/drivers/iio/magnetometer/als31300.c
++++ b/drivers/iio/magnetometer/als31300.c
+@@ -373,7 +373,7 @@ static int als31300_probe(struct i2c_client *i2c)
+ 
+ 	ret = devm_add_action_or_reset(dev, als31300_power_down, data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to add powerdown action\n");
++		return ret;
+ 
+ 	indio_dev->info = &als31300_info;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+diff --git a/drivers/iio/magnetometer/tmag5273.c b/drivers/iio/magnetometer/tmag5273.c
+index 2ca5c26f0091..bdb656b031b1 100644
+--- a/drivers/iio/magnetometer/tmag5273.c
++++ b/drivers/iio/magnetometer/tmag5273.c
+@@ -642,7 +642,7 @@ static int tmag5273_probe(struct i2c_client *i2c)
+ 	 */
+ 	ret = devm_add_action_or_reset(dev, tmag5273_power_down, data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to add powerdown action\n");
++		return ret;
+ 
+ 	ret = pm_runtime_set_active(dev);
+ 	if (ret < 0)
+diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+index ef4aa7b2835e..b92fbd27755b 100644
+--- a/drivers/iio/proximity/vl53l0x-i2c.c
++++ b/drivers/iio/proximity/vl53l0x-i2c.c
+@@ -352,8 +352,7 @@ static int vl53l0x_probe(struct i2c_client *client)
+ 
+ 	error = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
+ 	if (error)
+-		return dev_err_probe(&client->dev, error,
+-				     "Failed to install poweroff action\n");
++		return ret;
+ 
+ 	indio_dev->name = "vl53l0x";
+ 	indio_dev->info = &vl53l0x_info;
+diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
+index f7f88498ba0e..1175c7887ae1 100644
+--- a/drivers/iio/temperature/mlx90635.c
++++ b/drivers/iio/temperature/mlx90635.c
+@@ -977,8 +977,7 @@ static int mlx90635_probe(struct i2c_client *client)
+ 	ret = devm_add_action_or_reset(&client->dev, mlx90635_disable_regulator,
+ 				       mlx90635);
+ 	if (ret < 0)
+-		return dev_err_probe(&client->dev, ret,
+-				     "failed to setup regulator cleanup action\n");
++		return ret;
+ 
+ 	ret = mlx90635_wakeup(mlx90635);
+ 	if (ret < 0)
+@@ -986,8 +985,7 @@ static int mlx90635_probe(struct i2c_client *client)
+ 
+ 	ret = devm_add_action_or_reset(&client->dev, mlx90635_sleep, mlx90635);
+ 	if (ret < 0)
+-		return dev_err_probe(&client->dev, ret,
+-				     "failed to setup low power cleanup\n");
++		return ret;
+ 
+ 	ret = regmap_read(mlx90635->regmap_ee, MLX90635_EE_VERSION, &dsp_version);
+ 	if (ret < 0)
+diff --git a/drivers/input/touchscreen/zforce_ts.c b/drivers/input/touchscreen/zforce_ts.c
+index df42fdf36ae3..4d000b5b3ae6 100644
+--- a/drivers/input/touchscreen/zforce_ts.c
++++ b/drivers/input/touchscreen/zforce_ts.c
+@@ -739,8 +739,7 @@ static int zforce_probe(struct i2c_client *client)
+ 
+ 	error = devm_add_action_or_reset(&client->dev, zforce_reset, ts);
+ 	if (error)
+-		return dev_err_probe(&client->dev, error,
+-				     "failed to register reset action\n");
++		return error;
+ 
+ 	snprintf(ts->phys, sizeof(ts->phys),
+ 		 "%s/input0", dev_name(&client->dev));
+diff --git a/drivers/mmc/host/litex_mmc.c b/drivers/mmc/host/litex_mmc.c
+index b338ccfa8f33..08764cb8aa3d 100644
+--- a/drivers/mmc/host/litex_mmc.c
++++ b/drivers/mmc/host/litex_mmc.c
+@@ -531,8 +531,7 @@ static int litex_mmc_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_add_action_or_reset(dev, litex_mmc_free_host_wrapper, mmc);
+ 	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Can't register mmc_free_host action\n");
++		return ret;
+ 
+ 	host = mmc_priv(mmc);
+ 	host->mmc = mmc;
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+index b3dc1afeefd1..38fb81db48c2 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+@@ -1016,8 +1016,7 @@ static int enetc4_pf_probe(struct pci_dev *pdev,
+ 
+ 	err = devm_add_action_or_reset(dev, enetc4_pci_remove, pdev);
+ 	if (err)
+-		return dev_err_probe(dev, err,
+-				     "Add enetc4_pci_remove() action failed\n");
++		return err;
+ 
+ 	/* si is the private data. */
+ 	si = pci_get_drvdata(pdev);
 diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 8a1cd63b29ce..9e70bc815937 100644
+index 917a76d584f0..28ba11e42823 100644
 --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
 +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -273,6 +273,36 @@
- #define EXYNOSAUTOV920_DRD_HSPPLLTUNE		0x110
- #define HSPPLLTUNE_FSEL				GENMASK(18, 16)
+@@ -1859,8 +1859,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
+ 					       exynos5_usbdrd_orien_switch_unregister,
+ 					       phy_drd);
+ 		if (ret)
+-			return dev_err_probe(phy_drd->dev, ret,
+-					     "Failed to register TypeC orientation devm action\n");
++			return ret;
+ 	}
  
-+/* ExynosAutov920 phy usb31drd port reg */
-+#define EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL	0x000
-+#define PHY_RST_CTRL_PIPE_LANE0_RESET_N_OVRD_EN	BIT(5)
-+#define PHY_RST_CTRL_PIPE_LANE0_RESET_N		BIT(4)
-+#define PHY_RST_CTRL_PHY_RESET_OVRD_EN		BIT(1)
-+#define PHY_RST_CTRL_PHY_RESET			BIT(0)
-+
-+#define EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0	0x0004
-+#define PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR		GENMASK(31, 16)
-+#define PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK		BIT(8)
-+#define PHY_CR_PARA_CON0_PHY0_CR_PARA_ACK		BIT(4)
-+#define PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL		BIT(0)
-+
-+#define EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON1	0x0008
-+
-+#define EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2	0x000c
-+#define PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_EN		BIT(0)
-+#define PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_DATA		GENMASK(31, 16)
-+
-+#define EXYNOSAUTOV920_USB31DRD_PHY_CONFIG0	0x100
-+#define PHY_CONFIG0_PHY0_PMA_PWR_STABLE		BIT(14)
-+#define PHY_CONFIG0_PHY0_PCS_PWR_STABLE		BIT(13)
-+#define PHY_CONFIG0_PHY0_ANA_PWR_EN		BIT(1)
-+
-+#define EXYNOSAUTOV920_USB31DRD_PHY_CONFIG7	0x11c
-+#define PHY_CONFIG7_PHY_TEST_POWERDOWN		BIT(24)
-+
-+#define EXYNOSAUTOV920_USB31DRD_PHY_CONFIG4	0x110
-+#define PHY_CONFIG4_PIPE_RX0_SRIS_MODE_EN	BIT(2)
-+
- /* Exynos9 - GS101 */
- #define EXYNOS850_DRD_SECPMACTL			0x48
- #define SECPMACTL_PMA_ROPLL_REF_CLK_SEL		GENMASK(13, 12)
-@@ -2079,6 +2109,253 @@ static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
- 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
- };
+ 	return 0;
+diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+index 98579998b300..29510af4e595 100644
+--- a/drivers/power/supply/mt6370-charger.c
++++ b/drivers/power/supply/mt6370-charger.c
+@@ -898,7 +898,7 @@ static int mt6370_chg_probe(struct platform_device *pdev)
+ 	ret = devm_add_action_or_reset(dev, mt6370_chg_destroy_attach_lock,
+ 				       &priv->attach_lock);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init attach lock\n");
++		return ret;
  
-+static void
-+exynosautov920_usb31drd_cr_clk(struct exynos5_usbdrd_phy *phy_drd, bool high)
-+{
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 reg = 0;
-+
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+	if (high)
-+		reg |= PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK;
-+	else
-+		reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK;
-+
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+	fsleep(1);
-+}
-+
-+static void
-+exynosautov920_usb31drd_port_phy_ready(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	struct device *dev = phy_drd->dev;
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	static const unsigned int timeout_us = 20000;
-+	static const unsigned int sleep_us = 40;
-+	u32 reg = 0;
-+	int err;
-+
-+	/* Clear cr_para_con */
-+	reg &= ~(PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK |
-+			PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR);
-+	reg |= PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+	writel(0x0, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON1);
-+	writel(0x0, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2);
-+
-+	exynosautov920_usb31drd_cr_clk(phy_drd, true);
-+	exynosautov920_usb31drd_cr_clk(phy_drd, false);
-+
-+	/*
-+	 * The maximum time from phy reset de-assertion to de-assertion of
-+	 * tx/rx_ack can be as high as 5ms in fast simulation mode.
-+	 * Time to phy ready is < 20ms
-+	 */
-+	err = readl_poll_timeout(reg_phy +
-+				EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0,
-+			reg, !(reg & PHY_CR_PARA_CON0_PHY0_CR_PARA_ACK),
-+			sleep_us, timeout_us);
-+	if (err)
-+		dev_err(dev, "timed out waiting for rx/tx_ack: %#.8x\n", reg);
-+
-+	reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+}
-+
-+static void
-+exynosautov920_usb31drd_cr_write(struct exynos5_usbdrd_phy *phy_drd,
-+				 u16 addr, u16 data)
-+{
-+	struct device *dev = phy_drd->dev;
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 cnt = 0;
-+	u32 reg = 0;
-+
-+	/* Pre Clocking */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+	reg |= PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+
-+	/*
-+	 * tx clks must be available prior to assertion of tx req.
-+	 * tx pstate p2 to p0 transition directly is not permitted.
-+	 * tx clk ready must be asserted synchronously on tx clk prior
-+	 * to internal transmit clk alignment sequence in the phy
-+	 * when entering from p2 to p1 to p0.
-+	 */
-+	do {
-+		exynosautov920_usb31drd_cr_clk(phy_drd, true);
-+		exynosautov920_usb31drd_cr_clk(phy_drd, false);
-+		cnt++;
-+	} while (cnt < 15);
-+
-+	reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+
-+	/*
-+	 * tx data path is active when tx lane is in p0 state
-+	 * and tx data en asserted. enable cr_para_wr_en.
-+	 */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2);
-+	reg &= ~PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_DATA;
-+	reg |= FIELD_PREP(PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_DATA, data) |
-+		PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_EN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2);
-+
-+	/* write addr */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+	reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR;
-+	reg |= FIELD_PREP(PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR, addr) |
-+		PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK |
-+		PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+
-+	/* check cr_para_ack*/
-+	cnt = 0;
-+	do {
-+		/*
-+		 * data symbols are captured by phy on rising edge of the
-+		 * tx_clk when tx data enabled.
-+		 * completion of the write cycle is acknowledged by assertion
-+		 * of the cr_para_ack.
-+		 */
-+		exynosautov920_usb31drd_cr_clk(phy_drd, true);
-+		reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
-+		if ((reg & PHY_CR_PARA_CON0_PHY0_CR_PARA_ACK))
-+			break;
-+
-+		exynosautov920_usb31drd_cr_clk(phy_drd, false);
-+
-+		/*
-+		 * wait for minimum of 10 cr_para_clk cycles after phy reset
-+		 * is negated, before accessing control regs to allow for
-+		 * internal resets.
-+		 */
-+		cnt++;
-+	} while (cnt < 10);
-+
-+	if (cnt == 10)
-+		dev_dbg(dev, "CR write failed to 0x%04x\n", addr);
-+	else
-+		exynosautov920_usb31drd_cr_clk(phy_drd, false);
-+}
-+
-+static void
-+exynosautov920_usb31drd_phy_reset(struct exynos5_usbdrd_phy *phy_drd, int val)
-+{
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 reg;
-+
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+	reg &= ~PHY_RST_CTRL_PHY_RESET_OVRD_EN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+	if (val)
-+		reg |= PHY_RST_CTRL_PHY_RESET;
-+	else
-+		reg &= ~PHY_RST_CTRL_PHY_RESET;
-+
-+	reg |= PHY_RST_CTRL_PHY_RESET_OVRD_EN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+}
-+
-+static void
-+exynosautov920_usb31drd_lane0_reset(struct exynos5_usbdrd_phy *phy_drd, int val)
-+{
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 reg;
-+
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+	reg |= PHY_RST_CTRL_PIPE_LANE0_RESET_N_OVRD_EN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+	if (val)
-+		reg &= ~PHY_RST_CTRL_PIPE_LANE0_RESET_N;
-+	else
-+		reg |= PHY_RST_CTRL_PIPE_LANE0_RESET_N;
-+
-+	reg &= ~PHY_RST_CTRL_PIPE_LANE0_RESET_N_OVRD_EN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_RST_CTRL);
-+}
-+
-+static void
-+exynosautov920_usb31drd_pipe3_init(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 reg;
-+
-+	/*
-+	 * Phy and Pipe Lane reset assert.
-+	 * assert reset (phy_reset = 1).
-+	 * The lane-ack outputs are asserted during reset (tx_ack = rx_ack = 1)
-+	 */
-+	exynosautov920_usb31drd_phy_reset(phy_drd, 1);
-+	exynosautov920_usb31drd_lane0_reset(phy_drd, 1);
-+
-+	/*
-+	 * ANA Power En, PCS & PMA PWR Stable Set
-+	 * ramp-up power suppiles
-+	 */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG0);
-+	reg |= PHY_CONFIG0_PHY0_ANA_PWR_EN | PHY_CONFIG0_PHY0_PCS_PWR_STABLE |
-+		PHY_CONFIG0_PHY0_PMA_PWR_STABLE;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG0);
-+
-+	fsleep(10);
-+
-+	/*
-+	 * phy is not functional in test_powerdown mode, test_powerdown to be
-+	 * de-asserted for normal operation
-+	 */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG7);
-+	reg &= ~PHY_CONFIG7_PHY_TEST_POWERDOWN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG7);
-+
-+	/*
-+	 * phy reset signal be asserted for minimum 10us after power
-+	 * supplies are ramped-up
-+	 */
-+	fsleep(10);
-+
-+	/*
-+	 * Phy and Pipe Lane reset assert de-assert
-+	 */
-+	exynosautov920_usb31drd_phy_reset(phy_drd, 0);
-+	exynosautov920_usb31drd_lane0_reset(phy_drd, 0);
-+
-+	/* Pipe_rx0_sris_mode_en  = 1 */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG4);
-+	reg |= PHY_CONFIG4_PIPE_RX0_SRIS_MODE_EN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG4);
-+
-+	/*
-+	 * wait for lane ack outputs to de-assert (tx_ack = rx_ack = 0)
-+	 * Exit from the reset state is indicated by de-assertion of *_ack
-+	 */
-+	exynosautov920_usb31drd_port_phy_ready(phy_drd);
-+
-+	/* override values for level settings */
-+	exynosautov920_usb31drd_cr_write(phy_drd, 0x22, 0x00F5);
-+}
-+
-+static void
-+exynosautov920_usb31drd_ssphy_disable(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 reg;
-+
-+	/* 1. Assert reset (phy_reset = 1) */
-+	exynosautov920_usb31drd_lane0_reset(phy_drd, 1);
-+	exynosautov920_usb31drd_phy_reset(phy_drd, 1);
-+
-+	/* phy test power down */
-+	reg = readl(reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG7);
-+	reg |= PHY_CONFIG7_PHY_TEST_POWERDOWN;
-+	writel(reg, reg_phy + EXYNOSAUTOV920_USB31DRD_PHY_CONFIG7);
-+}
-+
- static void
- exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- {
-@@ -2173,12 +2450,15 @@ exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	/* after POR low and delay 75us, PHYCLOCK is guaranteed. */
- 	fsleep(75);
+ 	priv->attach = MT6370_ATTACH_STAT_DETACH;
  
--	/* force pipe3 signal for link */
-+	/* Disable forcing pipe interface */
- 	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
--	reg |= LINKCTRL_FORCE_PIPE_EN;
--	reg &= ~LINKCTRL_FORCE_PHYSTATUS;
--	reg |= LINKCTRL_FORCE_RXELECIDLE;
-+	reg &= ~LINKCTRL_FORCE_PIPE_EN;
- 	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL);
-+
-+	/* Pclk to pipe_clk */
-+	reg = readl(reg_phy + EXYNOS2200_DRD_CLKRST);
-+	reg |= EXYNOS2200_CLKRST_LINK_PCLK_SEL;
-+	writel(reg, reg_phy + EXYNOS2200_DRD_CLKRST);
+@@ -909,7 +909,7 @@ static int mt6370_chg_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_add_action_or_reset(dev, mt6370_chg_destroy_wq, priv->wq);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init wq\n");
++		return ret;
+ 
+ 	ret = devm_work_autocancel(dev, &priv->bc12_work, mt6370_chg_bc12_work_func);
+ 	if (ret)
+diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+index e9aba9ad393c..e2ff9c4609ef 100644
+--- a/drivers/power/supply/rt9467-charger.c
++++ b/drivers/power/supply/rt9467-charger.c
+@@ -1218,25 +1218,25 @@ static int rt9467_charger_probe(struct i2c_client *i2c)
+ 	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_adc_lock,
+ 				       &data->adc_lock);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init ADC lock\n");
++		return ret;
+ 
+ 	mutex_init(&data->attach_lock);
+ 	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_attach_lock,
+ 				       &data->attach_lock);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init attach lock\n");
++		return ret;
+ 
+ 	mutex_init(&data->ichg_ieoc_lock);
+ 	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_ichg_ieoc_lock,
+ 				       &data->ichg_ieoc_lock);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init ICHG/IEOC lock\n");
++		return ret;
+ 
+ 	init_completion(&data->aicl_done);
+ 	ret = devm_add_action_or_reset(dev, rt9467_chg_complete_aicl_done,
+ 				       &data->aicl_done);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init AICL done completion\n");
++		return ret;
+ 
+ 	ret = rt9467_do_charger_init(data);
+ 	if (ret)
+diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+index 8c6bf3d49753..e90d37d4f956 100644
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -520,8 +520,7 @@ static int meson_pwm_init_channels_s4(struct pwm_chip *chip)
+ 		ret = devm_add_action_or_reset(dev, meson_pwm_s4_put_clk,
+ 					       meson->channels[i].clk);
+ 		if (ret)
+-			return dev_err_probe(dev, ret,
+-					     "Failed to add clk_put action\n");
++			return ret;
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+index e63c77e41823..1bdc8a51befb 100644
+--- a/drivers/spi/spi-nxp-fspi.c
++++ b/drivers/spi/spi-nxp-fspi.c
+@@ -1283,7 +1283,7 @@ static int nxp_fspi_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_add_action_or_reset(dev, nxp_fspi_cleanup, f);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to register nxp_fspi_cleanup\n");
++		return ret;
+ 
+ 	return devm_spi_register_controller(&pdev->dev, ctlr);
  }
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 50adfb8b335b..3be165080a15 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -10476,8 +10476,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 	err = devm_add_action_or_reset(dev, ufshcd_devres_release,
+ 				       host);
+ 	if (err)
+-		return dev_err_probe(dev, err,
+-				     "failed to add ufshcd dealloc action\n");
++		return err;
  
- static void
-@@ -2226,6 +2506,8 @@ static int exynosautov920_usbdrd_phy_init(struct phy *phy)
- 		/* Bypass PHY isol when first USB is powered on */
- 		if ((atomic_inc_return(&usage_count) == 1))
- 			inst->phy_cfg->phy_isol(inst, false);
-+	} else if (inst->phy_cfg->id == EXYNOS5_DRDPHY_PIPE3) {
-+		inst->phy_cfg->phy_isol(inst, false);
- 	}
+ 	host->nr_maps = HCTX_TYPE_POLL + 1;
+ 	hba = shost_priv(host);
+diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
+index 83079c414b4f..67832790acad 100644
+--- a/drivers/usb/misc/qcom_eud.c
++++ b/drivers/usb/misc/qcom_eud.c
+@@ -193,8 +193,7 @@ static int eud_probe(struct platform_device *pdev)
  
- 	/* UTMI or PIPE3 specific init */
-@@ -2275,6 +2557,10 @@ static int exynosautov920_usbdrd_combo_phy_exit(struct phy *phy)
- 		/* enable PHY isol when all USBs are powered off */
- 		if (atomic_dec_and_test(&usage_count))
- 			inst->phy_cfg->phy_isol(inst, true);
-+	} else if (inst->phy_cfg->id == EXYNOS5_DRDPHY_PIPE3) {
-+		exynosautov920_usb31drd_ssphy_disable(phy_drd);
-+
-+		inst->phy_cfg->phy_isol(inst, true);
- 	}
+ 	ret = devm_add_action_or_reset(chip->dev, eud_role_switch_release, chip);
+ 	if (ret)
+-		return dev_err_probe(chip->dev, ret,
+-				"failed to add role switch release action\n");
++		return ret;
  
- 	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-@@ -2333,6 +2619,36 @@ static const char * const exynosautov920_regulator_names[] = {
- 	"avdd075_usb", "avdd18_usb20", "avdd33_usb20",
- };
+ 	chip->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(chip->base))
+diff --git a/sound/soc/sof/imx/imx-common.c b/sound/soc/sof/imx/imx-common.c
+index 62bf707aa909..0ea232a38533 100644
+--- a/sound/soc/sof/imx/imx-common.c
++++ b/sound/soc/sof/imx/imx-common.c
+@@ -404,7 +404,7 @@ static int imx_probe(struct snd_sof_dev *sdev)
+ 				       imx_unregister_action,
+ 				       sdev);
+ 	if (ret)
+-		return dev_err_probe(sdev->dev, ret, "failed to add devm action\n");
++		return ret;
  
-+static const struct
-+exynos5_usbdrd_phy_config usb31drd_phy_cfg_exynosautov920[] = {
-+	{
-+		.id		= EXYNOS5_DRDPHY_PIPE3,
-+		.phy_isol	= exynos5_usbdrd_phy_isol,
-+		.phy_init	= exynosautov920_usb31drd_pipe3_init,
-+	},
-+};
-+
-+static const struct phy_ops exynosautov920_usb31drd_combo_ssphy_ops = {
-+	.init		= exynosautov920_usbdrd_phy_init,
-+	.exit		= exynosautov920_usbdrd_combo_phy_exit,
-+	.power_on	= exynosautov920_usbdrd_phy_power_on,
-+	.power_off	= exynosautov920_usbdrd_phy_power_off,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static const
-+struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_combo_ssphy = {
-+	.phy_cfg		= usb31drd_phy_cfg_exynosautov920,
-+	.phy_ops		= &exynosautov920_usb31drd_combo_ssphy_ops,
-+	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB31,
-+	.clk_names		= exynos5_clk_names,
-+	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
-+	.core_clk_names		= exynos5_core_clk_names,
-+	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
-+	.regulator_names	= exynosautov920_regulator_names,
-+	.n_regulators		= ARRAY_SIZE(exynosautov920_regulator_names),
-+};
-+
- static const struct phy_ops exynosautov920_usbdrd_combo_hsphy_ops = {
- 	.init		= exynosautov920_usbdrd_phy_init,
- 	.exit		= exynosautov920_usbdrd_combo_phy_exit,
-@@ -2597,6 +2913,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos990-usbdrd-phy",
- 		.data = &exynos990_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynosautov920-usb31drd-combo-ssphy",
-+		.data = &exynosautov920_usb31drd_combo_ssphy
- 	}, {
- 		.compatible = "samsung,exynosautov920-usbdrd-combo-hsphy",
- 		.data = &exynosautov920_usbdrd_combo_hsphy
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index 4923f9be3d1f..f96c773b85c9 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -690,4 +690,5 @@
- 
- /* exynosautov920 */
- #define EXYNOSAUTOV920_PHY_CTRL_USB20				(0x0710)
-+#define EXYNOSAUTOV920_PHY_CTRL_USB31				(0x0714)
- #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
+ 	common->ipc_handle = dev_get_drvdata(&common->ipc_dev->dev);
+ 	if (!common->ipc_handle)
 -- 
-2.34.1
+2.39.5
 
