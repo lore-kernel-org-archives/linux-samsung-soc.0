@@ -1,148 +1,198 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1C2E9EDC
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Jul 2025 14:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475612D5420
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Jul 2025 17:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751551668; cv=none; b=GhCU5q3eBIzVDf/OvyOe1JLjRB/eEK2jLt8U/iOJx2nlcKjeJN7r0cslHtmEt8AyFXe7a56imhxont4KITQNJzTAWoBHXeYdmQIy50QpTHqd4iz14ojrq6XEcVktX5c8PR+j55oD8qUppy3A2JB5S/2G96bYxPN/HSBYwIeZ3Go=
+	t=1751564369; cv=none; b=TXVxAKWQrXm3EFYnU6RZOO3i3MLvdUcfn+ixHjISLLGXU1gHOc5/aOwXPTyp7InJJP1Vu9UClJpP6xMqMfWmL6LmmBdSU6kEKBaVrycBC6J3t7gHAUsW0RiWrEB1G3WKxoJwSVu62pm8B5GRwUwCda3B+c0INgAlCmwxwrJ2Qpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751551668; c=relaxed/simple;
-	bh=tZiZ92ztTcdwSFwaDSEjuylr6E2oMfBwx3JEMzcXyII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MRqOtzAnrDtxdLanbVcJFXGe5x/rpMvJuX1fbR0YCrJt57bxsYEv2a8ccgudUNC3e4aXXrFw9y6tePO1Mdki0D2yVSHokOZcn2hs9n0MwWcS9Z2DJ9jEHU0Lc5mdrN6XYqUYsCxgs6MJ0eU9Jcf2HQ17Vuy8cS0JxA0+ztW6WXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xui94Qb+; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751564369; c=relaxed/simple;
+	bh=OyLzI9ti5ZF4tK6Y97Gl7vSXaMfHy1WelDatJfxOx4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JJ1cyrRUebAwTjWvSyRUQ0BUcsv0cosItKAJRCQ0eaZWHnruipOSWak639djrcl2s+1ZuzDrF7lei7uewSabNfG+pi1ZPfLA3xE475DOShL4/xOVmGgVnYCIWkwVuV/a7qVXYWFnB/37DRxWqNWoaH9S60lL0vFY81bknNLdEhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=abUr61XR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xui94Qb+"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-453634d8609so58074545e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2025 07:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751551665; x=1752156465; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ycI4WYThtdNsX6KYwyJiENU7SdlsJACu2s2/RAZVc/g=;
-        b=xui94Qb+fQn9ZjakukbMGl2DdqpOFHJY6ZLSYwcBLgPjkKL6hZaoUV3Hr/YzjFvNzb
-         zCeQHiKRA/QiTBKY8padANOeys4SBeNSk0GvYFiRXkf7VhoNrAuyJ3sxgOpGTD6G77lG
-         jHz2R3Kx+lVrZ+h0/B1telDK8avjKvA3ZsFZPhGTbhPdlpZbZyLPVoHw2acnDkGHOAgM
-         mDlp5FknINVQuvhLZb+XMQokPXRmO/BaDCSyBnnbWWADfnz35b1TKWfVoOXf4e/943Fi
-         wT2lKZXh9Lxpt9iCXqa1yN3dyRUaMJHzntWAvEJMgIA8/bJYVOKsSsT5S6/2niWaqbdp
-         fydw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751551665; x=1752156465;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ycI4WYThtdNsX6KYwyJiENU7SdlsJACu2s2/RAZVc/g=;
-        b=PQRbbFpw88gytJ1vTwKStfCF4uIJeM++t6F2MZfyGJ11JBaKFYwlznKzNsqxyJMrEV
-         B7LgNvf2vPVPUH97rjjiaIuiYQ6cUZB9IpoJnFuMXqdcXaTuBjd/vcUUBFss2Z9GVjYF
-         Ia+QNOQznT44zwGn5TFr76SFPEvhAiJ+0rzpHJpAE1nFVbVN06dS1ns8wUSVTik8Z/2d
-         jtervX10ChvjM1YgNKjfTRrw1YXqIcW7sYxroFNFeGiCBNoPULAxv1Ijd/0FnA3mPZAb
-         IqcvSOlWWokYFZ3b1tgwuE+FPJp155lGk03ez/pDWrf3Jo2aUSu0jwAC/KPXCNltLR05
-         otFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU0AWZan++yLWd+GJMdN0MEt4aBnGs4b5LLHfBoEBfnzlVwSl01DjGhmqcRmd/MFTYFgmJ7qViMxNrKz0+4egOnQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEOLC2BCDkoioZmd9RiYhEM73VNiu7UetvX8LQmd1nH926weiF
-	pZlL6H41myiDKSaRskQzreAqI2gt7IqGiCaR1cULLp6j9fWAwUqLIfmX7UvXW16f6g8=
-X-Gm-Gg: ASbGncs8APN+3eQBhqr5+hy7HChpCT+NbnmP6nhIcewBuNQueOTwT1+bNd6fa4cpJW+
-	oICzaPTH51797LaAnZilJ2wAkAoIiFOH9QCODsLcN/5a4c1x0pe327Y5vCCOEmpZn2SeNfk+5Yn
-	kk+RSpoPqnl0aMTzJo1EHXQUKTvNo60P5OC295L24EmF0/G95VCAGPiuogGbxMLQD0F3qZUPkHX
-	ry1wnVR1Uyp7mzVDFVIYTkyI7TaYfMMuHaY++39kP7//vEilvtHeYaWyrUQz7eyi8c0OFSrNYea
-	ht7I4pvPO61qzDr0C7Yq7Cvzo1n1l2bFWVqIxR3jcFotIhjUuqFqY44Gk7IjdGzyFUA6DenZ2ua
-	BxfQhc7vUoanPC7Nc
-X-Google-Smtp-Source: AGHT+IENaq88sCKdSam+I4emffuT1q9K5iTEZO5saslNhRejQ3SetZS7xkYpcNjBldQAnYj+qmKUfA==
-X-Received: by 2002:a05:6000:480c:b0:3a8:310a:b1dc with SMTP id ffacd0b85a97d-3b32fffbbc4mr2523114f8f.56.1751551664251;
-        Thu, 03 Jul 2025 07:07:44 -0700 (PDT)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.164])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5966csm18926220f8f.72.2025.07.03.07.07.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 07:07:43 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 03 Jul 2025 15:07:40 +0100
-Subject: [PATCH] scsi: ufs: exynos: call phy_notify_pmstate() from hibern8
- callbacks
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="abUr61XR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751564366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Jr9UUYTDJ7ikkP8jHrSyTuWft6sFVyd5UT0R70tW400=;
+	b=abUr61XRwRbAU+9GckYHH1eck5hA3fbHWWgeCxNoBTaPeIznGa5z6XPpu8CLbhdW0qTGSg
+	tZwFjMiUbzNQJ5MqICXrukNxtaB22ziAaIL7NNqNZJg4lUrFpq41fgr1DzxExI8M0/0eOc
+	U50knsePAvtus9AL8LK10ERmDMEkILY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-W8nV6t3uN-Ou3Ud00PVttA-1; Thu,
+ 03 Jul 2025 13:39:22 -0400
+X-MC-Unique: W8nV6t3uN-Ou3Ud00PVttA-1
+X-Mimecast-MFC-AGG-ID: W8nV6t3uN-Ou3Ud00PVttA_1751564359
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF94F1808984;
+	Thu,  3 Jul 2025 17:39:17 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.44.32.252])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0297C1956087;
+	Thu,  3 Jul 2025 17:39:01 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-omap@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+Date: Thu,  3 Jul 2025 19:38:57 +0200
+Message-ID: <20250703173859.246664-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKuOZmgC/0XNQQ6DIBCF4auYWXcSSgOtXqUxBnGoLIoW0EiMd
- y8pabv83+J7OwTylgI01Q6eVhvs5HKcTxXoUbkHoR1yA2dcsCu74GIC0pbcFHAeU+emaE3q5me
- IKhJqRvXQ10JpKSEbsydjt49/b0t7ei35Jpbx/9JUv48MY4HxCxvGeyXEjRspmpVDexxvUT6tU
- rwAAAA=
-X-Change-ID: 20250703-ufs-exynos-phy_notify_pmstate-c0e9db95ac66
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1720;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=tZiZ92ztTcdwSFwaDSEjuylr6E2oMfBwx3JEMzcXyII=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoZo6u+V3Q026xLVWd3U0WTHK0GIijnylbPkNaZ
- Nk9sNbretSJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaGaOrgAKCRDO6LjWAjRy
- up9jD/wMpHZvlBCnREgmHLSrg0lxxe2ntcr9OETQ+7+AiDjL5pkH9OAGBPU+NCBY/bCqDjguH9v
- EVtws4IY/0/0VViKPOiH2Y9zJuNyaYNzadlQStEJyHJdDFH5YXfJcRGTtbR+mRehJu+6XK6vXDU
- AK6pemUfcwJ8g03tqVMjURIuJYdRns34AUP/BHPlTV92w7MqEXqjifiNfuDqyhADk5Qeq2Gc5Qc
- Cf5CpXIQmWjOKyU0STy1zlQmUnXjipvGTmmjmzNdRcDqK3eQQzMUL2xbnrc7oqzlXimVgkaDLme
- xOSDaZzsw0YiIsM7zHIv9hrWjjrQckT5JOkcZ8LMMvzvxDHTUcZrTasdvCGElrDcnNs2965dw7N
- 7zldXitX3acPMpUtmvyf2DwuITA1Y9oPcE2x7CZxBA7k7YGAUEUUc9f++sG4TmNBgE43Ygokkz3
- OEgP5NJNLUZUiz4rZ4WxT7E5RFO6Aur6uf/EEVRqn+PNHWEYbbTmt6NqZZ7MGy5wGI96/Ku1a2i
- TMLTscMTHr/lOTuYwBcfwhQu/n2ue4ARLjIi0flCIp76E4mQ0dh6up3U2ip1m/E2Y/GBvqx4yEF
- BlWaeijNzs9rAJPCuDdxXxNEqoziojgXHxtp3tj20cOHs2ONAeHknZNQb3+BtzXN/kKcsqcrlqc
- xRXHSsU+e3Jg7fA==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Notify the ufs phy of the hibern8 link state so that it can program the
-appropriate values.
+The kernel Makefiles define the __ASSEMBLY__ macro to provide
+a way to use headers in both, assembler and C source code.
+However, all the supported versions of the GCC and Clang compilers
+also define the macro __ASSEMBLER__ automatically already when compiling
+assembly code, so some kernel headers are using __ASSEMBLER__ instead.
+With regards to userspace code, this seems also to be constant source
+of confusion, see for example these links here:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-Note this patch has a dependency on the new API proposed in [1]
+ https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
+ https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
+ https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
+ https://github.com/riscv-software-src/opensbi/issues/199
 
-[1] https://lore.kernel.org/lkml/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org/ 
----
- drivers/ufs/host/ufs-exynos.c | 4 ++++
- 1 file changed, 4 insertions(+)
+To avoid confusion in the future, it would make sense to standardize
+on the macro that gets defined by the compiler, so this patch series
+changes all occurances of __ASSEMBLY__ into __ASSEMBLER__.
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 3e545af536e53e06b66c624ed0dc6dc7de13549f..e9fac23dc15abd685aba4c169c82e211040dec8b 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1574,6 +1574,8 @@ static void exynos_ufs_pre_hibern8(struct ufs_hba *hba, enum uic_cmd_dme cmd)
- 			exynos_ufs_disable_auto_ctrl_hcc(ufs);
- 		exynos_ufs_ungate_clks(ufs);
- 
-+		phy_notify_pmstate(ufs->phy, PHY_UFS_HIBERN8_EXIT);
-+
- 		if (ufs->opts & EXYNOS_UFS_OPT_USE_SW_HIBERN8_TIMER) {
- 			static const unsigned int granularity_tbl[] = {
- 				1, 4, 8, 16, 32, 100
-@@ -1606,6 +1608,8 @@ static void exynos_ufs_post_hibern8(struct ufs_hba *hba, enum uic_cmd_dme cmd)
- 		exynos_ufs_gate_clks(ufs);
- 		if (ufs->opts & EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL)
- 			exynos_ufs_enable_auto_ctrl_hcc(ufs);
-+
-+		phy_notify_pmstate(ufs->phy, PHY_UFS_HIBERN8_ENTER);
- 	}
- }
- 
+I split the patches per architecture to ease the review, and I also
+split the uapi headers from the normal ones in case we decide that
+uapi needs to be treated differently from the normal headers here.
 
----
-base-commit: 4611e0cba12ff5bb64b469cfac129f40f41b5caf
-change-id: 20250703-ufs-exynos-phy_notify_pmstate-c0e9db95ac66
-prerequisite-change-id: 20250703-phy-notify-pmstate-f02ba5582f65:v2
-prerequisite-patch-id: 99070bdd3132b74f7b8932d3d8bef685815a5edd
-prerequisite-patch-id: 02cd952ede323864a87816a20e3f6e06b885eab3
+The related cleanup patches for x86, parisc, sh and arc patches
+already got merged via their specific architecture tree:
 
-Best regards,
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=24a295e4ef1ca8
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8a141be3233af7
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cccaea1d66e94b
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e2b6a188625a2b
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9cc646950eefda
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=179e949719fe81
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2cb74be378675c
+
+So I assume the arm patches should go via the arm tree.
+
+v3:
+- Split the arm patches from the global series
+  (see https://lore.kernel.org/all/20250314071013.1575167-1-thuth@redhat.com/)
+- Rebased the patches on linux-next and fixed the conflicts
+
+Thomas Huth (2):
+  arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+  arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
+
+ arch/arm/include/asm/arch_gicv3.h                |  4 ++--
+ arch/arm/include/asm/assembler.h                 |  2 +-
+ arch/arm/include/asm/barrier.h                   |  4 ++--
+ arch/arm/include/asm/cache.h                     |  2 +-
+ arch/arm/include/asm/cp15.h                      |  4 ++--
+ arch/arm/include/asm/cputype.h                   |  4 ++--
+ arch/arm/include/asm/current.h                   |  4 ++--
+ arch/arm/include/asm/delay.h                     |  4 ++--
+ arch/arm/include/asm/domain.h                    |  8 ++++----
+ arch/arm/include/asm/fpstate.h                   |  2 +-
+ arch/arm/include/asm/ftrace.h                    |  6 +++---
+ arch/arm/include/asm/hardware/cache-b15-rac.h    |  2 +-
+ arch/arm/include/asm/hardware/cache-l2x0.h       |  4 ++--
+ arch/arm/include/asm/hardware/dec21285.h         |  2 +-
+ arch/arm/include/asm/hardware/ioc.h              |  2 +-
+ arch/arm/include/asm/hardware/iomd.h             |  4 ++--
+ arch/arm/include/asm/hardware/memc.h             |  2 +-
+ arch/arm/include/asm/hwcap.h                     |  2 +-
+ arch/arm/include/asm/irq.h                       |  2 +-
+ arch/arm/include/asm/jump_label.h                |  4 ++--
+ arch/arm/include/asm/kexec.h                     |  4 ++--
+ arch/arm/include/asm/kgdb.h                      |  4 ++--
+ arch/arm/include/asm/mach/arch.h                 |  2 +-
+ arch/arm/include/asm/mcpm.h                      |  4 ++--
+ arch/arm/include/asm/memory.h                    |  4 ++--
+ arch/arm/include/asm/mpu.h                       |  4 ++--
+ arch/arm/include/asm/opcodes.h                   | 12 ++++++------
+ arch/arm/include/asm/page.h                      |  4 ++--
+ arch/arm/include/asm/pgtable-2level.h            |  4 ++--
+ arch/arm/include/asm/pgtable-3level.h            |  4 ++--
+ arch/arm/include/asm/pgtable-nommu.h             |  4 ++--
+ arch/arm/include/asm/pgtable.h                   | 10 +++++-----
+ arch/arm/include/asm/probes.h                    |  4 ++--
+ arch/arm/include/asm/proc-fns.h                  |  4 ++--
+ arch/arm/include/asm/ptrace.h                    |  4 ++--
+ arch/arm/include/asm/system_info.h               |  4 ++--
+ arch/arm/include/asm/system_misc.h               |  4 ++--
+ arch/arm/include/asm/thread_info.h               |  2 +-
+ arch/arm/include/asm/thread_notify.h             |  2 +-
+ arch/arm/include/asm/tlbflush.h                  | 10 +++++-----
+ arch/arm/include/asm/tls.h                       |  4 ++--
+ arch/arm/include/asm/unified.h                   |  6 +++---
+ arch/arm/include/asm/unwind.h                    |  4 ++--
+ arch/arm/include/asm/v7m.h                       |  4 ++--
+ arch/arm/include/asm/vdso.h                      |  4 ++--
+ arch/arm/include/asm/vdso/cp15.h                 |  4 ++--
+ arch/arm/include/asm/vdso/gettimeofday.h         |  4 ++--
+ arch/arm/include/asm/vdso/processor.h            |  4 ++--
+ arch/arm/include/asm/vdso/vsyscall.h             |  4 ++--
+ arch/arm/include/asm/vfp.h                       |  2 +-
+ arch/arm/include/asm/virt.h                      |  4 ++--
+ arch/arm/include/uapi/asm/ptrace.h               |  4 ++--
+ arch/arm/mach-at91/pm.h                          |  2 +-
+ arch/arm/mach-exynos/smc.h                       |  4 ++--
+ arch/arm/mach-footbridge/include/mach/hardware.h |  2 +-
+ arch/arm/mach-imx/hardware.h                     |  2 +-
+ arch/arm/mach-imx/mxc.h                          |  2 +-
+ arch/arm/mach-omap2/control.h                    |  8 ++++----
+ arch/arm/mach-omap2/soc.h                        |  4 ++--
+ arch/arm/mach-omap2/sram.h                       |  4 ++--
+ arch/arm/mach-pxa/irqs.h                         |  2 +-
+ arch/arm/mach-pxa/pxa-regs.h                     |  2 +-
+ arch/arm/mach-s3c/map-base.h                     |  2 +-
+ arch/arm/mach-sa1100/include/mach/bitfield.h     |  2 +-
+ arch/arm/mach-sa1100/include/mach/hardware.h     |  2 +-
+ arch/arm/mach-tegra/reset.h                      |  2 +-
+ arch/arm/mach-tegra/sleep.h                      |  2 +-
+ arch/arm/tools/gen-mach-types                    |  2 +-
+ drivers/memory/emif.h                            |  4 ++--
+ 69 files changed, 129 insertions(+), 129 deletions(-)
+
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+2.50.0
 
