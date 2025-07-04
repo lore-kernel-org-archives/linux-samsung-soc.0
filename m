@@ -1,129 +1,187 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9FC2F533A;
-	Fri,  4 Jul 2025 10:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92882F7D13
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Jul 2025 13:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751624763; cv=none; b=jtg1fy/qFRYlPbY28B3DgET+MRgb5u6fIxuiTJv3MRik4C7ekX3Dp9wYedQttPsj6OccYy71hBrEKj+kw5BXHHk4NMpPPStGHzuMjWMybJ3CKIk5VMSK/XmI2IXUhXdpA+6FY1EBj7Fa4fjqzjE727nJ2fDUJzo4rZK13b/bcow=
+	t=1751634564; cv=none; b=KLp+ZdWRYBdaz9KPveVnaQx/KIWd+CyNDVkU8yqUZN6F8j+CYFmdn7yf21+5lj/8RAVjv0M1U+PcIUJdBvf2sKzL8YvV3QxmGl6ffJ39bf8MI1A61e/FsKXwd041lTkZeWOO1Xlc2+PQ9n8GmvuSCdIatwUYO/Iqss3LVaM2UBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751624763; c=relaxed/simple;
-	bh=s1yOooabGEhfLrwLG8Gkq0tF2jy2NbMTKO3iM7iaLlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VzxFVtUO7RN5koZsEeDfTT4wQmyQgmJw9y3j3PmwW/p9rolTmNnz/Ns1BbNsmHVKKu+qbDNUJRFzVzJrvinR1DCEMu58Vh9OkA0Kve78UUE2ciIpY+wkGp2P0No4eENBcxAVawdwEPdcLMN14QO+LERJhvfq6DnEIiwfdePPxec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=D5eSV8tD; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	s=arc-20240116; t=1751634564; c=relaxed/simple;
+	bh=7ZXkeb6eFkBOPADQFZ6Ugr+b8t74NHRMQP7v0mRURjs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ZGSLu6K+RQtSjF15TgB84YAzCWtSMW+q5nWVZtddHwW0nRTDHj4ixT35sXvpLdKvRUkoR8+T53fcvksWSdNDYuomcJzWp2PZjn6Zb5VrQwRZ1DzQxm5sadU/Wnw9OUQ8wEEqz9SEJuoYmXJpbfNbPqpCHdNR/h2TVVGKK2S2Iq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tGy7O1TW; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="D5eSV8tD"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eDkIk/2D8dgafpo6mhXDy8h1DOSaJXXyI6mZYy1xav0=; b=D5eSV8tD66CAy1FlAKXzsOthF3
-	ySHf+dVSbKnEPwoznpwq/Bv9ZWzDp1jgP/hTDaI3bXxzNC5hN2zW8M4+wvHLn9Z2kw4r30723LdMe
-	F3sjvG86+xaMKncJ2m0gB2DdQwhlBoB4X/AIKi1e5utpP/6iFrdLLbF0a+5KT3/nw/r2YiOH5PGHi
-	/OuCGlBh1RIuiHRrOoHAXn1tWdlTq40GOg4B724Eqr+gokQozt7SdUZZtYtMYGJrsksRitMD0y7rH
-	30D0Yk2itjP24Pl19KU7IwgknhukKoYB5HrbQZTqbK1iZKWMmvH+WTEcH5hh2Jc7yRhkWSYEceoiQ
-	v1TELLxw==;
-Received: from [189.7.87.79] (helo=[192.168.0.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uXdbN-00CNw6-Gr; Fri, 04 Jul 2025 12:25:05 +0200
-Message-ID: <68b4d53f-a185-4e11-af1e-532fc45cb8b2@igalia.com>
-Date: Fri, 4 Jul 2025 07:24:46 -0300
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tGy7O1TW"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250704130920epoutp01c93c570db1134ce91ad9170518aaab8a~PDlo75Ys_2441224412epoutp01F
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Jul 2025 13:09:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250704130920epoutp01c93c570db1134ce91ad9170518aaab8a~PDlo75Ys_2441224412epoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751634560;
+	bh=7ZXkeb6eFkBOPADQFZ6Ugr+b8t74NHRMQP7v0mRURjs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=tGy7O1TWZRAGFzE9c5zCBfJ0EWJB9ZW168DlwGplfHmJMdkgUweVwdg8Ma0qOU969
+	 owlFoU46WtVhNOXjrual6QCRz/QaeuITxMMQwP4EEnKVB6rxrE9Z3bslWmSbEaCWxw
+	 FgEOg93qp+uo6zw0nVsaku9VYF6FtZbxTtgieNXE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250704130919epcas5p19ebf1ad617b18e718d49ca531405bd15~PDlna0mq20316103161epcas5p13;
+	Fri,  4 Jul 2025 13:09:19 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bYYqx3J2Dz2SSKX; Fri,  4 Jul
+	2025 13:09:17 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250704130916epcas5p2ccff0f947268712a35e5e80977bf5806~PDllQx00_1901719017epcas5p21;
+	Fri,  4 Jul 2025 13:09:16 +0000 (GMT)
+Received: from INBRO001561 (unknown [107.122.12.6]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250704130913epsmtip1efc9beeb49ba18d5c56da5d5c629e5c4~PDligOFVO0201502015epsmtip1b;
+	Fri,  4 Jul 2025 13:09:13 +0000 (GMT)
+From: "Pankaj Dubey" <pankaj.dubey@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Shradha Todi'"
+	<shradha.t@samsung.com>, "'Rob Herring'" <robh@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-fsd@tesla.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
+	<kw@linux.com>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
+	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>
+In-Reply-To: <5ea33054-8a08-4bb3-81e7-d832c53979dc@kernel.org>
+Subject: RE: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
+ FSD SoC
+Date: Fri, 4 Jul 2025 18:39:12 +0530
+Message-ID: <000101dbece4$d8694d80$893be880$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/80] drivers: drm: Remove redundant
- pm_runtime_mark_last_busy() calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Douglas Anderson <dianders@chromium.org>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Qiang Yu <yuq825@gmail.com>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Damon Ding <damon.ding@rock-chips.com>,
- Ayushi Makhija <quic_amakhija@quicinc.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- imx@lists.linux.dev, lima@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFUClgbainc6hQuKSBO0V8ttZVgkwGg1JXJAfs/ltABn1f9rAD4JQ8bAeFf3fQB1zUu0wGsyVLstNTsxXA=
+Content-Language: en-us
+X-CMS-MailID: 20250704130916epcas5p2ccff0f947268712a35e5e80977bf5806
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03
+References: <20250625165229.3458-1-shradha.t@samsung.com>
+	<CGME20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03@epcas5p3.samsung.com>
+	<20250625165229.3458-8-shradha.t@samsung.com>
+	<20250627211721.GA153863-robh@kernel.org>
+	<02af01dbea78$24f01310$6ed03930$@samsung.com>
+	<f877b3d7-d770-4424-9813-da748775f456@kernel.org>
+	<02bf01dbea8c$fc835cb0$f58a1610$@samsung.com>
+	<5ea33054-8a08-4bb3-81e7-d832c53979dc@kernel.org>
 
-Hi Sakari,
 
-On 04/07/25 04:54, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
 
-[...]
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Thursday, July 3, 2025 1:48 AM
+> To: Shradha Todi <shradha.t=40samsung.com>; 'Rob Herring'
+> <robh=40kernel.org>
+> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-phy=40lists.infradead.org; linux-fsd=40te=
+sla.com;
+> mani=40kernel.org; lpieralisi=40kernel.org; kw=40linux.com;
+> bhelgaas=40google.com; jingoohan1=40gmail.com; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; alim.akhtar=40samsung.com; vkoul=40kernel.org;
+> kishon=40kernel.org; arnd=40arndb.de; m.szyprowski=40samsung.com;
+> jh80.chung=40samsung.com; pankaj.dubey=40samsung.com
+> Subject: Re: =5BPATCH v2 07/10=5D dt-bindings: phy: Add PHY bindings supp=
+ort for
+> FSD SoC
+>=20
+> On 01/07/2025 15:35, Shradha Todi wrote:
+> >>> does not support auto adaptation so we need to tune the PHYs
+> >>> according to the use case (considering channel loss, etc). This is
+> >>> why we
+> >>
+> >> So not same? Decide. Either it is same or not, cannot be both.
+> >>
+> >> If you mean that some wiring is different on the board, then how does
+> >> it differ in soc thus how it is per-soc property? If these are
+> >> use-cases, then how is even suitable for DT?
+> >>
+> >> I use your Tesla FSD differently and then I exchange DTSI and compatib=
+les?
+> >>
+> >> You are no describing real problem and both binding and your
+> >> explanations are vague and imprecise. Binding tells nothing about it,
+> >> so it is example of skipping important decisions.
+> >>
+> >>> have 2 different SW PHY initialization sequence depending on the
+> >>> instance number. Do you think having different compatible (something
+> >>> like
+> >>> tesla,fsd-pcie-phy0 and tesla,fsd-pcie-phy1) and having phy ID as
+> >>> platform data is okay in this case? I actually took reference from fi=
+les like:
+> >>
+> >> And in different use case on same soc you are going to reverse
+> >> compatibles or instance IDs?
+> >>
+> >
+> > Even though both the PHYs are exactly identical in terms of hardware,
+> > they need to be programmed/initialized/configured differently.
+> >
+> > Sorry for my misuse of the word =22use-case=22. To clarify, these
+> > configurations will always remain the same for FSD SoC even if you use =
+it
+> differently.
+> >
+> > I will use different compatibles for them as I understand that it is
+> > the best option.
+>=20
+> I still do not see the difference in hardware explained.
+>=20
 
-> diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
-> index bb09df5000bd..11ec7e913974 100644
-> --- a/drivers/gpu/drm/vc4/vc4_v3d.c
-> +++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-> @@ -153,7 +153,6 @@ vc4_v3d_pm_put(struct vc4_dev *vc4)
->   
->   	mutex_lock(&vc4->power_lock);
->   	if (--vc4->power_refcount == 0) {
-> -		pm_runtime_mark_last_busy(&vc4->v3d->pdev->dev);
->   		pm_runtime_put_autosuspend(&vc4->v3d->pdev->dev);
->   	}
+Hi Krzysztof=20
 
-Nit: please, drop the curly braces.
+Let me add more details and see if that makes sense to understand the inten=
+tion
+behind the current design of the PHY driver.
 
->   	mutex_unlock(&vc4->power_lock);
+In FSD SoC, the two PHY instances, although having identical hardware desig=
+n and
+register maps, are placed in different locations (Placement and routing) in=
+side the
+SoC and have distinct PHY-to-Controller topologies.=20
 
-For vc4,
+One instance is connected to two PCIe controllers, while the other is conne=
+cted to
+only one. As a result, they experience different analog environments, inclu=
+ding
+varying channel losses and noise profiles.
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
+Since these PHYs lack internal adaptation mechanisms and f/w based tuning,
+manual register programming is required for analog tuning, such as equaliza=
+tion,
+de-emphasis, and gain. To ensure optimal signal integrity, it is essential =
+to use different
+register values for each PHY instance, despite their identical hardware des=
+ign.
+This is because the same register values may not be suitable for both insta=
+nces due to
+their differing environments and topologies.
 
-Best Regards,
-- Maíra
+Do let us know if this explains the intention behind separate programming s=
+equence
+for both instance of the PHY?
+
+Thanks,
+Pankaj Dubey
+> Best regards,
+> Krzysztof
+
