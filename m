@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692A70813;
-	Sat,  5 Jul 2025 08:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2140123AD;
+	Sat,  5 Jul 2025 08:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751703981; cv=none; b=pzV4r2JIudo/WXt9wjLMnFaCWDlqD16gzH5aVs5AHotHF69SOwKC/pYGkd91vkSzXhce+QCfbPDDYM7svTy5HRkzkF5Tv7dzkR//PQYv9L+JO2J0rCWaBcwgV31cGiI3V9jxW1QQ72V28WqYD5Tec4GxaIy2De83mDwvOIvX1Kg=
+	t=1751704513; cv=none; b=ucvrdI27mIKlQko/7fmtkE1O2IqoVCx41sXCRksw42APkuDR7dsiEkG9tJa9i2vmPvwgYG9b8YcG/8r4obydNC2AHfQp5xsiyb94ocZoc+pvYrS0+Z+LiLdfnIfNVxsn14iGvrsqKkxbF0YxFsh7m/CXjMGlLABbibEb+aRnizY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751703981; c=relaxed/simple;
-	bh=2vWcb12LUeJ5TfO3TZX3nCMIRZ8f2vaeQ78pRRCXp9M=;
+	s=arc-20240116; t=1751704513; c=relaxed/simple;
+	bh=OoZzuOzHiyo+cy87MtB1w+pqJRHbH3QJTYkmSakBpTs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jni2fzfnVSQHqDAc0ojsRFmjDL9PEryTv8k6J2vLlyghdkKfCBEsCzxbpdHzmAx8JN00+PJBWs/MWQHkcRt4n7ggoOK+QV3R9y8zczinj0vjoVc7vWk8L6n0xK9rw/t1cbNrxm8a8FaNuWHalFXo1VetACWCg1CXXlyi6gsCS+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eITODc6S; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=mQMKIW5LqlqzDsRYJSAp/9BRxDoUmDuZnKasQhrGkvEUP/hlrj9RMWs35foUpog5AKylbEpqH2iVlP3004IZz0Pi+E0RTe5G1676aMCmhf/4LpGHKo4H/VmmN4RxFZEUZ6mYznIghkJ2NF8wuYNeIwu+PHUPLXFaAzPwX4lqdpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfYGpn1i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eITODc6S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D03C4CEE7;
-	Sat,  5 Jul 2025 08:26:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfYGpn1i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A06CC4CEE7;
+	Sat,  5 Jul 2025 08:35:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751703980;
-	bh=2vWcb12LUeJ5TfO3TZX3nCMIRZ8f2vaeQ78pRRCXp9M=;
+	s=k20201202; t=1751704512;
+	bh=OoZzuOzHiyo+cy87MtB1w+pqJRHbH3QJTYkmSakBpTs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eITODc6SCZ78tC55ViK2fVrf/YVVg0ep23VuzHQeo7NFw2JfHhD/c2ppMBR/oK6x7
-	 mEAW++Ol4ZXewwqYJTeER27toMOxSr1z29HT2ROebB1UUzPXm5mmscjuspXBO3U87f
-	 wg2b7jTdX6eTZrQTFotjYYkGTkE+smGgj+ChsFMFhFeDFf+uz3kyCVJgExKF25US/y
-	 xI8xofYeoyv2I0ZwJbi6wqPHiveig5iqZuzpUe5hzx4MNmDjWMe/xjFikG/ral+MV7
-	 imvcECnz9ApJlBd/gXwfjRTo0098MAh15NT061XuvBo/6BmsoE6gQSXx4SxM51Oj9n
-	 BqYr+M9o4ZM3Q==
-Message-ID: <8ea1e2a2-96d2-47b6-8f8d-74fd2971db9e@kernel.org>
-Date: Sat, 5 Jul 2025 10:26:16 +0200
+	b=dfYGpn1iZAqx9EC2NttuDf/5YVjRJ9aW/yOg7faIOBFaC9CcEsgzZ3+EhKjU6LI4t
+	 3Ejq330Hjt0Otqvbx9AEORN4FbORQ4rKMYjGapz1gXIRVZOCC+L2OWv6we8pZ7Nvig
+	 SXX1ePuTYF0iztwFZCl/jDEzNgYNzZt7SEpIDpBHxlRpSFDGwjf8TsXl+g4S5qqaRZ
+	 gM9DkJUVYGEURTQrrYLqimK77PB+ssAYScm6NvXVkj6LPRJdGT3rgVdDX/yzpdASzN
+	 0LDd6GqLJQdRzEfKwB5ThRw8+Ggq8rkmyn62BxaBCPjg9TTRa7ujDafp3/Z/ZNfTXq
+	 zG8ODMGGhMrug==
+Message-ID: <ff887aaf-966a-41ff-a905-f791820136fd@kernel.org>
+Date: Sat, 5 Jul 2025 10:35:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] phy: exynos-mipi-video: correct cam0 sysreg
- compatible for exynos7870
+Subject: Re: [PATCH 2/2] phy: exynos-mipi-video: allow skipping absent PHYs
 To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
  Alim Akhtar <alim.akhtar@samsung.com>,
@@ -44,7 +43,7 @@ To: Kaustabh Chakraborty <kauschluss@disroot.org>,
 Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org>
- <20250627-exynos7870-mipi-phy-fix-v1-1-2eefab8b50df@disroot.org>
+ <20250627-exynos7870-mipi-phy-fix-v1-2-2eefab8b50df@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,21 +89,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250627-exynos7870-mipi-phy-fix-v1-1-2eefab8b50df@disroot.org>
+In-Reply-To: <20250627-exynos7870-mipi-phy-fix-v1-2-2eefab8b50df@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/06/2025 22:01, Kaustabh Chakraborty wrote:
-> Fix the cam0 sysreg compatible (samsung,cam0-sysreg), which has been
-> erroneously declared as samsung,cam-sysreg. This follows the same
-> compatible name used in Exynos5433 PHY.
+>  
+>  struct mipi_phy_device_desc {
+> -	int num_phys;
+>  	int num_regmaps;
+>  	const char *regmap_names[EXYNOS_MIPI_REGMAPS_NUM];
+>  	struct exynos_mipi_phy_desc {
+> +		bool present;
+>  		enum exynos_mipi_phy_id	coupled_phy_id;
+>  		u32 enable_val;
+>  		unsigned int enable_reg;
+> @@ -54,10 +54,9 @@ struct mipi_phy_device_desc {
+>  static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
+>  	.num_regmaps = 1,
+>  	.regmap_names = {"syscon"},
+> -	.num_phys = 4,
+>  	.phys = {
+> -		{
+> -			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
+> +		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
 
-That's not a compatible, but property name from the binding. With fixing
-commit msg:
 
+This should be a separate change... but overall I don't like existing
+idea and I think your change is a reason to fix actual code style issue:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+It is expected that each variant will define static const array and then
+you assign in:
 
+static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
+	.phys = exynos5420_mipi_phys_data
+}
+
+which means:
+1. You don't waste space for unused entries (now you always allocate 5
+entries, even if you have one phy)
+2. You can count them easily - ARRAY_SIZE
+3. Index in the array won't the the phy ID, so you need a separate ID
+member for that
+4. You do not need this odd 'present' field, because really code which
+is not initalized should mean 'not present' and it should be never
+needed to initialize additionally to indicate 'yes, I do exist' beyond
+basic initializations.
 
 Best regards,
 Krzysztof
