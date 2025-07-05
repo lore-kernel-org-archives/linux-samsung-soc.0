@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E822E3706;
-	Sat,  5 Jul 2025 07:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692A70813;
+	Sat,  5 Jul 2025 08:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751701688; cv=none; b=uKf72bGlOsJ8pxDvlGdMJhYony5kCEynRIvbZg+wgz8ZphbCjIgwXVITyjlMH//6HfdYOMPtqouqjqOjn/jVkaZZ5aWmKb5Aq1bMAQ3hlqhyeBgDftEzmPOccVnmRTqaoaoYL55RH/nE4gVOnu53MmR5IboJJYQDJTDulK56uW0=
+	t=1751703981; cv=none; b=pzV4r2JIudo/WXt9wjLMnFaCWDlqD16gzH5aVs5AHotHF69SOwKC/pYGkd91vkSzXhce+QCfbPDDYM7svTy5HRkzkF5Tv7dzkR//PQYv9L+JO2J0rCWaBcwgV31cGiI3V9jxW1QQ72V28WqYD5Tec4GxaIy2De83mDwvOIvX1Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751701688; c=relaxed/simple;
-	bh=++KifqUfbYRvRlxKq94CtWj3DurfyheFMkPt0HzHSS8=;
+	s=arc-20240116; t=1751703981; c=relaxed/simple;
+	bh=2vWcb12LUeJ5TfO3TZX3nCMIRZ8f2vaeQ78pRRCXp9M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8pkgQd7hfzgBi59tRTKMa8ZatIt+olIHygR2iKEwN569ZnpGMhXQoLTPaXeAL5GeG6Xnam+UTvlF0vGgJd5RTVhi6lX9ezCYnQRTKDJPloe3Gctl6Y1jQsJd+tKFNmi+KrP6MzSu6uqGUJdCJC+iTqOQP93Z+DNciEpM9QOpQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwOrt+Ig; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=jni2fzfnVSQHqDAc0ojsRFmjDL9PEryTv8k6J2vLlyghdkKfCBEsCzxbpdHzmAx8JN00+PJBWs/MWQHkcRt4n7ggoOK+QV3R9y8zczinj0vjoVc7vWk8L6n0xK9rw/t1cbNrxm8a8FaNuWHalFXo1VetACWCg1CXXlyi6gsCS+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eITODc6S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwOrt+Ig"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80AC9C4CEE7;
-	Sat,  5 Jul 2025 07:48:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eITODc6S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D03C4CEE7;
+	Sat,  5 Jul 2025 08:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751701687;
-	bh=++KifqUfbYRvRlxKq94CtWj3DurfyheFMkPt0HzHSS8=;
+	s=k20201202; t=1751703980;
+	bh=2vWcb12LUeJ5TfO3TZX3nCMIRZ8f2vaeQ78pRRCXp9M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XwOrt+IgliAniBEBc4gFPxJ578ZUpSpB0ZK/DsLMONEgCpv6ktjGBkBZBmEj2x8IG
-	 AKhdBRCnM4pizAErq8zdelPXLzqWdu3K3PS4dSSyoINnJiqmqY8tgTv0HKzBXHAvpZ
-	 PvFxLeJU8Lm9ZuEj6/TQUH8qrdIQd1/YCp5FQcUl0SwSttZU6cIgdUFQ09wF4h5wk6
-	 P5HkSlj0crED3ZIEPnM7MKda1jkCA7JWfBBZOCyXFEMpzZjQNXVyNwFRCpGIShnxob
-	 y/5xDnpgaEydh1QfZ2aeEb3Z6HXpA5jC5U/+WdGeOIfZyzCnk7d4hvB8jeIZsKxVeg
-	 y8sfU5BREOUBg==
-Message-ID: <a2fec2cf-46e2-4436-adc2-8f555a558929@kernel.org>
-Date: Sat, 5 Jul 2025 09:47:56 +0200
+	b=eITODc6SCZ78tC55ViK2fVrf/YVVg0ep23VuzHQeo7NFw2JfHhD/c2ppMBR/oK6x7
+	 mEAW++Ol4ZXewwqYJTeER27toMOxSr1z29HT2ROebB1UUzPXm5mmscjuspXBO3U87f
+	 wg2b7jTdX6eTZrQTFotjYYkGTkE+smGgj+ChsFMFhFeDFf+uz3kyCVJgExKF25US/y
+	 xI8xofYeoyv2I0ZwJbi6wqPHiveig5iqZuzpUe5hzx4MNmDjWMe/xjFikG/ral+MV7
+	 imvcECnz9ApJlBd/gXwfjRTo0098MAh15NT061XuvBo/6BmsoE6gQSXx4SxM51Oj9n
+	 BqYr+M9o4ZM3Q==
+Message-ID: <8ea1e2a2-96d2-47b6-8f8d-74fd2971db9e@kernel.org>
+Date: Sat, 5 Jul 2025 10:26:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,27 +35,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
- FSD SoC
-To: Pankaj Dubey <pankaj.dubey@samsung.com>,
- 'Shradha Todi' <shradha.t@samsung.com>, 'Rob Herring' <robh@kernel.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-fsd@tesla.com, mani@kernel.org, lpieralisi@kernel.org, kw@linux.com,
- bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
- kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
- jh80.chung@samsung.com
-References: <20250625165229.3458-1-shradha.t@samsung.com>
- <CGME20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03@epcas5p3.samsung.com>
- <20250625165229.3458-8-shradha.t@samsung.com>
- <20250627211721.GA153863-robh@kernel.org>
- <02af01dbea78$24f01310$6ed03930$@samsung.com>
- <f877b3d7-d770-4424-9813-da748775f456@kernel.org>
- <02bf01dbea8c$fc835cb0$f58a1610$@samsung.com>
- <5ea33054-8a08-4bb3-81e7-d832c53979dc@kernel.org>
- <000101dbece4$d8694d80$893be880$@samsung.com>
+Subject: Re: [PATCH 1/2] phy: exynos-mipi-video: correct cam0 sysreg
+ compatible for exynos7870
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org>
+ <20250627-exynos7870-mipi-phy-fix-v1-1-2eefab8b50df@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,97 +90,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000101dbece4$d8694d80$893be880$@samsung.com>
+In-Reply-To: <20250627-exynos7870-mipi-phy-fix-v1-1-2eefab8b50df@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/07/2025 15:09, Pankaj Dubey wrote:
-> 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Thursday, July 3, 2025 1:48 AM
->> To: Shradha Todi <shradha.t@samsung.com>; 'Rob Herring'
->> <robh@kernel.org>
->> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-fsd@tesla.com;
->> mani@kernel.org; lpieralisi@kernel.org; kw@linux.com;
->> bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org;
->> conor+dt@kernel.org; alim.akhtar@samsung.com; vkoul@kernel.org;
->> kishon@kernel.org; arnd@arndb.de; m.szyprowski@samsung.com;
->> jh80.chung@samsung.com; pankaj.dubey@samsung.com
->> Subject: Re: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
->> FSD SoC
->>
->> On 01/07/2025 15:35, Shradha Todi wrote:
->>>>> does not support auto adaptation so we need to tune the PHYs
->>>>> according to the use case (considering channel loss, etc). This is
->>>>> why we
->>>>
->>>> So not same? Decide. Either it is same or not, cannot be both.
->>>>
->>>> If you mean that some wiring is different on the board, then how does
->>>> it differ in soc thus how it is per-soc property? If these are
->>>> use-cases, then how is even suitable for DT?
->>>>
->>>> I use your Tesla FSD differently and then I exchange DTSI and compatibles?
->>>>
->>>> You are no describing real problem and both binding and your
->>>> explanations are vague and imprecise. Binding tells nothing about it,
->>>> so it is example of skipping important decisions.
->>>>
->>>>> have 2 different SW PHY initialization sequence depending on the
->>>>> instance number. Do you think having different compatible (something
->>>>> like
->>>>> tesla,fsd-pcie-phy0 and tesla,fsd-pcie-phy1) and having phy ID as
->>>>> platform data is okay in this case? I actually took reference from files like:
->>>>
->>>> And in different use case on same soc you are going to reverse
->>>> compatibles or instance IDs?
->>>>
->>>
->>> Even though both the PHYs are exactly identical in terms of hardware,
->>> they need to be programmed/initialized/configured differently.
->>>
->>> Sorry for my misuse of the word "use-case". To clarify, these
->>> configurations will always remain the same for FSD SoC even if you use it
->> differently.
->>>
->>> I will use different compatibles for them as I understand that it is
->>> the best option.
->>
->> I still do not see the difference in hardware explained.
->>
-> 
-> Hi Krzysztof 
-> 
-> Let me add more details and see if that makes sense to understand the intention
-> behind the current design of the PHY driver.
-> 
-> In FSD SoC, the two PHY instances, although having identical hardware design and
-> register maps, are placed in different locations (Placement and routing) inside the
-> SoC and have distinct PHY-to-Controller topologies. 
-> 
-> One instance is connected to two PCIe controllers, while the other is connected to
-> only one. As a result, they experience different analog environments, including
-> varying channel losses and noise profiles.
-> 
-> Since these PHYs lack internal adaptation mechanisms and f/w based tuning,
-> manual register programming is required for analog tuning, such as equalization,
-> de-emphasis, and gain. To ensure optimal signal integrity, it is essential to use different
-> register values for each PHY instance, despite their identical hardware design.
-> This is because the same register values may not be suitable for both instances due to
-> their differing environments and topologies.
-> 
-> Do let us know if this explains the intention behind separate programming sequence
-> for both instance of the PHY?
-Thanks, it explains and it should be in binding description if you go
-with different compatible, but you should first check if existing
-properties do not describe these differences enough, e.g. num-lanes,
-max-link-speed.
+On 26/06/2025 22:01, Kaustabh Chakraborty wrote:
+> Fix the cam0 sysreg compatible (samsung,cam0-sysreg), which has been
+> erroneously declared as samsung,cam-sysreg. This follows the same
+> compatible name used in Exynos5433 PHY.
 
-equalization has its own properties for example.
+That's not a compatible, but property name from the binding. With fixing
+commit msg:
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
