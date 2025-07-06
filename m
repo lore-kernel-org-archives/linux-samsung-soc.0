@@ -1,40 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2241EB1AF;
-	Sun,  6 Jul 2025 18:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B052BCF67;
+	Sun,  6 Jul 2025 18:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751826381; cv=none; b=QbHlre1cpDMnnT0gDl3KKtO3MMqkF5WLdtwnO4Q2H4MsOUqcI/aQWxjoiy6E2Lb6gl15Y3m6rIL0PqfpcALXUbj8BA2P0zxOG4KwjCg86Dntgi/6VaLpkO9ARlCYSzpd6Plb3ot2wRcLzz6/u2pezXgWU13L9pglUMO2qmsdENk=
+	t=1751826387; cv=none; b=bGfEaJczMjfLprHZ6lYmfL5v02VI6LQsRub3evswrxXwtZCgos34rqEZx71zTQhbTBHo0J5PC5edJ0JdAjnK1tp7GMg3mIefSGtPSLrIJMVvD1zVLup1U+jPZkVD12M9tAETpW9YzJqcmPBOomwLeJ6N2stUngz13LOZsxG6b+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751826381; c=relaxed/simple;
-	bh=/yVlBK3lzKHbYCYl0PZiqbYZGWExt3hrCNM7yAG5SKs=;
+	s=arc-20240116; t=1751826387; c=relaxed/simple;
+	bh=9ukz1J1hpyoS4t+3L56en0gtBgQTrz9vCaRlVq/nDU0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PHpMeZlktJ1dyCKkgrH7LLDyb6FydhWpk0ECO6NNqeFKirumqnJ97zSLAxlbAWbWSq9OwfU0aDIptJNohTQua8voOzmc8iAvHH2TOIM5uoInzE9UwT4kDLEF2qkqLyI6om/ZJ3JVKNll+94r3CMlJpvdVbUQx1vUcOI3BJ12OoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=PuuZk7/B; arc=none smtp.client-ip=178.21.23.139
+	 In-Reply-To:To:Cc; b=YenxShL1/uGY+AHYwwudAuYe32odI5Qz4d498+g0dyBZV2eaLYzqsX1dPghtvebvLaD4UPYbqVH6dCUtt4VnrSe7LJC1I20LpWlTLPzKbHVWvmDTYuEutHIdRQkhUm735pHUC88sjLP1YcWLnKssuKG3Dad3v7aqRPlYoGQh8lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=I53m653J; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="PuuZk7/B"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="I53m653J"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id CDDE420F29;
-	Sun,  6 Jul 2025 20:26:17 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 77EB420D0D;
+	Sun,  6 Jul 2025 20:26:24 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id rl7io2hTU7H8; Sun,  6 Jul 2025 20:26:14 +0200 (CEST)
+ id O6wthDKFcM8y; Sun,  6 Jul 2025 20:26:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751826374; bh=/yVlBK3lzKHbYCYl0PZiqbYZGWExt3hrCNM7yAG5SKs=;
+	t=1751826383; bh=9ukz1J1hpyoS4t+3L56en0gtBgQTrz9vCaRlVq/nDU0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=PuuZk7/B9sYzIT6Sa12YMRpWqZAaCdVieFegUzi1E4tyKp4RGPNzGK15e/6Z6WVL0
-	 pxI2xevy0jNmx5H8drznvGt89zc6lsNqH0IU24A35OOcbo3xY9Ds9BZ9b/A23IqRh4
-	 r1ij9hUeA0N6kepk0apZ3Q2op24gyf0xLS0LIiNQ7aLZ9PRDLSLkDk7Y8oOCKjC+MP
-	 RBKtSHP10g/4zSQfrIlIKlRz19kxgvj8Yx9ZxzHimJWS/uXucTQ4CieMjOILg/Cmnv
-	 hgSZB2dMqUClI+XGoA1FV+i8LGHH+KK+a1rOXx9B4uUUIwh41Rhh5iclmJaCS6Hukb
-	 qyD4iRGo2CM8Q==
+	b=I53m653JSLlMVpKhfXIL/INukUGcP3l2QVTY08CkChgdRyHakBTFGEllc0UYgWNvw
+	 utHvMc5FSOQ4Au9v+B795EUIZ7aEUpvlmwLqILHkSiVJ/RKfJGhMPQCyuPv7Wo6rtD
+	 8Cs7v6RdxYTT4rSrnuT8c7Y1+N9NMu5astMSqYEU1O56m0GcyB7IqQ60Jg1if2CFNJ
+	 zry3aFWerisutCkc4nBMS0feUSrCZi/SZvJYetOcrWAYhtkCj4uVlVlK3sosvS+LJI
+	 OgiBxh+DmNVvsjJ8qO3XioTZzmHlYQGfYEtB0tl43my/RtL+xfStXGeYqxnEuP9KmH
+	 lFBlVBY+X7b8A==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Sun, 06 Jul 2025 23:55:36 +0530
-Subject: [PATCH v3 02/13] drm/bridge: samsung-dsim: add SFRCTRL register
+Date: Sun, 06 Jul 2025 23:55:37 +0530
+Subject: [PATCH v3 03/13] drm/bridge: samsung-dsim: add flag to control
+ header FIFO wait
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -43,7 +44,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250706-exynos7870-dsim-v3-2-9879fb9a644d@disroot.org>
+Message-Id: <20250706-exynos7870-dsim-v3-3-9879fb9a644d@disroot.org>
 References: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
 In-Reply-To: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
 To: Inki Dae <inki.dae@samsung.com>, 
@@ -65,86 +66,111 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, 
  Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751826342; l=2917;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751826342; l=3620;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=/yVlBK3lzKHbYCYl0PZiqbYZGWExt3hrCNM7yAG5SKs=;
- b=rg0Z6iPqzouiWIlP5bus/OmhjJawqb+W/hjlGRJWv3GSvNiAY+vrpywOhafwiijLkIXX9P0xf
- 26UKrMhccV4BXBuAKAbT3WgoSNcY87qZ0klfqXZg1Uiqjo3VsDXegQJ
+ bh=9ukz1J1hpyoS4t+3L56en0gtBgQTrz9vCaRlVq/nDU0=;
+ b=8Q8sNrH93Z5Tn1bADFeyu70w3ruBWFrgwoNwT+m6XOLoQiLsiE4t/o8kUymdL8qVp9Rih5rpS
+ ps6UI9M6CMWCuLb+v4IjPPdhp1gPTNtxnPkJ6XA6FcsYy2re1A/84yg
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Exynos7870 devices, enabling the display requires disabling
-standby by writing to the SFRCTRL register. Add the register and related
-bit values. Since this behavior isn't available on other SoCs, implement
-a flag in the driver data struct indicating the availability of this
-feature.
+Exynos7870's DSIM device doesn't require waiting for the header FIFO
+during a MIPI DSI transfer. Add a flag in the driver data in order to
+control said behavior.
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 16 ++++++++++++++++
+ drivers/gpu/drm/bridge/samsung-dsim.c | 15 ++++++++++++---
  include/drm/bridge/samsung-dsim.h     |  1 +
- 2 files changed, 17 insertions(+)
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 0b061ad0ecec158f994846da08fae59f74bfa091..dca3939dd99fa07aee309067b93e652bc9a9b78f 100644
+index dca3939dd99fa07aee309067b93e652bc9a9b78f..84af24171b6856cbcf95b9077b997ee587fc0409 100644
 --- a/drivers/gpu/drm/bridge/samsung-dsim.c
 +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -157,6 +157,11 @@
- #define DSIM_INT_RX_ECC_ERR		BIT(15)
- #define DSIM_INT_RX_CRC_ERR		BIT(14)
- 
-+/* DSIM_SFRCTRL */
-+#define DSIM_SFR_CTRL_STAND_BY		BIT(4)
-+#define DSIM_SFR_CTRL_SHADOW_UPDATE	BIT(1)
-+#define DSIM_SFR_CTRL_SHADOW_EN		BIT(0)
-+
- /* DSIM_FIFOCTRL */
- #define DSIM_RX_DATA_FULL		BIT(25)
- #define DSIM_RX_DATA_EMPTY		BIT(24)
-@@ -257,6 +262,7 @@ enum reg_idx {
- 	DSIM_PKTHDR_REG,	/* Packet Header FIFO register */
- 	DSIM_PAYLOAD_REG,	/* Payload FIFO register */
- 	DSIM_RXFIFO_REG,	/* Read FIFO register */
-+	DSIM_SFRCTRL_REG,	/* SFR standby and shadow control register */
- 	DSIM_FIFOCTRL_REG,	/* FIFO status and control register */
- 	DSIM_PLLCTRL_REG,	/* PLL control register */
- 	DSIM_PHYCTRL_REG,
-@@ -1037,6 +1043,7 @@ static void samsung_dsim_set_display_mode(struct samsung_dsim *dsi)
- 
- static void samsung_dsim_set_display_enable(struct samsung_dsim *dsi, bool enable)
+@@ -418,6 +418,7 @@ static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
+ 	.has_clklane_stop = 1,
+ 	.num_clks = 2,
+ 	.max_freq = 1000,
++	.wait_for_hdr_fifo = 1,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
+ 	.pll_p_offset = 13,
+@@ -438,6 +439,7 @@ static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
+ 	.has_clklane_stop = 1,
+ 	.num_clks = 2,
+ 	.max_freq = 1000,
++	.wait_for_hdr_fifo = 1,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
+ 	.pll_p_offset = 13,
+@@ -456,6 +458,7 @@ static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
+ 	.has_legacy_status_reg = 1,
+ 	.num_clks = 2,
+ 	.max_freq = 1000,
++	.wait_for_hdr_fifo = 1,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
+ 	.pll_p_offset = 13,
+@@ -474,6 +477,7 @@ static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
+ 	.has_clklane_stop = 1,
+ 	.num_clks = 5,
+ 	.max_freq = 1500,
++	.wait_for_hdr_fifo = 1,
+ 	.wait_for_reset = 0,
+ 	.num_bits_resol = 12,
+ 	.pll_p_offset = 13,
+@@ -492,6 +496,7 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+ 	.has_clklane_stop = 1,
+ 	.num_clks = 2,
+ 	.max_freq = 1500,
++	.wait_for_hdr_fifo = 1,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 12,
+ 	.pll_p_offset = 13,
+@@ -510,6 +515,7 @@ static const struct samsung_dsim_driver_data imx8mm_dsi_driver_data = {
+ 	.has_clklane_stop = 1,
+ 	.num_clks = 2,
+ 	.max_freq = 2100,
++	.wait_for_hdr_fifo = 1,
+ 	.wait_for_reset = 0,
+ 	.num_bits_resol = 12,
+ 	/*
+@@ -1117,6 +1123,7 @@ static void samsung_dsim_send_to_fifo(struct samsung_dsim *dsi,
  {
+ 	struct device *dev = dsi->dev;
+ 	struct mipi_dsi_packet *pkt = &xfer->packet;
 +	const struct samsung_dsim_driver_data *driver_data = dsi->driver_data;
- 	u32 reg;
+ 	const u8 *payload = pkt->payload + xfer->tx_done;
+ 	u16 length = pkt->payload_length - xfer->tx_done;
+ 	bool first = !xfer->tx_done;
+@@ -1157,9 +1164,11 @@ static void samsung_dsim_send_to_fifo(struct samsung_dsim *dsi,
+ 		return;
  
- 	reg = samsung_dsim_read(dsi, DSIM_MDRESOL_REG);
-@@ -1045,6 +1052,15 @@ static void samsung_dsim_set_display_enable(struct samsung_dsim *dsi, bool enabl
- 	else
- 		reg &= ~DSIM_MAIN_STAND_BY;
- 	samsung_dsim_write(dsi, DSIM_MDRESOL_REG, reg);
-+
-+	if (driver_data->has_sfrctrl) {
-+		reg = samsung_dsim_read(dsi, DSIM_SFRCTRL_REG);
-+		if (enable)
-+			reg |= DSIM_SFR_CTRL_STAND_BY;
-+		else
-+			reg &= ~DSIM_SFR_CTRL_STAND_BY;
-+		samsung_dsim_write(dsi, DSIM_SFRCTRL_REG, reg);
-+	}
- }
+ 	reg = get_unaligned_le32(pkt->header);
+-	if (samsung_dsim_wait_for_hdr_fifo(dsi)) {
+-		dev_err(dev, "waiting for header FIFO timed out\n");
+-		return;
++	if (driver_data->wait_for_hdr_fifo) {
++		if (samsung_dsim_wait_for_hdr_fifo(dsi)) {
++			dev_err(dev, "waiting for header FIFO timed out\n");
++			return;
++		}
+ 	}
  
- static int samsung_dsim_wait_for_hdr_fifo(struct samsung_dsim *dsi)
+ 	if (NEQV(xfer->flags & MIPI_DSI_MSG_USE_LPM,
 diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
-index d7877191bad155e877b2812daeb81ac0be6f735c..f0c1e5c5ed490afe0bcfd06830f52471710b29ea 100644
+index f0c1e5c5ed490afe0bcfd06830f52471710b29ea..62c07952bd00f9c2c287a6a998f0e243dd4032a9 100644
 --- a/include/drm/bridge/samsung-dsim.h
 +++ b/include/drm/bridge/samsung-dsim.h
-@@ -57,6 +57,7 @@ struct samsung_dsim_driver_data {
- 	unsigned int has_freqband:1;
- 	unsigned int has_clklane_stop:1;
- 	unsigned int has_broken_fifoctrl_emptyhdr:1;
-+	unsigned int has_sfrctrl:1;
+@@ -61,6 +61,7 @@ struct samsung_dsim_driver_data {
  	unsigned int num_clks;
  	unsigned int min_freq;
  	unsigned int max_freq;
++	unsigned int wait_for_hdr_fifo;
+ 	unsigned int wait_for_reset;
+ 	unsigned int num_bits_resol;
+ 	unsigned int pll_p_offset;
 
 -- 
 2.49.0
