@@ -1,113 +1,167 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AFB19DFB4;
-	Sun,  6 Jul 2025 18:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751826501; cv=none; b=Oif0x5NyNP0d1f4cG8xIjN4z6Odl4qSCQQ5ubvXeoh79vTex4Z0FyEpGAPo+UoxdkwXW6dJkJQ8ADOhd35I4b/qi3gz8sAv1CSdZwGbAG1cpzeSFGsTPKRTDAWICmDDlJlYy3K22BZhp7X7CcrJZXNwk6bqR/9cyBtJm25YStsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751826501; c=relaxed/simple;
-	bh=l4Nuu5usU3hvRSdSwV3bQf/gyHyhMjDbMhpD0WU6O88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d0mCinOf/AlJ5sEGlUBPS9f9IkbJ84OZ8Xg8U7KEir4zOi+jZdyPFNVHAQKMxHCKIW9fFAfSAc27LtGdnSzeSsyvND5OrWa18+ZthFgYjejicKm5kJG2X89j2WEQ5OApTxJqNH8Q4Kj5QoIk0dYj6GYGkKEHuIqGZ9/5u7uJ95g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mZeL7Azx; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A7119D8A3;
+	Sun,  6 Jul 2025 23:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751845247; cv=pass; b=KUb4GPhlQ/8MuT1OMRLa8NNzhD/K7it/bdQH+BgyCV3pFLYWYl5FAnY+6Bi8/4+126O+/afek2DqXnWxwHV/g7dInrkOT5eDwIG/pUyu+Wh/ajZD5aD4E6ga2eStdlb/bhMxyn2Xj/BpoeEwSovXD2eCl+W51Tx3LIiJZShyM7E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751845247; c=relaxed/simple;
+	bh=NkxOf7+BjgKmZX7jUZ3jfxcHO4ioeJ88sa6e9cbyLDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZbwumLSEummarwmRLkm1hOBAUYFA5iszWtk9GPFwRmjM2bf5oNbC03WxcwmqNCMRjIrPtQbauCWcyyT1yBn4U6oL5noCBIFQ2vSpe7ATjESbnp1uJDVtPfJmRaTsYlxmROCsprgkzRAgHkGMjKhkAr946ImmJmnKlHDGjjmgyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=PHP6uUKU; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mZeL7Azx"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 394C2252CB;
-	Sun,  6 Jul 2025 20:28:19 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id NKyM3LjktSyw; Sun,  6 Jul 2025 20:28:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751826498; bh=l4Nuu5usU3hvRSdSwV3bQf/gyHyhMjDbMhpD0WU6O88=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=mZeL7Azx9pvTBO/XZA+C2RRKe4dOY1p97G9izs0EGm5LBZqrFwaPc0Wkev6ftGWUI
-	 v8zK0D/VaIeWf9RegwftPWS2HmVyGSdl/LE7Jsc6OwcECpdfwMBu6xHu58n5UKDpRU
-	 Ri0DIqkztOP+IGAhj52jFH4ozUNHDBIdmkp7LxiD+aEhkTPylvE3UUvhzIwS4B27fB
-	 72/1YRGh1VgQl9UycaGx3Wz9GJnIwoxDlc523j/gcYMf8r59OY57EFVc1mZYaZxJ0s
-	 rtDq3HuI2Ru1fjIjkwp9+ADp+C1SbDalCxWlxlU4zwBp3Yy060mpP7J6hdFjCFT6ja
-	 0k99907zDMfTw==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Sun, 06 Jul 2025 23:55:47 +0530
-Subject: [PATCH v3 13/13] drm/exynos: dsi: add support for exynos7870
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="PHP6uUKU"
+ARC-Seal: i=1; a=rsa-sha256; t=1751845223; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fe4Wq1KSc3C9rtv0WoUmiWpsTCwvWig8dHjgLavQ2lB58K3Jk/pGTpd3b4x1Wdg2MGB2tYGQD9lHgvYLNcQKHPEkdiaBz7IqrBvbeyCMJOJnz3TlQJX+M4uh6DhjxR3mHQ583IjWMEqX68Ii9TRpxDfMOJBGiJpwy39LCnafvXA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751845223; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OkhH9IbTR9ruQ0dR5dB94E4BV7dQSG/wEWPibMZafbA=; 
+	b=U4TOnkhCu3os+mMAxmmjAEeK6lJQC7+ZvnvuihSKwPB71oFzLcLdeQuZ2wdNvgJdY9hVTPBPnseRZjVfE24h0Zi7daoRFmoNvLAFoPBwIo3GJEdPdkxQ67on+lwpfikYBUhk3COGtZaR9+VU6gOx53kNMBcdHlVFdJ8Fvo3vp0c=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751845223;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=OkhH9IbTR9ruQ0dR5dB94E4BV7dQSG/wEWPibMZafbA=;
+	b=PHP6uUKU7p+zdqQcQCUB7B3GzsHJfLj3AA0qA9RAG76Jtn0j7m8wN5uSEMumn+KM
+	TaLnYdeNZRJlKnRcqKdg+3L/1z6U3Qb425zKwq1wX8EnHSuFP+YJaAXScr3Q9nValRm
+	KKe191Xbi5imrkWtAZMjMv3/QyFTOJis7OM5pFUs=
+Received: by mx.zohomail.com with SMTPS id 175184522081850.59797125193427;
+	Sun, 6 Jul 2025 16:40:20 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 00041180F14; Mon, 07 Jul 2025 01:40:15 +0200 (CEST)
+Date: Mon, 7 Jul 2025 01:40:15 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: t.antoine@uclouvain.be, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
+Message-ID: <zc7kbscxpwjkqypichbroxpthnrajjn55gttapmugscloccqdz@y336iasbb3w5>
+References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
+ <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
+ <4cahu6dog7ly4ww6xyjmjigjfxs4m55mrnym2bjmzskscfvk34@guazy6wxbzfh>
+ <aGbkLIFkMlihbJUt@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250706-exynos7870-dsim-v3-13-9879fb9a644d@disroot.org>
-References: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
-In-Reply-To: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
-To: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751826342; l=1284;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=l4Nuu5usU3hvRSdSwV3bQf/gyHyhMjDbMhpD0WU6O88=;
- b=uKy2IIutBFRwXBDbPmTpTTgEzxdiT2/Opbe2OKCOjqx5XHG89DV2J+xbzI2b9Mm/K/8YTadQw
- EknlV+5ZTEyBc+yw2IZyXBw3+87K4K7ojNREnlrUf3mdUjxIKSAKaMd
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="c4dm6iyzznajhm27"
+Content-Disposition: inline
+In-Reply-To: <aGbkLIFkMlihbJUt@duo.ucw.cz>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/251.827.75
+X-ZohoMailClient: External
 
-Add glue layer support for Exynos7870's DSIM IP bridge driver.
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+--c4dm6iyzznajhm27
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
+MIME-Version: 1.0
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 896a03639e2d9b80971d43aff540fc7fb9f005bd..c4d098ab7863890b2111742c07953c148304e4ec 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -154,6 +154,11 @@ static const struct samsung_dsim_plat_data exynos5433_dsi_pdata = {
- 	.host_ops = &exynos_dsi_exynos_host_ops,
- };
- 
-+static const struct samsung_dsim_plat_data exynos7870_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS7870,
-+	.host_ops = &exynos_dsi_exynos_host_ops,
-+};
-+
- static const struct of_device_id exynos_dsi_of_match[] = {
- 	{
- 		.compatible = "samsung,exynos3250-mipi-dsi",
-@@ -175,6 +180,10 @@ static const struct of_device_id exynos_dsi_of_match[] = {
- 		.compatible = "samsung,exynos5433-mipi-dsi",
- 		.data = &exynos5433_dsi_pdata,
- 	},
-+	{
-+		.compatible = "samsung,exynos7870-mipi-dsi",
-+		.data = &exynos7870_dsi_pdata,
-+	},
- 	{ /* sentinel. */ }
- };
- MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+Hi,
 
--- 
-2.49.0
+On Thu, Jul 03, 2025 at 10:12:28PM +0200, Pavel Machek wrote:
+> > > Other differences include the lack of V_BATT register to read the bat=
+tery
+> > > level. The voltage must instead be read from V_CELL, the lowest volta=
+ge of
+> > > all cells. The mask to identify the chip is different. The computatio=
+n of
+> > > the charge must also be changed to take into account TASKPERIOD, which
+> > > can add a factor 2 to the result.
+> > >=20
+> > > Add support for the MAX77759 by taking into account all of those
+> > > differences based on chip type.
+> > >=20
+> > > Do not advertise temp probes using the non-volatile memory as those a=
+re
+> > > not available.
+> > >=20
+> > > The regmap was proposed by Andr=E9 Draszik in
+> > >=20
+> > > Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e45=
+5a116.camel@linaro.org/
+> > >=20
+> > > Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> > > ---
+> > >  drivers/power/supply/max1720x_battery.c | 265 ++++++++++++++++++++++=
+++++++----
+> > >  1 file changed, 238 insertions(+), 27 deletions(-)
+> > >=20
+> > > diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/=
+supply/max1720x_battery.c
+> > > index 68b5314ecf3a234f906ec8fe400e586855b69cd9..c9ad452ada9d0a2a51f37=
+d04fd8c3260be522405 100644
+> > > --- a/drivers/power/supply/max1720x_battery.c
+> > > +++ b/drivers/power/supply/max1720x_battery.c
+> > > @@ -37,6 +37,7 @@
+> > >  #define MAX172XX_REPCAP			0x05	/* Average capacity */
+> > >  #define MAX172XX_REPSOC			0x06	/* Percentage of charge */
+> > >  #define MAX172XX_TEMP			0x08	/* Temperature */
+> > > +#define MAX172XX_VCELL			0x09	/* Lowest cell voltage */
+> > [...]
+> > >  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> > [...]
+> > > +			ret =3D regmap_read(info->regmap, MAX172XX_VCELL, &reg_val);
+> > > +			val->intval =3D max172xx_cell_voltage_to_ps(reg_val);
+> >=20
+> > I haven't reviewed this fully due to all the feedback you already
+> > got from Peter Griffin and the DT binding being broken, but something
+> > that catched my eye:
+> >=20
+> > POWER_SUPPLY_PROP_VOLTAGE_NOW provides the voltage of the whole
+> > battery and not of a single cell. E.g. a typical Li-Ion battery
+> > with two serial cells has a nominal voltage of roughly 7.4V while
+> > each cell has just 3.7V.
+>=20
+> Phones normally only have one cell...
 
+=2E.. and chips often support more and are used in all kind of devices.
+
+(Btw. some new high-end phones start to have 1S2P configuration)
+
+Greetings,
+
+-- Sebastian
+
+--c4dm6iyzznajhm27
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmhrCV8ACgkQ2O7X88g7
++ppJvRAAg7PAPwbCzrNitsQskPCm2wR7E5zX11wF6cw97Vs4cjsW1RVbWRpf+Chy
+QCEESLFfi2EVnFxE9I+Zrk0xhJ1MWiK84gHCpDMjXgiAM3xh49fzBS/l3GQd86G+
+Ss0kwxK3li/15hwltW2fqwMLtB43HEz+nfxy2E5QzxRodKm2PZFzWAI97/0h0Ygc
+ldoEPNJ2N2CKjPTF6Wx9Qt2CWHpF0QynX3uHiT4woBEH3a08jh3KX6JDFMeJ8jsN
+YX8dAT/IvoQ787Lwp6NBKgin+miTEk1eaxNI/0XLcTL/mjuuYY3mBWiv/9rW/NrN
+mFzQABShn0ZPV55EwwOyhwWkpqowoyzhEFe8vvBUAcYjPDAKWd4d0bFEBNJnyQWh
+gAukMdZkH3rCgoonf5q6qpsq50dXirTF1Pn5dxaleW6tnW0WHveH/sTlcsO9jNg7
+zqD3+hS8XrjTR1inZZeNk/Zpfdb8coDbUupU2UGlaAuoXPG8qV/f4+z5QgZUrGr9
+A7OjyPCvqvyRuQrRaQ++pIaHfoiMv0qInRkUO/4la7ypqG2fzROzTFmkwcqLPdLJ
+rM5AgkEY7hUsX52BhIUlxJYoCksa/Wm19Jy+K+vJg75kLvzyC74ANEZXfKz0/Oqi
+r7LhPJC+v8SsKRfgapLbq9Q/XrS9tsJa3JM1PqobO86gfgXbDIo=
+=e+oy
+-----END PGP SIGNATURE-----
+
+--c4dm6iyzznajhm27--
