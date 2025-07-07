@@ -1,111 +1,72 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E791F225793;
-	Mon,  7 Jul 2025 18:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5CB19E97B;
+	Mon,  7 Jul 2025 20:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751912364; cv=none; b=M67HhSvBjf7fyYi7LC6UsWtRmo/Zrdhk7gI3vteeU5kGUqZgbEWkcReeg/GqpUXuh++Ns3+McbDK13gNjQkt0qWh4/9TadnH8Dh8lXNq3mmQUr+oN910oA+j5jim4mKim65z7RIPsqBy3II0WBDnl7Bn4KSREy+0tXuoDnYiIBc=
+	t=1751919518; cv=none; b=AG7x8RxfsSXvfEF+R5RYSPpQzO7qfqzQZexIg/IcAwuWrynKVKLVUdW7qJ4HWFnp2zkv+doRYP3fZwVBzDlvgpV29FPl3qjnvLSHEcPKi7UqgAc8SgSwXNRqWU33L0fVcGMl42J+3IoWg/MFLozrrCc//uJX1TwDyAmOB154gjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751912364; c=relaxed/simple;
-	bh=p/dxjs15L0a5Sz3tQHqcixRBIuA7PAMaCm/nWUbvrek=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=pHt6zeHHfZ0weD4hi4WxRlGNoB0qpggMPNbEWE46GmMKMWUzL3F1egsvLANilweXFKuwbDT55XgIL+gRR3rPD6VtRda2Buts+bltHtNcYK6vTSls2jCLhTB0alF7IcbZHrznTlBLOM0jpGGKORJ/OtcTgv46dZEtpdS/2ADN7Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=T00pbbO+; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1751919518; c=relaxed/simple;
+	bh=MH6AW7DZ/+6oxcmK2lbp/E4s2yvinxh6tDS7lCW48ZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hT4p1rjG7muko/hJdwT4EjI+gTx88tBubTTxjlpD4gB8j9nvJ74QSo0ObAcNP307GD7t+BIrUVlPytOhgKrLpDS2BExCRiGCHQexeYAYTLdqlkMvidPw07PZz5xa0pBfY/Al546DEJcfMPMUGIGByKrwn7jWcZzNRdyynZgholU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jSR1FrsC; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="T00pbbO+"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 2AF6F2594D;
-	Mon,  7 Jul 2025 20:19:13 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id QOWxhEcrvivp; Mon,  7 Jul 2025 20:19:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751912352; bh=p/dxjs15L0a5Sz3tQHqcixRBIuA7PAMaCm/nWUbvrek=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=T00pbbO+jCdvdkvIOoT6jI7hss0OLTm99ZQjqyKP0L63hGzaxERsjIaztPSoaoORF
-	 1bJYYaStDXrDm/zv9bRXZce5ftZbkx23l4AEXDtrOymMtJhsbUjhm38jaX7O5wrPM2
-	 /UpYZ1axzfYs7RRBc2kG7fJ6FkyUHqIVB+8dCpzrkEKBmrWH5psxF0s206xVOUjuKE
-	 fKwMdeNUIththWg4Ux0gZLKiAL0HNGC3sy8lJPqFR1K2EtfxHzfAz4r3Tq2vG/tb9c
-	 qQiwDnl2UnKi8Px8Hgcz9jWGx/gAP771HIfkKehg+zgY26YirynXh2y9IOan+DWhKH
-	 vES+3MNw0y1yQ==
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jSR1FrsC"
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bbbCv3q9Hzm0yt2;
+	Mon,  7 Jul 2025 20:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1751919513; x=1754511514; bh=MH6AW7DZ/+6oxcmK2lbp/E4s
+	2yvinxh6tDS7lCW48ZU=; b=jSR1FrsCl2VS0dFJCuOShZLpG0WDsBAU0/hDbzeA
+	l39wESHmTAQftBnRGuphZAqsS/E2PJ1fbQ9oLv378acS3Ffph5wYOsCY0Smes2rY
+	BA1hahqSW6U0U1AIBSXluY6UQzf/ROej8ZP9GQux8jacZ2jGAVN/KsNrrsgQlq5Y
+	+vYkUfutjXKJ8DS/81QIcoOKKkatBJgIyVuL6COuUZSGaD52LPP+Vs20eN8Foihv
+	cvBJZhpBm2+hKEvpIFIsgmGYzOffRQRjpDTWQEh7ingXuV+1yDOUGGj+BBfNup7s
+	4g0jFstuvU87VKPYT15PWWxdgsgurgH20P58Iga1mtwwbQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id RmX8vjQgZHsO; Mon,  7 Jul 2025 20:18:33 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bbbCl74C8zm0yVD;
+	Mon,  7 Jul 2025 20:18:27 +0000 (UTC)
+Message-ID: <bac5f533-0513-4d59-98b8-de44a08daef3@acm.org>
+Date: Mon, 7 Jul 2025 13:18:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 07 Jul 2025 18:19:12 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: exynos-mipi-video: allow skipping absent PHYs
-In-Reply-To: <ff887aaf-966a-41ff-a905-f791820136fd@kernel.org>
-References: <20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org>
- <20250627-exynos7870-mipi-phy-fix-v1-2-2eefab8b50df@disroot.org>
- <ff887aaf-966a-41ff-a905-f791820136fd@kernel.org>
-Message-ID: <2153e31b0b15d2b5b630aa4c387dc4b3@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: exynos: call phy_notify_pmstate() from hibern8
+ callbacks
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2025-07-05 08:35, Krzysztof Kozlowski wrote:
-> On 26/06/2025 22:01, Kaustabh Chakraborty wrote:
->> 
->>  struct mipi_phy_device_desc {
->> -	int num_phys;
->>  	int num_regmaps;
->>  	const char *regmap_names[EXYNOS_MIPI_REGMAPS_NUM];
->>  	struct exynos_mipi_phy_desc {
->> +		bool present;
->>  		enum exynos_mipi_phy_id	coupled_phy_id;
->>  		u32 enable_val;
->>  		unsigned int enable_reg;
->> @@ -54,10 +54,9 @@ struct mipi_phy_device_desc {
->>  static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
->>  	.num_regmaps = 1,
->>  	.regmap_names = {"syscon"},
->> -	.num_phys = 4,
->>  	.phys = {
->> -		{
->> -			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
->> +		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
-> 
-> 
-> This should be a separate change... but overall I don't like existing
-> idea and I think your change is a reason to fix actual code style 
-> issue:
-> 
-> It is expected that each variant will define static const array and 
-> then
-> you assign in:
-> 
-> static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
-> 	.phys = exynos5420_mipi_phys_data
-> }
-> 
-> which means:
-> 1. You don't waste space for unused entries (now you always allocate 5
-> entries, even if you have one phy)
-> 2. You can count them easily - ARRAY_SIZE
-> 3. Index in the array won't the the phy ID, so you need a separate ID
-> member for that
-> 4. You do not need this odd 'present' field, because really code which
-> is not initalized should mean 'not present' and it should be never
-> needed to initialize additionally to indicate 'yes, I do exist' beyond
-> basic initializations.
-
-Weird, I don't know why had I even developed this patch. The 'issue' it
-fixes isn't even an issue. Oversight, I'll drop it I guess...
-
-> 
-> Best regards,
-> Krzysztof
+On 7/3/25 7:07 AM, Peter Griffin wrote:
+> Notify the ufs phy of the hibern8 link state so that it can program the
+> appropriate values.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
