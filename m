@@ -1,120 +1,111 @@
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7585B2135CE;
-	Mon,  7 Jul 2025 17:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E791F225793;
+	Mon,  7 Jul 2025 18:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751909067; cv=none; b=eqh8Kw8IFjBJOaSp+KRyy/FHtOigd+vrMRIvBmlIEDeTyebcyTMdthMgoFhwFiuNKH/S4ijhplpkGpzkN2cvfSYlf+BnDYJHgjhc/jDY6707yqhdJbjurnIFqKdL4SwJ4VJhDlNyfdU0spFDiVsDrgt0jFzKSXNnf3I8upMnpO4=
+	t=1751912364; cv=none; b=M67HhSvBjf7fyYi7LC6UsWtRmo/Zrdhk7gI3vteeU5kGUqZgbEWkcReeg/GqpUXuh++Ns3+McbDK13gNjQkt0qWh4/9TadnH8Dh8lXNq3mmQUr+oN910oA+j5jim4mKim65z7RIPsqBy3II0WBDnl7Bn4KSREy+0tXuoDnYiIBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751909067; c=relaxed/simple;
-	bh=LE5lOnV1r6sEYCrRLSbv+JwAGegUabn8yUwH1H/NhFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/BmhiHweptdiyEHBR/XD7VuYUt1H0xOu/Sd9fyEildJaiyup3sAd7WZms9bYx95HiBkd5ACF0s+dwaIVySENsMD+NkNFDAR6XX3E/7Jz1o4fvkjXlaqVZL2wHfZ31V83uMV9bWU/7zLxJuTzCMhSN3eiPRL5mO922/PMJei41M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=B0le2tee; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1751912364; c=relaxed/simple;
+	bh=p/dxjs15L0a5Sz3tQHqcixRBIuA7PAMaCm/nWUbvrek=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=pHt6zeHHfZ0weD4hi4WxRlGNoB0qpggMPNbEWE46GmMKMWUzL3F1egsvLANilweXFKuwbDT55XgIL+gRR3rPD6VtRda2Buts+bltHtNcYK6vTSls2jCLhTB0alF7IcbZHrznTlBLOM0jpGGKORJ/OtcTgv46dZEtpdS/2ADN7Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=T00pbbO+; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="B0le2tee"
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bbWLw2f9Xzm0ySS;
-	Mon,  7 Jul 2025 17:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751909061; x=1754501062; bh=69KTYEFmtifFl6F+XwfdQSIS
-	iwSApdb5o2AdPYlIDQM=; b=B0le2teessx03Mvotp6H2wWDVBfklJXHzPY2eRtu
-	2Kt6d89ZTST2ezD6vD14RsTtINUAq0oSWMMDI3XtQB4V0iUWUj1KTwSYrHUtpwkD
-	NJj89Hq3l8epZx91bp8ToczxTUi7k4EWGcC5WXjQVM2YxPM56nFSWSQeOjU/A6b6
-	ohV2h3a9MBLu0x9LYFV+cLXhdBjfLXIPpzb+fyEpibUTlWyW+CezVff+2u+nYSM4
-	z2Ec+QP8UoOoGWkRbAOyG0bHv2ay6JjwjR2UpBsXkODD1t7PoaEV4JxdBDCk7Vyy
-	HwKsIDXKBbezJ4wzpP/TwVFkHpBEjQUmEYfTzrPtMb2Thw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id vZUE9ek8VnuB; Mon,  7 Jul 2025 17:24:21 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bbWLc6BJ0zm0yTF;
-	Mon,  7 Jul 2025 17:24:08 +0000 (UTC)
-Message-ID: <970182d5-6b67-4b02-aa05-0485d0f801d6@acm.org>
-Date: Mon, 7 Jul 2025 10:24:06 -0700
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="T00pbbO+"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 2AF6F2594D;
+	Mon,  7 Jul 2025 20:19:13 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id QOWxhEcrvivp; Mon,  7 Jul 2025 20:19:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751912352; bh=p/dxjs15L0a5Sz3tQHqcixRBIuA7PAMaCm/nWUbvrek=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=T00pbbO+jCdvdkvIOoT6jI7hss0OLTm99ZQjqyKP0L63hGzaxERsjIaztPSoaoORF
+	 1bJYYaStDXrDm/zv9bRXZce5ftZbkx23l4AEXDtrOymMtJhsbUjhm38jaX7O5wrPM2
+	 /UpYZ1axzfYs7RRBc2kG7fJ6FkyUHqIVB+8dCpzrkEKBmrWH5psxF0s206xVOUjuKE
+	 fKwMdeNUIththWg4Ux0gZLKiAL0HNGC3sy8lJPqFR1K2EtfxHzfAz4r3Tq2vG/tb9c
+	 qQiwDnl2UnKi8Px8Hgcz9jWGx/gAP771HIfkKehg+zgY26YirynXh2y9IOan+DWhKH
+	 vES+3MNw0y1yQ==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: fix programming of HCI_UTRL_NEXUS_TYPE
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Seungwon Jeon <essuuj@gmail.com>,
- Avri Altman <avri.altman@wdc.com>, Kiwoong Kim <kwmad.kim@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 07 Jul 2025 18:19:12 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] phy: exynos-mipi-video: allow skipping absent PHYs
+In-Reply-To: <ff887aaf-966a-41ff-a905-f791820136fd@kernel.org>
+References: <20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org>
+ <20250627-exynos7870-mipi-phy-fix-v1-2-2eefab8b50df@disroot.org>
+ <ff887aaf-966a-41ff-a905-f791820136fd@kernel.org>
+Message-ID: <2153e31b0b15d2b5b630aa4c387dc4b3@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 7/7/25 10:05 AM, Andr=C3=A9 Draszik wrote:
-> On Google gs101, the number of UTP transfer request slots (nutrs) is
-> 32, and in this case the driver ends up programming the UTRL_NEXUS_TYPE
-> incorrectly as 0.
->=20
-> This is because the left hand side of the shift is 1, which is of type
-> int, i.e. 31 bits wide. Shifting by more than that width results in
-> undefined behaviour.
->=20
-> Fix this by switching to the BIT() macro, which applies correct type
-> casting as required. This ensures the correct value is written to
-> UTRL_NEXUS_TYPE (0xffffffff on gs101), and it also fixes a UBSAN shift
-> warning:
->      UBSAN: shift-out-of-bounds in drivers/ufs/host/ufs-exynos.c:1113:2=
-1
->      shift exponent 32 is too large for 32-bit type 'int'
->=20
-> For consistency, apply the same change to the nutmrs / UTMRL_NEXUS_TYPE
-> write.
->=20
-> Fixes: 55f4b1f73631 ("scsi: ufs: ufs-exynos: Add UFS host support for E=
-xynos SoCs")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->   drivers/ufs/host/ufs-exynos.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exyno=
-s.c
-> index 3e545af536e53e06b66c624ed0dc6dc7de13549f..f0adcd9dd553d2e630c75e8=
-c3220e21bc5f7c8d8 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -1110,8 +1110,8 @@ static int exynos_ufs_post_link(struct ufs_hba *h=
-ba)
->   	hci_writel(ufs, val, HCI_TXPRDT_ENTRY_SIZE);
->  =20
->   	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_RXPRDT_ENTRY_SIZE);
-> -	hci_writel(ufs, (1 << hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
-> -	hci_writel(ufs, (1 << hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
-> +	hci_writel(ufs, BIT(hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
-> +	hci_writel(ufs, BIT(hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
->   	hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
->  =20
->   	if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB)
+On 2025-07-05 08:35, Krzysztof Kozlowski wrote:
+> On 26/06/2025 22:01, Kaustabh Chakraborty wrote:
+>> 
+>>  struct mipi_phy_device_desc {
+>> -	int num_phys;
+>>  	int num_regmaps;
+>>  	const char *regmap_names[EXYNOS_MIPI_REGMAPS_NUM];
+>>  	struct exynos_mipi_phy_desc {
+>> +		bool present;
+>>  		enum exynos_mipi_phy_id	coupled_phy_id;
+>>  		u32 enable_val;
+>>  		unsigned int enable_reg;
+>> @@ -54,10 +54,9 @@ struct mipi_phy_device_desc {
+>>  static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
+>>  	.num_regmaps = 1,
+>>  	.regmap_names = {"syscon"},
+>> -	.num_phys = 4,
+>>  	.phys = {
+>> -		{
+>> -			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
+>> +		[EXYNOS_MIPI_PHY_ID_CSIS0] = {
+> 
+> 
+> This should be a separate change... but overall I don't like existing
+> idea and I think your change is a reason to fix actual code style 
+> issue:
+> 
+> It is expected that each variant will define static const array and 
+> then
+> you assign in:
+> 
+> static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
+> 	.phys = exynos5420_mipi_phys_data
+> }
+> 
+> which means:
+> 1. You don't waste space for unused entries (now you always allocate 5
+> entries, even if you have one phy)
+> 2. You can count them easily - ARRAY_SIZE
+> 3. Index in the array won't the the phy ID, so you need a separate ID
+> member for that
+> 4. You do not need this odd 'present' field, because really code which
+> is not initalized should mean 'not present' and it should be never
+> needed to initialize additionally to indicate 'yes, I do exist' beyond
+> basic initializations.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Weird, I don't know why had I even developed this patch. The 'issue' it
+fixes isn't even an issue. Oversight, I'll drop it I guess...
+
+> 
+> Best regards,
+> Krzysztof
