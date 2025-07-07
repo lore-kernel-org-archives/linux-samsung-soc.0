@@ -1,134 +1,109 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA8128A71E
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Jul 2025 08:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F747B3E1;
+	Mon,  7 Jul 2025 09:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751878334; cv=none; b=H15642AD9+s4iQJ8fMerk/Zw8culO/ep66LhoJSjDa2/FMvfX0rDVRuRcU3a0dbyy3uQRakRrCFrkdUx05QkdNPdTCDeLP+fXay/P0Q6RwI6fABuB6WVluEhPhYPzQ77nXUkqVdTV3cdt7bYmcd986E7Ik26DuDCrlcVkhXKlk4=
+	t=1751879788; cv=none; b=RxkUD0sS80ox+2Yk58dQz4IlKl5SAZk01vEkBLHRbcj+TZtcVqNul8201IFqrP0lrjX4vaoCceYpgUdLxd3JsiNHAEQ52ZX9uqI1dJjbvjiRnksy4iFH1x635G1kFsX8yy7+8cXIthglt+WN6x0RRIdOdcvzjxR8+seOaygSy8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751878334; c=relaxed/simple;
-	bh=NDVPiT3y/IEBQaw7UV/tz0okFb5sjvyKj7Prqist9Bk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VWGsi60cmTzz9TmbXFkOOhfBJCkJ0uYVoaiIF6ynzxHFJ7x9yhExvBpSsZu9QBj9fCaKXIS1QMCGFmznbJ/2mGL0N8FY1ATBA0dllx5ME4Nru3Gnag0hVDXA23RiTi5+03+14Wc5cdRV3UmnmqN60uFq3443JN7o7flmS41Z9fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fvqE07jI; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751879788; c=relaxed/simple;
+	bh=S+ERr6u3aNq9RU4g8j9HXu8p3MOcQKERi/Lynnvtfp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=quVCSr2d769gSluxZIN+XbuiZji4b1kPv1zeCIKW0AXyvB/Q3iCGh/MDjeIckv/EcEPEkz8x//3sNkAdvtDvta4Gs0MqDY5lBZoQIxaYKDq00w5WTRWNxDpz68cNAH+bWQe/knu1yAkzuJJrITuSevzaxUqB3Egtk0Dx/YndSVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFfkXcHS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fvqE07jI"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2ebb72384dbso797009fac.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2025 01:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751878332; x=1752483132; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NDVPiT3y/IEBQaw7UV/tz0okFb5sjvyKj7Prqist9Bk=;
-        b=fvqE07jIpvy4ifNW0ENVM5dM8uK9HHJEA7cAtS3tvy/2syphxGzcHiDj0jB/UKb476
-         cmUfcqrq+/gWOmz9amXLx0K8j/MCGQcmq3uj8FAizeNPpeimQ0BwqaITr2pMY/Ry3+VA
-         xPkZMqx1C4pocgEJPguG0d8TlgVHk0c5l2atN4NZxjgbDjlrVpSUSsWgviiRlNaIf/Rk
-         dzxrDoyjcxg8vu+l9HuuLnEPJ7vfs8VfDQUBmkpunc0nQsDMRAsUIucA2NEIiYsxK6xU
-         ycf1skxi0hFJGUi3whQVT6UMDajY8qRGQxRMa9bjfDbak23ZXhlI+YfWqTU0xXpvvrOM
-         y4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751878332; x=1752483132;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NDVPiT3y/IEBQaw7UV/tz0okFb5sjvyKj7Prqist9Bk=;
-        b=jFfvNLq21mwHlX1lN5aw5xiJzyZB1+9L4n6kn5Ea8kqkYANbGGRF+uMdEaQvpe18gx
-         VonH0tkZWlExQSluB3hutXpqRA8nhrkG+axYEZSl2UplmaFWgEIJ2USYoL9RO6y/IHqv
-         cmS1EPWOb+Tx05jPaZYWNQvly+1ksU1igeFID6VrN4Lgp/N6WZVp5gw3XHfr0HlM/3nQ
-         qB8pDmtL01pHuUzIuYwWUjHY0406n3rDmZl9ui7xJLQ7Ws8ttRpUcZsQfB2WKoKakBNC
-         z96BCFJ2IpbhgINsPYBqGTW288CwTV/P0dhtOO5F70il8IClEw/ZnaTv8TRjWQuLKKcX
-         EmNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqSpLBDKXXgIdV12BtQd4gZ1vNENeozzgLSMG8u4gpHoLTwObZajK4GEmuJO2Hxy35z+67WcY0y0fXle+xTFPwjA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8nDvFOSZ1AgZ+sCMsSzD7wUzM7fpEIpddXhSdz10dKvuh1g+w
-	rTaPY6L5jSVUlXXe/lAJ00d0kTPkataHqNDoYNq4ED/jJ12bwwYQ24HgPT2f5G0wvS6TvJScXon
-	G3BLz/zcMpvocZ+BnzF1vPf0RFyb/+M2MHQSqCp63SA==
-X-Gm-Gg: ASbGncuBeifMbnt0hUV8SMEJNOmLtEPYusLzq8WnWFO/CzO6P8pvzy7vmQuk579WKhg
-	edlYZ4EwTK7+98dmu5oqi2/RD4b0k3/UghdztzhTp118Ul00SWVsQx0RUHfDd8Bv91d6JKjQu9S
-	+bK5TwFP/KIdnTVgDocAzzLgq55G6LuNzfcpqi9TR15kYn
-X-Google-Smtp-Source: AGHT+IEj3geuDFpX++SDMrn/ji9XGPECs4W5y0PIqWxFAyffhSBGzwoeTrtt+GXfjptm1UQik2oIQixEFyIbodoYkeE=
-X-Received: by 2002:a05:6870:9687:b0:2d9:45b7:8ffc with SMTP id
- 586e51a60fabf-2f7afde4ee8mr5416161fac.3.1751878332040; Mon, 07 Jul 2025
- 01:52:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFfkXcHS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11355C4CEE3;
+	Mon,  7 Jul 2025 09:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751879787;
+	bh=S+ERr6u3aNq9RU4g8j9HXu8p3MOcQKERi/Lynnvtfp0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=TFfkXcHSonqw5qmGanS5rIltPbpecXINcniIKPTWwJrrjWmhcIN4ELgXMiC019IEG
+	 SD11bRN8XQv32cau+ovLfoHLk1WFFTIqfMvX+LFN7v5OibZ7NHO9JBo3dSByr/Vbbz
+	 k+IcNS1HvBuEMlhaeFRS8TloFeZV6MwSvKr/RfQ2PzyRwbmlz0QajYzvvguUT+FN8G
+	 XB+7sDhwL8MFSCCJZZPy+xORL9g2Rm7of3cOs2IcpMNBHplW1Jq7q7swBGDrwdiYDh
+	 QfgfdoKOx5ibNCu1RjeWBYgEhJCUShGdcDsJ3t62uIZ8fn5pSu62W8nBazmhnKzo/V
+	 5V0ag9bmn5iXg==
+Message-ID: <d4c85825-5979-43f4-8136-5b15c1691b52@kernel.org>
+Date: Mon, 7 Jul 2025 11:16:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
- <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
- <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com>
- <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be> <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
- <2e26f8f534284b280e9d5e8d4ae556a452e93ff5.camel@linaro.org>
-In-Reply-To: <2e26f8f534284b280e9d5e8d4ae556a452e93ff5.camel@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 7 Jul 2025 09:52:00 +0100
-X-Gm-Features: Ac12FXypfLDLEdnbrTBCEZv832mBaFKGNgc3VgFrnkzOkozoICaCDgwT3JcKDwQ
-Message-ID: <CADrjBPr_UY6LDxTqHAszC1nhq+qdV7OC5M2y+z2C2iwOKzqWYw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel <sre@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: rtc: s3c-rtc: add compatible for
+ exynosautov9
+To: Devang Tailor <dev.tailor@samsung.com>, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ inux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ faraz.ata@samsung.com
+References: <20250702052426.2404256-1-dev.tailor@samsung.com>
+ <CGME20250702051530epcas5p12b8c62aba9cc11dc8d13c65fb12b6c3c@epcas5p1.samsung.com>
+ <20250702052426.2404256-2-dev.tailor@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250702052426.2404256-2-dev.tailor@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andr=C3=A9
+On 02/07/2025 07:24, Devang Tailor wrote:
+> Add "samsung,exynosautov9-rtc" dedicated compatible for
+> on-chip RTC found in ExynosAutov9 SoC.
+> 
+> Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/rtc/s3c-rtc.yaml | 1 +
 
-On Mon, 7 Jul 2025 at 09:04, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> Hi,
->
-> On Mon, 2025-07-07 at 08:16 +0100, Peter Griffin wrote:
-> > Hi Thomas,
-> >
-> > On Tue, 24 Jun 2025 at 16:45, Thomas Antoine <t.antoine@uclouvain.be> w=
-rote:
-> >
-> > > I am unsure about what to do about this initalization, especially for=
- values
-> > > which slightly differ from the devicetree. I think for next version, =
-I
-> > > will have the same parameters be passed in the devicetree like androi=
-d.
-> >
-> > We don't really pass register values like the downstream driver is
-> > doing in the device tree. I think you will likely need to add a
-> > max77759-gs101-oriole compatible to the driver and then have the
-> > application specific values, and m5 gauge model algorithm as static
-> > info in the driver applied from the dedicated compatible. It would
-> > also be worth checking whether any more of those register values can
-> > be represented by the standard power-supply binding properties that
-> > already exist.
->
-> I believe these are likely battery specific values, and were obtained dur=
-ing
-> battery characterization by the vendor (or Maxim). They can change (with =
-a
-> different battery supplier etc, hence I don't think basing this on a
-> max77759-gs101-oriole would be correct here.
->
-> As we learned from the Pixel 6a battery updates, the same phone may use
-> batteries (e.g. from different suppliers).
->
-> Either it needs to know about the specific battery model, or the values
-> should be passed from DT in some way.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Some of the fg-params values are characterization values like
-QResidual, Rcomp0 and others. I hadn't really considered different
-batteries for the same phone model. Given that information I think one
-would need to investigate in more detail how downstream chooses what
-battery it has and what set of values to use.
-
-Thanks,
-
-Peter
+Best regards,
+Krzysztof
