@@ -1,432 +1,132 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD1815D1
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Jul 2025 07:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FEB285CBD
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Jul 2025 07:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751872590; cv=none; b=R/nOEdCmE/+OVtG3MtnhQGrptc4idl655nIhEjVL6SsubLM18lBwxBVMWtFdpPuwhWbR5RPTcQQy466GsGqFQkyGrP4h389l9n+KbSI6bn0pCAZySv2wTXxuG/CLhlEM3A+lMxkQ/Q086lOPZ2G0f1xmyVwI2LnR0sjtsQ1AxPM=
+	t=1751874126; cv=none; b=aLamfpoDIxxOWfXblqsdIcqzQsy/5RYFNho7WZQM+S35IWCxL2uvmH9pJ1XWc4Aa46H2yqO1B2ObUEzAQSh8UINAy+oCYv1mI9D+lVOp6aWQu2N64skP9g+wAo+VkFWF990QZDAOnTtWSZSA0hONi8IP9E2pVlkZ+0Xq1pdyncY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751872590; c=relaxed/simple;
-	bh=nXbsMvaba6aiUnJCHdwSQVfHA//I8drvmjZ0+Kh6WXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFnVNZ4rzpcCuWdBWx7pEtQrQiPPPfFK8bxvUwTA6sHwudyV1oOawCHVNteZysdty28eMsKIktXxDw6iTcwKVvy+FckzKcuYNNUAcBxkY2l/5T+/ofoKkFveY1px4e7oQclgEpdogtM3NHVt9XPbea7nqpo0eZJuqWnr/S0kaeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DdUQf8Lv; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751874126; c=relaxed/simple;
+	bh=2oKgQpwQgsPL+7EXCiATOc+S0pR2sm/0S4sqSSqcejc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GabOaH9qjzHrFTiRWyc74p/acZB96o1nfb/MjPiOs3QAwaLbQklFAqzRmEGD00/DXbAlItM51kQDXEUg2D2nEmhae7OBvwyPKIIZjiSP6Nj7w4Upm0tXg1Z0aG/JdDBdEk0cR+sEVAZSzMIOxbvoVx4fv2Rpestj2//TuRtsG08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=aiNFnkaw; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DdUQf8Lv"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73afbe1494fso1694958a34.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2025 00:16:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="aiNFnkaw"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-451d7b50815so21765085e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2025 00:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751872587; x=1752477387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qUP0DUWzm8NrO7MzcRs7sXfo7Dkll6lZPIJdSpwpNxY=;
-        b=DdUQf8Lvtu5no9eim0Pjr/rG+9Zf02pW8U3+zLX0Bo6HLrt7zk/tI8O3LNSEZ4Wt+T
-         /Qsu78UDDJ/vBwUBtL1G+YwbVfaR56EHMj+mMTUUU+Dsy42gQhTdFBxRRXVUpQ6piHit
-         +c/8myr61dKYzlQG/yzkMNYANmVvkXMuIGWkfPFSHhj35gSF+2iPdEg0Jhs0Ld4HR0aK
-         sJdMz5yorwWTy2Ck4F87r78DmzpkRg5HMqWokugVzLW0jW+FrpngZzcptdy6p/LnG7h4
-         +skeAQRd3NGh1XpODeVI4kIwME5VzhAUO5gOly4OW+c132ftUEQZM6zglMIHbz/NoFel
-         Z5Lg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751874124; x=1752478924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDb2QDDbYI7e1da4zOCjqVkWLKFqFwWgy3CDKFih7gw=;
+        b=aiNFnkaw0vNoS/Da3dzKI9kHaHzL9yx2Jwg9BguUOThYgoDU+tXR5H36aPt6TozXPd
+         iaLtNjb3ArE0V/+cmOQHxTJOzqaaUdgmErsAT8BKmM5e+HKyf3X/ieWmG7n6HBbcyT3g
+         yF7Cqf2Bo7bvS1NUs1JTWGwh1HoC32grNomSS473pgRrVBH5ANKHmoTfvU5T+ys91Kik
+         1FwTqftf5bHf/6o0xeNR/J/fTjrUd9y9TQdGseGJhDn+1vE/d7AOZmwVtioA85q5qzRC
+         jX6YSeeebndDo+nDMbcmQDFyd3UPvPsZM1jztt3c0/xdv+AqhywEuW9XELBeuKijMzua
+         VVWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751872587; x=1752477387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qUP0DUWzm8NrO7MzcRs7sXfo7Dkll6lZPIJdSpwpNxY=;
-        b=twxn0bwe/rz2aTsXCapdYdg55jpGsySWUzLJQTX069AlMFRhtUosoNf0us+GhZ/0S9
-         U+vj+seJ3fB6khZfRyd62iThAmw7dSa39TSR6wk2mT8gSDswHL9pYhG/mhjt8xqc+JtX
-         wfN22LScQIg3CnjPDsj7ixPSSIRFxQ0p4cI5zN0mXkSrZGSFtkm1vvgLMBQMQvK4j1PP
-         VeZVD1d+21ywh8d/Ipjw0eA796iI1LjSzekKhO5XMmVaKEoB73/smS/ZS5Am7wLzzvzZ
-         mJ8zcCYvTQMYkXy7DAjmwd/REtQd6l3ifLmK3b0lfhPG7bwccdFvunNWHRlQeJXxtt3r
-         FTbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFzm7zu5I255GUIxoUBnsWX3S2HdTyVQjlMb7SCuXPAwe/Bq6qVex9Np/3L0miiV7cNlkeOqrkG0ljGCBinkfwAQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Du8b9TSTukkKkladf+k9MYCQhPM1OKzUuwYUDtiHzmmz4qcn
-	y8O6bsGVXL0keUTDNCTBpdZ9SQsB/GhlDvH4I/5nnCYuaHZ4CxV/xzIv/UpUsZpkK3olauNz5w1
-	HiBtfa/qtl9uhAMuXQ3Fl5sF5KLJUCjyrNAeszzv6UQ==
-X-Gm-Gg: ASbGncv+2H2KL6bq2bey37j9xEiVFCafWuI06LXl0hAqKAidiW/u6MlXxue+n65XveC
-	NVUZH13enP06KhVc835QLF7xypuqAodTSJR0Er9rOllggHUIxl4LPFfhEaHp2XhsW0311z+eVLq
-	IrzylFwqIcWdD/+8NwK1iMCwmgmYy2cm5wEgeLLfcIZIBQ
-X-Google-Smtp-Source: AGHT+IFMyBczzKElrESwPhgOU1rzzIsdM3cnUOxQm2j1E9L8US6VNieQQzSWClkIoyTpdfs8LiptAVY3dmgeRyhMJ0M=
-X-Received: by 2002:a05:6830:6c81:b0:72b:9d8d:5881 with SMTP id
- 46e09a7af769-73ca672a595mr6343669a34.28.1751872586592; Mon, 07 Jul 2025
- 00:16:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751874124; x=1752478924;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bDb2QDDbYI7e1da4zOCjqVkWLKFqFwWgy3CDKFih7gw=;
+        b=Bd815rad2QF8si8Zx+2BK4/X4GMDhQV9bFFhoKtJcL9Ni3hmIRcVcuD4DtZMGHAG11
+         fHIEvVxDUKzhcqAUzzoGenQposmpuojzX7MHvA/TDJetBWZT/SLVIjMj2dcSk1hszF7k
+         UXJURKR/BDyGdO1PRXLLNFxLROgxror7TCfTEzuQlQOyXV/Tltmn3UTir797UeXeUquY
+         DzeuNP4tEXcbxKQlvdJh4cB6EWgFo53CVIpvyhQgLf7o+eNft/kSiGujuNuWcOAIBJnY
+         xLeXpOYNLuDVLbQbreG//KK1oNwJ+ZBxA/gxZ14PlbzZKmjzQ9fYm1bVxLveDkhfXfKz
+         NWNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsWpfuDrqvorArQN/jMZc78fJVfKYG/QWiPNb5d6YCFBuDkJkQDqK8WQ8u1pyzdkXtQ4hukm67jYaIxHdke6DogA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXJ+JubISpIMmVOJeFT65772922BSJkPMBioBrZPi/wbcN8ntk
+	C5bMmKSAKH78QrVpQgg2INm6C8D2Dl1JEOMM9J8gBgxL9G6Z2ZuNoHf4IcEcSi8P6Zc=
+X-Gm-Gg: ASbGncvewVLAOut9dm35zo+d0g3850Frkv0xmYnAm/PoKCFNI8FB+52Wa3fNTF6qOfK
+	NHKMY41zE1nLICV2WlUKgbEwTbb4oCCHWWYpjHerd1aVzIFHxTeLhypAhmYDlIrNSBLIr1qh3n1
+	hclOrsOMehcPgSfh2tMTRJMx6ZLNLRm2DpiCUKU1QG7D0KuLs22Zk/HR9UdoHIsBtTm+B8n4wDe
+	gb9apZFyTieoiee6tGP/eTGBnKFe9cTzEQMSX8Pavri4fmVN1xjVeHfvxa77qPI/5PSWFAuh6tH
+	GoToItKN/VzBkhcSzd0j+OSwPfs+eE5ScoMCeyVoo0CBn/vPjLVhe6Ml4j6Z7Tk=
+X-Google-Smtp-Source: AGHT+IEWekPleecTkqzHnxj/5d4ocJg6iJ2GS+S28dD/Gu1BHihs4HNC2F49+o22Hs0t3Y/zfvGdYQ==
+X-Received: by 2002:a05:600c:4755:b0:453:6ca:16a6 with SMTP id 5b1f17b1804b1-454b3116236mr125103245e9.10.1751874123696;
+        Mon, 07 Jul 2025 00:42:03 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3cf3:a61f:85ed:69db])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b10b8c89sm107026185e9.38.2025.07.07.00.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 00:42:03 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Lee Jones <lee@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-samsung-soc@vger.kernel.org,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] Immutable branch between GPIO, MFD and ARM-SoC for v6.17-rc1
+Date: Mon,  7 Jul 2025 09:41:49 +0200
+Message-ID: <20250707074149.11000-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
- <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
- <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com> <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be>
-In-Reply-To: <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 7 Jul 2025 08:16:15 +0100
-X-Gm-Features: Ac12FXwMRomWxAk899mtr7ERc1Q1HFgMOstsgrsF7Db8eRule70Om9Vs1Zufc88
-Message-ID: <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
-To: Thomas Antoine <t.antoine@uclouvain.be>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Tue, 24 Jun 2025 at 16:45, Thomas Antoine <t.antoine@uclouvain.be> wrote=
-:
->
->
->
-> On 6/6/25 1:40 PM, Peter Griffin wrote:
-> > Hi Thomas,
-> >
-> > Thanks for your patch and working to get fuel gauge functional on
-> > Pixel 6! I've tried to do quite an in-depth review comparing with the
-> > downstream driver.
-> Hi Peter,
->
-> Thank you very much for the in-depth review!
->
-> > On Fri, 23 May 2025 at 13:52, Thomas Antoine via B4 Relay
-> > <devnull+t.antoine.uclouvain.be@kernel.org> wrote:
-> >>
-> >> From: Thomas Antoine <t.antoine@uclouvain.be>
-> >>
-> >> The interface of the Maxim MAX77759 fuel gauge has a lot of common wit=
-h the
-> >> Maxim MAX1720x. A major difference is the lack of non-volatile memory
-> >> slave address. No slave is available at address 0xb of the i2c bus, wh=
-ich
-> >> is coherent with the following driver from google: line 5836 disables
-> >> non-volatile memory for m5 gauge.
-> >>
-> >> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a6=
-8c36bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
-> >>
-> >> Other differences include the lack of V_BATT register to read the batt=
-ery
-> >> level. The voltage must instead be read from V_CELL, the lowest voltag=
-e of
-> >> all cells. The mask to identify the chip is different. The computation=
- of
-> >> the charge must also be changed to take into account TASKPERIOD, which
-> >> can add a factor 2 to the result.
-> >>
-> >> Add support for the MAX77759 by taking into account all of those
-> >> differences based on chip type.
-> >>
-> >> Do not advertise temp probes using the non-volatile memory as those ar=
-e
-> >> not available.
-> >>
-> >> The regmap was proposed by Andr=C3=A9 Draszik in
-> >>
-> >> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455=
-a116.camel@linaro.org/
-> >
-> > I think it would be worth noting in the commit message this is basic
-> > initial support for the M5 gauge in MAX77759, and things like loading
-> > & saving the m5 model aren't implemented yet.
-> >
-> > That's important as some values such as the REPSOC register value used
-> > for POWER_SUPPLY_PROP_CAPACITY show the result after all processing
-> > including ModelGauge mixing etc, so these values won't be as accurate
-> > as downstream.
->
-> I will add that to the next version.
+Hi!
 
-Ok great :)
-
->
-> >>[...]
-> >> +static const enum power_supply_property max77759_battery_props[] =3D =
-{
-> >> +       POWER_SUPPLY_PROP_PRESENT,
-> >
-> > I checked the register values match downstream - this looks correct
-> >
-> >> +       POWER_SUPPLY_PROP_CAPACITY,
-> >
-> > I checked the register offset matchs downstream. The value reported
-> > varies a bit versus downstream. As mentioned above that is likely due
-> > to the REPSOC register reporting after mixing with the m5 model which
-> > is not loaded currently. Also the application specific values and cell
-> > characterization information used by the model isn't configured
-> > currently (see link below in _TEMP property below for the initial fuel
-> > gauge params used by downstream.
-> >
->
-> I have dumped the model written to my phone by a userdebug stock android.
-> If you think it is necessary, I can implement model loading where the
-> model is passed in the devicetree for next version.
-
-See comment a bit further down about using a dedicated compatible.
-Also I think it's probably worth thinking about it conceptually as 3
-things
-1) Ensuring the application specific values and initial registers are
-initialized like downstream does from DT (DesignCap, CONFIG register
-etc)
-2) Loading the M5 model gauge algorithm
-3) Saving and restoring the "algorithm configuration" values to nvmem
-and re-loading them on a fresh boot.
-
-Most of the code for these features is in the following file
-https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef4745=
-73cc8629cc1d121eb6a81ab68c/max_m5.c
-downstream.
-
->
-> >> +       POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> >
-> > I checked the register offset matchs downstream. Values reported look s=
-ensible.
-> >
-> >> +       POWER_SUPPLY_PROP_CHARGE_FULL,
-> >
-> > Downstream has a slightly different implementation than upstream for
-> > this property. See here
-> > https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef=
-474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c#2244
-> >
->
-> Indeed, the main difference seems to be to use FULLCAPNOM instead of
-> FULLCAP. I will check out to see if both differ in value.
->
->
-> >> +       POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-> >
-> > I checked the register offset value is correct. However this is
-> > reporting 3000000 and downstream reports 4524000. I checked and it's
-> > just converting the register reset value of DESIGNCAP which is 0xbb8.
-> >
-> > This is listed as a "application specific" value, so it maybe we just
-> > need to write the correct initial value to DESIGNCAP (see TEMP section
-> > below)
-> >
->
-> The value  3000000 is the default value which will be set after a hardwar=
-e
-> reset. I was able to extract the init sequence from a stock android.
-> It indeed writes the DESIGNCAP value. Here is a summary of the registers
-> written to upon a hardware reset. When (DTS) is written next to it,
-> it means that the value is exactly the same as given by the table in
-> maxim,cos-a1-2k at the link
-> https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviol=
-e-5.10-android15/arch/arm64/boot/dts/google/gs101-oriole-battery-data.dtsi
->
->   "0x05 0x0000" #REPCAP
->   "0x2a 0x0839" #RELAXCFG (DTS)
->   "0x60 0x0080" #COMMAND UNLOCK_CFG
->   "0x48 0x5722" #VFSOC0 (Value read from reg 0xff)
->   "0x28 0x260e" #LEARNCFG (DTS)
->   "0x1d 0x4217" #CONFIG (DTS)
->   "0xbb 0x0090" #CONFIG2 (DTS)
->   "0x13 0x5f00" #FULLSOCTHR (DTS)
->   "0x35 0x08e8" #FULLCAPREP
->   "0x18 0x08d6" #DESIGNCAP (DTS)
->   "0x46 0x0c80" #DPACC
->   "0x45 0x0094" #DQACC
->   "0x00 0x0002" #STATUS
->   "0x23 0x0905" #FULLCAPNOM
->   "0x3a 0xa561" #VEMPTY (DTS)
->   "0x12 0x2f80" #QRTABLE0 (DTS)
->   "0x22 0x1400" #QRTABLE1 (DTS)
->   "0x32 0x0680" #QRTABLE2 (DTS)
->   "0x42 0x0580" #QRTABLE3 (DTS)
->   "0x38 0x03bc" #RCOMP0
->   "0x39 0x0c02" #TCOMPO
->   "0x3c 0x2d00" #TASKPERIOD (DTS)
->   "0x1e 0x05a0" #ICHGTERM (DTS)
->   "0x2c 0xed51" #TGAIN (DTS)
->   "0x2d 0x1eba" #TOFF (DTS)
->   "0x2b 0x3870" #MISCCFG (DTS)
->   "0x04 0x0000" #ATRATE (DTS)
->   "0xb6 0x06c3" #CV_MIXCAP (value =3D 75% of FULLCAPNOM)
->   "0xb7 0x0600" #CV_HALFTIME
->   "0x49 0x2241" #CONVGCFG (DTS)
->   "0x60 0x0000" #COMMAND LOCK_CFG
->   "0xb9 0x0014" #CURVE (DTS)
->   "0x29 0xc623" #FILTERCFG (DTS)
->   "0x2e 0x0400" #CGAIN (hard coded)
->   "0xbb 0x00b0" #CONFIG2 (DTS | 0x0020)
-
-Bit 5 is "LdMdl" see
-https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef4745=
-73cc8629cc1d121eb6a81ab68c/max_m5_reg.h#1489
-It is set to 1 to initiate loading a model, and firmware clears the
-bit to zero to indicate model loading is finished. You can see more
-info about how this works
-https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef4745=
-73cc8629cc1d121eb6a81ab68c/max_m5.c#459
-
->   "0x02 0x0780" #TALRTTH
->   "0x00 0x0000" #STATUS
->   "0x17 0x9320" #CYCLES
->
-> As can be seen, most values come directly from the devicetree but some
-> are not present in there or differ from the value given in the devicetree=
-.
-
-Some of those registers like RepCap, Cycles, FullCapNom are ModelGauge
-algorithm outputs.
-
-Others like DQACC, DPACC, RCOMP0 are part of the values that should be
-saved and restored to some nvmem. You can see the function here that
-does this https://android.googlesource.com/kernel/google-modules/bms/+/1a68=
-c36bef474573cc8629cc1d121eb6a81ab68c/max_m5.c#657
-
->
-> Without a similar init, charge and temperature will be non-functional
-> other values will most likely be wrong.
-> The fuel gauge stays powered through reboot so it doesn't reset even
-> when switching from android to linux, meaning that without any hardware
-> crash (e.g. empty batterry), the chip will look perfectly initialized.
-> A hardware reset of the fuel gauge can be forced by writing to
-> /proc/sysrq-trigger or by writing 0xf to 0x60.
-
-Ah that explains it then, as Andre mentioned he thought this reported
-a correct value in a previous version. It might be worth adding that
-info in the cover letter of future versions.
-
->
-> I am unsure about what to do about this initalization, especially for val=
-ues
-> which slightly differ from the devicetree. I think for next version, I
-> will have the same parameters be passed in the devicetree like android.
-
-We don't really pass register values like the downstream driver is
-doing in the device tree. I think you will likely need to add a
-max77759-gs101-oriole compatible to the driver and then have the
-application specific values, and m5 gauge model algorithm as static
-info in the driver applied from the dedicated compatible. It would
-also be worth checking whether any more of those register values can
-be represented by the standard power-supply binding properties that
-already exist.
-
-> (except maybe IAvgEmpty which seems to be unused in the downsteam driver?=
-)
->
-> >> +       POWER_SUPPLY_PROP_CHARGE_AVG,
-> >
-> > This property isn't reported downstream. The value is changing and not
-> > just the reset value. I noticed REPSOC is an output of the ModelGauge
-> > algorithm so it is likely not to be completely accurate.
-> >
-> >> +       POWER_SUPPLY_PROP_TEMP,
-> >
-> > I checked the register offset value is correct. However the
-> > temperature is always being reported as the register reset value of
-> > 220. This is for obvious reasons quite an important one to report
-> > correctly.
-> >
-> > I started debugging this a bit, and it is caused by an incorrectly
-> > configured CONFIG (0x1D) register. In particular the TEX[8] bit is 1
-> > on reset in this register which means temperature measurements are
-> > written from the host AP. When this bit is set to 0, measurements on
-> > the AIN pin are converted to a temperature value and stored in the
-> > Temperature register (I then saw values of 360 and the value
-> > changing).
-> >
-> > See here for the bits in that CONFIG register
-> > https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef=
-474573cc8629cc1d121eb6a81ab68c/max_m5_reg.h#403
-> >
-> > In downstream all these initial register settings are taken from DT
-> > here  https://android.googlesource.com/kernel/google-modules/raviole-de=
-vice/+/refs/heads/android14-gs-pixel-6.1/arch/arm64/boot/dts/google/gs101-f=
-ake-battery-data.dtsi#27
-> >
-> > For temperature when TEX=3D0, TGAIN, TOFF and TCURVE registers should
-> > also be configured to adjust the temperature measurement.
-> >
-> > I think it would likely be worth initialising all the fuel gauge
-> > registers referenced in maxim,fg-params as that includes some of the
-> > application specific values for DESIGNCAP, also some of the cell
-> > characterization information, and hopefully we will get more accurate
-> > values from the fuel gauge generally.
-> >
->
-> See previous comment.
->
-> >> +       POWER_SUPPLY_PROP_CURRENT_NOW,
-> >
-> > I checked the register offset matches downstream. Values reported look
-> > reasonable.
-> >
-> >> +       POWER_SUPPLY_PROP_CURRENT_AVG,
-> >
-> > I checked the register offset matches downstream. Values reported look
-> > reasonable.
-> >
-> >> +       POWER_SUPPLY_PROP_MODEL_NAME,
-> >
-> > This property isn't reported downstream.
->
-> Is this a problem?
-
-Nope, that was more for my own benefit when doing the review :)
+Please pull the following cross-tree changes for the next merge window.
 
 Thanks,
+Bartosz
 
-Peter
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
->
-> >> [...]
-> >>  /*
-> >>   * Current and temperature is signed values, so unsigned regs
-> >>   * value must be converted to signed type
-> >> @@ -390,16 +507,36 @@ static int max1720x_battery_get_property(struct =
-power_supply *psy,
-> >>                 val->intval =3D max172xx_percent_to_ps(reg_val);
-> >>                 break;
-> >>         case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> >> -               ret =3D regmap_read(info->regmap, MAX172XX_BATT, &reg_=
-val);
-> >> -               val->intval =3D max172xx_voltage_to_ps(reg_val);
-> >> +               if (info->id =3D=3D MAX1720X_ID) {
-> >> +                       ret =3D regmap_read(info->regmap, MAX172XX_BAT=
-T, &reg_val);
-> >> +                       val->intval =3D max172xx_voltage_to_ps(reg_val=
-);
-> >
-> > I think MAX1720X using MAX172XX_BATT register is likely a bug as the
-> > downstream driver uses MAX172XX_VCELL for that variant  see here
-> > https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef=
-474573cc8629cc1d121eb6a81ab68c/max1720x.h#304
-> >
->
-> Based on the comments from Sebastian Reichel, it seems that it is
-> downstream which is wrong:
-> https://lore.kernel.org/all/4cahu6dog7ly4ww6xyjmjigjfxs4m55mrnym2bjmzsksc=
-fvk34@guazy6wxbzfh/
->
-> > Having said that, if we do need to cope with differing register
-> > offsets for the different fuel gauge variants it would be nicer to
-> > abstract them in a way similar to the downstream driver. See here
-> > https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef=
-474573cc8629cc1d121eb6a81ab68c/max_m5.c#1235
-> > I think that would be more scalable in supporting multiple variants in
-> > one driver. Otherwise we will have an explosion of if(id=3D=3Dblah) els=
-e
-> > if (id=3D=3Dblah) in the driver.
-> >
-> > kind regards,
-> >
-> > Peter
->
->
-> I completely agree about the need for abstraction if we want to keep both
-> chips in the same driver. I will try to implement that for next version.
-> Best regards,
-> Thomas
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-mmio-remove-bgpio-pdata-for-v6.17-rc1
+
+for you to fetch changes up to 9bad4bec5daddbb296481af759f9d56c849ba96f:
+
+  gpio: mmio: remove struct bgpio_pdata (2025-07-07 09:31:08 +0200)
+
+----------------------------------------------------------------
+Immutable branch between GPIO, MFD and ARM-SoC for v6.17-rc1
+
+Remove struct bgpio_pdata after converting its users to generic device
+properties.
+
+----------------------------------------------------------------
+Bartosz Golaszewski (6):
+      gpio: mmio: drop the big-endian platform device variant
+      gpio: mmio: get chip label and GPIO base from device properties
+      mfd: vexpress-sysreg: set-up software nodes for gpio-mmio
+      ARM: omap1: ams-delta: use generic device properties for gpio-mmio
+      ARM: s3c: crag6410: use generic device properties for gpio-mmio
+      gpio: mmio: remove struct bgpio_pdata
+
+ arch/arm/mach-omap1/board-ams-delta.c | 42 ++++++++++++------------
+ arch/arm/mach-s3c/mach-crag6410.c     | 17 ++++++----
+ drivers/gpio/gpio-mmio.c              | 61 +++++++++++------------------------
+ drivers/mfd/vexpress-sysreg.c         | 46 +++++++++++++++-----------
+ include/linux/gpio/driver.h           |  6 ----
+ 5 files changed, 77 insertions(+), 95 deletions(-)
