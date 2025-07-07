@@ -1,129 +1,126 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC211F4CB2
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Jul 2025 07:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5154828A40B
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Jul 2025 08:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751874182; cv=none; b=Qo1SmaywXVxiPM4krTR2gv/8fmSX2IOipWadVMKObjDaDl+rO0ToDtzDjlX8+t9gbpQnv0hsptIf67aSCRdubEuC3Ilg3wz7zk5zJrcgT8E8JV3YktzALZUxEqnE00Qp1+PkR6Z/qX8uBuh1c87+q+Jk+OrzDI3OUXrVNcPnios=
+	t=1751875460; cv=none; b=TBsFzJKCTObzW9r8h4+c7WQyUTt29ng+cFehwfru9NcVh7pCal/fdPQYQnQxepXCu4npiNNaR9vIdBM2O2z1Z6ojnr32RmlQ30fyft84tuC052oKSTqiErc6CpVo2yi8KX2mM+9vBP3vEFBaq2ze58VPPo54pZ6q08IpLDyMClk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751874182; c=relaxed/simple;
-	bh=Eh5nVob8XqBT5H4toPBO7Udtl43mgczbn+4VPn8DZoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HxvxvvJZZMWerLOHAqGbpnSJPKKH+JXk/D9EHjvYRZ6xdoH1rxxENmk7YGDI/2n9vx4rbwkr2aocsxORgPeX5kjeFV2VmXjW+Fzsxprae5jTFI4ETXLgxD2zOcTvFotrZVruPtP2DefZUJ6NuWaAxA0TqyVbuzuTT26WCEoKu2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ChHYPX1n; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1751875460; c=relaxed/simple;
+	bh=IEoYgZVPqV6REtyvNEYkqmdU4AlOYV3bBv9n+zrtW+0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GPuZ2zMOLbpcEvcSC2+wfAsL5rz7V4B/Z38HcXbEMzbrh+yDp4Qjx3SbUpVlPDg0KQMXRIj/j75bvKtak+cviBPMFbAL2RaMWWJUVFMDbbHFJOut1v83WerzAt9DHNlik1W+zmwbnFOdv7zA9R4h9HI56R4Nvb/72+0P+OAZcKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OrAeMbWM; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ChHYPX1n"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so2372238f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2025 00:43:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OrAeMbWM"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a51481a598so1488057f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2025 01:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751874179; x=1752478979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IKu+RkS0Zdmhr2twn3T0q2HDKxEwF3RB9jkgTUfP94w=;
-        b=ChHYPX1nmz0n+W8CMnMDT7zZPn16w0D3pSWC/02A1q8MtyIHzkeqBgPtGe1ZTKA0jj
-         gGzwOFiiHv3N/t7ebj1FmgFVWONCdV1M+svymtUoPcYyhks/KCBExK7AwPt3v0QyK6nd
-         Mpv5rT6D7+F1Iw+4asZfTaO6GeFumO5uVwOSTdIYm0MvB+tzUcBjTOppISc7kpZVM5eO
-         LvwiAozcanHKw5xXpQ0Xx3+n9DDztZvYQuAtOSG3V5bWBZB9jxbAv3fyYPpsBIaEbI14
-         4PcJqTsYB/+OFbS5XfM9EXz2uocu+z/qEolNC90DxxQDQr/tju5QBwOWPlu70UaOjXSL
-         RR5g==
+        d=linaro.org; s=google; t=1751875457; x=1752480257; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IEoYgZVPqV6REtyvNEYkqmdU4AlOYV3bBv9n+zrtW+0=;
+        b=OrAeMbWMGSqIdFhUjy2qNfv5YBKOfuqvgNPSGBqk9aclu0IZgqRwttTG3akD7TAlst
+         Dr5vjqlBcG8iOK4ZN9kQdgO4ShCmi2l1UBC4Tq9UWqGgHsu0p5ysxA+9Rlov7EXp1QdR
+         4CYbcr+MD9/bdV6BagNrbqx7CTKPA0V8mlIT6FmTTMaJjJ9jSxSMH0plhbJH+rfDxIg2
+         2Ze63+yXKmr991n7Z6jHYBientUxswE8D0AYyPNPpbZ37lPiOCYFzIWmMPVQKhw+ojAM
+         kJzuyeSna28MRFSTRuIEnSR22BtxHG7bH9mx1pi7qckY50/UzjDA7bhQcpwAWLonaBOb
+         0ikQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751874179; x=1752478979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IKu+RkS0Zdmhr2twn3T0q2HDKxEwF3RB9jkgTUfP94w=;
-        b=EJBNw+RQt0McnRxburLZKOZvpvBc5EiPr2Q/5pdujWDjAUeGogYNtVxBNcOzTpTDpS
-         BSVOfCF2PG64RzgewnXFPjd9kadT55Eno3W9ZCtB3FsaRudXrZnrt4MVSSvc3xnWOFav
-         adHf+Mwsv5ymv2FDREPu2zszdbNFt7+zsXQKwHKtbBfyCmOkP/UC2jqyIdtFGM0ITYEZ
-         +cj8R7b0IT7z7hsDXgJQg64l0E9GtyxNLD4IS4QhaWpYAdRo/dRlBHnCDlX7a3OVbvOl
-         iamJx9X+UflRKcseA+KP2omIDZLBgBmzNjE/C/x09P9xHm4z0+oFv0aWQQ/kpcbSHBu8
-         UNDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5BjTIFDgUip7zFrAdhj4iWY4x4paGxsKnFCwrVJKCA6yxg9MXWB9X5o7FOTCSY27BaJALPrHhDOb5YpM5pXiqiQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2BrOyWu3nRqW3yCKJiE2p3lGwkfC06sKrDkyZPHc780hJcmgR
-	k5O0eYoD3cjZD5ZN2/R2Nq+ifoDKukdi3awvqvN5XMdmFxrwvSvKj1EpgO50TyrzqGo=
-X-Gm-Gg: ASbGncsFEO5A2PeaRqBi+xiCL1HXrmBHJavuRGIx9qgN7STV/4humkD0JVfeekF+fIN
-	hLVoiFdG3mnhdeiRPMXGAiu+oTglbWhQvMLRDYKmjK4TSgT8skMscBWwXfM5EJ/kgBAlVuPspAj
-	MpUBgJfpkVU4iy7LJ6U26rmwROKjnqeDzzPRiZIt6YU/DqoBGC+XFPSd+yuq6WN5HpcGEiq5xdZ
-	+mIYq2yoEEuaAIn4b9OTyLefiGJGiYSNAGDuVuT9KleXcxMwp5XLa76w8pp3MGvOuG4rfS+X7Fw
-	ItLTxAKVorl6ioRlvaBTcjhGx+U7MUeDAzci4P+Iua+XrU/0GepfsjAGarfAm8g=
-X-Google-Smtp-Source: AGHT+IHNExQVGguYaXAKB1aXj/Vuf2MjgUwaU88wZ/Fr9+ouWScx/ZAWPfXjtQAAvi/SLz+JJ7WmDg==
-X-Received: by 2002:a5d:5846:0:b0:3a5:7991:fd3 with SMTP id ffacd0b85a97d-3b495b94916mr10412880f8f.11.1751874178826;
-        Mon, 07 Jul 2025 00:42:58 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3cf3:a61f:85ed:69db])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b4708d0941sm9259629f8f.26.2025.07.07.00.42.57
+        d=1e100.net; s=20230601; t=1751875457; x=1752480257;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IEoYgZVPqV6REtyvNEYkqmdU4AlOYV3bBv9n+zrtW+0=;
+        b=HawQiF6OXFCiLyLca0J2CisfUUumfgc/YvOj0RQ3pfuXMlx3J4nBPBlODZBQ4hHK+j
+         gULcwHjcB/GVLRPWgEbFhPIUnvN/Js214c6eM2U/OdfCfjNtIuxzXUyJjVHCQo1x1I8E
+         ARnogidohJM/JVqFcG50drce3RYlhEJCDABmkWKRvwh3GExq4kXOhoBpUTMBhMRbzqi/
+         BQTTCS+C0gtTeNqZW3zib4CozE0YxueMyKpcpLLWSgTHVkRQGqh8lpeDj1HW9hbmevMZ
+         Vn32bjEUlK/3D/wf2q8N8lJxwW6dD63Sw0QnE5szeydAyd2uIZ6QPMMc67r9SK0ZOTmz
+         RtpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbtP8XFI2KeEiFoqgT0LyXTMsF2IVTsyyOYLALKuGcUgXqYEz4aMeXuZ4td/MH/UzGRScfi/hyxRFBRtdh7JVC4g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzetawaL9zVDPe/LWEnnV1kG4myzJfSZ5IT33jgBAtFi/8hcIf2
+	I4EEe24OOg6TJK8597ktKljcqf5gbXa2LCrqPUj1h3WBZOMKAjpm5ykrP6ngfgMyPMc=
+X-Gm-Gg: ASbGncv7jm/rOFEWzGC9xagoUVfUnkZgMQnM9HT6M73a2fToxOjmaD4Smdqo5v9oNu0
+	juDj0MX8pD31gJrSwFHlx1g+AsZZiNCChF1XW8JQTuGFhRd8yjCfUREQNOBLUtwcdpOLf+YVaON
+	3zz9r9Y6N6HixrPoLNjvjbPrT7dZTQEyELY26Y2Rt4yNAJeo5zLAYa7x7iFxtAy/8EPL+jsj0bm
+	MuINP1dYvuKMkXIntkEgQzyPhAej16lrjok3pue3UuJlfGiKhQ8O1nnpgP2W1pRVRFWjC30YOQA
+	PfnqZcAjCrmWHgZpoTFBNL8jBn2yoLjlrPnPj654OPy0jsUWVYMfx6Q3MnFnZbtaPQ==
+X-Google-Smtp-Source: AGHT+IHEIeX1O24CgOzuWsNBfkxeH6TOmmWEVLZJcsdlbgvxYrZII56COdsRCTeJJ4eyH1AmqDGCWg==
+X-Received: by 2002:a5d:64e5:0:b0:3a4:e609:dc63 with SMTP id ffacd0b85a97d-3b49701fd14mr7926081f8f.20.1751875456566;
+        Mon, 07 Jul 2025 01:04:16 -0700 (PDT)
+Received: from [10.1.1.59] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1698f54sm103519225e9.33.2025.07.07.01.04.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 00:42:58 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-samsung-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH RFT v2 0/6] gpio: mmio: remove struct bgpio_pdata
-Date: Mon,  7 Jul 2025 09:42:56 +0200
-Message-ID: <175187417000.11224.18185920121696300938.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250701-gpio-mmio-pdata-v2-0-ebf34d273497@linaro.org>
-References: <20250701-gpio-mmio-pdata-v2-0-ebf34d273497@linaro.org>
+        Mon, 07 Jul 2025 01:04:16 -0700 (PDT)
+Message-ID: <2e26f8f534284b280e9d5e8d4ae556a452e93ff5.camel@linaro.org>
+Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel
+ gauge
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Thomas Antoine
+	 <t.antoine@uclouvain.be>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau	 <dima.fedrau@gmail.com>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>, Tudor
+ Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar	 <alim.akhtar@samsung.com>,
+ linux-pm@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+Date: Mon, 07 Jul 2025 09:04:14 +0100
+In-Reply-To: <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
+References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
+	 <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
+	 <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com>
+	 <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be>
+	 <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+build1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi,
 
+On Mon, 2025-07-07 at 08:16 +0100, Peter Griffin wrote:
+> Hi Thomas,
+>=20
+> On Tue, 24 Jun 2025 at 16:45, Thomas Antoine <t.antoine@uclouvain.be> wro=
+te:
+>=20
+> > I am unsure about what to do about this initalization, especially for v=
+alues
+> > which slightly differ from the devicetree. I think for next version, I
+> > will have the same parameters be passed in the devicetree like android.
+>=20
+> We don't really pass register values like the downstream driver is
+> doing in the device tree. I think you will likely need to add a
+> max77759-gs101-oriole compatible to the driver and then have the
+> application specific values, and m5 gauge model algorithm as static
+> info in the driver applied from the dedicated compatible. It would
+> also be worth checking whether any more of those register values can
+> be represented by the standard power-supply binding properties that
+> already exist.
 
-On Tue, 01 Jul 2025 13:49:34 +0200, Bartosz Golaszewski wrote:
-> I'm working on removing the fields relevant only to gpio-mmio from
-> struct gpio_chip. One of the bits that need addressing before we can do
-> this is the removal of struct bgpio_pdata from the kernel. Fortunately
-> there are only 3 users left treewide.
-> 
-> This series adds support for parsing of generic device properties to
-> gpio-mmio, converts all users to setting up software nodes containing
-> relevant values in their property sets and removes struct bgpio_pdata.
-> 
-> [...]
+I believe these are likely battery specific values, and were obtained durin=
+g
+battery characterization by the vendor (or Maxim). They can change (with a
+different battery supplier etc, hence I don't think basing this on a
+max77759-gs101-oriole would be correct here.
 
-Applied, thanks!
+As we learned from the Pixel 6a battery updates, the same phone may use
+batteries (e.g. from different suppliers).
 
-[1/6] gpio: mmio: drop the big-endian platform device variant
-      https://git.kernel.org/brgl/linux/c/e567269e246809223fafaee7d421ae17a832fae5
-[2/6] gpio: mmio: get chip label and GPIO base from device properties
-      https://git.kernel.org/brgl/linux/c/c4a834840596c8b9e388d430154959390f9f96e4
-[3/6] mfd: vexpress-sysreg: set-up software nodes for gpio-mmio
-      https://git.kernel.org/brgl/linux/c/11cd2e582bf4da87b5fc0f9b07e194daaf212651
-[4/6] ARM: omap1: ams-delta: use generic device properties for gpio-mmio
-      https://git.kernel.org/brgl/linux/c/094017efe332d411a8d6ac41fd8d0a4f81f72a99
-[5/6] ARM: s3c: crag6410: use generic device properties for gpio-mmio
-      https://git.kernel.org/brgl/linux/c/bb9c88d5b0fabe05b0ed4b843efe78ac1c4712f0
-[6/6] gpio: mmio: remove struct bgpio_pdata
-      https://git.kernel.org/brgl/linux/c/9bad4bec5daddbb296481af759f9d56c849ba96f
+Either it needs to know about the specific battery model, or the values
+should be passed from DT in some way.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cheers,
+Andre'
