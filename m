@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F747B3E1;
-	Mon,  7 Jul 2025 09:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FED35949;
+	Mon,  7 Jul 2025 09:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751879788; cv=none; b=RxkUD0sS80ox+2Yk58dQz4IlKl5SAZk01vEkBLHRbcj+TZtcVqNul8201IFqrP0lrjX4vaoCceYpgUdLxd3JsiNHAEQ52ZX9uqI1dJjbvjiRnksy4iFH1x635G1kFsX8yy7+8cXIthglt+WN6x0RRIdOdcvzjxR8+seOaygSy8U=
+	t=1751880194; cv=none; b=pWxnk/INvxGKlwtuXga4VRQati+ns3hecsFgxuhoK8RRfpo/TjsGw4TThX3EeToVdtEGogDWe6537326qIV1y346gDpGmuMF/EqW5mU+xK8fx4hx79iAyPzUlPd7hb3Z4weh1axfxh/r6lzcKe7JeoPTAwXkIgTbQuk5XlGw944=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751879788; c=relaxed/simple;
-	bh=S+ERr6u3aNq9RU4g8j9HXu8p3MOcQKERi/Lynnvtfp0=;
+	s=arc-20240116; t=1751880194; c=relaxed/simple;
+	bh=RbxFgpIxXrfafCP6i22oEUkI/RIpYVuECfRa8OxdDjI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=quVCSr2d769gSluxZIN+XbuiZji4b1kPv1zeCIKW0AXyvB/Q3iCGh/MDjeIckv/EcEPEkz8x//3sNkAdvtDvta4Gs0MqDY5lBZoQIxaYKDq00w5WTRWNxDpz68cNAH+bWQe/knu1yAkzuJJrITuSevzaxUqB3Egtk0Dx/YndSVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFfkXcHS; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Sdrk3jxH95FteSpYonPWXH/PSD6C2JFEr/Z0SY7YvQf4pEB0OLXEYTt7fxcyITsBeN4Lp58j760PAvbhPIkB2+/ndjyCWQ2d6PR5qIYOkGsz2MRLIgu9Ws88DMXlmubqgLEbBC2kd5kILzon1GM+bDf4TG3QtHj7nGCVAviJ9ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAhay+Pu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFfkXcHS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11355C4CEE3;
-	Mon,  7 Jul 2025 09:16:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAhay+Pu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CABEC4CEE3;
+	Mon,  7 Jul 2025 09:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751879787;
-	bh=S+ERr6u3aNq9RU4g8j9HXu8p3MOcQKERi/Lynnvtfp0=;
+	s=k20201202; t=1751880193;
+	bh=RbxFgpIxXrfafCP6i22oEUkI/RIpYVuECfRa8OxdDjI=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=TFfkXcHSonqw5qmGanS5rIltPbpecXINcniIKPTWwJrrjWmhcIN4ELgXMiC019IEG
-	 SD11bRN8XQv32cau+ovLfoHLk1WFFTIqfMvX+LFN7v5OibZ7NHO9JBo3dSByr/Vbbz
-	 k+IcNS1HvBuEMlhaeFRS8TloFeZV6MwSvKr/RfQ2PzyRwbmlz0QajYzvvguUT+FN8G
-	 XB+7sDhwL8MFSCCJZZPy+xORL9g2Rm7of3cOs2IcpMNBHplW1Jq7q7swBGDrwdiYDh
-	 QfgfdoKOx5ibNCu1RjeWBYgEhJCUShGdcDsJ3t62uIZ8fn5pSu62W8nBazmhnKzo/V
-	 5V0ag9bmn5iXg==
-Message-ID: <d4c85825-5979-43f4-8136-5b15c1691b52@kernel.org>
-Date: Mon, 7 Jul 2025 11:16:22 +0200
+	b=JAhay+PuU3zrEqQR5yZbH19YArapVD+FeG2ljrXb5m5ROj5NGPTArQBmH7x5ycfOy
+	 LIPUCzuX128X7eE/peBSebV3mS3iiochl+RirD6dfvCdwPpb4K1tnf8wHS8algGM+7
+	 EYFyHHJwQbpwInkjpbsB26NKNFPTygAK8zNRRZ8GGl08Hr4NnGpPqCO/A6v3PdFDNY
+	 CQWroJyESwTQNlrVlA1+/UMSmay91kpzczxpsvtt0xTglmOO2kj7td4wz5A1fFTkke
+	 M6K1FPcHBiOrs1wSz5xX0OkrVi9pPBP1VPszos7c2CmWURlY6mD6HFJmRcQevlXGPN
+	 L9efGblZQgGAg==
+Message-ID: <46fb0a9d-be33-46c6-98d1-501970ec8e7a@kernel.org>
+Date: Mon, 7 Jul 2025 11:23:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: rtc: s3c-rtc: add compatible for
- exynosautov9
+Subject: Re: [PATCH 3/3] arm64: dts: exynosautov9: add RTC DT node
 To: Devang Tailor <dev.tailor@samsung.com>, alexandre.belloni@bootlin.com,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  alim.akhtar@samsung.com, linux-rtc@vger.kernel.org,
@@ -44,8 +43,8 @@ To: Devang Tailor <dev.tailor@samsung.com>, alexandre.belloni@bootlin.com,
  inux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  faraz.ata@samsung.com
 References: <20250702052426.2404256-1-dev.tailor@samsung.com>
- <CGME20250702051530epcas5p12b8c62aba9cc11dc8d13c65fb12b6c3c@epcas5p1.samsung.com>
- <20250702052426.2404256-2-dev.tailor@samsung.com>
+ <CGME20250702051533epcas5p28698c81b7ec141938f8808393c498cb7@epcas5p2.samsung.com>
+ <20250702052426.2404256-4-dev.tailor@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,19 +90,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250702052426.2404256-2-dev.tailor@samsung.com>
+In-Reply-To: <20250702052426.2404256-4-dev.tailor@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/07/2025 07:24, Devang Tailor wrote:
-> Add "samsung,exynosautov9-rtc" dedicated compatible for
-> on-chip RTC found in ExynosAutov9 SoC.
-> 
-> Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
-> ---
->  Documentation/devicetree/bindings/rtc/s3c-rtc.yaml | 1 +
+> --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> @@ -1633,6 +1633,16 @@ pwm: pwm@103f0000 {
+>  			clock-names = "timers";
+>  			status = "disabled";
+>  		};
+> +
+> +		rtc: rtc@10540000 {
+> +			compatible = "samsung,exynosautov9-rtc";
+> +			reg = <0x10540000 0x100>;
+> +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+> +				<GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Misaligned. Should match earlier '<'.
+
 
 Best regards,
 Krzysztof
