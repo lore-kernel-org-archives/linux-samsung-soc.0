@@ -1,72 +1,116 @@
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5CB19E97B;
-	Mon,  7 Jul 2025 20:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6D021D3EE
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Jul 2025 06:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751919518; cv=none; b=AG7x8RxfsSXvfEF+R5RYSPpQzO7qfqzQZexIg/IcAwuWrynKVKLVUdW7qJ4HWFnp2zkv+doRYP3fZwVBzDlvgpV29FPl3qjnvLSHEcPKi7UqgAc8SgSwXNRqWU33L0fVcGMl42J+3IoWg/MFLozrrCc//uJX1TwDyAmOB154gjI=
+	t=1751954891; cv=none; b=VA25ZKHHMknhRN4CB9JwB9in9vKh9zNpr0TXsfgiK10NnlGIZBxOakK791q2TQSvoTUV6qWT5+HbzzYODPieJTbt5rajPjLvsLEazDufgaXKXUQXF1dbwPIUyta66RJPkKNnppwc8ZtPM1Nza4cUV/zm8MgRbZw8sl5k3NsI2RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751919518; c=relaxed/simple;
-	bh=MH6AW7DZ/+6oxcmK2lbp/E4s2yvinxh6tDS7lCW48ZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hT4p1rjG7muko/hJdwT4EjI+gTx88tBubTTxjlpD4gB8j9nvJ74QSo0ObAcNP307GD7t+BIrUVlPytOhgKrLpDS2BExCRiGCHQexeYAYTLdqlkMvidPw07PZz5xa0pBfY/Al546DEJcfMPMUGIGByKrwn7jWcZzNRdyynZgholU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jSR1FrsC; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1751954891; c=relaxed/simple;
+	bh=25UiW6629URZeKqWd4szAoxmIeiqK59ITssZ/WmW6N8=;
+	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=H1IQTdGPQCPYeeTMeQQXyMw3PsbZsJI+dC2GhKuzkUlSPNG1eiasapabvsgA2oeyKSDsnjU/00zfahQrKx9Va4KkKTMNk6y4L2H3pkhu1/qpt3bLVH2pTJWWhsNIYuFQ4XNIsOiMJIhpH7fjmD3MkLCDJqIOasYTh0S9Ard6dJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AARM8Egs; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jSR1FrsC"
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bbbCv3q9Hzm0yt2;
-	Mon,  7 Jul 2025 20:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751919513; x=1754511514; bh=MH6AW7DZ/+6oxcmK2lbp/E4s
-	2yvinxh6tDS7lCW48ZU=; b=jSR1FrsCl2VS0dFJCuOShZLpG0WDsBAU0/hDbzeA
-	l39wESHmTAQftBnRGuphZAqsS/E2PJ1fbQ9oLv378acS3Ffph5wYOsCY0Smes2rY
-	BA1hahqSW6U0U1AIBSXluY6UQzf/ROej8ZP9GQux8jacZ2jGAVN/KsNrrsgQlq5Y
-	+vYkUfutjXKJ8DS/81QIcoOKKkatBJgIyVuL6COuUZSGaD52LPP+Vs20eN8Foihv
-	cvBJZhpBm2+hKEvpIFIsgmGYzOffRQRjpDTWQEh7ingXuV+1yDOUGGj+BBfNup7s
-	4g0jFstuvU87VKPYT15PWWxdgsgurgH20P58Iga1mtwwbQ==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id RmX8vjQgZHsO; Mon,  7 Jul 2025 20:18:33 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bbbCl74C8zm0yVD;
-	Mon,  7 Jul 2025 20:18:27 +0000 (UTC)
-Message-ID: <bac5f533-0513-4d59-98b8-de44a08daef3@acm.org>
-Date: Mon, 7 Jul 2025 13:18:26 -0700
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AARM8Egs"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250708060806epoutp019e1892a4590de5dca845fedccd99d9a3~QMa-NuJ2L1643816438epoutp01-
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Jul 2025 06:08:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250708060806epoutp019e1892a4590de5dca845fedccd99d9a3~QMa-NuJ2L1643816438epoutp01-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751954886;
+	bh=3p+zdleNxB6xRk4PA0vX4wiF7EshOfZNCGt0ekbxrE4=;
+	h=From:To:In-Reply-To:Subject:Date:References:From;
+	b=AARM8EgstyoyfWyL4eq5vQTpP8M+VWdAQahD+yHqVQiAU4TVAXYyg7vjPgHLfE/gL
+	 t/fmgKJfWSxJY27IjWEBJjQGctDhYe3ra1EOdmO4k7410qp41JNLgxyf/8Kfp8Yqhf
+	 FxbF9GMIQ1To9jsOyjggBa95scHa6aBbHTFUz0cM=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250708060805epcas5p34c5e724bc477b39ce43f2ad0190c11e2~QMa_xKtgX0555505555epcas5p3A;
+	Tue,  8 Jul 2025 06:08:05 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bbrJ349PBz2SSKb; Tue,  8 Jul
+	2025 06:08:03 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250708050010epcas5p257fc957d612d63e061303608bcc1002b~QLfrkfgkS1015710157epcas5p2E;
+	Tue,  8 Jul 2025 05:00:10 +0000 (GMT)
+Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250708050008epsmtip29ff3634961b9082c94f5de5773bcd1f9~QLfp-s9Ri1376613766epsmtip28;
+	Tue,  8 Jul 2025 05:00:08 +0000 (GMT)
+From: "Devang Tailor" <dev.tailor@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+	<alexandre.belloni@bootlin.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <inux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <faraz.ata@samsung.com>
+In-Reply-To: <46fb0a9d-be33-46c6-98d1-501970ec8e7a@kernel.org>
+Subject: RE: [PATCH 3/3] arm64: dts: exynosautov9: add RTC DT node
+Date: Tue, 8 Jul 2025 10:30:07 +0530
+Message-ID: <156a01dbefc5$2e8203f0$8b860bd0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: call phy_notify_pmstate() from hibern8
- callbacks
-To: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHhFGtl4NDuGuGnv9eMR4cSGFTkLQGbtz9QAkmtjDMBFtDZJrP1e9Qg
+Content-Language: en-in
+X-CMS-MailID: 20250708050010epcas5p257fc957d612d63e061303608bcc1002b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250702051533epcas5p28698c81b7ec141938f8808393c498cb7
+References: <20250702052426.2404256-1-dev.tailor@samsung.com>
+	<CGME20250702051533epcas5p28698c81b7ec141938f8808393c498cb7@epcas5p2.samsung.com>
+	<20250702052426.2404256-4-dev.tailor@samsung.com>
+	<46fb0a9d-be33-46c6-98d1-501970ec8e7a@kernel.org>
 
-On 7/3/25 7:07 AM, Peter Griffin wrote:
-> Notify the ufs phy of the hibern8 link state so that it can program the
-> appropriate values.
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Hi Krzysztof,
+
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 07 July 2025 14:53
+> To: Devang Tailor <dev.tailor@samsung.com>;
+> alexandre.belloni@bootlin.com; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; linux-rtc@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; inux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> faraz.ata@samsung.com
+> Subject: Re: [PATCH 3/3] arm64: dts: exynosautov9: add RTC DT node
+> 
+> On 02/07/2025 07:24, Devang Tailor wrote:
+> > --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > @@ -1633,6 +1633,16 @@ pwm: pwm@103f0000 {
+> >  			clock-names = "timers";
+> >  			status = "disabled";
+> >  		};
+> > +
+> > +		rtc: rtc@10540000 {
+> > +			compatible = "samsung,exynosautov9-rtc";
+> > +			reg = <0x10540000 0x100>;
+> > +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+> > +				<GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+> 
+> 
+> Misaligned. Should match earlier '<'.
+
+Will update it to match last '<' 's alignment.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
