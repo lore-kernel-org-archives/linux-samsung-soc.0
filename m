@@ -1,129 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A522E7BB8;
-	Wed,  9 Jul 2025 14:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A961FCF41;
+	Wed,  9 Jul 2025 16:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069997; cv=none; b=kVUuDcE+qWUA6NfCqehAIqBMoQBXi+NKw3FYxjT612yB1/zBDlYHvnOr3wZCGBTXrG8M6znwjAZ7X425lNS0qewH6P7xY3wjJM1EpSTwlpLoWQ0tKsx97CRpmDWKwGrmWal6ozznpX2GZE01MpBnCpq42JX1EBNNx6/oXmibZrs=
+	t=1752077436; cv=none; b=ej7C8r4jD2S9MP5bLh/VSQNU+Yk0XD9my7yJdIpnAsWLyAiOo+f3vlkiiBdcCZCtbR+eVLHYahNsC28xK2peS+A+mRPm3tisIyCoYxD2+ipny/lrvzhrctcmdssrh2W9YYIjWUgqSASQLtWKpgQED4Kip9t97vwXz7qRHXD2cto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069997; c=relaxed/simple;
-	bh=zsceZ3e3Q3uizdRPkkkTw9psNWaSicRPXttwuALsa1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RhuCNwTD8DdYDYsLnoxsly+SCFLjSblFocaw0WGPDNkuxeZczOuL23YjeNcXpLaQJn5pMPmGX1SlkyFGFIHITix7lIl0N7smU3wie9F4QuSmQ9ytkeOWd0P9rX8pag7BkOMO6JFjAogIbRGf/LLc7esQl2wrZma2zk/FXF2ulaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U84/UUO+; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U84/UUO+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF21C4CEEF;
-	Wed,  9 Jul 2025 14:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069995;
-	bh=zsceZ3e3Q3uizdRPkkkTw9psNWaSicRPXttwuALsa1A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U84/UUO+lgsVFLJlzZp03T/UT2e5GfDEdigFWYyz8Aa0IXeeiU6gi2ndzt93Gtb8z
-	 5oEuGUAtzIHe9BAv63MuxP/z/xb4sW8h2dyKO0PE94xGqFUUM6xryUn7psq2WqraJt
-	 gk3DtyiTRCW9SM8zu50aop8dr7LPgfXLv0lZ8iGbXBWsDyZCryy++UV4BzUdZMfj1o
-	 fze80VK+y1N25SgMAUsO97cGqmTmpMME0cnex7QyLjGwsCc5IMjR1uXP+wSJapz8vs
-	 7+YrrqHp5Q0QrRGVVyQf/8OXeVZht7yFdyapTHTzhHozjm1LlJnLguO9F1NY/YQpt2
-	 EaD6SbFrpXseg==
-Message-ID: <58851e92-6a06-4074-88fa-fb4f7ead2596@kernel.org>
-Date: Wed, 9 Jul 2025 16:06:29 +0200
+	s=arc-20240116; t=1752077436; c=relaxed/simple;
+	bh=sdLxh5wPU4SO7jBx9mRMGoBNVWRvuavllwbkk1oFYlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbTd3kMv0r7nePjTMYgfB8kAVmvttORHyDSywp5HdZwvgjdT8dssLoE4qEkhonpowdLovySuS3ep9EYGugrjL3RouHi0ILL9Qad460XwpGFF66VvqqpAZ7VAAaO8D9EEc5R65A8ypY0hvOST21rGSNjYDqibXV6i7dO+byR4VAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBE47152B;
+	Wed,  9 Jul 2025 09:10:16 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37B6C3F694;
+	Wed,  9 Jul 2025 09:10:26 -0700 (PDT)
+Date: Wed, 9 Jul 2025 17:10:23 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	William Mcvicker <willmcvicker@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v5] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+Message-ID: <20250709-chocolate-flamingo-of-nirvana-5de895@sudeepholla>
+References: <20250709-gs101-cpuidle-v5-1-b34d3210286d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] MAINTAINERS: Add maintainers for Samsung PPMU driver
-To: Vivek Yadav <vivek.2311@samsung.com>, pankaj.dubey@samsung.com,
- ravi.patel@samsung.com, shradha.t@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- will@kernel.org, mark.rutland@arm.com, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, linux-fsd@tesla.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20250708103208.79444-1-vivek.2311@samsung.com>
- <CGME20250708103246epcas5p47b446ec342f9d49361c0a9a3929bcdd2@epcas5p4.samsung.com>
- <20250708103208.79444-7-vivek.2311@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250708103208.79444-7-vivek.2311@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709-gs101-cpuidle-v5-1-b34d3210286d@linaro.org>
 
-On 08/07/2025 12:32, Vivek Yadav wrote:
-> Add maintainers entry for Samsung PPMU driver
+On Wed, Jul 09, 2025 at 02:26:27PM +0100, Peter Griffin wrote:
+> Register cpu pm notifiers for gs101 which call the
+> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+> C2 hint. This hint is required to actually enter the C2 idle state.
 > 
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+> A couple of corner cases are handled, namely when the system is rebooting
+> or suspending we ignore the request. Additionally the request is ignored if
+> the CPU is in CPU hot plug. Some common code is refactored so that it can
+> be called from both the CPU hot plug callbacks and CPU PM notifier taking
+> into account that CPU PM notifiers are called with IRQs disabled whereas
+> CPU hotplug callbacks are not.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ca11a553d412..5895b4e70c9e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21023,6 +21023,13 @@ F:	drivers/regulator/s5m*.c
->  F:	drivers/rtc/rtc-s5m.c
->  F:	include/linux/mfd/samsung/
->  
-> +SAMSUNG PPMU DRIVER
+> Additionally due to CPU PM notifiers using raw_spinlock the locking is
+> updated to use raw_spinlock variants, this includes updating the pmu_regs
+> regmap to use .use_raw_spinlock = true and additionally creating and
+> registering a custom  pmu-intr-gen regmap instead of using the regmap
+> provided by syscon.
+> 
+> Note: this patch has a runtime dependency on adding 'local-timer-stop' dt
+> property to the CPU nodes. This informs the time framework to switch to a
+> broadcast timer as the local timer will be shutdown. Without that DT
+> property specified the system hangs in early boot with this patch applied.
+> 
 
-PPMU for what? Exynos? Then add it in the name.
+Assuming this is arm64 platform and using PSCI for all the power management,
+can you please briefly explain why all these dance is absolutely necessary
+when PSCI calls can be the clue for the EL3 firmware. I am basing my question
+on this information in the file:
 
-> +M:	Vivek Yadav <vivek.2311@samsung.com>
-> +M:	Ravi Patel <ravi.patel@samsung.com>
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/perf/samsung,ppmu-v2.yaml
-> +F:	drivers/perf/samsung/
+/*
+ * CPU_INFORM register hint values which are used by
+ * EL3 firmware (el3mon).
+ */
 
-Also, this should be added to Samsung SoC maintainer entry as well.
+This clearly sounds like workaround for the firmware limitations. That
+needs to be clearly documented IMO.
 
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sudeep
