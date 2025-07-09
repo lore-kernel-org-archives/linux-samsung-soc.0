@@ -1,24 +1,24 @@
-Received: from mail-m3289.qiye.163.com (mail-m3289.qiye.163.com [220.197.32.89])
+Received: from mail-m49203.qiye.163.com (mail-m49203.qiye.163.com [45.254.49.203])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B47271454;
-	Wed,  9 Jul 2025 07:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528D326D4E7;
+	Wed,  9 Jul 2025 07:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044562; cv=none; b=cORwEkgWq1AbVEl4TWmwyHOi7Wb6JRBy4ISSMInQ4GuAQt7+h+TlrXC7EC4UuVgM41i1a2UxHLLWiwVmo73bUrsXJNojh3Dn9O7hzkr/xp26ylI/omQ+a+3+mZ3U29/cDUsXOouBa9CzW9+g5Jc/rtj+aUZE2qMcKnGAhB4MtMk=
+	t=1752044564; cv=none; b=fOuvRYj2yCIqEpAm115glzVRb5zCLOKJ5c7ohB8hipOLWFKzluxFQq366M9orFXtorsW2tKVTo4+WaqJLVF3VcCIjtDS/gCcJp6s8a7EYIj3do1t2tBlJZJE4ylkhE+aG2X9V7iX1d1LkAKlXoLRGQX4YQSYg10ng12L48AiXWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044562; c=relaxed/simple;
-	bh=ToOwrW4Ivg/2RaTG/95dxfLXV58Yy4E7DFPBvBHsb5E=;
+	s=arc-20240116; t=1752044564; c=relaxed/simple;
+	bh=BzGdCdQR5z1fK/Ok8zkIm73HZKDqtklbsKhUXEJvvZM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ai/gZQNTI++fCOAOJpQGgqXSxBe6nLvoPF8AtnXo65TqiXtdCMHZ193YbXEKnqfugpkY88iLmVIRUOYVG562iICbiHaksBE+IffRzKSsRUlziV7CetLkRGTTGnrleDbPK1i4eB8Ke6yGCsS73AT7EOOZkU8UsuJQjJh+KozHF+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QVHIz8Py; arc=none smtp.client-ip=220.197.32.89
+	 MIME-Version; b=opaH9v5AHAXLQj5HkxcljVVpf+dBIAMPEp23VtjhZ6FzMIj2/Vs5fKhMGihmvOM2tfTFQJjUDvtn7JGfkEM9xEvgVLV7Oe+7auHKJSbPRZ25tdRkrEtQvm26XcOZfWa0yodAwuMQhafr56NURanCPlz8U+Wa2DJJ+p+DhPzGpYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=V8tFnJ9L; arc=none smtp.client-ip=45.254.49.203
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QVHIz8Py"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="V8tFnJ9L"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1b69b79f1;
-	Wed, 9 Jul 2025 15:02:28 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1b69b7a02;
+	Wed, 9 Jul 2025 15:02:30 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -49,9 +49,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v2 05/12] drm/exynos: exynos_dp: Remove redundant &analogix_dp_plat_data.skip_connector
-Date: Wed,  9 Jul 2025 15:01:32 +0800
-Message-Id: <20250709070139.3130635-6-damon.ding@rock-chips.com>
+Subject: [PATCH v2 06/12] drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
+Date: Wed,  9 Jul 2025 15:01:33 +0800
+Message-Id: <20250709070139.3130635-7-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250709070139.3130635-1-damon.ding@rock-chips.com>
 References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
@@ -63,17 +63,17 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh4ZHlYYS0tJTBoYQxpPSh1WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ09KQlYaHkhNGRkYSUhLT0xWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a97edfe313c03a3kunm3a7bcd50c83a1a
+X-HM-Tid: 0a97edfe3b1703a3kunm3a7bcd50c83a76
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRA6MRw*OjE9My8sFRAZIjce
-	IzAKC0hVSlVKTE5JS09PTk5LQ0pCVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSklNNwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PS46NTo4EDE4Qi8yFRYrIjY3
+	MBMKFCJVSlVKTE5JS09PTk5IS01LVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTEtNNwY+
 DKIM-Signature:a=rsa-sha256;
-	b=QVHIz8Py1qSFWXdvgv67yD9JQbhmCNitTjXgFOVbjnOl7gQgem7zwgZYF1f+nUDd8XaQH65U66qUPu8kuFkgsVdqu7SMHs3o6PvRkDKV6rTEI6zFNr9BGGCm56wXLcHi/PT3hrE1Clbayl3Ey45sTxCpzyaeFy+OcZfu4oLZVX8=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=31qCOv3EsFTnb6xOey3qzemk44ARayPHAWjUZoC3ZPU=;
+	b=V8tFnJ9LGgflmJMSM52BGdI72h06n7FVI23Oo+/okZIQl8qHqfzGhaYCITAkocv4GKLDJqw4rQUFD06zs4JAmztAzXViA9MTY0nrlwfY7eYW7ri9UxSXVriITMJLJTyi1K/37F6m7HfbO+sK1N/ZXaMLaDAjF+2zFOjE4TgJK4M=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=tEYzJx27vsuCFqj2WBv34hvEM6QBkWQ0M5b793ipMJ8=;
 	h=date:mime-version:subject:message-id:from;
 
 The &analogix_dp_plat_data.skip_connector related check can be replaced
@@ -81,21 +81,35 @@ by &analogix_dp_plat_data.bridge.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 ---
- drivers/gpu/drm/exynos/exynos_dp.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+ include/drm/bridge/analogix_dp.h                   | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 9d7d3f009e58..9e1313fdecad 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -237,7 +237,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
--	dp->plat_data.skip_connector = !!bridge;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index a9bc935b6220..78d68310e4f6 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1049,7 +1049,7 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+ 		return -EINVAL;
+ 	}
  
- out:
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+-	if (!dp->plat_data->skip_connector) {
++	if (!dp->plat_data->bridge) {
+ 		connector = &dp->connector;
+ 		connector->polled = DRM_CONNECTOR_POLL_HPD;
+ 
+diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+index 15cb6b706e9f..202e5eafb2cc 100644
+--- a/include/drm/bridge/analogix_dp.h
++++ b/include/drm/bridge/analogix_dp.h
+@@ -30,7 +30,6 @@ struct analogix_dp_plat_data {
+ 	struct drm_bridge *bridge;
+ 	struct drm_encoder *encoder;
+ 	struct drm_connector *connector;
+-	bool skip_connector;
+ 
+ 	int (*power_on)(struct analogix_dp_plat_data *);
+ 	int (*power_off)(struct analogix_dp_plat_data *);
 -- 
 2.34.1
 
