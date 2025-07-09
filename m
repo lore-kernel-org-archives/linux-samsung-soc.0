@@ -1,77 +1,74 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9D1238C2C
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Jul 2025 19:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECC421FF3C
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Jul 2025 19:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752088445; cv=none; b=XZX3exuSBHtHROFqME228EM6ldjUeJxnOsOAqIS2x5qJpzs5u0SuMn117mRYVZPJOgpCmCu++yH4Uf9/SRIxoS3dqkjGNqlDDS1HOqJSmpJeG1uXrNBrbdLLqRIDvOQsJgj1SdoHbA1v+4buqSZOSr1COJEw60KO/cBW8jFbk9E=
+	t=1752088533; cv=none; b=sJklOwq/MEoFJNBALz84qECzhOlLOhzPycWL9xE2Qa+VfsWNuqu3ib195zBPY7BJ5cJl+i5NNPEcaA6soqiESK4GS00y2wk6Cc2WkIqoyT28be34pXLZDKtcY1cS2hIl+VaO7dGZNS1c1wRipwWlWZwtUgRCgnKvwpHjj9s66Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752088445; c=relaxed/simple;
-	bh=zHDAgo+3usMVt1m3EEn01KDZ4SXsamOfc9Zt4WzYYcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QTILWzYdprXh73fRII6/fC76ygqDuhke2/HZ/ppg42GEuo2dIM6v44SB+ibLZg22OHOh9tk2FbQKu73dXkglpAzv/wMmOWgleesYy7A8n+guQWFllkE+NpCDSNEb/Oh4kBvXlCeRqnQCmNcygpL00jLeVQ9uYYFdWMhhHb2/ZXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sDNcYaPS; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1752088533; c=relaxed/simple;
+	bh=Vg3SYFcxbZhfxzHwdzewVgAiginzpLipvsLFtGoX06g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AncCl4iP4aw60hVSgrIuvRFuhvW8+tZ6fPR7sJN84HvZHYdsbRiSFs9SjC5Op4qzJbwqnudqhP+Kt2uPZf+6WhvtAzZ8NVSAm2ucyAWg9PO0oGUAJ6wCfuBcGunmqHrga2zFNTNhn2SFQqQQrvfAYZnBwEZRviaXDPe/pUqfBj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GGMIXGsU; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sDNcYaPS"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45368313a7bso220885e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2025 12:14:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GGMIXGsU"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso39923f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2025 12:15:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752088442; x=1752693242; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752088530; x=1752693330; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LO2SvKCCqko+0I0eG/Gzz/cIcDsvNsYtE0Nh9DYuiN0=;
-        b=sDNcYaPS/eXYFC7nF1pKmAG8GQT4TIIdN38xtjIWCIEoYHSyjVnbV2fkU01TiwLJMi
-         l2RR/DdLzA9BEkSgMO6PgKc/TCOLX/YjSFcjACezjx/tKdET5xWP/NJsF4FwZoLOQH0W
-         Tj41S+I1OMM0dJ8c6np7eKgfucbZiMkk76TW2YO8wOTXmPrYMjZy6rgya5FMK1ZKads8
-         JCr/Gl/GOkLtC8JZAdXDvvCXvKUKiHHefnw3eHeLj9pzbA7JzovbIpFM6rrTMpAUykbN
-         YNovUCCv1gMX62o0LWCVJT/Q/xfaWHonn+JH/2NLqtCRC78bPSDNV+Kj1EVS1M+Ookwq
-         aD7A==
+        bh=IOUI37vOvArNOMfbDlU1r5BFH53BMkpjGIGFBJa2WR4=;
+        b=GGMIXGsUNhJI6oHDJ5ZgmWlONrkEqHZhIkZ9ufW/GC9LhM2yYdYEIoa4j+dns7QowV
+         kva0huBNSQjEvnP7JO7zlDkEX03nK/XqmTU1QK/6VnsSzBjpttrByHE99s30Y+r2XYTc
+         4oVXgkflaXx2cjZzquTu5s2K8dZ9DPt6johmdtLa06hNhjdLDVBqTBSUIvEmIXC72BNj
+         9ufzeU5eBQKGg7j/q/+H6/QSh1JxbO6deJnrlc6DDC7ZOpmlOn764hhQUgWxyCvouGcX
+         gvzTyBZ6YvYXXHNsYsWIbOS+IY8CfBL2V940Ez4G2lI1z9l1NZTagDV63uleFH19TIvB
+         qqbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752088442; x=1752693242;
+        d=1e100.net; s=20230601; t=1752088530; x=1752693330;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LO2SvKCCqko+0I0eG/Gzz/cIcDsvNsYtE0Nh9DYuiN0=;
-        b=UWhXFz67VyFLPYZyynNbu0ch5E6yUrinEhtr4PR9MfosC1Q7kSYy1+jR59RS2DFaUQ
-         4L9bdsg1aAlNtsfmuuGYb+I3ZvIEOu0wUSqSdMSFflTFGFGUtsTJENn/Fr3FTYtQiJ7y
-         Kvv2QJ3X0ulCMH/K3cERsP0WDpbViSmnvTHu2ofZr84H/6n7ye4kbf2GuijeA5CvUreh
-         agReoD1+pHLitckja36KtbBY05fKCQ0XRiykk6J1wxYhteHGd7xSa1MeFFj7ppPYJbLI
-         arzIWZ8QGEX9bDYxamSi3CQ/cy+xMT9WBZsYpt3VrvePPvFWZHTgBCDSvy+tAQoK23yW
-         JCTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Y1aNNatnifhSKKN5dTx+eIFfZNvmPrL5IRsv44YYX9Se3Qy2QEDoTGz8hPVuiquGFP97xfLJW6ZJr8QDWwFfrw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzz+NxIEUwkpTZ5hyYt/3fHBdou9fPEaLcnGFzED56Qi81C6xX
-	WC3Loe0SXRRHQ38gfdntmXOltxdYWHxoQVzmvsSlLQHAqVhSBMpVv+p0ty3QsAJTn6A=
-X-Gm-Gg: ASbGnctCdIidvCiK4s5z1PtTy/e9KlNQvlTgN4iurLq7ILu0B50KlEjW5HdAkz+F1Ha
-	dRgIs7E3rVEMZGP7RFEiZJ5k8syduqm7VjSYaNXPVuyonFlcgCgIkvHQOGlENt40ifNqCkshASg
-	n1yxSIf926Zo3aAtEUGuBpWQJdMuG7ZomMy5GUbbrxlsdW2/sfL5DgfTfHcMwHRlinJj1JocwGT
-	5EW1xQKvd3HBvM9Y8rK8tWsbeC2UGzkeOmgMJ53fBSEnMNVpdtDgVjX15kfCPCKgAaik+Hif5/a
-	jNIaOmdQuMpie1ZUgeQrMgvRk2DcOm06jVGwpStFooJH5tDA/SW5HoqlCqVX+YtXXRD6BCMXN4s
+        bh=IOUI37vOvArNOMfbDlU1r5BFH53BMkpjGIGFBJa2WR4=;
+        b=SstwffkgNmqF0AVxuQ79Ld0Coqu3YQ7pIV1nIO3fqgo12vqty8Yv+JfhsAXAZlqP3H
+         F6li2ngWNjrxz6sjnS5RWAFicO5FtbxTJu2MSt+94aU4KpHlJHijGjHpPA1gx+oZrXq1
+         g9gzoOJZUTvlkvYuUQ4/r+LUBeJjPPoBdtgRopSwL+PeN1CeJ7J7k+yQR1Y/Z+3uqDts
+         TjZEffdUVt5X2EInOWa1epfUQ8bb3xmlYAQN75NQJCo3eeJI4u3mN6hYqTrou0PwXBJL
+         xBVCkSqaBaGtInSVLP6cGxinWfCHHsksiQNv9d8EEPV7egxfLZOBZoQHv1OJdLsAUdUT
+         +fPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPBSRZ5z1GLIMigXScrciqoJ9g6sDuh1q4C3z+gJbZy7u8BmOFtD5peA2p3TbebcieMj2LSi5t3PppEnyrZhRr8Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTL+q9qKPgwXcQgp37ibAkRUS7WFI2kWvdG8C7jATzxr0w1VwO
+	/KkV95sbDxwOJNTfd78oyrKaW67E8usEnPd4ht8/NyrAz12I9MIwVLztTI64tFpNTQU=
+X-Gm-Gg: ASbGncstOR2kbCeqeJW6IGM/Lrfgi33dLZxznyWwyaB1DiiYYMe0h/m9xiNHdgsfmL9
+	ZJhl11smfgq0++Jn6PbiJ7LsFrns6r9s6uRaUz4xJDAJN2C7eVKRROLZG8FjHpI0+UQmSkgpRSK
+	zJPQ0oQuikfEAZX3MGlvZM+afGqv1Iu1M7eOTfEZpr3O0PsyvyUyG+G3QZOP8EMe1L/C2qF6dCB
+	MAk8NmTNPdPhCbSQzFHmtPXKI/dkPsFxReDza15GQXtwKpWngIFEDcInTGhMW/7Puj5YMOk0YzF
+	Xnz743vjEPwejFvoHsh3O7/NqhFOrLiOLSPhZih8U/4j36LzB2ya7Ko7gKNp0fupzGzCmn/z33Q
 	=
-X-Google-Smtp-Source: AGHT+IF+y4VS+J+ifAdhQiRONDZqZsKUZRm/2F/D1x8s7RGynhJsmman4W9nCsHt84pBRtIV7i+ROQ==
-X-Received: by 2002:a05:600c:19d1:b0:453:9b3:5b70 with SMTP id 5b1f17b1804b1-454d53eeff3mr13735995e9.8.1752088441748;
-        Wed, 09 Jul 2025 12:14:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5fQuSnWVC1+1FSPZh+mnfL3zRfmekTmST3Oxxmhd4JajNQiGduP450T3HuQ8hjxFtcBtDTA==
+X-Received: by 2002:a05:6000:2888:b0:3a4:d4a0:1315 with SMTP id ffacd0b85a97d-3b5e44e107cmr1444727f8f.6.1752088529780;
+        Wed, 09 Jul 2025 12:15:29 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b97353sm17115944f8f.51.2025.07.09.12.14.00
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285dc08sm17159588f8f.98.2025.07.09.12.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 12:14:01 -0700 (PDT)
+        Wed, 09 Jul 2025 12:15:29 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.17
-Date: Wed,  9 Jul 2025 21:13:57 +0200
-Message-ID: <20250709191358.171004-2-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 1/3] arm64: defconfig: for v6.17
+Date: Wed,  9 Jul 2025 21:15:20 +0200
+Message-ID: <20250709191523.171359-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -79,31 +76,22 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1801; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=zHDAgo+3usMVt1m3EEn01KDZ4SXsamOfc9Zt4WzYYcE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBobr928v6ljIcAcuQ3vV9rIKJq6n7Tm/0r2elL4
- FOSeEekazqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaG6/dgAKCRDBN2bmhouD
- 13qOD/9pbiV+Cnbqp0KsjL6cy1H+uJszH7jFQPm4e7juzTsGXcLalJmneRiviNHPeQlhY4Re2Fu
- sHLTlU59BDYNC9BHWjmfHo4jqxNh3FWStRKxTWvurS4QzcqRXtmhjwQYHSc2aLRl48Lvt5gDur2
- RrNnEZ3l9sh1m2mV9wldUyBmloQwS08tIkYd9LQKLOJ2KWRr2PYi2H7ezKcVbCiqaNdua7eWlGb
- NGPeEMf+mCVnEz0zobdeYe8nzsKgki7BPDGbBR/hurovDsQSCwag7G+nuOM/G17yne6mKayaVfa
- 8fpx5NWgQfZGFaqTuWJVJeruhv6P370Rme8tVIb1d/QgEUv99N0JiZqOFTmZtT1pSKvn+tigY2Z
- kLGHC6xW0/ZqexuNCujKcptcR7pDcBFxuzCiwufFjTyMFbWcJ9E991WA8GLKRBfArtcwACYxqPF
- /3Hp23E/jm/b0xsWKTVMuxFSrh0o4yoKZ3f99WAHWSpEWGaGADCLg5+hm7wiA23Lz6S3PQaywP5
- 22cXVmRAjSkOes+0ADM3ViW69HlVCDoZ/FcN8o8xy0z4MyAIyZ5Mgn7YA86ZGu/dgr0BTgymzbb
- dfC003omx/U1bsB+mODbyrgVy9C/GE3PVFXOuafmfkb9undGYLEc/7NMzciiCwrRSRafYYoeA0R S+lSfuRP3SDJgEw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1262; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=Vg3SYFcxbZhfxzHwdzewVgAiginzpLipvsLFtGoX06g=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBobr/LrlRRiB7NlTXa7KpRiF8ppNyVSL6muQZyc
+ U/nnYOJbbOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaG6/ywAKCRDBN2bmhouD
+ 1631D/9+mUsRGRHWiIdpYnSIndM3CR/VSb5CpOedsp/WMUAxCfvyYm+cNPdqWe68MxqUBliQTxh
+ 1luK/jO2yNlAMjmvD96Q/UOLXSlS4g7NdpSePbKoaT3isLHiX8n972jvmX1pE684SlPD+rAl8Wt
+ BflVWx59w+n0qWa66Hc+lMgBw58NXoJ2daiG2t2w50XLSdskrcF/Oadi1bwI5f00HEywZMPxKnj
+ QkquXmlnBi6dyHdHfFGHu3c7k/Zjg9Qcy5F7ut+IOUC4wdJkHSsnAS5xgRC9nnjB5holPin6heD
+ ozlaZ5iKoM25cHC3GxOJnmDjQBaRrMbb7vIdJkEVuQlr5HAFmKbPiZHusiVlJgVYMcu9nt4Axme
+ fGeQkPXLKa6wxYWeS9QI+IrZEVm/Oai3bSurC/PZeyvoJu1w6pHZebKXR3FoPsLR0klnTkGBbL4
+ zenZDZRqCT6Nq0kS8FAy0rAIyPykug3COaM4NCi7WsbJWpHXhM4hlrLXG5Rqtxo63beki5kfn3K
+ yOoWXlfEQ6J9zcesgUhIyAFhgqvATrlJVJG318inhKHYbiR5YgeWikUbEeJGNlwgXDb6P2kITWk
+ y2Hpg1qxObvXjVB6wKFdAVf++28TEW/v9h5UVrsnsxt4X5nEidEK+72Amfzl0J6zxKZ1N1/gLw+ ol9EG7e7CPuRbbg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-
-Hi,
-
-Clock drivers. The bindings were kept on separate branch, just in case, but
-eventually they were not shared outside.
-
-Best regards,
-Krzysztof
-
 
 The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
@@ -111,36 +99,30 @@ The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.17
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-6.17
 
-for you to fetch changes up to 2d539f31ab0eb3eb3bd9491b7dcd52dec7967e15:
+for you to fetch changes up to a7d7aebed4005b9c287f9bd9d22c273da63c9028:
 
-  clk: samsung: exynosautov920: add block hsi2 clock support (2025-06-12 17:28:11 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.17
-
-1. Fixes for clock topology on Google GS101.
-2. Add HSI2 controller on ExynosAutov920.
-3. Minor comment fix for Exynos850.
+  arm64: defconfig: enable Samsung PMIC over ACPM (2025-06-30 08:03:28 +0200)
 
 ----------------------------------------------------------------
-André Draszik (3):
-      clk: samsung: gs101: fix CLK_DOUT_CMU_G3D_BUSD
-      clk: samsung: gs101: fix alternate mout_hsi0_usb20_ref parent clock
-      clk: samsung: exynos850: fix a comment
+Samsung SoC defconfig changes for v6.17
 
-Krzysztof Kozlowski (1):
-      Merge branch 'for-v6.17/clk-dt-bindings-headers' into next/clk
+1. Multiple SoCs (including Samsung, Apple): switch sound to module from
+   a built-in, because it is not necessary for booting.  Also drop
+   redundant sound codec options.
 
-Raghav Sharma (3):
-      dt-bindings: clock: exynosautov920: sort clock definitions
-      dt-bindings: clock: exynosautov920: add hsi2 clock definitions
-      clk: samsung: exynosautov920: add block hsi2 clock support
+2. Enable PMIC drivers for Google GS101 Pixel 6 phones: MAX77759 and
+   Samsung PMIC over ACPM protocol.
 
- .../clock/samsung,exynosautov920-clock.yaml        | 37 +++++++++--
- drivers/clk/samsung/clk-exynos850.c                |  2 +-
- drivers/clk/samsung/clk-exynosautov920.c           | 72 ++++++++++++++++++++++
- drivers/clk/samsung/clk-gs101.c                    |  4 +-
- include/dt-bindings/clock/samsung,exynosautov920.h |  9 +++
- 5 files changed, 115 insertions(+), 9 deletions(-)
+----------------------------------------------------------------
+André Draszik (2):
+      arm64: defconfig: enable Maxim max77759 driver
+      arm64: defconfig: enable Samsung PMIC over ACPM
+
+Krzysztof Kozlowski (2):
+      arm64: defconfig: Switch SOUND to module
+      arm64: defconfig: Drop unneeded unselectable sound drivers
+
+ arch/arm64/configs/defconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
