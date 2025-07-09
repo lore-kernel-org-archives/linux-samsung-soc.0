@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6CA26B955;
-	Wed,  9 Jul 2025 06:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A232126A1A4;
+	Wed,  9 Jul 2025 06:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752043327; cv=none; b=f58XKnAja/zguEHSv5c+iOwD8CRRfKyQPNV7FzESuu0+uCz/zl585m6VzDbf6mNqngEomZc/sVu4fBO/uoP2j5+0Wg5L13tkaeyLaimipEQF0Hcyb0FFNUhUqKl1gOZ8i3DvaZBZqfzzW26f+5dyUB0tFICuxVR0T2CQ8a3TY1k=
+	t=1752043455; cv=none; b=sdAVX+J6VbTGoluXi4ElG28nz5Zyx2HqlIDruMB/tyTTQxzlHZFkl2OLXn9a1elMyKdomlnpGAHygH4l/mYzNYHtXwkeThKRu5svH/yyShexjGUS61oQ4uuDNW4D8yBm1KwbJQ4FbnrT1CuFSWDtQR8IE0xUO8vieJ/l5QMA64I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752043327; c=relaxed/simple;
-	bh=7+vCqZFN7U4lnW639qGXUMHfGK51a943czZTXZl01Rw=;
+	s=arc-20240116; t=1752043455; c=relaxed/simple;
+	bh=wdxGlzNC/61f9KkdCBvZ7+eq6PnXnZ+ZbeMf8yJwp9g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CD625eiXHydvSCggw/v+8upvzt0n8U0O+AxBnCz4b9tWQ1PrfS+8DpFK35CA8WH7Al5u0iemwJOdUMsAWYGPL4nViwKMd8yWiePfiKpRx1F6pX/77J6stoKzC2fu0L6Q1knLoZS3pIutWOgqYZm/rxxcSNg20HCRkt/Gdeua0jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S17CPSJn; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=pqrblj7egGtvC4x8shLBVuPBX5rD29rFEVO2Cx72cr+/m7VlIid1Wa9vBTVNFGKRGvrLWeIJbftyTcM1htbDh2xAbLHYwpJvIAdZykeZYT1pynXo7MJQtJSFifcHRch0spxmAoJsyVcv2hAuPzjWCszKGD876WB/Z7VrNAz96bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czRQdp+g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S17CPSJn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BCEC4CEF0;
-	Wed,  9 Jul 2025 06:42:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czRQdp+g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA9EC4CEF0;
+	Wed,  9 Jul 2025 06:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752043327;
-	bh=7+vCqZFN7U4lnW639qGXUMHfGK51a943czZTXZl01Rw=;
+	s=k20201202; t=1752043455;
+	bh=wdxGlzNC/61f9KkdCBvZ7+eq6PnXnZ+ZbeMf8yJwp9g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S17CPSJnTZsiKwFWyk3hbEFT/5JvQJaEWZfiwyG1YJJ5CWMFFeHYkiD0WEgH+1yhF
-	 FFV+trtzovMtt+RcP7nQFjQE3BIU/PubAiRXnylnSuxxNgxhs22UHNnUl74y8Sh61Q
-	 Q3dfaPuamWXn1d8vNXPC6Udygiy0450ILB3zLFpnSiB+RBsMfacwq0E4f5yc4K8C2t
-	 YnoBbvJvuJ9A9DKn/EfQVPfCfb5wEqKbGqTZnksf5iyGPs5ZNr1Mk4DKYYIo72Ppwd
-	 Q0jiQXZbXGTNkRZ7w1/tFkis6SMAlNiLU2x3UjJpD0nQxc0fBr7YEKTEY2hXTdlc7e
-	 BMhrycdhvlvTQ==
-Message-ID: <91f183dc-7294-451f-96ce-4d24c073fbbf@kernel.org>
-Date: Wed, 9 Jul 2025 08:42:02 +0200
+	b=czRQdp+g5BYxJ1e8jmArYF8RZF6zgaMn/UeTflpCUq2nRqaixrwJNviCA/tr0Z7lF
+	 xfv9XKfOawvKBsWbhBL6t3+88xyCugqmTwG/38DppYfIGnCyBMC4zdUhRoKoT/PPXb
+	 YHehDBpZOO5lXx15hdiPwSdHpj5x+q3edY0Q3x+9/SlUs2rzOm84oMWWjHj8wHoTlZ
+	 jqrLOQFE9mEyDfuFtVe2UpQWVTH2HvuD9vE4ksFvX4QsGkRXSSRqAhfqk+EcgwLsOE
+	 Y6/Z1N0vYi/mKr/FgpF47LRC+th691UGNGVNfH63yxD9JrSC+wAHLDA5nVhp+KBDRJ
+	 Eu2rhCqJQKIEQ==
+Message-ID: <0dce5de0-cfe0-4305-80c8-4551c6ee3965@kernel.org>
+Date: Wed, 9 Jul 2025 08:44:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: Add samsung,abox-generic document
-To: ew kim <ew.kim@samsung.com>, broonie@kernel.org, lgirdwood@gmail.com,
- s.nawrocki@samsung.com, robh@kernel.org, krzk+dt@kernel.org,
+Subject: Re: [PATCH] arm64: dts: exynos: add abox generic for ExynosAutov920
+To: ew kim <ew.kim@samsung.com>, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Cc: alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <CGME20250709002434epcas2p29b2368f0de6c760b17565ad7f2c37a19@epcas2p2.samsung.com>
- <20250709001239.379695-1-ew.kim@samsung.com>
+References: <CGME20250709002408epcas2p25248bf1a397fc308d91ffef3889c41d5@epcas2p2.samsung.com>
+ <20250709001210.379418-1-ew.kim@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,42 +88,51 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250709001239.379695-1-ew.kim@samsung.com>
+In-Reply-To: <20250709001210.379418-1-ew.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/07/2025 02:12, ew kim wrote:
-> Add soundcard bindings for the abox generic of exynus automotive.
+> Add a node for Abox generic. This driver, exynosautov920, connects to
+> the SoC and allows you to configure a sound card.
 
-This wasn't ever tested, so very short review. You have typos here and
-there. But more important - this should not be a "generic" thing, but
-binding for your sound card.
-
-What's more important, there is no user of it, so anyway this cannot be
-accepted as it makes no sense without user.
+DTS is not for drivers. NAK.
 
 > 
 > Signed-off-by: ew kim <ew.kim@samsung.com>
 > ---
->  .../bindings/sound/samsung,abox-generic.yaml  | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
+>  .../boot/dts/exynos/exynosautov920-audio.dtsi | 20 +++++++++++++++++++
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi |  1 +
+>  2 files changed, 21 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-audio.dtsi
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml b/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-audio.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-audio.dtsi
 > new file mode 100644
-> index 000000000000..bf641a197903
+> index 000000000000..4a1341ccdc2e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/soc/samsung/abox-generic.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-audio.dtsi
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
 
-But the quality of the patch and lack of testing makes me thinking if
-you could not get some help inside Samsung in posting a proper patch?
+You need to clean up old downstream code. Read DTS coding style.
 
+> + *        http://www.samsung.com/
+> + *
+> + * EXYNOS - Audio Device Tree source
+> + */
+> +
+> +/ {
+> +	abox_generic: abox_generic@generic {
+> +		compatible = "samsung,abox_generic";
+> +		samsung,num-of-pcm_playback = <32>;
+> +		samsung,num-of-pcm_capture = <32>;
+> +		samsung,num-of-i2s-dummy-backend = <5>;
+> +		status = "disabled";
+
+You just add dead code. This is very poor submission. Reach internally
+(or to experienced R&D in Poland) to guide you how to submit proper patches.
 
 Best regards,
 Krzysztof
