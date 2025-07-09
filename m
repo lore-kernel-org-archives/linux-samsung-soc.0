@@ -1,129 +1,139 @@
-Received: from mail-m49204.qiye.163.com (mail-m49204.qiye.163.com [45.254.49.204])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BE6274FD1;
-	Wed,  9 Jul 2025 09:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D92B28642D
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Jul 2025 10:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752053118; cv=none; b=hzz92gen0Lx2r7YYy1w+IDOuEZjF47B4tR1Tr99MfZ+cGU6nZzK23i/iaNQ95djrL8KDBA2uJHHecQ1hpSfydSUxx+R7VHgEsTPBhLEy3TXBF5fYYq6th1+byLSQC5yut9UzOdYaBQV1ppdBks3ju/EvEbqgEfIVU5J4XJCrVH8=
+	t=1752055240; cv=none; b=urUQbfmZdwHydAx24E6WArwty4TDtGnyPxQn1UgkysmfSz47hyyD1QQTLaefbo1vYrnHmBjY47rEHuKPVzgjtwJQpazx2oi6ScYsUaLK7ljQh3eBCjZvRz47+q5yObeTJ91MYXyU1L32U6uK4QKsRukgdBKHFY3zVTU5pREJJR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752053118; c=relaxed/simple;
-	bh=5mqpNt6i6U7q+b3iLZPYVQahWKokuwJty8dn4HfZwUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S7But4qr43l5yU7z+Ds/lYoJpItBJERkUvOIhHiS498YH5HB6PFbXQrHg4m+0ydVjWXVaSPRlP1xmgObuAeytvyD7J4fOpQ6YazZItlupZ7lhk0Npkt09fWOpiDI1MOFcXxw8/VPCgGGI1Sxakopcr3j7mb7i0CNcYCWbqc9Xio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZHGcEjNW; arc=none smtp.client-ip=45.254.49.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1752055240; c=relaxed/simple;
+	bh=3cMxryECHbFyInj86wbRy79c+zpxeGN9+i2nNUGxS78=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=NwSwZCroHCYDaFZEDZ06a2KMiBx2yyuLf7GBAz45rlljcvIpGErNQW/kKE3jkmdR4pRuQ4GrwIRtCa37qLkA4Tng/jAaRKSEqe2cbk4RAZVY6pII1vheUsU5iYTUc6FvYhObNnPOdKVhmut2jHUEh7j5864Tdk/c01DDP6R72qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RkDOXHwB; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZHGcEjNW"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1b69d1c4b;
-	Wed, 9 Jul 2025 15:02:42 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jingoohan1@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	l.stach@pengutronix.de,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v2 11/12] drm/bridge: analogix_dp: Remove unused APIs for AUX bus
-Date: Wed,  9 Jul 2025 15:01:38 +0800
-Message-Id: <20250709070139.3130635-12-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250709070139.3130635-1-damon.ding@rock-chips.com>
-References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RkDOXHwB"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250709100035epoutp045579931df254fe322efc46b41bcf9bd7~QjPRPxSuO1996219962epoutp04_
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Jul 2025 10:00:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250709100035epoutp045579931df254fe322efc46b41bcf9bd7~QjPRPxSuO1996219962epoutp04_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752055236;
+	bh=8YjDIVkSzZ1qBfDNEzt6aiWfmZ06SFpmvJBdwg8GbFU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=RkDOXHwBuvlmrqhkH4uE1KVp+NZWs9KeY8E4a2V30+uMokRIsRytohwaPYjIdUmlE
+	 84H/VaoKMjeaMdCk/VbRvlJQoTuSHI9Kp4EOh1LYUPiMg2+t3i8x7CuQdm2q4cEBOo
+	 J5IzruWxe3qGA61hLrekCtW1Qwd9DkGUc5yX136o=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250709100035epcas5p11cefc566289685aa4dadd35429e93d22~QjPQiuHEG1114111141epcas5p1k;
+	Wed,  9 Jul 2025 10:00:35 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bcYPr5Dhtz6B9mD; Wed,  9 Jul
+	2025 10:00:32 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250709085159epcas5p15cd74d4ab9d7944eef406ce118768a84~QiTXJ9MsA0055000550epcas5p1N;
+	Wed,  9 Jul 2025 08:51:59 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250709085156epsmtip13f8f84df1a677aaa0f8edc8247250f7a~QiTUNkrE12100421004epsmtip1O;
+	Wed,  9 Jul 2025 08:51:55 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<neil.armstrong@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250706-grouse-of-pastoral-bloom-7d79b0@krzk-bin>
+Subject: RE: [PATCH v4 3/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo HS phy
+Date: Wed, 9 Jul 2025 14:21:54 +0530
+Message-ID: <07d401dbf0ae$bb0256b0$31070410$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkMdQlZCHx4YThlCGE8aGBlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a97edfe6a1803a3kunm3a7bcd50c83bc0
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pkk6TRw5UTEzFS8RIxdMIi4J
-	IkkwC0hVSlVKTE5JS09PTk1OSkhOVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFISU5LNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=ZHGcEjNWd8Ny++COiRajpPxJxHQekEehDeGuu9Y4E9O7z8QGdVqEXvkKN1LP1c7k8/Debbz4uRuv6VfLjhx7YEerzTPINgAqhTXYqdJbAvtaas9gPGzCN4U9DgzvElAeKzVVp07yV4an3fkKdbMqyYRg51tG04FzOBwULGPhiHg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=fqyUN1F8Tzi8KnSDWJShNFEL8g+VnD7YEPfF0DJm4TE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AJNRgOcAqL7pisBlv/N8LMsH/TA
+Content-Language: en-in
+X-CMS-MailID: 20250709085159epcas5p15cd74d4ab9d7944eef406ce118768a84
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701120002epcas5p2c4d728d599a819057bcc40b724881276
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701120002epcas5p2c4d728d599a819057bcc40b724881276@epcas5p2.samsung.com>
+	<20250701120706.2219355-4-pritam.sutar@samsung.com>
+	<20250706-grouse-of-pastoral-bloom-7d79b0@krzk-bin>
 
-Since the panel/bridge parsing has been moved to the Analogix side,
-the analogix_dp_aux_to_plat_data() and analogix_dp_get_aux() is
-redundant.
+Hi Krzysztof,
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 14 --------------
- include/drm/bridge/analogix_dp.h                   |  2 --
- 2 files changed, 16 deletions(-)
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 06 July 2025 03:12 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; neil.armstrong=40=
+linaro.org;
+> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v4 3/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo HS phy
+>=20
+> On Tue, Jul 01, 2025 at 05:37:03PM +0530, Pritam Manohar Sutar wrote:
+> > This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+>=20
+> What is =22this=22? You add here HS PHY, so HS is 3.1?
+>=20
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 660f95e90490..abc64cc17e4c 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1695,20 +1695,6 @@ int analogix_dp_stop_crc(struct drm_connector *connector)
- }
- EXPORT_SYMBOL_GPL(analogix_dp_stop_crc);
- 
--struct analogix_dp_plat_data *analogix_dp_aux_to_plat_data(struct drm_dp_aux *aux)
--{
--	struct analogix_dp_device *dp = to_dp(aux);
--
--	return dp->plat_data;
--}
--EXPORT_SYMBOL_GPL(analogix_dp_aux_to_plat_data);
--
--struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp)
--{
--	return &dp->aux;
--}
--EXPORT_SYMBOL_GPL(analogix_dp_get_aux);
--
- static int analogix_dp_aux_done_probing(struct drm_dp_aux *aux)
- {
- 	struct analogix_dp_device *dp = to_dp(aux);
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 0b6d85f1924e..94854b5949c2 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -51,8 +51,6 @@ void analogix_dp_unbind(struct analogix_dp_device *dp);
- int analogix_dp_start_crc(struct drm_connector *connector);
- int analogix_dp_stop_crc(struct drm_connector *connector);
- 
--struct analogix_dp_plat_data *analogix_dp_aux_to_plat_data(struct drm_dp_aux *aux);
--struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp);
- int analogix_dp_find_panel_or_bridge(struct analogix_dp_device *dp);
- 
- #endif /* _ANALOGIX_DP_H_ */
--- 
-2.34.1
+=22this=22 means =22combo phy=22. Combo phy is combination of 2 types of th=
+e phys.=20
+1. one supports only USB3.1 SSP+ and denoted as =22samsung,exynosautov920-u=
+sb31drd-combo-ssphy=22 as in patch no 5 (combo SS phy)
+2. another supports only USB2.0 HS and termed as =22samsung,exynosautov920-=
+usbdrd-combo-hsphy=22 as in this patch (combo HS phy)
+
+> If this is the same phy, why are you adding another compatible?
+
+As explained earlier (even in cover letter), there are 3 types of the phys =
+in this SoC.
+1. one is simmilar with exynos850 and termed as =22samsung,exynosautov920-u=
+sbdrd-phy=22 as mentioned in patch no.1
+2. two phys are in combo phys as explained above (patch no 3 =5Bcombo HS ph=
+y=5D and 5=5Bcombo SS phy=5D)
+		=09
+NOTE: hs phy in combo phy in =22NOT=22 same as phy (patch no. 1 which is si=
+milar with exynos850).=20
+		=09
+These three phys (usbdrd-phy, combo-hsphy, combo-ssphy) are totally deferen=
+t =22NOT=22 same, hence added 3 three compatible for three phys.
+
+>=20
+> Best regards,
+> Krzysztof
+
 
