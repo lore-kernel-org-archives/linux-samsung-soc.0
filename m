@@ -1,27 +1,27 @@
 Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AB73BB48
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606831EA80
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106866; cv=none; b=arO9sPkn+09cuOVb7KyAcEglsjiQN99Ao16/7FWMiTCXv8J9kfxDbHWTZur5OQ2HPviy8UtO6BdNMavHb+7KOwCoiJNdzeIHOoVBU/2XvWRBXsO7lTiCOO96+W+ufzOiknCW6pcO8TNiBymBmrHdrc58pmrahw6v8jlwCqbWw/4=
+	t=1752106866; cv=none; b=uTy+vQw/t8rNPaOTsd04ce7mVI2P/wdo60+t5RO2tFNbOxPHUBQlJk4wv8S0ksgT972ImrPSrEDk9erBRAHopAoTMHvoW1JzjldjkDZ30tUtGzOvbZiQH+dcmLUp+e0jrKyiIR7OEjEoXu6+FWbZN8IPaUBFp5XxW5NMHWG5ySE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752106866; c=relaxed/simple;
-	bh=I3gMaKVjatpxTEc20thzK2HEjVPobuIRzNSHDsOU4XM=;
+	bh=j6y4CRKseQoEZyQ+Mx7uaatjudKpQjwG59w6BIf/0iw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hHoO4ydhEkLrGaDLrb5knaTapg9cv+VVIRccP15QNkmZOBrcok/mrrE2dKoDi+hq4fbph8gppB9h1umId+HPw4FQAueALuvnnUi6MqnNLPYFD4zBa3w7d+JwnwCoE+HRHFRe0FwkBzxVvxWgne/ynUyHVcracL+LNMNs3eWvksE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=dlQoxCJY; arc=none smtp.client-ip=112.168.119.159
+	 MIME-Version; b=I5DWYEjuhFNmErjZSSXJQwgXveXzPqiZyZ6U+csuXBU9p+FIfwa9m5uAK1FAi9o5eJImXHxHyuzPlLy5nrj7pKJAdqk1uV5BpHc1DO+LfQWrU5aQWeO06EpfOuMLLFnFjyvm0rXlP/GiEmRNVUO72WIzubTdZfEYyeFDFSmTnU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=nCEnAlGn; arc=none smtp.client-ip=112.168.119.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="dlQoxCJY"
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="nCEnAlGn"
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
-	t=1752106858; bh=I3gMaKVjatpxTEc20thzK2HEjVPobuIRzNSHDsOU4XM=;
-	l=5198; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=dlQoxCJYvaU9NzuZeyM3wwau9fVyB2T9Ly5FRqprW5njzY/1lnXe6XM+rCrTQIHrf
-	 3ts7QG+gBCQXuVa+fP8c2BeS7YvONZGT0wpY9xkGsTikX8FGdVvqgm0ufZQnZUnCZT
-	 fIEwoYcWVDWGHfyUZFvRkSGs2QrsAvTVZHq9ysLA=
+	t=1752106858; bh=j6y4CRKseQoEZyQ+Mx7uaatjudKpQjwG59w6BIf/0iw=;
+	l=2936; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=nCEnAlGn93Nbggu1Wktf5vQnLKtFTsB8hSyHRWlALZ0K60bzWHz9/OGS1RaEp8IEb
+	 qNzlVbZf+K98zlFQKZ6Bywbq4j4oAtcQMWzL4HiTPhmfyTkjfQ9PprXFYEU0wCrXFk
+	 wiPFfuBr1sT/hWABZSVsA8p/95wAd3I6CBXaPKkU=
 Received: from unknown (HELO kangseongu..) (ksk4725@coasia.com@115.23.218.194)
 	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:58 +0900
 X-Original-SENDERIP: 115.23.218.194
@@ -106,9 +106,9 @@ Cc: kenkim <kenkim@coasia.com>,
 	linux-gpio@vger.kernel.org,
 	soc@lists.linux.dev,
 	Varada Pavani <v.pavani@samsung.com>
-Subject: [PATCH 08/16] clk: samsung: artpec-8: Add clock support for CMU_CPUCL block
-Date: Thu, 10 Jul 2025 09:20:38 +0900
-Message-Id: <20250710002047.1573841-9-ksk4725@coasia.com>
+Subject: [PATCH 07/16] clk: samsung: artpec-8: Add clock support for CMU_CORE block
+Date: Thu, 10 Jul 2025 09:20:37 +0900
+Message-Id: <20250710002047.1573841-8-ksk4725@coasia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
 References: <20250710002047.1573841-1-ksk4725@coasia.com>
@@ -123,127 +123,73 @@ Content-Transfer-Encoding: 8bit
 From: Hakyeong Kim <hgkim05@coasia.com>
 
 Add clock support for below CMU block in ARTPEC-8 SoC.
- - CMU_CPUCL
+ - CMU_CORE
 
 Signed-off-by: Varada Pavani <v.pavani@samsung.com>
 Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
 ---
- drivers/clk/samsung/clk-artpec8.c | 99 +++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+ drivers/clk/samsung/clk-artpec8.c | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-artpec8.c b/drivers/clk/samsung/clk-artpec8.c
-index f41b7941c630..15c90fe29308 100644
+index 648abdd2f510..f41b7941c630 100644
 --- a/drivers/clk/samsung/clk-artpec8.c
 +++ b/drivers/clk/samsung/clk-artpec8.c
-@@ -17,6 +17,7 @@
+@@ -16,6 +16,7 @@
+ /* NOTE: Must be equal to the last clock ID increased by one */
  #define CMU_CMU_NR_CLK			(DOUT_CLKCMU_VPP_CORE + 1)
  #define CMU_BUS_NR_CLK			(DOUT_CLK_BUS_PCLK + 1)
- #define CMU_CORE_NR_CLK			(DOUT_CLK_CORE_PCLK + 1)
-+#define CMU_CPUCL_NR_CLK		(DOUT_CLK_CPUCL_PCLKDBG + 1)
++#define CMU_CORE_NR_CLK			(DOUT_CLK_CORE_PCLK + 1)
  #define CMU_IMEM_NR_CLK			(MOUT_IMEM_JPEG_USER + 1)
  
  /* register offset definitions for cmu_cmu (0x12400000) */
-@@ -521,6 +522,104 @@ static void __init artpec8_clk_cmu_core_init(struct device_node *np)
- CLK_OF_DECLARE(artpec8_clk_cmu_core, "axis,artpec8-cmu-core",
- 	       artpec8_clk_cmu_core_init);
+@@ -476,6 +477,50 @@ static void __init artpec8_clk_cmu_bus_init(struct device_node *np)
+ CLK_OF_DECLARE(artpec8_clk_cmu_bus, "axis,artpec8-cmu-bus",
+ 	       artpec8_clk_cmu_bus_init);
  
-+/* Register Offset definitions for CMU_CPUCL (0x11410000) */
-+#define PLL_LOCKTIME_PLL_CPUCL				0x0000
-+#define PLL_CON0_MUX_CLKCMU_CPUCL_SWITCH_USER		0x0120
-+#define PLL_CON0_PLL_CPUCL				0x0140
-+#define MUX_CLK_CPUCL_PLL				0x1000
-+#define DIV_CLK_CLUSTER_ACLK				0x1800
-+#define DIV_CLK_CLUSTER_CNTCLK				0x1804
-+#define DIV_CLK_CLUSTER_PCLKDBG				0x1808
-+#define DIV_CLK_CPUCL_CMUREF				0x180c
-+#define DIV_CLK_CPUCL_PCLK				0x1814
-+#define DIV_CLK_CLUSTER_ATCLK				0x1818
-+#define DIV_CLK_CPUCL_DBG				0x181c
-+#define DIV_CLK_CPUCL_PCLKDBG				0x1820
++/* Register Offset definitions for CMU_CORE (0x12410000) */
++#define PLL_CON0_MUX_CLK_CORE_ACLK_USER			0x0100
++#define PLL_CON0_MUX_CLK_CORE_DLP_USER			0x0120
++#define DIV_CLK_CORE_PCLK				0x1800
 +
-+static const unsigned long cmu_cpucl_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_CPUCL,
-+	PLL_CON0_MUX_CLKCMU_CPUCL_SWITCH_USER,
-+	PLL_CON0_PLL_CPUCL,
-+	MUX_CLK_CPUCL_PLL,
-+	DIV_CLK_CLUSTER_ACLK,
-+	DIV_CLK_CLUSTER_CNTCLK,
-+	DIV_CLK_CLUSTER_PCLKDBG,
-+	DIV_CLK_CPUCL_CMUREF,
-+	DIV_CLK_CPUCL_PCLK,
-+	DIV_CLK_CLUSTER_ATCLK,
-+	DIV_CLK_CPUCL_DBG,
-+	DIV_CLK_CPUCL_PCLKDBG,
++static const unsigned long cmu_core_clk_regs[] __initconst = {
++	PLL_CON0_MUX_CLK_CORE_ACLK_USER,
++	PLL_CON0_MUX_CLK_CORE_DLP_USER,
++	DIV_CLK_CORE_PCLK,
 +};
 +
-+static const struct samsung_pll_clock cmu_cpucl_pll_clks[] __initconst = {
-+	PLL(pll_1017x, PLL_CPUCL, "fout_pll_cpucl", "fin_pll",
-+	    PLL_LOCKTIME_PLL_CPUCL, PLL_CON0_PLL_CPUCL, NULL),
++PNAME(mout_clk_core_aclk_user_p) = { "fin_pll", "dout_clkcmu_core_main" };
++PNAME(mout_clk_core_dlp_user_p) = { "fin_pll", "dout_clkcmu_core_dlp" };
++
++static const struct samsung_mux_clock cmu_core_mux_clks[] __initconst = {
++	MUX(MOUT_CLK_CORE_ACLK_USER, "mout_clk_core_aclk_user",
++	    mout_clk_core_aclk_user_p, PLL_CON0_MUX_CLK_CORE_ACLK_USER, 4, 1),
++	MUX(MOUT_CLK_CORE_DLP_USER, "mout_clk_core_dlp_user",
++	    mout_clk_core_dlp_user_p, PLL_CON0_MUX_CLK_CORE_DLP_USER, 4, 1),
 +};
 +
-+PNAME(mout_clkcmu_cpucl_switch_user_p) = {
-+	"fin_pll", "dout_clkcmu_cpucl_switch" };
-+PNAME(mout_pll_cpucl_p) = {
-+	"fin_pll", "fout_pll_cpucl" };
-+PNAME(mout_clk_cpucl_pll_p) = {
-+	"mout_pll_cpucl", "mout_clkcmu_cpucl_switch_user" };
-+
-+static const struct samsung_mux_clock cmu_cpucl_mux_clks[] __initconst = {
-+	MUX_F(0, "mout_pll_cpucl", mout_pll_cpucl_p,
-+	      PLL_CON0_PLL_CPUCL, 4, 1,
-+	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
-+	MUX(MOUT_CLKCMU_CPUCL_SWITCH_USER, "mout_clkcmu_cpucl_switch_user",
-+	    mout_clkcmu_cpucl_switch_user_p,
-+	    PLL_CON0_MUX_CLKCMU_CPUCL_SWITCH_USER, 4, 1),
-+	MUX_F(MOUT_CLK_CPUCL_PLL, "mout_clk_cpucl_pll", mout_clk_cpucl_pll_p,
-+	      MUX_CLK_CPUCL_PLL, 0, 1, CLK_SET_RATE_PARENT, 0),
++static const struct samsung_div_clock cmu_core_div_clks[] __initconst = {
++	DIV(DOUT_CLK_CORE_PCLK, "dout_clk_core_pclk",
++	    "mout_clk_core_aclk_user", DIV_CLK_CORE_PCLK, 0, 4),
 +};
 +
-+static const struct samsung_fixed_factor_clock cpucl_ffactor_clks[] __initconst = {
-+	FFACTOR(DOUT_CLK_CPUCL_CPU, "dout_clk_cpucl_cpu",
-+		"mout_clk_cpucl_pll", 1, 1, CLK_SET_RATE_PARENT),
++static const struct samsung_cmu_info cmu_core_info __initconst = {
++	.mux_clks		= cmu_core_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(cmu_core_mux_clks),
++	.div_clks		= cmu_core_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(cmu_core_div_clks),
++	.nr_clk_ids		= CMU_CORE_NR_CLK,
++	.clk_regs		= cmu_core_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(cmu_core_clk_regs),
 +};
 +
-+static const struct samsung_div_clock cmu_cpucl_div_clks[] __initconst = {
-+	DIV(DOUT_CLK_CLUSTER_ACLK, "dout_clk_cluster_aclk",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_ACLK, 0, 4),
-+	DIV(DOUT_CLK_CLUSTER_PCLKDBG, "dout_clk_cluster_pclkdbg",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_PCLKDBG, 0, 4),
-+	DIV(DOUT_CLK_CLUSTER_CNTCLK, "dout_clk_cluster_cntclk",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_CNTCLK, 0, 4),
-+	DIV(DOUT_CLK_CLUSTER_ATCLK, "dout_clk_cluster_atclk",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_ATCLK, 0, 4),
-+	DIV(DOUT_CLK_CPUCL_PCLK, "dout_clk_cpucl_pclk",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CPUCL_PCLK, 0, 4),
-+	DIV(DOUT_CLK_CPUCL_CMUREF, "dout_clk_cpucl_cmuref",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CPUCL_CMUREF, 0, 3),
-+	DIV(DOUT_CLK_CPUCL_DBG, "dout_clk_cpucl_dbg",
-+	    "dout_clk_cpucl_cpu", DIV_CLK_CPUCL_DBG, 0, 4),
-+	DIV(DOUT_CLK_CPUCL_PCLKDBG, "dout_clk_cpucl_pclkdbg",
-+	    "dout_clk_cpucl_dbg", DIV_CLK_CPUCL_PCLKDBG, 0, 4),
-+};
-+
-+static const struct samsung_cmu_info cmu_cpucl_info __initconst = {
-+	.pll_clks		= cmu_cpucl_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(cmu_cpucl_pll_clks),
-+	.fixed_factor_clks	= cpucl_ffactor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(cpucl_ffactor_clks),
-+	.mux_clks		= cmu_cpucl_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(cmu_cpucl_mux_clks),
-+	.div_clks		= cmu_cpucl_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(cmu_cpucl_div_clks),
-+	.nr_clk_ids		= CMU_CPUCL_NR_CLK,
-+	.clk_regs		= cmu_cpucl_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(cmu_cpucl_clk_regs),
-+};
-+
-+static void __init artpec8_clk_cmu_cpucl_init(struct device_node *np)
++static void __init artpec8_clk_cmu_core_init(struct device_node *np)
 +{
-+	samsung_cmu_register_one(np, &cmu_cpucl_info);
++	samsung_cmu_register_one(np, &cmu_core_info);
 +}
 +
-+CLK_OF_DECLARE(artpec8_clk_cmu_cpucl, "axis,artpec8-cmu-cpucl",
-+	       artpec8_clk_cmu_cpucl_init);
++CLK_OF_DECLARE(artpec8_clk_cmu_core, "axis,artpec8-cmu-core",
++	       artpec8_clk_cmu_core_init);
 +
  /* Register Offset definitions for CMU_IMEM (0x10010000) */
  #define PLL_CON0_MUX_CLK_IMEM_ACLK_USER			0x0100
