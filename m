@@ -1,153 +1,108 @@
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58981C6FF4;
-	Fri, 11 Jul 2025 05:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6311D54FE
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 06:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752212482; cv=none; b=RluuDbZLkulTUIvlpc4g0VWrzCzXoWUkh5+m9ZQalet0gELkzyKlXfMht1R1YFRsQCJxN1BhsJSN78LEBfpv7X/LIcgm+Iq2e2y1ojip2eSXyKQVAQREjs4I2HZ1IffM+eQnD0B4u4bOeYAI0I90j+Cf4ykTpSWjYlIbLagKnik=
+	t=1752215743; cv=none; b=IdnEwnQZDmwUNEb2TnjMsNARxrV5HsizdvQdpAXTPIcZLfVrSVHW7eKq/LvtM6fkTrkhSSK3UD/34vnBH47f9X+nLIdC02M+9EC0phZXXVRrl7EJwTpEjsWhcNL+jUjOBCM4XohqXCrF3fQpcGQJwddNmTQ27hSeDGD/2ZOZ+rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752212482; c=relaxed/simple;
-	bh=ESJfwhw0SdQ8axF0pAvMzTZFD8Z78/rfZuPLHzl0B3s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AMZBFw9C6eETFVF+D5GzceHBzf89lEmpHunSNBC7/Iv3lIPtFhFPKT6ioLwAo6DXeWvoGsBGLsdoQuCAjaaKRwQuHWVCUCjNykfJhxPMFieGa7Ad9/McDGK9GC3O1NSlWpkRILSKH6npfTnhFmqqLn1YJM+GKx7diLy0DMwKqtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HumDKL0v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FB+ou8Kf; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1752215743; c=relaxed/simple;
+	bh=AEXqVE0etQh37WXsg6HkMKCvaPGPubgogFWsxy/xjCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=mSE/CDxBXY4w2OXbAFJrIpLDE2KUb03uoFtn5el2djMu5roptzWU1teCd50KFf4tBbywBbAQ2QZSx9mx/6I/OajnKWTq36TNLMC0orMHVbxhIAoaD6H/zAr8zAjrVR/RGnDuRKWl1oAPRgTuaGuvKIiJhH2FDFdzSdUcCNY3miM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O0iOs1dV; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HumDKL0v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FB+ou8Kf"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id B7630130002D;
-	Fri, 11 Jul 2025 01:41:18 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 01:41:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752212478;
-	 x=1752219678; bh=K+c4cfk5bIIVixUFmq0Bup+UjA5hE+VOmmk++Lxu70M=; b=
-	HumDKL0v0T1NJLhwr7jorqx1vvP05PA4e7HznW7B5DO5PxN8083rX9TxWizbtOZO
-	u/xFeEad3A9mupqIZOGe+F1zbfBf/gpc2t/WShiOY89OmC0pR9wzgzqR7cn8rftT
-	4Aib3kQwmJy2raUNW61UEjiwa028RW2yuc2bMl3UIxxZsyllZ630SZGVLKCalfRw
-	E3mWXuBeJpQCX18MM3BmtGe2DVN2wtPRkX9unVbs1mQoZP8KMvE/QdqDWk0oAClE
-	unvhalCoUSqD5KtjP/RwaDcwvzNYtZV6zWPFH2MwW1MXaETwubbd7ONLzshV49LH
-	5isCvpJWKsNacACiTXxgkA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752212478; x=
-	1752219678; bh=K+c4cfk5bIIVixUFmq0Bup+UjA5hE+VOmmk++Lxu70M=; b=F
-	B+ou8KfW0Z2ZwTJ6TD76msOg4vedRCHv+T7arkXqrDXZHbgpZ/TpbfwfFyQtxs9T
-	Dh7ikS34egNK2DHtsMkRm+hiHlPb0L6iwiAFiNQIebGr4ic/An4CpykugrL8avLf
-	ecRqzDIOOtB29CR1x9ZCB2r44btykK6otD6XLlbjaFl5LcOX6ar3MQNOeK5vU1uO
-	USX5PNSn8rRil0XB2WigpBZ4waf5+J8RXdScV/uq/4KAUeKOZHMU4tCkE4YhbYJd
-	l+W2YfJbBo8sX6ZZp577t2IkSE5lN1eyaL6CC1Ztc5xfKTQU+EX2XqMd0s6wczGD
-	wHk5kbDRz6Kct6TmgNBTA==
-X-ME-Sender: <xms:-6NwaE9lod84s0CXMHkWfZC0AO7TO311GcRRwtgrwS1_5zEsM_swlg>
-    <xme:-6NwaMs4h2clYaMgfLfM6-evGe8bWGyOpzKbQ4XqdLBrZ5Hy9U4xyxWBT6fxFrHxr
-    ln44xztCgiO9ZIM3t8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdehudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeggedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshhouhhvihhkrdgthhgrkhhrrghvrghrthihsegrrhhmrdgtohhmpd
-    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
-    thhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehsuhguvg
-    gvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgs
-    vghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvg
-    hlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthho
-    pehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpth
-    htoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggv
-    nhessghrohgruggtohhmrdgtohhm
-X-ME-Proxy: <xmx:-6NwaAKKFPiix-Afsub2jew7TZkSNHqvQc0vt7cI6doA_m_pMEoBNg>
-    <xmx:-6NwaAUUPtPEsWr3Hikpbe4OZuFzJ04UMTX_-_fCFZIGyordVvxKjQ>
-    <xmx:-6NwaKNtpq6HXvZORQd_4Are9OXcNBqTFMAhhOHgg7tM0TbYGY-U0Q>
-    <xmx:-6NwaMfVeIX68FhwV5CX_NT4Go1KiFOsqTBQmFgwSIpixngJ2Yvd-Q>
-    <xmx:_qNwaAWvRqSa4EGy36-XT2ZxBnr1FJDRZBtWxWMPy17gkSSWTXSfNgi1>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id ADDDD700068; Fri, 11 Jul 2025 01:41:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O0iOs1dV"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250711063539epoutp011db6bbc83a3b2214c873254732daaa4c~RHu6FnLv30231302313epoutp01W
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 06:35:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250711063539epoutp011db6bbc83a3b2214c873254732daaa4c~RHu6FnLv30231302313epoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752215739;
+	bh=ArMuUjUjfuaCEhQVg7xbi9LyS0T9hCbQPYjtmfTWZJs=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=O0iOs1dVDNI1zMe79WFeXMG2qN92E08vjdqSAZY4d6BLGCGfxBTBS4BJKHg1OkH3+
+	 /YBdSKK4Lg6uPK9ajYl6vIc4WWLXfYVAVv7y8NUXq/5K517ZKjY9T6p5jCZyqHsezi
+	 fWtty6C0vG6J5mCe0lDF5NeAeVKI8udZKCWxoxQE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250711063539epcas5p26f35b218af46423626481ec75f82db1e~RHu5nraKp3228232282epcas5p23;
+	Fri, 11 Jul 2025 06:35:39 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bdhmR4vCgz2SSKw; Fri, 11 Jul
+	2025 06:35:35 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf~Q1lkNxKgj2321423214epcas5p1T;
+	Thu, 10 Jul 2025 08:25:33 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250710082531epsmtip157b0106af49bac387934c44e814c6078~Q1litj7Re0693006930epsmtip1w;
+	Thu, 10 Jul 2025 08:25:31 +0000 (GMT)
+From: Devang Tailor <dev.tailor@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, alexandre.belloni@bootlin.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, faraz.ata@samsung.com
+Cc: Devang Tailor <dev.tailor@samsung.com>
+Subject: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+Date: Thu, 10 Jul 2025 14:04:31 +0530
+Message-Id: <20250710083434.1821671-1-dev.tailor@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T17e904bff5b9beaf
-Date: Fri, 11 Jul 2025 07:40:55 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Shivendra Pratap" <shivendra.pratap@oss.qualcomm.com>,
- "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Sebastian Reichel" <sre@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Sudeep Holla" <sudeep.holla@arm.com>,
- "Souvik Chakravarty" <Souvik.Chakravarty@arm.com>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Andy Yan" <andy.yan@rock-chips.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- "Olof Johansson" <olof@lixom.net>, "Konrad Dybcio" <konradybcio@kernel.org>,
- cros-qcom-dts-watchers@chromium.org, "Vinod Koul" <vkoul@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Elliot Berman" <elliotb317@gmail.com>
-Cc: "Stephen Boyd" <swboyd@chromium.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>,
- linux-samsung-soc@vger.kernel.org, "Wei Xu" <xuwei5@hisilicon.com>,
- linux-rockchip@lists.infradead.org,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Sen Chu" <sen.chu@mediatek.com>, "Sean Wang" <sean.wang@mediatek.com>,
- "Macpaul Lin" <macpaul.lin@mediatek.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Ray Jui" <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>,
- bcm-kernel-feedback-list@broadcom.com,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Elliot Berman" <quic_eberman@quicinc.com>,
- "Srinivas Kandagatla" <srini@kernel.org>,
- "Elliot Berman" <elliot.berman@oss.qualcomm.com>
-Message-Id: <23e0f0d5-c0f6-4fc5-9775-c0ae73681d31@app.fastmail.com>
-In-Reply-To: <9bd63c0b-cf14-d00b-c600-9582061e3afc@oss.qualcomm.com>
-References: 
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-4-b2d3b882be85@oss.qualcomm.com>
- <2d8e17ad-6bd6-47a9-b5ab-0a91689684ee@app.fastmail.com>
- <9bd63c0b-cf14-d00b-c600-9582061e3afc@oss.qualcomm.com>
-Subject: Re: [PATCH v10 04/10] dt-bindings: arm: Document reboot mode magic
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
+References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
 
-On Thu, Jul 10, 2025, at 18:53, Shivendra Pratap wrote:
-> On 7/10/2025 9:00 PM, Arnd Bergmann wrote:
->> On Thu, Jul 10, 2025, at 11:15, Shivendra Pratap wrote:
->> 
->>> +  reset-types:
->>> +    type: object
->>> +    $ref: /schemas/power/reset/reboot-mode.yaml#
->> 
->> The other users of the reboot-mode.yaml binding all call this
->> node 'reboot-mode' instead of 'reset-types', can you change that
->> here for consistency?
-> nvmem-reboot-mode and syscon-reboot-mode use reboot-mode in the
-> device tree node name.
-> qcom-pon does not uses reboot-mode at its device tree node name, it
-> uses pon.
-> Kept it reset-types as this patch was already reviewed earlier and
-> the name makes it closer to vendor-specific reset-type.
-> Should we make it reboot-mode? Please suggest.
+Enable on-chip RTC support. The on-chip RTC of this SoC is similar
+to the previous versions of Samsung SoC. So re-use the existing
+RTC driver with applicable call-backs for initialization and IRQ handling.
+Add a separate call-back for disabling RTC since existing '.disable'
+call-backs updates additional bit not valid for RTC of ExynosAutov9.
 
-Yes, I would still change that. At least all the platform-independent
-drivers are consistent that way.
+Setting and getting hardware clock has been tested using 'hwclock'
+and 'date' utilities.
 
-      Arnd
+Alarm interrupt has been checked with incrementing interrupt
+count via "cat /proc/interrupts | grep rtc" for 10sec
+wakeup time via "echo +10 > /sys/class/rtc/rtc0/wakealarm"
+
+changelog
+---
+Changes in v2:
+- Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
+- link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-dev.tailor@samsung.com/
+
+
+Devang Tailor (3):
+  dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
+  rtc: s3c: support for exynosautov9 on-chip RTC
+  arm64: dts: exynosautov9: add RTC DT node
+
+ .../devicetree/bindings/rtc/s3c-rtc.yaml       |  1 +
+ .../boot/dts/exynos/exynosautov9-sadk.dts      |  4 ++++
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi   | 10 ++++++++++
+ drivers/rtc/rtc-s3c.c                          | 18 ++++++++++++++++++
+ 4 files changed, 33 insertions(+)
+
+
+base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
+-- 
+2.34.1
+
