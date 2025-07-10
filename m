@@ -1,29 +1,29 @@
 Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6159C28F1
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7451BC5C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106864; cv=none; b=UWWAO4OCBJhUvNJ2HoAenB3mJU16Wrj9/gWH8BU6FB2B4H25agECt651GyQLuz5xgvin9lIsBV8wFaw93fC2h+yvXIxrjFNMkEtbzl1cA/xSC2u5L+CTDTUj4qJELp6uOub39e5LHNYR7rKYpoUSXgXmVI1FOQ0QZ9vw15mdplY=
+	t=1752106866; cv=none; b=OvXf7Vuwpqh7+ty6mNPqpsiElljyHPm38xI4KL620ZxWpFE+/y9iCWYV8wuSf5ObxAplsvJXKrWP1Wsy+0gyuuwMUBCxSEpzHKNOFfmnc8gpxI7Afccb8eI02hGsMS6Wmea4RtFu9GtD0Bg1jicERoglB0BtEhWrxVSRhYhzgQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752106864; c=relaxed/simple;
-	bh=DyFX5NVU0qfu6w33KZd1xOrQORMsGM0vYCT7ZpTXwlo=;
+	s=arc-20240116; t=1752106866; c=relaxed/simple;
+	bh=DPuahl419ZI8H8sIxt4+AyDZsbJtqz9HQjp9C1Tkzek=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RZI8nx+gClKpHpEwuWnYpaH+0CQlST2kKMJnp4sSOF0Ohi5eLqYEZd2v6uma0l4nvlGGF64qR8XnZJCxRhb9HIGJ5xw7qovxSIVYgp3YdBkRMkbE7lkG3oVM5GP9hv0ujZ/LFWpfcDOmUVhHksJo0Fclivw93xQDd+o8yJIe/Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=vh5S674m; arc=none smtp.client-ip=112.168.119.159
+	 MIME-Version; b=Ep0gpxxtYEd2oMauUXV8v/N+UtswyWrynht6/+gCwZEKk9kL9HsL/LA//c6lWcMqAosenWqcZKZk7O4iprBUzJBOKD5aBqPr7Aup8wbRibnVcJusxYkQ1EPMm6C/g4Bl+YKnVywVySLxHSgb6FgKL3cz4NZ+u1quYI8b6IWxt7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=uMMMoSJ2; arc=none smtp.client-ip=112.168.119.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="vh5S674m"
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="uMMMoSJ2"
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
-	t=1752106850; bh=DyFX5NVU0qfu6w33KZd1xOrQORMsGM0vYCT7ZpTXwlo=;
-	l=4651; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=vh5S674mIvXVosNkJsEGHaPWeduY8Ag4VBabLfEEwvW3o5DycqS4EdFl8pQYA/FPo
-	 ygmb4clDvQFkVscMIC02TQcJn/HJiKKQCyy4jXhqcHeH9YbWo/LW1rX04NGzloTJmU
-	 eFESaz1fIyCReTrtdaGPR5JMXBiyvKUZWYnQB83Q=
+	t=1752106856; bh=DPuahl419ZI8H8sIxt4+AyDZsbJtqz9HQjp9C1Tkzek=;
+	l=2845; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=uMMMoSJ2Jnq0N9tjsiml/673AJH3xj8Azva0xHCbjtgJ/p3fhDBy7Or71nZSAYiEG
+	 Zp0jA5ly/65J3Uy5Kv1Y7V2IAMO7RPlVqTCPyKD7bYMskiAWmjsWN6oUkTgxhkwxEc
+	 sGqCAl6RAtvwWPLGmZMIRd096rYwQmrHXyvs+jjs=
 Received: from unknown (HELO kangseongu..) (ksk4725@coasia.com@115.23.218.194)
-	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:50 +0900
+	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:56 +0900
 X-Original-SENDERIP: 115.23.218.194
 X-Original-SENDERCOUNTRY: KR, South Korea 
 X-Original-MAILFROM: ksk4725@coasia.com
@@ -64,7 +64,8 @@ X-Original-RCPTTO: jesper.nilsson@axis.com,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
+	soc@lists.linux.dev,
+	v.pavani@samsung.com
 From: ksk4725@coasia.com
 To: Jesper Nilsson <jesper.nilsson@axis.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -103,10 +104,11 @@ Cc: kenkim <kenkim@coasia.com>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
-Subject: [PATCH 01/16] dt-bindings: clock: Add CMU bindings definitions for ARTPEC-8 platform
-Date: Thu, 10 Jul 2025 09:20:31 +0900
-Message-Id: <20250710002047.1573841-2-ksk4725@coasia.com>
+	soc@lists.linux.dev,
+	Varada Pavani <v.pavani@samsung.com>
+Subject: [PATCH 06/16] clk: samsung: artpec-8: Add clock support for CMU_BUS block
+Date: Thu, 10 Jul 2025 09:20:36 +0900
+Message-Id: <20250710002047.1573841-7-ksk4725@coasia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
 References: <20250710002047.1573841-1-ksk4725@coasia.com>
@@ -118,147 +120,80 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ravi Patel <ravi.patel@samsung.com>
+From: Hakyeong Kim <hgkim05@coasia.com>
 
-Add device tree clock definitions constants for ARTPEC-8 platform.
-ARTPEC-8 platform has separate instances for each particular CMU.
-So clock IDs in this bindings header also start from 1 for each CMU block.
+Add clock support for below CMU block in ARTPEC-8 SoC.
+ - CMU_BUS
 
+Signed-off-by: Varada Pavani <v.pavani@samsung.com>
 Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
 ---
- include/dt-bindings/clock/axis,artpec8-clk.h | 122 +++++++++++++++++++
- 1 file changed, 122 insertions(+)
- create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+ drivers/clk/samsung/clk-artpec8.c | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/include/dt-bindings/clock/axis,artpec8-clk.h b/include/dt-bindings/clock/axis,artpec8-clk.h
-new file mode 100644
-index 000000000000..69adfa999e34
---- /dev/null
-+++ b/include/dt-bindings/clock/axis,artpec8-clk.h
-@@ -0,0 +1,122 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
-+ *             https://www.samsung.com
-+ * Copyright (c) 2022-2025  Axis Communications AB.
-+ *             https://www.axis.com
-+ *
-+ * Device Tree binding constants for ARTPEC-8 clock controller.
-+ */
+diff --git a/drivers/clk/samsung/clk-artpec8.c b/drivers/clk/samsung/clk-artpec8.c
+index 1ef9e52ad24b..648abdd2f510 100644
+--- a/drivers/clk/samsung/clk-artpec8.c
++++ b/drivers/clk/samsung/clk-artpec8.c
+@@ -15,6 +15,7 @@
+ 
+ /* NOTE: Must be equal to the last clock ID increased by one */
+ #define CMU_CMU_NR_CLK			(DOUT_CLKCMU_VPP_CORE + 1)
++#define CMU_BUS_NR_CLK			(DOUT_CLK_BUS_PCLK + 1)
+ #define CMU_IMEM_NR_CLK			(MOUT_IMEM_JPEG_USER + 1)
+ 
+ /* register offset definitions for cmu_cmu (0x12400000) */
+@@ -431,6 +432,50 @@ static void __init artpec8_clk_cmu_cmu_init(struct device_node *np)
+ CLK_OF_DECLARE(artpec8_clk_cmu_cmu, "axis,artpec8-cmu-cmu",
+ 	       artpec8_clk_cmu_cmu_init);
+ 
++/* Register Offset definitions for CMU_BUS (0x12c10000) */
++#define PLL_CON0_MUX_CLK_BUS_ACLK_USER			0x0100
++#define PLL_CON0_MUX_CLK_BUS_DLP_USER			0x0120
++#define DIV_CLK_BUS_PCLK				0x1800
 +
-+#ifndef _DT_BINDINGS_CLOCK_ARTPEC8_H
-+#define _DT_BINDINGS_CLOCK_ARTPEC8_H
++static const unsigned long cmu_bus_clk_regs[] __initconst = {
++	PLL_CON0_MUX_CLK_BUS_ACLK_USER,
++	PLL_CON0_MUX_CLK_BUS_DLP_USER,
++	DIV_CLK_BUS_PCLK,
++};
 +
-+/* CMU_CMU */
-+#define PLL_SHARED0				1
-+#define DOUT_PLL_SHARED0_DIV2			2
-+#define DOUT_PLL_SHARED0_DIV3			3
-+#define DOUT_PLL_SHARED0_DIV4			4
-+#define PLL_SHARED1				5
-+#define DOUT_PLL_SHARED1_DIV2			6
-+#define DOUT_PLL_SHARED1_DIV3			7
-+#define DOUT_PLL_SHARED1_DIV4			8
-+#define PLL_AUDIO				9
-+#define DOUT_CLKCMU_BUS_BUS			10
-+#define DOUT_CLKCMU_BUS_DLP			11
-+#define DOUT_CLKCMU_CDC_CORE			12
-+#define DOUT_CLKCMU_OTP				13
-+#define DOUT_CLKCMU_CORE_MAIN			14
-+#define DOUT_CLKCMU_CORE_DLP			15
-+#define DOUT_CLKCMU_CPUCL_SWITCH		16
-+#define DOUT_CLKCMU_DLP_CORE			17
-+#define DOUT_CLKCMU_FSYS_BUS			18
-+#define DOUT_CLKCMU_FSYS_IP			19
-+#define DOUT_CLKCMU_FSYS_SCAN0			20
-+#define DOUT_CLKCMU_FSYS_SCAN1			21
-+#define DOUT_CLKCMU_GPU_3D			22
-+#define DOUT_CLKCMU_GPU_2D			23
-+#define DOUT_CLKCMU_IMEM_ACLK			24
-+#define DOUT_CLKCMU_IMEM_JPEG			25
-+#define DOUT_CLKCMU_MIF_SWITCH			26
-+#define DOUT_CLKCMU_MIF_BUSP			27
-+#define DOUT_CLKCMU_PERI_DISP			28
-+#define DOUT_CLKCMU_PERI_IP			29
-+#define DOUT_CLKCMU_PERI_AUDIO			30
-+#define DOUT_CLKCMU_RSP_CORE			31
-+#define DOUT_CLKCMU_TRFM_CORE			32
-+#define DOUT_CLKCMU_VCA_ACE			33
-+#define DOUT_CLKCMU_VCA_OD			34
-+#define DOUT_CLKCMU_VIO_CORE			35
-+#define DOUT_CLKCMU_VIO_AUDIO			36
-+#define DOUT_CLKCMU_VIP0_CORE			37
-+#define DOUT_CLKCMU_VIP1_CORE			38
-+#define DOUT_CLKCMU_VPP_CORE			39
++PNAME(mout_clk_bus_aclk_user_p) = { "fin_pll", "dout_clkcmu_bus_bus" };
++PNAME(mout_clk_bus_dlp_user_p) = { "fin_pll", "dout_clkcmu_bus_dlp" };
 +
-+/* CMU_BUS */
-+#define MOUT_CLK_BUS_ACLK_USER			1
-+#define MOUT_CLK_BUS_DLP_USER			2
-+#define DOUT_CLK_BUS_PCLK			3
++static const struct samsung_mux_clock cmu_bus_mux_clks[] __initconst = {
++	MUX(MOUT_CLK_BUS_ACLK_USER, "mout_clk_bus_aclk_user",
++	    mout_clk_bus_aclk_user_p, PLL_CON0_MUX_CLK_BUS_ACLK_USER, 4, 1),
++	MUX(MOUT_CLK_BUS_DLP_USER, "mout_clk_bus_dlp_user",
++	    mout_clk_bus_dlp_user_p, PLL_CON0_MUX_CLK_BUS_DLP_USER, 4, 1),
++};
 +
-+/* CMU_CORE */
-+#define MOUT_CLK_CORE_ACLK_USER			1
-+#define MOUT_CLK_CORE_DLP_USER			2
-+#define DOUT_CLK_CORE_PCLK			3
++static const struct samsung_div_clock cmu_bus_div_clks[] __initconst = {
++	DIV(DOUT_CLK_BUS_PCLK, "dout_clk_bus_pclk", "mout_clk_bus_aclk_user",
++	    DIV_CLK_BUS_PCLK, 0, 4),
++};
 +
-+/* CMU_CPUCL */
-+#define PLL_CPUCL				1
-+#define MOUT_CLK_CPUCL_PLL			2
-+#define MOUT_CLKCMU_CPUCL_SWITCH_USER		3
-+#define DOUT_CLK_CPUCL_CPU			4
-+#define DOUT_CLK_CLUSTER_ACLK			5
-+#define DOUT_CLK_CLUSTER_PCLKDBG		6
-+#define DOUT_CLK_CLUSTER_CNTCLK			7
-+#define DOUT_CLK_CLUSTER_ATCLK			8
-+#define DOUT_CLK_CPUCL_PCLK			9
-+#define DOUT_CLK_CPUCL_CMUREF			10
-+#define DOUT_CLK_CPUCL_DBG			11
-+#define DOUT_CLK_CPUCL_PCLKDBG			12
++static const struct samsung_cmu_info cmu_bus_info __initconst = {
++	.mux_clks		= cmu_bus_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(cmu_bus_mux_clks),
++	.div_clks		= cmu_bus_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(cmu_bus_div_clks),
++	.nr_clk_ids		= CMU_BUS_NR_CLK,
++	.clk_regs		= cmu_bus_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(cmu_bus_clk_regs),
++};
 +
-+/* CMU_FSYS */
-+#define PLL_FSYS				1
-+#define MOUT_FSYS_SCAN0_USER			2
-+#define MOUT_FSYS_SCAN1_USER			3
-+#define MOUT_FSYS_BUS_USER			4
-+#define MOUT_FSYS_MMC_USER			5
-+#define DOUT_FSYS_PCIE_PIPE			6
-+#define DOUT_FSYS_ADC				7
-+#define DOUT_FSYS_PCIE_PHY_REFCLK_SYSPLL	8
-+#define DOUT_FSYS_EQOS_INT125			9
-+#define DOUT_FSYS_OTP_MEM			10
-+#define DOUT_FSYS_SCLK_UART			11
-+#define DOUT_FSYS_EQOS_25			12
-+#define DOUT_FSYS_EQOS_2p5			13
-+#define DOUT_FSYS_BUS300			14
-+#define DOUT_FSYS_BUS_QSPI			15
-+#define DOUT_FSYS_MMC_CARD0			16
-+#define DOUT_FSYS_MMC_CARD1			17
-+#define DOUT_SCAN_CLK_FSYS_125			18
-+#define DOUT_FSYS_QSPI				19
-+#define DOUT_FSYS_SFMC_NAND			20
-+#define DOUT_SCAN_CLK_FSYS_MMC			21
++static void __init artpec8_clk_cmu_bus_init(struct device_node *np)
++{
++	samsung_cmu_register_one(np, &cmu_bus_info);
++}
 +
-+/* CMU_IMEM */
-+#define MOUT_IMEM_ACLK_USER			1
-+#define MOUT_IMEM_GIC_CA53			2
-+#define MOUT_IMEM_GIC_CA5			3
-+#define MOUT_IMEM_JPEG_USER			4
++CLK_OF_DECLARE(artpec8_clk_cmu_bus, "axis,artpec8-cmu-bus",
++	       artpec8_clk_cmu_bus_init);
 +
-+/* CMU_PERI */
-+#define MOUT_PERI_IP_USER			1
-+#define MOUT_PERI_AUDIO_USER			2
-+#define MOUT_PERI_I2S0				3
-+#define MOUT_PERI_I2S1				4
-+#define MOUT_PERI_DISP_USER			5
-+#define DOUT_PERI_SPI				6
-+#define DOUT_PERI_UART1				7
-+#define DOUT_PERI_UART2				8
-+#define DOUT_PERI_PCLK				9
-+#define DOUT_PERI_I2S0				10
-+#define DOUT_PERI_I2S1				11
-+#define DOUT_PERI_DSIM				12
-+
-+#endif /* _DT_BINDINGS_CLOCK_ARTPEC8_H */
+ /* Register Offset definitions for CMU_IMEM (0x10010000) */
+ #define PLL_CON0_MUX_CLK_IMEM_ACLK_USER			0x0100
+ #define PLL_CON0_MUX_CLK_IMEM_JPEG_USER			0x0120
 -- 
 2.34.1
 
