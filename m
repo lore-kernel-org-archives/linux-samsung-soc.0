@@ -1,134 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C80F8F5E;
-	Thu, 10 Jul 2025 07:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF2723E25B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 07:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131737; cv=none; b=Gx+3H5Fh19o8rfFMKMuLsl3lHW9YWoyesJQcVhD2jHDh/pswhUxYEKzB2yA+WKtnRWvmG2TNWKTx+zFHadvxscGUx8ObNk74LsPZ87R38u0dSuBzQ1a1WAmhM4VbFxOu10FdqoXulVOjC2PPenhoCThQBzHyuf33DQvnYGqG70U=
+	t=1752132904; cv=none; b=nHwls6dRHoh9Lv4NzkeNZeduF7r9YE025faJnCO5L1AqK09kzZnajDVm/Xjgdt1ncXGFK59033vdFWJbc+2SSSSBYAV1/E4Nw944BxJNbbT0xMxTosY8l+MSN7YMGNVSBw/44BnVJg7I+W2lFGAvoxBnu1W6FANwvWIenWbcjpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131737; c=relaxed/simple;
-	bh=r/IHHg2/rKtSBRBIR9amX8nuBDjwCD7GzpJ+h1lge4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/TmrAfoM3LHfFuSXwr8N+2VF5Nol4XxmFvZVlmByxeVhDc+WLm0UFbHgjstv2tHQSxOwPCWHh+tJfpPUecPaA4ljYFVIiiVkvbu4HoSATC3PXCn3DOnABSHieMFK0PwjVnYIJ+8CncSIdFLLqU92je7cN3daueaRJv1nqZAhjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UlpwZ4Jv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752132904; c=relaxed/simple;
+	bh=d39nBvEBYdC3uHEcBXf7x3j1kWB+ksaAnGiURALeQcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=idJHqSsFE4kNr8BCTcmwYs6VacTAuwgyKtVtkZcT4GOHERlcwpfCgYdrFQdzxhqgZm7b5PU3YyRlIOKcHOQVnHPK0Yl47WsWpVJ+c1DnOu7WrAyesGmX6F5ZfdK9QFxpelENq29jRk4zmZcmlfIgVKItZlRmRz6qE3BfSLJz/Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EGCtWr6F; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlpwZ4Jv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E746C4CEE3;
-	Thu, 10 Jul 2025 07:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131737;
-	bh=r/IHHg2/rKtSBRBIR9amX8nuBDjwCD7GzpJ+h1lge4k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UlpwZ4JvhE6CfOq0Pbz4STUIAcRcaah8QMiRskKTCFnyVu7v38Q4Mr4man6iVgkOa
-	 B7E9fQKKswgNnYucbpERIhir7fJqOmVfQmuNcoMfdAyGlwJg66GMvNnd+tF13ursvc
-	 A2luUMvGlDgIUzYDu6+Wq7brLSscz9CK3JvcE/n5P7U9KBNCIfxvD9iCXzLAVK4mfE
-	 P7m9DpuQAQybIz29bhn7CGpjgBz4vjp3XMuNzuBWZuO/8x7pkaG0lKLwpy8UEaMjTt
-	 +gprlr5nd+Fgh96aupBrFo/cBwcP7SRfqnIqy1KGEqcMc5ji5FeBOplIZuDxr4RD+S
-	 vwicw7TpkC5sw==
-Message-ID: <e805be4b-4fe8-42e6-9269-84112a16392f@kernel.org>
-Date: Thu, 10 Jul 2025 09:15:23 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EGCtWr6F"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b39c46e1cfso96110f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752132899; x=1752737699; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eKH+aO2rjY7GmUAztpIfNiK4qIgC0rzf6T7b5auiuAo=;
+        b=EGCtWr6FR0wUEJsfGnkfdT3y+Fa2R0ZliRYN7dZf6OEN6+Jn1DGuIOqPZYsnv1Pjx7
+         YLDZk/NY/nkerSMvxGGSh0FExzUwms7oX7VACfT/xVxOEw3txcfQY6S7Xp2UoDj5RnCw
+         u0uC+O26WPdzLnAV86/YLqk0lnG1oJ31o8HDmMFB4NOWqMI7eh9m3K1GA/9liKshfFnm
+         dpWTaRpxwYvuHn6XEmVYLvyQ7HuQknDGDZaI6haOyirxSqeYKEQDY72ErgWZNFIgDnaq
+         S4cn7Qh5s+NJHvKMXFVUtL9a0JKAvMFYWVVnSdIKPQU12TTmrXwkiYTkKdqhVKc5HsaH
+         Vr2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752132899; x=1752737699;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eKH+aO2rjY7GmUAztpIfNiK4qIgC0rzf6T7b5auiuAo=;
+        b=Ewy1s4mx9TibIVjK950WeRucLpWMUXjZ0j56w4ePxDprmn+dmqCjeMalLjiOfzLENZ
+         SpW8+7n+H9YqYJYBoihWaFElVSBnGqNBhClI8jHnpUkBav4S6pnKOuQwzpN+HGUf/weJ
+         K7dVuN/IEk+akdh/xedYyQfaxfOXhL9LNHe4wprpujZQiQzYr3dtou9kooM0IxjVzte8
+         ldMGs4i/16BUrQe5qk3VCrrVUaGap6Wb5IJhCEJzHHFPx6sHTJuAwkZHF+zztVjzu+W8
+         l2XGo+MvNEoeF/b/OdgOwfsgXQUR4D/N2lxmiZREvbZtSgeulYsDRgGo4nMBW45aunR1
+         3Mpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWU6V80w8iDtYcD4ef4177pbhPZCrZ9x4niVXDdVBtOojTwXT7hUoVkor507U/EOWZQCW986ZdZgO7WYHdYVIUEmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU9s0PWX4ErpE/besloHI1rjFx+om+EdIgd9g3Cvzur6nU7N3W
+	9oHLyVb241iZHLvkQi8Fqq5C8VxocRbiSVx7zZD7mJkAzXF2wB6PZzMKVnzJUCpt8M4=
+X-Gm-Gg: ASbGnctCnjM56+OtRuykWlQvtkioaiAQFu4UTLvDOTgwzjAZ6PjGaPKSzA9bm8SWGZM
+	6YOn0ACx3O4NcpaqRClLt4zywB1BCDV+n6pBtPh3qB5efRNfCHfAWAWvOZKPHblOtJrbp7RYo0b
+	WeL/mzc0zaWQhF2ajOo5ztc25JDrdkFbW+EqCUjWBgjCDj5zIcpxNF6slBt/ghUrw5kVdtgwY3K
+	QaBoQyOSPGQkW25cFb5MCsQkId9181TqMYjOFoQEzhLEGJfdkA4bPTdnmyOzx5Ca877XzFECeBC
+	Or99VlZaQ7hdgCKJnLjX6/xlEXJTTpkltvrqdW20IibWRr10Jm3svzd9boib1osCRPqPrMxwswU
+	=
+X-Google-Smtp-Source: AGHT+IEABgTHpJuOVHfeR0LW6JPSlCNNGz0kLe9NhwWkBaf3MGsAU8IXDfncPgdRLsTmveiPVUe0Kw==
+X-Received: by 2002:a05:600c:4503:b0:451:df07:cd00 with SMTP id 5b1f17b1804b1-454d54022a5mr18146195e9.7.1752132899555;
+        Thu, 10 Jul 2025 00:34:59 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd466154sm10826555e9.12.2025.07.10.00.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 00:34:58 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] arm64: tesla/google: MAINTAINERS: Reference "SoC clean" maintainer profile
+Date: Thu, 10 Jul 2025 09:34:44 +0200
+Message-ID: <20250710073443.13788-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/16] dt-bindings: arm: Add Axis ARTPEC SoC platform
-To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- SungMin Park <smn1196@coasia.com>, Ravi Patel <ravi.patel@samsung.com>,
- linux-arm-kernel@axis.com
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
- Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
- <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-14-ksk4725@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710002047.1573841-14-ksk4725@coasia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1538; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=d39nBvEBYdC3uHEcBXf7x3j1kWB+ksaAnGiURALeQcc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBob20TKRivgecVWAUhUenDgNDULB4gEgAPU26Mz
+ 5fZljgJzDeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaG9tEwAKCRDBN2bmhouD
+ 10KdD/0aQJmtgD0v956KA9gKqa8XetCl7cuwD54IaMQfP1htmD57xwa2jvS8tZdCHn7HLEBj+tK
+ MpkP2fLJMyLrSMrKHi1NG/5AlVFrnOyAwsXaMXm+m4r7vyREzl+B9ta1AmqbDUQIqwWJNwym/u0
+ +Y/zAIXcNAl7zoI1/Iv+a1WSlMQpopcv7FU2HHlvQq7P9vT6GUzfZDWdL937RaC/e+x3k2Y75IY
+ XO+oS4rRB5fREV8x50kbsSWcvTXUK2r8W8N3ozpCUtgYo2n+SVMTKfknG5zlLyzntbcShhtip+7
+ 3X5cEwDCwoFvPIS1Y2rYEj7kru9V5pbLCi2/fzD5WEcDafEXHcAr/IxLYJ5kNGVH8gAiqGlOA9s
+ wEtTLSiy12iadzaj7wUr0PYydrId/41LlgSyIKe/KBIl/bBqxr4FFDPUsDiYyk/qjhrtE7sgvhT
+ tcn332YxguO9xtOYJyAmw9qA62ioQTJ/bT7a0d+FOfDFIpMm3RUI0KNrfjIjTgfPii2M+c2BGao
+ xmQaJnZOMstXfwTYVZMYeAidtlltrahVqY+aWe6++rXM+9i6aQkoH37HLsqt6ou4rMRokUyxJ4m
+ UTjduzAq0FxJNxJE3UDy5AP0I1VrIl+WpqStqgE0nZX0lE+NL/eaLkFhA3APnjbbPg2ek0+xIDx oH0QHIARAWGWjLQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 10/07/2025 02:20, ksk4725@coasia.com wrote:
-> From: Ravi Patel <ravi.patel@samsung.com>
-> 
-> Add device tree bindings for the Axis ARTPEC-8 SoC platform
-> and ARTPEC-8 Grizzly board.
-> 
-> Also move the existing ARTPEC-6 related bindings from .txt
-> to yaml format.
+Effectively all Tesla FSD and Google GS101 DTS patches go via Samsung
+SoC maintainer, who applies the same rules as for Samsung SoC: DTS must
+be fully DT bindings compliant (`dtbs_check W=1`).  Existing sources
+already are compliant, so just document that implicit rule by mentioning
+respective maintainer profile in their entries.
 
-Don't mix conversion with new boards.
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: André Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Signed-off-by: sungminpark <smn1196@coasia.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index efba8922744a..4073f7ac978f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3392,6 +3392,7 @@ M:	linux-fsd@tesla.com
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
++P:	Documentation/process/maintainer-soc-clean-dts.rst
+ F:	arch/arm64/boot/dts/tesla/
+ 
+ ARM/TEXAS INSTRUMENT AEMIF/EMIF DRIVERS
+@@ -10317,6 +10318,7 @@ R:	Tudor Ambarus <tudor.ambarus@linaro.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
++P:	Documentation/process/maintainer-soc-clean-dts.rst
+ C:	irc://irc.oftc.net/pixel6-kernel-dev
+ F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+ F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
+-- 
+2.43.0
 
-Same problems about SoB chain...
-
-> ---
-
-
-
-Best regards,
-Krzysztof
