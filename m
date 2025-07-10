@@ -1,29 +1,29 @@
 Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1200049620
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AB73BB48
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2025 00:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106866; cv=none; b=dboX+LL5SZmdAAd4sc7/06SLTUOZtkO1GtpEfk1ctZvqb1NQ/KL3UvJdIbcka9i+RQXKqcKvom9ChwYySiQtxMoo/zLSIOYuSg6HXCxenaZlUiLNjRtIdYu/ISjvMNqD+RQ3v7anKtULVQHpCYE6zmrp5U5QQbg6uRp1rLuvczU=
+	t=1752106866; cv=none; b=arO9sPkn+09cuOVb7KyAcEglsjiQN99Ao16/7FWMiTCXv8J9kfxDbHWTZur5OQ2HPviy8UtO6BdNMavHb+7KOwCoiJNdzeIHOoVBU/2XvWRBXsO7lTiCOO96+W+ufzOiknCW6pcO8TNiBymBmrHdrc58pmrahw6v8jlwCqbWw/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752106866; c=relaxed/simple;
-	bh=MHRM9WlGY8PZrkjRSCsLOOtIq/UdaiwDrCTZs8Cu3zU=;
+	bh=I3gMaKVjatpxTEc20thzK2HEjVPobuIRzNSHDsOU4XM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W9iQXb7emALu8Qh5ZUj6lwyNl0+qxvMz8NHbAkrFtNESyGjUeqeZ0XWfGmv2LrabXdHqtuBI5+wJoGo7ALwxsBypZeXb5ouWAc93XXwZ5mQmRqiTXNFlp2LVQiU01UVN4vc7QGQhmbjtiWvFYLWYYJI3aFzWrTqJww0FNHJWKLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=U1nBOaNl; arc=none smtp.client-ip=112.168.119.159
+	 MIME-Version; b=hHoO4ydhEkLrGaDLrb5knaTapg9cv+VVIRccP15QNkmZOBrcok/mrrE2dKoDi+hq4fbph8gppB9h1umId+HPw4FQAueALuvnnUi6MqnNLPYFD4zBa3w7d+JwnwCoE+HRHFRe0FwkBzxVvxWgne/ynUyHVcracL+LNMNs3eWvksE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=dlQoxCJY; arc=none smtp.client-ip=112.168.119.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="U1nBOaNl"
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="dlQoxCJY"
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
-	t=1752106853; bh=MHRM9WlGY8PZrkjRSCsLOOtIq/UdaiwDrCTZs8Cu3zU=;
-	l=4610; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=U1nBOaNl6RG8gwleWzaqKw4KPohjQxHHRkjbSt/YIYkjO1ZiCMdlemQsrMc4O6FaN
-	 ApHHLQafJhmeRC9/xmMLdwnlufg27z1EA/Q/HIVQGhpFlCgD4D4zD31eRoGz5QKvnH
-	 M5dvaILYZClXh6GdfQpkIQyAiOg3FvVvP4dtB4xQ=
+	t=1752106858; bh=I3gMaKVjatpxTEc20thzK2HEjVPobuIRzNSHDsOU4XM=;
+	l=5198; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=dlQoxCJYvaU9NzuZeyM3wwau9fVyB2T9Ly5FRqprW5njzY/1lnXe6XM+rCrTQIHrf
+	 3ts7QG+gBCQXuVa+fP8c2BeS7YvONZGT0wpY9xkGsTikX8FGdVvqgm0ufZQnZUnCZT
+	 fIEwoYcWVDWGHfyUZFvRkSGs2QrsAvTVZHq9ysLA=
 Received: from unknown (HELO kangseongu..) (ksk4725@coasia.com@115.23.218.194)
-	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:53 +0900
+	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:58 +0900
 X-Original-SENDERIP: 115.23.218.194
 X-Original-SENDERCOUNTRY: KR, South Korea 
 X-Original-MAILFROM: ksk4725@coasia.com
@@ -64,7 +64,8 @@ X-Original-RCPTTO: jesper.nilsson@axis.com,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
+	soc@lists.linux.dev,
+	v.pavani@samsung.com
 From: ksk4725@coasia.com
 To: Jesper Nilsson <jesper.nilsson@axis.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -103,10 +104,11 @@ Cc: kenkim <kenkim@coasia.com>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
-Subject: [PATCH 04/16] clk: samsung: artpec-8: Add initial clock support
-Date: Thu, 10 Jul 2025 09:20:34 +0900
-Message-Id: <20250710002047.1573841-5-ksk4725@coasia.com>
+	soc@lists.linux.dev,
+	Varada Pavani <v.pavani@samsung.com>
+Subject: [PATCH 08/16] clk: samsung: artpec-8: Add clock support for CMU_CPUCL block
+Date: Thu, 10 Jul 2025 09:20:38 +0900
+Message-Id: <20250710002047.1573841-9-ksk4725@coasia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
 References: <20250710002047.1573841-1-ksk4725@coasia.com>
@@ -120,124 +122,132 @@ Content-Transfer-Encoding: 8bit
 
 From: Hakyeong Kim <hgkim05@coasia.com>
 
-Add initial clock support for ARTPEC-8 SoC which is required
-for enabling basic clock management.
+Add clock support for below CMU block in ARTPEC-8 SoC.
+ - CMU_CPUCL
 
-Add clock support for below CMU block in ARTPEC-8 SoC:
- - CMU_IMEM
-
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Signed-off-by: Varada Pavani <v.pavani@samsung.com>
 Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
 ---
- drivers/clk/samsung/Kconfig       |  8 ++++
- drivers/clk/samsung/Makefile      |  1 +
- drivers/clk/samsung/clk-artpec8.c | 62 +++++++++++++++++++++++++++++++
- 3 files changed, 71 insertions(+)
- create mode 100644 drivers/clk/samsung/clk-artpec8.c
+ drivers/clk/samsung/clk-artpec8.c | 99 +++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 76a494e95027..289591b403ad 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -13,6 +13,7 @@ config COMMON_CLK_SAMSUNG
- 	select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
- 	select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
- 	select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
-+	select ARTPEC8_COMMON_CLK if ARM64 && ARCH_ARTPEC8
- 
- config S3C64XX_COMMON_CLK
- 	bool "Samsung S3C64xx clock controller support" if COMPILE_TEST
-@@ -102,3 +103,10 @@ config TESLA_FSD_COMMON_CLK
- 	help
- 	  Support for the clock controller present on the Tesla FSD SoC.
- 	  Choose Y here only if you build for this SoC.
-+
-+config ARTPEC8_COMMON_CLK
-+	bool "Axis ARTPEC-8 clock controller support" if COMPILE_TEST
-+	depends on COMMON_CLK_SAMSUNG
-+	help
-+	  Support for the clock controller present on the Axis ARTPEC-8 SoC.
-+	  Choose Y here only if you are building for the Axis ARTPEC-8 SoC.
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index b77fe288e4bb..473eb08fc8fc 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -3,6 +3,7 @@
- # Samsung Clock specific Makefile
- #
- 
-+obj-$(CONFIG_ARTPEC8_COMMON_CLK)	+= clk-artpec8.o
- obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
- obj-$(CONFIG_EXYNOS_3250_COMMON_CLK)	+= clk-exynos3250.o
- obj-$(CONFIG_EXYNOS_4_COMMON_CLK)	+= clk-exynos4.o
 diff --git a/drivers/clk/samsung/clk-artpec8.c b/drivers/clk/samsung/clk-artpec8.c
-new file mode 100644
-index 000000000000..11a48b2fcc09
---- /dev/null
+index f41b7941c630..15c90fe29308 100644
+--- a/drivers/clk/samsung/clk-artpec8.c
 +++ b/drivers/clk/samsung/clk-artpec8.c
-@@ -0,0 +1,62 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
-+ *             https://www.samsung.com
-+ * Copyright (c) 2022-2025  Axis Communications AB.
-+ *             https://www.axis.com
-+ *
-+ * Common Clock Framework support for ARTPEC-8 SoC.
-+ */
+@@ -17,6 +17,7 @@
+ #define CMU_CMU_NR_CLK			(DOUT_CLKCMU_VPP_CORE + 1)
+ #define CMU_BUS_NR_CLK			(DOUT_CLK_BUS_PCLK + 1)
+ #define CMU_CORE_NR_CLK			(DOUT_CLK_CORE_PCLK + 1)
++#define CMU_CPUCL_NR_CLK		(DOUT_CLK_CPUCL_PCLKDBG + 1)
+ #define CMU_IMEM_NR_CLK			(MOUT_IMEM_JPEG_USER + 1)
+ 
+ /* register offset definitions for cmu_cmu (0x12400000) */
+@@ -521,6 +522,104 @@ static void __init artpec8_clk_cmu_core_init(struct device_node *np)
+ CLK_OF_DECLARE(artpec8_clk_cmu_core, "axis,artpec8-cmu-core",
+ 	       artpec8_clk_cmu_core_init);
+ 
++/* Register Offset definitions for CMU_CPUCL (0x11410000) */
++#define PLL_LOCKTIME_PLL_CPUCL				0x0000
++#define PLL_CON0_MUX_CLKCMU_CPUCL_SWITCH_USER		0x0120
++#define PLL_CON0_PLL_CPUCL				0x0140
++#define MUX_CLK_CPUCL_PLL				0x1000
++#define DIV_CLK_CLUSTER_ACLK				0x1800
++#define DIV_CLK_CLUSTER_CNTCLK				0x1804
++#define DIV_CLK_CLUSTER_PCLKDBG				0x1808
++#define DIV_CLK_CPUCL_CMUREF				0x180c
++#define DIV_CLK_CPUCL_PCLK				0x1814
++#define DIV_CLK_CLUSTER_ATCLK				0x1818
++#define DIV_CLK_CPUCL_DBG				0x181c
++#define DIV_CLK_CPUCL_PCLKDBG				0x1820
 +
-+#include <linux/clk-provider.h>
-+#include <dt-bindings/clock/axis,artpec8-clk.h>
-+
-+#include "clk.h"
-+
-+/* NOTE: Must be equal to the last clock ID increased by one */
-+#define CMU_IMEM_NR_CLK			(MOUT_IMEM_JPEG_USER + 1)
-+
-+/* Register Offset definitions for CMU_IMEM (0x10010000) */
-+#define PLL_CON0_MUX_CLK_IMEM_ACLK_USER			0x0100
-+#define PLL_CON0_MUX_CLK_IMEM_JPEG_USER			0x0120
-+#define MUX_CLK_IMEM_GIC_CA53				0x1000
-+#define MUX_CLK_IMEM_GIC_CA5				0x1008
-+
-+static const unsigned long cmu_imem_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLK_IMEM_ACLK_USER,
-+	PLL_CON0_MUX_CLK_IMEM_JPEG_USER,
-+	MUX_CLK_IMEM_GIC_CA53,
-+	MUX_CLK_IMEM_GIC_CA5,
++static const unsigned long cmu_cpucl_clk_regs[] __initconst = {
++	PLL_LOCKTIME_PLL_CPUCL,
++	PLL_CON0_MUX_CLKCMU_CPUCL_SWITCH_USER,
++	PLL_CON0_PLL_CPUCL,
++	MUX_CLK_CPUCL_PLL,
++	DIV_CLK_CLUSTER_ACLK,
++	DIV_CLK_CLUSTER_CNTCLK,
++	DIV_CLK_CLUSTER_PCLKDBG,
++	DIV_CLK_CPUCL_CMUREF,
++	DIV_CLK_CPUCL_PCLK,
++	DIV_CLK_CLUSTER_ATCLK,
++	DIV_CLK_CPUCL_DBG,
++	DIV_CLK_CPUCL_PCLKDBG,
 +};
 +
-+PNAME(mout_imem_aclk_user_p) = { "fin_pll", "dout_clkcmu_imem_aclk" };
-+PNAME(mout_imem_gic_ca53_p) = { "mout_imem_aclk_user", "fin_pll" };
-+PNAME(mout_imem_gic_ca5_p) = { "mout_imem_aclk_user", "fin_pll" };
-+PNAME(mout_imem_jpeg_user_p) = { "fin_pll", "dout_clkcmu_imem_jpeg" };
-+
-+static const struct samsung_mux_clock cmu_imem_mux_clks[] __initconst = {
-+	MUX(MOUT_IMEM_ACLK_USER, "mout_imem_aclk_user",
-+	    mout_imem_aclk_user_p, PLL_CON0_MUX_CLK_IMEM_ACLK_USER, 4, 1),
-+	MUX(MOUT_IMEM_GIC_CA53, "mout_imem_gic_ca53",
-+	    mout_imem_gic_ca53_p, MUX_CLK_IMEM_GIC_CA53, 0, 1),
-+	MUX(MOUT_IMEM_GIC_CA5, "mout_imem_gic_ca5",
-+	    mout_imem_gic_ca5_p, MUX_CLK_IMEM_GIC_CA5, 0, 1),
-+	MUX(MOUT_IMEM_JPEG_USER, "mout_imem_jpeg_user",
-+	    mout_imem_jpeg_user_p, PLL_CON0_MUX_CLK_IMEM_JPEG_USER, 4, 1),
++static const struct samsung_pll_clock cmu_cpucl_pll_clks[] __initconst = {
++	PLL(pll_1017x, PLL_CPUCL, "fout_pll_cpucl", "fin_pll",
++	    PLL_LOCKTIME_PLL_CPUCL, PLL_CON0_PLL_CPUCL, NULL),
 +};
 +
-+static const struct samsung_cmu_info cmu_imem_info __initconst = {
-+	.mux_clks		= cmu_imem_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(cmu_imem_mux_clks),
-+	.nr_clk_ids		= CMU_IMEM_NR_CLK,
-+	.clk_regs		= cmu_imem_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(cmu_imem_clk_regs),
++PNAME(mout_clkcmu_cpucl_switch_user_p) = {
++	"fin_pll", "dout_clkcmu_cpucl_switch" };
++PNAME(mout_pll_cpucl_p) = {
++	"fin_pll", "fout_pll_cpucl" };
++PNAME(mout_clk_cpucl_pll_p) = {
++	"mout_pll_cpucl", "mout_clkcmu_cpucl_switch_user" };
++
++static const struct samsung_mux_clock cmu_cpucl_mux_clks[] __initconst = {
++	MUX_F(0, "mout_pll_cpucl", mout_pll_cpucl_p,
++	      PLL_CON0_PLL_CPUCL, 4, 1,
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
++	MUX(MOUT_CLKCMU_CPUCL_SWITCH_USER, "mout_clkcmu_cpucl_switch_user",
++	    mout_clkcmu_cpucl_switch_user_p,
++	    PLL_CON0_MUX_CLKCMU_CPUCL_SWITCH_USER, 4, 1),
++	MUX_F(MOUT_CLK_CPUCL_PLL, "mout_clk_cpucl_pll", mout_clk_cpucl_pll_p,
++	      MUX_CLK_CPUCL_PLL, 0, 1, CLK_SET_RATE_PARENT, 0),
 +};
 +
-+static void __init artpec8_clk_cmu_imem_init(struct device_node *np)
++static const struct samsung_fixed_factor_clock cpucl_ffactor_clks[] __initconst = {
++	FFACTOR(DOUT_CLK_CPUCL_CPU, "dout_clk_cpucl_cpu",
++		"mout_clk_cpucl_pll", 1, 1, CLK_SET_RATE_PARENT),
++};
++
++static const struct samsung_div_clock cmu_cpucl_div_clks[] __initconst = {
++	DIV(DOUT_CLK_CLUSTER_ACLK, "dout_clk_cluster_aclk",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_ACLK, 0, 4),
++	DIV(DOUT_CLK_CLUSTER_PCLKDBG, "dout_clk_cluster_pclkdbg",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_PCLKDBG, 0, 4),
++	DIV(DOUT_CLK_CLUSTER_CNTCLK, "dout_clk_cluster_cntclk",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_CNTCLK, 0, 4),
++	DIV(DOUT_CLK_CLUSTER_ATCLK, "dout_clk_cluster_atclk",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CLUSTER_ATCLK, 0, 4),
++	DIV(DOUT_CLK_CPUCL_PCLK, "dout_clk_cpucl_pclk",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CPUCL_PCLK, 0, 4),
++	DIV(DOUT_CLK_CPUCL_CMUREF, "dout_clk_cpucl_cmuref",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CPUCL_CMUREF, 0, 3),
++	DIV(DOUT_CLK_CPUCL_DBG, "dout_clk_cpucl_dbg",
++	    "dout_clk_cpucl_cpu", DIV_CLK_CPUCL_DBG, 0, 4),
++	DIV(DOUT_CLK_CPUCL_PCLKDBG, "dout_clk_cpucl_pclkdbg",
++	    "dout_clk_cpucl_dbg", DIV_CLK_CPUCL_PCLKDBG, 0, 4),
++};
++
++static const struct samsung_cmu_info cmu_cpucl_info __initconst = {
++	.pll_clks		= cmu_cpucl_pll_clks,
++	.nr_pll_clks		= ARRAY_SIZE(cmu_cpucl_pll_clks),
++	.fixed_factor_clks	= cpucl_ffactor_clks,
++	.nr_fixed_factor_clks	= ARRAY_SIZE(cpucl_ffactor_clks),
++	.mux_clks		= cmu_cpucl_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(cmu_cpucl_mux_clks),
++	.div_clks		= cmu_cpucl_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(cmu_cpucl_div_clks),
++	.nr_clk_ids		= CMU_CPUCL_NR_CLK,
++	.clk_regs		= cmu_cpucl_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(cmu_cpucl_clk_regs),
++};
++
++static void __init artpec8_clk_cmu_cpucl_init(struct device_node *np)
 +{
-+	samsung_cmu_register_one(np, &cmu_imem_info);
++	samsung_cmu_register_one(np, &cmu_cpucl_info);
 +}
 +
-+CLK_OF_DECLARE(artpec8_clk_cmu_imem, "axis,artpec8-cmu-imem",
-+	       artpec8_clk_cmu_imem_init);
++CLK_OF_DECLARE(artpec8_clk_cmu_cpucl, "axis,artpec8-cmu-cpucl",
++	       artpec8_clk_cmu_cpucl_init);
++
+ /* Register Offset definitions for CMU_IMEM (0x10010000) */
+ #define PLL_CON0_MUX_CLK_IMEM_ACLK_USER			0x0100
+ #define PLL_CON0_MUX_CLK_IMEM_JPEG_USER			0x0120
 -- 
 2.34.1
 
