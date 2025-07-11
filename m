@@ -1,26 +1,26 @@
-Received: from mail-m19731117.qiye.163.com (mail-m19731117.qiye.163.com [220.197.31.117])
+Received: from mail-m3289.qiye.163.com (mail-m3289.qiye.163.com [220.197.32.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64E01E5B73;
-	Fri, 11 Jul 2025 07:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12731F0E24;
+	Fri, 11 Jul 2025 07:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218725; cv=none; b=tfDeoYpwjFxB0U4WQUDjwVdr8Kibj+5xNDnh0Ub65aHClMcyqBM2E6CBWsy5oyz4lUhD6oAeWqh5TWbY4+YDEQatwYGqrva/I3mxT1vwU5T5UWRDOwqJOxqr9k68nPg2SA0n1ArMs8FzA8tnr4T3bXRX7EmziA2v16y4VdCOQOc=
+	t=1752219753; cv=none; b=o+kSjR9XdKRd4uPqL42QH0d9UG7IwZevh4EQu02XOkAvPBZ2jJydiJjui2A7hr540HjqZMHZXLEj5bXZthstMo/HylPyis1xSq7w+DJP00dE0sZa7Z3fDerUDYWShv3cKH8GbTrr7JO4RNAb38EXiEzC8QJK9gcPD5NR2LsEzhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218725; c=relaxed/simple;
-	bh=EPbH64nRja7CPYX6FXOzsav2K14chsOTUkAA897dKuo=;
+	s=arc-20240116; t=1752219753; c=relaxed/simple;
+	bh=zSY5SfpIxP5bW4/J02CzHcFnbyzwnF76bsOcMPBvMAM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ol17qkxqFvwrjSAl/WFjPQ4+C4ds1fojxA11mnNYmYY7eIQgttqQB+vdFCqKxMZgR+rRlKi9tkhAVtUBvM0Kre483qskhKQ39Z/zg9jHATNZiSqMdbKdkd65EphKDEANZoYv3Oyp6fLcddvA/q7hB2CaWaDbueXW0/bRiW21bqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Aa+3MMGC; arc=none smtp.client-ip=220.197.31.117
+	 In-Reply-To:Content-Type; b=LT0aihJmlEbOswMNwKVF3fU+iiJzZWteC9trBBx/VprfDS9KAFxN/aOspqFCv2d4fk6lWuob73iAuVYD8koTW07ICy0Q7Uo9InGW98u7OSmsJPPwtvZ3U4Ki2R6Zq+3wDeBRyENPBDXdiGEMqoek7dw4zQHJGtxWKuK/tkoadzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MVDBP+Ml; arc=none smtp.client-ip=220.197.32.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Aa+3MMGC"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MVDBP+Ml"
 Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1badf1316;
-	Fri, 11 Jul 2025 15:20:05 +0800 (GMT+08:00)
-Message-ID: <600f723d-1ec7-4e67-b6f1-316ac8c09235@rock-chips.com>
-Date: Fri, 11 Jul 2025 15:20:04 +0800
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1bae50b4c;
+	Fri, 11 Jul 2025 15:26:58 +0800 (GMT+08:00)
+Message-ID: <ec271884-87a1-4117-a7f7-45e423b9de8a@rock-chips.com>
+Date: Fri, 11 Jul 2025 15:26:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -28,8 +28,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] drm/exynos: exynos_dp: Remove
- &exynos_dp_device.ptn_bridge
+Subject: Re: [PATCH v2 05/12] drm/exynos: exynos_dp: Remove redundant
+ &analogix_dp_plat_data.skip_connector
 To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
  andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
 Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
@@ -43,59 +43,67 @@ Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
- <20250709070139.3130635-5-damon.ding@rock-chips.com>
- <4596850.bcXerOTE6V@diego>
+ <20250709070139.3130635-6-damon.ding@rock-chips.com>
+ <6306541.2iPT33SAM4@diego>
 Content-Language: en-US
 From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <4596850.bcXerOTE6V@diego>
+In-Reply-To: <6306541.2iPT33SAM4@diego>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkxNSFYaH0NKSk8YGU9PHUJWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0saQ1ZPTxhIHh8aQx1OS0NWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a97f85b090603a3kunm38f22b26f2f422
+X-HM-Tid: 0a97f86155fa03a3kunm5a905d91f32139
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M0k6Ijo*FzE5HR8KEzA*Czwu
-	HwowCQtVSlVKTE5JSUpDT0tMT0tCVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSUtPNwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MC46TRw5ATE0Qh8eE1ZDGTwX
+	PEIKCy9VSlVKTE5JSUpDQ0lLSUpNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQk5INwY+
 DKIM-Signature:a=rsa-sha256;
-	b=Aa+3MMGCvohGN1l0oGiN9mPE9+buYJEnl7ehbJtNvS297qP4+L7vINeEZPucXb9o8A4JzLAXyJsHSJEQslBF+pchRkHo/Eum2OyZKRYcPQ6U1nEYgyo+L5wX146JCFtmGeuaa1OuwRzenz3aIxjmbCmDgLQJwoJopLf5Na7YYzg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=47mqYoiKeZ/zqm9N6N2f/Tu0kYWZlKHaQ/Ixw2H+aSk=;
+	b=MVDBP+MlXmQIBids0j03Vrslb0E7yHyCGuZ7vavVT9bPeByoPFrna+SYZtUEzpKc162OMDNeixdHM2x4Lyi7dBzfmK8GzfH9YcN70K/4VBtbxnDPFtyKHshIarOPguVv7/6s15pne+vD4nRZd1JOoUilcMrtPA7VZP8FsUR2+wQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=3f/SyxPB0VfACu7tJD6T5FVMoYuITfLiK8Gntfmm160=;
 	h=date:mime-version:subject:message-id:from;
 
 Hi Heiko,
 
-On 2025/7/10 3:55, Heiko Stübner wrote:
+On 2025/7/10 3:58, Heiko Stübner wrote:
 > Hi Damon,
 > 
-> Am Mittwoch, 9. Juli 2025, 09:01:31 Mitteleuropäische Sommerzeit schrieb Damon Ding:
->> Use &analogix_dp_plat_data.bridge instead of &exynos_dp_device.ptn_bridge
->> directly.
+> Am Mittwoch, 9. Juli 2025, 09:01:32 Mitteleuropäische Sommerzeit schrieb Damon Ding:
+>> The &analogix_dp_plat_data.skip_connector related check can be replaced
+>> by &analogix_dp_plat_data.bridge.
 >>
 >> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> 
->> @@ -155,7 +154,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_dp.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+>> index 9d7d3f009e58..9e1313fdecad 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+>> @@ -237,7 +237,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>>   	dp->plat_data.power_off = exynos_dp_poweroff;
+>>   	dp->plat_data.attach = exynos_dp_bridge_attach;
+>>   	dp->plat_data.get_modes = exynos_dp_get_modes;
+>> -	dp->plat_data.skip_connector = !!bridge;
 >>   
->>   	dp->drm_dev = drm_dev;
->>   
->> -	if (!dp->plat_data.panel && !dp->ptn_bridge) {
->> +	if (!dp->plat_data.panel && !dp->plat_data.panel) {
+>>   out:
+>>   	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+>>
 > 
-> typo. The second test should be for dp->plat_data.bridge
+> I think you might want to merge
+> - drm/exynos: exynos_dp: Remove redundant &analogix_dp_plat_data.skip_connector
+> - drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
+> 
+> Because when separate this creates a bisection issue.
+> Like when a bisect happens to land directly on this commit, you already have
+> removed the exynos assignment, but the updated check from the following patch
+> is not yet in place.
+> 
+> 
 
-That was so careless of me! I will fix it in the next version.
-
-> 
-> 
->>   		ret = exynos_dp_dt_parse_panel(dp);
->>   		if (ret)
->>   			return ret;
-> 
-> 
-> 
-> 
-> 
+Oh, I see. Squashing related commits together would be better.
 
 Best regards,
 Damon
