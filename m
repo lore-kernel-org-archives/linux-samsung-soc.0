@@ -1,122 +1,215 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9160E28B50A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 11:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3ACE28C02A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 12:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752234454; cv=none; b=q7mcyMpYSsuBddjN1Tmmm5Apxg/oMU7+F1wgy3zHiW52vg5ohdMTO5nxOhteXY+SVwud13ASwNo0H0F9N1jsp+1+01Dj0JgZ+kojKUlyYseY/+g2S98bvtInTXa4EzRePBZtynqd3O26+0e6g2omyPXZfPfp2L26e0BW+DWFjHY=
+	t=1752237152; cv=none; b=ARdzaGulVncTm58pL5f5djltYV2KYzaXTlfEi61cLFpbecFTxJaPK98FbSE/AKFksgfWCnIzpjL8vmi1wHZtLI7unauV/Q7brCZGExFh42+1vhdtUP2g8eWAfG/4tVoizQOI7rDloqNIIoU5cOGN1FCRlXxPlXvX6f/KmiZMKqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752234454; c=relaxed/simple;
-	bh=QJVaK3OzonhM172ouy0CpSbbwuoG2dejA4OnkSXs130=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jyFeVdEbqgeh7WjDhldWbgYzClzw9Rs1hNHhy7YZjdagSWHl1DWrhmAY6pcqTizDgk2djCKPyrfbsWnpEDthujIAAuy90CeA5nffYesobuDk1F8GNaRZ5XTyvnE3leRA0oLKHf6zSetiyK/LrFMY0jg0b7TxrxVblGavlkRvPUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zomu+GvF; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1752237152; c=relaxed/simple;
+	bh=jskRVxDVP/S7EV7/YxIs2gggxobMl3QXDo9NH63okro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AcLOAWlCgoi2dLuy+3EbfXBNBYKa6+62pp99ToXvJPrdiRl+NflXkmfc/69eBtf8v8paWUJoc69wfD95V4ERRlFziK0rCbS21Z2VXHgMT9LZxmDr/vZG37BnB87sjSS9GufCPlX4rsoHlzGTC1aOdqJzGrvNbIiI6zn7OnM/WDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E/pjBBTo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zomu+GvF"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55516abe02cso2005636e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 04:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752234451; x=1752839251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uRhFukVlfvQMsLzBFVuMG+Qi50dL1WntO88bS057RO0=;
-        b=Zomu+GvFGSHoNlAih7UVzXj0ULTVJF17s0qg7rIpqzretbLlc6nQ7NZ7kzlmNATYOw
-         c5nq685/0LCfbCN852zdK3Al2bCRvN6/PtLiug07w6cbHrpI+owEqt3OBmt7Ln/ZtNZt
-         BrWdYJsuYrDbfMq4llFGrLMiIjk5X/FpHxGytyJEYwrnmuQvFJZA2cS4fnGvD5gqOHTy
-         3MAaZQqNivCl91EupaR7S2fbggnKnQ7HboCjIeoprFr6zMbN+kwDrAgEtVlxgtxVSpZ4
-         y7pYUNCjAN31NPnCcYDxn/0KK+rwGnBRKepjzZV7kINpkCt2A8YRWJ106UTmqgGkVx46
-         YcdA==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E/pjBBTo"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BB7IAQ023904
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 12:32:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I+uJUa0zDVqqPkW/P6ZNncfaiD0Ik/YbmbIwujNrzqc=; b=E/pjBBToKGzsD7Nd
+	aP/K0oulwHPlxsH9QDB5UjkokGaSTwp+ppzV3nPC+zT0BAr1G2IsxtUchb0/O1r6
+	IXdkA7CV8TuW/2M6R1CGUEA9OTppGialSdxTjdC5tlulcQFhsGbFUpxIAY5Wdejn
+	A3ym7h3zKXy/RBGl6G/H77MKPrI7+QLrsSlDnCZJN7KV9rsIRPzDY02eapz7lveF
+	aZ7oKzOgavVo3GAdhfV6WxApnbgw0XnrD2vuizxgp7T753m8zZZmrSlR6jxDNbDC
+	4rgx/9s1/zjlN4vrW6g+s0VCJ+K5kIBA7byNQu6EUv95pcKztrKQZlEfD0AxWhx4
+	apS7jQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap8jch-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 12:32:29 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-74d15d90cdbso1822835b3a.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 05:32:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752234451; x=1752839251;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uRhFukVlfvQMsLzBFVuMG+Qi50dL1WntO88bS057RO0=;
-        b=VbMmcc1kLYXdh4WaSQOi5q9x310PZU0EuWOTtPNKCBPGrxNWII07OzAuMFXgdgnFao
-         zwexWevGhyJZ5+douT8uzqjbbIGoMQmjCpwo/WhxHmPAogyd2wNm6EubOfBKp+FxP8vX
-         c3B5j9MP4qyPw6fxqITnJDx+OlGMy+au7Oc58WgeadoIf6o8OCsIvBdAsUno7q9wOWo8
-         BdjHgi7zp9PxMQnaWB7ko23RSlNhOjFmqUtMTQtVT5ypJVgORZQnXJgPtoXJqonGid1r
-         UHdK3DxPVpjrljt7zoMVZjdocPDfLLn45dGgoDdTuf+QvusgK5sjtm/4U2FqmoGTMCDo
-         71FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhC6j2FuzeEZx4ggQNTPy3/I8bn8IabWucDv8VSnTuEF3Fue9jg7clie/LBWj9V08MWJptvfzIVp8KlqPiVkRPqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKXdUZGBtU0vEl4vGwpbXm8L0+WNxIh2k4ZOFmOsfYNIDCkAUt
-	mDV3KAcHRQLFn+PJP9DHn0dWWQcBFfks7De1UodrNHdDuMprBufjm2TyiLEd3Yw5AFc=
-X-Gm-Gg: ASbGncuo44oTK0iSRQOIVkPxMR68AaVipKZvj3zF7Y7t1c8bN47ucfZyqbJZCmy8w/U
-	eQ9ZCApYVrkG1jFbjB+M1ADoMsueVDSH+FSZoaki5Hix9e15+zUvUZkm3FZndDQyGCucktEL/aK
-	NHf/wJSj6UHa/DiicpTQPtnOSO5OiC/pv2jaSoAw8OQvHRHajyV2oTnSkv00qvZrF3KrYAIMQXj
-	n9hyP3hBmNg53NCGleNsp6nMdcOe4mT0+Lve/QuMmmOPMyNrzWPyuiq5xagYhrCVick/XTz31bJ
-	N6iyv4fio+lbc/pzg0pvVqypGMFqab/51qmJcyKeyrnpJe6+NlPWS3L+jpXPHRjMnL1gjNBtQd/
-	IE/LQ2IbwxkrvPi/l5eUXlFPydYHDNGDdqFIFoN4BTYHGF+X4aXXASLXmfGQXreDe9fR1BWgnkl
-	czVAZhAsU=
-X-Google-Smtp-Source: AGHT+IG12UDrTXalEDU0YKI0OWyt7RE273XbDSoBAUX3pRGix+0Sj5LWHFUpgBtVPKp9Q0+KnL0ueA==
-X-Received: by 2002:a05:6512:3405:b0:553:243c:c1d3 with SMTP id 2adb3069b0e04-5590071bca8mr2492286e87.18.1752234449986;
-        Fri, 11 Jul 2025 04:47:29 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b60f09sm915928e87.154.2025.07.11.04.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 04:47:29 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pmdomain: samsung: Fix splash-screen handover by enforcing a sync_state
-Date: Fri, 11 Jul 2025 13:47:19 +0200
-Message-ID: <20250711114719.189441-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1752237148; x=1752841948;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+uJUa0zDVqqPkW/P6ZNncfaiD0Ik/YbmbIwujNrzqc=;
+        b=FmtlJgXxx2I5qdOX1sByd7rtKQ6OwuqjRXQETxceCyLQPalFu9tFQo/ipVbt1Upnrh
+         jtTV//DYYaU2wqmP/A4Du1cC4+kjxVEJZlnbtxvFFZ1cHGLeXaN976OTxs2IM0YzwF9A
+         2B0s+DDsE1MUZo1KSlq9gH8Fc1tgj6mbZA0gMEd9coJQINXLy1huDJU1E221X+/62hQw
+         Xe57NF7qqNImgE5GAS4MkMQo9KeFpLvxtkp1yiEpTcQEMLHTGcydlcBLORqrjxePO12b
+         peDYnbJ/nteJFMh9N+Jq/zwqu0+EVRpxiclkVIL/3Ed9dzhMxCmV2p8lZ5za1+TWYqk4
+         KKlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRDH46drGx+aoHBAv6ZHpc/wuUIGpikdvp4YVV3hlMhulk6PB0I8r3nXrtYaKO46c0xZcDmZmfobx5NOTHezQcCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhmKxNJa5lrMtyyFHjOHq4z1vIY4V4pXKyTG/Z5w7CQ8bdaUQr
+	PwGkuEjpbE6fPkFu7V+sxuGB5rXMD1+9eC1JY0JnhU+RjM1Uy34XkUeBq21EcSTYyhkqLwCNIFg
+	U79El5l2okbSC3Uzrd36OOeun0CcE2XPI8q+ZKvTs0sFuS4lC9AP9FcidrFX7TdahB1iKF6OB2Q
+	==
+X-Gm-Gg: ASbGncvMjs96QTbr+7VZy2IRWtqzmkLYZpZLD+bV3F+2gUl7viXNRpGsjXa4xaDLjHG
+	PdAan/U7uUOBaQUvopDLrsYwbO0ETiLleVfQ6MzTHxgMSYwix6ApCrzEWoSrJ4UySrYXCGL8oT3
+	A8NV57TosiS9iClYPbJdfaZm0rGr5sEASfWr9cmsI1IJdUpAl8z0mw1mm/uXqO7k179RUYIb7aq
+	0KuUTrFTmj9xlasPkVmbtQ4ZaGi9MEyTLiNF9nvzsfSiQVsOXWY1AHNQAZLtaG6U8fwDFB8Qy54
+	NI6cmJXKE1SxQ/tml1AtFCCUVX18LCZ7mxCH8SmsdVw/YLMHCQacQ6WwoIOO/TjgUMrx6Mw=
+X-Received: by 2002:a05:6a00:1151:b0:74c:f1d8:c402 with SMTP id d2e1a72fcca58-74ee07bb96dmr4845170b3a.8.1752237148289;
+        Fri, 11 Jul 2025 05:32:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9gsUsqbiWSyynICyXIvV85uCk9/J6nn3GoQC+GKfjb1N1fCIuGevD1MSbYwD9kXnui8JeEw==
+X-Received: by 2002:a05:6a00:1151:b0:74c:f1d8:c402 with SMTP id d2e1a72fcca58-74ee07bb96dmr4845108b3a.8.1752237147622;
+        Fri, 11 Jul 2025 05:32:27 -0700 (PDT)
+Received: from [10.219.56.108] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f90d66sm5040981b3a.173.2025.07.11.05.32.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 05:32:27 -0700 (PDT)
+Message-ID: <cdadd6cf-18c9-15c7-c58a-b5d56b53452a@oss.qualcomm.com>
+Date: Fri, 11 Jul 2025 18:02:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v10 02/10] dt-bindings: power: reset: Document reboot-mode
+ cookie
+To: Rob Herring <robh@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Elliot Berman <elliotb317@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        Andre Draszik <andre.draszik@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        linux-rockchip@lists.infradead.org,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-2-b2d3b882be85@oss.qualcomm.com>
+ <20250710224740.GA15385-robh@kernel.org>
+Content-Language: en-US
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+In-Reply-To: <20250710224740.GA15385-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=6871045d cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=s8YR1HE3AAAA:8
+ a=PKmmUXB_vcMajKhYsGEA:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-ORIG-GUID: Kor4Tv1HeBpE4xRUNKJDReywi0ftL9R1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4OSBTYWx0ZWRfX8wv77k5ckVvO
+ dYvL00BDTjldAmDYbuWxAAL039/AUuij2EMdMcJ4FVqnEQN3eO00aqm0zgJve0+1rwhoy3cF+8m
+ XHF7lrH019vFwEGgxvByJzZ1YD27J7+KJCEfY/2Z2cturzySaS1VOLyfWGmOm1o1UzGi1y6mRk7
+ UeinKjwoaGbthO7+h7pRu2l0S+U2NIJZEoXp6LL2Rp4fWVGNn6OwmXp/Q2J+0IX86st8j2M0WUx
+ X4py+D9Qwlo1OOEytoF1k1cfmdUYWD7gX33r+IxgnQEtdIS5fbD9zT3R4LyfHyuYjSvn86xywbt
+ RkWR0+NWwxugaGKevFX9wrXhWubiwkKgwNjCOL5CWqYl+FepIKpgU7CtYZRHYk51FPLQZGL7tT+
+ A920qXDFraFron3I+GXKEc/0TlPquw8P+mWiF+n0Ft+oVko4V60mWuvzdX6OVwjI176j39QG
+X-Proofpoint-GUID: Kor4Tv1HeBpE4xRUNKJDReywi0ftL9R1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
+ phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507110089
 
-It's has been reported that some Samsung platforms fails to boot with
-genpd's new sync_state support.
 
-Typically the problem exists for platforms where bootloaders are turning on
-the splash-screen and handing it over to be managed by the kernel. However,
-at this point, it's not clear how to correctly solve the problem.
 
-Although, to make the platforms boot again, let's add a temporary hack in
-the samsung power-domain provider driver, which enforces a sync_state that
-allows the power-domains to be reset before consumer devices starts to be
-attached.
+On 7/11/2025 4:17 AM, Rob Herring wrote:
+> On Thu, Jul 10, 2025 at 02:45:44PM +0530, Shivendra Pratap wrote:
+>> Update the reboot-mode binding to support an optional cookie
+>> value in mode-<cmd> properties. The cookie is used to supply
+>> additional data for reboot modes that accept two arguments.
+>>
+>> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+>> ---
+>>  .../devicetree/bindings/power/reset/reboot-mode.yaml         | 12 +++++++-----
+>>  1 file changed, 7 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+>> index 3ddac06cec7277789b066d8426ea77d293298fac..a4d2fe1db51e0c1f34ebefddaad82b8cc0b1b34a 100644
+>> --- a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+>> +++ b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+>> @@ -10,14 +10,15 @@ maintainers:
+>>    - Andy Yan <andy.yan@rock-chips.com>
+>>  
+>>  description: |
+>> -  This driver get reboot mode arguments and call the write
+>> -  interface to store the magic value in special register
+>> -  or ram. Then the bootloader can read it and take different
+>> -  action according to the argument stored.
+>> +  This driver gets reboot mode arguments and calls the write
+>> +  interface to store the magic and an optional cookie value
+>> +  in special register or ram. Then the bootloader can read it
+>> +  and take different action according to the argument stored.
+>>  
+>>    All mode properties are vendor specific, it is a indication to tell
+>>    the bootloader what to do when the system reboots, and should be named
+>> -  as mode-xxx = <magic> (xxx is mode name, magic should be a non-zero value).
+>> +  as mode-xxx = <magic cookie> (xxx is mode name, magic should be a
+>> +  non-zero value, cookie is optional).
+> 
+> I don't understand the distinction between magic and cookie... Isn't all 
+> just magic values and some platform needs more than 32-bits of it?
+Need two different arguments. Will try to clarify a bit below.
+PSCI defines SYSTEM_RESET2 vendor-specific resets which takes two
+parameters - reset_type and cookie. Both parameters are independent and
+used by firmware to define different types of resets or shutdown.
+As per spec:
+reset_type: Values in the range 0x80000000-0xFFFFFFFF of the reset_type parameter
+can be used to request vendor-specific resets or shutdowns.
+cookie: the cookie parameter can be used to pass additional data to the 
+implementation.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Link: https://lore.kernel.org/all/212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/pmdomain/samsung/exynos-pm-domains.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index 9b502e8751d1..5d478bb37ad6 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -147,6 +147,15 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 				parent.np, child.np);
- 	}
- 
-+	/*
-+	 * Some Samsung platforms with bootloaders turning on the splash-screen
-+	 * and handing it over to the kernel, requires the power-domains to be
-+	 * reset during boot. As a temporary hack to manage this, let's enforce
-+	 * a sync_state.
-+	 */
-+	if (!ret)
-+		of_genpd_sync_state(np);
-+
- 	pm_runtime_enable(dev);
- 	return ret;
- }
--- 
-2.43.0
-
+Now to implement SYSTEM_RESET2 vendor-specific resets using reboot-mode
+driver, we will need two separate arguments. reboot-mode already defines a
+magic, which will be used as reset_type. For the second parameter requirement of
+SYSTEM_RESET2, we add support for additional argument cookie.
+> 
+>>  
+>>    For example, modes common Android platform are:
+>>      - normal: Normal reboot mode, system reboot with command "reboot".
+>> @@ -45,5 +46,6 @@ examples:
+>>        mode-recovery = <1>;
+>>        mode-bootloader = <2>;
+>>        mode-loader = <3>;
+>> +      mode-edl = <1 2>;
+>>      };
+>>  ...
+>>
+>> -- 
+>> 2.34.1
+>>
