@@ -1,152 +1,140 @@
-Received: from mail-m21467.qiye.163.com (mail-m21467.qiye.163.com [117.135.214.67])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03291A2632;
-	Fri, 11 Jul 2025 08:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E4A27CB06
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 09:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221147; cv=none; b=ta8Az8H4zeg5kDiZqKwIitKSlQJTioF3QwTyisfIm5olItIENbjK6skHeK9VS2U4i472GgVqkIXMYjNCwI0g0YHqt9rq15x7vbsmI9LmcCDddRWc1yfEEzPyvJx78AXtNnamzs6TTTAQip7Fw/cjnu3dpoDFb/7A1HzUJ0i57PE=
+	t=1752227828; cv=none; b=tPsHo+HfRl2MK/cVyqu5VE35T/UvDPIyr7tB3HJAaud2lIJUsFmt5xBQkQBGH1fWdjHEtoDGZousqtaZB20a1QN7m23YwoXVnVbsfRAY11B1OpoLBPKdRliowzH2/f4Esd1o0NYYSBoG7yJPy4GUykKoh88+TM9/q9IQE9DI+j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221147; c=relaxed/simple;
-	bh=YNgM2YUegra+JJIhbeMsctb/xCYn3P/Rg4e68nZ+iyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gRIh8B3X3056sHw2rG4iSh32ELDnapqqTqBm/pRTl71MAVktBtLJbJ1nZNek+LBYRgABg76bDmWzK/1Q3Zcm6wQbE5xIIEo4NDwETyQ2P5ZnnohWnWoa9SqeYNnWVrSq8tpyO6MBxiyN9yefNnIWRyUC/nH8HgWsSIXIedeN6rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=f3ABdV+J; arc=none smtp.client-ip=117.135.214.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1752227828; c=relaxed/simple;
+	bh=/jz62YG9XUYKioVMwcvC8pt1XPpu81We8MhowTWgq3g=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=iiRSQXMdjoVfirMD6cfHlB7itEHsp5ERhHxo1BCM+0Xrl6BVV1f33C/5/bGJOHLt6hya38AGBYmKBKl6XYIa3H8v4taaY1Hm1FUl0+kPKuCfkmMpe6GiRQZdFLYEMJXCzxslelI2iHNlOjbhMaQymZqaHSoVFyqgjgJA76xMumg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HwcmosRg; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="f3ABdV+J"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1baf32046;
-	Fri, 11 Jul 2025 15:50:18 +0800 (GMT+08:00)
-Message-ID: <84b8fe6e-0d33-42a9-9f8f-ed10998429e8@rock-chips.com>
-Date: Fri, 11 Jul 2025 15:50:18 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HwcmosRg"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250711095659epoutp03a458172e76337ec11a9bcba3166299c3~RKesFlmMC2912329123epoutp03j
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jul 2025 09:56:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250711095659epoutp03a458172e76337ec11a9bcba3166299c3~RKesFlmMC2912329123epoutp03j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752227819;
+	bh=+5zHegncV70kjbqyw48Y9OdFtKw1OBm4PBQI79nv4ew=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=HwcmosRgLUGbih8+toJsjXN/4B4BZaTYNYtYADygEqPVaUrasnRy0U3HrAKqt7uOJ
+	 BBWPO4IQmJIrToH4WZnvuT2h7jv4/75w+8CkeHzw5NzYSgRHdB0aibtd7nygnq7dkb
+	 qW+gsoS3+4aGuUfUqBGoktci3qLLhlsYNp09Vu5U=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250711095658epcas5p33152e44e3698223878ac0bf294f1bf8b~RKerickMk0269002690epcas5p3Y;
+	Fri, 11 Jul 2025 09:56:58 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bdnDm74z2z3hhTJ; Fri, 11 Jul
+	2025 09:56:56 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250711095228epcas5p11af898a023698a922eb59ddbbffaa176~RKavvWm-70063600636epcas5p1p;
+	Fri, 11 Jul 2025 09:52:28 +0000 (GMT)
+Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250711095226epsmtip153e539dffb1184623f3f9ac93d4bb0dd~RKauOa9jJ2985929859epsmtip1p;
+	Fri, 11 Jul 2025 09:52:26 +0000 (GMT)
+From: "Devang Tailor" <dev.tailor@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <alexandre.belloni@bootlin.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-rtc@vger.kernel.org>, <faraz.ata@samsung.com>
+In-Reply-To: <20250711-shapeless-adorable-lobster-d2efbf@krzk-bin>
+Subject: RE: [PATCH v2 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
+Date: Fri, 11 Jul 2025 15:22:25 +0530
+Message-ID: <188001dbf249$831afd00$8950f700$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/12] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
- <20250709070139.3130635-13-damon.ding@rock-chips.com>
- <6140569.FjKLVJYuhi@diego>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <6140569.FjKLVJYuhi@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUIeS1YYSUJKSUpMQkgfTxhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a97f876b52003a3kunm13db4e75f3c74a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxA6GCo*KjE2Lx8SUSk5EgEj
-	C08wCj5VSlVKTE5JSUlLSUlLTEJNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPT0lMNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=f3ABdV+J9ZF4Xh4dDg/WOg07CApS5rihUgUFAvDfOc0Q3Sk0KKlc5dUnKK0B8PkH67LddM3XLMInqreiNp6Iq4k45NkImv8eCKuNN/9Qarq/wNQ452zop5AwY0dB2gNx8FzkKokv0WlZypir9qZ2d0Pl+UxU4dsxr9HRKS+eZqs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=ugJYj+exyps/6wR5MX4czRxtXgkmuqVMFOJv2QPxESU=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMc6yo9jRPgA4nZ2IiZrgLtyBFMygKSVtdMAw5/R1ICPLNBmLFr0ApA
+Content-Language: en-in
+X-CMS-MailID: 20250711095228epcas5p11af898a023698a922eb59ddbbffaa176
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9
+References: <20250710083434.1821671-1-dev.tailor@samsung.com>
+	<CGME20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9@epcas5p4.samsung.com>
+	<20250710083434.1821671-3-dev.tailor@samsung.com>
+	<20250711-shapeless-adorable-lobster-d2efbf@krzk-bin>
 
-Hi Heiko,
 
-On 2025/7/10 4:11, Heiko Stübner wrote:
-> Am Mittwoch, 9. Juli 2025, 09:01:39 Mitteleuropäische Sommerzeit schrieb Damon Ding:
->> Apply drm_bridge_connector helper for Analogix DP driver.
->>
->> The following changes have been made:
->> - Remove &analogix_dp_device.connector and change
->>    &analogix_dp_device.bridge from a pointer to an instance.
->> - Apply devm_drm_bridge_alloc() to allocate &analogix_dp_device that
->>    contains &drm_bridge.
->> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
->>    and &drm_connector_helper_funcs.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ------
->>
->> Changes in v2:
->> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
->>    DRM_BRIDGE_OP_EDID.
->> - Add analogix_dp_bridge_edid_read().
->> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
->>    patches.
->> ---
->>   .../drm/bridge/analogix/analogix_dp_core.c    | 169 ++++++++----------
->>   .../drm/bridge/analogix/analogix_dp_core.h    |   4 +-
->>   2 files changed, 80 insertions(+), 93 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index abc64cc17e4c..fb510e55ef06 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -23,6 +23,7 @@
->>   #include <drm/drm_atomic.h>
->>   #include <drm/drm_atomic_helper.h>
->>   #include <drm/drm_bridge.h>
->> +#include <drm/drm_bridge_connector.h>
->>   #include <drm/drm_crtc.h>
->>   #include <drm/drm_device.h>
->>   #include <drm/drm_edid.h>
->> @@ -948,23 +949,13 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
->>   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
->>   }
->>   
->> -static int analogix_dp_get_modes(struct drm_connector *connector)
->> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	const struct drm_edid *drm_edid;
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	int num_modes = 0;
->>   
->>   	if (dp->plat_data->panel) {
->>   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
-> 
-> here is one example where a panel_bridge would help :-)
-> 
-> I.e. I'd think without it the code would need some sort of
-> 
->    	if (dp->plat_data->bridge) {
->    		num_modes += drm_bridge_get_modes(dp->plat_data->bridge, connector);
-> 
-> thing?
-> 
+Hi Krzysztof,
 
-Oh, the handling of bridge here is indeed not well thought out. I will 
-implement the panel-bridge in the next version.
 
->> -	} else {
->> -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->> -
->> -		drm_edid_connector_update(&dp->connector, drm_edid);
->> -
->> -		if (drm_edid) {
->> -			num_modes += drm_edid_connector_add_modes(&dp->connector);
->> -			drm_edid_free(drm_edid);
->> -		}
->>   	}
->>   
->>   	if (dp->plat_data->get_modes)
-> 
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 11 July 2025 12:51
+> To: Devang Tailor <dev.tailor=40samsung.com>
+> Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
+> rtc=40vger.kernel.org; faraz.ata=40samsung.com
+> Subject: Re: =5BPATCH v2 2/3=5D rtc: s3c: support for exynosautov9 on-chi=
+p RTC
+>=20
+> On Thu, Jul 10, 2025 at 02:04:33PM +0530, Devang Tailor wrote:
+> > The on-chip RTC of this SoC is almost similar to the previous versions
+> > of SoC. Hence re-use the existing driver with platform specific change
+> > to enable RTC.
+> >
+> > This has been tested with 'hwclock' & 'date' utilities
+> >
+> > Signed-off-by: Devang Tailor <dev.tailor=40samsung.com>
+> > ---
+> >  drivers/rtc/rtc-s3c.c =7C 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c index
+> > 5dd575865adf..8db24b6360b8 100644
+> > --- a/drivers/rtc/rtc-s3c.c
+> > +++ b/drivers/rtc/rtc-s3c.c
+> > =40=40 -384,6 +384,15 =40=40 static void s3c6410_rtc_disable(struct s3c=
+_rtc
+> *info)
+> >  	writew(con, info->base + S3C2410_RTCCON);  =7D
+> >
+> > +static void exynosautov9_rtc_disable(struct s3c_rtc *info) =7B
+> > +	unsigned int con;
+> > +
+> > +	con =3D readb(info->base + S3C2410_RTCCON);
+> > +	con &=3D =7ES3C2410_RTCCON_RTCEN;
+> > +	writeb(con, info->base + S3C2410_RTCCON); =7D
+>=20
+> Looks a lot like s3c24xx_rtc_disable()...
+>=20
+> Anyway, if you keep ignoring the review, no point to provide reviews here=
+.
+>=20
 
-Best regards,
-Damon
+I have removed the redundant code I had added in V1 considering your review=
+ comment for asymmetry code.
+s3c24xx_rtc_disable() & s3c6410_rtc_disable() updates additional bit, which=
+ is not valid for ExynosAutov9 (only RTCCON=5B4:0=5D are valid), hence I ad=
+ded this and mentioned in V2 cover letter as well.
+Please let me know if I am missing anything.
+
+> Best regards,
+> Krzysztof
+
 
