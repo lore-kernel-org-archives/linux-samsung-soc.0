@@ -1,141 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9922641F8;
-	Sat, 12 Jul 2025 08:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC5721883C;
+	Sat, 12 Jul 2025 11:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752308180; cv=none; b=K+3Wfu7yrGPrtLYVN1utBRtC+W9JUdZTZANW1ORXGEdpodDrb4HWHivDbQz+FmZgGQ/tZGKrFju0ofzRrGd1c+jZgJSITwJNXHVAzy0tyC7FDh4phumbqJarfb58ezX/ZyCr1juaP4mJaJDm7fJn0RLqIRKDlPo+7E8b8hxIewk=
+	t=1752321003; cv=none; b=SKN8a9HvxfzrdKMVhuW3FKgWggRBnqc/kC6V7VRM/4t4432/WZwJBKuaRV5SI3scktA21L8K+HM9kNxkoLD3EkDjVp1pMefqgU+zHqkXQSZ87U5XZJ5HZXSXwT/TJp5h2PQ4xsSiDTgxEiSADGnKPhRIUohaPd6m4lfdhokpph8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752308180; c=relaxed/simple;
-	bh=fQo4K2HEVBu7amyJdMssKDsDgVHS7eWNIAwuuStgM+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CuFmrx3bMaol6+mcs8aYFwBXlMwTzBkX8Y6NKvLIdQ24s4FYdh5ZRyop4sWWKjLLt5uDDiOYLywPJ5SeHxpXUFwDnw8w7jy61FeoEFH6KKYyH2rqZWjF4vqLG3m9yTjol6R8uGIqNOarXlBAcuz5ZXL8hd9oHWUP/KhfBGHOP5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4h3f0M6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752321003; c=relaxed/simple;
+	bh=S+tYkmbasYOAVw0o6YkfoWz4FtmHaFsF4csZGWOvnmk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZrDiDm25LqY8v0V2fLhQ41qy6OK/ondyUyUfgMKCIvU5levNCfVhkXZtUkWJ3xQxQYVY4lDw23ABdUY3nT6cyX1sgEyC3lobypz6OlWru/QZ24YxuVcgfyWJce1k4waVi/txV3zO/URHgJuupv8YAs+5mWrsynQNsqSGynOzRXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IAslfoZL; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4h3f0M6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9FC1C4CEEF;
-	Sat, 12 Jul 2025 08:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752308179;
-	bh=fQo4K2HEVBu7amyJdMssKDsDgVHS7eWNIAwuuStgM+s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H4h3f0M6RL7BWmgXq6jGkkhbjLOIkn7KQ6bslA+r7BrRSju49TS6ochVYpoW/DzEG
-	 llOtm5LCN/pTrUV8sgVyjmn4Tc2eGiBI0IAsTiv0qE1gU0l4zkSaInYVxdG4knxLMy
-	 gl9GUSfmA1MVtaq5qcdhGz+udmaMeRZ/hQve36YVvB296xNjpcN1C5OPi+2zpxzolV
-	 K2hE4arC57ZmqERaKBIUWTC4T8hQW8PQdCIVS2Qw74eNNuf5u5dzK2TKGFTgT+ReCW
-	 y0y8dwywE3QjzxZAxJgF8JjPjBiX+1MHzqWvfy/SQ4pcVTBycIABrbyF9uEQxjOGkQ
-	 LhclI/sRaGO/w==
-Message-ID: <40c06385-26bc-4d5f-8fdc-fee2600afdeb@kernel.org>
-Date: Sat, 12 Jul 2025 10:16:11 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IAslfoZL"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 3C1D825D28;
+	Sat, 12 Jul 2025 13:49:58 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id UdEQUmxa2Ljx; Sat, 12 Jul 2025 13:49:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1752320997; bh=S+tYkmbasYOAVw0o6YkfoWz4FtmHaFsF4csZGWOvnmk=;
+	h=From:Date:Subject:To:Cc;
+	b=IAslfoZLT3WCtll3Oqe0CeZ14PDMLkGO+Mkzk+z9CLeJ9LNnX9w8mT+z/85MxOvya
+	 F0fBcPK6ZCCyHEZHD+skxRk0J3rrJyWj3NuBbHYp7s7OnT4IGbdq6BC3huxAGyD+Mq
+	 piYjNY+QfL6zgFBqY5zMvTBrfLXFMfWLRiSBjmhvzRM+mou1OhgdJ+8zLlDoCspGt3
+	 ZRWCSNaQUAOJuJvR7L8vmPAOJMUFuD4NJVzDamzwMLVHJV/7VINa624PryIQoq2djV
+	 6BVztx3RX2wPI5X/RJjmxaOkjNUMRCg3AEYo+viyXjckO5MMf9VZ18m2e4Nsn653i+
+	 bARP1Jm/ZwsBA==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Sat, 12 Jul 2025 17:19:30 +0530
+Subject: [PATCH] iommu/exynos: add support for reserved regions
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] phy: exynos5-usbdrd: support HS phy for
- ExynosAutov920
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- neil.armstrong@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
- <CGME20250701115959epcas5p40f28954777a620b018251301eea13873@epcas5p4.samsung.com>
- <20250701120706.2219355-3-pritam.sutar@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250701120706.2219355-3-pritam.sutar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250712-exynos-sysmmu-resv-regions-v1-1-e79681fcab1a@disroot.org>
+X-B4-Tracking: v=1; b=H4sIAMlLcmgC/x2MMQqAMAwAvyKZDWjAUv2KOIiNNYNVGhRF/LvB5
+ eCGuweUs7BCVzyQ+RSVLZnUZQHTMqbIKMEcqKKmctQiX3faFPXWdT0ws56GaJWic/VM3reBQgM
+ 22DPPcv3zfnjfDywU1kRsAAAA
+X-Change-ID: 20250629-exynos-sysmmu-resv-regions-661f2889d2d5
+To: Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752320988; l=1824;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=S+tYkmbasYOAVw0o6YkfoWz4FtmHaFsF4csZGWOvnmk=;
+ b=XrB80dr8a+JpILdcBo5C8ky8eoGj9SFiZjVCtse37Zu1p3PeiZQKE+VHre362XvQFhPjcTFZo
+ rQBP0wI1zv3AWTuPsfcXTXWutuy7l58dImvg6ZriUEHbco9XIsfAiW1
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On 01/07/2025 14:07, Pritam Manohar Sutar wrote:
-> This SoC has a single USB 3.1 DRD combo phy that supports both
-> UTMI+ (HS) and PIPE3 (SS) and three USB2.0 DRD HS phy controllers
-> those only support the UTMI+ (HS) interface.
-> 
-> Support only UTMI+ port for this SoC which is very similar to what
-> the existing Exynos850 supports.
-> 
-> This SoC shares phy isol between USBs. Bypass PHY isol when first USB
-> is powered on and enable it when all of then are powered off. Add
-> required change in phy driver to support HS phy for this SoC.
-> 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+The bootloader configures a reserved memory region for framebuffer,
+which is protected by the IOMMU. The kernel-side driver is oblivious as
+of which memory region is set up by the bootloader. In such case, the
+IOMMU tries to reference the reserved region - which is not reserved in
+the kernel anymore - and it results in an unrecoverable page fault. More
+information about it is provided in [1].
 
-Drop
+Add support for reserved regions using iommu_dma_get_resv_regions().
+For OF supported boards, this requires defining the region in the
+iommu-addresses property of the IOMMU owner's node.
 
-You again added significant changes and claimed they were reviewed.
+Link: https://lore.kernel.org/r/544ad69cba52a9b87447e3ac1c7fa8c3@disroot.org [1]
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+ drivers/iommu/exynos-iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 131 ++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h |   2 +
->  2 files changed, 133 insertions(+)
-> 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index dd660ebe8045..64f3316f6ad4 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -480,6 +480,8 @@ struct exynos5_usbdrd_phy {
->  	enum typec_orientation orientation;
->  };
->  
-> +static atomic_t usage_count = ATOMIC_INIT(0);
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index b62a8f35c3e8516ead6a41f92dc7c8dc057986a8..b6edd178fe25e7c258cc82c47e9170fb4db74064 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -22,6 +22,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ 
++#include "dma-iommu.h"
+ #include "iommu-pages.h"
+ 
+ typedef u32 sysmmu_iova_t;
+@@ -1479,6 +1480,7 @@ static const struct iommu_ops exynos_iommu_ops = {
+ 	.device_group = generic_device_group,
+ 	.probe_device = exynos_iommu_probe_device,
+ 	.release_device = exynos_iommu_release_device,
++	.get_resv_regions = iommu_dma_get_resv_regions,
+ 	.of_xlate = exynos_iommu_of_xlate,
+ 	.default_domain_ops = &(const struct iommu_domain_ops) {
+ 		.attach_dev	= exynos_iommu_attach_device,
 
-No, you cannot have singletons. How are you going to handle two
-independent phys?
+---
+base-commit: a62b7a37e6fcf4a675b1548e7c168b96ec836442
+change-id: 20250629-exynos-sysmmu-resv-regions-661f2889d2d5
 
 Best regards,
-Krzysztof
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
