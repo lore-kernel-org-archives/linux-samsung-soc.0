@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CC18F5B;
-	Sat, 12 Jul 2025 07:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F141E5B7A;
+	Sat, 12 Jul 2025 08:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752306757; cv=none; b=s8Tlu4uOQyGYcei8SRH4g8tReoId+KjYS0JEdy2EwHT/xOu/Z8AnFhFWAhUxtUQ+SIgRdTiHrkZvWnOFQE+taoEUpCu2/ehSRd6T0gTvnkSpaJrYElXgFOsIIjRam5E+yj/irwPmFszDcfWA6RfrW7i50nI4zzMs4U58etAGVY0=
+	t=1752308039; cv=none; b=Q4rHy0oXPqrNRARRcnkgeI3OzdIShhgXPyjpP+1LtghNCcYFAYy7OQkuRH0M564w/FfLSJLruaLCtYRJEu982995QfubWxwasM5njMUJyeapUQbHMl3pAHskyNZABkMlDyn3Wpg04z8OBmUoi15dRn9pspYJGuXI/dMlomkOGr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752306757; c=relaxed/simple;
-	bh=Ovl3SBGISov0rIfRZoGndqdQZutg9gmcb12N601d76M=;
+	s=arc-20240116; t=1752308039; c=relaxed/simple;
+	bh=VA30t7dnvV2wR8+/G/Sx+Tt/ksk9TRh6rruNucHezUA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qzWgfUpgbH8ajLOjNcqu/M1HX+Cks/dVd0SnHO5Z1mfgNGa841unswDXJEeoWVM5Qf9YKKv1R+aSSWNFv6UriYOV9f/krPaUcf6DEmLkgxwqHr+AaLjc2vw+0ro5PhWooZDB2vVCoujMu3XKFJiJcge06zrnY9+wJsQi7vpjaMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVUob5A/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=d4ZPwoNOMZ+odzQCM0qAfEdKtE5F+cxm2pfjR6DBKff7s3nUpGdqHTkTy2sPcmiwpbQgVWEJ/Bswy6skfLM2me70grvwIAj0lA9C3Cekqdrdm4JwkWGVJjvCgarDQg/pRfpiCxfYj4KcBId/IZlNUaI9DvjbA5tSzu1HbvFTpvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ7WnKkb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVUob5A/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F96DC4CEEF;
-	Sat, 12 Jul 2025 07:52:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ7WnKkb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BB08C4CEEF;
+	Sat, 12 Jul 2025 08:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752306756;
-	bh=Ovl3SBGISov0rIfRZoGndqdQZutg9gmcb12N601d76M=;
+	s=k20201202; t=1752308039;
+	bh=VA30t7dnvV2wR8+/G/Sx+Tt/ksk9TRh6rruNucHezUA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BVUob5A/gBKrAEWEqetuMhE854N/Cx9j+wTJxPEGV75EdKnFCWjWYJRqCf6K5d4wz
-	 f+LEiPVa935i3LQF3TSdyoK5l4CIAf/HV0vTGvfd8ai+dWtTmJ+w2931kd/t6oupiV
-	 x6HVNOvSLPLGgMCFRmDEqEBY9kytRzo/aDWeb1C9Kju0wGbOxq+tSfvzgssin3VYv4
-	 7uhSyNP1NlTJYC84V/S5/j7nRHfkhvkOX1SHlA0uVCeplcmh9EZJ5cdJspza1wS1jy
-	 T5kObBFNrqgZ92JmvS8hEaQBrz+3sItytNXIUDuDZQPXDcvOcwLQXQjhhjSKrcqdxm
-	 yKFhyk9LtWIxw==
-Message-ID: <be042c1e-fac0-4928-a378-1fe3fec14a9e@kernel.org>
-Date: Sat, 12 Jul 2025 09:52:33 +0200
+	b=QJ7WnKkbEcxdwG+1MxX+s8ajsFIOU1r7Nvufpt/Y7fT+Hle06/5txFU6XxWWDyUak
+	 QlK43GRwI36NsDQRurVYr5U6PxrWP43R497gp3Ms6Gahwc3hR00cJHG6XZxVN0LWVC
+	 HvMGpWfH9KyfBVnqWLJy2pnEBCiUAV9CbNKTnNNo9Q20p71Lb3sZ+y0U+/l8eRHXxY
+	 JVFoxoGJ3f87maqVa1VMhc/naXqtuZ458PvRq22Di55FFuxNQBCy9HvZNPSMP0gd4G
+	 hUbc/+Iz7Vjz7ZgVk6Hsk3jev82n2RAkrd8OkHy36WZXjFidu1U2ia/zqT+rz+a1Ps
+	 W7pVDDKmpfweA==
+Message-ID: <9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
+Date: Sat, 12 Jul 2025 10:13:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,24 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pmdomain: samsung: Fix splash-screen handover by
- enforcing a sync_state
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+Subject: Re: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
+ 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, neil.armstrong@linaro.org, kauschluss@disroot.org,
+ ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
+ s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250711114719.189441-1-ulf.hansson@linaro.org>
+ rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
+ muhammed.ali@samsung.com, selvarasu.g@samsung.com
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+ <CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
+ <20250701120706.2219355-2-pritam.sutar@samsung.com>
+ <20250706-fresh-meaty-cougar-5af170@krzk-bin>
+ <07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,29 +98,138 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250711114719.189441-1-ulf.hansson@linaro.org>
+In-Reply-To: <07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/07/2025 13:47, Ulf Hansson wrote:
-> It's has been reported that some Samsung platforms fails to boot with
-> genpd's new sync_state support.
+On 09/07/2025 10:46, Pritam Manohar Sutar wrote:
+> Hi Krzysztof,
 > 
-> Typically the problem exists for platforms where bootloaders are turning on
-> the splash-screen and handing it over to be managed by the kernel. However,
-> at this point, it's not clear how to correctly solve the problem.
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: 06 July 2025 03:11 PM
+>> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
+>> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com;
+>> andre.draszik@linaro.org; peter.griffin@linaro.org; neil.armstrong@linaro.org;
+>> kauschluss@disroot.org; ivo.ivanov.ivanov1@gmail.com;
+>> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
+>> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
+>> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
+>> faraz.ata@samsung.com; muhammed.ali@samsung.com;
+>> selvarasu.g@samsung.com
+>> Subject: Re: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+>> ExynosAutov920 HS phy compatible
+>>
+>> On Tue, Jul 01, 2025 at 05:37:01PM +0530, Pritam Manohar Sutar wrote:
+>>> Add a dedicated compatible string for USB HS phy found in this SoC.
+>>> The SoC requires two clocks, named "phy" and "ref" (same as clocks
+>>> required by Exynos850).
+>>>
+>>> It also requires various power supplies (regulators) for the internal
+>>> circuitry to work. The required voltages are:
+>>> * avdd075_usb - 0.75v
+>>> * avdd18_usb20 - 1.8v
+>>> * avdd33_usb20 - 3.3v
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> No, really. Look:
+>>
+>>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+>>> ---
+>>>  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 37 +++++++++++++++++++
+>>>  1 file changed, 37 insertions(+)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+>>> b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+>>> index e906403208c0..2e29ff749bba 100644
+>>> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+>>> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+>>> @@ -34,6 +34,7 @@ properties:
+>>>        - samsung,exynos7870-usbdrd-phy
+>>>        - samsung,exynos850-usbdrd-phy
+>>>        - samsung,exynos990-usbdrd-phy
+>>> +      - samsung,exynosautov920-usbdrd-phy
+>>>
+>>>    clocks:
+>>>      minItems: 1
+>>> @@ -110,6 +111,15 @@ properties:
+>>>    vddh-usbdp-supply:
+>>>      description: VDDh power supply for the USB DP phy.
+>>>
+>>> +  avdd075_usb-supply:
+>>> +    description: 0.75V power supply for USB phy
+>>> +
+>>> +  avdd18_usb20-supply:
+>>> +    description: 1.8V power supply for USB phy
+>>> +
+>>> +  avdd33_usb20-supply:
+>>> +    description: 3.3V power supply for USB phy
+>>> +
+>>
+>> None of these were here. Follow DTS coding style... but why are you adding
+>> completely new supplies?
 > 
-> Although, to make the platforms boot again, let's add a temporary hack in
-> the samsung power-domain provider driver, which enforces a sync_state that
-> allows the power-domains to be reset before consumer devices starts to be
-> attached.
+> Digital supplies were here. Need Analog supplies for exynosautov920, hence added new Analog supplies; 'a'vdd075_usb, 'a'vdd18_usb20, 'a'vdd33_usb20
 > 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Link: https://lore.kernel.org/all/212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
+> Will add "full stops" for DTS coding style in description.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+You cannot grow one line change into 50 line change and retain the review.
+> 
+>>
+>>
+>>>  required:
+>>>    - compatible
+>>>    - clocks
+>>> @@ -235,6 +245,33 @@ allOf:
+>>>
+>>>          reg-names:
+>>>            maxItems: 1
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - samsung,exynosautov920-usbdrd-phy
+>>> +    then:
+>>> +      properties:
+>>> +        clocks:
+>>> +          minItems: 2
+>>> +          maxItems: 2
+>>> +
+>>> +        clock-names:
+>>> +          items:
+>>> +            - const: phy
+>>> +            - const: ref
+>>> +
+>>> +        reg:
+>>> +          maxItems: 1
+>>> +
+>>> +        reg-names:
+>>> +          maxItems: 1
+>>> +
+>>> +      required:
+>>> +        - avdd075_usb-supply
+>>> +        - avdd18_usb20-supply
+>>> +        - avdd33_usb20-supply
+>>
+>> Neither was this entire diff hunk here.
+>>
+>> This was part of other block for a reason.
+> 
+> Added regulators in driver. This block is added for regulators (other block does not have "required" field for power supplies)
+> if excluded this block,  
+> "make ARCH=arm64 dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml" will fail as mentioned below 
+
+
+Nothing is explained in changelog/cover letter. You claim you only added
+Rb tag. This is an entirely silent change while keeping the review.
+Combined with not even following DTS style!
+
+It's not acceptable.
 
 Best regards,
 Krzysztof
