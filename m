@@ -1,91 +1,127 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C7723B60C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2025 08:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EA0229B16
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2025 09:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481064; cv=none; b=awi3h+BTIfee7/rPAy1VOQhnEJmVfqnXxUwKfZU28DT4S1xF/EHrwm2D/Ex0nQ7aYW65Clz3S4Me9OtcyJ7OMX2RnOX6VPY0Ka/iiJd1h0tZPZ7Ydj3Rg31d1LgHzqCNnJ9qruzpZB8PhR3Zdk8ug/Yp5MzBGGMrr9ySYT6KYvI=
+	t=1752485688; cv=none; b=ZAapoG3xUiNaZyfeokSmNTt+34jAcYLa3RbrBr/MKZSaZD+cIezAK0Rwj34IWuoQFgenWH/PgaQz8ZLgfgHHtxstdFvXp8uSt+KGiABwbL9UqqpP/Z2wv5ge7vAar0wz0QoLjpnWQhK3zR903Bh3W2IzTHLdRb8rqD5YcZPyt8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481064; c=relaxed/simple;
-	bh=vuIneu7pM5DIf0S1GOG5o8U5Cu3F83SLWq90fihZ9gA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=W4GHvAAvbgnVdckif5JQLg87oPK/7t9wlAJhVsiDwQXde1W6TAQLWLtGstQLuitVDRLDRAkb2teZWRbVHU2P9bi+j2BtdK2USFgbtXnc2U2kyPNcvhdoBfQZfvEOc9zaJ5ta4ytlZvuZ2PwR+ex2/yU8ThcHXqKk1ayBvnWDmPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GPSTHLpv; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1752485688; c=relaxed/simple;
+	bh=UfwKYdfhLk2Qy+lp7anf0iJDtzV7naJAbuUbpizuis4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LZnxaT9j9LOi1FkT653W2ta+XwHSQS9zsT3FArjGPr3tAHZB04HXxqJP/9r2HokweoF/HDLRoatc135wx0rIcwRh6BXbMx4u0vcNJYmhExeM1ltSKwp6A44V75UaGF+yi04vW13h9nwhOQIaw2CvCp0BeDfjJ1azb7cFOxB44z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=di1SOu9k; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GPSTHLpv"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250714081739epoutp04543a71bf25c85e690ea36e1db1bbbda2~SED0evKnq2852128521epoutp04X
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2025 08:17:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250714081739epoutp04543a71bf25c85e690ea36e1db1bbbda2~SED0evKnq2852128521epoutp04X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752481059;
-	bh=vuIneu7pM5DIf0S1GOG5o8U5Cu3F83SLWq90fihZ9gA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=GPSTHLpvrIdCbHkiVrB8Uo8ZndCQxfWHLVW/ZFGV+G6QkE8ul31rhAy8YHFT4b/Bv
-	 L0n3+KUbGgpyKaYVtctzkWtujiCPruPBcrPNhNDfOJfxLsIKMJQY2YW52RtDVp2pYF
-	 phsw6gTYCtKrHXUMKbsMl6NGIw0JRnQ4ELUP9WdU=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250714081739epcas2p19bbac4165e91d7dacad9ecaeb7ece5f7~SED0G2MI91346213462epcas2p1n;
-	Mon, 14 Jul 2025 08:17:39 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bgZtp57PYz2SSKy; Mon, 14 Jul
-	2025 08:17:38 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250714081738epcas2p224d4cc8d164531794da6ce8dfe668ffc~SEDzGQRXB1610116101epcas2p2C;
-	Mon, 14 Jul 2025 08:17:38 +0000 (GMT)
-Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250714081738epsmtip207db5f8791a72e34b9535829bb5af1b7~SEDzC9ZwS1814318143epsmtip2Q;
-	Mon, 14 Jul 2025 08:17:38 +0000 (GMT)
-From: <sw617.shin@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <422fc81c-81d7-4473-92b6-9d112e6e247a@kernel.org>
-Subject: RE: [PATCH v3 RESEND 3/5] watchdog: s3c2410_wdt: Increase max
- timeout value of watchdog
-Date: Mon, 14 Jul 2025 17:17:37 +0900
-Message-ID: <001c01dbf497$c2b0b040$481210c0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="di1SOu9k"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-711756ae8c9so32633107b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2025 02:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752485685; x=1753090485; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vEmmr4XGYIHTUb8r2LHfVd1MIoDVWAOSUqn/NEpPRbM=;
+        b=di1SOu9kEFU45yaf/R5J/6R+Bg6mYwoa9dYW5LtCDcJzD1ToEk5wcOtE/9Iag6dWcf
+         FJzKHkIh7LL9XZpdOe9l5mpGzgzKV4lf4vbyjSiaY0E0Cf6eQHy7jBS4RssfRCQ1bwiK
+         mlMjxiK0WpoBtUfGVevE+X+EhK7X41zVYyF+DisvaNNr+F3CYwihd4eVhJ0BqnSYxIce
+         42AvKP1sASthFrA0dcHmdF97uoz5WHuebMavzGRy4uhPicT7vMZGkPUjU51aZViAybC4
+         YlP3Ig+ZWzk68fU/dCrGTPcN4CJuLBw1XKm1RVRyE76462b88rNzZlxSw8Ef4gfToPtY
+         hqxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752485685; x=1753090485;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vEmmr4XGYIHTUb8r2LHfVd1MIoDVWAOSUqn/NEpPRbM=;
+        b=U2SPyCer85gpyTjRC/NIRim001I62Y1wRxPanqgjKP88VcPPHxxpfr5kFdIT6tmhjp
+         imUlVNbsKW4SqEFIffTyi9SjjU/UGMXLognu79JkB6oST3pGHkc/2/3jWjTyxgMxI4hY
+         KITpOcfmQIcmUMJVKQov5p4JcMhQHTZ1/PB2uW0VIKrrerOglTt9tAlRgcpaLyI7/Wtd
+         HITtRXHyJo0dFqM4HILdnr2l5kW5JOZCYYerBF3KFKE/k2XEMm6mLspqkLBIGMeWlEnq
+         hjh3djRRcDtsBkwG+NgXaDQjfkxPIIWek2sLdy5a4UMVnIvXFsFawCW/GmI77Jtzbs6M
+         xPOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVtD7uV8+0W+IWWpnOUeDPj12rnISGf09NRwuGQZ76N5oUxU2N/8C2Sl74xoJyUgIxD907WCN3t75WW25kwLeZ+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/kZN7OHfowMWGKq09SYVP6LtVrYF/jQPRzmHDREYx6+d5yJmx
+	dqYYjHVwZQLvlHshUR5AHrktfibY2yfChuItbH0cAWq6qOllbEXrhRsRecj2LJW3BOebf0OtFni
+	f/yWlSkDqoN3pE5NarOTfxnXX/KUsp8Qzcou10mAM/g==
+X-Gm-Gg: ASbGncvMuoX/4RFgjzdmRSxCJfx2tp9EHpTXeqJ4fdJuKHwTVLGWNvhvaqahfeCx27J
+	UOwfXzxsbha3jcTOzyKGj35DxwneWj47iEL+RJutQd7r4OcgohTWtWMi13Aa/5dD/nTeRrnHi+6
+	Bec5dLGfYXmKL+r+xlaUkrC755M7NpQwpW7zns4hqt+FzdOO7kJGpTWLk2b93FktzKS3sypaY1e
+	bR1b8ZPatzl5TpFSb8=
+X-Google-Smtp-Source: AGHT+IHIlg2QgBnKLSKe6umOG6mLkyHuyOGa5CDuUCJGRmLch13uGRl1lyUH/fje8e3UhcJpXB/eeeAkkqwb0eDhQ3E=
+X-Received: by 2002:a05:690c:628a:b0:70e:7ff6:9ff3 with SMTP id
+ 00721157ae682-717d5f3d391mr195973477b3.35.1752485685299; Mon, 14 Jul 2025
+ 02:34:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIEaJ+ioIR5Yp9zWAA/UcLZjjUhMgF6s7ZMAnq+8xsBNs3P4bO2+lkg
-Content-Language: ko
-X-CMS-MailID: 20250714081738epcas2p224d4cc8d164531794da6ce8dfe668ffc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250714055858epcas2p47b849c0141fdb556288333f7abe00372
-References: <20250714055440.3138135-1-sw617.shin@samsung.com>
-	<CGME20250714055858epcas2p47b849c0141fdb556288333f7abe00372@epcas2p4.samsung.com>
-	<20250714055440.3138135-4-sw617.shin@samsung.com>
-	<422fc81c-81d7-4473-92b6-9d112e6e247a@kernel.org>
+References: <20250711114719.189441-1-ulf.hansson@linaro.org>
+In-Reply-To: <20250711114719.189441-1-ulf.hansson@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 14 Jul 2025 11:34:08 +0200
+X-Gm-Features: Ac12FXwf4BfTjOB0bq-V0l481-9ls28bgQwLelpMu5ij-cJg8s7O_Ow2nAI2D7E
+Message-ID: <CAPDyKFrouK9b8Gd+DYg-=BE0dYVuiwy3+Jkrp1=4dDXu90gDTw@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: samsung: Fix splash-screen handover by
+ enforcing a sync_state
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 14 Jul 2025 08:04:47 +0200, Krzysztof Kozlowski wrote:
-> I claim that this patch fixes nothing, because there is no user of
-> QUIRK_HAS_32BIT_MAXCNT.
+On Fri, 11 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> It's has been reported that some Samsung platforms fails to boot with
+> genpd's new sync_state support.
+>
+> Typically the problem exists for platforms where bootloaders are turning on
+> the splash-screen and handing it over to be managed by the kernel. However,
+> at this point, it's not clear how to correctly solve the problem.
+>
+> Although, to make the platforms boot again, let's add a temporary hack in
+> the samsung power-domain provider driver, which enforces a sync_state that
+> allows the power-domains to be reset before consumer devices starts to be
+> attached.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Link: https://lore.kernel.org/all/212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Dear Krzysztof,
+Marek, Krzysztof thanks for reviewing and testing!
 
-Thank you for your review.
-Are you suggesting that we combine the patches labeled as =5Bv3 3/5=5D and =
-=5Bv3 4/5=5D into one?
+I have applied for this for next!
 
-Best regards,
-Sangwook Shin
+Kind regards
+Uffe
 
+> ---
+>  drivers/pmdomain/samsung/exynos-pm-domains.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> index 9b502e8751d1..5d478bb37ad6 100644
+> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
+> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> @@ -147,6 +147,15 @@ static int exynos_pd_probe(struct platform_device *pdev)
+>                                 parent.np, child.np);
+>         }
+>
+> +       /*
+> +        * Some Samsung platforms with bootloaders turning on the splash-screen
+> +        * and handing it over to the kernel, requires the power-domains to be
+> +        * reset during boot. As a temporary hack to manage this, let's enforce
+> +        * a sync_state.
+> +        */
+> +       if (!ret)
+> +               of_genpd_sync_state(np);
+> +
+>         pm_runtime_enable(dev);
+>         return ret;
+>  }
+> --
+> 2.43.0
+>
