@@ -1,99 +1,102 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089FC28C872
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2025 08:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C0A2F2C56
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2025 10:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752655370; cv=none; b=rAdu+GgVYUpcPbkHjcQx7IsTqNdtMdkheo3cnJszkj3M9T6fVGj9mFXxJum5oVEgxsAG8tiZPS+eKMkKai5lDgWqIK+jjajM/5vLWpvg/S9Wxa88nhwtlFJ2BcMX6D3w9oxEhmDek4V60iAPlvYDYG4MV0eQTsVvy/1wYtMXnCs=
+	t=1752661023; cv=none; b=PctQujEDYFT35rAMJKePnAJQ0lxUc636r7VZpF0YjUCDBWoM413Y57vO+89RNQDM+1EROleva70yzqiUOe+raigDzU+Cp3tq3bfmpkBMbtQSjYux3Lqt0xMUugWiEm+Guzc0/F9wVc8wT/BdxEEyX0GP3MQicLKnQUrD5zVQfYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752655370; c=relaxed/simple;
-	bh=B7SsdO+MenMYckXWR84ZUdMgGeszbtfwtQYKlL+IKug=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=biuyKxlgz8eCQf7YNAjgqQvk8uTkJYN6nw1hWJwXPeEO9uVWwWXMY+hGIUbiFTo11TC8gpVEaNSEz6KEJKywJr1kabmg+18CygiopxnkTspQC14lp77tuQoS7OxGuEd9wGMwBDn+mW3v9l5GTG4Tgd09ET9fWMTWL78jPNo6BZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCYr+BL7; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1752661023; c=relaxed/simple;
+	bh=GwY+ydg7QNO8ffgOhspbvFzuLK5V0VJeLu7G3qLFQ9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nA+7kCxmuyTsTJpmU0JEmZy1akWGafNc7ZQS9xjwzz6N+X5cwTj9hWdwT0sEZPCLTbNaN3da6zPbJBNQokrzh1TI+GL6UY6ZPMfEmvkYgxOO0VWFuHTPRRymi3ISVFyCHP5k0jgGufZVFRZhAPNbA8neJuk1pDBX6oRz7eMIlFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vnKajPBD; arc=none smtp.client-ip=209.85.160.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCYr+BL7"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6070a8f99ffso977076a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2025 01:42:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vnKajPBD"
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2ff1ed124deso2331970fac.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2025 03:17:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752655366; x=1753260166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rEwTO6jDq9O1mX9IG6Eme66k2aXlrb5FWoDpo6lnm8I=;
-        b=YCYr+BL79jTPQR9L1CxHCYOtcpEswJv268F2OgdQcRxjzaEmNFdYmAZu2zHQAk63of
-         ONFw7M5fHR46bIsXgDAny65czF1Rvozo7nqGMSYshOLgrArYDIsoXSRf/vFFYj8tdXvn
-         w39FGMlQ0pi3PUhp1uEb6c3tyET1t/ZkhSQgQXWK+QMZc+4p0X9XK6pVDaT0/FuUqRqJ
-         XrK3S5305s4595oqFfmTYxw2hqR+zKYV1AwAqPT80WMO1/3YOok1bw657wwzB2sWnn7A
-         eO7LiQx25JDmbR7hgIiJuQdNJV3j52yQDGjFFhsb3ulqukl5fkj5UtUPjyBO44pFcZU6
-         xXFQ==
+        d=linaro.org; s=google; t=1752661020; x=1753265820; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GwY+ydg7QNO8ffgOhspbvFzuLK5V0VJeLu7G3qLFQ9o=;
+        b=vnKajPBDLQoJuBu1wcoh4+9baoAfoU5a+icFk2HgcdAex4DqZ9wDHfdX+9M36A1kiW
+         SzKTA/rZxtjh2QTarg7+OnKAE9QI8tLwAxlNs1pxxf6WX7MiwN/2KbVJzcNDfaaDrlMD
+         KXy5fxIr25qFFDMjYmowwwazpUkLadav/fkNKIS4lsB6sRp+cnOVOt57e8rAmFNDNTN2
+         60nGYg0+S4FGRZm/Q5bpSpQOwlkimsVoZ2WPAiW3KbVKylmEqIG6A/9kqftOcuXhE+xt
+         BKnHsj4F85pQBDLzPvG4sJdIWqNGKBO2ed3TRdfGxj8GuBxTcIzXfZdowU4Xv16/VW9X
+         mukw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752655366; x=1753260166;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rEwTO6jDq9O1mX9IG6Eme66k2aXlrb5FWoDpo6lnm8I=;
-        b=li7clHAhmHzBSC0TEWwp5OORCMpiiy6E9FftIiGA+iHQmnw/JRd6Z+HnV0RrpOOMV9
-         MG5K6WMFYHf4sJtp75++hxWbveFieSSApxWUgQvr1napjivoEE0xkKg36DAnAgdaxZ6Z
-         iZdTi+n6Jv2l16+evytV1Y1ZvjPmm9Tx5jfP67mjoL5HYoDG719nUEvRNHqOfw03O/5y
-         19K7EN41CfpZbEjGqjIqsbILA3D7t17iEkOWB0XoPetadN8gXE1DANsBTaT2weG8VtbG
-         6aXtXNYIDJ/BMbfX2jKfaPMk76o3nrFpNsmVsRe9SMUwxg4J+b0Hx2xZYVStJv2mM2zu
-         59cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEzg2mOniwddSHtVWyw2IOeZB2GOcMIi2l8+KhIy0o6/S61gqCFWNLK4+kWxuP7W2nTAnPU70+Sj4oRlvIMI8XOQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyacTkAp8/dN0yKCOeTqCTjCbpKnSgBXsNOHQjUqe+gxl9SyZMM
-	AD3eKmQzkyqOpLsEQzFWMDlaUngn/oPMfjI6AuAY7dAOgDoBxJCGq3tZst0FjxMAw+U=
-X-Gm-Gg: ASbGncsGNYqB5CE8oKz9emuVEoMKrmljYq+JWDeWvVZ9+p131PwZu2vQXl9wWizmhMV
-	HwbQsWzZ0ejtfJfsfGkEVTx64d2kaEhKtmpSUD7kuNPPystlUl8/q1ky9DDjRAakTiW4eOdCI4l
-	e0BnmOUHDpA4EHQXl6G2xUDW6A9JMA+T4bnKi0SD7tHeqgMGE7WMhJYo/MfBd68Si6045opffLP
-	r5E6IIjgEFL5YRn/qcoqfofSFlZFrcINS0AwEx873yqU0oKACDWM9+aEIo9CzYWZjOeF5z+/m/j
-	D5F5uIbm8R8hl6QhPdYz0NqrCvHgsezsuLCVE2c20KpqmfC2vXaahwAs4vzgG6C+SU3Gf1APPT5
-	camXgjiqUk9v12BpxuTZYv764hqOVnxwmJcCk
-X-Google-Smtp-Source: AGHT+IG5VzneoFYbewswXVJiJQA7X4tnJGGDHvgb8EgFHw+/z6nhgITDJiBHyRBEDaIMb0avqqonAA==
-X-Received: by 2002:a17:907:86a5:b0:ae0:8621:2233 with SMTP id a640c23a62f3a-ae9c99cf09bmr84890266b.6.1752655366273;
-        Wed, 16 Jul 2025 01:42:46 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294bfdsm1132749566b.120.2025.07.16.01.42.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 01:42:45 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, 
- alim.akhtar@samsung.com, kishon@kernel.org, Sowon Na <sowon.na@samsung.com>
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20250702013316.2837427-4-sowon.na@samsung.com>
-References: <20250702013316.2837427-1-sowon.na@samsung.com>
- <CGME20250702013332epcas2p4ea41cc442d42fd7b2c742e1d08b26182@epcas2p4.samsung.com>
- <20250702013316.2837427-4-sowon.na@samsung.com>
-Subject: Re: (subset) [PATCH 3/5] dt-bindings: soc: samsung: exynos-sysreg:
- add hsi2 for ExynosAutov920
-Message-Id: <175265536480.111577.14907577908476237198.b4-ty@linaro.org>
-Date: Wed, 16 Jul 2025 10:42:44 +0200
+        d=1e100.net; s=20230601; t=1752661020; x=1753265820;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GwY+ydg7QNO8ffgOhspbvFzuLK5V0VJeLu7G3qLFQ9o=;
+        b=uiWobzIpmZaDpOWWmEPTI6WKaKxg1Y8fBtV9Feg1q7EZ3pa9970vAlgnI/qgu02OsQ
+         7o+ffT4zv3DkthEUo9YPa/Hdr2fTqSgwATy9zue7gskTLRX1kTOp8QHxiLkb9EjpK3Mb
+         pEbzKSgWgrvGDuDrLOuA4x8o1jj3CpT3H8u2OP+xXi+yJfH5sqjqnwtnqb9+WrKsMfHs
+         6xVcgDwN82mDjl7peuLmGLTMxU7bGi/houfYQqNdLIiSeLxB4Sn/77Pv+3i8S476fKSb
+         dDh/+1uB6Tf/QPMWGftMFp740F/6VW8itoiickjmY4SDt9wKMRS0qjic8jIAk4JMxSB0
+         oKow==
+X-Forwarded-Encrypted: i=1; AJvYcCUc0RznObl+7jimlptgJuJUIKSDSHrb2QWa7boiU6HSrXjRMnvSSTe9rWIofx37CoxYn/gNaRZh1K3C3lFDY69JSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhELkMTUdzAc8syE6ro2WQjLtGjtQFEGEgpL/nahy2vpMO19it
+	YIfSemRKkwNbwra6E/DeHtzimJ1om1TV0ZlYMSrgB0qGbLKX9GsKNId5gYxNVvcU5PEkrmzcg03
+	stP7gCdqQiiHyURm9xC5jDQiE8CNsV7yRmypPpD/xZA==
+X-Gm-Gg: ASbGncu8S28U/urZQThGkimjZ0043KV1//9eyVDDHX4cd+kYu2jRERG+hUAiXg1YINK
+	usURhoRKxAFi2ahVNyFzMaobC3YfCSMLUVZ4EmRmJweYywh9EoZnkS9HFpYgj4iJPbK3s9v80cZ
+	b6J0eziLILqT0MDraN+DhIgUmbe6qmuReshBGn+j/gX/IXWaQ0tTlqyy7k7GZ92tSxVUuMvZWEo
+	FcdCEgD
+X-Google-Smtp-Source: AGHT+IFBJVxKAXo/cKR2ndkM9X7Bsz8i7y0trbE2KS4VktpXvhySzwMgUoWrnTeCkvYzPODvF62WRFigY53HbadClC8=
+X-Received: by 2002:a05:6871:71f:b0:2eb:a8fb:8622 with SMTP id
+ 586e51a60fabf-2ffb229c270mr1371804fac.15.1752661020506; Wed, 16 Jul 2025
+ 03:17:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
+ <yq11pqiaedd.fsf@ca-mkp.ca.oracle.com> <yq1a556776b.fsf@ca-mkp.ca.oracle.com>
+In-Reply-To: <yq1a556776b.fsf@ca-mkp.ca.oracle.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 16 Jul 2025 11:16:49 +0100
+X-Gm-Features: Ac12FXyVvVETCy_fvebhSLHtpuQY_pd3_d6Vt5LZcabX59ifAwOETZg6eR50R8Q
+Message-ID: <CADrjBPrCBG4ZatLwYyH07f5EQrbO876M7WqXX7UfgD9Cg8w9Uw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ufs: exynos: call phy_notify_pmstate() from hibern8 callbacks
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-scsi@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Martin,
 
-On Wed, 02 Jul 2025 10:33:09 +0900, Sowon Na wrote:
-> Add hsi2 compatible for ExynosAutov920 ufs shareability register to
-> set io coherency of the ExynosAutov920 ufs.
-> 
-> 
++ Vinod (phy maintainer)
 
-Applied, thanks!
+On Mon, 14 Jul 2025 at 23:15, Martin K. Petersen
+<martin.petersen@oracle.com> wrote:
+>
+>
+> >> Notify the ufs phy of the hibern8 link state so that it can program the
+> >> appropriate values.
+> >
+> > Applied to 6.17/scsi-staging, thanks!
+>
+> This appears to have a dependency on a patch series aimed at the phy
+> tree.
 
-[3/5] dt-bindings: soc: samsung: exynos-sysreg: add hsi2 for ExynosAutov920
-      https://git.kernel.org/krzk/linux/c/687d974a218a719f7e729bef9c498ec36f18115e
+Thanks for your email. Yes you're correct, as mentioned after the ---
+in the patch this has a dependency on the new API proposed in [1] so
+can't be queued currently.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks,
 
+Peter
+
+[1] https://lore.kernel.org/lkml/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org/
