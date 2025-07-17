@@ -1,102 +1,108 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C0A2F2C56
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2025 10:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3F51A83FB
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2025 03:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661023; cv=none; b=PctQujEDYFT35rAMJKePnAJQ0lxUc636r7VZpF0YjUCDBWoM413Y57vO+89RNQDM+1EROleva70yzqiUOe+raigDzU+Cp3tq3bfmpkBMbtQSjYux3Lqt0xMUugWiEm+Guzc0/F9wVc8wT/BdxEEyX0GP3MQicLKnQUrD5zVQfYI=
+	t=1752723156; cv=none; b=NpFKGbeD/ATst0tkpZ5fjgZ3fy4OLnjvRrGU7LBkWwzfAdq8M3JxJ+jxk/9ZA4lthPQ0KzxWw8QrBeqWXwoNpjzTSS/wC4ih/zpNQwkSKJCyNVOXyoCuLDEM7rqY1oAe9JW0lZbEzw8DTWecNGjgllv34ko2C5T3MZVwLEWzKcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661023; c=relaxed/simple;
-	bh=GwY+ydg7QNO8ffgOhspbvFzuLK5V0VJeLu7G3qLFQ9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nA+7kCxmuyTsTJpmU0JEmZy1akWGafNc7ZQS9xjwzz6N+X5cwTj9hWdwT0sEZPCLTbNaN3da6zPbJBNQokrzh1TI+GL6UY6ZPMfEmvkYgxOO0VWFuHTPRRymi3ISVFyCHP5k0jgGufZVFRZhAPNbA8neJuk1pDBX6oRz7eMIlFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vnKajPBD; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1752723156; c=relaxed/simple;
+	bh=u0HoJ5h72t0o8MWHTDCV8a9gVUilTrQ2p+/B69p45b0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=UIT/NSIyTcvoBLJS/e0O5s0xGPb2q1+2XEov8H/neS6ENSOO4qkj4rZlDpsu4hOcU3wQ0nbE/L0/Qwk+szM5uNYNsrJldsw5tQPIDx+lbhjDhJz0kmI1bTorI2WCDGRnlVCNMFjVZEOsNCFDspUwe8mhU0icwrQYMwewsuQe1h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Sd120Sj+; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vnKajPBD"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2ff1ed124deso2331970fac.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2025 03:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752661020; x=1753265820; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwY+ydg7QNO8ffgOhspbvFzuLK5V0VJeLu7G3qLFQ9o=;
-        b=vnKajPBDLQoJuBu1wcoh4+9baoAfoU5a+icFk2HgcdAex4DqZ9wDHfdX+9M36A1kiW
-         SzKTA/rZxtjh2QTarg7+OnKAE9QI8tLwAxlNs1pxxf6WX7MiwN/2KbVJzcNDfaaDrlMD
-         KXy5fxIr25qFFDMjYmowwwazpUkLadav/fkNKIS4lsB6sRp+cnOVOt57e8rAmFNDNTN2
-         60nGYg0+S4FGRZm/Q5bpSpQOwlkimsVoZ2WPAiW3KbVKylmEqIG6A/9kqftOcuXhE+xt
-         BKnHsj4F85pQBDLzPvG4sJdIWqNGKBO2ed3TRdfGxj8GuBxTcIzXfZdowU4Xv16/VW9X
-         mukw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752661020; x=1753265820;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GwY+ydg7QNO8ffgOhspbvFzuLK5V0VJeLu7G3qLFQ9o=;
-        b=uiWobzIpmZaDpOWWmEPTI6WKaKxg1Y8fBtV9Feg1q7EZ3pa9970vAlgnI/qgu02OsQ
-         7o+ffT4zv3DkthEUo9YPa/Hdr2fTqSgwATy9zue7gskTLRX1kTOp8QHxiLkb9EjpK3Mb
-         pEbzKSgWgrvGDuDrLOuA4x8o1jj3CpT3H8u2OP+xXi+yJfH5sqjqnwtnqb9+WrKsMfHs
-         6xVcgDwN82mDjl7peuLmGLTMxU7bGi/houfYQqNdLIiSeLxB4Sn/77Pv+3i8S476fKSb
-         dDh/+1uB6Tf/QPMWGftMFp740F/6VW8itoiickjmY4SDt9wKMRS0qjic8jIAk4JMxSB0
-         oKow==
-X-Forwarded-Encrypted: i=1; AJvYcCUc0RznObl+7jimlptgJuJUIKSDSHrb2QWa7boiU6HSrXjRMnvSSTe9rWIofx37CoxYn/gNaRZh1K3C3lFDY69JSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhELkMTUdzAc8syE6ro2WQjLtGjtQFEGEgpL/nahy2vpMO19it
-	YIfSemRKkwNbwra6E/DeHtzimJ1om1TV0ZlYMSrgB0qGbLKX9GsKNId5gYxNVvcU5PEkrmzcg03
-	stP7gCdqQiiHyURm9xC5jDQiE8CNsV7yRmypPpD/xZA==
-X-Gm-Gg: ASbGncu8S28U/urZQThGkimjZ0043KV1//9eyVDDHX4cd+kYu2jRERG+hUAiXg1YINK
-	usURhoRKxAFi2ahVNyFzMaobC3YfCSMLUVZ4EmRmJweYywh9EoZnkS9HFpYgj4iJPbK3s9v80cZ
-	b6J0eziLILqT0MDraN+DhIgUmbe6qmuReshBGn+j/gX/IXWaQ0tTlqyy7k7GZ92tSxVUuMvZWEo
-	FcdCEgD
-X-Google-Smtp-Source: AGHT+IFBJVxKAXo/cKR2ndkM9X7Bsz8i7y0trbE2KS4VktpXvhySzwMgUoWrnTeCkvYzPODvF62WRFigY53HbadClC8=
-X-Received: by 2002:a05:6871:71f:b0:2eb:a8fb:8622 with SMTP id
- 586e51a60fabf-2ffb229c270mr1371804fac.15.1752661020506; Wed, 16 Jul 2025
- 03:17:00 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sd120Sj+"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250717033231epoutp04addd7afb30a50b80a17d041e2474e29c~S7GuX2xfo1327313273epoutp04Y
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2025 03:32:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250717033231epoutp04addd7afb30a50b80a17d041e2474e29c~S7GuX2xfo1327313273epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752723151;
+	bh=wtgAOa4GSUziwCJMssifdopqTXEYBR+/Wnr2hYJlNsE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Sd120Sj+9mJ5AEfd0hWAR+iJG/xwqmDSpPHOBKqqtSilpIwuL+i9vI7cBeVcGk5rV
+	 VHwftBpIqtmSQtrHuV4AqttCi014zdVdw2zQkNA6wcQ/Nebdf0JFkFmjEgWPHitQX+
+	 0wKawRiAmvS/R9Z2tCXmWDoBzHFV0QzquNMGMamw=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250717033231epcas5p2a3c51123fe882ea8c53d5d9f7fc62cdb~S7GtsS0PK2221822218epcas5p2Z;
+	Thu, 17 Jul 2025 03:32:31 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bjJQQ2y70z6B9mF; Thu, 17 Jul
+	2025 03:32:30 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250717033229epcas5p1464870a12adb7d5bc1f8f167a3915592~S7Gr936NM1620016200epcas5p1S;
+	Thu, 17 Jul 2025 03:32:29 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250717033227epsmtip25b85527e412e4455b6917d0c14a48faf~S7GqrEfkj0106101061epsmtip2W;
+	Thu, 17 Jul 2025 03:32:27 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Sowon Na'" <sowon.na@samsung.com>, <robh@kernel.org>,
+	<krzk@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
+	<kishon@kernel.org>
+Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20250702013316.2837427-2-sowon.na@samsung.com>
+Subject: RE: [PATCH 1/5] phy: samsung-ufs: update calibration settings for
+ EVT2
+Date: Thu, 17 Jul 2025 09:02:26 +0530
+Message-ID: <1e9001dbf6cb$6c210960$44631c20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org>
- <yq11pqiaedd.fsf@ca-mkp.ca.oracle.com> <yq1a556776b.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1a556776b.fsf@ca-mkp.ca.oracle.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 16 Jul 2025 11:16:49 +0100
-X-Gm-Features: Ac12FXyVvVETCy_fvebhSLHtpuQY_pd3_d6Vt5LZcabX59ifAwOETZg6eR50R8Q
-Message-ID: <CADrjBPrCBG4ZatLwYyH07f5EQrbO876M7WqXX7UfgD9Cg8w9Uw@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ufs: exynos: call phy_notify_pmstate() from hibern8 callbacks
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, Vinod Koul <vkoul@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-scsi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQKcRDJWwAug8EBOlN5S0ESXxoAVsAJii8AiAqsl+u+yjJ7w0A==
+X-CMS-MailID: 20250717033229epcas5p1464870a12adb7d5bc1f8f167a3915592
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250702013332epcas2p159e663ba3bde9f5bf28ccd743c211fd8
+References: <20250702013316.2837427-1-sowon.na@samsung.com>
+	<CGME20250702013332epcas2p159e663ba3bde9f5bf28ccd743c211fd8@epcas2p1.samsung.com>
+	<20250702013316.2837427-2-sowon.na@samsung.com>
 
-Hi Martin,
+Hi Sowon,=20
 
-+ Vinod (phy maintainer)
+> -----Original Message-----
+> From: Sowon Na <sowon.na=40samsung.com>
+> Sent: Wednesday, July 2, 2025 7:03 AM
+> To: robh=40kernel.org; krzk=40kernel.org; conor+dt=40kernel.org;
+> vkoul=40kernel.org; alim.akhtar=40samsung.com; kishon=40kernel.org
+> Cc: krzk+dt=40kernel.org; linux-kernel=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org;
+> sowon.na=40samsung.com
+> Subject: =5BPATCH 1/5=5D phy: samsung-ufs: update calibration settings fo=
+r EVT2
+>=20
+> The hardware EVT version for exynosautov920 has been updated, with EVT2
+> confirmed as the final production version. Accordingly, this patch update=
+s the
+> UFS PHY calibration settings to match EVT2 hardware characteristics.
+>=20
+This patch does more then what is mentioned here,=20
+please update the commit with all the changes so that we understand why the=
+ changes was done.=20
+=2E
+=2E
+.=5Bsnip=5D
+> -=23define EXYNOSAUTOV920_CDR_LOCK_OFFSET
+> 	0xce4
+> -
+> +=23define EXYNOSAUTOV920_CAL_DONE_OFFSET
+> 	0xce0
+Any reason for not using CRD lock and using Cal Done?=20
 
-On Mon, 14 Jul 2025 at 23:15, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> >> Notify the ufs phy of the hibern8 link state so that it can program the
-> >> appropriate values.
-> >
-> > Applied to 6.17/scsi-staging, thanks!
->
-> This appears to have a dependency on a patch series aimed at the phy
-> tree.
 
-Thanks for your email. Yes you're correct, as mentioned after the ---
-in the patch this has a dependency on the new API proposed in [1] so
-can't be queued currently.
-
-Thanks,
-
-Peter
-
-[1] https://lore.kernel.org/lkml/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org/
