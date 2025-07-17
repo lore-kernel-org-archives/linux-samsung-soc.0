@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640029ACF3;
-	Thu, 17 Jul 2025 11:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F8119D07E;
+	Thu, 17 Jul 2025 11:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751746; cv=none; b=WH708JqcJS0Xcukvj2dTzVZMbBsMEqZW9mtxJ9xzxlZjmiSN5tHS76UJeTt5FRIpkoEe8RMAhZZbLXWrbVrE9udnmECzzv6lgYG3+TLLOMmsfe6cFkweRpZYzxI5mOgamGroyu8icF2CqY72U3JypC6VIoVJxF7wK+hb88uWuUI=
+	t=1752752019; cv=none; b=IM+Yy5lkxch4W0HdBFaav723KBELDwdGJSf/hovsG7ct2v1itlNE714rEyWJl9l+2owr3rpU6cI90xrGSxVQc8i+LUMHoSRTF4rgCxxoHA9NCpohvWgaYDzYQQzBLfT1X596Cw58gNIMqDLOzvp2w0W1q78sWHAFwnjalarkN2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751746; c=relaxed/simple;
-	bh=s7qqZHElyo+o5VJEBt29CUvupnNWyLKQ59EZf+ACPhA=;
+	s=arc-20240116; t=1752752019; c=relaxed/simple;
+	bh=6U2OH/CjEwXIt8VklPkbpyEDxQKKccJGFPTbQ20C3M4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iA4V2ELL+rdSIYzAVRNiiIbfd64itdhtmeYsGn5vRIpWhVnYMkgQwFTWcjHDF/ewHziw4JGvljPzRjLlKcXoiPG3kbgK1KziX1bjkrBkolEesGfI2e5jOMtr+PJiy/zPF86JTTYtmoGrFv7MaBA7hHCDFPCNxSqXbVQNGP2n8u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSdHVpgt; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=CZfEf/u1e+j4RO9x1/NOeTaE3oYw+T+rn/1LKDtacNKLRdlxHQJbL/acLXbmRLGjNUc4R2I2cEFyvNE9982QRr3rnEJ87cIfeIwOW5C/Sj9Tp5lVZ1913Bbnl4Rlrvf8zg5JoNDHpBvdhV5PifMrWAF9OXgBs4s6yXNl8+gsN0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmYXwm6A; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSdHVpgt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B09C4CEE3;
-	Thu, 17 Jul 2025 11:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752751745;
-	bh=s7qqZHElyo+o5VJEBt29CUvupnNWyLKQ59EZf+ACPhA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mSdHVpgtREgIpKURnH/NZYbWMez7rDXbli9MStgoyie9Tzj15tUbwXQF5XejG0RA1
-	 VHZtKU7qtHP+/giPSm4o/Ed3Pf94oycXlw6IKqqKlpqmTfYRwDFxruq5d19dWTl2Ii
-	 dViGjwtwDzEq8EEKgqVGY2G1PXQVKmMC6we9nt21aiwSDmJO2K9gdbyfkHT/uy4Wg0
-	 Wqgq5eWIfWZ5EDQtLx+mvdnQrNtqnp/mq3ps8oZZgpbgrf8BoxkrSnbWfeY/owMHfX
-	 Gq43T4LsNhxAKPWLWfcMbu4Cp5cx9eYdGy8JH9XdSgEHUpvPLt7ULm5dYKVjGl+shR
-	 A0IJob2ieu8ZQ==
-Message-ID: <a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
-Date: Thu, 17 Jul 2025 13:28:58 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmYXwm6A"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0df6f5758so145586266b.0;
+        Thu, 17 Jul 2025 04:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752752015; x=1753356815; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6U2OH/CjEwXIt8VklPkbpyEDxQKKccJGFPTbQ20C3M4=;
+        b=cmYXwm6Aa6VT8WZSu1zJAIRPe1Luxb2Xb0v9wNYFCoy0AYmm2rKaAxmGKLjeZvcwVz
+         lHpd+5gDJERgdlZNtPIIQUwkLuxjuQsWeLdYOPn6mE+naRzAkUiw4wP01CDQQ+pqZnAf
+         rApSpMMIWlm6HP3A2hLo4UfL413vJgr5M6+H0O6kpH0cMuWgEKDwwpHnRNnmV95BCYEd
+         lh3VBBENNKmCpy8XQVKAVcJJrEu6O2PVUITxYlc30fJIuC4/9s0+smQH4Fs/E1uI9ts0
+         J9BSQWwAmU+YAacZrlZjt1a69Yq6iEzGH/epFxC+rLGBlrN03h+4FWVBszBm7SVW4E/u
+         mf6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752752015; x=1753356815;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6U2OH/CjEwXIt8VklPkbpyEDxQKKccJGFPTbQ20C3M4=;
+        b=PZMW7WTBZirLhNbH1uCOPZv/QiaKi1QsfiSIYcSAS1/3OYGM2u75JmkNxuagQLcteU
+         73vn4+JmaAu5HPEWmbkAIYk38Jv/6ZDhajgr5jb8dlgNCjato3CE9ALQl2DQ6m9Qkwb1
+         +0VaLEsgchj/HDNMHF8EuCkI0eG8WzMkwwTiYJxeRFn9bWcqXQxPqW+Xr/OYI6eugixL
+         fC9Ow1UdNIDelpGLwjOIOE04rpoboKtEJtboLvvDGqeb/m85xGu7/mKYem45D74/RSIv
+         aZIasgjzqVURNBZ3/3Uo1WtIyIbKtKZ5Bu6KfF1QYP6qGxJt8PWXxJeDRIgVFgNywLRY
+         dTfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIFvku4cZSNTAL/ur7qVZCDlzdniwHU0IQwI68/cIIjt4nmBdkdrjGN0BirhvTPnKr34GrWfMa3TtGFUdk@vger.kernel.org, AJvYcCXFhZACsSyBZ4ryxiQ4g4lpIMCm30cheRsg3pLclcR1W7d2EFabM8RLGPawLSB70msi3kg2TDuixgA5j94iSKDr+Dc=@vger.kernel.org, AJvYcCXzjoE/ZgGGrZRL4PsImqRJHWkfoKAYJffe/J8TqrYzs0NAqKWQyGTYWgODCMLI8mheN5uqLNoOP8dc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLwbObwS31h4u4i6PbKigospZ9OgMPdxAThn4yIxmQ+vOfHh0v
+	d3iOJT93ip3sF2FO9xvbzg2IccWoZVQsH4w0ekVzuztYQ9AJNLv7wcA7TdH72w==
+X-Gm-Gg: ASbGncu6DDTQs0hpvl76RWOsqgPNiXyV66kKI0IDXXIitkdel4/A8NSvhg06UVhi0J+
+	h1D4R5N+D0Be730/5uj7Rrf6e8J8qVFwcwkNySqVHKGA/9X81pTS1MVRqk5pcnWiAks8piP4gug
+	fbKB4GbF/ESDvSuLM9BaRV0ch/VFULAUH9olZ6CcHZBaytcQpxPpK/UHTHis+zLy4fPRg/3spw8
+	bVkIBSfOU1iVqicKCCqyoMfRs826lPZzud9qRn33QFKu4JD0km/K6r+Vws2G0BmlKTDrSCUYgim
+	pXcQbfKcVOXb4Wz4bhQ8/sBcVXTAqfZAgLpwkWC2TJV0pNZV8EPVvRk1aKZ+uxoABDICbmJTFcG
+	HgR1aYuU0bi/R7pPOaiGoalxCPiqx/g66G1kWeSuNTCOqq9eAvunVJaPEaPAlYFd5U9eTjQVPUp
+	fp
+X-Google-Smtp-Source: AGHT+IFokpYaErCcaLWj5J3oTUvALXxh1UB06PRFPPxGEEZnsvtJjgJ9UYtDrOcF22Ow5ej2G53Evw==
+X-Received: by 2002:a17:907:ea8:b0:aec:56e0:c4a9 with SMTP id a640c23a62f3a-aec56e0c8f5mr139334766b.28.1752752015030;
+        Thu, 17 Jul 2025 04:33:35 -0700 (PDT)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec53b053a4sm95354066b.139.2025.07.17.04.33.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 04:33:34 -0700 (PDT)
+Message-ID: <3e640051-35e5-4eb8-aa00-cb57abcbb919@gmail.com>
+Date: Thu, 17 Jul 2025 14:33:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,93 +68,45 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
- 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
- peter.griffin@linaro.org, neil.armstrong@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
- <CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
- <20250701120706.2219355-2-pritam.sutar@samsung.com>
- <20250706-fresh-meaty-cougar-5af170@krzk-bin>
- <07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
- <9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
- <000c01dbf70b$ccdbf630$6693e290$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <000c01dbf70b$ccdbf630$6693e290$@samsung.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
+ <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com>
+ <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
+ <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/07/2025 13:13, Pritam Manohar Sutar wrote:
+On 7/17/25 11:12, Dzmitry Sankouski wrote:
+> чт, 17 июл. 2025 г. в 10:28, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
+>> On 9/26/24 12:47, Dzmitry Sankouski wrote:
+>>> S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+>>> panel/touchscreen.
+>>>
+>>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+>> When is this going to get merged? This patch brings the regulators
+>> functionality of the pmic, so not having it merged is odd. This PMIC is
+>> used on other devices too, like the Galaxy S22.
 >>
->>
->> Nothing is explained in changelog/cover letter. You claim you only added Rb tag.
->> This is an entirely silent change while keeping the review.
-> 
-> Will add more explanations in cover letter/changelog why this block is added.
-> 
->> Combined with not even following DTS style!
-> 
-> Ok got it. Will change supplies name as below 
-> avdd075_usb => avdd075-usb
-> avdd18_usb20 => avdd18-usb20
-> avdd33_usb20 => avdd33-usb20
->    
-> Confirm the above change that is meant in terms of DTS style.
-Yes. I have doubts that actual supplies have suffix usb20. Are there
-more than one avdd18 for this block?
+>> It seems like this has been hanging for almost an year at this point.
+>> If the author won't, will somebody resend it?
+>
+> It's already merged, see
+> https://lore.kernel.org/all/20240617-starqltechn_integration_upstream-v5-2-ea1109029ba5@gmail.com/
+
+I don't see patch 3/3 being merged anywhere, nor is it in my linux-next clone
+from today. Do you _not_ need it anymore?
 
 Best regards,
-Krzysztof
+Ivaylo
+
+>
+
