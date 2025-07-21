@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5AD1ACED5;
-	Mon, 21 Jul 2025 06:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDD027F00A;
+	Mon, 21 Jul 2025 06:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080081; cv=none; b=hm33kFVqqzH43kNXcQRaNijRJpBOkyW2qSOoEumeAaNR3rgtdmj12KH3cq97fALh7UMk4PHoMBuHcom9UU62UUfNp3tvTI3+5thYxxrPzzm5/b0wRE9AG1lvVQBtuwWQBhVPT4g7V+dI8zWj7y+OkQ9U9ITjmCthnVwaLacqFQs=
+	t=1753080284; cv=none; b=Qx+pmB7QyV7vFOEKWwb1s2ScZHdkH/Htnkk3/5ejhPdWKLydjyB/hlEZHfehmPjqmaVER3jjN+x3C5ipqm3TLHSgQw8Q+aUF2Svb1wVeo19783jXE92PcLalwNWlQPPO8fyHTBv4ft2zQkSLsnPKlwnALicpRBYr9b9XO8cO568=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080081; c=relaxed/simple;
-	bh=xl7vOESJTsfcCXVwLUmgzS9ZdYbuh4p/EOGZp1eq6U4=;
+	s=arc-20240116; t=1753080284; c=relaxed/simple;
+	bh=wvxEQfO5q7696mFzNxs9ne5fSgIF2uWYH+60V8ROAmo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EnZh9BHTSFlUPoZR19M8JcfcS3zY13Z5XrXSBVG9nsbJVqnXRHVg22yV87aA/QsZ5eBSyDCWLZSdCByr8XkaQmWWX4zPx4Fvq25yWp7J0PZRlp9io9clS2AM46HOZ0DMt9htvYtjwWRnwSVUIQN5YA+FqxRTcAW+QyaXp9GqBgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ac6t/+k7; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Z63QUB/q32dDqCce3+2U5zn/xw1lOm9rqRgBOvfC9IGhQ8z00aoxjDKs6snFJWEFtebPFJpyFd9rYT3rNB05WCS1jJQnQH4i8ayFIxsWA/SDnEAqkxbIbfbtM0916RsPdFcQLnpfucu3qlvTSgzstlhSH2EGwsDR6FLs5hK49tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koyHUpY3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ac6t/+k7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489EEC4CEED;
-	Mon, 21 Jul 2025 06:41:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koyHUpY3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD43DC4CEED;
+	Mon, 21 Jul 2025 06:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080078;
-	bh=xl7vOESJTsfcCXVwLUmgzS9ZdYbuh4p/EOGZp1eq6U4=;
+	s=k20201202; t=1753080284;
+	bh=wvxEQfO5q7696mFzNxs9ne5fSgIF2uWYH+60V8ROAmo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ac6t/+k7D5HFwBBoGOduwPZFC2LVZqLI726GIl+1opIwkyeiu5X+XkrFdyN35tlWo
-	 yuG5gRhvRPfB88ZyjpsXaRuiwBEWIxWch2bAIv0cno7kaqzvnoROwsBxAZc4gqlfCN
-	 5+WECYpKsK1gsGSn0mC7Tic+0/A66xviLxQkRTWrde+ToKEDPPwNXtBw4Knc24UsaJ
-	 PBOktbyrbqHd7Dm0j+eS2WNXlRQyTPuB4FSufGqOcL96AEBIYk+FSrX1hfn/AJU6lH
-	 r3BA5kaMjrah1NbDezTpMHW4Aqb30DE7dhxAheRWXeKRPNcxS9IYtPVLF+yhsbiacY
-	 1wHJAwsp7sz3A==
-Message-ID: <b5da2e57-6135-433e-ad92-0bd2fa71458e@kernel.org>
-Date: Mon, 21 Jul 2025 08:41:13 +0200
+	b=koyHUpY3JFkN64NrYE9EI1KXTEwY/vPI0Jp0RcWoI542qQcQxlthOETZ2QIzqKzaQ
+	 HxWlFfgqat8RqDd+pQo4q7Y/pBuk8Ce+YdQdJovRuKjNkUBp+SE1xC6ZluHdzYPD6b
+	 5svg/VaZN7OqRY1MRnIOZ0jxbd7NLHVK7LniR2mPO9XIffWPdd2UEi/fu42q1Sk7LZ
+	 W45mf/I3UIsCiKmUirHIrbMMUWEs3RI3UTUJ/vw5KDztLAXQv9t8knQHzkuM85Nd/8
+	 96UdFxayHhtlhJqx1VFA23Gl2bC3rskloySAw4BMvV7xkkjEuxjOCSH87F+w3Q/CrM
+	 OVoffsOZUzfEg==
+Message-ID: <6dc0c8d7-e081-4a3d-b289-368b6da69011@kernel.org>
+Date: Mon, 21 Jul 2025 08:44:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] arm64: dts: exynosautov920: add abox_generic dt node
+Subject: Re: [PATCH 3/9] ASoC: dt-bindings: sound: Add Samsung ExynosAuto ABOX
+ binding
 To: ew kim <ew.kim@samsung.com>, broonie@kernel.org, s.nawrocki@samsung.com,
  robh@kernel.org, krzk+dt@kernel.org
 Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
@@ -43,8 +44,8 @@ Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250721023052.3586000-1-ew.kim@samsung.com>
- <CGME20250721024611epcas2p37ecbc204ea695d97f6477c04712a9974@epcas2p3.samsung.com>
- <20250721023052.3586000-3-ew.kim@samsung.com>
+ <CGME20250721024611epcas2p47ebaf8cb494fc2bf71a83b00ba47f2b3@epcas2p4.samsung.com>
+ <20250721023052.3586000-4-ew.kim@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,81 +91,131 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250721023052.3586000-3-ew.kim@samsung.com>
+In-Reply-To: <20250721023052.3586000-4-ew.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/07/2025 04:30, ew kim wrote:
-> Add device tree node for the abox_generic platform driver to enable
-> its registration as a platform device. This node does not represent
-> direct hardware resources but is necessary for driver initialization
-> and platform device binding.
-> 
-> Properties added in the device tree node:
-> 
-> - samsung,num-pcm-playback (uint32):
->   Maximum number of supported PCM playback devices.
->   Here, PCM playback devices refer to ALSA PCM devices.
-> 
-> - samsung,num-pcm-capture (uint32):
->   Maximum number of supported PCM capture devices.
->   Here, PCM capture devices refer to ALSA PCM devices.
-> 
-> - samsung,num-i2s-dummy-backend (uint32):
->   Maximum number of supported I2S dummy backend devices.
-> 
-> The node is declared disabled by default in the main device tree source,
-> and enabled via board-specific DTS overlays by setting status = "okay".
-> 
-> This device tree binding document will be added under
-> Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
-> 
-> to describe the node properties and usage.
+> Add the device tree binding documentation for the Samsung Exynos Automotive
+> ABOX generic audio management core. This binding describes how to configure
+> the maximum number of PCM playback, PCM capture, and dummy I2S backend
+> instances for the ABOX core. Actual hardware functionality is provided
+> by child audio sub-drivers.
 > 
 > Signed-off-by: ew kim <ew.kim@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |  4 ++++
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi     | 10 ++++++++++
-
-Entirely wrong order of patches.
-
->  2 files changed, 14 insertions(+)
+>  .../bindings/sound/samsung,exynosauto.yaml    | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> index a397f068ed53..a870c0b6847f 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -86,3 +86,7 @@ &usi_0 {
->  &xtcxo {
->  	clock-frequency = <38400000>;
->  };
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
+> new file mode 100644
+> index 000000000000..b1e49f38ffe9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/samsung,exynosauto.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +&abox_generic {
-> +	status = "okay";
-> +};
-> \ No newline at end of file
-
-
-?
-
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 2cb8041c8a9f..4f086a7a79c8 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1126,6 +1126,16 @@ timer {
->  			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
->  			     <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
->  	};
+> +title: Samsung Exynos Automotive Abox Generic
 > +
-> +	abox_generic: abox_generic {
+> +maintainers:
+> +  - Eunwoo Kim <ew.kim@samsung.com>
+> +
+> +description: |
+> +  The Samsung Exynos Automotive Abox Generic node represents a
+> +  generic audio management platform device inside Exynos Automotive SoCs.
 
+No, we do not add bindings for "generic" stuff.
 
-And you did not resolve any of previous comments, just sent the same v1.
+Describe the SoC.
 
-NAK.
+> +  It does not directly control hardware resources itself, but acts as
 
-Implement and respond to feedback. Then version properly your patches.
+Does not control hardware? so not suitable for bindings and DTS.
 
+> +  a common interface to manage child audio sub-drivers for PCM playback,
+> +  PCM capture, and I2S dummy backends.
+
+Not relevant.
+
+> +
+> +  Typically, this node provides configuration for the maximum number of
+> +  PCM playback and capture devices (ALSA PCM) and the maximum number
+> +  of dummy I2S backend devices. The actual hardware control is handled
+> +  by child drivers attached to this generic core.
+
+Not relevant. Describe the hardware.
+
+> +
+> +  This node must exist for the platform driver to probe,
+> +  even though it does not map any physical hardware address.
+
+Drivers are not relevant, read writing bindings.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: samsung,abox_generic
+
+You did not implement previous feedback. This does not follow DTS coding
+style and writing bindings.
+
+I already asked you to read DTS coding style and nothing improved, no
+issues were resolved.
+
+> +
+> +  samsung,num-pcm-playback:
+> +    description: Maximum number of PCM playback instances (ALSA PCM devices).
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  samsung,num-pcm-capture:
+> +    description: Maximum number of PCM capture instances (ALSA PCM devices).
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  samsung,num-i2s-dummy-backend:
+> +    description: Maximum number of dummy I2S backend instances.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+Nothing above describes hardware. Bindings are not for ALSA.
+
+> +
+> +  '#address-cells':
+> +    description: Required for child nodes that may declare address space.
+> +    const: 2
+> +
+> +  '#size-cells':
+> +    description: Required for child nodes that may declare address space.
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - samsung,num-pcm-playback
+> +  - samsung,num-pcm-capture
+> +  - samsung,num-i2s-dummy-backend
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    abox_generic {
+
+Did you read DTS coding style?
+
+> +      compatible = "samsung,abox_generic";
+> +      samsung,num-pcm-playback = <32>;
+> +      samsung,num-pcm-capture = <32>;
+> +      samsung,num-i2s-dummy-backend = <5>;
+> +      status = "disabled";
+
+No.
+
+> +      #address-cells = <2>;
+> +      #size-cells = <1>;
+> +    };
 
 
 Best regards,
