@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F750195;
-	Mon, 21 Jul 2025 06:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD5472618;
+	Mon, 21 Jul 2025 06:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080364; cv=none; b=oFRO1kXc8v6EuUpKWoNaMUlZgArq52MZtsI/C1MLkpEuM5TDHQtYUdXt5xAKb+1f/YDHDuYlu9x+8ZmIpQJmsC7Qf+P7dK0X/kJrKdqR0vd0EYeo6kzAbQP6qYtEZhxjr2ZxzEUUgdhDOnOaBGVJX29crIRnt8izfiBDjda293M=
+	t=1753080395; cv=none; b=JhQQYwOtKyCFSVYQD+TE1+2ij8AftFewERe8sXJ+8qmA2Yk5F27Un3SsHB0wvq1P9PH/QMqKJEu/UtwivQGyALuMRDrULCuaHQmYFfh25yt6NZ5LyN3nicxiMYnzbOJ8LU7CgzWVYPcf3SrhV+EebjUHrCFxGvNqndIhvm3BHSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080364; c=relaxed/simple;
-	bh=vikc9/7AWqVBduvZfLN2OQgvdzxZdXkUrCN1s6ev2Jw=;
+	s=arc-20240116; t=1753080395; c=relaxed/simple;
+	bh=yJlCNopcvM830fvt3iNNGN6z/XSOqy61RZ7Rh/ZDF9o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RMlsyooE9+u4Qw3BuONm9Nd0oz+1F2IHtq2CSn/HSto+8JUG4uVL8nZ07aW8Cu/9Glh4RPTU/fNmJPbRSULFBfpZA4J8JAoSysY3hFyhs17cLTqyZrmyKlYeBaZgoBVCyFWLEAgtMlMGgbU8p9qZe5YjXgV56yIq5sRj9wwou+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNtryoUh; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=G7Voc1+WMFkKEbjgdRubHYBaBNtmSD1nep5md1JJDMGRSn/jubn3hBbq8OC0rH/Ydt70vYZl2g0b0+eXPO/VzvCW0vbPVjK26dSToMbhSgVsp9VRbqD3eSsO7RzYojDUa2knL4vK8/faqNCAdMyu7h/MjrH0MgvKyjn0bhiTP0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZz0X0Fh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNtryoUh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82F9C4CEF1;
-	Mon, 21 Jul 2025 06:46:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZz0X0Fh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A58C4CEED;
+	Mon, 21 Jul 2025 06:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080364;
-	bh=vikc9/7AWqVBduvZfLN2OQgvdzxZdXkUrCN1s6ev2Jw=;
+	s=k20201202; t=1753080394;
+	bh=yJlCNopcvM830fvt3iNNGN6z/XSOqy61RZ7Rh/ZDF9o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hNtryoUhvoYumcPoFX0lmUIGBh+NGeiwBGovFyxNSKqXcB4XsrmCRcXX9VMOIQbLX
-	 VvOd9ECQZ8znDikb+b01AuM/ARg6U3vUZgmpUb5Q33wNMJUpDg38PolW1c31OME1H+
-	 Iv+SZy00Bna47CRHvHk0Wic0nQlqzNlM52UQuZU6KrCxm+3Lbzw7KEfMJSHbbHzo7f
-	 F9Wi+XaJJHA6Z+9rARPDVdwFAYt9cf9iZDCo4Dhptlvjdw4/OmGXgqfT/LIJBmIUa9
-	 ciBu8rvENKRM16eE9vNQ1tIdKt8NvbW7Zasf/KYv/eVkHqcuq9VvAl+FbcGrW9Rw8N
-	 9fCj5IsOY45Xg==
-Message-ID: <9ae13771-e577-4005-84cd-230aba048085@kernel.org>
-Date: Mon, 21 Jul 2025 08:45:59 +0200
+	b=uZz0X0FhVbaaH3gsiXWW6p/2lSmm/9m/tk6MbjAoagVGyTruYrAlF9p7c+UXiloxr
+	 rWUTQBZOVc59A91zvWWJAiQiDe3+ImdGLDai+yvazvgwfu51GCxP+cySATXHeFnfJ3
+	 Zm95qaVOHOOEf4Mb3ILWCIez0sOZPbk+He0ugUJaYR1TeEjl4eJLv9kG4P6x2xyiad
+	 sKOrJKnXBt18b2DOQ1DZA3IXYAjeV2QHENlTx1GilmQMnlfxCYjT1anRUhuWKY/CxY
+	 FprrPmarjQ3+yKrUFX2K6EvjXtKQohzeAyW7scGAQ1rN+32wNBMUw3tWnwdSPYz02y
+	 /ESfimbS6A3NA==
+Message-ID: <856f876d-c6f2-4968-81ea-2e9ccaba879a@kernel.org>
+Date: Mon, 21 Jul 2025 08:46:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] arm64: dts: exynosautov920: Add ABOX IPC Generic
- device node
+Subject: Re: [PATCH 6/9] ASoC : dt-bindings: sound: Add binding for ABOX IPC
+ Generic
 To: ew kim <ew.kim@samsung.com>, broonie@kernel.org, s.nawrocki@samsung.com,
  robh@kernel.org, krzk+dt@kernel.org
 Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
@@ -44,8 +44,8 @@ Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250721023052.3586000-1-ew.kim@samsung.com>
- <CGME20250721024611epcas2p375cd5e4b53fcff3b69a39ef19c0825a4@epcas2p3.samsung.com>
- <20250721023052.3586000-6-ew.kim@samsung.com>
+ <CGME20250721024611epcas2p382f3decd51152a5c89c673f222e22da1@epcas2p3.samsung.com>
+ <20250721023052.3586000-7-ew.kim@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,61 +91,69 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250721023052.3586000-6-ew.kim@samsung.com>
+In-Reply-To: <20250721023052.3586000-7-ew.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/07/2025 04:30, ew kim wrote:
-> This patch adds a new child node `abox_ipc_generic` under the
-
-Please read kernel submitting patches and DT bindings submitting patches.
-
-> `abox_generic` node for ExynosAuto v920. The ABOX IPC Generic
-> driver handles inter-processor communication (IPC) between
-> the ABOX DSP and host SoC using IRQs.
+> This patch updates the existing samsung,exynosauto.yaml schema to
+> describe the ABOX IPC Generic child node. This node represents
+> a virtual IPC interface used by the ABOX audio subsystem to
+> communicate with SoC-specific hardware using shared IRQ channels.
 > 
-> The node includes configuration for the number of IRQ channels
-> used for IPC routing. This allows SoC-specific subsystems to
-> send and receive messages through the ABOX generic audio stack.
+> The schema describes the `samsung,num-irq` property and allows
+> integration of the IPC node under `abox_generic`.
 > 
 > Signed-off-by: ew kim <ew.kim@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |  6 +++++-
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi     | 10 ++++++++--
->  2 files changed, 13 insertions(+), 3 deletions(-)
+>  .../bindings/sound/samsung,exynosauto.yaml    | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> index a870c0b6847f..2f4cf112675a 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -89,4 +89,8 @@ &xtcxo {
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
+> index b1e49f38ffe9..3a7b5be627ee 100644
+> --- a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
+> +++ b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
+> @@ -48,6 +48,23 @@ properties:
+>      description: Required for child nodes that may declare address space.
+>      const: 1
 >  
->  &abox_generic {
->  	status = "okay";
-> -};
-> \ No newline at end of file
-> +};
-> +
-> +&abox_ipc_generic {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 4f086a7a79c8..21bcbcf7e2b6 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1133,8 +1133,14 @@ abox_generic: abox_generic {
->  		samsung,num-pcm-capture = <32>;
->  		samsung,num-i2s-dummy-backend = <5>;
->  		status = "disabled";
-> -		#address-cells = <2>;
-> -		#size-cells = <1>;
-> +		/* #address-cells = <2>; */
-> +		/* #size-cells = <1>; */
-> +
-> +		abox_ipc_generic: abox_ipc_generic {
-> +			compatible = "samsung,abox_ipc_generic";
+> +  abox_ipc_generic:
+> +    type: object
+> +    description: ABOX IPC Generic subnode for SoC-level message routing
+> +    properties:
+> +      compatible:
+> +        const: samsung,abox_ipc_generic
 
-No bindings. Are you sure you follow standard patchset order?
+We cannot take generic IPC.
+> +
+> +      samsung,num-irq:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: Number of IRQ channels supported for IPC routing.
+> +
+> +    required:
+> +      - compatible
+> +      - samsung,num-irq
+> +
+> +    additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - samsung,num-pcm-playback
+> @@ -66,4 +83,10 @@ examples:
+>        status = "disabled";
+>        #address-cells = <2>;
+>        #size-cells = <1>;
+> +
+> +      abox_ipc_generic {
+> +        compatible = "samsung,abox_ipc_generic";
+> +        samsung,num-irq = <64>;
+> +        status = "disabled";
+
+So you never test it...
+
+> +      };
+>      };
+
 
 Best regards,
 Krzysztof
