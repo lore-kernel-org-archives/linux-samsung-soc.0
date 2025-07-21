@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD5472618;
-	Mon, 21 Jul 2025 06:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E025D223302;
+	Mon, 21 Jul 2025 06:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080395; cv=none; b=JhQQYwOtKyCFSVYQD+TE1+2ij8AftFewERe8sXJ+8qmA2Yk5F27Un3SsHB0wvq1P9PH/QMqKJEu/UtwivQGyALuMRDrULCuaHQmYFfh25yt6NZ5LyN3nicxiMYnzbOJ8LU7CgzWVYPcf3SrhV+EebjUHrCFxGvNqndIhvm3BHSs=
+	t=1753080461; cv=none; b=N5ENwM65Md6yP1RSJsBTy4yAyXUq0glfVd4SnPUobOdHCM6pOaErXeJw7uI6rw2ukakkYHRrkhVeIjw4g2QR3q/w2OJpuAfili5rfjBNsT4YoVCp39mIx5U8GxHFnhpct/QqBAL+x/urAIcwUmPHV2ZZn1HK8rjgOpbAbyc8Rgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080395; c=relaxed/simple;
-	bh=yJlCNopcvM830fvt3iNNGN6z/XSOqy61RZ7Rh/ZDF9o=;
+	s=arc-20240116; t=1753080461; c=relaxed/simple;
+	bh=ZjVTcKbsRevDk/Oaru45By4rM0QU89TkvkSHMwWvxxw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7Voc1+WMFkKEbjgdRubHYBaBNtmSD1nep5md1JJDMGRSn/jubn3hBbq8OC0rH/Ydt70vYZl2g0b0+eXPO/VzvCW0vbPVjK26dSToMbhSgVsp9VRbqD3eSsO7RzYojDUa2knL4vK8/faqNCAdMyu7h/MjrH0MgvKyjn0bhiTP0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZz0X0Fh; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=VVIALukgMjSkLLmGgdCoMueMjcA+T8j36AcO3c40KeGXvXhHVayf3yP8Tw6n9J58KkvqS5Yca7OMuWSb5hOEAhKDh0NKpTkLixmwQ/ITNyv/55804cV/6W/iU3dkV6yp+kW7iauqDCdw+2kldVWBRpP3fmD7FCQWC4drIFUB6lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHD8hyGf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZz0X0Fh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A58C4CEED;
-	Mon, 21 Jul 2025 06:46:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHD8hyGf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94BBC4CEED;
+	Mon, 21 Jul 2025 06:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080394;
-	bh=yJlCNopcvM830fvt3iNNGN6z/XSOqy61RZ7Rh/ZDF9o=;
+	s=k20201202; t=1753080460;
+	bh=ZjVTcKbsRevDk/Oaru45By4rM0QU89TkvkSHMwWvxxw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uZz0X0FhVbaaH3gsiXWW6p/2lSmm/9m/tk6MbjAoagVGyTruYrAlF9p7c+UXiloxr
-	 rWUTQBZOVc59A91zvWWJAiQiDe3+ImdGLDai+yvazvgwfu51GCxP+cySATXHeFnfJ3
-	 Zm95qaVOHOOEf4Mb3ILWCIez0sOZPbk+He0ugUJaYR1TeEjl4eJLv9kG4P6x2xyiad
-	 sKOrJKnXBt18b2DOQ1DZA3IXYAjeV2QHENlTx1GilmQMnlfxCYjT1anRUhuWKY/CxY
-	 FprrPmarjQ3+yKrUFX2K6EvjXtKQohzeAyW7scGAQ1rN+32wNBMUw3tWnwdSPYz02y
-	 /ESfimbS6A3NA==
-Message-ID: <856f876d-c6f2-4968-81ea-2e9ccaba879a@kernel.org>
-Date: Mon, 21 Jul 2025 08:46:29 +0200
+	b=DHD8hyGfljx5ywckYjCud4sf1NSOvkJJzeSwoh63ofX0BinD6/Is+W3UNNQyT0IH6
+	 J20S2JoL/VRTsKFF/kfrU9rn1B5NmVqiSm5FCush5ffiuUfr7kexOtIEG6Z1riU4n8
+	 4jLmkIQCy+YAjEGCdsmxN9EmGKiPqwXWZetMMZpzhxkIHoRd3+2iBWQOF2WzF8seRg
+	 Xf8reRoJOv4nMNmJhsh8CRi0RNzGKo4iBNdBNF+JNiWj356CCQsLw7fuzH60gTjktT
+	 Xa+m0o/ogOiteifEirY7u3iWm2OmsVgmF0+E9OtH+iafG68f0AU5A92IF6pkvLNEeT
+	 ot2NqjjqqMlsQ==
+Message-ID: <2b6481e8-9a70-4676-bca4-da3ee00e73ba@kernel.org>
+Date: Mon, 21 Jul 2025 08:47:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] ASoC : dt-bindings: sound: Add binding for ABOX IPC
- Generic
+Subject: Re: [PATCH 9/9] ASoC: dt-bindings: sound: exynosauto: add PCM
+ frontend nodes for ABOX generic
 To: ew kim <ew.kim@samsung.com>, broonie@kernel.org, s.nawrocki@samsung.com,
  robh@kernel.org, krzk+dt@kernel.org
 Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
@@ -44,8 +44,8 @@ Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250721023052.3586000-1-ew.kim@samsung.com>
- <CGME20250721024611epcas2p382f3decd51152a5c89c673f222e22da1@epcas2p3.samsung.com>
- <20250721023052.3586000-7-ew.kim@samsung.com>
+ <CGME20250721024612epcas2p122d627cfb90eac508b6ed3667acd9b9b@epcas2p1.samsung.com>
+ <20250721023052.3586000-10-ew.kim@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,68 +91,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250721023052.3586000-7-ew.kim@samsung.com>
+In-Reply-To: <20250721023052.3586000-10-ew.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/07/2025 04:30, ew kim wrote:
-> This patch updates the existing samsung,exynosauto.yaml schema to
-> describe the ABOX IPC Generic child node. This node represents
-> a virtual IPC interface used by the ABOX audio subsystem to
-> communicate with SoC-specific hardware using shared IRQ channels.
+> This patch extends the Exynos Automotive ABOX generic device tree bindings
+> to support PCM playback and capture frontend nodes.
 > 
-> The schema describes the `samsung,num-irq` property and allows
-> integration of the IPC node under `abox_generic`.
+> Each PCM device node describes an audio stream interface handled by the
+> ABOX DSP. These nodes include properties for stream ID, IRQ, ADSP core
+> assignment, buffer limits, and stream category (deep_buffer or compress).
+> 
+> The bindings use patternProperties to match playback and capture nodes
+> as children of the abox_generic controller.
+
+This split of one device into three makes no sense. Adding new binding
+is one commit.
+
 > 
 > Signed-off-by: ew kim <ew.kim@samsung.com>
 > ---
->  .../bindings/sound/samsung,exynosauto.yaml    | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
+>  .../bindings/sound/samsung,exynosauto.yaml    | 126 +++++++++++++++++-
+>  1 file changed, 123 insertions(+), 3 deletions(-)
 > 
 > diff --git a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
-> index b1e49f38ffe9..3a7b5be627ee 100644
+> index 3a7b5be627ee..e477550afc7c 100644
 > --- a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
 > +++ b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
-> @@ -48,6 +48,23 @@ properties:
->      description: Required for child nodes that may declare address space.
->      const: 1
+> @@ -28,6 +28,14 @@ properties:
+>    compatible:
+>      const: samsung,abox_generic
 >  
-> +  abox_ipc_generic:
-> +    type: object
-> +    description: ABOX IPC Generic subnode for SoC-level message routing
-> +    properties:
-> +      compatible:
-> +        const: samsung,abox_ipc_generic
+> +  status:
+> +    enum: [ okay, disabled ]
+> +    description: DTS node enablement state
 
-We cannot take generic IPC.
-> +
-> +      samsung,num-irq:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description: Number of IRQ channels supported for IPC routing.
-> +
-> +    required:
-> +      - compatible
-> +      - samsung,num-irq
-> +
-> +    additionalProperties: false
-> +
->  required:
->    - compatible
->    - samsung,num-pcm-playback
-> @@ -66,4 +83,10 @@ examples:
->        status = "disabled";
->        #address-cells = <2>;
->        #size-cells = <1>;
-> +
-> +      abox_ipc_generic {
-> +        compatible = "samsung,abox_ipc_generic";
-> +        samsung,num-irq = <64>;
-> +        status = "disabled";
 
-So you never test it...
-
-> +      };
->      };
+Sorry, but why are you writing something entirely different than every
+other binding?
 
 
 Best regards,
