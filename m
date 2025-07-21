@@ -1,36 +1,36 @@
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC9728C5A4
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2025 09:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B528D8CB
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2025 09:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753091031; cv=none; b=rPM+aY44PGOSERSkUa32BFF+qBuEg0o/NzDlZnptZi2kDl+g6W5Z1fOpOeMy4pheWE6F7Fqk15Rtj4OdH4AYererVZkGG4HCSP8hVeUJBplALzAOhYqn/yQdfNI0ujJZuTcu9jmnfZH1NkUn6bzcg45HkuCrq4DHmP8N2AUHZgU=
+	t=1753091035; cv=none; b=tBBgwVjgoxefBeVLijoA/yNwvQuf29vMMVAiPjSTi/5K5scd+bHNEDZYzKmafB1d61M6AOCeBwUfJ+d6RXI2tAM6eWgdq0JQ4sZtUlR0jvXchXzrVhHUVqGnZP6a6FhhYc/scHuofu/mtIoY8uDpMPxgcCVcLR/U76ABFOE1aZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753091031; c=relaxed/simple;
-	bh=fA7kCw/btmE/Kdd4JfUiEBidHB1Txrk8ejW2zzBXunM=;
+	s=arc-20240116; t=1753091035; c=relaxed/simple;
+	bh=QHXGHFXuTsdjOdvOFvsVyCMBCyTudAbMgmdgOuKio7I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=csisbzJPRIdV1IJjZXgLFunFq5tvP7iXs36xmsIY1cZmm/3z93/tPOwRautrEqWwhGFM6BLg0m8zRiDnsT5DeKieQzyrRyIyWdU8tqDjdeNJj/hxXvNki4Rkfu06+Rd5GvJyPuL/iAQ6F9tX6sWseSP6182s7/Gvel5X9V1+9AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=YBw89Lf4; arc=none smtp.client-ip=95.215.58.174
+	 In-Reply-To:To:Cc; b=dvKC9pqO39icziB9ZUasJCKyU/v/+e96eRLqXvuTMWTx11IFocmpAXI0KgIOYsPKbCF7VWEvwJpSF9CBbDeMBZi72TuTbE2mkWL5uE/fR/YdWGFMwAS2seUpgbGi8Klwlf2mvNQ+tzP1hQFJpawsCmBD0vo5aLP+XHo2GnkugRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=dqtK07zg; arc=none smtp.client-ip=95.215.58.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="YBw89Lf4"
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="dqtK07zg"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1753091027;
+	t=1753091030;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OLEv1F8si+d4JJJEfku+IvjEsa+DjKyQC0EuZ/oVHD0=;
-	b=YBw89Lf4y0J81omtVXFiErCy7x7GCqvBn9kRHUywYFrPxpgnwB8GnQ1oWSMqF3dK6auKZd
-	TIVzr17F0DAzQsdoZzgMIVze8Nx24Y6tlvowId9/BdMVItXdl7O700OyBHnfh1Man7gGiQ
-	egQLEfykp0Sglpzko5rNyXEaHVOBFS8=
+	bh=y9J8Q6nI+kE6dVKYCKcMhHtBZibz54RqJK7hL8Sg/lQ=;
+	b=dqtK07zgziOvMYG4HICBxksYSxrXoLe8gej8MuaecTskrorIiO/5rlzpWSGkRXfINx0ywr
+	uKBnBQ7zhKY53AM5JW2VrW4PGDbHCgWC7Z0gc/oGdTZwCI0k7srA2lRQTc9LAFNXtPo609
+	SEu22n7GUk1lLr8DHyYbrQ1uTTHsMes=
 From: Henrik Grimler <henrik@grimler.se>
-Date: Mon, 21 Jul 2025 11:43:18 +0200
-Subject: [PATCH 2/3] drm/bridge: sii9234: use dev_err_probe where
- applicable
+Date: Mon, 21 Jul 2025 11:43:19 +0200
+Subject: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection logic
+ to detect MHL
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -39,7 +39,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-exynos4-sii9234-driver-v1-2-2e47ed02f677@grimler.se>
+Message-Id: <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
 References: <20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se>
 In-Reply-To: <20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -53,72 +53,169 @@ To: Andrzej Hajda <andrzej.hajda@intel.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
  ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
  linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1995; i=henrik@grimler.se;
- h=from:subject:message-id; bh=fA7kCw/btmE/Kdd4JfUiEBidHB1Txrk8ejW2zzBXunM=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBofgvIS7HDC0DrDRkeyFvc9LW0I1rTyNgAnlKfU
- bM4zIXwgQqJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaH4LyAAKCRCwB25JC3Fh
- a3XoB/9G40Lv0JikNKi9Ia8QkocQfYruM/z/b25jkjcvIMg5emz1qVhp4+y6a/lOb8wxDwSronb
- r0DcGzDRu+uBkuNJJTqPDSUT8OdWNrabTLHQb0g0lRMkzdGvqEthoZh7b77uFB2FYcJy0667FxY
- fmB0SCpJPWuhfF6o5lJY1W3qjcl40tpPjdgUrlNSeSdgfa5YSvxsylKke/698b3U87mZAjq/mVF
- wZAg7ppIU+1baeyu0De6hog7wGH0+prm1c9/n/yfAZbfWcQbg4bJzuBzmrlFHkv5HywIcjZxpgp
- 3eJeWA74HahKR5PMQx4q1bvXXon1/RICH7CYjs0Eususlxhb
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4173; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=QHXGHFXuTsdjOdvOFvsVyCMBCyTudAbMgmdgOuKio7I=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBofgvLFNVB0QWRIEgdw90xBe01dDqqpUqh3WSug
+ 1b+WcQ27jqJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaH4LywAKCRCwB25JC3Fh
+ a8t2CAC2Qa3XCkijFxzKacvil9jrKn6k9ZUuj6eCnPPxJ0+kakMvvk3fUIHtaZrCp+il5Mua7d5
+ zISfM8/1fjP/8ywj4Wi1P44KikM2LK9MR7pXBYyf73RQ4Adtjg94Tj+jLVJNG8q0xFox0JY4pA/
+ J/CiexNs+GYWMXrGVuMPBtvLVvAxGkiUwlSVcR7j1hWyhuhWSdPGPQUxnUANsZPHw79OT+TtZEV
+ RhP5n/pHto2q48+sLv2rLiMjWtf1mB5Ab/1WGqI2l50RUTYWe+XOZWy6i6Cee/BIxjxRx/V4V7S
+ ckxBDLDc11c72ZJBIblR9wcGqWGLg1HuRuu3Sm2p0ZphAucp
 X-Developer-Key: i=henrik@grimler.se; a=openpgp;
  fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
 X-Migadu-Flow: FLOW_OUT
 
-In case of error during resource acquisition the driver should print
-an error message only if it is not deferred probe. Use dev_err_probe
-helper to handle this, which will also record defer probe reason for
-debugging.
+To use MHL we currently need the MHL chip to be permanently on, which
+consumes unnecessary power. Let's use extcon attached to MUIC to enable
+the MHL chip only if it detects an MHL cable.
 
 Signed-off-by: Henrik Grimler <henrik@grimler.se>
 ---
- drivers/gpu/drm/bridge/sii9234.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 86 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index 930117bbba87285e62107389606897740516eb0a..0e0bb1bf71fdcef788715cfd6fa158a6992def33 100644
+index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
 --- a/drivers/gpu/drm/bridge/sii9234.c
 +++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -825,10 +825,9 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	}
+@@ -19,6 +19,7 @@
  
- 	ctx->gpio_reset = devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_LOW);
--	if (IS_ERR(ctx->gpio_reset)) {
--		dev_err(ctx->dev, "failed to get reset gpio from DT\n");
--		return PTR_ERR(ctx->gpio_reset);
--	}
-+	if (IS_ERR(ctx->gpio_reset))
-+		return dev_err_probe(ctx->dev, PTR_ERR(ctx->gpio_reset),
-+				     "failed to get reset gpio from DT\n");
+ #include <linux/delay.h>
+ #include <linux/err.h>
++#include <linux/extcon.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+@@ -26,6 +27,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of_graph.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
  
- 	ctx->supplies[0].supply = "avcc12";
- 	ctx->supplies[1].supply = "avcc33";
-@@ -836,9 +835,7 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	ctx->supplies[3].supply = "cvcc12";
- 	ret = devm_regulator_bulk_get(ctx->dev, 4, ctx->supplies);
- 	if (ret) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(ctx->dev, "regulator_bulk failed\n");
--		return ret;
-+		dev_err_probe(ctx->dev, ret, "regulator_bulk failed\n");
- 	}
+@@ -170,8 +172,12 @@ struct sii9234 {
+ 	struct drm_bridge bridge;
+ 	struct device *dev;
+ 	struct gpio_desc *gpio_reset;
+-	int i2c_error;
+ 	struct regulator_bulk_data supplies[4];
++	struct extcon_dev *extcon;
++	struct notifier_block extcon_nb;
++	struct work_struct extcon_wq;
++	int cable_state;
++	int i2c_error;
  
- 	ctx->client[I2C_MHL] = client;
-@@ -911,10 +908,9 @@ static int sii9234_probe(struct i2c_client *client)
- 					sii9234_irq_thread,
- 					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
- 					"sii9234", ctx);
--	if (ret < 0) {
--		dev_err(dev, "failed to install IRQ handler\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret,
-+				     "failed to install IRQ handler\n");
+ 	struct mutex lock; /* Protects fields below and device registers */
+ 	enum sii9234_state state;
+@@ -864,6 +870,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
+ 	return 0;
+ }
  
- 	ret = sii9234_init_resources(ctx, client);
++static void sii9234_extcon_work(struct work_struct *work)
++{
++	struct sii9234 *ctx =
++		container_of(work, struct sii9234, extcon_wq);
++	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
++
++	if (state == ctx->cable_state)
++		return;
++
++	ctx->cable_state = state;
++
++	if (state > 0)
++		sii9234_cable_in(ctx);
++	else
++		sii9234_cable_out(ctx);
++}
++
++static int sii9234_extcon_notifier(struct notifier_block *self,
++			unsigned long event, void *ptr)
++{
++	struct sii9234 *ctx =
++		container_of(self, struct sii9234, extcon_nb);
++
++	schedule_work(&ctx->extcon_wq);
++
++	return NOTIFY_DONE;
++}
++
++static int sii9234_extcon_init(struct sii9234 *ctx)
++{
++	struct extcon_dev *edev;
++	struct device_node *musb, *muic;
++	int ret;
++
++	/* Get micro-USB connector node */
++	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
++	/* Then get micro-USB Interface Controller node */
++	muic = of_get_next_parent(musb);
++
++	if (!muic) {
++		dev_info(ctx->dev,
++			 "no extcon found, switching to 'always on' mode\n");
++		return 0;
++	}
++
++	edev = extcon_find_edev_by_node(muic);
++	of_node_put(muic);
++	if (IS_ERR(edev)) {
++		dev_err_probe(ctx->dev, PTR_ERR(edev),
++			      "invalid or missing extcon\n");
++	}
++
++	ctx->extcon = edev;
++	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
++	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
++	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
++	if (ret) {
++		dev_err(ctx->dev, "failed to register notifier for MHL\n");
++		return ret;
++	}
++
++	return 0;
++}
++
+ static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
+ 					 const struct drm_display_info *info,
+ 					 const struct drm_display_mode *mode)
+@@ -916,12 +986,17 @@ static int sii9234_probe(struct i2c_client *client)
  	if (ret < 0)
+ 		return ret;
+ 
++	ret = sii9234_extcon_init(ctx);
++	if (ret < 0)
++		return ret;
++
+ 	i2c_set_clientdata(client, ctx);
+ 
+ 	ctx->bridge.of_node = dev->of_node;
+ 	drm_bridge_add(&ctx->bridge);
+ 
+-	sii9234_cable_in(ctx);
++	if (!ctx->extcon)
++		sii9234_cable_in(ctx);
+ 
+ 	return 0;
+ }
+@@ -930,7 +1005,15 @@ static void sii9234_remove(struct i2c_client *client)
+ {
+ 	struct sii9234 *ctx = i2c_get_clientdata(client);
+ 
+-	sii9234_cable_out(ctx);
++	if (ctx->extcon) {
++		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
++					   &ctx->extcon_nb);
++		flush_work(&ctx->extcon_wq);
++		if (ctx->cable_state > 0)
++			sii9234_cable_out(ctx);
++	} else {
++		sii9234_cable_out(ctx);
++	}
+ 	drm_bridge_remove(&ctx->bridge);
+ }
+ 
 
 -- 
 2.50.1
