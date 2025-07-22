@@ -1,76 +1,74 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932EE2E4271;
-	Tue, 22 Jul 2025 12:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C4723AB8D;
+	Tue, 22 Jul 2025 12:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186486; cv=none; b=pr3Mj0bJRqP6tHCyuyjIgVHMF2zZgfe8RQoqOkVF1V/X69QWQMr+EMT65j/WswJ8ibHnfb3IExsomQfHbsoPtxzGFIISIl1zR/xNSVyYal8xkC+Pgm4QC5Sd1PCz0CsxJHjN6MOdLAZXHDItz1XXkoXTV3MToMAsh+Fzh7XJeJU=
+	t=1753187038; cv=none; b=L06G+eGPze4dYSXIarUnwvjQzk94g9+0/7gN5mqzM4wTHfFmqCT7Pt+iiVqNNRVdnTJh7mVAhHeDljApAU1qWiftkVtX/0OOVJi0oE6pSmv4Zq5DQj0V1zYiRcp8mgEsZDSprdGPkMw9He4t6MKYPmtFAN/3uHZg2JpehRrnqdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186486; c=relaxed/simple;
-	bh=wYA+tGJ4iaNqAl71+ugrW7w5EiuR472bCCRturb1O7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DfJ1F/v4TenFBpqTogxiWBCraYeJ5NZrnrbdfbpZZRXDiM7fTZCe8BqYKI+sDTf09ACcQC/ebT4gWzdpI+ZlLr9HxOxhjt6gmDIXqLACtGx56iVWB7mSB5l9+1Q1+20GiZcAW/js8nhOklYyql7mhxQMK/u6uDxbDh/yIOEWizw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIl9xJNp; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1753187038; c=relaxed/simple;
+	bh=WeTPywAQLUuchrmA0NvHrm6ddehj4OFPXPzgdioHAnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=owLzFiWQxu54Tjgd3IF9mRgcJF9p2rSHBcM6v3Wy/kL2ZjyyUgUmejZDK8Q+b6G/NEk226bFml7vmAES4tBFyT2h1PiE76pQqanVAofFNOC+2Qc05HhwEDaJbBkXbUajZMk7eQaM0PJikF7a7La3L7ZP8qvGDZ8Bp62OhJliTAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OshxhfJX; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIl9xJNp"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae9be1697easo1177243366b.1;
-        Tue, 22 Jul 2025 05:14:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OshxhfJX"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae6fa02d8feso791092066b.0;
+        Tue, 22 Jul 2025 05:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753186482; x=1753791282; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753187035; x=1753791835; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nqDzbvTFUCnNJAo/5cnzfm9fwZI1Vw0IZkVaSkNbQRY=;
-        b=cIl9xJNpZcrcQn3MvMScCsN+0dm3SQ2sW6PzPcuStTqIZOnmbaqC0Wzn+aivcUBI76
-         Z3lllVx45kSX0UOFXOYVT0MH2Lk2fIan94h1hpPOAppPXrWiJBA5lLnoPnzrAx+7PjKY
-         T4bOOXXaUpeNnF3s6e6zMAygZhDM8hiasPRk7LbFjJwQjXgq6Jq3tP6JIWGWsyY6n2hP
-         3+5Q4AllAPVRuvovyYH2AgvZw/HzIiwgJFib9x+hgBl3+gIqumBJG9hcgn4ct4/KtqhS
-         pXpKOft4g4d5UDYDQHQ9sBKtMSqfsxrnC8VavMXdYSauVLcyzjrGoE6GJhKYi+YV57wQ
-         36gg==
+        bh=o9zVmz81PD3EcDqh5BGdUlKDbC/PBBgCXACORglCMmc=;
+        b=OshxhfJX1h7xkzClEekXTwDpl3I/BW6vkfq55EEtfJsOPKNI7ZU1zvHvKTXydggNcI
+         YI5tUjpKMoaH5cji9yKVJOnH9hSkMkcc5RY0yMi5dwzguuGVV0vqUkSc9EfJeIb03hJx
+         BoPPFVF/+2LSWrs0yhtUJ9DDCvByc3ARPrYjNRj8ULnkkkyrOBdAOdwFGQ/NV8wl9PnO
+         fWKYz7Qs+K8PzYk+dCwQGi/yCGlFIGHGkxtDbmjgEvmfN5ibXMGMta9PHAcga9P33LPF
+         BMGiaz99FKQgfxUxh0wIwNxntZHDD5atq7bYcJP3aWlNq1HQHYpQhI/R3jfVtxnaKTLK
+         aYfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753186482; x=1753791282;
+        d=1e100.net; s=20230601; t=1753187035; x=1753791835;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nqDzbvTFUCnNJAo/5cnzfm9fwZI1Vw0IZkVaSkNbQRY=;
-        b=b/THhDU8vC9s+17Yp9rJPvlhGDfJ6GD+KGStAUPTv1W6bgh26eBCW62UGZ/8SCizE5
-         T5KfKFbGJZYmITaMT55GNfr068A8+SGjXcelvwL1rL0RQnMbWefgZR6pZh19swoc8pFP
-         kUENuXUJZPqYcnACnRtoOpZjmzJPx/7sMZgR82Yl33PegjEQ/VEiyltl4GRe7NTw+54s
-         hmO9NDmMWa+Ppd/qKPt1ONme4wCmvVYaNOv6R+h5k4cJUPSUzSGjQYNPnK4DQg6mseeI
-         GDT7i+guYjFJQV9b2pA/2XU0kWrq6jX/a8jAsTnTyHFQPU10Dj4J0DcJ8ri3qVm/acdN
-         Ocgw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+I3ywFZ6TNGUqKRjWAZmj1ZRoK1UtvJa+hugKueEKgqnEg/1dRXavARALou7rLVYbqFyo/bWpH5uH@vger.kernel.org, AJvYcCWaEbn75qfPxFlsA/WX6ue6RJGTFmb+HKJ+38bkjnixBeQxCw40ZqQu3viVwO7V5bRI6P/GTbSc1PiUUjK9@vger.kernel.org, AJvYcCXkBptNbMYpFZ167JJzcc3E+w7qv7VDQJ1Mpj3166enZnEd/LYrolhK8ym04Xo6riqf41FZNRgBY521nBuBa4NGhcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVicLkQejCqHNgn8TIQzJQUBFbjVwt2bsE8DYsbLB7yLn3VnxL
-	GPeO4Mj4kYyUSeCnTIp/5mtBNyCE9DG06kqv7DRtaENcMoIT/P6PPosI
-X-Gm-Gg: ASbGncvA56dCER0TaCOJHmsCjbmpPACggmBDzOJrBGGBSq1hGrs7UdfToq2SaIN4o8C
-	Y+KcLXBWikH7H9ch1gPQQLNRWqK3slueFN5CbpI390KekJ7lEKrUZ13WXMVchtSG3ac/sZsYKWU
-	9H09/VDmgXAOPBxn6XLEU8QASGidxaxP0P0ygXMCHw6qqJc26ygJO+TEqZfGCII62GrJklFTnR6
-	gorLzTSzdoFqGhB/s+Nzu9SRu9ffyfHVNbTqiDkz/AJn4wquZ/pnEL7huqAEJDSjcQFkiw1mV5K
-	gmbdSmmxQj6OLGhBdhYNwCxSl9Iulq9iLOKN8OQauZpELOJblBcjOt+PT9rwXJV7Dq56YV33fuN
-	S7+LzIEZD3gmrN5yS5aGKG6MGspLCYUgFhl3C1xJVuG6qBDpIdadg0hoJpk3XtUvhYNzi6MHBwQ
+        bh=o9zVmz81PD3EcDqh5BGdUlKDbC/PBBgCXACORglCMmc=;
+        b=gETbwkcuqxlTAIJ5Ebh+WlZst5g7WRHuJC+wZ5cwAqypHwCh7z75e81j1k8CX5sEcx
+         vcIVLVLHJ2kH86D1JSpqG2nFIPTl5NX7n9zFd20MWUqLniSzuzuBngkSfQOZxaEIEqKm
+         wIDKvAbCGIClIkmWRNG/2U58PgGYq+gmsv+6Hzg7dBaRYqbtBUHDcx8sL2yyZToX6/c4
+         DiLk78gRQy8R/ES7xAmSjx3qzlJcU/pWLke+WVxAAV8RNbldZy9tmOIvng4uXhrR9351
+         POoDvhcNfjNRW+si4QDeJxxS2bVGynBgpbSbkVurJ2HNnKl04LC4Kk4k1n/Op6teO/dv
+         kuQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi30HHFMjUZCDoKsyglykS9yxP/EgnpnKuI2yP3bGMJg4ShyDKW5//+eFRtrBuUkcO/Btoq18wck1eXy5E@vger.kernel.org, AJvYcCWwQTjJhPrh0GrZOhEJAQpOTClRHIe6A/mSH83OMYqP/D/r2ef8BhDO7jGTSG+ootHQs7WII9BwoJZJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmJqf4CezCX+Ud1nOPJmlPPc+Yf7Be+IlkUPIBbYKx+tSUihjh
+	YQ3cOGfOGxTjoU9ecJ1VTjSYOgTYwFm6g5uyUX9Klf0FmVp0NXBUzXhndxiCtg==
+X-Gm-Gg: ASbGnctGQT7pWtcGA5dJ5r9W/nzJ1dgWBHHA4GdVyCvxt9DaQpY/CmZdDAb8wF9Aa4N
+	riM+oBeqreMmqfAm0nYhnKFQ7J6kX88FF2OOSi0Rkhv0lLGaGkPGALtgE0jwuXhY9qM96xicMTN
+	t1guxxN6+dXghXxiWqJ43I+VSzwwc/4zCOX9eInZGo5kwthqxJS7MTEOBaWm3WZftYhDK4W2OTM
+	lqMrfmDz86jzDJGo66jBWMXbI7sY11v+5gCdxTIgVkSIWaBEf2LD/KIEUvONHX6E2ChAhyRYm+s
+	0v4EPt/JgzVBCXqybhWIkUXpmLuVhMah4Yx8C9RLTedH1cHAZrMqF5U7apC0MiFxBW+Xtoi+bc5
+	MaEr8fcusqHLomNy6N+waov+mmtTK7wB0q+U+1WoF83HENN0Im/EPtr0eNCVhCOUV7Bk197rLOA
 	==
-X-Google-Smtp-Source: AGHT+IEJeLyW+u4ycTMqgYxs6NJLL3r5OO1XqbswJb79Eo8rI5BTivFIQk7F1kvNyi4zz8SC00zzcA==
-X-Received: by 2002:a17:907:7f18:b0:ae9:cc51:40d6 with SMTP id a640c23a62f3a-af15433635amr357787766b.28.1753186481641;
-        Tue, 22 Jul 2025 05:14:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLZ9hBnU0L+6iBn36Ar8EtrC0DggxduYejAe7GRNOw5gatUgZQ863G8i/REynVRkoMww08NQ==
+X-Received: by 2002:a17:906:c00f:b0:ae3:7058:7b48 with SMTP id a640c23a62f3a-ae9cde31899mr1973204166b.25.1753187034636;
+        Tue, 22 Jul 2025 05:23:54 -0700 (PDT)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2eb90sm858660266b.90.2025.07.22.05.14.40
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79a056sm861358466b.14.2025.07.22.05.23.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 05:14:41 -0700 (PDT)
+        Tue, 22 Jul 2025 05:23:54 -0700 (PDT)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
+Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
-Date: Tue, 22 Jul 2025 15:14:34 +0300
-Message-ID: <20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 0/4] arm64: dts: exynos2200: introduce serial busses, except spi
+Date: Tue, 22 Jul 2025 15:23:46 +0300
+Message-ID: <20250722122350.444019-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -80,26 +78,32 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add samsung,exynos2200-hsi2c compatible, reusing the autov9 support
-since it's compatible with exynos2200's i2c controllers.
+Hey, folks!
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Before anything, this patchset only has binding dependencies, without
+which it will have undocumented compatibles. They are the following:
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-index 8d47b290b..7ae8c7b1d 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-@@ -36,6 +36,7 @@ properties:
-       - items:
-           - enum:
-               - google,gs101-hsi2c
-+              - samsung,exynos2200-hsi2c
-               - samsung,exynos850-hsi2c
-           - const: samsung,exynosautov9-hsi2c
-       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+[1] - https://lore.kernel.org/all/20250722120859.443283-1-ivo.ivanov.ivanov1@gmail.com/
+[2] - https://lore.kernel.org/all/20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com/
+[3] - https://lore.kernel.org/all/20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com/
+
+This patchset adds serial busses, implemented in usi, as well as serial_0
+and serial_1 for exynos2200. It's missing spi, due to me having troubles
+with reads when testing.
+
+Best regards,
+Ivaylo
+
+Ivaylo Ivanov (4):
+  arm64: dts: exynos2200: fix typo in hsi2c23 bus pins label
+  arm64: dts: exynos2200: increase peric1 and cmgp syscon sizes
+  arm64: dts: exynos2200: add serial_0/1 nodes
+  arm64: dts: exynos2200: define all usi nodes
+
+ .../boot/dts/exynos/exynos2200-pinctrl.dtsi   |    2 +-
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi    | 1391 ++++++++++++++++-
+ 2 files changed, 1390 insertions(+), 3 deletions(-)
+
 -- 
 2.43.0
 
