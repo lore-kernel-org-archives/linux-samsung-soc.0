@@ -1,76 +1,75 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45DC2E92B7;
-	Tue, 22 Jul 2025 12:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2792E424D;
+	Tue, 22 Jul 2025 12:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186146; cv=none; b=REXBQT8/Y4uP+ofZvg/JGwxZMT0WGk9oaSC2m/pPvfvPmWbAnPWab1QmCJXK/D6GOqK1qeB3YlmePf6BTGYZjg8rOr26Jq8AMxg0l/czYAjTkncnUFwb4MtdyS4k2B3Q6nrbc/LKJxs+aD47Hy+7z2dmW7NDE1Ob9maSITgHwf4=
+	t=1753186278; cv=none; b=UMJAlWozlO07QNzegXGBrPwhZA8U5M2yQTnklUCyGlqkh4HSG1rw1VNrLgQWt6YFH4U5yOk0EPej+vlmySM/cVbkTTL5NBfU3D71FDjAau8e9mqIfhftBRL1eFXG11YA3FxXIzuY3OU0X69qNtrM4eD7x1gmQFvtSlyWt3CRjxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186146; c=relaxed/simple;
-	bh=/M6JFQ2h1CU2nv3SZRy8IgVgox5k7S4bcL/1CYucyUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z4XVSBhsnzKdXfm7O7FXKxHIJhv6r0LLMXkPH66rpGfPgxuNSolOG8MbqrXfUeJH/mvDzv2syjPubEe5iR2WAh5r37NeciKZgM3w0+NhfOMAgQrRkY0J1gOuxyXMq2w4WNycl/q7EBRY8ZyNeuioaJiC68DcD07uYXL6BPrPdJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pw4EHjEq; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1753186278; c=relaxed/simple;
+	bh=bY4/gf3mnR9ugbzc4iSCLdkwuMxGhpaLeXXWldQr5S4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ecHJSfbnDthNfM/31CtBcwOD2WRDt5pkvUKuFWoiY5ungixhHzfcYEaGSY1LW3se+bAQTZ44mOwvPjDJjSbpg2T8AQBSZPuGSaxG/K2kLjshLZVa0QcET7BjKH8dOi6RqHFNDmU2Qm0JDP6skeYRg27i9tGqwD74JIgAYANt18c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OV1ZTYoV; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pw4EHjEq"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so810201666b.2;
-        Tue, 22 Jul 2025 05:09:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OV1ZTYoV"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so9644737a12.2;
+        Tue, 22 Jul 2025 05:11:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753186143; x=1753790943; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753186274; x=1753791074; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/zN+BCB9PDyNDE9R4NEw3s0veUZFcpZLCmrjf9UE/w=;
-        b=Pw4EHjEqCdcmvmT59rEZfF77g75GBAa6Ha+o6BZ3gJiNE2BAJE41YxmtldrK9tB0Sx
-         xP1yFamtX/+AIB9ob0FsWMu1avuWAWLVAz7V7Z2waW+X2NJQ9EcvYKZSMuR1nn3BLeO7
-         di2aHYAgZuRfLJZQ1kBKTVL04bV5Fv7kEHdNnvk3UrN2CejEl5ZECj52yaYUgAJNgdeG
-         SFCMPQZ4CZx+WAV425IIXtMQaCAcqllU2+bOfRjS2jHb0w9d2JebrSwDDdDHw+aAqA5f
-         qrMo21zuF1h6DaJr1xZu2CSn+obQZU7dRk8hVUZQDQ36dM2zmqF2tUUE+k5N3X0TJ3HZ
-         umxw==
+        bh=lx+ZVMuygWM6iK3n5i4Qy5l+eUl2JVt18wiRP2PvZQs=;
+        b=OV1ZTYoVfnzq6p9ck6+P75mLoLhdr9VlOqYAe7RSwmLf6N0msniLLXhNb0AKDY4UOB
+         WjHP2PNAcE1Cae5g/EIjr/vZZdTKOVMJkSs6+tuTbn7dtsPSkPNxdKOWvZHZKO0bj18+
+         2Erg5NrwV7NLu1P8Vz4+tgRwA4xXOmvA9tulPFuSaJ55CXP5cLd9I/Uu8Y5vxdBM5hWT
+         8C/UMvZI1XEz1/eQw0HhCEYtq0QwQuQEjIAcu59VTjkmfAehi+9BNXZw5E6S/JVRIOEe
+         gTOgVfjzybQ2lE1E8ep30i89QMBE0acVSZQiiVDrQQANCnuJCqqoWONqIBX+0OjWHBW5
+         FzqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753186143; x=1753790943;
+        d=1e100.net; s=20230601; t=1753186274; x=1753791074;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=i/zN+BCB9PDyNDE9R4NEw3s0veUZFcpZLCmrjf9UE/w=;
-        b=QKLCxs+846FJhSuenNnGfDtYi/W48vBBcJh2fRdt1jcpqtbYKUKWfA1n+ChcXd3Pot
-         azwQT+lAOCGLlLEK52tUCxUUY6pMe56uSa5x+fOoOIJVX0VlCWtEwf/56FL9nu1VmXFZ
-         Qw5cTI/wUdDPLewA4xA5j5MnPXrBioMCe9EW4XV4/GS2aWAUXHFs/RKHfx/1abpVOrKl
-         TkMBSXCUTQkMDdBGQWoRwh2ihSciAzj5rTRDSNuhzcS6WPAy5zwdt065uQuNq3QJZtYA
-         uIjZW4p3UapP1PnlbektL25Eg1TQJRz20FyEnHuIYc0fQ5aVu8vcwvEoGEXVgsIKlExL
-         TH0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMrTxdIt8YZPfsOvlGS20XFprzAaUlQavXWcE6ZjXHaVDtbgM06NQMTl5ZhUz0ggsM3W/3KfOlrDkf@vger.kernel.org, AJvYcCV4t+Ayk5cbHb08T1GuhZS+QeK6X0rEo0CkFp+yx67Og9yeWyBrpIMHzdI8D1WnaAGdmAV1WbO/F73yxMiR@vger.kernel.org, AJvYcCXL7vsFO5Nn+mGkzI9CZHMHEHe4jcdp9/k3FtI2jDeN09a+wXabjh68PdZdStAhXnxPRhEPeXRMKuE897oY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeUoMuPsQTDmZgGs+gwrtWjRQZdhONmm0DDclwssHUdULXUKx8
-	+/9EoDD2nbBdgs3S587FyF/wGdg6pVGSRUugdDO078S2fTI4l7FFvcOtcfkX+Q==
-X-Gm-Gg: ASbGncup5KMzb/1JdB4wlXUr4hY1SH9qHuGfc8khgtjoE+15Wm3VkyNriUgFvE/BnyT
-	M5pGlPtC0vAXVzS2Zh8E/Ry1NFNurWOGumIiZPH0haX3XYW0NvUJjs8/bYn9+Em/Xhbmfrx4vNa
-	QAC/5iQm9fJ2JBpISg21tUD4DsF4fKMkvyHLzvVc/8gvCVnRcF8Ow4bg2Vp7nkhhBXwylcsFqsQ
-	W4SsWM1f2bkUww0IarlKNZ9DjyDP7wt8ezU4A+oRGHj9rJIZ/l7dbRpi4+yDtacK3TlCrw5S1Zn
-	BMyH2dcT2VA9zz8xhxsU6sVEJYGuD1sU91FG4+Opg/RwtCtS+9GYXIHqzEt0snDDmCgpf34xpvz
-	XxU1Fha3kGJnbMh/uSZpNiahOtFYf9ItcQoG2vS9q1NgKM8Zr155YNwnRV77ZK531Is8SN5OmFQ
+        bh=lx+ZVMuygWM6iK3n5i4Qy5l+eUl2JVt18wiRP2PvZQs=;
+        b=kG2vYjoQHfbaknOTWDrSfynb2GLKKaI1DnLg6cdq3jGTKGDEUuPcFLZMEbe5Pd+s/M
+         xx3iJZncuz09GNrhaYK37r8UcgTiHEou0g6jWBLnWpGVevKDm+ZAfwa/Raslc//rbqu1
+         xgRQCZmVYFajKOyhVJINLz2oly1Ihefc33npBGHH/lP8LZGL7nlsABDciAEkVGAnskX5
+         82pMdUFHps+SR/9UTbQCyRO5bDHuZ8dHe8Xxnv3RDQO24E0ZJV+qgJ7BJR3rj+vPbyV9
+         tGVyoPzWCnrJi8uDRwLMXl+xKzU2o8hQAnO9DgtjMTNGL8iaqw0wx/K0b0b473aQxMU7
+         hGBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDBkuBuIxu1ikp5BH4Wcci6Ak5SWZhYZolRX4e0Y7ha6lLigqKyBdA6Lzqj38nchdF/HHb80o88XuX@vger.kernel.org, AJvYcCXDWOIqAEZu9wxH/fsLPilQnIi5CicY5OJ/etnuUXIaDAerRqPj75LTkYml4UPkxR85Bc1dafPVa/mt81ut@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk1RxYGTzFfd+6XPxGkoEC3VnabZAV1tXs49i+BLOxyLDqREGj
+	1Hcvco9Lmbg6x/HOnQ7o+N1Dq1zSiAXPsu4WndRB9EZJetfu3iPDt/4w
+X-Gm-Gg: ASbGncsicedcwPJPc/bEJH7SjO8+hxcQXtTuoiUVCrUqmCoqe+5gujxOe9Jx9J9xyMv
+	1DzPmNzlG3rrQK+NXZXjI0XCBV2YNfyOLUll5Ir9hpl7PtM6bX0pyBqaSMCw2/WdVGF9YxvUhMl
+	han1Bu4GbKrP3shzyZ/fG4gTVij2lbJX+YJTWl3udU+TBi38KK1tdUxf4Fc3aXkIMgH6TAQ6JC6
+	RBdYjkJJXEkai6j+veOCI2cCkVXszkNR9H88UXu0Rpff1d1i34HGRqR534Y4QBnEVn50rMxpvbA
+	Vu2CnLBj+VPm1eF45hVPl/x+4D53pP5lLKV+OfPnNzqkshSBvOnkcjahZQ2a7XhTzD22UOjzUuV
+	+EAgfg9eEMrR7n8JI35BXWlV64r5Dko0R91V/5Ku9/FINnQFSPYLtx8dafrj+UR/PKASYwRBwMQ
 	==
-X-Google-Smtp-Source: AGHT+IELdo3U27oOgtv6Kv6ED6xgavO/dGRHioarTGley0NsAKeI8rQbhsUM6DVDUWHgEzZ0n6rdvw==
-X-Received: by 2002:a17:907:3e9f:b0:ae3:a812:a780 with SMTP id a640c23a62f3a-ae9c9ba7b98mr2301348066b.61.1753186142732;
-        Tue, 22 Jul 2025 05:09:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGED88fhPyhrYgJcmSWIkwvCbWfNUN8i7LvAClr6ahEphO0Z2rfiWIHbCtX4nZVH0UIjwz71g==
+X-Received: by 2002:a05:6402:2689:b0:612:b67f:d512 with SMTP id 4fb4d7f45d1cf-612c731f0a7mr14639047a12.4.1753186273485;
+        Tue, 22 Jul 2025 05:11:13 -0700 (PDT)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79551esm850878566b.4.2025.07.22.05.09.01
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612f15f596dsm5090257a12.51.2025.07.22.05.11.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 05:09:02 -0700 (PDT)
+        Tue, 22 Jul 2025 05:11:13 -0700 (PDT)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org,
-	linux-serial@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: serial: samsung: add samsung,exynos2200-uart compatible
-Date: Tue, 22 Jul 2025 15:08:59 +0300
-Message-ID: <20250722120859.443283-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit address space
+Date: Tue, 22 Jul 2025 15:10:36 +0300
+Message-ID: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -80,32 +79,33 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dedicated samsung,exynos2200-uart compatible to the dt-schema for
-representing uart of the exynos2200.
-
-Like GS101, it has a required DT property samsung,uart-fifosize and
-exhibits the 32 bit register access limit, so reuse support for it.
+Some device trees, like the exynos2200 one, configure the root node
+with #address-cells and #size-cells set to 2. However, the usi binding
+expects 32 bit address space only. Allow these determining properties to
+be set as 1 or 2 instead of a constant 1.
 
 Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 ---
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index 83d9986d8..1a1f991d5 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -28,6 +28,10 @@ properties:
-           - samsung,exynos5433-uart
-           - samsung,exynos850-uart
-           - samsung,exynos8895-uart
-+      - items:
-+          - enum:
-+              - samsung,exynos2200-uart
-+          - const: google,gs101-uart
-       - items:
-           - enum:
-               - samsung,exynos7-uart
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+index cb2263709..4ce871676 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+@@ -57,10 +57,10 @@ properties:
+   ranges: true
+ 
+   "#address-cells":
+-    const: 1
++    enum: [1, 2]
+ 
+   "#size-cells":
+-    const: 1
++    enum: [1, 2]
+ 
+   samsung,sysreg:
+     $ref: /schemas/types.yaml#/definitions/phandle-array
 -- 
 2.43.0
 
