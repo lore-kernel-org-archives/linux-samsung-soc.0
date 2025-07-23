@@ -1,135 +1,164 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C47283C8C
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2025 09:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9192E6D01
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2025 12:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261507; cv=none; b=P6hjeBdjL3/lBFB5VR8CYEimGgCe+KoteqRQdtH8AyAEQVF981nTTQsyfBFXIhgKmHVQ7zkL8kzf3CABx5CXhkYR58AjPE2T7K0k8oay2UQ9fC0SCAlrEqNUYPPgv79Zz/52QwOrKZH5Soiz+Ar3ni+SCxBw86IshvTmmmjdsXs=
+	t=1753274725; cv=none; b=WQAFyB1CX842nQnyrJ1zaDFLP8uLT8fBYxNtpxOmG9ovEIOr+HB30DyWN/nqZX7fwu4xDXwXoyTzCMwly45oqx2bjsVqlvtMxUf+U+ZwtSPQYZHZk4jI/rGscE/pBmaXVQYwqAuEfcecTm5+GcUjNdx7afNP8WXV4SeVadpMuF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261507; c=relaxed/simple;
-	bh=k3GjnkVYrP1B4aQik37L6qakXOv0eTA+cuGhbBu9yp4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=psPuB1n2GXxZ7JdvKgmmHW4z/ujZlTs+SAzE0eWajCTIrOH5HUq9E9y0He+YlLmwo0+77YflJpP9xGOQknsg2tlXrz065uMz2Gw77NxJp1+bD8qL5XYZIB012TEjc5GVu0GRxWCIo4UzqCFAN1krtPk8lCDyr4WXi08Acb1fwEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FJ63pBtV; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753274725; c=relaxed/simple;
+	bh=PSVh8+zmjXz2/3Itj97rR3bCxNouxj4qoJGhebydnM0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=lPyjEKvAzvJWk089PHn3MUOXB7Ldzp+vCY1XPbOx3G5K87zb0mlABfPpui0CR7dbvUmbIJh1pIkADQ6YHdBcbuc3OxNgryTGZ0gq+bzuv0808CLlGlmJ/ElFGikCt3CHXRAdWqtb1V3wutIAnNdfLwuQTAMou/agKKMm0Eexwx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Th3ykaYL; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FJ63pBtV"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae34f43be56so129956166b.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2025 02:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753261504; x=1753866304; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCgbja/gOTY6PAB9qzS6fOz3VhDsGQwTh8VHxpGStNo=;
-        b=FJ63pBtVkQAyu7mvzuj18M7GkLkfgk0Q0nN7DizSc62/ZrnjpNUBhHW+1Jn90X1e8C
-         HX+78PHoZLew1ncvpYZQtn1KUkS1L4GWMkGC4PPKPRHI+QILc9d+VVYeoyPHR3xJfL2D
-         M5yWmBiKtYITLQJk2hPNtBnSzdl/FHnTw4DpKwLZSpd/3dUiLPbcBVFbsSGfjQuF9tbB
-         Ox1cSq+R2FVn4etsXNmqL46zt6oIQovdUyaEIj5rqlxDfUg/g0+zcq9cBlSkeYr0JIPh
-         IXJn+cdKasm905Z+A7u0qCFBFFrvvtEl3mAgjFiix12NGDx6pwePclkzBlQQLfAiRXS7
-         Bbgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753261504; x=1753866304;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZCgbja/gOTY6PAB9qzS6fOz3VhDsGQwTh8VHxpGStNo=;
-        b=BweypQ5iZ2CiZ9pt3s+Yeaty2m9RNCD/yPF8FWXIvFN+y4efzWgffx4EkTYO+7kr2u
-         Nra/zHeIkXOLJThftaK/DEYA0E1pvzFhhRWaTJ0F/bEgbtRBQszQoI/Wai/PkwUA0kZ7
-         JYHiw/aCbQfRhh9NYEz4H3OcLnDZvcHF2lwYHptmGxaxReOXxMo4h1lztayWyEThuPYH
-         xaB6nCYyirLxPmx0tTI14b0ZaHSobJiGZ1sDga3NNGP6vAPsMrtJKdc4EMVij8yOZmKj
-         1l8f15U1XsUJli19aQc+ctlBSykNqHYeLf9BjjKoV6hGf1PBM+Rkxd5E0mS+Vup8gCWB
-         UoIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfnkhLa9jYfP2/YUenvKYKLciXVBapy2sUqEz1AXCmmti3MMUGzlYoo7lxza6iOrWCxlBDaJhsDQQth11mggZnpw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7lz+Hx2Cl7yOKNXjd9AQb1A1u5aAWbbx5Wcp0QTvDLkLqM+As
-	PoK9GDQZ32EwvHB78HGIQRdAWUSSYVo8RQxYrySXaputwUM33jawEl2+ho19ujcWdBQ=
-X-Gm-Gg: ASbGncvzpTEPRUMXTiuz/GfsmReSm664WqU3BRKA7pE+/Rn/8uoVEAJKRzErsZttNet
-	EXOgDJoBvylyN08I9nCuGlGgRMmr1eZPktTOP5YaMSsoPP1z5JfNUGCHcLQPyA9XhGtV8UZ6NDB
-	Q04QTurC1zai+WjD7YcknWHQC29c3KBnKnuN3Xg4RZ/Qc1vi/Cc0pQf/Zo4JYB6eD6L6dnXC5oO
-	DpMm3Wacu9LxDHGb0E2hcoAi3m3PGajgj6YvJIaScy3thhZ0RpGfeLULzo9trrd8sO9wXAlVaYq
-	8u8SSalfImzIMsvmXDnUt2iVRsmFr8QF6Mqp86W5foz2uuvoNt0geVTfIwcuvYsnwNmt/qOwxPs
-	L7ym+AfGqjFUYE2CTB8DFBLlAQ7Ut+uno
-X-Google-Smtp-Source: AGHT+IGDvi6weUHt1zBLFFABHti+LtpFg4sB/fcxjNLis7RjEwnRTt3JzWNz/nbQdoKPmX82/bVYRA==
-X-Received: by 2002:a17:907:a07:b0:ade:9b52:4d84 with SMTP id a640c23a62f3a-af2f9171be3mr83211566b.15.1753261503791;
-        Wed, 23 Jul 2025 02:05:03 -0700 (PDT)
-Received: from kuoka.. ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af22f6fa6afsm208165466b.120.2025.07.23.02.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 02:05:03 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	soc@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] arm64: dts: samsung: dts late for v6.17, part two
-Date: Wed, 23 Jul 2025 11:04:56 +0200
-Message-ID: <20250723090455.25295-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250723090455.25295-3-krzysztof.kozlowski@linaro.org>
-References: <20250723090455.25295-3-krzysztof.kozlowski@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Th3ykaYL"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250723124516epoutp02564dde2e34e3efeeeb99d1694a9c7c9d~U4hCzCbBl1468114681epoutp02c
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2025 12:45:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250723124516epoutp02564dde2e34e3efeeeb99d1694a9c7c9d~U4hCzCbBl1468114681epoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753274716;
+	bh=PEOfka7o20zIZPmyJjhDlnK3FdIZ1ayZnAmiWFOAY8o=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Th3ykaYLsbUr7KCPyz3pnLe7ntpQviosxGR/2/NTX7YjsIa2F6uvGG4/t8bK2qXi6
+	 +7KYSWEKgoP+QUS/P1ZtifH1h4YMgmiBvknkZH2QImhHyU2qDjLbf0tW2ADHno+lLk
+	 KQa+ncSUwSb50Qbsz0xYXyxOlH4+NZjURykH1CZE=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250723124515epcas5p1aaf594fdd1861aef3eb2f4883c0973b8~U4hBuY4AX2230822308epcas5p1z;
+	Wed, 23 Jul 2025 12:45:15 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bnDPQ1b3Qz6B9m6; Wed, 23 Jul
+	2025 12:45:14 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250723124513epcas5p40a7150ee82c674eb479589288323da54~U4hAQiFXe2820028200epcas5p4a;
+	Wed, 23 Jul 2025 12:45:13 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250723124510epsmtip201e2e3138007aeaccacf564c5214f1c8~U4g9PPG5e2748727487epsmtip2V;
+	Wed, 23 Jul 2025 12:45:10 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
+	<pritam.sutar@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzysztof.kozlowski@linaro.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
+	<peter.griffin@linaro.org>, <neil.armstrong@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
+Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Wed, 23 Jul 2025 18:15:08 +0530
+Message-ID: <2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1277; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=k3GjnkVYrP1B4aQik37L6qakXOv0eTA+cuGhbBu9yp4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBogKW4P0UvirWoR64QHVT8sGAC5b3VZtif/zjju
- Tcgt15OsOCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaICluAAKCRDBN2bmhouD
- 1/8/D/9g5Op+GBYMMSso3IjQEbVlUOXL50H08DRw5IhgOD8/JEC2MB9HI9A27GE+SOvvAuMn95N
- yAiQz2hEVZVBMhZRjSMvA/GgGL68YsFXodGDzrrohbVaQBX1Tt8O8pNZQg0un1MdSGlQk+xmEEz
- VAydxdgmYXNjp7x0DPiOKXgmUTtCBF2SI7l2gDJxZXbHeqx4J88M4eKos3AsLn/UPhiqOSbtOf/
- Vf/1i3bnQvPYiUYb/j+RJsA8O0Z1VsrZn+S81zDu+YmShmJ5K3hXRBPyhhFNvFiDSkEfAcfzh16
- ZhNgr+hH3eLnEBurn/mVIK3C86dvHdYHRRabzt907PbYvYewMqEHyciTIikc77zvJFcemeaKIn7
- NdTymOl0yn1JpbBmqQp3sz77KNHp872fGEBnPjNSW2GcrSERXkEYCjMi4MFD4QqTw/91G7z9AAv
- 7jnvOxIoBDk3osWnb2TMCZgTgCm9pKnCyWsBfnm2KrgNVzAknGozS9iMV454DIR2b5Q+QiCltVb
- 6/ZrFsnOuREufeR9O9esdGUlIh4T0uEawlYXyPN7/El2KsAWBhWLa3CxYFlBR6KF7p9Lmp9UQzi
- 4YSy9Fs/jY70dFp+NG1E5y9nbX1sxvpyRYn0aCzBg+v3p2TqaMgjD/i43Z53S1X86c9er7h6DJg 1IkmyPCm1CfKkZw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNAmb2xVkCD/Nw+wC0VRd5AgU5Triy3GiwIA==
+X-CMS-MailID: 20250723124513epcas5p40a7150ee82c674eb479589288323da54
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
+	<20250701120706.2219355-2-pritam.sutar@samsung.com>
+	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
+	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
+	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
+	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
+	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
+	<00ff01dbfac1$ee528860$caf79920$@samsung.com>
+	<9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
+	<000901dbfb90$42873060$c7959120$@samsung.com>
+	<6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
 
-Hi,
-
-On top of previous pull request. Late pull with minor things.
-
-Best regards,
-Krzysztof
 
 
-The following changes since commit 49a27c6c392dec46c826ee586f7ec8973acaeed7:
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Wednesday, July 23, 2025 2:13 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof
+> Kozlowski' <krzysztof.kozlowski=40linaro.org>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+=5Bsnip=5D
+> >>>>> Ok got it. Will change supplies name as below avdd075_usb =3D>
+> >>>>> avdd075-usb
+> >>>>> avdd18_usb20 =3D> avdd18-usb20
+> >>>>> avdd33_usb20 =3D> avdd33-usb20
+> >>>>>
+> >>>>> Confirm the above change that is meant in terms of DTS style.
+> >>>> Yes. I have doubts that actual supplies have suffix usb20. Are
+> >>>> there more than one avdd18 for this block?
+> >>>>
+> >>>
+> >>> Yes, there are more than one vdd18 supplies for this block.
+> >>
+> >> And their names are?
+> >>
+> >>>
+> >>> Re-analysed your comment on adding new supplies.
+> >>> Going to re-use existing supplies as mentioned below, rather than
+> >>> introducing new supplies
+> >>>
+> >>>   dvdd-usb20-supply   =3D> for 0.75v
+> >>>   vddh-usb20-supply   =3D> for 1.8v
+> >>>   vdd33-usb20-supply =3D> for 3.3v
+> >>
+> >>
+> >> You just expect us to guess whether this is correct...
+> >
+> > Sorry about not being clear so far.
+> >
+> > V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY The naming
+> > convention used in the schematic are avdd075-usb, avdd18_usb20,
+> > avdd33_usb20.
+> >
+> > However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
+>=20
+>=20
+> Then dvdd, vdd33 and vdd18.
+>=20
+> > Since GS101 binding already using supply names similar to what is
+> mentioned in the PHY user manual.
+>=20
+>=20
+> GS101 has USB 2.0 and DP, thus the suffix made some sense. I think you ha=
+ve
+> only USB 2.0, that's why I question the suffix.
+>=20
+I cross checked the schematic of v920 SADK, this is a combo PHY which suppo=
+rt USB-3.0 as well.=20
+=40 Pritam
+Schema should capture all the supplies including USB-3.0, similar to GS101 =
+(which has USB2.0 and DP combo).
+So that would be as below:
+dvdd075-usb20-supply
+vdd18-usb20-supply
+vdd33-usb20-supply
+dvdd075-usb30-supply
+vdd18-usb30-supply
+please cross check the supply at your end and do the needful.=20
 
-  arm64: dts: exynos7870-j6lte: reduce memory ranges to base amount (2025-07-05 10:23:36 +0200)
+>=20
+> Best regards,
+> Krzysztof
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.17-2
-
-for you to fetch changes up to 8e5bf103b3ada972ea890ae6aa2118ff9b8c321c:
-
-  arm64: samsung: MAINTAINERS: Add Tesla FSD DTS to Exynos entry (2025-07-15 11:03:41 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.17, part two
-
-Tesla FSD and Google GS101 DTS are handled via Samsung SoC tree, so the
-clean dtbs_check rule applies there as well - mention this in their
-maintainer entries.
-
-Also, include Tesla FSD DTS patterns in Samsung SoC tree to document how
-the patches actually travel.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      arm64: tesla/google: MAINTAINERS: Reference "SoC clean" maintainer profile
-      arm64: samsung: MAINTAINERS: Add Tesla FSD DTS to Exynos entry
-
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
