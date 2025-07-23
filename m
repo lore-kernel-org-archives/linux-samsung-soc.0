@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD38927990E;
-	Wed, 23 Jul 2025 08:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26E6283FDE;
+	Wed, 23 Jul 2025 09:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753260169; cv=none; b=ktRbF2mOPFOZkJUv8YBRYXr9TJSJSvE2hQ+35CUJakGPaW+sdI5U8GmbvTeNjkYk4WRFvQWkJqv8/MkOz+NEmeZAG/NqJz5u6GWVG3sVUZWj4wteRYNWaEZWHocw83ZUHiwGPBvsDZb1BX+tlBlphRiMesvQ5ri2H/0VcOjbGyU=
+	t=1753261245; cv=none; b=CH6uCr07mfva7cGFlx0B/4Cz3ot7vWar6PcYZrxDhL/hjqzYQcdB4n5xuk+cMB6Fp9ZFMsDFgj+sPqsCrSbFgroa+fTEtugqdMiRHBPxKN7gOpQ9kvXY21uLntVJM61VGnyCxvNo1dSScsqMWp0fq/NPyBfMtcd7fSLlCrYeFc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753260169; c=relaxed/simple;
-	bh=prvWFi+z0zohKW9TFGGnwO6BglnkBXWV+SiL44zZjuE=;
+	s=arc-20240116; t=1753261245; c=relaxed/simple;
+	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LYPe/F6k892LksGaOKrl/GHj/VcYLnOBEuaXedDJNX1P+rmN2pfrDAiK9+o6c131c9UdbUcsIBuO/QXPg11lCqxgXwxYNDBJiR/5vvYtjfjn31ys55/oUFcb5nl18SXWMNlCROErRGC0vtX0i5l06+NOtofSkKAoRFOQBuJN9tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJMYDn55; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qpAsQ/SqV1wtE+l1A/XH697fqlFbnl7+QR2yJLFMsC2KlhussiJJ0pFKAe2IidRBzk8GHP7+nWDJzc5AT4MDhu/GhRwOatIBRF5QPoxS8P1l/PONYF7vv70G7TgegfwIHbUR61P1CriA2cBbSrj9VBkQmtmMS5bN9YPQztggOLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h74P1KVs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJMYDn55"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B0FC4CEE7;
-	Wed, 23 Jul 2025 08:42:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h74P1KVs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED5C4CEE7;
+	Wed, 23 Jul 2025 09:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753260169;
-	bh=prvWFi+z0zohKW9TFGGnwO6BglnkBXWV+SiL44zZjuE=;
+	s=k20201202; t=1753261245;
+	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vJMYDn555vsHRNq5kPiUZijyDB87u7vNQAghXB15tKuihRu8Xr8PzRs/L8j7at0JF
-	 W9j4kEYkPWlZhnf0CEPtg5y2ptJqiAiQrZevWOC9zgSXTfoB9+Zk3aKd3GrLQbpdTe
-	 8WST3WBTINOoHT63bqx4UH029GC99uI3aRrhenPQsNoCJPPUzORE9tn4wFFH9dB3f6
-	 C6XHgWgeRfSrXTX+cCiyDCS8f0E0VRVCv8I4dJT6tFoxFXjLtKeXRXkCA+OkfYRWW3
-	 aWeUmxVkHag/fId2idjTVER+4Kl6tZVpuxYhguZDiRQWE8ccU67Qfok4kctFg4jrmo
-	 r7fEzeZZJ1VVw==
-Message-ID: <6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
-Date: Wed, 23 Jul 2025 10:42:42 +0200
+	b=h74P1KVsWWv3AE+EU8hXR7Cuyn4Eka9sKV+4Dh2bNqpAenoNzYH1SzsXgNon4Vp1E
+	 57y1dxGRSeN6du/ORxuLU2nY+2GDk+gk4K+3GnNhqbr5yS308F4Zwynw66j21kzxEo
+	 SKKbn76ut326an85/aN3jxEbNkDIY/jz1qN0zTIQ3chCR92Uy/JPqlfk+2mN5Tpil9
+	 kBIbnaOA4pCOhuS9xHP6UBqyMK4RSBachNSAbE8pz0O52SFJsz8v8uDBx6fUkyxFM7
+	 NNQKcl29ueHrxks2hJJZkLQ/EDCECO2CLcW14wSvt1wzjl8opH7UQhS3Lc4u3rzxFV
+	 rgvbaqUE8VqXA==
+Message-ID: <bca15900-da2d-4384-a79a-ee630fd7cee2@kernel.org>
+Date: Wed, 23 Jul 2025 11:00:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,30 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
- 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
- peter.griffin@linaro.org, neil.armstrong@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH v7] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: William Mcvicker <willmcvicker@google.com>,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
- <CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
- <20250701120706.2219355-2-pritam.sutar@samsung.com>
- <20250706-fresh-meaty-cougar-5af170@krzk-bin>
- <07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
- <9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
- <000c01dbf70b$ccdbf630$6693e290$@samsung.com>
- <a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
- <00ff01dbfac1$ee528860$caf79920$@samsung.com>
- <9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
- <000901dbfb90$42873060$c7959120$@samsung.com>
+ linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com
+References: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
+ <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,67 +91,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000901dbfb90$42873060$c7959120$@samsung.com>
+In-Reply-To: <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/07/2025 07:11, Pritam Manohar Sutar wrote:
->> On 22/07/2025 06:34, Pritam Manohar Sutar wrote:
->>>>>> Nothing is explained in changelog/cover letter. You claim you only
->>>>>> added Rb
->>>> tag.
->>>>>> This is an entirely silent change while keeping the review.
->>>>>
->>>>> Will add more explanations in cover letter/changelog why this block is
->> added.
->>>>>
->>>>>> Combined with not even following DTS style!
->>>>>
->>>>> Ok got it. Will change supplies name as below avdd075_usb =>
->>>>> avdd075-usb
->>>>> avdd18_usb20 => avdd18-usb20
->>>>> avdd33_usb20 => avdd33-usb20
->>>>>
->>>>> Confirm the above change that is meant in terms of DTS style.
->>>> Yes. I have doubts that actual supplies have suffix usb20. Are there
->>>> more than one avdd18 for this block?
->>>>
->>>
->>> Yes, there are more than one vdd18 supplies for this block.
->>
->> And their names are?
->>
->>>
->>> Re-analysed your comment on adding new supplies.
->>> Going to re-use existing supplies as mentioned below, rather than
->>> introducing new supplies
->>>
->>>   dvdd-usb20-supply   => for 0.75v
->>>   vddh-usb20-supply   => for 1.8v
->>>   vdd33-usb20-supply => for 3.3v
->>
->>
->> You just expect us to guess whether this is correct...
+On 21/07/2025 10:18, Krzysztof Kozlowski wrote:
 > 
-> Sorry about not being clear so far. 
+> On Thu, 17 Jul 2025 17:22:36 +0100, Peter Griffin wrote:
+>> Register cpu pm notifiers for gs101 which call the
+>> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+>> C2 hint. This hint is required to actually enter the C2 idle state in
+>> addition to the PSCI calls due to limitations in the el3mon/ACPM firmware.
+>>
+>> A couple of corner cases are handled, namely when the system is rebooting
+>> or suspending we ignore the request. Additionally the request is ignored if
+>> the CPU is in CPU hot plug. Some common code is refactored so that it can
+>> be called from both the CPU hot plug callbacks and CPU PM notifier taking
+>> into account that CPU PM notifiers are called with IRQs disabled whereas
+>> CPU hotplug callbacks are not.
+>>
+>> [...]
 > 
-> V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY
-> The naming convention used in the schematic are
-> avdd075-usb, 
-> avdd18_usb20, 
-> avdd33_usb20.
+> Applied, thanks!
 > 
-> However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
+> [1/1] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+>       (no commit info)
+> 
 
-
-Then dvdd, vdd33 and vdd18.
-
-> Since GS101 binding already using supply names similar to what is mentioned in the PHY user manual.
-
-
-GS101 has USB 2.0 and DP, thus the suffix made some sense. I think you
-have only USB 2.0, that's why I question the suffix.
-
+... and dropped, because I missed the part it is not bisectable. This
+cannot go the same cycle.
 
 Best regards,
 Krzysztof
