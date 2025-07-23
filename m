@@ -1,125 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26E6283FDE;
-	Wed, 23 Jul 2025 09:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5362494ED
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2025 09:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261245; cv=none; b=CH6uCr07mfva7cGFlx0B/4Cz3ot7vWar6PcYZrxDhL/hjqzYQcdB4n5xuk+cMB6Fp9ZFMsDFgj+sPqsCrSbFgroa+fTEtugqdMiRHBPxKN7gOpQ9kvXY21uLntVJM61VGnyCxvNo1dSScsqMWp0fq/NPyBfMtcd7fSLlCrYeFc8=
+	t=1753261505; cv=none; b=F/TKg4EICg+o8rE/sWlxb6Q1f4l7CPm6n8bwMVJZp44N2mhshnabKy8F8IUBGnx84PHDrTVX9ChV93wE7LJpe58OsU/v4yCG8gbtTX/DAL2x2M2XBWuEKLIO+IfxNSY3LNpowGMPUbM+cvJy7X3JbcryvXlGZuvU8frsiCC5Vec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261245; c=relaxed/simple;
-	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qpAsQ/SqV1wtE+l1A/XH697fqlFbnl7+QR2yJLFMsC2KlhussiJJ0pFKAe2IidRBzk8GHP7+nWDJzc5AT4MDhu/GhRwOatIBRF5QPoxS8P1l/PONYF7vv70G7TgegfwIHbUR61P1CriA2cBbSrj9VBkQmtmMS5bN9YPQztggOLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h74P1KVs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753261505; c=relaxed/simple;
+	bh=jKxS63Re37hcFm6L5FR0wOlWb0i7sX+Y/k5+Rp76jT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TlFnyEA/2sPJOc2GmmwsJ4r7qIVfuS7vEfVAV1HoxiJGjq7dSt9NDSYQTP8dODYplbVsRy7cIXrE17t2FfF0QG9TQG05CPgvyUguTn+bxCHtsxdbYEaQNqEyabeVwGPOe7c7bI1cOqhGgspB9Yv1GqudhwIBKkvDr7pJreB269o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UFMOx8H1; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h74P1KVs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED5C4CEE7;
-	Wed, 23 Jul 2025 09:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753261245;
-	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h74P1KVsWWv3AE+EU8hXR7Cuyn4Eka9sKV+4Dh2bNqpAenoNzYH1SzsXgNon4Vp1E
-	 57y1dxGRSeN6du/ORxuLU2nY+2GDk+gk4K+3GnNhqbr5yS308F4Zwynw66j21kzxEo
-	 SKKbn76ut326an85/aN3jxEbNkDIY/jz1qN0zTIQ3chCR92Uy/JPqlfk+2mN5Tpil9
-	 kBIbnaOA4pCOhuS9xHP6UBqyMK4RSBachNSAbE8pz0O52SFJsz8v8uDBx6fUkyxFM7
-	 NNQKcl29ueHrxks2hJJZkLQ/EDCECO2CLcW14wSvt1wzjl8opH7UQhS3Lc4u3rzxFV
-	 rgvbaqUE8VqXA==
-Message-ID: <bca15900-da2d-4384-a79a-ee630fd7cee2@kernel.org>
-Date: Wed, 23 Jul 2025 11:00:41 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UFMOx8H1"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-606a269d440so1108216a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2025 02:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753261502; x=1753866302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CoZCnvfP/rwehZqm543p76Ydsjj+4/YJqR0zDLYGaAE=;
+        b=UFMOx8H19Rsg+CgmUAAmFzOKd2j9tmv6ECE2xMLR585XbhVoXzIBeQhOkUuXL1laB8
+         cVbHq3hSkVT+Vusvbko4fH4427/vMQOZg4MElhG/yZP3TkKEym5CJXZNZ9iRQpwookT4
+         EuvCUjwvKKZJrOw8ibTBt0RyKZ35s2aMl/Fvr2Rh63tRymOgdhg5ywaOhICcfhPk18Jc
+         LMCEGgNYb4+zds+UJHdjiuJoEdO1un0vQbCGkEMgjQFrAqQPIIGoTSl5xX4CmNBwc5OQ
+         pYnTji++M5eHtBFsfTgFixngOp50NRZLJBiEkwhCua1GBwHUUaoTSqn8V/RUCyw6/IiZ
+         NFyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753261502; x=1753866302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CoZCnvfP/rwehZqm543p76Ydsjj+4/YJqR0zDLYGaAE=;
+        b=o14rOEOEmwkIkTlYGX2DvA3Q/QEidxpfwJbQ68O5TY7E0g73RWMYoE2cBVqqwrdv2Q
+         Y//uoYqcIIe15MY/IUAGHxvssV5h/LM+k9jYVO0nBWGHc9nVBTNyZdDwelRtf1Et9eim
+         74JskzVHAZ+JrGer5uichyIvrLUO88gRoowOwgoZ4gSmv8ov4rHwByBmNtqmanMU203X
+         vRG6ChadibF1lITXhVr/vMjWVBhG6Er5500Hdy1TOFWNDyXBeiGC++I6+wQ0zUS00CDP
+         18ZO/GvXqik1vVXKUD6MYypJsOa/uHzwopCxy8ndLVZAfq5xamRdaaWGiTTOijWZJDWR
+         6XZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh42PGHOZF4SD3TXMRtzkYpqHq3CyE5zPjHirMXkB+LurB91OBoS05kgFSWnkk/jzENm4YaiR1meB8fcWBQgFKkQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycJ/u1I9SNV/3WyMOc3rGevzkLQJq1B/b3mdNHzcNFPUFFm6bX
+	I7DsWcnOc5c9tViMbhKu4zfjKX9z20TgTmSYcz4CQSeZ6nNVmEu5UHdwmqApjpm/tBA=
+X-Gm-Gg: ASbGncvbcIv2uIAiO5cSEzRQG9YMUkxy4G3thcpgCmYXckHlKmJDxIhb3djKgE2GRO4
+	d2ycRh2eSHKP4jLZ9p9M/WCyA7jQiEv+3hbOX7Bi7lxNW0H8ffWF0ByLotnVMNiDtuFOnXSukZk
+	NRhVlQI1TaHcZtqR8HekRnc5ZKY73h+Lh6fsqvgBwPrYHV6TBoIRTGk4HJi7QikjyBszGItizly
+	jTfFfMz79FqOaDsXlSjFvaO3657Ht3GukIZq4TDr5yHnVmpC1DW/2TRm5nUQsDr1pTloOkcmD5a
+	wsmW1eloLxlHEPc3uQ4+FEmkc4V8Gf5mk1ROt9rIob3EHmP4xICcYn0ynvRjdI94AmKIH0ti2F9
+	Gavn7RYBL34+ns52cKBhYx34c2n8pmqcz
+X-Google-Smtp-Source: AGHT+IEfzsllmY1ddx+Lz3lhSzSUYagxITt83zhZt/m63TVAuXGg4evDnAWl67hB8SYpI35/gQ1tAw==
+X-Received: by 2002:a17:907:8688:b0:ae3:617a:c52 with SMTP id a640c23a62f3a-af2f64c62aamr72965566b.2.1753261502178;
+        Wed, 23 Jul 2025 02:05:02 -0700 (PDT)
+Received: from kuoka.. ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af22f6fa6afsm208165466b.120.2025.07.23.02.05.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 02:05:01 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/2] samsung: drivers for v6.17
+Date: Wed, 23 Jul 2025 11:04:55 +0200
+Message-ID: <20250723090455.25295-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: William Mcvicker <willmcvicker@google.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com
-References: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
- <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1184; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=jKxS63Re37hcFm6L5FR0wOlWb0i7sX+Y/k5+Rp76jT4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBogKW3mDzwNTJovQ3V2taqJr+0T0EUFr4aTJQrU
+ U2eCAEqgvCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaICltwAKCRDBN2bmhouD
+ 1yR5D/wLSF3mWxeCh6hr0nA8CzfZto/VRm7x52o6glrfAIZHQ/zaOZ1570ojQRpZeJP5mZm4qGY
+ eCpgfc3Cl1f3osmJKLI+ojFPlK2gH/ipqWahqcUL3RsUoLEivfyXNMYgVXTlWkTORjB418lS8G4
+ fC+/aTu3X6UgYmwLBP8r10DUaCbsZDfBDbr0mNCU1VMLKphSgTRHrJ7Fg8HVk8mXucjIsd0J/5t
+ Wl9bVoa0hc/QJMAZO9hG2pK0KaAuIHgs/9GSO9HpcyHnlMKbMOvg09YptLZkXDUDs2zTlRF5wnB
+ NQXTtkM/pqAfz3z9cWqPeRK4OkEILvtOIFeYAIO+qd8n3Pa3B7DyBhlf2r/xLCh6FOKtNtHp1dX
+ tk1JND/+6NxXlw4Zt9WkiAj6vA4vu7Do4i1DEdR2dlB/C28jltww4CsTGu48nkO66/6iD1vCAA3
+ ZMeQciN0yfxEl7fRNBiHs5JSXdSW8axGHEtdSU8PkD71n0nSR0Fwxf4RY1JSEk7vFdeFJlUUuio
+ z03+FSDx3pT2g/B3sbq/trspGQa3YpomiGIBGJvvId9fUwkUa4CHy5DxEbDObIScg4zIs3oZ8W8
+ GikDwiW3shZzRPhee2lB943Ur5FpLQDYG1LGPmjsUY7oMlNhTaPs2mEsEmIWjvC7ivChoKGwVrB R22rNCovyB27l2A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 21/07/2025 10:18, Krzysztof Kozlowski wrote:
-> 
-> On Thu, 17 Jul 2025 17:22:36 +0100, Peter Griffin wrote:
->> Register cpu pm notifiers for gs101 which call the
->> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
->> C2 hint. This hint is required to actually enter the C2 idle state in
->> addition to the PSCI calls due to limitations in the el3mon/ACPM firmware.
->>
->> A couple of corner cases are handled, namely when the system is rebooting
->> or suspending we ignore the request. Additionally the request is ignored if
->> the CPU is in CPU hot plug. Some common code is refactored so that it can
->> be called from both the CPU hot plug callbacks and CPU PM notifier taking
->> into account that CPU PM notifiers are called with IRQs disabled whereas
->> CPU hotplug callbacks are not.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
->       (no commit info)
-> 
+Hi,
 
-... and dropped, because I missed the part it is not bisectable. This
-cannot go the same cycle.
+Late pull with minor things.
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.17
+
+for you to fetch changes up to 687d974a218a719f7e729bef9c498ec36f18115e:
+
+  dt-bindings: soc: samsung: exynos-sysreg: add hsi2 for ExynosAutov920 (2025-07-16 10:41:42 +0200)
+
+----------------------------------------------------------------
+Samsung SoC drivers for v6.17
+
+1. Google GS101: Minor improvement PMU binding.
+2. ExynosAutov920: Add HSI2 system registers binding.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      dt-bindings: soc: samsung: exynos-pmu: Constrain google,pmu-intr-gen-syscon
+
+Sowon Na (1):
+      dt-bindings: soc: samsung: exynos-sysreg: add hsi2 for ExynosAutov920
+
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml          | 3 +++
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 1 +
+ 2 files changed, 4 insertions(+)
