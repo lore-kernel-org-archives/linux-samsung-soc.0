@@ -1,116 +1,116 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE931D90DF;
-	Thu, 24 Jul 2025 07:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19E6155C97
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 07:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753340526; cv=none; b=t5CdI4/8Dey94nTQwV1amcYH8p+BQ+oIj84NL82diKK5v4UGSGUIbfyXTfFr+686oHcX8FnbghHzcjsb0wN9vrlKb0+cc9CW8yo0uzCKBMTa/dE6fy9ucMA/tVmDe9mitLULwltPzFP+Drui2IPstMsc48f3jqkDtlg2338jCGo=
+	t=1753341265; cv=none; b=Xv2XBspcVDJO/8yuvrDnLFqBDnmWumpGHiiO+WBCpIybH6SFQViRCBpmRAFekz9Y4fEZou4ZpLsN02OJ0MOnjaZt0PzbVV2ik26sRuGz5Ju51T4HQsqRePZBmUPJ+IVL0eBh0S+yEVqdQkHL3hGeovzvGf4I1c50s+ym+VP7hMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753340526; c=relaxed/simple;
-	bh=Q1vmtZhAqt5hBWwprbn4CUB66zCHOr4Mx+OTWP+3XfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VOlXn/rTNp3tzIYFtqiqetA284TEJFdStcJr1kopUc0bX4Hn82Cj1mELdRalqyMBhFTahb5GfILSNzGX7vP5PZn1oU7Zr4uUqVpFxwxkG4/92OeIsYhALkyQ76jBbWw5wVRstdhyJ1YZAuLun9r4g/XgXAvVYX9i6VMq3daAYkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHhQzT5t; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753341265; c=relaxed/simple;
+	bh=rE5qWWZjndiq49hxBlZf+jiV7j0uDbdzOEQLJLes2Yo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TU7pR+jpE5DukXQaKtPPClasYh3fxkCC0+zfso3c8JCxg28hxCM8J0WFAh/AcMxFG3boqjzz7xyX6UT7UwGIZ3ake9nK5Sq9q6Fc7y3b16IWgYxHaOPrLK9Rwyhu9rVO4C6OHcZFG1Ft5cuGYjR5OvTEC12lPxZm6M0CFW4oE3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uMw1sUWg; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHhQzT5t"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so3922795e9.1;
-        Thu, 24 Jul 2025 00:02:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uMw1sUWg"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e8dd5602497so522289276.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 00:14:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753340523; x=1753945323; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OlUtBVs7mVLIbrf7opyOhCkogChwruSdb2WYQaTp8x8=;
-        b=IHhQzT5tv8vxbf8sD6m53LbpTHESgtH1SXAUMNK4KsScItaIgGGiWoZs38aW+fcczr
-         Jyl3E6AUcQVBO8BFHGrHzSvLSR4ugo7RoWae9rL7NPzPDYr7tAgMEROacHxNK9aAWdhk
-         3UaSOscXg10DbJ6YRLYc/vvwicRO3FXB0lGYLt+qoSIekjnq1t5U/M4tx2w+kwAjzfEq
-         UyIJBb4bJ5oEv2qOafjbgJwvGpQO9dC4jPyyB/V42EcnBaqF027xRW9mwOdU8eqmMkh3
-         L1iId5isIBqjnO38jH51wtqwEI6/xiLxwd3E7EzKUSP//JhGGXjsqXWXv+i3N4stpFCm
-         Pbhw==
+        d=linaro.org; s=google; t=1753341262; x=1753946062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RYtiTl2/vcB5JjeNMht3FQUGQbOf7Sw/0g0qYc0qYCs=;
+        b=uMw1sUWgd/kyEaVHyO0gCQsjPlh8i4zKQIw7iR1q+McYVsnggcp0xEcI4LcZHxerIg
+         J6Dqhxb83bm3fBqU53lfOuvQrsG3cev/82p61m8rG7GxK3wQruIPEcbauLdU9MS7G3wV
+         nxOLADZhnvMJx2QY2gcXZ857x9Y9QG1BJWLYnVkQTtz/oZFEdbOy7fvQlgRZ/q1I2ubD
+         ER3jW2pedmhsaXP+NUUOvkKF+FBeIChp4nEDp/8jWB/xM6w2abcRBPiuf733sdTDfjDy
+         54Wk1AT6nEmmxNLng9yuZK7HjSmAWouIYXSAqVvCRT+XPkRhMH3+psFrJibni2F378Mo
+         CJYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753340523; x=1753945323;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OlUtBVs7mVLIbrf7opyOhCkogChwruSdb2WYQaTp8x8=;
-        b=NQ6Yombh7U9Y8/aWCd6E3b3G3mwx6GmK9PWh34Ou3lABCSXojEODVLT/yMeNyMGekw
-         MBbWsBPU0n1WsHkRTcjNmSD6SYLqY7zRbSShGbRHLIi98pCZQXjWsg5CDIeqVf0++p1V
-         z00BFO9hrC38NIXaYSSnim6ud6JIVDmmjA0j2qjDc0wcRSFAg43xEhnThrqJYrLNZhH7
-         WnYdXA2Xf6L3WmgYd8R7zs4AoNT6bEvJyFmYMYsX3dCXgaipn3TAgVswldqjS0syOywu
-         f2A5FQppEU29vo/u1MrCMXusG90zZedI2anHVnxczJxGTbjlW+LY/azSJL6K0I7P3/3e
-         GAVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOZzZmug5Z6JQ0DHvfbJOGz/yNFavbvZScVGRw3h3iJpLWDwh51t2+eEKhrfAVYOaporooETWZaSb0in+47GZdo7Y=@vger.kernel.org, AJvYcCWP281iLAlfWEfACXGBub6Ip/yLTLyJALyDKn3+SNu1DmmHeG7UQKa+Ieq7kPodhJbCiseACuXqPZ88/gGT@vger.kernel.org, AJvYcCXNu5G447LyZRKbczoQE4EIrCTNfhwQKq832hBJ2TDSUZAZPEZurOjLsjl6cP92TGzCVyq9PabS4cLG@vger.kernel.org
-X-Gm-Message-State: AOJu0YyspxIFEgyGf0GKpdYFGL6hE2sE5mXyQMYyLnZpeVhjlU2/ixFH
-	Ri6pgPurHVgCSo0BGzqSnf+JlwD12dgO++ohUG4p8y4JzaZDnLM7ZJbs
-X-Gm-Gg: ASbGnct6+//xOcaNdMj3Hu1+Dv5IjtJosyIlPpNzUo9WxpQHx0/B5DP6Ig81rquHb3y
-	sRGcVYHp4HAunUPUMKLV5T6pu2ZCAYaT26ACP/rm3Eo+r3f6PJCpAkYZd3GjXNdj+mpUPKN2sWt
-	1NH5hykt3sOLXicvHcyooXcM+HFEXo7cY5G7Lj9ABO2DUSAK7gZJ8qIZDJMskYmedr6nliH/zPc
-	ycZUrIhvy9xJ6unz52Qi4ZrpHAjr8ICzkCzsoHjXUyw2nmO0xzNHU/rwFVZZthnZwLvzG0gUvvw
-	cYyS+i0NK56xhIRpx20LxMlXUU5VlVTR2yJwdrSMRvt/8RIl6msRV8rXKRb5gszS8sT8WSp0ccu
-	eALa8x07kMF0OAtlIa2tWcwW0XCckbTx/zh0+4mi46/b2vwpr4eV9ZciLuRUqCwF0pNNEfGg+/2
-	bENFTM6kDJqKY=
-X-Google-Smtp-Source: AGHT+IFGy6HODxEH7/PmTdmL1a3/zjPLMsIBH3rq+Xq0Tau9JAc9/MY1EEnrW2AphA2h+4ON6UFPxg==
-X-Received: by 2002:a05:600c:a408:b0:456:1904:27f3 with SMTP id 5b1f17b1804b1-45869e4b95dmr39641815e9.18.1753340522595;
-        Thu, 24 Jul 2025 00:02:02 -0700 (PDT)
-Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586ec79441sm9982835e9.2.2025.07.24.00.02.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 00:02:02 -0700 (PDT)
-Message-ID: <cf7030d4-a686-4edd-9698-1a9c301d1dd0@gmail.com>
-Date: Thu, 24 Jul 2025 10:02:00 +0300
+        d=1e100.net; s=20230601; t=1753341262; x=1753946062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RYtiTl2/vcB5JjeNMht3FQUGQbOf7Sw/0g0qYc0qYCs=;
+        b=oz07/XJMLapDhMn5aA6HXgstEMo37VoH8R4UrNbJBhhCUFImxq13HUMGOn/pZVI+T6
+         SLFgtz1OIxjJvaO5t+lDscZZjPmeQB8Nk4UXkr21wEcDnci8Pi5Z4SNH3RkiUUJpTcoJ
+         +uvn7cvUPa0fa+6F1YOG7S3fW9Y9yJofDaq4MhFBN93Mm7GCE374SimwhZF3kYxjuJNu
+         TqgjBlRmMfc6PYIsXbAlzgthH2zAw0EvJXlsNj1rTXr8xb0N7+Uv5GcjkT86H/YzfhVy
+         hZFO4TQnxPm51OnsQF2BuGVdd83nAsAlNqCl9FLeu3NuYT962+hzXPU0yOGYP3104r8l
+         4JHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVobJrg8f9m0Ce/K+EerZvMppCO20IUQsI0bSYfpeG8Z2prX1y+v0wvP/UeLUkgydVa+PVgBjMb4uzNaEN3KVLVWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3uAktUVXL3F+AInKJzsZE3nKnB4j6N3DRXhhteH7dgbNnrIvw
+	rpiMFfV8sbsjiO+XvhyxzJsURvtmcouQtRTQeyVQZOH9b7rvnlqYgZYakRHjPo9yNoCmt6OyRVN
+	1nOleKAZkrwbG+0s5mgo08bykV+LpeoSTY+JSB3V+SQ==
+X-Gm-Gg: ASbGncvHkJR1rfkJkn8wBW/418opJkcKZ8vLpMVbXHvh/66DYPv82xxDTKo0OVvnDQI
+	QwDxl/g7qTbsjfSQK0Q8htn1hkKAX8pNUGdKJmVquwe/DtjoFTFEAc+5Qcslss8jFZd55appQ8V
+	DjrBwwxmw24oDkpCnwBtfPNcmaukX6jeFXVZmqDetWNMx3wOjC9LDDtDavZBfsELDqWk5zNr+be
+	OqQuDg=
+X-Google-Smtp-Source: AGHT+IFmnBw44RVqEQy61JKuL0iFrYaWpRDyxUhMmlPDwRzFw5AwUBOybBBoOUdWV5mpQDmcfwgotc7Tx/G30sPFLxE=
+X-Received: by 2002:a05:6902:4a0c:b0:e8b:d37b:86fa with SMTP id
+ 3f1490d57ef6-e8dc5a86969mr7074336276.37.1753341261694; Thu, 24 Jul 2025
+ 00:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
- address space
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
- <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka>
- <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
- <fbe025c9-2688-49f1-bd94-2cb0a1bbc8d2@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <fbe025c9-2688-49f1-bd94-2cb0a1bbc8d2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CGME20250714055853epcas2p1c8a30bbc61045c6a359d32989cfaf2f9@epcas2p1.samsung.com>
+ <20250714055440.3138135-1-sw617.shin@samsung.com> <20250714055440.3138135-2-sw617.shin@samsung.com>
+In-Reply-To: <20250714055440.3138135-2-sw617.shin@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 24 Jul 2025 02:14:10 -0500
+X-Gm-Features: Ac12FXyeh_teX33m6-oCCNN--bnf0arq8tqlpYQ5bLEOmvlZqoOtQ8w9OKWGEX4
+Message-ID: <CAPLW+4=Gsd9VNv6T_e2QMWkPNbjp4c2GQEYpD9icU3r+0QuPww@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND 1/5] watchdog: s3c2410_wdt: Replace hardcoded
+ values with macro definitions
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/24/25 09:56, Krzysztof Kozlowski wrote:
-> On 23/07/2025 10:21, Ivaylo Ivanov wrote:
->> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
->>> On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
->>>> Some device trees, like the exynos2200 one, configure the root node
->>>> with #address-cells and #size-cells set to 2. However, the usi binding
->>>> expects 32 bit address space only. Allow these determining properties to
->>> So if USI expects 32 bit, then why do we allow 64?
->>>
->>> Switching this to 2 means you use 64-bit addressing for children
->> I don't, but the main point was to avoid defining ranges for every single usi
-> I do not understand your "I don't", because you do.
+On Mon, Jul 14, 2025 at 12:59=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.=
+com> wrote:
+>
+> Modify the code to utilize macro-defined values instead of hardcoded
+> values. The value 0x100 in the s3c2410wdt_set_heartbeat function represen=
+ts
+> S3C2410_WTCON_PRESCALE_MAX + 1, but it is hardcoded, making its meaning
+> difficult to understand and reducing code readability.
+>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> ---
 
-I meant it in the "I don't _need_ to explicitly use that, but it's _nice_ to have"
-way, so I don't have to clutter the nodes with address translations in ranges.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Best regards,
-Ivaylo
-
->  You change the child
-> address space to 64 bit and switch to 36/64 bit DMA. That's the meaning
-> of address cells 2.
+>  drivers/watchdog/s3c2410_wdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 40901bdac426..95f7207e390a 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -587,7 +587,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>         if (count >=3D 0x10000) {
+>                 divisor =3D DIV_ROUND_UP(count, 0xffff);
+>
+> -               if (divisor > 0x100) {
+> +               if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
+>                         dev_err(wdt->dev, "timeout %d too big\n", timeout=
+);
+>                         return -EINVAL;
+>                 }
+> --
+> 2.25.1
 >
 >
-> Best regards,
-> Krzysztof
-
