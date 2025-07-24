@@ -1,197 +1,441 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5044257453
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 09:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E4926056C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753350974; cv=none; b=g10S5mILHUMklI01skaq4pEAul21pbznYjGOrhBvS1H6HA1ZZVL8QGvkY7PkICdtVpXBgTFGrg5OPQaxlVHUr6EzlwF39iKbW4/XmcXtzb73PEiZa0zt8NNHOdF3/9xbdSWNkF7FixCNItBt5rv/vDEl4la8gru6oucbu6XfMpI=
+	t=1753355641; cv=none; b=Rv4S9nxNW2yL+s7k4PH4548bj1TJHtO3q+RoLDAn2is1qNUsM9hgnRZaBfP36kjTF8+P15mAVUJhWM6zni/EqdDHnxeGo8D2wSfAeuaBPlrLKQid3OlqSrkMqgRi1vetRPTdlb3GAeJjsXXg8AromSd1bd0giEfbfNtNJ4daQs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753350974; c=relaxed/simple;
-	bh=xgv/6RY0aXaXcqVmGsKiJ7rv1l72xkz7t+/1yhSFO+4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=iSvFUFMvd6xZf2ElEcOGeugG+AmLdLyRxYGEJ4JpIQhIV2WZnx/zYVDHRm5haUaWG/cHRmoH4NawWVN31T/i/OpGckezEE8Zqt87YlpWTczaLCiKfIwq7symnjkQ5HMgOaovtTX0TqcEceSHuv13Tb8RVf9tOm1bDybE9mSKQB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tXkLFpum; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1753355641; c=relaxed/simple;
+	bh=EzzIiAoijePLKsMHhDEAi/RsAbRH40rRrq9ogMFdd+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DvdQm9ODIOn9zABJLK8fbKrDyvd/5KCet/S9UwMkO+qf0PwHVo65FrafeKATCqkPCD2LXgAyExgfUqznxhy26E7BwFBfz36WRKthWT9ki2Kg9/wI6jzjwdT/hXQ3IeFMLQMx8o0QiYXCgwSzvs+mF6Ls7ssG0Ew//KCRqlmKI8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SAg18EsO; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tXkLFpum"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250724095610epoutp0459d437f44c872cc2833facfcb52dc2c4~VJ2sKrD8k1813318133epoutp04Z
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 09:56:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250724095610epoutp0459d437f44c872cc2833facfcb52dc2c4~VJ2sKrD8k1813318133epoutp04Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753350970;
-	bh=u9kGzbP2QPnTerojC0M6PdIstHffL6YDLYBkr55PnyQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=tXkLFpum7mpat6+Q/fQl/+zWboM7qSTARv5MQ60rP2NgdQh2zREwk5x/OgwCJm5al
-	 W+xnSoXjkNWYQYILSlCmiVs99fZHCMVTnvRJm0+q8WftqcM/JbEifzuPxwUWhUKSfK
-	 zTMAgiRRiw42zoNAp9+92fd9twRtNQrgHaxIWP/U=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250724095609epcas5p1f59c0b9b75b092d4b53af00a59df9b79~VJ2rY0ILh1609716097epcas5p1e;
-	Thu, 24 Jul 2025 09:56:09 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bnmbr5q6pz6B9mJ; Thu, 24 Jul
-	2025 09:56:08 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250724095412epcas5p36b38fe9e1b835e731abdbcaf64be1174~VJ0_IgfWj0680206802epcas5p30;
-	Thu, 24 Jul 2025 09:54:12 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250724095409epsmtip2c71016c48766841f9a06c5d7f2a181f8~VJ069jbaJ1922819228epsmtip2E;
-	Thu, 24 Jul 2025 09:54:08 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
-	<peter.griffin@linaro.org>, <neil.armstrong@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
-	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
-Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Thu, 24 Jul 2025 15:24:07 +0530
-Message-ID: <000001dbfc80$e85fd690$b91f83b0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SAg18EsO"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60e5396e101so167328a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 04:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753355637; x=1753960437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fU1t/gY+fvQSdT58b4/oSddCY0LCDKCOWarJB5CkkMo=;
+        b=SAg18EsOLyTlcEIggrJs4dxUidrILahWTxK/qJQ80M93sOUFVd7+t/vtavi0h0SnrP
+         k+0xFwfjoMJr2xkwiBNC2qjx3qfs1oXz0Jq4edcFMK0qOAiC3HR0h5vvn0Jq9ow1Oftj
+         GJUnzGrfg+vp3kViTzEGOVpEK1Gmexv+QNUsn/DNmse7MsXr7NLv+6txsvO7KoRa+gDP
+         rBCxcQxzvbmIWRDOl+BTUDJ/hTuTIAUb0l5T2guaGSepPamskNOCAu2lHHxgkT1ZUbgo
+         zmkaH2I2H1Fx5FzoGpthoiaqYQIF1XmMRu0HggPZAsUydA5kebjQIxYsLl9EGD/hQd23
+         zs2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753355637; x=1753960437;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fU1t/gY+fvQSdT58b4/oSddCY0LCDKCOWarJB5CkkMo=;
+        b=pZUy8yzfBETo4JTirMEuL3BonCbdnFBBaJtxaSDaK2OJSbQQyUoqHNZZoSzijShyCH
+         pLuyP85ESpzxT0nk/LE86ng2ITFDugC7yY2Oh3Q3GoMa5WZCMjPb358P4vV79sMK/aIH
+         pKe9BolVq2HhnbebyuOJlUnlwmNampEqUgSqihGDaaVqIblRMDjnPC78Y952RAjpw5Gk
+         hPLjIubvQxGnlUVF7PI4/ENPc00Ban1PgWAqRUDy4tmHQNbs/2rAylgx/PzdTTA+HMM+
+         CHAeDn2ZxavCk4MnI8uizdcwOM6rJ13kVcxnnWv6/mbxfRTYs+DJt0x404MXoxLnARB2
+         3ulA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuAl+LClO/BGv2jryQMXjxhBHQ6t+WjR6pkZ8nOYoQSjdCg6rgrrqtAFQZvCVOCSlB4p5KxK0YqU8xF9HU1chRDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybdK6uqRWJMeNo2kGK9r1FWve/W0xHAh/vSnGEGhaEkzt9t0le
+	xbYCcdKZvFIyHzXZy5bl2/F7kxWgM9TjpDY3HmNpOcbu5H0CM/2mWQGvVNoDcMD/Lqc=
+X-Gm-Gg: ASbGncsgtfR3jmrBcX5wqoJ2MIeOmVwGl0Tt+sQ+Ferad6Lfi4G56nens8couoJqrE9
+	YhVmH49XTBPQTDTHnA4AWXRRQqQ00YQvjGiQhN1axrf9pxqwMdZYWZaieJvoKs64fp91sqvaqY3
+	cqcnmToKu4TIemjM736mEd86sGXTKyu89X2hAoKRjW2wfhH3g7tCVa3znWUIQwPCkwn1IgymCF7
+	bAAwM0nZVPkW97hrN3KNn0mMMyCl1CA7pZDRJbDPPZB+nypoXj4LulyPfbHxKq0Yb3JeD5D/nwk
+	YVEeAOATJXGy8BwmPfeYpE+Hhg/di/hvoCC/kxpkXRC0yRPvPQydbD+SOL7Ow/n73ASs/lYoUz1
+	shw/wKzZVRPYLjtiudnUudnfNOUsKhr51
+X-Google-Smtp-Source: AGHT+IFl8bw5VcqnaZyFMvU5N/+Z9FnZSRMF08+PL/sdFu/kNwhhTBGIr/Ez+0UF8NF5JU+4/pUhLA==
+X-Received: by 2002:a17:907:1ca4:b0:ae6:eff8:bab0 with SMTP id a640c23a62f3a-af2f927c442mr230489466b.15.1753355636774;
+        Thu, 24 Jul 2025 04:13:56 -0700 (PDT)
+Received: from kuoka.. ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cc6b416sm98680266b.40.2025.07.24.04.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 04:13:55 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lucas Stankus <lucas.p.stankus@gmail.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Dan Robertson <dan@dlrobertson.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	=?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	Stefan Popa <stefan.popa@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Alexandru Lazar <alazar@startmail.com>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Angelo Compagnucci <angelo.compagnucci@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	David Heidelberg <david@ixit.cz>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Andreas Klinger <ak@it-klinger.de>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/4] dt-bindings: iio: Drop unused header includes in examples
+Date: Thu, 24 Jul 2025 13:13:46 +0200
+Message-ID: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNAmb2xVkCD/Nw+wC0VRd5AgU5TrgBzoneLbLPVtqQ
-Content-Language: en-in
-X-CMS-MailID: 20250724095412epcas5p36b38fe9e1b835e731abdbcaf64be1174
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
-	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
-	<20250701120706.2219355-2-pritam.sutar@samsung.com>
-	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
-	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
-	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
-	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
-	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
-	<00ff01dbfac1$ee528860$caf79920$@samsung.com>
-	<9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
-	<000901dbfb90$42873060$c7959120$@samsung.com>
-	<6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
-	<2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13440; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=EzzIiAoijePLKsMHhDEAi/RsAbRH40rRrq9ogMFdd+Q=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoghVp1lbwagOVzqnb4D4tPHa76QycwmUcOD8wG
+ rj1LtwZ+vyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIIVaQAKCRDBN2bmhouD
+ 13FoD/43m/JIqB7zoemYOwgQTGXeBr2NHqZX3JjU1PNOPdslHa6EEIzjX9tPb84kF5Y3xi1LeHy
+ hv/4VRTOzK3anln9OLWQCpNvOe9DKZAQBLPbA0TbvUB0Q960y/xUjwFNUH54C9dQDbxJTrTDzxz
+ jAC14J5MbleGVZ9wh1eLFN8kRo2kUxcoG0AhkIC2KPncOCLDa8v4LwsEDdKhZaOwzBC+Rwax27A
+ JYQeOzUCHOF96sj1TT03AugZHXGbvMLR4b4KyAPEuW6S7lrb+ou6nT5LfnC9UyFAkCxgp+zCzVh
+ 4EeIzgZZ86ChXCF3JEuVEuA/P5BRmCFvZIXbdDn8iOgBKrgpFuoVdCY90DvOo3L4FGPQbfz1nw3
+ FTVpdwglTDSDct0eDWw8RunTiavSfgmrc9si53ghRwX9Mc54xsf9APpRiV4r2B3+UrWVFNUuF2Z
+ mRN36MocYerVvVC+azuA3RqoYGq75hrElFxtHXP5QJRHvEskyGtvLmUR+kwh+Yl30gKgjKb3woC
+ CGABbDDz6cvHXwrwKSWa+XnYH4phU7sVHcROxQWdamZnrYnfWusRIHDmVYXZZqLOadUHIXhQqyE
+ KcKz4F3CMJ0XF5p5YWuZgpm9d6QYksD8isNOm7ZRGLUe0QrvAH7UKdh1yW6/hq2+brXKjMeWBDk cFazX3wrd9S/cEA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Hi,=20
+Drop includes of headers which example code does not use.  No functional
+impact.
 
-> -----Original Message-----
-> From: Alim Akhtar <alim.akhtar=40samsung.com>
-> Sent: 23 July 2025 06:15 PM
-> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Pritam Manohar Sutar'
-> <pritam.sutar=40samsung.com>; 'Krzysztof Kozlowski'
-> <krzysztof.kozlowski=40linaro.org>
-> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; andre.draszik=40linaro.org;
-> peter.griffin=40linaro.org; neil.armstrong=40linaro.org; kauschluss=40dis=
-root.org;
-> ivo.ivanov.ivanov1=40gmail.com; m.szyprowski=40samsung.com;
-> s.nawrocki=40samsung.com; linux-phy=40lists.infradead.org;
-> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org;
-> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: RE: =5BPATCH v4 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 HS phy compatible
->=20
->=20
->=20
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzk=40kernel.org>
-> > Sent: Wednesday, July 23, 2025 2:13 PM
-> > To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof
-> > Kozlowski' <krzysztof.kozlowski=40linaro.org>
-> > Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> =5Bsnip=5D
-> > >>>>> Ok got it. Will change supplies name as below avdd075_usb =3D>
-> > >>>>> avdd075-usb
-> > >>>>> avdd18_usb20 =3D> avdd18-usb20
-> > >>>>> avdd33_usb20 =3D> avdd33-usb20
-> > >>>>>
-> > >>>>> Confirm the above change that is meant in terms of DTS style.
-> > >>>> Yes. I have doubts that actual supplies have suffix usb20. Are
-> > >>>> there more than one avdd18 for this block?
-> > >>>>
-> > >>>
-> > >>> Yes, there are more than one vdd18 supplies for this block.
-> > >>
-> > >> And their names are?
-> > >>
-> > >>>
-> > >>> Re-analysed your comment on adding new supplies.
-> > >>> Going to re-use existing supplies as mentioned below, rather than
-> > >>> introducing new supplies
-> > >>>
-> > >>>   dvdd-usb20-supply   =3D> for 0.75v
-> > >>>   vddh-usb20-supply   =3D> for 1.8v
-> > >>>   vdd33-usb20-supply =3D> for 3.3v
-> > >>
-> > >>
-> > >> You just expect us to guess whether this is correct...
-> > >
-> > > Sorry about not being clear so far.
-> > >
-> > > V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY The
-> > > naming convention used in the schematic are avdd075-usb,
-> > > avdd18_usb20, avdd33_usb20.
-> > >
-> > > However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
-> >
-> >
-> > Then dvdd, vdd33 and vdd18.
-> >
-> > > Since GS101 binding already using supply names similar to what is
-> > mentioned in the PHY user manual.
-> >
-> >
-> > GS101 has USB 2.0 and DP, thus the suffix made some sense. I think you
-> > have only USB 2.0, that's why I question the suffix.
-> >
-> I cross checked the schematic of v920 SADK, this is a combo PHY which
-> support USB-3.0 as well.
-> =40 Pritam
-> Schema should capture all the supplies including USB-3.0, similar to GS10=
-1
-> (which has USB2.0 and DP combo).
-> So that would be as below:
-> dvdd075-usb20-supply
-> vdd18-usb20-supply
-> vdd33-usb20-supply
-> dvdd075-usb30-supply
-> vdd18-usb30-supply
-> please cross check the supply at your end and do the needful.
->=20
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml  | 1 -
+ Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml     | 1 -
+ Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml       | 1 -
+ Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 1 -
+ Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml    | 1 -
+ Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml       | 1 -
+ Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml    | 1 -
+ .../devicetree/bindings/iio/imu/invensense,icm42600.yaml        | 2 --
+ Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml     | 2 --
+ Documentation/devicetree/bindings/iio/light/st,vl6180.yaml      | 1 -
+ .../bindings/iio/magnetometer/voltafield,af8133j.yaml           | 1 -
+ Documentation/devicetree/bindings/iio/pressure/bmp085.yaml      | 1 -
+ 20 files changed, 26 deletions(-)
 
-Yes, we have a combo PHY that supports USB20 and USB30 and=20
-need these supplies. Will update the binding accordingly.
-
-> >
-> > Best regards,
-> > Krzysztof
-
-Thank you.
-
-Regards,
-Pritam
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+index 5887021cc90f..3dc973b98f81 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+@@ -37,7 +37,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml
+index 0c5b64cae965..3a8c69eecfde 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml
+@@ -57,7 +57,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -73,7 +72,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+index 84d949392012..a23a626bfab6 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+@@ -56,7 +56,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -72,7 +71,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml
+index c07261c71013..f39e2912731f 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml
+@@ -58,7 +58,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -74,7 +73,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+index 62465e36a590..88aa67bf2280 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+@@ -37,7 +37,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -52,7 +51,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml
+index 457a709b583c..85c9537f1f02 100644
+--- a/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml
+@@ -107,7 +107,6 @@ examples:
+         };
+     };
+   - |
+-    # include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+index 8723a336229e..c5fedcf998f2 100644
+--- a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+@@ -40,7 +40,6 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+       #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml b/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
+index f64d99b35492..53de921768ac 100644
+--- a/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
+@@ -57,7 +57,6 @@ examples:
+         };
+     };
+   - |
+-    # include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+index ddec9747436c..705adbe88def 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+@@ -93,7 +93,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+index 21ee319d4675..62d906e24997 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+@@ -379,7 +379,6 @@ unevaluatedProperties: false
+ examples:
+   # Example AD7173-8 with external reference connected to REF+/REF-:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+ 
+     spi {
+diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
+index c28db0d635a0..b9dc04b0d307 100644
+--- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
+@@ -278,7 +278,6 @@ examples:
+   - |
+     #include <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
+     #include <dt-bindings/iio/qcom,spmi-adc7-pm8350.h>
+-    #include <dt-bindings/interrupt-controller/irq.h>
+ 
+     pmic {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+index 2a8ad4fdfc6b..f0a1347ba4db 100644
+--- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+@@ -50,7 +50,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml b/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml
+index 775eee972b12..044b66a3b00c 100644
+--- a/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml
+@@ -44,7 +44,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml
+index bf5a43a81d59..71f9f9b745cb 100644
+--- a/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml
+@@ -59,7 +59,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+index 4cacc9948726..3a725ece7ec4 100644
+--- a/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+@@ -44,7 +44,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
+index d4d4e5c3d856..119e28a833fd 100644
+--- a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
+@@ -74,7 +74,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -91,7 +90,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml b/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
+index 688100b240bc..2930b3386703 100644
+--- a/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
+@@ -47,7 +47,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -63,7 +62,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml b/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml
+index 27c36ab7990d..8598fb631aac 100644
+--- a/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml
++++ b/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml
+@@ -32,7 +32,6 @@ required:
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml b/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml
+index b6ab01a6914a..ed42dc5afb99 100644
+--- a/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml
++++ b/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml
+@@ -44,7 +44,6 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/gpio/gpio.h>
+     i2c {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+index 706b7e24f182..b9ea37317b53 100644
+--- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
++++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+@@ -109,7 +109,6 @@ examples:
+     };
+   - |
+     # include <dt-bindings/gpio/gpio.h>
+-    # include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+-- 
+2.48.1
 
