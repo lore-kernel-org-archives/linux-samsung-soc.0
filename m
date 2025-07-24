@@ -1,165 +1,166 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02DB2701B4
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 11:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719CC27055A;
+	Thu, 24 Jul 2025 11:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355648; cv=none; b=ZG8lJDaEQ4LY7k5CZr5sFH1F5B2hBPmXLdwR65dU6YnGVFoZaFM1fj6fJnxmcIBylU76ta0kp9Sn0QHyvDaN6MgdMkQpQVFurccOybhn62o+V/PyDrAhVaAASS8S4bpe38FJeGdCE21pmIOhJmy6K17zh6RFPO6nfHRlltIv7J4=
+	t=1753356162; cv=none; b=ujaKW7d70gbLYpkyDkBqqH/AhWbQOXt7BKlDZ5jxrRQg4SHne0+iKysUmZQk6YKOT+u3A52cW1ep3zTYLOJsV+jyczkcL5y63i5xezVB5Mtn7VKPl/jQj/Dm/n3hoE4JVRMfcHbbhcvGlmo+7T5VxraUA5hJ6pxBH2soE+V2okw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355648; c=relaxed/simple;
-	bh=b6N2umPNTV1IfL0+b1JOlj8SzHV/dhc713qHvi1TTIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jr/k84Da6lgk7yAhJq38QZhcVzL3CGvscsuWLzfopl8sARZv8V90P4XSuv2bVxyns2ko3tb2MhP5H3fbjInP0X1zeRVE2Jj0Cfj0AfshwmbMLFDuVDwNkxQ65Vt85wUHjJ9+WiIccXKPJ3En8w375tDz/KpmwBpEuBHdkKx1tgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZGvYe1/O; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753356162; c=relaxed/simple;
+	bh=ncQWBKwI6E8yMwJouaUCSKjj7KYKskxzt07O77RrEYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=fwU+G7NT+Jqj4Wp0YoGsnEQv6jbtDRQziszD9UQc+Tmq6f985vFRS0u3U2fkaHcHR+MGnWHkixwJZsrcdrojgOV58/mdRNfmMl0fW2JC/pz9qrybTlLZHQYeaJ6+nO4OAy8R3Sq0UdcNO0xHxDWc22jhrm0+o8OQYX5eYDiohLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=V+zTJRhD; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZGvYe1/O"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-adb2bd27d8bso14503466b.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 04:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753355645; x=1753960445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bQZpQlnfxb8+AbjkuLqrM6+tWlLtQf4du/oIELr93aw=;
-        b=ZGvYe1/OENH+LRmIDw9ZUOU2QvRiPphRgi9aW2GVd7l3hovyHqH/msU01Sa8C+CX7K
-         HRipvMixVPDI/e13ZNl7xXI1IQVADrjUMg5LVaJIXLc+YwAZWWDWzfU1AFCMsr2f4Xam
-         ZA72gwQwx2ZpAjAZ8XPPQJ7xv1dhJsO7p9w4BrKDOb+Mubl2kM/bJ5tOqAMDoIBXV7Kw
-         s7RmLQdZoPzO8qdc5X8R3eWcly4Si8H0bCnAvKQUdtYLXlXzqx+tB9roJKwYV066yINZ
-         mA8mqH5HTXiH19txyTvczNdBbKNy7mnRqfKIgQmu+gTvb3IgXWWhrM3W9V7gsXWAsRRC
-         sCrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355645; x=1753960445;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bQZpQlnfxb8+AbjkuLqrM6+tWlLtQf4du/oIELr93aw=;
-        b=dGxGNCpMOCrVR2m8nPfmzRvW85FbxUNJjPAbs/1RXeddHEkNrUFWjP6tqZsi6qGyjW
-         Z9kEkaYnJ1FveGUvTdxp4IO3Y3cCcenGIG9XcthiwBWnaigCktYOF/U55UnixgCyBoJb
-         4W0RmIlEsO87Gm8886PY1Wr+8/6bpyYmp/Kgj7TjRkC1/mnht+psPdHxnjJlxsFwQ7KF
-         qzGIS4S/reXxgqW+fUGGD9LxbsHkD1uxK74VSErVULApbxMYkfcyeB6b6dNk3ATwkaan
-         VxTor7t3eqH/uqKiKJb+6DF+53cO88+EvMNRUouFv0aPOZaqxEXT9K7xxwV3/oCyWtPz
-         G1iA==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0nCK6KMtucDSw88Aw5bJrNbrl5OSEpzOOtoVX1xnrZrVzx0pffodsrDPk+zsNwn3/kfVjxfWO95ZsZ8vmb9mag==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt7KkuKwTnoZ8vSnqs7z3AE9afOZx3la7Qf0NNdTC8Sh2TsqqS
-	qxCAIC3vb0mcVjSUu8lsRtKXnIpoSVdLnJkdnscHlS2nNiK4hZpmfxe/44G9Ni7jipA=
-X-Gm-Gg: ASbGncsolHGmYUuRxDenYjBAEAEq8Wq04g8k4uIDcTsDScS8hVQxA2HIUdwxHZhQQTC
-	Udh5e+vFJXLxWAv2aPwIUQnsC56SeWaZBwv/cXQ8sxhd75iNhTfBoeyg2Bb73tYKVox63ZsNCxV
-	tN7/tWn8txPJCVAz+lAaI5IQ6jC1PphLeMT8REOcf5pZhnBnVQ5OxnIeIgnp7rGy1YPKHhLaabg
-	YM2nCHjPGvJty531hrN7B3mgMtFy4b3kYPRzONvhJnL2F9DCP81ootaidacsyhxguEj1R5PQ+pP
-	lxIpNJOEtl9/DMleoQ99sOPxaXnWCzfZD5RTUEg6DepZPFQhyyY9mgsmdYqC5sjihPOcZEFYH6j
-	9Mey6NlfWjBk3BCuc0fc3Zev/vTnIKyGl
-X-Google-Smtp-Source: AGHT+IFa0qQb9reYIZm1YmnTMClWxGtJ7wMFuJjmizdol6uz/d8+OmMad9nebjC8fBgVpRYvCf7I3A==
-X-Received: by 2002:a17:907:da0:b0:ae3:bd92:e6aa with SMTP id a640c23a62f3a-af2f6d21a13mr251363066b.6.1753355644977;
-        Thu, 24 Jul 2025 04:14:04 -0700 (PDT)
-Received: from kuoka.. ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cc6b416sm98680266b.40.2025.07.24.04.14.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:14:04 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lucas Stankus <lucas.p.stankus@gmail.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dan Robertson <dan@dlrobertson.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	=?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>,
-	Alexandru Tachici <alexandru.tachici@analog.com>,
-	Stefan Popa <stefan.popa@analog.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Alexandru Lazar <alazar@startmail.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Angelo Compagnucci <angelo.compagnucci@gmail.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	David Heidelberg <david@ixit.cz>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Andreas Klinger <ak@it-klinger.de>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/4] dt-bindings: iio: light: Simplify interrupts property in the example
-Date: Thu, 24 Jul 2025 13:13:49 +0200
-Message-ID: <20250724111345.47889-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
-References: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="V+zTJRhD"
+Received: from [192.168.6.83] (office.icewarp.com [82.113.48.146])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 25826161193;
+	Thu, 24 Jul 2025 13:22:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1753356157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zk+cD+vGoFFprH1JsPNoZZcojBrn4oW2cTrpdNOuWYI=;
+	b=V+zTJRhD9IxgO6eAU2f73Q6zmgZuL/s30d7j1lY0zcy3d+WBbOZ5HrkgP76c3rBCMTIK+S
+	eEKeiRU20oNV/FfFdSfJcgtS3cxzHp8H6rk6ESmLKYWA1A5e5y58Dha/qdqdzGiQHxbABK
+	dJPUbBfYk42jDWkqvQgkaFi7Sb1Ov/g=
+Message-ID: <623783cf-d1ca-424c-9e71-e14acb9c3204@ixit.cz>
+Date: Thu, 24 Jul 2025 13:22:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1756; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=b6N2umPNTV1IfL0+b1JOlj8SzHV/dhc713qHvi1TTIo=;
- b=owEBbAKT/ZANAwAKAcE3ZuaGi4PXAcsmYgBoghVv8JkjSZ8TS10rImPxhJU6HQEp0Ax8CdrPj
- oFHeCKo4tmJAjIEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIIVbwAKCRDBN2bmhouD
- 1+xND/dph6v3f/nk6xR6ZOVDJzqcxHAMQW0NMaZkXHLCSexCIrYiXqPYWGOTQr1kxGVpawORqWf
- WEys7LnslZMo0RJeJqF8MU49l5ngYTPO5r3uwWWR5ujBuBUgIWF40bZMZaNZ1jFzFh0x6NzQ8on
- fNRUkL5E+WhVNien8tpppc5W35sunUUoI67pNmo//pIbOY8l1YK4/z7OhPxQvtnBKTzq1/5ijPl
- emLzxmSY842kA/l4YDqE8VFKBmsR+nQA9jByliluWCNtbvkrQ8BVrXWFbnfeEo+Ts67krs0+Erq
- RdOszM9836SAecgYaVZyk/ChFftLLywwpXH/H0RUg0QKbBPYOkKDvj1wRYD9I5QHH0JHqyoLf0Q
- KkLiEFfGNQ/JZqaxildmiiHNEjQzacsj8YmT7HM5slfZoi6iWYz4WNHwzv55SFke2/1VNLEyh4C
- DsgO7tYJJ2HWrG+YPZTu6KohrQLV9M/CF7Gna6E/QGEI3FY4A6E8iSPvDNEGsZ03dfOkxOxM4Qm
- UxxJMk35cSze6vAI2pFfB03721d2x25Cf4RuX8hKGWUJ2yYM05eYGn1msvWybWR26ogcI0UG6Lv
- HvhlielC+QYEOhDWOSK7f2olNiVjRlngmx/32jTCIwy/0R+HRhYN/35eAAFRVVtmuuxE3sMMSym MHhpGZoVv9Prp
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] dt-bindings: iio: light: Simplify interrupts property
+ in the example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
+ <20250724111345.47889-8-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko <andy@kernel.org>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Alexandru Lazar <alazar@startmail.com>,
+ linux-arm-kernel@lists.infradead.org, Bjorn Andersson
+ <andersson@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+ Angelo Compagnucci <angelo.compagnucci@gmail.com>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>, =?UTF-8?Q?Ond=C5=99ej_Jirman?=
+ <megi@xff.cz>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>,
+ Puranjay Mohan <puranjay@kernel.org>, Manivannan Sadhasivam
+ <mani@kernel.org>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ Dan Robertson <dan@dlrobertson.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Stefan Popa <stefan.popa@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>,
+ Alexandru Tachici <alexandru.tachici@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Lucas Stankus <lucas.p.stankus@gmail.com>, linux-kernel@vger.kernel.org,
+ Andreas Klinger <ak@it-klinger.de>, Andy Gross <agross@kernel.org>
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <20250724111345.47889-8-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-dynaimage,al3010 and dynaimage,al3320a are I2C devices, so their
-interrupts are not routed to GIC and rarely first interrupt cell is <0>.
-This looks like copy-paste from some SoC block, so drop it and also for
-readability use known defines instead of hard-coding interrupt flag.
+Thank you,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/iio/light/dynaimage,al3010.yaml         | 2 +-
- .../devicetree/bindings/iio/light/dynaimage,al3320a.yaml        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: David Heidelberg <david@ixit.cz>
 
-diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-index f1048c30e73e..1472c997c16f 100644
---- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-+++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-@@ -42,6 +42,6 @@ examples:
-             compatible = "dynaimage,al3010";
-             reg = <0x1c>;
-             vdd-supply = <&vdd_reg>;
--            interrupts = <0 99 4>;
-+            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
-         };
-     };
-diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
-index 8249be99cff9..d06db737cd9e 100644
---- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
-+++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
-@@ -40,6 +40,6 @@ examples:
-             compatible = "dynaimage,al3320a";
-             reg = <0x1c>;
-             vdd-supply = <&vdd_reg>;
--            interrupts = <0 99 4>;
-+            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
-         };
-     };
+On 24/07/2025 13:13, Krzysztof Kozlowski wrote:
+> dynaimage,al3010 and dynaimage,al3320a are I2C devices, so their
+> interrupts are not routed to GIC and rarely first interrupt cell is <0>.
+> This looks like copy-paste from some SoC block, so drop it and also for
+> readability use known defines instead of hard-coding interrupt flag.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   .../devicetree/bindings/iio/light/dynaimage,al3010.yaml         | 2 +-
+>   .../devicetree/bindings/iio/light/dynaimage,al3320a.yaml        | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> index f1048c30e73e..1472c997c16f 100644
+> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> @@ -42,6 +42,6 @@ examples:
+>               compatible = "dynaimage,al3010";
+>               reg = <0x1c>;
+>               vdd-supply = <&vdd_reg>;
+> -            interrupts = <0 99 4>;
+> +            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
+>           };
+>       };
+> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+> index 8249be99cff9..d06db737cd9e 100644
+> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+> @@ -40,6 +40,6 @@ examples:
+>               compatible = "dynaimage,al3320a";
+>               reg = <0x1c>;
+>               vdd-supply = <&vdd_reg>;
+> -            interrupts = <0 99 4>;
+> +            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
+>           };
+>       };
+
 -- 
-2.48.1
+David Heidelberg
 
