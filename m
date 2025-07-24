@@ -1,60 +1,58 @@
-Received: from mail-m21468.qiye.163.com (mail-m21468.qiye.163.com [117.135.214.68])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D432521D5BC;
-	Thu, 24 Jul 2025 08:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F88274FC2
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 08:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344536; cv=none; b=KYzWuZS4oRrGbKxQ1OJW07+tLc4wurPy+o/hp9V+aOuJQK5W0JNijVb0si464JgyDyV5LSBezFbmGTgJTbxFaxH9tw2g+ltvVlcmeSz49+5pGWyztJV16FHdtIT8vKdskpYRmkmVTAoGgl/2HFqY2hiAsgniS0zc1aPMyjyenI0=
+	t=1753344823; cv=none; b=XxQDVlTeACR9W+TMaKqv5Kl6sgjXCIQH5kipNHpIAYQRw4s0mmh3hUmesRmbLu2uyfTaUQvtYFLyxGd8b3qbTCz6I460SMNnAJo0SYKbxavwGFnKWtTzvtAl9X3MifLvRx6f9wjtkMP+CmFbcrSd4vUFnbh5RU3sRtC56MLFwFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344536; c=relaxed/simple;
-	bh=/hXLqceSyN9TOshckad73N092ri3oY7WH7I29ufvDWM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tDVT3p/GITE/KyfGhtYDJ4Kxe/vEvkA+D0LlZyKkn6zMpn7c3UqZVO7mkkXBR4jdEuBvNsMcH8+SXsHpUQuyT8nKrKWEj/inPuSFM3gjHXjYPFsRRijsC6jimFDcvQ/m8auFEEDmVCjAd/thy5Vc5q2DTD9GrqV8FikDgSTx99c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=JRR3A9dh; arc=none smtp.client-ip=117.135.214.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1753344823; c=relaxed/simple;
+	bh=U7tIo/+hPh5wsSDVa2lALrOfs/J4zuc77cFA4O2QvIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=jF7vNd3p9VHJudxEXX/JaQ/9dRbsVxGVCGXlXX+K/o4tW9WFfg/eL1dWdZp8bpWG4tVYEdq8qy5w6ImsPQYwad6hGDTVDK46oHWXoOYRdNOwuMEgMTx2GgON9fXONkmaN/CI80UYHJSdON//GP1IUQ8vWWwXbpo613LNr6L6lFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IJ/QZ3xB; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="JRR3A9dh"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c34441;
-	Thu, 24 Jul 2025 16:03:42 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jingoohan1@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	l.stach@pengutronix.de,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 11/14] drm/exynos: exynos_dp: Apply analogix_dp_find_panel_or_bridge()
-Date: Thu, 24 Jul 2025 16:03:01 +0800
-Message-Id: <20250724080304.3572457-12-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
-References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IJ/QZ3xB"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250724081338epoutp026cd013dd62b5648f084728090630ac80~VIdLAKKbX0995809958epoutp025
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 08:13:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250724081338epoutp026cd013dd62b5648f084728090630ac80~VIdLAKKbX0995809958epoutp025
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753344819;
+	bh=ohWkVViPltngJsHO7QO3hWauv6Xr0PKpOtjgZtEomck=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=IJ/QZ3xBh860Y+YV68K2mGFTVfAPqPNyQKBqTeeZ7ReOwu9Hu2I6xY/wDbY6tMFZV
+	 Eeuniks0YSdlKMOHkD2++iWfjlDyCF4Td+41Gwb917VtI2LeYNhdURhFxqgwHBOvi2
+	 INNcV2CRufee+EAt3eNM6LK980px1U12TJfSqW5k=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250724081338epcas2p374500980da4a71c430cf64110e52ddf6~VIdKLs-yC1011010110epcas2p3L;
+	Thu, 24 Jul 2025 08:13:38 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bnkKY2kssz3hhT7; Thu, 24 Jul
+	2025 08:13:37 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250724081336epcas2p30ba9afd1e78d9bbb60f44d24d1cf0acb~VIdI9bMNu0887108871epcas2p3I;
+	Thu, 24 Jul 2025 08:13:36 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250724081336epsmtip13c1b034ffc2b18f9512c58cb6a28178d~VIdI5pJXI1874118741epsmtip1J;
+	Thu, 24 Jul 2025 08:13:36 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net, semen.protsenko@linaro.org, khwan.seo@samsung.com,
+	dongil01.park@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
+	<sw617.shin@samsung.com>
+Subject: [PATCH v4 0/4] Increase max timeout value of s3c2410 watchdog
+Date: Thu, 24 Jul 2025 17:08:50 +0900
+Message-Id: <20250724080854.3866566-1-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,79 +60,53 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a983b75a3c403a3kunmbbba7af2a064
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhhCQlZISksYHxlNTh0YHR5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=JRR3A9dhVuInFKflciWmtxeO35JgqAgF/ez+slG/xokgRyhrxYkJ5ol7dtNlFdnPiayM7hTlqaTu7buXs2e6iFoIFEQm9XQNwAjDmKxITAgFQtL6Sv9+hPswAA2wZwEMPo2Zz3NFvLW26eQz3ZP8m5DhXO6yrmdZbcJY/5nsMl0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=DSLukblLESTTAuXw3hygP55JWV94nhT/wWVcn/G+HYU=;
-	h=date:mime-version:subject:message-id:from;
+X-CMS-MailID: 20250724081336epcas2p30ba9afd1e78d9bbb60f44d24d1cf0acb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250724081336epcas2p30ba9afd1e78d9bbb60f44d24d1cf0acb
+References: <CGME20250724081336epcas2p30ba9afd1e78d9bbb60f44d24d1cf0acb@epcas2p3.samsung.com>
 
-Apply analogix_dp_find_panel_or_bridge() in order to move the
-panel/bridge parsing from Exynos side to the Analogix side.
+The ExynosAutoV9 and ExynosAutoV920 SoCs have a 32-bit counter register,
+but due to code constraints, only 16-bit values could be used.
+This series enables these SoCs to use the 32-bit counter.
+Additionally, it addresses the issue where the ExynosAutoV9 SoC supports
+the DBGACK bit but it was not set.
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- drivers/gpu/drm/exynos/exynos_dp.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+V3->V4:
+  - Merge patches [v3 3/5] and [v3 4/5] into one so that Quirk and its consumer
+    are part of the same patch.
+  - Link to v3:
+    https://lore.kernel.org/linux-watchdog/20250714055440.3138135-1-sw617.shin@samsung.com/
+    https://lore.kernel.org/linux-watchdog/20250515075350.3368635-1-sw617.shin@samsung.com/
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 39dfb7a44c85..c5aa9cc5e2bd 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -203,9 +203,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np;
- 	struct exynos_dp_device *dp;
--	struct drm_panel *panel;
--	struct drm_bridge *bridge;
--	int ret;
- 
- 	dp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_dp_device),
- 			  GFP_KERNEL);
-@@ -225,32 +222,31 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (np) {
- 		dp->plat_data.panel = of_drm_find_panel(np);
- 
--		of_node_put(np);
- 		if (IS_ERR(dp->plat_data.panel))
- 			return PTR_ERR(dp->plat_data.panel);
- 
- 		goto out;
- 	}
- 
--	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0, &panel, &bridge);
--	if (ret)
--		return ret;
--
- 	/* The remote port can be either a panel or a bridge */
--	dp->plat_data.panel = panel;
--	dp->plat_data.bridge = bridge;
- 	dp->plat_data.dev_type = EXYNOS_DP;
- 	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
-+	dp->plat_data.ops = &exynos_dp_ops;
- 
- out:
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
- 	if (IS_ERR(dp->adp))
- 		return PTR_ERR(dp->adp);
- 
--	return component_add(&pdev->dev, &exynos_dp_ops);
-+	if (np) {
-+		of_node_put(np);
-+		return component_add(&pdev->dev, &exynos_dp_ops);
-+	} else {
-+		return analogix_dp_find_panel_or_bridge(dp->adp);
-+	}
- }
- 
- static void exynos_dp_remove(struct platform_device *pdev)
+V2->V3:
+  - Correct the incorrect tag information.
+  - Link to v2:
+    https://lore.kernel.org/linux-watchdog/20250514094220.1561378-1-sw617.shin@samsung.com/
+
+V1->V2:
+  - Modify the max_timeout calculation considering overflow
+  - Separate tha max_timeout calculation into a separate patch
+  - Add max_cnt in struct s3c2410_wdt
+  - Set max_cnt once in probe function
+  - Add patch that uses S3C2410_WTCON_PRESCALE_MAX instead of hardcoded one
+  - Remove unnecessary inner parentheses
+  - Link to v1:
+    https://lore.kernel.org/linux-watchdog/20250513094711.2691059-1-sw617.shin@samsung.com/
+
+Sangwook Shin (4):
+  watchdog: s3c2410_wdt: Replace hardcoded values with macro definitions
+  watchdog: s3c2410_wdt: Fix max_timeout being calculated larger
+  watchdog: s3c2410_wdt: Increase max timeout value of watchdog
+  watchdog: s3c2410_wdt: exynosautov9: Enable supported features
+
+ drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
+
 -- 
-2.34.1
+2.25.1
 
