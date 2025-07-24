@@ -1,113 +1,134 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4211ACEDC;
-	Thu, 24 Jul 2025 16:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8D9205E02
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 18:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753375311; cv=none; b=Fcpbxtj9DfLErFKfAOzbjRuW2V/zQbOFuN+YaKQVvTpq2IlPhTvGWh9aCE5lt6rd+l/0ln63zjKepyV68kg004UDqsfPMWSeyik9KqmNOk+8a1MnWhnXNUf9PkZWCDOl/TNZPt/m7F0uvNFbk1+F0G1STkYDxM5iuuj1gGWqlX8=
+	t=1753383094; cv=none; b=VpyTW0qp2ZZt2YNI+QS+wpbBpg3hfPmsIkaZanO1dKhmKsR9RAoWM6RXAnsvqSt+mLpKPKSv5A5w6NX9CoQI+tkobIFpNcb1pSxJd4PRLMciTFz7pxhwjxMJyc/6LZ5FalPqku/3zxGbOr+ud6fNRU0B4zprT8j15MS1UcsL7T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753375311; c=relaxed/simple;
-	bh=GJ7oPGiI/+5Cg12azq2uSL0OHujgc0U//kiVeas2jMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7mKvzSVDT24WwzctqoXgts0Afk5Zk7aOMom9RDeQQkle3EMPtl52eMYu73cVQs29DV5LfmsQG5cMuJubDRJWFMnuUot7UqzwsK8kbSJqp1uLm9npr99hSy1SECAkpWFnOGcxfz6pzQ8JhQ48b/209Bl2Ng9amBg0wJ3FVZKhuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nrRaoxe3; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1753383094; c=relaxed/simple;
+	bh=x7ArkJEJ9UcO+6C4Ru2GjqQ1KuSGnTuAjOfKTce7MBE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YDKXuljXsFCzgW3upSoTQiHSQjN47HKNr0edrEZNw0Eos5aBmZLVW6ibk6bJ2WMG/lKnqwJFZOyaG9buYwpGr9wPts7IV0+hmMyhUOWJ8k0mosCX5JTRFSK8Omnkw0jLszEwq//M2qpjL++cIYdVtYARYNgA7YOTIj4yS+73XLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=h8U+1wbM; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nrRaoxe3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753375310; x=1784911310;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GJ7oPGiI/+5Cg12azq2uSL0OHujgc0U//kiVeas2jMI=;
-  b=nrRaoxe3hD2jaQdzIqhpTrXWz9pyX0jgZNK2dnz/xeTCBQHa80wE3KDg
-   GKXDyRZdPsAFK3ADUWeSA1aLH4CJuNIXebl4NP7M2DNUNEhNfoei49evC
-   zSmsg8V17oFmFJU3bELvBwM6ieAvQB9G1hH7iYeqVR+f6IY9ByOAKAVd3
-   UZxxn2IheoNxAyok/QTMEdby4kl8EPtjpyt5xiL5W3LLz91arw2OZi4ul
-   R4Tu2SL8xrk1GXoyt3j5XkhHHCduZzM4d4a3Y2i6jwX+OFOTxHee9d5zp
-   dBMeUrqGw8nfERi+bp5H/nRxpLahhPoSglzN6DZLNnHa15e3M5UgXVeDH
-   g==;
-X-CSE-ConnectionGUID: RtJnbSuFQNORFNY8DQc+Cg==
-X-CSE-MsgGUID: U6u/XPTTTry0w9j6m9JtiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="58322801"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="58322801"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 09:41:49 -0700
-X-CSE-ConnectionGUID: kbR/YZUgRpGnkRP9NRGpww==
-X-CSE-MsgGUID: 7yCD/4uhRS+IRX2C8Brupg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="164860147"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 24 Jul 2025 09:41:45 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uez0o-000Kdd-0x;
-	Thu, 24 Jul 2025 16:41:42 +0000
-Date: Fri, 25 Jul 2025 00:40:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Henrik Grimler <henrik@grimler.se>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maciej Purski <m.purski@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-Subject: Re: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-Message-ID: <202507250036.RXWSmKW2-lkp@intel.com>
-References: <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="h8U+1wbM"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1753383088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sk/dubggUrsZRv18JEnxLLB6/IJr310Fql5axFV4e5U=;
+	b=h8U+1wbMYDv9Gf6u/u3z/hX0EVU0H4ilBeJpZMlFyewcM1+vzqzVK7zcwJLjNsmE6NXuPY
+	EwP7dIrJzzzHnVnB7Zm6OEVGSuMzJCdHw3q5WPBdEIYDbp7yko/khz3CiWZxPJZmOhpAxV
+	330XfEXxHjjBMGffK+HjmVCPjpfCmCc=
+From: Henrik Grimler <henrik@grimler.se>
+Date: Thu, 24 Jul 2025 20:50:51 +0200
+Subject: [PATCH v2 1/3] drm/bridge: sii9234: fix some typos in comments and
+ messages
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250724-exynos4-sii9234-driver-v2-1-faee244f1d40@grimler.se>
+References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
+In-Reply-To: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
+ linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2337; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=x7ArkJEJ9UcO+6C4Ru2GjqQ1KuSGnTuAjOfKTce7MBE=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBogoCjJ9/3h8Wky1TRWhdX3OOfB+G5JpWthPsCV
+ w440zNhYqKJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaIKAowAKCRCwB25JC3Fh
+ a9npCADHWTJz3xTyDqFUzn3hB/3tLJFw8GxSEj0e+QRnCpw/CKXNg5ylY7zfogUgWnla48cjNzQ
+ OQfvrAjIreTRs5OjMyliwSiBU3Hf43FzDbahNZ/DNLVgKmmaAe6JX8Ue+jH1Zbhr0ZNkLCLxlve
+ WViOyl7ljdRecRVi+/EzudbtLa09Ve6A6zaTtdcEXUPy+DOsNGDfz0LPUlMTanQBEFCi4JpgrmP
+ I62kuosZ1XoPH8fO04ycNyd5hqs+gt2CKk2kG3Qd2jsl/YcpXQrXT7ODt1bwdk+o292+NALeNSE
+ yOewobZJ008mh/A5wmNHSJgR1/xAkH4yb0CHpigj2vl4/HRm
+X-Developer-Key: i=henrik@grimler.se; a=openpgp;
+ fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
+X-Migadu-Flow: FLOW_OUT
 
-Hi Henrik,
+Fix spelling and formatting so that the code is easier to follow, and
+so that it is more searchable.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
+---
+v2: no changes
+---
+ drivers/gpu/drm/bridge/sii9234.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-[auto build test ERROR on ca2a6abdaee43808034cdb218428d2ed85fd3db8]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Henrik-Grimler/drm-bridge-sii9234-fix-some-typos-in-comments-and-messages/20250721-174814
-base:   ca2a6abdaee43808034cdb218428d2ed85fd3db8
-patch link:    https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677%40grimler.se
-patch subject: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection logic to detect MHL
-config: arm64-randconfig-002-20250724 (https://download.01.org/0day-ci/archive/20250725/202507250036.RXWSmKW2-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250725/202507250036.RXWSmKW2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507250036.RXWSmKW2-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: extcon_register_notifier
-   >>> referenced by sii9234.c:928 (drivers/gpu/drm/bridge/sii9234.c:928)
-   >>>               drivers/gpu/drm/bridge/sii9234.o:(sii9234_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: extcon_unregister_notifier
-   >>> referenced by sii9234.c:1009 (drivers/gpu/drm/bridge/sii9234.c:1009)
-   >>>               drivers/gpu/drm/bridge/sii9234.o:(sii9234_remove) in archive vmlinux.a
+diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
+index bb1bed03eb5b7ae67f752c0d593dc54131e9e370..930117bbba87285e62107389606897740516eb0a 100644
+--- a/drivers/gpu/drm/bridge/sii9234.c
++++ b/drivers/gpu/drm/bridge/sii9234.c
+@@ -339,7 +339,7 @@ static int sii9234_cbus_reset(struct sii9234 *ctx)
+ 	return sii9234_clear_error(ctx);
+ }
+ 
+-/* Require to chek mhl imformation of samsung in cbus_init_register */
++/* Require to check mhl information of samsung in cbus_init_register */
+ static int sii9234_cbus_init(struct sii9234 *ctx)
+ {
+ 	cbus_writeb(ctx, 0x07, 0xF2);
+@@ -614,7 +614,7 @@ static void sii9234_cable_out(struct sii9234 *ctx)
+ 
+ 	disable_irq(to_i2c_client(ctx->dev)->irq);
+ 	tpi_writeb(ctx, TPI_DPD_REG, 0);
+-	/* Turn on&off hpd festure for only QCT HDMI */
++	/* Turn on&off hpd feature for only QCT HDMI */
+ 	sii9234_hw_off(ctx);
+ 
+ 	ctx->state = ST_OFF;
+@@ -708,7 +708,7 @@ static enum sii9234_state sii9234_rsen_change(struct sii9234 *ctx)
+ {
+ 	int value;
+ 
+-	/* Work_around code to handle wrong interrupt */
++	/* Workaround code to handle wrong interrupt */
+ 	if (ctx->state != ST_RGND_1K) {
+ 		dev_err(ctx->dev, "RSEN_HIGH without RGND_1K\n");
+ 		return ST_FAILURE;
+@@ -723,9 +723,9 @@ static enum sii9234_state sii9234_rsen_change(struct sii9234 *ctx)
+ 	}
+ 	dev_dbg(ctx->dev, "RSEN lost\n");
+ 	/*
+-	 * Once RSEN loss is confirmed,we need to check
+-	 * based on cable status and chip power status,whether
+-	 * it is SINK Loss(HDMI cable not connected, TV Off)
++	 * Once RSEN loss is confirmed, we need to check
++	 * based on cable status and chip power status, whether
++	 * it is SINK Loss (HDMI cable not connected, TV Off)
+ 	 * or MHL cable disconnection
+ 	 * TODO: Define the below mhl_disconnection()
+ 	 */
+@@ -820,7 +820,7 @@ static int sii9234_init_resources(struct sii9234 *ctx,
+ 	int ret;
+ 
+ 	if (!ctx->dev->of_node) {
+-		dev_err(ctx->dev, "not DT device\n");
++		dev_err(ctx->dev, "no DT device\n");
+ 		return -ENODEV;
+ 	}
+ 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1
+
