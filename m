@@ -1,116 +1,150 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19E6155C97
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 07:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E69239581;
+	Thu, 24 Jul 2025 07:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753341265; cv=none; b=Xv2XBspcVDJO/8yuvrDnLFqBDnmWumpGHiiO+WBCpIybH6SFQViRCBpmRAFekz9Y4fEZou4ZpLsN02OJ0MOnjaZt0PzbVV2ik26sRuGz5Ju51T4HQsqRePZBmUPJ+IVL0eBh0S+yEVqdQkHL3hGeovzvGf4I1c50s+ym+VP7hMg=
+	t=1753341855; cv=none; b=TDHDAhYt8OnuFNW95x/G3OLnbNMoreHZYmhvDJQw9y0l+d8uQipQRuHg1/3ry7YN3ZGeMvIBHcn6dAR/PiF80WSMoJQlVFkNeSxiqPPkr4LmVfdOECAIG9Qj0dmnU2aiCijJN3MPk5f7bLrH3kq7l9W3WG7XHEEjFGNQS+SBE10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753341265; c=relaxed/simple;
-	bh=rE5qWWZjndiq49hxBlZf+jiV7j0uDbdzOEQLJLes2Yo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TU7pR+jpE5DukXQaKtPPClasYh3fxkCC0+zfso3c8JCxg28hxCM8J0WFAh/AcMxFG3boqjzz7xyX6UT7UwGIZ3ake9nK5Sq9q6Fc7y3b16IWgYxHaOPrLK9Rwyhu9rVO4C6OHcZFG1Ft5cuGYjR5OvTEC12lPxZm6M0CFW4oE3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uMw1sUWg; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753341855; c=relaxed/simple;
+	bh=dUyLN2kfotLNLyofConSuTyLmjoZe/xUKspDkME1Jro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iv0/QtW4bPRgBWSwoG7fIUFD8k2rpIIV+/Zbub0p4bp7sNTYI5JwAb5vP1FHii+6nXTgK97ZvqO4Jow+7MRhdDPNxXHPdPoodNt2QdPtzMNx9IZ2Rr1+puTsB25MkyJinGk1WXnYNkmoRLO/Hm/20YKvHb+qmeRSi4YdbHczCFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bp13qMKX; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uMw1sUWg"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e8dd5602497so522289276.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 00:14:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bp13qMKX"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so6310015e9.0;
+        Thu, 24 Jul 2025 00:24:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753341262; x=1753946062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RYtiTl2/vcB5JjeNMht3FQUGQbOf7Sw/0g0qYc0qYCs=;
-        b=uMw1sUWgd/kyEaVHyO0gCQsjPlh8i4zKQIw7iR1q+McYVsnggcp0xEcI4LcZHxerIg
-         J6Dqhxb83bm3fBqU53lfOuvQrsG3cev/82p61m8rG7GxK3wQruIPEcbauLdU9MS7G3wV
-         nxOLADZhnvMJx2QY2gcXZ857x9Y9QG1BJWLYnVkQTtz/oZFEdbOy7fvQlgRZ/q1I2ubD
-         ER3jW2pedmhsaXP+NUUOvkKF+FBeIChp4nEDp/8jWB/xM6w2abcRBPiuf733sdTDfjDy
-         54Wk1AT6nEmmxNLng9yuZK7HjSmAWouIYXSAqVvCRT+XPkRhMH3+psFrJibni2F378Mo
-         CJYg==
+        d=gmail.com; s=20230601; t=1753341852; x=1753946652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o8vH8JfnKijTJB45W87819LYq2SjUU3QszzdXJjSPeo=;
+        b=Bp13qMKXrCU+BYsS/+gRMgzyJrbmU9N0qr9a6lyaUMv5bUggUSfb7sqDMIllgxYLVO
+         DL1W0EmYAtjuBMPyAVpx/+ntXm/9KSBsoK5qJ2+BiAFgG3g7RM43z/3BbefobbBLmyEU
+         AJYSyxd7Tg3elwSSL8pz+bgNVFk2K9YxPPXDLryTW2PtrsMlGb+w52pLmZ2FI8PFm+Xa
+         oIb2oTh9cfyvHFaKR6aXLeINYOgbh9WEFQFhZaNojprXBWuTBj4BwfP7MluTMhi5N3Cx
+         huKQ4czLjMgUiZb4T5WLVKC9pRFymKCwZ4X1o2BFvOnIowO1CHKoeCG/l27ZbKWYSkht
+         P6SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753341262; x=1753946062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RYtiTl2/vcB5JjeNMht3FQUGQbOf7Sw/0g0qYc0qYCs=;
-        b=oz07/XJMLapDhMn5aA6HXgstEMo37VoH8R4UrNbJBhhCUFImxq13HUMGOn/pZVI+T6
-         SLFgtz1OIxjJvaO5t+lDscZZjPmeQB8Nk4UXkr21wEcDnci8Pi5Z4SNH3RkiUUJpTcoJ
-         +uvn7cvUPa0fa+6F1YOG7S3fW9Y9yJofDaq4MhFBN93Mm7GCE374SimwhZF3kYxjuJNu
-         TqgjBlRmMfc6PYIsXbAlzgthH2zAw0EvJXlsNj1rTXr8xb0N7+Uv5GcjkT86H/YzfhVy
-         hZFO4TQnxPm51OnsQF2BuGVdd83nAsAlNqCl9FLeu3NuYT962+hzXPU0yOGYP3104r8l
-         4JHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVobJrg8f9m0Ce/K+EerZvMppCO20IUQsI0bSYfpeG8Z2prX1y+v0wvP/UeLUkgydVa+PVgBjMb4uzNaEN3KVLVWw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3uAktUVXL3F+AInKJzsZE3nKnB4j6N3DRXhhteH7dgbNnrIvw
-	rpiMFfV8sbsjiO+XvhyxzJsURvtmcouQtRTQeyVQZOH9b7rvnlqYgZYakRHjPo9yNoCmt6OyRVN
-	1nOleKAZkrwbG+0s5mgo08bykV+LpeoSTY+JSB3V+SQ==
-X-Gm-Gg: ASbGncvHkJR1rfkJkn8wBW/418opJkcKZ8vLpMVbXHvh/66DYPv82xxDTKo0OVvnDQI
-	QwDxl/g7qTbsjfSQK0Q8htn1hkKAX8pNUGdKJmVquwe/DtjoFTFEAc+5Qcslss8jFZd55appQ8V
-	DjrBwwxmw24oDkpCnwBtfPNcmaukX6jeFXVZmqDetWNMx3wOjC9LDDtDavZBfsELDqWk5zNr+be
-	OqQuDg=
-X-Google-Smtp-Source: AGHT+IFmnBw44RVqEQy61JKuL0iFrYaWpRDyxUhMmlPDwRzFw5AwUBOybBBoOUdWV5mpQDmcfwgotc7Tx/G30sPFLxE=
-X-Received: by 2002:a05:6902:4a0c:b0:e8b:d37b:86fa with SMTP id
- 3f1490d57ef6-e8dc5a86969mr7074336276.37.1753341261694; Thu, 24 Jul 2025
- 00:14:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753341852; x=1753946652;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8vH8JfnKijTJB45W87819LYq2SjUU3QszzdXJjSPeo=;
+        b=bu6WAWzFBW7nWB9y3yL6n52d8taZRVf2o7T9GUu565767khYDmvcbiyrOPaTYxcC8I
+         qxOck3PYXcPB4UJ8yaaqvv5oGuaxWviv2faspph+5bBRs4wHgVj3BXgoDTGi1zVgf2rS
+         3kY3Wk0CsGCfjliDc9ToLfHd8QJuu1Y/ARPISZkuI2hRk2ZTOnGPctX70p2EhPczfTV2
+         f66hbcTlGySTVxIWTuRGbi6PjpJ9b10XlgwpqFHQSBw1usqSPb4hMXx9bXinYq7sSkbm
+         XGYfX0wOEELJNbSfWnyk3AFd3Iyt1EF3HMX66y7kvjtowEhCUkzR3fUeLUJTAob8v7Aj
+         mW4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVaPgVroIh947akSqShDYWNFsTfEMwOsV7Wt2Ptn2sfXyfurlS9uTJPKWlEvlDH6Hd+dxM9QOK1qrLrEjMg@vger.kernel.org, AJvYcCXK8BGIlFlA3j2q/rrJ4jGjEPQAsC8xxzfZv9T3PnyqjAbqlfhXVia1YWo/RQr46RnKVmxjBA7uEmqc@vger.kernel.org, AJvYcCXN+UJQVm923/eDdJG7HKO6zuwxlUrPJ1fUWwAnvRdPMbGXQ+4vzBSjRJSeo9fOUidoCzriiwUkST4fUFnnjxE/Le0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/KbpUy5IuMgusRYWMyXedypqqN/gu5i5gMiv9ngFiZHOTf3XB
+	DM6OR8s5aqW7nuIxg/u0Kn9QnmZBoLWnK9ErFrNcuqB0bq4vJsVrkm8hPILO4Q==
+X-Gm-Gg: ASbGncsdng7IymGsCKF4ilOPtX/tFKhy+iZmb97okKwK0F6+SbUuqs4plHlpSNyXGGf
+	d2RX7OgPq4lNPNiAsIetOxxyN1My1EpBQF70/2jnRjNwkqRqPAHICUZmAIlIXceDghbM7hNcNss
+	/HkabYDYdgr3QTs8py8tvv99H9aJb9L/U+M4KRhj2GwFu/bhFl1hntsjNGyjSOBJTCbo/nLd48j
+	qxTfoGM/3OBHJJIEjMPoNqCRYA+L+xDTWvdQx2/g9OTbJljUV6FvGaYoflntFAKGMuVslf7AElI
+	Rf6upfGBzXCLPPhFbWJxE0x1MDjhDaHvwdMJqnl9THLMAzJZqVOWq/cVOO9lrxMjKqw++jV4YAw
+	dUykpAZAsUYxEuf54oQ7lVa4i4wM8jOBHHAe6TqoVR7ZGzOJu5blnCahK9O+/NYG+e/ZXQuMEnw
+	NH
+X-Google-Smtp-Source: AGHT+IHJ2yzAoWayRGrUS7izFIhkrxGchhvycroHp+KIHa7mpc3HqJKp+E42uRSyubs/rDl8+yH73g==
+X-Received: by 2002:a05:600c:8717:b0:455:fc16:9ed8 with SMTP id 5b1f17b1804b1-45868d4eaf7mr55550145e9.30.1753341851836;
+        Thu, 24 Jul 2025 00:24:11 -0700 (PDT)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458714605c2sm3269475e9.19.2025.07.24.00.24.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 00:24:11 -0700 (PDT)
+Message-ID: <f5022fe7-c3f6-4bea-bb0c-98dfe461d555@gmail.com>
+Date: Thu, 24 Jul 2025 10:24:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250714055853epcas2p1c8a30bbc61045c6a359d32989cfaf2f9@epcas2p1.samsung.com>
- <20250714055440.3138135-1-sw617.shin@samsung.com> <20250714055440.3138135-2-sw617.shin@samsung.com>
-In-Reply-To: <20250714055440.3138135-2-sw617.shin@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 24 Jul 2025 02:14:10 -0500
-X-Gm-Features: Ac12FXyeh_teX33m6-oCCNN--bnf0arq8tqlpYQ5bLEOmvlZqoOtQ8w9OKWGEX4
-Message-ID: <CAPLW+4=Gsd9VNv6T_e2QMWkPNbjp4c2GQEYpD9icU3r+0QuPww@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 1/5] watchdog: s3c2410_wdt: Replace hardcoded
- values with macro definitions
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
+ address space
+Content-Language: en-US
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka>
+ <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
+ <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 12:59=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.=
-com> wrote:
+On 7/24/25 06:02, Sam Protsenko wrote:
+> On Wed, Jul 23, 2025 at 3:21 AM Ivaylo Ivanov
+> <ivo.ivanov.ivanov1@gmail.com> wrote:
+>> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
+>>> On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
+>>>> Some device trees, like the exynos2200 one, configure the root node
+>>>> with #address-cells and #size-cells set to 2. However, the usi binding
+>>>> expects 32 bit address space only. Allow these determining properties to
+>>> So if USI expects 32 bit, then why do we allow 64?
+>>>
+>>> Switching this to 2 means you use 64-bit addressing for children
+>> I don't, but the main point was to avoid defining ranges for every single usi
+>> node, because they are a lot.
+>>
+> If all MMIO addresses in your SoC are 32-bit (they probably are), I
+> think it'd be neater to just make the entire "soc" bus 32-bit (so both
+> address and size cells = <1>), and map it to the root node's address
+> space with "ranges", like this:
 >
-> Modify the code to utilize macro-defined values instead of hardcoded
-> values. The value 0x100 in the s3c2410wdt_set_heartbeat function represen=
-ts
-> S3C2410_WTCON_PRESCALE_MAX + 1, but it is hardcoded, making its meaning
-> difficult to understand and reducing code readability.
+>     soc: soc@0 {
+>         compatible = "simple-bus";
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <0x0 0x0 0x0 0x20000000>;
+>         ...
 >
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-> ---
+> That's how it's done in exynos850 and gs101 dts for example. This way
+> you could drop all those extra "reg = <0x0 ...>" in the child nodes,
+> also avoid declaring "ranges" arrays in each USI node (just "ranges;"
+> would be enough), and this patch won't be needed.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Yeah, but then we'll have one more DT patch that is way bigger, changing
+every single "reg =" in /soc. And the device tree for the SoC is merged already.
 
->  drivers/watchdog/s3c2410_wdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+I do think that the neatest option is to avoid that and set an enum in the
+binding, as otherwise we'd be making a stylistic change that has no
+impact on functionality.
+
+If we want the device tree to model hardware identically to how it is, then
+we'd want to define IPs per bus (which I cannot really do on my own, I don't
+even have TRMs).
+
+I'll leave it up to Krzysztof to decide what is best.
+
+Best regards,
+Ivaylo
+
+> Maybe I'm missing
+> some details though?
 >
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 40901bdac426..95f7207e390a 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -587,7 +587,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
-evice *wdd,
->         if (count >=3D 0x10000) {
->                 divisor =3D DIV_ROUND_UP(count, 0xffff);
->
-> -               if (divisor > 0x100) {
-> +               if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
->                         dev_err(wdt->dev, "timeout %d too big\n", timeout=
-);
->                         return -EINVAL;
->                 }
-> --
-> 2.25.1
->
->
+>> Best regards,
+>> Ivaylo
+>>
+>>>  and
+>>> allowing DMA for >32 bit. This should be the true reason - what is the
+>>> address space and DMA range for children?
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+
