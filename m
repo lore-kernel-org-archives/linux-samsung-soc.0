@@ -1,63 +1,63 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B40A26E140
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 11:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02DB2701B4
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 11:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355646; cv=none; b=pMv/K4/Ql/GJ+ScruCMJpCh6Ae84Rf7L9122SzNLYHJUmLAs8GS7byGUW5nvi+NtHZmcNw8je9rGKa/lRLbaKB6xf8IX47hRhS7m6oO7nfT84XUpoQnPiQSEFQXRPkohrCabBcnLQME89j58psdD+RsK/pBRsUe6Tx5NTcyDC+U=
+	t=1753355648; cv=none; b=ZG8lJDaEQ4LY7k5CZr5sFH1F5B2hBPmXLdwR65dU6YnGVFoZaFM1fj6fJnxmcIBylU76ta0kp9Sn0QHyvDaN6MgdMkQpQVFurccOybhn62o+V/PyDrAhVaAASS8S4bpe38FJeGdCE21pmIOhJmy6K17zh6RFPO6nfHRlltIv7J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355646; c=relaxed/simple;
-	bh=QUlUkMxYLf0SjVpBsl0OVkwsTq7YyKk/KjAw6Del9ZE=;
+	s=arc-20240116; t=1753355648; c=relaxed/simple;
+	bh=b6N2umPNTV1IfL0+b1JOlj8SzHV/dhc713qHvi1TTIo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WQ1a+T2u3FF/g/1VUMwz5KqZvNUmlvk26jWWGrWjovvk+FDpv44rETbu9an4E8jZAg80yj0/klD2PKkVLiSeSw/VldsT7b9KlKZnqxVauTaD+f6iG4tEJDJDVqglfdkWtTohrqyXAFZWr4rEeufHv/8dkPNlgH2N2Dnol5b0PK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OUXuB8dU; arc=none smtp.client-ip=209.85.208.41
+	 MIME-Version; b=jr/k84Da6lgk7yAhJq38QZhcVzL3CGvscsuWLzfopl8sARZv8V90P4XSuv2bVxyns2ko3tb2MhP5H3fbjInP0X1zeRVE2Jj0Cfj0AfshwmbMLFDuVDwNkxQ65Vt85wUHjJ9+WiIccXKPJ3En8w375tDz/KpmwBpEuBHdkKx1tgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZGvYe1/O; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OUXuB8dU"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-606a269d440so121599a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 04:14:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZGvYe1/O"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-adb2bd27d8bso14503466b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2025 04:14:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753355642; x=1753960442; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1753355645; x=1753960445; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RlXiIo1YTe81LzNvByvFXaqoppLPAdO13nkKqXERm8A=;
-        b=OUXuB8dU0RZCQdve72E3reseoZ9KffQ+cRCr6FIx1sQYUb8ZiSFECkC1Uhn5wO4BFb
-         2Zjqen5Qv7xFb/q+ashmbPH6cEw0BtDrtvkxXvw7EXHtYZZ3tC48Wz4Prsz+2POr3fe0
-         TROa9I6SVthk6efxrxsr+XHLkDJV7Y0EU2MHWcHed/L15bis7yTJqK/SdLuhTu/vaTDk
-         CcNE6J6U5rKRLZFQv6+nP6hLc5PTpENqz6lowAyIKAEDZq9WL1Wj3VJQn4NVDFiNE4Je
-         wAhUrAZGCkEtgwDBp39yqs1wgx8UI8yECLdGMa5JvcwmdxWLk6LjL6H7KmI2anvcdZSq
-         bk+Q==
+        bh=bQZpQlnfxb8+AbjkuLqrM6+tWlLtQf4du/oIELr93aw=;
+        b=ZGvYe1/OENH+LRmIDw9ZUOU2QvRiPphRgi9aW2GVd7l3hovyHqH/msU01Sa8C+CX7K
+         HRipvMixVPDI/e13ZNl7xXI1IQVADrjUMg5LVaJIXLc+YwAZWWDWzfU1AFCMsr2f4Xam
+         ZA72gwQwx2ZpAjAZ8XPPQJ7xv1dhJsO7p9w4BrKDOb+Mubl2kM/bJ5tOqAMDoIBXV7Kw
+         s7RmLQdZoPzO8qdc5X8R3eWcly4Si8H0bCnAvKQUdtYLXlXzqx+tB9roJKwYV066yINZ
+         mA8mqH5HTXiH19txyTvczNdBbKNy7mnRqfKIgQmu+gTvb3IgXWWhrM3W9V7gsXWAsRRC
+         sCrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355642; x=1753960442;
+        d=1e100.net; s=20230601; t=1753355645; x=1753960445;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RlXiIo1YTe81LzNvByvFXaqoppLPAdO13nkKqXERm8A=;
-        b=qslNkzZoyGQH4rNY/f7YDq9uffihpT1hvTQ5PDRsuyUhePItrJjbX0vGUjddTg6wuG
-         BJS7I3xi2LfBhV58gH3dDLwu1unSFGC2Eehz5wo5wxfbjct6WXuw0eIeJ9ds/SIqrfMt
-         KQwjlE4b+7FgrEnEpjBeJTs/czkBMbMolxXO+NwgIYlsC8BpaBXvBsxOJAkfPKlFkz6v
-         i0UV6o2krAmsuUoqbi0YY0qtNORty/3NJzjZSAtvo00g8m3L2wUA1FpEhZEqv7hxfZLb
-         pgEWUfZaeNaNtRnIQ9cMU3HS9BMntG0Hm5o+xYjAVK/9TvF5YVHGWV/lxIknD7k1pxhl
-         KzIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWM7eds7evc2ygxbA+BLJAteFpIR0G8xg7i1lu3cv3pe8Ly44i5zb4sA8qM0XKtDPJJ0RyrHOkDa/W66H2xDT5IYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd97Hn1bhnavTbjrDu4QOIu4GxTyWHIZhcrlhClJpYbiVxTJUA
-	payCQipKZLyhScc0HIyj5tsF+ebfQ6z5BMjnkYtOT5iv8qxIgzMdydmKDfiYHzavmV4=
-X-Gm-Gg: ASbGnct3qYbytDPTkxjEkTnlzxgZ4CWRagNgJO0LgE32mcRt0PNbGR0GXpI/ihM0VO4
-	lV91bTSkw0egCp1W1bvJv7AKXcAxT9aVUGrN3a6rMM/9z7JeO7ahwxfVZAK2VoZtqyCiyLOhoKW
-	KzBtB92YJ3a+8CuxEZ+/FeXMf5Z8w0Ynz7N2L9r8abolWNW+gplr/KXQs7JCzW1YAeTkQHQBql7
-	NM9ljdbC7JJkWa4xRXlpHrwQv/7fEx0XtWxFajF53fG0nla/OsfXhRDRV0138QWQQpcxptm9i6B
-	lhS6oL/xFKXkQiV3Lf8agTDgqYuKcslOT4QCDJfU5pQ3B6FiLj5iWvDYfpSr1sVbBAX1Ni6fU58
-	Ru1YI/QcatyTN0/J0pPRrVx4vClICvFcE
-X-Google-Smtp-Source: AGHT+IEFsO1jeCJCKKhxjlisy/SsUZZ3OuDpWFhFwhM5aFP4wr0fQrdhbCZsUAkk2m0dTOMZzux8qg==
-X-Received: by 2002:a17:906:7956:b0:aec:5d6d:2180 with SMTP id a640c23a62f3a-af2f8c55a72mr223332966b.13.1753355642274;
-        Thu, 24 Jul 2025 04:14:02 -0700 (PDT)
+        bh=bQZpQlnfxb8+AbjkuLqrM6+tWlLtQf4du/oIELr93aw=;
+        b=dGxGNCpMOCrVR2m8nPfmzRvW85FbxUNJjPAbs/1RXeddHEkNrUFWjP6tqZsi6qGyjW
+         Z9kEkaYnJ1FveGUvTdxp4IO3Y3cCcenGIG9XcthiwBWnaigCktYOF/U55UnixgCyBoJb
+         4W0RmIlEsO87Gm8886PY1Wr+8/6bpyYmp/Kgj7TjRkC1/mnht+psPdHxnjJlxsFwQ7KF
+         qzGIS4S/reXxgqW+fUGGD9LxbsHkD1uxK74VSErVULApbxMYkfcyeB6b6dNk3ATwkaan
+         VxTor7t3eqH/uqKiKJb+6DF+53cO88+EvMNRUouFv0aPOZaqxEXT9K7xxwV3/oCyWtPz
+         G1iA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL0nCK6KMtucDSw88Aw5bJrNbrl5OSEpzOOtoVX1xnrZrVzx0pffodsrDPk+zsNwn3/kfVjxfWO95ZsZ8vmb9mag==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt7KkuKwTnoZ8vSnqs7z3AE9afOZx3la7Qf0NNdTC8Sh2TsqqS
+	qxCAIC3vb0mcVjSUu8lsRtKXnIpoSVdLnJkdnscHlS2nNiK4hZpmfxe/44G9Ni7jipA=
+X-Gm-Gg: ASbGncsolHGmYUuRxDenYjBAEAEq8Wq04g8k4uIDcTsDScS8hVQxA2HIUdwxHZhQQTC
+	Udh5e+vFJXLxWAv2aPwIUQnsC56SeWaZBwv/cXQ8sxhd75iNhTfBoeyg2Bb73tYKVox63ZsNCxV
+	tN7/tWn8txPJCVAz+lAaI5IQ6jC1PphLeMT8REOcf5pZhnBnVQ5OxnIeIgnp7rGy1YPKHhLaabg
+	YM2nCHjPGvJty531hrN7B3mgMtFy4b3kYPRzONvhJnL2F9DCP81ootaidacsyhxguEj1R5PQ+pP
+	lxIpNJOEtl9/DMleoQ99sOPxaXnWCzfZD5RTUEg6DepZPFQhyyY9mgsmdYqC5sjihPOcZEFYH6j
+	9Mey6NlfWjBk3BCuc0fc3Zev/vTnIKyGl
+X-Google-Smtp-Source: AGHT+IFa0qQb9reYIZm1YmnTMClWxGtJ7wMFuJjmizdol6uz/d8+OmMad9nebjC8fBgVpRYvCf7I3A==
+X-Received: by 2002:a17:907:da0:b0:ae3:bd92:e6aa with SMTP id a640c23a62f3a-af2f6d21a13mr251363066b.6.1753355644977;
+        Thu, 24 Jul 2025 04:14:04 -0700 (PDT)
 Received: from kuoka.. ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cc6b416sm98680266b.40.2025.07.24.04.13.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cc6b416sm98680266b.40.2025.07.24.04.14.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:14:01 -0700 (PDT)
+        Thu, 24 Jul 2025 04:14:04 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Lars-Peter Clausen <lars@metafoo.de>,
 	Michael Hennerich <Michael.Hennerich@analog.com>,
@@ -97,9 +97,9 @@ To: Lars-Peter Clausen <lars@metafoo.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/4] dt-bindings: iio: adc: samsung,exynos-adc: Use correct IRQ level in example
-Date: Thu, 24 Jul 2025 13:13:48 +0200
-Message-ID: <20250724111345.47889-7-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 4/4] dt-bindings: iio: light: Simplify interrupts property in the example
+Date: Thu, 24 Jul 2025 13:13:49 +0200
+Message-ID: <20250724111345.47889-8-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
 References: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
@@ -109,62 +109,57 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1492; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=QUlUkMxYLf0SjVpBsl0OVkwsTq7YyKk/KjAw6Del9ZE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoghVuzHS4uXkyTU6sLVWBewujbkHFikNttM/IZ
- isOEeWsOKCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIIVbgAKCRDBN2bmhouD
- 10l9D/9DQ2PDHDgUtLpbh1bG9p4sGi3ncJTi0AN2Is3G8KmpxmpfhMyu1KOOykbxxWYASd5nQQn
- XLCKNWaU40/sTcE05eH6IeyPkaVbBAmrqOIKiWYnkGPWLk2hFeyeDjU1i/299W2erhYLqqImuFZ
- BdUteV1wXC9ce8uWNX0o14sewzu6cz7tRYfaCcM+TSmP/Ngj1xDy+4HOIgw/dZb5jaDN0Dkx+oF
- BX7F0Toypv9+/XDHBm/ToCHcF68AHBVsUH4Sun7kLo6gnUu8uqDZ3wyDq6inD9w+iUkkwb1kquX
- kunMrEATyImHxNK9PBKolSZe1BnFjP6qM/G796nPqDzotG3blFp7admLxwk20kfNBGgeBF9LGPV
- BSAbdxqQcxiN33p/icJcU6hLpEy7wsLgPguvVkL+3qwBWfKo9mlnlmf0GpyVGh1qAm5o9v3p/Mg
- T/Ut7KQp4l00G0fmEBvTELyk8iXW4KRMZTFoeNFChPU+iXoJCKRfY5ULOtpSzXYn8wJnoRLwVkf
- DSpoXxNqM1g8gim36z+BCRQgS5jFE9Miduv2EhAZQVedb+0Tu0Tep62i7ZLXUpl6KKGTCsmj3bE
- vAdNuW2Cslh5TlRotpuzZ+fv3XaVrA+z6fLaIfLrL18NXt0ptrlGhgOjMlhPNV8wLYZZ/RG649H oPxf6PSkRACc8nQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1756; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=b6N2umPNTV1IfL0+b1JOlj8SzHV/dhc713qHvi1TTIo=;
+ b=owEBbAKT/ZANAwAKAcE3ZuaGi4PXAcsmYgBoghVv8JkjSZ8TS10rImPxhJU6HQEp0Ax8CdrPj
+ oFHeCKo4tmJAjIEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIIVbwAKCRDBN2bmhouD
+ 1+xND/dph6v3f/nk6xR6ZOVDJzqcxHAMQW0NMaZkXHLCSexCIrYiXqPYWGOTQr1kxGVpawORqWf
+ WEys7LnslZMo0RJeJqF8MU49l5ngYTPO5r3uwWWR5ujBuBUgIWF40bZMZaNZ1jFzFh0x6NzQ8on
+ fNRUkL5E+WhVNien8tpppc5W35sunUUoI67pNmo//pIbOY8l1YK4/z7OhPxQvtnBKTzq1/5ijPl
+ emLzxmSY842kA/l4YDqE8VFKBmsR+nQA9jByliluWCNtbvkrQ8BVrXWFbnfeEo+Ts67krs0+Erq
+ RdOszM9836SAecgYaVZyk/ChFftLLywwpXH/H0RUg0QKbBPYOkKDvj1wRYD9I5QHH0JHqyoLf0Q
+ KkLiEFfGNQ/JZqaxildmiiHNEjQzacsj8YmT7HM5slfZoi6iWYz4WNHwzv55SFke2/1VNLEyh4C
+ DsgO7tYJJ2HWrG+YPZTu6KohrQLV9M/CF7Gna6E/QGEI3FY4A6E8iSPvDNEGsZ03dfOkxOxM4Qm
+ UxxJMk35cSze6vAI2pFfB03721d2x25Cf4RuX8hKGWUJ2yYM05eYGn1msvWybWR26ogcI0UG6Lv
+ HvhlielC+QYEOhDWOSK7f2olNiVjRlngmx/32jTCIwy/0R+HRhYN/35eAAFRVVtmuuxE3sMMSym MHhpGZoVv9Prp
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-The interrupt line to GIC is IRQ_TYPE_LEVEL_HIGH, so use that instead of
-"none".  Also replace the hard-coded GIC_SPI flag.
+dynaimage,al3010 and dynaimage,al3320a are I2C devices, so their
+interrupts are not routed to GIC and rarely first interrupt cell is <0>.
+This looks like copy-paste from some SoC block, so drop it and also for
+readability use known defines instead of hard-coding interrupt flag.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml    | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/iio/light/dynaimage,al3010.yaml         | 2 +-
+ .../devicetree/bindings/iio/light/dynaimage,al3320a.yaml        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-index 4e40f6bed5db..8069e99ddac8 100644
---- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-@@ -128,10 +128,12 @@ allOf:
- 
- examples:
-   - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-     adc: adc@12d10000 {
-         compatible = "samsung,exynos-adc-v1";
-         reg = <0x12d10000 0x100>;
--        interrupts = <0 106 0>;
-+        interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-         #io-channel-cells = <1>;
- 
-         clocks = <&clock 303>;
-@@ -152,11 +154,12 @@ examples:
- 
-   - |
-     #include <dt-bindings/clock/exynos3250.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     adc@126c0000 {
-         compatible = "samsung,exynos3250-adc";
-         reg = <0x126c0000 0x100>;
--        interrupts = <0 137 0>;
-+        interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-         #io-channel-cells = <1>;
- 
-         clocks = <&cmu CLK_TSADC>,
+diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+index f1048c30e73e..1472c997c16f 100644
+--- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
++++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+@@ -42,6 +42,6 @@ examples:
+             compatible = "dynaimage,al3010";
+             reg = <0x1c>;
+             vdd-supply = <&vdd_reg>;
+-            interrupts = <0 99 4>;
++            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
+         };
+     };
+diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+index 8249be99cff9..d06db737cd9e 100644
+--- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
++++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+@@ -40,6 +40,6 @@ examples:
+             compatible = "dynaimage,al3320a";
+             reg = <0x1c>;
+             vdd-supply = <&vdd_reg>;
+-            interrupts = <0 99 4>;
++            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
+         };
+     };
 -- 
 2.48.1
 
