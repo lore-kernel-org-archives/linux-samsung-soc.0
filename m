@@ -1,150 +1,286 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m32120.qiye.163.com (mail-m32120.qiye.163.com [220.197.32.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E69239581;
-	Thu, 24 Jul 2025 07:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A43327147D;
+	Thu, 24 Jul 2025 08:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753341855; cv=none; b=TDHDAhYt8OnuFNW95x/G3OLnbNMoreHZYmhvDJQw9y0l+d8uQipQRuHg1/3ry7YN3ZGeMvIBHcn6dAR/PiF80WSMoJQlVFkNeSxiqPPkr4LmVfdOECAIG9Qj0dmnU2aiCijJN3MPk5f7bLrH3kq7l9W3WG7XHEEjFGNQS+SBE10=
+	t=1753344213; cv=none; b=XQ4PgSW8caLVMenm4HxlIXqL+dyP1szhk8Mhevg2cXLJ0Y653Ax32n91RniiGJzN2X8qtMEcBzbSj/dQP+YPkpjg4StnXUyNjTGBvg35Jdsh5ctQU8T7wlGWLitj4aOZVTJcAgUkSGeFXwqP9yqy9ZuaBl6qMwzu4s1lYQEIDdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753341855; c=relaxed/simple;
-	bh=dUyLN2kfotLNLyofConSuTyLmjoZe/xUKspDkME1Jro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iv0/QtW4bPRgBWSwoG7fIUFD8k2rpIIV+/Zbub0p4bp7sNTYI5JwAb5vP1FHii+6nXTgK97ZvqO4Jow+7MRhdDPNxXHPdPoodNt2QdPtzMNx9IZ2Rr1+puTsB25MkyJinGk1WXnYNkmoRLO/Hm/20YKvHb+qmeRSi4YdbHczCFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bp13qMKX; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753344213; c=relaxed/simple;
+	bh=3xQYD58mFmghAcfEZ+1U73cxFtAHLs1gyXKdCXJgmsQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Vs3t6bgB0MfZ0mTzuVXTkYtHYYKgRTu6QYhFckx+923D9655yKsm0RDI5ciBE3xkHDtT4plavfST31cfbGQ29ckjd5dPq55/O09TuTS+pVUrQIQXCb81OIfx1ARHezmc5E0pDKVhNgS8yJnaNo2FBeI5LGMBpxLOxaajyYHX2N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BnfDBOwG; arc=none smtp.client-ip=220.197.32.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bp13qMKX"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so6310015e9.0;
-        Thu, 24 Jul 2025 00:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753341852; x=1753946652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o8vH8JfnKijTJB45W87819LYq2SjUU3QszzdXJjSPeo=;
-        b=Bp13qMKXrCU+BYsS/+gRMgzyJrbmU9N0qr9a6lyaUMv5bUggUSfb7sqDMIllgxYLVO
-         DL1W0EmYAtjuBMPyAVpx/+ntXm/9KSBsoK5qJ2+BiAFgG3g7RM43z/3BbefobbBLmyEU
-         AJYSyxd7Tg3elwSSL8pz+bgNVFk2K9YxPPXDLryTW2PtrsMlGb+w52pLmZ2FI8PFm+Xa
-         oIb2oTh9cfyvHFaKR6aXLeINYOgbh9WEFQFhZaNojprXBWuTBj4BwfP7MluTMhi5N3Cx
-         huKQ4czLjMgUiZb4T5WLVKC9pRFymKCwZ4X1o2BFvOnIowO1CHKoeCG/l27ZbKWYSkht
-         P6SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753341852; x=1753946652;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8vH8JfnKijTJB45W87819LYq2SjUU3QszzdXJjSPeo=;
-        b=bu6WAWzFBW7nWB9y3yL6n52d8taZRVf2o7T9GUu565767khYDmvcbiyrOPaTYxcC8I
-         qxOck3PYXcPB4UJ8yaaqvv5oGuaxWviv2faspph+5bBRs4wHgVj3BXgoDTGi1zVgf2rS
-         3kY3Wk0CsGCfjliDc9ToLfHd8QJuu1Y/ARPISZkuI2hRk2ZTOnGPctX70p2EhPczfTV2
-         f66hbcTlGySTVxIWTuRGbi6PjpJ9b10XlgwpqFHQSBw1usqSPb4hMXx9bXinYq7sSkbm
-         XGYfX0wOEELJNbSfWnyk3AFd3Iyt1EF3HMX66y7kvjtowEhCUkzR3fUeLUJTAob8v7Aj
-         mW4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVaPgVroIh947akSqShDYWNFsTfEMwOsV7Wt2Ptn2sfXyfurlS9uTJPKWlEvlDH6Hd+dxM9QOK1qrLrEjMg@vger.kernel.org, AJvYcCXK8BGIlFlA3j2q/rrJ4jGjEPQAsC8xxzfZv9T3PnyqjAbqlfhXVia1YWo/RQr46RnKVmxjBA7uEmqc@vger.kernel.org, AJvYcCXN+UJQVm923/eDdJG7HKO6zuwxlUrPJ1fUWwAnvRdPMbGXQ+4vzBSjRJSeo9fOUidoCzriiwUkST4fUFnnjxE/Le0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/KbpUy5IuMgusRYWMyXedypqqN/gu5i5gMiv9ngFiZHOTf3XB
-	DM6OR8s5aqW7nuIxg/u0Kn9QnmZBoLWnK9ErFrNcuqB0bq4vJsVrkm8hPILO4Q==
-X-Gm-Gg: ASbGncsdng7IymGsCKF4ilOPtX/tFKhy+iZmb97okKwK0F6+SbUuqs4plHlpSNyXGGf
-	d2RX7OgPq4lNPNiAsIetOxxyN1My1EpBQF70/2jnRjNwkqRqPAHICUZmAIlIXceDghbM7hNcNss
-	/HkabYDYdgr3QTs8py8tvv99H9aJb9L/U+M4KRhj2GwFu/bhFl1hntsjNGyjSOBJTCbo/nLd48j
-	qxTfoGM/3OBHJJIEjMPoNqCRYA+L+xDTWvdQx2/g9OTbJljUV6FvGaYoflntFAKGMuVslf7AElI
-	Rf6upfGBzXCLPPhFbWJxE0x1MDjhDaHvwdMJqnl9THLMAzJZqVOWq/cVOO9lrxMjKqw++jV4YAw
-	dUykpAZAsUYxEuf54oQ7lVa4i4wM8jOBHHAe6TqoVR7ZGzOJu5blnCahK9O+/NYG+e/ZXQuMEnw
-	NH
-X-Google-Smtp-Source: AGHT+IHJ2yzAoWayRGrUS7izFIhkrxGchhvycroHp+KIHa7mpc3HqJKp+E42uRSyubs/rDl8+yH73g==
-X-Received: by 2002:a05:600c:8717:b0:455:fc16:9ed8 with SMTP id 5b1f17b1804b1-45868d4eaf7mr55550145e9.30.1753341851836;
-        Thu, 24 Jul 2025 00:24:11 -0700 (PDT)
-Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458714605c2sm3269475e9.19.2025.07.24.00.24.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 00:24:11 -0700 (PDT)
-Message-ID: <f5022fe7-c3f6-4bea-bb0c-98dfe461d555@gmail.com>
-Date: Thu, 24 Jul 2025 10:24:10 +0300
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BnfDBOwG"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c343ac;
+	Thu, 24 Jul 2025 16:03:19 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jingoohan1@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	l.stach@pengutronix.de,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 02/14] drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to &drm_bridge_funcs.atomic_enable
+Date: Thu, 24 Jul 2025 16:02:52 +0800
+Message-Id: <20250724080304.3572457-3-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
- address space
-Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
- <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka>
- <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
- <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a983b754bd503a3kunmbbba7af29de8
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR5NTVYeGkJIQhkdQk0fSE1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=BnfDBOwGRxTL7kryxwnR4u/GLr0CZh28iSz8X6EV2jJWwz16teYYaO0UR5gtmvpek/2Xky+o4vVveJEmP6DdC99hc6onQga9pHeEer7NcxQFj849c8Npk5yaIpdVBzfP/whC8LJ223QbuemPTvay5azih8x6qYVjggJDjImdWz0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=iRIQPqf5FgKCUcwwQNJRIfqVXyG5a6BwS2hQtnRVAHU=;
+	h=date:mime-version:subject:message-id:from;
 
-On 7/24/25 06:02, Sam Protsenko wrote:
-> On Wed, Jul 23, 2025 at 3:21 AM Ivaylo Ivanov
-> <ivo.ivanov.ivanov1@gmail.com> wrote:
->> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
->>> On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
->>>> Some device trees, like the exynos2200 one, configure the root node
->>>> with #address-cells and #size-cells set to 2. However, the usi binding
->>>> expects 32 bit address space only. Allow these determining properties to
->>> So if USI expects 32 bit, then why do we allow 64?
->>>
->>> Switching this to 2 means you use 64-bit addressing for children
->> I don't, but the main point was to avoid defining ranges for every single usi
->> node, because they are a lot.
->>
-> If all MMIO addresses in your SoC are 32-bit (they probably are), I
-> think it'd be neater to just make the entire "soc" bus 32-bit (so both
-> address and size cells = <1>), and map it to the root node's address
-> space with "ranges", like this:
->
->     soc: soc@0 {
->         compatible = "simple-bus";
->         #address-cells = <1>;
->         #size-cells = <1>;
->         ranges = <0x0 0x0 0x0 0x20000000>;
->         ...
->
-> That's how it's done in exynos850 and gs101 dts for example. This way
-> you could drop all those extra "reg = <0x0 ...>" in the child nodes,
-> also avoid declaring "ranges" arrays in each USI node (just "ranges;"
-> would be enough), and this patch won't be needed.
+According to the include/drm/drm_bridge.h, the callback
+&drm_bridge_funcs.mode_set is deprecated and it should be better to
+include the mode setting in the &drm_bridge_funcs.atomic_enable instead.
 
-Yeah, but then we'll have one more DT patch that is way bigger, changing
-every single "reg =" in /soc. And the device tree for the SoC is merged already.
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+ .../drm/bridge/analogix/analogix_dp_core.c    | 161 +++++++++---------
+ 1 file changed, 82 insertions(+), 79 deletions(-)
 
-I do think that the neatest option is to avoid that and set an enum in the
-binding, as otherwise we'd be making a stylistic change that has no
-impact on functionality.
-
-If we want the device tree to model hardware identically to how it is, then
-we'd want to define IPs per bus (which I cannot really do on my own, I don't
-even have TRMs).
-
-I'll leave it up to Krzysztof to decide what is best.
-
-Best regards,
-Ivaylo
-
-> Maybe I'm missing
-> some details though?
->
->> Best regards,
->> Ivaylo
->>
->>>  and
->>> allowing DMA for >32 bit. This should be the true reason - what is the
->>> address space and DMA range for children?
->>>
->>> Best regards,
->>> Krzysztof
->>>
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index ed35e567d117..0106e7e0f093 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1177,12 +1177,88 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	return ret;
+ }
+ 
++static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
++					const struct drm_display_mode *mode)
++{
++	struct analogix_dp_device *dp = to_dp(bridge);
++	struct drm_display_info *display_info = &dp->connector.display_info;
++	struct video_info *video = &dp->video_info;
++	struct device_node *dp_node = dp->dev->of_node;
++	int vic;
++
++	/* Input video interlaces & hsync pol & vsync pol */
++	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
++	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
++	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
++
++	/* Input video dynamic_range & colorimetry */
++	vic = drm_match_cea_mode(mode);
++	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
++	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
++		video->dynamic_range = CEA;
++		video->ycbcr_coeff = COLOR_YCBCR601;
++	} else if (vic) {
++		video->dynamic_range = CEA;
++		video->ycbcr_coeff = COLOR_YCBCR709;
++	} else {
++		video->dynamic_range = VESA;
++		video->ycbcr_coeff = COLOR_YCBCR709;
++	}
++
++	/* Input vide bpc and color_formats */
++	switch (display_info->bpc) {
++	case 12:
++		video->color_depth = COLOR_12;
++		break;
++	case 10:
++		video->color_depth = COLOR_10;
++		break;
++	case 8:
++		video->color_depth = COLOR_8;
++		break;
++	case 6:
++		video->color_depth = COLOR_6;
++		break;
++	default:
++		video->color_depth = COLOR_8;
++		break;
++	}
++	if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
++		video->color_space = COLOR_YCBCR444;
++	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR422)
++		video->color_space = COLOR_YCBCR422;
++	else
++		video->color_space = COLOR_RGB;
++
++	/*
++	 * NOTE: those property parsing code is used for providing backward
++	 * compatibility for samsung platform.
++	 * Due to we used the "of_property_read_u32" interfaces, when this
++	 * property isn't present, the "video_info" can keep the original
++	 * values and wouldn't be modified.
++	 */
++	of_property_read_u32(dp_node, "samsung,color-space",
++			     &video->color_space);
++	of_property_read_u32(dp_node, "samsung,dynamic-range",
++			     &video->dynamic_range);
++	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
++			     &video->ycbcr_coeff);
++	of_property_read_u32(dp_node, "samsung,color-depth",
++			     &video->color_depth);
++	if (of_property_read_bool(dp_node, "hsync-active-high"))
++		video->h_sync_polarity = true;
++	if (of_property_read_bool(dp_node, "vsync-active-high"))
++		video->v_sync_polarity = true;
++	if (of_property_read_bool(dp_node, "interlaced"))
++		video->interlaced = true;
++}
++
+ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 					     struct drm_atomic_state *old_state)
+ {
+ 	struct analogix_dp_device *dp = to_dp(bridge);
+ 	struct drm_crtc *crtc;
+-	struct drm_crtc_state *old_crtc_state;
++	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+ 	int timeout_loop = 0;
+ 	int ret;
+ 
+@@ -1190,6 +1266,11 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	if (!crtc)
+ 		return;
+ 
++	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
++	if (!new_crtc_state)
++		return;
++	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
++
+ 	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
+ 	/* Not a full enable, just disable PSR and continue */
+ 	if (old_crtc_state && old_crtc_state->self_refresh_active) {
+@@ -1296,83 +1377,6 @@ static void analogix_dp_bridge_atomic_post_disable(struct drm_bridge *bridge,
+ 		DRM_ERROR("Failed to enable psr (%d)\n", ret);
+ }
+ 
+-static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
+-				const struct drm_display_mode *orig_mode,
+-				const struct drm_display_mode *mode)
+-{
+-	struct analogix_dp_device *dp = to_dp(bridge);
+-	struct drm_display_info *display_info = &dp->connector.display_info;
+-	struct video_info *video = &dp->video_info;
+-	struct device_node *dp_node = dp->dev->of_node;
+-	int vic;
+-
+-	/* Input video interlaces & hsync pol & vsync pol */
+-	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
+-	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
+-	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
+-
+-	/* Input video dynamic_range & colorimetry */
+-	vic = drm_match_cea_mode(mode);
+-	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
+-	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
+-		video->dynamic_range = CEA;
+-		video->ycbcr_coeff = COLOR_YCBCR601;
+-	} else if (vic) {
+-		video->dynamic_range = CEA;
+-		video->ycbcr_coeff = COLOR_YCBCR709;
+-	} else {
+-		video->dynamic_range = VESA;
+-		video->ycbcr_coeff = COLOR_YCBCR709;
+-	}
+-
+-	/* Input vide bpc and color_formats */
+-	switch (display_info->bpc) {
+-	case 12:
+-		video->color_depth = COLOR_12;
+-		break;
+-	case 10:
+-		video->color_depth = COLOR_10;
+-		break;
+-	case 8:
+-		video->color_depth = COLOR_8;
+-		break;
+-	case 6:
+-		video->color_depth = COLOR_6;
+-		break;
+-	default:
+-		video->color_depth = COLOR_8;
+-		break;
+-	}
+-	if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
+-		video->color_space = COLOR_YCBCR444;
+-	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR422)
+-		video->color_space = COLOR_YCBCR422;
+-	else
+-		video->color_space = COLOR_RGB;
+-
+-	/*
+-	 * NOTE: those property parsing code is used for providing backward
+-	 * compatibility for samsung platform.
+-	 * Due to we used the "of_property_read_u32" interfaces, when this
+-	 * property isn't present, the "video_info" can keep the original
+-	 * values and wouldn't be modified.
+-	 */
+-	of_property_read_u32(dp_node, "samsung,color-space",
+-			     &video->color_space);
+-	of_property_read_u32(dp_node, "samsung,dynamic-range",
+-			     &video->dynamic_range);
+-	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
+-			     &video->ycbcr_coeff);
+-	of_property_read_u32(dp_node, "samsung,color-depth",
+-			     &video->color_depth);
+-	if (of_property_read_bool(dp_node, "hsync-active-high"))
+-		video->h_sync_polarity = true;
+-	if (of_property_read_bool(dp_node, "vsync-active-high"))
+-		video->v_sync_polarity = true;
+-	if (of_property_read_bool(dp_node, "interlaced"))
+-		video->interlaced = true;
+-}
+-
+ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+@@ -1381,7 +1385,6 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.atomic_enable = analogix_dp_bridge_atomic_enable,
+ 	.atomic_disable = analogix_dp_bridge_atomic_disable,
+ 	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
+-	.mode_set = analogix_dp_bridge_mode_set,
+ 	.attach = analogix_dp_bridge_attach,
+ };
+ 
+-- 
+2.34.1
 
