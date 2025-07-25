@@ -1,143 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2E22EBDD6;
-	Fri, 25 Jul 2025 12:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F3217A310
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jul 2025 14:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753446938; cv=none; b=c3MlaaKZpBMwaRXIv4CXT9L5Py0Cw5my7Wdbx8ug+uov8fDSgD9oPYo9FJ/ZVherK7Qua4d0bYSK/I3ovuVNVxGMIBeg70Sq4x+/bTuRHR0A1cw2l8Xal/ONilCplZ/+joF0iPbbp/Xn5gfEv2RcDEQ/2Y3ur8BIM6wTDDPkr5s=
+	t=1753452981; cv=none; b=qcDRt3/LBwYVgf/ZmlQ58w22GD3INAtJeHo2GdzrUQRxiLIriEYZC2fQ5ykRMnk06aVSLOjJao/K2hBrykYQcbCITBp0H0R4C4q1z7WSSGGicfxf4s4rgnKmoFlUzAW5m3T+8NZidk8BdHuF8iZtF6EQDKTSvqBOlncmZt7z1Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753446938; c=relaxed/simple;
-	bh=K6lhYOFk6FqHc5KGTJa0H9hdPo39Xa+YwkdswgKg/Uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDJzx2CQB+oCEqZnU64EPaRpHJ56NFiU8sQjGmU8FcUHcxcfBTKbC49k4iC2CznGKQ3tGNJNMEGXxnVV+q4h+sw4iwEQnujIU0FFjDgr6BZMH2y9zO/ImRLrPQ5/UDVJONzfdA1xT9H4IPU2cLzFDCEK66bLy89sHPBvPtxXxA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqrON0qH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753452981; c=relaxed/simple;
+	bh=8AW0wZtIdMTOecI8zEy7or/xRHq/+HDNB4Msky+fi4A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F7YGUZjJkw3Nvt91P/gJikNBkpd6eT13dQmnSiftXErgkSmMk6zy1axbxzE86/88tj8LGMBupoDluQqN0XDF0CwM9FLB8bAEkJkiUM8s6oBD8TynzvVJqcHX2JIo0h6AR4+nR61vQyRNTnsLoyWlHWkGP5nIHZPvdQmp32YOKF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pBebP9rA; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqrON0qH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB279C4CEE7;
-	Fri, 25 Jul 2025 12:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753446937;
-	bh=K6lhYOFk6FqHc5KGTJa0H9hdPo39Xa+YwkdswgKg/Uo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AqrON0qHGybb6yWX0+bT4DOdnrA/mk09GsdEcn0X1sXW9c5AIqf23HIEbLoR67j/m
-	 j63CKTyReqqIIDJkTjbC1D17PSRLjeBzhC1Dd3AoN7nPF9PqoDPZbfr/lArD1p1mQS
-	 VQGimphF7s17GydcxW6vIjQ9fjEtz618ZYISsTu/M96PBNUqlCCDqBpa/P3ffEKNJU
-	 HmYgDF1q93vVwZj8Gsdz/9wNu9DYYEBznTk7XawtNKpAbTs9HpPTdgHVJSYc9zdB3z
-	 Bp4Ad+eH69ISaUqtnyAabKNbyOrHVwomZqQYmZV7iKgHLml2Mf2l2u6OfyUhr8Gqos
-	 WwZpazwV7+TWg==
-Date: Fri, 25 Jul 2025 13:35:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Arec Kao <arec.kao@intel.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Hans de Goede <hansg@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>, Hao Yao <hao.yao@intel.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Jacopo Mondi <jacopo@jmondi.org>, Jimmy Su <jimmy.su@intel.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Leon Luo <leonl@leopardimaging.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Matthew Majewski <mattwmajewski@gmail.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Pavel Machek <pavel@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Shunqian Zheng <zhengsq@rock-chips.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Todor Tomov <todor.too@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Tony Lindgren <tony@atomide.com>, Zhi Mao <zhi.mao@mediatek.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH 00/72] media: i2c: Reduce cargo-cult
-Message-ID: <aIN6DnXudHqaYXB2@finisterre.sirena.org.uk>
-References: <20250710174808.5361-1-laurent.pinchart@ideasonboard.com>
- <PN3P287MB1829DD1254FB74391A750F498B5EA@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
- <20250724115202.GK11202@pendragon.ideasonboard.com>
- <PN3P287MB1829C9E8C78ADD70259A68F08B5EA@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
- <20250724135259.GR11202@pendragon.ideasonboard.com>
- <PN3P287MB1829E1FEE7D2468CE9915C778B5EA@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
- <20250724154414.GE22016@pendragon.ideasonboard.com>
- <PN3P287MB1829FC781EA3A94E0B8F16B98B59A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pBebP9rA"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so3538644a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jul 2025 07:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753452978; x=1754057778; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0GYrZkLXVXcOZgbWnPr9ONxYHIczwht5gJlvJdmNzQk=;
+        b=pBebP9rALtTAJKnpPJpllQiQY9VyHBqULO3QVOWmJ5tHTNwIFaXLluiQHWXyiL6Xy0
+         PhL6Ido0qCPelByNCaLUEzqA3kJel/6i8NBKeOVLVA6tfG6fWetUM75BBKojyvH3CemT
+         2aD6LpUKdXpATcx9W+fWh9va6Rdfrk+2QKO7HDcLplrwT+N4Eh6Ncv3b6qJyPOeKCoa+
+         3aXEpODFl5Y5Vt/SowT0DixTR1wlN/snGgxQ5cIYPuGCXYMlUqdnjTMObT//AVbIJjNa
+         ngCDvW/QKYOCyittTgnCCR7/Od/oT4wO9oTXE/PejAjzg7k/7gtTB8rV4kPMUUnkgjoj
+         /zEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753452978; x=1754057778;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0GYrZkLXVXcOZgbWnPr9ONxYHIczwht5gJlvJdmNzQk=;
+        b=Me34HJbhp4b/Byhijm/DQQVMLeYlzkkzI5RnU1AebzrMVsR5aKIafEJd+uDavufAPb
+         pQVyn67ApXhFOm4NiQLgGja4frE6XkEhLith1LsGsKdw46mhDjOaoqXlSjM4sXMYPORI
+         yMbalZnJ7FUIldSuLgUepKAYrK8jT+jFiH5kYLLBylrC480cejcXos6RK45QONPBjph7
+         kkj1rRG6+vYs0/ZYTNZqBzVPX9jNtA3VeEL57rdHGFsbvC90i171MG5ioViX4CLesQih
+         X1VJiIOwmy2v7YmMDnr29uxOLmOc5iY5qbbp246MuXXy1bDR8fZlasD91I7Q28AehD96
+         7uXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFqgKtHnZQri2XEhWea387a+w1Y9NtfNPWgkq+P+HrgYFpR+hrdJdRrM5lBWzSCZDSBswIc3TfsHJESrrn1kjWWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwotUX6dt25VKhJ/xQ20xjfjmF+D1OCZkpLqPv8L1xVLI+YP/T
+	rSjezr1Kcuj/O+dXLjJByFxcHvTwDVTFGcOYvhYdGLcpIjqLACfcJkfmBX/x5ytI8Jc=
+X-Gm-Gg: ASbGncvgQrstB8+Vc4zln3hLaej1sXxHiAdmj1qrfOhIHeVJupNB86duN+QuSZiti7V
+	xikk0mOXWQqo0S0JVXd2FvfY0yZofH+h/UVNYPGNZR8Q38N0WqRoUkPNUknPTzWZi53i8gaevvi
+	X/CzPtdqSaFEbKjS04WB81jj5aCHgKbnL64krGNVrMsjEL3B1ChcH8QMqAOt4HRqNeGzb58Q7qe
+	dkiAmVqP9hjfterMHRRSBgwaAWpPcVX0anbbznzbF7lWiWvb/dvnFR7MHHZMzQN4PfyvTaj1P4Q
+	SlVQVbjKjyR/EvKeWAkY/Q6wjKONI1+jMVeoBpl3X64xPtFdQC0mUNuUqT67BtEkfjVFoLz9pXu
+	tTOoAqKmtl8NM6zJAfaAqD+byG+Zkped1ebLnm4qV9BiQH4YDmbvMFS4CGBZGGk8lxvizfZ3DVb
+	Wboxm5YA==
+X-Google-Smtp-Source: AGHT+IESxxtSVuTR7JcpPvCin5sJRXnxskX5QKzVI4SQNZf89ZEV5qKL5Ev6pflyXfFUSgm5m/ZQVA==
+X-Received: by 2002:a17:907:7205:b0:ae3:bb4a:91fb with SMTP id a640c23a62f3a-af61ef2e6demr228089066b.59.1753452977655;
+        Fri, 25 Jul 2025 07:16:17 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f85e60bsm278398966b.96.2025.07.25.07.16.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 07:16:17 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 0/2] scsi: ufs: core: interrupt handling optimisations
+Date: Fri, 25 Jul 2025 15:16:14 +0100
+Message-Id: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wxJPGBgsjwWJYupx"
-Content-Disposition: inline
-In-Reply-To: <PN3P287MB1829FC781EA3A94E0B8F16B98B59A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-X-Cookie: Do not cut switchbacks.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK6Rg2gC/13MQQrCMBCF4auUWRtpJ01aXXkP6SI0STMgjZ1oU
+ Ervbiy4cfk/eN8KyTG5BOdqBXaZEsW5BB4qGIOZJyfIlgasUdUdSvH0KYxWBMOWeBFjJ1F73aJ
+ TGsrpzs7TawevQ+lA6RH5vfu5+a4/qv2nciMaoeWpNwp972u83Gg2HI+RJxi2bfsAJzI6Da0AA
+ AA=
+X-Change-ID: 20250723-ufshcd-hardirq-c7326f642e56
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com, 
+ linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+UFS performance for < v4 controllers has reduced quite a bit in 6.16.
+This series addresses this regression and brings numbers more or less
+back to the previous level.
 
---wxJPGBgsjwWJYupx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+See patch 2 for some benchmark (fio) results.
 
-On Fri, Jul 25, 2025 at 07:00:40AM +0000, Tarang Raval wrote:
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- patch 1: new patch as suggested by Bart during v1 review
+- patch 2: update commit message and some inline & kerneldoc comments
+- patch 2: add missing jiffies.h include
+- Link to v1: https://lore.kernel.org/r/20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org
 
-> The sensor driver typically determines this via the presence (or absence)=
-=20
-> of regulator supply entries in the Device Tree. If a supply is not define=
-d,
-> it's assumed to be always-on (e.g., provided by the board via fixed rails=
-).
+---
+André Draszik (2):
+      scsi: ufs: core: complete polled requests also from interrupt context
+      scsi: ufs: core: move some irq handling back to hardirq (with time limit)
 
-No, this is broken.  The driver should unconditionally request whatever
-supplies the device needs.
+ drivers/ufs/core/ufshcd.c | 211 +++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 152 insertions(+), 59 deletions(-)
+---
+base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
+change-id: 20250723-ufshcd-hardirq-c7326f642e56
 
---wxJPGBgsjwWJYupx
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiDegoACgkQJNaLcl1U
-h9Bengf+NMIEHsQ9+sljtGVgIcOtgrR79nFpheWX7pGfItMxxmP7GSIOxGLN0ypY
-ST0+Jq6SNod/0cZo4rpIVQmRrkYA0sPFp1r/mE7DQktfcLLpsbgtLp5BbDSLKV9w
-DC+fSk/YPL5Ndorj2m77tkNiMADykQL7/tl5BTlGxZ3PbK1SwthJ0kyuXstPPGde
-EbWLOMoEa8WwJ8WAy0VcrrCoTrenrocivl9bEZumrxgr1E3FBYiBtkYplaofKzl9
-e2GIUDGSIn+aCFWzdxEqAGllKEGRkrCyHLIz0vnNrF/zbqQTlJO+KYeX1Onowvkc
-ilP3T4bQ8j/S9g30VmVh/HJPwkAMrg==
-=BxdR
------END PGP SIGNATURE-----
-
---wxJPGBgsjwWJYupx--
