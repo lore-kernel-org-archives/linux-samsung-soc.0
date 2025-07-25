@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96D1FC3;
-	Fri, 25 Jul 2025 08:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EDB1FC3;
+	Fri, 25 Jul 2025 08:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433300; cv=none; b=US9+J1i8HSbm278rHoFt0ZdIkZ/hp8Bj/v4qOg3+qb2ak25o9tsGbxrSbjVhXOtPDlbv9GHdXRWHkuWvotOTdaT4NpYLNhuolHEX9xLmgPFAxNUvZf0na4Q6WxnSMIb64/LaX3cmPmVa0mdyzYXFKpTXCzBLmz9k1djvO0C4UsI=
+	t=1753433544; cv=none; b=Z48wzH6yKMgTyLqLZHBjMm8fqi307ZPugRbAWcPWV5LFWmEtqUhP3jP81FfyO3AgJuhLK+Mz6ys2SIrCoflj7Uk/b1/XjhpjnKZxM6shm+VFbD9jrVkDN9jAswP8DiyK1xYLxc2HL4nTLWDC3eFebCPvmXRWpEeUdl5qI3NZGRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433300; c=relaxed/simple;
-	bh=EwAtmyR0kMv8l1AdAG5vtKyOKjmw06VLhEKfxX4RGTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RClqt1GEO4o4K3OY6e/rrKZbDXkUQfSV4l6rIiTRSk9ELZ/Q0fLz/zQwt6U+fipK1ntx0ZFbv1EMMdhE3J/cwkBTnWCj+TiUXlwi8bDabA+No3/WKrv3VX8FocZ1eTZRc9A6xyPT7scogfp1W5bRc7GxdPAnul33i6yVH4mEv5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miHprvFx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753433544; c=relaxed/simple;
+	bh=v460wegL41COGLMIC6tZ6p6QjPl0aFJj1BobsnJVX24=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gXxAMQ7gy/W5Id/r9s6Qisz1Qciy5ioAmpHk4wK5V3rapEr1U23w9aUpH62sEb8PRkK8zCuJVGzTMTARCbW9lAfnAXyHqcpgBgJVkWIuMtR4EO3l3MILx0uO3oA+yv44R61HbTwEmyGa3A+Gy5IPRpvDFiX2Se1dV1QyZYmHl2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBb2XtQI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miHprvFx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD714C4CEE7;
-	Fri, 25 Jul 2025 08:48:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBb2XtQI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225ADC4CEE7;
+	Fri, 25 Jul 2025 08:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753433298;
-	bh=EwAtmyR0kMv8l1AdAG5vtKyOKjmw06VLhEKfxX4RGTo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=miHprvFxB1dhNx7Nz1jlGp0x8mhCM6iRCsrt3AylbwU1UUvSubjMo55u3Rp7Hs6Lo
-	 RmpZHj2X/66IwdiWQgw9/uLJIMvdtpPvWI79bjqxSziNB4f5dkgDMaDOCr1xfnNX46
-	 pYm4U9vQW0C1ThFCoSbvC2TRdZ/3WNbTLv6EtluQP5az9X8gUXg03dL+5TIHM2DfeZ
-	 ofG/i4zJE0tYCxh+45puhjvKij8UPX8lSwhqFhrMaMn/gJzEHs9BXNmwTSA43Z9iGS
-	 o5qWTbZ+vR9InSC8E3Uv3fOOs/C8Eu3jP0j9ptw7ibd5zFaqH3IcvA9ezgYab08wy2
-	 J/ck/mO26/X9A==
-Message-ID: <1635e663-24b6-48f8-b781-67284d832db7@kernel.org>
-Date: Fri, 25 Jul 2025 10:48:14 +0200
+	s=k20201202; t=1753433543;
+	bh=v460wegL41COGLMIC6tZ6p6QjPl0aFJj1BobsnJVX24=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=MBb2XtQI9g2edV9cjAUaicJfKBWi6GJmznWd+UsH+vsxfvtsfJrEf9v7CrerBVO5U
+	 pwXugUGCFzzQ9OhlfCbLOlc+u6uNchlXVn5DjgO3FSHmBp70Asd95zG0AsCYptqFqm
+	 N3bmZ0UPDTKjlFb+payOzJaAZ6Vle3bEMyej4NsBAb6A8W89fGYTcWT3VbcUiyjMeZ
+	 118Y9AwGpSEF2qUWUmjA+UaGT60XZw0W9GIXkXIZO97elHAjNdj3b0GldwI31rXD3i
+	 fpzTPoo2981M0EXnhu7DGFQr7X/TZ0cfS4vfrlDHU2vpxDIWT246t++hLMKK5brKaI
+	 ZwwGCNBKYXIGw==
+Message-ID: <e8f1d209-fb35-4a39-941f-c81807ae91ff@kernel.org>
+Date: Fri, 25 Jul 2025 10:52:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Fix section mismatch from
  the module conversion
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de,
  willmcvicker@google.com
 Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -46,7 +47,7 @@ Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
  <linux-samsung-soc@vger.kernel.org>
 References: <20250620181719.1399856-6-willmcvicker@google.com>
  <20250715121834.2059191-1-daniel.lezcano@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <1635e663-24b6-48f8-b781-67284d832db7@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -91,39 +92,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
+In-Reply-To: <1635e663-24b6-48f8-b781-67284d832db7@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/07/2025 14:18, Daniel Lezcano wrote:
-> The function register_current_timer_delay() when compiling on ARM32
-> fails with a section mismatch. That is resulting from the module
-> conversion where the function exynos4_clocksource_init() is called
-> from mct_init_dt(). This one had its __init annotation removed to for
-> the module loading.
+On 25/07/2025 10:48, Krzysztof Kozlowski wrote:
+> On 15/07/2025 14:18, Daniel Lezcano wrote:
+>> The function register_current_timer_delay() when compiling on ARM32
+>> fails with a section mismatch. That is resulting from the module
+>> conversion where the function exynos4_clocksource_init() is called
+>> from mct_init_dt(). This one had its __init annotation removed to for
+>> the module loading.
+>>
+>> Fix this by adding the __init_or_module annotation for the functions:
+>>  - mct_init_dt()
+>>  - mct_init_spi()
+>>  - mct_init_dt()
+>>
+>> Compiled on ARM32 + MODULES=no, ARM64 + MODULES=yes, ARM64 +
+>> MODULES=no
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>  drivers/clocksource/exynos_mct.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Fix this by adding the __init_or_module annotation for the functions:
->  - mct_init_dt()
->  - mct_init_spi()
->  - mct_init_dt()
+> Did anyone applied this or any other fix?
 > 
-> Compiled on ARM32 + MODULES=no, ARM64 + MODULES=yes, ARM64 +
-> MODULES=no
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/clocksource/exynos_mct.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Next builds are still broken.
+> https://krzk.eu/#/builders/12/builds/3365
 
-Did anyone applied this or any other fix?
+... and first failure was 9 (!) days ago:
+https://krzk.eu/#/builders/12/builds/3350
 
-Next builds are still broken.
-https://krzk.eu/#/builders/12/builds/3365
-
-Please revert untested patches if there is no consensus for fixes
-
-It's really surprising that original patchset was not even built by
-defconfigs (and I assume it was not even asked to be built by LKP).
 
 Best regards,
 Krzysztof
