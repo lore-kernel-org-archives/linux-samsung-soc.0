@@ -1,171 +1,241 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C6C1C5D59
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jul 2025 14:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE761E766F;
+	Fri, 25 Jul 2025 19:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452983; cv=none; b=rc6viux8rxJxgStPa16KWCEK/HNoN5mu4WLUVDhg7au60ryu+vCVEPQCRezOYl2c6o0Bb1/W4vH/EDQ1Tnj1Cm8YpPpSk/ucETelAxE3DRCX/JRssCm5p0Tc4qCQrXa9/5y2EGr4aX2Vrtc01FD76oT/PnlIZ8hGEpPABfrNECk=
+	t=1753472802; cv=none; b=cVlSFQcZU6sAZEqB4aeEHoanAxdlRYNSJRtX1HtRTD/2nhaF2LQf4O5VLnkPwS/MiQUeA91+dxsR7nXFOOmYLwhBxYDaFrXIppsA6GsVJOXWahADsHX6qwyUT4EPzNI4VDcIaLoKvQ80+sV1/TecS+hMB9hrvR/1vBgzqKhCq5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452983; c=relaxed/simple;
-	bh=Xip8jE5pNwtMgx7ORp3HsgqbQwAw/yGfdOPBmn7/ojQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=loHH+FEi62RR6jTCbr8Oytcpfn8fvGQBO9KBjvXrhstNx2LjlrDDaf4f2vtQhkw5aVmjDH0ZNKJz7Xivd/yr/qG0xjjIIThEAC4tqxGx7ubqP3j3pIfn+9vgMAoF6Qq7Ibr9GPQWhuqdNocT8tEPmTt/KQ9EaNWW5pkqCD3zN00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qa5fzeGC; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753472802; c=relaxed/simple;
+	bh=H3Pl6gyLNP/P3wbEeukRaq98SrRFmB1+FETRxiE6TnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W+jsViRrkNySPGsTEMfmoX7uWWIixj+4t8sM2PhZCgSusWFBbHUyaw3URSC8W8zUfYz5VZ7ePHp0vc35GPekFtQAacNVQ5C92NjdwWmKET6SAMYzNd8dM4AZOeyXd8Kz3O+W4rYAUcEdpf8qUkDFLxEnPPGp6XULy0FBLH6LpK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TUlGwI1/; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qa5fzeGC"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso386786566b.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jul 2025 07:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753452978; x=1754057778; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/zam/LW3oj60VYDi/BrVgQJFij9S3YsCyteAYO8PX1E=;
-        b=qa5fzeGCaPC7T/LANLBabBtX9iOfWWLDcXhdXjjKv4h96ps0BDv05BoMs6+cHbr7YA
-         9wjbMSLbv8YqFDk3BuXvRnNx9AaMwLKASd9oehza2BDJnfLX3iEMnOJ/YO5lfOU9HszQ
-         /cylqojecTdDERHbC8v4pqhkUgKKP2oJ2NRg8ybd6p37z8GwzvahflWZ5jzzv0L+Nb13
-         AnEsgrjsSqb+oHrLgKdhzMYc6c14cdaaFcodT14LHa7hddAyrnLgjU0QmnD11pBdSutv
-         rARAB67OwXYOiVSNlfB91NVpb/5Adnocnf3cX/dV4y8hGlXaeW1VJaBkEKZZoqqOMB4S
-         KK1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753452978; x=1754057778;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/zam/LW3oj60VYDi/BrVgQJFij9S3YsCyteAYO8PX1E=;
-        b=aa9E7Neu5VSxadC10yhvworeKW92JOD691Q5Af4MQJiqA8zBnBAU5Y1jGjXGZfbtIP
-         qwVkIvT/vL7hH/4T5iOFE3rJQZe78fJmzTmnmZhJFRi8XJQ5wPvRiYBTIQb6H1egQHJs
-         7+kI3fXsXAxAYOhFI+tdeT/xBl0oFnivefz7lY/rpz8mrXsIhLmLgwOF4KOpQfboS+ba
-         7o8+TpYJ8817Eai4p51Q2bHbkKqZsRDO2WNZA8mT6nhzaBV//8knyUo8+HG7kGrhCc0Y
-         61NdxqNoAHjqGJq/+GiDjskzMLknNpGOtqROEjVB5hCF11u64wHV+eaJ6YeW8B3pmLo/
-         SjJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjGHAaAGxaNrCEUUOeDgihTAa1F2/RvxTz3RTKHAlEwwNR/Ysq/jSv4/4l/b3cHUxkKB/6ibzkuFQetP394s/yhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTBkd79iR9vgxw0n/g1/doPzUwfqOZbcv7CiAbjg1jsE5JHOV0
-	1yM17wzTuX0EJKLHSRkQzOGxnOrbu9QJHYyASipKLFnJ2vA+hAWt5yWU4NgvdVriKr0=
-X-Gm-Gg: ASbGncstXtcnnZSfv0lqEldT/Z3uPquAV6xpX8j6bzEA4VXv+ikPmH7ss+n9cHdHoAb
-	/8Gg9Dpz9Gm2fuCYVnJ072ji/YnJj+74OmbwF8KRaloohTaHaHi5FcXzdBsUu0gmJsk2wZcKGHJ
-	KTl0XAL47tz0exc/PsXse2/kYoshWYJXZfe0eO/mruEHUnBiaYp9zskPoySz0nIpGG4aibmluiX
-	d/Owsjb5nJrb9bj/QT7T7XWc0WXg5G7UQsKRD4d0YkKaox/Yv3RhtB72YC88iqNZiLYqmLGNHsd
-	yVQpeO1AOfM6cB9AtbwcpoLOsSLpeh9jQvpmU6OCE8nhlcfwW5PHDE0lfNiHK024PdrUUEBsEzL
-	twE3V1hnpsWS4mjIXf9gQWV9wTk/PsLPT6g3RstSWsACjesp+iB8GqASgHHSFelijc+kf2VlcNM
-	d21HzMlA==
-X-Google-Smtp-Source: AGHT+IFX5GnNzDHfFClTllxEfxM5knR3JPoKqdSRHH8rDBPQpxv4Ttm+JHD8dxakGBd8eBWGd9ILPw==
-X-Received: by 2002:a17:907:9623:b0:ae3:c777:6e5e with SMTP id a640c23a62f3a-af61df52d26mr252419366b.19.1753452978372;
-        Fri, 25 Jul 2025 07:16:18 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f85e60bsm278398966b.96.2025.07.25.07.16.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 07:16:17 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 25 Jul 2025 15:16:15 +0100
-Subject: [PATCH v2 1/2] scsi: ufs: core: complete polled requests also from
- interrupt context
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TUlGwI1/"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=prxfnO3e15wcyBVTUn75ZWiKrjM1vcJUc4ZMMOjkQdc=; b=TUlGwI1/sAOve1BDnS40gn7kgs
+	kTW+CEJ/5ZrPFaJVsXvbKD96K4fVK4onh7mCY+W1QNyAmftuwaWuPSoz3fo4FssF2Yo5YDvNa3sJ8
+	2T7h6tf6sbj8PxVBU0/HCm67EbS3YYerMTSrkFlyoe2NPpTlzPo9Kq4cfiTP5ueIHK0P2Zepr/X5N
+	d1JXv3m2iXoyYs90+kaHRB/AKb4DpBWeKRjBeq7UyBVWSCYmid48/1zrPnctmacHOYJsTY5XzAU56
+	RLuyUrtES+2uzO5BGabOI/YdRhqjfAvbjG1FmBdvn1QJE2Wy6BgppPo3vRfoxsMiiQ0k9WYS5U9HU
+	aQ3tGI3Q==;
+Received: from i53875ba0.versanet.de ([83.135.91.160] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ufOMX-0000i6-FB; Fri, 25 Jul 2025 21:45:49 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Damon Ding <damon.ding@rock-chips.com>
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v3 00/14] Apply drm_bridge_connector and panel_bridge helper for
+ the Analogix DP driver
+Date: Fri, 25 Jul 2025 21:45:48 +0200
+Message-ID: <6070443.MhkbZ0Pkbq@diego>
+In-Reply-To: <b0ce0d8d-4ceb-419e-a892-d39b8633aa13@rock-chips.com>
+References:
+ <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <3890785.kQq0lBPeGt@diego>
+ <b0ce0d8d-4ceb-419e-a892-d39b8633aa13@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250725-ufshcd-hardirq-v2-1-884c11e0b0df@linaro.org>
-References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
-In-Reply-To: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com, 
- linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
 
-When commit ee8c88cab4af ("scsi: ufs: core: Fix the polling
-implementation") was added, the block layer did not support completing
-polled requests from interrupt context.
+Hi Damon,
+Am Freitag, 25. Juli 2025, 04:15:06 Mitteleurop=C3=A4ische Sommerzeit schri=
+eb Damon Ding:
+> On 2025/7/24 21:10, Heiko St=C3=BCbner wrote:
+> > Am Donnerstag, 24. Juli 2025, 10:02:50 Mitteleurop=C3=A4ische Sommerzei=
+t schrieb Damon Ding:
+> >> PATCH 1 is a small format optimization for struct analogid_dp_device.
+> >> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+> >> PATCH 3 is to apply a better API for the encoder initialization.
+> >> PATCH 4-7 are preparations for apply drm_bridge_connector helper.
+> >> PATCH 8 is to apply the drm_bridge_connector helper.
+> >> PATCH 9-11 are to move the panel/bridge parsing to the Analogix side.
+> >> PATCH 12-13 are preparations for apply panel_bridge helper.
+> >> PATCH 14 is to apply the panel_bridge helper.
+> >=20
+> > for future revisions, please provide a changelog on what changed since
+> > the previous version, I guess ideally here in the cover-letter.
+> >=20
+> >=20
+> > On my rk3588-tiger-displayport-carrier this works like a charm
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> >=20
+> >=20
+> >=20
+> >=20
+>=20
+> Glad to see your review and test. :-)
+>=20
+> I will include the version-to-version changelogs (v2 -> v3 and v3 -> v4)=
+=20
+> in the next iteration.
 
-This has changed since (presumably with commit b99182c501c3 ("bio: add
-pcpu caching for non-polling bio_put")) and it is possible to complete
-polled requests also from interrupt context.
+I have to amend that a bit, sadly. When doing a reboot with the edp
+running, I see logs like:
 
-Therefore, this commit here changes the code to also complete polled
-requests from interrupt context, mostly reverting above referenced
-commit as it is not necessary anymore. We do keep the fix to make
-ufshcd_poll() return a positive number.
+[...]
+[  139.614749] systemd-shutdown[1]: Syncing filesystems and block devices.
+[  139.622201] systemd-shutdown[1]: Rebooting.
+[  139.684845] ------------[ cut here ]------------
+[  139.690050] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip-iommu.c:9=
+89 rk_iommu_identity_attach+0xac/0xbc
+[  139.701175] Modules linked in: panthor rockchip_vdec rocket drm_gpuvm v4=
+l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper v4l2_mem2mem gpu_sc=
+hed rng_core fuse
+[  139.717685] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Not tainted 6.16.0-r=
+c7-00183-gd436cbe8e4b3 #1541 PREEMPT=20
+[  139.728799] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger Disp=
+layport Carrier v1 (DT)
+[  139.738548] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[  139.746351] pc : rk_iommu_identity_attach+0xac/0xbc
+[  139.751821] lr : rk_iommu_identity_attach+0x70/0xbc
+[  139.757290] sp : ffff800080e4b7c0
+[  139.761001] x29: ffff800080e4b7c0 x28: ffff0001f6f98080 x27: ffff0001f0a=
+4b010
+[  139.769006] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 00000000000=
+00000
+[  139.777010] x23: 0000000000000000 x22: ffffdbf23c0485e0 x21: ffff0001f0e=
+9cc10
+[  139.785014] x20: ffff0001f0df17a0 x19: ffff0001f0e2cb80 x18: 00000000000=
+00038
+[  139.793018] x17: 0002550800000009 x16: 0000046c0446043e x15: 0438000008c=
+a080c
+[  139.801021] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 07d00780000=
+25508
+[  139.809024] x11: 0002550800000009 x10: 0000046c0446043e x9 : ffffdbf23c1=
+37000
+[  139.817031] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 00000000000=
+00000
+[  139.825034] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : ffff0001f0d=
+f1780
+[  139.833038] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 00000000fff=
+fffea
+[  139.841042] Call trace:
+[  139.843780]  rk_iommu_identity_attach+0xac/0xbc (P)
+[  139.849252]  rk_iommu_attach_device+0x54/0x134
+[  139.854236]  __iommu_device_set_domain+0x7c/0x110
+[  139.859510]  __iommu_group_set_domain_internal+0x60/0x134
+[  139.865561]  __iommu_attach_group+0x88/0x9c
+[  139.870250]  iommu_attach_device+0x68/0xa0
+[  139.874841]  rockchip_drm_dma_attach_device+0x28/0x7c
+[  139.880508]  vop2_crtc_atomic_enable+0x620/0xaa0
+[  139.885678]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
+[  139.892413]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+[  139.898369]  commit_tail+0xa0/0x1a0
+[  139.902279]  drm_atomic_helper_commit+0x17c/0x1b0
+[  139.907552]  drm_atomic_commit+0x8c/0xcc
+[  139.911951]  drm_client_modeset_commit_atomic+0x228/0x298
+[  139.918005]  drm_client_modeset_commit_locked+0x5c/0x188
+[  139.923960]  drm_client_modeset_commit+0x2c/0x58
+[  139.929137]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
+[  139.936164]  drm_fb_helper_hotplug_event+0xe8/0xf8
+[  139.941526]  drm_fbdev_client_hotplug+0x24/0xe0
+[  139.946605]  drm_client_hotplug+0x48/0xc4
+[  139.951100]  drm_client_dev_hotplug+0x9c/0xd4
+[  139.955984]  drm_kms_helper_connector_hotplug_event+0x20/0x30
+[  139.962426]  drm_bridge_connector_hpd_cb+0x88/0xa0
+[  139.967790]  drm_bridge_hpd_notify+0x3c/0x60
+[  139.972577]  display_connector_hpd_irq+0x30/0xa4
+[  139.978835]  irq_thread_fn+0x2c/0xb0
+[  139.983894]  irq_thread+0x170/0x304
+[  139.988833]  kthread+0x12c/0x204
+[  139.993468]  ret_from_fork+0x10/0x20
+[  139.998486] ---[ end trace 0000000000000000 ]---
+[  140.004737] ------------[ cut here ]------------
+[  140.010884] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip-iommu.c:1=
+040 rk_iommu_attach_device+0x114/0x134
+[  140.023079] Modules linked in: panthor rockchip_vdec rocket drm_gpuvm v4=
+l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper v4l2_mem2mem gpu_sc=
+hed rng_core fuse
+[  140.040577] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Tainted: G        W =
+          6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT=20
+[  140.054457] Tainted: [W]=3DWARN
+[  140.058804] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger Disp=
+layport Carrier v1 (DT)
+[  140.069595] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[  140.078454] pc : rk_iommu_attach_device+0x114/0x134
+[  140.084989] lr : rk_iommu_attach_device+0x98/0x134
+[  140.091423] sp : ffff800080e4b7e0
+[  140.096197] x29: ffff800080e4b7e0 x28: ffff0001f6f98080 x27: ffff0001f0a=
+4b010
+[  140.105270] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 00000000000=
+00000
+[  140.114351] x23: ffff0001f6f843e0 x22: ffffdbf23c0485e0 x21: ffff0001f0e=
+9cc10
+[  140.123425] x20: ffff0001f0e2cb80 x19: ffff0001f6f843c0 x18: 00000000000=
+00038
+[  140.132489] x17: 0002550800000009 x16: 0000046c0446043e x15: 0438000008c=
+a080c
+[  140.141552] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 07d00780000=
+25508
+[  140.150623] x11: 0002550800000009 x10: 0000046c0446043e x9 : ffffdbf23c1=
+37000
+[  140.159701] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 00000000000=
+00000
+[  140.168772] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : ffff0001f0e=
+2cbe0
+[  140.177825] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 00000000fff=
+fffea
+[  140.186858] Call trace:
+[  140.190627]  rk_iommu_attach_device+0x114/0x134 (P)
+[  140.197124]  __iommu_device_set_domain+0x7c/0x110
+[  140.203417]  __iommu_group_set_domain_internal+0x60/0x134
+[  140.210492]  __iommu_attach_group+0x88/0x9c
+[  140.216203]  iommu_attach_device+0x68/0xa0
+[  140.221802]  rockchip_drm_dma_attach_device+0x28/0x7c
+[  140.228479]  vop2_crtc_atomic_enable+0x620/0xaa0
+[  140.234664]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
+[  140.242400]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+[  140.249349]  commit_tail+0xa0/0x1a0
+[  140.254246]  drm_atomic_helper_commit+0x17c/0x1b0
+[  140.260496]  drm_atomic_commit+0x8c/0xcc
+[  140.265866]  drm_client_modeset_commit_atomic+0x228/0x298
+[  140.272885]  drm_client_modeset_commit_locked+0x5c/0x188
+[  140.279791]  drm_client_modeset_commit+0x2c/0x58
+[  140.285914]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
+[  140.293889]  drm_fb_helper_hotplug_event+0xe8/0xf8
+[  140.300214]  drm_fbdev_client_hotplug+0x24/0xe0
+[  140.306248]  drm_client_hotplug+0x48/0xc4
+[  140.311695]  drm_client_dev_hotplug+0x9c/0xd4
+[  140.317531]  drm_kms_helper_connector_hotplug_event+0x20/0x30
+[  140.324930]  drm_bridge_connector_hpd_cb+0x88/0xa0
+[  140.331248]  drm_bridge_hpd_notify+0x3c/0x60
+[  140.336990]  display_connector_hpd_irq+0x30/0xa4
+[  140.343120]  irq_thread_fn+0x2c/0xb0
+[  140.348081]  irq_thread+0x170/0x304
+[  140.352937]  kthread+0x12c/0x204
+[  140.357501]  ret_from_fork+0x10/0x20
+[  140.362453] ---[ end trace 0000000000000000 ]---
 
-The change has been verified using:
-    fio --name=randread --rw=randread --ioengine=pvsync2 --hipri=1 \
-        --direct=1 --bs=4k --numjobs=8 --size=32m --runtime=30 \
-        --time_based --end_fsync=1 --group_reporting --filename=/foo
 
-which appears to have completed with no errors with this commit.
+After some minutes of hanging it does reboot afterall.
 
-Suggested-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/ufs/core/ufshcd.c | 26 +-------------------------
- 1 file changed, 1 insertion(+), 25 deletions(-)
+Heiko
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 13f7e0469141619cfc5e180aa730171ff01b8fb1..d8e2eabacd3efbf07458e81cc4d15ba7f05d3913 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -5613,26 +5613,6 @@ static void __ufshcd_transfer_req_compl(struct ufs_hba *hba,
- 		ufshcd_compl_one_cqe(hba, tag, NULL);
- }
- 
--/* Any value that is not an existing queue number is fine for this constant. */
--enum {
--	UFSHCD_POLL_FROM_INTERRUPT_CONTEXT = -1
--};
--
--static void ufshcd_clear_polled(struct ufs_hba *hba,
--				unsigned long *completed_reqs)
--{
--	int tag;
--
--	for_each_set_bit(tag, completed_reqs, hba->nutrs) {
--		struct scsi_cmnd *cmd = hba->lrb[tag].cmd;
--
--		if (!cmd)
--			continue;
--		if (scsi_cmd_to_rq(cmd)->cmd_flags & REQ_POLLED)
--			__clear_bit(tag, completed_reqs);
--	}
--}
--
- /*
-  * Return: > 0 if one or more commands have been completed or 0 if no
-  * requests have been completed.
-@@ -5656,10 +5636,6 @@ static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
- 	WARN_ONCE(completed_reqs & ~hba->outstanding_reqs,
- 		  "completed: %#lx; outstanding: %#lx\n", completed_reqs,
- 		  hba->outstanding_reqs);
--	if (queue_num == UFSHCD_POLL_FROM_INTERRUPT_CONTEXT) {
--		/* Do not complete polled requests from interrupt context. */
--		ufshcd_clear_polled(hba, &completed_reqs);
--	}
- 	hba->outstanding_reqs &= ~completed_reqs;
- 	spin_unlock_irqrestore(&hba->outstanding_lock, flags);
- 
-@@ -5747,7 +5723,7 @@ static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba)
- 	 * Ignore the ufshcd_poll() return value and return IRQ_HANDLED since we
- 	 * do not want polling to trigger spurious interrupt complaints.
- 	 */
--	ufshcd_poll(hba->host, UFSHCD_POLL_FROM_INTERRUPT_CONTEXT);
-+	ufshcd_poll(hba->host, 0);
- 
- 	return IRQ_HANDLED;
- }
-
--- 
-2.50.1.487.gc89ff58d15-goog
 
