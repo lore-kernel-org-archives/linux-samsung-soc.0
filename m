@@ -1,159 +1,149 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8AF14A82
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2025 17:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15782E36E6;
+	Mon, 28 Jul 2025 06:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753636065; cv=none; b=e9i9I53w7lBUcJI8aoYhPpgVM+/5ORl3zhWAEv+nakHsmBQeu/loLYhfkjGAgLC4Q9A/c7gvzBHbbhSeoOMJky6fBOzXlpavxdYa9z1d7iPxRyuvIS+EiU1b8Z44uthK9PnfoyHySVuATEwv4L9vBockVuNpe4ZBKsElKuZU+54=
+	t=1753684212; cv=none; b=Fwy0rKMZTiiBTRu3f1ue6xc6s7sY3IiJm2YKkTBcCoZA3ChrBsjncGmgbihKHqUFFuyZhu4tu/NB7kbgRnixfqShX6b0YZH6xB4f62fraaM3g9Ugk3aDtxqLv2rsRhSD5Zk4P611/bK6xVkxLSFY8RyEQql8wM03ujnNHJmvJj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753636065; c=relaxed/simple;
-	bh=wdvQvZOCUJ/q5uIVaqvSjkbGbQL15jJ/+mzkMqjWgSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnuH1oqRJ7oLp4U44W+qix8hLp4xrGAwz8eJmkMMWPedgM0XicBllf0XUV4+6fbuPO8Boxf8GIYOgA5baTHWO4EnN2Jkj80Xqq7yqCeoq+LkWffeU8y4HdCOVjjv8v2O4w11iBIcL54g7UOuEyYj0IfNptp10N2qHf2Ls1NPmVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GjWlHz6V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1753684212; c=relaxed/simple;
+	bh=PZhix2m4fVFQ5HsQVXTs4d5E58RzN1jb5QILt948gYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lIi4m3+vttihVp5Gb5+usOsW3ozSqPdA9mdppi02P4VePAIYrHEK1uaeMhX2uyQQFAut6LzuQzf/weHeH89coVSSiuBOBqR3/w8/DDXigmWhozWt4HmqzXBiUaNZiF/yUDvAXHmjK0DDU5Gs3Mh7q4lsUk3Kh6+0133e0IjLJi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUDHRm5Y; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GjWlHz6V"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RCpvXL029754
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2025 17:07:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ixTGCGDVVyYZCVMPENu9+cSJ
-	CMoukZrCFUWQs6e8nEs=; b=GjWlHz6VsRKE///7RZP+5J6nheAUZYr6XJ1Pn8y1
-	9PG8KwFozIyqCuM0kPniLOFb4DCi1tJP4COnQrtVj9R6dr67Ztcq0s+9PYkW5pDA
-	D/aLW4F3wevb9eSFNy9tvV3KB+YZuUNkRfCqUKfaw5vjYKFoh1nas4aPogtn3L5L
-	Z6ev0yhdRShYYdS86oXSMRGepuBXhBvFrDeMLrr+2Xdx4Bc3AmvCvdMzUXt7HjxD
-	iGjajE0qEdOACM8yy2YkzM8HtLLhRmk8dkCf+mAdMYgOevhNemt2k7TsJpeBrNn8
-	/nRDW8qbacMN0rvUJMEeBuzs/lVthIi3mFB1XWdo3RciEw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484racjb83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2025 17:07:41 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70732006280so22334146d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2025 10:07:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUDHRm5Y"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55628eaec6cso3688359e87.0;
+        Sun, 27 Jul 2025 23:30:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753684209; x=1754289009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=316U4DOI1oCGsif5IWGCXTFbVQzmX1KKv1+uFfG3g+Y=;
+        b=hUDHRm5YYqGW/hAT2Q0q6OhHbhqp/+mso65WojXhQiFb4XswcEldnAJdKhvtwjhuIp
+         9SKXshuWai7Dn2rQqa3ix9fdHwz95VCL9HA/iyGxrIF7qAFCkEcc950KlTSCcJPaz1Ed
+         osU3z9Lbq64aq+GAKKFumqTs0tDrsaKoUBY4KG2+df9gBPYoBw5a4d6tyo0GDR5uOJOQ
+         iCgtFEtsKtaSiajEImdkOSya0Y/QBplsT/po9hetwE+qnJ79JhvIR0kR1GmJcPwvHRTw
+         8ptYs5LNicHXUCdj+mfwNg0SFtkT5jZU8viFDuIZd3g6nQ0J5WgTDbQgmVA1unUs2qNy
+         g0iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753636060; x=1754240860;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ixTGCGDVVyYZCVMPENu9+cSJCMoukZrCFUWQs6e8nEs=;
-        b=kezAIIZr1BgIkjwJ3yuhIQF6BoRO2L5tyOeYog0SOg11RWMvpKspxCUA5FK5MNQEgW
-         m0+HAqkog8PqbNx6NgyAo8/Lh60B1Rq5syjo1ZezErdhrkAwIeBsp3K07zrFH5yQCxVS
-         qFGq1EcMYjaMFKGpYsl53i78ygOPKsZ4izCWxdvfXI8pR7xCK8vJRgVP17yh6ikadiFf
-         XEu+0csMnlFmv83LskzPgIBuRpesVxInN1CpAS9uSkIP/uySSoJNfWo4CEraOtJt0qhq
-         +pa2mlsRAuQ1tZPB0VvqsAG4/ky7jBvjvfPmjbXP2oHB0BRweb/KJug+GVgNiGSH4kfx
-         MDDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0pbx2LbycLN8TVyAS4fiuKN9eHSei6QhVKurzc4a3mZTSG7v1QLX6NSnYcuoiCJqOsSxdgCIP9Zt945dXLqKj8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEr1kFul7SNZc6sm+a+5E/Gs5rqq7yM5ILE6yZjdeb9DRAcDOe
-	av+rtFVNugchfSD0BUXDtJRW9dWdHbV9nxLlSooHs9lLroijrw4iCUSDasY9AemohFGCYVI2gpe
-	oi/li8P/094gb2mdCAFO2bLsSaRmGk82nc9jI93Oj13CaizvqLvLeEIUd3/FUTUwhrqDPBt3wlA
-	==
-X-Gm-Gg: ASbGncufME3c1wM5/6ltRKo5mkK61wWGSA0zv6XU8uZtCqSq2TxY9bYRTfhdpTes57B
-	acT5Di+xM0xZndPG6ADnuKHFExyGRBIG0bKYtTcJf7uOVC1u3n9AfeiQy6RIfaaWaY/5kcNuD0J
-	SSvpEORn+fz1sR11hnP7ixvsK7VuTtHFzve1zlIniq+MvKlXMUFXtsGNL5gWr3cBT7ltB4gdMCn
-	k/SNFrjS4yDDWxpcCPrDQOYb16PXGDN4lvtZFjZA6FZIByhl+EdfvRCOhYxF4B/69TREwfMYZli
-	fko6jA4za49+892bnca3tkczVVs0ZO2OII0ulfeplmUQRnYumstO7RcqTZyx5Me3lcVy66PfgMk
-	FYGSkFfVs4w5ST498yFCr8OOL3DgK8IavKCDX/jzPp2ByWtJBtt2Z
-X-Received: by 2002:a05:6214:2589:b0:707:4537:694d with SMTP id 6a1803df08f44-70745378ec4mr29537446d6.40.1753636060365;
-        Sun, 27 Jul 2025 10:07:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEXLKqoDY1SG91obuUTr/s+jXCYfFkccduE+r6jszKozvG4bsVHcYbTsAuHs4gKScMQt334Q==
-X-Received: by 2002:a05:6214:2589:b0:707:4537:694d with SMTP id 6a1803df08f44-70745378ec4mr29537026d6.40.1753636059860;
-        Sun, 27 Jul 2025 10:07:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b633760e6sm878179e87.160.2025.07.27.10.07.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 10:07:38 -0700 (PDT)
-Date: Sun, 27 Jul 2025 20:07:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Henrik Grimler <henrik@grimler.se>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-Message-ID: <ldhyfuczwtwydwnvno4xn6ppjtt7mtcj35fp52xrqaajtfbtpb@2pgkytczb5k5>
-References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
- <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
+        d=1e100.net; s=20230601; t=1753684209; x=1754289009;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=316U4DOI1oCGsif5IWGCXTFbVQzmX1KKv1+uFfG3g+Y=;
+        b=c3ou6N6FqGy0kDf9XJ3HXGvYA72OqFFB/uD011f8eE3moV7Cb8v1bV/vXimXYqIQ6F
+         PH4lf0TnrfyJrgV4WAo7mbljJ2X2l5LvYtJkDMzfyu1AhQxvjpjPOWTZ9Fpm5zsc0BiU
+         lepx8V8RhhYajO+3W7zli2swSqhOcOXwIhnYRQia/z/El86VcECQDOXdfYpVvJplbkZD
+         /22RykoCdHEN0gege+HqYXu41MoxwmXSM7vgMVU6SvgxkKqR0QnMWvxmIXyyZFAU6Tvp
+         r0spXCZz2g8/5pBNp2u76yG9zbG5n6cygjGxb5w0twueZoss+Ay54gmaG1Gv/uUYZFi9
+         FnDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4S7Su63Hb5eHAbvqoYJVH53B2LaDgXEOtSuYe6VTDEO3Ib9SoHuULdzfdg76wVDSW8UUKkA0XUQLvdp1U@vger.kernel.org, AJvYcCUKhU0mZtLbqXexT1NmpuINiEeZqJn3hVU+IkYS5IwLSvWagBOhLojhKBa+OxHl8eNNUsHYynVzD/Kf@vger.kernel.org, AJvYcCV6z0iJo4izk7AC0xwoEfMtxSW7/bxockZBj6nxxXLghRCZDNB7tFJUK2EBRydK5+7tPJz2uSaNrOeO@vger.kernel.org, AJvYcCVXgLssVKZ54tt6KoJOPi7Ae48wuboTW6+3pePvI/bDVDV47LENAMWAgMkB2TDlmEd2Baj6C+50d/4Vf2FFfT9SaL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGvrssB/5vRAuzS3xCpzRd+U6ykclb4vU0uN5Z+VUFEeY4jhYX
+	VFir2vXJKOqr8jxMcyapcFfkFPSLYZsRSaYqvBJY+b6SNqz8IF6UXgzN
+X-Gm-Gg: ASbGnctVaWKnIHY4y3ntnDjyxxM3dvyCRErcTNblFITverFoCfr7HkRSAMbAUOn7JA1
+	9Oy5XFHLi9KMbnSI7iNYwfR8uwJqJ+9kzV5PbML+u31wNtMY/HhIgZgGHWh8qyiqwcHwmiUf4LC
+	+Kv55MKr4rz3sCfuEHvsspsQe8N9hISorWzHWgAPhHgolOxp2I64U3dtlG62Wme4XOzWQ0t06UW
+	9qOSncLaAoZmLJjt6v/K1tMPrLKQiFEIwwPawT/uthvkczrfu4EGpeiZs8i7K+DqxWkt43mtvLn
+	00W3BmyKX9yFwUNZMC/kZGQfcH5ihl+vwt+rukCxjeu4kKKDdAx5ux5+b9LBg9Uh7OK2SRRBu8R
+	vi+aSF0+BTWQNFGP65CdrywlkzJQQC2N02tdKNLvdG4l+
+X-Google-Smtp-Source: AGHT+IEM7K5rZYU4BO59YG8z3ImKAWgJLk3LWr8tkHB+uKAbk+/BZbc8cNCzT1IHuQMGlPVOFj+NoQ==
+X-Received: by 2002:a05:6512:1323:b0:553:3770:c912 with SMTP id 2adb3069b0e04-55b5f4b9fbamr2207518e87.47.1753684208304;
+        Sun, 27 Jul 2025 23:30:08 -0700 (PDT)
+Received: from [172.16.183.77] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6316d9a5sm1124184e87.21.2025.07.27.23.30.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Jul 2025 23:30:07 -0700 (PDT)
+Message-ID: <3be5c56c-f2cf-4ade-a77c-ace556119f96@gmail.com>
+Date: Mon, 28 Jul 2025 09:30:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
-X-Authority-Analysis: v=2.4 cv=WqsrMcfv c=1 sm=1 tr=0 ts=68865cdd cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=QyXUC8HyAAAA:8 a=he5a5jZawRGK-0tMrGoA:9 a=CjuIK1q_8ugA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-GUID: KbTTzbyfnoQ9n11xpBI8Ud7RZjlqqDft
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI3MDE1MiBTYWx0ZWRfX4s/Qjvc5MGcT
- u8+MT4Y9kDLjxCNecWpsCkyT3+oEq9qk5GX0N16f0UyRwUwsxvAjGLjZyFD7mJE+WGmUNdoxaYi
- NLFwNh1E4BNd7kBgNh6ix07XAFOBC/PsE7b3Cyn1wdQAaSIzQaTkeIqzJ5ixPUDH4xzf+cOp4g1
- gX51IatFR2lUG5AphIzVZd+FpszCwAi/62+628P2hP1bgHwNBonbtVex3v3/mGiTg2T4qOvs8JP
- toW7kFzsKbmY0zLlPAd6Lj31D2/KsfOaOKHm6jL0MdBG8ThxvRlO6I1Nhm8N5BUE2hmaX3oXTIN
- sf38Vm4WjF/0eMFVob6uQKiqlkWMHEFSFk3W/KwLW4HMZC8JRNi5QV7C1yKOEOgN4phH3uElztJ
- 5p5nvLFiX5lJjprkqovVHCAdR4wRttEgSZQ8Pg3hTDvy9WT8sQtokNGnHyZL+PlAKJji2thq
-X-Proofpoint-ORIG-GUID: KbTTzbyfnoQ9n11xpBI8Ud7RZjlqqDft
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-27_05,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
- clxscore=1015 mlxlogscore=855 impostorscore=0 mlxscore=0 malwarescore=0
- adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507270152
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: iio: adc: Replace hard-coded GPIO/IRQ
+ flag with a define
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lucas Stankus <lucas.p.stankus@gmail.com>,
+ Puranjay Mohan <puranjay@kernel.org>, Dan Robertson <dan@dlrobertson.com>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+ =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>,
+ Alexandru Tachici <alexandru.tachici@analog.com>,
+ Stefan Popa <stefan.popa@analog.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Stephan Gerhold <stephan@gerhold.net>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Alexandru Lazar <alazar@startmail.com>, Andy Gross <agross@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Angelo Compagnucci <angelo.compagnucci@gmail.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>, David Heidelberg <david@ixit.cz>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Andreas Klinger <ak@it-klinger.de>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
+ <20250724111345.47889-6-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250724111345.47889-6-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 08:50:53PM +0200, Henrik Grimler wrote:
-> To use MHL we currently need the MHL chip to be permanently on, which
-> consumes unnecessary power. Let's use extcon attached to MUIC to enable
-> the MHL chip only if it detects an MHL cable.
-
-Does HPD GPIO reflect the correct state of the cable? What is the order
-of events in such a case? Should the sii9234 signal to Exynos HDMI that
-the link is established?
-
+On 24/07/2025 14:13, Krzysztof Kozlowski wrote:
+> For readability use known defines instead of hard-coding GPIO or
+> interrupt flag.
 > 
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+FWIW:
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Thanks!
+
 > ---
-> v2: add dependency on extcon. Issue reported by kernel test robot
->     <lkp@intel.com>
-> ---
->  drivers/gpu/drm/bridge/Kconfig   |  1 +
->  drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
->  2 files changed, 87 insertions(+), 3 deletions(-)
+>   Documentation/devicetree/bindings/iio/adc/maxim,max1241.yaml | 2 +-
+>   Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml  | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index b9e0ca85226a603a24f90c6879d1499f824060cb..f18a083f6e1c6fe40bde5e65a1548acc61a162ae 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -303,6 +303,7 @@ config DRM_SII902X
->  config DRM_SII9234
->  	tristate "Silicon Image SII9234 HDMI/MHL bridge"
->  	depends on OF
-> +	select EXTCON
+> diff --git a/Documentation/devicetree/bindings/iio/adc/maxim,max1241.yaml b/Documentation/devicetree/bindings/iio/adc/maxim,max1241.yaml
+> index ef8d51e74c08..592854766583 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/maxim,max1241.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/maxim,max1241.yaml
+> @@ -63,6 +63,6 @@ examples:
+>               vdd-supply = <&adc_vdd>;
+>               vref-supply = <&adc_vref>;
+>               spi-max-frequency = <1000000>;
+> -            shutdown-gpios = <&gpio 26 1>;
+> +            shutdown-gpios = <&gpio 26 GPIO_ACTIVE_LOW>;
+>           };
+>       };
+> diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
+> index 503285823376..4a8f127de7e3 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
+> @@ -81,7 +81,7 @@ examples:
+>               reg = <0x10>;
+>   
+>               interrupt-parent = <&gpio1>;
+> -            interrupts = <29 8>;
+> +            interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+>   
+>               vdd-supply = <&dummyreg>;
+>               iovdd-supply = <&dummyreg>;
 
-Either this or 'depends on EXTCON || !EXTCON'
-
->  	help
->  	  Say Y here if you want support for the MHL interface.
->  	  It is an I2C driver, that detects connection of MHL bridge
-
--- 
-With best wishes
-Dmitry
