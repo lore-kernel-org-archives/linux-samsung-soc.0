@@ -1,547 +1,167 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C1826463A
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jul 2025 14:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9453E26D4CE
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jul 2025 14:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713793; cv=none; b=TW2pN+98M+puaFgcRqqmbrWhgRDavoMqUqRQJIl5OJ0MG6JNa46eVKkUJAthDsrudTG+QBnLi7Xbac80gJuPr1eZyfEwD35vvvMtv7FpSL7WUk1tgapW2drKpDVWrrWSoBLD7oQQzu5cVd9anShv0xNWjzB1iulbWpZtvNJU2kI=
+	t=1753714146; cv=none; b=EtpVhPApNRZ2y/xSdzNnO3mPAmvZyWO/uxrwgErRpWjiy897MGInPkCSG9r3zbzSws8tmpXqpax+sHcTsOm0FmQ3UzDACE4zBhAXSbKHIyh4f2fub1k5FPrYkkbbC5ezgPzjjmoZA+PLWRqXqI1OwXDw8/LU0pleN6GxFubN7i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713793; c=relaxed/simple;
-	bh=kPzTmDqWphtU/qdg1ICXp/2n8T7OfZhf28GzogkdcE0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m6NhUhj2jcnbJOshorjOuEF84bV0vxK7a5gjJo7tSD5+1ejLp300qZkBacbdK7NsPq3guMe0pvBSwm5oMnY8XDHOsr46HTYXKYAzyf2u+QhyouPa2Oy95lauCVPK5b6HVAuid0ldQL2cxBgiXcAufOtLnb/7zvfEuywG0+n+EZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bCgracz/; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1753714146; c=relaxed/simple;
+	bh=oroXOouyEXMQYoTbrRLMPLPdWadAqBE7KEfDIgwRoe8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tOaf4syqPPWlI4l1H174KN+ay5bgAy8Y0OFAdX7VPiGHBfSZeBZBaaqr/Tn9cOrX/4SZVhlpEQD8XeW8MxE8F8tUhsxFpcUpvQW7ixFElX03AYgnqIuSMlX+6PHOhGV0BZ317WIGclNMKikPeGfV2KqGtSsxdqqWAv9ljLmm9xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m6nSHzhN; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bCgracz/"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45629702e52so18988915e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jul 2025 07:43:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m6nSHzhN"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b783ea502eso1218100f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jul 2025 07:49:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753713789; x=1754318589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vqYUlRZTzwtS04zGP6tYbDYAXbK12WfQpvfGegVe3To=;
-        b=bCgracz/lxXme9h7Kzscp5coxlhhITxaRLYgg21RRabaJHQF0cyMeePbUdqIMsqDVt
-         JmfMXvPALxSMICqcPfTdW4rCnu/NYFXI7D0YTqG8cHEykzEL9WimwxpIfqo0YGN1f0F6
-         fNUDCh6QMqaLqnwUntwrVN3Bv6srHwdZJvep8HJwXI+3vtnqR9PbnzpX7PKs9GVWvb0R
-         uIW8an1dPtjXJ3G5xKULRf6D7QxjXLsApEdxca7leCjTzYIzPraEWswsdnE8hkAbq2mq
-         YRWEs9d2uoBzq1DAK5bQBtjYlLkf+keAwTaejBmv9Oh3akI60Opd2pLAj61sXjF8iNKo
-         J4vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753713789; x=1754318589;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+        d=linaro.org; s=google; t=1753714143; x=1754318943; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=vqYUlRZTzwtS04zGP6tYbDYAXbK12WfQpvfGegVe3To=;
-        b=J0KRAM7+RiKwIw6SkAXHVyeOnjUREOBIgNtTZI1N2Pjxdzjt1auDqbBe6u/dl2NuwK
-         V/cyux9HncPKVkCRg9sn2YbO3syskpyNceXczD6PQdrxDzHogYk9bWhjOTgv8ZOMBGi1
-         x+MdCsJQ9EApjULv/DLOmd776VxOq9Hw9iEzEP4QxSSyM1aSwamO72moJzb3ugTk/Z6z
-         h55o+weYS8LDTmrB9LszaWkMufY3X66rBvmqSOFWLQuUnQTghSi8fiMx6XS0SdhhWDT1
-         Prqci5Ab8eYKe7obC3FR9vpcVnTi93ip5ALUYc5nJjc0HPhFw96yQNSKsEuvSD/HA5+v
-         sxWw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4P0jsa/HOLk3JdeD2N1iyO4Xx/U8fRGkGnBa2Atg526OErlC0/Tc8TemEnVZuOiiomUXBoeGzmWwCMA5YI20Ucw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhXuwEE4GoxgiRsRhAvpE73SPNLkRrNQFw+ebnVli9GQjabws7
-	8+h25Adz5e5W5yzyqzu/ryAtlHLdyUsbPSUcpn/iIK5VbtR3LNtxsqTMsQ4rMFb4XA0=
-X-Gm-Gg: ASbGncs/eCM7Xi8RqbMV91oQ6VujQoP4fuQW7ZiB7a29i1TduHXnCAzRUEqPuqW5OaK
-	+v9v/KqEUEIDsu1JL5eLfsIercluBHeXYfwX5o8BZJmGewSOBso0y81i7zcOBYyh2jd3xajFxSd
-	0C3jd8KD13ht7QlW1jw+RF33J9xNVQKnLmU35MD5Uw0oBsx5lHJMp3FofGriRdQmhLXMkPBEzQJ
-	Uc6udLnicA44B/QgBxZzrH2XpQ+mGc3KqNLcaXs47e+2d1CD75rmll79A2wBEgjft+RkJ4H57c2
-	wjEthy3Vg6a7EO/aQyndr2I/HJlAhVdUUopW7kHZ1//sj66H4PhkpLMSNMPIiEhfJfGPmPc8uz5
-	KxHpRn4iqYAiUdRV0wzCaFv8FDPi6EkX3CiZTfnZkpdFc8vGkhlOzbsUZWrBTK82Vpm2JDtmXJH
-	Y=
-X-Google-Smtp-Source: AGHT+IHHwD+fprpfTZ+Tc8raIMnj4baKXWJzwLinnlIU7pm9jcY7mFmzUJ5J5w2BAaeWzUruK5qVcw==
-X-Received: by 2002:a05:600c:83c9:b0:450:d04e:22d6 with SMTP id 5b1f17b1804b1-458762fcb8cmr92605685e9.7.1753713788569;
-        Mon, 28 Jul 2025 07:43:08 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:9019:46ec:c6f1:c165? ([2a01:e0a:3d9:2080:9019:46ec:c6f1:c165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abc13besm100033685e9.2.2025.07.28.07.43.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 07:43:08 -0700 (PDT)
-Message-ID: <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
-Date: Mon, 28 Jul 2025 16:43:07 +0200
+        bh=oroXOouyEXMQYoTbrRLMPLPdWadAqBE7KEfDIgwRoe8=;
+        b=m6nSHzhN0xons/abHVvsThnODNbrB77ViaMLU3k/rBGbvZ5f+rabcf97RYElbAynVK
+         ePw5OIPcEyg6QA4Vzpev7yoF00YsDPZlh63O7ikgUbb94hZBg/U021SqAFdtHlilC/pk
+         15IhdWcn41IT8cPW+cPq6iA27x+BS/zjNvovS641yHB3lsMjnR0AWc9tDX+2TDx047DQ
+         NLU6E6nEYGcKvUL8jHM4wCE48qtTt3qyDTpY7CJAxcxSQey6z6EAbfH2cGBIBnbAX8LS
+         ySHqa38SCdn7G84LaxSwqNsqXboho64pER2LzDjRLC1m79k6FlYZ81KFO9ROA+sKLHIh
+         vzyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753714143; x=1754318943;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oroXOouyEXMQYoTbrRLMPLPdWadAqBE7KEfDIgwRoe8=;
+        b=tsU8/xZFkexjJj11lWBZCUop4EB8RjnCMBPE+GSaClk8T6LRe9Q5a5+qBOsLCdv4ll
+         usofszqb+voLMoPvuK/IxgHuSj0S8OtogjjaPCB7mlywZYJwZhImIQCjoFgACvX40jNc
+         fERGNe/ebY/L1WRuDWFMOXSEshnnwscQBKrt7So5BwW8ZCRBwj1YhVvMsEau9CJbUiYz
+         2hCJMfPA0n/3zwiVyRUf3AK44DmQFtewrR558RryO0KmhUDKd2m4C9Rsp+MijFTOSeuW
+         bFLUNez+GGLx8J7ner0lm8RNieuix5LnQczIB+yzkVE7Zcj81xrLkX3BNjWy/dTURxXn
+         yJ3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/r/rb1t5wjLXkZgCxm6VmomMnW1MFgH4L86cwA6ruN1cgRFFXeSgNILdxvgKAYhKAjHSiAeGSkOKN/wcRoe5kWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLrB1oSMs1FpCAogL7CIm2HA1Xrm6TE5y1GCHoV/mr1bDlURla
+	cjF+aNXBADIO5Km6EiICU14z7pZ8sGeNvCG1sofplCpqwWOAI8ChCEER4+EAGk0tMhM=
+X-Gm-Gg: ASbGncvMd07tn9j7JdtY7N/W+V3Y32xcC92jp4agrqmkPWERTrKfvH6P0ETrAxcLaWG
+	t9fRP8PDPV3w/P6sxhlh1PZarWjf0hZSiiyS37Oe1Yzx+zyLftk2R/bbf9fcipbnx0mmZzqMCEE
+	MEa67dv3tuJHTS1lDAjy6wWogzm6F9oQdUmJ2x1LzNjNtMjuuEVJNAWThVbrL5tEj3m+dxm4Ny6
+	Ps5caD+Gno/93kuQx4mvCB6T4+SjZ2pNL+d8PtLuo7lkDmnENHoONdge1khhSQ0zl6nDkt7V87c
+	kLvZwKYP8//Qb1PhjaUzgW3LfAVWLBR8S7pYS/XNevVH2xI2CccSrwN7GKOBXokbpxuGdw4LyT5
+	rgl3sp1i1hoV+eaF3cz0gzHGVzQ==
+X-Google-Smtp-Source: AGHT+IHWf8xJO++7SQQNR7YMIGl99CTvsqEGJMidGEJBKdJCbzSX1/wzjH3YIznfuSenCXc4S09u0g==
+X-Received: by 2002:a05:6000:230f:b0:3a4:f7ae:77c9 with SMTP id ffacd0b85a97d-3b7765e6271mr8343867f8f.5.1753714142772;
+        Mon, 28 Jul 2025 07:49:02 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78ba0b8e1sm1280683f8f.40.2025.07.28.07.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 07:49:02 -0700 (PDT)
+Message-ID: <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
+Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
+ hardirq (with time limit)
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Alim Akhtar	
+ <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van
+ Assche	 <bvanassche@acm.org>, "James E.J. Bottomley"	
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"	
+ <martin.petersen@oracle.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam	 <mani@kernel.org>, kernel-team@android.com,
+ linux-arm-msm@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Date: Mon, 28 Jul 2025 15:49:01 +0100
+In-Reply-To: <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
+References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
+	 <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
+	 <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.1-1+build2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
- hardirq (with time limit)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>,
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
- linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
- <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 25/07/2025 16:16, André Draszik wrote:
-> Commit 3c7ac40d7322 ("scsi: ufs: core: Delegate the interrupt service
-> routine to a threaded IRQ handler") introduced a massive performance
-> drop for various work loads on UFSHC versions < 4 due to the extra
-> latency introduced by moving all of the IRQ handling into a threaded
-> handler. See below for a summary.
-> 
-> To resolve this performance drop, move IRQ handling back into hardirq
-> context, but apply a time limit which, once expired, will cause the
-> remainder of the work to be deferred to the threaded handler.
-> 
-> Above commit is trying to avoid unduly delay of other subsystem
-> interrupts while the UFS events are being handled. By limiting the
-> amount of time spent in hardirq context, we can still ensure that.
-> 
-> The time limit itself was chosen because I have generally seen
-> interrupt handling to have been completed within 20 usecs, with the
-> occasional spikes of a couple 100 usecs.
-> 
-> This commits brings UFS performance roughly back to original
-> performance, and should still avoid other subsystem's starvation thanks
-> to dealing with these spikes.
-> 
-> fio results for 4k block size on Pixel 6, all values being the average
-> of 5 runs each:
->    read / 1 job      original      after  this commit
->      min IOPS        4,653.60   2,704.40     3,902.80
->      max IOPS        6,151.80   4,847.60     6,103.40
->      avg IOPS        5,488.82   4,226.61     5,314.89
->      cpu % usr           1.85       1.72         1.97
->      cpu % sys          32.46      28.88        33.29
->      bw MB/s            21.46      16.50        20.76
-> 
->    read / 8 jobs     original      after  this commit
->      min IOPS       18,207.80  11,323.00    17,911.80
->      max IOPS       25,535.80  14,477.40    24,373.60
->      avg IOPS       22,529.93  13,325.59    21,868.85
->      cpu % usr           1.70       1.41         1.67
->      cpu % sys          27.89      21.85        27.23
->      bw MB/s            88.10      52.10        84.48
-> 
->    write / 1 job     original      after  this commit
->      min IOPS        6,524.20   3,136.00     5,988.40
->      max IOPS        7,303.60   5,144.40     7,232.40
->      avg IOPS        7,169.80   4,608.29     7,014.66
->      cpu % usr           2.29       2.34         2.23
->      cpu % sys          41.91      39.34        42.48
->      bw MB/s            28.02      18.00        27.42
-> 
->    write / 8 jobs    original      after  this commit
->      min IOPS       12,685.40  13,783.00    12,622.40
->      max IOPS       30,814.20  22,122.00    29,636.00
->      avg IOPS       21,539.04  18,552.63    21,134.65
->      cpu % usr           2.08       1.61         2.07
->      cpu % sys          30.86      23.88        30.64
->      bw MB/s            84.18      72.54        82.62
-
-Thanks for this updated change, I'm running the exact same run on SM8650 to check the impact,
-and I'll report something comparable.
-
-Thanks,
-Neil
-
-> 
-> Closes: https://lore.kernel.org/all/1e06161bf49a3a88c4ea2e7a406815be56114c4f.camel@linaro.org
-> Fixes: 3c7ac40d7322 ("scsi: ufs: core: Delegate the interrupt service routine to a threaded IRQ handler")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> ---
-> v2:
-> * update some inline & kerneldoc comments
-> * mention 4k block size and 5 runs were used in fio runs
-> * add missing jiffies.h include
-> ---
->   drivers/ufs/core/ufshcd.c | 191 +++++++++++++++++++++++++++++++++++++---------
->   1 file changed, 154 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index d8e2eabacd3efbf07458e81cc4d15ba7f05d3913..404a4e075a21e73d22ae6bb89f77f69aebb7cd6a 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -19,6 +19,7 @@
->   #include <linux/clk.h>
->   #include <linux/delay.h>
->   #include <linux/interrupt.h>
-> +#include <linux/jiffies.h>
->   #include <linux/module.h>
->   #include <linux/pm_opp.h>
->   #include <linux/regulator/consumer.h>
-> @@ -111,6 +112,9 @@ enum {
->   /* bMaxNumOfRTT is equal to two after device manufacturing */
->   #define DEFAULT_MAX_NUM_RTT 2
->   
-> +/* Time limit in usecs for hardirq context */
-> +#define HARDIRQ_TIMELIMIT 20
-> +
->   /* UFSHC 4.0 compliant HC support this mode. */
->   static bool use_mcq_mode = true;
->   
-> @@ -5603,26 +5607,56 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
->    * __ufshcd_transfer_req_compl - handle SCSI and query command completion
->    * @hba: per adapter instance
->    * @completed_reqs: bitmask that indicates which requests to complete
-> + * @time_limit: time limit in jiffies to not exceed executing command completion
-> + *
-> + * This completes the individual requests as per @completed_reqs with an
-> + * optional time limit. If a time limit is given and it expired before all
-> + * requests were handled, the return value will indicate which requests have not
-> + * been handled.
-> + *
-> + * Return: Bitmask that indicates which requests have not been completed due to
-> + * time limit expiry.
->    */
-> -static void __ufshcd_transfer_req_compl(struct ufs_hba *hba,
-> -					unsigned long completed_reqs)
-> +static unsigned long __ufshcd_transfer_req_compl(struct ufs_hba *hba,
-> +						 unsigned long completed_reqs,
-> +						 unsigned long time_limit)
->   {
->   	int tag;
->   
-> -	for_each_set_bit(tag, &completed_reqs, hba->nutrs)
-> +	for_each_set_bit(tag, &completed_reqs, hba->nutrs) {
->   		ufshcd_compl_one_cqe(hba, tag, NULL);
-> +		__clear_bit(tag, &completed_reqs);
-> +		if (time_limit && time_after_eq(jiffies, time_limit))
-> +			break;
-> +	}
-> +
-> +	/* any bits still set represent unhandled requests due to timeout */
-> +	return completed_reqs;
->   }
->   
-> -/*
-> - * Return: > 0 if one or more commands have been completed or 0 if no
-> - * requests have been completed.
-> +/**
-> + * ufshcd_poll_impl - handle SCSI and query command completion helper
-> + * @shost: Scsi_Host instance
-> + * @queue_num: The h/w queue number, or UFSHCD_POLL_FROM_INTERRUPT_CONTEXT when
-> + *             invoked from the interrupt handler
-> + * @time_limit: time limit in jiffies to not exceed executing command completion
-> + * @__pending: Pointer to store any still pending requests in case of time limit
-> + *             expiry
-> + *
-> + * This handles completed commands with an optional time limit. If a time limit
-> + * is given and it expires, @__pending will be set to the requests that could
-> + * not be completed in time and are still pending.
-> + *
-> + * Return: true if one or more commands have been completed, false otherwise.
->    */
-> -static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
-> +static int ufshcd_poll_impl(struct Scsi_Host *shost, unsigned int queue_num,
-> +			    unsigned long time_limit, unsigned long *__pending)
->   {
->   	struct ufs_hba *hba = shost_priv(shost);
->   	unsigned long completed_reqs, flags;
->   	u32 tr_doorbell;
->   	struct ufs_hw_queue *hwq;
-> +	unsigned long pending = 0;
->   
->   	if (hba->mcq_enabled) {
->   		hwq = &hba->uhq[queue_num];
-> @@ -5636,15 +5670,34 @@ static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
->   	WARN_ONCE(completed_reqs & ~hba->outstanding_reqs,
->   		  "completed: %#lx; outstanding: %#lx\n", completed_reqs,
->   		  hba->outstanding_reqs);
-> -	hba->outstanding_reqs &= ~completed_reqs;
-> +
-> +	if (completed_reqs) {
-> +		pending = __ufshcd_transfer_req_compl(hba, completed_reqs,
-> +						      time_limit);
-> +		completed_reqs &= ~pending;
-> +		hba->outstanding_reqs &= ~completed_reqs;
-> +	}
-> +
->   	spin_unlock_irqrestore(&hba->outstanding_lock, flags);
->   
-> -	if (completed_reqs)
-> -		__ufshcd_transfer_req_compl(hba, completed_reqs);
-> +	if (__pending)
-> +		*__pending = pending;
->   
->   	return completed_reqs != 0;
->   }
->   
-> +/*
-> + * ufshcd_poll - SCSI interface of blk_poll to poll for IO completions
-> + * @shost: Scsi_Host instance
-> + * @queue_num: The h/w queue number
-> + *
-> + * Return: true if one or more commands have been completed, false otherwise.
-> + */
-> +static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
-> +{
-> +	return ufshcd_poll_impl(shost, queue_num, 0, NULL);
-> +}
-> +
->   /**
->    * ufshcd_mcq_compl_pending_transfer - MCQ mode function. It is
->    * invoked from the error handler context or ufshcd_host_reset_and_restore()
-> @@ -5698,13 +5751,19 @@ static void ufshcd_mcq_compl_pending_transfer(struct ufs_hba *hba,
->   /**
->    * ufshcd_transfer_req_compl - handle SCSI and query command completion
->    * @hba: per adapter instance
-> + * @time_limit: time limit in jiffies to not exceed executing command completion
->    *
->    * Return:
-> - *  IRQ_HANDLED - If interrupt is valid
-> - *  IRQ_NONE    - If invalid interrupt
-> + *  IRQ_HANDLED     - If interrupt is valid
-> + *  IRQ_WAKE_THREAD - If further interrupt processing should be delegated to the
-> + *                    thread
-> + *  IRQ_NONE        - If invalid interrupt
->    */
-> -static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba)
-> +static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba,
-> +					     unsigned long time_limit)
->   {
-> +	unsigned long pending;
-> +
->   	/* Resetting interrupt aggregation counters first and reading the
->   	 * DOOR_BELL afterward allows us to handle all the completed requests.
->   	 * In order to prevent other interrupts starvation the DB is read once
-> @@ -5720,12 +5779,18 @@ static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba)
->   		return IRQ_HANDLED;
->   
->   	/*
-> -	 * Ignore the ufshcd_poll() return value and return IRQ_HANDLED since we
-> -	 * do not want polling to trigger spurious interrupt complaints.
-> +	 * Ignore the ufshcd_poll() return value and return IRQ_HANDLED or
-> +	 * IRQ_WAKE_THREAD since we do not want polling to trigger spurious
-> +	 * interrupt complaints.
->   	 */
-> -	ufshcd_poll(hba->host, 0);
-> +	ufshcd_poll_impl(hba->host, 0, time_limit, &pending);
->   
-> -	return IRQ_HANDLED;
-> +	/*
-> +	 * If a time limit was set, some request completions might not have been
-> +	 * handled yet and will need to be dealt with in the threaded interrupt
-> +	 * handler.
-> +	 */
-> +	return pending ? IRQ_WAKE_THREAD : IRQ_HANDLED;
->   }
->   
->   int __ufshcd_write_ee_control(struct ufs_hba *hba, u32 ee_ctrl_mask)
-> @@ -6286,7 +6351,7 @@ static void ufshcd_complete_requests(struct ufs_hba *hba, bool force_compl)
->   	if (hba->mcq_enabled)
->   		ufshcd_mcq_compl_pending_transfer(hba, force_compl);
->   	else
-> -		ufshcd_transfer_req_compl(hba);
-> +		ufshcd_transfer_req_compl(hba, 0);
->   
->   	ufshcd_tmc_handler(hba);
->   }
-> @@ -6988,12 +7053,16 @@ static irqreturn_t ufshcd_handle_mcq_cq_events(struct ufs_hba *hba)
->    * ufshcd_sl_intr - Interrupt service routine
->    * @hba: per adapter instance
->    * @intr_status: contains interrupts generated by the controller
-> + * @time_limit: time limit in jiffies to not exceed executing command completion
->    *
->    * Return:
-> - *  IRQ_HANDLED - If interrupt is valid
-> - *  IRQ_NONE    - If invalid interrupt
-> + *  IRQ_HANDLED     - If interrupt is valid
-> + *  IRQ_WAKE_THREAD - If further interrupt processing should be delegated to the
-> + *                    thread
-> + *  IRQ_NONE        - If invalid interrupt
->    */
-> -static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
-> +static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status,
-> +				  unsigned long time_limit)
->   {
->   	irqreturn_t retval = IRQ_NONE;
->   
-> @@ -7007,7 +7076,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
->   		retval |= ufshcd_tmc_handler(hba);
->   
->   	if (intr_status & UTP_TRANSFER_REQ_COMPL)
-> -		retval |= ufshcd_transfer_req_compl(hba);
-> +		retval |= ufshcd_transfer_req_compl(hba, time_limit);
->   
->   	if (intr_status & MCQ_CQ_EVENT_STATUS)
->   		retval |= ufshcd_handle_mcq_cq_events(hba);
-> @@ -7016,15 +7085,25 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
->   }
->   
->   /**
-> - * ufshcd_threaded_intr - Threaded interrupt service routine
-> + * ufshcd_intr_helper - hardirq and threaded interrupt service routine
->    * @irq: irq number
->    * @__hba: pointer to adapter instance
-> + * @time_limit: time limit in jiffies to not exceed during execution
-> + *
-> + * Interrupts are initially served from hardirq context with a time limit, but
-> + * if there is more work to be done than can be completed before the limit
-> + * expires, remaining work is delegated to the IRQ thread. This helper does the
-> + * bulk of the work in either case - if @time_limit is set, it is being run from
-> + * hardirq context, otherwise from the threaded interrupt handler.
->    *
->    * Return:
-> - *  IRQ_HANDLED - If interrupt is valid
-> - *  IRQ_NONE    - If invalid interrupt
-> + *  IRQ_HANDLED     - If interrupt was fully handled
-> + *  IRQ_WAKE_THREAD - If further interrupt processing should be delegated to the
-> + *                    thread
-> + *  IRQ_NONE        - If invalid interrupt
->    */
-> -static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
-> +static irqreturn_t ufshcd_intr_helper(int irq, void *__hba,
-> +				      unsigned long time_limit)
->   {
->   	u32 last_intr_status, intr_status, enabled_intr_status = 0;
->   	irqreturn_t retval = IRQ_NONE;
-> @@ -7038,15 +7117,22 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
->   	 * if the reqs get finished 1 by 1 after the interrupt status is
->   	 * read, make sure we handle them by checking the interrupt status
->   	 * again in a loop until we process all of the reqs before returning.
-> +	 * This is done until the time limit is exceeded, at which point further
-> +	 * processing is delegated to the threaded handler.
->   	 */
-> -	while (intr_status && retries--) {
-> +	while (intr_status && !(retval & IRQ_WAKE_THREAD) && retries--) {
->   		enabled_intr_status =
->   			intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
->   		ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
->   		if (enabled_intr_status)
-> -			retval |= ufshcd_sl_intr(hba, enabled_intr_status);
-> +			retval |= ufshcd_sl_intr(hba, enabled_intr_status,
-> +						 time_limit);
->   
->   		intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
-> +
-> +		if (intr_status && time_limit && time_after_eq(jiffies,
-> +							       time_limit))
-> +			retval |= IRQ_WAKE_THREAD;
->   	}
->   
->   	if (enabled_intr_status && retval == IRQ_NONE &&
-> @@ -7063,6 +7149,20 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
->   	return retval;
->   }
->   
-> +/**
-> + * ufshcd_threaded_intr - Threaded interrupt service routine
-> + * @irq: irq number
-> + * @__hba: pointer to adapter instance
-> + *
-> + * Return:
-> + *  IRQ_HANDLED - If interrupt was fully handled
-> + *  IRQ_NONE    - If invalid interrupt
-> + */
-> +static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
-> +{
-> +	return ufshcd_intr_helper(irq, __hba, 0);
-> +}
-> +
->   /**
->    * ufshcd_intr - Main interrupt service routine
->    * @irq: irq number
-> @@ -7070,20 +7170,37 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
->    *
->    * Return:
->    *  IRQ_HANDLED     - If interrupt is valid
-> - *  IRQ_WAKE_THREAD - If handling is moved to threaded handled
-> + *  IRQ_WAKE_THREAD - If handling is moved to threaded handler
->    *  IRQ_NONE        - If invalid interrupt
->    */
->   static irqreturn_t ufshcd_intr(int irq, void *__hba)
->   {
->   	struct ufs_hba *hba = __hba;
-> +	unsigned long time_limit = jiffies +
-> +		usecs_to_jiffies(HARDIRQ_TIMELIMIT);
->   
-> -	/* Move interrupt handling to thread when MCQ & ESI are not enabled */
-> -	if (!hba->mcq_enabled || !hba->mcq_esi_enabled)
-> -		return IRQ_WAKE_THREAD;
-> +	/*
-> +	 * Directly handle interrupts when MCQ & ESI are enabled since MCQ
-> +	 * ESI handlers do the hard job.
-> +	 */
-> +	if (hba->mcq_enabled && hba->mcq_esi_enabled)
-> +		return ufshcd_sl_intr(hba,
-> +				      ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
-> +				      ufshcd_readl(hba, REG_INTERRUPT_ENABLE),
-> +				      0);
->   
-> -	/* Directly handle interrupts since MCQ ESI handlers does the hard job */
-> -	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
-> -				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
-> +	/*
-> +	 * Otherwise handle interrupt in hardirq context until the time limit
-> +	 * expires, at which point the remaining work will be completed in
-> +	 * interrupt thread context.
-> +	 */
-> +	if (!time_limit)
-> +		/*
-> +		 * To deal with jiffies wrapping, we just add one so that other
-> +		 * code can reliably detect if a time limit was requested.
-> +		 */
-> +		time_limit++;
-> +	return ufshcd_intr_helper(irq, __hba, time_limit);
->   }
->   
->   static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
-> @@ -7516,7 +7633,7 @@ static int ufshcd_eh_device_reset_handler(struct scsi_cmnd *cmd)
->   				__func__, pos);
->   		}
->   	}
-> -	__ufshcd_transfer_req_compl(hba, pending_reqs & ~not_cleared_mask);
-> +	__ufshcd_transfer_req_compl(hba, pending_reqs & ~not_cleared_mask, 0);
->   
->   out:
->   	hba->req_abort_count = 0;
-> @@ -7672,7 +7789,7 @@ static int ufshcd_abort(struct scsi_cmnd *cmd)
->   		dev_err(hba->dev,
->   		"%s: cmd was completed, but without a notifying intr, tag = %d",
->   		__func__, tag);
-> -		__ufshcd_transfer_req_compl(hba, 1UL << tag);
-> +		__ufshcd_transfer_req_compl(hba, 1UL << tag, 0);
->   		goto release;
->   	}
->   
-> 
+T24gTW9uLCAyMDI1LTA3LTI4IGF0IDE2OjQzICswMjAwLCBOZWlsIEFybXN0cm9uZyB3cm90ZToK
+PiBPbiAyNS8wNy8yMDI1IDE2OjE2LCBBbmRyw6kgRHJhc3ppayB3cm90ZToKPiA+IENvbW1pdCAz
+YzdhYzQwZDczMjIgKCJzY3NpOiB1ZnM6IGNvcmU6IERlbGVnYXRlIHRoZSBpbnRlcnJ1cHQgc2Vy
+dmljZQo+ID4gcm91dGluZSB0byBhIHRocmVhZGVkIElSUSBoYW5kbGVyIikgaW50cm9kdWNlZCBh
+IG1hc3NpdmUgcGVyZm9ybWFuY2UKPiA+IGRyb3AgZm9yIHZhcmlvdXMgd29yayBsb2FkcyBvbiBV
+RlNIQyB2ZXJzaW9ucyA8IDQgZHVlIHRvIHRoZSBleHRyYQo+ID4gbGF0ZW5jeSBpbnRyb2R1Y2Vk
+IGJ5IG1vdmluZyBhbGwgb2YgdGhlIElSUSBoYW5kbGluZyBpbnRvIGEgdGhyZWFkZWQKPiA+IGhh
+bmRsZXIuIFNlZSBiZWxvdyBmb3IgYSBzdW1tYXJ5Lgo+ID4gCj4gPiBUbyByZXNvbHZlIHRoaXMg
+cGVyZm9ybWFuY2UgZHJvcCwgbW92ZSBJUlEgaGFuZGxpbmcgYmFjayBpbnRvIGhhcmRpcnEKPiA+
+IGNvbnRleHQsIGJ1dCBhcHBseSBhIHRpbWUgbGltaXQgd2hpY2gsIG9uY2UgZXhwaXJlZCwgd2ls
+bCBjYXVzZSB0aGUKPiA+IHJlbWFpbmRlciBvZiB0aGUgd29yayB0byBiZSBkZWZlcnJlZCB0byB0
+aGUgdGhyZWFkZWQgaGFuZGxlci4KPiA+IAo+ID4gQWJvdmUgY29tbWl0IGlzIHRyeWluZyB0byBh
+dm9pZCB1bmR1bHkgZGVsYXkgb2Ygb3RoZXIgc3Vic3lzdGVtCj4gPiBpbnRlcnJ1cHRzIHdoaWxl
+IHRoZSBVRlMgZXZlbnRzIGFyZSBiZWluZyBoYW5kbGVkLiBCeSBsaW1pdGluZyB0aGUKPiA+IGFt
+b3VudCBvZiB0aW1lIHNwZW50IGluIGhhcmRpcnEgY29udGV4dCwgd2UgY2FuIHN0aWxsIGVuc3Vy
+ZSB0aGF0Lgo+ID4gCj4gPiBUaGUgdGltZSBsaW1pdCBpdHNlbGYgd2FzIGNob3NlbiBiZWNhdXNl
+IEkgaGF2ZSBnZW5lcmFsbHkgc2Vlbgo+ID4gaW50ZXJydXB0IGhhbmRsaW5nIHRvIGhhdmUgYmVl
+biBjb21wbGV0ZWQgd2l0aGluIDIwIHVzZWNzLCB3aXRoIHRoZQo+ID4gb2NjYXNpb25hbCBzcGlr
+ZXMgb2YgYSBjb3VwbGUgMTAwIHVzZWNzLgo+ID4gCj4gPiBUaGlzIGNvbW1pdHMgYnJpbmdzIFVG
+UyBwZXJmb3JtYW5jZSByb3VnaGx5IGJhY2sgdG8gb3JpZ2luYWwKPiA+IHBlcmZvcm1hbmNlLCBh
+bmQgc2hvdWxkIHN0aWxsIGF2b2lkIG90aGVyIHN1YnN5c3RlbSdzIHN0YXJ2YXRpb24gdGhhbmtz
+Cj4gPiB0byBkZWFsaW5nIHdpdGggdGhlc2Ugc3Bpa2VzLgo+ID4gCj4gPiBmaW8gcmVzdWx0cyBm
+b3IgNGsgYmxvY2sgc2l6ZSBvbiBQaXhlbCA2LCBhbGwgdmFsdWVzIGJlaW5nIHRoZSBhdmVyYWdl
+Cj4gPiBvZiA1IHJ1bnMgZWFjaDoKPiA+IMKgwqAgcmVhZCAvIDEgam9iwqDCoMKgwqDCoCBvcmln
+aW5hbMKgwqDCoMKgwqAgYWZ0ZXLCoCB0aGlzIGNvbW1pdAo+ID4gwqDCoMKgwqAgbWluIElPUFPC
+oMKgwqDCoMKgwqDCoCA0LDY1My42MMKgwqAgMiw3MDQuNDDCoMKgwqDCoCAzLDkwMi44MAo+ID4g
+wqDCoMKgwqAgbWF4IElPUFPCoMKgwqDCoMKgwqDCoCA2LDE1MS44MMKgwqAgNCw4NDcuNjDCoMKg
+wqDCoCA2LDEwMy40MAo+ID4gwqDCoMKgwqAgYXZnIElPUFPCoMKgwqDCoMKgwqDCoCA1LDQ4OC44
+MsKgwqAgNCwyMjYuNjHCoMKgwqDCoCA1LDMxNC44OQo+ID4gwqDCoMKgwqAgY3B1ICUgdXNywqDC
+oMKgwqDCoMKgwqDCoMKgwqAgMS44NcKgwqDCoMKgwqDCoCAxLjcywqDCoMKgwqDCoMKgwqDCoCAx
+Ljk3Cj4gPiDCoMKgwqDCoCBjcHUgJSBzeXPCoMKgwqDCoMKgwqDCoMKgwqAgMzIuNDbCoMKgwqDC
+oMKgIDI4Ljg4wqDCoMKgwqDCoMKgwqAgMzMuMjkKPiA+IMKgwqDCoMKgIGJ3IE1CL3PCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIDIxLjQ2wqDCoMKgwqDCoCAxNi41MMKgwqDCoMKgwqDCoMKgIDIwLjc2
+Cj4gPiAKPiA+IMKgwqAgcmVhZCAvIDggam9ic8KgwqDCoMKgIG9yaWdpbmFswqDCoMKgwqDCoCBh
+ZnRlcsKgIHRoaXMgY29tbWl0Cj4gPiDCoMKgwqDCoCBtaW4gSU9QU8KgwqDCoMKgwqDCoCAxOCwy
+MDcuODDCoCAxMSwzMjMuMDDCoMKgwqAgMTcsOTExLjgwCj4gPiDCoMKgwqDCoCBtYXggSU9QU8Kg
+wqDCoMKgwqDCoCAyNSw1MzUuODDCoCAxNCw0NzcuNDDCoMKgwqAgMjQsMzczLjYwCj4gPiDCoMKg
+wqDCoCBhdmcgSU9QU8KgwqDCoMKgwqDCoCAyMiw1MjkuOTPCoCAxMywzMjUuNTnCoMKgwqAgMjEs
+ODY4Ljg1Cj4gPiDCoMKgwqDCoCBjcHUgJSB1c3LCoMKgwqDCoMKgwqDCoMKgwqDCoCAxLjcwwqDC
+oMKgwqDCoMKgIDEuNDHCoMKgwqDCoMKgwqDCoMKgIDEuNjcKPiA+IMKgwqDCoMKgIGNwdSAlIHN5
+c8KgwqDCoMKgwqDCoMKgwqDCoCAyNy44OcKgwqDCoMKgwqAgMjEuODXCoMKgwqDCoMKgwqDCoCAy
+Ny4yMwo+ID4gwqDCoMKgwqAgYncgTUIvc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgODguMTDCoMKg
+wqDCoMKgIDUyLjEwwqDCoMKgwqDCoMKgwqAgODQuNDgKPiA+IAo+ID4gwqDCoCB3cml0ZSAvIDEg
+am9iwqDCoMKgwqAgb3JpZ2luYWzCoMKgwqDCoMKgIGFmdGVywqAgdGhpcyBjb21taXQKPiA+IMKg
+wqDCoMKgIG1pbiBJT1BTwqDCoMKgwqDCoMKgwqAgNiw1MjQuMjDCoMKgIDMsMTM2LjAwwqDCoMKg
+wqAgNSw5ODguNDAKPiA+IMKgwqDCoMKgIG1heCBJT1BTwqDCoMKgwqDCoMKgwqAgNywzMDMuNjDC
+oMKgIDUsMTQ0LjQwwqDCoMKgwqAgNywyMzIuNDAKPiA+IMKgwqDCoMKgIGF2ZyBJT1BTwqDCoMKg
+wqDCoMKgwqAgNywxNjkuODDCoMKgIDQsNjA4LjI5wqDCoMKgwqAgNywwMTQuNjYKPiA+IMKgwqDC
+oMKgIGNwdSAlIHVzcsKgwqDCoMKgwqDCoMKgwqDCoMKgIDIuMjnCoMKgwqDCoMKgwqAgMi4zNMKg
+wqDCoMKgwqDCoMKgwqAgMi4yMwo+ID4gwqDCoMKgwqAgY3B1ICUgc3lzwqDCoMKgwqDCoMKgwqDC
+oMKgIDQxLjkxwqDCoMKgwqDCoCAzOS4zNMKgwqDCoMKgwqDCoMKgIDQyLjQ4Cj4gPiDCoMKgwqDC
+oCBidyBNQi9zwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAyOC4wMsKgwqDCoMKgwqAgMTguMDDCoMKg
+wqDCoMKgwqDCoCAyNy40Mgo+ID4gCj4gPiDCoMKgIHdyaXRlIC8gOCBqb2JzwqDCoMKgIG9yaWdp
+bmFswqDCoMKgwqDCoCBhZnRlcsKgIHRoaXMgY29tbWl0Cj4gPiDCoMKgwqDCoCBtaW4gSU9QU8Kg
+wqDCoMKgwqDCoCAxMiw2ODUuNDDCoCAxMyw3ODMuMDDCoMKgwqAgMTIsNjIyLjQwCj4gPiDCoMKg
+wqDCoCBtYXggSU9QU8KgwqDCoMKgwqDCoCAzMCw4MTQuMjDCoCAyMiwxMjIuMDDCoMKgwqAgMjks
+NjM2LjAwCj4gPiDCoMKgwqDCoCBhdmcgSU9QU8KgwqDCoMKgwqDCoCAyMSw1MzkuMDTCoCAxOCw1
+NTIuNjPCoMKgwqAgMjEsMTM0LjY1Cj4gPiDCoMKgwqDCoCBjcHUgJSB1c3LCoMKgwqDCoMKgwqDC
+oMKgwqDCoCAyLjA4wqDCoMKgwqDCoMKgIDEuNjHCoMKgwqDCoMKgwqDCoMKgIDIuMDcKPiA+IMKg
+wqDCoMKgIGNwdSAlIHN5c8KgwqDCoMKgwqDCoMKgwqDCoCAzMC44NsKgwqDCoMKgwqAgMjMuODjC
+oMKgwqDCoMKgwqDCoCAzMC42NAo+ID4gwqDCoMKgwqAgYncgTUIvc8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgODQuMTjCoMKgwqDCoMKgIDcyLjU0wqDCoMKgwqDCoMKgwqAgODIuNjIKPiAKPiBUaGFu
+a3MgZm9yIHRoaXMgdXBkYXRlZCBjaGFuZ2UsIEknbSBydW5uaW5nIHRoZSBleGFjdCBzYW1lIHJ1
+biBvbiBTTTg2NTAgdG8gY2hlY2sgdGhlIGltcGFjdCwKPiBhbmQgSSdsbCByZXBvcnQgc29tZXRo
+aW5nIGNvbXBhcmFibGUuCgpCdHcsIG15IGNvbXBsZXRlIGNvbW1hbmQgd2FzIChzaG91bGQgcHJv
+YmFibHkgaGF2ZSBhZGRlZCB0aGF0CnRvIHRoZSBjb21taXQgbWVzc2FnZSBpbiB0aGUgZmlyc3Qg
+cGxhY2UpOgoKZm9yIHJ3IGluIHJlYWQgd3JpdGUgOyBkbwogICAgZWNobyAicnc6ICR7cnd9Igog
+ICAgZm9yIGpvYnMgaW4gMSA4IDsgZG8KICAgICAgICBlY2hvICJqb2JzOiAke2pvYnN9IgogICAg
+ICAgIGZvciBpdCBpbiAkKHNlcSAxIDUpIDsgZG8KICAgICAgICAgICAgZmlvIC0tbmFtZT1yYW5k
+JHtyd30gLS1ydz1yYW5kJHtyd30gXAogICAgICAgICAgICAgICAgLS1pb2VuZ2luZT1saWJhaW8g
+LS1kaXJlY3Q9MSBcCiAgICAgICAgICAgICAgICAtLWJzPTRrIC0tbnVtam9icz0ke2pvYnN9IC0t
+c2l6ZT0zMm0gXAogICAgICAgICAgICAgICAgLS1ydW50aW1lPTMwIC0tdGltZV9iYXNlZCAtLWVu
+ZF9mc3luYz0xIFwKICAgICAgICAgICAgICAgIC0tZ3JvdXBfcmVwb3J0aW5nIC0tZmlsZW5hbWU9
+L2ZvbyBcCiAgICAgICAgICAgIHwgZ3JlcCAtRSAnKGlvcHN8c3lzPXxSRUFEOnxXUklURTopJwog
+ICAgICAgICAgICBzbGVlcCA1CiAgICAgICAgZG9uZQogICAgZG9uZQpkb25lCgpDaGVlcnMsCkFu
+ZHJlJwo=
 
