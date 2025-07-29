@@ -1,231 +1,262 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m1973199.qiye.163.com (mail-m1973199.qiye.163.com [220.197.31.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57DB2BD04;
-	Tue, 29 Jul 2025 03:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC9686250;
+	Tue, 29 Jul 2025 05:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753761354; cv=none; b=lnO3Ek1ho4lqdeEmjkIFte2IU3IdQSvJorhMSmKDJ5gz97d4ao3phQdpnftLA7VECnyDanYYjeE/D3Fz1RtMkXT9o8I/bVjq3PkyJLWyU1KeEiY9YgbFqy6myymz3gvD32rUEj8UkCAcnmTUuALY/Mmk9k9wT7xO39/E2K50ezg=
+	t=1753767545; cv=none; b=Oh6oFBS+aXaLbrEbdGv6DB5PzDhszRl6OPIw2Y6FYJ2A3DcoItMKkDhbq0jJYsdbtdrbgYIEYuQd1I+DW3sGsyQaKeAJgrlOp6aNpgvi8dxtfMw4g34aaGXbYnghYExDETr4hQH7VEZbUuJNVBIHqHTeIaGjyCzFzjNNBiJbYts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753761354; c=relaxed/simple;
-	bh=XNaY6zjFNMOy/UiDZl0iNlt84kbapG83XbK3qEJHriE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qk1eYIVIrehjzSu+O/3eZSmMzBSL4OBe8mYqzz1tH7pK5rYrJ4mEqbNjkbbus2lGYKf1NWmmiNZa8jg8DRoS/m+vclJROR6mxQUjVXJXlVUAlDEDtIllTTYzHN2NA2RvzZrjTh7itEtVLChszMXpz9Dq/qfCjqa6LtpRvidaZKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCKQm6xF; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753767545; c=relaxed/simple;
+	bh=sBdpQgPnQXkNu4TCTAteKv12CvzzyHt/7BpK1doVSVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c78LXGN09eK3yD9peeDYJRdZUDLpuhCPHEYCpYSzgGIUdd/jGVEo8wtDetrm5qmQ8P0m4/bE442Sfgq3EO/h6qjTwpweHJB2JQxKU9cfeJhxB6viyiYd1J96zaybhF8d8PogMF+N+cLWnqwz05HQXVhbUgHiYtm1p7wahSDSJu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Awj36o1f; arc=none smtp.client-ip=220.197.31.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCKQm6xF"
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-884f22f9c90so1594443241.0;
-        Mon, 28 Jul 2025 20:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753761351; x=1754366151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QeyQgL4zAM9urQ/V2LLVC5jrotO1A696xW4MrH9cKZw=;
-        b=VCKQm6xF+P12a844HDXwqdxb1lT4mI4L/nT6K5XNVX+DELYa8HkUlW6KxXJfEMYAIa
-         THEY0u4yte+WWDapMDt81XuB90HGbLvrbU2zqyeKfznWpIGAgtLhPt0s9ACn5vu8uz49
-         N0ltjwznlnZ/+T2Cn/TNruFAZOdoEt/DihI+zON7nff5KpC6cxl3UZHa+CfuSgU4bGKe
-         0ISIvjeoXGETkBnKoyX0tjqzkwYRqzFMRT31s9/9Su4CPhnskCDTbqOLWU8A8Z1DmFxf
-         DDWEnCVcpu2Y2hVFy92fgYttH2m6z+v6+lCSk35m1c8h9JxsgDEo+xHdqwL61HLGvBoG
-         2Xxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753761351; x=1754366151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QeyQgL4zAM9urQ/V2LLVC5jrotO1A696xW4MrH9cKZw=;
-        b=ECJWUze+bE8Ul+rogrKM6YgrKDfXZ4TkACKGy0t1z6LhfGrHvMU8567ePz2WPDgtNo
-         VL2kNEgukipB7qEyUYrxP9krlVYP1LmAjWYrc7DchH1nCdM3JGUd7cbgDlb7e1Mfcwwg
-         226LA8Tngg1ay4hhm0OMNWUKuizM8xOt7Bqcor73hTZD+ldE27Lu7PqoVGBXw28WXgjB
-         TX0i76bHIEWMxeVdbzESrmlDlr3Z6jWaPU9BjGWCDqRiY0jf9CtaS3vVWVNhsf1bUVIK
-         BK29MRObD48b4XahY/THEMu19FJ/0jolg+SP2NqqsLg3tdYypNyrX9JvAKPUhfxFIMxO
-         eSKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAvNPwdKqLCX/qjy/MhOSumacXW8b7YqgiW+P3YsLTvVAHpCVL6gcw8q+JDs9Af7q9NgVXG0KZXbiHe7yfkLMIS2M=@vger.kernel.org, AJvYcCWm2k6awSyX/SdvKsd493yzv0uf+VC40Q+OlGsU1TMunyqKdk9l1j4wlJ+7YK0FxUopnwjG/ojLaJRl@vger.kernel.org, AJvYcCXrJDmkC2g1egMTZ43mo7z5ymSYXny+PUqaaWrNzRggWgBleXFqmCJViHHMLuwaH3gyDRr1EX43Rh0wBAZn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy2vRTftqmtLYhMix4qwgYPfF07Gce7LAHnJtzUGGgokq9sNyW
-	kCHIQl5CqJrvTmighqd32ZrjHTlsrMvo5eReRTbI4q7Zmr9bJKR5pqHhD8klUqi31n9TObqPkbi
-	Jb54EwvUeLHq8kYaE/hhRnaIdsE4OKSU=
-X-Gm-Gg: ASbGnctfIcd1zNCETT0lRJ+9ldt5UUXfyVIPaAzBYT+31KndoV4s94iHCJixBnuIlTG
-	LVdDJI52aW/tIVEBmgE0O07TAqCJUpv7TqdnRle+coYBZbJXLD6Sx7kwDJAkcwsDcl/IGwZXSc9
-	vUN8hMmVNUd5Ne99b8T9eXQBGhAM6TxxlXW1jJrapJwuD/JqhxhXRzbeYFrP+KvdEn9AAu+vHX8
-	XvEEw==
-X-Google-Smtp-Source: AGHT+IG2mKzTaoyQhIzvXEq6IUJ/Cn1eY9r2poRKFBunLtB0fjLDRJGBG8ErMCT2vRGzzaUM0D1HViC2dX+iwTNt2js=
-X-Received: by 2002:a05:6102:6885:b0:4e9:b793:1977 with SMTP id
- ada2fe7eead31-4fa3f6f2a22mr6292838137.0.1753761351455; Mon, 28 Jul 2025
- 20:55:51 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Awj36o1f"
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d8da68de;
+	Tue, 29 Jul 2025 11:16:28 +0800 (GMT+08:00)
+Message-ID: <1cf4bc1b-d7f3-4a88-b8d8-d2f681dce370@rock-chips.com>
+Date: Tue, 29 Jul 2025 11:16:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org> <20250706-exynos7870-dsim-v3-3-9879fb9a644d@disroot.org>
-In-Reply-To: <20250706-exynos7870-dsim-v3-3-9879fb9a644d@disroot.org>
-From: Inki Dae <daeinki@gmail.com>
-Date: Tue, 29 Jul 2025 12:55:09 +0900
-X-Gm-Features: Ac12FXwWbP8lV4QH9kqWdIB3oIAGkUWrt4c9ZYSOynqYZlW4YQIBN8DquJzuVJI
-Message-ID: <CAAQKjZPNh=r5xf7X_R58VhuKz61vVGO83Oe9KsA1m_nJ1OuMLA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/13] drm/bridge: samsung-dsim: add flag to control
- header FIFO wait
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/14] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+From: Damon Ding <damon.ding@rock-chips.com>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <3890785.kQq0lBPeGt@diego>
+ <b0ce0d8d-4ceb-419e-a892-d39b8633aa13@rock-chips.com>
+ <6070443.MhkbZ0Pkbq@diego>
+ <c73fa024-fdd0-4f62-9c8a-11e7eee3c475@rock-chips.com>
+Content-Language: en-US
+In-Reply-To: <c73fa024-fdd0-4f62-9c8a-11e7eee3c475@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a98542e771803a3kunme49a881d3b3324
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUgeGFZPTE1JQktDSkxPQ09WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Awj36o1fZIv1IG0o76X7hKYBrp5apPQb5p//ZbkLwZTnM1WGzYBl4vs64yB9BBnVNQEW/pJs6fuSc0HlYlkJNLwCrFpG/96yZMZXi6z7yaSH3Dn23+QCPXRZN4KCnyBEjKhuTqLDLLBL4y0R+I9spgBmlyoynbdCb3j/K0Yavcs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=P30xMObD+4ZJRdzp8lAIExQtJvi4EAiA8x/rld+Y1H0=;
+	h=date:mime-version:subject:message-id:from;
 
-2025=EB=85=84 7=EC=9B=94 7=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 3:26, Ka=
-ustabh Chakraborty <kauschluss@disroot.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
-=84=B1:
->
-> Exynos7870's DSIM device doesn't require waiting for the header FIFO
-> during a MIPI DSI transfer. Add a flag in the driver data in order to
-> control said behavior.
+On 2025/7/29 11:02, Damon Ding wrote:
+> Hi Heiko,
+> 
+> On 2025/7/26 3:45, Heiko Stübner wrote:
+>> Hi Damon,
+>> Am Freitag, 25. Juli 2025, 04:15:06 Mitteleuropäische Sommerzeit 
+>> schrieb Damon Ding:
+>>> On 2025/7/24 21:10, Heiko Stübner wrote:
+>>>> Am Donnerstag, 24. Juli 2025, 10:02:50 Mitteleuropäische Sommerzeit 
+>>>> schrieb Damon Ding:
+>>>>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>>>>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>>>>> PATCH 3 is to apply a better API for the encoder initialization.
+>>>>> PATCH 4-7 are preparations for apply drm_bridge_connector helper.
+>>>>> PATCH 8 is to apply the drm_bridge_connector helper.
+>>>>> PATCH 9-11 are to move the panel/bridge parsing to the Analogix side.
+>>>>> PATCH 12-13 are preparations for apply panel_bridge helper.
+>>>>> PATCH 14 is to apply the panel_bridge helper.
+>>>>
+>>>> for future revisions, please provide a changelog on what changed since
+>>>> the previous version, I guess ideally here in the cover-letter.
+>>>>
+>>>>
+>>>> On my rk3588-tiger-displayport-carrier this works like a charm
+>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>>>
+>>>>
+>>>>
+>>>>
+>>>
+>>> Glad to see your review and test. :-)
+>>>
+>>> I will include the version-to-version changelogs (v2 -> v3 and v3 -> v4)
+>>> in the next iteration.
+>>
+>> I have to amend that a bit, sadly. When doing a reboot with the edp
+>> running, I see logs like:
+>>
+>> [...]
+>> [  139.614749] systemd-shutdown[1]: Syncing filesystems and block 
+>> devices.
+>> [  139.622201] systemd-shutdown[1]: Rebooting.
+>> [  139.684845] ------------[ cut here ]------------
+>> [  139.690050] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip- 
+>> iommu.c:989 rk_iommu_identity_attach+0xac/0xbc
+>> [  139.701175] Modules linked in: panthor rockchip_vdec rocket 
+>> drm_gpuvm v4l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper 
+>> v4l2_mem2mem gpu_sched rng_core fuse
+>> [  139.717685] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Not tainted 
+>> 6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT
+>> [  139.728799] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger 
+>> Displayport Carrier v1 (DT)
+>> [  139.738548] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS 
+>> BTYPE=--)
+>> [  139.746351] pc : rk_iommu_identity_attach+0xac/0xbc
+>> [  139.751821] lr : rk_iommu_identity_attach+0x70/0xbc
+>> [  139.757290] sp : ffff800080e4b7c0
+>> [  139.761001] x29: ffff800080e4b7c0 x28: ffff0001f6f98080 x27: 
+>> ffff0001f0a4b010
+>> [  139.769006] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 
+>> 0000000000000000
+>> [  139.777010] x23: 0000000000000000 x22: ffffdbf23c0485e0 x21: 
+>> ffff0001f0e9cc10
+>> [  139.785014] x20: ffff0001f0df17a0 x19: ffff0001f0e2cb80 x18: 
+>> 0000000000000038
+>> [  139.793018] x17: 0002550800000009 x16: 0000046c0446043e x15: 
+>> 0438000008ca080c
+>> [  139.801021] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 
+>> 07d0078000025508
+>> [  139.809024] x11: 0002550800000009 x10: 0000046c0446043e x9 : 
+>> ffffdbf23c137000
+>> [  139.817031] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 
+>> 0000000000000000
+>> [  139.825034] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : 
+>> ffff0001f0df1780
+>> [  139.833038] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 
+>> 00000000ffffffea
+>> [  139.841042] Call trace:
+>> [  139.843780]  rk_iommu_identity_attach+0xac/0xbc (P)
+>> [  139.849252]  rk_iommu_attach_device+0x54/0x134
+>> [  139.854236]  __iommu_device_set_domain+0x7c/0x110
+>> [  139.859510]  __iommu_group_set_domain_internal+0x60/0x134
+>> [  139.865561]  __iommu_attach_group+0x88/0x9c
+>> [  139.870250]  iommu_attach_device+0x68/0xa0
+>> [  139.874841]  rockchip_drm_dma_attach_device+0x28/0x7c
+>> [  139.880508]  vop2_crtc_atomic_enable+0x620/0xaa0
+>> [  139.885678]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
+>> [  139.892413]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+>> [  139.898369]  commit_tail+0xa0/0x1a0
+>> [  139.902279]  drm_atomic_helper_commit+0x17c/0x1b0
+>> [  139.907552]  drm_atomic_commit+0x8c/0xcc
+>> [  139.911951]  drm_client_modeset_commit_atomic+0x228/0x298
+>> [  139.918005]  drm_client_modeset_commit_locked+0x5c/0x188
+>> [  139.923960]  drm_client_modeset_commit+0x2c/0x58
+>> [  139.929137]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
+>> [  139.936164]  drm_fb_helper_hotplug_event+0xe8/0xf8
+>> [  139.941526]  drm_fbdev_client_hotplug+0x24/0xe0
+>> [  139.946605]  drm_client_hotplug+0x48/0xc4
+>> [  139.951100]  drm_client_dev_hotplug+0x9c/0xd4
+>> [  139.955984]  drm_kms_helper_connector_hotplug_event+0x20/0x30
+>> [  139.962426]  drm_bridge_connector_hpd_cb+0x88/0xa0
+>> [  139.967790]  drm_bridge_hpd_notify+0x3c/0x60
+>> [  139.972577]  display_connector_hpd_irq+0x30/0xa4
+>> [  139.978835]  irq_thread_fn+0x2c/0xb0
+>> [  139.983894]  irq_thread+0x170/0x304
+>> [  139.988833]  kthread+0x12c/0x204
+>> [  139.993468]  ret_from_fork+0x10/0x20
+>> [  139.998486] ---[ end trace 0000000000000000 ]---
+>> [  140.004737] ------------[ cut here ]------------
+>> [  140.010884] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip- 
+>> iommu.c:1040 rk_iommu_attach_device+0x114/0x134
+>> [  140.023079] Modules linked in: panthor rockchip_vdec rocket 
+>> drm_gpuvm v4l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper 
+>> v4l2_mem2mem gpu_sched rng_core fuse
+>> [  140.040577] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Tainted: 
+>> G        W           6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT
+>> [  140.054457] Tainted: [W]=WARN
+>> [  140.058804] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger 
+>> Displayport Carrier v1 (DT)
+>> [  140.069595] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS 
+>> BTYPE=--)
+>> [  140.078454] pc : rk_iommu_attach_device+0x114/0x134
+>> [  140.084989] lr : rk_iommu_attach_device+0x98/0x134
+>> [  140.091423] sp : ffff800080e4b7e0
+>> [  140.096197] x29: ffff800080e4b7e0 x28: ffff0001f6f98080 x27: 
+>> ffff0001f0a4b010
+>> [  140.105270] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 
+>> 0000000000000000
+>> [  140.114351] x23: ffff0001f6f843e0 x22: ffffdbf23c0485e0 x21: 
+>> ffff0001f0e9cc10
+>> [  140.123425] x20: ffff0001f0e2cb80 x19: ffff0001f6f843c0 x18: 
+>> 0000000000000038
+>> [  140.132489] x17: 0002550800000009 x16: 0000046c0446043e x15: 
+>> 0438000008ca080c
+>> [  140.141552] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 
+>> 07d0078000025508
+>> [  140.150623] x11: 0002550800000009 x10: 0000046c0446043e x9 : 
+>> ffffdbf23c137000
+>> [  140.159701] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 
+>> 0000000000000000
+>> [  140.168772] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : 
+>> ffff0001f0e2cbe0
+>> [  140.177825] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 
+>> 00000000ffffffea
+>> [  140.186858] Call trace:
+>> [  140.190627]  rk_iommu_attach_device+0x114/0x134 (P)
+>> [  140.197124]  __iommu_device_set_domain+0x7c/0x110
+>> [  140.203417]  __iommu_group_set_domain_internal+0x60/0x134
+>> [  140.210492]  __iommu_attach_group+0x88/0x9c
+>> [  140.216203]  iommu_attach_device+0x68/0xa0
+>> [  140.221802]  rockchip_drm_dma_attach_device+0x28/0x7c
+>> [  140.228479]  vop2_crtc_atomic_enable+0x620/0xaa0
+>> [  140.234664]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
+>> [  140.242400]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+>> [  140.249349]  commit_tail+0xa0/0x1a0
+>> [  140.254246]  drm_atomic_helper_commit+0x17c/0x1b0
+>> [  140.260496]  drm_atomic_commit+0x8c/0xcc
+>> [  140.265866]  drm_client_modeset_commit_atomic+0x228/0x298
+>> [  140.272885]  drm_client_modeset_commit_locked+0x5c/0x188
+>> [  140.279791]  drm_client_modeset_commit+0x2c/0x58
+>> [  140.285914]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
+>> [  140.293889]  drm_fb_helper_hotplug_event+0xe8/0xf8
+>> [  140.300214]  drm_fbdev_client_hotplug+0x24/0xe0
+>> [  140.306248]  drm_client_hotplug+0x48/0xc4
+>> [  140.311695]  drm_client_dev_hotplug+0x9c/0xd4
+>> [  140.317531]  drm_kms_helper_connector_hotplug_event+0x20/0x30
+>> [  140.324930]  drm_bridge_connector_hpd_cb+0x88/0xa0
+>> [  140.331248]  drm_bridge_hpd_notify+0x3c/0x60
+>> [  140.336990]  display_connector_hpd_irq+0x30/0xa4
+>> [  140.343120]  irq_thread_fn+0x2c/0xb0
+>> [  140.348081]  irq_thread+0x170/0x304
+>> [  140.352937]  kthread+0x12c/0x204
+>> [  140.357501]  ret_from_fork+0x10/0x20
+>> [  140.362453] ---[ end trace 0000000000000000 ]---
+>>
+>>
+>> After some minutes of hanging it does reboot afterall.
+>>
+>> Heiko
+>>
+>>
+> 
+> Could you please help confirm whether the same error still occurs with 
+> this patch series under the same conditions?
 
-I will merge this patch as-is and just sharing the following comments
-purely for reference (for other Exynos DRM contributors).
+Careless, what I want to express should be '...without this patch 
+series...'. :-)
 
-This patch likely needs follow-up improvements in conjunction with
-Marek=E2=80=99s earlier patch (commit-id:
-15f389da11257b806da75a070cfa41ca0cc15aae). I=E2=80=99m unable to verify thi=
-s
-at the moment because the SoC Technical Reference Manual (TRM)
-documentation I have is incomplete.
+> 
+> And I will also perform additional verification on my RK3588S EVB1 board.
+> 
+> Best regards,
+> Damon
+> 
+> 
+> 
 
-Based on these two patches, we should plan for future code
-improvements that account for two scenarios:
-
-- The header FIFO must be waited for.
-- The header FIFO does not need to be waited for.
-
-Currently, this is handled via driver data using the
-has_broken_fifoctrl_emptyhdr and wait_for_hdr_fifo flags. If the
-handling of this behavior changes in newer Exynos SoCs, this approach
-may become confusing or lead to inconsistencies.
-
-Thanks,
-Inki Dae
-
->
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  drivers/gpu/drm/bridge/samsung-dsim.c | 15 ++++++++++++---
->  include/drm/bridge/samsung-dsim.h     |  1 +
->  2 files changed, 13 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/brid=
-ge/samsung-dsim.c
-> index dca3939dd99fa07aee309067b93e652bc9a9b78f..84af24171b6856cbcf95b9077=
-b997ee587fc0409 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -418,6 +418,7 @@ static const struct samsung_dsim_driver_data exynos3_=
-dsi_driver_data =3D {
->         .has_clklane_stop =3D 1,
->         .num_clks =3D 2,
->         .max_freq =3D 1000,
-> +       .wait_for_hdr_fifo =3D 1,
->         .wait_for_reset =3D 1,
->         .num_bits_resol =3D 11,
->         .pll_p_offset =3D 13,
-> @@ -438,6 +439,7 @@ static const struct samsung_dsim_driver_data exynos4_=
-dsi_driver_data =3D {
->         .has_clklane_stop =3D 1,
->         .num_clks =3D 2,
->         .max_freq =3D 1000,
-> +       .wait_for_hdr_fifo =3D 1,
->         .wait_for_reset =3D 1,
->         .num_bits_resol =3D 11,
->         .pll_p_offset =3D 13,
-> @@ -456,6 +458,7 @@ static const struct samsung_dsim_driver_data exynos5_=
-dsi_driver_data =3D {
->         .has_legacy_status_reg =3D 1,
->         .num_clks =3D 2,
->         .max_freq =3D 1000,
-> +       .wait_for_hdr_fifo =3D 1,
->         .wait_for_reset =3D 1,
->         .num_bits_resol =3D 11,
->         .pll_p_offset =3D 13,
-> @@ -474,6 +477,7 @@ static const struct samsung_dsim_driver_data exynos54=
-33_dsi_driver_data =3D {
->         .has_clklane_stop =3D 1,
->         .num_clks =3D 5,
->         .max_freq =3D 1500,
-> +       .wait_for_hdr_fifo =3D 1,
->         .wait_for_reset =3D 0,
->         .num_bits_resol =3D 12,
->         .pll_p_offset =3D 13,
-> @@ -492,6 +496,7 @@ static const struct samsung_dsim_driver_data exynos54=
-22_dsi_driver_data =3D {
->         .has_clklane_stop =3D 1,
->         .num_clks =3D 2,
->         .max_freq =3D 1500,
-> +       .wait_for_hdr_fifo =3D 1,
->         .wait_for_reset =3D 1,
->         .num_bits_resol =3D 12,
->         .pll_p_offset =3D 13,
-> @@ -510,6 +515,7 @@ static const struct samsung_dsim_driver_data imx8mm_d=
-si_driver_data =3D {
->         .has_clklane_stop =3D 1,
->         .num_clks =3D 2,
->         .max_freq =3D 2100,
-> +       .wait_for_hdr_fifo =3D 1,
->         .wait_for_reset =3D 0,
->         .num_bits_resol =3D 12,
->         /*
-> @@ -1117,6 +1123,7 @@ static void samsung_dsim_send_to_fifo(struct samsun=
-g_dsim *dsi,
->  {
->         struct device *dev =3D dsi->dev;
->         struct mipi_dsi_packet *pkt =3D &xfer->packet;
-> +       const struct samsung_dsim_driver_data *driver_data =3D dsi->drive=
-r_data;
->         const u8 *payload =3D pkt->payload + xfer->tx_done;
->         u16 length =3D pkt->payload_length - xfer->tx_done;
->         bool first =3D !xfer->tx_done;
-> @@ -1157,9 +1164,11 @@ static void samsung_dsim_send_to_fifo(struct samsu=
-ng_dsim *dsi,
->                 return;
->
->         reg =3D get_unaligned_le32(pkt->header);
-> -       if (samsung_dsim_wait_for_hdr_fifo(dsi)) {
-> -               dev_err(dev, "waiting for header FIFO timed out\n");
-> -               return;
-> +       if (driver_data->wait_for_hdr_fifo) {
-> +               if (samsung_dsim_wait_for_hdr_fifo(dsi)) {
-> +                       dev_err(dev, "waiting for header FIFO timed out\n=
-");
-> +                       return;
-> +               }
->         }
->
->         if (NEQV(xfer->flags & MIPI_DSI_MSG_USE_LPM,
-> diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsu=
-ng-dsim.h
-> index f0c1e5c5ed490afe0bcfd06830f52471710b29ea..62c07952bd00f9c2c287a6a99=
-8f0e243dd4032a9 100644
-> --- a/include/drm/bridge/samsung-dsim.h
-> +++ b/include/drm/bridge/samsung-dsim.h
-> @@ -61,6 +61,7 @@ struct samsung_dsim_driver_data {
->         unsigned int num_clks;
->         unsigned int min_freq;
->         unsigned int max_freq;
-> +       unsigned int wait_for_hdr_fifo;
->         unsigned int wait_for_reset;
->         unsigned int num_bits_resol;
->         unsigned int pll_p_offset;
->
-> --
-> 2.49.0
->
->
