@@ -1,26 +1,26 @@
-Received: from mail-m4921.qiye.163.com (mail-m4921.qiye.163.com [45.254.49.21])
+Received: from mail-m83227.xmail.ntesmail.com (mail-m83227.xmail.ntesmail.com [156.224.83.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203822260C;
-	Tue, 29 Jul 2025 03:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27470220F36;
+	Tue, 29 Jul 2025 03:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753759088; cv=none; b=iLQ63WLWP2JAhON4rX/3qftxQKaXoN1Lv24pbnVWzjhoBBkpfje6uKUSdlVnyo3y1ow0VQxqy7bCbSOllnZni96knrZOJW8nq/pin/cNLdogg+GrUeMRaK4bD3ZvQQxDAIRKhbOQ6icUZFZdmXnFhJ/4m6bxWpz36spTD0dvDBg=
+	t=1753759379; cv=none; b=up+RH8crifrKVSgs6YPejxVROKVRyqa0RNAype4/SjScqv5v6qbbuii5JsnCs5NvfrnWfNAF6SAZ4TVMikTLmzeNkbAL0W0vRu97zJkhKza14jWpv/XpoSBTEfWcgHmzxfZc8uIRmGrnotDnRCkY9wQqMpDapVbjxGv8F5aeme4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753759088; c=relaxed/simple;
-	bh=JyjFda6f4EE/8fOIgLBq9b6zmENABJvBFkWKEbibw2k=;
+	s=arc-20240116; t=1753759379; c=relaxed/simple;
+	bh=SnM1UAE7l7E3vA4a9C/h0NwsuzBKmJHC2GnuVYscJPk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XJF6rkhg0HtcMB6NLA2xamUQCP9bSWQnnFVvheB60Sw6M/DCGKFFxaRaQ8qe/8+MpDxXbaWLGsC7nxvw/RCmvyG60U5EmCVVoIDuaPdWk5jyTjjVF7jZZHgJg1s4n45tNvntopmD5/PSO2/+HlFBISRCzXUUumaj7XE7ue+Jj+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Z0t5SR8B; arc=none smtp.client-ip=45.254.49.21
+	 In-Reply-To:Content-Type; b=XJoVdPVnAvlgwfBHp9k1KVIOD5L3U2KE+5tdC95a4uYGMQ4biddXEZA1lkzjRytY1diloKy2KLhYijJucrz85FCPI7hKRZp9YoorQnRNUOWOqUZN0uNjdR0xfA6GNpkjPmJ6vmwQDnDp0ojGkMBqlcI1WBNI1oH//Yr3pfjQXyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=LiMF/V4r; arc=none smtp.client-ip=156.224.83.227
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Z0t5SR8B"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="LiMF/V4r"
 Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d8d1d917;
-	Tue, 29 Jul 2025 11:02:36 +0800 (GMT+08:00)
-Message-ID: <c73fa024-fdd0-4f62-9c8a-11e7eee3c475@rock-chips.com>
-Date: Tue, 29 Jul 2025 11:02:35 +0800
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d8de167e;
+	Tue, 29 Jul 2025 11:22:50 +0800 (GMT+08:00)
+Message-ID: <63226b37-1dec-4998-b2b6-e969ca786f37@rock-chips.com>
+Date: Tue, 29 Jul 2025 11:22:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -28,190 +28,88 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+Subject: Re: [PATCH v3 03/14] drm/rockchip: analogix_dp: Apply
+ drmm_encoder_init() instead of drm_simple_encoder_init()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
  jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
  mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
  jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
  kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ l.stach@pengutronix.de, dianders@chromium.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
 References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
- <3890785.kQq0lBPeGt@diego>
- <b0ce0d8d-4ceb-419e-a892-d39b8633aa13@rock-chips.com>
- <6070443.MhkbZ0Pkbq@diego>
+ <20250724080304.3572457-4-damon.ding@rock-chips.com>
+ <6psjcrhbnk7czdrdtxh65kr6qvygkwogvert75dg2svbm2cqd3@uhffyfdxqpec>
 Content-Language: en-US
 From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <6070443.MhkbZ0Pkbq@diego>
+In-Reply-To: <6psjcrhbnk7czdrdtxh65kr6qvygkwogvert75dg2svbm2cqd3@uhffyfdxqpec>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985421c7f003a3kunmfdedbf933ad983
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a9854344c1803a3kunmbc6d5ef53b5bbd
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ09JS1YaSkxCT0tOTE9NTk1WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGklKGlZIHx1LHkkeSx9DH09WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=Z0t5SR8B0vNhWrIok1/FmCtBb+MTf4osUwhrg8hT1btBuvXhnXOGGjVTAQgW39ozpyvLP5Q97tYO5BKW2/6juag1AJ0ZQrSFHBf4lVoR4JhL4AzzBGqbv7v4FVFPC/44dOfHwmC+/7dor0OH9WnhILMXY+7qat0tS0i7c5Oxedo=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=MM2qm6q8mkhokguSCCLMixLY0zbxDFkGmL61vvZn9Nc=;
+	b=LiMF/V4rH3QqRzk0VLBeqKLCLbx/NP1Emxe528xmhWl9Zye0NFzYX4UPlWJWn/fBxk/znUKcFCVyqFWK/urEAE3LRP6IEmQNllUopbTDUvA9KZ7BnHHZB1R5zzAf8eLa+eIeuBYiAe2DouhqA3FKqaEfD9JHKsZvXXMvHM6RQTY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=n/oZwA3AlTNfmx4P7C3GWExCuKTHEtbzFqxGSx8S9/k=;
 	h=date:mime-version:subject:message-id:from;
 
-Hi Heiko,
+Hi Dmitry,
 
-On 2025/7/26 3:45, Heiko Stübner wrote:
-> Hi Damon,
-> Am Freitag, 25. Juli 2025, 04:15:06 Mitteleuropäische Sommerzeit schrieb Damon Ding:
->> On 2025/7/24 21:10, Heiko Stübner wrote:
->>> Am Donnerstag, 24. Juli 2025, 10:02:50 Mitteleuropäische Sommerzeit schrieb Damon Ding:
->>>> PATCH 1 is a small format optimization for struct analogid_dp_device.
->>>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
->>>> PATCH 3 is to apply a better API for the encoder initialization.
->>>> PATCH 4-7 are preparations for apply drm_bridge_connector helper.
->>>> PATCH 8 is to apply the drm_bridge_connector helper.
->>>> PATCH 9-11 are to move the panel/bridge parsing to the Analogix side.
->>>> PATCH 12-13 are preparations for apply panel_bridge helper.
->>>> PATCH 14 is to apply the panel_bridge helper.
->>>
->>> for future revisions, please provide a changelog on what changed since
->>> the previous version, I guess ideally here in the cover-letter.
->>>
->>>
->>> On my rk3588-tiger-displayport-carrier this works like a charm
->>> Tested-by: Heiko Stuebner <heiko@sntech.de>
->>>
->>>
->>>
->>>
+On 2025/7/26 8:12, Dmitry Baryshkov wrote:
+> On Thu, Jul 24, 2025 at 04:02:53PM +0800, Damon Ding wrote:
+>> Compared with drm_simple_encoder_init(), drmm_encoder_init() can handle
+>> the cleanup automatically through registering drm_encoder_cleanup() with
+>> drmm_add_action().
 >>
->> Glad to see your review and test. :-)
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
 >>
->> I will include the version-to-version changelogs (v2 -> v3 and v3 -> v4)
->> in the next iteration.
+>> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> index d30f0983a53a..4ed6bf9e5377 100644
+>> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> @@ -29,7 +29,6 @@
+>>   #include <drm/drm_of.h>
+>>   #include <drm/drm_panel.h>
+>>   #include <drm/drm_probe_helper.h>
+>> -#include <drm/drm_simple_kms_helper.h>
+>>   
+>>   #include "rockchip_drm_drv.h"
+>>   
+>> @@ -377,8 +376,7 @@ static int rockchip_dp_drm_create_encoder(struct rockchip_dp_device *dp)
+>>   							     dev->of_node);
+>>   	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+>>   
+>> -	ret = drm_simple_encoder_init(drm_dev, encoder,
+>> -				      DRM_MODE_ENCODER_TMDS);
+>> +	ret = drmm_encoder_init(drm_dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
 > 
-> I have to amend that a bit, sadly. When doing a reboot with the edp
-> running, I see logs like:
+> It's not possible to use drmm_encoder_init() here. Per the documentation
+> the encoder data structure should be allocated by drmm_kzalloc().
+> However this drm_encoder is a part of struct rockchip_dp_device. It's
+> allocated by rockchip_dp_probe() via devm_kzalloc(). This means that it
+> can potentially be freed before the drm device is completely released,
+> creating a use-after-free error.
 > 
-> [...]
-> [  139.614749] systemd-shutdown[1]: Syncing filesystems and block devices.
-> [  139.622201] systemd-shutdown[1]: Rebooting.
-> [  139.684845] ------------[ cut here ]------------
-> [  139.690050] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip-iommu.c:989 rk_iommu_identity_attach+0xac/0xbc
-> [  139.701175] Modules linked in: panthor rockchip_vdec rocket drm_gpuvm v4l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper v4l2_mem2mem gpu_sched rng_core fuse
-> [  139.717685] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Not tainted 6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT
-> [  139.728799] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger Displayport Carrier v1 (DT)
-> [  139.738548] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [  139.746351] pc : rk_iommu_identity_attach+0xac/0xbc
-> [  139.751821] lr : rk_iommu_identity_attach+0x70/0xbc
-> [  139.757290] sp : ffff800080e4b7c0
-> [  139.761001] x29: ffff800080e4b7c0 x28: ffff0001f6f98080 x27: ffff0001f0a4b010
-> [  139.769006] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 0000000000000000
-> [  139.777010] x23: 0000000000000000 x22: ffffdbf23c0485e0 x21: ffff0001f0e9cc10
-> [  139.785014] x20: ffff0001f0df17a0 x19: ffff0001f0e2cb80 x18: 0000000000000038
-> [  139.793018] x17: 0002550800000009 x16: 0000046c0446043e x15: 0438000008ca080c
-> [  139.801021] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 07d0078000025508
-> [  139.809024] x11: 0002550800000009 x10: 0000046c0446043e x9 : ffffdbf23c137000
-> [  139.817031] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 0000000000000000
-> [  139.825034] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : ffff0001f0df1780
-> [  139.833038] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 00000000ffffffea
-> [  139.841042] Call trace:
-> [  139.843780]  rk_iommu_identity_attach+0xac/0xbc (P)
-> [  139.849252]  rk_iommu_attach_device+0x54/0x134
-> [  139.854236]  __iommu_device_set_domain+0x7c/0x110
-> [  139.859510]  __iommu_group_set_domain_internal+0x60/0x134
-> [  139.865561]  __iommu_attach_group+0x88/0x9c
-> [  139.870250]  iommu_attach_device+0x68/0xa0
-> [  139.874841]  rockchip_drm_dma_attach_device+0x28/0x7c
-> [  139.880508]  vop2_crtc_atomic_enable+0x620/0xaa0
-> [  139.885678]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
-> [  139.892413]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
-> [  139.898369]  commit_tail+0xa0/0x1a0
-> [  139.902279]  drm_atomic_helper_commit+0x17c/0x1b0
-> [  139.907552]  drm_atomic_commit+0x8c/0xcc
-> [  139.911951]  drm_client_modeset_commit_atomic+0x228/0x298
-> [  139.918005]  drm_client_modeset_commit_locked+0x5c/0x188
-> [  139.923960]  drm_client_modeset_commit+0x2c/0x58
-> [  139.929137]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
-> [  139.936164]  drm_fb_helper_hotplug_event+0xe8/0xf8
-> [  139.941526]  drm_fbdev_client_hotplug+0x24/0xe0
-> [  139.946605]  drm_client_hotplug+0x48/0xc4
-> [  139.951100]  drm_client_dev_hotplug+0x9c/0xd4
-> [  139.955984]  drm_kms_helper_connector_hotplug_event+0x20/0x30
-> [  139.962426]  drm_bridge_connector_hpd_cb+0x88/0xa0
-> [  139.967790]  drm_bridge_hpd_notify+0x3c/0x60
-> [  139.972577]  display_connector_hpd_irq+0x30/0xa4
-> [  139.978835]  irq_thread_fn+0x2c/0xb0
-> [  139.983894]  irq_thread+0x170/0x304
-> [  139.988833]  kthread+0x12c/0x204
-> [  139.993468]  ret_from_fork+0x10/0x20
-> [  139.998486] ---[ end trace 0000000000000000 ]---
-> [  140.004737] ------------[ cut here ]------------
-> [  140.010884] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip-iommu.c:1040 rk_iommu_attach_device+0x114/0x134
-> [  140.023079] Modules linked in: panthor rockchip_vdec rocket drm_gpuvm v4l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper v4l2_mem2mem gpu_sched rng_core fuse
-> [  140.040577] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Tainted: G        W           6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT
-> [  140.054457] Tainted: [W]=WARN
-> [  140.058804] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger Displayport Carrier v1 (DT)
-> [  140.069595] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [  140.078454] pc : rk_iommu_attach_device+0x114/0x134
-> [  140.084989] lr : rk_iommu_attach_device+0x98/0x134
-> [  140.091423] sp : ffff800080e4b7e0
-> [  140.096197] x29: ffff800080e4b7e0 x28: ffff0001f6f98080 x27: ffff0001f0a4b010
-> [  140.105270] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 0000000000000000
-> [  140.114351] x23: ffff0001f6f843e0 x22: ffffdbf23c0485e0 x21: ffff0001f0e9cc10
-> [  140.123425] x20: ffff0001f0e2cb80 x19: ffff0001f6f843c0 x18: 0000000000000038
-> [  140.132489] x17: 0002550800000009 x16: 0000046c0446043e x15: 0438000008ca080c
-> [  140.141552] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 07d0078000025508
-> [  140.150623] x11: 0002550800000009 x10: 0000046c0446043e x9 : ffffdbf23c137000
-> [  140.159701] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 0000000000000000
-> [  140.168772] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : ffff0001f0e2cbe0
-> [  140.177825] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 00000000ffffffea
-> [  140.186858] Call trace:
-> [  140.190627]  rk_iommu_attach_device+0x114/0x134 (P)
-> [  140.197124]  __iommu_device_set_domain+0x7c/0x110
-> [  140.203417]  __iommu_group_set_domain_internal+0x60/0x134
-> [  140.210492]  __iommu_attach_group+0x88/0x9c
-> [  140.216203]  iommu_attach_device+0x68/0xa0
-> [  140.221802]  rockchip_drm_dma_attach_device+0x28/0x7c
-> [  140.228479]  vop2_crtc_atomic_enable+0x620/0xaa0
-> [  140.234664]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
-> [  140.242400]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
-> [  140.249349]  commit_tail+0xa0/0x1a0
-> [  140.254246]  drm_atomic_helper_commit+0x17c/0x1b0
-> [  140.260496]  drm_atomic_commit+0x8c/0xcc
-> [  140.265866]  drm_client_modeset_commit_atomic+0x228/0x298
-> [  140.272885]  drm_client_modeset_commit_locked+0x5c/0x188
-> [  140.279791]  drm_client_modeset_commit+0x2c/0x58
-> [  140.285914]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
-> [  140.293889]  drm_fb_helper_hotplug_event+0xe8/0xf8
-> [  140.300214]  drm_fbdev_client_hotplug+0x24/0xe0
-> [  140.306248]  drm_client_hotplug+0x48/0xc4
-> [  140.311695]  drm_client_dev_hotplug+0x9c/0xd4
-> [  140.317531]  drm_kms_helper_connector_hotplug_event+0x20/0x30
-> [  140.324930]  drm_bridge_connector_hpd_cb+0x88/0xa0
-> [  140.331248]  drm_bridge_hpd_notify+0x3c/0x60
-> [  140.336990]  display_connector_hpd_irq+0x30/0xa4
-> [  140.343120]  irq_thread_fn+0x2c/0xb0
-> [  140.348081]  irq_thread+0x170/0x304
-> [  140.352937]  kthread+0x12c/0x204
-> [  140.357501]  ret_from_fork+0x10/0x20
-> [  140.362453] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> After some minutes of hanging it does reboot afterall.
-> 
-> Heiko
-> 
+>>   	if (ret) {
+>>   		DRM_ERROR("failed to initialize encoder with drm\n");
+>>   		return ret;
+>> -- 
+>> 2.34.1
+>>
 > 
 
-Could you please help confirm whether the same error still occurs with 
-this patch series under the same conditions?
-
-And I will also perform additional verification on my RK3588S EVB1 board.
+Got it. This patch will be dropped in the next version.
 
 Best regards,
 Damon
