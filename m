@@ -1,172 +1,114 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3351DC9A3
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 07:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4AA226CF7
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 07:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859060; cv=none; b=P1MZc4ABPId0doDctH94I6M8a78qoC10PuC8Cl3q9TadaEnCa+9AuHNL+DtXPLKSad16Neb5whcSNZ5HmK/PoaQ+4W4jojX6jm8xWkEKUDGfdT3Xw4fesX5NmWKu40MG8ux+lrczwKtvjo3dhEBs3R+5kRzDa/EsnYewg08bsOU=
+	t=1753859703; cv=none; b=N/1tgVQafUBQeQ4HeSBqZsr6hsQe0oqPFXgMpcod5ND/AC4JU+uA/q9zrqXpySN5HE5osf7r9Ei6JHJgbm3bLbTe87bZEfgVqGx4lRNpUHKdURIkQvYU0tyOcn42o+JAs9rwTZLYBBE/UxbZFN5iQ9o6VVzds3oCP1qTWy6OCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859060; c=relaxed/simple;
-	bh=ejF5a+NRIOf1oWrPc8RSvxPJC407uoRHPB/IPhVhqf8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eY2YOUtWjeWZOraQ7Xv41NgDKB/JsE9+GAnUN1de0fibacejVTK/aG0bvHtwJoINtdXyahps2aqdxXH5nzX0BNcidjbdVluSrRVQgVmsj3d830QGEWn4mav0mfhobT8SmTX173GE4M/H52OxbZVbxJEecVKCvwWzj52FJwC08nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hY93S4fM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1753859703; c=relaxed/simple;
+	bh=Jl96Chu7SMvNDn8DRT0lGln0Wby6eyTfgII4vTzTBJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XgtP7uW1KZXC+cjvswah+1lUfM1sqClgSfX3GFRD14Hw1RTux/i2QjlkjVqyFae0uH6hOjIBInQe+wjVaEpi+6F126kmfHr9l2jVQAWCSGDF8R2VzPcL4VHpl1SrcPUJ76Fjg99OeLPxl+HJTUnTJu2tTwyN1LRyLnnO1I8zB/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wUSH2U8E; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hY93S4fM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753859056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7EgCjCwSAoWT6dP7WChm7aBhbHSl4JFbz/gKARLGAAw=;
-	b=hY93S4fM23q+8Mx0TJVA5VVJc/+ONAJ2J+pwPeEpow1Lu9fU9QkofoiJ8pY/QwWbBXPm6j
-	LK1rCYLYAQcPwGuf+Sro91FR8MGVDdHs6kkpbMulszEn0G4vclFP4uYEz1bOUsuH0WpV3U
-	Pf+Lyr7OTOjglF5fMz+Xj6YRrdp0mOE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-594-fOg-1mQhNLCdSHCDCxuzfg-1; Wed, 30 Jul 2025 03:04:14 -0400
-X-MC-Unique: fOg-1mQhNLCdSHCDCxuzfg-1
-X-Mimecast-MFC-AGG-ID: fOg-1mQhNLCdSHCDCxuzfg_1753859053
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b78c983014so1466864f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 00:04:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wUSH2U8E"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561607166aso3464045e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 00:15:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753859699; x=1754464499; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZFPYlDdJ0rVu0VNavE3SZOZbmVPr53MAqWXB77UPjc=;
+        b=wUSH2U8EPGCQ2lMwnLOrVxFsIuFACO50urbgtau4e8PO5WYDzUdiv4JPpaIS6Uqyy3
+         Rz03LYPML9Re6IaQ/IjxE5njLXaL0A5Ac6ZitCoP/B8P4uPhaG6L4EpFKwkUM9Hou7lQ
+         YZMVmlhDWNkiWHfRDcqs3RlcBgEqDLfRabZ3zbIUoMxPzA6wLDQLhhzepmtLeECG7cVF
+         uSIDa+AH2SlyyG/2FI6NtSqlBQuIm/X6sL/pMxVQv6AbbB/jKL65IGl2wvQy0xvAy6nI
+         QKPy0eN/9Q1+vyzL1BIx6eOnYeTeSaG6WKS7PeSB3n6wcRViU4APOwo+4D6TTtk04Kyq
+         GkvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753859053; x=1754463853;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753859699; x=1754464499;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7EgCjCwSAoWT6dP7WChm7aBhbHSl4JFbz/gKARLGAAw=;
-        b=qjG5VHHdivNJRUooa7gEvGVxdL1LklGwjldr1rEi4j56ezIf3lu5dZC0aTd6KM4Ykc
-         hm03oqCLMQhdyQ732dWSi4ojpIilnk4UA3sTdzUTjyGG/LmIeXPmiVD5LeLYiOi3f6ft
-         +jU1Dby577qGbPwks6xRpzTZgp32ZFNAogo05H8xFCoJ5ru2/xYmZIzVNNUhviY1q9nk
-         FOxI7IPJ1KbUHQsRtKZWGMOQXXuD87sfDUrQH206aLrMvXMwTzYR3d9IkouQDXRRt7RQ
-         +1Wly19NdnIS165mAWJX8PEb2E1UQ4VOMh0ige55AigMiV7InJwpWObT7RZKFY6x3qhO
-         OIEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi6FGIMMgr7qXdA6jdWPmdR/iQjQXpt+sYj/8i+kAvTiIyqY/xycr/wGIxMgDLUE5R1907aHrga8jvUUCsVnxFHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFRWFGy1zTz3d+WBf4ScRQBB/JFnABUhIbnOjtnEH3B/ItMURV
-	BZ9DR9OViPY8PJ749s9ibDO9KXjBRJr+sqfHoKp8iQ3WeM6HDMPb8hnqVfFLf+JrThwqN/D1P8Y
-	nkYDpNLc41LHCYXGCzj6TpLYsinJ+XgyHg0gg92GBl59G49WK7/IZY73KJAWBJVAwi+Cv//H1
-X-Gm-Gg: ASbGncthFy2evTXJsUy5ah9C/ErYK43nXLtFPg0FwlW8Xro5KFNmziFjmgybMUy5NNn
-	fp9yp7X96YifOinZUc3Qw01MwWsr0HfdwWp1ywGbmNp8a7N1iO6zkGtgKElk9QAC/DaAlu1yZ/q
-	1bWnse9WgPOPLUXbRsita5Ey9HiHBte3duVmc1moxbrK7dol4eHYbjYr6Wob80mKMsPewfE3mHn
-	RdBZ8duWD6Ze/xhz4fCsPou+BoAiHNNYz9PPuS+YoByqHMXVOaTLpN1g9SWb7E6Jo14+bXC+wzc
-	ew/Qzl2kmx8Jr48mp2YH0JQK9ptOP/odhLZlqys16ZPXuPL3sTU9TAQgzm7OvEYqvgY0LrcY0nO
-	korQ=
-X-Received: by 2002:a05:6000:178c:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b794ffdafbmr1455231f8f.37.1753859052960;
-        Wed, 30 Jul 2025 00:04:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNUbYGDL0unBoGUvLAcwoshm16lk2z/rlSxU4KYNEG/RVgWXaLcOgnhaU/dRAgxynEmknJng==
-X-Received: by 2002:a05:6000:178c:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b794ffdafbmr1455181f8f.37.1753859052432;
-        Wed, 30 Jul 2025 00:04:12 -0700 (PDT)
-Received: from [192.168.0.6] (ltea-047-064-115-093.pools.arcor-ip.net. [47.64.115.93])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78b78f5edsm7115817f8f.28.2025.07.30.00.04.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 00:04:11 -0700 (PDT)
-Message-ID: <532f5e18-8613-454c-8497-8c224360ebbf@redhat.com>
-Date: Wed, 30 Jul 2025 09:04:09 +0200
+        bh=TZFPYlDdJ0rVu0VNavE3SZOZbmVPr53MAqWXB77UPjc=;
+        b=tv3L2AVeyIhDfReyMNIlPZ8mAK1p+gMj2B7e8OfvJl5mhPB9Dcht08dYf8Fop9IIUF
+         W0up24/lAXn5Q0o3OcDt4ApLUKdNuQvgUw5Nh/HPA0LefeKf5M2GOiKvikz794KTbF2t
+         U/MZkjjmQtvCH2I8CT2Yl6L8rQpvDfQfViOcRux7IPvmwlsvEF/bhpQa0/99Oa4p2+9F
+         frdwEmpFRNWNSy88tLCasQHIA3Zy5f5NKOGgaPSjkKvP0dhyYar8URKV3t3xPU+yZZ+K
+         IRR1cPsmQjIjxPj3FSiig4rJillFySu9+0t5/ZHlI1x1+ZyBdXWu4TIRsyzjzTbuFoLG
+         6cUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvbbMkHN0MoWSNOhVJSnVv39orGei5n0QBfHmcR6HfqC4Mf+Uin4cQa0jOAdVZBZC6998iPE1OLnJTcrq7yGvFow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoNKQ/EjSNMhZ7OX2Hv2EYgnE3uFzKX6D10TdOVKb8UQZpeNFj
+	qDDt9vnPvfYlKrLHV9yDl1eJ5p+ykv+L7U2SaEj1AsUUTs/Z4esyGZwZZQG/tbP9XAg=
+X-Gm-Gg: ASbGnctldUrpzc3304zmqsXHU7J9QTq+o28zhU0McnZ4A4Gxh5948Ic3JdVFIjkrwB2
+	AeFkFuI7T7w6CD0ZnyWqzw5ceBlEA73eRCuXE5PN1KWuGHAUpyGjjvGmmCchIiICP4ICnW2N+jZ
+	kngkiZJCOMgRfbxuH8hO9wbmuY4r0UK6a0RNCHFfQiAOiI8U44Lnz4H4TpnaGSGwjCgwRJwLA6S
+	Pg73MXkQkLpxkYoAE4lmfBe90ogPJzLE6B1kpr39l/avzM0frs4QyQuZKKpC7pjYeAyIbOmOEWq
+	0RWIKG3tSXKmVRHumPyPSau+RBhKXNaI5oJE/cpKMQHAJ3uYYLZ28on3+xXVI1fJYee5TWW50+z
+	DrpWBOvSX5SqXcw0tYJJC0n7M
+X-Google-Smtp-Source: AGHT+IHNb3WqBOl3BcnyoTf2mFnsCMBFsTDjTJbP6rodUQ7rplDyO6pwXBZDtxJ0tWuM+n35yFd+5Q==
+X-Received: by 2002:a05:600c:3d8a:b0:458:6733:fb59 with SMTP id 5b1f17b1804b1-45892bc5895mr18567715e9.19.1753859699078;
+        Wed, 30 Jul 2025 00:14:59 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e75d:6dc4:a638:ae8e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eb284fsm15118926f8f.12.2025.07.30.00.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 00:14:58 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] ARM: s3c/gpio: complete the conversion to new GPIO value setters
+Date: Wed, 30 Jul 2025 09:14:43 +0200
+Message-ID: <20250730071443.8758-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in
- uapi headers
-From: Thomas Huth <thuth@redhat.com>
-To: linux-arm-kernel@lists.infradead.org, Russell King <linux@armlinux.org.uk>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20250703173859.246664-1-thuth@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <20250703173859.246664-1-thuth@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/07/2025 19.38, Thomas Huth wrote:
-> The kernel Makefiles define the __ASSEMBLY__ macro to provide
-> a way to use headers in both, assembler and C source code.
-> However, all the supported versions of the GCC and Clang compilers
-> also define the macro __ASSEMBLER__ automatically already when compiling
-> assembly code, so some kernel headers are using __ASSEMBLER__ instead.
-> With regards to userspace code, this seems also to be constant source
-> of confusion, see for example these links here:
-> 
->   https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
->   https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
->   https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
->   https://github.com/riscv-software-src/opensbi/issues/199
-> 
-> To avoid confusion in the future, it would make sense to standardize
-> on the macro that gets defined by the compiler, so this patch series
-> changes all occurances of __ASSEMBLY__ into __ASSEMBLER__.
-> 
-> I split the patches per architecture to ease the review, and I also
-> split the uapi headers from the normal ones in case we decide that
-> uapi needs to be treated differently from the normal headers here.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Friendly ping! The patches should still apply cleanly, I think.
+Commit fb52f3226cab ("ARM: s3c/gpio: use new line value setter
+callbacks") correctly changed the assignment of the callback but missed
+the check one liner higher. Change it now too to using the recommended
+callback as the legacy one is going away soon.
 
-  Thomas
+Fixes: fb52f3226cab ("ARM: s3c/gpio: use new line value setter callbacks")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Autobuilders pointed out only now that I missed the other line that
+needs changing in my previous patch. I'd like to still queue this for
+v6.17. Either through the SoC tree if it's not too late or through the
+GPIO tree together with my second PR for this merge window. Please
+kindly ack it.
 
+ arch/arm/mach-s3c/gpio-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-s3c/gpio-samsung.c b/arch/arm/mach-s3c/gpio-samsung.c
+index 206a492fbaf5..3ee4ad969cc2 100644
+--- a/arch/arm/mach-s3c/gpio-samsung.c
++++ b/arch/arm/mach-s3c/gpio-samsung.c
+@@ -516,7 +516,7 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
+ 		gc->direction_input = samsung_gpiolib_2bit_input;
+ 	if (!gc->direction_output)
+ 		gc->direction_output = samsung_gpiolib_2bit_output;
+-	if (!gc->set)
++	if (!gc->set_rv)
+ 		gc->set_rv = samsung_gpiolib_set;
+ 	if (!gc->get)
+ 		gc->get = samsung_gpiolib_get;
+-- 
+2.48.1
 
