@@ -1,145 +1,172 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14621D514E
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 04:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3351DC9A3
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 07:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753849592; cv=none; b=h+QZDDjsGyJDo8mdV6NHTU+HxiqbUAxFd/eAGcawQzwSGTE1iyIsnq/uvmUBxbp6CUc/PIbcDmWzflSh6RHSdYNioM7nn6VJbSSby+OOFS3XKsjOINWEyDQTwnNTj3w6OyOOF0g9/7Wh16VnQo1rc/t/tdRImtDSJwozIRSonRg=
+	t=1753859060; cv=none; b=P1MZc4ABPId0doDctH94I6M8a78qoC10PuC8Cl3q9TadaEnCa+9AuHNL+DtXPLKSad16Neb5whcSNZ5HmK/PoaQ+4W4jojX6jm8xWkEKUDGfdT3Xw4fesX5NmWKu40MG8ux+lrczwKtvjo3dhEBs3R+5kRzDa/EsnYewg08bsOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753849592; c=relaxed/simple;
-	bh=I12H13J2/EnsbpFY4Jno3735w5xfWZIGU+LWx/KGj6w=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=lEG7V7a1TpHAFrdygPaGSn6Qr8Xc5sppojHu6RVWC9875ftJAczCjm1A1aLRQMI8n057E4awWZYfmhEKxWVNKSghxybE3IGf3knyxChFoWRyVlkyNvLIfNBU16oEQOBjWu3rBD2q/XXwuhRlTQ67D7vBW6XWnm0dJKpvHjirM+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WTpxiXNo; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1753859060; c=relaxed/simple;
+	bh=ejF5a+NRIOf1oWrPc8RSvxPJC407uoRHPB/IPhVhqf8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eY2YOUtWjeWZOraQ7Xv41NgDKB/JsE9+GAnUN1de0fibacejVTK/aG0bvHtwJoINtdXyahps2aqdxXH5nzX0BNcidjbdVluSrRVQgVmsj3d830QGEWn4mav0mfhobT8SmTX173GE4M/H52OxbZVbxJEecVKCvwWzj52FJwC08nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hY93S4fM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WTpxiXNo"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250730042626epoutp010fb62919fc937af23b9af95c8379e3c2~W7OgvrI6b2113221132epoutp01J
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 04:26:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250730042626epoutp010fb62919fc937af23b9af95c8379e3c2~W7OgvrI6b2113221132epoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753849586;
-	bh=XADhAxJSJK7XTnD6xMYiRrgiWZbM/wAFycVV7wrUEWw=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=WTpxiXNo5hDwREZCQCpXkEmdBk9uwAq4fs7H8jEmZv9y8Vqtky7kB51qPKMP25TG7
-	 vvD+dEiBY+yAZlhVXyQdaffReJVuztkJ2wmIYL5lCNBHZ6429ZK3gyHLWcKPpSJ//i
-	 J5HfyxnrW+QYbpU74BPHrA3RV/hGsOr6ixVuXCFg=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250730042625epcas5p2bd1524fa52de5daae0afa6b10db513cf~W7Of3rIvi1492314923epcas5p23;
-	Wed, 30 Jul 2025 04:26:25 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bsK0c60mZz6B9mF; Wed, 30 Jul
-	2025 04:26:24 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250730042624epcas5p35c34b8407135ac6b3ffd8f5e6f85eadb~W7OeGesCm1453314533epcas5p35;
-	Wed, 30 Jul 2025 04:26:24 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250730042622epsmtip2189c4cceaa19ce310300f1e31e526d55~W7OcshZbi0895408954epsmtip2K;
-	Wed, 30 Jul 2025 04:26:22 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Devang Tailor'" <dev.tailor@samsung.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alexandre.belloni@bootlin.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-	<faraz.ata@samsung.com>
-In-Reply-To: <20250710083434.1821671-4-dev.tailor@samsung.com>
-Subject: RE: [PATCH v2 3/3] arm64: dts: exynosautov9: add RTC DT node
-Date: Wed, 30 Jul 2025 09:56:21 +0530
-Message-ID: <36d501dc010a$1ba82f60$52f88e20$@samsung.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hY93S4fM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753859056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7EgCjCwSAoWT6dP7WChm7aBhbHSl4JFbz/gKARLGAAw=;
+	b=hY93S4fM23q+8Mx0TJVA5VVJc/+ONAJ2J+pwPeEpow1Lu9fU9QkofoiJ8pY/QwWbBXPm6j
+	LK1rCYLYAQcPwGuf+Sro91FR8MGVDdHs6kkpbMulszEn0G4vclFP4uYEz1bOUsuH0WpV3U
+	Pf+Lyr7OTOjglF5fMz+Xj6YRrdp0mOE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-fOg-1mQhNLCdSHCDCxuzfg-1; Wed, 30 Jul 2025 03:04:14 -0400
+X-MC-Unique: fOg-1mQhNLCdSHCDCxuzfg-1
+X-Mimecast-MFC-AGG-ID: fOg-1mQhNLCdSHCDCxuzfg_1753859053
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b78c983014so1466864f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2025 00:04:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753859053; x=1754463853;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7EgCjCwSAoWT6dP7WChm7aBhbHSl4JFbz/gKARLGAAw=;
+        b=qjG5VHHdivNJRUooa7gEvGVxdL1LklGwjldr1rEi4j56ezIf3lu5dZC0aTd6KM4Ykc
+         hm03oqCLMQhdyQ732dWSi4ojpIilnk4UA3sTdzUTjyGG/LmIeXPmiVD5LeLYiOi3f6ft
+         +jU1Dby577qGbPwks6xRpzTZgp32ZFNAogo05H8xFCoJ5ru2/xYmZIzVNNUhviY1q9nk
+         FOxI7IPJ1KbUHQsRtKZWGMOQXXuD87sfDUrQH206aLrMvXMwTzYR3d9IkouQDXRRt7RQ
+         +1Wly19NdnIS165mAWJX8PEb2E1UQ4VOMh0ige55AigMiV7InJwpWObT7RZKFY6x3qhO
+         OIEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi6FGIMMgr7qXdA6jdWPmdR/iQjQXpt+sYj/8i+kAvTiIyqY/xycr/wGIxMgDLUE5R1907aHrga8jvUUCsVnxFHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFRWFGy1zTz3d+WBf4ScRQBB/JFnABUhIbnOjtnEH3B/ItMURV
+	BZ9DR9OViPY8PJ749s9ibDO9KXjBRJr+sqfHoKp8iQ3WeM6HDMPb8hnqVfFLf+JrThwqN/D1P8Y
+	nkYDpNLc41LHCYXGCzj6TpLYsinJ+XgyHg0gg92GBl59G49WK7/IZY73KJAWBJVAwi+Cv//H1
+X-Gm-Gg: ASbGncthFy2evTXJsUy5ah9C/ErYK43nXLtFPg0FwlW8Xro5KFNmziFjmgybMUy5NNn
+	fp9yp7X96YifOinZUc3Qw01MwWsr0HfdwWp1ywGbmNp8a7N1iO6zkGtgKElk9QAC/DaAlu1yZ/q
+	1bWnse9WgPOPLUXbRsita5Ey9HiHBte3duVmc1moxbrK7dol4eHYbjYr6Wob80mKMsPewfE3mHn
+	RdBZ8duWD6Ze/xhz4fCsPou+BoAiHNNYz9PPuS+YoByqHMXVOaTLpN1g9SWb7E6Jo14+bXC+wzc
+	ew/Qzl2kmx8Jr48mp2YH0JQK9ptOP/odhLZlqys16ZPXuPL3sTU9TAQgzm7OvEYqvgY0LrcY0nO
+	korQ=
+X-Received: by 2002:a05:6000:178c:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b794ffdafbmr1455231f8f.37.1753859052960;
+        Wed, 30 Jul 2025 00:04:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNUbYGDL0unBoGUvLAcwoshm16lk2z/rlSxU4KYNEG/RVgWXaLcOgnhaU/dRAgxynEmknJng==
+X-Received: by 2002:a05:6000:178c:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b794ffdafbmr1455181f8f.37.1753859052432;
+        Wed, 30 Jul 2025 00:04:12 -0700 (PDT)
+Received: from [192.168.0.6] (ltea-047-064-115-093.pools.arcor-ip.net. [47.64.115.93])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78b78f5edsm7115817f8f.28.2025.07.30.00.04.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 00:04:11 -0700 (PDT)
+Message-ID: <532f5e18-8613-454c-8497-8c224360ebbf@redhat.com>
+Date: Wed, 30 Jul 2025 09:04:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQMc6yo9jRPgA4nZ2IiZrgLtyBFMygGaMzhCAmY8HSqxqDjnIA==
-X-CMS-MailID: 20250730042624epcas5p35c34b8407135ac6b3ffd8f5e6f85eadb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250710082538epcas5p2556f80b4193a046262808ae7742675be
-References: <20250710083434.1821671-1-dev.tailor@samsung.com>
-	<CGME20250710082538epcas5p2556f80b4193a046262808ae7742675be@epcas5p2.samsung.com>
-	<20250710083434.1821671-4-dev.tailor@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ uapi headers
+From: Thomas Huth <thuth@redhat.com>
+To: linux-arm-kernel@lists.infradead.org, Russell King <linux@armlinux.org.uk>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250703173859.246664-1-thuth@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <20250703173859.246664-1-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 03/07/2025 19.38, Thomas Huth wrote:
+> The kernel Makefiles define the __ASSEMBLY__ macro to provide
+> a way to use headers in both, assembler and C source code.
+> However, all the supported versions of the GCC and Clang compilers
+> also define the macro __ASSEMBLER__ automatically already when compiling
+> assembly code, so some kernel headers are using __ASSEMBLER__ instead.
+> With regards to userspace code, this seems also to be constant source
+> of confusion, see for example these links here:
+> 
+>   https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
+>   https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
+>   https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
+>   https://github.com/riscv-software-src/opensbi/issues/199
+> 
+> To avoid confusion in the future, it would make sense to standardize
+> on the macro that gets defined by the compiler, so this patch series
+> changes all occurances of __ASSEMBLY__ into __ASSEMBLER__.
+> 
+> I split the patches per architecture to ease the review, and I also
+> split the uapi headers from the normal ones in case we decide that
+> uapi needs to be treated differently from the normal headers here.
 
+Friendly ping! The patches should still apply cleanly, I think.
 
-> -----Original Message-----
-> From: Devang Tailor <dev.tailor=40samsung.com>
-> Sent: Thursday, July 10, 2025 2:05 PM
-> To: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> rtc=40vger.kernel.org; faraz.ata=40samsung.com
-> Cc: Devang Tailor <dev.tailor=40samsung.com>
-> Subject: =5BPATCH v2 3/3=5D arm64: dts: exynosautov9: add RTC DT node
->=20
-> Add DT node for on-chip RTC for ExynosAutov9
->=20
-> Signed-off-by: Devang Tailor <dev.tailor=40samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
-
-You can also send a top-up patch to correct the ordering of the nodes based=
- on the ascending addresses.
-
->  arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts =7C  4 ++++
->  arch/arm64/boot/dts/exynos/exynosautov9.dtsi     =7C 10 ++++++++++
->  2 files changed, 14 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> index de2c1de51a76..5f5167571f7a 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> =40=40 -106,6 +106,10 =40=40 &pwm =7B
->  	status =3D =22okay=22;
->  =7D;
->=20
-> +&rtc =7B
-> +	status =3D =22okay=22;
-> +=7D;
-> +
->  &serial_0 =7B
->  	pinctrl-0 =3D <&uart0_bus_dual>;
->  	status =3D =22okay=22;
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> index 66628cb32776..afa6b258153c 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> =40=40 -1633,6 +1633,16 =40=40 pwm: pwm=40103f0000 =7B
->  			clock-names =3D =22timers=22;
->  			status =3D =22disabled=22;
->  		=7D;
-> +
-> +		rtc: rtc=4010540000 =7B
-> +			compatible =3D =22samsung,exynosautov9-rtc=22;
-> +			reg =3D <0x10540000 0x100>;
-> +			interrupts =3D <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks =3D <&xtcxo>;
-> +			clock-names =3D =22rtc=22;
-> +			status =3D =22disabled=22;
-> +		=7D;
->  	=7D;
->  =7D;
->=20
-> --
-> 2.34.1
+  Thomas
 
 
