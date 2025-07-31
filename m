@@ -1,122 +1,133 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3F22BD595
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2025 10:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2262BE02D;
+	Thu, 31 Jul 2025 10:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753957262; cv=none; b=dEwZsERNsDJLL51pgmoEhTMCg991HKOex5Bm57JooBNxe0IH2A2TlCWVGIQfJlwlOI3iJHgazu0EXgR931dUA9xjl+LvNjiLrYa3YRoeX6nJerbHz+gos9Az3/co/+LTCu0pvj5wnXOQ1h4ZjbbQwkxG/m6zz8HlalpcFIJ4atY=
+	t=1753959587; cv=none; b=U56on3cq5FAQZUufT5PUCEt1AYnHGkQrZT8QSsta3B+eEhHRYCEUjvcjBJYukUQtokVlK1vKodf+Fabig534TlPieNZohPYXk8hqgmW2H35f4XxIXmR9rhdBy3l3t6B6v4tENOfRDASXeEW653rj0Gkf1hvk1jA0dsge6BA1evQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753957262; c=relaxed/simple;
-	bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BdULhwTO5wy3Bnco0VKbd2rnCYpcz/qsF2ln2VQAULCOvjNZM+prk3zPXHYyRy3qa3qUjRziApnvCMIMQnR5u3KG02eUEcYR6w6umCPUZ+DFuhmSa3RbsrY7BF/iHFX+XfMOF/7kwWeLEaRDfbeX4RcdeDvRjhVpXR1TanYTbiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DdtIclw1; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753959587; c=relaxed/simple;
+	bh=qPWfK9sgu6r8bmRE+mFmR8DEssdNTrNeH7RfdRDf8hc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bpNtPMSEJEg1WUylcOOY9jY2iM+1DHgeI4Zg6wo3x16o/fD86WCqdpjnX2v8eRPSrIhltdCq3kTGf6EABSP5HJ8l6snf7uoRlNHP6eOgejr7paB8l7OCRBqfR6+e9BFAbaNurfHwwIpOFBzqTfZeBTSzKrDT1JYtRll08/ah63I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jy2SfELj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DdtIclw1"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso1108229f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2025 03:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753957259; x=1754562059; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
-        b=DdtIclw12SBilY5CAMUdd7ccs+qeIRvc729/Y/7UPBM7zvnOIkCTQa+PU+3MJJUsN9
-         dG4R06mRsp1hbfYxL0kgmbOvYyVuNrNNosd+NSNRlaAT6OSliYUNJpvgFcnT1TOVWyt+
-         8c7bL1pH+7uBj8YRe0k7lF/fsw8je13pwwN+jhYH1k+D1kuA/QwxHF9165P6WVWnYkpf
-         hbRbRzV0eQiXOwOqcY8rEACSBKl2hBMWHJbBi0jH9aqO+Mu2UcuadTpkzcbfLpLlyNi4
-         0i7yimw64ONL2CPFVzcT9ic3bY7oTJBjqUot7A2wNJVQ49S8+MMJ7NBSgzO7czvp7MsG
-         YM3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753957259; x=1754562059;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
-        b=np+cRE6Fl8146wAk+WQ2YAqkHheYjpb63oikAAuO/TW2zSiWjuIJp9qnKSQpPDBB/G
-         CQXmEMUG2XVxbyO5do81w4Kv6K47k1UHLV75cnzN/x6mARewGGN2w8rJpfc+7ltNTWHY
-         9dHELUd43tFBT200NeqXQIUQPhnGK0WJoSIaZlJieYUiZoeIXXD5+1q0DZ0d8WZFPnSm
-         gP8cwQSe3FFbyPMyvL0sLXzcQW8KQctXvdY0dizXR54RmxuvrYjq1dloV74ScsVoGg4K
-         OEvOzrwaFiukDuNVOu73fVO0e6bjfB3NpUUp/zGrCCf5AsEL032w8vnkacSIiWz9I3Ug
-         RyaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXTrhIfcMFXWLf8DvyJ/qFMS/YPMD8dc9QnZnEcLca2J8qr02Oi/w9zMDBns0p9Iqt36Cl3Xv/Mx1VY1YzPYiOqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVKZRFgBX8+R5MCdtZMijfsH0Fo7gUsD8gxTDOElnGVKpRMtyd
-	QJ240LSRShRKOgPN0vWdchd37GU0XqoF75Y1Xeu+x1gVPcsseOx1EPw12B2j3iRL/hs=
-X-Gm-Gg: ASbGnctIzs0jiHmhnvpXBaT/HSv9KX+u2WCK/fP1ONehrdMUlaFxA9t2SHPF6zIdGCF
-	8Zy9KVNNW+qaRQ1jr/I2dLVWyEGhSCnQb2qQB3RIYbOWRL1jgnVV4CeRrufse5uWFU9jozH1VHA
-	vgl9H3XPG9/N6hiKNwrVexm7BQZCu/LkUgJp4z1TtGHAw9w2wZvfdeBjUjXCGXMQpe1LbfG4Dk7
-	V6U+azKZ7RuumsacxtoZMhwyCRS14Jw8XOCk1LGQ3zyYOwF9utzVay1+SsE7nCI6lL8IZ+FPJq9
-	V5IwDaJabqFP2J62oRAOvyAxY3lvLXbhDHMijidr98wSBKNAxUjw188jiY/cxAH0V5JEJA/0Yo9
-	xXDSKeBQc+qlHUaz9Sjkbj3cJ/A==
-X-Google-Smtp-Source: AGHT+IFVEwLIcO4fNKnjyIY1mnWetXH6kHJKTnn/c6Wln21XoHb709OPThVEb0OesSZIKjx5gzja4Q==
-X-Received: by 2002:a05:6000:22c8:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b79d812bc8mr1195293f8f.25.1753957258867;
-        Thu, 31 Jul 2025 03:20:58 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588d89c50fsm60787795e9.0.2025.07.31.03.20.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 03:20:58 -0700 (PDT)
-Message-ID: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin
- Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni	 <alexandre.belloni@bootlin.com>, Peter Griffin
- <peter.griffin@linaro.org>,  Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 31 Jul 2025 11:20:56 +0100
-In-Reply-To: <20250730145100.GA6782@google.com>
-References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org>
-	 <20250730145100.GA6782@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jy2SfELj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA39C4CEF5;
+	Thu, 31 Jul 2025 10:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753959586;
+	bh=qPWfK9sgu6r8bmRE+mFmR8DEssdNTrNeH7RfdRDf8hc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jy2SfELj63IFup2dLp/YeTc1l0sM7Tr8Xu0JCb7WWN1lNQVx9z9F9YkHCOUY3ngEN
+	 PJfv0rQacZTEZ5BDe81CUoOcohA71TL/TVsLo946tkmZT0yoJt/dg20po9iOugbXke
+	 o3Oa47KxEUcWHVJB3je+QQcyuk5QHB1kbErBOQ5sXzGrkphI1uVhF2O1nU7yXk71yV
+	 CVHPKDVIL+yr8Y0IWAACC4QTuGeb33ZUMrdsBBAOIIFan8DrGj76SCkBXZFmtdzERP
+	 o1MfTPQeJyOnINMelM4ThSUl3Q1thgwEMys9M0rtgMIr5YRCE1o6s6cWS5sWJk6WFX
+	 SbpYjLuE8DAXg==
+Message-ID: <0774bf0f-5686-46ab-bd71-82b859201353@kernel.org>
+Date: Thu, 31 Jul 2025 12:59:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: samsung: exynos-srom: Fix of_iomap leak in
+ exynos_srom_probe
+To: "zhen.ni" <zhen.ni@easystack.cn>, alim.akhtar@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
+ <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
+ <5b4dc6a3-f6fd-4bf7-a84e-3d79db8d062e@easystack.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <5b4dc6a3-f6fd-4bf7-a84e-3d79db8d062e@easystack.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
-> On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
->=20
-> > Original cover letter further down.
-> >=20
-> > This is a resend of two patches from the original series that haven't
-> > been merged yet. That series was merged except for the attached two
-> > patches here. Other than rebasing against next-20250729 there are no
-> > changes to them.
-> >=20
-> > Lee, I think Stephen's intention was to get these two merged via the
-> > MFD tree please.
->=20
-> Although I have no issue with this, it does seem a little odd now that
-> the set consists of only Clk patches.=C2=A0 Let me know what you / Stephe=
-n
-> decide.
+On 31/07/2025 11:40, zhen.ni wrote:
+> Hi,
+> 
+> During static analysis with Smatch, I identified the following issue:
+> 
+> ```
+> drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()
+> warn: 'srom->reg_base' from of_iomap() not released on lines: 155.
 
-Thanks Lee.
+Nothing in commit msg explained you used Smatch. You must describe the
+tools you use.
 
-I simply went by Stephen's ACK, which to me implies he wanted it merged
-via a different tree (mfd). I guess at this stage it doesn't matter anymore=
-,
-since all the core changes are in already.
+> ```
+> 
+> Problem analysis:
+> 1. In exynos_srom_probe(), the reg_base resource is acquired via of_iomap()
+> 2. The of_platform_populate() call at the end of the function has a 
+> possible failure path:
 
-I'll defer to Stephen :-)
+Above is AI/LLM output?
+
+> ```
+> root = root ? of_node_get(root) : of_find_node_by_path("/");
+> if (!root)
+>       return -EINVAL; // Failure return point
+> ```
+> 3. When this path is taken, reg_base is not released, causing a resource 
+> leak
+> 
+> Verification:
+> After applying the patch, the Smatch warning is resolved
+
+This means no testing. You should mention it as well.
+
+Don't top post. See netiquette.
 
 
-Cheers,
-Andre'
-
+Best regards,
+Krzysztof
