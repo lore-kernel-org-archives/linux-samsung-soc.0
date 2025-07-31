@@ -1,134 +1,74 @@
-Received: from mail-m3285.qiye.163.com (mail-m3285.qiye.163.com [220.197.32.85])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D6F23BE;
-	Thu, 31 Jul 2025 14:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59FDA921;
+	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753971403; cv=none; b=bYmTgehk7Xt8Lp/QjVzNiMvUoNAGydMJaBNOS8bcSEmf9/FakO1kDlrv4K5/0E2Yzir5LDWWGsNnCazUKgyS5LvOYfBA6DN+w+JWnuwCCByZFbuhGKAf0DCsEqzoHno1hlEucaNTBOlsnVzfiueoT/eHv/OSUFGFjWhaJwaDAYs=
+	t=1753980414; cv=none; b=CBlwggY09J4vi9RgRCrvZbZl8PJvSg/hcFzR8q6fumfStyprrFktY7BIGFOHKC8oDLiYNV4egE+i0RY/nRBihc9tz107WsXiSGfWZUVtXnF34bs7RBmft0gI0v/wd3xRvYLeXiejW7FK2j5Men1GR0+zI/IBEv/g8zseQO+nd6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753971403; c=relaxed/simple;
-	bh=UW8GLbU03FCsMjccf40Jm+8x7OkSG2Tz5Njj2gbNmQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5Ll36nzUGhH1fBGR+WjfyLu5t4qiJXwtS9S0jVsWgWEMY1DmMY/msJg/KTS6gNGd5ew96sGT5YxzACyGAsN8c/N8+8PDgXx9r5TJhmovBM2DpcrBdd4QyZ+wvO5HdGx0dv379SfQc+r9F/NWirN1FjEznemmZGu+nXM5mVTgII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.32.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from [192.168.1.94] (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id dee002b7;
-	Thu, 31 Jul 2025 17:40:26 +0800 (GMT+08:00)
-Message-ID: <5b4dc6a3-f6fd-4bf7-a84e-3d79db8d062e@easystack.cn>
-Date: Thu, 31 Jul 2025 17:40:26 +0800
+	s=arc-20240116; t=1753980414; c=relaxed/simple;
+	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=RBS0da45HfdjFgvw6ArMBJtUwDUmQ1k4PgVArU4kelFi7Qv09uvyKvznjhp9T07s0xd/LNmG0al018M23n8DTVpzK49THQC6WI45QBHnPl0/inatEf+ouzOq7TywUHLGpr/TP8YpqiJDudQUBXso6b5PjcWGPUKU/c0Gt87stBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPXGXw+s; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPXGXw+s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DF4C4CEEF;
+	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753980413;
+	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=sPXGXw+scJs3C7UZI/DA7MkT8ZN7ufgUcQDo6OoT3wd0tG1XIxdEmW42mDTr2FwvB
+	 +g2toyhn+m4aah5rzF3VTaYgwwnfqkAUadACT2JKaGyZoyNkSAengCkwSnWhj089yJ
+	 KRLUQFV8aP3CfE6SS5dlWSxgtaAwf2DyO0uuJvY5Mg9t6FgEUvQEqLETVtBmGG4LVE
+	 FAy5pKc8Lv2IS284454L5lY1pw78sQaMjs1qNnoExK+AbO43poml56YaYA2ZT0WZJ/
+	 0uveNgKYd+S2bTIiBTMYW7opEXNGfiiklXc3bTfggoVvJOq11Kxa0M3sB9m6ZRGo0h
+	 oQmOrF2fr/Qag==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: samsung: exynos-srom: Fix of_iomap leak in
- exynos_srom_probe
-To: Krzysztof Kozlowski <krzk@kernel.org>, alim.akhtar@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
- <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
-From: "zhen.ni" <zhen.ni@easystack.cn>
-In-Reply-To: <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985fdab9b90229kunm51918700f3967
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDShkZVkgZHk9NT08aHk8fT1YVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
+References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org> <20250730145100.GA6782@google.com> <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
+Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>
+Date: Thu, 31 Jul 2025 09:46:51 -0700
+Message-ID: <175398041189.3513.13629420060562627196@lazor>
+User-Agent: alot/0.11
 
-Hi,
+Quoting Andr=C3=A9 Draszik (2025-07-31 03:20:56)
+> On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
+> > On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
+> >=20
+> > > Original cover letter further down.
+> > >=20
+> > > This is a resend of two patches from the original series that haven't
+> > > been merged yet. That series was merged except for the attached two
+> > > patches here. Other than rebasing against next-20250729 there are no
+> > > changes to them.
+> > >=20
+> > > Lee, I think Stephen's intention was to get these two merged via the
+> > > MFD tree please.
+> >=20
+> > Although I have no issue with this, it does seem a little odd now that
+> > the set consists of only Clk patches.=C2=A0 Let me know what you / Step=
+hen
+> > decide.
+>=20
+> Thanks Lee.
+>=20
+> I simply went by Stephen's ACK, which to me implies he wanted it merged
+> via a different tree (mfd). I guess at this stage it doesn't matter anymo=
+re,
+> since all the core changes are in already.
+>=20
 
-During static analysis with Smatch, I identified the following issue:
-
-```
-drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()
-warn: 'srom->reg_base' from of_iomap() not released on lines: 155.
-```
-
-Problem analysis:
-1. In exynos_srom_probe(), the reg_base resource is acquired via of_iomap()
-2. The of_platform_populate() call at the end of the function has a 
-possible failure path:
-```
-root = root ? of_node_get(root) : of_find_node_by_path("/");
-if (!root)
-      return -EINVAL; // Failure return point
-```
-3. When this path is taken, reg_base is not released, causing a resource 
-leak
-
-Verification:
-After applying the patch, the Smatch warning is resolved
-
-
-Best regards,
-Zhen
-
-
-在 2025/7/31 17:06, Krzysztof Kozlowski 写道:
-> On 31/07/2025 10:33, Zhen Ni wrote:
->> The current error handling in exynos_srom_probe() has a resource leak
->> in the of_platform_populate() failure path. When this function fails
->> after successful resource allocation, srom->reg_base is not released.
->>
->> To fix this issue, replace of_iomap() with
->> devm_platform_ioremap_resource(). devm_platform_ioremap_resource()
->> is a specialized function for platform devices.
-> 
-> Don't explain us kernel code. Drop sentence.
-> 
->> It allows 'srom->reg_base' to be automatically released whether the
->> probe function succeeds or fails.
-> 
-> It's obvious.
-> 
->>
->> Besides, use IS_ERR() instead of !srom->reg_base
-> 
-> I don't understand this. You keep explaining the code and this suggests
-> you made change here not related to original case. Can you return
-> srom->reg_base here? No?
-> 
-> 
->> as the return value of devm_platform_ioremap_resource()
->> can either be a pointer to the remapped memory or
->> an ERR_PTR() encoded error code if the operation fails.
->>
-> 
-> Missing fixes and cc-stable.
-> 
->> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
->> ---
->>   drivers/memory/samsung/exynos-srom.c | 10 ++++------
->>   1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
->> index e73dd330af47..d913fb901973 100644
->> --- a/drivers/memory/samsung/exynos-srom.c
->> +++ b/drivers/memory/samsung/exynos-srom.c
->> @@ -121,20 +121,18 @@ static int exynos_srom_probe(struct platform_device *pdev)
->>   		return -ENOMEM;
->>   
->>   	srom->dev = dev;
->> -	srom->reg_base = of_iomap(np, 0);
->> -	if (!srom->reg_base) {
->> +	srom->reg_base = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(srom->reg_base)) {
->>   		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
->> -		return -ENOMEM;
->> +		return PTR_ERR(srom->reg_base);
-> 
-> How did you test it?
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+I'll pick it up after the merge window closes.
