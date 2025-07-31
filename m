@@ -1,74 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59FDA921;
-	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B90A289804
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2025 23:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980414; cv=none; b=CBlwggY09J4vi9RgRCrvZbZl8PJvSg/hcFzR8q6fumfStyprrFktY7BIGFOHKC8oDLiYNV4egE+i0RY/nRBihc9tz107WsXiSGfWZUVtXnF34bs7RBmft0gI0v/wd3xRvYLeXiejW7FK2j5Men1GR0+zI/IBEv/g8zseQO+nd6A=
+	t=1754005535; cv=none; b=RC2qqWVAUxm8ltjS0GWJvOlEvFaiQX5MH7PZsy9dfLEAoQLB737+N5/kKe5aCFu4tL6z+U0O7pI4NN1omKSzal/ZucF7eCdohDxxVi5cqtq5B68IQQOnOWlw5IBmZ5if1QjhtTGzgTB76xsrDIpyGPt2aI2m0/kXdG/bd/oK4r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980414; c=relaxed/simple;
-	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=RBS0da45HfdjFgvw6ArMBJtUwDUmQ1k4PgVArU4kelFi7Qv09uvyKvznjhp9T07s0xd/LNmG0al018M23n8DTVpzK49THQC6WI45QBHnPl0/inatEf+ouzOq7TywUHLGpr/TP8YpqiJDudQUBXso6b5PjcWGPUKU/c0Gt87stBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPXGXw+s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754005535; c=relaxed/simple;
+	bh=2gt6Nxed+AFerebrJU3TYDHkF7LsDAD0OfwSV1lcaH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T1c9JbKf8SQrYfFx7MACuO0fnF7YNBr03Jt9ih7jLY8QWxbce8lV3oDQs6w3PylwOyn+XTB1iX4X3xOUtFYXAyLVY6IF0S8WWq3GNPn77oRZ8YdMSM+SFmE3jDltvM1HBBICH+yi5EgJFKXgT0L0yShm46xX5N67p+CpW3jbRB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vAIALMc9; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPXGXw+s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DF4C4CEEF;
-	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753980413;
-	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sPXGXw+scJs3C7UZI/DA7MkT8ZN7ufgUcQDo6OoT3wd0tG1XIxdEmW42mDTr2FwvB
-	 +g2toyhn+m4aah5rzF3VTaYgwwnfqkAUadACT2JKaGyZoyNkSAengCkwSnWhj089yJ
-	 KRLUQFV8aP3CfE6SS5dlWSxgtaAwf2DyO0uuJvY5Mg9t6FgEUvQEqLETVtBmGG4LVE
-	 FAy5pKc8Lv2IS284454L5lY1pw78sQaMjs1qNnoExK+AbO43poml56YaYA2ZT0WZJ/
-	 0uveNgKYd+S2bTIiBTMYW7opEXNGfiiklXc3bTfggoVvJOq11Kxa0M3sB9m6ZRGo0h
-	 oQmOrF2fr/Qag==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vAIALMc9"
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6196da3f479so151425eaf.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2025 16:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754005533; x=1754610333; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5aj5vUWJXyfqyhprLvdwVUEl/uN3d7BC1IvykTif/4=;
+        b=vAIALMc9cvDdQUpfHCK3eqpWjTikpAvTOsGZ+naGN3sJbFs73TobHywPpbzhpdOZNK
+         zXKsOuJhniq89roybImciL06q8G0SOfj0NRTT6AkF8c4S7L3dE01/c6yl3HKiNBxtaQ5
+         U/sMUfJNfjsgnM7t1zeJqd9xQcmtU6NGjo/o8E6CxuUjLyQWhxfd5EjyuSL0rYjFsxQr
+         CFdzR6HJHaXFmFOq0Z0D0Jpku/Upx/LAsjWhi0EdShL4+0Bf09PewGPyNncqDOuFWgs2
+         ib9B7pxPsxk4FA5DytchSBZwQuQceBaJbw2rDbypduCpUJ3NeH2moNulu3cT5EGBGuWd
+         dcsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754005533; x=1754610333;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o5aj5vUWJXyfqyhprLvdwVUEl/uN3d7BC1IvykTif/4=;
+        b=ZBxJEA9h57Hhr0CPywGbvuvalKM8xExnEZvpMJo2bheiSWRQp3FUeDTcQlOiuc9hiE
+         uykQN8ii6UP8kYcgok5iOZKY37/ppgQ6cU59faNzNw6wq0EFp4MukBcsMTvtxds8pDx0
+         J5GQ2wVa+WfSCy+rfRRh8vCj+xNYlAUgSeB4sfClcpHCsTEyT3+DKGk4uVFjV9UYZ/S2
+         HI8L1HhVQIWWOqemk2stHHEo3MjDOM5Nz4b8IZX7DUE0mOx9prGa+U9d7rjbLMUTSjHJ
+         ziTeeseFFOGVeV1lD82BChMn5XXFKqrb8Vz8pQa+k7/oj4Y0kRXSbx5MUkVAzmrgt2LG
+         QmFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdJrix1miZ+o9nzKA3fmRmMkkd7TfHwOi60wWagbEN01IBdtH/20QhFiiyx5VKLnRiJ4UOa5cbnoZJWmulj3mHFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr98wmM4TQ61pJFxNIfvZ8PIMyOGd2PS8t/3MMSAVB7LB3mPue
+	WFgW46Nd2vRg69nCOjIWJkatpJqQqK75vncxQrqNMW5nH0MP/wQrWvkDmx9AmGXF6Gk=
+X-Gm-Gg: ASbGnctagvv0+1H27GzfImzeH+4Ij8cm0/qWuzr1ON5ahV5AwtaixoS22dAj2O11VUp
+	eTNFMhf2uUcPqntcce4SPdRyNLx2lzZhtg7g+oXHj80wz992VQfoGIrI7q9A41I0c05H4v961SQ
+	CHiD1cECbHBxH1szI3ppductm4D7/zUAYW9NV/ZjNeIr9uX2yGhNCe+Y/fvf1OEnenJ7vrIhGal
+	th+MIttMcGwvw+E0CHjsIDKEbSC0tmG17NAxCwFwLQYERv34jdc9Eh0SYJTb+auUnsNiVSgIMqW
+	Wc2CqISJUtgoRPuFWMQMYXkibkp/25zpvuzg0NHszVq3LgCkjAbnAEzLzdGO47mfhOT0//mouIa
+	TwKDC5WJYHbsxVEXe83E47L6wnQ==
+X-Google-Smtp-Source: AGHT+IFuo3EccWt2eqaswL/GXTzhTAtiWo9RPTumIYwjblTx1Ehjy9OmBX7qt65iTSqVmlJ1VnsAJQ==
+X-Received: by 2002:a05:6820:6682:b0:619:7ffe:b0af with SMTP id 006d021491bc7-6197ffec3b4mr712572eaf.8.1754005532733;
+        Thu, 31 Jul 2025 16:45:32 -0700 (PDT)
+Received: from localhost ([136.49.61.16])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-619704e167bsm373502eaf.4.2025.07.31.16.45.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 16:45:32 -0700 (PDT)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: exynos: Add Ethernet node for E850-96 board
+Date: Thu, 31 Jul 2025 18:45:32 -0500
+Message-Id: <20250731234532.12903-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org> <20250730145100.GA6782@google.com> <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>
-Date: Thu, 31 Jul 2025 09:46:51 -0700
-Message-ID: <175398041189.3513.13629420060562627196@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
 
-Quoting Andr=C3=A9 Draszik (2025-07-31 03:20:56)
-> On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
-> > On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
-> >=20
-> > > Original cover letter further down.
-> > >=20
-> > > This is a resend of two patches from the original series that haven't
-> > > been merged yet. That series was merged except for the attached two
-> > > patches here. Other than rebasing against next-20250729 there are no
-> > > changes to them.
-> > >=20
-> > > Lee, I think Stephen's intention was to get these two merged via the
-> > > MFD tree please.
-> >=20
-> > Although I have no issue with this, it does seem a little odd now that
-> > the set consists of only Clk patches.=C2=A0 Let me know what you / Step=
-hen
-> > decide.
->=20
-> Thanks Lee.
->=20
-> I simply went by Stephen's ACK, which to me implies he wanted it merged
-> via a different tree (mfd). I guess at this stage it doesn't matter anymo=
-re,
-> since all the core changes are in already.
->=20
+The E850-96 board has a hard-wired LAN9514 chip which acts as a USB hub
+and Ethernet bridge. It's being discovered dynamically when the USB bus
+gets enumerated, but the corresponding Ethernet device tree node is
+still needed for the bootloader to pass the MAC address through. Add
+LAN9514 nodes as described in [1]. 'local-mac-address' property (in the
+'ethernet' node) is used for MAC address handover from the bootloader to
+Linux.
 
-I'll pick it up after the merge window closes.
+[1] Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
+
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/exynos850-e850-96.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+index 7d70a32e75b2..ab076d326a49 100644
+--- a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
++++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+@@ -21,6 +21,7 @@ / {
+ 	compatible = "winlink,e850-96", "samsung,exynos850";
+ 
+ 	aliases {
++		ethernet0 = &ethernet;
+ 		mmc0 = &mmc_0;
+ 		serial0 = &serial_0;
+ 	};
+@@ -241,10 +242,24 @@ &usbdrd {
+ };
+ 
+ &usbdrd_dwc3 {
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	dr_mode = "otg";
+ 	usb-role-switch;
+ 	role-switch-default-mode = "host";
+ 
++	hub@1 {
++		compatible = "usb424,9514";
++		reg = <1>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethernet: ethernet@1 {
++			compatible = "usb424,ec00";
++			reg = <1>;
++		};
++	};
++
+ 	port {
+ 		usb1_drd_sw: endpoint {
+ 			remote-endpoint = <&usb_dr_connector>;
+-- 
+2.39.5
+
