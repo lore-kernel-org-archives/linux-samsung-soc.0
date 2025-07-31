@@ -1,148 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5E2242907;
-	Thu, 31 Jul 2025 09:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3F22BD595
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2025 10:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753952773; cv=none; b=j16kWwWkEV9czH0I2b6CVf4mMsBKVxVwksOxVVdQK2Xba0/ZbVax//u5142wmsh0h85no7YBFIn9GytUvzOrLpYkwX7ugNKJN6GkrKXQS4YRkFdulka6rdrGHJSWYmYy6AGau1V0S0dKyQhMOtBsOavyUe3FrI0tYFmHLvqhrXI=
+	t=1753957262; cv=none; b=dEwZsERNsDJLL51pgmoEhTMCg991HKOex5Bm57JooBNxe0IH2A2TlCWVGIQfJlwlOI3iJHgazu0EXgR931dUA9xjl+LvNjiLrYa3YRoeX6nJerbHz+gos9Az3/co/+LTCu0pvj5wnXOQ1h4ZjbbQwkxG/m6zz8HlalpcFIJ4atY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753952773; c=relaxed/simple;
-	bh=oSMKei0qcQQgEgMV1zyUo1IrYdKO89Yq7Tm0/TNmFXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=epMzOCtlUW5NlA7kLWrFacYMuOsT6YlmI2NOywFduQ3FXKlvPxVTXC3BLCwD1gFn6cbqtzQjSDcVglFTtO/6RrI+BclqVccUXcrPPlD/P45fURSW1Is7a7Ku0nJLBcMbD46L6oVG/jbrCbEWYErZHuLwuNytic8fYy35L3SBa5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/4YKdSq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753957262; c=relaxed/simple;
+	bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BdULhwTO5wy3Bnco0VKbd2rnCYpcz/qsF2ln2VQAULCOvjNZM+prk3zPXHYyRy3qa3qUjRziApnvCMIMQnR5u3KG02eUEcYR6w6umCPUZ+DFuhmSa3RbsrY7BF/iHFX+XfMOF/7kwWeLEaRDfbeX4RcdeDvRjhVpXR1TanYTbiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DdtIclw1; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/4YKdSq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB98C4CEEF;
-	Thu, 31 Jul 2025 09:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753952772;
-	bh=oSMKei0qcQQgEgMV1zyUo1IrYdKO89Yq7Tm0/TNmFXg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f/4YKdSqLENAXDynYM/jt1AeTEaJ1yN5/Y4+ny2jqUH48YHlnTWdpMznnDtMoJMAZ
-	 4U6iuyBEB1GhdqkuklBMFvcUWSc2X5RE4nNW1rvKAPiEl99/Mo4JKvALE1LXTTYY/e
-	 ZNitFaBeqkKxGBu+vvpbaTPYjb0zyrQ2fP2n+zcz7q4bpmw0PNWJvMjJEgumjL2lCH
-	 MA6bE0nn/ezx8pO9+kCNyh16hJKbqMPCZXzxwmbx1Z9FAjRxyDgjbXV9bMNNZMemlm
-	 b5Y1hj2VpJskxwt/ibowYUnzsj62pqZ5dID0HT+SC7sn8DGwsChJf7vEpZkYWH1lHv
-	 WhxI2EoV+tKSQ==
-Message-ID: <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
-Date: Thu, 31 Jul 2025 11:06:09 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DdtIclw1"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso1108229f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2025 03:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753957259; x=1754562059; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
+        b=DdtIclw12SBilY5CAMUdd7ccs+qeIRvc729/Y/7UPBM7zvnOIkCTQa+PU+3MJJUsN9
+         dG4R06mRsp1hbfYxL0kgmbOvYyVuNrNNosd+NSNRlaAT6OSliYUNJpvgFcnT1TOVWyt+
+         8c7bL1pH+7uBj8YRe0k7lF/fsw8je13pwwN+jhYH1k+D1kuA/QwxHF9165P6WVWnYkpf
+         hbRbRzV0eQiXOwOqcY8rEACSBKl2hBMWHJbBi0jH9aqO+Mu2UcuadTpkzcbfLpLlyNi4
+         0i7yimw64ONL2CPFVzcT9ic3bY7oTJBjqUot7A2wNJVQ49S8+MMJ7NBSgzO7czvp7MsG
+         YM3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753957259; x=1754562059;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
+        b=np+cRE6Fl8146wAk+WQ2YAqkHheYjpb63oikAAuO/TW2zSiWjuIJp9qnKSQpPDBB/G
+         CQXmEMUG2XVxbyO5do81w4Kv6K47k1UHLV75cnzN/x6mARewGGN2w8rJpfc+7ltNTWHY
+         9dHELUd43tFBT200NeqXQIUQPhnGK0WJoSIaZlJieYUiZoeIXXD5+1q0DZ0d8WZFPnSm
+         gP8cwQSe3FFbyPMyvL0sLXzcQW8KQctXvdY0dizXR54RmxuvrYjq1dloV74ScsVoGg4K
+         OEvOzrwaFiukDuNVOu73fVO0e6bjfB3NpUUp/zGrCCf5AsEL032w8vnkacSIiWz9I3Ug
+         RyaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXTrhIfcMFXWLf8DvyJ/qFMS/YPMD8dc9QnZnEcLca2J8qr02Oi/w9zMDBns0p9Iqt36Cl3Xv/Mx1VY1YzPYiOqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVKZRFgBX8+R5MCdtZMijfsH0Fo7gUsD8gxTDOElnGVKpRMtyd
+	QJ240LSRShRKOgPN0vWdchd37GU0XqoF75Y1Xeu+x1gVPcsseOx1EPw12B2j3iRL/hs=
+X-Gm-Gg: ASbGnctIzs0jiHmhnvpXBaT/HSv9KX+u2WCK/fP1ONehrdMUlaFxA9t2SHPF6zIdGCF
+	8Zy9KVNNW+qaRQ1jr/I2dLVWyEGhSCnQb2qQB3RIYbOWRL1jgnVV4CeRrufse5uWFU9jozH1VHA
+	vgl9H3XPG9/N6hiKNwrVexm7BQZCu/LkUgJp4z1TtGHAw9w2wZvfdeBjUjXCGXMQpe1LbfG4Dk7
+	V6U+azKZ7RuumsacxtoZMhwyCRS14Jw8XOCk1LGQ3zyYOwF9utzVay1+SsE7nCI6lL8IZ+FPJq9
+	V5IwDaJabqFP2J62oRAOvyAxY3lvLXbhDHMijidr98wSBKNAxUjw188jiY/cxAH0V5JEJA/0Yo9
+	xXDSKeBQc+qlHUaz9Sjkbj3cJ/A==
+X-Google-Smtp-Source: AGHT+IFVEwLIcO4fNKnjyIY1mnWetXH6kHJKTnn/c6Wln21XoHb709OPThVEb0OesSZIKjx5gzja4Q==
+X-Received: by 2002:a05:6000:22c8:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b79d812bc8mr1195293f8f.25.1753957258867;
+        Thu, 31 Jul 2025 03:20:58 -0700 (PDT)
+Received: from [10.1.1.59] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588d89c50fsm60787795e9.0.2025.07.31.03.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 03:20:58 -0700 (PDT)
+Message-ID: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
+Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Michael Turquette
+ <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin
+ Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni	 <alexandre.belloni@bootlin.com>, Peter Griffin
+ <peter.griffin@linaro.org>,  Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Thu, 31 Jul 2025 11:20:56 +0100
+In-Reply-To: <20250730145100.GA6782@google.com>
+References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org>
+	 <20250730145100.GA6782@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+build2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: samsung: exynos-srom: Fix of_iomap leak in
- exynos_srom_probe
-To: Zhen Ni <zhen.ni@easystack.cn>, alim.akhtar@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250731083340.1057564-1-zhen.ni@easystack.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 31/07/2025 10:33, Zhen Ni wrote:
-> The current error handling in exynos_srom_probe() has a resource leak
-> in the of_platform_populate() failure path. When this function fails
-> after successful resource allocation, srom->reg_base is not released.
-> 
-> To fix this issue, replace of_iomap() with
-> devm_platform_ioremap_resource(). devm_platform_ioremap_resource()
-> is a specialized function for platform devices.
+On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
+> On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
+>=20
+> > Original cover letter further down.
+> >=20
+> > This is a resend of two patches from the original series that haven't
+> > been merged yet. That series was merged except for the attached two
+> > patches here. Other than rebasing against next-20250729 there are no
+> > changes to them.
+> >=20
+> > Lee, I think Stephen's intention was to get these two merged via the
+> > MFD tree please.
+>=20
+> Although I have no issue with this, it does seem a little odd now that
+> the set consists of only Clk patches.=C2=A0 Let me know what you / Stephe=
+n
+> decide.
 
-Don't explain us kernel code. Drop sentence.
+Thanks Lee.
 
-> It allows 'srom->reg_base' to be automatically released whether the
-> probe function succeeds or fails.
+I simply went by Stephen's ACK, which to me implies he wanted it merged
+via a different tree (mfd). I guess at this stage it doesn't matter anymore=
+,
+since all the core changes are in already.
 
-It's obvious.
-
-> 
-> Besides, use IS_ERR() instead of !srom->reg_base
-
-I don't understand this. You keep explaining the code and this suggests
-you made change here not related to original case. Can you return
-srom->reg_base here? No?
+I'll defer to Stephen :-)
 
 
-> as the return value of devm_platform_ioremap_resource()
-> can either be a pointer to the remapped memory or
-> an ERR_PTR() encoded error code if the operation fails.
-> 
+Cheers,
+Andre'
 
-Missing fixes and cc-stable.
-
-> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
-> ---
->  drivers/memory/samsung/exynos-srom.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-> index e73dd330af47..d913fb901973 100644
-> --- a/drivers/memory/samsung/exynos-srom.c
-> +++ b/drivers/memory/samsung/exynos-srom.c
-> @@ -121,20 +121,18 @@ static int exynos_srom_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	srom->dev = dev;
-> -	srom->reg_base = of_iomap(np, 0);
-> -	if (!srom->reg_base) {
-> +	srom->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(srom->reg_base)) {
->  		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(srom->reg_base);
-
-How did you test it?
-
-Best regards,
-Krzysztof
