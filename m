@@ -1,176 +1,158 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ED4171D2
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Aug 2025 00:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CE4158535
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Aug 2025 04:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754094564; cv=none; b=TWcUsMmaUGGyNzrEd3AGw69A6OUU9BeJAbwfyez45UUA/m93xjBDuE6gBDLeNVPdoTMzcjkYq3mdOzsiD4VTC8qe0LAjfgE9qd1qpg4tMOO9+iFNck9n+iDA6YVLrrO+TXVifr6rFBjFi3DX8hL9UX0zspCgJag08EqcsV3eZzQ=
+	t=1754107919; cv=none; b=N1fWls/B+JQd3PerFj6xg2VcbLxhY09ThEbDqg8eHYjmUO/OuhHrsvGSJMBBninYGjUJnzjvOWDr2zzDGjRsYX2XMVaiJschHUy22CxjnPh1sD9KbeGKMXNqVAh8LxS6EPuPBjlzvvyKA1zaYgjCWot3GUEVAo8attklmPL5IPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754094564; c=relaxed/simple;
-	bh=/e3HiXOOhmzJYdmEluxt28mSjbsOiXAfIZ5KId+BGtI=;
+	s=arc-20240116; t=1754107919; c=relaxed/simple;
+	bh=lJKRnlysUD8MFDQfZoBVJQlFexCUCMcqAdy6vCaSzxU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YfF8oJc30wPRa4nVop8eYE7ZCljSyt8evFQ/HDOVGVX0HUQpMvTLOnRFzSmK2lIqnnhxfq9KGfQjGSNgdkGHLTIVUakz76jvM2l7JqaaH09Rsi0ZjSRKt9Rl1jTcfvuH9egLXGug5ujRz0SXh4y2xqyc0L1PyEnRBLoDYmDDqEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DFz66w5k; arc=none smtp.client-ip=209.85.219.178
+	 To:Cc:Content-Type; b=AR/WY1+ZiJUsKPjeNq+US3s19lqaEQ6aen30jaJDvmGcS6l8NRB4AaLZfNvU7f4cOpM5C0XDlciCrTmhtwveuHHf8dzXOk+2Diw1IcCflgIyIemVXtNjeGTKJ6k+UFEFvgrI3bVfI43CIwhOzykhWvk0SRm3ky/7w8ieEeLOPaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CIjig7F3; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DFz66w5k"
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8dfa190de4so1997642276.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2025 17:29:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CIjig7F3"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71a39f93879so39648407b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2025 21:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754094561; x=1754699361; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754107915; x=1754712715; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b1ukSKhmtxKEyX7FOOTcTRSkRm/xtlj9BuhhycLdVw0=;
-        b=DFz66w5k0qUmNTadhV4g0/lKF++F8G2fPKsYyWmgsWy59GYENDqOus397dwEKeDtWq
-         WTgkiHHzQwgerX/kippvJnQE8syFnRfduooO5YE1FWnd4+FokY2JoHaFeakDqiDRv2Kl
-         PV8FrEvrYTOkIo4XAoyHlnOubUsbMGkyoeqGrcj1JxRsnFbgYbiYrBckDCP60RQ3Ziq4
-         D/B5Zdn0S2/sJj/Yaka5RfBAdHDGFFDAu0pKAjKqp3hFmnAlrza4OXcuvSd6AbYxmuMD
-         Iw2mlYZiiV+3nVKJZAk7rmKrniXZUJx5KRel/6++6Xe9nRrffySm9kkXobU9CBvFzSHw
-         jRUg==
+        bh=NYp4mXKhOVGUhhKWIugNhHcZ1ORze3B3p0bRipFlplY=;
+        b=CIjig7F3Dtlq4c5T9Ikl2c2bBjh6pJaMFyU+KImT8R2vXxu34MDFVmw9wZ0/V4qpgV
+         Uw4hAbe7w4SGCG5w3XEoJo1qHPr/u8VIj6/XyU/wWKcEJ2lCReYU7/7yn7bH7S0SzQIz
+         Y66CQ0YgDhaei344hRUh0FtFrp9g1MK0ufbWaDkdYJSBgk239J+HisOFE8Cqxv5/pHe5
+         YlZupAbzCtloL+4MszhCNYWt9yGI+QeVE9eK5PNMYkvhcplJQuobx1kupvBBiiZByPTp
+         hiY2xkV4d66md1913w4SxnRB1rqQXYSSPb8+4r3l07hHTXOWyH5sEafxZeinu/WKCBLB
+         IlAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754094561; x=1754699361;
+        d=1e100.net; s=20230601; t=1754107915; x=1754712715;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b1ukSKhmtxKEyX7FOOTcTRSkRm/xtlj9BuhhycLdVw0=;
-        b=BqJ0ALj9R4UI27rIALfUqUtnGYejq6aBFYZPnWZVWRtb9xulPtywlsHMG4okcMYV3h
-         cnwEsC5zkun5JGySnqLF4KLh1LUAOR+/yjnfPFrF++XWU17W3mSQr5iO3Qbys6axRRE9
-         24M2VNprQ3jZ40/v8yqFFi/9EmuVEBMyHwNOcw6SUuaI4cgeZroE+pH5zKLST7q02kXZ
-         qHMW29XOC2mxEtwtP8OtYFIIyR/Z47wxpyIjJcTfxm+um8R+v/jbvdyUmaScr6jxM/tk
-         0GtgW6fC917bJz+C2l2CnuNjZRzHiU7tDDjuqzkWcs6fUGHEccqhSugi7UiAuKvMpjKl
-         eN6w==
-X-Forwarded-Encrypted: i=1; AJvYcCX3EgSaEF/2EVHRsp7o3FxWpsKdGBJi1nX1yW69m1LXCbvCjPwok/pq47vaALxE77Zca0BK6o1rO2qMTpNZRoYKPw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXLfaiMCO++iC8GOxVmnaLFqVX0ptUY7wd7Ocjp+ZB3xzVyf5F
-	6tcIlngUvxmP+B24A9lLm+kdgBOZ7eBORF26h4gm3uHsu214W9hGBJXb+BgpGAQidRY+zCStCNI
-	/gxO2fjfqCAioRmxVc3UMNqQ6zzZpdrBu+CTOIb6ILZQoqODcpptY3NXiHQ==
-X-Gm-Gg: ASbGncu7gDLkJc04dJlWudIgltauaNpcRaDJ6JN6omU6G+YQtlLAscafpLo+D52mf8e
-	OhcVA+WxL8/qxPr5PCuxE5Kkk3zoKM1r/jutDMEp9AgB68WZquphRK5eIKM2Fj/7PQmBqLXLCw2
-	3vFrOrvtuq6pFloosFuuQaFPLtVy/z0j61agDMCv7zhzufuYfkZ2JQE6kmcG4ynYNMU3SEYnLWb
-	Nj2Rw==
-X-Google-Smtp-Source: AGHT+IE8ocrwfW+jYi1b+PwwdH776i/4xWR5LD9i+ONjyo97j81erbD7o9iAQzRF40MbhmQx3aXjuOwbFFA0dvMS4Yc=
-X-Received: by 2002:a05:690c:3343:b0:71a:38ee:1ff with SMTP id
- 00721157ae682-71b7ef4db59mr22292567b3.25.1754094561179; Fri, 01 Aug 2025
- 17:29:21 -0700 (PDT)
+        bh=NYp4mXKhOVGUhhKWIugNhHcZ1ORze3B3p0bRipFlplY=;
+        b=C1sbXWMSkgA78og1wBIZzvPjjDaNdVcup9t7KZ40dWAEuF3+eFnnR0v0vr+f5mFz26
+         Vy+iMsUqLYI77Hip8UJ4g42cSCHZpmMiaywPrGN+hhVZkB+flb8HWWha01heL2kvUQP8
+         gyfNF1H8BWdWtuCTiDIi7fQ5/YUbsLunpPRsXsZttrKZVor5w32+T7OZ4/L5pzWFYlS0
+         fGNeO7K7drWSHNTMEMEMOwCnPq+6v/BFF1bWOYgJXzvXBrDyjpOsMRADzfhSMqWyUX0e
+         DrifMyUXV4AbuGuWgnqOclxD1Ywis6XX03axC+oLHyRvoMt5UUMzUVwR7J20Rq5Q5bxc
+         bWUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSt85IDtUT5++lRKhHWIVKnQzph6iAUz3p2hcTQlJeQDvoTc97zEPIYf0dW2jJo5sXLHf3sJtTnzefkQesKTtQSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhlTiBaa2iHxdr7atBbhF71Nt9Yy1Lq8KBjXBsxLm9Z5u/WaSe
+	s6uX8JSRSkXA4uXBNN4+kTNY6a2RHjHVmaMPTIx/rAuciVXm6yKlCiN6lPHW9Z27jIB4J7aUyMH
+	g/OedCspsrbPbTqWW9BVw+eSGEKzmF7zYpQjXfSl3Pw==
+X-Gm-Gg: ASbGncv5mHcD6Y4qEwNxU/G6O7vOPwBmMkKCdlsaNKba9Ysn/47cBhsHuDYhF4R4OwT
+	WGQucWYMwrjWIMJZQ4RC/jCMvZGQ67CRk+fCgN9VZT1SlhjmXwCgdM66fUocmX8wINDD4EXyW1z
+	z7p3yLdVtX9+WpoS16HMzM2qVD+hrqDhJ2gHcm6Uv26G+oEfbDcFG0yzkRM1fJ12xmlml/ZMd89
+	XSicw==
+X-Google-Smtp-Source: AGHT+IF9ctIxKBr9nfRXs2qCE2fyDGDHNm3LJDq8aN0iByZsWyGIn7LQZuF9bXAq3rhtwRAuKAX7NxEh1CJ8dlCDFPo=
+X-Received: by 2002:a05:690c:55c8:10b0:71a:20aa:2265 with SMTP id
+ 00721157ae682-71b5a71c1e8mr83900667b3.6.1754107915222; Fri, 01 Aug 2025
+ 21:11:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com> <20250730074253.1884111-6-ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250730074253.1884111-6-ivo.ivanov.ivanov1@gmail.com>
+References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
+ <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-3-sw617.shin@samsung.com>
+In-Reply-To: <20250724080854.3866566-3-sw617.shin@samsung.com>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 1 Aug 2025 19:29:09 -0500
-X-Gm-Features: Ac12FXzIeJyXP9m27_ER8_SL561hmtMLHZi1Z0J-tLh9l2MOkqp5S4hnFCva6J8
-Message-ID: <CAPLW+4maFxYv4RrvzUXWwteXAVm64ocj2LSAgtM6RMtzbM_p-w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: exynos2200: define all usi nodes
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Date: Fri, 1 Aug 2025 23:11:44 -0500
+X-Gm-Features: Ac12FXy2WLL3xRYhDsxothu9WYIfOUZEaNDjOS1ze6he7jduUVYVbSmd09OsrAk
+Message-ID: <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, khwan.seo@samsung.com, dongil01.park@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 2:44=E2=80=AFAM Ivaylo Ivanov
-<ivo.ivanov.ivanov1@gmail.com> wrote:
+On Thu, Jul 24, 2025 at 3:13=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.c=
+om> wrote:
 >
-> Universal Serial Interface (USI) supports three types of serial
-> interfaces - uart, i2c and spi. Each protocol can work independently
-> and configured using external configuration inputs.
+> Fix the issue of max_timeout being calculated larger than actual value.
+> The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
+> S3C2410_WTCON_MAXDIV is smaller than the actual value because the remaind=
+er
+> is discarded during the calculation process. This leads to a larger
+> calculated value for max_timeout compared to the actual settable value.
+> A ceiling operation is applied in the calculation process to resolve this=
+.
 >
-> As each USI instance has access to 4 pins, there are multiple possible
-> configurations:
-> - the first 2 and the last 2 pins can be i2c (sda/scl) or uart (rx/tx)
-> - the 4 pins can be used for 4 pin uart or spi
->
-> Such configuration can be achieved by setting the mode property of usiX
-> and usiX_i2c nodes correctly - if usiX is set to take up 2 pins, then
-> usiX_i2c can be set to take the other 2. If usiX is set for 4 pins, then
-> usiX_i2c should be left disabled.
->
-
-The whole naming scheme is a bit confusing: one might think that
-because both usiX and usiX_i2c have the same number (X), they
-represent the same USI block. I can see how they might share the same
-pins, but it doesn't seem enough to me to justify this convention. If
-I'm missing something, please help me understand why it should be done
-like that?
-
-> Define all the USI nodes from peric0 (usi4), peric1 (usi7-10), peric2
-> (usi0-6, usi11) and cmgp (usi0-6_cmgp, 2 pin usi7_cmgp) blocks, as well
-> as their respective uart and i2c subnodes. As Samsung, for some reason,
-> has decided to restart the counting of usi instances for cmgp, suffix
-> labels for nodes of such with _cmgp.
->
-
-Yeah, they probably meant to number CMGP instances, not USI instances.
-Because CMGP (stands for Common GPIO) is actually a separate IP block
-containing:
-  - 2 x USIs
-  - 1 GPIO controller (8 GPIO lines)
-  - One general purpose ADC
-  - 6 interrupt combiners
-
-So some USI blocks are separate USIs, and some USI blocks are a part
-of bigger CMGP blocks. And instead of using "usi_01_cmgp" for example,
-they should've gone with "usi_cmgp01".
-
-Usually it's recommended to follow the naming scheme from the TRM, but
-AFAIU you don't have one. And the scheme used in the downstream device
-tree looks like comlete garbage. Anyways, I don't have strong
-preference on the naming scheme. Frankly I'd just do the consecutive
-numbering for all the USI nodes in this case, like: usi0, usi1, etc.
-And add the comments when needed, like "USI from CMGP01 block".
-
-> Spi support will be added later on.
->
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 1361 ++++++++++++++++++++
->  1 file changed, 1361 insertions(+)
+>  drivers/watchdog/s3c2410_wdt.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot=
-/dts/exynos/exynos2200.dtsi
-> index 22c6da907..f83e6cf24 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> @@ -7,6 +7,7 @@
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 95f7207e390a..31f7e1ec779e 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -411,8 +411,8 @@ static inline unsigned int s3c2410wdt_max_timeout(str=
+uct s3c2410_wdt *wdt)
+>  {
+>         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
 >
->  #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/soc/samsung,exynos-usi.h>
+> -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX=
+ + 1)
+> -                                      / S3C2410_WTCON_MAXDIV);
+> +       return S3C2410_WTCNT_MAXCNT / DIV_ROUND_UP(freq,
+> +               (S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV);
+>  }
 >
->  / {
->         compatible =3D "samsung,exynos2200";
-> @@ -314,6 +315,76 @@ pinctrl_peric0: pinctrl@10430000 {
->                         reg =3D <0x10430000 0x1000>;
->                 };
->
-> +               usi4: usi@105000c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x105000c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric0 CLK_DOUT_PERIC0_USI04>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric0 0x1024>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_8: i2c@10500000 {
 
-Why not number all the underlying protocol nodes using the same number
-as the USI node? Like it's done in gs101.dtsi. And maybe even follow
-USI naming scheme used in gs101 in general? Like, sort all USI nodes
-by unit address, and then number them starting from 0. If some other
-USIs are missing (like I mentioned in my review for the previous
-patch), add those too, first.
+How about something like this instead?
 
-[snip]
+8<--------------------------------------------------------------------->8
+static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq)
+{
+    const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
+                S3C2410_WTCON_MAXDIV; /* 32768 */
+    const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
+    u64 t_max =3D n_max / freq;
+
+    if (t_max > UINT_MAX)
+        t_max =3D UINT_MAX;
+
+    return (unsigned int)t_max;
+}
+8<--------------------------------------------------------------------->8
+
+This implementation's result:
+  - is never greater than real timeout, as it loses the decimal part
+after integer division in t_max
+  - much closer to the real timeout value, as it benefits from very
+big n_max in the numerator (this is the main trick here)
+  - prepared for using 32-bit max counter value in your next patch, as
+it uses u64 type for calculations
+
+For example, at the clock frequency of 33 kHz:
+  - real timeout is: 65074.269 sec
+  - old function returns: 65535 sec
+  - your function returns: 32767 sec
+  - the suggested function returns: 65074 sec
+
+I've prepared the test program you can run on your machine to play
+with all implementations: [1].
+
+Thanks!
+
+[1] https://gist.github.com/joe-skb7/c2b2290bb0b0572a4018d81fc4ba1f3e
+
+>  static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool ma=
+sk)
+> --
+> 2.25.1
+>
