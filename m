@@ -1,480 +1,223 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D417E1F09A8;
-	Sat,  2 Aug 2025 11:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA31239562;
+	Sat,  2 Aug 2025 13:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754133793; cv=none; b=DJvb2GtvRXgG0XoGa3YbGkaOZ51/Hw+n6ckrElAeHybXFjaEjTd3ZKzB0+8S2jFKSqNn3LbTfXUAZUCxlc8cX+cLl55xdTT4sxE0kNTzGTzo3PYDOcIkKifs+am54bJ8kr+eUWGmubI+ymr89ha6oM4iMFENgwROtbGNkuAkfCw=
+	t=1754141217; cv=none; b=IG0vgVIyuoW40jat9TEhLXVW51lb5uRGKPjDkU2zjfa69cAeQU58WNnn6xuHrBrRfAyVto901jZ05gA1rSPHlAIhUfh7BqwCpNP/qvNzVXtOKPbPsroP/VF7ZiZjYKcsWqz5QKTeqh4bSdnO8XuTivGIuY9WqKTb34HC7/EdWxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754133793; c=relaxed/simple;
-	bh=anHzn65RjMZ+HyLRTnpzNpXZb0erz0p33kSIJGWgp7c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c2Pw5OdzUaBo5R6UDmW6hYUqRPzxI1KX/DIydo7bHQKybDNjhItxnR3MlgTGh+Zod7rQNxhLwE2FdOjeE8fhZBu1T6PYxjYYqVzCmJ/fwvM6WJqanihNZxfWI33jDKbS6/9lywqHtJc92aCukRWgrZGbcgEL9wlnHORfCXbcjHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYm5GDGT; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754141217; c=relaxed/simple;
+	bh=RQcvlDgE9AaqghHzjivBTwci6wnSL8fk15KJ90oMijI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ecBA5JpXZKFsKSto4Wd7cZc9hg+ufJs+QXZp/+45TVRt1SxBSjdL5zRa7J3r1XsqAuRsWkcOGiooOxb4LX6lTMu15l6cGAG9ealaotRlvot2QvlsQf3alEjlzLc4B2pSmHQG4ZeCzwcSqdTHWULmqwwXntiK/KirVsiiRJM2s4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=qqNUWLHW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CLzPCjtS; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYm5GDGT"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af951a71cafso52011066b.1;
-        Sat, 02 Aug 2025 04:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754133789; x=1754738589; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePCoFySFAoskxh6QFB+5mbyRmWWyITU6vIkl8qdqX6Y=;
-        b=BYm5GDGTzbFBeW6e/gYd3J6caOEE6Cuwqsm0xwkL7XNBKGUpCpAl1fH4XqTZuH7whT
-         rLG2hC2I5l50Pd+9F1I3Ono/HL6Q8Uvi/LehBQAJV6VLGh/YYozc9XvwZwRu4m7D1jr8
-         FaA73IJosWKft2Hywm9d6TXHn1mDdMa1ZICrZjTVz1jXfEwgsMesSgmTHxdttq+z+wtk
-         o7fdspy/NGj7A9F89r0aDyhOiX8H+Deu5Hqgucp+vSk22f7yPfR5ZrGhy86xrhKygygG
-         kJJG8p79U6PS1FQ7dptD/8n/VsnjVySjyHWrugujhjHbKjjQxd4SN2bl8T/ZIvEbK7ca
-         aa/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754133789; x=1754738589;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePCoFySFAoskxh6QFB+5mbyRmWWyITU6vIkl8qdqX6Y=;
-        b=e9Y9khP6cWTYNyj71R8ZHrAF3hIGuHETXOnIy8RdEdtd6Blxa/ZHyIL8X2CoBMfq8z
-         Ms7/+iS2hq32lkqQRYTqBAPbqTiDtkQAzpX/LIFuImEFyyNQQXseudbj4wdw/b+G4Srn
-         SCn4x5hDzmeCPOvKzXEI3jginUhkXiDIMchUDtwnGvHJVjT1LPKiodEffp2JNxJGYSFa
-         YNHXlgKIH/mLhplEEy21NNUDyPGcZD1CyAh8b0YzrXcyoNQR4/o4ltjaan2O4k/kB7sB
-         tObPo00tjMsWtTyGgx6N26OAHrsXyqMNkZ+ZsTCFPiynWP5neN7e+z6ej7ZturemVouG
-         BR0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8hcpIxyzozTroI61++LOCjzmMyocubaat7bc+VqS51dQK0o0HZkusgRb8g+kFT/9Q82vxMBVymwwtO/mecUGOIfQ=@vger.kernel.org, AJvYcCXxjS1NyhKFmazazSloeVyapMElVG6TQBpI4hmtpOZI3WGm/biKZjOED8MdD3MhwJy9G5npUzSnH0ZX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQQe3hgu/eYon9Skd7MhKwmkzRSbzdwv6keVWBBtCPr6YkBTXJ
-	K6YZ7BwiQJO3rQtVnpciLxitSyMpn39KC2G+0EwgNTL5sYyxxrtOoMeH
-X-Gm-Gg: ASbGncud4Hvj2N8Z5vJ5bxNyYkmkPQx/Uz2MtmodNR0a8kCDpB1IVr5Fd7J4BGIVEeo
-	yOv1jzjJQoMSfPeTPJy7NV4y6et7HjuEczeeLcbk5l+zFDBjSLc3LXmfwLj8ndvWp2tu+TKRYNl
-	QLtL8JieP8Vxj7eSzPA7xqVBpuzPpPs9E8UGv2ZZ0Oz1CU5rpdUdmswe9ApGD63eCQfJd2tPeCA
-	aambiG+bdEo7BzV70GNniA+r+udkc61WinqyDbtGtHQXhLxF+zEQjCGkKtzSCQbT+5Gmf8yZ/7Q
-	0pAszHUiTDAAS0vRlEi8+es6fDAMyY8ZNusnAF0bXjGeThjXB3T3/4Q/RoxXDAzQ2ysBaCKFs+v
-	/TtuA3ZKr5V5FfOAuXJWv
-X-Google-Smtp-Source: AGHT+IFwLCMtqzeoAx9PAufnjbuXvhMedxOBv6H7ywdhbjsaH2ysShYk4GYfrSSjo/BOTIDehkI1mg==
-X-Received: by 2002:a17:907:1ca2:b0:ae6:c561:764a with SMTP id a640c23a62f3a-af93ffbe4b6mr317556566b.2.1754133788803;
-        Sat, 02 Aug 2025 04:23:08 -0700 (PDT)
-Received: from [127.0.1.1] ([46.53.242.22])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-af91a21c050sm419926766b.104.2025.08.02.04.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 04:23:08 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Sat, 02 Aug 2025 14:22:22 +0300
-Subject: [PATCH v7] regulator: add s2dos05 regulator support
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="qqNUWLHW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CLzPCjtS"
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id A87BC1380608;
+	Sat,  2 Aug 2025 09:26:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sat, 02 Aug 2025 09:26:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754141212;
+	 x=1754148412; bh=bmI1hYqjksR+DRa8JSQk6MVH64W5+sLipA6UwCtocJY=; b=
+	qqNUWLHW5NkgMWC7l9Ppuzcw0TRZVKBalVrpuNL2tWkSX16V+CaL/WD3GPRevH/3
+	cOaqYuZWVehBMlqwkuJTQ3+7ee7mvoCmm57l/9y3kSLOhYi/j9UZL0baYRp5JOQM
+	j4yp2XwkBPHkkHrQr9G2kPmFqob1bo+ge9yICVt/dsRrLU+xuJA6h9g8SW4qJPa0
+	AHQH8Vz64gEdgI7kQ+1DTmePAvNbJQJxnWkGkDSZF/paCkDAzfIwxTUg+JfaHIca
+	2uCTiijQTVgzLiuE6qwTC/es2iaY0ak3Q1yInsTplxnRcKjgCrvxpj+WvGFL/Gkm
+	HIx11r/lg4cei6lIenYP+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754141212; x=
+	1754148412; bh=bmI1hYqjksR+DRa8JSQk6MVH64W5+sLipA6UwCtocJY=; b=C
+	LzPCjtSlWjEpgC9nck7IIN+a6VWM2T9KzMBiWo4CFmbf/c8EsbwRuyBR6zo43jFD
+	hvyIbMP0zgOcLL+h4kub0bXZEqehHtgFY6sV9cwlFjffv+lGsEsKcJttU2+8fn3b
+	kRALXojkwbX6H2IOxV2soFJHVIcKk6LuRbHAbjPhMXvWGeT7KA2Mau0LJLy4HAji
+	lfgiUMmK9spCDs/oe1YGLozfqCHtXvx0XyirO7dloL77Fyd05IG6lp0ZwH1pUgeh
+	FNabC3mgBC+9qZ25Drxy58dz8xR3lKKGectSGWS0hTtARs2FRFJmAX2nfNB3fKxO
+	c360wFl1nKo7iNibIdOnQ==
+X-ME-Sender: <xms:FhKOaIqzIVCCzZqyPT8S-Kuyp75Ghz90bD-sNWC1Ynb1xWuDhB2fgA>
+    <xme:FhKOaAAM51hB_nYlCo1hgXLgPrXfAQsJTzEzSK29ONCez_BVzRWEnZ7YYfmVPVSd4
+    mYWvtLYdmS8g_-J1io>
+X-ME-Received: <xmr:FhKOaKNy3dovqvqjcZlMlmNulu_odOhDUh_OuI4TialffSqjpk1dXSXjcgxfsuv77hx6_icSG8wxq9Qphv3aDtPfT18v805RrQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdeiieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
+    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
+    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
+    rghtvggthhdrshgvpdhnsggprhgtphhtthhopedutdehpdhmohguvgepshhmthhpohhuth
+    dprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihguvggrshhonhgsohgrrhgurdgt
+    ohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epuggvvhgrrhhshhhtsehtihdrtghomhdprhgtphhtthhopegsphgrrhhrohhtsehtihdr
+    tghomhdprhgtphhtthhopehhvhgvrhhkuhhilheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepihhsvghlhiesphhosghogidrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhp
+    ihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohephhgrnh
+    hsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrrhhthhhisggrnhdrvhgvvghr
+    rghsohhorhgrnhesmhhitghrohgthhhiphdrtghomh
+X-ME-Proxy: <xmx:FhKOaHAoXiF7NV692VGvUlBtEKV8Ppc7HpktTEwZStXxvUIyFnrhjw>
+    <xmx:FhKOaIXbJEGFB6MyMI6SEvkY_tAqtZmQdwpF1CyYAg0cU-whIhajXA>
+    <xmx:FhKOaOXdPk75wbqe7BRIpcNiWjQWCtbKZe7Hw0Dw9yRuHK1wn0wJ9A>
+    <xmx:FhKOaA4w1OKh4y5m73fZ4TocrIIXqTtdAsWzkrmS8EjZZidpBDEFUw>
+    <xmx:HBKOaGfprgDP-C4pCZ_BqeXWMGw4oENfGJWvHSy-BbRaGSp473jMOr6M>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 2 Aug 2025 09:26:45 -0400 (EDT)
+Date: Sat, 2 Aug 2025 15:26:43 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Bin Liu <bin.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>,	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,	Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Jackson Lee <jackson.lee@chipsnmedia.com>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Paul Kocialkowski <paulk@sys-base.io>,	Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Corentin Labbe <clabbe@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org,	imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org,	linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org,	linux-sunxi@lists.linux.dev,
+ linux-usb@vger.kernel.org,	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mjpeg-users@lists.sourceforge.net
+Subject: Re: [PATCH 17/65] media: rcar-vin: Do not set file->private_data
+Message-ID: <20250802132643.GA1848717@ragnatech.se>
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-17-eb140ddd6a9d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250802-starqltechn_integration_upstream-v7-1-98ed0e1e1185@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAO30jWgC/43Q32rDIBQG8FcpXs/hn6jJrvYeo5SjOUmExHRqQ
- 0fJu88UtpXeLJffAX/fhzeSMHpM5O1wIxEXn/wcSjAvB+IGCD1S35ZMBBMV09zQlCF+jhndEE4
- +ZOwj5PLmdDmnHBEmal2ta8Ws6FCSwlhISG2E4IYChcs4luM5Yuev996PY8mDT3mOX/cZi9yuP
- 431/42LpIyi7LTWgnED7r2fwI+vbp7Ihi/VH9hwuQOsCihagV2rnKqNeQbV48Idf7KobSFwzho
- mGgvqGdS/IGdsD6i3hbqSrAHQusVHcF3Xb3dKsijYAQAA
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754133787; l=12852;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=anHzn65RjMZ+HyLRTnpzNpXZb0erz0p33kSIJGWgp7c=;
- b=3cwMzUVkrYowhS/IULnuwdB4PcPvPGDB4IpZ7cshg0fNhDTTa2F7JsGrn0syMthUrm99FtFUj
- g+aGGIL4atBDP8+mKGf/7XyVbKAMkey/haeyT+LqdzmWnXIMVPZoIlX
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250802-media-private-data-v1-17-eb140ddd6a9d@ideasonboard.com>
 
-S2DOS05 has 1 buck and 4 LDO regulators, used for powering
-panel/touchscreen.
+Hi Jacopo,
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
-The S2DOS05 is a companion power management IC for the panel and touchscreen
-in smart phones. Provides voltage regulators and
-ADC for power/current measurements.
----
-Changes in v7:
-- rebase on latest linux-next
-- update cc list
-- Link to v6: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com
+Thanks for your effort tidying things up!
 
-Changes in v6:
-- fix uninitialized ret variable
-- Link to v5: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com
+On 2025-08-02 11:22:39 +0200, Jacopo Mondi wrote:
+> The R-Car VIN driver sets file->private_data to the driver-specific
+> structure, but the following call to v4l2_fh_open() overwrites it
+> with a pointer to the just allocated v4l2_fh.
+> 
+> Remove the mis-leading assignment in the driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-Changes in v5:
-- Split patchset per subsystem
-- Rewrite cover letter
-- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Changes in v4:
-- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
-- Reorder patches:
-  - squash max77705 subdevice bindings in core file because
-    no resources there
-  - split device tree changes
-- Use _ as space for filenames in power/supply like the majority
-- Replace gcc-845 freq_tbl frequencies patch with new approach,
-  based on automatic m/n/pre_div value generation
-- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
+> ---
+>  drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> index 62eddf3a35fc91434cb2e584a01819380a7a6dd8..079dbaf016c25139e2ac82be63d8fce0d11fd208 100644
+> --- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> @@ -588,8 +588,6 @@ static int rvin_open(struct file *file)
+>  	if (ret)
+>  		goto err_pm;
+>  
+> -	file->private_data = vin;
+> -
+>  	ret = v4l2_fh_open(file);
+>  	if (ret)
+>  		goto err_unlock;
+> 
+> -- 
+> 2.49.0
+> 
 
-Changes in version 3:
-- s2dos05 driver converted to MFD
-
-Changes in version 2:
-- s2dos05 regulator:
-  - hex to decimal in regulator values
-  - fix compatible value
-  - remove interrupt specific code, because it's
-    empty in vendor kernel, and I cannot test it on
-    available hardware anyway.
----
-Changes in v7:
-- rebase on latest linux-next
-- update cc list
-- run sparse and smatch again
-
-Changes in v6:
-- run sparse and smatch
-- initialize ret variable
-
-Changes in v5:
-- fix Kconfig and module description to be the same
-- make regulators const
-- code refactoring
-- replace s2m* pattern on s2* to include s2dos05
-
-Changes in v4:
-- remove excessive linux/module.h import
-- use generic regulator helpers
-- use of_match
-- use devm_* for mem allocations
-- use // style comment
-- drop all junk Samsung code
-- adjust to depend on sec-core
----
- MAINTAINERS                           |   2 +-
- drivers/regulator/Kconfig             |   8 ++
- drivers/regulator/Makefile            |   1 +
- drivers/regulator/s2dos05-regulator.c | 176 ++++++++++++++++++++++++++++++++++
- include/linux/regulator/s2dos05.h     |  73 ++++++++++++++
- 5 files changed, 259 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 494b12c03de7..12dd90438bd7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22391,7 +22391,7 @@ F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.yaml
- F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.yaml
- F:	drivers/clk/clk-s2mps11.c
- F:	drivers/mfd/sec*.[ch]
--F:	drivers/regulator/s2m*.c
-+F:	drivers/regulator/s2*.c
- F:	drivers/regulator/s5m*.c
- F:	drivers/rtc/rtc-s5m.c
- F:	include/linux/mfd/samsung/
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index eaa6df1c9f80..2399c8a9a1c5 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1344,6 +1344,14 @@ config REGULATOR_RTQ2208
- 	  and two ldos. It features wide output voltage range from 0.4V to 2.05V
- 	  and the capability to configure the corresponding power stages.
- 
-+config REGULATOR_S2DOS05
-+	tristate "Samsung S2DOS05 voltage regulator"
-+	depends on MFD_SEC_CORE || COMPILE_TEST
-+	help
-+	  This driver provides support for the voltage regulators of the S2DOS05.
-+	  The S2DOS05 is a companion power management IC for the smart phones.
-+	  The S2DOS05 has 4 LDOs and 1 BUCK outputs.
-+
- config REGULATOR_S2MPA01
- 	tristate "Samsung S2MPA01 voltage regulator"
- 	depends on MFD_SEC_CORE || COMPILE_TEST
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index be98b29d6675..78605b0fa0b2 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -156,6 +156,7 @@ obj-$(CONFIG_REGULATOR_RTMV20)	+= rtmv20-regulator.o
- obj-$(CONFIG_REGULATOR_RTQ2134) += rtq2134-regulator.o
- obj-$(CONFIG_REGULATOR_RTQ6752)	+= rtq6752-regulator.o
- obj-$(CONFIG_REGULATOR_RTQ2208) += rtq2208-regulator.o
-+obj-$(CONFIG_REGULATOR_S2DOS05) += s2dos05-regulator.o
- obj-$(CONFIG_REGULATOR_S2MPA01) += s2mpa01.o
- obj-$(CONFIG_REGULATOR_S2MPS11) += s2mps11.o
- obj-$(CONFIG_REGULATOR_S5M8767) += s5m8767.o
-diff --git a/drivers/regulator/s2dos05-regulator.c b/drivers/regulator/s2dos05-regulator.c
-new file mode 100644
-index 000000000000..db304f2988cf
---- /dev/null
-+++ b/drivers/regulator/s2dos05-regulator.c
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// s2dos05.c - Regulator driver for the Samsung s2dos05
-+//
-+// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
-+
-+#include <linux/bug.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/of_regulator.h>
-+#include <linux/mfd/samsung/core.h>
-+#include <linux/regulator/s2dos05.h>
-+#include <linux/i2c.h>
-+
-+struct s2dos05_data {
-+	struct regmap *regmap;
-+	struct device *dev;
-+};
-+
-+#define _BUCK(macro)	S2DOS05_BUCK##macro
-+#define _buck_ops(num)	s2dos05_ops##num
-+#define _LDO(macro)	S2DOS05_LDO##macro
-+#define _REG(ctrl)	S2DOS05_REG##ctrl
-+#define _ldo_ops(num)	s2dos05_ops##num
-+#define _MASK(macro)	S2DOS05_ENABLE_MASK##macro
-+#define _TIME(macro)	S2DOS05_ENABLE_TIME##macro
-+
-+#define BUCK_DESC(_name, _id, _ops, m, s, v, e, em, t, a) {	\
-+	.name		= _name,				\
-+	.id		= _id,					\
-+	.ops		= _ops,					\
-+	.of_match = of_match_ptr(_name),			\
-+	.of_match_full_name = true,				\
-+	.regulators_node = of_match_ptr("regulators"),		\
-+	.type		= REGULATOR_VOLTAGE,			\
-+	.owner		= THIS_MODULE,				\
-+	.min_uV		= m,					\
-+	.uV_step	= s,					\
-+	.n_voltages	= S2DOS05_BUCK_N_VOLTAGES,		\
-+	.vsel_reg	= v,					\
-+	.vsel_mask	= S2DOS05_BUCK_VSEL_MASK,		\
-+	.enable_reg	= e,					\
-+	.enable_mask	= em,					\
-+	.enable_time	= t,					\
-+	.active_discharge_off = 0,				\
-+	.active_discharge_on = S2DOS05_BUCK_FD_MASK,		\
-+	.active_discharge_reg	= a,				\
-+	.active_discharge_mask	= S2DOS05_BUCK_FD_MASK		\
-+}
-+
-+#define LDO_DESC(_name, _id, _ops, m, s, v, e, em, t, a) {	\
-+	.name		= _name,				\
-+	.id		= _id,					\
-+	.ops		= _ops,					\
-+	.of_match = of_match_ptr(_name),			\
-+	.of_match_full_name = true,				\
-+	.regulators_node = of_match_ptr("regulators"),		\
-+	.type		= REGULATOR_VOLTAGE,			\
-+	.owner		= THIS_MODULE,				\
-+	.min_uV		= m,					\
-+	.uV_step	= s,					\
-+	.n_voltages	= S2DOS05_LDO_N_VOLTAGES,		\
-+	.vsel_reg	= v,					\
-+	.vsel_mask	= S2DOS05_LDO_VSEL_MASK,		\
-+	.enable_reg	= e,					\
-+	.enable_mask	= em,					\
-+	.enable_time	= t,					\
-+	.active_discharge_off = 0,				\
-+	.active_discharge_on = S2DOS05_LDO_FD_MASK,		\
-+	.active_discharge_reg	= a,				\
-+	.active_discharge_mask	= S2DOS05_LDO_FD_MASK		\
-+}
-+
-+static const struct regulator_ops s2dos05_ops = {
-+	.list_voltage		= regulator_list_voltage_linear,
-+	.map_voltage		= regulator_map_voltage_linear,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-+	.set_active_discharge	= regulator_set_active_discharge_regmap,
-+};
-+
-+static const struct regulator_desc regulators[S2DOS05_REGULATOR_MAX] = {
-+		// name, id, ops, min_uv, uV_step, vsel_reg, enable_reg
-+		LDO_DESC("ldo1", _LDO(1), &_ldo_ops(), _LDO(_MIN1),
-+			_LDO(_STEP1), _REG(_LDO1_CFG),
-+			_REG(_EN), _MASK(_L1), _TIME(_LDO), _REG(_LDO1_CFG)),
-+		LDO_DESC("ldo2", _LDO(2), &_ldo_ops(), _LDO(_MIN1),
-+			_LDO(_STEP1), _REG(_LDO2_CFG),
-+			_REG(_EN), _MASK(_L2), _TIME(_LDO), _REG(_LDO2_CFG)),
-+		LDO_DESC("ldo3", _LDO(3), &_ldo_ops(), _LDO(_MIN2),
-+			_LDO(_STEP1), _REG(_LDO3_CFG),
-+			_REG(_EN), _MASK(_L3), _TIME(_LDO), _REG(_LDO3_CFG)),
-+		LDO_DESC("ldo4", _LDO(4), &_ldo_ops(), _LDO(_MIN2),
-+			_LDO(_STEP1), _REG(_LDO4_CFG),
-+			_REG(_EN), _MASK(_L4), _TIME(_LDO), _REG(_LDO4_CFG)),
-+		BUCK_DESC("buck", _BUCK(1), &_buck_ops(), _BUCK(_MIN1),
-+			_BUCK(_STEP1), _REG(_BUCK_VOUT),
-+			_REG(_EN), _MASK(_B1), _TIME(_BUCK), _REG(_BUCK_CFG)),
-+};
-+
-+static int s2dos05_pmic_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-+	struct of_regulator_match *rdata = NULL;
-+	struct s2dos05_data *s2dos05;
-+	struct regulator_config config = { };
-+	unsigned int rdev_num = ARRAY_SIZE(regulators);
-+	int i, ret = 0;
-+
-+	s2dos05 = devm_kzalloc(dev, sizeof(*s2dos05), GFP_KERNEL);
-+	if (!s2dos05)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, s2dos05);
-+
-+	rdata = devm_kcalloc(dev, rdev_num, sizeof(*rdata), GFP_KERNEL);
-+	if (!rdata)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < rdev_num; i++)
-+		rdata[i].name = regulators[i].name;
-+
-+	s2dos05->regmap = iodev->regmap_pmic;
-+	s2dos05->dev = dev;
-+	if (!dev->of_node)
-+		dev->of_node = dev->parent->of_node;
-+
-+	for (i = 0; i < rdev_num; i++) {
-+		struct regulator_dev *regulator;
-+
-+		config.init_data = rdata[i].init_data;
-+		config.of_node = rdata[i].of_node;
-+		config.dev = dev;
-+		config.driver_data = s2dos05;
-+		regulator = devm_regulator_register(&pdev->dev,
-+						&regulators[i], &config);
-+		if (IS_ERR(regulator)) {
-+			ret = PTR_ERR(regulator);
-+			dev_err(&pdev->dev, "regulator init failed for %d\n",
-+				i);
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct platform_device_id s2dos05_pmic_id[] = {
-+	{ "s2dos05-regulator" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(platform, s2dos05_pmic_id);
-+
-+static struct platform_driver s2dos05_platform_driver = {
-+	.driver = {
-+		.name = "s2dos05",
-+	},
-+	.probe = s2dos05_pmic_probe,
-+	.id_table = s2dos05_pmic_id,
-+};
-+module_platform_driver(s2dos05_platform_driver);
-+
-+MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
-+MODULE_DESCRIPTION("Samsung S2DOS05 Regulator Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/regulator/s2dos05.h b/include/linux/regulator/s2dos05.h
-new file mode 100644
-index 000000000000..2e89fcbce769
---- /dev/null
-+++ b/include/linux/regulator/s2dos05.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+// s2dos05.h
-+//
-+// Copyright (c) 2016 Samsung Electronics Co., Ltd
-+//              http://www.samsung.com
-+// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
-+
-+#ifndef __LINUX_S2DOS05_H
-+#define __LINUX_S2DOS05_H
-+
-+// S2DOS05 registers
-+// Slave Addr : 0xC0
-+enum S2DOS05_reg {
-+	S2DOS05_REG_DEV_ID,
-+	S2DOS05_REG_TOPSYS_STAT,
-+	S2DOS05_REG_STAT,
-+	S2DOS05_REG_EN,
-+	S2DOS05_REG_LDO1_CFG,
-+	S2DOS05_REG_LDO2_CFG,
-+	S2DOS05_REG_LDO3_CFG,
-+	S2DOS05_REG_LDO4_CFG,
-+	S2DOS05_REG_BUCK_CFG,
-+	S2DOS05_REG_BUCK_VOUT,
-+	S2DOS05_REG_IRQ_MASK = 0x0D,
-+	S2DOS05_REG_SSD_TSD = 0x0E,
-+	S2DOS05_REG_OCL = 0x10,
-+	S2DOS05_REG_IRQ = 0x11
-+};
-+
-+// S2DOS05 regulator ids
-+enum S2DOS05_regulators {
-+	S2DOS05_LDO1,
-+	S2DOS05_LDO2,
-+	S2DOS05_LDO3,
-+	S2DOS05_LDO4,
-+	S2DOS05_BUCK1,
-+	S2DOS05_REG_MAX,
-+};
-+
-+#define S2DOS05_IRQ_PWRMT_MASK	BIT(5)
-+#define S2DOS05_IRQ_TSD_MASK	BIT(4)
-+#define S2DOS05_IRQ_SSD_MASK	BIT(3)
-+#define S2DOS05_IRQ_SCP_MASK	BIT(2)
-+#define S2DOS05_IRQ_UVLO_MASK	BIT(1)
-+#define S2DOS05_IRQ_OCD_MASK	BIT(0)
-+
-+#define S2DOS05_BUCK_MIN1	506250
-+#define S2DOS05_LDO_MIN1	1500000
-+#define S2DOS05_LDO_MIN2	2700000
-+#define S2DOS05_BUCK_STEP1	6250
-+#define S2DOS05_LDO_STEP1	25000
-+#define S2DOS05_LDO_VSEL_MASK	0x7F
-+#define S2DOS05_LDO_FD_MASK	0x80
-+#define S2DOS05_BUCK_VSEL_MASK	0xFF
-+#define S2DOS05_BUCK_FD_MASK	0x08
-+
-+#define S2DOS05_ENABLE_MASK_L1	BIT(0)
-+#define S2DOS05_ENABLE_MASK_L2	BIT(1)
-+#define S2DOS05_ENABLE_MASK_L3	BIT(2)
-+#define S2DOS05_ENABLE_MASK_L4	BIT(3)
-+#define S2DOS05_ENABLE_MASK_B1	BIT(4)
-+
-+#define S2DOS05_RAMP_DELAY	12000
-+
-+#define S2DOS05_ENABLE_TIME_LDO		50
-+#define S2DOS05_ENABLE_TIME_BUCK	350
-+
-+#define S2DOS05_LDO_N_VOLTAGES	(S2DOS05_LDO_VSEL_MASK + 1)
-+#define S2DOS05_BUCK_N_VOLTAGES (S2DOS05_BUCK_VSEL_MASK + 1)
-+
-+#define S2DOS05_REGULATOR_MAX	(S2DOS05_REG_MAX)
-+
-+#endif // __LINUX_S2DOS05_H
-
----
-base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
-change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
-
-Best regards,
 -- 
-Dzmitry Sankouski <dsankouski@gmail.com>
-
+Kind Regards,
+Niklas Söderlund
