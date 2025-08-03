@@ -1,250 +1,138 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0CE2222B4;
-	Sat,  2 Aug 2025 16:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754150689; cv=pass; b=sxMag2MbruIOnkLM3n/jKjQ6RQ/o1pJAmQ+kw6HTaITvkKRJZlR92F0RamDjLPkjCVKg3aGX2Tzm5+8boB6w7HP8hE26bvmn4J3DHkDTYDcrarzdRutp8jMbI/gSqfwV69k4mbHE6mo8bQgOP7Kf95T3bVwRsFMSfNN+fsvNL/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754150689; c=relaxed/simple;
-	bh=Vdg8jHA+16KK4kio/H2ZmPEJzKRxTHixv3V9j/VFf7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UTsU+4Z8kpiOGtRwXXPLw7vU9vnfpQnimtK/SzOWzz6RQIa8illbVnbGKFllnnsBE6GMm2773m3HM5DEvaylJwFa/ZtvYdnYFAwueOT6hH+vhQZZPqkqul99TsewBn1hgy7xUeqOIdKAX6oXTGTFb/po1phy0l3BUsWxCbTFmxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=V2U4lWFe; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1318834;
+	Sun,  3 Aug 2025 08:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754209358; cv=none; b=ZAq4Qn9MqqZde6VkDpN78/TtBcOfrUKVGMxKca7K2ykBNHVUY7zijLtXLtGpFaep1b8lnePNQteLxtBwpEn6idHG0IyArZ1pKjxGqv+OEs9NzwuRlot9g8eAKbb0KI9ZizTI/NAyQUgxZ2bwC2wYcdfc17w52mMGu7qri1cOoxI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754209358; c=relaxed/simple;
+	bh=ELG7zMAKHeSy4fPpy7ykVCCtCN0vHQ+obFd4AJX/FxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8gmBsSnc49tuQISSFPQ1hdmoS2VKsual4IXshZk0kEA9Q1muBAQ7PkS8fEwJa9pwbBLkQHwcuOF1u0NNGURpgIV9Awgm06+uM68wPkf1CtQowzwqxQhJuWKXGI9UvyvL0uAgv2aBWzAFScLOpepWkNEt/VcC6ZHfBSnJ8NiD/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PveAAsoB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="V2U4lWFe"
-ARC-Seal: i=1; a=rsa-sha256; t=1754150560; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WQqpUkXPtrxzpxaZ2hYfl+XOPYKxR/yR0rcNvg04LRAV+Tsf44cBMfyRI8vwmTxp6gChLAQiPjGtlwy/K9/JX//NPyH7DHB8Ls9uEYjsC0dr6CE5dX7KPtJg9DFRaUhNEv2SbmQChbOmcjGtuyBrJWCXYi6NE//Lt6k/YcpSEVQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754150560; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xtf+dEyzkoelWC2Fx1wwuEkZQXXlAY749DZ4vNup7Cw=; 
-	b=hHHrzU5f++KJzrykhl5qlTExwl012A/zJUgHdgegKkwmNfKI8D3LZOgAROYses2JC1f6mU8skpwAGlagDmezWPJTkb+oc3sAmcoyg1tGLWs3PFHZAsPvG7EG9Z1xxAZTqJneL5PWuQ0spEMdUg74OA81m7ClHn9VORnJf/lBfuU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754150560;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=xtf+dEyzkoelWC2Fx1wwuEkZQXXlAY749DZ4vNup7Cw=;
-	b=V2U4lWFeUsKW1XUdY48JG6pxgTjVc/FBs9bOk6qZ6M6qlPk/usIQI2rIzHjaum91
-	Wvxe2kb/Bg9+AdRIIIXAhwCMTefshntu3rhhapqWQg1gEagHTxztLAzLCKJfhTyRN02
-	lQWJkogElFkvVK07iEt7bkp3i5NJH/xmkBJnBsA8=
-Received: by mx.zohomail.com with SMTPS id 1754150557071593.1499218812709;
-	Sat, 2 Aug 2025 09:02:37 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
- Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hansg@kernel.org>,
- Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- Christian Gromm <christian.gromm@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>,
- Jonathan Corbet <corbet@lwn.net>, Tomasz Figa <tfiga@chromium.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Andy Walls <awalls@md.metrocast.net>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dmitry Osipenko <digetx@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
- Zhou Peng <eagle.zhou@nxp.com>,
- Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Corentin Labbe <clabbe@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- mjpeg-users@lists.sourceforge.net,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH 44/65] media: rockchip: rkvdec: Access v4l2_fh from file
-Date: Sat, 02 Aug 2025 12:02:27 -0400
-Message-ID: <12713603.O9o76ZdvQC@trenzalore>
-In-Reply-To: <20250802-media-private-data-v1-44-eb140ddd6a9d@ideasonboard.com>
-References:
- <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-44-eb140ddd6a9d@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PveAAsoB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A2AC4CEEB;
+	Sun,  3 Aug 2025 08:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754209357;
+	bh=ELG7zMAKHeSy4fPpy7ykVCCtCN0vHQ+obFd4AJX/FxM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PveAAsoB0TGRYWQF+J34mpo1HHNlPCPN4F2fYv9loOLUIR0JXOCPDqKHqTXxKGBnd
+	 Gpf1cUv6/L9cQoDzTfZ0yE3JGppSa89IAUX0YazlWhaaK3NZBtZs3aYOh7nB6XlXrS
+	 2iTnY3adW+wEL6Osg7GPyQu0M0/08F1SKSK0dQ+vIbH+aa2U/qycmo9pneM0Pm9vHc
+	 jxUgrMXfGoGqJKp531QwqB1nHx2MFihS9fRspptj/yaaFdtCspNivFBZ4f0KKnr8CS
+	 p0qF3uKW+H6QqMg75f2OeFFEb3bVNOGh9DKtBhqs5iM/xxDO+ZT4exWSnXsny5ta33
+	 eNDYlhS3LzzJQ==
+Message-ID: <dc1482a7-a69e-40ec-83ee-98ecc2e57bf1@kernel.org>
+Date: Sun, 3 Aug 2025 10:22:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] regulator: add s2dos05 regulator support
+To: Dzmitry Sankouski <dsankouski@gmail.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250802-starqltechn_integration_upstream-v7-1-98ed0e1e1185@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250802-starqltechn_integration_upstream-v7-1-98ed0e1e1185@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jacopo,
+On 02/08/2025 13:22, Dzmitry Sankouski wrote:
+> +
+> +	platform_set_drvdata(pdev, s2dos05);
+> +
+> +	rdata = devm_kcalloc(dev, rdev_num, sizeof(*rdata), GFP_KERNEL);
+> +	if (!rdata)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < rdev_num; i++)
+> +		rdata[i].name = regulators[i].name;
+> +
+> +	s2dos05->regmap = iodev->regmap_pmic;
+> +	s2dos05->dev = dev;
+> +	if (!dev->of_node)
+> +		dev->of_node = dev->parent->of_node;
+> +
+> +	for (i = 0; i < rdev_num; i++) {
+> +		struct regulator_dev *regulator;
+> +
+> +		config.init_data = rdata[i].init_data;
+> +		config.of_node = rdata[i].of_node;
+> +		config.dev = dev;
+> +		config.driver_data = s2dos05;
+> +		regulator = devm_regulator_register(&pdev->dev,
+> +						&regulators[i], &config);
+> +		if (IS_ERR(regulator)) {
+> +			ret = PTR_ERR(regulator);
+> +			dev_err(&pdev->dev, "regulator init failed for %d\n",
+> +				i);
+> +		}
+> +	}
+> +
+> +	return ret;
 
-Thanks for the cleanup !
+I do not understand your logic here and I already commented on issues
+with 'ret'. If 1st regulator fails, but the last one succeeds, you
+return 0. If 1st succeeds, but the last one fails, you return failure
+failing the probe.
 
-On Saturday, 2 August 2025 05:23:06 EDT Jacopo Mondi wrote:
-> The v4l2_fh associated with an open file handle is now guaranteed
-> to be available in file->private_data, initialised by v4l2_fh_add().
-> 
-> Access the v4l2_fh, and from there the driver-specific structure,
-> from the file * in all ioctl handlers.
-> 
-> While at it, remove the now unused fh_to_rkvdec_ctx() macro.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Why only last regulator is important? I see it is a buck, so maybe there
+is a difference, but this should be clearly explained. Or fixed.
 
-Reviewed-by: Detlev Casanova <detlev.casanova@collabora.com>
-
-> ---
->  drivers/media/platform/rockchip/rkvdec/rkvdec.c | 14 +++++++-------
->  drivers/media/platform/rockchip/rkvdec/rkvdec.h |  5 -----
->  2 files changed, 7 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c index
-> 481c2488f9ac64e70869ed21e5053cfbc4ed6e0e..9fa80ab3c62b7753e6c992aefd106ee99
-> ed375e4 100644 --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -354,7 +354,7 @@ static int rkvdec_try_capture_fmt(struct file *file,
-> void *priv, struct v4l2_format *f)
->  {
->  	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	const struct rkvdec_coded_fmt_desc *coded_desc;
-> 
->  	/*
-> @@ -387,7 +387,7 @@ static int rkvdec_try_output_fmt(struct file *file, void
-> *priv, struct v4l2_format *f)
->  {
->  	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	const struct rkvdec_coded_fmt_desc *desc;
-> 
->  	desc = rkvdec_find_coded_fmt_desc(pix_mp->pixelformat);
-> @@ -418,7 +418,7 @@ static int rkvdec_try_output_fmt(struct file *file, void
-> *priv, static int rkvdec_s_capture_fmt(struct file *file, void *priv,
->  				struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	struct vb2_queue *vq;
->  	int ret;
-> 
-> @@ -439,7 +439,7 @@ static int rkvdec_s_capture_fmt(struct file *file, void
-> *priv, static int rkvdec_s_output_fmt(struct file *file, void *priv,
->  			       struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	struct v4l2_m2m_ctx *m2m_ctx = ctx->fh.m2m_ctx;
->  	const struct rkvdec_coded_fmt_desc *desc;
->  	struct v4l2_format *cap_fmt;
-> @@ -504,7 +504,7 @@ static int rkvdec_s_output_fmt(struct file *file, void
-> *priv, static int rkvdec_g_output_fmt(struct file *file, void *priv,
->  			       struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
-> 
->  	*f = ctx->coded_fmt;
->  	return 0;
-> @@ -513,7 +513,7 @@ static int rkvdec_g_output_fmt(struct file *file, void
-> *priv, static int rkvdec_g_capture_fmt(struct file *file, void *priv,
->  				struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
-> 
->  	*f = ctx->decoded_fmt;
->  	return 0;
-> @@ -532,7 +532,7 @@ static int rkvdec_enum_output_fmt(struct file *file,
-> void *priv, static int rkvdec_enum_capture_fmt(struct file *file, void
-> *priv, struct v4l2_fmtdesc *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	u32 fourcc;
-> 
->  	fourcc = rkvdec_enum_decoded_fmt(ctx, f->index, ctx->image_fmt);
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.h index
-> 35effe9467845fdfc4ffea432211d1d2e75a08b0..481aaa4bffe975fa106fb22e78bef90ad
-> e86a6cf 100644 --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> @@ -124,11 +124,6 @@ struct rkvdec_ctx {
->  	void *priv;
->  };
-> 
-> -static inline struct rkvdec_ctx *fh_to_rkvdec_ctx(struct v4l2_fh *fh)
-> -{
-> -	return container_of(fh, struct rkvdec_ctx, fh);
-> -}
-> -
->  static inline struct rkvdec_ctx *file_to_rkvdec_ctx(struct file *filp)
->  {
->  	return container_of(file_to_v4l2_fh(filp), struct rkvdec_ctx, fh);
-
-
-
-
+Best regards,
+Krzysztof
