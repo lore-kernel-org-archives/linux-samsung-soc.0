@@ -1,219 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE64E271A9A;
-	Mon,  4 Aug 2025 14:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2679327464F;
+	Mon,  4 Aug 2025 15:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317522; cv=none; b=AkiUPgmVeKC2qjXRGxUzqx/NPR/IzxmpN8D4w/YWA/JKttZMQwtHNI8WbZBqjCClf6rWa84D4nVc/Q/eFvR9Eh+/JHI+1Bzeyi7WPS+FZkraxvaSHtNF6XlnMw+c05EhNUAGMQJmUjSrvW5b6UIlzDJ29tkhUs/dLeiD6FwXIGw=
+	t=1754322441; cv=none; b=EpYZP7waknsa77Bd1oKbyUpVpYJPcVryuToYjtXRsHY4XJCxZjMu/FQMbce0ArmQZS3KB0f/xRh8HGYJ1+t6luGsj+XEwGSYSLTx5SHlnU6+8Izov/Af03vkondfrebTMRnNuQFlUrbRTg8AZCRzSon0PvVko650/bVnJCqElBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317522; c=relaxed/simple;
-	bh=SUEmfllbxCfuPwlmfLNSQ5Zq6XjkIAA05us9mJD3pTY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UUUZa4V8NGpokc1MAWVJ+ggdQ/OfsIYDmn0nYH4CqStCM2pWjBuJ+6cny/48jihGAIEou6Yzx+kUWA8SYk9oICin78NekjiOJt7mBwSP1j4GAStx0OVF0ImIt68Aqpga395B1i2Xs/q6Ip1TNv/qcH+0iW/R1d74KfTZpIFZTTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDLoSEjz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754322441; c=relaxed/simple;
+	bh=7ITKNxyhyM+XiYJjTDaSLuVW+z1B1zw/mgNG+UlmUm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AoF7XzWBmGat9QKroVtXnZ7DkGAONsE1F0QXCNTaJnjWB3pvdj3SVaHHio14kPPBik3xDEgambOPewLyc/TK6XDf+6csmZdAl6o7TYNdjURfRGZoSrcNxCqNQVVzNGEqb3FerTPU39pozsbuGI660vzratA5Mim58r9G5UzZ91w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BrJZy/f2; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDLoSEjz"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 57C23C4CEFA;
-	Mon,  4 Aug 2025 14:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754317522;
-	bh=SUEmfllbxCfuPwlmfLNSQ5Zq6XjkIAA05us9mJD3pTY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=uDLoSEjzgY7QQQV+umULTFZuwx+xylsxVX1YDLNRl4T1Q3WovI9DeTCl7qi+6lVsf
-	 MblQfE/YyybwAGYTB6jGC+cJ2PNfeA03I+5Z9VHFKIIlWYJVnc0XL+wNMhb4eAizck
-	 4J0GOUmZu1pKC+l+yP3chWK9We0LgfrhgM0/GA6Esp7lmOfYHJ2pqZ/E7xZC18Pxon
-	 P7SV4YviMDVrP+FXbVHxmKgFlrr7O/wIJPGd85+c72A/UeictqJeWuVT7rpkhdnAwR
-	 VSy1ORKB84K46Zb/iR9kBH25x/C8aCpOjfpSs7E9NrlbOprxhAvh+wpmFpAVWDQnyX
-	 FxpBjkjaE4Bmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB71C87FCF;
-	Mon,  4 Aug 2025 14:25:22 +0000 (UTC)
-From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
-Date: Mon, 04 Aug 2025 16:26:41 +0200
-Subject: [PATCH v5 4/4] arm64: dts: exynos: google: add Maxim MAX77759
- Fuel-gauge
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BrJZy/f2"
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bwgsr6XPCzlgqyC;
+	Mon,  4 Aug 2025 15:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1754322430; x=1756914431; bh=8h6LkW+9Y/F+yA58YI9n4Cyy
+	7CwoIORIsoVtJY8sZck=; b=BrJZy/f2W9S26puuWGJtOc0S4JT7gYpTpbz6LQFw
+	EzsuBjc1Ad1y8wJ9+m2q9kRhY15Wpu54KFhO7zDm0s8Jc/HZMmvw3MYIRdq4QEED
+	hHCQkCJPVlrJPgCukoqbkJ8c5J2KUAIoQQ4e+Y2QAPjOKWo+1zGq1dHBiMd2vBQI
+	SAZg+JqslaJn9aQaXLF49D66+S3pveubkxVF7/cAlkYNAHHilqHtYIy+6gCTgN/J
+	tfDMw9mCGnQ1R33LS+DCmYagtNsb7rsWUhWaqYmFZNgES/Aye3nzUdyhCFlr05k1
+	JCerje6hTVyhU0d5ZtKzz5F38HwRFRZGA5/zno+vAFsc+g==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id DstBBlAYGuUv; Mon,  4 Aug 2025 15:47:10 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bwgsd3GVpzlgqy6;
+	Mon,  4 Aug 2025 15:46:59 +0000 (UTC)
+Message-ID: <c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org>
+Date: Mon, 4 Aug 2025 08:46:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
+ in reset on suspend
+To: Bharat Uppal <bharat.uppal@samsung.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ linux-samsung-soc@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com,
+ Nimesh Sati <nimesh.sati@samsung.com>
+References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
+ <20250804113643.75140-1-bharat.uppal@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250804113643.75140-1-bharat.uppal@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250804-b4-gs101_max77759_fg-v5-4-03a40e6c0e3d@uclouvain.be>
-References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
-In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754317658; l=4842;
- i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
- bh=WF3EeuQVRCI8z8XyGntN8UgYyyixrVyY5uSQUCZ94dw=;
- b=v68T20khFe1UGQ2JyoNgy4ms6kbeJYjj9SRA+1t4Mx+n0o6kAgF3AMdV/EemaH96ywtN6rd6t
- EPtpPJzp0m8A2BonUtQTkzYgodWp+grRpoUrNC1z/wYrp6tl5qw45Kw
-X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
- pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
-X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
- auth_id=289
-X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
-Reply-To: t.antoine@uclouvain.be
 
-From: Thomas Antoine <t.antoine@uclouvain.be>
+On 8/4/25 4:36 AM, Bharat Uppal wrote:
+> +static int fsd_ufs_suspend(struct exynos_ufs *ufs)
+> +{
+> +	exynos_ufs_gate_clks(ufs);
+> +	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
+> +	return 0;
+> +}
 
-Add the node for the Maxim MAX77759 fuel gauge as a slave of the i2c.
+Why '0 << 0' instead of just '0'? Isn't the latter easier to read?
 
-The TODO is still applicable given there are other slaves on the
-bus (e.g. PCA9468, other MAX77759 functions and the MAX20339 OVP).
+Thanks,
 
-For the device specific values (full design capacity and terminal
-current), the device should check an EEPROM at address 0x50 of the
-hsi2c_8 for a battery id stored in register 0x17. A set of parameters
-for the initialization of the fuel gauge should be chosen based on
-this id. Those sets are defined here:
-
-Link: https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviole-5.10-android15/arch/arm64/boot/dts/google/gs101-oriole-battery-data.dtsi
-Link: https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviole-5.10-android15/arch/arm64/boot/dts/google/gs101-raven-battery-data.dtsi
-
-This does not seem to be a standard pattern in the kernel currently
-so it is not implemented. Values observed on tested devices are
-instead used. The driver or the devicetree should be should be
-extended in the future to take versions into account.
-
-The pinctrl name follows the convention proposed in
-Link: https://lore.kernel.org/all/20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org/
-
-Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
----
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 10 ++++++++
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 30 ++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/google/gs101-raven.dts  | 11 ++++++++
- 3 files changed, 51 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index 8df42bedbc036b5e97f6238d64820370043ffef2..18d147f6ea4a1a76c375996557349c866b9dad72 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -13,6 +13,12 @@
- / {
- 	model = "Oriole";
- 	compatible = "google,gs101-oriole", "google,gs101";
-+
-+	battery: battery {
-+		compatible = "simple-battery";
-+		charge-full-design-microamp-hours = <4524000>;
-+		charge-term-current-microamp = <45000>;
-+	};
- };
- 
- &cont_splash_mem {
-@@ -27,3 +33,7 @@ &framebuffer0 {
- 	format = "a8r8g8b8";
- 	status = "okay";
- };
-+
-+&fuel_gauge {
-+	monitored-battery = <&battery>;
-+};
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index d6ddcc13f7b20c6dfbe92e86abafe965870d0c78..3362ad89ef6bacb7349259cf9e14452193ff7361 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/usb/pd.h>
- #include "gs101-pinctrl.h"
- #include "gs101.dtsi"
-@@ -99,6 +100,16 @@ &hsi2c_8 {
- 	eeprom: eeprom@50 {
- 		compatible = "atmel,24c08";
- 		reg = <0x50>;
-+
-+		nvmem-layout {
-+			compatible = "fixed-layout";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			fg_state: fgstate@42 {
-+				reg = <0x42 0x17>;
-+			};
-+		};
- 	};
- };
- 
-@@ -188,6 +199,18 @@ usbc0_role_sw: endpoint {
- 			};
- 		};
- 	};
-+
-+	fuel_gauge: fuel-gauge@36 {
-+		compatible = "maxim,max77759-fg";
-+		reg = <0x36>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&if_pmic_fg_int>;
-+		interrupt-parent = <&gpa9>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		shunt-resistor-micro-ohms = <5000>;
-+		nvmem-cell-names = "fg_state";
-+		nvmem-cells = <&fg_state>;
-+	};
- };
- 
- &pinctrl_far_alive {
-@@ -214,6 +237,13 @@ typec_int: typec-int-pins {
- };
- 
- &pinctrl_gpio_alive {
-+	if_pmic_fg_int: if-pmic-fg-int-pins {
-+		samsung,pins = "gpa9-3";
-+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <GS101_PIN_PULL_UP>;
-+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
-+	};
-+
- 	key_power: key-power-pins {
- 		samsung,pins = "gpa10-1";
- 		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
-index 1e7e6b34b8649bc700a745c579a0268f0f6a9524..f91800879ea94b8fb0008c5e1f828072cabc1ac7 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
-@@ -13,6 +13,13 @@
- / {
- 	model = "Raven";
- 	compatible = "google,gs101-raven", "google,gs101";
-+
-+	battery: battery {
-+		compatible = "simple-battery";
-+
-+		charge-full-design-microamp-hours = <4904000>;
-+		charge-term-current-microamp = <49000>;
-+	};
- };
- 
- &cont_splash_mem {
-@@ -27,3 +34,7 @@ &framebuffer0 {
- 	format = "a8r8g8b8";
- 	status = "okay";
- };
-+
-+&fuel_gauge {
-+	monitored-battery = <&battery>;
-+};
-
--- 
-2.50.1
-
-
+Bart.
