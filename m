@@ -1,115 +1,252 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDDF26B97E
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Aug 2025 13:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880DE8F58;
+	Mon,  4 Aug 2025 14:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314494; cv=none; b=WQO2NXF2M/TDRhLLqJgua9ipIFur/GRECEN4uucW6viKs/jaC9wNI3XHYDheAjac66tyC8nPiNUZ0c8PKLmXI1A+XNnwAGTCVd+E+S8/PHa7KGOXCu+5d9BNCgT+1NVUtHNVFTEyJdOYdB9G+8NHydnRPrKsM488k9SWmduyGY4=
+	t=1754317522; cv=none; b=e9XUpSpT1I3CMVs5CWc4jj1gqXu2ITe7wcSzp1FvVVtE2Y4L/rS85k6X0GlVKQaUOI1QNlqotHQyPArphVdjrpScnGiZFIOJWvhC4GCAYKe+pGfMxOQ8m/iM+obN4UNwogp9RQzP9F9+47SaYswE26ag6HqWmqsWdEF8JnkL0G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314494; c=relaxed/simple;
-	bh=NK+E7i4SF9xONO+tY0AUV10ypXRnVmeU59H+CPBgCM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=eyKjph0R214iQYPPOmhSC62ecJDXmc0LSNXV/a1fqF0MvlEd7DPBlr4f6IPP58t8jeIyQPLCck8lMVxUFJU2ruBQzhk5heO6HxfUb1P/LXmBR4eyI/ptxsaS9iniCkpMNV7kkPJVVvBHK7/k23dMLUPWmmSl/5c6vX8e96v2H8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UeB9aEBW; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1754317522; c=relaxed/simple;
+	bh=BSGBOSXkEidOKLno5lfnh0peRNvAv6oMZrDPVi1ZE90=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OnR9PtKywhaps5NbxXgzyi5vgx9d8LLGOAc1uX63Rfx8CKP6OI1uOXOR3M5+miWcNDt0BAs8IDFBmK/uYRY7pU3qTOjzqzTCHo5SJgglcJ82ZIrFMI5h9C4c38j9u44r2ed6KFS2H9Qo24z/ZSGdW+bl9ZelUEHLOmkFFwhq54Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCmzh4Un; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UeB9aEBW"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250804133443epoutp03420af1eafd5031bd3eae653576d73ca8~Yk7pctFQV2786127861epoutp03j
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Aug 2025 13:34:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250804133443epoutp03420af1eafd5031bd3eae653576d73ca8~Yk7pctFQV2786127861epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754314483;
-	bh=sueo5FzJALTgcvMOuRIM5QQ0PClRb+SDXbInCek3SMA=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=UeB9aEBWEFlrA5DhY7AzlHd0VxJgsYpQndITSlMkzmCrkDNgnUx6oK+ieOQVbtH/v
-	 rDu/I3g4tuje/GmqsubqXaegC+d7EwJahFJmzk5vvM+CHvCoIYetwriWHVvtXHVE1N
-	 A5o41RdpumwW3mPNFIe1jQuc9LlOe3QGm4UYw6Q4=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250804133442epcas5p2f2ea67fdb98a648a8f980c284c050ce4~Yk7oNtz_c0438204382epcas5p2J;
-	Mon,  4 Aug 2025 13:34:42 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bwcwx3WChz6B9m5; Mon,  4 Aug
-	2025 13:34:41 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23~YjUx9a2j51246212462epcas5p1D;
-	Mon,  4 Aug 2025 11:36:54 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250804113652epsmtip213f4596d1526ebbf9840e78bb83ae723~YjUwbwAjr0602706027epsmtip2T;
-	Mon,  4 Aug 2025 11:36:52 +0000 (GMT)
-From: Bharat Uppal <bharat.uppal@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com, Bharat Uppal
-	<bharat.uppal@samsung.com>, Nimesh Sati <nimesh.sati@samsung.com>
-Subject: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device in
- reset on suspend
-Date: Mon,  4 Aug 2025 17:06:43 +0530
-Message-ID: <20250804113643.75140-1-bharat.uppal@samsung.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCmzh4Un"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E059C4CEE7;
+	Mon,  4 Aug 2025 14:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754317522;
+	bh=BSGBOSXkEidOKLno5lfnh0peRNvAv6oMZrDPVi1ZE90=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=YCmzh4Un7PY9Bsv9Gd8qVjAUQepS2c8XvwqtDm5EfSLOSb0cn4DjcPsEhbGMwoNi/
+	 9DrzsFU7c5tzHIFNuorhYeCUlZVA/flDThMIw2hhxYZ4xdeMSMMvvnqrFXbal2QEKv
+	 h2mF8UNpsElgRhDQ+7PDaYyFodVpWdS7urpHwrvGAhvpFuAoM3vm7/HrwuOIh374P1
+	 aU7nmL921yH6D8DJCp4MLJx+nywM/83H5WBZA9/Jqo/+kWH/LuClxIrx3E3aTh7Enx
+	 /SP/PNdk0YybiowIYc5E4a8H4qD0GRH3xLHBa0hygdadDl0bEUXfyPvs+q/1CGWH5Q
+	 5IfNVTK7Swkdg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E203C87FD3;
+	Mon,  4 Aug 2025 14:25:22 +0000 (UTC)
+From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
+Subject: [PATCH v5 0/4] gs101: MAX77759 Fuel Gauge driver support and
+ enablement
+Date: Mon, 04 Aug 2025 16:26:37 +0200
+Message-Id: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
-References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAB3DkGgC/4XQ2wrCMAwG4FeRXlvpIaXWK99DRNqZzoJu2m5FG
+ Xt36wlBFG8CfyBfSAaSMAZMZDEZSMQcUmibEtR0QqqdbWqkYVsyEUwAL4U6oHXijG8O9qy1Vmb
+ jawpMoJDcgpOSlNFjRB/Od3a1LnkXUtfGy31L5rfuHzBzyqiZb4W32nmUbNlX+7bPNjQzh+RmZ
+ vFyFOM/HVGcuTbKWIdOe//FgbejhPzhQHEcGMMApbISPpzxcXTEU19e2D0vH8cr9sMtHGABAAA
+ =
+X-Change-ID: 20241202-b4-gs101_max77759_fg-402e231a4b33
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754317658; l=7588;
+ i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
+ bh=BSGBOSXkEidOKLno5lfnh0peRNvAv6oMZrDPVi1ZE90=;
+ b=8XBLP3ma5Cjk8qBog4IQTzb+ZmNeBy3h3n3x/404aUyNBbf3ZGBCca/USP49oWNvqyzxehU5e
+ 5xDzHAwkd9kBmNPBgRtywP/QWsb055AarO9n9SMeFgDF1bk/ZnQ53no
+X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
+ pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
+X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
+ auth_id=289
+X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
+Reply-To: t.antoine@uclouvain.be
 
-On FSD platform, gating the reference clock (ref_clk) and putting the
-UFS device in reset by asserting the reset signal during UFS suspend,
-improves the power savings and ensures the PHY is fully turned off.
+The gs101-oriole (Google Pixel 6) and gs101-raven (Google Pixel 6 Pro)
+have a Maxim MAX77759 which provides a fuel gauge functionnality based
+on the MAX M5 fuel gauge.
 
-These operations are added as FSD specific suspend hook to avoid
-unintended side effects on other SoCs supported by this driver.
+Add a driver for fuel gauge of the the Maxim MAX77759 based on the
+one for the Maxim MAX1720x which also uses the MAX M5 fuel gauge.
+Enable it for the gs101-oriole and gs101-raven boards.
 
-Signed-off-by: Nimesh Sati  <nimesh.sati@samsung.com>
-Signed-off-by: Bharat Uppal <bharat.uppal@samsung.com>
+Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
 ---
- drivers/ufs/host/ufs-exynos.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi everyone,
+I decided to completely separate the MAX77759 and the MAX1720x. The
+reason I had just modified the MAX1720x initially was because I
+thought at the time that their difference were much less important
+than they ended up being.
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 3e545af536e5..b19a9f0d25f6 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1896,6 +1896,13 @@ static int fsd_ufs_pre_pwr_change(struct exynos_ufs *ufs,
- 	return 0;
- }
- 
-+static int fsd_ufs_suspend(struct exynos_ufs *ufs)
-+{
-+	exynos_ufs_gate_clks(ufs);
-+	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-+	return 0;
-+}
-+
- static inline u32 get_mclk_period_unipro_18(struct exynos_ufs *ufs)
- {
- 	return (16 * 1000 * 1000000UL / ufs->mclk_rate);
-@@ -2162,6 +2169,7 @@ static const struct exynos_ufs_drv_data fsd_ufs_drvs = {
- 	.pre_link               = fsd_ufs_pre_link,
- 	.post_link              = fsd_ufs_post_link,
- 	.pre_pwr_change         = fsd_ufs_pre_pwr_change,
-+	.suspend                = fsd_ufs_suspend,
- };
- 
- static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
+Their common parts could be put in a common MAX M5 files which could
+prove useful if more chips using the MAX M5 are to be added.
+
+Changes in v5:
+- Separate MAX77759 from MAX1720x for clarity
+- Remove voltage reporting
+- Add initialization of the chip
+- Add device dependent initialization data
+- Add access to eeprom for access to non-volatile backup data.
+- Link to v4: https://lore.kernel.org/r/20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be
+
+Changes in v4:
+- Make first patch standalone
+- Separate MAX77759 defines from MAX1720x defines (Dimitri Fedrau)
+- Inline device name property (Dimitri Fedrau)
+- Separate MAX77759 capacity lsb logic from the MAX1720x capacity
+  computation (Dimitri Fedrau)
+- Use device_property_read_u32 instead of of_property_read_u32
+  (Sebastian Reichel)
+- Removed leftover debugs
+- Move shunt-resistor-micro-ohms to out of allOf:if: (Krzysztof Kozlowski)
+- Fix reg-names constraints
+- Fix style errors
+- Link to v3: https://lore.kernel.org/r/20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be
+
+Changes in v3:
+- Update base tree to avoid conflicts
+- Fix capacity computation for max1720x
+- Add separate properties for the max7759 to disable non-functional ones
+- Take TASKPERIOD into account for voltage computation of max77759
+- Simplify vcell computation (Dimitri Fedrau)
+- Switch has_nvmem to bool and keep it only in chip_data (Dimitri Fedrau)
+- Drop the yes_range from the write table (Sebastian Reichel)
+- Add test_power_supply_properties.sh to cover letter (Sebastian Reichel)
+- Switch back some changes to binding and actually use allOf:if: to
+  restrict constraints (Krzysztof Kozlowski)
+- Fix style errors
+- Link to v2: https://lore.kernel.org/r/20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be
+
+Changes in v2:
+- Add fallback for voltage measurement (André Draszik)
+- Add regmap for the max77759 (André Draszik)
+- Add chip identification for the max77759 (André Draszik, Peter Griffin)
+- Move RSense value to a devicetree property shunt-resistor-micro-ohms
+  (Dimitri Fedrau, André Draszik)
+- Use allOf:if to narrow binding per variant (Krzysztof Kozlowski)
+- Remove binding example (Krzysztof Kozlowski)
+- Change defconfig order to follow savedefconfig (Krzysztof Kozlowski)
+- Fix style errors
+- Link to v1: https://lore.kernel.org/r/20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be
+
+tools/testing/selftests/power_supply/test_power_supply_properties.sh:
+gs101-oriole:
+  # Testing device max77759-fg
+  ok 1 max77759-fg.exists
+  ok 2 max77759-fg.uevent.NAME
+  ok 3 max77759-fg.sysfs.type
+  ok 4 max77759-fg.uevent.TYPE
+  ok 5 max77759-fg.sysfs.usb_type # SKIP
+  ok 6 max77759-fg.sysfs.online # SKIP
+  # Reported: '1' ()
+  ok 7 max77759-fg.sysfs.present
+  ok 8 max77759-fg.sysfs.status # SKIP
+  # Reported: '19' % ()
+  ok 9 max77759-fg.sysfs.capacity
+  ok 10 max77759-fg.sysfs.capacity_level # SKIP
+  # Reported: 'MAX77759' ()
+  ok 11 max77759-fg.sysfs.model_name
+  # Reported: 'Maxim Integrated' ()
+  ok 12 max77759-fg.sysfs.manufacturer
+  ok 13 max77759-fg.sysfs.serial_number # SKIP
+  ok 14 max77759-fg.sysfs.technology # SKIP
+  ok 15 max77759-fg.sysfs.cycle_count # SKIP
+  ok 16 max77759-fg.sysfs.scope # SKIP
+  ok 17 max77759-fg.sysfs.input_current_limit # SKIP
+  ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
+  ok 19 max77759-fg.sysfs.voltage_now # SKIP
+  ok 20 max77759-fg.sysfs.voltage_min # SKIP
+  ok 21 max77759-fg.sysfs.voltage_max # SKIP
+  ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
+  ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
+  # Reported: '-234690' uA ()
+  ok 24 max77759-fg.sysfs.current_now
+  ok 25 max77759-fg.sysfs.current_max # SKIP
+  ok 26 max77759-fg.sysfs.charge_now # SKIP
+  # Reported: '4572000' uAh (4.572 Ah)
+  ok 27 max77759-fg.sysfs.charge_full
+  # Reported: '4524000' uAh (4.524 Ah)
+  ok 28 max77759-fg.sysfs.charge_full_design
+  ok 29 max77759-fg.sysfs.power_now # SKIP
+  ok 30 max77759-fg.sysfs.energy_now # SKIP
+  ok 31 max77759-fg.sysfs.energy_full # SKIP
+  ok 32 max77759-fg.sysfs.energy_full_design # SKIP
+  ok 33 max77759-fg.sysfs.energy_full_design # SKIP
+
+  gs101-raven:
+    # Testing device max77759-fg
+  ok 1 max77759-fg.exists
+  ok 2 max77759-fg.uevent.NAME
+  ok 3 max77759-fg.sysfs.type
+  ok 4 max77759-fg.uevent.TYPE
+  ok 5 max77759-fg.sysfs.usb_type # SKIP
+  ok 6 max77759-fg.sysfs.online # SKIP
+  # Reported: '1' ()
+  ok 7 max77759-fg.sysfs.present
+  ok 8 max77759-fg.sysfs.status # SKIP
+  # Reported: '96' % ()
+  ok 9 max77759-fg.sysfs.capacity
+  ok 10 max77759-fg.sysfs.capacity_level # SKIP
+  # Reported: 'MAX77759' ()
+  ok 11 max77759-fg.sysfs.model_name
+  # Reported: 'Maxim Integrated' ()
+  ok 12 max77759-fg.sysfs.manufacturer
+  ok 13 max77759-fg.sysfs.serial_number # SKIP
+  ok 14 max77759-fg.sysfs.technology # SKIP
+  ok 15 max77759-fg.sysfs.cycle_count # SKIP
+  ok 16 max77759-fg.sysfs.scope # SKIP
+  ok 17 max77759-fg.sysfs.input_current_limit # SKIP
+  ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
+  ok 19 max77759-fg.sysfs.voltage_now # SKIP
+  ok 20 max77759-fg.sysfs.voltage_min # SKIP
+  ok 21 max77759-fg.sysfs.voltage_max # SKIP
+  ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
+  ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
+  # Reported: '-224377' uA ()
+  ok 24 max77759-fg.sysfs.current_now
+  ok 25 max77759-fg.sysfs.current_max # SKIP
+  ok 26 max77759-fg.sysfs.charge_now # SKIP
+  # Reported: '4622000' uAh (4.622 Ah)
+  ok 27 max77759-fg.sysfs.charge_full
+  # Reported: '4904000' uAh (4.904 Ah)
+  ok 28 max77759-fg.sysfs.charge_full_design
+  ok 29 max77759-fg.sysfs.power_now # SKIP
+  ok 30 max77759-fg.sysfs.energy_now # SKIP
+  ok 31 max77759-fg.sysfs.energy_full # SKIP
+  ok 32 max77759-fg.sysfs.energy_full_design # SKIP
+  ok 33 max77759-fg.sysfs.energy_full_design # SKIP
+
+---
+Thomas Antoine (4):
+      power: supply: add support for MAX77759 fuel gauge
+      dt-bindings: power: supply: add support for MAX77759 fuel gauge
+      arm64: defconfig: enable Maxim MAX77759 fuel-gauge driver
+      arm64: dts: exynos: google: add Maxim MAX77759 Fuel-gauge
+
+ .../bindings/power/supply/maxim,max77759.yaml      |  76 +++
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  10 +
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi |  30 +
+ arch/arm64/boot/dts/exynos/google/gs101-raven.dts  |  11 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/power/supply/Kconfig                       |  14 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/max77759_battery.c            | 649 +++++++++++++++++++++
+ 8 files changed, 792 insertions(+)
+---
+base-commit: bc9ff192a6c940d9a26e21a0a82f2667067aaf5f
+change-id: 20241202-b4-gs101_max77759_fg-402e231a4b33
+
+Best regards,
 -- 
-2.49.0
+Thomas Antoine <t.antoine@uclouvain.be>
+
 
