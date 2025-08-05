@@ -1,175 +1,132 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACED2AD0B
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Aug 2025 05:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B2C20A5EB;
+	Tue,  5 Aug 2025 06:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754370217; cv=none; b=hKRZ5XoeQkpK1aMiWzXshlD0e4dg/GS/JxXtIR5+cmHGCAzd1G4Kdfer2ftICHC2FfSdFjYG/u53X4vFom5ARdSff2lBH7MT0xWYt+w/qY0kQobt5fzgQMjcAGELenGylA+TMmFV4YmwDCUd025PK0EgZO/5K59tI0HdxTtdC5o=
+	t=1754374864; cv=none; b=ezYFQ3pIs/Gcih8jHg0LvIP56czezFEllFSsHprWo49VKttjQTWlGfkFrCK9WyPTKqRRz/pbZZoLEghkG853O+z/C50IMMuDrfhqonLi/FHlw0mnCYSpEJ6oBfr04ejWAqFv6EXi3HdX3vc4ahX04wGtK0tmgTGLskjkbS6HeXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754370217; c=relaxed/simple;
-	bh=8eUuiOAVr7JSZ5ksqVPkUqhNwo/8hc8bMdYjo7FjjO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ezvQGmAJlvtKRb59GjoNirDAxG3raA4bhtqrRquZDEsyR8ajpAqE8hR+5xaMNK7EphWd0kSIgWOxeaWGuLIsh7NuGQLBszEprt9UhlkG2MAfSEZqcDn1m4I9GBtbPwOyl4d3wAnb8mkAGtzCcxOcOBFL+v6itdZ0UyFSkZywvoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rRcX1HZB; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1754374864; c=relaxed/simple;
+	bh=BRNKEI5g2PV7iMHZA2w3uzrDHh21dufQnN/CJY0cfsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LgzPYwOMorj1BG7zieHcb66sL5qMNawDOpP//XISvUSlmq2zAE9kqub1beqSv2NlBC/HvNXoTfOk5+zci2AYWijGCSUIjVzqE4eyA5J2aIhTS8lbIvucKzY2hlosVRypVAAwb0jj82E1EPmlUk/OEIUUelaeETE6D85TwisqqVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9t08Vji; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rRcX1HZB"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71b4677044bso55683267b3.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Aug 2025 22:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754370214; x=1754975014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eY5N7v+zWU8+UjZUkDsBJT0AwO4FrfcIvgZ3TXySOJk=;
-        b=rRcX1HZBhz+7gXxh6R1MLbFhNa9oTQ4Dntav+38dfyqV5pUds8W2C7+1/KtHNMcwPb
-         CyAgiabfQoq9NcTo1jphPnQbX7NlyXOUQGy45O0SE1cn+VDlw8U+E4ZHXqYtNn6/GKdh
-         9FC20lNjghCCXK0rbyp3RsCQEleZtPhyDU/eoGlu5mEzSVPoXrrDaLGPANaDh6SO6aLH
-         1UOI1N/EMz/NA7v0POXf1aYeqGvgQhB7a46YYwPUPHlRoZtqmRLYCFSZPu8ZSkaW65qs
-         T1XkWjZB8/G7Kih7pBIkK0gduSeuP3kXHBGrhHKb3/RrntZ/XW7kl5vN5eeuRInjvODd
-         ia0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754370214; x=1754975014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eY5N7v+zWU8+UjZUkDsBJT0AwO4FrfcIvgZ3TXySOJk=;
-        b=n2PVfy0nE/xP6qAr9dO9dI+rupp4vpOJkAh79pj5ZotF89uF19cQJnGbPz3FRflfhK
-         aGA/rJlLzTkp86CoaiIhwmNxZupeox+vZHeJw2hj2MlCPhY6I48ltag6RIE/gaDqxw8/
-         vRnbouEU9zSPpvT/+CZ6Nj6wwvC5zi3HZ+oDkRd6MGP3yvMjP4tOLFYRT7hvbiKQcmaE
-         MQL7/ED7UVlDkILL3ijT+L3h17qyyb51xHrUEUcO4LeBCiL8txXiYpb7dDIU7agB85a8
-         7PCYhbuu9yhUf5Nw29cA70qr/B86ACxtkqBhgSqm7tSLCoVs6HYJlK2EgCzs2FxemJGb
-         GvEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMhaQh+HBzNbWTWK45WSlreAWkzXRnyJDRK8MLruJhs0D4JlqFdWTvHkLy4/tv+xj86lP0nyhXr0/O96+C4rvH+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRAw6WOBAriJQxhYCND7t8E5bsiSaFjWafm2IKXIKtYefuDmb8
-	duv1R4OELKE69tRNBd/FMFXWFDQcasKLTcKjfRDktL9cDKRm5BODimqn6R8Z5OMAUgFJ+PCaM/l
-	ya0HO6V5wJEePQMXphZilj0D+ib0j/g2WsgWS5OmYnw==
-X-Gm-Gg: ASbGnctXfbOJUZsmR15NB/hHok0hWFIuHuCAMEzFNsyjhZNGoXerBaGKQVhgrMT340z
-	Ek7kn89B3/M/wwkPH/VmZt9pEsvBsLAAVkCYLA02SZkgPmCBzvJdSPxgL/wn3jXvx5/oAzM4PkS
-	4c/i9UXYzHdUjls+QlQcKLuYlzCr70ikHytc8Lg/z1MSH3lmrqkheYE8DNcxYTrQRkXP5Obd7xc
-	921+A==
-X-Google-Smtp-Source: AGHT+IG1oZhqjscU5pfjiY1Q7UEpsk3imnmFMsZ67z7dBWGY5jc3R9ttC3dArQUXZ4i83be1Xm4e66GVmgTedDEMPjA=
-X-Received: by 2002:a05:690c:6f0f:b0:71a:251e:36eb with SMTP id
- 00721157ae682-71b7ef66861mr146668157b3.21.1754370214226; Mon, 04 Aug 2025
- 22:03:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9t08Vji"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A7EC4CEF4;
+	Tue,  5 Aug 2025 06:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754374864;
+	bh=BRNKEI5g2PV7iMHZA2w3uzrDHh21dufQnN/CJY0cfsA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n9t08VjimayiNb7Hufr0EaDWw3KA9XI6cunD6K52BHh5NaGQvdEVl4+AnHyFV3lTv
+	 cHt7UQmclSsUusZrWWWBXMFLtw4myQyr9lzlVKbKaLSW4WxuOatv9vBkVYGt3NsCSV
+	 WfTnkWry/4PmJif916aJzz+IDaAro8srjN9tEw2DNiIHI75Awwt+uyevoOU+WsGSgy
+	 1hvXQdEILquRGqXKo/1EXTR7dERRdpXCxpK6IhWrH5Aw5QYmT3XGm6/BYrq/O4o7Ap
+	 Ti5XWVkcgf6nlRjvEki8udG5HKfi6YszeDfPMow3X5usFzDp7EJMybNz5nRoWHHnnG
+	 Tst7NLHq0ohQw==
+Message-ID: <42de1ed3-073a-4058-971b-a9a8c473d9a0@kernel.org>
+Date: Tue, 5 Aug 2025 08:20:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
- <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-3-sw617.shin@samsung.com>
- <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
- <000a01dc05c0$9f0ab110$dd201330$@samsung.com> <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
-In-Reply-To: <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 5 Aug 2025 00:03:23 -0500
-X-Gm-Features: Ac12FXwhfK5c6hCAFDVH8lXtPSm0rXJFOVWdmBpTpuOp_j1X3bUQ9DkVKABvZIY
-Message-ID: <CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
- calculated larger
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: sw617.shin@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com, 
-	wim@linux-watchdog.org, khwan.seo@samsung.com, dongil01.park@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] gs101: MAX77759 Fuel Gauge driver support and
+ enablement
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 4, 2025 at 11:47=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> On 8/4/25 21:22, sw617.shin@samsung.com wrote:
-> > On Saturday, August 2, 2025 at 1:12 PM Sam Protsenko <semen.protsenko@l=
-inaro.org> wrote:
-> >
-> >> How about something like this instead?
-> >>
-> >> 8<--------------------------------------------------------------------=
-->8
-> >> static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq) =
-{
-> >>      const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
-> >>                  S3C2410_WTCON_MAXDIV; /* 32768 */
-> >>      const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
-> >>      u64 t_max =3D n_max / freq;
-> >>
-> >>      if (t_max > UINT_MAX)
-> >>          t_max =3D UINT_MAX;
-> >>
-> >>      return (unsigned int)t_max;
-> >> }
-> >> 8<--------------------------------------------------------------------=
-->8
-> >>
-> >> This implementation's result:
-> >>    - is never greater than real timeout, as it loses the decimal part =
-after
-> >> integer division in t_max
-> >>    - much closer to the real timeout value, as it benefits from very b=
-ig
-> >> n_max in the numerator (this is the main trick here)
-> >>    - prepared for using 32-bit max counter value in your next patch, a=
-s it
-> >> uses u64 type for calculations
-> >>
-> >> For example, at the clock frequency of 33 kHz:
-> >>    - real timeout is: 65074.269 sec
-> >>    - old function returns: 65535 sec
-> >>    - your function returns: 32767 sec
-> >>    - the suggested function returns: 65074 sec
-> >
-> > Thank you for your feedback.
-> > I'll make the code changes as follows in the next patch set:
-> >
-> > static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *w=
-dt)
-> >   {
-> >          const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
-> > +       const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
-> > +                       S3C2410_WTCON_MAXDIV;
-> > +       const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
->
-> Not sure if splitting this expression adds any value. Why not just the fo=
-llowing ?
->
-> const u64 n_max =3D (u64)(S3C2410_WTCON_PRESCALE_MAX + 1) *
->                     S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
->
-> Or just use a define ?
->
+On 04/08/2025 16:26, Thomas Antoine via B4 Relay wrote:
+> The gs101-oriole (Google Pixel 6) and gs101-raven (Google Pixel 6 Pro)
+> have a Maxim MAX77759 which provides a fuel gauge functionnality based
+> on the MAX M5 fuel gauge.
+> 
+> Add a driver for fuel gauge of the the Maxim MAX77759 based on the
+> one for the Maxim MAX1720x which also uses the MAX M5 fuel gauge.
+> Enable it for the gs101-oriole and gs101-raven boards.
+> 
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> ---
+> Hi everyone,
+> I decided to completely separate the MAX77759 and the MAX1720x. The
+> reason I had just modified the MAX1720x initially was because I
+> thought at the time that their difference were much less important
+> than they ended up being.
+> 
+> Their common parts could be put in a common MAX M5 files which could
+> prove useful if more chips using the MAX M5 are to be added.
+> 
+> Changes in v5:
+> - Separate MAX77759 from MAX1720x for clarity
+> - Remove voltage reporting
+> - Add initialization of the chip
+> - Add device dependent initialization data
+> - Add access to eeprom for access to non-volatile backup data.
+> - Link to v4: https://lore.kernel.org/r/20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be
 
-Oh, that code snippet above is just a suggestion, please treat it as
-pseudo-code for this purpose, -- I just wanted to illustrate the idea,
-and should've been more clear! Yes, definitely should be revised and
-re-tested. And yeah, I agree, one single const or define would be
-enough, no need to make it too verbose. Also, the naming may be not
-the best, e.g. cnt_max might be better than n_max for example. But
-I'll leave it to Sangwook Shin to decide on the implementation, just
-wanted to communicate the idea.
+No changes in the bindings? There were errors posted due to lack of testing.
 
-> > +       u64 t_max =3D n_max / freq;
-> >
->
-> Make sure this compiles on 32-bit builds.
->
-
-Can you please elaborate what might be the possible problem -- just
-curious? I admit I never though about 32-bit case when writing that
-code, but don't see any immediate issues with that too.
-
-> > -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_M=
-AX + 1)
-> > -                                      / S3C2410_WTCON_MAXDIV);
-> > +       if (t_max > UINT_MAX)
-> > +               t_max =3D UINT_MAX;
-> > +
-> > +       return (unsigned int)t_max;
->
-> I am quite sure that this typecast is unnecessary.
->
-> Guenter
->
+Best regards,
+Krzysztof
