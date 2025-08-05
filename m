@@ -1,165 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013018.outbound.protection.outlook.com [52.101.72.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CB3C8CE;
-	Tue,  5 Aug 2025 08:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754382781; cv=none; b=G8/RnB86ZKAEyGgYdoCGT22vtXqz7CniKx8pg7Sbi15w9b1uUocVuT+aGOjsB6eE/zvvxNAeoD25F3eKtV+q+QrDVySAydkzcip/z7on1DZvUh6t4/JbOOfrWLg/O4Op2OiZj8oS0XzzaMvsKCA0Mge8WOSEZ9Xsjr52Ui8gPLM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754382781; c=relaxed/simple;
-	bh=H+195tupBnrAgDGdlIgQ3BH2CjjoT2sHHXaqRr4/ORs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NpY6WWD+VZ/8BQfRXC9NQFwHetTAjDygAzLRG88N5PVUkjWbGCb4458DalV4StzbHQ2xWm1btwcKM3adM5H3NzEs9IrGh36P/FrOpdKl/DN9pgNllejqFoWvtn2QWmlt0hssEWWR8Hp2+TIFm8NhAmZvpLc9j7iajvoLYISpafM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2NZl6Nr; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5DA26E70B;
+	Tue,  5 Aug 2025 09:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754386428; cv=fail; b=sgyRbrygOHkL0umWEC85FviwL9Mwnt7Mg20yH7V+2X3MhCTACwjjA/FjjWci2FHWfY7UuIeAVCyvcSQsP2cy+UMMvY/RWBWeZpZmzT9Fvtxhxa+1c4PGY377uas6dzRmyIW/7nkFMWfYWXPcxzqBBzOLzXQ32fwLEr+5Z5Ig5m8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754386428; c=relaxed/simple;
+	bh=Hp4gun261P/CK3tOjAczYWyVX8LZ/OBqMZOAsFyKdOw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TGyK+MHNzjbu2QPqR5bgQBwsBOUjSVDg/dtxc66lAZrAGoq8wFnY4E+hNU2VKYKsiP0lt0oUmkFFxIyoe7VVOAl/VVl3jbbqSToAWG5VDwDy6D5czI/Jbfb1bPOfx3XUdq790tC1i8i6soB6Z8UfhnI25w6ZuCLrw6w82CQUXgc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=SLuNOKYK; arc=fail smtp.client-ip=52.101.72.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2NZl6Nr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12CFC4CEF4;
-	Tue,  5 Aug 2025 08:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754382780;
-	bh=H+195tupBnrAgDGdlIgQ3BH2CjjoT2sHHXaqRr4/ORs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B2NZl6Nr9/SxTW59A3tJ1Rgt0Rc8Lgi/6qbX7oD/moywv08iB6rxtDJTqJyg/CsAg
-	 p0T7bTnrLipNOx7L1gG/krytcUFRVxl5Fkf7+BND+dAV1VFuM17FNYHd8kw51FfXt4
-	 pDi00T0dDelWcA0ubEUudVR8n/lFJTkiqrskq04MScVIv1AVphYVSf9LGBb5oD4+nq
-	 AnFqq0bUB/Dc7cuxWjiVjhF1bsI3IKIW8GQHHfzfMNUemPSfaesfAd2nBPilGN2KAZ
-	 77XTs8hr6GZdnJZDPfkoKAoC3YneILHvyelUQdLLUbmAanwTpxhXnimDLrbq0h5pJy
-	 PrfZg21hGa51Q==
-Message-ID: <b7b22093-539d-48af-8f78-54754b4412bb@kernel.org>
-Date: Tue, 5 Aug 2025 10:32:55 +0200
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="SLuNOKYK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oVTrqm6gav1g6hjS/bsXfylDA9nYBSujqj3LxYuMK79S44uAQR2SHVYOLLz8Ru0xdsgYAWa8SEZ1VlrN1QaTAUAJ/tydyw8toIPZBZoVycDu3T4/pxSvQ89b+9zNli2y4Vy8qlzzPhoUr/HoRzsGUxbNVXSitPLZilmOGMIYd4L2b16FrEmTmR7baFyqbNrNf5qOxLsgBlG4tm1mAcDP/oW7GtphQfCbHKXwzZQA/kL/4L+UGG68AMRzErCTQpTe2YRDgwOVzUJI/UB/mjAXIICWMR0lD4Em1luFDPUhmFKF/uU5tyxgiSSiCgFd3EGXTP57tmJourZMfT4k1kDr5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XSdyPORcOcEQ4J3OnKiTKjN8U+AEHy1K3NzmFwwhEL0=;
+ b=CRptoBsCLTGkHC+bJX51xJBFPeLiRBcfNOKnt+3bsre7Abp1rmjJcvSkG2a9qh5aLQC5+2o3lCwQ4t0ogqUgkXtqVXE5c3psQ4wKE5D/EZiwpjnh91mnpsIwzEZ7EklChRT1pcMjyWo2IQ9Lko169+i3LUToTr0xBvMVRI02xmLg/xXhDpzCXvJRogmRdesYNGm/ymiimZ56VqXslmJMYNYmb+duBK5M5GAkYPM5WlNqEuL5ZyGzYLoQ8hiJGMTmIMbNWV6RwN6iS4Sh25dv3fg9JYe686xeL9lvbdTp3wyoEwjx9+PdnlXb9QmmTXYq7cA1pDb1HQLq90GsEoxlRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XSdyPORcOcEQ4J3OnKiTKjN8U+AEHy1K3NzmFwwhEL0=;
+ b=SLuNOKYK2vSPlbKnmoPd12bdwh7jcHQ7QadrvWC0Ynqasp2pPIUDSNn6d5DrOXXCqRVA3IC64Pk3ls21hTDsgif/pdo9e1TSue2p+VyQ7UZWWkhZ4RaFhu8JX//2YiDtDKjTB70Tprrdx561FQfUHah6e0ChYHm7JwtEuGKew2U=
+Received: from CWLP123CA0001.GBRP123.PROD.OUTLOOK.COM (2603:10a6:401:56::13)
+ by GV1PR02MB8260.eurprd02.prod.outlook.com (2603:10a6:150:63::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 09:33:43 +0000
+Received: from AM3PEPF0000A790.eurprd04.prod.outlook.com
+ (2603:10a6:401:56:cafe::28) by CWLP123CA0001.outlook.office365.com
+ (2603:10a6:401:56::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.21 via Frontend Transport; Tue,
+ 5 Aug 2025 09:33:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM3PEPF0000A790.mail.protection.outlook.com (10.167.16.119) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9009.8 via Frontend Transport; Tue, 5 Aug 2025 09:33:42 +0000
+Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 5 Aug
+ 2025 11:33:35 +0200
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+CC: <kernel@axis.com>, <linux-phy@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] phy: exynos5-usbdrd: Remove error print for
+ devm_add_action_or_reset()
+User-Agent: a.out
+Date: Tue, 5 Aug 2025 11:33:35 +0200
+Message-ID: <pnd34a6m7tc.a.out@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] dt-bindings: power: supply: add support for
- MAX77759 fuel gauge
-To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
- <20250804-b4-gs101_max77759_fg-v5-2-03a40e6c0e3d@uclouvain.be>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-2-03a40e6c0e3d@uclouvain.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A790:EE_|GV1PR02MB8260:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7fe37cf-c51c-4c0d-cc47-08ddd4032b0b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ko80Gj1OvHB2UutXT4EkNI37WT+8cudgDTMRMl2sjqL3Is9oq1RB1YNeSUoO?=
+ =?us-ascii?Q?zNV23DHMFbx0uzorPm77PjdVGLbn7g2o5H0bbuol9p2g7Itk9BTVWb4qW95A?=
+ =?us-ascii?Q?tW4sRRu9+iRQctx2/Jj/mDDJzbV827xWu+devxL8PD9AgOKC8f8lR1LyFacW?=
+ =?us-ascii?Q?1gEyuAKw1dyOHtFahV6fDP5jsA3ppo6QHW1YcaSJgas1OGyDIqJjy0IOMoHU?=
+ =?us-ascii?Q?sq3KQdI24pU+TqZyb0A+6r55utQIG4UywGS46SFn4CIwbw/L1ky/0kzoAFWW?=
+ =?us-ascii?Q?u44+cRmmNeOZBv/CDeiCMj0tyx/A/EoL0lU26PU060wGNAAshlY57tldsNIk?=
+ =?us-ascii?Q?jHTrZ77YeZ8eaRQPPKAG9GNE3bk7RhSnHVu3xxyK28VuLeCBtXO/GuOYaAPP?=
+ =?us-ascii?Q?KO/JSaudEJztOTp6MgCrT9581artRr9cNYZRuzkjzhA592+rnchYVPMuQagp?=
+ =?us-ascii?Q?S7VNiGb/V+gPXu7DSL+GYIiUDzBq72Heg/KgaVq4ayJCpOBunOetDzPl06uC?=
+ =?us-ascii?Q?eCt/Pmc6uydiPCWBF3qq8jRCmNjp/u3G8XR/ArEV/xuXF24mZtnnOqa1Z0Yw?=
+ =?us-ascii?Q?Q22hDZT3snk7+ZGuToOy50/2y8GURO/t03HHIlkk4y5v3Le8PvSdJLgxaDri?=
+ =?us-ascii?Q?G62YblMFivqBrhV1xoxNSclE+DnJ8m7ozE6kniA4CT34FjwlsjN5WE8TRlda?=
+ =?us-ascii?Q?mHtmIl6imXKdeL9qg0hcvneOyBMe4uuYUS6ZZ2xENfVt23fH6BHiw+RDynYl?=
+ =?us-ascii?Q?q773Iebv4MIJnQMzotZUv2T4d/y2P22rLUUx9++NC6a5xddcmgAnnzZAQrDL?=
+ =?us-ascii?Q?yN4giA7X/OgEQYPU3i2JWv6Ex1mEy7ZGwdQnNMDcR4trIjhfeciPArsY0rYs?=
+ =?us-ascii?Q?Ypi4EHmFjFM1D5BFjx3mupasXypsQfm4Y5ZoU+BoxlSoSsOm+56rNlvdOo9N?=
+ =?us-ascii?Q?ux5Es0zyBeSzfYX9P19EQU3fvkoJS5n56rIUVeVr0Ssei5lX5phD8Fw8KmHE?=
+ =?us-ascii?Q?0wv6inrTjLLvq5Bd8hcfmIB8bENaGXRp8/d4AuNPp35vOb4jhYRZBU7o6ewU?=
+ =?us-ascii?Q?kGFp4gPOTQOFT6LXQtkLZ1mFQTv6YiIduTqNGOx3sGjRjTzgzJ5Yxmjg8kZl?=
+ =?us-ascii?Q?ACaeAQPkTsh+SrmPoK0HJYwyf18OuAwwgzIvOuSgFKGofyhMSoXQKOqK0AvP?=
+ =?us-ascii?Q?ahxrMSXTKpLEc9vkRf0C3m82QwQwsxk4xO0EflvxWi5TUN1L3mF89GgCn2Tb?=
+ =?us-ascii?Q?qyH/y01+J+8lpPyj6xemcefhHmFUYhXsv9yx5bXaN+SoyFlL4oGd4wJ88EXS?=
+ =?us-ascii?Q?nXobKabEbrq3EW4u5mztZq2m1rQ97QcKmdpTVteGXiNeojdKFq6p7WhQ6FvS?=
+ =?us-ascii?Q?K5DqfafIFzQLpIYInNOORJbFw2kaLj9WUcYjQL4LlTJOjqpNBgiZzWaO+zLb?=
+ =?us-ascii?Q?oeHORXCqOSDGs82JhGyJ1BbpFri89c+XDLw9SJI+twI5nNZptkaQVhEYl+t/?=
+ =?us-ascii?Q?6p72hQIbcpQgKi8Gad3EoDfwK1oixtQerdV0?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 09:33:42.8238
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7fe37cf-c51c-4c0d-cc47-08ddd4032b0b
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A790.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR02MB8260
 
-On 04/08/2025 16:26, Thomas Antoine via B4 Relay wrote:
-> +  monitored-battery:
+When `devm_add_action_or_reset()` fails, it is due to a failed memory
+allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
+anything when error is `-ENOMEM`. Therefore, remove the useless call to
+`dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
+return the value instead.
 
-You don't have the type defined because of missing power supply ref.
+Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+---
+Changes in v2:
 
-> +    description: |
-> +      The fuel gauge needs the following battery properties:
-> +      - charge-full-design-microamp-hours
-> +      - charge-term-current-microamp
-> +
-> +  nvmem-cells:
-> +    maxItems: 1
-> +    description: |
-> +      Saved fuel gauge state. This state will be used during the initialization
-> +      and saved on exit. It must be initialized beforehand.
-> +      Its layout must be composed of
-> +        - RCOMP0 (characterization of the open-circuit voltage)
-> +        - TCOMPO (temperature compensation information)
-> +        - FULLCAPREP (reported full capacity)
-> +        - QRTABLE00, QRTABLE10, QRTABLE20, QRTABLE30 (cell capacity information)
-> +        - cv_mixcap (remaining capacity of the cell without empty compensation)
-> +        - cv_halftime (time-to-full characterization time constant)
-> +      They must all be aligned on 2 bytes. A valid CRC8 checksum must
-> +      also be found at the end (polynomial x^8 + x^2 + x + 1).
-> +
-> +  nvmem-cell-names:
-> +    const: fg_state
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - shunt-resistor-micro-ohms
-> +  - monitored-battery
-> +  - nvmem-cells
-> +  - nvmem-cell-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      fuel-gauge@36 {
-> +        compatible = "maxim,max77759-fg";
-> +        reg = <0x36>;
-> +        interrupt-parent = <&gpa9>;
-> +        interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-> +        shunt-resistor-micro-ohms = <5000>;
-> +        monitored-battery = <&battery>;
-> +        nvmem-cell-names = "fg_state";
-> +        nvmem-cells = <&fg_state>;
+* Split the patch to one seperate patch for each sub-system.
 
-Reverse the order of these two.
+Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
 
-> +      };
-> +    };
-> 
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index 917a76d584f0..28ba11e42823 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -1859,8 +1859,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
+ 					       exynos5_usbdrd_orien_switch_unregister,
+ 					       phy_drd);
+ 		if (ret)
+-			return dev_err_probe(phy_drd->dev, ret,
+-					     "Failed to register TypeC orientation devm action\n");
++			return ret;
+ 	}
+ 
+ 	return 0;
 
-Best regards,
-Krzysztof
+base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
+-- 
+2.39.5
+
