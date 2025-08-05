@@ -1,192 +1,175 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D593594C
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Aug 2025 04:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACED2AD0B
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Aug 2025 05:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754369475; cv=none; b=N6MWQzmpkcK5hfa14ehY9OcDYL8kHmSPox21+BDKhiZIHO6mGE9FG6Ew6QA5iuluLnK4DuqX1btxyP8dSc4brZqyUa+XjdBgBwvOxXDEo9iG3qFBZ/pn5S3JfNXVev4EtehOqz/m8i04MSlw1hadXGaFu2OSNO8CDr3yGD7dkaU=
+	t=1754370217; cv=none; b=hKRZ5XoeQkpK1aMiWzXshlD0e4dg/GS/JxXtIR5+cmHGCAzd1G4Kdfer2ftICHC2FfSdFjYG/u53X4vFom5ARdSff2lBH7MT0xWYt+w/qY0kQobt5fzgQMjcAGELenGylA+TMmFV4YmwDCUd025PK0EgZO/5K59tI0HdxTtdC5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754369475; c=relaxed/simple;
-	bh=v0Ft1DFU0RL+7vSEod4nlD2k84JOMABcIK1ssZxiqnw=;
+	s=arc-20240116; t=1754370217; c=relaxed/simple;
+	bh=8eUuiOAVr7JSZ5ksqVPkUqhNwo/8hc8bMdYjo7FjjO0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BFXE4pLw3fSgp4MFKKvz4/yGKLFoxrRktUJWKX8PS9HR4DYefMG9OuCTFBDZo0gYFugDpoiWlWs0L6RgXORnwpiytER1r1NjeHdVXCWS9uBoWQzEBYPs/8u63reww+VmaYwNEg6G4+iDcVE4OHjlSvoVOn1mQLdp5mLFsHz1UME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kTDagdNd; arc=none smtp.client-ip=209.85.128.175
+	 To:Cc:Content-Type; b=ezvQGmAJlvtKRb59GjoNirDAxG3raA4bhtqrRquZDEsyR8ajpAqE8hR+5xaMNK7EphWd0kSIgWOxeaWGuLIsh7NuGQLBszEprt9UhlkG2MAfSEZqcDn1m4I9GBtbPwOyl4d3wAnb8mkAGtzCcxOcOBFL+v6itdZ0UyFSkZywvoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rRcX1HZB; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTDagdNd"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-717b580ff2aso46551097b3.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Aug 2025 21:51:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rRcX1HZB"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71b4677044bso55683267b3.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Aug 2025 22:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754369471; x=1754974271; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754370214; x=1754975014; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=goRDbiInExYlg2FZrZ7REiNXbKoKaAvkFCx3YBMBwsw=;
-        b=kTDagdNdCOFVgdDkh940Si786d/amhH1VeVMmdWOJcti1havtIZdiEa344OpRNaXWX
-         xawk0H6Gr62J92x/IGQJuJ7cLUEhRWF0LKv2fsAfZG1JbpYLs94G7FcEl1/g2bGIXFX6
-         wkk0ZkN34kFhvjs1pn3z0RFOgBD1AsL7mTQtoY/+Sym0u/hyJ1UHwwYQmRi+rvuNFMFp
-         xjKgkimpTnoRmOMvxhNGjIMv8Tta8ULzP6dKaDTL2b1chV72b38DIV5ry+19NXaRRMtL
-         bfZz0A0evTDZlAzJCn6IYTeziY2tLzw8hCapFlvYD1AfUqQXNTrRoiLfJkQS2aZfgmzV
-         6fUA==
+        bh=eY5N7v+zWU8+UjZUkDsBJT0AwO4FrfcIvgZ3TXySOJk=;
+        b=rRcX1HZBhz+7gXxh6R1MLbFhNa9oTQ4Dntav+38dfyqV5pUds8W2C7+1/KtHNMcwPb
+         CyAgiabfQoq9NcTo1jphPnQbX7NlyXOUQGy45O0SE1cn+VDlw8U+E4ZHXqYtNn6/GKdh
+         9FC20lNjghCCXK0rbyp3RsCQEleZtPhyDU/eoGlu5mEzSVPoXrrDaLGPANaDh6SO6aLH
+         1UOI1N/EMz/NA7v0POXf1aYeqGvgQhB7a46YYwPUPHlRoZtqmRLYCFSZPu8ZSkaW65qs
+         T1XkWjZB8/G7Kih7pBIkK0gduSeuP3kXHBGrhHKb3/RrntZ/XW7kl5vN5eeuRInjvODd
+         ia0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754369471; x=1754974271;
+        d=1e100.net; s=20230601; t=1754370214; x=1754975014;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=goRDbiInExYlg2FZrZ7REiNXbKoKaAvkFCx3YBMBwsw=;
-        b=quZ+9EVCrE1wrVc9LzxNcleAMqg9u3uSXx4CA6XNWmg8Nz9RJuraB6tXzq6EyYW2GK
-         lZtuDx8hAZWRrulDSgCi6s5DP2wJZcH3uwFVj0TV7QIKdHkP799toCZ7kDpBuwugcdSa
-         UJVbFLDAY79nUMumSxODeRiAxN3jJt5G1bs7ldAykqqKceS0thQJS6mlKH9yXxivFjfN
-         tTFYzFAPrklUZhZEEFjQaxxIhT/2lOdmWekA2RAWbulCzPN9fm2WeLskme1UToO0ku7z
-         uNoyA3b64QZNM2A89d0R3vN+91mr3SSi1TqI3FSgmEeUYVqVaHAS8R64qzg2pMv/YbH6
-         8+nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlUzwo9/ErxFsZukDKZzigCcPcGfy90M6Apk2S8tYXdowkqnphqTVCXLeH4l+mhFSEZ7EZpoXvgT2vJKXfFqi2TA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaOq2o2tFpXQcQkJEEOl89xYG1c31J3bR/Svqcss7MuUcXBO3Q
-	Ll9a5UEuiuQNn8APyAkjT/U/W5XhNYPGP7BicwFSkT9SuR29v1bFk0lOoDNbqOcXP80xBqoFD44
-	14Rr0SflRRizgc9BAVFXbU+Wp6eWPbhR34UzTVnxgsw==
-X-Gm-Gg: ASbGncv6a3yCHLc410Iem9XRH2v5Wsdk6IDDDb2xNlU1UJdlsjzBKB4MSOkSXmyVpgK
-	C3stT5sybWsQ4W7pjYpooPc6ZwEgYFRUuMzUFb9E6K8yCqm61f/PlFvN1s86yWEnl+Bm1Rwd1k4
-	ahwkV90+iCwIz7C/tHUnCl0f2W3z02J0r5lr6lEnP+Z9FnT1eSZQw9Tbb7WTc4NG6ObPw1GrHCG
-	rBAwg==
-X-Google-Smtp-Source: AGHT+IHeQ9gjfgM8r8LCqDBzIZurZmcUaTL4L7HOV3CKVzHJvHoNvkFagl++11B+nx8hPTcRNP2NnteS7qwpSI1JFek=
-X-Received: by 2002:a05:690c:14:b0:70e:7ae4:5a21 with SMTP id
- 00721157ae682-71b7f0c56fbmr121732557b3.4.1754369471580; Mon, 04 Aug 2025
- 21:51:11 -0700 (PDT)
+        bh=eY5N7v+zWU8+UjZUkDsBJT0AwO4FrfcIvgZ3TXySOJk=;
+        b=n2PVfy0nE/xP6qAr9dO9dI+rupp4vpOJkAh79pj5ZotF89uF19cQJnGbPz3FRflfhK
+         aGA/rJlLzTkp86CoaiIhwmNxZupeox+vZHeJw2hj2MlCPhY6I48ltag6RIE/gaDqxw8/
+         vRnbouEU9zSPpvT/+CZ6Nj6wwvC5zi3HZ+oDkRd6MGP3yvMjP4tOLFYRT7hvbiKQcmaE
+         MQL7/ED7UVlDkILL3ijT+L3h17qyyb51xHrUEUcO4LeBCiL8txXiYpb7dDIU7agB85a8
+         7PCYhbuu9yhUf5Nw29cA70qr/B86ACxtkqBhgSqm7tSLCoVs6HYJlK2EgCzs2FxemJGb
+         GvEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMhaQh+HBzNbWTWK45WSlreAWkzXRnyJDRK8MLruJhs0D4JlqFdWTvHkLy4/tv+xj86lP0nyhXr0/O96+C4rvH+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRAw6WOBAriJQxhYCND7t8E5bsiSaFjWafm2IKXIKtYefuDmb8
+	duv1R4OELKE69tRNBd/FMFXWFDQcasKLTcKjfRDktL9cDKRm5BODimqn6R8Z5OMAUgFJ+PCaM/l
+	ya0HO6V5wJEePQMXphZilj0D+ib0j/g2WsgWS5OmYnw==
+X-Gm-Gg: ASbGnctXfbOJUZsmR15NB/hHok0hWFIuHuCAMEzFNsyjhZNGoXerBaGKQVhgrMT340z
+	Ek7kn89B3/M/wwkPH/VmZt9pEsvBsLAAVkCYLA02SZkgPmCBzvJdSPxgL/wn3jXvx5/oAzM4PkS
+	4c/i9UXYzHdUjls+QlQcKLuYlzCr70ikHytc8Lg/z1MSH3lmrqkheYE8DNcxYTrQRkXP5Obd7xc
+	921+A==
+X-Google-Smtp-Source: AGHT+IG1oZhqjscU5pfjiY1Q7UEpsk3imnmFMsZ67z7dBWGY5jc3R9ttC3dArQUXZ4i83be1Xm4e66GVmgTedDEMPjA=
+X-Received: by 2002:a05:690c:6f0f:b0:71a:251e:36eb with SMTP id
+ 00721157ae682-71b7ef66861mr146668157b3.21.1754370214226; Mon, 04 Aug 2025
+ 22:03:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250724081337epcas2p31f594b6e9ab87e24c94f11dea4070956@epcas2p3.samsung.com>
- <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-4-sw617.shin@samsung.com>
- <CAPLW+4mo-Fw5+KmwHdZGAM4uNpOWL6QakTgP-wMSxR=+dMGqsQ@mail.gmail.com> <000b01dc05c0$a50f5f20$ef2e1d60$@samsung.com>
-In-Reply-To: <000b01dc05c0$a50f5f20$ef2e1d60$@samsung.com>
+References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
+ <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-3-sw617.shin@samsung.com>
+ <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
+ <000a01dc05c0$9f0ab110$dd201330$@samsung.com> <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
+In-Reply-To: <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 4 Aug 2025 23:51:00 -0500
-X-Gm-Features: Ac12FXxJPNFLaHj5nje0A_AcDG6Ll1OXb556rCVkvn6Yb_8cbt1jdRu-9Ss-iOU
-Message-ID: <CAPLW+4=sJM4UwsqfC8t=swzhGU=BdRn3T6GjJje0unZSgNg-ng@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] watchdog: s3c2410_wdt: Increase max timeout value
- of watchdog
-To: sw617.shin@samsung.com
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, khwan.seo@samsung.com, dongil01.park@samsung.com, 
+Date: Tue, 5 Aug 2025 00:03:23 -0500
+X-Gm-Features: Ac12FXwhfK5c6hCAFDVH8lXtPSm0rXJFOVWdmBpTpuOp_j1X3bUQ9DkVKABvZIY
+Message-ID: <CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: sw617.shin@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com, 
+	wim@linux-watchdog.org, khwan.seo@samsung.com, dongil01.park@samsung.com, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
 	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 4, 2025 at 11:23=E2=80=AFPM <sw617.shin@samsung.com> wrote:
+On Mon, Aug 4, 2025 at 11:47=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
 >
-> On Saturday, August 2, 2025 at 1:37 PM Sam Protsenko <semen.protsenko@lin=
-aro.org> wrote:
-> > Not a strong point, but I'd break this patch into two:
-> >   1. Add 32-bit counter feature (without enabling it in exynosautov920
-> > implementation)
-> >   2. Enable 32-bit counter feature in exynosautov920
+> On 8/4/25 21:22, sw617.shin@samsung.com wrote:
+> > On Saturday, August 2, 2025 at 1:12 PM Sam Protsenko <semen.protsenko@l=
+inaro.org> wrote:
 > >
+> >> How about something like this instead?
+> >>
+> >> 8<--------------------------------------------------------------------=
+->8
+> >> static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq) =
+{
+> >>      const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
+> >>                  S3C2410_WTCON_MAXDIV; /* 32768 */
+> >>      const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
+> >>      u64 t_max =3D n_max / freq;
+> >>
+> >>      if (t_max > UINT_MAX)
+> >>          t_max =3D UINT_MAX;
+> >>
+> >>      return (unsigned int)t_max;
+> >> }
+> >> 8<--------------------------------------------------------------------=
+->8
+> >>
+> >> This implementation's result:
+> >>    - is never greater than real timeout, as it loses the decimal part =
+after
+> >> integer division in t_max
+> >>    - much closer to the real timeout value, as it benefits from very b=
+ig
+> >> n_max in the numerator (this is the main trick here)
+> >>    - prepared for using 32-bit max counter value in your next patch, a=
+s it
+> >> uses u64 type for calculations
+> >>
+> >> For example, at the clock frequency of 33 kHz:
+> >>    - real timeout is: 65074.269 sec
+> >>    - old function returns: 65535 sec
+> >>    - your function returns: 32767 sec
+> >>    - the suggested function returns: 65074 sec
+> >
+> > Thank you for your feedback.
+> > I'll make the code changes as follows in the next patch set:
+> >
+> > static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *w=
+dt)
+> >   {
+> >          const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+> > +       const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
+> > +                       S3C2410_WTCON_MAXDIV;
+> > +       const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
 >
-> I'll break this patch into two in the next patch set.
+> Not sure if splitting this expression adds any value. Why not just the fo=
+llowing ?
 >
-> > >  #define S3C2410_WTCNT_MAXCNT   0xffff
-> >
-> > Suggest renaming this to S3C2410_WTCNT_MAXCNT_16, to emphasize the fact
-> > this value is for 16-bit counters. And for consistency with the below o=
-ne.
-> >
-> > > +#define S3C2410_WTCNT_MAXCNT_32        0xffffffff
-> > >
+> const u64 n_max =3D (u64)(S3C2410_WTCON_PRESCALE_MAX + 1) *
+>                     S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
 >
-> I'll rename this to S3C2410_WTCNT_MAXCNT_16 in the next patch set.
->
-> > > + * %QUIRK_HAS_32BIT_MAXCNT: WTDAT and WTCNT are 32-bit registers.
-> > > + With these
-> >
-> > Why not name it like QUIRK_HAS_32BIT_CNT or QUIRK_HAS_32BIT_COUNTER?
-> > As I understand, the quirk means that the chip has 32-bit counter, so M=
-AX
-> > bit is not really needed?
-> >
-> > > + * 32-bit registers, larger values to be set, which means that large=
-r
-> > > + timeouts
-> >
-> > Spelling: "to be set" -> "will be set" (or "have to be set").
->
-> I'll modify this in the next patch set.
->
-> > > +       unsigned int            max_cnt;
-> >
-> > Maybe make it u32? It definitely refers to a 32-bit register value, so
-> > will be more explicit that way. Not a strong opinion though.
-> >
->
-> I'll change this to u32 in the next patch set.
->
-> > >  };
-> > >
-> > >  static const struct s3c2410_wdt_variant drv_data_s3c2410 =3D {
-> > > @@ -349,7 +356,7 @@ static const struct s3c2410_wdt_variant
-> > drv_data_exynosautov920_cl0 =3D {
-> > >         .cnt_en_bit =3D 8,
-> > >         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET=
- |
-> > >                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> > > -                 QUIRK_HAS_DBGACK_BIT,
-> > > +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
-> > >  };
-> > >
-> > >  static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 =
-=3D {
-> > > @@ -362,7 +369,7 @@ static const struct s3c2410_wdt_variant
-> > drv_data_exynosautov920_cl1 =3D {
-> > >         .cnt_en_bit =3D 8,
-> > >         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET=
- |
-> > >                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> > > -                 QUIRK_HAS_DBGACK_BIT,
-> > > +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
-> >
-> > Yeah, I think it would be easier to review and handle further if this
-> > exynosautov920 enablement is extracted into a separate patch.
-> >
->
-> I'll break this patch into two in the next patch set.
->
-> > >
-> > > -       if (count >=3D 0x10000) {
-> > > -               divisor =3D DIV_ROUND_UP(count, 0xffff);
-> > > +       if (count > wdt->max_cnt) {
-> >
-> > wdt->max_cnt + 1?
-> >
->
-> Yes, 0x10000 represented 'wdt->max_cnt + 1.'
-> Would you like to suggest any revisions?
+> Or just use a define ?
 >
 
-Ah, sorry, I didn't notice you also changed >=3D to just >. All well and
-good, no change is needed here!
+Oh, that code snippet above is just a suggestion, please treat it as
+pseudo-code for this purpose, -- I just wanted to illustrate the idea,
+and should've been more clear! Yes, definitely should be revised and
+re-tested. And yeah, I agree, one single const or define would be
+enough, no need to make it too verbose. Also, the naming may be not
+the best, e.g. cnt_max might be better than n_max for example. But
+I'll leave it to Sangwook Shin to decide on the implementation, just
+wanted to communicate the idea.
 
-> > > +       wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT;
-> > > +       if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
-> >
-> > Double braces don't seem to be needed.
-> >
-> > > +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
-> > > +
-> >
-> > Style (minor nitpick): this block can be more explicit, i.e.:
-> >
-> >        if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
-> >                wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
-> >        else
-> >                wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT;
+> > +       u64 t_max =3D n_max / freq;
 > >
 >
-> I'll fix these in the next patch set.
+> Make sure this compiles on 32-bit builds.
 >
+
+Can you please elaborate what might be the possible problem -- just
+curious? I admit I never though about 32-bit case when writing that
+code, but don't see any immediate issues with that too.
+
+> > -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_M=
+AX + 1)
+> > -                                      / S3C2410_WTCON_MAXDIV);
+> > +       if (t_max > UINT_MAX)
+> > +               t_max =3D UINT_MAX;
+> > +
+> > +       return (unsigned int)t_max;
 >
+> I am quite sure that this typecast is unnecessary.
+>
+> Guenter
 >
