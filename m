@@ -1,173 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABFB81741;
-	Thu,  7 Aug 2025 09:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC422144C7
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 10:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754557640; cv=none; b=X4/aN7On+kZ6jBLeWZirjwZAo42I6oK7Jup90KkfooOUbOBClmhhRHlQfp6wfWsWawz3wl6JrM1W6/riZbT/zPrEzk/uLWga1vnLqf8+NZg9fFcRQGAL9qBwaaVGkBcUDL17MYLQ2+YfEsFc6BCIXAvCZ0rknmPXNYpk6OjPSks=
+	t=1754563826; cv=none; b=BjjD1JF4WCbZwLyyOUBMS5ap8jI42b+4GAekS+8R92XM60cFzhA62UOZjkbK6OCtc8OGRVzACIx86vY++gEe7dVNz5SgCzuD4dKzTLG37DXk7jwPykncGpK4FvqPXQnYrqEPhJkK3gscqn1DcBfx0BsTegdfztFNtQCTHb6n9Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754557640; c=relaxed/simple;
-	bh=LdyIokBuO7Un8obo21ibvQiKDOlr/VJXcK2c42DetEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAuTnyMSZa6uBiCln+Xn2bgZ6bZX/l5IRGZ1wjCPYF3kBVWU2gUN/UTFduCQc1DTaWAFgLRZvIwBJvJROu0h/9svifXfhD6kRBx72WJcWTzmtZeCvm67UkNziIciJMI6D7yhaYKhqKr/Trjdio7WaLY0tApVO30XWKDAb4T7Usw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kjmTs2hr; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1754563826; c=relaxed/simple;
+	bh=Syfn0NEuvRi1yje0O/PsVJqRnUVtWUN/PEXoRX+j6eU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=L56AtxmXns/yfWtTTmWwuTqSg56nKvindk9JNTkQMaN2XC/dksppgUXVCZHLq/MRymB7QpiGTU3MeJJjvNxesLs8NIxqIYty+GiN4ujboU6vCzMyQz4H47IrD2uE4P4qSPnW6BSLrIPjQdcq34NZC5ptEWy5kNgczSAgT8FV1/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=e2jZcK3M; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kjmTs2hr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754557639; x=1786093639;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LdyIokBuO7Un8obo21ibvQiKDOlr/VJXcK2c42DetEE=;
-  b=kjmTs2hrhIohhPkn7/Zh7W3VrxWVLCX4npJaHOwq2B8WruZ6C/hallJu
-   YnVkY/oN2lZ3rGuDEWBVIx4ROpDbvToXV0qmK4b9nRzmw3ZIzPX+eBaIg
-   NGcIh/qKtodzR2yHivYhGsHLnNiCeU86O3QZ8NDWraDHwdveHk4iAWmhK
-   VDOZ+pTMKBKouyqZab9O1t4Oj2IQYrEogfmVDG38ro2X7ai7b5STnHYeq
-   uG6ji3Is4P1Ahj3RNn353QA0zqgtfaHSktrrwP36M/jqrxEAWEbClsvRP
-   3kaPj5vF1e21/DgeaclmLs9/loRUrFu77dYpbkpbiwNoPR+rNumBjzTS3
-   Q==;
-X-CSE-ConnectionGUID: 4teRfpiwSPKkcKrhqFWpaQ==
-X-CSE-MsgGUID: ZWfcwNPRQ6CaCIg55QLPIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="68340071"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="68340071"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 02:07:18 -0700
-X-CSE-ConnectionGUID: aqDUmy8SRu+br3OGdJ9mBw==
-X-CSE-MsgGUID: sawpwupxQIuoCN6lIPNl9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="169473133"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.255])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 02:07:16 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 79BBB11FC45;
-	Thu,  7 Aug 2025 12:07:13 +0300 (EEST)
-Date: Thu, 7 Aug 2025 09:07:13 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 64/65] media: staging: ipu7: isys: Don't set
- V4L2_FL_USES_V4L2_FH manually
-Message-ID: <aJRswZIVKCuzqCpr@kekkonen.localdomain>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-64-eb140ddd6a9d@ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e2jZcK3M"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250807105022epoutp02bba9beeca1376a2a34cb3c10f232de02~ZdoAO3OPJ1754017540epoutp02U
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 10:50:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250807105022epoutp02bba9beeca1376a2a34cb3c10f232de02~ZdoAO3OPJ1754017540epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754563822;
+	bh=4JuxWH0gBRJFGn1yRVR8bYk8LvsjMgUCt5sZEIKMU0w=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=e2jZcK3MhHShok6QY1JpZA90wrloAaNL1f4N67gVCrQ0cHt+aESjgPMQLu6lIPajZ
+	 2o/Df62U5i3edTPAuG5HKG+UqZG6SD8MQXyyDyAY0Zuu/WxECQbBS9aTx1fFcHYPrI
+	 p3d02kLcxwAKqR9Os+i7I8n+CzqCmsa/sio/i6c8=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250807105021epcas5p3d0cb6d2d9e7317dda010087be19fcb1f~Zdn-wez1Y0694006940epcas5p3R;
+	Thu,  7 Aug 2025 10:50:21 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4byP7x017Dz2SSKb; Thu,  7 Aug
+	2025 10:50:21 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250805052803epcas5p47a93b443b6c085e237adbafc4de1f3b7~Yx8BUYASz2721327213epcas5p4k;
+	Tue,  5 Aug 2025 05:28:03 +0000 (GMT)
+Received: from FDSFTE361 (unknown [107.122.81.127]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250805052802epsmtip299b7db91253d19087c2c9b5618578ed1~Yx7-3VIlX0050500505epsmtip22;
+	Tue,  5 Aug 2025 05:28:02 +0000 (GMT)
+From: "Bharat Uppal" <bharat.uppal@samsung.com>
+To: "'Bart Van Assche'" <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
+	<martin.petersen@oracle.com>, <alim.akhtar@samsung.com>,
+	<avri.altman@wdc.com>, <linux-samsung-soc@vger.kernel.org>
+Cc: <pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>, "'Nimesh Sati'"
+	<nimesh.sati@samsung.com>
+In-Reply-To: <c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org>
+Subject: RE: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
+ in reset on suspend
+Date: Tue, 5 Aug 2025 10:58:00 +0530
+Message-ID: <0ae601dc05c9$b749ba60$25dd2f20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250802-media-private-data-v1-64-eb140ddd6a9d@ideasonboard.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-in
+Thread-Index: AQExeeAfBfzr5YSvfr0wrrMUW8ELmAHKrEFuAhf3ztm1iYbGIA==
+X-CMS-MailID: 20250805052803epcas5p47a93b443b6c085e237adbafc4de1f3b7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
+References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
+	<20250804113643.75140-1-bharat.uppal@samsung.com>
+	<c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org>
 
-On Sat, Aug 02, 2025 at 11:23:26AM +0200, Jacopo Mondi wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> The V4L2_FL_USES_V4L2_FH flag is set by v4l2_fh_init(). It is not meant
-> to be set manually by drivers. Drop it from the ipu7-isys driver.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-Thanks, Jacopo!
+> -----Original Message-----
+> From: Bart Van Assche <bvanassche=40acm.org>
+> Sent: 04 August 2025 21:17
+> To: Bharat Uppal <bharat.uppal=40samsung.com>; linux-scsi=40vger.kernel.o=
+rg;
+> linux-kernel=40vger.kernel.org; James.Bottomley=40HansenPartnership.com;
+> martin.petersen=40oracle.com; alim.akhtar=40samsung.com;
+> avri.altman=40wdc.com; linux-samsung-soc=40vger.kernel.org
+> Cc: pankaj.dubey=40samsung.com; aswani.reddy=40samsung.com; Nimesh Sati
+> <nimesh.sati=40samsung.com>
+> Subject: Re: =5BPATCH=5D scsi: ufs: exynos: fsd: Gate ref_clk and put UFS=
+ device in
+> reset on suspend
+>=20
+> On 8/4/25 4:36 AM, Bharat Uppal wrote:
+> > +static int fsd_ufs_suspend(struct exynos_ufs *ufs) =7B
+> > +	exynos_ufs_gate_clks(ufs);
+> > +	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
+> > +	return 0;
+> > +=7D
+>=20
+> Why '0 << 0' instead of just '0'? Isn't the latter easier to read?
+Thanks for reviewing.
+Indeed setting 0 is right, but in the same file ufs-exynos.c,  I have seen =
+HCI_GPIO_OUT register configured using 0 << 0.
+My intent here is to maintain coding style within the file.
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+With Regards
+Bharat Uppal
 
--- 
-Sakari Ailus
+>=20
+> Thanks,
+>=20
+> Bart.
+
