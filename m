@@ -1,368 +1,215 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11023126.outbound.protection.outlook.com [40.107.162.126])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FD5239E97
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Aug 2025 07:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754379742; cv=none; b=sBoFvt+D2rQsGeBsOJ69NvZG3lL32b73LC7tTepUSGT5zn2EhWdNLPjHY6U2IAIY9WJxOJuah3I2b1yw4TE8xiL11a+EKx3veHcNHTBEiKNZM3rzDzyEquez7HZb21hFWOJN6/KxhSN02UqbkqhJpmCsAsthaGRWRRNubO9zgDg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754379742; c=relaxed/simple;
-	bh=1qW0jic5qgSouRAJ0K8gWbRDvMtLz1uULmdexDci+H4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVDFsL9+AFo30ujUX/uDTD52k1T6wJLffZSUuarY5RM9ogs5Z61yGPwQYkdor4mAI03NcwAGSVlril6f60+Ae5scD5Sp3dElSsCeFwxiNUXamiSV/U7C4XnKtnGsXM+iRCV8MK55GNc70aTmez4J/8+EpKGhHVBAXKFsfsoAhxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1ujCHA-0005yv-K9; Tue, 05 Aug 2025 09:40:00 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1ujCGr-00C0Ka-13;
-	Tue, 05 Aug 2025 09:39:41 +0200
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1ujCGr-00A7fC-02;
-	Tue, 05 Aug 2025 09:39:41 +0200
-Date: Tue, 5 Aug 2025 09:39:40 +0200
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 29/65] media: allegro: Access v4l2_fh from file
-Message-ID: <aJG1PC0poVY-QZRb@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-29-eb140ddd6a9d@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8CD22173A;
+	Tue,  5 Aug 2025 08:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.126
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754382065; cv=fail; b=L4tout6TVymym/WHJjrx0BlrWWSIrFEBIsFvMb8ehIJzMCzFi2+PnQAx1hUN9lglERCy83JVMEGHIRRzlCf9v5+DiBNrGqah4TcGcuN7fqsNxe3WwnKRjTmqqRv41meeSL1JSG89fi7Q5biFKTxbdQ0kmt7torDby0PkvbZvRcc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754382065; c=relaxed/simple;
+	bh=hXuoJBbG7z/2orTi7CyapP1w673tiDlAZSXq5ZC5op0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oVuvaaRabtjovWzoZ9YrTrdAVyH9lLZvuT9I9V1F8Xx0LapGZpv81RRqnmRsQ6qxC3RWyt88rVZpQQQvrURiiPEkaIDq9003Yw2D9mdDakPdIpwUru1CqPZtrVPCaHMT7HJeZIuw2ec9PWs0pEyi7sguCs1JqI9DChOegyreDBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=VscHYmxc; arc=fail smtp.client-ip=40.107.162.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="VscHYmxc"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xMOnK0Kvb1lj/TVz4+GUmaL3BZ7Zwpch/cES81zp6IclLSMrtgrIV81ngw6Ut7Z94mSkt6B3N+JKcPVPPmzBKfhOQk7D6ep+17Vldh9zUJzKy+kFilhBCb8DhuswaIS2OB0BeR6bsf8OucParW/JPo8KlRFl34/TR4wu6GN9J5GTjNwzagfnTbHHwMB31STd7kJVYf5xghv49237aG94O7GUZ0vNCH+1uMBaUgiOhBg4Bt1zEnSQGG6zoyWN4R09qtDnjjrkQQelo1zMx7tV+6Q95CT0s3w6hrBi5b7vOVKUlROGCVkHeGdnewkKv4f9zGdNlI1dAcow+lH1a/uZsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cD9EpZaivAm90NanCD9PITPxQrEU4Vgfy1ahi2/aJ+A=;
+ b=Y04BXAdrgY7I/vqSAgdfsvGZgJVLnDAxYr0atsgUkwWRJ1LtdnAht/Rp96fc/EH9vX66wvRcpER0wdtXVVIpw0QVlojHASmG+gzhiZjduZ+cP11jAZCHzHOqhB25zyYtqun5Qzf3ZvsxF5g0c91+VfNg5lMV9RGGYsLeVMFOK/B2D0bomyxa5oUG5yaZBMHtvmVTpB9Leooa56MRZccs32jgnjyrmcF8+HihuN34P/LEww75h5juNGoGYSlovAHLReprm7BDa6K2R+ZZ0ZcD6R9Mpqa6CL3juz5KopA7LoOmER7DdqB8QI/lUtsIQZzDERgyFZdYnu15/DNFoQtwYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
+ dkim=pass header.d=uclouvain.be; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cD9EpZaivAm90NanCD9PITPxQrEU4Vgfy1ahi2/aJ+A=;
+ b=VscHYmxcAYuTohcrnDTEBIBK5hM5DX+p8VDpcQvdaLejR1xwQUnjZlg0BU6QpVfQ6L5IEzNDFgKTylHg55zt6jf5b/B0Z0K9M76BwVCV2QvsqlXauh+Do0hWm97IRd7ndMYTzPq2Lqlnv2ca/2h0jCeAMGoF7YEPyeyn7zmkGPOAHoXwHrHQhBB/QSFipZDZMMV4sS3suFT+6nLlhGKjtrEzZz2gNmlCURHS/bImxBc6vI7Z4v9n8T5yaqQvdNm1hUqC+tnqP7/o7+hbx2xr7pAZi2xvWEVg4qDruAOXwfq7D/bNrwfaIZqOAQMOYD8w2WP/+5M8fIN/GS4gbvp45Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=uclouvain.be;
+Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
+ by AS2PR03MB9491.eurprd03.prod.outlook.com (2603:10a6:20b:599::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 08:20:58 +0000
+Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
+ ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
+ ([fe80::c90e:deef:6dcf:538c%7]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
+ 08:20:56 +0000
+Message-ID: <e63913df-6808-4822-a3a4-870b650f10d9@uclouvain.be>
+Date: Tue, 5 Aug 2025 10:23:14 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] gs101: MAX77759 Fuel Gauge driver support and
+ enablement
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sebastian Reichel
+ <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+ <42de1ed3-073a-4058-971b-a9a8c473d9a0@kernel.org>
+Content-Language: en-US
+From: Thomas Antoine <t.antoine@uclouvain.be>
+In-Reply-To: <42de1ed3-073a-4058-971b-a9a8c473d9a0@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0157.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:36c::10) To AS8PR03MB9047.eurprd03.prod.outlook.com
+ (2603:10a6:20b:5b6::13)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250802-media-private-data-v1-29-eb140ddd6a9d@ideasonboard.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|AS2PR03MB9491:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3bebd21-d4f9-425d-6714-08ddd3f90095
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SHY2bzRsZ3BnWnhRc2w4OXlOR3NPYllxN01KYmhRbXdQK1B3K0FpU1FSUXUv?=
+ =?utf-8?B?ajVOTUwrOG1yeEVJbE9YLzBkTmpzbTNhNDI5QVdUdnB6eEJ4SkdIUkNhbkpH?=
+ =?utf-8?B?SXZjVUpnM2RJdVdWQlozOFh6a2pLb0xqb1E3V29VaUdieWhuSjRKd1lxNTBG?=
+ =?utf-8?B?TjNIN0swOWQ4cXNUN2JuMkpSOS8wMlRiWGU5aVFHQnlDeUdFL3NvSEpxdUM5?=
+ =?utf-8?B?aTZJMFJia0UzVGx6YU9Sdlg3YTJlcDNFUFFxOEVqUnlwUEVqeWxvU3Z2R2tE?=
+ =?utf-8?B?UTQ4bVVhTmdIa1ArR1BZS3Y1M0xuV3locmg1QlFHT2RoQm5VYkNJYzR1VkNu?=
+ =?utf-8?B?T1IwSUZ1WGZpSmZKTzRTR1dPaVdTTjRxSGErcVRObVRSQVJyMUo3K0dSMWhl?=
+ =?utf-8?B?S2lWMnRWNHg5NkdvcTZ1ak52VVVsbW5rb0ZIVEpXWDVmVG1wMUtDUEVJdHhQ?=
+ =?utf-8?B?Smx4b2MwL1lyMjkwaEQwK25ZekN0RkJ4R0dZMWdpRXltbStLQi8vZGZ3K3RJ?=
+ =?utf-8?B?MUk2TUZBb0NSWFZpYkJaU3hKNzVURUlySVhPMW8zeTkzdTFQbDZpcU5JZlhv?=
+ =?utf-8?B?TDh3eWk1KzF0L1dETXRKYVNyYTVWSld0Nm54U1hWdFBkVW1FVXlweWlnY2kx?=
+ =?utf-8?B?WTRjNFdlVTE5Y1RVd1JybDRtNjdiS0Y5ZlNGZmpxM0Nkbm0vcnduU0FmdjN2?=
+ =?utf-8?B?UkxOMDNaamxidTFSQ2Y5a0VIZUpwbWd2WkEvSEdpWFArSlZCd0tOcGJUazly?=
+ =?utf-8?B?S3hXQUQzQ1pGWjlTcVNjQ3NGVEM4TnVScXFzMjZtWU1zcDQ5QjI0UUZGdFM5?=
+ =?utf-8?B?R2N2bzlwL0Z3UUZYRmtqZnVjakdFWW5PWWoxQWdzTHp5WHp4NnhpSzVOQzNq?=
+ =?utf-8?B?R3l0ejcwOHgyd0NMckdLbnA2dlkvVTNGYWlmRDZjaFQxOUN1MVBlLy9sSHlZ?=
+ =?utf-8?B?blVXWHNoRmdrajZwSHExdVVJOUlkRXB5Q0VPc2h3MnppMURGU1RHT01sU21D?=
+ =?utf-8?B?dU9TdnJLOS9FOGpjckZpeFBsR3VYVlJHNlZISFNUUEc1Rm8xWjUyWFVJOVVh?=
+ =?utf-8?B?NzBqdWFOY0F5akF0U1Y4WC9nWnV1VldBcnluK3ZCUFk0V3BJZXZPUkgrT1Rv?=
+ =?utf-8?B?dkJDeVVyUWVHbVZuWDZxVWNETWRGbEMrR25WbHpVa1ZHUVBSS28xV0JUTGVW?=
+ =?utf-8?B?OWpoUVpVMW1jakRzMEpMR3o0Z2pOazk5ZG1yMGFrN3dPZWdYbk1mN2JGaHgz?=
+ =?utf-8?B?UDY2Qnloa1RLKzJQd2FSd2RYVy95RXRoQVZWenRaMTV1MlRJcmRVckRwY0VG?=
+ =?utf-8?B?bHVJckdBNkQxdU9KWnYzMmxLb0VMK2xld3ptSmZhQ3dUZTdmcFlsbVB2NGpL?=
+ =?utf-8?B?dFRWMFhUTTdDRjFhL3RNbms1Z250MzJFdkNVdEEzZHhsZGpHRUtlWUE2aEVO?=
+ =?utf-8?B?SGh5cERqWWpjRjJJa0VEb2tTZm5kMWJFM0JQbldBY09mdHNyck5pQ29nV0po?=
+ =?utf-8?B?b0RRdnVaSVdSeGtVcXEra0JidzdwS29xNy9HR21zVmpRM1NNVXp5YnFuUUFJ?=
+ =?utf-8?B?MFkxclVCc21SUmtJV2Z4OUZzQnJyeE1aRVJvNDc0ZTgwdnQwbVRMcURsRE8z?=
+ =?utf-8?B?TjJhZTlEYTZ0dzdvWWljZTRUWkQrWnRzWTZJeEZGL3MyRVBxUWdtSEVQZjhG?=
+ =?utf-8?B?WTF5c08yTGpJc1RPem9NWTVycjdkNFpUbHNXc1pvdDF2bHBGbXh6M1lNa1JJ?=
+ =?utf-8?B?dDVFUmlMV0JjNEdkNDk4YUVkVlhOdXMvWWRBcnI1bStlZ3RDdlVxUjRCblJt?=
+ =?utf-8?B?WHpNclk3RUFhMU9ZMGk3ZzNOU3l1T1diZFlCTko4VHhVSGxHOWNQc2Jpemd5?=
+ =?utf-8?B?K3JGYTBoNDZ0cHZEN0RYT1FsMUtBekN2OHVYRXdONERWaWUxV3FVcFpodWxG?=
+ =?utf-8?B?RnptTmh4ZUlIbkU2d21UaVppOUFvcnAzdlJWZC9lT21Nb1pKOWx1NnZWcTRM?=
+ =?utf-8?B?TmZNVU42QUd3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bUZrMS95QTFYY1lGMTBjUFo4dWRvYVJ1a2E3ZDU0LytVcVZpalh0dmEwMDlr?=
+ =?utf-8?B?dW9Ud2JnTjRCNk1JUDhMRngwdWNOMEN1NjBnY1ZucFQ5NGIwVUl2Ulc2WFBY?=
+ =?utf-8?B?MytmSnNYQks4VjNHWEtLU2xiNnh0TjhtM3pWWUpHamhIMmdBcS9GZjhud0JQ?=
+ =?utf-8?B?amowOHBWUUkydDlwSFBOM0QvNGowK1J4aWsxR3lqTzdvaGd3Q2pqL0t2TVdZ?=
+ =?utf-8?B?d3hhbTQ4S2hmTXBHRXlTSk8vamxwYzgxUng5blFjbGJyMXQ0djRTc2xDWlNa?=
+ =?utf-8?B?dmN4YVNOYjN2Vk8rVEJDS0p2SWVJRnZuUm1lRXZyWkY0bWZXUVB2SFk3Y2Ja?=
+ =?utf-8?B?TC9xdDNXREkrSm9CK2kralZCbGlkZm1wbzNUTi8xaDBLajJJRVZNYWFuVndC?=
+ =?utf-8?B?VjFka3NDV0U1bmVyeXhEUTZXanJVcUIwbnJ5blh3dy80a3phQVFscFpsdjAx?=
+ =?utf-8?B?T0dndTRUZmVMVzVPKzBOOVB0emEvdzViVDU2eDdqRUorUUtnT0RrNkozWGlG?=
+ =?utf-8?B?TFFnZnJNSTI5bXVxU1FKV3p4bUp2NENSQVc3emh6MXZHcEtsNUROVU1abGtM?=
+ =?utf-8?B?aGdtT0x6elFFVEJCK3BCSTVJVFRLTExMSzY4SzZMSC90YlNYWG4zNCtTWWZi?=
+ =?utf-8?B?dUhHMzg1cHNCYXdLT1RnQkVCQmpqNWM0TVM0Q3dSU1d1K0kxcmo0QmZFQTVv?=
+ =?utf-8?B?d2ZQQ1RDWFRtMVdDamtDaHFnMytTdktZeGNKS2loOGNxR2wzZUprMUx4N3E0?=
+ =?utf-8?B?aFVNcXFmUVhjVXR4aVpHbmtjcG94TGRjK3YwcFRtR0M2VFlLTjVxekl5TDBF?=
+ =?utf-8?B?SUVDR25JanFHWVNydEFFZTk5SUxpM0VlU0t3T1JlaC9EQ0FYT3VxZjVCMTlm?=
+ =?utf-8?B?UlU4Ri9xcHZZQ0R3aWdEckpRWTlHSjNucjhNRVFUOWxJSnNmSHVWNXplUnB6?=
+ =?utf-8?B?K0x0RE9ZWmF4M2tud1dyTytQOGQxYmxLM0pYVCt4bGcxa0hLazgveUErcWFH?=
+ =?utf-8?B?dFg1QldrOXdNUXQrRXVya1NIWmxrSGF6SVp3SkY1bzVVUitLR0l5RHo2Zm0v?=
+ =?utf-8?B?Y3dRcHQ4dTdNNTdld09SMVE4SEl1SFZyNU90RTBTeE96M25idUxzUXV4R2Yy?=
+ =?utf-8?B?Q25hU3N5SG92VnRpMHIxQURTamJReTRoaXRhTC8veXFrdG5vejRuTG1lcnJM?=
+ =?utf-8?B?SVh3eGhWSHg0OHhsRTcwSTVOalQwTFVpR0hFR2wyNkJSQWhSTExYY0dxNEZQ?=
+ =?utf-8?B?RWhlUW5oamtydEVTTXZjODZBdW84T05hdkxvNnVOMjlRSkhrUDd1NlFPRTlE?=
+ =?utf-8?B?YTRIWkpsZVZ2aFFaeDh2Wm4wUHhIRSswcTh0UUJ3VkVJR21ZOWJKaXZrMnFU?=
+ =?utf-8?B?QlZIckhvMjBZWGR0WGd3WWRDV3hqMW1xTm1QNEtGWXBiSGxCUlJ2ZVVEc2xQ?=
+ =?utf-8?B?Umk0NmhERVgzSER1eWJOZldrcWtIYk9ydEQvWTVhR3gwTmpzU0YwSVoyMzdi?=
+ =?utf-8?B?NjVSS1ZuZFRTSXVzendGVjIzRzlMbVlvZlM0ZlRwSTlKeEdLSS8wOTJuZnlj?=
+ =?utf-8?B?aExtYUlsOGZHYUNMem9SaFRyZGFzTUkySktCNDQ3ckJXZmhnNVM2d1JZdzhu?=
+ =?utf-8?B?SXJhSU81U1RqSEJySk5WUy9BS2MyM0xyN1RBS1hpc0liTzVnR0oydmJMUW1L?=
+ =?utf-8?B?T0NWRy9jeU90RHIvVlFKWC8rSlZUMElFUEJqUlFqZHNmM0p3T2ZaQkYxMVdo?=
+ =?utf-8?B?VG1OeU13Y29SYk9ha3FmWEczRkVLMFhGU3RyaTNkWEJybjZUOEVNVTNqT0VZ?=
+ =?utf-8?B?bkRiV3ZYem1TcDFWU283RlI5REpCc2hhQzJZd2lOWFBVR1ZKMDQ1RlE2MlNR?=
+ =?utf-8?B?OWwwK3BFMkFIZWo3eVE3YjdSbTF4cWhaL3hMME5iWmJmREJtSDMrMmVJVWUr?=
+ =?utf-8?B?Vm8yS0t4OFIrcTNhM1gvVjkxeGJEK01uSzhDc084VkhrczNlMEN2czk0dzJs?=
+ =?utf-8?B?UzJTeElmRUl4N2F6T3JBM09WeFJKYUJuU0VCTGNTTExkL0tTN2ppSmp4V2Jq?=
+ =?utf-8?B?R3VYWjJuVTJYa0k3a3p1Rm1aRHhFR09zRlJsKy9ZMUNQRSt6RVNld0dvb3V1?=
+ =?utf-8?B?Vml4Z2lIQUlqUklCMm1Gb0xkUUpla1Z3YzAvOGNiWlBQbVBMdHFNWEFLTUxG?=
+ =?utf-8?B?bWRlSUdKVGMvTHZPSE1MMyt2dCt0NUFDeTBmNnVPUU9YQUNtdDBVZllxRk9y?=
+ =?utf-8?B?WkEwTDNEUUc5UUt0OGNJT0ZpYzB3PT0=?=
+X-OriginatorOrg: uclouvain.be
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3bebd21-d4f9-425d-6714-08ddd3f90095
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 08:20:56.8191
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GgPYdK/4bd+IALGkdZCmaH4oA7g0YF33G8hxYzp48lMdQHp3I78viocPgeR9eMnkZtB3zI0YA7PmFCCx/5xq+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB9491
 
-Hi Jacopo,
+Hello,
 
-On Sat, 02 Aug 2025 11:22:51 +0200, Jacopo Mondi wrote:
-> The v4l2_fh associated with an open file handle is now guaranteed
-> to be available in file->private_data, initialised by v4l2_fh_add().
+On 8/5/25 8:20 AM, Krzysztof Kozlowski wrote:
+> On 04/08/2025 16:26, Thomas Antoine via B4 Relay wrote:
+>> The gs101-oriole (Google Pixel 6) and gs101-raven (Google Pixel 6 Pro)
+>> have a Maxim MAX77759 which provides a fuel gauge functionnality based
+>> on the MAX M5 fuel gauge.
+>>
+>> Add a driver for fuel gauge of the the Maxim MAX77759 based on the
+>> one for the Maxim MAX1720x which also uses the MAX M5 fuel gauge.
+>> Enable it for the gs101-oriole and gs101-raven boards.
+>>
+>> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+>> ---
+>> Hi everyone,
+>> I decided to completely separate the MAX77759 and the MAX1720x. The
+>> reason I had just modified the MAX1720x initially was because I
+>> thought at the time that their difference were much less important
+>> than they ended up being.
+>>
+>> Their common parts could be put in a common MAX M5 files which could
+>> prove useful if more chips using the MAX M5 are to be added.
+>>
+>> Changes in v5:
+>> - Separate MAX77759 from MAX1720x for clarity
+>> - Remove voltage reporting
+>> - Add initialization of the chip
+>> - Add device dependent initialization data
+>> - Add access to eeprom for access to non-volatile backup data.
+>> - Link to v4: https://lore.kernel.org/r/20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be
 > 
-> Access the v4l2_fh, and from there the driver-specific structure,
-> from the file * in all ioctl handlers.
-> 
-> While at it remove the only left user of fh_to_channel() and remove
-> the macro completely.
+> No changes in the bindings? There were errors posted due to lack of testing.
 
-Thanks for the cleanup!
+The binding has changed a lot due to it being separated from
+the MAX17201 binding. I tested the new binding and found no error and no
+bot was triggered as far as I know. Sorry if the changes were unclear.
+ 
+> Best regards,
+> Krzysztof
 
-Minor suggestion below, but even without it
-
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
-
-> ---
->  drivers/media/platform/allegro-dvt/allegro-core.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
-> index 5e3b1f5d7206d84b8ccb9ea3b3f3f1fe75becf99..81c6afcf2d06f9e39015e49d355346238c5033d8 100644
-> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
-> +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
-> @@ -197,8 +197,6 @@ static const struct regmap_config allegro_sram_config = {
->  	.cache_type = REGCACHE_NONE,
->  };
->  
-> -#define fh_to_channel(__fh) container_of(__fh, struct allegro_channel, fh)
-> -
->  struct allegro_channel {
->  	struct allegro_dev *dev;
->  	struct v4l2_fh fh;
-> @@ -3284,7 +3282,7 @@ static int allegro_enum_fmt_vid(struct file *file, void *fh,
->  static int allegro_g_fmt_vid_cap(struct file *file, void *fh,
->  				 struct v4l2_format *f)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  
->  	f->fmt.pix.field = V4L2_FIELD_NONE;
->  	f->fmt.pix.width = channel->width;
-> @@ -3326,7 +3324,7 @@ static int allegro_try_fmt_vid_cap(struct file *file, void *fh,
->  static int allegro_s_fmt_vid_cap(struct file *file, void *fh,
->  				 struct v4l2_format *f)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  	struct vb2_queue *vq;
->  	int err;
->  
-> @@ -3350,7 +3348,7 @@ static int allegro_s_fmt_vid_cap(struct file *file, void *fh,
->  static int allegro_g_fmt_vid_out(struct file *file, void *fh,
->  				 struct v4l2_format *f)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  
->  	f->fmt.pix.field = V4L2_FIELD_NONE;
->  
-> @@ -3397,7 +3395,7 @@ static int allegro_try_fmt_vid_out(struct file *file, void *fh,
->  static int allegro_s_fmt_vid_out(struct file *file, void *fh,
->  				 struct v4l2_format *f)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  	int err;
->  
->  	err = allegro_try_fmt_vid_out(file, fh, f);
-> @@ -3438,7 +3436,7 @@ static int allegro_channel_cmd_start(struct allegro_channel *channel)
->  static int allegro_encoder_cmd(struct file *file, void *fh,
->  			       struct v4l2_encoder_cmd *cmd)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  	int err;
->  
->  	err = v4l2_m2m_ioctl_try_encoder_cmd(file, fh, cmd);
-> @@ -3488,7 +3486,7 @@ static int allegro_ioctl_streamon(struct file *file, void *priv,
->  				  enum v4l2_buf_type type)
->  {
->  	struct v4l2_fh *fh = file_to_v4l2_fh(file);
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
-
-You could remove the local fh entirely, if you change
-
-	return v4l2_m2m_streamon(file, fh->m2m_ctx, type);
-
-to
-
-	return v4l2_m2m_streamon(file, channel->fh.m2m_ctx, type);
-
-in the allegro_ioctl_streamon() function.
-
-Michael
-
->  	int err;
->  
->  	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
-> @@ -3503,7 +3501,7 @@ static int allegro_ioctl_streamon(struct file *file, void *priv,
->  static int allegro_g_parm(struct file *file, void *fh,
->  			  struct v4l2_streamparm *a)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  	struct v4l2_fract *timeperframe;
->  
->  	if (a->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> @@ -3520,7 +3518,7 @@ static int allegro_g_parm(struct file *file, void *fh,
->  static int allegro_s_parm(struct file *file, void *fh,
->  			  struct v4l2_streamparm *a)
->  {
-> -	struct allegro_channel *channel = fh_to_channel(fh);
-> +	struct allegro_channel *channel = file_to_channel(file);
->  	struct v4l2_fract *timeperframe;
->  	int div;
->  
-> 
-> -- 
-> 2.49.0
-> 
-> 
+Best regards,
+Thomas
