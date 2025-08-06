@@ -1,225 +1,292 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C150288CA1;
-	Wed,  6 Aug 2025 09:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355781FBE80;
+	Wed,  6 Aug 2025 09:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754472211; cv=none; b=SbeGXjyvSddYWJtPPBXN0XUArPb0ONp+ju1RQ8ifPtLJJ9FyV5uZrxbXaAGi7EOAUWN11Xf44GlzOWwDz8ZT4WQfwAw6p3B52FFmCHew6cICmPOOAbu2onRoE3Ee8rhicGLdHcGONkmy9nWfV/Oyg+OezvAHwE7x/AdRJIy8pxs=
+	t=1754473724; cv=none; b=s3lz4ELO/egHrc1IpPcRoVpnXILNW9o8ys3A7eWKRWUPy5CGcJNmTeMXrAcwLfYcv79gRTjAqVfvP4MLbCQXiYriVX2ZHmH8Ejrq5jWB+rr7wFu6DrfJTep0/gQwnVX6FYNWCzpkKPZFaqxKhYsYKASeykAqHUkpJNDuGg4i+GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754472211; c=relaxed/simple;
-	bh=Hwk7vf4HuAvJ7UE5NKvVA2XssqjK1pHzEDmND+upm+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VEVXopUZC1whf1Ep4dwsY0gac/ojTUMe+ljCGbnwDvecb74hNoaw81X8L34tjcrqamRBwvyUomhRVG6Db+Wr+B5hqGkwFoTEC6JBl1AWsj+1MPK3J1NVfF7JinhNGKaS1TMKb+ygSYoi6+SnadY9ZRyiczsmyRkVfmqoAxDe4VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6GNOto+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754473724; c=relaxed/simple;
+	bh=dBB2uil8xdYuqq7KSR4GUD8VnaNZFEk4RwnSQxJK8VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXxfF5fO+ywVUFyJ9npAQjlMi1axc/aUcVzBJ5zfHplN6TyXxZU54dpJncL4fqjoue2Gx0BX4DUaDWmg+FzeI4zGItryNy/BG5rcG4nhJ5xMoh4Hb1fu1ogry3JFmphoNWmRYbFipU6zO01xJR1lOWBFe7/Q1ymdTAJwMr/53aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BVgd+rZs; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6GNOto+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 538D7C4CEE7;
-	Wed,  6 Aug 2025 09:23:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754472210;
-	bh=Hwk7vf4HuAvJ7UE5NKvVA2XssqjK1pHzEDmND+upm+w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i6GNOto+ufwZENyRkRe/0U2+uH/1sJM9g0wsZ61Ffeoees9k2birWd0oPEd/qr7QX
-	 1tErIhLbKSjseupyE4qMugARknExUz+FDgWq06s5mJgRN+me57kwAzEVm0KZYfg66X
-	 JR/AN8nU2UsLuJZ5fJiaHI5tnfKTm7F/R+/2ZfwkjBA/orFv19vzXWuh/lNh6qXWqq
-	 KOqOS37KyZXWVmoYqRuvUXX4Okpne/HTVHYwLhGJnGcRx9DR2UCyrdy7sLTroDbI1c
-	 VcexKBfRy5HQB8mHPo/seo5c8xMfa9x8ETmEaKwUcoC160BsgykC0u6Ke6n1wA9v7c
-	 etW7oMX8cjHZw==
-Message-ID: <ef3b8e12-0677-4e49-bf2c-b8136c9a6908@kernel.org>
-Date: Wed, 6 Aug 2025 11:23:21 +0200
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BVgd+rZs"
+Received: from pendragon.ideasonboard.com (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AD44511EB;
+	Wed,  6 Aug 2025 11:47:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754473669;
+	bh=dBB2uil8xdYuqq7KSR4GUD8VnaNZFEk4RwnSQxJK8VA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BVgd+rZsh/ZxoGPA94UhjQapWLxk+gRiwJX2O0VIWWSiN8SZXjLCSOE6MZ8Brh1lv
+	 8XpLo+euerZ1zpRgloZxPxWGh/ChUK6DJKXc9a9m4Y+VmYiVxNuicDSagQBdkuQpE4
+	 LSv8nzfk6MdHfJRD3zCZIOhReZsK2sp0LHv5o6aI=
+Date: Wed, 6 Aug 2025 12:48:22 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil+cisco@kernel.org>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Bin Liu <bin.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Jackson Lee <jackson.lee@chipsnmedia.com>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Corentin Labbe <clabbe@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mjpeg-users@lists.sourceforge.net
+Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
+ custom functions
+Message-ID: <20250806094822.GA24768@pendragon.ideasonboard.com>
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+ <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
-To: Pankaj Dubey <pankaj.dubey@samsung.com>,
- 'SeonGu Kang' <ksk4725@coasia.com>,
- 'Jesper Nilsson' <jesper.nilsson@axis.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>,
- 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
- 'Conor Dooley' <conor+dt@kernel.org>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Alim Akhtar' <alim.akhtar@samsung.com>,
- 'Linus Walleij' <linus.walleij@linaro.org>,
- 'Tomasz Figa' <tomasz.figa@gmail.com>,
- 'Catalin Marinas' <catalin.marinas@arm.com>, 'Will Deacon'
- <will@kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'kenkim' <kenkim@coasia.com>, 'Jongshin Park' <pjsin865@coasia.com>,
- 'GunWoo Kim' <gwk1013@coasia.com>, 'HaGyeong Kim' <hgkim05@coasia.com>,
- 'GyoungBo Min' <mingyoungbo@coasia.com>, 'SungMin Park'
- <smn1196@coasia.com>, 'Shradha Todi' <shradha.t@samsung.com>,
- 'Ravi Patel' <ravi.patel@samsung.com>, 'Inbaraj E' <inbaraj.e@samsung.com>,
- 'Swathi K S' <swathi.ks@samsung.com>, 'Hrishikesh'
- <hrishikesh.d@samsung.com>, 'Dongjin Yang' <dj76.yang@samsung.com>,
- 'Sang Min Kim' <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <847e908b-1073-46ea-93f3-1f36cc93d8b8@kernel.org>
- <bfdc2eddde554e1d1808dd8399bc6a693f681c9b.camel@coasia.com>
- <CGME20250721064006epcas5p4617b0450e69f72c94d2b3ae7b1d200e7@epcas5p4.samsung.com>
- <99977f38-f055-46ed-8eb0-4b757da2bcdd@kernel.org>
- <000501dc06ab$37f09440$a7d1bcc0$@samsung.com>
- <e334f106-d9f3-4a21-8cdd-e9d23dd2755d@kernel.org>
- <002001dc06b1$540dc980$fc295c80$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <002001dc06b1$540dc980$fc295c80$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
 
-On 06/08/2025 11:05, Pankaj Dubey wrote:
+Hi Hans,
+
+On Wed, Aug 06, 2025 at 10:16:37AM +0200, Hans Verkuil wrote:
+> On 02/08/2025 11:22, Jacopo Mondi wrote:
+> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Accessing file->private_data manually to retrieve the v4l2_fh pointer is
+> > error-prone, as the field is a void * and will happily cast implicitly
+> > to any pointer type.
+> > 
+> > Replace all remaining locations that read the v4l2_fh pointer directly
+> > from file->private_data and cast it to driver-specific file handle
+> > structures with driver-specific functions that use file_to_v4l2_fh() and
+> > perform the same cast.
+> > 
+> > No functional change is intended, this only paves the way to remove
+> > direct accesses to file->private_data and make V4L2 drivers safer.
+> > Other accesses to the field will be addressed separately.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > ---
+> >  drivers/media/pci/ivtv/ivtv-driver.h               |  5 ++++
+> >  drivers/media/pci/ivtv/ivtv-fileops.c              | 10 +++----
+> >  drivers/media/pci/ivtv/ivtv-ioctl.c                |  8 +++---
+> >  drivers/media/platform/allegro-dvt/allegro-core.c  |  7 ++++-
+> >  drivers/media/platform/amlogic/meson-ge2d/ge2d.c   |  8 ++++--
+> >  .../media/platform/chips-media/coda/coda-common.c  |  7 ++++-
+> >  .../platform/chips-media/wave5/wave5-helper.c      |  2 +-
+> >  .../media/platform/chips-media/wave5/wave5-vpu.h   |  5 ++++
+> >  drivers/media/platform/m2m-deinterlace.c           |  7 ++++-
+> >  .../media/platform/mediatek/jpeg/mtk_jpeg_core.c   |  7 ++++-
+> >  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c  |  7 ++++-
+> >  .../media/platform/mediatek/mdp3/mtk-mdp3-m2m.c    |  7 ++++-
+> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c   |  2 +-
+> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h   |  5 ++++
+> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   |  2 +-
+> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h   |  5 ++++
+> >  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c     |  7 ++++-
+> >  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c |  7 ++++-
+> >  drivers/media/platform/nxp/mx2_emmaprp.c           |  7 ++++-
+> >  drivers/media/platform/renesas/rcar_fdp1.c         |  7 ++++-
+> >  drivers/media/platform/renesas/rcar_jpu.c          |  7 ++++-
+> >  drivers/media/platform/rockchip/rga/rga.c          |  3 +--
+> >  drivers/media/platform/rockchip/rga/rga.h          |  5 ++++
+> >  drivers/media/platform/rockchip/rkvdec/rkvdec.c    |  2 +-
+> >  drivers/media/platform/rockchip/rkvdec/rkvdec.h    |  5 ++++
+> >  .../media/platform/samsung/exynos-gsc/gsc-core.h   |  6 +++++
+> >  .../media/platform/samsung/exynos-gsc/gsc-m2m.c    |  6 ++---
+> >  .../media/platform/samsung/exynos4-is/fimc-core.h  |  5 ++++
+> >  .../media/platform/samsung/exynos4-is/fimc-m2m.c   |  2 +-
+> >  drivers/media/platform/samsung/s5p-g2d/g2d.c       |  7 +++--
+> >  .../media/platform/samsung/s5p-jpeg/jpeg-core.c    |  9 +++++--
+> >  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   |  6 ++---
+> >  .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  6 +++++
+> >  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c   |  7 ++++-
+> >  drivers/media/platform/st/sti/delta/delta-v4l2.c   | 26 +++++++++++-------
+> >  drivers/media/platform/st/sti/hva/hva-v4l2.c       | 31 ++++++++++++----------
+> >  drivers/media/platform/st/sti/hva/hva.h            |  2 --
+> >  drivers/media/platform/st/stm32/dma2d/dma2d.c      |  7 +++--
+> >  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c   |  3 +--
+> >  .../platform/sunxi/sun8i-rotate/sun8i_rotate.c     |  3 +--
+> >  drivers/media/platform/ti/omap3isp/ispvideo.c      |  4 +--
+> >  drivers/media/platform/ti/omap3isp/ispvideo.h      |  6 +++++
+> >  drivers/media/platform/verisilicon/hantro.h        |  5 ++++
+> >  drivers/media/platform/verisilicon/hantro_drv.c    |  3 +--
+> >  drivers/staging/media/imx/imx-media-csc-scaler.c   |  7 ++++-
+> >  drivers/staging/media/meson/vdec/vdec.c            | 24 ++++++-----------
+> >  drivers/staging/media/meson/vdec/vdec.h            |  5 ++++
+> >  drivers/staging/media/sunxi/cedrus/cedrus.c        |  3 +--
+> >  drivers/staging/media/sunxi/cedrus/cedrus.h        |  5 ++++
+> >  drivers/staging/media/sunxi/cedrus/cedrus_video.c  |  5 ----
+> >  50 files changed, 237 insertions(+), 100 deletions(-)
+> > 
+> > diff --git a/drivers/media/pci/ivtv/ivtv-driver.h b/drivers/media/pci/ivtv/ivtv-driver.h
+> > index a6ffa99e16bc64a5b7d3e48c1ab32b49a7989242..cad548b28e360ecfe2bcb9fcb5d12cd8823c3727 100644
+> > --- a/drivers/media/pci/ivtv/ivtv-driver.h
+> > +++ b/drivers/media/pci/ivtv/ivtv-driver.h
+> > @@ -388,6 +388,11 @@ static inline struct ivtv_open_id *fh2id(struct v4l2_fh *fh)
+> >  	return container_of(fh, struct ivtv_open_id, fh);
+> >  }
+> >  
+> > +static inline struct ivtv_open_id *file2id(struct file *filp)
+> > +{
+> > +	return container_of(file_to_v4l2_fh(filp), struct ivtv_open_id, fh);
 > 
->> Also SAME strict DT compliance profile will be applied. (see more on
->> that below)
->>
->>>
->>> Given that ARTPEC-8 is a distinct SoC with its own set of IPs, we believe it's
->> reasonable
->>> to create a separate directory for it, similar to FSD.
->>
->> No. It was a mistake for FSD to keep it separate why? Because there is
->> no single non-Samsung stuff there. I am afraid exactly the same will
->> happen there.
->>
+> Why not write:
 > 
-> I am not sure, why you are saying this as a mistake, in case next version of FSD
-
-
-My mistake that I agreed on that, based on promise that "there will be
-non Samsung stuff" and that "non Samsung stuff" never happened.
-
-> or ARTPEC is manufactured (ODM) by another vendor in that case, won't it
-> create problems? 
-
-
-No problems here. Non-Samsung Artpec/Axis soc will not go there. It will
-go the top-level axis directory, just like artpec-6
-
-
+> 	return fh2id(file_to_v4l2_fh(filp));
 > 
-> For example ARTPEC-6/7 (ARM based) have their own directories as "arch/arm/boot/dts/axis/"
-> These were not Samsung (ODM) manufactures SoCs. 
-> 
-> But ARTPEC-8/9 (ARM64) based SoCs are samsung manufactured. What if the next version say
-> ARTPEC-10 is not samsung manufactured, so different version of products (SoCs) from
-> same vendor (OEM), in this case Axis, will have code in separate directories and with different maintainers? 
+> Same for all other drivers that do this. I prefer to have the contained_of()
+> in just one place.
 
-It will be the same with Google Pixel for whatever they decide in the
-future. dts/exynos/google/ + dts/google/.
+Because fh2id gets removed in "[PATCH 57/65] media: ivtv: Access v4l2_fh
+from file". I can use it in this patch and drop it later, would you
+prefer that ?
 
-I know that this is not ideal, but for me grouping samsung stuff
-together is far more important, because there is much, much more to
-share between two SoCs designed by Samsung, than Axis-9 and future
-non-Samsung Axis-10. And I have `git grep` as argument:
-git grep compatible -- arch/arm64/boot/dts/tesla/
+> > +}
+> > +
+> >  struct yuv_frame_info
+> >  {
+> >  	u32 update;
+> 
+> <snip>
+> 
+> > diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
+> > index 1f134e08923a528cc676f825da68951c97ac2f25..74977f3ae4844022c04de877f31b4fc6aaac0749 100644
+> > --- a/drivers/media/platform/allegro-dvt/allegro-core.c
+> > +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
+> > @@ -302,6 +302,11 @@ struct allegro_channel {
+> >  	unsigned int error;
+> >  };
+> >  
+> > +static inline struct allegro_channel *file_to_channel(struct file *filp)
+> > +{
+> > +	return container_of(file_to_v4l2_fh(filp), struct allegro_channel, fh);
+> > +}
+> > +
+> >  static inline int
+> >  allegro_channel_get_i_frame_qp(struct allegro_channel *channel)
+> >  {
+> > @@ -3229,7 +3234,7 @@ static int allegro_open(struct file *file)
+> >  
+> >  static int allegro_release(struct file *file)
+> >  {
+> > -	struct allegro_channel *channel = fh_to_channel(file->private_data);
+> > +	struct allegro_channel *channel = file_to_channel(file);
+> 
+> So a file_to_channel inline function was added, but it is used in just one
+> place.
+> 
+> I would prefer to just drop the inline function and instead write:
+> 
+> 	struct allegro_channel *channel = fh_to_channel(file_to_v4l2_fh(file));
+> 
+> If this is needed in two or more places, then the extra inline makes sense,
+> but it is a fairly common pattern that it is only needed in the release function.
+> 
+> Adding a new inline just for that seems overkill to me.
 
-and point me to any Tesla IP. Zero results.
+file_to_channel() gets used in more places in "[PATCH 29/65] media:
+allegro: Access v4l2_fh from file", where fh_to_channel() is dropped.
+I'd rather keep it in this patch instead of having to modify the
+allegro_release() function in patch 29/65.
 
+> >  
+> >  	v4l2_m2m_ctx_release(channel->fh.m2m_ctx);
+> >  
 
-> 
->> Based on above list of blocks this should be done like Google is done,
->> so it goes as subdirectory of samsung (exynos). Can be called axis or
->> artpec-8.
-> 
-> I will suggest to keep axis, knowing the fact that sooner after artpec-8 patches gets approved and merged
-> we have plan to upstream artpec-9 (ARM64, Samsung manufactured) as well.
-> 
->>
->> To clarify: Only this SoC, not others which are not Samsung.
->>
->>>
->>> We will remove Samsung and Coasia teams from the maintainers list in v2
->> and only
->>> Axis team will be maintainer.
->>
->> A bit unexpected or rather: just use names of people who WILL be
->> maintaining it. If this is Jesper and Lars, great. Just don't add
->> entries just because they are managers.
-> 
-> AFAIK, Jesper will be taking care. 
-> 
->>
->>>
->>> Maintainer list for previous generation of Axis chips (ARM based) is already
->> present,
->>> so this will be merged into that.
->>
->> Existing Artpec entry does not have tree mentioned, so if you choose
->> above, you must not add the tree, since the tree is provided by Samsung SoC.
->>
-> 
-> OK
-> 
->> OTOH, how are you going to add there strict DT compliance? Existing axis
->> is not following this, but artpec-8, as a Samsung derivative, MUST
->> FOLLOW strict DT compliance. And this should be clearly marked in
->> maintainer entry, just like everywhere else.
->>
-> 
-> As I said this is tricky situation, though artpec-8 is derivative of samsung, we can't confirm 
-> if future versions (> 9) will be samsung derivative. 
-> 
-> But this would be case for all such custom ASIC manufactured by samsung, so I would like to
-> understand how this will be handled? 
+-- 
+Regards,
 
-
-I suggest to do the same as Google and when I say Google in this email,
-I mean Pixel/GS101. Google was easier because there was no prior entry
-and Axis has, so you will have two Axis entries. But I don't see how we
-can add clean-dts profiles to the existing Axis entry, if you decide to
-include Artpec-8 in that one.
-
-
-Best regards,
-Krzysztof
+Laurent Pinchart
