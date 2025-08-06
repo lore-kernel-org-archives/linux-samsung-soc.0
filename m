@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C163522F767;
-	Wed,  6 Aug 2025 12:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F828B516;
+	Wed,  6 Aug 2025 13:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484337; cv=none; b=mVw/oRqRCUx/osPnNHzSYfm+m+BiWXCsJKsBJh+dUeeIVK/pyfncyIF9aWa5L1yDrnUJPFR8WG5cmLOdhDlawiTuEUDrnRdNTpIKmfBECzh9QIkC+dV4hWBlG9n4cXZu+47QnjCOwVwGfm3n80Bi9ptgbOfSrG8arp2OykSQV08=
+	t=1754488668; cv=none; b=KmRBxG+dDJ3lNMjBm0PAOJUHotXTTGIavDYQxBKk5MntPMwHZLavgAZ4Dn4G7rPDQu2wf8lAcyyx3r21Kss5lpBdXFgw+18KUwG6IVV/vffOSAr64XPVJjxicRvS1X3QODElzxMW6bSArPJiDkKLN1dlvGTDBMzpsYEZu4kCQVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484337; c=relaxed/simple;
-	bh=vrDmqWuCtRp3CsCvQLuDwTzU8RUf2CvrKumyU6zb3Ok=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GQt9y32V/YIvM8Tsq38lXlG8gur83roUnDgRAtXyaTHmiP8nbeJ/CmfDkotjsK/UPWMqFhVWyCjVsd2b1oTA4EHudB8R/4MTJYliapOtRYOZWRhZoLQFuXZmK44kSVWRg6PXyBBsFvaXWCPlj+a3oxcG+GLOL1bEGt7SSvzpzrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piY2QrqA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754488668; c=relaxed/simple;
+	bh=n/ObepZyGgjKds95g5+xh+xWSxe6QfTejtKfyZCffzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ogcyEngT8K0eBmAF6mBso9xvIvaDabnbEWRluMAgQLUQINrC36me9oRc9sKcVAmZAepJbSRmW5zetFgy4nup/DHD614TGa1hg/pdMaaLjvRj3Z1BtMeLL+YMfDmE85BniAgM/9AXLKrLXDaaIL7TOeXyi52AB1Iay+I0EgGv71k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixufnPeF; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piY2QrqA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4AAC4CEE7;
-	Wed,  6 Aug 2025 12:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754484336;
-	bh=vrDmqWuCtRp3CsCvQLuDwTzU8RUf2CvrKumyU6zb3Ok=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=piY2QrqAz8Re20EZatq7znUbw5pHCiVHNr0AmhNRPE0MDM10HmfpdWd02d9i8tbdW
-	 E75PTNGi/w0FYgFIJnvX/BXnS/SvXPyQ9seXxkOyOZ7zJ0aOfRRVdb4s/IB6OlYGWX
-	 eGzXx+834KiDOoCU+8nK8fwVzqTKOTwSyOvq/we5j7dBgmFBvFnhVcaikg4QxsG3Ow
-	 eNHI0m7J7krY4D/AW4W0Ic/ki873otG6+qi8XZAxpJKL+nl6ve+/h5UhD3smasksSI
-	 31GfEPq8TJIP3QV/nzR3fqXJ0rFvGtrMjgIfsvva9ewHG8nil9RVHiEcnK1j0r7efu
-	 ou/p/iGbORZsA==
-Message-ID: <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
-Date: Wed, 6 Aug 2025 14:45:14 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixufnPeF"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af949bdf36cso774320066b.0;
+        Wed, 06 Aug 2025 06:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754488665; x=1755093465; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nHzr4MA8aqHB6jajAWjKyzRf2MPIdZd6EmOAFNAHckc=;
+        b=ixufnPeFZWZWL+U7dONizLSVXMhOcE+xOYcwCKqcY6dA7RJW1BImckZ3nkLbmbXC9e
+         JUQNINh9ASCnE3ITE2WTgoXcLji6NJpn8190FA+O+Ln7ZPCN0Dd9ddf6icXt6IQW5Tcu
+         6Aba7hZFIv6Ipd1oBW7A4Gmi3wA2PNgvz352FCjdBnhfARNApXKM7pliYib7W6s3jYr3
+         eSI/qodluaYihe4ce6tXnzXuQaqXFQhWXdwVXVJzSC/3I9UEQAyg9ki5xPRzGhhpad4a
+         Izd5oPRsdLFRsWRorH2yY3nj0AJzqjK/NNz3Qwyl1UkBSB5hVmCRb1T9L6oq3ykDdvrU
+         dFPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754488665; x=1755093465;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nHzr4MA8aqHB6jajAWjKyzRf2MPIdZd6EmOAFNAHckc=;
+        b=BgqJK8jEsrHBlJHgmwvMluANZhv0vkuhi0oX2xf6jrorcKnVprHsB3df+P9FFxu6XU
+         0e99I3eojmb77w4d56tHdGG6odh3k10Dzf7HRdkeUA/V2dk+J7lf0/8uFJj5/vkaTQ+4
+         RLqDBckTwSXWCBq//qnwUKLjFx4Zd1fXaYMsBsG90uZ3rBgNLec5IORAGfUEn2Kn01Wn
+         +FtzE4nokjBxNw/ZvRy9fytWd/4uyn0dci8eyxj70cB4tLxGj2ej4F8lj0uw+zgzi73q
+         yb1gmwIQm0Yh3SASXE5CehA+PpqQ2N/VBgxY2HhJJCoM9G7f45c+hMeMSqY9o2N9R7JQ
+         PQug==
+X-Forwarded-Encrypted: i=1; AJvYcCUiDDU9KJ1DKre7rBPj7nRbGAbycwDRmX4yJXe4wiKFdICD+nqD55XzMw6jjtDkjCN/VSpfNTkeboUnT27sDzhtIXM=@vger.kernel.org, AJvYcCV2Z7jhakL+L5GW5eYp5rxSvVw1ZxCQg48ywlOVqoKcp8Ga3c9Gss8mi42wkXHyYqGONolBTp/ayFJl@vger.kernel.org, AJvYcCW95p0POUrThDAJB5h18KyglatdaUVmGpKPK5VhAtbIBJQRK65NOUIhq10OfOAYpeWgIJ1U6X07+L7fVFUs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4qNWA/krtCsUIUtcTu8npjPpYqgZcqaLXX37b0JV/FVtRAA08
+	kGYjF+me9G7/XXJvhajkZoIREK7McNi8DpVDc3pehdYko8+yJHQc9z4S
+X-Gm-Gg: ASbGncvhSdfFCJndOZiyncF/OsX6/ZdHZn0HtCOaSZKdbaYXk35/8cxiH21m2aQGzaJ
+	yhwck/lzRPB2lNCDixA2ZS0JiFWTubXU962HIHaK5vVGeXeRBt6PngWAB0TAWZ83NHrVRKFhfqi
+	H/QNymdRB7wkNIATu6QZE2YTkL9mi3sUbDuo6KGEn/4JRaVWzVVLCMCIvKVae53ur4H3JOaJZLf
+	3i9lwZU48AWTjns7+tKyOgcuHOsawdT9NQcoTJh9iKPe9Y78ppywCohWsRagVnmcK6AcwGvdJqj
+	BrFSGDC1r5oQ4PYCgOAEH2Y20AJPuCoYOL0lu9qp9vnDll3ThXJ0mnHyLIbBDA0nISwPm0wr1g2
+	0FEftrXb8SDTJ7/07CblU3pmw7nPoN/Xkm7iz0MsBI1mjDhM7r1aokh7WcMGT/kxbBXw9kXsf+h
+	8rFRmcVlW063E=
+X-Google-Smtp-Source: AGHT+IGQ3QZUaLC8+topY1n9SlLxxAbYjEO2ebSd3f+30oUx/XN3GCsmaSZCHF1ta/LFIKgiqEA7eQ==
+X-Received: by 2002:a17:907:7f18:b0:af9:2502:7772 with SMTP id a640c23a62f3a-af992bc37femr270882566b.54.1754488664645;
+        Wed, 06 Aug 2025 06:57:44 -0700 (PDT)
+Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91ee3c1f7sm1045900366b.68.2025.08.06.06.57.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 06:57:44 -0700 (PDT)
+Message-ID: <cd17cfb4-5708-4c15-b616-505f669bf2eb@gmail.com>
+Date: Wed, 6 Aug 2025 16:57:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,297 +68,146 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 27/65] media: Reset file->private_data to NULL in
- v4l2_fh_del()
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
- <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
- Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hansg@kernel.org>,
- Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- Christian Gromm <christian.gromm@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
- <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
- Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
- Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
- Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
- <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
- <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Corentin Labbe <clabbe@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: exynos2200: define all usi nodes
+Content-Language: en-US
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250730074253.1884111-6-ivo.ivanov.ivanov1@gmail.com>
+ <CAPLW+4maFxYv4RrvzUXWwteXAVm64ocj2LSAgtM6RMtzbM_p-w@mail.gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CAPLW+4maFxYv4RrvzUXWwteXAVm64ocj2LSAgtM6RMtzbM_p-w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 02/08/2025 11:22, Jacopo Mondi wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Multiple drivers that use v4l2_fh and call v4l2_fh_del() manually reset
-> the file->private_data pointer to NULL in their video device .release()
-> file operation handler. Move the code to the v4l2_fh_del() function to
-> avoid direct access to file->private_data in drivers. This requires
-> adding a file pointer argument to the function.
-> 
-> Changes to drivers have been generated with the following coccinelle
-> semantic patch:
-> 
-> @@
-> expression fh;
-> identifier filp;
-> identifier release;
-> type ret;
-> @@
-> ret release(..., struct file *filp, ...)
-> {
-> 	<...
-> -	filp->private_data = NULL;
-> 	...
-> -	v4l2_fh_del(fh);
-> +	v4l2_fh_del(fh, filp);
-> 	...>
-> }
-> 
-> @@
-> expression fh;
-> identifier filp;
-> identifier release;
-> type ret;
-> @@
-> ret release(..., struct file *filp, ...)
-> {
-> 	<...
-> -	v4l2_fh_del(fh);
-> +	v4l2_fh_del(fh, filp);
-> 	...
-> -	filp->private_data = NULL;
-> 	...>
-> }
-> 
-> @@
-> expression fh;
-> identifier filp;
-> identifier release;
-> type ret;
-> @@
-> ret release(..., struct file *filp, ...)
-> {
-> 	<...
-> -	v4l2_fh_del(fh);
-> +	v4l2_fh_del(fh, filp);
-> 	...>
-> }
-> 
-> Manual changes have been applied to Documentation/ to update the usage
-> patterns, to drivers/media/v4l2-core/v4l2-fh.c to update the
-> v4l2_fh_del() prototype and reset file->private_data, and to
-> include/media/v4l2-fh.h to update the v4l2_fh_del() function prototype
-> and its documentation.
-> 
-> Additionally, white space issues have been fixed manually in
-> drivers/usb/gadget/function/uvc_v4l2.c
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  Documentation/driver-api/media/v4l2-fh.rst                         | 4 ++--
->  Documentation/translations/zh_CN/video4linux/v4l2-framework.txt    | 4 ++--
->  drivers/media/pci/cx18/cx18-fileops.c                              | 4 ++--
->  drivers/media/pci/ivtv/ivtv-fileops.c                              | 4 ++--
->  drivers/media/pci/saa7164/saa7164-encoder.c                        | 2 +-
->  drivers/media/pci/saa7164/saa7164-vbi.c                            | 2 +-
->  drivers/media/platform/allegro-dvt/allegro-core.c                  | 2 +-
->  drivers/media/platform/amlogic/meson-ge2d/ge2d.c                   | 2 +-
->  drivers/media/platform/amphion/vpu_v4l2.c                          | 4 ++--
->  drivers/media/platform/chips-media/coda/coda-common.c              | 4 ++--
->  drivers/media/platform/chips-media/wave5/wave5-helper.c            | 2 +-
->  drivers/media/platform/imagination/e5010-jpeg-enc.c                | 4 ++--
->  drivers/media/platform/m2m-deinterlace.c                           | 2 +-
->  drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c               | 4 ++--
->  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c                  | 4 ++--
->  drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c                | 4 ++--
->  .../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c    | 4 ++--
->  .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c    | 4 ++--
->  drivers/media/platform/nvidia/tegra-vde/v4l2.c                     | 2 +-
->  drivers/media/platform/nxp/dw100/dw100.c                           | 2 +-
->  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                     | 4 ++--
->  drivers/media/platform/nxp/imx-pxp.c                               | 2 +-
->  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c                 | 2 +-
->  drivers/media/platform/nxp/mx2_emmaprp.c                           | 2 +-
->  drivers/media/platform/qcom/iris/iris_vidc.c                       | 3 +--
->  drivers/media/platform/qcom/venus/core.c                           | 2 +-
->  drivers/media/platform/renesas/rcar_fdp1.c                         | 2 +-
->  drivers/media/platform/renesas/rcar_jpu.c                          | 4 ++--
->  drivers/media/platform/renesas/vsp1/vsp1_video.c                   | 2 +-
->  drivers/media/platform/rockchip/rga/rga.c                          | 2 +-
->  drivers/media/platform/rockchip/rkvdec/rkvdec.c                    | 2 +-
->  drivers/media/platform/samsung/exynos-gsc/gsc-m2m.c                | 4 ++--
->  drivers/media/platform/samsung/exynos4-is/fimc-m2m.c               | 4 ++--
->  drivers/media/platform/samsung/s5p-g2d/g2d.c                       | 2 +-
->  drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c                | 4 ++--
->  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c                   | 4 ++--
->  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c                   | 4 ++--
->  drivers/media/platform/st/sti/delta/delta-v4l2.c                   | 4 ++--
->  drivers/media/platform/st/sti/hva/hva-v4l2.c                       | 4 ++--
->  drivers/media/platform/st/stm32/dma2d/dma2d.c                      | 2 +-
->  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c                   | 2 +-
->  drivers/media/platform/sunxi/sun8i-rotate/sun8i_rotate.c           | 2 +-
->  drivers/media/platform/ti/omap3isp/ispvideo.c                      | 5 ++---
->  drivers/media/platform/ti/vpe/vpe.c                                | 2 +-
->  drivers/media/platform/verisilicon/hantro_drv.c                    | 4 ++--
->  drivers/media/test-drivers/vicodec/vicodec-core.c                  | 2 +-
->  drivers/media/test-drivers/vim2m.c                                 | 2 +-
->  drivers/media/test-drivers/visl/visl-core.c                        | 2 +-
->  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c                           | 3 +--
->  drivers/media/v4l2-core/v4l2-fh.c                                  | 7 ++++---
->  drivers/media/v4l2-core/v4l2-subdev.c                              | 5 ++---
->  drivers/staging/media/imx/imx-media-csc-scaler.c                   | 4 ++--
->  drivers/staging/media/meson/vdec/vdec.c                            | 2 +-
->  drivers/staging/media/sunxi/cedrus/cedrus.c                        | 2 +-
->  drivers/staging/most/video/video.c                                 | 4 ++--
->  drivers/usb/gadget/function/uvc_v4l2.c                             | 3 +--
->  include/media/v4l2-fh.h                                            | 5 ++++-
->  57 files changed, 89 insertions(+), 90 deletions(-)
-> 
+On 8/2/25 03:29, Sam Protsenko wrote:
+> On Wed, Jul 30, 2025 at 2:44 AM Ivaylo Ivanov
+> <ivo.ivanov.ivanov1@gmail.com> wrote:
+>> Universal Serial Interface (USI) supports three types of serial
+>> interfaces - uart, i2c and spi. Each protocol can work independently
+>> and configured using external configuration inputs.
+>>
+>> As each USI instance has access to 4 pins, there are multiple possible
+>> configurations:
+>> - the first 2 and the last 2 pins can be i2c (sda/scl) or uart (rx/tx)
+>> - the 4 pins can be used for 4 pin uart or spi
+>>
+>> Such configuration can be achieved by setting the mode property of usiX
+>> and usiX_i2c nodes correctly - if usiX is set to take up 2 pins, then
+>> usiX_i2c can be set to take the other 2. If usiX is set for 4 pins, then
+>> usiX_i2c should be left disabled.
+>>
+> The whole naming scheme is a bit confusing: one might think that
+> because both usiX and usiX_i2c have the same number (X), they
+> represent the same USI block.
 
-<snip>
+Mapped to a different address? Hm, I doubt.
 
-> diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
-> index b59b1084d8cdf1b62da12879e21dbe56c2109648..df3ba9d4674bd25626cfcddc2d0cb28c233e3cc3 100644
-> --- a/drivers/media/v4l2-core/v4l2-fh.c
-> +++ b/drivers/media/v4l2-core/v4l2-fh.c
-> @@ -67,7 +67,7 @@ int v4l2_fh_open(struct file *filp)
->  }
->  EXPORT_SYMBOL_GPL(v4l2_fh_open);
->  
-> -void v4l2_fh_del(struct v4l2_fh *fh)
-> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp)
+>  I can see how they might share the same
+> pins, but it doesn't seem enough to me to justify this convention. If
+> I'm missing something, please help me understand why it should be done
+> like that?
 
-Instead of adding a second argument, perhaps it is better to
-just provide the filp pointer. After all, you can get the v4l2_fh
-from filp->private_data.
+That's the way it was done by Samsung in downstream, and specifically in
+upstream for autov9 [1]. Clocks are already merged and definitions expect
+the convention implied by my patch. Iit'll be way more mangled if we use
+non-matching node to header-definition names.
 
-It simplifies the code a bit.
+>
+>> Define all the USI nodes from peric0 (usi4), peric1 (usi7-10), peric2
+>> (usi0-6, usi11) and cmgp (usi0-6_cmgp, 2 pin usi7_cmgp) blocks, as well
+>> as their respective uart and i2c subnodes. As Samsung, for some reason,
+>> has decided to restart the counting of usi instances for cmgp, suffix
+>> labels for nodes of such with _cmgp.
+>>
+> Yeah, they probably meant to number CMGP instances, not USI instances.
+> Because CMGP (stands for Common GPIO) is actually a separate IP block
+> containing:
+>   - 2 x USIs
+>   - 1 GPIO controller (8 GPIO lines)
+>   - One general purpose ADC
+>   - 6 interrupt combiners
+>
+> So some USI blocks are separate USIs, and some USI blocks are a part
+> of bigger CMGP blocks. And instead of using "usi_01_cmgp" for example,
+> they should've gone with "usi_cmgp01".
 
-Regards,
+I guess.
 
-	Hans
+>
+> Usually it's recommended to follow the naming scheme from the TRM, but
+> AFAIU you don't have one.
 
->  {
->  	unsigned long flags;
->  
-> @@ -75,6 +75,8 @@ void v4l2_fh_del(struct v4l2_fh *fh)
->  	list_del_init(&fh->list);
->  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
->  	v4l2_prio_close(fh->vdev->prio, fh->prio);
-> +
-> +	filp->private_data = NULL;
->  }
->  EXPORT_SYMBOL_GPL(v4l2_fh_del);
->  
-> @@ -94,10 +96,9 @@ int v4l2_fh_release(struct file *filp)
->  	struct v4l2_fh *fh = file_to_v4l2_fh(filp);
->  
->  	if (fh) {
-> -		v4l2_fh_del(fh);
-> +		v4l2_fh_del(fh, filp);
->  		v4l2_fh_exit(fh);
->  		kfree(fh);
-> -		filp->private_data = NULL;
->  	}
->  	return 0;
->  }
+Yes...
 
-<snip>
+>  And the scheme used in the downstream device
+> tree looks like comlete garbage. Anyways, I don't have strong
+> preference on the naming scheme. Frankly I'd just do the consecutive
+> numbering for all the USI nodes in this case, like: usi0, usi1, etc.
+> And add the comments when needed, like "USI from CMGP01 block".
 
-> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
-> index d8fcf49f10e09452b73499f4a9bd1285bc2835a5..5e4c761635120608e0b588e0b0daf63e69588d38 100644
-> --- a/include/media/v4l2-fh.h
-> +++ b/include/media/v4l2-fh.h
-> @@ -114,12 +114,15 @@ int v4l2_fh_open(struct file *filp);
->   * v4l2_fh_del - Remove file handle from the list of file handles.
->   *
->   * @fh: pointer to &struct v4l2_fh
-> + * @filp: pointer to &struct file associated with @fh
-> + *
-> + * The function resets filp->private_data to NULL.
->   *
->   * .. note::
->   *    Must be called in v4l2_file_operations->release\(\) handler if the driver
->   *    uses &struct v4l2_fh.
->   */
-> -void v4l2_fh_del(struct v4l2_fh *fh);
-> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp);
->  
->  /**
->   * v4l2_fh_exit - Release resources related to a file handle.
-> 
+This will mangle stuff way too much for my preference. People will be
+way more confused when comparing this to the downstream device tree
+too, as the average Jo does not have access to anything apart from kernel
+source (like me -_-).
+
+>
+>> Spi support will be added later on.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 1361 ++++++++++++++++++++
+>>  1 file changed, 1361 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+>> index 22c6da907..f83e6cf24 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+>> @@ -7,6 +7,7 @@
+>>
+>>  #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/soc/samsung,exynos-usi.h>
+>>
+>>  / {
+>>         compatible = "samsung,exynos2200";
+>> @@ -314,6 +315,76 @@ pinctrl_peric0: pinctrl@10430000 {
+>>                         reg = <0x10430000 0x1000>;
+>>                 };
+>>
+>> +               usi4: usi@105000c0 {
+>> +                       compatible = "samsung,exynos2200-usi", "samsung,exynos850-usi";
+>> +                       reg = <0x105000c0 0x20>;
+>> +                       ranges;
+>> +                       #address-cells = <1>;
+>> +                       #size-cells = <1>;
+>> +                       clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
+>> +                                <&cmu_peric0 CLK_DOUT_PERIC0_USI04>;
+>> +                       clock-names = "pclk", "ipclk";
+>> +                       samsung,sysreg = <&syscon_peric0 0x1024>;
+>> +                       status = "disabled";
+>> +
+>> +                       hsi2c_8: i2c@10500000 {
+> Why not number all the underlying protocol nodes using the same number
+> as the USI node?
+
+Same as above, my wild guess is that Samsung ordered them by physical
+position.
+
+Best regards,
+Ivaylo
+
+[1] https://github.com/torvalds/linux/blob/cca7a0aae8958c9b1cd14116cb8b2f22ace2205e/arch/arm64/boot/dts/exynos/exynosautov9.dtsi#L503
+
+>  Like it's done in gs101.dtsi. And maybe even follow
+> USI naming scheme used in gs101 in general? Like, sort all USI nodes
+> by unit address, and then number them starting from 0. If some other
+> USIs are missing (like I mentioned in my review for the previous
+> patch), add those too, first.
+>
+> [snip]
 
