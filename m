@@ -1,47 +1,47 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE45121C177
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA5321D3EE
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754463639; cv=none; b=bHtYEB6FCC/K1SUHZAxHjU/dwYfHN6wLEg3cYmtw8tk3eyY1SXivRo7VRSGZWMpI9ylZoaCYj5ds01e+yd82fxa/gHRNqksO36AWmSNw4JD7RyYb+bb+lsj3mcHag6S9+dJL5ROoFQ4w+NR9FzhAfokL8hYD+1B+tMCuWMBeSN0=
+	t=1754463640; cv=none; b=hy/5YQFzPjweVccB3cMfA+TCXeRPpRW6+9JuCGyJXxR4XxZ+9IVba5nbTQWtlZIdZI48eQ3phuXMniRdG4jloThUHbmIVerO7hmuYW47XvL+nX5V1MjHAdbvVSOTKZhw2lrEvW4/Rv7Q7J8S1vdGryn40KA7EyZbNB9zxkG3/kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754463639; c=relaxed/simple;
-	bh=Zak+lA2NlgBcbLZqurtxDfxO5mK6x15806J/6syzwmA=;
+	s=arc-20240116; t=1754463640; c=relaxed/simple;
+	bh=H59zEFkgFttAf9nouPo8nKbeyZ/Sdm2Wafzx8hd7zMg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=NwDh7ZMiGP58eD7H048DLiH7rqW9nBsv689Sps1okN4MbOXv0nb7vOebB/1bk7Ys7KP+Bj+GKOIJMdXeDt2EX02d6nU3WVG1ptYUxD9oc7DjGR32mH47ih/egRFmqEl2Kx63eCNbuj14fCTjoEeArm1ExWFj5e4yyJ0MEliwjEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ymhovyn+; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=aBnNkvfN/La4LobPcvssBvB1k0/wau4AawlUxXox2W+0LbhBfsHrJMgwG1+3PJ34iUvmJDGZDNtLWcwsIpOV8gQx6V8YidUKogLIQf4pB/gkwOSI5uBoH8IhidBiAPi2xFjj8tIOdiqPVbDw+VOA8QOr6KR5yzxjCv1JY04piq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kxBiL9/N; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ymhovyn+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kxBiL9/N"
 Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250806070032epoutp049a7ec81ac1cba509f4906fe99e88dbae~ZG2DPE9r_2705927059epoutp04I
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250806070032epoutp0128b05518e6086af861e65773c1270698~ZG2DUB-NT0745307453epoutp01K
 	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250806070032epoutp049a7ec81ac1cba509f4906fe99e88dbae~ZG2DPE9r_2705927059epoutp04I
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250806070032epoutp0128b05518e6086af861e65773c1270698~ZG2DUB-NT0745307453epoutp01K
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1754463632;
-	bh=mKTpam8fIwZZjEsxg/48/XZxFSwkIOSsx3tm0VaWfDM=;
+	bh=QgSLuMB6IfJaTXVdgDlHnqEzw93HHayGHE/LD8ICjyk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ymhovyn+RZVzv3TXs6K4ExBpBnMzeiFvYFFfPFhj0XSmNEE0ALAWPUgeRLi1QftY3
-	 3SIbv8FztYIib/4DAstDnPgobj9mNKCr2phBWLZAfX/Jk5kmEKQd+DqmjSti2HZ2j9
-	 JRxnKIX2rslnqVBMZO9mRHU6TdLcj9RRGQJUXR7A=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	b=kxBiL9/NY3QZDKpUFVDQ8B9ssxfdXlQSIoMtlCAahjZIUgIzjLtPquFXPdrcEsQkA
+	 AP1PZuunH6DzIx4/wxvDUr9iAVEpH8H7FG2FxRquFIXOVsDHgecPM/B9wrLnpZr8KP
+	 C2g21aD7RpWXlDJhmX++3GD/95P/gZyczoFZtGzk=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
 	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250806070031epcas2p26e495b7671e91a544eed1202f31aaa5f~ZG2CtBliL0387403874epcas2p2j;
+	20250806070031epcas2p21c1f038c06775770821addbeaf4359c5~ZG2CyzZOM0387403874epcas2p2l;
 	Wed,  6 Aug 2025 07:00:31 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bxh5C242hz6B9m5; Wed,  6 Aug
-	2025 07:00:31 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bxh5B6cxdz3hhT4; Wed,  6 Aug
+	2025 07:00:30 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250806070030epcas2p24cc79e6dd3e505afd980fc05ee9e4f19~ZG2BBgIB00238902389epcas2p2f;
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4~ZG2BMJm2w2311523115epcas2p4N;
 	Wed,  6 Aug 2025 07:00:30 +0000 (GMT)
 Received: from localhost.localdomain (unknown [10.229.9.126]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250806070029epsmtip2009cde937e0098d78076564724ab8bec~ZG2A4JwRr2292322923epsmtip25;
-	Wed,  6 Aug 2025 07:00:29 +0000 (GMT)
+	20250806070030epsmtip23ac824b074935795eb4b803619af7160~ZG2BC8YTS2044420444epsmtip2g;
+	Wed,  6 Aug 2025 07:00:30 +0000 (GMT)
 From: Sangwook Shin <sw617.shin@samsung.com>
 To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
 	linux@roeck-us.net, semen.protsenko@linaro.org, dongil01.park@samsung.com,
@@ -49,10 +49,10 @@ To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
 	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
 	<sw617.shin@samsung.com>
-Subject: [PATCH v5 3/5] watchdog: s3c2410_wdt: Increase max timeout value of
- watchdog
-Date: Wed,  6 Aug 2025 15:55:12 +0900
-Message-Id: <20250806065514.3688485-4-sw617.shin@samsung.com>
+Subject: [PATCH v5 5/5] watchdog: s3c2410_wdt: exynosautov9: Enable
+ supported features
+Date: Wed,  6 Aug 2025 15:55:14 +0900
+Message-Id: <20250806065514.3688485-6-sw617.shin@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250806065514.3688485-1-sw617.shin@samsung.com>
 Precedence: bulk
@@ -62,138 +62,50 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250806070030epcas2p24cc79e6dd3e505afd980fc05ee9e4f19
+X-CMS-MailID: 20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 cpgsPolicy: CPGSC10-234,N
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250806070030epcas2p24cc79e6dd3e505afd980fc05ee9e4f19
+X-CMS-RootMailID: 20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4
 References: <20250806065514.3688485-1-sw617.shin@samsung.com>
-	<CGME20250806070030epcas2p24cc79e6dd3e505afd980fc05ee9e4f19@epcas2p2.samsung.com>
+	<CGME20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4@epcas2p4.samsung.com>
 
-Increase max_timeout value from 55s to 3665038s (1018h 3min 58s) with
-38400000 frequency system if the system has 32-bit WTCNT register.
-
-cat /sys/class/watchdog/watchdog0/max_timeout
-3665038
-
-[    0.330082] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: count=1099511400000, timeout=3665038, freq=300000
-[    0.330087] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: timeout=3665038, divisor=256, count=1099511400000 (fffffc87)
-[    0.330127] s3c2410-wdt 10060000.watchdog_cl0: starting watchdog timer
-[    0.330134] s3c2410-wdt 10060000.watchdog_cl0: Starting watchdog: count=0xfffffc87, wtcon=0001ff39
-[    0.330319] s3c2410-wdt 10060000.watchdog_cl0: watchdog active, reset enabled, irq disabled
-
-If the system has a 32-bit WTCNT, add QUIRK_HAS_32BIT_CNT to its quirk flags,
-and it will operate with a 32-bit counter. If not, it will operate with a 16-bit
-counter like in the previous version.
+Enable supported features for ExynosAutov9 SoC.
+- QUIRK_HAS_DBGACK_BIT
+- QUIRK_HAS_32BIT_CNT
 
 Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
 ---
- drivers/watchdog/s3c2410_wdt.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/watchdog/s3c2410_wdt.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 0a4c0ab2a3d6..673ab6768688 100644
+index 541870b4d01a..f25563585983 100644
 --- a/drivers/watchdog/s3c2410_wdt.c
 +++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -34,7 +34,8 @@
- #define S3C2410_WTCNT		0x08
- #define S3C2410_WTCLRINT	0x0c
- 
--#define S3C2410_WTCNT_MAXCNT	0xffff
-+#define S3C2410_WTCNT_MAXCNT_16	0xffff
-+#define S3C2410_WTCNT_MAXCNT_32	0xffffffff
- 
- #define S3C2410_WTCON_RSTEN		BIT(0)
- #define S3C2410_WTCON_INTEN		BIT(2)
-@@ -124,6 +125,10 @@
-  * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting the
-  * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debug mode.
-  * Debug mode is determined by the DBGACK CPU signal.
-+ *
-+ * %QUIRK_HAS_32BIT_CNT: WTDAT and WTCNT are 32-bit registers. With these
-+ * 32-bit registers, larger values will be set, which means that larger timeouts
-+ * value can be set.
-  */
- #define QUIRK_HAS_WTCLRINT_REG			BIT(0)
- #define QUIRK_HAS_PMU_MASK_RESET		BIT(1)
-@@ -131,6 +136,7 @@
- #define QUIRK_HAS_PMU_AUTO_DISABLE		BIT(3)
- #define QUIRK_HAS_PMU_CNT_EN			BIT(4)
- #define QUIRK_HAS_DBGACK_BIT			BIT(5)
-+#define QUIRK_HAS_32BIT_CNT			BIT(6)
- 
- /* These quirks require that we have a PMU register map */
- #define QUIRKS_HAVE_PMUREG \
-@@ -199,6 +205,7 @@ struct s3c2410_wdt {
- 	struct notifier_block	freq_transition;
- 	const struct s3c2410_wdt_variant *drv_data;
- 	struct regmap *pmureg;
-+	u32 max_cnt;
+@@ -306,7 +306,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
+ 	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
+ 	.cnt_en_bit = 7,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+-		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
++		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
++		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
  };
  
- static const struct s3c2410_wdt_variant drv_data_s3c2410 = {
-@@ -412,7 +419,7 @@ static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
- {
- 	const unsigned long freq = s3c2410wdt_get_freq(wdt);
- 	//(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV = 0x8000
--	u64 t_max = div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
-+	u64 t_max = div64_ul((u64)wdt->max_cnt * 0x8000, freq);
+ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
+@@ -318,7 +319,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
+ 	.cnt_en_reg = EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT,
+ 	.cnt_en_bit = 7,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+-		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
++		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
++		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
+ };
  
- 	if (t_max > UINT_MAX)
- 		t_max = UINT_MAX;
-@@ -571,7 +578,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
- {
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
- 	unsigned long freq = s3c2410wdt_get_freq(wdt);
--	unsigned int count;
-+	unsigned long count;
- 	unsigned int divisor = 1;
- 	unsigned long wtcon;
- 
-@@ -581,7 +588,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
- 	freq = DIV_ROUND_UP(freq, 128);
- 	count = timeout * freq;
- 
--	dev_dbg(wdt->dev, "Heartbeat: count=%d, timeout=%d, freq=%lu\n",
-+	dev_dbg(wdt->dev, "Heartbeat: count=%lu, timeout=%d, freq=%lu\n",
- 		count, timeout, freq);
- 
- 	/* if the count is bigger than the watchdog register,
-@@ -589,8 +596,8 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
- 	   actually make this value
- 	*/
- 
--	if (count >= 0x10000) {
--		divisor = DIV_ROUND_UP(count, 0xffff);
-+	if (count > wdt->max_cnt) {
-+		divisor = DIV_ROUND_UP(count, wdt->max_cnt);
- 
- 		if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
- 			dev_err(wdt->dev, "timeout %d too big\n", timeout);
-@@ -598,7 +605,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
- 		}
- 	}
- 
--	dev_dbg(wdt->dev, "Heartbeat: timeout=%d, divisor=%d, count=%d (%08x)\n",
-+	dev_dbg(wdt->dev, "Heartbeat: timeout=%d, divisor=%d, count=%lu (%08lx)\n",
- 		timeout, divisor, count, DIV_ROUND_UP(count, divisor));
- 
- 	count = DIV_ROUND_UP(count, divisor);
-@@ -806,6 +813,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(wdt->src_clk))
- 		return dev_err_probe(dev, PTR_ERR(wdt->src_clk), "failed to get source clock\n");
- 
-+	if (wdt->drv_data->quirks & QUIRK_HAS_32BIT_CNT)
-+		wdt->max_cnt = S3C2410_WTCNT_MAXCNT_32;
-+	else
-+		wdt->max_cnt = S3C2410_WTCNT_MAXCNT_16;
-+
- 	wdt->wdt_device.min_timeout = 1;
- 	wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt);
- 
+ static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
 -- 
 2.25.1
 
