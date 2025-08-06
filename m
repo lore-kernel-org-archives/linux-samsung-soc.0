@@ -1,145 +1,155 @@
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C5B292912;
-	Wed,  6 Aug 2025 15:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DD429B78F
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 17:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494979; cv=none; b=Q7e+h40NeZe05/yfiFD1ddBWWvHZS+b2zIvuGP4bG2nWuGbfCFuk+s+PqSdmzuNtrvqRB9Sw+5mWQ1jGaUdI5xCMYv4Lh2yz2P+MgtRSbp0MTq1FgIRQttHzU/ImDfvWRBezaA0aK+YBgCdOyNLW7PCFuGBa/Sx4uf6cW3RFTsc=
+	t=1754500680; cv=none; b=HovgvV80qZEZYa6tZyL+xbdBGD3Nf3DQQx+3U3UljyY8QW+HstzalsJw0KC97DN+vfdrR9WrvUiNMOu548mNNYbL1x+a/uUGO7nnsl7VzxvuMHW8r0tuV0BewjgH9xiUyah0Oxwf/31A+tnKnHzuiTR2GNdUuYClbhzOvpO5JCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494979; c=relaxed/simple;
-	bh=jyRgJSWPbO3PnUVVeAzfDnOq8adELheV/kLaL+kk5ew=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=UBRxx/nYhXmwtRBK2XbSrMonpyVG/yEFoP5BHtS2bOpJ1vqG1SQluWArNkogTGt5MyUJ6OX4/yV8CRwzYupyiLRhL7+A2Elgl1kQd2XL+xrFyMqZ5Uw18F/cQJjzTRGm2fJYcQdlpnjQ6/S/MxLU8C5bjeuODH6iZKOxY6bgcZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Shsce62z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SlR+myEi; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1754500680; c=relaxed/simple;
+	bh=Y0fD4MpRo3g7NK5y3s9VeqYtv1/oJ4ikGjJ95epd7uo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SRxlg72mHBZr0i56dNpwLa52Gkmv9RWB0RPoCUOUzZp6eOXbgS9HBQ3ob3+jM2YcKIV+61ls9qiYuRp12xh/xbC5nueKXZzs5bumMdq2SjVW5faIkWCtJ2X+9O7WFf3nz8uaAR2XFAa+/dHv5bGEBgqc75hmCM2heGY9ughD+8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=snZU1FjK; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Shsce62z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SlR+myEi"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 25E1A1D0008D;
-	Wed,  6 Aug 2025 11:42:56 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 06 Aug 2025 11:42:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1754494976;
-	 x=1754581376; bh=tOn4t6RQtKYJOiy4GjdNdZL8fCaJIQVkOeOeYM78T9w=; b=
-	Shsce62z7ccdFezFEX0ljLJTYYZo8Sj/bFUVQu1aAmq//x3Dr9sVOfgEmY7qXnll
-	d7/0igJlw2TsRXbULIquZAJJGp1Klw+RH+HKgC+hdQJ2dxxSB779j/XDbTtO4waP
-	HBtlaJMW4NLFRdhm0Bmec57qu5kz9IhfvLcnQu3VW7drQpeQp2kQNQn0ymJ3mhyp
-	Tno3XVRsyqNRxu7QRW1JDzJHdLIDU1fhCkYl5jY3hvKMrGIYM4TUdRcGTXBFkxW3
-	fGXw71ZPwx0guOUbGPCmebkdUqUWAc45kzL6GF4uLEkXGBe7bIwCs6osx4TNKe1w
-	k62wtFPvsuBSj4o8QCyipg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754494976; x=
-	1754581376; bh=tOn4t6RQtKYJOiy4GjdNdZL8fCaJIQVkOeOeYM78T9w=; b=S
-	lR+myEibV8ZuD3LZrxezPsVhRSJDJ3iQYJ22AQTZCMgp0OQAG/TMpLX8ynHngT9e
-	OxMi5eLac0YYJpiq9pPfy/HwkJVr9V/FUmLgc35jADR3OUTAm/ki+SCniptT61fQ
-	J4PGivd/N7Rlwjjwv+dSmCWC+aHzl6NrX9bjOh1KtAt++WtFDfPoM9hfn2wRJXmH
-	fieBtpKNEeqZAFI2qcYNU1I3zYAjVou4DeOWrAzzKDX+sJj/O8ixsCI1Qo4CpD9F
-	VuXN4NRx9fjbX07caRXMZc/udaaIs6eoi/W0yQ/cUNrMnEMpUldGRMYBYeUnw7Bn
-	EuJiXAuR6vIhIz9BZ9iuQ==
-X-ME-Sender: <xms:_neTaAIPbMToyVFjVCzhY_3AHIxEeueKJk4PgLrsAYmzXQRWnt7dLg>
-    <xme:_neTaAJMTJEZ8ui8qTj2uwGWmUn3QBkTQD_2KCDNmqOsbv9l44sCDua3P3SDlit6I
-    WDfl38Xx_sSvS7pyJA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudekgeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeejpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtg
-    hpthhtohepjhgvshhpvghrrdhnihhlshhsohhnsegrgihishdrtghomhdprhgtphhtthho
-    pehlihhnuhigqdgrrhhmqdhkvghrnhgvlhesrgigihhsrdgtohhmpdhrtghpthhtohepmh
-    htuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehgfihkuddt
-    udefsegtohgrshhirgdrtghomhdprhgtphhtthhopehhghhkihhmtdehsegtohgrshhirg
-    drtghomhdprhgtphhtthhopehkvghnkhhimhestghorghsihgrrdgtohhmpdhrtghpthht
-    ohepkhhskhegjedvheestghorghsihgrrdgtohhmpdhrtghpthhtohepmhhinhhghihouh
-    hnghgsohestghorghsihgrrdgtohhm
-X-ME-Proxy: <xmx:_neTaMyQha4lWXE4lnfH10oTn7U5V7ZNVO7HRNP5Sh8rhCkGz197OA>
-    <xmx:_neTaCHarrhUi7SS3lsNUWCcs7zA21ELnaKANtAhm3udo3oPuqo9Gg>
-    <xmx:_neTaAGwPQ13TlH-W68kdH_hvmRV15_tjZDRb3_AMdF7uUncH9yDpA>
-    <xmx:_neTaLugcvZe_3BQ1_GvdspWP5DyXXIhogioBm8zi9LhHsUMRS7UZQ>
-    <xmx:_3eTaP4CvdJzy5tREUVbfv-NACFAbM6q6Gp5RicN6WQAd1u5qmZS1Gh->
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9D0F7700065; Wed,  6 Aug 2025 11:42:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="snZU1FjK"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e8da1fd7b6bso134639276.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Aug 2025 10:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754500677; x=1755105477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eCJFY1Ry1l45cujmFWN8iUaZroZ2v+N4zhO/u5g0qWo=;
+        b=snZU1FjKYXt9Xjr3LWONV8Z5qsaR+qsU3ZZ8DUO2IxnBmbXN+ci4hKywQpjvIOdZgz
+         Jx8P9J0wteBg9JhbPUpxI/fh5Q9PVnqh0XtKgr/2S5YZE3jhEHhiIzG++vXXdccWt03e
+         OmLMAgxzIeo5p7C3/joiOxauQ0LYPI1YFAcE2jlF0l5F+1diqR6W0LWnIUxG7ArcFp4D
+         +upo7BrtWilipH/UOlIrOAwAOcwDDP+oB7CdWWTnZmov+4c5rpGEJnymnE7u71M2aXpY
+         2TjKCBySiYDFIg2h3QqqqE5g03nGcVTLuF/7ysX6rUdV13sUGHQV4bfOY9dcE4wLpS4s
+         jRXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754500677; x=1755105477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eCJFY1Ry1l45cujmFWN8iUaZroZ2v+N4zhO/u5g0qWo=;
+        b=oYqD88XeMtIjby+xQB/wojmYiamjx/8elJjSP0jOmXrCy8+9ce/mhhU5plCNV8kX9v
+         cvBt5CEUPt2cmLHHxMWPBKDOwzHuZ8Ilb68EdxErhGIDAUlVSPvjOMGdf/B5YZhx2zCZ
+         Brxhai3Trd85+GcesPK1P2A0m8GtR+vXQ9rB0VCviLemBSNM9L4MwiVU4pVmx6hOrUwz
+         nRRbAEw15JYPDE1eqCGD+oyQjDuGQSBA6t2QZVKYj1oc4CHS5DiVApph9/50IyHIBmgY
+         fb1DLMp3FFexPN/WNkSLwwRpXY2BAnrZDdrF5XoDVlo6gcYjaI7hvrFilEhXt3h9/O5e
+         v8uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm+hO4qZsOp1ISv937/cafdfscNqrVRaY8eKgMMnZ9bBycrtrGH0ZzzcdRetEny8dhdtQOL7TGJuCv2aIumOBd8Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNzJ7cHS83GgP+a5noVZxMYuIhmW+FNhZxjwUqrD36WaKBFDhN
+	USbkHmdmUOxNi2e8bHk3ImQ3zPSafLmVXcBPG42ElQtjzHbmbhf2/1K1ZUwiO2U6zl1ZPL/E4yK
+	VD/Eph8iXWlW1VG6RDWv8LgSg5kWameSU3lmwi1pa9g==
+X-Gm-Gg: ASbGnctcVqjc2LcGks7798eLimhx5pQWoC20N1zB3dlyNjjKJ3Axr0HAi67UKmjc8z/
+	sEK6zXJ99m4nmvM1rjVP63dm9AT5Gk3T2DlHKnfB2cXmb8aAhiCQl5i4u7FY/FBiB9MOtgqPIVK
+	VEcVUs7/PJWuSZxFocYKCmGd4DMcWPxPirmBXH2edxitXe54PA8aUAsl/Y523/kBDkxQHwIMTsk
+	QU1ojR0nb508kb15JboFhWDFtQ=
+X-Google-Smtp-Source: AGHT+IF/PATUAgO1kyiILLwJ2Hz+mfCVgzAsnenKM/M4eB9tFIphDugm0X2Ki4Larr5HlLbqkJkCKKOb501IL1PCi98=
+X-Received: by 2002:a05:690c:f03:b0:71a:3484:abe8 with SMTP id
+ 00721157ae682-71bc98866fbmr51496647b3.34.1754500677372; Wed, 06 Aug 2025
+ 10:17:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T8d5032a2d74658ad
-Date: Wed, 06 Aug 2025 17:42:24 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Pankaj Dubey" <pankaj.dubey@samsung.com>, ksk4725 <ksk4725@coasia.com>,
- "Jesper Nilsson" <jesper.nilsson@axis.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Alim Akhtar" <alim.akhtar@samsung.com>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Tomasz Figa" <tomasz.figa@gmail.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
-Cc: kenkim <kenkim@coasia.com>, "Jongshin Park" <pjsin865@coasia.com>,
- "GunWoo Kim" <gwk1013@coasia.com>, "HaGyeong Kim" <hgkim05@coasia.com>,
- "GyoungBo Min" <mingyoungbo@coasia.com>, "SungMin Park" <smn1196@coasia.com>,
- "Shradha Todi" <shradha.t@samsung.com>,
- "'Ravi Patel'" <ravi.patel@samsung.com>, "Inbaraj E" <inbaraj.e@samsung.com>,
- "Swathi K S" <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- "Dongjin Yang" <dj76.yang@samsung.com>,
- "Sang Min Kim" <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, soc@lists.linux.dev
-Message-Id: <5584937d-0941-487a-859b-b3c55aceaf37@app.fastmail.com>
-In-Reply-To: <ef3b8e12-0677-4e49-bf2c-b8136c9a6908@kernel.org>
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <847e908b-1073-46ea-93f3-1f36cc93d8b8@kernel.org>
- <bfdc2eddde554e1d1808dd8399bc6a693f681c9b.camel@coasia.com>
- <CGME20250721064006epcas5p4617b0450e69f72c94d2b3ae7b1d200e7@epcas5p4.samsung.com>
- <99977f38-f055-46ed-8eb0-4b757da2bcdd@kernel.org>
- <000501dc06ab$37f09440$a7d1bcc0$@samsung.com>
- <e334f106-d9f3-4a21-8cdd-e9d23dd2755d@kernel.org>
- <002001dc06b1$540dc980$fc295c80$@samsung.com>
- <ef3b8e12-0677-4e49-bf2c-b8136c9a6908@kernel.org>
-Subject: Re: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <CGME20250806070029epcas2p1f764301b115b766f88b422b0dbdd68f1@epcas2p1.samsung.com>
+ <20250806065514.3688485-1-sw617.shin@samsung.com> <20250806065514.3688485-3-sw617.shin@samsung.com>
+In-Reply-To: <20250806065514.3688485-3-sw617.shin@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 6 Aug 2025 12:17:46 -0500
+X-Gm-Features: Ac12FXyGsSXeAvPSWY26uUPOsx4RabuRz1OCuoO1ZxYtOJ0aBX2ZDz4rGIPWY70
+Message-ID: <CAPLW+4=Lf5rs3p3+D17HDGYd1FHk-PDghOq4fygRzZi7VZXcHQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, dongil01.park@samsung.com, khwan.seo@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 6, 2025, at 11:23, Krzysztof Kozlowski wrote:
-> On 06/08/2025 11:05, Pankaj Dubey wrote:
->> 
->> or ARTPEC is manufactured (ODM) by another vendor in that case, won't it
->> create problems? 
+On Wed, Aug 6, 2025 at 2:00=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.co=
+m> wrote:
 >
+> Fix the issue of max_timeout being calculated larger than actual value.
+> The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
+> S3C2410_WTCON_MAXDIV is smaller than the actual value because the remaind=
+er
+> is discarded during the calculation process. This leads to a larger
+> calculated value for max_timeout compared to the actual settable value.
+> To resolve this issue, the order of calculations in the computation proce=
+ss
+> has been adjusted.
 >
-> No problems here. Non-Samsung Artpec/Axis soc will not go there. It will
-> go the top-level axis directory, just like artpec-6
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 95f7207e390a..0a4c0ab2a3d6 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/delay.h>
+> +#include <linux/math64.h>
+>
+>  #define S3C2410_WTCON          0x00
+>  #define S3C2410_WTDAT          0x04
+> @@ -410,9 +411,13 @@ static inline unsigned long s3c2410wdt_get_freq(stru=
+ct s3c2410_wdt *wdt)
+>  static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wd=
+t)
+>  {
+>         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+> +       //(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV =3D 0x8=
+000
 
-Agreed. We did have a case where something gradually changed
-instead of changing ODMs entirely:
+This single-line comment style (//) is usually not used in the kernel
+code. Prefer multi-line comment style instead (/* */). More
+importantly, this comment is not needed: using the raw 0x8000 value
+below is still hard-coding it, and this comment is not the best way to
+fix that. So declare either a proper constant or a define, and use it
+further. I'd go with this:
 
-Apple A4 was mostly an Exynos-family chip but A18 is not.
-If Axis turns into the next Apple and ARTPEC-23 is far enough
-removed from ARTPEC-9 to no longer fit into the same family
-as Exynos/Tensor/FSD, we can still reconsider the decision
-in a decade.
+    const u64 cnt_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
+                        S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
 
-     Arnd
+and then:
+
+    u64 t_max =3D div64_ul(cnt_max, freq);
+
+Sorry I didn't catch your related comment earlier in v4!
+
+With that addressed, feel free to add:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+> +       u64 t_max =3D div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
+>
+> -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX=
+ + 1)
+> -                                      / S3C2410_WTCON_MAXDIV);
+> +       if (t_max > UINT_MAX)
+> +               t_max =3D UINT_MAX;
+> +
+> +       return t_max;
+>  }
+>
+>  static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool ma=
+sk)
+> --
+> 2.25.1
+>
