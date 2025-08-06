@@ -1,111 +1,268 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA5321D3EE
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD7E1FB3;
+	Wed,  6 Aug 2025 08:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754463640; cv=none; b=hy/5YQFzPjweVccB3cMfA+TCXeRPpRW6+9JuCGyJXxR4XxZ+9IVba5nbTQWtlZIdZI48eQ3phuXMniRdG4jloThUHbmIVerO7hmuYW47XvL+nX5V1MjHAdbvVSOTKZhw2lrEvW4/Rv7Q7J8S1vdGryn40KA7EyZbNB9zxkG3/kk=
+	t=1754468220; cv=none; b=WMGSlCIoh2/1YRIVrUF4Y/3KghnUoIPT2idOOE0XrFCZNbFEKkd+cXtwp6WOvGoudMEAOSMRPNApywMe4RSrnu+xr8034CQPfCNk+TKhS3IvM+1IR+Abc0Ad9Fx4tgWABGUzG0h7di2Xfl/IJ3f6mp3nKcY4JhOzzBhxKnyKak8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754463640; c=relaxed/simple;
-	bh=H59zEFkgFttAf9nouPo8nKbeyZ/Sdm2Wafzx8hd7zMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=aBnNkvfN/La4LobPcvssBvB1k0/wau4AawlUxXox2W+0LbhBfsHrJMgwG1+3PJ34iUvmJDGZDNtLWcwsIpOV8gQx6V8YidUKogLIQf4pB/gkwOSI5uBoH8IhidBiAPi2xFjj8tIOdiqPVbDw+VOA8QOr6KR5yzxjCv1JY04piq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kxBiL9/N; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1754468220; c=relaxed/simple;
+	bh=mSezG6NRkxDtJlYf/ZFsHjMGCJmUaCUPnrgkbL+HJRE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RTXgsgHZ1CuANGhJNBsFqVrWzfv86fjk9NEgUHPbakFNa6NnuSZnDQ6BogoIEG0M+fK2HRAvB564Pqj3s91C4sdO09lStQ9+XvvErS8BlGKhHy394ngx6LiRuCLQnfNzFyYx1Bn1xJxfy/Nv5OoTrJjUiqqNkpBlAEGxkzODrXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBlcnILQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kxBiL9/N"
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250806070032epoutp0128b05518e6086af861e65773c1270698~ZG2DUB-NT0745307453epoutp01K
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250806070032epoutp0128b05518e6086af861e65773c1270698~ZG2DUB-NT0745307453epoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754463632;
-	bh=QgSLuMB6IfJaTXVdgDlHnqEzw93HHayGHE/LD8ICjyk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kxBiL9/NY3QZDKpUFVDQ8B9ssxfdXlQSIoMtlCAahjZIUgIzjLtPquFXPdrcEsQkA
-	 AP1PZuunH6DzIx4/wxvDUr9iAVEpH8H7FG2FxRquFIXOVsDHgecPM/B9wrLnpZr8KP
-	 C2g21aD7RpWXlDJhmX++3GD/95P/gZyczoFZtGzk=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250806070031epcas2p21c1f038c06775770821addbeaf4359c5~ZG2CyzZOM0387403874epcas2p2l;
-	Wed,  6 Aug 2025 07:00:31 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.36.99]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bxh5B6cxdz3hhT4; Wed,  6 Aug
-	2025 07:00:30 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4~ZG2BMJm2w2311523115epcas2p4N;
-	Wed,  6 Aug 2025 07:00:30 +0000 (GMT)
-Received: from localhost.localdomain (unknown [10.229.9.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250806070030epsmtip23ac824b074935795eb4b803619af7160~ZG2BC8YTS2044420444epsmtip2g;
-	Wed,  6 Aug 2025 07:00:30 +0000 (GMT)
-From: Sangwook Shin <sw617.shin@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	linux@roeck-us.net, semen.protsenko@linaro.org, dongil01.park@samsung.com,
-	khwan.seo@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
-	<sw617.shin@samsung.com>
-Subject: [PATCH v5 5/5] watchdog: s3c2410_wdt: exynosautov9: Enable
- supported features
-Date: Wed,  6 Aug 2025 15:55:14 +0900
-Message-Id: <20250806065514.3688485-6-sw617.shin@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250806065514.3688485-1-sw617.shin@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBlcnILQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657BBC4CEE7;
+	Wed,  6 Aug 2025 08:16:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754468219;
+	bh=mSezG6NRkxDtJlYf/ZFsHjMGCJmUaCUPnrgkbL+HJRE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=mBlcnILQJQ8itwowSPTjPYWtbmq0X3J4O4tViHMM3acfOo0gkxWlN1i8bih8TRk/D
+	 QEK88TYFCCAgRdFf8N2vcHquOSOUzegVf8WhW/Lsok7t83wbntVOKbt/9YhJ0whgx3
+	 5Pw9TjucRRgCke06GxlfRg3jM6WSnxmB2mHB5KAF2EmEO8hgceOt4Z1OmiUmUg2AaV
+	 FwUr0faqAjE7o5R8MImS6WtgvVuPDjdbXIJiJkaVw/SZsYXDBQgOf6d9ctuBZbPmCU
+	 dj5qL0frPJSAHC86jkv/ZZcGOlf7y8hBVfvg5g40mjFEZISVqZUlox2uPFHVojc+hd
+	 jTKUIqp5zZJRg==
+Message-ID: <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
+Date: Wed, 6 Aug 2025 10:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4
-References: <20250806065514.3688485-1-sw617.shin@samsung.com>
-	<CGME20250806070030epcas2p4f9b779bd9fde57b4bfea958efdf62cf4@epcas2p4.samsung.com>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
+ custom functions
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
+ <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hansg@kernel.org>,
+ Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+ Christian Gromm <christian.gromm@microchip.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
+ <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
+ Michael Tretter <m.tretter@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+ Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
+ <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Nas Chung <nas.chung@chipsnmedia.com>,
+ Jackson Lee <jackson.lee@chipsnmedia.com>,
+ Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+ Houlong Wei <houlong.wei@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Tiffany Lin <tiffany.lin@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+ Jacob Chen <jacob-chen@iotwrt.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Fabien Dessenne <fabien.dessenne@foss.st.com>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
+ <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Corentin Labbe <clabbe@baylibre.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Enable supported features for ExynosAutov9 SoC.
-- QUIRK_HAS_DBGACK_BIT
-- QUIRK_HAS_32BIT_CNT
+On 02/08/2025 11:22, Jacopo Mondi wrote:
+> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> Accessing file->private_data manually to retrieve the v4l2_fh pointer is
+> error-prone, as the field is a void * and will happily cast implicitly
+> to any pointer type.
+> 
+> Replace all remaining locations that read the v4l2_fh pointer directly
+> from file->private_data and cast it to driver-specific file handle
+> structures with driver-specific functions that use file_to_v4l2_fh() and
+> perform the same cast.
+> 
+> No functional change is intended, this only paves the way to remove
+> direct accesses to file->private_data and make V4L2 drivers safer.
+> Other accesses to the field will be addressed separately.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> ---
+>  drivers/media/pci/ivtv/ivtv-driver.h               |  5 ++++
+>  drivers/media/pci/ivtv/ivtv-fileops.c              | 10 +++----
+>  drivers/media/pci/ivtv/ivtv-ioctl.c                |  8 +++---
+>  drivers/media/platform/allegro-dvt/allegro-core.c  |  7 ++++-
+>  drivers/media/platform/amlogic/meson-ge2d/ge2d.c   |  8 ++++--
+>  .../media/platform/chips-media/coda/coda-common.c  |  7 ++++-
+>  .../platform/chips-media/wave5/wave5-helper.c      |  2 +-
+>  .../media/platform/chips-media/wave5/wave5-vpu.h   |  5 ++++
+>  drivers/media/platform/m2m-deinterlace.c           |  7 ++++-
+>  .../media/platform/mediatek/jpeg/mtk_jpeg_core.c   |  7 ++++-
+>  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c  |  7 ++++-
+>  .../media/platform/mediatek/mdp3/mtk-mdp3-m2m.c    |  7 ++++-
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c   |  2 +-
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h   |  5 ++++
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   |  2 +-
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h   |  5 ++++
+>  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c     |  7 ++++-
+>  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c |  7 ++++-
+>  drivers/media/platform/nxp/mx2_emmaprp.c           |  7 ++++-
+>  drivers/media/platform/renesas/rcar_fdp1.c         |  7 ++++-
+>  drivers/media/platform/renesas/rcar_jpu.c          |  7 ++++-
+>  drivers/media/platform/rockchip/rga/rga.c          |  3 +--
+>  drivers/media/platform/rockchip/rga/rga.h          |  5 ++++
+>  drivers/media/platform/rockchip/rkvdec/rkvdec.c    |  2 +-
+>  drivers/media/platform/rockchip/rkvdec/rkvdec.h    |  5 ++++
+>  .../media/platform/samsung/exynos-gsc/gsc-core.h   |  6 +++++
+>  .../media/platform/samsung/exynos-gsc/gsc-m2m.c    |  6 ++---
+>  .../media/platform/samsung/exynos4-is/fimc-core.h  |  5 ++++
+>  .../media/platform/samsung/exynos4-is/fimc-m2m.c   |  2 +-
+>  drivers/media/platform/samsung/s5p-g2d/g2d.c       |  7 +++--
+>  .../media/platform/samsung/s5p-jpeg/jpeg-core.c    |  9 +++++--
+>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   |  6 ++---
+>  .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  6 +++++
+>  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c   |  7 ++++-
+>  drivers/media/platform/st/sti/delta/delta-v4l2.c   | 26 +++++++++++-------
+>  drivers/media/platform/st/sti/hva/hva-v4l2.c       | 31 ++++++++++++----------
+>  drivers/media/platform/st/sti/hva/hva.h            |  2 --
+>  drivers/media/platform/st/stm32/dma2d/dma2d.c      |  7 +++--
+>  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c   |  3 +--
+>  .../platform/sunxi/sun8i-rotate/sun8i_rotate.c     |  3 +--
+>  drivers/media/platform/ti/omap3isp/ispvideo.c      |  4 +--
+>  drivers/media/platform/ti/omap3isp/ispvideo.h      |  6 +++++
+>  drivers/media/platform/verisilicon/hantro.h        |  5 ++++
+>  drivers/media/platform/verisilicon/hantro_drv.c    |  3 +--
+>  drivers/staging/media/imx/imx-media-csc-scaler.c   |  7 ++++-
+>  drivers/staging/media/meson/vdec/vdec.c            | 24 ++++++-----------
+>  drivers/staging/media/meson/vdec/vdec.h            |  5 ++++
+>  drivers/staging/media/sunxi/cedrus/cedrus.c        |  3 +--
+>  drivers/staging/media/sunxi/cedrus/cedrus.h        |  5 ++++
+>  drivers/staging/media/sunxi/cedrus/cedrus_video.c  |  5 ----
+>  50 files changed, 237 insertions(+), 100 deletions(-)
+> 
+> diff --git a/drivers/media/pci/ivtv/ivtv-driver.h b/drivers/media/pci/ivtv/ivtv-driver.h
+> index a6ffa99e16bc64a5b7d3e48c1ab32b49a7989242..cad548b28e360ecfe2bcb9fcb5d12cd8823c3727 100644
+> --- a/drivers/media/pci/ivtv/ivtv-driver.h
+> +++ b/drivers/media/pci/ivtv/ivtv-driver.h
+> @@ -388,6 +388,11 @@ static inline struct ivtv_open_id *fh2id(struct v4l2_fh *fh)
+>  	return container_of(fh, struct ivtv_open_id, fh);
+>  }
+>  
+> +static inline struct ivtv_open_id *file2id(struct file *filp)
+> +{
+> +	return container_of(file_to_v4l2_fh(filp), struct ivtv_open_id, fh);
 
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
----
- drivers/watchdog/s3c2410_wdt.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Why not write:
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 541870b4d01a..f25563585983 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -306,7 +306,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
- 	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
- 	.cnt_en_bit = 7,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
--		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
-@@ -318,7 +319,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
- 	.cnt_en_reg = EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT,
- 	.cnt_en_bit = 7,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
--		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
--- 
-2.25.1
+	return fh2id(file_to_v4l2_fh(filp));
 
+Same for all other drivers that do this. I prefer to have the contained_of()
+in just one place.
+
+> +}
+> +
+>  struct yuv_frame_info
+>  {
+>  	u32 update;
+
+<snip>
+
+> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
+> index 1f134e08923a528cc676f825da68951c97ac2f25..74977f3ae4844022c04de877f31b4fc6aaac0749 100644
+> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
+> +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
+> @@ -302,6 +302,11 @@ struct allegro_channel {
+>  	unsigned int error;
+>  };
+>  
+> +static inline struct allegro_channel *file_to_channel(struct file *filp)
+> +{
+> +	return container_of(file_to_v4l2_fh(filp), struct allegro_channel, fh);
+> +}
+> +
+>  static inline int
+>  allegro_channel_get_i_frame_qp(struct allegro_channel *channel)
+>  {
+> @@ -3229,7 +3234,7 @@ static int allegro_open(struct file *file)
+>  
+>  static int allegro_release(struct file *file)
+>  {
+> -	struct allegro_channel *channel = fh_to_channel(file->private_data);
+> +	struct allegro_channel *channel = file_to_channel(file);
+
+So a file_to_channel inline function was added, but it is used in just one
+place.
+
+I would prefer to just drop the inline function and instead write:
+
+	struct allegro_channel *channel = fh_to_channel(file_to_v4l2_fh(file));
+
+If this is needed in two or more places, then the extra inline makes sense,
+but it is a fairly common pattern that it is only needed in the release function.
+
+Adding a new inline just for that seems overkill to me.
+
+>  
+>  	v4l2_m2m_ctx_release(channel->fh.m2m_ctx);
+>  
+
+Regards,
+
+	Hans
