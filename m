@@ -1,66 +1,66 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F828B516;
-	Wed,  6 Aug 2025 13:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E4428BAAE;
+	Wed,  6 Aug 2025 14:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754488668; cv=none; b=KmRBxG+dDJ3lNMjBm0PAOJUHotXTTGIavDYQxBKk5MntPMwHZLavgAZ4Dn4G7rPDQu2wf8lAcyyx3r21Kss5lpBdXFgw+18KUwG6IVV/vffOSAr64XPVJjxicRvS1X3QODElzxMW6bSArPJiDkKLN1dlvGTDBMzpsYEZu4kCQVo=
+	t=1754489035; cv=none; b=bK41SL4nUyi4PE797Mpc/uyJy8LYmWoa70lgfMubIbxK4AEpm2dc6EV3kG5cjRGGyxbUIr/Tg/Xm3fZjxR2fXUXclfV8PcUo5xlApH9AYHvpSYCVT7ct3KsJ7A85veJYZY1KORO1aH96n1QhfjuHk1leL93RydNPFV47u9S13xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754488668; c=relaxed/simple;
-	bh=n/ObepZyGgjKds95g5+xh+xWSxe6QfTejtKfyZCffzk=;
+	s=arc-20240116; t=1754489035; c=relaxed/simple;
+	bh=lMoTmdZAcpb38FFOUzGfB6VQb3YZTNLRnWUbMapo/9A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogcyEngT8K0eBmAF6mBso9xvIvaDabnbEWRluMAgQLUQINrC36me9oRc9sKcVAmZAepJbSRmW5zetFgy4nup/DHD614TGa1hg/pdMaaLjvRj3Z1BtMeLL+YMfDmE85BniAgM/9AXLKrLXDaaIL7TOeXyi52AB1Iay+I0EgGv71k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixufnPeF; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:Content-Type; b=cF0w30Ait4CSYaDtGyne8C5t60t6daBte304MRJakaACXU3X8AP0Yu6pds5fZwZldTPFgV0hkJYvOlUWXKfGAcf3mK2x3YKMU7jcEUPaFGvT3Y+YBx0QTu+l2hOdDNlniweXkna3gT1jmauBrnp6vauMQK3JfGbfg/F4zryX8Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HT/lqZZB; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixufnPeF"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af949bdf36cso774320066b.0;
-        Wed, 06 Aug 2025 06:57:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HT/lqZZB"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so9072901a12.2;
+        Wed, 06 Aug 2025 07:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754488665; x=1755093465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754489032; x=1755093832; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nHzr4MA8aqHB6jajAWjKyzRf2MPIdZd6EmOAFNAHckc=;
-        b=ixufnPeFZWZWL+U7dONizLSVXMhOcE+xOYcwCKqcY6dA7RJW1BImckZ3nkLbmbXC9e
-         JUQNINh9ASCnE3ITE2WTgoXcLji6NJpn8190FA+O+Ln7ZPCN0Dd9ddf6icXt6IQW5Tcu
-         6Aba7hZFIv6Ipd1oBW7A4Gmi3wA2PNgvz352FCjdBnhfARNApXKM7pliYib7W6s3jYr3
-         eSI/qodluaYihe4ce6tXnzXuQaqXFQhWXdwVXVJzSC/3I9UEQAyg9ki5xPRzGhhpad4a
-         Izd5oPRsdLFRsWRorH2yY3nj0AJzqjK/NNz3Qwyl1UkBSB5hVmCRb1T9L6oq3ykDdvrU
-         dFPQ==
+        bh=ZdCn3l/Y/cDnw+eg7OBtMS2sCWl9a4rYzAAcz1Nkh/s=;
+        b=HT/lqZZBoJmbvEmNr2pMZpd+jI0bX2vfZlD+wZKD7tY6D8PS+DgiwoiUcFyINSny+v
+         qJgGXJ1P2Mcrcy0W65d9WgFQHdK85TVqN/xsvem0qX/6sZOsl7rnlfv5oo7VOrr+lHZJ
+         +yYeM9AYgJ7jm2Ac/R6E3iS4Otlp/oEtO1u+LC6jodCPNAuaRAbQ5sgYp4LH9vxW3zBP
+         5F1b++LOxEYts4mX8fWn/DSFtrGxve/49zNfW3bqn8SlaVZwMWWgyzWQnJVLp9IosxCw
+         VWjuYiG5udKVHjVB7t2ya3JYnOAFUi/KCFhR1lKUD546e1L6JeAPm1O+c3oXTToU7rDz
+         02Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754488665; x=1755093465;
+        d=1e100.net; s=20230601; t=1754489032; x=1755093832;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nHzr4MA8aqHB6jajAWjKyzRf2MPIdZd6EmOAFNAHckc=;
-        b=BgqJK8jEsrHBlJHgmwvMluANZhv0vkuhi0oX2xf6jrorcKnVprHsB3df+P9FFxu6XU
-         0e99I3eojmb77w4d56tHdGG6odh3k10Dzf7HRdkeUA/V2dk+J7lf0/8uFJj5/vkaTQ+4
-         RLqDBckTwSXWCBq//qnwUKLjFx4Zd1fXaYMsBsG90uZ3rBgNLec5IORAGfUEn2Kn01Wn
-         +FtzE4nokjBxNw/ZvRy9fytWd/4uyn0dci8eyxj70cB4tLxGj2ej4F8lj0uw+zgzi73q
-         yb1gmwIQm0Yh3SASXE5CehA+PpqQ2N/VBgxY2HhJJCoM9G7f45c+hMeMSqY9o2N9R7JQ
-         PQug==
-X-Forwarded-Encrypted: i=1; AJvYcCUiDDU9KJ1DKre7rBPj7nRbGAbycwDRmX4yJXe4wiKFdICD+nqD55XzMw6jjtDkjCN/VSpfNTkeboUnT27sDzhtIXM=@vger.kernel.org, AJvYcCV2Z7jhakL+L5GW5eYp5rxSvVw1ZxCQg48ywlOVqoKcp8Ga3c9Gss8mi42wkXHyYqGONolBTp/ayFJl@vger.kernel.org, AJvYcCW95p0POUrThDAJB5h18KyglatdaUVmGpKPK5VhAtbIBJQRK65NOUIhq10OfOAYpeWgIJ1U6X07+L7fVFUs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4qNWA/krtCsUIUtcTu8npjPpYqgZcqaLXX37b0JV/FVtRAA08
-	kGYjF+me9G7/XXJvhajkZoIREK7McNi8DpVDc3pehdYko8+yJHQc9z4S
-X-Gm-Gg: ASbGncvhSdfFCJndOZiyncF/OsX6/ZdHZn0HtCOaSZKdbaYXk35/8cxiH21m2aQGzaJ
-	yhwck/lzRPB2lNCDixA2ZS0JiFWTubXU962HIHaK5vVGeXeRBt6PngWAB0TAWZ83NHrVRKFhfqi
-	H/QNymdRB7wkNIATu6QZE2YTkL9mi3sUbDuo6KGEn/4JRaVWzVVLCMCIvKVae53ur4H3JOaJZLf
-	3i9lwZU48AWTjns7+tKyOgcuHOsawdT9NQcoTJh9iKPe9Y78ppywCohWsRagVnmcK6AcwGvdJqj
-	BrFSGDC1r5oQ4PYCgOAEH2Y20AJPuCoYOL0lu9qp9vnDll3ThXJ0mnHyLIbBDA0nISwPm0wr1g2
-	0FEftrXb8SDTJ7/07CblU3pmw7nPoN/Xkm7iz0MsBI1mjDhM7r1aokh7WcMGT/kxbBXw9kXsf+h
-	8rFRmcVlW063E=
-X-Google-Smtp-Source: AGHT+IGQ3QZUaLC8+topY1n9SlLxxAbYjEO2ebSd3f+30oUx/XN3GCsmaSZCHF1ta/LFIKgiqEA7eQ==
-X-Received: by 2002:a17:907:7f18:b0:af9:2502:7772 with SMTP id a640c23a62f3a-af992bc37femr270882566b.54.1754488664645;
-        Wed, 06 Aug 2025 06:57:44 -0700 (PDT)
+        bh=ZdCn3l/Y/cDnw+eg7OBtMS2sCWl9a4rYzAAcz1Nkh/s=;
+        b=tKt9YNqeUR55PwFyI1FAE/nlwZRjDEbDsbRqHhKtF4IQSJPZ6nNwTQjg/yqv52HPIr
+         XnUcaYE6V+LZ56Rym93oBnboVe0Te3oB5ZMB5vbpwerXXo++Hhw5eEXzDsA/gNMi/V9H
+         tuzobdz5MfI79n5YjF6UgcGrz8reYUGmqqxIC9qpgAJJAI4nqa779WNqkGfUpbzKdbV4
+         rMWxUalk3f4KSJcSy8fsG2IiihCFgamL/HVRkPrsRRyf9b7FAHyqmpKe4vO0m6BDGgVn
+         Saof1ufXABizOjiYZFXxqWGkRaBkmfA189snkrZnlUvEQyLpQdKPhvb16DmJ8+YKA2Zk
+         0kDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQgHtme9M02CF2PRnKJUP7pK4MXOgyF79R63t6KJl59/A5zux6oImcQReWGYy888S2Cl08J30GrC9xGAcD@vger.kernel.org, AJvYcCWcSGDU5BA6yixyl9GdClLOzKf9KlTC33SP5dyy4BDwJcJqzaewEX/wMC4Ls1DLGyZGZc2jwQ61JxQAUq9MdcqmDIU=@vger.kernel.org, AJvYcCXFD1DwXsk5e/Jrq3RFDa1HOJSwQTXUxFjL9GcpCXnLLgK/n6xto35Rktos1o1suNpGlbMDjz+r96ef@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo5WI7kTc9pDfNJZsPuY/MLtTO5Rt/WbY/Bjp2Gxze426EVrTL
+	NFNGQ6p6ndAGiauDYEjBJCAPwJSR6cUkEcBZSikI9uyO+XNVx70hH518
+X-Gm-Gg: ASbGnct2cOwXwUUybcO0i0XCvksXB+K9YJ3ExLvhwMTErU5+r+kZP1D+UmSFaCmyA0I
+	h8pxX22aLIJbTHXLesswHP8yTtCuNReBTg/uAR2KF8kndrCtE/SE1mmN0CHr4O47+70ynGS3SNB
+	WYnB61Ly/RbBiftmUZlG5nl2u3wqqZZvLQocvl4aNHBaEIbShTVf2iDcHqn2cAbv+7nEAZ6hLWt
+	kjAvFZLmKUxfAAF9mywzszWQ32CYIrwTl3+izFldK5DhhsHBY1HuKw4tVeXKIKt4C4s2C7GVyGV
+	60i0OYWrJU1s0PomGzfONcpuaRE5qmQknvU3g1UCfYzgIf4XxF9W21rjFee7KPe3hE1pyosY01s
+	X7xZXv1J233qD0IHDsRiLUaY/hr2X5Ti6ap0cRjVh0Q7/Ufo1k6Gw7ywZTB6MygBpBAecLyGagA
+	qhC9WbljjdjjE=
+X-Google-Smtp-Source: AGHT+IEZN/xnmINXiJf33M2U1WyJPsMopS4IUXYnX6+rek03rsq/iuB5F0OgJMrRAGHbwh934qYWfw==
+X-Received: by 2002:a17:907:9710:b0:ae0:de30:8569 with SMTP id a640c23a62f3a-af9900f6e63mr261859666b.1.1754489031265;
+        Wed, 06 Aug 2025 07:03:51 -0700 (PDT)
 Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91ee3c1f7sm1045900366b.68.2025.08.06.06.57.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0f4sm1094570366b.106.2025.08.06.07.03.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 06:57:44 -0700 (PDT)
-Message-ID: <cd17cfb4-5708-4c15-b616-505f669bf2eb@gmail.com>
-Date: Wed, 6 Aug 2025 16:57:42 +0300
+        Wed, 06 Aug 2025 07:03:50 -0700 (PDT)
+Message-ID: <cf613367-dba6-4014-9be6-ff40de16a3a6@gmail.com>
+Date: Wed, 6 Aug 2025 17:03:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm64: dts: exynos2200: define all usi nodes
+Subject: Re: [PATCH v2 4/5] arm64: dts: exynos2200: add serial_0/1 nodes
 Content-Language: en-US
 To: Sam Protsenko <semen.protsenko@linaro.org>
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -77,137 +77,139 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com>
- <20250730074253.1884111-6-ivo.ivanov.ivanov1@gmail.com>
- <CAPLW+4maFxYv4RrvzUXWwteXAVm64ocj2LSAgtM6RMtzbM_p-w@mail.gmail.com>
+ <20250730074253.1884111-5-ivo.ivanov.ivanov1@gmail.com>
+ <CAPLW+4kOiBOZYQVA-ZiMEn+-_ZF1HD8QTm9AH0y34bcY+Mu92A@mail.gmail.com>
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <CAPLW+4maFxYv4RrvzUXWwteXAVm64ocj2LSAgtM6RMtzbM_p-w@mail.gmail.com>
+In-Reply-To: <CAPLW+4kOiBOZYQVA-ZiMEn+-_ZF1HD8QTm9AH0y34bcY+Mu92A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 8/2/25 03:29, Sam Protsenko wrote:
-> On Wed, Jul 30, 2025 at 2:44 AM Ivaylo Ivanov
+On 8/2/25 02:12, Sam Protsenko wrote:
+> On Wed, Jul 30, 2025 at 2:43 AM Ivaylo Ivanov
 > <ivo.ivanov.ivanov1@gmail.com> wrote:
->> Universal Serial Interface (USI) supports three types of serial
->> interfaces - uart, i2c and spi. Each protocol can work independently
->> and configured using external configuration inputs.
->>
->> As each USI instance has access to 4 pins, there are multiple possible
->> configurations:
->> - the first 2 and the last 2 pins can be i2c (sda/scl) or uart (rx/tx)
->> - the 4 pins can be used for 4 pin uart or spi
->>
->> Such configuration can be achieved by setting the mode property of usiX
->> and usiX_i2c nodes correctly - if usiX is set to take up 2 pins, then
->> usiX_i2c can be set to take the other 2. If usiX is set for 4 pins, then
->> usiX_i2c should be left disabled.
->>
-> The whole naming scheme is a bit confusing: one might think that
-> because both usiX and usiX_i2c have the same number (X), they
-> represent the same USI block.
-
-Mapped to a different address? Hm, I doubt.
-
->  I can see how they might share the same
-> pins, but it doesn't seem enough to me to justify this convention. If
-> I'm missing something, please help me understand why it should be done
-> like that?
-
-That's the way it was done by Samsung in downstream, and specifically in
-upstream for autov9 [1]. Clocks are already merged and definitions expect
-the convention implied by my patch. Iit'll be way more mangled if we use
-non-matching node to header-definition names.
-
->
->> Define all the USI nodes from peric0 (usi4), peric1 (usi7-10), peric2
->> (usi0-6, usi11) and cmgp (usi0-6_cmgp, 2 pin usi7_cmgp) blocks, as well
->> as their respective uart and i2c subnodes. As Samsung, for some reason,
->> has decided to restart the counting of usi instances for cmgp, suffix
->> labels for nodes of such with _cmgp.
->>
-> Yeah, they probably meant to number CMGP instances, not USI instances.
-> Because CMGP (stands for Common GPIO) is actually a separate IP block
-> containing:
->   - 2 x USIs
->   - 1 GPIO controller (8 GPIO lines)
->   - One general purpose ADC
->   - 6 interrupt combiners
->
-> So some USI blocks are separate USIs, and some USI blocks are a part
-> of bigger CMGP blocks. And instead of using "usi_01_cmgp" for example,
-> they should've gone with "usi_cmgp01".
-
-I guess.
-
->
-> Usually it's recommended to follow the naming scheme from the TRM, but
-> AFAIU you don't have one.
-
-Yes...
-
->  And the scheme used in the downstream device
-> tree looks like comlete garbage. Anyways, I don't have strong
-> preference on the naming scheme. Frankly I'd just do the consecutive
-> numbering for all the USI nodes in this case, like: usi0, usi1, etc.
-> And add the comments when needed, like "USI from CMGP01 block".
-
-This will mangle stuff way too much for my preference. People will be
-way more confused when comparing this to the downstream device tree
-too, as the average Jo does not have access to anything apart from kernel
-source (like me -_-).
-
->
->> Spi support will be added later on.
+>> Add nodes for serial_0 (UART_DBG) and serial_1 (UART_BT), which
+>> allows using them.
 >>
 >> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 >> ---
->>  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 1361 ++++++++++++++++++++
->>  1 file changed, 1361 insertions(+)
+>>  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 26 ++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
 >>
 >> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
->> index 22c6da907..f83e6cf24 100644
+>> index bab77b442..22c6da907 100644
 >> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
 >> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
->> @@ -7,6 +7,7 @@
->>
->>  #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/soc/samsung,exynos-usi.h>
->>
->>  / {
->>         compatible = "samsung,exynos2200";
->> @@ -314,6 +315,76 @@ pinctrl_peric0: pinctrl@10430000 {
->>                         reg = <0x10430000 0x1000>;
+>> @@ -336,6 +336,19 @@ pinctrl_peric1: pinctrl@10730000 {
+>>                         reg = <0x10730000 0x1000>;
 >>                 };
 >>
->> +               usi4: usi@105000c0 {
->> +                       compatible = "samsung,exynos2200-usi", "samsung,exynos850-usi";
->> +                       reg = <0x105000c0 0x20>;
->> +                       ranges;
->> +                       #address-cells = <1>;
->> +                       #size-cells = <1>;
->> +                       clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->> +                                <&cmu_peric0 CLK_DOUT_PERIC0_USI04>;
->> +                       clock-names = "pclk", "ipclk";
->> +                       samsung,sysreg = <&syscon_peric0 0x1024>;
+>> +               serial_1: serial@10840000 {
+>> +                       compatible = "samsung,exynos2200-uart", "google,gs101-uart";
+>> +                       reg = <0x10840000 0x100>;
+>> +                       clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
+>> +                                <&cmu_peric1 CLK_DOUT_PERIC1_UART_BT>;
+>> +                       clock-names = "uart", "clk_uart_baud0";
+>> +                       interrupts = <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +                       pinctrl-0 = <&uart1_bus>;
+>> +                       pinctrl-names = "default";
+>> +                       samsung,uart-fifosize = <256>;
 >> +                       status = "disabled";
+>> +               };
 >> +
->> +                       hsi2c_8: i2c@10500000 {
-> Why not number all the underlying protocol nodes using the same number
-> as the USI node?
+>>                 cmu_hsi0: clock-controller@10a00000 {
+>>                         compatible = "samsung,exynos2200-cmu-hsi0";
+>>                         reg = <0x10a00000 0x8000>;
+>> @@ -458,6 +471,19 @@ pinctrl_peric2: pinctrl@11c30000 {
+>>                         reg = <0x11c30000 0x1000>;
+>>                 };
+>>
+>> +               serial_0: serial@11c40000 {
+>> +                       compatible = "samsung,exynos2200-uart", "google,gs101-uart";
+>> +                       reg = <0x11c40000 0x100>;
+>> +                       clocks = <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>,
+>> +                                <&cmu_peric2 CLK_DOUT_PERIC2_UART_DBG>;
+>> +                       clock-names = "uart", "clk_uart_baud0";
+>> +                       interrupts = <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +                       pinctrl-0 = <&uart0_bus_single>;
+>> +                       pinctrl-names = "default";
+>> +                       samsung,uart-fifosize = <256>;
+>> +                       status = "disabled";
+>> +               };
+>> +
+> Shouldn't these two serial nodes be children of some corresponding USI
+> nodes?
 
-Same as above, my wild guess is that Samsung ordered them by physical
-position.
+Which :P
+
+>  IIUC, the downstream counterpart of this device tree is [1]? I
+> can see the corresponding USI node is missing there. And if you don't
+> have the TRM, it might get confusing. But, apart from my intuition
+> telling me that those UART blocks *should* be implemented as a part of
+> USI IP blocks in Exynos2200, there is also a fact that the downstream
+> driver is actually accessing USI registers in exynos_usi_init()
+> function, in the exynos-uart driver here: [2].
+
+Unless that does nothing and Samsung did not care enough to strip the
+code for it.
+
+>  If that's correct, it
+> means there should exist a USI block, which should be modeled like so:
+>
+> 8<------------------------------------------------------------------------->8
+>     usi_...: usi@11c400c0 {
+>         compatible = ...;
+>         reg = <0x138200c0 0x20>;
+>         samsung,sysreg = <...>;
+>         samsung,mode = <USI_MODE_UART>;
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges;
+>         clocks = <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>,
+>                  <&cmu_peric2 CLK_DOUT_PERIC2_UART_DBG>;
+>         clock-names = "pclk", "ipclk";
+>         status = "disabled";
+>
+>         serial_0: serial@11c40000 {
+>             compatible = "samsung,exynos2200-uart", "google,gs101-uart";
+>             reg = <0x11c40000 0x100>;
+>             clocks = <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>,
+>                      <&cmu_peric2 CLK_DOUT_PERIC2_UART_DBG>;
+>             clock-names = "uart", "clk_uart_baud0";
+>             interrupts = <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH 0>;
+>             pinctrl-0 = <&uart0_bus_single>;
+>             pinctrl-names = "default";
+>             samsung,uart-fifosize = <256>;
+>             status = "disabled";
+>         };
+>     };
+> 8<------------------------------------------------------------------------->8
+>
+> This way you can achieve the same behavior as in downstream kernel, by
+> making the (upstream) USI driver to initialize corresponding USI
+> registers for you.
+>
+> Does that make any sense?
+
+Not really. Perhaps you could __verify__ to what USI instance it belongs?
+And is there a sysreg register for controlling the behavior of that?
+
+Again, I know nothing more than what downstream says.
 
 Best regards,
 Ivaylo
 
-[1] https://github.com/torvalds/linux/blob/cca7a0aae8958c9b1cd14116cb8b2f22ace2205e/arch/arm64/boot/dts/exynos/exynosautov9.dtsi#L503
-
->  Like it's done in gs101.dtsi. And maybe even follow
-> USI naming scheme used in gs101 in general? Like, sort all USI nodes
-> by unit address, and then number them starting from 0. If some other
-> USIs are missing (like I mentioned in my review for the previous
-> patch), add those too, first.
 >
-> [snip]
+> Thanks!
+>
+> [1] https://github.com/jgudec/android_kernel_samsung_exynos2200/blob/CWAI/arch/arm64/boot/dts/exynos/s5e9925.dts#L4648
+> [2] https://github.com/jgudec/android_kernel_samsung_exynos2200/blob/CWAI/drivers/tty/serial/exynos_tty.c#L2181
+>
+>
+>>                 cmu_cmgp: clock-controller@14e00000 {
+>>                         compatible = "samsung,exynos2200-cmu-cmgp";
+>>                         reg = <0x14e00000 0x8000>;
+>> --
+>> 2.43.0
+>>
+>>
 
