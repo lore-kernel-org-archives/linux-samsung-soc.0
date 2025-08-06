@@ -1,46 +1,46 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EE221638D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A2021765B
 	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754463636; cv=none; b=XhnCK33mmjpLPG65QPJCUyH9UgzA9Hx9NWizAIQWDsbZzCDgmULpGA9EBusUvbsAU0DdQYRRajXob0Gt+dqRqHOAw7NZwFkWghk4IM6PKkWX9Dl4hFP0AJudzNhgVEnsjy6uAwmWJhM6LEhS35qlZYcPaDUKEk/X0TPYw2Si2Oc=
+	t=1754463638; cv=none; b=D14L5dhWn4dQ6BCi1GhKUExzhs0yBeUJGBMKXGrh/n0cKs/f6CJ2fL/V16cxZE/XrqvaHMw2ZDJUMgmE2m0A6PNrfHf0XcLgJ5Y46WwchKDhcHWGwBslUcmYDt3jhE/C0ODHsmXalcLEiujaqNLnTSe5P6UBOVT/uDgZOdxIZ8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754463636; c=relaxed/simple;
-	bh=fK9VnHjeGeZ+I4QWMyuMXcWdy0VX33jmireJow/WyE4=;
+	s=arc-20240116; t=1754463638; c=relaxed/simple;
+	bh=l1zppUoGsgYQuvWfeE9ZII+mvExfI8uZ5tf9ENz9M9I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=AdFDr/zEhGXi2gAdSMtbD5fkZsKe9k5qXCOUDRx94J0AcNsRn/A0D0HKO1Mo1XmCz4WNQH6iVoxeEDaRIMKSeeS/uZE5h8JaLc4gB24xIIdt5hNZ3VKQLSfP/Gxa3axooPgnWhW6nX+VlH+Hw1d+LdjOhFdWpfJebuAoq9wDAjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=exB3lSrH; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=qa3c1k0bq0iF84WSK5qkoPysao6udPfDVmvZHmCu9ukDTArW86mfw81kFX/VGaOfIMkidNszmT58aFB+m77Ql0+DlTfG0tO6yb7FKU4SMV59IL218Dv+GF3krdRrJalUCd0wq32bpUz5WuTH/JLBmYTGfGS4koJj1LSd+dZj6i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r7dlNq/u; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="exB3lSrH"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250806070031epoutp0299b22f3f004ec48164ea0e9687bdab30~ZG2CVXGLl0376203762epoutp02k
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r7dlNq/u"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250806070031epoutp0117a286a92be385980d7fd23a31e28de4~ZG2Cs50U70309503095epoutp01e
 	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Aug 2025 07:00:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250806070031epoutp0299b22f3f004ec48164ea0e9687bdab30~ZG2CVXGLl0376203762epoutp02k
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250806070031epoutp0117a286a92be385980d7fd23a31e28de4~ZG2Cs50U70309503095epoutp01e
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1754463631;
-	bh=EHP1Kn4u1hbST9K3iiqbN2BkFflYyC4SeT8ll5DHOAU=;
+	bh=iF7XGLKPcudkWLwpYz/z12ZVFINWFvDEkKGpP/Zh/5A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=exB3lSrHqLcljETr1Sy15vVeoUV4kV38wn4la7SiiYOKKzjOL3gqI4NH+mcqs6SFc
-	 v8Hx4TvgKvXpEwEh2SD0A41RfZ3SNIoQGkwefKAZyO9tuAijApYCZzjAp26I4kOo+Q
-	 YRuqdDzbr9D5n4fhEmZoqlU8FnAl/Za6LLrzZF9k=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250806070030epcas2p42ba0d1ddacb08bccdc3e4f97ea317069~ZG2Bz_v9Y2835028350epcas2p4T;
-	Wed,  6 Aug 2025 07:00:30 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bxh5B3x25z6B9mG; Wed,  6 Aug
+	b=r7dlNq/uMXoo3w1DXnptLLOpG3nzFYKhs0yXKGY8qmlXilOEPnRTo+vpoH94dBM/m
+	 k9sCzy3cZUAwoE2iFddO75pSn21DgrER5HM99Sw4LHHBN56us/3oVMY1M4dkWGF0QV
+	 mP1LNXjXi7Iyo/9NXPypXy2Hl5+NzXlngYfL4CgY=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250806070031epcas2p17a262a7d137cb71fe22b980fbe93030a~ZG2COqlmH3143031430epcas2p1b;
+	Wed,  6 Aug 2025 07:00:31 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.101]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bxh5B4c7Yz2SSKn; Wed,  6 Aug
 	2025 07:00:30 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250806070029epcas2p1f764301b115b766f88b422b0dbdd68f1~ZG2A32YOF0152301523epcas2p1n;
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250806070029epcas2p3a937682ba1bdad1317ef62aab8f826ae~ZG2AzGAgf0509105091epcas2p3M;
 	Wed,  6 Aug 2025 07:00:29 +0000 (GMT)
 Received: from localhost.localdomain (unknown [10.229.9.126]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250806070029epsmtip298a6e310946bb155b77ddf18434180b6~ZG2AzuvxD2044420444epsmtip2e;
+	20250806070029epsmtip225a7d2938714340a4c5feb1655141d0e~ZG2As9TKD1971119711epsmtip2V;
 	Wed,  6 Aug 2025 07:00:29 +0000 (GMT)
 From: Sangwook Shin <sw617.shin@samsung.com>
 To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
@@ -49,10 +49,10 @@ To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
 	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
 	<sw617.shin@samsung.com>
-Subject: [PATCH v5 2/5] watchdog: s3c2410_wdt: Fix max_timeout being
- calculated larger
-Date: Wed,  6 Aug 2025 15:55:11 +0900
-Message-Id: <20250806065514.3688485-3-sw617.shin@samsung.com>
+Subject: [PATCH v5 1/5] watchdog: s3c2410_wdt: Replace hardcoded values with
+ macro definitions
+Date: Wed,  6 Aug 2025 15:55:10 +0900
+Message-Id: <20250806065514.3688485-2-sw617.shin@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250806065514.3688485-1-sw617.shin@samsung.com>
 Precedence: bulk
@@ -62,58 +62,42 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250806070029epcas2p1f764301b115b766f88b422b0dbdd68f1
+X-CMS-MailID: 20250806070029epcas2p3a937682ba1bdad1317ef62aab8f826ae
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 cpgsPolicy: CPGSC10-234,N
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250806070029epcas2p1f764301b115b766f88b422b0dbdd68f1
+X-CMS-RootMailID: 20250806070029epcas2p3a937682ba1bdad1317ef62aab8f826ae
 References: <20250806065514.3688485-1-sw617.shin@samsung.com>
-	<CGME20250806070029epcas2p1f764301b115b766f88b422b0dbdd68f1@epcas2p1.samsung.com>
+	<CGME20250806070029epcas2p3a937682ba1bdad1317ef62aab8f826ae@epcas2p3.samsung.com>
 
-Fix the issue of max_timeout being calculated larger than actual value.
-The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
-S3C2410_WTCON_MAXDIV is smaller than the actual value because the remainder
-is discarded during the calculation process. This leads to a larger
-calculated value for max_timeout compared to the actual settable value.
-To resolve this issue, the order of calculations in the computation process
-has been adjusted.
+Modify the code to utilize macro-defined values instead of hardcoded
+values. The value 0x100 in the s3c2410wdt_set_heartbeat function represents
+S3C2410_WTCON_PRESCALE_MAX + 1, but it is hardcoded, making its meaning
+difficult to understand and reducing code readability.
 
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
 ---
- drivers/watchdog/s3c2410_wdt.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/watchdog/s3c2410_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 95f7207e390a..0a4c0ab2a3d6 100644
+index 40901bdac426..95f7207e390a 100644
 --- a/drivers/watchdog/s3c2410_wdt.c
 +++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -27,6 +27,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/delay.h>
-+#include <linux/math64.h>
+@@ -587,7 +587,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
+ 	if (count >= 0x10000) {
+ 		divisor = DIV_ROUND_UP(count, 0xffff);
  
- #define S3C2410_WTCON		0x00
- #define S3C2410_WTDAT		0x04
-@@ -410,9 +411,13 @@ static inline unsigned long s3c2410wdt_get_freq(struct s3c2410_wdt *wdt)
- static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
- {
- 	const unsigned long freq = s3c2410wdt_get_freq(wdt);
-+	//(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV = 0x8000
-+	u64 t_max = div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
- 
--	return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
--				       / S3C2410_WTCON_MAXDIV);
-+	if (t_max > UINT_MAX)
-+		t_max = UINT_MAX;
-+
-+	return t_max;
- }
- 
- static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
+-		if (divisor > 0x100) {
++		if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
+ 			dev_err(wdt->dev, "timeout %d too big\n", timeout);
+ 			return -EINVAL;
+ 		}
 -- 
 2.25.1
 
