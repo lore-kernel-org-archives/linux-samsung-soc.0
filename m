@@ -1,125 +1,164 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32E727A10D
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 10:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C227147C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 10:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754564033; cv=none; b=JR+2PbaRPS5Kfj5YAGs5CpCIo54FGAkkcqDPdVYxhl7Al/lmso8HTMJZSZptTzc5p45L6yIX/KcdfEUVAd1fdDYHOoU0Xs3l+7EcXmZ2IZms3dryO9RgMJAUQ6vdyuhFVuJt2vaE60KE3bCfaK050ScwAU0Mzv0IFQ2sO5ShWrg=
+	t=1754564379; cv=none; b=kpzD63q8iHj2FB/lgg0CUC/4q3nq8eyAKi/0eCVNdyt+GW5Hp/DIaT917buSJVnEcNV6yc1NmtcE01oPXvXoU2M5n2HZT8VaNdkh5ED7LduiafAVEsbdl5kZ0CBJSXzLaDJAjj2+9NqEBiX6fO/4/O5HnH1t1x76HDdNYn575y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754564033; c=relaxed/simple;
-	bh=mO7KKyVbAAB6LIeT63La3wZfx8885Z7ITq97oad3Rsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=UqcJtTLoNn71TRV1PV0HzrpisAVZLkXzDp55SwKVDAFs25J+1iLU/d3DoL8axUtqUIvLIKQ09hoZnAKVlN4Jfkk7swGcJ4j4iVRxk9r1lz+3DEpapU2lS5eqhf2o29QDRsqR/U9EEcGAJ/fNFKZHwfghY22KZ+VdtYN4rua+Zh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XshrS32s; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1754564379; c=relaxed/simple;
+	bh=jLynvhAoC3nMY9EsoCJigpriu26a00wtOvd+f8xTNeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oB49/CSWUOBkKz0p5gObPOqIAENYcx9UfIChBHSynd6kO4xF435Ky0+g4ZADRtp7Qv7WaumnyIVf1r5MP74r9ox0TflsntBfYVP/YeRmXHGPaegTB3r1tzyFWYfRZWqblHTVK8fUybVnwiyvfYOcS7mK5KQZrha5VJBcm9022BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vW1v+HzZ; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XshrS32s"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250807105349epoutp040c9eac24e3790d3b81dbf023dba54cea~ZdrBtDPNg0656706567epoutp04M
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 10:53:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250807105349epoutp040c9eac24e3790d3b81dbf023dba54cea~ZdrBtDPNg0656706567epoutp04M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754564029;
-	bh=68xVvjXbi6ynymUb0K2pHdKhGYhDNv+h3kRgipI5AtQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XshrS32skeKcznLRlgfF713BvYRbidj0KlEfhs5Y8CFtBRQEfp1D/Ehxl5daV4YJ4
-	 2k9oWP/8zvFBYRIiCbRdhzvBhdx1ucKBpHnbDusJWQG6SOw1jnztsoPwx9RklmlEbR
-	 TNtRe/Qhm7DdMuzGo6bPlfmVR6UytBqMp0bquJt0=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250807105348epcas5p3065541de7991a0705ff5e9059865079e~ZdrAxgdxa2228622286epcas5p3Z;
-	Thu,  7 Aug 2025 10:53:48 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4byPCv6Z6Zz3hhT3; Thu,  7 Aug
-	2025 10:53:47 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477~ZXjjK2EY50583105831epcas5p4M;
-	Thu,  7 Aug 2025 03:25:27 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250807032525epsmtip212df53bafdf0fb26bd25845d81d27973~ZXjhND0eV1700017000epsmtip2j;
-	Thu,  7 Aug 2025 03:25:25 +0000 (GMT)
-From: Aakarsh Jain <aakarsh.jain@samsung.com>
-To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-	andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	alim.akhtar@samsung.com, robh@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
-	anindya.sg@samsung.com, Aakarsh Jain <aakarsh.jain@samsung.com>
-Subject: [PATCH 10/10] dt-bindings: media: s5p-mfc: Add SoC-specific
- compatible for 'samsung,mfc-v5'
-Date: Thu,  7 Aug 2025 08:54:49 +0530
-Message-ID: <20250807032449.92770-11-aakarsh.jain@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250807032449.92770-1-aakarsh.jain@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vW1v+HzZ"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6155527ab87so104647a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Aug 2025 03:59:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754564376; x=1755169176; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvMfOW0K5+CfylFuc8dQRU5yL7iRaqNXhwYAoS6QuGs=;
+        b=vW1v+HzZfkwvBSOdaGeGKJneq06W8Dg1fwVxM9sBQS0iD1kz0iJ1yr76p7x6fJWcde
+         znb6wKCQp3qRZI2Xy32e3JmPePZL5IjKPtkzBPcmJk/tULZlN32DzcasZ6qQ2a1qCy0+
+         Lqwh0CEMwAIBqnxo6uDdPh5REPGySexNmPjQ2edtBcoRJFqGsbproJxxQ53r9oIhG9kp
+         STe31kkkQE/djrfvvvhUvR7DDYz1VL/YaM18ZUmoCYgToWiAR9WDX59IFofGtUVcL6ag
+         Uqw+QNHljRs8n7dcxGcAZ1KDRSAthaFPdyCiNetoYk65u63hLPHhb5P5VUFuCd8sjSWB
+         Advw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754564376; x=1755169176;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IvMfOW0K5+CfylFuc8dQRU5yL7iRaqNXhwYAoS6QuGs=;
+        b=o3F+IC5uzHLg003BjrIBTFeVbUr6+Oc5Z8BvePCfJLyLN+EZIM+70Pcf8TPkKT4r7E
+         b8VEuUN2uDL2MyHXN8nNo9WYuZ6doewX0j2agakAbvyBcycL0dxEZ+kCb2tbj6HA5Uto
+         kq1lYNWmWiPBzBbZYDUSD1e+LpW4UnK3OZ2Rvra+7iravU83MCbD4Ovq6AByNf673Gih
+         QidZqAG9BWAy4snpkdmfXKzVCir/UJ0+cCatdCPmbojVfGncKBJa9gpkHhM0DLTu4jil
+         gpp2FvlnbGzvL5HSX2l7NP2WU7i+hIjI1xKvQeMb7rMaDgOOSB+nR1NzTB0TXsMj6J1P
+         42WQ==
+X-Gm-Message-State: AOJu0Yw6+QUDUU/T143Px03fT7/E9df05pCMC4AT5dE/Bz+h2KZXWpl0
+	9xWcYn76ra2pVZrqGdAo4YGMDZrBdzJRh14mWfcj85xYiT5wqK2X75GY3aHR+ni5XGQ=
+X-Gm-Gg: ASbGncuzGCf04f5tVGPzJQIg2tnPHn1/lXT8RHhSRjtWyRAIOXVR0nMZ0t+TiPBY33p
+	ecWUifpAMQ+0wKXMAIB3XLASke3JQ2tQsedX4DpbGehg/H8HjN33yGIps2yyoSuIbg8GgmLsGS6
+	VWPAUcYad71hiXzAk+LJg7iEoPXXomnmwAUP4kTifdNOT5qve9VAbKVQ8MeqgOUnX5Lma1GK924
+	dWTxanSLjrmpCoMNO+NVYyWGKlhjD6xqVM+gmTEnc3JFzvO4fvoDaErbLofI8zyzBoohzHgH5ve
+	1EiVvmTBT5eL+YzMmSQMZD6vUnAbl4U1cmX6Xf/WzwYIXkHHC0drnCxBNJAQvyeX1I8Y0VMfpz6
+	a65vv5NImn45nOQQkpI9xEnLXLXxY3cq/JeYo+bjXZSM=
+X-Google-Smtp-Source: AGHT+IEvJ6td6iNd7e94Kkjtwe3tYixKx3u6KXJTp/O1bo37Zy/totEk9IAx2HyLhWP8NfTXAJGFxA==
+X-Received: by 2002:a05:6402:40cf:b0:612:b3fd:4b35 with SMTP id 4fb4d7f45d1cf-6179619204amr2008731a12.6.1754564375986;
+        Thu, 07 Aug 2025 03:59:35 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.218.223])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe79a0sm11627165a12.39.2025.08.07.03.59.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 03:59:34 -0700 (PDT)
+Message-ID: <419c8b19-da07-4972-892c-9f8a55a546c5@linaro.org>
+Date: Thu, 7 Aug 2025 12:59:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] ARM: dts: samsung: exynos4: Use SoC-specific
+ compatible string for MFC
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
+ andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+ alim.akhtar@samsung.com, robh@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
+ anindya.sg@samsung.com
 References: <20250807032449.92770-1-aakarsh.jain@samsung.com>
-	<CGME20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477@epcas5p4.samsung.com>
+ <CGME20250807032508epcas5p416a3af567faba6a4fe3d6f6af5c0dd80@epcas5p4.samsung.com>
+ <20250807032449.92770-3-aakarsh.jain@samsung.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250807032449.92770-3-aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-'samsung,mfc-v5' compatible string was getting used for both S5pv210
-and Exynos4 SoC. Based on SoC-specific, modify existing 'samsung,mfc-v5'
-compatible to 'samsung,exynos4-mfc'. Add new compatible for s5pv210.
+On 07/08/2025 05:24, Aakarsh Jain wrote:
+> Modify the MFC device tree node to use a SoC-specific
+> compatible string instead of a generic one.
 
-Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
----
- .../devicetree/bindings/media/samsung,s5p-mfc.yaml     | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Why?
 
-diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-index 6a711c8103ac..922b1de66736 100644
---- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-+++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-@@ -18,10 +18,11 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
--          - samsung,exynos5433-mfc        # Exynos5433
--          - samsung,mfc-v5                # Exynos4
-+          - samsung,s5pv210-mfc           # S5pv210
-+          - samsung,exynos4-mfc           # Exynos4
-           - samsung,exynos5250-mfc        # Exynos5
-           - samsung,exynos5420-mfc        # Exynos5420
-+          - samsung,exynos5433-mfc        # Exynos5433
-           - samsung,exynos5800-mfc        # Exynos5800
-           - samsung,exynos7880-mfc        # Exynos7880
-           - tesla,fsd-mfc                 # Tesla FSD
-@@ -114,7 +115,8 @@ allOf:
-         compatible:
-           contains:
-             enum:
--              - samsung,mfc-v5
-+              - samsung,s5pv210-mfc
-+              - samsung,exynos4-mfc
-     then:
-       properties:
-         clocks:
-@@ -184,7 +186,7 @@ examples:
-     #include <dt-bindings/interrupt-controller/irq.h>
- 
-     codec@13400000 {
--        compatible = "samsung,mfc-v5";
-+        compatible = "samsung,exynos4-mfc";
-         reg = <0x13400000 0x10000>;
-         interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
-         power-domains = <&pd_mfc>;
--- 
-2.49.0
+> 
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+> ---
+>  arch/arm/boot/dts/samsung/exynos4.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/samsung/exynos4.dtsi b/arch/arm/boot/dts/samsung/exynos4.dtsi
+> index ed47d0ce04e1..a2f15fbe98cb 100644
+> --- a/arch/arm/boot/dts/samsung/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos4.dtsi
+> @@ -435,7 +435,7 @@ i2s2: i2s@13970000 {
+>  		};
+>  
+>  		mfc: codec@13400000 {
+> -			compatible = "samsung,mfc-v5";
+> +			compatible = "samsung,exynos4-mfc";
 
+There are so many things wrong here...
+
+1. This breaks all users
+2. Not a correct compatible - there is no exynos4 (see writing bindings)
+3. Commit msg does not explain why breaking users is reasonable
+
+
+Best regards,
+Krzysztof
