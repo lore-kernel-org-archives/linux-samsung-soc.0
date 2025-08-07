@@ -1,65 +1,65 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C227147C
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 10:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAF7277CBB
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 11:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754564379; cv=none; b=kpzD63q8iHj2FB/lgg0CUC/4q3nq8eyAKi/0eCVNdyt+GW5Hp/DIaT917buSJVnEcNV6yc1NmtcE01oPXvXoU2M5n2HZT8VaNdkh5ED7LduiafAVEsbdl5kZ0CBJSXzLaDJAjj2+9NqEBiX6fO/4/O5HnH1t1x76HDdNYn575y4=
+	t=1754564405; cv=none; b=ZLfOT4hg7iuOQZADrGObKaRV0GInL/y9XROsI5WFY19sac+M9xqJKt7KuOM8Oo2M1/sdKBJWJFpuEDeWwWr/OE6isIkzM6YUMvMPX5G3Vr7AENlFYm1xvm9yd7jMxbM5mCkUojUQFfg4NtwkDgiX/XFpncnpyPITKVmqffpqAKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754564379; c=relaxed/simple;
-	bh=jLynvhAoC3nMY9EsoCJigpriu26a00wtOvd+f8xTNeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oB49/CSWUOBkKz0p5gObPOqIAENYcx9UfIChBHSynd6kO4xF435Ky0+g4ZADRtp7Qv7WaumnyIVf1r5MP74r9ox0TflsntBfYVP/YeRmXHGPaegTB3r1tzyFWYfRZWqblHTVK8fUybVnwiyvfYOcS7mK5KQZrha5VJBcm9022BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vW1v+HzZ; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1754564405; c=relaxed/simple;
+	bh=D/2194UFKbY+CEUSW1tbupVZ0CZVyou6ZfeJ1mmvBHU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iGINsCLHaG3r2kyp38gclmNNmLk6qgUE+kC7DAlMIbKwwtVVUPFu/SBZBFFcnuIdZEaTGbzCR5J+ilFVdLg3/nna20GGSj86DXpmsLuFtbRoG0blUpaSYoOlbrEJ+U/JSws02jvNSOi4VeNohRmIIYx/XHCOd9Y3RU+y6Bnge1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KVqbMAMO; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vW1v+HzZ"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6155527ab87so104647a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Aug 2025 03:59:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KVqbMAMO"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af92f13d27eso16389866b.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Aug 2025 04:00:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754564376; x=1755169176; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754564402; x=1755169202; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvMfOW0K5+CfylFuc8dQRU5yL7iRaqNXhwYAoS6QuGs=;
-        b=vW1v+HzZfkwvBSOdaGeGKJneq06W8Dg1fwVxM9sBQS0iD1kz0iJ1yr76p7x6fJWcde
-         znb6wKCQp3qRZI2Xy32e3JmPePZL5IjKPtkzBPcmJk/tULZlN32DzcasZ6qQ2a1qCy0+
-         Lqwh0CEMwAIBqnxo6uDdPh5REPGySexNmPjQ2edtBcoRJFqGsbproJxxQ53r9oIhG9kp
-         STe31kkkQE/djrfvvvhUvR7DDYz1VL/YaM18ZUmoCYgToWiAR9WDX59IFofGtUVcL6ag
-         Uqw+QNHljRs8n7dcxGcAZ1KDRSAthaFPdyCiNetoYk65u63hLPHhb5P5VUFuCd8sjSWB
-         Advw==
+        bh=pQRfyzai7ZWY+ER9WAmrVRipd4P7HvZq4QOb0oXkcEo=;
+        b=KVqbMAMOqcWbF6Zg92FviUTNN0XQzdmXjSmaOWNrBIZVgrMhrMds57w9q1/OmScUFm
+         +7H47Fb1oPeopDGYTTeuZkvOztjHWflOmJREX17i9k6tR04G9wjHm4b+S+m/I5PpsDy6
+         A1X/o5JCjJbB0WCP0RDxSos71KLShHB2iI2FV9hshARrKYD2Bi8DNz1qzhIrSiYU1j55
+         4I44ytksXm9vsTUwmoiL1Uhj3EfHWbvQnyQmC8zM8EskF+kwp3YwwATOX/xjrW1eqsqg
+         Ax4zAcYyQPFW93u+gl1UPW+/Do5ovAM+gXtiSzVp2wS2xvBl1HcWosfIS88ognOKittd
+         AxDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754564376; x=1755169176;
+        d=1e100.net; s=20230601; t=1754564402; x=1755169202;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IvMfOW0K5+CfylFuc8dQRU5yL7iRaqNXhwYAoS6QuGs=;
-        b=o3F+IC5uzHLg003BjrIBTFeVbUr6+Oc5Z8BvePCfJLyLN+EZIM+70Pcf8TPkKT4r7E
-         b8VEuUN2uDL2MyHXN8nNo9WYuZ6doewX0j2agakAbvyBcycL0dxEZ+kCb2tbj6HA5Uto
-         kq1lYNWmWiPBzBbZYDUSD1e+LpW4UnK3OZ2Rvra+7iravU83MCbD4Ovq6AByNf673Gih
-         QidZqAG9BWAy4snpkdmfXKzVCir/UJ0+cCatdCPmbojVfGncKBJa9gpkHhM0DLTu4jil
-         gpp2FvlnbGzvL5HSX2l7NP2WU7i+hIjI1xKvQeMb7rMaDgOOSB+nR1NzTB0TXsMj6J1P
-         42WQ==
-X-Gm-Message-State: AOJu0Yw6+QUDUU/T143Px03fT7/E9df05pCMC4AT5dE/Bz+h2KZXWpl0
-	9xWcYn76ra2pVZrqGdAo4YGMDZrBdzJRh14mWfcj85xYiT5wqK2X75GY3aHR+ni5XGQ=
-X-Gm-Gg: ASbGncuzGCf04f5tVGPzJQIg2tnPHn1/lXT8RHhSRjtWyRAIOXVR0nMZ0t+TiPBY33p
-	ecWUifpAMQ+0wKXMAIB3XLASke3JQ2tQsedX4DpbGehg/H8HjN33yGIps2yyoSuIbg8GgmLsGS6
-	VWPAUcYad71hiXzAk+LJg7iEoPXXomnmwAUP4kTifdNOT5qve9VAbKVQ8MeqgOUnX5Lma1GK924
-	dWTxanSLjrmpCoMNO+NVYyWGKlhjD6xqVM+gmTEnc3JFzvO4fvoDaErbLofI8zyzBoohzHgH5ve
-	1EiVvmTBT5eL+YzMmSQMZD6vUnAbl4U1cmX6Xf/WzwYIXkHHC0drnCxBNJAQvyeX1I8Y0VMfpz6
-	a65vv5NImn45nOQQkpI9xEnLXLXxY3cq/JeYo+bjXZSM=
-X-Google-Smtp-Source: AGHT+IEvJ6td6iNd7e94Kkjtwe3tYixKx3u6KXJTp/O1bo37Zy/totEk9IAx2HyLhWP8NfTXAJGFxA==
-X-Received: by 2002:a05:6402:40cf:b0:612:b3fd:4b35 with SMTP id 4fb4d7f45d1cf-6179619204amr2008731a12.6.1754564375986;
-        Thu, 07 Aug 2025 03:59:35 -0700 (PDT)
+        bh=pQRfyzai7ZWY+ER9WAmrVRipd4P7HvZq4QOb0oXkcEo=;
+        b=ASKOlwYz9HHh2CKtmOWaIFXRKbYbPuLVexB7uHJqMo1pQyXFi8soO5bV94AJVYHBWk
+         PfbTQBoI9j4i/gG4BV6JrCW7JkKPF7CshiUU2Dl+d6G2MMhxXnLKGfjePwuH+EJQYimO
+         NudjKEcO3q1LCC8CUmzNXTk63hZhHSVeV05eK5YpeL6cRl+CcoHtOJ6EKB3+G0S10kzS
+         KWqwv6JPza+s3BIXCoo/4Ppk/xPWSQfYBdJdKw/QNGtvx1I6LqX5isVDt4qxNRvckw/J
+         EdDPjHAGhH/dMZr6tBJQG5eHHtGtZ+ky4PifvRstzYdnCBdbvL7CKm4QH35I2xwfHzJD
+         qJ4g==
+X-Gm-Message-State: AOJu0Yyp9PLc5LgV771UM/H4w71/ttcdtWtFVwPVTWV3z4t8UUUHDprW
+	NNeBiAn59gcV96wIU5sYCQVqCTRa+dS8TBMxSqXDpsnxEObXdJbHbX19Yeh/WRrKqWE=
+X-Gm-Gg: ASbGncsEx/qFHsSXEz6O9tc9eHm2v4ZBjzLC2asNGUv8UO5TdixLxn6UppaqoVEJgKW
+	7C6nRfaBZVQx7crnjIuMlFVXG22l1YtK0UaQ23kp0CmssJGpQRNi6hqbQ1/6ycyR4zXAMCPUHC9
+	jGVdz1zg1h30+K6ZKfOzKi1DS2SxhauAmFDT2aiQUcXh9YxHrsxvURchRQ+7Ow+pdlwlIhVCNuZ
+	eSBG8wujz/QvjVVAqtQw1RChBhy7Q6vbujsdm/qAZZ1e8tu0Gxf6MKg+EVtR9vqFHJllsW12hm6
+	lG71NNQP0W9Nc0VTVX4ixKu7KdDx3GGy+uSROUXhaIOSVSXThGGYm6/gMUILn2zs6/aw5PMs6kk
+	1jT9NF9vXx9latjl4YTMv7oTSjf3rx/d8WSb8MoE8DzJa//309jfFug==
+X-Google-Smtp-Source: AGHT+IE4kHUsCaFrOmMEP4qyRP98QlRLge4KS7mWMGaAZOWXRlwTk01SGGX5ntkel70axSn5eoZ2qg==
+X-Received: by 2002:a17:907:3f8c:b0:af9:3d0a:f379 with SMTP id a640c23a62f3a-af98feffb63mr271235666b.0.1754564401932;
+        Thu, 07 Aug 2025 04:00:01 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.218.223])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe79a0sm11627165a12.39.2025.08.07.03.59.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af92b650c8asm1138206266b.65.2025.08.07.03.59.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 03:59:34 -0700 (PDT)
-Message-ID: <419c8b19-da07-4972-892c-9f8a55a546c5@linaro.org>
-Date: Thu, 7 Aug 2025 12:59:32 +0200
+        Thu, 07 Aug 2025 04:00:00 -0700 (PDT)
+Message-ID: <0d835f3a-cc28-44f6-801f-c787f5e363d1@linaro.org>
+Date: Thu, 7 Aug 2025 12:59:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,6 +69,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 02/10] ARM: dts: samsung: exynos4: Use SoC-specific
  compatible string for MFC
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Aakarsh Jain <aakarsh.jain@samsung.com>,
  linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
  linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
@@ -80,7 +81,7 @@ Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
 References: <20250807032449.92770-1-aakarsh.jain@samsung.com>
  <CGME20250807032508epcas5p416a3af567faba6a4fe3d6f6af5c0dd80@epcas5p4.samsung.com>
  <20250807032449.92770-3-aakarsh.jain@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <419c8b19-da07-4972-892c-9f8a55a546c5@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -126,39 +127,41 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250807032449.92770-3-aakarsh.jain@samsung.com>
+In-Reply-To: <419c8b19-da07-4972-892c-9f8a55a546c5@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/08/2025 05:24, Aakarsh Jain wrote:
-> Modify the MFC device tree node to use a SoC-specific
-> compatible string instead of a generic one.
-
-Why?
-
+On 07/08/2025 12:59, Krzysztof Kozlowski wrote:
+> On 07/08/2025 05:24, Aakarsh Jain wrote:
+>> Modify the MFC device tree node to use a SoC-specific
+>> compatible string instead of a generic one.
 > 
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> ---
->  arch/arm/boot/dts/samsung/exynos4.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Why?
 > 
-> diff --git a/arch/arm/boot/dts/samsung/exynos4.dtsi b/arch/arm/boot/dts/samsung/exynos4.dtsi
-> index ed47d0ce04e1..a2f15fbe98cb 100644
-> --- a/arch/arm/boot/dts/samsung/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/samsung/exynos4.dtsi
-> @@ -435,7 +435,7 @@ i2s2: i2s@13970000 {
->  		};
->  
->  		mfc: codec@13400000 {
-> -			compatible = "samsung,mfc-v5";
-> +			compatible = "samsung,exynos4-mfc";
+>>
+>> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/samsung/exynos4.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/samsung/exynos4.dtsi b/arch/arm/boot/dts/samsung/exynos4.dtsi
+>> index ed47d0ce04e1..a2f15fbe98cb 100644
+>> --- a/arch/arm/boot/dts/samsung/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/samsung/exynos4.dtsi
+>> @@ -435,7 +435,7 @@ i2s2: i2s@13970000 {
+>>  		};
+>>  
+>>  		mfc: codec@13400000 {
+>> -			compatible = "samsung,mfc-v5";
+>> +			compatible = "samsung,exynos4-mfc";
+> 
+> There are so many things wrong here...
+> 
+> 1. This breaks all users
+> 2. Not a correct compatible - there is no exynos4 (see writing bindings)
+> 3. Commit msg does not explain why breaking users is reasonable
 
-There are so many things wrong here...
-
-1. This breaks all users
-2. Not a correct compatible - there is no exynos4 (see writing bindings)
-3. Commit msg does not explain why breaking users is reasonable
-
+Ah and 4: there is no such compatible, so this fails tests.
 
 Best regards,
 Krzysztof
