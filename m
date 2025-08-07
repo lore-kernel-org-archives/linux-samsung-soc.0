@@ -1,221 +1,203 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020241EB36;
-	Thu,  7 Aug 2025 12:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849E72550AD
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 12:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754569939; cv=none; b=eQG+NSEZ3bdLcPKWlR4qxY9LZYd/S46bP/asDJF4Or/E+uc8eE0ooB0ema+bDlLGOL0cZzJ4q4qqecDNCuPwACE3xV5am2rdkY2FvStdC+8P5zzwly6kd2g4CxxFMkpoSpStfgOfG4u22sNT6Nwave9KFeSuVcp5yGpx1CGe+TA=
+	t=1754571228; cv=none; b=m7mgyVazCCLNUBmXFt8G0hHWW4E/ExobghQ+5dgM6QW+1EUNJGFYa1ssDxYBHIiB6WDX+iSrSF4pMcH4BW9j7Ce0KwwZblRkg4dqMQ703CCCYhS2hMIjEZcRX33/6/jbmROIS8wV7Xr4k9WVgcGy85R2v+O7A295BfsoTACQan4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754569939; c=relaxed/simple;
-	bh=mDLUQyipon3TC8s7Xe5hlhtx/kxMnlzT8INeN44SBME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIhqw8cLTe9KHk96o4DHnMi+Y0lc3lWSDq2Df2+c69OxiAOJf3EH/2Vlg68Y3881UUCbh5rLrL/AwjjRLcojVQnsiOi3lF5m+W6JmbJ8JDXJJ3n+16ln25MnSm/ApJLG6M638YZenQ2k2KGgn6KC/MA7r0WS1XoRmuwOn8ZTsDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LACv+uFT; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1754571228; c=relaxed/simple;
+	bh=vDeXb/wWTLJc+GArcSXI4AvbdX5CK+i8acNbQ3jBGQ8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=SDLD47+BXDiMtElP88H8q3ucfND7dTeNCwRGtamcaOzCXbhvhbgDxhJTS2gPxI8epCEeFg+k9CkIuccVGH0vP22WSEGxn5BPkFrmk6QxXYaJ9Q2QIABgi6FYJ2d0+KL55nqpk3dEgG2ezrApVUgKSg5m5tFERBHnjbYkz8FSN50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E9pOdQfq; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LACv+uFT"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EDCB18FA;
-	Thu,  7 Aug 2025 14:31:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754569883;
-	bh=mDLUQyipon3TC8s7Xe5hlhtx/kxMnlzT8INeN44SBME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LACv+uFTAOqCoVr6y4n8xhP/phvZ2YaIqX4nfPzsq8htw1/33Ig2joQ5o1c7g1TI/
-	 sm6fQdyxttR4+gfZN8u7QpF8EcmmN4qBOEZ1BO6Gpa7oo5sCerPApF06+UQkNeTbXv
-	 CoAosKL4r64nC+r6TFuPhQz7Lyc1Gdn1yLFrA/Yc=
-Date: Thu, 7 Aug 2025 15:31:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 58/65] media: zoran: Remove access to __fh
-Message-ID: <20250807123157.GF11583@pendragon.ideasonboard.com>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-58-eb140ddd6a9d@ideasonboard.com>
- <d8875dea-aa04-41fc-b1b4-519d06ed6cba@kernel.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E9pOdQfq"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250807125343epoutp019eb9f3fb49d6b0ec8210fec47353f880~ZfTtFFsTI2334523345epoutp01Z
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Aug 2025 12:53:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250807125343epoutp019eb9f3fb49d6b0ec8210fec47353f880~ZfTtFFsTI2334523345epoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754571223;
+	bh=Y9yyMjJ6Z+ujgBsWuyrsPhhrjWzJPw1UoObDzyEPgL4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=E9pOdQfq4Qa2TdxuASOp5se5gRtcVeNTzuHVeusffcLZYFYKZ35xpBKe+dkW8KY4b
+	 gCleL7e6RdpthnFxPvyOLofetQwtL6bb/zX8TGGa3qNXHMJQVw5N4lNZys1ePsuVQG
+	 QweD9NdVskdjUHUsAw0OVN8eQdUVW4FQsWRlRYiA=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250807125342epcas5p4cdf059b042ae879c14d7be75965eb1e8~ZfTsXP8_y2236622366epcas5p4G;
+	Thu,  7 Aug 2025 12:53:42 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4byRtF4R8Cz2SSKX; Thu,  7 Aug
+	2025 12:53:41 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250807122107epcas5p3978bf8e0b47f7d228a5c54d5bfe0a243~Ze3PYb-jU2564125641epcas5p3K;
+	Thu,  7 Aug 2025 12:21:07 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250807122103epsmtip110f44008e2ef1b2699b700ad35390c96~Ze3MRHzto2980529805epsmtip1D;
+	Thu,  7 Aug 2025 12:21:03 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250806234217.GA2030512-robh@kernel.org>
+Subject: RE: [PATCH v5 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Thu, 7 Aug 2025 17:51:02 +0530
+Message-ID: <000001dc0795$c0432660$40c97320$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d8875dea-aa04-41fc-b1b4-519d06ed6cba@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ+ZgWj3OwstM5ZbwFL0KmcSzrOlQJdB2aaAjkoxRUCiVKxNbLZYP5A
+Content-Language: en-in
+X-CMS-MailID: 20250807122107epcas5p3978bf8e0b47f7d228a5c54d5bfe0a243
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805114306epcas5p37782c02ae0ddc6b77094786c90af247a
+References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+	<CGME20250805114306epcas5p37782c02ae0ddc6b77094786c90af247a@epcas5p3.samsung.com>
+	<20250805115216.3798121-2-pritam.sutar@samsung.com>
+	<20250806234217.GA2030512-robh@kernel.org>
 
-On Thu, Aug 07, 2025 at 08:58:01AM +0200, Hans Verkuil wrote:
-> On 02/08/2025 11:23, Jacopo Mondi wrote:
-> > The __fh parameter is assigned to an unsued variable. Remove it
-> > and remove the unused struct zoran_fh type.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Hi Rob, 
+
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 07 August 2025 05:12 AM
+> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Cc: vkoul@kernel.org; kishon@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+> peter.griffin@linaro.org; kauschluss@disroot.org;
+> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
+> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
+> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; rosa.pila@samsung.com;
+> dev.tailor@samsung.com; faraz.ata@samsung.com;
+> muhammed.ali@samsung.com; selvarasu.g@samsung.com
+> Subject: Re: [PATCH v5 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+> ExynosAutov920 HS phy compatible
+> 
+> On Tue, Aug 05, 2025 at 05:22:11PM +0530, Pritam Manohar Sutar wrote:
+> > This SoC has USB2.0 phy and supports only UTMI+ interface. This phy
+> > requires two clocks, named as "phy" and "ref". The required supplies
+> > for this phy are vdd075_usb20(0.75v), vdd18_usb20(1.8v),
+> vdd33_usb20(3.3v).
+> >
+> > Add a dedicated compatible string for USB HS phy found in this SoC.
+> >
+> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
 > > ---
-> >  drivers/media/pci/zoran/zoran.h        | 6 ------
-> >  drivers/media/pci/zoran/zoran_driver.c | 3 +--
-> >  2 files changed, 1 insertion(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/media/pci/zoran/zoran.h b/drivers/media/pci/zoran/zoran.h
-> > index 1cd990468d3de9db8b14b72483972041c57bfee2..d05e222b392156bf1b3b4c83c6591db642c3c377 100644
-> > --- a/drivers/media/pci/zoran/zoran.h
-> > +++ b/drivers/media/pci/zoran/zoran.h
-> > @@ -154,12 +154,6 @@ struct zoran_jpg_settings {
-> >  
-> >  struct zoran;
-> >  
-> > -/* zoran_fh contains per-open() settings */
-> > -struct zoran_fh {
-> > -	struct v4l2_fh fh;
-> > -	struct zoran *zr;
-> > -};
-> > -
-> >  struct card_info {
-> >  	enum card_type type;
-> >  	char name[32];
-> > diff --git a/drivers/media/pci/zoran/zoran_driver.c b/drivers/media/pci/zoran/zoran_driver.c
-> > index f42f596d3e6295e31e3b33cd83c5f7243911bd30..ec7fc1da4cc02f5a344cb49bb9a783c41c758195 100644
-> > --- a/drivers/media/pci/zoran/zoran_driver.c
-> > +++ b/drivers/media/pci/zoran/zoran_driver.c
-> > @@ -511,12 +511,11 @@ static int zoran_s_fmt_vid_cap(struct file *file, void *__fh,
+> >  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 19
+> +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> > b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> > index e906403208c0..1932a2272ef9 100644
+> > --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-
+> phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-
+> phy.yaml
+> > @@ -34,6 +34,7 @@ properties:
+> >        - samsung,exynos7870-usbdrd-phy
+> >        - samsung,exynos850-usbdrd-phy
+> >        - samsung,exynos990-usbdrd-phy
+> > +      - samsung,exynosautov920-usbdrd-phy
+> >
+> >    clocks:
+> >      minItems: 1
+> > @@ -110,6 +111,12 @@ properties:
+> >    vddh-usbdp-supply:
+> >      description: VDDh power supply for the USB DP phy.
+> >
+> > +  dvdd075-usb20-supply:
+> > +    description: 0.75V power supply for the USB 2.0 phy.
+> > +
+> > +  vdd18-usb20-supply:
+> > +    description: 1.8V power supply for the USB 2.0 phy.
+> > +
+> >  required:
+> >    - compatible
+> >    - clocks
+> > @@ -219,6 +226,7 @@ allOf:
+> >                - samsung,exynos7870-usbdrd-phy
+> >                - samsung,exynos850-usbdrd-phy
+> >                - samsung,exynos990-usbdrd-phy
+> > +              - samsung,exynosautov920-usbdrd-phy
+> >      then:
+> >        properties:
+> >          clocks:
+> > @@ -235,6 +243,17 @@ allOf:
+> >
+> >          reg-names:
+> >            maxItems: 1
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - samsung,exynosautov920-usbdrd-phy
+> > +    then:
+> > +      required:
+> > +        - dvdd075-usb20-supply
+> > +        - vdd18-usb20-supply
+> > +        - vdd33-usb20-supply
 > 
-> This driver uses __fh as the name for the second argument of the ioctl
-> callbacks. Can you take this opportunity to rename it to either 'fh' or 'priv'?
-
-It's a bit of yak shaving, but not too difficult so it will be addressed
-in the next version (Jacopo already wrote the patches, thanks).
-
-> Generally it's not a good idea to prefix variables with __ for no good reason.
+> Presumably the existing devices don't have these new supplies, so:
 > 
-> Grepping for __fh also shows two other drivers:
-> 
-> drivers/media/platform/chips-media/coda/coda-common.c:#define fh_to_ctx(__fh)   container_of(__fh, struct coda_ctx, fh)
-> drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:#define fh_to_ctx(__fh) container_of(__fh, struct s5p_mfc_ctx, fh)
-> 
-> I think it is a good idea to rename __fh to fh there as well.
+> else:
+>   properties:
+>     dvdd075-usb20-supply: false
+>     vdd18-usb20-supply: false
 
-That can't be done, otherwise things like
+Appreciated for the suggestion. Will add this change in next version (v6) of
+the patch-set. 
+Snippet will look as mentioned below.
 
-#define fh_to_ctx(fh)	container_of(fh, struct coda_ctx, fh)
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynosautov920-usbdrd-phy
++    then:
++      required:
++        - dvdd075-usb20-supply
++        - vdd18-usb20-supply
++        - vdd33-usb20-supply
++
++    else:
++      properties:
++        dvdd075-usb20-supply: false
++        vdd18-usb20-supply: false
 
-static inline struct coda_ctx *file_to_ctx(struct file *filp)
-{
-	return fh_to_ctx(file_to_v4l2_fh(filp));
-}
+Thank you.
 
-will expand in the file_to_ctx() function to
-
-	return container_of(file_to_v4l2_fh(filp), struct coda_ctx, file_to_v4l2_fh(filp))
-
-We could rename the __fh argument to vfh or v4l2fh, but I think __fh is
-equally good there. It's just the macro argument name.
-
-> >  			       struct v4l2_format *fmt)
-> >  {
-> >  	struct zoran *zr = video_drvdata(file);
-> > -	struct zoran_fh *fh = __fh;
-> >  	int i;
-> >  	int res = 0;
-> >  
-> >  	if (fmt->fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG)
-> > -		return zoran_s_fmt_vid_out(file, fh, fmt);
-> > +		return zoran_s_fmt_vid_out(file, __fh, fmt);
-> >  
-> >  	for (i = 0; i < NUM_FORMATS; i++)
-> >  		if (fmt->fmt.pix.pixelformat == zoran_formats[i].fourcc)
-
--- 
 Regards,
+Pritam
 
-Laurent Pinchart
