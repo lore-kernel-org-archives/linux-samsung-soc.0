@@ -1,34 +1,34 @@
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEE8224249
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Aug 2025 07:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC162701CA
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Aug 2025 09:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638801; cv=none; b=Wx7z8Svy26L5LYfMPm8/jCGS4Pq+3mv4ooGobgKrw4wn55OxO8toMYoUNCU5BpaIuCsEvvFgmcL1U2DrX8yNuMBtfPXFzK5pBnhoxp3VxMFYNtw0O061+k04l4zL8wBerjNnc+3vXm+n0dPSNBsKnOva2ZOFND2dmFXNv5VLxFo=
+	t=1754646800; cv=none; b=q2ze75drb0CSYSyQPPTJyvvbI+dF1gChLcAoYbFcVgu+79C+f8Rq7M7kHe4QjtXvpizOySkb1GLvvTf7Idf8cKtMx+s9+qtHrh82kDgwuolCpGMo/f+o2QBkL6wfb+c3a5wfGdAia1q/r3pX6HiN7qwt0VmzFC5229tEsiRSSpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638801; c=relaxed/simple;
-	bh=1ByddKXfYzb2Biu/UoJUKo5zD1MP4q8sPZxMFZ142oQ=;
+	s=arc-20240116; t=1754646800; c=relaxed/simple;
+	bh=9Nlj78aB+Ys++ADXpttgaBsciQuo8MykUNXVf3a7maI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e1fjIrll7qogKN03lkQt0KsPWIp88SI4MJzA1axxBAAvc2eAgVZcTeybEpHw412RG3sRmEwyvJrP9NR2ZLC91mof+hQnZzj8QgzcICwH6TLrzDoA4hpg9MelhNmcf/lboZCDQlO/zodMobEyRZC8wjVxH4sfB1lWWaMo51Hwd9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=nA+S0+y1; arc=none smtp.client-ip=95.215.58.188
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTMHrO+IVc5zZMrxz7DOppBU5aidoNwjSQHeVkurthIwLqEWXgQzHspYlRJQkGCEl4CdlmoH0yJ3Gf7wKw78IHSSlmc08twrFM+aqwCgLzOuqNfCxh8WNo6j2K3f6/PQCXNa1hLs5aSJpVi9je0Q3NSI7O/swSa9cy8cUcDgv4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=KvU40ydH; arc=none smtp.client-ip=91.218.175.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="nA+S0+y1"
-Date: Fri, 8 Aug 2025 09:39:34 +0200
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="KvU40ydH"
+Date: Fri, 8 Aug 2025 11:52:59 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1754638786;
+	t=1754646790;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0PgcJqY7piVMe4TqAZpbZAh/XwpMd15g8rkb2eWQ+P0=;
-	b=nA+S0+y1ZwxrRdleSyjhsoPj011FiJ27Kyq/aNLv3Y9bteLeu5MAhVAUNc+5ApSON9ch2w
-	qW4M3kf+Nx73kPxeKZRQcEMAo316jMFtQ7xEnz8KmTXwDa2UvQ8iRGE2YwRLz3JAqghmJ1
-	pqWAcgxOsT5W+bJ7RmSD25h+D42IbRc=
+	bh=axyrifqNPjr8C6r1QvIN7+JuBjVLsnAazuNCWOgONBA=;
+	b=KvU40ydHKE0w7RhnYkcl2Fb4yOKj1J3yckXJpVjWfImCkk+Xyt2kBF+g+usQem2sMRyzPq
+	z0/rFqabrKERJFwUjlJGQqVdvN+RUzp42rml2K0b5dyQO8NgVWSS0P310wexL16Bp4tERl
+	3gj5fe514/cWTRE8Pz9+Ji8IPg/B5hY=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Henrik Grimler <henrik@grimler.se>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
 	Robert Foss <rfoss@kernel.org>,
@@ -41,14 +41,13 @@ Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
 	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection
+	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
+Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
  logic to detect MHL
-Message-ID: <20250808073413.GA19227@grimfrac.localdomain>
-References: <20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se>
- <CGME20250721094425eucas1p2a427e209cd0f1933118b2046c01e1c3f@eucas1p2.samsung.com>
- <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
- <ef676bc4-a4e8-45d8-9db7-5f9843241d0c@samsung.com>
+Message-ID: <20250808095259.GA31443@grimfrac.localdomain>
+References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
+ <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
+ <ldhyfuczwtwydwnvno4xn6ppjtt7mtcj35fp52xrqaajtfbtpb@2pgkytczb5k5>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -57,220 +56,121 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef676bc4-a4e8-45d8-9db7-5f9843241d0c@samsung.com>
+In-Reply-To: <ldhyfuczwtwydwnvno4xn6ppjtt7mtcj35fp52xrqaajtfbtpb@2pgkytczb5k5>
 X-Migadu-Flow: FLOW_OUT
 
-Hi Marek,
+Hi Dmitry,
 
-On Fri, Aug 01, 2025 at 10:09:08AM +0200, Marek Szyprowski wrote:
-> On 21.07.2025 11:43, Henrik Grimler wrote:
+On Sun, Jul 27, 2025 at 08:07:37PM +0300, Dmitry Baryshkov wrote:
+> On Thu, Jul 24, 2025 at 08:50:53PM +0200, Henrik Grimler wrote:
 > > To use MHL we currently need the MHL chip to be permanently on, which
 > > consumes unnecessary power. Let's use extcon attached to MUIC to enable
 > > the MHL chip only if it detects an MHL cable.
-> >
+> 
+> Does HPD GPIO reflect the correct state of the cable?
+
+Yes, the HPD gpio pin changes state from low to high when a mhl cable is
+connected:
+
+$ sudo cat /sys/kernel/debug/gpio|grep gpio-755
+ gpio-755 (                    |hpd                 ) in  lo IRQ
+$ sudo cat /sys/kernel/debug/gpio|grep gpio-755
+ gpio-755 (                    |hpd                 ) in  hi IRQ
+
+so that is described correctly.
+
+> What is the order of events in such a case?
+
+Order of events as in function tracing log? I enabled function tracing
+with these filters:
+
+  'max77693_muic_*' 'samsung_dsim_*' 'drm_bridge_*'
+  'drm_atomic_bridge_*' 'exynos_irq_*' 'hdmi*' 'sii9234_*'
+
+and captured the calls when I connect cable. dmesg with debug output
+at the same time gives:
+
+[ 6568.462521] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
+[ 6568.470575] max77693-charger max77693-charger: not charging. connector type: 13
+[ 6568.491722] sii9234 15-0039: sii9234: detection started d3
+[ 6569.398148] i2c i2c-15: sendbytes: NAK bailout.
+[ 6569.401477] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
+[ 6569.408403] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
+[ 6569.422638] max77693-charger max77693-charger: not charging. connector type: 13
+[ 6569.570615] sii9234 15-0039: sii9234_irq_thread
+[ 6569.622846] sii9234 15-0039: irq 00/00 42/5c 00/00
+[ 6569.626182] sii9234 15-0039: RGND_READY_INT
+[ 6570.592367] sii9234 15-0039: sii9234_irq_thread
+[ 6570.644626] sii9234 15-0039: irq 00/60 40/5c 00/00
+[ 6570.656185] sii9234 15-0039: RGND 1K!!
+[ 6570.937165] sii9234 15-0039: sii9234_irq_thread
+[ 6570.989467] sii9234 15-0039: irq 20/60 00/5c 00/0c
+[ 6571.000986] sii9234 15-0039: MHL cable connected.. RSEN High
+[ 6571.222655] sii9234 15-0039: sii9234_irq_thread
+[ 6571.274884] sii9234 15-0039: irq 00/60 04/5c 00/04
+[ 6571.278219] sii9234 15-0039: mhl est interrupt
+[ 6571.408117] sii9234 15-0039: sii9234_irq_thread
+[ 6571.460346] sii9234 15-0039: irq 40/60 00/5c 00/04
+
+and in captured trace I see that on cable connect we get an irq that
+is handled through:
+1. max77693_muic_irq_handler
+2. max77693_muic_irq_work
+3. max77693_muic_adc_handler
+4. sii9234_extcon_notifier
+5. sii9234_extcon_work
+6. sii9234_cable_in
+7. hdmi_irq_thread
+
+Raw captured trace dat file can be found here:
+https://grimler.se/files/sii9234-mhl-connect-trace.dat
+
+Maybe you were asking for some other type of order of events log
+though, please let me know if I misunderstand.
+
+> Should the sii9234 signal to Exynos HDMI that the link is established?
+
+Maybe.. Sorry, I do not know enough about extcon and drm yet. I assume
+you mean through drm_helper_hpd_irq_event() and
+drm_bridge_hpd_notify(), I will experiment a bit and add it to the
+driver and see if this improves it.
+
+There is currently (as I wrote to Marek Szyprowski in a response in
+v1) an issue where device screen stops working if cable is connected
+when device screen is off, maybe proper notification would help..
+
 > > Signed-off-by: Henrik Grimler <henrik@grimler.se>
 > > ---
+> > v2: add dependency on extcon. Issue reported by kernel test robot
+> >     <lkp@intel.com>
+> > ---
+> >  drivers/gpu/drm/bridge/Kconfig   |  1 +
+> >  drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 87 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > index b9e0ca85226a603a24f90c6879d1499f824060cb..f18a083f6e1c6fe40bde5e65a1548acc61a162ae 100644
+> > --- a/drivers/gpu/drm/bridge/Kconfig
+> > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > @@ -303,6 +303,7 @@ config DRM_SII902X
+> >  config DRM_SII9234
+> >  	tristate "Silicon Image SII9234 HDMI/MHL bridge"
+> >  	depends on OF
+> > +	select EXTCON
 > 
-> Thanks!
-> 
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Either this or 'depends on EXTCON || !EXTCON'
 
-Thanks for testing! On trats2 I assume? After some more testing I
-noticed that mhl hotplugging only works reliably if device screen is
-on when cable is plugged in, otherwise I get errors like:
-
-[  281.203520] exynos-hdmi 12d00000.hdmi: [drm:hdmiphy_enable.part.0] *ERROR* PLL could not reach steady state
-[  281.313816] exynos-mixer 12c10000.mixer: timeout waiting for VSYNC
-[  281.420637] ------------[ cut here ]------------
-[  281.423861] WARNING: CPU: 3 PID: 1189 at drivers/gpu/drm/drm_atomic_helper.c:1720 drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c
-[  281.436172] [CRTC:71:crtc-1] vblank wait timed out
-[  281.440870] Modules linked in: cpufreq_conservative rfcomm aes_arm aes_generic nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 cmac nft_reject algif_hash algif_skcipher nft_ct nf_conntrack af_alg nf_defrag_ipv6 nf_defrag_ipv4 bnep nf_tables ntc_thermistor hwmon brcmfmac_wcc s5k6a3 st_accel_spi spi_s3c64xx st_gyro_spi hci_uart st_sensors_spi btbcm btintel pwm_samsung bluetooth st_gyro_i2c st_accel_i2c st_gyro st_sensors_i2c st_accel st_sensors brcmfmac ecdh_generic ecc s5c73m3 libaes lima cfg80211 drm_shmem_helper gpu_sched exynos_adc brcmutil rfkill panel_samsung_s6e8aa0 s5p_sss exynos_rng s5p_g2d tm2_touchkey leds_an30259a cm36651 leds_aat1290 led_class_flash led_class ak8975 industrialio_triggered_buffer kfifo_buf gpio_keys uhid hid uinput ledtrig_pattern zram zsmalloc fuse loop nfnetlink ipv6 evdev [last unloaded: cpufreq_conservative]
-[  281.514974] CPU: 3 UID: 10000 PID: 1189 Comm: phoc Tainted: G        W           6.16.0-postmarketos-exynos4 #38 PREEMPT 
-[  281.515007] Tainted: [W]=WARN
-[  281.515013] Hardware name: Samsung Exynos (Flattened Device Tree)
-[  281.515027] Call trace: 
-[  281.515062]  unwind_backtrace from show_stack+0x18/0x1c
-[  281.515155]  show_stack from dump_stack_lvl+0x50/0x64
-[  281.515219]  dump_stack_lvl from __warn+0x88/0x15c
-[  281.515271]  __warn from warn_slowpath_fmt+0x118/0x1ac
-[  281.515285]  warn_slowpath_fmt from drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c
-[  281.515340]  drm_atomic_helper_wait_for_vblanks.part.0 from drm_atomic_helper_commit_tail_rpm+0x84/0x94
-[  281.515363]  drm_atomic_helper_commit_tail_rpm from commit_tail+0xa8/0x1a0
-[  281.515385]  commit_tail from drm_atomic_helper_commit+0x164/0x19c
-[  281.515402]  drm_atomic_helper_commit from drm_atomic_commit+0xd0/0x104
-[  281.515489]  drm_atomic_commit from drm_mode_atomic_ioctl+0x9f8/0xd14
-[  281.515512]  drm_mode_atomic_ioctl from drm_ioctl+0x20c/0x4cc
-[  281.515562]  drm_ioctl from sys_ioctl+0x5a8/0xc10
-[  281.515634]  sys_ioctl from ret_fast_syscall+0x0/0x54
-[  281.515651] Exception stack(0xc5d05fa8 to 0xc5d05ff0)
-[  281.515665] 5fa0:                   beb4be88 beb4be88 0000000d c03864bc beb4be88 0000000d
-[  281.515675] 5fc0: beb4be88 beb4be88 c03864bc 00000036 acbe4450 ad8edc70 acbe4490 acd46cf0
-[  281.515682] 5fe0: beb4be58 beb4bd38 b6e5651f b6ebb040
-[  281.515693] ---[ end trace 0000000000000000 ]---
-
-or device just hangs. I suppose this might not be an issue in the
-sii9234 driver though, so will collect your tags (unless I do further
-changes)!
-
-> You should also add "select EXTCON" (like in case of Sii8620) to Kconfig 
-> to avoid potential build break if extcon support is built as a module.
-
-Kernel robot also reported this issue, so I have added the select in
-v2:
-https://lore.kernel.org/linux-samsung-soc/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se/
+Feels like depends is a better description so will change to it,
+thanks!
 
 Best regards,
 Henrik Grimler
 
+> >  	help
+> >  	  Say Y here if you want support for the MHL interface.
+> >  	  It is an I2C driver, that detects connection of MHL bridge
 > 
-> >   drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
-> >   1 file changed, 86 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-> > index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
-> > --- a/drivers/gpu/drm/bridge/sii9234.c
-> > +++ b/drivers/gpu/drm/bridge/sii9234.c
-> > @@ -19,6 +19,7 @@
-> >   
-> >   #include <linux/delay.h>
-> >   #include <linux/err.h>
-> > +#include <linux/extcon.h>
-> >   #include <linux/gpio/consumer.h>
-> >   #include <linux/i2c.h>
-> >   #include <linux/interrupt.h>
-> > @@ -26,6 +27,7 @@
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/mutex.h>
-> > +#include <linux/of_graph.h>
-> >   #include <linux/regulator/consumer.h>
-> >   #include <linux/slab.h>
-> >   
-> > @@ -170,8 +172,12 @@ struct sii9234 {
-> >   	struct drm_bridge bridge;
-> >   	struct device *dev;
-> >   	struct gpio_desc *gpio_reset;
-> > -	int i2c_error;
-> >   	struct regulator_bulk_data supplies[4];
-> > +	struct extcon_dev *extcon;
-> > +	struct notifier_block extcon_nb;
-> > +	struct work_struct extcon_wq;
-> > +	int cable_state;
-> > +	int i2c_error;
-> >   
-> >   	struct mutex lock; /* Protects fields below and device registers */
-> >   	enum sii9234_state state;
-> > @@ -864,6 +870,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
-> >   	return 0;
-> >   }
-> >   
-> > +static void sii9234_extcon_work(struct work_struct *work)
-> > +{
-> > +	struct sii9234 *ctx =
-> > +		container_of(work, struct sii9234, extcon_wq);
-> > +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-> > +
-> > +	if (state == ctx->cable_state)
-> > +		return;
-> > +
-> > +	ctx->cable_state = state;
-> > +
-> > +	if (state > 0)
-> > +		sii9234_cable_in(ctx);
-> > +	else
-> > +		sii9234_cable_out(ctx);
-> > +}
-> > +
-> > +static int sii9234_extcon_notifier(struct notifier_block *self,
-> > +			unsigned long event, void *ptr)
-> > +{
-> > +	struct sii9234 *ctx =
-> > +		container_of(self, struct sii9234, extcon_nb);
-> > +
-> > +	schedule_work(&ctx->extcon_wq);
-> > +
-> > +	return NOTIFY_DONE;
-> > +}
-> > +
-> > +static int sii9234_extcon_init(struct sii9234 *ctx)
-> > +{
-> > +	struct extcon_dev *edev;
-> > +	struct device_node *musb, *muic;
-> > +	int ret;
-> > +
-> > +	/* Get micro-USB connector node */
-> > +	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-> > +	/* Then get micro-USB Interface Controller node */
-> > +	muic = of_get_next_parent(musb);
-> > +
-> > +	if (!muic) {
-> > +		dev_info(ctx->dev,
-> > +			 "no extcon found, switching to 'always on' mode\n");
-> > +		return 0;
-> > +	}
-> > +
-> > +	edev = extcon_find_edev_by_node(muic);
-> > +	of_node_put(muic);
-> > +	if (IS_ERR(edev)) {
-> > +		dev_err_probe(ctx->dev, PTR_ERR(edev),
-> > +			      "invalid or missing extcon\n");
-> > +	}
-> > +
-> > +	ctx->extcon = edev;
-> > +	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-> > +	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-> > +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-> > +	if (ret) {
-> > +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
-> >   					 const struct drm_display_info *info,
-> >   					 const struct drm_display_mode *mode)
-> > @@ -916,12 +986,17 @@ static int sii9234_probe(struct i2c_client *client)
-> >   	if (ret < 0)
-> >   		return ret;
-> >   
-> > +	ret = sii9234_extcon_init(ctx);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> >   	i2c_set_clientdata(client, ctx);
-> >   
-> >   	ctx->bridge.of_node = dev->of_node;
-> >   	drm_bridge_add(&ctx->bridge);
-> >   
-> > -	sii9234_cable_in(ctx);
-> > +	if (!ctx->extcon)
-> > +		sii9234_cable_in(ctx);
-> >   
-> >   	return 0;
-> >   }
-> > @@ -930,7 +1005,15 @@ static void sii9234_remove(struct i2c_client *client)
-> >   {
-> >   	struct sii9234 *ctx = i2c_get_clientdata(client);
-> >   
-> > -	sii9234_cable_out(ctx);
-> > +	if (ctx->extcon) {
-> > +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-> > +					   &ctx->extcon_nb);
-> > +		flush_work(&ctx->extcon_wq);
-> > +		if (ctx->cable_state > 0)
-> > +			sii9234_cable_out(ctx);
-> > +	} else {
-> > +		sii9234_cable_out(ctx);
-> > +	}
-> >   	drm_bridge_remove(&ctx->bridge);
-> >   }
-> >   
-> >
-> Best regards
 > -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
+> With best wishes
+> Dmitry
 > 
