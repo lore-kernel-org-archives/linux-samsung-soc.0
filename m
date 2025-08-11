@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4F82EA46A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444F22E9ED5;
 	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925512; cv=none; b=gGuuecmbYx0wYhUoAccjVVTw/L5TtQp8UhqaSS65f0OcUQqCdpK+NLgOZEP3wsmg7dAMw4Wh8b6dKOwPdZSQdfDTSXmQvLKUclXm9fdzOZEt7fN6VbEs0oBKyN/FMXdjH9pZysMNzUbpfmQFLmu/zaC3JbMJFJOmhxP/RstTOAg=
+	t=1754925512; cv=none; b=qNTuOnp1x/tymwNg0BaOB3qoQyO3rCZX+cV4dtRpQoAiqsUMLq1lhSjoDHOotlFmRs+IBcjBEi6UjTZvQel7YjiwTASN9X5sK5A3gx43pIc9TCGiCwjurjabDZnw282elfG/HjCVU8u4CcpVAGjSNw9t0K0gy7bHtH9r/zjJlpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754925512; c=relaxed/simple;
-	bh=jG3yxXJ79lHdae10GlwGV2mo/hPUrMugrmvjpwEgG6s=;
+	bh=Rw9Gk4+QNNQQ22Oplb/nL6UadRxNdVe8S5ltBz9aEjo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DNcuMxlItS1VNLw2Tp2hP17dve7dc2vqfFRb/6PQUpjgkMdvYwJ4Wq3p6+BT5P08oJs14QeG18L9XWfHtCCcTuZW9x5BMcSeDTZUDwzsC1oycIxedtoVTPykzon6zWh+vonQ7a25VYEp1JBVxQCC7cpPL3mY4RZEzjMe36Ny8uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1cz5cMj; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Q/h52m2VdXNAfA1Gw5JibxzrA95SC9JPvfE9qgSAtF3GYvq0uKn/seGUQx5G2/o/SKye091vn4qqcnWPf5x6SGp1ox8wem50DizKx2ww8UGnswM37laB3kLLj828hqC+p2mtsfxOGZISZm7kb02LB4ofr2mFy3W2V3g2fWZ2/Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+UmgY5R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1cz5cMj"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 174C0C4FE82;
-	Mon, 11 Aug 2025 15:18:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+UmgY5R"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E824AC2BCC4;
+	Mon, 11 Aug 2025 15:18:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754925511;
-	bh=jG3yxXJ79lHdae10GlwGV2mo/hPUrMugrmvjpwEgG6s=;
+	bh=Rw9Gk4+QNNQQ22Oplb/nL6UadRxNdVe8S5ltBz9aEjo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=i1cz5cMjl77nGHNZ3V24o7SKDmktE56TXnC35AD5Vb300rDz8iujAWmvoP0FxyUhb
-	 SifaH9VEIzVsxcBmxsNpkqz3xvPb2aHp2AMbkTofUvDtPTAF1Qdnyms2c5nmTa35Bq
-	 oU0R/iJ/00vervbj9gn5WU90m/Gd2IpIDlhrfX6Q4Yf5v73+Jcz6xKbkbaVBWN8Oil
-	 Wq65nZlowMflkzNaM8eRsV3oU8qALHAF3+sOMtW2d4JtAqneiPdzn4PQYblpR6kY09
-	 PU6FjgDlpQy+KRdJW0Ni+krK8j/2/F008/NV6E+jvLatEFsEup7NJvMe6CBc0fdmwa
-	 O9qOG5jAgy/aQ==
+	b=V+UmgY5RPoiQjUgGh8zftmb+UZPjlG3zK+FfqL9fXQut0cErfA1HF38XeRDuK6cWe
+	 9MVVWHTNdupX3AiNfDesbaGJaRPgQTrgmQS2lMFtujwLc4RTkyE7RlGKxpRW2CBUkf
+	 tFCPGepvG3NrJkXE82t8UzujU/bW568SubHigT0QGwWzf5uhalXtFqzXiy3XMFjjk5
+	 0HoCZPPR3JjuqiHXBos46KlNlqVf6kuijoHMB8OskMk4yTUYsxX+c5CRMLz35BBrcI
+	 hUTQsOevyDHlWK6M0LLXrwhj1J9c/Va+D7qRqYEuEZGK5h2s3ik2YIRypXE44Bahcu
+	 cTwdj/Dd3U4HA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA50CA0ED3;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58BDC87FDA;
 	Mon, 11 Aug 2025 15:18:30 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:18:49 -0400
-Subject: [PATCH 057/114] clk: stm32f4: convert from round_rate() to
+Date: Mon, 11 Aug 2025 11:18:47 -0400
+Subject: [PATCH 055/114] clk: st: clkgen-fsyn: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-57-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-55-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=2998;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=3173;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=AumK8BwNqzO627oEWWSfUxrEbI4mV0KAS1s9UAxn9TA=;
- b=pNrNmNIcyX36FbFqMWLlv3eoG6G/f+nT9NUyvbIM67aj47jQla4WbcCgNFVyBGKoRc6fMJY9g
- /Hc08HVRHA4Bnhh/vlJMd14EV3TINDDYbL4KIb3mILPMqr9tATZabYE
+ bh=gUSLbeZHr73B/I2fV9jotoRj8MmBd1lu8kA4ol+iIJ0=;
+ b=G6k4uh/JRAn4/1Td8h7erdt/dHCXUCAhiA0vLqRrFWA9B+Z4UG8OeJjyBbv4xxj66+p+h/rCk
+ 7Ok2dvXQYtwDl/u4bPzZSai6M4gKpoLwoMpcJ2RakLzXW4yhmR6iimb
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,88 +127,89 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/clk-stm32f4.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/clk/st/clkgen-fsyn.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 719cddc82ae6f8f706716e5ba91a69759c066415..b5d4d48432a0be0a416d628667893e7165caaf0a 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -443,8 +443,8 @@ static unsigned long clk_apb_mul_recalc_rate(struct clk_hw *hw,
- 	return parent_rate;
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index 40df1db102a77bbe5144d42f6e05361b66634e9a..e06e7e5cc1a56192cceeea20343c292423015bbe 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -375,22 +375,21 @@ static int clk_fs660c32_vco_get_params(unsigned long input,
+ 	return 0;
  }
  
--static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
--				   unsigned long *prate)
-+static int clk_apb_mul_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
+-static long quadfs_pll_fs660c32_round_rate(struct clk_hw *hw,
+-					   unsigned long rate,
+-					   unsigned long *prate)
++static int quadfs_pll_fs660c32_determine_rate(struct clk_hw *hw,
++					      struct clk_rate_request *req)
  {
- 	struct clk_apb_mul *am = to_clk_apb_mul(hw);
- 	unsigned long mult = 1;
-@@ -453,12 +453,14 @@ static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
- 		mult = 2;
+ 	struct stm_fs params;
  
- 	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
--		unsigned long best_parent = rate / mult;
-+		unsigned long best_parent = req->rate / mult;
+-	if (clk_fs660c32_vco_get_params(*prate, rate, &params))
+-		return rate;
++	if (clk_fs660c32_vco_get_params(req->best_parent_rate, req->rate, &params))
++		return 0;
  
--		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
-+		req->best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
- 	}
+-	clk_fs660c32_vco_get_rate(*prate, &params, &rate);
++	clk_fs660c32_vco_get_rate(req->best_parent_rate, &params, &req->rate);
  
--	return *prate * mult;
-+	req->rate = req->best_parent_rate * mult;
-+
+ 	pr_debug("%s: %s new rate %ld [ndiv=%u]\n",
+ 		 __func__, clk_hw_get_name(hw),
+-		 rate, (unsigned int)params.ndiv);
++		 req->rate, (unsigned int)params.ndiv);
+ 
+-	return rate;
 +	return 0;
  }
  
- static int clk_apb_mul_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -474,7 +476,7 @@ static int clk_apb_mul_set_rate(struct clk_hw *hw, unsigned long rate,
- }
- 
- static const struct clk_ops clk_apb_mul_factor_ops = {
--	.round_rate = clk_apb_mul_round_rate,
-+	.determine_rate = clk_apb_mul_determine_rate,
- 	.set_rate = clk_apb_mul_set_rate,
- 	.recalc_rate = clk_apb_mul_recalc_rate,
+ static int quadfs_pll_fs660c32_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -436,7 +435,7 @@ static const struct clk_ops st_quadfs_pll_c32_ops = {
+ 	.disable	= quadfs_pll_disable,
+ 	.is_enabled	= quadfs_pll_is_enabled,
+ 	.recalc_rate	= quadfs_pll_fs660c32_recalc_rate,
+-	.round_rate	= quadfs_pll_fs660c32_round_rate,
++	.determine_rate = quadfs_pll_fs660c32_determine_rate,
+ 	.set_rate	= quadfs_pll_fs660c32_set_rate,
  };
-@@ -670,21 +672,23 @@ static unsigned long stm32f4_pll_recalc(struct clk_hw *hw,
- 	return parent_rate * n;
+ 
+@@ -814,19 +813,21 @@ static unsigned long quadfs_recalc_rate(struct clk_hw *hw,
+ 	return rate;
  }
  
--static long stm32f4_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--		unsigned long *prate)
-+static int stm32f4_pll_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
+-static long quadfs_round_rate(struct clk_hw *hw, unsigned long rate,
+-				     unsigned long *prate)
++static int quadfs_determine_rate(struct clk_hw *hw,
++				 struct clk_rate_request *req)
  {
- 	struct clk_gate *gate = to_clk_gate(hw);
- 	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
- 	unsigned long n;
+ 	struct stm_fs params;
  
--	n = rate / *prate;
-+	n = req->rate / req->best_parent_rate;
+-	rate = quadfs_find_best_rate(hw, rate, *prate, &params);
++	req->rate = quadfs_find_best_rate(hw, req->rate,
++					  req->best_parent_rate, &params);
  
- 	if (n < pll->n_start)
- 		n = pll->n_start;
- 	else if (n > 432)
- 		n = 432;
+ 	pr_debug("%s: %s new rate %ld [sdiv=0x%x,md=0x%x,pe=0x%x,nsdiv3=%u]\n",
+ 		 __func__, clk_hw_get_name(hw),
+-		 rate, (unsigned int)params.sdiv, (unsigned int)params.mdiv,
+-			 (unsigned int)params.pe, (unsigned int)params.nsdiv);
++		 req->rate, (unsigned int)params.sdiv,
++		 (unsigned int)params.mdiv,
++		 (unsigned int)params.pe, (unsigned int)params.nsdiv);
  
--	return *prate * n;
-+	req->rate = req->best_parent_rate * n;
-+
+-	return rate;
 +	return 0;
  }
  
- static void stm32f4_pll_set_ssc(struct clk_hw *hw, unsigned long parent_rate,
-@@ -749,7 +753,7 @@ static const struct clk_ops stm32f4_pll_gate_ops = {
- 	.disable	= stm32f4_pll_disable,
- 	.is_enabled	= stm32f4_pll_is_enabled,
- 	.recalc_rate	= stm32f4_pll_recalc,
--	.round_rate	= stm32f4_pll_round_rate,
-+	.determine_rate = stm32f4_pll_determine_rate,
- 	.set_rate	= stm32f4_pll_set_rate,
- };
  
+@@ -873,7 +874,7 @@ static const struct clk_ops st_quadfs_ops = {
+ 	.enable		= quadfs_fsynth_enable,
+ 	.disable	= quadfs_fsynth_disable,
+ 	.is_enabled	= quadfs_fsynth_is_enabled,
+-	.round_rate	= quadfs_round_rate,
++	.determine_rate = quadfs_determine_rate,
+ 	.set_rate	= quadfs_set_rate,
+ 	.recalc_rate	= quadfs_recalc_rate,
+ };
 
 -- 
 2.50.1
