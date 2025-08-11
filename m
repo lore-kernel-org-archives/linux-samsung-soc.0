@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B1B2E3393;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D882E3B03;
 	Mon, 11 Aug 2025 15:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925507; cv=none; b=NeSqqOLxgOwoWC88GDdgHTI2GayuFcOn02El+Bl6rAG6W5vmZb1yfLsXG2Mz0lkCVNUk0UNSz83cdYoH2n6/xxG3Wm6eE13/d4jWyEkHfJizdLcgXVJRHDc9pWo1mtQrEbJranleR3OTQsbV+vgA/iB7oRBbyOCSGLp1aRln3nc=
+	t=1754925507; cv=none; b=T3rC2Ps3lw333bcLBIWHXAKCUlZobVwT9fXfd6DbGv+jc6+8qC6fwpT6ohKnl7WAX8KAO5/NcBV0yy2cQap1IIfmK3X/hQX+6vjcGcR2W4JHnM1XkAKrj1SU0Ha0msfS3l+wV4A1lJsyFw1sCfzlK6eVrhCTFBat/zYCCanekZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754925507; c=relaxed/simple;
-	bh=VFtXFr9vIbfRWYr9oKIzZrITltUTnw3h47oXl5iKkyM=;
+	bh=KkdBtDONYJ8Bt9V3bv59x9RzDmfzDA2g2B331LaPaPo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=s7mOYlULogZTRdrH6hPvD/xhJVJ8rXzjwnsdXABZHC62gx8pszATKN8l1gPVkCg6GeFJnjuH/uB1ZQ0bTHRfErzPmAB3NFOCGNsm1zbgyS7qLCnDfVvjC+sn0CpIgghwGm9zULig4Z5IOLoWa8bxlIYtsm/CvWdgWAkZF9DCalU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBnAYYEL; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=sqb8FGJBs8bV1oyO1q6VUiO8zkRaV76bkLBKzPnKiqg0O1UWj8jwDuXvz2jdzzCbTER9Tmbzpd+GeZSK3TC8I6o84hnHW+flLej1XnleL+RmvrfYJNkSZpHRtsKXxNuDUcLGQNbbFXHEii4WBQvA79zsBr8ZykxwY/2QE5bxEd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5QwNZaH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBnAYYEL"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 49F49C116D0;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5QwNZaH"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AB6B2C113CF;
 	Mon, 11 Aug 2025 15:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754925506;
-	bh=VFtXFr9vIbfRWYr9oKIzZrITltUTnw3h47oXl5iKkyM=;
+	bh=KkdBtDONYJ8Bt9V3bv59x9RzDmfzDA2g2B331LaPaPo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mBnAYYELB4g2UaKHeFwyAjSlyQyh5nF37XyeEzv+a1vKT1V/g1rlSsGlzKoDQhFML
-	 dVjdIWgd7CMUJxDEwNn232fz9mQXrtNTblfARKgGueNWFlupYjrwgLOslJxtxe4tVb
-	 LerhQVB8AVrOfk4qhUbq7OiHrbWYFVvz7TvIjz8zc/mzI+qJkw+v1Htp6u2CoaVVoR
-	 XBLvioHJczzuxVYNYTRysrKnKtBWEpblm3XZrV37VHUkrXL9M6yOuDPzAdEiXO/jLb
-	 OCnTc+PFA+C9ZJEiSjChGSQwTXevAK7eXZ0BiymrZ1WEfH7UUsMs2pTc7Tp67q0eSy
-	 rhsEhiRIm/4OQ==
+	b=C5QwNZaHPe2NHEBmjxe8RuzN95YS9s/PIkSUy/kniQS8rM697kh9hvolDMkvJQxzX
+	 05UKblJyvaOro5bAmZVG+Ytf9hHaUF/nFBZttMIa2h/nPcAklvaFWG0WCtuiAT6hhu
+	 xHRJyHFWpK38WFbgHUkIR231GgmoD0eFMH6hsx7BpshlXKhRFkYFtSpEy76ueSXLNZ
+	 gvapnB/rqYpV1XNhfX2i6jP+dU7Nr8Ffd5Zy2wqtMcpgyyNMfwRXyuajIjROjqt/ky
+	 Dfnl+iD4OqjbxY82WAU5ZJqwkxKjn3aBcAkAat9JeMsyHH6G6Xk5Kf6N48GLbzDbmO
+	 1kxbSqd7uqj9A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2AACA0EC4;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90600CA0EC7;
 	Mon, 11 Aug 2025 15:18:26 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:18:05 -0400
-Subject: [PATCH 013/114] clk: cs2000-cp: convert from round_rate() to
+Date: Mon, 11 Aug 2025 11:18:08 -0400
+Subject: [PATCH 016/114] clk: gemini: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-13-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-16-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925497; l=1787;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925497; l=1540;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=UvrHRYRUxYuk67DeJ+BpwAUoKfafzxXGpd5nwpRerDw=;
- b=fDAJAnMViOEmt/8f9KCjYUUh9pvmB1LYo7aMsJDlpj8/brXkcPxnDhngHVSEAGqFWM1LGT+LE
- 6nhpWQIm00QB34irXdnHIulkoqg6QTZCVYDJATKKqb7eX0tY6Hgo221
+ bh=fq61zK+hq54hhS03I3X0iQmUgqsM8bf2Q3LlVo5dgDc=;
+ b=rtW4321gwOW415w/7adzhjZpRSYwAPRPbfIBGymJgkqkHjmJFinLSZagckdwk9CGS/Whm2ro9
+ Oo/e7TAaGJfAptjw1DozTI1vZLvNPMyE/XzlJUpu3eqO237Vzmn2zpo
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,46 +127,44 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/clk-cs2000-cp.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/clk/clk-gemini.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 35cb93ad298a7188ada8548a9e5995676d72e49f..8800472ba63f297c94b293323770ebb97999e12e 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -305,15 +305,19 @@ static unsigned long cs2000_recalc_rate(struct clk_hw *hw,
- 	return cs2000_ratio_to_rate(ratio, parent_rate, priv->lf_ratio);
+diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+index 856b008e07c6b7e967b01c4ef43af838f7f18fe2..e94589c385688e0c48e047b2fde87304b0a1150f 100644
+--- a/drivers/clk/clk-gemini.c
++++ b/drivers/clk/clk-gemini.c
+@@ -126,13 +126,16 @@ static unsigned long gemini_pci_recalc_rate(struct clk_hw *hw,
+ 	return 33000000;
  }
  
--static long cs2000_round_rate(struct clk_hw *hw, unsigned long rate,
--			      unsigned long *parent_rate)
-+static int cs2000_determine_rate(struct clk_hw *hw,
-+				 struct clk_rate_request *req)
+-static long gemini_pci_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *prate)
++static int gemini_pci_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
  {
- 	struct cs2000_priv *priv = hw_to_priv(hw);
- 	u32 ratio;
- 
--	ratio = cs2000_rate_to_ratio(*parent_rate, rate, priv->lf_ratio);
-+	ratio = cs2000_rate_to_ratio(req->best_parent_rate, req->rate,
-+				     priv->lf_ratio);
- 
--	return cs2000_ratio_to_rate(ratio, *parent_rate, priv->lf_ratio);
-+	req->rate = cs2000_ratio_to_rate(ratio, req->best_parent_rate,
-+					 priv->lf_ratio);
+ 	/* We support 33 and 66 MHz */
+-	if (rate < 48000000)
+-		return 33000000;
+-	return 66000000;
++	if (req->rate < 48000000)
++		req->rate = 33000000;
++	else
++		req->rate = 66000000;
 +
 +	return 0;
  }
  
- static int cs2000_select_ratio_mode(struct cs2000_priv *priv,
-@@ -430,7 +434,7 @@ static u8 cs2000_get_parent(struct clk_hw *hw)
- static const struct clk_ops cs2000_ops = {
- 	.get_parent	= cs2000_get_parent,
- 	.recalc_rate	= cs2000_recalc_rate,
--	.round_rate	= cs2000_round_rate,
-+	.determine_rate = cs2000_determine_rate,
- 	.set_rate	= cs2000_set_rate,
- 	.prepare	= cs2000_enable,
- 	.unprepare	= cs2000_disable,
+ static int gemini_pci_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -179,7 +182,7 @@ static int gemini_pci_is_enabled(struct clk_hw *hw)
+ 
+ static const struct clk_ops gemini_pci_clk_ops = {
+ 	.recalc_rate = gemini_pci_recalc_rate,
+-	.round_rate = gemini_pci_round_rate,
++	.determine_rate = gemini_pci_determine_rate,
+ 	.set_rate = gemini_pci_set_rate,
+ 	.enable = gemini_pci_enable,
+ 	.disable = gemini_pci_disable,
 
 -- 
 2.50.1
