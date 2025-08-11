@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967552ED854;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8A22EA461;
 	Mon, 11 Aug 2025 15:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925516; cv=none; b=nAwMrr/e32B1RZzP84VXKQF3lAx2Ww5ywC/dH3/3C5jMBFPdeGJfOMk0NEbzfZ1X1ODPSh/qkOz8scQN2cssudJHyBi86+8nk1HJdQgjiFGlbHh6jSt1GIwsdrPnXE71P4kjW9YP2Mm9RlCpN/yU8s0B5wjKUeCSm9tEYNSFPbU=
+	t=1754925517; cv=none; b=j/gT61u8pCC/HyO/OXVumtQuAL6P4VqI7CF8WfXDgX12JOdeX2pDisUXxU5+ocqlSn0TsRvS03DOgxCZ22DfBAoxLqrYuaBC4wEBSMkz4tXDtpeL0aUj8NTvNNUpbcY2VxpQ4VcfEXhCS7e02isc7m9mtBRmR3V0BUnQlgTVJ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925516; c=relaxed/simple;
-	bh=DgV6YlTBDkUrNyyRhS1zI2zv3QMz45uq7zsOajWSEz8=;
+	s=arc-20240116; t=1754925517; c=relaxed/simple;
+	bh=zw9hWSN5n+Kpeh+wodQ5uxYPF57I3p/MhkkzEzCZbeE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JIQr4Jg0R5LTr13IZSSH+SnaFpruuS8FLq85/sRvfCUQdA7R+BoIYshl5D6Uv0BEKJjDHHF1LiMUHRbPJpJD0jhZhyR81IHqMVZzt/VDplq5tV8u2GCW0GWq1ZE9b8lbP9AyxfOuQverThDlIgIH7EOwbt4dz7ELsTvJiaC4440=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjjQmsmr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=a2EMgocZVCz94KW7Njs75rrZJIsQ8fY9rJ+cg56r3HXbVmV7nB6eQn69Vypjbxz/ANGhxqIP0Egjjd+wZ3vUA5omvYSlGelsdhAknXBuH4WnEREs4pIxPgMF/hOmyexYYiPq3xz54VfjL2qocRkiWQ3pJ83A1wscN0x0mqSjCD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sg6kvB4m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjjQmsmr"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3C399C4FF14;
-	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sg6kvB4m"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6184C4CEFB;
+	Mon, 11 Aug 2025 15:18:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925512;
-	bh=DgV6YlTBDkUrNyyRhS1zI2zv3QMz45uq7zsOajWSEz8=;
+	s=k20201202; t=1754925514;
+	bh=zw9hWSN5n+Kpeh+wodQ5uxYPF57I3p/MhkkzEzCZbeE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=OjjQmsmrucefoLxUr5OGQ9+yc8HRDkXRiaiAN0UQoZwZdXC0HWHQBuEbFtbiFxObx
-	 M1GY1bgnkOWa5PZi63N9Cim7AlyvC5fE2SBivftdGE83Jqz0so0EQSNJzddnH14Ba5
-	 4OGirdsM8DGRsRSEVujUpEg1HDql7Ef+VT/+HvxRT9Zs+WiKM4afMKYhhgJUsUzWtj
-	 gVR8VoxG4ndmOZ9MYrJPmctDRN3SBUL4JpmfdByrm10CQiWHyejrgaqpjE0nZeMG2n
-	 owIiI5AKtn5Z9W/lC4VnMyF4+6Qo4BL0tz1JtOtXo/Ynt1ZpWQO4aMydQvD201Wfpn
-	 wUO2bhoEWmiJQ==
+	b=sg6kvB4mB/w8+CSzmgnaTvxiD8GLmYpamyUFuSimtq7NsNxkpwAi0zQtkbWb4CqXt
+	 SW1d0loNSmkiuNmfifaSKIW2xDp7xbAjv9nXm/VS4OwMoNOjrPT2QvcjwBgv1i1ps5
+	 zU5rKvlICOLyBtGWOfhiEwo+Xr854ZfmUCN+sEj4/F5Xz3BVxLLctRc/l1P0XPzDcQ
+	 tSfLEeAu+F/VEqzJXDrKDjMg0uWUMqjIj/oevv2sXUfV46MTAMp8MQXDBG3jPTmND1
+	 zkLddTSFnoE3E8+EyJtfQo2T+Ty/h2l0+VuNynyStZrloZtpml5g2TpUzr0x6xtGk7
+	 d3RRt4ZipoOcA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 299C6CA0EC4;
-	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09FACA0EC8;
+	Mon, 11 Aug 2025 15:18:34 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:19:01 -0400
-Subject: [PATCH 069/114] clk: zynqmp: pll: convert from round_rate() to
+Date: Mon, 11 Aug 2025 11:19:26 -0400
+Subject: [PATCH 094/114] clk: rockchip: ddr: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-69-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-94-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=2224;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1666;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=lskpKNDz5PXgHwG043xSBBoY9L3jCf8IYdbJMbo+pqY=;
- b=6K32Cq3AtxddqDEswKIewVZ6ixls6cXq38xWyGnT4SPjLfcqb9QH4+emafqpKpp6DcKj8YU2k
- djHjbLNcQJUCBZxr2eRk+dQ8L6FLPKL1KwiFgtRDg7HTIkbp7gMoxm/
+ bh=+mTNNaA/Rw26i0WQAx+OIQblwc90KAUsuFHwu0lEWj8=;
+ b=rTl0OqGx+j74m+r7f4wrHisEEDRwWTntvTo+iCDJVcKHw2awCwJ9lKPHIWuR7jm5OOl41r7C+
+ ghPrb9Sfv2NDz2WVpcs21qKgRU7FQnBQSxyD5/9wqvK9Fd71FNgBTUA
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,63 +127,46 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/zynqmp/pll.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/clk/rockchip/clk-ddr.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 7411a7fd50acf7b718f789074598c25bec509aa1..630a3936c97c348c1d36252cb93c5551b2469969 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -98,29 +98,29 @@ static inline void zynqmp_pll_set_mode(struct clk_hw *hw, bool on)
-  *
-  * Return: Frequency closest to @rate the hardware can generate
-  */
--static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--				  unsigned long *prate)
-+static int zynqmp_pll_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+index 86718c54e56b3ff52ee6ea9f209159de91e9da39..8866a65982a0489f1aacd546bda60af1d30278ee 100644
+--- a/drivers/clk/rockchip/clk-ddr.c
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -55,17 +55,18 @@ rockchip_ddrclk_sip_recalc_rate(struct clk_hw *hw,
+ 	return res.a0;
+ }
+ 
+-static long rockchip_ddrclk_sip_round_rate(struct clk_hw *hw,
+-					   unsigned long rate,
+-					   unsigned long *prate)
++static int rockchip_ddrclk_sip_determine_rate(struct clk_hw *hw,
++					      struct clk_rate_request *req)
  {
- 	u32 fbdiv;
- 	u32 mult, div;
+ 	struct arm_smccc_res res;
  
- 	/* Let rate fall inside the range PS_PLL_VCO_MIN ~ PS_PLL_VCO_MAX */
--	if (rate > PS_PLL_VCO_MAX) {
--		div = DIV_ROUND_UP(rate, PS_PLL_VCO_MAX);
--		rate = rate / div;
-+	if (req->rate > PS_PLL_VCO_MAX) {
-+		div = DIV_ROUND_UP(req->rate, PS_PLL_VCO_MAX);
-+		req->rate = req->rate / div;
- 	}
--	if (rate < PS_PLL_VCO_MIN) {
--		mult = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
--		rate = rate * mult;
-+	if (req->rate < PS_PLL_VCO_MIN) {
-+		mult = DIV_ROUND_UP(PS_PLL_VCO_MIN, req->rate);
-+		req->rate = req->rate * mult;
- 	}
+-	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, rate, 0,
++	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, req->rate, 0,
+ 		      ROCKCHIP_SIP_CONFIG_DRAM_ROUND_RATE,
+ 		      0, 0, 0, 0, &res);
  
--	fbdiv = DIV_ROUND_CLOSEST(rate, *prate);
-+	fbdiv = DIV_ROUND_CLOSEST(req->rate, req->best_parent_rate);
- 	if (fbdiv < PLL_FBDIV_MIN || fbdiv > PLL_FBDIV_MAX) {
- 		fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
--		rate = *prate * fbdiv;
-+		req->rate = req->best_parent_rate * fbdiv;
- 	}
- 
--	return rate;
+-	return res.a0;
++	req->rate = res.a0;
++
 +	return 0;
  }
  
- /**
-@@ -294,7 +294,7 @@ static const struct clk_ops zynqmp_pll_ops = {
- 	.enable = zynqmp_pll_enable,
- 	.disable = zynqmp_pll_disable,
- 	.is_enabled = zynqmp_pll_is_enabled,
--	.round_rate = zynqmp_pll_round_rate,
-+	.determine_rate = zynqmp_pll_determine_rate,
- 	.recalc_rate = zynqmp_pll_recalc_rate,
- 	.set_rate = zynqmp_pll_set_rate,
+ static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
+@@ -83,7 +84,7 @@ static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
+ static const struct clk_ops rockchip_ddrclk_sip_ops = {
+ 	.recalc_rate = rockchip_ddrclk_sip_recalc_rate,
+ 	.set_rate = rockchip_ddrclk_sip_set_rate,
+-	.round_rate = rockchip_ddrclk_sip_round_rate,
++	.determine_rate = rockchip_ddrclk_sip_determine_rate,
+ 	.get_parent = rockchip_ddrclk_get_parent,
  };
+ 
 
 -- 
 2.50.1
