@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7852E763A;
-	Mon, 11 Aug 2025 15:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1B2E8E1D;
+	Mon, 11 Aug 2025 15:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925510; cv=none; b=Lvgbyetr3tu42PRIUnM1zmgJAzhvXM2gkTQxeseNjBtDqud8A3tT7/KzqL8rAYZIgQIUhnYDF98/DqvGB6QbSSG9WFv8RPdBAvbb00zixrwOpvu2dVKTrDqPkaPUgSyUWpzYT6F4sxBWav9wW5V17KwBHsWe+0wL7gqRtngOIF8=
+	t=1754925510; cv=none; b=iggEghcZTeSj38H/w0vsFlDkc62QkBwF2+9R5NUkUcIws8tJZ0pxLkKFeHtusaIt39CLotRvT0wWqACbLIyOLsxAjJ7N4YIlJ828cMtAhPovJAMLEUTJFFvhKQhYkgmgLpUGX61nT508c64CEuWi7VTFVEP0e/daT+b495g5utY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754925510; c=relaxed/simple;
-	bh=oS/ZrCjBTdyPuJMM+Yew4C7cf0HwcK6IhmTH8w2E3wE=;
+	bh=Apc2qzNpfS9aAHI8h/9ad7fvCKlHY8Hm4ds5yDJuMxY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FpCsNLTsCIF4dvAXcNaJ3XMDpSzjdc3g4P+EJiB+r95LH/7ZD/zlCptmlNWwBmAJXAZxpoLA84SruYcjXENrH2LFhWZrgTHSWjAkxlGagMINsivRPpYPsjOj3OHHWNz+vfrDgRJrCOL+CN+xSUoG7FDZ50m9qobaATSVka3iuA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGRs0sC9; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=ZJx+gm5KMn64xkiX87eqqywL60Z4ERDV97Ss/u8H3uOXjzt+r+RqyPytJkdjVsPR73FVyswqggVLgRwjJBZrvwUR7YY0ZWgNX2z8MqCCkfAYZkMbqh6JWbCzD46oNzpAr8jn2OdBbUprRtXlFJLvRcygRlcJ89IKL3rnve3mNu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pc2y+ckB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGRs0sC9"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8673BC4AF50;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pc2y+ckB"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6125C19421;
 	Mon, 11 Aug 2025 15:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754925509;
-	bh=oS/ZrCjBTdyPuJMM+Yew4C7cf0HwcK6IhmTH8w2E3wE=;
+	bh=Apc2qzNpfS9aAHI8h/9ad7fvCKlHY8Hm4ds5yDJuMxY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jGRs0sC9HKEJgF+GylLW+yPT6UtkqueBYMVsEYZfuh1GMoTY6F3k1xgHWqIkDv7bX
-	 r1/ksDc39F5Q6cjY2Ld4ZMKHeweTjYUMGW//WbVPqrsPyuruyqBAsh01Q2TY0c+/1C
-	 ot3cS7wxuR/eJ2H6cJTpAkHKR+9xPi6NP08M8Ldl1+EH9Z+f2TVBa3sYT3DK+QDzGi
-	 z1/BLkkskQZJwMJds9/UcuU3UCnoQp2Ny4b+t9c8qIUTZijvEBNRsyAleHOOw1GXlM
-	 hRJ1oDesembcMrCUU+CV//f14i/zuE29ST6pCG7OEPLPFPHa6qWpRZn/zqyAaBGzlK
-	 HM12quohQcCOw==
+	b=Pc2y+ckBwV6Rdu49pgbnKxX8piZe7F+BV9WP5MLfbHVH9rYb3qLklc2ucy3MxIrpo
+	 Ez8CA8oE1fk0yFR1LgKKedg8trPwICBnZsEhl2IgwFt234xrsj49yEv5hX56Iq1uD1
+	 F2o0UQ7o1zBc6v8INWCZvtQ4emAbXpiDRhX9cRER0+VfVSzRPLc8fgP+psn+W1O5OP
+	 xuv8nMzO7ym+lDgJBQe8UIVtUgf9PigsaNLs3f8EGfEy5+l7gT5a8aJr51mKVmN3wG
+	 2SraZuhAlNj+AcxdWycxr/btBCZOM7mY2+5QhqPP7xDxbBR01mOk2938UL41QbFmXh
+	 KgiaTMhfUfQzQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CA0CA0ECD;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9657DC87FDA;
 	Mon, 11 Aug 2025 15:18:29 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:18:33 -0400
-Subject: [PATCH 041/114] clk: si514: convert from round_rate() to
+Date: Mon, 11 Aug 2025 11:18:35 -0400
+Subject: [PATCH 043/114] clk: si5341: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-41-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-43-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1615;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1946;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=dagTZ8T2ZWlrRPVjhpPlS47bP85AKVvJF75/1IUEHCk=;
- b=1G8W5arP5g5axnUnhxSv5YFklILV589JL7kyFbnUXIZgHs6LZyzSE1SQAd6sETEfbnA0vagtV
- TgNeOblAgxGB6iJ3x8RECdptL4wESj05RTuXKsNZL/ykW5cKJ0IGgBZ
+ bh=VSclFs7R89Y+Lsm61Wi5Kzy/FJb3iOqfzn5aANhegPc=;
+ b=flWSSXi6CEENtdFwyXcyp3r9Kub5eRxDOAYKZ/Npi1LtbV7xxzxgOYvzm2I3AsyOaNwIt8AHw
+ esev6EsAl3zCadBDavASsob5DvzObWhBdDc6yl/uXR7h9oJCiYxZi60
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,56 +127,58 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/clk-si514.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/clk/clk-si5341.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 1127c35ce57d70f93fb77feb6a971dae98e871d7..f61590d70575bca52d0255ba114ba6ab381e6f54 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -227,20 +227,28 @@ static unsigned long si514_recalc_rate(struct clk_hw *hw,
- 	return si514_calc_rate(&settings);
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index 5004888c7eca5f85a444ec6de684b8dd79635622..2499b771cd83e313eafd83cb0519b1b94da73a61 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -663,8 +663,8 @@ static unsigned long si5341_synth_clk_recalc_rate(struct clk_hw *hw,
+ 	return f;
  }
  
--static long si514_round_rate(struct clk_hw *hw, unsigned long rate,
+-static long si5341_synth_clk_round_rate(struct clk_hw *hw, unsigned long rate,
 -		unsigned long *parent_rate)
-+static int si514_determine_rate(struct clk_hw *hw,
-+				struct clk_rate_request *req)
++static int si5341_synth_clk_determine_rate(struct clk_hw *hw,
++					   struct clk_rate_request *req)
  {
- 	struct clk_si514_muldiv settings;
- 	int err;
- 
--	if (!rate)
-+	if (!req->rate) {
-+		req->rate = 0;
+ 	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
+ 	u64 f;
+@@ -672,15 +672,21 @@ static long si5341_synth_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	/* The synthesizer accuracy is such that anything in range will work */
+ 	f = synth->data->freq_vco;
+ 	do_div(f, SI5341_SYNTH_N_MAX);
+-	if (rate < f)
+-		return f;
++	if (req->rate < f) {
++		req->rate = f;
 +
- 		return 0;
-+	}
- 
--	err = si514_calc_muldiv(&settings, rate);
--	if (err)
--		return err;
-+	err = si514_calc_muldiv(&settings, req->rate);
-+	if (err) {
-+		req->rate = err;
- 
--	return si514_calc_rate(&settings);
 +		return 0;
 +	}
-+
-+	req->rate = si514_calc_rate(&settings);
+ 
+ 	f = synth->data->freq_vco;
+ 	do_div(f, SI5341_SYNTH_N_MIN);
+-	if (rate > f)
+-		return f;
++	if (req->rate > f) {
++		req->rate = f;
+ 
+-	return rate;
++		return 0;
++	}
 +
 +	return 0;
  }
  
- /*
-@@ -289,7 +297,7 @@ static const struct clk_ops si514_clk_ops = {
- 	.unprepare = si514_unprepare,
- 	.is_prepared = si514_is_prepared,
- 	.recalc_rate = si514_recalc_rate,
--	.round_rate = si514_round_rate,
-+	.determine_rate = si514_determine_rate,
- 	.set_rate = si514_set_rate,
+ static int si5341_synth_program(struct clk_si5341_synth *synth,
+@@ -741,7 +747,7 @@ static const struct clk_ops si5341_synth_clk_ops = {
+ 	.prepare = si5341_synth_clk_prepare,
+ 	.unprepare = si5341_synth_clk_unprepare,
+ 	.recalc_rate = si5341_synth_clk_recalc_rate,
+-	.round_rate = si5341_synth_clk_round_rate,
++	.determine_rate = si5341_synth_clk_determine_rate,
+ 	.set_rate = si5341_synth_clk_set_rate,
  };
  
 
