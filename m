@@ -1,65 +1,66 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9B52E03F3;
-	Mon, 11 Aug 2025 15:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4F1238C16;
+	Mon, 11 Aug 2025 16:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927969; cv=none; b=Mx6oTX4c/Y8aKC4U6Yl8BYHqXuEEZ1hhiBZ+2hTB1hWQ36t8oHaL1wSftgwXKRcEoMGGBSIitocX/nzyLNZJik4u6Y0XWYW3bTIoj8gGD/u8x6zNqQde+uvsyiJn1HSJqSahKNivVUSmgV3MFRVex1Y6Lokz9G5XlR4Oj13E4DM=
+	t=1754928056; cv=none; b=Jb8hnWdjwTOGtHX9YQAU9RDzgZpCbgGlK5t4Z2heUU8iEOKbgQFdqJiWp1bVWyYLgbSn8AXCXOn13l4r3og/jLK4IG2BuzRO3F4KudqTO3x8S2CVXJNKURoyZNxv9N2peSTTArl/2qURKKyFW+EwIKpsgEnVgzQdHqmc+lsWrX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927969; c=relaxed/simple;
-	bh=1ZjtfZm6gzHoBq7YwuEyZk4iDxQ70a64CmZy/OoszSI=;
+	s=arc-20240116; t=1754928056; c=relaxed/simple;
+	bh=c4dnBdft5abWpi6v7xsGcdHktYX5OXpwZTFm+IlP2U8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iz82LT9lQRJ1/KmPtuxlCF3WbmYpUoWPNL9Mq9hbhSg1lHqqho4sF8KZYuY6uf13OoNxvRC7SF+q/taNFyHF/ebLEGiNUFHelb/omv0gRoW84vgTeHop9EAX+rZ4C07haY7iRrCTtB6iFQSOCHNHCMI9OCB1CQPudh0TKIaZeNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DA8Pu47T; arc=none smtp.client-ip=209.85.208.41
+	 Content-Type:MIME-Version; b=gPICEyF6aAesto2kmgHctqcRl7mntZ1NiJiNsh2SMBgUViUWczRnpN4JthEXmEWrLVfaZzX9QNeVnUfjUoYM8OOCpvNxrFHv+T8f2LSLYSsU0iM6DbJbVqyflFWpTAYYvmzvw4SPUGjkgfc/ebk/lUq7JoazIRI3kMLbVete648=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKKKt/+/; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DA8Pu47T"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6180ce2197cso4039815a12.2;
-        Mon, 11 Aug 2025 08:59:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKKKt/+/"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-af910372ab3so940249066b.1;
+        Mon, 11 Aug 2025 09:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754927966; x=1755532766; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754928051; x=1755532851; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=TvyCEuzC+XGQIfI6+Ojs1caIw/9527DVynHbE5eSZOc=;
-        b=DA8Pu47TZp1mfxf5xiR57HrU9NJ2l6ZvTZRhJYCtYltZGEOTP38U9wrW0OlgUs+Rpq
-         kk5Ww925qfMl0GIO3U9hJ21DIYLRjVBGh4CqPqkMF2Nzw6MHAKrH2JLuVUzfrnhDvQEx
-         xNIIaIdvdw/zvYyTdsOjZ87QSB65n4D5DT6ICBOvX4upccNOqS/VJTu0t2/CkPnmZykE
-         k29pmtYql/ksQgwobaVgHxkGOVZHPhuruEDDhpY+7gmz51ymp8MiOgwGruIRkgzAYb5I
-         zTHgwM+xBJfmDyaUKTe0izXOzorRt2ms+/pvFi3cjQI0WYm1kgxR5itstZhDblgDLbYW
-         9RTg==
+        bh=cmIrlL5AjQp5OrtEkcw9eDi4LGiI7a6CtQnHd0I7Fpk=;
+        b=TKKKt/+/lPvxvJoH6AhdboX7XWHzzv8s4r7qdWbt1nqUAOuzYb4qppIC7kqhZeYAsj
+         8vUijOcscMmYDLK+u0zozoVcEVF9U3pdY7Wmehj8w3LurhPAB9iCB4hZ80K/1SeJRnzK
+         VlwLKC9zGPb9FocwS79tv52JIpwhDEJvo/u7DmIb5obpeDgzKHiKR4BH+D0xRq0ctqWW
+         0a7hmvs5v7rqj5lOVhoFPdCIUDaFBLjTvOtAksHv8buk4JKI/TogFCpfhv0lw150gzJi
+         1jj3bLYYYVqvw/wwg7uATKTCTvRUlPRoQ/tONCdId4oNRU+fM/Mob+plqpDOBCDdv4kP
+         z7Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754927966; x=1755532766;
+        d=1e100.net; s=20230601; t=1754928051; x=1755532851;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TvyCEuzC+XGQIfI6+Ojs1caIw/9527DVynHbE5eSZOc=;
-        b=LOVb32/dt3un5L3JwHHpUz4ZoDC4djA268hr1m95CwWUKVsFN2myiDwTuxjAbRcgnL
-         i5I95Q3fLUWTAlEa3hGHLhTD3tLeYSHuvtM113isO9h45RewrHYfFbZ1hQ7izjuapxF8
-         7AcGtSF0cU5y1SKPUnyQSieNiechGcecvPF6Dg9YCNv7G5YJEK6mf5Vy68rs5auYTNDl
-         BqDTa0BVSa83nfq4lPpH5Xs79yZhBD3BHQwnZoGBe4FI49JFumbIBvCtsWqZ7F+Oev38
-         LzRaCpx+E+GNfYOL8FRbjen7yXAVfpk3byQpWlDHSRv2L4BJeKcOd68S3r63ZmdNYKFy
-         5O6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTy+4m7IrLAWTE2NC5ZKVPtQByKA112hDceNvHiyiYbhf9+WuQIE6prERfZ0Y+Rx/YH4iMuDGcQidk+oAjBg==@vger.kernel.org, AJvYcCVB2ooAu4fjJ6Qh9QbBsHODyAgqrhZbhK5gdYf8BE0OLYFNF20MONNSOIlNmW68NSTIw7RTeLNsiqf2iA==@vger.kernel.org, AJvYcCVnVCuHzitoTjvzukscdfaGZB4ynOcY1qj1jJcnBVMsgKPgjpUAGxmNlVn9efSO1kimZzc/DpfO6Q==@vger.kernel.org, AJvYcCX+Ll157MnEOaNbDOD+jJlXDPqqUiMc3YhuPg51z2/pVDsaf37hi8fNMztYXD/R3WoPH0LTlgx2SxN6koT388gJ7es=@vger.kernel.org, AJvYcCXAKkxSvbfKxHFmwQV1XQJa/4mPAVEzp++2mEp1LruN26JQVm29FWxNYfyGbbyJ0XswfsXKoqpvoxuKUnkMrZjc0x4=@vger.kernel.org, AJvYcCXR/FfROnsmfyuDxH/apNX+dIoSFaGWGg3UpSRplHRGBxng3PhnlJ3hoVUpE4UZsCjjauke3nLrSzHg0n7g@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqS0rtMI4vd7u8hCQ5HCPhYttICG15x2PU9PmUYcg8fjFdGhhC
-	PeEIT4mh2iV9AX9R04j55Vm/AWLX8Io7TbaK8OP8gIDXcCLa0HCWHk2h
-X-Gm-Gg: ASbGncuwSQs9s2HSycWFgp3fepRPluHnf8a7i6f/Fc/J/t1QUgprCZpsrJez+xIPylf
-	GFKvC9TTdXaY4Tqq6vly2l6wCUxidFHD7BsKSds/CJlNByxQY57hnRVmY/LnCKqj8WQ+Y0dIhR8
-	zcFt5bHe3vGy1H48DWjmFmrJ80RcQHWqySkQXLvdxEK+otH9qZvu5QI6OETgla7UiPrCXQyjEix
-	Kud19dXP9mKRH0j9YsFG73T6ZnkXqbgdMF51mtLUFcc2ClpDXx+56iJsbI7fP1Cp4NkhL2txZqo
-	sPi59K0Kn9w96rqpW4COorKuyiTt3dp57QhxozeWecVurHjpyiNIcQRQtRhsxLu7BdX6FRYfwwW
-	lh9Jb8Ab8lvZ1BkinJq/TyEJWFXtCsoUtOhtht18=
-X-Google-Smtp-Source: AGHT+IHR6aQlSF/8bXSoH4TD6ap2xoMQpmbGXXfb1yr3omEUKfVx4ptOTSMnNibgVm0ppSBcD6Zkmg==
-X-Received: by 2002:a05:6402:42c5:b0:618:4044:67a7 with SMTP id 4fb4d7f45d1cf-61840446cc7mr1952899a12.5.1754927966277;
-        Mon, 11 Aug 2025 08:59:26 -0700 (PDT)
+        bh=cmIrlL5AjQp5OrtEkcw9eDi4LGiI7a6CtQnHd0I7Fpk=;
+        b=dWs7zZH0tMJw7mVVB9286GHWLMLZdQcU329/aqa41wBajdPzsrVc3Aedp4i5oqOlra
+         f7NT9CztPnckESis/lYg5V6dzSnGqZ3nO4w8PdasTVlkLmI8o2a4b0kry9EUyPyT/0Ri
+         SLMv+M5mCEgwWDWtJyq82PIkXV/2iy2omGfqqTYnUoZN10bY8TB1nF3NTGZD/xcRii0m
+         09ivyv5Nu5zOQMzrL9XL5XM10PDRWmUjk1jR6T53OQlOLLoFrhoJSuilC44XPbH/QxyV
+         bg0F9oZACUIm/3pkUP66NuAdNqMzuH0fZKEZlBdZoU1/2RDjW62LY17gGC7soSfsfTYO
+         tJ+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUmDmZr1gRK/vZaUWNhtSZsVgfwO7g0TGvC5qXbZdQXAHE49d27ejMltUVDWhgkQPDK3pWO0ORL95r7ylJ7oMOV0Q=@vger.kernel.org, AJvYcCVOlHZ0+qEq2gE4NYc/VeSKDantkRBgiBBR1ycchED8srMd5MIPQyxIXdkHdqjHaB5KlUL6bSO9bw==@vger.kernel.org, AJvYcCVpTxjhag8ixMJq1NamIfIaU8QJEl1jj+TpO+pvHeCIvT8GNs7lqeW9VVjGRi7W2tLdGpHsZobruTWejEKNURgZ9Rg=@vger.kernel.org, AJvYcCW//lh0tgFO8v28t7QmWJ3a74jGrVwJh5NJtW4OHlQFAs/8YpSYt3AmG3CtaLAGmiAOwOVhb+8zJCfJHox35g==@vger.kernel.org, AJvYcCWJ9rN97iPk+/RzvjkstyYYYQlLnxeej3drfduXlMi3zQyiD2pQ0vYF7xWWlHl3YyenCqM4/VnZoNuxjp4X@vger.kernel.org, AJvYcCXOuix/LFS0fI5hNaikkBLdjTE4u70U/SDTP8jdo3Nwf82mKE/qDgz6P4oMKNv++z4bOIuQ6QoeUpEyDw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4H51npszQRqjHklz7Y6mLI28GmRJxFALmprjVvgEp8isbCR2V
+	eNgixD95XzhA3rXGEQ9rt1MLeZlbBcoOfWYOtna0mTN2qID1sKy/+5pq
+X-Gm-Gg: ASbGncvbGswzTdXEpTwmO7trVfyIhTlJkzrCvlqO2WrF9HwdIJG59I8gUiPNO65AUGC
+	e/e90IlZ62y8y8go0Qkr/ttNQ0y7mz8GMpD/JuepleRjigzlDV+Ktzb9N19aSw3o5/gmjew7QxR
+	R1+6ejKYMdPh4Je81E4VjdbP+mtjQ21ssYb0CsnG7EJ7MXg4Rs66QwfoPoxZ2nGxM8bzxvuNgAt
+	ERuvo/oPHY3Nhk21o+nGUjxXErPkdArZtwfYAKTtRw4b/5YxhgnKyTA9sOzMFYtPNXTTqIOC/BO
+	KXRtpTu0uNKFenbc2IlXMxgPeLuyJY8X9/gOVuQHjc68pwxmdNd9zvVIg0u0bY5GN0pSAjR4Fof
+	8ePzYYgv3U3iYhexwyfM1yCGFE3zQdH/FA2Kax2EF2iOmGa2ICQ==
+X-Google-Smtp-Source: AGHT+IGh6yl4CupkZ+bbkqrg8mnCZBWOoNaEnJApexkC1cSCi5mW8bJYL756B85cuxjEowuHPJgNRQ==
+X-Received: by 2002:a17:907:9486:b0:af2:31a9:c981 with SMTP id a640c23a62f3a-afa1d7233bdmr11410366b.23.1754928050948;
+        Mon, 11 Aug 2025 09:00:50 -0700 (PDT)
 Received: from giga-mm.home ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618200a0159sm2966360a12.6.2025.08.11.08.59.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a07643asm2049410666b.15.2025.08.11.09.00.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 08:59:25 -0700 (PDT)
-Message-ID: <522ae36bf788df6d957bfee671857d6b2e1e8863.camel@gmail.com>
-Subject: Re: [PATCH 001/114] clk: at91: peripheral: fix return value
+        Mon, 11 Aug 2025 09:00:50 -0700 (PDT)
+Message-ID: <c7f1fb05a6b7703ab18770bb5b58af0c58154f1f.camel@gmail.com>
+Subject: Re: [PATCH 002/114] clk: at91: peripheral: convert from
+ round_rate() to determine_rate()
 From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>, Stephen
  Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Cristian
@@ -113,11 +114,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Date: Mon, 11 Aug 2025 17:59:22 +0200
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-1-b3bf97b038dc@redhat.com>
+Date: Mon, 11 Aug 2025 18:00:47 +0200
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-2-b3bf97b038dc@redhat.com>
 References: 
 	<20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-	 <20250811-clk-for-stephen-round-rate-v1-1-b3bf97b038dc@redhat.com>
+	 <20250811-clk-for-stephen-round-rate-v1-2-b3bf97b038dc@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.1 
@@ -131,42 +132,123 @@ MIME-Version: 1.0
 On Mon, 2025-08-11 at 11:17 -0400, Brian Masney via B4 Relay wrote:
 > From: Brian Masney <bmasney@redhat.com>
 >=20
-> determine_rate() is expected to return an error code, or 0 on success.
-> clk_sam9x5_peripheral_determine_rate() has a branch that returns the
-> parent rate on a certain case. This is the behavior of round_rate(),
-> so let's go ahead and fix this by setting req->rate.
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
 >=20
-> Fixes: b4c115c76184f ("clk: at91: clk-peripheral: add support for changea=
-ble parent rate")
+> This driver already has a clk_sam9x5_peripheral_determine_rate()
+> implementation, however it can change the parent rate. The existing
+> round rate does not have this functionality. I could add a check
+> for CLK_SET_RATE_PARENT, and combine the two functions, however there
+> are some other minor differences in the two implementations. I don't
+> have access to this particular hardware. I believe that they could
+> be combined, however it would need to be tested on real hardware.
+> So, let's play it safe and convert the existing round rate
+> implementation to ensure that the driver keeps the same functionality
+> as before.
+>=20
 > Signed-off-by: Brian Masney <bmasney@redhat.com>
 
 Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
 > ---
-> =C2=A0drivers/clk/at91/clk-peripheral.c | 7 +++++--
-> =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
+> =C2=A0drivers/clk/at91/clk-peripheral.c | 41 +++++++++++++++++++++++-----=
+-----------
+> =C2=A01 file changed, 24 insertions(+), 17 deletions(-)
 >=20
 > diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-per=
 ipheral.c
-> index c173a44c800aa8cc6970c266995f4a60b0a38554..629f050a855aaebfd1a03ff87=
-c2b016cd2284a5a 100644
+> index 629f050a855aaebfd1a03ff87c2b016cd2284a5a..e700f40fd87f9327365f25036=
+6f7f7bde01f5987 100644
 > --- a/drivers/clk/at91/clk-peripheral.c
 > +++ b/drivers/clk/at91/clk-peripheral.c
-> @@ -279,8 +279,11 @@ static int clk_sam9x5_peripheral_determine_rate(stru=
-ct clk_hw *hw,
-> =C2=A0	long best_diff =3D LONG_MIN;
-> =C2=A0	u32 shift;
+> @@ -335,50 +335,57 @@ static int clk_sam9x5_peripheral_determine_rate(str=
+uct clk_hw *hw,
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> -static long clk_sam9x5_peripheral_round_rate(struct clk_hw *hw,
+> -					=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long rate,
+> -					=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *parent_rate)
+> +static int clk_sam9x5_peripheral_no_parent_determine_rate(struct clk_hw =
+*hw,
+> +							=C2=A0 struct clk_rate_request *req)
+> =C2=A0{
+> =C2=A0	int shift =3D 0;
+> =C2=A0	unsigned long best_rate;
+> =C2=A0	unsigned long best_diff;
+> -	unsigned long cur_rate =3D *parent_rate;
+> +	unsigned long cur_rate =3D req->best_parent_rate;
+> =C2=A0	unsigned long cur_diff;
+> =C2=A0	struct clk_sam9x5_peripheral *periph =3D to_clk_sam9x5_peripheral(=
+hw);
 > =C2=A0
 > -	if (periph->id < PERIPHERAL_ID_MIN || !periph->range.max)
-> -		return parent_rate;
+> -		return *parent_rate;
 > +	if (periph->id < PERIPHERAL_ID_MIN || !periph->range.max) {
-> +		req->rate =3D parent_rate;
+> +		req->rate =3D req->best_parent_rate;
 > +
 > +		return 0;
 > +	}
 > =C2=A0
-> =C2=A0	/* Fist step: check the available dividers. */
-> =C2=A0	for (shift =3D 0; shift <=3D PERIPHERAL_MAX_SHIFT; shift++) {
+> =C2=A0	if (periph->range.max) {
+> =C2=A0		for (; shift <=3D PERIPHERAL_MAX_SHIFT; shift++) {
+> -			cur_rate =3D *parent_rate >> shift;
+> +			cur_rate =3D req->best_parent_rate >> shift;
+> =C2=A0			if (cur_rate <=3D periph->range.max)
+> =C2=A0				break;
+> =C2=A0		}
+> =C2=A0	}
+> =C2=A0
+> -	if (rate >=3D cur_rate)
+> -		return cur_rate;
+> +	if (req->rate >=3D cur_rate) {
+> +		req->rate =3D cur_rate;
+> +
+> +		return 0;
+> +	}
+> =C2=A0
+> -	best_diff =3D cur_rate - rate;
+> +	best_diff =3D cur_rate - req->rate;
+> =C2=A0	best_rate =3D cur_rate;
+> =C2=A0	for (; shift <=3D PERIPHERAL_MAX_SHIFT; shift++) {
+> -		cur_rate =3D *parent_rate >> shift;
+> -		if (cur_rate < rate)
+> -			cur_diff =3D rate - cur_rate;
+> +		cur_rate =3D req->best_parent_rate >> shift;
+> +		if (cur_rate < req->rate)
+> +			cur_diff =3D req->rate - cur_rate;
+> =C2=A0		else
+> -			cur_diff =3D cur_rate - rate;
+> +			cur_diff =3D cur_rate - req->rate;
+> =C2=A0
+> =C2=A0		if (cur_diff < best_diff) {
+> =C2=A0			best_diff =3D cur_diff;
+> =C2=A0			best_rate =3D cur_rate;
+> =C2=A0		}
+> =C2=A0
+> -		if (!best_diff || cur_rate < rate)
+> +		if (!best_diff || cur_rate < req->rate)
+> =C2=A0			break;
+> =C2=A0	}
+> =C2=A0
+> -	return best_rate;
+> +	req->rate =3D best_rate;
+> +
+> +	return 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int clk_sam9x5_peripheral_set_rate(struct clk_hw *hw,
+> @@ -430,7 +437,7 @@ static const struct clk_ops sam9x5_peripheral_ops =3D=
+ {
+> =C2=A0	.disable =3D clk_sam9x5_peripheral_disable,
+> =C2=A0	.is_enabled =3D clk_sam9x5_peripheral_is_enabled,
+> =C2=A0	.recalc_rate =3D clk_sam9x5_peripheral_recalc_rate,
+> -	.round_rate =3D clk_sam9x5_peripheral_round_rate,
+> +	.determine_rate =3D clk_sam9x5_peripheral_no_parent_determine_rate,
+> =C2=A0	.set_rate =3D clk_sam9x5_peripheral_set_rate,
+> =C2=A0	.save_context =3D clk_sam9x5_peripheral_save_context,
+> =C2=A0	.restore_context =3D clk_sam9x5_peripheral_restore_context,
 
 --=20
 Alexander Sverdlin.
