@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5FC2E9ECC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411752E9ED0;
 	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925512; cv=none; b=aQth0TVDBSed3vT3oA16U6g01spRHmER5CskgRckwMVc2wKHpvz5/Z0EEyomZgQBR1yZTjS0IPCRFTwE+pR1q5/mfZGb/X3Iht4EkJlfZbkPpsnsK3IJi47uKvXsQxOkfyLrDjhc/rBPgsqYRkMrALTbx2Gxba6Scy1iBl8Z3/s=
+	t=1754925512; cv=none; b=mSywMLI0wOnUx3icKe25IZxfFJijSyoqa45m/m68Tc1FbAOyyc/R1zl4B/umXu4KTnjaZ0fFCT5LfFPyggxFKKENnZyX7Z+aBQWHHP7YuAou0H3qCan7ePtoenuA7Bi4XzWCz0gi6mxaTJnyN2QZiZywhJfi06/5c+WyCE1zwMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754925512; c=relaxed/simple;
-	bh=vYA80ZelHu2ZuRxqrvuEPthKFA7gwtWe5SoG73umt/A=;
+	bh=vpirylzetY0eXNQN6lA8k19KtFjJNLXJjVryJzeBPow=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZU19jitIQwLJJ7zGCOHyHGAn+DV0ZVE9rsGNo2eaHODqKzx1TpLIvVbIO8SbkBOeo6/Vp5vUj/BxrTskk3xY5eggpg6XOE/pVXWTd5+tsb5ZVUdm5AL18wS3ft9TCWYFrkZSdKYvLi3jVh5qDtGOUaKUYg3t58LSI2muzcwZo1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgIUQqf+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=RtIe9BR5zDw9hu7+ZqUgW5LvKOFCK+r8QLhk+GsrggN1fm86McnndL75TV7Tj2RluGfjGQkaRX6gb8Bob7nhk/azrEPbcPCqN4LRPJEur0bsXXHdc/vNKfwmuSvocBI+WU3cUiCY5crvxFcHonuIb1HuRwg7c0/SgVTWWFndTvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEvWttrz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgIUQqf+"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C4F22C4FDFA;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEvWttrz"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 07A5DC2BCFF;
 	Mon, 11 Aug 2025 15:18:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754925510;
-	bh=vYA80ZelHu2ZuRxqrvuEPthKFA7gwtWe5SoG73umt/A=;
+	bh=vpirylzetY0eXNQN6lA8k19KtFjJNLXJjVryJzeBPow=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VgIUQqf+Qd7taIQZQMW26jfUke6DJqv4FIHCOhEifXcAltqki2SHIaoMq2rwL2bC6
-	 q06tiudYjR3WLdLAcgcByhPQ9/Q/NG46wMvR7f2c2H5DcomcAkqH19nyfgCqHMxB/v
-	 PWARrw7MPw5xTEhSQwMc6Vgm3Se8m4tmyaZLkHhHHJjf/KEKEqbWp5rwTVVao9gXpB
-	 qR5H/w4aL3FIAv3O1xe6EBwnVn6L4kPXGfQIhdOqeAaHmpVVvdjfyRVzFb6PgPr83K
-	 akZ/WCSnmQzrX101fLZ6GAEDGoLTX3gOJOQUsX2ADnZqt91HU2HB2kSsrs9ENQA70G
-	 wcLiatpmpLTZg==
+	b=JEvWttrzAcF1T/Fu735V4wr+jhER1xHiSJuF3CPAbSVDDWxPJxMhrhmGNDR6zunYq
+	 gAzuwMQFZpwfbZ2mY7NtLH3itM+Io9qjDxYQvwvyU1rd/kqC1WAGgmAZBfvY7/GOhF
+	 PY0vLqow4VBuI2E8h4V/rW5+VGbx4j+MOJAQpEZhHDc31Dw9gpdJ5uY2d8GpKmCk/A
+	 y5QxBJPKiPs7ux+qafXDNBPK1WQvSFooUnzFRVgMj02uctIa9zFi34Nvh3/UV8EKXq
+	 NYuZVr69iateclyd2Y9l2sOIhRPTJNpLRnA356HGov1gnEpNGBkApx4kweConwYz3i
+	 WuzpbTPLz5goQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9B7CA0EC4;
-	Mon, 11 Aug 2025 15:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE684CA0ECD;
+	Mon, 11 Aug 2025 15:18:29 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:18:45 -0400
-Subject: [PATCH 053/114] clk: sprd: div: convert from round_rate() to
- determine_rate()
+Date: Mon, 11 Aug 2025 11:18:38 -0400
+Subject: [PATCH 046/114] clk: sifive: sifive-prci: convert from
+ round_rate() to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-53-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-46-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1521;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=3917;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=k3pms/XRU1mNa9tg+/+IC7mp+Tyl74X/Bc0zkHgzvtw=;
- b=drK9ZeTSL+Vu3bHNx/1pSM4otvnZZYtWL6bsGu4xhHMdQqdlnpChUHORtZCT/l06o2OkC7d0u
- OMP27NgZZU9AoN8xV+PrHOmeH5vox/A6KvfYR2l5Gc4hlWJ2WzxVxk3
+ bh=hC/ZgUTIYom+i1g3YO1lyOW6iNGVl9CAm5qy5dkubO4=;
+ b=z2VfzP5IclC6Zx5WAOeSvxHcXjD4O9gmA0kgupAYF9wzqgy1oa+JdN4ESoVCcchwH4iaYC0oG
+ 0CqL2NxLU7tCFZuqsttBkxwWhWS+NFWCTGJmsl/ynr4hC6Lqq/zTxXH
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -125,45 +125,87 @@ The round_rate() clk ops is deprecated, so migrate this driver from
 round_rate() to determine_rate() using the Coccinelle semantic patch
 on the cover letter of this series.
 
+Note that the changes to the three header files were done by hand.
+
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/sprd/div.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/clk/sifive/fu540-prci.h  |  2 +-
+ drivers/clk/sifive/fu740-prci.h  |  2 +-
+ drivers/clk/sifive/sifive-prci.c | 11 ++++++-----
+ drivers/clk/sifive/sifive-prci.h |  4 ++--
+ 4 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
-index 936782c241271832c0a1957c99cbecc287351d1b..013423881968002d29c4e9536e7cd7b944779196 100644
---- a/drivers/clk/sprd/div.c
-+++ b/drivers/clk/sprd/div.c
-@@ -9,13 +9,16 @@
+diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
+index e0173324f3c52adf128b65c02afcd94069af8ccb..d45193c210b4be658ee8c1fb81b3be612d19772f 100644
+--- a/drivers/clk/sifive/fu540-prci.h
++++ b/drivers/clk/sifive/fu540-prci.h
+@@ -49,7 +49,7 @@ static struct __prci_wrpll_data sifive_fu540_prci_gemgxlpll_data = {
  
- #include "div.h"
+ static const struct clk_ops sifive_fu540_prci_wrpll_clk_ops = {
+ 	.set_rate = sifive_prci_wrpll_set_rate,
+-	.round_rate = sifive_prci_wrpll_round_rate,
++	.determine_rate = sifive_prci_wrpll_determine_rate,
+ 	.recalc_rate = sifive_prci_wrpll_recalc_rate,
+ 	.enable = sifive_prci_clock_enable,
+ 	.disable = sifive_prci_clock_disable,
+diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
+index f31cd30fc3951e0c8a9f9c01c7abc7b7ad39c057..c605a899d97de76a03c58b7c1209292e7acebbb0 100644
+--- a/drivers/clk/sifive/fu740-prci.h
++++ b/drivers/clk/sifive/fu740-prci.h
+@@ -55,7 +55,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_cltxpll_data = {
  
--static long sprd_div_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *parent_rate)
-+static int sprd_div_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
+ static const struct clk_ops sifive_fu740_prci_wrpll_clk_ops = {
+ 	.set_rate = sifive_prci_wrpll_set_rate,
+-	.round_rate = sifive_prci_wrpll_round_rate,
++	.determine_rate = sifive_prci_wrpll_determine_rate,
+ 	.recalc_rate = sifive_prci_wrpll_recalc_rate,
+ 	.enable = sifive_prci_clock_enable,
+ 	.disable = sifive_prci_clock_disable,
+diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+index caba0400f8a2cf97446a7722c28f6b2eb627dcf5..4d1cc7adb2b32d99a2187ca80dbdef7f90124309 100644
+--- a/drivers/clk/sifive/sifive-prci.c
++++ b/drivers/clk/sifive/sifive-prci.c
+@@ -183,9 +183,8 @@ unsigned long sifive_prci_wrpll_recalc_rate(struct clk_hw *hw,
+ 	return wrpll_calc_output_rate(&pwd->c, parent_rate);
+ }
+ 
+-long sifive_prci_wrpll_round_rate(struct clk_hw *hw,
+-				  unsigned long rate,
+-				  unsigned long *parent_rate)
++int sifive_prci_wrpll_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
  {
- 	struct sprd_div *cd = hw_to_sprd_div(hw);
+ 	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
+ 	struct __prci_wrpll_data *pwd = pc->pwd;
+@@ -193,9 +192,11 @@ long sifive_prci_wrpll_round_rate(struct clk_hw *hw,
  
--	return divider_round_rate(&cd->common.hw, rate, parent_rate, NULL,
--				  cd->div.width, 0);
-+	req->rate = divider_round_rate(&cd->common.hw, req->rate,
-+				       &req->best_parent_rate,
-+				       NULL, cd->div.width, 0);
+ 	memcpy(&c, &pwd->c, sizeof(c));
+ 
+-	wrpll_configure_for_rate(&c, rate, *parent_rate);
++	wrpll_configure_for_rate(&c, req->rate, req->best_parent_rate);
+ 
+-	return wrpll_calc_output_rate(&c, *parent_rate);
++	req->rate = wrpll_calc_output_rate(&c, req->best_parent_rate);
 +
 +	return 0;
  }
  
- unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
-@@ -75,7 +78,7 @@ static int sprd_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ int sifive_prci_wrpll_set_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive-prci.h
+index 91658a88af4ef6157563846399e4857ba83c8645..d74b2bddd08a0753409e0040b493bba1497593eb 100644
+--- a/drivers/clk/sifive/sifive-prci.h
++++ b/drivers/clk/sifive/sifive-prci.h
+@@ -291,8 +291,8 @@ void sifive_prci_hfpclkpllsel_use_hfclk(struct __prci_data *pd);
+ void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd);
  
- const struct clk_ops sprd_div_ops = {
- 	.recalc_rate = sprd_div_recalc_rate,
--	.round_rate = sprd_div_round_rate,
-+	.determine_rate = sprd_div_determine_rate,
- 	.set_rate = sprd_div_set_rate,
- };
- EXPORT_SYMBOL_GPL(sprd_div_ops);
+ /* Linux clock framework integration */
+-long sifive_prci_wrpll_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *parent_rate);
++int sifive_prci_wrpll_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req);
+ int sifive_prci_wrpll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long parent_rate);
+ int sifive_clk_is_enabled(struct clk_hw *hw);
 
 -- 
 2.50.1
