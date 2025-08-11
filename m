@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A423D2EFD98;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71432EFDAC;
 	Mon, 11 Aug 2025 15:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925517; cv=none; b=eTWtE1VWpiohx1QHlNu3EbTpG8P+eccTIwJ4yuR8lmfM5eloyZtzwGqJ1L/xSoPp5Pg6L7Y7ehlUs+0Z8wELFaU1VXenixElz2bHkfaWvFdStom//gj1OAk/mgzcKiIXJCEAsGIkaNZ0gzTEM3pmYUhaUaSh5UZqIOlA1mAsA5I=
+	t=1754925517; cv=none; b=cujR3I/bjwOERqtcE9pkbYV1uCuE/3aWkw+QL3pYiO8lHb5b2trKB0cRP/Dm2UtHZG+bycH/Vg3M619F5b6XHTJHrQNt/uppgQNh4nfMLYt6BhDriYsLAPJOvJfeFaB2ThNfotXkKxrRsnpAByiWvc4FkpVxYcaBZIquWTmSZeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754925517; c=relaxed/simple;
-	bh=MrrMtNkSO9iG1WIbrcOSOjndK2PbBimlmPdKKlwYuOc=;
+	bh=0qRwAyI6BBJq6rdVO6xTsGUiWxnfqdNJv4I89uhp6PE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IpYMXUyot6qsv5u0r4+NvCyfeDN/9W9vWYHlz0Y1nleFCvVmHuzksGyHrwgDP+4mGUcQT5XZS5F409rCKk9iFmPHhOnh5ZaH/Mj69gl8vkkzQcTaiXNPInhnW08XfBwHgFDB+HREj/vRmOYNfx9dFs7kISRNpXhceiHAJBdkPM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyV4pa7s; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Yu15YkJSnqMnMw/HL002nHlcQtPixMWloFb1Ey2+fOevKWRrfgQQ8ktYtoUVSUDTfLAC+L+upuZ1YNavLiaK0sQ7fY2okYTBubIg3rCOoHGfGzlsDnwNo61w/xuCkTUsNpPQ/i1GV6CalI5Eph1plHYf+y4IgWvg8qYDk7F4llU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJNYcMcJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyV4pa7s"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F35EAC4FEA3;
-	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJNYcMcJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 17D7CC56874;
+	Mon, 11 Aug 2025 15:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925513;
-	bh=MrrMtNkSO9iG1WIbrcOSOjndK2PbBimlmPdKKlwYuOc=;
+	s=k20201202; t=1754925516;
+	bh=0qRwAyI6BBJq6rdVO6xTsGUiWxnfqdNJv4I89uhp6PE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TyV4pa7s7Ob9QAibNEzzgNTsPwZjEYuYNWSrWnJliPN+vAj62iaNcis7y8PhfLe9Q
-	 IIC4EtfvwvHJ+q2IijL5Ebv9KcjbgCeBm/HmPXuu3YH/WldaYJEro/oKToZ2STHR8+
-	 zjZb990MFFha9XPxvU2ECc3Bzg5As7gCwBrxqt1VxAPAAsghEOw6Np/6HV7e0FDgjV
-	 PQu46MU3h1K8rc8rLr7aFJzrd4evqZWqau2ViRxLPZJvXBjsTSfa85EwN8HZbRamLg
-	 obskFOesjDXBZ8Y1fwcwKyinbIeJljt2fPrVLLU8DEsrtaA96hnlM1AHcLRhBKTNRH
-	 ri9JeMaYdK5Ng==
+	b=EJNYcMcJgJfGLB8KQajBCkdDDpfXj6eEvnoAC3mmXdDy7uvjtQ0PpxeiRqPo76Mpz
+	 9hIUjdGEy7I5FBtvfbcTZ/eRB7dC2wRUUakyIjCo2SBivN43Xf8YreKlVQ6FCPcfdi
+	 BCTUAsi65yWu2Mj0sDHvkWIVkz8brD42mJX8cSvhaHKT4S9awrahjNrEOMQb4yFB96
+	 lY4SH+vy5FSBSpziPKm0MRedYqzlIfrOQkjDLbSyi9lxnzHdDrkjRW5qTrG6Xmo3Vr
+	 Jy9vgMAkB4HKTZsyag4ZpSdmkQX9gMZ1ZKsfuZj2u79ZqkzQ6EN32Qe7oZTmJoOsi9
+	 UgN+Tc14LdQQg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC39CCA0EC8;
-	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B5ACA0EDA;
+	Mon, 11 Aug 2025 15:18:35 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:19:08 -0400
-Subject: [PATCH 076/114] clk: axs10x: i2s_pll_clock: convert from
- round_rate() to determine_rate()
+Date: Mon, 11 Aug 2025 11:19:39 -0400
+Subject: [PATCH 107/114] clk: versaclock7: convert from round_rate() to
+ determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-76-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-107-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1817;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=3930;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=+FK9LgHGXyQGGBSuKsYmGY0ad82VKpfsWPKq5cr8Ky0=;
- b=4I4qzLfvBXGWv1gBj0awBFVRJ6GU0raJMhE98aQB0e3Ey7YZ36DyHuoPKBRcBWuNwCpLg+4P4
- p3bkeEj+q4zC8OBsQklbj+kv8XBYWUnjHqHyrxMcTUYzvp7FMuo3K7z
+ bh=pV0hzX5meej1V9jCXC+yNB+MJ8wG4M3giNUgVcvRU6k=;
+ b=Wdn2Qf11E4dJPJknD+q7/QSac+tyKquY4ucfn3WYnbfrHqheDIUvUlz/ppyf2ZscSer1ShS6t
+ 4+ibqLTJPFrBF9rvjpWKjY/ljTSBF/A9Puce8k+rLTXd4V9Vvqnqy0A
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,48 +127,93 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/axs10x/i2s_pll_clock.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/clk-versaclock7.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
-index 9667ce898428032f6db4070bd0e8ba92c074f277..6f3e1151b354e0a0d001b3241695f992df3b8711 100644
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -108,21 +108,21 @@ static unsigned long i2s_pll_recalc_rate(struct clk_hw *hw,
- 	return ((parent_rate / idiv) * fbdiv) / odiv;
+diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
+index 483285b30c13d90117850458998b8fd6136574b8..adcc603e32593121f7e760e62e77a06a976672e7 100644
+--- a/drivers/clk/clk-versaclock7.c
++++ b/drivers/clk/clk-versaclock7.c
+@@ -900,17 +900,18 @@ static unsigned long vc7_fod_recalc_rate(struct clk_hw *hw, unsigned long parent
+ 	return fod_rate;
  }
  
--static long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--			unsigned long *prate)
-+static int i2s_pll_determine_rate(struct clk_hw *hw,
+-static long vc7_fod_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *parent_rate)
++static int vc7_fod_determine_rate(struct clk_hw *hw,
 +				  struct clk_rate_request *req)
  {
- 	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
--	const struct i2s_pll_cfg *pll_cfg = i2s_pll_get_cfg(*prate);
-+	const struct i2s_pll_cfg *pll_cfg = i2s_pll_get_cfg(req->best_parent_rate);
- 	int i;
+ 	struct vc7_fod_data *fod = container_of(hw, struct vc7_fod_data, hw);
+ 	unsigned long fod_rate;
  
- 	if (!pll_cfg) {
--		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
-+		dev_err(clk->dev, "invalid parent rate=%ld\n", req->best_parent_rate);
- 		return -EINVAL;
- 	}
+ 	pr_debug("%s - %s: requested rate: %lu, parent_rate: %lu\n",
+-		 __func__, clk_hw_get_name(hw), rate, *parent_rate);
++		 __func__, clk_hw_get_name(hw), req->rate, req->best_parent_rate);
  
- 	for (i = 0; pll_cfg[i].rate != 0; i++)
--		if (pll_cfg[i].rate == rate)
--			return rate;
-+		if (pll_cfg[i].rate == req->rate)
-+			return 0;
+-	vc7_calc_fod_divider(rate, *parent_rate,
++	vc7_calc_fod_divider(req->rate, req->best_parent_rate,
+ 			     &fod->fod_1st_int, &fod->fod_2nd_int, &fod->fod_frac);
+-	fod_rate = vc7_calc_fod_2nd_stage_rate(*parent_rate, fod->fod_1st_int,
++	fod_rate = vc7_calc_fod_2nd_stage_rate(req->best_parent_rate, fod->fod_1st_int,
+ 					       fod->fod_2nd_int, fod->fod_frac);
  
- 	return -EINVAL;
+ 	pr_debug("%s - %s: fod_1st_int: %u, fod_2nd_int: %u, fod_frac: %llu\n",
+@@ -918,7 +919,9 @@ static long vc7_fod_round_rate(struct clk_hw *hw, unsigned long rate, unsigned l
+ 		 fod->fod_1st_int, fod->fod_2nd_int, fod->fod_frac);
+ 	pr_debug("%s - %s rate: %lu\n", __func__, clk_hw_get_name(hw), fod_rate);
+ 
+-	return fod_rate;
++	req->rate = fod_rate;
++
++	return 0;
  }
-@@ -156,7 +156,7 @@ static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
  
- static const struct clk_ops i2s_pll_ops = {
- 	.recalc_rate = i2s_pll_recalc_rate,
--	.round_rate = i2s_pll_round_rate,
-+	.determine_rate = i2s_pll_determine_rate,
- 	.set_rate = i2s_pll_set_rate,
+ static int vc7_fod_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
+@@ -952,7 +955,7 @@ static int vc7_fod_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long
+ 
+ static const struct clk_ops vc7_fod_ops = {
+ 	.recalc_rate = vc7_fod_recalc_rate,
+-	.round_rate = vc7_fod_round_rate,
++	.determine_rate = vc7_fod_determine_rate,
+ 	.set_rate = vc7_fod_set_rate,
+ };
+ 
+@@ -978,21 +981,24 @@ static unsigned long vc7_iod_recalc_rate(struct clk_hw *hw, unsigned long parent
+ 	return iod_rate;
+ }
+ 
+-static long vc7_iod_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *parent_rate)
++static int vc7_iod_determine_rate(struct clk_hw *hw,
++				  struct clk_rate_request *req)
+ {
+ 	struct vc7_iod_data *iod = container_of(hw, struct vc7_iod_data, hw);
+ 	unsigned long iod_rate;
+ 
+ 	pr_debug("%s - %s: requested rate: %lu, parent_rate: %lu\n",
+-		 __func__, clk_hw_get_name(hw), rate, *parent_rate);
++		 __func__, clk_hw_get_name(hw), req->rate, req->best_parent_rate);
+ 
+-	vc7_calc_iod_divider(rate, *parent_rate, &iod->iod_int);
+-	iod_rate = div64_u64(*parent_rate, iod->iod_int);
++	vc7_calc_iod_divider(req->rate, req->best_parent_rate, &iod->iod_int);
++	iod_rate = div64_u64(req->best_parent_rate, iod->iod_int);
+ 
+ 	pr_debug("%s - %s: iod_int: %u\n", __func__, clk_hw_get_name(hw), iod->iod_int);
+ 	pr_debug("%s - %s rate: %ld\n", __func__, clk_hw_get_name(hw), iod_rate);
+ 
+-	return iod_rate;
++	req->rate = iod_rate;
++
++	return 0;
+ }
+ 
+ static int vc7_iod_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
+@@ -1023,7 +1029,7 @@ static int vc7_iod_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long
+ 
+ static const struct clk_ops vc7_iod_ops = {
+ 	.recalc_rate = vc7_iod_recalc_rate,
+-	.round_rate = vc7_iod_round_rate,
++	.determine_rate = vc7_iod_determine_rate,
+ 	.set_rate = vc7_iod_set_rate,
  };
  
 
