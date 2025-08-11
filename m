@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7910A2E11AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D0E2E11C6;
 	Mon, 11 Aug 2025 15:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925505; cv=none; b=qyHObeM57irmwzXb5J4Au7HZs5seTn5MW1bOL8CBEBScCDBhJQjYJBc/rqbEqfBLai8lEiFZsBu3WmJG4Orv0EJ0aR/lqwh21y7b7d03PzZPl1ppd8tHordEjMPFFnOW4SMgGg6rHoCEB+g7jKAUIs4rJuHgpR1+cp1m7Qxj6fo=
+	t=1754925505; cv=none; b=t2toX4pJ1SkMQb/klBwreIOmdUu3Gykjf4rirgBWa74+1ETCStOd95Lb2G7VGIp4pb6WhPkVepCrAvho7TVxr6SJzTsrY1Hj1j9rzeqbOgmpSieDFT9VodRnRZkQUgC9wBR7sT/q+qKt7hCkvSJpitnNZWPJwXDX3Md2UderjXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754925505; c=relaxed/simple;
-	bh=XdEl7ffUuP28xNeOs2gpjytOGbx2uwlFS3OuWln0FMs=;
+	bh=QwCvYSi7oYXstdT2DyXr0f3ZFKbxUGLkDDPHK/1uHFk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JG36324cCu2Fs3+Yd+kbi7DH/mut7Kc6BP3pOJHfW/8mqtwnnavVmb4aWMR1wzNjvKl8IeMaXkmigXdqHsXU/Jyu6g8/ZXYhLroeKRO7S/dUL/mGsFKWwphjBp3U+C1ZnH7WPWnAt072jMqMqOCOkvk76NEXx7I7ciuIHsSQeco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnZWxC2u; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Bt9QnXHBxbzqH+Syqs85/3SynyALG8JYDZHAxBsVzLQoJnl336ANLKck6Q0b6GOYO+M4kmymUq9u1c7YbliFjLVRddFs1AUfQrJ62s33RvWzGncYnm7KCSbXacTEADEWc+iVf5aWrSD96DcIU1bFxp17KajaWyVZ6WcCMZtIytQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uO0itys8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnZWxC2u"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 15D2CC4CEF7;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uO0itys8"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 55512C116C6;
 	Mon, 11 Aug 2025 15:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754925505;
-	bh=XdEl7ffUuP28xNeOs2gpjytOGbx2uwlFS3OuWln0FMs=;
+	bh=QwCvYSi7oYXstdT2DyXr0f3ZFKbxUGLkDDPHK/1uHFk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=rnZWxC2uSzx9Iag5KESIntjEE520EHDY/0vw9jIhU4XdKtRwJ6WRLkH7yg+G7bWQp
-	 ML0lOLpsjsbfbjqTaylrlPPQCB64/EzsiezzTZ6RLoLgflKyLmkoY7TWQKgw0Ocxpc
-	 lsvgl6Kzq+QN79W4yf4kmJuqD6WwauwbJLSACuaN6WaXlRASSALFgT7dDwgcCtaSOV
-	 jQFggVdOP+fqeYomXarPOJzz2yorzTHPpjwYHYEkgn/MarE63+e0/Tucp1WXs32Qyi
-	 ac7ovgcBsdxu3Ivsfa3mr4Y1bP9rdZA/eSzad/F7OsC/fqrioDrCMFyRB0KTnbg5eX
-	 /X5BQk8X5Wtbg==
+	b=uO0itys8wScIVlo6jOid3yFBpIRGmmHbZOAkYoI0GYQzeEkvQW/LuOD2xbhzb8pzh
+	 RBUzbWXLFsF52oIk+6w1S4oJK+0gqhr8K3yhsMIXHtxPB/88yPIlo9V3Wunjy+1jlP
+	 GkOocJk3Qf2B9895MHkUwYQx1gtXWQmVc+I7zoYTRAceQYnLmxHCaye40fxvacUuSE
+	 OEIMSTrDPACD0mGAwt4r2I60NRg6yjuHNJOlT6FclSrUY1OvZV0xQAFaLv9h3km7ZH
+	 LHl2vCcIuFjIPsb/h4w3m24P9ezbKeQWfqzzoF0ykKH+eN0rVq1TNAj7NIOKnbX5IJ
+	 otAyNWCv3ZSQQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A57C87FD2;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B6BC87FDA;
 	Mon, 11 Aug 2025 15:18:25 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:17:53 -0400
-Subject: [PATCH 001/114] clk: at91: peripheral: fix return value
+Date: Mon, 11 Aug 2025 11:17:56 -0400
+Subject: [PATCH 004/114] clk: at91: audio-pll: convert from round_rate() to
+ determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-1-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-4-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -106,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925497; l=1242;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925497; l=4707;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=YDaru8NKwF1RrGzFnGDGBIGGQ7vzTx7xnsU79XG8/hU=;
- b=o3nykMfjA0nvC2Pj+Fs9ck0fGBH2SVd4bUG7DnDIK3o4g/hxcVLbJNIpCuWx2Jl3F0gOdDjLJ
- 7YjKI7D7u91Bkah4yiNYKbc1GheZA8NXY93rcAhA3tHh92Yj+QVUE3n
+ bh=SGuw9JWwq1o444YOUxZkRtwxJ8APzz0URtEM9+13sSI=;
+ b=rQevtpMTTg6AuxnWclCBYR4DBW+XT5DBJ/qMYawxw+fPmJ+1r3Z0RGI7ddAzU4PeeYmsgdcf+
+ 7B/fVywiFKRCqXPAxx3m+mC5TIs6FBc7Dbf3TiCgQ5IL0FSxlxlfDeQ
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -120,35 +121,131 @@ Reply-To: bmasney@redhat.com
 
 From: Brian Masney <bmasney@redhat.com>
 
-determine_rate() is expected to return an error code, or 0 on success.
-clk_sam9x5_peripheral_determine_rate() has a branch that returns the
-parent rate on a certain case. This is the behavior of round_rate(),
-so let's go ahead and fix this by setting req->rate.
+The round_rate() clk ops is deprecated, so migrate this driver from
+round_rate() to determine_rate() using the Coccinelle semantic patch
+on the cover letter of this series.
 
-Fixes: b4c115c76184f ("clk: at91: clk-peripheral: add support for changeable parent rate")
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/at91/clk-peripheral.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/at91/clk-audio-pll.c | 42 ++++++++++++++++++++++------------------
+ 1 file changed, 23 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index c173a44c800aa8cc6970c266995f4a60b0a38554..629f050a855aaebfd1a03ff87c2b016cd2284a5a 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -279,8 +279,11 @@ static int clk_sam9x5_peripheral_determine_rate(struct clk_hw *hw,
- 	long best_diff = LONG_MIN;
- 	u32 shift;
+diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
+index a92da64c12e1cff5961d0b85bd630a25015206b1..bf9b635ac9d6e2fa3523376799315f04ea0ead2a 100644
+--- a/drivers/clk/at91/clk-audio-pll.c
++++ b/drivers/clk/at91/clk-audio-pll.c
+@@ -270,8 +270,8 @@ static int clk_audio_pll_frac_determine_rate(struct clk_hw *hw,
+ 	return 0;
+ }
  
--	if (periph->id < PERIPHERAL_ID_MIN || !periph->range.max)
--		return parent_rate;
-+	if (periph->id < PERIPHERAL_ID_MIN || !periph->range.max) {
-+		req->rate = parent_rate;
+-static long clk_audio_pll_pad_round_rate(struct clk_hw *hw, unsigned long rate,
+-					 unsigned long *parent_rate)
++static int clk_audio_pll_pad_determine_rate(struct clk_hw *hw,
++					    struct clk_rate_request *req)
+ {
+ 	struct clk_hw *pclk = clk_hw_get_parent(hw);
+ 	long best_rate = -EINVAL;
+@@ -283,7 +283,7 @@ static long clk_audio_pll_pad_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	int best_diff = -1;
+ 
+ 	pr_debug("A PLL/PAD: %s, rate = %lu (parent_rate = %lu)\n", __func__,
+-		 rate, *parent_rate);
++		 req->rate, req->best_parent_rate);
+ 
+ 	/*
+ 	 * Rate divisor is actually made of two different divisors, multiplied
+@@ -304,12 +304,12 @@ static long clk_audio_pll_pad_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				continue;
+ 
+ 			best_parent_rate = clk_hw_round_rate(pclk,
+-							rate * tmp_qd * div);
++							req->rate * tmp_qd * div);
+ 			tmp_rate = best_parent_rate / (div * tmp_qd);
+-			tmp_diff = abs(rate - tmp_rate);
++			tmp_diff = abs(req->rate - tmp_rate);
+ 
+ 			if (best_diff < 0 || best_diff > tmp_diff) {
+-				*parent_rate = best_parent_rate;
++				req->best_parent_rate = best_parent_rate;
+ 				best_rate = tmp_rate;
+ 				best_diff = tmp_diff;
+ 			}
+@@ -318,11 +318,13 @@ static long clk_audio_pll_pad_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	pr_debug("A PLL/PAD: %s, best_rate = %ld, best_parent_rate = %lu\n",
+ 		 __func__, best_rate, best_parent_rate);
+ 
+-	return best_rate;
++	req->rate = best_rate;
 +
-+		return 0;
-+	}
++	return 0;
+ }
  
- 	/* Fist step: check the available dividers. */
- 	for (shift = 0; shift <= PERIPHERAL_MAX_SHIFT; shift++) {
+-static long clk_audio_pll_pmc_round_rate(struct clk_hw *hw, unsigned long rate,
+-					 unsigned long *parent_rate)
++static int clk_audio_pll_pmc_determine_rate(struct clk_hw *hw,
++					    struct clk_rate_request *req)
+ {
+ 	struct clk_hw *pclk = clk_hw_get_parent(hw);
+ 	long best_rate = -EINVAL;
+@@ -333,20 +335,20 @@ static long clk_audio_pll_pmc_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	int best_diff = -1;
+ 
+ 	pr_debug("A PLL/PMC: %s, rate = %lu (parent_rate = %lu)\n", __func__,
+-		 rate, *parent_rate);
++		 req->rate, req->best_parent_rate);
+ 
+-	if (!rate)
++	if (!req->rate)
+ 		return 0;
+ 
+ 	best_parent_rate = clk_round_rate(pclk->clk, 1);
+-	div = max(best_parent_rate / rate, 1UL);
++	div = max(best_parent_rate / req->rate, 1UL);
+ 	for (; div <= AUDIO_PLL_QDPMC_MAX; div++) {
+-		best_parent_rate = clk_round_rate(pclk->clk, rate * div);
++		best_parent_rate = clk_round_rate(pclk->clk, req->rate * div);
+ 		tmp_rate = best_parent_rate / div;
+-		tmp_diff = abs(rate - tmp_rate);
++		tmp_diff = abs(req->rate - tmp_rate);
+ 
+ 		if (best_diff < 0 || best_diff > tmp_diff) {
+-			*parent_rate = best_parent_rate;
++			req->best_parent_rate = best_parent_rate;
+ 			best_rate = tmp_rate;
+ 			best_diff = tmp_diff;
+ 			tmp_qd = div;
+@@ -356,9 +358,11 @@ static long clk_audio_pll_pmc_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
+ 
+ 	pr_debug("A PLL/PMC: %s, best_rate = %ld, best_parent_rate = %lu (qd = %d)\n",
+-		 __func__, best_rate, *parent_rate, tmp_qd - 1);
++		 __func__, best_rate, req->best_parent_rate, tmp_qd - 1);
++
++	req->rate = best_rate;
+ 
+-	return best_rate;
++	return 0;
+ }
+ 
+ static int clk_audio_pll_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -436,7 +440,7 @@ static const struct clk_ops audio_pll_pad_ops = {
+ 	.enable = clk_audio_pll_pad_enable,
+ 	.disable = clk_audio_pll_pad_disable,
+ 	.recalc_rate = clk_audio_pll_pad_recalc_rate,
+-	.round_rate = clk_audio_pll_pad_round_rate,
++	.determine_rate = clk_audio_pll_pad_determine_rate,
+ 	.set_rate = clk_audio_pll_pad_set_rate,
+ };
+ 
+@@ -444,7 +448,7 @@ static const struct clk_ops audio_pll_pmc_ops = {
+ 	.enable = clk_audio_pll_pmc_enable,
+ 	.disable = clk_audio_pll_pmc_disable,
+ 	.recalc_rate = clk_audio_pll_pmc_recalc_rate,
+-	.round_rate = clk_audio_pll_pmc_round_rate,
++	.determine_rate = clk_audio_pll_pmc_determine_rate,
+ 	.set_rate = clk_audio_pll_pmc_set_rate,
+ };
+ 
 
 -- 
 2.50.1
