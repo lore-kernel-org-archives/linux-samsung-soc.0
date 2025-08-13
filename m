@@ -1,338 +1,150 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC7A2E718B;
-	Wed, 13 Aug 2025 13:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F632E8DEC
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2025 15:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090674; cv=none; b=aytgRsCMk5l0bx9ZGPojlIn+5NRoLjOLMKITchdVg2J2IWZvegj1rN3hRO+EgTd6QsMc1YFS72Vkffdg7mfGMyvxeBi2bvh0t0pS7oIzH4/s7knOmSXRZIj1AcOkrri4Tk199BHDyuOCwjptepCGgootYY8ytz0geKVjZBwdG9Y=
+	t=1755097307; cv=none; b=GFBVDTWwyd0jwLRi+8ZomxKZsQEIvmFPTHEeHzVGiUK92pyf1A+Ot42T+N0JaK9H83Ee+5bM66ilYLLrLA05GuN/R3tWKDaQYXoJLdhYcv8sHbhtoI4DbCO+Zp9wVx7edGJ/hd1X8fAtgFj46fAZ4nuVvltDkYe+BavPpOqambQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090674; c=relaxed/simple;
-	bh=0nWjFYh74w2mIcJjfCn/sF1211cVnM+5dP9HRvjwS7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WIUo5cz1TTjDCTCHH3IU3lk/KS0+BvDJSyop717BLrVqazS0FDJkZOToyQPUmo8lGdSHqqtXPD19JJHQub3lPn5ldAq7ouNncUBgsujttcNZo6AJhIQSckOHb0EZ+NEeDt9coX+05Dif4oD5/a17eCdvZr/k+r2h+ISuzgI4/Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1GK3eTe; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755097307; c=relaxed/simple;
+	bh=W5C4Jb/87TEkHjxZzTAhHGOUm7nNwtwZIRnVcZUesz4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JguXV700ta+8q8VmTAj+yvoP1W/FUAGN7RaATbqnPl8jPMc6v0utZ8QTLaJBcRKC9Y7ZGJQgxyZ2d4DakA6eJLQMq8BpeM60qHUWFhZWQPWSbWxV1xmXNf5GT7mTbjF9jxa/OKGsnahaMOwZEIIWrUoh3UPtU8Q6UJzLxj6ErBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o19woiQF; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1GK3eTe"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32128c5fc44so857267a91.1;
-        Wed, 13 Aug 2025 06:11:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o19woiQF"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b783ea502eso742459f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2025 08:01:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755090672; x=1755695472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PMqGPn5i1dBgX26P0LPYzxtUAGEpZYYhsp9BiJes8v0=;
-        b=U1GK3eTemfNES5g/OqLWMa14IfknnmtUKEtJg1P2MVImERq7ucX0+lHiP3WyLQE617
-         lXjLcgHyFb62d8GTyUhhNavFHRnKeWNQ1Va+ZN1flIDysQMD3Y9Jrs6vM4UEKFTprCRQ
-         VGuXObT9p3sX8Goels8jxHrhLY1zcsusJdqThoM4uWZHoy6bAtN0hPHEj4sNhSEhm4LW
-         qoWwr+u1OzsKrQmDBvuVPpfYlOezltNepvbGU0ApMc1QYPjPYHsxGjL4ANUz9N2T20Qw
-         vWN2uIJUzwohWY5Nwq5x6QE4WyUn64T66Ryi2DZZsAfohIBR8zR1xRcJp1JnNXoQIUAj
-         Z+QQ==
+        d=linaro.org; s=google; t=1755097303; x=1755702103; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ZjYg8bYZKeQRQQcTg3Cp0VfZeqh6q0mPFPEWR4Ir4Y=;
+        b=o19woiQFJH5/yTf8WTZL16j5a8s5PIZOy1EhRpFHlVcrU7XzeVCB+vejDU2fdG9B5o
+         Wce+ZRMwNoOmPcHZQo+G0/c4kbF5sWzLG06yk4lxET6FeuRY9Dxt+fqR2vWCTooCWfAF
+         7t7xHiLzycLo6ZKZnG/KT6HBc/lzj2jMhN6Uai+MtjCfn+BklgMeEYU+1mhz3A4dYIGC
+         iZdfD0O+QiAMeZSVhsQOFbeuQVfKCvRYvPR6Y3PDr5GH9lrLPuRAFMz+wpetnS23mA9H
+         Q9qLfNZSf/NHzRMZ+7zOhPI5+GSRyYGS4SEu5+qNPvQ2aUY4RDLUpvzIOnyAqTgP4N4z
+         Gi5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755090672; x=1755695472;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PMqGPn5i1dBgX26P0LPYzxtUAGEpZYYhsp9BiJes8v0=;
-        b=AliPsjWkR167LCdqXOsp9XEwNAcIzmLKdlL6pmhlH0E4+3+//LrFAEdh+/uXc+c0bC
-         JSbzNvaw57AeZvYJyXf9klQsEitnrPSzfjk6m924+LsnrHG/E8QVRiUzjML3VeSo3iBc
-         pqYg8Zt9bo3tSt4Pmpzliv0Qi5WGKpNmvE30kDr3mZavPg7JhQdmO/ZAPze8gZTzcAyD
-         D5ZEluxWEFFz3TMwXo1woamzMx4MkZxWRwV84L9CuY57K8lCRcJwq48SA4/BCvfdpv1g
-         kg+3vkcCoKWmjGem4MxqGpp5WjOTYg/wJ+LKyrWlSHsEqyRGZIymMh5SiLDSkxzZ+3Im
-         z1oA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIBbhg+tkhSkvdduEmWqbEIuwXuk1IsJOSe1rclaOgY/au+ibv4NJ/UE1XflBuROYvHi95GWgmmXtvpo+adBVLSnM=@vger.kernel.org, AJvYcCX5tWJqe10w8Ab19UmKdDLOTIs2N7nsV4mlySqMKF0Vl49uAiemdWhmmGa6cz70BXnmXfktlQ8AAXPAODs=@vger.kernel.org, AJvYcCXXg9KYwFO8aD/zjE57WUx0tKSkFPa+TiLxep4PrBW+1GZpgOACpPVgM7/q36qepI4XN8u72YpnIsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwBxc/p2T/4Pxm24cWzA6pL4nZ+D2dmt33+UWNS1EC2eA+nI5Q
-	A7gMHkNNs5Pj0td31UIL5SqNYq1tKqwGtgkFsCgfcizB+8oI6a6lLY+g
-X-Gm-Gg: ASbGncurlhfozzf/KnejY1CNCjfV3hz+kAgeEnSNREaLMjNfWBJXlb2MIzyOLHEVgSj
-	vPy0QWLtR73+Db3TvUqH1j71Zggmk9VpWvc895BrdOcwzyveXtF6UnQixxqHjxniYE0SP/cwBrf
-	Ec9UPIaCeR8oZbAKltetfG6xorOydZAh/1jBErmCkfQ6vFR9ls4grWU3rjg4XLTCHED9pUAUyLu
-	spMDFGNn2OyRyQ5K00WZ2lWnjGyzkRaDsPQvk1XObeTmRL6SqNCO9Eyv+L+CU7TXuI4g/U+uLx8
-	pM/b5KRMfAKT5LzGMRrv09Ah4WRK/MiAOEUi1SYSF3NSg8XhU7Svwc/PueQ+gCKd7KrprgQtU/N
-	aIZLIvCClbdIfBCshxkPiZqAY28eXuA4=
-X-Google-Smtp-Source: AGHT+IEPKcFPf/H6yHGsr0sS7omSEBlqNNcKUaAqL1joOuoGej9xA/Vpwpo3atGz6DL927Y0FQPKsg==
-X-Received: by 2002:a17:90a:c2c8:b0:320:e145:26f3 with SMTP id 98e67ed59e1d1-321d27e34cbmr3948954a91.8.1755090672310;
-        Wed, 13 Aug 2025 06:11:12 -0700 (PDT)
-Received: from rockpi-5b ([45.112.0.216])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32325765df6sm161504a91.12.2025.08.13.06.11.06
+        d=1e100.net; s=20230601; t=1755097303; x=1755702103;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+ZjYg8bYZKeQRQQcTg3Cp0VfZeqh6q0mPFPEWR4Ir4Y=;
+        b=l063JV+f2YzFtY0YRfMQvlLIMs6/w1q30qmSTkWCWMfVoC5mRiYMMyFexBd+N7Om00
+         hb8fTRYy5iC/ivHX44Oj6uMNndJBY32YS2LrXSIHm98WEIJJ8w3E2iKIcOoZuQ9Btp1Q
+         C7a+shXXw8BXD+G+hfrfYSXrWBiH73SkknloJHFWz/CiiaqaQ+ZUBj7EO+8I3WJzhtRX
+         Cndgm1A5QQUk4oxMFFuj7G7FqnCsaBR3elLBYdzrJuwDW6qJd/G77A2dbuyTxjZLOq7j
+         B+KcVzmH3NoLYf1pSYmOr96Rp99s6g9c9G8uGW7/5laVNmSvI709AJ6n1Hga01aVZiaO
+         KpjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIPA/jjSvt11schlZOPEMxkUb+wX/OaJhnrCbebQ5TqkHb45czwsh3mloxgT17vqVGpjJYsc/prUpLtTpNzDZag==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNGRmf7Gqcl4o4xHr7iWXJS8TTYqxswKuiq5NUt48vAZOvWa8v
+	iEe0iiqee/qNm4HLSgrIVst8GYkYx2wkXadEP/35X8QM0hVOLI3I16DLFoAkXo2BNK0=
+X-Gm-Gg: ASbGncuzzXZy/CvN7jBnKi5gunYHZUa7pWQjBcfjoMPacEKKv3628dsz1CNtShCyhZF
+	TGf7xgPJ1SBHQ8frKSLeHc1tu8Xqc1T62aG1RffS0qdTJvIzy7J5m4FzHfeS/u62F4X6M7nyyRa
+	i6x+esiQH3/1HwQ1alNWAYbXL/QpeCQWx3IlFbDyN97xRHDeSWsA/5s+TTUplvnHTmfmcERk0xy
+	4c15PNFBDfIE77VFIIeZiHk+R+0nt+fMKfvSCmAso9tnc9FBUSRk1hcLvLFkEr7OWESVXQ5fxXp
+	gjXnS4cld5oFvQLpzVzTvprr4yG7ouZ9owiJXAoSnCQ83IqX/YmWgZIuvba2sytxN2MzxvkyYej
+	9kWLPdsvjyOOuCrce+j7wbU8zVoK+bCuqFAecHmBUmY2UC7HNBn7U
+X-Google-Smtp-Source: AGHT+IHGvynWNGnvSA7OYlBBf/7gl/Nh7E2z9kJEbRhnGw3Vbg8mnkSNWKEci8XTra92+d3/1Aer7w==
+X-Received: by 2002:a5d:64e8:0:b0:3b8:de54:6e64 with SMTP id ffacd0b85a97d-3b918cf9b79mr2657354f8f.26.1755097302446;
+        Wed, 13 Aug 2025 08:01:42 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.191])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4533f1sm48402964f8f.42.2025.08.13.08.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 06:11:11 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-pm@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list),
-	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Mateusz Majewski <m.majewski2@samsung.com>
-Subject: [PATCH v7 7/7] thermal/drivers/exynos: Refactor IRQ clear logic using SoC-specific config
-Date: Wed, 13 Aug 2025 18:39:51 +0530
-Message-ID: <20250813131007.343402-8-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813131007.343402-1-linux.amoon@gmail.com>
-References: <20250813131007.343402-1-linux.amoon@gmail.com>
+        Wed, 13 Aug 2025 08:01:41 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v3 0/2] Add new phy_notify_state() api
+Date: Wed, 13 Aug 2025 16:00:45 +0100
+Message-Id: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ2onGgC/3WOzQqDMBCEX0Vy7spmY/zpqe9RerA20YU2kSRIR
+ Xz3qtBDDz1+A/PNLCKawCaKc7aIYCaO7N0G6pSJbmhdb4AfGwtC0lihgnGYwfnEdobxFVObDFi
+ ke6t1TbbUYiuOwVh+H9LrbeOBY/JhPjYmuae7rpCIRCi11rlSiqSqgWA0yYS8D2wtu8uTXRt87
+ kMvdtFE3/LfLxMBgu1k2WChGimrH8e6rh8u7y8B8gAAAA==
+X-Change-ID: 20250703-phy-notify-pmstate-f02ba5582f65
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1778;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=W5C4Jb/87TEkHjxZzTAhHGOUm7nNwtwZIRnVcZUesz4=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBonKjT7hPpRY5qXZZedoet2Il5XVhKZC/pOtbKi
+ +0CtwW2VqqJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaJyo0wAKCRDO6LjWAjRy
+ ut5TD/0TOzju4DzjH2y3pvzRzJijBdv5apB8VHPYifqqj7MLn86Izngf41KZwGwKbazWnZUQsbO
+ 1EnJFS0eECeObLYmtsuyAvCeTZpzp76buX55s0arQgnrFia742gUzSFLTMckgDZ2kQe7ZfdcB/7
+ mVi9suq05k1eFJPKUQJoYbj2L5i7akr6TBQIeZ1XqJnp2OOFr009CI7pRF35hRcQrx4x3TmG5+z
+ d4Qwz92t5VIRUB5dJqSJjplMQOthKYpdfc0SdwnGWgJtRtTDvyQdxUprh1rlWzdtbZPhnkFt4pW
+ Dd00kxzySCvu8neFuSdVAsC0tSfQXN/eQrTToqzxuWtv8ZCt7zehCBKZbuQOZHMtvYHR3EqmSYZ
+ oKn4GhUnCWUWXw/TZ9OAXM1VppLz+XqjeTgHaL/Bj7ewnO1jEe0UaTpa6I9KRHwXjHpiLmqBAG3
+ 5Bt0FU6QTDoPKejfGLE0nUgNb+5glAK/GASaA/lnyoHYz0fYWIa297yHH08FwXrzf8F7fGcMiui
+ jGATUZDHuI6qi2yQ2bgjT7f0OvjDDNWnFEXKjkZfs7uvy2m3N2g6lkmntTC9weJ0WGnCJrtgrRA
+ dTbHzxY0pC+tAMc8nkWDbxryoEHc7AqGCwt8o1NUMY4ZPoEquzQHAsq1vHQTuwQXSdm6p79g2ed
+ rioz0wrkgrHVGQQ==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-The Exynos TMU driver's IRQ clear logic has been refactored for improved
-maintainability and reduced code duplication. A unified
-exynos4210_tmu_clear_irqs() implementation now replaces the previous
-reliance on SoC-specific functions and hardcoded register mappings.
-This new implementation leverages SoC-specific configuration fields
-(tmu_intstat, tmu_intclear, and IRQ bit mappings) stored within
-exynos_tmu_data. These fields are populated during device setup within
-exynos_map_dt_data(), thereby streamlining new SoC integration, ensuring
-correct interrupt handling, and improving code clarity. This refactor
-simplifies the addition of new SoC support, ensures correct interrupt
-handling across platforms, and improves overall code clarity.
+This series adds a new phy_notify_state() API to the phy subsystem. It is
+designed to be used when some specific runtime configuration parameters
+need to be changed when transitioning to the desired state which can't be
+handled by phy_calibrate()or phy_power_{on|off}().
 
-Cc: Mateusz Majewski <m.majewski2@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+The first user of the new API is phy-samsung-ufs and phy-gs101-ufs which
+need to issue some register writes when entering and exiting the hibern8
+link state.
+
+A separate patch will be sent for ufs-exynos driver to make use of this new
+API in the hibern8 callbacks.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-v7: new patch in this series
-    split the IRQ function handler per SoC.
----
- drivers/thermal/samsung/exynos_tmu.c | 150 +++++++++++++++++----------
- 1 file changed, 96 insertions(+), 54 deletions(-)
+Changes in v3:
+- Rename API to phy_notify_state(). (Mani/Neil)
+- Remove inline kerneldoc comment (Mani)
+- s/phy/PHY (Mani)
+- peripheral specific enums in phy.h (Vinod)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 5e581055e3f3..9f94c58e1e74 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -158,6 +158,8 @@ enum soc_type {
-  *	0 < reference_voltage <= 31
-  * @tzd: pointer to thermal_zone_device structure
-  * @enabled: current status of TMU device
-+ * @tmu_intstat: interrupt status register
-+ * @tmu_intclear: interrupt clear register
-  * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
-  * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
-  * @tmu_set_crit_temp: SoC specific method to set critical temperature
-@@ -184,6 +186,8 @@ struct exynos_tmu_data {
- 	u8 reference_voltage;
- 	struct thermal_zone_device *tzd;
- 	bool enabled;
-+	u32 tmu_intstat;
-+	u32 tmu_intclear;
- 
- 	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
- 	void (*tmu_set_high_temp)(struct exynos_tmu_data *data, u8 temp);
-@@ -770,67 +774,90 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
- }
- 
- static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
-+{
-+	unsigned int val_irq;
-+	u32 tmu_intstat = data->tmu_intstat;
-+	u32 tmu_intclear = data->tmu_intclear;
-+
-+	val_irq = readl(data->base + tmu_intstat);
-+
-+	/* Exynos4210 doesn't support FALL interrupts */
-+	writel(val_irq, data->base + tmu_intclear);
-+}
-+
-+static void exynos4412_tmu_clear_irqs(struct exynos_tmu_data *data)
- {
- 	unsigned int val_irq, clear_irq = 0;
--	u32 tmu_intstat, tmu_intclear;
-+	u32 tmu_intstat = data->tmu_intstat;
-+	u32 tmu_intclear = data->tmu_intclear;
- 	struct tmu_irq_map irq_map = {0};
- 
--	if (data->soc == SOC_ARCH_EXYNOS5260) {
--		tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
--		tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
--	} else if (data->soc == SOC_ARCH_EXYNOS7) {
--		tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
--		tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
--	} else if (data->soc == SOC_ARCH_EXYNOS5433) {
--		tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
--		tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
--	} else {
--		tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
--		tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
-+	val_irq = readl(data->base + tmu_intstat);
-+
-+	/* Set SoC-specific interrupt bit mappings */
-+	irq_map.fall[2] = BIT(20);
-+	irq_map.fall[1] = BIT(16);
-+	irq_map.fall[0] = BIT(12);
-+	irq_map.rise[2] = BIT(8);
-+	irq_map.rise[1] = BIT(4);
-+	irq_map.rise[0] = BIT(0);
-+
-+	/* Map active INTSTAT bits to INTCLEAR */
-+	for (int i = 0; i < 3; i++) {
-+		if (val_irq & irq_map.fall[i])
-+			clear_irq |= irq_map.fall[i];
-+		if (val_irq & irq_map.rise[i])
-+			clear_irq |= irq_map.rise[i];
- 	}
- 
-+	if (clear_irq)
-+		writel(clear_irq, data->base + tmu_intclear);
-+}
-+
-+static void exynos5420_tmu_clear_irqs(struct exynos_tmu_data *data)
-+{
-+	unsigned int val_irq, clear_irq = 0;
-+	u32 tmu_intstat = data->tmu_intstat;
-+	u32 tmu_intclear = data->tmu_intclear;
-+	struct tmu_irq_map irq_map = {0};
-+
- 	val_irq = readl(data->base + tmu_intstat);
- 
--	/* Exynos4210 doesn't support FALL interrupts */
--	if (data->soc == SOC_ARCH_EXYNOS4210) {
--		writel(val_irq, data->base + tmu_intclear);
--		return;
-+	/* Set SoC-specific interrupt bit mappings */
-+	irq_map.fall[2] = BIT(24);
-+	irq_map.fall[1] = BIT(20);
-+	irq_map.fall[0] = BIT(16);
-+	irq_map.rise[2] = BIT(8);
-+	irq_map.rise[1] = BIT(4);
-+	irq_map.rise[0] = BIT(0);
-+
-+	for (int i = 0; i < 3; i++) {
-+		if (val_irq & irq_map.fall[i])
-+			clear_irq |= irq_map.fall[i];
-+		if (val_irq & irq_map.rise[i])
-+			clear_irq |= irq_map.rise[i];
- 	}
- 
-+	if (clear_irq)
-+		writel(clear_irq, data->base + tmu_intclear);
-+}
-+
-+static void exynos5433_tmu_clear_irqs(struct exynos_tmu_data *data)
-+{
-+	unsigned int val_irq, clear_irq = 0;
-+	u32 tmu_intstat = data->tmu_intstat;
-+	u32 tmu_intclear = data->tmu_intclear;
-+	struct tmu_irq_map irq_map = {0};
-+
-+	val_irq = readl(data->base + tmu_intstat);
-+
- 	/* Set SoC-specific interrupt bit mappings */
--	switch (data->soc) {
--	case SOC_ARCH_EXYNOS3250:
--	case SOC_ARCH_EXYNOS4412:
--	case SOC_ARCH_EXYNOS5250:
--	case SOC_ARCH_EXYNOS5260:
--		irq_map.fall[2] = BIT(20);
--		irq_map.fall[1] = BIT(16);
--		irq_map.fall[0] = BIT(12);
--		irq_map.rise[2] = BIT(8);
--		irq_map.rise[1] = BIT(4);
--		irq_map.rise[0] = BIT(0);
--		break;
--	case SOC_ARCH_EXYNOS5420:
--	case SOC_ARCH_EXYNOS5420_TRIMINFO:
--		irq_map.fall[2] = BIT(24);
--		irq_map.fall[1] = BIT(20);
--		irq_map.fall[0] = BIT(16);
--		irq_map.rise[2] = BIT(8);
--		irq_map.rise[1] = BIT(4);
--		irq_map.rise[0] = BIT(0);
--		break;
--	case SOC_ARCH_EXYNOS5433:
--	case SOC_ARCH_EXYNOS7:
--		irq_map.fall[2] = BIT(23);
--		irq_map.fall[1] = BIT(17);
--		irq_map.fall[0] = BIT(16);
--		irq_map.rise[2] = BIT(7);
--		irq_map.rise[1] = BIT(1);
--		irq_map.rise[0] = BIT(0);
--		break;
--	default:
--		pr_warn("exynos-tmu: Unknown SoC type %d, using fallback IRQ mapping\n", soc);
--		break;
-+	irq_map.fall[2] = BIT(23);
-+	irq_map.fall[1] = BIT(17);
-+	irq_map.fall[0] = BIT(16);
-+	irq_map.rise[2] = BIT(7);
-+	irq_map.rise[1] = BIT(1);
-+	irq_map.rise[0] = BIT(0);
- 
- 	/* Map active INTSTAT bits to INTCLEAR */
- 	for (int i = 0; i < 3; i++) {
-@@ -915,6 +942,8 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4210_tmu_read;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
-+		data->tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
- 		data->gain = 15;
- 		data->reference_voltage = 7;
- 		data->efuse_value = 55;
-@@ -934,7 +963,14 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos4412_tmu_clear_irqs;
-+		if (data->soc == SOC_ARCH_EXYNOS5260) {
-+			data->tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
-+			data->tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
-+		} else {
-+			data->tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
-+			data->tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
-+		}
- 		data->gain = 8;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 55;
-@@ -952,7 +988,9 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos5420_tmu_clear_irqs;
-+		data->tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
-+		data->tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
- 		data->gain = 8;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 55;
-@@ -969,7 +1007,9 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos5433_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos5433_tmu_clear_irqs;
-+		data->tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
-+		data->tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
- 		data->gain = 8;
- 		if (res.start == EXYNOS5433_G3D_BASE)
- 			data->reference_voltage = 23;
-@@ -989,7 +1029,9 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_control = exynos7_tmu_control;
- 		data->tmu_read = exynos7_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->tmu_clear_irqs = exynos5433_tmu_clear_irqs;
-+		data->tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
-+		data->tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
- 		data->gain = 9;
- 		data->reference_voltage = 17;
- 		data->efuse_value = 75;
+- Link to v2: https://lore.kernel.org/r/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org
+
+Changes in v2:
+- Add new phy_notify_pmstate API() instead of using phy_set_mode() (Vinod)
+- Link to v1: https://lore.kernel.org/r/20241002201555.3332138-1-peter.griffin@linaro.org
+
+---
+Peter Griffin (2):
+      phy: add new phy_notify_state() api
+      phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
+
+ drivers/phy/phy-core.c                | 25 +++++++++++++++++++++++
+ drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c | 38 +++++++++++++++++++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.h |  7 +++++++
+ include/linux/phy/phy.h               | 19 ++++++++++++++++++
+ 5 files changed, 117 insertions(+)
+---
+base-commit: 43c3c17f0c805882d1b48818b1085747a68c80ec
+change-id: 20250703-phy-notify-pmstate-f02ba5582f65
+
+Best regards,
 -- 
-2.50.1
+Peter Griffin <peter.griffin@linaro.org>
 
