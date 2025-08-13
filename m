@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFACF2BE65A;
-	Wed, 13 Aug 2025 07:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3894B27FB15;
+	Wed, 13 Aug 2025 08:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071887; cv=none; b=oJfOllp3W1eGwjTFYlWS1rc3IXYkeBtC3j0Vmfscb6RqC5t46IAlm+2YM/EDYJYMmlZh4GXJQPIt1TP65IhwVPqkggE76xxymvnB9ERDLrBCMTOV6Iu36VzBpZxGCCw3OZl8EDYi0NwhlWNk3hmHXuN4Is64VG8aZQgnrkzl1z4=
+	t=1755072069; cv=none; b=lSD2NXNfcbQYqrzvMZeQuFDMPdnPGfLQwEEozMW3wMTRxaEndAas6n7KIb59IK8VUXcETn0E9B0AAJXdNsY4Yuoi6kY1qSn7cJuQcEUmTNtaE9bjblP28YaNwBXdEiz8xkHdH8UvWIYE/VDk92n1OQUxpW0BDzvjlAc9oAIdjWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071887; c=relaxed/simple;
-	bh=eKYp0uIBZIMuaOiXjjT5VkfmOtK1hJ338ApEda24Owc=;
+	s=arc-20240116; t=1755072069; c=relaxed/simple;
+	bh=ik3RRtJNXNQz3MHEcfgevkOsyPm9dZmKKxQvnQGEwKw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LwjR3mNuw5gKf45kSQ9v9Km/cUMKmlSBEyrlnv2G6HtXt5vY5AO1NCgldx1S8Ypaa4hwa6jYsYktBCkixkqV2UmxoBF7KtFJ/udv/ayuzcuz2Xsr6zdVl1OSJFL4jT7NUyP88y6uzlBeH7ZVxkarImNV+W8wrhdIH3diFme1u7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYtnb3Z7; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=RuV18t3/8vuVrzbEjJcEnVKXryx23Y3axyWzn5iWqYu/UaZCxNXlmHyXH6GWyG2uHPq2LVFiZ1fF3HV3oUgk8Otkw6ByFpF8u8F5wf8QIIX3G1+fttmfO1Cap/9teHG58p8ZcM1g/AlQqcWS3XdyWzyi3LWhqAEGpelo8RJy6W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t83xbZU6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYtnb3Z7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286C7C4CEEB;
-	Wed, 13 Aug 2025 07:58:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t83xbZU6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480C7C4CEEB;
+	Wed, 13 Aug 2025 08:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755071887;
-	bh=eKYp0uIBZIMuaOiXjjT5VkfmOtK1hJ338ApEda24Owc=;
+	s=k20201202; t=1755072068;
+	bh=ik3RRtJNXNQz3MHEcfgevkOsyPm9dZmKKxQvnQGEwKw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mYtnb3Z78YECNeFBj8PmQGq2QA6/Ko3beUHRA+bnDltRSY3Njft0EZ8FxF7DFdyVl
-	 KSNnaOj+vJ7ezl2DwWSCmHzWVtjcvlOgoZRq90COv3D/mYjxj6Yn9ckompydndA3FW
-	 RRlKjySb6vhk0qoOB4mk16utzPRcYYidf+jE/1BzvVCm0JT4pIBIK54N1VUvN8pY0J
-	 NXVRwFv5dz6GIWFk3uhL/5wz9Ha3zt2uLJvocmEZZRqRBAiGbz/tB6vCsGje5wbG2j
-	 VPbDy7kUADaAXeC7RuzYqUjo+arKnjH4XGijUmmPBRJuvfc2Jlen1VnSaw5l2B3ypt
-	 spZ3bmSB0koKQ==
-Message-ID: <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
-Date: Wed, 13 Aug 2025 09:58:03 +0200
+	b=t83xbZU6jvSLu4cvvrf+c+Qg1DzqBKCNvl+j3mMg/8FMgCuCbfYqwY3b+MUohZnwH
+	 taLYlaMHQNZPk/TJ+tFNpcqnyYN3D/gvy1OpbNq5M43TGDz98nz0BuNiNm/PBkePeL
+	 MKF9Hy76P8YQcDuNrho4oLbx8zxkry5tUeINgxTvBgKy3Q6in6YqWytWb+5lp3xeoJ
+	 8Gj4unrcrPZ/0YPKZRbr8It/uxsnM1OLZe0QFFuORsuba0ues++gvURHvw/QwsalPh
+	 0ODFA0TiIB7UYHOpi0Z6d4nuUxgs3a5hdu8zCAh0Qzjt/IdqfW8PRYWyIn3XGkCdOu
+	 vlCiw2zJjNhBQ==
+Message-ID: <c2e3aa26-7d9e-4423-9209-c882143310ce@kernel.org>
+Date: Wed, 13 Aug 2025 10:01:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,13 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+Subject: Re: [PATCH v1 0/1] Enable CMU_HSI1 for Exynos990
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
+References: <20250528105821.158140-1-umer.uddin@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,31 +87,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
+In-Reply-To: <20250528105821.158140-1-umer.uddin@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
-> This series implements changes in the SoC subsystem, which includes
-> devicetree additions. It depends on all sub-series listed below:
-> (Legend: [R]eviewed, [A]ccepted)
+On 28/05/2025 12:58, Umer Uddin wrote:
+> Hi all.
 > 
-> exynosdrm-decon            - https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
-> exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
-> exynos7870-mipi-phy-fix    - https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
-> exynos7870-dsim            - https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
-> panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
-> panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+> This series enables a new clock block (CMU_HSI1) for the Exynos990
+> SoC. This clock block provides clocks for the DesignWare MMC
+> Controller, PCIE subsystem and UFS subsystem.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> This patch depends on the following series:
+> 
+> [CMU_HSI1] https://lore.kernel.org/linux-samsung-soc/20250528105252.157533-1-umer.uddin@mentallysanemainliners.org/
+> 
+I think dependency was not merged (received comments), so I will drop
+this from my queue. If that is not accurate, anyway please resend once
+dependency is ready/merged. Patch itself looked ok.
 
-What is the status of the bindings from dependencies? I think they were
-not accepted.
-
-I also replied with few nits for one of DTS patches. Everything else
-looks fine.
-
-BTW, really great job you did here, I am impressed!
+BTW, I take clock and SoC changes, so it is fine to send DTS with clock
+dependency together. DTS should not be mixed with driver code for Greg's
+subsystems, preferred not to mix for netdev.
 
 Best regards,
 Krzysztof
