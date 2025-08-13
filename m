@@ -1,75 +1,77 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB562D978A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2025 10:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4742F6560
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2025 10:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081010; cv=none; b=iv5/cd+eFZU6oLaEE3j0bQMXm9rxzsPfYGwofFtGQtX4sOG3XcHFn2bU1i6tkqXktqPiAyy1yVJLdm3g5ygODe+RGUspY95uz/pQaezKU5bp7A1cZsmZ0e5WV5wrmly7HM0RSuQ3nCgP5JiEm/6l7xYRGl0gaNpRb0vXR/t5Mpc=
+	t=1755081398; cv=none; b=du1jxnOjs1b3qWJL2N5jcBvvAsov4zmBhHwjhfYJcI1hDordnzewsiCMvzkIRZFB9Zuc3uTxaeqFwF3piqdAW8ey2U8X0ieOH9Rf59ut5Gz/GHVnY7hBnZJjIzqJagQBC7OdflIQit/sF4n93mBOE9KJSmkCkXH/fZWrMGKwSIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081010; c=relaxed/simple;
-	bh=j9nZfVw6WNDy8P2NhYDYq7yIvlQTGbMyRsqF99spDPg=;
+	s=arc-20240116; t=1755081398; c=relaxed/simple;
+	bh=rM1VH7DXY3SQ5CU5JoXtOdVhg6Lj0cix+4FvL7D4Z3Q=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UwqyZAQJN/qGVD6P3JZyDrMatvNv0uwyJpf9eU9LuI4p3ho9/d0D6ow8zu7XCwRmc2R/dgyNr7VfKKjWFr0am3O7EVZO3bBbxoRJG0A91pB/9DJVWvziH9bB89mJh++MfaP4JyGv238sM3c4AmCzlUno9UqHCrjRnyGyJANIQuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUFJxWfG; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version:Content-Type; b=lbOQBNYbjHb8aEPf490Kw5w8f5XoxwA1sZ4T3ucqnd0J6I4UFo/PnAbRnndY8L2dRKSckzwTQzvZqGDusG+RAbGw/AC+oBFtxvR8FecUs0avK2CcGJpNIOhyDWsQuBI4E3mrVTicCQ5SZ81zVPbZMW8xekzNKctzaT4ptKMh7Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XqLUgWhl; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUFJxWfG"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-af933e84619so105350266b.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2025 03:30:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XqLUgWhl"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-af940717334so85190366b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2025 03:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755081007; x=1755685807; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755081394; x=1755686194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m/uSEHyOY8TPjXVXr20mUPgAnYEaOn2OIFqZC7pMk9s=;
-        b=WUFJxWfG4eSFGdYuIruhFLprBSs3OYy9j9FabWpGTd7q2ocK54xvxHDEJJ1dfFkvlJ
-         hfUJ61RLp3OIyhZEbcFzLm2DRUtlY6/mISgI6pBwd+ybA1+wEZJst4mMyCPvK8IScmTD
-         oaZnS4AJ6/4tNpulm0OZ6wgoG1TBNPrinTktb3mqvDIJFD4ioqQfE8FIcFTHcisfuI6a
-         9FHDWjmkdUKbu32XA5vhCw47pfv6dez5Tx9ZD7tPUfezjnxaVPEy0LqVY4QX2mZdvfmx
-         ShAzh2JXgqwyFVS/rwYZNY1uDrx9iVfw1JD3YdxkjDDQzfWN4Ub5x/Djy3f+6EKA4ntR
-         p9vw==
+        bh=pZSse5z3Xz3M0O4BGbTx+nqu/znB14s8R4egSwB9b9M=;
+        b=XqLUgWhl4cK8s3pED+YdqFOezhbepyC3P/7XsRA3c1rgqdPL2ghVGjcnxSi7Sad6Dt
+         cnAjZIG1COXaQd8ku1vDXl+bSJRT/1F9MB/rMIuipBm+P/4tvhBXBd7jGFH6y8pP/D3v
+         LkX6y+v7R4llOGaEIKOmj12dI6FwRKu/inR6qnquq2ISt41GsMzQZboJ4iWYuIKxCLbG
+         GCcGL19JeuFYgQRE8PJh89n3Ky9enSIH+LNKEeEzdT1hvohncvU5rwNWAgHyWY1mSRu+
+         5d5XoVF3RHm3K11p4xOavVxkdgBzNfDdhqUVzy+bQblLiznvoTAW9Jc+4D/OQKAb6ecX
+         a45w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755081007; x=1755685807;
+        d=1e100.net; s=20230601; t=1755081394; x=1755686194;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m/uSEHyOY8TPjXVXr20mUPgAnYEaOn2OIFqZC7pMk9s=;
-        b=jNBy7L9q1C4aK34VxzDcGMpmkUZxHqiXYvWGmHhkJWUGqbicTwax/kvHl8pz2a3BxR
-         yxAHz5D72F9V0rGqENOwsBsBaTSL1OHlpmn6dvVcrOBlcyt2H9lA1UPppMtfCXccNQ4F
-         AMLO7fWEYYCa+rDybH50KnXoMJw5iKJKSdeSus5XgP3IdxqbT9fZ8xL6kyfglEbhxw1J
-         VubVaIp29Dano/X2slWJSpO0K/W8BIFzjwSpIxs4GT/S7OhDTdp0OTrhXThuHBRTdovD
-         TSAwYlz2Mx5khKyD6D6Acz6Mdyed56jnTDkoYEsBSyb5Ku5k/nrP7Idc0KcKQwFW1gym
-         i3oA==
-X-Forwarded-Encrypted: i=1; AJvYcCU36oV3mOKPLxdFMZlyiOWubXVWzgTkRxc8cT9KZHoTaNGylqHdqATpcYjdn+HwbuQiNF/jQm4ghbldCfwRnB1nWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgfp+9IA34ISfk0g01DLr+r3+DvTRg+9cYiY+RwVMBg4Um9qZI
-	w770GjTd81oAYBq6MZRW8e7X0KC9eK6tJa8Z10og8p058aAXaW4GQ+8A2Wtd1cKoJAs=
-X-Gm-Gg: ASbGncv1JGnqp2h/aoR+OlvlCYYyxHBq04X4kuLFbxNau3k2TmCCDEdswnCAor+0C1O
-	PGYl1yhjvVgTMHCnNscHEauhRt77fxEMUWRQ4LgSE5bblVg1lbhyBaX9s8PP51WZt1jR7ZvuzI1
-	EPI/SPEqxilIW+UqgcBnQ4okcm9oW+h9YzAEl/5ON99lmwXcHrv7ZNX8TamME+R0S6g0wikIyCs
-	7ohziqGTq0jTLaVcMRkKqBoYJFS1KehGstQftqZVPivbM8xX3U+88GTtQ97gJlY3WXmPfloWROW
-	498DAe19oa4WIHEAEUA3pVcjBONllmsanZl/hCgf5V0WD5DJiY11Xg403Oq8q1QRlAB3SGfjAb2
-	vkkHmtLL/rnQlks5fKt50bG+n+AHEFxNEjVt6TFg=
-X-Google-Smtp-Source: AGHT+IF29cdNPOBhCMcj9Obj9AvGdSJsCml5B5sk74SLW18u0La5OP66JPcnqGI8eEVOZWoaJs2nkg==
-X-Received: by 2002:a05:6402:1ecc:b0:612:f2fc:2b9b with SMTP id 4fb4d7f45d1cf-6186bf79c06mr842428a12.1.1755081006695;
-        Wed, 13 Aug 2025 03:30:06 -0700 (PDT)
+        bh=pZSse5z3Xz3M0O4BGbTx+nqu/znB14s8R4egSwB9b9M=;
+        b=ElkfowuFyDURzXJjI25OFUzgAiWb1EJAYW4KeWXty4z7dnSYzDzHQn6x18bl0f6XQq
+         Y5/CCG4eTf2utWyU+AAtvNJLxQ/hUwN7iOu29UV8ZUyHgkRCmD/L+m6XrKjoZQesklxU
+         sgyZSzNvdsQ5a0Cvp4Il+Lpgys/edFrwJgJoibpV7gr+k/mZxoZYPgSm/V0TcGZ46B8E
+         iQVyjxNILsgTrPWXrly8bI0RMyQ3XSdSTDwLEbEOoPGx23nTDPmznDYR3cD5gfNyIDLv
+         L/ns5nHRvOV2MHWjc5JwmOiR+dB7Noz3hkWRwGoxIzYYWav4J5e+Wb8k6uAMlO75CabK
+         pZaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg95iGP1Hmky2bUhI12piUQeN7W3iPLBUGsKmJuiAaM4Ud2o4+5aYSQg6XRCkVwsLowyq1BYpdq3Rh4/oCUu0yBA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTJ2QpeByH3MrFAHXOXsO2Ij8uVPidCvJ9wZHSTgdxvBK/q4g1
+	GcFfM6zidN23hvQnK0xEIk9mMg4OHHC0eRDghUq9tLdE5ex/sZ+EasNMsd0aJgHW3Q2TgcwnW8k
+	BtIXd
+X-Gm-Gg: ASbGnct4tercF63Xbz2NpFStKbv1o7jns10FtqfbpOJovROztiNNTKs/UOaCTNutoCI
+	ect5nH7DftrqSHSg8m7Qf890pHT5Oy8k97G4V4Rspsh8Tu8eNvlD3OI6v8qBowxgkQY5XQlTIAp
+	rw+2K/iPg+cn236GfH56JfzSr/aFTIj8GgcqDi4FziVDHTfWjw8yTOk/kOgvA0XBRATqxkqZ/JF
+	jX7cYs3VmFIWW2pKg1P42j/k3r+1TJlzvEQGwPqHEwVorBaVOpr4amcolFjldz8/53lrYyd1kVW
+	xsTjOGyKzJ+5HAjzCfacjdYtV5KyDc9HACukNfLkb0dCmVFC6yWjxfQJTg7eqCvN38G2i4pugES
+	UgkqcTOdGYrEzuMV4y+iILeZyG+wiu2w6vUNeN5DwLfgc1Vbwqg==
+X-Google-Smtp-Source: AGHT+IFIGBvJE51ImLFwJEf+HWdvDhMI/ga9sn6qqV6XG49qX/4+cl2bNcAjFXq4HMH1UQxepumpXQ==
+X-Received: by 2002:a17:906:4794:b0:af9:7e88:e174 with SMTP id a640c23a62f3a-afca4e6e6b9mr94000266b.12.1755081394358;
+        Wed, 13 Aug 2025 03:36:34 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f15d9fsm21466335a12.17.2025.08.13.03.30.05
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c08csm2392328866b.118.2025.08.13.03.36.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 03:30:05 -0700 (PDT)
+        Wed, 13 Aug 2025 03:36:33 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, alim.akhtar@samsung.com, 
- Zhen Ni <zhen.ni@easystack.cn>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250806025538.306593-1-zhen.ni@easystack.cn>
-References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
- <20250806025538.306593-1-zhen.ni@easystack.cn>
-Subject: Re: [PATCH v2] memory: samsung: exynos-srom: Fix of_iomap leak in
- exynos_srom_probe
-Message-Id: <175508100520.39785.3470511038407039138.b4-ty@linaro.org>
-Date: Wed, 13 Aug 2025 12:30:05 +0200
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250731234532.12903-1-semen.protsenko@linaro.org>
+References: <20250731234532.12903-1-semen.protsenko@linaro.org>
+Subject: Re: [PATCH] arm64: dts: exynos: Add Ethernet node for E850-96
+ board
+Message-Id: <175508139304.40388.17997940621075080202.b4-ty@linaro.org>
+Date: Wed, 13 Aug 2025 12:36:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -81,23 +83,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 06 Aug 2025 10:55:38 +0800, Zhen Ni wrote:
-> The of_platform_populate() call at the end of the function has a
-> possible failure path, causing a resource leak.
-> 
-> Replace of_iomap() with devm_platform_ioremap_resource() to ensure
-> automatic cleanup of srom->reg_base.
-> 
-> This issue was detected by smatch static analysis:
-> drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()warn:
-> 'srom->reg_base' from of_iomap() not released on lines: 155.
+On Thu, 31 Jul 2025 18:45:32 -0500, Sam Protsenko wrote:
+> The E850-96 board has a hard-wired LAN9514 chip which acts as a USB hub
+> and Ethernet bridge. It's being discovered dynamically when the USB bus
+> gets enumerated, but the corresponding Ethernet device tree node is
+> still needed for the bootloader to pass the MAC address through. Add
+> LAN9514 nodes as described in [1]. 'local-mac-address' property (in the
+> 'ethernet' node) is used for MAC address handover from the bootloader to
+> Linux.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] memory: samsung: exynos-srom: Fix of_iomap leak in exynos_srom_probe
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/6744085079e785dae5f7a2239456135407c58b25
+[1/1] arm64: dts: exynos: Add Ethernet node for E850-96 board
+      (no commit info)
 
 Best regards,
 -- 
