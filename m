@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEBB2E9EAF;
-	Wed, 13 Aug 2025 07:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFACF2BE65A;
+	Wed, 13 Aug 2025 07:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071811; cv=none; b=k0/rNANq8Hm6jiRAs+J33XuDSBiyG9KGcXQFlDi1px1M41IeEf/FVaCW9CeQoM5A9izI/kaBf/dkIlCKDvt9gMc7dEtJHrh9u8ItMJltz/uHC293ndtcqAsHW7t/3cu16Xl8gcTTfthRt+OUdr1/23u4xSfd4wyQHnUtiTrocDc=
+	t=1755071887; cv=none; b=oJfOllp3W1eGwjTFYlWS1rc3IXYkeBtC3j0Vmfscb6RqC5t46IAlm+2YM/EDYJYMmlZh4GXJQPIt1TP65IhwVPqkggE76xxymvnB9ERDLrBCMTOV6Iu36VzBpZxGCCw3OZl8EDYi0NwhlWNk3hmHXuN4Is64VG8aZQgnrkzl1z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071811; c=relaxed/simple;
-	bh=SKWXBFlygeG3qDZNnsJJVgf3glQMopwMM8YJ342cbAs=;
+	s=arc-20240116; t=1755071887; c=relaxed/simple;
+	bh=eKYp0uIBZIMuaOiXjjT5VkfmOtK1hJ338ApEda24Owc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9MfgogfaL+WCqzh6n1Z1hqtbokkgwZkZknz22sWzPFnPLVu+gXHumsf2zuGvnGDGmzbS6DO1J8YmHqO5mK12UGEflsOnrEeLUyvgzLnp7CXC6EnVOWIPICXuBa5W5log653dDCmyP3HL+BCvx4KvZkLBM5OwC1UmVeaOcHmZ9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1ln4MWC; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=LwjR3mNuw5gKf45kSQ9v9Km/cUMKmlSBEyrlnv2G6HtXt5vY5AO1NCgldx1S8Ypaa4hwa6jYsYktBCkixkqV2UmxoBF7KtFJ/udv/ayuzcuz2Xsr6zdVl1OSJFL4jT7NUyP88y6uzlBeH7ZVxkarImNV+W8wrhdIH3diFme1u7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYtnb3Z7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1ln4MWC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD2FEC4CEEB;
-	Wed, 13 Aug 2025 07:56:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYtnb3Z7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286C7C4CEEB;
+	Wed, 13 Aug 2025 07:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755071811;
-	bh=SKWXBFlygeG3qDZNnsJJVgf3glQMopwMM8YJ342cbAs=;
+	s=k20201202; t=1755071887;
+	bh=eKYp0uIBZIMuaOiXjjT5VkfmOtK1hJ338ApEda24Owc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D1ln4MWCFlclf+UsMtL4BG/cdi8RRDSpRkbWIWOqN13A4FeYX+AlQmTAFA7JvfQj2
-	 P9MLVGh/1GP3xgYGuAjJ2dl/UjiwfKabXH6+CK5dpTiSomUjHxeu/MpSTf6XFR5IEJ
-	 G7+PVIlbTr1aVRvZk0EgZ1R0zQ3bdMQ0PaaBCk+Pp98znt3qgQEP1+xw04s6UtjaPX
-	 DLVJfybtVtRqA4+nnQRbJR1oclLNDc9aszt/uXkeBcVBNWIQ3aE+79Oed7/Cidx2+3
-	 0SeGAtz0bp1MSy8Si8igK9XB8vPRF0YTQrwJUCR06gkiuTGHCZUOyVsBSe9IqkZStB
-	 jri3B9iFlb0pQ==
-Message-ID: <6f0451ee-ddb8-4ded-8f0a-b491de9cc308@kernel.org>
-Date: Wed, 13 Aug 2025 09:56:46 +0200
+	b=mYtnb3Z78YECNeFBj8PmQGq2QA6/Ko3beUHRA+bnDltRSY3Njft0EZ8FxF7DFdyVl
+	 KSNnaOj+vJ7ezl2DwWSCmHzWVtjcvlOgoZRq90COv3D/mYjxj6Yn9ckompydndA3FW
+	 RRlKjySb6vhk0qoOB4mk16utzPRcYYidf+jE/1BzvVCm0JT4pIBIK54N1VUvN8pY0J
+	 NXVRwFv5dz6GIWFk3uhL/5wz9Ha3zt2uLJvocmEZZRqRBAiGbz/tB6vCsGje5wbG2j
+	 VPbDy7kUADaAXeC7RuzYqUjo+arKnjH4XGijUmmPBRJuvfc2Jlen1VnSaw5l2B3ypt
+	 spZ3bmSB0koKQ==
+Message-ID: <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
+Date: Wed, 13 Aug 2025 09:58:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] arm64: dts: exynos7870: add DSI support
+Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
 To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <20250627-exynos7870-drm-dts-v2-3-d4a59207390d@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,106 +88,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250627-exynos7870-drm-dts-v2-3-d4a59207390d@disroot.org>
+In-Reply-To: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->  			reboot-mode {
->  				compatible = "syscon-reboot-mode";
->  				offset = <0x080c>;
-> @@ -674,6 +682,83 @@ cmu_isp: clock-controller@144d0000 {
->  				 <&cmu_mif CLK_GOUT_MIF_CMU_ISP_VRA>;
->  		};
->  
-> +		syscon_cam0: syscon@144f1040 {
-> +			compatible = "samsung,exynos7870-cam0-sysreg", "syscon";
-> +			reg = <0x144f1040 0x04>;
-> +		};
-> +
-> +		dsi: dsi@14800000 {
-> +			compatible = "samsung,exynos7870-mipi-dsi";
-> +			reg = <0x14800000 0x100>;
-> +			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clock-names = "bus", "pll", "byte", "esc";
-> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_BUS_DISP>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_APB_DISP>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_MIPIPHY_TXBYTECLKHS_USER>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_MIPIPHY_RXCLKESC0_USER>;
+> This series implements changes in the SoC subsystem, which includes
+> devicetree additions. It depends on all sub-series listed below:
+> (Legend: [R]eviewed, [A]ccepted)
+> 
+> exynosdrm-decon            - https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
+> exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+> exynos7870-mipi-phy-fix    - https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
+> exynos7870-dsim            - https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
+> panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
+> panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 
-First clocks, then clock-names, please. Same for phys here and in all
-other place.
+What is the status of the bindings from dependencies? I think they were
+not accepted.
 
-> +
-> +			phy-names = "dsim";
-> +			phys = <&mipi_phy 1>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					dsi_to_decon: endpoint {
-> +						remote-endpoint = <&decon_to_dsi>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		decon: decon@14830000 {
+I also replied with few nits for one of DTS patches. Everything else
+looks fine.
 
-node name: display-controller@
-
-> +			compatible = "samsung,exynos7870-decon";
-> +			reg = <0x14830000 0x8000>;
-> +			interrupt-names = "fifo", "vsync", "lcd_sys";
-> +			interrupts = <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clock-names = "pclk_decon0", "aclk_decon0",
-> +				      "decon0_eclk", "decon0_vclk";
-> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_PLL>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_BUS_USER>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_DECON_ECLK>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_DECON_VCLK>;
-> +
-> +			iommus = <&sysmmu_decon>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					decon_to_dsi: endpoint {
-> +						remote-endpoint = <&dsi_to_decon>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		sysmmu_decon: sysmmu@14860000 {
-
-iommu@
-
-> +			compatible = "samsung,exynos-sysmmu";
-> +			reg = <0x14860000 0x1000>;
-> +			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-> +			#iommu-cells = <0>;
-> +
-> +			clock-names = "sysmmu";
-> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_BUS_USER>;
-> +		};
-
-
+BTW, really great job you did here, I am impressed!
 
 Best regards,
 Krzysztof
