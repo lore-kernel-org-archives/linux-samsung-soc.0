@@ -1,260 +1,143 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83E62BCF6C
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Aug 2025 11:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3149A2F8BC3;
+	Thu, 14 Aug 2025 11:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755170806; cv=none; b=X95gvZ+YvpCfZKoXij0Nac1B3qVggzQdEt0UsPRZ78a3BX336rFn2eR4YwY4TtBuy+U4J7vq15QQbGqns0jtkUXEe4nvdMhNXIqY+2gvga6EBd1MxsK7/HiTGu1JQZ8GVbpVSvBPq/fqEz30Skp40XpkcZsmNaYRSoP2A/qgeik=
+	t=1755171798; cv=none; b=N7VmHPpgegCP1PMwMorBJtFnDxSROmo8luXNTx5iYgK1FArtSk6ATKC6tHDf6JcrCIqhKo4ntMb2Pj/6hnviI6Fh7wDa/tX9WNYB+wuaxOoGD7WDoetU4OurIDz/ZC/fYto229NgMJYYGtRWBkY0QDdAGYwGo8oIQqrm+VbEzNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755170806; c=relaxed/simple;
-	bh=epsU6CJkL8Y2Lgc4OVbJpKH512xqEz8z5bFYimSS8QE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=RoTjaakTX+SCHHWD5qawti2OKQAvZFB0BxMBEI/6VgHHj3WV9M5abSBGBHtwvsng5BqTz2Fo8U4VKIeifseYxTCEcM9xilQ0ANR6naNSPYH1j0kg0PnnMrtlKC1+Kcey65w0xgLuIN05htB5SHefXA7gP+gAb8rAy/UowdB2Ugs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A+DhvwE+; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1755171798; c=relaxed/simple;
+	bh=Zdy7dLbFkZGtII3NQmazxOkB03u71Z+SQYve42TvTVI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UYJNkU0fkVioW/z5bPYlEnSh1sZXiqmsowJC/1ESXEFq7tR7SJEZZic99S/tGx+AaAvmSKT6DCwWqYvOGCS8JsrxPkBTDgwleIPxYa9sMS1nRUzuimI1jmKHxmsoDw+iuq4CHb1TR8TGu0L9HMOvFXEQevUUqXXi39+wd7coh5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NnG4Um3r; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A+DhvwE+"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250814112636euoutp01e75da97c80617e8602dc12af37a5e8a2~bnopMIgbI2458624586euoutp01z
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Aug 2025 11:26:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250814112636euoutp01e75da97c80617e8602dc12af37a5e8a2~bnopMIgbI2458624586euoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755170796;
-	bh=+OXY5MBEwk0jrYJZN16GlrQS4PB2GzTe0j9NScg3+/A=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=A+DhvwE++uOVIyVb32AbTkLnS0oSjjeRky46vJGRu7TzHyQkqfXMTCOt9SMdCc/RV
-	 8963aRXVrqn98Sj0lbI/3dG6oCvYZNijxAvU4+h9z23V0E3wC1u6sLqhWvxLuy8fpu
-	 FqNuc1KECR1VvvwWfi/odeq+7I3K+kjRlJ4RnIWY=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250814112636eucas1p206b752b35c984c7eac2d87eb14dfb270~bnoos_SS51872218722eucas1p2G;
-	Thu, 14 Aug 2025 11:26:36 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250814112634eusmtip2866c82989b01dc30cd17f669701e5f35~bnonZXT4g2264922649eusmtip2c;
-	Thu, 14 Aug 2025 11:26:34 +0000 (GMT)
-Message-ID: <1840a54c-c03a-42e3-a3a8-52e38919df38@samsung.com>
-Date: Thu, 14 Aug 2025 13:26:33 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnG4Um3r"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4716f9a467so129123a12.0;
+        Thu, 14 Aug 2025 04:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755171794; x=1755776594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SCmrgWC//nzUB+KMWvV1r1xovE6hyF4d5hN6Lt7hoXI=;
+        b=NnG4Um3rLqvb/JV9fj9axMvAe7G/lfxsVLeAyiNLD9Idtxs9PM/foXkAUyV8brWT4v
+         5vnTC9hSX0fgKZrDc5ZR+QQXN+Mo9hBORolsYx6QwneBNmQHe2SYRR4BAxYwv9IdU0ri
+         sWPN2g2rNKHFqbvzdR5yIHXCbihIWcWoO8xu5R1brv+K2IkhlSGfSsIYjiXknZG6yy8+
+         YXKPJxJQmeTdzj2GfhzOqOV/SLZAzwo9ZDxzC8sjSZv/65LcGRMHfd6k8cQIFmPT0HBE
+         tmomlMumDCWc4P5Cfw7HdSobNLjeCSgq+Zi4WFfUhEjOzWZigfpB2dlqx2J7iJMtQmmc
+         aIHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755171794; x=1755776594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SCmrgWC//nzUB+KMWvV1r1xovE6hyF4d5hN6Lt7hoXI=;
+        b=adxQQPdhr/1xBoliHvUfSfhEDVDcI1kdFrD7HJnBPXHnyWz/C79f0EEHqHNorZN4Gb
+         teuX9VRV5bTJNjJXN10aRUKHiN4u9lic7xNoBDACkjKi0Wa9w0RhHJs/XS6f/cBu3ZzV
+         lCzjSQ5hSE1JX7l4qfvyZY6k5e04RfJ1GeIZk9iwu8hK4eJwsbGFWku+b3BlC2Es6QzG
+         8AQuo6ukHnKsroOCbm1QnOAdXSQq3NTKqLgfckz4m2Y6VkIFv6quf0+fnQWcmrwn0LAk
+         euGGTyC1V9vKLJNtV4goH5LPbA/SPd+n/DwGrAqu9FTxVnSFmMkFLHjl2+z5UughYyBv
+         fGqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUFaE7KZrJU5SuEgdXfrHIURXwtSLFoux0UKJHgEpz/F+bE4EHjWA85VUQDfTrM9sDi8Q3UlwDzEWcOuRuHPc9padS9jk=@vger.kernel.org, AJvYcCV5zilt2kkotn5bab3TTAzs06ZVUgPDpxOPVybAbHtolJ95oACLfIWTFNDKvJ6Ni/12a6TAvbvYPr4FyXNM7NnzZLs=@vger.kernel.org, AJvYcCVzdGvCRioMKMoenEceN8lCraMec+S/Owf15sa+TX5ysbwRCc2R7jkpwKsVU2/ri3IDWwKrR+bshgr3@vger.kernel.org, AJvYcCW9wTS7TUxe+boB25ydMM5sXCg4uB/KZr3iUGBDwiRO7id6YKBwg9KbX2oSleVhcFbpOWf1pqzo5IQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9BSPZMilMGlLyLvsLnlt817KNtnc+gdvt0RR87GzlWl9HMjJo
+	DQW76cDigL12xXjP1W6srdM4+i3WY7wwp9mmjwt2M6bl3jOiSRtXPh7P
+X-Gm-Gg: ASbGncvPXtfMqohgQ44bs8U646vZL2kbYOsw8kUOEe5O/T3LpS1U87B/zjmnhGwIz1/
+	kerbFHki5Ku8uudKCid1RRyOGVR/t5G31oO5BW1OjLsZ0ebRBzvaFoF/9iW81fm3dFOXChhPvZQ
+	zsjpGLWjL5zl0I9YP2okJ2xbtvchXe2RAZP1icTDCDHWv55DPa//WsabnJCOrm6Wtont+jbksyU
+	mQHtCD2lE2jxcGkK8YbYokxtmTIAq5Jvyihh2Fdf1QZHNhpOUi22FeAgWfqf0wmeZzILqDTAVHe
+	QxWhhke5ulaPuElp7VfxGx1t8zis5fSJ9nH83d84quJXMMbCAgZPdNbf69QhEUjPjo+SMSrdgxC
+	2guLi/ZroI9aa0JE9KmfydZTjdnlM+Q==
+X-Google-Smtp-Source: AGHT+IGj538MNFw8lnLpKQJxZofnRLU078qxv/1o5OvFcfhFzVvepwV4a2SHH8CKzazBMkPgBT0qiQ==
+X-Received: by 2002:a05:6a00:1255:b0:736:4d90:f9c0 with SMTP id d2e1a72fcca58-76e2f8bfd42mr1938894b3a.1.1755171794275;
+        Thu, 14 Aug 2025 04:43:14 -0700 (PDT)
+Received: from ranganath.. ([2406:7400:98:6831:7d1d:f0f4:7398:409e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c34d23f01sm19285741b3a.23.2025.08.14.04.43.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 04:43:13 -0700 (PDT)
+From: Ranganath V N <vnranganath.20@gmail.com>
+To: corbet@lwn.net,
+	linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	alim.akhtar@samsung.com,
+	dave@stgolabs.net,
+	rafael@kernel.org,
+	linux-kernel-mentees@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	vishal.l.verma@intel.com,
+	Ranganath V N <vnranganath.20@gmail.com>
+Subject: [PATCH] Documentation: Fix driver-api typos
+Date: Thu, 14 Aug 2025 17:12:44 +0530
+Message-ID: <20250814114245.16399-1-vnranganath.20@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-To: Henrik Grimler <henrik@grimler.se>, Andrzej Hajda
-	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
-	Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250814112636eucas1p206b752b35c984c7eac2d87eb14dfb270
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52
-X-EPHeader: CA
-X-CMS-RootMailID: 20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52
-References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
-	<CGME20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52@eucas1p1.samsung.com>
-	<20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
 
-On 24.07.2025 20:50, Henrik Grimler wrote:
-> To use MHL we currently need the MHL chip to be permanently on, which
-> consumes unnecessary power. Let's use extcon attached to MUIC to enable
-> the MHL chip only if it detects an MHL cable.
->
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> ---
-> v2: add dependency on extcon. Issue reported by kernel test robot
->      <lkp@intel.com>
-> ---
->   drivers/gpu/drm/bridge/Kconfig   |  1 +
->   drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
->   2 files changed, 87 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index b9e0ca85226a603a24f90c6879d1499f824060cb..f18a083f6e1c6fe40bde5e65a1548acc61a162ae 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -303,6 +303,7 @@ config DRM_SII902X
->   config DRM_SII9234
->   	tristate "Silicon Image SII9234 HDMI/MHL bridge"
->   	depends on OF
-> +	select EXTCON
->   	help
->   	  Say Y here if you want support for the MHL interface.
->   	  It is an I2C driver, that detects connection of MHL bridge
-> diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-> index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
-> --- a/drivers/gpu/drm/bridge/sii9234.c
-> +++ b/drivers/gpu/drm/bridge/sii9234.c
-> @@ -19,6 +19,7 @@
->   
->   #include <linux/delay.h>
->   #include <linux/err.h>
-> +#include <linux/extcon.h>
->   #include <linux/gpio/consumer.h>
->   #include <linux/i2c.h>
->   #include <linux/interrupt.h>
-> @@ -26,6 +27,7 @@
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/mutex.h>
-> +#include <linux/of_graph.h>
->   #include <linux/regulator/consumer.h>
->   #include <linux/slab.h>
->   
-> @@ -170,8 +172,12 @@ struct sii9234 {
->   	struct drm_bridge bridge;
->   	struct device *dev;
->   	struct gpio_desc *gpio_reset;
-> -	int i2c_error;
->   	struct regulator_bulk_data supplies[4];
-> +	struct extcon_dev *extcon;
-> +	struct notifier_block extcon_nb;
-> +	struct work_struct extcon_wq;
-> +	int cable_state;
-> +	int i2c_error;
->   
->   	struct mutex lock; /* Protects fields below and device registers */
->   	enum sii9234_state state;
-> @@ -864,6 +870,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
->   	return 0;
->   }
->   
-> +static void sii9234_extcon_work(struct work_struct *work)
-> +{
-> +	struct sii9234 *ctx =
-> +		container_of(work, struct sii9234, extcon_wq);
-> +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-> +
-> +	if (state == ctx->cable_state)
-> +		return;
-> +
-> +	ctx->cable_state = state;
-> +
-> +	if (state > 0)
-> +		sii9234_cable_in(ctx);
-> +	else
-> +		sii9234_cable_out(ctx);
-> +}
-> +
-> +static int sii9234_extcon_notifier(struct notifier_block *self,
-> +			unsigned long event, void *ptr)
-> +{
-> +	struct sii9234 *ctx =
-> +		container_of(self, struct sii9234, extcon_nb);
-> +
-> +	schedule_work(&ctx->extcon_wq);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int sii9234_extcon_init(struct sii9234 *ctx)
-> +{
-> +	struct extcon_dev *edev;
-> +	struct device_node *musb, *muic;
-> +	int ret;
-> +
-> +	/* Get micro-USB connector node */
-> +	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-> +	/* Then get micro-USB Interface Controller node */
-> +	muic = of_get_next_parent(musb);
-> +
-> +	if (!muic) {
-> +		dev_info(ctx->dev,
-> +			 "no extcon found, switching to 'always on' mode\n");
-> +		return 0;
-> +	}
-> +
-> +	edev = extcon_find_edev_by_node(muic);
-> +	of_node_put(muic);
-> +	if (IS_ERR(edev)) {
-> +		dev_err_probe(ctx->dev, PTR_ERR(edev),
-> +			      "invalid or missing extcon\n");
-> +	}
+Corrected a few spelling mistakes
 
-It looks that the original logic got lost somehow in the above code 
-block, what causes kernel oops if compiled as module and loaded before 
-extcon provider. Please handle -EPROBE_DEFER and propagate error value, 
-like the original code did in sii8620 driver:
+- functionalty ==> functionality
+in Documentation/driver-api/cxl/devices/device-types.rst
 
-         if (IS_ERR(edev)) {
-                 if (PTR_ERR(edev) == -EPROBE_DEFER)
-                         return -EPROBE_DEFER;
-                 dev_err(ctx->dev, "Invalid or missing extcon\n");
-                 return PTR_ERR(edev);
-         }
+- adjascent ==> adjacent
+in Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
 
+- succeessful ==> successful
+in Documentation/driver-api/thermal/exynos_thermal_emulation.rst
 
-> +
-> +	ctx->extcon = edev;
-> +	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-> +	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-> +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-> +	if (ret) {
-> +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
->   					 const struct drm_display_info *info,
->   					 const struct drm_display_mode *mode)
-> @@ -916,12 +986,17 @@ static int sii9234_probe(struct i2c_client *client)
->   	if (ret < 0)
->   		return ret;
->   
-> +	ret = sii9234_extcon_init(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +
->   	i2c_set_clientdata(client, ctx);
->   
->   	ctx->bridge.of_node = dev->of_node;
->   	drm_bridge_add(&ctx->bridge);
->   
-> -	sii9234_cable_in(ctx);
-> +	if (!ctx->extcon)
-> +		sii9234_cable_in(ctx);
->   
->   	return 0;
->   }
-> @@ -930,7 +1005,15 @@ static void sii9234_remove(struct i2c_client *client)
->   {
->   	struct sii9234 *ctx = i2c_get_clientdata(client);
->   
-> -	sii9234_cable_out(ctx);
-> +	if (ctx->extcon) {
-> +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-> +					   &ctx->extcon_nb);
-> +		flush_work(&ctx->extcon_wq);
-> +		if (ctx->cable_state > 0)
-> +			sii9234_cable_out(ctx);
-> +	} else {
-> +		sii9234_cable_out(ctx);
-> +	}
->   	drm_bridge_remove(&ctx->bridge);
->   }
->   
->
-Best regards
+Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+---
+ Documentation/driver-api/cxl/devices/device-types.rst           | 2 +-
+ .../cxl/platform/example-configurations/one-dev-per-hb.rst      | 2 +-
+ Documentation/driver-api/thermal/exynos_thermal_emulation.rst   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+index 923f5d89bc04..7f69dfa4509b 100644
+--- a/Documentation/driver-api/cxl/devices/device-types.rst
++++ b/Documentation/driver-api/cxl/devices/device-types.rst
+@@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
+ Typically used for initialization, configuration, and I/O access for anything
+ other than memory (CXL.mem) or cache (CXL.cache) operations.
+ 
+-The Linux CXL driver exposes access to .io functionalty via the various sysfs
++The Linux CXL driver exposes access to .io functionality via the various sysfs
+ interfaces and /dev/cxl/ devices (which exposes direct access to device
+ mailboxes).
+ 
+diff --git a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+index aebda0eb3e17..a4c3fb51ea7d 100644
+--- a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
++++ b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+@@ -10,7 +10,7 @@ has a single CXL memory expander with a 4GB of memory.
+ Things to note:
+ 
+ * Cross-Bridge interleave is not being used.
+-* The expanders are in two separate but adjascent memory regions.
++* The expanders are in two separate but adjacent memory regions.
+ * This CEDT/SRAT describes one node per device
+ * The expanders have the same performance and will be in the same memory tier.
+ 
+diff --git a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+index c21d10838bc5..f77d27c25ce2 100644
+--- a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
++++ b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+@@ -32,7 +32,7 @@ Exynos emulation mode requires synchronous of value changing and
+ enabling. It means when you want to update the any value of delay or
+ next temperature, then you have to enable emulation mode at the same
+ time. (Or you have to keep the mode enabling.) If you don't, it fails to
+-change the value to updated one and just use last succeessful value
++change the value to updated one and just use last successful value
+ repeatedly. That's why this node gives users the right to change
+ termerpature only. Just one interface makes it more simply to use.
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.43.0
 
