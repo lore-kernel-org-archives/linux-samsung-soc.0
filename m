@@ -1,158 +1,139 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6AF1BE871
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Aug 2025 14:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A9921ABA4;
+	Thu, 14 Aug 2025 15:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182025; cv=none; b=mGEVOE1bPzPXdTabLaiIv98alcY8GvQlt0RGuNwkmO6pCH3XHAofV1aD3inMaBLlS4Q1H4wkgwWA2CpIRCI4mAsoJnyi92bg8hGSO8zs4hMIigSaMD7DT+xsW+Wr3pQ1XAB+lIEXQXgEamPYWx3P5hhP1MnjPt/uWtO2k+adIYo=
+	t=1755184617; cv=none; b=AumI7WSdaBXL9BbE42b5x/ttazIaJdfHSWu97l/JuE3ei9ou2VA6b4qZaFFSiv9CTFX0/RVk2eR9UrIvOTa6ZvbgSWsJHf7cMD9ju3xk1aWfi8EquY0m6pSz/ivZoe18BsM/29PZiMX4Xgg25cueaY/Frux2JvtmcWuaR7jWHPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182025; c=relaxed/simple;
-	bh=3HRyi/pPqiXt+55im0ZeDQ/EKS5tO/F9qNKqrYGaFPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=QjKoxL5aS7ZUgtIBgUz9XrKT8hSO5H8c8IJKCz76t6E+eD0WL57ZtJkSFiLZLMqh6X5aG1C168GNJXNvW53KSKmgt9qXQp9qZ0dKt+bezuhRRdQWl+wwhyKS+ss00aUpwqjQ/WInzz8HYOUFB+h20pksFN9hwA7j4RAZnQ8jKQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=e7jfXMEt; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e7jfXMEt"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250814143341euoutp02ae86c6899ca0990ebd29d20e5eb72b63~bqL-N9WCI0705707057euoutp02J
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Aug 2025 14:33:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250814143341euoutp02ae86c6899ca0990ebd29d20e5eb72b63~bqL-N9WCI0705707057euoutp02J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755182021;
-	bh=HYTbEJeXrofpbs+IrmDrCBkyO0qBISpuRD07yukoC3M=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=e7jfXMEtbajFgUjwRBhcTLRIVblrZOpnEbsCSf3WAKB1weUW7mUHDy9TxhLX2WjL+
-	 kHFZv4Xci0Ot/45YURj7O/2bNOx4+5EINW25i7mU557c2szi1xkvgufLUGo2E3ntEz
-	 34/Z2FghVovoMJr9w84HVH3KRqE89Cp0FhfBmgUc=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250814143340eucas1p24ef13c4a8a272a5830bc0adbbc8206a2~bqL_iNFfu0056100561eucas1p2Y;
-	Thu, 14 Aug 2025 14:33:40 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250814143338eusmtip29e7b2dc498b358fdadaba0c0c10331ce~bqL7__0l03070130701eusmtip20;
-	Thu, 14 Aug 2025 14:33:37 +0000 (GMT)
-Message-ID: <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
-Date: Thu, 14 Aug 2025 16:33:36 +0200
+	s=arc-20240116; t=1755184617; c=relaxed/simple;
+	bh=PMFf9xzg7pxujnDyrrhyaKEYpp1klQQY8RGxuDDnp2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Foc47pchPHR53/m+ITLfaI1PlxFcQ+5FzsIkD/y8Wwduf0OgYx7ym32EM7Nekz8nHEPFwMaKIQ0l5mHmsOhw3scmP6LHjyhGgYT8TfxQc9poSdka9z91Xcx3sJj/oABBQKG9m+ZENDiJCQd+vZmXy9mzsVwOIQiWF1py4y9JB/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce83fb5fso690993fac.1;
+        Thu, 14 Aug 2025 08:16:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755184614; x=1755789414;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nUx5rdSAym75bidV8LMMjvhD6atsKdb4p+2dl0DoyhU=;
+        b=l5Q21Ytj861r/MJ2QcB6qBEvYCQQw2vzULZaUyb9libIMq3z5kQ2xixcs9dZf8xKtK
+         YXZu2e8M9qk5wRP83rh+1q53qj4w+HRkHrAacWucdN0Zb5OkmukS59wPgQnth+Nh3orc
+         Ci7mpxAKXlt8KsoFmv54fVayQaSOTe6YE5ho2paEvcbjpWwXV1UHi4hoS6VJgMwg5Y2i
+         jNI/3pRdiWjK+88bYHH4KLlZgqLsTJ5NoTQxQMhoNcx2ThptO4aK1s2iZ8gT0tb2ay90
+         INwa9azF6cCk04+r318+8gQhWYFo/6iaA5iE102yCtIy8pr3S4nILJnzMEjGDkkpv5EL
+         SQ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2rLaOtKqrhBLCCEQkbaLeEBDNucWro5BTuCf1momoHs0cGyDDmfeU7U927WOPa4FZDDNXTcNVEg6b+Kn6@vger.kernel.org, AJvYcCVsuiAo5oobAaos1XJcUgosg6ZEwmglC4z0JB2I+DYpsW8dX9oHBxmDw/RCkt8BMYEaXmYWdw7b5JegGAANWQ==@vger.kernel.org, AJvYcCW/6zUTxAY6nY6r0f99bOGad8FrhIeI/66V4sc1UmAJ8QGlpEnOpVlu7+UvNvFRJFYr2MKCn7DUbh2IWQ==@vger.kernel.org, AJvYcCWcQvJ043y17WJpQLuEZeQ9ylXCk/vw+aSw0PBFS/ZOBOLfkmGXvRPDftvnHHSZkmtqhVpUpJAw7EkQvIm3LgXwrcE=@vger.kernel.org, AJvYcCWe9Ej+5tuAoGgBKFS7FhNLu2wLiw6mcShMuWJHs1/7ilWqOx1657D5sJvklPhrXtRcdUMhAveLiw==@vger.kernel.org, AJvYcCXPbUip6cp5Wsjq0RUC8oU3jIN5dCCKY181R02AktHwX0vuCErIgfmqKCU78e+SA7uUdZvbMG2Tgcr2@vger.kernel.org, AJvYcCXWKK2qqtXFkmiIxXlukO14na9wNdyqrkf42XYB0As7IaFHZ+mSFOr5VfuhqcxoKmyXty9WRoqglpySsKQRPMMsjy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwwPtJeBVhYnkUqAliMg2K5tYsHfjZoytTDo6D7CxPy91OejcP
+	fUG42DsFc84vnTJK8prrQagV7+weQSruQe3mvZVz1ztdF5WX7/BnZE7q5tAqyvlf
+X-Gm-Gg: ASbGncteX2oD5SfKKOUCIL3hI+V+usQmPKBOkSVaIkSpngiIgF6i0SMzq1yJV76ycTi
+	DrfbnYEkVUkjFbY5BbaQl+O+7EJIEhfpYZQVnonSVLFHAvtVL5wA6ia82YuwZDoAYqTmmGQN4/n
+	9YFqefhS3Zd8JSzgiwc3+Klnh6RsD2a/19gFnRjMyhIEkih9qSgi3gzsPRUyVVCWX5+htzBx+pp
+	z8BAvsogtQMDorRnd+/XJ3+R51Sug6yn2ClPWc1bVB9X1HvPtlFa3GLO5szn39a6ZAQYmyl/VV+
+	WFeEPOEZRksa5KIYoLgvEzkDkwxthAX9SMxT2q1++fOnOL4CnMog5IiZyPH0J5cNtkok/E0205r
+	JiPaIONa1uE4WInGoDNo/MF6TCeM5C8x9S8W1NSsCpOujCOEfBBX/wjeWm5SS
+X-Google-Smtp-Source: AGHT+IHleF1KhCQRwQpLHBVeZ+jksRslQfFyEIsTwcpiCcsptA+0rXQr1GPfUSEE9xIWH7UtUzWUoA==
+X-Received: by 2002:a05:6870:9726:b0:30c:99ff:730a with SMTP id 586e51a60fabf-30cd12cabb4mr2387487fac.23.1755184614186;
+        Thu, 14 Aug 2025 08:16:54 -0700 (PDT)
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com. [209.85.160.53])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f982410sm1476336a34.40.2025.08.14.08.16.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 08:16:53 -0700 (PDT)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30cce83fb5fso690983fac.1;
+        Thu, 14 Aug 2025 08:16:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6okWnQAYfYw+vCM3Z1ql6X8tQkVb+5j6u/HhrOXA/hiXKR3wH0ME92KCXnM8sQsyCE+HGQv96CKe6UAN3zQ==@vger.kernel.org, AJvYcCVswhOg7x9NUu8Z0xaDl+T87z3fC/vTRORtFC/7bmNnRKolV2so5foPicmfheXELibuslKprwlW0ZThMcbUf2mSzfE=@vger.kernel.org, AJvYcCWfMO9gabqXobIs9IaR5OfmokZglfZx9mfOF3D6Re1oeaCTvcD/NLoO7rtt2LBjiVvktAfAZEbqwLLXRd0g@vger.kernel.org, AJvYcCWkU4UY00BpWaPU4jdDK4VNJGhF/RDekehglCECnXr5o/2cBQNXEO/8VqNs0wgVaEfw8oOFt90Sl2sP@vger.kernel.org, AJvYcCXLUlXlKbYvPeDSohLPnRvR1tSD8LbSZFQUDfgaSOAo5u5LymsOIvWvav4jhi+u9GNgnzelYPhDIdnANg==@vger.kernel.org, AJvYcCXcdoWc7WanchgGoUNlTaP0EGnaPHszw+BdXQXbb7xVSobDDPyz9jaax40C2Gz4ZXi/VRVhEvCyTfyMGes2VfvBFOA=@vger.kernel.org, AJvYcCXh9HAOeWp0vc73LPyouBtKPvpLXDM2+HRN73dWXh5uZ0aQu0iFMUIj5i/903eIiW3DmL7QjUtxEg==@vger.kernel.org
+X-Received: by 2002:a05:6102:e09:b0:4fc:b033:cdc5 with SMTP id
+ ada2fe7eead31-50fe9974df5mr1305485137.22.1755184225208; Thu, 14 Aug 2025
+ 08:10:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
-	dianders@chromium.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250814104753.195255-1-damon.ding@rock-chips.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250814143340eucas1p24ef13c4a8a272a5830bc0adbbc8206a2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
-X-EPHeader: CA
-X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
-References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
-	<20250814104753.195255-1-damon.ding@rock-chips.com>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-111-b3bf97b038dc@redhat.com>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-111-b3bf97b038dc@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Aug 2025 17:10:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXnN+4B1=RhOOHZ9mCN4e4WnfjtY_HO1t+176=dSs26Qw@mail.gmail.com>
+X-Gm-Features: Ac12FXz03sJgdAZuxBhvZVUnciJ_u8JIfA74KaWnv048j9en2I4ZzU7p0Ef3ecQ
+Message-ID: <CAMuHMdXnN+4B1=RhOOHZ9mCN4e4WnfjtY_HO1t+176=dSs26Qw@mail.gmail.com>
+Subject: Re: [PATCH 111/114] clk: divider: remove round_rate() in favor of determine_rate()
+To: bmasney@redhat.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
+	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
+	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 14.08.2025 12:47, Damon Ding wrote:
-> PATCH 1 is a small format optimization for struct analogid_dp_device.
-> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
-> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
-> PATCH 7 is to apply the drm_bridge_connector helper.
-> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
-> PATCH 11-12 are preparations for apply panel_bridge helper.
-> PATCH 13 is to apply the panel_bridge helper.
-
-This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig, 
-so it causes build break:
-
-drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to 
-`drm_bridge_connector_init'
-make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
-
-After adding this dependency, the Exynos DP driver stops working. On 
-Samsung Snow Chromebook I observed following issue:
-
-[    4.534220] exynos-dp 145b0000.dp-controller: failed to attach 
-following panel or bridge (-16)
-[    4.543428] exynos-drm exynos-drm: failed to bind 
-145b0000.dp-controller (ops exynos_dp_ops): -16
-[    4.551775] exynos-drm exynos-drm: adev bind failed: -16
-[    4.556559] exynos-dp 145b0000.dp-controller: probe with driver 
-exynos-dp failed with error -16
-
-I will investigate details later in the evening.
-
-> Damon Ding (13):
->    drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
->    drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
->      &drm_bridge_funcs.atomic_enable
->    drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
->    drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
->    drm/bridge: exynos_dp: Remove unused &exynos_dp_device.connector
->    drm/bridge: analogix_dp: Remove redundant
->      &analogix_dp_plat_data.skip_connector
->    drm/bridge: analogix_dp: Apply drm_bridge_connector helper
->    drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
->    drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
->    drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
->    drm/bridge: analogix_dp: Remove panel disabling and enabling in
->      analogix_dp_set_bridge()
->    drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
->      in analogix_dp_unbind()
->    drm/bridge: analogix_dp: Apply panel_bridge helper
+On Mon, 11 Aug 2025 at 17:19, Brian Masney via B4 Relay
+<devnull+bmasney.redhat.com@kernel.org> wrote:
+> From: Brian Masney <bmasney@redhat.com>
 >
->   .../drm/bridge/analogix/analogix_dp_core.c    | 384 ++++++++++--------
->   .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
->   drivers/gpu/drm/exynos/exynos_dp.c            |  48 +--
->   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  49 +--
->   include/drm/bridge/analogix_dp.h              |   7 +-
->   5 files changed, 248 insertions(+), 245 deletions(-)
+> This driver implements both the determine_rate() and round_rate() clk
+> ops, and the round_rate() clk ops is deprecated. When both are defined,
+> clk_core_determine_round_nolock() from the clk core will only use the
+> determine_rate() clk ops. Also all clk drivers that directly calls
+> divider's round_rate() have been migrated over to determine_rate(). So
+> let's remove the round_rate() clk ops.
 >
-> ---
->
-> Changes in v2:
-> - Update Exynos DP driver synchronously.
-> - Move the panel/bridge parsing to the Analogix side.
->
-> Changes in v3:
-> - Rebase for the existing devm_drm_bridge_alloc() applying commit.
-> - Fix the typographical error of panel/bridge check in exynos_dp_bind().
-> - Squash all commits related to skip_connector deletion in both Exynos and
->    Analogix code into one.
-> - Apply panel_bridge helper to make the codes more concise.
-> - Fix the handing of bridge in analogix_dp_bridge_get_modes().
-> - Remove unnecessary parameter struct drm_connector* for callback
->    &analogix_dp_plat_data.attach().
-> - In order to decouple the connector driver and the bridge driver, move
->    the bridge connector initilization to the Rockchip and Exynos sides.
->
-> Changes in v4:
-> - Rebase for the applied &drm_bridge_funcs.detect() modification commit.
-> - Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
-> - Drop the drmm_encoder_init() modification commit.
-> - Rename the &analogix_dp_plat_data.bridge to
->    &analogix_dp_plat_data.next_bridge.
->
-Best regards
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
