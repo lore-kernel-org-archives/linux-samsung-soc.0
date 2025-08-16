@@ -1,172 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DDD1DD9AC;
-	Fri, 15 Aug 2025 14:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E34501A;
+	Sat, 16 Aug 2025 00:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755268932; cv=none; b=SNhpiggnkyeE9A40sTIS95MDv1GE+NrbqcxwEUJI6oJej7AM2cdvzeCFScha1rZK+f/f/Z3Vto/lRpVbPEEb0uvlbXjXrtna2B3INUDpqC6zffP78GwWZK+tg8NEm3lZorToO1CTgrz2utfyFe82d9NHJiBDnmdFLOYya1vf9As=
+	t=1755304587; cv=none; b=Vsdk5t3lcD/hrKzn26JEp6XrWSytH7LC99rDyqwbTiNYG0h0WuB0fRftD+DU9CoQ5Yrs4k4lIEmi4Oa31sZNN2v8gmH3IPBllKOVDF0/lo7tFhWS6D8v2DnnPGgqKLSYFSBEW+1FHvxCk59NaWFqCakUh/XM9qRPhcdUzfTO+Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755268932; c=relaxed/simple;
-	bh=3eUf4UXirGpUX0gw3VvalDgnQQxUYuzOa7d+Bn86Fb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uoFmnoQUiiydNZvBSIwjw1eFMinxeq2dGKl6YT05B4duAUcyXIcx+CZ7jQuJ5taxR7mj7ziRg1uLszZAQ4/r/WbMrgUwP7rVOSMDZcEBij0JMWC0f41d7cXPPdoszmT7Q+eNY2Dl1gb2xUtotHKAg+E5n1JbABVeQWDAIsFn52o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGhHpuiS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755304587; c=relaxed/simple;
+	bh=benNazeuPaouG/+e8wLXd4fxOv6Us5y+9Sh2v9/dsfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+kyY821p98y/Rr/Fq/6IL3NZ8CAahEkcnQtg3KFe6K56wywT2ZO7yE8e8RgEeunwLKNTR8Qete/TeIl+X+eh4DsJpfL4PxGUIOPEfAyZwYolsF7n1iHcS0y2YNyPVOXKDrPU3E7PK0oGZNE0t5JaR+ibIgDmMhPq9d/jKFhZaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mJOdlNAh; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGhHpuiS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B35C4CEEB;
-	Fri, 15 Aug 2025 14:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755268931;
-	bh=3eUf4UXirGpUX0gw3VvalDgnQQxUYuzOa7d+Bn86Fb0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QGhHpuiSTtGAbt/6dlTCnnoTA4ZplxFC8Tro0GJAdbAh12tMNEUSLu07z11OvQBvk
-	 oHTf5TJS/YKStrrrPHeWRzwJ0jGE6j5AZ1tbRvaZy3dDmEE9KCuVb15MPpzSH6J/gw
-	 2nlRciQR5ILTUmZcjfPb8Wftcr9/dguuRdUZKw9cWJDeaG76YAPPH1GvTVv9P/kSEx
-	 wLYcS3eJZ7unChNgWOYh7wQNPjdRjal2zeZDCWKyPnLkisSlJQ+WGVCBgVhn2LIrAt
-	 +qG7XHhqCY/zS15DuM72YtrsT2tpKSGGxqzGtUU2p/oH3AF5g3+H8o04kc5YGhgMBJ
-	 knwp+/59e078g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	David Airlie <airlied@gmail.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Drew Fustini <fustini@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	Fabio Estevam <festevam@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Fu Wei <wefu@redhat.com>,
-	Guo Ren <guoren@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	imx@lists.linux.dev,
-	Iwona Winiarska <iwona.winiarska@intel.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-actions@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-pwm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-rtc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mJOdlNAh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755304585; x=1786840585;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=benNazeuPaouG/+e8wLXd4fxOv6Us5y+9Sh2v9/dsfc=;
+  b=mJOdlNAhAO+1VHVjjrYso7JmNsr0Sy+pQ5kYpBEqkgozEhGIYaoiy2Ln
+   RI7ynZ9Ffvv2LoR5vQoSHiIZexSlSAixki6lmuzJSMLJOOm2e/c8uEF0h
+   BxPZscGOx97/ukND+ymEAwtnRcA+YFS7x/3Sd56Vk4MV1K+SYaWIMdxmP
+   vsEbtMcIqYTeSMJLbf3ge+8CKkYyfVY9pCG4UeIrYvQnEzqB1ozKAu3/Y
+   lpVIHFwbbCavonCLDKZDeK08cgAvGDJqUXm2Sq6RanJYlxF59oDM4yyl9
+   X2ClZH+dpin719Q+FSpvS3Qw3rbz1hweO4UBUI0RtNSFokRUkG9Rj1Il+
+   w==;
+X-CSE-ConnectionGUID: wRmwqNWlQYOsPU2dNupwXg==
+X-CSE-MsgGUID: iYiDwLKeRLKoEiIGMdez4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61465016"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="61465016"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 17:36:25 -0700
+X-CSE-ConnectionGUID: XsfJWJHDRiucVH5KSe51BA==
+X-CSE-MsgGUID: NSRhkyfJQCqWWqVNaOYoEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="166309080"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 15 Aug 2025 17:36:18 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un4u8-000CSI-05;
+	Sat, 16 Aug 2025 00:36:16 +0000
+Date: Sat, 16 Aug 2025 08:35:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	Liu Ying <victor.liu@nxp.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Nancy Yuen <yuenn@google.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	openbmc@lists.ozlabs.org,
-	Patrick Venture <venture@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Yangtao Li <tiny.windzz@gmail.com>,
-	Zhang Rui <rui.zhang@intel.com>
-Subject: Re: (subset) [PATCH 00/21] treewide: remove unneeded 'fast_io' parameter in regmap_config
-Date: Fri, 15 Aug 2025 09:42:02 -0500
-Message-ID: <175526892008.370600.8859545110801188375.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
-References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v4 08/13] drm/bridge: analogix_dp: Add new API
+ analogix_dp_finish_probe()
+Message-ID: <202508160857.yC3oMucJ-lkp@intel.com>
+References: <20250814104753.195255-9-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814104753.195255-9-damon.ding@rock-chips.com>
+
+Hi Damon,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-exynos/exynos-drm-next]
+[also build test ERROR on rockchip/for-next linus/master v6.17-rc1 next-20250815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Damon-Ding/drm-bridge-analogix_dp-Formalize-the-struct-analogix_dp_device/20250814-185009
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git exynos-drm-next
+patch link:    https://lore.kernel.org/r/20250814104753.195255-9-damon.ding%40rock-chips.com
+patch subject: [PATCH v4 08/13] drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
+config: x86_64-randconfig-001-20250816 (https://download.01.org/0day-ci/archive/20250816/202508160857.yC3oMucJ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160857.yC3oMucJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508160857.yC3oMucJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: vmlinux.o: in function `analogix_dp_finish_probe':
+>> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1700: undefined reference to `devm_of_dp_aux_populate_bus'
 
 
-On Wed, 13 Aug 2025 18:14:46 +0200, Wolfram Sang wrote:
-> While working on a driver using regmap with MMIO, I wondered if I need
-> to set 'fast_io' in the config. Turned out I don't need to, so I added
-> documentation for it with commit ffc72771ff6e ("regmap: Annotate that
-> MMIO implies fast IO").
-> 
-> This series fixes the existing users in the tree which needlessly set
-> the flag. They have been found using this coccinelle script:
-> 
-> [...]
+vim +1700 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 
-Applied, thanks!
+  1695	
+  1696	int analogix_dp_finish_probe(struct analogix_dp_device *dp)
+  1697	{
+  1698		int ret;
+  1699	
+> 1700		ret = devm_of_dp_aux_populate_bus(&dp->aux, analogix_dp_aux_done_probing);
+  1701		if (ret) {
+  1702			/*
+  1703			 * If devm_of_dp_aux_populate_bus() returns -ENODEV, the done_probing() will
+  1704			 * not be called because there are no EP devices. Then the callback function
+  1705			 * analogix_dp_aux_done_probing() will be called directly in order to support
+  1706			 * the other valid DT configurations.
+  1707			 *
+  1708			 * NOTE: The devm_of_dp_aux_populate_bus() is allowed to return -EPROBE_DEFER.
+  1709			 */
+  1710			if (ret != -ENODEV) {
+  1711				dev_err(dp->dev, "failed to populate aux bus\n");
+  1712				return ret;
+  1713			}
+  1714	
+  1715			return analogix_dp_aux_done_probing(&dp->aux);
+  1716		}
+  1717	
+  1718		return 0;
+  1719	}
+  1720	EXPORT_SYMBOL_GPL(analogix_dp_finish_probe);
+  1721	
 
-[18/21] soc: remove unneeded 'fast_io' parameter in regmap_config
-        commit: 5d8a9c8401648d338d072a488d455ed4611c5d4b
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
