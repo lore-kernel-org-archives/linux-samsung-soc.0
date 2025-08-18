@@ -1,32 +1,32 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AA32F0C5D;
-	Mon, 18 Aug 2025 09:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473B27A477;
+	Mon, 18 Aug 2025 09:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755508922; cv=none; b=ZO3bGk090MeI337HMMhhBUgTlw4zm49RztfHZ2Sd+Cve0ROjA/9FS+zSdobzYBxB/Vu5PYOIulhfy/ZCeXs0VZmQLs9+KXqVOiwYAUHHQTksEiSsSlwU06nNIggDZzJBUraaptCCqSlpXkQrI5zE55/peW5zlt5gZLdY2guTazI=
+	t=1755509457; cv=none; b=KRYGbxOwqnWvwz5ucan5hH/1kDFunZny6qQIEIdreCn+zqMC7B8ZdjEABPKBIJS/5JITHuL8vNMoGR0o+IgmFxBtIJ++iJeZg9IoxPn178JF2Wab5mylEGNSVBhS9dFBN4Aff8iWDSGJ6eQNu8nOEOSR3oUglyAy5W5oSKP1Ico=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755508922; c=relaxed/simple;
-	bh=kqWkwpZeDd3/I+FFiy2R27j1WrvPesd6DRcrbiWwlas=;
+	s=arc-20240116; t=1755509457; c=relaxed/simple;
+	bh=H/RXtCGHHBQ1De/TaksVJ3qWD5+W1hECG5Q6BNf8hho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cMWLZV+B4YM29ETV9SlzBfqaryV5OFD6hRDrMVN9uwldEl56X6eA5sheDKT/dcgtHHJL3IM/ayjApjB92c6/y2g/iIRWsGraeBZwB66g2aS3M/qalmO7e7OU7lWZtLW/HAObHIFRIkBZt0zwLaL/2BBYsHccUFwIQq0raFF9azk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MiNljGcw; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=kD/BnymMtDxQudn6FXKj0Kr99LOa1scjkxzQRUeFHDoQpgWYzwgS4P8bVmWAhu/QXArkxgW/Z7fGAJ87Sfor9yVu3T2dq4u+LXnyP+YWT7eBhKJqOHaRFn3NGRYqR3nFg7fmSeTIGYYrqUfQI6R7yEzEdR7mjnYNrwyk5j9ck04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WEvCwHrt; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MiNljGcw"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WEvCwHrt"
 Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9B7B417D1;
-	Mon, 18 Aug 2025 11:20:58 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A84E817D1;
+	Mon, 18 Aug 2025 11:29:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755508858;
-	bh=kqWkwpZeDd3/I+FFiy2R27j1WrvPesd6DRcrbiWwlas=;
+	s=mail; t=1755509395;
+	bh=H/RXtCGHHBQ1De/TaksVJ3qWD5+W1hECG5Q6BNf8hho=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MiNljGcwNxjzMcy1MqNDcTJD1GeWwOnpxjDNCVBmYPbX8wToXu5Dbi+7oatKDBds1
-	 pJOX746hIzx1pUtfClWxjOehH97MfSZLhhOpJRpwsem6DIamO9EzhWWPeyaRvEMAOv
-	 FMnsDM4Km1i9WLuos2TwoKQxhtibpk3R77xvujxo=
-Date: Mon, 18 Aug 2025 12:21:33 +0300
+	b=WEvCwHrtO2zW5f35Nzm4LD1pik4x3m01g/rzVvq5amdOzMDfxcHEbM1SBjhuZlUbn
+	 cdHrFSzhbRD36iU9dU+fKvvVVshrRm+mbJ8cLFex0lqSZnIQV0Ha12azlU7PpeCFla
+	 GIGsF+cQc6JPBw8OXJRgPKDt1IUfesZndTSM1xpY=
+Date: Mon, 18 Aug 2025 12:30:30 +0300
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Inbaraj E <inbaraj.e@samsung.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
@@ -42,12 +42,12 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	kernel@pengutronix.de, festevam@gmail.com,
 	linux-media@vger.kernel.org, imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 05/12] media: imx-mipi-csis: Move clk to
- mipi_csis_info structure
-Message-ID: <20250818092133.GA5862@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v2 08/12] media: imx-mipi-csis: Add support to dump all
+ vc regs
+Message-ID: <20250818093030.GB5862@pendragon.ideasonboard.com>
 References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141025epcas5p2b226c4eaab5d60d0e95f684e2ef930f2@epcas5p2.samsung.com>
- <20250814140943.22531-6-inbaraj.e@samsung.com>
+ <CGME20250814141041epcas5p2b281659391a8e45c95e8db21d9867f98@epcas5p2.samsung.com>
+ <20250814140943.22531-9-inbaraj.e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,90 +56,56 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250814140943.22531-6-inbaraj.e@samsung.com>
+In-Reply-To: <20250814140943.22531-9-inbaraj.e@samsung.com>
 
 Hi Inbaraj,
 
-On Thu, Aug 14, 2025 at 07:39:36PM +0530, Inbaraj E wrote:
-> clock names in NXP SoC's is different from the FSD SoC. Inorder to
+Please see [1] and in particular [2]. I would like to get that series
+merged for v6.18, but it's missing reviews. If you want to speed it up,
+you can review the patches :-)
 
-s/clock/Clock/
-s/Inorder/In order/
+[1] https://lore.kernel.org/linux-media/20250608235840.23871-1-laurent.pinchart@ideasonboard.com
+[2] https://lore.kernel.org/linux-media/20250608235840.23871-9-laurent.pinchart@ideasonboard.com/
 
-Is the difference really a matter of SoCs, or is it because the FSD SoC
-uses a different version of the IP ?
-
-I also suspect that the "phy" clock was added by mistake, and isn't
-needed in NXP SoCs. Could you please check and confirm if the v3.3 and
-v3.6.3 versions of the IP have an input PHY clock ?
-
-> extend this driver to use for FSD SoC. Move the clock names to
-> mipi_csis_info structure.
+On Thu, Aug 14, 2025 at 07:39:39PM +0530, Inbaraj E wrote:
+> Extend support to dump all 4 virtual channel register.
 > 
 > Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
 > ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
+>  drivers/media/platform/nxp/imx-mipi-csis.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
 > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index 2beb5f43c2c0..4afa75734f05 100644
+> index 4f6c417fdf58..c1653a738854 100644
 > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
 > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -267,6 +267,8 @@ static const struct mipi_csis_event mipi_csis_events[] = {
+> @@ -876,11 +876,26 @@ static int mipi_csis_dump_regs(struct mipi_csis_device *csis)
+>  		{ MIPI_CSIS_DPHY_SCTRL_L, "DPHY_SCTRL_L" },
+>  		{ MIPI_CSIS_DPHY_SCTRL_H, "DPHY_SCTRL_H" },
+>  		{ MIPI_CSIS_ISP_CONFIG_CH(0), "ISP_CONFIG_CH0" },
+> +		{ MIPI_CSIS_ISP_CONFIG_CH(1), "ISP_CONFIG_CH1" },
+> +		{ MIPI_CSIS_ISP_CONFIG_CH(2), "ISP_CONFIG_CH2" },
+> +		{ MIPI_CSIS_ISP_CONFIG_CH(3), "ISP_CONFIG_CH3" },
+>  		{ MIPI_CSIS_ISP_RESOL_CH(0), "ISP_RESOL_CH0" },
+> +		{ MIPI_CSIS_ISP_RESOL_CH(1), "ISP_RESOL_CH1" },
+> +		{ MIPI_CSIS_ISP_RESOL_CH(2), "ISP_RESOL_CH2" },
+> +		{ MIPI_CSIS_ISP_RESOL_CH(3), "ISP_RESOL_CH3" },
+>  		{ MIPI_CSIS_SDW_CONFIG_CH(0), "SDW_CONFIG_CH0" },
+> +		{ MIPI_CSIS_SDW_CONFIG_CH(1), "SDW_CONFIG_CH1" },
+> +		{ MIPI_CSIS_SDW_CONFIG_CH(2), "SDW_CONFIG_CH2" },
+> +		{ MIPI_CSIS_SDW_CONFIG_CH(3), "SDW_CONFIG_CH3" },
+>  		{ MIPI_CSIS_SDW_RESOL_CH(0), "SDW_RESOL_CH0" },
+> +		{ MIPI_CSIS_SDW_RESOL_CH(1), "SDW_RESOL_CH1" },
+> +		{ MIPI_CSIS_SDW_RESOL_CH(2), "SDW_RESOL_CH2" },
+> +		{ MIPI_CSIS_SDW_RESOL_CH(3), "SDW_RESOL_CH3" },
+>  		{ MIPI_CSIS_DBG_CTRL, "DBG_CTRL" },
+>  		{ MIPI_CSIS_FRAME_COUNTER_CH(0), "FRAME_COUNTER_CH0" },
+> +		{ MIPI_CSIS_FRAME_COUNTER_CH(1), "FRAME_COUNTER_CH1" },
+> +		{ MIPI_CSIS_FRAME_COUNTER_CH(2), "FRAME_COUNTER_CH2" },
+> +		{ MIPI_CSIS_FRAME_COUNTER_CH(3), "FRAME_COUNTER_CH3" },
+>  	};
 >  
->  #define MIPI_CSIS_NUM_EVENTS ARRAY_SIZE(mipi_csis_events)
->  
-> +#define MIPI_CSIS_MAX_CLOCKS	4
-> +
->  enum mipi_csis_clk {
->  	MIPI_CSIS_CLK_PCLK,
->  	MIPI_CSIS_CLK_WRAP,
-> @@ -274,13 +276,6 @@ enum mipi_csis_clk {
->  	MIPI_CSIS_CLK_AXI,
->  };
->  
-> -static const char * const mipi_csis_clk_id[] = {
-> -	"pclk",
-> -	"wrap",
-> -	"phy",
-> -	"axi",
-> -};
-> -
->  enum mipi_csis_version {
->  	MIPI_CSIS_V3_3,
->  	MIPI_CSIS_V3_6_3,
-> @@ -289,6 +284,7 @@ enum mipi_csis_version {
->  struct mipi_csis_info {
->  	enum mipi_csis_version version;
->  	unsigned int num_clocks;
-> +	const char *clk_names[MIPI_CSIS_MAX_CLOCKS];
->  };
->  
->  struct mipi_csis_device {
-> @@ -697,7 +693,7 @@ static int mipi_csis_clk_get(struct mipi_csis_device *csis)
->  		return -ENOMEM;
->  
->  	for (i = 0; i < csis->info->num_clocks; i++)
-> -		csis->clks[i].id = mipi_csis_clk_id[i];
-> +		csis->clks[i].id = csis->info->clk_names[i];
->  
->  	ret = devm_clk_bulk_get(csis->dev, csis->info->num_clocks,
->  				csis->clks);
-> @@ -1539,12 +1535,14 @@ static const struct of_device_id mipi_csis_of_match[] = {
->  		.data = &(const struct mipi_csis_info){
->  			.version = MIPI_CSIS_V3_3,
->  			.num_clocks = 3,
-> +			.clk_names = {"pclk", "wrap", "phy"},
->  		},
->  	}, {
->  		.compatible = "fsl,imx8mm-mipi-csi2",
->  		.data = &(const struct mipi_csis_info){
->  			.version = MIPI_CSIS_V3_6_3,
->  			.num_clocks = 4,
-> +			.clk_names = {"pclk", "wrap", "phy", "axi"},
->  		},
->  	},
->  	{ /* sentinel */ },
+>  	unsigned int i;
 
 -- 
 Regards,
