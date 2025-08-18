@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72083002BA;
-	Mon, 18 Aug 2025 08:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB2F22F01;
+	Mon, 18 Aug 2025 08:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505466; cv=none; b=g+3I7Q22C9YZdRWy177TrbGeAup2zPMzILx+Pj3ifpLSypMBEHFcxDupRvv0yrIV6tkJoB/G5TehzrQpFBI1Q2idu9aFSsYSXLiBYPGE/gHX1HRZIqy9m43qWkU/qjEB5jfLBQczaNzVOg7dGPZaixWBhIwU7nMK2/E76WB/cXU=
+	t=1755505604; cv=none; b=jy6hDaGgwuGBuCMZjfefYs4G4EJERIngIQ+CSD1oYUsndFy3mgfIx1V3CfrjQyXQahjE1s70PaErN65f1Uoh+ZBW0ju2AiJmnEW+VxOiezLFXHVwEmF7yz77qkl+zUdxwTf4YLuEYon4htQPUFyLGfQIkZnnso66IqI49J697bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505466; c=relaxed/simple;
-	bh=MiQPrxEJ/teaQmDKrGY2HdIgF3uIH4Toe8Kn3G31yMc=;
+	s=arc-20240116; t=1755505604; c=relaxed/simple;
+	bh=Vm8cWvKgpjFAKW99yrjp0C+LOL3fJWGgMbbY76Ih1RY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oYEotcCwfd9R0CX6wY/nK0ruTvnOMlCEnuFGoitvxx9G41fhdvN76ZJtKHmGcR5IkJqd+s4UhN7rxQuDWhXiiAFvN6OpdVh+etibJdhb1knn7rqsMCbpseqsXz+vZ9FEMY+z3rhW5haiyvF0+djykFwsUn0CuFsw0Pq2YefDSFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=df1PTFHI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=oXrLZ5wf/x0eZ4MuF8LOpJdCTLsA2YbQC62R5fXnguH3th7+lG0p67v12LWOj518BQXcLI9lgsU5HYSx8laYoVyTo+m7vElxua0VPp5VsOGTk5rKLfdqNskLM1+yShHjv9eFgLbPBVlU9xZscx242DPzPlp036ww85RJwnLoWH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFsv9ZC6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="df1PTFHI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFCDC4CEEB;
-	Mon, 18 Aug 2025 08:24:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFsv9ZC6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A772C4CEED;
+	Mon, 18 Aug 2025 08:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755505465;
-	bh=MiQPrxEJ/teaQmDKrGY2HdIgF3uIH4Toe8Kn3G31yMc=;
+	s=k20201202; t=1755505602;
+	bh=Vm8cWvKgpjFAKW99yrjp0C+LOL3fJWGgMbbY76Ih1RY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=df1PTFHIi6uTv0vhbGA3O8UNJwOvUdwLBcvzj24UVzXxsXIZgsyZsS/Kdw+qQZGxU
-	 Ys8tJAIYvHAS22Uvd9tUxKKKEEEikqqgbld4mBTnY4spxKxGzznPaFER/Ts3rDZ/Hh
-	 QMupsVPOTSGFiucJ3s9TpdQAFUsSOdD+pALA3J1LE5kJeL8Xqo8EDdpYZvRKSTvE2y
-	 9J/TyKTJUpP8XWDZR85L3+Bv8vIPuoDkgNiwH6CigycGmXo1aJboeAlsN3a2TMOdkE
-	 g+GrhNjH198aQO5V8eCfaZ2Qoict+ggphf+0X8Gb7FVo5JvCGeiicCcXiYQLdMhKgB
-	 uHVTONJkAR5Sw==
-Message-ID: <ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
-Date: Mon, 18 Aug 2025 10:24:17 +0200
+	b=FFsv9ZC6MF/RWiBx47eLyFD9CBfESKS/m7zZ90r6SnLHCScdp3+iudxbEnezGPWBd
+	 AsXQVeOqpXCQ61elmgUi8/QCp8aRkXglnamVhsmqxty9ZFtWIZFlWckKle8rgMXcKL
+	 xc77cPQ6M5AwyqFnc+tjARmMhuMpVFHH7eRSBa16aE9IOI3lJWilOdksaoTCGMaQEk
+	 nFsiU0jWFZkgY0/MY73Gp0cplRLHmTl3FaCpBvKRaT9Ubjm2pZgY7MYBXSS/oe4JTa
+	 WdIMwgcflSTu1e+cMbze+VRaUA12e3AGoVmNothVIG6NUHfAwdZruIB39D4aCoLFwJ
+	 xr5R9VC6Y5i9A==
+Message-ID: <1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
+Date: Mon, 18 Aug 2025 10:26:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD SoC
+Subject: Re: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
 To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
@@ -49,8 +49,8 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org
 References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
- <20250814140943.22531-4-inbaraj.e@samsung.com>
+ <CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
+ <20250814140943.22531-5-inbaraj.e@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,77 +96,275 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250814140943.22531-4-inbaraj.e@samsung.com>
+In-Reply-To: <20250814140943.22531-5-inbaraj.e@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/08/2025 16:09, Inbaraj E wrote:
-> Document the MIPI CSI2 controller device tree bindings for Tesla
-> FSD SoC
+> There is a csi dma and csis interface that bundles together to allow
 
-Explain the hardware.
+CSI DMA?
+What is CSIS?
+
+> csi2 capture.
+
+CSI2?
 
 > 
 > Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
 > ---
->  .../bindings/media/nxp,imx-mipi-csi2.yaml     | 88 ++++++++++++++-----
->  1 file changed, 68 insertions(+), 20 deletions(-)
+>  arch/arm64/boot/dts/tesla/fsd-evb.dts |  96 +++++
+>  arch/arm64/boot/dts/tesla/fsd.dtsi    | 552 ++++++++++++++++++++++++++
+>  2 files changed, 648 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> index 03a23a26c4f3..802fb1bd150d 100644
-> --- a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> +++ b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> @@ -14,7 +14,7 @@ description: |-
->    The NXP i.MX7 and i.MX8 families contain SoCs that include a MIPI CSI-2
->    receiver IP core named CSIS. The IP core originates from Samsung, and may be
->    compatible with some of the Exynos4 and S5P SoCs. i.MX7 SoCs use CSIS version
-> -  3.3, and i.MX8 SoCs use CSIS version 3.6.3.
-> +  3.3, i.MX8 SoCs use CSIS version 3.6.3 and FSD SoC uses CSIS version 4.3.
+> diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> index 9ff22e1c8723..dcc9a138cdb9 100644
+> --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> @@ -130,3 +130,99 @@ &serial_0 {
+>  &ufs {
+>  	status = "okay";
+>  };
+> +
+> +&mipicsis0 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis1 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis2 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis3 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis4 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis5 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis6 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis7 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis8 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis9 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis10 {
+> +	status = "okay";
+> +};
+> +
+> +&mipicsis11 {
+> +	status = "okay";
+> +};
+> +
+> +&csis0 {
+> +	status = "okay";
+> +};
+> +
+> +&csis1 {
+> +	status = "okay";
+> +};
+> +
+> +&csis2 {
+> +	status = "okay";
+> +};
+> +
+> +&csis3 {
+> +	status = "okay";
+> +};
+> +
+> +&csis4 {
+> +	status = "okay";
+> +};
+> +
+> +&csis5 {
+> +	status = "okay";
+> +};
+> +
+> +&csis6 {
+> +	status = "okay";
+> +};
+> +
+> +&csis7 {
+> +	status = "okay";
+> +};
+> +
+> +&csis8 {
+> +	status = "okay";
+> +};
+> +
+> +&csis9 {
+> +	status = "okay";
+> +};
+> +
+> +&csis10 {
+> +	status = "okay";
+> +};
+> +
+> +&csis11 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> index a5ebb3f9b18f..a83503e9c502 100644
+> --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
+> +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> @@ -493,6 +493,558 @@ clock_mfc: clock-controller@12810000 {
+>  			clock-names = "fin_pll";
+>  		};
 >  
->    While the CSI-2 receiver is separate from the MIPI D-PHY IP core, the PHY is
->    completely wrapped by the CSIS and doesn't expose a control interface of its
-> @@ -26,6 +26,7 @@ properties:
->        - enum:
->            - fsl,imx7-mipi-csi2
->            - fsl,imx8mm-mipi-csi2
-> +          - tesla,fsd-mipi-csi2
+> +		mipicsis0: mipi-csis@12640000 {
+
+Messed ordering. See DTS coding style.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+What is csis?
+
+> +			compatible = "tesla,fsd-mipi-csi2";
+> +			reg = <0x0 0x12640000 0x0 0x124>;
+> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clock_csi CAM_CSI0_0_IPCLKPORT_I_ACLK>,
+> +				<&clock_csi CAM_CSI0_0_IPCLKPORT_I_PCLK>;
+> +			clock-names = "aclk", "pclk";
+> +			samsung,syscon-csis = <&sysreg_cam 0x40c>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					mipi_csis_0_out: endpoint {
+> +						remote-endpoint = <&csis_in_0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		csis0: csis@12641000 {
+> +			compatible = "tesla,fsd-csis-media";
+> +			reg = <0x0 0x12641000 0x0 0x44c>;
+> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clock_csi CAM_CSI0_0_IPCLKPORT_I_ACLK>,
+> +				<&clock_csi CAM_CSI0_0_IPCLKPORT_I_PCLK>,
+> +				<&clock_csi CAM_CSI_PLL>;
+> +			clock-names = "aclk", "pclk", "pll";
+> +			iommus = <&smmu_isp 0x0 0x0>;
+> +			status = "disabled";
+> +
+> +			port {
+> +				csis_in_0: endpoint {
+> +					remote-endpoint = <&mipi_csis_0_out>;
+> +				};
+> +			};
+> +		};
+> +
+> +		mipicsis1: mipi-csis@12650000 {
+> +			compatible = "tesla,fsd-mipi-csi2";
+> +			reg = <0x0 0x12650000 0x0 0x124>;
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clock_csi CAM_CSI0_1_IPCLKPORT_I_ACLK>,
+> +				<&clock_csi CAM_CSI0_1_IPCLKPORT_I_PCLK>;
+> +			clock-names = "aclk", "pclk";
+> +			samsung,syscon-csis = <&sysreg_cam 0x40c>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					mipi_csis_1_out: endpoint {
+> +						remote-endpoint = <&csis_in_1>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		csis1: csis@12651000 {
+> +			compatible = "tesla,fsd-csis-media";
+> +			reg = <0x0 0x12651000 0x0 0x44c>;
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clock_csi CAM_CSI0_1_IPCLKPORT_I_ACLK>,
+> +				<&clock_csi CAM_CSI0_1_IPCLKPORT_I_PCLK>,
+> +				<&clock_csi CAM_CSI_PLL>;
+> +			clock-names = "aclk", "pclk", "pll";
+> +			iommus = <&smmu_isp 0x0 0x0>;
+> +			status = "disabled";
+> +
+> +			port {
+> +				csis_in_1: endpoint {
+> +					remote-endpoint = <&mipi_csis_1_out>;
+> +				};
+> +			};
+> +		};
+> +
+> +		mipicsis2: mipi-csis@12660000 {
+> +			compatible = "tesla,fsd-mipi-csi2";
+> +			reg = <0x0 0x12660000 0x0 0x124>;
+> +			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clock_csi CAM_CSI0_2_IPCLKPORT_I_ACLK>,
+> +				<&clock_csi CAM_CSI0_2_IPCLKPORT_I_PCLK>;
+> +			clock-names = "aclk", "pclk";
+> +			samsung,syscon-csis = <&sysreg_cam 0x40c>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					mipi_csis_2_out: endpoint {
+> +						remote-endpoint = <&csis_in_2>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		csis2: csis@12661000 {
 
 
-Isn't this Samsung CSI IP? Why are you adding it to NXP? Nothing in
-commit msg helps me to understand that.
+What is CSIS? Seems like copy paste from other Samsung code, but isn't
+this just CSI?
 
->        - items:
->            - enum:
->                - fsl,imx8mp-mipi-csi2
-> @@ -38,24 +39,21 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    minItems: 3
-> -    items:
-> -      - description: The peripheral clock (a.k.a. APB clock)
-> -      - description: The external clock (optionally used as the pixel clock)
-> -      - description: The MIPI D-PHY clock
-> -      - description: The AXI clock
-> +    minItems: 2
-> +    maxItems: 4
->  
->    clock-names:
-> -    minItems: 3
-> -    items:
-> -      - const: pclk
-> -      - const: wrap
-> -      - const: phy
-> -      - const: axi
-> +    minItems: 2
-> +    maxItems: 4
->  
->    power-domains:
->      maxItems: 1
->  
-> +  samsung,syscon-csis:
-
-samsung, so not nxp. Even more confusing.
+What is the meaning of this CSIS acronym?
 
 
 Best regards,
