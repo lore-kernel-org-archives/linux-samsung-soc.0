@@ -1,172 +1,243 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C49D221FDC;
-	Mon, 18 Aug 2025 09:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FAB326D6E;
+	Mon, 18 Aug 2025 12:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509657; cv=none; b=M+oFhntEkBI7Z2NsA2KW2KP7XztsLbZacZey8r4zcTq5kf3L2zDJLmbgTueN5b7Y59V0SndJQI0WM5TahDJYno4JE5UlT6c2xrKir4IqzENCmZgLaaidUc7SoNE8V1UMapDOqHvC3PWC7nS/gYcY40Rga13scEoEZQQHkWQwc4M=
+	t=1755519186; cv=none; b=JiyrAsExyrHbpUoGEX2n9u0cVkI2gkfLpiujhFjmNB4SQPlfv6eMtbVSejM9Yjhrl1/BuT63HhIsm364oWv+RMNm1q4/wyAeJDSyMvsPGVvDbyiCsfnBAuBFS24ICarvgG1D6UMon+FwSoQVpXyF36vgXJLBN8UC0MpkPswS5uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509657; c=relaxed/simple;
-	bh=aXdSfAR4983BNp7JPSaitHLvzBXoEwpGjFaYcoiR100=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ph4VNcjmnntRuQIO6tdx9tnIzoHqm1FQGqMQpa5ldYtLTbADiCvdirm9VIP+dtCJOEfCzd06tpQHf3kHrGjswtqfmMJ0M42hUdtklgsneAvBat27gKfRAqU+IkgrAaaNvINMQEq8SGz8Exj+ndSU2uJ7K6TLXHATPJqlq3TBQ4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qFpZvREc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1755519186; c=relaxed/simple;
+	bh=rp49452Teg70crejMOwAEBmVAEoVcBUXfqqRBjXnNik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IdffwLuxs6ScLEMmM2resXli/VXxfegMPknQey0b6rljCxKVEtas9Rd9UP/kLWThtodD3Ed7qRke2AuCt7HyewWX3UviPbHB6T08GkSXKerBe0h3ja1/07xHacsLRtKXZeNeF6lTmiCEOr4mstCJ8HpDZY/BcZ3pK8qXV7/vKJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=PSxNhDdZ; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qFpZvREc"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 820F12416;
-	Mon, 18 Aug 2025 11:33:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755509594;
-	bh=aXdSfAR4983BNp7JPSaitHLvzBXoEwpGjFaYcoiR100=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFpZvREcnMuHPIGb3EM8skBbhb2ObaIU7jEuzNsB+cq8A5yVEnZH6ML/uK7/znBNF
-	 ao4NfQQ/eQUGGOmHDSeL/+4mOxSY7VyVPD7WBv/oRu4Oc2z/c4FjolrY3X0WDKejMC
-	 rbi9ExxsgMNJUcWGOMLNZrlaACJKMT0TQ3I4dz1s=
-Date: Mon, 18 Aug 2025 12:33:49 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Inbaraj E <inbaraj.e@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
-	cw00.choi@samsung.com, rmfrfs@gmail.com, martink@posteo.de,
-	mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
-	catalin.marinas@arm.com, pankaj.dubey@samsung.com,
-	shradha.t@samsung.com, ravi.patel@samsung.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-	linux-samsung-soc@vger.kernel.org, kernel@puri.sm,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 07/12] media: imx-mipi-csis: Add support to configure
- specific vc
-Message-ID: <20250818093349.GC5862@pendragon.ideasonboard.com>
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141036epcas5p1fc02cea3f97534303673eb8453b6a18f@epcas5p1.samsung.com>
- <20250814140943.22531-8-inbaraj.e@samsung.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="PSxNhDdZ"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IAJpjQ011221;
+	Mon, 18 Aug 2025 14:12:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	vF8oVy6/ZMtowVhAnxsrKfpp6JXqFRBEiZTXs8imWKc=; b=PSxNhDdZaYr8EoNw
+	8aZMzG+HAc5zZ/G6iGzm7FWO+i9981Jvk6JfEpE+hG0VOKlKZPoIa46QiLFU4DYx
+	sUznRsmqgIiHeCSbPJoiisAuzQzZ6hgkO4CmmJIHG7kce+fJ4nFBIscnYKnoIKbX
+	3aYq4auNUAVqWfPNpND0uGOiy/LN0NcMei0rDbyUEd+d+AzIAj5hnYsC2UnS0xR7
+	owFelE/4Cju4Q5ND97wzWltji6xPXOGJ9DX+MuHSSWyyGgT9iyzcWsaxj1P2gIhN
+	ZoZAmieb/bp+Dh/tSZAo0g1gI8TJ7Cp2gxhDUWfG1cXNsAamFT96b+DTHpo8oG9Y
+	4YsXyw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48k3j4capj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 14:12:15 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DD37C40046;
+	Mon, 18 Aug 2025 14:10:01 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CD98B6D4186;
+	Mon, 18 Aug 2025 14:08:47 +0200 (CEST)
+Received: from [10.48.87.121] (10.48.87.121) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
+ 2025 14:08:43 +0200
+Message-ID: <20437dbf-9d45-4a51-815f-ad1d1d15346e@foss.st.com>
+Date: Mon, 18 Aug 2025 14:08:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250814140943.22531-8-inbaraj.e@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 058/114] clk: stm32: stm32-core: convert from round_rate()
+ to determine_rate()
+To: <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+        "Cristian Marussi" <cristian.marussi@arm.com>,
+        Chen Wang
+	<unicorn_wang@outlook.com>,
+        Inochi Amaoto <inochiama@gmail.com>,
+        Nicolas
+ Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Keguang Zhang
+	<keguang.zhang@gmail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        "Takao Orito" <orito.takao@socionext.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Huang
+	<ychuang3@nuvoton.com>,
+        Shan-Chun Hung <schung@nuvoton.com>,
+        "Vladimir
+ Zapolskiy" <vz@mleia.com>,
+        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Samuel Holland
+	<samuel.holland@sifive.com>,
+        Yixun Lan <dlan@gentoo.org>,
+        Steen Hegelund
+	<Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        <UNGLinuxDriver@microchip.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Michal Simek <michal.simek@amd.com>,
+        "Maxime
+ Ripard" <mripard@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?=
+	<afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>, Sven Peter
+	<sven@kernel.org>,
+        Janne Grunau <j@jannau.net>, Alyssa Rosenzweig
+	<alyssa@rosenzweig.io>,
+        Neal Gompa <neal@gompa.dev>,
+        Eugeniy Paltsev
+	<Eugeniy.Paltsev@synopsys.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>,
+        Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner
+	<heiko@sntech.de>,
+        Andrea della Porta <andrea.porta@suse.com>,
+        "Krzysztof
+ Kozlowski" <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        "Ulf
+ Hansson" <ulf.hansson@linaro.org>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>,
+        Nobuhiro Iwamatsu
+	<nobuhiro1.iwamatsu@toshiba.co.jp>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <sophgo@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linux-riscv@lists.infradead.org>,
+        <spacemit@lists.linux.dev>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <patches@opensource.cirrus.com>, <linux-actions@lists.infradead.org>,
+        <asahi@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <soc@lists.linux.dev>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-58-b3bf97b038dc@redhat.com>
+Content-Language: en-US
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-58-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
 
-Hi Inbaraj,
 
-On Thu, Aug 14, 2025 at 07:39:38PM +0530, Inbaraj E wrote:
-> MIPI_CSIS_V3_3 and MIPI_CSIS_V3_6_3 support streaming only on VC0.
+On 8/11/25 17:18, Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
+>
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+Reviewed-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-That doesn't appear to be true, at least for MIPI_CSIS_V3_6_3. I have a
-patch series that adds VC support for v3.6.3 in the i.MX8MP, and it has
-been susccessfully tested.
-
-> The
-> MIPI_CSIS_V4_3 present in the FSD SoC supports streaming on any one VC
-> out of four VCs. To extend support for the FSD SoC, add the ability to
-> configure a specific VC. The FSD CSI Rx can configure any one VC and
-> start streaming.
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
 > ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index a3e2c8ae332f..4f6c417fdf58 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -54,7 +54,7 @@
->  
->  /* CSIS common control */
->  #define MIPI_CSIS_CMN_CTRL			0x04
-> -#define MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW	BIT(16)
-> +#define MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW(n)	BIT(((n) + 16))
->  #define MIPI_CSIS_CMN_CTRL_INTER_MODE		BIT(10)
->  #define MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW_CTRL	BIT(2)
->  #define MIPI_CSIS_CMN_CTRL_RESET		BIT(1)
-> @@ -319,6 +319,7 @@ struct mipi_csis_device {
->  		u32 hs_settle;
->  		u32 clk_settle;
->  	} debug;
-> +	unsigned int vc;
->  };
->  
->  /* -----------------------------------------------------------------------------
-> @@ -544,9 +545,10 @@ static void __mipi_csis_set_format(struct mipi_csis_device *csis,
->  				   const struct csis_pix_format *csis_fmt)
->  {
->  	u32 val;
-> +	unsigned int vc = csis->vc;
->  
->  	/* Color format */
-> -	val = mipi_csis_read(csis, MIPI_CSIS_ISP_CONFIG_CH(0));
-> +	val = mipi_csis_read(csis, MIPI_CSIS_ISP_CONFIG_CH(vc));
->  	val &= ~(MIPI_CSIS_ISPCFG_ALIGN_32BIT | MIPI_CSIS_ISPCFG_FMT_MASK
->  		| MIPI_CSIS_ISPCFG_PIXEL_MASK);
->  
-> @@ -567,11 +569,11 @@ static void __mipi_csis_set_format(struct mipi_csis_device *csis,
->  		val |= MIPI_CSIS_ISPCFG_PIXEL_MODE_DUAL;
->  
->  	val |= MIPI_CSIS_ISPCFG_FMT(csis_fmt->data_type);
-> -	mipi_csis_write(csis, MIPI_CSIS_ISP_CONFIG_CH(0), val);
-> +	mipi_csis_write(csis, MIPI_CSIS_ISP_CONFIG_CH(vc), val);
->  
->  	/* Pixel resolution */
->  	val = format->width | (format->height << 16);
-> -	mipi_csis_write(csis, MIPI_CSIS_ISP_RESOL_CH(0), val);
-> +	mipi_csis_write(csis, MIPI_CSIS_ISP_RESOL_CH(vc), val);
->  }
->  
->  static int mipi_csis_calculate_params(struct mipi_csis_device *csis,
-> @@ -631,6 +633,7 @@ static void mipi_csis_set_params(struct mipi_csis_device *csis,
->  {
->  	int lanes = csis->bus.num_data_lanes;
->  	u32 val;
-> +	unsigned int vc = csis->vc;
->  
->  	val = mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
->  	val &= ~MIPI_CSIS_CMN_CTRL_LANE_NR_MASK;
-> @@ -648,7 +651,7 @@ static void mipi_csis_set_params(struct mipi_csis_device *csis,
->  	val = (0 << MIPI_CSIS_ISP_SYNC_HSYNC_LINTV_OFFSET)
->  	    | (0 << MIPI_CSIS_ISP_SYNC_VSYNC_SINTV_OFFSET)
->  	    | (0 << MIPI_CSIS_ISP_SYNC_VSYNC_EINTV_OFFSET);
-> -	mipi_csis_write(csis, MIPI_CSIS_ISP_SYNC_CH(0), val);
-> +	mipi_csis_write(csis, MIPI_CSIS_ISP_SYNC_CH(vc), val);
->  
->  	val = mipi_csis_read(csis, MIPI_CSIS_CLK_CTRL);
->  	val |= MIPI_CSIS_CLK_CTRL_WCLK_SRC;
-> @@ -669,7 +672,7 @@ static void mipi_csis_set_params(struct mipi_csis_device *csis,
->  	/* Update the shadow register. */
->  	val = mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
->  	mipi_csis_write(csis, MIPI_CSIS_CMN_CTRL,
-> -			val | MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW |
-> +			val | MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW(vc) |
->  			MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW_CTRL);
->  }
->  
-> @@ -945,6 +948,8 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
->  	struct v4l2_subdev_state *state;
->  	int ret;
->  
-> +	csis->vc = 0;
+>   drivers/clk/stm32/clk-stm32-core.c | 28 ++++++++++++++++++----------
+>   1 file changed, 18 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+> index 933e3cde0795386c3e5e6902aa0989cf3dffc01e..72825b9c36a4d3b8ba3f7615b9026c09ffaf88d1 100644
+> --- a/drivers/clk/stm32/clk-stm32-core.c
+> +++ b/drivers/clk/stm32/clk-stm32-core.c
+> @@ -351,14 +351,14 @@ static int clk_stm32_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>   	return ret;
+>   }
+>   
+> -static long clk_stm32_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> -					 unsigned long *prate)
+> +static int clk_stm32_divider_determine_rate(struct clk_hw *hw,
+> +					    struct clk_rate_request *req)
+>   {
+>   	struct clk_stm32_div *div = to_clk_stm32_divider(hw);
+>   	const struct stm32_div_cfg *divider;
+>   
+>   	if (div->div_id == NO_STM32_DIV)
+> -		return rate;
+> +		return 0;
+>   
+>   	divider = &div->clock_data->dividers[div->div_id];
+>   
+> @@ -369,14 +369,22 @@ static long clk_stm32_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>   		val =  readl(div->base + divider->offset) >> divider->shift;
+>   		val &= clk_div_mask(divider->width);
+>   
+> -		return divider_ro_round_rate(hw, rate, prate, divider->table,
+> -				divider->width, divider->flags,
+> -				val);
+> +		req->rate = divider_ro_round_rate(hw, req->rate,
+> +						  &req->best_parent_rate,
+> +						  divider->table,
+> +						  divider->width,
+> +						  divider->flags, val);
 > +
-
-Dynamic VC selection belongs to this patch, not patch 09/12. 09/12 does
-too many different things, it has to be split into one patch per
-feature.
-
->  	if (!enable) {
->  		v4l2_subdev_disable_streams(csis->source.sd,
->  					    csis->source.pad->index, BIT(0));
-
--- 
-Regards,
-
-Laurent Pinchart
+> +		return 0;
+>   	}
+>   
+> -	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
+> -					 rate, prate, divider->table,
+> -					 divider->width, divider->flags);
+> +	req->rate = divider_round_rate_parent(hw, clk_hw_get_parent(hw),
+> +					      req->rate,
+> +					      &req->best_parent_rate,
+> +					      divider->table,
+> +					      divider->width, divider->flags);
+> +
+> +	return 0;
+>   }
+>   
+>   static unsigned long clk_stm32_divider_recalc_rate(struct clk_hw *hw,
+> @@ -392,7 +400,7 @@ static unsigned long clk_stm32_divider_recalc_rate(struct clk_hw *hw,
+>   
+>   const struct clk_ops clk_stm32_divider_ops = {
+>   	.recalc_rate	= clk_stm32_divider_recalc_rate,
+> -	.round_rate	= clk_stm32_divider_round_rate,
+> +	.determine_rate = clk_stm32_divider_determine_rate,
+>   	.set_rate	= clk_stm32_divider_set_rate,
+>   };
+>   
+>
