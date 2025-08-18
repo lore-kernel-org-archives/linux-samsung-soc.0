@@ -1,142 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBED63314A2;
-	Mon, 18 Aug 2025 18:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9B25B1C7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2025 22:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541547; cv=none; b=g1OMUJ6Qr4RDhwJ+Ny5kHSUf0qLxOFNOWgB9ge5JyygcUJUst8vo/XO2AIJwmVQWF7fYn6uxS/5Fptoy+iacSXDyfFXDJL9BTVS/FI/5IGc2tRQKw6C5tDR01aMfsMSGAsYvOXZyjaRAj87PtW0Nk4msLM52ve3Iau5khQRAgdQ=
+	t=1755556048; cv=none; b=Qu0C2BO9tE52WmBlpnI382jKUvdLwN2UyONRMQ0mh6a+3vBhYt2UKX8gFzvwvzxfXluTwJRwVoQHdsTV5psXRcoLZTSr3KB7Pl+hhcw4lNaIP8j4sqkQDE2i11s19B4npfYOmbJAFFyeSNWkT3ZT7OMSW2xhsQZSvfduURtgbes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541547; c=relaxed/simple;
-	bh=P5OJ4RHbL7bfCZueIbVBkF40afwl0Pm482XBXI7/HfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=j/7DAsrVu5bMm/6j74ZWS6j+W/Atc7CHOzd1jZPP1GiRFR1NvnVf8HTPdkrCFPFsUw+5qQkLsYcigzmuTeNXEeMOMFYeJtEnmX9FtjOYNuWGOedVyHAgWKafDJ/hH2LtDwlQ7KUO27k9snEDqzwjH5d1UrYO3lq43gmMPYH6m0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDIrUk6e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755556048; c=relaxed/simple;
+	bh=4GnconOYETG187lwN0wKDqqPuWaknNEmUH5TmtWL1cM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kRbmWWhBbaMEHabaIOxQOXY620daSfEBrVQwqbifw7wGpuFnBe5vM6ksAS6rKFhDXAFT9pyRstdY2L2Ue4lpaYgGZV/648WJvSfC7bJPp0TrjjD0aUa3NPjRFmC6Bp9eo4Ggi2Vvgi6cUKBF/qG/ueTolUuRf5GRcfp9UzVGY74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xhm86hu2; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDIrUk6e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50078C4CEEB;
-	Mon, 18 Aug 2025 18:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755541546;
-	bh=P5OJ4RHbL7bfCZueIbVBkF40afwl0Pm482XBXI7/HfQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=IDIrUk6equNseS0ZrN+tjnJzBgBbvhGFPTLcNrmqpDYFo8ThI70gRQ1UQo83gHjLN
-	 y6axwix4PwvKDr3Qxm4V+5NyFfjqgcbavchlT1oHZgZygTQm9lVuS1d70g6BqQBdya
-	 50XI46xc97f1NcbV9SKLIwwXvcY/QHJfm5PPEZ4BRJ7f61zRejSLUpXnWGVDzcerDF
-	 fzJ9IGTpdNW9EmIJ52biPC64T7A73pMNSc5BRcd6QmhoC2Y9A4KEwaVUs17c44r9Zj
-	 4Ba762DlDExTmr4RoFgVk3fpKr7j0VmeHipw0KWx8OadDdKkSeegTBvmRmNl//M3xp
-	 UHGRuax/NOnLA==
-Date: Mon, 18 Aug 2025 13:25:44 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, mani@kernel.org,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
-	kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
-	jh80.chung@samsung.com, pankaj.dubey@samsung.com
-Subject: Re: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
-Message-ID: <20250818182544.GA534647@bhelgaas>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xhm86hu2"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e931c71a1baso4742920276.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2025 15:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755556044; x=1756160844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v6GHquVYXzgy3eg0gKU71NB7gwzG68GwWf56FpOt+cA=;
+        b=Xhm86hu2tQSdjW/onnnhODIDx9mo8V4ZDN9E9s7+0236Y3KrPJUSxJDupTYybZy4BW
+         vEQJzo7OEBRt6SmUJ+b2t1UYyT4g4Bz/c8BFj//DxQS5qW+JLUporocpywiINASY3Y7q
+         4gWPmMKvJ5XsjBs4IsCAr6O2UcW4cx+rh+eQVSsllwbpP7Ax8rKvLs71Pd2W9fSpSVY5
+         CpLzHHYJEscP1zFGaL70dpcjn8jfoAg+DJY+Shxc+GrJvWwfGNzi7ZAfMs0BM/7EBi3X
+         AoQN12IRz6fwOdpiEAMqeI+U7BHwhLaG+1NckB/F1DfKudwsInjLYUS81yD2eOGP24Jz
+         +2ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755556044; x=1756160844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v6GHquVYXzgy3eg0gKU71NB7gwzG68GwWf56FpOt+cA=;
+        b=PFaF2n6+dD+bZsxsIlQy3YPbhnBgpXKWWeukglCw/pCjNmSohkCMO8Zf77zRv+Jg5J
+         JKeR2+jChf8azl79WR6FCRu5LTUQ6kQOWqCrKsWkGQWf+1ywSrLjDMjCP6urMvLlJxHe
+         a0qWoxANv1Xnlj4YEUtsCRuVT2CiY6R5oVBeKR2kjjI1xlKs/OpBNIK68YXVv+toVEVJ
+         qL9bQLT0FTSBkAHsWsMzFPOa9G8ur90m73SGylC3vl/E79Y0xlaKVhUiLfOKl5z12JNK
+         zyWddE4LxPxNUJTBDabDuqlKdc0nfuP8sq8qaqlxIM+Il0HKOx5hiWBFzV0lXi0LSgBt
+         IdZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4JL0Z3pbpPQFQ95qDhtqHPTNB3WI1eX+od4H2DHfA6qsgINKSkyTu9cC/1x24UpobHuYRl9rovBlGx9O+eNvtVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+QBnCUXTKym5XoMgZm5AT62vmNL/+/QfYb9fbkTCxpqHM+Ikp
+	Mmg49UtiP/tYNReOx5hs1YgIc8+veIDTBlHk8EdmnoKyLaYW2LpyPSPRPhJeI8kxMDPwoGD9Ino
+	iHObpfcOn+yLnsMbSlIbMnmtUDqosGwFJ01Zg4IaazQ==
+X-Gm-Gg: ASbGncsayKuy+rB1D+mquXmkiAkKZelidPJ8IfhNwB86GRavRfEC2/tdickDppr8Ect
+	Lp0U9fyLIfUTxgBs2qNflqGGAzxLQuMtXEa6uav/XtimcNrzqDDOCL1hakp67rVC1AQ/aXcUvtL
+	7VXU/sXP/jyB1Me2HMJiDvcdLdLo/gtC1bjPvdgRnT/TXj/GYk2GSp5SCrYpLzgAgBGEpwv9mpy
+	/Ynbw==
+X-Google-Smtp-Source: AGHT+IEZsy19x5o98/r/4pLWO9YODI0vvSUQTbdAUdhq77x6WDR5zVwjMfdFgml+3tCPHJRWGhBSBH2CxRxauE2CLfo=
+X-Received: by 2002:a05:6902:f84:b0:e93:3d8b:4e3f with SMTP id
+ 3f1490d57ef6-e94e61bd04emr669336276.13.1755556044632; Mon, 18 Aug 2025
+ 15:27:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000d01dc1022$ad8c0740$08a415c0$@samsung.com>
+References: <CGME20250818022433epcas2p3fc48febfa6729645af6ebd088937c80c@epcas2p3.samsung.com>
+ <20250818021826.623830-1-sw617.shin@samsung.com> <20250818021826.623830-3-sw617.shin@samsung.com>
+In-Reply-To: <20250818021826.623830-3-sw617.shin@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 18 Aug 2025 17:27:13 -0500
+X-Gm-Features: Ac12FXxZ-jPQHli_YsB9TH41Az0ILCITH7EMyT1TjZMDBHz6hJ2bX99BQB7uVbk
+Message-ID: <CAPLW+4m4S=j8Z0ue9LcxH+8HBsPKTfLuG9nV+6v4NLE=Qp+wnQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/5] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, dongil01.park@samsung.com, khwan.seo@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[+to Krzysztof]
+On Sun, Aug 17, 2025 at 9:24=E2=80=AFPM Sangwook Shin <sw617.shin@samsung.c=
+om> wrote:
+>
+> Fix the issue of max_timeout being calculated larger than actual value.
+> The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
+> S3C2410_WTCON_MAXDIV is smaller than the actual value because the remaind=
+er
+> is discarded during the calculation process. This leads to a larger
+> calculated value for max_timeout compared to the actual settable value.
+> To resolve this issue, the order of calculations in the computation proce=
+ss
+> has been adjusted.
+>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 95f7207e390a..1e8cf0299713 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/delay.h>
+> +#include <linux/math64.h>
+>
+>  #define S3C2410_WTCON          0x00
+>  #define S3C2410_WTDAT          0x04
+> @@ -410,9 +411,14 @@ static inline unsigned long s3c2410wdt_get_freq(stru=
+ct s3c2410_wdt *wdt)
+>  static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wd=
+t)
+>  {
+>         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+> +       const u64 n_max =3D (u64)(S3C2410_WTCON_PRESCALE_MAX + 1) *
+> +                       S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
+> +       u64 t_max =3D div64_ul(n_max, freq);
+>
+> -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX=
+ + 1)
+> -                                      / S3C2410_WTCON_MAXDIV);
+> +       if (t_max > UINT_MAX)
+> +               t_max =3D UINT_MAX;
+> +
+> +       return t_max;
+>  }
+>
 
-On Mon, Aug 18, 2025 at 03:00:00PM +0530, Shradha Todi wrote:
-> > On Mon, Aug 11, 2025 at 09:16:37PM +0530, Shradha Todi wrote:
-> > > Add host and endpoint controller driver support for FSD SoC.
+Thanks for working on this, Sangwook! It looks much better now.
 
-> > It's kind of unfortunate that the driver uses "ep" everywhere for
-> > struct exynos_pcie pointers.  It's going to be confusing because "ep"
-> > is also commonly used for endpoint-related things, e.g., struct
-> > dw_pcie_ep pointers.  Maybe it's not worth changing; I dunno.
-> 
-> I did try to rename the structure and the pointers 
-> (https://lore.kernel.org/all/20230214121333.1837-9-shradha.t@samsung.com/)
-> But the intention was different back then and so the idea was rejected.
-> I could add a patch to only rename the pointers to something less
-> confusing like "exy_pci"
-
-The patch you mention did several renames:
-
-  s/to_exynos_pcie/to_samsung_pcie/
-  s/struct exynos_pcie/struct samsung_pcie/
-  s/struct exynos_pcie *ep/struct samsung_pcie *sp/
-
-I'm only concerned about the confusion of "ep" being used both for
-"struct exynos_pcie *" and for "struct dw_pcie_ep *".
-
-It would still be sort of an annoying patch to do something like this:
-
-  s/struct exynos_pcie *ep/struct exynos_pcie *pcie/
-
-But 'git grep "struct .*_pcie \*.*=" drivers/pci/controller/' says
-using "pcie" in this way is quite common, so maybe it would be worth
-doing.
-
-What do you think, Krzysztof?
-
-> > > +static irqreturn_t fsd_pcie_irq_handler(int irq, void *arg)
-> > > +{
-> > > +	u32 val;
-> > > +	struct exynos_pcie *ep = arg;
-> > > +	struct dw_pcie *pci = &ep->pci;
-> > > +	struct dw_pcie_rp *pp = &pci->pp;
-> > > +
-> > > +	val = readl(ep->elbi_base + FSD_IRQ2_STS);
-> > > +	if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-> > > +		val &= FSD_IRQ_MSI_ENABLE;
-> > > +		writel(val, ep->elbi_base + FSD_IRQ2_STS);
-> > 
-> > This looks weird because FSD_IRQ_MSI_ENABLE sounds like an *enable*
-> > bit, but here you're treating it as a *status* bit.
-> > 
-> > As far as I can tell, you set FSD_IRQ_MSI_ENABLE once at probe-time in
-> > fsd_pcie_msi_init(), then you clear it here in an IRQ handler, and it
-> > will never be set again.  That seems wrong; am I missing something?
-> 
-> Actually the status IRQ and enable IRQ registers are different offsets
-> but the bit position for MSI remains same in both cases so I just reused
-> the macro.
-
-Ah, that's what I missed, thanks!  At probe-time, fsd_pcie_msi_init()
-enables it in FSD_IRQ2_EN.  Here you clear it in FSD_IRQ2_STS.
-
-> But I understand that it's confusing so I will add another
-> macro for FSD_IRQ_MSI_STATUS or just rename the macro to
-> FSD_IRQ_MSI to re-use.
-
-Using the same name just because a similar bit happens to be at the
-same position in two different registers is definitely confusing.  I
-think it will be better to have two macros, one for FSD_IRQ2_STS and
-another for FSD_IRQ2_EN, e.g.,
-
-  #define FSD_IRQ2_STS                         0x008
-  #define   FSD_IRQ2_STS_MSI                   BIT(17)
-  #define FSD_IRQ2_EN                          0x018
-  #define   FSD_IRQ2_EN_MSI                    BIT(17)
-
-Another question about the test:
-
-  if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-
-This assumes there are no other bits in FSD_IRQ2_STS that could be
-set.  I would have expected a test like this:
-
-  if (val & FSD_IRQ_MSI_ENABLE) {
-
-Is there a reason to restrict it to the case when *only*
-FSD_IRQ_MSI_ENABLE is set?
-
-Bjorn
+>  static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool ma=
+sk)
+> --
+> 2.25.1
+>
