@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33D0273D84;
-	Mon, 18 Aug 2025 06:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E7F2FFDF1;
+	Mon, 18 Aug 2025 08:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755498753; cv=none; b=Lt1MYIWzofTYd856GNtajFYX/H4bZaDTXeDDCGdgO5U5rAQYeEdrGGMefha4dmqkqMTvRI3R+Wfhpwfjo8Nauhx+DvM/Ybx4eK2UQSprdNNQyO/CoZUsYsVwnzdG4ZtFkN/8a1d1TBEJ5vj3UC7YqiSf4aewlXbMe27I47bl50k=
+	t=1755505368; cv=none; b=CViigXi7i3ycA6x4jx2q6V/L44mJ1fqryXlkSVeREksA/t0EW5KDlXxnn1ElOazb7xckTRivQaFtlVRdgmYNDsjVDdnrg/8ADvCpgOS8BXN+jD+BGk2ri1/xDlnGbl2n8Oex2u3Fv4TbS8ScKgeTh3+JPDHzNVLUEtOHWpYbkzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755498753; c=relaxed/simple;
-	bh=IqeYeauks1YJwsXt8Zs3h943HI/7m7G8G1Ab7AZ2Vp8=;
+	s=arc-20240116; t=1755505368; c=relaxed/simple;
+	bh=G5KjcXCcfVMEVsjscb4Ys/l1/DUNqEaAxB7u6lNcs7A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LwnIMsO9EbvRS2zF4NZgxJFDUKE5pHVhubLEgw6F75+GWCIxoPsGrXo25EiaGutRA99ymwsI+zBJBSsT6cjDO+3tY0jc9o3POQ8EGTDO+i2G1WRd0pO+0/sya0hTeNVSufQVHjPlkAN4GbKs6yEzTsbSCFluC/Z+NSqOrYwdewA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9tQjYkx; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=NOK+OPhK2aY9WfrRQ9h8zTe+Z+/zDtYOIAXu3+jAEMNL1AL2iE29SCE/fVwbt6QEabkkH8IuxR9wdh+Dg34ZRZCa4PXUD85OBcSphiQraGry7EiEGUOoq2YUap2F7kV9IVXIO8cP7BQ99xDLe2OECewjSxxxTw4PMOUdhm4TcCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7NUkrR+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9tQjYkx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D2D5C4CEEB;
-	Mon, 18 Aug 2025 06:32:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7NUkrR+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F8EC4CEEB;
+	Mon, 18 Aug 2025 08:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755498753;
-	bh=IqeYeauks1YJwsXt8Zs3h943HI/7m7G8G1Ab7AZ2Vp8=;
+	s=k20201202; t=1755505366;
+	bh=G5KjcXCcfVMEVsjscb4Ys/l1/DUNqEaAxB7u6lNcs7A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g9tQjYkxKSJYXuflHqpOhLHcjHwrYSD+4pdI8GtEUOYZ+y2T66B3B0D0j5+u0F9FZ
-	 4w9XRCzBpgdr2pSi4ZXIYNNPYKjYGkqKdHskDzneDAG4jCQJU28/JgHo9yEGUppoWo
-	 KzkyiPl0xD8HatrkvOGt3fIHUXIsrFnx/Fm8zdq21eUI7Lm4FmqlrjVq8Txo1y0Znc
-	 YLyUUn8TinGeoudyWOAFrjFHuzdIAFPdGF7mSzm6O0aY7z0ad2X+QGOI67oogQ0/24
-	 kQMsAr7KL+tp2Wro27lhBntIgSqEOnqdgYnEKG5bc/+SkNMSbOpWWYd66AwXSA9YLd
-	 HkTCGcI2Us86w==
-Message-ID: <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
-Date: Mon, 18 Aug 2025 08:32:29 +0200
+	b=Q7NUkrR+lL70kb7FWfE7SwLKXc2u4ErdmJAmrympHHMqrMapsTnf7U+Vgm+n4sd27
+	 JaqV6b6fY2tBPOH+3jg0MZLlb1g2Bz2e5vm/KHs54+I0kOVk4/Dot0BLkHxoI3ADMu
+	 pbd5coJAVX5IoNOAW7N1NqHQY/ZzKiR6BKqOupptlnqhhFas93qCSlZaGBrnlRv/31
+	 y21sqMJu2mdvJn2GukyD80DW3fJzspHCZDuigNZlP4S9JwM3XdTKDDCBtAARSX75hi
+	 XJFzCTzwxFlGnSNQW5fSlc69q9ebc8HPPZH+YF0TwEnGofhmvkkBhEC9NmuCQSpHtH
+	 C8khRVzSe6P9Q==
+Message-ID: <05da83dd-2cd2-4f51-8169-e8cf0190d6c1@kernel.org>
+Date: Mon, 18 Aug 2025 10:22:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
- <45fc52d9988d1bf17eca392364c63193@disroot.org>
+Subject: Re: [PATCH v2 00/12] Add FSD CSI support
+To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+ martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+ catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ ravi.patel@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
+ festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <CGME20250814140956epcas5p480aa24441933523484da5c241a201d3c@epcas5p4.samsung.com>
+ <20250814140943.22531-1-inbaraj.e@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,41 +95,44 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <45fc52d9988d1bf17eca392364c63193@disroot.org>
+In-Reply-To: <20250814140943.22531-1-inbaraj.e@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/08/2025 16:49, Kaustabh Chakraborty wrote:
-> On 2025-08-13 07:58, Krzysztof Kozlowski wrote:
->> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->>> This series implements changes in the SoC subsystem, which includes
->>> devicetree additions. It depends on all sub-series listed below:
->>> (Legend: [R]eviewed, [A]ccepted)
->>>
->>> exynosdrm-decon            - 
->>> https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
->>> exynos7870-mipi-phy        A 
->>> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
->>> exynos7870-mipi-phy-fix    - 
->>> https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
->>> exynos7870-dsim            - 
->>> https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
->>> panel-samsung-s6e8aa5x01   - 
->>> https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
->>> panel-synaptics-tddi       - 
->>> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
->>>
->>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>
->> What is the status of the bindings from dependencies? I think they were
->> not accepted.
+On 14/08/2025 16:09, Inbaraj E wrote:
+> FSD CSI(Camera Serial Interface) IP bundles Link controller and DMA
+> controller for receiving frames. FSD SoC has 12 instances of CSI IP and
+> 3 D-PHY. 4 instances of CSI IP use 1 D-PHY.
 > 
-> Except panel-synaptics-tddi, all have been accepted. A lot of them
-> haven't hit next though. I'm waiting for that to send the next revision.
+> This patch series does the following:
+> 1) Refactor the imx-mipi-csis driver to support platform specific
+> clock names and interrupt handlers through device specific data
+> (struct mipi_csis_info).
+> 2) Add FSD CSI link controller support in imx-mipi-csis driver.
+> 3) Introduce a new media driver for FSD CSI DMA providing support for
+> video capture and streaming.
+>  
+> These patches were tested on the FSD platform using the
+> capture_raw_frames application.
+> 
+> Changes since v1:
+> 1. Addressed review comments from Laurent Pinchart to integrate the
+> with imx-mipi-csis.c to handle the CSIS and expose it as a subdev.
+> 
+> Here is the link to v1 patch for reference:
+> https://patchwork.kernel.org/project/linux-media/patch/7e7832c16925386b771ddb7e00e08661115aa0ea.1668963790.git.sathya@samsung.com/
 
-What does it mean - accepted but not hit next? If it is accepted, it
-must be visible in next. Which maintainer's tree are not in the next?
+Use lore links. b4 gives them for free..
 
+> 
+> Inbaraj E (12):
+>   dt-bindings: clock: Add CAM_CSI clock macro for FSD
+>   clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
+>   dt-bindings: media: nxp: Add support for FSD SoC
+>   arm64: dts: fsd: Add CSI nodes
 
+Please split patches targeting different subsystems, since they are
+completely independent. There is little benefit in combining independent
+work into one huge patchset.
 Best regards,
 Krzysztof
