@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155997E9;
-	Mon, 18 Aug 2025 08:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0E7302CB9;
+	Mon, 18 Aug 2025 08:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505937; cv=none; b=cDZsArZbpGbok7Y6yttjlFCJ2hSwh6BvmIb2jw7nkXR9Bu7EZkpVhrzE9hjaJjp/cDyPPGWxcHW7JPRHoaigiS3Y8NDiB89eIA/Ph0M3j2dDST4tGaGlr16GY+lHX8toxOcgZZrhXJLnXdCJBmACRDnRVRa/vxngFNAl1qibjSM=
+	t=1755506726; cv=none; b=FpxNirh3x3I1roOt27cxEIboJUjZsH9qePHw34qLUiatbzMWbdLXwp0eibswiYY+QFQ7NScO2zM6vrrBrstHYO/4/d6TwHfQkzEMxsM1lLAgboY3Z9CSLVHodSBHCu+ah8Yg0gwblz0xHuCDwOqC/W7aDkx6iB8dnN8jvGZ6cg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505937; c=relaxed/simple;
-	bh=nNOBI0F8EkG+NeIt2D1S0Fuj4+shs+JG9u5tILSOhyU=;
+	s=arc-20240116; t=1755506726; c=relaxed/simple;
+	bh=aOYWObx4Fq92sxZHONfJQ6t1WE5Gg23eP/MPjI057uE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5qRe7tdh0P48CgU3O4B4abRNCcSkW22KiHOnKg6drSLKSv6MPx4lLuKEWZttR5o5UsDZWEquUc/93SfU+bhaji5OqTONhs2AiQ45k3+52y+3wk1vwm5amSsHU74CbCK9Fb5YXlyBuPPjD4hbcimpU62CGtH3Q13P64/gqV5k4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFe21OFb; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=gZ8fc8Meckdu6BHnqBQtdU+lpHFekjEZqMMMYHvP42VcczG9wfpMmdSaHzSHeB98RSIbpf7+k5J8eQzMbL5bvLQf7OIiIO9QRTc4rYBNDeN9Aczk1tQrjlzvmk3o26aPV1CWpKU+ikldHavGNfZwkhgWoOiceBaJmshrKNYmIIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmkXj6v8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFe21OFb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42BADC4CEEB;
-	Mon, 18 Aug 2025 08:32:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmkXj6v8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31712C4CEEB;
+	Mon, 18 Aug 2025 08:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755505936;
-	bh=nNOBI0F8EkG+NeIt2D1S0Fuj4+shs+JG9u5tILSOhyU=;
+	s=k20201202; t=1755506725;
+	bh=aOYWObx4Fq92sxZHONfJQ6t1WE5Gg23eP/MPjI057uE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CFe21OFb+bEd+KZWrl1NSWnS6cBxbGJTHGeVk3t2pdcmgvkOK3Q7t71xKg41sFi97
-	 zAprJLG9Tw61IZDsSQYRSqPiEoegSTaFEREUt1/+EHJ+35WWpa5duIpNPUlpv6BcQ/
-	 inarCAhBDRTuWLL37wDbCJ6g85hFXO3mLbhJ0YUW4qY/icFdD+20sJxJQWubkyYWUI
-	 KhAtSR5L8Ls5mfbt66mDU8Yv2Cd466iMN8613YGj8tqJ9+xgF4KM4iyoXnvs9yPRmF
-	 M/3QMyn5BijD5GYnwMToSzLj3LBDbtybU8WinY56+m6jjiSoLtklVcLD7fcs9GN/57
-	 r9RG8sF92Jx6A==
-Message-ID: <1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
-Date: Mon, 18 Aug 2025 10:32:07 +0200
+	b=PmkXj6v8SuiPkJ+tr7JC9jcbehHDz8moMhpjM8Ps4LL8n/rCzxgD1/aW/zVKfqZAk
+	 WFPqLMikWTvz02jyNkmqAauE/d0QZ6V9YRDBJifL/NOZ7Vd0RgG5lranzzhE817i1n
+	 R2JPbPsRfG8bDwtn8lHhEDwT2ncjEN/KLGewsD/oGM8lrzS6V6gkbZiH9k2FR3YpJX
+	 2j3O0pb4/7H0Nc047/IS25pAylpb/VqCUG4qq9RS6OjOGlTyMu4JJu/KzkqQgnDvCD
+	 wgAyCLEW5lRrXVrHzcyY9ZGi0xx8clqiJ2ZoLKAD+xn9bbbYFMEEPCTc4dMmHXN6zX
+	 29Hl86hAl8sRA==
+Message-ID: <c46c6f66-dee6-4efa-a624-de62aa705206@kernel.org>
+Date: Mon, 18 Aug 2025 10:45:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] arm64: defconfig: Enable FSD CSIS DMA driver
+Subject: Re: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
+ controller
 To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
@@ -49,8 +50,8 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org
 References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141057epcas5p21ca33641e42164886dc1bf404237876d@epcas5p2.samsung.com>
- <20250814140943.22531-12-inbaraj.e@samsung.com>
+ <CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
+ <20250814140943.22531-11-inbaraj.e@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,18 +97,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250814140943.22531-12-inbaraj.e@samsung.com>
+In-Reply-To: <20250814140943.22531-11-inbaraj.e@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/08/2025 16:09, Inbaraj E wrote:
-> Enable CSIS DMA driver support for FSD based platforms.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - iommus
+> +  - port
 
-Tesla FSD
-
-You are changing defconfig for all platforms, it's not your personal or
-company defconfig.
-
+Also, you miss here supplies (as required).
 
 Best regards,
 Krzysztof
