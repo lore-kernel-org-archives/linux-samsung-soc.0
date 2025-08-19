@@ -1,55 +1,55 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC172343211
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C180341AB3
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609497; cv=none; b=XtOLzCNTmSPQQ8dqxoonLrRCYv/oPXPO/Mj3kOZcyot62LDZdroPjvjrpHvqkl+MbrsbvxRn9dz3C5SkQXB0qbVMpK0AOcqvFwkmiqBzVBnUThFvPhWQ19GrOuBXGFSoaEAlRA7XeKroMSIBxpnxL6Dg+LX+v4OdGg3p7zVpefk=
+	t=1755611288; cv=none; b=e9hf6mau4G2K5aPd3WEcz95ii79QhMRjbJddQoxToN6Tcaq8oGmcR+WjdTkCqlu++sKQ7SL49/xpgD1Idw6Hh7nd0p4pEairGtBO2mHPZjh3sfBN6VmDxeap4tSKaFJA1q1iELCxdgU6xA/y4gr7b8BIy2vfSBSL0YfZX5Wuiqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609497; c=relaxed/simple;
-	bh=haelXDwMy02Pwc8ZA2q/PxzyUxHWHwhLuI5ijIySm2Q=;
+	s=arc-20240116; t=1755611288; c=relaxed/simple;
+	bh=WgxoQGTefGQy6krhXNt6jyY6Ogd2/MoAfO4+6xkHD0Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ZReXa79LEydtsw7kosVAM3dULf5J1b7Clo8FvbeWNjFqClDJwan06A70ojW6nRygiVt9BsFTY2RYKXI/8bSHyeOsH4oCMKuEZT0zY7mW1X0/GwuJO8+eXYEfqofQl7H/U0jhymJ08UvAuj+ppZUcrWCq0qb6mQvScPZUlam73A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b28gXOmJ; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=bFk2mUr0ei1ip5Q/RTgUJTSaMnw1O3zlcUOelHDvjVAsVhetMyzVcbVoN9EJGs5GxsDAVnTHWBGdnOSVOgQsq9MhPr072NTh2PZsgQB4NeXwuolyTWWpam88MdLO6L7c+EjTAher1bBkaCsKsvfsdhQALY3DrAWcxW7K1/CfNJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iDuI4579; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b28gXOmJ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iDuI4579"
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250819131814euoutp02078de8ca7d9d2a8615a977537f7c62bb~dLYigXZ3z1526515265euoutp023
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:18:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250819131814euoutp02078de8ca7d9d2a8615a977537f7c62bb~dLYigXZ3z1526515265euoutp023
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250819134805euoutp019976ca5a2f89a1d478dcda935fcd8d7a~dLyl_arGx2265022650euoutp01z
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:48:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250819134805euoutp019976ca5a2f89a1d478dcda935fcd8d7a~dLyl_arGx2265022650euoutp01z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755609494;
-	bh=haelXDwMy02Pwc8ZA2q/PxzyUxHWHwhLuI5ijIySm2Q=;
+	s=mail20170921; t=1755611285;
+	bh=rNNRF4Z64xSeC0TtYIjoq13C5zAXQshZP/bVM+z+NiQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b28gXOmJv53Ukifr2jI0aPiN+kMb9HQZdc90+xIpGWsCXMjzXCs2BhEZzlqeWCbEe
-	 XNIxLDdM7+bmLvwFirdlYVt922QudW1edmFOYmAXkyD3uaUur4O+Q/SNp8+NZrmsew
-	 6FWIkB/NKoNcUv+wqS/Dz0JkHhZdn8oXOWJ/oSfs=
+	b=iDuI4579/yT2PSmol4tFFkDPplMZDmKc2g2rMu5dRM4X5bFq8Mp9N9d8ms5MibZt7
+	 368lvC9S/XM+zfdLWHKDyLl7aVWbm3yIS0yqTu3B0yEvgwuioypHKq/KuZhwAp+6ps
+	 UvZGL7usRQvkKiZq+w9jzFcXFra/MftkQdpbXkm8=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab~dLYiBBqeM2800428004eucas1p2h;
-	Tue, 19 Aug 2025 13:18:14 +0000 (GMT)
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11~dLylHjeKm2798127981eucas1p1o;
+	Tue, 19 Aug 2025 13:48:04 +0000 (GMT)
 Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250819131813eusmtip1ef1102cfde54eb4bafb4302017462cbe~dLYhNgGmp2290322903eusmtip1f;
-	Tue, 19 Aug 2025 13:18:13 +0000 (GMT)
+	20250819134803eusmtip14d110ea7c0e1c86224f6c2ecf32b88ba~dLykUPeUf2742627426eusmtip1o;
+	Tue, 19 Aug 2025 13:48:03 +0000 (GMT)
 From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux.amoon@gmail.com
+To: m.majewski2@samsung.com
 Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
 	justinstitt@google.com, krzk@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	llvm@lists.linux.dev, lukasz.luba@arm.com, m.majewski2@samsung.com,
+	linux.amoon@gmail.com, llvm@lists.linux.dev, lukasz.luba@arm.com,
 	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
 	rafael@kernel.org, rui.zhang@intel.com
-Subject: Re: [PATCH v7 7/7] thermal/drivers/exynos: Refactor IRQ clear logic
- using SoC-specific config
-Date: Tue, 19 Aug 2025 15:18:03 +0200
-Message-ID: <20250819131803.23296-1-m.majewski2@samsung.com>
+Subject: Re: [PATCH v7 6/7] thermal/drivers/exynos: Handle temperature
+ threshold IRQs with SoC-specific mapping
+Date: Tue, 19 Aug 2025 15:47:55 +0200
+Message-ID: <20250819134755.92187-1-m.majewski2@samsung.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813131007.343402-8-linux.amoon@gmail.com>
+In-Reply-To: <20250819131704.19780-1-m.majewski2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -57,22 +57,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab
+X-CMS-MailID: 20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab
+X-RootMTR: 20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11
 X-EPHeader: CA
-X-CMS-RootMailID: 20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab
-References: <20250813131007.343402-8-linux.amoon@gmail.com>
-	<CGME20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11
+References: <20250819131704.19780-1-m.majewski2@samsung.com>
+	<CGME20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11@eucas1p1.samsung.com>
 
-> A unified
-> exynos4210_tmu_clear_irqs() implementation now replaces the previous
-> reliance on SoC-specific functions and hardcoded register mappings.
+> +		pr_warn("exynos-tmu: Unknown SoC type %d, using fallback IRQ mapping\n", soc);
 
-Well, right now we actually add exynos{4412,5420,5433}_tmu_clear_irqs :)
-But those are quite similar except irq_map values, so maybe they can be
-unified into one?
+I missed this when writing the previous reply, but this doesn't build:
+"soc" should be "data->soc". This line disappears in 7/7 though, so 7/7
+builds just fine for me.
 
 Kind regards,
 Mateusz Majewski
