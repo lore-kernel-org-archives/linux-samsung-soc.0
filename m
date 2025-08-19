@@ -1,141 +1,137 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7991332A3DB
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 11:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E0331197D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 11:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603585; cv=none; b=kJLWUnqshR7rQzfueeQrdY4cULP+Neqel/hWc3uH4BTq4atlcppbyKMDH+nf6CSkkDutr1ToJM4fWyO2LioiIN97uTOcX2CYmxjNiqLPSiPj5NUt6rzGqe1IwL/fp5eyvW/O54HvlhUkFHwHWGtKUbl0daSV0mjUB4FZEeYe87A=
+	t=1755603956; cv=none; b=M5Tbi5zYoWMtaOhU7SMOtnOHqNoeKAz43zmaeedws9qIQHRnVKNNSpQAHuv9kfDJ/CpyiUx8HXjzWUFnNgy5USv19g/REOkj1aCG3cRUwKAkG9Err5VqrYCpNVLxzNySnn+A/y2ZTeebVHVVmuMOBZjLL30JhQjQKLQsuhHCXh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603585; c=relaxed/simple;
-	bh=SBFzXTu/TE3Y27yTuml5s/ls/Z8dlIb7BbI3Fl++GYo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=dQpcUV1SodiJPl0YX/0kFShwA09O2EZVwhvQStI15jQIP3VdghKGWc3voe0icQbngoxaxrtdJKKl6qb5f9B8PwhMS28ox5dJupgzzQ1yGWJ+OSh9jZPUt2DprquDGAeKrWKH45+o/56EvzixQJw7XMMNaQQYN5YDjzCNzK4Eif8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZVvYutnR; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1755603956; c=relaxed/simple;
+	bh=atHOVDZrHoC4KUAzLF3V2ExuFabINMR3JpSKKqoKhGM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n/bdK2EPF2g/SsLkt3vS/5jJW+Pm6YKRHod+kUOlTm9BZBkSIvBidQboLtxDL1KNIJC+50Q5LFtJ3s3d0C2gKmKU7FvESNHhMmT/XIUXAdTjdUpzgIEkk7i6rT7j/io2FRyCU9VjqQFZ0txqwpHLP6xgSUIhTlLCLfKJ/HHgtDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lv9lj/cX; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZVvYutnR"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250819113941epoutp02eec6c1013f1c164289f96925413e2db1~dKCfpViqJ0414704147epoutp021
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 11:39:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250819113941epoutp02eec6c1013f1c164289f96925413e2db1~dKCfpViqJ0414704147epoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755603581;
-	bh=1P2Rps+nWLL6vuu8v5AZ6QLluRY8gS5KDMDYoN14d3E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=ZVvYutnRrj1vsaoIzlGc1d/RjPE60V5uAz1QTRDCZxI81j7cue1sfgSA7oaKZO8YW
-	 2qVnzb45IaXeEFXrgbk+ARvR9GiIrmLx90CgXtFOidCb4d1xvFEEGV8mqz30CiOzoN
-	 ZcxgykS5DuOVlEM5wzk/ytKYpW7LZdaE9Lb5rgp8=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250819113940epcas5p44becd1ec50dff43ea959114a166fe0dd~dKCeeitQH2997129971epcas5p49;
-	Tue, 19 Aug 2025 11:39:40 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5ngH2cfwz3hhT3; Tue, 19 Aug
-	2025 11:39:39 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250819113938epcas5p3cac2467171b234b921448bf9b537cce2~dKCdAIEYh2225622256epcas5p3a;
-	Tue, 19 Aug 2025 11:39:38 +0000 (GMT)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250819113935epsmtip16d1c515c409672f87d62e0dbcafa0d4d~dKCaJwZgR0293302933epsmtip1n;
-	Tue, 19 Aug 2025 11:39:35 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Bjorn Helgaas'" <helgaas@kernel.org>, "'Krzysztof Kozlowski'"
-	<krzysztof.kozlowski@linaro.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
-	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <20250818182544.GA534647@bhelgaas>
-Subject: RE: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
-Date: Tue, 19 Aug 2025 17:09:34 +0530
-Message-ID: <00b501dc10fd$f1fecc10$d5fc6430$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lv9lj/cX"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b46a332a5so95435e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 04:45:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755603953; x=1756208753; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9mI1h+BmNbILdGpeniKvEeoyTFz8pMoc//wK6fMdn9Q=;
+        b=lv9lj/cX2UXwsb1R9a98hQn+oJ1MDC6y0tX8Ws3JMNdkTzaDJi3Hj8e8Lzk/KL5Jr1
+         LEZMITgWLiGdxcKqWWUMy6XgkmDFabymAggbcEuOlmgxR/IL8pSIHKrjRQZM51mJa0qX
+         bfWN77WiHAWVctXeQbBov1X6Q/9VkYTPxZt+Ldne96kVPSevhw1TXlmJU0wSb0eC+KGJ
+         KSzVKGitGeO9zfnp+67ee9OmaJSwHuxfjKR7wpCsnco3xNqOkDJEDW42igYYIScXQwgD
+         JeFW6ucAe2OI0POn+nvUVVJ/OClejf7g0cZ/OR/d0HBuRbQfkrkWh7vM61UcXQeFjzLq
+         15fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755603953; x=1756208753;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9mI1h+BmNbILdGpeniKvEeoyTFz8pMoc//wK6fMdn9Q=;
+        b=xNTHPaytgp7GLykROjC3eg/XJypRoJyBKI3f6ianOrIKw8ZVodVNbjN3bwKJI/qWN0
+         5mG4JmmTlSu1Nl80VBJdzsTqa98mRAka+TzbPMVGe/LnvsmEzrTKbQWnS+oe+2kJX9Wv
+         f+i43nKY8X1158ESjbobrqAMpS+eyRtstbW9kP8/zt3q0QaRKLUTcem777zXyBx1DUfa
+         gxoxKefjoQXo2gCRarlLd7YmlCsFNU0z32DgxIf7qWpUl55cb3LBd1CvbimSKp8ZB3lv
+         tgzE2aaJXBUIzsUcOgx2ZdLcVbE/MLKGknMMhz068qK2X/+HGsWj93bBDcOYz5ZbohHG
+         IXXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZbc7g2OZSu4RC0Nnh6gKUC7NSPwuBfAk0KCFNRmBHkwexzHOU7mTk8TN703i11o9kWiO2JFD2MEot5zMtCQ67dg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVW/1eFSnEdaBYtw+9zC3WbUjhzvnLHbCD7JfjfIVL1/3OOghC
+	qQolBSU5kvGweVROIPa2h9D6rE/eaTKOAEQ5K5euOpL8rbRGg/EUIWarBPsBMMtnvX4=
+X-Gm-Gg: ASbGncuvAYy0IwcTYg1+Fa3xxA5vsC5E28oq1izvVupjiVxrez0CrncRBKsBDLTsUPa
+	mEo5v9ZLkZbdN+1m3i3WoIRef/bzkXsbg+GvRBuHXQlwAU8b0ZyTz0DjXzLJVdP45n82gB8/bIH
+	hZ+W7JJ2peWZnBQDKSh+1/6bdz5lEvd0icCUTso5cD8JKTNJ9DWcm0aoIAyL2zMy694l1S+yjf4
+	/naxhsR+K/Lh1qJ3yfuZRwTRpDqRphAB/DUUg6ZRWqUrxRYZ2XySkiLmheiJLZ5HfVMVwgUBpk5
+	Y5nFkAVjRVvAbXBW+dursV2uTFxtv285skjA4CbmfFl6hmBejkYEVrt8yZrCD/1z8A1Gg1TUnsa
+	50WCV16jyxVT5e9F6AsluCCWgEbaITyBwO+d/+lPxITtKLcIU4ETO0tBroW2OARN+Nre3UwLt28
+	PIPQ==
+X-Google-Smtp-Source: AGHT+IEnwmvW6IIY3fHtQYIYoD1wKmz1nhv91N571YRo5fDdb1O2yoXT6VRpNYHi8x8OdTISvstKRw==
+X-Received: by 2002:a05:600c:3ba5:b0:456:2698:d4d9 with SMTP id 5b1f17b1804b1-45b45374caamr14002615e9.3.1755603953268;
+        Tue, 19 Aug 2025 04:45:53 -0700 (PDT)
+Received: from ta2.c.googlers.com (245.92.187.35.bc.googleusercontent.com. [35.187.92.245])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077788df7sm3430817f8f.48.2025.08.19.04.45.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 04:45:52 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH 0/3] exynos-acpm: add DVFS protocol and clock driver
+Date: Tue, 19 Aug 2025 11:45:35 +0000
+Message-Id: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFRpmM4OvQHoLmp1/7yOMMM/WjwMQMTDUGCtWYRPHA=
-Content-Language: en-in
-X-CMS-MailID: 20250819113938epcas5p3cac2467171b234b921448bf9b537cce2
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250818182551epcas5p33fbe099df79778031b489f0902cceed3
-References: <CGME20250818182551epcas5p33fbe099df79778031b489f0902cceed3@epcas5p3.samsung.com>
-	<20250818182544.GA534647@bhelgaas>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN9jpGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0NL3cTkglzd5JxsXSOLFKNEc4tUA2MDcyWg8oKi1LTMCrBR0bG1tQD
+ TV39kWgAAAA==
+X-Change-ID: 20250819-acpm-clk-28d2a78e0307
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755603952; l=1667;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=atHOVDZrHoC4KUAzLF3V2ExuFabINMR3JpSKKqoKhGM=;
+ b=h6Bb36OJtt4jZDYOdwe5maGI2bcHWggh27JZXK/hNIDehiPXcAddUEhsj/76QM7GPPUeu3kqb
+ jydYZwKtvyDBk4+2SmWwopkALIvvL42OrRHIifDVPAm8txJvXd+GSM0
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-> > > > +static irqreturn_t fsd_pcie_irq_handler(int irq, void *arg)
-> > > > +{
-> > > > +	u32 val;
-> > > > +	struct exynos_pcie *ep = arg;
-> > > > +	struct dw_pcie *pci = &ep->pci;
-> > > > +	struct dw_pcie_rp *pp = &pci->pp;
-> > > > +
-> > > > +	val = readl(ep->elbi_base + FSD_IRQ2_STS);
-> > > > +	if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-> > > > +		val &= FSD_IRQ_MSI_ENABLE;
-> > > > +		writel(val, ep->elbi_base + FSD_IRQ2_STS);
-> > >
-> > > This looks weird because FSD_IRQ_MSI_ENABLE sounds like an *enable*
-> > > bit, but here you're treating it as a *status* bit.
-> > >
-> > > As far as I can tell, you set FSD_IRQ_MSI_ENABLE once at probe-time in
-> > > fsd_pcie_msi_init(), then you clear it here in an IRQ handler, and it
-> > > will never be set again.  That seems wrong; am I missing something?
-> >
-> > Actually the status IRQ and enable IRQ registers are different offsets
-> > but the bit position for MSI remains same in both cases so I just reused
-> > the macro.
-> 
-> Ah, that's what I missed, thanks!  At probe-time, fsd_pcie_msi_init()
-> enables it in FSD_IRQ2_EN.  Here you clear it in FSD_IRQ2_STS.
-> 
-> > But I understand that it's confusing so I will add another
-> > macro for FSD_IRQ_MSI_STATUS or just rename the macro to
-> > FSD_IRQ_MSI to re-use.
-> 
-> Using the same name just because a similar bit happens to be at the
-> same position in two different registers is definitely confusing.  I
-> think it will be better to have two macros, one for FSD_IRQ2_STS and
-> another for FSD_IRQ2_EN, e.g.,
-> 
->   #define FSD_IRQ2_STS                         0x008
->   #define   FSD_IRQ2_STS_MSI                   BIT(17)
->   #define FSD_IRQ2_EN                          0x018
->   #define   FSD_IRQ2_EN_MSI                    BIT(17)
-> 
-> Another question about the test:
-> 
->   if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-> 
-> This assumes there are no other bits in FSD_IRQ2_STS that could be
-> set.  I would have expected a test like this:
-> 
->   if (val & FSD_IRQ_MSI_ENABLE) {
-> 
+The APM firmware exposes clocks that are variable and index based.
+These clocks don't provide an entire range of values between the limits
+but only discrete points within the range. The firmware also manages
+the voltage scaling appropriately with the clock scaling.
 
-Thanks for pointing this out. FSD_IRQ_MSI_ENABLE is a single-bit, so there
-is no functional difference in the two statements. I didn't have a specific
-reason for using "== FSD_IRQ_MSI_ENABLE".
-But I see that "val & FSD_IRQ_MSI_ENABLE" would have been the more
-standard way to write this. I will update this for clarity.
+Add support for the ACPM DVFS protocol. It translates clock frequency
+requests to messages that can be interpreted by the APM firmware.
+Add an ACPM clock driver to model the clocks exposed by the APM firmware.
 
-> Is there a reason to restrict it to the case when *only*
-> FSD_IRQ_MSI_ENABLE is set?
-> 
-> Bjorn
+All patches can go through the samsung tree.
+
+Thanks,
+ta
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Tudor Ambarus (3):
+      dt-bindings: firmware: google,gs101-acpm-ipc: add clocks node
+      firmware: exynos-acpm: add DVFS protocol
+      clk: samsung: add Exynos ACPM clock driver
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  28 +++
+ drivers/clk/samsung/Kconfig                        |  10 ++
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-acpm.c                     | 192 +++++++++++++++++++++
+ drivers/firmware/samsung/Makefile                  |   4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  85 +++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
+ drivers/firmware/samsung/exynos-acpm.c             |   5 +
+ include/dt-bindings/clock/google,gs101.h           |  15 ++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  10 ++
+ 10 files changed, 370 insertions(+), 1 deletion(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250819-acpm-clk-28d2a78e0307
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
