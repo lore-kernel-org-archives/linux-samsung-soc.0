@@ -1,67 +1,67 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7763054D7;
-	Tue, 19 Aug 2025 22:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0FC2BE634;
+	Tue, 19 Aug 2025 22:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755641992; cv=none; b=VqfHTCYs1XMfzY7yjfW0OWoHIuF0UrDOlWTUH3l11XUVlZyj1SCqLd1s3X70sugkeXwINK3UnNCJuKa3Rayo9K+OPwU7DtQKkFyPaXu/0clvMdb2YN+4lSolNOaL7GP1LOSYyfJuoGYtIFkgxqNFSRvQBHj7bVJkR+3s9DfUdyw=
+	t=1755641997; cv=none; b=PBIe/nMjDh0dHznW8C69PWYB/dJGLLsVAnhGYX/QFkVsi/RaumDatgHc/tMdF/6tc80sOMmYkFMiavuzvmcY+Tea7JR9K7vp0NTTtUw0x30fqMtamltrkdaZvA1q551OvbUHFlHtsYIpnl0nVc/Grl7U5WYTPcWaYwuu6srj+l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755641992; c=relaxed/simple;
-	bh=EgjV2IN3BTxVAhU8sWcO6A242l1zwL+tm7uc6WZdAWo=;
+	s=arc-20240116; t=1755641997; c=relaxed/simple;
+	bh=IZSjRet90Z7ssCuwoIO31SUnba8YT9zfKUtMi4mD8fU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Teiio6AnW6cZr3ysbw1BCL/k1EM/BcKOShgD9+ogA/NNJipEdF6VN6YIh/LfznEns2wOKplIhctk9jN9hTI9yOVYQ5vA0Z8jGQf+9dNBgtzRL9FsjbgoVlwqP1wE/SV0Csd1fdBX+u8SrJDL49K0gZd7w3XfAevs8e/rnzBKCg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVCXcIBr; arc=none smtp.client-ip=209.85.210.175
+	 In-Reply-To:To:Cc; b=jYByatebrNYn/3TvkCgvUMlfFHIKI/ZQKOOEs+nRGc+gVj2kYq03XbNTH7v/ll3fr87LhPrkNgJxpxXhdFbCtsDoIcP1Xvzt8DRiJdn8siz3bD9KSSffG5+CvhVm3hyY/yDPaMJvp5WSrRF/mH6z0EF0ZkDGNNCaL5HCd/nBoZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YU24Au1S; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVCXcIBr"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3493121b3a.0;
-        Tue, 19 Aug 2025 15:19:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YU24Au1S"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ebe86ecso6722773b3a.3;
+        Tue, 19 Aug 2025 15:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755641990; x=1756246790; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755641995; x=1756246795; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pkq0pzcUOmJj4u6sdt3L7jO6dKHmpCQKHQSOPpZvKhI=;
-        b=fVCXcIBrkUsk819CNIKzWbE8gov9uD69r656wQgbUFBvZRqOTHRUbjMKzSfacpinew
-         njkl4Zbr3bgez+L66F1NK0j2bMegzXrDVWJGkeHh3ylcDPTOXAENtkOIcykWOW/t14sJ
-         ftljJFcXd6pVFdnj6Q5zUw6WpaDEIPwZboIZ76H2Fqfftw4xbeJSkylf8zqonk8tN75n
-         1WZaRwUiiTTEJ+5/6OL68SgzWrj321IgPEs59fOtZvsFsWSUoYOJqY18Mkf5hRyKyBF9
-         Lmhi6VqbhCTH6X0Hs0t/xlWFJwtPAcE/j5dJRdzMwixY1hyiv86HwfxHZnn5x/oA5/QU
-         aElw==
+        bh=0KkOOM0vdlCAI+wIK/wdqoZizl1s5oNfkaIbRaWdhzk=;
+        b=YU24Au1SwgN3D0N3wMSqO8VmaIZClSb+EjUKUv1Q4+JpMd88sZz+/BZqJhV9R58tM7
+         aIA63GkcFiTpTwZqa+dNUca857s4YifhC6gKXMlpGkLnafcr7t8KxOe3RSj8OrL5t/4n
+         oCvayfcCv0LX1GncLK3k0cHOieEWkhAnv7DqGXTfoK1cILzl/LH1tzKqbF6ok9fTLPEP
+         bHaQhyJtTfPFcsr5TPJVU6CFbjI9XnskicFm4MzfgMfc4png4peNaWGDLwD0mViqd3ZH
+         bnS8pI4CB6ET/qel3BU33ZvaL4732EleERaJt1lsLRwMKF+pyLGZD0uQ4daoNgImGU7v
+         8zsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755641990; x=1756246790;
+        d=1e100.net; s=20230601; t=1755641995; x=1756246795;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pkq0pzcUOmJj4u6sdt3L7jO6dKHmpCQKHQSOPpZvKhI=;
-        b=PxMfca24KsxUmSX3QSHGE4mXkSCmThdMfQE33pfAynYL5uxN6CpYeZGcIVToEY4rid
-         J97PPhcYDdavfGaKxyWCuf2jM+t5pr1ghDa3k0qbS7JZIsYofKlGPLiucApZecQjKUi4
-         CrxUgBWtfiRVAN/86Y65XxmoOlT2o165XoYD29Y/pA0aMkkcQLpXZZESZJ+ikisk4hXm
-         JhdbxLlD8A6BZPO92/tTi6rEvPiP7H1QgoCDW9TIGGz+PsKUhZ+0q80tRx+R+Usz0nDZ
-         HHRsbkxqYc6lqXQ165MxnmWn6NuG0f8uIfbmZFQPHO9Gwhmpy8/Y+ujKyrN3JJ3Iwygb
-         hsvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkkgsPh4CXzymMSzWEAfyGOLPQKAl2lMMqVQ6KvFOztzqXSJc/UJp8CnzVdQ6LpamNHGHsFMzUNUyQ@vger.kernel.org, AJvYcCWLixAl232rLEHfE9GK2Vpy5qKCW0F5bvjOEnTeHPuwKmtC9aiIm01TSD3vETbqVGQhUY4Ke5/0evHs@vger.kernel.org, AJvYcCWQUID3o9HcM84QLMzId1bmFD+LarQ0kPRxNB2Ih/KOTAW9vJnGiEvv6oX2Fx0J9QOgVu0oQ364KZwQ51Vd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK57+33zNNtoU/X9twdZQXtmhMQ3qBthPBYSI0mPQnwiEEpjZY
-	AFxYz5OPf0v2gSgXih37zGGJ9N7dc60h6gmJ9WnZO4fuVYJDHQZ2CN7n
-X-Gm-Gg: ASbGnctr81gGlQL1VYaZaojGOAT1u3yMjE3AlAHraTwKfD9zT/nO69SIVXPrCxnaX4N
-	yDg+MjzSF1mXkqB1XVcBL+uTXXn/KycLgpBpIo0hi1B1vQv/bxtRMcFaBEbUHL6NsdzOvUnxhth
-	XnYhDfZnGTEQyYOt/MUVoHkH+IXupFFsgrwC/m/XZgL1tZhmtUvPVGqZlUcXLq9bZvQqZ3U3OxD
-	xtL95q6eedE+3VFH8GahcSmqSPAQfOsQIk8M9SNoSqvbVAFhMA7HrPDCQhx2b7MS4FeRaXM/h0S
-	MYenjcFMIEUdHHF5bcitYId675GacBdbBqqeF2Yuv4A81j5MLhTuK+7T+vfX7TCOBcThDk6Rp4d
-	FkYSzh5OcGM9UTb9vBywvmWnerO6BZCYJXGmYYULnWsYRGF3FSCsELdaQGQ==
-X-Google-Smtp-Source: AGHT+IGcPQQ5Lnmcph7eecNE9Uv5mWy4z4P8pOTvFiPP9MDuOO+jMuphebVbEiXw1XRDeaUc5z9QrQ==
-X-Received: by 2002:a05:6a00:3c85:b0:76b:cadf:5dbe with SMTP id d2e1a72fcca58-76e8daa1adfmr936224b3a.0.1755641990472;
-        Tue, 19 Aug 2025 15:19:50 -0700 (PDT)
+        bh=0KkOOM0vdlCAI+wIK/wdqoZizl1s5oNfkaIbRaWdhzk=;
+        b=QJTMZdSYd15hzLc2JM6HpoZpLEYLjnQZRkgeIiLlxYgeU8BvPpHS4vbbmZd7eMyTLm
+         7EkqHtLMu6SHjrdGexYRy/P3WTnsuORPSNAKzUrjYAIyCbDKLadFAZd0qW+qo4uz5qH4
+         nHqeGQYxtNBeZdeSPjRemsHKoh9oZSDq1KRfw+hhensun+hkQLiYx2RhjEE8iJW2ah2J
+         CUUleASU0ZiOcy3/7D7fwElaC526eYROXrCp0/fBZmpcObY+dJBcTrl2YREK4Y0NdEL6
+         gd2X0J+mFsNQ7FRypQVnchyENlDscCBFr84LFEYdcfgolysRD9eUex/CyJ7R16CvR6Qk
+         vi+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYA6CivU6TlSQb04FwnYvO4raWp9iMx3oZ7rgD2ljzdLJaK8dZenwFZQ36SHa5YBNAVLfjYvm+coejzft9@vger.kernel.org, AJvYcCWuDckzQ9k4zE7AX+xruC8wKQpbm1u1Ww0R+5qgyUcsXx0icocv8dAgRqgrB3Yl5U7rywXhLYj6daM1@vger.kernel.org, AJvYcCXowggEx4U8sxhw5ANbc5iYM2wolcqyRSZpr4DZOGRXcQHdiZrSCiLs+cL/wVUg31tAuGn/By6yqStf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXmnp2cPJmqqxg4z/Nmg5c8s1EIRfIC4xqlQJULcepSgp0ZaYM
+	lh+raPBWnOT2VOc158UCLF5V5pyhTAGrajm6Ykc112OOoFcYbm5+/wUG
+X-Gm-Gg: ASbGncvulscjelURtlXaRpkkOWu26pU48HKLXi8MK3Q0bjc7gKmnhF45mBbeSrzteQZ
+	7xyXxjfZzhtFK5yLAdgB0e4JBO30sb6S9rWUPsXg+pctgOwTQKIfeXI+jLBjfNDXmHch4pJ2teL
+	vIfkaBU1jGbUQSsHNWy+pnOfb62WLlj4gc3EN6T9pf3ebLeraIsRAcL1WEIPhvZyPwg3aKxHMqX
+	XPmCZV5eRT1ONkR9J/lt+oO96Ee8QHS/vZT3NF+yIFSlTQgJ5bkaghuOcxs8lAgB53LbtDKZXJ4
+	q7ovF8UWR3tzG99Sv6hHpqdjDlxQpl3Zz5hntBeG96hcbr/kuFgy9+SlOvMEty8YrdT9JKfXs2Z
+	bjr5Utcsp9d1L32oods9iDOGran7j5eU7wYn2Zj634/vKL0U=
+X-Google-Smtp-Source: AGHT+IF9v2AvvuFPQMdP0lvVa5n8RIYqG+ESMAJ0YZ7ovr4Osfp4R2DX0zeaK2DGQvf9Zp7Xs062YQ==
+X-Received: by 2002:a05:6a00:2e23:b0:76e:2eff:7ae9 with SMTP id d2e1a72fcca58-76e8dbaf7e8mr905265b3a.12.1755641994766;
+        Tue, 19 Aug 2025 15:19:54 -0700 (PDT)
 Received: from [127.0.0.1] (aulavirtual.utp.edu.pe. [190.12.77.24])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4f76b5sm3431545b3a.59.2025.08.19.15.19.46
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4f76b5sm3431545b3a.59.2025.08.19.15.19.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 15:19:50 -0700 (PDT)
+        Tue, 19 Aug 2025 15:19:54 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Tue, 19 Aug 2025 17:19:36 -0500
-Subject: [PATCH 1/3] clk: samsung: exynos990: Fix CMU TOP mux/div widths
- and add fixed-factors
+Date: Tue, 19 Aug 2025 17:19:37 -0500
+Subject: [PATCH 2/3] dt-bindings: clock: exynos990: Reorder IDs clocks and
+ extend
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-2-v1-1-e84b47b859ce@gmail.com>
+Message-Id: <20250819-2-v1-2-e84b47b859ce@gmail.com>
 References: <20250819-2-v1-0-e84b47b859ce@gmail.com>
 In-Reply-To: <20250819-2-v1-0-e84b47b859ce@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -83,142 +83,435 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755641982; l=6749;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755641982; l=15686;
  i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
- bh=EgjV2IN3BTxVAhU8sWcO6A242l1zwL+tm7uc6WZdAWo=;
- b=1QCh90rN56p6R3kfiHTGSpY6hHK3WN3npDGcpi8QPXQxfS8xLeM9psBkjjolDUnpuTcef80tv
- vZoVjZHo/fPAb72zRjwwy9x6xrSj3o5Nl8jOV229WYu1DAPYpDMPYts
+ bh=IZSjRet90Z7ssCuwoIO31SUnba8YT9zfKUtMi4mD8fU=;
+ b=SDqrPlwJZ7aAlvq5vK4lIV5uYIPkibEN5Ah4t0t268uziiwhD9ld9H7LpXSANhuRcODa9E016
+ 4fty8msP7R8D0+T+xuDQaAdio4zvlp3/SGaa3AnJYy6xH/rcX6OksLT
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
 
-Correct mux/div bit widths in CMU TOP (DPU, DSP_BUS, G2D_MSCL,
-HSI0/1/2). Replace wrong divs with fixed-factor clocks for
-HSI1/2 PCIe and USBDP debug. Also fix OTP rate. These align
-with Exynos990 downstream cmucal and ensure correct parent/rate
-selection.
+Reorganize CMU_TOP clock definitions
+and add missing clock definitions for DPU and CMUREF.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos990.c | 35 ++++++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 15 deletions(-)
+ include/dt-bindings/clock/samsung,exynos990.h | 402 ++++++++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 203 insertions(+), 199 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index 8d3f193d2b4d4c2146d9b8b57d76605b88dc9bbb..57e26c4d1f39cef838f3201956762a0c242f726a 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -759,11 +759,11 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_CMU_DPU_ALT, "mout_cmu_dpu_alt",
- 	    mout_cmu_dpu_alt_p, CLK_CON_MUX_MUX_CLKCMU_DPU_ALT, 0, 2),
- 	MUX(CLK_MOUT_CMU_DSP_BUS, "mout_cmu_dsp_bus",
--	    mout_cmu_dsp_bus_p, CLK_CON_MUX_MUX_CLKCMU_DSP_BUS, 0, 2),
-+	    mout_cmu_dsp_bus_p, CLK_CON_MUX_MUX_CLKCMU_DSP_BUS, 0, 3),
- 	MUX(CLK_MOUT_CMU_G2D_G2D, "mout_cmu_g2d_g2d",
- 	    mout_cmu_g2d_g2d_p, CLK_CON_MUX_MUX_CLKCMU_G2D_G2D, 0, 2),
- 	MUX(CLK_MOUT_CMU_G2D_MSCL, "mout_cmu_g2d_mscl",
--	    mout_cmu_g2d_mscl_p, CLK_CON_MUX_MUX_CLKCMU_G2D_MSCL, 0, 1),
-+	    mout_cmu_g2d_mscl_p, CLK_CON_MUX_MUX_CLKCMU_G2D_MSCL, 0, 2),
- 	MUX(CLK_MOUT_CMU_HPM, "mout_cmu_hpm",
- 	    mout_cmu_hpm_p, CLK_CON_MUX_MUX_CLKCMU_HPM, 0, 2),
- 	MUX(CLK_MOUT_CMU_HSI0_BUS, "mout_cmu_hsi0_bus",
-@@ -775,7 +775,7 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	    0, 2),
- 	MUX(CLK_MOUT_CMU_HSI0_USBDP_DEBUG, "mout_cmu_hsi0_usbdp_debug",
- 	    mout_cmu_hsi0_usbdp_debug_p,
--	    CLK_CON_MUX_MUX_CLKCMU_HSI0_USBDP_DEBUG, 0, 2),
-+	    CLK_CON_MUX_MUX_CLKCMU_HSI0_USBDP_DEBUG, 0, 1),
- 	MUX(CLK_MOUT_CMU_HSI1_BUS, "mout_cmu_hsi1_bus",
- 	    mout_cmu_hsi1_bus_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_BUS, 0, 3),
- 	MUX(CLK_MOUT_CMU_HSI1_MMC_CARD, "mout_cmu_hsi1_mmc_card",
-@@ -788,7 +788,7 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	    0, 2),
- 	MUX(CLK_MOUT_CMU_HSI1_UFS_EMBD, "mout_cmu_hsi1_ufs_embd",
- 	    mout_cmu_hsi1_ufs_embd_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_UFS_EMBD,
--	    0, 1),
-+	    0, 2),
- 	MUX(CLK_MOUT_CMU_HSI2_BUS, "mout_cmu_hsi2_bus",
- 	    mout_cmu_hsi2_bus_p, CLK_CON_MUX_MUX_CLKCMU_HSI2_BUS, 0, 1),
- 	MUX(CLK_MOUT_CMU_HSI2_PCIE, "mout_cmu_hsi2_pcie",
-@@ -837,7 +837,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
- 	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
- 	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
--	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
-+	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 1),
- 	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
- 	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+diff --git a/include/dt-bindings/clock/samsung,exynos990.h b/include/dt-bindings/clock/samsung,exynos990.h
+index 6b9df09d2822f1c8e5086a2fc0bda783ca224812..b384e271bf276a375f67659fc84e53350ea73c0e 100644
+--- a/include/dt-bindings/clock/samsung,exynos990.h
++++ b/include/dt-bindings/clock/samsung,exynos990.h
+@@ -9,205 +9,209 @@
+ #define _DT_BINDINGS_CLOCK_EXYNOS_990_H
  
-@@ -862,7 +862,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
+ /* CMU_TOP */
+-#define CLK_FOUT_SHARED0_PLL		1
+-#define CLK_FOUT_SHARED1_PLL		2
+-#define CLK_FOUT_SHARED2_PLL		3
+-#define CLK_FOUT_SHARED3_PLL		4
+-#define CLK_FOUT_SHARED4_PLL		5
+-#define CLK_FOUT_G3D_PLL		6
+-#define CLK_FOUT_MMC_PLL		7
+-#define CLK_MOUT_PLL_SHARED0		8
+-#define CLK_MOUT_PLL_SHARED1		9
+-#define CLK_MOUT_PLL_SHARED2		10
+-#define CLK_MOUT_PLL_SHARED3		11
+-#define CLK_MOUT_PLL_SHARED4		12
+-#define CLK_MOUT_PLL_MMC		13
+-#define CLK_MOUT_PLL_G3D		14
+-#define CLK_MOUT_CMU_APM_BUS		15
+-#define CLK_MOUT_CMU_AUD_CPU		16
+-#define CLK_MOUT_CMU_BUS0_BUS		17
+-#define CLK_MOUT_CMU_BUS1_BUS		18
+-#define CLK_MOUT_CMU_BUS1_SSS		19
+-#define CLK_MOUT_CMU_CIS_CLK0		20
+-#define CLK_MOUT_CMU_CIS_CLK1		21
+-#define CLK_MOUT_CMU_CIS_CLK2		22
+-#define CLK_MOUT_CMU_CIS_CLK3		23
+-#define CLK_MOUT_CMU_CIS_CLK4		24
+-#define CLK_MOUT_CMU_CIS_CLK5		25
+-#define CLK_MOUT_CMU_CMU_BOOST		26
+-#define CLK_MOUT_CMU_CORE_BUS		27
+-#define CLK_MOUT_CMU_CPUCL0_DBG_BUS	28
+-#define CLK_MOUT_CMU_CPUCL0_SWITCH	29
+-#define CLK_MOUT_CMU_CPUCL1_SWITCH	30
+-#define CLK_MOUT_CMU_CPUCL2_BUSP	31
+-#define CLK_MOUT_CMU_CPUCL2_SWITCH	32
+-#define CLK_MOUT_CMU_CSIS_BUS		33
+-#define CLK_MOUT_CMU_CSIS_OIS_MCU	34
+-#define CLK_MOUT_CMU_DNC_BUS		35
+-#define CLK_MOUT_CMU_DNC_BUSM		36
+-#define CLK_MOUT_CMU_DNS_BUS		37
+-#define CLK_MOUT_CMU_DPU		38
+-#define CLK_MOUT_CMU_DPU_ALT		39
+-#define CLK_MOUT_CMU_DSP_BUS		40
+-#define CLK_MOUT_CMU_G2D_G2D		41
+-#define CLK_MOUT_CMU_G2D_MSCL		42
+-#define CLK_MOUT_CMU_HPM		43
+-#define CLK_MOUT_CMU_HSI0_BUS		44
+-#define CLK_MOUT_CMU_HSI0_DPGTC		45
+-#define CLK_MOUT_CMU_HSI0_USB31DRD	46
+-#define CLK_MOUT_CMU_HSI0_USBDP_DEBUG	47
+-#define CLK_MOUT_CMU_HSI1_BUS		48
+-#define CLK_MOUT_CMU_HSI1_MMC_CARD	49
+-#define CLK_MOUT_CMU_HSI1_PCIE		50
+-#define CLK_MOUT_CMU_HSI1_UFS_CARD	51
+-#define CLK_MOUT_CMU_HSI1_UFS_EMBD	52
+-#define CLK_MOUT_CMU_HSI2_BUS		53
+-#define CLK_MOUT_CMU_HSI2_PCIE		54
+-#define CLK_MOUT_CMU_IPP_BUS		55
+-#define CLK_MOUT_CMU_ITP_BUS		56
+-#define CLK_MOUT_CMU_MCSC_BUS		57
+-#define CLK_MOUT_CMU_MCSC_GDC		58
+-#define CLK_MOUT_CMU_CMU_BOOST_CPU	59
+-#define CLK_MOUT_CMU_MFC0_MFC0		60
+-#define CLK_MOUT_CMU_MFC0_WFD		61
+-#define CLK_MOUT_CMU_MIF_BUSP		62
+-#define CLK_MOUT_CMU_MIF_SWITCH		63
+-#define CLK_MOUT_CMU_NPU_BUS		64
+-#define CLK_MOUT_CMU_PERIC0_BUS		65
+-#define CLK_MOUT_CMU_PERIC0_IP		66
+-#define CLK_MOUT_CMU_PERIC1_BUS		67
+-#define CLK_MOUT_CMU_PERIC1_IP		68
+-#define CLK_MOUT_CMU_PERIS_BUS		69
+-#define CLK_MOUT_CMU_SSP_BUS		70
+-#define CLK_MOUT_CMU_TNR_BUS		71
+-#define CLK_MOUT_CMU_VRA_BUS		72
+-#define CLK_DOUT_CMU_APM_BUS		73
+-#define CLK_DOUT_CMU_AUD_CPU		74
+-#define CLK_DOUT_CMU_BUS0_BUS		75
+-#define CLK_DOUT_CMU_BUS1_BUS		76
+-#define CLK_DOUT_CMU_BUS1_SSS		77
+-#define CLK_DOUT_CMU_CIS_CLK0		78
+-#define CLK_DOUT_CMU_CIS_CLK1		79
+-#define CLK_DOUT_CMU_CIS_CLK2		80
+-#define CLK_DOUT_CMU_CIS_CLK3		81
+-#define CLK_DOUT_CMU_CIS_CLK4		82
+-#define CLK_DOUT_CMU_CIS_CLK5		83
+-#define CLK_DOUT_CMU_CMU_BOOST		84
+-#define CLK_DOUT_CMU_CORE_BUS		85
+-#define CLK_DOUT_CMU_CPUCL0_DBG_BUS	86
+-#define CLK_DOUT_CMU_CPUCL0_SWITCH	87
+-#define CLK_DOUT_CMU_CPUCL1_SWITCH	88
+-#define CLK_DOUT_CMU_CPUCL2_BUSP	89
+-#define CLK_DOUT_CMU_CPUCL2_SWITCH	90
+-#define CLK_DOUT_CMU_CSIS_BUS		91
+-#define CLK_DOUT_CMU_CSIS_OIS_MCU	92
+-#define CLK_DOUT_CMU_DNC_BUS		93
+-#define CLK_DOUT_CMU_DNC_BUSM		94
+-#define CLK_DOUT_CMU_DNS_BUS		95
+-#define CLK_DOUT_CMU_DSP_BUS		96
+-#define CLK_DOUT_CMU_G2D_G2D		97
+-#define CLK_DOUT_CMU_G2D_MSCL		98
+-#define CLK_DOUT_CMU_G3D_SWITCH		99
+-#define CLK_DOUT_CMU_HPM		100
+-#define CLK_DOUT_CMU_HSI0_BUS		101
+-#define CLK_DOUT_CMU_HSI0_DPGTC		102
+-#define CLK_DOUT_CMU_HSI0_USB31DRD	103
+-#define CLK_DOUT_CMU_HSI0_USBDP_DEBUG	104
+-#define CLK_DOUT_CMU_HSI1_BUS		105
+-#define CLK_DOUT_CMU_HSI1_MMC_CARD	106
+-#define CLK_DOUT_CMU_HSI1_PCIE		107
+-#define CLK_DOUT_CMU_HSI1_UFS_CARD	108
+-#define CLK_DOUT_CMU_HSI1_UFS_EMBD	109
+-#define CLK_DOUT_CMU_HSI2_BUS		110
+-#define CLK_DOUT_CMU_HSI2_PCIE		111
+-#define CLK_DOUT_CMU_IPP_BUS		112
+-#define CLK_DOUT_CMU_ITP_BUS		113
+-#define CLK_DOUT_CMU_MCSC_BUS		114
+-#define CLK_DOUT_CMU_MCSC_GDC		115
+-#define CLK_DOUT_CMU_CMU_BOOST_CPU	116
+-#define CLK_DOUT_CMU_MFC0_MFC0		117
+-#define CLK_DOUT_CMU_MFC0_WFD		118
+-#define CLK_DOUT_CMU_MIF_BUSP		119
+-#define CLK_DOUT_CMU_NPU_BUS		120
+-#define CLK_DOUT_CMU_OTP		121
+-#define CLK_DOUT_CMU_PERIC0_BUS		122
+-#define CLK_DOUT_CMU_PERIC0_IP		123
+-#define CLK_DOUT_CMU_PERIC1_BUS		124
+-#define CLK_DOUT_CMU_PERIC1_IP		125
+-#define CLK_DOUT_CMU_PERIS_BUS		126
+-#define CLK_DOUT_CMU_SSP_BUS		127
+-#define CLK_DOUT_CMU_TNR_BUS		128
+-#define CLK_DOUT_CMU_VRA_BUS		129
+-#define CLK_DOUT_CMU_DPU		130
+-#define CLK_DOUT_CMU_DPU_ALT		131
+-#define CLK_DOUT_CMU_SHARED0_DIV2	132
+-#define CLK_DOUT_CMU_SHARED0_DIV3	133
+-#define CLK_DOUT_CMU_SHARED0_DIV4	134
+-#define CLK_DOUT_CMU_SHARED1_DIV2	135
+-#define CLK_DOUT_CMU_SHARED1_DIV3	136
+-#define CLK_DOUT_CMU_SHARED1_DIV4	137
+-#define CLK_DOUT_CMU_SHARED2_DIV2	138
+-#define CLK_DOUT_CMU_SHARED4_DIV2	139
+-#define CLK_DOUT_CMU_SHARED4_DIV3	140
+-#define CLK_DOUT_CMU_SHARED4_DIV4	141
+-#define CLK_GOUT_CMU_G3D_BUS		142
+-#define CLK_GOUT_CMU_MIF_SWITCH		143
+-#define CLK_GOUT_CMU_APM_BUS		144
+-#define CLK_GOUT_CMU_AUD_CPU		145
+-#define CLK_GOUT_CMU_BUS0_BUS		146
+-#define CLK_GOUT_CMU_BUS1_BUS		147
+-#define CLK_GOUT_CMU_BUS1_SSS		148
+-#define CLK_GOUT_CMU_CIS_CLK0		149
+-#define CLK_GOUT_CMU_CIS_CLK1		150
+-#define CLK_GOUT_CMU_CIS_CLK2		151
+-#define CLK_GOUT_CMU_CIS_CLK3		152
+-#define CLK_GOUT_CMU_CIS_CLK4		153
+-#define CLK_GOUT_CMU_CIS_CLK5		154
+-#define CLK_GOUT_CMU_CORE_BUS		155
+-#define CLK_GOUT_CMU_CPUCL0_DBG_BUS	156
+-#define CLK_GOUT_CMU_CPUCL0_SWITCH	157
+-#define CLK_GOUT_CMU_CPUCL1_SWITCH	158
+-#define CLK_GOUT_CMU_CPUCL2_BUSP	159
+-#define CLK_GOUT_CMU_CPUCL2_SWITCH	160
+-#define CLK_GOUT_CMU_CSIS_BUS		161
+-#define CLK_GOUT_CMU_CSIS_OIS_MCU	162
+-#define CLK_GOUT_CMU_DNC_BUS		163
+-#define CLK_GOUT_CMU_DNC_BUSM		164
+-#define CLK_GOUT_CMU_DNS_BUS		165
+-#define CLK_GOUT_CMU_DPU		166
+-#define CLK_GOUT_CMU_DPU_BUS		167
+-#define CLK_GOUT_CMU_DSP_BUS		168
+-#define CLK_GOUT_CMU_G2D_G2D		169
+-#define CLK_GOUT_CMU_G2D_MSCL		170
+-#define CLK_GOUT_CMU_G3D_SWITCH		171
+-#define CLK_GOUT_CMU_HPM		172
+-#define CLK_GOUT_CMU_HSI0_BUS		173
+-#define CLK_GOUT_CMU_HSI0_DPGTC		174
+-#define CLK_GOUT_CMU_HSI0_USB31DRD	175
+-#define CLK_GOUT_CMU_HSI0_USBDP_DEBUG	176
+-#define CLK_GOUT_CMU_HSI1_BUS		177
+-#define CLK_GOUT_CMU_HSI1_MMC_CARD	178
+-#define CLK_GOUT_CMU_HSI1_PCIE		179
+-#define CLK_GOUT_CMU_HSI1_UFS_CARD	180
+-#define CLK_GOUT_CMU_HSI1_UFS_EMBD	181
+-#define CLK_GOUT_CMU_HSI2_BUS		182
+-#define CLK_GOUT_CMU_HSI2_PCIE		183
+-#define CLK_GOUT_CMU_IPP_BUS		184
+-#define CLK_GOUT_CMU_ITP_BUS		185
+-#define CLK_GOUT_CMU_MCSC_BUS		186
+-#define CLK_GOUT_CMU_MCSC_GDC		187
+-#define CLK_GOUT_CMU_MFC0_MFC0		188
+-#define CLK_GOUT_CMU_MFC0_WFD		189
+-#define CLK_GOUT_CMU_MIF_BUSP		190
+-#define CLK_GOUT_CMU_NPU_BUS		191
+-#define CLK_GOUT_CMU_PERIC0_BUS		192
+-#define CLK_GOUT_CMU_PERIC0_IP		193
+-#define CLK_GOUT_CMU_PERIC1_BUS		194
+-#define CLK_GOUT_CMU_PERIC1_IP		195
+-#define CLK_GOUT_CMU_PERIS_BUS		196
+-#define CLK_GOUT_CMU_SSP_BUS		197
+-#define CLK_GOUT_CMU_TNR_BUS		198
+-#define CLK_GOUT_CMU_VRA_BUS		199
++#define CLK_FOUT_G3D_PLL		1
++#define CLK_FOUT_MMC_PLL		2
++#define CLK_FOUT_SHARED0_PLL		3
++#define CLK_FOUT_SHARED1_PLL		4
++#define CLK_FOUT_SHARED2_PLL		5
++#define CLK_FOUT_SHARED3_PLL		6
++#define CLK_FOUT_SHARED4_PLL		7
++#define CLK_MOUT_PLL_G3D		8
++#define CLK_MOUT_PLL_MMC		9
++#define CLK_MOUT_PLL_SHARED0		10
++#define CLK_MOUT_PLL_SHARED1		11
++#define CLK_MOUT_PLL_SHARED2		12
++#define CLK_MOUT_PLL_SHARED3		13
++#define CLK_MOUT_PLL_SHARED4		14
++#define CLK_MOUT_CMU_DPU_BUS		15
++#define CLK_MOUT_CMU_APM_BUS		16
++#define CLK_MOUT_CMU_AUD_CPU		17
++#define CLK_MOUT_CMU_BUS0_BUS		18
++#define CLK_MOUT_CMU_BUS1_BUS		19
++#define CLK_MOUT_CMU_BUS1_SSS		20
++#define CLK_MOUT_CMU_CIS_CLK0		21
++#define CLK_MOUT_CMU_CIS_CLK1		22
++#define CLK_MOUT_CMU_CIS_CLK2		23
++#define CLK_MOUT_CMU_CIS_CLK3		24
++#define CLK_MOUT_CMU_CIS_CLK4		25
++#define CLK_MOUT_CMU_CIS_CLK5		26
++#define CLK_MOUT_CMU_CMU_BOOST		27
++#define CLK_MOUT_CMU_CORE_BUS		28
++#define CLK_MOUT_CMU_CPUCL0_DBG_BUS	29
++#define CLK_MOUT_CMU_CPUCL0_SWITCH	30
++#define CLK_MOUT_CMU_CPUCL1_SWITCH	31
++#define CLK_MOUT_CMU_CPUCL2_BUSP	32
++#define CLK_MOUT_CMU_CPUCL2_SWITCH	33
++#define CLK_MOUT_CMU_CSIS_BUS		34
++#define CLK_MOUT_CMU_CSIS_OIS_MCU	35
++#define CLK_MOUT_CMU_DNC_BUS		36
++#define CLK_MOUT_CMU_DNC_BUSM		37
++#define CLK_MOUT_CMU_DNS_BUS		38
++#define CLK_MOUT_CMU_DPU		39
++#define CLK_MOUT_CMU_DPU_ALT		40
++#define CLK_MOUT_CMU_DSP_BUS		41
++#define CLK_MOUT_CMU_G2D_G2D		42
++#define CLK_MOUT_CMU_G2D_MSCL		43
++#define CLK_MOUT_CMU_HPM		44
++#define CLK_MOUT_CMU_HSI0_BUS		45
++#define CLK_MOUT_CMU_HSI0_DPGTC		46
++#define CLK_MOUT_CMU_HSI0_USB31DRD	47
++#define CLK_MOUT_CMU_HSI0_USBDP_DEBUG	48
++#define CLK_MOUT_CMU_HSI1_BUS		49
++#define CLK_MOUT_CMU_HSI1_MMC_CARD	50
++#define CLK_MOUT_CMU_HSI1_PCIE		51
++#define CLK_MOUT_CMU_HSI1_UFS_CARD	52
++#define CLK_MOUT_CMU_HSI1_UFS_EMBD	53
++#define CLK_MOUT_CMU_HSI2_BUS		54
++#define CLK_MOUT_CMU_HSI2_PCIE		55
++#define CLK_MOUT_CMU_IPP_BUS		56
++#define CLK_MOUT_CMU_ITP_BUS		57
++#define CLK_MOUT_CMU_MCSC_BUS		58
++#define CLK_MOUT_CMU_MCSC_GDC		59
++#define CLK_MOUT_CMU_CMU_BOOST_CPU	60
++#define CLK_MOUT_CMU_MFC0_MFC0		61
++#define CLK_MOUT_CMU_MFC0_WFD		62
++#define CLK_MOUT_CMU_MIF_BUSP		63
++#define CLK_MOUT_CMU_MIF_SWITCH		64
++#define CLK_MOUT_CMU_NPU_BUS		65
++#define CLK_MOUT_CMU_PERIC0_BUS		66
++#define CLK_MOUT_CMU_PERIC0_IP		67
++#define CLK_MOUT_CMU_PERIC1_BUS		68
++#define CLK_MOUT_CMU_PERIC1_IP		69
++#define CLK_MOUT_CMU_PERIS_BUS		70
++#define CLK_MOUT_CMU_SSP_BUS		71
++#define CLK_MOUT_CMU_TNR_BUS		72
++#define CLK_MOUT_CMU_VRA_BUS		73
++#define CLK_MOUT_CMU_CMUREF		74
++#define CLK_MOUT_CMU_CLK_CMUREF		75
++#define CLK_DOUT_CMU_APM_BUS		76
++#define CLK_DOUT_CMU_AUD_CPU		77
++#define CLK_DOUT_CMU_BUS0_BUS		78
++#define CLK_DOUT_CMU_BUS1_BUS		79
++#define CLK_DOUT_CMU_BUS1_SSS		80
++#define CLK_DOUT_CMU_CIS_CLK0		81
++#define CLK_DOUT_CMU_CIS_CLK1		82
++#define CLK_DOUT_CMU_CIS_CLK2		83
++#define CLK_DOUT_CMU_CIS_CLK3		84
++#define CLK_DOUT_CMU_CIS_CLK4		85
++#define CLK_DOUT_CMU_CIS_CLK5		86
++#define CLK_DOUT_CMU_CMU_BOOST		87
++#define CLK_DOUT_CMU_CORE_BUS		88
++#define CLK_DOUT_CMU_CPUCL0_DBG_BUS	89
++#define CLK_DOUT_CMU_CPUCL0_SWITCH	90
++#define CLK_DOUT_CMU_CPUCL1_SWITCH	91
++#define CLK_DOUT_CMU_CPUCL2_BUSP	92
++#define CLK_DOUT_CMU_CPUCL2_SWITCH	93
++#define CLK_DOUT_CMU_CSIS_BUS		94
++#define CLK_DOUT_CMU_CSIS_OIS_MCU	95
++#define CLK_DOUT_CMU_DNC_BUS		96
++#define CLK_DOUT_CMU_DNC_BUSM		97
++#define CLK_DOUT_CMU_DNS_BUS		98
++#define CLK_DOUT_CMU_DSP_BUS		99
++#define CLK_DOUT_CMU_G2D_G2D		100
++#define CLK_DOUT_CMU_G2D_MSCL		101
++#define CLK_DOUT_CMU_G3D_SWITCH		102
++#define CLK_DOUT_CMU_HPM		103
++#define CLK_DOUT_CMU_HSI0_BUS		104
++#define CLK_DOUT_CMU_HSI0_DPGTC		105
++#define CLK_DOUT_CMU_HSI0_USB31DRD	106
++#define CLK_DOUT_CMU_HSI0_USBDP_DEBUG	107
++#define CLK_DOUT_CMU_HSI1_BUS		108
++#define CLK_DOUT_CMU_HSI1_MMC_CARD	109
++#define CLK_DOUT_CMU_HSI1_PCIE		110
++#define CLK_DOUT_CMU_HSI1_UFS_CARD	111
++#define CLK_DOUT_CMU_HSI1_UFS_EMBD	112
++#define CLK_DOUT_CMU_HSI2_BUS		113
++#define CLK_DOUT_CMU_HSI2_PCIE		114
++#define CLK_DOUT_CMU_IPP_BUS		115
++#define CLK_DOUT_CMU_ITP_BUS		116
++#define CLK_DOUT_CMU_MCSC_BUS		117
++#define CLK_DOUT_CMU_MCSC_GDC		118
++#define CLK_DOUT_CMU_CMU_BOOST_CPU	119
++#define CLK_DOUT_CMU_MFC0_MFC0		120
++#define CLK_DOUT_CMU_MFC0_WFD		121
++#define CLK_DOUT_CMU_MIF_BUSP		122
++#define CLK_DOUT_CMU_NPU_BUS		123
++#define CLK_DOUT_CMU_OTP		124
++#define CLK_DOUT_CMU_PERIC0_BUS		125
++#define CLK_DOUT_CMU_PERIC0_IP		126
++#define CLK_DOUT_CMU_PERIC1_BUS		127
++#define CLK_DOUT_CMU_PERIC1_IP		128
++#define CLK_DOUT_CMU_PERIS_BUS		129
++#define CLK_DOUT_CMU_SSP_BUS		130
++#define CLK_DOUT_CMU_TNR_BUS		131
++#define CLK_DOUT_CMU_VRA_BUS		132
++#define CLK_DOUT_CMU_DPU		133
++#define CLK_DOUT_CMU_DPU_ALT		134
++#define CLK_DOUT_CMU_CLK_CMUREF		135
++#define CLK_DOUT_CMU_SHARED0_DIV2	136
++#define CLK_DOUT_CMU_SHARED0_DIV3	137
++#define CLK_DOUT_CMU_SHARED0_DIV4	138
++#define CLK_DOUT_CMU_SHARED1_DIV2	139
++#define CLK_DOUT_CMU_SHARED1_DIV3	140
++#define CLK_DOUT_CMU_SHARED1_DIV4	141
++#define CLK_DOUT_CMU_SHARED2_DIV2	142
++#define CLK_DOUT_CMU_SHARED4_DIV2	145
++#define CLK_DOUT_CMU_SHARED4_DIV3	146
++#define CLK_DOUT_CMU_SHARED4_DIV4	147
++#define CLK_GOUT_CMU_G3D_BUS		148
++#define CLK_GOUT_CMU_MIF_SWITCH		149
++#define CLK_GOUT_CMU_APM_BUS		150
++#define CLK_GOUT_CMU_AUD_CPU		151
++#define CLK_GOUT_CMU_BUS0_BUS		152
++#define CLK_GOUT_CMU_BUS1_BUS		153
++#define CLK_GOUT_CMU_BUS1_SSS		154
++#define CLK_GOUT_CMU_CIS_CLK0		155
++#define CLK_GOUT_CMU_CIS_CLK1		156
++#define CLK_GOUT_CMU_CIS_CLK2		157
++#define CLK_GOUT_CMU_CIS_CLK3		158
++#define CLK_GOUT_CMU_CIS_CLK4		159
++#define CLK_GOUT_CMU_CIS_CLK5		160
++#define CLK_GOUT_CMU_CORE_BUS		161
++#define CLK_GOUT_CMU_CPUCL0_DBG_BUS	162
++#define CLK_GOUT_CMU_CPUCL0_SWITCH	163
++#define CLK_GOUT_CMU_CPUCL1_SWITCH	164
++#define CLK_GOUT_CMU_CPUCL2_BUSP	165
++#define CLK_GOUT_CMU_CPUCL2_SWITCH	166
++#define CLK_GOUT_CMU_CSIS_BUS		167
++#define CLK_GOUT_CMU_CSIS_OIS_MCU	168
++#define CLK_GOUT_CMU_DNC_BUS		169
++#define CLK_GOUT_CMU_DNC_BUSM		170
++#define CLK_GOUT_CMU_DNS_BUS		171
++#define CLK_GOUT_CMU_DPU		172
++#define CLK_GOUT_CMU_DPU_BUS		173
++#define CLK_GOUT_CMU_DSP_BUS		174
++#define CLK_GOUT_CMU_G2D_G2D		175
++#define CLK_GOUT_CMU_G2D_MSCL		176
++#define CLK_GOUT_CMU_G3D_SWITCH		177
++#define CLK_GOUT_CMU_HPM		178
++#define CLK_GOUT_CMU_HSI0_BUS		179
++#define CLK_GOUT_CMU_HSI0_DPGTC		180
++#define CLK_GOUT_CMU_HSI0_USB31DRD	181
++#define CLK_GOUT_CMU_HSI0_USBDP_DEBUG	182
++#define CLK_GOUT_CMU_HSI1_BUS		183
++#define CLK_GOUT_CMU_HSI1_MMC_CARD	184
++#define CLK_GOUT_CMU_HSI1_PCIE		185
++#define CLK_GOUT_CMU_HSI1_UFS_CARD	186
++#define CLK_GOUT_CMU_HSI1_UFS_EMBD	187
++#define CLK_GOUT_CMU_HSI2_BUS		188
++#define CLK_GOUT_CMU_HSI2_PCIE		189
++#define CLK_GOUT_CMU_IPP_BUS		190
++#define CLK_GOUT_CMU_ITP_BUS		191
++#define CLK_GOUT_CMU_MCSC_BUS		192
++#define CLK_GOUT_CMU_MCSC_GDC		193
++#define CLK_GOUT_CMU_MFC0_MFC0		194
++#define CLK_GOUT_CMU_MFC0_WFD		195
++#define CLK_GOUT_CMU_MIF_BUSP		196
++#define CLK_GOUT_CMU_NPU_BUS		197
++#define CLK_GOUT_CMU_PERIC0_BUS		198
++#define CLK_GOUT_CMU_PERIC0_IP		199
++#define CLK_GOUT_CMU_PERIC1_BUS		200
++#define CLK_GOUT_CMU_PERIC1_IP		201
++#define CLK_GOUT_CMU_PERIS_BUS		202
++#define CLK_GOUT_CMU_SSP_BUS		203
++#define CLK_GOUT_CMU_TNR_BUS		204
++#define CLK_GOUT_CMU_VRA_BUS		205
  
- 	DIV(CLK_DOUT_CMU_APM_BUS, "dout_cmu_apm_bus", "gout_cmu_apm_bus",
--	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 3),
-+	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 2),
- 	DIV(CLK_DOUT_CMU_AUD_CPU, "dout_cmu_aud_cpu", "gout_cmu_aud_cpu",
- 	    CLK_CON_DIV_CLKCMU_AUD_CPU, 0, 3),
- 	DIV(CLK_DOUT_CMU_BUS0_BUS, "dout_cmu_bus0_bus", "gout_cmu_bus0_bus",
-@@ -889,7 +889,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_CLKCMU_CORE_BUS, 0, 4),
- 	DIV(CLK_DOUT_CMU_CPUCL0_DBG_BUS, "dout_cmu_cpucl0_debug",
- 	    "gout_cmu_cpucl0_dbg_bus", CLK_CON_DIV_CLKCMU_CPUCL0_DBG_BUS,
--	    0, 3),
-+	    0, 4),
- 	DIV(CLK_DOUT_CMU_CPUCL0_SWITCH, "dout_cmu_cpucl0_switch",
- 	    "gout_cmu_cpucl0_switch", CLK_CON_DIV_CLKCMU_CPUCL0_SWITCH, 0, 3),
- 	DIV(CLK_DOUT_CMU_CPUCL1_SWITCH, "dout_cmu_cpucl1_switch",
-@@ -924,16 +924,11 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_CLKCMU_HSI0_DPGTC, 0, 3),
- 	DIV(CLK_DOUT_CMU_HSI0_USB31DRD, "dout_cmu_hsi0_usb31drd",
- 	    "gout_cmu_hsi0_usb31drd", CLK_CON_DIV_CLKCMU_HSI0_USB31DRD, 0, 4),
--	DIV(CLK_DOUT_CMU_HSI0_USBDP_DEBUG, "dout_cmu_hsi0_usbdp_debug",
--	    "gout_cmu_hsi0_usbdp_debug", CLK_CON_DIV_CLKCMU_HSI0_USBDP_DEBUG,
--	    0, 4),
- 	DIV(CLK_DOUT_CMU_HSI1_BUS, "dout_cmu_hsi1_bus", "gout_cmu_hsi1_bus",
- 	    CLK_CON_DIV_CLKCMU_HSI1_BUS, 0, 3),
- 	DIV(CLK_DOUT_CMU_HSI1_MMC_CARD, "dout_cmu_hsi1_mmc_card",
- 	    "gout_cmu_hsi1_mmc_card", CLK_CON_DIV_CLKCMU_HSI1_MMC_CARD,
- 	    0, 9),
--	DIV(CLK_DOUT_CMU_HSI1_PCIE, "dout_cmu_hsi1_pcie", "gout_cmu_hsi1_pcie",
--	    CLK_CON_DIV_CLKCMU_HSI1_PCIE, 0, 7),
- 	DIV(CLK_DOUT_CMU_HSI1_UFS_CARD, "dout_cmu_hsi1_ufs_card",
- 	    "gout_cmu_hsi1_ufs_card", CLK_CON_DIV_CLKCMU_HSI1_UFS_CARD,
- 	    0, 3),
-@@ -942,8 +937,6 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    0, 3),
- 	DIV(CLK_DOUT_CMU_HSI2_BUS, "dout_cmu_hsi2_bus", "gout_cmu_hsi2_bus",
- 	    CLK_CON_DIV_CLKCMU_HSI2_BUS, 0, 4),
--	DIV(CLK_DOUT_CMU_HSI2_PCIE, "dout_cmu_hsi2_pcie", "gout_cmu_hsi2_pcie",
--	    CLK_CON_DIV_CLKCMU_HSI2_PCIE, 0, 7),
- 	DIV(CLK_DOUT_CMU_IPP_BUS, "dout_cmu_ipp_bus", "gout_cmu_ipp_bus",
- 	    CLK_CON_DIV_CLKCMU_IPP_BUS, 0, 4),
- 	DIV(CLK_DOUT_CMU_ITP_BUS, "dout_cmu_itp_bus", "gout_cmu_itp_bus",
-@@ -980,7 +973,17 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	DIV(CLK_DOUT_CMU_VRA_BUS, "dout_cmu_vra_bus", "gout_cmu_vra_bus",
- 	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
- 	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_clkcmu_dpu", "gout_cmu_dpu",
--	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 4),
-+	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
-+};
-+
-+static const struct samsung_fixed_factor_clock cmu_top_ffactor[] __initconst = {
-+	FFACTOR(CLK_DOUT_CMU_HSI1_PCIE, "dout_cmu_hsi1_pcie",
-+		"gout_cmu_hsi1_pcie", 1, 8, 0),
-+	FFACTOR(CLK_DOUT_CMU_OTP, "dout_cmu_otp", "oscclk", 1, 8, 0),
-+	FFACTOR(CLK_DOUT_CMU_HSI0_USBDP_DEBUG, "dout_cmu_hsi0_usbdp_debug",
-+		"gout_cmu_hsi0_usbdp_debug", 1, 8, 0),
-+	FFACTOR(CLK_DOUT_CMU_HSI2_PCIE, "dout_cmu_hsi2_pcie",
-+		"gout_cmu_hsi2_pcie", 1, 8, 0),
- };
- 
- static const struct samsung_gate_clock top_gate_clks[] __initconst = {
-@@ -1126,6 +1129,8 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
- 	.nr_mux_clks = ARRAY_SIZE(top_mux_clks),
- 	.div_clks = top_div_clks,
- 	.nr_div_clks = ARRAY_SIZE(top_div_clks),
-+	.fixed_factor_clks = cmu_top_ffactor,
-+	.nr_fixed_factor_clks = ARRAY_SIZE(cmu_top_ffactor),
- 	.gate_clks = top_gate_clks,
- 	.nr_gate_clks = ARRAY_SIZE(top_gate_clks),
- 	.nr_clk_ids = CLKS_NR_TOP,
+ /* CMU_HSI0 */
+ #define CLK_MOUT_HSI0_BUS_USER				1
 
 -- 
 2.49.0
