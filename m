@@ -1,115 +1,151 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFA326ACB
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 10:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FAC326D72
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 11:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597608; cv=none; b=pq089osjfuUpNftaqIRMYtjNQFYd8vlEMmTBZiPS3fefAyEXurr+CZLudamMyucbmjFliB8IX6aLbAFIqCIDuxKwRahOUWnfclK4iVlXhbclffRi7HKAWEdgtyyDWDJX9lLROn2XwAM312StEifMq/xnniCU/gzhyb9vsr8xdfA=
+	t=1755602350; cv=none; b=oaRV4Nc4exvRnXiI36vwjCks2sH885/pUA11JPzkBknNUPXBdJU7Luh08e2tbzipSybwB37ShwbQass4VYKts8y9+WfdZWRjNMhwOvBAfpdp33gkGbvzjRGf8HVg7QdlFi4snxwRoQqd3OO5dGXHFaLAmAbZRvPGsNGFXm7xZZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597608; c=relaxed/simple;
-	bh=jzGnOmF7Sk4LwrNAoupPd1iop6vJLnCtHUZ3GO0ffG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=A0cNV2Lx41ewiUyqZVzG/ydroLBQSiha52Cb89LUxt07zv9bjv+skGF3kvTUoz5pgsUHYHD1pJX86amFczEc9CbvI+Lf2XrStFX0tp4iuouCJGvJycSvSqUziy85TQFzogBMCScIWiD03JnMk/YwcAu06mG/xYl41OeHqGnf96s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kdIooph2; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755602350; c=relaxed/simple;
+	bh=MgK+rLkI/+TCi8M5AFavEkLcyu2sg1ISmDECM+mPkA4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Gxe93a1cxHwaJSpHxgcqzvuO5uggUJCQwioqDzy0YoDQn1Jg6fIDjAsukRoVgdPNdfgJ85cI6/IWz4fZCB0Kxyo+DITOGCfyvgClDs4LrEGV3iqJaGoaxmbx0/kAKnJNfeDhEJsL6BrGJBHEoJQDaUgsLeZv/EeS3yueXKZyTYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U1BmD/j/; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kdIooph2"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so679965666b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 03:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755597604; x=1756202404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gjBR+kR0t8TJ8QuirCE4bg/F9pyLOUYw+FF6LSil2u8=;
-        b=kdIooph2lqV0R4lJaAqUiRFto8KCbnHqUdqUc0UsKxtdmiVsbC39n6LkEaPrCqE90n
-         OOacvCpM3z/Rw7dM37qltNglAAiOkGUgSVwnvkznYBsJaIV86sD8Hpu1zuixCRq4YK8S
-         yZTjXVKlM1p3Rvf5xALrsyi5nF/Bi32snAOcQAGrPObj3tFC21T9OtG+cwxHbWYmhgVB
-         WDv7gkVBlbKgo5PTQVyU5rbM/Dh88Ph0ubSBbLVD74Pjl/zHcY0Pfgss3c1xphH6aEml
-         fU2IhvzAmqz+g1qB8FZBplSEbrG+iikKuLDrIou+LJIK3e7by/2XlJxWnxPURnWYtnrm
-         5wkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755597604; x=1756202404;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gjBR+kR0t8TJ8QuirCE4bg/F9pyLOUYw+FF6LSil2u8=;
-        b=bNc2SsLAvmHA2NsCr4ohAphgvCK9xin9dKVnBWEXmQ20Bm9UV41eV4FAd0et6T01dg
-         0FNORqbL5Zb6VUOtfQMVYWn+nL7HXUxqEWAoz1WkENXmtKKDwtrNDra0MdiBVQ1o9JSP
-         kDFZxC8vTV0PSjjUY8jHaz0BsiRxDMvVdG1nU4beJtocWxC/5Ikmc6DImSrSE3zRGPaf
-         /rf9uNxbgZhU9VdyO5Y+3hGwRgeHl0UF51ZI6YN49uBhfuoE1V8rFMLLOq1t4HZywYaj
-         unAnnexsZjVdgQCRmkM1KtoxuNjTDbatnhv+E64ekx4FIJCxQ/nS+ZCPkklYcoxsm4Mq
-         d/DA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4KzJv6aEW2p3IcesGl/isB/HPiMlU3J4UKQ+ratXAX9BI4EmEBPVisrmLcDF694ZZ8GWZI18zL8ouDlqi5TptlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXFDWnBILUzqnn14jvst3np/U2Q30xru7S95JgD37fda/0WXx7
-	V8PegBTrTIe9La1XVzx5o1R/aojayM59LM2hfa0fpi9KJHrP6fJq+JJAv7BVrXhP6P0=
-X-Gm-Gg: ASbGnctkX1LMZ2GG0i4jIKa0DO+svmzPrSBqn2Yc307OVaMK23SuPa5sQ5HiaMHG07K
-	C7EQSAAzqXa5axCcB3RLorjhMq9kkwTdYAs5On9k8hwPUkL8bH5N32HM99DXGdvoD3wED79+F9d
-	rDjpwaJ4BEcQp73jrC8aFj/nQwuoBs5CIx+hezcbxlgoDNg7IIamV5YM39sneGyHXbYm4MQnMei
-	uTOJPYPpdqEo3sH13INF5MI2JByJsBSR2ZMx5iCkD7U25h5gOobu6uGr7V5PAHQIbsd4Bk8ygse
-	tzQxehq0tXJJu9Tu45Kanlvj1zxxNF+glA8WIRJMvCq3L6oC7L2r/szTVVE6SQ/V+XEgqLsX9dR
-	mgx5RD2+a4XRpHH13cGTrCmRbLnPCo7cLs+DqNdjWdBzA
-X-Google-Smtp-Source: AGHT+IFPRArZTdTP+NLIy/Vie9G8nvUNWq182V7aJXvkqOBztXScKlilBZHnaP0cP/Vv2uPVCLOzAQ==
-X-Received: by 2002:a17:907:3f1b:b0:af9:a4de:f092 with SMTP id a640c23a62f3a-afddd1caabcmr172982166b.55.1755597604424;
-        Tue, 19 Aug 2025 03:00:04 -0700 (PDT)
-Received: from [172.20.10.10] ([213.233.104.124])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdcfccea7sm977812366b.67.2025.08.19.03.00.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 03:00:03 -0700 (PDT)
-Message-ID: <e55326b7-7f52-4497-897b-32d67f522cd5@linaro.org>
-Date: Tue, 19 Aug 2025 11:00:01 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U1BmD/j/"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250819111905epoutp032e5bcb9cd5930ac63e8e63f62f8e7dfe~dJwg1CE321478214782epoutp03f
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 11:19:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250819111905epoutp032e5bcb9cd5930ac63e8e63f62f8e7dfe~dJwg1CE321478214782epoutp03f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755602345;
+	bh=0x7d8H6xz06YdYxBNLbU6UcbRVQToFcahkQJVNXKeqY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=U1BmD/j/YwHu+EzB0ss87m0t849jfii6N5aFLgGxZWLTxUYiJjQQbn6ZZHAF5aIO8
+	 MM+lGFfh7VKEocSr9NHirbwVaEXcyedMZCDhHfMafc98WLYEniBfTnzklZASPQytyl
+	 7u3qTq5A6Gn81m+5ddvih6GoEJtzRRY965Ux2tPA=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250819111905epcas5p29e792b412afad62d2b1010071fe37c5e~dJwgKcvVD1153211532epcas5p2r;
+	Tue, 19 Aug 2025 11:19:05 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5nCX0vk7z3hhTD; Tue, 19 Aug
+	2025 11:19:04 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250819111903epcas5p415026199e9a0ed1375118cb29bc45e32~dJweljSOS3266032660epcas5p4K;
+	Tue, 19 Aug 2025 11:19:03 +0000 (GMT)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250819111900epsmtip260850d7ecf79765666ebe8b2011e9d64~dJwboEOGA1429714297epsmtip2f;
+	Tue, 19 Aug 2025 11:19:00 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Bjorn Helgaas'"
+	<helgaas@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzysztof.kozlowski@linaro.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
+	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <29287880-9436-4acd-b3f9-b4d9eb726896@kernel.org>
+Subject: RE: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
+Date: Tue, 19 Aug 2025 16:48:59 +0530
+Message-ID: <00b401dc10fb$11bb1020$35313060$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 6/6] spi: s3c64xx: Remove the use of dev_err_probe()
-To: Xichao Zhao <zhao.xichao@vivo.com>, Andi Shyti <andi.shyti@kernel.org>,
- Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "open list:SAMSUNG SPI DRIVERS" <linux-spi@vger.kernel.org>,
- "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250819092044.549464-1-zhao.xichao@vivo.com>
- <20250819092044.549464-7-zhao.xichao@vivo.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250819092044.549464-7-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMTDUGC4sYT5EPbicD3neTazEuiywIHCRg2AsFZ7fKx1ZhD8A==
+Content-Language: en-in
+X-CMS-MailID: 20250819111903epcas5p415026199e9a0ed1375118cb29bc45e32
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250819063415epcas5p3e0bebab838b913e90bd07adf23c410f1
+References: <20250818182544.GA534647@bhelgaas>
+	<CGME20250819063415epcas5p3e0bebab838b913e90bd07adf23c410f1@epcas5p3.samsung.com>
+	<29287880-9436-4acd-b3f9-b4d9eb726896@kernel.org>
 
 
 
-On 8/19/25 10:20 AM, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-> remove the useless call to dev_err_probe(), and just return the value instead.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 19 August 2025 12:04
+> To: Bjorn Helgaas <helgaas@kernel.org>; Shradha Todi <shradha.t@samsung.com>; Krzysztof
+> Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org;
+> mani@kernel.org; lpieralisi@kernel.org; kwilczynski@kernel.org; robh@kernel.org;
+> bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org; conor+dt@kernel.org;
+> alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org; arnd@arndb.de;
+> m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
+> Subject: Re: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-> ---
->  drivers/spi/spi-s3c64xx.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> On 18/08/2025 20:25, Bjorn Helgaas wrote:
+> > [+to Krzysztof]
+> >
+> > On Mon, Aug 18, 2025 at 03:00:00PM +0530, Shradha Todi wrote:
+> >>> On Mon, Aug 11, 2025 at 09:16:37PM +0530, Shradha Todi wrote:
+> >>>> Add host and endpoint controller driver support for FSD SoC.
+> >
+> >>> It's kind of unfortunate that the driver uses "ep" everywhere for
+> >>> struct exynos_pcie pointers.  It's going to be confusing because "ep"
+> >>> is also commonly used for endpoint-related things, e.g., struct
+> >>> dw_pcie_ep pointers.  Maybe it's not worth changing; I dunno.
+> >>
+> >> I did try to rename the structure and the pointers
+> >> (https://lore.kernel.org/all/20230214121333.1837-9-shradha.t@samsung.com/)
+> >> But the intention was different back then and so the idea was rejected.
+> >> I could add a patch to only rename the pointers to something less
+> >> confusing like "exy_pci"
+> >
+> > The patch you mention did several renames:
+> >
+> >   s/to_exynos_pcie/to_samsung_pcie/
+> >   s/struct exynos_pcie/struct samsung_pcie/
+> >   s/struct exynos_pcie *ep/struct samsung_pcie *sp/
+> >
+> > I'm only concerned about the confusion of "ep" being used both for
+> > "struct exynos_pcie *" and for "struct dw_pcie_ep *".
+> >
+> > It would still be sort of an annoying patch to do something like this:
+> >
+> >   s/struct exynos_pcie *ep/struct exynos_pcie *pcie/
+> >
+> > But 'git grep "struct .*_pcie \*.*=" drivers/pci/controller/' says
+> > using "pcie" in this way is quite common, so maybe it would be worth
+> > doing.
+> >
+> > What do you think, Krzysztof?
 > 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index b1567243ae19..3a00f9e480c5 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1268,8 +1268,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  
->  	host = devm_spi_alloc_host(&pdev->dev, sizeof(*sdd));
->  	if (!host)
-> -		return dev_err_probe(&pdev->dev, -ENOMEM,
-> -				     "Unable to allocate SPI Host\n");
-> +		return -ENOMEM;
->  
->  	platform_set_drvdata(pdev, host);
->  
+> I think you want other Krzysztof, but nevertheless, the reasoning there
+> "Changing it to samsung_pcie for making it
+> generic."
+> is wrong. The naming of these structures do not matter, they are not
+> less generic. This is rather churn, which will affect backporting for
+> ZERO readability increase. Why zero? Because calling all this "exynos"
+> is the same as calling all this "samsung". It just does not matter.
+> 
+> However s/ep/pcie/ in variable name makes sense if that's more common.
+> 
+
+I will add a patch in the series to do that.
+
+> 
+> Best regards,
+> Krzysztof
 
