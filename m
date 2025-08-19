@@ -1,111 +1,320 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FB130C345;
-	Tue, 19 Aug 2025 18:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D83527FD40
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 21:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755629547; cv=none; b=IQWtikLXSc6t1Iv2g2/ZTvxn9j2X6DWWPEB+UBVSltom9yJjljZW9vwPUN9cf0ClheQDhFOvjLurR/gkEJhr7wf2dRLql5s22I2+7RfmU4+ExF/WEJdPQNPkP3eRI1E/R+hXocH7+Az79RrmfOeCizCrIo2hN1nF0dtrdVmDp2M=
+	t=1755638452; cv=none; b=OKCQqMNDlYOUp1I0UdXlR46suH0GmHDi5ABdbldrLRKr85BMbCr05StMJMstd5aNycFKEBte4DEtcvG+b0HLCuF6WFlyx6W0dRrWTqRuf6WKBUco56e5Lk1pu69OAVFLCGz/e3FQvBGZwxUV35y+MXQSnm+fT4uJjCS1W+EuFCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755629547; c=relaxed/simple;
-	bh=UtpGsqXUkldWGa3nJKuOrHaS+PduZ9qTMdBlN9e+xOY=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=juzm/lpgnE2mRVBdK0CKRUGwVEXJQtT6lRPm+ZI6X977q06ta1+xlWzx64UB0ErUQ/44EX2QfIJ3iAeSYMxTg8EHV6mMiydfSlXemDckz/YQD+Xi3Z6dA/uKog7Knf1h0cCbGG5EMrdaJ0+p2D1CeAcbEMNdLGYoXUyGkbBSTGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+iA9dLm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755638452; c=relaxed/simple;
+	bh=IWcz0ydMjyEdBub64TYja7PDnt0WzVGt0kTZt4QhU3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=KrttwwvYMVIOD6Ydn9IBTewKiWVVMg0dnJhB6bM41fbIhapWbFsz1YgACQ/Kpa6XcU0Z/LjvzGz/p76Pvu4cjrzqTDyQgUO3xR16aVhNbbM1B8/dBqgkTrjHD1mQlim8aHgahOidh3SzqD2ErsSbgBiZdEnbjZmAfw0gWb0vLVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=C2oTnsXz; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+iA9dLm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64AB7C4CEF1;
-	Tue, 19 Aug 2025 18:52:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755629547;
-	bh=UtpGsqXUkldWGa3nJKuOrHaS+PduZ9qTMdBlN9e+xOY=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=r+iA9dLmj6cVcyob6HLoSTvGYGcB4vNpyq5nDs1dLlAuYwxuYvdz2dIxJMRTFnDbB
-	 ngKZot3gY1gBpWm8qEElguO95+95Fjhx2qo3EZPCTtBiDhFkwUQ15WTT4omOLWdUDJ
-	 fb+seFWe7JcwLS5EAT3BuLplKV9J0hp6BHU/FYieC0RXGHRK2ga4wFag12a87a3nHa
-	 2GASII1kgQFzWdB6huGdUs9exYHIfvPOv8+lS4Iq9FE3+UIN1jfGtUsA/tg/48dPex
-	 jS2H5rn2P2+aHxmw6t7sbD4Ciod6k7kqfB1MW3Oa8aiRgVAJt0VFLBnC/5K9tkH9RX
-	 xy6zNeW7U8SUg==
-From: Mark Brown <broonie@kernel.org>
-To: Raju Rangoju <Raju.Rangoju@amd.com>, Sunny Luo <sunny.luo@amlogic.com>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, Andi Shyti <andi.shyti@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Xichao Zhao <zhao.xichao@vivo.com>
-In-Reply-To: <20250819092044.549464-1-zhao.xichao@vivo.com>
-References: <20250819092044.549464-1-zhao.xichao@vivo.com>
-Subject: Re: [PATCH v1 0/6] spi: Remove the use of dev_err_probe()
-Message-Id: <175562954316.246851.7964895006967945147.b4-ty@kernel.org>
-Date: Tue, 19 Aug 2025 19:52:23 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C2oTnsXz"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250819212047euoutp02e4a3474cef4e8ff8c9c51f5a04c831db~dR93AWGz10396203962euoutp02d
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 21:20:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250819212047euoutp02e4a3474cef4e8ff8c9c51f5a04c831db~dR93AWGz10396203962euoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755638447;
+	bh=Rw3wVMolVT3ui9ni2jKtmMC3tGVqAxf5rPHe/2TBJ48=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=C2oTnsXz3NNtg4L83Neo5ItQvYtcYZbfHWTjnOUOxEtQxVnGmnqkzCecAPocD9K+n
+	 OE8yoPaBy+RJxeAOlJqPYl/wDa+8UFtSjz/UIcVPA4MXpGUp6UY569T+uj2+msxTeo
+	 HqybRnpz6tLeHrOR6ieeM2yvY01Uj+X2ZOZeiRw8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250819212046eucas1p1ebb750b120bc1374625b1d6265312380~dR92bX_yG3208332083eucas1p1m;
+	Tue, 19 Aug 2025 21:20:46 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250819212042eusmtip29da91ca4dc6562decd39eb09a7ac7296~dR9y0yEjY1577615776eusmtip2c;
+	Tue, 19 Aug 2025 21:20:42 +0000 (GMT)
+Message-ID: <f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
+Date: Tue, 19 Aug 2025 23:20:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250819212046eucas1p1ebb750b120bc1374625b1d6265312380
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+X-EPHeader: CA
+X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+	<20250814104753.195255-1-damon.ding@rock-chips.com>
+	<a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+	<7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
+	<1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
 
-On Tue, 19 Aug 2025 17:20:37 +0800, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-> remove the useless call to dev_err_probe(), and just return the value instead.
-> 
-> Xichao Zhao (6):
->   spi: spi_amd: Remove the use of dev_err_probe()
->   spi: SPISG: Remove the use of dev_err_probe()
->   spi: Remove the use of dev_err_probe()
->   spi: mt65xx: Remove the use of dev_err_probe()
->   spi: pxa2xx: Remove the use of dev_err_probe()
->   spi: s3c64xx: Remove the use of dev_err_probe()
-> 
-> [...]
+On 15.08.2025 04:59, Damon Ding wrote:
+> On 2025/8/15 5:16, Marek Szyprowski wrote:
+>> On 14.08.2025 16:33, Marek Szyprowski wrote:
+>>> On 14.08.2025 12:47, Damon Ding wrote:
+>>>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>>>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>>>> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
+>>>> PATCH 7 is to apply the drm_bridge_connector helper.
+>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
+>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>>>> PATCH 13 is to apply the panel_bridge helper.
+>>>
+>>> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig,
+>>> so it causes build break:
+>>>
+>>> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to
+>>> `drm_bridge_connector_init'
+>>> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>>>
+>>> After adding this dependency, the Exynos DP driver stops working. On
+>>> Samsung Snow Chromebook I observed following issue:
+>>>
+>>> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach
+>>> following panel or bridge (-16)
+>>> [    4.543428] exynos-drm exynos-drm: failed to bind
+>>> 145b0000.dp-controller (ops exynos_dp_ops): -16
+>>> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
+>>> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver
+>>> exynos-dp failed with error -16
+>>>
+>>> I will investigate details later in the evening.
+>>
+>> The failure is caused by trying to add plat_data->next_bridge twice
+>> (from exynos_dp's .attach callback, and from analogix' ->bind callback).
+>>
+>>
+>> Best regards
+>
+> I see. The bridge attachment for the next bridge was not well thought 
+> out. It may be better to move panel_bridge addition a little forward 
+> and remove next_bridge attachment on the Analogix side. Then, the 
+> Rockchip side and Exynos side can do their own next_bridge attachment 
+> in &analogix_dp_plat_data.attach() as they want.
+>
+> Could you please help test the following modifications(they have been 
+> tested on my RK3588S EVB1 Board) on the Samsung Snow Chromebook? ;-)
 
-Applied to
+Assuming that I properly applied the malformed diff, it doesn't solve 
+all the issues. There are no errors reported though, but the display 
+chain doesn't work and no valid mode is reported:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+# dmesg | grep drm
+[    3.384992] [drm] Initialized panfrost 1.4.0 for 11800000.gpu on minor 0
+[    4.487739] [drm] Exynos DRM: using 14400000.fimd device for DMA 
+mapping operations
+[    4.494202] exynos-drm exynos-drm: bound 14400000.fimd (ops 
+fimd_component_ops)
+[    4.502374] exynos-drm exynos-drm: bound 14450000.mixer (ops 
+mixer_component_ops)
+[    4.511930] exynos-drm exynos-drm: bound 145b0000.dp-controller (ops 
+exynos_dp_ops)
+[    4.518411] exynos-drm exynos-drm: bound 14530000.hdmi (ops 
+hdmi_component_ops)
+[    4.529628] [drm] Initialized exynos 1.1.0 for exynos-drm on minor 1
+[    4.657434] exynos-drm exynos-drm: [drm] Cannot find any crtc or sizes
+[    4.925023] exynos-drm exynos-drm: [drm] Cannot find any crtc or sizes
 
-Thanks!
+# ./modetest -c -Mexynos
+Connectors:
+id      encoder status          name            size (mm)       modes 
+   encoders
+69      0       disconnected    LVDS-1          0x0             0       68
+  props:
+        1 EDID:
+                flags: immutable blob
+                blobs:
 
-[1/6] spi: spi_amd: Remove the use of dev_err_probe()
-      commit: 2a5d410916d3a8dcac06f72494f252314e933cfb
-[2/6] spi: SPISG: Remove the use of dev_err_probe()
-      commit: 0d00ebc6b869f4df67c05522bc1e8d01d1c7daa7
-[3/6] spi: Remove the use of dev_err_probe()
-      commit: b875b97017050b92c64273178a0b0d282ea67874
-[4/6] spi: mt65xx: Remove the use of dev_err_probe()
-      commit: 2bee48c9d1cd1749922d0e2df54330c924e14a0e
-[5/6] spi: pxa2xx: Remove the use of dev_err_probe()
-      commit: 67259af78219bdbdea00491f32b1c0971a33401e
-[6/6] spi: s3c64xx: Remove the use of dev_err_probe()
-      commit: 27848c082ba0b22850fd9fb7b185c015423dcdc7
+                value:
+        2 DPMS:
+                flags: enum
+                enums: On=0 Standby=1 Suspend=2 Off=3
+                value: 0
+        5 link-status:
+                flags: enum
+                enums: Good=0 Bad=1
+                value: 0
+        6 non-desktop:
+                flags: immutable range
+                values: 0 1
+                value: 0
+        4 TILE:
+                flags: immutable blob
+                blobs:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+                value:
+71      0       disconnected    HDMI-A-1        0x0             0       70
+  props:
+        1 EDID:
+                flags: immutable blob
+                blobs:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+                value:
+        2 DPMS:
+                flags: enum
+                enums: On=0 Standby=1 Suspend=2 Off=3
+                value: 0
+        5 link-status:
+                flags: enum
+                enums: Good=0 Bad=1
+                value: 0
+        6 non-desktop:
+                flags: immutable range
+                values: 0 1
+                value: 0
+        4 TILE:
+                flags: immutable blob
+                blobs:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+                value:
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
 
-Thanks,
-Mark
+I will investigate details later this week.
+
+
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 0529bfb02884..8a9ce1f31678 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -1573,6 +1573,15 @@ int analogix_dp_bind(struct analogix_dp_device 
+> *dp, struct drm_device *drm_dev)
+>                 return ret;
+>         }
+>
+> +       if (dp->plat_data->panel) {
+> +               dp->plat_data->next_bridge = 
+> devm_drm_panel_bridge_add(dp->dev,
+> + dp->plat_data->panel);
+> +               if (IS_ERR(dp->plat_data->next_bridge)) {
+> +                       ret = PTR_ERR(bridge);
+> +                       goto err_unregister_aux;
+> +               }
+> +       }
+> +
+>         bridge->ops = DRM_BRIDGE_OP_DETECT |
+>                       DRM_BRIDGE_OP_EDID |
+>                       DRM_BRIDGE_OP_MODES;
+> @@ -1588,22 +1597,6 @@ int analogix_dp_bind(struct analogix_dp_device 
+> *dp, struct drm_device *drm_dev)
+>                 goto err_unregister_aux;
+>         }
+>
+> -       if (dp->plat_data->panel) {
+> -               dp->plat_data->next_bridge = 
+> devm_drm_panel_bridge_add(dp->dev,
+> - dp->plat_data->panel);
+> -               if (IS_ERR(dp->plat_data->next_bridge)) {
+> -                       ret = PTR_ERR(bridge);
+> -                       goto err_unregister_aux;
+> -               }
+> -       }
+> -
+> -       ret = drm_bridge_attach(dp->encoder, 
+> dp->plat_data->next_bridge, bridge,
+> -                               DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> -       if (ret) {
+> -               dev_err(dp->dev, "failed to attach following panel or 
+> bridge (%d)\n", ret);
+> -               goto err_unregister_aux;
+> -       }
+> -
+>         return 0;
+>
+>  err_unregister_aux:
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c 
+> b/drivers/gpu/drm/exynos/exynos_dp.c
+> index 80ba700d2964..d0422f940249 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+> @@ -104,7 +104,7 @@ static int exynos_dp_bridge_attach(struct 
+> analogix_dp_plat_data *plat_data,
+>         /* Pre-empt DP connector creation if there's a bridge */
+>         if (plat_data->next_bridge) {
+>                 ret = drm_bridge_attach(&dp->encoder, 
+> plat_data->next_bridge, bridge,
+> -                                       0);
+> + DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>                 if (ret)
+>                         return ret;
+>         }
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c 
+> b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 0862b09a8be2..dfd32a79b94f 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -164,6 +164,24 @@ static int rockchip_dp_powerdown(struct 
+> analogix_dp_plat_data *plat_data)
+>         return 0;
+>  }
+>
+> +static int rockchip_dp_attach(struct analogix_dp_plat_data *plat_data,
+> +                                    struct drm_bridge *bridge)
+> +{
+> +       struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
+> +       int ret;
+> +
+> +       if (plat_data->next_bridge) {
+> +               ret = drm_bridge_attach(&dp->encoder.encoder, 
+> plat_data->next_bridge, bridge,
+> + DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> +               if (ret) {
+> +                       dev_err(dp->dev, "failed to attach following 
+> panel or bridge (%d)\n", ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int rockchip_dp_get_modes(struct analogix_dp_plat_data 
+> *plat_data,
+>                                  struct drm_connector *connector)
+>  {
+> @@ -478,6 +496,7 @@ static int rockchip_dp_probe(struct 
+> platform_device *pdev)
+>         dp->plat_data.dev_type = dp->data->chip_type;
+>         dp->plat_data.power_on = rockchip_dp_poweron;
+>         dp->plat_data.power_off = rockchip_dp_powerdown;
+> +       dp->plat_data.attach = rockchip_dp_attach;
+>         dp->plat_data.get_modes = rockchip_dp_get_modes;
+>         dp->plat_data.ops = &rockchip_dp_component_ops;
+>
+>
+> Best regards,
+> Damon
+>
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
