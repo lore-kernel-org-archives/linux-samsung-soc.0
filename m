@@ -1,76 +1,76 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C180341AB3
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE05280309;
+	Tue, 19 Aug 2025 15:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611288; cv=none; b=e9hf6mau4G2K5aPd3WEcz95ii79QhMRjbJddQoxToN6Tcaq8oGmcR+WjdTkCqlu++sKQ7SL49/xpgD1Idw6Hh7nd0p4pEairGtBO2mHPZjh3sfBN6VmDxeap4tSKaFJA1q1iELCxdgU6xA/y4gr7b8BIy2vfSBSL0YfZX5Wuiqc=
+	t=1755616049; cv=none; b=PljLhOENxXGLqwBfe8tD5UD2t8fEnxGoRufW0x4nrFfinxvsaWBUGsNz0l7ZHMbS1oDqeKEz39aIluhtsOvJhLW1Cqs4OnKR7eUk9PWvPcU4EnoRxCMtrp0gyvTQjoizQFdvwPghMBqJcoThNcVJwMqMGY7bQCwMeZLWjiLG0sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611288; c=relaxed/simple;
-	bh=WgxoQGTefGQy6krhXNt6jyY6Ogd2/MoAfO4+6xkHD0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=bFk2mUr0ei1ip5Q/RTgUJTSaMnw1O3zlcUOelHDvjVAsVhetMyzVcbVoN9EJGs5GxsDAVnTHWBGdnOSVOgQsq9MhPr072NTh2PZsgQB4NeXwuolyTWWpam88MdLO6L7c+EjTAher1bBkaCsKsvfsdhQALY3DrAWcxW7K1/CfNJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iDuI4579; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1755616049; c=relaxed/simple;
+	bh=FWERPV2b/K8+f34kGRRaIibkqQthKRkjtRIcOO9bI5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UattT2Yvamf+ZEbWziwuRw2N5EOBLLCdWIEY0rVPO914BRrkV+d8PANbeRTYj4mNQi/fv9LGr6rO1tjgOKGS7Is0Y/R1J/q4R6CxXODGfNVMcNExoxX89lZ5TyvG3bMMfzEIegM/Zjj7/VfJBRgqs33kmmAeBTK7RwuMggzVWzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE+N92nb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iDuI4579"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250819134805euoutp019976ca5a2f89a1d478dcda935fcd8d7a~dLyl_arGx2265022650euoutp01z
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:48:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250819134805euoutp019976ca5a2f89a1d478dcda935fcd8d7a~dLyl_arGx2265022650euoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755611285;
-	bh=rNNRF4Z64xSeC0TtYIjoq13C5zAXQshZP/bVM+z+NiQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iDuI4579/yT2PSmol4tFFkDPplMZDmKc2g2rMu5dRM4X5bFq8Mp9N9d8ms5MibZt7
-	 368lvC9S/XM+zfdLWHKDyLl7aVWbm3yIS0yqTu3B0yEvgwuioypHKq/KuZhwAp+6ps
-	 UvZGL7usRQvkKiZq+w9jzFcXFra/MftkQdpbXkm8=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11~dLylHjeKm2798127981eucas1p1o;
-	Tue, 19 Aug 2025 13:48:04 +0000 (GMT)
-Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250819134803eusmtip14d110ea7c0e1c86224f6c2ecf32b88ba~dLykUPeUf2742627426eusmtip1o;
-	Tue, 19 Aug 2025 13:48:03 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: m.majewski2@samsung.com
-Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
-	justinstitt@google.com, krzk@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux.amoon@gmail.com, llvm@lists.linux.dev, lukasz.luba@arm.com,
-	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
-	rafael@kernel.org, rui.zhang@intel.com
-Subject: Re: [PATCH v7 6/7] thermal/drivers/exynos: Handle temperature
- threshold IRQs with SoC-specific mapping
-Date: Tue, 19 Aug 2025 15:47:55 +0200
-Message-ID: <20250819134755.92187-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250819131704.19780-1-m.majewski2@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE+N92nb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08798C2BC86;
+	Tue, 19 Aug 2025 15:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755616049;
+	bh=FWERPV2b/K8+f34kGRRaIibkqQthKRkjtRIcOO9bI5Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mE+N92nbp+0JXiAfwUIvsTH3cdqCCtHHsNuHILfE2mK2nj9Hu6eIbPQAYGqMadNYQ
+	 lE+BY04Cx6za6/mrYs/m3pr7JWmln6sXgeXvUZi9UP4Wj0RHKSxYZuMQKRWXb0RUTe
+	 TQmGYIyAGtIBlvq1EfONtAE15fNiJ+sSdAy+dimAV901J6WuE592aAiuzvEeimJeLr
+	 kZSiT12cx0D0uYSsObJj160WPnjKuyxpEKA57YcYffTu3t3VT7TxZ0ggDE6qFA8PuJ
+	 4EXUpJ00lgf0jG+1Jkvz9DD70nYzymAm09Ch9bl5Cu15uowQic72B51sLb+htyhYz8
+	 NAHjFR3vapv4g==
+Date: Tue, 19 Aug 2025 10:07:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, mani@kernel.org,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
+	kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
+	jh80.chung@samsung.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
+Message-ID: <20250819150727.GA586493@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11
-X-EPHeader: CA
-X-CMS-RootMailID: 20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11
-References: <20250819131704.19780-1-m.majewski2@samsung.com>
-	<CGME20250819134804eucas1p1ed14f9680e66327a86af4e98319eed11@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00b501dc10fd$f1fecc10$d5fc6430$@samsung.com>
 
-> +		pr_warn("exynos-tmu: Unknown SoC type %d, using fallback IRQ mapping\n", soc);
+On Tue, Aug 19, 2025 at 05:09:34PM +0530, Shradha Todi wrote:
+> ...
 
-I missed this when writing the previous reply, but this doesn't build:
-"soc" should be "data->soc". This line disappears in 7/7 though, so 7/7
-builds just fine for me.
+> > Another question about the test:
+> > 
+> >   if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
+> > 
+> > This assumes there are no other bits in FSD_IRQ2_STS that could be
+> > set.  I would have expected a test like this:
+> > 
+> >   if (val & FSD_IRQ_MSI_ENABLE) {
+> 
+> Thanks for pointing this out. FSD_IRQ_MSI_ENABLE is a single-bit, so there
+> is no functional difference in the two statements. I didn't have a specific
+> reason for using "== FSD_IRQ_MSI_ENABLE".
+> But I see that "val & FSD_IRQ_MSI_ENABLE" would have been the more
+> standard way to write this. I will update this for clarity.
 
-Kind regards,
-Mateusz Majewski
+Oof, sorry, I don't know what I was thinking.  You're right, it's OK
+as is.  But "val & FSD_IRQ_MSI_ENABLE" *is* shorter and more
+idiomatic, so I think preferable anyway.
+
+Bjorn
