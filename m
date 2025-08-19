@@ -1,66 +1,67 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDA0353345;
-	Tue, 19 Aug 2025 22:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7763054D7;
+	Tue, 19 Aug 2025 22:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755641988; cv=none; b=gTrzVL+vAJQ6lO0HOVoLxmhB4z7uqEUrrcZFWSSj/9Aq1a/RRmdjCn1FlSY/XxOiJzqJQ8R1XbBHRMhhlCagLp240ZwegCiFlhVl1wgeDKaBh9BYc+k1IEhwjAB0WQvD9vfNbh7u4SxPzzy7h6OUqUJwpJLtIkMDJs7K/dI2iSQ=
+	t=1755641992; cv=none; b=VqfHTCYs1XMfzY7yjfW0OWoHIuF0UrDOlWTUH3l11XUVlZyj1SCqLd1s3X70sugkeXwINK3UnNCJuKa3Rayo9K+OPwU7DtQKkFyPaXu/0clvMdb2YN+4lSolNOaL7GP1LOSYyfJuoGYtIFkgxqNFSRvQBHj7bVJkR+3s9DfUdyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755641988; c=relaxed/simple;
-	bh=9xnTT004xILa2UhRGzJrZPOdnh0XmNdq4Be712m2VvE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NYYtwGJLeCUu4Ew53vizrV45DW+qLW2KKhuVwRb2+MIAA9akBqUFzutBaGk6PJp0saLY4zNHeh1Mhut+NWLWpB03RlLdDV9mP+JdldByYdmK8Hy0GLTB2JCNVat3wzNRbGrApcRDToviYuMjaFkxsTB3uWua2D2DrXL5y/FGpoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XrREl4mR; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1755641992; c=relaxed/simple;
+	bh=EgjV2IN3BTxVAhU8sWcO6A242l1zwL+tm7uc6WZdAWo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Teiio6AnW6cZr3ysbw1BCL/k1EM/BcKOShgD9+ogA/NNJipEdF6VN6YIh/LfznEns2wOKplIhctk9jN9hTI9yOVYQ5vA0Z8jGQf+9dNBgtzRL9FsjbgoVlwqP1wE/SV0Csd1fdBX+u8SrJDL49K0gZd7w3XfAevs8e/rnzBKCg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVCXcIBr; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XrREl4mR"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea94c7dso6428348b3a.2;
-        Tue, 19 Aug 2025 15:19:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVCXcIBr"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3493121b3a.0;
+        Tue, 19 Aug 2025 15:19:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755641986; x=1756246786; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xa4yNFnEl2+GCJiVXv/vbsFbdWUzJ8PFt4Rgx/UrWQ8=;
-        b=XrREl4mRXT+eVO8KkYpe4Sz7Fv0WjOR7iXqsBH5UShw2mhnpAi8S0N9A8q5xzQsedS
-         XRO6ATqFq4g+mYiCHTNoJ0XlvpnTpS4elP0XRp/goqA3KV14lt4jgGh22bVuopsrCiVs
-         2+3faTga+yrkPclI0ZeeDTMeF8jcAI7yx8cJ6g/Swx3QmyBS4pIxNMZJEhwd2Ep/b1vX
-         aYYAZ3wYMbA5K231Q0c8X5QgPX9dlW3USBAkq5+0gn1yGiQjWeUgDY105u/3ZXM0MTih
-         Fk8bEhCRlLaJD9e1hLEL67iYUYgIaWOQ3DhkUUJtOpCIbW2rNY1B+bRFP0zbLbAzmEVe
-         rpGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755641986; x=1756246786;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1755641990; x=1756246790; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xa4yNFnEl2+GCJiVXv/vbsFbdWUzJ8PFt4Rgx/UrWQ8=;
-        b=qM8WbcaqKqzvV6b92GXPvA48QY9zPkmTgieuJwbTt5rwDsHq7STSkT2UwLvqMXeNjM
-         ax40NWE3ylsl5MKdjDDhjSCdm3pT830bWd6rs+CmV9gOefgcQjp5NfPRpFzFUAJMjsM6
-         xHnIfj8L+v4PY8zGSPBowLeGCeFfA83KVCNN57nWt2Jd7V9y2ZURCnZ/U3LOtc/osTJ/
-         lyW/jjezzmp0T7nVrPvxpMMY4TmOtIVBmlssAAHi6MtnFA6qjwdR/iWn6ZEjstV3Xm7e
-         7O3QbRAgWrKy2/4apIdM40XA8H+OCnbjRZSgamVceix0xmPXlvFV8J18cta6nEpTuZXr
-         ZGKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/gtT1KlRCH0EUpMZBywEK0ZLjn6udwi6kEixOD5leq9aI0Vrz6r4Xi0jbahzJ6u7a70Luja5QbZeS@vger.kernel.org, AJvYcCWj60MCGX9eg47wpoo1Jwj4yvnSNpw9hHhWeJn+DvWU1UAbeossIe7E6q51U+LXzQAdtBuXasEh2/qt@vger.kernel.org, AJvYcCX6KPgbx/Enra6QpUaqi4310fzRTdRg/NQ7YIwrKaRiIJZP93P27Bh4ddmQ8GBF+eGjCNrzeWI1DJndJZEx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Bj1WChsWUI2dteF1vwV1qqI3iUEPuHp0SsmTv/fsKH64adMN
-	tG7l4wzMhla/W9vWhHnVZEmc08WLZ1oyhGAvHPjpjEIUhc12LGkeyyP2
-X-Gm-Gg: ASbGncsAw+1JMobhbchHWUXwBBrkVxYwXA86fwf4FL73A7Wic4KmjX1hxJc2oliigly
-	pY+gu3nCT4vOUROqxz66kXm3UHVeSnw7yFsD/g/sBXoyG320LZqVhMcjY3ky921JdqbNBegJhQg
-	Xi9SrN7zxxgYo0AI0qfDQHY1sPepFdIh5IUagFHekdkNk9PPLQF9fUSmodpDyxbuMAApAQmhMLt
-	0Ss2Wzi2j0/cZLyOqzy9jOAqT8OZo6FY2Miz4hWzRWxHj5MAXnGhZMsPGdLWy4HACeSLEUiOas/
-	jxBwx5J8T8IleKd+6APutmOnOsf/KOMc0F9k3zN8rvX8xDYN5uCgR/tMpw0YbhWt0zbjVqQG0wP
-	mxG0bMG0d8kLLhBuSiSGUev9ZNRBRnmoLbhikrfyqEz8lcm0=
-X-Google-Smtp-Source: AGHT+IGKAGY0PBPZKHCkHC28OiWYdaexqUW3c63hGO/z977zliS7OCS8eRNBxqJSK768+D+wCJy0DQ==
-X-Received: by 2002:a05:6a00:194e:b0:76b:ffd1:7737 with SMTP id d2e1a72fcca58-76e8ddd18c2mr905568b3a.22.1755641986361;
-        Tue, 19 Aug 2025 15:19:46 -0700 (PDT)
+        bh=pkq0pzcUOmJj4u6sdt3L7jO6dKHmpCQKHQSOPpZvKhI=;
+        b=fVCXcIBrkUsk819CNIKzWbE8gov9uD69r656wQgbUFBvZRqOTHRUbjMKzSfacpinew
+         njkl4Zbr3bgez+L66F1NK0j2bMegzXrDVWJGkeHh3ylcDPTOXAENtkOIcykWOW/t14sJ
+         ftljJFcXd6pVFdnj6Q5zUw6WpaDEIPwZboIZ76H2Fqfftw4xbeJSkylf8zqonk8tN75n
+         1WZaRwUiiTTEJ+5/6OL68SgzWrj321IgPEs59fOtZvsFsWSUoYOJqY18Mkf5hRyKyBF9
+         Lmhi6VqbhCTH6X0Hs0t/xlWFJwtPAcE/j5dJRdzMwixY1hyiv86HwfxHZnn5x/oA5/QU
+         aElw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755641990; x=1756246790;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pkq0pzcUOmJj4u6sdt3L7jO6dKHmpCQKHQSOPpZvKhI=;
+        b=PxMfca24KsxUmSX3QSHGE4mXkSCmThdMfQE33pfAynYL5uxN6CpYeZGcIVToEY4rid
+         J97PPhcYDdavfGaKxyWCuf2jM+t5pr1ghDa3k0qbS7JZIsYofKlGPLiucApZecQjKUi4
+         CrxUgBWtfiRVAN/86Y65XxmoOlT2o165XoYD29Y/pA0aMkkcQLpXZZESZJ+ikisk4hXm
+         JhdbxLlD8A6BZPO92/tTi6rEvPiP7H1QgoCDW9TIGGz+PsKUhZ+0q80tRx+R+Usz0nDZ
+         HHRsbkxqYc6lqXQ165MxnmWn6NuG0f8uIfbmZFQPHO9Gwhmpy8/Y+ujKyrN3JJ3Iwygb
+         hsvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkkgsPh4CXzymMSzWEAfyGOLPQKAl2lMMqVQ6KvFOztzqXSJc/UJp8CnzVdQ6LpamNHGHsFMzUNUyQ@vger.kernel.org, AJvYcCWLixAl232rLEHfE9GK2Vpy5qKCW0F5bvjOEnTeHPuwKmtC9aiIm01TSD3vETbqVGQhUY4Ke5/0evHs@vger.kernel.org, AJvYcCWQUID3o9HcM84QLMzId1bmFD+LarQ0kPRxNB2Ih/KOTAW9vJnGiEvv6oX2Fx0J9QOgVu0oQ364KZwQ51Vd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK57+33zNNtoU/X9twdZQXtmhMQ3qBthPBYSI0mPQnwiEEpjZY
+	AFxYz5OPf0v2gSgXih37zGGJ9N7dc60h6gmJ9WnZO4fuVYJDHQZ2CN7n
+X-Gm-Gg: ASbGnctr81gGlQL1VYaZaojGOAT1u3yMjE3AlAHraTwKfD9zT/nO69SIVXPrCxnaX4N
+	yDg+MjzSF1mXkqB1XVcBL+uTXXn/KycLgpBpIo0hi1B1vQv/bxtRMcFaBEbUHL6NsdzOvUnxhth
+	XnYhDfZnGTEQyYOt/MUVoHkH+IXupFFsgrwC/m/XZgL1tZhmtUvPVGqZlUcXLq9bZvQqZ3U3OxD
+	xtL95q6eedE+3VFH8GahcSmqSPAQfOsQIk8M9SNoSqvbVAFhMA7HrPDCQhx2b7MS4FeRaXM/h0S
+	MYenjcFMIEUdHHF5bcitYId675GacBdbBqqeF2Yuv4A81j5MLhTuK+7T+vfX7TCOBcThDk6Rp4d
+	FkYSzh5OcGM9UTb9vBywvmWnerO6BZCYJXGmYYULnWsYRGF3FSCsELdaQGQ==
+X-Google-Smtp-Source: AGHT+IGcPQQ5Lnmcph7eecNE9Uv5mWy4z4P8pOTvFiPP9MDuOO+jMuphebVbEiXw1XRDeaUc5z9QrQ==
+X-Received: by 2002:a05:6a00:3c85:b0:76b:cadf:5dbe with SMTP id d2e1a72fcca58-76e8daa1adfmr936224b3a.0.1755641990472;
+        Tue, 19 Aug 2025 15:19:50 -0700 (PDT)
 Received: from [127.0.0.1] (aulavirtual.utp.edu.pe. [190.12.77.24])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4f76b5sm3431545b3a.59.2025.08.19.15.19.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4f76b5sm3431545b3a.59.2025.08.19.15.19.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 15:19:46 -0700 (PDT)
+        Tue, 19 Aug 2025 15:19:50 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: [PATCH 0/3] clk: samsung: exynos990: CMU_TOP fixes (mux regs,
- widths, factors)
-Date: Tue, 19 Aug 2025 17:19:35 -0500
-Message-Id: <20250819-2-v1-0-e84b47b859ce@gmail.com>
+Date: Tue, 19 Aug 2025 17:19:36 -0500
+Subject: [PATCH 1/3] clk: samsung: exynos990: Fix CMU TOP mux/div widths
+ and add fixed-factors
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,10 +70,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHj4pGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC0NLXSPdxCSzZIuklDQD8xRzJaC6gqLUtMwKsBnRsbW1AGSoGL5TAAA
- A
-X-Change-ID: 20250819-2-ab6c8bdf07d7
+Message-Id: <20250819-2-v1-1-e84b47b859ce@gmail.com>
+References: <20250819-2-v1-0-e84b47b859ce@gmail.com>
+In-Reply-To: <20250819-2-v1-0-e84b47b859ce@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -83,42 +83,143 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755641982; l=1033;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755641982; l=6749;
  i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
- bh=9xnTT004xILa2UhRGzJrZPOdnh0XmNdq4Be712m2VvE=;
- b=8MVLXZojb3zm1GhzaT8ctC5m5NWK4ZNxXo7JbD3tlEiHyK6JCcNfUZfaBEO7MR8Yg+qe0XTNt
- m/0J203ote8DAIN8TGNjqFQrn8eYRIuCCsT6AqtRQsY+3ZKyZVLGCl+
+ bh=EgjV2IN3BTxVAhU8sWcO6A242l1zwL+tm7uc6WZdAWo=;
+ b=1QCh90rN56p6R3kfiHTGSpY6hHK3WN3npDGcpi8QPXQxfS8xLeM9psBkjjolDUnpuTcef80tv
+ vZoVjZHo/fPAb72zRjwwy9x6xrSj3o5Nl8jOV229WYu1DAPYpDMPYts
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
 
-Hi,
-
-Two small fixes for Exynos990 CMU_TOP:
-
-Correct PLL mux register selection (use PLL_CON0), add DPU_BUS and
-CMUREF mux/div, and update clock IDs.
-Fix mux/div bit widths and replace a few bogus divs with fixed-factor
-clocks (HSI1/2 PCIe, USBDP debug); also fix OTP rate.
-
-Please review.
-
-Denzeel Oliva
+Correct mux/div bit widths in CMU TOP (DPU, DSP_BUS, G2D_MSCL,
+HSI0/1/2). Replace wrong divs with fixed-factor clocks for
+HSI1/2 PCIe and USBDP debug. Also fix OTP rate. These align
+with Exynos990 downstream cmucal and ensure correct parent/rate
+selection.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
-Denzeel Oliva (3):
-      clk: samsung: exynos990: Fix CMU TOP mux/div widths and add fixed-factors
-      dt-bindings: clock: exynos990: Reorder IDs clocks and extend
-      clk: samsung: exynos990: Fix PLL mux regs, add DPU/CMUREF
+ drivers/clk/samsung/clk-exynos990.c | 35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
- drivers/clk/samsung/clk-exynos990.c           | 154 +++++++++++++++----------
- include/dt-bindings/clock/samsung,exynos990.h | 402 ++++++++++++++++++++++++++++++++--------------------------------
- 2 files changed, 297 insertions(+), 259 deletions(-)
----
-base-commit: 886e5e7b0432360842303d587bb4a65d10741ae8
-change-id: 20250819-2-ab6c8bdf07d7
+diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+index 8d3f193d2b4d4c2146d9b8b57d76605b88dc9bbb..57e26c4d1f39cef838f3201956762a0c242f726a 100644
+--- a/drivers/clk/samsung/clk-exynos990.c
++++ b/drivers/clk/samsung/clk-exynos990.c
+@@ -759,11 +759,11 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+ 	MUX(CLK_MOUT_CMU_DPU_ALT, "mout_cmu_dpu_alt",
+ 	    mout_cmu_dpu_alt_p, CLK_CON_MUX_MUX_CLKCMU_DPU_ALT, 0, 2),
+ 	MUX(CLK_MOUT_CMU_DSP_BUS, "mout_cmu_dsp_bus",
+-	    mout_cmu_dsp_bus_p, CLK_CON_MUX_MUX_CLKCMU_DSP_BUS, 0, 2),
++	    mout_cmu_dsp_bus_p, CLK_CON_MUX_MUX_CLKCMU_DSP_BUS, 0, 3),
+ 	MUX(CLK_MOUT_CMU_G2D_G2D, "mout_cmu_g2d_g2d",
+ 	    mout_cmu_g2d_g2d_p, CLK_CON_MUX_MUX_CLKCMU_G2D_G2D, 0, 2),
+ 	MUX(CLK_MOUT_CMU_G2D_MSCL, "mout_cmu_g2d_mscl",
+-	    mout_cmu_g2d_mscl_p, CLK_CON_MUX_MUX_CLKCMU_G2D_MSCL, 0, 1),
++	    mout_cmu_g2d_mscl_p, CLK_CON_MUX_MUX_CLKCMU_G2D_MSCL, 0, 2),
+ 	MUX(CLK_MOUT_CMU_HPM, "mout_cmu_hpm",
+ 	    mout_cmu_hpm_p, CLK_CON_MUX_MUX_CLKCMU_HPM, 0, 2),
+ 	MUX(CLK_MOUT_CMU_HSI0_BUS, "mout_cmu_hsi0_bus",
+@@ -775,7 +775,7 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+ 	    0, 2),
+ 	MUX(CLK_MOUT_CMU_HSI0_USBDP_DEBUG, "mout_cmu_hsi0_usbdp_debug",
+ 	    mout_cmu_hsi0_usbdp_debug_p,
+-	    CLK_CON_MUX_MUX_CLKCMU_HSI0_USBDP_DEBUG, 0, 2),
++	    CLK_CON_MUX_MUX_CLKCMU_HSI0_USBDP_DEBUG, 0, 1),
+ 	MUX(CLK_MOUT_CMU_HSI1_BUS, "mout_cmu_hsi1_bus",
+ 	    mout_cmu_hsi1_bus_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_BUS, 0, 3),
+ 	MUX(CLK_MOUT_CMU_HSI1_MMC_CARD, "mout_cmu_hsi1_mmc_card",
+@@ -788,7 +788,7 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+ 	    0, 2),
+ 	MUX(CLK_MOUT_CMU_HSI1_UFS_EMBD, "mout_cmu_hsi1_ufs_embd",
+ 	    mout_cmu_hsi1_ufs_embd_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_UFS_EMBD,
+-	    0, 1),
++	    0, 2),
+ 	MUX(CLK_MOUT_CMU_HSI2_BUS, "mout_cmu_hsi2_bus",
+ 	    mout_cmu_hsi2_bus_p, CLK_CON_MUX_MUX_CLKCMU_HSI2_BUS, 0, 1),
+ 	MUX(CLK_MOUT_CMU_HSI2_PCIE, "mout_cmu_hsi2_pcie",
+@@ -837,7 +837,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+ 	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
+-	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
++	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 1),
+ 	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+ 
+@@ -862,7 +862,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
+ 
+ 	DIV(CLK_DOUT_CMU_APM_BUS, "dout_cmu_apm_bus", "gout_cmu_apm_bus",
+-	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 3),
++	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 2),
+ 	DIV(CLK_DOUT_CMU_AUD_CPU, "dout_cmu_aud_cpu", "gout_cmu_aud_cpu",
+ 	    CLK_CON_DIV_CLKCMU_AUD_CPU, 0, 3),
+ 	DIV(CLK_DOUT_CMU_BUS0_BUS, "dout_cmu_bus0_bus", "gout_cmu_bus0_bus",
+@@ -889,7 +889,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_CLKCMU_CORE_BUS, 0, 4),
+ 	DIV(CLK_DOUT_CMU_CPUCL0_DBG_BUS, "dout_cmu_cpucl0_debug",
+ 	    "gout_cmu_cpucl0_dbg_bus", CLK_CON_DIV_CLKCMU_CPUCL0_DBG_BUS,
+-	    0, 3),
++	    0, 4),
+ 	DIV(CLK_DOUT_CMU_CPUCL0_SWITCH, "dout_cmu_cpucl0_switch",
+ 	    "gout_cmu_cpucl0_switch", CLK_CON_DIV_CLKCMU_CPUCL0_SWITCH, 0, 3),
+ 	DIV(CLK_DOUT_CMU_CPUCL1_SWITCH, "dout_cmu_cpucl1_switch",
+@@ -924,16 +924,11 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_CLKCMU_HSI0_DPGTC, 0, 3),
+ 	DIV(CLK_DOUT_CMU_HSI0_USB31DRD, "dout_cmu_hsi0_usb31drd",
+ 	    "gout_cmu_hsi0_usb31drd", CLK_CON_DIV_CLKCMU_HSI0_USB31DRD, 0, 4),
+-	DIV(CLK_DOUT_CMU_HSI0_USBDP_DEBUG, "dout_cmu_hsi0_usbdp_debug",
+-	    "gout_cmu_hsi0_usbdp_debug", CLK_CON_DIV_CLKCMU_HSI0_USBDP_DEBUG,
+-	    0, 4),
+ 	DIV(CLK_DOUT_CMU_HSI1_BUS, "dout_cmu_hsi1_bus", "gout_cmu_hsi1_bus",
+ 	    CLK_CON_DIV_CLKCMU_HSI1_BUS, 0, 3),
+ 	DIV(CLK_DOUT_CMU_HSI1_MMC_CARD, "dout_cmu_hsi1_mmc_card",
+ 	    "gout_cmu_hsi1_mmc_card", CLK_CON_DIV_CLKCMU_HSI1_MMC_CARD,
+ 	    0, 9),
+-	DIV(CLK_DOUT_CMU_HSI1_PCIE, "dout_cmu_hsi1_pcie", "gout_cmu_hsi1_pcie",
+-	    CLK_CON_DIV_CLKCMU_HSI1_PCIE, 0, 7),
+ 	DIV(CLK_DOUT_CMU_HSI1_UFS_CARD, "dout_cmu_hsi1_ufs_card",
+ 	    "gout_cmu_hsi1_ufs_card", CLK_CON_DIV_CLKCMU_HSI1_UFS_CARD,
+ 	    0, 3),
+@@ -942,8 +937,6 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    0, 3),
+ 	DIV(CLK_DOUT_CMU_HSI2_BUS, "dout_cmu_hsi2_bus", "gout_cmu_hsi2_bus",
+ 	    CLK_CON_DIV_CLKCMU_HSI2_BUS, 0, 4),
+-	DIV(CLK_DOUT_CMU_HSI2_PCIE, "dout_cmu_hsi2_pcie", "gout_cmu_hsi2_pcie",
+-	    CLK_CON_DIV_CLKCMU_HSI2_PCIE, 0, 7),
+ 	DIV(CLK_DOUT_CMU_IPP_BUS, "dout_cmu_ipp_bus", "gout_cmu_ipp_bus",
+ 	    CLK_CON_DIV_CLKCMU_IPP_BUS, 0, 4),
+ 	DIV(CLK_DOUT_CMU_ITP_BUS, "dout_cmu_itp_bus", "gout_cmu_itp_bus",
+@@ -980,7 +973,17 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	DIV(CLK_DOUT_CMU_VRA_BUS, "dout_cmu_vra_bus", "gout_cmu_vra_bus",
+ 	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
+ 	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_clkcmu_dpu", "gout_cmu_dpu",
+-	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 4),
++	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
++};
++
++static const struct samsung_fixed_factor_clock cmu_top_ffactor[] __initconst = {
++	FFACTOR(CLK_DOUT_CMU_HSI1_PCIE, "dout_cmu_hsi1_pcie",
++		"gout_cmu_hsi1_pcie", 1, 8, 0),
++	FFACTOR(CLK_DOUT_CMU_OTP, "dout_cmu_otp", "oscclk", 1, 8, 0),
++	FFACTOR(CLK_DOUT_CMU_HSI0_USBDP_DEBUG, "dout_cmu_hsi0_usbdp_debug",
++		"gout_cmu_hsi0_usbdp_debug", 1, 8, 0),
++	FFACTOR(CLK_DOUT_CMU_HSI2_PCIE, "dout_cmu_hsi2_pcie",
++		"gout_cmu_hsi2_pcie", 1, 8, 0),
+ };
+ 
+ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+@@ -1126,6 +1129,8 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
+ 	.nr_mux_clks = ARRAY_SIZE(top_mux_clks),
+ 	.div_clks = top_div_clks,
+ 	.nr_div_clks = ARRAY_SIZE(top_div_clks),
++	.fixed_factor_clks = cmu_top_ffactor,
++	.nr_fixed_factor_clks = ARRAY_SIZE(cmu_top_ffactor),
+ 	.gate_clks = top_gate_clks,
+ 	.nr_gate_clks = ARRAY_SIZE(top_gate_clks),
+ 	.nr_clk_ids = CLKS_NR_TOP,
 
-Best regards,
 -- 
-Denzeel Oliva <wachiturroxd150@gmail.com>
+2.49.0
 
