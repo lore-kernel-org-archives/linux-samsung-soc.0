@@ -1,545 +1,222 @@
-Received: from mail-m3286.qiye.163.com (mail-m3286.qiye.163.com [220.197.32.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8DE2DE1E0;
-	Wed, 20 Aug 2025 09:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE05F31DDAF;
+	Wed, 20 Aug 2025 13:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682427; cv=none; b=gz+lVBaCGasfoH+aq1pWT34svB0lRGQ4qVhviiCO0bBwq2osiyRVyVDjxs5SxWPE8QkBnYvrgUOvdjfIhIOO/PQxsVDiwv+0Faytk17XZDDz1arp0jNsSFnyDhqa+n4wce+meZBnQqTGgYgrmzrg0D9nZXboFA1t6MlUVr9kA4c=
+	t=1755696544; cv=none; b=dn2E4QBXnvG4OxKCNjQ21vjSyW+dJ7C2b+RscEy6+oMIWnaoObBnw6Qymw6uZVPyraFZShhzoL0R2bL4GvuEjBj8cQlS2l3VpZDhUyqljxT2Oap2cB8pmfwOdH51jA/q7QhMpUXqqyEnyx0aaS0MAxQifQILftUyDCzmqZVcUzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682427; c=relaxed/simple;
-	bh=ipwjPhy5CISp7Yde1508C225MYkCcxxi5S7t/MKOuLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p2MdlVBq7q05JcE3o5ccKjzbgqYhh1NrGAi+cdIRfsWOjlcZciQq8Q1lMQCM/RguSUOPypE6uiv7uv9eOFED+Zw5h3CFJCAUrFGwSuLcjvEdT00xFqHAWkVSqsh6a9MtO9XdKtnb4I1tr8VRX5DSCbMTm3eZbgJdTFZytssB4p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S2g7LaBK; arc=none smtp.client-ip=220.197.32.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1755696544; c=relaxed/simple;
+	bh=AJIjVE+9x/GkFggg+E+VOL6kHUa36rZ+tFjynAzQJkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s90562Zn05XXVuHermmzFssZ8pwNGjo1YZZj4grNdjSd30TJXfNU8bvDmptzJAOwZD7Wl4sWpA/w3n/YVGq4heXBxHlpsC85TYSgtbi3bZF5xfDgLINIY9EqVzjiqVxFAIbTYZ/R9B3kkd6pICz81DdfioeBxu1P8xd30j8pHv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMAuJjhz; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S2g7LaBK"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2000fb8e9;
-	Wed, 20 Aug 2025 17:18:13 +0800 (GMT+08:00)
-Message-ID: <62dfbe1d-3e36-4bc5-9b25-a465e710f23b@rock-chips.com>
-Date: Wed, 20 Aug 2025 17:18:13 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMAuJjhz"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61a8c134609so1844378a12.3;
+        Wed, 20 Aug 2025 06:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755696541; x=1756301341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0nVpFwznHMpNpqwkISsWqIDhkZo9GN/5f7ypKNFeZFY=;
+        b=KMAuJjhzsKqBrT7Zs6umUyIpnKksnx+Hrjxdhz0VumhfKIkt964vOdW8tdJ4fXVAwR
+         evGYY5gYH0IV/TbTQY2ZH6+8iMZEnya0bbMHLppCvzCroCEGgR60TrudtOHerKMCiINs
+         +3X/tr/ewFyQ1rMtEr6SpGgzDlNg+/aq0LSdfmOgOrb1E3m52TJsIZGn7IuYXXcKLr9j
+         4bNrUbzXqzPpLlZFcYxHPNB0xtG9ZYwuULc9HykAZ1TS/uRaHyA8/DOhwDVQk6StsrlT
+         3L3m7MnbHXIZ1RqbaYa4rcGFN07XCTYTCgXS6wwMZeH+B4p+qT7xDjG+SOQ8hv0TPpfm
+         rQvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755696541; x=1756301341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0nVpFwznHMpNpqwkISsWqIDhkZo9GN/5f7ypKNFeZFY=;
+        b=YrBd50t2369CixJXYbsTWPy0tr9ELan8YmfKwxcYA+qwVNyPouyfsdJAHnliHvObAb
+         VzexgBERAEep9lM0bIQfP7YYMdXBQewS20BVdEUCpM0q0uxh5ZIT2A2M21BZpiT6IAC8
+         d5EurmP3KHKV9720ycaO9fu+SmDxCKmxnpWcEZJODBYKohqjKWUc/gNvBm/GMxHnU4aD
+         n29OOj9u6uN078ateAfHjos4LzUXU3L1nahbFFvVXevH+B3hEQBJJsC7ZPqcrCOduOXL
+         ym6FnTlIDlOuOcGXEOamVtuGirFhcsPC6tcZCNfd7VtGS58/HFyme/6psNssjw4B5l0e
+         3qdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAxK2GA5Mgub4/q2cigwXomSLl10/OmQ/TRKOipuq2aEW3APGU11HUkxqLkM1MB8lpkX4PuoWLUbE=@vger.kernel.org, AJvYcCWKTDLJZhK0Z7G2+K9IRsq01OddAHo4ty7vjtqRIOXbcTDvW4DYUvlR3XCPnnqNDTnIF7oN7Pa08I4jX7q1o2Epey0=@vger.kernel.org, AJvYcCWudSoMupLUk0RKtvSlvOlg4fQolAe2n3heE+BdNoA0KWgA9dac8sRbrRVxPynXKQ6vakhHTYzdxF2asCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk95NTWTkb1RGqYjwUqNXGrww6efGzOG0Y9tuJSettewAvMjyu
+	q/EFCXUVN2BjMJZRDWOSEYwpGnHYLlR6+6yBdIvsc9q3mbGZG60FPOJ/oHRRR575urDIWS/JPCl
+	PavRPWNilZCr6HtWftSLE7XODoLyBoHs=
+X-Gm-Gg: ASbGncsNJprF+K7ot+ZOCRPoPXJlmVDect5cNG/b+FKghc+XP3gJFX304juqfuOY1sg
+	CogGD4QT1hbDZqR9vSDC4QbdmbaWeNn7Rno4e1E6PFhuZ/FoPbrDX/MZ6AEn3xPX4UYM/UwEyAr
+	lsOKWnuydYhPQKPXg4z9G/VdQ1Oh8i9ywyUuQnnXoMt6ti9AZT9KDdNlxYpspJJZTaiindoOugw
+	Cto8g==
+X-Google-Smtp-Source: AGHT+IE1YhFYDwX8RTFqCBvI/O0nzvU66srlAToMGQhCnvv7ApS2NTfh2GSqAw7utXfVWbtfNzrw3Bn9dL0oJJc7q1g=
+X-Received: by 2002:a05:6402:460a:b0:612:b742:5bba with SMTP id
+ 4fb4d7f45d1cf-61a975521a9mr2385263a12.13.1755696540707; Wed, 20 Aug 2025
+ 06:29:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/13] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- l.stach@pengutronix.de, dianders@chromium.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250814104753.195255-1-damon.ding@rock-chips.com>
- <20250814104753.195255-8-damon.ding@rock-chips.com>
- <incxmqneeurgli5h6p3hn3bgztxrzyk5eq2h5nq4lgzalohslq@mvehvr4cgyim>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <incxmqneeurgli5h6p3hn3bgztxrzyk5eq2h5nq4lgzalohslq@mvehvr4cgyim>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a98c6c5939703a3kunm2f49bde6a651cb
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk9NT1YZGEJOTE5NGUpKGU9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=S2g7LaBKZlRshono/9VQkRXfQdvQdgRv4roCKejtwReYGSTYbO+WdBzWWTD8aO8jTyI0O+BKYZ9ymC5S1LtAX6cDxJYqhQoT0mt69hlhu852HS8/QXNqE52Ol4w2KwXGISxJJrVGQTUnllRGAQlsjtQdYvVRcgKWu5zJunxxtY8=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=rnSRSkDuxQmuvDfQoOzT1gflDfeLzfldveNhiQK/1hY=;
-	h=date:mime-version:subject:message-id:from;
+References: <CGME20250819131732eucas1p26bd491e9b6b747a4857905bfd50420a9@eucas1p2.samsung.com>
+ <20250813131007.343402-7-linux.amoon@gmail.com> <20250819131704.19780-1-m.majewski2@samsung.com>
+In-Reply-To: <20250819131704.19780-1-m.majewski2@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 20 Aug 2025 18:58:43 +0530
+X-Gm-Features: Ac12FXxJk9FiRDbaSI1KGn0qHUotnyfsd3cxseyNycA4dBDFvpr7OUkV8SN9KUE
+Message-ID: <CANAwSgSjkP_wZ2Wvk1bZ2j6GHwAqEw1f5ZXLfQyEWgzcBzb6Mw@mail.gmail.com>
+Subject: Re: [PATCH v7 6/7] thermal/drivers/exynos: Handle temperature
+ threshold IRQs with SoC-specific mapping
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org, 
+	justinstitt@google.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, llvm@lists.linux.dev, lukasz.luba@arm.com, 
+	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
+	rafael@kernel.org, rui.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi Mateusz,
 
-On 8/17/2025 12:43 AM, Dmitry Baryshkov wrote:
-> On Thu, Aug 14, 2025 at 06:47:47PM +0800, Damon Ding wrote:
->> Apply drm_bridge_connector helper for Analogix DP driver.
->>
->> The following changes have been made:
->> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
->>    and &drm_connector_helper_funcs.
->> - Remove unnecessary parameter struct drm_connector* for callback
->>    &analogix_dp_plat_data.attach.
->> - Remove &analogix_dp_device.connector.
->> - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
->>    &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
->> - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
->>    &drm_bridge_funcs.edid_read().
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ------
->>
->> Changes in v2:
->> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
->>    DRM_BRIDGE_OP_EDID.
->> - Add analogix_dp_bridge_edid_read().
->> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
->>    patches.
->>
->> Changes in v3:
->> - Rebase with the new devm_drm_bridge_alloc() related commit
->>    48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
->>    API").
->> - Expand the commit message.
->> - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
->>    bridge is available.
->> - Remove unnecessary parameter struct drm_connector* for callback
->>    &analogix_dp_plat_data.attach.
->> - In order to decouple the connector driver and the bridge driver, move
->>    the bridge connector initilization to the Rockchip and Exynos sides.
->>
->> Changes in v4:
->> - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
->>    &drm_connector.
->> - Rename the &analogix_dp_plat_data.bridge to
->>    &analogix_dp_plat_data.next_bridge.
->> ---
->>   .../drm/bridge/analogix/analogix_dp_core.c    | 145 ++++++++----------
->>   .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
->>   drivers/gpu/drm/exynos/exynos_dp.c            |  18 ++-
->>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
->>   include/drm/bridge/analogix_dp.h              |   3 +-
->>   5 files changed, 88 insertions(+), 90 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 7876b310aaed..a8ed44ec8ef5 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -947,24 +947,16 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
->>   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
->>   }
->>   
->> -static int analogix_dp_get_modes(struct drm_connector *connector)
->> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	const struct drm_edid *drm_edid;
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	int num_modes = 0;
->>   
->> -	if (dp->plat_data->panel) {
->> +	if (dp->plat_data->panel)
->>   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
->> -	} else {
->> -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->>   
->> -		drm_edid_connector_update(&dp->connector, drm_edid);
->> -
->> -		if (drm_edid) {
->> -			num_modes += drm_edid_connector_add_modes(&dp->connector);
->> -			drm_edid_free(drm_edid);
->> -		}
->> -	}
->> +	if (dp->plat_data->next_bridge)
->> +		num_modes += drm_bridge_get_modes(dp->plat_data->next_bridge, connector);
-> 
-> If there is a next bridge which provides OP_MODES, then
-> drm_bridge_connector will use it for get_modes() and skip this one
-> completely. I'm not sure what's the value of this call.
+Thanks for your review comments..
 
-Following your advice, it is really a good idea to distinguish the 
-drm_bridge_ops between the panel and the bridge. Will add it in v5.
+On Tue, 19 Aug 2025 at 18:47, Mateusz Majewski <m.majewski2@samsung.com> wr=
+ote:
+>
+> Hello :)
+>
+> > +/* Map Rise and Falling edges for IRQ Clean */
+> > +struct tmu_irq_map {
+> > +     u32 fall[3];
+> > +     u32 rise[3];
+> > +};
+>
+Ops, this is an overkill approach that could be simplified further.
 
-> 
->>   
->>   	if (dp->plat_data->get_modes)
->>   		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
->> @@ -972,51 +964,39 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
->>   	return num_modes;
->>   }
->>   
->> -static struct drm_encoder *
->> -analogix_dp_best_encoder(struct drm_connector *connector)
->> +static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
->> +							   struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->> +	const struct drm_edid *drm_edid = NULL;
->>   
->> -	return dp->encoder;
->> -}
->> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->>   
->> +	if (dp->plat_data->get_modes)
->> +		dp->plat_data->get_modes(dp->plat_data, connector);
-> 
-> 
-> So, we have DDC, but we still want to return platform modes? What is the
-> usecase for that?
-> 
-> There might be some, but I think it deserves a comment in the source
-> file.
-> 
+static void exynos4412_tmu_clear_irqs(struct exynos_tmu_data *data)
+{
+        unsigned int val_irq, clear_irq =3D 0;
+        u32 tmu_intstat =3D data->tmu_intstat;
+        u32 tmu_intclear =3D data->tmu_intclear;
+        static const u32 irq_bits[] =3D {
+                BIT(0), BIT(4), BIT(8),   /* Rising edge */
+                BIT(12), BIT(16), BIT(20) /* Falling edge */
+        };
 
-For Rockchip side, since RK3588 and RK3576 can support YUV formats while 
-the other can not, the &analogix_dp_plat_data.get_modes() help filter 
-out YUV formats for some platforms(The YUV feature support may not be 
-fit for this patch series and will come later).
+        val_irq =3D readl(data->base + tmu_intstat);
 
-For Exynos side, I think &analogix_dp_plat_data.get_modes() can help
-parse the video mode set in the eDP DT node when there is no available 
-panel or bridge.
+        /* Set SoC-specific interrupt bit mappings */
+        for (int i =3D 0; i < ARRAY_SIZE(irq_bits); i++) {
+                if (val_irq & irq_bits[i])
+                        clear_irq |=3D irq_bits[i];
+        }
 
-I will add some comments about it in the next version.
+        if (clear_irq)
+                writel(clear_irq, data->base + tmu_intclear);
+}
 
->>   
->> -static int analogix_dp_atomic_check(struct drm_connector *connector,
->> -				    struct drm_atomic_state *state)
->> -{
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	struct drm_connector_state *conn_state;
->> -	struct drm_crtc_state *crtc_state;
->> +	return drm_edid;
->> +}
->>   
->> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
->> -	if (WARN_ON(!conn_state))
->> -		return -ENODEV;
->> +static int analogix_dp_bridge_atomic_check(struct drm_bridge *bridge,
->> +					   struct drm_bridge_state *bridge_state,
->> +					   struct drm_crtc_state *crtc_state,
->> +					   struct drm_connector_state *conn_state)
->> +{
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   
->>   	conn_state->self_refresh_aware = true;
->>   
->> -	if (!conn_state->crtc)
->> -		return 0;
->> -
->> -	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
->> -	if (!crtc_state)
->> -		return 0;
->> -
->>   	if (crtc_state->self_refresh_active && !dp->psr_supported)
->>   		return -EINVAL;
->>   
->>   	return 0;
->>   }
->>   
->> -static const struct drm_connector_helper_funcs analogix_dp_connector_helper_funcs = {
->> -	.get_modes = analogix_dp_get_modes,
->> -	.best_encoder = analogix_dp_best_encoder,
->> -	.atomic_check = analogix_dp_atomic_check,
->> -};
->> -
->>   static enum drm_connector_status
->> -analogix_dp_detect(struct drm_connector *connector, bool force)
->> +analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	enum drm_connector_status status = connector_status_disconnected;
->>   
->>   	if (dp->plat_data->panel)
->> @@ -1028,21 +1008,11 @@ analogix_dp_detect(struct drm_connector *connector, bool force)
->>   	return status;
->>   }
->>   
->> -static const struct drm_connector_funcs analogix_dp_connector_funcs = {
->> -	.fill_modes = drm_helper_probe_single_connector_modes,
->> -	.detect = analogix_dp_detect,
->> -	.destroy = drm_connector_cleanup,
->> -	.reset = drm_atomic_helper_connector_reset,
->> -	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->> -	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> -};
->> -
->>   static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
->>   				     struct drm_encoder *encoder,
->>   				     enum drm_bridge_attach_flags flags)
->>   {
->>   	struct analogix_dp_device *dp = to_dp(bridge);
->> -	struct drm_connector *connector = NULL;
->>   	int ret = 0;
->>   
->>   	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
->> @@ -1050,31 +1020,8 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
->>   		return -EINVAL;
->>   	}
->>   
->> -	if (!dp->plat_data->next_bridge) {
->> -		connector = &dp->connector;
->> -		connector->polled = DRM_CONNECTOR_POLL_HPD;
->> -
->> -		ret = drm_connector_init(dp->drm_dev, connector,
->> -					 &analogix_dp_connector_funcs,
->> -					 DRM_MODE_CONNECTOR_eDP);
->> -		if (ret) {
->> -			DRM_ERROR("Failed to initialize connector with drm\n");
->> -			return ret;
->> -		}
->> -
->> -		drm_connector_helper_add(connector,
->> -					 &analogix_dp_connector_helper_funcs);
->> -		drm_connector_attach_encoder(connector, encoder);
->> -	}
->> -
->> -	/*
->> -	 * NOTE: the connector registration is implemented in analogix
->> -	 * platform driver, that to say connector would be exist after
->> -	 * plat_data->attch return, that's why we record the connector
->> -	 * point after plat attached.
->> -	 */
->>   	if (dp->plat_data->attach) {
->> -		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
->> +		ret = dp->plat_data->attach(dp->plat_data, bridge);
->>   		if (ret) {
->>   			DRM_ERROR("Failed at platform attach func\n");
->>   			return ret;
->> @@ -1178,14 +1125,21 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->>   }
->>   
->>   static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
->> +					struct drm_atomic_state *state,
->>   					const struct drm_display_mode *mode)
->>   {
->>   	struct analogix_dp_device *dp = to_dp(bridge);
->> -	struct drm_display_info *display_info = &dp->connector.display_info;
->>   	struct video_info *video = &dp->video_info;
->>   	struct device_node *dp_node = dp->dev->of_node;
->> +	struct drm_connector *connector;
->> +	struct drm_display_info *display_info;
->>   	int vic;
->>   
->> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
->> +	if (!connector)
->> +		return;
->> +	display_info = &connector->display_info;
->> +
->>   	/* Input video interlaces & hsync pol & vsync pol */
->>   	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
->>   	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
->> @@ -1269,7 +1223,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
->>   	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
->>   	if (!new_crtc_state)
->>   		return;
->> -	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
->> +	analogix_dp_bridge_mode_set(bridge, old_state, &new_crtc_state->adjusted_mode);
->>   
->>   	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
->>   	/* Not a full enable, just disable PSR and continue */
->> @@ -1385,7 +1339,11 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
->>   	.atomic_enable = analogix_dp_bridge_atomic_enable,
->>   	.atomic_disable = analogix_dp_bridge_atomic_disable,
->>   	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
->> +	.atomic_check = analogix_dp_bridge_atomic_check,
->>   	.attach = analogix_dp_bridge_attach,
->> +	.get_modes = analogix_dp_bridge_get_modes,
->> +	.edid_read = analogix_dp_bridge_edid_read,
->> +	.detect = analogix_dp_bridge_detect,
->>   };
->>   
->>   static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
->> @@ -1615,6 +1573,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
->>   
->>   int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
->>   {
->> +	struct drm_bridge *bridge = &dp->bridge;
->>   	int ret;
->>   
->>   	dp->drm_dev = drm_dev;
->> @@ -1628,7 +1587,16 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
->>   		return ret;
->>   	}
->>   
->> -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
->> +	bridge->ops = DRM_BRIDGE_OP_DETECT |
->> +		      DRM_BRIDGE_OP_EDID |
-> 
-> Should this be limited to the !panel cases? Otherwise OP_EDID overrides
-> OP_MODES and the analogix_dp_bridge_get_modes() will never be called.
-> 
->> +		      DRM_BRIDGE_OP_MODES;
->> +	bridge->of_node = dp->dev->of_node;
->> +	bridge->type = DRM_MODE_CONNECTOR_eDP;
->> +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
->> +	if (ret)
->> +		goto err_unregister_aux;
->> +
->> +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
->>   	if (ret) {
->>   		DRM_ERROR("failed to create bridge (%d)\n", ret);
->>   		goto err_unregister_aux;
->> @@ -1646,7 +1614,6 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
->>   void analogix_dp_unbind(struct analogix_dp_device *dp)
->>   {
->>   	analogix_dp_bridge_disable(&dp->bridge);
->> -	dp->connector.funcs->destroy(&dp->connector);
->>   
->>   	drm_panel_unprepare(dp->plat_data->panel);
->>   
->> @@ -1656,7 +1623,8 @@ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
->>   
->>   int analogix_dp_start_crc(struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp;
->> +	struct drm_bridge *bridge;
->>   
->>   	if (!connector->state->crtc) {
->>   		DRM_ERROR("Connector %s doesn't currently have a CRTC.\n",
->> @@ -1664,13 +1632,26 @@ int analogix_dp_start_crc(struct drm_connector *connector)
->>   		return -EINVAL;
->>   	}
->>   
->> +	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
->> +	if (bridge->type != DRM_MODE_CONNECTOR_eDP)
->> +		return -EINVAL;
->> +
->> +	dp = to_dp(bridge);
->> +
->>   	return drm_dp_start_crc(&dp->aux, connector->state->crtc);
->>   }
->>   EXPORT_SYMBOL_GPL(analogix_dp_start_crc);
->>   
->>   int analogix_dp_stop_crc(struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp;
->> +	struct drm_bridge *bridge;
->> +
->> +	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
->> +	if (bridge->type != DRM_MODE_CONNECTOR_eDP)
->> +		return -EINVAL;
->> +
->> +	dp = to_dp(bridge);
->>   
->>   	return drm_dp_stop_crc(&dp->aux);
->>   }
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> index 91b215c6a0cf..17347448c6b0 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> @@ -154,7 +154,6 @@ struct analogix_dp_device {
->>   	struct drm_encoder	*encoder;
->>   	struct device		*dev;
->>   	struct drm_device	*drm_dev;
->> -	struct drm_connector	connector;
->>   	struct drm_bridge	bridge;
->>   	struct drm_dp_aux	aux;
->>   	struct clk		*clock;
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
->> index 702128d76ae3..65579873ceea 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
->> @@ -21,6 +21,7 @@
->>   #include <drm/bridge/analogix_dp.h>
->>   #include <drm/drm_atomic_helper.h>
->>   #include <drm/drm_bridge.h>
->> +#include <drm/drm_bridge_connector.h>
->>   #include <drm/drm_crtc.h>
->>   #include <drm/drm_of.h>
->>   #include <drm/drm_panel.h>
->> @@ -95,8 +96,7 @@ static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
->>   }
->>   
->>   static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
->> -				   struct drm_bridge *bridge,
->> -				   struct drm_connector *connector)
->> +				   struct drm_bridge *bridge)
->>   {
->>   	struct exynos_dp_device *dp = to_dp(plat_data);
->>   	int ret;
->> @@ -147,6 +147,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
->>   	struct exynos_dp_device *dp = dev_get_drvdata(dev);
->>   	struct drm_encoder *encoder = &dp->encoder;
->>   	struct drm_device *drm_dev = data;
->> +	struct drm_connector *connector;
->>   	int ret;
->>   
->>   	dp->drm_dev = drm_dev;
->> @@ -168,10 +169,19 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
->>   	dp->plat_data.encoder = encoder;
->>   
->>   	ret = analogix_dp_bind(dp->adp, dp->drm_dev);
->> -	if (ret)
->> +	if (ret) {
->>   		dp->encoder.funcs->destroy(&dp->encoder);
->> +		return ret;
->> +	}
->> +
->> +	connector = drm_bridge_connector_init(dp->drm_dev, dp->plat_data.encoder);
->> +	if (IS_ERR(connector)) {
->> +		ret = PTR_ERR(connector);
->> +		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
->> +		return ret;
->> +	}
->>   
->> -	return ret;
->> +	return drm_connector_attach_encoder(connector, dp->plat_data.encoder);
->>   }
->>   
->>   static void exynos_dp_unbind(struct device *dev, struct device *master,
->> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> index d30f0983a53a..87dfb48206db 100644
->> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> @@ -25,6 +25,7 @@
->>   #include <drm/display/drm_dp_helper.h>
->>   #include <drm/drm_atomic.h>
->>   #include <drm/drm_atomic_helper.h>
->> +#include <drm/drm_bridge_connector.h>
->>   #include <drm/bridge/analogix_dp.h>
->>   #include <drm/drm_of.h>
->>   #include <drm/drm_panel.h>
->> @@ -394,6 +395,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->>   {
->>   	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
->>   	struct drm_device *drm_dev = data;
->> +	struct drm_connector *connector;
->>   	int ret;
->>   
->>   	dp->drm_dev = drm_dev;
->> @@ -413,7 +415,14 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->>   	if (ret)
->>   		goto err_cleanup_encoder;
->>   
->> -	return 0;
->> +	connector = drm_bridge_connector_init(dp->drm_dev, dp->plat_data.encoder);
->> +	if (IS_ERR(connector)) {
->> +		ret = PTR_ERR(connector);
->> +		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
->> +		goto err_cleanup_encoder;
->> +	}
->> +
->> +	return drm_connector_attach_encoder(connector, dp->plat_data.encoder);
->>   err_cleanup_encoder:
->>   	dp->encoder.encoder.funcs->destroy(&dp->encoder.encoder);
->>   	return ret;
->> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
->> index f06da105d8f2..ffc05f3de232 100644
->> --- a/include/drm/bridge/analogix_dp.h
->> +++ b/include/drm/bridge/analogix_dp.h
->> @@ -33,8 +33,7 @@ struct analogix_dp_plat_data {
->>   
->>   	int (*power_on)(struct analogix_dp_plat_data *);
->>   	int (*power_off)(struct analogix_dp_plat_data *);
->> -	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
->> -		      struct drm_connector *);
->> +	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *);
->>   	int (*get_modes)(struct analogix_dp_plat_data *,
->>   			 struct drm_connector *);
->>   };
->> -- 
->> 2.34.1
->>
-> 
+> Hmm, we can probably get away with less interrupts. We actually only
+> enable one fall interrupt in tmu_set_low_temp and one rise interrupt in
+> tmu_set_high_temp.
 
-Best regards,
-Damon
+Got it =E2=80=94 we need to enable INTEN for both rising and falling edges,
+specific to each SoC.
+So each SoC has a one-to-one mapping of INTEN with INTSTAT and INTCLEAR bit=
+s
+for rising and falling edge detection:.
 
+Exynos4412
+   Falling edge: bits 20, 16, 12
+   Rising edge: bits 8, 4, 0
+Exynos5422
+  Falling edge: bits 24, 20, 16
+  Rising edge: bits 8, 4, 0
+Exynos5433
+  Falling edge: bits 23, 17, 16
+  Rising edge: bits 7, 1, 0
+
+So we need to enable INTEN like below.
+
+ static void exynos4412_tmu_set_low_temp(struct exynos_tmu_data *data, u8 t=
+emp)
+ {
+        exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_FALL, 0, temp);
+-       exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
+-                             EXYNOS_TMU_INTEN_FALL0_SHIFT, true);
++       for (int i =3D 0; i < 3; i++)
++               exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
++                                     EXYNOS_TMU_INTEN_FALL0_SHIFT + i
+* 4, true);
+ }
+
+ static void exynos4412_tmu_set_high_temp(struct exynos_tmu_data *data, u8 =
+temp)
+ {
+        exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_RISE, 8, temp);
+-       exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
+-                             EXYNOS_TMU_INTEN_RISE0_SHIFT + 4, true);
++       for (int i =3D 0; i < 3; i++)
++               exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
++                             EXYNOS_TMU_INTEN_RISE0_SHIFT + 1 * 4, true);
+ }
+
+>
+> Regarding tmu_set_crit_temp, on SoCs that have hardware thermal tripping
+> there is nothing to clear. On others we will reboot immediately anyway,
+> though maybe there is nothing wrong with clearing the interrupt
+> beforehand? Regardless of this, there is only a rise critical
+> temperature interrupt, we never set a matching fall interrupt.
+>
+As per my understanding, it depends on the calibration consists of reading =
+the
+measured data from e-fuse and wrote the calibrated threshold temperature to
+generate interrupts into trigger level 0-3
+
+THRES_TEMP_RISE and THRES_TEMP_FALL.
+
+When the current temperature exceeds a threshold rise temperature,
+ then it generates the corresponding interrupt (INTREQ_RISE[2:0]).
+When the current temperature goes below a threshold fall temperature, t
+hen it generates a corresponding interrupt (INTREQ_FALL[2:0].
+
+It also depends on the sample interval
+
+> Maybe it would also be good to add a bool to this struct containing
+> information about whether a fall interrupt is in use, and reuse
+> the same logic for 4210?
+>
+> (Nitpick: I am not a native speaker of English, but I think "clean" and
+> "clear" have slightly different meanings, and the rest of the code
+> consistently uses "clear", so it would be worthwhile to also use "clear"
+> here.)
+>
+> > +             break;
+>
+> Maybe put irq_map inside exynos_tmu_data? exynos_map_dt_data has a
+> switch block that is quite similar, in that it also matches on the SoC
+> type. This way also there is no need to have a fallback.
+>
+I want to avoid this If you have any design feedback, plz let me know.
+
+I had attempted to refactor exynos_tmu_data by splitting it per-SoC,
+assigning dedicated callback functions for each variant. The goal was
+to eliminate
+the need for data->soc checks and make the code more modular.
+However, the approach didn=E2=80=99t work as expected=E2=80=94devm_thermal_=
+of_zone_register()
+wouldn=E2=80=99t bind the sensor-specific callbacks correctly.
+
+static const struct thermal_zone_device_ops exynos_sensor_ops =3D {
+.get_temp =3D exynos_get_temp,
+.set_emul_temp =3D exynos_tmu_set_emulation,
+.set_trips =3D exynos_set_trips,
+};
+
+> Kind regards,
+> Mateusz Majewski
+
+Thanks
+-Anand
