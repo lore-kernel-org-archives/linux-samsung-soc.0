@@ -1,127 +1,105 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D939258EFF;
-	Thu, 21 Aug 2025 15:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC192E267C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Aug 2025 16:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790558; cv=none; b=nT2TM2YERLcyQOdtz89dhnmXY2F8vIg7dvvOJ6ogoG2qBmVQ2q9GmX77pnjov1v6j6ZaD16Wn/JiG+zvjRqRHHYIKauUK2f0PXgoa2r9YE+bISnMcdENKcVKMJMOodkzfQXC/stH9socD+dK0OfqlGs/OC4LUvAtAKTmF9A+hwM=
+	t=1755795054; cv=none; b=EH6250S50dCegBgF684BtIsHusdNoaSRiiISyRhvTw30e36jlbH4NMILZppQquAURYZyS1NpBkE0+uoj+yuizLyCRAR6PN7lqyEtGPQlBgWOMdRTPU76hGtsKS2upY+PT/BYpI2/IpCAc7MNvZ/qJlsQh+6env5UEN62BQZVzBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790558; c=relaxed/simple;
-	bh=s82GxoNSw63yRZx/u0+Xxio+PIiKpP4YwVGMnr28pv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tVxC/nBrNSYJrdaGSdx0lKuN0S2sb/kodDpEwecd/Q5wexgYDWAObYhCSq4d1zf+JYuioUD6LK9vvAGh7U0ydgd0h3VN8XDef6yIZQ3MVNIJL8szVXeoZN05x0TVZhC3Wmu2o//QrXtuSqvfR+4zLcO+xhnnthLYsx9ZPEO7EiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OqDW5n33; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755795054; c=relaxed/simple;
+	bh=MA5CoRznscTD/9JPv2I1fgD+UFpMWzRT7Bcr37nG6ws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u5fomxDCO7TOriKZpXKmV2Av8u0+xRCx0h7ImHQTGvLSh1Cy0rSyhSZ5V1XzudKDPbizNeALM1DQYBTW/rNz1iu7208Y2gDz0gGQ+UJtLaS9jY85rEfm/B6s8+DXtbh4wd3bocO3rN+ludMiteENaGDLuJr36hFjLSMjnR73LWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkWlqK7d; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OqDW5n33"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-245f2a8fa81so15634215ad.0;
-        Thu, 21 Aug 2025 08:35:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkWlqK7d"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55ce508cfe0so1178188e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Aug 2025 09:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755790556; x=1756395356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jMyV1g4zn80PbhfAc9iWBO3qy/khW3/zllYxtdudBRY=;
-        b=OqDW5n33ztzGfzYnTNt48WQChRpq9dh6R8iwydErRcUk8kBxTdFQgIXRC1hMn6MRRo
-         ekKE23V5eGRoBEMXyg5lAFEPGTXckj7dkW7aU7Qsm+LKcmDqIPzV1e39A86RLYR9edDC
-         FYpdTPB15TzwDxHw3A4UX06BO5OcpX5pv3q/WM/WB1bstqEAqulySsrOPbBU9kMLsJHm
-         K/1GvzCo0Zr4/CQrPF0ws+Tr+Q3tiFtmSoHbxTOxoaIxk6BTrCpVYLCzEcWPEthDBdwh
-         lhUnHg9ks4Rp6xZwWAGK/cVofNSSRRjfl5QSeB4wEJ0L/JNI61U9KYEzE2y+ZCnvB8Gm
-         SBBA==
+        d=linaro.org; s=google; t=1755795049; x=1756399849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MA5CoRznscTD/9JPv2I1fgD+UFpMWzRT7Bcr37nG6ws=;
+        b=wkWlqK7dAOZ1y+MgUubgf3rcCYYAXyFlwlaf6n4BDE1E8OdI9GvbbFHWXkFl/JUFpg
+         QKfV51wUQLLQmaYPN84dofbifww2acVr069Lix2t8jO531wrxko2uFTV43AqOPGFcPC2
+         WI2CIbzgrmnkREqIIFNuu2TPj9+XqcicbgOur3++CAajgcp1uC8YwLk5Fwy7lmsjwGok
+         75qkS0ue+edCqf8SETxtdazBQpUu9ZXtTajUIpPtPT6xsd1EBJvuWNjHjaa7OPUO71m5
+         bNJnhuWZ4pei0ddwxz9G8ZSvM8adFkmUF72vyFqcPzooTr27LGesDsqJ0Z61m+Om3WsQ
+         McEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755790556; x=1756395356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755795049; x=1756399849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jMyV1g4zn80PbhfAc9iWBO3qy/khW3/zllYxtdudBRY=;
-        b=Egar0tCYGm9yzXZhpXMza565LDBCR0MLw6K3pkSaYsb7Da5DWAb+74L8Mo9REDXSNN
-         WN4xikjS8djDJ/utrm9HmCYxzSVdcuxKODENqFUlgImD0C837LYL07Uv0U/L4GfDfsnP
-         Q/z8RcBRvn63C/6DqCjEMRbX6SGuf0cfFmEtMzN4XB+yMfX/gqvLVLl3ZqOcVTXbM5bu
-         meMQE3V/4i7C8LKQVcAZx6w0aZQ8yFzZzDdUO2KoAtECntIdI+utVulMcDHnj6/U+sgW
-         jxUbULv3VWF9ceRJbobP7lSXV7mh/MvzUNXmwjNxN+NvIkRJ8wmi73NcHza9Y1RFIkAY
-         cX1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7ohkfmhx4e6H/utrtIVNqBGeMT1Meft5EUgF87lWCKmS4g/GMtF952l2om195xb6BUsfZBgfR5LCiG8NntkEy4iw=@vger.kernel.org, AJvYcCW06NEAY9yqcMbq99I3STVSToJWNKBw2D+S9Gt9c86NB27iQFTxZPZqv2ve0l8k7T57MaxPG91YMA31siM=@vger.kernel.org, AJvYcCXGrCRE9NMCj+hN+iVKnAokUh6LdKfRaM0XNa/O2MgGknmCoZyYBBNsl7glKyGQJZozaG3cSr2CvMQeqSY4R6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywQsZhqBVRZhCXRCw9XLee7k8S+CgACABK4OgQfYPURHtKaP7B
-	UbKp1lEBvp7XHDCkAGEZ9GSPGPi2ZgJB7/kDojZZ1G2gONH18Jet4f8E
-X-Gm-Gg: ASbGncsHXJG64uw75UTlw2UOkQ//RVYJXNG/Ut6PvOa8hKjRcM6ZQuNcYt6MTigj+SA
-	dOg677dOKEQLkShtzEkzwEcGgz6wQ4NXffUD7mU6r1TNe9oE8EcHGAfe8dD+XFHou6du+tpO4B/
-	/W5JB6ZDlaU2bze1cHzKRFkouhEVE8h4JSD9xJVepqfOQJk2pNyHrDa6fK0r+uzsPXhI+KiisA3
-	AOX0mpLS6vtkXhFdZgajDNLYRSymh3dzg8I9nWiEhNmZU11vnK4o4iUKsthApNEgFnWa8S07gww
-	MTsSegAP/1KNSydWx5rA3iln6Obe/rIrdJgTTYu0phsJSjNbTdvz5VkIqOkXa1j0SFlCqcl0X7H
-	OpcmCTpfmmXLhEBc+ASOlJxKFvEtXL6xJ2+jzM59CWqjeRA==
-X-Google-Smtp-Source: AGHT+IGrMWesMUWnFglIGSBoWLu6F3+7GZd8RAE67E8bXFw1pRYGmeUsNSijIB145sp3eYLYZFRBaQ==
-X-Received: by 2002:a17:902:f54d:b0:235:efbb:9537 with SMTP id d9443c01a7336-2460238be4amr27003675ad.3.1755790556289;
-        Thu, 21 Aug 2025 08:35:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325154b70e0sm71365a91.29.2025.08.21.08.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 08:35:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 21 Aug 2025 08:35:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	semen.protsenko@linaro.org, dongil01.park@samsung.com,
-	khwan.seo@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 5/5] watchdog: s3c2410_wdt: exynosautov9: Enable
- supported features
-Message-ID: <8798e925-6c99-4efe-a0e8-5cedf04a3403@roeck-us.net>
-References: <20250818021826.623830-1-sw617.shin@samsung.com>
- <CGME20250818022433epcas2p15ec2e45f26f6ff5fb69f0b1e377616f4@epcas2p1.samsung.com>
- <20250818021826.623830-6-sw617.shin@samsung.com>
+        bh=MA5CoRznscTD/9JPv2I1fgD+UFpMWzRT7Bcr37nG6ws=;
+        b=in0Uf5Zy+rVhrvV/67r+jgvqR1uwVhUK0IaS2DPnD4p0tRo3TxEKRw7iPRKlAOn5Pm
+         KaMKziCeAiECB1JtkXZUr6VJHsB3IwBGZHxQzaLR45/A9G0Oo9OS/kr1XIsakMTOebS3
+         5ZZZ32odnB58bYYEgG8kEjSN6AP5h5fWgOCHDZ6hGi0AlO0C0WeoftNCqmNP48WNDzJO
+         5BW6G4UUHPY70qSHhq5Fs8kjfGW6vOyOBqJqHoPGtX+tvOrJsXq5S5PJzjA7hebxG5qf
+         Mh+hwMtf7LBCd2i8bFWOf2M9+aJ84gKMoZHWgfKV9XJqRrvX1jp7Ozhs2HVBFFaMBuDx
+         8vMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEqKWnUDCLH7DUKEsnvWxCQNT2rFdHg1yapSu9T8ZgyHdNtzpVABFHGesTWLp4tHVDutqO577eAD2p2PvzZmrMwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdczOKhO0w79Tu0kUocX8bt3PkA/NBhYmLHVpuNUsSaTCBqoY1
+	NXGLW5fGPP+95gqjhbTRc74WlE9JNBk8PltBA5B8icfCvXmHEp5x/gZGfXqQtHVFh41Pbevc9u/
+	Ma8+X3M7kUIvd9LmZt3wkmc/bTc3w8Mg3CfkRbcOS5A==
+X-Gm-Gg: ASbGncu5kHV9e4HpPP36MBUwYQpeW46yK66lDmzUmUhiuICyLYuNO/zXcJGLUNArD7i
+	Hrb92T4aBWYQyRw2DJriIen2jhZmHvFC19SLpYZClZlmz+PoSPyPLmpw7BNDiz2qLxrdwXZkc4y
+	vw5lBphTBGI7UTOGYHka+HbLp41BwB1AvZYjy/gzA4ZOk688PPzLFyGgTjWiUZcZyPE45DU8Kpp
+	aJj6BVK/G23gyUM1Q==
+X-Google-Smtp-Source: AGHT+IHXxJmnZpxwlzV39CihpI1fip8jHsQ3wqrQIPStR8+WqibfCJ2j76EEt47pzZKFul7hhblBfkLJ4pGoe6B1jMM=
+X-Received: by 2002:a05:651c:23c8:20b0:32a:78f7:9bef with SMTP id
+ 38308e7fff4ca-33549e3ad61mr6524161fa.8.1755795049223; Thu, 21 Aug 2025
+ 09:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818021826.623830-6-sw617.shin@samsung.com>
+References: <20250710002047.1573841-1-ksk4725@coasia.com> <CGME20250821124039epcas5p34b77813c9936b8b70c801e0e1b67891a@epcas5p3.samsung.com>
+ <20250821123310.94089-1-ravi.patel@samsung.com> <20250821123310.94089-6-ravi.patel@samsung.com>
+In-Reply-To: <20250821123310.94089-6-ravi.patel@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Aug 2025 18:50:38 +0200
+X-Gm-Features: Ac12FXwqIo6zLlw0fIpSEAb-CCiAQ7nCYe-8wPk85-SMsx3heqK_K_zSrsS4110
+Message-ID: <CACRpkdbdpcPBC8mwazoXHy+HE+hH-XWDkfHV4Uz38YhZU7UH7w@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific configuration
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, 
+	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
+	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com, 
+	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
+	dj76.yang@samsung.com, hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@axis.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev, 
+	Priyadarsini G <priya.ganesh@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 11:18:26AM +0900, Sangwook Shin wrote:
-> Enable supported features for ExynosAutov9 SoC.
-> - QUIRK_HAS_DBGACK_BIT
-> - QUIRK_HAS_32BIT_CNT
-> 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+On Thu, Aug 21, 2025 at 2:40=E2=80=AFPM Ravi Patel <ravi.patel@samsung.com>=
+ wrote:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> From: SeonGu Kang <ksk4725@coasia.com>
+>
+> Add Axis ARTPEC-8 SoC specific configuration data to enable pinctrl.
+>
+> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> Signed-off-by: Priyadarsini G <priya.ganesh@samsung.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
 
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 915d3c88565a..b774477190b6 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -306,7 +306,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
->  	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
->  	.cnt_en_bit = 7,
->  	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-> -		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> +		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
->  };
->  
->  static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
-> @@ -318,7 +319,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
->  	.cnt_en_reg = EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT,
->  	.cnt_en_bit = 7,
->  	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-> -		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> +		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
->  };
->  
->  static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
-> -- 
-> 2.25.1
-> 
-> 
+Looks good to me.
+
+I expect that Krzysztof will queue this and send
+to me with a pull request once he's happy with it.
+
+Yours,
+Linus Walleij
