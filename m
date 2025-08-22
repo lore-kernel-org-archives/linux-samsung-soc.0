@@ -1,150 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD72311C2A;
-	Fri, 22 Aug 2025 13:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCD83074BC
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 13:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870924; cv=none; b=AZczcVnokfzKPlOgbfpMO5s4u3o5q74tF38wBXuh8DO4f5hN/O3Z60amjc7j+N/ld0tmo9PBLwvLNbs18QGS7Y8dKITp/eFaWoWB4PZl6xuHVnVKkpKQ5faWnfwt/FoCJD//l4lx13EiEJ7cVdSI7KGEMlr9gvyuLs/v/h3dfMY=
+	t=1755871042; cv=none; b=KE/VdanlSzQbr0G+86ccJbARqoZWwrvXixMDx1g+dMduh5Npyq+NK1nWHF7jGaOZgYKqN0m5VUxR2CtjDkwcNruRZ2h3qRImdxLlO8XgtAE/9qtNTTU722YqAsVVZVDnOrOnD1xjVbbioOX62/2n4nKsaNzqmg51XVuXTnS9IqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870924; c=relaxed/simple;
-	bh=zSm1zQkFdhpmY/HgWj2Qj7y/a2Z/6Ftha+/cqaK8MEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovLFglyICsbjPQvwHPEPDfaXk9Qm6h1Bn0bzdqc4RuStR+7nIu+qoK+VTCbm9c7SUQR1xcee3bFpc2zX6EbLEQquagRho5BTjF6/u7kflAflYCG2P7gPvAsRJQ3JXEl8Nmisf4wpQDgjmff2qvjgVm6mkCKG2w1QHILxNMtHsHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLkkNl3d; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755871042; c=relaxed/simple;
+	bh=qYOiKaomuYF3FFz6S9PgNZ0UIWGTOlBCNi6+QRdBe8c=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=NG5KWyrZNzDHodE/MtICLbPw4eNJYQKqa7U5hTfPVkVRhgB94pVmXZbuNIfKwnKeLhVMuMf5D4EFg4qaN0jec18QuF0bRayE3TkR9iYuYNt4fMmXC+trIhn0p/QjNTUkzGYQrzegc0JBdEJ6BqyNk/hX9WZOcgt7ire4Vo0epxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jwvOoxx+; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLkkNl3d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3125CC113CF;
-	Fri, 22 Aug 2025 13:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755870923;
-	bh=zSm1zQkFdhpmY/HgWj2Qj7y/a2Z/6Ftha+/cqaK8MEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bLkkNl3dXIsDnJZtsoiU1Vm9inBEz27/WByO/q5z3/GGf24wqq7LFXOKlQqSAmwYH
-	 XEsmcwA495cLpTYMi23yUD7uVqMpOUQ/kZM+5scQWVBWtf+Lfhg3JUpDBbAUjaqA0z
-	 Kr9az9pakd2wZhulu7Z5YD6wRAaqk9jjK74McEH8yyrQi8CGpWwhmFejwAC3/t7jxf
-	 G3VHJqB3aLMYeMBfkXWdDt8dhy2d4GczXYyAmLuBQhAyJLMH+pbZ0DyyGIOa2xs57m
-	 1JLxMstwbqwUAttH0HW+mnZVdVUNYVlLtvAJvhw7tQv74IvFdTtjsF7TLFdNzauyb0
-	 9od25tu/b7Tgg==
-Date: Fri, 22 Aug 2025 08:55:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	willmcvicker@google.com, kernel-team@android.com
-Subject: Re: [PATCH 1/3] dt-bindings: firmware: google,gs101-acpm-ipc: add
- clocks node
-Message-ID: <20250822135521.GA3487754-robh@kernel.org>
-References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
- <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jwvOoxx+"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250822135717epoutp010da703a2b5fb1cfea6603cdc47635145~eG2e9ZUDG1656916569epoutp01x
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 13:57:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250822135717epoutp010da703a2b5fb1cfea6603cdc47635145~eG2e9ZUDG1656916569epoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755871037;
+	bh=W4C5v6Mam7mfoOZt+/Uk2fNaLUuqcHXWmVmMPWM4nmI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=jwvOoxx+0UkR29FGHjt3nZB44roEkqCrPy3UV4AxVKwtIX37Oul0uvkstC1WMv2Jq
+	 EVKhVqqQcxDJBxtEAtUas3cMR818eJ/xFBm1R+98ywV0zAFG1JpHKkCARpXGj0ZOLa
+	 6w0XRyIrH69pEU8cfi4QLo0K4EXFLxqOhao5xbfs=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250822135716epcas5p18bd9dbea2d4c64fddf513df96cf206a8~eG2eIJ28p2289722897epcas5p1m;
+	Fri, 22 Aug 2025 13:57:16 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4c7hZg1tPyz6B9m4; Fri, 22 Aug
+	2025 13:57:15 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250822135714epcas5p1061155a3eaf18a8843e73652afbcfe52~eG2ckacBH1755517555epcas5p1I;
+	Fri, 22 Aug 2025 13:57:14 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250822135710epsmtip1545b9b7689f40f6c2351d8d4952539fc~eG2Y0A9DZ0796007960epsmtip1e;
+	Fri, 22 Aug 2025 13:57:10 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
+Subject: RE: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
+Date: Fri, 22 Aug 2025 19:27:09 +0530
+Message-ID: <00d101dc136c$aa037020$fe0a5060$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQE9OnCOAxwEstACXXiXx7J94PTA
+Content-Language: en-in
+X-CMS-MailID: 20250822135714epcas5p1061155a3eaf18a8843e73652afbcfe52
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
+	<20250814140943.22531-5-inbaraj.e@samsung.com>
+	<1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
 
-On Tue, Aug 19, 2025 at 11:45:36AM +0000, Tudor Ambarus wrote:
-> The firmware exposes clocks that can be controlled via the ACPM
-> interface. Describe the clocks exposed by the APM firmware.
 
-ACPM? APM is Advanced Power Management aka the predecessor to ACPI?
+Hi Krzysztof,
 
+Thanks for the review.
 
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 28 ++++++++++++++++++++++
->  include/dt-bindings/clock/google,gs101.h           | 15 ++++++++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-> index 9785aac3b5f34955bbfe2718eec48581d050954f..27cdf9c881ca680e78e77a0e14ffcffeba970871 100644
-> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-> @@ -27,6 +27,29 @@ properties:
->    mboxes:
->      maxItems: 1
->  
-> +  clocks:
-> +    description:
-> +      Clocks that are variable and index based. These clocks don't provide
-> +      an entire range of values between the limits but only discrete points
-> +      within the range. The firmware also manages the voltage scaling
-> +      appropriately with the clock scaling.
-> +    type: object
-> +    additionalProperties: false
+>=20
+> On 14/08/2025 16:09, Inbaraj E wrote:
+> > There is a csi dma and csis interface that bundles together to allow
+>=20
+> CSI DMA?
+> What is CSIS?
+>=20
+> > csi2 capture.
+>=20
+> CSI2?
 
-You don't need a child node. Just add #clock-cells to the parent.
+CSIS stands for Camera Serial Interface Slave.
 
-> +
-> +    properties:
-> +      compatible:
-> +        const: google,gs101-acpm-dvfs-clocks
-> +
-> +      "#clock-cells":
-> +        const: 1
-> +        description:
-> +          The argument is the ID of the clock contained by the firmware
-> +          messages.
-> +
-> +    required:
-> +      - compatible
-> +      - "#clock-cells"
-> +
->    pmic:
->      description: Child node describing the main PMIC.
->      type: object
-> @@ -59,6 +82,11 @@ examples:
->          mboxes = <&ap2apm_mailbox>;
->          shmem = <&apm_sram>;
->  
-> +        clocks {
-> +            compatible = "google,gs101-acpm-dvfs-clocks";
-> +            #clock-cells = <1>;
-> +        };
-> +
->          pmic {
->              compatible = "samsung,s2mpg10-pmic";
->              interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
-> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
-> index 442f9e9037dc33198a1cee20af62fc70bbd96605..f1d0df412fdd49b300db4ba88bc0b1674cf0cdf8 100644
-> --- a/include/dt-bindings/clock/google,gs101.h
-> +++ b/include/dt-bindings/clock/google,gs101.h
-> @@ -634,4 +634,19 @@
->  #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
->  #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
->  
-> +#define CLK_ACPM_DVFS_MIF				0
-> +#define CLK_ACPM_DVFS_INT				1
-> +#define CLK_ACPM_DVFS_CPUCL0				2
-> +#define CLK_ACPM_DVFS_CPUCL1				3
-> +#define CLK_ACPM_DVFS_CPUCL2				4
-> +#define CLK_ACPM_DVFS_G3D				5
-> +#define CLK_ACPM_DVFS_G3DL2				6
-> +#define CLK_ACPM_DVFS_TPU				7
-> +#define CLK_ACPM_DVFS_INTCAM				8
-> +#define CLK_ACPM_DVFS_TNR				9
-> +#define CLK_ACPM_DVFS_CAM				10
-> +#define CLK_ACPM_DVFS_MFC				11
-> +#define CLK_ACPM_DVFS_DISP				12
-> +#define CLK_ACPM_DVFS_BO				13
-> +
->  #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
-> 
-> -- 
-> 2.51.0.rc1.167.g924127e9c0-goog
-> 
+Samsung v4.3 CSIS IP bundles both the CSIS link operation and the CSIS
+DMA operation. The DMA-related operation are referred to as CSIS DMA and
+are handled by the fsd-csis driver. The link related operations are
+referred to simply as CSIS and are integrated into imx-mipi-csis driver.
+
+I'll update the commit message and commit description accordingly,
+and maintain consistency across the patches.
+
+>=20
+> >
+> > Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
+> > ---
+> >  arch/arm64/boot/dts/tesla/fsd-evb.dts =7C  96 +++++
+> > +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> > =40=40 -493,6 +493,558 =40=40 clock_mfc: clock-controller=4012810000 =
+=7B
+> >  			clock-names =3D =22fin_pll=22;
+> >  		=7D;
+> >
+> > +		mipicsis0: mipi-csis=4012640000 =7B
+>=20
+> Messed ordering. See DTS coding style.
+
+I'll fix the ordering in next patchset.
+
+>=20
+> Node names should be generic. See also an explanation and list of example=
+s
+> (not exhaustive) in DT specification:
+> https://protect2.fireeye.com/v1/url?k=3Da30d23f8-c28636dd-a30ca8b7-
+> 74fe485cbff6-ee12f8a711c584c8&q=3D1&e=3Db96506d8-2d5d-4303-b9e8-
+> 0e1189db1585&u=3Dhttps%3A%2F%2Fdevicetree-
+> specification.readthedocs.io%2Fen%2Flatest%2Fchapter2-devicetree-
+> basics.html%23generic-names-recommendation
+>=20
+
+There is no generic name directly related to CSI apart from camera. That's
+why I used mipi-csis. If preferred, I can move the name to csis or simply c=
+si.
+Please let me know which one is more appropriate.
+
+Regards,
+Inbaraj E
+
