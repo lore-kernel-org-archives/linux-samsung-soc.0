@@ -1,47 +1,47 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCD83074BC
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 13:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526B93093AA
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 14:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871042; cv=none; b=KE/VdanlSzQbr0G+86ccJbARqoZWwrvXixMDx1g+dMduh5Npyq+NK1nWHF7jGaOZgYKqN0m5VUxR2CtjDkwcNruRZ2h3qRImdxLlO8XgtAE/9qtNTTU722YqAsVVZVDnOrOnD1xjVbbioOX62/2n4nKsaNzqmg51XVuXTnS9IqU=
+	t=1755871239; cv=none; b=nPQPw0LqxV2jTUrBcDneNfb1/1Sbe5aWtiHhFHf8mLnxiMhqEjv1OTaf/7Eg1HAdJiYTi84KjAgbYJZOeQCq8ak+3bj63EbPEd3w3JOHTnlFQRgh+CtTmwKd1bs9xGjct5GWAwLw0Zno7C3tyHTJW69czDs64Dkd2Mi+DFlusAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871042; c=relaxed/simple;
-	bh=qYOiKaomuYF3FFz6S9PgNZ0UIWGTOlBCNi6+QRdBe8c=;
+	s=arc-20240116; t=1755871239; c=relaxed/simple;
+	bh=U5vB3jTLB/0YtaPU98NKvAcBNxrZMtOdgUeBiXaL9ro=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=NG5KWyrZNzDHodE/MtICLbPw4eNJYQKqa7U5hTfPVkVRhgB94pVmXZbuNIfKwnKeLhVMuMf5D4EFg4qaN0jec18QuF0bRayE3TkR9iYuYNt4fMmXC+trIhn0p/QjNTUkzGYQrzegc0JBdEJ6BqyNk/hX9WZOcgt7ire4Vo0epxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jwvOoxx+; arc=none smtp.client-ip=203.254.224.24
+	 Content-Type:References; b=CLC2CkxHV+EP5/+NhkcHCeHEAaq8VFudSUI9ZraM0C/P/A3GVe7EpcHJFOv7BefEA83S2FdAubGOSk/sbxuvb6zWss1WjBJeMe1kkop7hdIlQrOpEE/TdNFNroWLXWLJ7v2Jbj2+5lbLOMuuro6qviSj2hqdtZrM1PWQJtfkpeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LmWYTT7G; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jwvOoxx+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LmWYTT7G"
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250822135717epoutp010da703a2b5fb1cfea6603cdc47635145~eG2e9ZUDG1656916569epoutp01x
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 13:57:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250822135717epoutp010da703a2b5fb1cfea6603cdc47635145~eG2e9ZUDG1656916569epoutp01x
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250822140035epoutp037e65b71a0871df37fc55949cde806391~eG5X3oEml1318713187epoutp03W
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 14:00:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250822140035epoutp037e65b71a0871df37fc55949cde806391~eG5X3oEml1318713187epoutp03W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755871037;
-	bh=W4C5v6Mam7mfoOZt+/Uk2fNaLUuqcHXWmVmMPWM4nmI=;
+	s=mail20170921; t=1755871235;
+	bh=I3q54JPaEsRJCyuS492x1saEps2lZA8otnLyPxGwJho=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=jwvOoxx+0UkR29FGHjt3nZB44roEkqCrPy3UV4AxVKwtIX37Oul0uvkstC1WMv2Jq
-	 EVKhVqqQcxDJBxtEAtUas3cMR818eJ/xFBm1R+98ywV0zAFG1JpHKkCARpXGj0ZOLa
-	 6w0XRyIrH69pEU8cfi4QLo0K4EXFLxqOhao5xbfs=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250822135716epcas5p18bd9dbea2d4c64fddf513df96cf206a8~eG2eIJ28p2289722897epcas5p1m;
-	Fri, 22 Aug 2025 13:57:16 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4c7hZg1tPyz6B9m4; Fri, 22 Aug
-	2025 13:57:15 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250822135714epcas5p1061155a3eaf18a8843e73652afbcfe52~eG2ckacBH1755517555epcas5p1I;
-	Fri, 22 Aug 2025 13:57:14 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	b=LmWYTT7GwhV60aof6ADr7N8Qd+vuTM1Yx6Yz4T4eUYslzQhwlZ2vY/87kkEaoEP4m
+	 27Y3Tc1gAAsTnHRJdKQYUdsCibPG5AmIXryNyn4tZ60K7UQzpbflukgVZ0TmOr92+n
+	 0pPd767wl1aL9sOR8ckwStNPa1OG9Y/yg3cm/lJc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250822140033epcas5p3fa5e592a3ee6654a259180b9d8f4a8de~eG5WT2gdF1315513155epcas5p3f;
+	Fri, 22 Aug 2025 14:00:33 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c7hfT0FH1z2SSKY; Fri, 22 Aug
+	2025 14:00:33 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250822140032epcas5p23047c7ce5a1f89ab6a7c5a564c2529db~eG5Ur29Ct0779907799epcas5p23;
+	Fri, 22 Aug 2025 14:00:32 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20250822135710epsmtip1545b9b7689f40f6c2351d8d4952539fc~eG2Y0A9DZ0796007960epsmtip1e;
-	Fri, 22 Aug 2025 13:57:10 +0000 (GMT)
+	20250822140028epsmtip251a4acc1d4fb38f8f1054d3e0d6c3567~eG5Q_y8uc3153031530epsmtip25;
+	Fri, 22 Aug 2025 14:00:28 +0000 (GMT)
 From: "Inbaraj E" <inbaraj.e@samsung.com>
 To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
 	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
@@ -57,10 +57,11 @@ Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<kernel@pengutronix.de>, <festevam@gmail.com>,
 	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
 	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
-Subject: RE: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
-Date: Fri, 22 Aug 2025 19:27:09 +0530
-Message-ID: <00d101dc136c$aa037020$fe0a5060$@samsung.com>
+In-Reply-To: <7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
+Subject: RE: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD
+ SoC
+Date: Fri, 22 Aug 2025 19:30:27 +0530
+Message-ID: <00d201dc136d$1fdd6bc0$5f984340$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,78 +70,39 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQE9OnCOAxwEstACXXiXx7J94PTA
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQF6bLd9AsRKNAMBJ/ZVhAEp+FCyAvdCX9qyZ1l58A==
 Content-Language: en-in
-X-CMS-MailID: 20250822135714epcas5p1061155a3eaf18a8843e73652afbcfe52
+X-CMS-MailID: 20250822140032epcas5p23047c7ce5a1f89ab6a7c5a564c2529db
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5
+X-CMS-RootMailID: 20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946
 References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
-	<20250814140943.22531-5-inbaraj.e@samsung.com>
-	<1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
+	<CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
+	<20250814140943.22531-4-inbaraj.e@samsung.com>
+	<ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
+	<00d001dc136a$36ad7230$a4085690$@samsung.com>
+	<7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
 
-
-Hi Krzysztof,
-
-Thanks for the review.
-
->=20
-> On 14/08/2025 16:09, Inbaraj E wrote:
-> > There is a csi dma and csis interface that bundles together to allow
->=20
-> CSI DMA?
-> What is CSIS?
->=20
-> > csi2 capture.
->=20
-> CSI2?
-
-CSIS stands for Camera Serial Interface Slave.
-
-Samsung v4.3 CSIS IP bundles both the CSIS link operation and the CSIS
-DMA operation. The DMA-related operation are referred to as CSIS DMA and
-are handled by the fsd-csis driver. The link related operations are
-referred to simply as CSIS and are integrated into imx-mipi-csis driver.
-
-I'll update the commit message and commit description accordingly,
-and maintain consistency across the patches.
-
->=20
+> On 22/08/2025 15:39, Inbaraj E wrote:
+> >>>
+> >>>    power-domains:
+> >>>      maxItems: 1
+> >>>
+> >>> +  samsung,syscon-csis:
+> >>
+> >> samsung, so not nxp. Even more confusing.
+> >>
 > >
-> > Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
-> > ---
-> >  arch/arm64/boot/dts/tesla/fsd-evb.dts =7C  96 +++++
-> > +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> > =40=40 -493,6 +493,558 =40=40 clock_mfc: clock-controller=4012810000 =
-=7B
-> >  			clock-names =3D =22fin_pll=22;
-> >  		=7D;
-> >
-> > +		mipicsis0: mipi-csis=4012640000 =7B
+> > I used samsung,syscon-csis because the system controller on Tesla FSD
+> > follows Samsung's sysreg design.
 >=20
-> Messed ordering. See DTS coding style.
+> OK, this is property for Tesla though, so please use tesla prefix.
 
-I'll fix the ordering in next patchset.
-
->=20
-> Node names should be generic. See also an explanation and list of example=
-s
-> (not exhaustive) in DT specification:
-> https://protect2.fireeye.com/v1/url?k=3Da30d23f8-c28636dd-a30ca8b7-
-> 74fe485cbff6-ee12f8a711c584c8&q=3D1&e=3Db96506d8-2d5d-4303-b9e8-
-> 0e1189db1585&u=3Dhttps%3A%2F%2Fdevicetree-
-> specification.readthedocs.io%2Fen%2Flatest%2Fchapter2-devicetree-
-> basics.html%23generic-names-recommendation
->=20
-
-There is no generic name directly related to CSI apart from camera. That's
-why I used mipi-csis. If preferred, I can move the name to csis or simply c=
-si.
-Please let me know which one is more appropriate.
+Using tesla,syscon-csis results in a =22prefix not found=22 issue when runn=
+ing dtbs_check
 
 Regards,
 Inbaraj E
