@@ -1,132 +1,107 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEFB26F2AE;
-	Fri, 22 Aug 2025 03:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618A8289378;
+	Fri, 22 Aug 2025 06:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755834724; cv=none; b=Aj0JvJs6lmDgFMzPw+JnaYod5jzEz2q2BGFwY1kDTxMhmqwDtO9gQrud9lVKbwNttp69TenhxANqcHXe06Lo4QiutK8iQKgfzyrUfosVvC73VXqH1+4dH12n0S4a30i9Cx4hOx6/eVME8r7lU6wzuT/Ccnf5po4hRTNgz+AJLPk=
+	t=1755843580; cv=none; b=NPXu2OZIjYxdysj8OzPOzg1QdI82Ne8VV1rd37e4Hpdc+dlixOiD2mQuttOWq8xDp+GIQlhLtNjClHT0Fsvz7qgtMDIrZLrL4CIqnxFjpFOyeccvL/CK+Y8wPuaGtf2NMT9gxe63/jFrHVfCV8GEkB6j3UaQ+/D8WhjaUWDcc3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755834724; c=relaxed/simple;
-	bh=/52vRgIJUjMO/j9jQkvKz+7tt80vmSfVQHF7sXmO88g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nVYy2Ro71pzi6cjVvg//0yw34h7aNDTsHiY2WO5K8nMGByNKVO2CkOEDrnkh9PUzV3c6T+bEm0sF+czdsbNyhcS8sAdFukWb/le2d9NxZogLR0NMRzm4uxt1E8550/nhpMeLSGi83Blg+Bca27pN6qQUaiFsbxk/xu4tH18ZLtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUG2E8sq; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1755843580; c=relaxed/simple;
+	bh=v8a3z04Uh0u/uSmoBokGI0Tk49vBcGLpTfeWGAwsaHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q8Rn4Z/kldD3dBsciu9is6XDm0NKXAXk4d/fWUogCmVac8iZarq5qAvDoA1eqb7PpoCTFO2TTZrD9emh2npunxNwlL+2bxKxg+w5E7SuMiBItfVlaQ+loeffy9iFQ8X+5OKK6G76Raxh74s9+RK+MvtbSsD+INrB6FMvDLxjFNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWdXbViW; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUG2E8sq"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1658334b3a.1;
-        Thu, 21 Aug 2025 20:52:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWdXbViW"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7af30a5so282758766b.3;
+        Thu, 21 Aug 2025 23:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755834723; x=1756439523; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=49sb8pd+Y6b5PW3M0gBrDMMusN8J4nmn5BPMHLBEa5M=;
-        b=jUG2E8sq4yvqus9MQ2DPaMDwB3xfMDTbfbTm0ttuQJ3UOJ6Ls3OadS/A1w46UCRQk0
-         wKAbI5hgqAyOxRMzz4SITZQj8O93WmE0c8E0fWlrqlR0UiXV3lO1ybNS0UrpkRrujoU7
-         vtmWOGLvBCr0XKdsbgU44+TR2VkzQ15TIWX42kj5nzFCRCoP5C9uM1hdENLsht+eoiWE
-         MSQ9ulH1T56cnP7tFVbtN5ToB5eckZTdFqJ+r9/XgOC3bCHoNtkJCJgM0NsWF1Ik7oCr
-         gsKdhV30QUbCG/klHhX9z2KSEzbP+S5zrdDS5s2m+19+wg/YT0ALOdcjq/bKIPEzTTpG
-         U4Yg==
+        d=gmail.com; s=20230601; t=1755843578; x=1756448378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v8a3z04Uh0u/uSmoBokGI0Tk49vBcGLpTfeWGAwsaHM=;
+        b=QWdXbViWI4Q/kIl+wGlw/L7DIbGv8KbV2WhldGWUq9Q4wY+h8IPN04daZpBXpBzQ8w
+         7l+lGUfanCwENwn0Javh1WSdoWLaSD0vTCPn/cheJA2NzLQE/hCVUd2bY2n1DRCixUAy
+         NBn4j00s7ETbg5NWy+zVKlVnXgEfSP06fgUTEnRSSmnWFroTwoeQ2t0RTsJbsyaM91kD
+         HXa5at+v+dyNGdbD5dMGUNDfCCaaqm5+p64+YZcRblRGC9+3UQSD0PppVhWKBFBsMnMG
+         WKpEom5DLAFYdMtI6xfbDx7ayV16ZW+i7AkvLHmr/7X4p7+xblnxsaq/B1bixIe5mKwJ
+         14Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755834723; x=1756439523;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755843578; x=1756448378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=49sb8pd+Y6b5PW3M0gBrDMMusN8J4nmn5BPMHLBEa5M=;
-        b=HPxJ59xTeUrdUcJk+370C8fEx7h07g1Mwak9ydnB2uLhpqxqdk6tvMREAumTndExKG
-         0D03ZG9XiE4S/NghTxq4MzAknpzHi6zvMMvgPAcUhJ5h2xX0lZdbIvqGIznYUzv0d/r2
-         bFY5EY1nPDmSvsnwT3sEJTab1p0HPLnBqAqiKoL2dftMvyPA/8EkcdG4D2OYZXsdNIyH
-         RLdXjwF68qdpl8XcYS1QE41URSlvqomIKaJ6gmATr8R5b127mE1jw1R8MdFFgOF1SQav
-         jKagOKIzA88rr+7qTu1PaVmCME1D3fOwnLIaS40dRLWlB7MraxMaDmPsLQ2Ac/wpcjz7
-         CqYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhxnR6Y6jtJQ2JwPQQGurWSSs+/tOe3+SBVCBj2u6L3c3fsWiYdphWrATQRb1UQS1q1QJkcboI9Bvi7BQ=@vger.kernel.org, AJvYcCXK/js/c22Xk3/x0m+RU9DDFe8LLLwMG4FLVQqeaiufgT9NnArJhvFuuPKwCvw5Ba0XRA9ObvCUaojaWlaNqeDIV/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL+CBFr2AsY0T7e+CVefqr8scf0gd14p/AYu10O8q4rRnHn8KJ
-	rrby2LxObqAqlg2Te3jkn1sYgFumnHl2HxkX/z6aMFYom6esqaNpPwYG
-X-Gm-Gg: ASbGnctipYocj9QjKIddJx+fXaQ66wsZDPNlpEDQjrEVTYRLF4oROSAhS8uQ8ZrznG1
-	H/iR0FQXzLAAPJNj9EY0Yw3277VuaIAyYUCfIx+8s2vyvGW930c3/0uF3Hzk20zOY6aOti5ChQW
-	yZDt2X5dgGSjHSOHf+XzI9ls4T7jQCmVmPq9hfYc/FF2rIFmHWbZYXcd7uZBZDnxj7z5u6JC951
-	4m73rLKDbx2asdOQmLGjDGFDi9756sLa6P8lNh/HFPD6n8wNIni7ZdqiHUgNQ/QzeurwR9fMwBY
-	GVN/nHTzErH17nsPBpo5S4nCE6EFW70oEeTWOPF7Mq/rgi2FevJkEC8IFLF8BbN+UEOvVQxzs9F
-	oVGmtAK37v/WfprUGuBhETUSZrk7f
-X-Google-Smtp-Source: AGHT+IE/XZWblGeCYZs22CUnDKwXULfC+6SOqnh7RXjuAgW/Urgwc5sc12Db+DpiqPeiba2SievDcA==
-X-Received: by 2002:a05:6a00:1742:b0:76e:99fc:db91 with SMTP id d2e1a72fcca58-770305105c8mr1796426b3a.3.1755834722669;
-        Thu, 21 Aug 2025 20:52:02 -0700 (PDT)
-Received: from [127.0.1.1] ([2401:4900:1c7e:807:34f9:502:b902:b409])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d10fdb1sm9449656b3a.27.2025.08.21.20.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 20:52:02 -0700 (PDT)
-From: Dixit Parmar <dixitparmar19@gmail.com>
-Date: Fri, 22 Aug 2025 09:19:58 +0530
-Subject: [PATCH 10/10] iio: temperature: Drop unnecessary -ENOMEM messages
+        bh=v8a3z04Uh0u/uSmoBokGI0Tk49vBcGLpTfeWGAwsaHM=;
+        b=kRw6iLyn8/1Hlq3huuFIlBCwcWg69GQWG1PGWW0WN595JRpgWimI2c39HwyYcQPrLl
+         IwYPE6dxyBDsJv9AI2J3kxX8Az2SVdAYF2e6geVMrBJuYMQ/EkHDchLuOwj8dAGW1iTG
+         02fUt/MQjsLbbdSWzEE6lQnr0HRmg4R6R/hw7fXPdZTyhxPj4Bdi+jxfA/HjGFkby14Q
+         6s8K0KjL3gTrrW6EZ1Vk/1FalD/M/ZKGyxiEPun6HmIDxsQTAi88irpBmZRAdQrYIrnr
+         7K8EuFbbzmPDYyC9rMHu2SEtRY6ncK2s7wpyVUuU1LBQO97B8eN5nsWXk1bIR5+82OSK
+         tMAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4ju/kct++cUClDhgHCz3FSuclOBU4ky0qtEyC05jk7cjklHPeXtbAKbUE558tlg4TmcnmvJlkG4rO29e6@vger.kernel.org, AJvYcCURn6/6mklc19gIPgmZ5aO5THaTrNRrlNzuO2WjZ72OgmCPvUZO7CAq+aIvkaBamQUgzODfyFz45pr/OQS2fukRW4E=@vger.kernel.org, AJvYcCVk9Cd8N/BhjqksyJs8b8kVq59Nqh+IL0k98KrKcxRD6P6Ajbs1MBnR287I0nYdLOJkrJ9YGjoufzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDmHnuQfg9Tb1OCXl2o+k+4rtmNzt13Pi8k+/1SG98oOeIp/vT
+	ICzHnzX3dpnSZY5GWCB7YRvCWFAV/7TPBdg+eFIPKg+0dLyeFrApQirIdoALtrzARJyqPRef+Ap
+	pebx8xT8w838C5HDaVtkzd3Wf5z1uOdw=
+X-Gm-Gg: ASbGncsHuUIcxLhazQO1TNnBFMjpzYeSb+GdAz81SKpXkPBpCpuLreYVbjmRthfHiEO
+	LMcmukdHEZjNT4dfL39V79H+T64W7AzmhpJ8ICGAcus239ddJAPtFzGZ5tYq1ODUiS3v50xW9h/
+	lSpsQj8aOH6A0M3kVXgf9JOrtmbNy5SPprH0ZP1kkn7fhGLMcPIpwRofkVl7iyxW+mBIH6MP2EO
+	mjSOeXiA/OdXPlxRQ==
+X-Google-Smtp-Source: AGHT+IE+QSuwTRWNnEst85zd/nVk0XCWCT3dBHW+V785HwC5spF07O83YE3tf7aS5P/QoM3Upoe1DUKm+4/yzGTsmC4=
+X-Received: by 2002:a17:907:1c17:b0:af9:1184:68b3 with SMTP id
+ a640c23a62f3a-afe296358ebmr171036766b.55.1755843577528; Thu, 21 Aug 2025
+ 23:19:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-enomam_logs-v1-10-db87f2974552@gmail.com>
 References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
 In-Reply-To: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Support Opensource <support.opensource@diasemi.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen <haibo.chen@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Cai Huoqing <cai.huoqing@linux.dev>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Andreas Klinger <ak@it-klinger.de>, Crt Mori <cmo@melexis.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
- Dixit Parmar <dixitparmar19@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755834598; l=910;
- i=dixitparmar19@gmail.com; s=20250726; h=from:subject:message-id;
- bh=/52vRgIJUjMO/j9jQkvKz+7tt80vmSfVQHF7sXmO88g=;
- b=aO9X2tBzsuRCvTKvElyomG3RIlmdjR2h4cNhhqfgx56wssi9qwsbgRVsLxnMuUkDukkoN2haD
- KMTw66khfeTCy0kwjT6Jv3/dYxro2mv3JCJumcVZAKzBT0O80Sr5yzs
-X-Developer-Key: i=dixitparmar19@gmail.com; a=ed25519;
- pk=TI6k8pjTuLFcYiHazsate3W8rZGU2lbOrSJ4IWNoQhI=
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 22 Aug 2025 09:19:01 +0300
+X-Gm-Features: Ac12FXwT5-FuVxm-aLv8k_QiDyCdQQYyidQq38gD1A8xq-6f9ed_haxl-pVwx0A
+Message-ID: <CAHp75VeTD5Y1bi-jYyfRnCPDfB4=WO+QF1uK5MSaSq=oUUMFdQ@mail.gmail.com>
+Subject: Re: [PATCH 00/10] iio: Drop unnecessary -ENOMEM messages
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Cai Huoqing <cai.huoqing@linux.dev>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andreas Klinger <ak@it-klinger.de>, 
+	Crt Mori <cmo@melexis.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The drivers do not require their own error messages for error
--ENOMEM, memory allocation failures. So remove the dev_err
-messages from the probe().
+On Fri, Aug 22, 2025 at 6:50=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail.c=
+om> wrote:
+>
+> The drivers do not require their own error messages for error
+> -ENOMEM, memory allocation failures. So remove the dev_err
+> messages from the probe().
+> With these patches, all the iio drivers now has uniform handling
+> of the -ENOMEM while device_allocation and trigger_allocation
+> calls.
 
-Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
----
- drivers/iio/temperature/mlx90632.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I don't understand. Don't you have a subscription to linux-iio@ ML?
+https://lore.kernel.org/linux-iio/CAHp75VdL9kV2fyi63zqPZnW4CaeYPmJ74tmGEgU=
+=3DM7FSYBv0ww@mail.gmail.com/T/#t
+If you found something new, please base it on that series as it was
+already sent and reviewed.
 
-diff --git a/drivers/iio/temperature/mlx90632.c b/drivers/iio/temperature/mlx90632.c
-index ae4ea587e7f9..c4bf5dc2f266 100644
---- a/drivers/iio/temperature/mlx90632.c
-+++ b/drivers/iio/temperature/mlx90632.c
-@@ -1178,10 +1178,8 @@ static int mlx90632_probe(struct i2c_client *client)
- 	int ret;
- 
- 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*mlx90632));
--	if (!indio_dev) {
--		dev_err(&client->dev, "Failed to allocate device\n");
-+	if (!indio_dev)
- 		return -ENOMEM;
--	}
- 
- 	regmap = devm_regmap_init_i2c(client, &mlx90632_regmap);
- 	if (IS_ERR(regmap)) {
-
--- 
-2.43.0
-
+--=20
+With Best Regards,
+Andy Shevchenko
