@@ -1,135 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E243E42048;
-	Fri, 22 Aug 2025 06:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27542E7BB9
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 07:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844748; cv=none; b=RmWNmZUcb0Y+6Lw2GzYaFqSm9yr0XXTn+Saz3UhTDcqjPX1NiIuq+3o7hhjF3Jv38SmOlGLVzhDGoBLS3oYmSjtAHKoslCZgDPzm6Cpx7jbX9Cjfr51TwXOrEi6O+nKjlH0+FwvTe1J+p9ATDNj1Y97FsraD4ljBc0QoUfL6jSI=
+	t=1755848254; cv=none; b=OE8cLxSF5wpCQrEusQqYQ2zK2zjld/87qNN3Zdnk6MiLuzCNEroq6H9/3dsi6p/1ThOlZ32MQz/D7SzZx3XgQaLpaYQVbaxh7YcGUCxSrJeSsWrV+i/BfmiNXNFPlH6k0lEJ/hWRfBo9T+X9MXDRxWFw1etC/Qaa9Mc4af2QBl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844748; c=relaxed/simple;
-	bh=9dBmEU03SovoA9hX+z1h03ERnwmP9cygR1p8I8nnokY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fm7UxrdJNhyzieUmUl0UKWkCbXYJmHfWOLFIQL27Bj1yFmHEtcWA29+g9PlGB6AIWj4m8uVWYQxKhEHMAfW1YGNQHaPlz2JKvkvYlupiezQqXqYPWqb3hZg7b5JmCx/nZLdprIP/iVLUp3Bp2vsPMtqZI5SWQoSScEpl29oBkGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ipy6AnWM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755848254; c=relaxed/simple;
+	bh=rZNmHReHWc7SHe15VRjGNvhrOv/d15a79W7KUSWO7B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=V7NSvZSgR+kkqWKtv5BH9vKucjlAVxMKx7RCoZ0EL1AHiXBOY4ASTZP7gQQuIM/9PEEEfKTtStfpPoNy0PzpyvgZrD0Ibz2caNs/sWgn8D1zmSvRZV5e2xSob9LavN9Nr3iD7gRC/Rq/BTBB44XjHRSTgnAt8P2khAKknv6T6RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eE2/A4xS; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ipy6AnWM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4775C4CEF1;
-	Fri, 22 Aug 2025 06:38:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755844747;
-	bh=9dBmEU03SovoA9hX+z1h03ERnwmP9cygR1p8I8nnokY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ipy6AnWM1qZQ5VjH5qsEC0y62f3B3BG/JPjKUSNfD+jZsnUHdTNOQzrLpFi26hwzz
-	 BgbnhjeiPd2mt7/XSiwvJYqCoSKMx8u5X3EvD/T6Lv8WSLvXUQ7k3U7CRMUL3NRksb
-	 ypwYu7N02o3aLeGjwjSCFrC6tsNbjHRnaKCYjCUL+/L70ayISAlryVkErSN5vVg6Ka
-	 D8wN886AkmxNI4ET/dnR4b+qYZwDSHbOXO4PTAuS6bU4kpo9xL0GzojCPtroUO8J1w
-	 /E8ZgyiXnQpsi553fH/p1Em5uIMuJx1hSKJwPWH4r3G38cRgK3hhb/PYJTEzGMv5Rh
-	 IeDfiqIRjI7cQ==
-Message-ID: <3a936b3b-0599-4b0a-83a8-52b899c24125@kernel.org>
-Date: Fri, 22 Aug 2025 08:38:57 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eE2/A4xS"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250822073728euoutp016659d64748289fd330ff498da43651b2~eBq31Ry7-2775127751euoutp01C
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 07:37:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250822073728euoutp016659d64748289fd330ff498da43651b2~eBq31Ry7-2775127751euoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755848248;
+	bh=YpD640TC5fGnjxgE2tIiQAR4qbkw8FJ8AkBFrdbOroQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=eE2/A4xSGHrbR+sD7qA1wNESSbzmc5PyKo9Jn17vlWjXRJkrCLlhru7gIBq0RWV+X
+	 7QY7tdM/octqsMkr2pVu9PVaszpEM/KDgQvglkPHSyDjRoeQHd8clnGTpetaKeJvkO
+	 vXdIMMkdL2wjIRPTXuWXWw/uPi49XSZAEYIa1P6k=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250822073728eucas1p2fd9f391cfd7d60040e809c96fffb8f9c~eBq3OXfdB2922529225eucas1p2W;
+	Fri, 22 Aug 2025 07:37:28 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250822073726eusmtip23349aa599dce22b1587cd9779d4d8825~eBq1yhVNn1837618376eusmtip29;
+	Fri, 22 Aug 2025 07:37:26 +0000 (GMT)
+Message-ID: <1979fe6e-7a54-4812-9878-b4ce286401b2@samsung.com>
+Date: Fri, 22 Aug 2025 09:37:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8
- SoC support
-To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
- tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
- gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
- smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
- dj76.yang@samsung.com, hypmean.kim@samsung.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250821123310.94089-1-ravi.patel@samsung.com>
- <CGME20250821124055epcas5p4d1072e9b4ef29587e0fd8606bc1abc4f@epcas5p4.samsung.com>
- <20250821123310.94089-9-ravi.patel@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
+ logic to detect MHL
+To: Henrik Grimler <henrik@grimler.se>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+	Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
+	linux-kernel@vger.kernel.org
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250821123310.94089-9-ravi.patel@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250818142622.GA286180@grimfrac.localdomain>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250822073728eucas1p2fd9f391cfd7d60040e809c96fffb8f9c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52
+X-EPHeader: CA
+X-CMS-RootMailID: 20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52
+References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
+	<CGME20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52@eucas1p1.samsung.com>
+	<20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
+	<1840a54c-c03a-42e3-a3a8-52e38919df38@samsung.com>
+	<20250818142622.GA286180@grimfrac.localdomain>
 
-On 21/08/2025 14:32, Ravi Patel wrote:
-> From: SungMin Park <smn1196@coasia.com>
-> 
-> Add initial device tree support for Axis ARTPEC-8 SoC.
-> 
-> This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
-> 
-> Signed-off-by: SungMin Park <smn1196@coasia.com>
-> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-...
+On 18.08.2025 16:26, Henrik Grimler wrote:
+> On Thu, Aug 14, 2025 at 01:26:33PM +0200, Marek Szyprowski wrote:
+>> On 24.07.2025 20:50, Henrik Grimler wrote:
+>>> To use MHL we currently need the MHL chip to be permanently on, which
+>>> consumes unnecessary power. Let's use extcon attached to MUIC to enable
+>>> the MHL chip only if it detects an MHL cable.
+>>>
+>>> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+>>> ---
+>>> v2: add dependency on extcon. Issue reported by kernel test robot
+>>>       <lkp@intel.com>
+>>> ---
+>>>    drivers/gpu/drm/bridge/Kconfig   |  1 +
+>>>    drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
+>>>    2 files changed, 87 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+>>> index b9e0ca85226a603a24f90c6879d1499f824060cb..f18a083f6e1c6fe40bde5e65a1548acc61a162ae 100644
+>>> --- a/drivers/gpu/drm/bridge/Kconfig
+>>> +++ b/drivers/gpu/drm/bridge/Kconfig
+>>> @@ -303,6 +303,7 @@ config DRM_SII902X
+>>>    config DRM_SII9234
+>>>    	tristate "Silicon Image SII9234 HDMI/MHL bridge"
+>>>    	depends on OF
+>>> +	select EXTCON
+>>>    	help
+>>>    	  Say Y here if you want support for the MHL interface.
+>>>    	  It is an I2C driver, that detects connection of MHL bridge
+>>> diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
+>>> index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
+>>> --- a/drivers/gpu/drm/bridge/sii9234.c
+>>> +++ b/drivers/gpu/drm/bridge/sii9234.c
+> [ ...]
+>
+>>> +
+>>> +	edev = extcon_find_edev_by_node(muic);
+>>> +	of_node_put(muic);
+>>> +	if (IS_ERR(edev)) {
+>>> +		dev_err_probe(ctx->dev, PTR_ERR(edev),
+>>> +			      "invalid or missing extcon\n");
+>>> +	}
+>> It looks that the original logic got lost somehow in the above code
+>> block, what causes kernel oops if compiled as module and loaded before
+>> extcon provider. Please handle -EPROBE_DEFER and propagate error value,
+>> like the original code did in sii8620 driver:
+>>
+>>           if (IS_ERR(edev)) {
+>>                   if (PTR_ERR(edev) == -EPROBE_DEFER)
+>>                           return -EPROBE_DEFER;
+>>                   dev_err(ctx->dev, "Invalid or missing extcon\n");
+>>                   return PTR_ERR(edev);
+>>           }
+> Thanks for detecting the issue! I think my code is just missing return
+> before dev_err_probe (same mistake as I did on patch 2). With return
+> added I have not been able to reproduce any kernel oops, but if
+> CONFIG_DRM_SII9234=y and CONFIG_EXTCON_MAX77693=m then it seems like
+> linux gets stuck probing sii9234 and waiting for the extcon provider
+> (verified with some printf debugging). This happens for me both with:
+>
+> 	edev = extcon_find_edev_by_node(muic);
+> 	of_node_put(muic);
+> 	if (IS_ERR(edev)) {
+> 		return dev_err_probe(ctx->dev, PTR_ERR(edev),
+> 				     "Invalid or missing extcon\n");
+> 	}
+>
+> and
+>
+> 	edev = extcon_find_edev_by_node(muic);
+> 	of_node_put(muic);
+> 	if (IS_ERR(edev)) {
+> 		if (PTR_ERR(edev) == -EPROBE_DEFER)
+> 			return -EPROBE_DEFER;
+> 		dev_err(ctx->dev, "Invalid or missing extcon\n");
+> 		return PTR_ERR(edev);
+> 	}
+>
+> I am not sure what to do to fix the issue, as far as I can see probe
+> logic and extcon handling is the same as in sil-sii8620 and ite-it6505
+> (i.e. the other bridges that use extcon). Will investigate further.
 
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+Indeed your code lacked only the return directive, I've noticed that 
+just after sending my reply.
 
-No CPU mask?
+I'm not sure if there is a simple way to solve the endless probe issue 
+with sii9234=y and max77963=m. We have to rely on the user to either 
+keep all drivers compiled-in or configured as modules here. Afair the 
+same issue happens with sii8620 and max77843.
 
-> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +};
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-
-Best regards,
-Krzysztof
