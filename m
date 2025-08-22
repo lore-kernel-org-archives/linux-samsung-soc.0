@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E96226E15D;
-	Fri, 22 Aug 2025 06:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E243E42048;
+	Fri, 22 Aug 2025 06:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844353; cv=none; b=d3yec2gGL5oO/lrJOePN8ujpythpkqaDL96tlrLuwTYUNF2kdHD5mSBe/qwO+uzLUtmDaKrY/2G1UEVPd1iB6CV481xX1GT4Go9ifyXID/Lkng8y+Wgg5989WQj/vfohCAIytfYQLBdRUdy80/SAuA4deb6EFY/KqnlqEhG9A5c=
+	t=1755844748; cv=none; b=RmWNmZUcb0Y+6Lw2GzYaFqSm9yr0XXTn+Saz3UhTDcqjPX1NiIuq+3o7hhjF3Jv38SmOlGLVzhDGoBLS3oYmSjtAHKoslCZgDPzm6Cpx7jbX9Cjfr51TwXOrEi6O+nKjlH0+FwvTe1J+p9ATDNj1Y97FsraD4ljBc0QoUfL6jSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844353; c=relaxed/simple;
-	bh=4VZ/xm7n5imPTrLX4hKthO212IbvmQSFDDZvXHzPBLc=;
+	s=arc-20240116; t=1755844748; c=relaxed/simple;
+	bh=9dBmEU03SovoA9hX+z1h03ERnwmP9cygR1p8I8nnokY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSpZxER+FnqC185A0tpyJoU6sk/Qnx30l2dTSQjH27KMbriQ1FYLW7xgiKhCL47rk31Fzf8QU065bSV6cQheRgoM43LVwN9Xu7aS4t5p2+1EIztxSUaepkVjSrrXxMtyJu1KPOtKe5ukEAsiy7YLql9yceE1SffPNRnouw5H740=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZqdjzG6; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=fm7UxrdJNhyzieUmUl0UKWkCbXYJmHfWOLFIQL27Bj1yFmHEtcWA29+g9PlGB6AIWj4m8uVWYQxKhEHMAfW1YGNQHaPlz2JKvkvYlupiezQqXqYPWqb3hZg7b5JmCx/nZLdprIP/iVLUp3Bp2vsPMtqZI5SWQoSScEpl29oBkGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ipy6AnWM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZqdjzG6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D09DC4CEF1;
-	Fri, 22 Aug 2025 06:32:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ipy6AnWM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4775C4CEF1;
+	Fri, 22 Aug 2025 06:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755844353;
-	bh=4VZ/xm7n5imPTrLX4hKthO212IbvmQSFDDZvXHzPBLc=;
+	s=k20201202; t=1755844747;
+	bh=9dBmEU03SovoA9hX+z1h03ERnwmP9cygR1p8I8nnokY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CZqdjzG6cBuQUCYzRxG/ebFTI0DWcBnMYG8RT+kg+o71dARQqTxk0dDpIcQWhraUJ
-	 AENPf0UwPlSdLjpfd0bHhSGfPUa/LnJ3WrKlLD99Qv9tiNeZK+OpVbANOC4vmtvZeU
-	 mJTGjLBVzohgAlhNRy2ZaMjqKQXgvnR3XSccK+Swt4NYiY2kDlPavFBlwIMwFu+Pqo
-	 aa6zqe1e6QBDybNcK1U0MFnjm5vzEYPJwZSZbcCb9Qr8uIaMjhNWTYaFcA0XaS8gE+
-	 ldV2FV5Eg3FrJPz5LwxjBHDr8kEFjH5lykaGK9ABVAtDvUSqKGwWXyQZTHWrJAmOur
-	 36cuORYcNCFrA==
-Message-ID: <ceb20624-7405-40c5-9c29-1a7339e0cca4@kernel.org>
-Date: Fri, 22 Aug 2025 08:32:23 +0200
+	b=Ipy6AnWM1qZQ5VjH5qsEC0y62f3B3BG/JPjKUSNfD+jZsnUHdTNOQzrLpFi26hwzz
+	 BgbnhjeiPd2mt7/XSiwvJYqCoSKMx8u5X3EvD/T6Lv8WSLvXUQ7k3U7CRMUL3NRksb
+	 ypwYu7N02o3aLeGjwjSCFrC6tsNbjHRnaKCYjCUL+/L70ayISAlryVkErSN5vVg6Ka
+	 D8wN886AkmxNI4ET/dnR4b+qYZwDSHbOXO4PTAuS6bU4kpo9xL0GzojCPtroUO8J1w
+	 /E8ZgyiXnQpsi553fH/p1Em5uIMuJx1hSKJwPWH4r3G38cRgK3hhb/PYJTEzGMv5Rh
+	 IeDfiqIRjI7cQ==
+Message-ID: <3a936b3b-0599-4b0a-83a8-52b899c24125@kernel.org>
+Date: Fri, 22 Aug 2025 08:38:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] clk: samsung: Add clock PLL support for ARTPEC-8
- SoC
+Subject: Re: [PATCH v2 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8
+ SoC support
 To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
  mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
@@ -54,8 +54,8 @@ Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
  linux-gpio@vger.kernel.org, soc@lists.linux.dev
 References: <20250710002047.1573841-1-ksk4725@coasia.com>
  <20250821123310.94089-1-ravi.patel@samsung.com>
- <CGME20250821124024epcas5p349dda3c9e0523cc07acf2889476beeb1@epcas5p3.samsung.com>
- <20250821123310.94089-3-ravi.patel@samsung.com>
+ <CGME20250821124055epcas5p4d1072e9b4ef29587e0fd8606bc1abc4f@epcas5p4.samsung.com>
+ <20250821123310.94089-9-ravi.patel@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,19 +101,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250821123310.94089-3-ravi.patel@samsung.com>
+In-Reply-To: <20250821123310.94089-9-ravi.patel@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/08/2025 14:32, Ravi Patel wrote:
+> From: SungMin Park <smn1196@coasia.com>
+> 
+> Add initial device tree support for Axis ARTPEC-8 SoC.
+> 
+> This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
+> 
+> Signed-off-by: SungMin Park <smn1196@coasia.com>
+> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+...
+
 > +
-> +static const struct clk_ops samsung_pll1031x_clk_ops = {
-> +	.recalc_rate = samsung_pll1031x_recalc_rate,
-> +	.round_rate = samsung_pll_round_rate,
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
 
+No CPU mask?
 
-This will conflict with round_rate drop, so might need rebasing. Please
-follow up discussion or decisions in the round rate patchset.
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +};
+
 
 Best regards,
 Krzysztof
