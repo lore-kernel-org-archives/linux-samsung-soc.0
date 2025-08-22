@@ -1,82 +1,91 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BD02EE286;
-	Fri, 22 Aug 2025 09:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE5A2E7F2A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 10:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855691; cv=none; b=gTbsDV+00uz5fW6UsSs040Mk+66xnuItKft/m1sKn15uRYvnsMUBhupWiaa4DHJme2FjP46OG19SHuTmfTfsDiE6jImXtuq57aDLwsETLxup4SDhdWiXeMchKM5PdIP3QOGGi4FXEQ1SnmMNFQXG8IUmdO2yPBvitAia2GAkUD4=
+	t=1755858241; cv=none; b=TdS8DOlSli2mxejc3Lf0h/wEQ5TKc5peY1mCdwq/Iq/ciffCWozZGlx+iLw0yP0wasniJpD/qWsOSPuhREEiIxpr8rL9YpeSUPRMoxFocVxunc1LyRuvriCie0+gwLlma5QQacCDhJQe8o5+i0p2BjFgF7xjowQEgcO95ZC6Vi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855691; c=relaxed/simple;
-	bh=RZKftV/2n/t5kgoSakypDVxhxqhMEzE7Gy6hWmya91U=;
+	s=arc-20240116; t=1755858241; c=relaxed/simple;
+	bh=Pi24T1VzeRTeyxb78iSx9eOfruahP8bbLgZ7xrrxp9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuQLzquTWRKFcefRmTSe8eplSCJlnNB0LiiLrqJgmpG9QpaV7EqvM1Yu4wda8JrZbbZFLIFsthH0vNL2PVav3S8R8BehdqamYNDGjzKF/YnpxTA0IMi929rcSliZ80uRaml7sGbMKNHE2biYE9QIDvqbvMO41mSZVp+CzXycQOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOt7Sl4F; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mp1+Jqgt7vPXZYrsxASkk3iQyUP6TWSZTd33qidZJDneA4Z9MAYJ9LMVp2zrX1Jkv7JCaH6XYp3nXgFA60+AuW6zZCXNXjikRrgDDvPbABQvj//V3yHccAgJVOgYZllZg8+UH1mCAUM1bU9d7feHu8g97d9lEgU8Wl6Tl1QKo4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Df1LibZf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOt7Sl4F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755855690; x=1787391690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RZKftV/2n/t5kgoSakypDVxhxqhMEzE7Gy6hWmya91U=;
-  b=QOt7Sl4FI+/gwek72VSCovIXtpyoAvoI4WB4gykS6kQ4F24vtqS7Zg85
-   QZpNqVLfEe8A6KvtM9d/1nZZIKDKQuvA+fNktetqtT3YfSvyvL/vKRjsP
-   RYbR9NrFQKYHsy07RASi5N9SuxYh+oIIWxY52pcadXQZR5J4ufzU1YvST
-   RwP4hVick6vrl9YRj/nuO2zXf/NeCNMWnOIpCQiXusFTHKuVhyjHnsBoh
-   cWtp6konsYLNC17SG4qfCbMmCxTMaGOfJ8LbDfGKH4SEFoUbZKyGXXxrD
-   vMREkU2r7dqCQsa/wlzaE/A79HmcTXU2dBi4/M1vs3WXK4qbsiZZdGT3J
-   g==;
-X-CSE-ConnectionGUID: GLEIF0/8QW6sLS9Ocwwf3w==
-X-CSE-MsgGUID: T87sE9eFTj2jZk1r1+7Jzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="61994838"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="61994838"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:41:29 -0700
-X-CSE-ConnectionGUID: 7dUmcja+THqiuGqu0CivaA==
-X-CSE-MsgGUID: 0REQ5MhYReu1rNaxxngBzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="172857947"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:41:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1upOGs-00000007To4-2PQ4;
-	Fri, 22 Aug 2025 12:41:18 +0300
-Date: Fri, 22 Aug 2025 12:41:18 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Support Opensource <support.opensource@diasemi.com>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Df1LibZf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755858238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eJvTKEyEbzhmekaQhrASqnfJY8OZgIJPjxsG4VBPz2I=;
+	b=Df1LibZfcCT038kHgiULSf3yMBc0QmSVpolCt1IIGRx00KGNE+NQC2rWV9xiouCzdV03BL
+	7we2RefRSrXIk0nX66zvbHYXzR4ywC6nEaA14xyewBpBHjkBZNrHYP6zGJXWddB8BY4DjH
+	jekmxmkuxoW9unZXX/EfJYQulJqu6Fo=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-307-Lb1ajCHDOo6S6N4BTJiLvg-1; Fri, 22 Aug 2025 06:23:56 -0400
+X-MC-Unique: Lb1ajCHDOo6S6N4BTJiLvg-1
+X-Mimecast-MFC-AGG-ID: Lb1ajCHDOo6S6N4BTJiLvg_1755858236
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e864817cb8so812063385a.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2025 03:23:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755858236; x=1756463036;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eJvTKEyEbzhmekaQhrASqnfJY8OZgIJPjxsG4VBPz2I=;
+        b=wM7GoLT64QpMrgqTcEypbfadNy74PxXpI2Wv/3feIEjdgRRulmDDFL+a2XpNaQQ79V
+         f7fIQlJuSikgmwWZdetyhREvzYlklE+14sYSRur2HB49hi6GLCLhgxg46Cc0BTq2Ejws
+         xPNb+thHlJMIZZqq29QByS1GxNPqufLcBrBEV460C4SI0LTu9OVPhyNZZdaf0ZwMJpGE
+         2g9QPB3D8ajwktD0zkXHED5+QlcwcjwptY+45PdTx4+a5F+x+E7vCEejFxAZFOTGG2yR
+         Kn02oGfmmvM5R8DATzIto++nK/UrX/5aMOCKT/dxBMMikGole1/d3ew1vlNR2DYVJTwY
+         Hzng==
+X-Forwarded-Encrypted: i=1; AJvYcCWIcC+FVOvyGjHb/yjIky9UDZ2xpM9ZlgyD6ElOJOVnh1d9TxgDrwG5LrKONoDcIXIPhA7+8WjqvRbUjQMSe7Oykw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YywkGF7/gY+6od+um4c3sXUCV0c6WdYp0bpQrgXf9q4bE98eeYw
+	r7iTtEE7tOwl9dxLOhf7orNFyh6ZENJ8XJsOvELOp+7wy4wBn514QnhIoF4vusLu2R7cjJBJmLC
+	gh7CrZWMuCcu2gK8G0+Pmuf/+dHpCCTHikjx8GFPXG883DLvy2SEiB7WJxpjwH4exoyUg220T
+X-Gm-Gg: ASbGncubkTbtMJx6ldXAJ4S4YRq6+UtA1L8Y1kvDeh7PCpnv12gNxAxVrcHVWHcTsFr
+	pG6fyYs/c9wfuPsj2xP8t7jQzy5tadKBiDJNdLwQPZjTzKVgWBU8dPpUVtRFoniehcAEt3FleXA
+	6GXLdsfKf1znfRErrLwwGtZPVoXY08aHkPvpp9ZYYfn2lbJ50iO8Voxy+woAc2hcDaL2ulSahP0
+	Gueov+eHDjW1Jw6do5hgWccjnrpf7DBhgpjjjYpNVJwTQq7em6jKNgnFP1QB6oa36wMWb7BXr4G
+	gFx+P00Z9q4QitXJV0Eqq7mYCK1JWtVLv4tjdpqbiH8/yNreDfqQzoTueHCH+r4ryI0kA0oGzq4
+	VRY6QjI30ZlkUcZWMxpM=
+X-Received: by 2002:a05:620a:2985:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ea11515112mr250141285a.4.1755858235934;
+        Fri, 22 Aug 2025 03:23:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzbF5my1f7sWP1hvt+Ae8lWAWkUFPWkmMGpX8yUvMXDR4PmNo9Qp3wmQyKLcPE30uIWwQ98Q==
+X-Received: by 2002:a05:620a:2985:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ea11515112mr250139985a.4.1755858235417;
+        Fri, 22 Aug 2025 03:23:55 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7eb1123ce2asm16520885a.65.2025.08.22.03.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 03:23:54 -0700 (PDT)
+Date: Fri, 22 Aug 2025 06:23:52 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Haibo Chen <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Cai Huoqing <cai.huoqing@linux.dev>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andreas Klinger <ak@it-klinger.de>, Crt Mori <cmo@melexis.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 02/10] iio: adc: Drop unnecessary -ENOMEM messages
-Message-ID: <aKg7Ptj4jy4Icvgo@smile.fi.intel.com>
-References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
- <20250822-enomam_logs-v1-2-db87f2974552@gmail.com>
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	willmcvicker@google.com, kernel-team@android.com
+Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
+Message-ID: <aKhFOHFGKPYXgIri@x1>
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
+ <aKdmurrT1pFtLSI8@x1>
+ <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -85,34 +94,45 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822-enomam_logs-v1-2-db87f2974552@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Aug 22, 2025 at 09:19:50AM +0530, Dixit Parmar wrote:
-> The drivers do not require their own error messages for error
-> -ENOMEM, memory allocation failures. So remove the dev_err
-> messages from the probe().
+Hi Tudor,
 
-...
+On Fri, Aug 22, 2025 at 09:14:03AM +0100, Tudor Ambarus wrote:
+> On 8/21/25 7:34 PM, Brian Masney wrote:
+> > On Tue, Aug 19, 2025 at 11:45:38AM +0000, Tudor Ambarus wrote:
+> >> +static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> >> +				unsigned long *parent_rate)
+> >> +{
+> >> +	/*
+> >> +	 * We can't figure out what rate it will be, so just return the
+> >> +	 * rate back to the caller. acpm_clk_recalc_rate() will be called
+> >> +	 * after the rate is set and we'll know what rate the clock is
+> >> +	 * running at then.
+> >> +	 */
+> >> +	return rate;
+> >> +}
+> > 
+> > ...
+> > 
+> >> +
+> >> +static const struct clk_ops acpm_clk_ops = {
+> >> +	.recalc_rate = acpm_clk_recalc_rate,
+> >> +	.round_rate = acpm_clk_round_rate,
+> >> +	.set_rate = acpm_clk_set_rate,
+> >> +};
+> > 
+> > The round_rate clk op is deprecated. Please convert this over to use
+> > determine_rate.
+> 
+> I can do that, sure. Shall I also update the kdoc for round_rate(), mark it
+> as deprecated and add your Suggested-by tag? It would help other newcomers.
 
->  	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*ddata));
-> -	if (!indio_dev) {
-> -		dev_err(&pdev->dev, "failed to allocate iio device\n");
-> -
-> +	if (!indio_dev)
->  		return -ENOMEM;
-> -	}
-> +
->  	ddata = iio_priv(indio_dev);
->  	ddata->ato = device_get_match_data(&pdev->dev);
->  	if (!ddata->ato)
+I am working to remove round_rate from the clk core and the various
+drivers. Your driver just needs to be updated similar to this:
 
-Looking at this hunk I'm wondering if you are using --histogram diff algo when
-preparing patches. If not, please do for the next version.
+https://lore.kernel.org/all/20250710-clk-imx-round-rate-v1-10-5726f98e6d8d@redhat.com/
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Brian
 
