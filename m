@@ -1,107 +1,118 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618A8289378;
-	Fri, 22 Aug 2025 06:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A6F1E4AB;
+	Fri, 22 Aug 2025 06:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755843580; cv=none; b=NPXu2OZIjYxdysj8OzPOzg1QdI82Ne8VV1rd37e4Hpdc+dlixOiD2mQuttOWq8xDp+GIQlhLtNjClHT0Fsvz7qgtMDIrZLrL4CIqnxFjpFOyeccvL/CK+Y8wPuaGtf2NMT9gxe63/jFrHVfCV8GEkB6j3UaQ+/D8WhjaUWDcc3w=
+	t=1755843998; cv=none; b=RQ2ggiMq6smkQuIw3XZo+VDAfKCGEgYtA3RNubz1Pj899oey6zeGFzMEoyiUYB4iR6R5B0ppem1lwD22k17+OiyTVBGWqkNHz6O3rxX3lpFf5MqrYtzEb0HpVD1I+iTiaEv0nd8UkSco0y+KLWqTdYlH6FBnsefpKsTa0CqJkmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755843580; c=relaxed/simple;
-	bh=v8a3z04Uh0u/uSmoBokGI0Tk49vBcGLpTfeWGAwsaHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q8Rn4Z/kldD3dBsciu9is6XDm0NKXAXk4d/fWUogCmVac8iZarq5qAvDoA1eqb7PpoCTFO2TTZrD9emh2npunxNwlL+2bxKxg+w5E7SuMiBItfVlaQ+loeffy9iFQ8X+5OKK6G76Raxh74s9+RK+MvtbSsD+INrB6FMvDLxjFNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWdXbViW; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755843998; c=relaxed/simple;
+	bh=+CZdwfNyEfkKUF083jCWK7dcVEES5NOSdYHEBqM8tqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=syUg9cMdfQwjIVKE+EIAeqAPm1mfvmexiOwz1vULvo6QJV6oNyyISKkiwPuIjVl5Uyl3q1vFv3k3vyACNfoCIspfs9kwzc9CazR/KhfMf4eq0YJ+r1e+wqYDNbTfPlMgYOR0gogw5pgp/eBtjy1wuVDIfSJFm9BaiznJb4DcdHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYOcsqd7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWdXbViW"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7af30a5so282758766b.3;
-        Thu, 21 Aug 2025 23:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755843578; x=1756448378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v8a3z04Uh0u/uSmoBokGI0Tk49vBcGLpTfeWGAwsaHM=;
-        b=QWdXbViWI4Q/kIl+wGlw/L7DIbGv8KbV2WhldGWUq9Q4wY+h8IPN04daZpBXpBzQ8w
-         7l+lGUfanCwENwn0Javh1WSdoWLaSD0vTCPn/cheJA2NzLQE/hCVUd2bY2n1DRCixUAy
-         NBn4j00s7ETbg5NWy+zVKlVnXgEfSP06fgUTEnRSSmnWFroTwoeQ2t0RTsJbsyaM91kD
-         HXa5at+v+dyNGdbD5dMGUNDfCCaaqm5+p64+YZcRblRGC9+3UQSD0PppVhWKBFBsMnMG
-         WKpEom5DLAFYdMtI6xfbDx7ayV16ZW+i7AkvLHmr/7X4p7+xblnxsaq/B1bixIe5mKwJ
-         14Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755843578; x=1756448378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v8a3z04Uh0u/uSmoBokGI0Tk49vBcGLpTfeWGAwsaHM=;
-        b=kRw6iLyn8/1Hlq3huuFIlBCwcWg69GQWG1PGWW0WN595JRpgWimI2c39HwyYcQPrLl
-         IwYPE6dxyBDsJv9AI2J3kxX8Az2SVdAYF2e6geVMrBJuYMQ/EkHDchLuOwj8dAGW1iTG
-         02fUt/MQjsLbbdSWzEE6lQnr0HRmg4R6R/hw7fXPdZTyhxPj4Bdi+jxfA/HjGFkby14Q
-         6s8K0KjL3gTrrW6EZ1Vk/1FalD/M/ZKGyxiEPun6HmIDxsQTAi88irpBmZRAdQrYIrnr
-         7K8EuFbbzmPDYyC9rMHu2SEtRY6ncK2s7wpyVUuU1LBQO97B8eN5nsWXk1bIR5+82OSK
-         tMAg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4ju/kct++cUClDhgHCz3FSuclOBU4ky0qtEyC05jk7cjklHPeXtbAKbUE558tlg4TmcnmvJlkG4rO29e6@vger.kernel.org, AJvYcCURn6/6mklc19gIPgmZ5aO5THaTrNRrlNzuO2WjZ72OgmCPvUZO7CAq+aIvkaBamQUgzODfyFz45pr/OQS2fukRW4E=@vger.kernel.org, AJvYcCVk9Cd8N/BhjqksyJs8b8kVq59Nqh+IL0k98KrKcxRD6P6Ajbs1MBnR287I0nYdLOJkrJ9YGjoufzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDmHnuQfg9Tb1OCXl2o+k+4rtmNzt13Pi8k+/1SG98oOeIp/vT
-	ICzHnzX3dpnSZY5GWCB7YRvCWFAV/7TPBdg+eFIPKg+0dLyeFrApQirIdoALtrzARJyqPRef+Ap
-	pebx8xT8w838C5HDaVtkzd3Wf5z1uOdw=
-X-Gm-Gg: ASbGncsHuUIcxLhazQO1TNnBFMjpzYeSb+GdAz81SKpXkPBpCpuLreYVbjmRthfHiEO
-	LMcmukdHEZjNT4dfL39V79H+T64W7AzmhpJ8ICGAcus239ddJAPtFzGZ5tYq1ODUiS3v50xW9h/
-	lSpsQj8aOH6A0M3kVXgf9JOrtmbNy5SPprH0ZP1kkn7fhGLMcPIpwRofkVl7iyxW+mBIH6MP2EO
-	mjSOeXiA/OdXPlxRQ==
-X-Google-Smtp-Source: AGHT+IE+QSuwTRWNnEst85zd/nVk0XCWCT3dBHW+V785HwC5spF07O83YE3tf7aS5P/QoM3Upoe1DUKm+4/yzGTsmC4=
-X-Received: by 2002:a17:907:1c17:b0:af9:1184:68b3 with SMTP id
- a640c23a62f3a-afe296358ebmr171036766b.55.1755843577528; Thu, 21 Aug 2025
- 23:19:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYOcsqd7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39CAC4CEF1;
+	Fri, 22 Aug 2025 06:26:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755843998;
+	bh=+CZdwfNyEfkKUF083jCWK7dcVEES5NOSdYHEBqM8tqQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DYOcsqd7LVjWDHnSQWLStDeK3nH6zXTbWDyvLpE41nhaOeDkzkJrxMg8jpVFWAu84
+	 SNhRGUPw5YlZv+9YsxOuD3loDyzoj5YyyejCzOx9cVFtFOACVLZqfKEQWvhwdEUZRN
+	 q/kMgIZjM4zNnx07XKP6FlUS/3OswaBn3gS8lumDA+twoMX334B3Oy85ZfiGE3D31u
+	 jFxFTbjS1Kkfz/8szrAYTL8+rKMA+d9tdWC7pah1bgMvTUoW3wCQHMjbDngul3pptu
+	 xAqNztpnznFyjuxNTFB3GFgWgb5a8vCYAV61s7m4RbDEsmCYMazjKi734PeZ7Zk9bB
+	 Gp8dkffpnwUNg==
+Message-ID: <1096f050-f617-4e86-8948-1fc8c3936b04@kernel.org>
+Date: Fri, 22 Aug 2025 08:26:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
-In-Reply-To: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 22 Aug 2025 09:19:01 +0300
-X-Gm-Features: Ac12FXwT5-FuVxm-aLv8k_QiDyCdQQYyidQq38gD1A8xq-6f9ed_haxl-pVwx0A
-Message-ID: <CAHp75VeTD5Y1bi-jYyfRnCPDfB4=WO+QF1uK5MSaSq=oUUMFdQ@mail.gmail.com>
-Subject: Re: [PATCH 00/10] iio: Drop unnecessary -ENOMEM messages
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen <haibo.chen@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Cai Huoqing <cai.huoqing@linux.dev>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andreas Klinger <ak@it-klinger.de>, 
-	Crt Mori <cmo@melexis.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/10] Add support for the Axis ARTPEC-8 SoC
+To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
+ dj76.yang@samsung.com, hypmean.kim@samsung.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+ <CGME20250821124014epcas5p12bacab10aac378f8d011fe7d2e04c8fa@epcas5p1.samsung.com>
+ <20250821123310.94089-1-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250821123310.94089-1-ravi.patel@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 6:50=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail.c=
-om> wrote:
->
-> The drivers do not require their own error messages for error
-> -ENOMEM, memory allocation failures. So remove the dev_err
-> messages from the probe().
-> With these patches, all the iio drivers now has uniform handling
-> of the -ENOMEM while device_allocation and trigger_allocation
-> calls.
+On 21/08/2025 14:32, Ravi Patel wrote:
+> 
+> Link to v1: https://lore.kernel.org/all/20250710002047.1573841-1-ksk4725@coasia.com/
+> NOTE: The first version has been sent by Coasia.
+>       After that, it has been agreed between Coasia and Samsung that Samsung will take
+>       ownership of upstreaming ARTPEC-8 and ARTPEC-9 platforms.
 
-I don't understand. Don't you have a subscription to linux-iio@ ML?
-https://lore.kernel.org/linux-iio/CAHp75VdL9kV2fyi63zqPZnW4CaeYPmJ74tmGEgU=
-=3DM7FSYBv0ww@mail.gmail.com/T/#t
-If you found something new, please base it on that series as it was
-already sent and reviewed.
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Krzysztof
