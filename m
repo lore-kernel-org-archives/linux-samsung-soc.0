@@ -1,121 +1,150 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8904528643B;
-	Fri, 22 Aug 2025 13:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD72311C2A;
+	Fri, 22 Aug 2025 13:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870615; cv=none; b=GbNnzVn0eX2iwQrMsEwRLL1WEpLvViNZlEZ8f8Yv4HejAvzDV+CGsXxumJVFe3HOlU5qoABmj3e9votLvThtbczCdm6ADglOOW2meMrayoHYR8FjOP6o5cQriqiWbkw2hkyXa8Eic8b3fx51iYGWRzlDgUd3nzXSFTxRX1sYzJo=
+	t=1755870924; cv=none; b=AZczcVnokfzKPlOgbfpMO5s4u3o5q74tF38wBXuh8DO4f5hN/O3Z60amjc7j+N/ld0tmo9PBLwvLNbs18QGS7Y8dKITp/eFaWoWB4PZl6xuHVnVKkpKQ5faWnfwt/FoCJD//l4lx13EiEJ7cVdSI7KGEMlr9gvyuLs/v/h3dfMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870615; c=relaxed/simple;
-	bh=4csLMJWEKL0FQgzY0JcEeIbaYFvPi98v3ZZmSuKKcC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CZGRfwsj6BLcV3SxJVqdXfQTpjUWP6+LMLFYy2793ov8C7USe7NLnrRmtAaHquqwS4in45lMW6qnyLoNDa1xHzNjL4dZF8AcXVEFSe63jCwfwbTMa6tZLGt+/Zc6RKPO2w3moIKnCeNTOsLITqsCfpp4Cm7UM6figaBqrN+4ahQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5JHQE7j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755870924; c=relaxed/simple;
+	bh=zSm1zQkFdhpmY/HgWj2Qj7y/a2Z/6Ftha+/cqaK8MEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovLFglyICsbjPQvwHPEPDfaXk9Qm6h1Bn0bzdqc4RuStR+7nIu+qoK+VTCbm9c7SUQR1xcee3bFpc2zX6EbLEQquagRho5BTjF6/u7kflAflYCG2P7gPvAsRJQ3JXEl8Nmisf4wpQDgjmff2qvjgVm6mkCKG2w1QHILxNMtHsHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLkkNl3d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5JHQE7j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B68C4CEED;
-	Fri, 22 Aug 2025 13:50:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLkkNl3d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3125CC113CF;
+	Fri, 22 Aug 2025 13:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755870615;
-	bh=4csLMJWEKL0FQgzY0JcEeIbaYFvPi98v3ZZmSuKKcC8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L5JHQE7jOsDk7AN4SpxIT+KOakh6Bbeq/3ZIAB1P7513GBcUrXEBoodZHadhLFyTQ
-	 r4i9X1KogEbYxilVkQFdapxEt9zz+4seg1jwj7kHNXAwWHZVRXkGiMHpDfnhRjrPKy
-	 2rzJZ/j/T+NoA0Js3qv9SlzlagJhbsMRA9IieR8UnCqcv7MiYiKbdfaUxE2w9zQ3f7
-	 r1Za8sr3Da3XCCuEfFNGqqDK4KQG20PmvDk1MBiFmLYjfgdcPn5dCUAvYTJ/SD+Tyj
-	 jexsfI3tpStB/u/+o905rLtWeQDhpzEVT/Zv/OSljwd/qCzubkWhBC6FYMLtmohjhb
-	 oYI35ohjcr2Dw==
-Message-ID: <7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
-Date: Fri, 22 Aug 2025 15:50:06 +0200
+	s=k20201202; t=1755870923;
+	bh=zSm1zQkFdhpmY/HgWj2Qj7y/a2Z/6Ftha+/cqaK8MEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLkkNl3dXIsDnJZtsoiU1Vm9inBEz27/WByO/q5z3/GGf24wqq7LFXOKlQqSAmwYH
+	 XEsmcwA495cLpTYMi23yUD7uVqMpOUQ/kZM+5scQWVBWtf+Lfhg3JUpDBbAUjaqA0z
+	 Kr9az9pakd2wZhulu7Z5YD6wRAaqk9jjK74McEH8yyrQi8CGpWwhmFejwAC3/t7jxf
+	 G3VHJqB3aLMYeMBfkXWdDt8dhy2d4GczXYyAmLuBQhAyJLMH+pbZ0DyyGIOa2xs57m
+	 1JLxMstwbqwUAttH0HW+mnZVdVUNYVlLtvAJvhw7tQv74IvFdTtjsF7TLFdNzauyb0
+	 9od25tu/b7Tgg==
+Date: Fri, 22 Aug 2025 08:55:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	willmcvicker@google.com, kernel-team@android.com
+Subject: Re: [PATCH 1/3] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ clocks node
+Message-ID: <20250822135521.GA3487754-robh@kernel.org>
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD SoC
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
- <20250814140943.22531-4-inbaraj.e@samsung.com>
- <ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
- <00d001dc136a$36ad7230$a4085690$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <00d001dc136a$36ad7230$a4085690$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
 
-On 22/08/2025 15:39, Inbaraj E wrote:
->>>
->>>    power-domains:
->>>      maxItems: 1
->>>
->>> +  samsung,syscon-csis:
->>
->> samsung, so not nxp. Even more confusing.
->>
+On Tue, Aug 19, 2025 at 11:45:36AM +0000, Tudor Ambarus wrote:
+> The firmware exposes clocks that can be controlled via the ACPM
+> interface. Describe the clocks exposed by the APM firmware.
+
+ACPM? APM is Advanced Power Management aka the predecessor to ACPI?
+
+
 > 
-> I used samsung,syscon-csis because the system controller on Tesla FSD
-> follows Samsung's sysreg design.
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 28 ++++++++++++++++++++++
+>  include/dt-bindings/clock/google,gs101.h           | 15 ++++++++++++
+>  2 files changed, 43 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+> index 9785aac3b5f34955bbfe2718eec48581d050954f..27cdf9c881ca680e78e77a0e14ffcffeba970871 100644
+> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+> @@ -27,6 +27,29 @@ properties:
+>    mboxes:
+>      maxItems: 1
+>  
+> +  clocks:
+> +    description:
+> +      Clocks that are variable and index based. These clocks don't provide
+> +      an entire range of values between the limits but only discrete points
+> +      within the range. The firmware also manages the voltage scaling
+> +      appropriately with the clock scaling.
+> +    type: object
+> +    additionalProperties: false
 
-OK, this is property for Tesla though, so please use tesla prefix.
+You don't need a child node. Just add #clock-cells to the parent.
 
-Best regards,
-Krzysztof
+> +
+> +    properties:
+> +      compatible:
+> +        const: google,gs101-acpm-dvfs-clocks
+> +
+> +      "#clock-cells":
+> +        const: 1
+> +        description:
+> +          The argument is the ID of the clock contained by the firmware
+> +          messages.
+> +
+> +    required:
+> +      - compatible
+> +      - "#clock-cells"
+> +
+>    pmic:
+>      description: Child node describing the main PMIC.
+>      type: object
+> @@ -59,6 +82,11 @@ examples:
+>          mboxes = <&ap2apm_mailbox>;
+>          shmem = <&apm_sram>;
+>  
+> +        clocks {
+> +            compatible = "google,gs101-acpm-dvfs-clocks";
+> +            #clock-cells = <1>;
+> +        };
+> +
+>          pmic {
+>              compatible = "samsung,s2mpg10-pmic";
+>              interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
+> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+> index 442f9e9037dc33198a1cee20af62fc70bbd96605..f1d0df412fdd49b300db4ba88bc0b1674cf0cdf8 100644
+> --- a/include/dt-bindings/clock/google,gs101.h
+> +++ b/include/dt-bindings/clock/google,gs101.h
+> @@ -634,4 +634,19 @@
+>  #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
+>  #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
+>  
+> +#define CLK_ACPM_DVFS_MIF				0
+> +#define CLK_ACPM_DVFS_INT				1
+> +#define CLK_ACPM_DVFS_CPUCL0				2
+> +#define CLK_ACPM_DVFS_CPUCL1				3
+> +#define CLK_ACPM_DVFS_CPUCL2				4
+> +#define CLK_ACPM_DVFS_G3D				5
+> +#define CLK_ACPM_DVFS_G3DL2				6
+> +#define CLK_ACPM_DVFS_TPU				7
+> +#define CLK_ACPM_DVFS_INTCAM				8
+> +#define CLK_ACPM_DVFS_TNR				9
+> +#define CLK_ACPM_DVFS_CAM				10
+> +#define CLK_ACPM_DVFS_MFC				11
+> +#define CLK_ACPM_DVFS_DISP				12
+> +#define CLK_ACPM_DVFS_BO				13
+> +
+>  #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
+> 
+> -- 
+> 2.51.0.rc1.167.g924127e9c0-goog
+> 
