@@ -1,47 +1,47 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257E92192F5
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Aug 2025 02:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28982586EE
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Aug 2025 11:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755916752; cv=none; b=IWmQHUIHjRJY8FCNvE0cOBJveOHAU6C7W5FhysPFVOT1bJBFLDtesI70BYxVcPNrsZ84B1QQ2PiA/vXqQIsfbhzhc8nStLlaB7Wq9W/O7pT99mPs0ZNDWB2PT7GAPnczEOhfQcz6Xl0lEG9Idy9ouYtuttFdkZ0TKT3OpHvOXQ0=
+	t=1755949794; cv=none; b=QI68ATSCs1Zm6Tgcq0wg1Z7tBo1t0ddStfD5QmTI8VsyH/oUQ+QwZVDGmlWrYUNWP7K18IZG+Q1cjU1sgwL0udzVhzE0KZZTEFNh6l/oiCC4gTKC2V4ZqsiRYIYEoG/VqNm/kZCPxWbQt3ZmDD5wJcb0b6HGiD2h0V2pQtnZnrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755916752; c=relaxed/simple;
-	bh=L7WoG8zGop/ZKdVUhYNfywWNrZs1UmlVsAEI7SXXCWs=;
+	s=arc-20240116; t=1755949794; c=relaxed/simple;
+	bh=o1RpCWhfORcxBtd2lZKYg1CKOTkPhfuLfoc5oR1Lwhw=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ZjtsIqWP+i4fy2oF3bfI455O68araH6cbPA0sOhhut72HGwEV1mpKmZb5Vh9qezwdTs04lYA6CRD9BU0pSgVFoOynsQZFZE0EN1HilrfSBgvzatkcBpL862SVYCOBe184JurJT9xhIfIk+wiROV07TJsESz/6tp1wWS+c1DGHqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jy2W90b/; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=PAvyopaHDntxf3ix8keNrgmv8FTZPd90mX5Eqo3OOzTuzOEfQQnbwkNocyeLNiPLpLpQEEAm4lO7QUl1fsPGPtNDAPK3rySIBjHWNf06GL4PrE3j/unfcVo44pO/4U+9I+aqIql5G+MM20toKaw5WQ3WcIOM3h0G0aGWfxchGUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZmgDDqX2; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jy2W90b/"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250823023908epoutp041400dab0cfd4a34152e017573ea574ea~eRPq2kLHh3054530545epoutp04O
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Aug 2025 02:39:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250823023908epoutp041400dab0cfd4a34152e017573ea574ea~eRPq2kLHh3054530545epoutp04O
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZmgDDqX2"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250823114944epoutp023b47783b14bae1999a0ea51f9042db6d~eYwaPZkdF1086810868epoutp02J
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Aug 2025 11:49:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250823114944epoutp023b47783b14bae1999a0ea51f9042db6d~eYwaPZkdF1086810868epoutp02J
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755916748;
-	bh=QgV+PmLGp/KB9EJOqn7Inp5PsJT3991z6ChCStxbjQg=;
+	s=mail20170921; t=1755949784;
+	bh=mQPgL7zodvejOKqrhn0V4sG0yzzxNSz8kWdaZzz+MYw=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=jy2W90b/yrA+cEyfyqMXqbqQteuc2jI/0L9Ybe/nN8QpCAue5U9nz09bkUuiT0Xd4
-	 1QGv9YB9XuWQsft8FF2bQEDnhhxzDeENeHRSdySchf+t/gxnERhGgsBjp5d67rzs+E
-	 eiBSPgHwA/nNGUV8uOTjHVnyZTpm+SMtmiOLWZc4=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250823023906epcas5p2f0bf896d97618e2e66cfd9b27c4cd6bf~eRPpnxNTD1444614446epcas5p2L;
-	Sat, 23 Aug 2025 02:39:06 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c81Tk0Kjcz3hhT3; Sat, 23 Aug
-	2025 02:39:06 +0000 (GMT)
+	b=ZmgDDqX22bDtLdXRQmSKWph5jAbCMTfEZ6xdPpOT0E+rpjMUXiBEETAo8ozqcDYhH
+	 Mt8hD0iOfIfp+y7hfZudGHgIIkAMS3qudvSauK933U9sjeWADSIjLE4cKPkS4Wy7ZP
+	 48aIIQctziepHJWty6QBWM9AzkJeNdd5zX8OpDyg=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250823114943epcas5p41e4d427f2c33267ac1c280a2583bcc0b~eYwZkIJNb0178801788epcas5p4B;
+	Sat, 23 Aug 2025 11:49:43 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4c8Fj25y79z6B9m4; Sat, 23 Aug
+	2025 11:49:42 +0000 (GMT)
 Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250823023905epcas5p28b7b4c4015e8be3f26883ecf205427ba~eRPoLvoEO2360223602epcas5p2l;
-	Sat, 23 Aug 2025 02:39:05 +0000 (GMT)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250823114942epcas5p143d475885a37ec024bc0590408457db2~eYwYG5e6z0521905219epcas5p1_;
+	Sat, 23 Aug 2025 11:49:42 +0000 (GMT)
 Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20250823023901epsmtip1dafb04bddf79dbf9f341e0d7af7c0106~eRPkfpx8c0621806218epsmtip1J;
-	Sat, 23 Aug 2025 02:39:01 +0000 (GMT)
+	20250823114938epsmtip19a9bbf2438abd0f903ac1ae13e019400~eYwUVX9gK2438024380epsmtip1k;
+	Sat, 23 Aug 2025 11:49:38 +0000 (GMT)
 From: "Inbaraj E" <inbaraj.e@samsung.com>
 To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
 	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
@@ -57,57 +57,221 @@ Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<kernel@pengutronix.de>, <festevam@gmail.com>,
 	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
 	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <c46c6f66-dee6-4efa-a624-de62aa705206@kernel.org>
-Subject: RE: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
- controller
-Date: Sat, 23 Aug 2025 08:09:00 +0530
-Message-ID: <00e201dc13d7$17d2a750$4777f5f0$@samsung.com>
+In-Reply-To: <b1f59033-12d0-4395-85f1-e296a5dbca5f@kernel.org>
+Subject: RE: [PATCH v2 12/12] media: fsd-csis: Add support for FSD CSIS DMA
+Date: Sat, 23 Aug 2025 17:19:36 +0530
+Message-ID: <00e301dc1424$033ed5a0$09bc80e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQIMxZSZAiExi2YA0x2iD7KMY0ZQ
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQLOIzgLAmiUCqAC0LEeUbJ0pR0Q
 Content-Language: en-in
-X-CMS-MailID: 20250823023905epcas5p28b7b4c4015e8be3f26883ecf205427ba
+X-CMS-MailID: 20250823114942epcas5p143d475885a37ec024bc0590408457db2
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141051epcas5p14dccee388087372973988aeebcb872cf
+X-CMS-RootMailID: 20250814141103epcas5p14516cbe45c21d28ba9e231da99940aa1
 References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
-	<20250814140943.22531-11-inbaraj.e@samsung.com>
-	<c46c6f66-dee6-4efa-a624-de62aa705206@kernel.org>
+	<CGME20250814141103epcas5p14516cbe45c21d28ba9e231da99940aa1@epcas5p1.samsung.com>
+	<20250814140943.22531-13-inbaraj.e@samsung.com>
+	<b1f59033-12d0-4395-85f1-e296a5dbca5f@kernel.org>
 
 Hi Krzysztof,
 
 Thanks for the review.
 
+> 
 > On 14/08/2025 16:09, Inbaraj E wrote:
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - clocks
-> > +  - clock-names
-> > +  - iommus
-> > +  - port
->=20
-> Also, you miss here supplies (as required).
+> > FSD CSIS IP bundles DMA engine for receiving frames from MIPI-CSI2 bus.
+> > Add support internal DMA controller to capture the frames.
+> >
+> > Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> 
+> I commented on order of patches and got more surprise - final driver patch
+> after DTS defconfig. It's really wrong order.
 
-According to the HW design of FSD SoC, the control to manage CSIS power is =
-given to
-a separate CPU where custom firmware runs. Therefore. The Linux side does n=
-ot control
-the CSIS power supplies directly and are hence not included in the device t=
-ree.
-=20
+I'll fix in next patchset.
+
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -3334,6 +3334,14 @@ S:	Maintained
+> >  F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> >  F:	drivers/media/platform/samsung/s5p-mfc/
+> >
+> > +ARM/SAMSUNG FSD BRIDGE DRIVER
+> 
+> TESLA FSD BRIDGE DRIVER
+> (because ARM/foo are only SoC maintainer entries)
+> 
+
+I'll change in next patchset.
+
+> > +M:	Inbaraj E <inbaraj.e@samsung.com>
+> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-
+> subscribers)
+> 
+> Replace above list with samsung-soc list.
+> 
+
+I'll change in next patchset.
+ 
+> > +L:	linux-media@vger.kernel.org
+> > +S:	Maintained
+> >  source "drivers/media/platform/samsung/exynos-gsc/Kconfig"
+> >  source "drivers/media/platform/samsung/exynos4-is/Kconfig"
+> > +
+> > +config VIDEO_FSD_CSIS
+> 
+> VIDEO_TSLA_FSD_CSIS
+
+I'll change in next patchset.
+
+> 
+> > +	tristate "FSD SoC MIPI-CSI2 media controller driver"
+> > +	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
+> > +	depends on HAS_DMA
+> > +	depends on OF
+> 
+> OF seems unneeded dependency
+> 
+> But you miss ARCH_TESLA_FSD instead.
+> 
+> 
+
+I'll remove OF and add ARCH_TESLA_FSD in next patchset.
+
+> > +	select VIDEOBUF2_DMA_CONTIG
+> > +	select V4L2_FWNODE
+> > +	help
+> > +	  This is a video4linux2 driver for FSD SoC MIPI-CSI2 Rx.
+> 
+> Tesla FSD
+
+I'll add in next patchset.
+
+> > new file mode 100644
+> > index 000000000000..74f46038d506
+> > --- /dev/null
+> > +++ b/drivers/media/platform/samsung/fsd-csis/fsd-csis.c
+> > @@ -0,0 +1,1709 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
+> > + *             https://www.samsung.com
+> > + *
+> > + * FSD CSIS V4L2 Capture driver for FSD SoC.
+> 
+> "Tesla FSD" in both places
+
+I'll change in next patchset.
+
+> 
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/regmap.h>
+> > +#include <media/v4l2-device.h>
+> > +#include <media/v4l2-ioctl.h>
+> > +#include <media/videobuf2-dma-contig.h> #include <media/v4l2-mc.h>
+> 
+> How can you depend on OF if there is no single OF header?
+
+> > +
+> > +	ret = devm_request_irq(dev, irq,
+> > +			csis_irq_handler, IRQF_SHARED, pdev->name, csis);
+> 
+> Please align these (checkpatch --strict)
+
+I'll fix in next patchset
+
+> 
+> > +
+> > +	ret = fsd_csis_clk_get(csis);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	pm_runtime_enable(dev);
+> > +	if (!pm_runtime_enabled(dev)) {
+> 
+> That's odd code. Why?
+> 
+> > +		ret = fsd_csis_runtime_resume(dev);
+> 
+> Even more questions why?
+
+If CONFIG_PM is enabled, the clocks are enabled manually in the
+driver through fsd_csis_runtime_resume API.
+
+If CONFIG_PM is enabled, the clocks are managed through the PM
+runtime framework.
+
+Can you please help me understand what wrong here?
+
+> 
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	}
+> > +
+> > +	platform_set_drvdata(pdev, csis);
+> > +
+> > +	ret = fsd_csis_enable_pll(csis);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = fsd_csis_media_init(csis);
+> > +	if (ret)
+> > +		return ret;
+> 
+> I think you miss clean up of csis->pll completely. Just use
+> devm_clk_get_enabled and convert everything here to devm.
+> 
+> 
+
+I'll fix in next patchset.
+
+> > +
+> > +	ret = fsd_csis_async_register(csis);
+> > +	if (ret)
+> > +		goto err_media_cleanup;
+> > +
+> > +	return 0;
+> > +
+> > +err_media_cleanup:
+> > +	fsd_csis_media_cleanup(csis);
+> 
+> Also this...
+> 
+
+if fsd_csis_media_init fails, the cleanup is handled internally.
+Here, cleanup is used only for fsd_csis_async_register failure.
+
+can you please help me understand what is wrong here?
+ 
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void fsd_csis_remove(struct platform_device *pdev) {
+> > +	struct fsd_csis *csis = platform_get_drvdata(pdev);
+> > +
+> > +static struct platform_driver fsd_csis_driver = {
+> > +	.probe		= fsd_csis_probe,
+> > +	.remove		= fsd_csis_remove,
+> > +	.driver		= {
+> > +		.name		= FSD_CSIS_MODULE_NAME,
+> > +		.of_match_table = of_match_ptr(fsd_csis_of_match),
+> 
+> Drop of_match_ptr, it is not really correct.
+
+Will drop in next patchset.
 
 Regards,
 Inbaraj E
