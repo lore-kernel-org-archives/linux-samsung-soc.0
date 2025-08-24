@@ -1,241 +1,165 @@
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196062D5A16
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 11:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11F2DF719;
+	Sun, 24 Aug 2025 18:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756034267; cv=none; b=aCKcBbKcd57Vfb0NXYlrWJ+s2XcP9UdX0bcDXDNj3N3Sqs98NDOes0G9Ti1SjrWPAkKq4YzDgBiTtTYk3ocw23Jnl+N7KU+BVEw88tkpnM5gr9Od19BuPmxqEPVYu+4U1qC8zicq2Ig8PCGGMMrPbPd7yrVgw5kIE9Cwa5O7bRk=
+	t=1756058930; cv=none; b=ffq4rCWAGYacDxSr1gj0nkETy6iqswg2bW9b/o0y3rlmQvdFy7UK/eDiCLCdg7orMfcbXZawY34N9rBDeZ6PtwRS6OPn45wAKZpC8Ao6nwhVDVd2rbB/xmWYDsOrRyTASCEgJkU8kp00GXN8FlS2rzmlLP5UqUbfQrSM61QfKnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756034267; c=relaxed/simple;
-	bh=tXujzRgrrBGUn2v030aF3lID+YnDxsftptuhhBvWKg4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mpCecCdUDRHA9oUB3+dVS2Pq0Ma5Oo2KBm2gwEJNliTgDwGjqWwqiGDz//2EGhOAEUBuNSX0M2r1SKoPsQIXZ+F4Vl+/JNUgr1wp9FBfSzM/Uh/BrdiHEmmrwu/owXIqu05WSkEVx9pkZxwErs4x2SOSXl2y4ycKwKVFU+QFXg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=PffkWfbx; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1756058930; c=relaxed/simple;
+	bh=An8jfmhWOdf46fE9qIQpX/BSyD/SCxzw9pyGE/aqGpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aWVyL87jUOCd5yC5UdikdZQWetVkG8sYxUdy1z6oiHFxvRAZGdQSP9BqpgGR5VYzhhl3fMPx9b6Q6p7isTJDwXJoYUyE2kGrz8/M91KNrEkRE5AZwyMelSBCbLwcf7t5ejIXIA4YIwtPg+idT2DrFuvkts3Lm0N0BKpnbyl2GYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0366qJt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="PffkWfbx"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756034260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=37+dl7EpiJ+GXGLYXXe1onZHgckG1U2hI48/KV0d1I0=;
-	b=PffkWfbxzXBAdOh6czW5cQrlRuQsFnWWrDGzH11GAZCfvecRlDqtv3lMN8b5oKcrvDOYiH
-	0xnwivO8jQPgNxPk8NFeEIiPOA/VHcNw6QOhlz/O1IogfqlOMvzWVRBJzwWxqgP54+ekKk
-	UmmasPAmFjDmxV6i+1qZZKjujXvz+K8=
-From: Henrik Grimler <henrik@grimler.se>
-Date: Sun, 24 Aug 2025 13:16:56 +0200
-Subject: [PATCH v3 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0366qJt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D027C4CEF4;
+	Sun, 24 Aug 2025 18:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756058930;
+	bh=An8jfmhWOdf46fE9qIQpX/BSyD/SCxzw9pyGE/aqGpo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W0366qJtN3N2wIlY1SJIG8b3r7bvUUeT3lqqwHq0HEMaD48hi+7u6KQa/0gnA9n68
+	 Vh35oBCU7hLI4g0sVT3ayS8qnIsOfvdZ5ONIHz+gMf4uvHNPaxwwIR17Jehf4HrxEG
+	 tUMVko4Ox4WI6s6xsQHqXFnRgArMcxfAdGP/CqI39Vi0x8m9rBIJeFzW1PzUVtTHN2
+	 40JKNKZumbTj2p39RNK+GFo0x8C+qWTaK6DyWOBI5bSEEaDf9lCYtyDXAQuHB/kFPZ
+	 58Nxsf058Eu9OJreMJd+0d9kiaJKbtjammqzKXePDqC0LTKupl/aHt3a0T6Q0SBqBd
+	 4nXTO3/txUuOQ==
+Message-ID: <c744f5da-ed3a-4559-80b1-9cef5254224b@kernel.org>
+Date: Sun, 24 Aug 2025 18:50:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: exynos-acpm: fix PMIC returned errno
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
+ Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org
+References: <20250821-acpm-pmix-fix-errno-v1-1-771a5969324c@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250821-acpm-pmix-fix-errno-v1-1-771a5969324c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250824-exynos4-sii9234-driver-v3-3-80849e716a37@grimler.se>
-References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
-In-Reply-To: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
- linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4972; i=henrik@grimler.se;
- h=from:subject:message-id; bh=tXujzRgrrBGUn2v030aF3lID+YnDxsftptuhhBvWKg4=;
- b=kA0DAAoBsAduSQtxYWsByyZiAGiq9MGgu7d0a5IvpXE27Z/Vihx4bBp4EscBPD4qgCydQJkHr
- 4kBMwQAAQoAHRYhBCx/Ka6XiR9kGanizbAHbkkLcWFrBQJoqvTBAAoJELAHbkkLcWFrLCcIAIm1
- nM3abFAj8mHjSAHke+KtItJOiyo8GtEdvaJzrlL/t0bAMxUDDWG7tW71BiFBCtbeW4pjD0RE6Vo
- lidu4/+xACv/LTWQ6038x4LHfOoczXxyIVxIZqJvYIBR0jQu2f69QVGUfDR9/o1GCMLLBObYyqP
- 9gzyCSYiB1t2LfbSQnpaM5q1zF30Z6fJ9O1aslK6TV3Ot86RpSnwyMkLf3jziqOCkV2+QoEJPIU
- UAESmv8MKGrzOYJFwGpTrknV314YnoSG+ODiP1wypPakj/VBTbiAjJJf8VeVmV0CDkBOqL+ZTP/
- qV0EOSlEwhGj0lvLkAVIWaaEy8qm0zgkDnfIGWA=
-X-Developer-Key: i=henrik@grimler.se; a=openpgp;
- fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-Migadu-Flow: FLOW_OUT
 
-To use MHL we currently need the MHL chip to be permanently on, which
-consumes unnecessary power. Let's use extcon attached to MUIC to enable
-the MHL chip only if it detects an MHL cable.
+On 21/08/2025 15:28, Tudor Ambarus wrote:
+> ACPM PMIC command handlers returned a u8 value when they should
+> have returned either zero or negative error codes.
+> Translate the APM PMIC errno to linux errno.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-input/aElHlTApXj-W_o1r@stanley.mountain/
+> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  drivers/firmware/samsung/exynos-acpm-pmic.c | 36 +++++++++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
+> index 39b33a356ebd240506b6390163229a70a2d1fe68..a355ee194027c09431f275f0fd296f45652af536 100644
+> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
+> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
+> @@ -5,6 +5,7 @@
+>   * Copyright 2024 Linaro Ltd.
+>   */
+>  #include <linux/bitfield.h>
+> +#include <linux/errno.h>
+>  #include <linux/firmware/samsung/exynos-acpm-protocol.h>
+>  #include <linux/ktime.h>
+>  #include <linux/types.h>
+> @@ -33,6 +34,26 @@ enum exynos_acpm_pmic_func {
+>  	ACPM_PMIC_BULK_WRITE,
+>  };
+>  
+> +enum acpm_pmic_error_codes {
 
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
-v3: add missing return in error path, spotted by Marek
-    Use depends on EXTCON || !EXTCON instead of select
-v2: add dependency on extcon. Issue reported by kernel test robot
-    <lkp@intel.com>
----
- drivers/gpu/drm/bridge/Kconfig   |  1 +
- drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 87 insertions(+), 3 deletions(-)
+This enum is not used. Size is not needed and you can just use
+designated initializers in the array.
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 6945029b35929a8e30054ac1a699bd88ab0487f2..bf73f8d900ebd8da9fa3444c0b2d9bfc901ea773 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -304,6 +304,7 @@ config DRM_SII902X
- config DRM_SII9234
- 	tristate "Silicon Image SII9234 HDMI/MHL bridge"
- 	depends on OF
-+	depends on EXTCON || !EXTCON
- 	help
- 	  Say Y here if you want support for the MHL interface.
- 	  It is an I2C driver, that detects connection of MHL bridge
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index e43248e515b3dcdde043997288d61f738417b8f0..72c6aeed6e12e43df3b052dadc0990f1609253f0 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -19,6 +19,7 @@
- 
- #include <linux/delay.h>
- #include <linux/err.h>
-+#include <linux/extcon.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-@@ -26,6 +27,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -170,8 +172,12 @@ struct sii9234 {
- 	struct drm_bridge bridge;
- 	struct device *dev;
- 	struct gpio_desc *gpio_reset;
--	int i2c_error;
- 	struct regulator_bulk_data supplies[4];
-+	struct extcon_dev *extcon;
-+	struct notifier_block extcon_nb;
-+	struct work_struct extcon_wq;
-+	int cable_state;
-+	int i2c_error;
- 
- 	struct mutex lock; /* Protects fields below and device registers */
- 	enum sii9234_state state;
-@@ -863,6 +869,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	return 0;
- }
- 
-+static void sii9234_extcon_work(struct work_struct *work)
-+{
-+	struct sii9234 *ctx =
-+		container_of(work, struct sii9234, extcon_wq);
-+	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-+
-+	if (state == ctx->cable_state)
-+		return;
-+
-+	ctx->cable_state = state;
-+
-+	if (state > 0)
-+		sii9234_cable_in(ctx);
-+	else
-+		sii9234_cable_out(ctx);
-+}
-+
-+static int sii9234_extcon_notifier(struct notifier_block *self,
-+			unsigned long event, void *ptr)
-+{
-+	struct sii9234 *ctx =
-+		container_of(self, struct sii9234, extcon_nb);
-+
-+	schedule_work(&ctx->extcon_wq);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int sii9234_extcon_init(struct sii9234 *ctx)
-+{
-+	struct extcon_dev *edev;
-+	struct device_node *musb, *muic;
-+	int ret;
-+
-+	/* Get micro-USB connector node */
-+	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-+	/* Then get micro-USB Interface Controller node */
-+	muic = of_get_next_parent(musb);
-+
-+	if (!muic) {
-+		dev_info(ctx->dev,
-+			 "no extcon found, switching to 'always on' mode\n");
-+		return 0;
-+	}
-+
-+	edev = extcon_find_edev_by_node(muic);
-+	of_node_put(muic);
-+	if (IS_ERR(edev)) {
-+		return dev_err_probe(ctx->dev, PTR_ERR(edev),
-+			      "invalid or missing extcon\n");
-+	}
-+
-+	ctx->extcon = edev;
-+	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-+	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-+	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-+	if (ret) {
-+		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
- 					 const struct drm_display_info *info,
- 					 const struct drm_display_mode *mode)
-@@ -915,12 +985,17 @@ static int sii9234_probe(struct i2c_client *client)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = sii9234_extcon_init(ctx);
-+	if (ret < 0)
-+		return ret;
-+
- 	i2c_set_clientdata(client, ctx);
- 
- 	ctx->bridge.of_node = dev->of_node;
- 	drm_bridge_add(&ctx->bridge);
- 
--	sii9234_cable_in(ctx);
-+	if (!ctx->extcon)
-+		sii9234_cable_in(ctx);
- 
- 	return 0;
- }
-@@ -929,7 +1004,15 @@ static void sii9234_remove(struct i2c_client *client)
- {
- 	struct sii9234 *ctx = i2c_get_clientdata(client);
- 
--	sii9234_cable_out(ctx);
-+	if (ctx->extcon) {
-+		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-+					   &ctx->extcon_nb);
-+		flush_work(&ctx->extcon_wq);
-+		if (ctx->cable_state > 0)
-+			sii9234_cable_out(ctx);
-+	} else {
-+		sii9234_cable_out(ctx);
-+	}
- 	drm_bridge_remove(&ctx->bridge);
- }
- 
+> +	ACPM_PMIC_SUCCESS = 0,
+> +	ACPM_PMIC_ERR_READ = 1,
+> +	ACPM_PMIC_ERR_WRITE = 2,
+> +	ACPM_PMIC_ERR_MAX
+> +};
+> +
+> +static int acpm_pmic_linux_errmap[ACPM_PMIC_ERR_MAX] = {
 
--- 
-2.50.1
+const
 
+> +	0, /* ACPM_PMIC_SUCCESS */
+> +	-EACCES, /* Read register can't be accessed or issues to access it. */
+> +	-EACCES, /* Write register can't be accessed or issues to access it. */
+> +};
+> +
+> +static inline int acpm_pmic_to_linux_errno(int errno)
+
+Drop inline
+
+s/int errno/int err/
+(or code?)
+
+errno is just too similar to Linux errno.
+
+
+> +{
+> +	if (errno >= ACPM_PMIC_SUCCESS && errno < ACPM_PMIC_ERR_MAX)
+> +		return acpm_pmic_linux_errmap[errno];
+> +	return -EIO;
+> +}
+
+
+
+Best regards,
+Krzysztof
