@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11F2DF719;
-	Sun, 24 Aug 2025 18:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4952E0B5C;
+	Sun, 24 Aug 2025 18:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058930; cv=none; b=ffq4rCWAGYacDxSr1gj0nkETy6iqswg2bW9b/o0y3rlmQvdFy7UK/eDiCLCdg7orMfcbXZawY34N9rBDeZ6PtwRS6OPn45wAKZpC8Ao6nwhVDVd2rbB/xmWYDsOrRyTASCEgJkU8kp00GXN8FlS2rzmlLP5UqUbfQrSM61QfKnI=
+	t=1756058935; cv=none; b=W7R4ZX8YmAVcRWuoNFNiQSyyQ/b27eRDB2i20FWIjjPbMNW8JgHps5atEDxJtLzaDnvl9WdR9tQCIpky5SKoQKNJUiBCSaA9lgwX0yD4RhOqRvVPx4MCq/RUjlxGsESEEBdm4VGv3zJpBDOEjFpoW6GG1cx0owVW+r8dmroXIv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058930; c=relaxed/simple;
-	bh=An8jfmhWOdf46fE9qIQpX/BSyD/SCxzw9pyGE/aqGpo=;
+	s=arc-20240116; t=1756058935; c=relaxed/simple;
+	bh=Dz7Bfvd9yeGmrDyimftkClMOiIZZVoc2BNo3QLV9xDQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aWVyL87jUOCd5yC5UdikdZQWetVkG8sYxUdy1z6oiHFxvRAZGdQSP9BqpgGR5VYzhhl3fMPx9b6Q6p7isTJDwXJoYUyE2kGrz8/M91KNrEkRE5AZwyMelSBCbLwcf7t5ejIXIA4YIwtPg+idT2DrFuvkts3Lm0N0BKpnbyl2GYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0366qJt; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KFV8tQEtvDWnDMGlUe2/tfw7AJtE7qjH6R0F0jMVoXgkAA/0pAxUS/EZwXIF4puwG5EQeP20HxC3Bl/tpBoL5Sz3gFBezBJpwlgaKDRU4IKmONmLx57Fy+rdRh134QTEGxPlQahi1anOOgzN8+LHR8lY4tMEVXlsuM6oRLg8otw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFTb7IIC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0366qJt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D027C4CEF4;
-	Sun, 24 Aug 2025 18:08:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFTb7IIC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDFBC4CEF4;
+	Sun, 24 Aug 2025 18:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058930;
-	bh=An8jfmhWOdf46fE9qIQpX/BSyD/SCxzw9pyGE/aqGpo=;
+	s=k20201202; t=1756058935;
+	bh=Dz7Bfvd9yeGmrDyimftkClMOiIZZVoc2BNo3QLV9xDQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W0366qJtN3N2wIlY1SJIG8b3r7bvUUeT3lqqwHq0HEMaD48hi+7u6KQa/0gnA9n68
-	 Vh35oBCU7hLI4g0sVT3ayS8qnIsOfvdZ5ONIHz+gMf4uvHNPaxwwIR17Jehf4HrxEG
-	 tUMVko4Ox4WI6s6xsQHqXFnRgArMcxfAdGP/CqI39Vi0x8m9rBIJeFzW1PzUVtTHN2
-	 40JKNKZumbTj2p39RNK+GFo0x8C+qWTaK6DyWOBI5bSEEaDf9lCYtyDXAQuHB/kFPZ
-	 58Nxsf058Eu9OJreMJd+0d9kiaJKbtjammqzKXePDqC0LTKupl/aHt3a0T6Q0SBqBd
-	 4nXTO3/txUuOQ==
-Message-ID: <c744f5da-ed3a-4559-80b1-9cef5254224b@kernel.org>
-Date: Sun, 24 Aug 2025 18:50:59 +0200
+	b=PFTb7IICSB6VIZsIJZDJjVob3tQ8CZmPW74JzIJbagvutRUdosnP1xIZYMfHcp+uO
+	 CwIpNl+GLqcBnJJWA2kUpvAA+Dr4o8A6PuXGfGpQd1Ghh7aZuUc4Fx1kNGdMbh38Vx
+	 DgIog86BnKa/u+gIkPikmIPtDj6WB/8mugwhTwH0MzJN1RFfSB1c7NOqno3pbTI8oY
+	 J9QqmVUjFEbZ8BgvxUrR2VRMtwUP0RuSsfdolrAC83m3Or57a504tnCRBNIszNhNTk
+	 LjXhbZSswZvxq7QFi7qk01rpRLEpz18I+lWe163Ol0kgEoyRQHBK1IhGlL3FWvy9P+
+	 pZg0MdYWeZ2gw==
+Message-ID: <b7bfe424-2cfd-4897-ab0d-69c8e92acf24@kernel.org>
+Date: Sun, 24 Aug 2025 19:00:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: exynos-acpm: fix PMIC returned errno
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
- Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org
-References: <20250821-acpm-pmix-fix-errno-v1-1-771a5969324c@linaro.org>
+Subject: Re: [PATCH 1/3] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ clocks node
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
+ <20250822135521.GA3487754-robh@kernel.org>
+ <ebea336e-c43f-4519-b2c6-4f8812e29448@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,76 +97,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250821-acpm-pmix-fix-errno-v1-1-771a5969324c@linaro.org>
+In-Reply-To: <ebea336e-c43f-4519-b2c6-4f8812e29448@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/08/2025 15:28, Tudor Ambarus wrote:
-> ACPM PMIC command handlers returned a u8 value when they should
-> have returned either zero or negative error codes.
-> Translate the APM PMIC errno to linux errno.
+On 22/08/2025 17:03, Tudor Ambarus wrote:
+> Hi, Rob,
 > 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-input/aElHlTApXj-W_o1r@stanley.mountain/
-> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/firmware/samsung/exynos-acpm-pmic.c | 36 +++++++++++++++++++++++++----
->  1 file changed, 31 insertions(+), 5 deletions(-)
+> On 8/22/25 2:55 PM, Rob Herring wrote:
+>> On Tue, Aug 19, 2025 at 11:45:36AM +0000, Tudor Ambarus wrote:
+>>> The firmware exposes clocks that can be controlled via the ACPM
+>>> interface. Describe the clocks exposed by the APM firmware.
+>>
+>> ACPM? APM is Advanced Power Management aka the predecessor to ACPI?
 > 
-> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
-> index 39b33a356ebd240506b6390163229a70a2d1fe68..a355ee194027c09431f275f0fd296f45652af536 100644
-> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
-> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
-> @@ -5,6 +5,7 @@
->   * Copyright 2024 Linaro Ltd.
->   */
->  #include <linux/bitfield.h>
-> +#include <linux/errno.h>
->  #include <linux/firmware/samsung/exynos-acpm-protocol.h>
->  #include <linux/ktime.h>
->  #include <linux/types.h>
-> @@ -33,6 +34,26 @@ enum exynos_acpm_pmic_func {
->  	ACPM_PMIC_BULK_WRITE,
->  };
->  
-> +enum acpm_pmic_error_codes {
+> ACPM (Alive Clock and Power Manager) is a firmware that operates on the     
 
-This enum is not used. Size is not needed and you can just use
-designated initializers in the array.
+Please unwrap the acronym in one place of bindings commit msgs.
 
-> +	ACPM_PMIC_SUCCESS = 0,
-> +	ACPM_PMIC_ERR_READ = 1,
-> +	ACPM_PMIC_ERR_WRITE = 2,
-> +	ACPM_PMIC_ERR_MAX
-> +};
-> +
-> +static int acpm_pmic_linux_errmap[ACPM_PMIC_ERR_MAX] = {
+> APM (Active Power Management) module that handles overall power management                              
+> activities. APM is built around a GREBE processor.
+> 
+> In linux we have an ACPM protocol driver that communicates with the firmware
+> via mailbox channels. It's similar to arm,scmi if you want.
 
-const
-
-> +	0, /* ACPM_PMIC_SUCCESS */
-> +	-EACCES, /* Read register can't be accessed or issues to access it. */
-> +	-EACCES, /* Write register can't be accessed or issues to access it. */
-> +};
-> +
-> +static inline int acpm_pmic_to_linux_errno(int errno)
-
-Drop inline
-
-s/int errno/int err/
-(or code?)
-
-errno is just too similar to Linux errno.
-
-
-> +{
-> +	if (errno >= ACPM_PMIC_SUCCESS && errno < ACPM_PMIC_ERR_MAX)
-> +		return acpm_pmic_linux_errmap[errno];
-> +	return -EIO;
-> +}
-
+Rest of Rob's comment seems valid, so this also invalidates the DTS.
 
 
 Best regards,
