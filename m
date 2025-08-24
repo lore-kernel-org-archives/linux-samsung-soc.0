@@ -1,36 +1,35 @@
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B362D4B73
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 11:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCF32D541B
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 11:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756034262; cv=none; b=JfWdwZxj/WukHVL/SajrP4+uvhB46R/CefRse/SO5to7VNQKXoy3McQEutVG8E8LppjJsHjBR6ow5/rCn+FIYhEkbBMyfnLtNqymIaAO0fSEE2xhKnuM2XhEWK/aATRegWD5o/9ccb3Jc6wJ/A9uZXQqgByA6n+xUwDYVyQfhuc=
+	t=1756034262; cv=none; b=JpbwT91KhmBK4w+8u3RhaexMZnE0A3OXOtIZD0mv6fbwNAJFJWc1eBNAvK5pGa0oE5qA23akustuthNy/vD0xiOEaYcuML5f6QCKoQy22gBqCaS0t+4j/WTPGQWBu4uwgu5p+NHVjAWGvKmPgKl7PTZrwTWkPmC4XN3j1v5Anp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756034262; c=relaxed/simple;
-	bh=2hbU/JPpq+X+b93KBMazUAOoDOg6/IpPSJiqUcoJRj4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lOQ17QBHWsMF2v6zo6TvQFiuva1eP4O952xOMDk9dT+MwAQejlGA+DObwMzCok4GPNpnNd9ADGaleQ5dN3A10SGz8XCJ3FrtFVPZ4onHmTJcSny3Vl3vQRcWX+iWapmzaDDbcSW3FlOho/F3Pq2LyQU0r1m+eIHsexQKLt8KSC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=H2i8/Z/D; arc=none smtp.client-ip=91.218.175.177
+	bh=RqSrQZsPMePDaTzNNSIfbjwAEN4ih55AGp+7yA9PgkA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iind3HSq9S82mDq+wywi1eFzlLDF1DFv4Srv1CiQGWjJh4KivQw90exjE7Wl7Gfa5EDIFzXLVJV6IffDUUZO+hHcRhfD7SaCnN9y4BbhJDYJaYur6FAValec+gdTY856xfATheZvWm7bThcFEj423iB1DNzS4lcLllQTHW2bN1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=eF5ITTYo; arc=none smtp.client-ip=91.218.175.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="H2i8/Z/D"
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="eF5ITTYo"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756034258;
+	t=1756034253;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3LQfg9PNf1t19zyYrXBmiGz0nsA2Dze/kpHpdB04NEk=;
-	b=H2i8/Z/Dd1ccwRMT9pJ1dDvczogVNknNpVKIPH+yIOaCXJ0RXTH7CxZSpOIgHE4TTUCWwW
-	HAYJ2hLpn3fv//7tvFdJPxtc+r8loU3c81eH+foi3ugmnfB0obszMw6+sRK4WTuMLdtYiU
-	Vd1LPVyrlSJAmqmqs3iCKg6rIilBQk8=
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ge79lPdHCphIIoT5GqPoGFJLIef0X39qCGER1FsMbsQ=;
+	b=eF5ITTYoPR9uV0wAVY9FMxc0iONWlpHZ1jtzz8JO4jTVCprq58I6ryLQQ5tr9JzNYzgb3e
+	/2yzfvHSpksu/fdMcb3l2TSByorop78a7mzwism6qZ5WWD76XkFajfsn9DH9pA4iQNsq7H
+	EHilvHDbrvEIGJzw/acLQQxQF38iaRs=
 From: Henrik Grimler <henrik@grimler.se>
-Date: Sun, 24 Aug 2025 13:16:55 +0200
-Subject: [PATCH v3 2/3] drm/bridge: sii9234: use dev_err_probe where
- applicable
+Subject: [PATCH v3 0/3] drm/bridge: sii9234: use extcon to detect cable
+ attachment
+Date: Sun, 24 Aug 2025 13:16:53 +0200
+Message-Id: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -39,9 +38,11 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250824-exynos4-sii9234-driver-v3-2-80849e716a37@grimler.se>
-References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
-In-Reply-To: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
+X-B4-Tracking: v=1; b=H4sIAKX0qmgC/3XNwQ6CMAzG8VcxOzuzluLQk+9hPKDroImC2cwCI
+ by7g5MeOP6/pL9OKnIQjuq8m1TgJFH6Lkex36lHW3cNa3G5FRosAKHSPIxdH0lHkRMWpF2QxEG
+ 7CqyjewngSpWP34G9DCt8veVuJX76MK5/EizrQpbGImyRCbTRyGTZGfRHay9NkNeTwyGyWsyEv
+ w5tOpgdXzMjkQdH5s+Z5/kL5k/pKQUBAAA=
+X-Change-ID: 20231218-exynos4-sii9234-driver-d817d4b511d5
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
  Marek Szyprowski <m.szyprowski@samsung.com>, 
  Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -54,78 +55,66 @@ To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
  ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
  linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2063; i=henrik@grimler.se;
- h=from:subject:message-id; bh=2hbU/JPpq+X+b93KBMazUAOoDOg6/IpPSJiqUcoJRj4=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBoqvS+8R0f1PRorqdnd9Bp/G8CpitQqnizIhgBO
- 6TJxHtFKCaJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaKr0vgAKCRCwB25JC3Fh
- a/uUCADJbaz5IGQA8slIHDswHP0HZIyepT57uXh/hoeTc8qmBEJkit1tipXPSocIiEs2ZPugLD9
- YEMpGZ4bjcGwiHZ3OJX1+yqxFJefu9LL80PnhGqKQTcXAYjKHnIAlcJ+PE37NyNh5VjtuBWiHY7
- dOCn4GdxWKpg/n3u16sGHtoPfl1V1G05WnJrGjjPckGYOlqqlZXow18hTaWVIGH+voXRl1xwbkU
- ZnFzUwzEqwyTi3xfeprymY3TAjyHzTN7iuUVp6Q61SpcVmDZKtnNyft2pQkNG+rjO6uo69mFAJq
- oICte8FFQsQtDJaJ1iOJcufc+c1R8jRmyrQ+hoW1UdavFLpW
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1910; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=RqSrQZsPMePDaTzNNSIfbjwAEN4ih55AGp+7yA9PgkA=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBoqvS37BGY/Bu7ZzRm4gX2y+dhlmuOnM2R8+UXG
+ NB3tJIsLbuJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaKr0twAKCRCwB25JC3Fh
+ a1yFB/9N5+SPxFODk4BllPS3ie+a6cSHB9lOzpNjgDKoi09yzcGmJov+4tdkPcz3SoItsb1qCHH
+ lBD8XcmaLv4hIbxX2006yXIqem1QgSdPT7fhJ9EghUVvcK2yPgOjVk0cg+WFhac5yaTGDokWqCJ
+ n/OiwH1I3wz9hI2xTLRMlBsTxLfrBWFRCunKinshvynrLNrduhDMo1omHb7n67YSy8RxojTG8QX
+ 8iVxXO469zgFdmXiVPSo/r/PsJ68Rj6z6giQL1mhDdwTfQ2mwtH6x4f2FzGCVGQhGd1ThXz7jCM
+ hLlOZ/3MpY6oNuDtsG7oGChv3Lkvb+7jWujIorJmDIApZzO6
 X-Developer-Key: i=henrik@grimler.se; a=openpgp;
  fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
 X-Migadu-Flow: FLOW_OUT
 
-In case of error during resource acquisition the driver should print
-an error message only if it is not deferred probe. Use dev_err_probe
-helper to handle this, which will also record defer probe reason for
-debugging.
+Hi,
+
+This series fixes so HDMI through the sii9234 MHL chip works when
+cable is hotplugged, by making the MHL chip use extcon cable detection
+functions. Patch 3, that actually implements the extcon parts, is heavily
+inspired by commit 688838442147 ("drm/bridge/sii8620: use micro-USB
+cable detection logic to detect MHL") by Maciej Purski.
+
+Before these changes, HDMI only worked if cable was plugged in before
+booting. If no cable was connected, then wlr-randr still showed HDMI
+as connected, with 0x0 px, which confused at least some UIs (phosh)
+and caused problems:
+https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828
+
+Tested on exynos4412-i9305.
+
+Best regards,
+Henrik Grimler
 
 Signed-off-by: Henrik Grimler <henrik@grimler.se>
 ---
-v3: add missing return in error path, spotted by Dmitry
-v2: no changes
+Changes in v3:
+
+- Fix return of dev_err_probe in patch 2 and patch 3, spotted by
+  Dmitry and Marek respectively.
+- Change to depends on EXTCON || !EXTCON instead of select
+- Collect tags for patch 1 (not 3 since there were (minor) changes)
+- Link to v2: https://lore.kernel.org/r/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se
+
+Changes in v2:
+- Add dependency on extcon in patch 3. Issue reported by kernel test robot <lkp@intel.com>
+- Link to v1: https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se
+
 ---
- drivers/gpu/drm/bridge/sii9234.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+Henrik Grimler (3):
+      drm/bridge: sii9234: fix some typos in comments and messages
+      drm/bridge: sii9234: use dev_err_probe where applicable
+      drm/bridge: sii9234: use extcon cable detection logic to detect MHL
 
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index 930117bbba87285e62107389606897740516eb0a..e43248e515b3dcdde043997288d61f738417b8f0 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -825,21 +825,17 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	}
- 
- 	ctx->gpio_reset = devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_LOW);
--	if (IS_ERR(ctx->gpio_reset)) {
--		dev_err(ctx->dev, "failed to get reset gpio from DT\n");
--		return PTR_ERR(ctx->gpio_reset);
--	}
-+	if (IS_ERR(ctx->gpio_reset))
-+		return dev_err_probe(ctx->dev, PTR_ERR(ctx->gpio_reset),
-+				     "failed to get reset gpio from DT\n");
- 
- 	ctx->supplies[0].supply = "avcc12";
- 	ctx->supplies[1].supply = "avcc33";
- 	ctx->supplies[2].supply = "iovcc18";
- 	ctx->supplies[3].supply = "cvcc12";
- 	ret = devm_regulator_bulk_get(ctx->dev, 4, ctx->supplies);
--	if (ret) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(ctx->dev, "regulator_bulk failed\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(ctx->dev, ret, "regulator_bulk failed\n");
- 
- 	ctx->client[I2C_MHL] = client;
- 
-@@ -911,10 +907,9 @@ static int sii9234_probe(struct i2c_client *client)
- 					sii9234_irq_thread,
- 					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
- 					"sii9234", ctx);
--	if (ret < 0) {
--		dev_err(dev, "failed to install IRQ handler\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret,
-+				     "failed to install IRQ handler\n");
- 
- 	ret = sii9234_init_resources(ctx, client);
- 	if (ret < 0)
+ drivers/gpu/drm/bridge/Kconfig   |   1 +
+ drivers/gpu/drm/bridge/sii9234.c | 124 +++++++++++++++++++++++++++++++--------
+ 2 files changed, 102 insertions(+), 23 deletions(-)
+---
+base-commit: efe927b9702643a1d80472664c2642f0304cb608
+change-id: 20231218-exynos4-sii9234-driver-d817d4b511d5
 
+Best regards,
 -- 
-2.50.1
+Henrik Grimler <henrik@grimler.se>
 
