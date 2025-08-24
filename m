@@ -1,66 +1,66 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7226F21C19E
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 19:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FBA231842
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 19:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756062293; cv=none; b=SeSv28dP/r+kJ0917+cUU5F/XmqBG+38PY97YIlGaB0AGByviQwDzcfZj0IKAJr0QFCbyq3J5SpB18QAAV/TtIu1eNegg7QS74NniCl3/M2/UPRIOD6hs3pCn0mUxMwY5bHx1OfqwcMbI4Y3n1m/TcBj6ostv6IhvKEAD4pg5EY=
+	t=1756062443; cv=none; b=YpPNpKvEJ4ub39EcynbWV5KDNPsx4HWOBmMvZnLF0VdJZROs0iuPqsEauHveroPzOKNDK17zcBVjWqYTiIsmc5CQE+EyaZH8YSUBxPd5e1YvHPHDofk9Ubd12TOmAd5cdLAG9rk54rDV08UNgImBrgm//OvLFALrkcfMjI4EzRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756062293; c=relaxed/simple;
-	bh=UP+AYol+DY8UTEmT5RaSgfZsggShtTb7514fxVj9jCY=;
+	s=arc-20240116; t=1756062443; c=relaxed/simple;
+	bh=Or9relOdtZKZQi+PZvyFmONuNwHiY1OaMP7l/cQpXAE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cy12Y/rar2A76nOJhrTYJamJlqfXrX10kPXPVILNvNwG4FmLpqnA02eRNyA+IVQgRgtkgB43HnuYjbWE87Ycb2onswvPcBwsBOWWFOQ3KnnwlfDRo+88GGwPzgQX222iOMeApbsycpwqD4b97IOhBiUud8M9XdoPPQkPVPWhPxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xt+BweIj; arc=none smtp.client-ip=209.85.167.45
+	 In-Reply-To:Content-Type; b=m1DVllueAwkyOpcj4FoG8md6wiOzkBX1DoiBZfXdzVgYZQfLbpNSfxrMsokoeYJJZwCRFnKcJaZxL18jYretF6xydlXw49E4faK1T6woj6UABtJAeaBVu6vFtveVWCvdr/a6HmkyW/OvWRzUiWQzRfV4PZHuemzRgu4y1fBlgpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TP9v4FKl; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xt+BweIj"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f3bb787a1so80162e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 12:04:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TP9v4FKl"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55e00f938dfso539310e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Aug 2025 12:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756062288; x=1756667088; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6yqEEUlIDSc/+3KFB8fDmfBaOKciQCNwulQzIyyj/3k=;
-        b=xt+BweIjZ9gyWWKUxS3RYMaB9pwRpO0pNpbeP7xasGsGNN3QfOMFeqP+AWSUB7CXi4
-         K97dymZmnzLNS1iLlmg2YltHWBEmCqaIgLBcKAgsh0Tnj3B5vmBdu0id3heOFTxKnvUu
-         PB6FHw5Z5s/TkvosfV4u/Ycpdtmyv6KQMOcV1tY13CT8jAY0yNG4Cp/3UTL3nuQ/+fha
-         CM2VayOWDYdmBasVIGxZNqKn+fvgHGMM5g/J1Xi/0GUVuRl8jtYo1bWQkUfBEFExf52I
-         u5CWucaLQcCI8kIZxu4dbrGLuhmzF+SFQ51k2VfN2GP0XFPZQ+PC7gE0CsvN4k1twteR
-         90Qg==
+        d=linaro.org; s=google; t=1756062439; x=1756667239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kRFerQraihZIanmomm0IKhmbjfbkS3W8YtjfgYvp2fw=;
+        b=TP9v4FKluJ7PjmXmnDBpJalFojQEpojrdUcweMmE5jAjk3kpFGiwY3I/etMGHHC10n
+         0sUd+ic2YEfRyaE09CZoiBgS7Lmf9FsZ9sViLLUvmPVEGJcuqtLxtPopH84vhHnxem9m
+         5TGZD6cueZvMsB0i17kaGjhOly3+ymGiA+X3wADOK8YVdTCpE+QVrmBnRelYHAntuXlM
+         9G7OI8rElJLTtkUDd7s6Mnff5D+RBx3gNtcRGdbJIStzUVu9eWjjgWfUycZUF6TSrWD2
+         xF6z0PbnH254SfN6+SGFaqxGcMblbw8FvF+eBcNAE8SUYWiGSE4fZR4WfIUHnM9BPQTi
+         Z3yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756062288; x=1756667088;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6yqEEUlIDSc/+3KFB8fDmfBaOKciQCNwulQzIyyj/3k=;
-        b=P1x2NZ6z7i2lfYa8tX12TvDjpXmjdSb5gtgK4aFOvRlOhJwqhxefqZb6h6WUMS7dWG
-         GihjHTFYmC1d0gXKJ8B7tCDQ7pu2tUgk4Ibxz+FC7/MEsKhkGyllmGfDFVfRnMHyMLfy
-         X2lVcALDLQ19b01fs65s32xabL/vyBhw2UxN34J0fwD2vWaeNMFF4gf6eQ/d2cGewyqp
-         8maFl7WPLei4TMLK6ngw+2CZ/9Lv6HRF7pyIJtlSoZdUKsAcl8iDXIxOjomDt8rZ4i1w
-         6G6n2FQ4JGAIo1OZ9vV5kvCcVdJzrssqIB+DFnxQQt0V6Ru9XNLdLoZg4ImXq/htYEuJ
-         ewzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT0XA/J31B4YSG/aNxD3RZFCKhKlgnIKvJRNzlduzGZozmGoF4QHy1r+0AlHH/79Kez4O+2pEdDWJHofW3QDRZ5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/y2UF/hD2a+EaWND9VvcGdj9l3geZLInCmZ4/3WSKFoh7Oh27
-	3QSZqJVzz1NM7BYH6G/zTHsVpTlry6JNK9WWmGR1iJCiBUk70klUEyti0vyKvjtd204=
-X-Gm-Gg: ASbGnctgTm83yzje8vGQDkfZGMEw+yMKF/vwO0JehwmlMpDIJa+rZHJ2p9u8heYT6+g
-	IDSDQ/072fF7T6VoIG/0ko+eQsiqJkcSD9QpNmKg5MZV0QqGAsheExpuIgPagyIkg5SvP5nfP5r
-	p7/MyD7F/x3FT7Pmub8/Xhdof4MaqVhI9ZN7sHIxKeCmqMpdYC2McKGhGo1RsuMfb6wCcBC9wrn
-	ELPEJDAkKyTDSAtIlM6vUYHaY5HAtoTVvaVKyGMz2InGjBz6APQ/VkF5GjU2lB5BDvpRYW0fPYP
-	AiJcJ1d2UkygnWOje8rk5rMhEhW6VMMv7xiuOomX9IvTJrBJCw8Ynw44yBG+cA0+SQra1Y51ree
-	e4jO081YH/SJobp8sYpJNDnuqDhyxijvgMw6BOg3dSNIuOlMw5520LUi1t3rw03QAY5GiL59+Ku
-	gz
-X-Google-Smtp-Source: AGHT+IFyrm2w79r4qu/FnmHu4qBJdoxQ8tpCUb7HA7mtPlKxjeyzi9xJQ9J7AuBmZ4uek0zzq2ON9Q==
-X-Received: by 2002:a05:6512:a85:b0:553:24b4:6492 with SMTP id 2adb3069b0e04-55f0cd6ef0bmr1246189e87.5.1756062288277;
-        Sun, 24 Aug 2025 12:04:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756062439; x=1756667239;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kRFerQraihZIanmomm0IKhmbjfbkS3W8YtjfgYvp2fw=;
+        b=kTNgfky6LXlVeH0lVGrSK7eWaF5lluyl2R6vVbN3tiCzKFOUzg1VPw9lYXQhn4fBOb
+         oYHyOLZqYfNnUkEDqReFhiQl68z8ZjBxL+5pLsV+CuCn5avaRegYIsbkvddA4y7+XkS+
+         sXRAxNECij9XiRWgE419RdVk8ll1RSdZE0P4tPC0j13KbZxqyR95tX6RLkbFURi69oSc
+         3UPxgO6TAQViS94qvC+jsBUlDElKctfX4hnEi4LLf1WGxDbIc2IaXOoQARuaTwJORSP3
+         RE6hcuXsDJMXy9orvcYKtKk2RhZwVvA+EzICJycio4StGKDbhQeApIikHqRskqlNWRXB
+         kYuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgLsDRmIxA7lt1bSt8+i74UwTpQF8rk6fiG1aeCmf91uffPvMFK5Sy5q1Bj5njOTNpQsAMumXIk8IffUHhK+T16w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVubP+lQxETNCAEoETeaXjt4a0Xf9ubzJQeVXqRz0e4LO4E3Ik
+	cWmMCfAU0BXnXUaQ7K2y2qPq3QhSnl9wm+ecVDLo+DfXy6jnMLEYqQohmJP+oYr0vmY=
+X-Gm-Gg: ASbGncuDiJiFZnZPhXUbJXyRg1kqGhK70Mz+ltQPigFHFq7wZJ+WO+v1LLZi+8JU1xk
+	R01p/HsimoRMn3K4eX9JLNiN7FW+3TjXeAcMpCCbDThEg/i0j+2Vp2LYa3R8OLI9pF7HhaoPbHs
+	Nli3bAI9GEJy2M+6ofUEnS0Pjsg609XKZDat6rZQ6p/J05Y2ysguZOQnsyc1BfNm4fzjJS/i7Bd
+	f6nUNnoPBp9h+kllyLXRDNGS4VI8+uwl+hZMTFyh0t3J65d+r+4xmXhUqrxsfLzFPum1DDT07Uz
+	1/U4THMpFvNxTnkR2g2SFGGn6M/z18LgYk9eEl24A0BKSO9RTUW2vBE+AEFlRUIZkjLD97sYWM3
+	qyXTYsuz2i9N5a2QahhWxZVmbKE9doWSZltoMfhAthz47J+TY1wo/l/iQF++D3krGo8vQmbf5UT
+	FSgtfl4CexWb8=
+X-Google-Smtp-Source: AGHT+IH13MoxmrDQetMznYo3yow5OENe/3UHzqm8TZjVRtSQjRA+4ERWWZasIRoFRuhqFpxTrCVdqA==
+X-Received: by 2002:a05:6512:2391:b0:55f:44eb:ea92 with SMTP id 2adb3069b0e04-55f44ebec0cmr134730e87.7.1756062439301;
+        Sun, 24 Aug 2025 12:07:19 -0700 (PDT)
 Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c8bb4esm1204996e87.75.2025.08.24.12.04.45
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35ca6713sm1206429e87.136.2025.08.24.12.07.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 12:04:47 -0700 (PDT)
-Message-ID: <fb733991-857c-4a5b-ba20-d8bd557a4339@linaro.org>
-Date: Sun, 24 Aug 2025 22:04:45 +0300
+        Sun, 24 Aug 2025 12:07:18 -0700 (PDT)
+Message-ID: <b4221eca-7977-47b3-a563-f392d7dafb8b@linaro.org>
+Date: Sun, 24 Aug 2025 22:07:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/65] media: camss: Replace .open() file operation with
- v4l2_fh_open()
+Subject: Re: [PATCH 20/65] media: camss: Remove custom .release fop()
+Content-Language: ru-RU
 To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
  <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
@@ -106,6 +106,8 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
  Neil Armstrong <neil.armstrong@linaro.org>,
  Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Nas Chung <nas.chung@chipsnmedia.com>,
+ Jackson Lee <jackson.lee@chipsnmedia.com>,
  Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
  Houlong Wei <houlong.wei@mediatek.com>,
  Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
@@ -114,10 +116,11 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
  Geert Uytterhoeven <geert+renesas@glider.be>,
  Magnus Damm <magnus.damm@gmail.com>,
  Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>, Heiko Stuebner <heiko@sntech.de>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>,
  Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
  =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
  Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
  Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -129,11 +132,11 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
  Nicolas Dufresne <nicolas.dufresne@collabora.com>,
  Benjamin Gaignard <benjamin.gaignard@collabora.com>,
  Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
- <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Corentin Labbe <clabbe@baylibre.com>,
+ <mripard@kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+ <niklas.soderlund@ragnatech.se>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Corentin Labbe <clabbe@baylibre.com>,
  Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>,
  Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
@@ -145,26 +148,22 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-rockchip@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
 References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-19-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-20-eb140ddd6a9d@ideasonboard.com>
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250802-media-private-data-v1-19-eb140ddd6a9d@ideasonboard.com>
+In-Reply-To: <20250802-media-private-data-v1-20-eb140ddd6a9d@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Jacopo, Laurent,
+Hi Jacopo,
 
-thank you for the nice clean-up.
+thank you for the change!
 
 On 8/2/25 12:22, Jacopo Mondi wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> The 'file->private_data' pointer is reset in the vb2_fop_release()
+> call path. For this reason a custom handler for the .release
+> file operation is not needed and the driver can use
+> vb2_fop_release() directly.
 > 
-> The custom video_open() function in the camss driver open-codes the
-> v4l2_fh_open() helper, with an additional mutex that protects the whole
-> function. Given that the function does not modify any data guarded by
-> the lock, there's no need for using the mutex and the function can be
-> replaced by v4l2_fh_open().
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
 Tested-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
