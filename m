@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9822E3376;
-	Sun, 24 Aug 2025 18:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC902E11D5;
+	Sun, 24 Aug 2025 18:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058955; cv=none; b=sO7pSSxJWQdAE7iKr0vSG0DVKm3pCPYLjBrHm1/V7vdebQ9uqoXZfuCfEjUdO9DZAIFNbZmWaF4cokjAVW9CdaqZaPGsRPHXmORuMp+JZMMAL76VkZ+sItdJYpX5r1tNS1YJxD6neMDPltbW2ek+OZQwcpfQoB9xcQbhr9fSz4Q=
+	t=1756058961; cv=none; b=LSa19QO2TypJEXlu2Vfdd6WlrGLqkemshYSPk2z8blEok8Z0CfXbslm6F/734rIzB/Qv6Z99Ttn+X8pFmh03L9oVvMxCJmxM5CoBLVShYCp0pC0MclzOV8/xsRBq4+k+3wcv7wZbzMOsAbgLo0uOwwSrx7PF9tVPQHBlWoifhy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058955; c=relaxed/simple;
-	bh=np+VrBVospNSVz3iEYSM8cUG8EfYPYLfyDd/NbXqYT8=;
+	s=arc-20240116; t=1756058961; c=relaxed/simple;
+	bh=iPbQM7eQEDWhHlOv6zZRNIcUTBEBN8jCIsD9OOZwY+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HJKT2lrX0mIJvpkVojkwHiAHR1gqfQBG3QRig9ewIU7AgMKmN7rvvvXNKVbu+VkLAFo5znw9IA1C9iOluFjn/kLAMkphBmFsP7XWcIXjnZs3knstVXU8pvniml9Gnxef93VgInHCdVQe00ixvb4+9JLTe0mJC50fJkRyBQLE5J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QllgAN/3; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=oK34NQkXt5ueoKgy5aFu7zAv1Gw1QjzpJ0/txeBdNPCw0vT56pG1N5A62di2d9LTWrDackrEA2vCkq8nijmVtkj4T2EYSpSMKursDMpec4PsIcxUdAwcrVZR1OSLRhk97sHWFNs/VkgdQNumfQ/Wt9SIXxz6eivyvuyh51QUfvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOvpHgzp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QllgAN/3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2105AC4CEF4;
-	Sun, 24 Aug 2025 18:09:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOvpHgzp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7C4C116C6;
+	Sun, 24 Aug 2025 18:09:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058955;
-	bh=np+VrBVospNSVz3iEYSM8cUG8EfYPYLfyDd/NbXqYT8=;
+	s=k20201202; t=1756058961;
+	bh=iPbQM7eQEDWhHlOv6zZRNIcUTBEBN8jCIsD9OOZwY+U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QllgAN/35E0N/fl3OlfDYFxmkkjUQq8LaArzXX6nlr85KfEQTpilF3S+9ZIWD0cSW
-	 lz0RAgL0ZVGJYHk6x8vqogdd0c8ATf3HKxG1nLyhsxeGb5jLo6OaOEPmFSXveqcBB8
-	 Lj2t47+67V0Agu+b/qlUPLZucnLpqUY5h/JoDVeUjfcjHqDxv/zVDDxwxxLlV3Ouel
-	 2fcIs9NAffNwAC/SyxdR/zrCXZ5eMhV/aMGSJVoc04udjSFOBItNUPrVaK1P2VkQvo
-	 1dmjonveLmM5kfc8w+ahlPEr8Nj50Gp87W06s/gc9lWAdUbOSwjtxc8E0dfJB/pnCQ
-	 ahfo1RTB0SZxA==
-Message-ID: <ca2b3b24-91dd-478f-888e-4f46dd26a672@kernel.org>
-Date: Sun, 24 Aug 2025 19:11:38 +0200
+	b=jOvpHgzpPDo9tVHRtKb5N3xmgEM2rhVGCcrliFcFam4iC/S7mkN7LUvHQO1H4M25y
+	 sDeeFpuiiyf3GOe7OCSpGbDdrjZaL5NF8hL7w79tLqkzqh72le0q5IYRiwIjXtWfuj
+	 0ikKLi5/f4jAtPAOn7/bw+Smhea4qnw/OeI8CSVl0XigcVYUZGfQwpJhXC6I9scBvz
+	 DCFzj5Dac8/AhVaEXQak5DgJ/pMHXp/xCxH5CntrM8TYmsSalD5x16sjfRsx8Cp6UC
+	 GjSZejp7tVElro0tnAYdWHOIqB5F01gQrfDTcMu7RqnOP+02a0X9Catfy3rzkzz4Bb
+	 XpAL0YSLhGqnQ==
+Message-ID: <4858376a-be7e-4eb8-a68c-fbd00532a106@kernel.org>
+Date: Sun, 24 Aug 2025 19:13:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] firmware: exynos-acpm: add DVFS protocol
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+Subject: Re: [PATCH v5 3/4] arm64: defconfig: enable Maxim MAX77759 fuel-gauge
+ driver
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
- <20250819-acpm-clk-v1-2-6bbd97474671@linaro.org>
+ linux-samsung-soc@vger.kernel.org
+References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+ <20250804-b4-gs101_max77759_fg-v5-3-03a40e6c0e3d@uclouvain.be>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,69 +95,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250819-acpm-clk-v1-2-6bbd97474671@linaro.org>
+In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-3-03a40e6c0e3d@uclouvain.be>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/08/2025 13:45, Tudor Ambarus wrote:
-> Add ACPM DVFS protocol handler. It constructs DVFS messages that
-> the APM firmware can understand.
+On 04/08/2025 16:26, Thomas Antoine via B4 Relay wrote:
+> From: Thomas Antoine <t.antoine@uclouvain.be>
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Enable the Maxim MAX77759 fuel gauge as it is used by the gs101-oriole
+> (Google Pixel 6) and gs101-raven (Google Pixe 6 Pro) boards.
+> 
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
 > ---
->  drivers/firmware/samsung/Makefile                  |  4 +-
->  drivers/firmware/samsung/exynos-acpm-dvfs.c        | 85 ++++++++++++++++++++++
->  drivers/firmware/samsung/exynos-acpm-dvfs.h        | 21 ++++++
->  drivers/firmware/samsung/exynos-acpm.c             |  5 ++
->  .../linux/firmware/samsung/exynos-acpm-protocol.h  | 10 +++
->  5 files changed, 124 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/samsung/Makefile b/drivers/firmware/samsung/Makefile
-> index 7b4c9f6f34f54fd731886d97a615fe1aa97ba9a0..80d4f89b33a9558b68c9083da675c70ec3d05f19 100644
-> --- a/drivers/firmware/samsung/Makefile
-> +++ b/drivers/firmware/samsung/Makefile
-> @@ -1,4 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  
-> -acpm-protocol-objs			:= exynos-acpm.o exynos-acpm-pmic.o
-> +acpm-protocol-objs			:= exynos-acpm.o
-> +acpm-protocol-objs			+= exynos-acpm-pmic.o
-> +acpm-protocol-objs			+= exynos-acpm-dvfs.o
->  obj-$(CONFIG_EXYNOS_ACPM_PROTOCOL)	+= acpm-protocol.o
-> diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.c b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ee457c1a3de2ff2e4395d9fc3ff4c13294473b2d
-> --- /dev/null
-> +++ b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-> @@ -0,0 +1,85 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2020 Samsung Electronics Co., Ltd.
-> + * Copyright 2020 Google LLC.
-> + * Copyright 2025 Linaro Ltd.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-> +#include <linux/ktime.h>
-> +#include <linux/types.h>
-> +#include <linux/units.h>
-> +
-> +#include "exynos-acpm.h"
-> +#include "exynos-acpm-dvfs.h"
-> +
-> +#define ACPM_DVFS_ID			GENMASK(11, 0)
-> +#define ACPM_DVFS_REQ_TYPE		GENMASK(15, 0)
-> +
-> +enum exynos_acpm_dvfs_func {
-> +	ACPM_DVFS_FREQ_REQ,
-> +	ACPM_DVFS_FREQ_GET,
-> +};
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-These are actual values for hardware/firmware? If so, please use rather
-defines.
 
-Rest looks good.
+I think the driver part was not applied. I'll drop it from my queue,
+please resend SoC bits separately once driver gets applied by its
+maintainer.
 
 Best regards,
 Krzysztof
