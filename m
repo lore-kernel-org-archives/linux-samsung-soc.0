@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11D92E0928;
-	Sun, 24 Aug 2025 18:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072872E03E1;
+	Sun, 24 Aug 2025 18:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058946; cv=none; b=AzED8HqXCOKsuAQXGlcCc0t1toC/ndNiJG5LJuODM/AmFwcj9WN3HxJzbC0Ck/i5u3lvV9R7brdb4ww0tu4jquqN1kBISWMzwzixAdtzTbamZWHxPT/7cOKhs9RZgqsggyJeES3hLnwRR5r50abl+aVpVs1rJr+IEN6B06DMTYA=
+	t=1756058951; cv=none; b=F3bztTwPK6M751jePxdiOOTsUk6Ez/Yyc6eE4UI7XS/uha+68cRIUaDB+3/twYI8xtGDuVnEeLxDYLnPgDvRbm5G7Vm1dXAtdmQRpHVLlW670njbDbYYRysFeMUgdxT61vLtuXsCiz4jl6iYYTuQYWDP71wxm+rkjYzM1wd4AhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058946; c=relaxed/simple;
-	bh=g0ilQfX+/tsXpJe+/dm6xg4GYotqHJ7yh3Hp5H7k3BU=;
+	s=arc-20240116; t=1756058951; c=relaxed/simple;
+	bh=tIb8TOaYFmDPG2l1skDR+dK6peTTauqAWzIqoeEul+s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sdEFp/xuUfvyN6DsHg1kiRGqQ6YxTCXJ0ILjoGma/l1wAzFbmSGsRIsMTlFuVGKx+ZivB+N5D+d4oQCXhxtw+boQdfd0RkqfXR52iZ3QsdLoWHpBjf1UhgnnvQZ3P1g1B39qqVjbcgGCheiNM/pMtDKoXb5zcoYLBqjenGSKE40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYORHDT1; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=pF0QP7VcH6x1z8YCDY2vThzQTnEjpkV5ngRWCmGmJtBppotYHECTKu3zY6nCfH1xDtzDuOPGbHoYTF4N8d4S/y9XGF1zNRpcNr03rTdGaGVJnRIYbFLD0exq6MNluLY2yB7bZO8hthvSZrFqvFdkuO6e3BHiaOyEdhgcZ/DMHpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4HZimzE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYORHDT1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A928C116B1;
-	Sun, 24 Aug 2025 18:09:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4HZimzE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56CCC4CEEB;
+	Sun, 24 Aug 2025 18:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058946;
-	bh=g0ilQfX+/tsXpJe+/dm6xg4GYotqHJ7yh3Hp5H7k3BU=;
+	s=k20201202; t=1756058950;
+	bh=tIb8TOaYFmDPG2l1skDR+dK6peTTauqAWzIqoeEul+s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cYORHDT1EcCVhK+jIa47dA1py4lK3SaU7oZxMBVxZ5k6HS2X5nhIKSTPRyL/HZxlE
-	 v1C49Hjmg1HYxFbwkMzStqUD9scByM8CrMC/5CHHpEiI5Y6s52Lpj68+c7BYxAR1E8
-	 EgZ7mBt5CtXlGWvswvqgdt6oyIIsTAb7l65TDk6YaCmkIkxt0MWmq8/zan33Ux97BV
-	 UJwbhUzF6aACPpUgSXdc3uexK506UUpseFgNY/jJyF0pLPXRsAxU01tv6ax2KdlvvL
-	 FSAu5AlROFUy6M6hu3ZS6q4mqp2pnJdPhzC72Cl+jsrsrUBjtv7Zlv7y8j1lfRPWfE
-	 t8fDhUp+3uWRg==
-Message-ID: <ded0bf9a-29f1-40c5-9b55-a4c7dcb2b439@kernel.org>
-Date: Sun, 24 Aug 2025 19:02:14 +0200
+	b=F4HZimzEDCxhs/tjlSR4cjBwj38UvzzONt2cA+xlCh3Bk1atrnT47m/sqAvRizXzR
+	 7EV/dVhFUXmreDSwBtkitoAPltjvvyBUreUOqfsQWUw+x3KaZOc7JsbfTZrirlWUK+
+	 EnXd2mMl4G5Hups2hPJ1+rdY8msSc6L27222OCIodAg+IRrdxlowiwSI5PGN6xoc8v
+	 rDe5rq+iiRtmdaLrPIZ7snLhqR0fXzexyh1OyBvrESdgnHKGNoaTpPytrbZJE0M+GM
+	 yWp4ZAI9++a3iGmtSlYjGT3VPGP+KHFsQH7N70qphpD2Zfb0o+BgFkDkQ3ySSWglYm
+	 JPfdvXK8W1Lig==
+Message-ID: <e17ea82b-fb3e-45d2-a168-3b917816fe7b@kernel.org>
+Date: Sun, 24 Aug 2025 19:10:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] arm64: dts: exynos: gs101: add
- google,gs101-acpm-dvfs-clocks
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
+Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- willmcvicker@google.com, kernel-team@android.com
-References: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
- <20250819-acpm-dvfs-dt-v1-1-4e38b95408c4@linaro.org>
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,19 +94,141 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250819-acpm-dvfs-dt-v1-1-4e38b95408c4@linaro.org>
+In-Reply-To: <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/08/2025 14:10, Tudor Ambarus wrote:
-> Define the clocks exposed by the ACPM interface.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-This will need changes as discussed in the bindings.
+On 19/08/2025 13:45, Tudor Ambarus wrote:
+> +
+> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			     unsigned long parent_rate)
+> +{
+> +	struct acpm_clk *clk = to_acpm_clk(hw);
+> +
+> +	return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
+> +					clk->acpm_chan_id, clk->id, rate);
+> +}
+> +
+> +static const struct clk_ops acpm_clk_ops = {
+> +	.recalc_rate = acpm_clk_recalc_rate,
+> +	.round_rate = acpm_clk_round_rate,
+
+This should be determine_rate. Check recent patchset from Brian Masney.
+I applied the samsung bits from it to samsung soc tree.
+
+...
+
+> +
+> +static int __init acpm_clk_probe(struct platform_device *pdev)
+
+module probe for sure should not be __init.
+
+> +{
+> +	const struct acpm_clk_match_data *match_data;
+> +	const struct acpm_handle *acpm_handle;
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct clk_hw **hws;
+> +	struct device *dev = &pdev->dev;
+> +	struct acpm_clk *aclks;
+> +	unsigned int acpm_chan_id;
+> +	int i, err, count;
+> +
+> +	acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
+> +	if (IS_ERR(acpm_handle))
+> +		return dev_err_probe(dev, PTR_ERR(acpm_handle),
+> +				     "Failed to get acpm handle.\n");
+> +
+> +	match_data = of_device_get_match_data(dev);
+> +	if (!match_data)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Failed to get match data.\n");
+> +
+> +	count = match_data->nr_clks;
+> +	acpm_chan_id = match_data->acpm_chan_id;
+> +
+> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
+> +				GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	clk_data->num = count;
+> +	hws = clk_data->hws;
+> +
+> +	aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
+> +	if (!aclks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		const struct acpm_clk_variant *variant = &match_data->clks[i];
+> +		struct acpm_clk *aclk = &aclks[i];
+> +
+> +		hws[i] = &aclk->hw;
+> +
+> +		aclk->id = variant->id;
+> +		aclk->handle = acpm_handle;
+> +		aclk->acpm_chan_id = acpm_chan_id;
+> +
+> +		err = acpm_clk_ops_init(dev, aclk, variant->name);
+> +		if (err)
+> +			return dev_err_probe(dev, err,
+> +					     "Failed to register clock.\n");
+> +	}
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +					   clk_data);
+> +}
+> +
+> +#define ACPM_CLK(_id, cname)					\
+> +	{							\
+> +		.id		= _id,				\
+> +		.name		= cname,			\
+> +	}
+> +
+> +static const struct acpm_clk_variant gs101_acpm_clks[] __initconst = {
+
+This goes to top of the file, after struct declarations.
+
+> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
+> +};
+> +
+> +static const struct acpm_clk_match_data acpm_clk_gs101 __initconst = {
+
+Are you going to have more of such clk_match_data? More variants?
+
+> +	.clks = gs101_acpm_clks,
+> +	.nr_clks = ARRAY_SIZE(gs101_acpm_clks),
+> +	.acpm_chan_id = 0,
+> +};
+> +
+> +static const struct of_device_id acpm_clk_ids[] __initconst = {
+> +	{
+> +		.compatible = "google,gs101-acpm-dvfs-clocks",
+> +		.data =  &acpm_clk_gs101,
+> +	},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, acpm_clk_ids);
+> +
+> +static struct platform_driver acpm_clk_driver __refdata = {
+
+__refdata feels wrong here. There is a long standing issue with Samsung
+clock drivers - I sent a patchset for that but it did failed testing.
+
+But your code is even simpler - no CLK_OFDECLARE - so why is this refdata?
+
 
 Best regards,
 Krzysztof
