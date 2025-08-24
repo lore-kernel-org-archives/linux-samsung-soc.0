@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30F22E1EFC;
-	Sun, 24 Aug 2025 18:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8162E0928;
+	Sun, 24 Aug 2025 18:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058938; cv=none; b=kVuOt3+jObYwtVWStQ5Ug4Ocxl/ocRk+6ct2hLbzxG67BJXK31gi2H+aPnTdlHWeeEOlo8ZRCB2iKcyF2t2mhrCnzC9H8mqZhkt1ycshrWs5F4r6cj4cMP7xQFefPiJSwqacUwUoBNZfj0C9AIop6uAQIrPDWH0LLPosoHw/ldA=
+	t=1756058943; cv=none; b=dpDjxBm2fbF0ghA8QJSyguuWIA6r1xyNKd7pTTGQ0FI5K7BJzyJ+cwM2HCXX4YB/cgYuST7y7cxpwOGJARliJGDtCBq8JX4kWvP1ySz2vT8aB/yr0eMDwr0JNLtRJk3qn0yTTo6EhOY5y6Y2Q4xT7njK3DZ+rzNfM9e/EZ6smNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058938; c=relaxed/simple;
-	bh=umSWfjb0DeNRj76EhSEDH+9yf9Ho17weEZf8IVkMMHw=;
+	s=arc-20240116; t=1756058943; c=relaxed/simple;
+	bh=C2PJV2yfHtKCww4nJMYQFz7mbBK02PRR3JX5m8Cqrus=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pzd8H3aTE7Eh1lhlyT9EMMdpGaKIiYO9MF7ynnwetOSwJmZPBaGmISmrFq0cOWe+A4fFwCT6dMw1mEnqcFmjNxa+3znZdsOY+w9F9SHBMVGztb0KJ4KMTZUJusdR8I4FLMGPw/Qlm2t+Ls9Kh5/aoAOo8/UOkz8giqHbJpre2b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdb2TdsB; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=cngog/sHJTyPXaPq+EOjwMv5bM0F4nsceH7IUy33aoUlPjWT9WH/zQ/dH2MOUA1QZGP/rxuGR0vKpB1/h1Y8S5Ebq7HIUL7gO3HemacXkqYG7uRb78SvVZNW1ZmGp7ZvBkyj7YJmP/DwR6a63b2QMTah9xyEykFsTvQOUeleL9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufe4bkjQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdb2TdsB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CD2C4CEEB;
-	Sun, 24 Aug 2025 18:08:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufe4bkjQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 257ABC116B1;
+	Sun, 24 Aug 2025 18:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058938;
-	bh=umSWfjb0DeNRj76EhSEDH+9yf9Ho17weEZf8IVkMMHw=;
+	s=k20201202; t=1756058942;
+	bh=C2PJV2yfHtKCww4nJMYQFz7mbBK02PRR3JX5m8Cqrus=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sdb2TdsBUzB87L+57Uj73zfJA9WbnICffrdUV4toJEf3b072FbnO/zWBlq5UdjC0A
-	 4OigGIJxOGzC9wqOFGYhhqszbIJHfVqR7bOViIyFxyK58TZwauhR6d3IzYPNhWESgB
-	 uj/icIIcoiZArv9W8J5EhtooCCJZTTw5lzoWIAOLL8z98AOT3B5fW9G6cVvc3+JKMd
-	 eNQQmWLuleZxp+rz8gBkYBkpzD//OrUAAXSkUxqMRf+Uiiy1cMF9Y24UYZQXpfApnp
-	 9VSlz1U/NZvgKwlt83eaIkSyNx+K8DvFwzSMeNTdJeZBjqKHvD7MlSIl2JuTgRBFkJ
-	 eY2CkrzFjmSmw==
-Message-ID: <aafe8482-7017-47e8-b035-7adc49e69a06@kernel.org>
-Date: Sun, 24 Aug 2025 19:00:52 +0200
+	b=ufe4bkjQejooZua/NUHBmxvYak4gljv5eCIJytQ1jRmXPx+cE7dMU2NytlykjOANW
+	 XUx2scPvpTMR4wC8IMB3jT50xauDxYH/tlGOFCoMMJE2pZRWY2dHaKGh+YqYsGUBzA
+	 UE6Yz2v7ZK9pf8T25//N+v3zNLCIycz/LnLFOfzbREUOdN8A+b+xs8oHl3DNfqt3m1
+	 1/mXfp8ogY7CTYXqMddsc7YVRha37r+X5/5z8SBy1IK483vH4wTV9IWyXriLV79N1m
+	 mcwE6qibhVBjDTbgIAerP088pw2mR/GNIrRdBv06cHC6dGl+BHrEy9hm6Gm69BYlKI
+	 UZM9dDoBLTNKg==
+Message-ID: <0e7651c5-e624-4d91-8939-db39d72d79b6@kernel.org>
+Date: Sun, 24 Aug 2025 19:01:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: enable Exynos ACPM clocks
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org
-Cc: peter.griffin@linaro.org, andre.draszik@linaro.org,
- willmcvicker@google.com, kernel-team@android.com,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250819-acpm-clk-defconfig-v1-1-70f5963ef90a@linaro.org>
+Subject: Re: [PATCH 2/3] arm64: dts: exynos: gs101: add CPU clocks
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
+ <20250819-acpm-dvfs-dt-v1-2-4e38b95408c4@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,24 +92,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250819-acpm-clk-defconfig-v1-1-70f5963ef90a@linaro.org>
+In-Reply-To: <20250819-acpm-dvfs-dt-v1-2-4e38b95408c4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/08/2025 14:21, Tudor Ambarus wrote:
-> Enable the Exynos ACPM clocks driver. Samsung Exynos platforms
-> implement ACPM to provide support for clock configuration, PMIC
-> and temperature sensors.
+On 19/08/2025 14:10, Tudor Ambarus wrote:
+> The GS101 CPU clocks are exposed through the ACPM protocol. Add them.
+
+"Add GS101 CPU clocks exposed through ...".
+
 > 
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
-> The patch should go through the Samsung SoC tree.
-> 
-> The driver is proposed at:
-> https://lore.kernel.org/linux-samsung-soc/20250819-acpm-clk-v1-0-6bbd97474671@linaro.org/
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-
-Please send it with above patchset - it target's same maintainer: me.
 
 Best regards,
 Krzysztof
