@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8162E0928;
-	Sun, 24 Aug 2025 18:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11D92E0928;
+	Sun, 24 Aug 2025 18:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058943; cv=none; b=dpDjxBm2fbF0ghA8QJSyguuWIA6r1xyNKd7pTTGQ0FI5K7BJzyJ+cwM2HCXX4YB/cgYuST7y7cxpwOGJARliJGDtCBq8JX4kWvP1ySz2vT8aB/yr0eMDwr0JNLtRJk3qn0yTTo6EhOY5y6Y2Q4xT7njK3DZ+rzNfM9e/EZ6smNk=
+	t=1756058946; cv=none; b=AzED8HqXCOKsuAQXGlcCc0t1toC/ndNiJG5LJuODM/AmFwcj9WN3HxJzbC0Ck/i5u3lvV9R7brdb4ww0tu4jquqN1kBISWMzwzixAdtzTbamZWHxPT/7cOKhs9RZgqsggyJeES3hLnwRR5r50abl+aVpVs1rJr+IEN6B06DMTYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058943; c=relaxed/simple;
-	bh=C2PJV2yfHtKCww4nJMYQFz7mbBK02PRR3JX5m8Cqrus=;
+	s=arc-20240116; t=1756058946; c=relaxed/simple;
+	bh=g0ilQfX+/tsXpJe+/dm6xg4GYotqHJ7yh3Hp5H7k3BU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cngog/sHJTyPXaPq+EOjwMv5bM0F4nsceH7IUy33aoUlPjWT9WH/zQ/dH2MOUA1QZGP/rxuGR0vKpB1/h1Y8S5Ebq7HIUL7gO3HemacXkqYG7uRb78SvVZNW1ZmGp7ZvBkyj7YJmP/DwR6a63b2QMTah9xyEykFsTvQOUeleL9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufe4bkjQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=sdEFp/xuUfvyN6DsHg1kiRGqQ6YxTCXJ0ILjoGma/l1wAzFbmSGsRIsMTlFuVGKx+ZivB+N5D+d4oQCXhxtw+boQdfd0RkqfXR52iZ3QsdLoWHpBjf1UhgnnvQZ3P1g1B39qqVjbcgGCheiNM/pMtDKoXb5zcoYLBqjenGSKE40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYORHDT1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufe4bkjQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 257ABC116B1;
-	Sun, 24 Aug 2025 18:08:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYORHDT1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A928C116B1;
+	Sun, 24 Aug 2025 18:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058942;
-	bh=C2PJV2yfHtKCww4nJMYQFz7mbBK02PRR3JX5m8Cqrus=;
+	s=k20201202; t=1756058946;
+	bh=g0ilQfX+/tsXpJe+/dm6xg4GYotqHJ7yh3Hp5H7k3BU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ufe4bkjQejooZua/NUHBmxvYak4gljv5eCIJytQ1jRmXPx+cE7dMU2NytlykjOANW
-	 XUx2scPvpTMR4wC8IMB3jT50xauDxYH/tlGOFCoMMJE2pZRWY2dHaKGh+YqYsGUBzA
-	 UE6Yz2v7ZK9pf8T25//N+v3zNLCIycz/LnLFOfzbREUOdN8A+b+xs8oHl3DNfqt3m1
-	 1/mXfp8ogY7CTYXqMddsc7YVRha37r+X5/5z8SBy1IK483vH4wTV9IWyXriLV79N1m
-	 mcwE6qibhVBjDTbgIAerP088pw2mR/GNIrRdBv06cHC6dGl+BHrEy9hm6Gm69BYlKI
-	 UZM9dDoBLTNKg==
-Message-ID: <0e7651c5-e624-4d91-8939-db39d72d79b6@kernel.org>
-Date: Sun, 24 Aug 2025 19:01:42 +0200
+	b=cYORHDT1EcCVhK+jIa47dA1py4lK3SaU7oZxMBVxZ5k6HS2X5nhIKSTPRyL/HZxlE
+	 v1C49Hjmg1HYxFbwkMzStqUD9scByM8CrMC/5CHHpEiI5Y6s52Lpj68+c7BYxAR1E8
+	 EgZ7mBt5CtXlGWvswvqgdt6oyIIsTAb7l65TDk6YaCmkIkxt0MWmq8/zan33Ux97BV
+	 UJwbhUzF6aACPpUgSXdc3uexK506UUpseFgNY/jJyF0pLPXRsAxU01tv6ax2KdlvvL
+	 FSAu5AlROFUy6M6hu3ZS6q4mqp2pnJdPhzC72Cl+jsrsrUBjtv7Zlv7y8j1lfRPWfE
+	 t8fDhUp+3uWRg==
+Message-ID: <ded0bf9a-29f1-40c5-9b55-a4c7dcb2b439@kernel.org>
+Date: Sun, 24 Aug 2025 19:02:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: exynos: gs101: add CPU clocks
+Subject: Re: [PATCH 1/3] arm64: dts: exynos: gs101: add
+ google,gs101-acpm-dvfs-clocks
 To: Tudor Ambarus <tudor.ambarus@linaro.org>,
  Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
@@ -46,7 +47,7 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  willmcvicker@google.com, kernel-team@android.com
 References: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
- <20250819-acpm-dvfs-dt-v1-2-4e38b95408c4@linaro.org>
+ <20250819-acpm-dvfs-dt-v1-1-4e38b95408c4@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,21 +93,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250819-acpm-dvfs-dt-v1-2-4e38b95408c4@linaro.org>
+In-Reply-To: <20250819-acpm-dvfs-dt-v1-1-4e38b95408c4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 19/08/2025 14:10, Tudor Ambarus wrote:
-> The GS101 CPU clocks are exposed through the ACPM protocol. Add them.
-
-"Add GS101 CPU clocks exposed through ...".
-
+> Define the clocks exposed by the ACPM interface.
 > 
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+This will need changes as discussed in the bindings.
 
 Best regards,
 Krzysztof
