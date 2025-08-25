@@ -1,143 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F69A1EA80;
-	Mon, 25 Aug 2025 12:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F97192B84
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2025 12:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756125351; cv=none; b=SYtZzFoUzpAMVWDI8QH0glQj0BOjNnbfHr6+0lNYZue7AeyZQOEZa/GQ+aa6t+57UoBF8nJNIlJddc0DmFDir4Z1Km8iw13FIl6kGlnAlEJTeRy84El9BXObfmmnmkOp47rlxm3MzWY+WelxLetZkWur4c1Hoe9qenPRairD+Tc=
+	t=1756125979; cv=none; b=Ajlsu385gGlKZs1adF2NVKxcLemkRFKzbb3Omwi2b8F/U5wZA4vvmVEkj5+i+6Z6cS8uomVUGVk0y1VEOvgu0LdyE94GHsVZRcLjiX1YI7StMozafjzq/8b7/5QklUuIly2YPJiwgAsdf6DL5cyTdc08Tisw1PzOvfmmZerMKaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756125351; c=relaxed/simple;
-	bh=fmN28Z7k3cJ+qxMZZAzmNiA/6SfCbZNCaKzsLonyu54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OEB6TMbIW5DWk/mQXygNVYRg5wDSorx8zar+TH40rdCojZ6wLc3KI5GI9D8U9WAAJpBkJcmmnOAm1C+ULfEQxV6UIkWUfWgtecrshjrR8t/OF0Rq+guBNdcpbZ3dQmvFbIWKoWUW87qmdwmAGtejFI4546/qq1r0aPmeESeRLU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epxunTyL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756125979; c=relaxed/simple;
+	bh=NFA7Rip9aCBxNZXcfUwWfEWkPVvY2cnDcsKyD6aZzXw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=loTmRyQgG4UQe9vYrAypCCJxU7nXw8rYQw0Lksj+iRknnz9kdysNYEbLUXWeQyMGFmq7jkNWYK33V5e2wZfe+HkYL6YB3rN+hxwF4+kLOdrkhkz0HrLdnSR/X3Cbf1w1tjgIs3pIFFH5k4J/fALSohpUBi4GroLScce0IwKLhOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=V6MeUGkm; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epxunTyL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD804C116B1;
-	Mon, 25 Aug 2025 12:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756125350;
-	bh=fmN28Z7k3cJ+qxMZZAzmNiA/6SfCbZNCaKzsLonyu54=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=epxunTyL3Kp9VyNJi+WFwLKIWblbHlFMrBxZzAti1/oIGlif00+z1vOX/iMjA/l87
-	 E5mqD0NEYI6U1Hi20Q9NJEO1foLXNjbeG6HW5x2Qph6A+SjG4smIq0UqrQRNyogT1s
-	 SUOPAqZSXz4y9hIA6yAkyVpEjjKwT9AdnZAQ4wATn7yO596QMLEO4so0xRG9PCAd4B
-	 ZajHled9mQVRN2DxyM0yaChXDNHrbCpj2Sr5Arg/wEhjdnwTXrXmE3I+FwPC1voYc0
-	 zYVz9VFhlZjls2xyW/C7bkL1IjgMTRepY4Lx3hxCzaN0/PSFB0pcHGTYh+uxUA08Pq
-	 WUqmRBJfm53nw==
-Message-ID: <db692853-a43c-4a4a-9a07-a7485bc9fdb9@kernel.org>
-Date: Mon, 25 Aug 2025 14:35:41 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="V6MeUGkm"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250825124616epoutp01fd54206fe70a7029b4a57a1e0942d243~fA0VVY0wO3234832348epoutp01f
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2025 12:46:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250825124616epoutp01fd54206fe70a7029b4a57a1e0942d243~fA0VVY0wO3234832348epoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756125976;
+	bh=B3ggiGG3zGwf6IwROz+KzPW9tQZQRZy1LRUC1d2oO7M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=V6MeUGkmsrAeOtXmXencbUG3LWQKsujjNiIvmQ0U0GcTarAlfFOtZ9oEOI5oUawEI
+	 09MZ9QmBOwb4nSuIoQXswuhngUcu/w0Tvs1f5J2we0U8PH7sf49EMNNIMTnQ4/cJmi
+	 gGp3gB6rXhx3Ar/gz8NFWoZUYyqKMEp1Msg7CUNA=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250825124614epcas5p2ae7004efd1bd437a7c96737bb944d2df~fA0T3T3Eb0139601396epcas5p2h;
+	Mon, 25 Aug 2025 12:46:14 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c9VsK3Nzhz3hhT4; Mon, 25 Aug
+	2025 12:46:13 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250825124612epcas5p1bd59a975b75029ee366a424379ad6dee~fA0SV3_FU1396413964epcas5p1g;
+	Mon, 25 Aug 2025 12:46:12 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250825124608epsmtip2bfc35ca4c6d5c979e37d4c4cca04ef7c~fA0Oi-Efs2384823848epsmtip2R;
+	Mon, 25 Aug 2025 12:46:08 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <4af38093-007e-4bfc-8439-0c3dc84012d8@kernel.org>
+Subject: RE: [PATCH v2 12/12] media: fsd-csis: Add support for FSD CSIS DMA
+Date: Mon, 25 Aug 2025 18:16:07 +0530
+Message-ID: <016201dc15be$3d032ca0$b70985e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/10] Add support for the Axis ARTPEC-8 SoC
-To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
- tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
- gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
- smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
- dj76.yang@samsung.com, hypmean.kim@samsung.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <CGME20250825120654epcas5p17bdbd92679d2b4c0f0c9bbb348163c0b@epcas5p1.samsung.com>
- <20250825114436.46882-1-ravi.patel@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250825114436.46882-1-ravi.patel@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQLOIzgLAmiUCqAC0LEeUQJu3YaUAdjFWtWyVbegcA==
+Content-Language: en-in
+X-CMS-MailID: 20250825124612epcas5p1bd59a975b75029ee366a424379ad6dee
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141103epcas5p14516cbe45c21d28ba9e231da99940aa1
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141103epcas5p14516cbe45c21d28ba9e231da99940aa1@epcas5p1.samsung.com>
+	<20250814140943.22531-13-inbaraj.e@samsung.com>
+	<b1f59033-12d0-4395-85f1-e296a5dbca5f@kernel.org>
+	<00e301dc1424$033ed5a0$09bc80e0$@samsung.com>
+	<4af38093-007e-4bfc-8439-0c3dc84012d8@kernel.org>
 
-On 25/08/2025 13:44, Ravi Patel wrote:
-> List of Samsung-provided IPs:
-> - UART
-> - Ethernet (Vendor: Synopsys)
-> - SDIO
-> - SPI
-> - HSI2C
-> - I2S
-> - CMU (Clock Management Unit)
-> - Pinctrl (GPIO)
-> - PCIe (Vendor: Synopsys)
-> - USB (Vendor: Synopsys)
-> 
-> List of Axis-provided IPs:
-> - VIP (Image Sensor Processing IP)
-> - VPP (Video Post Processing)
-> - GPU
-> - CDC (Video Encoder)
-> 
-> This patch series includes below changes:
-> - CMU (Clock Management Unit) driver and its bindings
-> - GPIO pinctrl configuration and its bindings
-> - Basic Device Tree for ARTPEC-8 SoC and boards
-> 
-> The patch series has been tested on the ARTPEC-8 EVB with
-> Linux v6.15-rc5 and intended to be merged via the `arm-soc` tree.
-> 
-> ---
-> Changes in v3:
-> - Rebased patchset on linux-samsung-soc "for-next" branch which includes round_rate() drop
-> - Add CPU mask in dtsi patch #8
-> 
-> Link to v2: https://lore.kernel.org/all/20250821123310.94089-1-ravi.patel@samsung.com/
 
-Thanks for v2. Just a note: due to OSSE 25 I will look at it at a later
-time, probably next week.
+Hi Krzysztof,
 
-Best regards,
-Krzysztof
+> >> Even more questions why?
+> >
+> > If CONFIG_PM is enabled, the clocks are enabled manually in the driver
+> > through fsd_csis_runtime_resume API.
+> >
+> > If CONFIG_PM is enabled, the clocks are managed through the PM runtime
+> > framework.
+> >
+> > Can you please help me understand what wrong here?
+>=20
+> I think I see such code for the first time, so wrong is doing something
+> common in completely unusual way.
+>=20
+
+Driver should ensure a device can be also used normally when runtime
+PM is disabled. So enabling clocks manually in probe, if CONFIG_PM is
+disabled.
+
+A Couple of other drivers also doing it in same way
+drivers/media/platform/nxp/imx-mipi-csis.c and=20
+drivers/media/platform/samsung/exynos4-is/fimc-core.c
+
+> >
+> > I'll fix in next patchset.
+> >
+> >>> +
+> >>> +	ret =3D fsd_csis_async_register(csis);
+> >>> +	if (ret)
+> >>> +		goto err_media_cleanup;
+> >>> +
+> >>> +	return 0;
+> >>> +
+> >>> +err_media_cleanup:
+> >>> +	fsd_csis_media_cleanup(csis);
+> >>
+> >> Also this...
+> >>
+> >
+> > if fsd_csis_media_init fails, the cleanup is handled internally.
+>=20
+> What does it mean internally?
+
+I mean that in case fsd_csis_media_init fails, the cleanup of resources is =
+handled
+Within the same function itself.
+
+>=20
+> > Here, cleanup is used only for fsd_csis_async_register failure.
+> >
+> > can you please help me understand what is wrong here?
+>=20
+> Yeah, you leak clock resources.
+
+I'll fix in next patchset
+
+Regards,
+Inbaraj E
+
