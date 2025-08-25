@@ -1,163 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC802EAB6A;
-	Mon, 25 Aug 2025 11:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676292D0610
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2025 11:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756121970; cv=none; b=jptS9MF9BKkDH0LL2OTRZuCFMjkxwme+hb/KvXwpXTiYRM+acsyPKzGQVozSA5X8sycJ5VzTNT06z8vhakOb6MUalYTJOtI7ZYVr3yWaT2+U7QVVxLWM6ZQebjAcG/trJnnMJHLNkxcgAXO7DIt3kEfNXgv63bHo4XBfHoNi1zM=
+	t=1756122908; cv=none; b=O9+c5yDDOROiyVr9qDDyTYtAlf6eYXGdGDDbm+3e8ijds65qFVaSggRgKlkER14ynlES/pMhAjLdaR4U4vWOf25+2oofLR92t8MFub/sGiQUV/gPmiUjwyNDMWuSnJAWACI2PRlIPFYe+m4c5/6jNhCrglspVnQbuLdiqmh2G5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756121970; c=relaxed/simple;
-	bh=7GO8Jac/WHBeZjLJm6fIwvfWXASWj8xYr2ROiPzF9aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fK/y0HpCGkdx88TdwbvQtZed8vLcvPpxj2rmuIG/cfScbPN8TNbuLfSyrS/5aCXnH8gkeL/MeOP+BvCqxslTfeS5djU1dyf83zJ5k1VMAxEjUNtZV+iF1tXad026fsBw8AhAeBiGeNQsjIYRg6NdeYK5N7NJZAar6uZxcUVrrO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwfu8tca; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756122908; c=relaxed/simple;
+	bh=t4a7zrF0Xr2ClAN6pV1FixF/O//yC/uzplxDHLALIK4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=qQ0lYbaCXRVEkyPA5eP+CrTIWshPvKeF6Pif625D7WQbSVlUGV5ERcTznPSUEQP4KESZ/aNKWKfjrYheC6u9O+37NfIV0zo6dATSA1zfnMpkAosyRek3rQa8byo05FWE+msrYMneXnSbATOSoMGsLxhaa4Yo1Yzjj4HLuyf17N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CI6X0S/J; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwfu8tca"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0328DC4CEED;
-	Mon, 25 Aug 2025 11:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756121970;
-	bh=7GO8Jac/WHBeZjLJm6fIwvfWXASWj8xYr2ROiPzF9aw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iwfu8tcaJGUohZ1xHZUMJowvML3G8NY+bdjH9VfIzuIhdm5y42l5Ande4p8TWQ1Lx
-	 gmEgz/P9aAafKnlQrJlUWyXYAcAqj+I4CwQxT5qle6VRvEQQRxr0+RgQm0NHLhQo+s
-	 Df9HLsaYXPKqsW2AdXzaD9NpxoM4DA2QAgFzLpaOMDBsX6yuwpDpi+OjdaQDCPhNri
-	 HgkWVFk67uDHuGhqaclhyjdCY9mCxc93vBEI75XUrAlrJS0oIyFvBfwM06WakAkS4Q
-	 XzpIrftTP3tJJwESpsBNigK4l0dfZoHYX7RcTRyN5KZ04FBbC5d2mwlPahqF+W9ZUU
-	 xnUQcc7EWJuFA==
-Date: Mon, 25 Aug 2025 12:39:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Ray
- Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen
- <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Cai Huoqing <cai.huoqing@linux.dev>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Andreas Klinger <ak@it-klinger.de>, Crt
- Mori <cmo@melexis.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 00/10] iio: Drop unnecessary -ENOMEM messages
-Message-ID: <20250825123919.3c228ef7@jic23-huawei>
-In-Reply-To: <20250825093150.3ba23f2a@jic23-huawei>
-References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
-	<20250825093150.3ba23f2a@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CI6X0S/J"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250825115504epoutp033fd8c82cb30aafb4528bcee4cabc3770~fAHotghpc2429824298epoutp03b
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2025 11:55:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250825115504epoutp033fd8c82cb30aafb4528bcee4cabc3770~fAHotghpc2429824298epoutp03b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756122904;
+	bh=t4a7zrF0Xr2ClAN6pV1FixF/O//yC/uzplxDHLALIK4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=CI6X0S/Jsv7Kjb6cHe/Y/TBFcxIENb+lsuEYgQ8sV+JGy+RCHJ/rp+AsYvgFCc83y
+	 4sO2ljNm/Q0wTFqR+1D27EXtXh6nABLvgDnA9Nr53VP6mqr+LExS6QbtiXkhGwKL8o
+	 hnztLPGBbBtRKWtnpraFI8mrEMHAsfLjRXvesLoc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250825115503epcas5p3cfb8d3f909e3d377f5e0ff6166178520~fAHoFByz-3077330773epcas5p37;
+	Mon, 25 Aug 2025 11:55:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c9TkG5JQ2z2SSKZ; Mon, 25 Aug
+	2025 11:55:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250825115502epcas5p4279b95596caf95a26b0d5c6ccec726e9~fAHmgL5x80820308203epcas5p4B;
+	Mon, 25 Aug 2025 11:55:02 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250825115457epsmtip13e6a6a0580ea03ee165871a0c3831561~fAHinOYHh0161601616epsmtip1X;
+	Mon, 25 Aug 2025 11:54:57 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <322df419-10fb-412c-9c3f-7493d9a58670@kernel.org>
+Subject: RE: [PATCH v2 11/12] arm64: defconfig: Enable FSD CSIS DMA driver
+Date: Mon, 25 Aug 2025 17:24:56 +0530
+Message-ID: <015901dc15b7$16a67b40$43f371c0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQHrKQRZAj9O8PIBXjI9/wIrSUI/Adz/j96ya6VQEA==
+Content-Language: en-in
+X-CMS-MailID: 20250825115502epcas5p4279b95596caf95a26b0d5c6ccec726e9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141057epcas5p21ca33641e42164886dc1bf404237876d
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141057epcas5p21ca33641e42164886dc1bf404237876d@epcas5p2.samsung.com>
+	<20250814140943.22531-12-inbaraj.e@samsung.com>
+	<1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
+	<00d401dc13d2$65033080$2f099180$@samsung.com>
+	<322df419-10fb-412c-9c3f-7493d9a58670@kernel.org>
 
-On Mon, 25 Aug 2025 09:31:50 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+Hi Krzysztof,
 
-> On Fri, 22 Aug 2025 09:19:48 +0530
-> Dixit Parmar <dixitparmar19@gmail.com> wrote:
-> 
-> > The drivers do not require their own error messages for error
-> > -ENOMEM, memory allocation failures. So remove the dev_err
-> > messages from the probe().
-> > With these patches, all the iio drivers now has uniform handling
-> > of the -ENOMEM while device_allocation and trigger_allocation
-> > calls.
-> > 
-> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>  
-> Series looks fine to me, after the minor tweaks to commit messages
-> that Andy requested.  However as it touches a lot of drivers
-> I'd like to leave it on list a little longer.
+=2E
+> >
+> > I noticed that Exynos and NXP driver configs are added in the defconfig=
+.
+> > Could you please clarify why I shouldn't add my driver config in defcon=
+fig?
+>=20
+> No, I gave you rationale why your commit description is poor.
 
-I changed my mind after taking the dev_err_probe() series earlier.
-I'm rather too busy at the moment, so clearing this out now will reduce
-what I need to keep track of.
+I'll update the commit description in next patchset.
 
-Fixed up the () that Andy asked for in commit messages and applied
-to the togreg branch of iio.git, pushed out initially as testing.
+>=20
+> Best regards,
+> Krzysztof
 
-There is still the rest of the week (probably) in which I can add
-tags etc if anyone wants to give them before I push that out as
-a non rebasing tree.
-
-Thanks,
-
-Jonathan
-
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> > Dixit Parmar (10):
-> >       iio: accel: Drop unnecessary -ENOMEM messages
-> >       iio: adc: Drop unnecessary -ENOMEM messages
-> >       iio: dac: Drop unnecessary -ENOMEM messages
-> >       iio: health: Drop unnecessary -ENOMEM messages
-> >       iio: humidity: Drop unnecessary -ENOMEM messages
-> >       iio: light: Drop unnecessary -ENOMEM messages
-> >       iio: potentiostat: Drop unnecessary -ENOMEM messages
-> >       iio: pressure: Drop unnecessary -ENOMEM messages
-> >       iio: proximity: Drop unnecessary -ENOMEM messages
-> >       iio: temperature: Drop unnecessary -ENOMEM messages
-> > 
-> >  drivers/iio/accel/bma220_spi.c      | 4 +---
-> >  drivers/iio/accel/dmard06.c         | 4 +---
-> >  drivers/iio/accel/dmard09.c         | 4 +---
-> >  drivers/iio/accel/dmard10.c         | 4 +---
-> >  drivers/iio/accel/mc3230.c          | 4 +---
-> >  drivers/iio/accel/mma7660.c         | 4 +---
-> >  drivers/iio/accel/stk8312.c         | 4 +---
-> >  drivers/iio/accel/stk8ba50.c        | 4 +---
-> >  drivers/iio/adc/ad7949.c            | 4 +---
-> >  drivers/iio/adc/bcm_iproc_adc.c     | 4 +---
-> >  drivers/iio/adc/cpcap-adc.c         | 6 ++----
-> >  drivers/iio/adc/da9150-gpadc.c      | 5 ++---
-> >  drivers/iio/adc/dln2-adc.c          | 9 +++------
-> >  drivers/iio/adc/exynos_adc.c        | 4 +---
-> >  drivers/iio/adc/imx7d_adc.c         | 4 +---
-> >  drivers/iio/adc/imx8qxp-adc.c       | 4 +---
-> >  drivers/iio/adc/mxs-lradc-adc.c     | 4 +---
-> >  drivers/iio/adc/palmas_gpadc.c      | 4 +---
-> >  drivers/iio/adc/rn5t618-adc.c       | 4 +---
-> >  drivers/iio/adc/stm32-dfsdm-adc.c   | 4 +---
-> >  drivers/iio/adc/stmpe-adc.c         | 4 +---
-> >  drivers/iio/adc/ti-adc084s021.c     | 4 +---
-> >  drivers/iio/adc/ti-ads131e08.c      | 8 ++------
-> >  drivers/iio/adc/ti_am335x_adc.c     | 5 ++---
-> >  drivers/iio/adc/twl4030-madc.c      | 4 +---
-> >  drivers/iio/adc/viperboard_adc.c    | 4 +---
-> >  drivers/iio/dac/ad5380.c            | 4 +---
-> >  drivers/iio/dac/ad5764.c            | 4 +---
-> >  drivers/iio/dac/ds4424.c            | 4 +---
-> >  drivers/iio/dac/ti-dac7311.c        | 4 +---
-> >  drivers/iio/dac/vf610_dac.c         | 4 +---
-> >  drivers/iio/health/afe4403.c        | 4 +---
-> >  drivers/iio/health/afe4404.c        | 4 +---
-> >  drivers/iio/humidity/am2315.c       | 4 +---
-> >  drivers/iio/humidity/dht11.c        | 4 +---
-> >  drivers/iio/light/stk3310.c         | 4 +---
-> >  drivers/iio/potentiostat/lmp91000.c | 4 +---
-> >  drivers/iio/pressure/dlhl60d.c      | 4 +---
-> >  drivers/iio/proximity/ping.c        | 4 +---
-> >  drivers/iio/proximity/srf04.c       | 4 +---
-> >  drivers/iio/temperature/mlx90632.c  | 4 +---
-> >  41 files changed, 47 insertions(+), 130 deletions(-)
-> > ---
-> > base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> > change-id: 20250822-enomam_logs-f66642957fb3
-> > 
-> > Best regards,  
-> 
-> 
+Regards,
+Inbaraj E
 
