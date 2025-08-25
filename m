@@ -1,57 +1,33 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4DD2FE07F;
-	Mon, 25 Aug 2025 15:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8415C1C84DE;
+	Mon, 25 Aug 2025 22:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756135167; cv=none; b=RlJTa6kbztsIu7ZuKxq1qiA+L5iXtMpFjSKqY8Dv0dE4ZV788t+E7P+HZRtr2pL7jussmm8f6XK0U5ObQjiUQCd7RhMrX/AZvbyewlIf95bRr3I0m7bxxdyuSRhcmsUIX16BazCbuu6GMnO83NAuSHnZERrIbtcmj1hojbU/9B8=
+	t=1756160639; cv=none; b=f2h3spRtkn2vsEM4C4FATPE2qI+2i7hL4WKYnGFnekgNY02x1u5bALm208tB0LZGyYYtyzVo3uBl4lBH96mljotOZnyj3o31pX39IGF519w5oWkoC6ILoLGp08Lg8Pmjh0BsrXH90XUpcZnHWNEdU3sxvpGP5AQDb7pyFFvskBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756135167; c=relaxed/simple;
-	bh=A7Ok+6x0nz7G/NXQZolAaahGwavoIJocShJSVNv4IUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLCaCRhPR0Y7QayP6YqnkJKSxc0V/zRFW77IGmVcxEwz6jADkL4fjvDGcfAn+we7Cin+l+FQHe+JDkkj3R83JcMskwXkSP6aBS7/3NGP0MEwXonFQOYSK/ADyMZSLqWLa9V84jNZNXvf+aXjIlOeTzs9LCgw9JQf622nkYi99cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=VUpZlwhP; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=duEdRiVj; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1756160639; c=relaxed/simple;
+	bh=C8dCcIKDdLsDA62THkA9YNFeAbhvDEtzivsFsYtysoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tGXY5uhHHeicUivdPPkMuJbDnPrgyvl7svEWl9kH8ICjdJomHVfJWsQdDXv6b+c82gKcXuaabvWy2SETQKd8fQbmcBlyPqLVa+vknJdAaq252X0vK5iIVTqjl27m+VGmNPIa9tscd0I6/jzZMdsDtM6tWpepnhy8SKpI2ZGwxRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFrzhgcp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="VUpZlwhP";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="duEdRiVj"
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 754A512FB9E1;
-	Mon, 25 Aug 2025 08:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1756135165; bh=A7Ok+6x0nz7G/NXQZolAaahGwavoIJocShJSVNv4IUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VUpZlwhPxWL3ebw/nnirosxs3Rjd5L7t/60O/HEV9YxrNt2siHqrlZaZDter3XKN8
-	 PsYY/F+uuzOxMUIrMLBnzxR2QSneGnJk3Mzpjtjkmr2fNqiymcDPhdiYuRWqL4Ne7k
-	 Khi1pAOAQp1g6nHWSv6Qmp2sfIx+7NpAN0IBLMTPHCIWRkkKbZnJAKboONlp8zNsaH
-	 UJj/PiwGVbX5uQ74V1aqDseWL5Z+FWFENTfXDe5Sg/K82P6tNRrlpd+cPN9H4oudfz
-	 2rDKHuXmgj/vzunHquSVHpf1HL4WLRMLz47qThVFat1+9OveTtQQKe7f77Ne+L/Nw2
-	 7EUZh/J1K+4yg==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 98egf3YSLU1r; Mon, 25 Aug 2025 08:19:24 -0700 (PDT)
-Received: from ketchup (unknown [117.171.64.92])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 41E5A12FB9E3;
-	Mon, 25 Aug 2025 08:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1756135163; bh=A7Ok+6x0nz7G/NXQZolAaahGwavoIJocShJSVNv4IUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=duEdRiVjwA2Ug0kAQ3mge4pcWDsoESpJ80SNf7IVWNzZZRpvm9evWQaowfkmCkZ+a
-	 oQWfjuZ+IzKzxlNrb09/4ZRdSpGOXBG+6YisKkS1cb/wksihSBhCJJk+lYXYFU6oxF
-	 QU4EAvZTzJ1PC9QsR6agnYj/+z7cC1L7x2Cd1zufggZRqATeTKyn2StZ/7c8atpREJ
-	 w5ronVaZKmRKyj14LxpKmy7ZO75UbpRAqllX4O/IomGBw8vJLF87Rs4pk9IwW+zy2D
-	 NLRc9ZoreAMYv1VcszhcTWaeSAmCBma/XwUAUK2WeCTsX+8xnzC7csZqc2FKwbuYL/
-	 P0JKnwjGbGeJg==
-Date: Mon, 25 Aug 2025 15:18:57 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFrzhgcp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2B5C4CEED;
+	Mon, 25 Aug 2025 22:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756160639;
+	bh=C8dCcIKDdLsDA62THkA9YNFeAbhvDEtzivsFsYtysoQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eFrzhgcpB4xSQ+04CnDToPC6BbaXLfZhYIA5I/BavZfky4LVkNeiBm33bKCwjfNMR
+	 7Xb6TL3pLhbQUnBSeoZywHVCHtHEMtbySuCz757jR5LLWGzGIAWc2BOMQnJKu/GTDD
+	 OqBmH7dyMmZk1RARABrqGFKsw9O9AnWfe1iHh5N4qj7JtCSjVfAJPlNBoDQzAapk03
+	 krEs+vWhYgzabnk0EG5oW4LBwfNFqc1Pw+++S7/1krPhye3Fbxfwd3gAuIyFq598JK
+	 pyPcrlbN+zCcku+7kEqoKnQ115oGGgQBsZT2rIXqlg87fc1FYNe8a8EqRPk1p8C1S+
+	 DRCnOZhIQCHAQ==
+From: Yixun Lan <dlan@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Sudeep Holla <sudeep.holla@arm.com>,
 	Cristian Marussi <cristian.marussi@arm.com>,
@@ -74,23 +50,25 @@ To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
 	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Samuel Holland <samuel.holland@sifive.com>,
-	Yixun Lan <dlan@gentoo.org>,
 	Steen Hegelund <Steen.Hegelund@microchip.com>,
 	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+	UNGLinuxDriver@microchip.com,
+	Orson Zhai <orsonzhai@gmail.com>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	Chunyan Zhang <zhang.lyra@gmail.com>,
 	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
 	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Michal Simek <michal.simek@amd.com>,
 	Maxime Ripard <mripard@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
 	Manivannan Sadhasivam <mani@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
 	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
 	Neal Gompa <neal@gompa.dev>,
 	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
 	Max Filippov <jcmvbkbc@gmail.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
@@ -108,49 +86,72 @@ To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+	Qin Jian <qinjian@cqplus1.com>,
+	Viresh Kumar <vireshk@kernel.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Alex Helms <alexander.helms.jy@renesas.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Liviu Dudau <liviu.dudau@arm.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
-	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Brian Masney <bmasney@redhat.com>
+Cc: Yixun Lan <dlan@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	patches@opensource.cirrus.com,
+	linux-actions@lists.infradead.org,
+	asahi@lists.linux.dev,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Subject: Re: [PATCH 051/114] clk: spacemit: ccu_pll: convert from
- round_rate() to determine_rate()
-Message-ID: <aKx-4bkkOeVi7j82@ketchup>
+	linux-samsung-soc@vger.kernel.org,
+	soc@lists.linux.dev
+Subject: Re: (subset) [PATCH 000/114] clk: convert drivers from deprecated round_rate() to determine_rate()
+Date: Tue, 26 Aug 2025 06:23:38 +0800
+Message-ID: <175616003525.79746.16402526303339008811.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-51-b3bf97b038dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-51-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 11:18:43AM -0400, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
-> 
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/spacemit/ccu_pll.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
 
-Reviewed-by: Haylen Chu <heylenay@4d2.org>
+On Mon, 11 Aug 2025 11:17:52 -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> various clk drivers using the Coccinelle semantic patch posted below.
+> I did a few minor cosmetic cleanups of the code in a few cases.
+> 
+> This series is broken up into several categories:
+> 
+> [...]
+
+Thanks, Applied to SpacemiT's SoC tree at "k1/clk-for-6.18" branch
+
+[049/114] clk: spacemit: ccu_ddn: convert from round_rate() to determine_rate()
+          https://github.com/spacemit-com/linux/commit/b4a7b0d2c4485d11d37dec721709660f3967efcf
+[050/114] clk: spacemit: ccu_mix: convert from round_rate() to determine_rate()
+          https://github.com/spacemit-com/linux/commit/56737edda7db58549550776092da12fe03600399
+[051/114] clk: spacemit: ccu_pll: convert from round_rate() to determine_rate()
+          https://github.com/spacemit-com/linux/commit/d02c71cba7bba453d233a49497412ddbf2d44871
+
+Best regards,
+-- 
+Yixun Lan
+
