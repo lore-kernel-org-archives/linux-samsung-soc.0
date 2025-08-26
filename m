@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44032FCC12;
-	Tue, 26 Aug 2025 08:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005962E2EFC;
+	Tue, 26 Aug 2025 08:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197325; cv=none; b=TDIe4CZJ4pgDPV36Bt9Ud1TyN4PQVFa3fTPNb1377cEOj2wJPy9/u2oHKChigrnRlfYHkQktEWbZx7twnYymJYegvC0yW8VCcOpNe8P7/Al2/j2CN9LLEmo8PmRP081a4Lc1pq9i/+uepb+69orZGWtkuwOmRvyj6nVQXTy/3GI=
+	t=1756197420; cv=none; b=LhOBTRZ7U9PLV6NKSPxFK+tzkhQG8P+rbJOH0fu4/S2zLAdf6ufOezUHkgDhLNGAsNtamxes4tFIYkPKVvDDdnHp8Vqe669eUNsKm8/5mu18Jq303ABQGvrBTUn/9oa36YfFwbC7Q2Gh4ZQQXGFq+58TRcjFeVRq7pmC9qDE3eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197325; c=relaxed/simple;
-	bh=nrG+katxORgoz1280zOJ1BjvEfsOXCrjgMG9haaiYo0=;
+	s=arc-20240116; t=1756197420; c=relaxed/simple;
+	bh=4SD5QVA66nkPCLV8uxwBD6c4YfUnBkJMxfemVXaiDpE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPZSnS4yCSjG9EAguETWMlBAMWEby5wrN4A2w9IZI2IZMv3IG1G5SGkD2fMNjkVyrNmM29jlHeeYqGZvfjtEUuqai6Pn49UHZ5DagYE0f7Lel9JGF32vq8Mmq4txwpY9HulG7kQZsb/dxaIesFaiWW0RKxivTCQBQ9mTq6Z5H3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0Nlq2+o; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EfetTbqaGCysQL3V+FzCxor/X7Ysbs1YbeCJk9MSOLi3dtjjhZpRfk4/qtGepU9ShegaVBqnVs4fB1zUCJoOSMLjzLsaHoyQ2GNsZ8VUA7YxqaWsagpC8skaQaUMWiqY0ya2DJDr0RWvMYOFauNyzAObmCF6KPIEKpD+MyNp8J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5uX0cvq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0Nlq2+o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B0BC4CEF1;
-	Tue, 26 Aug 2025 08:35:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5uX0cvq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353A6C4CEF1;
+	Tue, 26 Aug 2025 08:36:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756197325;
-	bh=nrG+katxORgoz1280zOJ1BjvEfsOXCrjgMG9haaiYo0=;
+	s=k20201202; t=1756197419;
+	bh=4SD5QVA66nkPCLV8uxwBD6c4YfUnBkJMxfemVXaiDpE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G0Nlq2+oVHJ6Cf52NPgTzUWVPenNhKHurD15yUf5QZrP3Iy1T8Bm4cBGvZBMcpvp0
-	 3gE6tdomwYIrKJRtAUGcKHVG33jNRRBHUiPUW3Y+qlCj/Frvulqsw/0hd51qaijzsT
-	 UmVsNItVGO6wcuLWiaFnD/xHb59dW6e3jIqL7zyaZHzcmci3Y6CXCx6yuum3xUfagL
-	 JsZEU4AhbnD88yNuDQFeuqa+jUJj/ahsSjoqT0IVJAIiVGW0xoss9/XBGu2HC0j4Md
-	 WtyiotIFbY3eC4K9KpolS/G49BwNc1a8Cm0XHFQ14DeHgiUqoqII6wnuW0PBhsjAPw
-	 j1oEEKb9ie3UQ==
-Message-ID: <83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
-Date: Tue, 26 Aug 2025 10:35:19 +0200
+	b=o5uX0cvqTiZPagMirmBUJw82WYLJkFI2pni4xXmay3je1ces7sKq//iuqOYu7VQRL
+	 tXxpsunPiBTNMNvBwbzfnq/CxgI3rH7IA8c/gofkkLQxX8hTm6RYrEj22M2D1yZQgu
+	 mwcWvFc4svv4NBgTmWW4Ka9lI+LK5JnecWBnqXmNlCLdWa7HdOzinw6UmUDDA7k+TN
+	 Nec56F6S4tg6vmunI3yn96FnF/LRZOZwdNGZjjdKH8+DlIomeiCbXXHTWUGHTqPtof
+	 wYzNYdzWxsd1ds4LUtEus6OKWf4DNQnOsqbxPV7Gf2pZinduZGDG192VOPvGs7KtNX
+	 jiWbqd4SXo71g==
+Message-ID: <1dfaedc8-88e6-4749-8726-e8f66878e57e@kernel.org>
+Date: Tue, 26 Aug 2025 10:36:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,24 +35,26 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo ssphy
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
- peter.griffin@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org,
- johan@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
- <CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
- <20250822093845.1179395-6-pritam.sutar@samsung.com>
- <20250824-rough-fresh-orangutan-eecb2f@kuoka>
- <007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+Subject: Re: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
+To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+ martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+ catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ ravi.patel@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
+ festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+ <CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
+ <20250814140943.22531-5-inbaraj.e@samsung.com>
+ <1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
+ <00d101dc136c$aa037020$fe0a5060$@samsung.com>
+ <41434afa-fecd-4507-bcca-735d358ac925@kernel.org>
+ <016401dc15c0$fc0dcfe0$f4296fa0$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,139 +100,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+In-Reply-To: <016401dc15c0$fc0dcfe0$f4296fa0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/08/2025 08:37, Pritam Manohar Sutar wrote:
-> Hi Krzysztof, 
+On 25/08/2025 15:05, Inbaraj E wrote:
+> Hi Krzysztof,
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 24 August 2025 02:26 PM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com;
->> andre.draszik@linaro.org; peter.griffin@linaro.org; kauschluss@disroot.org;
->> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
->> johan@kernel.org; m.szyprowski@samsung.com; s.nawrocki@samsung.com;
->> linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
->> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
->> ExynosAutov920 combo ssphy
->>
->> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote:
->>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
->>> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
->>> "phy" and "ref". The required supplies for USB3.1 are named as
->>> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
->>
->> Please do not describe the schema, but hardware. This sentence does not help
->> me in my question further.
-> 
-> This is a combo phy having Synopsys usb20 and usb30 phys (these 2 phys are totally different). 
-> One PHY only supports usb2.0 and data rates whereas another one does usb3.1 ssp+ and usb3.1 ssp
-> 	
-> This patch only explains about usb30 (since these are two different phys) phy and omitted inclusion of usb20 reference (added separate patch for this patch no 3). 
-> 	
-> Hope this is clear.
-
-No. That sentence still explains what schema is doing.
-
-BTW, wrap your email correctly.
-
-> 
->>
 >>>
->>> Add schemas for combo ssphy found on this SoC.
->>>
->>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->>> ---
->>>  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 23 +++++++++++++++++++
->>>  1 file changed, 23 insertions(+)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
->>> b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
->>> index f0cfca5736b8..96e5bbb2e42c 100644
->>> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
->>> @@ -34,6 +34,7 @@ properties:
->>>        - samsung,exynos7870-usbdrd-phy
->>>        - samsung,exynos850-usbdrd-phy
->>>        - samsung,exynos990-usbdrd-phy
->>> +      - samsung,exynosautov920-usb31drd-combo-ssphy
->>>        - samsung,exynosautov920-usbdrd-combo-hsphy
->>>        - samsung,exynosautov920-usbdrd-phy
->>>
->>> @@ -118,6 +119,12 @@ properties:
->>>    vdd18-usb20-supply:
->>>      description: 1.8V power supply for the USB 2.0 phy.
->>>
->>> +  dvdd075-usb30-supply:
->>> +    description: 0.75V power supply for the USB 3.0 phy.
->>> +
->>> +  vdd18-usb30-supply:
->>> +    description: 1.8V power supply for the USB 3.0 phy.
->>> +
->>>  required:
->>>    - compatible
->>>    - clocks
->>> @@ -227,6 +234,7 @@ allOf:
->>>                - samsung,exynos7870-usbdrd-phy
->>>                - samsung,exynos850-usbdrd-phy
->>>                - samsung,exynos990-usbdrd-phy
->>> +              - samsung,exynosautov920-usb31drd-combo-ssphy
->>>                - samsung,exynosautov920-usbdrd-combo-hsphy
->>>                - samsung,exynosautov920-usbdrd-phy
->>>      then:
->>> @@ -262,6 +270,21 @@ allOf:
->>>        properties:
->>>          dvdd075-usb20-supply: false
->>>          vdd18-usb20-supply: false
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - samsung,exynosautov920-usb31drd-combo-ssphy
->>> +    then:
->>> +      required:
->>> +        - dvdd075-usb30-supply
->>> +        - vdd18-usb30-supply
+>>> CSIS stands for Camera Serial Interface Slave.
 >>
->> Why are you adding usb20 and usb30 suffixes to the supplies? These are
->> separate devices, so they do not have both variants at the same time.
+>> Googling for "MIPI CSIS" gives me 0 results, so I still claim this is not a generic
+>> name.
 > 
-> This is a combo phy consisting of usb2 and usb3 phys combined. 
-> To drive these separate phys, added suffixes for these supplies respectively.
-
-But they are separate.
-
+> I checked other vendors (e.g: freescale), and they are using mipi-csi. I'll adopt for the
+> same.
 > 
-> Moreover, gs101 is also using similar convention for its usb20 and dp supplies. 
-> Added suffix for usb2 and usb3 as per our last communication https://lore.kernel.org/linux-phy/6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org/
+>
 
-Then please review patches on the list and help to improve them BEFORE
-they got merged.
-
-I questioned the suffix there, so I really do not understand why did you
-added it.
-
-> 
->>
->> From this device point of view, the supply is called dvdd075 or vdd18.
->> If you open device datasheet (not SoC datasheet), that's how it will be called,
->> most likely.
-> 
-> Yes, Agree. In device datasheet, suffixes are not mentioned, but in our board schematic it is mentioned. 
-> Let me know your suggestion about adding suffixes?
-
-I already said, multiple times on various discussions. You name these
-based on how the inputs are called in this device.
+Then it is just "csi"? Except that you have some other different nodes
+called "csi" as well, so two different devices are "csi"?
 
 Best regards,
 Krzysztof
