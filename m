@@ -1,66 +1,67 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3483F1C5496
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 12:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61F03128A2
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 12:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756299592; cv=none; b=LqPrN4fS63iHxPo/LLS8C5y4OM3LLXUUZqcQmUcCRPp9OVd5QLSckUqPYtfxOyDykwYGLz0drSbau+CxR3a/k1y8X1p0WL3ne297BZFczLKjhEHITCQ7vNl9+T+tkC0tapb8Lx8EZn0wrDfUqzhD47gAdFv4us6ROLMAW/Wd7Rk=
+	t=1756299594; cv=none; b=aUNA+SwQ+hCkcLtQxY6VF0X8e+AzP9jXuHtbdSV5VeXNsZfGdXES7R7+iV6nPR1VXQVLV7NSLejvLeKaL5jAzhGL/6icLFtbbaSpRvDZrI6yKoiVRU0+CeiZ16DJ6AdGXpto+CeyBNTe0b7Wd+Y6+kzqUAAI+Bh1awiF9SLo8X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756299592; c=relaxed/simple;
-	bh=oYO2aZrhN1EN+TKF1UnZ/sK5wtemMH9P5gox8Ik8xhE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eSJJANqpuPHXtdiRFKtZ5Vj5H12lP/OsCPA7Gzm6w1VlooffyxtWq9lQNk4kmjXMcCtcN+izJ68h/Zz4To3MbZ5SObYnh45RnIzmNtTSTU21OBY9VlVTJuHjhbJFIvCgKjtC0/RiNJCLoWcFnk8OlR562wfTzBeEIDAENA5Edzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RA0TW2t5; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1756299594; c=relaxed/simple;
+	bh=uoqgJ3OhNeN6asyWKYrHarA0VMYib5B/PdW+OT7cv0M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QGjO6Jsd5lzJG4lPke7QOKvvyxvtzhgYNvBDU7UilyRsiBI8suGSi1t2zWyW7RGWmBqK+uiefkPzP3MiKkHS1x1VKHVviCKeqjhc1lp9AQqYQmnLp8ZPlZnxXEe9F+MR/dE8aR1V6UQx3h2DFQZ/brn6hz8dieMwlmN3OwDwUFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/gC66OC; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RA0TW2t5"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c6abcfd142so1953823f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 05:59:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/gC66OC"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so39594465e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 05:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756299589; x=1756904389; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2+GEmKa2OmE1NjrVANYz5XX9YGwV6aNe/Kh6e6q34E=;
-        b=RA0TW2t5Dwx1Qx4ugD/7KOmylXqznXJnfP9TfpijFWhCyh+5OOZ6+em7WVFAFQ7KFk
-         O8M08O1jcyjlzX4KFY+Rr9FzWzGiA+5iQmbP0oWwYhO7O6f2i15q3rNPwl7v0DzmaKYx
-         zlejZhoLrVtwSwLX56knnYqW+cnIxmkJkor0rhXwDzvg1LGXXhKbrLPi8y1QKpBrbeTo
-         KyHCOx9VPEleeXbVlRpSgvHlI0zmZzyiL4mmml5VcYgVuFb3tO925lkBXenGZa8Yl/Oe
-         9pm1aqhYLSP6f7JYjBgakTACwRW7ySV00QZ1dVrgHAkOzWXf/AG2OeM6sJFURQu7qAvb
-         3fUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756299589; x=1756904389;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1756299591; x=1756904391; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=J2+GEmKa2OmE1NjrVANYz5XX9YGwV6aNe/Kh6e6q34E=;
-        b=saApaooI0azHUwBz5R+UQhardJkflQfGwjobDqAeg1m1s61+Y1IcpjRzoY32P5adlD
-         1Jq8ZRfzizOcTap1BLfy8C7hff3NiZv9cCNjAJW/QKfsKADmMMo+K4OKQv+y4+CcT/Ba
-         P8LGzvW5SW9AouCDaDCDvJe35dpRCo6vE70913KVGBLGHFIT86C2IYN2pY1AO9ARwngI
-         BKyJKoQlwWe0k8S0mdS/u3w5gf2/sG9JGenb2hFsCC+ogqwjZk+56w0HzBxCqcwVPrEc
-         jOXk3IJYmDm2fCSIv8LZR5/bXQ2xPpayQjap4Jn3YdeKArXZrMLSsazHFD1la+54stn0
-         lAEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJbfB0WsSevj6DzlHCpfnWrgxQRWv+K3DLe7du5YIw6bQhxcsGvDbNm0sVBsKcSWkhkH3W0nNw97T4hLYgYT+aNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCKv4krb47vjxc7RnJcLMe3S6BNeslznfhlUUa0VaSQnlbmrK0
-	VR4e6jlUbnaC876Kzen1rzr+bbgQ/NWb3J8uRCV11s2Yw7ILapLuU25Y87oTiSCSTBE=
-X-Gm-Gg: ASbGncu2DattA7g6kPz9ZrT3Zt6CZ9taR4HNkrAcUSXjNjQFjkEQEo1C+P9cw/tph3g
-	vyxq1VCvk4j5XR+pVJ6IoRlKy0U/S+WTAv/bXSoTWhSO77QXFOM3KNAnTjB7xLfOgYxRpwBjkbc
-	hmTXe2UtRJFWf7AR44ncAvTw+WeWu+srLIADYcZjni4NvqdVPdIKETEuAjFYb0duOAwDsVgRzPP
-	/AjzL0YzX4f9ICVllQIMNIT2rimCiRhl3w6V5kRXwdH91SkE7qg4DpPl65DJaBBAtVqXY/C/JUS
-	eWH9LM1p6JsRYBpnjlhHCXiHaKm2nal/jtAD4djGYNdA1/dr/u3ivB6i4JBwKy+OBVFEqfpb5CN
-	A4gbijAZpCmoWkJXXHx13Jd+KusRf/VGjkWPR4bq+Bg2sociRdWlb5J7iju5nKvrphWu6x00X8+
-	7DiQ==
-X-Google-Smtp-Source: AGHT+IFYbOQDkswd8yZg7ePHjCvgvWKEUD2miqxIlRTjqnawegRIfM+9sdtjHuSQ/AW/K7wL9nEJSQ==
-X-Received: by 2002:a05:6000:43cc:20b0:3c6:aa87:d959 with SMTP id ffacd0b85a97d-3c6aa87dab1mr11788600f8f.26.1756299589300;
-        Wed, 27 Aug 2025 05:59:49 -0700 (PDT)
+        bh=OjK6OpIk8kyuSL5lFjeicimOy3JEve15WbehlqoxKGY=;
+        b=h/gC66OCfB1RPBkJ9usBZQrAPpBfc55SUL7i5ZXrZMBFl0QKndqvPmDyiB7iyGr7vU
+         t8k54017UuMo1SEdbpKnkuoLl64fKKhBeDrCBLDQyUJ4FXS4T7dOFZCAdG6FgoavUx8+
+         w7zqKgE9qw+fxN6lt7ZMQZXjFpZUygNPqTTOY7TIB8T3z6b62NWlM+coLbi59YQ569zj
+         l/VJjL0gblVlDcYGDM2J+UQL+RyYBIKMuQnmx2zb+8N0cFFhc3yUmej+EW8XsOFvdbeJ
+         8ia1VeIM97g3LRERSZdSspf69gBLAssH3j4Lj/w1jUud0EAkyg5zk3E24CkShBkEKovJ
+         EJ4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756299591; x=1756904391;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OjK6OpIk8kyuSL5lFjeicimOy3JEve15WbehlqoxKGY=;
+        b=OfJvJIrBshX1JEhMRx6+cDPig9E+qQhGWTTUafLishik98Mm63q9QEME5cCeHfzqBe
+         HjNfSZYNC+fqCRhb43KnQ5vepUYUNQqf8L5xylQL3faFf+k4ZX9SAtoYAt6cFX8lH3JB
+         5gdk97iJgM2YFZHwxBlaN2xd7X8Yn4HitVFBOhml/Du+ZMaTqPwwdVNTrPAb9a32B2R8
+         Epu7zFPzWZmBPjK+W6HQ1AvQI+A7ZO2RHO7up3DjSqV5yNnvG3Arqx1MsMUPrB+hKKZ0
+         qHEMrZWC8c6qrCMTNARis/4dfdmFdRdECXAq4KSyZq/sKzBF5C9RxqZZo2n6XdgicuMM
+         bwuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXy+H2/D7n1cEuoLatJFBZePvsH86Ph4p2ZMPp7MXHWRZ2pb2plOBqO/+1G2x2T4m81q8WfHzZSo8CdQj7IDGN65Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMiD7Bl3FZoc47rQQryB1KQpEuzRbyRAfZGkL65ddO6VrA8Giq
+	147Xh7ebZZHOoWIdTqThypnFEy5UddmgU4QbkQYobFVk+qp+ah2pMhcnZVilzx2/cqc=
+X-Gm-Gg: ASbGncvoF0UhZvMCkeAJNDpEa2nlgKkhXiNsi+UODWP1HeD6eUlz3nOlmRrSkA6A908
+	JOiTYkg3svwzCdo7Yr5ZK4IQsZ6l09DMiliOeyAO58TyOhxWtH7+qqONy53x4WYkxZ61G0/Filz
+	2RlIDhOm4nq4YPc/btud01LLEJCXtawGUfjQG808bewt93WJTHG33dZET6sWYEPI4IgUKlzTFSy
+	CN1Z+oGcyMgPRgvgy+Snv9ZixOp3elKtwAc5KqeVG0rE8clHnA/YmOdJA7GE1FeoG2b2UhKGXtB
+	o1qoG0Qgxu3dxEGKJy4/fCkWWhVDdetQFaDJ5BytJ6519gOlp6JveGNSP1uuzBj2/4UOlAd3KG5
+	X9Jr8R+sH6/RHplq19rhNBedVyFaEkXdzluyK2qbMmoxgdZ9H4KxnsVtjqQG1VYyTeInMItjuDM
+	Re5spiBTSsyH0D
+X-Google-Smtp-Source: AGHT+IHPwrsF3Jtd95IZMfDq3CXcF1TLGO6gNbOm6NJUOa4ZfiI/Wp4VmFA1B9k12eMcZCO8op0PEw==
+X-Received: by 2002:a05:600c:4689:b0:458:bc3f:6a72 with SMTP id 5b1f17b1804b1-45b517954femr168350295e9.4.1756299590870;
+        Wed, 27 Aug 2025 05:59:50 -0700 (PDT)
 Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc890b178bsm3272069f8f.52.2025.08.27.05.59.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc890b178bsm3272069f8f.52.2025.08.27.05.59.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 05:59:48 -0700 (PDT)
+        Wed, 27 Aug 2025 05:59:50 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 0/3] arm64: dts: exynos: gs101: add cpufreq support
-Date: Wed, 27 Aug 2025 12:59:45 +0000
-Message-Id: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
+Date: Wed, 27 Aug 2025 12:59:47 +0000
+Subject: [PATCH v2 2/3] arm64: dts: exynos: gs101: add CPU clocks
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,10 +70,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEEBr2gC/3XMQQ6CMBCF4auQWTumxaItK+9hWEBbYBJtyZQ0G
- sLdrexd/i953wbJM/kEbbUB+0yJYihRnyqwcx8mj+RKQy3qRmhpsLfLC10eE7oVxXWwN6MGZ62
- DclnYj/Q+uEdXeqa0Rv4cepa/9Q+UJQpU/qIH0yihrbo/KfQcz5En6PZ9/wLSjGgKqQAAAA==
-X-Change-ID: 20250819-acpm-dvfs-dt-06bc794bdccd
+Message-Id: <20250827-acpm-dvfs-dt-v2-2-e1d2890d12b4@linaro.org>
+References: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
+In-Reply-To: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
 To: Peter Griffin <peter.griffin@linaro.org>, 
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -83,47 +83,90 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  willmcvicker@google.com, kernel-team@android.com, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756299588; l=1160;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756299588; l=2740;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=oYO2aZrhN1EN+TKF1UnZ/sK5wtemMH9P5gox8Ik8xhE=;
- b=vFZY7juelyD4nVnYQ7mi3pFO0bqjlNOteUib11Jccm9ahWUZSQbBny11zaRftz6LXZp8Erea+
- mOSitc7kKe9B+IHnTcctE0okkkdCgc7IFUPuhRPIxgN0UeqElkV7R2t
+ bh=uoqgJ3OhNeN6asyWKYrHarA0VMYib5B/PdW+OT7cv0M=;
+ b=vnVVuPmKG+UU58DxmUVjQUGxPgldzUS4A/j/jb9225yIdT/j7J7EUC0BGjTM1lU6pntynAPaO
+ KdDzTE4di3OCQQZG6n3zIstYLljRQ4YZMRzjMl2OPkxhUs7ftmOMYdd
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Define the CPU clocks and OPPs.
-
-The patch set depends on the bindings sent at:
-https://lore.kernel.org/linux-samsung-soc/20250827-acpm-clk-v2-1-de5c86b49b64@linaro.org/T/#u
-
-The following error will be seen without the bindings patch:
-arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
-FATAL ERROR: Unable to parse input tree
-
-Thanks,
-ta
+Add the GS101 CPU clocks exposed through the ACPM protocol.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
-Changes in v2:
-- acpm node becomes a clock provider.
-- reword commit message, extend cover letter with info about dependency
-  on a bindings patch.
-- Link to v1: https://lore.kernel.org/r/20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
----
-Tudor Ambarus (3):
-      arm64: dts: exynos: gs101: add #clock-cells to the ACPM protocol node
-      arm64: dts: exynos: gs101: add CPU clocks
-      arm64: dts: exynos: gs101: add OPPs
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index f00754692bbac39fd828ebd4ef7c269f746f2522..746b7d8ecdc90fd746015b8322924bac66c6e363 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -72,6 +72,7 @@ cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0000>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&ananke_cpu_sleep>;
+ 			capacity-dmips-mhz = <250>;
+@@ -82,6 +83,7 @@ cpu1: cpu@100 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0100>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&ananke_cpu_sleep>;
+ 			capacity-dmips-mhz = <250>;
+@@ -92,6 +94,7 @@ cpu2: cpu@200 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0200>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&ananke_cpu_sleep>;
+ 			capacity-dmips-mhz = <250>;
+@@ -102,6 +105,7 @@ cpu3: cpu@300 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0300>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&ananke_cpu_sleep>;
+ 			capacity-dmips-mhz = <250>;
+@@ -112,6 +116,7 @@ cpu4: cpu@400 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a76";
+ 			reg = <0x0400>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL1>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&enyo_cpu_sleep>;
+ 			capacity-dmips-mhz = <620>;
+@@ -122,6 +127,7 @@ cpu5: cpu@500 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a76";
+ 			reg = <0x0500>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL1>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&enyo_cpu_sleep>;
+ 			capacity-dmips-mhz = <620>;
+@@ -132,6 +138,7 @@ cpu6: cpu@600 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-x1";
+ 			reg = <0x0600>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL2>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&hera_cpu_sleep>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -142,6 +149,7 @@ cpu7: cpu@700 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-x1";
+ 			reg = <0x0700>;
++			clocks = <&acpm_ipc CLK_ACPM_DVFS_CPUCL2>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&hera_cpu_sleep>;
+ 			capacity-dmips-mhz = <1024>;
 
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 284 +++++++++++++++++++++++++++
- 1 file changed, 284 insertions(+)
----
-base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-change-id: 20250819-acpm-dvfs-dt-06bc794bdccd
-
-Best regards,
 -- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
+2.51.0.261.g7ce5a0a67e-goog
 
