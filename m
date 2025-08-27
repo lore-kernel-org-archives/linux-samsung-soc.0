@@ -1,119 +1,224 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7CC304964
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 12:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF8A35207F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 13:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756299597; cv=none; b=uaNLCe0FTCu1IO7SRVGMRht+LSE1Zh+Cy+kDU48Y+KesHTgcRKgtE+cqC6LYSI+03MARPKG+6JExmsquAKX/O6EtaOmUyzFUHK/K+zi7RFyuSLAPZ1Y5jNBn3u0IxQNPEVmWoQ1/TCpRFhcalaD0NqAFd+i3NUM0uDXXeQRI69k=
+	t=1756300420; cv=none; b=cQrLHanCeR/RBL7FhR+GkMtnXrPVV3sNUufS44J5ZxqBkuDmXjFUSvK/CoKGz+mMxsm1x91KKk9ME9HH5XPwoq3wpq2jeVW6ooiJek6nBF2MIvHAWLhX1epTb9+Id+H+80wE5GBrW46qchNWWRGcek5P9b/zksTZpc3++AcpnBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756299597; c=relaxed/simple;
-	bh=lXqAHsVVGobAqxHDBDj2hfAW5L/ixpf0F+OYYJ4nT/w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GSNBXz+XiCZMj4BTGxiTrIkn6Uy14wtzoEkKlBb5FRB13Nz2ncVc+v4E1fRHLYu/6xi2d5Vm1tjgqRqua1vZ1RPLKQg5cqghwk2/romC3aXsY3AZOsniWCPpZy1pkY2Qfr0zxm9d/Fv3JvsyD4XLgDq5/4db7LYGjD4iOzm8eNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vGh/t5bn; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756300420; c=relaxed/simple;
+	bh=eRhLjVe67iKErrxJ74pmlvZqDh8RQqKX7+TmAocxpuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qt+4N1ZVAOdiGbwVjCWWdukVQ03Zj3+MuFqmwmcFMg9jMbIUjWPjPKmvy/OxINhDGVGw/ky4U/tFXYMZD2GqPDPA1420DfMjsGGioigMQW+7Ir2TrOx75yk7vGTVB8ZFmh7qYG0vCENwWGuYvKBnvLLCnUTSW3CawJimdf+zQIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b6sfeUg1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vGh/t5bn"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso35938015e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 05:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756299590; x=1756904390; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=St11QoIkuwt6LD0qyFy2W7TckyvP5Gq6gOAm3aWS/Ik=;
-        b=vGh/t5bnupJIjbNNLkWrelgN1x+vnYeZB80lDlbAu2sR7vqO4QpBjNCeZhBvKYHGuY
-         700Id3X+DHpfup/KUwUtT1mLDV9WTJbiNy+zCz6JN1wioY4fTYv4zhfpoSxbovg/DeWk
-         1fVd810pBH6hmyOrQLhKC28sfvjG4EjV+LHw1bl3EIZoJpgQsccdcFE9gBqdPCdcDnjS
-         vKRGpKQoCAg9tSIceDvEO1kFyuU1gSDoPyezboXq//GGkmz1SH4qbOHmLXd+MeKztWe+
-         2Pgr8JdJxdzB1V4ycx8jjIXhOYvBFmd3SZ3joe5I29uXApisnkKtSEGchfgQbJtLijOI
-         ytIg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b6sfeUg1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756300416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=13LJOrVZbt5/bZNb1010AyPGLHEYUJgw1i+wJLdf1Rs=;
+	b=b6sfeUg1k3h/K+rZmCBUqdC1FVC3pux6Pf71g5GAHVPKij43CoMeWsKftGJGlQ2rVh/VIU
+	GNhyysNGbqz463uou7EP4x7eermxMXYMWOpw1FeWeae0EoMlEWddLDqD5f62BMOvA8VYnW
+	1qLigQxwP30H/zuiYKHCE2PNHwA7ggc=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-DFo3Whj6MkyNm5kAxl2uLA-1; Wed, 27 Aug 2025 09:13:35 -0400
+X-MC-Unique: DFo3Whj6MkyNm5kAxl2uLA-1
+X-Mimecast-MFC-AGG-ID: DFo3Whj6MkyNm5kAxl2uLA_1756300415
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7f2942a1aa1so237814885a.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 06:13:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756299590; x=1756904390;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756300405; x=1756905205;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=St11QoIkuwt6LD0qyFy2W7TckyvP5Gq6gOAm3aWS/Ik=;
-        b=sIifxwCkK5M4mXZiJSgKV+zx5EZ+52XQSItYKbEtv+Bl2iXrDxaca5XWZZ5cymIGlP
-         aePVvfwEj2bDB63CMgc18xTqA9LKeXl8ZjycyBIZbNepx3crehs2ZJfcpDl1M5KPjlQN
-         DsxhHcFaUFZpUyWXhbGlX9XC5mvA9WDJAJQp9FONusWNKxerE3MrlB00alqbTxtfL5uh
-         TZwCoc6BsvyZEQ8rYChLJKqCPS0BW1yLoXgmUgZ0PwVHjuySzugi6MYFICdBq6yOD+1B
-         g+9dkU0sVgZLz3X44P0G+rfiCjHe+X9Z3oLO+R/1AbNkrzN39ZilfyqvA+3g/X1cdxa8
-         9Wew==
-X-Forwarded-Encrypted: i=1; AJvYcCU7/gNUZRYoVawL/ZF3tlbYPOfTwg53Bo9WTNbyijUlZXGMY+ESzGFLUW0SlTequ4L6ifkOv47DIwE4OXp6QMU3mg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5jysbUgkHrgyqQZpPfzyVqkpuQkPyi0hnUwiB6LLOZr7IvZLz
-	fQYNCfG7skHkJebsidtPhbj9xJtLjFGV1UnJrnLSE2r7I9xjkwM00s55QTE3+Oz/4aE=
-X-Gm-Gg: ASbGnctsPxJeMVSXrbSqMgdxmDh6IcOIxOQHRwF1ice/qK6+CFha1nyR322r20jkhwF
-	hBRy1gjWBqeV28/wXwNN5bkPcB+el5isk8ocHzv3WMcZsEIy/aOctVN3LhR6qJq0CuYa3fg+Pvh
-	PoSR2RwjzbYwG03KnH02lKb3aOiIwAtMaR1rPIOE0AVA/+brC6HCQIFrCw4VOfDcUsEruiqSVKx
-	nEEcNOi11h2ElS9gtG44OhATCMybaYwFx0WW2+/KT7Fw9CUlxHwi26jS0QKnB02JlDwRP+tEOcR
-	PD8QaXGrtwODhgPjbbJnNTUOe3Wnyh6JfisZp178H2fY28kwF7rDRIGfSKUEKwkkq4LEULDj0e3
-	HgxO2ytktPcFaMliTGC9HJM0wpkYLFC4xOeR0UuifKFtXia8XP6Q9dZmHeK+QWW6KO7z9Z87NFw
-	BqJw==
-X-Google-Smtp-Source: AGHT+IGrO5in4kxeXFs8Ggk7J9FQe0NLAJGrBqkvOKY0AV+1WCmJgGAiQ8Lyh7hq52k9MPnYiLZGlg==
-X-Received: by 2002:a05:600c:4f47:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-45b698efbc2mr40559705e9.7.1756299590136;
-        Wed, 27 Aug 2025 05:59:50 -0700 (PDT)
-Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc890b178bsm3272069f8f.52.2025.08.27.05.59.49
+        bh=13LJOrVZbt5/bZNb1010AyPGLHEYUJgw1i+wJLdf1Rs=;
+        b=UqxLiy85uzbnEL4xXWMwetj/LnBMBF3P4PPVAWiz6BM9VPY8FT0kR3aJZcfF5UkECb
+         5AwImf76Lc4EOQ0M82pPjDTlpChPZH/1r01M9BO0Cpl7IJS6hHzcSZqQDjwsLhTut3xr
+         uFuEcwDI2hDJ07t+aGnG9ipPatObFgmSMSpncCZZEYMnMyvrTi4RezPs2e8OMy1l2SpU
+         ysrUgzLB12kpxKgQEAGECmEsAvQSzr6Wfnd+hQSdyK8wqudeIkPqzAMt6r4Og4tJUhg5
+         V4pNFay2aG5ssMxqMp6Ut7ZI8tAvSUpNl1nAK61HTYS2Vq4oVVsM6q3ks5md/DngPTNd
+         gw8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWBiBq03sWtAGg0r/qguYglEKdhOY2PMaycH3X4/c4AbRB0wJCz8I4MPsX39AwhhU7HglC80+WXg0E+GwcgpZT1XA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySzI6NusmGYDiV/JTSxUlEDLYexgR6CuND0Siy3kpmAd/mtdLG
+	4JD7hBtAapMjAr5ovb+GmJuTK4vGOhwJAF2y+Ia4YeWJbxVMuo0y+5yqJOaT4whzCYamUuAik7H
+	qzGQ3tqHATKV55ev+lWIHWb2r552fl2LU2FYgTXxgX2UybK379GPobUMtid1+YMN++hM1gJXk
+X-Gm-Gg: ASbGncv1dgG8HW6jGKdTnKqTFqDbLVgFV6HaWX6mK3wFyG3Zfs5Ga7DTN+y+DHOI0A1
+	RlmygRJ3rT4mTDp4oHOwGnyr5lDb0+aSVRB8fYUd9qH3hBSEdegO1rZv84rDLEY7KzSHIHbSRQU
+	W+QvhVLlcad1YRwGgwB8LFoIWsoLPU+iCWHV2xLkB1AWB403pvAxsJyDl2T02TuAYsXVUTU6fUa
+	inzHndo8sCUSOCE0xlPnqkyhQJfuARZfOocu4pDJ5/hYt8h9pyeLXcG9HpKnLuAPGsuD0qDEcdw
+	iz61RcgPkd1u2yrlBkn/OFklqozGpjq3ASBthmPNTZIYgj3++LVPf8iPpxiJOKjpq+dG02FXn6j
+	rboaETfSv19/M1u7ejG0=
+X-Received: by 2002:a05:620a:7101:b0:7ed:92c8:7d16 with SMTP id af79cd13be357-7f58d941f59mr592255085a.31.1756300405038;
+        Wed, 27 Aug 2025 06:13:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG//kDH7SoWg5eCSBiMLHP3nCnmfnmaReGS2V45T15TfIErjBPeekutHDc1uHZhw0fUtcQytQ==
+X-Received: by 2002:a05:620a:7101:b0:7ed:92c8:7d16 with SMTP id af79cd13be357-7f58d941f59mr592238785a.31.1756300403878;
+        Wed, 27 Aug 2025 06:13:23 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebeca23e10sm885475785a.6.2025.08.27.06.13.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 05:59:49 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Wed, 27 Aug 2025 12:59:46 +0000
-Subject: [PATCH v2 1/3] arm64: dts: exynos: gs101: add #clock-cells to the
- ACPM protocol node
+        Wed, 27 Aug 2025 06:13:22 -0700 (PDT)
+Date: Wed, 27 Aug 2025 09:13:17 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Alex Helms <alexander.helms.jy@renesas.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 112/114] clk: scmi: remove round_rate() in favor of
+ determine_rate()
+Message-ID: <aK8EbcEHz3Yzpa1W@x1>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-112-b3bf97b038dc@redhat.com>
+ <20250827070933.GB18994@nxa18884-linux.ap.freescale.net>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-acpm-dvfs-dt-v2-1-e1d2890d12b4@linaro.org>
-References: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
-In-Reply-To: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756299588; l=858;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=lXqAHsVVGobAqxHDBDj2hfAW5L/ixpf0F+OYYJ4nT/w=;
- b=1hf3mcPjyceW9nVsY3YJaxdSK+F2L7MXoZnBJFli89bCPqeG8RhhWI+dgSmVFITri3grRwv4z
- cDeXEVit+3jDX/fnKLE9QVz2WyAluN7lZ9fP3bWF51Nsyhbi7g8lZJ0
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827070933.GB18994@nxa18884-linux.ap.freescale.net>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Make the ACPM node a clock provider by adding the mandatory
-"#clock-cells" property, which allows devices to reference
-its clock outputs.
+On Wed, Aug 27, 2025 at 03:09:33PM +0800, Peng Fan wrote:
+> Hi Brian, Sudeep, Cristian
+> 
+> On Mon, Aug 11, 2025 at 11:19:44AM -0400, Brian Masney via B4 Relay wrote:
+> >From: Brian Masney <bmasney@redhat.com>
+> >
+> >This driver implements both the determine_rate() and round_rate() clk
+> >ops, and the round_rate() clk ops is deprecated. When both are defined,
+> >clk_core_determine_round_nolock() from the clk core will only use the
+> >determine_rate() clk ops, so let's remove the round_rate() clk ops since
+> >it's unused.
+> >
+> >Signed-off-by: Brian Masney <bmasney@redhat.com>
+> >---
+> > drivers/clk/clk-scmi.c | 30 ------------------------------
+> > 1 file changed, 30 deletions(-)
+> >
+> >diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> >index d2408403283fc72f0cf902e65f4c08bcbc7b4b0b..6c6ddb92e7cf6a0cfac2c7e19c0f15f777bb8c51 100644
+> >--- a/drivers/clk/clk-scmi.c
+> >+++ b/drivers/clk/clk-scmi.c
+> >@@ -54,35 +54,6 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
+> > 	return rate;
+> > }
+> > 
+> >-static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> >-				unsigned long *parent_rate)
+> >-{
+> 
+> I see the point of round_rate is not used if determine_rate is there.
+> But reading the code of round_rate, It might be better to rename
+> scmi_clk_round_rate to scmi_clk_determine_rate.
+> 
+> Anyway, need Sudeep and Cristian to comment.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+In this case, yes the round_rate implementation is filled out, whereas
+the determine_rate lets the firmware handle it, and
+scmi_clk_recalc_rate() will later populate the rate the clock is running
+at.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index c0f8c25861a9ddb5bbd256b62c66a645922ca74e..f00754692bbac39fd828ebd4ef7c269f746f2522 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -202,6 +202,7 @@ ext_200m: clock-2 {
- 	firmware {
- 		acpm_ipc: power-management {
- 			compatible = "google,gs101-acpm-ipc";
-+			#clock-cells = <1>;
- 			mboxes = <&ap2apm_mailbox>;
- 			shmem = <&apm_sram>;
- 		};
+I can convert round_rate over to determine_rate in this case, however it
+would be a change to what's there now, and risks a regression. Here's
+the relevant code from drivers/clk/clk.c where the determine_rate and
+round_rate ops are called:
 
--- 
-2.51.0.261.g7ce5a0a67e-goog
+    static int clk_core_determine_round_nolock(struct clk_core *core,
+                                               struct clk_rate_request *req)
+    {
+    	...
+            if (clk_core_rate_is_protected(core)) {
+                    req->rate = core->rate;
+            } else if (core->ops->determine_rate) {
+                    return core->ops->determine_rate(core->hw, req);
+            } else if (core->ops->round_rate) {
+                    rate = core->ops->round_rate(core->hw, req->rate,
+                                                 &req->best_parent_rate);
+    	...
+
+If Sudeep / Cristian want the round rate converted to determine rate in
+this driver, then I can do that in a v2.
+
+Brian
 
