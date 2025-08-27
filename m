@@ -1,139 +1,188 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652F352066
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2025 13:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A3E1DDA24
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 01:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756216313; cv=none; b=rTw44Zu5LokyPxjR9FYC/cr5iCphwiHsUcSeK2vIq7EptVeu58/NRmNB+jXylTd+T3cY+5GVbVsCwJ/OHKSnfVtdbh7G39inVUiAyDepRcb2IHLB8O1kIq0m6tM/ynmLGEYCmTFS8T7PW6suSkCBUCGeGhSYFHLXj3N/0lDb27A=
+	t=1756259452; cv=none; b=RcCIDe/xPqHgGI4uKtyS5rzCmWlQCf23iYZTZiW6gL48G9K5nm/yGKO1j4zrLxYsBa6jtUvh5uWekgwQm9Jx+emp4C6frS5h5tZ4yCAoW0XzDp6dJguMWhR+atrG3i9/YbIpDcUgztjcTxKkot3rcj98EdGVGSUp5DbJt9F0o28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756216313; c=relaxed/simple;
-	bh=8kJ15fRNtT9ecFYkHwLv1bZhA0gGUBoIk61tT6gFSVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=RMxIDxO7epr9Vt9l0XT30TzNbW5rSurxaT80AfmK1BClmc6yFvg7wx74oN5CBj8x1Cf/DK7WKP4O5mfkxSbItpbK+PBQakSFxV9GM8Uc/QZup/1O0FHB1socIu26arZtXwiwNSlL++Fu7CX36tHCKZvd3TMMRyx3UtodfoDUVy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bHjR9T+B; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1756259452; c=relaxed/simple;
+	bh=HZCUzkkrDtoFfybmi/wQUgDLYhcZj2oCbu0jLkMK5WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlhl+wpDKntBU28I+tR24ELp3sS/OtmZo+ypwmHQy4egXZFMWaGeFzVDIbqh/jaBt5gGRqPRyZJ4yZ+YD2ur2h6toBByS4hvSBpHm8z+0KwLXpNL95S3KsP1l2jFoqaEXXy2Jc+uWiBP0S5ooAv5SU902oi0As5LxNxiENQrVSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RtohOwq/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bHjR9T+B"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250826135149euoutp024ee0a0bc829df9d68e4e75c041ce9c6b~fVW3L0ltQ1480614806euoutp028
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2025 13:51:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250826135149euoutp024ee0a0bc829df9d68e4e75c041ce9c6b~fVW3L0ltQ1480614806euoutp028
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756216309;
-	bh=ZULyMtTc2idS17UiaomIDWxS5E26GTUAPz4WEPqaGL4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=bHjR9T+BR5tUnH4liPvral9SsKd+bJlZDHZ7KHtU61th59XkHPlp8XlAv5V5/Apz0
-	 I1ntxc+wChLrrwb6cgx0ukA7lcBwo7AFtdeJR0JnCa79mGp/z4lkQ1Zze7SSSv5tl1
-	 WSd83YJ7XtzSf7rYivTV8SqRgODkz8xMtITL0/8k=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250826135149eucas1p2ef79b300c589d967c1533100e84b4049~fVW2pkj3s2476024760eucas1p2-;
-	Tue, 26 Aug 2025 13:51:49 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250826135146eusmtip2cb1cdc8b30562e52ddb197a8da8a70a9~fVWzxQpNd2140921409eusmtip2c;
-	Tue, 26 Aug 2025 13:51:46 +0000 (GMT)
-Message-ID: <8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com>
-Date: Tue, 26 Aug 2025 15:51:45 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RtohOwq/"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QN20C7031496
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 01:50:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0laXQCaNkR8BdkTEIAIjvxkP
+	U6e+xAcI3sMZOZG++40=; b=RtohOwq/mGWF5aMn8hEPDpMx/rZR9xAALF19Kgyn
+	ABnotCfpABau8JwSOXOICFi9m0+JYeo5KRmxM7/PZXvfAVZ+xkORF/VXDwTNR3Ph
+	HPx+mTISivbCf4otlZINmlEZaKzFvdI6E4ajQHq9yVGAUfZo4nLChDdFD8U1iaE4
+	IS1qmtCDKjKe0bte0kvKERccexJ6lHl808lZOQbURByejcjFT3WTBN/nsM8JSd+g
+	k1B3AWzsQK6lbv1D9bzTVgUEmdbFOgAkV//+43Xv1+qkGLvzB6NM7Z7dZU1NecZ0
+	guNgLQYiFnm+R6mcteg49ubo9IpFgtLwxmbQpqJPkNbHbw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48se16syup-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 01:50:49 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b10ab0062aso150796841cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2025 18:50:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756259448; x=1756864248;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0laXQCaNkR8BdkTEIAIjvxkPU6e+xAcI3sMZOZG++40=;
+        b=xMLzhsERj9Xvb08/8fo9Kf+S4ggQCBkxJnTEMK1U+S+kjMHiyjpdar4BejSkt3kvnX
+         UB1Yp7DFvOQ9WxKCU4zVo/VyjYkkxEfftPVmv4cei7Hf9NWq+to7Fi0PzkluxDBbX8V/
+         2wpqGSBEsWebfE+idIIgeuE1jUfL/lh+kvy507NX0/TVgpBXRiy8c35GKLOfnbPdh79/
+         D9KkTqE3G7Qvchlk46WMwd5q9eL+4UYj9c3z2p8W3VytuimTnZDKBwGLoK6KAfc3B/7Y
+         6a90kSDkWjNnupINMECb2tQtYEUEId2MCS/d2Vp5ffmRn5JYcIRuhQg26MzC+6mAC27o
+         rYog==
+X-Forwarded-Encrypted: i=1; AJvYcCVYWk+MrrcxuVYoRl9eg5rHsUGpHh3mWtyfmZTnJ/W/6+TQS3SmIO04exsxexs6xFFmQEhAMctpXQFL2lh/opzP5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKzG2ZHVjNfsS9JRR7WQTWnMST0CnqWX0cm9cFc37S6KrsMffK
+	yVTP/X4H/bKTA3D1UCq1QzyFpfIiSAgucz/20fTnYxSUp4jR/5NLx7yDaPWbFHqAxKJ9xtrGWQl
+	fgCy6NI+PhiSEASCSorE7dXt75ns4ie26h8N4uGxqWFmDgSb3wa2FbGaAFMMXtphcfQl9dbFS4A
+	==
+X-Gm-Gg: ASbGnctMzVVCyW1OvlGVmreshuvXLA5tsOekJYjGJjHzCW3HNrXwW5U2V98YYs/kZdo
+	rXhpBX8xKQrRPAvXo5+m3hQpb4YFWbvlikkGwzuWEKX4fTTQ5k4xKTrD/z7wmVY2SnbN2war4Wd
+	VYwSR4mh34wQdb7gmbIuYit8EE7gmQA3/mJdOyjodKfdjQ842VVQx0b8W/vogr5itAJw2zG0REF
+	9HHaFqNYm/JUPx90GyX8yLtl24GTHyxj1fM2PpkUdxJRzxQppLxZzrQnLiQYQs4vpSTXBp1sJcn
+	8vVuN/GK14A6MJ3WS6c2bIBOeBbsj+WsYYXgBjjCwz0Xa1Fn0NqNZVnafXUo0ppnUZ1Wchvh1+q
+	MpsmxnvZB8wH1qsKjej3SWqkqkzv3dAddRX2Zd1VPVIQxP5xlntKA
+X-Received: by 2002:ac8:5e12:0:b0:4ae:6b72:2ae2 with SMTP id d75a77b69052e-4b2aaacef55mr186156941cf.40.1756259448008;
+        Tue, 26 Aug 2025 18:50:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMxKJaOrtRDBj0yHJf7PhiEmF+htiaol/DYqvG4rG8Xn2tdgOPzsKsBrI5J0XgVP0gDX2TkA==
+X-Received: by 2002:ac8:5e12:0:b0:4ae:6b72:2ae2 with SMTP id d75a77b69052e-4b2aaacef55mr186156351cf.40.1756259447377;
+        Tue, 26 Aug 2025 18:50:47 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f4b46d050sm989200e87.150.2025.08.26.18.50.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 18:50:46 -0700 (PDT)
+Date: Wed, 27 Aug 2025 04:50:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Louis Chauvet <louis.chauvet@bootlin.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Manikandan Muralidharan <manikandan.m@microchip.com>,
+        Dharma Balasubiramani <dharma.b@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>, Liu Ying <victor.liu@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Edmund Dea <edmund.j.dea@intel.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Sui Jingfeng <suijingfeng@loongson.cn>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hansg@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 26/39] drm/msm/mdp5: Switch to
+ drm_atomic_get_new_crtc_state()
+Message-ID: <dc2sfo6edj4w3qiwldoglaanbi2h7mmev7x4pklwbl7x6x6rah@kjyc52pv2xqy>
+References: <20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org>
+ <20250825-drm-no-more-existing-state-v1-26-f08ccd9f85c9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 3/6] clocksource/drivers/exynos_mct: Set local timer
- interrupts as percpu
-To: Will McVicker <willmcvicker@google.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
-	Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Cc: Donghoon Yu <hoony.yu@samsung.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, John
-	Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, Peter
-	Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
-	<andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250620181719.1399856-4-willmcvicker@google.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250826135149eucas1p2ef79b300c589d967c1533100e84b4049
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250620181827eucas1p297671b9a3783026020bb357d494c2e70
-X-EPHeader: CA
-X-CMS-RootMailID: 20250620181827eucas1p297671b9a3783026020bb357d494c2e70
-References: <20250620181719.1399856-1-willmcvicker@google.com>
-	<CGME20250620181827eucas1p297671b9a3783026020bb357d494c2e70@eucas1p2.samsung.com>
-	<20250620181719.1399856-4-willmcvicker@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-drm-no-more-existing-state-v1-26-f08ccd9f85c9@kernel.org>
+X-Proofpoint-GUID: DkBLOsVyJDoHpIIu7MfK4Ist3dikTrGt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDEyMCBTYWx0ZWRfX048UbKuEj8M6
+ LOgNZsx1aXdaY5R3J6mY1SQgLAN4KSsa+aZ6j5HNcP33ST9UWWRLlOx8uzgMLoSEIUV/VukAd0h
+ 8DuUCHGFeRVns8E07Y6zjXhGXRxwhHw4LUMZ8cVa4MXHhk5aWSvaYPlnw8vxD+6qx/7JwXQ/8lV
+ 507pgjDZ9iB362hkqGbY7KrcwHrccgsBZfgSO/5MoX6fsc4Yqa634C0FVYAFv4DJ/rfgEG5E5Jw
+ BlXJs2Vi9KEavk4StjPdJJ09ZI/hPpM1eBP68kWam7HlxjOJtweqSX3Nc6L9dgkQ/ZgUvwj1ubB
+ NylxRmyAmbCYKLY+4nBF+m2UAlT7tK7QvWsdW9MX0LrQGUGDoV+pEYDlNoyAslUwd4NYOt/nyQ7
+ c1WJ8haI
+X-Proofpoint-ORIG-GUID: DkBLOsVyJDoHpIIu7MfK4Ist3dikTrGt
+X-Authority-Analysis: v=2.4 cv=CNYqXQrD c=1 sm=1 tr=0 ts=68ae6479 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=viL_tbrIvFpnGUkEXy0A:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 spamscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508260120
 
-On 20.06.2025 20:17, Will McVicker wrote:
-> From: Hosung Kim <hosung0.kim@samsung.com>
->
-> To allow the CPU to handle it's own clock events, we need to set the
-> IRQF_PERCPU flag. This prevents the local timer interrupts from
-> migrating to other CPUs.
->
-> Signed-off-by: Hosung Kim <hosung0.kim@samsung.com>
-> [Original commit from https://android.googlesource.com/kernel/gs/+/03267fad19f093bac979ca78309483e9eb3a8d16]
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-
-This patch has been merged some time ago to v6.17-rc1 as commit 
-f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer 
-interrupts as percpu"). Recently I found that it breaks CPU hotplug 
-support for some 'little' cores on Exynos5422 based boards, like 
-OdroidXU3/XU4:
-
-# for i in /sys/devices/system/cpu/cpu[1-9]; do echo 0 >$i/online; done
-# for i in /sys/devices/system/cpu/cpu[1-9]; do echo 1 >$i/online; done
-[  117.100195] CPU2: failed to come online
--bash: echo: write error: Input/output error
-[  118.140426] CPU3: failed to come online
--bash: echo: write error: Input/output error
-[  118.148428] CPU4: detected I-Cache line size mismatch, workaround 
-enabled
-[  118.169613] CPU5: detected I-Cache line size mismatch, workaround 
-enabled
-[  118.216802] CPU6: detected I-Cache line size mismatch, workaround 
-enabled
-[  118.283725] CPU7: detected I-Cache line size mismatch, workaround 
-enabled
-#
-
-Frankly speaking I have no idea why this happens. CPU hotplug was always 
-broken for the CPU0, but this is not relevant for this case. Maybe this 
-PERCPU flag should be applied only on ARM64-based boards to avoid 
-affecting legacy ARM 32bit cases?
-
+On Mon, Aug 25, 2025 at 03:43:31PM +0200, Maxime Ripard wrote:
+> The msm atomic_check implementation uses the deprecated
+> drm_atomic_get_existing_crtc_state() helper.
+> 
+> This hook is called as part of the global atomic_check, thus before the
+> states are swapped. The existing state thus points to the new state, and
+> we can use drm_atomic_get_new_crtc_state() instead.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
->   drivers/clocksource/exynos_mct.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 96361d5dc57d..a5ef7d64b1c2 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -596,7 +596,8 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
->   			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
->   			if (request_irq(mct_irq,
->   					exynos4_mct_tick_isr,
-> -					IRQF_TIMER | IRQF_NOBALANCING,
-> +					IRQF_TIMER | IRQF_NOBALANCING |
-> +					IRQF_PERCPU,
->   					pcpu_mevt->name, pcpu_mevt)) {
->   				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
->   									cpu);
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
 
-Best regards
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+To merge through drm-misc-next:
+
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+With best wishes
+Dmitry
