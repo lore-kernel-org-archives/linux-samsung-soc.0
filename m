@@ -1,76 +1,75 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D5F2BE7B0
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 17:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4762DEA90
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 22:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756316458; cv=none; b=KCx8Nuq55cGfGyIs8Z7ElRfQL30tSt1dszO1eneqao5sFIzB/Dy1JltitKdauu8lZv/GfG9kUL6J7sGcdJi3+JzHz1mtLUxcUzJE1R3fqBAsJ8b01uFmE0VA88L3lLjzV0rrwA8PY2dk+oyIrP/HwxYk52b+M86ZISiv13cmWSs=
+	t=1756333648; cv=none; b=hUw3yWPzygb3Ed2ei6ri2mPvs0PEUHkg9fpmaCVLUnKqdzbyGCJp0Ua7rRf/kB6NApZS1nkvt0TZKRgqNs2c4dU6iGmhvcO/72VOH42OnUo20yf+S5/Wi7nDYb+cQDpzwuZWaVm46icRKbQlO678bEPPIJ3ZQIfdUkcRzc62E1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756316458; c=relaxed/simple;
-	bh=8mZSXa5tllwYg7Vri8XTHsFCezJ/LPItoC8qISf/FQg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=u8X7dsJdRtCRazXHmSo5739yweOcGkC/ZG8Wf72iIzyGY9vaeMd4V2hRK/96mWvs2N9DZ9xwSt98AH8ELOL3mKd94HUsaMd29Q3IkJqWasF49U8oPOBqp3V+a6hwjbDbDMNIE/+BNbjERR8Ch+WQ3y4sNuwhFdnrMH/KsoeuInU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aYQoa5Tq; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1756333648; c=relaxed/simple;
+	bh=39TfirOm0CvaijkhQPEcSMxZAXyiBUqSqGTWwYkVIEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISBkeWAdFO/FGdQk//UUFUeBE9fxIIAsaXRSZ0WxnDOtLv+/HN3wth6GihwscyypfPX7lmHrWyHupZdjohWztTS72zl7XlyyQasyM1wLdRL0kKFCY0oYf/IyxPHVKSwdGgnu+6NqErrFTimokdaIF+FKXubE8GmJzqwU5gv/2o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N3nSP7Gc; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aYQoa5Tq"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RG7gUx029334
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 17:40:56 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N3nSP7Gc"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RGDUpG029068
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 22:27:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9pryiKbesf4KLCmykOzJgOnqNMnr4CU7A7f1EXmgKk4=; b=aYQoa5Tqtc2tN8AL
-	iq3IQTavdCc6+N80wDp9/1ryQ6rtURE8hJYJ1JEf8GeMDt8Z57Ye+hrSjWGiS71g
-	dhTRly7ADDiCbZ+3yuhupKzFgyym6AZwAcOPdPXs4ELX8pirZMJET9j7BYqPdz6F
-	ZDY3xCJRWorp+AKCGAuCK09e4laJy4I4REdEF1KxFyiaKUObIG+jnZSoOJ8hsS/P
-	20/Lf4vNVU0EKTh1RpsR1NuG7UbcbDM0y4LlPFN3ItahZrHzGcEe80H5Dqu1duk/
-	fYwIxae0xwk6pCPszhHTrzdgVA9KKBlKZFlMQ3qfiDI1b8OwiDD7D9G8+1hGmZRi
-	jBWi7Q==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5w2wmv2-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=coI2WbZxINU7lzeYxnfoWTr2
+	sAMMNa2PgUU+5RmzHvA=; b=N3nSP7Gc5TMt+IIn+qZ9uGuYzVafaBp1ac2JStUp
+	K7rRbNrItFfkrE4pn3NSwfK3EJKU+G54f3mtlHj6FVmTiyk34UhAcW763bLSlDn6
+	lE8nZPvaSrrbDD1z8NV8GMsE+EejI9+PUuTSSHiKEagz9bQN6sfvpB5/sPOKcU3B
+	hixfH4Wr/PN3um5++i/3CX9NXOAeLZ9SXBULzqfYPbTbm7cJ0YT0lWqwC5hM7lYu
+	l1sOWd/H9mcZguQFv0ANnTeWef+C8qNF9wb0KmfE+GAKuhHp+eDVTrDi1PKjuj3Y
+	LyVxJjOjvzkfxEw8ajNN66YMc9YGBbuSSUh3zv0iLcgaEQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5ume8ng-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 17:40:55 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70a9f562165so4113926d6.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 10:40:55 -0700 (PDT)
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 22:27:25 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b2f7851326so10481101cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 15:27:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756316454; x=1756921254;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9pryiKbesf4KLCmykOzJgOnqNMnr4CU7A7f1EXmgKk4=;
-        b=tywFxxA0A9MYIfGIuso0yfaTjG7D+F1NUQn2Rhii7BiLheGUboV/zrVmvLJ7+iUseS
-         3mktI9m1lrL6HOgApYeJbC0o8jtTIRhKz4JB9mt1JRlfL0cx692R/z/3OZ9jLzEEa54r
-         IbCH2hpPmEAczOwkNBnYtrs1/OWxQLMuKLXd0FZd1tUlclsq4EtKxa2MGLmOqMYRQ7Nf
-         Xa/vtpbdGOoVNCT1Ta2j7m3Bk7zrgcdKsUOXveoEuvPwAVIM2w1NQUrsWC5wdJYov8fV
-         onNziUJvWtA8rpd10s+F1UcddY3SRgG/WSbAeoP3o9v9qHyAdCUqnyNK3KvvIa4qvsBh
-         C9ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWGO+aM7QRYFGU4l9MYoLYWIkAb65SkefcuEJ8bml+UdMrCYRNAUQg25oSghcduhzCwcDtAGrt8AAH/At0eLT/Iig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyIKk6nCtv0Wx5mzhIDJoWrxJzWNItfrxTcQvFQQN92pJ/XPsh
-	nznLUoUua4wBhP+epN6n35Q5OuugRlCWpf3TXLJP5AttP8fgLjEnC18jr8E1MkqCDbodkgeIK2W
-	XsUF4lyBcoMw/UHr6NFztrjHJLul4DcqkVTuyjhXDVrA6YOVq5PnOaofJiVu11juRY6YXqvOLXQ
+        d=1e100.net; s=20230601; t=1756333644; x=1756938444;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=coI2WbZxINU7lzeYxnfoWTr2sAMMNa2PgUU+5RmzHvA=;
+        b=cBgB6D2NEyxmHQv5PEC0S0rdn3d661aS6H0eeF9uLzN4oixwSZS699fohcdFgH7ukb
+         1HEo2rBsykZdhsUWPdxQjMQaueuQ79SxiUYLgsTqxF3qeeMdqTQTschZpAlQVzSNR7Az
+         bZvuXPGlsOHp1sEva+xTMFqGSspY56DzC1a2ZAMtyFWD93WEXqwr67nVAAWYbdqPSM2u
+         9rrzAiIpJYOsczckx0ZD5OjXH8uMtrmiaHz1rnjCxl6600uiW4W7G0zQwU2XPH2wtN25
+         QAhgZXY33p9QgKh/qMDF+NiHk0KmEJJa+nA8QZY+VwFrHOjfgvnbr8A1yb+60n/aRxzp
+         3fBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdczPSScCrwp+zRXmiXLD9fHKvZZFtXH4NI17D+LGBs8WZefK+qQOJnj/o5YBaIj53pedXeKqjSthu5a0FFZ8egg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj8TRun/AI6JDnQ/EAFIo/vqnt7TyGERiFIFUlGm/5/hpOjS15
+	7z8HzoVMFsuirkj+9nmPIo/9sTA8avysQElTR+/zvuTfBe2i+fiFPQuSsYhBmCYSUS9hxxM9ZWz
+	rKAsPPiTlX22M7zLi7Qp0tFTK4c+SueCLZQPjF13toCHh8iCXkTh1Lglf55JqlLUyH6Se1kJmnw
 	==
-X-Gm-Gg: ASbGncs8jNJG6PMcCAq+901+giX7ehZlgW1GGCRm2saHkNfZZl864RBplJjZF1yKI6k
-	akcNltGUWqOz42LRNDTmt04RdRt/InQ1LO/YjP+MEo6CmKTFtRvkSmYcGTbXH6H//90QuVdNI1f
-	J7MIggb39s4LuKbtaLQM4TtdrU0cv28R+v79kDenRa7x7vyVj5X3jefWyV/dhqxrq2y0lmcrn9p
-	zWrlLERiBILJxT7/GSgT2bxE7mHWF+pibKlYL4j9cLlPLY5fvYNl+XmSsnn1obkkYeCEMjCdBO+
-	AUNMFsApDx/Ei1w4yYPaipIxAFxMMfr/e5kZMKNZegyYl1oGNsw7fQavjRsZ6y1pNYNYCRmW4gk
-	wziMBtR8aMPJffM8+mqT4EQ==
-X-Received: by 2002:a05:6214:27c1:b0:70b:5320:d416 with SMTP id 6a1803df08f44-70d970cd29fmr238272106d6.14.1756316453983;
-        Wed, 27 Aug 2025 10:40:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhCi0u3Z5H0bwldj3p8+1IvfpKHSh571vUpFu3K1OKrspl//SOwGcmP4Yk4ANptZX5dCndsg==
-X-Received: by 2002:a05:6214:27c1:b0:70b:5320:d416 with SMTP id 6a1803df08f44-70d970cd29fmr238270536d6.14.1756316452731;
-        Wed, 27 Aug 2025 10:40:52 -0700 (PDT)
-Received: from ehlo.thunderbird.net (85-76-46-56-nat.elisa-mobile.fi. [85.76.46.56])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5aa917sm28124531fa.41.2025.08.27.10.40.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 10:40:50 -0700 (PDT)
-Date: Wed, 27 Aug 2025 20:40:47 +0300
+X-Gm-Gg: ASbGncsjVmZV/5m+PnK/SbxG3Bg7ORsBq4mbgM5jPPGdYQw2h14FX0QsxaL9jk0v1Ut
+	Mm9/jo6p7B8Ab1B4KVinbSM6G3a98WCk+lVPWLNiAWs06VsYXPoIaFPxWAUCv7lw3wEB2KaYFXL
+	Krup9oYiJ5+tid+YRh1xlzjbWB1bpJjcfyjaj8pZoVKv+1xe5Fin5EN67Y8I7kBfx4G3Y9Es4iK
+	HYEQo0qgv/Zb6WQ2GVmPQNcge2RTMc4om816YRsf1j0/SDe2vHi6l30YY2QJNk+HK3blc5vr8mT
+	6OuY3aUnAS350iHrTiUpCSmfri8WwOYXnwvA66Ycaa4NBuVpd2RtiRaarDEPoBjH1KfVy1fD3iO
+	S7BRdyJJ9ge4FtJhES8MSMXuwlAGNH9iAsKa2vZCE5zfDYBb61vfe
+X-Received: by 2002:a05:622a:4c8e:b0:4b0:8f6e:d70a with SMTP id d75a77b69052e-4b2de073d4amr102607061cf.22.1756333644064;
+        Wed, 27 Aug 2025 15:27:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfGaJaSCsOEz0+c7R0GpHgMKXCo1cAu/f4pCkJRC2KgnMVotYeSkSM/eNVsc6qfr/OnO8xNw==
+X-Received: by 2002:a05:622a:4c8e:b0:4b0:8f6e:d70a with SMTP id d75a77b69052e-4b2de073d4amr102606571cf.22.1756333643552;
+        Wed, 27 Aug 2025 15:27:23 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-336818f1d41sm14139131fa.51.2025.08.27.15.27.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 15:27:21 -0700 (PDT)
+Date: Thu, 28 Aug 2025 01:27:19 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maxime Ripard <mripard@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
         Louis Chauvet <louis.chauvet@bootlin.com>,
@@ -110,7 +109,7 @@ To: Maxime Ripard <mripard@kernel.org>,
         Sean Paul <sean@poorly.run>,
         Marijn Suijten <marijn.suijten@somainline.org>,
         Sandy Huang <hjc@rock-chips.com>,
-        =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
         Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
@@ -119,114 +118,91 @@ To: Maxime Ripard <mripard@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Hans de Goede <hansg@kernel.org>,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?ISO-8859-1?Q?Ma=EDra_Canal?= <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-CC: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_01/39=5D_drm/atomic=3A_Make_drm=5Fatomic?=
- =?US-ASCII?Q?=5Fget=5Fconnector=5Fstate=28=29_early_return_consistent?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20250825-drm-no-more-existing-state-v1-1-f08ccd9f85c9@kernel.org>
-References: <20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org> <20250825-drm-no-more-existing-state-v1-1-f08ccd9f85c9@kernel.org>
-Message-ID: <BBD9E72B-B1B6-4072-A465-68204879684C@oss.qualcomm.com>
+Subject: Re: [PATCH 03/39] drm/atomic: Convert
+ drm_atomic_get_connector_state() to use new connector state
+Message-ID: <hab6s4wyauqiej5ankh3gppdqkm2ymlevhrnklfe76kqjmmjqy@fptmzxpqv5av>
+References: <20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org>
+ <20250825-drm-no-more-existing-state-v1-3-f08ccd9f85c9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=Z/vsHGRA c=1 sm=1 tr=0 ts=68af4327 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=ntis2/2Y3p1p47GkerkPQg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=puQWGBksFvoA:10 a=VwQbUJbxAAAA:8
- a=V78A4Cvkybgf4icwE48A:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX2pgF/DjtSxly
- rIQK5Zd6UVljByFntp9ojkKE1g5IiqMkTYTGHe9UGwen1Bwf9170nhipGAOeArykXadNwFKkufk
- HA8ZL8W60CSu8LbHeMQtaowDyxbrclH6em4daF7nT341t5RKNmLxch30iACnnfjQGAlB6tpw3nB
- +cTEmUvUasrMsC82jfWPMtgNOOVzK3vprTvxqPKxVTt9vtG+Gzw58B6t2ar6fPm/TooZGGCs973
- ZdSOR5X4rDtsjWwqgi4X7NnCuDXp6x9B4T9GN3594ojrvDZ8BrPY8o0Coewmk+IAeX5lcU6qBm3
- nUraBawMTFmp8tRJgZctmVhi7zk/w03plS1/So3veh4hBPlib/GYjUQBnEhpATj8lE9Zi3xHuZm
- zO1JGDsM
-X-Proofpoint-GUID: sjQS2npUxWWfQJko6FrWhYd5uNNO7hQg
-X-Proofpoint-ORIG-GUID: sjQS2npUxWWfQJko6FrWhYd5uNNO7hQg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-drm-no-more-existing-state-v1-3-f08ccd9f85c9@kernel.org>
+X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68af864d cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=wpE8WlYdICmIRzy2dDcA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX6Y5Rcy3gzPtM
+ 2fquEC3rYRwx+b45IMWRHMi9DN4Sek5GEchGvxnm1EXZFQTZ7/ciShc1/zhGloRaivj/BCtBaQi
+ rCicNpf30Z7ewn8FZddDa7T4NcCatwBlQlII5319LTJkynBwCaCJNL7KAlolkghGLu99bAPE02v
+ xk/O8BMgzfX/bF+tmxrRoqAZErDXxOLUK3uhT5dqVyCSSz350wurJygX3h6c+P9ZQiuimHKi4AM
+ xC7Z4NFjKHlL6B6Llkep9aLy0bEA0HjAMrd2zl2rWG18IZdnW9tJsqtpVWyLUzTkHL3rKoXmQOX
+ neOyv9wkqC5QZIv5i7NIA1MmX9QFp0ZaA/e8PRQ2/l5eJbn+vGATtUEfxys0U8D2l8m3ZLP5PE5
+ saW6m9eC
+X-Proofpoint-GUID: 3VOxdufu_w2Bw80_6ubct_5KzRrCJ2Xl
+X-Proofpoint-ORIG-GUID: 3VOxdufu_w2Bw80_6ubct_5KzRrCJ2Xl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 malwarescore=0 phishscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+ clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230032
 
-On 25 August 2025 16=2E43=2E06 EEST, Maxime Ripard <mripard@kernel=2Eorg> w=
-rote:
->The drm_atomic_get_connector_state() tries to lookup if a connector
->state was already allocated in the global state to return early if it
->was the case=2E drm_atomic_get_plane_state() and
->drm_atomic_get_crtc_state() behave similarly=2E
->
->However, and unlike the other two, drm_atomic_get_connector_state() will
->do that lookup after having called drm_modeset_lock(), when the others
->will do it before=2E
->
->Let's move the early return before the lock to make it consistent=2E
->
->Signed-off-by: Maxime Ripard <mripard@kernel=2Eorg>
->---
-> drivers/gpu/drm/drm_atomic=2Ec | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/gpu/drm/drm_atomic=2Ec b/drivers/gpu/drm/drm_atomic=
-=2Ec
->index cd15cf52f0c9144711da5879da57884674aea9e4=2E=2Efe21f154e0fa030f85fb3=
-d6d35e2684adcf36e26 100644
->--- a/drivers/gpu/drm/drm_atomic=2Ec
->+++ b/drivers/gpu/drm/drm_atomic=2Ec
->@@ -1128,10 +1128,13 @@ drm_atomic_get_connector_state(struct drm_atomic_=
-state *state,
-> 	struct drm_mode_config *config =3D &connector->dev->mode_config;
-> 	struct drm_connector_state *connector_state;
->=20
-> 	WARN_ON(!state->acquire_ctx);
->=20
->+	if (state->connectors[index]=2Estate)
->+		return state->connectors[index]=2Estate;
+On Mon, Aug 25, 2025 at 03:43:08PM +0200, Maxime Ripard wrote:
+> The drm_atomic_get_connector_state() function calls the deprecated
+> drm_atomic_get_existing_connector_state() helper to get find if a
+> connector state had already been allocated and was part of the given
+> drm_atomic_state.
+> 
+> At the point in time where drm_atomic_get_connector_state() can be
+> called (ie, during atomic_check), the existing state is the new state
+> and drm_atomic_get_existing_connector_state() can thus be replaced by
+> drm_atomic_get_new_connector_state().
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_atomic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 660b081ff5d8c39061cebfb5ea122ac1e51677ad..30b7ec05a1af07075e40cd2822ecfd67df004ba2 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -1128,11 +1128,11 @@ drm_atomic_get_connector_state(struct drm_atomic_state *state,
+>  	struct drm_mode_config *config = &connector->dev->mode_config;
+>  	struct drm_connector_state *connector_state;
+>  
+>  	WARN_ON(!state->acquire_ctx);
+>  
+> -	connector_state = drm_atomic_get_existing_connector_state(state, connector);
+> +	connector_state = drm_atomic_get_new_connector_state(state, connector);
 
-Unlike other DRM objects, connectors are dynamic=2E There is no guarantee =
-that at this point this array entry exists and it's valid=2E You might be t=
-ampering with the unallocated memory=2E
+I'd say, drop patches 1-2 and use this function directly as is now.
 
->+
-> 	ret =3D drm_modeset_lock(&config->connection_mutex, state->acquire_ctx)=
-;
-> 	if (ret)
-> 		return ERR_PTR(ret);
->=20
-> 	index =3D drm_connector_index(connector);
->@@ -1150,13 +1153,10 @@ drm_atomic_get_connector_state(struct drm_atomic_=
-state *state,
-> 		       sizeof(*state->connectors) * (alloc - state->num_connector));
->=20
-> 		state->num_connector =3D alloc;
-> 	}
->=20
->-	if (state->connectors[index]=2Estate)
->-		return state->connectors[index]=2Estate;
->-
-> 	connector_state =3D connector->funcs->atomic_duplicate_state(connector)=
-;
-> 	if (!connector_state)
-> 		return ERR_PTR(-ENOMEM);
->=20
-> 	drm_connector_get(connector);
->
+>  	if (connector_state)
+>  		return connector_state;
+>  
+>  	ret = drm_modeset_lock(&config->connection_mutex, state->acquire_ctx);
+>  	if (ret)
+> 
+> -- 
+> 2.50.1
+> 
 
-
-With best wishes=20
+-- 
+With best wishes
 Dmitry
