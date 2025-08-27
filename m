@@ -1,158 +1,109 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E2A2FDC31;
-	Wed, 27 Aug 2025 02:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADC83081AA
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 04:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756262092; cv=none; b=pdUinAyIHd4bKApkSbo1uZgFcP/pLw8Z8a+YuPySmZWok2wnsNuikAXo4crhGUUqaGgHgtqoxIrt0h579JDoCDpQGpbV9sYmBwA2nMi5sNfP1GoBeVevatzmp31zUKl3E8T/olf/o6p7dfykSKpeqdGbw4cLbYXXkWVWPsFhpIk=
+	t=1756270751; cv=none; b=EdDhRKRxua53ndHJ0PA+DpiMr9M7L3taKJq+4LXj1Vb4ypvj06UE+7i+4cL2EgDrRiVWlrCDAHqSSl6Qhe2XytUBomu+GsxXmKzKXhU1/gu6UGv3TBGrpO66gNa4hz10hCde8a1sJu19lyfqsDY12BGvjNe9KOxaWRiALhB/mas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756262092; c=relaxed/simple;
-	bh=flSfPRNQnYMom8ROcCS1tPymmpBjL2uMjRUbr65zK+U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C0g8gSWJIIZhAQp57StK6jTCC3SWkR6I/xN9nvpvcEBf5Pz7DYP0/cPdjjt7IPrpZaWzYXmG6EHCVw5kngexXC1eRq2n83qh51KA8ZbgrinZO5PtaJ2c/6Ta+Xsk5djih3pLdkOBbmbz36ReEg5GAvIaqCya9vN0sO16OCCamd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 64a67eb882ee11f0b29709d653e92f7d-20250827
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:e8eb1380-9b4f-4676-8e85-4dd94b7a98db,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:ad5ebea67f0f0036752eb1b7b2dd6389,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:1,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 64a67eb882ee11f0b29709d653e92f7d-20250827
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 976442035; Wed, 27 Aug 2025 10:34:45 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id D683BE008FAA;
-	Wed, 27 Aug 2025 10:34:43 +0800 (CST)
-X-ns-mid: postfix-68AE6EC3-738925222
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 6F1FDE008FB0;
-	Wed, 27 Aug 2025 10:34:38 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-pm@vger.kernel.org,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-omap@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v2 14/18] cpufreq: powerpc: macintosh: Use __free(put_cpufreq_policy) for policy reference
-Date: Wed, 27 Aug 2025 10:31:58 +0800
-Message-Id: <20250827023202.10310-15-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756270751; c=relaxed/simple;
+	bh=VKOTiVgb3NZp/RJs2R0cfCmNJs+zE1QkjYhgAeEbwnY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=rvCa7hO/Qmg39OFVJHmOCvIXB5O+Np7EdgQl9YnP9QYJDd1F5FQlCPVomYQXyWPc1zFAC60+6scwCgcWbq7zrCjxmRsVYLI1Mxcg2exkehmPeQZ/8/ftSb3xHnexG3Fkjr/uM/od548YovPPLg9I2uFX+jXiolSSwItTpHvcHxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FTX85omX; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FTX85omX"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250827045907epoutp040aee5e04c3ca9d57228e0e624db141f2~fhvCZTgvQ1817218172epoutp04e
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2025 04:59:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250827045907epoutp040aee5e04c3ca9d57228e0e624db141f2~fhvCZTgvQ1817218172epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756270747;
+	bh=4OaX8SYxIlvnIjTkW++dFL0U3/EmZSsNqRJJF3Co8hI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FTX85omXfrgSzUmKDRyWP3+NX1JgnQV87XUHKwsChnIDBwL2m8HzAyqMDuSCZVBaD
+	 UX4mOQ3eo1HEpJ8ALuY4/32IKdV9PRQ+TA/4Gl20v7lW8BR5mOFN1P8v9Nt0F3f2Yv
+	 GQg/RA3sfpp0aVbZxEWu9J0eFDBsQMDbcjL6hVNM=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250827045907epcas2p2330c46b8a707ebf26928786595989d76~fhvB7xaPP1733617336epcas2p2C;
+	Wed, 27 Aug 2025 04:59:07 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cBXPQ5GpDz3hhTQ; Wed, 27 Aug
+	2025 04:59:06 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250827045906epcas2p2198037517886df0714e24d8d908a6c57~fhvA-1I341733217332epcas2p2Z;
+	Wed, 27 Aug 2025 04:59:06 +0000 (GMT)
+Received: from mclaren.dsn.sec.samsung.com (unknown [10.229.9.108]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250827045905epsmtip2928268d367150f1c7d2d0e8b4493e7bb~fhvA3r_Mm1856618566epsmtip2d;
+	Wed, 27 Aug 2025 04:59:05 +0000 (GMT)
+From: Kisung Lee <kiisung.lee@samsung.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Mauro Carvalho
+	Chehab <mchehab@kernel.org>, Inki Dae <inki.dae@samsung.com>
+Cc: Kisung Lee <kiisung.lee@samsung.com>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH 4/4] media: samsung: scaler: Add Kconfig and Makefile
+Date: Wed, 27 Aug 2025 04:47:20 +0000
+Message-ID: <20250827044720.3751272-5-kiisung.lee@samsung.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250827044720.3751272-1-kiisung.lee@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250827045906epcas2p2198037517886df0714e24d8d908a6c57
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250827045906epcas2p2198037517886df0714e24d8d908a6c57
+References: <20250827044720.3751272-1-kiisung.lee@samsung.com>
+	<CGME20250827045906epcas2p2198037517886df0714e24d8d908a6c57@epcas2p2.samsung.com>
 
-Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-annotation for policy references. This reduces the risk of reference
-counting mistakes and aligns the code with the latest kernel style.
+Add Kconfig and Makefile for Scaler driver directory.
+This will serve as the entry point for enabling and building
+Exynosautov920 specific device drivers.
 
-No functional change intended.
-
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Signed-off-by: Kisung Lee <kiisung.lee@samsung.com>
 ---
- drivers/macintosh/windfarm_cpufreq_clamp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/platform/samsung/Kconfig  | 1 +
+ drivers/media/platform/samsung/Makefile | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/macintosh/windfarm_cpufreq_clamp.c b/drivers/macinto=
-sh/windfarm_cpufreq_clamp.c
-index 28d18ef22bbb..f05e2167481f 100644
---- a/drivers/macintosh/windfarm_cpufreq_clamp.c
-+++ b/drivers/macintosh/windfarm_cpufreq_clamp.c
-@@ -62,7 +62,7 @@ static const struct wf_control_ops clamp_ops =3D {
-=20
- static int __init wf_cpufreq_clamp_init(void)
- {
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	struct wf_control *clamp;
- 	struct device *dev;
- 	int ret;
-@@ -79,8 +79,6 @@ static int __init wf_cpufreq_clamp_init(void)
- 	ret =3D freq_qos_add_request(&policy->constraints, &qos_req, FREQ_QOS_M=
-AX,
- 				   max_freq);
-=20
--	cpufreq_cpu_put(policy);
--
- 	if (ret < 0) {
- 		pr_err("%s: Failed to add freq constraint (%d)\n", __func__,
- 		       ret);
---=20
+diff --git a/drivers/media/platform/samsung/Kconfig b/drivers/media/platform/samsung/Kconfig
+index 0e34c5fc1dfc..baff5f7b9c3a 100644
+--- a/drivers/media/platform/samsung/Kconfig
++++ b/drivers/media/platform/samsung/Kconfig
+@@ -8,3 +8,4 @@ source "drivers/media/platform/samsung/s3c-camif/Kconfig"
+ source "drivers/media/platform/samsung/s5p-g2d/Kconfig"
+ source "drivers/media/platform/samsung/s5p-jpeg/Kconfig"
+ source "drivers/media/platform/samsung/s5p-mfc/Kconfig"
++source "drivers/media/platform/samsung/v920-scaler/Kconfig"
+diff --git a/drivers/media/platform/samsung/Makefile b/drivers/media/platform/samsung/Makefile
+index 21fea3330e4b..7a9e6f126628 100644
+--- a/drivers/media/platform/samsung/Makefile
++++ b/drivers/media/platform/samsung/Makefile
+@@ -5,3 +5,4 @@ obj-y += s3c-camif/
+ obj-y += s5p-g2d/
+ obj-y += s5p-jpeg/
+ obj-y += s5p-mfc/
++obj-y += v920-scaler/
+-- 
 2.25.1
 
