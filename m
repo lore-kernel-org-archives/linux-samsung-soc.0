@@ -1,168 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DA82EB84B;
-	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B627430BBAD
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 10:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374016; cv=none; b=iwEIK4KeeaGfMHdEU8Lj1tFeodlS6BEiMM6yWI5BUC5hf3TC8n8Tz+HBx1lItXruWPZ7llX7sbdAN1cyJ9VBpvM9Mk2/zQkV+4nCoQ++x/J4zLblpTYfFImS6ZY93C3NIZ0m+Bu3sCzchPtgNDiybSFOhtS6mSHDpFqzLq/MVrw=
+	t=1756376205; cv=none; b=HOY+rsOqg6JiP4MFE+6UPzwrEeF82opWZOOa5l9qbxG34xHM977KqnFjSrurz++ZfRpT+V/JX/Qh8ePOB15LDiAA24ssXTizUMmXYdXb1rBo1ZU4zdAXswKXZ/pXV/TrI6JtpTQaDVo3cunYdEves713NjWNTk+XQdcpDIvP+V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374016; c=relaxed/simple;
-	bh=Cl0m1kDKpWeagimjoCyJC2nNVcFJOKHXK8N9AWWvIRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PWjtMwHik0IV1dxaOdgqBsNcnTrTTzRXi0xgmGTD70kRkbs85J1F6ZZl0+Qt+6t8HMN0NpxvqxK1HGg0ONZmXhDIPAE+X64uh+FnnERGPWPFsphMPWTReCE+VzzXEOoU2OLQnTao2V0WJuIVE7KflxadzHBZr67z9z3IPUyUOpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ89yqsM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756376205; c=relaxed/simple;
+	bh=eQ6/+QYc3GtKN89cbuw8yxOlg3HzS1j1uIjLOLeHlUw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Y0yWzod0dVaYBKuc2coP29jxOVefY9OWOo0YGknatL9/CMtyYOz4Rn5+jTIx/fZJOARSNnr/XSdsKIOdrxayNWcqB0N+tiBR8PLnnob2mo3crtN9xljO+QM5nH/3lRBjMtZpsWCJmB9yMOt0KzysOCKkb+iuNGHlwNUBpZfn1KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CkYi5kMx; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ89yqsM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4004EC4CEFC;
-	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756374016;
-	bh=Cl0m1kDKpWeagimjoCyJC2nNVcFJOKHXK8N9AWWvIRE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JJ89yqsM/siAb1VR6ZJU3bEFaUkNGoy0qdWneQKwaNTbKw9v5mNgvGxJA28E63mh8
-	 Upq25haYXC1EwPZL5mZ2pA6J2O7jYs80WZygAwabYpOC504atc6SOmn/XDviZLtv/u
-	 Dkhv5fJWuapG9S8NjjHS5krDPTFQktzMc6uGIyrrf1CtjntEwSY+BeVohNBKzjYck9
-	 vc8aBvirQTUlJJbQyNuCJvdcB69O+ndDUle/uzIu+YrtfNIQ654vov6hDZekcrOcRL
-	 5uf6Pz1m20Ccro9eZRk6B2A29o17/4zQC0wXfU4vOxKUBk+cvk6B8LwZnfbzjU2bLw
-	 ryOgMyPpw3vEg==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30cceb3be82so715373fac.2;
-        Thu, 28 Aug 2025 02:40:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiFB/UFu1N0ZnTKqAR7jDshLPTAg829ij5rlYHMqEp0u+M0AexWFNC6Z0A9xtUVlB/4C/t5aWw7p4=@vger.kernel.org, AJvYcCUkdycEW+9kHgwCMXHAfsTYsQg7+nVyxfoFXzHpuCA+6wOzZEwyqCsaVnYfeP5Futxnp8PQ6yp3HMNYu4FfKrA40zo=@vger.kernel.org, AJvYcCUonPOnRlFo0mcqL06BWkPneOaJaoFtYJ/3pQN0UaQa5GX5CuGhNTkeor21j6cm+pnvKn4sX+9bjW6FmA==@vger.kernel.org, AJvYcCVg0FZ36TSQTocwz39aZnj+tMLerFOnWM3RSBcdmaywU++sUxnJfshcvJgh6ban6qTKwTY=@vger.kernel.org, AJvYcCVrAlxbM0F2b08GxzUuVtkTqrn/qpsDWwFWiyYTQCIewtyl8sQJHizLCHbKu0B66FT6nZIHLFGG7vta7Ks=@vger.kernel.org, AJvYcCWAbMVIHu07tKcHSJf7ms/QsimIqVEov6fjquvTp0vh00re5kqmzTR0L1XlpvcvTc2U22108FxeAThheWon@vger.kernel.org, AJvYcCWWvyVqMAfLAIERec1CbZopIXgz3939IyGJrvhnG3XBoclOzEZ0BCOI0IdGIAtQDt1iu+kKGsopsAJ5Xg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcYOLKt6QaZkOk/lPYhKCw6defQgFSYtvm2N5RzBzJ07O9zzjl
-	5pYX8kCJtJOVz0HeV+mYwNTVRO9VgoOrFcR79jcXMGiKKD/9Il3lGjNBfgjyzybS6RGjje//IpG
-	HpxPet1FnS7beFeV5beoUZ6unk9N4U0g=
-X-Google-Smtp-Source: AGHT+IGV4ScW5OAU3iglUFz6GOl/SaxSbnlEKhbCLP2wFA8xAwCena16hSLRSa/lAp17g1juuguW4VQdAzFwj9/LUxc=
-X-Received: by 2002:a05:6870:9710:b0:310:b613:5fdb with SMTP id
- 586e51a60fabf-314dcb575e6mr9287838fac.7.1756374014938; Thu, 28 Aug 2025
- 02:40:14 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CkYi5kMx"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250828101640epoutp031994b19e1acbca0201ebe00392aa22a2~f5tlB77wH0846508465epoutp03X
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 10:16:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250828101640epoutp031994b19e1acbca0201ebe00392aa22a2~f5tlB77wH0846508465epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756376200;
+	bh=7WVbLEgCBgW0kxr8siZONXo38qiuBE7Ny1BRGaYyQ2A=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=CkYi5kMx3iyOqZ9y17EC/DFSJSQlfwgkL60NAxPR6nSriqfZALFLSUU5yLg4OQxyb
+	 bscMf4PnGUvY+dm8nCjARO//MNPdU6N6oITbGYSdNn67c5m+8WBYByBbfVt+Cet/4y
+	 zoQZcOJWXReceNQTRN3WThIaYRmfxqH+jsonVMwQ=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250828101639epcas5p48b80c4a47884cd10bbac3bbc8f4591fc~f5tkKT9_40991509915epcas5p4y;
+	Thu, 28 Aug 2025 10:16:39 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cCHPL3zKGz3hhT3; Thu, 28 Aug
+	2025 10:16:38 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250828101638epcas5p47594b2a3f92cfbe02b3135b62e6c71fd~f5tivVJSY0991509915epcas5p4u;
+	Thu, 28 Aug 2025 10:16:38 +0000 (GMT)
+Received: from FDSFTE361 (unknown [107.122.81.127]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250828101636epsmtip14b3c87b255cbf7a76151549e375f0457~f5thOPiNG2530725307epsmtip1e;
+	Thu, 28 Aug 2025 10:16:36 +0000 (GMT)
+From: "Bharat Uppal" <bharat.uppal@samsung.com>
+To: "'Bart Van Assche'" <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
+	<martin.petersen@oracle.com>, <alim.akhtar@samsung.com>,
+	<avri.altman@wdc.com>, <linux-samsung-soc@vger.kernel.org>
+Cc: <pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>, "'Nimesh Sati'"
+	<nimesh.sati@samsung.com>, <bharat.uppal@samsung.com>
+In-Reply-To: 
+Subject: RE: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
+ in reset on suspend
+Date: Thu, 28 Aug 2025 15:46:24 +0530
+Message-ID: <005401dc1804$d68d9110$83a8b330$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn> <20250827023202.10310-4-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250827023202.10310-4-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 28 Aug 2025 11:40:03 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyk8AzMIpXHgrT8Z1UHGDrWUNjtTLP9mZxojpyASBCiNu69qRn54WdH-2Y
-Message-ID: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/18] ACPI: processor: thermal: Use
- __free(put_cpufreq_policy) for policy reference
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer <mmayer@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQExeeAfBfzr5YSvfr0wrrMUW8ELmAHKrEFuAhf3ztm1iYbGIIAkeQeQ
+Content-Language: en-in
+X-CMS-MailID: 20250828101638epcas5p47594b2a3f92cfbe02b3135b62e6c71fd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
+References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
+	<20250804113643.75140-1-bharat.uppal@samsung.com>
+	<c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org> 
 
-On Wed, Aug 27, 2025 at 4:33=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
-n> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  drivers/acpi/processor_thermal.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_th=
-ermal.c
-> index 1219adb11ab9..f99ed0812934 100644
-> --- a/drivers/acpi/processor_thermal.c
-> +++ b/drivers/acpi/processor_thermal.c
-> @@ -64,17 +64,13 @@ static int phys_package_first_cpu(int cpu)
->
->  static int cpu_has_cpufreq(unsigned int cpu)
->  {
-> -       struct cpufreq_policy *policy;
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
->
->         if (!acpi_processor_cpufreq_init)
->                 return 0;
->
->         policy =3D cpufreq_cpu_get(cpu);
-> -       if (policy) {
-> -               cpufreq_cpu_put(policy);
-> -               return 1;
-> -       }
-> -       return 0;
-> +       return !!policy;
+Hi Bart,
+I have made the relevant changes and pushed the updated patch.
+Can you please review it and close the same.
 
-If you want to make this change, please also change the return type of
-the function to bool.
+With Regards
+Bharat Uppal
 
->  }
->
->  static int cpufreq_get_max_state(unsigned int cpu)
-> @@ -95,7 +91,7 @@ static int cpufreq_get_cur_state(unsigned int cpu)
->
->  static int cpufreq_set_cur_state(unsigned int cpu, int state)
->  {
-> -       struct cpufreq_policy *policy;
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> -----Original Message-----
+> From: Bharat Uppal <bharat.uppal=40samsung.com>
+> Sent: 05 August 2025 10:58
+> To: 'Bart Van Assche' <bvanassche=40acm.org>; 'linux-scsi=40vger.kernel.o=
+rg'
+> <linux-scsi=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
+> kernel=40vger.kernel.org>; 'James.Bottomley=40HansenPartnership.com'
+> <James.Bottomley=40HansenPartnership.com>;
+> 'martin.petersen=40oracle.com' <martin.petersen=40oracle.com>;
+> 'alim.akhtar=40samsung.com' <alim.akhtar=40samsung.com>;
+> 'avri.altman=40wdc.com' <avri.altman=40wdc.com>; 'linux-samsung-
+> soc=40vger.kernel.org' <linux-samsung-soc=40vger.kernel.org>
+> Cc: 'pankaj.dubey=40samsung.com' <pankaj.dubey=40samsung.com>;
+> 'aswani.reddy=40samsung.com' <aswani.reddy=40samsung.com>; 'Nimesh Sati'
+> <nimesh.sati=40samsung.com>
+> Subject: RE: =5BPATCH=5D scsi: ufs: exynos: fsd: Gate ref_clk and put UFS=
+ device in
+> reset on suspend
+>=20
+>=20
+> > -----Original Message-----
+> > From: Bart Van Assche <bvanassche=40acm.org>
+> > Sent: 04 August 2025 21:17
+> > To: Bharat Uppal <bharat.uppal=40samsung.com>;
+> > linux-scsi=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> > James.Bottomley=40HansenPartnership.com;
+> > martin.petersen=40oracle.com; alim.akhtar=40samsung.com;
+> > avri.altman=40wdc.com; linux-samsung-soc=40vger.kernel.org
+> > Cc: pankaj.dubey=40samsung.com; aswani.reddy=40samsung.com; Nimesh
+> Sati
+> > <nimesh.sati=40samsung.com>
+> > Subject: Re: =5BPATCH=5D scsi: ufs: exynos: fsd: Gate ref_clk and put U=
+FS
+> > device in reset on suspend
+> >
+> > On 8/4/25 4:36 AM, Bharat Uppal wrote:
+> > > +static int fsd_ufs_suspend(struct exynos_ufs *ufs) =7B
+> > > +	exynos_ufs_gate_clks(ufs);
+> > > +	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
+> > > +	return 0;
+> > > +=7D
+> >
+> > Why '0 << 0' instead of just '0'? Isn't the latter easier to read?
+> Thanks for reviewing.
+> Indeed setting 0 is right, but in the same file ufs-exynos.c,  I have see=
+n
+> HCI_GPIO_OUT register configured using 0 << 0.
+> My intent here is to maintain coding style within the file.
+>=20
+> With Regards
+> Bharat Uppal
+>=20
+> >
+> > Thanks,
+> >
+> > Bart.
 
-This isn't correct AFAICS at least formally because the scope of the
-variable is the whole function, so it won't get out of scope at the
-point where you want cpufreq_cpu_put() to be called.
-
-The policy variable should be defined in the block following the "for"
-loop (and actually all of the local variables except for "i" can be
-defined there).
-
-Or better still, please move that block to a separate function
-containing all of the requisite local variable definitions and call
-that function for each online CPU.
-
->         struct acpi_processor *pr;
->         unsigned long max_freq;
->         int i, ret;
-> @@ -127,8 +123,6 @@ static int cpufreq_set_cur_state(unsigned int cpu, in=
-t state)
->                 max_freq =3D (policy->cpuinfo.max_freq *
->                             (100 - reduction_step(i) * cpufreq_thermal_re=
-duction_pctg)) / 100;
->
-> -               cpufreq_cpu_put(policy);
-> -
->                 ret =3D freq_qos_update_request(&pr->thermal_req, max_fre=
-q);
->                 if (ret < 0) {
->                         pr_warn("Failed to update thermal freq constraint=
-: CPU%d (%d)\n",
-> --
