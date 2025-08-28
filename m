@@ -1,78 +1,126 @@
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1647D13C9C4;
-	Thu, 28 Aug 2025 13:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F328227B83;
+	Thu, 28 Aug 2025 14:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756388167; cv=none; b=LP18QB/FoTbGhRUNJyDhzm1SIQFjd/xf8ZEulQ/O/ChYcgl/oY7RhpvYr77lF3v6JRzd3p/wyZymGV/O8WbLcd4A+LElSrStmWd2sVcjw9+M35Vz2iYM/n/mDypSruEZ9XsXveFPYcbrL86IY3RJMJCnJ0eguwEUriGZ7uDvKAM=
+	t=1756391201; cv=none; b=Kb9DEcIy4BQyyoYfmG1/xH8g38n6X0MSeTushNXmswVR9Pgr1oKJH0Ze1Qp9pnQnUIjO80VIwhBLn4rbglazLq1xzGZ3rTqnMnqT6GiEExaUCtCTtI/637atYC5jIH6RjrJAoCE6J2vvMDgoSBYT5Hp81ZhZ3cusLLw24Eh1EoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756388167; c=relaxed/simple;
-	bh=pMJGVdHzw82RWoCc7SXHdGTgGvXvAd4aIAO5C8iissU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kh/00mcw2OxdfIJFy/vNSnXLYxGOz9h4/zULisLT/6akhQh84u5hRmAUYrOUm2x5JV9yHp3eIw5J2C4UASllc1DUz1rd3o6cNq5Qt0wIosOMxf6Nb3DBTUvv0iBJuYgR/jxoiJx094gBCKy0uMgEiDoGuV5VzlBi/5jJGNmASiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=MSDxVgj9; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1756391201; c=relaxed/simple;
+	bh=nZTT535RfyXPcNBRflR/RKIqbWf0jF5aESO8lp2wvoc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Dxum7ckWOUnMXghjDtqBL0074posI5M93m3ukyGC9KIpv25CPjVUGfZtabDn+bnhgb4BY2JCQS1RZqZCEws71B1fWxx2ErVutWPvrgLE7SbWmXO4MmBnqSldwLuKzfN/SZqgwBAAawiJq/gHmqg+F6ZEhc+MhyQ5srBWmLATs5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DK6o2o7h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="MSDxVgj9"
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cCMqT1WhbzlgqVV;
-	Thu, 28 Aug 2025 13:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756388162; x=1758980163; bh=sqV1scMIAszcnmCOhrVrNpOW
-	dX3EsLB6kvfYWi/fNHk=; b=MSDxVgj9nIhZvrnKCZWsf6hc48bZmFnudklPkxDQ
-	J5H0jMEJVRrOZDc+8XHIor1L3DeKNmpEFx9A99bqNe/VUiTHxkl7P6fGTaCN0U0s
-	kBSGl/E28At3yC3FytdKeKteJUEkhm91sm7rhQTvGty2S95rn/0YwX6ULgjqka8g
-	Gzxux9/9Zj9YDIcWYw2Psk4UybI4LjFFbQM5uywgl9iILoUOV6XKm2I3tub5UtEq
-	yHMky2H8JklcRwyjGmdlQOD27oETiWF57w1cDUXTu706PQ1HQO1KX+OOEwJhLv3E
-	vtP1qcAYVvG26UFN7LJQlSbAVEI6brHDJeH5GWDvYIIpBQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id pohtwsPELwlf; Thu, 28 Aug 2025 13:36:02 +0000 (UTC)
-Received: from [172.20.6.188] (unknown [208.98.210.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cCMqH1f14zlgn8k;
-	Thu, 28 Aug 2025 13:35:53 +0000 (UTC)
-Message-ID: <f8672cb8-f6ec-4eed-9c0b-4f4806cca79b@acm.org>
-Date: Thu, 28 Aug 2025 06:35:53 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DK6o2o7h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 762C8C4CEFA;
+	Thu, 28 Aug 2025 14:26:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756391200;
+	bh=nZTT535RfyXPcNBRflR/RKIqbWf0jF5aESO8lp2wvoc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=DK6o2o7hQb39YCj7Se7T/Oaju7Jz9DdnSK69P2J5Y4v3z4pv5/NiVgd61NkEzUZpv
+	 lo63HA7tMPXLmj3TqV07fCRCN6ktOnIbGPUfnmEIeTlt3VUiykXK/CbITsSBXTHbSN
+	 YLUmsoSOqdPmZ8kOnhkUZ6zXmUsz9etsCxMraTWv8vKeufvGLiZeiay9YbEmDT6fnV
+	 UMnpx3+IA1LDg8ozja/LlNWJpLxA2Xk8CW3OoAZawG5Y4VsFne0QQbXzjkzuKP4Hig
+	 tX3xzQ8pYlyPY3LVpeQECcVwtBxsfQZCf6VdM1Hd5tfyZ79mp7/Gq3UdicBvVJ5vHC
+	 PniYkScWUDr/Q==
+Date: Thu, 28 Aug 2025 09:26:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
- in reset on suspend
-To: Bharat Uppal <bharat.uppal@samsung.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: conor+dt@kernel.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, 
+ krzk@kernel.org, devicetree@vger.kernel.org, linux-fsd@tesla.com, 
+ linux-arm-kernel@lists.infradead.org, shradha.t@samsung.com, 
+ ravi.patel@samsung.com, linux-kernel@vger.kernel.org, 
  linux-samsung-soc@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com,
- Nimesh Sati <nimesh.sati@samsung.com>
-References: <CGME20250821053938epcas5p290f78790250d8cb09df2f35e45624359@epcas5p2.samsung.com>
- <20250821053923.69411-1-bharat.uppal@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250821053923.69411-1-bharat.uppal@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Inbaraj E <inbaraj.e@samsung.com>
+In-Reply-To: <20250828083926.16849-1-inbaraj.e@samsung.com>
+References: <CGME20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896@epcas5p3.samsung.com>
+ <20250828083926.16849-1-inbaraj.e@samsung.com>
+Message-Id: <175639108979.1621797.4942360795464575731.robh@kernel.org>
+Subject: Re: [v3] arm64: dts: fsd: Add CSIS nodes
 
-On 8/20/25 10:39 PM, Bharat Uppal wrote:
-> On FSD platform, gating the reference clock (ref_clk) and putting the
-> UFS device in reset by asserting the reset signal during UFS suspend,
-> improves the power savings and ensures the PHY is fully turned off.
+
+On Thu, 28 Aug 2025 14:09:26 +0530, Inbaraj E wrote:
+> The Tesla FSD SoC CSIS IP bundles MIPI CSI-2 link controller and video
+> capture interface. Add nodes describing the MIPI CSI-2 link controller
+> and video capture interface.
 > 
-> These operations are added as FSD specific suspend hook to avoid
-> unintended side effects on other SoCs supported by this driver.
+> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> ---
+> 
+> Changes since v2:
+> - Changed generic node name
+> - Fixed node ordering
+> 
+> Here is patch link for v2:
+> https://lore.kernel.org/linux-media/20250814140943.22531-1-inbaraj.e@samsung.com/
+> 
+> This patch is dependent on below patchset
+> https://lore.kernel.org/linux-media/20250822002734.23516-1-laurent.pinchart@ideasonboard.com/T/#t
+> 
+>  arch/arm64/boot/dts/tesla/fsd.dtsi | 540 +++++++++++++++++++++++++++++
+>  1 file changed, 540 insertions(+)
+> 
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250828 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/tesla/' for 20250828083926.16849-1-inbaraj.e@samsung.com:
+
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12640000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12641000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12650000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12651000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12660000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12661000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12670000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12671000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12680000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12681000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12690000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12691000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126a0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126a1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126b0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126b1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126c0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126c1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126d0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126d1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126e0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126e1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126f0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
+arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126f1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+
+
+
+
 
