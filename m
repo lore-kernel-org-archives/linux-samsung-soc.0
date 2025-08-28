@@ -1,126 +1,203 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F328227B83;
-	Thu, 28 Aug 2025 14:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A073933EB19
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 17:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756391201; cv=none; b=Kb9DEcIy4BQyyoYfmG1/xH8g38n6X0MSeTushNXmswVR9Pgr1oKJH0Ze1Qp9pnQnUIjO80VIwhBLn4rbglazLq1xzGZ3rTqnMnqT6GiEExaUCtCTtI/637atYC5jIH6RjrJAoCE6J2vvMDgoSBYT5Hp81ZhZ3cusLLw24Eh1EoE=
+	t=1756401321; cv=none; b=IobPqaZqHgtcAm0a02kMkIV2sWbHtxesTiSddvPm/njxwDpOxQKMMsqo3tnNqAXlVMAgOdFwxt1h3gfjZP0DcnZlUA63B9GFQ/EmNDGAxt9V5CcKCDQWirp8rSUQ7q/HT+aqBw6s4RtPkqBOFXOqYcQl31WaKz0KgF2tQDQRG2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756391201; c=relaxed/simple;
-	bh=nZTT535RfyXPcNBRflR/RKIqbWf0jF5aESO8lp2wvoc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Dxum7ckWOUnMXghjDtqBL0074posI5M93m3ukyGC9KIpv25CPjVUGfZtabDn+bnhgb4BY2JCQS1RZqZCEws71B1fWxx2ErVutWPvrgLE7SbWmXO4MmBnqSldwLuKzfN/SZqgwBAAawiJq/gHmqg+F6ZEhc+MhyQ5srBWmLATs5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DK6o2o7h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756401321; c=relaxed/simple;
+	bh=tjLq4yotJVvrKtVjK5XLYb7jE1fQQx1FF/sxrbky9es=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BP6BiVXVlINbZdUjizqIR2C2mk/pirZJYbQpewDDr8WtLvSOoEmVF2qf0MG8BFPqjM0nqDhvHXXZplCK+Hm6X7Hyjup9xY/8IbLOW8AoRQx2CUQraxnSdTM+jZs363hyFQeHF+ciFjj23RTKW/f7wxRHp4A9AzhCdjMB0uwi0xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EJzdxybn; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DK6o2o7h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 762C8C4CEFA;
-	Thu, 28 Aug 2025 14:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756391200;
-	bh=nZTT535RfyXPcNBRflR/RKIqbWf0jF5aESO8lp2wvoc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=DK6o2o7hQb39YCj7Se7T/Oaju7Jz9DdnSK69P2J5Y4v3z4pv5/NiVgd61NkEzUZpv
-	 lo63HA7tMPXLmj3TqV07fCRCN6ktOnIbGPUfnmEIeTlt3VUiykXK/CbITsSBXTHbSN
-	 YLUmsoSOqdPmZ8kOnhkUZ6zXmUsz9etsCxMraTWv8vKeufvGLiZeiay9YbEmDT6fnV
-	 UMnpx3+IA1LDg8ozja/LlNWJpLxA2Xk8CW3OoAZawG5Y4VsFne0QQbXzjkzuKP4Hig
-	 tX3xzQ8pYlyPY3LVpeQECcVwtBxsfQZCf6VdM1Hd5tfyZ79mp7/Gq3UdicBvVJ5vHC
-	 PniYkScWUDr/Q==
-Date: Thu, 28 Aug 2025 09:26:39 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EJzdxybn"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-325e31cecd6so1072051a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 10:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756401319; x=1757006119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
+        b=EJzdxybnyxlQrk6qJR558wtNekNbgws953L2pneIZYbmyp9tAmsnaz2aSuhIUBM5zr
+         yym6Q3hOD+h86ma+8fB5UYxWC0FsSh8WsgByN6NGuhj5XPnYnWvTGq97mGOESOdqxB8M
+         UO5/YFoyUcXdWdRme2wq/ulZFp8KXOMX/N5wcNQCirgFPfS9pE37lzw+nKFk5IrmnDbO
+         G5sw2Dwq2cicHF4lperkYSyAoX2g6OycdnZ1FjYe/p8IEgXy13BJvrhiJGJwM3VA8ugT
+         uPqiFjyVbr8N6oCUmphfD2rJa6OFoETW3Ncm5ZacDEJ+l20U+VrrmUTHcEPjkrroNkNZ
+         4tIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756401319; x=1757006119;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
+        b=Y6gjsa1Qr1juWBwNP+ZmyexIZ1MwdEoO+G7xNpxQUDQVGr862VUrs9S/SwEA32pAMo
+         cRY3Jv2yQRjA+g6UDvWFu3wgy5e3/oKsU9cY0s8B+me1faaDNL+SIYxM5kHdvVNP3nhw
+         wOvv6LtgDb25n+q6WSLzk1fjdrscbZBmZcgaX0NiAzQsRjxHMIXVCEqIBeohqjNQ0VHj
+         kpQu+2trXumNSenW4ZWv6l4S/e+1Km5ALGsuG+aPDU5Vafc+Q8V3qyBKbmCfUfvAVB0A
+         qxKArszQg8K0GxxSTtWsIDX0kenLiXVAzxAzTs9L+qdXx60hPe3ZF+5qoicM7iWk/Usk
+         lABw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaefiS3xCZcy5kLOr2m8NVCNWlSoCMO+GWY0uVyhHhSxZC6ykM3G2XP8AajmEIacxrz1geyrdJItyq9lutJxuAcQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3HBwRs6aa2IlUyE0nYjYhxMBaqBEf2DgItXhHLnR/Aq+B6Nxk
+	H0S0GVzsKqTCwYtM+rj6gjSD+gmfyFguLC/qpTuLxFsFpSg6t6WhBRNJbSlZ5IAqF8ycYKQSXZH
+	wL/wZJg==
+X-Google-Smtp-Source: AGHT+IEgfCMAj/kPGbx0Dj2C82B+XByTzBEnlSaJgGQHGzaozLp7T19v0PG28aEIfyLg5E6WkydfWYNcBOM=
+X-Received: from pjhk31.prod.google.com ([2002:a17:90a:4ca2:b0:327:9b90:7a79])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc3:b0:327:cec7:b8c6
+ with SMTP id 98e67ed59e1d1-327cec7cb53mr1738031a91.32.1756401318775; Thu, 28
+ Aug 2025 10:15:18 -0700 (PDT)
+Date: Thu, 28 Aug 2025 10:15:17 -0700
+In-Reply-To: <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, 
- krzk@kernel.org, devicetree@vger.kernel.org, linux-fsd@tesla.com, 
- linux-arm-kernel@lists.infradead.org, shradha.t@samsung.com, 
- ravi.patel@samsung.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org
-To: Inbaraj E <inbaraj.e@samsung.com>
-In-Reply-To: <20250828083926.16849-1-inbaraj.e@samsung.com>
-References: <CGME20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896@epcas5p3.samsung.com>
- <20250828083926.16849-1-inbaraj.e@samsung.com>
-Message-Id: <175639108979.1621797.4942360795464575731.robh@kernel.org>
-Subject: Re: [v3] arm64: dts: fsd: Add CSIS nodes
+Mime-Version: 1.0
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-3-zhangzihuan@kylinos.cn> <aK8Sd30K64mbN1Nt@google.com> <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
+Message-ID: <aLCOpfNkcQN9P-Wa@google.com>
+Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
+ policy reference
+From: Sean Christopherson <seanjc@google.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Markus Mayer <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 28, 2025, Zihuan Zhang wrote:
+> > Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_poli=
+cy() until
+> > policy goes out of scope, and so using __free() means the code is effec=
+tively:
+> >=20
+> > 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+> > 			struct cpufreq_policy *policy;
+> > 			int cpu;
+> >=20
+> > 			cpu =3D get_cpu();
+> > 			policy =3D cpufreq_cpu_get(cpu);
+> > 			if (policy && policy->cpuinfo.max_freq)
+> > 				max_tsc_khz =3D policy->cpuinfo.max_freq;
+> > 			put_cpu();
+> >=20
+> > 			if (policy)
+> > 				cpufreq_cpu_put(policy);
+> > 		}
 
-On Thu, 28 Aug 2025 14:09:26 +0530, Inbaraj E wrote:
-> The Tesla FSD SoC CSIS IP bundles MIPI CSI-2 link controller and video
-> capture interface. Add nodes describing the MIPI CSI-2 link controller
-> and video capture interface.
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> ---
-> 
-> Changes since v2:
-> - Changed generic node name
-> - Fixed node ordering
-> 
-> Here is patch link for v2:
-> https://lore.kernel.org/linux-media/20250814140943.22531-1-inbaraj.e@samsung.com/
-> 
-> This patch is dependent on below patchset
-> https://lore.kernel.org/linux-media/20250822002734.23516-1-laurent.pinchart@ideasonboard.com/T/#t
-> 
->  arch/arm64/boot/dts/tesla/fsd.dtsi | 540 +++++++++++++++++++++++++++++
->  1 file changed, 540 insertions(+)
-> 
+...
 
+> Yes, this will indeed change the execution order.
+> Can you accept that?=20
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+No, because it's buggy.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+> Personally, I don=E2=80=99t think it=E2=80=99s ideal either.
+>=20
+> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+>  			int cpu;
+> 			cpu =3D get_cpu();
+> 			{
+> 				struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_=
+cpu_get(cpu);
+> 				if (policy && policy->cpuinfo.max_freq)
+> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
+> 			}
+> 			put_cpu();
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 }
+>=20
+> Other places may also have the same issue,
+>=20
+> maybe we should consider introducing a macro to handle this properly,
+> so that initialization and cleanup are well defined without changing
+> the existing order unexpected.
+>=20
+> like this:
+>=20
+> #define WITH_CPUFREQ_POLICY(cpu) {\
+>=20
+> for(struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D  \
+> 			cpufreq_cpu_get(cpu);			\
+> 			policy;)
+>=20
+> Then Use it:
+>=20
+> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+>  			int cpu;
+> 			cpu =3D get_cpu();
+> 			WITH_CPUFREQ_POLICY(cpu){
+> 				if (policy->cpuinfo.max_freq)
+> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
+> 			}
+> 			put_cpu();
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+This all feels very forced, in the sense that we have a shiny new tool and =
+are
+trying to use it everywhere without thinking critically about whether or no=
+t
+doing so is actually an improvement.
 
-  pip3 install dtschema --upgrade
+At a glance, this is literally the only instance in the entire kernel where=
+ the
+CPU to use is grabbed immediately before the policy.
+=20
+  $ git grep -B 20 cpufreq_cpu_get | grep -e get_cpu -e smp_processor_id
+  arch/x86/kvm/x86.c-			cpu =3D get_cpu();
+  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_power(struct devic=
+e *cpu_dev,
+  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_cost(struct device=
+ *cpu_dev, unsigned long KHz,
+  drivers/cpufreq/mediatek-cpufreq-hw.c-mtk_cpufreq_get_cpu_power(struct de=
+vice *cpu_dev, unsigned long *uW,
 
+Probably because KVM's usage is rather bizarre and honestly kind of dumb.  =
+But
+KVM has had this behavior for 15+ years, so as weird as it is, I'm not incl=
+ined
+to change it without a really, really strong reason to do so, e.g. to itera=
+te
+over all CPUs or something.
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250828 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/tesla/' for 20250828083926.16849-1-inbaraj.e@samsung.com:
-
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12640000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12641000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12650000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12651000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12660000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12661000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12670000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12671000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12680000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12681000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12690000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12691000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126a0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126a1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126b0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126b1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126c0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126c1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126d0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126d1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126e0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126e1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126f0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126f1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-
-
-
-
-
+So given that this is the only intance of the problem patter, I think it ma=
+kes
+sense to leave KVM as-is, and not spend a bunch of time trying to figure ou=
+t how
+to make KVM's usage play nice with __free().
