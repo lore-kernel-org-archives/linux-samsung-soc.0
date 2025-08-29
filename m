@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DA72BEFF6;
-	Fri, 29 Aug 2025 10:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFBB21B9E2;
+	Fri, 29 Aug 2025 10:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463349; cv=none; b=WtlTeykeNQFNiw7slbfcRDecbOIk6HwirwRNNtSuq/fnwCwJOIXND4uAS4aCwa7FjdbeBS5BNiGWy7Sj6nwmF4hSFrcEWJFvG1GF5/bjqffTTnanmEPir2svNsSg5KnnT6Uoz7FFwjmCHDTrxdzvU0lCtFv2f8GbFVlljaLK+2U=
+	t=1756463826; cv=none; b=HcFZK185gDTwzqtI/eT9QARcIKVKCAN9pO3Zh32i8GjNd3T1AiYfapnNd7kNi4jORG2YRDwy5rzInTwOeJ9Y8UE6WVfKRGaAOmvxvFUNiml18HFQcxOMjAdiRnjZqEHbKES2zWexNCRFn4JYbcrnHbh/phCbDCHU/pA3EZspNho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463349; c=relaxed/simple;
-	bh=rK4qkpQLHD4YV+ZOv6+7UA3F3GsCJ78MecmyuokwNhA=;
+	s=arc-20240116; t=1756463826; c=relaxed/simple;
+	bh=twpmMydgICDDkUVDIvDfY78Sj0i19Dq/UEGfEUuux1s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PATegCY43OUlNEY0hbHyc28z8kCUYN1bHafnmxWmeCgbpiqcrRIi3zcqmbMI5ZMyaj62P3UDdM3fiDYQSbos9BSq99KOa0s6D7KcxR4CZnNev4ZeHMDXvYM/Gzv5NMzlGOw+lC9Trk+F9RJbIX8NGmFVr/xUh3p6aNYaaWY0TLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXZriuDk; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=b7IPflKO1bQwBYfeW7CvbBDuddtMPA4bFP2BaxnVhYNf26A2+2i/LpFv/9Sdsh7Zr+7YK9W4uukw/5a394axHXM0MNiUaF9gmtxntZq/aJPa5TWwW2b5T1YDb41uFlTi5uq5lqar0pqOrDH46Ssr/1jVK3iu9ASDF4e7OFmvgxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrpuH4vt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXZriuDk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE17C4CEF0;
-	Fri, 29 Aug 2025 10:28:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrpuH4vt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 208D4C4CEF0;
+	Fri, 29 Aug 2025 10:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756463349;
-	bh=rK4qkpQLHD4YV+ZOv6+7UA3F3GsCJ78MecmyuokwNhA=;
+	s=k20201202; t=1756463826;
+	bh=twpmMydgICDDkUVDIvDfY78Sj0i19Dq/UEGfEUuux1s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oXZriuDkwQAQm9ce6gw+R5rqIDEB/OI+h2EsdRTbbciLZPFIKjLWfZfByzZNRVA0/
-	 4kwLvxPLFMjjcU7FhE23E4Nb788MSU9ScxDDFIqS1smxYrFHr4wvR75K9+EfvLht2v
-	 gAbbRULk70G1qnvHBT5yGLzNPic1WyvHUlehmuoL1pcVv3mfbOmpZ5gURvCtFC1bdX
-	 X6PkDrK7o2KywWgHhuJ1040CwOh+EOM2n02isZCWgSfyVnYcD+2j07j3km+PklsRab
-	 0qkA+5nZqsZREwAS9LYlPX2+0CiFCSATA9bC5niYDb7zTwA8+LOTQtrnrVtpcO6gmi
-	 ZHvq9jYIv/Qpg==
-Message-ID: <32dedafd-df52-48fe-a9b2-be96127bb9b7@kernel.org>
-Date: Fri, 29 Aug 2025 12:28:57 +0200
+	b=JrpuH4vt9h+7I5uDIi1z32DF4FivnQM8qzJuzSgvUdjD0ilUL0EYSlJiyQm0iMzpI
+	 4ZZONeMbba+BvmXZ4T+1b/Y1eqR/sXHv/A+vRZGIrx8L/762U5dLVc5UPABesqhSci
+	 vdC072mLRISyravqh5voJmkTWqmvXP1TYREVmvN5wheZsyHG6B4yZTas4gAbhq+ffJ
+	 uf4eEjvODHB2ahVjtrkTxIcQfSLMM8av3U9HL5WSK9ltQa4BPZOUY//05CjeuBLtiI
+	 c9G1uWViAlyQL4764sDSQF/R+x8uv9ENDj4IvGIJNXGMOo8V5fykEMw3kRCpb/2NTG
+	 I0jloOUhgM62A==
+Message-ID: <e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
+Date: Fri, 29 Aug 2025 12:36:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,28 +35,26 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific
- configuration
-To: Linus Walleij <linus.walleij@linaro.org>,
- Ravi Patel <ravi.patel@samsung.com>
-Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
- tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
- gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
- smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
- dj76.yang@samsung.com, hypmean.kim@samsung.com,
+Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, kauschluss@disroot.org,
+ ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org,
+ johan@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, soc@lists.linux.dev,
- Priyadarsini G <priya.ganesh@samsung.com>
-References: <CGME20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2@epcas5p4.samsung.com>
- <20250825114436.46882-1-ravi.patel@samsung.com>
- <20250825114436.46882-6-ravi.patel@samsung.com>
- <CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+ <CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+ <20250822093845.1179395-6-pritam.sutar@samsung.com>
+ <20250824-rough-fresh-orangutan-eecb2f@kuoka>
+ <007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+ <83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
+ <000401dc18cd$ec02a1b0$c407e510$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,39 +100,63 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
+In-Reply-To: <000401dc18cd$ec02a1b0$c407e510$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 29/08/2025 12:11, Linus Walleij wrote:
-> Hi Ravi / SeonGu,
+On 29/08/2025 12:15, Pritam Manohar Sutar wrote:
+> Hi Krzysztof
 > 
-> thanks for your patch!
-> 
-> On Mon, Aug 25, 2025 at 2:07 PM Ravi Patel <ravi.patel@samsung.com> wrote:
-> 
->> From: SeonGu Kang <ksk4725@coasia.com>
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 26 August 2025 02:05 PM
+>> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
+> .
+> .
+> [snip]
+> .
+> .
+>>>> Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy:
+>>>> add
+>>>> ExynosAutov920 combo ssphy
+>>>>
+>>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote:
+>>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+>>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
+>>>>> "phy" and "ref". The required supplies for USB3.1 are named as
+>>>>> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+>>>>
+>>>> Please do not describe the schema, but hardware. This sentence does
+>>>> not help me in my question further.
+>>>
+>>> This is a combo phy having Synopsys usb20 and usb30 phys (these 2 phys are
+>> totally different).
+>>> One PHY only supports usb2.0 and data rates whereas another one does
+>>> usb3.1 ssp+ and usb3.1 ssp
+>>>
+>>> This patch only explains about usb30 (since these are two different phys) phy
+>> and omitted inclusion of usb20 reference (added separate patch for this patch
+>> no 3).
+>>>
+>>> Hope this is clear.
 >>
->> Add Axis ARTPEC-8 SoC specific configuration data to enable pinctrl.
+>> No. That sentence still explains what schema is doing.
 >>
->> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
->> Signed-off-by: Priyadarsini G <priya.ganesh@samsung.com>
->> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
 > 
-> Please avoid CC to soc@kernel.org on these patches, they end up in the
-> patchwork for immediate merging for SoC:
-> https://patchwork.kernel.org/project/linux-soc/patch/20250825114436.46882-6-ravi.patel@samsung.com/
-
-Yeah, that's odd - most likely old CC-list. This could happen if using
-b4 but there is no b4 being used here, so why Cc-ing according to some
-old files?
-
+> Ok, let me simplify the commit message further something like below. 
+> Anyways, the coverletter contains more details about it.
 > 
-> I think this is not you intention, the pinctrl portions will be merged by
-> Krzysztof who sends it to me once that part is finished reviewing.
-Version for review should not be merged via soc@, so that's wrong
-process in any case. But you are right that I will be taking everything,
-thus soc@ is not involved at all.
+> "dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo ssphy
+> 
+>   Add schema for combo ssphy found on this SoC.
+> "
+> 
+> Please confirm if this looks fine?
+> If so, will reflect the similar commit messages in patch 1 and 3.
+
+Please read my first comment again. I do not see how does this satisfy
+hardware explanation.
 
 Best regards,
 Krzysztof
