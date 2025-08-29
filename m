@@ -1,50 +1,50 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B8E2D0C8E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 11:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79A23148D8
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 12:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756468711; cv=none; b=K7JbOhPxYO31rDe+mHT1oK4XXEbCU1BzrFvHM9K6bUcefnLH4CLx7MLfJtFaKQ4ly6JFBZJhJ/Mm5adp4jGfJbsui1+1CEFcriHjrHHoilJFBpCW8Pi+2uBaEcl8PffB/CCv9KDppPOodM5Zmora79SwyO7UGnGArQOCYRQwvpM=
+	t=1756469007; cv=none; b=ouFoaDNdMGSVlAtOvSlQxKbYQdnaLbUmXArrnlcdZPD9zdayw8rVtYd09w+H2SX51ZilLE6kiqaPChBka0bO+EExYelivYs27q+v8xxdFvlmHTSJ3NeGQxRltQKpC2rMGkwGpfdpCZuS/xgtc2N5laj6PzIzw02SoPaeF4WEYO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756468711; c=relaxed/simple;
-	bh=Rw5SIZaECKmBfdJ5CiNQHvr4hnQuJd5QmrWW0G/k3ys=;
+	s=arc-20240116; t=1756469007; c=relaxed/simple;
+	bh=UkovlfHenV4WT3s3KqM90aV65iV1WYZhu5CPcxht3kM=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=fvRjMDtjT+P948TjZvvNrlrBhZtDOzmzvI+jlL3tBi7JK5P3XkNlaqpcL9+9Kph9yOWCYNoquuBdB87dAS1xygSRv3oX2FbL6PPFdVZJMYsVWaQnOxu0TbzWf+6Xm5JQHCV2od80GfC62WHKup3SoUAnR/0ACmtdpwai3K5dKfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CysoOR9P; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=S0ugdq/+HcNVwFxrBv7y/0AiujcKicNDtBz8EyJFtHp7EpbdctgeRIisaCgce5TCxkO90kU4Xk5pd/gBXnhHXi2cFEx0NQmWKqypzxY/AXnxwQHMXuJjJUxb4Hub08Yaznch8gK+2DHfsJ2KLQW7eBMH/JgntpTbHO0qRxOK2wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bLD1OemG; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CysoOR9P"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250829115827epoutp04336b427451634036641ce2a41a08e430~gOvvIXhWV1085910859epoutp045
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 11:58:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250829115827epoutp04336b427451634036641ce2a41a08e430~gOvvIXhWV1085910859epoutp045
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bLD1OemG"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250829120322epoutp02479865895642bb43f4d50d72303cca2d~gO0B7cEai0352603526epoutp02O
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 12:03:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250829120322epoutp02479865895642bb43f4d50d72303cca2d~gO0B7cEai0352603526epoutp02O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756468707;
-	bh=uwY5hixuwzaZTDT5buByhfxmW867fLKpSCP8rlpiI14=;
+	s=mail20170921; t=1756469002;
+	bh=N9szQPe/7ipHEDNbxZo34E063kPc1jQMPVE3QTXxPAw=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=CysoOR9PC9hnqe3pml403GQnA2oc/kH9yTcRYWraVwncS6r0Ua7oKrZX8fYTY8UiF
-	 wkmMBTtTPFS8p8p/SBihey+pSFosShUCntvBWl+YoSz6EKKZoIOEa6n7z321Lfvwa1
-	 +ys3ZAmEG4PVEJOSTVSBzmqJSKzG06tJCI9Fb7tQ=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	b=bLD1OemGrCXJjy0NGdgGQuVg9OxwfwBqDlUf7A4YCvPM1R5lqkANtyCPp97RIgJ8u
+	 xzpFudJv9M2VdIlrlYqxLOs7fzxcpj2V51r6FPTlXnFWIGj6GnKlGsqkpVjPEoQae+
+	 F1RjH6KJZhW+UdU38I3XU0eJ92EjxbIIyv3gCh8Y=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
 	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250829115827epcas5p1f685d8dfedaaf5048eb61a23746eb119~gOvueZGSr1701717017epcas5p1U;
-	Fri, 29 Aug 2025 11:58:27 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cCxcL15L7z3hhT4; Fri, 29 Aug
-	2025 11:58:26 +0000 (GMT)
+	20250829120322epcas5p12448fdc22bfd06ebd17fabf10c3e92e8~gO0BSebHi3201832018epcas5p1i;
+	Fri, 29 Aug 2025 12:03:22 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cCxk11NSyz2SSKX; Fri, 29 Aug
+	2025 12:03:21 +0000 (GMT)
 Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
 	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250829115825epcas5p308b9c24446175f4cd3107cd25d87d005~gOvtI56rB0210702107epcas5p3A;
-	Fri, 29 Aug 2025 11:58:25 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	20250829120320epcas5p3eb6abcefc16910b3b7b73d5e5b169f43~gOz-yUdR00051000510epcas5p3A;
+	Fri, 29 Aug 2025 12:03:20 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20250829115822epsmtip19020d35d0d51e22cc1325735aeef32e0~gOvqKeOfY1508415084epsmtip1L;
-	Fri, 29 Aug 2025 11:58:22 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
-	<pritam.sutar@samsung.com>
+	20250829120317epsmtip14cec5995bc2dbc0cbf21ccbf1f9a1b72~gOz80JLJO1511815118epsmtip1e;
+	Fri, 29 Aug 2025 12:03:17 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>
 Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
 	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
@@ -58,8 +58,8 @@ Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
 In-Reply-To: <6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
 Subject: RE: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
  ExynosAutov920 combo ssphy
-Date: Fri, 29 Aug 2025 17:28:21 +0530
-Message-ID: <264501dc18dc$39afb340$ad0f19c0$@samsung.com>
+Date: Fri, 29 Aug 2025 17:33:16 +0530
+Message-ID: <001101dc18dc$e97457e0$bc5d07a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,9 +68,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+wLwFCB2ArX7ZGwBn6FItwLUPA9DAP+/dGQCDX8RFrR+i4pg
-Content-Language: en-us
-X-CMS-MailID: 20250829115825epcas5p308b9c24446175f4cd3107cd25d87d005
+Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+wLwFCB2ArX7ZGwBn6FItwLUPA9DAP+/dGQCDX8RFrR+kenQ
+Content-Language: en-in
+X-CMS-MailID: 20250829120320epcas5p3eb6abcefc16910b3b7b73d5e5b169f43
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
@@ -88,19 +88,75 @@ References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
 	<263801dc18d3$d1e20950$75a61bf0$@samsung.com>
 	<6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
 
-Hi Krzysztof
+Hi Krzysztof,
 
 > -----Original Message-----
 > From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Friday, August 29, 2025 4:56 PM
+> Sent: 29 August 2025 04:56 PM
 > To: Alim Akhtar <alim.akhtar=40samsung.com>; 'Pritam Manohar Sutar'
 > <pritam.sutar=40samsung.com>
 > Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
 > krzk+dt=40kernel.org; conor+dt=40kernel.org; andre.draszik=40linaro.org;
+> peter.griffin=40linaro.org; kauschluss=40disroot.org;
+> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
+> johan=40kernel.org; m.szyprowski=40samsung.com; s.nawrocki=40samsung.com;
+> linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo ssphy
 >=20
-=5BSnip=5D
-> >>>>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar
-> wrote:
+> On 29/08/2025 12:58, Alim Akhtar wrote:
+> > Hi Krzysztof
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: Friday, August 29, 2025 4:07 PM
+> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com=
+;
+> >> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
+> >> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> >> igor.belwon=40mentallysanemainliners.org;
+> >> johan=40kernel.org; m.szyprowski=40samsung.com; s.nawrocki=40samsung.c=
+om;
+> >> linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org;
+> >> linux-kernel=40vger.kernel.org; linux-arm- kernel=40lists.infradead.or=
+g;
+> >> linux-samsung-soc=40vger.kernel.org;
+> >> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com;
+> >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
+> >> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy=
+:
+> >> add
+> >> ExynosAutov920 combo ssphy
+> >>
+> >> On 29/08/2025 12:15, Pritam Manohar Sutar wrote:
+> >>> Hi Krzysztof
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >>>> Sent: 26 August 2025 02:05 PM
+> >>>> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >>>> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> >>> .
+> >>> .
+> >>> =5Bsnip=5D
+> >>> .
+> >>> .
+> >>>>>> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd=
+-phy:
+> >>>>>> add
+> >>>>>> ExynosAutov920 combo ssphy
+> >>>>>>
+> >>>>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wro=
+te:
 > >>>>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
 > >>>>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks,
 > >>>>>>> named =22phy=22 and =22ref=22. The required supplies for USB3.1 a=
@@ -157,14 +213,14 @@ ot=20capture=20that=20in=20the=20commit.=0D=0A>=20>=20However=20mentioning,=
 mit=20msg=20did=20not=20describe=0D=0A>=20hardware=20after=20first=20senten=
 ce,=20but=20said=20what=20schema=20requires=20(some=0D=0A>=20clocks=20and=
 =20supplies).=20Other=20examples:=0D=0A>=2000399bbe02d2bb6fd8d6eb90573ec305=
-616449f4=0D=0A>=20e4c9a7b475e5d0d9b2440ee48f91d1364eabd6cb=0D=0A>=20=0D=0AT=
-hanks=20for=20suggestion=20as=20always,=20I=20hope=20the=20author=20can=20f=
-ollow=20this.=20=0D=0A=0D=0A>=20and=20here=20another=20anti-pattern:=0D=0A>=
-=2023f793850e9ee7390584c0809f085d6c88de7d3f=0D=0A>=20=0D=0A>=20(and=20befor=
-e=20you=20ask=20why=20above=20carries=20my=20Rb=20tag,=20then=20note=20that=
-=0D=0AI=20will=20not=20ask=20:-)=0D=0A>=20Samsung's=20revenue=20is=20around=
-=20220=20billion=20USD,=20so=20for=20sure=20it=20has=20a=20lot,=0D=0A>=20re=
-ally=20a=20lot=20of=20resources=20to=20review=20patches=20internally=20and=
-=20improve=20their=0D=0A>=20quality=20before=20posting).=0D=0A>=20=0D=0AHmm=
-...,=20however=20let=20me=20check=20internally.=0D=0A=0D=0A>=20Best=20regar=
-ds,=0D=0A>=20Krzysztof=0D=0A=0D=0A
+616449f4=0D=0A>=20e4c9a7b475e5d0d9b2440ee48f91d1364eabd6cb=0D=0A>=20=0D=0A=
+=0D=0AThank=20you=20for=20the=20pointers,=20will=20refer=20the=20examples=
+=20and=20=0D=0Aupdate=20the=20commit=20messages=20accordingly.=20=0D=0A=0D=
+=0A>=20and=20here=20another=20anti-pattern:=0D=0A>=2023f793850e9ee7390584c0=
+809f085d6c88de7d3f=0D=0A>=20=0D=0A>=20(and=20before=20you=20ask=20why=20abo=
+ve=20carries=20my=20Rb=20tag,=20then=20note=20that=0D=0A>=20Samsung's=20rev=
+enue=20is=20around=20220=20billion=20USD,=20so=20for=20sure=20it=20has=20a=
+=20lot,=0D=0A>=20really=20a=20lot=20of=20resources=20to=20review=20patches=
+=20internally=20and=20improve=20their=0D=0A>=20quality=20before=20posting).=
+=0D=0A>=20=0D=0A>=20Best=20regards,=0D=0A>=20Krzysztof=0D=0A=0D=0AThank=20y=
+ou.=0D=0A=0D=0ARegards,=0D=0APritam=0D=0A=0D=0A
