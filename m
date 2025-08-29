@@ -1,246 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC8B3376BF;
-	Fri, 29 Aug 2025 17:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA5A30CD8A;
+	Fri, 29 Aug 2025 18:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489600; cv=none; b=muFy2i2d6aD/5gBZNNn5Ja8HYFbwJqIPqHilHVPwYdkWVmEq2ISUOVC8SHzy6GLP8hud3GdimQr8q5DuNfta+GV/5s00bMqa8hy7UtuWmMMie8QAnma3jjVTBWZRJ++QKQXzqMWLrU/kylfvkhQ8VjWEX5/9jwYxgobl+p00CeM=
+	t=1756493212; cv=none; b=GnOf67ylfoIbo3TQOmBosgzkgcJ/meMGOEFB7x6AFOou9kR06DAIChTTA25l7xZe/k3TP2/qqM/tqN+JzI63/wsI8k59U+hSiZf0GFRUhWWlu/NNLsMi68fYR1MHkramTvFDO54+2C4VmqCxWB4/sK3vYgdR48jtETA8l7l/Sro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489600; c=relaxed/simple;
-	bh=ni/lQ5yzIye/3iBX3VMg4p5EesBhwErRoN8M///2GNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPioxsPrBY+oXpvqIw8YH3wK2p7BeqpFvVgAS36dpdhs4fbzMCQoy4HzOJ22oeJijOshcFEAhahD1uXfEQrNlPP0LlwHnGmi3+3vkLtTTBXVCUl9A8ouxuquhB3f+cQmF/Yxfrt7LRIfO9HtMI0Jkw6Oeo5LoXNhKpz6hiwcNoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fhs3NxM+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756493212; c=relaxed/simple;
+	bh=v1CXCLkc3V2gOKTrIvLbzThifD/xfD1NRiFqcp7amsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UmixdLqbae/gucD5LlvoSQMZUL4HHrTmo2wl0glxp72WcUR9xmMFReDRwQmGWsmjQ6adu7LofoWBBByHxco62eQQh6mdduiXONqbL0K2sci2npiN1/L5akoq8FLBKW90c0ZtTqZPEFR26dN7qHq0haUCEWTrLM9G+4EWtLMeY9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvp6/HBR; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fhs3NxM+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1EEC4CEF0;
-	Fri, 29 Aug 2025 17:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756489599;
-	bh=ni/lQ5yzIye/3iBX3VMg4p5EesBhwErRoN8M///2GNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fhs3NxM+vQiz2pFhk/hwwJPHnY/ziGeFEK6zrOQeE8/KVlLdkmrY4vRwVdD2oXeJO
-	 Pl2vU/rMM2fUKtHsiqPelilXXkufypzi0ghXGiaPsw7iEBIblRpwx4gLbwaRmzHTHl
-	 9v7h4FzueqvZRni1uGfOD60lEPNzLuxGsoPSFgV4sEEWZYuIJNMmdJegIq/HXE/3h/
-	 g8B3pET1KW5ndBD0EviQlQniCmutNefiQO4zq94AlQK1/aj6KCecQffcbIIFDcJBxc
-	 JiPuEe3OXb8K747sv6k5RpS3Db23wWPcwoDBmytgzhZtTZkcAnvaIzcv3Fqgiv+uCs
-	 pkmS2DV080Glg==
-Date: Fri, 29 Aug 2025 12:46:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Inbaraj E <inbaraj.e@samsung.com>
-Cc: rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com, martink@posteo.de,
-	kernel@puri.sm, mchehab@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	shradha.t@samsung.com
-Subject: Re: [PATCH v3 1/7] dt-bindings: media: nxp: Add support for FSD SoC
-Message-ID: <20250829174638.GA1054721-robh@kernel.org>
-References: <20250828085911.81266-1-inbaraj.e@samsung.com>
- <CGME20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6@epcas5p1.samsung.com>
- <20250828085911.81266-2-inbaraj.e@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvp6/HBR"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-77238a3101fso341758b3a.0;
+        Fri, 29 Aug 2025 11:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756493210; x=1757098010; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1CXCLkc3V2gOKTrIvLbzThifD/xfD1NRiFqcp7amsM=;
+        b=fvp6/HBRSBVjm/7wYiH4TlOo6893gh3tRBMlyT56adl3rA2BKz92ZNxOSlAazIrHdj
+         ZpZNUe/bOfW4HF0xe0+xYZGrlY9t8GLqQVMKvRZSGsJliLC8H4ZCq8P0rwZCLZo5FW6z
+         1E4KYMxe8bn06FRc3g7Vy18eTadX4NpZMuhMWmiegPUJWMDZ8dPuK+osoLpN+AVE9X4U
+         FFGkAaQiIcaLaK+dAGE6dFdx3QhZTmo3ZASREP9tYZkcleZqp1AZEurtv8zE7vCDngqM
+         fDUbTiA1X8O+L7nfvMWBRx3rTlmyma3Gr1qfNSjFf1CTQGfgxn3kGmAncY297EQ6yF/q
+         RWTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756493210; x=1757098010;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v1CXCLkc3V2gOKTrIvLbzThifD/xfD1NRiFqcp7amsM=;
+        b=J2euwqbx2BzTtsMWDBRSCHplSFeMYh/jT6CZiPSi0zbrWUv8wHDNXaFzXKSIgfE8ei
+         7XCtjykV1y3R1joha9iEP4sEhjh+Let1bnDEeEciI008YdbHVLu2el3wMCU9ysCWB+O/
+         /8eIA/cd1yN3CRPRdK7fvK0m9y2pQOlpQsYUJPk5MxvLf7qrPIXJFADH4fju3BSpYRK7
+         NKAhV5guTdT60wZ/KCjrjHomYLChBqXlZqjtFsOhEKUPviCsgvFkBBVqYXy5PeQPi/GI
+         yzfIRlD70C1pWPHMzPq3PkrfKKnGz1YBf/7fGKHiTF2f45r4XORiT4vYVax7VCfv0FCR
+         uKjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHAyROUzVSGJMPncVQvcdbbDE3PkAXjNfc5TH9aowlQSbtM1jq5tqUIi1jfxFuQ/hOaEQwmQ/3F/o/rLk=@vger.kernel.org, AJvYcCUJWslJM78a6oF3+jTo/SzzmvX6F4LF1ncHG0oLqxAZtFqW64hpaPUfIHKlj6Wg8sSt/9H8o9/HivL5j4W9fJ8=@vger.kernel.org, AJvYcCVQlkkYwnKOwCj/JSKGT2ZzxO7uEzIGMUt+q6frVpZmk4UkO47Shssf9dwWyooO4ogB4lz1CQoOY2aDcqqJtxj5nmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHEXli1AWcPGddoweg/TfUXHBQPXQfqGqUIvepihfQVDSZj02X
+	JeeBY4gbbObQumgqaTa6QOzpzVWeSwlMCN3uhRHIsANpiXFjGKIzGcQl7xAjMw==
+X-Gm-Gg: ASbGnct+CJvPWzItWMVH4befXzPXt4hFCUt8BvQco18dLjpi60uThMJHKi20SkUnvxT
+	LIz3BB2lkpB/r97nOcu/0KMehFZ5b1VghhslGrvnhihPOq6Vn2KZQG+rsNN8oN1NOrlG5Fu86Vv
+	u79LYxwNZhtveUt6+Dm9UCMaM9FnuxTND31Rm7FGzSJZ1UESA3aVZMjQq6IwJg7oWtPbSA+Sw6X
+	E1+Wev0F2JWyE0EwVLKKBDH67CtHc4Jq52Q3vJ8w+L9EvkBBar+DmT78ikAcl00+iHT7mTtDbr3
+	vsxddf2YSwCS3CvRks06nHKQGIJ2ILwjoUbf5mdmyG319DObk8SG5u+x3InM7MjYoyLXJh+woKD
+	NuWRHOdPkjymRE6SKEV60hNnJ2x8HJUTmj3GVg7KTGmnUSZrzZN6XLe9z4IGRuZRozEgo9g8=
+X-Google-Smtp-Source: AGHT+IFkDUn0Bj27WhzY121M482vhMayXfNAABYTgrCz865mRDEJIuDhY4dOuhuI9V5Yw9Osyp3N2w==
+X-Received: by 2002:a05:6a20:65a4:b0:243:a251:cf5b with SMTP id adf61e73a8af0-243a251d425mr11908511637.57.1756493209662;
+        Fri, 29 Aug 2025 11:46:49 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a5f7a9csm3051681b3a.91.2025.08.29.11.46.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 11:46:48 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3d6c251f-bd3b-4f9a-aa3a-edb9da0caced@roeck-us.net>
+Date: Fri, 29 Aug 2025 11:46:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828085911.81266-2-inbaraj.e@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] watchdog: s3c2410: Add FSD support
+To: Varada Pavani <v.pavani@samsung.com>, krzk@kernel.org,
+ alim.akhtar@samsung.com, wim@linux-watchdog.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gost.dev@samsung.com, aswani.reddy@samsung.com
+References: <CGME20250829140010epcas5p1bc06faf0001ab2695f0199db65fe678d@epcas5p1.samsung.com>
+ <20250829140003.109588-1-v.pavani@samsung.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250829140003.109588-1-v.pavani@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 02:29:05PM +0530, Inbaraj E wrote:
-> The Tesla FSD CSIS link controller is used to configure MIPI CSI-2
-> Rx link operations.
-> 
-> The Tesla FSD SoC include a MIPI CSI-2 Rx IP core named CSIS, which is
-> compatible with the CSIS IP found in NXP i.MX7 and i.MX8 SoCs. Add the
-> compatible string "tesla,fsd-mipi-csi2" to support the MIPI CSI-2 Rx
-> link operation on the Tesla FSD SoC.
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> ---
->  .../bindings/media/nxp,imx-mipi-csi2.yaml     | 91 +++++++++++++++----
->  1 file changed, 71 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> index 41ad5b84eaeb..39b9447fd40c 100644
-> --- a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> +++ b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> @@ -14,7 +14,7 @@ description: |-
->    The NXP i.MX7 and i.MX8 families contain SoCs that include a MIPI CSI-2
->    receiver IP core named CSIS. The IP core originates from Samsung, and may be
->    compatible with some of the Exynos4 and S5P SoCs. i.MX7 SoCs use CSIS version
-> -  3.3, and i.MX8 SoCs use CSIS version 3.6.3.
-> +  3.3, i.MX8 SoCs use CSIS version 3.6.3 and FSD SoC uses CSIS version 4.3.
->  
->    While the CSI-2 receiver is separate from the MIPI D-PHY IP core, the PHY is
->    completely wrapped by the CSIS and doesn't expose a control interface of its
-> @@ -26,6 +26,7 @@ properties:
->        - enum:
->            - fsl,imx7-mipi-csi2
->            - fsl,imx8mm-mipi-csi2
-> +          - tesla,fsd-mipi-csi2
->        - items:
->            - enum:
->                - fsl,imx8mp-mipi-csi2
-> @@ -38,24 +39,21 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    minItems: 3
-> -    items:
-> -      - description: The peripheral clock (a.k.a. APB clock)
-> -      - description: The external clock (optionally used as the pixel clock)
-> -      - description: The MIPI D-PHY clock
-> -      - description: The AXI clock
-> +    minItems: 2
-> +    maxItems: 4
->  
->    clock-names:
-> -    minItems: 3
-> -    items:
-> -      - const: pclk
-> -      - const: wrap
-> -      - const: phy
-> -      - const: axi
-> +    minItems: 2
-> +    maxItems: 4
->  
->    power-domains:
->      maxItems: 1
->  
-> +  tesla,syscon-csis:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Syscon used to hold and release the reset of MIPI D-PHY
+On 8/29/25 07:00, Varada Pavani wrote:
+> FSD SoC has 3 CPU clusters, each has its own WDT instance.\
 
-Reset? Sounds like you should be using the reset binding.
+Full Self Driving ?
 
-> +
->    phy-supply:
->      description: The MIPI D-PHY digital power supply
->  
-> @@ -93,7 +91,8 @@ properties:
->              properties:
->                data-lanes:
->                  description:
-> -                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2 data lines.
-> +                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2 data
-> +                  lines.
+Guenter
 
-Reformatting should be a separate patch.
-
->                  minItems: 1
->                  items:
->                    - const: 1
-> @@ -115,7 +114,6 @@ required:
->    - interrupts
->    - clocks
->    - clock-names
-> -  - power-domains
->    - ports
->  
->  additionalProperties: false
-> @@ -124,20 +122,73 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          contains:
-> -            const: fsl,imx7-mipi-csi2
-> +          const: fsl,imx7-mipi-csi2
-
-'contains' was correct. It is more future proof when there is another 
-SoC that is backwards compatible with imx7.
-
->      then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: The peripheral clock (a.k.a. APB clock)
-> +            - description: The external clock (optionally used as the pixel
-> +                clock)
-> +            - description: The MIPI D-PHY clock
-> +        clock-names:
-> +          items:
-> +            - const: pclk
-> +            - const: wrap
-> +            - const: phy
-> +        tesla,syscon-csis: false
-> +        fsl,num-channels: false
-
-blank line
-
->        required:
-> +        - power-domains
->          - phy-supply
->          - resets
-> -    else:
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: fsl,imx8mm-mipi-csi2
-> +    then:
->        properties:
->          clocks:
-> -          minItems: 4
-> +          items:
-> +            - description: The peripheral clock (a.k.a. APB clock)
-> +            - description: The external clock (optionally used as the pixel
-> +                clock)
-> +            - description: The MIPI D-PHY clock
-> +            - description: The AXI clock
->          clock-names:
-> -          minItems: 4
-> +          items:
-> +            - const: pclk
-> +            - const: wrap
-> +            - const: phy
-> +            - const: axi
-> +        tesla,syscon-csis: false
-> +        fsl,num-channels: false
->          phy-supply: false
->          resets: false
-
-blank line
-
-> +      required:
-> +        - power-domains
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: tesla,fsd-mipi-csi2
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: The peripheral clock (a.k.a. APB clock)
-> +            - description: The DMA clock
-
-Wouldn't this be the same as the "AXI clock"?
-
-> +        clocks-names:
-> +          items:
-> +            - const: pclk
-> +            - const: aclk
-> +        phy-supply: false
-> +        resets: false
-> +        power-domains: false
-
-blank line
-
-> +      required:
-> +        - tesla,syscon-csis
-> +        - fsl,num-channels
->  
->  examples:
->    - |
-> -- 
-> 2.49.0
-> 
