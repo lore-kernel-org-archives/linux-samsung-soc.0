@@ -1,131 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DCC3101C1;
-	Fri, 29 Aug 2025 10:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842B33101D5
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464940; cv=none; b=jeuoB4iupjNbm8Fk8srUqAjl2Y75OSmgR39Pk+WfQLuCpQUrCNlKN9souyH1pXyfO8RibTiQippOWqJTNCZp8M4w9lCMizQlbAbQ49lMZY59+8WovqEIrSSCigGIxuw/JhT6d9vq8ZIe8uDBKVfzntloBFGG8IgV16DTKwmFHlk=
+	t=1756465102; cv=none; b=OT9Z3Q6TbGV9uvgS0l6/MiIOhQ5hmBffsgeNOxOJP8IWQ243mJvEgJ9S2TFmXu3d4Y7Vo17Q6bLacJYyiomDF6EcH1TRJUENiafyPIvgIQbXCQzUfBUF4TDvtPMqi8iUssaP2DX7394iEywN52340nv8nZcS2D29DdSO9tcMhlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464940; c=relaxed/simple;
-	bh=/WZWOpRzeXEH6fk09jEKeyE927MDqdEymoNh0MK6e0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u8uDr22Jtza4Gg95OHRIM9TXy0Rtxogx8ZfKRGuVWZN54lYriI17SbsLfKy2W4o/nRQ3CU+HhitZA5pqUovUxKNg82NUCWQFj10lFlHC0zs3/IqmD6HSCAllKQP5q+ae8yuQBwr+rlAAEU37LK1PNKZiw1RiXfm7hdbwtOfReDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyHGMYG2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756465102; c=relaxed/simple;
+	bh=Uf410WYNzsisiR/petPGajENLdSiO3ACl2azDr3sx3I=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=JUsu3BIoaMnsOiC3sCqq0ZmJMQIP2w+yOrxstJZFoeAJ2jMDc3gA8daa/LmZALg81bxKURe6MxQpxAkcZfpthdg4DDC3KWUnHoVn0eo2Lm6UKO6+8Fs5O/NBZWMwnvBZH9+k7a06yQ9fwg8y2Py7UtATtdvqlxxMOIhz4PlbXYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sOxvIw4E; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyHGMYG2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F87C4CEF0;
-	Fri, 29 Aug 2025 10:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756464940;
-	bh=/WZWOpRzeXEH6fk09jEKeyE927MDqdEymoNh0MK6e0g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hyHGMYG2P8C/7jomhaHPksY3VxRY+h0UqufTh+luBRoSogbz/S3GjhqJCz018NwIO
-	 R/N06fzW9xW5RKxU+okfWj7P+QF4Oh68PxLEpS4rJAma8lx3Rxh6AJuRO9sLcn/Dg8
-	 UcF4K0C+IbJIc5DewEWlJvLEH8Bt5hEhwVNQAXxoiU6ekrx4zccZ2qc+1+i21i81WY
-	 675+bm5bLum4t3soT/l6rnmiiMSbHuSlN0gTpnmYmaPDwh9PiLVODNQZEtSKwa2CCI
-	 nHXML+ol6YXeO7cOdM3gS7gg2g/PrYEHy0EUz/lZov/KhqotSi0JvMEg6trhzYFKVL
-	 /xywfFU446JPw==
-Message-ID: <51240b84-b063-4b99-b755-cc958192fef2@kernel.org>
-Date: Fri, 29 Aug 2025 12:55:35 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sOxvIw4E"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250829105818epoutp012940fdd726b94203f656e4f0fe1e0342~gN7NtyDyl1501215012epoutp01p
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 10:58:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250829105818epoutp012940fdd726b94203f656e4f0fe1e0342~gN7NtyDyl1501215012epoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756465098;
+	bh=KbXZsLg/Ue7PwUbZF2XDqNQLk+AaXNqWgxb8Ug1xzoo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=sOxvIw4E6HlG5GO3fkt2pOd0U2sj7ZduR/swuv+PGLsza8lD4PLKZFcM3jXMpRMsU
+	 hwEDhjzAHVzNg+A+iaJg5ni2AmAl4slysJNNh4GnNmpkP6NhYtVVtSHzmn9FYwG6pl
+	 MIkbdB8Sqg1jLXlQRUflYrePkaQoDgfual6XuVJQ=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250829105817epcas5p494efd395966d195b9bc5c726c9377107~gN7MZgVqD1496314963epcas5p4g;
+	Fri, 29 Aug 2025 10:58:17 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cCwGw0Vhsz2SSKg; Fri, 29 Aug
+	2025 10:58:16 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250829105815epcas5p47f74045e2c06d71f16fac7b8ddcb9efe~gN7K8KPhO1496314963epcas5p4X;
+	Fri, 29 Aug 2025 10:58:15 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250829105812epsmtip21b0817b549a0c83092589c33ae363fc6~gN7H6iEol0293702937epsmtip2h;
+	Fri, 29 Aug 2025 10:58:12 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
+	<pritam.sutar@samsung.com>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
+	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <igor.belwon@mentallysanemainliners.org>,
+	<johan@kernel.org>, <m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
+Subject: RE: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+Date: Fri, 29 Aug 2025 16:28:10 +0530
+Message-ID: <263801dc18d3$d1e20950$75a61bf0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] arm64: dts: exynos2200: introduce serial busses,
- except spi
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
- <31435f98-5701-4ae0-b822-11a99d1b2eef@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <31435f98-5701-4ae0-b822-11a99d1b2eef@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+wLwFCB2ArX7ZGwBn6FItwLUPA9DtJbmBNA=
+Content-Language: en-us
+X-CMS-MailID: 20250829105815epcas5p47f74045e2c06d71f16fac7b8ddcb9efe
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+	<CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+	<20250822093845.1179395-6-pritam.sutar@samsung.com>
+	<20250824-rough-fresh-orangutan-eecb2f@kuoka>
+	<007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+	<83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
+	<000401dc18cd$ec02a1b0$c407e510$@samsung.com>
+	<e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
 
-On 29/08/2025 12:40, Ivaylo Ivanov wrote:
-> On 8/15/25 10:04, Ivaylo Ivanov wrote:
->> Hey, folks!
->>
->> This patchset adds serial busses, implemented in usi, for exynos2200.
->> It's missing spi, due to me having troubles with reads when testing.
->> Serial_0/1 have not been included in the patchset, as it seems like
->> they're encapsulated in usi blocks, but are the only implemented
->> protocol and/or do not have a dedicated register for setting other
->> protocols in a sysreg. That'd at least require patches in the usi
->> driver and bindings to add support for.
->>
->> About the naming convention for usi nodes, I've chosen to keep the
->> downstream one instead of relabelling all to avoid confusion when
->> cross-referencing the vendor DT and to keep consistency with clock
->> names. They're labelled the same in the bootloader too.
-> 
-> BUMP - when is this going to get merged? I had a few other things
+Hi Krzysztof
 
-OSSE25...
-
-You can help out by reviewing other patches on the mailing lists in
-order to relieve the burden of maintainers and move your patches higher
-up the list.
-
-
-> I wanted to upstream before merge cycle.
-
-You should have posted them already. b4 handles dependencies, this
-maintainer can read cover letters.
-
-I plan to clear my todo queue this weekend and close my merge window
-within two weeks due to travel.
-
-Best regards,
-Krzysztof
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Friday, August 29, 2025 4:07 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; kauschluss=40disr=
+oot.org;
+> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
+> johan=40kernel.org; m.szyprowski=40samsung.com;
+> s.nawrocki=40samsung.com; linux-phy=40lists.infradead.org;
+> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org;
+> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo ssphy
+>=20
+> On 29/08/2025 12:15, Pritam Manohar Sutar wrote:
+> > Hi Krzysztof
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: 26 August 2025 02:05 PM
+> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> > .
+> > .
+> > =5Bsnip=5D
+> > .
+> > .
+> >>>> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-p=
+hy:
+> >>>> add
+> >>>> ExynosAutov920 combo ssphy
+> >>>>
+> >>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote=
+:
+> >>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+> >>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
+> >>>>> =22phy=22 and =22ref=22. The required supplies for USB3.1 are named=
+ as
+> >>>>> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+> >>>>
+> >>>> Please do not describe the schema, but hardware. This sentence does
+> >>>> not help me in my question further.
+> >>>
+> >>> This is a combo phy having Synopsys usb20 and usb30 phys (these 2
+> >>> phys are
+> >> totally different).
+> >>> One PHY only supports usb2.0 and data rates whereas another one does
+> >>> usb3.1 ssp+ and usb3.1 ssp
+> >>>
+> >>> This patch only explains about usb30 (since these are two different
+> >>> phys) phy
+> >> and omitted inclusion of usb20 reference (added separate patch for
+> >> this patch no 3).
+> >>>
+> >>> Hope this is clear.
+> >>
+> >> No. That sentence still explains what schema is doing.
+> >>
+> >
+> > Ok, let me simplify the commit message further something like below.
+> > Anyways, the coverletter contains more details about it.
+> >
+> > =22dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo
+> > ssphy
+> >
+> >   Add schema for combo ssphy found on this SoC.
+> > =22
+> >
+> > Please confirm if this looks fine?
+> > If so, will reflect the similar commit messages in patch 1 and 3.
+>=20
+> Please read my first comment again. I do not see how does this satisfy
+> hardware explanation.
+>=20
+Just went through the conversation above,=20
+until what extent hardware description need to be explain in the commit?
+Do we have any guideline for the same?
+Could you please help with an example from previous any commit or some othe=
+r patches?=20
+I understand that mentioning, =E2=80=9Ctwo=20clocks,=20two=20supplies=20etc=
+=22=20are=20part=20of=20schema,=20=0D=0Aone=20may=20or=20may=20not=20captur=
+e=20that=20in=20the=20commit.=20=0D=0AHowever=20mentioning,=20=E2=80=9Cthis=
+=20hardware=20(SoC)=20contain=20a=20combo=20PHY=20which=20supports=20usb3.1=
+=20and=20usb3.0=22=20is=20not=20ok?=20=0D=0A=0D=0A>=20Best=20regards,=0D=0A=
+>=20Krzysztof=0D=0A=0D=0A
