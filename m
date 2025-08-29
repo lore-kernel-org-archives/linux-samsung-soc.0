@@ -1,203 +1,190 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A073933EB19
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 17:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D124617BEBF
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2025 00:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401321; cv=none; b=IobPqaZqHgtcAm0a02kMkIV2sWbHtxesTiSddvPm/njxwDpOxQKMMsqo3tnNqAXlVMAgOdFwxt1h3gfjZP0DcnZlUA63B9GFQ/EmNDGAxt9V5CcKCDQWirp8rSUQ7q/HT+aqBw6s4RtPkqBOFXOqYcQl31WaKz0KgF2tQDQRG2I=
+	t=1756428479; cv=none; b=DtdacJAyz8NJVMHAvigvCHirLfKDKqJ2zXvaCRbrum81Msn1iaOOF1+kh9JDkI1dMKVvvULourAXc9ApXmYCnNok427jhkD0j0g/m8OzV4ucC563bbmivE3ijHb8l97dvQtjipZsI3VWVmzhOfs+AZTxfa4o/8oLpuiV2kiA+vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401321; c=relaxed/simple;
-	bh=tjLq4yotJVvrKtVjK5XLYb7jE1fQQx1FF/sxrbky9es=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BP6BiVXVlINbZdUjizqIR2C2mk/pirZJYbQpewDDr8WtLvSOoEmVF2qf0MG8BFPqjM0nqDhvHXXZplCK+Hm6X7Hyjup9xY/8IbLOW8AoRQx2CUQraxnSdTM+jZs363hyFQeHF+ciFjj23RTKW/f7wxRHp4A9AzhCdjMB0uwi0xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EJzdxybn; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1756428479; c=relaxed/simple;
+	bh=2hr2jy4IpoCDgvk7s9IjtfXTVDQh1mDXQrhhYPQBqgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pxym619kjy8j+nXtgTaFITEQrKYpivNzML/xgBC+fkTBWaglGSShSr7PTO3AEA/NfhWx9GMoDmRPMSjetTraHkkxoigsRkynSFzz/073SlIpTqw1RBp1taYE2LPuuTMwxnEYR/1DBtbGbnpJszeFLFMVta3OL8RPJ/3iH33UXfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X2bqI+iK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EJzdxybn"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-325e31cecd6so1072051a91.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 10:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756401319; x=1757006119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
-        b=EJzdxybnyxlQrk6qJR558wtNekNbgws953L2pneIZYbmyp9tAmsnaz2aSuhIUBM5zr
-         yym6Q3hOD+h86ma+8fB5UYxWC0FsSh8WsgByN6NGuhj5XPnYnWvTGq97mGOESOdqxB8M
-         UO5/YFoyUcXdWdRme2wq/ulZFp8KXOMX/N5wcNQCirgFPfS9pE37lzw+nKFk5IrmnDbO
-         G5sw2Dwq2cicHF4lperkYSyAoX2g6OycdnZ1FjYe/p8IEgXy13BJvrhiJGJwM3VA8ugT
-         uPqiFjyVbr8N6oCUmphfD2rJa6OFoETW3Ncm5ZacDEJ+l20U+VrrmUTHcEPjkrroNkNZ
-         4tIA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X2bqI+iK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756428476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MySjf1dNQ+QFblxbzgcBLucxms+md0OmiOz5lWF0b/w=;
+	b=X2bqI+iKL80FamtJ+SqLchWE8oDnBbJGpqe3P6/SbNALyHg6tcA8Kz6ev3u4oDkLE0foX3
+	9aZr54el4jmA5afqZmBwY/0JVkKg+qQzqFiXoe1G5hVIRUatjykw960UAgOhyl5HrpFFoL
+	jKumBaLzq7GgQyFjjcBcbAAxNcry5iY=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-214-lwj1DqJuM0CCTWizZXnJmg-1; Thu, 28 Aug 2025 20:47:55 -0400
+X-MC-Unique: lwj1DqJuM0CCTWizZXnJmg-1
+X-Mimecast-MFC-AGG-ID: lwj1DqJuM0CCTWizZXnJmg_1756428474
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7f7dd47f712so546655585a.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2025 17:47:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756401319; x=1757006119;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
-        b=Y6gjsa1Qr1juWBwNP+ZmyexIZ1MwdEoO+G7xNpxQUDQVGr862VUrs9S/SwEA32pAMo
-         cRY3Jv2yQRjA+g6UDvWFu3wgy5e3/oKsU9cY0s8B+me1faaDNL+SIYxM5kHdvVNP3nhw
-         wOvv6LtgDb25n+q6WSLzk1fjdrscbZBmZcgaX0NiAzQsRjxHMIXVCEqIBeohqjNQ0VHj
-         kpQu+2trXumNSenW4ZWv6l4S/e+1Km5ALGsuG+aPDU5Vafc+Q8V3qyBKbmCfUfvAVB0A
-         qxKArszQg8K0GxxSTtWsIDX0kenLiXVAzxAzTs9L+qdXx60hPe3ZF+5qoicM7iWk/Usk
-         lABw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaefiS3xCZcy5kLOr2m8NVCNWlSoCMO+GWY0uVyhHhSxZC6ykM3G2XP8AajmEIacxrz1geyrdJItyq9lutJxuAcQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3HBwRs6aa2IlUyE0nYjYhxMBaqBEf2DgItXhHLnR/Aq+B6Nxk
-	H0S0GVzsKqTCwYtM+rj6gjSD+gmfyFguLC/qpTuLxFsFpSg6t6WhBRNJbSlZ5IAqF8ycYKQSXZH
-	wL/wZJg==
-X-Google-Smtp-Source: AGHT+IEgfCMAj/kPGbx0Dj2C82B+XByTzBEnlSaJgGQHGzaozLp7T19v0PG28aEIfyLg5E6WkydfWYNcBOM=
-X-Received: from pjhk31.prod.google.com ([2002:a17:90a:4ca2:b0:327:9b90:7a79])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc3:b0:327:cec7:b8c6
- with SMTP id 98e67ed59e1d1-327cec7cb53mr1738031a91.32.1756401318775; Thu, 28
- Aug 2025 10:15:18 -0700 (PDT)
-Date: Thu, 28 Aug 2025 10:15:17 -0700
-In-Reply-To: <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
+        d=1e100.net; s=20230601; t=1756428474; x=1757033274;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MySjf1dNQ+QFblxbzgcBLucxms+md0OmiOz5lWF0b/w=;
+        b=BbGrllbcb5XnBimu2zRJJD31DdozWXzyiQDujYdzQXjkmL/VgjclwuYd46IGuP14U0
+         oUxO0ug4EnkiAnRG/OLReII2TToIj3NJ7dSM0iwQLjdqWDmHtE7YROZP90n/QKB/Ugkg
+         gF7BLPp/ck2CY9Wu1ZifKUwNlAw9j3P5sF2ziwBbSZDaEN+xqRUbUPcZjXI8JBNLfFo5
+         F6m9zuc1s9wp4lmKWU8O8zOLmhIWIpfaVZ9X7Kp8dkSfjSq/2KGKAR2NnvPFIJb2FJZR
+         FmAxdOjvoPnbkUJ05TaCbeg73uqaWbTgHqvxwZz3uqgn+KF8Ncw+PDaq+1K2JdSKkyu4
+         zHRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLJLGx3LIs/8yBGIV1+6DtOKcPG6soesmz5iagq1T8ZSWV6a4ZGjYqpOIEdTVbWW31kcVhddSAbsXrROmhhc3f9Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoOlfnX2WsYQ9CbXy3dIsScCXGUz6WzNhhk8jPwOzP7FGVWX1V
+	DI4O2Do5x+X8d3KdJJTZeG2cY1rBgZQgnblN60/DFxI/bVgp5BHqrpjYGae4FvPd/rcVpKaax6U
+	9yM2XyI57v6864Qfl0utOZhlrSxHSmHfb+5J4pEOl3cC9XAzU88/O2TFQI5jOu5rzTTvNozDx
+X-Gm-Gg: ASbGncvFKWYjfMlr0yoGuj4Sp0/HjfEtM/nSlQGMlho42dqzk/FmR+Vo6bAAGpHJDeR
+	LVgyXyfJ1i9gALbkwqPMmg+xXWOqD2cTdwrxxVZpGURL/zsXPjDyGKb6RgaBDJj486+clWoRnUw
+	W2eQwAJwLZKMloXNGnkTkZWat75GZb6s7WFoqRRYwTRkmoFzu5mPlnHzhjlqo6hskiRMcSP6E+s
+	sjUEScTJXCuONleLFy0/ccJdgT/ae1uxCU4PCY6100Y10YfOKGMiEMN4OQHLiqadnfmuo5e7efS
+	z1e679a0rAz7oh4COrIsjqM/ivOFmHgpvK8myXiOrXRvMWjsJJPrHI/fG+dx+sjXw4Ct08FmaZg
+	H8AUSGvHsiu7IRDR7snM=
+X-Received: by 2002:a05:620a:408a:b0:7f3:caf0:8412 with SMTP id af79cd13be357-7f3caf08452mr1587634885a.46.1756428474359;
+        Thu, 28 Aug 2025 17:47:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjCgf4If/yLnG9xLRPpSvaRiEUxzvfevF39cHGHA+NM0Oih06WQG6xkNf8xHsAsX5EmFe8lQ==
+X-Received: by 2002:a05:620a:408a:b0:7f3:caf0:8412 with SMTP id af79cd13be357-7f3caf08452mr1587627285a.46.1756428473789;
+        Thu, 28 Aug 2025 17:47:53 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc14754ee8sm80548485a.32.2025.08.28.17.47.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 17:47:53 -0700 (PDT)
+Date: Thu, 28 Aug 2025 20:47:47 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Alex Helms <alexander.helms.jy@renesas.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated
+ round_rate() to determine_rate()
+Message-ID: <aLD4s0sGEaQKD9PQ@x1>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827023202.10310-3-zhangzihuan@kylinos.cn> <aK8Sd30K64mbN1Nt@google.com> <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
-Message-ID: <aLCOpfNkcQN9P-Wa@google.com>
-Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
- policy reference
-From: Sean Christopherson <seanjc@google.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Markus Mayer <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Aug 28, 2025, Zihuan Zhang wrote:
-> > Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_poli=
-cy() until
-> > policy goes out of scope, and so using __free() means the code is effec=
-tively:
-> >=20
-> > 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
-> > 			struct cpufreq_policy *policy;
-> > 			int cpu;
-> >=20
-> > 			cpu =3D get_cpu();
-> > 			policy =3D cpufreq_cpu_get(cpu);
-> > 			if (policy && policy->cpuinfo.max_freq)
-> > 				max_tsc_khz =3D policy->cpuinfo.max_freq;
-> > 			put_cpu();
-> >=20
-> > 			if (policy)
-> > 				cpufreq_cpu_put(policy);
-> > 		}
+On Mon, Aug 11, 2025 at 11:17:52AM -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> various clk drivers using the Coccinelle semantic patch posted below.
+> I did a few minor cosmetic cleanups of the code in a few cases.
 
-...
+I posted a v2 patch series with 8 patches from this series that needed a
+v2 to:
 
-> Yes, this will indeed change the execution order.
-> Can you accept that?=20
+https://lore.kernel.org/linux-clk/20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com/T/
 
-No, because it's buggy.
+Sorry I didn't put PATCH v2 in the subject. I noticed as soon as it
+started to send.
 
-> Personally, I don=E2=80=99t think it=E2=80=99s ideal either.
->=20
-> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
->  			int cpu;
-> 			cpu =3D get_cpu();
-> 			{
-> 				struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_=
-cpu_get(cpu);
-> 				if (policy && policy->cpuinfo.max_freq)
-> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
-> 			}
-> 			put_cpu();
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 }
->=20
-> Other places may also have the same issue,
->=20
-> maybe we should consider introducing a macro to handle this properly,
-> so that initialization and cleanup are well defined without changing
-> the existing order unexpected.
->=20
-> like this:
->=20
-> #define WITH_CPUFREQ_POLICY(cpu) {\
->=20
-> for(struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D  \
-> 			cpufreq_cpu_get(cpu);			\
-> 			policy;)
->=20
-> Then Use it:
->=20
-> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
->  			int cpu;
-> 			cpu =3D get_cpu();
-> 			WITH_CPUFREQ_POLICY(cpu){
-> 				if (policy->cpuinfo.max_freq)
-> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
-> 			}
-> 			put_cpu();
+In summary, it fixes one merge conflict introduced in linux-next, remove
+one case of &*, fix a comment, and removes unnecessary space after a
+cast on 5 patches.
 
-This all feels very forced, in the sense that we have a shiny new tool and =
-are
-trying to use it everywhere without thinking critically about whether or no=
-t
-doing so is actually an improvement.
+There are currently 7 patches from this series that's currently in
+linux-next (renesas, spacemit, samsung). 
 
-At a glance, this is literally the only instance in the entire kernel where=
- the
-CPU to use is grabbed immediately before the policy.
-=20
-  $ git grep -B 20 cpufreq_cpu_get | grep -e get_cpu -e smp_processor_id
-  arch/x86/kvm/x86.c-			cpu =3D get_cpu();
-  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_power(struct devic=
-e *cpu_dev,
-  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_cost(struct device=
- *cpu_dev, unsigned long KHz,
-  drivers/cpufreq/mediatek-cpufreq-hw.c-mtk_cpufreq_get_cpu_power(struct de=
-vice *cpu_dev, unsigned long *uW,
+The relevant remaining 99 patches from this series waiting to be merged
+can be grabbed with this command:
 
-Probably because KVM's usage is rather bizarre and honestly kind of dumb.  =
-But
-KVM has had this behavior for 15+ years, so as weird as it is, I'm not incl=
-ined
-to change it without a really, really strong reason to do so, e.g. to itera=
-te
-over all CPUs or something.
+b4 am --add-link \
+	--cherry-pick 1-37,39-47,52-63,65-67,69-89,91-91,94-94,96-96,100-112,114-114 \
+	20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com
 
-So given that this is the only intance of the problem patter, I think it ma=
-kes
-sense to leave KVM as-is, and not spend a bunch of time trying to figure ou=
-t how
-to make KVM's usage play nice with __free().
+There's no dependencies with the other series.
+
+Brian
+
