@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6002627F9;
-	Fri, 29 Aug 2025 14:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4242D9ECB;
+	Fri, 29 Aug 2025 14:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476765; cv=none; b=hZ1ma0WCZUFnVcEnbq/8u01OQaNyb1eYxNfWO+RdIXLx5olEmyikgaxinkcTSK4MXVr7IvcJHgdSUxEXxr1qDHccUJaWNmzH017b0d4vEIcgZNvs/dVQSw1rGpSI9/Qxf0lvEvoHsL4ES67lj+IoUzglvrDXKg0mzVFSgjQ2pKI=
+	t=1756476880; cv=none; b=JZXsJ4M5Gw3mVmSJL2rdtwRVH1tHIxCc7kyYADkL0Rxx3xeYoy4y8hVOYdinZZjZBMOLYwzVKsXX1lkcGbQLC6i4KyjcQvQ7irepQSCyLzR+ImptkL0P6aoY6tyCZPSuGztJ9rErTByjflz0aPCkTbqmGCC6S3Mz/sXc1fTR+r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476765; c=relaxed/simple;
-	bh=CPujCojsEdEJ23RIIfgOEmPVGJrHEjssoVjfvYtZVf4=;
+	s=arc-20240116; t=1756476880; c=relaxed/simple;
+	bh=VMVb37L+6eOc0LNuwVScLaeYIjjIpE5bZA9fKqzTBGo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THWQhqwl/km7VmOKdEVmPWRKlsZC+2S9UQyCT/m7lq2rdYcYkvySoxJg9B8U8CEsYOeVmSLru5vf+kjMH9xvP5i3SXDBqemWqkTNAR/EZpYulSN+sy4qabpT/mcgxJL8/8SjRItMkb7ah5TXmWloky71+L3Ex8WEnWED15lI0OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1IY3a8V; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=j5rqZqzKi3CRmp9eY9be3SDLI7gezFbkNLG4VxaMofe7hvbWH6q4LOIt7LCsmKjJAeqaerOdRdxBPlplJJvxUigMDpiIsqnQx3tsKgVa/bXB3aSFy6W7vAr86+hJFPHrhG0abJNr8sWl/XMFmH5gaVY6e+vGqUVlxzHkm5t6XxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfGkQDKU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1IY3a8V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5949FC4CEF5;
-	Fri, 29 Aug 2025 14:12:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfGkQDKU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB09C4CEF0;
+	Fri, 29 Aug 2025 14:14:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756476765;
-	bh=CPujCojsEdEJ23RIIfgOEmPVGJrHEjssoVjfvYtZVf4=;
+	s=k20201202; t=1756476880;
+	bh=VMVb37L+6eOc0LNuwVScLaeYIjjIpE5bZA9fKqzTBGo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y1IY3a8V6pa/HovY0fIOjSdKwVjr7WAhbPVRF3q0/1tPYIM4SAYp4rtBC3xP1sF8Q
-	 JzAYGUBZVGPAdu18qgkf4W+2uQg1SMsY/EYpei2MML0L9fOTNQXGDMWfS78lzgWUfD
-	 MiM5KQRRr3H5GbqEa9OAMAz6pzEJna1I9iXutYyMdEeMoYLhwpqlXMrRoRG5zEvVWO
-	 x7ZqfZjiFXjttWawf9+BNc2XvO7TnbinaSlNc5Q4njaKK0oP3/57qWY3pjyE6p4geH
-	 xn+HY1kKgTxnE31hN2tvQrTpH4pOmYPsGOvvnH9v+1DaABocE0nZ5MhDt7PwTtClX1
-	 LF8RfEJuokR2w==
-Message-ID: <726456a1-e6ff-47dd-aeab-434fa43ef1f6@kernel.org>
-Date: Fri, 29 Aug 2025 16:12:40 +0200
+	b=LfGkQDKUOoTmhjCFBaANinZoo1Gvxbb40ViyMTqs1bOVP+1nI32MJjIDpPgcVuxVS
+	 NOuD0KoZH/7XYjATrGqbQgIVjH9yVp94fX4miCr/RRci5c7o7rRgvwW47Y5NoNX98T
+	 eoR+kykEfNGTQAsnj+dz4dGbydGXGviNWeZFeKAhWDBeqUTgw+Sc+EtH62BswjaRSX
+	 KcWGJW1osmXfUr2mtf062vkaTQ+RHQw0RqJnkA/Jxh/7KGBYNaSQHIsW1I7l/6WCzY
+	 0f6GLjAnrCA73lFKV5BA1BLTHiSqqmyuNO59iQReSDX8yvJBHSnjWjR3qA579fkwcJ
+	 MxNOtmb2thPew==
+Message-ID: <4770fec3-1b1c-4ade-aa3f-1ad097bbbb3f@kernel.org>
+Date: Fri, 29 Aug 2025 16:14:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Modify tesla fsd bindings
+Subject: Re: [PATCH 2/2] arm64: dts: fsd: Fix Clock handle for WDT
 To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
  cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
  sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
@@ -43,8 +43,8 @@ To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
  linux-kernel@vger.kernel.org
 Cc: aswani.reddy@samsung.com, gost.dev@samsung.com
 References: <20250829135643.105406-1-v.pavani@samsung.com>
- <CGME20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd@epcas5p1.samsung.com>
- <20250829135643.105406-2-v.pavani@samsung.com>
+ <CGME20250829135708epcas5p1b62d44f8a712b1c865fd82d26e89896f@epcas5p1.samsung.com>
+ <20250829135643.105406-3-v.pavani@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,26 +90,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250829135643.105406-2-v.pavani@samsung.com>
+In-Reply-To: <20250829135643.105406-3-v.pavani@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/08/2025 15:56, Varada Pavani wrote:
-> FSD SoC WDT is using Samsung legacy WDT driver with
-> "samsung,exynos7-wdt" compatibility. Now change the compatibility due to
-> few driver changes (PMU bit changes for each WDT instance and Clocks)
-> for WDT found in FSD SoC.
+> FSD SoC WDT has few changes when compared to exynos7 interms of Clocks,
+> PMU register bits for each cluster. So use "tesla,fsd-wdt"
 
-Eh, no, this does not work like that. FSD SoC was released like 8 years
-ago, so how hardware can change now?
+So what was added in 2022?
 
-You cannot claim ABI needs changes because your driver does something,
-it's just misinterpretation of bindings.
+> compatibility for using correct driver data.
+> FSD supports 2 Clocks for WDT (PCLK and CLK).
+> - use fin_pll source Clock for all timer related calculations.
+> - use bus Clock (IMEM_WDT0_IPCLKPORT_PCLK) to gate/ungate the register
+> interface. Update both as per WDT UM.
 
-Please read writing bindings. DTS was added recently, in 2022, but 3
-years is long enough to test it, so I must assume this was tested.
+No, you break all the users. Probably users don't care, but I do care
+because I use that arguments for reviewing other patches, so I apply a
+bit stricter rules for existing Samsung trees.
 
-Otherwise you need to REALLY carefully explain that.
+Otherwise provide rationale about impact and what was happening in 2022
+with this code...
+
 
 Best regards,
 Krzysztof
