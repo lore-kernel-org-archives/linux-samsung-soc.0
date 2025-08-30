@@ -1,222 +1,150 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CF52D3758;
-	Sat, 30 Aug 2025 16:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B042D2391
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 16:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756571327; cv=none; b=bYvLtnWKvU/s3dV9fUAZ5H4x2/b9chw5tHwlmVvxU7PRQMbX0B3/6q76a1xNjIlJj1QiERjAoO3qpnIc1h9WfLG2Wi1L83ZaS802rlS1zT42TimVAL+Qpa4xSlKeX4Wk+ocBnilJVJ+9PvateJc4OEQOtPQy3wgg33U46tLR9HQ=
+	t=1756571399; cv=none; b=AOECDHUQJNqUfpuW5znjqUQMGGP6MPyXVhQqykxuZRxL6FFYFlixZ6WtEkDDzgalYkhx7JErXbhoOmjzKzJUP+xBBgDnx8qMHrtnLgs40oGSVFfipFND92V1pEGUWx/tTF1/+/KN+CZx/aqp3vI2e6mdp/c4GGsjpaDnnMKsPoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756571327; c=relaxed/simple;
-	bh=5IPuwTPYxNGQIBDJPCqLNlhrVjtDtNs6m7JTklARsrQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cWciIvx9isruxRzLxa8iMxTAa9gljU6S+MhuDHb06JwKq/bG32jVjJPdYNYOtseD0cHwvSwBsPP3TkEMTUcEnO359nx8f3FQ5PN6ppD6rzogS+/vX/dDVi69CwWWFSVU4PvhZ65brMZXqDVS9sEuqviNVk8v/WXSMdKEgZsrakE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L12eiNY/; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756571399; c=relaxed/simple;
+	bh=zpj0k7sYQI2nycOBsAPtFBnwj7bXoYfvpQ17GfPguas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pqw6HM/T2mo7PVmfT7IAShFvr2ZVzMehOzftYW1mcrmC2F+M+gBHIhZP5pEZwdVGRCVF33JQoWK3k9/xHuWaC+hFBRWeXddLQUmPtuybWFEPYfiuZf0ReedtcEJ3irDCpE29L0sdf3R0jwupgtDsan3g7CMtCiKrPtAdn2R6q48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PevNt1hv; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L12eiNY/"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70df91bdc53so23391056d6.3;
-        Sat, 30 Aug 2025 09:28:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PevNt1hv"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b041264542eso3301066b.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 09:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756571325; x=1757176125; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=emZkWDIm/t5c5gZiLUdjkY64mxwXxHIrDh9PX4vUBWQ=;
-        b=L12eiNY/PA7acm5XYaB7mC3xswJclo4QdMzGfAsB3NPEGaAZrdyvtFSG+OAmAv0EBP
-         0QZvHbwNeecdV7g2bqGngirgFJK84IGCrmX0ZdoPCFdrvreAHf8sXNSBh+KfcK9qTY8h
-         hBOdIcf6u8TEIakG+WQ+xqYRcq5I9DJc4evcwJVipTDijDTRAhi5lPNGUHt8oYgGAnT8
-         RXrQP10YOrUxcCw8KW5fwAWIyUFcTrW3/w+YBbVAZ5GXl/bdRIqj/DRaYjRWqvbDzRTv
-         TDkrHntnf/mj1fRFnvxsHAV6ya5ZBXPT4EArAIaNEvEVSwpiTqwelqUCD1rVxxG1NksP
-         GUTA==
+        d=linaro.org; s=google; t=1756571395; x=1757176195; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aDZ1phRAEk3zIW1PFqiad/v15RHmZHAjGk3sbt/9HL4=;
+        b=PevNt1hv8zZj/mBBOOhbKgROYMzhWWK9vCPFKATXm2CJxPse2Xc7C2B5TvGSiL3qUm
+         gOViJd2BFvSQ9aZJvUw1b+CTchHZUYCmHxIgbwl2QkmrVoxtVxgUYBclmOqF2US44q2s
+         2errzsjgif75Iuiy71EPAfHqiMggXiF8d0RbAPifzdjSXSlsNldG/j7YhVeu0JNna9nQ
+         PfLY+vTOSGBiBwTQT1ba7sBISQNUFgYeMJJbgDyitqHakFvT9WwwLA8tve5vIFmpHnYp
+         Yy2VnKxi1KAplkW7vyrmlGTAE5VQM6umoOSUD6JQHpRg6/x1JRmhK4eKduhiEkTXzS6y
+         +UTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756571325; x=1757176125;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=emZkWDIm/t5c5gZiLUdjkY64mxwXxHIrDh9PX4vUBWQ=;
-        b=DbdcouWM5CP502KTmiYt3R41KqcaMqNaEs5Sj5oDKS2BUZHxf+0vEMyxAeS07kt6bR
-         CXyeZJbC9PpRAS8jvklMMcnXYik3fbF9sL0EZWCiEPm7kNG4lX+6xIswZnDBWWviIAZw
-         dxaAqOabqDnwHQnIBFWNyYqu+Ugzc+1jUGhTkIvwy6E8lxYvMsHHfs1wLYW9+8K5K13G
-         NC6gLE3lOTaZmPDD4uMHGkf+WXSJU1J4KRQFajc+LkUqoARdPyiA/lXRslOHUreJRAc3
-         yRguBXNOOfO9I4KG7fSSV+zR9dS/ljL+miIA1V95lE/4zzefEx5+vbttv8XBl5GixXrd
-         CVXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6lHul1m9+b8PZ/HpoOoe6f2zd5DCUWyrcAf7RVxG78cOW5picmoYenAp9NqeLhzdXLHJawj/E4u4f@vger.kernel.org, AJvYcCVDuuKB/4OkGx0xkCQGhbA8QcbUoVjmBIJCMRhd3l+mymgmM0vUK0xqxPBKAwHpdxAqdrCj9dGSUtdoNIo9@vger.kernel.org, AJvYcCVJsGtIfqJaXg2j3XVyKI93MOMLLpKLwiTWq+nMWeWQssUbCnYfZtKqQoDcYnrglrarX1A+PV5uz3+b@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl8mad9Q5PXsbkPomIss0aEYzIIbqO2VpIz2ZangxNm1BM7zhs
-	LFJbguhprl+wv1qTFAWpaKL9vUWn8OpzqjqT2VroTa6gi7FooJBWJNv6
-X-Gm-Gg: ASbGncvJEdwNBF5Iqm9PITBLMZ3Nua96niXrE8xYWeWHjs6gUqehf3K//gztqt31l4x
-	BLaH+xS5fZ7C9P1B1WZfVxPiwnf2zSpccWKuGZ6jdIJgDSoyv6/D1kB1MIsS8ddJwbckxLQ67m0
-	fBSTYhDlb0U+tJDtFbQd40CHjBAL8wtnqlkRWj7g6mFSIR4+kAxWQP6PxraPBLh9EMqVcaZvWuw
-	VjK4BqbBvC4ZnWnoOC25/KkzqgZoHawp2TbkPNwH98x225GyXvApvqNP6e47BcQt7P3Afs9eXj1
-	MW1B2LPfwezaLWDedHtPARKUcHcukEX3TCgqqYtoWZ4f8X4co7TLrMr6EAI3UPD+3esRLaryEsP
-	BMd6WxK0xraibg9ouVdpTpuKuxMy8Jy9u79kRjLw=
-X-Google-Smtp-Source: AGHT+IFpNpM1hvW9chxsQmi7d0czGq1O/qS8qHHkp52KwpLCkNld7aFsu3xbEQ3CJnMfEy0jJkWeFQ==
-X-Received: by 2002:a05:6214:5010:b0:70d:d36e:964 with SMTP id 6a1803df08f44-70fac898f06mr30513146d6.39.1756571324515;
-        Sat, 30 Aug 2025 09:28:44 -0700 (PDT)
-Received: from [127.0.0.1] ([74.249.85.195])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb28b5a26sm8110786d6.64.2025.08.30.09.28.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 09:28:44 -0700 (PDT)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Sat, 30 Aug 2025 16:28:42 +0000
-Subject: [PATCH v5 5/5] clk: samsung: exynos990: Add DPU_BUS and CMUREF
- mux/div and update CLKS_NR_TOP
+        d=1e100.net; s=20230601; t=1756571395; x=1757176195;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aDZ1phRAEk3zIW1PFqiad/v15RHmZHAjGk3sbt/9HL4=;
+        b=iqcH8MTVRQXRcZwMq5OiVLVYBQJV6ghGzDm526Wwmj2BCEDW7OyzyBaCQnRecq7kFg
+         zfiMM5yUGGSPv1pdKardmQwzbt2DmUOO6iH0ShVg5aC6QYXfQZJDbO6dYOSD2TnkY4MR
+         RBZISG4TrBZ8+W3C07TGGuOM6qzqhxr792QJdU2W5ZRmXRNMnyYFmY/bGSwBlW0Qwtgu
+         HsgWAg3FL7o1VeTOW7Ni0+JcqCKvvespnxGbfOHodlPY1HLHKEeFEZUwT5Mhzu2GjhGJ
+         EY4hXN3FxP2/LYRUD2vnUw1+0QDh0T7PKii5iBONWVjVD4jHNorxLt3iaMFl2PiL9Agu
+         5B3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWkmpW+sOVQCnjqs3mcZ6sjQwsNVs7YR/tcdZIrKn1JcSM5OnBwlYqDXxmfxGhRD9EvhY6SO85Cczi2AQ5s1XxbFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyHVZ4Qqxwvfkj4hep7XdfeZOKlCTd6n8aU+jM4bUlrQz5vUBW
+	0CKFnJYKc8YHoCZ0t7FPYC7ev8jUow8oJ57IgYE7P3XZNM9GFMapi7EZ1Z/zOu6UxYo=
+X-Gm-Gg: ASbGncv0E+Dy+eDC4za4KGti5uq4c0bNq8RCIL0vKqJ6lDz9V9+lSWTdPHM1FN7Bw+8
+	AVrP60evSCdZG8Y3ObpgVPNebBWsmlQIctSilPy2Vb8cVsp1OpivK1Q43vcWbDtTizPeZkvd+Wz
+	zlr6oP2tUgUZtupFHjpAOX92Bvwc949i5H3QJTzb/1xAzAuF3e0s6Zt88gIgzENnECU/ROtVsD0
+	XrPbiJ7MStiYVNm9ACEH5m+5fv6eymzyQ4Bj2s7gW2SRNSFX/3MQ+6K7hiwelzqE9VwTM8jX+yx
+	RHsmCRedC2J4b1T02vFiampCyIN7f7e6uej9UCYhUB6QYHR8vKpLTLyNvBKWQdhZNAlkjb7qu4m
+	njQL7KAu9efUZV3TSMq1Gsa6Lr+piitvhMCnRFPHGo64=
+X-Google-Smtp-Source: AGHT+IHl8ruWEBHE6w89eG7vWUcWSOoBbbR5fr+SYB9KV3qmIErp5onySpmrDg8O9rfNho2DchGeeg==
+X-Received: by 2002:a17:907:808:b0:af9:3397:ee9d with SMTP id a640c23a62f3a-aff0ee1731bmr196795366b.3.1756571395394;
+        Sat, 30 Aug 2025 09:29:55 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefc7ee972sm460428366b.1.2025.08.30.09.29.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Aug 2025 09:29:54 -0700 (PDT)
+Message-ID: <95f73965-5ba4-4c02-8dc2-09771952ab1b@linaro.org>
+Date: Sat, 30 Aug 2025 18:29:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] usb: ohci: s3c2410: Drop support for S3C2410
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250830130101.142934-3-krzysztof.kozlowski@linaro.org>
+ <fc4ec548-9a1a-44c3-9958-b6778e37d910@rowland.harvard.edu>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <fc4ec548-9a1a-44c3-9958-b6778e37d910@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250830-fix-cmu-top-v5-5-7c62f608309e@gmail.com>
-References: <20250830-fix-cmu-top-v5-0-7c62f608309e@gmail.com>
-In-Reply-To: <20250830-fix-cmu-top-v5-0-7c62f608309e@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756571320; l=5654;
- i=wachiturroxd150@gmail.com; s=20250830; h=from:subject:message-id;
- bh=5IPuwTPYxNGQIBDJPCqLNlhrVjtDtNs6m7JTklARsrQ=;
- b=CvwDr0wXhmzZT+RELAeJJ1yiEwqe5yMi7s5f4NyHS4xmHtZvt/7vrTANzyvxMaEuG7HHsuMwn
- 2NmBW5cswaGDDBohXFGDWB0dI0sOYtTb9DOG5TIzsGVpHBgr+EnMkjN
-X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
- pk=rxHEBGA1eos5vQkPC9SlkEPD6sil9F03N6bc8qmUFrQ=
 
-Add DPU_BUS and CMUREF mux/div, wire their registers and parents,
-and update CLKS_NR_TOP. These use the new IDs appended to the
-bindings to avoid ABI changes.
+On 30/08/2025 17:25, Alan Stern wrote:
+> On Sat, Aug 30, 2025 at 03:01:02PM +0200, Krzysztof Kozlowski wrote:
+>> Samsung S3C24xx family of SoCs was removed the Linux kernel in the
+>> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+>> 2023.  There are no in-kernel users of remaining S3C24xx compatibles.
+>>
+>> The driver is still being used via platform code for S3C64xx platforms.
+> 
+> This title and description are a bit confusing.  I gather that while the 
+> S3C24xx chipsets are not longer supported, the S3C24xx OHCI controller 
+> is still being used in S3C64xx systems.
+> 
+> So what the patch does is drop support for S3C2410 _systems_ while 
+> retaining support for S3C2410 _controllers_.  Is that right?  If so, can 
+> we change $SUBJECT to say "usb: ohci: Drop DT support for S3C2410 
+> systems"?
+Yes, true. I'll adjust the subject.
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
----
- drivers/clk/samsung/clk-exynos990.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index 8571c225d09074cfd1c299879c1e6b4a7322520a..91736b15c4b4a0759419517f7b04dd0a8f38a289 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -17,7 +17,7 @@
- #include "clk-pll.h"
- 
- /* NOTE: Must be equal to the last clock ID increased by one */
--#define CLKS_NR_TOP (CLK_GOUT_CMU_VRA_BUS + 1)
-+#define CLKS_NR_TOP (CLK_DOUT_CMU_CLK_CMUREF + 1)
- #define CLKS_NR_HSI0 (CLK_GOUT_HSI0_XIU_D_HSI0_ACLK + 1)
- #define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
- 
-@@ -45,6 +45,7 @@
- #define PLL_CON3_PLL_SHARED3				0x024c
- #define PLL_CON0_PLL_SHARED4				0x0280
- #define PLL_CON3_PLL_SHARED4				0x028c
-+#define CLK_CON_MUX_CLKCMU_DPU_BUS			0x1000
- #define CLK_CON_MUX_MUX_CLKCMU_APM_BUS			0x1004
- #define CLK_CON_MUX_MUX_CLKCMU_AUD_CPU			0x1008
- #define CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS			0x100c
-@@ -103,6 +104,8 @@
- #define CLK_CON_MUX_MUX_CLKCMU_SSP_BUS			0x10e0
- #define CLK_CON_MUX_MUX_CLKCMU_TNR_BUS			0x10e4
- #define CLK_CON_MUX_MUX_CLKCMU_VRA_BUS			0x10e8
-+#define CLK_CON_MUX_MUX_CLK_CMU_CMUREF			0x10f0
-+#define CLK_CON_MUX_MUX_CMU_CMUREF			0x10f4
- #define CLK_CON_DIV_CLKCMU_APM_BUS			0x1800
- #define CLK_CON_DIV_CLKCMU_AUD_CPU			0x1804
- #define CLK_CON_DIV_CLKCMU_BUS0_BUS			0x1808
-@@ -162,6 +165,7 @@
- #define CLK_CON_DIV_CLKCMU_VRA_BUS			0x18e0
- #define CLK_CON_DIV_DIV_CLKCMU_DPU			0x18e8
- #define CLK_CON_DIV_DIV_CLKCMU_DPU_ALT			0x18ec
-+#define CLK_CON_DIV_DIV_CLK_CMU_CMUREF			0x18f0
- #define CLK_CON_DIV_PLL_SHARED0_DIV2			0x18f4
- #define CLK_CON_DIV_PLL_SHARED0_DIV3			0x18f8
- #define CLK_CON_DIV_PLL_SHARED0_DIV4			0x18fc
-@@ -253,6 +257,7 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	PLL_CON3_PLL_SHARED3,
- 	PLL_CON0_PLL_SHARED4,
- 	PLL_CON3_PLL_SHARED4,
-+	CLK_CON_MUX_CLKCMU_DPU_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_APM_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_AUD_CPU,
- 	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
-@@ -311,6 +316,8 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_MUX_MUX_CLKCMU_SSP_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_TNR_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_VRA_BUS,
-+	CLK_CON_MUX_MUX_CLK_CMU_CMUREF,
-+	CLK_CON_MUX_MUX_CMU_CMUREF,
- 	CLK_CON_DIV_CLKCMU_APM_BUS,
- 	CLK_CON_DIV_CLKCMU_AUD_CPU,
- 	CLK_CON_DIV_CLKCMU_BUS0_BUS,
-@@ -370,6 +377,7 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_DIV_CLKCMU_VRA_BUS,
- 	CLK_CON_DIV_DIV_CLKCMU_DPU,
- 	CLK_CON_DIV_DIV_CLKCMU_DPU_ALT,
-+	CLK_CON_DIV_DIV_CLK_CMU_CMUREF,
- 	CLK_CON_DIV_PLL_SHARED0_DIV2,
- 	CLK_CON_DIV_PLL_SHARED0_DIV3,
- 	CLK_CON_DIV_PLL_SHARED0_DIV4,
-@@ -465,6 +473,8 @@ PNAME(mout_pll_shared3_p)		= { "oscclk", "fout_shared3_pll" };
- PNAME(mout_pll_shared4_p)		= { "oscclk", "fout_shared4_pll" };
- PNAME(mout_pll_mmc_p)			= { "oscclk", "fout_mmc_pll" };
- PNAME(mout_pll_g3d_p)			= { "oscclk", "fout_g3d_pll" };
-+PNAME(mout_cmu_dpu_bus_p)		= { "dout_cmu_dpu",
-+					    "dout_cmu_dpu_alt" };
- PNAME(mout_cmu_apm_bus_p)		= { "dout_cmu_shared0_div2",
- 					    "dout_cmu_shared2_div2" };
- PNAME(mout_cmu_aud_cpu_p)		= { "dout_cmu_shared0_div2",
-@@ -679,6 +689,12 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
- 					    "dout_cmu_shared4_div2",
- 					    "dout_cmu_shared0_div4",
- 					    "dout_cmu_shared4_div3" };
-+PNAME(mout_cmu_cmuref_p)		= { "oscclk",
-+					    "dout_cmu_clk_cmuref" };
-+PNAME(mout_cmu_clk_cmuref_p)		= { "dout_cmu_shared0_div4",
-+					    "dout_cmu_shared1_div4",
-+					    "dout_cmu_shared2_div2",
-+					    "oscclk" };
- 
- /*
-  * Register name to clock name mangling strategy used in this file
-@@ -709,6 +725,8 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	    PLL_CON0_PLL_MMC, 4, 1),
- 	MUX(CLK_MOUT_PLL_G3D, "mout_pll_g3d", mout_pll_g3d_p,
- 	    PLL_CON0_PLL_G3D, 4, 1),
-+	MUX(CLK_MOUT_CMU_DPU_BUS, "mout_cmu_dpu_bus",
-+	    mout_cmu_dpu_bus_p, CLK_CON_MUX_CLKCMU_DPU_BUS, 0, 1),
- 	MUX(CLK_MOUT_CMU_APM_BUS, "mout_cmu_apm_bus",
- 	    mout_cmu_apm_bus_p, CLK_CON_MUX_MUX_CLKCMU_APM_BUS, 0, 1),
- 	MUX(CLK_MOUT_CMU_AUD_CPU, "mout_cmu_aud_cpu",
-@@ -837,6 +855,10 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	    mout_cmu_tnr_bus_p, CLK_CON_MUX_MUX_CLKCMU_TNR_BUS, 0, 3),
- 	MUX(CLK_MOUT_CMU_VRA_BUS, "mout_cmu_vra_bus",
- 	    mout_cmu_vra_bus_p, CLK_CON_MUX_MUX_CLKCMU_VRA_BUS, 0, 2),
-+	MUX(CLK_MOUT_CMU_CMUREF, "mout_cmu_cmuref",
-+	    mout_cmu_cmuref_p, CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
-+	MUX(CLK_MOUT_CMU_CLK_CMUREF, "mout_cmu_clk_cmuref",
-+	    mout_cmu_clk_cmuref_p, CLK_CON_MUX_MUX_CLK_CMU_CMUREF, 0, 2),
- };
- 
- static const struct samsung_div_clock top_div_clks[] __initconst = {
-@@ -981,6 +1003,10 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
- 	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_dpu", "gout_cmu_dpu",
- 	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
-+	DIV(CLK_DOUT_CMU_DPU_ALT, "dout_cmu_dpu_alt", "gout_cmu_dpu_bus",
-+	    CLK_CON_DIV_DIV_CLKCMU_DPU_ALT, 0, 4),
-+	DIV(CLK_DOUT_CMU_CLK_CMUREF, "dout_cmu_clk_cmuref", "mout_cmu_clk_cmuref",
-+	    CLK_CON_DIV_DIV_CLK_CMU_CMUREF, 0, 2),
- };
- 
- static const struct samsung_fixed_factor_clock cmu_top_ffactor[] __initconst = {
-
--- 
-2.50.1
-
+Best regards,
+Krzysztof
