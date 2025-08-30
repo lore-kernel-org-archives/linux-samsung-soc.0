@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD8D20B7ED;
-	Sat, 30 Aug 2025 09:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9682A230BCC;
+	Sat, 30 Aug 2025 09:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545448; cv=none; b=NrawIBO4R/QIWQXNpkDQX0nIUwGpk5QWyqDLUB05B2jsDmStnefiIx5Z4H43rBq5YrVlK/ukIdbdqp8gVIfV6hzmKnc504anUzKbSYJpZKG4tEhDkKdfFN5H2XZmDo6clN52pYYY+Wsp9+dOjgsxi4yq5/aKYg7n+maK/PkwyYI=
+	t=1756545500; cv=none; b=CjlSKNHKL4Dj5EQSGriF7TzOU+UWihi2dZ9Vpvi8seGSb7uQ5D509JGptGQ52Qb2vYB0EUpAIiUWwJRYrTr9fE89RXUl88MSanINW8p0dE00zWO5xHZ6s25kwtoRR/aeD70UpO67h4g5N0opGvheDSvn3PwzrVHE1C1RblKFGVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545448; c=relaxed/simple;
-	bh=PiCpVSQF5pSo2SVTBFYEDKcdWKHrOsEEZbDSq2TfM1Q=;
+	s=arc-20240116; t=1756545500; c=relaxed/simple;
+	bh=6Dsuecx+6uYfPydtCR6KibWWC7zXcfy10I2x2UJtlmA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OBTPi5Ww8n8BXKqBvriW5GULXyAIKV50IPXPQGxoi2m5GAdnyUiMztfwHNg3n1ReXjG9rqLr9buk9w+GAxmRXI1hW/6sv4ZK/LRjeb121cqjNwVU1QnFsTidu8RFmt+pgzbW0qeWW1/goXxEcbJE5PUI18Sq5b0ZIX48652MA+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CipwpUub; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Q91oavZgNcXsbxfJTO6bZmk7+AjZsHFZsPA6yH+1a5SABhutDMz25+gmjjVMEKLtyQQ5ns9vBZ3yry7hbP3YMK9OMC4sUtfA+ulaLzNFsrrLPYKq1hpB/oOVi3G0pm6VwU+LAGtiRhUPCrmmeYKxfaHqv9FYTQp5EUrg8jJD1Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwodF7OH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CipwpUub"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3356C4CEEB;
-	Sat, 30 Aug 2025 09:17:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwodF7OH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A983C4CEF5;
+	Sat, 30 Aug 2025 09:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756545447;
-	bh=PiCpVSQF5pSo2SVTBFYEDKcdWKHrOsEEZbDSq2TfM1Q=;
+	s=k20201202; t=1756545499;
+	bh=6Dsuecx+6uYfPydtCR6KibWWC7zXcfy10I2x2UJtlmA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CipwpUubuN8IlUgSL+zKVETGunKyx7tx6n+pvJ78+GxpLEdIiS7oQlghSvNyziXta
-	 O20a/rgIrNz1x2PSFFYGxipoz2h5igS89YDsIbmPr/xOyrdKW58kY+HFOgiPdoUWO0
-	 tVmVBOFwFllC6Cz36kyiw0IEAkBKHmmARxCAKU50mKJlhEZwEKg/zp0sniavIaESMG
-	 /V4QOiOAhcFtmBcAYNkWs9nuAHnk8unclrCsaNftSfhqHDPxppLeFWAG5oyuFVgJmU
-	 SWcNDoKlhhv+TIxlHqWcqURiFkvo201UaCt/PJgVK7b3H1Cg2/95eUK2P89sFP/SY5
-	 B/SnzEYK+t+xA==
-Message-ID: <f5897ae6-08b4-4446-be57-4c1e8f5c0d18@kernel.org>
-Date: Sat, 30 Aug 2025 11:17:21 +0200
+	b=ZwodF7OHxqaoiT+5BKbrvFLSLRCq8UjMwDV3Lv5TQ70hvU7Jkv90uBXoX9YoMchKd
+	 PfErxLnKl01iyukoQKeMor/g86yCp2QYtvbJtfLu3BvDcLo9lRfUmHJ71q9iWrdj3k
+	 sIUZeA+bOhiRVQR+C0aeNmtKem6VGtDLI6OU5TcXDfm7kUeG83G7Gp2c9wXvg2E6Yn
+	 JJ1UaQv4QKHoeLlmfFzSQumG5s71CHAP95iVAou9GnJ60N1J6VRHHigso1JfDUnzw3
+	 iNjkpbil2mB44wrENc//UkOjmOjYZcZa7t2B7tbdj3xoXtUeWNgT/yaBLvQKudMMv0
+	 wnbRIlJRhZNOg==
+Message-ID: <47ddc58b-02d6-42e7-83f8-09bb80d73894@kernel.org>
+Date: Sat, 30 Aug 2025 11:18:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] clk: samsung: exynos990: Fix CMU TOP mux/div
- widths and add fixed-factors
+Subject: Re: [PATCH v4 3/4] clk: samsung: exynos990: update CLK_NR_TOP for new
+ IDs clocks
 To: Denzeel Oliva <wachiturroxd150@gmail.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -47,7 +47,7 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20250825-cmu-top-v4-0-71d783680529@gmail.com>
- <20250825-cmu-top-v4-1-71d783680529@gmail.com>
+ <20250825-cmu-top-v4-3-71d783680529@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,21 +93,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250825-cmu-top-v4-1-71d783680529@gmail.com>
+In-Reply-To: <20250825-cmu-top-v4-3-71d783680529@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/08/2025 07:51, Denzeel Oliva wrote:
-> Correct mux/div bit widths in CMU TOP (DPU, DSP_BUS, G2D_MSCL,
-> HSI0/1/2). Replace wrong divs with fixed-factor clocks for
+> The new clock IDs have been added and put last,
+> it is necessary to change.
+> 
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos990.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+> index 105ba0363..9fcdad7cc 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -17,7 +17,7 @@
+>  #include "clk-pll.h"
+>  
+>  /* NOTE: Must be equal to the last clock ID increased by one */
+> -#define CLKS_NR_TOP (CLK_GOUT_CMU_VRA_BUS + 1)
+> +#define CLKS_NR_TOP (CLK_DOUT_CMU_CLK_CMUREF + 1)
 
-Separate commits.
-
-> HSI1/2 PCIe and USBDP debug. Also add OTP rate in ffactor.
-> These align with Exynos990 downstream cmucal and ensure correct
-> parent/rate selection.
-
-Fixes tags.
+This belongs to the driver patch introducing these new clocks. Such
+change alone makes no sense or commit msg really does not explain issue
+being fixed here.
 
 Best regards,
 Krzysztof
