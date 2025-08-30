@@ -1,66 +1,66 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C2A261B95
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 16:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0C3283145
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 16:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756572527; cv=none; b=hPofH4gGw43CAhFBoRAZH3O+MAU3qZLWJVbdX62uZRlAYbWJWfdtOdy/P352wuG8wlhm5TA6R7gy3DUUH/wG4/5yUWeWqjieyf6j8d/omLvgIGHINhFhudyNOX9zBkerc3s24QphwzDx/Dr64HRMGaKppEnO1meFYuX98AxoOIo=
+	t=1756572528; cv=none; b=fEdR99MLi5yYAi4RmiH2UYRCGJFhaATTnu+vXY33Fg4/lSXFpaiFz/VPcidgQgbrfzoSuVpGkP3XbULQCn6DUpScPtAIglLT0I8/cjzh7cytRCkYyV3B76jCAIKC4NMsNkqY075t/dGkR601kVzSII3AKtJzb9t24l5pixCaMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756572527; c=relaxed/simple;
-	bh=7uER2DvoLLE6z6epL6HrNFtjDW4TWlnYFUC2TNnSIPk=;
+	s=arc-20240116; t=1756572528; c=relaxed/simple;
+	bh=pL0Y/tA1FQ3f1lp+caPxhjKsPy45nrMI/uBEpcjgahA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TrNpRkjW3hUM4LXsXXpmno9ajHfDYHK1FON/I0wRyJ9zqzRZ9jPvkyhdJ1WNtMVCfYU67n0WjGshrcEZ6WUe7U9otP37UZN+kT4m6U7xK5wZfnyu9ARHX5OHmAJj1IjW8oPUB4zrAWqRmc0KIH6OFY5cxJMXToMDXA/rwk8DI6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D7B6xbNQ; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:To:Cc; b=KYLlX4tw8tZlPnB/ZhKE9V6fy8aTvKOYqurrplMH4kwc2DhtnTSZmqVB9vje1aJyMs3LtryzpS9Xx0XXMZRAZ1TFt47SiMDXh56qTZzoyFrgN83oxNzn1lR+g+WOiQsX3UJ2hZLqvpAML1vTWaw+k89M0leQxruPvw+Lm7Xkou8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oOEc+eJi; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D7B6xbNQ"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ceed75169cso252501f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 09:48:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oOEc+eJi"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3cbb5e7f5aaso423682f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 09:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756572523; x=1757177323; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756572524; x=1757177324; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kwHNHld86Ahk+TRbfmt7h72W95FfFhoR7W7sL+uYmow=;
-        b=D7B6xbNQyhoQGODZw9BF2Jwadd/lwFoYcOz4MVwS+I2WtMh7iBUMKb0w9DnaUoj7w3
-         hSJmFJSM5gF5LI+NkKb1k0A2DmR4ckoGjFTKEW5Ev2Ju+EJQCv13yyP3BlDGWFnr/9Oa
-         v3MW0LD+clhahBdOiAqhTy+Nkzyn6tiweP3Ea3W7M/rxgCEoCwxqlwCedvLuTRRtsjQB
-         bhM9i8limr87pLqNQF36+bT505xXVUh6CDuP0uldN9RrI2B3GcL+lU7eWeOIYsVkwfyb
-         Tv16Uv3huN1iTT/5vX7+SKpGxkt9uouY0ti9Jt5bdq14VgNMu8upyLoAEF/5FMs7hIKl
-         qNVA==
+        bh=46Am/D2MIaLs89LH0/OBcxUYQRA2iV/u3RL9jcdWVzU=;
+        b=oOEc+eJimC0cc49JAq1G7T/kNnYWQJJaOkdMPLLqHfQA+//5r/8AHM88IjH86EBvFM
+         A3E7FXNo1w7s3lAAwyrKdNB3biqAxGLQrkpZEqTHRdTe71tPk5TFrcyJQ199qtCYgb6H
+         WLfVdFgR/0Yb1uHbfHKgSsRI1Z4A82htpzDrz5BRgdRwnVmTBVhR9mUFpwsZwqb+0WUQ
+         kcn4Z7B/1yDlNs9Pln0Rc7l3/8waWHhPhm5OHk9ZaOSU57geihRrBJhu7ETGGDCaGMVe
+         lwFz4Dc9NFbAuT75ZWNb13Wp+h39QneSe1M+ndJmDPhXzir9fGWuZyi4JEl7TMtwHkpA
+         qzpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756572523; x=1757177323;
+        d=1e100.net; s=20230601; t=1756572524; x=1757177324;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kwHNHld86Ahk+TRbfmt7h72W95FfFhoR7W7sL+uYmow=;
-        b=PkRpWLtKVX12dN/6QGqjqtg/7GGueHdmrSlJqxsLKsUGC3ddYhP2ASVmb7p/lhyYFu
-         FFs2FZJAmGvVnO8qWl09TLc6fgoXbzvZtRcdLRkphN4CbvOsjNQ0AhF/kmK1xKymkGRm
-         Ck0xBHj1YtuTg6hgaqM4Tsq1H8dYne+xlPZTkUmA5GiXAlOObx/U2h9zxFYnDutX9cgg
-         IsqbfAsM47wMclqu0sv3MHXGwtpNpXm3Kcn6AnTXHJ4l2nYoGoyIaXx/fZXzWmc8XkWo
-         9KDrMthXfjOQpeFnnQ9SLQ3CYwxyO7ty6VSa+MaRuoMUQJ7LHyEpobp4XNU8kXdKRUd9
-         Uhog==
-X-Forwarded-Encrypted: i=1; AJvYcCWgo1HJnpKum+ugn2kgCkO1lrDvExGjeJHbM5XSGCCXm96j4PtcmKUlWM4akilQnsYSnrOIrS+FHPOvI8drhtqBXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz68ZsfQKhWR9INx2Bit6gQHCdnnKPHsHPOqPGSW9jXxZ8TOR6T
-	NtFNCDQKRvfJzQL/wau0jYtzq46ItWKCwcAOxKuit8XXT+TX6iQyr+omEZBNLfsvQLQ=
-X-Gm-Gg: ASbGncsWGDAEVYpY8UB9imQESmsVeWnKRv/9/o/M40JABT4lz6m0UEsvN+szvxBa598
-	xbxh7q1ZKnXEde1SsWWZJ0jOaYRvsJ7LMW9BKxT08xHnOxrWBzSxWxpaiYIWtpB6ubw+7y6Ij7f
-	Gm+HCyR1eCQwgldLXUvOIY4EoU4iprnOKTvGI6R2u4Xi2WU5ELvrIYk+gKuKkE4aZlw3U1lEM6w
-	enhBHTwrC2U4q/QKiCydSKtjmNNbK4uIhGsuqlTwRDU43/X6ypdjXO44U9mVZpczZRXfNGChjcc
-	uZydtp9sS3yCt33PK0Zlay20vFVLuQijvyH6iPXu4WlWwXcsddEDSKjze6sPa6SAI2E8QA5/apm
-	MQVoq3StYHUhaDqv3EQD+CUnBeLXMPkgDucMqPZM=
-X-Google-Smtp-Source: AGHT+IGUYbZV5y47P6lmjYscKjNdQ2Uw8ELxYIkx4OD71yfrs+H4TcNwkmZsQ6P3v/fHNbcN0w5aPQ==
-X-Received: by 2002:a5d:4490:0:b0:3d1:6e71:4915 with SMTP id ffacd0b85a97d-3d16e714b0dmr1046081f8f.4.1756572522774;
-        Sat, 30 Aug 2025 09:48:42 -0700 (PDT)
+        bh=46Am/D2MIaLs89LH0/OBcxUYQRA2iV/u3RL9jcdWVzU=;
+        b=fbHhel9nH8I+O7TsgeK5L0DG2w1+RSHQSpSwvZHxhuWiuqS+zOD3KcdHICn5mB4BOu
+         U3ZJVCRGIFi3RKavNfjxFFjSCuBywMPYkUMatk0S5BIWFn1SDgxgtLFu8Fnjx7krN8MX
+         edwbjYYsNy5tueX7byxnoelhXPCU8VK5FQPoYuaYyKjWEzMJ1VvnybdUfoaFwrkZ8VbU
+         nOzNxIW1L8oL83BicccaBWB1+YZnksGgeGg18+qAH/bC8vxNB9VWf2HhJRKNPAmLyK7j
+         o1L9dIJb9nKTSjN5PkzXCNOlx+lFYvV6P7fEgZE6CLheyXZpau6w4iVCQ6YoFs0O/v07
+         103Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV4xRhGrSi95mxTsQubaU9BM5caEZz6FFjl/OMiSfGGHTmlA/p3cH5xFfseD4uhJcsJTWU7YnqqEPwxE+WDWTymow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZEDdJ9/gexp5BKEKVzTJpreu27p59OugPOBdEtwsD/H7kg4bT
+	B526NCLRS6dPCEowCkrFunKgSysppF+FdFpa9EEmsEUsxmSMFQnPvd2RIVmbmiJNnic=
+X-Gm-Gg: ASbGncuJFxkX/nYsbe9FvQOQcBv0FKdTuko/3kQprqcKTSQkD67KAHhJ0z4UmmiqMLw
+	LqfRnlMFOWyJteuYkZndtGCsZUDcNL+d/lN8A90uM/WYrsQVSDNxeeIPzdkvlI9iOFNku5YyokS
+	EqTjDps2ze7UhXDwmjypnMqoQVV9rVQ063JHG6as1OI23aq9ZnNtyIF/KdoePd+MnrED663mhoS
+	PETjpkqg8PXE3I5WuhBvymS/C8WrbGU8SXJANikpoehvtLFTLrNfmaWHSgvjuDGdVq5Jg1mMk5M
+	2QB9lU0bP4j9w28m+mFrRFvyOy8IsrDe94A7T8PGRfKvVG3MKXmjdxU/IkUvmeyWQschiU8O0Ku
+	lG/gMgMjy1XhSdfZiL1DMSISqE1uU6yyLdPHHkeE=
+X-Google-Smtp-Source: AGHT+IHrD1CCygt9VhpZMao/pWEV9H2CEgmVnFAV/e9OSZMvWIN5W6294UyPv80QFR88fzw4agBOrg==
+X-Received: by 2002:a05:6000:250c:b0:3cd:edee:c7ea with SMTP id ffacd0b85a97d-3d0fce99928mr1901993f8f.9.1756572524321;
+        Sat, 30 Aug 2025 09:48:44 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf274dde69sm7818129f8f.14.2025.08.30.09.48.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf274dde69sm7818129f8f.14.2025.08.30.09.48.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 09:48:42 -0700 (PDT)
+        Sat, 30 Aug 2025 09:48:43 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sat, 30 Aug 2025 18:48:30 +0200
-Subject: [PATCH v2 1/5] iio: adc: exynos_adc: Drop S3C2410 support
+Date: Sat, 30 Aug 2025 18:48:31 +0200
+Subject: [PATCH v2 2/5] iio: adc: exynos_adc: Drop touchscreen support
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250830-s3c-cleanup-adc-v2-1-4f8299343d32@linaro.org>
+Message-Id: <20250830-s3c-cleanup-adc-v2-2-4f8299343d32@linaro.org>
 References: <20250830-s3c-cleanup-adc-v2-0-4f8299343d32@linaro.org>
 In-Reply-To: <20250830-s3c-cleanup-adc-v2-0-4f8299343d32@linaro.org>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -84,149 +84,360 @@ Cc: linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4264;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9651;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=7uER2DvoLLE6z6epL6HrNFtjDW4TWlnYFUC2TNnSIPk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosytjN2yInA7p39V8n1XoJXYzoAUFvLq/xOHS6
- dqUEsdByBGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLMrYwAKCRDBN2bmhouD
- 1x9QD/wP0Tzu8mof+pIAGOVInqw3xEGpRCv4RnJN0E5qMXRG9QqqJNdBW2jeKvNmvYaYzO6zJAY
- Ev7ZpFXpiRZNKoGRbe6yPsfoVCLfXL2htcCeFgoSPKj9r0dsVJ5vQcDYEJ61UrmOdbd5IeB8Iaa
- z2yx4V+eF/xCz/UUS1JKcwo5saIq8aqQlxNjufJK/RxTUi/z6kPnczOXA+jali0A3lXVphMABDf
- 9dN7bnsGgy4Tzl+3OME5+VoQRNpiRnOXcKpnOa8Ljpx7V5zgZTsGF4hpL2nLD/ACLBIbNxvSLAL
- 7Vx2vi0K83YcWGQ+sugWZ+VZ0uiCEbpNU31k2QuhDk+1U55VbN6RnjOSP6HrVu1Y5dTcvu2z4LV
- Asmjc+u/KHPBJTSbfmxzAv/USAuaZDK5sVodbVSlKABJasrieBwAmse0NRU5kQilaHgkL4cTA+J
- q/pxj0YOSEL1sR6EWpxwyg8dWsdsWoxW2C1R8dn66ur9rBN82aqcxuHA5TfuUpN59A/Ub5W8/Kx
- O8+joypsCNHDmOH+1jvCa4j8kYfae2PVTplVv12sZFYCVsmB0U0ouzZajd+ozTIaN+KA3+ZNBc4
- 8n9gIcZFRJBgjeoX3l0ghSLrEJji28t/r8xm1hANzB4Am+xtEioguys9BdSsk//SRbElZE5I6Ck
- 9lClcMh5sUUutag==
+ bh=pL0Y/tA1FQ3f1lp+caPxhjKsPy45nrMI/uBEpcjgahA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosytkEcxfjHQT7VpZUcY+dplKHe4fxjk2DaMcg
+ wuZIqCSX8qJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLMrZAAKCRDBN2bmhouD
+ 14esEACT+lG3NVpPCnP6LNODNDUDPVIO42ESqvarp2mk7F4HExWVhyrF3bEKOu2gYO/lJbG4qx2
+ lrVEf4KKD48ZpgAOSH2zLuZlS+nHzP+HQ8bhkIAnCf555wKYFFmIKDTu3oHlqbhKHPjlRtCdA3l
+ wtWkRmukT196jrOC/7QYR7t9b29Nw9Wd1vMuGia16FBfAN43yyuaAx71Owfmj8qPqJWmlcqQfsz
+ m8dmIQfqS5DXjWmzCrhWSlTJ01CjJIEMt++P5Z0HB0+fDSwS4t4L0kP7+QDZ9/RV5j4OS9Brk+q
+ 7xdUZyQBV+ek+dCOGERMxoAzH8iQuP6ANYK5hA2+XFPT6usd9U4iBh/3aTG4BcCGhYc/yuLlf74
+ FbJOQLVofJuoMrK/G+QzsxBzFY/QBIFVq8NAnFdj3o2PYExtLCv0MtOSmremRE13LxpmDyLdkhp
+ DG8MuBcL1gT3xELHncCPwojydENBSlFhVOLxCvUSBsZkoQgnOgu/R+7DHj0EFilbOPRLs9snW5C
+ u21Gy/0/fbOh6mI6mY42hy2EXEhLmdbx7p6dQSjPPW+AaRRFZLPfc4UzQLrIa/lMvQgndvhqMu5
+ 5FVcSWmo/NlT4IJqrgue/ODrSvRY7nMsiesFkZDSSlwrvxtSTF3ERxcZmKO+IGLuLzlW+8KMY7/
+ v9xEoRs8iaXPEuA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Samsung S3C24xx family of SoCs was removed from the Linux kernel in the
-commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
-2023.  There are no in-kernel users of its compatibles.
+With last user of touchscreen via ADC (S3C24xx SoC) gone, drop the
+remaining code from Samsung SoC ADC driver.
 
 Reviewed-by: Andy Shevchenko <andy@kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/iio/adc/exynos_adc.c | 75 +-------------------------------------------
- 1 file changed, 1 insertion(+), 74 deletions(-)
+ drivers/iio/adc/exynos_adc.c | 196 +------------------------------------------
+ 1 file changed, 1 insertion(+), 195 deletions(-)
 
 diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 4614cf848535944a41e0ab19f35c5ca0546000c0..17fd33c6bd6d0dcf41771331ecb328e58d820ed0 100644
+index 17fd33c6bd6d0dcf41771331ecb328e58d820ed0..30f6d8436e775a8d2177951b436cd45152307ea2 100644
 --- a/drivers/iio/adc/exynos_adc.c
 +++ b/drivers/iio/adc/exynos_adc.c
-@@ -44,9 +44,6 @@
- #define ADC_V1_MUX(x)		((x) + 0x1c)
- #define ADC_V1_CLRINTPNDNUP(x)	((x) + 0x20)
+@@ -19,11 +19,9 @@
+ #include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/of.h>
+-#include <linux/of_irq.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/of_platform.h>
+ #include <linux/err.h>
+-#include <linux/input.h>
  
--/* S3C2410 ADC registers definitions */
--#define ADC_S3C2410_MUX(x)	((x) + 0x18)
--
+ #include <linux/iio/iio.h>
+ #include <linux/iio/machine.h>
+@@ -35,14 +33,12 @@
+ 
+ /* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+ #define ADC_V1_CON(x)		((x) + 0x00)
+-#define ADC_V1_TSC(x)		((x) + 0x04)
+ #define ADC_V1_DLY(x)		((x) + 0x08)
+ #define ADC_V1_DATX(x)		((x) + 0x0C)
+ #define ADC_V1_DATY(x)		((x) + 0x10)
+ #define ADC_V1_UPDN(x)		((x) + 0x14)
+ #define ADC_V1_INTCLR(x)	((x) + 0x18)
+ #define ADC_V1_MUX(x)		((x) + 0x1c)
+-#define ADC_V1_CLRINTPNDNUP(x)	((x) + 0x20)
+ 
  /* Future ADC_V2 registers definitions */
  #define ADC_V2_CON1(x)		((x) + 0x00)
- #define ADC_V2_CON2(x)		((x) + 0x04)
-@@ -61,10 +58,8 @@
- #define ADC_V1_CON_PRSCLV(x)	(((x) & 0xFF) << 6)
- #define ADC_V1_CON_STANDBY	(1u << 2)
- 
--/* Bit definitions for S3C2410 ADC */
-+/* Bit definitions for S3C2410 / S3C6410 ADC */
+@@ -61,17 +57,12 @@
+ /* Bit definitions for S3C2410 / S3C6410 ADC */
  #define ADC_S3C2410_CON_SELMUX(x) (((x) & 7) << 3)
--#define ADC_S3C2410_DATX_MASK	0x3FF
--#define ADC_S3C2416_CON_RES_SEL	(1u << 3)
  
- /* touch screen always uses channel 0 */
- #define ADC_S3C2410_MUX_TS	0
-@@ -307,53 +302,6 @@ static const struct exynos_adc_data exynos_adc_s5pv210_data = {
- 	.start_conv	= exynos_adc_v1_start_conv,
- };
+-/* touch screen always uses channel 0 */
+-#define ADC_S3C2410_MUX_TS	0
+-
+ /* ADCTSC Register Bits */
+ #define ADC_S3C2443_TSC_UD_SEN		(1u << 8)
+ #define ADC_S3C2410_TSC_YM_SEN		(1u << 7)
+ #define ADC_S3C2410_TSC_YP_SEN		(1u << 6)
+ #define ADC_S3C2410_TSC_XM_SEN		(1u << 5)
+ #define ADC_S3C2410_TSC_XP_SEN		(1u << 4)
+-#define ADC_S3C2410_TSC_PULL_UP_DISABLE	(1u << 3)
+-#define ADC_S3C2410_TSC_AUTO_PST	(1u << 2)
+ #define ADC_S3C2410_TSC_XY_PST(x)	(((x) & 0x3) << 0)
  
--static void exynos_adc_s3c2416_start_conv(struct exynos_adc *info,
--					  unsigned long addr)
--{
--	u32 con1;
+ #define ADC_TSC_WAIT4INT (ADC_S3C2410_TSC_YM_SEN | \
+@@ -79,12 +70,6 @@
+ 			 ADC_S3C2410_TSC_XP_SEN | \
+ 			 ADC_S3C2410_TSC_XY_PST(3))
+ 
+-#define ADC_TSC_AUTOPST	(ADC_S3C2410_TSC_YM_SEN | \
+-			 ADC_S3C2410_TSC_YP_SEN | \
+-			 ADC_S3C2410_TSC_XP_SEN | \
+-			 ADC_S3C2410_TSC_AUTO_PST | \
+-			 ADC_S3C2410_TSC_XY_PST(0))
 -
--	/* Enable 12 bit ADC resolution */
--	con1 = readl(ADC_V1_CON(info->regs));
--	con1 |= ADC_S3C2416_CON_RES_SEL;
--	writel(con1, ADC_V1_CON(info->regs));
+ /* Bit definitions for ADC_V2 */
+ #define ADC_V2_CON1_SOFT_RESET	(1u << 2)
+ 
+@@ -116,13 +101,11 @@
+ struct exynos_adc {
+ 	struct exynos_adc_data	*data;
+ 	struct device		*dev;
+-	struct input_dev	*input;
+ 	void __iomem		*regs;
+ 	struct regmap		*pmu_map;
+ 	struct clk		*clk;
+ 	struct clk		*sclk;
+ 	unsigned int		irq;
+-	unsigned int		tsirq;
+ 	unsigned int		delay;
+ 	struct regulator	*vdd;
+ 
+@@ -131,12 +114,6 @@ struct exynos_adc {
+ 	u32			value;
+ 	unsigned int            version;
+ 
+-	bool			ts_enabled;
 -
--	/* Select channel for S3C2416 */
--	writel(addr, ADC_S3C2410_MUX(info->regs));
+-	bool			read_ts;
+-	u32			ts_x;
+-	u32			ts_y;
 -
--	con1 = readl(ADC_V1_CON(info->regs));
--	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
--}
--
--static struct exynos_adc_data const exynos_adc_s3c2416_data = {
--	.num_channels	= MAX_ADC_V1_CHANNELS,
--	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
--
--	.init_hw	= exynos_adc_v1_init_hw,
--	.exit_hw	= exynos_adc_v1_exit_hw,
--	.start_conv	= exynos_adc_s3c2416_start_conv,
--};
--
--static void exynos_adc_s3c2443_start_conv(struct exynos_adc *info,
--					  unsigned long addr)
--{
--	u32 con1;
--
--	/* Select channel for S3C2433 */
--	writel(addr, ADC_S3C2410_MUX(info->regs));
--
--	con1 = readl(ADC_V1_CON(info->regs));
--	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
--}
--
--static struct exynos_adc_data const exynos_adc_s3c2443_data = {
--	.num_channels	= MAX_ADC_V1_CHANNELS,
--	.mask		= ADC_S3C2410_DATX_MASK, /* 10 bit ADC resolution */
--
--	.init_hw	= exynos_adc_v1_init_hw,
--	.exit_hw	= exynos_adc_v1_exit_hw,
--	.start_conv	= exynos_adc_s3c2443_start_conv,
--};
--
- static void exynos_adc_s3c64xx_start_conv(struct exynos_adc *info,
- 					  unsigned long addr)
- {
-@@ -365,15 +313,6 @@ static void exynos_adc_s3c64xx_start_conv(struct exynos_adc *info,
- 	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
+ 	/*
+ 	 * Lock to protect from potential concurrent access to the
+ 	 * completion callback during a manual conversion. For this driver
+@@ -507,55 +484,13 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 	return ret;
  }
  
--static struct exynos_adc_data const exynos_adc_s3c24xx_data = {
--	.num_channels	= MAX_ADC_V1_CHANNELS,
--	.mask		= ADC_S3C2410_DATX_MASK, /* 10 bit ADC resolution */
+-static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
+-{
+-	struct exynos_adc *info = iio_priv(indio_dev);
+-	unsigned long time_left;
+-	int ret;
 -
--	.init_hw	= exynos_adc_v1_init_hw,
--	.exit_hw	= exynos_adc_v1_exit_hw,
--	.start_conv	= exynos_adc_s3c64xx_start_conv,
--};
+-	mutex_lock(&info->lock);
+-	info->read_ts = true;
 -
- static struct exynos_adc_data const exynos_adc_s3c64xx_data = {
- 	.num_channels	= MAX_ADC_V1_CHANNELS,
- 	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-@@ -486,18 +425,6 @@ static const struct exynos_adc_data exynos7_adc_data = {
+-	reinit_completion(&info->completion);
+-
+-	writel(ADC_S3C2410_TSC_PULL_UP_DISABLE | ADC_TSC_AUTOPST,
+-	       ADC_V1_TSC(info->regs));
+-
+-	/* Select the ts channel to be used and Trigger conversion */
+-	info->data->start_conv(info, ADC_S3C2410_MUX_TS);
+-
+-	time_left = wait_for_completion_timeout(&info->completion,
+-						EXYNOS_ADC_TIMEOUT);
+-	if (time_left == 0) {
+-		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
+-		if (info->data->init_hw)
+-			info->data->init_hw(info);
+-		ret = -ETIMEDOUT;
+-	} else {
+-		*x = info->ts_x;
+-		*y = info->ts_y;
+-		ret = 0;
+-	}
+-
+-	info->read_ts = false;
+-	mutex_unlock(&info->lock);
+-
+-	return ret;
+-}
+-
+ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+ {
+ 	struct exynos_adc *info = dev_id;
+ 	u32 mask = info->data->mask;
  
- static const struct of_device_id exynos_adc_match[] = {
- 	{
--		.compatible = "samsung,s3c2410-adc",
--		.data = &exynos_adc_s3c24xx_data,
--	}, {
--		.compatible = "samsung,s3c2416-adc",
--		.data = &exynos_adc_s3c2416_data,
--	}, {
--		.compatible = "samsung,s3c2440-adc",
--		.data = &exynos_adc_s3c24xx_data,
--	}, {
--		.compatible = "samsung,s3c2443-adc",
--		.data = &exynos_adc_s3c2443_data,
--	}, {
- 		.compatible = "samsung,s3c6410-adc",
- 		.data = &exynos_adc_s3c64xx_data,
- 	}, {
+ 	/* Read value */
+-	if (info->read_ts) {
+-		info->ts_x = readl(ADC_V1_DATX(info->regs));
+-		info->ts_y = readl(ADC_V1_DATY(info->regs));
+-		writel(ADC_TSC_WAIT4INT | ADC_S3C2443_TSC_UD_SEN, ADC_V1_TSC(info->regs));
+-	} else {
+-		info->value = readl(ADC_V1_DATX(info->regs)) & mask;
+-	}
++	info->value = readl(ADC_V1_DATX(info->regs)) & mask;
+ 
+ 	/* clear irq */
+ 	if (info->data->clear_irq)
+@@ -566,46 +501,6 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-/*
+- * Here we (ab)use a threaded interrupt handler to stay running
+- * for as long as the touchscreen remains pressed, we report
+- * a new event with the latest data and then sleep until the
+- * next timer tick. This mirrors the behavior of the old
+- * driver, with much less code.
+- */
+-static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
+-{
+-	struct exynos_adc *info = dev_id;
+-	struct iio_dev *dev = dev_get_drvdata(info->dev);
+-	u32 x, y;
+-	bool pressed;
+-	int ret;
+-
+-	while (READ_ONCE(info->ts_enabled)) {
+-		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
+-		if (ret == -ETIMEDOUT)
+-			break;
+-
+-		pressed = x & y & ADC_DATX_PRESSED;
+-		if (!pressed) {
+-			input_report_key(info->input, BTN_TOUCH, 0);
+-			input_sync(info->input);
+-			break;
+-		}
+-
+-		input_report_abs(info->input, ABS_X, x & ADC_DATX_MASK);
+-		input_report_abs(info->input, ABS_Y, y & ADC_DATY_MASK);
+-		input_report_key(info->input, BTN_TOUCH, 1);
+-		input_sync(info->input);
+-
+-		usleep_range(1000, 1100);
+-	}
+-
+-	writel(0, ADC_V1_CLRINTPNDNUP(info->regs));
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static int exynos_adc_reg_access(struct iio_dev *indio_dev,
+ 			      unsigned reg, unsigned writeval,
+ 			      unsigned *readval)
+@@ -657,70 +552,12 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
+ 	return 0;
+ }
+ 
+-static int exynos_adc_ts_open(struct input_dev *dev)
+-{
+-	struct exynos_adc *info = input_get_drvdata(dev);
+-
+-	WRITE_ONCE(info->ts_enabled, true);
+-	enable_irq(info->tsirq);
+-
+-	return 0;
+-}
+-
+-static void exynos_adc_ts_close(struct input_dev *dev)
+-{
+-	struct exynos_adc *info = input_get_drvdata(dev);
+-
+-	WRITE_ONCE(info->ts_enabled, false);
+-	disable_irq(info->tsirq);
+-}
+-
+-static int exynos_adc_ts_init(struct exynos_adc *info)
+-{
+-	int ret;
+-
+-	if (info->tsirq <= 0)
+-		return -ENODEV;
+-
+-	info->input = input_allocate_device();
+-	if (!info->input)
+-		return -ENOMEM;
+-
+-	info->input->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
+-	info->input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
+-
+-	input_set_abs_params(info->input, ABS_X, 0, 0x3FF, 0, 0);
+-	input_set_abs_params(info->input, ABS_Y, 0, 0x3FF, 0, 0);
+-
+-	info->input->name = "S3C24xx TouchScreen";
+-	info->input->id.bustype = BUS_HOST;
+-	info->input->open = exynos_adc_ts_open;
+-	info->input->close = exynos_adc_ts_close;
+-
+-	input_set_drvdata(info->input, info);
+-
+-	ret = input_register_device(info->input);
+-	if (ret) {
+-		input_free_device(info->input);
+-		return ret;
+-	}
+-
+-	ret = request_threaded_irq(info->tsirq, NULL, exynos_ts_isr,
+-				   IRQF_ONESHOT | IRQF_NO_AUTOEN,
+-				   "touchscreen", info);
+-	if (ret)
+-		input_unregister_device(info->input);
+-
+-	return ret;
+-}
+-
+ static int exynos_adc_probe(struct platform_device *pdev)
+ {
+ 	struct exynos_adc *info = NULL;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct s3c2410_ts_mach_info *pdata = dev_get_platdata(&pdev->dev);
+ 	struct iio_dev *indio_dev = NULL;
+-	bool has_ts = false;
+ 	int ret;
+ 	int irq;
+ 
+@@ -753,27 +590,10 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	/* leave out any TS related code if unreachable */
+-	if (IS_REACHABLE(CONFIG_INPUT)) {
+-		has_ts = of_property_read_bool(pdev->dev.of_node,
+-					       "has-touchscreen") || pdata;
+-	}
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
+ 		return irq;
+ 	info->irq = irq;
+-
+-	if (has_ts) {
+-		irq = platform_get_irq(pdev, 1);
+-		if (irq == -EPROBE_DEFER)
+-			return irq;
+-
+-		info->tsirq = irq;
+-	} else {
+-		info->tsirq = -1;
+-	}
+-
+ 	info->dev = &pdev->dev;
+ 
+ 	init_completion(&info->completion);
+@@ -842,11 +662,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 	else
+ 		info->delay = 10000;
+ 
+-	if (has_ts)
+-		ret = exynos_adc_ts_init(info);
+-	if (ret)
+-		goto err_iio;
+-
+ 	ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed adding child nodes\n");
+@@ -858,11 +673,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ err_of_populate:
+ 	device_for_each_child(&indio_dev->dev, NULL,
+ 				exynos_adc_remove_devices);
+-	if (has_ts) {
+-		input_unregister_device(info->input);
+-		free_irq(info->tsirq, info);
+-	}
+-err_iio:
+ 	iio_device_unregister(indio_dev);
+ err_irq:
+ 	free_irq(info->irq, info);
+@@ -882,10 +692,6 @@ static void exynos_adc_remove(struct platform_device *pdev)
+ 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+ 	struct exynos_adc *info = iio_priv(indio_dev);
+ 
+-	if (IS_REACHABLE(CONFIG_INPUT) && info->input) {
+-		free_irq(info->tsirq, info);
+-		input_unregister_device(info->input);
+-	}
+ 	device_for_each_child(&indio_dev->dev, NULL,
+ 				exynos_adc_remove_devices);
+ 	iio_device_unregister(indio_dev);
 
 -- 
 2.48.1
