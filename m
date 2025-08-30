@@ -1,143 +1,137 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA747262B;
-	Sat, 30 Aug 2025 03:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D12248F73;
+	Sat, 30 Aug 2025 08:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756526334; cv=none; b=NfK++b+PyF7k/uDfJYtA33ksZw14St+vHudgO+LMdPw4BaizRun+agXXE+FFcu0BGr/9wEfdmiu2AXlVm7do4+Wlt9KNnlvbqSF1/M9B5+CIRDhBTnSNPFEP0g6aUmNX0o/ZIg2E7whvq2Vpo1PvBx6P/rjZ3ngS/UoYp5rpLQs=
+	t=1756543563; cv=none; b=jNODXhBX2EkAZbODZ/ffQOoRMwrMax0eNKjVXgpGE61MuNqDacryXKDkdDakygk+6MDWbTark1FPbN+8lYvai52ZooGoZBIp6csS/We/gha2g8xQH4XuIDtM7qKvSyHg3eyFMnzfzY3Buw1lW2dkRkEuzJybfbUdYv5iFnoyLEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756526334; c=relaxed/simple;
-	bh=VABUD4jO9Kymnm8cj7uMAQ8AvocLC42Iebzpv/8ohiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1GUAnIeda/fIDvQOKdkwosczgyjYsN0v3l7LTsw7fnQ54ZrZe5oHy8OaOyWsjwzPpjOeWHforfb5M3g0lSQvPWmE8h04cWODJL1e73m/bqk4Nom1sQ/boIDDsQdqd+/nu6SUv0XUSSTE4W2kbfDgSnFdfW0mSfEmXAcX3O6kUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knb/vVYf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756543563; c=relaxed/simple;
+	bh=2bdvU0RJRJLGHzflhJpSDlCKftXyN1TaCSNn8HmET70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Grbg4inGqE+BzpSNQBnvPDj0yQxxbkCWkxlBRaD5nKdyNpBDZZ+LRH67vFL+YpKZnvqYmE7FHsfTAM/FmoqdTCIqYRC8w0eWL3rcb+uVRaRHi7hRmM+KvZuik7/eL88XD5BwDNayt0n12BaH66Q6xC3X5gnqXeS4gCWfJArVhhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VChSzhmv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knb/vVYf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF6EC4CEEB;
-	Sat, 30 Aug 2025 03:58:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VChSzhmv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2DFC4CEEB;
+	Sat, 30 Aug 2025 08:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756526334;
-	bh=VABUD4jO9Kymnm8cj7uMAQ8AvocLC42Iebzpv/8ohiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=knb/vVYf4lzqy+199q3lrWFfPdLUs3K4k2ZKF73nP9OEKi7V13ySggZQiv2/QnjKn
-	 YATGK0Lmv/VQ9OpWMJLweUDUxXJrNz7qFfJMXHaKkNSVCB8SA5cbykG9MhYfHd4KBA
-	 MjjMQ0SfPFwcJoz4Kpx7ZcO5ma6EzP76t1UHW37Fq+w/aeq9ValcipbntIFij7dNE5
-	 K76xpi0EB9sVHWIiNteFgj6o55LbRmLuON7mGnck+00x2/Qp9qvuDEIY8mwPEk7jJR
-	 ww4rvZWGxCeyCpaiJvC17/LAn0NToem0XETjxU3QuukDR03GcyUTjOTgZJOD6CjU02
-	 wGM3SiHbl2QLw==
-Date: Sat, 30 Aug 2025 09:28:44 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de, 
-	m.szyprowski@samsung.com, jh80.chung@samsung.com, pankaj.dubey@samsung.com
-Subject: Re: [PATCH v3 12/12] arm64: dts: fsd: Add PCIe support for Tesla FSD
- SoC
-Message-ID: <dsa7u5pz7qmjaunzrqgpjkyv4xh427bbnpkdzvkpz3w6v6xf6v@5kxhihh4hw2j>
-References: <20250811154638.95732-1-shradha.t@samsung.com>
- <CGME20250811154746epcas5p261ba0c811f9dd8748f8f241b76be6525@epcas5p2.samsung.com>
- <20250811154638.95732-13-shradha.t@samsung.com>
+	s=k20201202; t=1756543560;
+	bh=2bdvU0RJRJLGHzflhJpSDlCKftXyN1TaCSNn8HmET70=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VChSzhmvdwhjhYSeII5RUbIj6uU5nABAVHXKicw+PRbjuI8hL2IGyWHRAeCAUfuof
+	 E+aoFHwlwAF/Tepq0Y4PJCYnBLbau3TJMwff9TarIwhJMRDl7cpmK2kpiyICzzicRt
+	 EaeJmWRh2wgD4W2p4MuB6faqYLhHtjHtmPKAzgOAZ+pEGiwwP3GKhUh6naOp5A8pjQ
+	 Oaur/oEVWJPYFUDxlEtyMw6vpDCrO3/To43QklSszDLjyIrAjAH5MVREAaBcxmYWFm
+	 PnDXd/j1ovedS4zn34VdCBrwQSqTyGk957xp3xRMFLxZNUMsTnAO1MNH14ywvLMjYY
+	 y3ju75dYiJxrg==
+Message-ID: <7bb127ed-8c1c-4379-9cee-f1178eb3fbc7@kernel.org>
+Date: Sat, 30 Aug 2025 10:45:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811154638.95732-13-shradha.t@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Modify tesla fsd bindings
+To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: aswani.reddy@samsung.com, gost.dev@samsung.com
+References: <20250829135643.105406-1-v.pavani@samsung.com>
+ <CGME20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd@epcas5p1.samsung.com>
+ <20250829135643.105406-2-v.pavani@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250829135643.105406-2-v.pavani@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 09:16:38PM GMT, Shradha Todi wrote:
-> Add the support for PCIe controller driver and phy driver for Tesla FSD.
-> It includes support for both RC and EP.
+On 29/08/2025 15:56, Varada Pavani wrote:
+> FSD SoC WDT is using Samsung legacy WDT driver with
+> "samsung,exynos7-wdt" compatibility. Now change the compatibility due to
+> few driver changes (PMU bit changes for each WDT instance and Clocks)
+> for WDT found in FSD SoC.
 > 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  arch/arm64/boot/dts/tesla/fsd-evb.dts      |  34 +++++
->  arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi |  65 +++++++++
->  arch/arm64/boot/dts/tesla/fsd.dtsi         | 147 +++++++++++++++++++++
->  3 files changed, 246 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> index 9ff22e1c8723..1b63c5d72d19 100644
-> --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> @@ -130,3 +130,37 @@ &serial_0 {
->  &ufs {
->  	status = "okay";
->  };
-> +
-> +&pcierc2 {
+> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
+More comments:
+1. Subject: completely vague, everything is modify, every binding is
+"bindings". Write useful subjects.
 
-It'd be good to use underscore to differentiate RC and EP modes:
+2. ... and never tested :/
+The amount of very poor contributions from Samsung recently skyrocketed.
+Like 66% of contributions were not passing basic guidelines, basic
+process, so should not have been sent.
 
-	pcie_rc1
-	pcie_ep1
 
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie1_clkreq>, <&pcie1_wake>, <&pcie1_preset>,
-> +			<&pcie0_slot1>;
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Could you please explain what these 'preset' and 'slot' pins are?
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-> +};
-> +
-> +&pcieep2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie1_clkreq>, <&pcie1_wake>, <&pcie1_preset>,
-> +			<&pcie0_slot1>;
-> +};
-> +
-> +&pcierc0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake0>, <&pcie0_preset0>,
-> +			 <&pcie0_slot0>;
-> +};
-> +
-> +&pcieep0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake0>, <&pcie0_preset0>,
-> +			 <&pcie0_slot0>;
-> +};
-> +
-> +&pcierc1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake1>, <&pcie0_preset0>;
-> +};
-> +
-> +&pcieep1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake1>, <&pcie0_preset0>;
-> +};
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-[...]
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
-> +		pcieep2: pcie-ep@15400000 {
-> +			compatible = "tesla,fsd-pcie-ep";
-> +			reg = <0x0 0x15090000 0x0 0x1000>,
-> +			      <0x0 0x15400000 0x0 0x2000>,
-> +			      <0x0 0x15402000 0x0 0x80>,
-> +			      <0x0 0x15800000 0x0 0xff0000>;
-> +			reg-names = "elbi", "dbi", "dbi2", "addr_space";
-> +			clocks = <&clock_fsys0 PCIE_SUBCTRL_INST0_AUX_CLK_SOC>,
-> +				 <&clock_fsys0 PCIE_SUBCTRL_INST0_DBI_ACLK_SOC>,
-> +				 <&clock_fsys0 PCIE_SUBCTRL_INST0_MSTR_ACLK_SOC>,
-> +				 <&clock_fsys0 PCIE_SUBCTRL_INST0_SLV_ACLK_SOC>;
-> +			clock-names = "aux", "dbi", "mstr", "slv";
-> +			num-lanes = <4>;
-> +			phys = <&pciephy0>;
-> +			samsung,syscon-pcie = <&sysreg_fsys0 0x434>;
-> +			status = "disabled";
 
-So only host mode DMA is cache coherent and not endpoint? Weird.
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Best regards,
+Krzysztof
