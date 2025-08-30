@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA132BA4A;
-	Sat, 30 Aug 2025 09:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF80320B7ED;
+	Sat, 30 Aug 2025 09:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756544888; cv=none; b=X5T0bgc+4efQfJeuLYQeoyBDcLC1U0U+cyJqn8SXIL2TZdJbClaSqvMJrCM2JJDs8L5aICC9Cq+wdjauBxz23DQFLOghk/AVSphYB9YmUQxzTvAUMfkVTcXWGh+DvSRKd/8uXdOJhyNT7JsnODeSnSpPP/G8oEoNg2yZFMMY4oU=
+	t=1756545403; cv=none; b=gLapjJeQEpjmArIWynzuZeCm2MtWagbePoFkg4+DXkor1Fp6X5qJhPLAKEhNAC4iBCRIWXX4g94Q05L0lI0avX66hwLlVQ8khoc6CXoPaTbltepBkcU2aacKorhNu5kIybazLFg81BZqCaj9p/N+fHE1H8qeB3kGi+/0WRMk71c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756544888; c=relaxed/simple;
-	bh=27PN1sfIWBxKnrB+V8uXnT6HNOKJLQY9Xodlg62IbR4=;
+	s=arc-20240116; t=1756545403; c=relaxed/simple;
+	bh=Hi6ffWKrxrALgFq3VtBQbENk8AuueEtf9y+gH8NC3Xw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U+y3djK8f/MQgNmfdFr+9u9ReuLuax6GNOqzsZQIHgIZ7CFuIaMYkN6pAgxJLvCUffbv2l74vnies5FJ8Sq35McbD3RahbSB+DUnL4zVX4/dDL9AnKSYaEF96HiKktJ6/it2ZKkpRnKifpnmEt4/dpGnzb4ZuuqBg5ml/pO3+Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnaqmkCz; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rExWhgfQkijVVyefShYGeBrGdr5gLL5rfJ5KzkdDILCQq1x2thgRm6mW0FOitJ3F9OKkq4gXjaumgOJXdUvVMY532MeR09tQZiOwC7mFRv/+G2ucwXWu3RrlKBTkhSbSUp8ttfYZvLFjst/QLEDYlhpidrUP7eTDWvbeXuF2zKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il1ejRMO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnaqmkCz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03A92C4CEEB;
-	Sat, 30 Aug 2025 09:08:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il1ejRMO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E1FC4CEEB;
+	Sat, 30 Aug 2025 09:16:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756544887;
-	bh=27PN1sfIWBxKnrB+V8uXnT6HNOKJLQY9Xodlg62IbR4=;
+	s=k20201202; t=1756545402;
+	bh=Hi6ffWKrxrALgFq3VtBQbENk8AuueEtf9y+gH8NC3Xw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nnaqmkCzKPmrCdXaUrhuw7f7bZ4Jmc7ppApy0f6hZ+rbMsTGmdHo2ODTCxEEMCVuG
-	 1PPRV29acvR2qoqEPpPa4Ax2aht866VSfujm7Gb1DKHGNy8UVHhpHts0J+w0Fa/t2j
-	 SG9LZTvdGWa4jOp+Y0+iX7eGn0xvuOuGsIwGZYdE0OlZW230i7mGlePb6LlOmIPjCQ
-	 hfaCGErRX11VypQPykDjuMvruSkP+zTTpWofcxpE7CEfVC/N2GjQXRT6g7bzK/4tDy
-	 YSbESYOPu0Uuov/dnSyiLDlqrQWe+AQ69OshxUxOtZ7kzf9O8yCogq3a5O/InEokpN
-	 /rZMEWDUpyjdQ==
-Message-ID: <e573cfc8-be9c-482c-9b06-4eedbb92d520@kernel.org>
-Date: Sat, 30 Aug 2025 11:08:02 +0200
+	b=Il1ejRMOSMwAJPHZTR6+O7R66MmNB/OUP98v0puVCH7ezc5nmHP4Hkm+dhCfbruGG
+	 iY4Bvw0MniR+ogC3quGWR3PHp6bIwR4N/fPmI+mvSTmzvWg0LOnnx9y/66xWrvZ9L5
+	 OY/iTN4UZqIzrPJ8sjLJXn1bj08zUIJ/kqzBi1+dloZZiyyVzHToRx93UqNqUoJm33
+	 CzVFWev/mBxmkVleSrCBeg/RySzOMSyoFARHBnaxOrQM1pqMQAjQG7nVDh8l9+Sppk
+	 v4/BwCWRi13yJzSJcXIta8RfpYm0VwUhoOOlRDMWgsM5jDY4VOYM3oviekJzjdn297
+	 33KYFPJo9x+gA==
+Message-ID: <96bced8e-7e47-4db9-9674-be1f3138d608@kernel.org>
+Date: Sat, 30 Aug 2025 11:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: exynosautov920: Add tmu hardware binding
-To: Shin Son <shin.son@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250825064929.188101-1-shin.son@samsung.com>
- <CGME20250825064933epcas2p40a7c491366097f90add675bc36822ef9@epcas2p4.samsung.com>
- <20250825064929.188101-4-shin.son@samsung.com>
+Subject: Re: [PATCH v4 4/4] clk: samsung: exynos990: Fix PLL mux regs, add
+ DPU/CMUREF
+To: Denzeel Oliva <wachiturroxd150@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250825-cmu-top-v4-0-71d783680529@gmail.com>
+ <20250825-cmu-top-v4-4-71d783680529@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,161 +93,217 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250825064929.188101-4-shin.son@samsung.com>
+In-Reply-To: <20250825-cmu-top-v4-4-71d783680529@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/08/2025 08:49, Shin Son wrote:
-> Create a new exynosautov920-tmu.dtsi describing new TMU hardware
-> and include it from exynosautov920.dtsi.
+On 25/08/2025 07:51, Denzeel Oliva wrote:
+> Switch PLL muxes to PLL_CON0 to correct parent selection and
+> clock rates. Add DPU_BUS and CMUREF mux/div and their register
+> hooks and parents.
 > 
-> The exynosautov920-tmu node uses the misc clock as its source
-> and exposes two new DT properties:
-> 
-> - tmu-name: identifies the TMU variant for sensor skipping
-> - sensor-index-ranges: defines valid sensor index ranges for the bitmap
-> 
-> This TMU binding defines six thermal zones with a critical trip point
-> at 125 degrees:
-> 
-> tmu_top : cpucl0-left, cpucl1
-> tmu_sub0: cpucl0-right, cpucl2
-> tmu_sub1: g3d, npu
-> 
-> Signed-off-by: Shin Son <shin.son@samsung.com>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 > ---
->  .../boot/dts/exynos/exynosautov920-tmu.dtsi   | 92 +++++++++++++++++++
->  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 34 +++++++
->  2 files changed, 126 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
+>  drivers/clk/samsung/clk-exynos990.c | 97 ++++++++++++++++++++++++-------------
+>  1 file changed, 63 insertions(+), 34 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
-> new file mode 100644
-> index 000000000000..fa88e9bcdfec
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
-> @@ -0,0 +1,92 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's ExynosAuto920 TMU configurations device tree source
-> + *
-> + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
-> + *
-> + * Samsung's ExynosAuto920 SoC TMU(Thermal Managemenut Unit) are listed as
-> + * device tree nodes in this file.
-> + */
-> +
-> +/ {
-> +	thermal-zones {
-> +		cpucl0left-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tmuctrl_top 0>;
-> +
-> +			trips {
-> +				cpucl0_0_critical: cpucl0-0-critical {
-> +					temperature = <125000>;	/* millicelsius */
-> +					hysteresis = <0>;	/* millicelsius */
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+> index 9fcdad7cc..d1135708c 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -45,6 +45,7 @@
+>  #define PLL_CON3_PLL_SHARED3				0x024c
+>  #define PLL_CON0_PLL_SHARED4				0x0280
+>  #define PLL_CON3_PLL_SHARED4				0x028c
+> +#define CLK_CON_MUX_CLKCMU_DPU_BUS			0x1000
+>  #define CLK_CON_MUX_MUX_CLKCMU_APM_BUS			0x1004
+>  #define CLK_CON_MUX_MUX_CLKCMU_AUD_CPU			0x1008
+>  #define CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS			0x100c
+> @@ -103,6 +104,8 @@
+>  #define CLK_CON_MUX_MUX_CLKCMU_SSP_BUS			0x10e0
+>  #define CLK_CON_MUX_MUX_CLKCMU_TNR_BUS			0x10e4
+>  #define CLK_CON_MUX_MUX_CLKCMU_VRA_BUS			0x10e8
+> +#define CLK_CON_MUX_MUX_CLK_CMU_CMUREF			0x10f0
+> +#define CLK_CON_MUX_MUX_CMU_CMUREF			0x10f4
+>  #define CLK_CON_DIV_CLKCMU_APM_BUS			0x1800
+>  #define CLK_CON_DIV_CLKCMU_AUD_CPU			0x1804
+>  #define CLK_CON_DIV_CLKCMU_BUS0_BUS			0x1808
+> @@ -162,6 +165,7 @@
+>  #define CLK_CON_DIV_CLKCMU_VRA_BUS			0x18e0
+>  #define CLK_CON_DIV_DIV_CLKCMU_DPU			0x18e8
+>  #define CLK_CON_DIV_DIV_CLKCMU_DPU_ALT			0x18ec
+> +#define CLK_CON_DIV_DIV_CLK_CMU_CMUREF			0x18f0
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV2			0x18f4
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV3			0x18f8
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV4			0x18fc
+> @@ -239,13 +243,21 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	PLL_LOCKTIME_PLL_SHARED2,
+>  	PLL_LOCKTIME_PLL_SHARED3,
+>  	PLL_LOCKTIME_PLL_SHARED4,
+> +	PLL_CON0_PLL_G3D,
+>  	PLL_CON3_PLL_G3D,
+> +	PLL_CON0_PLL_MMC,
+>  	PLL_CON3_PLL_MMC,
+> +	PLL_CON0_PLL_SHARED0,
+>  	PLL_CON3_PLL_SHARED0,
+> +	PLL_CON0_PLL_SHARED1,
+>  	PLL_CON3_PLL_SHARED1,
+> +	PLL_CON0_PLL_SHARED2,
+>  	PLL_CON3_PLL_SHARED2,
+> +	PLL_CON0_PLL_SHARED3,
+>  	PLL_CON3_PLL_SHARED3,
+> +	PLL_CON0_PLL_SHARED4,
+>  	PLL_CON3_PLL_SHARED4,
+> +	CLK_CON_MUX_CLKCMU_DPU_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_APM_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_AUD_CPU,
+>  	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
+> @@ -304,6 +316,8 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	CLK_CON_MUX_MUX_CLKCMU_SSP_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_TNR_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_VRA_BUS,
+> +	CLK_CON_MUX_MUX_CLK_CMU_CMUREF,
+> +	CLK_CON_MUX_MUX_CMU_CMUREF,
+>  	CLK_CON_DIV_CLKCMU_APM_BUS,
+>  	CLK_CON_DIV_CLKCMU_AUD_CPU,
+>  	CLK_CON_DIV_CLKCMU_BUS0_BUS,
+> @@ -363,6 +377,7 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	CLK_CON_DIV_CLKCMU_VRA_BUS,
+>  	CLK_CON_DIV_DIV_CLKCMU_DPU,
+>  	CLK_CON_DIV_DIV_CLKCMU_DPU_ALT,
+> +	CLK_CON_DIV_DIV_CLK_CMU_CMUREF,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV2,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV3,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV4,
+> @@ -458,6 +473,8 @@ PNAME(mout_pll_shared3_p)		= { "oscclk", "fout_shared3_pll" };
+>  PNAME(mout_pll_shared4_p)		= { "oscclk", "fout_shared4_pll" };
+>  PNAME(mout_pll_mmc_p)			= { "oscclk", "fout_mmc_pll" };
+>  PNAME(mout_pll_g3d_p)			= { "oscclk", "fout_g3d_pll" };
+> +PNAME(mout_cmu_dpu_bus_p)		= { "dout_cmu_dpu",
+> +					    "dout_cmu_dpu_alt" };
+>  PNAME(mout_cmu_apm_bus_p)		= { "dout_cmu_shared0_div2",
+>  					    "dout_cmu_shared2_div2" };
+>  PNAME(mout_cmu_aud_cpu_p)		= { "dout_cmu_shared0_div2",
+> @@ -507,7 +524,7 @@ PNAME(mout_cmu_cpucl0_switch_p)		= { "fout_shared4_pll",
+>  					    "dout_cmu_shared0_div2",
+>  					    "fout_shared2_pll",
+>  					    "dout_cmu_shared0_div4" };
+> -PNAME(mout_cmu_cpucl1_switch_p)	= { "fout_shared4_pll",
+> +PNAME(mout_cmu_cpucl1_switch_p)		= { "fout_shared4_pll",
 
-Missing blank line.
 
-> +		cpucl0right-thermal {
+I don't understand this change.
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
+>  					    "dout_cmu_shared0_div2",
+>  					    "fout_shared2_pll",
+>  					    "dout_cmu_shared0_div4" };
+> @@ -577,7 +594,7 @@ PNAME(mout_cmu_hsi1_bus_p)		= { "dout_cmu_shared0_div3",
+>  					    "dout_cmu_shared4_div3",
+>  					    "dout_cmu_shared2_div2",
+>  					    "fout_mmc_pll", "oscclk", "oscclk" };
+> -PNAME(mout_cmu_hsi1_mmc_card_p)	= { "oscclk", "fout_shared2_pll",
+> +PNAME(mout_cmu_hsi1_mmc_card_p)		= { "oscclk", "fout_shared2_pll",
 
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tmuctrl_sub0 0>;
-> +
-> +			trips {
-> +				cpucl0_1_critical: cpucl0-1-critical {
-> +					temperature = <125000>;	/* millicelsius */
-> +					hysteresis = <0>;	/* millicelsius */
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +		cpucl1-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tmuctrl_top 1>;
-> +
-> +			trips {
-> +				cpucl1_critical: cpucl1-critical {
-> +					temperature = <125000>;	/* millicelsius */
-> +					hysteresis = <0>;	/* millicelsius */
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +		cpucl2-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tmuctrl_sub0 1>;
-> +
-> +			trips {
-> +				cpucl2_critical: cpucl2-critical {
-> +					temperature = <125000>;	/* millicelsius */
-> +					hysteresis = <0>;	/* millicelsius */
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +		g3d-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tmuctrl_sub1 0>;
-> +
-> +			trips {
-> +				g3d_critical: g3d-critical {
-> +					temperature = <125000>; /* millicelsius */
-> +					hysteresis = <0>; /* millicelsius */
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +		npu-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tmuctrl_sub1 1>;
-> +
-> +			trips {
-> +				npu_critical: npu-critical {
-> +					temperature = <125000>; /* millicelsius */
-> +					hysteresis = <0>; /* millicelsius */
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 0fdf2062930a..a4ff941f8e43 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -330,6 +330,39 @@ watchdog_cl1: watchdog@10070000 {
->  			samsung,cluster-index = <1>;
->  		};
+Neither this, looks like you changed nothing here.
+
+>  					    "fout_mmc_pll",
+>  					    "dout_cmu_shared0_div4" };
+>  PNAME(mout_cmu_hsi1_pcie_p)		= { "oscclk", "fout_shared2_pll" };
+> @@ -672,6 +689,12 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
+>  					    "dout_cmu_shared4_div2",
+>  					    "dout_cmu_shared0_div4",
+>  					    "dout_cmu_shared4_div3" };
+> +PNAME(mout_cmu_cmuref_p)		= { "oscclk",
+> +					    "dout_cmu_clk_cmuref" };
+> +PNAME(mout_cmu_clk_cmuref_p)		= { "dout_cmu_shared0_div4",
+> +					    "dout_cmu_shared1_div4",
+> +					    "dout_cmu_shared2_div2",
+> +					    "oscclk" };
 >  
-> +		tmuctrl_top: tmutop-thermal@100a0000 {
+>  /*
+>   * Register name to clock name mangling strategy used in this file
+> @@ -689,19 +712,21 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
+>  
+>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>  	MUX(CLK_MOUT_PLL_SHARED0, "mout_pll_shared0", mout_pll_shared0_p,
+> -	    PLL_CON3_PLL_SHARED0, 4, 1),
+> +	    PLL_CON0_PLL_SHARED0, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED1, "mout_pll_shared1", mout_pll_shared1_p,
+> -	    PLL_CON3_PLL_SHARED1, 4, 1),
+> +	    PLL_CON0_PLL_SHARED1, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED2, "mout_pll_shared2", mout_pll_shared2_p,
+> -	    PLL_CON3_PLL_SHARED2, 4, 1),
+> +	    PLL_CON0_PLL_SHARED2, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED3, "mout_pll_shared3", mout_pll_shared3_p,
+> -	    PLL_CON3_PLL_SHARED3, 4, 1),
+> +	    PLL_CON0_PLL_SHARED3, 4, 1),
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
+This looks like fix, so shuold be sent separately with Fixes tag.
+
+>  	MUX(CLK_MOUT_PLL_SHARED4, "mout_pll_shared4", mout_pll_shared4_p,
+>  	    PLL_CON0_PLL_SHARED4, 4, 1),
+>  	MUX(CLK_MOUT_PLL_MMC, "mout_pll_mmc", mout_pll_mmc_p,
+>  	    PLL_CON0_PLL_MMC, 4, 1),
+>  	MUX(CLK_MOUT_PLL_G3D, "mout_pll_g3d", mout_pll_g3d_p,
+>  	    PLL_CON0_PLL_G3D, 4, 1),
+> +	MUX(CLK_MOUT_CMU_DPU_BUS, "mout_cmu_dpu_bus",
+> +	    mout_cmu_dpu_bus_p, CLK_CON_MUX_CLKCMU_DPU_BUS, 0, 1),
+>  	MUX(CLK_MOUT_CMU_APM_BUS, "mout_cmu_apm_bus",
+>  	    mout_cmu_apm_bus_p, CLK_CON_MUX_MUX_CLKCMU_APM_BUS, 0, 1),
+>  	MUX(CLK_MOUT_CMU_AUD_CPU, "mout_cmu_aud_cpu",
+> @@ -830,37 +855,13 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>  	    mout_cmu_tnr_bus_p, CLK_CON_MUX_MUX_CLKCMU_TNR_BUS, 0, 3),
+>  	MUX(CLK_MOUT_CMU_VRA_BUS, "mout_cmu_vra_bus",
+>  	    mout_cmu_vra_bus_p, CLK_CON_MUX_MUX_CLKCMU_VRA_BUS, 0, 2),
+> +	MUX(CLK_MOUT_CMU_CMUREF, "mout_cmu_cmuref",
+> +	    mout_cmu_cmuref_p, CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
+> +	MUX(CLK_MOUT_CMU_CLK_CMUREF, "mout_cmu_clk_cmuref",
+> +	    mout_cmu_clk_cmuref_p, CLK_CON_MUX_MUX_CLK_CMU_CMUREF, 0, 2),
+>  };
+>  
+>  static const struct samsung_div_clock top_div_clks[] __initconst = {
+> -	/* SHARED0 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+
+And this is not really explained in the commit msg.
+
+> -
+> -	/* SHARED1 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV2, "dout_cmu_shared1_div2", "mout_pll_shared1",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV3, "dout_cmu_shared1_div3", "mout_pll_shared1",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV4, "dout_cmu_shared1_div4", "dout_cmu_shared1_div2",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
+> -
+> -	/* SHARED2 region */
+> -	DIV(CLK_DOUT_CMU_SHARED2_DIV2, "dout_cmu_shared2_div2", "mout_pll_shared2",
+> -	    CLK_CON_DIV_PLL_SHARED2_DIV2, 0, 1),
+> -
+> -	/* SHARED4 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV2, "dout_cmu_shared4_div2", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV3, "dout_cmu_shared4_div3", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV4, "dout_cmu_shared4_div4", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
+> -
+>  	DIV(CLK_DOUT_CMU_APM_BUS, "dout_cmu_apm_bus", "gout_cmu_apm_bus",
+>  	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 2),
+>  	DIV(CLK_DOUT_CMU_AUD_CPU, "dout_cmu_aud_cpu", "gout_cmu_aud_cpu",
+> @@ -974,6 +975,34 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+>  	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
+>  	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_dpu", "gout_cmu_dpu",
+>  	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
+> +	DIV(CLK_DOUT_CMU_DPU_ALT, "dout_cmu_dpu_alt", "gout_cmu_dpu_bus",
+> +	    CLK_CON_DIV_DIV_CLKCMU_DPU_ALT, 0, 4),
+> +	DIV(CLK_DOUT_CMU_CLK_CMUREF, "dout_cmu_clk_cmuref", "mout_cmu_clk_cmuref",
+> +	    CLK_CON_DIV_DIV_CLK_CMU_CMUREF, 0, 2),
 
 
 Best regards,
