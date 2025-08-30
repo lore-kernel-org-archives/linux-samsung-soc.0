@@ -1,135 +1,147 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD4825F7A5
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 15:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC74D25783F;
+	Sat, 30 Aug 2025 16:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756567520; cv=none; b=HQeigbpyBeFCjk0CRiP3+oD5h5IhQ7cDlwrVvAdJkj66I5Y0UbwT6KYzmF9d8nSXlqrEHMfBbxDrcm6EMko9koNFWxRD3Mh+5HObg2GlltysVa8MPH5MB0bv7s/KeRPmwdg927jisFov63NByuuwPJPwoW/NxK6aTM2UuJWsMsw=
+	t=1756571323; cv=none; b=LkuHLgozjkAzVFygKg8DicERcOjP2PRrnZ3qdPnfItveIiznhAgHTkVJccwi1oN37ISyGnEciWvyh7sAiPIioG3q0akX7bLju0Wp+0WGNJxjVwnLDWkM0acy7Jjv0UDUD8WAnyvc4ixG2ZNg1Hjz18E9haNBFSm7ByC6V/Uq8to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756567520; c=relaxed/simple;
-	bh=4Pre2iPR3cFdQiZxON1rzrA8qHFbR9ocqwJAPI1d5E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QANdZ72eejlxFDFf9rpboFyCtmTYN5Kf9k3CyY681s3/2OTDlDj307pEibyRvB6xv8p6arf8s5Tq8MC7CmBkmWBQbiPoUZ2csmvEyvQwCGv9cHqcVPI+s9qYUUOe8HbjEzwf7h+JAy7vaprl6KaPl2XNc+LHHpWN5VBXmUflzgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=nlmx3XNV; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+	s=arc-20240116; t=1756571323; c=relaxed/simple;
+	bh=DTu6htZoqYuzhaeQFD9mKEvbhzis4l6Wheni3yeZONY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uDR33ta9rgCt3BoNZvF9VTzm9q7KZlO3UAOI/nynZpF5h2IPLHn4G/fxJRXm+jMnMMPKWznm3QskESfZKolXPifPtozsM/6Ju59cOJHlXfMd7HBNKXVDDoJqIk0t6M4YBQDaT6QYrGU2Gxe98jfAg7wzjqO1BJcpcJwNFAQa6dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWlrbwxK; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="nlmx3XNV"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b326b6c189so2143021cf.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 08:25:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWlrbwxK"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70a9f5dfa62so26740496d6.3;
+        Sat, 30 Aug 2025 09:28:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1756567515; x=1757172315; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+vQXLaG2kcpMi6zISzeFWytxG/6ZsxQ37Uw+pok3HOE=;
-        b=nlmx3XNV8gcjLk7cgcyvWlI7yq3yuEgE+b7QciP/KTn5hq8S6pJxz6IP1n69Y50YZr
-         GXbM9UHv1SZCDpUtSFQjwYAqMKE2ugBeAVcutmtFOLK1ziZnJwBVRUcVFWG1padFUqZ9
-         XzKZy7Zn6xiLnZbGAzeqasn0S2bpM/ZALaKqgb2fevC31afEdm3fwdvpLPrEuwxZ9jDQ
-         aG41oGq6Q/XOI4X5VeA9/qysMVK7KoE34DtcN0RL5o7YsCo0AHvaA5JtJYcq8ckmyUe4
-         5jBFpLPk5qpwa/hG7Q8GktkFxLmhgSg8snZWrWw9MB2hlTxv5O+z4ZEBTJhB+XPBT05x
-         4vVw==
+        d=gmail.com; s=20230601; t=1756571321; x=1757176121; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t5qRg8dL7CV+FgonqN1II497OJX54kF6SQzjUzNxw88=;
+        b=RWlrbwxKc6Pf/Moi4jiXSV6IneKV1aSKoVTsaF3AIZohxOSa/UC6Gc+6ac9h67QQ0B
+         Bo2NXW1KdvOhstkAhYOMjVSMOojThnesJ+Ox1BbdfY2rd482k2x/Xg6L0Wy28q4cQJ5X
+         U15PFRoBuVzlgOf/Cs0c130Ze2blIUxT0hdXELmAhieij0zZWbLwT+r/hrZmT5LmUsnw
+         u22/YLo3d81q3XPbBwom8VYfZCgLocBrjgQDjMSuHKyIPQ9M+Hi3bf4K95QOBPyS0uEW
+         i0oxsT3+qcilUlLtNnVZABDdXvqe9ia1iS3a64RiBb3e9vf3LOAPhNO2+DJYoYDexbFp
+         IVSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756567515; x=1757172315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+vQXLaG2kcpMi6zISzeFWytxG/6ZsxQ37Uw+pok3HOE=;
-        b=CWY2+UnMUDfW3s4oa0j+cjQVi6WnL8lGRIssYDYGtWINTqKg+y+AXNlHRX9z37FD0o
-         AiFYNYYK0//2BssabJMryxlidtVxA3i+eVG3cxfhjRdscNDifAd6WQgHYuG4JnIJKkwR
-         AK0CDn6CJmi1eXWm5kNAT1HkZNv8Ve+sDKPBaf/lv2lLNcGmCXfG3iDNt+rve7t2sc6g
-         N5ZpLAPC1rgcXnbSLUaDPyhupQt+yG0RaG+RAQKNm8GY9lANqiY0N9GhU88BilfDWkVj
-         xF6Z1MrqnINSSKjV8wej5hrT95G2z9BSzUJ0H0ilSFf3F96dQAcrkNbVg9zI3bSNETHB
-         RnPA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7U8lkMAGREEax1/IiCi8zXUYPdd5mhMuzgHbYC3K+whOIb8YdxD6SvhDQWx4sRm/TdVOj/+Tyc9Vl+ezBt1Jr7Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpAuRFq7I4VsMiC/Odv1FJmd6C7TghNYhkUZ6jenGlE6OP4BDc
-	3jchbvgG+IuGsjOgBaAejnXjOaP+fx20Thzps3lizniQLWnLt00YHBg0+U7MUjgmEQ==
-X-Gm-Gg: ASbGnct6B2FSnff8q4OaeLHKQASDuBUb/wgW+cO0vOn0hyLTXqIENnJYxIx2O0PmJ5I
-	RP0gNSt3oNxrHexZAeroCgpwPoswkGVZ96/uWFBc8OWN+FFAenbofMePsRyhWvnGx3yrEEiggHf
-	ArslR076sXsY+sVJvd63obes5CVx5FyuQ/vRhxyuO+ohr08wtoYXlzqJXpQ/LCHlseqRRS6r8X6
-	WjJYfW67aHFviByVMbPx207vU8jgbSnaMiKZuCtuAvbBP+2nmmNwoKzc6ce5Hu1PItdhtsIIFwo
-	62WPHK8KCmM7xNpyd+J1f/n37uVGUWd/B/D+M493zclk80gIEzSh4IrXWVTFsyJQYNlYyrnwn6N
-	IcLp4Jy15J+TOdoIkQzV3iO3AOtJHL7djF6Iy3hdX
-X-Google-Smtp-Source: AGHT+IFqTzpp+i1c8d9FlbmpErvbAswo/o1qSIXruitHS83JpeUiodcPTxO3zJSo4ZrC4TsBR6h8EA==
-X-Received: by 2002:a05:622a:448:b0:4ae:f8bb:7c6a with SMTP id d75a77b69052e-4b31dcceb72mr20637521cf.54.1756567514656;
-        Sat, 30 Aug 2025 08:25:14 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::fd35])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc1605fb27sm363814885a.62.2025.08.30.08.25.13
+        d=1e100.net; s=20230601; t=1756571321; x=1757176121;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t5qRg8dL7CV+FgonqN1II497OJX54kF6SQzjUzNxw88=;
+        b=Ch1oR+2qxVV7DrjfP1zzbRuiQZFRq9Lj3R0vW6xovNEwgvgEo1etGZrntX4zksWp4o
+         72m7GoIvf/bmXHYcz/YADi6ycdm2YZ8Z9xzFOejnvL59W/egX5EtUQ3wlXCcrUsml+7t
+         +AUUvhd45iNz1MCZ0MsiuDGXj1q6p0nlljaURoqcaAskIA2Vzs9bJAzB3WQNxN49vhzV
+         dATuYMP8kE0L5rDBn2RRDDj+qdflfRHrlJ73Jqy3H1DiyDEDOj5tqUEliwrT2k8R4375
+         ul8ctqVTjuU94VB2vY+/MLDHazNX+KK6Wyst8el5YMtM/PfrnV6aayxGPISmFKo6cF7w
+         Thzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYXtwJk9CClZH2bUerE652DYpS/cjNb8mGoO5UOnMC38SsdOXbrmxktzZrG//GasiaiNGAgODd1cnSEkKi@vger.kernel.org, AJvYcCUvvKG/4HRvsQbyrhLv67AQt7BAzy6XWTmCYJRgVWD2mcHBn14YcUkn9lngmghCU+N0DkA3i+cypsOA@vger.kernel.org, AJvYcCVE6V0e61kxNuIdEpa1Z/qSnUcNIx6e0N2lyQ6QqR8sZ8Dp0+3y+wH8rT+xl9T0okJHDp/VyWDf98sY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJmVFQvQY5/FLMmUsGovii7F7LyesTQ/3mnsNdmu3Z5Ucradi3
+	T+8L3+0QBLSLuy5VZFreGz5FEFLi4ynVFbIqY5zsmNslGQp8khi8Btkf
+X-Gm-Gg: ASbGncur83Bn4xgmtFXMNgy52UodPLEz2IOcFFl2rCxIDlFZgv4VlSJ8skeXDDZy0u4
+	yj/mdC8Ck2IHM2biTZ7w8pvAYNWncaMI0YdF+KP1yUt6G/wkdKvs0UvxZmnQ1MbA1tOOqdosywF
+	sLFdjN7zRnrG2w9w+nxrLMiHPxSFMNlttpEXxRUzRRixorp/nDbXXOK0OsnathAUwbUVdirEXRf
+	lESxsQQtSF6kSDvcfc5Jds0H78V5Y2yw36TBLr7wBwfJn7FvWXQyyuQESdk1+z5l152pvfGDmgs
+	ReSI8LVYe18/aE5waey7Ob8jIX3fcrUSkuYxCsMIdCDfMPVljgmxK6I4mJQD1CmfS7IsSCLKoFO
+	zLqxQC0jg26BQaCBJFngD+K2NYTvZ
+X-Google-Smtp-Source: AGHT+IEDsnzVzmDqICYsDSEbi2aaTM/6NHF5Tn3lwCq02oQLmPIh4l49hBu0D6JUcNECJ8GrIWvnTg==
+X-Received: by 2002:a05:6214:f09:b0:70d:9291:bdd8 with SMTP id 6a1803df08f44-70fac7c7ed1mr28987296d6.30.1756571320599;
+        Sat, 30 Aug 2025 09:28:40 -0700 (PDT)
+Received: from [127.0.0.1] ([74.249.85.195])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb28b5a26sm8110786d6.64.2025.08.30.09.28.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 08:25:14 -0700 (PDT)
-Date: Sat, 30 Aug 2025 11:25:10 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: ohci: s3c2410: Drop support for S3C2410
-Message-ID: <fc4ec548-9a1a-44c3-9958-b6778e37d910@rowland.harvard.edu>
-References: <20250830130101.142934-3-krzysztof.kozlowski@linaro.org>
+        Sat, 30 Aug 2025 09:28:40 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v5 0/5] clk: samsung: exynos990: CMU_TOP fixes (mux regs,
+ widths, factors)
+Date: Sat, 30 Aug 2025 16:28:37 +0000
+Message-Id: <20250830-fix-cmu-top-v5-0-7c62f608309e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830130101.142934-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALUms2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC2MD3bTMCt3k3FLdkvwCXQNLQ/PERAsTC3PDJCWgjoKiVKA02LTo2Np
+ aAIZGO1pdAAAA
+X-Change-ID: 20250830-fix-cmu-top-0917aa84871b
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756571319; l=1607;
+ i=wachiturroxd150@gmail.com; s=20250830; h=from:subject:message-id;
+ bh=DTu6htZoqYuzhaeQFD9mKEvbhzis4l6Wheni3yeZONY=;
+ b=TLrfWOSA0lvmaSNnT+NdMXez4B1AptncW54LbNAkWa5w+d2JzK+N+1IQ+yAVMSNO25fxPCFEy
+ UBnQgmyzbFwA4LaOd57KjANj/h0Y/WEc/z/cFH4T5EBqdNC4JeVz7MX
+X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
+ pk=rxHEBGA1eos5vQkPC9SlkEPD6sil9F03N6bc8qmUFrQ=
 
-On Sat, Aug 30, 2025 at 03:01:02PM +0200, Krzysztof Kozlowski wrote:
-> Samsung S3C24xx family of SoCs was removed the Linux kernel in the
-> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
-> 2023.  There are no in-kernel users of remaining S3C24xx compatibles.
-> 
-> The driver is still being used via platform code for S3C64xx platforms.
+Hi,
 
-This title and description are a bit confusing.  I gather that while the 
-S3C24xx chipsets are not longer supported, the S3C24xx OHCI controller 
-is still being used in S3C64xx systems.
+Two small fixes for Exynos990 CMU_TOP:
 
-So what the patch does is drop support for S3C2410 _systems_ while 
-retaining support for S3C2410 _controllers_.  Is that right?  If so, can 
-we change $SUBJECT to say "usb: ohci: Drop DT support for S3C2410 
-systems"?
+Correct PLL mux register selection (use PLL_CON0), add DPU_BUS and
+CMUREF mux/div, and update clock IDs.
+Fix mux/div bit widths and replace a few bogus divs with fixed-factor
+clocks (HSI1/2 PCIe, USBDP debug); also fix OTP rate.
 
-Alan Stern
+Changes in v2:
 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/usb/host/ohci-s3c2410.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-> index 66d970854357..e623e24d3f8e 100644
-> --- a/drivers/usb/host/ohci-s3c2410.c
-> +++ b/drivers/usb/host/ohci-s3c2410.c
-> @@ -448,13 +448,6 @@ static const struct dev_pm_ops ohci_hcd_s3c2410_pm_ops = {
->  	.resume		= ohci_hcd_s3c2410_drv_resume,
->  };
->  
-> -static const struct of_device_id ohci_hcd_s3c2410_dt_ids[] = {
-> -	{ .compatible = "samsung,s3c2410-ohci" },
-> -	{ /* sentinel */ }
-> -};
-> -
-> -MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
-> -
->  static struct platform_driver ohci_hcd_s3c2410_driver = {
->  	.probe		= ohci_hcd_s3c2410_probe,
->  	.remove		= ohci_hcd_s3c2410_remove,
-> @@ -462,7 +455,6 @@ static struct platform_driver ohci_hcd_s3c2410_driver = {
->  	.driver		= {
->  		.name	= "s3c2410-ohci",
->  		.pm	= &ohci_hcd_s3c2410_pm_ops,
-> -		.of_match_table	= ohci_hcd_s3c2410_dt_ids,
->  	},
->  };
->  
-> -- 
-> 2.48.1
-> 
+- In the first commit the divratio of
+  PLL_SHARED0_DIV3 should not be changed.
+
+Changes in v3:
+
+- There is no ABI massive break, the new ID clocks are
+  in the last define CMU_TOP block.
+
+Changes in v4:
+
+- Fix compilation for define CLK_DOUT_CMU_CMUREF to
+  CLK_DOUT_CMU_CLK_CMUREF
+
+Changes in v5:
+
+-  Rewrite commits and remove cosmetic/non-operational changes
+   and unrelated rebases.
+   CLKS_NR_TOP will be moved to the patch that adds the new clocks.
+
+Please review.
+
+Denzeel Oliva
+
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+Denzeel Oliva (5):
+      clk: samsung: exynos990: Use PLL_CON0 for PLL parent muxes
+      clk: samsung: exynos990: Fix CMU_TOP mux/div bit widths
+      clk: samsung: exynos990: Replace bogus divs with fixed-factor clocks
+      dt-bindings: clock: exynos990: Extend clocks IDs
+      clk: samsung: exynos990: Add DPU_BUS and CMUREF mux/div and update CLKS_NR_TOP
+
+ drivers/clk/samsung/clk-exynos990.c           | 80 ++++++++++++++++++++-------
+ include/dt-bindings/clock/samsung,exynos990.h |  4 ++
+ 2 files changed, 63 insertions(+), 21 deletions(-)
+---
+base-commit: 39f90c1967215375f7d87b81d14b0f3ed6b40c29
+change-id: 20250830-fix-cmu-top-0917aa84871b
+
+Best regards,
+-- 
+Denzeel Oliva <wachiturroxd150@gmail.com>
+
