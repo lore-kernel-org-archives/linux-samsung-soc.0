@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D12248F73;
-	Sat, 30 Aug 2025 08:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD66253F2A;
+	Sat, 30 Aug 2025 09:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756543563; cv=none; b=jNODXhBX2EkAZbODZ/ffQOoRMwrMax0eNKjVXgpGE61MuNqDacryXKDkdDakygk+6MDWbTark1FPbN+8lYvai52ZooGoZBIp6csS/We/gha2g8xQH4XuIDtM7qKvSyHg3eyFMnzfzY3Buw1lW2dkRkEuzJybfbUdYv5iFnoyLEA=
+	t=1756544814; cv=none; b=q4x1Lw5QQ0WlKcgDduM0KCzuwNloRPwoDhdAZPJTNnoohF8m71PwB5NR8thQMkJZfoqNLyruq242u9W9YpmcvH5GOj+tl04An+0Ku+4NAotXUPlyEvZAj9H1CWn92JhmUgc3YHLPHiJAJ/WijnCUNSSDxGC5cU7GsAGvYYOIpDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756543563; c=relaxed/simple;
-	bh=2bdvU0RJRJLGHzflhJpSDlCKftXyN1TaCSNn8HmET70=;
+	s=arc-20240116; t=1756544814; c=relaxed/simple;
+	bh=mpWZMBrKYpqukOiHgjuGvad1OfHPQQN9cvi3zmQkyuE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Grbg4inGqE+BzpSNQBnvPDj0yQxxbkCWkxlBRaD5nKdyNpBDZZ+LRH67vFL+YpKZnvqYmE7FHsfTAM/FmoqdTCIqYRC8w0eWL3rcb+uVRaRHi7hRmM+KvZuik7/eL88XD5BwDNayt0n12BaH66Q6xC3X5gnqXeS4gCWfJArVhhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VChSzhmv; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=NLHBUuxIpZrmm6Fr55ISXZBdkvikOnDmOBzN0TNDtzzLDLDRloOUfIJQXRnNR8Q+5l+YWYNGHI1H/GJ0XxcKe9TihCzsrNEiMz9B9+nEr0RdIEEVMCDSBg7TKpnWk92qbcEKtLpjmMCJtHRRSyVBu50baNd9G+5v45Fp3RCzaPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhbiGsvC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VChSzhmv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2DFC4CEEB;
-	Sat, 30 Aug 2025 08:45:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhbiGsvC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4459C4CEEB;
+	Sat, 30 Aug 2025 09:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756543560;
-	bh=2bdvU0RJRJLGHzflhJpSDlCKftXyN1TaCSNn8HmET70=;
+	s=k20201202; t=1756544814;
+	bh=mpWZMBrKYpqukOiHgjuGvad1OfHPQQN9cvi3zmQkyuE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VChSzhmvdwhjhYSeII5RUbIj6uU5nABAVHXKicw+PRbjuI8hL2IGyWHRAeCAUfuof
-	 E+aoFHwlwAF/Tepq0Y4PJCYnBLbau3TJMwff9TarIwhJMRDl7cpmK2kpiyICzzicRt
-	 EaeJmWRh2wgD4W2p4MuB6faqYLhHtjHtmPKAzgOAZ+pEGiwwP3GKhUh6naOp5A8pjQ
-	 Oaur/oEVWJPYFUDxlEtyMw6vpDCrO3/To43QklSszDLjyIrAjAH5MVREAaBcxmYWFm
-	 PnDXd/j1ovedS4zn34VdCBrwQSqTyGk957xp3xRMFLxZNUMsTnAO1MNH14ywvLMjYY
-	 y3ju75dYiJxrg==
-Message-ID: <7bb127ed-8c1c-4379-9cee-f1178eb3fbc7@kernel.org>
-Date: Sat, 30 Aug 2025 10:45:55 +0200
+	b=BhbiGsvCYk30HFN3baBWG0Rf/dD78i+pnexb6GfhtIrmb4NODMXRyfvGtgILT03ND
+	 uM0rqUvS6yqPPGlHZTGqGn40aCKDrOy5UI2EGRsmlncrz5mO4FailR656uEeavzDn2
+	 pUUu7t8AR08/uUczyjrU+fQeyx3m99XCrDs0Sg9P5qtFETLahqJxxMHgKHn/Sy41B+
+	 zvnY8v8XW7xTQCZh1nGG84XSVX0pvB73V3YnHgtOrDonAzwqLG9vMH7qYchfotiueC
+	 0G5WJRzGE54tnS4qcyvjKiDwbQIz02EPR39gf6rLj6DkqvGebJ3/RDBM9L3lRk3cQC
+	 G6Kp48/oo5x7w==
+Message-ID: <f6acdd01-8847-4282-b375-f8e564be81d2@kernel.org>
+Date: Sat, 30 Aug 2025 11:06:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Modify tesla fsd bindings
-To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Subject: Re: [PATCH 1/3] dt-bindings: thermal: samsung: Add tmu-name and
+ sensor-index-ranges properties
+To: Shin Son <shin.son@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, gost.dev@samsung.com
-References: <20250829135643.105406-1-v.pavani@samsung.com>
- <CGME20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd@epcas5p1.samsung.com>
- <20250829135643.105406-2-v.pavani@samsung.com>
+References: <20250825064929.188101-1-shin.son@samsung.com>
+ <CGME20250825064933epcas2p33e2b4566b5911fef8d7127900fc10002@epcas2p3.samsung.com>
+ <20250825064929.188101-2-shin.son@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,47 +94,94 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250829135643.105406-2-v.pavani@samsung.com>
+In-Reply-To: <20250825064929.188101-2-shin.son@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/08/2025 15:56, Varada Pavani wrote:
-> FSD SoC WDT is using Samsung legacy WDT driver with
-> "samsung,exynos7-wdt" compatibility. Now change the compatibility due to
-> few driver changes (PMU bit changes for each WDT instance and Clocks)
-> for WDT found in FSD SoC.
+On 25/08/2025 08:49, Shin Son wrote:
+> The exynosautov920 TMU requires per-sensor interrupt enablement
+> for its critical trip points.
+> Add two new DT properties to the Samsung thermal bindings
+> to support this requirement:
 > 
-> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
-More comments:
-1. Subject: completely vague, everything is modify, every binding is
-"bindings". Write useful subjects.
+> - **tmu-name**: an explicit identifier for each TMU,
+> 		used to skip specific sensors
+> (e.g., sensor 5 is temporarily disabled on the TMU_SUB1 block).
+> 
+> - **sensor-index-ranges**: defines valid sensor index ranges
+> 			   for the driver’s bitmap in private data,
+> 			   enabling per-sensor interrupt setup and data access.
+> 
+> Signed-off-by: Shin Son <shin.son@samsung.com>
+> ---
+>  .../thermal/samsung,exynos-thermal.yaml       | 23 ++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> index 29a08b0729ee..420fb7a944e3 100644
+> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> @@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
+>  
+>  maintainers:
+>    - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Shin Son <shin.son@samsung.com>
 
-2. ... and never tested :/
-The amount of very poor contributions from Samsung recently skyrocketed.
-Like 66% of contributions were not passing basic guidelines, basic
-process, so should not have been sent.
+This needs also explanation in commit msg.
+
+>  
+>  description: |
+>    For multi-instance tmu each instance should have an alias correctly numbered
+> @@ -27,6 +28,7 @@ properties:
+>        - samsung,exynos5420-tmu-ext-triminfo
+>        - samsung,exynos5433-tmu
+>        - samsung,exynos7-tmu
+> +      - samsung,exynosautov920-tmu
+>  
+>    clocks:
+>      minItems: 1
+> @@ -62,11 +64,29 @@ properties:
+>      minItems: 1
+>  
+>    '#thermal-sensor-cells':
+> -    const: 0
+> +    enum:
+> +      - 0
+> +      - 1
+>  
+>    vtmu-supply:
+>      description: The regulator node supplying voltage to TMU.
+>  
+> +  tmu-name:
+
+Generic property? Where is it defined.
+
+> +    description: The TMU hardware name.
+
+Anyway, you do not get instance IDs. I talked about this at OSSE25.
 
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    minItems: 1
+> +    maxItems: 1
+> +
+> +  sensor-index-ranges:
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Where is the property defined? You keep adding generic properties.
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+> +    description: |
+> +      Valid Sensor index ranges for the TMU hardware.
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+I don't understand what is this for.
 
+> +
+> +      Note:: On the ExynosautoV920 variant, the fifth sensor in the TMU SUB1 is disabled,
+> +      so the driver skips it when matching by tmu-name.
+
+That's not name, so why are you referring to tmu-name? And driver has
+nothing to do here. Describe hardware.
+
+None of this is really correct. :/
 
 
 Best regards,
