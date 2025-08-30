@@ -1,66 +1,66 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FB227B35B
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 11:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AA027C172
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 11:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756552196; cv=none; b=a3uqBRcIABkT/QutTB2Pq3PnzFyF1x+QV8DaOD/pOeAp3ek9qJvbB9YIur3D/3+FJ4s3j7PaE9PRYAav29jebn+MdUr3S0dfGH3qqdrXprY6dt8legeKupYRP0KyP2d4L88PfKQcutArhAIPl7RE3nnJS+mvm2Aa28ngDRlFYLE=
+	t=1756552197; cv=none; b=k9ABkcNa7K5Hzz7s/Q63jqzWZTP8lR5hjCH5ac/4y44e/IVCLaU/xL85mabqcflrarQstORZKFUzAaK4nM0fTuMR+DtpRsmVP4/UiBq94kVhMhnwqr+dbqKLSc632DLuoZve5Wmt61k2fIoSjVZnzlyUhaqs7ZO845fqx8P09xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756552196; c=relaxed/simple;
-	bh=KjoP2OpIwgvcEU8lQlbyugpaZUrY36rc56GQiCq2XW0=;
+	s=arc-20240116; t=1756552197; c=relaxed/simple;
+	bh=ebjPcUawDuyYiStYmNU5ZL3R3L1PNedniR0atYT+P1Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=amZsoBH8uRZGZGvQ+OMe2rnTOXR9ZURoabexTJ5Di7YFkmZzWkZfKz0wTBVL2K/eNu+kXnueyPnpexejc60bbKr1tO5paIaZfLEyROawVPf+5jHv+4mKJlP4bN5aT6g4ARVVmkpXw8a8X76j4++7SVNKfrw0Ki6yL5KinlkDk40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IFi8f7TC; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:To:Cc; b=D6ISzThCNjO6Zc3DjXQyxT8IAMP6jjuAgcGqiVfw1H+YjQxXZdeTfJgeNt5uhagRYsGcP/EomeZUCcE0JVAwdX6ZgjgKM8uV8TDRZ4i+KatRE8S5E1xq1+sHJe3AGG/MPyNYBkME0EMAF5RjHKgB7YYxmzIDKGwwlV1l7VquweU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mPrfzW2F; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFi8f7TC"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afe7584b6c1so38211566b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 04:09:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPrfzW2F"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso664247a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 04:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756552192; x=1757156992; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756552194; x=1757156994; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jbqsXZ0a+2gRMmLHMi/t44FvhwPty9xFovSO5BTpK8k=;
-        b=IFi8f7TCxN+nVFQuDVoK8TIJzUUDh12mv1OLrds3nptTbnaoVcikWPjB9L/um1NBPH
-         HMWS5F24ez7u0k1mWUAHSSusIBq+Xlf29b0sIQ0WpPUyd7Iuzscj4UMwR6jqzGu13idI
-         8HQxqbQ82Omv9rLXfQh7tgwosc8abC1xLdPUTBnh/fMh00zUg+/VfWXPq9GwuQlLxLJo
-         4OCJab1EFItjJhXBaw4aNdO31ppnBCxreUKYIDVAtvprErnk8DqSBzIzsiJiPGtxKlLv
-         ugDayC4pjjjegsrZf5/U4d9uQ+dLqYF+zxKUyncSfAq+zcWNek10CQHxxMxNJcXrWTT7
-         StZQ==
+        bh=lR2F57pXZlUmDDCYEA5++08US32un21m5O7B8t3ZqrM=;
+        b=mPrfzW2FAZs/rZYVYIW54R0ePY24K4rrShfDoq9q9tpXor8CpVQye8DDbKBqaow6/E
+         9PPTu/UKnms4e80hiszzimSRSmyw+qpxRtv/i4WiJkeLekATrTSQlutenfdEJvn8qRL+
+         O67zAdOsOZaBzUlGNvPot0YiKdYc5GMvoXCfZzg9JTnl5blFo4J8RFr590T5cGLsUHpl
+         zFW8jeqcNYxr2u5fda7Cr0msc259RhQ60wmkXyeFwx/lBiU6uTYt9Ikpr3cfAi1wWwFg
+         +7aUSqsJHJIq5ynqclCRA/u+73Wjs88wUmwdenu4XQ9vou8pZmg80sF4auPHqI0AmsHA
+         GB8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756552192; x=1757156992;
+        d=1e100.net; s=20230601; t=1756552194; x=1757156994;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jbqsXZ0a+2gRMmLHMi/t44FvhwPty9xFovSO5BTpK8k=;
-        b=YUTh0dm3g65wM0Kc1LfgZ7p4Q36eR4J5YUn/ekGFHXgB52fsAkBEGA959iVtjeIZ8C
-         QwhfSUMk5oigYDe5g0oEza37bFp5ljh3ytuRXRi2OUBjYgQIeHYwqpEP60DsiKbS9iBT
-         rUzKQfJ1JwzEKF5pd+hcaB0+6sMGdW859usrsXEh9FRSA38Q27t7KBMWWe5FGHP9BbAf
-         wLDP0qHVwJg2gZ25W+p56n3p6gN2cqfzeFE7oea9N7oqjAYdAoHAcpjBnHbehZDMeuMF
-         tTf4neLc9IdYu/sPwusdrtCLuQMx96R7pIqs/AEk7qpqtkJtI8b6bY8JtspyjUSCVaek
-         K9aA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmzmjbl99CED7bwg+6ykekIjk57SFmDmLzFI/COE19U8y6mFQ2X9ouoMiSccjjqOcHjPY2pGImvxca2rfibBuhug==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw67K5P3JE3InKqnPU4Uuejilan/bnWrum7LswWJXdcWYhCfgTF
-	GUlxwoqxixpUwgZ0UTQGw9o3WuVHHcbzXB1RZhWtpfUHdgIU0alQ9zun/aeWW9SWlkw=
-X-Gm-Gg: ASbGncu1AdP0Cplsko1cn9XXS3eOc3O0g5xRFr+erzwKGHapzsuY4+1nZVJDVDaSovl
-	ei7FuHSLFmjeYGcZXlhBV8enNGXaI8V//A4VKfJzPZvQHtyPX+3sDW2SF0/TQUiF7P7yrMLAEEa
-	zn4Wozkt0ggrIoZrSgpYxLsqFAh3LXUAvstNBcCMmYEeUQTpDdjAgPuvHgkycs+Su83yU3ZFp8X
-	y+Nl736TeQcwImOjKRT9qjga8mFqXAHmTA9AnfhxbxeHeLADc55Bo/IZhlhthCJ8RHJF2BqDL9G
-	i3jlUgUUdfDWgFIDAkOJgH1ApsHtV8fsn3z/pSjOJ3AAMkWA3Nqm1C5OqV/uvRTzcNDNwjPkD7D
-	7rQN1Wrn1FPhx9j8JVQluW7cLV+GpE8fkRQybnrQ=
-X-Google-Smtp-Source: AGHT+IHYI3tcuSfMfYLyvgkgErLnZ1GzeCpm9S3JwFpVHykTzgSrhsFx7MfV7tYp5tXNWutnC3a91w==
-X-Received: by 2002:a05:6402:354c:b0:61c:d7e5:47a3 with SMTP id 4fb4d7f45d1cf-61d0d365421mr1981474a12.3.1756552192554;
-        Sat, 30 Aug 2025 04:09:52 -0700 (PDT)
+        bh=lR2F57pXZlUmDDCYEA5++08US32un21m5O7B8t3ZqrM=;
+        b=LSUQiDSt1LUA02Q55Pr6nJOptVupATHG+Mlzx8I5mn3F0AhUcpUD+GZgmlclLtlGae
+         sP+FAJgH6l9a8eyV3LHodulUeWpA8bsyHlRHSkNf53GuwSEyC0HD2WI1zlZdKO5r22zv
+         DD5/RFXiukgeKVeorpFI2/nnAgZli2CP+xNkVAZDqTF3orUDFlGCl3zkI+Ix/ibS8PVU
+         OcSxAZtvuyrnMQmJXGfkXgDdve11A2vpGupi6hhzVv9XlYFhPKDVD/adCp8n4UlHig+e
+         q8TbvuzFTd8ZzNOGnXDYYeP+ifzWlGLrgfs4IW/N4AlTyyP+fO0/7djGE0RPeBOFrh2+
+         7+pA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2snsfUnyasHGKnKFfHCjV8xKpKmDhKZCSuU9a3Q9D4+VMmyY5PIh28/2YPgc+TSfqbXHNvJZaB6DaK92yBU+pig==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7SirokMmC/+/xO64Gd0sPLdngKJEVVKNIW10DodqmYwWBvHda
+	6B8lbOw63T4cjzdvSlWrhQppG0VhCaaFy1cfSBOYiT15zTEkftREUvRrFIuRyqVp2Tg=
+X-Gm-Gg: ASbGncshgCVBSIFNfIQ7aH1xjvfFT9GnYBReqh78C/CQ0Pu+T5VskSkE9cByTDBl+Fu
+	wGsWMhCGU18CTH2wMCUdUbAdOO5NB7bwsALjNBJoJcF0U2nyl4DxUk1p71Q8HypyESiw74uFG8j
+	2BcC330Tuapenkn4CXYvFxJ4Z9Smwq2fOfaj3kPShpwWtOxafDd70mTCpgjkXUvudRuDmmEZYwO
+	oq4gf1RutSiUhWtHKbi3k5W1fNbLWs7rQfXvaVlqJsrFxx+PF3gif+OIkHkKz7Y9x68o9tOXrWn
+	usCeVzCuLLg4WyOZsWAu739i8xbgcCM/egn9K0V02yfeDaPuZ3EWfiePFiU2SeaOKtyEtbsf9h5
+	Q8kDqO2jVQnFq+D1JsY7jA/1XY9qMvJ5P52shIE0=
+X-Google-Smtp-Source: AGHT+IEHg6IFH3LpvUBk8gtz2eV/nm1aGFtWrmsvGK8L0WqQQZfDuF8JLAEJnGWmJwRCGuoJqDkE/Q==
+X-Received: by 2002:a05:6402:13d0:b0:61b:6c51:4005 with SMTP id 4fb4d7f45d1cf-61d0d5f33e1mr2017554a12.6.1756552194001;
+        Sat, 30 Aug 2025 04:09:54 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc21542asm3285666a12.18.2025.08.30.04.09.51
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc21542asm3285666a12.18.2025.08.30.04.09.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 04:09:52 -0700 (PDT)
+        Sat, 30 Aug 2025 04:09:53 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sat, 30 Aug 2025 13:09:40 +0200
-Subject: [PATCH 3/5] iio: adc: exynos_adc: Drop platform data support
+Date: Sat, 30 Aug 2025 13:09:41 +0200
+Subject: [PATCH 4/5] dt-bindings: iio: adc: samsung,exynos: Drop S3C2410
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250830-s3c-cleanup-adc-v1-3-de54dfb1d9ea@linaro.org>
+Message-Id: <20250830-s3c-cleanup-adc-v1-4-de54dfb1d9ea@linaro.org>
 References: <20250830-s3c-cleanup-adc-v1-0-de54dfb1d9ea@linaro.org>
 In-Reply-To: <20250830-s3c-cleanup-adc-v1-0-de54dfb1d9ea@linaro.org>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -84,73 +84,48 @@ Cc: linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1736;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1211;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=KjoP2OpIwgvcEU8lQlbyugpaZUrY36rc56GQiCq2XW0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBostv13VGu7FUVwm7lV7kKSuqLAH95o21fWUsyk
- kZGd4D32xyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLLb9QAKCRDBN2bmhouD
- 1xCpD/9RsBrZtrfnGAO6kOBtpZf3RsuYS4WozEoGAPOZ/+LUFG7GyY6PHdLh04yO0tyeru9lmnl
- NWiyylXT161JodBZBtmPzVGF03rHBTAOUplPZd5paYxfpJwt8PJb/xHmt+0xSbnapKtKq200hOX
- EUPwCpJQ9D8g6nPMbYUQ6Ens7xPCUMXbhA29e7wK9UBBL0oTOeUZRaBbz4p0phSh1Jm1shYTVXp
- QngUaBT09dvDLQfrg9tGI+JBpDndf89JRLDDK3yQ/Vj813uwCaXSU3NmD0OKS/vtuUyzo/J0OIt
- 8vVneJFmFtj4xhz1JdbVUnA8vMsGRMZLf/f0M9GRJHxy7pHzmzW6OUolCzk+CHo3KCQgbOY1coA
- 6v46Kib9uoMtvr7Y+3aQb0c+2zWCV24+9ia905h/shhAk8pEhuZun2FPDPiUxSr490p1irdBmt0
- 6OCDoUzRL5lkSOt6avOdIL9235r4vBEvl2HvUzT9elT+Z6862INH90abu3DWL6oAm+rk4O2k401
- /PuIEEZckhNUQTxHX/j6Hsvdc+1QQgbLp5dQXn/VfZp8fCYyNy6NE+jvz2674Gdvk0LFg9KbCrn
- v26uvKiam2qS5ejw+6+GF74I/T7rOXWawPDPYNvrAjuXZOsC2O1WHTbgNsWyDAC4U4RJ3YDi9gQ
- EEPu7EfKv7b8Umg==
+ bh=ebjPcUawDuyYiStYmNU5ZL3R3L1PNedniR0atYT+P1Y=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBostv2ZO/eRzqfN09DvckB8iOzzLArEcasEJY79
+ KGtOMomiLGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLLb9gAKCRDBN2bmhouD
+ 19RCD/4xQ3Lz5ArA1qhWwyYsVlyQlUrvZkfdqHYEi4Z3pihmEyrnxDe7VcRcaaLD5l5Hf32dvUh
+ zkjHWB0psmPLTFsE/4DoNsY3zrb7K+pvqvyPzGOwO0rEG8V8Dl229/x16WBxhY5pG2Edn5s8Z7A
+ asw6TY2NjoAQaK+oDCiskoRQDrAlif2cZNdNVuXnOt2k78SbnHcVimLj6zF5kwonj/FPfSonoYK
+ ryXfKQkn3z5G6dWXHfgDtA4AZQ5UhHI5wSVZTOHt2h6jYkO+NEpE6d2CqdIbz2CWzA3POOJSYKl
+ 3fd1XN/yu104EEvJSPcbDdl6+vBj+9/kwfby/ALUtP4KXyiJ7LPWfau8DfZ1PK+9z5QE997+2vI
+ nMfRgzL+nvN9A8ePeOCJy9HCpNDYCbDr3uip6Qb23fvPHgk3JJMx6oNeZktf7A6LGmo/FXZNBVl
+ TYynjROY9z3MAaTYvzHBtZ5BxLgRVkSrGLlvQdba3HPFjZdFbqprdLoE+50cqEYb4Eam671dNtN
+ Qc7wThoHCuER5UKtiP7QLTsTStp55A0RcXoDgLtSgVVwBepZYIezh1cmY6n815AnCErxAhuFRpp
+ gcVthAWmYl0jzee1XHTrxwR/dWtZOehvKMDxXG+oJcyxqeugKVHoMrQsgfOddrfMiLlASAf8SWA
+ GkMBVLmFCrHgKwg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-There are no Samsung Exynos SoC ADC driver users which bind via platform
-ID, thus platform data is never set and can be dropped.
+Samsung S3C24xx family of SoCs was removed the Linux kernel in the
+commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+2023.  There are no in-kernel users of remaining S3C24xx compatibles.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/iio/adc/exynos_adc.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 30f6d8436e775a8d2177951b436cd45152307ea2..dd1494ee365a7b34d6b485ee4c9e753f50b5ff26 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -106,7 +106,6 @@ struct exynos_adc {
- 	struct clk		*clk;
- 	struct clk		*sclk;
- 	unsigned int		irq;
--	unsigned int		delay;
- 	struct regulator	*vdd;
- 
- 	struct completion	completion;
-@@ -213,7 +212,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
- 	writel(con1, ADC_V1_CON(info->regs));
- 
- 	/* set touchscreen delay */
--	writel(info->delay, ADC_V1_DLY(info->regs));
-+	writel(10000, ADC_V1_DLY(info->regs));
- }
- 
- static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
-@@ -556,7 +555,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
- {
- 	struct exynos_adc *info = NULL;
- 	struct device_node *np = pdev->dev.of_node;
--	struct s3c2410_ts_mach_info *pdata = dev_get_platdata(&pdev->dev);
- 	struct iio_dev *indio_dev = NULL;
- 	int ret;
- 	int irq;
-@@ -657,11 +655,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	if (info->data->init_hw)
- 		info->data->init_hw(info);
- 
--	if (pdata)
--		info->delay = pdata->delay;
--	else
--		info->delay = 10000;
--
- 	ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed adding child nodes\n");
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+index 8069e99ddac860b22c793c3ef9479f720cfd8c65..73d7ba0fda1def433a97d10bce21e762a307e36c 100644
+--- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+@@ -18,10 +18,6 @@ properties:
+           - samsung,exynos3250-adc
+           - samsung,exynos4212-adc                # Exynos4212 and Exynos4412
+           - samsung,exynos7-adc
+-          - samsung,s3c2410-adc
+-          - samsung,s3c2416-adc
+-          - samsung,s3c2440-adc
+-          - samsung,s3c2443-adc
+           - samsung,s3c6410-adc
+           - samsung,s5pv210-adc
+       - items:
 
 -- 
 2.48.1
