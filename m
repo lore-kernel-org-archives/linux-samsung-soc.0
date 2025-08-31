@@ -1,109 +1,134 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93723265CB3
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Aug 2025 13:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E7C242D7B;
+	Sun, 31 Aug 2025 13:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756646901; cv=none; b=gyE+VBM2VUVWQUQdnEA3CHHtU7yt+RgZxvh9HKlOjFOZgCT1fMCz1y5PjPol/hTYvACJP4Ec8YUY9InezIAU7X0cjquHS9Z4g9MXPGeFWqKazd8IntmiTuTlhJXkzTcI2+gAYSdu42mAkhpe7zOgtHYn3zePOrVOLOZsu3eR2xc=
+	t=1756646994; cv=none; b=T0QUBVvV2yl8wIg3XzBZejG+jKMcygLNXNQ60fv2mF3/G1gQE/P/yUA+LFHf5UQstWnFxl5kKKHQ9HiuG74pag0bGFq7bzWxUUelImzFeKXiYRQlzKmHvtgctGEeqSxBffW9sG7b75JAa76o+/k5ASkXdXUDqXJ5qJ7ZtB7/r/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756646901; c=relaxed/simple;
-	bh=LdivQQ+HHnZWD9LIPqe5v9pOuvWPc7P5UYV8ZAoOTho=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eQBwiydliIwvZzW3lgHgk339IxQ0vqtllr+WPkZ9ArpcDqhAa022Qj9yhoYa4ewy9ZwDvVCmHrcKwDyO42/KM50uq6JpkhTppQjNk0Ft1Sz0AMtWXA8RWeVXJGzCbsjWlbfqIzfc3DUkHQ2dC9QejZnG8j5ouFIJkKbSMsZpWGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aiCZn2Rk; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756646994; c=relaxed/simple;
+	bh=SrMZkbWdusRiH0hmaE91NI0Lw0F3UPdK23OAzsrNGUM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YS0Fa+ZmJk7yFpOe/eTD7IQWFLVP7t+wSNgJ79LopNDLAIfUOPQb/H2GFOgTCB1rORZaRNS6GGlUFuAA/qCi6vW/V5OcN05I/G3WeRfJjbHgQJZnVY5JHJUr35MK+HRQLtjWfMom8zS3wKTuyTJ6Mk9aAEiwsq967XFEppCSiSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q63wtjRE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aiCZn2Rk"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3cd151c38ceso521690f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Aug 2025 06:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756646898; x=1757251698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZuVblRpOdjWQCfpwKse83LT8IgPkp+MhNhnqf1geLpk=;
-        b=aiCZn2Rk10y3E6tYyekqS7YbSY8SY+93KAD+xThLDbMxjJnLCqkcD18G5ZLBbqceCH
-         Xj68ArzsBIYW6qwWiwRn6kvMY4GCop6aOHewJgETm4jjptSYEzMgqmt72Yb8XwnZbXs5
-         kKq6N9FNwq+BXptH8fDrYU3vKNGMdYwpXhtFGVk7tOwLSoFKF9JAlls6WRGX6054b4Rl
-         g9DQdVGqZQ2CWk9oA+z+NKpgEdUuyK1CkYTsNkV3s6pS2sZkEvpYMXCvzbP9Xxj3Dv2l
-         1FH/91BG//8XA6T0nz29P3lCHfSPFhjv6/BG/qZzpOHpt4qlqPcePFXJvZ/aAaraG0dt
-         Pv6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756646898; x=1757251698;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZuVblRpOdjWQCfpwKse83LT8IgPkp+MhNhnqf1geLpk=;
-        b=C2WjPlkAz7cDjvPdP7iELrTpaZt+wOHHuqH8iNB8c5SrxcnlSq20QJmEnmieRYjp6w
-         URU0HkVDeg3BXHm9Y2fsBoRCD/84g5bGlrCe+6QimpXGq8wgxMy1VjhlKbIUXuIUJLD0
-         N8c9Vci+Z7ftNqUHK9I4OwgbplqHwCLN1e/nQ3FF2kFlxp801nDmoHeriaAZFq+g/p/+
-         6nTJclRYf7J1pSrgCXT626xw/7Vwaoc/u+g1spBO0nWh9uEe5aCYBWsd348oS1CTwMWQ
-         EOsW/1dU/cWTZ+RSLEsn0A0xslWQP02Hs4ExcbQu0t+gs48pFVO7Gqnqyy5jNur7APtt
-         C/UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhkTA3KJ0wFbFyg/bt2r1jsV1xf3dmlX7ORyH1/OOrXZmJB/xOyWRjCEF0nT6LKJrTr4dz/j3bZc/j/FGjTC1JQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv89/0ciuLfOCbYfWPaZszdUrVfvtzQzIJF+HA4l+1341h0rA+
-	DU0rb39j3Ph5c9W9YF33QyUtrU+53mwcykRn6jpBEViQPKkNCmYPAERcT092dJEu7t8=
-X-Gm-Gg: ASbGncssPoovf+4Yu2gUS1rYE3pVKs9AUJ8nEXzO6MBV6l3QAjrN81eRt7LuznoHjaX
-	95PVjiXxj90l0NDaf9aAefcG4RRv5uWJnVZuLL0pNEvn45i+7o27wpBr/YdWlpcl9rhwiP6ao5c
-	xKNtrxJeIZYcdcCNOB6yRurd0aMhoAUzcsa4Mnu8OheLOBYMbSb2mLbqyiDKh6AQWWmHStoCC+Y
-	NooHf/zyh1rxR0kIL9QpvsqfT1QYtu/oynVf5R7ZAge4zkzlrfPHwlpY65aOxVMTAi1FwwAauZK
-	DZwmdLErrqJ/bc7649Dp90PjyvCxYyq22avjvpR3x6Q+xEHPg1Gzhz5u4S5iGPOryJ3bjxnzSRW
-	ou7QoMsol2JtH700MrcxqvykcRD56M7kCNqNYJnQD3qMMkrEpnS4phW8ZRT1a
-X-Google-Smtp-Source: AGHT+IGjjCRfDtUdQVx88kWUHZJxBBGxwDC32T0AevVKpXcpfKjnIqL3cEb2Sd3S+uivJb0HGuqySg==
-X-Received: by 2002:a05:6000:2dc7:b0:3ca:6c06:70f3 with SMTP id ffacd0b85a97d-3d0f967dfa7mr3081239f8f.1.1756646897869;
-        Sun, 31 Aug 2025 06:28:17 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87b3900dsm29956925e9.0.2025.08.31.06.28.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 06:28:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
- s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
- linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com, 
- will@kernel.org, arnd@arndb.de, Ravi Patel <ravi.patel@samsung.com>
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, 
- gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
- smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com, 
- inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
- dj76.yang@samsung.com, hypmean.kim@samsung.com, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-In-Reply-To: <20250825114436.46882-7-ravi.patel@samsung.com>
-References: <20250825114436.46882-1-ravi.patel@samsung.com>
- <CGME20250825120725epcas5p36cdf2c4e839db307f1cc0dc81346b913@epcas5p3.samsung.com>
- <20250825114436.46882-7-ravi.patel@samsung.com>
-Subject: Re: (subset) [PATCH v3 06/10] dt-bindings: arm: Convert Axis
- board/soc bindings to json-schema
-Message-Id: <175664689576.195158.13430798793147668085.b4-ty@linaro.org>
-Date: Sun, 31 Aug 2025 15:28:15 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q63wtjRE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE7BC4CEED;
+	Sun, 31 Aug 2025 13:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756646993;
+	bh=SrMZkbWdusRiH0hmaE91NI0Lw0F3UPdK23OAzsrNGUM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Q63wtjREnKbKCYx54RcSmujLZ6KEnlVBKCl9h9qMj6j8rXNoFIxUvVYlg3hfy6tkp
+	 dXtfq/oBfz+XYw+54JkWlTv8BBD83m7a4NAVi7C6SeWxYmSerB75ht4V1iRFx48rtT
+	 bg1/vZXDWb6tz88BUXWEEKHhKe7FiV9TD3wYpan5TAYYAu+GFD7bszkLT0ELiGsEIh
+	 HP671kpJk/Qm1qBXZ3ojJyXWTun0gyzNuHP2p3Du5/3hlRsVGqxXvmJ9QATym+yqnI
+	 AKpWtpK0iic6fVZQ25+eQElYopvl3XleeuVqOCOWKqmAzLQLxaIxjdDLKtZ26VGYPU
+	 Yk698P/rntfrA==
+Message-ID: <15508cb4-843c-42d1-8854-5eabd79ca0df@kernel.org>
+Date: Sun, 31 Aug 2025 15:29:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/10] Add support for the Axis ARTPEC-8 SoC
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
+ dj76.yang@samsung.com, hypmean.kim@samsung.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev
+References: <CGME20250825120654epcas5p17bdbd92679d2b4c0f0c9bbb348163c0b@epcas5p1.samsung.com>
+ <20250825114436.46882-1-ravi.patel@samsung.com>
+ <db692853-a43c-4a4a-9a07-a7485bc9fdb9@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <db692853-a43c-4a4a-9a07-a7485bc9fdb9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-
-On Mon, 25 Aug 2025 17:14:32 +0530, Ravi Patel wrote:
-> Convert Axis SoC bindings to DT schema format using json-schema.
-> Existing bindings supports ARTPEC-6 SoC and board.
+On 25/08/2025 14:35, Krzysztof Kozlowski wrote:
+> On 25/08/2025 13:44, Ravi Patel wrote:
+>> This patch series includes below changes:
+>> - CMU (Clock Management Unit) driver and its bindings
+>> - GPIO pinctrl configuration and its bindings
+>> - Basic Device Tree for ARTPEC-8 SoC and boards
+>>
+>> The patch series has been tested on the ARTPEC-8 EVB with
+>> Linux v6.15-rc5 and intended to be merged via the `arm-soc` tree.
+>>
+>> ---
+>> Changes in v3:
+>> - Rebased patchset on linux-samsung-soc "for-next" branch which includes round_rate() drop
+>> - Add CPU mask in dtsi patch #8
+>>
+>> Link to v2: https://lore.kernel.org/all/20250821123310.94089-1-ravi.patel@samsung.com/
 > 
-> 
+> Thanks for v2. Just a note: due to OSSE 25 I will look at it at a later
+> time, probably next week.
 
-Applied, thanks!
+I applied few patches and checked the rest (left review when
+applicable). Please send v4 after rebasing and dropping applied patches.
+In general everything looks pretty nice, so I am very happy!
 
-[06/10] dt-bindings: arm: Convert Axis board/soc bindings to json-schema
-        https://git.kernel.org/krzk/linux/c/ea0484e4b82b3496310a94684dfad5e61421f633
+Note, I will be closing my trees earlier this cycle, probably 1-2 weeks
+more max.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Krzysztof
