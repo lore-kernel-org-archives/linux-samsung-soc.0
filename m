@@ -1,1444 +1,202 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB37A2D23B5
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 17:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756573286; cv=none; b=WL1aaZaWZ9AR8d2r58q8H54UGs3XZdr/0tgGAP3uB5TqgHXZNB24mUjCMNBOil1LZKTSSDX4P5o7IM2xLtZL624GYwpPxvbMD3xfjBLxUgXZZ0KHzf+23ie9NRP9+D5s3CaA3Xy1Mq6X7NhGfq2bI/GmnKOSi41n0N/ntqvlflg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756573286; c=relaxed/simple;
-	bh=64SpjyOQDa//pYK2lF/0rCZAKhHP30UPnQ4w1EKqHuI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bH7iOG6lzDdoYVUYl4cizKNI4G14ebzgZ6JCHTabBVrucEDwc0r0CusRiqV+MVQFfZkNPJDYna6eGX87uttLa+HGQlW/dyRMsmvekL/jTPEDi9bUd5Yfag/k9Xea/RLb5/OKwRbjj+OrexB80UvZ9X0cSqjgDLx2dScpwYVD2Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UQ/aPg/M; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4FF2E41E;
+	Sun, 31 Aug 2025 01:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756602070; cv=fail; b=H7Rk+7qZoPY354pnIWUnIBK8SeIC4a18/lZbzfu0HrnEjJtDqEY5zS1ZjMap2V527iee7Y6nyylk4kt2DW+GebQYhe+fidXUT61QhPSLSdvRenaR+S9EPN3rr9o5azklZfEzL9/HuEFWAjkzOI49HtnexTEzlLqnnjPRKRhec4Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756602070; c=relaxed/simple;
+	bh=LjLVGxfnyLsO7LiuY8JaT6TcqZPRLAOLf7c+9o3HcOA=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=orx2avTK5hVu1ucpUniIS561YlsETvO496CPGzNpEbiRIuUxnXc107JAozwF+uEYIWeuc/oiBX+UidgdccRY0hvN77djhz2bHxA0G4BemtJhNpB9EJZfO1hAmYay7apiRfyCzoTSWjkhz+7CiA8+qlHV9g69s1yIY87AhTng/D0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ad72zas+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OsjzZBYM; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UQ/aPg/M"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afe7f50b605so65759166b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Aug 2025 10:01:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ad72zas+";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OsjzZBYM"
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57V0AE65006760;
+	Sun, 31 Aug 2025 01:00:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=tur+Tjx3BTqpCIea5u
+	I1WI4X60ODxfwMk7DAmsro92k=; b=Ad72zas+2lqrbRBDgSbyTfHycUjjBn/spK
+	S4XJ0Ay815Ycck2og/2ii9nEORybjrEfKs3ezrWfla3f8ZisqQjxvYzzQePMqXa9
+	qoxJNFsJ5LjgfhUBBOyx0ejBpxyRfrC+LIKAtCy8WulfZ4UEeosh3+QYwmFrDd0d
+	cIm2nePBjUbmbblh3604o6RJUjCmdGW0MDw9J4Y3lLJbAKyqJrLxwc/g97EoTBMx
+	MtsXDYn+B1HCf1Lxd9XEWTUUQVvOtaXVTBFuvkHDON1ggL/4n8Nx13jnyF9T/5vl
+	l3/a3MC4Ns92e7uBW7A0Pnb0C0yD014l+CQrq3NOKqU7EL/deuxw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48v8p4g2vq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 31 Aug 2025 01:00:55 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57UMU2Sv026871;
+	Sun, 31 Aug 2025 01:00:54 GMT
+Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012016.outbound.protection.outlook.com [40.107.200.16])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01k9fya-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 31 Aug 2025 01:00:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aVrvW+1SrDWCcHgcmsb1Esi8M2KnJ4n8usivDeiPmRrGp2puMa4Hi2cqvdLrqWHFhlYwj5/dw5+xG3Yh2IPM6Lp+1z6pknrBlXPYXOniExXw08OdT5dqyL8XfSSPcVyVWxxAccfU4J5T8vomm2gvY6ynZQLjnSiCNXw/y1V9eQY5e/S7fBPydQs4vM3L1sm4rDNayELatUzBfL8Gjk4QLaYUd7gbZ2Df3EF4udu2EbwC6KtQra79sJ094MXAn/tiY1m2lz9498kh9+kaLbUqyY5DTpuQeAIIO9xEKM23NDduLNlmqYVJYfAHuYnAqL9AogAzzy19/GasWuB2bVe+8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tur+Tjx3BTqpCIea5uI1WI4X60ODxfwMk7DAmsro92k=;
+ b=kCwYmouuw6TRKb1PI9N6T+rbcvWOWQIQJsNYIfloZpc5NqWpAiafIlkEYXCktA4I1IaYcWFd6+SfYWYOhmLg02pB6vt9afr3wHZy+9BySRt14950G0t9Fpax5JQR9+3wOkTNgKlfBBqyi/xVFB/rzntiZYixnG00k8DqpaCYYyKlSJ8VGAfuBGTu3nJpH4BhMBxDVYhxBhatNfpEepYenEu3Nnw0mXvyJ/ao/7kMVb5vuE8yQlT0fCsSszWg4tAZQLV8Fw5sY0CMF1iVSmzOmTgfhf+FMXb+4+w4lp5Lg7K9JbF51iuDz8tIve5K0V5kLL2lvBkr0CNBnWQHYgGE6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756573281; x=1757178081; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MWOp0rTA7zZYwoAEreoB91orfKRN6pd3RvUyv2wMzoI=;
-        b=UQ/aPg/MCl8pa0I4LTu1m5AmxkOYLakFQphrXihaiXcCUcbI0FDpbBvx/CvY9tJSv6
-         zjQ29MEm+EUlejL5H3tMAxIW9wzPQEEZfdXpDJm/V/tLqH1DxkCg3iHL0roGdKPyEkQo
-         XmQP4GuNPVDDdlWZNqqQcCoP4QxLrJkceaPMpxD53d6M3MQ288Bi8SyEVePxyhs6/BPu
-         +aGJ2V7OKZPbWIRJ4x+g6C8TkdPKrqba6hdXIxju+uKR2xP+TzmRevPP3g+Do2zxXyS/
-         +M3O3bOM8gvTKs4hLimniJ0xCJU0bNQ/EGPBAE1Mo9rIJn6x1TWEHtoUtrqqk848gfXD
-         HLVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756573281; x=1757178081;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MWOp0rTA7zZYwoAEreoB91orfKRN6pd3RvUyv2wMzoI=;
-        b=ODKhPwMxoV3j4wW4eBN85EFFRtIp515q8FJ5QXBk0lJK/UXMqIrjp3O3Ey9WHKrRbl
-         e2QRlG6yhNC1RnnPIp68MxmdI7khzP7N8j7Ap+8E69jSPSvJPoyFHhV7jAIEO+Meaw3z
-         WCPUYiZl8cxpRq6RT0NN4tucBNXdNbTVYmYHA5V66dAiLT/bG2r/XmFfBvDmm8r/jB/4
-         oray855KsxkNklsfFNNVW6bNETh+yqSA4X4fa+vV1q3n5DjSCM2vEKWaYKqaPWe1jZN+
-         p1PnAEPXIThVBYYC9VVAB/y/sBuv/Xc92kO1QOMM4DV9RSXc9bqnAcskNxaT7uYjmA0r
-         LrXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjiJyNCfWxCCJmezzsyTxZu7yfksybFEByZTXEIlyqnYOLJ7YR7P651mxQQpfBIjz441H5J3swPzFGL/JZ7hbm3w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyNdvqtHCNI/ZrzTk7EFIgLeiTr7pkUO9+ltlyUtNq54rO/5+V
-	gNbIlbAO5IJipGbW8t4PIFWpsvXArphSvGSVSEPCrEiDAv5k2QQqoaPMJR6nJlVHAXY=
-X-Gm-Gg: ASbGncuCDO+1A/KIMyWVFeWj2XJdX9i8mch5x/SjFegUZI6a+qmNNkoiSk2tPz48QJ7
-	qp6OMkGuXYyb4QFBJt2qqfa39ryS8AwsbVN15aN3YoVshfFMeXiuZ9jo5sbY4PNPTuQ4dRemt+l
-	jRbzmBiYwniDa+k8Nw2dBc38JWlnZ5vKv9Is1Gfv6+CFG015rfaTDbnxqRflbqREbAguNNt4hpX
-	gJZlxyYOf8wIsrsGW7f9RoZjVesl/cQQvi0gDEf2IuV0JVLyPsFrQ+cN3UySOOC4GljOmtv6vWI
-	UwcUjZasX503eLaSUxSOtixpRjiyExqiWThlrb2VGGA+Fqe7vdn7eNi7YWLUeZhwIzYNliL3k6z
-	3yH9cS/N6WMeMfIUSbdbdTItIQ65qHcT5x8mgQCQ=
-X-Google-Smtp-Source: AGHT+IGgze3q/Vsr9nY4RakSeqewag0OCF0p+CQF+pHQVCZt94f/RE+Z/hkykhoMh0GKOQB0UuZZgA==
-X-Received: by 2002:a17:906:794f:b0:ad8:8e05:e5e9 with SMTP id a640c23a62f3a-aff0edbf2damr278330166b.2.1756573280777;
-        Sat, 30 Aug 2025 10:01:20 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff12a6b404sm309038766b.88.2025.08.30.10.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 10:01:20 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sat, 30 Aug 2025 19:01:11 +0200
-Subject: [PATCH 3/4] mtd: rawnand: s3c2410: Drop driver (no actual S3C64xx
- user)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tur+Tjx3BTqpCIea5uI1WI4X60ODxfwMk7DAmsro92k=;
+ b=OsjzZBYMNE05jNu6ov1DFJ827bojwCaK7ye82/1UOVN+F3KmF081dEnVwMCZC/TZ5W2UZDZjovHweR5vDlw03CP5tqmGJX7wjficU7/qrX42qv3dvywx3dHpS6KK6tis86lkZuK8zQ0HOXjT/wpj6JoRcizM0JjaaEY2yYOPzDk=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by SN7PR10MB6450.namprd10.prod.outlook.com (2603:10b6:806:2a1::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Sun, 31 Aug
+ 2025 01:00:51 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.9073.021; Sun, 31 Aug 2025
+ 01:00:51 +0000
+To: Bharat Uppal <bharat.uppal@samsung.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
+        aswani.reddy@samsung.com, Nimesh Sati <nimesh.sati@samsung.com>
+Subject: Re: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
+ in reset on suspend
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250821053923.69411-1-bharat.uppal@samsung.com> (Bharat Uppal's
+	message of "Thu, 21 Aug 2025 11:09:23 +0530")
+Organization: Oracle Corporation
+Message-ID: <yq11posgv9j.fsf@ca-mkp.ca.oracle.com>
+References: <CGME20250821053938epcas5p290f78790250d8cb09df2f35e45624359@epcas5p2.samsung.com>
+	<20250821053923.69411-1-bharat.uppal@samsung.com>
+Date: Sat, 30 Aug 2025 21:00:49 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: YQBPR01CA0003.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01::11)
+ To CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250830-s3c-cleanup-nand-v1-3-05b99ef990fe@linaro.org>
-References: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
-In-Reply-To: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=38603;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=64SpjyOQDa//pYK2lF/0rCZAKhHP30UPnQ4w1EKqHuI=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosy5ZECtAAMZ9grGABbbqcBAeveUQzwK2fexnr
- zMQyPQ7CIKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLMuWQAKCRDBN2bmhouD
- 15R+D/9PO7gqlCbdP2JhjraBS0JNtyGCwOVIRL91rs6EV5nQ8t23GHWAZlMwzIuXcZ1alolmaI6
- NlFtsO2GA78CRFNnFvpp5svFTi+pqGUsw4p+DDobGByFPrD0jsKar9GsBhjvAF3oFvJO4vZS1Hx
- foUfhHYvLALixqnQTMhCxANNnBQUFuvlzDTzUbspuP/TYFqJRgzJ07Wjb40Zyo7GxAbOJ6dtRIz
- A8V6szICq1t7zHZqQp4W+jjxKrVOzyklB13DkkYuXVcCUKMQzWo7HOLuyyXuJHxGbarTfrqVVcA
- 1wsBHp9fZ7xXjb5dFDDTB/mfUuEv5q8dFLet1MSa287HVA8ag9esgaRiYDHbupLCl0VGejt7rPl
- t6/e7y3wFXsLGrZuiVJSd0eBSdY0ZDIVJKOeo8HgpNcWAPxtcheF0HzoMph4Ex+f71PTDIlLu+7
- 9Wpg7/55qaYcrjkdBqFAp/SSv38QjXtexiRWMzH6kpqxWlkCXoWCpyZSV6RA9AePWb7VseAwgWP
- 91OcYvoJkeN7Z0BRx7f0JOTaz+mX8Bs1X+XrQor+UgXgbQHGRvY+1hal6R0aTyTjfzB5Mr5jeMv
- qHrnboJLytSA1wyLKdTPL0CkeOdao9w+e2rzww8YLyXXcHkUaudn8xKLWirLkgER65PC+hAML4y
- yo9G73cvyFkvGIg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|SN7PR10MB6450:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8096c838-5d36-4075-6aec-08dde829d458
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mlPWPu4GgnveZUuiokLDxn407KvzwrZxjMc322nP5vCVORVsfavyJC86ffjj?=
+ =?us-ascii?Q?1htMkLhgBWjYXsL8kIM3osTbgFlvwojvfRU5Y2niGY1RhQ+Md5fXrUihRbd+?=
+ =?us-ascii?Q?sMaUMF1HiqMdnWd7c83sp3eT/279bFHyAILJl55muiWDuWY/STdfcin/3X/c?=
+ =?us-ascii?Q?LTMuCTO4OVxt7SOVSDZXosb2cotcfwxL9OpxDjVWYPPdaZ5aVqCuwaRTQfiw?=
+ =?us-ascii?Q?Lqu1jRjK+dSKtxuW9u7V+u7RpgGJJma70awpGxfgYArKCyXmOEliaREszSkd?=
+ =?us-ascii?Q?3RacX3x0bHZ+gnFyblD7tB5QLmpg492aEmnRl2TUc5jNSmTqIaXWu8NkbIX8?=
+ =?us-ascii?Q?Jx9K9aG8zpwmnzoCLq7jZjbYL/yO/2p/TbbQLvAONpcrJ9h1I4ZazF3xuu9E?=
+ =?us-ascii?Q?+0o+UrTG9GGPuEETmuiXA/95bHtKP2U3otz4AYFMnSRU0DUuK5tHefJV6/JC?=
+ =?us-ascii?Q?+F0Jlq7Li6fvBFiFW7EgylDNrTpnX8sBDWHZ/f1yfw+/nCYiBMoS8cMNTkbl?=
+ =?us-ascii?Q?kgl7N2K2umoosOwrYBDkBg37z9LWOLJAKM/N1H682mZksHbmay2+chB9qWmM?=
+ =?us-ascii?Q?GJtfl3/v+AMFYprcEY2GL6/o5twTHTcnzZSBHoy2ef7t4ud5H7Isk5w2hWBD?=
+ =?us-ascii?Q?rPG7gl9gHCKLC+nIlCB0YqJOZ4YdGKk2dS/sO+CrJUvQlayZIE0DszIYVSdA?=
+ =?us-ascii?Q?9M/pF7Bkq/ggswyERQMd9tWjV8kEKHeJUr3tyV9piqi1fBBJX1ZMeSErNb5B?=
+ =?us-ascii?Q?U3yQf88RY9S90tThYPXlLtKvDhv4cy5EHWwaRJRT0BXdpdL384TXrK8wujrM?=
+ =?us-ascii?Q?rZUmefDAiaKvbTsmMsx2p3ngmeLeY5OqSr+h65FkaOg/0HGJNS5sOhV+uEvI?=
+ =?us-ascii?Q?BmGlnWf2OOwzTA1/HK7AqR6nrWuFnG0vFndromzW4fog94vbV+5j16Meaobg?=
+ =?us-ascii?Q?IeOPSqUIiz/QSfbPvoLifY0WRF2W32DQNDZcghqq5GdafBTm9BmXsKSpV1iJ?=
+ =?us-ascii?Q?XrBvy+vRs5XjrerIY6phzc75nqJBcl6z70RaXHO9ihESh75DGDXBeVl8lcCe?=
+ =?us-ascii?Q?ukEKSblPrvPPN5sSQEtbOyOjiyfcj18SyMvrLkmdFpSGwmUa26J//yCX/EZy?=
+ =?us-ascii?Q?0Q5qgU1hMXn09fewfQ85VFi66SR8PPH5D9o414RX1ddnzfUam8SMVZe5RgwA?=
+ =?us-ascii?Q?EPZYX+LRt2+iEsKNRmahT9paAtXKg48daJvrZIHaLcfaOuYwpVcrF9hjhxef?=
+ =?us-ascii?Q?7uEDuFrGRKMpRK4hOyZs/bi1URAEcaV/6s4rBOYIewqFUD+0Pye050ZjDLU4?=
+ =?us-ascii?Q?oXr53d56wR5J7TCwKLi4uDdc4zYs450tOAF8+pmHt9+vsc2HXf4N5G/mPU2R?=
+ =?us-ascii?Q?30+0wUHe9kzjCt3NkMS80xSTaR8oEwdLGp6Gnu0yUi8I+Q72nA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pvj+7YmLpekuFEPYgVSRdBLZ6bv0pCUpSoC21aOmPrDZPxY4C6aI3lFyS00z?=
+ =?us-ascii?Q?xKHWc1DOywuqsMp4uTQ0VBO6p1vOhZhj9PQknbDed8i8V5kj1GUa+wVpOMOh?=
+ =?us-ascii?Q?fv7mmvZpXCkrIGVIdenvkP5gvTXF++A4K/UgrpEuaiyz4Gq+aijB1n99Vd68?=
+ =?us-ascii?Q?r95oZuqEijVoM9Euh8ruQeAbMcDceGEiO6RswuFmiw5TCcLwgte8wWYxmnDM?=
+ =?us-ascii?Q?0iwZ0xTm/pz9gx3oxBjeTJt/IuFSmqQmOD2WyKFON/8pFHqbJWRLuf0/L31p?=
+ =?us-ascii?Q?3/Ii1k8LUGpEauPw6HfdSQOhnF/6cOuXM42wZdErgOznc+BnXmyo60AzoBPH?=
+ =?us-ascii?Q?mmE/4r2WlZ/BmqqUT7Ix2hVQ7634ZP7xE/jmbHU9xD/nZT9t+ScpPca+C8+6?=
+ =?us-ascii?Q?FyaG7fYFaDm4dUS+bYdd5o72XkldDbzBpgiLmGOg7dMI5Ez/g+5t9MyskV1f?=
+ =?us-ascii?Q?uKj6lMSo746QQwMqkWGQLwkIH7ZlVkhty6+lMQjSJ0+sgnZpDCUrpYaU/NUZ?=
+ =?us-ascii?Q?fT8HUpv6h3ixbfqk1nJtlI63LHIGOPqDwqvsGeHHoeaBkjFYCocnzQ25Bk4V?=
+ =?us-ascii?Q?zQ8evVZ4o6Imcbg0ziKWl1LEgTDJH/SAsEBRmNanlHE7k7GB03J5Rs4THr0h?=
+ =?us-ascii?Q?dBHqBqsTKl9vbvb+u7TkEtXluZnYWP7BC9brCikaJ4IeodIfXI6rddZIpvn0?=
+ =?us-ascii?Q?OQz7w80q/PgvpjYu6Uf9oXTnuAYQ+QUu8SK1HzlVd+BsR+E2uLCD+yswXuqh?=
+ =?us-ascii?Q?Vj9qJOcCmXYtnKZS3YlxgMFekNdTnuA6WUy+Xe0yIVnq9g/UMO/AXvDT43IZ?=
+ =?us-ascii?Q?+A30LEAlvrrP4AWWBkVbSxwAXZUvAdvCkoBXlsQumF78WxRdk8pUDTlvZfPR?=
+ =?us-ascii?Q?SOrmKxh0axajFS+352/gExZVGk6JV/4IvJEB7A6dUZ409/+w9c2Ao38aL+cd?=
+ =?us-ascii?Q?4j/F5UdXvUMsuRnP+ti1gWjYPn/tQEq+EB8kiICv2ep/ZvCcGYgOkpxixpU8?=
+ =?us-ascii?Q?7orBGgB3hBnK1X6lcTdYHy5BoMYuUfPWqo74zPVX35FT02SYNQtizhfyyOss?=
+ =?us-ascii?Q?O+fWS2Mbo1BJ8y8MGRnmLuOupe6jsN2Usb0+ux83B5NSdHc8RDnXUYQCeBF6?=
+ =?us-ascii?Q?1yNrw3Hvd1F0+pHMyalQt+jglKVYTcFx1M8x4uR5ihiJQUszFWOLNM+K2HHV?=
+ =?us-ascii?Q?XaLk3q6SfDenux2oE9B1F6ggOgBe7UeMS7606vq6YGak7UC6KFKHpsff8JH/?=
+ =?us-ascii?Q?f5GK2QBupFksppzz8BB5PvMK0erwi1TUAGE1VLYJVD2MVPctGRnZXz7gzsKV?=
+ =?us-ascii?Q?hjYnoA285H0iCwq3gwpAJ9OBolkY+ICQg4CxdJeKPvBXqUYm2R6DkZeSZ0O0?=
+ =?us-ascii?Q?xK8MapzzJ1OxjWbBjtzY2u+s9NrRksCrFema4c8w65lBkABxaZIbG41RZ7+p?=
+ =?us-ascii?Q?6NWpndbsfCivmJa6jwvJXO9leKaq+nSKkrewOEq4tjAKBSh2b6b6lIxY2KDF?=
+ =?us-ascii?Q?5/GU4ynAH77Mpc5Di3pU8gi4vxR0ldq3F/in704TX7DFPxRLcge2qdauEG52?=
+ =?us-ascii?Q?PJ3bm6ez77NwrS9+QbyCJKBcwVVLd7WuxCC0o2TN/9WNTyHUAvrYZFzwPYDX?=
+ =?us-ascii?Q?yg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9SC7P3ZTWJdNes6lYAC6Pvw1ggIw8zLLnv6TZVJP6ZgTQPqGyEjgyKocMO9CI5hXWqZnOwTP3MV/sWBPGyVmkAGslnD7zlQLy8fJz+X3ezKNJK/a6PYgbvg+FdKh3Uhtptha6YvjyUBBijmWHmwLKzPW9gTy6SkXWEUdk4ayS2eFTHh1uycfDBUhgZX6vGUWWTLbCXsYL9uW3v/ED2lIrIbVod9GpJ+pLjQ4mJFyH3XY2yaP8fbHq4vGqrT9fTsEgrEXPDIK2Cs3F+26hLoOH5APflgI25XyN4Neugm/1Ln1RIbI9/NSUeQFRB6A0EXtrkUocUqjlWlOL+j3+GvsOBgnj88jo/eylW7EbD6fjlz+Er5u2x2Z9M3lied4zArEm0jZ4s7NV9tKfLH//2Pq//kvTcWTLIPx4k9UxfsNV1dHhQW5/Kec1ijDT3lWdj06llsX/UlSQRMCvlML3DRd9Un72caFXFGX8yaacAE9xWv3GPgek71dclMVUR+9pDEFI7T0cF38LVU2q3fxYsC+iU05I9h1XPUIU/lGhidmPE0NhI3QAcgNnxt1U56w/TtX6axMAa2gECZtqKjWIcOCwtpRXcH9ArPnVZRBNmtvwsM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8096c838-5d36-4075-6aec-08dde829d458
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2025 01:00:51.1849
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T6KfIGwqR6frrs9uSO5JmoghMlhgA7vhpxjhZUD74wNM4LnUJPez/m5yYwDEyFegIT8JYoVWuBotwJ+bPyVv0hDVWa/l2PWOkzbqFsDXuzs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6450
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-30_10,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508310008
+X-Proofpoint-ORIG-GUID: H_C8lIzzI1mRNo6xyb_XFKPnjk29weCO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDIyMiBTYWx0ZWRfX/PHKfq6Lop+8
+ zjgLlvwYsKI3B+QyfrDq2+WoQaVpGZYfmOSV/aafYOX3yCb4giYgkR85jyXMlYgCsy2YHMAy4u/
+ KSXemeRf608K9tA0988RYV1QeE1SPeo/9ALOdy49bUwskyTp90VgH0i7QZjFIYXoqbYdLDA9bH8
+ GGlBpIUc01XfzQm2/KXX/OXopYahunfDV8y7QVWtqYRn/utQBhd3Fg5D0XcDN2yXhpresWReh3C
+ M1PT086Q9aUh9rryE5nSr3hcR4jeZMRCIofn8QZNRkDcJcg8uHBC3R3ON1+gx93fmH8DC1xjSAx
+ bquCbdVzsmEH68wPgohLK+zq7F/V6b1zGWm04rD9l3dPsJi0aJtt95LyenR5StDonz7/dnVP6OA
+ oLd9vcuv
+X-Authority-Analysis: v=2.4 cv=doHbC0g4 c=1 sm=1 tr=0 ts=68b39ec7 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=GoEa3M9JfhUA:10 a=CEIZDvEd9kZ5D99qYfAA:9 a=zgiPjhLxNE0A:10
+X-Proofpoint-GUID: H_C8lIzzI1mRNo6xyb_XFKPnjk29weCO
 
-The s3c2410 NAND driver still supports S3C64xx platform, which in
-general is supported in the kernel.  There are however no references of
-"s3c6400-nand" platform device ID or "s3c24xx-nand" driver, thus this
-driver cannot be instantiated for S3C64xx platform and is basically
-unused.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/mtd/nand/raw/Kconfig                   |   26 -
- drivers/mtd/nand/raw/Makefile                  |    1 -
- drivers/mtd/nand/raw/s3c2410.c                 | 1192 ------------------------
- include/linux/platform_data/mtd-nand-s3c2410.h |   70 --
- 4 files changed, 1289 deletions(-)
+Bharat,
 
-diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-index 4b99d9c422c3f689c4023c139c1b90ed1d0fbc1a..f053806333c3f7ecb3d4d9d514e67238d39f4286 100644
---- a/drivers/mtd/nand/raw/Kconfig
-+++ b/drivers/mtd/nand/raw/Kconfig
-@@ -77,32 +77,6 @@ config MTD_NAND_NDFC
- 	help
- 	  NDFC Nand Flash Controllers are integrated in IBM/AMCC's 4xx SoCs
- 
--config MTD_NAND_S3C2410
--	tristate "Samsung S3C NAND controller"
--	depends on ARCH_S3C64XX
--	help
--	  This enables the NAND flash controller on the S3C24xx and S3C64xx
--	  SoCs
--
--	  No board specific support is done by this driver, each board
--	  must advertise a platform_device for the driver to attach.
--
--config MTD_NAND_S3C2410_DEBUG
--	bool "Samsung S3C NAND controller debug"
--	depends on MTD_NAND_S3C2410
--	help
--	  Enable debugging of the S3C NAND driver
--
--config MTD_NAND_S3C2410_CLKSTOP
--	bool "Samsung S3C NAND IDLE clock stop"
--	depends on MTD_NAND_S3C2410
--	default n
--	help
--	  Stop the clock to the NAND controller when there is no chip
--	  selected to save power. This will mean there is a small delay
--	  when the is NAND chip selected or released, but will save
--	  approximately 5mA of power when there is nothing happening.
--
- config MTD_NAND_SHARPSL
- 	tristate "Sharp SL Series (C7xx + others) NAND controller"
- 	depends on ARCH_PXA || COMPILE_TEST
-diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
-index 711d043ad4f86620b64b35ad3adab6c19f69ad25..363cd18eaf164fc1dc984f4ba9414965bf97f655 100644
---- a/drivers/mtd/nand/raw/Makefile
-+++ b/drivers/mtd/nand/raw/Makefile
-@@ -9,7 +9,6 @@ obj-$(CONFIG_MTD_NAND_DENALI)		+= denali.o
- obj-$(CONFIG_MTD_NAND_DENALI_PCI)	+= denali_pci.o
- obj-$(CONFIG_MTD_NAND_DENALI_DT)	+= denali_dt.o
- obj-$(CONFIG_MTD_NAND_AU1550)		+= au1550nd.o
--obj-$(CONFIG_MTD_NAND_S3C2410)		+= s3c2410.o
- obj-$(CONFIG_MTD_NAND_DAVINCI)		+= davinci_nand.o
- obj-$(CONFIG_MTD_NAND_DISKONCHIP)	+= diskonchip.o
- obj-$(CONFIG_MTD_NAND_FSMC)		+= fsmc_nand.o
-diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
-deleted file mode 100644
-index 33130d75c5bab709a3e5cfd6e95b273cf62e4d46..0000000000000000000000000000000000000000
---- a/drivers/mtd/nand/raw/s3c2410.c
-+++ /dev/null
-@@ -1,1192 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * Copyright © 2004-2008 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * Samsung S3C2410/S3C2440/S3C2412 NAND driver
--*/
--
--#define pr_fmt(fmt) "nand-s3c2410: " fmt
--
--#ifdef CONFIG_MTD_NAND_S3C2410_DEBUG
--#define DEBUG
--#endif
--
--#include <linux/module.h>
--#include <linux/types.h>
--#include <linux/kernel.h>
--#include <linux/string.h>
--#include <linux/io.h>
--#include <linux/ioport.h>
--#include <linux/platform_device.h>
--#include <linux/delay.h>
--#include <linux/err.h>
--#include <linux/slab.h>
--#include <linux/clk.h>
--#include <linux/cpufreq.h>
--#include <linux/of.h>
--
--#include <linux/mtd/mtd.h>
--#include <linux/mtd/rawnand.h>
--#include <linux/mtd/partitions.h>
--
--#include <linux/platform_data/mtd-nand-s3c2410.h>
--
--#define S3C2410_NFREG(x) (x)
--
--#define S3C2410_NFCONF		S3C2410_NFREG(0x00)
--#define S3C2410_NFCMD		S3C2410_NFREG(0x04)
--#define S3C2410_NFADDR		S3C2410_NFREG(0x08)
--#define S3C2410_NFDATA		S3C2410_NFREG(0x0C)
--#define S3C2410_NFSTAT		S3C2410_NFREG(0x10)
--#define S3C2410_NFECC		S3C2410_NFREG(0x14)
--#define S3C2440_NFCONT		S3C2410_NFREG(0x04)
--#define S3C2440_NFCMD		S3C2410_NFREG(0x08)
--#define S3C2440_NFADDR		S3C2410_NFREG(0x0C)
--#define S3C2440_NFDATA		S3C2410_NFREG(0x10)
--#define S3C2440_NFSTAT		S3C2410_NFREG(0x20)
--#define S3C2440_NFMECC0		S3C2410_NFREG(0x2C)
--#define S3C2412_NFSTAT		S3C2410_NFREG(0x28)
--#define S3C2412_NFMECC0		S3C2410_NFREG(0x34)
--#define S3C2410_NFCONF_EN		(1<<15)
--#define S3C2410_NFCONF_INITECC		(1<<12)
--#define S3C2410_NFCONF_nFCE		(1<<11)
--#define S3C2410_NFCONF_TACLS(x)		((x)<<8)
--#define S3C2410_NFCONF_TWRPH0(x)	((x)<<4)
--#define S3C2410_NFCONF_TWRPH1(x)	((x)<<0)
--#define S3C2410_NFSTAT_BUSY		(1<<0)
--#define S3C2440_NFCONF_TACLS(x)		((x)<<12)
--#define S3C2440_NFCONF_TWRPH0(x)	((x)<<8)
--#define S3C2440_NFCONF_TWRPH1(x)	((x)<<4)
--#define S3C2440_NFCONT_INITECC		(1<<4)
--#define S3C2440_NFCONT_nFCE		(1<<1)
--#define S3C2440_NFCONT_ENABLE		(1<<0)
--#define S3C2440_NFSTAT_READY		(1<<0)
--#define S3C2412_NFCONF_NANDBOOT		(1<<31)
--#define S3C2412_NFCONT_INIT_MAIN_ECC	(1<<5)
--#define S3C2412_NFCONT_nFCE0		(1<<1)
--#define S3C2412_NFSTAT_READY		(1<<0)
--
--/* new oob placement block for use with hardware ecc generation
-- */
--static int s3c2410_ooblayout_ecc(struct mtd_info *mtd, int section,
--				 struct mtd_oob_region *oobregion)
--{
--	if (section)
--		return -ERANGE;
--
--	oobregion->offset = 0;
--	oobregion->length = 3;
--
--	return 0;
--}
--
--static int s3c2410_ooblayout_free(struct mtd_info *mtd, int section,
--				  struct mtd_oob_region *oobregion)
--{
--	if (section)
--		return -ERANGE;
--
--	oobregion->offset = 8;
--	oobregion->length = 8;
--
--	return 0;
--}
--
--static const struct mtd_ooblayout_ops s3c2410_ooblayout_ops = {
--	.ecc = s3c2410_ooblayout_ecc,
--	.free = s3c2410_ooblayout_free,
--};
--
--/* controller and mtd information */
--
--struct s3c2410_nand_info;
--
--/**
-- * struct s3c2410_nand_mtd - driver MTD structure
-- * @chip: The NAND chip information.
-- * @set: The platform information supplied for this set of NAND chips.
-- * @info: Link back to the hardware information.
--*/
--struct s3c2410_nand_mtd {
--	struct nand_chip		chip;
--	struct s3c2410_nand_set		*set;
--	struct s3c2410_nand_info	*info;
--};
--
--enum s3c_cpu_type {
--	TYPE_S3C2410,
--	TYPE_S3C2412,
--	TYPE_S3C2440,
--};
--
--enum s3c_nand_clk_state {
--	CLOCK_DISABLE	= 0,
--	CLOCK_ENABLE,
--	CLOCK_SUSPEND,
--};
--
--/* overview of the s3c2410 nand state */
--
--/**
-- * struct s3c2410_nand_info - NAND controller state.
-- * @controller: Base controller structure.
-- * @mtds: An array of MTD instances on this controller.
-- * @platform: The platform data for this board.
-- * @device: The platform device we bound to.
-- * @clk: The clock resource for this controller.
-- * @regs: The area mapped for the hardware registers.
-- * @sel_reg: Pointer to the register controlling the NAND selection.
-- * @sel_bit: The bit in @sel_reg to select the NAND chip.
-- * @mtd_count: The number of MTDs created from this controller.
-- * @save_sel: The contents of @sel_reg to be saved over suspend.
-- * @clk_rate: The clock rate from @clk.
-- * @clk_state: The current clock state.
-- * @cpu_type: The exact type of this controller.
-- */
--struct s3c2410_nand_info {
--	/* mtd info */
--	struct nand_controller		controller;
--	struct s3c2410_nand_mtd		*mtds;
--	struct s3c2410_platform_nand	*platform;
--
--	/* device info */
--	struct device			*device;
--	struct clk			*clk;
--	void __iomem			*regs;
--	void __iomem			*sel_reg;
--	int				sel_bit;
--	int				mtd_count;
--	unsigned long			save_sel;
--	unsigned long			clk_rate;
--	enum s3c_nand_clk_state		clk_state;
--
--	enum s3c_cpu_type		cpu_type;
--};
--
--struct s3c24XX_nand_devtype_data {
--	enum s3c_cpu_type type;
--};
--
--/* conversion functions */
--
--static struct s3c2410_nand_mtd *s3c2410_nand_mtd_toours(struct mtd_info *mtd)
--{
--	return container_of(mtd_to_nand(mtd), struct s3c2410_nand_mtd,
--			    chip);
--}
--
--static struct s3c2410_nand_info *s3c2410_nand_mtd_toinfo(struct mtd_info *mtd)
--{
--	return s3c2410_nand_mtd_toours(mtd)->info;
--}
--
--static struct s3c2410_nand_info *to_nand_info(struct platform_device *dev)
--{
--	return platform_get_drvdata(dev);
--}
--
--static struct s3c2410_platform_nand *to_nand_plat(struct platform_device *dev)
--{
--	return dev_get_platdata(&dev->dev);
--}
--
--static inline int allow_clk_suspend(struct s3c2410_nand_info *info)
--{
--#ifdef CONFIG_MTD_NAND_S3C2410_CLKSTOP
--	return 1;
--#else
--	return 0;
--#endif
--}
--
--/**
-- * s3c2410_nand_clk_set_state - Enable, disable or suspend NAND clock.
-- * @info: The controller instance.
-- * @new_state: State to which clock should be set.
-- */
--static void s3c2410_nand_clk_set_state(struct s3c2410_nand_info *info,
--		enum s3c_nand_clk_state new_state)
--{
--	if (!allow_clk_suspend(info) && new_state == CLOCK_SUSPEND)
--		return;
--
--	if (info->clk_state == CLOCK_ENABLE) {
--		if (new_state != CLOCK_ENABLE)
--			clk_disable_unprepare(info->clk);
--	} else {
--		if (new_state == CLOCK_ENABLE)
--			clk_prepare_enable(info->clk);
--	}
--
--	info->clk_state = new_state;
--}
--
--/* timing calculations */
--
--#define NS_IN_KHZ 1000000
--
--/**
-- * s3c_nand_calc_rate - calculate timing data.
-- * @wanted: The cycle time in nanoseconds.
-- * @clk: The clock rate in kHz.
-- * @max: The maximum divider value.
-- *
-- * Calculate the timing value from the given parameters.
-- */
--static int s3c_nand_calc_rate(int wanted, unsigned long clk, int max)
--{
--	int result;
--
--	result = DIV_ROUND_UP((wanted * clk), NS_IN_KHZ);
--
--	pr_debug("result %d from %ld, %d\n", result, clk, wanted);
--
--	if (result > max) {
--		pr_err("%d ns is too big for current clock rate %ld\n",
--			wanted, clk);
--		return -1;
--	}
--
--	if (result < 1)
--		result = 1;
--
--	return result;
--}
--
--#define to_ns(ticks, clk) (((ticks) * NS_IN_KHZ) / (unsigned int)(clk))
--
--/* controller setup */
--
--/**
-- * s3c2410_nand_setrate - setup controller timing information.
-- * @info: The controller instance.
-- *
-- * Given the information supplied by the platform, calculate and set
-- * the necessary timing registers in the hardware to generate the
-- * necessary timing cycles to the hardware.
-- */
--static int s3c2410_nand_setrate(struct s3c2410_nand_info *info)
--{
--	struct s3c2410_platform_nand *plat = info->platform;
--	int tacls_max = (info->cpu_type == TYPE_S3C2412) ? 8 : 4;
--	int tacls, twrph0, twrph1;
--	unsigned long clkrate = clk_get_rate(info->clk);
--	unsigned long set, cfg, mask;
--	unsigned long flags;
--
--	/* calculate the timing information for the controller */
--
--	info->clk_rate = clkrate;
--	clkrate /= 1000;	/* turn clock into kHz for ease of use */
--
--	if (plat != NULL) {
--		tacls = s3c_nand_calc_rate(plat->tacls, clkrate, tacls_max);
--		twrph0 = s3c_nand_calc_rate(plat->twrph0, clkrate, 8);
--		twrph1 = s3c_nand_calc_rate(plat->twrph1, clkrate, 8);
--	} else {
--		/* default timings */
--		tacls = tacls_max;
--		twrph0 = 8;
--		twrph1 = 8;
--	}
--
--	if (tacls < 0 || twrph0 < 0 || twrph1 < 0) {
--		dev_err(info->device, "cannot get suitable timings\n");
--		return -EINVAL;
--	}
--
--	dev_info(info->device, "Tacls=%d, %dns Twrph0=%d %dns, Twrph1=%d %dns\n",
--		tacls, to_ns(tacls, clkrate), twrph0, to_ns(twrph0, clkrate),
--						twrph1, to_ns(twrph1, clkrate));
--
--	switch (info->cpu_type) {
--	case TYPE_S3C2410:
--		mask = (S3C2410_NFCONF_TACLS(3) |
--			S3C2410_NFCONF_TWRPH0(7) |
--			S3C2410_NFCONF_TWRPH1(7));
--		set = S3C2410_NFCONF_EN;
--		set |= S3C2410_NFCONF_TACLS(tacls - 1);
--		set |= S3C2410_NFCONF_TWRPH0(twrph0 - 1);
--		set |= S3C2410_NFCONF_TWRPH1(twrph1 - 1);
--		break;
--
--	case TYPE_S3C2440:
--	case TYPE_S3C2412:
--		mask = (S3C2440_NFCONF_TACLS(tacls_max - 1) |
--			S3C2440_NFCONF_TWRPH0(7) |
--			S3C2440_NFCONF_TWRPH1(7));
--
--		set = S3C2440_NFCONF_TACLS(tacls - 1);
--		set |= S3C2440_NFCONF_TWRPH0(twrph0 - 1);
--		set |= S3C2440_NFCONF_TWRPH1(twrph1 - 1);
--		break;
--
--	default:
--		BUG();
--	}
--
--	local_irq_save(flags);
--
--	cfg = readl(info->regs + S3C2410_NFCONF);
--	cfg &= ~mask;
--	cfg |= set;
--	writel(cfg, info->regs + S3C2410_NFCONF);
--
--	local_irq_restore(flags);
--
--	dev_dbg(info->device, "NF_CONF is 0x%lx\n", cfg);
--
--	return 0;
--}
--
--/**
-- * s3c2410_nand_inithw - basic hardware initialisation
-- * @info: The hardware state.
-- *
-- * Do the basic initialisation of the hardware, using s3c2410_nand_setrate()
-- * to setup the hardware access speeds and set the controller to be enabled.
--*/
--static int s3c2410_nand_inithw(struct s3c2410_nand_info *info)
--{
--	int ret;
--
--	ret = s3c2410_nand_setrate(info);
--	if (ret < 0)
--		return ret;
--
--	switch (info->cpu_type) {
--	case TYPE_S3C2410:
--	default:
--		break;
--
--	case TYPE_S3C2440:
--	case TYPE_S3C2412:
--		/* enable the controller and de-assert nFCE */
--
--		writel(S3C2440_NFCONT_ENABLE, info->regs + S3C2440_NFCONT);
--	}
--
--	return 0;
--}
--
--/**
-- * s3c2410_nand_select_chip - select the given nand chip
-- * @this: NAND chip object.
-- * @chip: The chip number.
-- *
-- * This is called by the MTD layer to either select a given chip for the
-- * @mtd instance, or to indicate that the access has finished and the
-- * chip can be de-selected.
-- *
-- * The routine ensures that the nFCE line is correctly setup, and any
-- * platform specific selection code is called to route nFCE to the specific
-- * chip.
-- */
--static void s3c2410_nand_select_chip(struct nand_chip *this, int chip)
--{
--	struct s3c2410_nand_info *info;
--	struct s3c2410_nand_mtd *nmtd;
--	unsigned long cur;
--
--	nmtd = nand_get_controller_data(this);
--	info = nmtd->info;
--
--	if (chip != -1)
--		s3c2410_nand_clk_set_state(info, CLOCK_ENABLE);
--
--	cur = readl(info->sel_reg);
--
--	if (chip == -1) {
--		cur |= info->sel_bit;
--	} else {
--		if (nmtd->set != NULL && chip > nmtd->set->nr_chips) {
--			dev_err(info->device, "invalid chip %d\n", chip);
--			return;
--		}
--
--		if (info->platform != NULL) {
--			if (info->platform->select_chip != NULL)
--				(info->platform->select_chip) (nmtd->set, chip);
--		}
--
--		cur &= ~info->sel_bit;
--	}
--
--	writel(cur, info->sel_reg);
--
--	if (chip == -1)
--		s3c2410_nand_clk_set_state(info, CLOCK_SUSPEND);
--}
--
--/* s3c2410_nand_hwcontrol
-- *
-- * Issue command and address cycles to the chip
--*/
--
--static void s3c2410_nand_hwcontrol(struct nand_chip *chip, int cmd,
--				   unsigned int ctrl)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--
--	if (cmd == NAND_CMD_NONE)
--		return;
--
--	if (ctrl & NAND_CLE)
--		writeb(cmd, info->regs + S3C2410_NFCMD);
--	else
--		writeb(cmd, info->regs + S3C2410_NFADDR);
--}
--
--/* command and control functions */
--
--static void s3c2440_nand_hwcontrol(struct nand_chip *chip, int cmd,
--				   unsigned int ctrl)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--
--	if (cmd == NAND_CMD_NONE)
--		return;
--
--	if (ctrl & NAND_CLE)
--		writeb(cmd, info->regs + S3C2440_NFCMD);
--	else
--		writeb(cmd, info->regs + S3C2440_NFADDR);
--}
--
--/* s3c2410_nand_devready()
-- *
-- * returns 0 if the nand is busy, 1 if it is ready
--*/
--
--static int s3c2410_nand_devready(struct nand_chip *chip)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	return readb(info->regs + S3C2410_NFSTAT) & S3C2410_NFSTAT_BUSY;
--}
--
--static int s3c2440_nand_devready(struct nand_chip *chip)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	return readb(info->regs + S3C2440_NFSTAT) & S3C2440_NFSTAT_READY;
--}
--
--static int s3c2412_nand_devready(struct nand_chip *chip)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	return readb(info->regs + S3C2412_NFSTAT) & S3C2412_NFSTAT_READY;
--}
--
--/* ECC handling functions */
--
--static int s3c2410_nand_correct_data(struct nand_chip *chip, u_char *dat,
--				     u_char *read_ecc, u_char *calc_ecc)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	unsigned int diff0, diff1, diff2;
--	unsigned int bit, byte;
--
--	pr_debug("%s(%p,%p,%p,%p)\n", __func__, mtd, dat, read_ecc, calc_ecc);
--
--	diff0 = read_ecc[0] ^ calc_ecc[0];
--	diff1 = read_ecc[1] ^ calc_ecc[1];
--	diff2 = read_ecc[2] ^ calc_ecc[2];
--
--	pr_debug("%s: rd %*phN calc %*phN diff %02x%02x%02x\n",
--		 __func__, 3, read_ecc, 3, calc_ecc,
--		 diff0, diff1, diff2);
--
--	if (diff0 == 0 && diff1 == 0 && diff2 == 0)
--		return 0;		/* ECC is ok */
--
--	/* sometimes people do not think about using the ECC, so check
--	 * to see if we have an 0xff,0xff,0xff read ECC and then ignore
--	 * the error, on the assumption that this is an un-eccd page.
--	 */
--	if (read_ecc[0] == 0xff && read_ecc[1] == 0xff && read_ecc[2] == 0xff
--	    && info->platform->ignore_unset_ecc)
--		return 0;
--
--	/* Can we correct this ECC (ie, one row and column change).
--	 * Note, this is similar to the 256 error code on smartmedia */
--
--	if (((diff0 ^ (diff0 >> 1)) & 0x55) == 0x55 &&
--	    ((diff1 ^ (diff1 >> 1)) & 0x55) == 0x55 &&
--	    ((diff2 ^ (diff2 >> 1)) & 0x55) == 0x55) {
--		/* calculate the bit position of the error */
--
--		bit  = ((diff2 >> 3) & 1) |
--		       ((diff2 >> 4) & 2) |
--		       ((diff2 >> 5) & 4);
--
--		/* calculate the byte position of the error */
--
--		byte = ((diff2 << 7) & 0x100) |
--		       ((diff1 << 0) & 0x80)  |
--		       ((diff1 << 1) & 0x40)  |
--		       ((diff1 << 2) & 0x20)  |
--		       ((diff1 << 3) & 0x10)  |
--		       ((diff0 >> 4) & 0x08)  |
--		       ((diff0 >> 3) & 0x04)  |
--		       ((diff0 >> 2) & 0x02)  |
--		       ((diff0 >> 1) & 0x01);
--
--		dev_dbg(info->device, "correcting error bit %d, byte %d\n",
--			bit, byte);
--
--		dat[byte] ^= (1 << bit);
--		return 1;
--	}
--
--	/* if there is only one bit difference in the ECC, then
--	 * one of only a row or column parity has changed, which
--	 * means the error is most probably in the ECC itself */
--
--	diff0 |= (diff1 << 8);
--	diff0 |= (diff2 << 16);
--
--	/* equal to "(diff0 & ~(1 << __ffs(diff0)))" */
--	if ((diff0 & (diff0 - 1)) == 0)
--		return 1;
--
--	return -1;
--}
--
--/* ECC functions
-- *
-- * These allow the s3c2410 and s3c2440 to use the controller's ECC
-- * generator block to ECC the data as it passes through]
--*/
--
--static void s3c2410_nand_enable_hwecc(struct nand_chip *chip, int mode)
--{
--	struct s3c2410_nand_info *info;
--	unsigned long ctrl;
--
--	info = s3c2410_nand_mtd_toinfo(nand_to_mtd(chip));
--	ctrl = readl(info->regs + S3C2410_NFCONF);
--	ctrl |= S3C2410_NFCONF_INITECC;
--	writel(ctrl, info->regs + S3C2410_NFCONF);
--}
--
--static void s3c2412_nand_enable_hwecc(struct nand_chip *chip, int mode)
--{
--	struct s3c2410_nand_info *info;
--	unsigned long ctrl;
--
--	info = s3c2410_nand_mtd_toinfo(nand_to_mtd(chip));
--	ctrl = readl(info->regs + S3C2440_NFCONT);
--	writel(ctrl | S3C2412_NFCONT_INIT_MAIN_ECC,
--	       info->regs + S3C2440_NFCONT);
--}
--
--static void s3c2440_nand_enable_hwecc(struct nand_chip *chip, int mode)
--{
--	struct s3c2410_nand_info *info;
--	unsigned long ctrl;
--
--	info = s3c2410_nand_mtd_toinfo(nand_to_mtd(chip));
--	ctrl = readl(info->regs + S3C2440_NFCONT);
--	writel(ctrl | S3C2440_NFCONT_INITECC, info->regs + S3C2440_NFCONT);
--}
--
--static int s3c2410_nand_calculate_ecc(struct nand_chip *chip,
--				      const u_char *dat, u_char *ecc_code)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--
--	ecc_code[0] = readb(info->regs + S3C2410_NFECC + 0);
--	ecc_code[1] = readb(info->regs + S3C2410_NFECC + 1);
--	ecc_code[2] = readb(info->regs + S3C2410_NFECC + 2);
--
--	pr_debug("%s: returning ecc %*phN\n", __func__, 3, ecc_code);
--
--	return 0;
--}
--
--static int s3c2412_nand_calculate_ecc(struct nand_chip *chip,
--				      const u_char *dat, u_char *ecc_code)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	unsigned long ecc = readl(info->regs + S3C2412_NFMECC0);
--
--	ecc_code[0] = ecc;
--	ecc_code[1] = ecc >> 8;
--	ecc_code[2] = ecc >> 16;
--
--	pr_debug("%s: returning ecc %*phN\n", __func__, 3, ecc_code);
--
--	return 0;
--}
--
--static int s3c2440_nand_calculate_ecc(struct nand_chip *chip,
--				      const u_char *dat, u_char *ecc_code)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	unsigned long ecc = readl(info->regs + S3C2440_NFMECC0);
--
--	ecc_code[0] = ecc;
--	ecc_code[1] = ecc >> 8;
--	ecc_code[2] = ecc >> 16;
--
--	pr_debug("%s: returning ecc %06lx\n", __func__, ecc & 0xffffff);
--
--	return 0;
--}
--
--/* over-ride the standard functions for a little more speed. We can
-- * use read/write block to move the data buffers to/from the controller
--*/
--
--static void s3c2410_nand_read_buf(struct nand_chip *this, u_char *buf, int len)
--{
--	readsb(this->legacy.IO_ADDR_R, buf, len);
--}
--
--static void s3c2440_nand_read_buf(struct nand_chip *this, u_char *buf, int len)
--{
--	struct mtd_info *mtd = nand_to_mtd(this);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--
--	readsl(info->regs + S3C2440_NFDATA, buf, len >> 2);
--
--	/* cleanup if we've got less than a word to do */
--	if (len & 3) {
--		buf += len & ~3;
--
--		for (; len & 3; len--)
--			*buf++ = readb(info->regs + S3C2440_NFDATA);
--	}
--}
--
--static void s3c2410_nand_write_buf(struct nand_chip *this, const u_char *buf,
--				   int len)
--{
--	writesb(this->legacy.IO_ADDR_W, buf, len);
--}
--
--static void s3c2440_nand_write_buf(struct nand_chip *this, const u_char *buf,
--				   int len)
--{
--	struct mtd_info *mtd = nand_to_mtd(this);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--
--	writesl(info->regs + S3C2440_NFDATA, buf, len >> 2);
--
--	/* cleanup any fractional write */
--	if (len & 3) {
--		buf += len & ~3;
--
--		for (; len & 3; len--, buf++)
--			writeb(*buf, info->regs + S3C2440_NFDATA);
--	}
--}
--
--/* device management functions */
--
--static void s3c24xx_nand_remove(struct platform_device *pdev)
--{
--	struct s3c2410_nand_info *info = to_nand_info(pdev);
--
--	if (info == NULL)
--		return;
--
--	/* Release all our mtds  and their partitions, then go through
--	 * freeing the resources used
--	 */
--
--	if (info->mtds != NULL) {
--		struct s3c2410_nand_mtd *ptr = info->mtds;
--		int mtdno;
--
--		for (mtdno = 0; mtdno < info->mtd_count; mtdno++, ptr++) {
--			pr_debug("releasing mtd %d (%p)\n", mtdno, ptr);
--			WARN_ON(mtd_device_unregister(nand_to_mtd(&ptr->chip)));
--			nand_cleanup(&ptr->chip);
--		}
--	}
--
--	/* free the common resources */
--
--	if (!IS_ERR(info->clk))
--		s3c2410_nand_clk_set_state(info, CLOCK_DISABLE);
--}
--
--static int s3c2410_nand_add_partition(struct s3c2410_nand_info *info,
--				      struct s3c2410_nand_mtd *mtd,
--				      struct s3c2410_nand_set *set)
--{
--	if (set) {
--		struct mtd_info *mtdinfo = nand_to_mtd(&mtd->chip);
--
--		mtdinfo->name = set->name;
--
--		return mtd_device_register(mtdinfo, set->partitions,
--					   set->nr_partitions);
--	}
--
--	return -ENODEV;
--}
--
--static int s3c2410_nand_setup_interface(struct nand_chip *chip, int csline,
--					const struct nand_interface_config *conf)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--	struct s3c2410_platform_nand *pdata = info->platform;
--	const struct nand_sdr_timings *timings;
--	int tacls;
--
--	timings = nand_get_sdr_timings(conf);
--	if (IS_ERR(timings))
--		return -ENOTSUPP;
--
--	tacls = timings->tCLS_min - timings->tWP_min;
--	if (tacls < 0)
--		tacls = 0;
--
--	pdata->tacls  = DIV_ROUND_UP(tacls, 1000);
--	pdata->twrph0 = DIV_ROUND_UP(timings->tWP_min, 1000);
--	pdata->twrph1 = DIV_ROUND_UP(timings->tCLH_min, 1000);
--
--	return s3c2410_nand_setrate(info);
--}
--
--/**
-- * s3c2410_nand_init_chip - initialise a single instance of an chip
-- * @info: The base NAND controller the chip is on.
-- * @nmtd: The new controller MTD instance to fill in.
-- * @set: The information passed from the board specific platform data.
-- *
-- * Initialise the given @nmtd from the information in @info and @set. This
-- * readies the structure for use with the MTD layer functions by ensuring
-- * all pointers are setup and the necessary control routines selected.
-- */
--static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
--				   struct s3c2410_nand_mtd *nmtd,
--				   struct s3c2410_nand_set *set)
--{
--	struct device_node *np = info->device->of_node;
--	struct nand_chip *chip = &nmtd->chip;
--	void __iomem *regs = info->regs;
--
--	nand_set_flash_node(chip, set->of_node);
--
--	chip->legacy.write_buf    = s3c2410_nand_write_buf;
--	chip->legacy.read_buf     = s3c2410_nand_read_buf;
--	chip->legacy.select_chip  = s3c2410_nand_select_chip;
--	chip->legacy.chip_delay   = 50;
--	nand_set_controller_data(chip, nmtd);
--	chip->options	   = set->options;
--	chip->controller   = &info->controller;
--
--	/*
--	 * let's keep behavior unchanged for legacy boards booting via pdata and
--	 * auto-detect timings only when booting with a device tree.
--	 */
--	if (!np)
--		chip->options |= NAND_KEEP_TIMINGS;
--
--	switch (info->cpu_type) {
--	case TYPE_S3C2410:
--		chip->legacy.IO_ADDR_W = regs + S3C2410_NFDATA;
--		info->sel_reg   = regs + S3C2410_NFCONF;
--		info->sel_bit	= S3C2410_NFCONF_nFCE;
--		chip->legacy.cmd_ctrl  = s3c2410_nand_hwcontrol;
--		chip->legacy.dev_ready = s3c2410_nand_devready;
--		break;
--
--	case TYPE_S3C2440:
--		chip->legacy.IO_ADDR_W = regs + S3C2440_NFDATA;
--		info->sel_reg   = regs + S3C2440_NFCONT;
--		info->sel_bit	= S3C2440_NFCONT_nFCE;
--		chip->legacy.cmd_ctrl  = s3c2440_nand_hwcontrol;
--		chip->legacy.dev_ready = s3c2440_nand_devready;
--		chip->legacy.read_buf  = s3c2440_nand_read_buf;
--		chip->legacy.write_buf	= s3c2440_nand_write_buf;
--		break;
--
--	case TYPE_S3C2412:
--		chip->legacy.IO_ADDR_W = regs + S3C2440_NFDATA;
--		info->sel_reg   = regs + S3C2440_NFCONT;
--		info->sel_bit	= S3C2412_NFCONT_nFCE0;
--		chip->legacy.cmd_ctrl  = s3c2440_nand_hwcontrol;
--		chip->legacy.dev_ready = s3c2412_nand_devready;
--
--		if (readl(regs + S3C2410_NFCONF) & S3C2412_NFCONF_NANDBOOT)
--			dev_info(info->device, "System booted from NAND\n");
--
--		break;
--	}
--
--	chip->legacy.IO_ADDR_R = chip->legacy.IO_ADDR_W;
--
--	nmtd->info	   = info;
--	nmtd->set	   = set;
--
--	chip->ecc.engine_type = info->platform->engine_type;
--
--	/*
--	 * If you use u-boot BBT creation code, specifying this flag will
--	 * let the kernel fish out the BBT from the NAND.
--	 */
--	if (set->flash_bbt)
--		chip->bbt_options |= NAND_BBT_USE_FLASH;
--}
--
--/**
-- * s3c2410_nand_attach_chip - Init the ECC engine after NAND scan
-- * @chip: The NAND chip
-- *
-- * This hook is called by the core after the identification of the NAND chip,
-- * once the relevant per-chip information is up to date.. This call ensure that
-- * we update the internal state accordingly.
-- *
-- * The internal state is currently limited to the ECC state information.
--*/
--static int s3c2410_nand_attach_chip(struct nand_chip *chip)
--{
--	struct mtd_info *mtd = nand_to_mtd(chip);
--	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
--
--	switch (chip->ecc.engine_type) {
--
--	case NAND_ECC_ENGINE_TYPE_NONE:
--		dev_info(info->device, "ECC disabled\n");
--		break;
--
--	case NAND_ECC_ENGINE_TYPE_SOFT:
--		/*
--		 * This driver expects Hamming based ECC when engine_type is set
--		 * to NAND_ECC_ENGINE_TYPE_SOFT. Force ecc.algo to
--		 * NAND_ECC_ALGO_HAMMING to avoid adding an extra ecc_algo field
--		 * to s3c2410_platform_nand.
--		 */
--		chip->ecc.algo = NAND_ECC_ALGO_HAMMING;
--		dev_info(info->device, "soft ECC\n");
--		break;
--
--	case NAND_ECC_ENGINE_TYPE_ON_HOST:
--		chip->ecc.calculate = s3c2410_nand_calculate_ecc;
--		chip->ecc.correct   = s3c2410_nand_correct_data;
--		chip->ecc.strength  = 1;
--
--		switch (info->cpu_type) {
--		case TYPE_S3C2410:
--			chip->ecc.hwctl	    = s3c2410_nand_enable_hwecc;
--			chip->ecc.calculate = s3c2410_nand_calculate_ecc;
--			break;
--
--		case TYPE_S3C2412:
--			chip->ecc.hwctl     = s3c2412_nand_enable_hwecc;
--			chip->ecc.calculate = s3c2412_nand_calculate_ecc;
--			break;
--
--		case TYPE_S3C2440:
--			chip->ecc.hwctl     = s3c2440_nand_enable_hwecc;
--			chip->ecc.calculate = s3c2440_nand_calculate_ecc;
--			break;
--		}
--
--		dev_dbg(info->device, "chip %p => page shift %d\n",
--			chip, chip->page_shift);
--
--		/* change the behaviour depending on whether we are using
--		 * the large or small page nand device */
--		if (chip->page_shift > 10) {
--			chip->ecc.size	    = 256;
--			chip->ecc.bytes	    = 3;
--		} else {
--			chip->ecc.size	    = 512;
--			chip->ecc.bytes	    = 3;
--			mtd_set_ooblayout(nand_to_mtd(chip),
--					  &s3c2410_ooblayout_ops);
--		}
--
--		dev_info(info->device, "hardware ECC\n");
--		break;
--
--	default:
--		dev_err(info->device, "invalid ECC mode!\n");
--		return -EINVAL;
--	}
--
--	if (chip->bbt_options & NAND_BBT_USE_FLASH)
--		chip->options |= NAND_SKIP_BBTSCAN;
--
--	return 0;
--}
--
--static const struct nand_controller_ops s3c24xx_nand_controller_ops = {
--	.attach_chip = s3c2410_nand_attach_chip,
--	.setup_interface = s3c2410_nand_setup_interface,
--};
--
--static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
--{
--	const struct s3c24XX_nand_devtype_data *devtype_data;
--	struct s3c2410_platform_nand *pdata;
--	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
--	struct device_node *np = pdev->dev.of_node, *child;
--	struct s3c2410_nand_set *sets;
--
--	devtype_data = of_device_get_match_data(&pdev->dev);
--	if (!devtype_data)
--		return -ENODEV;
--
--	info->cpu_type = devtype_data->type;
--
--	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata)
--		return -ENOMEM;
--
--	pdev->dev.platform_data = pdata;
--
--	pdata->nr_sets = of_get_child_count(np);
--	if (!pdata->nr_sets)
--		return 0;
--
--	sets = devm_kcalloc(&pdev->dev, pdata->nr_sets, sizeof(*sets),
--			    GFP_KERNEL);
--	if (!sets)
--		return -ENOMEM;
--
--	pdata->sets = sets;
--
--	for_each_available_child_of_node(np, child) {
--		sets->name = (char *)child->name;
--		sets->of_node = child;
--		sets->nr_chips = 1;
--
--		of_node_get(child);
--
--		sets++;
--	}
--
--	return 0;
--}
--
--static int s3c24xx_nand_probe_pdata(struct platform_device *pdev)
--{
--	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
--
--	info->cpu_type = platform_get_device_id(pdev)->driver_data;
--
--	return 0;
--}
--
--/* s3c24xx_nand_probe
-- *
-- * called by device layer when it finds a device matching
-- * one our driver can handled. This code checks to see if
-- * it can allocate all necessary resources then calls the
-- * nand layer to look for devices
--*/
--static int s3c24xx_nand_probe(struct platform_device *pdev)
--{
--	struct s3c2410_platform_nand *plat;
--	struct s3c2410_nand_info *info;
--	struct s3c2410_nand_mtd *nmtd;
--	struct s3c2410_nand_set *sets;
--	struct resource *res;
--	int err = 0;
--	int size;
--	int nr_sets;
--	int setno;
--
--	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
--	if (info == NULL) {
--		err = -ENOMEM;
--		goto exit_error;
--	}
--
--	platform_set_drvdata(pdev, info);
--
--	nand_controller_init(&info->controller);
--	info->controller.ops = &s3c24xx_nand_controller_ops;
--
--	/* get the clock source and enable it */
--
--	info->clk = devm_clk_get(&pdev->dev, "nand");
--	if (IS_ERR(info->clk)) {
--		dev_err(&pdev->dev, "failed to get clock\n");
--		err = -ENOENT;
--		goto exit_error;
--	}
--
--	s3c2410_nand_clk_set_state(info, CLOCK_ENABLE);
--
--	if (pdev->dev.of_node)
--		err = s3c24xx_nand_probe_dt(pdev);
--	else
--		err = s3c24xx_nand_probe_pdata(pdev);
--
--	if (err)
--		goto exit_error;
--
--	plat = to_nand_plat(pdev);
--
--	/* allocate and map the resource */
--
--	/* currently we assume we have the one resource */
--	res = pdev->resource;
--	size = resource_size(res);
--
--	info->device	= &pdev->dev;
--	info->platform	= plat;
--
--	info->regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(info->regs)) {
--		err = PTR_ERR(info->regs);
--		goto exit_error;
--	}
--
--	dev_dbg(&pdev->dev, "mapped registers at %p\n", info->regs);
--
--	if (!plat->sets || plat->nr_sets < 1) {
--		err = -EINVAL;
--		goto exit_error;
--	}
--
--	sets = plat->sets;
--	nr_sets = plat->nr_sets;
--
--	info->mtd_count = nr_sets;
--
--	/* allocate our information */
--
--	size = nr_sets * sizeof(*info->mtds);
--	info->mtds = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
--	if (info->mtds == NULL) {
--		err = -ENOMEM;
--		goto exit_error;
--	}
--
--	/* initialise all possible chips */
--
--	nmtd = info->mtds;
--
--	for (setno = 0; setno < nr_sets; setno++, nmtd++, sets++) {
--		struct mtd_info *mtd = nand_to_mtd(&nmtd->chip);
--
--		pr_debug("initialising set %d (%p, info %p)\n",
--			 setno, nmtd, info);
--
--		mtd->dev.parent = &pdev->dev;
--		s3c2410_nand_init_chip(info, nmtd, sets);
--
--		err = nand_scan(&nmtd->chip, sets ? sets->nr_chips : 1);
--		if (err)
--			goto exit_error;
--
--		s3c2410_nand_add_partition(info, nmtd, sets);
--	}
--
--	/* initialise the hardware */
--	err = s3c2410_nand_inithw(info);
--	if (err != 0)
--		goto exit_error;
--
--	if (allow_clk_suspend(info)) {
--		dev_info(&pdev->dev, "clock idle support enabled\n");
--		s3c2410_nand_clk_set_state(info, CLOCK_SUSPEND);
--	}
--
--	return 0;
--
-- exit_error:
--	s3c24xx_nand_remove(pdev);
--
--	if (err == 0)
--		err = -EINVAL;
--	return err;
--}
--
--/* PM Support */
--#ifdef CONFIG_PM
--
--static int s3c24xx_nand_suspend(struct platform_device *dev, pm_message_t pm)
--{
--	struct s3c2410_nand_info *info = platform_get_drvdata(dev);
--
--	if (info) {
--		info->save_sel = readl(info->sel_reg);
--
--		/* For the moment, we must ensure nFCE is high during
--		 * the time we are suspended. This really should be
--		 * handled by suspending the MTDs we are using, but
--		 * that is currently not the case. */
--
--		writel(info->save_sel | info->sel_bit, info->sel_reg);
--
--		s3c2410_nand_clk_set_state(info, CLOCK_DISABLE);
--	}
--
--	return 0;
--}
--
--static int s3c24xx_nand_resume(struct platform_device *dev)
--{
--	struct s3c2410_nand_info *info = platform_get_drvdata(dev);
--	unsigned long sel;
--
--	if (info) {
--		s3c2410_nand_clk_set_state(info, CLOCK_ENABLE);
--		s3c2410_nand_inithw(info);
--
--		/* Restore the state of the nFCE line. */
--
--		sel = readl(info->sel_reg);
--		sel &= ~info->sel_bit;
--		sel |= info->save_sel & info->sel_bit;
--		writel(sel, info->sel_reg);
--
--		s3c2410_nand_clk_set_state(info, CLOCK_SUSPEND);
--	}
--
--	return 0;
--}
--
--#else
--#define s3c24xx_nand_suspend NULL
--#define s3c24xx_nand_resume NULL
--#endif
--
--/* driver device registration */
--
--static const struct platform_device_id s3c24xx_driver_ids[] = {
--	{
--		.name		= "s3c6400-nand",
--		.driver_data	= TYPE_S3C2412, /* compatible with 2412 */
--	},
--	{ }
--};
--
--MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
--
--static struct platform_driver s3c24xx_nand_driver = {
--	.probe		= s3c24xx_nand_probe,
--	.remove		= s3c24xx_nand_remove,
--	.suspend	= s3c24xx_nand_suspend,
--	.resume		= s3c24xx_nand_resume,
--	.id_table	= s3c24xx_driver_ids,
--	.driver		= {
--		.name	= "s3c24xx-nand",
--	},
--};
--
--module_platform_driver(s3c24xx_nand_driver);
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
--MODULE_DESCRIPTION("S3C24XX MTD NAND driver");
-diff --git a/include/linux/platform_data/mtd-nand-s3c2410.h b/include/linux/platform_data/mtd-nand-s3c2410.h
-deleted file mode 100644
-index 25390fc3e795dee55111bd379b5c08ba7f848541..0000000000000000000000000000000000000000
---- a/include/linux/platform_data/mtd-nand-s3c2410.h
-+++ /dev/null
-@@ -1,70 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (c) 2004 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C2410 - NAND device controller platform_device info
--*/
--
--#ifndef __MTD_NAND_S3C2410_H
--#define __MTD_NAND_S3C2410_H
--
--#include <linux/mtd/rawnand.h>
--
--/**
-- * struct s3c2410_nand_set - define a set of one or more nand chips
-- * @flash_bbt: 		Openmoko u-boot can create a Bad Block Table
-- *			Setting this flag will allow the kernel to
-- *			look for it at boot time and also skip the NAND
-- *			scan.
-- * @options:		Default value to set into 'struct nand_chip' options.
-- * @nr_chips:		Number of chips in this set
-- * @nr_partitions:	Number of partitions pointed to by @partitions
-- * @name:		Name of set (optional)
-- * @nr_map:		Map for low-layer logical to physical chip numbers (option)
-- * @partitions:		The mtd partition list
-- *
-- * define a set of one or more nand chips registered with an unique mtd. Also
-- * allows to pass flag to the underlying NAND layer. 'disable_ecc' will trigger
-- * a warning at boot time.
-- */
--struct s3c2410_nand_set {
--	unsigned int		flash_bbt:1;
--
--	unsigned int		options;
--	int			nr_chips;
--	int			nr_partitions;
--	char			*name;
--	int			*nr_map;
--	struct mtd_partition	*partitions;
--	struct device_node	*of_node;
--};
--
--struct s3c2410_platform_nand {
--	/* timing information for controller, all times in nanoseconds */
--
--	int	tacls;	/* time for active CLE/ALE to nWE/nOE */
--	int	twrph0;	/* active time for nWE/nOE */
--	int	twrph1;	/* time for release CLE/ALE from nWE/nOE inactive */
--
--	unsigned int	ignore_unset_ecc:1;
--
--	enum nand_ecc_engine_type engine_type;
--
--	int			nr_sets;
--	struct s3c2410_nand_set *sets;
--
--	void			(*select_chip)(struct s3c2410_nand_set *,
--					       int chip);
--};
--
--/**
-- * s3c_nand_set_platdata() - register NAND platform data.
-- * @nand: The NAND platform data to register with s3c_device_nand.
-- *
-- * This function copies the given NAND platform data, @nand and registers
-- * it with the s3c_device_nand. This allows @nand to be __initdata.
--*/
--extern void s3c_nand_set_platdata(struct s3c2410_platform_nand *nand);
--
--#endif /*__MTD_NAND_S3C2410_H */
+> On FSD platform, gating the reference clock (ref_clk) and putting the
+> UFS device in reset by asserting the reset signal during UFS suspend,
+> improves the power savings and ensures the PHY is fully turned off.
+
+Applied to 6.18/scsi-staging, thanks!
 
 -- 
-2.48.1
-
+Martin K. Petersen
