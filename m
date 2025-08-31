@@ -1,67 +1,67 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AAB235057;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFC12594BE;
 	Sun, 31 Aug 2025 12:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756642399; cv=none; b=FLGtRbhHBqo9qYqeFsq82xb5mqNS9DLi8izfUH7Jxc8xUngN6GeHz4v3huTReG5zvgkwm5q6Bx1onbFRbkwkOIoXrkj1d2F237YDZAGYDujgE9bBADzr6OG2Qnc8rvtBJZxKuDDZqeitG3+JZJ/Or/SIE/oimXCJ+3UsPvzm0oI=
+	t=1756642400; cv=none; b=oX3tU7rr59dIaX5TYOabhY/kJuYsKYWNE0dPUdEinSegVQv5g/7N1sIrX3FOl7EMMUeg7d0RTvNiY9JKtzyPLzwnNoitkJ8TLc6h5XRC/PMpFTWWhN4haFy3gOSXoNNlGeRynFpSizVkWvVGpmdQ4JDYM4Oam8z9auwfGbywFn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756642399; c=relaxed/simple;
-	bh=Pu/jnxs8vnoSEdVAdFl2BrrhE0Ef1+tymfgD1ZqCFYw=;
+	s=arc-20240116; t=1756642400; c=relaxed/simple;
+	bh=m2f5QF1qzXsZs/+Ale6o6q2WrCrUbiw6HNuUXjNyWQg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UP2hk/b0TGj2nIo4EBB8ceTx9SVlUyAHOxBGA5uDbV8OC3cKor8KKFg+mpPITWqauuI5xxMQsLEQJax3ilYKfVqlIVdpcsKkCZyGqVYsii58ccDdmRTE/trQoRZWKVg3RFo84SRcMgV0gaGHyqO4FXUpjlXGfa/6GLSlin0w0Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rz3f+lo6; arc=none smtp.client-ip=209.85.222.170
+	 In-Reply-To:To:Cc; b=Is9XZhI1gice9AV6Ju2LbYOz0PS1gqnOG/K9nr5ClxFJ8dazom+1566SeFkr9I65enDmw1rfpeCbkZGBu48v2sXa1iFyGEnHxDJ1KVWNpby91fIFnRr3cC13KmpqIh7WiwcjQnQ8XC16kfoUpWBrI9FyE4ky7qxdnG4qMa63gQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaQLfK8o; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rz3f+lo6"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7fdddb25854so159594585a.3;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaQLfK8o"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e87061a6d5so355763685a.2;
         Sun, 31 Aug 2025 05:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756642397; x=1757247197; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756642398; x=1757247198; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PDmfIIxvbccs+VTC9JbCAL+D/6aBtsGaiV5H5qK73Vc=;
-        b=Rz3f+lo6x4NvsgV3nRzRpwb+KmAKJiLhGnzyaD/DJIOFHhbxAfLetUJJ8CPos6osJN
-         y4WyCFe8jcCUYetGfrfFN4jpok3jPyaxdw0EwhN19YUF8weKIKAwpnMujWz7VF+21Rte
-         aNWzLHh9mVxkcitXfxm8MmDRejfMtvDfnnV0TF0n0eIiLUahgrbWSXJI+MVTnEMMU+xo
-         zMtrFkYM/arMO3hrQZe1glkTqSWM2o1rQIglOYxgkOLNdPJeQS2HrT/+pvXaq8c/gue9
-         8t7UKh50SPWPTMXTvLAXt92rsriL00M22ykWSyfWaeB/PqtsqctYeZNGOkCJfo36rZ6N
-         Vmog==
+        bh=JlZ0v5UR+2xTEmMOu3usxKg9KggAdVQkFrID2DzE4oQ=;
+        b=ZaQLfK8olCrrWhvh3mGHI9nR8/PxQEJVJctvs0LNWrQT/EvUoCgXHd0xMmwVFueNTv
+         sXD/tQe1MPqBZ966Ey8q/HlsmoLXzVsDXSQSebUo+AWRgq1fEdVHTm5gBRKuPbQI24oT
+         2QjCSBQs4HR9suHgE2TCIgiRXSzq8NOhc6amiQo5ePqMWE9J4crBPxfUXUQjq+rVgfJ5
+         nVPE6N8HQg7X9VPMvxaoOzLHebgCzEtPHXfwIlUdp+0nP4sqe4FBRHAgsfBmErDTuoBg
+         pDTlKz60QS8wSFYOZtMZ1JWJYiYPaUgZE/C9h1ejPl+0h/jtgLf6yll9UZs9s2W9pKIs
+         xdMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756642397; x=1757247197;
+        d=1e100.net; s=20230601; t=1756642398; x=1757247198;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PDmfIIxvbccs+VTC9JbCAL+D/6aBtsGaiV5H5qK73Vc=;
-        b=gmXfNZ3gsBcKRnH3o9/Re67ywKBaRs7hQxFTm9OLqBCehSUToRetuSVamO5hpmfvde
-         OWcnnQA+ZurBMdS9Ozkgp4qysRg6hyGSnvN5kTKtrpOqVxfag+xvLkZ2EyRMzhNIyJCc
-         3CQXwjMV/D/6O0Qr5/9kCbykPk4+mSmGNwVg5+Ad27p1rVSLb+i0BeePZ9XR2inkRFde
-         g1VGdBTNHbuJ5RwJQqSz+DTSHD/mTRelCFf1bJ/6zoYg/l53L5isc3KbV2VcpZl5Xm6O
-         7eBMXopD20PKZ1SJih8gJSVhhO/m7sFgfeH5iFGQSZUXpZi6pwLq0r/pL5HP3CtCCmdE
-         7CzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEJeTVcv+fdXd4caEcI6Ygd9UuVKRg+SPBherXDl3TU5Hv+8Tp1lv7SJtqhfoJzDnXx56Wdhk6GHlV@vger.kernel.org, AJvYcCV+q+1UhmL415nBvxvI99pCU9w4wdCJEvalY9A+jeJJDgURugbJtaU9SCGYltAqfD9vGnCINpk0O5Z4@vger.kernel.org, AJvYcCWLpR6wWJbtd21uRO2nNHbzbF2oHosFA5kBQX7EIcggwJy1pSAL7Qv6bWNUjp2vmtc5oMWmKbpRA/fKhBjK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKfC6WwOcXq8RDJmi7dRWFAhNecY4KSbnH+b4IynxhxImSqdhq
-	dSo1cAERWC8z1eWgxpQ/TxO0Nv3yq4Wa2eZJ1mijqPecgORRijmjqdK/
-X-Gm-Gg: ASbGncu6YcuiroP1kTQeKU/JuXMRVphmcKDLcxCc0Rnn5kwxR6UCaO6n72ZGI85Ff7q
-	Nfd8heeHzXG9LOz00207FtbviAilj2HboVV7htYmLNInc9+u/hf8Un49iuhF4weP427lMMkEzxF
-	L5wbUAPcB2AYj6/5fk2DNXq5ki8epjLCU5T6TaXHl5yQbWrCwDZIjCmVq7+j7LqEyGGjlJwZKo7
-	MHPhbS7Paqg15R+ODUDIzjmcDu3zh/BZBOYS/RRVZMON00b2a8VsVlGfAq7XLvqlF6Owq+2KoNC
-	ssJEOHf6qPUZakNeTvR8oLFCCRbwfobfyRnXvVMVEkcbBMcnLqidY/WZrR42vYGrz/rCNhHyFPf
-	pc7fxTUmCyFIM/RNPhVNvZg9zfAm6omE=
-X-Google-Smtp-Source: AGHT+IEfAh2UbkwIQ39wtorHVguSuFgrNsM8OO8yQro++Hj3XAfs/mNEBkj0O/3oJVq6SgUMzK0njw==
-X-Received: by 2002:a05:620a:17a8:b0:801:3834:f643 with SMTP id af79cd13be357-8013834f6c4mr197407185a.57.1756642397105;
+        bh=JlZ0v5UR+2xTEmMOu3usxKg9KggAdVQkFrID2DzE4oQ=;
+        b=plxM8yHt4LNyoPwUT0vbMj1YmH4t0A8mDw2dqkz/Vb5b3XYHoB1ahUEun9xudVaJgQ
+         4MR6ilWswDOMTICySwIHibKR8BrVbOKop7Z1iIIB3S+aoCXCQbY+WhcOE5lP+bBrx1jJ
+         hMrb2bhgFaM+JliAESvxv79R4xmyTj4Zqfa1HPCzqDmhg+GpHOTPoB+1Z6uMrHXq8Jj3
+         /wqpMZPDtf2hRTO0CKuQOrmAPY4F9rD1YPFIQzwuJrdzHrRUc2y8tDCtiXQ1D3O4/M9x
+         pvGDx3MzypaceFNpZSiElCRysbvTZkyvxrhC54TZJhXNRZuPQvnSr31rSasVWXcmXgBN
+         gkBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFqJdFsn64/Cd9kuP0aHWuiYblUge4oxDSAf2wXlwbHQxnqMZtQU7Ar9ijJg+MD8W4sE+JD1e0ig24@vger.kernel.org, AJvYcCV3SH8Di3Y2Xv9Zf6vV7KQ/aWRKMqOCUmB2cVLKk+9TC+ziVD42jc0gLfGaY2xbrbEPRCAP3MbQGTSv@vger.kernel.org, AJvYcCWf0jST3Gy/0vyXEedAcnGQQi/uWIvreeB7cfNp7ablRQcheVNFjjMC2Hd0ZVeZYAAgOBunHnNDV9BvRSB8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ6WfjtCTxPsiMSqFw4PKUiY3ay4Cz2me6WzyQUpWzQoPCbshJ
+	ioTH5xc6EAOfOsxyTh842zuHabxXl6gAKTvumD4RuTxo4ksq6WV3PV9t
+X-Gm-Gg: ASbGncsGsHxFfoYYsvBpiHjzDxNSOumGom0nOKB4j/ZdlnWD5G06HI40d4RjjSa96YE
+	a8Bwn+C76v4qc/iWXTHbr3fBXI9bt/mW4wngszSEr9OWgAgDcZrdfQ21jU0TjEB+WxWGp/TcfRo
+	By91Kv73af9FJBCID0JbIJTMDra91nx66nXpV/DjG5fKPFVZk8iwrJEPCliwms+WeQElDTLYtYG
+	YCpHgEgLtszhz9oqdNtsLMWMDckAETqxiDp9JlGOrI8VL2fDbGliObzhOioxWPokWPDCMZ5qa8+
+	qRndk84Nfq3NMSNWDQOxgYmYWQhUi/9qbITXT69szAT2cje9oLv5NCtykeYPjkfkoX5wWicke/f
+	LH8nPpRsfM3ytX+otkwbkaQew6FXixUQCScO3MCeitlqORVk1+YiN
+X-Google-Smtp-Source: AGHT+IGlRlomj28QsowpW+ggD3fSIRdZkTy4adIY1fcPCIHbaJRIzm6jBaXx0BhL2//vg7rIorOICA==
+X-Received: by 2002:a05:620a:29d0:b0:7f9:44b0:8072 with SMTP id af79cd13be357-7ff26eaae2amr464092785a.4.1756642397911;
         Sun, 31 Aug 2025 05:13:17 -0700 (PDT)
 Received: from [127.0.0.1] ([135.237.130.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb289f518sm21163776d6.56.2025.08.31.05.13.16
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb289f518sm21163776d6.56.2025.08.31.05.13.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 05:13:16 -0700 (PDT)
+        Sun, 31 Aug 2025 05:13:17 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Sun, 31 Aug 2025 12:13:15 +0000
-Subject: [PATCH v2 2/3] clk: samsung: exynos990: Add LHS_ACEL gate clock
- for HSI0 and update CLK_NR_TOP
+Date: Sun, 31 Aug 2025 12:13:16 +0000
+Subject: [PATCH v2 3/3] clk: samsung: exynos990: Add missing USB clock
+ registers to HSI0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250831-usb-v2-2-00b9c0559733@gmail.com>
+Message-Id: <20250831-usb-v2-3-00b9c0559733@gmail.com>
 References: <20250831-usb-v2-0-00b9c0559733@gmail.com>
 In-Reply-To: <20250831-usb-v2-0-00b9c0559733@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -83,48 +83,35 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756642395; l=1601;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756642395; l=1180;
  i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=Pu/jnxs8vnoSEdVAdFl2BrrhE0Ef1+tymfgD1ZqCFYw=;
- b=zy4l1QKfCVLor0PXgeTtwdg6HleS57KspRKQ3hEkCQh3sSRZ3FxdOdhzXAlNXihshzq9NUphb
- hT0ddS/LwMiD3UzURxrl/9WIm5dZC3ETlNQpi+dOY9F9XKE1z3XG1Zi
+ bh=m2f5QF1qzXsZs/+Ale6o6q2WrCrUbiw6HNuUXjNyWQg=;
+ b=jhPFbn1//YcT1nfRuEz6+shNgqxHkLrk/WjGXAUF7BRl9XYF/0woSJ0zRfBoxqiOCuHFgPHT5
+ lzyoXOz3+rJBxN/8EkFeSdhevcTySRhTi5kPETQZXXWA/eiNYG2SjdE
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
-Add the LHS_ACEL gate clock to the HSI0 clock controller. This clock is
-critical for USB functionality and mark it as critical to keep it enabled.
-
-Update CLK_NR_TOP to include the new clock.
+These registers are required for proper USB operation and were omitted
+in the initial clock controller setup.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos990.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos990.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index 91736b15c4b4a0759419517f7b04dd0a8f38a289..7884354d612c54039289fa9b80ad08f34b9b7029 100644
+index 7884354d612c54039289fa9b80ad08f34b9b7029..47a1e0850c3020ab66931ae0c5ac4920f41496d0 100644
 --- a/drivers/clk/samsung/clk-exynos990.c
 +++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -18,7 +18,7 @@
- 
- /* NOTE: Must be equal to the last clock ID increased by one */
- #define CLKS_NR_TOP (CLK_DOUT_CMU_CLK_CMUREF + 1)
--#define CLKS_NR_HSI0 (CLK_GOUT_HSI0_XIU_D_HSI0_ACLK + 1)
-+#define CLKS_NR_HSI0 (CLK_GOUT_HSI0_LHS_ACEL_D_HSI0_CLK + 1)
- #define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
- 
- /* ---- CMU_TOP ------------------------------------------------------------- */
-@@ -1332,6 +1332,10 @@ static const struct samsung_gate_clock hsi0_gate_clks[] __initconst = {
- 	     "gout_hsi0_xiu_d_hsi0_aclk", "mout_hsi0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_HSI0_UID_XIU_D_HSI0_IPCLKPORT_ACLK,
- 	     21, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_GOUT_HSI0_LHS_ACEL_D_HSI0_CLK,
-+	     "gout_hsi0_lhs_acel_d_hsi0_clk", "mout_hsi0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_HSI0_UID_LHS_ACEL_D_HSI0_IPCLKPORT_I_CLK,
-+	     21, CLK_IS_CRITICAL, 0),
- };
- 
- static const struct samsung_cmu_info hsi0_cmu_info __initconst = {
+@@ -1224,6 +1224,8 @@ static const unsigned long hsi0_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_SYSMMU_USB_IPCLKPORT_CLK_S2,
+ 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_SYSREG_HSI0_IPCLKPORT_PCLK,
+ 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_ACLK_PHYCTRL,
++	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USB31DRD_REF_CLK_40,
++	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBDPPHY_REF_SOC_PLL,
+ 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBDPPHY_SCL_APB_PCLK,
+ 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBPCS_APB_CLK,
+ 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_BUS_CLK_EARLY,
 
 -- 
 2.50.1
