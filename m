@@ -1,194 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC71248F66;
-	Mon,  1 Sep 2025 09:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21872277813;
+	Mon,  1 Sep 2025 09:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756719247; cv=none; b=uLazeuC8Vp2boVvntf0WuLsp0Ka8SgYAtI7nLoRfXLqw0JW+meNrRxRgrntLiFVB4oUxkQsZgtgybJAQLYu2coe7G7yjh1x+QyeRTSZpAzmr5KBh2ExTTdbBCTb/bVlXOIYfxbN6NlzuEJ8B2v7Rc8hGD84Y1eHltG6+aLDONR0=
+	t=1756720538; cv=none; b=Tsliqz45cZjkZgGGpSU8HVZIUxPFf7ZVpn/h1yBd21SymK7hztyJndE9PBzIPXxR8gOOLKv9UAq96vuQ4Vt+q4AY0IJkGqNoerjv5WOuglB/2huVIs9Vbg0306xOYZaQWgCeRTNCAoFNmQYacpIL9X+rLxAIShGytVxyQF2hphk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756719247; c=relaxed/simple;
-	bh=3pD43VmzuMnbKqEZBMBvRD8QOeColEDDiPA98Xg+SaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/A6m5gN/d17iWrueL+2Qz1GI8ye9l9ORJdj2K1au+SOSVJ7LP1Q6Q2pmBUWvuWs4hyNlike/iVRhOa3vDub4VYgnGMoOUWVm9yTMXZOpPK4FEeOLJlnl8Bx7JMslpqRgxnx2Wqp72N9Yqpnn76lrlMbN/ufGADj6EDNdkmtFcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=up5IY0Lz; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="up5IY0Lz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF865C4CEF0;
-	Mon,  1 Sep 2025 09:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756719246;
-	bh=3pD43VmzuMnbKqEZBMBvRD8QOeColEDDiPA98Xg+SaI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=up5IY0Lz+TWMrst6sxwJCXHZlvksy+Kyvgdb5EAAQyC+UHTG6/VphlFt01RyHvzdY
-	 SpU7YnF5+Jqv0wV6aIuRTNVyJMCpVHjQyME6P1+siibcpvKIrd1QOnpg8aTaePOXU/
-	 QvT67wDPOMoeNkN9KpE1mREID6KnHbBNmAqEobXL092QepnV9neHZRxgpw6FGBEUUh
-	 NPw6CEx8P9CGBIzoTcXJo+Y3n4/aN7N5E/YDXz95PBTWB2RVvsl7Mfp9smS62ZJXhp
-	 izWNuW6h6BRCHrXysOq6sHn5ZHhZngDG/WcJAe3ynXx+8m1AjDe6cCP1rhiJl+yTmO
-	 67GBt22Hy8KSw==
-Message-ID: <44d8a998-efe7-4c2f-8580-5248b1a98c44@kernel.org>
-Date: Mon, 1 Sep 2025 11:34:00 +0200
+	s=arc-20240116; t=1756720538; c=relaxed/simple;
+	bh=ZHCWs4HH+c5lN4IlE9gqTWg9pmmhgAFoeTj2IWPQWHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gP3rpIjhpMrjmvgT8TeP5SiSIUxN04fAcwYIRwuhiTtwe95wEIkJ9cZbquW/1OsWlzJZ+XhKH1Kvoneq8gSmzX+i5csHp+l9WsKpEF2ZNyTUcGkLBJfzJvjO/MfvRcfrFEErUn+b2ju5TBHv9tRYQj5qHhaSOb2wn8qawr/Fdhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e86faa158fso433481885a.1;
+        Mon, 01 Sep 2025 02:55:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756720536; x=1757325336;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5tFy+S32zcH8SOQI+WY2rqVzMFSU7CQi//EUuweLF5I=;
+        b=gkgVRwmTvrHY8QjA24Ae5C0EU6BTXQJ4h83NWkwEJv3qr7ZdZrzvKtrdxEJqQJy8Op
+         y6DgfdGRSQBoMfTkfyJxfqoVrUfBCG2hLXKq8YhJorvSPrhgaHeARofrUxHmSxRPqzWm
+         VuWGjx9dUVzde0HzHmnR7vVJzJtAmfLEoyKDPgk1YNOYUdTifQ3RZ40LOLdShW0dyhtL
+         ayU0eR76FlL6baN1derAx20KU5vkrddPZ4FWQlSzma7r1bfpJBoWh1JzVRuquwzmUjjF
+         sJzpRQfoJCL51DIvr9fOkduFpkhkLOqIJn0xQvsG7mb+SgBen7eaLY0bm8pm4aJK5cE0
+         dlsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVM69MgPxyoR5Ut5aeWygoHr2XUIaQDJwu1fyTWaibj5wv3J0XXzx7sim4+tW69urS9w2kcpJkq8A==@vger.kernel.org, AJvYcCVbL6OrZIOvBxOjnR+pyPDujq/LoDpLxHhzNZ9oD/DY7jng2U9a8i37TUz8/BYT7beZOHT2EmL5UPAaXQ==@vger.kernel.org, AJvYcCVdop25MYNDUoYyn0qe2IPO/jihXUygnuWkDkWkMq5JD62Wl029HYSBB6cg+A9EVkjdu68ZsFZ80+CCHbMSiAP/qyI=@vger.kernel.org, AJvYcCVeqjHQ21KWXaPYHKnsy/aryWgyEAfHB8rWCG3j38KgkuJvKcoht4IkRS8fC7fby/+h/9MTLfFeXfgnFUTvJA==@vger.kernel.org, AJvYcCWaHvinxtxPdxoeffoboUjY4hchGV/xRfqRPc6USd0Op9t0swuHYuuI955q07VPWXH1OuGRaByyjdBPbH3g@vger.kernel.org, AJvYcCXSVMZ7HMvDMxhqmun1tiiRk9p8fp7hXonWnCXu9vXJAGIOMHbXQpSz2MayBL6w2M1/jCGfK1+lpjaRDexarHk4K70=@vger.kernel.org, AJvYcCXot2odj62uBzP9nx/PMNOiRePPiFxnvNANdVQVRz8kMJBtZBXqH7sTJUaBJZxYkUnwV3l70OKLZM9N@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiWOitpcdaO9ZiOGO1JFv1SDQ3Da8V1V6FvQgxtCo+iwWvtksw
+	UrNjJIWy5w6UkJ45fRVkeXKRkDNizN1vnUK2QtYMJdRZkPcXjhFTwOlj2UWANFcR
+X-Gm-Gg: ASbGnctTlLPATc09KAlNjicABySP6ryuDvuUDlOlvSOc3gNXPynQvjTlaN01aabJy9p
+	l7Bn0OCZGVCtNRN5mOxmi0XdM6jWYAdblhQlwJ9QWP8WZR0TUDXZkHSMstxgBr8I6RmZBcRIFBp
+	cxT+Niw8ADiVKobPVbQuCRZ4ZkUVRaONb7p5RojucufCT31jBSfr8YLWRueYqdqKhEVh4uYRE+O
+	T6COdIlMjXpGdFseIQxUDXohyXdfqVPyFXn1q+e+ZE6kaktAbOT/lsMK7Idimd//aFwDmFuERc3
+	wo6Fl1Nwby6OKNDHeX7hXDklTWPZQE8Cen1aiuhBEgNBx2E1Wp3MCV02/ZYfbowMt6wzZMqJW93
+	kAunp35i02klmrThHDPFPeRUoIQfrzXFjpmr2h7wJNQvFQJNbFX69Mj4HC7sU9uN1
+X-Google-Smtp-Source: AGHT+IF8wII5eWZgQBadnO5DQfaiFS5/z1JMcEs8d28tEnWe/M9RrAxpKwKDZsxBK/TMzbXJ9H2a6w==
+X-Received: by 2002:a05:620a:46a5:b0:7e6:81cc:6999 with SMTP id af79cd13be357-7fed6bab7f7mr818725185a.32.1756720535666;
+        Mon, 01 Sep 2025 02:55:35 -0700 (PDT)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc1654744csm641029085a.70.2025.09.01.02.55.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 02:55:35 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e86faa158fso433481385a.1;
+        Mon, 01 Sep 2025 02:55:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXw615kq5XrGvYFkU1BLhtLw4rGwyHzEv7Z2H3SDkwpe43pjhT1RoyPC+thz/DSHqKsfDStgLYH15WArsUpisQZhM=@vger.kernel.org, AJvYcCV5VrtR3uT/x1JzzMIDprdcFs+obhmjjUdj3elf9JcRU1W183Gqu5gkFqUcQqUC/6SAZb62InEUgIgvoQ==@vger.kernel.org, AJvYcCVoIuidq2GYFe0raAPkO6C3zClF02UgpIj/4qPAeZS3K9JKMq9b0JnjQlIXXPQfPYZFS2sjjo+6k3kgG+CEdg==@vger.kernel.org, AJvYcCWF3dvjLB2rAkX28vi0foTXvMYvCBz+56BvqDHySa5EchIKDcjFC3bAy8eX1QwFOZijNt4/KBwMsuKa6a1O@vger.kernel.org, AJvYcCWIYremoaJEEbaaotkhJhxiTdgpTdsfQ33n6yRqVwUsh0i3FKKrW1RblL2LBZxVVQt8j2u+FzfnFw==@vger.kernel.org, AJvYcCWM62SW2FvpqbErLI00vjtChxU5iFI+2NeKrUPoWU/RhLuSS/zraz7DTci1AN6hGUabgfl1V+XycdKZ@vger.kernel.org, AJvYcCWxlejoKbpjStSOSvBW076S1QroRHDeTDl5sWwhSR+Goz3va+z4XuPlHcF2HZUzASRDPGH+4QErwLfbyx40rRchMdg=@vger.kernel.org
+X-Received: by 2002:a05:6102:5e8e:b0:50d:feb0:316e with SMTP id
+ ada2fe7eead31-52aeb7798e1mr2104974137.2.1756720196368; Mon, 01 Sep 2025
+ 02:49:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
- <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
- <761936e8-1626-47f8-b3f5-ebc62f4a409b@linaro.org>
- <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
- <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <1907e1c7-2b15-4729-8497-a7e6f0526366@kernel.org> <aKhVVJPEPxCoKKjI@x1>
+ <4d31df9e-62c9-4988-9301-2911ff7de229@kernel.org> <aKhr8NYhei59At0s@x1> <7c6cc42c-fc76-4300-b0d2-8dabf54cf337@kernel.org>
+In-Reply-To: <7c6cc42c-fc76-4300-b0d2-8dabf54cf337@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 11:49:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUB4QGBaMk5r5eNRCPriUWAY+LBE2C7kVEkE9eCNE1TUA@mail.gmail.com>
+X-Gm-Features: Ac12FXwQn8nZWuX__OUteos14KQ8Ceq7TOY9AfEwCR3rwgzCn6YxJiejdZ6ywp8
+Message-ID: <CAMuHMdUB4QGBaMk5r5eNRCPriUWAY+LBE2C7kVEkE9eCNE1TUA@mail.gmail.com>
+Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated round_rate()
+ to determine_rate()
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
+	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
+	Andrea della Porta <andrea.porta@suse.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
+	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/09/2025 10:43, Tudor Ambarus wrote:
-> 
-> 
-> On 9/1/25 8:48 AM, Krzysztof Kozlowski wrote:
->> On 01/09/2025 08:56, Tudor Ambarus wrote:
->>>
->>>
->>> On 8/31/25 11:50 AM, Krzysztof Kozlowski wrote:
->>>> On 27/08/2025 14:42, Tudor Ambarus wrote:
->>>>> +
->>>>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
->>>>> +};
->>>>
->>>> I don't understand why clocks are defined in the firmware driver, not in
->>>> the clock driver.
->>>
->>> I chose to define the clocks in the firmware driver and pass them as 
->>> platform data to the clock platform device for extensibility. In case
->>> other SoCs have different clock IDs, they'll be able to pass the
->>
->> You will have to modify firmware driver, so still at least one driver
->> has to be changed. Having clocks defined in non-clock driver is really
->> unusual.
->>
->> This solution here creates also dependency on clock bindings and makes
->> merging everything unnecessary difficult.
->>
->>> clock data without needing to modify the clock driver. GS201 defines
->>> the same ACPM clocks as GS101, but I don't have access to other newer
->>> SoCs to tell if the ACPM clocks differ or not.
->>>
->>> The alternative is to define the clocks in the clock driver and
->>> use platform_device_register_simple() to register the clock platform
->>> device. The clock driver will be rigid in what clocks it supports.
->>>
->>> I'm fine either way for now. What do you prefer?
->>
->> Please move them to the driver.
-> 
-> Okay, will move the clock definitions to the clock driver.
-> 
->>
->>>
->>>>
->>>> This creates dependency of this patch on the clock patch, so basically
->>>> there is no way I will take it in one cycle.
->>>
->>> Would it work to have an immutable tag for the clock and samsung-soc
->>> subsytems to use?
->>
->> No, just try yourself. Patch #3 depends on patch #2, so that's the cross
->> tree merge. It's fine, but now patch #4 depends on patch #3, so you need
->> two merges.
->>
->> Or how do you actually see it being merged with immutable tag? What goes
->> where?
->>
-> 
-> Unnecessary difficult indeed. Hypothetically, if we kept the current
+On Sat, 23 Aug 2025 at 18:43, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 22/08/2025 15:09, Brian Masney wrote:
+> > On Fri, Aug 22, 2025 at 02:23:50PM +0200, Krzysztof Kozlowski wrote:
+> >> On 22/08/2025 13:32, Brian Masney wrote:
+> >>> 7 of the 114 patches in this series needs a v2 with a minor fix. I see
+> >>> several paths forward to merging this. It's ultimately up to Stephen how
+> >>> he wants to proceed.
+> >>>
+> >>> - I send Stephen a PULL request with all of these patches with the minor
+> >>>   cleanups to the 7 patches. Depending on the timing, Stephen can merge
+> >>>   the other work first, and I deal with cleaning up the merge conflicts.
+> >>>   Or he can if he prefers to instead.
+> >>>
+> >>> - Stephen applies everyone else's work first to his tree, and then the
+> >>>   good 107 patches in this series. He skips anything that doesn't apply
+> >>>   due to other people's work and I follow up with a smaller series.
+> >>
+> >> Both cause cross tree merge conflicts. Anyway, please document clearly
+> >> the dependencies between patches.
+> >
+> > This series only touches drivers/clk, so it shouldn't cause any issues
+> > with other subsystems, unless there's a topic branch somewhere, or I'm
+> > missing something?
+>
+> Individual maintainers handle subdirectories.
 
-No, it is impossible.
+FWI(still)W, I have taken the Renesas SoC-specific patches through
+the renesas-clk tree...
 
-> structure, we could have have a single tag on #4. Since the dependency was
+> > There are some drivers under drivers/clk/ where there is an entry in the
+> > MAINTAINERS file that's not Stephen, although it wasn't clear to me if
+> > all of those people will send PULL requests to Stephen. I described on
+> > the cover how how the series was broken up.
+> >
+> >   - Patches 4-70 are for drivers where there is no clk submaintainer
+> >   - Patches 71-110 are for drivers where this is an entry in MAINTAINERS
+> >     (for drivers/clk)
+>
+> It's hidden between multiple other descriptions of patches, so I really
+> would not think that this means that it is okay by individual maintainer
+> to take the patch.
+>
+> This really should be the one most important part of the cover letter
+> for something like this.
+> ..
 
-What does it mean tag on #4? There are no further users, so tagging this
-patch has zero effect.
+It was indeed rather implicit:
 
-> on a new clock driver, the clock subsystem could have lived without merging
-> the tag, as the chances of conflicts with the clk core are small. But not
+   "Once all of my conversion patches across the various trees in the kernel
+    have been merged, I will post a small series that removes the
+    round_rate() op from the clk core and the documentation. Here's the
+    other patch series that are currently in flight that need to be merged
+    before we can remove round_rate() from the core. [...]"
 
-Quick look tells me nothing would compile. Really, try yourself. Neither
-patch #3 nor patch #4 builds!
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
