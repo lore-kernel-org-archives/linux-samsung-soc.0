@@ -1,103 +1,243 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C065F338F2F
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Sep 2025 13:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2CB322550
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Sep 2025 14:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756733204; cv=none; b=OmGJU14iSINdpFL9YGf3ZVgloarEDBDJYCr2Yk0HCj/6qiUmCgkKfMQiK5TII+uR7hGxEChJyfcRlAJ4X4AGuSzEL6aTeCiButWTxYp+BEMrwbLehrv6LuPpfmHUugCTMeAL1Crj4CtMzYAxi9rIQ4m+CkcC+H1sPE5dinb4D30=
+	t=1756737001; cv=none; b=sOBjyIHk6S4s8lmBe6eTtj/5fClpm9O4j2puevj/3ZONiI96d9LbjJNRDUbrttxV0Xwq43t1qcLH9tHywQli9HYKAsk9FvnUj7Y+fxauP1O32fW24Et2+QdrN5n2l1h/ibCkyCYPrus4hCqcTMbL13BPfB3y9NgRSEJyE6VS3j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756733204; c=relaxed/simple;
-	bh=9zJLdqtOKjBpkNMI06ViEGQW2gjiowt6JmR/C4Vpi6s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Uho8LZYbhxGmTZwmjxKakTgg60VCBe0bMKe+MLehPPjzDLwc9APiBxA/Ya/ix16i8pJ4HZFYsNSjw7Xd5m5FoT5rp20RuXcwk7pnd+73D6+YP5SkAvrOwnUqQXsgxb9cw1IGTBFYqQ6Etq/xOnHjUbM1JTGEFMHaXOs1S7p3nLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DUQmjJWW; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756737001; c=relaxed/simple;
+	bh=8k/cTAP1uGo7YkU154SU3zLypsg/dO9vH8JEnPRukQw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=UjFlIn9+HLqChV828JXW+FCqjmZB98TgDPxlCyaUYJ7LOuEk3uXdmr6bP96OX8XeZ/fEsETiwcRK5sJy94HL0jFRTiWfv8T2Dn8r0wYksHdZg1AkjhYK1Gi8w4jHJBa8GfYjMmKcQUe1Xy5r7NyqSApdS2geEPq8OfpSOlKiWIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lEZ+kvdO; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DUQmjJWW"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0413cda0dbso30480966b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Sep 2025 06:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756733201; x=1757338001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ICiwcLIU71Izuhu8fP8tVO8odVf8d1Nj7kJu4RHQNHg=;
-        b=DUQmjJWWhlAgiKNReCDRFHM3BetprA9OPQvbYuNF9TtKpOMoCF7DFpJQhOo+RR2aNj
-         ErIvAoB5sPzHHJvjMdYdCWMgfrPAKY4ccw5f/y/uiwnuJruxfIOzy3XsAS8/fRzxX0Mq
-         2my0fE0uvKgsWMAyr2UIozPa0x5xzvOB/3ZkDd5COAspgM1VvBpKnUlK++0WHRuRsPK0
-         z7u/UiBIhBeNhSOVT2Ok2EcpxpFRN9qnNXioEO6rGmOHvGdMP3DG0WtPPXYyD7L93C3C
-         IyPeKkxA40Xsf+yJcA2lU4VoWxsree4YBoUJq9U+EatiAvDzW5Tir4KUysgpuAKbMuvN
-         RmlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756733201; x=1757338001;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ICiwcLIU71Izuhu8fP8tVO8odVf8d1Nj7kJu4RHQNHg=;
-        b=B690nX/yz44+3hVOVQPvG+NLcjJzn3U3FB6BmO67yl7hPPtGkhEprEfIAMafB5n+6b
-         8FOxeDfS8UKWRbof2x8HD9Yz/01wj5Q5/ooQvE2iZPDmgRvpNUU+EQrIDgWqYgDRK5or
-         Z+c73XZK4FRv6Q1Wid5b4Pzs0clkBoTGjwIuXAV9J/hq9wNXA/a3YBKBw7mNNESH9CKm
-         FjF6kBC+FbIi1Px2v7t+2Q0c3jqXBFCOmtHeD+2X5fUghjy+rvIBU1Ps2RdjrySOuwBy
-         RheNy6+BDCAqgvB4rNpZ493qHGwD/CBM3vBbfjqlxhB87lZl5pgJFEcxrpBb0FBLHWZt
-         +qKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHAm39U+0OUqTxkWMwK10wNLsUVwGcH+nrvDr3uGpnMAvkCcOaegqGzWDbhMSzv1QorY+XuLwLPIBJqcRPweoCnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP21wi0uWHW+yp8inKDQMa8ytGn/Bgj6lmAQuCIp1xmZ+ON5bN
-	vJ/nhi3FxAFKg1w2CZ9ZmculHfUtiW2upb9g0quaOssIRx4h9O8pjNQrB3KyBPb3NMs=
-X-Gm-Gg: ASbGnctucEg2qvacpO87udhVWiddRUVMzD6zjI1Ae/zuHV+RebnlYqEe9BCYSwa9PXX
-	B1dor5rN3uzTjF3oAbaEJaMqd8uHSvTy8/d/5nBxGbiWatPQsFSQNb/yS5zeq9sMciv34DqO3Hg
-	ug1EpyS5tVQseOsaUREXWSgnCNK0J04IoWDGa7nm6FFDd5ZUDakXEnXwJEup5SiNGuTPcgU5RKX
-	XC6fyWgS75ZSUsD0H9ookJaTr42LMx0vvyPtEp1rco8zOZlgWBwQFlAATwvdD96XciqhwOYVRg+
-	1VC5YYDlJ5bI8IrlMi3ml70Y68QLauRPBFbHe4UsjrP7mzMlf6LDWgi3lGJk/0AxxcyDTg4n1Y2
-	pXJrpFrineZgLHGnyVeyaOfkzQoozq8UQVw+tYZA=
-X-Google-Smtp-Source: AGHT+IHQTmAvbsKv0D4j4Hvyh4K0kyRVksjF4qrxn2f9tAR+H9KrYnWzvnDmgth3oDHi6jyc4O8txA==
-X-Received: by 2002:a17:906:16da:b0:b04:1fc6:1347 with SMTP id a640c23a62f3a-b041fc67c80mr223542566b.0.1756733201076;
-        Mon, 01 Sep 2025 06:26:41 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04241b2e7esm305997566b.43.2025.09.01.06.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 06:26:39 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20250830-s3c-cleanup-nand-v1-4-05b99ef990fe@linaro.org>
-References: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
- <20250830-s3c-cleanup-nand-v1-4-05b99ef990fe@linaro.org>
-Subject: Re: (subset) [PATCH 4/4] ARM: s3c6400_defconfig: Drop
- MTD_NAND_S3C2410
-Message-Id: <175673319874.45844.111501190462962489.b4-ty@linaro.org>
-Date: Mon, 01 Sep 2025 15:26:38 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lEZ+kvdO"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250901142951epoutp01bfb7f7ee6b843bdd3eda8bb2b13950e9~hLvxpnGg91206812068epoutp01c
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Sep 2025 14:29:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250901142951epoutp01bfb7f7ee6b843bdd3eda8bb2b13950e9~hLvxpnGg91206812068epoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756736991;
+	bh=2IVilufhTk8OxJwrv6/zlVYsrGN5/kHDHMnuC7CDzWc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=lEZ+kvdOgAgJi4Jw3RYYcX1BYw64Dh00cK7YI8yvONrG/6TnTVqR9fyPzn6WX5k7Q
+	 7TcB+flqvRXLj0KvWO+tm2WAqvxbOU7bD804SwRZoHV+ffVW1VFhp44wu5ouBy6OQ4
+	 +1LIIQ74X+ltEcB3moz9SMmZRmnic2NC1PNK8Xnk=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250901142950epcas5p13ea9f7cdf7c686e688e71ae08aa36acc~hLvwyJHrt2550625506epcas5p1T;
+	Mon,  1 Sep 2025 14:29:50 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cFrqd2hpgz6B9m5; Mon,  1 Sep
+	2025 14:29:49 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250901142948epcas5p3b6580da89ca826378481451bdafce798~hLvvQIxzi3166431664epcas5p3P;
+	Mon,  1 Sep 2025 14:29:48 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250901142947epsmtip2a81a5af8319bbbf7d82d50d5339d3232~hLvtvrwLf0150201502epsmtip23;
+	Mon,  1 Sep 2025 14:29:46 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Wim Van
+ Sebroeck'" <wim@linux-watchdog.org>, "'Guenter Roeck'" <linux@roeck-us.net>,
+	"'Rob Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
+Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20250830-watchdog-s3c-cleanup-v1-4-837ae94a21b5@linaro.org>
+Subject: RE: [PATCH 4/4] dt-bindings: watchdog: samsung-wdt: Split if:then:
+ and constrain more
+Date: Mon, 1 Sep 2025 19:59:45 +0530
+Message-ID: <31f501dc1b4c$dedf8fd0$9c9eaf70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMq6vyl63rBWSdRs1NKiWzUsYqwtwJkufMiArpZRa2xt8VwUA==
+Content-Language: en-us
+X-CMS-MailID: 20250901142948epcas5p3b6580da89ca826378481451bdafce798
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250830101916epcas5p13a007b24285862d6ed0db1e2d8b738d6
+References: <20250830-watchdog-s3c-cleanup-v1-0-837ae94a21b5@linaro.org>
+	<CGME20250830101916epcas5p13a007b24285862d6ed0db1e2d8b738d6@epcas5p1.samsung.com>
+	<20250830-watchdog-s3c-cleanup-v1-4-837ae94a21b5@linaro.org>
 
 
-On Sat, 30 Aug 2025 19:01:12 +0200, Krzysztof Kozlowski wrote:
-> MTD_NAND_S3C2410 driver was removed from the kernel, so cleanup
-> defconfig as well.
-> 
-> 
 
-Applied, thanks!
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: Saturday, August 30, 2025 3:49 PM
+> To: Wim Van Sebroeck <wim=40linux-watchdog.org>; Guenter Roeck
+> <linux=40roeck-us.net>; Rob Herring <robh=40kernel.org>; Krzysztof Kozlow=
+ski
+> <krzk+dt=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>; Alim Akhtar
+> <alim.akhtar=40samsung.com>
+> Cc: Krzysztof Kozlowski <krzk=40kernel.org>; linux-
+> watchdog=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
+> samsung-soc=40vger.kernel.org; Krzysztof Kozlowski
+> <krzysztof.kozlowski=40linaro.org>
+> Subject: =5BPATCH 4/4=5D dt-bindings: watchdog: samsung-wdt: Split if:the=
+n: and
+> constrain more
+>=20
+> Binding defined two if:then: blocks covering different conditions but not=
+ fully
+> constraining the properties per each variant:
+> 1. =22if:=22 to require samsung,syscon-phandle, 2. =22if:=22 with =22else=
+:=22 to narrow
+> number of clocks and require or disallow
+>    samsung,cluster-index.
+>=20
+> This still did not cover following cases:
+> 1. Disallow samsung,syscon-phandle when not applicable, 2. Narrow
+> samsung,cluster-index to =5B0, 1=5D, for SoCs with only two
+>    clusters.
+>=20
+> Solving this in current format would lead to spaghetti code, so re-write =
+entire
+> =22if:then:=22 approach into mutually exclusive cases so each SoC appears=
+ only in
+> one =22if:=22 block.  This allows to forbid samsung,syscon-phandle for S3=
+C6410,
+> and narrow samsung,cluster-index to =5B0, 1=5D.
+>=20
+This looks much cleaner.=20
+On a side note, may be you can add an example of latest SoC binding=20
+for the documentation purpose as current example in this file is pretty old=
+ and simple one.=20
+(I know one can always look into dtsi/dts for the example, but updating her=
+e won't harm)
 
-[4/4] ARM: s3c6400_defconfig: Drop MTD_NAND_S3C2410
-      https://git.kernel.org/krzk/linux/c/ae6f637a456c1de75a582afa9cb6169813e89b83
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> ---
+In anycase,
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+
+>  .../devicetree/bindings/watchdog/samsung-wdt.yaml  =7C 70
+> ++++++++++++++++------
+>  1 file changed, 52 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-
+> wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-
+> wdt.yaml
+> index
+> 51e597ba7db2615da41f5d3b6dc4e70f6bb72bb6..41aee1655b0c22a6dce212a6
+> 3fa4849089253f09 100644
+> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> =40=40 -74,24 +74,7 =40=40 allOf:
+>            contains:
+>              enum:
+>                - google,gs101-wdt
+> -              - samsung,exynos5250-wdt
+> -              - samsung,exynos5420-wdt
+> -              - samsung,exynos7-wdt
+>                - samsung,exynos850-wdt
+> -              - samsung,exynos990-wdt
+> -              - samsung,exynosautov9-wdt
+> -              - samsung,exynosautov920-wdt
+> -    then:
+> -      required:
+> -        - samsung,syscon-phandle
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            enum:
+> -              - google,gs101-wdt
+> -              - samsung,exynos850-wdt
+> -              - samsung,exynos990-wdt
+>                - samsung,exynosautov9-wdt
+>                - samsung,exynosautov920-wdt
+>      then:
+> =40=40 -104,9 +87,41 =40=40 allOf:
+>            items:
+>              - const: watchdog
+>              - const: watchdog_src
+> +        samsung,cluster-index:
+> +          enum: =5B0, 1=5D
+>        required:
+>          - samsung,cluster-index
+> -    else:
+> +        - samsung,syscon-phandle
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos990-wdt
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Bus clock, used for register interface
+> +            - description: Source clock (driving watchdog counter)
+> +        clock-names:
+> +          items:
+> +            - const: watchdog
+> +            - const: watchdog_src
+> +      required:
+> +        - samsung,cluster-index
+> +        - samsung,syscon-phandle
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos5250-wdt
+> +              - samsung,exynos5420-wdt
+> +              - samsung,exynos7-wdt
+> +    then:
+>        properties:
+>          clocks:
+>            items:
+> =40=40 -115,6 +130,25 =40=40 allOf:
+>            items:
+>              - const: watchdog
+>          samsung,cluster-index: false
+> +      required:
+> +        - samsung,syscon-phandle
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,s3c6410-wdt
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Bus clock, which is also a source clock
+> +        clock-names:
+> +          items:
+> +            - const: watchdog
+> +        samsung,cluster-index: false
+> +        samsung,syscon-phandle: false
+>=20
+>  unevaluatedProperties: false
+>=20
+>=20
+> --
+> 2.48.1
+
 
