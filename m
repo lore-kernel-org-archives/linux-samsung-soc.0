@@ -1,120 +1,80 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CA7259CA3
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Sep 2025 07:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BE71E5219;
+	Mon,  1 Sep 2025 07:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756710377; cv=none; b=ZzUb1+m0y2EnJU77M1k82NUniSawBeFAeRSzU6Ku/eRtig59ppQoiSrTncKNA6SasEzUb9p/KuR7QBchc7X+MlapwL7iRHf7l8mG1HXO+NDpAjkmZrieYiyb55jF0156ntLpdSssBBWaw65Sdv64dpu5lsk/x1j5JKSkfJJSbU4=
+	t=1756711594; cv=none; b=BHdVxL9QPnCFRS3iPpP2RSM4AeEoenE8th+7MChOP7GCeTaF7l23y+FNsCVx4Z/TZQZ/UVcAdn3ecdU/uT9ENH6SQ+SczBIv3ShAvJpzqnAyXsxUizquxdFlkD7nanf21efgrHEr4RYQg2VrcILc4KkL2iIImSPJPhlvmOPsDm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756710377; c=relaxed/simple;
-	bh=ghUkVbbL6fSFFM+VnU2xLQumO120VvySAdwvS0T6ve0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5JVG2QuGO+z9n7wFFWPrAAnCCiMuCR5Wh9Mgw4CQKbootCZg6uA0YjyIC7e1swFC9Lq9DP9NIaHrqmR+6qLE37UuTIV5XaIbnLVZwTQchp7jZV6CYi2bQqQeEWnMmkvdRxI385CTZkRnX5nefPAPeKk7GxicZt7J0y+Qu4S8aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5V7s0Hc; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756711594; c=relaxed/simple;
+	bh=ImQL93cWU9txQnD2Z/VJCpp3Mddb+X9LqtZaBzfGqPs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VGL62DR1C+iNlAh2d7Lhq4YGwYrzmrwkAD+F+j/lvr6JxH+jBnvpANyHDRlxH12vZtKlCbnJ3eg+P/SvBpDcNJA2zU687cdZFeRy8AXhkkC+5CBcE8qOcYUO3lJliX5zaPOpRULxvBojVhvMAUsN8nOze0cJSFJcilGlkkP4Rik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=218vl8jr; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5V7s0Hc"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b804ed966so9881135e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Sep 2025 00:06:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756710374; x=1757315174; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5RiPjeOB66FDKJZfr/ttLTVqavYTkJ/P7VOQby544s4=;
-        b=L5V7s0HcpxIN9ySwa+9k8bvQSXh6cl0hgNZll5XItb+IdlZ5Vu2bJDbABBorJxKxF0
-         UzscACIGYpDu4Np3yOwYzXlypBbXq7lXYdPo/SNf/vWBrRBfkNm3V5Ow3BgEI+qEntL1
-         Tr904zYYYwi/WIO7yQduQExd5GVJ1lhGjnyClNX4+cuYikU274e/6Ek4ZmQRjEZwTPlH
-         cajgmtQiOwddI1CWRuSaJzNIAwSKBK6Y/69Q4Zr06iuFf7idqzFEtsm/ap1F3jX0Dc8S
-         4gZMLk1w0TGZ0cxhmKra/aIVjvHz6HccPzM4IGvEJM9qVthIB7lOtmUpymMXydjEGtdG
-         VqeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756710374; x=1757315174;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5RiPjeOB66FDKJZfr/ttLTVqavYTkJ/P7VOQby544s4=;
-        b=JRmteasiMO1TyloMdHbJ5XWrtVFniusjWVgzWMl1pTV8uexJQsBlLU+3iwe8Sxj1+q
-         bcRibS0Pt96oiQC25pzfPLMMxDJBgdjgB+U/fI/nswRX66wy7MqvexvHNvhgymOGzOVh
-         H/5+/q5Ap9iGBvG8MAn2ybNzmQ+nMt+/wnhk8nEYKzpY6Y01KlpGeEIURM0A5RgTIall
-         FoDCoWPZlZDrdblcam0GEMjpsapsgPDoSXAUJP+KayEK9dHYOG5bQwCgKbvefSrK39Uz
-         lnaRtJ8lbMVk+GCDhln7FHbYySdq+qkjU+J1UQxO/WF1oTMlA/xj0WYTOY3A5IMA7zNH
-         QRqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqQe5Nl0FCem+M5WyfsADRy1e2SHntidUXhpHDZry8ScAowHITagzg691YN2oQ0c+pywsMyQQyidvLUUZp6z8ybg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRNVyWdN3y7ciQXjKz3uaiWNecZx4vWyGDtZhgKbYQlRsvZtXW
-	Tn9QuADjMim8+D73PhFZjqlEQi55XAbtWB8mccRpnu1NHdzvvogCHgTX9Ddrj5V4Er0=
-X-Gm-Gg: ASbGncuBcP7BrMOEMWrod9BatYMDO34y8ZMcahpFEsPhZT0an7Tn2O3ESasgwDO39nk
-	xWmtjBTIqbcwEIG8Uy91XWch2Ad2Bk+G1oEnKrtnKAcni4YzfBj4W13mfMkaE0FlEUqdTkpL+bc
-	ub5/IVkhx6eNIx4Ml+iwQXAHyCXin0uW64oU5E8nev+xiQN+p9hSjAYQWPxs2jHsu4122gx9ulf
-	xdjfc0FLSlAs19zmsrtlGot6jDfu8oIAGAa2zV5kYAJS2tur1MGajhn6m8JChnHKCoNFOxpdqhB
-	9+SEEzBXY39LHcogOcl+9ok8Wk/Gbn3wzKmnw9aWBRtIqaphsqUFGRoD8H53Ac03tGP7ikvAsUn
-	mkAV524JhG5HimJznE9slxWX4U9LdnCsHbNpvVQv0
-X-Google-Smtp-Source: AGHT+IFnBbOE5ba7PQ9iK6x0QBC9gheBMd69i0QeCPDpf2UAKrxEuZOeM6Cz6ka7pF/Dx8JiLhhRIQ==
-X-Received: by 2002:a05:600c:a44:b0:45b:7f72:340 with SMTP id 5b1f17b1804b1-45b8557c68cmr60349155e9.25.1756710374198;
-        Mon, 01 Sep 2025 00:06:14 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d85f80d8casm541692f8f.54.2025.09.01.00.06.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 00:06:13 -0700 (PDT)
-Message-ID: <73674a4e-2397-4470-8743-763e0fb7435d@linaro.org>
-Date: Mon, 1 Sep 2025 08:06:11 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="218vl8jr"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 985FA4E40C10;
+	Mon,  1 Sep 2025 07:26:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6DB7B60699;
+	Mon,  1 Sep 2025 07:26:23 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 291E41C22DC76;
+	Mon,  1 Sep 2025 09:26:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756711582; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ImQL93cWU9txQnD2Z/VJCpp3Mddb+X9LqtZaBzfGqPs=;
+	b=218vl8jrV5nS1OF9XPtgqctOBR4E5Wt9W4UG6OxZHv7VtXkQRBmbUVPaVY/3b1cPBl7ehQ
+	J7kK4SYpusaEVXga/qqSB0wfgkzV9Xt8jKrBzVRabErX/7SV2YBYZ2q8FAQAJ1EigBut1s
+	luu06JS21cW3gu2DjeH9Jet88Qx3zB/QM7V+5dZ6hNn1z9Do6W0Yo8wZ+ClFPoglbkXT/Q
+	ii9Sl8lbZqdedK97AHAk6UzFxuoZPlr5m9YkYhiiBZ7lix/nt9QHMSrAohu3Sb+yskUiXh
+	F2EpllC44LqrZxMO0GAq6p3Sc0xKPaXuSnNd4s7Rq7Zgg7yw6UbWFjtYS6PmLg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Krzysztof
+ Kozlowski <krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>,
+  Russell King <linux@armlinux.org.uk>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 4/4] ARM: s3c6400_defconfig: Drop MTD_NAND_S3C2410
+In-Reply-To: <20250830-s3c-cleanup-nand-v1-4-05b99ef990fe@linaro.org>
+	(Krzysztof Kozlowski's message of "Sat, 30 Aug 2025 19:01:12 +0200")
+References: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
+	<20250830-s3c-cleanup-nand-v1-4-05b99ef990fe@linaro.org>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Mon, 01 Sep 2025 09:26:01 +0200
+Message-ID: <87qzwqr5va.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] exynos-acpm: add DVFS protocol and clock driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <28b5b033-76de-4fed-af6b-6d8342362c47@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <28b5b033-76de-4fed-af6b-6d8342362c47@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hello Krzysztof,
 
+On 30/08/2025 at 19:01:12 +02, Krzysztof Kozlowski <krzysztof.kozlowski@lin=
+aro.org> wrote:
 
-On 8/31/25 11:42 AM, Krzysztof Kozlowski wrote:
-> On 27/08/2025 14:42, Tudor Ambarus wrote:
->> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
->> are variable and index based. These clocks don't provide an entire range
->> of values between the limits but only discrete points within the range.
->> The firmware also manages the voltage scaling appropriately with the
->> clock scaling. Make the ACPM node a clock provider.
->>
->> Add support for the ACPM DVFS protocol. It translates clock frequency
->> requests to messages that can be interpreted by the ACPM firmware.
->> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
->>
->> All patches can go through the samsung tree.
-> 
-> You really should have explained the dependencies instead of me trying
-> to decipher how to handle this patch. It's really not trivial.
+> MTD_NAND_S3C2410 driver was removed from the kernel, so cleanup
+> defconfig as well.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> I will take it via Samsung SoC.
 
-My apologies, I forgot. If I tested individual patches, I would have
-remind about the dependency. Something to automate for the next time ...
-> 
-> You do understand that clock is completely different subsystem (Stephen
-> Boyd)?
-> 
+Ok, I'll take the other patches through mtd.
 
-Yes, I do, sorry.
-
-Cheers,
-ta
+Thanks,
+Miqu=C3=A8l
