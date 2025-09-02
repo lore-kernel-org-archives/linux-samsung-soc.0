@@ -1,74 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226583054E7;
-	Tue,  2 Sep 2025 13:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91BD277026;
+	Tue,  2 Sep 2025 14:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819985; cv=none; b=kNE/1eSiHGErI0MzCbksaIaB504rKpaCj5nxXgcASA0jMY0qeVHhls3YMMWmNhpxBESFRRLJo1DftxM3shF8d7ZGPTvbUJI277zk8KYB8l1y8OvNx5Lg/vmLFojPaxswG9kQySc3nOnJwRE/nZhGJjLh7TpcVtBz+H1u8emVg5w=
+	t=1756823375; cv=none; b=c+0B+rQ9f7fAFtS52H2jogNkH+Pwb35EUu4j32ql/N/qE0nPwYydGbubO8DaAb5cxIS180jE4jzeqGi8LlIAplYlg4o1expK8PlFyb44UpwjpVy8d5bzjTmUXyCRBSxkYvtM1kXdSTJKjx5zcK5r6i9RrWABetwth3Im/m9oyDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819985; c=relaxed/simple;
-	bh=sBkfvtV88WJvhk99waVh61fGOEuvu+CGCXjjjDwFWgk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dGM+UM6e8k68R50XMFjfg/bcn2ZpaLGMLyKdWkpCZrprEIFkRCRPzCDKoEZCkzjt3oCTnkTSZKIQBgkzJQqhax1OCkuG8JG0cAqKubI2sDNjRjhzSvvJDJf73WMmudsPnbWVi1KHAYMoAVavLUBx/8OrOcHrUCcbZROdVg6FE4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YR8flJhN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756823375; c=relaxed/simple;
+	bh=/di9Z9Q2Z9WifwPEgJy+cghwk2Lex4IcvqCufSkxz1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Go3NrF4RoGvkq34CYCKAnQ5XY+Zj49tN2+6TY0pENG/Ol9lcIXugHCZQFcV1XQM1t/fE8nXqAzBxyOxNl1wpRZVv+97Lmqx48eDbORPWSuZe4gjjffyBnKQctEEU5zchRLb99gsSlZtsXpXx3L4/OhDmUXeBwGDufMR4xkpv5YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jl7O/6eM; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YR8flJhN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3C5C4CEED;
-	Tue,  2 Sep 2025 13:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756819985;
-	bh=sBkfvtV88WJvhk99waVh61fGOEuvu+CGCXjjjDwFWgk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YR8flJhNtGVFxi4yKyTwDq+mLCufp8faONJNipdW7vSjbwjD5FUbZycT4DKFuNyE+
-	 Bes9NXoM/9CB0B4gA+/dPGb86ZNXZyJtMUL9vZG/ULM1401w7jjHqUP4wlM/JY3IFO
-	 RCjP091qHL6sOu/acZEFenbKuLb4CpzZNTS/gnAb9KHMuUAxhbNSvvwroNvygTbxr4
-	 qfUqXfQWh6CUMTvmfio/DVMcVeE03p1HxWJn9OLRJVC5h6lsyUDPJTAFM7tafV06hS
-	 7WpZoQ0U0EjkOQ8xOa/4fBqRxjPdvYmRvXn75UDFrlHf6Chuw20rSTwwjybHEevXB6
-	 8AULmPhMRqE/A==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-In-Reply-To: <20250813161517.4746-10-wsa+renesas@sang-engineering.com>
-References: <20250813161517.4746-10-wsa+renesas@sang-engineering.com>
-Subject: Re: (subset) [PATCH 09/21] mfd: remove unneeded 'fast_io'
- parameter in regmap_config
-Message-Id: <175681998119.2360872.14819773585148263316.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 14:33:01 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jl7O/6eM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756823374; x=1788359374;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=/di9Z9Q2Z9WifwPEgJy+cghwk2Lex4IcvqCufSkxz1M=;
+  b=jl7O/6eMj0EYkH5A3C0sWvbOu9bcGii8IfSK8KMOkerqqByR7S3llwK7
+   vqSxqViQeE/cNChKfgoayR8YR5k6qbL/Acptp9KSHhf8ROfgn5VTOI+hI
+   cYbX8uxE8m0W2A0S3OmqwArqYky3WYBwZrjQjJeAEwDT+ZP++twUFY/HC
+   obSnFi+la1aqgzlrQv8wiv3PJrkCT53KCTLCcyRmBqTPNljcbJtSmZCL9
+   TrAGeNyVKqVumKwrYKX62shCoqwOQ9JjN6r4IOctT0D9PLt6L5Uq9o6Vx
+   UAiE4R5pNrNTkNP2nB7gL/5r1I7XFpH+qxjkhiOvsbTnfL1HSkpbzH7Tx
+   Q==;
+X-CSE-ConnectionGUID: aV0IQkAETCCmDP+AfxjtdQ==
+X-CSE-MsgGUID: BNXVL0NESNW8e6DoDLSmug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70480971"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="70480971"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:29:33 -0700
+X-CSE-ConnectionGUID: KBB6d1l3TTe5YfjCkl77Bg==
+X-CSE-MsgGUID: HxnFVIFXRyiIXQcPIZR2Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="176602640"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO stinkbox) ([10.245.245.118])
+  by orviesa005.jf.intel.com with SMTP; 02 Sep 2025 07:29:15 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 02 Sep 2025 17:29:14 +0300
+Date: Tue, 2 Sep 2025 17:29:14 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Dharma Balasubiramani <dharma.b@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, Liu Ying <victor.liu@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Edmund Dea <edmund.j.dea@intel.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <
+Subject: Re: [PATCH v2 00/37] drm/atomic: Get rid of existing states (not
+ really)
+Message-ID: <aLb_OrVn6hK0Hf-F@intel.com>
+References: <20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+In-Reply-To: <20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org>
+X-Patchwork-Hint: comment
 
-On Wed, 13 Aug 2025 18:14:55 +0200, Wolfram Sang wrote:
-> When using MMIO with regmap, fast_io is implied. No need to set it
-> again.
+On Tue, Sep 02, 2025 at 11:34:59AM +0200, Maxime Ripard wrote:
+> Hi,
 > 
+> Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+> accessors.
 > 
+> The initial intent was to remove the __drm_*_state->state pointer to
+> only rely on old and new states, but we still need it now to know which
+> of the two we need to free: if a state has not been committed (either
+> dropped or checked only), then we need to free the new one, if it has
+> been committed we need to free the old state. 
+> 
+> Thus, the state pointer is kept (and documented) only to point to the
+> state we should free eventually.
+> 
+> All users have been converted to the relevant old or new state
+> accessors.  
+> 
+> This was tested on tidss.
+> 
+> Let me know what you think,
+> Maxime
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-Applied, thanks!
+Other than the pre-existing ingenic private state issue that
+Dmitry spotted I didn't see anything obviously wrong.
 
-[09/21] mfd: remove unneeded 'fast_io' parameter in regmap_config
-        commit: 8a7d550ceea258220e31982903b8a017351526ec
+So apart from that the series is
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
---
-Lee Jones [æŽç¼æ–¯]
+> ---
+> Changes in v2:
+> - Dropped the first and second patches
+> - Reworked the recipient list to be nicer with SMTPs
+> - Link to v1: https://lore.kernel.org/r/20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org
+> 
+> ---
+> Maxime Ripard (37):
+>       drm/atomic: Convert drm_atomic_get_connector_state() to use new connector state
+>       drm/atomic: Remove unused drm_atomic_get_existing_connector_state()
+>       drm/atomic: Document __drm_connectors_state state pointer
+>       drm/atomic: Convert __drm_atomic_get_current_plane_state() to modern accessor
+>       drm/atomic: Convert drm_atomic_get_plane_state() to use new plane state
+>       drm/vkms: Convert vkms_crtc_atomic_check() to use new plane state
+>       drm/tilcdc: crtc: Use drm_atomic_helper_check_crtc_primary_plane()
+>       drm/atomic: Remove unused drm_atomic_get_existing_plane_state()
+>       drm/atomic: Document __drm_planes_state state pointer
+>       drm/atomic: Convert drm_atomic_get_crtc_state() to use new connector state
+>       drm/ingenic: ipu: Switch to drm_atomic_get_new_crtc_state()
+>       drm/arm/malidp: Switch to drm_atomic_get_new_crtc_state()
+>       drm/armada: Switch to drm_atomic_get_new_crtc_state()
+>       drm/atmel-hlcdc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/exynos: Switch to drm_atomic_get_new_crtc_state()
+>       drm/imx-dc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/imx-dcss: Switch to drm_atomic_get_new_crtc_state()
+>       drm/imx-ipuv3: Switch to drm_atomic_get_new_crtc_state()
+>       drm/ingenic: Switch to drm_atomic_get_new_crtc_state()
+>       drm/kmb: Switch to drm_atomic_get_new_crtc_state()
+>       drm/logicvc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/loongson: Switch to drm_atomic_get_new_crtc_state()
+>       drm/mediatek: Switch to drm_atomic_get_new_crtc_state()
+>       drm/msm/mdp5: Switch to drm_atomic_get_new_crtc_state()
+>       drm/omap: Switch to drm_atomic_get_new_crtc_state()
+>       drm/rockchip: Switch to drm_atomic_get_new_crtc_state()
+>       drm/sun4i: Switch to drm_atomic_get_new_crtc_state()
+>       drm/tegra: Switch to drm_atomic_get_new_crtc_state()
+>       drm/tilcdc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/vboxvideo: Switch to drm_atomic_get_new_crtc_state()
+>       drm/vc4: Switch to drm_atomic_get_new_crtc_state()
+>       drm/atomic: Switch to drm_atomic_get_new_crtc_state()
+>       drm/framebuffer: Switch to drm_atomic_get_new_crtc_state()
+>       drm/atomic: Remove unused drm_atomic_get_existing_crtc_state()
+>       drm/atomic: Document __drm_crtcs_state state pointer
+>       drm/atomic: Convert drm_atomic_get_private_obj_state() to use new plane state
+>       drm/atomic: Document __drm_private_objs_state state pointer
+> 
+>  drivers/gpu/drm/arm/malidp_planes.c             |   2 +-
+>  drivers/gpu/drm/armada/armada_plane.c           |   3 +-
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+>  drivers/gpu/drm/drm_atomic.c                    |  21 ++--
+>  drivers/gpu/drm/drm_framebuffer.c               |   2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c       |   2 +-
+>  drivers/gpu/drm/imx/dc/dc-plane.c               |   2 +-
+>  drivers/gpu/drm/imx/dcss/dcss-plane.c           |   4 +-
+>  drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c         |   3 +-
+>  drivers/gpu/drm/ingenic/ingenic-drm-drv.c       |   3 +-
+>  drivers/gpu/drm/ingenic/ingenic-ipu.c           |   4 +-
+>  drivers/gpu/drm/kmb/kmb_plane.c                 |   3 +-
+>  drivers/gpu/drm/logicvc/logicvc_layer.c         |   4 +-
+>  drivers/gpu/drm/loongson/lsdc_plane.c           |   2 +-
+>  drivers/gpu/drm/mediatek/mtk_plane.c            |   3 +-
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c      |   7 +-
+>  drivers/gpu/drm/omapdrm/omap_plane.c            |   2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |   6 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c    |   2 +-
+>  drivers/gpu/drm/sun4i/sun8i_ui_layer.c          |   3 +-
+>  drivers/gpu/drm/sun4i/sun8i_vi_layer.c          |   3 +-
+>  drivers/gpu/drm/tegra/dc.c                      |   2 +-
+>  drivers/gpu/drm/tilcdc/tilcdc_crtc.c            |   9 +-
+>  drivers/gpu/drm/tilcdc/tilcdc_plane.c           |   3 +-
+>  drivers/gpu/drm/vboxvideo/vbox_mode.c           |   8 +-
+>  drivers/gpu/drm/vc4/vc4_plane.c                 |   6 +-
+>  drivers/gpu/drm/vkms/vkms_crtc.c                |   4 +-
+>  include/drm/drm_atomic.h                        | 144 ++++++++++++------------
+>  28 files changed, 124 insertions(+), 135 deletions(-)
+> ---
+> base-commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
+> change-id: 20250825-drm-no-more-existing-state-9b3252c1a33b
+> 
+> Best regards,
+> -- 
+> Maxime Ripard <mripard@kernel.org>
 
+-- 
+Ville Syrjälä
+Intel
