@@ -1,136 +1,127 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B252D8DB7;
-	Wed,  3 Sep 2025 19:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D512D8DDA
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 19:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927239; cv=none; b=nnqO3evFtIt+5VADF09bwF1HgonZNMZillNczluLDofxUAWprcMKcB3MdaKNC+G0yELSvAYyYWM3/1r+mHdbbEoLXb7qMi7RBU8lxS3GpD98h1u6h1kE/4CciP8JiEDCIr/IjT1lvNreIGsnSmpOoLD4eRqew7GLb5kZRiy+w5k=
+	t=1756927260; cv=none; b=nV1r6/QW4DjlAhJT2iQJ4yH+FY7nB8a06A1+sHM3SQu64aSO0iUfFvxS4btWAIseW/WBb5w6MNs9nlflr1rYZxjIASoDnddFPjY9y4zFciVA/2Cac6KjAwzQMYL8qFSUVDJzEtao2UZ5dT54BIFwVxiOt9fj7WVAaQUv1LGh4DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927239; c=relaxed/simple;
-	bh=kRSOTd5XrHRhOT4S3xBCr2B49OtJoj5AOBsWHzaGwXc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SW+LUlAyNFUKkbFyzCxAYsYgo7L+nQuD32k9quKV7nNvIckun8/7uC9smO8/k11vLnjyJWuLQKX2aCUZb0RiJH/JcUVPfuX2TAQMP1cCZZc+D2cOXPLtqO/LitGtaZxxc/aCcHa4xkpwXJSHAhiPxOP7n8xuIdSf3MHE4y5H0Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=Z0xvlH/E; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1756927260; c=relaxed/simple;
+	bh=hSkvSWyCj5TG+K6dDKbK2f7/2LUdXbAtJRmHN0LkS5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGXv6o96Zjn2FOaqDRYxPK6O+8yEXHDe8eUF4X22omSpr1ksNzqF3tje19+maDDU+fzWNTeRCuV9dGemTBTZhc6f7+CycPjgCkgdhCLMZd2TA8zxjwmY9RGmo0AOTXfnEplw04P4sSEU015D2CuZQJJDRgWWTF9/IY93UWIlnho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=QVg0UfJL; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Z0xvlH/E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1756927235;
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="QVg0UfJL"
+Date: Wed, 3 Sep 2025 21:20:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1756927251;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=c+ZgGU/Y7ymCGJS4a8iBSCEwRU68y0Cdd3gwtYGpdv4=;
-	b=Z0xvlH/ECfsC59swm4ATc7moQPplDnhXIzmBF4X35r6pJmnBDDeoU1Ie5Ab1yxhe+1ln8W
-	GcUQb2ZLGdW9NnPudS1kvJ3oXxwi39axE8bJQYRDLCQpq4QuYcwKIMP6MOFv74jzcnlQqN
-	tMc5uO4lOOAAr/7RBg88uyXzuq33+zQ=
-Message-ID: <f19aa842d210bf4cd3d7abf03ea7323f9e52df75.camel@crapouillou.net>
-Subject: Re: [PATCH 024/114] clk: ingenic: x1000-cgu: convert from
- round_rate() to determine_rate()
-From: Paul Cercueil <paul@crapouillou.net>
-To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Date: Wed, 03 Sep 2025 21:20:32 +0200
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-24-b3bf97b038dc@redhat.com>
-References: 
-	<20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-	 <20250811-clk-for-stephen-round-rate-v1-24-b3bf97b038dc@redhat.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	 in-reply-to:in-reply-to:references:references;
+	bh=SMNUha3xD+Rt2dAgtb0zQ4SvE9n+JpMWof0kjfU/cXc=;
+	b=QVg0UfJLMlv1In1mpr0Y++srvzXc85BR+8GHcS2uVNMyRe55/mbrA5+W6Y3uAm9rwXhnML
+	G49K0tMJe3BizoEd51XH+pyu06fYzYVd+y1chcd431EM7kuEvpeeKdYH+sZzy4SBxfad5E
+	55FjIDBYTfjxUTEmsC7HHp64ojgww0g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Devang Tailor <dev.tailor@samsung.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, alexandre.belloni@bootlin.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, faraz.ata@samsung.com
+Subject: Re: [PATCH v2 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
+Message-ID: <20250903192046.GA4126@l14.localdomain>
+References: <20250710083434.1821671-1-dev.tailor@samsung.com>
+ <CGME20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9@epcas5p4.samsung.com>
+ <20250710083434.1821671-3-dev.tailor@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710083434.1821671-3-dev.tailor@samsung.com>
+X-Migadu-Flow: FLOW_OUT
 
-Le lundi 11 ao=C3=BBt 2025 =C3=A0 11:18 -0400, Brian Masney via B4 Relay a
-=C3=A9crit=C2=A0:
-> From: Brian Masney <bmasney@redhat.com>
->=20
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+Hi Devang,
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+On Thu, Jul 10, 2025 at 02:04:33PM +0530, Devang Tailor wrote:
+> The on-chip RTC of this SoC is almost similar to the previous
+> versions of SoC. Hence re-use the existing driver with platform specific
+> change to enable RTC.
 
-Cheers,
--Paul
+Could you please describe what the differences are to previous SoCs?
+You write almost similar, please elaborate in what way in commit
+message.
 
+> This has been tested with 'hwclock' & 'date' utilities
+> 
+> Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
 > ---
-> =C2=A0drivers/clk/ingenic/x1000-cgu.c | 19 ++++++++++---------
-> =C2=A01 file changed, 10 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/clk/ingenic/x1000-cgu.c
-> b/drivers/clk/ingenic/x1000-cgu.c
-> index
-> feb03eed4fe8c8f617ef98254a522d72d452ac17..d80886caf393309a0c908c06fb5
-> aa8b59aced127 100644
-> --- a/drivers/clk/ingenic/x1000-cgu.c
-> +++ b/drivers/clk/ingenic/x1000-cgu.c
-> @@ -84,16 +84,17 @@ static unsigned long
-> x1000_otg_phy_recalc_rate(struct clk_hw *hw,
-> =C2=A0	return parent_rate;
-> =C2=A0}
-> =C2=A0
-> -static long x1000_otg_phy_round_rate(struct clk_hw *hw, unsigned
-> long req_rate,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *parent_rate)
-> +static int x1000_otg_phy_determine_rate(struct clk_hw *hw,
-> +					struct clk_rate_request
-> *req)
-> =C2=A0{
-> -	if (req_rate < 18000000)
-> -		return 12000000;
-> -
-> -	if (req_rate < 36000000)
-> -		return 24000000;
-> +	if (req->rate < 18000000)
-> +		req->rate =3D 12000000;
-> +	else if (req->rate < 36000000)
-> +		req->rate =3D 24000000;
-> +	else
-> +		req->rate =3D 48000000;
-> =C2=A0
-> -	return 48000000;
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int x1000_otg_phy_set_rate(struct clk_hw *hw, unsigned long
-> req_rate,
-> @@ -161,7 +162,7 @@ static int x1000_usb_phy_is_enabled(struct clk_hw
-> *hw)
-> =C2=A0
-> =C2=A0static const struct clk_ops x1000_otg_phy_ops =3D {
-> =C2=A0	.recalc_rate =3D x1000_otg_phy_recalc_rate,
-> -	.round_rate =3D x1000_otg_phy_round_rate,
-> +	.determine_rate =3D x1000_otg_phy_determine_rate,
-> =C2=A0	.set_rate =3D x1000_otg_phy_set_rate,
-> =C2=A0
-> =C2=A0	.enable		=3D x1000_usb_phy_enable,
+> 
+>  drivers/rtc/rtc-s3c.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index 5dd575865adf..8db24b6360b8 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -384,6 +384,15 @@ static void s3c6410_rtc_disable(struct s3c_rtc *info)
+>  	writew(con, info->base + S3C2410_RTCCON);
+>  }
+>  
+> +static void exynosautov9_rtc_disable(struct s3c_rtc *info)
+> +{
+> +	unsigned int con;
+> +
+> +	con = readb(info->base + S3C2410_RTCCON);
+> +	con &= ~S3C2410_RTCCON_RTCEN;
+> +	writeb(con, info->base + S3C2410_RTCCON);
+> +}
+
+Rather than adding a new rtc_disable variant I think this could be
+handled in existing s3c24xx_rtc_disable (and I think that is what
+Krzysztof meant). How about adding a new bool to rtc_data that
+describes if S3C2410_TICNT reg is supported or not, and checking it in
+s3c24xx_rtc_disable?
+
+Best regards,
+Henrik Grimler
+
+>  static void s3c_rtc_remove(struct platform_device *pdev)
+>  {
+>  	struct s3c_rtc *info = platform_get_drvdata(pdev);
+> @@ -574,6 +583,12 @@ static struct s3c_rtc_data const s3c6410_rtc_data = {
+>  	.disable		= s3c6410_rtc_disable,
+>  };
+>  
+> +static const struct s3c_rtc_data exynosautov9_rtc_data = {
+> +	.irq_handler		= s3c6410_rtc_irq,
+> +	.enable			= s3c24xx_rtc_enable,
+> +	.disable		= exynosautov9_rtc_disable,
+> +};
+> +
+>  static const __maybe_unused struct of_device_id s3c_rtc_dt_match[] = {
+>  	{
+>  		.compatible = "samsung,s3c2410-rtc",
+> @@ -590,6 +605,9 @@ static const __maybe_unused struct of_device_id s3c_rtc_dt_match[] = {
+>  	}, {
+>  		.compatible = "samsung,exynos3250-rtc",
+>  		.data = &s3c6410_rtc_data,
+> +	}, {
+> +		.compatible = "samsung,exynosautov9-rtc",
+> +		.data = &exynosautov9_rtc_data,
+>  	},
+>  	{ /* sentinel */ },
+>  };
+> -- 
+> 2.34.1
+> 
+> 
