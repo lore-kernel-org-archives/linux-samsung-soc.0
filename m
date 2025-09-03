@@ -1,135 +1,126 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D1D2FABED
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 11:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDA32E7F20
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 12:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756899581; cv=none; b=RReMElIJJHcCD+bWVsZ1yZPyd1l6JNQ1uNnmZSc4yoh0V2j8FD6T3Uo6fqGM1PpzETrwitulP0YU+uu3uiSr2+W763/qRAcpniBsx6PSCzo/qyBUOwGgeiYlxC9RjjNlUQLmAFuxcDnLfHhaEayjiyHVpXVFyximyiIzVf+/rbs=
+	t=1756902235; cv=none; b=G9kiOcjXU3rvnHRmMvfAkCpERGSkloh5orQI0ZYcyzUIqN6kqNPfaF4qiuL+DGMK4htJlYwBG+gMH1QBN+r7JPp4Z50v5RSEi7yWbYAYNWWSA5IfolIw+YtjfylghcHQxfKGjtJHfynw6d0ipnnrLdwMdtdqap646LSgNhB0g78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756899581; c=relaxed/simple;
-	bh=DEKA94TkS8M4IPM3sEAm/5Qz3a9I4jWJINH3l1Tj/dY=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=jFv9Bfp28CKT+jYH9WK2QDJujLksI8hFr1OJNOQ7/jpX7HY6jJ/daADb9/4ZHwTR9FC7oLMCUfjbYJoVUTEsiUcM+JC9DBwLcbVihLMew6/EG1FW2luMSOpHDS+pbxSs6Ougs2WKhwzwRdPNbGNw2WfwfPRszp44fvlEdpOFgII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jKHDh4s2; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1756902235; c=relaxed/simple;
+	bh=IOTbcYwoFyQaIRv47aJvA/ATOIBrIIjZbIeEHBJYZgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doVf4ouAzGeCssZgT8LjxSkAxFhnIR9ozFDnXXZpbfNL7G4YPUscwlUXO4mNMa2IZLnV36s/qnDyK7uJd9HY9GhWxar3vraPc6F/FiBRJRLJADOaKqGkC9yFL6X1tfETA/3M/0QfBGoMyKGusgsBKyQ+gQW1NkbNgZg8pUJ0wB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ME4IxtqY; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jKHDh4s2"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250903113937epoutp032bfd3c759a157141cc6d5ee2f073b167~hwtta0DtU0370903709epoutp03h
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 11:39:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250903113937epoutp032bfd3c759a157141cc6d5ee2f073b167~hwtta0DtU0370903709epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756899577;
-	bh=7brYymqqs4aIaN8Zo+JAkRMDFy6v/aAdvXLq9zLu890=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=jKHDh4s27/JoGOdzhZg27/I0d02Rhr6wRj9FbKmS9rkgC3AfYTlYPZSVbPgxZeIhj
-	 tbvMN3XbmTKx/grFfAbs59jO4+sXWq0DUDSlUoRKhex8JuJHr+/RpylMEcRmCXKZHS
-	 ORw36rWn0+swGH9JUYOix0FWLehVQPuX1xPZ7RL0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250903113936epcas5p2a2fc50ab07b0fd777b4bee856b31511c~hwttCSEIa0673206732epcas5p2L;
-	Wed,  3 Sep 2025 11:39:36 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cH0yH46Bnz6B9m4; Wed,  3 Sep
-	2025 11:39:35 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250903113935epcas5p3227334fa7684fe2170093c2851f27476~hwtrskr2T2284122841epcas5p3A;
-	Wed,  3 Sep 2025 11:39:35 +0000 (GMT)
-Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250903113933epsmtip13e7d48e7582eba797719ac5d7c4a2873~hwtqTZwKo0781907819epsmtip1o;
-	Wed,  3 Sep 2025 11:39:33 +0000 (GMT)
-From: "Devang Tailor" <dev.tailor@samsung.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <alexandre.belloni@bootlin.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, <faraz.ata@samsung.com>
-In-Reply-To: <20250710083434.1821671-1-dev.tailor@samsung.com>
-Subject: RE: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
-Date: Wed, 3 Sep 2025 17:09:32 +0530
-Message-ID: <000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ME4IxtqY"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 9E4DF4E40BFA
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 12:23:49 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6CEA1606C3;
+	Wed,  3 Sep 2025 12:23:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 353941C228A5D;
+	Wed,  3 Sep 2025 14:23:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756902228; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=YumEJQKSlit0DjdeGbyizHywaHYlUT5ic7rTLQ6f/ZI=;
+	b=ME4IxtqY4zsA7nARb5WTtl/57ejoK707NoScjwGP8BjdNjLqBWTBbcsJnGgGTD2/QLqllY
+	IpuLP+RCXQuA+980APJpCicHcygVXaOazGdR+v5ZcGezBekFDLkpIwHiQccijqFiRLztNb
+	j+AjWQ3s7X7WWpaCKf2kX8BP2IJS/LknssX+FhDjckW1emX/HRQp9OYQkpAeT6Xh6fMWHX
+	VOht6KPTL7XQMwWerrED25vhQVSewbM++XggxIxlodm9CCsalY7B9dpMn3+VcbltBy0K6x
+	HhgsW0OTFAx0BkHuQSQoTaalcCKYJD4fzQc0N1ltyu21zUXnU0k0JgfsGWyZcw==
+Date: Wed, 3 Sep 2025 14:23:42 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Devang Tailor <dev.tailor@samsung.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, faraz.ata@samsung.com
+Subject: Re: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+Message-ID: <20250903122342a2996825@mail.local>
+References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
+ <20250710083434.1821671-1-dev.tailor@samsung.com>
+ <000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ8w0UJjWiHDR7+9bjoByRdFpd+nAMc6yo9sycffmA=
-Content-Language: en-in
-X-CMS-MailID: 20250903113935epcas5p3227334fa7684fe2170093c2851f27476
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
-References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
-	<20250710083434.1821671-1-dev.tailor@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
+On 03/09/2025 17:09:32+0530, Devang Tailor wrote:
+> 
+> Hi,
+> 
+> 
+> > -----Original Message-----
+> > From: Devang Tailor <dev.tailor@samsung.com>
+> > Sent: 10 July 2025 14:05
+> > To: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > alim.akhtar@samsung.com; alexandre.belloni@bootlin.com;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > rtc@vger.kernel.org; faraz.ata@samsung.com
+> > Cc: Devang Tailor <dev.tailor@samsung.com>
+> > Subject: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+> > 
+> > Enable on-chip RTC support. The on-chip RTC of this SoC is similar to the
+> > previous versions of Samsung SoC. So re-use the existing RTC driver with
+> > applicable call-backs for initialization and IRQ handling.
+> > Add a separate call-back for disabling RTC since existing '.disable'
+> > call-backs updates additional bit not valid for RTC of ExynosAutov9.
+> > 
+> > Setting and getting hardware clock has been tested using 'hwclock'
+> > and 'date' utilities.
+> > 
+> > Alarm interrupt has been checked with incrementing interrupt count via "cat
+> > /proc/interrupts | grep rtc" for 10sec wakeup time via "echo +10 >
+> > /sys/class/rtc/rtc0/wakealarm"
+> > 
+> > changelog
+> > ---
+> > Changes in v2:
+> > - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
+> > - link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-
+> > dev.tailor@samsung.com/
+> > 
+> 
+> Reminder!
+> Can you please help to identify if anything is pending in this patch series ? I see all three patches are reviewed.
+> 
 
-Hi,
+You have actions after those reviews:
 
+https://lore.kernel.org/all/20250711-shapeless-adorable-lobster-d2efbf@krzk-bin/
 
-> -----Original Message-----
-> From: Devang Tailor <dev.tailor=40samsung.com>
-> Sent: 10 July 2025 14:05
-> To: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> rtc=40vger.kernel.org; faraz.ata=40samsung.com
-> Cc: Devang Tailor <dev.tailor=40samsung.com>
-> Subject: =5BPATCH v2 0/3=5D On-chip RTC support for ExynosAutov9
->=20
-> Enable on-chip RTC support. The on-chip RTC of this SoC is similar to the
-> previous versions of Samsung SoC. So re-use the existing RTC driver with
-> applicable call-backs for initialization and IRQ handling.
-> Add a separate call-back for disabling RTC since existing '.disable'
-> call-backs updates additional bit not valid for RTC of ExynosAutov9.
->=20
-> Setting and getting hardware clock has been tested using 'hwclock'
-> and 'date' utilities.
->=20
-> Alarm interrupt has been checked with incrementing interrupt count via =
-=22cat
-> /proc/interrupts =7C grep rtc=22 for 10sec wakeup time via =22echo +10 >
-> /sys/class/rtc/rtc0/wakealarm=22
->=20
-> changelog
-> ---
-> Changes in v2:
-> - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
-> - link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-=
-1-
-> dev.tailor=40samsung.com/
->=20
+> > 
+> > Devang Tailor (3):
+> >   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
+> >   rtc: s3c: support for exynosautov9 on-chip RTC
+> >   arm64: dts: exynosautov9: add RTC DT node
+> > 
+> >  .../devicetree/bindings/rtc/s3c-rtc.yaml       |  1 +
+> >  .../boot/dts/exynos/exynosautov9-sadk.dts      |  4 ++++
+> >  arch/arm64/boot/dts/exynos/exynosautov9.dtsi   | 10 ++++++++++
+> >  drivers/rtc/rtc-s3c.c                          | 18 ++++++++++++++++++
+> >  4 files changed, 33 insertions(+)
+> > 
+> > 
+> > base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
+> > --
+> > 2.34.1
+> 
+> 
 
-Reminder=21
-Can you please help to identify if anything is pending in this patch series=
- ? I see all three patches are reviewed.
-
->=20
-> Devang Tailor (3):
->   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
->   rtc: s3c: support for exynosautov9 on-chip RTC
->   arm64: dts: exynosautov9: add RTC DT node
->=20
->  .../devicetree/bindings/rtc/s3c-rtc.yaml       =7C  1 +
->  .../boot/dts/exynos/exynosautov9-sadk.dts      =7C  4 ++++
->  arch/arm64/boot/dts/exynos/exynosautov9.dtsi   =7C 10 ++++++++++
->  drivers/rtc/rtc-s3c.c                          =7C 18 ++++++++++++++++++
->  4 files changed, 33 insertions(+)
->=20
->=20
-> base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
-> --
-> 2.34.1
-
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
