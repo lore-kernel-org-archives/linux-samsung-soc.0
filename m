@@ -1,188 +1,178 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF6930100A;
-	Wed,  3 Sep 2025 13:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41FF1459F7
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 13:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905936; cv=none; b=sq0RyJsnf4UnvQ0aLJYjsYXBAyX528o20iI/lGIT3cdsO3NdzCtZKljP/MgQHr0JzFWONTnGFLpfYzIwEUktu9KhOPvZiJZM+LCWmZWCZwfSE981h4/+N6IRYrzREYvzu8XmTufG7CRnEydyKBG/j0iWdYlW5LGnEzK1UcpYwYI=
+	t=1756907490; cv=none; b=c4HVINxJ23NHA/Z3Z/xjQDJjmopSOpk25MUKxfc1uTy+y+ipPdJpDQgwF93CZ/Y1LFWxi0E7miQz0DlPWNVBzcJ+u4szElCIfwZTPlqlPwXgCCRmqQgJFvWKAWwfUudMrkVJax6/1ujeeevlT3cX/gL4XDlQY2lH4wl05mlOTew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905936; c=relaxed/simple;
-	bh=LahPxxsFg6l59qbeOzrTE1d/6xGMndEUs1/iv+M2mpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G10cb2mxduVLZXnKmhl+zq9h38ke1qmSNbAB8HV4jRD0BDbrcVJhzxEDxgsxDPRWETDauguhZreKHeZO6u031I5vQa5KqUixhYnZk8AiSxApSXyFUYNrAO4uq9zO3SNydZ9T61F/NoUAhWQU0rjYq6+h7VTX1luj5WfF1UMkJkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fppeuxr2; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1756907490; c=relaxed/simple;
+	bh=n8Ihtdnse3VN/XbE/VuoI9w327s4Ffs6XQa/1KWmmzs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Be1Ht0Ggsre2EjaWPXJeo8VXl9lks+oEPrb1SbO+3D3/dwdq7jjSKqepCXcD4xwge5eNcwkgF0tdQTGwYzwpymZs16oDLflVlnEOYMwJqP3q7/Ii68ptSFgJ7Jsh1PK0rL2uZq+aF/Jhfyt8eIkcFJy/ylzpSKbqwHNnLourOmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dpd8hw/M; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fppeuxr2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756905934; x=1788441934;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LahPxxsFg6l59qbeOzrTE1d/6xGMndEUs1/iv+M2mpA=;
-  b=Fppeuxr25Ur/Z86f2B3WugWG/a9vqhM6uvfRHXNCVETvWuj2c1PrxP/X
-   FhRQZNigdx/JacuH5W0C1ScU2k7yDDjUwATX49Xv1S+kA8xT+GuDhqaMW
-   h5iiHc3Vfwna6EmsDZ3UZQKUuGD+A0nZGi+j+bEZ8mnbcyga/New4VrPd
-   yVqtFBY9xQ8yrerEfzXkl/RJ/37NNucRVBT0VCQJeImoveyiw7HIE8Znw
-   Y87BM+BsLOMkUe/FbnijKWIgZx9ETFZV2K8HMMlriPqtkTv9ZtQx3nqyQ
-   wwu6H7LOeiCE/kGnVDythBzTV4tMw66Vxx3n2stJ8V5eGgGsidkPGi/Oo
-   g==;
-X-CSE-ConnectionGUID: TJoSgmhTRq2o2hIPytUdiA==
-X-CSE-MsgGUID: hsJDom0/TQ2YMiF43BhqsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="70647392"
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="70647392"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 06:25:33 -0700
-X-CSE-ConnectionGUID: Ma4BX8/rSESlgghxFULMkw==
-X-CSE-MsgGUID: QBju9m/qQcWUy7qJM1NEGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="195226899"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.22])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 06:25:20 -0700
-Date: Wed, 3 Sep 2025 15:25:12 +0200
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Arec Kao <arec.kao@intel.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
-	Bingbu Cao <bingbu.cao@intel.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Bryan O'Donoghue <bod@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Scally <djrscally@gmail.com>, devicetree@vger.kernel.org, 
-	Dongcheng Yan <dongcheng.yan@intel.com>, Dongchun Zhu <dongchun.zhu@mediatek.com>, 
-	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, imx@lists.linux.dev, Jacopo Mondi <jacopo@jmondi.org>, 
-	Jason Chen <jason.z.chen@intel.com>, Jimmy Su <jimmy.su@intel.com>, 
-	Jingjing Xiong <jingjing.xiong@intel.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Leon Luo <leonl@leopardimaging.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Loic Poulain <loic.poulain@oss.qualcomm.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Mark Brown <broonie@kernel.org>, Matthew Majewski <mattwmajewski@gmail.com>, 
-	Mikhail Rudenko <mike.rudenko@gmail.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Pavel Machek <pavel@kernel.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Robert Foss <rfoss@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Shunqian Zheng <zhengsq@rock-chips.com>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Tarang Raval <tarang.raval@siliconsignals.io>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
-	Todor Tomov <todor.too@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Tony Lindgren <tony@atomide.com>, Zhi Mao <zhi.mao@mediatek.com>
-Subject: Re: [PATCH v2 00/72] media: i2c: Reduce cargo-cult
-Message-ID: <64alk4uwvdw6cejheukim7pfz7pabccuaqxlerr7mul6mqi5lf@feuimtlm4vxe>
-References: <20250812214620.30425-1-laurent.pinchart@ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dpd8hw/M"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250903135124epoutp028c31cab9d99793b62eaad8da664b00dd~hygyJrnKA0747407474epoutp02Q
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Sep 2025 13:51:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250903135124epoutp028c31cab9d99793b62eaad8da664b00dd~hygyJrnKA0747407474epoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756907484;
+	bh=dBdIdnKI53kzwYZV6kySizOPUkzoS2PQD2DaHLLIqVs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=dpd8hw/MupKTr0qtPO77S41WAB8tiH6YV/1JhHJBPEo3/4hwDwHHPHeAglXSEuURo
+	 yrsKiwkV5fuDTfYvShVDeCmIhmZwr3zd5ozvD/HAnDR2qhXqhLQzKTGYAWG8J8xYnR
+	 AAPqLNsh5LFGngoS6smBXAW7X5xHYz4x7z5ER3yM=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250903135124epcas5p18fa26f5f659e6fee887eb66d26da80c4~hygxjFWjW3191731917epcas5p1g;
+	Wed,  3 Sep 2025 13:51:24 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cH3tM1dWgz2SSKY; Wed,  3 Sep
+	2025 13:51:23 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250903135122epcas5p33bc7da2841b332773bceb3535f368af2~hygwEAZGf2373223732epcas5p3U;
+	Wed,  3 Sep 2025 13:51:22 +0000 (GMT)
+Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250903135121epsmtip12fd955463311b1f218dd2bddb5a961ad~hyguqdbwg1911719117epsmtip1h;
+	Wed,  3 Sep 2025 13:51:20 +0000 (GMT)
+From: "Devang Tailor" <dev.tailor@samsung.com>
+To: "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+	<faraz.ata@samsung.com>
+In-Reply-To: <20250903122342a2996825@mail.local>
+Subject: RE: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+Date: Wed, 3 Sep 2025 19:21:19 +0530
+Message-ID: <001a01dc1cd9$d52c1830$7f844890$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812214620.30425-1-laurent.pinchart@ideasonboard.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ8w0UJjWiHDR7+9bjoByRdFpd+nAMc6yo9AXLNbhMBpryuBbMOciLw
+Content-Language: en-in
+X-CMS-MailID: 20250903135122epcas5p33bc7da2841b332773bceb3535f368af2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
+References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
+	<20250710083434.1821671-1-dev.tailor@samsung.com>
+	<000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
+	<20250903122342a2996825@mail.local>
 
-Hello Laurent,
 
-Thank you for the patches!
+Hi Alexandre,
 
-On Wed, Aug 13, 2025 at 12:45:08AM +0300, Laurent Pinchart wrote:
 
-[..]
+> -----Original Message-----
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Sent: 03 September 2025 17:54
+> To: Devang Tailor <dev.tailor@samsung.com>
+> Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> alim.akhtar@samsung.com; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-rtc@vger.kernel.org; faraz.ata@samsung.com
+> Subject: Re: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+> 
+> On 03/09/2025 17:09:32+0530, Devang Tailor wrote:
+> >
+> > Hi,
+> >
+> >
+> > > -----Original Message-----
+> > > From: Devang Tailor <dev.tailor@samsung.com>
+> > > Sent: 10 July 2025 14:05
+> > > To: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > > alim.akhtar@samsung.com; alexandre.belloni@bootlin.com;
+> > > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > > linux- samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > linux- rtc@vger.kernel.org; faraz.ata@samsung.com
+> > > Cc: Devang Tailor <dev.tailor@samsung.com>
+> > > Subject: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+> > >
+> > > Enable on-chip RTC support. The on-chip RTC of this SoC is similar
+> > > to the previous versions of Samsung SoC. So re-use the existing RTC
+> > > driver with applicable call-backs for initialization and IRQ handling.
+> > > Add a separate call-back for disabling RTC since existing '.disable'
+> > > call-backs updates additional bit not valid for RTC of ExynosAutov9.
+> > >
+> > > Setting and getting hardware clock has been tested using 'hwclock'
+> > > and 'date' utilities.
+> > >
+> > > Alarm interrupt has been checked with incrementing interrupt count
+> > > via "cat /proc/interrupts | grep rtc" for 10sec wakeup time via
+> > > "echo +10 > /sys/class/rtc/rtc0/wakealarm"
+> > >
+> > > changelog
+> > > ---
+> > > Changes in v2:
+> > > - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit
+> logic.
+> > > - link for v1 :
+> > > https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-
+> > > dev.tailor@samsung.com/
+> > >
+> >
+> > Reminder!
+> > Can you please help to identify if anything is pending in this patch
+series ? I
+> see all three patches are reviewed.
+> >
+> 
+> You have actions after those reviews:
+> 
+>
+https://lore.kernel.org/all/20250711-shapeless-adorable-lobster-d2efbf@krzk-
+> bin/
+> 
 
-> Laurent Pinchart (72):
->   dt-bindings: media: Deprecate clock-frequency property for camera
->     sensors
->   dt-bindings: media: et8ek8: Deprecate clock-frequency property
->   dt-bindings: media: imx258: Make clocks property required
->   dt-bindings: media: imx274: Make clocks property required
->   media: i2c: mt9v022: Drop unused mt9v022.h header
->   media: i2c: mt9v032: Replace client->dev usage
->   media: i2c: mt9v032: Drop support for platform data
->   media: i2c: mt9v111: Do not set clock rate manually
->   media: i2c: ov6650: Drop unused driver
->   media: i2c: hi556: Replace client->dev usage
->   media: i2c: hi556: Use V4L2 sensor clock helper
->   media: i2c: hi847: Replace client->dev usage
->   media: i2c: hi847: Use V4L2 sensor clock helper
->   media: i2c: imx208: Replace client->dev usage
->   media: i2c: imx208: Use V4L2 sensor clock helper
->   media: i2c: imx319: Replace client->dev usage
->   media: i2c: imx319: Use V4L2 sensor clock helper
->   media: i2c: imx355: Replace client->dev usage
->   media: i2c: imx335: Use V4L2 sensor clock helper
->   media: i2c: og01a1b: Replace client->dev usage
->   media: i2c: og01a1b: Use V4L2 sensor clock helper
->   media: i2c: ov02c10: Replace client->dev usage
->   media: i2c: ov02c10: Use V4L2 sensor clock helper
->   media: i2c: ov02e10: Replace client->dev usage
->   media: i2c: ov02e10: Use V4L2 sensor clock helper
->   media: i2c: ov08d10: Replace client->dev usage
->   media: i2c: ov08d10: Use V4L2 sensor clock helper
->   media: i2c: ov08x40: Replace client->dev usage
->   media: i2c: ov08x40: Use V4L2 sensor clock helper
->   media: i2c: ov13858: Replace client->dev usage
->   media: i2c: ov13858: Use V4L2 sensor clock helper
->   media: i2c: ov13b10: Replace client->dev usage
->   media: i2c: ov13b10: Use V4L2 sensor clock helper
->   media: i2c: ov2740: Replace client->dev usage
->   media: i2c: ov2740: Use V4L2 sensor clock helper
->   media: i2c: ov4689: Use V4L2 sensor clock helper
->   media: i2c: ov5670: Replace client->dev usage
->   media: i2c: ov5670: Use V4L2 sensor clock helper
->   media: i2c: ov5675: Replace client->dev usage
->   media: i2c: ov5675: Use V4L2 sensor clock helper
->   media: i2c: ov5693: Use V4L2 sensor clock helper
->   media: i2c: ov7251: Use V4L2 sensor clock helper
->   media: i2c: ov9734: Replace client->dev usage
->   media: i2c: ov9734: Use V4L2 sensor clock helper
->   media: v4l2-common: Add legacy camera sensor clock helper
->   media: i2c: et8ek8: Drop support for per-mode external clock frequency
->   media: i2c: et8ek8: Use V4L2 legacy sensor clock helper
->   media: i2c: gc05a2: Use V4L2 legacy sensor clock helper
->   media: i2c: gc08a3: Use V4L2 legacy sensor clock helper
->   media: i2c: imx258: Replace client->dev usage
->   media: i2c: imx258: Use V4L2 legacy sensor clock helper
->   media: i2c: imx290: Use V4L2 legacy sensor clock helper
->   media: i2c: ov02a10: Replace client->dev usage
->   media: i2c: ov02a10: Use V4L2 legacy sensor clock helper
->   media: i2c: ov2685: Use V4L2 legacy sensor clock helper
->   media: i2c: ov5645: Use V4L2 legacy sensor clock helper
->   media: i2c: ov5695: Use V4L2 legacy sensor clock helper
->   media: i2c: ov8856: Replace client->dev usage
->   media: i2c: ov8856: Use V4L2 legacy sensor clock helper
->   media: i2c: s5c73m3: Use V4L2 legacy sensor clock helper
->   media: i2c: s5k5baf: Use V4L2 legacy sensor clock helper
->   media: i2c: s5k6a3: Use V4L2 legacy sensor clock helper
->   ARM: dts: samsung: exynos4210-i9100: Replace clock-frequency in camera
->     sensor node
->   ARM: dts: samsung: exynos4412-midas: Replace clock-frequency in camera
->     sensor node
->   ARM: dts: ti: omap3-n950: Replace clock-frequency in camera sensor
->     node
->   ARM: dts: ti: omap3-n9: Replace clock-frequency in camera sensor node
->   ARM: dts: ti: omap3-n900: Replace clock-frequency in camera sensor
->     node
->   ARM: dts: nxp: imx6qdl-pico: Replace clock-frequency in camera sensor
->     node
->   ARM: dts: nxp: imx6qdl-wandboard: Replace clock-frequency in camera
->     sensor node
->   arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Replace
->     clock-frequency in camera sensor node
->   arm64: dts: renesas: aistarvision-mipi-adapter-2.1: Drop
->     clock-frequency from camera sensor node
->   arm64: dts: renesas: rzg2l-smarc: Drop clock-frequency from camera
->     sensor node
+Thanks for the pointer. I had given the explanation for that,
+https://lore.kernel.org/all/188001dbf249$831afd00$8950f700$@samsung.com/
+after which I didn't get any feedback.
 
-Reviewed-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+As per my understanding I have addressed the review comment given in V1 for
+[PATCH 2/3] (without ignoring any).
+So I am not getting what I have missed. Would you help to point out what was
+left ?
 
---
-Kind Regards
-Mehdi Djait
+> > >
+> > > Devang Tailor (3):
+> > >   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
+> > >   rtc: s3c: support for exynosautov9 on-chip RTC
+> > >   arm64: dts: exynosautov9: add RTC DT node
+> > >
+> > >  .../devicetree/bindings/rtc/s3c-rtc.yaml       |  1 +
+> > >  .../boot/dts/exynos/exynosautov9-sadk.dts      |  4 ++++
+> > >  arch/arm64/boot/dts/exynos/exynosautov9.dtsi   | 10 ++++++++++
+> > >  drivers/rtc/rtc-s3c.c                          | 18
+++++++++++++++++++
+> > >  4 files changed, 33 insertions(+)
+> > >
+> > >
+> > > base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
+> > > --
+> > > 2.34.1
+> >
+> >
+> 
+> --
+> Alexandre Belloni, co-owner and COO, Bootlin Embedded Linux and Kernel
+> engineering https://protect2.fireeye.com/v1/url?k=62b10b19-03cce365-
+> 62b08056-74fe485cc33c-bc602ba9f8c455fd&q=1&e=14890047-79c7-46fe-
+> 85a0-48fc7c9b3d91&u=https%3A%2F%2Fbootlin.com%2F
+
