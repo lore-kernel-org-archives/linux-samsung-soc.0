@@ -1,216 +1,152 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8149E302CC4
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 13:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4330499B;
+	Thu,  4 Sep 2025 13:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992452; cv=none; b=ewz43xryLbhGxJ/yHS+HN8JEmdcmS6rJAF4psLBnTlvWothoYfeqZpzfKPqY81ewe0/O8k4mpQk8cjL6x86eHXvsvnr8NbvAqCwJ55iBn1p+yYr3DvBlJ2WpvQ7bVpDl+xELDor416GQjrFikgEUf63aSOL3y2+5JnpyIweLS2E=
+	t=1756993404; cv=none; b=NwmpKZaVDFbMaSRS8GURA40TXPNPOmBPL/vaazv5pMCRkMGVErIcVPRPNbMloeyPGSPBO8DMbRf9UyKhXeHqLZVlRpwaufNrZQLLA5aVJhaS7NE6ky6zBY6PDaPRMw5fL4LcbsjMJZYEZXuAARhG9sKJgDFVgA0cjn5qOObkYPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992452; c=relaxed/simple;
-	bh=4QCE683gFrC3oB20AMpMuljNRHfdz44NR0JejZ8MJcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=gncI0NZWYxsM7a8x9qwNHWf6EYWk7f993gcPvwDT/39Q9vO93Duoy7Thb4QNnfgkhJaYT6OeQWBWa1D5zf518bLrRHxPvbNy247OmdJE7pVwS0NwYYDvT0qXQjOQZ0vdwS0YvpqdCU9ljTY5SskI0AGLcJjD84lj0q1rOoraY10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=D+Of34zz; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1756993404; c=relaxed/simple;
+	bh=/9OWqx5QESRGHRCL0BQyhOtgreyfaYTGqx7ChEu5PaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hbRTk9TxC4omg7txy02+ArzUBZwaEDCIF7Mx5MDK8XLg6cZR8ZBELSbu5+HJ/PguGgIqiNzwtfth3KxBiNP0UUZtnJRQt6zaD968J2TNVE8v4jrBAXAof7LvQzSfMmIFqBeQPNoBxbOfzPMifZJOLOTM/pIbucqExhvNQKsGsAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyE8UVOj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D+Of34zz"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250904132728euoutp01768e7162a44c34f9133dfddc4e8419fa~iF1K5Xaf12954329543euoutp01b
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 13:27:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250904132728euoutp01768e7162a44c34f9133dfddc4e8419fa~iF1K5Xaf12954329543euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756992448;
-	bh=OuqZMaZEY3Ro7lOt8/v6vij9JESnmu0skXkRr3yqkBo=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=D+Of34zz2dwO58oipgkskjDy0ppJoZmQXo63nqEJfv72IvnnIB8uWBGApOhhQvZdL
-	 /9wTKwo+V35VsuIyoJE0tpEyKbCFcV5vWeI//gOnrow0l9jGlNCA1Lpj0D2QTZj7Ny
-	 0cuZAif42CpQkC1UD2tHFGIwv7Ce89dQo4XEPPao=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904132728eucas1p110dd7341b827ecb00d326aaab1b6e052~iF1KTEFC-1354913549eucas1p1Y;
-	Thu,  4 Sep 2025 13:27:28 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904132725eusmtip10df52413ab5451a89e7ae40f97632d99~iF1H12Bu90185801858eusmtip1I;
-	Thu,  4 Sep 2025 13:27:25 +0000 (GMT)
-Message-ID: <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
-Date: Thu, 4 Sep 2025 15:27:24 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyE8UVOj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0280AC4CEF0;
+	Thu,  4 Sep 2025 13:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756993403;
+	bh=/9OWqx5QESRGHRCL0BQyhOtgreyfaYTGqx7ChEu5PaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qyE8UVOjEPIjeyF7QEHLaeb3XpXfyUCJJCnebujOv1YfryOeGm+JF5KogZrQCD/YH
+	 iCHkpF38GXpRQdshJl2JwIgOxWUecuwQPFmJ35OBBIv3eGob4TFOxG5gY0IgtLnqPe
+	 Ng6Xnh+qgof4RcgEBn4SDMeWIMpjURrIPo1jXjvmlEHMepDhogWb24A9LjFeX3sQPW
+	 UY2iYzf/hGeivJAqKBVWsscsvK3ooH3k3EJVAFEeVXXnNDsuk+oF61czum4PKf5uWu
+	 9eutPfy46F0aYNSMJy9LnbkJjpaBU2QuPfVqAPkcbTdi9mWq0CeGR7XKIhinCDRqgw
+	 y/oB8JbHR+xbQ==
+Message-ID: <5543f849-2be7-459f-8600-d236625cc8f8@kernel.org>
+Date: Thu, 4 Sep 2025 15:43:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
-	dianders@chromium.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC
+ support
+To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, shradha.t@samsung.com, inbaraj.e@samsung.com,
+ swathi.ks@samsung.com, hrishikesh.d@samsung.com, dj76.yang@samsung.com,
+ hypmean.kim@samsung.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20250901051926.59970-1-ravi.patel@samsung.com>
+ <CGME20250901054254epcas5p24db87bd64fc57a25b17c51e608f15e7b@epcas5p2.samsung.com>
+ <20250901051926.59970-5-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <825ff59f-0a97-49a1-a210-a7ee275364bc@rock-chips.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250904132728eucas1p110dd7341b827ecb00d326aaab1b6e052
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
-X-EPHeader: CA
-X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
-References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
-	<20250814104753.195255-1-damon.ding@rock-chips.com>
-	<a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
-	<7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
-	<1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
-	<f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
-	<a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
-	<461daea4-5582-4aa2-bfea-130d2fb93717@samsung.com>
-	<46f9137e-402d-4c0f-a224-10520f80c8b4@rock-chips.com>
-	<ea57ca6e-4000-49f7-8e0b-899f34b7693a@samsung.com>
-	<825ff59f-0a97-49a1-a210-a7ee275364bc@rock-chips.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250901051926.59970-5-ravi.patel@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 04.09.2025 05:19, Damon Ding wrote:
-> On 9/1/2025 6:25 PM, Marek Szyprowski wrote:
->> On 01.09.2025 05:41, Damon Ding wrote:
->>> On 8/29/2025 4:23 PM, Marek Szyprowski wrote:
->>>> On 29.08.2025 10:08, Damon Ding wrote:
->>>>> On 8/20/2025 5:20 AM, Marek Szyprowski wrote:
->>>>>> On 15.08.2025 04:59, Damon Ding wrote:
->>>>>>> On 2025/8/15 5:16, Marek Szyprowski wrote:
->>>>>>>> On 14.08.2025 16:33, Marek Szyprowski wrote:
->>>>>>>>> On 14.08.2025 12:47, Damon Ding wrote:
->>>>>>>>>> PATCH 1 is a small format optimization for struct
->>>>>>>>>> analogid_dp_device.
->>>>>>>>>> PATCH 2 is to perform mode setting in
->>>>>>>>>> &drm_bridge_funcs.atomic_enable.
->>>>>>>>>> PATCH 3-6 are preparations for apply drm_bridge_connector 
->>>>>>>>>> helper.
->>>>>>>>>> PATCH 7 is to apply the drm_bridge_connector helper.
->>>>>>>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix
->>>>>>>>>> side.
->>>>>>>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
->>>>>>>>>> PATCH 13 is to apply the panel_bridge helper.
->>>>>>>>> ...
->>>>>>
->>>>>
->>>>> Could you please provide the related DTS file for the test? I will
->>>>> also try to find out the reason for this unexpected issue. ;-)
->>>>
->>>> Unfortunately I didn't find enough time to debug this further. The 
->>>> above
->>>> log is from Samsung Snow Chromebook,
->>>> arch/arm/boot/dts/samsung/exynos5250-snow.dts
->>>>
->>>>
->>>
->>> I compare the differences in the following display path before and
->>> after this patch series:
->>>
->>> exynos_dp -> nxp-ptn3460 -> panel "auo,b116xw03"
->>>
->>> The issue is likely caused by the &drm_connector_funcs.detect()
->>> related logic. Before this patch series, the nxp-ptn3460 connector is
->>> always connector_status_connected because there is not available
->>> &drm_connector_funcs.detect(). After it, the DRM_BRIDGE_OP_DETECT flag
->>> make the connection status depend on analogix_dp_bridge_detect().
->>>
->>> Could you please add the following patches additionally and try again?
->>> (Not the final solution, just validation)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> index a93ff8f0a468..355911c47354 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> @@ -1491,9 +1491,11 @@ int analogix_dp_bind(struct analogix_dp_device
->>> *dp, struct drm_device *drm_dev)
->>>                  }
->>>          }
->>>
->>> -       bridge->ops = DRM_BRIDGE_OP_DETECT |
->>> -                     DRM_BRIDGE_OP_EDID |
->>> +       bridge->ops = DRM_BRIDGE_OP_EDID |
->>>                        DRM_BRIDGE_OP_MODES;
->>> +       if (drm_bridge_is_panel(dp->plat_data->next_bridge))
->>> +               bridge->ops |= DRM_BRIDGE_OP_DETECT;
->>> +
->>>          bridge->of_node = dp->dev->of_node;
->>>          bridge->type = DRM_MODE_CONNECTOR_eDP;
->>>          ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
->>
->> It is better. Now the display panel is detected and reported to
->> userspace, but it looks that something is not properly initialized,
->> because there is garbage instead of the proper picture.
->>
->
-> I simulated the display path mentioned above on my RK3588S EVB1 Board.
-> To my slight surprise, it displayed normally with the reported 
-> connector type DRM_MODE_CONNECTOR_LVDS. ;-)
->
-> The modifications included:
-> 1.Synchronized the Analogix DP ralated DT configurations with Samsung 
-> Snow Chromebook.
-> 2.Skipped the I2C transfers and GPIO operations in nxp-ptn3460 driver.
-> 3.Set the EDID to that of eDP Panel LP079QX1-SP0V forcibly.
->
-> Additionally, I added debug logs to verify whether the functions in 
-> ptn3460_bridge_funcs were actually called.
->
-> Did you encounter any unexpected logs during your investigation? I'd 
-> like to perform additional tests on this issue. :-)
+On 01/09/2025 07:19, Ravi Patel wrote:
+> From: SungMin Park <smn1196@coasia.com>
+> 
+> Add initial device tree support for Axis ARTPEC-8 SoC.
+> 
+> This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
+> 
+> Signed-off-by: SungMin Park <smn1196@coasia.com>
+> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> ---
+>  MAINTAINERS                                   |  12 +
+>  arch/arm64/Kconfig.platforms                  |   7 +
+>  arch/arm64/boot/dts/exynos/Makefile           |   1 +
+>  .../boot/dts/exynos/axis/artpec-pinctrl.h     |  36 +++
+>  .../boot/dts/exynos/axis/artpec8-pinctrl.dtsi | 120 +++++++++
+>  arch/arm64/boot/dts/exynos/axis/artpec8.dtsi  | 244 ++++++++++++++++++
+>  6 files changed, 420 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..4d0c1f10ffd4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4102,6 +4102,18 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/sound/axentia,*
+>  F:	sound/soc/atmel/tse850-pcm5142.c
+> 
+> +AXIS ARTPEC ARM64 SoC SUPPORT
+> +M:	Jesper Nilsson <jesper.nilsson@axis.com>
+> +M:	Lars Persson <lars.persson@axis.com>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-samsung-soc@vger.kernel.org
+> +L:	linux-arm-kernel@axis.com
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
+> +F:	arch/arm64/boot/dts/exynos/axis/
+> +F:	drivers/clk/samsung/clk-artpec*.c
+> +F:	include/dt-bindings/clock/axis,artpec*-clk.h
 
+Some official ack would be nice for this, but I also remember we earlier
+emails, so I will take it as is.
 
-Okay, I've finally went to the office and tested manually all 3 
-Chromebook boards witch use exynos-dp based display hardware. Previously 
-I only did the remote tests and observed result on a webcam, which was 
-not directed directly at the tested displays, so I only saw the glare 
-from the display panel.
-
-The results are as follows:
-
-1. Snow (arch/arm/boot/dts/samsung/exynos5250-snow.dts) - exynos-dp -> 
-nxp-ptn3460 1366x768 lvds panel - works fine with the above mentioned 
-change.
-
-2. Peach-Pit (arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts) - 
-exynos-dp -> parade,ps8625 -> auo,b116xw03 1366x768 lvds panel - 
-displays garbage, this was the only board I previously was able to see 
-partially on the webcam.
-
-3. Peach-Pi (arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts) - 
-exynos-dp -> auo,b133htn01 1920x1080 edp panel - also displays garbage.
-
-Then I found why both Peach boards displays garbage on boot - the 
-framebuffer emulation is initialized for 1024x786 resolution, which is 
-not handled by those panels. This is a bit strange, because the 
-connector implemented by the panel reports proper native mode to drm and 
-userspace. 'modetest -c' shows the right resolution. Also when I run 
-'modetest -s' with the panel's native resolution then the test pattern 
-is correctly displayed on all three boards.
-
-
-Then I've played a bit with the analogix code and it looks that this 
-1024x768 mode is some kind default mode which comes from 
-analogix_dp_bridge_edid_read() function, which has been introduced by 
-this patchset. When I removed DRM_BRIDGE_OP_EDID flag from bridge->ops, 
-then I got it finally working again properly on all three boards. I hope 
-this helps fixing this issue.
-
-
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best regards,
+Krzysztof
