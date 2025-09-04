@@ -1,63 +1,63 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F18C277C8B
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 13:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA763054E4
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 13:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993574; cv=none; b=Wwm+7QTzfrs/kztU6BfLc3xq1oSVQwZpq6lwZhxKwSyAlyArdbsyvVthLiHgguErjm2JGqbiD/zJ7KO+Os8jt7yOCEEeDqgVdbapKYVP+902JGmKYEjANd5n2aFC3oT11PWLb2pCj06u85OuXq+pJyvShIEI4qZ2WuiwoFF2+8A=
+	t=1756993576; cv=none; b=Z454dnAE3NJ3W2QJRvXzZr8vhZac8gIO+MzUAhR/hJ43ylqTJYjVScA5IFbcOJRIS0BEzL5zHmJHj0uDZIqCr2BV2DJUAGln1hcyqQIpF8WKCYugak8iW9N0GcPRD18TNCNce86aRqnEJ7rKr0aWM+/dOCRfF0GIxBP7HvxZeVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993574; c=relaxed/simple;
-	bh=tzrZdWUmau9Ko5Je+ScAN4BMnTd/A6L4sx0uQaFUKWw=;
+	s=arc-20240116; t=1756993576; c=relaxed/simple;
+	bh=gXxTjmeDzKTB71t19xBb7Wxglec5+6mU41Xm0qtDe5k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gYQXURi/fj9xYsbmxoDHM5O6V74QaFWKuko6n6B815I+FOwLaADKfUaizoZc7GsBZEroQ91GMN349NdRe2i1l2ADspmOF468yVn1nfvPm854+L0THqIe+D+FE4BLnJzcau0ELWExYauaXExj+CeL6Av97oVLun8wOsmKgIUvsUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OWM/I8aQ; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version:Content-Type; b=rn2iVxB/iIxYzSPJfRehaJHektqk0tCObl/DwKNP9fSAoWTf1sey1GVnaM3SdFAUdIgvrNyDm7+onBOnldDGpB0dVuDu/EJ720dXP5vYYWuQoLzNHNHLsqPsy+6VrloQSDCq4H/VUVGbCxGgqhnm6ya9I+7d9oaKAgtacFL61To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CXFlau1U; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OWM/I8aQ"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b017e4330c9so12759666b.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Sep 2025 06:46:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CXFlau1U"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b00f6705945so10591666b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Sep 2025 06:46:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756993571; x=1757598371; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756993573; x=1757598373; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vateX41qLmBe78jZzOt63uJFfCVkgcgyVW4UPJkHk7I=;
-        b=OWM/I8aQzkazJJD8u4OG0BnAM4ka1XpiSM4N7jpxoap8Lo7EWM88L6dC8qMlyTN2/8
-         Q5JvlidA1hit+HuCP1Wbim9vgQbOGZOJK2Eun69mon1PFjg+fueoelzBWYQwfoZFsl2c
-         aP2ceuB8TnflzD1uK+OMxgXx2JFcO/B1s+1ZGT2tQWnzVexYXi6rcfphd+UQMHK5/rRB
-         us5UNNl5rvI3AUQGYmh8PqA1umnqYS/pbIMxlgiRriNlM1GjpMoFcbmH6jRnz6neddFt
-         ViBAW8zcrWOs+pqMwvrj5IjSTQWK7IP0XA0SPA63vvGn9V9ZJt6JtNtApfEkJ698KnJb
-         e9fw==
+        bh=AQ26RmHLaQWCbZPPgHAZQdVbT/ghy6v/A0FERV/jWuE=;
+        b=CXFlau1UNt/Poc6gW4Z87Y6m7IFh83zTb3QHxjsXqPJP3vuw5FSJv4BhwDOd6L6p4y
+         8bElfH/ctsxmfvjebSYnpZ/gTAeeGVrskS0tT/M86O9p7+PkCnaewEtI7/KOctchR78K
+         zbH9K5QfI9dqHFy7hoMBqrFcItQbmQkVmXB0xJVT+LC8/hxOiTMia5WE3W3BlbP03Q3J
+         jHKshro3NY9BN5b4gkSIgoTetUaBRYiPT0iITII2fwrQZT8Xvcelg5psmjpXKvYVffnG
+         wfg1DJAWzvQBYwxDz9spgGHKMAGaC6JlvCmu4rWBgeGMT1ez0rEat8o+oMS38vk9eQZi
+         cWtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756993571; x=1757598371;
+        d=1e100.net; s=20230601; t=1756993573; x=1757598373;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vateX41qLmBe78jZzOt63uJFfCVkgcgyVW4UPJkHk7I=;
-        b=crxYyHc/sqY6GrK68zJbLIIDEjCFkIle2sZyvVOOSoFDXgxl54rp6+MfmjQ3Yhz1n5
-         ZmsA4jn5htYsi6SmjsYbu4YCH+yc6b0NXUjxzQ2xuFFPqjEadjOCxh22Cfb4Rx2i/Q0p
-         hCC/Z/dA7QT26WuQ+PAImP0zjGQIaG9jhTyh+BUUUSxYExKsarkzpK2luL38pmQxePcT
-         J7ewWh27DEx8w7oNSnsAu6Q68Uqsh9o7OUSLcTSjZiGc/jzCJeeZWJU+lsQ4oUhBDnrW
-         vzpn1iJTUKuCtQ98unSAYoxuLXmHpq/p70ZQUxtJzDTcpSNj4o7eOgqLLjyP1OtiwXi1
-         tbyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWigH6tJ5JmVQyVaGzXmnhO3wH+LV1t+s5nlGUMk2Mro1jG9cBKH/zFCY7Y/ewGx4AF4JlQpqbsUAo1CcHeQMoxJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJuFjScN12wKbk2YmsK3CuS42BKGHeEfw77RnFTLEmY1IZfhu5
-	W9BrOFd/RZpRq6MkF5ul0MRaIEWz7A3Lz5hsWfMCI/1s+zXWMfBd6mc8zOgueO7g5hg=
-X-Gm-Gg: ASbGncseuXSxVR3rnSDiNZHn29AkHAxh1Gla480LW2Ph93h+RejJMOHptHrC7QmPg7C
-	O+RPSS/wUCzg1+djkI1xkrR27Jyfzbq56u3wzjTfcarx9DmaDbNua3DoJZmg16c9F6QCqNekgkx
-	AYuB7Hi36OvPrAuci2VKCtOwJCGPJFETGYHfV4+6rB3uSwOj9dAEGJDgF64Qrgq7nnFPrNLmqJb
-	PgCVVGu7VQjavuQQLdBqOiyL1lVPA7SydRJou8aCnONhpgST9X3S9zWYzRgFGJ8ot1QgHk2VqRr
-	jJjTCjO3WJsVkjg6w40lJhGktoFMIc+Zr+CXMRmxMPB3H2qYGjJxLBhRijF4EoEkMrJFAKqjUUa
-	wp5qIXk8KgFPd0ioPhsIueQj4+HKFPzvpqhJs7CWWdlxU6Q3haA==
-X-Google-Smtp-Source: AGHT+IFvWV4hrMxiuD4s72RuFmU5dC8uJSFz1ccYAGwp5WTz05lim7XPN1obF/dY5Raugo8Ut7n0LA==
-X-Received: by 2002:a17:906:4fc5:b0:ad8:a2b3:66fb with SMTP id a640c23a62f3a-aff0ee1dcffmr1098615466b.3.1756993570841;
-        Thu, 04 Sep 2025 06:46:10 -0700 (PDT)
+        bh=AQ26RmHLaQWCbZPPgHAZQdVbT/ghy6v/A0FERV/jWuE=;
+        b=X/qrd1xVH1Vd0bx0oRLJJTuSIp2SI9aMIQymLfKdfT/eeqVjPe0sg61msmhE9TvZQT
+         IQdRTxWtYsztUvGnRjwwfX2vhA/4tenbzOL+b+dj5NQLh9ISyNhbWj9P83/XU95iGf7o
+         uyQQND7U2/7vRGtusWJeU3MK0zQdDjYZMGPrkeEGa+FfYOMklHab9ztM4FWIYIbfbPCj
+         OhNFgvYt6pgHoVDhmGO5KrKqre6CLwHvsVqMmCMs2SPLBkrmUXdelVFWFPpH4Ns2RhJ7
+         4tSfkjByr4ECaLiJ8hVkbsXBllU4lW0eB5Rw4ZNzL/Y93bMh3oYHHjz7hAsU7slLnnf8
+         39Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpiy2FlnLe0B0NdPxMHmh4/MyLuMgdsZuwRVoMDe3CTSZqdHhlOCIISl6AKuzor7WjCW4haz3ejiF13UckrjDuJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3OsAlubGbPNzsNLznSy9YiXfSklj6pXpfIUhCTQWHSFm4VDFn
+	yvNwOZm9E1u8WVSM0IIR89yU8KsxOra0rck3qyz2elcjf9r0nGP3MkCRUOX9QQENXW0=
+X-Gm-Gg: ASbGncvxj/aIdj8Y/0SAPtS7zlENJWfn1HKJFq31TWhxwc7lW44XD1dfHln+rKxIG1x
+	b2i52B4Z0YoAFOtVqJBr8w5ihMz9iyj6bQx8ZvGNbUQ/yyX8BM9j+2iYHE7e1uYIzZ/9PifGlqw
+	c0Mf77xjM7ujtmvW3N/SpQeGPAiDuvAC0VIMjzkx5WCPS9NRs+ZxuPJkolCM+eeSin2PcnprNv+
+	aE0ey28ogIdqxtLJK/tiyxW0R6Z4uYbaUHScvYxo3iLE1S7LaPOQiGsz3Gtf0u1lWjLVjPxTLUy
+	6Bc2Hsruyqe0TSgO6qLabUnSd4wxPH7A309VM+IBBt+/JvyVc/8hcAViQIIPTmeX6OXBsGbEDaQ
+	X/2wLJZyNcYm/Kl3jwyXjxdlotbgjp6w110mcp94JKYIchDzlZw==
+X-Google-Smtp-Source: AGHT+IEQoqOwB2yGHXtT3U5ow0C3hw1fUocrSdNOZukUnko/TRqHkgL5aBTtZ+Kkhn/YxvPmHZWsUg==
+X-Received: by 2002:a17:907:7e99:b0:afe:af91:2e54 with SMTP id a640c23a62f3a-aff0f15c2c2mr1210879366b.9.1756993573122;
+        Thu, 04 Sep 2025 06:46:13 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413782b94sm1180634266b.35.2025.09.04.06.46.08
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413782b94sm1180634266b.35.2025.09.04.06.46.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:46:10 -0700 (PDT)
+        Thu, 04 Sep 2025 06:46:12 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
@@ -72,14 +72,14 @@ Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
  linux-gpio@vger.kernel.org
-In-Reply-To: <20250901051926.59970-5-ravi.patel@samsung.com>
+In-Reply-To: <20250901051926.59970-6-ravi.patel@samsung.com>
 References: <20250901051926.59970-1-ravi.patel@samsung.com>
- <CGME20250901054254epcas5p24db87bd64fc57a25b17c51e608f15e7b@epcas5p2.samsung.com>
- <20250901051926.59970-5-ravi.patel@samsung.com>
-Subject: Re: (subset) [PATCH v4 4/6] arm64: dts: exynos: axis: Add initial
- ARTPEC-8 SoC support
-Message-Id: <175699356858.171312.4717453350737707503.b4-ty@linaro.org>
-Date: Thu, 04 Sep 2025 15:46:08 +0200
+ <CGME20250901054259epcas5p13dfe6ccb7759af018a07403ceb1e86f4@epcas5p1.samsung.com>
+ <20250901051926.59970-6-ravi.patel@samsung.com>
+Subject: Re: (subset) [PATCH v4 5/6] arm64: dts: axis: Add ARTPEC-8 Grizzly
+ dts support
+Message-Id: <175699357104.171312.5414348160649999670.b4-ty@linaro.org>
+Date: Thu, 04 Sep 2025 15:46:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -91,17 +91,17 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 01 Sep 2025 10:49:24 +0530, Ravi Patel wrote:
-> Add initial device tree support for Axis ARTPEC-8 SoC.
-> 
-> This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
+On Mon, 01 Sep 2025 10:49:25 +0530, Ravi Patel wrote:
+> Add initial devcie tree for the ARTPEC-8 Grizzly board.
+> The ARTPEC-8 Grizzly is a small board developed by Axis,
+> based on the Axis ARTPEC-8 SoC.
 > 
 > 
 
 Applied, thanks!
 
-[4/6] arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC support
-      https://git.kernel.org/krzk/linux/c/2b48947f7b03e0fea32ea2c6841a0d8cd67e737b
+[5/6] arm64: dts: axis: Add ARTPEC-8 Grizzly dts support
+      https://git.kernel.org/krzk/linux/c/9e74b88c0a57f78dfd3017de435ae400d9b659d2
 
 Best regards,
 -- 
