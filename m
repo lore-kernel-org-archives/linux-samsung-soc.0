@@ -1,92 +1,95 @@
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F809233D9E
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 07:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235741F131A
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 07:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756969461; cv=none; b=KTAihPvx8mRvri/UTP2cuRjMiYfxou7JxIScjkBoVp2Ra6jMHfItCPMMdiSaeyOAZiUXRdoFKFBX7NbOqy2QzHnSTGE/DNdBKTytzvrJEzeqCjkCX0/IxEqLmgrhRv7EQjrrZyJAOFKlC/71IVAuwasOMNibKfHn31cEK0x8Tck=
+	t=1756970387; cv=none; b=bXuBazwEDqyu+sfzMaVXuG2qNac6bOsHFISIDD3G+kJe5RT1hbO2FyUwNshqHNDJlssWRb3SpAhhtdrxVBdkrCyZs6FbUFrduOTLKjuRuc0XhHC1InjeJf6NdJmZhcqtCMOztrkf5uROlFRVSMnBsaybHHBvmsteu1fgN3ovi4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756969461; c=relaxed/simple;
-	bh=IhKT8x/5hCHSHndLowOHkoRm2QFYbcT6oimaswr9Lqc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lk0oVZx/PaqibPha4tyCGjBTJRA2MYDoGsFAh/NA57ytqxxQ8agF18v7P6G0jNqA0RIKOT6BzPDMB3ZOmdnrVXTq47SzAyvj8tSxSpDb6Z1iSCwpmIVIQyNRIeY1GC6XS0bUo4JUR7fT7Zy15HG2RmWoNUR1LnoM5uyTa1gAtDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=eEDM4FH9; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1756970387; c=relaxed/simple;
+	bh=If26aWe6HDRuUd8BLxK/DNXNMPYO7QPBtdN29DandUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=eh8ROZotbBEWzbph9F+HYpqgqIoZTCVPopQOkD0FvED1F+WYCl4I2tdq6ARiNRTDNgbM7hZQQCO2mdjSxAx5qIH9xfn4SHg7RYDP0IDtkTRF4EQla2xpOcMelLiDwKoS20tnOTiE0e4wTaNyD2O+y2tOgWrHzLm/8FVDVSMvw5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ak5tC+BF; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="eEDM4FH9"
-Message-ID: <c649f29d3c0c6cb5718dfec1159fdaabe3ee3463.camel@grimler.se>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756969456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IhKT8x/5hCHSHndLowOHkoRm2QFYbcT6oimaswr9Lqc=;
-	b=eEDM4FH9yI5P7vlZLnXRLJiTuwuS7NbJ0sViZP4Ds5PvNDHS5xy40WQR1dsvIDd4E8365Y
-	+gW50vQHutvD8LEcJ87QAoY8UYIZ5pbO5gW+uRpVTTBMyZ/975w9O3bpjlf1MhyRMkxkDZ
-	8jHqnE6DVw5hvRJenMlC/j87WKxYj+A=
-Subject: Re: [PATCH v3 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Andrzej Hajda	
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	 <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, 	dri-devel@lists.freedesktop.org,
- linux-samsung-soc@vger.kernel.org, 	~postmarketos/upstreaming@lists.sr.ht,
- replicant@osuosl.org, 	linux-kernel@vger.kernel.org
-Date: Thu, 04 Sep 2025 09:04:11 +0200
-In-Reply-To: <532937cb-fa69-4010-b2cf-cba9a2e6c730@samsung.com>
-References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
-		<CGME20250824111745eucas1p20e336aecd501200bdd035bfc30ce1e63@eucas1p2.samsung.com>
-		<20250824-exynos4-sii9234-driver-v3-3-80849e716a37@grimler.se>
-		<ac222017-d4e2-4fa7-beed-cc6b73042a73@samsung.com>
-		<20250903193231.GA5526@l14.localdomain>
-	 <532937cb-fa69-4010-b2cf-cba9a2e6c730@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ak5tC+BF"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250904071943epoutp0313536caef3e2f7ba479eef6f8ff17eb2~iA0E5vZAL3041730417epoutp03h
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 07:19:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250904071943epoutp0313536caef3e2f7ba479eef6f8ff17eb2~iA0E5vZAL3041730417epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756970383;
+	bh=XIDY5zJ3pMt83TWBBmEEmGxMtm/5CHCj2NnIva/BZ98=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ak5tC+BFukzrUTWfIQGVKoVs3fE3A1pMBMpvIbCCnxwXVljg8dReeZVJljr5b5tuj
+	 pvjMRqzqUEwrCTFeY9BdCBIAjRUw9KsLIPoexT2J8J+mQ1iFL+8mJAkRQZuL2hc7K4
+	 +NlnWziASrp6fpu9SlQ5thFrSPByo3MeHuUumzng=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250904071942epcas5p1c7fd121345ed8fc30e6c449b18f1e023~iA0ES--qd0357003570epcas5p17;
+	Thu,  4 Sep 2025 07:19:42 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cHW7x4cL9z2SSKX; Thu,  4 Sep
+	2025 07:19:41 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1~iA0C3ZhEO0357003570epcas5p10;
+	Thu,  4 Sep 2025 07:19:41 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904071939epsmtip1658d4b2730e1a080e4041b37c376d7cb~iA0BI2m9F0339503395epsmtip1d;
+	Thu,  4 Sep 2025 07:19:39 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rosa.pila@samsung.com,
+	pritam.sutar@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com
+Subject: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+ compatible
+Date: Thu,  4 Sep 2025 12:58:44 +0530
+Message-Id: <20250904072844.358759-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
+References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
 
-Hi Marek,
+Add "samsung,exynosautov920-hsi2c" dedicated compatible for
+HSI2C found in ExynosAutov920 SoC.
 
-On Thu, 2025-09-04 at 08:40 +0200, Marek Szyprowski wrote:
-> On 03.09.2025 21:32, Henrik Grimler wrote:
-> > On Mon, Aug 25, 2025 at 04:16:50PM +0200, Marek Szyprowski wrote:
-> > > On 24.08.2025 13:16, Henrik Grimler wrote:
-> > > > To use MHL we currently need the MHL chip to be permanently on,
-> > > > which
-> > > > consumes unnecessary power. Let's use extcon attached to MUIC
-> > > > to enable
-> > > > the MHL chip only if it detects an MHL cable.
-> > > >=20
-> > > > Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> > > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > >=20
-> > > On Trats2 board the status of HDMI connector is no properly
-> > > reported as
-> > > disconnected when no cable is attached.
-> > Thanks for testing (again)!
-> >=20
-> > In what way is it not properly reported as disconnected, are you
-> > checking some sysfs property, or with some userspace tool?
->=20
-> Huh, my typo. It should be 'connector is *now* properly reported',=20
-> that's why I gave my 'tested-by' tag.
+Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-That clears it up, thank you :)
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+index 7ae8c7b1d006..207b95e392e5 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+@@ -38,6 +38,7 @@ properties:
+               - google,gs101-hsi2c
+               - samsung,exynos2200-hsi2c
+               - samsung,exynos850-hsi2c
++              - samsung,exynosautov920-hsi2c
+           - const: samsung,exynosautov9-hsi2c
+       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+         deprecated: true
+-- 
+2.34.1
 
-Best regards,
-Henrik Grimler
