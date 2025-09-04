@@ -1,134 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AA2BEC43;
-	Thu,  4 Sep 2025 07:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1A02882B2;
+	Thu,  4 Sep 2025 08:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972779; cv=none; b=ToPSjcyPtagWiTt1+AGXNWWp4HP53GkSFqcuVGvxqjVLVKIcr/s4KXONa/jZRogbx3cWO9pWaOrBPBbqV5ih2FWTuwutVISi7YEOIotlq5Dx0AFDxuiiZKy1o/FyV5Mc2KR577ZrQEkZJLieqOy6J9OlSyL6FL4uocqw/18hk2Q=
+	t=1756973096; cv=none; b=aL7KcvXNwS89Du5FhT90aTyn6ee5g/b52nP+3l2xJHaFdK32k4eOPltEwX8v6rOCDlgrE4tyfkiZmM1fxW5wB8v902uWaNM2FNItJYdyDGuGFg6AbeeK3s1XOvrdo+eWaXQN+ayS1JQ/2EA/QOff9yqc+qvS0KfVsB9R5HvXyRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972779; c=relaxed/simple;
-	bh=qr1V071kjlRjsRCmHcuB3ihXSJkt/phuzQie/Q1MiZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaPkD0J4n9X12VPRJHE95URIbdM27rwbUScJ7H2cHb9DOix4E3Rzg2NW4JfYlEa+6XMnwXN0G+QG2f0IODBODhErkFfFDZhRHcG6Pzv9yfKmpboPTdkaTVrRfHenNh3/Tg/KE+1J3FbbbLJVa7DBew6oy/hwOfcF2xGntoLscr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooXCt7hh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756973096; c=relaxed/simple;
+	bh=TCmU3EI9jxWadailuOfA0n0BlrZdIhAt3+9SPCCdzUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pyXRuNaONgg+Ad8dCW2B5mInOzjkWJFf3+o2VeBCdmEhcWMCRFAVUMXoQbU8eaqCzRwKf9P9E6XCvk+d6w2T/LyxgfGGk3UkKsXN0wLkJ2xe6MUDwkqqFQfeC1QvUWiPcz3LoDD/YCTK5hPvZJ5Z+ajHPC+gK4LCh3SyTTe5w2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UV3daTcO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooXCt7hh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4AFC4CEF1;
-	Thu,  4 Sep 2025 07:59:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UV3daTcO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F97C4CEF0;
+	Thu,  4 Sep 2025 08:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756972779;
-	bh=qr1V071kjlRjsRCmHcuB3ihXSJkt/phuzQie/Q1MiZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ooXCt7hhW4NMrwAjO7gPOLnLZI7xsHoYmdJepFhj62ONTqa6O7U78jJlEolZJFTeb
-	 SEaqRG9H2nu8UH4g1THcNbD90ssj//+E1fGFMVU1/zpzXwtGkbyMt9f30SKIKv0G+3
-	 bwG/TLFdU2Ct5JbPvWJEqeuM2eTxyPbKmZdvtwAIvO3SipW7NbdHUt/Nmram6KmbmE
-	 LRzJjXoNmF5C3/jukRpA66VKlkLRSGunAExp4E+Ny4nbRS1YgBbbtOGAmG2PcJNCtn
-	 wmCQtPGXg32OMvsx1xv1Z7Qyf7rzpArlYodOGDNKfttA/xGG/0iszppNrFryEwsO8M
-	 9Vew+ag+ROmfA==
-Date: Thu, 4 Sep 2025 09:59:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shin Son <shin.son@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name and
- sensor-index-ranges properties
-Message-ID: <20250904-chocolate-kangaroo-of-order-2cced3@kuoka>
-References: <20250903073634.1898865-1-shin.son@samsung.com>
- <CGME20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91@epcas2p4.samsung.com>
- <20250903073634.1898865-2-shin.son@samsung.com>
+	s=k20201202; t=1756973096;
+	bh=TCmU3EI9jxWadailuOfA0n0BlrZdIhAt3+9SPCCdzUI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UV3daTcO49651LPgFl4Ym3WNTH4bD0/uV+6O/x88njQWChtUAHe53fYktXioWt8Jz
+	 VWfSl7Wi2dWcui2dqa0gZqgEDbiCN7j2ohGhz7hBgK0Jq8J4sBCJ5FVCCkpLVr/1PN
+	 ajDvURY6LBa4sExKeIs6ubkiuSHTUugRQjYXuASV2S6k4Y5xa3gkcLJsnb+AGF1ZBx
+	 +I6vJWF5bf3gDnVoPtkfLULKUYQ90mmBdkrQXprigzcgoPurHt7Z8RCV3o6t6efPm1
+	 KJCw1AQa5tij4jqgJSlnhrIgn2Hc5dWmB5VAQAa+QksX9srPVatgE32mABjL5uu+X+
+	 tQo4C+rXyfJQw==
+Message-ID: <5643d3e6-a034-4e2a-babd-d82fb3d58e9d@kernel.org>
+Date: Thu, 4 Sep 2025 10:04:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250903073634.1898865-2-shin.son@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+ compatible
+To: Faraz Ata <faraz.ata@samsung.com>, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rosa.pila@samsung.com,
+ pritam.sutar@samsung.com, dev.tailor@samsung.com
+References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
+ <20250904072844.358759-1-faraz.ata@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250904072844.358759-1-faraz.ata@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 04:36:32PM +0900, Shin Son wrote:
-> The exynosautov920 TMU requires per-sensor interrupt enablement
-> for its critical trip points.
-> Add a DT property to the Samsung thermal bindings
-> to support this requirement:
-
-That's pretty redundant sentence.
+On 04/09/2025 09:28, Faraz Ata wrote:
+> Add "samsung,exynosautov920-hsi2c" dedicated compatible for
+> HSI2C found in ExynosAutov920 SoC.
 > 
-> - **samsung,hw-sensor-indices**: Defines the sensors currently
->                                  mapped to the TMU hardware.
-> 				 Indices not listed are absent or fused off
-
-Don't write here any code, but concise prose dxescribing hardware.
-
-If sensors are fused out, you certainly can read their status from efuse, no?
-
-This is really vague description of hardware. I don't understand why you
-are changing sensor-cells, why older variants of tmu gets now cells=1
-(missing constraints?).
-
-Why older variants also get that property for sensors? It does not make
-sense there, because they have one-to-one mapping between TMU and
-sensor.
-
-> 
-> Additionally, add myself to the bindings' maintainers list, as I plan
-> to actively work on the exynosautov920 TMU support and handle further
-> updates in this area.
-> 
-> Signed-off-by: Shin Son <shin.son@samsung.com>
+> Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
 > ---
->  .../bindings/thermal/samsung,exynos-thermal.yaml | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> index 29a08b0729ee..abd89902d33a 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> @@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
->  
->  maintainers:
->    - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Shin Son <shin.son@samsung.com>
->  
->  description: |
->    For multi-instance tmu each instance should have an alias correctly numbered
-> @@ -27,6 +28,7 @@ properties:
->        - samsung,exynos5420-tmu-ext-triminfo
->        - samsung,exynos5433-tmu
->        - samsung,exynos7-tmu
-> +      - samsung,exynosautov920-tmu
->  
->    clocks:
->      minItems: 1
-> @@ -62,11 +64,22 @@ properties:
->      minItems: 1
->  
->    '#thermal-sensor-cells':
-> -    const: 0
-> +    enum:
-> +      - 0
-> +      - 1
->  
->    vtmu-supply:
->      description: The regulator node supplying voltage to TMU.
->  
-> +  samsung,hw-sensor-indices:
-> +    description: |
 
-Drop |
-
-> +      List of hardware sensor indices that are physically present and usable
-> +      in this TMU instance. Indices not listed are either unmapped or unused.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 16
-> +    uniqueItems: true
+Where is any user of it? I looked on lore and found nothing.
 
 Best regards,
 Krzysztof
-
