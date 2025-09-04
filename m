@@ -1,203 +1,178 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011071.outbound.protection.outlook.com [40.107.130.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD482307ADD;
-	Thu,  4 Sep 2025 14:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996158; cv=fail; b=B3NpsM0MQ9LWGQugj00xDKYwpM6/94ZQsAc10HczEk69o5DTv8K6giZN24ddAxfgrA/4OQ36v9qQ1cxJrgJAHVHFN32mBgyshLAucS3O71e71UUx7Y6y/xEXS31Aur1c+f5S5phqhQwtBdjWyZtueNJXhXAWh9K+Ve/ZF9zbg4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996158; c=relaxed/simple;
-	bh=sbwOHE6GtW724lR0gir7jMNZX3lMzqLRZxFrYgOJnWE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evTX56cRDNHKAysqD8wUQEkizDizof8f9gqZaJCDTdvS/IkC9ANpF/DUmSAm/l5H4hSFAPsBBzLHQyjiy1YEh9IhfqnHjW6v5/fog7IwnUt/J0Vx95VXz+nTnCmXGGzOhv48cS0aw7D4qUFjIsUBOuNVyKTNgDQppiM2OUdySn0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=L3WYwSCT; arc=fail smtp.client-ip=40.107.130.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3A8246BC5
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 15:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756999961; cv=none; b=tlt/MjiTsdAsiqnQecd6Ewvu0WAQ3fTk6OjvMgvsLVOvZ/i7deGpQttiHm7WRvL7niyYrBwqbsA2yo+21eUSn0kJRwfVb0UqPwUeM95mBB9+8HXqePbqiAveT1ieBuyxeklxRlIj3U6TuN1QJt+2inbqGiVWhK23Xge0ROYxJVg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756999961; c=relaxed/simple;
+	bh=ZovBSTg3+nS4gEH8MquKWObavniQvrJ/CjBnS51s8KU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RGxgnMouT09GklX/+aw4zRvxTzHzbc0IKxIa0eCUx/X3jFyQA6x/N6GCTDoWWwFuC4eIf0GEOYikhoLBFDkzyFi2zPCDK7ZNSF1/lI4bE+UsYjHv3TLjcP4oi1chUVZaZAAh6V8WFMfeNIQVKpLuEx1/Yyi21H7D7sUQWJ3IKqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VvVqsOFs; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="L3WYwSCT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D64Z9Lur+ciJH+BsNrniAR+5y8uKqS3kkawzQPUhAQwm4K9GXJeBLp3U8ho+53HULSgjXGVfiUG3Dbh5FJAspBzCbhVSop/GyGe9hu3t4zTFrgnJAXqohw/XF5m6SQXMrj+xqebAXSyP7bLkuvwjJSo7/t8dhqSgepFbHyoz5nThkh8AATtFMayKprCuaEd+4UIakgVtWj/YQiTpw8I8cb90FxVbHUSKuNepPeIvztqQiCWT9Bvx0+zoF8gxSE4vLTWeqIZ0DqTOUjDCIya8ZvGuAzMLOYlc/hFcY+jSuw4g4bbUxaWO/t7U2w7rRAc1X6Y4Lc7fNx3itkicWh/d6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I9XuFjQYH7zkwT/vUCHWyQ6fWYvOgOMbcp7P/Xgr2gI=;
- b=wqXGu9Z7YnfTv0AVGe3VETJnpU5lB3Cdzbm0MFBglR2bRN07VaLjajW4XFlt2w9m1KygW9ZfDiWRNGfMWprUVAOmP+k8sgrByYQFmUAJCnfhvGtKFWm65Pm8aIxXvgcjkEH5qvzAHpd7ieaTHpqfxpCzRJ1yDeJFvSCg6CqcUnRAvIeSeyazArx5jVnmujvJIFliET6Wvg7zt4NP+qJ0gzC7PTmB+xUxNCcjB81cffVB/0HHerTUVv+8Irm4rFWnHbSI//u74XbWscCHY31M0+Bb0Pel4HYIXe0WRR+0FbmMW2MgFr3R31NEVF+Iyl6HRooRqW+EIsMJ+2i7AHKOoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=arm.com smtp.mailfrom=axis.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I9XuFjQYH7zkwT/vUCHWyQ6fWYvOgOMbcp7P/Xgr2gI=;
- b=L3WYwSCTArwuRMqJczRKEwBrNzsG/oD3s/CKN5fn7W3iuhZc6a6Q3ZZyQFm9+DeeQFOs44KN2WLSDnXBXEM8B2Rn5RibVn1YS3O/Hk9EzU4f6ANNB4He7RHrQSiYlO5pebaQxID1S6dBvZ6I50T6HeIgtBQoyXb3kdSVbuClKkk=
-Received: from AS4P195CA0048.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:65a::23)
- by AM0PR02MB5939.eurprd02.prod.outlook.com (2603:10a6:208:187::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 14:29:13 +0000
-Received: from AM4PEPF00025F97.EURPRD83.prod.outlook.com
- (2603:10a6:20b:65a:cafe::f1) by AS4P195CA0048.outlook.office365.com
- (2603:10a6:20b:65a::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.18 via Frontend Transport; Thu,
- 4 Sep 2025 14:29:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM4PEPF00025F97.mail.protection.outlook.com (10.167.16.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9115.0 via Frontend Transport; Thu, 4 Sep 2025 14:29:13 +0000
-Received: from se-mail02w.axis.com (10.20.40.8) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58; Thu, 4 Sep
- 2025 16:29:09 +0200
-Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
- (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 4 Sep 2025 16:29:09 +0200
-Received: from pc36611-1939.se.axis.com (pc36611-1939.se.axis.com [10.88.125.175])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id DD8981490;
-	Thu,  4 Sep 2025 16:29:09 +0200 (CEST)
-Received: by pc36611-1939.se.axis.com (Postfix, from userid 363)
-	id D823D601BA; Thu,  4 Sep 2025 16:29:09 +0200 (CEST)
-Date: Thu, 4 Sep 2025 16:29:09 +0200
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Ravi Patel <ravi.patel@samsung.com>, <jesper.nilsson@axis.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
-	<linus.walleij@linaro.org>, <tomasz.figa@gmail.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
-	<ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
-	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<smn1196@coasia.com>, <shradha.t@samsung.com>, <inbaraj.e@samsung.com>,
-	<swathi.ks@samsung.com>, <hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
-	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@axis.com>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v4 4/6] arm64: dts: exynos: axis: Add initial ARTPEC-8
- SoC support
-Message-ID: <aLmiNQIsgBuDfLcX@axis.com>
-References: <20250901051926.59970-1-ravi.patel@samsung.com>
- <CGME20250901054254epcas5p24db87bd64fc57a25b17c51e608f15e7b@epcas5p2.samsung.com>
- <20250901051926.59970-5-ravi.patel@samsung.com>
- <5543f849-2be7-459f-8600-d236625cc8f8@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VvVqsOFs"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso2550875e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Sep 2025 08:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756999958; x=1757604758; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zcywffTAPMM3Aelnx79fSslBG214GVPApnPBoT9pItY=;
+        b=VvVqsOFsw4FhfJfUTUhrpMFZwyUD3VALHXx/evw4+b0s3PyjsnNwdLexWrIsF55abi
+         eYaBi1/R4gvs+4tXLGW9m2gw6Tpcnbx0TLW5s9Fh+z0050jwj9Xwup8YfpL0y3nlhIdM
+         71EovvnS7OZbduE0HWOieftFGnyzG8Zrg83IUbNd+ME0C9CiOlKQtLqeYhnub3uWe9vK
+         th3D+yYvWheYaKcsMI+2rGYW9eWK4bAvfMsMMMBbDpfx8Zq3Cq9htoYmYH9oOUBFaxof
+         LFKdrg5kpF6jvXiooY/JpdBIDhSsDdv4Rn0q1VtLlA1N1weAr3RPkTa32MXc4EdkQ0G8
+         Q7xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756999958; x=1757604758;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zcywffTAPMM3Aelnx79fSslBG214GVPApnPBoT9pItY=;
+        b=fd5OzzMhGiJnIklPcDU5VJT1J7tDjwdqt49A/BIRm4JK4MiH6RK8sJxU8dd9MP8UCr
+         j8D8s6T8CApbOIxzdv6fmHV0eAXg0h80nTQDkW627DbEPkp8yXywjN8w8rc4E06fa7tu
+         H97iUyf6rZZqM6JbpEwupjnYtYP4OSLxYsQcyeQLZHYntazkzUmoNwK/umomc1hLK++e
+         1Rooh4JEerrvfZbLY4lB/XRTB7MNziQZ3aG7Di7goEOlqlVsHSK8ld/kd1Q2JfIFdoJq
+         eM6QEay70TrLJ/IBj3iv0mpIxg2V56lD8kaA+ZjlML+ISHuePyht+G6ZensdPBFGKxqF
+         eBNw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9XMlr+a3ZODQPd+4db3AxWjZogwVg8KZVd0S5HQZJdbPW8AoVBOgdGAiXfwA8dLEHajv33qCDpev9U1OoAN+ISg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmFwzCCJuPN0vijQwgdmRFDD7gfPZxvxC97zFOyqxd085JsIav
+	vN73NhINyMJRtlfDm5gnNIDdL6RecZmXzmwxlw1XJqNDLHqoByG85OJlNJaDF+aBUZk=
+X-Gm-Gg: ASbGncsbWR5+InW+pidDiVi8Fn0I1Y+TNnAyqem9+o4OhiI91e9VvTBxizN6gu/EEIa
+	1eycsGLSfBh+LZfW+pGejjQofIR6GqKbMsuO5UCItXwiyheeXc+S1mTSByw0epS1y75fKOxuri0
+	nGwjtLodA7qF1g+MvX6Moxja5VBp9GzMmc85ONLDbXKnoNH43qYa10QPT7A5IgBL21cN6t9tTju
+	H1MKhJkBqi77mZWFtA7AZsxFHP8mr9RHqu0p5+7IU7uoo5F1knWnWNbe//FtNgK0d8vd9dofd/4
+	Pow95Mb1iG145oYcdYkPNOFRYYafZ8YBpOjET2qV2huzdOB6//JYBFDapYVgWSVSC1iK3XFY76P
+	2q1L/MdWHnlrNi6XMYWWXROfqZf2QPiBVXVtcD6fwC7tVtJoSp4I=
+X-Google-Smtp-Source: AGHT+IEOK+thU4lBF9QkvDsW3QAK6jUHRnRYoVFlARXInUUOYeTnV9kbJl8HLIspvAB0lbR2Tb1UIQ==
+X-Received: by 2002:a05:6000:2886:b0:3e0:b982:ca5a with SMTP id ffacd0b85a97d-3e0b982cf37mr3073696f8f.5.1756999958082;
+        Thu, 04 Sep 2025 08:32:38 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([150.228.9.248])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf34494776sm27889919f8f.61.2025.09.04.08.32.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 08:32:37 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 04 Sep 2025 16:32:29 +0100
+Subject: [PATCH] clocksource/drivers/exynos_mct: only use IRQF_PERCPU flag
+ on ARM64 SoCs
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <5543f849-2be7-459f-8600-d236625cc8f8@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00025F97:EE_|AM0PR02MB5939:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9791b69-f702-453b-cd20-08ddebbf6bf4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NUaa3e1Hv+PChXMbjqD2G3PVhS4+jM2MfDbef7UCK4LpxfrfMIIr3ixK3+Qz?=
- =?us-ascii?Q?khcqCld95+KFpJZbD7u5UDu53VXrRTxy5V4IOy2x3AI4Io22M6iF+pwpRHEE?=
- =?us-ascii?Q?8rpIqIqTrxzofwxhNCUcU1B0F1NEDDbXpJzrhfJzZCmlFKted56vyIfibCAa?=
- =?us-ascii?Q?FnB+7bd7aDRwosrJteiJKZq8E8Sd48NFtNMamosZnQ1lpKvJZfC51qgvjJ8v?=
- =?us-ascii?Q?hQubnds1FaJbrNngV/P3Z03jzIDFcAnuoGf9n7ryGMPUeEeGC++P01c5H47s?=
- =?us-ascii?Q?fEV7QQSLZ6x71PHHWSDpiOwyjDZ6ySDBGe0gQo5yrYfY9TJpBKMfKuEECwHj?=
- =?us-ascii?Q?G8omDPXAwt1BCVAET64OEspTU4yckgHBbmrKrG0LwBNH3V+mHkKaH3NWI9gS?=
- =?us-ascii?Q?dvJggpTyCLntIdiNAUIRUS6ZQCK+fv3AocysNI96WZh6UL7Dt41ZUm+PXEEm?=
- =?us-ascii?Q?Krso1carUzuEduBs+VJjmqDSJBe89X99vXPPuok/mfSKqozFF8q6zNjAEkDU?=
- =?us-ascii?Q?730up0wa+udBsL7VvpNTPCe5gjdIxhSSNHf4q6E4yKb6RxE7bE1kIGyp/EE4?=
- =?us-ascii?Q?7tqD3jlXWN2fwl+W/L6UWlfGxhBagiS2qmMkCTsu9yMwCYQEHNsUrDPFUmO2?=
- =?us-ascii?Q?UqIEK83hVz52/+QlLl48yfe5Z2FFg+mQLcrCmDC7enXRsLZbDP8EhABlFIN6?=
- =?us-ascii?Q?+zbmP7kNF89ZUBSr+cWS4irmjlshdfHSwxgVtm4//7750JCOB/1LTWhZsPmP?=
- =?us-ascii?Q?pfb5/SGNpO7HnZMCCfQOBsVjvv4NKVph1lITOxaBDYKnYHLsrQJpYzefWyt8?=
- =?us-ascii?Q?eHJKKgJeEeF/J2Hd+SiR9JDuxjZmBMJT8gTi4hiHNf4KwqA3M0/tlg6BwMe+?=
- =?us-ascii?Q?3OH8WscwOpKACtBsIJCXOp6bofNO72nMmOuYHZPCst8f2LO5S/+mpr07qfsT?=
- =?us-ascii?Q?tilBt2vhOHFmJaD/5f7CsFlZPHZjTbSd/Jqt9PzAVZqMKLHqCrR83mYKcLgf?=
- =?us-ascii?Q?PExlGz9SgB8SjGvH2/lfiRkD7ZfuWf1rcTn1UyLTjNTOxjoBHwhoV5tKFKB4?=
- =?us-ascii?Q?15qNkFdhbHSmnHPKafmsSDp2T0WWXBjGMdyVAZqN0Z8QB6kjOlylDoDWcNzv?=
- =?us-ascii?Q?45i0Ei22hfvMdvIW94oSeaIbyDequ/cCodQO1bNVHFUdHQoSID3yJZOBqVYZ?=
- =?us-ascii?Q?UfTeIaNNyO/uT0FlDtwvZtADFSAeQc3jUu7Arheb3n2cowUao8ypk425R1hR?=
- =?us-ascii?Q?zAC22+UnIeA4bbNgl6wN9kPyiMgb54PEcW/K3ULe9tjQRLfBjBWLCih2/xUu?=
- =?us-ascii?Q?yHw9rRIJhwbtFPBIWsJq92TIn4fjbeeaZP8wbAqaZ7nKnvVKgVBlBc6Fal/l?=
- =?us-ascii?Q?jopLfPfl0HcMT3/UJ81F2pS2Co79/jfHftBYSSW9iaKY4sVQzaVB4A7bfCe0?=
- =?us-ascii?Q?TFegCNRvypLQttmMw5v1sWpAbCIJKLKitSdPORo3OfEUEJRyk1SetcO1osyF?=
- =?us-ascii?Q?u0xjCYH5xgxnu5yihN4fTF9OWoMdZFsXEejG?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:29:13.8531
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9791b69-f702-453b-cd20-08ddebbf6bf4
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F97.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR02MB5939
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAyxuWgC/x2NwQ6CMBAFf4Xs2U3aUg74K8ZDUx+wB0qzqwZD+
+ HerxznMzEEGFRhdu4MUbzHZSgN/6SgvqcxgeTSm4MLgRhcZ+6dsxmt+ctK1D5zra6msmBX2s9n
+ HqQ8eMQ2jp9apikn2/+N2P88vx6ou3XMAAAA=
+X-Change-ID: 20250904-exynos-mct-arm32-cpuhp-regression-14f321e4a591
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Ingo Molnar <mingo@kernel.org>, 
+ Hosung Kim <hosung0.kim@samsung.com>, 
+ Will McVicker <willmcvicker@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ John Stultz <jstultz@google.com>, kernel-team@android.com, 
+ youngmin.nam@samsung.com, hoony.yu@samsung.com, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2713;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=ZovBSTg3+nS4gEH8MquKWObavniQvrJ/CjBnS51s8KU=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoubEU/E74sQgeTf+abf8JCGdjferSkVZiIA4BB
+ SPYJAGILouJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaLmxFAAKCRDO6LjWAjRy
+ uhFYEACRe7uggDyXQmWDb08QOlfPW3pieYUctnlx1bnlUd8qsbJmBmdwTnLUvDmX7bUGx08DvCm
+ UOxqkOZD/FTTCfIXx9DVZKsUYEWQnlevCSJDINtIFSLakExB+yNXfTz7BQ2g7aEOlFVv96CpDg3
+ 7BNqnTNsy3K6awhvLIkow2aNwNAgBoX5HnQig4WTbchmFO7SGPkqIOLo7oWqhRidAY7S38TqeBS
+ t1jL8vFaZpl+TovAbn0tkMzdSM9ynUFKHfPXQpG6pW78cjfLvSPSJNrZK6FWAfhcfEkdUP565FF
+ UZKi1k9ZHrAqAkgMdTnPCIdXJc2RbbkCGzZf0I8+4EBS1zzO6+DeJArO4lJjDqpHkbeMoTDfxj5
+ 3gitcgPJ4M8XOLLegJdppIPn2VysPWxxqMeNSHfZfpAZZ2Mu0wXx58jTA/fFRf728CJcV8Op3Xh
+ PWXwrdtN58YsmVBiZNY9VQn/ryGRcHyEklwMtdSjx+xNPtUO/hG0BeNxZHjaW49OD2f1lyQOFbu
+ bw71aQ1JoA3GJZuKXZuvG6TPGk2NZU9nzBNIEhPugDhqsHGsDA0IdqD6VlZe5CDsjNh0LD/kr0r
+ nLY/g3nGIphqaXwDoJc9GcsEkg2qDlp9nryDfIVUYt8NUdpwBiUegQZVM6uOX+sfme/Iykiey8w
+ vtuTK3l+nGVzpzw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Thu, Sep 04, 2025 at 03:43:14PM +0200, Krzysztof Kozlowski wrote
-> On 01/09/2025 07:19, Ravi Patel wrote:
-> > From: SungMin Park <smn1196@coasia.com>
-> > 
-> > Add initial device tree support for Axis ARTPEC-8 SoC.
-> > 
-> > This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
-> > 
-> > Signed-off-by: SungMin Park <smn1196@coasia.com>
-> > Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> > ---
-> >  MAINTAINERS                                   |  12 +
-> >  arch/arm64/Kconfig.platforms                  |   7 +
-> >  arch/arm64/boot/dts/exynos/Makefile           |   1 +
-> >  .../boot/dts/exynos/axis/artpec-pinctrl.h     |  36 +++
-> >  .../boot/dts/exynos/axis/artpec8-pinctrl.dtsi | 120 +++++++++
-> >  arch/arm64/boot/dts/exynos/axis/artpec8.dtsi  | 244 ++++++++++++++++++
-> >  6 files changed, 420 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
-> >  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
-> >  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index fe168477caa4..4d0c1f10ffd4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -4102,6 +4102,18 @@ S:	Maintained
-> >  F:	Documentation/devicetree/bindings/sound/axentia,*
-> >  F:	sound/soc/atmel/tse850-pcm5142.c
-> > 
-> > +AXIS ARTPEC ARM64 SoC SUPPORT
-> > +M:	Jesper Nilsson <jesper.nilsson@axis.com>
-> > +M:	Lars Persson <lars.persson@axis.com>
-> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > +L:	linux-samsung-soc@vger.kernel.org
-> > +L:	linux-arm-kernel@axis.com
-> > +S:	Maintained
-> > +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
-> > +F:	arch/arm64/boot/dts/exynos/axis/
-> > +F:	drivers/clk/samsung/clk-artpec*.c
-> > +F:	include/dt-bindings/clock/axis,artpec*-clk.h
-> 
-> Some official ack would be nice for this, but I also remember we earlier
-> emails, so I will take it as is.
+This patch addresses a regression reported in [1] whereby CPU hotplug now
+fails on little CPUs (for reasons that aren't fully understood) for Arm
+32bit platforms such as Exynos 5422 used in OdroidXU3/XU4 boards.
 
-Sure, that is a reasonable request,
+Note: This patch makes an assumption that the exynos_mct driver is only
+used on Arm 32/64 bit SoCs.
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Closes: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/
+Link: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/ [1]
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Hi Marek & Krzysztof,
+    
+Can you test this patch on your Exynos5422 based boards and see if it
+resolves the issue Marek reported of CPU hot plug failing on the little
+cores of Exynos 5422 based boards?
 
-> Best regards,
-> Krzysztof
+Unfortunately I only have gs101 based Exynos hardware (which is Arm 64 bit
+SoC) to test on. I can confirm CPU hotplug is functional on the little
+cluster CPUs with IRQF_PERCPU flag on Pixel6/gs101 though.
 
-/^JN - Jesper Nilsson
+Thanks,
+
+Peter
+---
+---
+ drivers/clocksource/exynos_mct.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 62febeb4e1decec7f5db104db395884824563915..91d79b73a96a7e8a354d803c2b497bcde92af8d8 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -532,6 +532,16 @@ static int __init exynos4_timer_resources(struct device_node *np)
+ 	return 0;
+ }
+ 
++/*
++ * For reasons that aren't fully understood IRQF_PERCPU breaks CPU hotplug on
++ * little cores of ARM 32 bit SoCs like Exynos5422 used in OdroidXU3/4 boards.
++ */
++#if defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
++#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING | IRQF_PERCPU)
++#elif defined(CONFIG_ARM)
++#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING)
++#endif
++
+ /**
+  * exynos4_timer_interrupts - initialize MCT interrupts
+  * @np: device node for MCT
+@@ -602,8 +612,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
+ 			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
+ 			if (request_irq(mct_irq,
+ 					exynos4_mct_tick_isr,
+-					IRQF_TIMER | IRQF_NOBALANCING |
+-					IRQF_PERCPU,
++					MCT_IRQ_FLAGS,
+ 					pcpu_mevt->name, pcpu_mevt)) {
+ 				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
+ 									cpu);
+
+---
+base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+change-id: 20250904-exynos-mct-arm32-cpuhp-regression-14f321e4a591
+
+Best regards,
 -- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+Peter Griffin <peter.griffin@linaro.org>
+
