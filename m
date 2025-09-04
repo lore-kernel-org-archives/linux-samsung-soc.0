@@ -1,85 +1,78 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E7C306D36
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 13:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096733D987
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 13:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993580; cv=none; b=QYNqzLFQqRwJY544dHIKQItwP0DbZ8DtZiT0E0i3RYXwxwCffa5VMlGiIbT6+vW3tO4jQCVf2ovLwxH4YNAQDe9RqJzo6rpj/foRtNbJBCNDqMH3eM+RHGYQ9FwkwUWmEVc5/ny7zXV4LSJT3mZykib6n5VA2jJwh7oCPwdMuEQ=
+	t=1756993696; cv=none; b=YQDDe2NkvLj1dZe1Qpl1Ga48UACf3+8PaQMGC0ajooxQ0UCHRxmNRuIBOPDnhh9BKtCjC9AXqm3HV7yvGYb/F+8bnuNOJVZaF/0pAGLqaQFhcQi9i2EIy44BYUMiskBC5nuosWQGiXaozMu0j+4shV5snUILIKa31M1NEEjG/0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993580; c=relaxed/simple;
-	bh=exbALax/KRnxM/htU8cfFCENh4IpreCWgJhwJJBmuts=;
+	s=arc-20240116; t=1756993696; c=relaxed/simple;
+	bh=5b17D17KCNLnqi/G2Z2dTgyoEWSeb8SG6sPYeTo5izY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=t7FBhVbTcOYGISJc8XPBCfElMhLBO/TjJ6HkB6XqNKCRQqqyWqX1Wq3iFr1fF1+8Q+Qt4ltNSoaczl6ToIic8HgDhu+u1y7q0fC/uUoiaMPYnAQtK5vjeyWPcafqtRiAfvXMx/N/ZylIynTdhudONJqZTrQcijRbdCKB9SwuT0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XllKDlSw; arc=none smtp.client-ip=209.85.218.45
+	 MIME-Version:Content-Type; b=DRhxf3/LExXPgBZgfE69oXshRk2qmi1iw47b8j3a7O3cjIwsH/k3TiidwyNjNtFlqK8Qe3Jbb3SWXPfTiIZIlh2HdELCSY4ybeSReHvEOOMWmC8pnaIobiHs6PqL3y5pej68li4T2p0bU5jCLG6UZ8cnhrJt0h9OUsInwACwXzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ll3IK9Mz; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XllKDlSw"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b0446e57a18so12317566b.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Sep 2025 06:46:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ll3IK9Mz"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61ec2b5cb49so178920a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Sep 2025 06:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756993576; x=1757598376; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756993689; x=1757598489; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bWzUXsK84owgqc3mGwjxow+K46mQbNDiKZu7L/mwO3w=;
-        b=XllKDlSwVYM4Dm4Eyfg6UnPT9NGYHhowMX4kzz7IeWlSwsiCSzBy66y1nfjR2iROfs
-         KZ74/ywLobRVkbXPbBJNd2jAx/XM+T/tZbRg1W6f8kwWw1IDBhMydMM6m9XXN/rEXXY7
-         mRJ/r5x3pMlF0ipbplmE6ad7ym53WYpeSuXPH9HmH2FF03bZ5kOG6rJK46teDxxyrh69
-         RD4FFDxSsYdRZsF0JWGceHkOT2qjObiJJXhykEJ7sAvn22Wa8qV+cnZvtWdpeENARRJF
-         6DmU9ST+6yT1x/1S1qqCwKD6mhbALNoC1pVg5ONceldmh4tkWV50hFFIF5mY8LLBqoYu
-         56aA==
+        bh=B5PfVj7z1U9Fq+QcRMWYVttXEzyn9uOL+vv6a+ytkds=;
+        b=ll3IK9MzbAsGWBYZYSLZwhueudyH7E5mbvXA6FF7OJ+F5GdVVJ5/9kzlfA7Rs00Zdk
+         wWLm4/l8mU3uD17NgaH9Dw9w8gvCt96No8IhNVO5h1BkSzxDdcvRKCVwAZCyUTRTFm9E
+         xya6RRwKJVKmRupE+mBQoap7vojfayhu+UxgPYGMb8FY+b/YQNU8UpD4ilz/yqaFI8+t
+         WpHkmXptPNt6EfA3sH5G8inCFiDVj2Hz9WEqfEwQEBt7CBpbLue/4Qn6wigdH+A93mJr
+         dNGeduqbBTL23LYBgzbYpSnWmDnyfjZD9qbw4LWfpNUP4bTYAdRgYeBjz3ourSxYXFOJ
+         3XAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756993576; x=1757598376;
+        d=1e100.net; s=20230601; t=1756993689; x=1757598489;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bWzUXsK84owgqc3mGwjxow+K46mQbNDiKZu7L/mwO3w=;
-        b=tAk7t1ukDITHNZ7wLdgD9xhfqPIp97esk2RQ524Z/qSWesOxhp0UaUnv3fzf4asuj8
-         E+7etMrMbApwtIVYNXBBwl/50+l82uIF5dZ0ozqV9LQ7lhhMXEVh8TIVAOq1lp5nLcVz
-         13OnG53iYt3+zAQDdrmdmEuKfukLISr2qdSKPOatY9JT3zGjVvIjGpHDGUnberZ8KRBm
-         2+G38VG3IfdYR4D78l1H20b4cuDH4oVZgjcy1X6FhJEYa4QIAN+Hl1FKf49bvy4ZPetp
-         qZvpPwUiTDBjTS/e6XXdTXpvlMhfpUnK3dOFJbwDXrarzxoySx/29D+S/xht5gpOmpFB
-         9cZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBrxvZOsgxrfFVjzzMhb/bVAuiopCiIOhSNGUal1yOEch5RizdP/2ebrHqq/8boUifGKyI7aWWzM5YIlZRnNvONQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQFLxibeuTSb1u4nWOsQP+XCXC2LKziQ71GvcqTGsOsTPGqXgN
-	7TkMWRfI5JvHbATMJFuIA0+ezAxlPRNuNIYV0vH33C3M3H3ucaDqmmwmESQ3UX4FUsA=
-X-Gm-Gg: ASbGncvYSM9PD5xTzhP7/FwYALdadqRFT2H2I+0XHVgTKaG1rQGN0WpcuGgNot+Pzwq
-	bBGHMpmPicUoe190yvDrhWj/GGCnz9y8bpRSoIjA5c3RzbLygvFzPSHrAZd6f0N8AtWxiaBDD32
-	xFLJt/l5Hc6uApBvM1qDzoo0cYjqQZE0lDCd3yESAWZwkz3IS6ysTwfNJxh9fGxgVCJkbzhRUPz
-	elcsloL7dHhVJtxwpYiTdAiqIpSpOVudyT6opWyBMSMTjVvhxl3FYh80hzaH4J3vUOgJYZZhfiy
-	rGM8hfRH2qib+JQOY0wZWAVVx8APEXV5pc+VGkirfmFDYLkNtBNh3JE5ssh7HUn8AC+QGn1PAXo
-	41cScaJhqOHlqb1UQjrPh2ODoxJInbt1rfBJHJy/+HKaVmv11aA==
-X-Google-Smtp-Source: AGHT+IFRjqi0rL8OiC4NZXNOIG4FcZYbVhKsdzHVKskJZtLsw0JBOE11012YrpNCw1Y7RX8De6y4QA==
-X-Received: by 2002:a17:906:4785:b0:af9:5a1c:fee5 with SMTP id a640c23a62f3a-aff0e28e4e5mr1209123966b.0.1756993575559;
-        Thu, 04 Sep 2025 06:46:15 -0700 (PDT)
+        bh=B5PfVj7z1U9Fq+QcRMWYVttXEzyn9uOL+vv6a+ytkds=;
+        b=pShYoXByREU0/6K+RKeHpHYD3P+VB4rBXS14HthB1Eh6TCnwjvjRln+VL/T6Cjl+g+
+         VeXGzi4sFv8jCEnRjyc27v6VzuwvbKi31jTS1LaVKgXgV5kh4uUuk2E1HA5yYG9GgKvk
+         roas45UIQn/KBiAsj7bo8ugYydPNjUcLTYEsxpuywinF7Clj5I22WDA6aFbI6oSGmv0c
+         UU4HYrqksp0qbcaFsH2NG7XEtZJmLEii5n+HzIrVhwyRXnMPHmN+niMcGdCDzZkCW37w
+         M1uT4qErznkUq23p73T3/+pffePHHlx0b29mLg/4WfmwocNIJOscW/pD0SHlei3h4jFg
+         6kqA==
+X-Gm-Message-State: AOJu0YwZfVmVFJScbXq6aLyvVSdWthu3ER+Lzl/SFUObgSD5DJqiIFEt
+	DcPuOESb/ux6NeJpobEvrcc1gzkzzIPT6iXBte83LqC80hNPdRJdvkl0fLewQzBqgPg=
+X-Gm-Gg: ASbGncufWtkNxsGgPlhmIEvwNkUoUSzcySIph6V7rzf9ru3T/4wsBImy2+T5Yv/fe+R
+	NtjpJ4SKd6O3YNygajq0IIjw71PcK+hT4Vs5iHXXYnGa104yJKCJMs+x2ywkwa5SpMz31Ca852C
+	UgcxY/5lfelU30Lm05JuNDntPeiBn4GtE04Sja1vY2QMiUIHLiaydEbO05SE/oLCF+MkgOYQewF
+	Nfkyn3zfFMA5pHD+iwjKQnF+9ZF66TbZblu9sJ5MtxLLHvRjK7YyNFS3TVGQjP7JPPnKFoPXCaf
+	U55UaTg+syYrHjCyJ3UbaGL3JjVt4sqB4ZT4gFAO8c3Xkn2MnysfkbKp/jPiU2io0+k3aAvMgLD
+	WaUgDQy0+RLA+R26H2t+PGkC8DgCW3u9DwdYsSCQ=
+X-Google-Smtp-Source: AGHT+IFXmHyLiRikp8i7AT0rm9igyDk82338TdO+dG49oonCsmp2DJJwv/hKJNb9HHXBa/ePNM0EKw==
+X-Received: by 2002:a05:6402:354c:b0:61c:d7e5:47a3 with SMTP id 4fb4d7f45d1cf-61d0d365421mr10482985a12.3.1756993689530;
+        Thu, 04 Sep 2025 06:48:09 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413782b94sm1180634266b.35.2025.09.04.06.46.13
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61edb0fdf1dsm4243221a12.18.2025.09.04.06.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:46:14 -0700 (PDT)
+        Thu, 04 Sep 2025 06:48:08 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
- s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
- linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com, 
- will@kernel.org, arnd@arndb.de, Ravi Patel <ravi.patel@samsung.com>
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, 
- gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
- smn1196@coasia.com, shradha.t@samsung.com, inbaraj.e@samsung.com, 
- swathi.ks@samsung.com, hrishikesh.d@samsung.com, dj76.yang@samsung.com, 
- hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20250901051926.59970-7-ravi.patel@samsung.com>
-References: <20250901051926.59970-1-ravi.patel@samsung.com>
- <CGME20250901054303epcas5p3d8079b7806d995bfaf3004cbb4f95e41@epcas5p3.samsung.com>
- <20250901051926.59970-7-ravi.patel@samsung.com>
-Subject: Re: (subset) [PATCH v4 6/6] arm64: defconfig: Enable Axis ARTPEC
- SoC
-Message-Id: <175699357327.171312.14592323274121562181.b4-ty@linaro.org>
-Date: Thu, 04 Sep 2025 15:46:13 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250831-usb-v2-0-00b9c0559733@gmail.com>
+References: <20250831-usb-v2-0-00b9c0559733@gmail.com>
+Subject: Re: [PATCH v2 0/3] clk: samsung: exynos990: Fix USB clock support
+Message-Id: <175699368813.172086.8536010951360222334.b4-ty@linaro.org>
+Date: Thu, 04 Sep 2025 15:48:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -91,15 +84,26 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 01 Sep 2025 10:49:26 +0530, Ravi Patel wrote:
-> Enable the Axis ARTPEC-8 SoC in arm64 defconfig.
+On Sun, 31 Aug 2025 12:13:13 +0000, Denzeel Oliva wrote:
+> Small fixes for Exynos990 HSI0 USB clocks:
 > 
+> Add missing LHS_ACEL clock ID and implementation, plus two missing
+> USB clock registers. Without these, USB connections fail with errors
+> like device descriptor read timeouts and address response issues.
 > 
+> These changes ensure proper USB operation by adding critical missing
+> clock definitions.
+> 
+> [...]
 
 Applied, thanks!
 
-[6/6] arm64: defconfig: Enable Axis ARTPEC SoC
-      https://git.kernel.org/krzk/linux/c/eca86a61aedaa40310135c8799b28187afbc677e
+[1/3] dt-bindings: clock: exynos990: Add LHS_ACEL clock ID for HSI0 block
+      https://git.kernel.org/krzk/linux/c/eb9bc162775cabfc4cf2b37cb0d3c2c2bf4c4b54
+[2/3] clk: samsung: exynos990: Add LHS_ACEL gate clock for HSI0 and update CLK_NR_TOP
+      https://git.kernel.org/krzk/linux/c/d0563d320b6014a8d56170253fe0aec524658b9f
+[3/3] clk: samsung: exynos990: Add missing USB clock registers to HSI0
+      https://git.kernel.org/krzk/linux/c/f00a5dc81744250e7a3f843adfe12d7883282c56
 
 Best regards,
 -- 
