@@ -1,66 +1,67 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60994163;
-	Thu,  4 Sep 2025 14:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D3D305E1D;
+	Thu,  4 Sep 2025 14:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994836; cv=none; b=BAMAaFn8O3XZB8TRksjluyrLU1TykylBlLfGTGxgi/JZKpx22g0h0A+U0XR7IHsdMFprx7i0k1GhOz/Orz7dZQjEHS75rZ//06wuWI9cOdNeJLRj3yhV8r4Dt8mfV7EPYOp6tku9PL+Zm3LELm/Gg+Ik8o0xh0x2a8mP4KxiFFs=
+	t=1756994838; cv=none; b=Tx3W1qqlSuSHwDtaAFVJn8wb4GWI90sqsSjjSeVscOqlpkwWP/bKiVu+1KqH/On9J4KzVzYB9Dk5I9LyrXzrSWir5g6+1kjPX1EWM8qZH8XLm/mUZZIO7SZZnhSJVirNRBMvT142PAaVCDeTg9yV+NHjekQLR2nC1yMw7h7e50Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994836; c=relaxed/simple;
-	bh=ly5NeSE539nxeXkPhgKBaDj4r7GvtHEHx5sOROseuOI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PHCSh+INEJmny63Pvnbafsq9ENngCtQpabpg51j/ob91IfOTouiekX6NRMCKKdbmswg87zkzgynZ5xIQVhXyHLWdLGuj8DOZZoz1EjEirbx+Pp/LgwpwZPI8H6iGDNES78DJLwauXhU7WeVBmHz7IsaastgRvcSkqvk4MiRHMy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxQvHPqh; arc=none smtp.client-ip=209.85.222.180
+	s=arc-20240116; t=1756994838; c=relaxed/simple;
+	bh=sk6UDVI+7Kd9lIW0AsYOL2i9ElBbm6Hbh+uzwTLnIrc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hf9pcLI5W5Dg+FLqtBtp5M5yFXiqNSmStDkTbX5mxZLabw6O7jKiYLzx3O4eCN+53yz5u6fXM6BdOaFV/3m0BXkBOP/IwhG2+2YxrH8x8/q17OxEHM42mvZ/XgzlQgRQXW0VpR7Z/LLXq276AczuVXy8jT9x2vmDcwkrKBAUnZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRYGo4fi; arc=none smtp.client-ip=209.85.222.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxQvHPqh"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7f74b42ec59so72341585a.2;
-        Thu, 04 Sep 2025 07:07:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRYGo4fi"
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-80b7a6b2b47so105864385a.0;
+        Thu, 04 Sep 2025 07:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756994834; x=1757599634; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eihtZU8OHYKgtMximmIrUFJ856exD8VD53vOuodUiTU=;
-        b=RxQvHPqhaUWfVgs2fdW7u9hdu5II8asXVgiIRylLJM6dvzxNSXfsTe1cvKmOxC4uYU
-         IkDZWEP0p+i9rcCGfezhN1/ab/MwbnKiLnomvPmGS1r1j+aMi0Pt8SDTupKzCVmthlCG
-         arAjcegwBMjVRIYagmbvGSsZIun8kiraDJSX8rI5Bq+0XIHqM8Z/CgcxiaH7Z/dMLE8H
-         kVRAPKngtbrgiNPr9y1WZVqZxqm+ipnIyGDg57pYa3f/uwcYw+7fx0WvADFK8aaUSyz0
-         wf+4SYDGIr4+PUp+y1opU+bukJi1ueeTY4bTtFWciZKYApME0D32IZJ3iHoHwy7pTGi2
-         Ynsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756994834; x=1757599634;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1756994835; x=1757599635; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eihtZU8OHYKgtMximmIrUFJ856exD8VD53vOuodUiTU=;
-        b=m5rgGBScYV8lB+TXwnRJYHiy/y5+BaMACKPRSpZzsjteWd0Q/gDyVt9JD7SVFKD/yV
-         HUn/S1f0U9XnADb2laIwzI7WP4Bh9Cwy63Z09SijUYSuAzJSfI10deKWkByEguAtM6tD
-         hLcFYoGaLYVwBSn2uV/ctlbf6cv/KF7ywySIYMwWLIOc/2MqgI43jpMfokflcQWSKjjq
-         8AQQQNHtJTWpJiMERXenHU11RRS84CMCKDKYq24pwcImW8tiOO8rR24SLXsBol3zJeRH
-         5uRcKJ0yqlthp8UcOfURjaiZ9goY+PR8po1Fixx7ko/LQthiy0Mj55XeKs4oglIkMKND
-         dB7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrtBnBs/AjofAQ57hIhI7POM1yjpWLPGKphlkY84Mi7Gq/DV5T46GoImtIxBPAe5UsKjutnXA7SQdv@vger.kernel.org, AJvYcCUuxrx2LXFrFY5LTzH9HGXEjR6AzaN4x1ABmmWCb0kv/nktUDe+yRb2e9RkrE0WSHc4D0z5Sgxvwbr+0O8K@vger.kernel.org, AJvYcCWS4X4zD2JUksCfnTUyDSdupI/cAyM26tfttYTIEwwYLUBr/W52o9pWVQrFthRXMTEegmyVl7T9fM0J@vger.kernel.org, AJvYcCXVFqaxqUCBHH3l+P5dUI31VRCaqzFb2zqLLOnavwqnohbtc6sv2nu5yDa4pZRckqzDw+32gniEU0Cq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyim9HJUKlBfugFFvoxBFbyXMAHulYIcA6eug3t13mU6P6NjXWK
-	rlSgzNOIEFyhjxo5dZhWPoyFeJZwu8gnSxYgGfQf6ci0cDnlhn+f3Uv5u3uFYAl5
-X-Gm-Gg: ASbGncv0/XEGQbFsPjMFOjKuOz99jgGfX0GUND9s9GwV23Xg5U8ERaZ++3ekksrFQcm
-	9cEFWkn6EOKhGt/jJQJyAWcRYF+BWm7PgWwFJ/PvzE60nyeT5mevL3renNUppZyQ/SV6q9KVzPU
-	YlxHszNeon4v1NLo899JtrmVJeT81S0FmHVOxL88MOtrWtGv9m9/Rvh52o8r+sHfpbctv45gJdP
-	ia2iWGeRP/PpIb4j815+NUCeuA/1SQQc8lcqorD6r9DKhp2HfxvR+7UrYRiwsBIBx2We96dA477
-	vJehWHP7uISXsA2DQRGHf4taWC3qo6TQKCiGAWNDJ81GsYup4SGlGAc3QvKMYw2L/O6QUfDzITy
-	4XiqCC1EEodOphkWqKEdzJDNUiPu0
-X-Google-Smtp-Source: AGHT+IFAmc0wnCtcOEvRgXDrQ6IUkfol6ZeLbzKo/Il17bCwAzz4m4TitxyZWAzjU/KhfhX5q02NmA==
-X-Received: by 2002:a05:620a:394f:b0:806:522a:25ae with SMTP id af79cd13be357-806522a2b71mr1163297885a.36.1756994833844;
-        Thu, 04 Sep 2025 07:07:13 -0700 (PDT)
+        bh=d8MNTCcCI05lKy8GxRsjPvBNkyGZcGYhXm3EBNYA8RY=;
+        b=CRYGo4finZFCR5tZpZsZpOXdf4XGT0NBLuWEiSee5jbK9w3AuGdsC1lvBWpO+z84UY
+         baXDOfBjFQZSqClmR9HcTb/vnLg6AfpDofchhjo1ppNKMuiHTWze+l3Xprv5yDw3l6Lt
+         kM5gEAhEZnsdzOSIxVMy1I1S7PHf+pl3ORz4x2fB0Ju6mZemsA8i9c1l85ufz9qNd8/W
+         vbGsBKNWRxMkSP0N3pHF4uDZ6sNo4kfV2EI8mYibP6mNyLoyjHvTxtexjX0gmElNv5/V
+         Qiho2E3PzsyH6x56FpSx/XyrFNfGllc9Y3vC5prxZc+71CWzQgX45Zm6BmRgm41dSNDF
+         OMgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756994835; x=1757599635;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d8MNTCcCI05lKy8GxRsjPvBNkyGZcGYhXm3EBNYA8RY=;
+        b=CLvj8o6eEcubNmwnJ0oIb70aVWJUMeQPeLLAxlFEjIg1hcJsu28YvF4DWrVUWRK26m
+         ADRm0p1QrqwExylXL5hdwyqf/LqZd8lwz6GDZtlyWVwgcMyPV14m3nur5uySGl3bCuVi
+         VllY5/g7xdR8h0lF0pe2aeBuo/MrRb0NNxegg38lSHB2oOuFId+6UdqHSN8jMTyTp13M
+         bf4RccTBzrzsizTmCOtOgc6hc3UFM3NT1CDOjEi8p2ZhLBugFlFGjEzBr68kNa9RNklI
+         4HT4HiQuH72MKmJFvOVJTy71cwMMnrLVaWMI7bI8UUgxs/3syYsnk4D64bexUHUfd2UR
+         l/gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrvSRKXfSqXBdQQfQmcir/KnjElasm8r5PM2Gkm2r8TWn7RzOzA724L0temvQQBXIGtwNapLHNvKA0@vger.kernel.org, AJvYcCV3KSucbRc+fglMTYhsVb+39pWhMV/RV5tW5tfCOmzOaP5vuBbz+IzVcOkPTgkri+e7NCHu1cwxjBu9@vger.kernel.org, AJvYcCWFtkhqVl3g2nu11o3QW4BfLuDbDWAT0Keh/l23t978QW+49Oe6yVwuV/pqXwvlvR3kj19l8rCSqK8Rg89t@vger.kernel.org, AJvYcCXsyIxEK9Logi5l7A5RO+fhk5Y6unpARoeFF3GoRv0MN9R5GzXP/xXAzZMTltRufNLTUD43IQhZXCFq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUevPlRpi2wILt0zWB+haZ82Pz6Q0VN5UaOX1aIXN2WB4A4vD1
+	h1lQmnlb+L7F8isrM3JCt1f4epR33biwSvzJmUfGkGe0fNoPihxkHfk2
+X-Gm-Gg: ASbGnctG2BdEq96WDIh91IcVPXZC5yiwiPJNxmM7Y37L6vFJ0HsoT/i7xKlokTQYmig
+	PjwgtSR38DKVFS8zggpaDWAkeiATB96JHk1yBbfdP6Nk0wthwI1Gk2rlJIDwzDb78mg9P619SCj
+	+qHMFD+mXdC566Lv/ObU3tfKczJqFWZ02CmYoXYdBcGVXAqpUwA29gDMVIprMdtdx/zJldlkMtg
+	iRkK/lmU1CalhMYqzduvRFbdo3I6U+rL4B9/mCZcJJjqsOMeCM0b+Kmy+NApbfb+K0zKhF8OcI2
+	didYVbD6t7O2galOT+h+YHZQCvgwm1DatbsRUNayWgnebpf7sIEwX2psF+tYCfH0aguWru5KWP4
+	42phBN9AVysf2OPc+9MCaoaLowqC8D91ablrRhQM=
+X-Google-Smtp-Source: AGHT+IHj35nSbwkhonpcsIE6LnuEcLEbvD6Lw/8IqKGueIuk/hqKTIJ8PXvUK8DGI6HGTm91Dro8QQ==
+X-Received: by 2002:a05:620a:454b:b0:80a:fc34:564d with SMTP id af79cd13be357-80afc43a00fmr663708685a.6.1756994835256;
+        Thu, 04 Sep 2025 07:07:15 -0700 (PDT)
 Received: from [127.0.0.1] ([74.249.85.194])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80bdedfeaedsm212280285a.70.2025.09.04.07.07.13
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80bdedfeaedsm212280285a.70.2025.09.04.07.07.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 07:07:13 -0700 (PDT)
+        Thu, 04 Sep 2025 07:07:15 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: [PATCH v3 0/4] Add PERIC0/1 support for Exynos 990 and hsi2c
+Date: Thu, 04 Sep 2025 14:07:12 +0000
+Subject: [PATCH v3 2/4] dt-bindings: i2c: exynos5: Add exynos990-hsi2c
  compatible
-Date: Thu, 04 Sep 2025 14:07:10 +0000
-Message-Id: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,10 +70,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAA6duWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC2ND3QKg+uRi3dLiTF1DI0tTYyPDVFPT5CQloIaCotS0zAqwYdGxtbU
- ANmCpbFwAAAA=
-X-Change-ID: 20250831-perics-usi-1295321e55cb
+Message-Id: <20250904-perics-usi-v3-2-3ea109705cb6@gmail.com>
+References: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
+In-Reply-To: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -88,49 +88,36 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  Denzeel Oliva <wachiturroxd150@gmail.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756994833; l=1287;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756994833; l=1022;
  i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=ly5NeSE539nxeXkPhgKBaDj4r7GvtHEHx5sOROseuOI=;
- b=x5fRiKxuNl7/HyAUuv2TiCNfWDovKgGZuKvCrCwKms3j7fN31H08qUfze44YgZlEusYLZ0AnJ
- RgL9/06hOEIBF6BxPXba4/LTG3kFYYYN4WKqsB2MOZ/NMszO+WUFfjB
+ bh=sk6UDVI+7Kd9lIW0AsYOL2i9ElBbm6Hbh+uzwTLnIrc=;
+ b=7guy/wYSjdLOmEb4qL76oQX2nEHkn1zfJulWnyHwyvGlhcf2LNzzk0/JqXTYbW0xuScmty1V0
+ RuNXz3S20fRBrhSE0Brh1eYaONapvpw8QaRMo/OIfmiqJI+3ryo3vVy
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
-Hi,
+Add samsung,exynos990-hsi2c dedicated compatible for
+representing I2C of Exynos990 SoC.
 
-This patch series enables the PERIC0/1 (Peripheral Connectivity)
-and compatible hsi2c for Exynos990:
-
-- PERIC0/1 feeds HSI2C, SPI and UART
-
-Changes in v2:
-- Remove other unnecessary patches not related to mainline style
-
-Changes in v3:
-- Fix compatible string ordering in bindings (alphabetical)
-- Reorder device tree nodes by address as requested
-
-Denzeel Oliva
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
-Denzeel Oliva (4):
-      dt-bindings: clock: exynos990: Add PERIC0 and PERIC1 clock units
-      dt-bindings: i2c: exynos5: Add exynos990-hsi2c compatible
-      clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support
-      arm64: dts: exynos990: Enable PERIC0 and PERIC1 clock controllers
+ Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/clock/samsung,exynos990-clock.yaml    |   24 +
- .../devicetree/bindings/i2c/i2c-exynos5.yaml       |    1 +
- arch/arm64/boot/dts/exynos/exynos990.dtsi          |   22 +
- drivers/clk/samsung/clk-exynos990.c                | 1152 ++++++++++++++++++++
- include/dt-bindings/clock/samsung,exynos990.h      |  176 +++
- 5 files changed, 1375 insertions(+)
----
-base-commit: 1b15d1010a693feaf99fe3e08271cfc72be0f9f2
-change-id: 20250831-perics-usi-1295321e55cb
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+index 7ae8c7b1d0067e7e7a73a58e8bcb4aac71e87dd8..6fc03281a8f8440ba64df569f6c83ba2d9f6915e 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+@@ -38,6 +38,7 @@ properties:
+               - google,gs101-hsi2c
+               - samsung,exynos2200-hsi2c
+               - samsung,exynos850-hsi2c
++              - samsung,exynos990-hsi2c
+           - const: samsung,exynosautov9-hsi2c
+       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+         deprecated: true
 
-Best regards,
 -- 
-Denzeel Oliva <wachiturroxd150@gmail.com>
+2.50.1
 
