@@ -1,88 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8FB285069;
-	Thu,  4 Sep 2025 06:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F809233D9E
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 07:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968498; cv=none; b=C2Dediy7u2R6KsMeorhoTatBEBJEJ4LL75AyHx9B5Qe8OcVUjeHcU9PGwA1z5TfSL6SDoZ1gQitdrE3hGto6rYOgPr2Da5xZ5wqTi4edhpO4DWH8MyIBWq/tXDO3UUQi+LtXw5b1Nai4iTxXi/EdbG8oSn0iNdypUngYRR1+h5k=
+	t=1756969461; cv=none; b=KTAihPvx8mRvri/UTP2cuRjMiYfxou7JxIScjkBoVp2Ra6jMHfItCPMMdiSaeyOAZiUXRdoFKFBX7NbOqy2QzHnSTGE/DNdBKTytzvrJEzeqCjkCX0/IxEqLmgrhRv7EQjrrZyJAOFKlC/71IVAuwasOMNibKfHn31cEK0x8Tck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968498; c=relaxed/simple;
-	bh=WyIvrOVDNWf5X8qTZLswd5dlm0L7vHB640A5eFNHu8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPc5pIavln/dA2OGyvU6mecN0MvhOqMkDe1XWXPALVdxBFl0fcE9K3N9lNkKfqxeIs5RBU0D3WYVGM5+QUXoeSe6zGw2S7md3W92D2zrAVovGXz0yfJp+1Z442sJcJnWTRV5bKujOJZUd8y5txlyF01cn61L3NRVDEBfQfCkvlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKF40z36; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756969461; c=relaxed/simple;
+	bh=IhKT8x/5hCHSHndLowOHkoRm2QFYbcT6oimaswr9Lqc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lk0oVZx/PaqibPha4tyCGjBTJRA2MYDoGsFAh/NA57ytqxxQ8agF18v7P6G0jNqA0RIKOT6BzPDMB3ZOmdnrVXTq47SzAyvj8tSxSpDb6Z1iSCwpmIVIQyNRIeY1GC6XS0bUo4JUR7fT7Zy15HG2RmWoNUR1LnoM5uyTa1gAtDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=eEDM4FH9; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKF40z36"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 107DBC4CEF0;
-	Thu,  4 Sep 2025 06:48:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756968496;
-	bh=WyIvrOVDNWf5X8qTZLswd5dlm0L7vHB640A5eFNHu8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VKF40z36T6RfMUh5C1AQd4nbgMrAgm0MeJh780thFPYJbKuSL0apzCOU7eP15cHUK
-	 kKm5/Dejsjsy6TfPgf0zobV/ssA91J8UYmFvtpaRcUAWot99NvbxHuzx1JQEGKFI58
-	 QiiL0ok7G5sQSlo8yvQkPEQuS88rzE1HcgPzWmNuI1Ito7lyj/jVpZ4v3jh3HHOZYA
-	 SbnveT0uf1mhQkjGNzzBPrZiVfd1dH5QTeAL8Sj8fmkJFB/mA1ig3njRVkWqUw2Xbg
-	 iEaN3gGOGDzF2JpzLMRwW1iT1xPXR8bgc1/8gSlkA+U/icaAippFP4/wLerAesmnDW
-	 GWNpLB3ZFLi5Q==
-Date: Thu, 4 Sep 2025 08:48:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
-	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org, 
-	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com, 
-	s.nawrocki@samsung.com, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com, 
-	faraz.ata@samsung.com, muhammed.ali@samsung.com, selvarasu.g@samsung.com
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Message-ID: <20250904-interesting-lovely-ringtail-38bbef@kuoka>
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="eEDM4FH9"
+Message-ID: <c649f29d3c0c6cb5718dfec1159fdaabe3ee3463.camel@grimler.se>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1756969456;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IhKT8x/5hCHSHndLowOHkoRm2QFYbcT6oimaswr9Lqc=;
+	b=eEDM4FH9yI5P7vlZLnXRLJiTuwuS7NbJ0sViZP4Ds5PvNDHS5xy40WQR1dsvIDd4E8365Y
+	+gW50vQHutvD8LEcJ87QAoY8UYIZ5pbO5gW+uRpVTTBMyZ/975w9O3bpjlf1MhyRMkxkDZ
+	8jHqnE6DVw5hvRJenMlC/j87WKxYj+A=
+Subject: Re: [PATCH v3 3/3] drm/bridge: sii9234: use extcon cable detection
+ logic to detect MHL
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Andrzej Hajda	
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	 <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, 	dri-devel@lists.freedesktop.org,
+ linux-samsung-soc@vger.kernel.org, 	~postmarketos/upstreaming@lists.sr.ht,
+ replicant@osuosl.org, 	linux-kernel@vger.kernel.org
+Date: Thu, 04 Sep 2025 09:04:11 +0200
+In-Reply-To: <532937cb-fa69-4010-b2cf-cba9a2e6c730@samsung.com>
+References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
+		<CGME20250824111745eucas1p20e336aecd501200bdd035bfc30ce1e63@eucas1p2.samsung.com>
+		<20250824-exynos4-sii9234-driver-v3-3-80849e716a37@grimler.se>
+		<ac222017-d4e2-4fa7-beed-cc6b73042a73@samsung.com>
+		<20250903193231.GA5526@l14.localdomain>
+	 <532937cb-fa69-4010-b2cf-cba9a2e6c730@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250903073827.3015662-2-pritam.sutar@samsung.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 03, 2025 at 01:08:22PM +0530, Pritam Manohar Sutar wrote:
-> Document support for the USB20 phy found on the ExynosAutov920 SoC. The
-> USB20 phy is functionally identical to that on the Exynos850 SoC, so no
-> driver changes are needed to support this phy. However, add a dedicated
-> compatible string for USB20 phy found in this SoC.
-> 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Hi Marek,
 
-You just dropped all tags without explaining why.
+On Thu, 2025-09-04 at 08:40 +0200, Marek Szyprowski wrote:
+> On 03.09.2025 21:32, Henrik Grimler wrote:
+> > On Mon, Aug 25, 2025 at 04:16:50PM +0200, Marek Szyprowski wrote:
+> > > On 24.08.2025 13:16, Henrik Grimler wrote:
+> > > > To use MHL we currently need the MHL chip to be permanently on,
+> > > > which
+> > > > consumes unnecessary power. Let's use extcon attached to MUIC
+> > > > to enable
+> > > > the MHL chip only if it detects an MHL cable.
+> > > >=20
+> > > > Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> > > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > >=20
+> > > On Trats2 board the status of HDMI connector is no properly
+> > > reported as
+> > > disconnected when no cable is attached.
+> > Thanks for testing (again)!
+> >=20
+> > In what way is it not properly reported as disconnected, are you
+> > checking some sysfs property, or with some userspace tool?
+>=20
+> Huh, my typo. It should be 'connector is *now* properly reported',=20
+> that's why I gave my 'tested-by' tag.
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+That clears it up, thank you :)
 
 Best regards,
-Krzysztof
-
+Henrik Grimler
