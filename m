@@ -1,152 +1,242 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mail-m3270.qiye.163.com (mail-m3270.qiye.163.com [220.197.32.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F36831CA49
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 17:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C151EF0B9;
+	Fri,  5 Sep 2025 03:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008200; cv=none; b=iN4swk2ZaF195wpW/KJRDy6EF6YUrDXp78jeykJ6UIfKcDFpjereANQtLUXMCj86mnBRQcwkjfmoha2BOnxJDBPjHrdeBwXMhVOrM2piVpeqsjYiKunBIo+1yVgbPe32fco3eRjsvprWfUpW1+R+kmOtTsi2J/5rs0cLZEmCyC0=
+	t=1757041616; cv=none; b=odr5jpjuVAnWnomuai2gyFygUEu9uxVfq2+rF5Fh/WZzO4TStvaKO0q//jDkNBElhdynwC/ANQ9nk1PlHXuWqwe30grKAXSporFAEshJizBUy8kPunr4kRADs2ZvsxJthshl0Lk01zBU9+rnPUUVAIuPdTyms5h/dTYTjNI9S/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008200; c=relaxed/simple;
-	bh=P75rCZPVw96u/xm3axOzWQ8A/0dUeO3HwLrPeDSqxzU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=N+9t584Vi2kM6KT/ftUF12etQhKMEhaJppI5rkQpGhVtfYU0T4WWDyuLUZELmWFAVCxkc+OEorlBWhFICitsyz3pkkemND8Ycln9vwc13UQdF2+4Z2DBILX66VKvDtEJR/5surDGHS4rBFixxB/BWteKACyZjqeDpaz+s4+uWWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LM51+XH5; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1757041616; c=relaxed/simple;
+	bh=NQty9wCp6vRJtkHOlaJ/iEGX4DwlGUS9Q3AZEXK+72I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hsrwmUSiI3HKvKT7N8m0BD1hBO7QxuFhOzVxIu1sP02BqtKsulUTBMwudsC79/M0m1JHvqu2zt6yrcEU4IP+9yA6qm3gFV0NE9/EmbuDjFE5ZINycVhxfKwyU8vrqDa8RbBZ4oqV1OJE/+VIOGxDhabIc5blJZjiGeBByLUvqoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BwtbmYMN; arc=none smtp.client-ip=220.197.32.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LM51+XH5"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250904174955euoutp023754391c3d4b1cd9b1250b6e75e82610~iJaUEq5bZ2831528315euoutp02z
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Sep 2025 17:49:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250904174955euoutp023754391c3d4b1cd9b1250b6e75e82610~iJaUEq5bZ2831528315euoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757008195;
-	bh=xDLKHxEV4hBOubU1hA0pF3KKCXpZ9u6NZsKj3VxloXA=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=LM51+XH5yTExcGU88pRP1td8ngDXTxUnoaAgoRNqnWz/70AD7Ccf55vCTccn3Y1e1
-	 skSBgRtje2OwcDcspXfx8EsJZppo7vJ3/+u1tFeWyH17BrFvQenRtdMJZdKVqqmnWh
-	 TlsVqtdLkH5CDFGLBHQqW2Gd8LOWK5bee0Juq7IE=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904174953eucas1p17f0b6acef323d0a44b84b8ab177041cb~iJaS00zsD2322323223eucas1p1H;
-	Thu,  4 Sep 2025 17:49:53 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904174952eusmtip2cc300941d5463e8178ab6192d3bf54a1~iJaRhhG0z0094500945eusmtip2X;
-	Thu,  4 Sep 2025 17:49:52 +0000 (GMT)
-Message-ID: <28a9be50-2432-49b5-b10c-bf8b4f9ebd8b@samsung.com>
-Date: Thu, 4 Sep 2025 19:49:52 +0200
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BwtbmYMN"
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 21c51f9ff;
+	Fri, 5 Sep 2025 11:06:41 +0800 (GMT+08:00)
+Message-ID: <22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com>
+Date: Fri, 5 Sep 2025 11:06:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] clocksource/drivers/exynos_mct: only use IRQF_PERCPU
- flag on ARM64 SoCs
-To: Peter Griffin <peter.griffin@linaro.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ingo
-	Molnar <mingo@kernel.org>, Will McVicker <willmcvicker@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, John Stultz
-	<jstultz@google.com>, kernel-team@android.com, youngmin.nam@samsung.com,
-	hoony.yu@samsung.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ l.stach@pengutronix.de, dianders@chromium.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+ <20250814104753.195255-1-damon.ding@rock-chips.com>
+ <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+ <7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
+ <1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
+ <f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
+ <a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
+ <461daea4-5582-4aa2-bfea-130d2fb93717@samsung.com>
+ <46f9137e-402d-4c0f-a224-10520f80c8b4@rock-chips.com>
+ <ea57ca6e-4000-49f7-8e0b-899f34b7693a@samsung.com>
+ <825ff59f-0a97-49a1-a210-a7ee275364bc@rock-chips.com>
+ <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250904174953eucas1p17f0b6acef323d0a44b84b8ab177041cb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f
-X-EPHeader: CA
-X-CMS-RootMailID: 20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f
-References: <CGME20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f@eucas1p1.samsung.com>
-	<20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org>
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9917d72c0e03a3kunmbaa24fa91f77c7
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5IGVYeGEJMTkJKTU8fTE5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=BwtbmYMNkLOfYppAy+wuG3dRf3rgy/c5fhy0xfkxwjm4IP/EavUY+x5tkpRceqRJiBu+2UIRw4usYHfbUd9Y/L0yFePemizYbPmz3Q8nZ8ysLJ0O3T7nBxiPvA/aIkc9b4hwf3HatRCTgkqwI47m9DmdxumhhRdXH5+51C+XPQc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=yYRsnu1zQIxv1Gvs6bfNQCy9syx23j16FxOMbpuMt9Y=;
+	h=date:mime-version:subject:message-id:from;
 
-On 04.09.2025 17:32, Peter Griffin wrote:
-> This patch addresses a regression reported in [1] whereby CPU hotplug now
-> fails on little CPUs (for reasons that aren't fully understood) for Arm
-> 32bit platforms such as Exynos 5422 used in OdroidXU3/XU4 boards.
->
-> Note: This patch makes an assumption that the exynos_mct driver is only
-> used on Arm 32/64 bit SoCs.
->
-> Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/
-> Link: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/ [1]
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> Hi Marek & Krzysztof,
->      
-> Can you test this patch on your Exynos5422 based boards and see if it
-> resolves the issue Marek reported of CPU hot plug failing on the little
-> cores of Exynos 5422 based boards?
->
-> Unfortunately I only have gs101 based Exynos hardware (which is Arm 64 bit
-> SoC) to test on. I can confirm CPU hotplug is functional on the little
-> cluster CPUs with IRQF_PERCPU flag on Pixel6/gs101 though.
+Hi Marek,
 
-This is a duplicate of 
-https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/
+On 9/4/2025 9:27 PM, Marek Szyprowski wrote:
+> On 04.09.2025 05:19, Damon Ding wrote:
+>> On 9/1/2025 6:25 PM, Marek Szyprowski wrote:
+>>> On 01.09.2025 05:41, Damon Ding wrote:
+>>>> On 8/29/2025 4:23 PM, Marek Szyprowski wrote:
+>>>>> On 29.08.2025 10:08, Damon Ding wrote:
+>>>>>> On 8/20/2025 5:20 AM, Marek Szyprowski wrote:
+>>>>>>> On 15.08.2025 04:59, Damon Ding wrote:
+>>>>>>>> On 2025/8/15 5:16, Marek Szyprowski wrote:
+>>>>>>>>> On 14.08.2025 16:33, Marek Szyprowski wrote:
+>>>>>>>>>> On 14.08.2025 12:47, Damon Ding wrote:
+>>>>>>>>>>> PATCH 1 is a small format optimization for struct
+>>>>>>>>>>> analogid_dp_device.
+>>>>>>>>>>> PATCH 2 is to perform mode setting in
+>>>>>>>>>>> &drm_bridge_funcs.atomic_enable.
+>>>>>>>>>>> PATCH 3-6 are preparations for apply drm_bridge_connector
+>>>>>>>>>>> helper.
+>>>>>>>>>>> PATCH 7 is to apply the drm_bridge_connector helper.
+>>>>>>>>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix
+>>>>>>>>>>> side.
+>>>>>>>>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>>>>>>>>>>> PATCH 13 is to apply the panel_bridge helper.
+>>>>>>>>>> ...
+>>>>>>>
+>>>>>>
+>>>>>> Could you please provide the related DTS file for the test? I will
+>>>>>> also try to find out the reason for this unexpected issue. ;-)
+>>>>>
+>>>>> Unfortunately I didn't find enough time to debug this further. The
+>>>>> above
+>>>>> log is from Samsung Snow Chromebook,
+>>>>> arch/arm/boot/dts/samsung/exynos5250-snow.dts
+>>>>>
+>>>>>
+>>>>
+>>>> I compare the differences in the following display path before and
+>>>> after this patch series:
+>>>>
+>>>> exynos_dp -> nxp-ptn3460 -> panel "auo,b116xw03"
+>>>>
+>>>> The issue is likely caused by the &drm_connector_funcs.detect()
+>>>> related logic. Before this patch series, the nxp-ptn3460 connector is
+>>>> always connector_status_connected because there is not available
+>>>> &drm_connector_funcs.detect(). After it, the DRM_BRIDGE_OP_DETECT flag
+>>>> make the connection status depend on analogix_dp_bridge_detect().
+>>>>
+>>>> Could you please add the following patches additionally and try again?
+>>>> (Not the final solution, just validation)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> index a93ff8f0a468..355911c47354 100644
+>>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> @@ -1491,9 +1491,11 @@ int analogix_dp_bind(struct analogix_dp_device
+>>>> *dp, struct drm_device *drm_dev)
+>>>>                   }
+>>>>           }
+>>>>
+>>>> -       bridge->ops = DRM_BRIDGE_OP_DETECT |
+>>>> -                     DRM_BRIDGE_OP_EDID |
+>>>> +       bridge->ops = DRM_BRIDGE_OP_EDID |
+>>>>                         DRM_BRIDGE_OP_MODES;
+>>>> +       if (drm_bridge_is_panel(dp->plat_data->next_bridge))
+>>>> +               bridge->ops |= DRM_BRIDGE_OP_DETECT;
+>>>> +
+>>>>           bridge->of_node = dp->dev->of_node;
+>>>>           bridge->type = DRM_MODE_CONNECTOR_eDP;
+>>>>           ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
+>>>
+>>> It is better. Now the display panel is detected and reported to
+>>> userspace, but it looks that something is not properly initialized,
+>>> because there is garbage instead of the proper picture.
+>>>
+>>
+>> I simulated the display path mentioned above on my RK3588S EVB1 Board.
+>> To my slight surprise, it displayed normally with the reported
+>> connector type DRM_MODE_CONNECTOR_LVDS. ;-)
+>>
+>> The modifications included:
+>> 1.Synchronized the Analogix DP ralated DT configurations with Samsung
+>> Snow Chromebook.
+>> 2.Skipped the I2C transfers and GPIO operations in nxp-ptn3460 driver.
+>> 3.Set the EDID to that of eDP Panel LP079QX1-SP0V forcibly.
+>>
+>> Additionally, I added debug logs to verify whether the functions in
+>> ptn3460_bridge_funcs were actually called.
+>>
+>> Did you encounter any unexpected logs during your investigation? I'd
+>> like to perform additional tests on this issue. :-)
+> 
+> 
+> Okay, I've finally went to the office and tested manually all 3
+> Chromebook boards witch use exynos-dp based display hardware. Previously
+> I only did the remote tests and observed result on a webcam, which was
+> not directed directly at the tested displays, so I only saw the glare
+> from the display panel.
+> 
+> The results are as follows:
+> 
+> 1. Snow (arch/arm/boot/dts/samsung/exynos5250-snow.dts) - exynos-dp ->
+> nxp-ptn3460 1366x768 lvds panel - works fine with the above mentioned
+> change.
+> 
+> 2. Peach-Pit (arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts) -
+> exynos-dp -> parade,ps8625 -> auo,b116xw03 1366x768 lvds panel -
+> displays garbage, this was the only board I previously was able to see
+> partially on the webcam.
+> 
+> 3. Peach-Pi (arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts) -
+> exynos-dp -> auo,b133htn01 1920x1080 edp panel - also displays garbage.
+> 
+> Then I found why both Peach boards displays garbage on boot - the
+> framebuffer emulation is initialized for 1024x786 resolution, which is
+> not handled by those panels. This is a bit strange, because the
+> connector implemented by the panel reports proper native mode to drm and
+> userspace. 'modetest -c' shows the right resolution. Also when I run
+> 'modetest -s' with the panel's native resolution then the test pattern
+> is correctly displayed on all three boards.
+> 
+> 
+> Then I've played a bit with the analogix code and it looks that this
+> 1024x768 mode is some kind default mode which comes from
+> analogix_dp_bridge_edid_read() function, which has been introduced by
+> this patchset. When I removed DRM_BRIDGE_OP_EDID flag from bridge->ops,
+> then I got it finally working again properly on all three boards. I hope
+> this helps fixing this issue.
+> 
 
-and yes, it fixes the reported issue.
+Thank you for your help with the investigation. :-)
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Based on your helpful findings and Dmitry's earlier suggestions[0], it 
+is better to distinguish the &drm_bridge->ops of Analogix bridge based 
+on whether the downstream device is a panel, a bridge or neither.
 
-> Thanks,
->
-> Peter
-> ---
-> ---
->   drivers/clocksource/exynos_mct.c | 13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 62febeb4e1decec7f5db104db395884824563915..91d79b73a96a7e8a354d803c2b497bcde92af8d8 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -532,6 +532,16 @@ static int __init exynos4_timer_resources(struct device_node *np)
->   	return 0;
->   }
->   
-> +/*
-> + * For reasons that aren't fully understood IRQF_PERCPU breaks CPU hotplug on
-> + * little cores of ARM 32 bit SoCs like Exynos5422 used in OdroidXU3/4 boards.
-> + */
-> +#if defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
-> +#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING | IRQF_PERCPU)
-> +#elif defined(CONFIG_ARM)
-> +#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING)
-> +#endif
-> +
->   /**
->    * exynos4_timer_interrupts - initialize MCT interrupts
->    * @np: device node for MCT
-> @@ -602,8 +612,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
->   			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
->   			if (request_irq(mct_irq,
->   					exynos4_mct_tick_isr,
-> -					IRQF_TIMER | IRQF_NOBALANCING |
-> -					IRQF_PERCPU,
-> +					MCT_IRQ_FLAGS,
->   					pcpu_mevt->name, pcpu_mevt)) {
->   				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
->   									cpu);
->
-> ---
-> base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-> change-id: 20250904-exynos-mct-arm32-cpuhp-regression-14f321e4a591
->
-> Best regards,
+1. If there is a panel after, the &drm_bridge->ops should be set to 
+DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Since the &drm_bridge->ops of panel_bridge is DRM_BRIDGE_OP_MODES and 
+the panel-edp driver reads EDID in &drm_panel_funcs.get_modes(), the 
+DRM_BRIDGE_OP_EDID should be removed to ensure proper invocation for the 
+&drm_bridge_funcs.get_modes() of panel_bridge.
+
+2. If there is a bridge after, the &drm_bridge->ops should be set to NULL.
+
+The OP_EDID and OP_MODES supports depends on the next bridge rather than 
+the Analogix bridge. According to your investigation, nxp-ptn3460 
+supports &drm_bridge_funcs.edid_read() while parade-ps8625 do not.
+
+Additionally, since some bridges does not support 
+&drm_bridge_funcs.detect(), which regards as connector_status_connected 
+by default according to 
+drm_helper_probe_detect()(drivers/gpu/drm_probe_helper.c), the 
+connection status should also depends on the next bridge rather than the 
+Analogix bridge.
+
+3. If there is neither a panel nor a bridge, the &drm_bridge->ops should 
+be set to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
+
+In this case, the Analogix DP driver may work in the DP mode, so the 
+OP_EDID and OP_DETECT supports should be helpful.
+
+Best regards,
+Damon
+
+[0]https://lore.kernel.org/all/incxmqneeurgli5h6p3hn3bgztxrzyk5eq2h5nq4lgzalohslq@mvehvr4cgyim/
 
