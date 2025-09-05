@@ -1,211 +1,149 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BAF218EA8;
-	Fri,  5 Sep 2025 14:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621092F7AC8
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Sep 2025 16:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082700; cv=none; b=WPZUQps66j/6hqY8vX5K9pZ4fA+niUC5KI0vV2rO+bQwdoLPZhdu9OHkV4isM4Vzl4Qnb643dlY+To/8TyhdnOI/HTF/Uv2M8Nm1Hu/eS1sBnj55duNz1Ew5kY2z3F4gkhMtd0axacbzC9qMeSN+WgTsxAPuX0E6sIdX3wCR8vM=
+	t=1757089511; cv=none; b=uyPT0XPDVEQvO+QPjKpaw/uUiiITKQne8wX7USSZUQ/No0pXfiCwDjiPUGf1RZN1XNcI/ekp/BenOZro4L0ZskESwdzv0U9XkWty9LG7ymQibdJNr5PyJBZF1L/KUCGIf97au4qyy3mCny08y8Yw1yphTrjP7oIdLAb3LxxKnJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082700; c=relaxed/simple;
-	bh=+1nDfrVt0ppud9zgCkTbqp/0YBEdQzK1oYTnBYlqZPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WTylSHIvkcUSXtVEjMZA4s0vdvsYLag/KX5H753RNd5e+vxI2W8aKQjKp61Al6tI+OWEhe1hGf6F1TjmS7gHKzFaTbKoeeRy+QmxpChwRayQZgmbzlbLDvfM24Z1/Evhd2W7nOvW3E0XyiH6jDBANejfH3oNaqaFjIFGZyqObdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RUxHXctF; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757089511; c=relaxed/simple;
+	bh=guIcHIKYeFDX9C4HN1q3ElT4g6Ed4YixRaeM6K0q/jg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CrVyJA8terkRxZkh/UZfuRiqHCfzRY4ochmXc8zAa31XJfikEDXhF2fuOBRrgEXioRMU7tUu8mIx/UeikWrRCofc+bP1YtHggvNr7ihcnDlxf2Zm396TJbaUMbasinrKqJwWKq6VRUgB8zvI7lngAXPBFYpWvoSes88KmlCQWf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eRAq79L7; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUxHXctF"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-323267b98a4so2044395a91.1;
-        Fri, 05 Sep 2025 07:31:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eRAq79L7"
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3dbf3054ac4so1282722f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Sep 2025 09:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757082697; x=1757687497; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=3vIXH9G8eZJ7ix/XNHz4bvSACtWtZGWHKqaN5lng6nE=;
-        b=RUxHXctFV4BspeJlDvAkGloDoG8YrEX3YOsM83EtUOyc7Avizpl4eLVhDaDQlg7gch
-         JyQOajlleaVC8SdwhS2+g0n6k7PPozRlLaMb8rJHUs+wkHbNiJLMhh5D+t05Qes3YAM5
-         2p9ENG7Y7sdwENpNOyeVXuS/3MjWZzYls4LaXI+1mgY+TJGcyb3OV/FOcknmGcZaO348
-         dC/dRTA6HWVeG9qJZ1LlgGqg7S5bPFJPShwb0yAxVE2CIxAhVK+HGm7+h9D02af5HOph
-         3FhEHZrkaXs/NoC+TDHu4l5Lxw87cL+7AOkQRL1m+9Pgc0nsBHEuwk1AHRG7oz/qWObL
-         HW+A==
+        d=google.com; s=20230601; t=1757089508; x=1757694308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RdHOLLqwx7tJvI93Mas6xLDQ23Ec8f9ZA36n15YArp4=;
+        b=eRAq79L7IdKxIQ0U5MWTvvq1wEVbWiyEJO9pnkSgrHFQlJnCFNZDXh6G/5udLVndS9
+         hZQjGvjD95LloAlmYscmLALZG16dwQJCJmxKG0LSL2mwLGTXL6Qsgh4xKKwKTCXYTFG6
+         AkLSTDP0BThkHLEy498+Onhtj+HGj6odz5eYl61PV++Q3y+5bvqUo9XXM9ZIq0ZLQE5f
+         LybZ0vIu1+HTPSxDlS/3gJfrFXaaiStlKmizdh08D0b3faNgh31x8PimgMSY0OwIXnNf
+         KKpEy88Vhsu/B2jI7mYirANleouWssbHAcs4Jf7qjEYQFyEuyZxj94rAQ16d0b+kxT+U
+         voSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757082697; x=1757687497;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1757089508; x=1757694308;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3vIXH9G8eZJ7ix/XNHz4bvSACtWtZGWHKqaN5lng6nE=;
-        b=djtzxTIGNvt8LqeCvpO77Hk/CJktGPdrj+U/Z4PEdNx3nY9mDSVR+lB8XvHFBC1R5W
-         opjgoGmMXxBtVp7lPMMkqBDgV7FIQl3EZ2mM3k3njf8jkM1FnEsFn1j6opoIoIfJAQsx
-         ZTL38RDU+EnndUiE1hXEt7njkAtjD9rz2tUUaigLoyPqa6VIX/reBJHelvSzYp8dwro0
-         NXlKTbCocaEqInGbgLgsgopEYaLz108wrhUhKeduOFdsK51nJABjuhte3yLEGp7vdKxn
-         sdkTUR4+LVWbzVeITALT+TCicb15DhB7fsTPLuB005ybKmZVD+RXMhpsmXkEyiUA15R2
-         Q1OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/xQ10Pxq///tn1Rv36Of1/u5K2K5B59mFX8ck6nb3VXXBG4Vm9XFbmzL7QO4i4R8AAeWjpHSN7n/GNR04z7qkdek=@vger.kernel.org, AJvYcCUsFcQZ3ZKBjV2f6XLwce7ucSyFn+x54qP9CYaFNL4chm2yQDwd/tBC5rl7c+CTwrJRnXnaaHYTkXVc3g==@vger.kernel.org, AJvYcCUz1AmetXsWVMxIJ8YjoAGgugdJs6SJonmiPevfZdDnMO3o2FdcNB37opXxdBPmTQixlIsx6Q7a+Lhu@vger.kernel.org, AJvYcCV0e6jGSi4kuq5FgAbBiylHX1Be8JHVPI6psjMOefP/teOEvgrNrm5kQZ8jNQhMGXvZGqKx/UuRgQbDk9hL@vger.kernel.org, AJvYcCVX+alDi237ppyy3qNOe1pYaMneZXqAE04VkPtd6wWqayElUmudCOafL6FS7B6dUxKQuUXoEYylIrDv75o=@vger.kernel.org, AJvYcCWSkZ+qFRElamlDBuQPVmpRLk+pQiAIUjfLaW83BmfnrlrW2HdwCRFk5T+do7ih3tbJS2KKx1RiEBsL0401jqEAIGA=@vger.kernel.org, AJvYcCWnvlEb3KpBZExtt9YpyMcylNcPEwTP394RYO1AHDrD51qu4jzz/7pwJ/lxl0G0cfydCkjJrLiCkUeFtlk=@vger.kernel.org, AJvYcCXOlf7fkBChQ1GYOzxCrFfLo8nCstJcpmoSk/eXlayFQIUhzrDfeGzClJS9WbkaQ0TXK0UXSL33ekw=@vger.kernel.org, AJvYcCXSYXCmUA8dltWvM/mcdId3oTG72V7rwrkSED3seUt0tqwNSPvvaj7proIt7tU9eYq1wphxl2kcgYvROnwR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFendnPo+6Pnk9Pn0dBH4PxfTbpZFohw47L7cegPQrQXY0V+1K
-	wvCuG9uiH92zSNz7ZxdwenlSbEqBR54ZwjAfVRWclxhHhY7uyxSSAD2b
-X-Gm-Gg: ASbGncuEsjxata711uswiGAtun4l1XPQZ46yszjWwc0qd6/0AnkMAxtyPoxrJYLnDZF
-	SS930SQSxtfIJrHgLh3JZEVejdSXDn+nymoTVUzw78R7BpMZ4lNwAuJZhkI43agkuAGGfrdOrDS
-	b//S93OiJo3pUL2+VCWwPhGyjxDq2yANub+glXYYvDSffBw9RRLBBtvIapAhiNnmOk9uRb01awv
-	JBJ8Q/t8bzHfJvL+zFIP73tkUh6Lvcu90a8stxgyO+nQRHrdEHHne62QYApMnAvF1cP/W7mDv3N
-	PX5J9v14Y3N8g9Q5nom5m8FYGRfD84HoKJ2tTq3GkBph4Ldvu95ktkG5mqp6LgHYzd2UhbxjBOH
-	oaeAvLLP6a8glaQeBaxVVAAIzHPYik5kQ1ruPh1zB86AJFal0Gp/37k/GUTSZioC4ynVVmVfsGO
-	0YrAGmOw==
-X-Google-Smtp-Source: AGHT+IGsUGu45MQwt+NZPV5mLr8VYLLqfRHTzbjIcd42cuNIOrbj6li3sVxyZFvsqM7RMTuhEoyH4A==
-X-Received: by 2002:a17:90b:4c4b:b0:32b:94a2:b0d6 with SMTP id 98e67ed59e1d1-32b94a2b221mr8959418a91.3.1757082696826;
-        Fri, 05 Sep 2025 07:31:36 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77267a225e6sm12382015b3a.94.2025.09.05.07.31.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:31:36 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c00a3d00-d5d5-4f2b-8799-d1b8b22f85cb@roeck-us.net>
-Date: Fri, 5 Sep 2025 07:31:31 -0700
+        bh=RdHOLLqwx7tJvI93Mas6xLDQ23Ec8f9ZA36n15YArp4=;
+        b=XXLgZjFvsMH4TGxr6mZuSsIR9mlzbSvBMqLmKkLZzaL5j63ITZNHhZ/riTEpvroPaf
+         ByatQLQLbgZZqFhGSy0+haD53/P+Gac8TNWfH8lFRgC9QNqbqMRNMnNkdt1USfiRDtqS
+         +61/1xOoExG7anrMgUrzKt/9VMFWd6OeX6Z6KhHCGo5r3fzCPsmhd4PIAVLZcVbhIvBl
+         z7tTaPgP6M8/2Kpt27pF2rVO1DufMzkNp0B32nBQqGZxrnztqKuxFQRfGZb9Ov9TIGI3
+         Yx3jGRJ9qQ9vNU5s6Mu9KovKvu0EdfCNw6ghC6im192SSUGzfTG3YrIFcQIH157Okrrm
+         WhTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGw+DOqJuNyYzH+78NtsmqRr0QzbU3PI5jYHmUrcAEPt2SSowacAa5EwOoezfu510YBu8968/IJtkxArF17iYkBw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqndADSAqMQZot7pX+PpX9jUHGSrIaHaOP0CifmU4h7jxd4P2A
+	3+E+pdDTWV89jR1te7DnSwpnJzt7J5hqhhYLnyq3JMgXDKKaLUeXuLn7BSC3oDOCVYcLuHYsZsc
+	ySeuQObWU1fksrw==
+X-Google-Smtp-Source: AGHT+IFCF8RSEKc2M561aTeMp6Eg3cFM8Srz5/Q2pYIUE/bN9+Udlr5Snzmc+NupcbxxSPDUPWNVnLF2ct7JsA==
+X-Received: from wmbhg14.prod.google.com ([2002:a05:600c:538e:b0:45c:b52d:d2ee])
+ (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:4284:b0:3e0:152a:87b8 with SMTP id ffacd0b85a97d-3e0152a89b4mr5750276f8f.8.1757089507832;
+ Fri, 05 Sep 2025 09:25:07 -0700 (PDT)
+Date: Fri,  5 Sep 2025 16:24:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/12] hwmon: Remove redundant error log prints
-To: Xichao Zhao <zhao.xichao@vivo.com>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Guillaume La Roque
- <glaroque@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Markus Mayer <mmayer@broadcom.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, zhanghongchen
- <zhanghongchen@loongson.cn>, Yinbo Zhu <zhuyinbo@loongson.cn>,
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Talel Shenhar <talel@amazon.com>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
- "moderated list:ARM/Allwinner sunXi SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- "open list:THERMAL" <linux-pm@vger.kernel.org>,
- "open list:THERMAL DRIVER FOR AMLOGIC SOCS"
- <linux-amlogic@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "open list:QUALCOMM TSENS THERMAL DRIVER" <linux-arm-msm@vger.kernel.org>,
- "open list:RENESAS R-CAR THERMAL DRIVERS"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- "open list:TI BANDGAP AND THERMAL DRIVER" <linux-omap@vger.kernel.org>
-References: <20250905072423.368123-1-zhao.xichao@vivo.com>
- <20250905072423.368123-3-zhao.xichao@vivo.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250905072423.368123-3-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
+Message-ID: <20250905162446.88987-1-smostafa@google.com>
+Subject: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
+From: Mostafa Saleh <smostafa@google.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, 
+	Mostafa Saleh <smostafa@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/5/25 00:23, Xichao Zhao wrote:
-> devm_thermal_of_zone_register() prints error log messages when
-> it fails, so there is no need to print error log messages again.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->   drivers/hwmon/hwmon.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> index 1688c210888a..0514e4bc5e71 100644
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -239,8 +239,7 @@ static int hwmon_thermal_add_sensor(struct device *dev, int index)
->   	if (IS_ERR(tzd)) {
->   		if (PTR_ERR(tzd) != -ENODEV)
->   			return PTR_ERR(tzd);
-> -		dev_info(dev, "temp%d_input not attached to any thermal zone\n",
-> -			 index + 1);
-> +
+Booting the kernel on Pixel-6 with `CONFIG_DEBUG_PREEMPT` prints the
+following WARN:
 
-This series moves the message from an informational message here to an error message
-in the thermal core, even though it is (for hwmon) not an error. I personally
-think this is a bad idea. Can we get another API that lets me suppress that error
-message ?
+[    0.784187][    T1] BUG: using smp_processor_id() in preemptible [000000=
+00] code: swapper/0/1
+[    0.784328][    T1] caller is debug_smp_processor_id+0x20/0x30
+[    0.784433][    T1] CPU: 6 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.1=
+7.0-rc4-gd69eb204c255 #1 PREEMPT
+[    0.784439][    T1] Hardware name: Oriole (DT)
+[    0.784441][    T1] Call trace:
+[    0.784443][    T1]  show_stack+0x34/0xa0 (C)
+[    0.784453][    T1]  dump_stack_lvl+0x7c/0xb0
+[    0.784460][    T1]  dump_stack+0x18/0x24
+[    0.784464][    T1]  check_preemption_disabled+0xf8/0x100
+[    0.784470][    T1]  debug_smp_processor_id+0x20/0x30
+[    0.784476][    T1]  gs101_cpuhp_pmu_online+0x40/0x108
+[    0.784483][    T1]  cpuhp_invoke_callback+0x188/0x2d8
+[    0.784490][    T1]  cpuhp_issue_call+0xec/0x240
+[    0.784494][    T1]  __cpuhp_setup_state_cpuslocked+0x140/0x2c0
+[    0.784499][    T1]  __cpuhp_setup_state+0x58/0x88
+[    0.784504][    T1]  exynos_pmu_probe+0x2a4/0x380
+[    0.784508][    T1]  platform_probe+0x64/0xd0
+[    0.784516][    T1]  really_probe+0xd0/0x3b0
+[    0.784520][    T1]  __driver_probe_device+0x8c/0x170
+[    0.784524][    T1]  driver_probe_device+0x44/0x140
+[    0.784528][    T1]  __device_attach_driver+0xd8/0x180
+[    0.784532][    T1]  bus_for_each_drv+0x90/0xf8
+[    0.784536][    T1]  __device_attach+0xa8/0x1d0
+[    0.784540][    T1]  device_initial_probe+0x1c/0x30
+[    0.784544][    T1]  bus_probe_device+0xb4/0xc0
+[    0.784547][    T1]  device_add+0x4d0/0x700
+[    0.784550][    T1]  of_device_add+0x4c/0x78
+[    0.784556][    T1]  of_platform_device_create_pdata+0x9c/0x148
+[    0.784560][    T1]  of_platform_bus_create+0x1d0/0x370
+[    0.784563][    T1]  of_platform_bus_create+0x234/0x370
+[    0.784567][    T1]  of_platform_populate+0x84/0x178
+[    0.784571][    T1]  of_platform_default_populate_init+0xf0/0x120
+[    0.784579][    T1]  do_one_initcall+0x68/0x2d0
+[    0.784585][    T1]  kernel_init_freeable+0x2d8/0x358
+[    0.784589][    T1]  kernel_init+0x28/0x168
+[    0.784595][    T1]  ret_from_fork+0x10/0x20
 
-Guenter
+As this value is only read once, it doesn't require to be stable, so
+just use "raw_smp_processor_id" instead.
 
->   		devm_kfree(dev, tdata);
->   		return 0;
->   	}
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+
+Signed-off-by: Mostafa Saleh <smostafa@google.com>
+---
+ drivers/soc/samsung/exynos-pmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-=
+pmu.c
+index a77288f49d24..338f4758a089 100644
+--- a/drivers/soc/samsung/exynos-pmu.c
++++ b/drivers/soc/samsung/exynos-pmu.c
+@@ -338,7 +338,7 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+=20
+ static int gs101_cpuhp_pmu_online(unsigned int cpu)
+ {
+-	unsigned int cpuhint =3D smp_processor_id();
++	unsigned int cpuhint =3D raw_smp_processor_id();
+ 	u32 reg, mask;
+=20
+ 	/* clear cpu inform hint */
+@@ -361,7 +361,7 @@ static int gs101_cpuhp_pmu_online(unsigned int cpu)
+ static int gs101_cpuhp_pmu_offline(unsigned int cpu)
+ {
+ 	u32 reg, mask;
+-	unsigned int cpuhint =3D smp_processor_id();
++	unsigned int cpuhint =3D raw_smp_processor_id();
+=20
+ 	/* set cpu inform hint */
+ 	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
+--=20
+2.51.0.355.g5224444f11-goog
 
