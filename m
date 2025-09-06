@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AED266EF1;
-	Sat,  6 Sep 2025 12:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BC943147;
+	Sat,  6 Sep 2025 12:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757161256; cv=none; b=KjwL43pmw7NuRfAmrRxrqG6hKkz00Mx6mJUyzJn/nDtwr0+S6vsiYj+jhTIYcj8WWxQR/soOYekwNuF0nb4fetSmBSupX9QbmA8QKbR7LkcUSlh9+vghQc0RYP/pOnBwHdqBPQ1cbA4NbXwzj0x0luyqZH8olc2O6pk/UB3bbDg=
+	t=1757161465; cv=none; b=YKl2qombaOflf6yjwBRwQ3J4MytS0zgNSf4y8gM0ILshAq/HoaVxzftFGZam2mCFSHaJAgYdmK7V6vqQ+6sUdT6tdRub4AOftjT1zNbTJNkj7HkbmHdtjQd1A1zYMsg8hesvi68MYA9UKmiZi2MmS0v5ZyE4VAGWSc4Cslj+EPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757161256; c=relaxed/simple;
-	bh=tj2qaoX0X4TgcNXLGb5/BwqEER/Qx4Bs9TmgYBUu/vg=;
+	s=arc-20240116; t=1757161465; c=relaxed/simple;
+	bh=LppTgJaF7fTxKZvRds8rgTlYyuijH70CrVXtkw7evrU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diFgTmVmwvi0ecQEvGb1G3/rXtAYbVx1OkrdSsQCfKWd6dNWnnyip66MoEo9RDRdmzWp7MvhV58PJz/fYyZfdL5IaZCy+bgq+Ac9ObbOUxa+hKHCWLCbVG7J2ztZp/wDtkjTXYueK7NPd3CBo4FkoMMvSHgPBlIekLIRRfl5JqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LneFQRDj; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EYjhl3h5l7xRt5d06RobsPy2n+QeGiMTOiT9k8TrvsnFZ4+1pdotvxxhfnRNPQxPCyYkUL1otqxCx9cmx9E8+YtR9KHj5TGVPDyJb1A0UZOPNdoXR7dbMmAmh72541/mJo5T9rhacQkYMAvOVSWgd+zP2Sp4foG4aJCHoQlqKJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrM9nytm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LneFQRDj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411AFC4CEE7;
-	Sat,  6 Sep 2025 12:20:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrM9nytm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA55CC4CEE7;
+	Sat,  6 Sep 2025 12:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757161255;
-	bh=tj2qaoX0X4TgcNXLGb5/BwqEER/Qx4Bs9TmgYBUu/vg=;
+	s=k20201202; t=1757161465;
+	bh=LppTgJaF7fTxKZvRds8rgTlYyuijH70CrVXtkw7evrU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LneFQRDjv//hBKwYIOfuAeZS26z2XACGJrDB8xTO3LSKmRRDCRwty7TCQrM+KLapR
-	 3uAqg20tT3OZuJTH58jyZ++yEsSfmWWV5gDpnTVZw81ruvE4goyuInK39JsRy1M59C
-	 8c+Cozat0J/+ftjqfa8nPOul/F630EdfsfpfMo4zrGThqqeTlfoyT//SZILAmfrL9a
-	 RHQRaS/JXtdMWyCEZmG3VqRyaRXHHdaftQyVvbZ6mzCB/CdFFtchADTI97t90jjsCB
-	 75K10SXV1+56xC6X9YEb/VnC21CJoEsFY2bP2RH3fzjyAQWEDPfLBuxrLSzj7oX5Kb
-	 6odKzo4myA6/Q==
-Message-ID: <700967d0-ad8b-471b-b2cf-6544727db26d@kernel.org>
-Date: Sat, 6 Sep 2025 14:20:49 +0200
+	b=MrM9nytmKDZIyTkcf1+dJMggZ3syk0dTbRAqRfqNm3mkMpKCq77KLSz0ASisCsOK0
+	 WBcWpXaXuU1dp3waw0CKbLi+KFfKcxm38cTiRwKQNJr7yM6hfgE0tEIInvWYocgbeJ
+	 3Q+iUFCpPpVd+EMxu6H5PxTSwU7BA5u6ijzvN0c6tXq77Qfg6GvLyh5/5iXkB50rVP
+	 EMfOiaS29OV6gNbiuUpQHPMz/IHqKXsOpV6AxBYZGE4BUxf/6qPKrhD5CEY6jUFcKO
+	 xXDOCGJNdGxaxJSt2fEbyLdqcyg0FP1AlNumKLjI9izppm2rppDjySEoiKXTZMbBSv
+	 /VCeRI0DHsGbg==
+Message-ID: <4959ce59-84aa-40a5-aa07-f2dfa856d9b2@kernel.org>
+Date: Sat, 6 Sep 2025 14:24:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,21 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] firmware: exynos-acpm: register ACPM clocks pdev
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 1/2] ARM: dts: samsung: exynos5250: describe sromc bank
+ memory map
+To: Henrik Grimler <henrik@grimler.se>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
- <20250903-acpm-clk-v3-4-65ecd42d88c7@linaro.org>
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-smdk5250-sromc-v1-0-b360c6ab01c6@grimler.se>
+ <20250904-smdk5250-sromc-v1-1-b360c6ab01c6@grimler.se>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,21 +89,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250903-acpm-clk-v3-4-65ecd42d88c7@linaro.org>
+In-Reply-To: <20250904-smdk5250-sromc-v1-1-b360c6ab01c6@grimler.se>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/09/2025 15:56, Tudor Ambarus wrote:
-> Register by hand a platform device for the ACPM clocks.
-> The ACPM clocks are not modeled as a DT child of ACPM because:
-> 1/ they don't have their own resources.
-> 2/ they are not a block that can be reused. The clock identifying
->    data is reduced (clock ID, clock name and mailbox channel ID)
->    and may differ from a SoC to another.
+On 04/09/2025 08:10, Henrik Grimler wrote:
+> According to public user manual for Exynos 5250 [1], the SROM
+> controller has 4 banks, at same addresses as for example Exynos
+> 5410. Describe the bank memory map of the SoC.
+> 
+> [1] https://web.archive.org/web/20130921194458/http://www.samsung.com/global/business/semiconductor/file/product/Exynos_5_Dual_User_Manaul_Public_REV100-0.pdf
+> 
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+>  arch/arm/boot/dts/samsung/exynos5250.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/samsung/exynos5250.dtsi b/arch/arm/boot/dts/samsung/exynos5250.dtsi
+> index b9e7c493881804647534b1d7395f6eb62a07fb92..741cc693f5d8f6b33772d7819c965c590571f305 100644
+> --- a/arch/arm/boot/dts/samsung/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos5250.dtsi
+> @@ -1214,6 +1214,15 @@ &serial_3 {
+>  	dma-names = "rx", "tx";
+>  };
+>  
+> +&sromc {
+> +	#address-cells = <2>;
+> +	#size-cells = <1>;
+> +	ranges = <0 0 0x04000000 0x20000
 
-If I understand patchset correctly (and your cover letter supports
-that), this does not depend on patch #3, so please move it before that
-one, so both firmware patches are one after another.
+
+These should be separate tupples, so
+
+<0 0 0x04000000 0x20000>,
+<....>,
+<....>,
+
+
 
 Best regards,
 Krzysztof
