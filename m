@@ -1,35 +1,36 @@
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C255661
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Sep 2025 07:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5BC2E2EF8
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Sep 2025 07:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757316463; cv=none; b=BYVKj90gk0mwrrHv48Xj4hMVgNcUZSHtPRzpyF5V2WQyP8HJpGrKsFBqSiqIqXek/jX27AbV+hp/ZXj8e3wfNn+UHdunnImqQ5UCdytYrVmT+j2pj8QVwXL6XivNIHSBk6L46ngpqNpIGrEmwhI1x49FKNzVf+QFrTrXa4w2h/I=
+	t=1757316463; cv=none; b=U18/ZTwCnCCus/SMijD2z4TNA0p4fkkY5N0TtPTIUcEcurm4qH6hdQrAMn7usmh8rMqPPrZrm5RWKrPKyVYBEr4feMRYXU7j6Y+IQLJDyuC5KvIruII3AN37rMfoxqJZb8DuAuC7HWGW4jnOU+iNyyuzThfBh8NDh6OOrxq1Mzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757316463; c=relaxed/simple;
-	bh=m6P2ifyb2S9aL4S799UQEuuQspOh/8y6FFDeBdDh+ZA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=teGxbkB4gVDAigPb0ND+Tl6ulFGvjgBdQWUMw3TDqdVwuLnBW7FQxMEJ09TEhAISE8aFx4MyUerWdoUfwgjkVbCjroKzDcQza0z7rmQbqhRXSlZh1tnPYKD6sKzswKgPBwxEKJUC4q0h+CEwAqEZEHM6LlhnffENN+TdIXTFFF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=X0Q6oZKq; arc=none smtp.client-ip=91.218.175.174
+	bh=MdZEy+mKc13tFn5n0EEYzZw6bxpGTPBNamn20XR+u4c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=m8WvLXvNb/Zb5QdsSWtdzaw0d7MP3Iy+J61jCmKvQqnNazJe8uNWmO6YPoT4vxUk1cdw1Etcf9pQQcJ1Maf8T5xTiOv8E1qmE+1HyY6aGcfXlWEwnZqSG7xwITOE2UbaylNd5Aupxmu/SSDwME1ablKQfXZE+/YZuIlJj9KMB04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=MTTgnw23; arc=none smtp.client-ip=91.218.175.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="X0Q6oZKq"
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="MTTgnw23"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1757316457;
+	t=1757316460;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=s6dihIf8dRj48AF5jPOhCRWjZ7JWA05I9MIiVmOPVtw=;
-	b=X0Q6oZKqzJr+JTOYipYoyZoI04xQnZRkJ/ggYeJXe0d3TZolCHT5M5mpiBqRGj4m6wY+tS
-	ShE5D36ZOd1cxRonket/mri5wWtLYX157va0J62dksPWsHCNYMAAzaufzZkaWP+md5nZuT
-	XKCUzH6UomkCbYTJkIGoOO7CGEH2/o4=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JJIQiWkgB4AInE9n12DbAJF2fbihCnUqwsNzAIdNdKk=;
+	b=MTTgnw23A9YdbEDCSM7WyTzhFLgqc4Qd7TY0vTs5kKCzidQnR9fUAYyMQDD2jLUIINp4U8
+	76Y3VnGW+vT2P7C19kDIXYU8gPed8+OsTcl2gBj4IK543MH56YRLYuKQ1fJs33FjWsfdio
+	3+yq5vdTeSO799I1ugNbwa2KVKZjyDo=
 From: Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH v2 0/3] exynos5250-smdk5250: describe SROM controller and
- ethernet port
-Date: Mon, 08 Sep 2025 09:26:54 +0200
-Message-Id: <20250908-smdk5250-sromc-v2-0-e91b2375d4e1@grimler.se>
+Date: Mon, 08 Sep 2025 09:26:56 +0200
+Subject: [PATCH v2 2/3] ARM: dts: samsung: exynos5250: describe sromc bank
+ memory map
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -38,62 +39,60 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAD6FvmgC/13MTQ6CQAyG4auQrh1TBgeCK+9hWMwMFRrlJ60hG
- sLdHXHnrm+T71lBSZgUztkKQgsrT2MKe8gg9n7syHCbGixah5W1Rof27tJtVKYhGvIu1M4VSKG
- CNJqFbvzawWuTumd9TvLe/SX/fn9Ujad/askNmlCUGEsfMI/lpRMeHiRHJWi2bfsAzoijF60AA
- AA=
-X-Change-ID: 20250722-smdk5250-sromc-ea5b95530eb7
+Message-Id: <20250908-smdk5250-sromc-v2-2-e91b2375d4e1@grimler.se>
+References: <20250908-smdk5250-sromc-v2-0-e91b2375d4e1@grimler.se>
+In-Reply-To: <20250908-smdk5250-sromc-v2-0-e91b2375d4e1@grimler.se>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1506; i=henrik@grimler.se;
- h=from:subject:message-id; bh=m6P2ifyb2S9aL4S799UQEuuQspOh/8y6FFDeBdDh+ZA=;
- b=owEBiQF2/pANAwAIAbAHbkkLcWFrAcsmYgBovoVYKGkaXfYWHIIoUROmHqmzQeWHVBTPFVcfF
- b537vzfq/OJAU8EAAEIADkWIQQsfymul4kfZBmp4s2wB25JC3FhawUCaL6FWBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMSwzLDIACgkQsAduSQtxYWsYtQgAgF4PHPETcK6t3eCeZlF0EPy3GjYIrQH
- qnxESTAzF/51M+p4KKxslzW6+UYQE4fRlRIkVgKcCKeZhvwpZ9GW8c3qpUFK0JMEErjKFDH4s3E
- 5SXeLSfM95i98GKBjOD89eqGYQ12kpddUYgdnJXMXaDqCdBBxUQhhE7xDIy63pZz3CZDabIAVeC
- aA+8ZJkOOHtsAeWx6LtG48EN/5lifqS/oRrQs7tgbqWs+2Zu9By0HtQySyWIFuVMh4qxyJpwlZa
- jTyccjPtAq0O88McodoD6qG5zDqh+/o12q+GLFwBeT1tCIq14vjnCuME4WGkNKo35Z13/xHIyYr
- Rty5nEqbbsA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1133; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=MdZEy+mKc13tFn5n0EEYzZw6bxpGTPBNamn20XR+u4c=;
+ b=owGbwMvMwMG4gT3Pk7swMZvxtFoSQ8a+1iQd5hNph9YvyJFW/nTF+k+YVccMjYX7rt0+a1UYy
+ qO/1CGxk9GfhYGRg8FSTJFFp15z3fRO+RTJlY/OwgxiZQKZIi3SwAAELAx8uYl5pUY6Rnqm2oZ6
+ hoY6xjpGDFycAjDVHULs/91+SLufMeoKZOJvZfko43rs1ZpIo08mEh2htiy3F/+bxFYRwHdvG6+
+ tZFthaHSe6/O7UpVrJobGdbg7qief3Hyqzk2/vHuulcv6iVFzkrcoKp9k2PjktGS6+NGJzPmLhF
+ 705ie4uYjJ985436RzZNYGaak/ndsvr/FY/elH/TkvfR/LA2IdJQzbTJd6PJu4tV5pzsEUJ/7V6
+ 3o319xWY/E8OOP44iZu1UkfVqbV6Nsf++VZtPvxvAN1/xvSK39yT/MWdnl5hEdlYpF/5xoZ7dqm
+ RbOOc26by7pJUycs3S0j+1zp2Q8+JcJBO1Xy4g5p6Whc1Xj06Nr24NYlU96HpIQFCfxcx+jZ7Kw
+ u+XMXAA==
 X-Developer-Key: i=henrik@grimler.se; a=openpgp;
  fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
 X-Migadu-Flow: FLOW_OUT
 
-Based on smdk5250 description in Samsung's vendor kernel [1] and the
-u-boot dts [2], the smdk5250 board seems to have a ethernet port
-connected to bank 1 of the SROM controller.
+According to public user manual for Exynos 5250 [1], the SROM
+controller has 4 banks, at same addresses as for example Exynos
+5410. Describe the bank memory map of the SoC.
 
-Unfortunately I do not have access to the board, so this is not tested
-on an actual device, and based solely on the linked sources.
-
-[1] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-note-tab-lte-10.1-2012-gt-n8020-p4note-exynos4412-dump/arch/arm/mach-exynos/mach-smdk5250.c#L982
-[2] https://gitlab.com/u-boot/u-boot/-/blob/master/arch/arm/dts/exynos5250-smdk5250.dts
+[1] https://web.archive.org/web/20130921194458/http://www.samsung.com/global/business/semiconductor/file/product/Exynos_5_Dual_User_Manaul_Public_REV100-0.pdf
 
 Signed-off-by: Henrik Grimler <henrik@grimler.se>
 ---
-Changes in v2:
-- Use comma separated tuples in ranges (@krzk)
-- Add patch to update ranges format in exynos5410.dtsi as well
-- Link to v1: https://lore.kernel.org/r/20250904-smdk5250-sromc-v1-0-b360c6ab01c6@grimler.se
+ arch/arm/boot/dts/samsung/exynos5250.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
----
-Henrik Grimler (3):
-      ARM: dts: samsung: exynos5410: use multiple tuples for sromc ranges
-      ARM: dts: samsung: exynos5250: describe sromc bank memory map
-      ARM: dts: samsung: smdk5250: add sromc node
+diff --git a/arch/arm/boot/dts/samsung/exynos5250.dtsi b/arch/arm/boot/dts/samsung/exynos5250.dtsi
+index b9e7c493881804647534b1d7395f6eb62a07fb92..4616794b19e8c5c341d7a7d3cfe2b16bbd8c840c 100644
+--- a/arch/arm/boot/dts/samsung/exynos5250.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos5250.dtsi
+@@ -1214,6 +1214,15 @@ &serial_3 {
+ 	dma-names = "rx", "tx";
+ };
+ 
++&sromc {
++	#address-cells = <2>;
++	#size-cells = <1>;
++	ranges = <0 0 0x04000000 0x20000>,
++		 <1 0 0x05000000 0x20000>,
++		 <2 0 0x06000000 0x20000>,
++		 <3 0 0x07000000 0x20000>;
++};
++
+ &sss {
+ 	clocks = <&clock CLK_SSS>;
+ 	clock-names = "secss";
 
- arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts | 37 +++++++++++++++++++++++
- arch/arm/boot/dts/samsung/exynos5250.dtsi         |  9 ++++++
- arch/arm/boot/dts/samsung/exynos5410.dtsi         |  8 ++---
- 3 files changed, 50 insertions(+), 4 deletions(-)
----
-base-commit: 1557c2eb023d9cdf97b4686fd206048c070d4e70
-change-id: 20250722-smdk5250-sromc-ea5b95530eb7
-
-Best regards,
 -- 
-Henrik Grimler <henrik@grimler.se>
+2.50.1
 
