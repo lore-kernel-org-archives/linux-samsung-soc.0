@@ -1,139 +1,225 @@
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4AB322DBA
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 11:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57112D5C95;
+	Tue,  9 Sep 2025 11:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416505; cv=none; b=oTTwBnFhaeCqNY+LpzAM1uOKeKT3/1xXCGiehGIIxo4xqgZWXu02eN9bS77P77IwqDjtO0an66LY9Gjxe3PNn3uUQYAAfbNzZbkythRvzilT6o/Ke7ffJ7FH/Cn9SW+niDdr1WjKfSBe3c4XEbxJSBZ46Xd0Pkw9M0JcecAxIRs=
+	t=1757417271; cv=none; b=uX29QQsnBYosbFffI892cRhnuaxrvO6tIo6AD1IH8rtHxtxQqi63qL2fGGOHd20XqvFAt0XoaUFiHlvMfb4Y2DQxQyWSBeNf34FmmVrOKwqFneC7PLRdM/FzpAtq8FDdgyQZMtLxyZPU5z3womgtKUkAIIWhdw0CHfaqfcSv3Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416505; c=relaxed/simple;
-	bh=g3ZI8YN/95LI9br+AKCOMOcs4Ot9AmRP9xRKTSgX7YM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WKolYG9bxQIh6WHtwk1IF3slBj/PAQZRXkkEFHCG4k3cVid3IXxrCQXbux5FqcZg1MOdgYIBCzGetP1XLF7UC0D1zgKGJ6IegsZkIJkxbe84NSXkRCYg85Sbx/pXZ5e94FhHeQa4bRg+AWcfMFbuxjDHwmTejNCMcxQW5LHLh/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pkJkZakD; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757417271; c=relaxed/simple;
+	bh=Q7MJ6HuoxZjlAYgfu4R8+11tXMfLB78JEQFVmnR4+ik=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mRf6vbF4BrnEpylhGts94yFTVDXAE9gBGtZd50niZdyMgiFn6ClcwuOGVvtJelcwSK9C1RvLPzxUxH/HBUfAGtBYjloJhjY6OgNyI7NfInuYOval0KBbZmZLjUPD0fMuqcnJ9th0KLPApsME7XTY5fWymfvaIKGAQM9ZfYUqYeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUri/ZJq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pkJkZakD"
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-62177413b39so1685489eaf.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 04:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757416503; x=1758021303; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3J9huOApoi8Y6hebVd9AzV0hA0WzoEyWAy0m3sVnzY=;
-        b=pkJkZakDQmm0ibgP1jQYl/4uzpvdF6Br0ZxxjBOM+iG9aDMIKMy589BAZpdMm0ra5U
-         XzpQsS5PnKy1q1Xv0OvO6q1yr1UC2aDTMJpFXEwCUXIhn7Q4HE35ZKTbvhTWA0y7p4tI
-         iC468iW45DnOPnPFzq4aOocMVS4oWPRPNN5HraJU4hBfR1xKZhKEiKh7BhtwTUgGJk+0
-         /h7L0gFp4kX1kgKEf+qZmOQGJkAtd9kEQCFlgop4hNfK+vkQ78kkLsT08C7G8eQuiI07
-         OSG1nygBez2FfYgvNmkw3iXFtOVLDAmqVWlEOsRWEfULN+4Iu2KK+2DaHwI3ARe18JVq
-         wBzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757416503; x=1758021303;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H3J9huOApoi8Y6hebVd9AzV0hA0WzoEyWAy0m3sVnzY=;
-        b=BMVfzVZ7R+yVR1z6EPNfqqER6860nToRXb4LXSAvLOCFOmBuh1jBJjQJDDh3Fhzuu9
-         eM5ufTbMF4nPNP4BJpdeodvRmrJA1sA0krLktKU21e99Kn+WosnMU+o8cSh/ky2cecS0
-         WBHdOJJ0cyPXktKakzeA5l6Ki+x2zBiPdpwMRSEoNstAAAkXr0pjsRJwxnBvQcabEi3C
-         VLr/b+5H88OUgxRarXoTJ6dnPdDz1owi3IUVC24vigYE1qUJ98SCgpNuePraODwpkngj
-         zshzqbXRP8x2wSFGm/psTFca1ysKdZ/KwRq87BW0L2dHlmlJ2iEdFwudd6jEGFKb1+4X
-         qvUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5A8LXwYnLb/3qTwdNR7xTflLTe1xcsAOQQ5YkVi4soVJXPr0qhyV+sAaab/1Us/7R+jQlxZPpftceOISv5m6SwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/fIqE0Eo1Tqxd+noA75jnFWMnxvmtfilE2IVwLnuCN7BQiEaD
-	sgBYJ1Cj/N5XDNygKEgDeuvne/5EVaz4D4G4jF5OTIfbpDV0Vav6JqDmPn6WBNIBm4MkVeAniKk
-	slLCXaC42H/DJd00HmLRP33yUFyUWV4j8zWDlyJsIaA==
-X-Gm-Gg: ASbGncusYLLeh6qlarPGL++M5KO2sVMSHQgTVjK/Vp7+uPLYRff2ouxdwy2uuAeNK/V
-	2MBmC3T3inCLjRX0jVPwEa3almeYTmwbuVAIn0hQGLvfHIyVx5av2Ov+KUsV5rVjpWnKzKwUAf2
-	WBXSWhbK8eYrSRNduykXkKY544g62qhPPDJe3w+w8yLfsEtrWIg4+AHckVojnEi+IOd9l6gYuPY
-	dlbCpZLBZTViqIg
-X-Google-Smtp-Source: AGHT+IF3haCb/E1FzNUTbha289kFS363Kg33HMc7PBhqqE87V+/FyqUeuaGr+6CiNvSrkmkJwrmOIOH6XS4or1+1aBE=
-X-Received: by 2002:a05:6808:13c6:b0:43a:d659:7822 with SMTP id
- 5614622812f47-43b29ae7843mr4779835b6e.34.1757416502750; Tue, 09 Sep 2025
- 04:15:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUri/ZJq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078C7C4CEF4;
+	Tue,  9 Sep 2025 11:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757417270;
+	bh=Q7MJ6HuoxZjlAYgfu4R8+11tXMfLB78JEQFVmnR4+ik=;
+	h=From:Subject:Date:To:Cc:From;
+	b=UUri/ZJqN0tlREK57LEBuZpte2YMcLywloUf9mMFp/XBfZhxBFIEgLWvWkA/nYHoG
+	 jctP+YuzvBP3Stew5Hg/jalr+ET5txVQ/IVSDT9DHq7aDnv9rdKGQGjqinjvUCqKSh
+	 t5I4lVgQs7pbv4go67N1QPjDhh+sKOaKFsU/dt0QqQEQ2sGxbDXe4tWiH5F37sqEYU
+	 CEJAQ5UUjfadRZG4U04S2hmn8S9Wzdd+kh+pq1/Zhj4ndOE9aULqnFGkxhgAaQLhBS
+	 jbY+ulJE875PN4v3bqL4OGsfA+gjvU+/BXpPN6SfThNGEvtb6ZYW5No3+oOhZZh4pG
+	 PBSie+cSr8u9w==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v3 00/39] drm/atomic: Get rid of existing states (not
+ really)
+Date: Tue, 09 Sep 2025 13:27:19 +0200
+Message-Id: <20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905162446.88987-1-smostafa@google.com>
-In-Reply-To: <20250905162446.88987-1-smostafa@google.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 9 Sep 2025 12:14:51 +0100
-X-Gm-Features: Ac12FXx64qJXe2GQUzO8JtALwGYnJphXENgbpS-QSSifTl3glwftoVzGYAhwfsA
-Message-ID: <CADrjBPqH==y5KaN6oBnGJ8407gx31sGVEFqqNdz8NG_vPuNPYw@mail.gmail.com>
-Subject: Re: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krzk@kernel.org, alim.akhtar@samsung.com, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABcPwGgC/43NQQ7CIBCF4as0rB1Dh9AUV97DuGhhaIkKBhpS0
+ /Tu0m6MG+Pyf5l8s7BE0VFip2phkbJLLvgS4lAxPXZ+IHCmNEOOkrcowcQH+ACPEAlodmlyfoA
+ 0dROB6gVK1HUnRM8K8Ixk3bzjl2vpsVyH+Np/5Xpb/2JzDRwsb7U2yrZSq/ONoqf7McSBbW7Gj
+ 6U4/rSwWIZUa7W0jWmaL2td1zcXtIcXEQEAAA==
+X-Change-ID: 20250825-drm-no-more-existing-state-9b3252c1a33b
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Edmund Dea <edmund.j.dea@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+ Sui Jingfeng <suijingfeng@loongson.cn>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, linux-rockchip@lists.infradead.org, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Hans de Goede <hansg@kernel.org>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5731; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=Q7MJ6HuoxZjlAYgfu4R8+11tXMfLB78JEQFVmnR4+ik=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBkH+GUuXKh5EtKUyyzoVj+da9081x9WWi3PNgkkCzesW
+ pBzZRdLx1QWBmFOBlkxRZYnMmGnl7cvrnKwX/kDZg4rE8gQBi5OAZiIuj1jnWI4n8bX5IMaIR59
+ rg1225SSX4otdE16oid2/X3OFIs0savVqT9rPkdcflqnPMUrYNMlxloRqYV2c/mLDs9e66AS4a2
+ yl/2L9OFTi17/nnT0/AqvJmbG49Oyi8QPpP73kpb/0nRnWysA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-Hi Mostafa,
+Hi,
 
-Thanks for your patch and bug report, it's great to see more folks
-running upstream Pixel 6 :)
+Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+accessors.
 
-On Fri, 5 Sept 2025 at 17:25, Mostafa Saleh <smostafa@google.com> wrote:
->
-> Booting the kernel on Pixel-6 with `CONFIG_DEBUG_PREEMPT` prints the
-> following WARN:
->
-> [    0.784187][    T1] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-> [    0.784328][    T1] caller is debug_smp_processor_id+0x20/0x30
-> [    0.784433][    T1] CPU: 6 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc4-gd69eb204c255 #1 PREEMPT
-> [    0.784439][    T1] Hardware name: Oriole (DT)
-> [    0.784441][    T1] Call trace:
-> [    0.784443][    T1]  show_stack+0x34/0xa0 (C)
-> [    0.784453][    T1]  dump_stack_lvl+0x7c/0xb0
-> [    0.784460][    T1]  dump_stack+0x18/0x24
-> [    0.784464][    T1]  check_preemption_disabled+0xf8/0x100
-> [    0.784470][    T1]  debug_smp_processor_id+0x20/0x30
-> [    0.784476][    T1]  gs101_cpuhp_pmu_online+0x40/0x108
-> [    0.784483][    T1]  cpuhp_invoke_callback+0x188/0x2d8
-> [    0.784490][    T1]  cpuhp_issue_call+0xec/0x240
-> [    0.784494][    T1]  __cpuhp_setup_state_cpuslocked+0x140/0x2c0
-> [    0.784499][    T1]  __cpuhp_setup_state+0x58/0x88
-> [    0.784504][    T1]  exynos_pmu_probe+0x2a4/0x380
-> [    0.784508][    T1]  platform_probe+0x64/0xd0
-> [    0.784516][    T1]  really_probe+0xd0/0x3b0
-> [    0.784520][    T1]  __driver_probe_device+0x8c/0x170
-> [    0.784524][    T1]  driver_probe_device+0x44/0x140
-> [    0.784528][    T1]  __device_attach_driver+0xd8/0x180
-> [    0.784532][    T1]  bus_for_each_drv+0x90/0xf8
-> [    0.784536][    T1]  __device_attach+0xa8/0x1d0
-> [    0.784540][    T1]  device_initial_probe+0x1c/0x30
-> [    0.784544][    T1]  bus_probe_device+0xb4/0xc0
-> [    0.784547][    T1]  device_add+0x4d0/0x700
-> [    0.784550][    T1]  of_device_add+0x4c/0x78
-> [    0.784556][    T1]  of_platform_device_create_pdata+0x9c/0x148
-> [    0.784560][    T1]  of_platform_bus_create+0x1d0/0x370
-> [    0.784563][    T1]  of_platform_bus_create+0x234/0x370
-> [    0.784567][    T1]  of_platform_populate+0x84/0x178
-> [    0.784571][    T1]  of_platform_default_populate_init+0xf0/0x120
-> [    0.784579][    T1]  do_one_initcall+0x68/0x2d0
-> [    0.784585][    T1]  kernel_init_freeable+0x2d8/0x358
-> [    0.784589][    T1]  kernel_init+0x28/0x168
-> [    0.784595][    T1]  ret_from_fork+0x10/0x20
->
-> As this value is only read once, it doesn't require to be stable, so
-> just use "raw_smp_processor_id" instead.
+The initial intent was to remove the __drm_*_state->state pointer to
+only rely on old and new states, but we still need it now to know which
+of the two we need to free: if a state has not been committed (either
+dropped or checked only), then we need to free the new one, if it has
+been committed we need to free the old state. 
 
-Can I ask what baseline you are running when you see this warning?
+Thus, the state pointer is kept (and documented) only to point to the
+state we should free eventually.
 
-As this code got refactored recently in commit 78b72897a5c8 ("soc:
-samsung: exynos-pmu: Enable CPU Idle for gs101") which is present in
-linux-next but hasn't made its way to a proper release yet. After this
-patch smp_processor_id() is always called with a raw_spin_lock() held
-(so this warning shouldn't fire).
+All users have been converted to the relevant old or new state
+accessors.  
 
-I just built next-20250909 locally to confirm, and with the above
-patch reverted I see the warning you mention. So in summary I think
-the issue has already been fixed by the above commit.
+This was tested on tidss.
 
-Thanks,
+Let me know what you think,
+Maxime
 
-Peter
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v3:
+- Added an armada rework patch
+- Added an ingenic fix
+- Collected tags
+- Rebased on latest drm-misc-next tag
+- Link to v2: https://lore.kernel.org/r/20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org
+
+Changes in v2:
+- Dropped the first and second patches
+- Reworked the recipient list to be nicer with SMTPs
+- Link to v1: https://lore.kernel.org/r/20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org
+
+---
+Maxime Ripard (39):
+      drm/atomic: Convert drm_atomic_get_connector_state() to use new connector state
+      drm/atomic: Remove unused drm_atomic_get_existing_connector_state()
+      drm/atomic: Document __drm_connectors_state state pointer
+      drm/atomic: Convert __drm_atomic_get_current_plane_state() to modern accessor
+      drm/atomic: Convert drm_atomic_get_plane_state() to use new plane state
+      drm/vkms: Convert vkms_crtc_atomic_check() to use new plane state
+      drm/tilcdc: crtc: Use drm_atomic_helper_check_crtc_primary_plane()
+      drm/atomic: Remove unused drm_atomic_get_existing_plane_state()
+      drm/atomic: Document __drm_planes_state state pointer
+      drm/atomic: Convert drm_atomic_get_crtc_state() to use new connector state
+      drm/ingenic: ipu: Switch to drm_atomic_get_new_crtc_state()
+      drm/arm/malidp: Switch to drm_atomic_get_new_crtc_state()
+      drm/armada: Drop always true condition in atomic_check
+      drm/armada: Switch to drm_atomic_get_new_crtc_state()
+      drm/atmel-hlcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/exynos: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dc: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dcss: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-ipuv3: Switch to drm_atomic_get_new_crtc_state()
+      drm/ingenic: Switch to drm_atomic_get_new_crtc_state()
+      drm/kmb: Switch to drm_atomic_get_new_crtc_state()
+      drm/logicvc: Switch to drm_atomic_get_new_crtc_state()
+      drm/loongson: Switch to drm_atomic_get_new_crtc_state()
+      drm/mediatek: Switch to drm_atomic_get_new_crtc_state()
+      drm/msm/mdp5: Switch to drm_atomic_get_new_crtc_state()
+      drm/omap: Switch to drm_atomic_get_new_crtc_state()
+      drm/rockchip: Switch to drm_atomic_get_new_crtc_state()
+      drm/sun4i: Switch to drm_atomic_get_new_crtc_state()
+      drm/tegra: Switch to drm_atomic_get_new_crtc_state()
+      drm/tilcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/vboxvideo: Switch to drm_atomic_get_new_crtc_state()
+      drm/vc4: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Switch to drm_atomic_get_new_crtc_state()
+      drm/framebuffer: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Remove unused drm_atomic_get_existing_crtc_state()
+      drm/atomic: Document __drm_crtcs_state state pointer
+      drm/ingenic: crtc: Switch to ingenic_drm_get_new_priv_state()
+      drm/atomic: Convert drm_atomic_get_private_obj_state() to use new plane state
+      drm/atomic: Document __drm_private_objs_state state pointer
+
+ drivers/gpu/drm/arm/malidp_planes.c             |   2 +-
+ drivers/gpu/drm/armada/armada_plane.c           |   9 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+ drivers/gpu/drm/drm_atomic.c                    |  21 ++--
+ drivers/gpu/drm/drm_framebuffer.c               |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c       |   2 +-
+ drivers/gpu/drm/imx/dc/dc-plane.c               |   2 +-
+ drivers/gpu/drm/imx/dcss/dcss-plane.c           |   4 +-
+ drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c         |   3 +-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c       |   5 +-
+ drivers/gpu/drm/ingenic/ingenic-ipu.c           |   4 +-
+ drivers/gpu/drm/kmb/kmb_plane.c                 |   3 +-
+ drivers/gpu/drm/logicvc/logicvc_layer.c         |   4 +-
+ drivers/gpu/drm/loongson/lsdc_plane.c           |   2 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c            |   3 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c      |   7 +-
+ drivers/gpu/drm/omapdrm/omap_plane.c            |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |   6 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c    |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c          |   3 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c          |   3 +-
+ drivers/gpu/drm/tegra/dc.c                      |   2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c            |   9 +-
+ drivers/gpu/drm/tilcdc/tilcdc_plane.c           |   3 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c           |   8 +-
+ drivers/gpu/drm/vc4/vc4_plane.c                 |   6 +-
+ drivers/gpu/drm/vkms/vkms_crtc.c                |   4 +-
+ include/drm/drm_atomic.h                        | 144 ++++++++++++------------
+ 28 files changed, 126 insertions(+), 141 deletions(-)
+---
+base-commit: 2a1eea8fd601db4c52f0d14f8871663b7b052c91
+change-id: 20250825-drm-no-more-existing-state-9b3252c1a33b
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
