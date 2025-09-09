@@ -1,130 +1,166 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2352E888F
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 18:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED52F6162
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 19:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757443566; cv=none; b=gsb+gk6XPezue5oMgt/S4K6xGNE3Qfip0XgYHWPp8cU9iGInsHtVLvOm9mkNdrw61w9x+WG+8pWHHcz16p6wCaGgP6io4Yo4z6haYcThL8qCy2rAEmb0nviKormLU6BiTREgbu21md4iMC9eCJmy5JeQj2yMMMdFvkLoHCQ/oM4=
+	t=1757444596; cv=none; b=FORYmm/20qDENLrUz3pdlk35LDpL/g9SkFULFjI3X+eURN0d6wGEbk9EiizQSc/zsT17FTVJQ5w69rPaJykqx5ceouetjhwjXwyTDaiT24pNrDkaUL1/iNRsQeRorBcjQnUhC247+8PZIIR93uP1ug9XAl+Bh9MBZZSSdfYenog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757443566; c=relaxed/simple;
-	bh=96PWMU27/jrXI2PVjuNvBWIsi+qKgC6GLk3JCeyEiAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dzNsonZt5e8S8gxKpzVWb379u1xpYbac1PEGF/xj5TR5NDqjN0dUMJC9L8ge3ezI7zNL9ZaAv1+5Pm28PPItWqbwCRKIg71qrO0KgbizAmaq19IiMVLhXKDt3avgMKYvtpGFGbYnvLxWk6wMMp+Y2wYobphbtAtqF3OTXxM/m0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LAxG5VzH; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757444596; c=relaxed/simple;
+	bh=EjNAaxQUenuK7EaRLOLrG29w1k9jNgb4H9oETUyneSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jqkFsN2ofkMwDmpPukXjze1BTvGDHhJGmK0eHVEA63Jy85cV3K0d680woUuDWFBiF8jF1CiYbXFMWYiJy+6SIG3d4bUOs7l1J9a5XfYaqJdn9GlSbXdIhJ1OndtS2aWYmpK60S3GiJB2yX6M4+STpoSMbrm9/U9+cbkfqWzsgHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SxMxsdIA; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LAxG5VzH"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b046b086599so109511266b.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 11:46:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SxMxsdIA"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45de2856648so14375e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 12:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757443563; x=1758048363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sbgtE9csO6Cvgxlo8b8Cy8qgsxjaxLMfDvbV/GRdzeA=;
-        b=LAxG5VzHV79ivAapLxx8qvj5C6R9vJ0oenYiGuG1kYc/0UkToCZ7R90/wubKRcmNY3
-         JNxnghhA2/ebzIE4gscYjcILh1WlDw5OW2fRLD0Jtjha00yDbS3OLNCcTHJt1WMHmL62
-         9XCFORCImaN+bhfZPXoUJqkj3ZlAerI8iI2sktfRnULDZ7I0Cw8cec3lzj5hoVco1f9v
-         4d3zXsEwaDc+xFvoC0LEYrZLj5Mn7whx4Z2E8KOIpyJqc/KwZiRXfMYOb2Wmp0XJIUIA
-         87RQYj06zeOwzMSzXigd3KEHpBbs2xoH8ONFBV7Rhp48CO4iehboaEGBfd1NnyDSMHQz
-         NeKQ==
+        d=google.com; s=20230601; t=1757444593; x=1758049393; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=833QCxEdhL0JSxB6O316FiCLruN7/IzPCiKaaovTmfQ=;
+        b=SxMxsdIAziFLJ3nO58KARGnaHsBsUcDIzZs4D7gHk3DLYhU39nd5BcAQIoURV7i18V
+         DWdSg8TfhekpUA46Bc6F733rCfUZBQidl43n7RY0mh8OVvMY1BysS5/kc/Cve/BHst9z
+         IQQc+FaJQeLpSDgn8KWciq7uiGh16c140+s4a51NY3PCZ6U6bWsH3vYh4d1YvUCkoOQ1
+         mjpMK9j+p7kQVZPDG4hsjdmgsabhtF3bn6L18XOS+fzYe+kwKYCiYdUnbj/tEjFIZLvQ
+         TbX13csc1ZUwuoFmxZVpIaylBjeZScDsG+V+kQnmwN5k8pT8qCN1rVCr1xh59iiBYwkm
+         jrxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757443563; x=1758048363;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sbgtE9csO6Cvgxlo8b8Cy8qgsxjaxLMfDvbV/GRdzeA=;
-        b=cWoNP1T/W9rwQ/tT6GHajFCWzIsDWEqpdDqR7yk2ArNGr6Ig67u+ZmidkZfAM8bivm
-         R7SF58p+Mj7mrSTDNMlFPdtbJOod98+EutooHbGL0g3CcwzchpmkCpTIqHYxGMU50tF+
-         d3aXsSyfUCqlGPelICzNvZE9xtA//D/YCDxDfC2s4bYBWI4e/jhv/opH2Hy4ZVl1yjLY
-         mmJnm7jg8hLjEB6Q08nSe8B5b1jWukfZPRKZxrqV3TsZ2bUfWMJX4oLtkZdN1nOJkVV4
-         wQGzTQSvo0fTl0bLSNDzNyCTXthTfPqnrcTJfQ+WaVZ/V+7rM/xyGp0qcJu33P8WJZr0
-         nWuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJCYa2w4QckcgY27sr9BMX/+Ykw79k82bwkceA7UwxUMs9bLljs+0P6snbEKRpyhKiL+nhmgaPLjt+R9T5iVs8Qg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze2eelK1PZSJSW3UIJ9wIq1jloUHHnvQVRLP/0+5zym513+4xb
-	07ItW14BfSqw2f9HM+6fzo5lxqfGCvx5BWdmacuYkayNYz28rZVR5XPlvRrhsATco6w=
-X-Gm-Gg: ASbGncv3B8ZDYlWjjDLc/cS/zuvloOTijOI2w2kFycgimg3xuaRNNykHUx72GNcenly
-	llBwdt0mSCenxxn2jXQ+oQvXXoolAj5GMzsM8AVXvJdD4USublvYCPGZva6giFuZ9J9TC1JvWKB
-	MNKygtSMrP/BF83ttUM3jrq5z7jhevgmJmeuT1e1/LyMJCELorgaXq0VMjnmJP/LABt6PXFddVr
-	G/eh8rIAsfFQL2vjtHgYiB1uybliL0x9M9CHHuKjmp/nH5Ipax74FAxcVr91ONrOdZbyX1OZX+B
-	jJXomu5R27940DYywlSRAkAI8rtTFXvD0B+unv8ckBtdgOnf2dhYpqT5731QtSvyo0vhWqL0K17
-	pC2yt4L8kfG/FUGoJAaqtrdqewHSi4c+nmxtd3JAtZG+16A4paDt+JKY=
-X-Google-Smtp-Source: AGHT+IF9qmGIbHHgyLkF+cuxfT/tBA4kZKk5q6FFmJEiexmBUNMRyqAXcs52z+BMBR9gWhKpKR+C/Q==
-X-Received: by 2002:a17:907:60cc:b0:afe:ee31:4b93 with SMTP id a640c23a62f3a-b04b10a4accmr652443266b.0.1757443562945;
-        Tue, 09 Sep 2025 11:46:02 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0783046d34sm35399566b.6.2025.09.09.11.46.01
+        d=1e100.net; s=20230601; t=1757444593; x=1758049393;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=833QCxEdhL0JSxB6O316FiCLruN7/IzPCiKaaovTmfQ=;
+        b=Gaqd1+RrDyoH9nw1LjNN8ppyk63QhbLjSyzu4bQjrVefp3fRwb9zb50lpWvt5LfsAH
+         +IEG/FVbDGhs/akZxmNwW4ee53t07KpM39Oz0w+J/uXNcPaXKbkUzsT3+ik0JwYQ61aW
+         F/uXP0w9jNLVlaO431NYBhn2JCsOjQKlgCJD3OBcVWp2POrbMDKcsE3nviXGE8K+n9YZ
+         a2OHbsf/oD2eaMPrZ80LxD+22eYYHzPAXZ803wFfuyjZlb5UiY7goi+/CQtWmHg8EHhT
+         9Dyf7KufAgb/Qyh1fTEg+4bp88zFpdCABI9iQJF9c1IXtktRHX+T79qnjXcfVpBBq+7z
+         /Z8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPZshpw3wrK6hL9N2wqYAzQ+pn+Ydi763XUNpXtsxd1I3YlXbwmDjrBFuzmDi9U+ryf44NOBr4XTZEwHoek26wTQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIHHFsSnIK4/zEA4TbJt9pzPGTZvJyEQWxX+HkJmk2fU7jo3eS
+	CM7VfDIfEUBgJAygNY7/Dc9jITEae8p5JUBfU7ppyfxGAi3R1ieRmdNaH0YTexI3Ww==
+X-Gm-Gg: ASbGnctoCU4D25o7ZR71PtHIx0MXrh4xLhQ5UiFe/Xeln48om2pQWm99+F6RNt0YNnR
+	BHy7lZPMKPJgw8v/JFKYtGhasm1qEUAlH0zZrD37tHxyzsTYaT13Go7/+vYP6zSKKSEvv7KfX4K
+	zAbK/idQmn8c7fMri6Vl7+4NkEC6vylPDyBY4hjsfoe2W6KlC6JYutzMiZHGvRGLvZK+z800aMR
+	YQ8gq7+qr/BzBM1oq71n4wa0f30v0h67K8I/H7GJsrjUzucZ+buxLqqqcAXA+Zq3+r58UgVb/0+
+	Ni0UErycKbypFUDncBUdX+PB1yc7lzawW0QZUELBKTzGPRbcAyYrq9MbEZI9e/OFaoYfaHYzdSw
+	GrUIF15mdNVRxDiHPFULoBwrKVYZeikgvj+vBilD4qBk3ypmytdtPAqUey6p5x0PC6l4gP1fzgf
+	zgiw==
+X-Google-Smtp-Source: AGHT+IF/7Gke/uEJRI8ZanBW5R1zgvfkJ5RRqnaXdfg0LKuZIsEThOsZZRdKhI2pCuXyyI5lT2W0qg==
+X-Received: by 2002:a05:600c:5c3:b0:43d:409c:6142 with SMTP id 5b1f17b1804b1-45df73eb3a0mr156745e9.0.1757444590528;
+        Tue, 09 Sep 2025 12:03:10 -0700 (PDT)
+Received: from google.com (26.38.155.104.bc.googleusercontent.com. [104.155.38.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea47sm3592410f8f.46.2025.09.09.12.03.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:46:02 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	soc@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM: dts: samsung: dts for v6.18
-Date: Tue,  9 Sep 2025 20:45:58 +0200
-Message-ID: <20250909184559.105777-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+        Tue, 09 Sep 2025 12:03:05 -0700 (PDT)
+Date: Tue, 9 Sep 2025 19:03:01 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
+Message-ID: <aMB55Rhn9M_DvBab@google.com>
+References: <20250905162446.88987-1-smostafa@google.com>
+ <CADrjBPqH==y5KaN6oBnGJ8407gx31sGVEFqqNdz8NG_vPuNPYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1462; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=96PWMU27/jrXI2PVjuNvBWIsi+qKgC6GLk3JCeyEiAg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHXnwqcshQhMcnuW6z945CPT+bxhcKDTjVPRJ
- pSWTYWfHrmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMB15wAKCRDBN2bmhouD
- 1zUdD/wN+EBFSwGSxuGwG1tuhq5rNoCYRiolY1hHazJfxBx0abVi8Ilgrp0VoAWG5kZW8Jq+wTc
- QTTQoqHCyv4RKvO0jKM5gNCEWFMw1fhyO8k393+Ct+aGDCpbP1IbZZtfx3t3Zzs4D1gCXDH6T40
- jVWun62rnKoj3YKcyvic0Whd7ABzCRfNuXmDvgCLdEW9rqPUBNty/kpShQZTc3Md3Oqm5z1guUI
- OeVkU4ZKuX0IQBoZZQ8ODIVf1SiRtMyr289ULGsTBe713UsZfTBwxL4XVlVaZ7qA5PUSVJtioCV
- CL74u9paL/IB/6h8/KCxN5r0pIaKHU/NLrOEqpgg7NycD5m595Uwaw5FuB6F5fphQ8WaDLVuSC/
- 7e58lPDbPHOKQ6fpTTlGGPJegDmTDrp4pnRmKCTzwnO2EjayT7tKpjvrlBg+OqnZOM0qfi0vsP8
- sHaza3Vm1GXFIQmaMkedoebzzjDUmVBG9WyxtnJEMbbuxZesUK35A00qjAvo1pBWm3+3mrHMDc9
- 6XlBUm67Sk18/hrFeDi+Of/AMke7AWftXc4n+ZBRgYEcYj5gc4UdLzL3TyXT9PS7v3hiRhRf4+c
- dKLibr+/ix3V32BBRNSWoDGZ4AoUaLQPboAZxi1xy8y8FsWOW0nOTxOCcKm6JaORP4XrrTruBCv VxkqT4s/l9dTxDQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADrjBPqH==y5KaN6oBnGJ8407gx31sGVEFqqNdz8NG_vPuNPYw@mail.gmail.com>
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Hi Peter,
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+On Tue, Sep 09, 2025 at 12:14:51PM +0100, Peter Griffin wrote:
+> Hi Mostafa,
+> 
+> Thanks for your patch and bug report, it's great to see more folks
+> running upstream Pixel 6 :)
+> 
+> On Fri, 5 Sept 2025 at 17:25, Mostafa Saleh <smostafa@google.com> wrote:
+> >
+> > Booting the kernel on Pixel-6 with `CONFIG_DEBUG_PREEMPT` prints the
+> > following WARN:
+> >
+> > [    0.784187][    T1] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+> > [    0.784328][    T1] caller is debug_smp_processor_id+0x20/0x30
+> > [    0.784433][    T1] CPU: 6 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc4-gd69eb204c255 #1 PREEMPT
+> > [    0.784439][    T1] Hardware name: Oriole (DT)
+> > [    0.784441][    T1] Call trace:
+> > [    0.784443][    T1]  show_stack+0x34/0xa0 (C)
+> > [    0.784453][    T1]  dump_stack_lvl+0x7c/0xb0
+> > [    0.784460][    T1]  dump_stack+0x18/0x24
+> > [    0.784464][    T1]  check_preemption_disabled+0xf8/0x100
+> > [    0.784470][    T1]  debug_smp_processor_id+0x20/0x30
+> > [    0.784476][    T1]  gs101_cpuhp_pmu_online+0x40/0x108
+> > [    0.784483][    T1]  cpuhp_invoke_callback+0x188/0x2d8
+> > [    0.784490][    T1]  cpuhp_issue_call+0xec/0x240
+> > [    0.784494][    T1]  __cpuhp_setup_state_cpuslocked+0x140/0x2c0
+> > [    0.784499][    T1]  __cpuhp_setup_state+0x58/0x88
+> > [    0.784504][    T1]  exynos_pmu_probe+0x2a4/0x380
+> > [    0.784508][    T1]  platform_probe+0x64/0xd0
+> > [    0.784516][    T1]  really_probe+0xd0/0x3b0
+> > [    0.784520][    T1]  __driver_probe_device+0x8c/0x170
+> > [    0.784524][    T1]  driver_probe_device+0x44/0x140
+> > [    0.784528][    T1]  __device_attach_driver+0xd8/0x180
+> > [    0.784532][    T1]  bus_for_each_drv+0x90/0xf8
+> > [    0.784536][    T1]  __device_attach+0xa8/0x1d0
+> > [    0.784540][    T1]  device_initial_probe+0x1c/0x30
+> > [    0.784544][    T1]  bus_probe_device+0xb4/0xc0
+> > [    0.784547][    T1]  device_add+0x4d0/0x700
+> > [    0.784550][    T1]  of_device_add+0x4c/0x78
+> > [    0.784556][    T1]  of_platform_device_create_pdata+0x9c/0x148
+> > [    0.784560][    T1]  of_platform_bus_create+0x1d0/0x370
+> > [    0.784563][    T1]  of_platform_bus_create+0x234/0x370
+> > [    0.784567][    T1]  of_platform_populate+0x84/0x178
+> > [    0.784571][    T1]  of_platform_default_populate_init+0xf0/0x120
+> > [    0.784579][    T1]  do_one_initcall+0x68/0x2d0
+> > [    0.784585][    T1]  kernel_init_freeable+0x2d8/0x358
+> > [    0.784589][    T1]  kernel_init+0x28/0x168
+> > [    0.784595][    T1]  ret_from_fork+0x10/0x20
+> >
+> > As this value is only read once, it doesn't require to be stable, so
+> > just use "raw_smp_processor_id" instead.
+> 
+> Can I ask what baseline you are running when you see this warning?
+> 
+> As this code got refactored recently in commit 78b72897a5c8 ("soc:
+> samsung: exynos-pmu: Enable CPU Idle for gs101") which is present in
+> linux-next but hasn't made its way to a proper release yet. After this
+> patch smp_processor_id() is always called with a raw_spin_lock() held
+> (so this warning shouldn't fire).
+> 
+> I just built next-20250909 locally to confirm, and with the above
+> patch reverted I see the warning you mention. So in summary I think
+> the issue has already been fixed by the above commit.
 
-are available in the Git repository at:
+I am on commit
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.18
+commit d69eb204c255c35abd9e8cb621484e8074c75eaa
+Merge: 68f285e26478 9b2bfdbf43ad
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu Sep 4 09:59:15 2025 -0700
 
-for you to fetch changes up to d19b1773362adfe8c0d5ccc4faf6aea0249976a6:
+    Merge tag 'net-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
 
-  ARM: dts: samsung: smdk5250: add sromc node (2025-09-08 09:35:51 +0200)
 
-----------------------------------------------------------------
-Samsung DTS ARM changes for v6.18
+Which doesn't have the commit you mentioned as it is in the Maintainer's
+tree, thanks for pointing that.
 
-1. Drop S3C2416 SoC from bindings, because it was removed from kernel
-   in 2023.
+Thanks,
+Mostafa
 
-2. Add Ethernet attached via SROM controller (memory bus) on SMDK5250.
-   This wasn't tested, but code should work just like it is working on
-   Exynos5410-based boards.
-
-----------------------------------------------------------------
-Henrik Grimler (3):
-      ARM: dts: samsung: exynos5410: use multiple tuples for sromc ranges
-      ARM: dts: samsung: exynos5250: describe sromc bank memory map
-      ARM: dts: samsung: smdk5250: add sromc node
-
-Krzysztof Kozlowski (1):
-      dt-bindings: arm: samsung: Drop S3C2416
-
- .../bindings/arm/samsung/samsung-boards.yaml       |  6 ----
- arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts  | 37 ++++++++++++++++++++++
- arch/arm/boot/dts/samsung/exynos5250.dtsi          |  9 ++++++
- arch/arm/boot/dts/samsung/exynos5410.dtsi          |  8 ++---
- 4 files changed, 50 insertions(+), 10 deletions(-)
+> 
+> Thanks,
+> 
+> Peter
