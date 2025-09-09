@@ -1,74 +1,55 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED52F6162
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 19:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6023054F0
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 20:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757444596; cv=none; b=FORYmm/20qDENLrUz3pdlk35LDpL/g9SkFULFjI3X+eURN0d6wGEbk9EiizQSc/zsT17FTVJQ5w69rPaJykqx5ceouetjhwjXwyTDaiT24pNrDkaUL1/iNRsQeRorBcjQnUhC247+8PZIIR93uP1ug9XAl+Bh9MBZZSSdfYenog=
+	t=1757449360; cv=none; b=MSRcZw5ZFY/vqTemo5+2GKO1yJzda1y553OVvU4sT3DPQiLtdgKroBTsPDCGMZBnOu+2jtAndRYLMNXJmxhX1Ic1DgNtUkOq+qgFfPiB6zSbizcG1oEvvz/mURZWRLb91UX/7H/Y06t29Ahy9XanD5BWgNmZ4QCjLeA7sbQn6KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757444596; c=relaxed/simple;
-	bh=EjNAaxQUenuK7EaRLOLrG29w1k9jNgb4H9oETUyneSs=;
+	s=arc-20240116; t=1757449360; c=relaxed/simple;
+	bh=j/6fyTntaQ6oHvCPqHXXtCXsIY2tT3B17DcVLU+R5RY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jqkFsN2ofkMwDmpPukXjze1BTvGDHhJGmK0eHVEA63Jy85cV3K0d680woUuDWFBiF8jF1CiYbXFMWYiJy+6SIG3d4bUOs7l1J9a5XfYaqJdn9GlSbXdIhJ1OndtS2aWYmpK60S3GiJB2yX6M4+STpoSMbrm9/U9+cbkfqWzsgHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SxMxsdIA; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CF0f0qoTu9IbIy11KHh93Y04URdV/nOSZh7ZcNuotAxEJNvzMiwX37HJd2wOUCshuB6Zl8S7Z0JE0NDRhS/p3MkaohmcFn1UTOtSXGlgEc4kYVeUM1/qOXD1DxKYLO8hVzVIWJmmsNxnQjpuxmmVyHdHE3Na5VMs8Zykv6fTyjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=IkyrOxuq; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SxMxsdIA"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45de2856648so14375e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 12:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757444593; x=1758049393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=833QCxEdhL0JSxB6O316FiCLruN7/IzPCiKaaovTmfQ=;
-        b=SxMxsdIAziFLJ3nO58KARGnaHsBsUcDIzZs4D7gHk3DLYhU39nd5BcAQIoURV7i18V
-         DWdSg8TfhekpUA46Bc6F733rCfUZBQidl43n7RY0mh8OVvMY1BysS5/kc/Cve/BHst9z
-         IQQc+FaJQeLpSDgn8KWciq7uiGh16c140+s4a51NY3PCZ6U6bWsH3vYh4d1YvUCkoOQ1
-         mjpMK9j+p7kQVZPDG4hsjdmgsabhtF3bn6L18XOS+fzYe+kwKYCiYdUnbj/tEjFIZLvQ
-         TbX13csc1ZUwuoFmxZVpIaylBjeZScDsG+V+kQnmwN5k8pT8qCN1rVCr1xh59iiBYwkm
-         jrxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757444593; x=1758049393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=833QCxEdhL0JSxB6O316FiCLruN7/IzPCiKaaovTmfQ=;
-        b=Gaqd1+RrDyoH9nw1LjNN8ppyk63QhbLjSyzu4bQjrVefp3fRwb9zb50lpWvt5LfsAH
-         +IEG/FVbDGhs/akZxmNwW4ee53t07KpM39Oz0w+J/uXNcPaXKbkUzsT3+ik0JwYQ61aW
-         F/uXP0w9jNLVlaO431NYBhn2JCsOjQKlgCJD3OBcVWp2POrbMDKcsE3nviXGE8K+n9YZ
-         a2OHbsf/oD2eaMPrZ80LxD+22eYYHzPAXZ803wFfuyjZlb5UiY7goi+/CQtWmHg8EHhT
-         9Dyf7KufAgb/Qyh1fTEg+4bp88zFpdCABI9iQJF9c1IXtktRHX+T79qnjXcfVpBBq+7z
-         /Z8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUPZshpw3wrK6hL9N2wqYAzQ+pn+Ydi763XUNpXtsxd1I3YlXbwmDjrBFuzmDi9U+ryf44NOBr4XTZEwHoek26wTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIHHFsSnIK4/zEA4TbJt9pzPGTZvJyEQWxX+HkJmk2fU7jo3eS
-	CM7VfDIfEUBgJAygNY7/Dc9jITEae8p5JUBfU7ppyfxGAi3R1ieRmdNaH0YTexI3Ww==
-X-Gm-Gg: ASbGnctoCU4D25o7ZR71PtHIx0MXrh4xLhQ5UiFe/Xeln48om2pQWm99+F6RNt0YNnR
-	BHy7lZPMKPJgw8v/JFKYtGhasm1qEUAlH0zZrD37tHxyzsTYaT13Go7/+vYP6zSKKSEvv7KfX4K
-	zAbK/idQmn8c7fMri6Vl7+4NkEC6vylPDyBY4hjsfoe2W6KlC6JYutzMiZHGvRGLvZK+z800aMR
-	YQ8gq7+qr/BzBM1oq71n4wa0f30v0h67K8I/H7GJsrjUzucZ+buxLqqqcAXA+Zq3+r58UgVb/0+
-	Ni0UErycKbypFUDncBUdX+PB1yc7lzawW0QZUELBKTzGPRbcAyYrq9MbEZI9e/OFaoYfaHYzdSw
-	GrUIF15mdNVRxDiHPFULoBwrKVYZeikgvj+vBilD4qBk3ypmytdtPAqUey6p5x0PC6l4gP1fzgf
-	zgiw==
-X-Google-Smtp-Source: AGHT+IF/7Gke/uEJRI8ZanBW5R1zgvfkJ5RRqnaXdfg0LKuZIsEThOsZZRdKhI2pCuXyyI5lT2W0qg==
-X-Received: by 2002:a05:600c:5c3:b0:43d:409c:6142 with SMTP id 5b1f17b1804b1-45df73eb3a0mr156745e9.0.1757444590528;
-        Tue, 09 Sep 2025 12:03:10 -0700 (PDT)
-Received: from google.com (26.38.155.104.bc.googleusercontent.com. [104.155.38.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea47sm3592410f8f.46.2025.09.09.12.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 12:03:05 -0700 (PDT)
-Date: Tue, 9 Sep 2025 19:03:01 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Subject: Re: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
-Message-ID: <aMB55Rhn9M_DvBab@google.com>
-References: <20250905162446.88987-1-smostafa@google.com>
- <CADrjBPqH==y5KaN6oBnGJ8407gx31sGVEFqqNdz8NG_vPuNPYw@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="IkyrOxuq"
+Date: Tue, 9 Sep 2025 22:22:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1757449345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jYE/ue6mADXQrf7ouwlsqqjbpynWqExFMHTfxRWVhAg=;
+	b=IkyrOxuqH8EDnr5p1a+FjxAvbR039kgBV4FDoQo1wJcLHFjIx35XQOOMgc3T0zKys1K9D+
+	ihpu6/AfUfJEPZpDZoseBrdlgmjNfWrPSkB0GhT/dGNXLfH7/EtLJijRrQIdl7UCi52Txb
+	rQecZgCu1beEGaeMYBvVqep2it3D8oE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] ARM: dts: samsung: Add cache information to the
+ Exynos542x SoC
+Message-ID: <20250909202035.GA10879@localhost>
+References: <20240730091322.5741-1-linux.amoon@gmail.com>
+ <CGME20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659@eucas1p1.samsung.com>
+ <20240730091322.5741-2-linux.amoon@gmail.com>
+ <09e9cf0b-27fd-46b8-8631-87d798afd19e@samsung.com>
+ <CANAwSgT_TOFwP80+H8-CdXDLLu+u2XZMr2dnxcsSDe8S5yeYCw@mail.gmail.com>
+ <a41a6143-ef2e-4d86-b102-eaf442985173@kernel.org>
+ <CANAwSgSbSgXwOQLrVrHD7jpDe0=Bq7r2K8p0JjvZJMPpVNq4XQ@mail.gmail.com>
+ <d72d7927-079a-4a82-a298-db9ed70a816f@kernel.org>
+ <CANAwSgSgK5hmcLg7sChAs7QL0x7wufHpWDZJFyw6tMiiOuDZeg@mail.gmail.com>
+ <CANAwSgRTM4OSnXKZWWzxi2cW8QwWLKJz2xmUThyLkdkq71rH1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -77,90 +58,144 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADrjBPqH==y5KaN6oBnGJ8407gx31sGVEFqqNdz8NG_vPuNPYw@mail.gmail.com>
+In-Reply-To: <CANAwSgRTM4OSnXKZWWzxi2cW8QwWLKJz2xmUThyLkdkq71rH1g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Peter,
+Hi Anand,
 
-On Tue, Sep 09, 2025 at 12:14:51PM +0100, Peter Griffin wrote:
-> Hi Mostafa,
+Thanks for working on this!
+
+On Tue, Sep 09, 2025 at 07:29:31PM +0530, Anand Moon wrote:
+[ ... ]
+> > > >>>> On 30.07.2024 11:13, Anand Moon wrote:
+> > > >>>>> As per the Exynos 5422 user manual add missing cache information to
+> > > >>>>> the Exynos542x SoC.
+> > > >>>>>
+> > > >>>>> - Each Cortex-A7 core has 32 KB of instruction cache and
+> > > >>>>>       32 KB of L1 data cache available.
+> > > >>>>> - Each Cortex-A15 core has 32 KB of L1 instruction cache and
+> > > >>>>>       32 KB of L1 data cache available.
+> > > >>>>> - The little (A7) cluster has 512 KB of unified L2 cache available.
+> > > >>>>> - The big (A15) cluster has 2 MB of unified L2 cache available.
+> > > >>>>>
+> > > >>>>> Features:
+> > > >>>>> - Exynos 5422 support cache coherency interconnect (CCI) bus with
+> > > >>>>>    L2 cache snooping capability. This hardware automatic L2 cache
+> > > >>>>>    snooping removes the efforts of synchronizing the contents of the
+> > > >>>>>    two L2 caches in core switching event.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > >>>>
+> > > >>>>
+> > > >>>> The provided values are not correct. Please refer to commit 5f41f9198f29
+> > > >>>> ("ARM: 8864/1: Add workaround for I-Cache line size mismatch between CPU
+> > > >>>> cores"), which adds workaround for different l1 icache line size between
+> > > >>>> big and little CPUs. This workaround gets enabled on all Exynos542x/5800
+> > > >>>> boards.
+> > > >>>>
+> > > >>> Ok, I have just referred to the Exynos 5422 user manual for this patch,
+> > > >>> This patch is just updating the cache size for CPU for big.litle architecture..
+
+I do not have access to the 5422 manual unfortunately, but if I add
+some prints in the code from the commit Marek referenced:
+
+```diff
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -173,6 +173,7 @@ void check_cpu_icache_size(int cpuid)
+        asm("mrc p15, 0, %0, c0, c0, 1" : "=r" (ctr));
+ 
+        size = 1 << ((ctr & 0xf) + 2);
++       pr_warn("CPU%u: icache line size: %u, size %u\n", cpuid, icache_size, size);
+        if (cpuid != 0 && icache_size != size)
+                pr_info("CPU%u: detected I-Cache line size mismatch, workaround enabled\n",
+                        cpuid);
+```
+
+Then we get in dmesg:
+
+CPU0: icache line size: 64, size 32
+CPU1: icache line size: 32, size 32
+CPU2: icache line size: 32, size 32
+CPU3: icache line size: 32, size 32
+CPU4: icache line size: 32, size 64
+CPU5: icache line size: 32, size 64
+CPU6: icache line size: 32, size 64
+CPU7: icache line size: 32, size 64
+
+I interpret this as that the i-cache-line-size property of CPU4, 5, 6
+and 7 (i.e. cpu@0, cpu@1, cpu@2 and cpu@4) should be 64 instead of 32.
+
+Not sure about the other properties..
+
+> Here's an article that provides detailed insights into the cache feature.
+> [0] http://jake.dothome.co.kr/cache4/
 > 
-> Thanks for your patch and bug report, it's great to see more folks
-> running upstream Pixel 6 :)
+> The values associated with L1 and L2 caches indicate their respective sizes,
+> as specified in the ARM Technical Reference Manual (TRM) below.
 > 
-> On Fri, 5 Sept 2025 at 17:25, Mostafa Saleh <smostafa@google.com> wrote:
-> >
-> > Booting the kernel on Pixel-6 with `CONFIG_DEBUG_PREEMPT` prints the
-> > following WARN:
-> >
-> > [    0.784187][    T1] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-> > [    0.784328][    T1] caller is debug_smp_processor_id+0x20/0x30
-> > [    0.784433][    T1] CPU: 6 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc4-gd69eb204c255 #1 PREEMPT
-> > [    0.784439][    T1] Hardware name: Oriole (DT)
-> > [    0.784441][    T1] Call trace:
-> > [    0.784443][    T1]  show_stack+0x34/0xa0 (C)
-> > [    0.784453][    T1]  dump_stack_lvl+0x7c/0xb0
-> > [    0.784460][    T1]  dump_stack+0x18/0x24
-> > [    0.784464][    T1]  check_preemption_disabled+0xf8/0x100
-> > [    0.784470][    T1]  debug_smp_processor_id+0x20/0x30
-> > [    0.784476][    T1]  gs101_cpuhp_pmu_online+0x40/0x108
-> > [    0.784483][    T1]  cpuhp_invoke_callback+0x188/0x2d8
-> > [    0.784490][    T1]  cpuhp_issue_call+0xec/0x240
-> > [    0.784494][    T1]  __cpuhp_setup_state_cpuslocked+0x140/0x2c0
-> > [    0.784499][    T1]  __cpuhp_setup_state+0x58/0x88
-> > [    0.784504][    T1]  exynos_pmu_probe+0x2a4/0x380
-> > [    0.784508][    T1]  platform_probe+0x64/0xd0
-> > [    0.784516][    T1]  really_probe+0xd0/0x3b0
-> > [    0.784520][    T1]  __driver_probe_device+0x8c/0x170
-> > [    0.784524][    T1]  driver_probe_device+0x44/0x140
-> > [    0.784528][    T1]  __device_attach_driver+0xd8/0x180
-> > [    0.784532][    T1]  bus_for_each_drv+0x90/0xf8
-> > [    0.784536][    T1]  __device_attach+0xa8/0x1d0
-> > [    0.784540][    T1]  device_initial_probe+0x1c/0x30
-> > [    0.784544][    T1]  bus_probe_device+0xb4/0xc0
-> > [    0.784547][    T1]  device_add+0x4d0/0x700
-> > [    0.784550][    T1]  of_device_add+0x4c/0x78
-> > [    0.784556][    T1]  of_platform_device_create_pdata+0x9c/0x148
-> > [    0.784560][    T1]  of_platform_bus_create+0x1d0/0x370
-> > [    0.784563][    T1]  of_platform_bus_create+0x234/0x370
-> > [    0.784567][    T1]  of_platform_populate+0x84/0x178
-> > [    0.784571][    T1]  of_platform_default_populate_init+0xf0/0x120
-> > [    0.784579][    T1]  do_one_initcall+0x68/0x2d0
-> > [    0.784585][    T1]  kernel_init_freeable+0x2d8/0x358
-> > [    0.784589][    T1]  kernel_init+0x28/0x168
-> > [    0.784595][    T1]  ret_from_fork+0x10/0x20
-> >
-> > As this value is only read once, it doesn't require to be stable, so
-> > just use "raw_smp_processor_id" instead.
+> Cortex-A15 L2 cache controller
+> [0] https://developer.arm.com/documentation/ddi0503/i/programmers-model/programmable-peripherals-and-interfaces/cortex-a15-l2-cache-controller
 > 
-> Can I ask what baseline you are running when you see this warning?
+> Cortex-A7 L2 cache controller
+> [1] https://developer.arm.com/documentation/ddi0503/i/programmers-model/programmable-peripherals-and-interfaces/cortex-a7-l2-cache-controller
 > 
-> As this code got refactored recently in commit 78b72897a5c8 ("soc:
-> samsung: exynos-pmu: Enable CPU Idle for gs101") which is present in
-> linux-next but hasn't made its way to a proper release yet. After this
-> patch smp_processor_id() is always called with a raw_spin_lock() held
-> (so this warning shouldn't fire).
+> These changes help define a fixed cache size, ensuring that active pages
+> are mapped correctly within the expected cache boundaries.
 > 
-> I just built next-20250909 locally to confirm, and with the above
-> patch reverted I see the warning you mention. So in summary I think
-> the issue has already been fixed by the above commit.
-
-I am on commit
-
-commit d69eb204c255c35abd9e8cb621484e8074c75eaa
-Merge: 68f285e26478 9b2bfdbf43ad
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu Sep 4 09:59:15 2025 -0700
-
-    Merge tag 'net-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-
-
-Which doesn't have the commit you mentioned as it is in the Maintainer's
-tree, thanks for pointing that.
-
-Thanks,
-Mostafa
-
+> Here is the small test case using perf
+> Before
 > 
-> Thanks,
+> $ sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
 > 
-> Peter
+> Simulated Cache Miss Time (avg): 4766632 ns
+> Factorial(10) = 3628800
+> 
+>  Performance counter stats for './fact':
+> 
+>             926328      armv7_cortex_a15/L1-dcache-loads/
+>      <not counted>      armv7_cortex_a7/L1-dcache-loads/
+>                          (0.00%)
+>              16510      armv7_cortex_a15/L1-dcache-load-misses/ #
+> 1.78% of all L1-dcache accesses
+>      <not counted>      armv7_cortex_a7/L1-dcache-load-misses/
+>                                (0.00%)
+> 
+>        0.008970031 seconds time elapsed
+> 
+>        0.000000000 seconds user
+>        0.009673000 seconds sys
+> 
+> After
+> $ sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+> Simulated Cache Miss Time (avg): 4623272 ns
+> Factorial(10) = 3628800
+> 
+>  Performance counter stats for './fact':
+> 
+>             930570      armv7_cortex_a15/L1-dcache-loads/
+>      <not counted>      armv7_cortex_a7/L1-dcache-loads/
+>                          (0.00%)
+>               4755      armv7_cortex_a15/L1-dcache-load-misses/ #
+> 0.51% of all L1-dcache accesses
+>      <not counted>      armv7_cortex_a7/L1-dcache-load-misses/
+>                                (0.00%)
+> 
+>        0.011068250 seconds time elapsed
+> 
+>        0.000000000 seconds user
+>        0.010793000 seconds sys
+
+I tried out the same test on my odroid-xu4, but was not able to
+reliably get the same improvement. Cache misses varied between around
+0.8 % to around 2.8 %. This was with a desktop UI installed and
+though, will try it out in a headless installation in the next few
+days, and perhaps try it on exynos5800 as well.
+
+Might be worth also testing on both small and big cores, like:
+
+$ sudo taskset -c 0,1,2,3 perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+$ sudo taskset -c 4,5,6,7 perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+
+Best regards,
+Henrik Grimler
