@@ -1,197 +1,259 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907A72FD1B6
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 18:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7723570B8;
+	Tue,  9 Sep 2025 18:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757440902; cv=none; b=jDCBLI4BcQHpN8Yyx26jZePgbyO9gmnf2UqJTCE0C8R3WmTBs8DI4fodVOIFtkDEbyjW8yRltenKRL61XCF+ZU5AheSUgQXe9K5NIX8R53Z8NMmovz6Jt8pxmDufo3kHNEBNWezuEApPcBdqOk/MVqcvIKdPSkLl1h6b33IE0t8=
+	t=1757441221; cv=none; b=Pkekunzu7idFAjlPuzM0diJq/6CPBm42mF24k2RQy6hzvU+htGAzQrHmvAH0Z+FBtoHLO24BQ7+Z2W4lTArKvOKiJKX4LjnImjP95TtU9BVdwltjs3xrM7f+LNlJsYmeqPqYnECHFvxBPPivjXWcK7Z9eqvJIbhDLUXr8n/594o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757440902; c=relaxed/simple;
-	bh=lPSneZP6QA4IVA2DA2vcr6ck9xWg1uRXp8PmH5pXh0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fyVU/72WsKkVK4nKHKUasfuC9I9+YKmXpAmZxhFScsYL8Jl13Eu5moZn+HafdJ8ggoPEkFXh/FbOGtXrrsqrEolH1FvMhsJX72or5WUtIAa7DMwzJRl0RH4EzGNwSisDgQsE4sOGjXiL7+P/bNwtu5jQjiem+E/WTznGpr52Opw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MfLEcX+T; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757441221; c=relaxed/simple;
+	bh=COUUp+dytOaa4h0pvUMtk0BvGhM37JjC6rq+LUDaqtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=enzhmKBC7rcCpokxz6uv7HGD1wsuWfjGe2osNe1vQE/Jw7OYo0TJY0EKcklT4rGdB+i5dluYFPBTKSQ6wyX4Di+1o7kzh0LVw/+pOqE3NPRGi4rhV9aQFzWzuz9OJYLCfyVfxswLj4/EIdoz4cJ4ztccd2i357ap/oa/EhWWqZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6tg5HaR; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MfLEcX+T"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b0419ea6241so65708766b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 11:01:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6tg5HaR"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32b6108f2d5so4295576a91.3;
+        Tue, 09 Sep 2025 11:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757440898; x=1758045698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NB3rahRir377R/zsN8HMeSS97H1bc/fP4p5/jH1URm0=;
-        b=MfLEcX+TwAAlLLpolOxXl7QApTRgegL4+PttY1mXCc6ne3qnneV45N7Pv/gdLFjl9y
-         ldmHo8drwJ/wWA8ZxeR/hx0nPMdbQTeco1vHsB2B/hLp7mOQY6jtctBpufb9G92M8xil
-         Gq/7PNV4vcbL47/Vf03Do/GIUcniORNgKkw2uSvwN5YdLUy8S7mrbTkr5W/MggCZSRNg
-         G0kNBy41oXtUstXsWmAYCpoK/VcyPb3vo9TfblfzdJnnGrF84LYB9HMasMhs+9RNKAGI
-         GrZNqmf31kwexEEcKdCdUnXwKL0lGC5RZUaarZjG7qI7mcfZPyGRcH0Zo1ec47F2GRMO
-         seCw==
+        d=gmail.com; s=20230601; t=1757441219; x=1758046019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lC2S89uWVd4kKLJY+Z3L6fWfhN36m0m3rdw9eQ0mhyM=;
+        b=g6tg5HaRn2pY6C4v6V0IH2GCiA8s3Y8lskDauOEpHv+HEA+3KlSWB1zcZWKQyQOF15
+         VajrP5nZ0LFmERX86zybdrBYoNJHcRG3atgJ3VcALZdYTzTpsRIEvhNxMgXMua4GG3yy
+         IYCEd49MYbzBFVmr65ifHhn1kyYCpEdo4B90PJ/p9tQ7GoW/2diJLiiSYWjzJdR29+GB
+         6j6sTjOtpCL6u54IXruFOKMQBk6fVcZIUfOGKJSet3SOBdP59EP0VaqoVasKLzNtkn2r
+         tjacWEiRSh4ySCddtVlGGw7QNXLs9IkMEmRqxp5XEFDqwgiylnaxTzEnG8KZdD8WhGsr
+         gyvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757440898; x=1758045698;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NB3rahRir377R/zsN8HMeSS97H1bc/fP4p5/jH1URm0=;
-        b=lXC5Aqm/e0iUyquLowXxxBkglSqpKg+/ckoEdQqCq0O6X/uLnbVeS8fNo/rMRnm+Fh
-         w1fkuaDBWvs8rMLKRtNpV7Kjl1lLbHdKELHQrPQkOb9qKzNZ+V5okq5rLc6cyIJIKb07
-         DUaNTHkrgoSh1wAiAsSdBjM1Vb/gXiMHztFfqxPob0dWcqm7tdcpJQCqSQ9IKRfMtzep
-         DS7efjI2kHjxEWr071VTWLEV3Bw08DsQ4AGQjOoAR0g2GfDT1ap636Gn2qtCAKlEQ7Dn
-         TBiKoaZIKc4GpXxd3CSA4iX3ngSgUOf/zYO/GDbWhPCmDFp+TjK5RO/RSaHyzp3EAgnD
-         kK2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAv6kaLdFM1yAm0tEeMAhl7LwBGMxZyTyDaiAm5YGYVaI4kryXHrlXai8+BhMUsqLqA0pKMUON+6RSPOk3/uVEZw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2EvoKZ/IAM5hnnM3GpcVYTW91dji/Do0leLG1/kiMBdmjYu/R
-	DJDTCZlmxKgGBCWvKri6n1hzqOFYZYkp2enyL++G6DlXETHVPub0AeI5/SwpNo6QteM=
-X-Gm-Gg: ASbGncsSZxp7BZuVpZWq4MYtQgewDzVhlol5nabDk3fOzmZBYI797pxzrtctoDyanBS
-	+0+dgmHcxCV+rGpnsIvgUmFkp1JkWvmbIJbYRu4rn1TOC8zT1SfGLOEYoVig9VmJor7ppvoig3o
-	OKRKxHN5JUS7OZzFb1dUzqk2++zFtk3I57XMak1tWwUAkEbiiWyTT5VnkGu308dbsrqOaRGAzuW
-	6z5EZtmT7R60/2NTAnF7OudIpm4TwKxuyWzyZf4VzwKC9Zek7R6ZP3HoxJIhIoyOOMRfkifH2Ek
-	kZLKgpJlJVbilwX0el5K5sim6vlY3m7nmERdnn0ErhdSCmbVTrF/5IPaTVbq6LE8rLiwPSvs8JB
-	HTn/nv/pbr1VpcmwoWzpdpzy9iJms7Lenl8ZKaU7x2DMQ
-X-Google-Smtp-Source: AGHT+IGXL1lC6sfR6puzIfYw5N3tfqCgjfuu9nQRbjgZ453UE5FzV7MG4pX6BoUszCm7i8a3ZjXp9w==
-X-Received: by 2002:a17:906:c113:b0:afe:af91:2e54 with SMTP id a640c23a62f3a-b04b16e17ffmr664688966b.9.1757440897721;
-        Tue, 09 Sep 2025 11:01:37 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b078334e899sm26294666b.64.2025.09.09.11.01.36
+        d=1e100.net; s=20230601; t=1757441219; x=1758046019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lC2S89uWVd4kKLJY+Z3L6fWfhN36m0m3rdw9eQ0mhyM=;
+        b=wIdMNYBb6g/sRDH58UU0+58u28c8jbcTjp29GIYKTeF1pGFX143nkr0k91PDIu8Gr4
+         WzXeDugPtfYu8Q62oWXL2Ely6lfUrQVwDw2mYf5xuPwBtD/ukhnNBScWJpJXNKYTnqQj
+         nflT28IDkB6EZaKYzB0SCad5N08DBB7CyAz7WAmEl9YycxmYUMrJ4a8LsAi+YFrNA3/b
+         bbL2LV5XJyLW1kROrzVkg0Z+KvmF1AJnAT0LlMtnIVCwsoQ7elqGL/qt2Bk+18KOb41+
+         NSUomY4/UtSTzOx8nLif5wx3vMUubu6roYK213KLvFiE8dgI7gN8edO+FzynNUWWZnma
+         garA==
+X-Forwarded-Encrypted: i=1; AJvYcCV46ybBpYz3WL1e+ZUzVFFpatn56V3cSVRr1ce/7IeZBfr/6fWO2JRkDwymMIC63VZULh8A8G6U+9QZqYjM@vger.kernel.org, AJvYcCVHKamF1TokTle2W8pjQYh66vLCJaAAjTIWn+SfSeyQ798340MBIJt0mTH2twpH6NaxpRTySDGY6Pp8X/lUkZeFOsE=@vger.kernel.org, AJvYcCWlxiSAMWwrdyrPWasuvwx6Ult0+1G27QTMvzKXwSqmRkxaXHsz8HvbMexBQXZaYCA5iwEeHPd7SqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEevcqO9OrUmTCmVVxSUmC4dwkHIt+UTcl4ZWZEmMSzLXUnk9J
+	KJBW113ogEEnKUz6BglXdBGT/+OI4EMWc5041XoHNYP05EDBSUJzNnO+
+X-Gm-Gg: ASbGncvWXgn35fFnX2yGXrBe12D7EtIv3bWapZhOy0n8Q6pCjUhkpVsaP31ADCjcAIO
+	7KiEi8GMldXelmhOorK9ScR5thbQkosuLG+KXhhwQA4KWoks1iGSyKFvaCHNhzMgfodEsfqwyyT
+	hjtbA5c7wOrkgsXP93+8XtCn7zheStXHg10he7hvLrIGbGRNWiy1KYXG2KMg3t6B4IfnfsZPkUZ
+	RkajUxDS6yedl9LYSXjeSfLVegIll2fZCrK2GeujJQ/dj1JXSe+0QLRR09eADC1shRCPK4dK/tt
+	M/SRmm2q/FnbHKHUKVxW0P5YhIk3bkrYV3Ql+1PZae79eyLAFWET8VdQ9ibMRvPfDd+okcL0BBo
+	B8ANf2bryia7MvljcVxBTmB75OraXwYg=
+X-Google-Smtp-Source: AGHT+IEQ8Fdk0HbZvmKlziMWHOi6q7YSOReqEYtXvWbMeLz8O2VLpBEy5+WUL5qEMmSebQfRgcmeeQ==
+X-Received: by 2002:a17:90b:3dcc:b0:329:e9da:35d0 with SMTP id 98e67ed59e1d1-32d43ef5112mr14793775a91.5.1757441218843;
+        Tue, 09 Sep 2025 11:06:58 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.216])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da8e7186sm35182693a91.16.2025.09.09.11.06.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:01:37 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	soc@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Tue, 09 Sep 2025 11:06:58 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] arm64: dts: samsung: dts for v6.18
-Date: Tue,  9 Sep 2025 20:01:27 +0200
-Message-ID: <20250909180127.99783-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250909180127.99783-3-krzysztof.kozlowski@linaro.org>
-References: <20250909180127.99783-3-krzysztof.kozlowski@linaro.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SOC CLOCK DRIVERS),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1] clk: samsung: exynos5420: Add support for power control registers
+Date: Tue,  9 Sep 2025 23:36:49 +0530
+Message-ID: <20250909180652.7130-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4448; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=lPSneZP6QA4IVA2DA2vcr6ck9xWg1uRXp8PmH5pXh0g=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowGt6T0IuM1YHzvBZgMmsxOPoA4RqAtH4l9R+s
- O/+YUMZ7M2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMBregAKCRDBN2bmhouD
- 13ukD/9SHoOx8xFBNg3/qjAVgkV/PKibiiWFgSvp6djzxC911MYrbS7OtoTWqyhX0xK0iyHuOW7
- PN8neHL723EiARZT2emcAKewRCoVR+JIpupio/HkHlJB6y5vbgjg2IenEfimryx1cOrMNfqZQ+I
- cNO/zF9Ju65IZy3iewiWmkDa+fU3bmvaghQAFUn06v9pwFskOwx175V59C8dhz0esy0AzJ4WOle
- CynzK3kMyxW0zgMCfY0VJlb1tHLT5L3aKshyCcMyWobfXTYUEtrgMg61ixGjB5+N0mzpfsBXAIl
- RogLQahDUlFbZznXU9t2i+3p95Itak+WQIBELc+jNYF6nQ3sPzbnbrqN+APvTbzk5wGb7Qxda68
- YA7TQzvqUOy49Fs3M96g2MNNXPMAklgxHapdg/vZfpUPUUcANjvQUt0NAVSh1SfeiR7iJ6+XyCc
- ZPN1xATGm49wV0tIklKkRCCumCv7bcL+8N7uLz5UO/47GrBVJC2iKUxxSWs+mqzVczxOwqz7/y+
- mwDLOiqF44cEj8+rYp4ZVPV1knxExrSErXOhIFKAZabB6EEaJ/L/RLpMs7/6NZTAhFKbF832zDp
- soWki6uSTE8O+5IY83+E8U9FPyZM7SedwJ+wVqxLn2RE675/djB6hWgnzx7u4RDJ0Auo4oHsWdJ f9vWGBZswpSDS7g==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+As per the Exynos5422 user manual, settings for the PWR_CTRL, PWR_CTRL2,
+PWR_CTRL_KFC, and PWR_CNTL_KFC registers manage ARM clock down and up
+configurations for idle and standby states.
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+The Exynos5422's dynamic clock frequency down feature enables automatic
+clock down when all CPU cores are in Wait For Event (WFE) or
+Wait For Interrupt (WFI) states, utilizing this feature in standby
+configurations.
 
-are available in the Git repository at:
+These modifications enhance the power management capabilities of the
+Exynos542x by providing finer control over the ARM clock behavior in
+various states.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.18
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 111 +++++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
 
-for you to fetch changes up to 44b0a8e433aaad8aac51593a052f043aeb9a18d1:
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index a9df4e6db82fa..ce4c554eb59f1 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <dt-bindings/clock/exynos5420.h>
++#include <linux/bitfield.h>
+ #include <linux/slab.h>
+ #include <linux/clk-provider.h>
+ #include <linux/mod_devicetable.h>
+@@ -29,6 +30,8 @@
+ #define CLKOUT_CMU_CPU		0xa00
+ #define SRC_MASK_CPERI		0x4300
+ #define GATE_IP_G2D		0x8800
++#define PWR_CTRL		0x1020
++#define PWR_CTRL2		0x1024
+ #define CPLL_LOCK		0x10020
+ #define DPLL_LOCK		0x10030
+ #define EPLL_LOCK		0x10040
+@@ -139,10 +142,50 @@
+ #define KPLL_CON0		0x28100
+ #define SRC_KFC			0x28200
+ #define DIV_KFC0		0x28500
++#define PWR_CTRL_KFC		0x29020
++#define PWR_CTRL2_KFC		0x29024
+ 
+ /* NOTE: Must be equal to the last clock ID increased by one */
+ #define CLKS_NR			(CLK_DOUT_PCLK_DREX1 + 1)
+ 
++/* Below definitions are used for PWR_CTRL settings */
++#define PWR_CTRL_ARM2_RATIO_MASK       GENMASK(30, 28)
++#define PWR_CTRL_ARM_RATIO_MASK        GENMASK(18, 16)
++#define PWR_CTRL_DIVARM2_DOWN_ENB      BIT(9)
++#define PWR_CTRL_DIVARM_DOWN_ENB       BIT(8)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE3  BIT(7)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE2  BIT(6)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE1  BIT(5)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE0  BIT(4)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE3  BIT(3)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE2  BIT(2)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE1  BIT(1)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE0  BIT(0)
++
++#define PWR_CTRL2_DIVARM2_UP_ENB       BIT(25)
++#define PWR_CTRL2_DIVARM_UP_ENB        BIT(24)
++#define PWR_CTRL2_DUR_STANDBY2_MASK    GENMASK(23, 16)
++#define PWR_CTRL2_DUR_STANDBY1_MASK    GENMASK(15, 8)
++#define PWR_CTRL2_UP_ARM2_RATIO_MASK   GENMASK(6, 4)
++#define PWR_CTRL2_UP_ARM_RATIO_MASK    GENMASK(2, 0)
++
++/* Below definitions are used for PWR_CTRL_KFC settings */
++#define PWR_CTRL_KFC_RATIO_MASK       GENMASK(21, 16)
++#define PWR_CTRL_KFC_DIVKFC_DOWN_ENB       BIT(8)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE3  BIT(7)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE2  BIT(6)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE1  BIT(5)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE0  BIT(4)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE3  BIT(3)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE2  BIT(2)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE1  BIT(1)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE0  BIT(0)
++
++#define PWR_CTRL2_KFC_DIVKFC_UP_ENB        BIT(24)
++#define PWR_CTRL2_KFC_DUR_STANDBY2_MASK    GENMASK(23, 16)
++#define PWR_CTRL2_KFC_DUR_STANDBY1_MASK    GENMASK(15, 8)
++#define PWR_CTRL2_KFC_UP_ARM_RATIO_MASK    GENMASK(5, 0)
++
+ /* Exynos5x SoC type */
+ enum exynos5x_soc {
+ 	EXYNOS5420,
+@@ -1574,6 +1617,72 @@ static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ },
+ };
+ 
++static void __init exynos5420_core_down_clock(void)
++{
++	unsigned int tmp;
++
++	/*
++	 * Enable arm clock down (in idle) and set arm divider
++	 * ratios in WFI/WFE state.
++	 */
++	tmp = (FIELD_PREP(PWR_CTRL_ARM2_RATIO_MASK, 7) |
++		FIELD_PREP(PWR_CTRL_ARM_RATIO_MASK, 7) |
++		PWR_CTRL_DIVARM_DOWN_ENB |
++		PWR_CTRL_DIVARM2_DOWN_ENB |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE3 |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE2 |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE1 |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE0 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE3 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE2 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE1 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE0);
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL);
++
++	/*
++	 * Enable arm clock up (on exiting idle). Set arm divider
++	 * ratios when not in idle along with the standby duration
++	 * ratios.
++	 */
++	tmp = (PWR_CTRL2_DIVARM2_UP_ENB | PWR_CTRL2_DIVARM_UP_ENB |
++		FIELD_PREP(PWR_CTRL2_DUR_STANDBY2_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_DUR_STANDBY1_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_UP_ARM2_RATIO_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_UP_ARM_RATIO_MASK, 2));
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL2);
++
++	/*
++	 * Enable arm clock down (in idle) and set kfc divider
++	 * ratios in WFI/WFE state.
++	 */
++	tmp = (FIELD_PREP(PWR_CTRL_KFC_RATIO_MASK, 7) |
++		PWR_CTRL_KFC_DIVKFC_DOWN_ENB |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE3 |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE2 |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE1 |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE0 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE3 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE2 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE1 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE0);
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL_KFC);
++
++	/*
++	 * Enable arm clock up (on exiting idle). Set kfc divider
++	 * ratios when not in idle along with the standby duration
++	 * ratios.
++	 */
++	tmp = (PWR_CTRL2_KFC_DIVKFC_UP_ENB |
++		FIELD_PREP(PWR_CTRL2_KFC_DUR_STANDBY2_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_KFC_DUR_STANDBY1_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_KFC_UP_ARM_RATIO_MASK, 2));
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL2_KFC);
++}
++
+ /* register exynos5420 clocks */
+ static void __init exynos5x_clk_init(struct device_node *np,
+ 		enum exynos5x_soc soc)
+@@ -1649,6 +1758,8 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 				ARRAY_SIZE(exynos5800_cpu_clks));
+ 	}
+ 
++	exynos5420_core_down_clock();
++
+ 	samsung_clk_extended_sleep_init(reg_base,
+ 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+ 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
 
-  arm64: dts: exynos990: Enable PERIC0 and PERIC1 clock controllers (2025-09-07 11:13:06 +0200)
+base-commit: cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
+-- 
+2.50.1
 
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.18
-
-1. Exynos850 e850 board: Enable Ethernet.
-
-2. Exynos990: Enable watchdog and USB, add more clock controllers.
-
-3. Exynos2200: Switch to 32-bit address space for blocks, because all
-   peripherals fit there.  Add remaining serial engine (USI) nodes
-   (serial, I2C).
-
-4. New Artpec ARTPEC-8 SoC with board. That's a design from Samsung,
-   sharing all basic blocks with other Samsung SoCs (busses, clock
-   controllers, pin controllers, PCIe, USB) and having media/video
-   related blocks from Axis.
-
-   Only basic support is added here: few clock controllers, pin
-   controller and UART.
-
-5. Several cleanups.
-
-----------------------------------------------------------------
-Denzeel Oliva (1):
-      arm64: dts: exynos990: Enable PERIC0 and PERIC1 clock controllers
-
-Igor Belwon (5):
-      arm64: dts: exynos990: Enable watchdog timer
-      arm64: dts: exynos990: Add USB nodes
-      arm64: dts: exynos990-x1s-common: Enable USB
-      arm64: dts: exynos990-c1s: Enable USB
-      arm64: dts: exynos990-r8s: Enable USB
-
-Ivaylo Ivanov (4):
-      arm64: dts: exynos2200: fix typo in hsi2c23 bus pins label
-      arm64: dts: exynos2200: use 32-bit address space for /soc
-      arm64: dts: exynos2200: increase the size of all syscons
-      arm64: dts: exynos2200: define all usi nodes
-
-Krzysztof Kozlowski (5):
-      arm64: dts: exynos5433: Add default GIC address cells
-      arm64: dts: google: gs101: Add default GIC address cells
-      arm64: dts: fsd: Add default GIC address cells
-      arm64: dts: exynos2200: Add default GIC address cells
-      arm64: dts: exynos8895: Minor whitespace cleanup
-
-Ravi Patel (1):
-      dt-bindings: arm: Convert Axis board/soc bindings to json-schema
-
-Sam Protsenko (1):
-      arm64: dts: exynos: Add Ethernet node for E850-96 board
-
-SeonGu Kang (1):
-      arm64: dts: axis: Add ARTPEC-8 Grizzly dts support
-
-SungMin Park (2):
-      dt-bindings: arm: axis: Add ARTPEC-8 grizzly board
-      arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC support
-
- Documentation/devicetree/bindings/arm/axis.txt     |   13 -
- Documentation/devicetree/bindings/arm/axis.yaml    |   36 +
- MAINTAINERS                                        |   12 +
- arch/arm64/Kconfig.platforms                       |    7 +
- arch/arm64/boot/dts/exynos/Makefile                |    1 +
- arch/arm64/boot/dts/exynos/axis/Makefile           |    4 +
- arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h   |   36 +
- .../arm64/boot/dts/exynos/axis/artpec8-grizzly.dts |   35 +
- .../boot/dts/exynos/axis/artpec8-pinctrl.dtsi      |  120 ++
- arch/arm64/boot/dts/exynos/axis/artpec8.dtsi       |  244 ++++
- arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi |    2 +-
- arch/arm64/boot/dts/exynos/exynos2200.dtsi         | 1434 +++++++++++++++++++-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         |    1 +
- arch/arm64/boot/dts/exynos/exynos850-e850-96.dts   |   15 +
- arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi |    2 +-
- arch/arm64/boot/dts/exynos/exynos990-c1s.dts       |   16 +
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts       |   16 +
- .../boot/dts/exynos/exynos990-x1s-common.dtsi      |   16 +
- arch/arm64/boot/dts/exynos/exynos990.dtsi          |   77 ++
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |    1 +
- arch/arm64/boot/dts/tesla/fsd.dtsi                 |    1 +
- 21 files changed, 2038 insertions(+), 51 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/axis.txt
- create mode 100644 Documentation/devicetree/bindings/arm/axis.yaml
- create mode 100644 arch/arm64/boot/dts/exynos/axis/Makefile
- create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
- create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-grizzly.dts
- create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
