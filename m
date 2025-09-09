@@ -1,77 +1,74 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F776146A66
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 18:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2352E888F
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Sep 2025 18:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442913; cv=none; b=hPBqP+P9rHAhTrKIGMIGrs3oZtvm5GMM6w4DQhURn5uknHrHkXyC9j3ZLxFBpnOUSWBA2IY3UlxR5XGvIjUZRuNsO+23UTZtxAwPExBkKbsIyyu86rvgg7d5XzYFDdD0VvHhFpNPAsXmWGrBryAMydwACMPhCW8x9ByEKoz7QyM=
+	t=1757443566; cv=none; b=gsb+gk6XPezue5oMgt/S4K6xGNE3Qfip0XgYHWPp8cU9iGInsHtVLvOm9mkNdrw61w9x+WG+8pWHHcz16p6wCaGgP6io4Yo4z6haYcThL8qCy2rAEmb0nviKormLU6BiTREgbu21md4iMC9eCJmy5JeQj2yMMMdFvkLoHCQ/oM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442913; c=relaxed/simple;
-	bh=SP/f/OHmyENYFgXEHOPc8/Rf7ucWnwCMfoZXoYcF+Ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rv59e+BtBW83kDjDRtmwAzeG/iu7dN2hz1u82FkaSA+xrKLERnIlcOVL+TlCxTr3l4Rd/lTWDkMbCn2yY7p+NQkHnjLi+sJpS3oB9MKcsZzXKBZESYaGK6JRZOqTBfts8+9+oukl57vuyl3p398+MmLpmle/eitssMqyPm8fhvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fKR8dC1Z; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1757443566; c=relaxed/simple;
+	bh=96PWMU27/jrXI2PVjuNvBWIsi+qKgC6GLk3JCeyEiAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dzNsonZt5e8S8gxKpzVWb379u1xpYbac1PEGF/xj5TR5NDqjN0dUMJC9L8ge3ezI7zNL9ZaAv1+5Pm28PPItWqbwCRKIg71qrO0KgbizAmaq19IiMVLhXKDt3avgMKYvtpGFGbYnvLxWk6wMMp+Y2wYobphbtAtqF3OTXxM/m0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LAxG5VzH; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fKR8dC1Z"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61d1fe6f160so1185481a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 11:35:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LAxG5VzH"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b046b086599so109511266b.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2025 11:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757442910; x=1758047710; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757443563; x=1758048363; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SwcRmJEpAdsIjXtM8gO5g337Luht7EqqgA9HVxaMN/w=;
-        b=fKR8dC1ZxKD5eQ7nCZs3VKAlInEJo8EKtOYvE3rDFMsIzkw0wjavw5+MX9zl0qT23H
-         m7/vdMni+VTvOnjDZJY/DHzbA7mbI9VLUryA8ogVsaeWbxsXKdQX7MPrVEBiZXK8+1I4
-         PnjvEmroIY5ULlBIvH9OyCDwDcHIlBigPivfFDoR7GXF50HCb3ZI+WRJozasyQD5NNXl
-         L+y2/kZUcNkOcjvIuWKqathysmv8ybpkak3eZtoZ5AFSHBGZa099BD66fDp0AW7pVjak
-         OxiHkussRUTU6cVXJ+R84bxjTxZbhY0zCor70/yWY0IZ8guEO43HHesICiYASt5+5jGS
-         yF3w==
+        bh=sbgtE9csO6Cvgxlo8b8Cy8qgsxjaxLMfDvbV/GRdzeA=;
+        b=LAxG5VzHV79ivAapLxx8qvj5C6R9vJ0oenYiGuG1kYc/0UkToCZ7R90/wubKRcmNY3
+         JNxnghhA2/ebzIE4gscYjcILh1WlDw5OW2fRLD0Jtjha00yDbS3OLNCcTHJt1WMHmL62
+         9XCFORCImaN+bhfZPXoUJqkj3ZlAerI8iI2sktfRnULDZ7I0Cw8cec3lzj5hoVco1f9v
+         4d3zXsEwaDc+xFvoC0LEYrZLj5Mn7whx4Z2E8KOIpyJqc/KwZiRXfMYOb2Wmp0XJIUIA
+         87RQYj06zeOwzMSzXigd3KEHpBbs2xoH8ONFBV7Rhp48CO4iehboaEGBfd1NnyDSMHQz
+         NeKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757442910; x=1758047710;
+        d=1e100.net; s=20230601; t=1757443563; x=1758048363;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SwcRmJEpAdsIjXtM8gO5g337Luht7EqqgA9HVxaMN/w=;
-        b=L4/iCWi38gbZotgqXjvN6z9GiTKYufyMgU4FJyiLSeggrZgxA0yFucBJ05d6w2Jjeg
-         FsrJNtV/bRRyQqnKki0kZj04h9fjmSeNwShGY0jNImxbsvWIu971/wlIBdFCd5qyt4te
-         HAjI62iC561qb7M4ASL4xsSseFSm0+GCsstvUpLVzmZqE+glGBKmI53wcNB4er14zF2R
-         ut+TEpB7AhFvsj7nzd5zzarHZLOA0oB9qiiRNdDEISG5F5xpJizK7VOItWhBhFcTNu5b
-         mGe/Bu70xNqr0OLb4SAYXWxnvSvGx15rUxWHprCKSXIPBddIHYVWnOKjsE4RBojh+ATt
-         F+pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl3OPsYyAaga7wy7j5EmwxHrJDJNYyy4eqXs220wh7Anrs074bRWF5Pr7LyYxUutnpderNhQ1WnGIdU66FPNJNaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLmgs0lJgTQ9jenKnVBUYxdC4JKKeUCiwJrdnrtlaGrMM+YISJ
-	U4+p8bsmfzHa0QWplBLUG3U2cMxolcKcjPB6xddK+PacWBCTi14J+ni2Gc4m8eeHXxM=
-X-Gm-Gg: ASbGncsSAcSi4omqPSEY2CGjXmObJN75weY1Be629NnDEN2sbJGh51Mp1vuqmFsMy8g
-	daybUlicC8VhRCXtgrHBGcHJQynvHSYxFT/KNRTwRrwva7P6AowyREt9BrDixp5NX3lJigQwC+Y
-	bA2ogJr7q+pTS1KhsU5gKWM1WClRYzQC8SdJfpfUBEerL8e0XG/imbiy04MhDuwgL/HRcYLorBj
-	KzkvdTGGatKS+IpG2ET0IPyHYNsa09O/YENDbIsdOL/ESliC0etUO7guOTEcooc/h5dO3IvifZc
-	s0CAI+01S+irq7AxWlAwX2JujkfgKRT5zIJ+7l7TIdRIXYtOt71d5Lm7MfhQ87wegTSb5HHJp7V
-	oGK0iHnSgPrDCdtc8NLqBW4WsV8kUmNaieg==
-X-Google-Smtp-Source: AGHT+IEtJecmV/jjQmnrF4shDa6h9ku/souQrmOu0T5Vo6piPtCO7DvbXGp5/2Tji0sGHNxwh00KNw==
-X-Received: by 2002:a05:6402:1e92:b0:627:6281:e432 with SMTP id 4fb4d7f45d1cf-6276281e7c1mr4700848a12.6.1757442910428;
-        Tue, 09 Sep 2025 11:35:10 -0700 (PDT)
+        bh=sbgtE9csO6Cvgxlo8b8Cy8qgsxjaxLMfDvbV/GRdzeA=;
+        b=cWoNP1T/W9rwQ/tT6GHajFCWzIsDWEqpdDqR7yk2ArNGr6Ig67u+ZmidkZfAM8bivm
+         R7SF58p+Mj7mrSTDNMlFPdtbJOod98+EutooHbGL0g3CcwzchpmkCpTIqHYxGMU50tF+
+         d3aXsSyfUCqlGPelICzNvZE9xtA//D/YCDxDfC2s4bYBWI4e/jhv/opH2Hy4ZVl1yjLY
+         mmJnm7jg8hLjEB6Q08nSe8B5b1jWukfZPRKZxrqV3TsZ2bUfWMJX4oLtkZdN1nOJkVV4
+         wQGzTQSvo0fTl0bLSNDzNyCTXthTfPqnrcTJfQ+WaVZ/V+7rM/xyGp0qcJu33P8WJZr0
+         nWuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJCYa2w4QckcgY27sr9BMX/+Ykw79k82bwkceA7UwxUMs9bLljs+0P6snbEKRpyhKiL+nhmgaPLjt+R9T5iVs8Qg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze2eelK1PZSJSW3UIJ9wIq1jloUHHnvQVRLP/0+5zym513+4xb
+	07ItW14BfSqw2f9HM+6fzo5lxqfGCvx5BWdmacuYkayNYz28rZVR5XPlvRrhsATco6w=
+X-Gm-Gg: ASbGncv3B8ZDYlWjjDLc/cS/zuvloOTijOI2w2kFycgimg3xuaRNNykHUx72GNcenly
+	llBwdt0mSCenxxn2jXQ+oQvXXoolAj5GMzsM8AVXvJdD4USublvYCPGZva6giFuZ9J9TC1JvWKB
+	MNKygtSMrP/BF83ttUM3jrq5z7jhevgmJmeuT1e1/LyMJCELorgaXq0VMjnmJP/LABt6PXFddVr
+	G/eh8rIAsfFQL2vjtHgYiB1uybliL0x9M9CHHuKjmp/nH5Ipax74FAxcVr91ONrOdZbyX1OZX+B
+	jJXomu5R27940DYywlSRAkAI8rtTFXvD0B+unv8ckBtdgOnf2dhYpqT5731QtSvyo0vhWqL0K17
+	pC2yt4L8kfG/FUGoJAaqtrdqewHSi4c+nmxtd3JAtZG+16A4paDt+JKY=
+X-Google-Smtp-Source: AGHT+IF9qmGIbHHgyLkF+cuxfT/tBA4kZKk5q6FFmJEiexmBUNMRyqAXcs52z+BMBR9gWhKpKR+C/Q==
+X-Received: by 2002:a17:907:60cc:b0:afe:ee31:4b93 with SMTP id a640c23a62f3a-b04b10a4accmr652443266b.0.1757443562945;
+        Tue, 09 Sep 2025 11:46:02 -0700 (PDT)
 Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123f08esm1707282a12.33.2025.09.09.11.35.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0783046d34sm35399566b.6.2025.09.09.11.46.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:35:09 -0700 (PDT)
+        Tue, 09 Sep 2025 11:46:02 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.18
-Date: Tue,  9 Sep 2025 20:35:04 +0200
-Message-ID: <20250909183504.104261-2-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL] ARM: dts: samsung: dts for v6.18
+Date: Tue,  9 Sep 2025 20:45:58 +0200
+Message-ID: <20250909184559.105777-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -79,19 +76,19 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3592; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=SP/f/OHmyENYFgXEHOPc8/Rf7ucWnwCMfoZXoYcF+Ug=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHNYyTMtXdgVINSVVMUfHhVmyZrZSKfFw9c6L
- Pz+Jl63/jeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMBzWAAKCRDBN2bmhouD
- 18jGD/9/DW7x7Gnncm+III6OLPIJRggeJ3ahi+ZOIbPAcqzETQjteI+PC1+r+WVnJR4LgRTjnfy
- nh99rONItP2xQpqCUvO78IyTJlg55fci64+pL/81Zy0VuFeCNxKhzfudG3mVs8C3fmGO1v2V5SH
- mdpHObusWdByV49x327xv2Gdt/WR//yjaPLKQH4ALm/XaX8CqB7fEVqULhcBXoJw1gwffBkYPVE
- 2O2jXhQ6WnmvQb04PLoizDRtfAJ5FkemhjCuuvkDRxBlycZR5P+8dEH3v+R8CKUI6XcFV/KUW3M
- loomE0efVKlueZz/d+cG3v5aGtLfpCPnCTXjWbEW2ey8aqtJSZO27Jd34CkP4+Q6BnIUv4vqlGU
- NgJFFQc7IcgMicy2YaqUM1mAj5U99y13U+Ec7w52T9R4sts0SYZoQjuNd2/jCkIM/kLZLAs7PiN
- IbpQXdtUQe6OqfSS8ixhQ/UM3Gu6P1tmRukxzTt5+7thjhbYz5N5Yt67ixKFq+t+MpNhDMIRdQJ
- 68ZKfAxI7Pw1F0S2Vj/qj0oNKMO/qIhlaCjKseMfTmysXUjKYKsiZu2Xyd+WoMnAY5z0ziCEsVK
- KtI81ktQne6TXowGhZTHLfCmfvBIKdBxRcArVAz245DgcLmUnOBj9tJiX38qUjO2ib9M+UJQbgK ki7dl0vi6BLGViQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1462; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=96PWMU27/jrXI2PVjuNvBWIsi+qKgC6GLk3JCeyEiAg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHXnwqcshQhMcnuW6z945CPT+bxhcKDTjVPRJ
+ pSWTYWfHrmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMB15wAKCRDBN2bmhouD
+ 1zUdD/wN+EBFSwGSxuGwG1tuhq5rNoCYRiolY1hHazJfxBx0abVi8Ilgrp0VoAWG5kZW8Jq+wTc
+ QTTQoqHCyv4RKvO0jKM5gNCEWFMw1fhyO8k393+Ct+aGDCpbP1IbZZtfx3t3Zzs4D1gCXDH6T40
+ jVWun62rnKoj3YKcyvic0Whd7ABzCRfNuXmDvgCLdEW9rqPUBNty/kpShQZTc3Md3Oqm5z1guUI
+ OeVkU4ZKuX0IQBoZZQ8ODIVf1SiRtMyr289ULGsTBe713UsZfTBwxL4XVlVaZ7qA5PUSVJtioCV
+ CL74u9paL/IB/6h8/KCxN5r0pIaKHU/NLrOEqpgg7NycD5m595Uwaw5FuB6F5fphQ8WaDLVuSC/
+ 7e58lPDbPHOKQ6fpTTlGGPJegDmTDrp4pnRmKCTzwnO2EjayT7tKpjvrlBg+OqnZOM0qfi0vsP8
+ sHaza3Vm1GXFIQmaMkedoebzzjDUmVBG9WyxtnJEMbbuxZesUK35A00qjAvo1pBWm3+3mrHMDc9
+ 6XlBUm67Sk18/hrFeDi+Of/AMke7AWftXc4n+ZBRgYEcYj5gc4UdLzL3TyXT9PS7v3hiRhRf4+c
+ dKLibr+/ix3V32BBRNSWoDGZ4AoUaLQPboAZxi1xy8y8FsWOW0nOTxOCcKm6JaORP4XrrTruBCv VxkqT4s/l9dTxDQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
@@ -101,72 +98,33 @@ The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.18
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.18
 
-for you to fetch changes up to b3b314ef13e46dce1cdd97a856bd0250dac8feb9:
+for you to fetch changes up to d19b1773362adfe8c0d5ccc4faf6aea0249976a6:
 
-  clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support (2025-09-07 11:12:45 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.18
-
-1. Tesla FSD: Expose CSI clocks to consumers (DTS).
-
-2. Exynos990:
-   - Few fixes for fixed factor clocks, register widths and proper PLL
-     parents.
-   - Add four more clocks for the DPU and HSI0 clock for USB.
-   - Add PERIC0 and PERIC1 clock controllers (CMU), responsible for
-     providing clocks to serial engines.
-
-3. Add seven clock controllers for the new Axis ARTPEC-8 SoC.  The SoC
-   shares all main blocks, including the clock controllers, with Samsung
-   SoC, so same drivers and bindings are used.
-
-4. Cleanups: switch to determine_rate().
+  ARM: dts: samsung: smdk5250: add sromc node (2025-09-08 09:35:51 +0200)
 
 ----------------------------------------------------------------
-Brian Masney (2):
-      clk: samsung: cpu: convert from round_rate() to determine_rate()
-      clk: samsung: pll: convert from round_rate() to determine_rate()
+Samsung DTS ARM changes for v6.18
 
-Denzeel Oliva (10):
-      clk: samsung: exynos990: Use PLL_CON0 for PLL parent muxes
-      clk: samsung: exynos990: Fix CMU_TOP mux/div bit widths
-      clk: samsung: exynos990: Replace bogus divs with fixed-factor clocks
-      dt-bindings: clock: exynos990: Extend clocks IDs
-      clk: samsung: exynos990: Add DPU_BUS and CMUREF mux/div and update CLKS_NR_TOP
-      dt-bindings: clock: exynos990: Add LHS_ACEL clock ID for HSI0 block
-      clk: samsung: exynos990: Add LHS_ACEL gate clock for HSI0 and update CLK_NR_TOP
-      clk: samsung: exynos990: Add missing USB clock registers to HSI0
-      dt-bindings: clock: exynos990: Add PERIC0 and PERIC1 clock units
-      clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support
+1. Drop S3C2416 SoC from bindings, because it was removed from kernel
+   in 2023.
 
-Hakyeong Kim (3):
-      dt-bindings: clock: Add ARTPEC-8 clock controller
-      clk: samsung: Add clock PLL support for ARTPEC-8 SoC
-      clk: samsung: artpec-8: Add initial clock support for ARTPEC-8 SoC
+2. Add Ethernet attached via SROM controller (memory bus) on SMDK5250.
+   This wasn't tested, but code should work just like it is working on
+   Exynos5410-based boards.
 
-Inbaraj E (2):
-      dt-bindings: clock: Add CAM_CSI clock macro for FSD
-      clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
+----------------------------------------------------------------
+Henrik Grimler (3):
+      ARM: dts: samsung: exynos5410: use multiple tuples for sromc ranges
+      ARM: dts: samsung: exynos5250: describe sromc bank memory map
+      ARM: dts: samsung: smdk5250: add sromc node
 
 Krzysztof Kozlowski (1):
-      Merge branch 'for-v6.18/dt-bindings-clk' into next/clk
+      dt-bindings: arm: samsung: Drop S3C2416
 
- .../bindings/clock/axis,artpec8-clock.yaml         |  213 ++++
- .../bindings/clock/samsung,exynos990-clock.yaml    |   24 +
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-artpec8.c                  | 1044 ++++++++++++++++
- drivers/clk/samsung/clk-cpu.c                      |   12 +-
- drivers/clk/samsung/clk-exynos990.c                | 1240 +++++++++++++++++++-
- drivers/clk/samsung/clk-fsd.c                      |   28 +-
- drivers/clk/samsung/clk-pll.c                      |  161 ++-
- drivers/clk/samsung/clk-pll.h                      |    2 +
- include/dt-bindings/clock/axis,artpec8-clk.h       |  169 +++
- include/dt-bindings/clock/fsd-clk.h                |   13 +
- include/dt-bindings/clock/samsung,exynos990.h      |  181 +++
- 12 files changed, 3032 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-artpec8.c
- create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+ .../bindings/arm/samsung/samsung-boards.yaml       |  6 ----
+ arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts  | 37 ++++++++++++++++++++++
+ arch/arm/boot/dts/samsung/exynos5250.dtsi          |  9 ++++++
+ arch/arm/boot/dts/samsung/exynos5410.dtsi          |  8 ++---
+ 4 files changed, 50 insertions(+), 10 deletions(-)
