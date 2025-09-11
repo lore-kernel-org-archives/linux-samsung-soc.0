@@ -1,101 +1,211 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997D01B87E8
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 09:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FD53203AC
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 12:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757582983; cv=none; b=AmLMVscVm05lXMGYvwP3csuN+p/jM9brMq9yw7FSK7RoezHi7HdACFp9Rc0x2jWCOqKVivXX2TKxd9SjMRPQ49S8WQGjjR1bbsJXQ7VeMLwG0c8d99dL3T/STvoFb5KnojkofD2r2XDM+AfwGtGiftfROJX5YfsEk4G6AXMXM0Y=
+	t=1757593432; cv=none; b=MAPUdAD37pEOxUZpIbCOZDeKo9983IkgcQIekzHROntjseVygV7STFumY31RW2TPwLnqyqWw7SbWPxJvuHmFtCRZbpalBNdGdnIQTGiuHJUE0xYV0ArtioQcRiMijkDUPtmUt7tCNnB/AgkHDFbRQmi+v53qtSSQbiKSZoGcLpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757582983; c=relaxed/simple;
-	bh=aD+vVYVhj1ox7WHNmXKQS68L0Zye3qkpz4fixE8sgUg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K8GXQk9tGPlHojg91k6Sl2kPANCUwWeu2akrqM1XYBUSmW5FW3dLHytG+7NitWX1K5nXy3fuXvu1VmlFIfUH4fWGZ8iwQdoqGHNrot1GUJ/9oSqfVyUebSOmT4aSB5V3vfxOVMS1JSFcQwVFKYxSpT42W7tr8UgIyIVH++g2Bx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZILn9q50; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1757593432; c=relaxed/simple;
+	bh=8BL93gxLuds6Tpj/iTAxO5O6nAfE8Xv9W01/Y+xLdro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K0L4z43mlIllSQm4XxwaNJfSNqEvqJq9IaW7zqw7ICaAXeMK5rnH4lV1CDfrCVxbLbyAB28gwkFOG7g1q7PNEm/nNq0PI8o68TN7HWkGJAZMn5mYOVezihdDVaQZZhmR1gsFv8i6xKC9IsUodO0tBP4QqhGBQkx52KtJAQZsAZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y+s8NMoe; arc=none smtp.client-ip=209.85.161.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZILn9q50"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45de185c04aso441985e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 02:29:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y+s8NMoe"
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61ea79c1e91so307692eaf.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 05:23:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757582979; x=1758187779; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hC+hJQkcVSXLbc1lxRNyfmEb4byMZ95qWgYNvEiyn2w=;
-        b=ZILn9q505Be7nFGFxpjI1BtMrDCsBqHeLc6shTE5h60vK/24maUDoaYTrGRmPYgUFY
-         PW7C/OT/BXMnHWb4yZWkGoj17xM5AlgOQq7dzThfYexegCzo3WlV4KvuKE5diaZqjfqh
-         R/Zrb2AMFvLZjjDwlcObmFHCFpVVx2RaCKiF9iun3LfywTqX/kho5/TvSDL3lYhTwas/
-         sUSNKHa5iAQHswha1ptUXIOoArZ424o+fgY6RhJKbXkoOVhYndGvoNlOHCTcJS9OR+hq
-         8lRAOy7nCNeeQtfr0T7TDrHwK5kdMYRyoPd2rd6w93MJZGqAEUquXVAsofrseNIhi0RF
-         +9yg==
+        d=linaro.org; s=google; t=1757593430; x=1758198230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZOhHNVyVLP7kW4W4c9CpTeNpoSEZbVmnYepZzBb3fl0=;
+        b=y+s8NMoe9auTqdmtssiI8Hf9X17J8H4aoTMmwnCKUCksx8xNfo9JIqQiRUykMqf5CO
+         yybATPBox/q19U+LeUECHtb4g3FFrOWbfbDqFfMEk7NOqvTfP7oVp0gCtRmeykRIRtVu
+         ny5DHo3Jy77gwjBG4qbz4MwxeP2YoUa7mOLcXaQgJN7Fw24I/ZE9v04wWCEYjmCEvUa1
+         NuF29DnQEJuU05cV7T4yoL+yNLcBXmzIVa9U0BLRkXiPvS8RFFrXluO7aemJxYe9J2/A
+         TaipvVzenj1v+1ftidPoiZOeuMYhg+kh5e50TnF0sPLaRQprwCZkC55SzMSSw+jyKkyC
+         l29w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757582979; x=1758187779;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hC+hJQkcVSXLbc1lxRNyfmEb4byMZ95qWgYNvEiyn2w=;
-        b=W7viFbTT0NHbBDSx0BAfS/qLAuv7NgT6otwpHoxhQqgMY43GziJLC5+tgZ0rMKrctT
-         XHXGAgHVzoK4AzORLvqPH2sT4gkX9U7onKq2oeB4iWctJbKQyJNfPfC3WD8B6D7AGhCX
-         jbf9SrjCt0r3H4JXWy5o3Rtf7DNJWrxTaFZuamWb7mTEsiLsi/3ySBV1CWVH+fdf1tTm
-         EFQ/w/nKrN955YWMKtnAfXyiN1ZkTIY10Ie1hNVgCi6x0DJXxsqeNEmGbN1OVNez2Jv7
-         ysZj8iEBTweeMozdw/PWpcUN/9nTrxfRQ1ET7bnmzyfIqDGzCaPxLijncOsjFhNATywz
-         TvtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJhYNHRQoKkjyAX2xRauqFsgNB3tbHYGb2bVWaUuRjFpwof+zB3Zq7/TYxHTJmyU96eqGCgA2o+lHGEXERXQyEHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL37cEqfjGKQLAVoPKs6asRqSdMHKpTu1x0yMe7Q2Jpdtip7cI
-	jph+3Aggun8AG1JCD55W1BX8duk4vR/fheJPgHrbD2FR7qsB6cSDbSoldcNhz6Y6EDqsuhKzelJ
-	mGrqe
-X-Gm-Gg: ASbGnctPVAljHe4e85earcB1E+hWFJj9GAuUkxWwx5sWxEZ4h/dywnyfMIbWcWG+Hg/
-	c2cVdvHZJ0qHqGiAN6slESYPmeH2bHcUrhXOYxppRCcgBTbBC0XhTdn6/3hdVQRc5cCiGarnqe+
-	LvVHMeZkuhx3H+qeOtrW9rPbc7+GCTQNY7jtJVw4Ja5NF2AwaMBXvTAq5xo6QaxdAThtd5Cunyj
-	ZQ+1vA0Ts7+3STEExFPCaGIx98fKeFzVxBWI7WNEb13P9f3BnqdGGCQwgohnLy0NpvNPAFy6WR7
-	SzZF9trbkMBpOQQ/5Y7jvTBF1QaAtoHmn91y/yZxgVuZqVMhfWdBh2KpWj88+CMDZwPvB0AlkLX
-	dmJ5bpD6t47iT1tmav6XlA79V0XdJAECV/bi1uSWDSMch0RYfQw==
-X-Google-Smtp-Source: AGHT+IHLpivrFJJuNi2aFsQowzY2Z21CVbIySOCBNLdn/DehLTyA9Hoq5rzO7sBA4BakWwnpnraSTw==
-X-Received: by 2002:a05:600c:37c7:b0:45b:71fc:75cb with SMTP id 5b1f17b1804b1-45e02a94b69mr7953895e9.5.1757582979441;
-        Thu, 11 Sep 2025 02:29:39 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607d75a0sm1731484f8f.44.2025.09.11.02.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 02:29:38 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
- Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org
-In-Reply-To: <20250908-acpm-pmix-fix-errno-v2-1-bcc537cf3f17@linaro.org>
-References: <20250908-acpm-pmix-fix-errno-v2-1-bcc537cf3f17@linaro.org>
-Subject: Re: [PATCH v2] firmware: exynos-acpm: fix PMIC returned errno
-Message-Id: <175758297808.29372.10913804909854615057.b4-ty@linaro.org>
-Date: Thu, 11 Sep 2025 11:29:38 +0200
+        d=1e100.net; s=20230601; t=1757593430; x=1758198230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZOhHNVyVLP7kW4W4c9CpTeNpoSEZbVmnYepZzBb3fl0=;
+        b=hKD1Z3UDX+o0OIWy/RnZeBCzw4nEVo9h1uSuN/M1RaXoodvTwbYgUFEkt6Bw8tw+hE
+         A7zeEvLPAp9q67NBhyVF67mpyRbDgIH+mImAxIza2V8l8LejwBXgIUVPq0xtuvkYNouy
+         JlDBuaN/nbnVh2e3MKeMmJXVttkXPEX4cYLb1T/NGN/9RJEJXgbwTtRJ837udXZMHdr2
+         APVnWo/AFkvmBaisBUebxIyWG2HuKd1nAn/NLpLZw0ZDKHlr/d1kgRmuBAOB/EdKTlCP
+         zXtgVfKH2xkmMblNE4ZXAqII00p1ATVOe/UBIBbJ3e2ZFGaL5Omk+7c+huFmtuozNQs/
+         HuIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlkdGvmZen860Lk34DKYIYUWF0DK4gB3/XxFpdOhaw5b64FCOhuW2wmcC5uotMHNU4XZmVJ2nrsB/fZvMC0URxjw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Eww03oLG27B311IF3CLbsfSAMzPtOZgRXJYhE6DfiyHsZqKF
+	O8Gq1SgrXr098RF/5m3ZPq9jXvo+42WRVLOfhViwr2B6sXk+ycEObTb1xfrbY0rurU2264UJRTf
+	ggjv9dUmewq7drqXL+lsQYzOOqZaOddgjoF+NjnxSAg==
+X-Gm-Gg: ASbGncs3JuQsNKKM/U57nEak41o59mdztRw6Flah0IcAfN/70U9VBsjw/TTkpydHMEm
+	fH34UDxFI9uWlzKmnNnjeZEYPm7Awnu7MtXCXdjoFB2iU3mn9CL9VXV3GgmMaBfj/I4P66MAM4e
+	wW/v6UxFQYyur4rvvqK4D2P1zNgnsF8QB9I8DyAiIURUbY4X6dc96ngr3P511ygZIx1/mau8GqG
+	KpUcAynm2Qurns0MQ==
+X-Google-Smtp-Source: AGHT+IFlJGRFVdFunbhE1qMFhFzsQ7ox2qrr0kPK3cR6JnkVwwd4KR9aUMOAVadxtU1iOr8rX8btiw416Km4fjx3eEM=
+X-Received: by 2002:a05:6871:2942:b0:322:3811:e4a1 with SMTP id
+ 586e51a60fabf-32264a23b40mr11016481fac.26.1757593429792; Thu, 11 Sep 2025
+ 05:23:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
+ <20250813-phy-notify-pmstate-v3-1-3bda59055dd3@linaro.org> <aKX5C9Xlx2CSJraY@vaman>
+In-Reply-To: <aKX5C9Xlx2CSJraY@vaman>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 11 Sep 2025 13:23:37 +0100
+X-Gm-Features: Ac12FXxrk_rVgmFgSaHooe5Gb5FZ-V_t_qQg9tRVc0kilQnohu6e2x4WgTN9EhE
+Message-ID: <CADrjBPpaJdzDSe3kjk=zrODusH3LnwhaBn9-NDCJwEy3ymwvew@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] phy: add new phy_notify_state() api
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com, 
+	William Mcvicker <willmcvicker@google.com>, Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Vinod,
 
-On Mon, 08 Sep 2025 14:02:00 +0000, Tudor Ambarus wrote:
-> ACPM PMIC command handlers returned a u8 value when they should
-> have returned either zero or negative error codes.
-> Translate the APM PMIC errno to linux errno.
-> 
-> 
+Thanks for your review feedback.
 
-Applied, thanks!
+On Wed, 20 Aug 2025 at 17:34, Vinod Koul <vkoul@kernel.org> wrote:
+>
+> On 13-08-25, 16:00, Peter Griffin wrote:
+> > Add a new phy_notify_state() api that notifies and configures a phy for a
+> > given state transition.
+> >
+> > This is intended to be by phy drivers which need to do some runtime
+>                     ^^^^^^^^^^
+> Missing 'used' possibly?
 
-[1/1] firmware: exynos-acpm: fix PMIC returned errno
-      https://git.kernel.org/krzk/linux/c/1da4cbefed4a2e69ebad81fc9b356cd9b807f380
+Yes your right, good spot, will fix.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> > configuration of parameters that can't be handled by phy_calibrate() or
+> > phy_power_{on|off}().
+> >
+> > The first usage of this API is in the Samsung UFS phy that needs to issue
+> > some register writes when entering and exiting the hibernate link state.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  drivers/phy/phy-core.c  | 25 +++++++++++++++++++++++++
+> >  include/linux/phy/phy.h | 19 +++++++++++++++++++
+> >  2 files changed, 44 insertions(+)
+> >
+> > diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> > index 04a5a34e7a950ae94fae915673c25d476fc071c1..60be8af984bf06649ef00e695d0ed4ced597cdb9 100644
+> > --- a/drivers/phy/phy-core.c
+> > +++ b/drivers/phy/phy-core.c
+> > @@ -520,6 +520,31 @@ int phy_notify_disconnect(struct phy *phy, int port)
+> >  }
+> >  EXPORT_SYMBOL_GPL(phy_notify_disconnect);
+> >
+> > +/**
+> > + * phy_notify_state() - phy state notification
+> > + * @phy: the PHY returned by phy_get()
+> > + * @state: the PHY state
+> > + *
+> > + * Notify the PHY of a state transition. Used to notify and
+> > + * configure the PHY accordingly.
+> > + *
+> > + * Returns: %0 if successful, a negative error code otherwise
+> > + */
+> > +int phy_notify_state(struct phy *phy, union phy_notify state)
+> > +{
+> > +     int ret;
+> > +
+> > +     if (!phy || !phy->ops->notify_phystate)
+> > +             return 0;
+> > +
+> > +     mutex_lock(&phy->mutex);
+> > +     ret = phy->ops->notify_phystate(phy, state);
+> > +     mutex_unlock(&phy->mutex);
+> > +
+> > +     return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(phy_notify_state);
+> > +
+> >  /**
+> >   * phy_configure() - Changes the phy parameters
+> >   * @phy: the phy returned by phy_get()
+> > diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> > index 13add0c2c40721fe9ca3f0350d13c035cd25af45..664d0864c3a5042949cb121e982368fe0a97827f 100644
+> > --- a/include/linux/phy/phy.h
+> > +++ b/include/linux/phy/phy.h
+> > @@ -53,6 +53,15 @@ enum phy_media {
+> >       PHY_MEDIA_DAC,
+> >  };
+> >
+> > +enum phy_ufs_state {
+> > +     PHY_UFS_HIBERN8_ENTER,
+> > +     PHY_UFS_HIBERN8_EXIT,
+> > +};
+> > +
+> > +union phy_notify {
+> > +     enum phy_ufs_state ufs_state;
+> > +};
+> > +
+> >  /**
+> >   * union phy_configure_opts - Opaque generic phy configuration
+> >   *
+> > @@ -83,6 +92,7 @@ union phy_configure_opts {
+> >   * @set_speed: set the speed of the phy (optional)
+> >   * @reset: resetting the phy
+> >   * @calibrate: calibrate the phy
+> > + * @notify_phystate: notify and configure the phy for a particular state
+> >   * @release: ops to be performed while the consumer relinquishes the PHY
+> >   * @owner: the module owner containing the ops
+> >   */
+> > @@ -132,6 +142,7 @@ struct phy_ops {
+> >       int     (*connect)(struct phy *phy, int port);
+> >       int     (*disconnect)(struct phy *phy, int port);
+> >
+> > +     int     (*notify_phystate)(struct phy *phy, union phy_notify state);
+> >       void    (*release)(struct phy *phy);
+> >       struct module *owner;
+> >  };
+> > @@ -255,6 +266,7 @@ int phy_reset(struct phy *phy);
+> >  int phy_calibrate(struct phy *phy);
+> >  int phy_notify_connect(struct phy *phy, int port);
+> >  int phy_notify_disconnect(struct phy *phy, int port);
+> > +int phy_notify_state(struct phy *phy, union phy_notify state);
+> >  static inline int phy_get_bus_width(struct phy *phy)
+> >  {
+> >       return phy->attrs.bus_width;
+> > @@ -412,6 +424,13 @@ static inline int phy_notify_disconnect(struct phy *phy, int index)
+> >       return -ENOSYS;
+> >  }
+> >
+> > +static inline int phy_notify_phystate(struct phy *phy, union phy_notify state)
+> > +{
+> > +     if (!phy)
+> > +             return 0;
+> > +     return -ENOSYS;
+>
+> Should be -ENOSYS either way, right?
 
+I initially thought the same, but I followed the pattern that is used
+by many of the other phy API calls like phy_init/exit,
+phy_power_on/off phy_calibrate, phy_notify_connect in
+include/linux/phy/phy.h. I can update it if you like, but I was trying
+to keep it consistent.
+
+The only API I can see (that isn't a *phy_get* or *phy_create*) which
+returns -ENOSYS unconditionally is phy_get_bus_width()
+
+Thanks,
+
+Peter
