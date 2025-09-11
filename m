@@ -1,47 +1,47 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84761A0BD0
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 14:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD691FE46D
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 14:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600234; cv=none; b=amBXLhMP4j1jWjK/ycGXMVixkc3epu7dc/SAUFpmb3YMHyXUxDHBMXDE64Qu58cirSJu12LgFSZAis3sq6a+CqqtCK75Ud+B+En2/l3xxBpsMPmiShZ+cYWq5x+fgEpvS9AtBHqqaecsoc9pPxGga73QDnUAtHrpeHGK9RwuQUU=
+	t=1757600237; cv=none; b=UApu02C8VdP/+uG0m5dqMBFcAPzjc7YL5h0+W4vqv94g5sRkp26BqYnyVn9T8CvAZQnOjryQy7mChgIb+ZV6Apbk5czZZr1yjz42ycKEyQHP4RVp2VhiGXFl5ARcgoDuULp2RPF53hl6o/s8GjEwLPmo8w/1ONolvDQ36pZUc3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600234; c=relaxed/simple;
-	bh=mbPCGX4UM3HTT02k6+HyBLV9KQeGijMJ1WmgYeVW2tM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=cPcmkCAaEzhGu95ouTdUWQmC6y8lQ26iwzyOtkVLGJP10hs5HcHPkSUMfbeVGM2agAI972FKEdPBWaN7El54Da2/GKAUv/wxAk5j8c1xzZipvtV0PAvXbJ2B7MeCSINsLXkKidJQETVh0zd9bwPZ2bI/AvyU2/b/GIAVitRUcMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=patOuB01; arc=none smtp.client-ip=203.254.224.33
+	s=arc-20240116; t=1757600237; c=relaxed/simple;
+	bh=QAkJSSRSi/BwImwzkIxcT5GbTZk5FqYPBKjQeHAJg9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=rP6hbc1tiw1fJvSDb7FNEMIwvMU2LuVPJj7AbfxnoFy0OmqwQTPww9G8upgPQd5hT1lAM15mM+pc2KJJ8bOwXJbGx8RKNSaT4Zc6e+4NEEacv2c6YgqxmZkTG4luPznx5Gxxzp6xRK8wCBIEuuKaVWBsGLzF6yNkVlpquBTV72Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y3XUE5wE; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="patOuB01"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250911141704epoutp0321953c6e562406d352b5a40cec63def5~kQBeYnqMo0154601546epoutp03I
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 14:17:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250911141704epoutp0321953c6e562406d352b5a40cec63def5~kQBeYnqMo0154601546epoutp03I
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y3XUE5wE"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250911141713epoutp01717f89494c0b9274119179118427a706~kQBmrqAmC1144511445epoutp01-
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2025 14:17:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250911141713epoutp01717f89494c0b9274119179118427a706~kQBmrqAmC1144511445epoutp01-
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757600224;
-	bh=RLpdNx7Q7daLl1m5w+1HBX92mGtsG9KdY01cT624FQQ=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=patOuB017iAODXDePtilJ66dkb0gEC6N1VU/RJczUip/26hnOiE/qxD33Lp5kZbmY
-	 HnvpnuPfqwhQWE3wLQ6cGeNSuwY+SvXliiR96oEnnTExZwoHk7SsF+lM/M85luGu2p
-	 sM6X41V8dqUBe4RkQOFJTk3ahTWUXeksV8rj0kqU=
+	s=mail20170921; t=1757600233;
+	bh=Jg8MFO3EvcQCH2GMBa7esLpNK5V25mOJPytVnl79R0w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y3XUE5wEkA3/opDPTwcYqxbUqa35BrKznBmAnVJS+PkmoPxis/HGSYrT/wEJ44HbF
+	 D0VP4EfpFp4e6oYY2Jls8p0Miujma/+3bP8FbtwkSr8nIK1XFJZvaMrwToBvSsdw2C
+	 36zc+WS8zW94Db4PdybebVkKhn7Q9FT033EgTBK4=
 Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250911141703epcas5p45f1cdb7fe1cc1b01d11f889708713a03~kQBdmAcvf2847928479epcas5p4v;
-	Thu, 11 Sep 2025 14:17:03 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cN04G6Kmdz6B9m4; Thu, 11 Sep
-	2025 14:17:02 +0000 (GMT)
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250911141712epcas5p36d9f96f77cbd7fc897d915f22de68fa0~kQBlhE0bP0750507505epcas5p3Y;
+	Thu, 11 Sep 2025 14:17:12 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cN04R2NX1z6B9m4; Thu, 11 Sep
+	2025 14:17:11 +0000 (GMT)
 Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250911141702epcas5p23d6a0708919eca66f9b29104efafbc1f~kQBcMU3Uf2246622466epcas5p2c;
-	Thu, 11 Sep 2025 14:17:02 +0000 (GMT)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250911141710epcas5p190bae9561e3886250c74a9e11def935b~kQBjrqDaJ0925909259epcas5p1F;
+	Thu, 11 Sep 2025 14:17:10 +0000 (GMT)
 Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250911141658epsmtip1c22551d755a82731ba8ba8a915095e45~kQBYqjAjg3172231722epsmtip1b;
-	Thu, 11 Sep 2025 14:16:58 +0000 (GMT)
+	20250911141706epsmtip127af8a1ef2bade909c2937ce4b346240~kQBgOqSyA0081400814epsmtip1h;
+	Thu, 11 Sep 2025 14:17:06 +0000 (GMT)
 From: Ravi Patel <ravi.patel@samsung.com>
 To: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, jesper.nilsson@axis.com,
@@ -56,10 +56,12 @@ Cc: andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
 	ksk4725@coasia.com, kenkim@coasia.com, smn1196@coasia.com,
 	pjsin865@coasia.com, shradha.t@samsung.com, Ravi Patel
 	<ravi.patel@samsung.com>
-Subject: [PATCH 0/3] Use exynos8895 driver data for ARTPEC-8 platform
-Date: Thu, 11 Sep 2025 19:46:02 +0530
-Message-ID: <20250911141605.13034-1-ravi.patel@samsung.com>
+Subject: [PATCH 2/3] arm64: dts: axis: Add samsung,exynos8895-uart
+ compatible for serial node
+Date: Thu, 11 Sep 2025 19:46:04 +0530
+Message-ID: <20250911141605.13034-3-ravi.patel@samsung.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250911141605.13034-1-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,38 +69,48 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250911141702epcas5p23d6a0708919eca66f9b29104efafbc1f
+X-CMS-MailID: 20250911141710epcas5p190bae9561e3886250c74a9e11def935b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250911141702epcas5p23d6a0708919eca66f9b29104efafbc1f
-References: <CGME20250911141702epcas5p23d6a0708919eca66f9b29104efafbc1f@epcas5p2.samsung.com>
+X-CMS-RootMailID: 20250911141710epcas5p190bae9561e3886250c74a9e11def935b
+References: <20250911141605.13034-1-ravi.patel@samsung.com>
+	<CGME20250911141710epcas5p190bae9561e3886250c74a9e11def935b@epcas5p1.samsung.com>
 
-Existing samsung uart driver has separately added ARTPEC-8 specific
-driver data, which is added long back (> 2yrs).
+Add the samsung,exynos8895-uart compatible in the serial node
+and also add samsung,uart-fifosize property.
 
-This driver data can be removed and other similar driver data
-like exynos8895 can be used with some changes in the dt-binding and
-device tree.
-This patch series does the same.
+This is to remove the axis,artpec8-uart specific code (which is
+kind of duplicated) from the driver and use the other matching
+exynos8895 uart code for ARTPEC-8.
 
-NOTE: This series is useful for the upcoming ARTPEC-9 base patches
-where uart is exactly same as the ARTPEC-8.
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/axis/artpec8.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Ravi Patel (3):
-  dt-bindings: serial: samsung: Update axis,artpec8-uart to use
-    samsung,uart-fifosize
-  arm64: dts: axis: Add samsung,exynos8895-uart compatible for serial
-    node
-  tty: serial: samsung: Remove unused artpec-8 specific code
+diff --git a/arch/arm64/boot/dts/exynos/axis/artpec8.dtsi b/arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
+index db9833297982..0f018b258b60 100644
+--- a/arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
++++ b/arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
+@@ -223,7 +223,7 @@
+ 		};
 
- .../bindings/serial/samsung_uart.yaml         |  2 +-
- arch/arm64/boot/dts/exynos/axis/artpec8.dtsi  |  3 +-
- drivers/tty/serial/Kconfig                    |  2 +-
- drivers/tty/serial/samsung_tty.c              | 38 -------------------
- 4 files changed, 4 insertions(+), 41 deletions(-)
+ 		serial_0: serial@16cc0000 {
+-			compatible = "axis,artpec8-uart";
++			compatible = "axis,artpec8-uart", "samsung,exynos8895-uart";
+ 			reg = <0x16cc0000 0x100>;
+ 			clocks = <&cmu_fsys CLK_GOUT_FSYS_UART0_PCLK>,
+ 				 <&cmu_fsys CLK_GOUT_FSYS_UART0_SCLK_UART>;
+@@ -231,6 +231,7 @@
+ 			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&serial0_bus>;
++			samsung,uart-fifosize = <64>;
+ 		};
+ 	};
 
 --
 2.17.1
