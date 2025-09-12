@@ -1,47 +1,54 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4906E4C81;
-	Fri, 12 Sep 2025 21:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B23273809
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 22:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757713855; cv=none; b=jZVXjYjgNKFXd8+CyJNxMq1qGWihoR5EvAmaj9RoQKVFz/muM8rVkHuK4hqBkN8gyfvELy+Cowlh5jNI3W+zdUSOu3Mk14VxPE46MIncX6fC9FtcBNXp1nqKZWls1rkLbL5sXq4WJJaj5UqKgeG2APIph0OuND8duUxrwLFAEuU=
+	t=1757714563; cv=none; b=Uq0Q5z5giBwO2PhVpx44OTpqE3Par7jum3l5gf2fc01J9T6uTaxCOFH0cLfOI7eqJjgfQ92MNYmRPyHgiU2aHka4OBLeQnoFoOt40gZoyuLWgBv+6FgUyxa8eSjXKKDTR/mYHxEyAdkarRx7tpmMrh+H+iuBLRqTA1MqGMCkz+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757713855; c=relaxed/simple;
-	bh=I32UvaadbaJ72Eaidbhmruy+XECfJJW6sIgil2cnjeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GfWJ0pGm5u9Fv5faIowM+5ZBVP+9fUakGnr2SvYIAZc4V7SSbx3+zibANYA8OGmtjeZXPXWISJotToiE0CiKsGP2iKgLtKoBnhnQDjCBmv7VJRsBHFsmf4ceM7CY66tx/mymh0MOZS1ETSlxPWQ7aBgGR6RYCJETWvt5EfiiOiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPkiIYGN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757714563; c=relaxed/simple;
+	bh=migYwaWcEFkXceb2jECsqJx9G0HoIYJqzR5emfUWiaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtQVcu8AzribNmScT7bR+PN2vks10dbnOapaAucW6f7q8BN2r0gJ4U3CzXQeWCZ/glk3hAa+ibGH4/ayAD7Z1YBq0GDCNYzhKYVEWewrNTcThAvsOTCvZro1TlaAv/fA/LLocQCE2TcD96u1BrFHr74CvSSJ2Y3Ozc7b60TZCfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LOsddw8U; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPkiIYGN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD397C4CEF1;
-	Fri, 12 Sep 2025 21:50:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757713855;
-	bh=I32UvaadbaJ72Eaidbhmruy+XECfJJW6sIgil2cnjeo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gPkiIYGNsVnzkGKHbxxmFqBsyIMcycgphKoCmbj8GCCYzxsWhQT3JRMOfmPyMqODQ
-	 uzGBxRZL3dghbATykaG2tSVEML0iOTtx1CmufOncToMeAUNzYK2GbPG/9ADADC+F/q
-	 TKmW6+PwUvNMEyFhDRectkEsWwFj/rqtvzT1GiBIYYRZCkQb4m7EIcd0r84ohOvsyX
-	 kjCilPYUg+ek55S/3MfjHoUcR1urIuTIDrF77z1T80tQRtaDG24SkwPg3MJqH6AB70
-	 j+3h6uxILGb51saPCUzDZhSfNo5dZOf3HZM7qqTPv4f62lHTAklzyMKeHXrb1gsQKW
-	 XbM9D3n5jJQ/w==
-Date: Fri, 12 Sep 2025 16:50:53 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LOsddw8U"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=VVaK
+	ksK86+6l/now4jDnqJzPYXz3j497f5eBLemjxh4=; b=LOsddw8UblcV+2BcFY7K
+	C6pwglAK4IU5mARj0LqB/qM0rYFAzymBL3+nBDSNXMINkzuZ8LyXyshghs4lbPFa
+	3BQxPFsePOXS1J8ZOwqLlgY3O16rZTUnivjCCeKCLrQPg89N7za/6ULgBiWZbK60
+	VzxBFy9nvB0M7Cfaxu3HehYPNaXzpyAJpzlkW2WS6J3j0DzfaM4wkz/T9ehAGo5n
+	b+dGKK1PWojvovLGDQ6EVMscBCLJ+XssKYLEwfPzDH3Vt70Hn8J0ycX4YGiMVohc
+	pPt9KrYw1jeeyomkBB/wh2z05g+h/sLmC9Q3+qnik8yzxhbpeJ3gW8OBnm23V3wc
+	MQ==
+Received: (qmail 1498791 invoked from network); 13 Sep 2025 00:02:38 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:02:38 +0200
+X-UD-Smtp-Session: l3s3148p1@eVTez6E+apsgAQnoAHJ8AC93OVDMgFWg
+Date: Sat, 13 Sep 2025 00:02:38 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH v9 3/4] PCI: qcom: Prepare for the DWC ECAM enablement
-Message-ID: <20250912215053.GA1643809@bhelgaas>
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-serial@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 7/8] dt-bindings: i2c: exynos5: Add exynos990-hsi2c
+ compatible
+Message-ID: <aMSYft5jCQe5iYdo@shikoro>
+References: <20250907-perics-add-usinodes-v2-0-58f41796d2d3@gmail.com>
+ <20250907-perics-add-usinodes-v2-7-58f41796d2d3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,59 +57,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909-controller-dwc-ecam-v9-3-7d5b651840dd@kernel.org>
+In-Reply-To: <20250907-perics-add-usinodes-v2-7-58f41796d2d3@gmail.com>
 
-On Tue, Sep 09, 2025 at 12:37:52PM +0530, Manivannan Sadhasivam wrote:
-> From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+On Sun, Sep 07, 2025 at 10:13:38PM +0000, Denzeel Oliva wrote:
+> Add samsung,exynos990-hsi2c dedicated compatible for
+> representing I2C of Exynos990 SoC.
 > 
-> To support the DWC ECAM mechanism, prepare the driver by performing below
-> configurations:
-> 
->   1. Since the ELBI region will be covered by the ECAM 'config' space,
->      override the 'elbi_base' with the address derived from 'dbi_base' and
->      the offset from PARF_SLV_DBI_ELBI register.
-> 
->   2. Block the transactions from the host bridge to devices other than Root
->      Port on the root bus to return all F's. This is required when the 'CFG
->      Shift Feature' of iATU is enabled.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 
-FWIW, before I noticed your v9, I had updated the comments here to fix
-a few inconsistencies.  Here's the diff:
+Applied to for-next, thanks!
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 7c2b2c8c61c2..962f0311a23a 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -343,15 +343,15 @@ static void qcom_pci_config_ecam(struct dw_pcie_rp *pp)
- 	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
- 
- 	/*
--	 * The only device on root bus is a single Root Port. So if PCI core
--	 * tries to access any devices other than Device/Function (0.0) in Bus
--	 * 0, the TLP will go outside of the controller to the PCI bus. But with
--	 * CFG Shift Feature (ECAM) enabled in iATU, there is no guarantee that
--	 * the response is going to be all F's. Hence, to make sure that the
-+	 * The only device on the root bus is a single Root Port. If we try to
-+	 * access any devices other than Device/Function 00.0 on Bus 0, the TLP
-+	 * will go outside of the controller to the PCI bus. But with CFG Shift
-+	 * Feature (ECAM) enabled in iATU, there is no guarantee that the
-+	 * response is going to be all F's. Hence, to make sure that the
- 	 * requester gets all F's response for accesses other than the Root
--	 * Port, configure iATU to block the transactions starting from function
--	 * 1 of the root bus to the end of the root bus (i.e from dbi_base + 4kb
--	 * to dbi_base + 1MB).
-+	 * Port, configure iATU to block the transactions starting from
-+	 * function 1 of the root bus to the end of the root bus (i.e., from
-+	 * dbi_base + 4KB to dbi_base + 1MB).
- 	 */
- 	addr = pci->dbi_phys_addr + SZ_4K;
- 	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
-@@ -1385,7 +1385,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- 	if (pp->ecam_enabled) {
- 		/*
- 		 * Override ELBI when ECAM is enabled, as when ECAM
--		 * is enabled ELBI moves along with the dbi config space.
-+		 * is enabled ELBI moves along with the DBI config space.
- 		 */
- 		offset = FIELD_GET(SLV_DBI_ELBI_ADDR_BASE, readl(pcie->parf + PARF_SLV_DBI_ELBI));
- 		pci->elbi_base = pci->dbi_base + offset;
