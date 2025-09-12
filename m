@@ -1,98 +1,186 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m49211.qiye.163.com (mail-m49211.qiye.163.com [45.254.49.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAAC3064BC
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 12:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F823304BAF;
+	Fri, 12 Sep 2025 12:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678596; cv=none; b=CC/hTgzYaS/8oP2p+u78VZ7t4FVe4sebFmd20bZ6x5mBv7Xv1qyN4j+REIub7ADQPxK8dvXSS1QA7bbcT5VeKq7dPONCg2C/8KYv1E0D80gncDuvsCtOeFTZVc9he4R1BOkg6vvvegTLJ9SN2luNYsFFNpKfShzxEKwuxIa3HbE=
+	t=1757680130; cv=none; b=kfRrxMdaAlpOFuI7Jhmi3UPoBNHd25DVTnQNkJapuemM2fNTVOrXeYbNk3cRTJV3aXy5scBOTyvMOl0RWS/gORbg08ptJm9QECA0vIrWibSYmN9FOxfOVn31wK/VsuwelMI152x7cG7uaFoMe3xNuUaHBoNgDu3AColZe5Rzl08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678596; c=relaxed/simple;
-	bh=QVperRnHEJSGJPTmM6KVvWxpKyHPxQzH/drJR08pJQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dPfF6Yt7uwsMcvRcrqCWmpFTDvaSaovEPs581RJJpeiufDU8CSKSGypvH5goNTsMAVmYc2Pubq8wI7MfWXT9Iui6mINJkoHUxTfExZDaqRsdg1OJdaH0LGQC8x3m4+3i28o99+1vnfJUiSlZwglMvNbkz8z01SfFy9Tbz57R1jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DL4/ihgf; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757680130; c=relaxed/simple;
+	bh=unb8s+7mjCOzdIdmrT9kcOakUCmsP2Y8y8vgu9R858A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eELhrcsiR8WK8ve1hsWJ0WBd/qQS2f+/TxxjSXP0F1lMmdqdEwaX/P9c/HZrVMWw6OiKolyv/8Hg2WsFs5AdN7aLTE7jCU7ZrOMLDe38cs6171mj5jGpXsjeR3n9SS8nYFnizxsOAkqp4tI6JwdE+9lLVEbUrzGzDDBmzNPOXmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=LB4GTJUx; arc=none smtp.client-ip=45.254.49.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DL4/ihgf"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-560880bb751so1818963e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 05:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757678592; x=1758283392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0PdFHKIGbwFEvO78k7VYipO5DNz3mTKctmHS0mOU/VI=;
-        b=DL4/ihgfFFXwIRBDN6byjzagNqLkh6HN+KEtNsE5XF3GAIey8uj/hdG7u9iRH5pUrg
-         gWHhGaL+Ykdw4rYmVdMYI6leNkBKlLrFjG/1x2rQkFpUAQ6Z3CkS11dReuW9O4AmVMlt
-         ASL49h+4ZOzl+GtpEKbGODW3bjM7/2AuiTCL8lmnLbTssR8bW/hIoQ9PMrwaz01dAjRh
-         SXPjN2aeV8ms/mb3CGu0aM0/ZupGivEdLqnLPrCsOyVJuW9XV8g/VhgxyWMaAuU2PpfE
-         PZu3gHqsfIk4TLuF+bXwa89ifMHGc2Ndloe1sLqoc4tXbclcSngtOEcCjhm2JwvqnjCR
-         trsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757678592; x=1758283392;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0PdFHKIGbwFEvO78k7VYipO5DNz3mTKctmHS0mOU/VI=;
-        b=FAUFRhOdVdcV9iwu2M4OX9mc9AOjqW+l8TyutX+X5P3/uBTlcbtcO9ItPa5Myo1gVg
-         ErsbrjDvaFpZ7rCtPUt2hjJlWc5MpAwbeDz+hsq7mrFOb2/qB1qRygIjSltpmgwei8TO
-         3cwmlVnb7HPDW4nXpK+EAQHt31WqlG/jnQILu+K+CdVnDNEUe+wJYTrmOTz22EIdo1gB
-         Wcq5RtWpS365KiqwVRBuu/BpR3pT8z4fMcgFMbaFpYM9jtBr4RETAhcrpfi9dmqyJiV8
-         8LA+TTpEwLlxAsRtCo2ETNHus/AvLxPrJG22P/ASVDI7L/LWm4evlFpvdOqKe1duUf1S
-         l6Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAZhIlpGbZ5MpWJ4f4LvzuiPuRFA9f/pQn0Yv1i8HtMJ7VkqAmCe+gRAGES/X57RukLHdjAjSUwFnxXW+DpmbaRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Q1ez6yGe9w4rDDM1TvgvAygrA+j2Nuv9qTDHF1DcZs/j3DRi
-	LRv2dW2pGS4XcWcfSJNmaPTkToyGLd060ZjiGjWejWJXJWWFYNO1YnQHrw8oXWeq5jZrdw24ITW
-	bILpxk2fo5dBguUdzk4h8nu8ce0r2O3CpL8QPbPtPPg==
-X-Gm-Gg: ASbGncux6gtFWYAKCM07S6fKjr74oJMiHmPxSaLIYey8/bqehYZDrRtRL0WxEr+f9nb
-	ULxJ6sK6zyc+xb7MW6fUzqanBqVeZHTNOqt8z3D2y013Uqk22Nrkj8t9n7cMJ6Mdw7K9ZDoUXxK
-	ipb7eCFqwvTCOE7aNtnddF4hJTuUQ7Fq4muXei4pHYnTnzOt2Drj1CUG0ulkA97jphRUfEviaSH
-	pt9F+I=
-X-Google-Smtp-Source: AGHT+IGSZOlTW8CCLhnbl5TBUxb6BdFbzV6+OuHe7/KsFBuH3oWJWnilJXYkrdME2jw+G6yIQ8lGS/eJCMYe6xHrNns=
-X-Received: by 2002:ac2:4e0e:0:b0:55f:493c:ba2b with SMTP id
- 2adb3069b0e04-57051f3c661mr692236e87.49.1757678592231; Fri, 12 Sep 2025
- 05:03:12 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="LB4GTJUx"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2298a0eab;
+	Fri, 12 Sep 2025 16:59:27 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jingoohan1@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	luca.ceresoli@bootlin.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v5 12/17] drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
+Date: Fri, 12 Sep 2025 16:58:41 +0800
+Message-Id: <20250912085846.7349-13-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250912085846.7349-1-damon.ding@rock-chips.com>
+References: <20250912085846.7349-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909181841.102103-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250909181841.102103-2-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 12 Sep 2025 14:03:00 +0200
-X-Gm-Features: Ac12FXwqQ4S6LsJ5ISymFmSoLLy-PySRhoETtxxqmtEpkSI7Fd-SoneEsLrhhRs
-Message-ID: <CACRpkdZAt2n2gd7TuwRiBzUwjKy-LH=d7EYC7hg=j753UxKQYg@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.18
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a993d26a65803a3kunm813a8c8ea46217
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh8eH1ZNS0hPS0tPTENCGENWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=LB4GTJUx4TPc3zOnsAmllehgCqb5/k+sCoyB5JUgaZnWoTiXNEy3WYRXqt/pcLCwYufq8+wqBJvDYo+UnWzeDxSw+UqYTttH223HQYb+yTwriXQC96+f5ag4Ls+XOBk811KOu6bHrJ8Lm5kzqt/AH3FhJtKLXm5NRuZhQtqsr9U=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=AXMVnXNQzXfiI7+wsCYAC8kpf4L3PqSIzL15EIexO9E=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Sep 9, 2025 at 8:18=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+Apply analogix_dp_finish_probe() in order to move the panel/bridge
+parsing from Rockchip side to the Analogix side.
 
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
-85:
->
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
-s/samsung-pinctrl-6.18
->
-> for you to fetch changes up to d37db94b078197ec4be1cadebbfd7bf144e3c5e4:
->
->   dt-bindings: pinctrl: samsung: Drop S3C2410 (2025-09-02 12:31:25 +0200)
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Pulled in, thanks for taking care of the Samsung drivers!
+---
 
-Yours,
-Linus Walleij
+Changes in v4:
+- Rename analogix_dp_find_panel_or_bridge() to
+  analogix_dp_finish_probe().
+
+Changes in v5:
+- Remove DRM_DISPLAY_DP_AUX_BUS for ROCKCHIP_ANALOGIX_DP
+---
+ drivers/gpu/drm/rockchip/Kconfig              |  1 -
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 38 +------------------
+ 2 files changed, 2 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index ab525668939a..99af5927c0f8 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -9,7 +9,6 @@ config DRM_ROCKCHIP
+ 	select DRM_PANEL
+ 	select VIDEOMODE_HELPERS
+ 	select DRM_ANALOGIX_DP if ROCKCHIP_ANALOGIX_DP
+-	select DRM_DISPLAY_DP_AUX_BUS if ROCKCHIP_ANALOGIX_DP
+ 	select DRM_DW_HDMI if ROCKCHIP_DW_HDMI
+ 	select DRM_DW_HDMI_QP if ROCKCHIP_DW_HDMI_QP
+ 	select DRM_DW_MIPI_DSI if ROCKCHIP_DW_MIPI_DSI
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 3b6b2d3ca5d1..0784f19a2ed9 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -21,14 +21,12 @@
+ #include <video/of_videomode.h>
+ #include <video/videomode.h>
+ 
+-#include <drm/display/drm_dp_aux_bus.h>
+ #include <drm/display/drm_dp_helper.h>
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge_connector.h>
+ #include <drm/bridge/analogix_dp.h>
+ #include <drm/drm_of.h>
+-#include <drm/drm_panel.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+ 
+@@ -416,24 +414,6 @@ static const struct component_ops rockchip_dp_component_ops = {
+ 	.unbind = rockchip_dp_unbind,
+ };
+ 
+-static int rockchip_dp_link_panel(struct drm_dp_aux *aux)
+-{
+-	struct analogix_dp_plat_data *plat_data = analogix_dp_aux_to_plat_data(aux);
+-	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
+-	int ret;
+-
+-	/*
+-	 * If drm_of_find_panel_or_bridge() returns -ENODEV, there may be no valid panel
+-	 * or bridge nodes. The driver should go on for the driver-free bridge or the DP
+-	 * mode applications.
+-	 */
+-	ret = drm_of_find_panel_or_bridge(dp->dev->of_node, 1, 0, &plat_data->panel, NULL);
+-	if (ret && ret != -ENODEV)
+-		return ret;
+-
+-	return component_add(dp->dev, &rockchip_dp_component_ops);
+-}
+-
+ static int rockchip_dp_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -472,6 +452,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.dev_type = dp->data->chip_type;
+ 	dp->plat_data.power_on = rockchip_dp_poweron;
+ 	dp->plat_data.power_off = rockchip_dp_powerdown;
++	dp->plat_data.ops = &rockchip_dp_component_ops;
+ 
+ 	ret = rockchip_dp_of_probe(dp);
+ 	if (ret < 0)
+@@ -483,22 +464,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dp->adp))
+ 		return PTR_ERR(dp->adp);
+ 
+-	ret = devm_of_dp_aux_populate_bus(analogix_dp_get_aux(dp->adp), rockchip_dp_link_panel);
+-	if (ret) {
+-		/*
+-		 * If devm_of_dp_aux_populate_bus() returns -ENODEV, the done_probing() will not
+-		 * be called because there are no EP devices. Then the rockchip_dp_link_panel()
+-		 * will be called directly in order to support the other valid DT configurations.
+-		 *
+-		 * NOTE: The devm_of_dp_aux_populate_bus() is allowed to return -EPROBE_DEFER.
+-		 */
+-		if (ret != -ENODEV)
+-			return dev_err_probe(dp->dev, ret, "failed to populate aux bus\n");
+-
+-		return rockchip_dp_link_panel(analogix_dp_get_aux(dp->adp));
+-	}
+-
+-	return 0;
++	return analogix_dp_finish_probe(dp->adp);
+ }
+ 
+ static void rockchip_dp_remove(struct platform_device *pdev)
+-- 
+2.34.1
+
