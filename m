@@ -1,92 +1,101 @@
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94D73101B2
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 14:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B5E311944
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 14:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757688438; cv=none; b=Rd+R0QFnma+HEkZRMC0MdGC0NS2tWeXV7NhrJNZe6krVcj7KDi7fIhPModrTsXhbQt10uYiB6rCqZHp7A6/rd71zyTj2EV0zBSNxB7lRWO/y4+8zJ5g9dADZenGBG71m7CpiilZNdoAgjZEI5QaYDVkSZXEoJSfRMhvLuboEiko=
+	t=1757689127; cv=none; b=iTNBkLMsvKGUbOw0j5MWwngsrF/PwY+Bm3BH27a7/CBowEO8EqLjwKmBi0aIbmXHaxrpxKz2D7eswR8cylMWqtuqfDTlgogqsliQToJxJeVGKzdnirgd+Z9IA4rgu/6RZoEwYFLM0IawlRqhdoc++d8j25nJ6hHF+puc8RI1OXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757688438; c=relaxed/simple;
-	bh=oD0rg6h2s8DRnh9ZlLpSygfF8WNHefSf37xINe7C+08=;
+	s=arc-20240116; t=1757689127; c=relaxed/simple;
+	bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JW4pI7CnpVtv/6gPovNsCc51rSpiR1wGu1XbV9qn4+u+7qO1QmWR5uX+TIDuOZPIn388Ns/mGGxqNzl2O5s08xNQuduIC6hAucq7o74wJ4/FxVb/HyXqcq4Dg74GLJuMp9lHZs/zJk7B8nWlp1S9bYfHqEJYAaLEdglo5Vh65Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=snSNmp5b; arc=none smtp.client-ip=209.85.210.54
+	 To:Cc:Content-Type; b=UrQ/vflQvQRddUedZhDq4LRfA7HrsVnZhtTQdk0zssj0BJh/m7ze4aaTfFhw/uZUXQxw4T7U7g4uKTUvyL10Y2SCAw81AUPLFZ+p8SxwaicsCin2sfwLG7YIsUude3uKjt8qObtcpLVbhpB5Ouw60MHpGfjW5oZqjYkG83QqUP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXURIzoL; arc=none smtp.client-ip=209.85.160.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="snSNmp5b"
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-74a61973bedso1839247a34.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 07:47:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXURIzoL"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30ccea8a199so1521390fac.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 07:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757688436; x=1758293236; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757689124; x=1758293924; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n5DP9lHEHxCZeRxso6ploohANo8ljFzvMmesuroyCAA=;
-        b=snSNmp5bTpFGV5C9ol6/nG8CtWdeXnTO+52pJjkJgqDPt6lvlMut7byEHdds97Kl2Z
-         DFVYfeGA07X2ADyhnkchcl8FLnZVtQ+QN9WkNuwFeUFCAaqcBbbg6W2feK/HzQmt/6dP
-         odDZmSn1hbl625f3pfJLU3LlEHjxtmjOKMfZ43ts+2uLH1es5NFkxqIt449fU+cnizlV
-         tahGe3CAfZoAK5db2Q7risuJCzqxF/ZQgY0/bz95LszWGYhVHXUzF4OPzkKDVxysAhH3
-         1ntiFNAG39VV9F14WpF3U5FqVYJKLFzA/wLUCOxUrkoyo9rQOuQ39liYoXrM1+DVsAcC
-         OmwQ==
+        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+        b=vXURIzoL6WOeHy68epWap3ErmNrC29xtLmfmt/5OszeFvCcBTXd9+e7funIXOiH1WE
+         jQUlydwxAqRRUSzjNPsX5gHuXQRClfjIzGBhA1yVFh8Wx4E/I2eHgAZNB8gnsJJlJLrg
+         qpBiAAef9FKGxqxnPsIVZKvBhTOvvs8z3RgusIBTBMpSwtYTpf/8kKvzhTrifkGV7O4p
+         9AHcCNNXS6KaIAkWvORPqfSTlRn1bEMfa6TjjUBZgHMd6weNK2Z3E1BXVucskAbhRmzp
+         vShp0Ug9U0wvKqbVBEcUFK5PfpEtk3+tUyoDXK1MFVj+zJWQSu9R6TfhZ1BRbhdWdqog
+         wv5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757688436; x=1758293236;
+        d=1e100.net; s=20230601; t=1757689124; x=1758293924;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=n5DP9lHEHxCZeRxso6ploohANo8ljFzvMmesuroyCAA=;
-        b=v6KUpgXC+/H9LCUGoef6c3FIF98i5LOcLGgYjlV/Yw3yPSCAac2bE/kfAqqChqeShL
-         VsVPYxhe2xSjRXZL5uNAiH9pMZGJmeBZORx2jN8v44TTIGjTMuFrlPROxQU8uG9WqWfg
-         zJ5FRaph76PIJKsQ8rXeGh8hzHZIuBnZjttz5lIu3211wqSXbCNWoTZ1CIMd56GR/vB/
-         8HmhCUyO5oDBuo5YiytyRBQ3QOl1PFcmhoMxL0zRsa4QJ05qU+MwTvzAeA9RWQs4Evka
-         MWvFnRqb05Bqqfj4Qmr3bRoEzR8s1tBkJ1eotvhn5Dmka0egKc2LiJaad+8k43P7NkdX
-         DFRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBo0Ea67isol+JQTb4UnJPI9KVKRYaYTQFsLx5Y57kgJczNh4HTF4UcXPbh+43UJyrsUG/F3JuVDCFAtBhSHYQVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOqUrs4/jyQhWPuRr7ZccAlskH3RuTMOz8rJMjmROAInvfDuak
-	PbFxeAcQ9BrZmVj5aU+onax2tyEXTHASbww2Lt9WeiFB1ZE/WliFV9IVMUPc1zNu/coVNerrfHG
-	wlPuvjdBEsRj9HDobYeF+j8pDdXf1sZgm3zRZuDKNK9yy7sCffbcCo5IiXQ==
-X-Gm-Gg: ASbGncvVvcSSL9dbqYYigPgnmVT1woqPKvR+MPq2LSzb3ZphfBXWIJvwH94QyfEL/xe
-	Ph7ALwXtS6WlGQRxxSx9dM2yfMhGCNe5GBvk31/US6F/BJ4UxLQyUPNCD7FKWzmvxuGbLY3I5ez
-	qcWBr+F8zYtwfrAgUr347B1IQhaFNURNhVnJhARJM3LlR59kJ+k8d4OyJTdyXU3F8S1oDQrAhZ8
-	uxyXh4=
-X-Google-Smtp-Source: AGHT+IGeyQqSFM5GQBH6iCx5tixN2uUYqtRIakzVl52m5pJ6MiMjEL31OlCuxkleyE+f7rCgdWR9L9hwu0O+n0AMn+8=
-X-Received: by 2002:a05:6830:2115:b0:746:d4d3:c8b3 with SMTP id
- 46e09a7af769-75353b6e84bmr1706635a34.15.1757688436065; Fri, 12 Sep 2025
- 07:47:16 -0700 (PDT)
+        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+        b=Cb3D3ntKNJKXMvSSyr03D70ZrbxSKckjvThvsicUY/JlRcd+tXd1oAAsyjwRce1EbG
+         JpYuAjjxWn901Uz+iOoFqbmPWt87KI6TGsKdVlMz7k1+rJDePBFAiSuL4kMKw/r11NXU
+         H9+CrtUn1fmXdhGXg/H+DXlghtwP3NbY5XLd2lmWc3Gl4/KNOhd31lQn3T9XUt3RfP5q
+         VQBhd2kvmgmnh/lpV7Rvs4b8tQLNLiZzWaG8ZpAqMZ6H1VU4c827Xo9+Zzxetm/Fjh7m
+         uPVdMHqZzUP16i8CJzHZawAOEPRH4B/EXjOWfK3fv+a+I5//dP4DpIaQaqn13zI5kJ/C
+         m0Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3HnFQkQc1Uqh2qhbFTXAjMWOIiZTWETrhCG8Zhj9rFB9C2jPcYqthUfLP8z2Z1c3WQHrfBl3Xap9sSNveOVbgrQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBnuLXje6gT6a+8hqbwpVmLZ127GlD8Vvv7iHB305lR6kJEuIU
+	tc9TMnPhwJDeh43CE+LsAAzAy1bhjZrYOlNX6HigKPWWwkFaUtByZpnZ8fzYC45A5mt5lQOiLhR
+	8dq/dLVRrDNJcDdIv0AqDxgmfqjHCxYIMpQG/KRqpDQ==
+X-Gm-Gg: ASbGnctfQTV9N9JQggf8UD2sLyzVFVWNOH0/AFnewz7sbKUflDg/CvG49ZsiYpLILmH
+	EzntMJiQVV76BxJ6Os5EzfPJz+1+N07VKVKJet/jbLQqJpTdsAXuHW/HmiauJ/jyOvlLeyXsbgT
+	c77UQzSh5BUQiLxP+4fRvV/ATTJJ+aBHzMhwKmqIrs7uvVCiMopnk7ShabjNM2qrSi3cTP4OnOs
+	+DYEYXyt+42Xe/zIw==
+X-Google-Smtp-Source: AGHT+IHAJ42BGc4DV3+A7HRXSgNpI4Ckz1R2zEcxWqCWvdlWoM2kBfvVDgKpueHQzqgzBraygif8YB0P1rDNI9gE4qo=
+X-Received: by 2002:a05:6870:b907:b0:315:3ef4:eecd with SMTP id
+ 586e51a60fabf-32e553a280fmr1618278fac.17.1757689123738; Fri, 12 Sep 2025
+ 07:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org>
-In-Reply-To: <20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org>
+References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+In-Reply-To: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 12 Sep 2025 15:47:04 +0100
-X-Gm-Features: Ac12FXyJH7pruBCqQvGbq77_X-ntri0UZ8m2NLg3fLfUFTSIie9VvPVCWn3Vxng
-Message-ID: <CADrjBPqb+yw0DS9ZrGhW8XSWosWrczV=nMBG4pBPvCVFDpJQ0Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] arm64: dts: exynos: gs101: add cpufreq support
+Date: Fri, 12 Sep 2025 15:58:32 +0100
+X-Gm-Features: Ac12FXwxoqn3zsYfC0T8IDf20S9zDpzsxcpDfKlZfpZdk1czNZgS3-vJNTlzLBQ
+Message-ID: <CADrjBPo8L=P2bHKTFvYOj7i0u6pA7vs32d3y+4Ho+82Z1mRE_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] exynos-acpm: add DVFS protocol and clock driver
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
 	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, willmcvicker@google.com, 
-	kernel-team@android.com
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	willmcvicker@google.com, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 3 Sept 2025 at 15:24, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+On Mon, 8 Sept 2025 at 14:13, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 >
-> Define the CPU clocks and OPPs.
+> Dependencies description:
+> All patches should go through the Samsung SoC tree.
+> The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
+> If the clock subsystem needs to merge the new clock driver, it will
+> need an immutable tag with the 2 patches.
+> No dependecies for #1, #3, #5.
 >
-> Patch #2 has a dependency on the ACPM clock bindings sent at:
-> https://lore.kernel.org/linux-samsung-soc/20250903-acpm-clk-v3-1-65ecd42d88c7@linaro.org/
+> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+> are variable and index based. These clocks don't provide an entire range
+> of values between the limits but only discrete points within the range.
+> The firmware also manages the voltage scaling appropriately with the
+> clock scaling. Make the ACPM node a clock provider.
 >
-> The following error will be seen without the bindings patch:
-> arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
->    10 | #include <dt-bindings/clock/google,gs101-acpm.h>
->       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Add support for the ACPM DVFS protocol. It translates clock frequency
+> requests to messages that can be interpreted by the ACPM firmware.
+> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
 >
 > Thanks,
 > ta
