@@ -1,54 +1,58 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B23273809
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 22:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164B92571DC
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2025 22:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757714563; cv=none; b=Uq0Q5z5giBwO2PhVpx44OTpqE3Par7jum3l5gf2fc01J9T6uTaxCOFH0cLfOI7eqJjgfQ92MNYmRPyHgiU2aHka4OBLeQnoFoOt40gZoyuLWgBv+6FgUyxa8eSjXKKDTR/mYHxEyAdkarRx7tpmMrh+H+iuBLRqTA1MqGMCkz+Q=
+	t=1757716911; cv=none; b=Hcpw1u4+yyw9K55N5spTlqIieXd6QWx8WF3Z+7DMwa+vzNDDmndrM8sPMuEKHfFy6F2F15uEd+SO1tYYzbr4fyNZKKWgGatR2GRKaTEdaYSxgaDxAyoeOLZzhNSMylO3KmWPvi0wef1J0vOJf1og6r75l02KS0apjb/feg1SnAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757714563; c=relaxed/simple;
-	bh=migYwaWcEFkXceb2jECsqJx9G0HoIYJqzR5emfUWiaM=;
+	s=arc-20240116; t=1757716911; c=relaxed/simple;
+	bh=41CPMeB5cMst8rFTr0hIwHXN/45oJmRQ3gqFpa1x3y0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtQVcu8AzribNmScT7bR+PN2vks10dbnOapaAucW6f7q8BN2r0gJ4U3CzXQeWCZ/glk3hAa+ibGH4/ayAD7Z1YBq0GDCNYzhKYVEWewrNTcThAvsOTCvZro1TlaAv/fA/LLocQCE2TcD96u1BrFHr74CvSSJ2Y3Ozc7b60TZCfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LOsddw8U; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yu+epkpY0yUepsWevL2wiPeA7uldB0/kcK0+IHs7h/05kATM+IaNjcBDDpC/9urHKkDfvjzP+85cpK6hZS+aayyB1mq6B2Wq7q835PSung4YlcNhepi6NPMXPbbTFISOX9W9CuyXfXFDl5oaSphYXYVfyH6nQ9l+MO/BHSYUw6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Um4WpDQH; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LOsddw8U"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Um4WpDQH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=VVaK
-	ksK86+6l/now4jDnqJzPYXz3j497f5eBLemjxh4=; b=LOsddw8UblcV+2BcFY7K
-	C6pwglAK4IU5mARj0LqB/qM0rYFAzymBL3+nBDSNXMINkzuZ8LyXyshghs4lbPFa
-	3BQxPFsePOXS1J8ZOwqLlgY3O16rZTUnivjCCeKCLrQPg89N7za/6ULgBiWZbK60
-	VzxBFy9nvB0M7Cfaxu3HehYPNaXzpyAJpzlkW2WS6J3j0DzfaM4wkz/T9ehAGo5n
-	b+dGKK1PWojvovLGDQ6EVMscBCLJ+XssKYLEwfPzDH3Vt70Hn8J0ycX4YGiMVohc
-	pPt9KrYw1jeeyomkBB/wh2z05g+h/sLmC9Q3+qnik8yzxhbpeJ3gW8OBnm23V3wc
-	MQ==
-Received: (qmail 1498791 invoked from network); 13 Sep 2025 00:02:38 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:02:38 +0200
-X-UD-Smtp-Session: l3s3148p1@eVTez6E+apsgAQnoAHJ8AC93OVDMgFWg
-Date: Sat, 13 Sep 2025 00:02:38 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=B7vC
+	Hc3e+Jy8US7hTTy4b9nsVzGf6UZv+0sVA7/a1y0=; b=Um4WpDQHJJyoDGQGUJlI
+	toL1eJ4r/frk7kDy23UEC+FfwIbkQz4MH6fuLgWvXFnQduOCP5AoGVhUs39qkWr3
+	9ylizJqtxlvx0xAlC/TQCGxQ8hsYkxw+hVAf6f6dLucBZTPJdQ6qEJ1wAYsPd89B
+	t1ZkgBrTCdMg5XVpi/QmQz7vjWDanBQ6xeBdnj8Z40H9V03PzIYAOiK1Q1NKWXvi
+	m8+1B6eiVmNMaemuGDOlZEU7TrGi2cyxePRXVPDRhFT0grEQhbQ2gH3hO1q5lmY/
+	uY7NwOdVj651c0bX4GJzSW042wt+udthFxosn9FeRvj/aYA4cD0WuEXRh8H9KbNM
+	CA==
+Received: (qmail 1506839 invoked from network); 13 Sep 2025 00:41:46 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:41:46 +0200
+X-UD-Smtp-Session: l3s3148p1@rqzUW6I+mq0gAQnoAHJ8AC93OVDMgFWg
+Date: Sat, 13 Sep 2025 00:41:46 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Denzeel Oliva <wachiturroxd150@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>, devicetree@vger.kernel.org,
+	Dongchun Zhu <dongchun.zhu@mediatek.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Todor Tomov <todor.too@gmail.com>, linux-arm-msm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-serial@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 7/8] dt-bindings: i2c: exynos5: Add exynos990-hsi2c
- compatible
-Message-ID: <aMSYft5jCQe5iYdo@shikoro>
-References: <20250907-perics-add-usinodes-v2-0-58f41796d2d3@gmail.com>
- <20250907-perics-add-usinodes-v2-7-58f41796d2d3@gmail.com>
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2.1 01/72] dt-bindings: media: Deprecate clock-frequency
+ property for camera sensors
+Message-ID: <aMShqlBgHXHIExDC@shikoro>
+References: <20250812214620.30425-2-laurent.pinchart@ideasonboard.com>
+ <20250813094923.23695-1-laurent.pinchart@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -57,14 +61,36 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250907-perics-add-usinodes-v2-7-58f41796d2d3@gmail.com>
+In-Reply-To: <20250813094923.23695-1-laurent.pinchart@ideasonboard.com>
 
-On Sun, Sep 07, 2025 at 10:13:38PM +0000, Denzeel Oliva wrote:
-> Add samsung,exynos990-hsi2c dedicated compatible for
-> representing I2C of Exynos990 SoC.
+Hi Laurent,
+
+On Wed, Aug 13, 2025 at 12:49:23PM +0300, Laurent Pinchart wrote:
+> Usage of the clock-frequency property for camera sensors is discouraged
+> in favour of using assigned-clock-rates (and assigned-clock-parents
+> where needed). Mark the property as deprecated.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> Update the examples accordingly. In DT examples where the sensor input
+> clock appears to come from a programmable clock generator, replace
+> clock-frequency by the assigned-clocks and assigned-clock-rates
+> properties. Otherwise, just drop clock-frequency.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Changes since v2:
+> 
+> - Don't remove clocks property in samsung,exynos4212-fimc-is.yaml
+> 
+> Changes since v1:
+> 
+> - Adapt examples in bindings that reference sensors
+> ---
+>  Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml    | 6 ++++--
 
-Applied to for-next, thanks!
+Can I have this i2c change seperately to avoid dependencies?
+
+Happy hacking,
+
+   Wolfram
 
