@@ -1,95 +1,65 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F1828FD;
-	Sat, 13 Sep 2025 09:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5E72BD590;
+	Sat, 13 Sep 2025 22:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757755916; cv=none; b=gA6ZLb0NJ2dzmuErh2DA+Jm+Lck/h4GNyBkBQ2Y2v0b9rbtkXylMwfr8EkUUdfsWmLUtGBfZRw/Q0PSx8biFg1yvEs1gsvOGf66mpn0ibKnYR8NwPE4B9m9AYRt0dWLCQpilAU3B4EgNMD1DDw5BHC+B25Ydzxg2og0O5K7HDeY=
+	t=1757801271; cv=none; b=LL3byE0AFeToWvZidvTEt5V9Jq2/fMpeEQHB/1LxnsWaC1HQDf/g+YYH6y5brFCwTC907OIrUUSy6byBTzHsWT8BUxqJyUMXHnYfT8/zKl97VLrqAKgJggK58X8440xH1cPw6fmXVh1PUuoI50JL4kJGzPC5AsxOtP2m87sOLuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757755916; c=relaxed/simple;
-	bh=i/90t0EIiI8YT4SDcQlBv+MxfSzMFscIihlKp+m74p8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0FqPosprEF46ABgGMymX2cNZIGN2xw1Y0Y5LULgIMstx9O8iwKoM0QgcfiZ2/B9yjQ57erWDID3vNmX3nHXTRaCovzuTNoqzE1JEl0JQlTscU2EiDXMhk7n7eay7vqBmkWZtt0RFCo5OH2QRxCRMokRwQegPTYpmAjpsajnc7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SPvrMojw; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1757801271; c=relaxed/simple;
+	bh=KkO4nlDVPP7NGR+5TE4adbTvXwa7kqLzgbOu4m6ZriA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=MZ+7QHh//t5hdlJdapvwF0upwsyUu3cuDhN/7AVkm2pdcXqtdHaoNUj0PPgPs8LdCAZzY+ae81pXnxrXC9nOALD9SdmOrZJsScBNCaM9dfSgg4NH9JmgLsLrvsVLbbXAH4E28PoQ4GrD7QXUmRDTY/n31raCZfOsq9xl6zwUBbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpsZ7MBi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SPvrMojw"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AD9F6664;
-	Sat, 13 Sep 2025 11:30:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757755827;
-	bh=i/90t0EIiI8YT4SDcQlBv+MxfSzMFscIihlKp+m74p8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SPvrMojwHgYf8KJbiXp0FAFeMMXBQZBtETs17QcPzsV2r2CAwhylnATx03eubg2j5
-	 XxD7prpuuzSAc0nrCVYf6L3ixLhxOYg/zxhKvwZj80EfndTrfnJ0FdjO6Y1ofCRRpJ
-	 r/Yn3sKRv6TAYhiRzj78N583eJ7fCaFUTnG2EBAU=
-Date: Sat, 13 Sep 2025 12:31:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-media@vger.kernel.org,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Dongchun Zhu <dongchun.zhu@mediatek.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Todor Tomov <todor.too@gmail.com>, linux-arm-msm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2.1 01/72] dt-bindings: media: Deprecate clock-frequency
- property for camera sensors
-Message-ID: <20250913093118.GA4842@pendragon.ideasonboard.com>
-References: <20250812214620.30425-2-laurent.pinchart@ideasonboard.com>
- <20250813094923.23695-1-laurent.pinchart@ideasonboard.com>
- <aMShqlBgHXHIExDC@shikoro>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpsZ7MBi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AB0C4CEF7;
+	Sat, 13 Sep 2025 22:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757801270;
+	bh=KkO4nlDVPP7NGR+5TE4adbTvXwa7kqLzgbOu4m6ZriA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=CpsZ7MBiWGo88QH09+zuGyg3NAqkbv0ewMeaXyBUE6PZ1o4O2fviYonVB6L01zmZN
+	 h3x6z1XfeyrO47HBE5TvHQPnDgcfOQu8XYPHv3vD9WzjuZQnZX9qxMSuvTS6RfaI9T
+	 EM+drg628Z+vNfyrsdm7jR+U1SFC71MNxPAW6wc4yHm2DBv5f+q90ECz8/89FSQudG
+	 br9C4F5Boulr3f//Sqi1i6bLquFEs4i34kRjdBGZqHH6QCk/zKaXRn00QvoqKrBh/q
+	 aY6CmcC/DYskGu6I1mCJpDp80UXb4KkLtKCHv+l44Oqle/X1qtnFa/KNbQhPmPMe0A
+	 Ilgfs6Nu/mxcg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aMShqlBgHXHIExDC@shikoro>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250909183504.104261-2-krzysztof.kozlowski@linaro.org>
+References: <20250909183504.104261-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.18
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Sat, 13 Sep 2025 15:07:49 -0700
+Message-ID: <175780126993.4354.439527294817394688@lazor>
+User-Agent: alot/0.11
 
-On Sat, Sep 13, 2025 at 12:41:46AM +0200, Wolfram Sang wrote:
-> On Wed, Aug 13, 2025 at 12:49:23PM +0300, Laurent Pinchart wrote:
-> > Usage of the clock-frequency property for camera sensors is discouraged
-> > in favour of using assigned-clock-rates (and assigned-clock-parents
-> > where needed). Mark the property as deprecated.
-> > 
-> > Update the examples accordingly. In DT examples where the sensor input
-> > clock appears to come from a programmable clock generator, replace
-> > clock-frequency by the assigned-clocks and assigned-clock-rates
-> > properties. Otherwise, just drop clock-frequency.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> > Changes since v2:
-> > 
-> > - Don't remove clocks property in samsung,exynos4212-fimc-is.yaml
-> > 
-> > Changes since v1:
-> > 
-> > - Adapt examples in bindings that reference sensors
-> > ---
-> >  Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml    | 6 ++++--
-> 
-> Can I have this i2c change seperately to avoid dependencies?
+Quoting Krzysztof Kozlowski (2025-09-09 11:35:04)
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
+85:
+>=20
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-6.18
+>=20
+> for you to fetch changes up to b3b314ef13e46dce1cdd97a856bd0250dac8feb9:
+>=20
+>   clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support (2025-09-0=
+7 11:12:45 +0200)
+>=20
+> ----------------------------------------------------------------
 
-I'm afraid it has been merged in the media tree already.
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks. Pulled into to clk-next
