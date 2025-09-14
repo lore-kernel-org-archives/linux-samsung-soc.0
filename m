@@ -1,71 +1,71 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7741400C
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 03:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2AD1D7E5B
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 03:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757819733; cv=none; b=rsOpaqH97IIdTA7P75hEr5mCWz6SHAlYOs6eGY0s+/vjKyYbJGnRbN4uKSYfvavv84wf+8JUqGLnhrQn5WQdUXLuDdvMXAgOWPOdnI8GRWD13DLP4rG5bumdBxFYnDvtbIMhTaKHDhyV8nuhzjmnIqAJvhi+oKOWTyl0CQ7FheA=
+	t=1757822117; cv=none; b=kSxxyeHu5lWJ8ZCUxnBSQ4YKGPJKRbGfopeYA/Vadu849QJPvtmUx5xgndv06A3YZaUXlDB+gMaKX7bVzkjMZeFlKd5x5/DMk1htWeJPVCja4dyl9nnv7/PYW34dyEjwrDrugZVsiGujVo8kYoZ3uddcRv5V1xxX0u8Txyx9R4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757819733; c=relaxed/simple;
-	bh=MGCNxggbrvTHVfmtavBwoZiNqQNphL1+ubBdUeqtuL8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qfN6/pyM79e1opVqttdI6RBS8UbdI8kUA4DssmrU5wtAAv7GoDg9blkpyeTKxAFM9I4WVCgfdc/x1mhYuUKNu0xVf+5dbqGtZKyjWGzoOcIABBck0H4atIcN9cYVYBCGkGjL4ZiA6q3TiZsK6CDF1No75nO9TW0qv+U45X8BzSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SG4B/A97; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1757822117; c=relaxed/simple;
+	bh=x427pBqx0gFYGTncFxJvdz5uzugsDQ22hEkrWxmHrFM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MybTZJGDK/o0poWHntPYiDLwDpcKwtXRrMYilJZiOgK7G/erGSoZW9KB14w90dQbs0q+BXZGbco8NbGyh5+PHgC7nqzCtCxezqnlL7N9olRlI9GrDOp4ZoOc0Jd4u90+nO1zrUTMY5/Ovf/J3B//p8xtuoHbZ+1XdV+1w0jbrvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbXfQYfp; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SG4B/A97"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32e1c8223d3so421717a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Sep 2025 20:15:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbXfQYfp"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso2915373b3a.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Sep 2025 20:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757819731; x=1758424531; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757822114; x=1758426914; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=sQXmggUMrwrIw1M8m1vWWqZXk8fIFrk0CiERl2VfUlI=;
-        b=SG4B/A97frduQ2zYGTdRf7OHbCHBtPPvWAU2y4zS5N3bCrqPI9fSWJ9MlAnWvUgkzR
-         s7m1nCSmq83SzU4BJZgj+ZM2JfH4U4OvNkH6/4kyJ7dOuMhH2QY0YBJbxqiXmS3mQsBG
-         YdPQj2wJPbjyuEhuG0AQrqFxTe4Ky7JSv6NMieo0US+IdRyLSq/dA02oWniWSbUOLLkx
-         nrH5BcXilJ3CQ6oUBABsVfalzFX3rL2rET/lyw9isJSE2fuSQPL0mDjqM1tfX1mZoLlv
-         rWlCifmB9h8rppUoh75nBvkPbuVb2s8dYPtE8qQ0OVpH3umfd06zvYY+sRwX/0nmHsBr
-         OPTw==
+        bh=eVZlx8kiBc10T/c0EsaVi7149K3UyKg/YmSpJ4DwS0o=;
+        b=RbXfQYfp0ZX9hzUdFfgU8A2FYtQGKZaByOVimDUVYC4K1iijOFZCUFs7lqw9OZs/qP
+         Q4jFsX1c3VSCg4InVa/DMuieJeQz3tYgWmNKDFPr960syC+hozC88gbEIS9O1eoubTGU
+         jCj0VeUQ5e8fQoqXkKc/R16XIUvTN4MiZ0v+an2j+rWgxnNI9C7FfJ6mJuNknvvnU35s
+         KBWwmGj831V3bSuG7PbZDC1cuVoQMM6sA2zgWbBIjb2ehJuoUwTxzcbCvVvMX/710arY
+         LOnUaJTjFEZ4X1RQZA+W9CD2fM1YZSOy/csdy8mkwsKxP9anSPc9ufnipIb7bAuJQryL
+         +7SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757819731; x=1758424531;
+        d=1e100.net; s=20230601; t=1757822114; x=1758426914;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sQXmggUMrwrIw1M8m1vWWqZXk8fIFrk0CiERl2VfUlI=;
-        b=DLAqUsLjPBcEQWNVVSmQ+p0nNTjRHiiGK4GfYA8QRbmlGjmbXVlsOZSk9drxo+dTxo
-         EQ9H1NCZNoE2NFF654clEoRiR2xDTtppNjaj4IKkux1SghJFdgRIN4ff7snKvS258I8/
-         f1E76+rjcdgY2Ac2I33DhG+dgjDqRFMx+sEf6aYOAkyrLjeg6q9N3iRYaUJXGCend8Uq
-         ctD+QquqSEoPlAJ+Idk6LVkvLijV8+gaXySLJJRp9FvmYxeB3+MrWpg4cFNbI73xGyXP
-         DFqQG211u02EzZHunROyHB6CA/Zgw3BvdixGGxCfB941LyjuX16B+L0Eu8Kvu9EVGFdG
-         gcTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9brKY+rYv8+QDp7AwHwydSfJ1QzudJUsPPGNkoqL8fO6Lh+VxzHZgiFE3GthjCSfgl3uQ7KMPbqU47NoZsPClKg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YypeuWkdjFtgX+RZYx3bq7HlgJ1p8iJLON9GrkX5LLYh7llKoMl
-	12n0RPOT5EH0W/G/eYRMqIkx3PWhVGoDU4VlZzX+aFBuXVIF2KS/A1RK9KPU2w==
-X-Gm-Gg: ASbGncvnoo52WDXCDaIuJAFXDqMy9E2q7FyBCC7vwwV8ai58wthKidh+JliODAIlGNZ
-	lovDt9MidYyDB0E+dUHED98tH/SaPqTmbsv6Jc7o5ZveA2ceMteSFu5oh6RYI+EtN5C4UgjAB1O
-	TtQHdsxgXuvU9uuoQKDP21l/m5QVUvNyGfJMlT3/LVbL/5N/lLVR1pAHGNG7N9dzba/EqY12PAJ
-	WLA93SBtt/YbAsyD8OIDf+ykJNgJSRyZ2jScEBa6HRxucqMcKwfy8OhhENlshCKXiZtBOyvPgtc
-	PkG6PpJGCSBybLmQZUzpqlTcXqhc9lIJL7jqzNlI2sfS1Otjis35lyinqyNWim5S6Pgrcmesqhr
-	kNwn1CFhYizkFnmxDHCIXcL21nGtT6he0xNrKu9xqQbeLcE1wcguqA/ETFYsVgWdXh43ThIvooR
-	et5A==
-X-Google-Smtp-Source: AGHT+IFWi3pcyz9EQVpfY6v2lw/9p7EFzqoSsTbbivP4Gpcr3MjF+VaPc8eCawrX7FuIYTVBOeLlVA==
-X-Received: by 2002:a17:90b:2785:b0:32b:51ab:5d3e with SMTP id 98e67ed59e1d1-32de4e7f4c7mr9393697a91.6.1757819731089;
-        Sat, 13 Sep 2025 20:15:31 -0700 (PDT)
+        bh=eVZlx8kiBc10T/c0EsaVi7149K3UyKg/YmSpJ4DwS0o=;
+        b=GfOW+Jo/ibgFpZr4eNit8CvtUkDFpciOT40mowABCRUo5NY39V5g+ZdCtEHNL9dnBQ
+         YkHJnwS7hB66ungc9aknwbC77tcUdj5dOVlJtFRh/ntLWIIXv8+/qBZiQtUkqtNfAr2f
+         DOP3czzhGPaol34LZYhAoGw5kTcmdUkx6fBHDNfuCYIkk832WLyxvXp9NI8iCScZrYaw
+         IDyw5Jr4lq0nwz9EHNSCH5FfkLE220lr5waSCK1WlE3EfPQhOwD0TdbOZ7raNE/IyffK
+         UXFigrXx02CM/8eppXECnU88MUvoMYlkd9JKo2XEefWewdTIHWMP68i10sD6TIzT+0CO
+         OZqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Xs4MZX62OwQXe5SATHYSf9kiJUUt6hruaLWwit+KD/l9J1OQPNgJsKB8okfNcoXKkjsjED9TKTVVvhP17qcoFQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6TVctJk5Bk84ba/tVbdRJhkomGLMTetu06DLpAGbfrccMcS34
+	hyYOx3DffIhkTWLvVIvTJQFh8GCUe3MWkU8ibXAb8L4hnlsmg5RawXumOX1MZw==
+X-Gm-Gg: ASbGncs25S0qwzfR0saOM0F+JGRQQZdT6ZMT8fR59mKnbJEMyRWswSzKl5glj+6O5Bd
+	MRSWqjunRh2ZTW3HKnCgRuZigWAa98fbs126fbZDezlBbn0oCutgP+ZJbJh/bohcAkpf3SmFbfV
+	l+Hxoqj+AD/H0HwnsdRK2O7/j4pSvWW3wDjM3plYBtA8/9FBXxSDPs+w3u8agQY9DNR0hTNmGVq
+	KyrHSmylI+HmP/OKNVErq/PaBmWdeVIxEnDUHl+QwpMOVltH0QUGv20aS9vQXhGcp7T1RBlV6aT
+	uPkL85gf/SUo8EhaZ9ThoLex8uaojVcSmpY6DyFQhXvQ+A7g8Zsp+Q3uIDdJoeUjuIlBX+MAJuS
+	U3w9apmyg+VsibwWIaMak3AHLKmgtDF9h72KtSGIlOw+70qdSo7Z+4NSnNdRVWH+ZG8uYtccVTa
+	kxgw==
+X-Google-Smtp-Source: AGHT+IHKPmLqyKmaJOziOgkGnuRkSWBVPjF9DQcOeFHiHgnYMiPe6kA2dVUDq8LL+GQhOQ/52sYZ1A==
+X-Received: by 2002:a05:6a21:9985:b0:24a:b9e:4a62 with SMTP id adf61e73a8af0-2602c04eb02mr10505362637.40.1757822114472;
+        Sat, 13 Sep 2025 20:55:14 -0700 (PDT)
 Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd990e44esm10206805a91.28.2025.09.13.20.15.27
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32e0c2863e6sm3704274a91.28.2025.09.13.20.55.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 20:15:30 -0700 (PDT)
+        Sat, 13 Sep 2025 20:55:14 -0700 (PDT)
 Sender: Inki Dae <daeinki@gmail.com>
 From: Inki Dae <inki.dae@samsung.com>
 To: airlied@linux.ie,
 	daniel@ffwll.ch
 Cc: dri-devel@lists.freedesktop.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] drm-misc-next
-Date: Sun, 14 Sep 2025 12:15:22 +0900
-Message-Id: <20250914031522.33155-1-inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Sun, 14 Sep 2025 12:55:06 +0900
+Message-Id: <20250914035506.63339-1-inki.dae@samsung.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -77,48 +77,46 @@ Content-Transfer-Encoding: 8bit
 
 Hi Dave and Daniel,
 
-   Add DSIM bridge drvier support for Exynos7870 SoC.
+   Add Exynos7870 SoC support to Exynos DSI driver and a bug fixup.
 
 Please kindly let me know if there is any problem.
+
+Ps. This PR depends on the following PR being merged first:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-misc-next-for-v6.18
+
 
 Thanks,
 Inki Dae
 
-The following changes since commit c08c931060c7e44452e635e115913dd88214848c:
+The following changes since commit 7ebef12d0c9411c1362cb22c4449747893b7ed2c:
 
-  drm/gem/shmem: Extract drm_gem_shmem_release() from drm_gem_shmem_free() (2025-09-12 19:04:37 -0400)
+  Merge tag 'exynos-drm-misc-next-for-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos into exynos-drm-next (2025-09-14 12:30:31 +0900)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-misc-next-for-v6.18
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.18
 
-for you to fetch changes up to 17308ab685acba947fb35e52fada2b97f346b8cd:
+for you to fetch changes up to 6a3ac4a08be247d6ebd5da13237aec4898a2c4a4:
 
-  drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM bridge (2025-09-14 11:53:09 +0900)
+  drm/exynos: dsi: add support for exynos7870 (2025-09-14 12:31:47 +0900)
 
 ----------------------------------------------------------------
 New feature
-Add DSIM bridge driver support for Exynos7870
-. Introduces Exynos7870 DSIM IP block support in the samsung-dsim bridge driver.
-Document Exynos7870 DSIM compatible in dt-bindings
-. Adds exynos7870 compatible string and required clocks in device tree schema.
+- Add glue layer support for Exynos7870 DSIM in Exynos DSI driver
+  . Introduces Exynos7870 DSIM bridge integration at Exynos DRM DSI layer.
+
+Bug fixups for exynos7_drm_decon.c module
+- Remove redundant ctx->suspended state handling
+  . Cleans up unused state check logic as call flow is now correctly managed.
+  . Fixes an issue where decon_commit() was blocked from decon_atomic_enable() due to incorrect state setting.
 
 ----------------------------------------------------------------
-Kaustabh Chakraborty (12):
-      drm/bridge: samsung-dsim: support separate LINK and DPHY status registers
-      drm/bridge: samsung-dsim: add SFRCTRL register
-      drm/bridge: samsung-dsim: add flag to control header FIFO wait
-      drm/bridge: samsung-dsim: allow configuring bits and offsets of CLKCTRL register
-      drm/bridge: samsung-dsim: allow configuring the MAIN_VSA offset
-      drm/bridge: samsung-dsim: allow configuring the VIDEO_MODE bit
-      drm/bridge: samsung-dsim: allow configuring PLL_M and PLL_S offsets
-      drm/bridge: samsung-dsim: allow configuring the PLL_STABLE bit
-      drm/bridge: samsung-dsim: increase timeout value for PLL_STABLE
-      drm/bridge: samsung-dsim: add ability to define clock names for every variant
-      dt-bindings: samsung,mipi-dsim: document exynos7870 DSIM compatible
-      drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM bridge
+Kaustabh Chakraborty (3):
+      dt-bindings: display: samsung,exynos7-decon: document iommus, memory-region, and ports
+      drm/exynos: exynos7_drm_decon: remove ctx->suspended
+      drm/exynos: dsi: add support for exynos7870
 
- .../bindings/display/bridge/samsung,mipi-dsim.yaml |  27 ++
- drivers/gpu/drm/bridge/samsung-dsim.c              | 353 ++++++++++++++++-----
- include/drm/bridge/samsung-dsim.h                  |  16 +-
- 3 files changed, 308 insertions(+), 88 deletions(-)
+ .../display/samsung/samsung,exynos7-decon.yaml     | 21 +++++++++++++
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c         | 36 ----------------------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  9 ++++++
+ 3 files changed, 30 insertions(+), 36 deletions(-)
