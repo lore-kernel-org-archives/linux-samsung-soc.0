@@ -1,63 +1,63 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE75202963
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 14:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6654E215F42
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757859482; cv=none; b=q/S2cfXQaQhYTwRlRFLspCfypYKTMl+a62mHvXEKspx/yVc5dIHJoFMf6CMlhT20ICXhcgpE9Cn5AHPtMQlU7XQTenBPcSf82yLHCjD6v/20xYpfd4dm7xmBvMQHMkQWRbq4uM6VZloDwdwnOt+bwRSwEX0Wp0x/QfzNkKhEaRQ=
+	t=1757859483; cv=none; b=KugKNG7cOdlE9NX126fgo3Pt112x2BYykp8XUJreRDPZl9IKb9x1uvHxGdyJ/YKzQtggCAyNf3GL3RDPhjtTri3vQyS428Jf0+DTMZzz7GS6akowD7VxMZEEnlKEw0n89HAcFE1Uk2kl5QsFmwfaTQR+rXo8bVNIaGg3qdqQVcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757859482; c=relaxed/simple;
-	bh=G/YgUWwYgipT54ZkK5S7t4iIid/jh16TP1NiVGcDIfY=;
+	s=arc-20240116; t=1757859483; c=relaxed/simple;
+	bh=DmOsX7Vf/ilavkrwxUtj9QNM909CJQfFtlFDgRHasuw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=APpfIRl2kVEVtVc141rmyV0d8r6E2/6dpUsBtamaw84O6l4VoOuXJfkrMaV4as2o/G38AYtZk5Dz7Y9TtceLCzHmL0c0kFwZqvcDoW+G+Wf1CsT/ZLpSqphn0KXo4/gxcPA8RnLBgBe3ZcO7AIItCOVs+zNTK3mpMj6GS9pmJ+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bOaoBPDo; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=VTDZqnQnm58ZoTUSag5upVOfQb8keYGvqRmVdQaNzBbN/apVcqPrd/rysp7z/UssBYsMdLJk1UmvWGxbelhd+fAGejiOZQR1bh1IvWf3v0SOJfP7ABEwUTZ9cxrmYXJ4aYUPsyJX6dsNcWr7rc8ebRNcx9SRz3EnUpX6zogpPPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lEgFIYxg; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOaoBPDo"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so2349353f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 07:17:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEgFIYxg"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3df35a67434so2035796f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 07:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757859478; x=1758464278; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757859480; x=1758464280; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2UA8yGhG9kMHYtx0Te9toutlRddNLKPlgFwt+Jj5ZBw=;
-        b=bOaoBPDoCiLOai8Urih7VD5ZEWw8uQOxpdMbaMY+nhC+HuQE3Dud2SrUjgYNtQSV5q
-         LW/hJgq9/+3WwWrTZ92ulIbpbuuBugVDGEm6HcUB2vkdkXSkt6rXlinhkxU0vUk6ocY3
-         7/YelEm+ubW3DIvMKH/aYJDcvPbXH6ZIR82fImPTd98hk6L1EfAxGe/r+IS4H0g09MIc
-         lcR8Mh9DJO7dLO7vl3XEPeMY0+7Bqm3H+lydqVxzFto1gv2vp4OTh3EH8I2IabtYMm5d
-         cOS6vmCDrzBjQw8cdFA/PdFlZ9EQWAptwSCMlK5IBd6Sy/hby7wqwiaHY0Y847ReFMA7
-         tbNA==
+        bh=WLnk4ZbyfQe9FhVo0Iaf0C5FfaSInQx1UG35rxo35j0=;
+        b=lEgFIYxgLGHYqJn+ddhQ28oIZ/tjQi5GuPHuzoxr+Bn289qSDM276yQyFigIXMPG8L
+         419MkelxiTX8SXCa0ngobbcKxNqUdomev6m4ZmRy7r0Os9YxTkJl4RRXW2ttzm+sS4zS
+         9IEyF7ffKYegwSe99ElP7IO4xVr8kelRwbnu8iJtfJL4Z9hehRE3DLomRaRQlntbFUf0
+         FitHnEM2c3we7suSR/9BdVIktzdXKqbeeqRkTBKaoWoK9VM5Vq9+briz/pu1j7MJHgTt
+         vQtFL6OKPs59/xfRZOar+Rt99oO9PBz/cuSAyC88KuhP8jQi03wsyC6/EhNBXpkvEYKL
+         915g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757859478; x=1758464278;
+        d=1e100.net; s=20230601; t=1757859480; x=1758464280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2UA8yGhG9kMHYtx0Te9toutlRddNLKPlgFwt+Jj5ZBw=;
-        b=L1rrjkwTuJ9th79P0dRtZKYprp6DXDgX6gEX6wRUZMtswl04Ku1uId0/P7+oB7Xp0M
-         6uymPQeZxypTg7Gac2H1BBvXW0lB8oVrCOL/XYZvesk6+VQZity3f2pKkhnoV5brnZ43
-         FXsVRWGPxX9Oq58/SP+rBloL99xEzA2oE0KAke82VIeulVEmbxedlZA1jRHYGAoqYq0M
-         GGOqyvGb78JkNHtHUtS5dtCL00OFgu7ZP/4P6LkJUvTn3mDV43rwJ3qNUo+pEDw5j+82
-         5XI81SFdfnaiy+Hjbf+m78JBRmp7UNlRLCYr0fabITgsfTatNz+wj4BKoCyWEViCMK/d
-         dB5A==
-X-Gm-Message-State: AOJu0YztIiwXTV0xXror0lDQxeHcah/jtKloFUJl+5C1qtZR+/FnUX9u
-	reLxLTjEUTYNdkBbQkTqfAOkRYeaBXfcbB8Wk+Q62zHPunnWKd6jO2jJ
-X-Gm-Gg: ASbGncua4PHh/jHDJH8X9ACeC1LlZ3xIe9nC7qnGrtmirlmatxH4c56KA9sUk1OFeee
-	zzQVnY7V67S69bgWGidHUoeTOoU2tVqTGmynefFqWfxrz8deV6VPOeyLLyTN23ml9y/1FyRXbzb
-	siecATc4v/Tid6iTzaAQ4I8To79/5ufzm0FFbwCpCe3hm6KzKDkK3dTehJNHseMsUDQ7CM4UNl+
-	GwAyY3YOjQTyJ6u+8hMDtYXLLIUEayv7422qUCSAHXozbKpviyYmNqf58E1+XU6DfgDlkf3nIbO
-	aY3ekhe70uvrv1AvLffK2xVKI5fjSQHjoJ5AMUqGBWog2pWvnRG2QEZ4A4QAGh4jyUAn6neJhBT
-	e9ubw+xJu8Amva6QLyp1sWTRMPT+dY5TDtGkz38q+1irQ0z3fqK+A5HvQeVKyk2svYUlaq5retw
-	==
-X-Google-Smtp-Source: AGHT+IEVZ6Z6kRbK2/B6B8AOG5votgND2aiK+Fq2TrFsSb/gyiSqAj2GfqraBbQ0O5p8f224y8alHw==
-X-Received: by 2002:a05:6000:420a:b0:3e7:5f26:f1f0 with SMTP id ffacd0b85a97d-3e765a13179mr8756668f8f.40.1757859478364;
-        Sun, 14 Sep 2025 07:17:58 -0700 (PDT)
+        bh=WLnk4ZbyfQe9FhVo0Iaf0C5FfaSInQx1UG35rxo35j0=;
+        b=Y2pA9Ghxd1xOm9djwQJ2I2/RQ+nPiLzc7uOYh5BvJkkpcuflHBccQ3KvcmwXfs+vxe
+         JIgubvB8yvF3WI8Ntt5xTZfGYgwcyn3aQPAEl41uia3+4JkTUiRd73u3lLOyxNOXOPlJ
+         tsEVBQ1kKekTw4LPjDjFesFOuvgHc+n2t+/f2tnUesfuWXBbheKWTzi0GsBmF4gCv73/
+         8m6dBC4uCR0nqJbU8w8wc0XxtUtvBWnMGBuI5aTAjsW/TPMiUCj0+p0g1Bv0hWQh7w1y
+         0KhWNpVd0y5SyxkPyHNUmFqUKMry90w+WXiKkO2NVNyerFiwCV15A+GrzyO1JZCG0JJd
+         FvqQ==
+X-Gm-Message-State: AOJu0Yyy53ApRTlitqMTCWI4JDF3zoQM2Uh2wRzJp06VSZtwVaTWEHbs
+	r6Hm3YT2IfhYQ3pTRR0kom8xUir2xSTYWbzmma7BW5l6Pl3LNWW/K/ae
+X-Gm-Gg: ASbGncs5pSGIYD0g0qaricWcnLagSBWi6l0R7hfxWuCNY0tXo9sVO5yeTCp0+6dCAnd
+	Z6XTixYMqsdntYb0T9omS7O+UASgBD0XG4Je/b/lHU/LMH6kBdO0DqylLXAcOMeb8eKqWM3T/JZ
+	5dh5pt1BAOQfHq9rEH3L51iOkinfIhyF6HrjA8f7MY6XApdpltCPlV7sU8LsDymuTMiF/SL+sD/
+	F9Ease5UY4L/iCoqwAuOScD3qQDI8xLo4hvVNb3VSWowPHT/u89ad9v8LN2/JtGLXPoBG63eWUV
+	hLNkGeAxniPxgDygxva6NfggKME8N2y9rMV8mTVJhwOY0Moht+X1iVEgmA9eAOqTN4axqsDQ15J
+	Kna5RUWiJZSKoDrnfJmnzVzPYh+Cfr6TdrZhM8swmD88b/imx/zqXnLTPK1beHPg+EDpJaQABgn
+	+CIe4IUry3
+X-Google-Smtp-Source: AGHT+IGob/FXoyz3+A1gJIBnwRTgWRN15gu4QTGHa/hPMhwPvI0q1Q0NHBycPN6rl7zOaTPDOVjCoA==
+X-Received: by 2002:a05:6000:22c7:b0:3e1:1cfc:ee90 with SMTP id ffacd0b85a97d-3e7659c4a5bmr6355341f8f.30.1757859479650;
+        Sun, 14 Sep 2025 07:17:59 -0700 (PDT)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e813eb46f3sm7319270f8f.23.2025.09.14.07.17.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e813eb46f3sm7319270f8f.23.2025.09.14.07.17.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 07:17:57 -0700 (PDT)
+        Sun, 14 Sep 2025 07:17:59 -0700 (PDT)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -72,9 +72,9 @@ Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-bindings: usb: samsung,exynos-dwc3 add exynos8890 compatible
-Date: Sun, 14 Sep 2025 17:17:43 +0300
-Message-ID: <20250914141745.2627756-3-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 2/2] dt-bindings: phy: samsung,usb3-drd-phy: add exynos8890 support
+Date: Sun, 14 Sep 2025 17:17:44 +0300
+Message-ID: <20250914141745.2627756-4-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250914141745.2627756-1-ivo.ivanov.ivanov1@gmail.com>
 References: <20250914141745.2627756-1-ivo.ivanov.ivanov1@gmail.com>
@@ -86,28 +86,57 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a compatible for the exynos8890-dwusb3 node. It features the same
-clocks and regulators as exynos7, so reuse its compatible.
+The exynos8890 SoC features two dwc3 controllers with one USBDRD and
+one USBHOST controller. Document compatible for the USBDRD one.
 
 Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 ---
- Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-index 6d39e5066..6ecbf53d8 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-@@ -21,6 +21,9 @@ properties:
-           - samsung,exynos7870-dwusb3
-           - samsung,exynos850-dwusb3
-           - samsung,exynosautov920-dwusb3
-+      - items:
-+          - const: samsung,exynos8890-dwusb3
-+          - const: samsung,exynos7-dwusb3
-       - items:
-           - const: samsung,exynos990-dwusb3
-           - const: samsung,exynos850-dwusb3
+diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+index e90640320..2b1544baf 100644
+--- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+@@ -33,6 +33,7 @@ properties:
+       - samsung,exynos7-usbdrd-phy
+       - samsung,exynos7870-usbdrd-phy
+       - samsung,exynos850-usbdrd-phy
++      - samsung,exynos8890-usbdrd-phy
+       - samsung,exynos990-usbdrd-phy
+ 
+   clocks:
+@@ -209,6 +210,30 @@ allOf:
+         reg-names:
+           maxItems: 1
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynos8890-usbdrd-phy
++    then:
++      properties:
++        clocks:
++          minItems: 3
++          maxItems: 3
++
++        clock-names:
++          items:
++            - const: phy
++            - const: ref
++            - const: pipe
++
++        reg:
++          maxItems: 1
++
++        reg-names:
++          maxItems: 1
++
+   - if:
+       properties:
+         compatible:
 -- 
 2.43.0
 
