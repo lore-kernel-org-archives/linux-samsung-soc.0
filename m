@@ -1,78 +1,78 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6501325782E
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 11:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC71E5B9E
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 11:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757849393; cv=none; b=L/JWPXmnC/rkDL5UWnf/WOy5H2A50Uqytt8z6cQwAVkKIW4NwsnK+wg6XHTAV6c6hmVdFXajgRsSRuXY3kJs9MCqrQPYF0Rac6NKd/sP5cIdZtitb9hvdTgdUr1h9EFXsGx/4MfDAXLYPWDG4K1Mb6m710wQqNNl6A+CTWowCIk=
+	t=1757850305; cv=none; b=U8LZY37lJ+F/vobcmiAeohKruOoqMogjBFGA4j8TB1ECd4MpfAoKclgrXZzarjIvZsO6pxZDaSnmM5NH3eL6hb1Eg9rI7xIkHc06fjqSMVcaqPU8UEhegqLKvpO44Wb6zdPCVbJHx6fchJ/6nUXi5LCquCV2J9QVJJdAtwBgKzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757849393; c=relaxed/simple;
-	bh=eGhvv9/N66YsxzDcDqEg58aZlG9m/MLJsOnFOeq3D8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sw1OMVFe2Pu8v1BJ0ympg9p5g7nTTMjJGpPhqE0KJiCLUy43aAWkk4xUOGASfChx7tV/vOIh+5c0Puh8WHNMKY6NF3tpB6+Md7mvzUhyj9il7YDOGutlk0SVwvx2in/n0pV5H86jxC7ZL3ZHAM7EnI/z0S5rfdTYBILFtCJ/bq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zyq+5QBF; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1757850305; c=relaxed/simple;
+	bh=fIdw23kCtB7mdE2ObsS2whaNsMI65r/FonqsAsCDIf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gB1pCPPHVcidZYEGoRatr2QuEjoQWy25uH4dHSP3jt01RaTmmfuH0Mqs0Qwx0K1NzdiStaGup5pfjw6RxXR0iHS0yGyjJG24kMwe/gXEwuCCbuAu20NqhdOvfY/dZYU6HWmrGIzoFSWwdT/lzQOfnBk9iyNsTLPChYTeGMMsx1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SgvYWpGq; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zyq+5QBF"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e9042021faso536500f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 04:29:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgvYWpGq"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3d118d8fa91so1052963f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 04:45:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757849390; x=1758454190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8vsQY4Dw+NKWkDueuyiKs+vcdnaBKygRmkUmRr7JUuk=;
-        b=Zyq+5QBF5hC+ZTkBwgK9TPRZ90TD9wnHf8TOy9nCbJFiyTDPc9uGAWShZlA9I4evU2
-         EpmncFCJZtFPNvCRXnNmaPqxKq5TqR7lCobsFZlqxd7oaWVj03WYIGQLpetSsMP50Wqz
-         96mioUN2ADah1apBDjrdpwJJtfRxfOo9CZrg8WXR6Nbgk4XRuf/6koK8aD1+41L1Q+91
-         F+hvGmrYy+IUUFSxtdvdSg7YDh4JuNd5mrcuF1ceYJmOxTiJkoadtLk3m8UFvK5qjjOZ
-         ua1UKEFlTqa8Uv1ARJOjo8ASgVLTkdaMBlxz8gMEcKVxX1R35UTQWneSewEZWO3JT8my
-         TDtw==
+        d=gmail.com; s=20230601; t=1757850301; x=1758455101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zl9epDnVBDf5FGwQnol7WPxPj6t42uf2hUNcw7PBwX4=;
+        b=SgvYWpGq43cB7t/JShNl/aLM3QH5u9bIB3pCoTaxzCbWGihOg5NeWk1sx5jlRRN2W/
+         1hcEmxw8cjnqyQ82uXR5AJj8YkTgD4ASMagzuhe5BUsfgdxrIp9X15PGxBrGJnp5hfwU
+         SJhad+5ot1AcgqYquRMtS/calSmiXLIiPxqxk8BCc1i1jBgXLO41azrxm3zhNLHGgt+f
+         +m6snHE/CLDPCd7WBnG3bK/3Ur/bq3uLuXOnV6YxFHaQE3xuMTCkMFwcl571r5vYcTED
+         8MwRQncNaxYJgNWro+1TzaoKmEQ1fVXgu8RMh9gmxp65xC4XpvaCN6gLrj91v3DPdxAI
+         rhYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757849390; x=1758454190;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8vsQY4Dw+NKWkDueuyiKs+vcdnaBKygRmkUmRr7JUuk=;
-        b=lkUITjyoNJ4ufYrtKZKlOpc+XrRbOWXF3GGW1RBQ2LYjoBOuRjlFig8e5kkF+uZb5i
-         iUH7Ydk8XBqjOl+iEV4nBATW/crccvT1XFmT+qLHmqfe3Bot8uiEicozE7wUVCfUgPvy
-         3UlKGQw/52PW+wm25ZCgqZSN2bwnnqq4YVvr7Cj0/+NRBPXlXeCslULpi04JCxfWZCii
-         id8X8tOlUBIBG5u/sLYbS2V35WoL7Z9qbGjKJ21z0joAgyjW+03TanCvDjrgjVTiqxai
-         JgHnix6Y7ln6nVUWH1tksBGx34tGsOi4AxFnzJFhQkqNP4jsqPxeQG7pHsLOcrBqVNku
-         9ZIg==
-X-Gm-Message-State: AOJu0YztuM878Vt94CIlpwNizH+T1KI541QzvkK4R7ko/ux4q6ZguqFv
-	D4vEHfhV7VMFvMon1eRgDEZu1J1wavQ7hyyn9xjUEx7XzWsMZjyCkzTK
-X-Gm-Gg: ASbGncv2vBpmvbElryjC9D1jLAh9TLXULTGXkzioEeD35aVLToLsYiwT0b7MRLc41EC
-	NL3t1kkLOK5UgMR9JyrftMJnuqx0yl+A64fGzKsUnlZ2bpAxL8T+8anxmwnWi67b+32ZCFmfmSm
-	8uu0eMgiMVW+F4Ldihm40Y0oc3rL4XwiIKLlUTF9Cx/UVEi6lMUT+9XWnq8MREoLJ4rNTEoras8
-	UMprIL0UJieUHH+ywrhtt8erUM1dNXAiVV1jmVdor8DG6Ba9shB5GxJa4xmZSlA+Eo4GOToOVeP
-	zkMcAsgUzc2JFfhzpRKQpWz7yxfXI8TIsiIhGps/eQ5L0+kC2O3B3JS1MVOROFiZcTuB+Tlzl1Y
-	TC5jkGxIcLVHLzm1feFqqfXbFdNhB2V3Q+7+OyxM9UKYjwidudrzH9GO7aARmqZpLVgxoT7A/rg
-	==
-X-Google-Smtp-Source: AGHT+IG7cUFQKEKzCWjaXCRFkeDZbrdH3vz4KY4We/ahlJdKQNXRJ0ZP4meSLxgeXXNpvydWJj/Jiw==
-X-Received: by 2002:a05:6000:2584:b0:3e7:5edd:ce07 with SMTP id ffacd0b85a97d-3e7659f3bc0mr9180559f8f.40.1757849389608;
-        Sun, 14 Sep 2025 04:29:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757850301; x=1758455101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zl9epDnVBDf5FGwQnol7WPxPj6t42uf2hUNcw7PBwX4=;
+        b=g0Y/ZF09Owci73hCKoYBbR79Nzc0t4WyHULrymf+KsNtwieVo4zB0mvYIFEoiOi6ua
+         W6Gg6BmR6sq+ERosQdeloy/SNEYtH9LxSuxUQJ0U9Ldz5WGQNUsFGnEV0XWR6KF212GP
+         qX1QKEDUqUCY5icvnwC2cS6ECbnWMZnTcpXQp+8zMnb+9H3Lg+E2GTO2DIAHzCVCl7L1
+         ewmya+etSsPu6Pq1iK2ZPaaQJxQ3pjX3etAW6tcjIBsi2j0oL/tPKj3ENe7ensjSkPa3
+         Mk/3PCSZPXiHqks6TTSSiXken7VykNzwOrw1c/Sty6+bZpS6TmpnmNF7Wxd4rJP426sN
+         yySg==
+X-Gm-Message-State: AOJu0YxTtbgHXw8kOJYR7y9Bkjp6epNh9IHZMb848+vrP5S5Ul2G1cNR
+	mftyfaGlI9Pj7W0Zf9THr0iADG1SiZezGKG7dkNkxXDQwxO6A/b+z8j9
+X-Gm-Gg: ASbGnctpTiFbTnzPxT/m3k9b3we4NbtYFomsGP8wZFMa7Jtb976Cp/zZouda1tuBrHd
+	nf+i3b6d47meyAXQvoDE7JdIZ7ei62+VuR2jB98jVI8nOPGs0m9EtNqK+yxcsApsM7DEJau5ZzZ
+	dDVAcjj+x6ZHRAyBehP/IYnYmHRVOLiY3zSxZ9gQC8vumGmE6EYTOaawQFuOIUY9LV5sOxNV50o
+	M+FvZJQTTxNTh4SuXML9IYtQ1r3/4CLaXd1/yTcIDuSOJvNqLlczLjsVhNyCg0JOQRAnCwtjtS6
+	++6fSh5xNI+ssBZepDkMk56FCB14n/rva9OambQ2sBz90mSPOXyEQr8EZ5JvXSt2UkKWpU1eZW6
+	o7vPR0XZ7xUvKAiBk4C/JvAmkNjUkTskwORmTP8z9l6aSHCZ9BuW+vb9ZU9KE1HNUZtMCfkoqIE
+	BJXJIyXPqM
+X-Google-Smtp-Source: AGHT+IEKZoR43PuG4u0ovxcf8LSqoSkXytpnNXieBus8x9zq/gDUlem4pul2S/1lpLAukbDJ5yAyag==
+X-Received: by 2002:a5d:5f53:0:b0:3e2:a287:2cf2 with SMTP id ffacd0b85a97d-3e765a0915amr6836384f8f.23.1757850301352;
+        Sun, 14 Sep 2025 04:45:01 -0700 (PDT)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8346defd3sm6591268f8f.1.2025.09.14.04.29.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ea21a6e4basm1503252f8f.11.2025.09.14.04.45.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 04:29:49 -0700 (PDT)
+        Sun, 14 Sep 2025 04:45:00 -0700 (PDT)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] soc: samsung: exynos-chipid: add exynos8890 SoC support
-Date: Sun, 14 Sep 2025 14:29:42 +0300
-Message-ID: <20250914112942.2604194-4-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 0/3] pinctrl: samsung: add exynos8890 SoC pinctrl
+Date: Sun, 14 Sep 2025 14:44:54 +0300
+Message-ID: <20250914114457.2610013-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250914112942.2604194-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250914112942.2604194-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -81,26 +81,25 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add exynos8890 information to soc_ids tables. This SoC product id
-is "0xE8890000".
+Hey folks,
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- drivers/soc/samsung/exynos-chipid.c | 1 +
- 1 file changed, 1 insertion(+)
+This patchset adds pinctrl support for the exynos8890 SoC.
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index c86f1058c..02466f916 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -57,6 +57,7 @@ static const struct exynos_soc_id {
- 	{ "EXYNOS5800", 0xE5422000 },
- 	{ "EXYNOS7420", 0xE7420000 },
- 	{ "EXYNOS7870", 0xE7870000 },
-+	{ "EXYNOS8890", 0xE8890000 },
- 	/* Compatible with: samsung,exynos850-chipid */
- 	{ "EXYNOS2200", 0xE9925000 },
- 	{ "EXYNOS7885", 0xE7885000 },
+Best regards,
+Ivaylo
+
+Ivaylo Ivanov (3):
+  dt-bindings: pinctrl: samsung: add exynos8890 compatible
+  dt-bindings: pinctrl: samsung: add exynos8890-wakeup-eint compatible
+  pinctrl: samsung: add exynos8890 SoC pinctrl configuration
+
+ .../samsung,pinctrl-wakeup-interrupt.yaml     |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |   5 +-
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 157 ++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+ 5 files changed, 165 insertions(+), 1 deletion(-)
+
 -- 
 2.43.0
 
