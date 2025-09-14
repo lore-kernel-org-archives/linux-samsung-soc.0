@@ -1,106 +1,128 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945FD1EBFF7
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 13:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2D8287E;
+	Sun, 14 Sep 2025 14:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757858220; cv=none; b=d2IOh4yQ1+7BJ6PU85Ft/FKE+o2tl7pdAk7roTT8GQcBJ2gUbFFL0T8Y6Yt5k89wOtp6FRLxRwuXQyno3j/SnecE+DBd7EnU72flmyWzvydmoTeZbe+7hrJycHud7NYD5Ti13pCX6Pku0C7qv/LYD/XeSFbC53Nf4WHaOTXN8kY=
+	t=1757859396; cv=none; b=QXGCGwIUmiA7rfFSlYxX3XmuRCAq42vPkS1koA/CgDP2WcU164+o/v0L23FlbfbQSk3n7zXl/1wBdrWTMm1bmun4cejlo044RwZtzpdDHkbOscCT51aC69CJnO037FYupqYEihILDYypcXojgpkZj+Kq/7dV/Ea0VkqhSe86kWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757858220; c=relaxed/simple;
-	bh=G/YgUWwYgipT54ZkK5S7t4iIid/jh16TP1NiVGcDIfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mqLXxxhJnPmbw4/gKr5VvfjaBnbYuWZh/ZLWmEbBgdl1y1a0VTTKd67vyj8QePApLdvDarN10XLHpt4LbRZ2XtR7+zccUA3y/JQaowgL3k1LPVPm8fOj9+NRhkKUHr6v0B6tF5WihHGpQBoQG6Tq/NMvfc9IxuNUJ64eP1yttpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHR/9HUm; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757859396; c=relaxed/simple;
+	bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJVjXj5dAn/KElCMuCNeIRFS6iEW+A3EgtQx8iv1+JCVKhlG71Q8F+SAPrk4GTO9OAQ9/rCApRWxC6umKvvuB5wnwU0ElkLVPSyWdH5ziYQBMImzBh0ICoMsfMxGOBV47rtuhvGzDv1JTpgc945kDrU2YEnNxQriE0Xnuh7/Jrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JTYB9lZj; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHR/9HUm"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so20943995e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 06:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757858217; x=1758463017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2UA8yGhG9kMHYtx0Te9toutlRddNLKPlgFwt+Jj5ZBw=;
-        b=aHR/9HUmPwzCarHoxiVPUS/JKdRy83Hp2l549rHvBav+G1aHNjN8qNTMr40oPOfbx4
-         +/pXMl/O8BAX45mR7VNJdalKpzw/ueWtoibME1WjIYjIVvfII2wtNIOk6BUyhZ+huHJU
-         RP4zk1sttF/Fr3XykCaT96FjN/pzMD7cacDdbisKuIt2+/xBjvtBdlyUKqeN76Js32Yl
-         NbBQCkiQ2dLlPVZWvlgDoQWdvkP9LbJpQrdXsb1Q8Fv+DPHKbmfReTMnQnPiMW5DYOmx
-         H/POhEFkC1UL76iwgvGaYxf2baU6iK0r12ik59DM1mohymEmc9ZjME7Cnch6pQPtqmW4
-         UZ3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757858217; x=1758463017;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2UA8yGhG9kMHYtx0Te9toutlRddNLKPlgFwt+Jj5ZBw=;
-        b=NYfMgVy+bOQ5usu8XCz6hgCFo64UXAKyPqvMlv4KNGpbHEjqS0VyIoX+ztSoGGa/Vu
-         NO1+dD8a34uvCQ/WOHfvxglJB4usXq9/Bz0fcLxbyMpqWwh7DIPORd97R9oTrfTQ6aru
-         Hdoj+EstRbk1pBztu6T4qAaZJS66e8GZpkFjPetDsPvgWwfDo7QpMu3cEATvpGRA3mL8
-         cEYwLkPLoL8QtuIO3EzUQSqNtqo5N3RU0FFHgwG7dVcdJazw54gi9qKIuPxmFfyxl2jF
-         Nqz2YzhmY7NTW4yoW7aw454eQEx6WJDcnZwUr5+Y3Y6XJs+HNPj/AEctGEeqHhvAGI41
-         fSWg==
-X-Gm-Message-State: AOJu0YwssFM3JN3ZYuLZ/ThTpP/uJFw60m1xl/GqwC0deLxUsYGCqi+e
-	+zUAlE7EXSSpvt4GlUCZUPc80JHK+UQsQMzKOerLeAC4MSgxuSy5hHX8
-X-Gm-Gg: ASbGncuVrhz4QhUZeR43X57yLXo2sYPjIo9PDXQogSA7O771KAXv3o97s+t4HEKk6EL
-	DoF1Dt4SEilHlNP7ccST979ReUgbREdQkVfuH0pYJIIblbAIPTtHe3BW/qLEy1X6OHeK9+qcj/B
-	NwBZCn+Wt8XWib/AfQcDtUHg1vN1mRSmjxGdW7hNz88noqCj0JM4Coj09fXMhTjXWAu7xv6xJKi
-	/+brV7i7yPTf3d6sfKyr92Wb+Byn7QOFE18IXY1EsvrLq1I8p3QEVXX1XbfdVeVmSJhb3wCefmb
-	6P2Xpq6Vej89dTW+OxaS4GvQadpe4176g21V3QIuIO7J9Fq5UVvV65o73XG/K16PFOJSJr8DYy8
-	7mGGacR+AZkrmoo2H6KEWTxDisHzxIYxbvxY1p//GkZVQmAlgOe2Bs6HPlxDd4RjAqfzYwVQq1Q
-	==
-X-Google-Smtp-Source: AGHT+IHB+VULFKNGf84XS/gc0CK50EFtBdez3HC/85lxGgum+zb542w5P3i1LGfQ0Av13zEl30jWvw==
-X-Received: by 2002:a05:600c:1387:b0:45b:88d6:8ddb with SMTP id 5b1f17b1804b1-45f211fc2dbmr82961965e9.37.1757858216790;
-        Sun, 14 Sep 2025 06:56:56 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e84de17f9bsm6740887f8f.49.2025.09.14.06.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:56:56 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: usb: samsung,exynos-dwc3 add exynos8890 compatible
-Date: Sun, 14 Sep 2025 16:56:52 +0300
-Message-ID: <20250914135652.2626066-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JTYB9lZj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757859394; x=1789395394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
+  b=JTYB9lZjPD+zk2eMHjOaN5wVD+7PC7Rnr4CifeHV8Blj4ixpOhz1fnzn
+   s5Og+SFO4aoFaWsXyU5XghEW17N1XPEotKSbpAiEzUE7eCtCP1DByVoXm
+   33QJr00lDj4DY2YKY/BtN76ugsx9ZG/L7O/Jh0hJAGIzTasQPNxqE8avM
+   N1scrIDBqSAeKJoo6V/pIjK+ENJ6VW38ZMyStcmzIkztWCcggRqb2b7l5
+   DmyEg7cTxibD+DnCNxBdVtiRjlQhE3Dy73druFUnmvTRQ7XhL8oVAqouL
+   pi9qGf/q0g4ncn1pA8fn+hp49vmL1t+66S7UEo9DaQUPfwhHkdXFEZQ6l
+   w==;
+X-CSE-ConnectionGUID: hKcCLeKvQ6+/p9MEzuBpRw==
+X-CSE-MsgGUID: XOlwq7e4TIukCBqyfFjvoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="71503324"
+X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
+   d="scan'208";a="71503324"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 07:16:33 -0700
+X-CSE-ConnectionGUID: fKFq+2jnSAaSeZDt1z3VvQ==
+X-CSE-MsgGUID: Zi1Q9B4xRvyVk5+bxvVdOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
+   d="scan'208";a="174224891"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 14 Sep 2025 07:16:30 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uxnWi-0002Sy-0K;
+	Sun, 14 Sep 2025 14:16:24 +0000
+Date: Sun, 14 Sep 2025 22:16:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+Message-ID: <202509142156.qb0htmwo-lkp@intel.com>
+References: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
 
-Add a compatible for the exynos8890-dwusb3 node. It features the same
-clocks and regulators as exynos7, so reuse its compatible.
+Hi Ivaylo,
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-index 6d39e5066..6ecbf53d8 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-@@ -21,6 +21,9 @@ properties:
-           - samsung,exynos7870-dwusb3
-           - samsung,exynos850-dwusb3
-           - samsung,exynosautov920-dwusb3
-+      - items:
-+          - const: samsung,exynos8890-dwusb3
-+          - const: samsung,exynos7-dwusb3
-       - items:
-           - const: samsung,exynos990-dwusb3
-           - const: samsung,exynos850-dwusb3
+[auto build test ERROR on krzk-dt/for-next]
+[also build test ERROR on linus/master v6.17-rc5]
+[cannot apply to krzk/for-next clk/clk-next next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-clock-add-exynos8890-SoC/20250914-202302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git for-next
+patch link:    https://lore.kernel.org/r/20250914122116.2616801-6-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+config: csky-randconfig-001-20250914 (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509142156.qb0htmwo-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/samsung/clk-exynos8890.c: In function 'exynos8890_init_clocks':
+>> drivers/clk/samsung/clk-exynos8890.c:49:45: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+      49 | #define QCH_DIS                 (QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+         |                                             ^~~~~~~~~~
+   drivers/clk/samsung/clk-exynos8890.c:88:31: note: in expansion of macro 'QCH_DIS'
+      88 |                         val = QCH_DIS;
+         |                               ^~~~~~~
+
+
+vim +/FIELD_PREP +49 drivers/clk/samsung/clk-exynos8890.c
+
+    39	
+    40	/*
+    41	 * As exynos8890 first introduced hwacg, cmu registers are mapped similarly
+    42	 * to exynos7, with the exception of the new q-state and q-ch registers that
+    43	 * can set the behavior of automatic gates.
+    44	 */
+    45	
+    46	/* decoded magic number from downstream */
+    47	#define QCH_EN_MASK		BIT(0)
+    48	#define QCH_MASK		(GENMASK(19, 16) | BIT(12))
+  > 49	#define QCH_DIS			(QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+    50	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
