@@ -1,188 +1,69 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F84169AD2;
-	Sun, 14 Sep 2025 16:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5AF25486D;
+	Sun, 14 Sep 2025 19:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757867721; cv=none; b=X4EhFp2HNhf5B2Pr84RixwlGULth3qgYd3bbOOlbLJMpOo0MkTfS7ksTtl5fdmk9M12EY8na8es72IU1JYQyUn/786BRm2lEahLkkI0EXp/UMuJ5Zn/Cnt2yWFiDqJxA9c6sC7z/yw0b+v6C9jln2tvlhuQrYOoeUAA2iycwQzg=
+	t=1757878331; cv=none; b=MSnxf9JCgeAIaQJgZ1il0lmyYHBENQbCwiMDnJoPBEOfiYrrjgczTTQy3uitj+bepl8Wole07MecOj3q0q3RzS0WD4qpG/bscXFJpPT8uD0WW+jIPBggz+fjRbJu+QMwlNu4s9mJhKXDnL6f7qUD7MRZ0iYcB1fU2JUhu+qanT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757867721; c=relaxed/simple;
-	bh=d/DksVt1jOUUNg1guB1c26u/tAnFGmp64Nkbi1kNFUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tIjSn0RsPzemtXLjBrpPGVrCZIFBzGHX0rqUAS3JZYrmukYOWPPkyNwmPNGf0vuADwOwArWW65MRa3dMbkTEbp6LnSjOyHuMKkrgkVZNyUJm246OQkjJHMtQqRCIeBQRm1LmHg4s0fyLP9B8VmZAmf+VQS2HDa9U1s7vsuE0FDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hn+TQJVM; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1757878331; c=relaxed/simple;
+	bh=SChiRd4Jr6UfFBCrUBWUWxMCt2bUKVsrLzTm4Xw4bZY=;
+	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IhPvsOK7ByLc/oOiw4LHJP9CchcYmdsqIZ0cR02L5IU2BszCRJ4ukQ1RWG1/ooyadWeOKN0SiF33Ccp5MZ5YGFiksVuFYa1eK+KOURik52pQVrqN2P3mI/elzMwEKH5Kw2CrONjMGSUoFvV+W3238WRhDgPaMeh09gJLRJz+kig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=lUcic0MA; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hn+TQJVM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 723BF1A0DE4;
-	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 452446063F;
-	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E2DC5102F29EC;
-	Sun, 14 Sep 2025 18:35:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757867707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=vXWzLeRrS8rJvdtCJ4XG5FPGmNASV270FtQzQBagios=;
-	b=Hn+TQJVM/yb935GC19LuIgIYljMxAJmsmLz7UaedBGkBq/dhvPV2kQcBfy3bsc+VYXcPvq
-	4XUFb6o+qmnPzfVk378L06lKM+0Hwh+WAzIpJHjswaV58/hO9T1QUoRI0PMih9eIsarw1E
-	RWXDHDGZUvfBkPlD5M1A57aL01icQ+8Oi/dPRiq0n7sQvMJnCQi029NnobOzpevUcLjmIS
-	5bxND2CPJVCPzKcaZU/42UyHVvpvIGDjW85vIXyx9QxPCKQBdBBu50iWY8OOIh6k6oflLB
-	WT/l5aXKGv2IA0teOtyOhhBPaCsU/F2mgRhdhGXJrWwvcUFzxk9AWq+G8dMZXg==
-Date: Sun, 14 Sep 2025 18:35:00 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 6/7] rtc: s5m: add support for S2MPS16 RTC
-Message-ID: <2025091416350055a27358@mail.local>
-References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="lUcic0MA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro;
+	s=protonmail; t=1757878319; x=1758137519;
+	bh=w7wnGFxKCc7yHOaz4m/M6wcLNTkWeL7mLpc1eKaDjVc=;
+	h=Date:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=lUcic0MAVzslDWbkKY/ya0bLz/NhScjQJ1lm5spqT9Sk0pS2q9+Vv3rSNVtCiaNiR
+	 gp6kEugW0yVvSwBCCS48vJwUesae5YcZ3IgPzqS2WWfAlLnhlLF7F/W3E0copsamuj
+	 9j0a+iTcG6z1IS7LcBxc8xICI1Z9PBvgomUync3sa61o4MKUK9iac3xZuDfw/PpU47
+	 xf6ArMqWrN4pjWG2iRgNyMc+P0IbHGV16WdVpman97w5j9IMkK0vnzYAFIoyB/5Tob
+	 q/A19Cq98xmMWGpwyjKu2rNwVwTjeWsojENPH13Q7iwxuqR6IDiarOgEXeSvUkiRPd
+	 rIlHj56dkQZeQ==
+Date: Sun, 14 Sep 2025 19:31:52 +0000
+From: Alexandru Chimac <alex@chimac.ro>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandru Chimac <alex@chimac.ro>
+Subject: [PATCH 0/3] pinctrl: samsung: add Exynos9610 pinctrl support
+Message-ID: <20250914-exynos9610-pinctrl-v1-0-5b877e9bc982@chimac.ro>
+Feedback-ID: 139133584:user:proton
+X-Pm-Message-ID: 9116ae75cf6b7b819408403bbf1327d42b3d61ff
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 14/09/2025 15:42:26+0300, Ivaylo Ivanov wrote:
-> Add support for Samsung's S2MPS16 PMIC RTC, which has pretty much
-> identical functionality to the existing S2MPS15 support, with the
-> difference being the ST2 register.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This patchset adds support for the pin controller found on Exynos9610.
 
-> ---
->  drivers/rtc/rtc-s5m.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index a7220b4d0..910248731 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -18,6 +18,7 @@
->  #include <linux/mfd/samsung/irq.h>
->  #include <linux/mfd/samsung/rtc.h>
->  #include <linux/mfd/samsung/s2mps14.h>
-> +#include <linux/mfd/samsung/s2mps16.h>
->  
->  /*
->   * Maximum number of retries for checking changes in UDR field
-> @@ -254,6 +255,11 @@ static int s5m_check_pending_alarm_interrupt(struct s5m_rtc_info *info,
->  		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
->  		val &= S5M_ALARM0_STATUS;
->  		break;
-> +	case S2MPS16X:
-> +		ret = regmap_read(info->s5m87xx->regmap_pmic, S2MPS16_REG_ST2,
-> +				  &val);
-> +		val &= S2MPS_ALARM0_STATUS;
-> +		break;
->  	case S2MPG10:
->  	case S2MPS15X:
->  	case S2MPS14X:
-> @@ -303,6 +309,7 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
->  		udr_mask |= S5M_RTC_TIME_EN_MASK;
->  		break;
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -354,6 +361,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -378,6 +386,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -416,6 +425,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -455,6 +465,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -494,6 +505,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -532,6 +544,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -613,6 +626,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->  		break;
->  
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -680,6 +694,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  		struct i2c_client *i2c;
->  
->  		switch (device_type) {
-> +		case S2MPS16X:
->  		case S2MPS15X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps15_rtc_regs;
-> @@ -817,6 +832,7 @@ static const struct platform_device_id s5m_rtc_id[] = {
->  	{ "s2mps13-rtc",	S2MPS13X },
->  	{ "s2mps14-rtc",	S2MPS14X },
->  	{ "s2mps15-rtc",	S2MPS15X },
-> +	{ "s2mps16-rtc",	S2MPS16X },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
-> -- 
-> 2.43.0
-> 
+Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+---
+Alexandru Chimac (3):
+      dt-bindings: pinctrl: samsung: Add exynos9610-pinctrl compatible
+      dt-bindings: pinctrl: samsung: Add exynos9610-wakeup-eint node
+      pinctrl: samsung: Add Exynos9610 pinctrl configuration
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   2 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 109 +++++++++++++++++=
+++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ 5 files changed, 115 insertions(+)
+---
+base-commit: 48c4c0b684f394721b7db809e1cc282fccdb33da
+change-id: 20250914-exynos9610-pinctrl-b44cdfaeeed1
+
+Best regards,
+--=20
+Alexandru Chimac <alex@chimac.ro>
+
+
