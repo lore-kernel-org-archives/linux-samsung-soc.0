@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0DB259CBF;
-	Mon, 15 Sep 2025 04:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D33310942;
+	Mon, 15 Sep 2025 04:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757910524; cv=none; b=en74GeenyN8pEOFwHdVNscyugAu/39D4u/8uitYV9sToOYzUovz96vU2nBhZE1lu/c33ruREMzgPwNwYQ6JgM0L9vud/OltxpN/cFJmVfinxz93spdGRL0yv58rQ/xtnTfRQSyCUjS8ob6A5BDCDLuZx//gTTUcIv334nxSQLfE=
+	t=1757910738; cv=none; b=IvzJzZRo46ATtxFvS0NV+KThR58be5+eT7bVqvdYyI5+CGgUTPUdICWdHbk4ZpyTBdXal9gmTDrK10cAI1jV5rmU/8n+I5HmqiRDey4RiUXoaof8jLaIuXUeOz0WFWGI11SdwVkTnWDY/5MvSknuqqu42LQn0Jkp1bsKp6EQyIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757910524; c=relaxed/simple;
-	bh=PX488pT97NE5afEQzWHqJGVvzubHIHjpc9XXtw1a3K0=;
+	s=arc-20240116; t=1757910738; c=relaxed/simple;
+	bh=eH3t+g3l6j6xyj0od6/hCedBiqBn+XE+EO0XkF8K1dM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uTB1elyhQPpY18arodQmcJEw7SMzNnwWhc3FApOdcA7vLOvqxp96uTsOozFBb7f9OAyyjFEr0beSppS2uK2/S46d2XHJvbPlVZT9bW7h87aTpho2UlowqBTaBFM2ogTuYDo2GBo770ogf8GA6id/afmvM0jtK/rOJwPR86ElLM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXvToxPM; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=eyMXWDe3rMTvktk2ZDiUpaazlgUayKTNIzjiXAaq0s0ah9L1QbeCKiOGDsFDwn4/MV4xZEIzhCJBogaMY51XjqYUrYkWQtMJOXwydpthMUc0iSrhMtFOvazI1/5JCH3YP1+VLbVANUPpRoJ4Zi0AiZGm/IhI2piVfMkMNxdODPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGQqKl5e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXvToxPM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1C58C4CEF1;
-	Mon, 15 Sep 2025 04:28:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGQqKl5e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9A62C4CEF1;
+	Mon, 15 Sep 2025 04:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757910524;
-	bh=PX488pT97NE5afEQzWHqJGVvzubHIHjpc9XXtw1a3K0=;
+	s=k20201202; t=1757910738;
+	bh=eH3t+g3l6j6xyj0od6/hCedBiqBn+XE+EO0XkF8K1dM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cXvToxPMvt66eSNyEq6Mm+6prusbb58pbwK3/1mjz7V1m33e6C4BApVob/SzQApok
-	 yMmfhex9V75YXylBe+/kYvPHRXDR0mEI803Q57TdHwvWpi8D1Y1k7oKKUhFb3y1Wqi
-	 UQtScSQk1uc9AUEWiYj4UON8M7DmeiqjVe0gvbRWoVtNp7ajDJSqA8SwYcS+ShDKNS
-	 4j8Z/0MlpJ1JLIwMaZuKLYDIQWe4sGO5+GdM3JRYJQY6xgFXUBz0LNE+KzMJSkbmDQ
-	 Ygkle5qtL/xQ3Ee0TpP+XClumVwEkKybffUTAnc9M7y7AsRT9+U9VX/s2FOdLHtrHj
-	 S1HMvdLL+MSxg==
-Message-ID: <b453e64b-b3db-4b8f-ba9d-0da7e55fe057@kernel.org>
-Date: Mon, 15 Sep 2025 06:28:38 +0200
+	b=AGQqKl5e3bU6pYfBP9cW3d7d5RsJY7OaPnm7UxS1kYfkpyfyJAsmjntTmj/3ZdgbP
+	 +PhdusC2lXVv5AYAmYLJyDD1bB3XMmuUKvV3FFFHsQFbO2+PXx89RbpbJAP9ZlhNz+
+	 4C6NC54Vc0WvtQW2lxpcxYsLkMMQCwHr4YZtSzXgbKwNHJzJQSGxu5jfxrcunvc/IM
+	 /liPdqDHK+JmY9AAfEfFaplnJ5bkiOWhKdnWSmQxd7okcZfMZgG1HSbHlzhXghD6dr
+	 PRcgQ22mkneOEO5fO8mF2s4Mm7DygSb00TYJw5UmCHq+UtnbotCiN3u9iyJU5v6XQZ
+	 jPulq9i/RGC6w==
+Message-ID: <88570467-9bb5-425d-ad9f-cada10e316eb@kernel.org>
+Date: Mon, 15 Sep 2025 06:32:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,21 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: thermal: samsung: Add a
- hw-sensor-indices property
-To: Shin Son <shin.son@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Henrik Grimler <henrik@grimler.se>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+Subject: Re: [PATCH 4/8] arm64: dts: exynos9610: Enable clock support
+To: Alexandru Chimac <alex@chimac.ro>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexandru Chimac <alexchimac@protonmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-References: <20250915040715.486733-1-shin.son@samsung.com>
- <CGME20250915040742epcas2p4ddc37eb56eb9d96313a5c3fac8befe5d@epcas2p4.samsung.com>
- <20250915040715.486733-2-shin.son@samsung.com>
+References: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
+ <20250915-exynos9610-clocks-v1-4-3f615022b178@chimac.ro>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,121 +94,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250915040715.486733-2-shin.son@samsung.com>
+In-Reply-To: <20250915-exynos9610-clocks-v1-4-3f615022b178@chimac.ro>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/09/2025 06:07, Shin Son wrote:
-> The exynosautov920 TMU requires per-sensor interrupt enablement
-> for its critical trip points.
+On 14/09/2025 23:19, Alexandru Chimac wrote:
+> Add CMU (Clock Management Unit) nodes and required
+> fixed clocks.
 > 
-> - **samsung,hw-sensor-indices**: List of sensor indices physically
->                                  monitored by this TMU block.
-> 				 Indicies not listed exist in the SoC
-> 				 register map but are not part of
-> 				 this TMU instance
-
-Not much improved here. Same comment as before. That's not even correct
-syntax but some oddly formatted code. I asked to drop it and instead
-describe hardware. This is not a place to write some **code** or
-whatever this paragraph is about to represent.
-
-> 
-> Additionally, add myself to the bindings' maintainers list, as I plan
-> to actively work on the exynosautov920 TMU support and handle further
-> updates in this area.
-> I also restrict 'samsung,hw-sensor-indices' to the V920 variant. To
-> ensure properties introduced in 'if/then' blocks are recognized, I
-> replace 'addtionalProperties: false' with 'unevaluatedProperties: false'.
-
-No, don't do that.
-
-> 
-> Signed-off-by: Shin Son <shin.son@samsung.com>
+> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
 > ---
->  .../thermal/samsung,exynos-thermal.yaml       | 40 ++++++++++++++++++-
->  1 file changed, 38 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> index 29a08b0729ee..448c68986b10 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> @@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
->  
->  maintainers:
->    - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Shin Son <shin.son@samsung.com>
->  
->  description: |
->    For multi-instance tmu each instance should have an alias correctly numbered
-> @@ -27,6 +28,7 @@ properties:
->        - samsung,exynos5420-tmu-ext-triminfo
->        - samsung,exynos5433-tmu
->        - samsung,exynos7-tmu
-> +      - samsung,exynosautov920-tmu
->  
->    clocks:
->      minItems: 1
-> @@ -62,7 +64,7 @@ properties:
->      minItems: 1
->  
->    '#thermal-sensor-cells':
-> -    const: 0
-> +    enum: [0, 1]
->  
->    vtmu-supply:
->      description: The regulator node supplying voltage to TMU.
-> @@ -97,6 +99,8 @@ allOf:
->          reg:
->            minItems: 2
->            maxItems: 2
-> +        '#thermal-sensor-cells':
-> +          const: 0
->    - if:
->        properties:
->          compatible:
-> @@ -119,6 +123,8 @@ allOf:
->          reg:
->            minItems: 1
->            maxItems: 1
-> +        '#thermal-sensor-cells':
-> +          const: 0
->  
->    - if:
->        properties:
-> @@ -139,8 +145,38 @@ allOf:
->          reg:
->            minItems: 1
->            maxItems: 1
-> +        '#thermal-sensor-cells':
-> +          const: 0
->  
-> -additionalProperties: false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynosautov920-tmu
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
-> +          maxItems: 1
-> +        reg:
-> +          minItems: 1
-> +          maxItems: 1
-> +        '#thermal-sensor-cells':
-> +          const: 1
-> +        samsung,hw-sensor-indices:
-> +          description:
-> +            List of thermal sensor indices physically monitored by this TMU instance.
-> +            Indices not listed correspond to registers that exist in the SoC
-> +            but are not connected to this TMU hardware block.
-> +          $ref: /schemas/types.yaml#/definitions/uint32-array
+>  arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts |   1 +
+>  arch/arm64/boot/dts/exynos/exynos9610.dtsi       | 205 +++++++++++++++++++++++
 
-I don't understand what is happening here with this binding. See writing
-schema and example-schema.
 
+There is no such file, which means you did not explain the dependencies
+and this should not be separate patch at all. You must squash it.
 
 
 Best regards,
