@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474B710FD;
-	Mon, 15 Sep 2025 04:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A52CA6F;
+	Mon, 15 Sep 2025 04:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757910784; cv=none; b=I3SEaT0roAKgqs5y+Azzz2P5+IBKyYw7EW7AyZjzWCmDJ3Nd5ZcPrSbfOI37D6hT1G0dKJya14x34obopGsJPBBhnYtAq7PlfHt/CFCwHreya2dGkN4dBvSj8mz5kqNEj3u8qfatDGUPlaDuNJ5qJDNK/oL2qbSTB03dubFJplU=
+	t=1757910983; cv=none; b=La+Nt4pEmLklzPJUUDSjekmMQ8hImnOqZxNFrCoKkVy7m/G82zpolUbXGKiagii9AQsW7TsT1aybw4jj8KqaBeMFZwBNw/1XCpqFUbOVakq8nQ/rlMidqcpT0Fglz2vYWceB29Gpk2PQMUpXcPmRbux57EfDgkBsEndZCjrngxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757910784; c=relaxed/simple;
-	bh=pykA1A3/Zg0D/ZaZ6KglsvOLp4vC0LMedDVJjoQuhpw=;
+	s=arc-20240116; t=1757910983; c=relaxed/simple;
+	bh=k0sNb7NLoVYVvW3vpRZbfBp88c3GVqAUJZWzv7Q2gnA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yl8e/JaVOsi9C/4XrIRNX2GgUGg48aclfQkTknPW+deU4Up/pLgGBQiD+NqV8jfhYdr9yUrGdbZeEA3qU9GyHaWWs++fOjjbmmfDEbACw82kAn3yqky0FL32ZwbJtcyIhROzlPSyPhWh6DuWoyBCtoGwy2KQKNFAIajYUb54hT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EeEAJXcp; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HKVmebvqSRB7ZnBkbscczXGV10VooH/SDm7kiEeQAnrMgE+bpGYusIeZiP5FdL++i0uAX8zx+FfG09+W9sKql4HyXBQm4EVtYAJh/J+8Iv1gjhoMdXNhlfHjS+KffVY1A7ktctdbTUFhCEOdTDlHntevvt3yebyDPUxntd2n+Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzZgT5Hh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EeEAJXcp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3B5C4CEF1;
-	Mon, 15 Sep 2025 04:33:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzZgT5Hh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AFEC4CEF1;
+	Mon, 15 Sep 2025 04:36:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757910783;
-	bh=pykA1A3/Zg0D/ZaZ6KglsvOLp4vC0LMedDVJjoQuhpw=;
+	s=k20201202; t=1757910981;
+	bh=k0sNb7NLoVYVvW3vpRZbfBp88c3GVqAUJZWzv7Q2gnA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EeEAJXcp//6Qb0FMBfCMiPMVoiiqCMa2329dXewXnCKIoi5MOma3r8T0jEawSr5Uu
-	 HQst3nHsv/qGEhvJTDMa+alyMRQ6/4K5g5c0g/xLm8SElEh40rUGrBHsXuTBDH6qJ8
-	 Rjs1IiZILiTOI7JA2g4MwYGrdbrAmWhzruKg/od84m7m8PnvdLYr+bXPc6yqK3I9RW
-	 rsRFrtEZlT0BNe3W3Z76Lf89k69YOiAMEd6g7SnKrs/20kio1QEIHbeOGwABL3wTKs
-	 YNzb4OASZJUt+hRS96Oi92FJq+qTBJAjAlEbB9pz47ABrwuwP/q63oZUObgUnfS806
-	 yttGaicxuhi/A==
-Message-ID: <9f255174-bfa4-4dfb-8c19-6488286fca21@kernel.org>
-Date: Mon, 15 Sep 2025 06:32:58 +0200
+	b=BzZgT5Hhy4pc7AgYH3SHmULpHKz1lw+ZkSNWmXdxZ49uR2y3/mwfdmsS0CL1vE8QX
+	 Bmq7R3gW6CDGiYewtTdSNuI15scKuKMUn2Xow+DrseH3sk0AuOqnU5qRuUhkhMV2eB
+	 z50elEW5tOAA3Sy/3fldbOadFOBhDqY1ZOUCIYoeHY5j7x983PCgQHjkxByty4zl+J
+	 cXiRLh5BSWYmxFrOuICVPX8xaFq8a1f+tCvG34UgITYE6+TX6ocvygRHKaOoFVjnoE
+	 ypP+WWnT6rtEO7r3BvSbAGxv7uuUanCAKGdexJJ93SbET93BeQ4am8FgSDT+WDqdPB
+	 fDuPo+eEO0RUA==
+Message-ID: <ede52fd2-fe20-4648-be7b-de10b14d7e3f@kernel.org>
+Date: Mon, 15 Sep 2025 06:36:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: Add initial support for Samsung
- Galaxy Tab S6 Lite (gta4xl)
+Subject: Re: [PATCH 2/3] arm64: dts: exynos: Add initial support for the
+ Exynos9610 SoC
 To: Alexandru Chimac <alex@chimac.ro>, Alim Akhtar <alim.akhtar@samsung.com>,
  Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>,
@@ -45,7 +45,7 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-hardening@vger.kernel.org
 References: <20250914-exynos9610-devicetree-v1-0-2000fc3bbe0b@chimac.ro>
- <20250914-exynos9610-devicetree-v1-3-2000fc3bbe0b@chimac.ro>
+ <20250914-exynos9610-devicetree-v1-2-2000fc3bbe0b@chimac.ro>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,82 +91,85 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250914-exynos9610-devicetree-v1-3-2000fc3bbe0b@chimac.ro>
+In-Reply-To: <20250914-exynos9610-devicetree-v1-2-2000fc3bbe0b@chimac.ro>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/09/2025 22:44, Alexandru Chimac wrote:
-> Add initial support for the Samsung Galaxy Tab S6 Lite (SM-P610/P615):
-> 
-> - Framebuffer, through SimpleFB
-> - RAM
-> - Buttons
-> 
-> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile              |  1 +
->  arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts | 97 ++++++++++++++++++++++++
->  2 files changed, 98 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index bdb9e9813e506de3a8ff6d1c3115382cca6ea9d9..8aacff968fa10d6b645bafe910c71fb65e8569f8 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos7885-jackpotlte.dtb	\
->  	exynos850-e850-96.dtb		\
->  	exynos8895-dreamlte.dtb		\
-> +	exynos9610-gta4xl.dtb		\
->  	exynos9810-starlte.dtb		\
->  	exynos990-c1s.dtb		\
->  	exynos990-r8s.dtb               \
-> diff --git a/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts b/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f455af22ff872c6f07b9bcfc68b1ae1f45d0def3
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts
-> @@ -0,0 +1,97 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Galaxy Tab S6 Lite device tree
-> + *
-> + * Copyright (c) 2025, Alexandru Chimac <alexchimac@protonmail.com>
-> + */
 > +
-> +/dts-v1/;
+> +	arm-a53-pmu {
+> +		compatible = "arm,cortex-a53-pmu";
+> +		interrupts = <0 82 4>,
+> +			     <0 83 4>,
+> +			     <0 84 4>,
+> +			     <0 85 4>;
+> +		interrupt-affinity = <&cpu0>,
+> +				     <&cpu1>,
+> +				     <&cpu2>,
+> +				     <&cpu3>;
+> +	};
 > +
-> +#include "exynos9610.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
+> +	arm-a73-pmu {
+> +		compatible = "arm,cortex-a73-pmu";
+> +		interrupts = <0 96 4>,
+> +			     <0 97 4>,
+> +			     <0 98 4>,
+> +			     <0 99 4>;
+
+You need to use proper defines.
+
+> +		interrupt-affinity = <&cpu100>,
+> +				     <&cpu101>,
+> +				     <&cpu102>,
+> +				     <&cpu103>;
+> +	};
 > +
-> +/ {
-> +	compatible = "samsung,gta4xl", "samsung,exynos9610";
-> +	#address-cells = <2>;
-> +	#size-cells = <1>;
+> +	oscclk: clock-osc {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-output-names = "oscclk";
+> +		clock-frequency = <26000000>;
+
+clock-frequency is board property.
+
+
+
+...
+
 > +
-> +	chosen {
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> +
+> +		/* Stock Samsung bootloader doesn't configure CNTFRQ_EL0 */
+> +		clock-frequency = <26000000>;
+> +	};
+> +
+> +	reserved-memory {
 > +		#address-cells = <2>;
 > +		#size-cells = <1>;
 > +		ranges;
 > +
-> +		framebuffer0: framebuffer@ca000000 {
-> +			compatible = "simple-framebuffer";
-> +			memory-region = <&cont_splash_rmem>;
-> +			width = <1200>;
-> +			height = <2000>;
-> +			stride = <(1200 * 4)>;
-> +			format = "a8r8g8b8";
+> +		abox_rmem: abox@e9400000 {
+
+What is abox?
+
+> +			compatible = "reserved-memory";
+> +			reg = <0x0 0xe9400000 0x2800000>;
+> +			no-map;
 > +		};
-> +	};
 > +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x3AB00000>,
-> +		      <0x0 0xC0000000 0x20000000>,
-> +		      <0x0 0xE1900000 0x1E700000>,
+> +		ramoops@f9d10000 {
 
-Lowercase hex everywhere.
+This belongs to the the board.
 
+> +			compatible = "ramoops";
+> +			reg = <0x0 0xf9d10000 0x200000>;
+> +			record-size = <0x80000>;
+> +			console-size = <0x80000>;
 
 Best regards,
 Krzysztof
