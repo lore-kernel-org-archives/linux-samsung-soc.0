@@ -1,162 +1,121 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B1A18FC92
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Sep 2025 05:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3761A274FE8
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Sep 2025 05:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757912518; cv=none; b=msiuS5nn4O2nNSFaLz3wQoOtNgqKUv3gN3RnaKA8GimIccQw5jc7+o63nuVvPwG8AWM9RRkJNNaDpc0teLVl1/E14hivkL+bWbiIRqa/csuJsT0Z9gdAQP786PaU+Z8RS6AJBRECoTgjrdNuVmGKK3nQs5M15VUSD0dOYg0LQd8=
+	t=1757913072; cv=none; b=Q/r40tnDD/4IvB7HgT/43Ze9JJH14Bc5lj2GziVz1pZVYmgOa1tVlatYseeLvHSqyFfw9ul0ON8AV+PNNZvpzjTJa8CUlQMqJ1ezHBUeJueOTZq38YeOfGfRfFN2YMGcuoUrSLEXnnZddm46oTl9gUiUOOPQ1rBlX8GMb9lZfxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757912518; c=relaxed/simple;
-	bh=CuybSsSuWIPhRMNpFKlKzYezGqxAQp7fUjyykk/QfSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aMCFZYpCJnXVeTTOXmC+oxQTm9kA1PhP+lb//80RVsnox1M71tgGoQYmxpDNtuS5pTQ2hMdMWeDcqp+pisrhTjnl8PNW77BSqjPVjvUQP60YmpQfwL5/MkhouFTo0fsGLGcakP/PQHZCwAgGBQ3oPQd8vv8+phng8a6pWTMvogA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBTij7nW; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757913072; c=relaxed/simple;
+	bh=KmEQCW9Cql9a5TIIg9oOo7EoLIf6c3rjcaWqnBj9prU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=ug55ujhvEGcjZwGuCz5FZTud4upkYlN4pMoSuHFv8NzI+8tPhdlOlva58ljFUF6MWmLhn2M7nmfITRYYkaYZ7rFPsx1uk1iZP/IBkB/4U/6r5eMXJlerrTRynv6ieqC5Av+U+kxTRxwQJ4ho07jkD+8a5cSblKhyuIf0+gQ/Odk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TiZkmvwe; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBTij7nW"
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-544aa9b536eso2520494e0c.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2025 22:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757912516; x=1758517316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SP8MR8Zyb+M1j23tZdMs2golC/4gwmlwntbTcjSvyqs=;
-        b=bBTij7nW7Ld8j0xWZk70Apsndc8wojz4rSxJTXCssSiichuxcL04jo6SPrUmAhTgxc
-         Ffy2haJtWimuSZo2MtVMyNWXtkf3PzMIYB93iggGcWor0/JAbfISm8Z7ULCMOS811l1S
-         gCROdeMuL/HGnoi6sx4ZCrvutTky1ODdl+hKRcBFO+8koq7oViX+VB3vnf8Q08+QRIkn
-         9od5ZlqYEaT0i5shSmRDHzSLDxJ6xYP+BY0cvdIqhD/Y/OPFh6cUDk6p6gv9S2AccdEp
-         RZL2mEzuVFhpQ0iBYcn9cmmienm0m6Zk2qEElWmoJmNt/PVgnHjXePu2BifBjCRCL4fJ
-         /A1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757912516; x=1758517316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SP8MR8Zyb+M1j23tZdMs2golC/4gwmlwntbTcjSvyqs=;
-        b=h7N0lVMbRC1IXqixNrhqeblE941rixyYcYfm3QbTl13ff0BglYkE8fWkCudDvMUJWC
-         EvY4GXhG7zQutYPbsrCKcK21UioxV1rRkM+xhD5+VYOFJci9zs3W5DC9goEO/69V1tvB
-         cKLRuoSHzwQCOnbgmvitl968LwmPzMKQFEXXdpHI3fbpxZz9lsBkhOeouhlMld87FBcE
-         Qd8pxdbLKgIZsbEm8tKxSdbXoel233jWKffcQy5U/uSTxY6AeOeqxrqrffGKF+1+42ML
-         txSuaWZVHL3cVWxf42ANCjx6PgMepCIUd/27xCqgvTaUjYO2b8Oa22YQmVmYEGsh/C78
-         3cUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQxdrOY1RyPqbwrD44oIh9GZrg9/I0pI76sz6SkBejYz606HDZiG2vGrG+JO9SKZ2z0cw3P7C/KwGhYW9d2fwxg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN+uNo8jrujAwd3hWZQVGsm4s/eFchwJ7RXoKRf3Cx4UWIr0gV
-	4zMWHxow0IzUoAQeYAykQKPAINk2dOoO8smEhxo0n5tVcGiubVwZgNTo6b/s2viZO90LUDoDb5E
-	UOobmCrIYr369X5RTp85UZOIFiiVMLD8=
-X-Gm-Gg: ASbGncsrFfhrdaYDvEmGbyN9K1jHIu2a7uNGLf/2lJpk3DAOQ7mZ+Qc1A13rxhL/edM
-	CIqQdwVTZ5SbmfU2qJPcR15zXlOb73/qQUTFQ1YKgELGEpLoScU94z65Z43PPTHXGaNyC8Fe7Vr
-	Zeaih3BS/4yGvwELbuL29ECFK3VC9xLp7b+kruwi1IbBueVF9epccSxhEAk3ZfIdm3IMURMDC3q
-	773BQ3HEn8xyywVWZ+sq/bdyPMjknjTmNQi3FKKw6Si1EepAqU=
-X-Google-Smtp-Source: AGHT+IE3jn62oKcgXSavOgunVi8XJshWJWhwQ/NqLWYGRV5pjEp2g/3sg3TnOmQhafFEN8gAAnv9ZuPZTgxOKs6YhQw=
-X-Received: by 2002:a05:6102:d86:b0:51a:4916:c5f0 with SMTP id
- ada2fe7eead31-55610cc5eb5mr3946090137.32.1757912515692; Sun, 14 Sep 2025
- 22:01:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TiZkmvwe"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250915051108epoutp03f5a055393f4e0d44b3efd06dea8860f4~lXJ8-dOBb2685726857epoutp03C
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Sep 2025 05:11:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250915051108epoutp03f5a055393f4e0d44b3efd06dea8860f4~lXJ8-dOBb2685726857epoutp03C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757913068;
+	bh=qmqMtJNrFtzSEf/7j5AmJKS9QXgfr+PbsuXopig7LdI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TiZkmvwe8V7Z02jiyiP6KDXZImnEjRU6RlgmLFElerxuTKKzowFtPjq7+0EdojUN2
+	 j4DNah1pgjbVytIIOVtQV//RaomPVraUFG+iZ4Jqe+zhrEQx1Ch5ix+62JIV5TWYTd
+	 abhAc7BS7+Mi2WJnju5LO9j8fcfNgdzl10sJjBVc=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250915051107epcas2p3a1ed106ddcd5760e4396e66b59d975af~lXJ8JG-xt0284402844epcas2p3U;
+	Mon, 15 Sep 2025 05:11:07 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cQCmW0kVNz6B9mB; Mon, 15 Sep
+	2025 05:11:07 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250915051106epcas2p37bc7519afa767689f6ea23b2dde9fb61~lXJ674Us-0246002460epcas2p3m;
+	Mon, 15 Sep 2025 05:11:06 +0000 (GMT)
+Received: from tayo (unknown [10.229.9.198]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250915051106epsmtip11720c0cdef36e4498c987188846be9e2~lXJ63Fhuv0849808498epsmtip1A;
+	Mon, 15 Sep 2025 05:11:06 +0000 (GMT)
+From: "myunggeun.ji" <myunggeun.ji@samsung.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Cc: Jongho Park <jongho0910.park@samsung.com>, kiisung lee
+	<kiisung.lee@samsung.com>, "myunggeun.ji" <myunggeun.ji@samsung.com>
+Subject: [PATCH 2/2] arm64: dts: exynosautov920: Add DT node for sysMMU
+Date: Mon, 15 Sep 2025 14:13:20 +0900
+Message-ID: <20250915051320.3378957-3-myunggeun.ji@samsung.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250915051320.3378957-1-myunggeun.ji@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250914031522.33155-1-inki.dae@samsung.com> <CAPM=9txNEQXDU6rKHxTVXej7fxgrbbd_X+emHejwA4a7s9aoaw@mail.gmail.com>
-In-Reply-To: <CAPM=9txNEQXDU6rKHxTVXej7fxgrbbd_X+emHejwA4a7s9aoaw@mail.gmail.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 15 Sep 2025 14:01:18 +0900
-X-Gm-Features: AS18NWA8kCkHBSD9xTpctn9ue13u7QfKbO5ABJGpcQFwup3LnmL09HsH5sVhYxY
-Message-ID: <CAAQKjZNcAXOLovpsYwhzKh1V-SGhiWTh3xt1aQorQFY9tTBv_Q@mail.gmail.com>
-Subject: Re: [GIT PULL] drm-misc-next
-To: Dave Airlie <airlied@gmail.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
-	Maarten Lankhorst <dev@lankhorst.se>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, 
-	DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250915051106epcas2p37bc7519afa767689f6ea23b2dde9fb61
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250915051106epcas2p37bc7519afa767689f6ea23b2dde9fb61
+References: <20250915051320.3378957-1-myunggeun.ji@samsung.com>
+	<CGME20250915051106epcas2p37bc7519afa767689f6ea23b2dde9fb61@epcas2p3.samsung.com>
 
-Hi Dave,
+System Memory Management Unit(SysMMU) for dpuf also called iommu.
+This sysmmu is version 9.0.
+DPUF has 3 dma blk, each channel is mapped to one iommu.
 
-Sorry for this. While rebasing onto drm-misc-next, I overlooked that
-some unrelated patches were unintentionally included. Since the pull
-requests for exynos-drm-misc-next and exynos-drm-next are
-interdependent, I will rebase onto drm-next and submit the two pull
-requests again today.
+Signed-off-by: myunggeun.ji <myunggeun.ji@samsung.com>
+---
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Thanks,
-Inki Dae
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index 0fdf2062930a..ec3dc77b46bf 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -1494,6 +1494,27 @@ cmu_cpucl2: clock-controller@1ee00000 {
+ 				      "switch",
+ 				      "cluster";
+ 		};
++
++		sysmmu_dpuf0: sysmmu@18040000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18040000 0x10000>;
++			interrupts = <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_dpuf1: sysmmu@18440000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18440000 0x10000>;
++			interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_dpuf2: sysmmu@18840000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18840000 0x10000>;
++			interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <0>;
++		};
+ 	};
+ 
+ 	timer {
+-- 
+2.50.1
 
-2025=EB=85=84 9=EC=9B=94 15=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 12:42, =
-Dave Airlie <airlied@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Hi Inki,
->
-> I've already gotten the last drm-misc-next pull for 6.18 in my tree,
-> there are some patches being pulled in that might be for 6.19? or do
-> we want to get another drm-misc-next pull into 6.18?
->
-> Dave.
->
-> On Sun, 14 Sept 2025 at 13:15, Inki Dae <inki.dae@samsung.com> wrote:
-> >
-> > Hi Dave and Daniel,
-> >
-> >    Add DSIM bridge drvier support for Exynos7870 SoC.
-> >
-> > Please kindly let me know if there is any problem.
-> >
-> > Thanks,
-> > Inki Dae
-> >
-> > The following changes since commit c08c931060c7e44452e635e115913dd88214=
-848c:
-> >
-> >   drm/gem/shmem: Extract drm_gem_shmem_release() from drm_gem_shmem_fre=
-e() (2025-09-12 19:04:37 -0400)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags=
-/exynos-drm-misc-next-for-v6.18
-> >
-> > for you to fetch changes up to 17308ab685acba947fb35e52fada2b97f346b8cd=
-:
-> >
-> >   drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM brid=
-ge (2025-09-14 11:53:09 +0900)
-> >
-> > ----------------------------------------------------------------
-> > New feature
-> > Add DSIM bridge driver support for Exynos7870
-> > . Introduces Exynos7870 DSIM IP block support in the samsung-dsim bridg=
-e driver.
-> > Document Exynos7870 DSIM compatible in dt-bindings
-> > . Adds exynos7870 compatible string and required clocks in device tree =
-schema.
-> >
-> > ----------------------------------------------------------------
-> > Kaustabh Chakraborty (12):
-> >       drm/bridge: samsung-dsim: support separate LINK and DPHY status r=
-egisters
-> >       drm/bridge: samsung-dsim: add SFRCTRL register
-> >       drm/bridge: samsung-dsim: add flag to control header FIFO wait
-> >       drm/bridge: samsung-dsim: allow configuring bits and offsets of C=
-LKCTRL register
-> >       drm/bridge: samsung-dsim: allow configuring the MAIN_VSA offset
-> >       drm/bridge: samsung-dsim: allow configuring the VIDEO_MODE bit
-> >       drm/bridge: samsung-dsim: allow configuring PLL_M and PLL_S offse=
-ts
-> >       drm/bridge: samsung-dsim: allow configuring the PLL_STABLE bit
-> >       drm/bridge: samsung-dsim: increase timeout value for PLL_STABLE
-> >       drm/bridge: samsung-dsim: add ability to define clock names for e=
-very variant
-> >       dt-bindings: samsung,mipi-dsim: document exynos7870 DSIM compatib=
-le
-> >       drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM =
-bridge
-> >
-> >  .../bindings/display/bridge/samsung,mipi-dsim.yaml |  27 ++
-> >  drivers/gpu/drm/bridge/samsung-dsim.c              | 353 +++++++++++++=
-+++-----
-> >  include/drm/bridge/samsung-dsim.h                  |  16 +-
-> >  3 files changed, 308 insertions(+), 88 deletions(-)
->
