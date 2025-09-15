@@ -1,121 +1,102 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E99D3002A0
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Sep 2025 11:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850D12FDC52;
+	Mon, 15 Sep 2025 11:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936151; cv=none; b=IoN/Tp0PF51eWCac3QZlvdutWFagRAZkE+TGRGqSA1+gvMDfwgymfHy4dEVd9uDOeCTxTIjCjwPjxxLW3LopRqq8MTUlSqOcZVCR2SxDC3ZCZPchZrzc9HKy2B5UfUDcHz5ou1hYGezUlE3thKiPER7Gyx3lwdfFMi2jBQ6ByGk=
+	t=1757936551; cv=none; b=AO9ADskXC+Nib4+G6DhDu5Cea8seUhyuWOZjcVDv/D/rfXbZVcO/J9jwWkmZsuEp5+SwUBhB1CmCRaS7kr7qP1yMZpLKfsDvV+djeQ54eLOdEUK2dziCUd5AhBi0Rw3ESM068Res48eYAAv7aDz7yT0F47tUF3vm3lgYLhsZZQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936151; c=relaxed/simple;
-	bh=1PkBQL9MG+FTL30snx49qZ03JgCam4aX/8234xsQ54I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iHd+2mUz7gH0jULMj1gKCWDT38MOutmFYCi8+I9u7ES5DssxuHNOVc5WvPmLZvwIaNLi7uUsOKfQAoEV63wnQJeWyFhSAGl+WT3QQLXmOo2nWtfOOcYBVlUUQ9U0CghwhODuGx1yrHIDZp5RfU63+MykKA+HfiFR7aR+TgBhZRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BA/Vvtk4; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757936551; c=relaxed/simple;
+	bh=ajbPUytumu0CYluhZI1VFCY6fxojox7Qh/NgvsPboFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DL3pvXG+8WmA3t8uljAm0Cqnx4Bsp5IVEqN5NI6FZXCagenZn3EPoBukI4qAM2yvAZso66dtSd4yuDsWnQ/VI68B1OyjyA0FvwQljzzKDJgSl9mlrpIouYn2Fe3HX51vQe2wh6kt8zYAJM+wa//3r1QJLE5Au9pcxM6Ub0t8+u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1rIBLGq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BA/Vvtk4"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-772301f8ae2so3781171b3a.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Sep 2025 04:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757936149; x=1758540949; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=dUzFkFk1+mO2jRYji6fAqwLaxf+InG/7uYm0PLcoMDU=;
-        b=BA/Vvtk4VX8feYhvA30Jgvfcr2kPPpGIWi7VI8KwP+BP8sC/NLTAy9QWJBDQJ3u2QT
-         M1+sLWwCaRoGyas6yYbkZlrDEBpdVfgQBD2YueN4nsTset4efDmNujN65TW+E2XVWj3I
-         hGoFr0VpyCitcBWkKqQYoZ91b0QSsvKqJgkU6WNPL10+ASXPVeLSHQK0c/h0iOBhaDRr
-         i7lzCviQSQTVvC8HshsCD89FVvCccsZwPngfNtVvsCpZNL4fAEPzc+hn/feN2Y4gCud1
-         tSUJsUl2WQ+W9DIm2cDQ2HbF+ex8EhvS80H48QusWIzO6FZKZcy9QzbXsWAlUxdS6uCV
-         NArw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757936149; x=1758540949;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dUzFkFk1+mO2jRYji6fAqwLaxf+InG/7uYm0PLcoMDU=;
-        b=pIFDErmbIRm6TfQIjFW3rqzadqsPEyC6kfc2gHrpMbYAv7A0YvZwxzMWte4ZwI3Bko
-         x7DmfueTPkJOGQuzZzFot5A9OEJTqAwGlPuLMOr69QUs4xPFJqD7XyUupkB/W8YGiFvG
-         nvqWGfgqhnWkYu6JJb7TZik6cLyxR51qpy4nWzoEHQMq5DhUtxqdUEYLNwvVKGyLkbi4
-         h+OeUTTBbYclMDP8YfC/7JvxwT2lAMq6yBEMWbuvuLBuBfgRcfz1LFPjoYGOaXWfvpLm
-         CORQXYkCdScTdif9QqduP98hEyJkdDGdsfSl57A+ttaTB1Rl+kqlrZP0p8YL4YwYnY55
-         rE5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUy2NjNgmaXmUZL4PVmN289d5MUmo8L2p37gi4BBEFG3l/kZEKO3qqHtU5WohKcaBYvGEjGeFFPxcslbQiPFGNBpw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+0Km4TwYySvQbhvG71yTdSCSo0L1ClmePDir7oj+Bi0IfqDNF
-	oCU+V1BO3AVwv5YnQs4DDIZN+UCGUrSKskKBLaVfmV45HRZ84Au78EecoB/hAg==
-X-Gm-Gg: ASbGncsNt41hjXJV3Nzf72P7RxuPuiGPSNKPo2elttDtnxwg2UYusINbx4++P7uarDs
-	TE3L7WjQ1/LJd0vkkpG8M4zbQkHtT5jC9+4MtXTUzSN4c3h6aSOeDwrTtz0xpAze3ivzCgQ5Pj6
-	jKzg/hXH81xjs3w/qcC9KN2j4gzdd/oZyQvkZd6jeyeKl6YdUj3ugwCFMVsF0LpGpoG5/+CGgGP
-	nsOXiobSLnDO1PWe0rzzwg3eQx5fRC0qR0YTDiif7dmnVUkpCbwyeRw1pt6ZhHlh+l1EZrXPRJl
-	XwW89xVEWUmWQ35mFiCSMh/fJTEeuW7hzR/V1CJFl7pIkikJ11XaTnFV7jIDVoJi/MIxIH1mU1G
-	xPcLeV8oOQK7TGC1YBOGN6Y6uvK4wBa4L61cbL0ZKRZCnJDlhDPAeD2gn5uzA7siEljE=
-X-Google-Smtp-Source: AGHT+IGr09urmEGmQvVvTRHCnJeUE3anzGKvE0M1XN+hFGHJ2XSQsiB0hamET89RZILOw7ceUvDY3A==
-X-Received: by 2002:a05:6a00:4646:b0:770:4ede:a2e8 with SMTP id d2e1a72fcca58-77612163929mr12201677b3a.16.1757936148826;
-        Mon, 15 Sep 2025 04:35:48 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b18400sm13054455b3a.59.2025.09.15.04.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 04:35:48 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL RESEND] exynos-drm-next
-Date: Mon, 15 Sep 2025 20:35:43 +0900
-Message-Id: <20250915113543.51294-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1rIBLGq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF12BC4CEF1;
+	Mon, 15 Sep 2025 11:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757936551;
+	bh=ajbPUytumu0CYluhZI1VFCY6fxojox7Qh/NgvsPboFA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1rIBLGq1tBvYdIR7PEsmaY8uolPSNmShYsgQhMCF8ydQUZc/pI+e09ACURJ6WnoW
+	 LpTkgnLXc+7f6IjlP2nIi0eFhimGYfO42x1B9yVVUcXNqK4phQdN/9KsBOjA8TWeNO
+	 cTnK59Ht/M2WnqL1kR4OE2mXVc2n6NHl+mx4B9xq07KGZJXC9s/GX6lSkl7hPBVInj
+	 V9rC6eJsCyck4qtIwyJ0YCD8n+Kw5RQ6A6SNi1db9ECX+Gl7rBFkfvwogOZc0u/E/3
+	 IyH/cVLWtCfFtVkJvDVUbLW3UtlZrl8H1gOVGliWC0BlUYsAB7ixZv3BHTqwLw6Fw8
+	 QAe75IVc63u3g==
+Date: Mon, 15 Sep 2025 12:42:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 7/7] regulator: s2mps11: add support for S2MPS16
+ regulators
+Message-ID: <f1944f1f-334a-4194-90a3-946c57528927@sirena.org.uk>
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-8-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-Hi Dave and Daniel,
-
-   Add Exynos7870 SoC support to Exynos DSI driver and a bug fixup.
-
-Please kindly let me know if there is any problem.
-
-Ps. This PR depends on the following PR being merged first:
-git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-misc-next-for-v6.18
-
-Thanks,
-Inki Dae
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xI+eyQ6kVMST17yA"
+Content-Disposition: inline
+In-Reply-To: <20250914124227.2619925-8-ivo.ivanov.ivanov1@gmail.com>
+X-Cookie: Use a pun, go to jail.
 
 
-The following changes since commit 77169a11d4e9916f6c22587df396d6128505dbfb:
+--xI+eyQ6kVMST17yA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM bridge (2025-09-15 19:55:15 +0900)
+On Sun, Sep 14, 2025 at 03:42:27PM +0300, Ivaylo Ivanov wrote:
 
-are available in the Git repository at:
+> +static int s2mps16_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+> +{
+> +	unsigned int ramp_val, ramp_shift, ramp_reg;
+> +	int rdev_id = rdev_get_id(rdev);
+> +
+> +	switch (rdev_id) {
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.18
+..
 
-for you to fetch changes up to 472df181d7c4c732d5c5b98d506d1902e7580acb:
+> +		ramp_shift = S2MPS16_BUCK_RAMP_SHIFT4;
+> +		break;
+> +	default:
+> +		return 0;
+> +	}
 
-  drm/exynos: dsi: add support for exynos7870 (2025-09-15 20:19:23 +0900)
+The operation should not be present if it's not supported, and should
+error out if mistakenly called on an invalid regulator.
 
-----------------------------------------------------------------
-New feature
-- Add glue layer support for Exynos7870 DSIM in Exynos DSI driver
-  . Introduces Exynos7870 DSIM bridge integration at Exynos DRM DSI layer.
+--xI+eyQ6kVMST17yA
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Bug fixups for exynos7_drm_decon.c module
-- Remove redundant ctx->suspended state handling
-  . Cleans up unused state check logic as call flow is now correctly managed.
-  . Fixes an issue where decon_commit() was blocked from decon_atomic_enable() due to incorrect state setting.
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Kaustabh Chakraborty (3):
-      dt-bindings: display: samsung,exynos7-decon: document iommus, memory-region, and ports
-      drm/exynos: exynos7_drm_decon: remove ctx->suspended
-      drm/exynos: dsi: add support for exynos7870
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjH+6AACgkQJNaLcl1U
+h9D0JAf/USq3/KVRC+2grlWD9G3VRW4/Ag3cmNm3nycXs410YXU+fDOeD6mjUe4g
+RRReRKHAZ/BUNq7ZdxhTuRHZpuRFL7lSgMNVqoPZUS4kOLkapl7qD7F8RRXW3kKV
+mtQX+kOas8wEuZZEs6eX0idaRl4R2tIS9sWFqIyezfXBJjGijXoiPYR12BF9NWfx
+itl9wA72GUDyhAJQNf/KMNqOVSFm+3aj+NWg/K3c8Y56J7yMW2+EOfpFGuB+1R0r
+ZcIihamxSp1LvrsIOo4cwWvFrJUmWEpLaiN91JyaboAAdF8pEJXyilEfKXVhESuj
+vj3ZwStB1FZaMP+m2NlXql8O4F3pHw==
+=WpDM
+-----END PGP SIGNATURE-----
 
- .../display/samsung/samsung,exynos7-decon.yaml     | 21 +++++++++++++
- drivers/gpu/drm/exynos/exynos7_drm_decon.c         | 36 ----------------------
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  9 ++++++
- 3 files changed, 30 insertions(+), 36 deletions(-)
+--xI+eyQ6kVMST17yA--
