@@ -1,106 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6928E32BC1D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 14:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22F75661;
+	Wed, 17 Sep 2025 19:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120416; cv=none; b=tr04zGvExah339a/qLqzbKmBlcyhAy6Qlxu2z83WY18yss9RYX1wpLBycNdbzN2RGMbn70UfJ82mjzvO2Rv524qztUVxRlriMqlaPE4zKLW20oWrGOPHKQwtbIUEv3Wis0ukakEwIOpIxtH0kA16elnRH6jVQbvSWMLwqVwTPm0=
+	t=1758136863; cv=none; b=V0A2/IqYruu01+6qVFFSq80eJW18DYXQXZUMpbBFhckYtTotMnj0rmBIGBFxx7cwmmYszLWKiU9539mhGmkqqz1TU0u1KSt2BrLwQHaS7nMl3aAchvH0vcrS+rUIxVIXxXMpF+2QFHB6zKFYUX8AjjPV2KOekG2ErTNLIw1lzwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120416; c=relaxed/simple;
-	bh=RhV3vKNoJmITjtgf6bFTsa7XOh0uqQKzGR+gqpl6FiQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J0iQ0jZP9phHRHuCoiPWeZbU8lyrPtMKK8jBEWavWJ4amvevNEz1apemiiZsA/STE+36dz0lXkihUvL08ImhWNBSLeVig4yOe0f9aBbwzsHhhRECuWOe+dDwH/GvvYacwz9f7myR8OfgfGahPS6UngDl4XakDs3qlJLN7YLDc8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OV2M8jAp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758136863; c=relaxed/simple;
+	bh=y+1oflaYqWx1oZke1AYLzfl4If0XApi/pCR6vFyP6Jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=htMlF1iiPC1tto4zZ/LC8SWFJSEhyqXgUkN8wPSc0101LYmtXWHzsP3XUkdXauF9z/ryP/up/RXd/0IYvPnXMvgAmmXEtDhzWWxyxbL2ETi51CZGMpeKGg4vQA0daP8NosoBu617zwOIHSe/bJyzn4nQfDHVrpUk/YWki0yuDbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elVhVFs1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OV2M8jAp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A785DC4CEF7;
-	Wed, 17 Sep 2025 14:46:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elVhVFs1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 299D8C4CEE7;
+	Wed, 17 Sep 2025 19:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758120416;
-	bh=RhV3vKNoJmITjtgf6bFTsa7XOh0uqQKzGR+gqpl6FiQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OV2M8jAp6LZHANWZfPjwbgb+t8rkDbEV3iggOvJrLwgeDmo4oWVRKcKprh++pxGEz
-	 9FMo8OwhFk+VR9zUnp5lWhRcIsAG1i//cTRgChPYPnYBzu4z6F8FKNoTNCwPgyZEVP
-	 S49q+IbBBaazA+l9tLr5TYM+XuRHLI87YWWiuggU8DXUoBlwm+uBGb4H6F6bDPYeVj
-	 JI+THlsmoK7V6oDC9TKqcTLBCt/HIyAe602o8wpUvU3ZB2fFwNO6B23lm1B613oQzG
-	 aG88mS7uzQ3NYjYONPGA6CfFVuWN/seWEfwDmMptEgE/Dug5y0FRsGJWunJVHY8EbG
-	 DqxL9wGm+jomA==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Wed, 17 Sep 2025 16:45:57 +0200
-Subject: [PATCH v4 16/39] drm/exynos: Switch to
- drm_atomic_get_new_crtc_state()
+	s=k20201202; t=1758136862;
+	bh=y+1oflaYqWx1oZke1AYLzfl4If0XApi/pCR6vFyP6Jg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=elVhVFs1jX2+3kDoleBQyuWVNoG1a8y2VSothBaxVMJS9D5ibYWTKz4q+tXzYInKC
+	 55z/W1t2Jb1zMwarTWYuGhb5qhN4bQPIP2fPQWNaIv6QZjSXWiKYwYhHo1COtzPgzk
+	 CytdkEvA9UTB0LAMsCyFd2kM9DILrBXh7+oxZVYYdXMjnPjxulqV9bAIjA5PdtsJRF
+	 bkkJjCor00KOuLH8e2/uPQZpY0GxpDnRPYJl1nal3oObv+zdx67FFeP1WpBM3PT/wP
+	 UpkpViIoAvdnhOttHIVvP95NQIWAPk6RdUpHbgraHqkuhSU8sPL+5XIGdSB0VnhKjh
+	 vFyfXteQdJhgA==
+Date: Wed, 17 Sep 2025 20:20:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jesper.nilsson@axis.com, lars.persson@axis.com,
+	mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, ksk4725@coasia.com,
+	smn1196@coasia.com, linux-arm-kernel@axis.com, krzk@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
+	swathi.ks@samsung.com, kenkim@coasia.com
+Subject: Re: [PATCH 5/7] dt-bindings: arm: axis: Add ARTPEC-9 alfred board
+Message-ID: <20250917-underrate-blurb-cd6a9aee014d@spud>
+References: <20250917085005.89819-1-ravi.patel@samsung.com>
+ <CGME20250917085045epcas5p2905ed7f307ca892997e14c33ad68f9fa@epcas5p2.samsung.com>
+ <20250917085005.89819-6-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250917-drm-no-more-existing-state-v4-16-5d4b9889c3c8@kernel.org>
-References: <20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org>
-In-Reply-To: <20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1787; i=mripard@kernel.org;
- h=from:subject:message-id; bh=RhV3vKNoJmITjtgf6bFTsa7XOh0uqQKzGR+gqpl6FiQ=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBmnTi7TUfx2UeSS2NYr3Jq/em9ls325sTStPWdCwZStH
- zgLlWa3dkxlYRDmZJAVU2R5IhN2enn74ioH+5U/YOawMoEMYeDiFICJZIkz1temP/DJzu4LL225
- Yij3Ue2t89/06LnRhXNXMbs5Kijt/BnJlGWU97qx49DUjimy6dsuMzYsiNNdNsugieEu54yzry6
- 87Fc/3bWfV7E72qTZ5ZSo5AJ3Tce9tTuyKspP/xBdFBVrcREA
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+jcr3yw54Dfe8FJr"
+Content-Disposition: inline
+In-Reply-To: <20250917085005.89819-6-ravi.patel@samsung.com>
 
-The exynos atomic_check implementation uses the deprecated
-drm_atomic_get_existing_crtc_state() helper.
 
-This hook is called as part of the global atomic_check, thus before the
-states are swapped. The existing state thus points to the new state, and
-we can use drm_atomic_get_new_crtc_state() instead.
+--+jcr3yw54Dfe8FJr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-To: Inki Dae <inki.dae@samsung.com>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-To: Kyungmin Park <kyungmin.park@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 7c3aa77186d3431d7020db4dec70332c0cfccb5d..6400070a4c9bcc00ecd0f21cbce1b5aafe1bff48 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -56,11 +56,11 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
- static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
- {
- 	struct drm_plane_state *state = &exynos_state->base;
- 	struct drm_crtc *crtc = state->crtc;
- 	struct drm_crtc_state *crtc_state =
--			drm_atomic_get_existing_crtc_state(state->state, crtc);
-+		drm_atomic_get_new_crtc_state(state->state, crtc);
- 	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
- 	int crtc_x, crtc_y;
- 	unsigned int crtc_w, crtc_h;
- 	unsigned int src_x, src_y;
- 	unsigned int src_w, src_h;
+--+jcr3yw54Dfe8FJr
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.50.1
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsKFgAKCRB4tDGHoIJi
+0hWoAQCXo+6cPmdH6YWPs9PyzigkwJ60BhAPlINjCbIJTksefwD/VzsJGao/I5xz
+PPOC4KGvroyyyWVXBtRiAJbuIIL+nwA=
+=76fH
+-----END PGP SIGNATURE-----
+
+--+jcr3yw54Dfe8FJr--
