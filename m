@@ -1,301 +1,127 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0F272803
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 20:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F65529B22F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 21:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758139619; cv=none; b=V9+asyNjv8wVx9bqerxWVdqIara2Re3CJc0lJuCKLPVmvvJXJ+wx3P5iAemXaB85HrylMac+PDmX2aYGAL97K/8CQ0DbQONlZgLxxugKjJcs4h5QJ2Jxpv0ZbMKGGNPMEWpZ8TmZxuTsoWfHkF0gNooYc1va4D420wrUhIzwr00=
+	t=1758143067; cv=none; b=u0JeUtnjgn59PQH4E3wWezd/dV6xTO0WwjnnpS0SJSrN4t8LlXBScsvcmaQ0/406KV+JyzJtmFEpslpaSPyhBMWdugGzoTw4/NHQJh4Ec8DZZXSZdIGDLl6TWuQYBAvjBPrbB8rAZSaF+0YrN/S9guR5KHbfAsUvk2ZBhfmeUmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758139619; c=relaxed/simple;
-	bh=uk0f/jb3Tj9XsJt8rx5PWMAF8eB/0DbZGV6iarNBAyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMRAEAWOz9VVceWPBDheoPt01yVGiSY7IFrGPyCSZWWq1bCHVvEwU28MJPBzy0ttRbAkQUlwBY/uYkG6s7pknhgCSNDcit5v8c/o0s2OOVknSjGMKikDLl2O2UyTNYzf/PSNRUx31yiN9+9e9HAOMYw8FE1vS/P7wOGpabVM9Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzJBJu0s; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1758143067; c=relaxed/simple;
+	bh=XU1ekLOUNIJuvyNVZ49DfP0GKjHnS4C5v3J1EnzRwMc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Wrgu3UI5g1r+aW3h+BQIShbb5ijMHl8+vjdriAW2GZv2svNqU9e8TwOyklL/5MuCOaitoPbI9lfXD+OgP/qu0/Q8WcRy2+JI94PxxvSBoYBgz07WbWrb3E6i+fYLSVhAhHpn5H7Wl2E1WtJaLn40Jn677ta2YS/1BxLNJpSI6Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sl1BYcI5; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzJBJu0s"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-25669596921so2307105ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 13:06:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sl1BYcI5"
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-829243c1164so30385685a.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 14:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758139617; x=1758744417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAoo4cL1dIYweQDzrk/O9/maigv0J12ua5s1T9IZZIQ=;
-        b=BzJBJu0sl7Ot/aa/y4ipoWenR7W1XYwuHfYqZRntlmHYFhwX1d1n5ISbGLOWg6MV9J
-         ILKXZL/dPEKBh6CN5osdjky9h7ZpWdH2CPtjJu29hjBfa9FjlFWneM3HN2jGlDB2lwQI
-         n6DfCO7u/99Od3MOivDB5HvXA58ZJahlptoVCxXm++yAb0A5jWNiity/l1nqYd+pL0rO
-         dhrYmt0yX+s70ypiurlJvni+34oWFTJpXZ16Pv64CMWx5aLkZL434OnfD4Acb/3j+c9+
-         RMP1bBIcny77PNWmtMUbinZfpMaU54hdMc7w3Q0dorKq8bLqF3KEVanjvMPRSXPjf/aA
-         smwA==
+        d=gmail.com; s=20230601; t=1758143064; x=1758747864; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j1PFOqUngE3WRT3vXoG+nn2/r+9Vx7zz/vfzR0o6Iog=;
+        b=Sl1BYcI5v/y1tOBssAu7aur7SWSRTrpAgZ6eXe57QHCEmO/alfzf/qiBAoO4YvDnW9
+         deMcPyaieRxEkz5RYpGig39GupK3Cja8td3kGx77tA5jVpwNIBJdD2P38TvvblhZAK0g
+         bgMbhI1lxT2L7pIU3PAchv9fk/lArarllEY7Vyt7csVOoarxp0zRw1cpb5aZsUdU9f9t
+         uaKUO90WRC/3YqRp+XGZDvUNwakNHjhe9aNfdZylRi6Qe6DkivoBU5peUf0s+4SB+w13
+         w+06rAOFgl9JCyFN0g6hNNaLq/LzD4TADv1ZBx7zqmQeGP2sqVi3i9mpWvz+zPLuDVzP
+         4WGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758139617; x=1758744417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAoo4cL1dIYweQDzrk/O9/maigv0J12ua5s1T9IZZIQ=;
-        b=XuJOvIOx5LMQydcJ2UnXOVfmqcKOx3j7StfqUlkB2BkuyCQVcg0D6F5JQFyrfivDaA
-         m6hqfMlll/HHHEgRnbh6Mq2ENIezy4z4Gal/2qOqGbP8x5P+DbHDAaX33bQU6FMMV/hq
-         l8UmC9EF65rLU05r73qTDDnmxablrWja8/d8Cf0zvlNLMrLMyd0ZykcyYLCPT2tTUvr8
-         AtC5MOefoFaGJB6OoT2NEbNTiJ2h0k6W82kNfDlgOE+BmnpJp+WolE7W11M9mMCkg6Um
-         ZQ6Km4qFe8heVtv4t1VpYQRAdhod0+4ZoUORd5f5ewB7M6MYCjgJwtZgup7VD68voe6c
-         YGCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5N5YQXcTrWazUJujIVO4Yz1JxObTWZzJGiDWv6b0txIwxeILPtvNvNQIKy1nlOQzNupTzWhz9YiXZW8LRWjD7PA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRv4otDgPlc+7tTf8ZmoGda3T358O9wc2aAEg50iPUsOQ7oDO3
-	aEK88JKNsSabJNfh9IXApEEzAumigmuH9aUTgC3e+iXp8JCOI1x9z9ak
-X-Gm-Gg: ASbGncuBwAwIjFVQxkRXK5czQymYNyfO3tDTs/YDYj4kPdGffVybrKLqbTM+q8E+jDP
-	0O3y7rweuB4hyPQw20d7wNBDXfbfdU5cCFKq/rljgyUhjiPGjoHvfK2RUEOEQson8ZRbl/l2a09
-	ZY7KyrCeoHXj2p4cw0Z8JzBFDexLItN5Zf2rXrVYfk7w77pK8STGFi6+t2c7BI0cux6OrijWXQ8
-	IP35llr2sdBhYjHp14EWUWIZVeXLeW9nkac4xYCCZdvvE6GoVMF88PVuHApH482BDhZSe/D4kdU
-	Pf//xmYVG7SVy2O+isMPApfmMdV63Wkl0qZJjItiFGg7Vypk2NqbMINFJZH9vwtH+h7t+aRoq21
-	PfJNr98AQksAzfesYYvWCiqIohlhqULpK9YE8lRJq3A==
-X-Google-Smtp-Source: AGHT+IH4ljt2vti7NSBWoLRl1Y3YBR7ak2BF6N3DsrRX2rCMF4AUdMIoGbFRGc1NosrFKmMz+WdEHw==
-X-Received: by 2002:a17:903:2c7:b0:264:567b:dd92 with SMTP id d9443c01a7336-26813e02d08mr43177195ad.52.1758139616771;
-        Wed, 17 Sep 2025 13:06:56 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c3d9:b11c:3856:2d3a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698035cd39sm3762225ad.146.2025.09.17.13.06.55
+        d=1e100.net; s=20230601; t=1758143064; x=1758747864;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j1PFOqUngE3WRT3vXoG+nn2/r+9Vx7zz/vfzR0o6Iog=;
+        b=o+taOKsRnSeUNX2nxSGAIzizIdBJ2g7RPOYzSIbtWjfAEmYniO0CwHGhtGMbm4BkCO
+         1ZyBaLSkS3YTcvg/iDn0R6hqV5kiYAXYkpwKCmp26IPrSFRZvTsJ5ck/9GIfF8ELLNXd
+         Q0toMVp7jQWvs45TnGx0KU4rXVCEXn4gAhbg2IidgTP7a3YbSnaFF2Xy4XtJMLvxCN8A
+         i2xdQ/U4g3I07b8n9zr7FsuqaIGunKG5v/22qbuc9k5k8EOrlKCDvTYMMRmnzU6QvBvZ
+         vbQ9NPzNlM8WzB9I2zqffDIx2ffy3C9HgX/jeo6sxXFaM3cUb2ZaDstsTSTPJ5Vjkh0/
+         VUwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXwH0EsyFQ/duW2+s7CHBWKBGNLjrhmT17dZdkzG9qqZY9StMSCBg+aLpwNwokewlff1l31+f0W5dO83qnQaYWZA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhQXMv+N5zZZYCUR1hjY2YSCx8l3YSAGzET+iijFlXAqjcXPHh
+	NypC0k8+mKQP0Di/oT+MOKEaqQJ06tlPntD10OOPkf7hVRyccpWujDYM
+X-Gm-Gg: ASbGnctgfkKc9SpyfrAiUDMuHG1X6U7BE+vHJ8s1L/8wtX8+LkjJViGMRlxCM6uLqa/
+	ztS803FRevl9ssfZD31v+94GQjhfTVK2XdPJIfTEZLum8/Ijeqb9VOT3rcTh57bg619VjESQP2v
+	3bjsRAo6otMhXCIcHmtKGwRIYKag6kKrepXdl7dJohYlJr8+iXE2umniDEWQ5wdDdJghkfJtmDo
+	+VrwIqSfG2x0WTkfeEzEYLik+2g8ltinbQSLWok/j1mJojEyc6aKWeOwHLXZaamIXHBtnGz78cU
+	rVl6t6+jqOJRg2pMeEKhddXW3NNFSaRa//MK39d/21IF/rMCmQ/shbCQnIjJoIPtF7zIYt4iejw
+	z5FW1Y1t521gsKXZjpOWXxx/zliKHuF5QpQo29ZzvIG4E
+X-Google-Smtp-Source: AGHT+IEFvNOShzKL68uD+NxZ49K1VTzvBYDXSCZdxnB+s1jOD/P17yqwToxMfbv19rJqIh6/MPoAXQ==
+X-Received: by 2002:a05:620a:2a07:b0:822:f45b:a5ef with SMTP id af79cd13be357-8310a6416admr415410285a.29.1758143064276;
+        Wed, 17 Sep 2025 14:04:24 -0700 (PDT)
+Received: from [127.0.0.1] ([51.8.152.70])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793543ffae5sm1897226d6.53.2025.09.17.14.04.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 13:06:56 -0700 (PDT)
-Date: Wed, 17 Sep 2025 13:06:53 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] Input: s6sa552 - add a driver for the Samsung
- A552 touchscreen controller
-Message-ID: <zh2cvvhvdklwnrnhmzsgajk5ryk7gwd5sayde656ddysi53d7b@frw2ph3opmoe>
-References: <20250914134458.2624176-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914134458.2624176-3-ivo.ivanov.ivanov1@gmail.com>
+        Wed, 17 Sep 2025 14:04:23 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Date: Wed, 17 Sep 2025 21:04:21 +0000
+Subject: [PATCH v3 1/7] dt-bindings: soc: samsung: exynos-sysreg: Add
+ Exynos990 PERIC0/1 compatibles
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914134458.2624176-3-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250917-perics-add-usinodes-v3-1-a3629e4666ef@gmail.com>
+References: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
+In-Reply-To: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-serial@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758143062; l=1475;
+ i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
+ bh=XU1ekLOUNIJuvyNVZ49DfP0GKjHnS4C5v3J1EnzRwMc=;
+ b=qoi9lCpJ8AkWkqZ81/EvZO508mjaU6R+Gk9C1QakipPbjB8q7Q823odRC/wj3PM0v3lQ7YSMD
+ 4IM/iE8VhokCRIYYXwA20VgPFybc4sLeVrGugmXaVCYx7xAp7nD6t6s
+X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
+ pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
-Hi Ivaylo,
+Add compatible strings for Exynos990 PERIC0 and PERIC1 system register
+controllers.
 
-On Sun, Sep 14, 2025 at 04:44:57PM +0300, Ivaylo Ivanov wrote:
-> The S6SA552 touchscreen is a capacitive multi-touch controller for
-> mobile use. It connects via i2c at the address 0x48.
-> 
-> Introduce a basic driver, which can handle initialization, touch events
-> and power states.
-> 
-> At least the firmware for this IC on Galaxy S7 differs from S6SY761
-> in register layout and bits, as well as some missing registers/functions,
-> for example for retrieving the max X/Y coordinates and the amount
-> of TX/RX channels.
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I am not sure why you are using runtime PM in the driver, given that you
-enable it on probe and disable it in remove and otherwise do not touch.
-
-If you want to use it then you should probably call runtime_pm_get() and
-runtime_pm_put() from open()/close() methods instead of toggling power
-directly.
-
-[...]
-
-> +
-> +static void s6sa552_input_close(struct input_dev *dev)
-> +{
-> +	struct s6sa552_data *sdata = input_get_drvdata(dev);
-> +	int ret;
-
-	int error;
-
-> +
-> +	ret = i2c_smbus_write_byte(sdata->client, S6SA552_SENSE_OFF);
-> +	if (ret)
-> +		dev_err(&sdata->client->dev, "failed to turn off sensing\n");
-> +}
-> +
-> +static ssize_t s6sa552_sysfs_devid(struct device *dev,
-> +				   struct device_attribute *attr, char *buf)
-> +{
-> +	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%#x\n", sdata->devid);
-> +}
-> +
-> +static DEVICE_ATTR(devid, 0444, s6sa552_sysfs_devid, NULL);
-> +
-> +static struct attribute *s6sa552_sysfs_attrs[] = {
-> +	&dev_attr_devid.attr,
-> +	NULL
-> +};
-> +ATTRIBUTE_GROUPS(s6sa552_sysfs);
-> +
-> +static int s6sa552_power_on(struct s6sa552_data *sdata)
-> +{
-> +	u8 buffer[S6SA552_EVENT_SIZE];
-> +	int ret;
-
-	int error;
-
-Use "error" for storing error values from APIs that return negative or
-0. For APIs that also return real values "ret" is fine.
-
-> +
-> +	ret = regulator_bulk_enable(ARRAY_SIZE(sdata->regulators),
-> +				    sdata->regulators);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(140);
-> +
-> +	/* double check whether the touch is functional */
-> +	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-> +					    S6SA552_READ_ONE_EVENT,
-> +					    S6SA552_EVENT_SIZE,
-> +					    buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (buffer[0] != S6SA552_EVENT_TYPE_ACK ||
-> +	    buffer[1] != S6SA552_EVENT_ACK_BOOT) {
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = i2c_smbus_read_byte_data(sdata->client, S6SA552_BOOT_STATUS);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* for some reasons the device might be stuck in the bootloader */
-> +	if (ret != S6SA552_BS_APPLICATION)
-> +		return -ENODEV;
-> +
-> +	/* enable touch functionality */
-> +	ret = i2c_smbus_write_byte_data(sdata->client,
-> +					S6SA552_TOUCH_FUNCTION, 0x01);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mdelay(20); /* make sure everything is up */
-> +
-> +	return 0;
-> +}
-> +
-> +static int s6sa552_hw_init(struct s6sa552_data *sdata)
-> +{
-> +	u8 buffer[S6SA552_DEVID_SIZE];
-> +	int ret;
-> +
-> +	ret = s6sa552_power_on(sdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-> +					    S6SA552_DEVICE_ID,
-> +					    S6SA552_DEVID_SIZE,
-> +					    buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	sdata->devid = get_unaligned_be16(buffer + 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static void s6sa552_power_off(void *data)
-> +{
-> +	struct s6sa552_data *sdata = data;
-> +
-> +	disable_irq(sdata->client->irq);
-> +	regulator_bulk_disable(ARRAY_SIZE(sdata->regulators),
-> +			       sdata->regulators);
-> +}
-> +
-> +static int s6sa552_probe(struct i2c_client *client)
-> +{
-> +	struct s6sa552_data *sdata;
-> +	int err;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
-> +						I2C_FUNC_SMBUS_BYTE_DATA |
-> +						I2C_FUNC_SMBUS_I2C_BLOCK))
-> +		return -ENODEV;
-> +
-> +	sdata = devm_kzalloc(&client->dev, sizeof(*sdata), GFP_KERNEL);
-> +	if (!sdata)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(client, sdata);
-> +	sdata->client = client;
-> +
-> +	sdata->regulators[S6SA552_REGULATOR_VDD].supply = "vdd";
-> +	sdata->regulators[S6SA552_REGULATOR_AVDD].supply = "avdd";
-> +	err = devm_regulator_bulk_get(&client->dev,
-> +				      ARRAY_SIZE(sdata->regulators),
-> +				      sdata->regulators);
-> +	if (err)
-> +		return err;
-> +
-> +	err = devm_add_action_or_reset(&client->dev, s6sa552_power_off, sdata);
-> +	if (err)
-> +		return err;
-> +
-> +	err = s6sa552_hw_init(sdata);
-> +	if (err)
-> +		return err;
-> +
-> +	sdata->input = devm_input_allocate_device(&client->dev);
-> +	if (!sdata->input)
-> +		return -ENOMEM;
-> +
-> +	sdata->input->name = S6SA552_DEV_NAME;
-> +	sdata->input->id.bustype = BUS_I2C;
-> +	sdata->input->open = s6sa552_input_open;
-> +	sdata->input->close = s6sa552_input_close;
-> +
-> +	input_set_abs_params(sdata->input, ABS_MT_POSITION_X, 0, S6SA552_MAX_X,
-> +			     0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_POSITION_Y, 0, S6SA552_MAX_Y,
-> +			     0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_TOUCH_MINOR, 0, 255, 0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_PRESSURE, 0, 255, 0, 0);
-> +
-> +	touchscreen_parse_properties(sdata->input, true, &sdata->prop);
-> +
-> +	if (!input_abs_get_max(sdata->input, ABS_X) ||
-> +	    !input_abs_get_max(sdata->input, ABS_Y)) {
-> +		dev_warn(&client->dev, "the axis have not been set\n");
-> +	}
-> +
-> +	err = input_mt_init_slots(sdata->input, S6SA552_TX_CHANNELS,
-> +				  INPUT_MT_DIRECT);
-> +	if (err)
-> +		return err;
-> +
-> +	input_set_drvdata(sdata->input, sdata);
-> +
-> +	err = input_register_device(sdata->input);
-> +	if (err)
-> +		return err;
-> +
-> +	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
-> +					s6sa552_irq_handler,
-> +					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-
-Do not hardcode trigger type, just use IRQF_ONESHOT.
-
-> +					"s6sa552_irq", sdata);
-> +	if (err)
-> +		return err;
-> +
-> +	pm_runtime_enable(&client->dev);
-> +
-> +	return 0;
-> +}
-
-Thanks.
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index d8b302f975474a87e4886006cf0b21cf758e4479..173c51b17d9684113bb8254ee0c83e8e74de2fca 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -30,6 +30,8 @@ properties:
+               - samsung,exynos8895-fsys1-sysreg
+               - samsung,exynos8895-peric0-sysreg
+               - samsung,exynos8895-peric1-sysreg
++              - samsung,exynos990-peric0-sysreg
++              - samsung,exynos990-peric1-sysreg
+               - samsung,exynosautov920-hsi2-sysreg
+               - samsung,exynosautov920-peric0-sysreg
+               - samsung,exynosautov920-peric1-sysreg
+@@ -93,6 +95,8 @@ allOf:
+               - samsung,exynos8895-fsys1-sysreg
+               - samsung,exynos8895-peric0-sysreg
+               - samsung,exynos8895-peric1-sysreg
++              - samsung,exynos990-peric0-sysreg
++              - samsung,exynos990-peric1-sysreg
+     then:
+       required:
+         - clocks
 
 -- 
-Dmitry
+2.50.1
+
