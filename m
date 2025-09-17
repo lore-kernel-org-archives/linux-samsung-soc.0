@@ -1,231 +1,111 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6512BE050
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 07:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331352DF6F5
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 07:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092869; cv=none; b=ssf7xmEJY62tf1d1R5JCL6L/2yzRPcZiXqE3aTif/BsppiDSu+INKqTtvz7RPWMOGJBbo2p7wd+v4KPEV/FEW1qDsEFiPI193/j4yJY/WxtzWdrap+pC9S+dInoTadMp2XTA1ZiqnmfCTXxslB0Rwls4n51/X/GhtqGw4pSz+kw=
+	t=1758093208; cv=none; b=Biub6/3GyQ9yqa38OBC720LByK5v/lGOjz3mJ/TC5lDa9AP8ch/o6RsuHuY/Xf+cuQBgufuRjgonwBtxzzeIm+FQAXelui2i9RzLDNc6MLa4DYQbyysBD79YLdhCodyJps+0t0YywpPpg/hTAcNJzIlQtBJ8cXMC9a3SP/G+6uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092869; c=relaxed/simple;
-	bh=25mYkkbNo5dkgGxMHrf97VRhuH0HcwY5SglFwuDCXdo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=XFarR4bjhrGutAj51zPaV9kSaJ1LvEimr8nrZQbrAgY2P995ETKaAYoYPbKGTj/fUjO1uZfXjSuqjrdoHW6dm2TXtSFzI2xEyl5xobvA6svdVpdklTz7qiEice8zCkvUef/sAtXaTJbzf9EgHgEcg9NlacnNwbYxMbWGiwsa4BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RGWtcuUa; arc=none smtp.client-ip=203.254.224.25
+	s=arc-20240116; t=1758093208; c=relaxed/simple;
+	bh=UsGkB1AQz2LiEC8IF3nZOMH69omRwaWpBkHX0BRNEfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=Fhp3M4FOFwG4mzUFe6MVMYCOL4y6eF8v3QZgJiiY7M53toXkoQFObfwsZlZFREDOSQvLdKX07RdQk1ZOtFjly4tyICD9AkIbf7sSfr9gibzgeblIQiu1banZ615iBWd8e3f3Tg0dlH3wqK8Bgl43USeb+B6f+KifhbrTi8INVSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Xykv6jaj; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RGWtcuUa"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250917070744epoutp02c4506776b2f9c215e2fc4b5ecfa56490~mACVPTK5i0691406914epoutp02E
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 07:07:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250917070744epoutp02c4506776b2f9c215e2fc4b5ecfa56490~mACVPTK5i0691406914epoutp02E
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Xykv6jaj"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250917071324epoutp03e5e0575e1cbe16d07d9f1e007c6a4982~mAHRhg4ry0232102321epoutp03j
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 07:13:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250917071324epoutp03e5e0575e1cbe16d07d9f1e007c6a4982~mAHRhg4ry0232102321epoutp03j
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758092864;
-	bh=p2X+j5SJAMEREJd1w3t8TYTfU2tuNXV8TS1mq8smvaI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=RGWtcuUaLhY8WQoRtyFOqx/FJvfhMKjDYYPiIGcIN/rh/LOZiSE0ImM6Uz7pCYiSz
-	 7pwIjapvnQQrI1V11HFsyxt9lvlqFOgaXCJ6smnF/lygHilO0iyzaHcz3LyHrJEhPM
-	 ebnabodwTvetz6i9shXEWIpf0hNPG2O0ofuHlw/k=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250917070743epcas5p21e3006ddc5adb45dae44c3ad85d064da~mACT3guNG0339903399epcas5p2Y;
-	Wed, 17 Sep 2025 07:07:43 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cRVG61MTyz6B9m7; Wed, 17 Sep
-	2025 07:07:42 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	s=mail20170921; t=1758093204;
+	bh=i/pN2d16gN/aOiyBlIWmhnSKwC/rb7+GOnUl5obF2Jc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Xykv6jajixf7eQQ/VvuNMThZgMxenMfG2p8egUqJeyaTfwlhG5jw+t7pWQ1mj9OlV
+	 mXEvwCD7kmO4SQFmXMquenAQek3zC3fgzCAE+mKh0j2dMaqYsaMuIXUM4nRl25eC+0
+	 gJ/ruKwhFhFDezcav4ipstQjr/oynK55XU4GFnzQ=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250917071323epcas5p1ad55db6b7f1c81762373e30093eb8b29~mAHQ-S9Rf3046930469epcas5p1b;
+	Wed, 17 Sep 2025 07:13:23 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cRVNf4y3Nz3hhT9; Wed, 17 Sep
+	2025 07:13:22 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
 	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250917070741epcas5p3f40ff9cf54757eef08a6faa7451f4e2b~mACSKitQP0859608596epcas5p3-;
-	Wed, 17 Sep 2025 07:07:41 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250917070737epsmtip204cd5a53ee83aea2bc9f33c333939bdd~mACOpKYWk2897628976epsmtip24;
-	Wed, 17 Sep 2025 07:07:37 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: 
-Subject: RE: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Wed, 17 Sep 2025 12:37:36 +0530
-Message-ID: <054e01dc27a1$c2011120$46033360$@samsung.com>
+	20250917071322epcas5p3b25ff15ee16f58aa3101f2fc44b554cc~mAHPbtPBs2147421474epcas5p3T;
+	Wed, 17 Sep 2025 07:13:22 +0000 (GMT)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250917071318epsmtip197b5a7d162ae47ea3d9d1223e43d5864~mAHMMaGiw0529705297epsmtip1C;
+	Wed, 17 Sep 2025 07:13:18 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: daniel.lezcano@linaro.org, tglx@linutronix.de, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+	krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	ksk4725@coasia.com, pjsin865@coasia.com, gwk1013@coasia.com,
+	bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com,
+	lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+	smn1196@coasia.com, shradha.t@samsung.com, swathi.ks@samsung.com,
+	kenkim@coasia.com, Ravi Patel <ravi.patel@samsung.com>
+Subject: [PATCH] dt-bindings: timer: exynos4210-mct: Add compatible for
+ ARTPEC-9 SoC
+Date: Wed, 17 Sep 2025 12:43:11 +0530
+Message-ID: <20250917071311.1404-1-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgGabj6EAmTXuDcB8lF0oAGjtHpaA19Hw4WzwQPd4IAUON4A
-Content-Language: en-in
-X-CMS-MailID: 20250917070741epcas5p3f40ff9cf54757eef08a6faa7451f4e2b
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250917071322epcas5p3b25ff15ee16f58aa3101f2fc44b554cc
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
+cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
-	<CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
-	<20250903073827.3015662-2-pritam.sutar@samsung.com>
-	<20250904-interesting-lovely-ringtail-38bbef@kuoka>
-	<000001dc1d70$aebf7d80$0c3e7880$@samsung.com>
-	<87857202-b436-4476-9384-67566126d844@kernel.org> 
+X-CMS-RootMailID: 20250917071322epcas5p3b25ff15ee16f58aa3101f2fc44b554cc
+References: <CGME20250917071322epcas5p3b25ff15ee16f58aa3101f2fc44b554cc@epcas5p3.samsung.com>
 
-Hi Krzysztof,
+From: SungMin Park <smn1196@coasia.com>
 
+Add Axis ARTPEC-9 mct compatible to the bindings documentation.
+The design for the timer is reused from previous Samsung SoCs
+like exynos4210 and ARTPEC-8.
 
-> -----Original Message-----
-> From: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> Sent: 04 September 2025 03:52 PM
-> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>
-> Cc: 'vkoul=40kernel.org' <vkoul=40kernel.org>; 'kishon=40kernel.org'
-> <kishon=40kernel.org>; 'robh=40kernel.org' <robh=40kernel.org>;
-> 'krzk+dt=40kernel.org' <krzk+dt=40kernel.org>; 'conor+dt=40kernel.org'
-> <conor+dt=40kernel.org>; 'alim.akhtar=40samsung.com'
-> <alim.akhtar=40samsung.com>; 'andre.draszik=40linaro.org'
-> <andre.draszik=40linaro.org>; 'peter.griffin=40linaro.org'
-> <peter.griffin=40linaro.org>; 'kauschluss=40disroot.org' <kauschluss=40di=
-sroot.org>;
-> 'ivo.ivanov.ivanov1=40gmail.com' <ivo.ivanov.ivanov1=40gmail.com>;
-> 'igor.belwon=40mentallysanemainliners.org'
-> <igor.belwon=40mentallysanemainliners.org>; 'm.szyprowski=40samsung.com'
-> <m.szyprowski=40samsung.com>; 's.nawrocki=40samsung.com'
-> <s.nawrocki=40samsung.com>; 'linux-phy=40lists.infradead.org' <linux-
-> phy=40lists.infradead.org>; 'devicetree=40vger.kernel.org'
-> <devicetree=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
-> kernel=40vger.kernel.org>; 'linux-arm-kernel=40lists.infradead.org' <linu=
-x-arm-
-> kernel=40lists.infradead.org>; 'linux-samsung-soc=40vger.kernel.org' <lin=
-ux-
-> samsung-soc=40vger.kernel.org>; 'rosa.pila=40samsung.com'
-> <rosa.pila=40samsung.com>; 'dev.tailor=40samsung.com'
-> <dev.tailor=40samsung.com>; 'faraz.ata=40samsung.com'
-> <faraz.ata=40samsung.com>; 'muhammed.ali=40samsung.com'
-> <muhammed.ali=40samsung.com>; 'selvarasu.g=40samsung.com'
-> <selvarasu.g=40samsung.com>
-> Subject: RE: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 HS phy compatible
->=20
-> Hi Krzysztof,
->=20
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzk=40kernel.org>
-> > Sent: 04 September 2025 03:12 PM
-> > To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> > krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> > andre.draszik=40linaro.org; peter.griffin=40linaro.org;
-> > kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> > igor.belwon=40mentallysanemainliners.org;
-> > m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
-> > phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> > kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
-> > dev.tailor=40samsung.com; faraz.ata=40samsung.com;
-> > muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
-> > Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy:
-> > add
-> > ExynosAutov920 HS phy compatible
-> >
-> > On 04/09/2025 09:51, Pritam Manohar Sutar wrote:
-> > > Hi Krzysztof,
-> > >
-> > >> -----Original Message-----
-> > >> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> > >> Sent: 04 September 2025 12:18 PM
-> > >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> > >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.c=
-om;
-> > >> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
-> > >> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> > >> igor.belwon=40mentallysanemainliners.org;
-> > >> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
-> > >> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> > >> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > >> linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
-> > >> dev.tailor=40samsung.com; faraz.ata=40samsung.com;
-> > >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
-> > >> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-p=
-hy:
-> > >> add
-> > >> ExynosAutov920 HS phy compatible
-> > >>
-> > >> On Wed, Sep 03, 2025 at 01:08:22PM +0530, Pritam Manohar Sutar wrote=
-:
-> > >>> Document support for the USB20 phy found on the ExynosAutov920 SoC.
-> > >>> The
-> > >>> USB20 phy is functionally identical to that on the Exynos850 SoC,
-> > >>> so no driver changes are needed to support this phy. However, add
-> > >>> a dedicated compatible string for USB20 phy found in this SoC.
-> > >>>
-> > >>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > >>
-> > >> You just dropped all tags without explaining why.
-> > >
-> > > Regretted inconvenience.
-> > >
-> > > There were significant changes in supplies' names in driver and
-> > > schemas (patch-set v8). This led to make changes in patch no 5.  And
-> > > review for these changes is needed.  Hence, removed RB tag in this pa=
-tch-
-> set.
-> > >
-> > > There was a ask for the same https://lore.kernel.org/linux-
-> >
-> phy/000401dc18cd=24ec02a1b0=24c407e510=24=40samsung.com/=23:=7E:text=3DLe=
-t%20me%
-> >
-> 20know%2C%20because%20of%20above%20changes%2C%20should%20be%20
-> >
-> removing%20your%20%0A%27reviewed%2Dby%27%20tag%20from%20patch%
-> > 201%20and%203.
-> > >
-> >
-> >
-> > Where in the changelog you explained why you dropped the tags?
->=20
-> Along with supplies' names, there were similar commit messages for patch =
-no 1,
-> 3 as patch no 5 (v7). (though, they were explaining schema more than h/w)=
-.
-> Changed commit messages of the patch no 1, 3, 5 (v7) as per reference com=
-mits
-> and would like to get them reviewed again, so did not add RB for patch 1 =
-and 3,
-> which you had given RB (in v7).
->=20
-> Forgot to add these details for dropping the RB tags in changelog.
-> Do I need to send v9 by retaining RB for patch 1 and 3?
->=20
+Signed-off-by: SungMin Park <smn1196@coasia.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+---
+ .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml       | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gentle Reminder.=20
-
-> >
-> > Best regards,
-> > Krzysztof
->=20
->=20
-> Thank you.
->=20
-> Regards,
-> Pritam
-
-Thank you,
-
-Regards,
-Pritam
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+index 10578f544581..a4b229e0e78a 100644
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+@@ -26,6 +26,7 @@ properties:
+       - items:
+           - enum:
+               - axis,artpec8-mct
++              - axis,artpec9-mct
+               - google,gs101-mct
+               - samsung,exynos2200-mct-peris
+               - samsung,exynos3250-mct
+@@ -131,6 +132,7 @@ allOf:
+           contains:
+             enum:
+               - axis,artpec8-mct
++              - axis,artpec9-mct
+               - google,gs101-mct
+               - samsung,exynos2200-mct-peris
+               - samsung,exynos5260-mct
+--
+2.17.1
 
