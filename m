@@ -1,66 +1,66 @@
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227942D8DCF
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 21:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91652F25EA
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 21:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143069; cv=none; b=Ky2gOkmMklbPnTUN6UFARqb8cYTi3ReIN1+77f5gtG54Eo8slDLXhhirkBxqXDxCtoMemYmuYTXlPAAFLMcadEgycVTZ9ZPaJXSMGac/DzP+5QobAYfzwdGX4PvTL+IXxu5VbKOzcb77e+zKqkRxbtPAppYeRwH9HcRV263t5/E=
+	t=1758143070; cv=none; b=gIvxdudC2ObuCQPL8l9v8sSC2hE1Mjp94Lq1tOEArTxDXQS5SCzrD7JvcO0lY49OLxOUZRSmKl3MG2rqREwUEslrBxTxx/6o1nJjefCpf2UH2WeIBb46aBO0GEhP315av7HrZlcgg1D1SDL0jgVRPCVRRUVQFfIndmnSPZdk1BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143069; c=relaxed/simple;
-	bh=r2bRl4B4OF/qKIhdCBGgWHHiscJkRg/BHw+S8XdcwM0=;
+	s=arc-20240116; t=1758143070; c=relaxed/simple;
+	bh=7/q7KnmwWMN+hTZMk53R59gQ8vuRN9Xg0o9/pqcgARc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YD/fxSIQaOAKJ28YCxY4AQ3hvFICXZNz+Z3IXDvJxQnj2UAJA0vmtmVrLMazZ107VA4npTuqSa3Z9IypVqe3gfZbpYG4U3S8RUDXDQ2pOmsggT5hcivyqt7aL/inp1PBTexTqCm0emtEkAJuc7nRH5S3CWyf01iFQinZPo64PmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9RZO4/0; arc=none smtp.client-ip=209.85.219.54
+	 In-Reply-To:To:Cc; b=bNo/ZOlLQcTvJ7CztXCjcVLPAsAIF5Zt9/TJKWk2MHU1A5UdpDWFIvUv/82i2DrzMrDoc039OHJ0LjF8mJnJY47pqcP8OeLusu8HSonStbHXgOLbeAxObr1sKP61LAVXvsj3cv6r1hlEZaMJwhgMquEjVFDer9MF9YRujD667Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bsc8cXkh; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9RZO4/0"
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78de32583fbso1554366d6.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 14:04:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bsc8cXkh"
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7240eb21ccaso12544666d6.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2025 14:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758143066; x=1758747866; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758143068; x=1758747868; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OLjc6vgKJXwelgY/kFV/7fD4NVClmcvjL7QnlQQl+JY=;
-        b=W9RZO4/0DliJmALonxeiq538anDPYMHS1SiGkE3jmI4AyzaAepJ8CKZIWDuOVs9ejf
-         ZDTPCjqz2+9MBOnBiJra4IE6iHa/0s0QVbJEC7AUhyNpWVGRhtbKWACq8TLHHQAQLHZo
-         NVWp7LOSI2ozZM8vJ8jX7yumSDuTtlH6W1g0F4Xrbus3YqDC8P5KGdoCU0zhRuWs7Yks
-         N8z+EmAM30gPJQOp1xs9wyRxCDd+lbBrTfVCOBb4qyMgjtu5PYX4H4bU/CRjMmWEGRQH
-         YJq1uhkvtCRW2qGMKGA2GW5Z8PXu0tCVNcOgVaxE5k49PFc817+Ow6qREx8y2nJ13Kmr
-         Iriw==
+        bh=0t+vzUv4eEyq+7X9KCxZxjlUuJ4kfiiop5UEdAli8J0=;
+        b=Bsc8cXkhS5VP7kLhiIooXz2q+HLVCLIeLtuK5NhUBCtq9n2QTe7pLDxcrKeqOszsF0
+         qz9ur0zMx3NrFai1nLAvbCbfTEcjYHsQgS6Y9OQDxgkh+d6CwUXn/rQw3uBjvANhrIfz
+         wM9ZeXAGhLa2RHf0ZkwEoeoVOa1uTLquMzTpZ+4PcdcmTIEwx7t0eTjZQuroxyJ1OFif
+         YZLZQ1ztKKfscr4J0GwgVHtYr2bGP+tx0ZYrzAqJWDr4N+mxC1TTTokWmHBBu8+4VfWU
+         GiwJH7KAT3IXpEpZbNMHlAA2jOImExueJ+PwAw/AvAuR3uo64imXDE9I7tDQQt/uQ0n6
+         W/rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758143066; x=1758747866;
+        d=1e100.net; s=20230601; t=1758143068; x=1758747868;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OLjc6vgKJXwelgY/kFV/7fD4NVClmcvjL7QnlQQl+JY=;
-        b=bASHjAAX/aeXM9qqEcgZcRjKVTYv1CtZnVn2iqOMF3yL8hW7kXsE88G5IQCgduNn6D
-         X61DJKjM8gxI2f5tX+Ehn/OU9unsjC1m9zGp+kVzkzBtK7lKvr+wenjsaETvadeVCaiR
-         7ZsE6GP3ez2vGeoSDrRozYvKXQkODvlJ7CYMp3bVO9pKrIqRwq1nkb2voeZsftmmBNZr
-         VxxsTiqQQyegxjKLJKQTXTqZity+mUAcbBtLROrY39AVGfNhGN52U0+qMqazajP5hW9P
-         7j6bqX1x8FIYF44uwGkCc6sy8oxEHW7sDniFKK2VltIlM8za3fOx0n+DID7kRhovy8zS
-         iOlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaeguazMhbA8KgNLf7MJhEE3GssB8rWMPmyNnr8No5g6f1fuGY17DW7TbVMm/Vyfbqa+sdGuK+85alB0oWH0AKOA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxexXeTf/jtNa/Qqot2cPvF6FWhCgZw2J2cyiewfBhCxkxEQdYR
-	A4WuWim+DT3fuIfkVk919Px+hcLv8QXptfSOpnFVd2yvqtgGs7IhWMpH
-X-Gm-Gg: ASbGncvsQrh2YbPzvRlso7D/X3VbUBRqreWkMQY/EJHqf3+NDb5KGkI4Ob6ENfBnroE
-	te/om/gvnjOuDb6Tnl2lBTl+x+xp/Xejc4SgzvqLyNdagz1dGOyATqRh+1+TvmcyPxg+mq7+Vsp
-	2nByMiwcGOy78N+BLCEs6im/6NvXKkkUM1/sWEvz5t1N+dCI8CboBYYm+PA7n0cTT4/8Bd2qc/W
-	8wIfKYbl968QGdvAJgYpklY83fMIIGb6QHpCfEgV/jYVGpQckd7HAzHoFnF9nY1siyJnlfS1bvb
-	Su2ftN3YABYrpS7yGzrpgGbG9bKnAUlhj83MHcuLkK62G0yLdlwFztD3FHi3eiJ/Dd3om0DOAVR
-	BxERmZ2ISsr5Q0AX1qO/ld+XkGKgq+Rg3NZCbjxjzusU/hE7KOyrEsy0=
-X-Google-Smtp-Source: AGHT+IFrkfpjfpj4V1IzxwzgKJOiCNq9/t9HIBwNE2UrLVBPq1G0Uq+ssai2vuM9RqyWADLBL3pR8A==
-X-Received: by 2002:a05:6214:f6d:b0:76e:7c27:f040 with SMTP id 6a1803df08f44-78ecf20bc3cmr46716026d6.54.1758143065909;
-        Wed, 17 Sep 2025 14:04:25 -0700 (PDT)
+        bh=0t+vzUv4eEyq+7X9KCxZxjlUuJ4kfiiop5UEdAli8J0=;
+        b=UiEhIsBJMUQfw2m4Jr84WUSurENE++bnhah8dLzIMGRq+AxXsA80xtdWAHzobAckoO
+         J7BuM9YdmJofiOJ1+tXcCy2Z7YGbBu9N5WuZ1fzbHvwuPVw5I/c76DuFWtCz0fIvtmGV
+         xvCaTxLbrCWy319hF5Pm0KarJlsK4pixKTqYiPCg4Agebco3gjS0WGXO5K+2aSq/i+v6
+         VMko6PuYuYIDnwftQsjdLwyWACE7HkC3YjG8LkbEMIvUfQTfgXO1lh2MUhTRApXnSRS3
+         zm7u49w75RpG3rqU52kt7BDnX2iBM3XEkElhq1nHO9acz0Tr3DoSVfIMacCvLDIcZ2Ux
+         SE7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtIvCy3vCSq5RCdciFuYWiRf4IO6KlJpzK5o1eohLU9F69//DVNYwG/ni6TYj+4VNjJTLMFHDQPqAhuohemIMM5w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCHzjTCFievKFvFeVdBlKvJoHQEbzjCUapiDZ/6wtwUpukpkam
+	OM58eK8sBtyW5hn98S4cq33z7kmIoWyaR6v2Xhy5jDXKmafg+mK5p8Yh
+X-Gm-Gg: ASbGncvSv4snQkqKfJQmZSAC0+U6WKf0n01T8pLYeoS5Bk+JfwGY50v/OfAQBLeIQNd
+	aWrL6+SIN+YysoTYXoMxFePvxdYO5oSHAnYIdH9TjAh7e6lmJqrTBcUdIu3+/LEi9H/IMr0cqfs
+	DEbRaSTARgZbsROTCgoLFATvmFkwp+pzfoev5zhB185ilGUTEGFFlKKxIT4TT2+LtW/KyQLfSN4
+	02iXY2i/SvoA893J/YSIbD3G2WHG2G1+IL5TjaBDu3ubsH1b+9fMaQPY69mvBKW6/Rd7aPYm90t
+	+IF4kucVovuW5+IVzIiaRKCLGDcXWGuuPo2AKiFmWGcJvslodaOTMTzjBYamaQQpWOQ8FGAKhOm
+	5DF5wRKE8P/+peDW1CSd8w8V2N46xzT35GRNloXH+8WvM
+X-Google-Smtp-Source: AGHT+IHJJ7FxhXppLqJ5pbKIB4bHEdrdsbUH4s0x4UPdSktVG1rpEIlRtsQvoMJIpZSNXgt5/AVhTQ==
+X-Received: by 2002:a05:6214:1943:b0:78d:592d:fd03 with SMTP id 6a1803df08f44-7926a5f662fmr12311516d6.25.1758143067540;
+        Wed, 17 Sep 2025 14:04:27 -0700 (PDT)
 Received: from [127.0.0.1] ([51.8.152.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793543ffae5sm1897226d6.53.2025.09.17.14.04.25
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793543ffae5sm1897226d6.53.2025.09.17.14.04.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 14:04:25 -0700 (PDT)
+        Wed, 17 Sep 2025 14:04:27 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Wed, 17 Sep 2025 21:04:23 +0000
-Subject: [PATCH v3 3/7] dt-bindings: soc: samsung: Add Exynos990 USI
+Date: Wed, 17 Sep 2025 21:04:25 +0000
+Subject: [PATCH v3 5/7] dt-bindings: serial: samsung: Add Exynos990 UART
  compatible
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-perics-add-usinodes-v3-3-a3629e4666ef@gmail.com>
+Message-Id: <20250917-perics-add-usinodes-v3-5-a3629e4666ef@gmail.com>
 References: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
 In-Reply-To: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -81,36 +81,37 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzk@kernel.org>, linux-serial@vger.kernel.org, 
- linux-i2c@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+ linux-i2c@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758143062; l=951;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758143062; l=896;
  i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=r2bRl4B4OF/qKIhdCBGgWHHiscJkRg/BHw+S8XdcwM0=;
- b=YwGiTLaTBVm47v5bQ1r7SxkCTmRNrDBm0v+/xK7ZoG2m3QWbczPFTXoj63VvdUma7/FMZZavm
- PNX+CL7qfzgAUhzJGU6eQe3/hjmT/WCuBfEKA95LyjY8PVKIYEYFIUp
+ bh=7/q7KnmwWMN+hTZMk53R59gQ8vuRN9Xg0o9/pqcgARc=;
+ b=zSJtklfi96dJ/A6QI2dd3ZrhnFeXwIcQhVDiDgn5BvYrAU8yIcIQ2Q9o4HXUTv5q1HGhchwqS
+ BMrhT322R83D2qom3YkcUayxCcLHizrCd+0DeW7F4War6bIhHDCxbDq
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
-Add samsung,exynos990-usi compatible string to the
-Universal Serial Interface (USI) bindings.
+Add samsung,exynos990-uart compatible string to the Samsung UART bindings.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 +
+ Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index c694926e56ef991965153b94d704fd53addb5cbe..4a719cea81f9d3c3b5296ba2d45b05dd014a1d9d 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -39,6 +39,7 @@ properties:
-               - samsung,exynos2200-usi
-               - samsung,exynosautov9-usi
-               - samsung,exynosautov920-usi
-+              - samsung,exynos990-usi
-           - const: samsung,exynos850-usi
-       - enum:
-           - samsung,exynos850-usi
+diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+index 1a1f991d536491007c7a87b24a6efd4ec3bc0ec7..369eaa9054908f7e1b63bba2e83be612d22f0718 100644
+--- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
++++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+@@ -49,6 +49,7 @@ properties:
+       - items:
+           - enum:
+               - samsung,exynos7870-uart
++              - samsung,exynos990-uart
+           - const: samsung,exynos8895-uart
+ 
+   reg:
 
 -- 
 2.50.1
