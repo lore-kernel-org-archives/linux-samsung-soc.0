@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B515680;
-	Thu, 18 Sep 2025 00:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3610E9;
+	Thu, 18 Sep 2025 00:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153721; cv=none; b=VVSdYqN6MPnaZcO7hG3A3Uib+frdiXDBVxTCVTkMZrl2m+QstBrdI/G/BAWgzrmWU5F0j0v0J13wl9UtdiDddFENURsJ95nguRgcTGko1noTIfwpZpai8bFsLm2qMlQMawKNKQ2eOdLKhKqjBPV8zKg/W0HDd79SIdcoL+z8Vmg=
+	t=1758154440; cv=none; b=jDXCGYq/EWyXwmwHUfcSEWwPb7qTU+gx/uZHV23AS8ynb0vVDssMx7ACNw+UIS5H2JTnotrKJqVZN/NN39a0+UZV54W8k+z/mDPXiLkzPI3g9NhAvFPPeG+uqK0T0HbH0v6Wipk46Mi3CyPkDM2y7cux7vjhAscJNkqNSqp7jNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153721; c=relaxed/simple;
-	bh=58p2Xb4E9NbqINoSvmh4kesI2fGee6RlZEm5bhePd/8=;
+	s=arc-20240116; t=1758154440; c=relaxed/simple;
+	bh=hTr6J9VDHbXPhtYR1LDytW4f3i4cGpxo4JbO2JkTn5A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TyR5icAUv+a0Ee7UzD2drESXQB0Iy+hDQ0ePEqEhKqoa/Y83LL5GjfHSCZAANsyxJ4EFYO4MvWyB0RWZL9577MUv35F+BepZWEuFkuMovktMOG1tFW4+CXePSkp7kTwSTaZjMPwSwWjr03bZFscIZttn6gQBUWoszu7oGobIIX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iuv8owKq; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=OsoCBtdc1iRxv8pX1FYrZzPIjqTcBSC58WH/hM54BPvvJP0C58+rq6KvUCrIK8g624vHRArQiU4GZhWnFRvyWg0Ru0gYQBdBzBwH8XPhJT7c8wXZqwwc3a0E03L8W8+utX7C8Y6AvhTCT5rq14YQtITSDH6fbfQsfpFmNj9Fl1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSfvdykW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iuv8owKq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A941C4CEE7;
-	Thu, 18 Sep 2025 00:01:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSfvdykW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFBFFC4CEE7;
+	Thu, 18 Sep 2025 00:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758153720;
-	bh=58p2Xb4E9NbqINoSvmh4kesI2fGee6RlZEm5bhePd/8=;
+	s=k20201202; t=1758154440;
+	bh=hTr6J9VDHbXPhtYR1LDytW4f3i4cGpxo4JbO2JkTn5A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Iuv8owKqOWqDV7z4VtmsNxRVNKDF5cNNmCfWMA8qLZFNWtB98KdPrDi595vXMYmUJ
-	 rni7XQ431XGrQvHjoumBhC2seJjkjOGJx7ToZ0v8kKEVoXtGCKUAXWvMRlP7Sf1F47
-	 rZ3PahazBtIv1z9KZsRhgPBdQWgjzwTm/KSwNh4V8sF83oQatPnRCSQZPfo+heccaD
-	 6Iepur7QxIT/rC4IFBNwiHDvwk8vc90jFUW8X9+OCfbitLWBbYzTQ2MRg/20ecrE5h
-	 R3Bwxx1y4aMshcENXZREhAHf8G3L7Wwfd3oCAHAfWfYPVaySx/tjdNNnuTRRgJYs5p
-	 kPzia27PHIJ/w==
-Message-ID: <4b12915d-b12d-402e-b4d0-5c2bc7b7ca35@kernel.org>
-Date: Thu, 18 Sep 2025 09:01:55 +0900
+	b=nSfvdykW/QAagDbiqu+Jm+EIagRmz+5tOLyORVZH/4cVIex98I1WhXOaP/q4VuJZB
+	 /gZkXEjrouGFqrikMU81RrLmZq17xAameEOH50leGJ2SFEtnjzHA+puOG6oH65tg61
+	 EnhuBYIuNbuU4C8yXQNI+lsiKW6zgVwed8PWszlAq/HsYRI+k+byUAWSRRAwsb0Zw/
+	 Jm1jGaPesKjTF5dZweeMHoq73JFwmtxcBpYkbcYv8Ah/VRYPVIYIUW1HHIoOnmj3py
+	 jcZyZosunQ4HWZJpO8VD7aBELWXoh4UJc8GK8FWVR89UEAy9B6XjEQomY54yfHB0Ma
+	 Vs27wqAwxSxEg==
+Message-ID: <69ac620e-9f2c-4e46-ac93-59fc1b9829ba@kernel.org>
+Date: Thu, 18 Sep 2025 09:13:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,22 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] dt-bindings: media: fsd: Add CSIS video capture
- interface
-To: Inbaraj E <inbaraj.e@samsung.com>
-Cc: rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com, martink@posteo.de,
- kernel@puri.sm, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
- ravi.patel@samsung.com, shradha.t@samsung.com
-References: <20250828085911.81266-1-inbaraj.e@samsung.com>
- <CGME20250828085930epcas5p1719c7db08074bf1540dc85b71736a6c5@epcas5p1.samsung.com>
- <20250828085911.81266-3-inbaraj.e@samsung.com>
- <20250901-rousing-orange-crab-c05fdf@kuoka>
- <025001dc27cc$72be7b90$583b72b0$@samsung.com>
+Subject: Re: [PATCH v3 5/7] dt-bindings: serial: samsung: Add Exynos990 UART
+ compatible
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-i2c@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
+ <20250917-perics-add-usinodes-v3-5-a3629e4666ef@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,24 +94,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <025001dc27cc$72be7b90$583b72b0$@samsung.com>
+In-Reply-To: <20250917-perics-add-usinodes-v3-5-a3629e4666ef@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/09/2025 21:13, Inbaraj E wrote:
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/clock/fsd-clk.h>
->>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +
->>> +    csis0: csis@12641000 {
->>
->> Incorrect unit address.
+On 18/09/2025 06:04, Denzeel Oliva wrote:
+> Add samsung,exynos990-uart compatible string to the Samsung UART bindings.
 > 
-> Thanks for pointing out.
-> Unit address is correct. Address in reg is wrong here I'll fix in next patchset.
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
 
-That's even worse, because it means the corresponding DTS was never tested.
+This should not be part of this patchset.
 
 Best regards,
 Krzysztof
