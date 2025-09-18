@@ -1,140 +1,112 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3652066DE
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Sep 2025 03:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72514B06C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Sep 2025 03:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758166602; cv=none; b=pdQ0MM0DeGYFkyK76aWW/OYxRC+Hxf1N8RB9DOPGG+8lDHTrUl5lgoM8lO0cVHXbRCxOOyYkl4jccoccs1uQRvZR4ICnlND8/+qGhegTScma16xPwFxOtjHa28PNIsMWryTRp6WlsI/N1zzwKutbqE81U4TtU3w6obBqzbKtVbk=
+	t=1758166920; cv=none; b=kzfdlqQ8RUyRNvlfwOr/kjLZzLMe9fPd+SyangSI49eRtGVNvcfTIUqtK62lSIYnLljZqI4IkAcIiGhhHbhHf7Q/7Zo4WaRCxEsl17GMoBzeGOtfKoXUvKU04q9yJKp7uPEiE6b96ACuffHAwgfFo4wIA+5KynRhw/7ztWZDec4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758166602; c=relaxed/simple;
-	bh=VKsWONJewYmDSeMo2MQznlDLi0vX8m8gSnerFHs1r+0=;
+	s=arc-20240116; t=1758166920; c=relaxed/simple;
+	bh=Y0IujvRvkNRRrQi1nYXL9ScFAz9W9/2gPqXwVoql+Gg=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=SWs+cNsvBhR2ZH+j2DvQ0lmN2Cf4DrjA0Y6L4xKfrq2zQd9m2/1K6GUTjAg0Ez23oL441MMZMdYw56WP2xk05loAbFQ2/zQQOlOzamfPPEvArbKymEylJqMRuzl+3GoBvBjVON9JKPCePj/VCOMETpga6GggtNj/QMYk1zNYf54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kadCp3fm; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=A8OVhzHklbri8RJWRIq/SewEQi7mULUtRiyeAoL8lWliuD7M2lrHQxWyTZ2J6b52Q/X6I03H2DxLUSgbjnkCiH7H3g1SR7cvlxQoLoFeQ9o/JZuravgqfD5XBTiz43VXpMcwcht9q4UymwTEk6lsEkROygl7rfXk9+sGQSP02/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qA2YIUHW; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kadCp3fm"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250918033638epoutp04746d809616a784cb53067f87c4aee625~mQzTK3YwJ0787707877epoutp04W
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Sep 2025 03:36:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250918033638epoutp04746d809616a784cb53067f87c4aee625~mQzTK3YwJ0787707877epoutp04W
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qA2YIUHW"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250918034154epoutp02fcffb7ccda590564d51a495bbedc4ad4~mQ35cJCDd2398523985epoutp02_
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Sep 2025 03:41:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250918034154epoutp02fcffb7ccda590564d51a495bbedc4ad4~mQ35cJCDd2398523985epoutp02_
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758166598;
-	bh=s3/5HzkQn/CeI2bopoX86uqRyljXPEsSE4o7WFp9P3M=;
+	s=mail20170921; t=1758166914;
+	bh=Y0IujvRvkNRRrQi1nYXL9ScFAz9W9/2gPqXwVoql+Gg=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=kadCp3fmysdFYd9IBQjFuD+vHlcKWirFTHefZhaBLZaTEtAmyCTOr2xzsc01TQwlm
-	 w0KBoHWSA9RuMEBcwjYnplWsQEWiQKEfWXkwWUp73Y+GIPeTi8QOg90AFYzushZTVd
-	 vmv60O0Ioal09e5lo/pnzDzIKPMBaM6C6aJ1+kAw=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250918033637epcas5p1d9d51cc4ecd81b27034d872b75b01417~mQzSacz5M1915119151epcas5p1L;
-	Thu, 18 Sep 2025 03:36:37 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cS1X45D7rz6B9m7; Thu, 18 Sep
-	2025 03:36:36 +0000 (GMT)
+	b=qA2YIUHWbfr25lMKWKtQ8K1Zjv0JgVJjYlnvdUGfivIoUm982qwRkBLKIXe/iLGge
+	 +NqgWHvjyWWDHL53DKtCbbEYhkr1C0OE0kCIxu4Pc53poxizUuATgJQN8LSdXFBy3D
+	 NcAqLTxScBf6IkH0n1CJPl69hvj0pkyMwVIYpuRo=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250918034153epcas5p2178818bfb332b0581f9746026ef7f45c~mQ348VSpN0288702887epcas5p23;
+	Thu, 18 Sep 2025 03:41:53 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cS1f90Vxmz2SSKg; Thu, 18 Sep
+	2025 03:41:53 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250918033636epcas5p4b3debeea3bf32662128d305b2883376f~mQzQ83BaZ2797427974epcas5p4Z;
-	Thu, 18 Sep 2025 03:36:36 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip2.samsung.com
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250918034152epcas5p3d165b46374d5f8f95c14e7e1d3090841~mQ33o4mpy2935529355epcas5p3G;
+	Thu, 18 Sep 2025 03:41:52 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20250918033632epsmtip28a31cc2e7c1a72b6d54f7708eb49c7e1~mQzNNeDoo2096320963epsmtip2s;
-	Thu, 18 Sep 2025 03:36:32 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jesper.nilsson@axis.com>,
-	<lars.persson@axis.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<alim.akhtar@samsung.com>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>
-Cc: <ksk4725@coasia.com>, <smn1196@coasia.com>, <linux-arm-kernel@axis.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <pjsin865@coasia.com>, <gwk1013@coasia.com>,
-	<bread@coasia.com>, <jspark@coasia.com>, <limjh0823@coasia.com>,
-	<lightwise@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<shradha.t@samsung.com>, <swathi.ks@samsung.com>, <kenkim@coasia.com>
-In-Reply-To: <59d50dee-cd6a-4eab-860a-bf6d50d9bb0a@kernel.org>
-Subject: RE: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
-Date: Thu, 18 Sep 2025 09:06:30 +0530
-Message-ID: <020801dc284d$6f555b50$4e0011f0$@samsung.com>
+	20250918034149epsmtip2b8fa50045b991065e8c1a0b516cb3682~mQ30-CFna2486924869epsmtip2g;
+	Thu, 18 Sep 2025 03:41:49 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Sangwook Shin'" <sw617.shin@samsung.com>, <krzk@kernel.org>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>,
+	<semen.protsenko@linaro.org>, <dongil01.park@samsung.com>,
+	<khwan.seo@samsung.com>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20250818021826.623830-3-sw617.shin@samsung.com>
+Subject: RE: [PATCH v6 2/5] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+Date: Thu, 18 Sep 2025 09:11:47 +0530
+Message-ID: <06c401dc284e$2bec2a50$83c47ef0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLTcCpqrQuryqKp/HAeD2/j2cyERgGw+1i9ApJXu36yh53O0A==
-Content-Language: en-in
-X-CMS-MailID: 20250918033636epcas5p4b3debeea3bf32662128d305b2883376f
+Thread-Index: AQMf0cCJ9LyTM0wh7cHpv36iTCHVmgFR01/4ASSqlWCx/USksA==
+Content-Language: en-us
+X-CMS-MailID: 20250918034152epcas5p3d165b46374d5f8f95c14e7e1d3090841
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
+cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917085019epcas5p273ef86028a90e78ada55cde48a28a949
-References: <CGME20250917085019epcas5p273ef86028a90e78ada55cde48a28a949@epcas5p2.samsung.com>
-	<20250917085005.89819-1-ravi.patel@samsung.com>
-	<59d50dee-cd6a-4eab-860a-bf6d50d9bb0a@kernel.org>
+X-CMS-RootMailID: 20250818022433epcas2p3fc48febfa6729645af6ebd088937c80c
+References: <20250818021826.623830-1-sw617.shin@samsung.com>
+	<CGME20250818022433epcas2p3fc48febfa6729645af6ebd088937c80c@epcas2p3.samsung.com>
+	<20250818021826.623830-3-sw617.shin@samsung.com>
 
-
+Hi Sangwook
 
 > -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 18 September 2025 06:35
-> To: Ravi Patel <ravi.patel@samsung.com>; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; jesper.nilsson@axis.com;
-> lars.persson@axis.com; mturquette@baylibre.com; sboyd@kernel.org; alim.akhtar@samsung.com; s.nawrocki@samsung.com;
-> cw00.choi@samsung.com
-> Cc: ksk4725@coasia.com; smn1196@coasia.com; linux-arm-kernel@axis.com; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; pjsin865@coasia.com;
-> gwk1013@coasia.com; bread@coasia.com; jspark@coasia.com; limjh0823@coasia.com; lightwise@coasia.com; hgkim05@coasia.com;
-> mingyoungbo@coasia.com; shradha.t@samsung.com; swathi.ks@samsung.com; kenkim@coasia.com
-> Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
-> 
-> On 17/09/2025 17:49, Ravi Patel wrote:
-> > Add basic support for the Axis ARTPEC-9 SoC which contains
-> > 6-core Cortex-A55 CPU and other several IPs. This SoC is an
-> > Axis-designed chipset used in surveillance camera products.
-> >
-> > This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
-> > Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
-> >
-> > This patch series includes below changes:
-> > - CMU (Clock Management Unit) driver and its bindings (patch #1 to #3)
-> > - PMU bindings (patch #4)
-> > - Basic Device Tree for ARTPEC-9 SoC and boards (patch #5 to #7)
-> >
-> > The patch series has been tested on the ARTPEC-9 EVB with
-> > Linux Samsung SoC tree (for-next branch) and intended
-> > to be merged via the `arm-soc` tree.
-> >
-> > NOTE: This patch series is dependent on following floating patches:
-> > 1. https://lore.kernel.org/all/20250917070004.87872-1-ravi.patel@samsung.com/T/#t
-> 
-> NAK, sorry, DTS cannot depend on the drivers. Please decouple the
-> dependencies.
+> From: Sangwook Shin <sw617.shin=40samsung.com>
+> Sent: Monday, August 18, 2025 7:48 AM
+> To: krzk=40kernel.org; alim.akhtar=40samsung.com; wim=40linux-watchdog.or=
+g;
+> linux=40roeck-us.net; semen.protsenko=40linaro.org;
+> dongil01.park=40samsung.com; khwan.seo=40samsung.com
+> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kern=
+el.org;
+> linux-watchdog=40vger.kernel.org; linux-kernel=40vger.kernel.org; Sangwoo=
+k Shin
+> <sw617.shin=40samsung.com>
+> Subject: =5BPATCH v6 2/5=5D watchdog: s3c2410_wdt: Fix max_timeout being
+> calculated larger
+>=20
+> Fix the issue of max_timeout being calculated larger than actual value.
+> The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
+> S3C2410_WTCON_MAXDIV is smaller than the actual value because the
+> remainder is discarded during the calculation process. This leads to a la=
+rger
+> calculated value for max_timeout compared to the actual settable value.
+> To resolve this issue, the order of calculations in the computation proce=
+ss has
+> been adjusted.
+>=20
+> Reviewed-by: Sam Protsenko <semen.protsenko=40linaro.org>
+> Signed-off-by: Sangwook Shin <sw617.shin=40samsung.com>
+> ---
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
-Ok, so you want patch #1 - #5 in separate series and #6 - #7 (DTS patches) in another series.
-Can you please review the patches, I will address review comments in v2 (if any) itself.
 
-> 
-> Maybe you wanted to point me where the bindings are, but then say so.
-
-Yes, these dependencies are for bindings related.
-
-Thanks,
-Ravi
-
-> 
-> 
-> > 2. https://lore.kernel.org/all/20250917071342.5637-1-ravi.patel@samsung.com/T/#u
-> > 3. https://lore.kernel.org/all/20250917071311.1404-1-ravi.patel@samsung.com/T/#u
-> 
-> I am dropping the patchset from my queue.
-> 
-> 
-> Best regards,
-> Krzysztof
 
