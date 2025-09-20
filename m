@@ -1,108 +1,222 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21D12AE99;
-	Sat, 20 Sep 2025 02:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098CB2F619F
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 20 Sep 2025 10:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758335113; cv=none; b=JYIqmKpPtRvfgfcPeuHPxoBVTTeTXuB1TKiGg0+B4cI+5EGmHNBdRHUA3B0NJe6YP8SkOquObRNdhYevEgkNv2NKx9VztnG4niG7f7Dolwn0u/MgNS8AeKq1y5hPI4ffFgJXGt9VkagNXkzd4u5+YYpfcknyob5R41O0kcDoqFc=
+	t=1758365378; cv=none; b=B2b+K1lmkNyO921bIc1U9NWxHlc/7OE+WF8WqpX7XraKP9HjHlKVYKb4t5tLhGT1SiVnlCSNeoGtVWWiofVY+SFrFCOE5GXSgCrUwb++fSG5zF+XpRUnhycc8+DTwLA7K1O8e+EBEc8so9SN8fMtOztSvFvp+g8DEKY5iXzfUVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758335113; c=relaxed/simple;
-	bh=QnShLZkg8/UnFhLj41Nrn/cdTJ5bTk/edIzV1tGTY98=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BKEBxEbEby+uXFPclYF/YRhELu7W2WOccDlxKhmMN5eqmPAM97FmYDcPu5LwBh9eyKAoX3upTsKh/zNUCXqFpEAY7ICKoiVYdYJOZMukMrLXCEagvpjCD1X/rUP6TA8X0qBu0Y6edRc8iEQ60rjyH4FhgvAYB0fwDj2Gaqh6+Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fNhuD3PK; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1758365378; c=relaxed/simple;
+	bh=LeD+Kp6HPaiggwjhXT1KWVi4MySo4T2YgcXx0PkGZ0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3NGKBPFeYPnjwx4tMjRug9VLaSTSWP4cdyMzMdXr3QYHoC3S6ZmcvFVF8NURObZnCkQAQCMl3H7+sIKeEVw26roDvjsQ9drPP8XejPpl/9qBX1Zoqxf1qX7+MFj4S3BJ3My3Yh0hicce30Z3+hbo6kQuhQPqJaO7sGEktyjeAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfJ7Pqhg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fNhuD3PK"
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58K25eJq029482;
-	Sat, 20 Sep 2025 02:25:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=CsJsIHjWIG9kg+Z72lMm4FPPciDowTkHulx54Bh9bag=; b=
-	fNhuD3PK3xgchkyrxrFXZsN+t/fWHciOPmYAk/StXaRalhOCtrXcnrziWI1elLbj
-	0lora/X878u+VsEBF6amdGRDkuAeN+H6hej8IcuhUCTjlxATdxVJE4rvRNCJqxSO
-	F1HagvmUpK4xMUgZESA+LRuqNbXwaP03t4UJrR0D69FoyqVXZTb8LY/lEe5FhBZm
-	KxmeSjrClzlM7z8RPupN/mhRugBx5xrdPb0LJmtMj/YjQxuwuMBsl9Hu/PndzaTB
-	TSdJut356AjlPxS8fK8k+S04dyyHnnZFC7jt85MRIccrBlaJSN2s54m/3o4BY+KK
-	Q/iRXdVS2bHFlqAELVcD2A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 499k6ar0bd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 20 Sep 2025 02:25:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58K1YIui020373;
-	Sat, 20 Sep 2025 02:25:00 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 499jq50p2r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 20 Sep 2025 02:25:00 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58K2Lxgd016735;
-	Sat, 20 Sep 2025 02:25:00 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 499jq50p2b-2;
-	Sat, 20 Sep 2025 02:25:00 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: alim.akhtar@samsung.com, krzk@kernel.org, peter.griffin@linaro.org,
-        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: exynos: correct sync pattern mask timing comment
-Date: Fri, 19 Sep 2025 22:24:52 -0400
-Message-ID: <175833431689.3341211.14106616916060311904.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
-References: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfJ7Pqhg"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7322da8so545012866b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 20 Sep 2025 03:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758365374; x=1758970174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
+        b=SfJ7PqhgZVJ+4gZgkx39NxdBt6ecJ8Je+/R2RnpVcyJ1mh0Mg5wN9hEWtiz/U+ol/i
+         6xl6kfNmxTZ2qIqEGykSR04lEEtwKCSGR5NXGTF4yDAk4qLt7np57BxE0mDAe1yP2Lia
+         utCH1acPEzLmrbNThBQmQFSHWNp+UEKGp+Axle/NwGr/KuqgIVgMdG3wvWFv6Fp3LQKW
+         2lrIQLaK7siis5vnnC1xqBsKrjH+7t/SvzudRdjD/7xzfXa+RIJEY2r4VFm+UtAhAGji
+         rRF7cixkOlb6cdPMfZSuUjBhacCAXl24tEoML9fjvK2b3nj/y2Di8WDq6BZ6EmCgNDti
+         GjSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758365374; x=1758970174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
+        b=Aa1Ti1SiiOaH0oFnNKNYEBQdzeGBu8RiRE5qjcx6HChOUUyadnoG3YeYNYlXeUB+2z
+         HK+gaqs+7nwd+jfeKmktS1YgIixvSAuxnOgQ/MUuc/Z0wCDfysUG+IQlDO002CH4Jyfn
+         JH7kpYalXL9yYUtu+7WvaIx9mXy0r6moM1X/bbyFNK2387/Cq1EaDLFw82MLW1SLkK2O
+         Yd9yFBXHuXxwYYVW0bPqR1ZVyx6qv2/7NABY0ocMtj0uwlgjn+3RVOK0VRVSGPwOX1wf
+         1KtNIPtTgqAIqBzjIvfH96er61lCCfGT6alJ2VNRI0B44j4mWSqVhj69tlWl80nLr4T4
+         JgdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnzXfUA58HDk/vhWjea1mAq3BFd+ppvJ0NNzpl5AzPQ4RdMS9Hqf7DvmT90upmSRuoyEVNr9bBqN4t1xcqVKhcPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp90bvaulfw4ARQEbT1OLixqub5o886XI8qBvpbq3S/VSCiLyS
+	l/qs+rLmUH+TbEih0SU2rbsT/u50VCVb8BqRcmUultPP6S1X0wNpMFNztk+Ifq2skt3Dp0hHU+u
+	iQosJwOm5QXwSu7eXJtZBfdJhQKlyUsY=
+X-Gm-Gg: ASbGncsIhfPqe16O3g+e3949cIyFt/ui8PYzHG6YwFiSri1bCpm7KfEu7GFVCOcLjju
+	wkevzQUr5/KhSre0mZ5MVkePbFYNFaMLdRzoTxYyrAkzYUokw6DY34pjN4yZ75/NRfI4dWMNNdm
+	afsIh60tqkrK6WdvsSpjvUkQHBCrPg2Tp7WXm898QxVNA8T69H9HUnscdwUrq/eP7gcxuy5nywS
+	BeugQI=
+X-Google-Smtp-Source: AGHT+IHHbhBTYGUaEQMbVjyA0lAj2luPxy2XsbzoJZ2rvsPEEjKDVfN8Ekg2zTb0h70UHa/ky/mxQ7DHX1RPk/WuHD8=
+X-Received: by 2002:a17:907:2d86:b0:afe:f418:2294 with SMTP id
+ a640c23a62f3a-b24f4cd1612mr662812666b.49.1758365373591; Sat, 20 Sep 2025
+ 03:49:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-20_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
- mlxlogscore=986 suspectscore=0 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509200020
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxNyBTYWx0ZWRfX89q8ZKWBEisI
- VzWqpWA7RCtrEioss/Ly1xhzBTysjmOPDMw5snOGaaefQUWQAvbSKJuv+aZzrgw9EIznd6tfUf4
- iN0FPFCLMVEQTQia5E+UZJwcbxhQNBQMeKfayFz716a3oUTCbsDrF0OKpSnqGBqo7POwsdc9R/e
- W8DQRa3GxKV+m6fO4pUoDGac/Oio5yrEISBznVZW4WNQtFoJDq/PNyXT/6jjTdumk5XI9UARAJZ
- ZeXGuY+uWKLwXoRq9v6NQTJzW6ywm/vdO79mvkANPUTRVzrcbTZMQjD/QrqNfF6vyrQrxkz55sL
- ZMlpLlKpUhOJM9YJ3oqACi2EL6GacrGENHxkMiyp14MrNfayincIab4ioYzOQ6W8yxV1ZuH5A5O
- eSA+2mBtCgaNKa4sKqHXg2ZTkXmWZg==
-X-Proofpoint-GUID: rnn4JSyZ3HsHYDEiN_d_XY6-hUB2SsOv
-X-Authority-Analysis: v=2.4 cv=E47Npbdl c=1 sm=1 tr=0 ts=68ce107e b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=erYYR6txwRpVtOmW1J8A:9
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:13614
-X-Proofpoint-ORIG-GUID: rnn4JSyZ3HsHYDEiN_d_XY6-hUB2SsOv
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+In-Reply-To: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 20 Sep 2025 13:48:57 +0300
+X-Gm-Features: AS18NWAsgghzm2kBTHVAUWgTvM4Rjv6fz5BEJyNeWi6WNSHflPsd2h04LFjYcyQ
+Message-ID: <CAHp75Vfx9kyP-rVtfvyyMK4VH+oiRVjP1fZOtbVH14iLh98Jxw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] media: Introduce video device state management
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, 
+	Ricardo Ribalda <ribalda@chromium.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Hans de Goede <hansg@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick@shmanahar.org>, 
+	Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Matt Ranostay <matt@ranostay.sg>, Andy Walls <awalls@md.metrocast.net>, 
+	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
+	Dan Scally <djrscally@gmail.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+	Martin Tuma <martin.tuma@digiteqautomotive.com>, 
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey_utkin@fastmail.com>, 
+	Ismael Luceno <ismael@iodev.co.uk>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Corentin Labbe <clabbe@baylibre.com>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Keke Li <keke.li@amlogic.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ming Qian <ming.qian@nxp.com>, 
+	Zhou Peng <eagle.zhou@nxp.com>, Eddie James <eajames@linux.ibm.com>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Eugen Hristev <eugen.hristev@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Nas Chung <nas.chung@chipsnmedia.com>, Jackson Lee <jackson.lee@chipsnmedia.com>, 
+	Devarsh Thakkar <devarsht@ti.com>, Bin Liu <bin.liu@mediatek.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, 
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
+	Yunfei Dong <yunfei.dong@mediatek.com>, Joseph Liu <kwliu@nuvoton.com>, 
+	Marvin Lin <kflin@nuvoton.com>, Dmitry Osipenko <digetx@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>, Mirela Rabulea <mirela.rabulea@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
+	Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Jacob Chen <jacob-chen@iotwrt.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	=?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
+	Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Maxime Ripard <mripard@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Yong Deng <yong.deng@magewell.com>, 
+	Paul Kocialkowski <paulk@sys-base.io>, Shreeya Patel <shreeya.patel@collabora.com>, 
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, Jai Luthra <jai.luthra@linux.dev>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Michal Simek <michal.simek@amd.com>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Michael Krufky <mkrufky@linuxtv.org>, Mike Isely <isely@pobox.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steve Longerbeam <slongerbeam@gmail.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, 
+	Changhuang Liang <changhuang.liang@starfivetech.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
+	Christian Gromm <christian.gromm@microchip.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Plamen Atanasov <tigerment@mail.bg>, Sean Young <sean@mess.org>, 
+	Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Jiasheng Jiang <jiashengjiangcool@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	Matthew Majewski <mattwmajewski@gmail.com>, Yunseong Kim <ysk@kzalloc.com>, Chen Ni <nichen@iscas.ac.cn>, 
+	Fabio Luongo <f.langufo.l@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Yang Yingliang <yangyingliang@huawei.com>, Ludwig Disterhof <ludwig@disterhof.eu>, 
+	"Everest K.C." <everestkc@everestkc.com.np>, Stefan Wahren <wahrenst@gmx.net>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Akash Kumar <quic_akakum@quicinc.com>, 
+	linux-input@vger.kernel.org, mjpeg-users@lists.sourceforge.net, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	kernel@collabora.com, linux-staging@lists.linux.dev, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 07 Sep 2025 13:27:49 -0700, Alok Tiwari wrote:
+On Fri, Sep 19, 2025 at 12:57=E2=80=AFPM Jai Luthra <jai.luthra@ideasonboar=
+d.com> wrote:
+>
+> Hi,
+>
+> This patch series introduces state management for video devices.
+>
+> Currently, V4L2 subdevices have a well-established state management
+> system [1] that allows the framework to store the subdevice state
+> at a central location.
+>
+> Video devices however lack this, leading to inconsistent state handling
+> across drivers and making it difficult to implement features like
+> hardware multiplexing in complex media pipelines [2].
+>
+> The series is composed of three parts:
+>
+> - Core Infrastructure (PATCH 1-4)
+>         Introduces the basic state structure, try state support,
+>         initialization callbacks, and driver helpers
+> - Framework Integration (PATCH 5-7)
+>         Integrates state passing through the ioctl wrappers and driver
+>         implementations
+> - Driver Examples (PATCH 8-10)
+>         Use the state to store formats in TI J721E CSI2RX and Rockchip
+>         RKISP1 drivers
+>
+> This should also provide a foundation for drivers to extend or subclass
+> the state structure with device-specific variables in future.
+>
+> I have tested capture and format negotiation with the converted drivers
+> on SK AM62A (j721e-csi2rx) and Debix Model A (rkisp1).
+>
+> [1]: https://lore.kernel.org/linux-media/20210610145606.3468235-1-tomi.va=
+lkeinen@ideasonboard.com/
+> [2]: https://lore.kernel.org/linux-media/20250724-multicontext-mainline-2=
+025-v2-0-c9b316773486@ideasonboard.com/
 
-> Fix the comment for SYNC_LEN_G2 in exynos_ufs_config_sync_pattern_mask().
-> The actual value is 40us, not 44us, matching the configured mask timing.
-> This change improves code clarity and avoids potential confusion for
-> readers and maintainers.
-> 
-> No functional changes.
-> 
-> [...]
+When you add a Cc list., do it after the '---' (three minus signs)
+line, otherwise that huge unneeded noise will become part of the
+commit message.
 
-Applied to 6.18/scsi-queue, thanks!
 
-[1/1] scsi: ufs: exynos: correct sync pattern mask timing comment
-      https://git.kernel.org/mkp/scsi/c/0bd0e43776b6
-
--- 
-Martin K. Petersen
+--=20
+With Best Regards,
+Andy Shevchenko
