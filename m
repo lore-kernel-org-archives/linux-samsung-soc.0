@@ -1,44 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C154027B340;
-	Mon, 22 Sep 2025 15:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7792E8B67;
+	Mon, 22 Sep 2025 15:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555672; cv=none; b=CBaLF6SLdBRPEXyySi2senbi9qHEDDLDKLPDCu4ytC+8OgntD+aIHGv9ov7bs3NoFGsBR7vKsizJgs2csBZ4ALPrzUhTGje2Ljmk4fq75H6dwmcUqBYfU70sVtxuSOrIxmr8Fo696FIn6mkI6naSH3enbqv2nUMHVxNAcE7JRPQ=
+	t=1758555732; cv=none; b=oGZNkKg1jY8CEhyeodMFKPBpTyWelvEhKbldVCxcD57zKU2Avzffux8SLw/lVW+aOy+vIvNiai6eqPHyDa4IkndCOOpDmsZhj680v2JzRZFyvEzNbVtD1W8SYaNQ/UqfWXvKZB1DvRwUK3/K6AIFPv9+oJRAdT4eGlWuc68gg88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758555672; c=relaxed/simple;
-	bh=NjOxxgw2G2HtP4z+tFDKo3O2KiZzVADLJNb1vGrq+zQ=;
+	s=arc-20240116; t=1758555732; c=relaxed/simple;
+	bh=S4ZKCw/ZbiWOG5I66sB8OoE++es1UH6MK7wMJa/tgLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BIxxQEJ1ld2lGWzwYmm0Q41ALJrwEp8W9HRxBh8H1afY6+IdrVLrko9xiYXeZsigPuH3bBHCsFn2v2A6+iAH9nVKTYQt+k5u4HitMEpswWn0J/xpFQ9eY7PSMABRgSHjA0QDPqFuMa/tJy+vCFz/ihxNwTmEPNlF4CxM8dItJx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VA2s+MDP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsTNcys0de4zc3aj0Ezn+6/58RKUpgNdqmlImLB1kHgI6IIYwJpzBL3LbC22D3zAfpWLRCOWjes6acO1NaLISdbW2mil8oerq8h2AhP8gcqvXvh3MQpW1sVdC6OgQOF67wGlXJ6lS+0BAVtVb99U6IKDcIa+sCt3z6FWg2+7JzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMToxKmX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VA2s+MDP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27802C4CEF0;
-	Mon, 22 Sep 2025 15:41:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMToxKmX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BC9C4CEF0;
+	Mon, 22 Sep 2025 15:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758555672;
-	bh=NjOxxgw2G2HtP4z+tFDKo3O2KiZzVADLJNb1vGrq+zQ=;
+	s=k20201202; t=1758555731;
+	bh=S4ZKCw/ZbiWOG5I66sB8OoE++es1UH6MK7wMJa/tgLc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VA2s+MDPsMa5SPyJHe17nMnOt1oqosfBHM2Zc/RjmVhCT+8m7O9M/44hd6Uym2dtK
-	 xsrVfRYPjd7ETzCCuujgOcZY62Ei5RkUfXID33hB51OaEaQd/U2xigL+re67jqY5g/
-	 GLMI4kDmC8YRrB5n3iy9XokE8t808gGMguGw6li+ktkarZQV7sODbVge0nEcS6h4sy
-	 mCNgZDr7807xW+HxT0Z0VlH2OEszwlP1WT5XrzQi/LFJ/2yVwRWWbtpdN9ZqnTwLPv
-	 BsXhziJ7B/DECiizElwS3BHXOx7BGMu+NAuN5aj0VRXpim4cM0TG3Y4+Jc+zl9+3Wr
-	 t4CxkqVKK13CA==
-Date: Mon, 22 Sep 2025 10:41:11 -0500
+	b=KMToxKmXaCISE/T+s9Eq3Yk5gsGavS0cFVMAoLoMFl1bHaDJa75ges1tsrcvZ6Sxa
+	 5xQ1sZllwcgBGs3BYQ+n32tS3pLQodI6SOjZbubVim6nASW6vC8hEXBfDMvBDWTMK8
+	 6uPzh+9z1WVflTkR9tj2/raYa2GonGYwqhE62acPaA4IAYU60nT9Nb4M0MYmVpYyDa
+	 fzStI8ztrzM3tQWu88XHKuxhz0FH64yZJajpEF4KUa+ljlBe3oi3tTrJF2P7u9U908
+	 EoreqsRMSNBVTMrrXg8BMVmHO+Nze9jZr0J0AUPTP5J90ku/dmrReVU7paOaX+Eb0T
+	 G0xuw3AUGig1w==
+Date: Mon, 22 Sep 2025 10:42:10 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
+To: Alexandru Chimac <alex@chimac.ro>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: arm: samsung: document herolte board
- binding
-Message-ID: <175855567004.25808.182745298436415730.robh@kernel.org>
-References: <20250914150321.2632019-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914150321.2632019-2-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: samsung: Add
+ exynos9610-pinctrl compatible
+Message-ID: <175855573003.31769.17417715794632247649.robh@kernel.org>
+References: <20250914-exynos9610-pinctrl-v1-0-90eda0c8fa03@chimac.ro>
+ <20250914-exynos9610-pinctrl-v1-1-90eda0c8fa03@chimac.ro>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,17 +50,16 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250914150321.2632019-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250914-exynos9610-pinctrl-v1-1-90eda0c8fa03@chimac.ro>
 
 
-On Sun, 14 Sep 2025 18:03:19 +0300, Ivaylo Ivanov wrote:
-> Add binding for the Samsung Galaxy S7 (SM-G930F) board, codenamed
-> herolte, which is based on the Samsung exynos8890 SoC.
+On Sun, 14 Sep 2025 19:34:26 +0000, Alexandru Chimac wrote:
+> Document pin controller support on Exynos9610-series SoCs.
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
 > ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
