@@ -1,269 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7979285C9C;
-	Sun, 21 Sep 2025 20:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E6C86329
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Sep 2025 04:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758487039; cv=none; b=p5AAZN5+Y7Xibo5iI+8X2yyEn5l/ON0KY5fPoOOtCohEl54kg0fsqml+gt4xnparmnO25mYNTksLaPsP9vE6zvAiLeSijICTUOJOp9eeUcVEe43fZ1xC7WOaiTWa24JjfJV3PlEdQiwfgRWTY9ENLtl1HhBxqUJ3nzOqmyEUkcg=
+	t=1758514754; cv=none; b=r9MYXl/q+Kc9EJIP3cuHWBD5R85pXAh9KDpOJYiAQbwLI6G1EOB2pJCWEP9eKfXvNoA7sTPykAkWqBpPMhTzSkjXa17MFkKJyGMuP7fBBQ2KMpFZnyFJ6IXayLvBok1HjFMB6D/ABkIftCfN8kpUsK63sbekJY7RhV8Pu2j6ltI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758487039; c=relaxed/simple;
-	bh=h0CCspWX7v+icobunOo57R3hj+9ITuMxqueMpV/4iUQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=DCKtgny3D8bNPLCVCnPmCuvEwy45bDga3zKQpy0w1Bru3WLUezUFqnyGTUn3Ah2EWXYIP5zHFWcz4rUbRuuqcT+4/EzMRzThHQu4lmRCfhf0rQhEzZpj0CVZ0Omx84cxSovVG4p4p4f6e0T9K1wIet912K94El0BRCuXwC/Mv68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWHIjc15; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758514754; c=relaxed/simple;
+	bh=9mQfF97iUqTuIDpHjmThzhD8K+3px3mB/MpG9m45V0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=PYHLTLCe0RzZJm99jZvQCEGcd+Pr6NWSBqQE/qwWdSl4DhKsPJ+wEpppnU3jZQiApOR35Rt7PHyZLLRiVbJgZiGlIhZAjucn41XPr95XkbT+9ya14SHZKflQlUeGZtOMA5B6aQpgdb4pqb/Py/Hd3y2roKcFou88OxYeVlloplw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JFg9q5lp; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWHIjc15"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E3DC4CEE7;
-	Sun, 21 Sep 2025 20:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758487038;
-	bh=h0CCspWX7v+icobunOo57R3hj+9ITuMxqueMpV/4iUQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GWHIjc15bLcK1IEAAs678u/24MLpykiuY2V/iTmlkGbs3wEHR2tZitc6wEcMIkfLI
-	 51UsHvUvkJp2CPh0KlTXvSiHF/ZqNH2RX6oj2lYNdVvRkF3r2HmVC0aPfjWDimdXgJ
-	 +quJ1/onweU9oJOaZvHBKGzu+cf5RqwGaiIoY+i8eQ6LFg6brwVlYAiLIA9Si865D3
-	 PABsMpTvS8OipSHL4RSB8aXq6tG3Rk/YykDXpW1M3aScraCwhtUdUPHP9mRROtLNu4
-	 EmCtAi1xnwcbKH8TsGGdet253smkYN2VweDHaic18bI8ym0zkGYjYMVQjJNKOCo8aJ
-	 HfKQurTsLbmXg==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JFg9q5lp"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250922041903epoutp0444a7eecc697f81a93028587f22c48d70~nf9enpCEg0141001410epoutp04j
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Sep 2025 04:19:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250922041903epoutp0444a7eecc697f81a93028587f22c48d70~nf9enpCEg0141001410epoutp04j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758514743;
+	bh=/rbB9Qe0PyGkKDgc61OqgDnmcVxYp84SH6KpmgRnDqk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=JFg9q5lp2AvZG+s2v9yqSJYiyLRqq5TGmjseJ4vuImH8CIb8ZNXzn5UmPJZ9F2Bru
+	 rXLgQdtKScCD/c1Ry5UUKvrselcHHOD+EqC/h51o5zTypIkyrSsQEXRqCRmm7URsUo
+	 BDmidaatle3pKocdAQ+O7/nUeluXcvC9lVV0M+hg=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250922041903epcas2p26df62412d40a7074b3c1ff6923629832~nf9eF2NSc1765817658epcas2p2D;
+	Mon, 22 Sep 2025 04:19:03 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cVVHB3pytz6B9mB; Mon, 22 Sep
+	2025 04:19:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df~nf9c3FJsN1765817658epcas2p2C;
+	Mon, 22 Sep 2025 04:19:01 +0000 (GMT)
+Received: from asswp60 (unknown [10.229.9.60]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250922041901epsmtip2d12fca8c5826a6ab1078b93f6091d011~nf9cxel3W0606606066epsmtip2I;
+	Mon, 22 Sep 2025 04:19:01 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Henrik Grimler
+	<henrik@grimler.se>
+Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Add exynosautov920 thermal support
+Date: Mon, 22 Sep 2025 13:18:54 +0900
+Message-ID: <20250922041857.1107445-1-shin.son@samsung.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
-References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org> <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
-Subject: Re: [PATCH v4 4/5] clk: samsung: add Exynos ACPM clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will Deacon <will@kernel.org>
-Date: Sun, 21 Sep 2025 13:37:16 -0700
-Message-ID: <175848703636.4354.2936744718103927060@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df
+References: <CGME20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df@epcas2p2.samsung.com>
 
-Quoting Tudor Ambarus (2025-09-08 06:12:45)
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95=
-e029c52436e5c7f 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->           status of the certains clocks from SoC, but it could also be ti=
-ed to
->           other devices as an input clock.
-> =20
-> +config EXYNOS_ACPM_CLK
-> +       tristate "Clock driver controlled via ACPM interface"
-> +       depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_=
-PROTOCOL)
+This change merges the new exynosautov920-specific register definitions and
+timing parameters into the exynos-tmu driver, ensuring consistent behavior
+across all Exynos series. All new code paths have been tested on a
+exynosautov920 board and verified to correctly read temperatures and
+emulate behavior.
 
-Why is COMPILE_TEST limited to !EXYNOS_ACPM_PROTOCOL?
+Changes in v4:
+- Kept 'addtionalProperties: false'.
+- Removed the 'samsung,hw-sensor-indices' property in the binding.
+- Added the 'samsung,sensors' property in the binding.
+- Dropped code-like formatting and rewrote the description in plain,
+  hardware-focused language in the commit message.
+- Removed the bitmap and replaced the tz_count to sensor_count.
 
-> +       help
-> +         This driver provides support for clocks that are controlled by
-> +         firmware that implements the ACPM interface.
-> +
-> +         This driver uses the ACPM interface to interact with the firmwa=
-re
-> +         providing all the clock controlls.
-> +
->  config TESLA_FSD_COMMON_CLK
->         bool "Tesla FSD clock controller support" if COMPILE_TEST
->         depends on COMMON_CLK_SAMSUNG
-> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acp=
-m.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8566495265ee3e06dbf370f9e=
-424d5540f5c7457
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-acpm.c
-> @@ -0,0 +1,184 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Samsung Exynos ACPM protocol based clock driver.
-> + *
-> + * Copyright 2025 Linaro Ltd.
-> + */
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
+Changes in v3:
+- Removed redundant commit message.
+- Rephrased the sentences to describe the hardware clearly.
+- Restricted sensor indices to V920.
+- Set #thermal-sensor-cells per variant.
+- Replaced 'additionalProperties' with 'unevaluatedProperties'.
+- Removed the duplicate #define and use the original.
+- Used lowercase hex in #define.
+- Simplified 'temp_to_code' and 'code_to_temp' to one computation
+  path by normalizing calib_temp.
 
-Is this include used?
+Changes in v2:
+- Replace the generic property with a vendor-specific one.
+- Added an indices property instead of ranges.
+- Shortened thermal node name and made them more generic.
+- Updated the indices logic accordingly after removing the ranges property.
 
-> +#include <linux/platform_device.h>
-> +#include <linux/types.h>
+Shin Son (3):
+  dt-bindings: thermal: samsung: Adjust '#thermal-sensor-cells' to 1
+  thermal: exynos_tmu: Support new hardware and update TMU interface
+  arm64: dts: exynosautov920: Add multiple sensors
 
-Are you avoiding kernel.h? If so, please include container_of.h and
-device/devres.h to avoid implicit includes.
+ .../thermal/samsung,exynos-thermal.yaml       |  32 +-
+ .../boot/dts/exynos/exynosautov920-tmu.dtsi   | 377 ++++++++++++++++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  31 ++
+ drivers/thermal/samsung/exynos_tmu.c          | 322 +++++++++++++--
+ 4 files changed, 724 insertions(+), 38 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
 
-> +
-> +struct acpm_clk {
-> +       u32 id;
-> +       struct clk_hw hw;
-> +       unsigned int mbox_chan_id;
-> +       const struct acpm_handle *handle;
-> +};
-> +
-> +struct acpm_clk_variant {
-> +       const char *name;
-> +};
-> +
-> +struct acpm_clk_driver_data {
-> +       const struct acpm_clk_variant *clks;
-> +       unsigned int nr_clks;
-> +       unsigned int mbox_chan_id;
-> +};
-> +
-> +#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
-> +
-> +#define ACPM_CLK(cname)                                        \
-> +       {                                               \
-> +               .name           =3D cname,                \
-> +       }
-> +
-> +static const struct acpm_clk_variant gs101_acpm_clks[] =3D {
-> +       ACPM_CLK("mif"),
-> +       ACPM_CLK("int"),
-> +       ACPM_CLK("cpucl0"),
-> +       ACPM_CLK("cpucl1"),
-> +       ACPM_CLK("cpucl2"),
-> +       ACPM_CLK("g3d"),
-> +       ACPM_CLK("g3dl2"),
-> +       ACPM_CLK("tpu"),
-> +       ACPM_CLK("intcam"),
-> +       ACPM_CLK("tnr"),
-> +       ACPM_CLK("cam"),
-> +       ACPM_CLK("mfc"),
-> +       ACPM_CLK("disp"),
-> +       ACPM_CLK("b0"),
-> +};
-> +
-> +static const struct acpm_clk_driver_data acpm_clk_gs101 =3D {
-> +       .clks =3D gs101_acpm_clks,
-> +       .nr_clks =3D ARRAY_SIZE(gs101_acpm_clks),
-> +       .mbox_chan_id =3D 0,
-> +};
-> +
-> +static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
-> +                                         unsigned long parent_rate)
-> +{
-> +       struct acpm_clk *clk =3D to_acpm_clk(hw);
-> +
-> +       return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
-> +                                       clk->mbox_chan_id, clk->id, 0);
-> +}
-> +
-> +static int acpm_clk_determine_rate(struct clk_hw *hw,
-> +                                  struct clk_rate_request *req)
-> +{
-> +       /*
-> +        * We can't figure out what rate it will be, so just return the
-> +        * rate back to the caller. acpm_clk_recalc_rate() will be called
-> +        * after the rate is set and we'll know what rate the clock is
-> +        * running at then.
-> +        */
-> +       return 0;
-> +}
-> +
-> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                            unsigned long parent_rate)
-> +{
-> +       struct acpm_clk *clk =3D to_acpm_clk(hw);
-> +
-> +       return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
-> +                                       clk->mbox_chan_id, clk->id, rate);
-> +}
-> +
-> +static const struct clk_ops acpm_clk_ops =3D {
-> +       .recalc_rate =3D acpm_clk_recalc_rate,
-> +       .determine_rate =3D acpm_clk_determine_rate,
-> +       .set_rate =3D acpm_clk_set_rate,
-> +};
-> +
-> +static int acpm_clk_ops_init(struct device *dev, struct acpm_clk *aclk,
+-- 
+2.50.1
 
-Maybe acpm_clk_register() is a more appropriate name.
-
-> +                            const char *name)
-> +{
-> +       struct clk_init_data init =3D {};
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &acpm_clk_ops;
-> +       aclk->hw.init =3D &init;
-> +
-> +       return devm_clk_hw_register(dev, &aclk->hw);
-> +}
-> +
-> +static int acpm_clk_probe(struct platform_device *pdev)
-> +{
-> +       const struct acpm_handle *acpm_handle;
-> +       struct clk_hw_onecell_data *clk_data;
-> +       struct clk_hw **hws;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct acpm_clk *aclks;
-> +       unsigned int mbox_chan_id;
-> +       int i, err, count;
-> +
-> +       acpm_handle =3D devm_acpm_get_by_node(dev, dev->parent->of_node);
-> +       if (IS_ERR(acpm_handle))
-> +               return dev_err_probe(dev, PTR_ERR(acpm_handle),
-> +                                    "Failed to get acpm handle.\n");
-
-Remove the period please. Most error messages don't have proper
-punctuation.
-
-> +
-> +       count =3D acpm_clk_gs101.nr_clks;
-> +       mbox_chan_id =3D acpm_clk_gs101.mbox_chan_id;
-> +
-> +       clk_data =3D devm_kzalloc(dev, struct_size(clk_data, hws, count),
-> +                               GFP_KERNEL);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       clk_data->num =3D count;
-> +       hws =3D clk_data->hws;
-> +
-> +       aclks =3D devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
-> +       if (!aclks)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < count; i++) {
-> +               struct acpm_clk *aclk =3D &aclks[i];
-> +
-> +               /*
-> +                * The code assumes the clock IDs start from zero,
-> +                * are sequential and do not have gaps.
-> +                */
-> +               aclk->id =3D i;
-> +               aclk->handle =3D acpm_handle;
-> +               aclk->mbox_chan_id =3D mbox_chan_id;
-> +
-> +               hws[i] =3D &aclk->hw;
-> +
-> +               err =3D acpm_clk_ops_init(dev, aclk,
-> +                                       acpm_clk_gs101.clks[i].name);
-> +               if (err)
-> +                       return dev_err_probe(dev, err,
-> +                                            "Failed to register clock.\n=
-");
-> +       }
-> +
-> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +                                          clk_data);
-> +}
-> +
-> +static const struct platform_device_id acpm_clk_id[] =3D {
-> +       { "gs101-acpm-clk" },
-> +       {},
-
-Please drop comma here so that nothing can come after.
