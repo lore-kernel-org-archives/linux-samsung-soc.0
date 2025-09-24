@@ -1,391 +1,212 @@
-Received: from mail-m49244.qiye.163.com (mail-m49244.qiye.163.com [45.254.49.244])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B990F27FD6D;
-	Wed, 24 Sep 2025 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.244
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E846F30BB87
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2025 15:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758705625; cv=none; b=br6/D3zq8vjuizb/29V/6wDAgWrLoAyUdgGwcFjqIazJ6Jo1E6diKCUZPFSuENfMBvGz8/2E89RA1G0fYSut6zMxWoeFccTb9/T3hsI7woD9rXn1DdVSqdghriu1PW5OpygtZxSuVn+WbYmKfLnThJ6tuFb+Av4POmSqWGs/7EU=
+	t=1758726672; cv=none; b=UoWm8FenQaJrTaxAuWtXcXjOvVPj5lKO5/s+2sOUcpUheajBwaYyioaIPufiaUpigPa3Y+BsoZlpyouKnh3J/rbazo26ao1V87DGzUeKW8S+tY6T+MowLuNMUQAa+A5P365hJzONUtoSDAG4be3VLwpiw9YYYd1O0lvg1q/wjaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758705625; c=relaxed/simple;
-	bh=zvuaIBezae1RX+XceIMs7N16ukgHasYSr72AnjpJu78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JufTo/n/zOkcEjYkYqzzChQ51IAA7N+MxWC7Vd/C8yqjVnCtPaaqOkOx3Qsw/f6wXaWX9AU/7tDObswdNkHt6xX5LnWfQK2Vt7TOxnzUSb8g340edJLnlPK/dqLsE58BXsLUmMfP896I3jB4KcmKcbGqIUv82h4IZA2RO22tUQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SIIVKC0K; arc=none smtp.client-ip=45.254.49.244
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1758726672; c=relaxed/simple;
+	bh=cwMIlE3GkPC64JAJSB4aokfZYWK2EOhyiJo/gkpirXM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YjK6qWCq0zpVdgxKM1XhI/sPLFkO8gBasC/3Ctv+9w7TwpInwSlEMQosXm3wgliyDVifRjFqZTZd472bsjOelCrtdt3zL5yYCbs3/rSfP79Vb7kuTJ6+qInUKbGlWThpff10wLF3yQpVTbT0FlnnhS6LnOeUQsIV4edil3ufL0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o7Op/i5U; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SIIVKC0K"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23e6e465e;
-	Wed, 24 Sep 2025 17:14:58 +0800 (GMT+08:00)
-Message-ID: <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
-Date: Wed, 24 Sep 2025 17:14:57 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7Op/i5U"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e30ef74b0so2921455e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2025 08:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758726669; x=1759331469; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KggF4AzFkPnQi9cWSb9T0cD1sb2eqqa5TYT3EEF8Bgw=;
+        b=o7Op/i5UbzGGizZHj8q/RMVmRMyjU2fetxesZzqY3+8HXnRvkw0fXBBEjqV1cr41F8
+         psILv+tGxK4/vSSvD8VT/MZZkL1CdZPIV49REPl58GrbjhQJsZZqrgCu5jfavbqefRmQ
+         /fHvmasfY1MaHhW6YkSu1cSiFX/tUnax202L/L+1sx24/tltKh8NEx81BCMUKAhiZRhW
+         rZjoH9JFg8pMMolgV8zqCJ8nyZLNqS0TT9uJweOVlTerqX1AfHHeJyVDimYjNdrAJWfq
+         JZE289GeDjMh5RcRnbzuOV+BQ0il+WO/OcQCoLiPuAJ2XIOuzfDpcI3ewmDZQo5vkrPL
+         eFtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758726669; x=1759331469;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KggF4AzFkPnQi9cWSb9T0cD1sb2eqqa5TYT3EEF8Bgw=;
+        b=B8e+eEvL1cpurSBfd7y8sQ+fDmkpwT2t/2rP+sZYmwG0X8B/EUZNNEuZc/Vq1aK5va
+         SufRnTOgCCm+lHDrdXzXfNP00HoDdHczsUNb4RhkdTWv8CVoGFXCO0oY+nX0CTSvgxMS
+         TbqQPbrHdbdlA2arotcT+zNaJRfG1SbD24DWIUcQcZtTDMjoS8JS4r1YAcQQxNkQs/ss
+         jiJUdP8xUQftqm/w1akcchDCikfPmEzuJ2b9dkKmJLlqF0toW9vE/LXXJuS8wLro9JLb
+         9Ykk3iUdng0OUvCndTP+Y8N/nTmfsRClRf6aa9LrQoOwpJuyRmgXNj8KjnYRp+LO6pv1
+         y3SA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3G0t1BFVbf1rwf95Om0TTqwyA/G/rXsU+Sk2uPs+PZC7/3Y7Jp8HCpVJD7saSs5WXUXOI2HhHdzt9XIlZKpk9PA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw5AS/bjCes9QOKUcYp2c6J+Vw1VxOTDfF82+yWWqW0L28K0Yl
+	qw5u9IZ79dIEU6QK6KpV4CasuGWgaT4ZFvzrVkIqylxr4Frgq47UEcatKYLhVKqYvls=
+X-Gm-Gg: ASbGncvaerznUWHd11DACGii0Ca+sRxkKnnwztjdCLwNtqiw5ixSv8iZfJT0YzXzRIS
+	TvPysO9ox1c9jiVKifDX/bYF0hz0S76O0DIVpEfceco8iDtDr+AgiuvNzV8FWTyMFOujadK20y6
+	cGOlaFQkqdrmMOLScOvD03B6lgGbk06me73EWWvPegoFEn7UX1wLWjDjcXqmnx3MaTgtRWv3NFH
+	hwL+kuz4TxDEJOum/brsyqQIkvqw3w43rE4V0AoTFXScwiN6qUQOJB6ZUl27LsjTR3UqWqvzGme
+	gJ48Igf3HnOd5ZWw7S6t16dQqiNWDBUkBiKB9WBHJvkegssV/PC553GWAQtyc+cJKN8NrvsU2we
+	NjUfxFrRHlGbuPgWEp1rug4UFvO483GAwAGCoVnOh/dKO84222Fynodg9A1mWRxE7UanAlsaGZR
+	w=
+X-Google-Smtp-Source: AGHT+IHGeGSg7hWYaClMwyJxTZdmSKbwm2O/TRWj6tWRYvpwU8Qj5GI4vawvnTrp+TRppDIVHbfFJQ==
+X-Received: by 2002:a05:600c:3586:b0:46e:2079:f50 with SMTP id 5b1f17b1804b1-46e329f8180mr2184925e9.20.1758726669193;
+        Wed, 24 Sep 2025 08:11:09 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a7c8531sm36045145e9.0.2025.09.24.08.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 08:11:08 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v5 0/5] exynos-acpm: add DVFS protocol and clock driver
+Date: Wed, 24 Sep 2025 15:10:59 +0000
+Message-Id: <20250924-acpm-clk-v5-0-4cca1fadd00d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/17] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-11-damon.ding@rock-chips.com>
- <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a997b012a9d03a3kunma77a41314d83e6
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0lLGFYYThlNHRoYTExIGE9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=SIIVKC0KCUfR3nN+GwLw5v1/d4nod3YY7POL/H/Aej0LixL+qxLVD844b2/VCZfclXxzPPwO/oNBO9jDa42GjKd43wjkFDTNJjfqKY+ZY0iN6DlVPuSUDboyvbLbvDuf+zmcSY2ijFYoVv1s0+P3csBiG0zXa77c3DWq97j2i3s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=r5/iUgL09RJK6WKifG6s6DOa6jDb3+QyMuclggS9aU0=;
-	h=date:mime-version:subject:message-id:from;
+X-B4-Tracking: v=1; b=H4sIAAQK1GgC/23Oyw7CIBAF0F9pWIvhWagr/8O4KA9bYi0NmEbT9
+ N+FbsTUsLpkzp1ZQLTB2QhO1QKCnV10fkyBHyqg+3bsLHQmZUAQ4UjiBrZ6ekA93CGRhrRCWkS
+ RAGl8CvbmXlvV5Zpy7+LTh/fWPOP8+6dkxhDBWinTCCZYLfB5cGMb/NGHDuSWmRSSiEKSJI3lW
+ taKNapmO0m/skG0kDTv5FYbRoyUWuwkK6UsJMuSUsqRTk/9Xruu6wfOFp2ATwEAAA==
+X-Change-ID: 20250819-acpm-clk-28d2a78e0307
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758726667; l=5145;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=cwMIlE3GkPC64JAJSB4aokfZYWK2EOhyiJo/gkpirXM=;
+ b=JswpE2Fv9zQL+B0aWcWNPjlcR8GXvjFyMyJtyOMkhrL+FjesIZla+MV0mvbJLlPGWWLWAITHj
+ dKeYFRzgUIsA+PiGYjWz7mNesCsEIUXC9A6yUTQUjXDhfEuPl/UzWPN
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Hi Dmitry,
+Dependencies description:
+All patches should go through the Samsung SoC tree.
+The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
+If the clock subsystem needs to merge the new clock driver, it will
+need an immutable tag with the 2 patches.
+No dependecies for #1, #3, #5 here. The DT patches that will follow will
+depend on the bindings from #1.
 
-On 9/12/2025 7:03 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 12, 2025 at 04:58:39PM +0800, Damon Ding wrote:
->> Apply drm_bridge_connector helper for Analogix DP driver.
->>
->> The following changes have been made:
->> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
->>    and &drm_connector_helper_funcs.
->> - Remove unnecessary parameter struct drm_connector* for callback
->>    &analogix_dp_plat_data.attach.
->> - Remove &analogix_dp_device.connector.
->> - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
->>    &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
->> - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
->>    &drm_bridge_funcs.edid_read().
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ------
->>
->> Changes in v2:
->> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
->>    DRM_BRIDGE_OP_EDID.
->> - Add analogix_dp_bridge_edid_read().
->> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
->>    patches.
->>
->> Changes in v3:
->> - Rebase with the new devm_drm_bridge_alloc() related commit
->>    48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
->>    API").
->> - Expand the commit message.
->> - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
->>    bridge is available.
->> - Remove unnecessary parameter struct drm_connector* for callback
->>    &analogix_dp_plat_data.attach.
->> - In order to decouple the connector driver and the bridge driver, move
->>    the bridge connector initilization to the Rockchip and Exynos sides.
->>
->> Changes in v4:
->> - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
->>    &drm_connector.
->> - Rename the &analogix_dp_plat_data.bridge to
->>    &analogix_dp_plat_data.next_bridge.
->>
->> Changes in v5:
->> - Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
->>    for next bridge attachment of Exynos side.
->> - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
->>    the downstream device is a panel, a bridge or neither.
->> - Remove the calls to &analogix_dp_plat_data.get_modes().
->> ---
->>   .../drm/bridge/analogix/analogix_dp_core.c    | 151 ++++++++----------
->>   .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
->>   drivers/gpu/drm/exynos/exynos_dp.c            |  25 +--
->>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
->>   include/drm/bridge/analogix_dp.h              |   3 +-
->>   5 files changed, 95 insertions(+), 96 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 9bf91d7595d6..156114170c4d 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -856,44 +856,38 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
->>   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
->>   }
->>   
->> -static int analogix_dp_get_modes(struct drm_connector *connector)
->> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	const struct drm_edid *drm_edid;
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	int num_modes = 0;
->>   
->> -	if (dp->plat_data->panel) {
->> +	if (dp->plat_data->panel)
->>   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
->> -	} else {
->> -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->>   
->> -		drm_edid_connector_update(&dp->connector, drm_edid);
->> -
->> -		if (drm_edid) {
->> -			num_modes += drm_edid_connector_add_modes(&dp->connector);
->> -			drm_edid_free(drm_edid);
->> -		}
->> -	}
->> +	if (dp->plat_data->next_bridge)
->> +		num_modes += drm_bridge_get_modes(dp->plat_data->next_bridge, connector);
-> 
-> This will be already handled by drm_bridge_connector, it will use the
-> last bridge in chain which implements OP_EDID or OP_MODES (with OP_EDID
-> having higher priority).
-> 
+The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+are variable and index based. These clocks don't provide an entire range
+of values between the limits but only discrete points within the range.
+The firmware also manages the voltage scaling appropriately with the
+clock scaling. Make the ACPM node a clock provider.
 
-Indeed, I will keep the drm_panel_get_modes() and remove 
-drm_bridge_get_modes() in this commit.
+Add support for the ACPM DVFS protocol. It translates clock frequency
+requests to messages that can be interpreted by the ACPM firmware.
+Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
 
->>   
->>   	return num_modes;
->>   }
->>   
->> -static struct drm_encoder *
->> -analogix_dp_best_encoder(struct drm_connector *connector)
->> +static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
->> +							   struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->> +	const struct drm_edid *drm_edid = NULL;
->>   
->> -	return dp->encoder;
->> -}
->> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
-> 
-> return drm_edid_read_ddc(...);
-> 
+Thanks,
+ta
 
-Will do in v6.
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Changes in v5:
+- acpm-clk: address Stephen's comments:
+  - drop of.h unused include, add devres/devres.h and container_of.h
+    to avoid implicit includes.
+  - r/acpm_clk_ops_init/acpm_clk_register.
+  - remove period from error messages, drop comma after sentinel in
+    platform_device_id.
+- collect Peter's R-b and T-b tags.
+- Link to v4: https://lore.kernel.org/r/20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org
 
->>   
->> +	return drm_edid;
->> +}
->>   
->> -static int analogix_dp_atomic_check(struct drm_connector *connector,
->> -				    struct drm_atomic_state *state)
->> +static int analogix_dp_bridge_atomic_check(struct drm_bridge *bridge,
->> +					   struct drm_bridge_state *bridge_state,
->> +					   struct drm_crtc_state *crtc_state,
->> +					   struct drm_connector_state *conn_state)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	struct drm_display_info *di = &connector->display_info;
->> -	struct drm_connector_state *conn_state;
->> -	struct drm_crtc_state *crtc_state;
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->> +	struct drm_display_info *di = &conn_state->connector->display_info;
->>   	u32 mask = DRM_COLOR_FORMAT_YCBCR444 | DRM_COLOR_FORMAT_YCBCR422;
->>   
->>   	if (is_rockchip(dp->plat_data->dev_type)) {
->> @@ -905,35 +899,18 @@ static int analogix_dp_atomic_check(struct drm_connector *connector,
->>   		}
->>   	}
->>   
->> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
->> -	if (WARN_ON(!conn_state))
->> -		return -ENODEV;
->> -
->>   	conn_state->self_refresh_aware = true;
->>   
->> -	if (!conn_state->crtc)
->> -		return 0;
->> -
->> -	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
->> -	if (!crtc_state)
->> -		return 0;
->> -
->>   	if (crtc_state->self_refresh_active && !dp->psr_supported)
->>   		return -EINVAL;
->>   
->>   	return 0;
->>   }
->>   
->> -static const struct drm_connector_helper_funcs analogix_dp_connector_helper_funcs = {
->> -	.get_modes = analogix_dp_get_modes,
->> -	.best_encoder = analogix_dp_best_encoder,
->> -	.atomic_check = analogix_dp_atomic_check,
->> -};
->> -
->>   static enum drm_connector_status
->> -analogix_dp_detect(struct drm_connector *connector, bool force)
->> +analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	enum drm_connector_status status = connector_status_disconnected;
->>   
->>   	if (dp->plat_data->panel)
->> @@ -945,21 +922,11 @@ analogix_dp_detect(struct drm_connector *connector, bool force)
->>   	return status;
->>   }
->>   
->> -static const struct drm_connector_funcs analogix_dp_connector_funcs = {
->> -	.fill_modes = drm_helper_probe_single_connector_modes,
->> -	.detect = analogix_dp_detect,
->> -	.destroy = drm_connector_cleanup,
->> -	.reset = drm_atomic_helper_connector_reset,
->> -	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->> -	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> -};
->> -
->>   static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
->>   				     struct drm_encoder *encoder,
->>   				     enum drm_bridge_attach_flags flags)
->>   {
->>   	struct analogix_dp_device *dp = to_dp(bridge);
->> -	struct drm_connector *connector = NULL;
->>   	int ret = 0;
->>   
->>   	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
->> @@ -967,31 +934,8 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
->>   		return -EINVAL;
->>   	}
->>   
->> -	if (!dp->plat_data->next_bridge) {
->> -		connector = &dp->connector;
->> -		connector->polled = DRM_CONNECTOR_POLL_HPD;
->> -
->> -		ret = drm_connector_init(dp->drm_dev, connector,
->> -					 &analogix_dp_connector_funcs,
->> -					 DRM_MODE_CONNECTOR_eDP);
->> -		if (ret) {
->> -			DRM_ERROR("Failed to initialize connector with drm\n");
->> -			return ret;
->> -		}
->> -
->> -		drm_connector_helper_add(connector,
->> -					 &analogix_dp_connector_helper_funcs);
->> -		drm_connector_attach_encoder(connector, encoder);
->> -	}
->> -
->> -	/*
->> -	 * NOTE: the connector registration is implemented in analogix
->> -	 * platform driver, that to say connector would be exist after
->> -	 * plat_data->attch return, that's why we record the connector
->> -	 * point after plat attached.
->> -	 */
->>   	if (dp->plat_data->attach) {
->> -		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
->> +		ret = dp->plat_data->attach(dp->plat_data, bridge);
->>   		if (ret) {
->>   			DRM_ERROR("Failed at platform attach func\n");
->>   			return ret;
->> @@ -1095,14 +1039,21 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->>   }
->>   
->>   static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
->> +					struct drm_atomic_state *state,
->>   					const struct drm_display_mode *mode)
->>   {
->>   	struct analogix_dp_device *dp = to_dp(bridge);
->> -	struct drm_display_info *display_info = &dp->connector.display_info;
->>   	struct video_info *video = &dp->video_info;
->>   	struct device_node *dp_node = dp->dev->of_node;
->> +	struct drm_connector *connector;
->> +	struct drm_display_info *display_info;
->>   	int vic;
->>   
->> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
->> +	if (!connector)
->> +		return;
->> +	display_info = &connector->display_info;
->> +
->>   	/* Input video interlaces & hsync pol & vsync pol */
->>   	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
->>   	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
->> @@ -1186,7 +1137,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
->>   	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
->>   	if (!new_crtc_state)
->>   		return;
->> -	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
->> +	analogix_dp_bridge_mode_set(bridge, old_state, &new_crtc_state->adjusted_mode);
->>   
->>   	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
->>   	/* Not a full enable, just disable PSR and continue */
->> @@ -1302,7 +1253,11 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
->>   	.atomic_enable = analogix_dp_bridge_atomic_enable,
->>   	.atomic_disable = analogix_dp_bridge_atomic_disable,
->>   	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
->> +	.atomic_check = analogix_dp_bridge_atomic_check,
->>   	.attach = analogix_dp_bridge_attach,
->> +	.get_modes = analogix_dp_bridge_get_modes,
->> +	.edid_read = analogix_dp_bridge_edid_read,
->> +	.detect = analogix_dp_bridge_detect,
->>   };
->>   
->>   static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
->> @@ -1532,6 +1487,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
->>   
->>   int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
->>   {
->> +	struct drm_bridge *bridge = &dp->bridge;
->>   	int ret;
->>   
->>   	dp->drm_dev = drm_dev;
->> @@ -1545,7 +1501,23 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
->>   		return ret;
->>   	}
->>   
->> -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
->> +	if (dp->plat_data->panel)
->> +		/* If the next is a panel, the EDID parsing is checked by the panel driver */
->> +		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
->> +	else if (dp->plat_data->next_bridge)
->> +		/* If the next is a bridge, the supported operations depend on the next bridge */
->> +		bridge->ops = 0;
-> 
-> And what if the next bridge is dp_connector without a separate HPD pin?
+Changes in v4:
+- clk-acpm:
+  - remove GS101_ACPM_CLK_ID type handling. Dead code, it should be
+    introduced with next devices.
+  - remove runtime check on clock IDs. Instead add a comment about the
+    assumptions the code is making: the clock IDs start from zero, are
+    sequential and do not have gaps. Slight changes based on this
+    assumption: s/hws[id]/hws[i], remove the inclusion of
+    dt-bindings/clock/google,gs101-acpm.h and the use of the clock IDs.
+    The clocks are defined solely by name in the driver.
+- move firmware patches close to each other, in between the bindings and
+  the clock driver
+- update the description of dependencies in the cover letter.
+- Link to v3: https://lore.kernel.org/r/20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org
 
-This case was indeed not taken into account.
+Changes in v3:
+- dt-bindings:
+  - move clock bindings to a new bindings header
+  - update commit's subject, s/add #clock-cells/add ACPM clocks.
+    It also suggests that the bindings are added.
+  - prepend "GS101_" on clocks binding name. The bindings name are the
+    same for GS201 and the acpm-clk driver will likely include both.
+  - collect Rob's R-b
+- clk-acpm:
+  - move clock definitions here instead of keeping them into the
+    ACPM protocol driver
+  - use platform_driver.id_table to differentiate device type
+  - fix Kconfig dependency, || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+  - update commit subject, s/dev/pdev
+- exynos-acpm:
+  - move clock definitions to clk-acpm
+  - use devm-action to unregister clk-acpm platform device
+- Link to v2: https://lore.kernel.org/r/20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org
 
-If the next is a bridge, it should be better to set DRM_BRIDGE_OP_DETECT 
-and return connector_status_connected in analogix_dp_bridge_detect(). 
-This ensures the connection status remains connected for both the 
-dp-connector and the bridges without DRM_BRIDGE_OP_DETECT.
+Changes in v2:
+- dt-bindings: clocks are not longer a child of ACPM protocol. Instead
+  make Alive Clock and Power Manager (ACPM) node a clock provider.
+  Update commit message.
+- firmware: exynos-acpm: register by hand the ACPM clocks dev (new
+  patch)
+- firmware: exynos-acpm: use defines intead of enum
+- acpm-clk:
+  - switch to determine_rate
+  - drop __init, __refdata, __initconst, this is a module, we need those
+    methods and data, after boot as well.
+  - fix the assumption that the clocks are defined by ID in ascending order.
+    There's still an assumption that the clk_id < nr_clks, but this is
+    now covered by a sanity check in the clock driver.
+- arm64: defconfig: enable Exynos ACPM clocks (add patch together with
+  this patch set) 
+- Link to v1: https://lore.kernel.org/r/20250819-acpm-clk-v1-0-6bbd97474671@linaro.org
 
-> 
->> +	else
->> +		/* In DP mode, the EDID parsing and HPD detection should be supported */
->> +		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
->> +
->> +	bridge->of_node = dp->dev->of_node;
->> +	bridge->type = DRM_MODE_CONNECTOR_eDP;
->> +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
->> +	if (ret)
->> +		goto err_unregister_aux;
->> +
->> +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
->>   	if (ret) {
->>   		DRM_ERROR("failed to create bridge (%d)\n", ret);
->>   		goto err_unregister_aux;
-> 
+---
+Tudor Ambarus (5):
+      dt-bindings: firmware: google,gs101-acpm-ipc: add ACPM clocks
+      firmware: exynos-acpm: add DVFS protocol
+      firmware: exynos-acpm: register ACPM clocks pdev
+      clk: samsung: add Exynos ACPM clock driver
+      arm64: defconfig: enable Exynos ACPM clocks
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  11 ++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/samsung/Kconfig                        |  10 ++
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-acpm.c                     | 185 +++++++++++++++++++++
+ drivers/firmware/samsung/Makefile                  |   4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  83 +++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
+ drivers/firmware/samsung/exynos-acpm.c             |  26 +++
+ include/dt-bindings/clock/google,gs101-acpm.h      |  26 +++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  10 ++
+ 11 files changed, 377 insertions(+), 1 deletion(-)
+---
+base-commit: bf2602a3cb2381fb1a04bf1c39a290518d2538d1
+change-id: 20250819-acpm-clk-28d2a78e0307
 
 Best regards,
-Damon
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
