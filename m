@@ -1,190 +1,155 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012010.outbound.protection.outlook.com [52.101.53.10])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B9D263F3C;
-	Wed, 24 Sep 2025 19:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758741777; cv=fail; b=MWTrkovcPX2C694dnvXuLsN3yHegB0pxRcsyAn0X2J/caU+6Y4edELded9pPinMh7ynkAtbYv3ajBHgBD+kY22iXqiC5EvONF62yswf/SpmdpYFLpXZml3yJfoOMjwVOkczkhXz6p1hYFODhgEGA4XHkJx6iNQxvjD5vpec5brY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758741777; c=relaxed/simple;
-	bh=GrJfbUqC/ixQxgH+pF15JnXV+iapy3lU3SS+1iriDEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CxPmyRyv9oV/1XDaOCXdUPllPJw78T6dZ+orb/qu65qcHM9yPSOc/7WmFE/gA7Z2KGYjY3AKFapQtHmjnhu4XUbYKLxnenuGDIWzCt5o4NMiPkZeqibH+5eUQan2usHvIX/lnE19pwn+YHclu+6L7O9j4kgyIRCUfFzksmKStlU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ru8dn9z8; arc=fail smtp.client-ip=52.101.53.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D380826CE2E
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2025 19:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758742389; cv=none; b=hqHZXrkLDOiorOsEiCIH3vkPviWK4yESwV4T5nW5sHQYbIa5kF7IrCxeioAfhD1PCMT8wMXH9XpfPsunqSHTWuVpdBHJNvryIGlnEDM1gfBI1o8t/dAd47xJmdF7dhXIHNCCKv/WA1N7VhJqL+5B85+CJY8Ex8Ax0JLHFvqsaV8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758742389; c=relaxed/simple;
+	bh=kGyFyRGnTEIQDnRHQzBMUtjvoUiSsEKBITF948LfKig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIGhDubSwkKxoZ7YwY22KtGorj11yRATW5nHm0Zx//vowJdmr7T84EsEImlM69E5lMJfYk3Np+z4HH9SVGNTbq8NCtEW1l98HG9Y5qpahdHysa3ClD/CWFbbBKlq9zk7Mi58nKLfcNugTBj/bEBZnu5IGo0/UrHl1Y681q3Tfiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=ZEM96ehZ; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ru8dn9z8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RVAZtZ0+kThonDa11n+QiQkWnXH+2YaPv72y0Cd8UX4RV4QE/uMvBJ9ym6PJoscOuUmJy1lcvYAMVF0xC9Cpg8gdI0fjMLKdnXa+1Px5fUhq1KoO7LPKxZVwHFDwXsSDe31y+zdXluK2nORD4QwNGgga/Sf5OHQGYrAIOXioBgokdgUq8Eud3Hr+D/qal38IhIpDM0ZlX22/ZvC6X87GiqOMpiA9gGpOUgUrzs2T/gwdxrpkoz2m87OU5320o0F62fT0yny7Yy09UdfFq8R2jc0mq7Nxw3tXYnsd7FnJrSEZkuhOuE7RbCgEVKb0Nw82kEa13rItxF3ua1ad/xmnIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4Iv5bwT+c4OjwCRiqZYTJwYVpy/ysyCcg9hrNpncSTQ=;
- b=TGJNQaziqKYW1GfOw+wG6IhUr70EfEmxhJrjLaVtw9heeEIgTfjXZSISxC/aKrUi5EmD6BZF51r4wTP8sD3wAkQF4O5NSApNywheTMHA4B2AmzyHo2/tPrTLy2QO8RaoEA1kjPHJwRQEjvwPgzqg1L6Rdi7Yfl18fcMzNaEbHQ2JfocMICPwolMiKjpNlFDqMUOyzcsKDASijb/yfekO7YR7f0WTcGOv96TXVM0GgJ2i3P2yLcX53kNksEjKXdhsxAtxBKKp1kxSz1qaH56PkEnZo7Qli1Ek6aVZGpY4D+ik22FIa1pXVN9ZJoohtqDI3FYz4NANRFq+JFgjPxM8WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Iv5bwT+c4OjwCRiqZYTJwYVpy/ysyCcg9hrNpncSTQ=;
- b=ru8dn9z8rbSKD7dlBRmYkbA+tXJT0sc8r/SNDc5zJX4vHkYqovdNFyojTszdpGooXHzresKFeV7ujMhQZcqBPMpC48zCMC4B417rfIXTD9beRu7KivyvRngPWYAydcP9c2A1TbGvbwmDVl15W+Z3qQxC4aNQJ+fshi/SpSXiee/YF4rwLQu1T7EgJf6BmKRcC2DEOpzyJMcpokU53wjvhfDJadhGzbOMvVVIBpJfJ37Y3pL7uXYqRSlpx/qobKmevRK57iCzwdGO+8ZZgx9jH67AuJllCxTkgjfWuUpwsRktiOD/xdPhn+OPXrfvHzvEd7RFOvVhg/2Pcy28KkNFCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by PH7PR12MB7283.namprd12.prod.outlook.com (2603:10b6:510:20a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
- 2025 19:22:49 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.021; Wed, 24 Sep 2025
- 19:22:49 +0000
-Date: Wed, 24 Sep 2025 16:22:46 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: joro@8bytes.org, bhelgaas@google.com, suravee.suthikulpanit@amd.com,
-	will@kernel.org, robin.murphy@arm.com, sven@kernel.org,
-	j@jannau.net, alyssa@rosenzweig.io, neal@gompa.dev,
-	robin.clark@oss.qualcomm.com, m.szyprowski@samsung.com,
-	krzk@kernel.org, alim.akhtar@samsung.com, dwmw2@infradead.org,
-	baolu.lu@linux.intel.com, kevin.tian@intel.com,
-	yong.wu@mediatek.com, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, tjeznach@rivosinc.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, heiko@sntech.de, schnelle@linux.ibm.com,
-	mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-	orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
-	zhang.lyra@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
-	samuel@sholland.org, jean-philippe@linaro.org, rafael@kernel.org,
-	lenb@kernel.org, yi.l.liu@intel.com, cwabbott0@gmail.com,
-	quic_pbrahma@quicinc.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, patches@lists.linux.dev,
-	vsethi@nvidia.com, helgaas@kernel.org, etzhao1900@gmail.com
-Subject: Re: [PATCH v4 4/7] iommu: Pass in old domain to attach_dev callback
- functions
-Message-ID: <20250924192246.GK2617119@nvidia.com>
-References: <cover.1756682135.git.nicolinc@nvidia.com>
- <19570f350d15528e13447168b7dcd95795afdbf3.1756682135.git.nicolinc@nvidia.com>
- <20250924184346.GI2617119@nvidia.com>
- <aNREE5qMJRU+0+Bw@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNREE5qMJRU+0+Bw@Asurada-Nvidia>
-X-ClientProxiedBy: BYAPR05CA0101.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::42) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="ZEM96ehZ"
+Date: Wed, 24 Sep 2025 21:32:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1758742374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5iHvWuqXMKqXY5xi5HWO4WJVMOf5QP5qFtqbNbimzII=;
+	b=ZEM96ehZfNKMQ9RPJZFXmoXJ8Fk/dL8ssD8yZTVwrJTEoInjNxItijIGl8OtrfbNlfEQyZ
+	jk1KKW07G6hBHf8X7G3kPRtnmUmIml0rWY7oeJPvxA6nOiDn0uifc48w56uARMZxnMOZd2
+	wKaMSGKfxG/hUk+DCJF1pHv7OGeu3Dw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: =?utf-8?B?77+91b3vv70=?= <shin.son@samsung.com>
+Cc: 'Bartlomiej Zolnierkiewicz' <bzolnier@gmail.com>,
+	'Krzysztof Kozlowski' <krzk@kernel.org>,
+	"'Rafael J . Wysocki'" <rafael@kernel.org>,
+	'Daniel Lezcano' <daniel.lezcano@linaro.org>,
+	'Zhang Rui' <rui.zhang@intel.com>,
+	'Lukasz Luba' <lukasz.luba@arm.com>,
+	'Rob Herring' <robh@kernel.org>,
+	'Conor Dooley' <conor+dt@kernel.org>,
+	'Alim Akhtar' <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
+ update TMU interface
+Message-ID: <20250924193248.GA34040@l14.localdomain>
+References: <20250922041857.1107445-1-shin.son@samsung.com>
+ <CGME20250922041902epcas2p3e40ed58737b22b7af9d09f6ba362928d@epcas2p3.samsung.com>
+ <20250922041857.1107445-3-shin.son@samsung.com>
+ <20250922200430.GA4697@l14.localdomain>
+ <000001dc2c24$8be7a090$a3b6e1b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|PH7PR12MB7283:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fdd5966-c4dd-4dc9-2e60-08ddfb9fbfbb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DJpk3apvdLdK6qEpvZnDAq7ic+TYVQtU0k3yPF0tLSs5KAMeq9b/uD0t2ZPO?=
- =?us-ascii?Q?8gEjCRUFuJ9htydLX8xMfGtSkoAmxe9ZK+eAOtgn8Qw93Edrf63oy+K8vog4?=
- =?us-ascii?Q?NmMfU+x+fJoSuTty96KnIJ+tRWTXcsS6wPzmBIZTJI3I3+FkCh95cZ/fsKvu?=
- =?us-ascii?Q?6o9U4sNPvKrnzYtGLXHOeSMFE8IJJEqUDdJELTaeZ2OPAqwXduvdozUxti1g?=
- =?us-ascii?Q?y2vvrT/tIbyCPQXh0Duowq4J7tIbwnhVLsF9zlm6znQSFqS1qTikd4+MIs37?=
- =?us-ascii?Q?Nj09xHUkFGu5beBbzaj8XwYfiZuQvUptKO0svc0qfW0gqaerqhX1jOotM5aK?=
- =?us-ascii?Q?R1k3xWCIxG2rBqidtrONiX9SBW6FoZ/6eLN9oSodbvRlNmICp3MSPTFk/6j7?=
- =?us-ascii?Q?2YUd9YZjB9huW/TIIMpz7f3+8OljOQJ8UIKUKfXPM9GIw+AYmFz54fp/W44J?=
- =?us-ascii?Q?3Om7Je4bmqNUC5lcqyrk8lHad0SfkwuTBUwd5PXk6hQGW1t4Abvrt1y1R7/u?=
- =?us-ascii?Q?YWNswPg9SD+fXLFxSI/KQtPqOjJL2VnK3FUfk2FykvaDbYuqMQSYO2nrjiWC?=
- =?us-ascii?Q?aVpR8Zlz2Yeik7lq11wN/cPh0Fgi6cf8s1Y7Rq6zpoKyoof7raVE73SxWsUZ?=
- =?us-ascii?Q?dL3rVATKUR2TZ9el7rLR7hkqbnj5ACLlKEVDMV3tyf306flk5SSjatobjPo5?=
- =?us-ascii?Q?qwz3f67byF4NaRvxhGzoPiQSwXvFjKvhulNNBlaLaUp7YElC7IH9Zpi/mW7O?=
- =?us-ascii?Q?/mYu3dO438El4hAtrup28NwoYIpI6i6+gKFf+nesLb+YElQ9Y+RdFqauW18v?=
- =?us-ascii?Q?hwgsYkxXB2LC1CdP6NdRUMwol13+1SBc97iyCQXVWkHhBvRhxRJHQue6gLK6?=
- =?us-ascii?Q?MoQZkN+ytn5NgkGFP5DLV16tvXdeyLqRNOj+atRuKLWJAt0MpguRhB8/mEzA?=
- =?us-ascii?Q?VL2vfIX90pTssLzdIiv02vIkEZHLqnu8bsvq33jyqe4GW12uAjLkKNFh2q36?=
- =?us-ascii?Q?9bD/MsXm1uozkVTOvYmY334juPSDugEi/DiQRqm9UIU39hthEJIarl6OlGvk?=
- =?us-ascii?Q?1pHX+RQyy97+VIhF5PCoP01K0/jZOygoYeOGBx3ZL371XjHIrPbtydKxcOm0?=
- =?us-ascii?Q?DHF0o48m/LnNXJKvxOiIx32QLHdSLszBFswgV+9yAjK4y0oK3VJD0mP15lSs?=
- =?us-ascii?Q?ex1ghd0JvFa4nXwDm9UjH4HjJUSso1h5Kqa00JeSiRujjulu0CX7pdzzCOPt?=
- =?us-ascii?Q?MFyPlK9N9CRVSgK0xazohFd42BCp/qH3lDZlFtBxGXbu3GA34IKWcMVxljNM?=
- =?us-ascii?Q?JwN//IuTvHr+/er7tze41HyUhbxrsk1CuE0kas5EYcMYuZnsN3yKlbgblJIJ?=
- =?us-ascii?Q?QsUqOQxyG0X4KMZxz/qC7rq2zpBS7n46JcBSlpTRzclP823+J7oUVbxyRQV2?=
- =?us-ascii?Q?pVIIbDZRupU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?H+PdLoH6bGeJG20/b/NDqWLEPT7KXFHuvXqaIIF8fxQGPHEytFQIXeEp9/sE?=
- =?us-ascii?Q?84VHlgVEALrOXUU+qBAenI67cORQ7zfjeWKf/qV9W4HQzD4oCQCNSNfQAWod?=
- =?us-ascii?Q?edkoAXIAc00N3dAKRZcVgyQXzhoYb2VDV0Z6TlgDG0+/W2q6J6KDk/R8GPXV?=
- =?us-ascii?Q?c3eGtYRr1Y1bXz54P5Key6m3OnKAneXlgbjCzJnkPFEh+GN1j8DCYRfqcqS9?=
- =?us-ascii?Q?klydDolhaANdWwBJE+N2MzRFfh8nDNk+yIhvI1dLeCPS2Y80DMoHG+FjMRrB?=
- =?us-ascii?Q?T0GcbBJQ/8IqiW4jXoOM7oG32jQDTFlDEm8btzX/5fKZT/NfyJIXmhW03Htc?=
- =?us-ascii?Q?zluDel47rjnI8EtF+qQGOi0Z2LovxrZ1QCeIW6ODFsXa5ULG5ZC4ysn+2Q6l?=
- =?us-ascii?Q?JBYh+yRbqLZdMUPKno+0PaF8qLjdBSBfxl1v9eLycS1+7EXIyZr2sltdWpBU?=
- =?us-ascii?Q?9aaSXAFUoog9rFi5kxUEF4tkCsYZpuOtlr+VvJhHaQOhE5ysGo0U7wMbJQ/a?=
- =?us-ascii?Q?ODcnbDXfwcRFZ5MoiGBPlEu56lhNX1cZ8pOhcBBUSWc8NtAYRiKmTnCWUl27?=
- =?us-ascii?Q?ZY0GbigkUpzNP6I4rYhZ/BJko8PhCyNZN3KUoFAf5QzDYdAq3LfXwISDYpjH?=
- =?us-ascii?Q?fxU4duJ0sBeeXhXuk3i04GRzvrKbRh3/NStLrGWID/2mK2Dw+tCzShvy8Dfl?=
- =?us-ascii?Q?XSmgEljY50stxDS0XY6FGZCGYhCd2OklSgJhqYokVzv/D2BKatuzJkxucF8I?=
- =?us-ascii?Q?vBV2DehCHvldpylXpZPSQUbrCg3eqNT09HxQz8aXKulYkMPv3IgSn4ADijWm?=
- =?us-ascii?Q?eyHAhu+mlLnQ23ynf38bl7Pmmj/vKPhqZh3SEl91nk9LGsu0J5mEtzPr8or/?=
- =?us-ascii?Q?TETI5uJ28YbnlzVjqBQmBmkkM2ZJvuYHs3xKH+EE3ln4i8kLbRWrYSos48jZ?=
- =?us-ascii?Q?L/Awv16wi/y41Pc9wdBxtDF1ibv1FyaxONrrUmg1XWDzhWZu3dYXJ4XMT8Dq?=
- =?us-ascii?Q?IoD1bs5mqCcVVVEcpjNrtJY8IUp50x3zxTshnxCcr9I4MlttlHPgF10YICVo?=
- =?us-ascii?Q?l6NW4sYC22yv8koOkr6QsYScj3RF/chIYS/ppjW21zeznw17W22Ua7MWif5Y?=
- =?us-ascii?Q?4HvQb/W4H49UWKnCochrS+sxreTmp9YcX2niNz/Si1ZAmyHUGWk/Q6WwZffh?=
- =?us-ascii?Q?d7fph8l33n91FS1G3Ek9RxQ8hOVKhcUDtsFFbBCi4/bogfsGOqhFKvcs2ccI?=
- =?us-ascii?Q?VAfXi/JBsdJT2i7rfbZip2WLo4vnCcmJUePT9398N7BPnhDnNYBU91t6u3rU?=
- =?us-ascii?Q?6qnk2tTpmkoZEFeDei8aVcJkWvG6evuJpLtSnnpK4FXueJUoP02nSRrEixvw?=
- =?us-ascii?Q?rfW9vvwehrz+5PkWN5Z6RhS8NtNrASorNDXP90aJXYTqTkuo+HGxqm7GuG2W?=
- =?us-ascii?Q?Th4rXedJTIcpExYIchwfWLWBTc4EmE3WhqNecRh7rbZcg3MovtEvL4/qEM7/?=
- =?us-ascii?Q?VrSzHI6j9yawNYmoFGnz+P2aHzyBwtv9PXBumpS5PR895NwXET3dRsy4EVmw?=
- =?us-ascii?Q?IwxA1eIByvjc0bJmQKZwmie39PykeS+z8GaDKD8L?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fdd5966-c4dd-4dc9-2e60-08ddfb9fbfbb
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 19:22:49.6534
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sAhIDaV4liUTqtPVLo8pa2nOfcJPHOsJjCVIZD1lGcxIFaKIuScPtx0uQ2ES97f4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7283
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <000001dc2c24$8be7a090$a3b6e1b0$@samsung.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 24, 2025 at 12:18:43PM -0700, Nicolin Chen wrote:
-> On Wed, Sep 24, 2025 at 03:43:46PM -0300, Jason Gunthorpe wrote:
-> > I've split things like this into more patches before, but this
-> > actually isn't too bad, so I wouldn't push for it.
-> 
-> Thanks. I will keep the flow in mind.
-> 
-> For working more on the new test attach op, I'd probably keep it
-> as-is.
-> 
-> > A series version would be:
-> >  - add a new op 'attach_dev2' or whatever
-> >  - Convert all drivers that just change the signature
-> >  - Convert drivers that have a trivial iommu_get_domain_for_dev()
-> >  - N patches to convert more complex drivers one by one
-> >  - Remove old op attach_dev
-> 
-> Does this mean that drivers would live with the 'attach_dev2' op
-> renamed from 'attach_dev'? Or the last could rename it back?
+Hi Shin,
 
-Could rename back, often better to select a name that doesn't need a
-rename back :)
+On Tue, Sep 23, 2025 at 09:53:53AM +0900, �ս� wrote:
+> Hello Henrik Grimler
+> 
+> > -----Original Message-----
+> > From: Henrik Grimler [mailto:henrik@grimler.se]
+> > Sent: Tuesday, September 23, 2025 5:05 AM
+> > To: Shin Son <shin.son@samsung.com>
+> > Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>; Krzysztof Kozlowski
+> > <krzk@kernel.org>; Rafael J . Wysocki <rafael@kernel.org>; Daniel Lezcano
+> > <daniel.lezcano@linaro.org>; Zhang Rui <rui.zhang@intel.com>; Lukasz Luba
+> > <lukasz.luba@arm.com>; Rob Herring <robh@kernel.org>; Conor Dooley
+> > <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>; linux-
+> > pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
+> > update TMU interface
+> > 
+> > Hi Shin,
+> > 
+> > On Mon, Sep 22, 2025 at 01:18:56PM +0900, Shin Son wrote:
+> > > The Exynos tmu driver's private data structure has been extended to
+> > > support the exynosautov920 hardware, which requires per-sensor
+> > > interrupt enablement and multiple-zone handling:
+> > >
+> > > - Add 'slope_comp' : compensation parameter below 25 degrees.
+> > > - Add 'calib_temp' : stores the fused calibaration temperature.
+> > > - Add 'sensor_count' : reflects the maximum sensor numbers.
+> > > - Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
+> > >
+> > > Since splitting this patch causes runtime errors during temperature
+> > > emulation or problems where the read temperature feature fails to
+> > > retrieve values, I have submitted it as a single commit. To add
+> > > support for the exynosautov920 to the exisiting TMU interface, the
+> > > following changes are included:
+> > >
+> > > 1. Simplify "temp_to_code" and "code_to_temp" to one computation path
+> > >    by normalizing calib_temp.
+> > > 2. Loop over 'sensor_count' in critical-point setup.
+> > > 3. Introduce 'update_con_reg' for exynosautov920 control-register
+> > updates.
+> > > 4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp'
+> > function.
+> > > 5. Skip high & low temperature threshold setup in exynosautov920.
+> > > 6. Enable interrupts via sensor_count in exynosautov920.
+> > > 7. Initialize all new members during 'exynosautov920_tmu_initialize'.
+> > > 8. Clear IRQs by iterating the sensor_count in exynosautov920.
+> > > 9. Register each zone with 'devm_thermal_of_zone_register()'
+> > >    based on 'sensor_count'.
+> > >
+> > > Signed-off-by: Shin Son <shin.son@samsung.com>
 
-Jason
+[ ... ]
+
+> > > @@ -952,6 +1183,14 @@ static int exynos_map_dt_data(struct
+> > > platform_device *pdev)
+> > >
+> > >  	data->cal_type = TYPE_ONE_POINT_TRIMMING;
+> > >
+> > > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
+> > > +		if (of_property_read_u32(pdev->dev.of_node,
+> > "samsung,sensors",
+> > > +					 &data->sensor_count)) {
+> > > +			dev_err(&pdev->dev, "failed to get sensor count\n");
+> > > +			return -ENODEV;
+> > > +		}
+> > > +	}
+> > 
+> > Do we really need the `if (data->soc == SOC_ARCH_EXYNOSAUTOV920)` here, I
+> > am sure there will be more socs that use samsung,sensors. Can't we simply
+> > read samsung,sensors for all socs and use EXYNOS_DEFAULT_SENSOR_COUNT if
+> > it fails, or would it be potentially dangerous if samsung,sensors is
+> > missing for autov920 dtb and default value of 1 is used?
+> > 
+> > Best regards,
+> > Henrik Grimler
+> > 
+> 
+> Yes. Incorrect remote-sensor settings can affect TMU operation. For
+> example, when the sensor count is set to 1,
+> The thermal zone doesn't function properly and the hardware trip doesn't
+> assert on the v920 variant.
+> I consider that configuration unsafe, so I added variant-specific handling
+> for that SoC.
+> Meanwhile, the other variant legitimately uses only a single sensor.
+
+I see, thanks for the explanation!
+
+Best regards,
+Henrik Grimler
