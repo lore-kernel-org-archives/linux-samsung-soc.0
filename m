@@ -1,242 +1,112 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328222C9D
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 03:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DC92E9EB5
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 06:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758771473; cv=none; b=DeG5Bd9xl5eTU5O5rldaEGWZmQkjGgxvZi3CqPQA4Ct+2yqbzOR8j2m5+FsvpANgIZA/ZWMGMw9nw7dX0P/nEqyrBT/9N053xdZfzqmH6hjXKEW60ZYpvt5ul5OEazpDjGdHaF4+f4J4UysEcm4DEYoGwaCoSXfUhr4+b5ePIlI=
+	t=1758782241; cv=none; b=Hyq9zou9wf9A2gd33bPPAP3M662NiZTnd+iydbzIkKWKHqJX6+SXhJ6CsdjF+k2NT5EhG4ec4psE7svQJwDikvd3K4TJzYByoYfHpdYVuKVcmpojpoMsPcmF9essU9Q85oMpW+OM2K4N6ZjWWNtt68UCWiyyRb82XL6U+ILwVs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758771473; c=relaxed/simple;
-	bh=SwJ8n9QRRLb939UHBqsh+5lwtzA2jD8olcgzZwVK72A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdD3bVPuUfLhTHImPxYBlFjfHn6Di237tYj6Lm8WEugD+0Pp3ptFihbvwLol/J+KiOzIF+6IdEGzQn13QJ8ItEF56xetsVEDZ7C9RJWLzv9leEH1iFtoqzG0J4PfQoENWSEk7UzmVDkRS/NUzqsqDKejlJkaJj3pMstGuN4L+N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UgTSuc6K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1758782241; c=relaxed/simple;
+	bh=/oUprJdQlpWhGyr+T8J0CGDIcV3tTijdiTeGGTLC3zM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=ZruGkZfksfjVt/xC8IqvqSP75tpb/paEBUfB4yMj3CQu7AlddzKo5uEtOOfhR0i1tPn+YftJXCiXxq8hIV1iFUzisxMyhvi4ZCEhxQhoinLDREGxwB39Nppanf/MBvk7oyTJxZw5H4Lo4RB7qSCJXCksHdHiVG51Bp20AAS+pSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Jih2lDjB; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UgTSuc6K"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P0t4L6029720
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 03:37:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=n78nIIomQavWQosZYQPTeoTh
-	4ytOcFS5L4hdEAU6XLI=; b=UgTSuc6KmCehqi8ARRkarzQ/yMYshdS5YZXikwc2
-	7kEv0mWOqAoVbz2YicphPD1AnKPWlRK1yp+Fmhm3SFLF2E1yvaljAw4k8AtMELg6
-	inG7Gz+JOnDV0mhleHIvoHBYxyJFyI7901v6BlbPPK5iouwon9LWTXsbaCKBEIOH
-	eimYo1z8/aAmfxm60mIIoxRFz+QEjrkNqCiCRZ+GJ9ejdR8KsVANgS51pb2xPN7c
-	PxENgsIhvFIwfVK0cSmGzFd+nlsjppggHlen3kj+tEcsjeH6bQCmWkOlOu5d61Zi
-	ArtvXKWsEGrwwYRd1VJG9Jo9uQVCHTZDYJdJP3/srrRK0A==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fpgf1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 03:37:51 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-85a0492b5feso176353985a.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2025 20:37:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758771470; x=1759376270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n78nIIomQavWQosZYQPTeoTh4ytOcFS5L4hdEAU6XLI=;
-        b=v0ewdqrpBg4ypntOFg1lgjCl8w+Qh781FrXdU6oYUssIHlL0/i5ze4IUZ9Vgbg7sWU
-         0QcK442Z8j6c2AmIXtxNpToEZ3sHNvhpRwfjXn6WBqFXIgs0aqqD21ygaE6QgkS5MIxs
-         KCbS/Ykl1d77plNWAbXST710ILnn5Z1okfdlBaXwTDeh8HKbJVz9nSNOXi2oeRFjW5E7
-         UF9ip18nVuBh4FX7j32gkTeqMPcUQVceq5w9/+Ulqg4eGgk2Y2J/eYnK9u3aSS9mBsh2
-         y8ZLxp7zSZi08kf5gXXyzekWGls9T3rSB7CKWb/xk2c6kRJ8unLKHcW12h9fqt/3Kkp2
-         wODg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTCg6TLuWeNoLCOuHq0Bdu1AQmG0SMGCvtmFTl3asBl/CcLalj8hI+1SuAfn13BWPzFpR0/6mi0BYZwLQoNjiWhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy98B0UEvpwz5TRn6EHflK3iJykMr6CTrccFv8a8QME6Z6Xnscy
-	bMp/k5geo/sjr6NRjMXqYxDrYCGgnHkD5+Ln6puxTXQ/i9R8uRaNJo5z/YjVLI1fM4iX3R5H5dq
-	9OwnsdpamnYRfu0dn5NlMed0GMPbF3K03EYOpUYVo1gPHtritBnqkddCtzvWHeGpq0F8l1iaNZw
-	==
-X-Gm-Gg: ASbGncsCWW/IWP7pMxX+tuG6eJSZkvRRC5ucIUpjvuMe7MS3Izoq2PQf0UBRosq2hvx
-	6S9d/Z4XyUyUFnE3A9Rg0sEfxYlDb29tgHsK9eqzvVj9z7Cb6WLJouJcetwn1UQIehvKndOu/xX
-	ZMDRQp/tp4/a/iceKyEAP3VSgeozmOUClx6b5zFGZ0AgmB/7eFxYHn+hBQqPecPCxRgSX3ortnV
-	SjqF13uuatFCZ/J/SaVBWOKQGPpdQk/wCVCJCrnr4Gw7QB5OrjvNkQUdK2dSKRmawuBxcLR+k5k
-	iayuDEe9mbFqeX6dVXRZzClTx/IxfcZjNUtwVMXvx7Ke0F6qVC78vAhYVEqsZ6xvJU+DUjb0RiC
-	aTnEYAz5hh7q60RbKMpyscwu9lux7RRb1gQd4rbzAxJaSjmdfm3IM
-X-Received: by 2002:a05:620a:2907:b0:80a:72d7:f0cd with SMTP id af79cd13be357-85aed8cbc11mr225515685a.56.1758771469831;
-        Wed, 24 Sep 2025 20:37:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/Mkya6v8AWWGYf6q1L7jR77pkQxfEZnuvWyLMjPjoG8YIV9rwp0IrPi1ugpz+EuhpXNM8VQ==
-X-Received: by 2002:a05:620a:2907:b0:80a:72d7:f0cd with SMTP id af79cd13be357-85aed8cbc11mr225513785a.56.1758771469267;
-        Wed, 24 Sep 2025 20:37:49 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb7bfb413sm2245821fa.56.2025.09.24.20.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 20:37:47 -0700 (PDT)
-Date: Thu, 25 Sep 2025 06:37:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
-        alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
-        andy.yan@rock-chips.com, dianders@chromium.org,
-        m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 10/17] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-Message-ID: <ykj7xrnpagbtftr7wt2vkyc4d4u4k5nmxsir433jzz7lhc3oq3@gaq4kicsrlpr>
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-11-damon.ding@rock-chips.com>
- <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
- <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Jih2lDjB"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250925063713euoutp026a55aec851076312a8ff08c0f7769c37~ocx9tfpNc0444304443euoutp02e
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 06:37:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250925063713euoutp026a55aec851076312a8ff08c0f7769c37~ocx9tfpNc0444304443euoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758782233;
+	bh=1KW/opvHx16r3s1Vc5ZpK1xznEfLK8QH9H6s4kzsVEA=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Jih2lDjBlJNmf5n3R8rFB9UiHzAVNyJGnEEezwa4oL8EJYZXWhXLH0gNeRAhTetw5
+	 /iokn0kMt24A6FsC/JMLedoA/pulEj6tl9siUnVmp9dLwptzs47WjfvFGxSfamzGkR
+	 Jn3CBQqEjZ6E+ZvB+i8w7nEAl4zYtOqk7wnhrPqo=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250925063712eucas1p2af67fe7f4ea8b8af33874bfaba09fb02~ocx9TqQsg2841228412eucas1p2s;
+	Thu, 25 Sep 2025 06:37:12 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250925063711eusmtip1f9c8523f8b0305612b38794be3d45926~ocx8VlJBi1105611056eusmtip1T;
+	Thu, 25 Sep 2025 06:37:11 +0000 (GMT)
+Message-ID: <5f69200c-0cce-4b7b-85df-8b9d37960269@samsung.com>
+Date: Thu, 25 Sep 2025 08:37:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
-X-Proofpoint-ORIG-GUID: xkdjEeF4viVyussKTeQc6IpOjHnG61Zi
-X-Proofpoint-GUID: xkdjEeF4viVyussKTeQc6IpOjHnG61Zi
-X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d4b90f cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=e-wIutcIwHs2mBw2ZVAA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX9t0et8PEnmL+
- V/1MU4KkDeVCMMxnXD5T+MISHh6wzry6UHhNtgpUg22cHnMQE4t4/R3vU+Ywe8gYbdF0mUpz04m
- 3ToSZV/UcdPvW8yd/XVzd0Xg31LNIQPr3QAtPddXbbO31zuc460x2bTNwMhumBu5XGNJ74N1Ta9
- 6OqkVuJOLkKqwI50eTY/Xq8YpsxRw7J9A4eDmEPClOjsCQrUuKhgcWWKj70AXX/hlZrgs+acHek
- 6df6JBL00d/CWYZuOKdTx/x11HNL55m4m2M0sMjyQveu/JdPVKFHlDOb2rv26yWGxGJgdwezrlU
- pu+rET/qcGJVXK6dBdyqWJwE912Oyx1KHFKLfPBYwvBpPpiqYeDZLFNn0mwl4JxOKx2qtHgHS2W
- LqtfgnYG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Use percpu interrupts
+ only on ARM64
+To: William McVicker <willmcvicker@google.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Ingo Molnar <mingo@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+	Youngmin Nam <youngmin.nam@samsung.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <aNQnszeIfeHjx3GS@google.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250925063712eucas1p2af67fe7f4ea8b8af33874bfaba09fb02
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250827102650eucas1p1fe270adbf29c649b9ce529e1d45aabc3
+X-EPHeader: CA
+X-CMS-RootMailID: 20250827102650eucas1p1fe270adbf29c649b9ce529e1d45aabc3
+References: <CGME20250827102650eucas1p1fe270adbf29c649b9ce529e1d45aabc3@eucas1p1.samsung.com>
+	<20250827102645.1964659-1-m.szyprowski@samsung.com>
+	<8fb4534e-ffb0-40ad-8256-b0fa040a1b97@kernel.org>
+	<d27df41d-58ba-41e8-9275-2e9991f574a0@samsung.com>
+	<6a89a8bf-022d-4c31-b6db-95763142e603@linaro.org>
+	<aNQnszeIfeHjx3GS@google.com>
 
-On Wed, Sep 24, 2025 at 05:14:57PM +0800, Damon Ding wrote:
-> Hi Dmitry,
-> 
-> On 9/12/2025 7:03 PM, Dmitry Baryshkov wrote:
-> > On Fri, Sep 12, 2025 at 04:58:39PM +0800, Damon Ding wrote:
-> > > Apply drm_bridge_connector helper for Analogix DP driver.
-> > > 
-> > > The following changes have been made:
-> > > - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
-> > >    and &drm_connector_helper_funcs.
-> > > - Remove unnecessary parameter struct drm_connector* for callback
-> > >    &analogix_dp_plat_data.attach.
-> > > - Remove &analogix_dp_device.connector.
-> > > - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
-> > >    &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
-> > > - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
-> > >    &drm_bridge_funcs.edid_read().
-> > > 
-> > > Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> > > 
-> > > ------
-> > > 
-> > > Changes in v2:
-> > > - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
-> > >    DRM_BRIDGE_OP_EDID.
-> > > - Add analogix_dp_bridge_edid_read().
-> > > - Move &analogix_dp_plat_data.skip_connector deletion to the previous
-> > >    patches.
-> > > 
-> > > Changes in v3:
-> > > - Rebase with the new devm_drm_bridge_alloc() related commit
-> > >    48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
-> > >    API").
-> > > - Expand the commit message.
-> > > - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
-> > >    bridge is available.
-> > > - Remove unnecessary parameter struct drm_connector* for callback
-> > >    &analogix_dp_plat_data.attach.
-> > > - In order to decouple the connector driver and the bridge driver, move
-> > >    the bridge connector initilization to the Rockchip and Exynos sides.
-> > > 
-> > > Changes in v4:
-> > > - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
-> > >    &drm_connector.
-> > > - Rename the &analogix_dp_plat_data.bridge to
-> > >    &analogix_dp_plat_data.next_bridge.
-> > > 
-> > > Changes in v5:
-> > > - Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
-> > >    for next bridge attachment of Exynos side.
-> > > - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
-> > >    the downstream device is a panel, a bridge or neither.
-> > > - Remove the calls to &analogix_dp_plat_data.get_modes().
-> > > ---
-> > >   .../drm/bridge/analogix/analogix_dp_core.c    | 151 ++++++++----------
-> > >   .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
-> > >   drivers/gpu/drm/exynos/exynos_dp.c            |  25 +--
-> > >   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
-> > >   include/drm/bridge/analogix_dp.h              |   3 +-
-> > >   5 files changed, 95 insertions(+), 96 deletions(-)
-> > > 
-> > > @@ -1532,6 +1487,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
-> > >   int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
-> > >   {
-> > > +	struct drm_bridge *bridge = &dp->bridge;
-> > >   	int ret;
-> > >   	dp->drm_dev = drm_dev;
-> > > @@ -1545,7 +1501,23 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
-> > >   		return ret;
-> > >   	}
-> > > -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
-> > > +	if (dp->plat_data->panel)
-> > > +		/* If the next is a panel, the EDID parsing is checked by the panel driver */
-> > > +		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
-> > > +	else if (dp->plat_data->next_bridge)
-> > > +		/* If the next is a bridge, the supported operations depend on the next bridge */
-> > > +		bridge->ops = 0;
-> > 
-> > And what if the next bridge is dp_connector without a separate HPD pin?
-> 
-> This case was indeed not taken into account.
-> 
-> If the next is a bridge, it should be better to set DRM_BRIDGE_OP_DETECT and
-> return connector_status_connected in analogix_dp_bridge_detect(). This
-> ensures the connection status remains connected for both the dp-connector
-> and the bridges without DRM_BRIDGE_OP_DETECT.
+On 24.09.2025 19:17, William McVicker wrote:
+> On 09/24/2025, Daniel Lezcano wrote:
+>> On 19/09/2025 23:31, Marek Szyprowski wrote:
+>>> On 27.08.2025 13:58, Krzysztof Kozlowski wrote:
+>>>> On 27/08/2025 12:26, Marek Szyprowski wrote:
+>>>>> For some unknown reasons forcing percpu interrupts for local timers
+>>>>> breaks CPU hotplug for 'little' cores on legacy ARM 32bit Exynos based
+>>>>> machines (for example Exynos5422-based Odroid-XU3/XU4 boards). Use percpu
+>>>>> flag only when driver is compiled for newer ARM64 architecture.
+>>>>>
+>>>>> Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
+>>>> I am pretty sure the patch above was not tested on arm32, thus this
+>>>> workaround seems reasonable.
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Daniel, any chance to get this merged?
+>> The patch does not apply. However it is not your fault but a glitch in the
+>> previous pull request and the regression found in the Exynos MCT.
+>>
+>> Apparently, Thomas had to drop the entire pull request while I thought he
+>> dropped only Will's changes.
+>>
+>> A pull request with the previous changes for v6.17-rc1 and with the new
+>> changes for v6.18-rc1 is about to be emitted but without the Exynos MCT
+>> changes for the modularization. That means your change does not apply
+>> correctly anymore on the current changes.
+> Is there somewhere I can check to see which changes will be re-sent? I don't
+> see them in the timers/drivers/next branch. Will it be patches 2-4 plus the
+> fixes for the section mismatch and this new IRQ fix? Once that's all sorted
+> out, I'll base the new modularization patches on top of that.
 
-Maybe OP_EDID | OP_DETECT? I think, we need to fix drm_bridge_connector
-to stop preferring OP_EDID bridges over OP_MODES if the latter one is
-enountered later in the chain. In other words inside
-drm_bridge_connector_init() clear bridge_edid if OP_MODES is encountered
-and vice versa. This way you can always declare OP_EDID here (after
-converting to panel bridge) and then letting panel's OP_MODES take over
-mode declaration. Would you please include such a patch in the next
-iteration?
+The problematic mct patches are still in linux-next, merged via tip tree 
+by commit 9703240ef617 ("Merge branch into tip/master: 
+'timers/clocksource'"). What are the plans to resolve this?
 
-> 
-> > 
-> > > +	else
-> > > +		/* In DP mode, the EDID parsing and HPD detection should be supported */
-> > > +		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
-> > > +
-> > > +	bridge->of_node = dp->dev->of_node;
-> > > +	bridge->type = DRM_MODE_CONNECTOR_eDP;
-> > > +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
-> > > +	if (ret)
-> > > +		goto err_unregister_aux;
-> > > +
-> > > +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
-> > >   	if (ret) {
-> > >   		DRM_ERROR("failed to create bridge (%d)\n", ret);
-> > >   		goto err_unregister_aux;
-> > 
-> 
-> Best regards,
-> Damon
-> 
-
+Best regards
 -- 
-With best wishes
-Dmitry
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
