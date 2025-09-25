@@ -1,130 +1,533 @@
-Received: from mail-m21470.qiye.163.com (mail-m21470.qiye.163.com [117.135.214.70])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E37BC2E0;
-	Thu, 25 Sep 2025 02:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48E02DF14C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 02:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758766637; cv=none; b=OlV8VLrGSOQCxsrNezTB6vPsxMROhJT8qo4exFuZfqOj9gBXUR603VgaMNpFNTnc3hqZPzD2j2NLq8T23U3vFD+k1n8akWDtBz3xzFnnRgniPXaTc+RsXTc/Z/wGRKXhiDz+vnP6bb7NInF3ITLk5vFxHX6Qsls0L7zFJxAjTWI=
+	t=1758767332; cv=none; b=L/LoYqiBKurAsc371tnCJ6naVuc1ZWdmMIXZNij+kD7/wbVNQmUYNtLetH5U4eRykcxh4xN/fV7AAGbYdAe9so+JTlyNhn5cI1TAzZrHUJWVYzZ4AlPF7e52JcOVtslyhb9mIX478g1t8hdnxkWPh+t0XyKIel4U6b+hn/ZpkHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758766637; c=relaxed/simple;
-	bh=2vZWpSzNYela03bxYQwOWzTgdlsvks2tQABzUql3sQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RcdFrcm21CP7J0Y1I5jG5faDCNfnhH80YQbnBReLh9cXLS+cUphrgM6XAtG+cpcpgimp/aMINgNMC8ZZnmL6kdPJbJiwkR6nB1H0TUO64lSvsFcpK7RRWg5ss2oSLncyGSRjeqFWnK47SPg/xdyfnGZwh1SG/zGeEJr521V9PsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=iVKD7f62; arc=none smtp.client-ip=117.135.214.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1758767332; c=relaxed/simple;
+	bh=J5lLd/vuL6jZtvy0ljv8wT1z6W/jyQFZVqfO7u/SBDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=YgvrQvList3jtdQtjNSA8Y3mtR2ALwNzd9KeDn5qMVkR1XhxbGf7r907bHHZGvvk1ei/I8UtgfRCmIgDigdU0vtPTNjn9F3m34ItGLduLDqJAjEbIKY9T6PvTVjOSVYWNPZcWIAqStYhsln94owQFjt02kvakb8wLR0ifNJbieQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EeZ4Bj6h; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="iVKD7f62"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23f942a34;
-	Thu, 25 Sep 2025 10:11:53 +0800 (GMT+08:00)
-Message-ID: <7cf14078-5d4f-4ced-bdcf-182371d0fd35@rock-chips.com>
-Date: Thu, 25 Sep 2025 10:11:53 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EeZ4Bj6h"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250925022848epoutp03526611133827d7a76b10a20957c93a3f~oZZEOrqCR1600416004epoutp03B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 02:28:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250925022848epoutp03526611133827d7a76b10a20957c93a3f~oZZEOrqCR1600416004epoutp03B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758767328;
+	bh=tG27NdAYAB5zCAFtjok5lejCXpe+CazBoZAPMuwAwqw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EeZ4Bj6hM5axd9clNiGSYNRsaD5cMBBYa+FJcNx4XZ6UUjEwLTib+w8ZbJr4Fv2d+
+	 K7dwQQLkPu0+WbRqr/1PUzLs/o7iviVyZ+G/02aD9RDyx7GKAVPt801fvxVnA+ewYh
+	 SCiqCfMdqKIQaXTBj54QLHggyEXveVMVh9rYFQBU=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250925022847epcas2p41a5b90e78cf67fb84ae830d54ac74728~oZZDh6C8z0383003830epcas2p4z;
+	Thu, 25 Sep 2025 02:28:47 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.36.70]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cXHhZ5Q39z6B9m6; Thu, 25 Sep
+	2025 02:28:46 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250925022846epcas2p42c5195c8d7934a47ce9e67816fda80f5~oZZCNfNDp1528015280epcas2p4C;
+	Thu, 25 Sep 2025 02:28:46 +0000 (GMT)
+Received: from asswp60 (unknown [10.229.9.60]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250925022845epsmtip129c979cacd4fb877f39d2b2a82f1f09d~oZZCH_YnZ2361923619epsmtip1j;
+	Thu, 25 Sep 2025 02:28:45 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Henrik Grimler
+	<henrik@grimler.se>
+Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 3/3] arm64: dts: exynosautov920: Add multiple sensors
+Date: Thu, 25 Sep 2025 11:28:40 +0900
+Message-ID: <20250925022841.2813150-4-shin.son@samsung.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250925022841.2813150-1-shin.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/17] drm/rockchip: analogix_dp: Apply
- &analogix_dp_plat_data.attach() to attach next bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-14-damon.ding@rock-chips.com>
- <2cu3ge6kjeibfznvt6c52xn2rp5zb3wk3pkb7gly34qrjlueem@7wqyowascpn5>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <2cu3ge6kjeibfznvt6c52xn2rp5zb3wk3pkb7gly34qrjlueem@7wqyowascpn5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a997ea4309303a3kunm542c945b85b02
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR5LT1ZIGh1PTEMdGUpDSx5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=iVKD7f62uqeDZeWknCM50t4q+F59fTE4NNT58Y0093B07tMOfWOMy8AZVe6YOCr802f8Pf+EvfpvFbJEg2wVUjJcIBAH3suMh+XfmN4d3KXJXFGIQ0VcjzG3rZuDDk/5Md8wIwVl5DruEmeVZoWpbNKEhRNxy82ULkMok5Cfsmg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=Ljhn8bif18aFps1rRdBClCGFFynJpfAeepmIW2TXY3A=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250925022846epcas2p42c5195c8d7934a47ce9e67816fda80f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250925022846epcas2p42c5195c8d7934a47ce9e67816fda80f5
+References: <20250925022841.2813150-1-shin.son@samsung.com>
+	<CGME20250925022846epcas2p42c5195c8d7934a47ce9e67816fda80f5@epcas2p4.samsung.com>
 
-Hi Dmitry,
+Create a new exynosautov920-tmu.dtsi describing new TMU hardware
+and include it from exynosautov920.dtsi.
 
-On 9/12/2025 7:05 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 12, 2025 at 04:58:42PM +0800, Damon Ding wrote:
->> There may be the panel or bridge after &analogix_dp_device.bridge.
->> Add rockchip_dp_attach() to support the next bridge attachment for
->> the Rockchip side.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> ---
->>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> index 0784f19a2ed9..39f1ed293c75 100644
->> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> @@ -164,6 +164,24 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
->>   	return 0;
->>   }
->>   
->> +static int rockchip_dp_attach(struct analogix_dp_plat_data *plat_data,
->> +				     struct drm_bridge *bridge)
->> +{
->> +	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
->> +	int ret;
->> +
->> +	if (plat_data->next_bridge) {
->> +		ret = drm_bridge_attach(&dp->encoder.encoder, plat_data->next_bridge, bridge,
->> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> 
-> Can this be handled inside analogix_dp_bridge's attach callback?
+The exynosautov920-tmu node uses the misc clock as its source.
 
-I found that the &analogix_dp_plat_data.attach() callbacks of Rockchip 
-and Exynos sides are the same. It should be nice to handle the next 
-bridge attachment in analogix_dp_bridge_attach(), which would allow us 
-to remove the &analogix_dp_bridge_attach().
+This TMU binding defines multiple thermal zones with a critical trip point
+at 125 degrees:
 
-> 
->> +		if (ret) {
->> +			dev_err(dp->dev, "failed to attach following panel or bridge (%d)\n", ret);
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   static bool
->>   rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
->>   				   const struct drm_display_mode *mode,
->> @@ -452,6 +470,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
->>   	dp->plat_data.dev_type = dp->data->chip_type;
->>   	dp->plat_data.power_on = rockchip_dp_poweron;
->>   	dp->plat_data.power_off = rockchip_dp_powerdown;
->> +	dp->plat_data.attach = rockchip_dp_attach;
->>   	dp->plat_data.ops = &rockchip_dp_component_ops;
->>   
->>   	ret = rockchip_dp_of_probe(dp);
->> -- 
->> 2.34.1
->>
-> 
+tmu_top : cpus0-0, cpus0-1, cpus0-2, cpus0-3,
+          cpus1-0, cpus1-1, cpus1-2, cpus1-3,
+	  cpus1-4, cpus1-5, cpus1-6, cpus1-7
 
-Best regards,
-Damon
+tmu_sub0: cpus0-4, cpus0-5, cpus0-6, cpus0-7,
+          cpus2-0, cpus2-1, cpus2-2, cpus2-3
+
+tmu_sub1: gpu0, gpu1, gpu2, gpu3, npu0, npu1
+
+Signed-off-by: Shin Son <shin.son@samsung.com>
+---
+ .../boot/dts/exynos/exynosautov920-tmu.dtsi   | 377 ++++++++++++++++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  31 ++
+ 2 files changed, 408 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
+
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
+new file mode 100644
+index 000000000000..641d142e0eeb
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
+@@ -0,0 +1,377 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung's ExynosAuto920 TMU configurations device tree source
++ *
++ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
++ *
++ * Samsung's ExynosAuto920 SoC TMU(Thermal Managemenut Unit) are listed as
++ * device tree nodes in this file.
++ */
++
++/ {
++	thermal-zones {
++		cpus0-0-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 9>;
++
++			trips {
++				cpus0_0_critical: cpus0-0-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-1-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 10>;
++
++			trips {
++				cpus0_1_critical: cpus0-1-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-2-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 11>;
++
++			trips {
++				cpus0_2_critical: cpus0-2-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-3-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 12>;
++
++			trips {
++				cpus0_3_critical: cpus0-3-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-4-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 7>;
++
++			trips {
++				cpus0_4_critical: cpus0-4-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-5-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 8>;
++
++			trips {
++				cpus0_5_critical: cpus0-5-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-6-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 9>;
++
++			trips {
++				cpus0_6_critical: cpus0-6-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus0-7-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 10>;
++
++			trips {
++				cpus0_7_critical: cpus0-7-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-0-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 1>;
++
++			trips {
++				cpus1_0_critical: cpus1-0-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-1-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 2>;
++
++			trips {
++				cpus1_1_critical: cpus1-1-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-2-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 3>;
++
++			trips {
++				cpus1_2_critical: cpus1-2-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-3-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 4>;
++
++			trips {
++				cpus1_3_critical: cpus1-3-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-4-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 5>;
++
++			trips {
++				cpus1_4_critical: cpus1-4-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-5-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 6>;
++
++			trips {
++				cpus1_5_critical: cpus1-5-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-6-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 7>;
++
++			trips {
++				cpus1_6_critical: cpus1-6-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus1-7-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_top 8>;
++
++			trips {
++				cpus1_7_critical: cpus1-7-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus2-0-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 3>;
++
++			trips {
++				cpus2_0_critical: cpus2-0-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus2-1-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 4>;
++
++			trips {
++				cpus2_1_critical: cpus2-1-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus2-2-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 5>;
++
++			trips {
++				cpus2_2_critical: cpus2-2-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpus2-3-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub0 6>;
++
++			trips {
++				cpus2_3_critical: cpus2-3-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		gpu0-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub1 1>;
++
++			trips {
++				gpu0_critical: gpu0-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		gpu1-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub1 2>;
++
++			trips {
++				gpu1_critical: gpu1-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		gpu2-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub1 3>;
++
++			trips {
++				gpu2_critical: gpu2-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		gpu3-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub1 4>;
++
++			trips {
++				gpu3_critical: gpu3-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		npu0-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub1 6>;
++
++			trips {
++				npu0_critical: npu0-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		npu1-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			thermal-sensors = <&tmu_sub1 7>;
++
++			trips {
++				npu1_critical: npu1-critical {
++					temperature = <125000>;	/* millicelsius */
++					hysteresis = <0>;	/* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index 0fdf2062930a..fba403e48aed 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -330,6 +330,36 @@ watchdog_cl1: watchdog@10070000 {
+ 			samsung,cluster-index = <1>;
+ 		};
+ 
++		tmu_top: tmu@100a0000 {
++			compatible = "samsung,exynosautov920-tmu";
++			reg = <0x100A0000 0x1000>;
++			interrupts = <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>;
++			#thermal-sensor-cells = <1>;
++			clocks = <&cmu_misc CLK_DOUT_MISC_NOCP>;
++			clock-names = "tmu_apbif";
++			samsung,sensors = <12>;
++		};
++
++		tmu_sub0: tmu@100b0000 {
++			compatible = "samsung,exynosautov920-tmu";
++			reg = <0x100B0000 0x1000>;
++			interrupts = <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>;
++			#thermal-sensor-cells = <1>;
++			clocks = <&cmu_misc CLK_DOUT_MISC_NOCP>;
++			clock-names = "tmu_apbif";
++			samsung,sensors = <10>;
++		};
++
++		tmu_sub1: tmu@100c0000 {
++			compatible = "samsung,exynosautov920-tmu";
++			reg = <0x100C0000 0x1000>;
++			interrupts = <GIC_SPI 949 IRQ_TYPE_LEVEL_HIGH>;
++			#thermal-sensor-cells = <1>;
++			clocks = <&cmu_misc CLK_DOUT_MISC_NOCP>;
++			clock-names = "tmu_apbif";
++			samsung,sensors = <7>;
++		};
++
+ 		gic: interrupt-controller@10400000 {
+ 			compatible = "arm,gic-v3";
+ 			#interrupt-cells = <3>;
+@@ -1507,3 +1537,4 @@ timer {
+ };
+ 
+ #include "exynosautov920-pinctrl.dtsi"
++#include "exynosautov920-tmu.dtsi"
+-- 
+2.50.1
 
