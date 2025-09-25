@@ -1,49 +1,95 @@
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1031FEC8
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 20:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E93C2417E6
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 22:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758830921; cv=none; b=VwF66NnEG+N/1ozserUVfSwROiSVm9xxy6K2D4qZB7eYpDGL8g764J8J/eHBpA/wOWULkz6G04xnRHPmpX57BKYmNqFGhWlEq6qfTzLgQK01ElZtoEBu5b8yLPmAItRWj1LlWoT7ob0Yr3EDD23LCOly80Xg8Gl9tWfi5cMGOy8=
+	t=1758838898; cv=none; b=UjkofdLWmxPnm3ARbhNmnSP4IUJxDoo+4DeQzuve05aJDn1mBuDZkquqmRiL3TmULO/MqXNijRsBmZ2BwECO98nQjvS/ItGKQdE19yUgaCS7LApbnGI/7LKQaPfIqO9/YvwmeHIGNAQTlAXeoRKZ+hzTwafGDbk6sqPR2y67h6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758830921; c=relaxed/simple;
-	bh=+9+1gM7bSo7UfKc1RlfZHk0+eH3bDM8IH8E1KkBVkCk=;
+	s=arc-20240116; t=1758838898; c=relaxed/simple;
+	bh=+nZDpgErPKlsBYr8SGrK/ZDzx0PkooCV3ZfWcpePsFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OY0BOQkLGe5ynfXduP5lxeQibzZOKQZXcBU/yPJm+al/6o1qtXkxiR3xi3VSuEO7X85MpLyugpqZH9uB6bE2PNV5gAaSD5rkBLPyEY5weSX0WLS+1h6snFKacTxp3HkNF6HH+Vefmu5TNoL3JHluwjWiDwV7DTALemffiuzGjyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=N5pQHQ8g; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	 Content-Type:Content-Disposition:In-Reply-To; b=WmMNezpiPOsQH0D6Bi9Z5qBN6cLoi0iCVYEfNfWNUTRzbFpPmrUhmGnu0ZDa84r1266voMNzyHI452W1IVLP3P79SYe/N8YhTVjUFZRRcWV6sQ+3uZhfTSYdSh2H6L2JG9WzIFdjCnZ5R919APsYL77fiJBEUllLCwCyqfRDXJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MAZeOmvk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="N5pQHQ8g"
-Date: Thu, 25 Sep 2025 22:08:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1758830905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CHCUVA6ZBGASwrMRFWpu/tNRrC6G7LyavlRsgZgcxyU=;
-	b=N5pQHQ8gfKBY0z3VYmVhBd7YBjvCWojKxBglRpEPje+xPwcKS8td68FEpWqst+h/avOSmN
-	mLKLv4HFKOZObzdoUOM8nZW6hql7NNrXJenpbFESsbWmb6LqJapYJMi6M6/Tm9XBtyy1qX
-	paktgChc9Z/H4lw94nZ6qgKP5NEZ4CE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Shin Son <shin.son@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] thermal: exynos_tmu: Support new hardware and
- update TMU interface
-Message-ID: <20250925200813.GA4158@samsung-a5>
-References: <20250925022841.2813150-1-shin.son@samsung.com>
- <CGME20250925022845epcas2p222efe02101d2f5a306ca9b7302e2c408@epcas2p2.samsung.com>
- <20250925022841.2813150-3-shin.son@samsung.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MAZeOmvk"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIUuML006031
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 22:21:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=aoTfqDMQtgNp8uKI6NaCQod1
+	KhD8aF7dBolg9fIYyjM=; b=MAZeOmvkPjKC32lFD2F+OE6mpbrhBaW5mKvBQNe6
+	tM1Pb8YBK5DDsvX/hmxhWhhKwV2dKs8/zfyklHHGC7vxhvHBSkNA5ZNThn4lnkBO
+	QQh4wUfoh5cKxqOvH0GhMFc2JfSnEEDugaQ3rNceSM/PZ/dh9D+eHrxk2qyI2dMy
+	lfU1ku9t0z+gVtbNCWxTkvf5loyw0EFZCSfYty4Q3Pmw4eunLVQYfurSUVBAAp6F
+	oxpWWoSPH2Uy/rS84xVRnfUglz0kLWfPa0NK6ajypxVErks1nacawLcwTNtiYdu/
+	5kapW/j7H3X9lec6+cztABI+8Ej4CuIDGQtBaexI+Hl2Fg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db320hdj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 22:21:35 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4bf85835856so40247761cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 15:21:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758838894; x=1759443694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aoTfqDMQtgNp8uKI6NaCQod1KhD8aF7dBolg9fIYyjM=;
+        b=qLihuOl2UC8LXVLKO0sCR5DE8UWQlZYyBlyVypHBmQFShGE9aunNb8MLCGwpR4Ubbd
+         t6A+qJbdZykijMCniyUG56VcFI8UPtFO1WVrKEIHBPKWM3qW8S5mAlMM3r/LpE+ELKI8
+         7/rzj+4sZkUMzICGrTrBvAnswQcEPsdGdwCrg9Te2o0IBQg10TWpi2onvzCWMZBqG8Zk
+         t1bwUg+vgkW7gAdH7QjRD2I6Frg8Zn0MgT1dgWl6HPYv7nQCY+QQpBsAdfTGE0bHcEai
+         uWm+Id8hbR5cMH41PdY8N+XX4m2duLALSUQOuv1B1iwHZbth6c83COa4DPNLlAOszIsk
+         J9gA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBNMQtfF9uUmrLt2xwcxvpCijjmWSDewvNol8z5Ej5M7vZa//KFL9XQJSinb9m6J+4gw5WQTg6B15grM55yguqgQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsWKZt2f1lwAXSjDFmtJghY7V3NwkNqCc1xpBMh6gPKyA0Caq/
+	xhMfPLX+mVBm89ssjtRxfXtDJ/8mWVzq+Uq2sMsAAsFDzyyKTaYHiXN6Tc/rRQ9eiTGo9Zf55hl
+	/nwTV/6DtcYkdHY0KxODXZjhh6/EiJMlYBikDNPhxG6YP0ZcXjnavP2dmzVxPVXEhOvLVTb2LbA
+	==
+X-Gm-Gg: ASbGncuAxgPEt2EV5qHNd+WT54mxIjw7rRTLVDy0fS8OFJDrsBKdgxo7L+BWEyz4zMu
+	PKQbpemp6JFtuXejsOgpfcnzz1SbVGCD7D5F5/fj4alWhCY4sFv2GsGVboG6ujs7Q9pikyx4Cmg
+	MSAnkhqRheYlVAfUm+gm7gfTxcnF2pPFcPl7VlZVq4VIgeR5VL7WjTOtN6qr2cPTVskB2NxASBc
+	C9CCsOPwhXXYd0adNAAi0doaDshP90F1xp22jewf846wcQfAut3TFRmisBxhWCkYq5CxQXXpykE
+	l5PDzYGbKrQXBL9jEhYyeljLDH79pZzyLQFkjiqg29JsZZIy8bZCY6FyTue6axeu5JKzVXDjF+R
+	HG2+E+33yMpCdvYcnao969Wg/4jr4aaEA6baS1Wq97W+lNc5rXF3g
+X-Received: by 2002:a05:622a:190e:b0:4b7:acab:852b with SMTP id d75a77b69052e-4dacd2444dfmr53076111cf.26.1758838893923;
+        Thu, 25 Sep 2025 15:21:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+ndE8As98QEszHZ6NDkq+zsmIILHZCa3+sexpBqWme3ZRaECjD3Wj4Ezi0fMLWu39g+sHHg==
+X-Received: by 2002:a05:622a:190e:b0:4b7:acab:852b with SMTP id d75a77b69052e-4dacd2444dfmr53075521cf.26.1758838893328;
+        Thu, 25 Sep 2025 15:21:33 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316a3304fsm1171495e87.122.2025.09.25.15.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 15:21:31 -0700 (PDT)
+Date: Fri, 26 Sep 2025 01:21:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+        alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
+        andy.yan@rock-chips.com, dianders@chromium.org,
+        m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 10/17] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
+Message-ID: <jzy37mcxvonlnouvsyepgyld4uxcsvlgxyj6upm4hek3fmavll@api4pfbjzi33>
+References: <20250912085846.7349-1-damon.ding@rock-chips.com>
+ <20250912085846.7349-11-damon.ding@rock-chips.com>
+ <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
+ <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
+ <ykj7xrnpagbtftr7wt2vkyc4d4u4k5nmxsir433jzz7lhc3oq3@gaq4kicsrlpr>
+ <7babd32a-6b20-4e4b-9c40-594520a183bb@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -52,562 +98,175 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925022841.2813150-3-shin.son@samsung.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <7babd32a-6b20-4e4b-9c40-594520a183bb@rock-chips.com>
+X-Authority-Analysis: v=2.4 cv=ao6/yCZV c=1 sm=1 tr=0 ts=68d5c06f cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=ZqRDvNvAEryDotfT4VUA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22 a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-ORIG-GUID: c51q_C1k8gx5CfHPS7y3ynCm6XklNQ4P
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MiBTYWx0ZWRfXxCLNqY5kxOwu
+ 6JT+2SzKlQfHPW+mQ4hJDPQPHPMMKAkNWhqWtQbPNWr+v7stkY5KiCNp9h3RtlKLkP2/ZckpfMM
+ yZUbRuiYLOmkNkRG4Ah+W+Kmy9VXKBBJN+HC2XimdH3al8pPKPGjCcAvUcHqwJTFq+8FDJkp+uu
+ aIqpV059NnkgOi4INMezDIJhIoLviQ/+GIjjA9WceLBmYEnTKt9f23idhtoKJY3mKVnLFngeKYn
+ S8nH7JCiOEEIxySYkBjxoUwC7g6pWfP0ckmwZ467awSMLgF9nqZs3WaV/tR+RWsca7nfMrjhBHo
+ Y5ghjpbBmoyRIUfFFjAbGJOiXc3IU373F62T+xbXFThFOzhq1ViNFgp57+PxnKJvKuhTdT9CfKB
+ AL49whUUs24GA99x3jKeyMLrbjlqOg==
+X-Proofpoint-GUID: c51q_C1k8gx5CfHPS7y3ynCm6XklNQ4P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250172
 
-On Thu, Sep 25, 2025 at 11:28:39AM +0900, Shin Son wrote:
-> The Exynos tmu driver's private data structure has been extended
-> to support the exynosautov920 hardware, which requires per-sensor interrupt
-> enablement and multiple-zone handling:
+On Thu, Sep 25, 2025 at 03:33:45PM +0800, Damon Ding wrote:
+> Hi Dmitry,
 > 
-> - Add 'slope_comp' : compensation parameter below 25 degrees.
-> - Add 'calib_temp' : stores the fused calibaration temperature.
-> - Add 'sensor_count' : reflects the maximum sensor numbers.
-> - Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
+> On 9/25/2025 11:37 AM, Dmitry Baryshkov wrote:
+> > On Wed, Sep 24, 2025 at 05:14:57PM +0800, Damon Ding wrote:
+> > > Hi Dmitry,
+> > > 
+> > > On 9/12/2025 7:03 PM, Dmitry Baryshkov wrote:
+> > > > On Fri, Sep 12, 2025 at 04:58:39PM +0800, Damon Ding wrote:
+> > > > > Apply drm_bridge_connector helper for Analogix DP driver.
+> > > > > 
+> > > > > The following changes have been made:
+> > > > > - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
+> > > > >     and &drm_connector_helper_funcs.
+> > > > > - Remove unnecessary parameter struct drm_connector* for callback
+> > > > >     &analogix_dp_plat_data.attach.
+> > > > > - Remove &analogix_dp_device.connector.
+> > > > > - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
+> > > > >     &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
+> > > > > - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
+> > > > >     &drm_bridge_funcs.edid_read().
+> > > > > 
+> > > > > Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> > > > > 
+> > > > > ------
+> > > > > 
+> > > > > Changes in v2:
+> > > > > - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
+> > > > >     DRM_BRIDGE_OP_EDID.
+> > > > > - Add analogix_dp_bridge_edid_read().
+> > > > > - Move &analogix_dp_plat_data.skip_connector deletion to the previous
+> > > > >     patches.
+> > > > > 
+> > > > > Changes in v3:
+> > > > > - Rebase with the new devm_drm_bridge_alloc() related commit
+> > > > >     48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
+> > > > >     API").
+> > > > > - Expand the commit message.
+> > > > > - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
+> > > > >     bridge is available.
+> > > > > - Remove unnecessary parameter struct drm_connector* for callback
+> > > > >     &analogix_dp_plat_data.attach.
+> > > > > - In order to decouple the connector driver and the bridge driver, move
+> > > > >     the bridge connector initilization to the Rockchip and Exynos sides.
+> > > > > 
+> > > > > Changes in v4:
+> > > > > - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
+> > > > >     &drm_connector.
+> > > > > - Rename the &analogix_dp_plat_data.bridge to
+> > > > >     &analogix_dp_plat_data.next_bridge.
+> > > > > 
+> > > > > Changes in v5:
+> > > > > - Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
+> > > > >     for next bridge attachment of Exynos side.
+> > > > > - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
+> > > > >     the downstream device is a panel, a bridge or neither.
+> > > > > - Remove the calls to &analogix_dp_plat_data.get_modes().
+> > > > > ---
+> > > > >    .../drm/bridge/analogix/analogix_dp_core.c    | 151 ++++++++----------
+> > > > >    .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
+> > > > >    drivers/gpu/drm/exynos/exynos_dp.c            |  25 +--
+> > > > >    .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
+> > > > >    include/drm/bridge/analogix_dp.h              |   3 +-
+> > > > >    5 files changed, 95 insertions(+), 96 deletions(-)
+> > > > > 
+> > > > > @@ -1532,6 +1487,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
+> > > > >    int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+> > > > >    {
+> > > > > +	struct drm_bridge *bridge = &dp->bridge;
+> > > > >    	int ret;
+> > > > >    	dp->drm_dev = drm_dev;
+> > > > > @@ -1545,7 +1501,23 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+> > > > >    		return ret;
+> > > > >    	}
+> > > > > -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
+> > > > > +	if (dp->plat_data->panel)
+> > > > > +		/* If the next is a panel, the EDID parsing is checked by the panel driver */
+> > > > > +		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
+> > > > > +	else if (dp->plat_data->next_bridge)
+> > > > > +		/* If the next is a bridge, the supported operations depend on the next bridge */
+> > > > > +		bridge->ops = 0;
+> > > > 
+> > > > And what if the next bridge is dp_connector without a separate HPD pin?
+> > > 
+> > > This case was indeed not taken into account.
+> > > 
+> > > If the next is a bridge, it should be better to set DRM_BRIDGE_OP_DETECT and
+> > > return connector_status_connected in analogix_dp_bridge_detect(). This
+> > > ensures the connection status remains connected for both the dp-connector
+> > > and the bridges without DRM_BRIDGE_OP_DETECT.
+> > 
+> > Maybe OP_EDID | OP_DETECT? I think, we need to fix drm_bridge_connector
+> > to stop preferring OP_EDID bridges over OP_MODES if the latter one is
+> > enountered later in the chain. In other words inside
+> > drm_bridge_connector_init() clear bridge_edid if OP_MODES is encountered
+> > and vice versa. This way you can always declare OP_EDID here (after
+> > converting to panel bridge) and then letting panel's OP_MODES take over
+> > mode declaration. Would you please include such a patch in the next
+> > iteration?
+> > 
 > 
-> Since splitting this patch causes runtime errors during temperature
-> emulation or problems where the read temperature feature fails to
-> retrieve values, I have submitted it as a single commit. To add support
-> for the exynosautov920 to the exisiting TMU interface, the following
-> changes are included:
+> I see. Following your suggestions, the logic will be:
 > 
-> 1. Simplify "temp_to_code" and "code_to_temp" to one computation path
->    by normalizing calib_temp.
-> 2. Loop over 'sensor_count' in critical-point setup.
-> 3. Introduce 'update_con_reg' for exynosautov920 control-register updates.
-> 4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp' function.
-> 5. Skip high & low temperature threshold setup in exynosautov920.
-> 6. Enable interrupts via sensor_count in exynosautov920.
-> 7. Initialize all new members during 'exynosautov920_tmu_initialize'.
-> 8. Clear IRQs by iterating the sensor_count in exynosautov920.
-> 9. Register each zone with 'devm_thermal_of_zone_register()'
->    based on 'sensor_count'.
-> 
-> Signed-off-by: Shin Son <shin.son@samsung.com>
+> 1.If the later bridge declares OP_MODES and
+> &drm_bridge_connector.bridge_edid already exists, the
+> &drm_bridge_connector.bridge_edid should be set to NULL.
+> 2.If the later bridge declares OP_EDID and
+> &drm_bridge_connector.bridge_modes already exists, the
+> &drm_bridge_connector.bridge_modes should be set to NULL.
+> 3.If the later bridge declares both OP_EDID and OP_MODES, set
+> &drm_bridge_connector.bridge_modes and &drm_bridge_connector.bridge_edid to
+> it(preserving the existing behavior).
 
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
+Yes. And then the get_modes() will defer its functionality to the last
+bridge that declares either of those.
 
-Best regards,
-Henrik Grimler
+> 
+> I will add a new commit with necessary code comments to implement this in
+> v6.
 
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 322 ++++++++++++++++++++++++---
->  1 file changed, 285 insertions(+), 37 deletions(-)
+Yes, thanks!
+
 > 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 47a99b3c5395..8fa188928b79 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -121,8 +121,51 @@
->  
->  #define EXYNOS_NOISE_CANCEL_MODE		4
->  
-> +/* ExynosAutov920 specific registers */
-> +#define EXYNOSAUTOV920_SLOPE_COMP		25
-> +#define EXYNOSAUTOV920_SLOPE_COMP_MASK		0xf
-> +#define EXYNOSAUTOV920_CALIB_SEL_TEMP		30
-> +#define EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK	0x2
-> +
-> +#define EXYNOSAUTOV920_SENSOR0_TRIM_INFO	0x10
-> +#define EXYNOSAUTOV920_TRIM_MASK		0x1ff
-> +#define EXYNOSAUTOV920_TRIMINFO_25_SHIFT	0
-> +#define EXYNOSAUTOV920_TRIMINFO_85_SHIFT	9
-> +
-> +#define EXYNOSAUTOV920_TMU_REG_TRIMINFO2	0x04
-> +
-> +#define EXYNOSAUTOV920_TMU_REG_THRESHOLD(p)	(((p)) * 0x50 + 0x00d0)
-> +#define EXYNOSAUTOV920_TMU_REG_INTEN(p)		(((p)) * 0x50 + 0x00f0)
-> +#define EXYNOSAUTOV920_TMU_REG_INT_PEND(p)	(((p)) * 0x50 + 0x00f8)
-> +
-> +#define EXYNOSAUTOV920_CURRENT_TEMP_P1_P0	0x084
-> +#define EXYNOSAUTOV920_TMU_REG_EMUL_CON		0x0b0
-> +
-> +#define EXYNOSAUTOV920_TMU_REG_CONTROL		0x50
-> +#define EXYNOSAUTOV920_TMU_REG_CONTROL1		0x54
-> +#define EXYNOSAUTOV920_TMU_REG_AVG_CONTROL	0x58
-> +#define EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL	0x70
-> +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0	0x74
-> +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1	0x78
-> +
-> +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT		8
-> +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK		0x1f
-> +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT	3
-> +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK		0xf
-> +#define EXYNOSAUTOV920_TMU_NUM_PROBE_MASK		0xf
-> +#define EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT		16
-> +#define EXYNOSAUTOV920_TMU_LPI_MODE_MASK		1
-> +#define EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT		10
-> +
-> +#define EXYNOSAUTOV920_TMU_AVG_CON_UPDATE		0x0008011a
-> +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE	0x030003c0
-> +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE	0x03c0004d
-> +
->  #define MCELSIUS	1000
->  
-> +#define EXYNOS_DEFAULT_SENSOR_COUNT			1
-> +#define EXYNOS_MAX_SENSOR_COUNT				15
-> +
->  enum soc_type {
->  	SOC_ARCH_EXYNOS3250 = 1,
->  	SOC_ARCH_EXYNOS4210,
-> @@ -133,6 +176,7 @@ enum soc_type {
->  	SOC_ARCH_EXYNOS5420_TRIMINFO,
->  	SOC_ARCH_EXYNOS5433,
->  	SOC_ARCH_EXYNOS7,
-> +	SOC_ARCH_EXYNOSAUTOV920,
->  };
->  
->  /**
-> @@ -150,6 +194,8 @@ enum soc_type {
->   * @efuse_value: SoC defined fuse value
->   * @min_efuse_value: minimum valid trimming data
->   * @max_efuse_value: maximum valid trimming data
-> + * @slope_comp: allocated value of the slope compensation.
-> + * @calib_temp: calibration temperature of the TMU.
->   * @temp_error1: fused value of the first point trim.
->   * @temp_error2: fused value of the second point trim.
->   * @gain: gain of amplifier in the positive-TC generator block
-> @@ -157,7 +203,8 @@ enum soc_type {
->   * @reference_voltage: reference voltage of amplifier
->   *	in the positive-TC generator block
->   *	0 < reference_voltage <= 31
-> - * @tzd: pointer to thermal_zone_device structure
-> + * @sensor_count: The maximum number of the sensors
-> + * @tzd_array: pointer array of thermal_zone_device structure
->   * @enabled: current status of TMU device
->   * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
->   * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
-> @@ -174,6 +221,7 @@ struct exynos_tmu_data {
->  	void __iomem *base;
->  	void __iomem *base_second;
->  	int irq;
-> +	int sensor_count;
->  	enum soc_type soc;
->  	struct mutex lock;
->  	struct clk *clk, *clk_sec, *sclk;
-> @@ -181,10 +229,12 @@ struct exynos_tmu_data {
->  	u32 efuse_value;
->  	u32 min_efuse_value;
->  	u32 max_efuse_value;
-> +	u16 slope_comp;
-> +	u16 calib_temp;
->  	u16 temp_error1, temp_error2;
->  	u8 gain;
->  	u8 reference_voltage;
-> -	struct thermal_zone_device *tzd;
-> +	struct thermal_zone_device *tzd_array[EXYNOS_MAX_SENSOR_COUNT];
->  	bool enabled;
->  
->  	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
-> @@ -205,13 +255,20 @@ struct exynos_tmu_data {
->   */
->  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
->  {
-> +	s32 temp_diff, code;
-> +
->  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
->  		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
->  
-> -	return (temp - EXYNOS_FIRST_POINT_TRIM) *
-> -		(data->temp_error2 - data->temp_error1) /
-> -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
-> -		data->temp_error1;
-> +	temp_diff = temp - EXYNOS_FIRST_POINT_TRIM;
-> +
-> +	code = temp_diff * (data->temp_error2 - data->temp_error1) * MCELSIUS /
-> +	       (data->calib_temp - EXYNOS_FIRST_POINT_TRIM);
-> +
-> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && temp_diff < 0)
-> +		code = code * (57 + data->slope_comp) / 65;
-> +
-> +	return code / MCELSIUS + data->temp_error1;
->  }
->  
->  /*
-> @@ -220,13 +277,20 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
->   */
->  static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
->  {
-> +	s32 code_diff, temp;
-> +
->  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
->  		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
->  
-> -	return (temp_code - data->temp_error1) *
-> -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
-> -		(data->temp_error2 - data->temp_error1) +
-> -		EXYNOS_FIRST_POINT_TRIM;
-> +	code_diff = temp_code - data->temp_error1;
-> +
-> +	temp = code_diff * (data->calib_temp - EXYNOS_FIRST_POINT_TRIM) * MCELSIUS /
-> +	       (data->temp_error2 - data->temp_error1);
-> +
-> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && code_diff < 0)
-> +		temp = temp * 65 / (57 + data->slope_comp);
-> +
-> +	return temp / MCELSIUS + EXYNOS_FIRST_POINT_TRIM;
->  }
->  
->  static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
-> @@ -262,6 +326,9 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  		clk_enable(data->clk_sec);
->  
->  	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
-> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920)
-> +		status = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> +
->  	if (!status) {
->  		ret = -EBUSY;
->  	} else {
-> @@ -280,27 +347,34 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  static int exynos_thermal_zone_configure(struct platform_device *pdev)
->  {
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> -	struct thermal_zone_device *tzd = data->tzd;
-> -	int ret, temp;
-> +	struct thermal_zone_device *tzd;
-> +	int ret, temp, idx;
->  
-> -	ret = thermal_zone_get_crit_temp(tzd, &temp);
-> -	if (ret) {
-> -		/* FIXME: Remove this special case */
-> -		if (data->soc == SOC_ARCH_EXYNOS5433)
-> -			return 0;
-> +	for (idx = 0; idx < data->sensor_count; idx++) {
-> +		tzd = data->tzd_array[idx];
->  
-> -		dev_err(&pdev->dev,
-> -			"No CRITICAL trip point defined in device tree!\n");
-> -		return ret;
-> -	}
-> +		if (!tzd)
-> +			continue;
->  
-> -	mutex_lock(&data->lock);
-> -	clk_enable(data->clk);
-> +		ret = thermal_zone_get_crit_temp(tzd, &temp);
-> +		if (ret) {
-> +			/* FIXME: Remove this special case */
-> +			if (data->soc == SOC_ARCH_EXYNOS5433)
-> +				return 0;
->  
-> -	data->tmu_set_crit_temp(data, temp / MCELSIUS);
-> +			dev_err(&pdev->dev,
-> +				"No CRITICAL trip point defined in device tree!\n");
-> +			return ret;
-> +		}
->  
-> -	clk_disable(data->clk);
-> -	mutex_unlock(&data->lock);
-> +		mutex_lock(&data->lock);
-> +		clk_enable(data->clk);
-> +
-> +		data->tmu_set_crit_temp(data, temp / MCELSIUS);
-> +
-> +		clk_disable(data->clk);
-> +		mutex_unlock(&data->lock);
-> +	}
->  
->  	return 0;
->  }
-> @@ -323,6 +397,37 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
->  	return con;
->  }
->  
-> +static void update_con_reg(struct exynos_tmu_data *data)
-> +{
-> +	u32 val, t_buf_vref_sel, t_buf_slope_sel;
-> +
-> +	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> +	t_buf_vref_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT)
-> +				& EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK;
-> +	t_buf_slope_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT)
-> +				& EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK;
-> +
-> +	val = readl(data->base +  EXYNOSAUTOV920_TMU_REG_CONTROL);
-> +	val &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
-> +	val |= (t_buf_vref_sel << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
-> +	val &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
-> +	val |= (t_buf_slope_sel << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
-> +	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
-> +
-> +	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
-> +	val &= ~(EXYNOSAUTOV920_TMU_NUM_PROBE_MASK << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
-> +	val &= ~(EXYNOSAUTOV920_TMU_LPI_MODE_MASK << EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT);
-> +	val |= (data->sensor_count << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
-> +	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
-> +
-> +	writel(1, data->base + EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL);
-> +	writel(EXYNOSAUTOV920_TMU_AVG_CON_UPDATE, data->base + EXYNOSAUTOV920_TMU_REG_AVG_CONTROL);
-> +	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE,
-> +	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0);
-> +	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE,
-> +	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1);
-> +}
-> +
->  static void exynos_tmu_control(struct platform_device *pdev, bool on)
->  {
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> @@ -354,9 +459,8 @@ static void exynos_tmu_update_temp(struct exynos_tmu_data *data, int reg_off,
->  	u16 tmu_temp_mask;
->  	u32 th;
->  
-> -	tmu_temp_mask =
-> -		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MASK
-> -						: EXYNOS_TMU_TEMP_MASK;
-> +	tmu_temp_mask = (data->soc == SOC_ARCH_EXYNOS7 || data->soc == SOC_ARCH_EXYNOSAUTOV920)
-> +		? EXYNOS7_TMU_TEMP_MASK	: EXYNOS_TMU_TEMP_MASK;
->  
->  	th = readl(data->base + reg_off);
->  	th &= ~(tmu_temp_mask << bit_off);
-> @@ -582,6 +686,68 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
->  	sanitize_temp_error(data, trim_info);
->  }
->  
-> +static void exynosautov920_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
-> +{
-> +	/*
-> +	 * Failing thresholds are not supported on Exynosautov920.
-> +	 * We use polling instead.
-> +	 */
-> +}
-> +
-> +static void exynosautov920_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
-> +{
-> +	/*
-> +	 * Rising thresholds are not supported on Exynosautov920.
-> +	 * We use polling instead.
-> +	 */
-> +}
-> +
-> +static void exynosautov920_tmu_disable_low(struct exynos_tmu_data *data)
-> +{
-> +	/* Again, this is handled by polling. */
-> +}
-> +
-> +static void exynosautov920_tmu_disable_high(struct exynos_tmu_data *data)
-> +{
-> +	/* Again, this is handled by polling. */
-> +}
-> +
-> +static void exynosautov920_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-> +{
-> +	unsigned int idx;
-> +
-> +	for (idx = 0; idx < data->sensor_count; idx++) {
-> +		if (!data->tzd_array[idx])
-> +			continue;
-> +
-> +		exynos_tmu_update_temp(data, EXYNOSAUTOV920_TMU_REG_THRESHOLD(idx), 16, temp);
-> +		exynos_tmu_update_bit(data, EXYNOSAUTOV920_TMU_REG_INTEN(idx), 7, true);
-> +	}
-> +}
-> +
-> +static void exynosautov920_tmu_initialize(struct platform_device *pdev)
-> +{
-> +	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> +	unsigned int val;
-> +
-> +	data->tmu_control(pdev, false);
-> +
-> +	update_con_reg(data);
-> +
-> +	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> +	data->cal_type = TYPE_TWO_POINT_TRIMMING;
-> +	data->slope_comp = (val >> EXYNOSAUTOV920_SLOPE_COMP) & EXYNOSAUTOV920_SLOPE_COMP_MASK;
-> +
-> +	val = readl(data->base + EXYNOSAUTOV920_SENSOR0_TRIM_INFO);
-> +	data->temp_error1 = (val >> EXYNOSAUTOV920_TRIMINFO_25_SHIFT) & EXYNOSAUTOV920_TRIM_MASK;
-> +	data->temp_error2 = (val >> EXYNOSAUTOV920_TRIMINFO_85_SHIFT) & EXYNOSAUTOV920_TRIM_MASK;
-> +
-> +	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_TRIMINFO2);
-> +	val = (val >> EXYNOSAUTOV920_CALIB_SEL_TEMP) & EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK;
-> +
-> +	data->calib_temp = (EXYNOS_SECOND_POINT_TRIM + (20 * val));
-> +}
-> +
->  static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
->  {
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> @@ -633,6 +799,24 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
->  	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
->  }
->  
-> +static void exynosautov920_tmu_control(struct platform_device *pdev, bool on)
-> +{
-> +	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> +	unsigned int con;
-> +
-> +	con = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
-> +
-> +	if (on) {
-> +		con |= BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
-> +		con |= BIT(EXYNOS_TMU_CORE_EN_SHIFT);
-> +	} else {
-> +		con &= ~BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
-> +		con &= ~BIT(EXYNOS_TMU_CORE_EN_SHIFT);
-> +	}
-> +
-> +	writel(con, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
-> +}
-> +
->  static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
->  {
->  	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-> @@ -671,7 +855,7 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *data, unsigned int val,
->  
->  		val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
->  		val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
-> -		if (data->soc == SOC_ARCH_EXYNOS7) {
-> +		if (data->soc == SOC_ARCH_EXYNOS7 || data->soc == SOC_ARCH_EXYNOSAUTOV920) {
->  			val &= ~(EXYNOS7_EMUL_DATA_MASK <<
->  				EXYNOS7_EMUL_DATA_SHIFT);
->  			val |= (temp_to_code(data, temp) <<
-> @@ -703,6 +887,8 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
->  		emul_con = EXYNOS5433_TMU_EMUL_CON;
->  	else if (data->soc == SOC_ARCH_EXYNOS7)
->  		emul_con = EXYNOS7_TMU_REG_EMUL_CON;
-> +	else if (data->soc == SOC_ARCH_EXYNOSAUTOV920)
-> +		emul_con = EXYNOSAUTOV920_TMU_REG_EMUL_CON;
->  	else
->  		emul_con = EXYNOS_EMUL_CON;
->  
-> @@ -756,11 +942,23 @@ static int exynos7_tmu_read(struct exynos_tmu_data *data)
->  		EXYNOS7_TMU_TEMP_MASK;
->  }
->  
-> +static int exynosautov920_tmu_read(struct exynos_tmu_data *data)
-> +{
-> +	return readw(data->base + EXYNOSAUTOV920_CURRENT_TEMP_P1_P0) &
-> +		EXYNOS7_TMU_TEMP_MASK;
-> +}
-> +
->  static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
->  {
->  	struct exynos_tmu_data *data = id;
-> +	int idx;
->  
-> -	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-> +	for (idx = 0; idx < data->sensor_count; idx++) {
-> +		if (!data->tzd_array[idx])
-> +			continue;
-> +
-> +		thermal_zone_device_update(data->tzd_array[idx], THERMAL_EVENT_UNSPECIFIED);
-> +	}
->  
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> @@ -805,6 +1003,19 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
->  	writel(val_irq, data->base + tmu_intclear);
->  }
->  
-> +static void exynosautov920_tmu_clear_irqs(struct exynos_tmu_data *data)
-> +{
-> +	unsigned int idx, val_irq;
-> +
-> +	for (idx = 0; idx < data->sensor_count; idx++) {
-> +		if (!data->tzd_array[idx])
-> +			continue;
-> +
-> +		val_irq = readl(data->base + EXYNOSAUTOV920_TMU_REG_INT_PEND(idx));
-> +		writel(val_irq, data->base + EXYNOSAUTOV920_TMU_REG_INT_PEND(idx));
-> +	}
-> +}
-> +
->  static const struct of_device_id exynos_tmu_match[] = {
->  	{
->  		.compatible = "samsung,exynos3250-tmu",
-> @@ -833,6 +1044,9 @@ static const struct of_device_id exynos_tmu_match[] = {
->  	}, {
->  		.compatible = "samsung,exynos7-tmu",
->  		.data = (const void *)SOC_ARCH_EXYNOS7,
-> +	}, {
-> +		.compatible = "samsung,exynosautov920-tmu",
-> +		.data = (const void *)SOC_ARCH_EXYNOSAUTOV920,
->  	},
->  	{ },
->  };
-> @@ -865,6 +1079,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->  
->  	data->soc = (uintptr_t)of_device_get_match_data(&pdev->dev);
->  
-> +	data->sensor_count = EXYNOS_DEFAULT_SENSOR_COUNT;
-> +
-> +	data->calib_temp = EXYNOS_SECOND_POINT_TRIM;
-> +
->  	switch (data->soc) {
->  	case SOC_ARCH_EXYNOS4210:
->  		data->tmu_set_low_temp = exynos4210_tmu_set_low_temp;
-> @@ -945,6 +1163,19 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->  		data->min_efuse_value = 15;
->  		data->max_efuse_value = 100;
->  		break;
-> +	case SOC_ARCH_EXYNOSAUTOV920:
-> +		data->tmu_set_low_temp = exynosautov920_tmu_set_low_temp;
-> +		data->tmu_set_high_temp = exynosautov920_tmu_set_high_temp;
-> +		data->tmu_disable_low = exynosautov920_tmu_disable_low;
-> +		data->tmu_disable_high = exynosautov920_tmu_disable_high;
-> +		data->tmu_set_crit_temp = exynosautov920_tmu_set_crit_temp;
-> +		data->tmu_initialize = exynosautov920_tmu_initialize;
-> +		data->tmu_control = exynosautov920_tmu_control;
-> +		data->tmu_read = exynosautov920_tmu_read;
-> +		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
-> +		data->tmu_clear_irqs = exynosautov920_tmu_clear_irqs;
-> +		data->sensor_count = EXYNOS_MAX_SENSOR_COUNT;
-> +		break;
->  	default:
->  		dev_err(&pdev->dev, "Platform not supported\n");
->  		return -EINVAL;
-> @@ -952,6 +1183,14 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->  
->  	data->cal_type = TYPE_ONE_POINT_TRIMMING;
->  
-> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
-> +		if (of_property_read_u32(pdev->dev.of_node, "samsung,sensors",
-> +					 &data->sensor_count)) {
-> +			dev_err(&pdev->dev, "failed to get sensor count\n");
-> +			return -ENODEV;
-> +		}
-> +	}
-> +
->  	/*
->  	 * Check if the TMU shares some registers and then try to map the
->  	 * memory of common registers.
-> @@ -1006,7 +1245,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct exynos_tmu_data *data;
-> -	int ret;
-> +	struct thermal_zone_device *tzd;
-> +	int ret, idx;
->  
->  	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->  	if (!data)
-> @@ -1084,11 +1324,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  		goto err_sclk;
->  	}
->  
-> -	data->tzd = devm_thermal_of_zone_register(dev, 0, data,
-> -						  &exynos_sensor_ops);
-> -	if (IS_ERR(data->tzd)) {
-> -		ret = dev_err_probe(dev, PTR_ERR(data->tzd), "Failed to register sensor\n");
-> -		goto err_sclk;
-> +	for (idx = 0; idx < data->sensor_count; idx++) {
-> +		tzd = devm_thermal_of_zone_register(dev, idx, data, &exynos_sensor_ops);
-> +
-> +		if (IS_ERR(tzd)) {
-> +			if (PTR_ERR(tzd) == -ENODEV)
-> +				continue;
-> +
-> +			ret = dev_err_probe(dev, PTR_ERR(data->tzd_array[idx]),
-> +					    "Failed to register sensor\n");
-> +			goto err_sclk;
-> +		}
-> +
-> +		data->tzd_array[idx] = tzd;
->  	}
->  
->  	ret = exynos_thermal_zone_configure(pdev);
-> -- 
-> 2.50.1
+> > > 
+> > > > 
+> > > > > +	else
+> > > > > +		/* In DP mode, the EDID parsing and HPD detection should be supported */
+> > > > > +		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
+> > > > > +
+> > > > > +	bridge->of_node = dp->dev->of_node;
+> > > > > +	bridge->type = DRM_MODE_CONNECTOR_eDP;
+> > > > > +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
+> > > > > +	if (ret)
+> > > > > +		goto err_unregister_aux;
+> > > > > +
+> > > > > +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
+> > > > >    	if (ret) {
+> > > > >    		DRM_ERROR("failed to create bridge (%d)\n", ret);
+> > > > >    		goto err_unregister_aux;
+> > > > 
+> > > 
 > 
+> Best regards,
+> Damon
+> 
+
+-- 
+With best wishes
+Dmitry
