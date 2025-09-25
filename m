@@ -1,111 +1,85 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A38D202C46
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 12:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9D1137923;
+	Thu, 25 Sep 2025 13:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758804991; cv=none; b=pXZGxCsz9KlOOpNrBY0i1oSx+G3UTkCURblT3evWg7nCLBaqwNWfW+PuIIVM/PhxHLykLsnvXyocqGBaLKQJttkmxUYLbxQ1S+N1vTubH5uI4oZOVOEF1DyJuEx7r4Us8OuuqkZXBrk7jEB/fjz0Xln4S89Oysz2Vi0bUFLlSRE=
+	t=1758805607; cv=none; b=hO8HL9U1abxTFJxGUiQFQV0c4enoEx3yYFoWsWoxhcixDQBJjLicFjxr1dhO0m9PuO+zRA00cdZyyzI0M6v92VW/Ws4vq+bxnREo4FGVHym76+WuDqyXuCRb+Tw8FU4AsMPz+5Q43GlEsDUt5BjH7Hw81aBmg/HNDWLZJy2RbP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758804991; c=relaxed/simple;
-	bh=zfRD2NhN+jwJe3TpYl4kyedsa+MtS16LR2jcIuY5Nvo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=IS3n8h9zxiqLPriH+RBUYt0Nd355nlnEH9mcFmtiZ9Sd6Nl1Od40EHHYill5F/fg60eNhQtvT3bGPX6tNZepEGc3PAD/HuYVhhWNxLwH4YVe3wW8Z7BYwb9tPgn4fmxwveqRZ9Sbgx+0W+pu2E9MV5xU5bezQ3TNqwBlh9oZp0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QtbQxVaZ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1758805607; c=relaxed/simple;
+	bh=tqHiPuaWvPkWNyWSejFJnXiHQaUaHLR+Dsrl+qUoonE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YgBw1qsvxeHeB9slQXjQ/EOnGhUxpvNEHuw3QRzq9B9GIgy7H72bgaCgLERfhHXj2jC6Qs9ZYvy2h6hIxHWTy9B6B2lk2eZZPeuS0lb3EoaitPdhOJtwzt/nwG5kfA3MsitV04UiI1kFqviGJMu73RrNcmudcgHie7I8+ttjguE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQrG8RUh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QtbQxVaZ"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250925125626epoutp02f44a3d6b6fd9bc0903527e5b9ee47ba2~oh9EWyQlJ2265422654epoutp02R
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2025 12:56:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250925125626epoutp02f44a3d6b6fd9bc0903527e5b9ee47ba2~oh9EWyQlJ2265422654epoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758804986;
-	bh=emDBLi0S/XbmKkKrMOpftjZrfm/X9R0ePHepVQNumuQ=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQrG8RUh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920D7C113D0;
+	Thu, 25 Sep 2025 13:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758805607;
+	bh=tqHiPuaWvPkWNyWSejFJnXiHQaUaHLR+Dsrl+qUoonE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QtbQxVaZMOTNc9SnArQhy8kECydiSbgkE1EbrdK/+rwbFbGzjCGWD4WyQVJPmIlUX
-	 HItoYfWfS7m53kw74lLQ/vxWMdBbAaEZuFq8/sTQeaRXWDjfAeNEL9P36pCFVF+COD
-	 nhuKf1d36jWfm7Jr80YHl992P7YbebM9tAJq8YuE=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250925125625epcas5p102b8b73d66fa1c644f6d5253a6572ba5~oh9DtWlVI0620606206epcas5p1e;
-	Thu, 25 Sep 2025 12:56:25 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cXYcm6mD9z6B9m5; Thu, 25 Sep
-	2025 12:56:24 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609~oh9CQvnaO2772627726epcas5p1X;
-	Thu, 25 Sep 2025 12:56:24 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250925125620epsmtip23c875d90d5ac17a4285aaef1ddbd0109~oh8__yXQ-1425914259epsmtip2k;
-	Thu, 25 Sep 2025 12:56:20 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, sunyeal.hong@samsung.com,
-	shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, chandan.vn@samsung.com,
-	dev.tailor@samsung.com, karthik.sun@samsung.com, Raghav Sharma
-	<raghav.s@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynosautov920: add CMU_MFC clock DT nodes
-Date: Thu, 25 Sep 2025 18:34:57 +0530
-Message-Id: <20250925130457.3476803-4-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250925130457.3476803-1-raghav.s@samsung.com>
+	b=kQrG8RUhEmZDzFq7uUXrW2aUzU/juCKW/Z0JZX4mnIHFCAL6KODWeh4dB6AQLe6xc
+	 PfTNxofgZFn89DvL3mZLIRwlAly3B2gydD1YejNSWbYD/KV0SDt1uvMcQRRLaMLwtQ
+	 +8sMFXWtkbVqMLsTdaUtt1DH0fVU1UR3YmCk3AgoIJgXuMaLo5iGBTMy8UPyUr2PgM
+	 UQl41Q9MTh7Vn6O08eEOe+v5UjEYvbunuUT6kNGuoHvq1G0jiDKO2C/E8yCaGgHwxB
+	 5Jzp+QsnsbT7ljExB8ER52wfMKfndh3GlRPPivYMCuvdBclDMeUI1o1BCCb5jrtvzR
+	 2wyZH1ZSnLBAg==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jonathan Chocron <jonnyc@amazon.com>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH v10 0/4] PCI: dwc: Add ECAM support with iATU configuration
+Date: Thu, 25 Sep 2025 18:36:36 +0530
+Message-ID: <175880556056.15879.13833041080045099781.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250923-controller-dwc-ecam-v10-0-e84390ba75fa@kernel.org>
+References: <20250923-controller-dwc-ecam-v10-0-e84390ba75fa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609
-References: <20250925130457.3476803-1-raghav.s@samsung.com>
-	<CGME20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609@epcas5p1.samsung.com>
+Content-Transfer-Encoding: 8bit
 
-Add required dt node for CMU_MFC block, which provides
-clocks for MFC IP
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Tue, 23 Sep 2025 16:56:50 +0530, Manivannan Sadhasivam wrote:
+> The current implementation requires iATU for every configuration
+> space access which increases latency & cpu utilization.
+> 
+> Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
+> which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
+> would be matched against the Base and Limit addresses) of the incoming
+> CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index d19d71faa6f8..6ee74d260776 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -1449,6 +1449,19 @@ ufs_0_phy: phy@16e04000 {
- 			status = "disabled";
- 		};
- 
-+		cmu_mfc: clock-controller@19c00000 {
-+			compatible = "samsung,exynosautov920-cmu-mfc";
-+			reg = <0x19c00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_MFC_MFC>,
-+				 <&cmu_top DOUT_CLKCMU_MFC_WFD>;
-+			clock-names = "oscclk",
-+				      "mfc",
-+				      "wfd";
-+		};
-+
- 		pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
+Applied to pci/controller/qcom, thanks!
+
+[1/4] PCI: dwc: Add support for ELBI resource mapping
+      commit: c96992a24beca0768c1c42ad25d6a466e17ec70f
+[2/4] PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'
+      commit: f6fd357f7afbeb34a633e5688a23b9d7eb49d558
+[3/4] PCI: qcom: Prepare for the DWC ECAM enablement
+      commit: 4660e50cf81800f82eeecf743ad1e3e97ab72190
+[4/4] PCI: dwc: Support ECAM mechanism by enabling iATU 'CFG Shift Feature'
+      commit: 0da48c5b2fa731b21bc523c82d927399a1e508b0
+
+Best regards,
 -- 
-2.34.1
-
+Manivannan Sadhasivam <mani@kernel.org>
