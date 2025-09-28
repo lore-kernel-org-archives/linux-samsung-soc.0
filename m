@@ -1,41 +1,41 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8732566E2;
-	Sun, 28 Sep 2025 17:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF2025524C;
+	Sun, 28 Sep 2025 17:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759082236; cv=none; b=kRr6PnOjG7RPbtYvPYwlG/UCuR8uRRoRcn0lukIpEPjqypqFDyY3YRaVjNO2/zjj9VrtYacYiNvrVAZRd8KVytNdz05tlTCKXM0Z6dZ7Y6bMoRHRKXD4sT8K1KO8lHkJq0BK88vMOdhY4RhaSZw8lAFQ3ApJX9HsuSmBEENv8yc=
+	t=1759082243; cv=none; b=H67rzmyXs2EqKbXf8J5WnAkNh1BlNjDZXR5Yi8kLyC1ir990pATYBqjOVRilTSu5n/GRPqkhiVNJLsf0SN1Fmq7uuJunLWYg/gsoEMTPjzZ8TinRk7QkJX+EGk4QNaga1MdzLH1E+WTcW7DdL8eRsfshlEgQfObxSal4abs+2TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759082236; c=relaxed/simple;
-	bh=N2KuE8IJLYc1CcM2YMaHWJDojNGvdBHAkkmTUKtgYiA=;
+	s=arc-20240116; t=1759082243; c=relaxed/simple;
+	bh=jfzyGuj16kMxD/o3zPsHJeSPpMjeWRHQN6zNVt1Jkh0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=T5uL1wBD4/UoqKLzlUZVB0Nwzulto6eT2EPY5gby8udZBt+NDNr6hadtr0IbPCGG33wxVmH0vEka7WOx29KokACEhnUAOD0XTkXcgY+t/u+vVKBuuuc+M6lQsKCRqHav0GWEB7saLd0ZvgkZwBoh4I06FnPdMimmnzGi58FmxJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=VsEY9pZ9; arc=none smtp.client-ip=178.21.23.139
+	 In-Reply-To:To:Cc; b=lQVPphMpsj570Eutw6+PyB88x61yCHhYgg3ls6aAw2bXbmJ9FJ4zoM/6vMejbgiXYRNszcapVP4zNklfUOKIhJneRM7NdJks3rS7Z9veZhUXWb/iRG947KkwgPfmGntcns/zaCupBHypHOxIUH6EURYh8TIA3j6nkww3rFnUbmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=VgdiktBS; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="VsEY9pZ9"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="VgdiktBS"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E3A3B25E06;
-	Sun, 28 Sep 2025 19:57:12 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 7509225E06;
+	Sun, 28 Sep 2025 19:57:19 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id MewRaZEVq18p; Sun, 28 Sep 2025 19:57:12 +0200 (CEST)
+ id ZvRMZfMFsOge; Sun, 28 Sep 2025 19:57:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1759082232; bh=N2KuE8IJLYc1CcM2YMaHWJDojNGvdBHAkkmTUKtgYiA=;
+	t=1759082238; bh=jfzyGuj16kMxD/o3zPsHJeSPpMjeWRHQN6zNVt1Jkh0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=VsEY9pZ9v+qdJP4FUxXvSiJ+nh7qLfxRHWL8I4ZCX+FCZ3bsqo/iT3aBLNa5PVk+f
-	 x1D1xIgzgp8RYjt3rGAPjydBrTKfj9zpXfaFG6BRxA6ZOv0SSCSLJyI3de/A8w8kCw
-	 AspRszAe/JivLKgbbR19HEGZCAqf4b81Rcu0YavVnkN3dcwbACOKPDPfsF1IFgUzL5
-	 3blZgKUM3Nm+t1IF2kSvg3xJCHWgwHKAI3tLVOP0bnSM4/QqyQO15xo/yKbVOQ1lGl
-	 dhVEbgUVDtVQHyApvTobFiKxtQcmRJ8vH04rB6jHsiYAQS8oLjIXcIi7T2f9CHe0yE
-	 LICj0QzNSOB7w==
+	b=VgdiktBSl72VFw/IWBtVXrrPsE8MWYSOm2/16wNQTLgTwNVmDYClEv/9oA8yCbf1f
+	 H7ETQqo592bSnwrlxLVvN9wT2OUB3sjgtlxLaIFFO5++p28D32iGU5ov7vdU8Sy60L
+	 467vRyg0lZjsXD98Rn7W5MLKsrMHNIBYHmGeXfU7qei41I1DLS9+PJYpdG3jcLi1Tk
+	 OS11uwVAarlSQwMyjPx05eztTmLiRY/St5dNT7arPkWJaXGzsNBMBiq6H2hI95y2TH
+	 ksMJCgtm1+/1CbyFSJLydh0msANjGOwuXeddLHMrgtxE/8bQ84vUtlt0/IyD7+K2Nh
+	 rwhmSJvZx8dGw==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Sun, 28 Sep 2025 23:26:35 +0530
-Subject: [PATCH v3 1/6] dt-bindings: samsung: exynos-sysreg: add exynos7870
- sysregs
+Date: Sun, 28 Sep 2025 23:26:36 +0530
+Subject: [PATCH v3 2/6] dt-bindings: soc: samsung: exynos-pmu: allow
+ mipi-phy subnode for Exynos7 PMU
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250928-exynos7870-drm-dts-v3-1-bb7d8e570860@disroot.org>
+Message-Id: <20250928-exynos7870-drm-dts-v3-2-bb7d8e570860@disroot.org>
 References: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
 In-Reply-To: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -52,36 +52,36 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759082219; l=1199;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759082219; l=1058;
  i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=N2KuE8IJLYc1CcM2YMaHWJDojNGvdBHAkkmTUKtgYiA=;
- b=b/0m/d5eGFNSuXWC0fmefe6j6ak8+P9wVRNEwC0z7BsTBtah+0Ri6dg/wUPaPlYwlFNcLcfnH
- LyEbjTADMWdDNGDy5UkmpgI8mk3XxHqjNhLLmZ49goCJaJB0dobG/uT
+ bh=jfzyGuj16kMxD/o3zPsHJeSPpMjeWRHQN6zNVt1Jkh0=;
+ b=eTef1nL0ejalqzBBewnKa6qqmug2JuyYhRuwquEuDfJCZjhroidGH7MKIb8QsYFz3OUuV9T+Q
+ mSG3NbGhQ5iDQzSWXU7ICRW+Zb6hsyBDVu5M8B8kyW9ykG3u0Z/dstx
 X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
  pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Add sysreg compatible strings for the Exynos7870 SoC. Two sysregs are
-added, used for the SoC MIPI PHY's CSIS and DSIM blocks.
+Add Exynos7's PMU compatible to the list of nodes which allow a MIPI
+PHY driver. This helps defining the phy node on SoC DTSIs such as
+exynos7870's as it has a compatibility fallback on Exynos7's PMU (and
+others in future if support is added).
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml          | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index d8b302f975474a87e4886006cf0b21cf758e4479..dd88f40a032c1e4e492dacf34a1eed27ee79976b 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -26,6 +26,8 @@ properties:
-               - samsung,exynos3-sysreg
-               - samsung,exynos4-sysreg
-               - samsung,exynos5-sysreg
-+              - samsung,exynos7870-cam0-sysreg
-+              - samsung,exynos7870-disp-sysreg
-               - samsung,exynos8895-fsys0-sysreg
-               - samsung,exynos8895-fsys1-sysreg
-               - samsung,exynos8895-peric0-sysreg
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index f0fb24156da9b8980dcfd5339ae75f12a71cf6d6..9293c5eeaaedf1704a48c19226d35d183d34fcd1 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -172,6 +172,7 @@ allOf:
+               - samsung,exynos5250-pmu
+               - samsung,exynos5420-pmu
+               - samsung,exynos5433-pmu
++              - samsung,exynos7-pmu
+     then:
+       properties:
+         mipi-phy: true
 
 -- 
 2.51.0
