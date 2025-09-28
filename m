@@ -1,143 +1,75 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F23256C87;
-	Sun, 28 Sep 2025 17:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BFF255E53
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Sep 2025 21:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759082271; cv=none; b=nWMB6F6dI93ksZ1GYkZKwIriqr4KlhRmCA8NR6lJohpmk3iNd6f5cnX9ypfBvEIf0F9koQ9HMuPeXwdd1XbUyAEwdc9HY+9V5yYZ/A1dXD9OMW4N8YBbRhfrm/43PusTcHxyXpyvB0cN5dAUSe/4BrwTFmvs5Wdc962OJQhyagY=
+	t=1759096580; cv=none; b=bvP3zMDRj07FLR9MnD447VFqpLXBztzinu4fHiYGGVl3G74uKyBLGA+PYcOM17ipN3lVz66cqLSNwuaQrxB5oJkoF1fv/EhVLFasLTj8OWCiFqI2bbKLVCFLfztMsRqpyVmdLZ/k5F5pTY1GMZdRtdy6dz/HvnwkxFBIJQ4mapM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759082271; c=relaxed/simple;
-	bh=G8POg89qhc3YFRtRay2TG6zhQ5wGIWVmGavGeCYc1jg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JoiVo+XHK7TM5B9KlUcbE7sVG8++m19OAO7+aLeksAuKBRqj5yOJ4d2e7dcrCQVKJnKV79SiiwqWdgLunMNj3LpxiC04T1i+5GR0PZDTtD18zj5IfVrqdnEGc54TjYi/piqOusy93QMvkv3oEVcQ4aUnfOsgaaT2KW1eozSmNWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=avOpMxva; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1759096580; c=relaxed/simple;
+	bh=Ag5OJvTMxXJDeRviaTg2QX6h5X6prtIOT5+vV3Pl5pc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MIyXU5pKi6z8hK17I8D1Dg/MHhzHh6rd6F1BTdxYd4a2U6P7blIcXbOk8IQK9fA1esFT/c3geAeAI9YyCXalwSutF9uXl4rXIllxwbN2ZDi0EoZbwvXWOSvz9LM2GmSnrNHxnxYpCaIschnDKYYVffbMrJxW9fcZBqW8g1M5Wjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAWZuSOY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="avOpMxva"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 311BD26151;
-	Sun, 28 Sep 2025 19:57:48 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 5jDSkinZ6OKr; Sun, 28 Sep 2025 19:57:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1759082267; bh=G8POg89qhc3YFRtRay2TG6zhQ5wGIWVmGavGeCYc1jg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=avOpMxvagnWapndS0g6pkU9rOzu32Ge0/JqVNiSg3Mhadtw5QIjgH0FnmGeTHnVoN
-	 VLEV6c/dT/+UWJB9GpOgjebZVJtq1KldJs01HTIUD910mxozBOeND+w1yd3WLz4OO2
-	 B/GGCP6EqjBiutggRBWs/CBFE+GkU2keCncqJfxmicNmlbtZjoP+b/pfB7s2A/stLs
-	 WilxswbPT2xx6tNvaquQ+LzAAkGc+HoHkpFY9lDBcVgFqIOCFXH3NN4UI8+GTidGO+
-	 aGZgiVMl47a3/SqGsYduly+ZJLo3fTeDoiYSZ5Vg6582JbLXp/7y3CZZoHa9DyUGB9
-	 kk/Ki9vyra6ow==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Sun, 28 Sep 2025 23:26:40 +0530
-Subject: [PATCH v3 6/6] arm64: dts: exynos7870-j6lte: enable display panel
- support
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAWZuSOY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DDBC16AAE
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Sep 2025 21:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759096580;
+	bh=Ag5OJvTMxXJDeRviaTg2QX6h5X6prtIOT5+vV3Pl5pc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UAWZuSOYJ3j9hQ0fWorFNYqEBsdus6cRQrTLw3KiJj0mUCPOHD22dEawatpChR7pL
+	 zzbOi1CxWDKrhE1/uMPXpHeGXxzlcoWg31PTg/0mhiHowjY9JWhKlOVB0dfgyT8r+B
+	 53D4w/py+/LWGXEmrea0tuBb9gBTJU2R3A6C2tXCuoUOlh/RLJeM64TfpFFdhBn7Rt
+	 N5PgqfNxjfRR0hMe9oUSTb7aBpy3wt7e9GFJ3qToxV/wx8xQcyyXRTCrYUwfZgrhSQ
+	 AurjXItdn4/usrZ0TYB4UoDcOisUFS6GAtc4AvlClRMKdDqH27RmO1Doq4Le02wZQ0
+	 OGXH6+fNP4Xpg==
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27c369f898fso43327975ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Sep 2025 14:56:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX92o0F+9/h/+H12Li9aTULCDbcBQYTN7hW4qmJ6sc9PvliYfa9fTiXhjaWfbu+cBRLoKpj5tCa3uLNLZbU7a+NMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrdAFM6JmRnH7QJXj7mfVwD8N6yVrv/YWu9+FAidaxNyGK2/sD
+	hJpAOzNfe8fWoFf9PGzPGubtjtWy5f+o3PSgc4va2Gj+RrSDczvKJvvWJEOyMiGzOOkvCW7PEwT
+	9ONpplIv0THniLi4yfmtxwjuF6GJGve0=
+X-Google-Smtp-Source: AGHT+IEmvEYVOc//pmIHeQbDnEcLXjslRWP9TUnzYJfx2tg/laNf7LCCb9RFTpKOInRVNDKY0Rk2d9ibGpbC2jNixjo=
+X-Received: by 2002:a17:903:1aeb:b0:27e:e77f:57f3 with SMTP id
+ d9443c01a7336-27ee77f5934mr118692055ad.14.1759096579693; Sun, 28 Sep 2025
+ 14:56:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250928-exynos7870-drm-dts-v3-6-bb7d8e570860@disroot.org>
-References: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
-In-Reply-To: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759082219; l=1965;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=G8POg89qhc3YFRtRay2TG6zhQ5wGIWVmGavGeCYc1jg=;
- b=yWWgBnadulfkxT6DEECzwI8LcB08R6butKr1fh8Ucd/eC0QfgCDlbARd9CHx+0r8IKeV4b1Gx
- zUpkQ9zSo+lAnwbGwQky/XHHTa110+oGWMw/zmHwFA3XAXUvXQkHZpi
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+References: <20250928-exynos7870-dt-fixes-v1-0-a40e77a73f16@disroot.org> <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
+In-Reply-To: <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 29 Sep 2025 06:56:08 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
+X-Gm-Features: AS18NWBY-JzZiyqDsQSGva_Q19zCpOwf1vpPOKC71sJ3_Roa16ez0Y1PkZhVmYM
+Message-ID: <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
+Subject: Re: [PATCH 1/7] arm64: dts: exynos7870: relocate ${x}-names property
+ after ${x}
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable DECON and DSI nodes, and add the compatible display panel and
-appropriate panel timings for this device. Also, remove the
-simple-framebuffer node in favor of the panel.
+On Mon, 29 Sept 2025 at 01:44, Kaustabh Chakraborty
+<kauschluss@disroot.org> wrote:
+>
+> All ${x}-names properties are conventionally placed after their
+> corresponding ${x} properties. For instance, 'clock-names' must follow
+> 'clocks', 'interrupt-names' must follow 'interrupts'. Make necessary
+> changes to follow said convention. No functional changes made.
+>
 
-This device has a 720x1480 AMOLED Samsung AMS561RA01 panel with
-S6E8AA5X01 controller.
+I don't intend to take such cosmetic changes, because they interfere
+with stable back porting, unless we have a tool for such cleanup. Did
+you use my prototype tool for that or some other tool?
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts | 38 ++++++++++++++++---------
- 1 file changed, 24 insertions(+), 14 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-index b8ce433b93b1b488da31bbe4846f8092243611ad..f92e1f8fabf3e01b69583f82cf842178a21002a2 100644
---- a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-@@ -27,20 +27,7 @@ aliases {
- 	};
- 
- 	chosen {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges;
--
- 		stdout-path = &serial2;
--
--		framebuffer@67000000 {
--			compatible = "simple-framebuffer";
--			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
--			width = <720>;
--			height = <1480>;
--			stride = <(720 * 4)>;
--			format = "a8r8g8b8";
--		};
- 	};
- 
- 	gpio-hall-effect-sensor {
-@@ -119,8 +106,9 @@ ramoops@46e00000 {
- 			pmsg-size = <0x4000>;
- 		};
- 
--		framebuffer@67000000 {
-+		cont_splash_mem: framebuffer@67000000 {
- 			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			iommu-addresses = <&decon 0x67000000 (720 * 1480 * 4)>;
- 			no-map;
- 		};
- 	};
-@@ -133,6 +121,28 @@ vibrator {
- 	};
- };
- 
-+&decon {
-+	memory-region = <&cont_splash_mem>;
-+
-+	status = "okay";
-+};
-+
-+&dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,burst-clock-frequency = <500000000>;
-+	samsung,esc-clock-frequency = <16000000>;
-+	samsung,pll-clock-frequency = <26000000>;
-+
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "samsung,s6e8aa5x01-ams561ra01";
-+		reg = <0>;
-+	};
-+};
-+
- &gpu {
- 	status = "okay";
- };
-
--- 
-2.51.0
-
+Best regards,
+Krzysztof
