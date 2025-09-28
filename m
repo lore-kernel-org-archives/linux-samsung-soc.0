@@ -1,116 +1,93 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87346200C2;
-	Sun, 28 Sep 2025 07:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA762165EA
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Sep 2025 07:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759043086; cv=none; b=utbDAPAkHIpsMY8BwroWXkU/Ibqj3bvlBkylNO5XPMZR8u2ZECdpE1AYFAOOl3/kxdoDc/m1nb4q+IJRWiP9O7DPI1QORfelEHdhg2k5mwe95zuUx8njXqlbL+agKIJTPidQ1IHEId/KQEjs4vTlyjYJ/sEl/855SHa5PABGg9o=
+	t=1759045752; cv=none; b=PZqBSwgvi6yHWMlL3hSPMqkpTjnyHqyXoLLMf05olY5rJzctdr700QV/L3c1C0sAcuFwdeRFGA0qs9xAFx8Wv3ML0Pk6cW7CAMsPlERwbxYhBFi+ymr1yV/3HmeJKcijtO8MVd1f0BIzAUjAyFGjtviD4o1GAyqAEs9QnFugOXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759043086; c=relaxed/simple;
-	bh=wh3jIY7ic2TbFwR0SQf2ct+jaUIfyaJP+Ktg1Y+IC0E=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=XpII7ylySTN5OgXtBEnkC5Oiw8wpci43Yn0fh2Q6r2IRuLCRguQPNGOd6fQdfhZOCuJxIB89mW9IUZadu19fb11Qvfklqq41IyglA7yEyDtEPrqHclSKSmGoBa2RVuFS/O2B6dlUDYz3HpP0oOpRI+cwAjEc0BsxXpHIf/b2IHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowADXK5713dhohiDrBw--.18611S2;
-	Sun, 28 Sep 2025 15:04:25 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	semen.protsenko@linaro.org,
-	peter.griffin@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] soc: samsung: exynos-pmu: fix reference leak in exynos_get_pmu_regmap_by_phandle()
-Date: Sun, 28 Sep 2025 15:04:19 +0800
-Message-Id: <20250928070419.39881-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowADXK5713dhohiDrBw--.18611S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF1xAr18WF4DCr4kZFy5Jwb_yoW8KF1Upr
-	WrJaySkrWkGrWvkrWvqr4jvFW3u34I939Y9a4xC34q93ZYqFySyryUGFy8Zas8Ary8JF15
-	tF12yFy8GFyUAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
-	v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoZ2-UUUU
-	U
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1759045752; c=relaxed/simple;
+	bh=j3c7FouKL5skROTw/0AZy7/egEPuFd8LTlkjIptlo8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TxP8XL3C9AplCWfClAQf4N1SWqpOYIdqigI/iGeeYjGjgoi9qNqC1wzmuhMCFMbfsXZc5SpUW0nlwd1OLBp/6BAU4wg7nlarUtM6AsoGAgXvqTxbKmogxy6DKq7vAuA27xkunP/qpvCIbmnJEkGsrn7YkxOKl5Z5xhhPsCLij9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TH0tUPNW; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TH0tUPNW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFF0C116C6
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Sep 2025 07:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759045752;
+	bh=j3c7FouKL5skROTw/0AZy7/egEPuFd8LTlkjIptlo8M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TH0tUPNWOXiE9Yp0HNfjHiCRzHo6Xl8G3gaMO4RDp2sCiKLgFUhIt0HG9LxAgmfQO
+	 U9ppC8IzQVY/xYHAoNSHkRqF7Rp+07O4Dc6/pVAwVazYaxKkV96kIrMP43Vkml2VGS
+	 3TuHYQi+n2bHCe41nLm1h1w+yBMGnpudw1aoe3wHOVkwueF92loin9Yb/z0Ctbf5Oi
+	 V2vcZ7tk3RQ+35l3gbvR1p9MzopeJ5fTad16AiYYUibvnzLUp8m2ctMdz0stJSfKFB
+	 zbV4FQ1a4kZYzyop773GUltVKgLn8jMoRTbo6p3+qvvRUf9I97KZpBfrwlbDf70kXi
+	 9QDa8cSECKbdA==
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27d3540a43fso39226675ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Sep 2025 00:49:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCKIs46QD8B9U9rMaJ+74+Nu0NrmPK8ozPJRLvXBW93FMMcKbtAwvHdpOxw3mXd+P7srpENneGWLDLT/tCxdbYBg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2VuWRNtFSqJ7SmqUHdMLPcfRU9GUpne5p8ejM5nSVH1IWZjif
+	HA2/g/QdzLBbl0UGy0tBPXMakzRTZBRHB83EvYWqq7ylQ682JTDjK1ophfKDkLPIoD8dwBApcd5
+	wRAKtK0vNhbeUgrflQUuf/2Ti8QIK+rg=
+X-Google-Smtp-Source: AGHT+IFpUdHB/+CVUZHfkEdJ2POKP1ak1+lRPx1y5PN9kbJW6f15ZFTm715q2PK5y2cB/xO4zd6cpfsv/m5ADSjkezo=
+X-Received: by 2002:a17:902:f708:b0:27e:eabd:4b41 with SMTP id
+ d9443c01a7336-27eeabd4ef9mr90231205ad.7.1759045752063; Sun, 28 Sep 2025
+ 00:49:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250928070419.39881-1-make24@iscas.ac.cn>
+In-Reply-To: <20250928070419.39881-1-make24@iscas.ac.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sun, 28 Sep 2025 16:49:00 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPcFzHYV0YWmWqA_ZoMBFyNSOjizBJi1-qLR73dPO0-qtg@mail.gmail.com>
+X-Gm-Features: AS18NWCp5rbiQcjWZ6kRZR2AsSbwoNU0TngRkgKvQDxBcN8z2LXAnpJLBfP7Ulw
+Message-ID: <CAJKOXPcFzHYV0YWmWqA_ZoMBFyNSOjizBJi1-qLR73dPO0-qtg@mail.gmail.com>
+Subject: Re: [PATCH v2] soc: samsung: exynos-pmu: fix reference leak in exynos_get_pmu_regmap_by_phandle()
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: alim.akhtar@samsung.com, semen.protsenko@linaro.org, 
+	peter.griffin@linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In exynos_get_pmu_regmap_by_phandle(), driver_find_device_by_of_node()
-utilizes driver_find_device_by_fwnode() which internally calls
-driver_find_device() to locate the matching device.
-driver_find_device() increments the reference count of the found
-device by calling get_device(), but exynos_get_pmu_regmap_by_phandle()
-fails to call put_device() to decrement the reference count before
-returning. This results in a reference count leak of the device each
-time exynos_get_pmu_regmap_by_phandle() is executed, which may prevent
-the device from being properly released and cause a memory leak.
+On Sun, 28 Sept 2025 at 16:04, Ma Ke <make24@iscas.ac.cn> wrote:
+>
+> In exynos_get_pmu_regmap_by_phandle(), driver_find_device_by_of_node()
+> utilizes driver_find_device_by_fwnode() which internally calls
+> driver_find_device() to locate the matching device.
+> driver_find_device() increments the reference count of the found
+> device by calling get_device(), but exynos_get_pmu_regmap_by_phandle()
+> fails to call put_device() to decrement the reference count before
+> returning. This results in a reference count leak of the device each
+> time exynos_get_pmu_regmap_by_phandle() is executed, which may prevent
+> the device from being properly released and cause a memory leak.
+>
+> Since Exynos-PMU is a core system device that is not unloaded at
+> runtime, and regmap is created during device probing, releasing the
+> temporary device reference does not affect the validity of regmap.
+> From the perspective of code standards and maintainability, reference
+> count leakage is a genuine code defect that should be fixed. Even if
+> the leakage does not immediately cause issues in certain scenarios,
+> known leakage points should not be left unaddressed.
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 0b7c6075022c ("soc: samsung: exynos-pmu: Add regmap support for SoCs that protect PMU regs")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v2:
+> - modified the typo of the variable in the patch. Sorry for the typo;
 
-Since Exynos-PMU is a core system device that is not unloaded at
-runtime, and regmap is created during device probing, releasing the
-temporary device reference does not affect the validity of regmap.
-From the perspective of code standards and maintainability, reference
-count leakage is a genuine code defect that should be fixed. Even if
-the leakage does not immediately cause issues in certain scenarios,
-known leakage points should not be left unaddressed.
 
-Found by code review.
+So it wasn't ever built. It's not a typo, it's lack of compiling, I do
+not take such patches.
 
-Cc: stable@vger.kernel.org
-Fixes: 0b7c6075022c ("soc: samsung: exynos-pmu: Add regmap support for SoCs that protect PMU regs")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the typo of the variable in the patch. Sorry for the typo;
-- added more detailed description.
----
- drivers/soc/samsung/exynos-pmu.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index a77288f49d24..b80cc30c1100 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -302,6 +302,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- {
- 	struct device_node *pmu_np;
- 	struct device *dev;
-+	struct regmap *regmap;
- 
- 	if (propname)
- 		pmu_np = of_parse_phandle(np, propname, 0);
-@@ -325,7 +326,10 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--	return syscon_node_to_regmap(pmu_np);
-+	regmap = syscon_node_to_regmap(pmu_np);
-+	put_device(dev);
-+
-+	return regmap;
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
--- 
-2.17.1
-
+You didn't respond to my review, so same comments as before.
