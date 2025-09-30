@@ -1,47 +1,47 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B162405E3
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 03:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD16924678D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 03:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759204527; cv=none; b=QFmB4+tJZ/HiQEUi5jxJfQR7R4ztVOsXd/Zi2uvAV0VfBcXgsFTdkb0bi/EzVZR9JXBriCBqcngr1gD9Ju+0AWyk9vmZqB6bLdiueN+viiB3FlqNB8+U0quSKKRQ6z6vmG6e+cXusWujxqcPfqLUcXcoxA/S1CWcWkBhUtVLHI0=
+	t=1759204530; cv=none; b=qDjQdLgDNi+iltvaKHxykYeo/MKKi7vPDWkAeIB3Cpik4i/ZwFgx6HVRWqic7sIs0TNyMZ73XEdnuxRUAiNH4NXgo4ZH/MAmuL7DHFn5XAEfwBYaH/Jcoa89J/AybwG0QJtf6EK0LW+Tj6D2bR+OISQThcQVOGeNpj2nqrOCkwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759204527; c=relaxed/simple;
-	bh=/bZiWZ58aCldGJC8t/nRfCKBq5N7NH0IgEUv4RdZGEI=;
+	s=arc-20240116; t=1759204530; c=relaxed/simple;
+	bh=/rr6fkKgpyd9I1sGDA1z4qN/504HunCyZVLAJ9zIIVY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=gcO597SLV7vd0M5eMK4wVE0sBwa4ByUsCWQcOari9x/4ZQ9tpPByzAEcaZUsltIMptB3yv0PCwbfszQAcJVhPAP3NYwrEgi9K7qeeIqy4HsXbK2aRV1e895bPFQzahlgqIAyVMF1YweeL2LZLy0G0knF7FhVyfr46zPJyp9jSV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ifyQouFS; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=LP7baG2FED6saXK3YGXPAH+knXqKAbAjDpxdIK0Zvml/SyTAfiGuF7R6F2t65SHKXhVGALeb7PsbvOOqFhZKgt0ZLBVYqGeGUOAYLWFpOcR/IKbUamFjLG/OsGSTFCKYgBHtRSo4U9lipatm31sIeNGoDhqsnNe65U9WOs1/O2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kEIXz/O3; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ifyQouFS"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250930035523epoutp0409bad0ec35a3a40f652d77ff720a5568~p8zF_mjZB1826818268epoutp049
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 03:55:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250930035523epoutp0409bad0ec35a3a40f652d77ff720a5568~p8zF_mjZB1826818268epoutp049
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kEIXz/O3"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250930035527epoutp01da90886807ee6614d22df52d1444a1f3~p8zJlyRU82952029520epoutp01R
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 03:55:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250930035527epoutp01da90886807ee6614d22df52d1444a1f3~p8zJlyRU82952029520epoutp01R
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759204523;
-	bh=OAKHIMC+SGgb607BRAlenii1CobqGR9qOX07bcaTIu0=;
+	s=mail20170921; t=1759204527;
+	bh=BSBr8yFx9WBcmfMiEeqIr3+j6OCPbBkalNH3vdDG14M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ifyQouFSGONTM7Qqzq+msnwCGfAhGfONx4PDxuP83CVvFnrzLo8TvsZjFHNq+mhdA
-	 ouTs1fgA0IQeOUghS71iWxf/2PjnCqo09nBN+wSAwoLU8e71ZQUg1qmEuWpLu7AEgb
-	 T408bQus/Cr4pQrlUmbH6ztIxLJVLJKu6TiHikcA=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250930035523epcas5p23c238981ff1efe5bf2c24f04766373e8~p8zFo_kiA2195921959epcas5p2G;
-	Tue, 30 Sep 2025 03:55:23 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cbPN967Dtz3hhT3; Tue, 30 Sep
-	2025 03:55:21 +0000 (GMT)
+	b=kEIXz/O3A8tkbLbzJPRO6wiYUQHzdo77H4KcE75DCx35tPFw6mo1riaoGewGVUc7w
+	 Yrjuvfyo4nfHpS2jq3NIecUHDQYjx4jNCZoReD9IleBJkNpcMMQXi/BsvEbxmN7XEl
+	 1hKDEdiDncHVHiUgYlzODMIR8X7799XWo2DuT0Xg=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250930035526epcas5p41bc3d59b8653b402b3d5f9d419e645ec~p8zJG7qMb2319723197epcas5p40;
+	Tue, 30 Sep 2025 03:55:26 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cbPNF54QMz2SSKb; Tue, 30 Sep
+	2025 03:55:25 +0000 (GMT)
 Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250930035521epcas5p428367b20b9498eb8862d17f4bb75f663~p8zEG_8yz2319723197epcas5p4h;
-	Tue, 30 Sep 2025 03:55:21 +0000 (GMT)
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250930035525epcas5p3a1238a3a7bc6e52113838397187e36ba~p8zHi0lrJ2823728237epcas5p3Y;
+	Tue, 30 Sep 2025 03:55:25 +0000 (GMT)
 Received: from bose.samsungds.net (unknown [107.108.83.9]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250930035518epsmtip13069665488924124e1d46773ced32431~p8zBxTW5-2942629426epsmtip1Q;
-	Tue, 30 Sep 2025 03:55:18 +0000 (GMT)
+	20250930035521epsmtip124585f13192326b1a3573b5d5d6e8b01~p8zEagPfI2885328853epsmtip1I;
+	Tue, 30 Sep 2025 03:55:21 +0000 (GMT)
 From: Himanshu Dewangan <h.dewangan@samsung.com>
 To: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
 	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
@@ -51,10 +51,10 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
 	linaro-mm-sig@lists.linaro.org, Himanshu Dewangan <h.dewangan@samsung.com>
-Subject: [PATCH 01/29] dt-bindings: media: mfc: Add Exynos MFC devicetree
- binding
-Date: Tue, 30 Sep 2025 09:33:20 +0530
-Message-Id: <20250930040348.3702923-2-h.dewangan@samsung.com>
+Subject: [PATCH 02/29] arm64: dts: mfc: Add MFC device tree for Auto V920
+ SoC
+Date: Tue, 30 Sep 2025 09:33:21 +0530
+Message-Id: <20250930040348.3702923-3-h.dewangan@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250930040348.3702923-1-h.dewangan@samsung.com>
 Precedence: bulk
@@ -64,137 +64,242 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250930035521epcas5p428367b20b9498eb8862d17f4bb75f663
+X-CMS-MailID: 20250930035525epcas5p3a1238a3a7bc6e52113838397187e36ba
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250930035521epcas5p428367b20b9498eb8862d17f4bb75f663
+X-CMS-RootMailID: 20250930035525epcas5p3a1238a3a7bc6e52113838397187e36ba
 References: <20250930040348.3702923-1-h.dewangan@samsung.com>
-	<CGME20250930035521epcas5p428367b20b9498eb8862d17f4bb75f663@epcas5p4.samsung.com>
+	<CGME20250930035525epcas5p3a1238a3a7bc6e52113838397187e36ba@epcas5p3.samsung.com>
 
 From: Nagaraju Siddineni <nagaraju.s@samsung.com>
 
-Introduce a new DT binding file for exynos-mfc
+Introduce the device‑tree entries for the Samsung Exynos AUTO V920
+multimedia‑function controller (MFC). The patch defines:
+- Reserved memory regions for firmware and CMA buffers.
+- Core0 and Core1 memory mappings.
+- The main MFC node with basic properties (compatible, reg, interrupts,
+  clocks, DMA window, firmware name, debug mode, etc.).
+- Per‑core sub‑nodes (MFC‑0 and MFC‑1) with their own sysmmu,
+  firmware region, and configuration parameters.
+- Resource table listing supported codecs and their capabilities.
 
-Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-which describes the Exynos Multi‑Format Codec (MFC) IP.  The schema
-covers the core node properties, required fields, and provides an
-example snippet.
+Adds full support for the V920 MFC hardware to the mainline kernel
+device‑tree, enabling proper memory allocation, interrupt handling and
+codec operation on this platform.
 
-Signed-off-by: Himanshu Dewangan <h.dewangan@samsung.com>
 Signed-off-by: Nagaraju Siddineni <nagaraju.s@samsung.com>
+Signed-off-by: Himanshu Dewangan <h.dewangan@samsung.com>
 ---
- .../bindings/media/samsung,exynos-mfc.yaml    | 77 +++++++++++++++++++
- MAINTAINERS                                   | 10 +++
- 2 files changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
+ .../dts/exynos/exynosautov920-evt2-mfc.dtsi   | 187 ++++++++++++++++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |   1 +
+ 2 files changed, 188 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-evt2-mfc.dtsi
 
-diff --git a/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-evt2-mfc.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-evt2-mfc.dtsi
 new file mode 100644
-index 000000000000..fbed987fb9cf
+index 000000000000..49c61958467e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/samsung,exynos-mfc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/arch/arm64/boot/dts/exynos/exynosautov920-evt2-mfc.dtsi
+@@ -0,0 +1,187 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SAMSUNG EXYNOS AUTO V920 SoC MFC device tree source
++ *
++ * Copyright (c) 2025 Samsung Electronics Co., Ltd.
++ *              http://www.samsung.com
++ */
 +
-+title: Samsung Exynos Multi Format Codec (MFC)
++#define MFC_CORE0_MEM_ADDR      0xE9C00000
++#define MFC_CORE1_MEM_ADDR      0xEFB00000
++#define MFC_CMA_MEM_ADDR        0xB0000000
++#define MFC_CMA_MEM_SIZE        0x040000000  /* 64MB */
++#define MFC_FW_MEM_ADDR         0x9F000000
++#define MFC_FW_MEM_SIZE         0x00800000  /* 8MB */
++#define MFC_MEM_SIZE            0x00100000  /* 1MB */
 +
-+maintainers:
-+  - Nagaraju Siddineni <nagaraju.s@samsung.com>
-+  - Himanshu Dewangan <h.dewangan@samsung.com>
++/ {
++reserved_memory: reserved-memory {
++	#address-cells = <2>;
++	#size-cells = <2>;
++	ranges;
 +
-+description:
-+  Multi Format Codec (MFC) is the IP present in Samsung SoCs which
-+  supports high resolution decoding and encoding functionalities.
++	mfc_fw_rmem: mfc_fw_rmem@9f000000 {
++		compatible = "shared-dma-pool";
++		reg = <0x0 MFC_FW_MEM_ADDR 0x0 MFC_FW_MEM_SIZE>;
++		alignment = <0x0 0x00010000>;
++		reusable;
++	};
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - samsung,exynos-mfc            # Exynos920
-+          - samsung,mfc_core0_mem         # Reserved Memory
-+          - samsung,mfc_core1_mem         # Reserved Memory
++	mfc_buf_rmem: mfc_buf_rmem {
++		compatible = "shared-dma-pool";
++		reg = <0x0 MFC_CMA_MEM_ADDR 0x0 MFC_CMA_MEM_SIZE>;
++		alignment = <0x0 0x00010000>;
++		reusable;
++		linux,cma-default;
++	};
 +
-+  power-domains:
-+    maximum: 1
++	mfc_core0_mem: mfc_core0_mem@e9c00000 {
++		compatible = "samsung,mfc_core0_mem";
++		reg = <0x0 MFC_CORE0_MEM_ADDR 0x0 MFC_MEM_SIZE>;
++	};
 +
-+  memory-region:
-+    minimum: 1
-+    maximum: 2
++	mfc_core1_mem: mfc_core1_mem@efb00000 {
++		compatible = "samsung,mfc_core1_mem";
++		reg = <0x0 MFC_CORE1_MEM_ADDR 0x0 MFC_MEM_SIZE>;
++	};
++};
 +
-+additionalProperties: true
++	mfc: mfc@19cd0000 {
++		/* Basic setting */
++		compatible = "samsung,exynos-mfc";
 +
-+patternProperties:
-+  "^mfc_core[0-9]$":
-+    type: object
-+    properties:
-+      compatible:
-+        enum:
-+          - samsung,exynos-mfc-core
-+      reg:
-+        maximum: 1
-+      interrupts:
-+        maximum: 1
-+      clocks:
-+        minimum: 1
-+        maximum: 1
-+      clock-names:
-+        items:
-+          - const: aclk_mfc
++		reg = <0x0 0x19CD0000 0x0 0x10000>;
++		interrupts = <GIC_SPI 653 IRQ_TYPE_LEVEL_HIGH>;
++		clock-names = "aclk_mfc";
++		clocks = <&cmu_top 1900>;
 +
-+    required:
-+      - compatible
-+      - reg
-+      - clocks
-+      - clock-names
-+      - interrupts
++		/* for vb2 device */
++		samsung,tzmp;
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    mfc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+        compatible = "samsung,exynos-mfc";
-+        mfc_core0: MFC-0@19cd0000 {
-+          #address-cells = <2>;
-+          #size-cells = <2>;
-+          compatible = "samsung,exynos-mfc-core";
-+          reg = <0x0 0x19ED0000 0x0 0x10000>;
-+          interrupts = <GIC_SPI 660 IRQ_TYPE_LEVEL_HIGH>;
-+          power-domains = <&pd_mfc>;
-+          clocks = <&cmu_top 2000>;
-+          clock-names = "aclk_mfc";
-+          };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 156fa8eefa69..e47016804ac8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3374,6 +3374,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
- F:	drivers/media/platform/samsung/s5p-mfc/
++		/* for F/W buffer to support 36bit-DMA */
++		memory-region = <&mfc_fw_rmem &mfc_buf_rmem>;
++
++		/* MFC DMA bit (32 or 36) */
++		dma_bit_mask = <32>;
++
++		/* MFC version */
++		ip_ver = <0x1600010C>;
++
++		/* MFC firmware name */
++		fw_name = "mfc_fw_v16.0.bin";
++
++		/* Debug mode */
++		debug_mode = <1>;
++
++		/* Features <on/off version> */
++		mem_clear = <1 0x0>;
++		/* Support from v11.0 (except 11.2) */
++		wait_fw_status = <1 0x190122>;
++
++		/* Scheduler 0: round-robin, 1: PBS */
++		scheduler = <1>;
++		/* The number of priority in PBS */
++		pbs_num_prio = <1>;
++
++		/* MFC IOVA threshold (MB) */
++		iova_threshold = <1700>;
++
++		/* Sub nodes for MFC core */
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		/*
++		 * Resource of standard
++		 * <codec num>		MFC_REG_CODEC_XXX
++		 * <op core type>	0: MFC only, 1: MFD only, 2: ALL
++		 * <max Kbps>		245760: 240Mbps, 122880: 120Mbps, 81920: 80Mbps
++		 */
++		mfc_resource {
++			/* codec name	{ codec mode, op core type, max Kbps } */
++			H264_dec	{ info = <0  2 245760>; };
++			VP8_dec		{ info = <14 0 81920>; };
++			HEVC_dec	{ info = <17 2 245760>; };
++			VP9_dec		{ info = <18 0 81920>; };
++			AV1_dec		{ info = <19 1 122880>; };
++			H264_enc	{ info = <20 0 245760>; };
++			VP8_enc		{ info = <25 0 81920>; };
++			HEVC_enc	{ info = <26 0 245760>; };
++			VP9_enc		{ info = <27 0 81920>; };
++		};
++
++		/* MFC core device */
++		mfc_core0: MFC-0@19cd0000 {
++			/* Basic setting */
++			compatible = "samsung,exynos-mfc-core";
++			id = <0>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++			reg = <0x0 0x19CD0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 653 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "aclk_mfc";
++			clocks = <&cmu_top 1900>;
++			samsung,tzmp;
++
++			/* MFC version */
++			ip_ver = <0x1600010C>;
++
++			/* for F/W buffer */
++			fw-region = <&mfc_core0_mem>;
++
++			/* Sysmmu check */
++			share_sysmmu = <0>;
++			axid_mask = <0xFFFF>;
++			tsmux_axid = <0x1>;
++
++			/* mem-log buffer size */
++			memlog_size = <0x80000>;
++			memlog_sfr_size = <0x1000>;
++
++			/* Device virtual address */
++			#dma-address-cells = <1>;
++			#dma-size-cells = <1>;
++			dma-window = <0x0 0xF0000000>;
++
++			/* Sub nodes for sysmmu, hwfc and mmcache */
++			iommu@19c70000 {
++				reg = <0x0 0x19C70000 0x0 0x9000>;
++			};
++		};
++
++		mfc_core1: MFC-1@19ed0000 {
++			/* Basic setting */
++			compatible = "samsung,exynos-mfc-core";
++			id = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++			reg = <0x0 0x19ED0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 660 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "aclk_mfc";
++			clocks = <&cmu_top 2000>;
++			samsung,tzmp;
++
++			/* MFC version */
++			ip_ver = <0x1600010D>;
++
++			/* for F/W buffer */
++			fw-region = <&mfc_core1_mem>;
++
++			/* Sysmmu check */
++			share_sysmmu = <0>;
++			axid_mask = <0xFFFF>;
++
++			/* Device virtual address */
++			#dma-address-cells = <1>;
++			#dma-size-cells = <1>;
++			dma-window = <0x0 0xF0000000>;
++
++			/* Sub nodes for sysmmu, hwfc and mmcache */
++			iommu@19e70000 {
++				reg = <0x0 0x19E70000 0x0 0x9000>;
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index 0fdf2062930a..f35441d29cdd 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -1507,3 +1507,4 @@ timer {
+ };
  
-+ARM/SAMSUNG EXYNOS SERIES Multi Format Codec (MFC) SUPPORT
-+M:	Nagaraju Siddineni <nagaraju.s@samsung.com>
-+M:	Himanshu Dewangan <h.dewangan@samsung.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-+F:	drivers/media/platform/samsung/exynos-mfc/
-+F:	drivers/media/platform/samsung/exynos-mfc/base/
-+
- ARM/SOCFPGA ARCHITECTURE
- M:	Dinh Nguyen <dinguyen@kernel.org>
- S:	Maintained
+ #include "exynosautov920-pinctrl.dtsi"
++#include "exynosautov920-evt2-mfc.dtsi"
 -- 
 2.34.1
 
