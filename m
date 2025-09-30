@@ -1,106 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7965234BA29
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 11:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D093081B2
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 15:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759230051; cv=none; b=YALCuX9AnJzFdsonjfWllKYIDLpToGetlGgcMZUjVQvCIt9Sdx80/VziieS8d2AErlC1AEPO8xS68AUN91+ss7nbWtZK3FGtjp+etTzJWnEF13GQ+N0hUnLKijrsDOryB7hiKjsqJrUL4WTKAW3f0ZesffD8JmdOQp25Fvbs9mU=
+	t=1759247182; cv=none; b=hSgoqFrggpMSqOKY6VWkqwD29sSVA0ldUV7JoXbFrc31UwM6yu/cvEVKNMKP0+o8HvzajSI2lVS5XG6/68bqgG6NhiAAGplTHhpomrFIRgD116aN1TdQaj7V8xhTzrfiVD5A/XXNyHiyL0WqaqOfYZHXUXD66xlK4soUcjKamLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759230051; c=relaxed/simple;
-	bh=SDH3XnNi6v//uFU3KL8fb7Cra3gbK8Z2qIAy3fUoWpw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FE0lHWWeorb/iDw8ccjhZbcDPH50U0HI7c+3DZlDXgegNKahc+Sge3/9qF0Wg34pTdrhfK2X/Y7xctco+nv/cKjXjRNiGzRiuftarW0w/6T9u4owW/aWZ/rsR/zJt2lu5lrsjEb2NJtFJI3CKcAS4Vh9SrrDOT+qzNRfStyJMow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckbEkHKd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759247182; c=relaxed/simple;
+	bh=CAUFl+LYZAZIfEQ0dOPctsXAqjVr28NSuz7MjuxJt4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=FGqJ+080p6Bdl/oxmARgAo7eQRZBxsc1A22lRfzKo6s0REPKoKKfePqPJIlmvUpkEnTWJ/+1PlkLFxKwK06+oT//K/wIKAqA4lo0q92zMt4TbTtKwDArSLiFw8NCHJM29RDJKDQuAZNS6CyuUAArgsx9/iaEtZoREWuHq9dWozk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GEmo2aaV; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckbEkHKd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DF3C4CEF0;
-	Tue, 30 Sep 2025 11:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759230051;
-	bh=SDH3XnNi6v//uFU3KL8fb7Cra3gbK8Z2qIAy3fUoWpw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ckbEkHKdRyKCkmvA1vl1evYZTUDGNQUKA9SWe48qi7FG985YXmxCI8Pn3ydTJh5Gl
-	 3p+uhSxzPeoCawpU6jOhKXx3GRjrK7Q4GzmChpruplb1Y9YrLftwoEVF93hHEHMWU6
-	 gzFOu5osYba/J0GyzLtAq4eNEBW2BpruQsXHO/KL+sHV8junGqze45jN5C5opd7+7g
-	 Lh9fXHP8O1zpqT59mUc859bnAy+Z4dViCZJnYSbo+6pDqz1Pcw7h4tI4WvAXJg50EI
-	 kP9g14dKnbhgvMnKBO/NIQ3jRtDnrghshQfeCpMI2btnx7GHoszNvYLY4YLXkMneD2
-	 vNnLe292dM7Jw==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 30 Sep 2025 12:59:31 +0200
-Subject: [PATCH v5 16/39] drm/exynos: Switch to
- drm_atomic_get_new_crtc_state()
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GEmo2aaV"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250930154613euoutp02582f8e08de0fb899c49ba015b438f06a~qGfujrOkK1925819258euoutp02c
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 15:46:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250930154613euoutp02582f8e08de0fb899c49ba015b438f06a~qGfujrOkK1925819258euoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759247173;
+	bh=iCpr5TzyOFeRuqU82QBgsAybOuX0sXWBwEO+eHNweII=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=GEmo2aaV3Fhb+h0H+OL88S5Un3zCHcz7kvEcOruc4TmXpXvHdpKjLwI7cEBp7asMO
+	 muCNuGSqnMlJSRFBKwmUe+kxce/c8fhUiZy+mBT4fvst9i7T4SLjLU0Jge/xzV09V9
+	 trHRBO20Um+o+53qS3gt/u6DVrintZBeymx0x8lo=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250930154612eucas1p2cf5b43435487dc8e6b19b60d1a3801ef~qGft4sFWT2800928009eucas1p2c;
+	Tue, 30 Sep 2025 15:46:12 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250930154610eusmtip1200c7ebad2fc47c80d082b3f7ac27ab7~qGfryC8yB2715127151eusmtip1T;
+	Tue, 30 Sep 2025 15:46:09 +0000 (GMT)
+Message-ID: <75d06769-4896-4095-9969-03a517705196@samsung.com>
+Date: Tue, 30 Sep 2025 17:46:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Betterbird (Windows)
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_08/29=5D_media=3A_mfc=3A_Add_Exynos?=
+ =?UTF-8?Q?=E2=80=91MFC_driver_probe_support?=
+To: Krzysztof Kozlowski <krzk@kernel.org>, Himanshu Dewangan
+	<h.dewangan@samsung.com>
+Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+	alim.akhtar@samsung.com, manjun@samsung.com, nagaraju.s@samsung.com,
+	ih0206.lee@samsung.com, jehyung.lee@samsung.com,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250930-drm-no-more-existing-state-v5-16-eeb9e1287907@kernel.org>
-References: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
-In-Reply-To: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1787; i=mripard@kernel.org;
- h=from:subject:message-id; bh=SDH3XnNi6v//uFU3KL8fb7Cra3gbK8Z2qIAy3fUoWpw=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBm3d6hFuvRJzm5y/8zv23bKVyjC0dbqr2iafLv5VMvcC
- Zv/ryjqmMrCIMzJICumyPJEJuz08vbFVQ72K3/AzGFlAhnCwMUpABMpc2esT81UEI99YMgbEjyf
- PfTMluUbjVdHHXv3SDfnS/kcp0Ud1vZWZpt8rP3P/H5iEBxl8jaZsVZy5WSv49YtqQlFaWmnply
- p9+M4c2f/oZ9G3yq+JvAdf1S7jOt9sohgG/P8C0732EO1uwA=
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+X-CMS-MailID: 20250930154612eucas1p2cf5b43435487dc8e6b19b60d1a3801ef
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9
+X-EPHeader: CA
+X-CMS-RootMailID: 20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9
+References: <CGME20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9@epcas5p4.samsung.com>
+	<20250930040348.3702923-1-h.dewangan@samsung.com>
+	<20250930040348.3702923-9-h.dewangan@samsung.com>
+	<CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
 
-The exynos atomic_check implementation uses the deprecated
-drm_atomic_get_existing_crtc_state() helper.
+Hi Krzysztof,
 
-This hook is called as part of the global atomic_check, thus before the
-states are swapped. The existing state thus points to the new state, and
-we can use drm_atomic_get_new_crtc_state() instead.
+On 30.09.2025 07:54, Krzysztof Kozlowski wrote:
+> On Tue, 30 Sept 2025 at 12:56, Himanshu Dewangan <h.dewangan@samsung.com> wrote:
+>> From: Nagaraju Siddineni <nagaraju.s@samsung.com>
+>>
+>> Introduce a new Kconfig entry VIDEO_EXYNOS_MFC for the Samsung
+>> Exynos MFC driver that supports firmware version 13 and later.
+>> Extend the top‑level Samsung platform Kconfig to disable the legacy
+>> S5P‑MFC driver when its firmware version is > v12 and to select the
+>> new Exynos‑MFC driver only when VIDEO_SAMSUNG_S5P_MFC is not enabled.
+>>
+>> Add exynos-mfc Kconfig and Makefile for probe functionality and creation
+>> of decoder and encoder device files by registering the driver object
+>> exynos_mfc.o and other relevant source files.
+>>
+>> Provide header files mfc_core_ops.h and mfc_rm.h containing core
+>>    operation prototypes, resource‑manager helpers,
+>>    and core‑selection utilities.
+>>
+>> Add a configurable option MFC_USE_COREDUMP to enable core‑dump
+>> support for debugging MFC errors.
+>>
+>> These changes bring support for newer Exynos‑based MFC hardware,
+>> cleanly separate it from the legacy S5P‑MFC driver, and lay the
+>> groundwork for future feature development and debugging.
+>>
+> No, NAK. Existing driver is well tested and already used on newest
+> Exynos SoC, so all this new driver is exactly how you should not work
+> in upstream. You need to integrate into existing driver.
+>
+> Samsung received this review multiple times already.
 
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-To: Inki Dae <inki.dae@samsung.com>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-To: Kyungmin Park <kyungmin.park@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please don't be so categorical. The MFC hardware evolved quite a bit 
+from the ancient times of S5PV210 SoC, when s5p-mfc driver was designed. 
+The feature list of the new hardware hardly matches those and I really 
+don't see the reason for forcing support for so different hardware in a 
+single driver. Sometimes it is easier just to have 2 separate drivers if 
+the common part is just the acronym in the hardware block name...
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 7c3aa77186d3431d7020db4dec70332c0cfccb5d..6400070a4c9bcc00ecd0f21cbce1b5aafe1bff48 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -56,11 +56,11 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
- static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
- {
- 	struct drm_plane_state *state = &exynos_state->base;
- 	struct drm_crtc *crtc = state->crtc;
- 	struct drm_crtc_state *crtc_state =
--			drm_atomic_get_existing_crtc_state(state->state, crtc);
-+		drm_atomic_get_new_crtc_state(state->state, crtc);
- 	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
- 	int crtc_x, crtc_y;
- 	unsigned int crtc_w, crtc_h;
- 	unsigned int src_x, src_y;
- 	unsigned int src_w, src_h;
-
+Best regards
 -- 
-2.51.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
