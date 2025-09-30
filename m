@@ -1,72 +1,72 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAA71D516C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F79F20C038
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 20:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263524; cv=none; b=UOsYE6b2zf/XwV8Sfl40Lem/sNOrAX2+2HLKAURpqJ92HUpaWFFJrlwKPYMJQhXceoFlMKSGx/pOofpIZd4pdZ8lmkhNICz+gR13+JMUns2I3mNqDdZit8dPosym/t/TVuSePd/qgl7oqXFYq4IhSDq0WxwMTR1p9DDANeL1WZc=
+	t=1759263670; cv=none; b=MqV/e40O7YosaCnVM56KxdH9Pvn62zlhltBF7lIUuYwHUs29wmlaITug0dCgdx6jCwJGdJtHKWrrEZxSKA5ixnt/+OrPdgvmybLRom7VuhYWNiAZpC7FEb3DJ9YZqkyx18lISm/0e8S0zK7bTlga/XUjwgegXCiOPA5J9kzeXT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263524; c=relaxed/simple;
-	bh=cYYH3/yTc9wBXPcA74vYb9yfUr6t5bEcM/coGFu1oMs=;
+	s=arc-20240116; t=1759263670; c=relaxed/simple;
+	bh=rxceyoBHzvM4ZjFAVY6FkDDrXnSA/1H3WOTMIrvT6vE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMOkyWHnxN5lNyasBExnOEzltoxl4z09cqjqcB4Cje6oM74vVhdW4QSOpjM9JK5sz7eY8HDNsH5oTmghNw5xOOWpAURaEIC2BzKPnBO20nUO/cBgw+8WNf1ZX99Te0jqim9QZc+IWjJ6NeGuE6y6xCidCld3+qBwWPL2jmfsWZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=phrIoJPh; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIeXwOHiPJSZ8nZEXoMcyDFNPUVBDW7z/+N/WrmgmHVOnQ0nsRdV9qHcYtQrxX0kSqD+OA+GMwROtNRXf1dTy/ntEUer39nBPTJfXZRpEp66ERx25YVsmp+qQ+Hi0uAeh7xuIh3k4VyJfj/Omv1mwSLRzah05rDAiXKE3LIJY3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OKIFGfsA; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="phrIoJPh"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UBvGGf009314
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OKIFGfsA"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UBbEXV017818
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 20:21:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1prKZ4v8aUicNJIrRPB93Z2q
-	BSZpWbI16ikZz4dczC8=; b=phrIoJPh//YjDsPd6tBBkta/NYufyjsIgztdxLMZ
-	AZvqOF5x6Cq7k7hO3vWlIFKi/Q2l3CWCZ11YULAuW0t0OZ2b3pl1O6nmoSAG/bwC
-	CtM3r5IUdX/w8EzIqd8MAT3aJxZEMkPVQb1yO63P53KW7/XTuzgjHBdgQP4bqgRg
-	cfd7QNe1bDajr5SObgGIQKwRT8CWlory66hqslK3qw9GPJaZUJa7kxlc+Jom+3Lv
-	JEt1iGDAxu74RjzeriRN0JIGkq3+4tnjVbc9ygx8n83DhmbX3WOnWKfDb+7IvjPz
-	xDLpEU2gkmxtKgNCeVzbUsmQvgS762iIdaQf7uEdPYnU8g==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977t49g-1
+	:references:subject:to; s=qcppdkim1; bh=+VFb0crc/qOwGeBvP/JtK6gr
+	pmOtlDvuwQF4VkTnYOY=; b=OKIFGfsAMS6m9Xdz77R/OpPAtDirEHauS58EhqBK
+	TFdGF65sxJhhca0WWxoGIJzqTzensMRHi1C4MUxrjEccLsQPnreEXG/IYa96Epp5
+	vp2O/DWSYZSHs/H1Tcw4yEavtsgQB+LCBGFbhwfq7vmCvhoch6shAXdozWriH1vd
+	SGRy2WHwYItvrIRcm2jYNTe/BAZROnuMzfXh79HwM4h/oA7e5RSs1p7Hxtx0y+wD
+	0MlAkDlzFu54pcauGfmFnSyJJB/MwnHpl+KEvIaoUsXbqsuwFSOQZWe3U0MkjR9q
+	xp1n2t3tcxIZ6Pg9Z+nVVQS/wRiH2YNRsJxFZecGEJpOSQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e80ttgq1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de801c1446so103409431cf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 13:18:41 -0700 (PDT)
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 20:21:08 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4df7cdf22cbso7351971cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 13:21:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759263521; x=1759868321;
+        d=1e100.net; s=20230601; t=1759263667; x=1759868467;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1prKZ4v8aUicNJIrRPB93Z2qBSZpWbI16ikZz4dczC8=;
-        b=jM7a9xMqPuHK7nU1VGxrvtHDc2EUI5KV53nrPpPEt5Pg89WStfj2OGLfYSuYpWt3dN
-         rNx6Bnqz4xK8LhZsNtsCqpU8vWDo5GG13pJYwkAS1vHrberqsOF03x3FvhvCQFIaOmbh
-         pOriTfoTlHZqIH1dgyRfdP9xzDfY8nLU2PrNxygsp7dhNa6B6YHTqP8UNihRSFLhL2y2
-         dx5QHw//WwMa5vijtWf6OpyOPvilfyfLAuoOoY+TpTNPau9gFejCh6OU8+6VYdUQZwww
-         2ycVAKWe4eLz3KL6eQK0rLWZAzFU0vZEUmb87pf161jZAgcvHcm+x2v2hWBxDoaJDhLP
-         wU2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVHRDe32+warDHHB3h4TArhb5w/hFKgkBmfZ9QiFg680GrvBXa+tETTCuMWdDFWVnSHQ4U1QuJX5YFZ5zdp0pilAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTTOMMhbhGOOfQPJ9deS5anSE7Xhq9TZkbVRmp/goeI3HjiRk7
-	Se/7Iaz6LVSjHQZNT8vkbfa8ls3ePuN0hTCgoY/T+cF/ewiFRT1lqZHDNuMOqhXPf9HmwS4rR+X
-	cWMiF+t/gqylO2k91ixhfpd4rrcNGpYwuhOzvKshmA+wjXNX43/f5fTWlmgUuIMOz+0jemhGlOg
+        bh=+VFb0crc/qOwGeBvP/JtK6grpmOtlDvuwQF4VkTnYOY=;
+        b=PibSBipU5LE3qK3UA+vo3Xvo8JFRDfHtpFCor7APqoLtDK7RjpgYSjidCR8hnlHeBv
+         h3dsZHqZfq4FFVwS4qnOyb7hhsSCtqkZm13ollny5fNyDa+pBIe0nyCW+zr5JuVn5l67
+         g+lT+xlLp+F2GoCcKK1YLCyIoaE7GXUnqOOCocZOXNPPIkP96xw+HU6xO4qAkN+AUSEe
+         DMcJWvgYM/a7XzJuXxd2723qPgXTdRsUSWvspsXtjTVYaiZ+ajmUBdxuubuS8fhHPh64
+         teLxseqK9/L/xJAVzbTcarqxg/hOBJfnpNFW3x7fEDqRCsZxFgvNZw4Mg8pPjkqn4C/x
+         +EvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyaz/QKmmY3la2931F4eANqQSL3ZtaONMwk+jNG/3bV36RsBylOKmi6ogTxU2JC2Cs9rqy9IKbqZ2cSPqKiengRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFTXvykUOxyptkBPMgCMK9ZxV8rG3mhCjAMTNQtL5Ae2PmITOe
+	zDILGhs/tazvR1231Z5AdldSgrVOi6SY0p3PfbL1Aqv7vX5LXCwvEkcO6sHL/F8aCy9HewDfQEE
+	keU+oI4g7xgXGNzKQx1onqhMnMY8nczmMijBfsCRqeTpN1ORcz87TllNxtcTwSBnORr+q3zMjGQ
 	==
-X-Gm-Gg: ASbGncuWQNS6x30UnIJ89XhwQ7rPcbgQkJAa2Y0c68KSoF9SkrBA8LRGKEQMYy7VVXP
-	w869R/Z38dzOX65fEXbNWjZBnBbVok7JwZ8A09r4PrL45mxa6qTMH3T+qfQr/cC5H+JkyT9yvwi
-	CBNQdVq3ojjsA1zXpC6a/T8y4i9W2NsVNanTb0bCIb3R0ezmHqYgAvL5PxiMrXueqv8JsHHcnr3
-	uhW4npifV8z7L8OwoCgBwsFaxjZ3GjYhzkBcJ5oAeBRsx0colulFRsIOwEqt/jIzqptDfTxfcVX
-	/wGvKc8X3g9RQqTEy7bqd/D8WAJI1VYwlUc6/lDo73LhCsu27pJtzadujsVpgJHT3eHkHw0iPnr
-	8jx1toKsqTblhnhaYFQMdjeDDcYpizEF5arBYk+l06VaQmtIvRHA2bSbayg==
-X-Received: by 2002:a05:622a:4cf:b0:4da:207:f0f8 with SMTP id d75a77b69052e-4e41c54839bmr12914441cf.11.1759263520680;
-        Tue, 30 Sep 2025 13:18:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSxICdUQhJwxyOP6ey50e51aF0tOi4+IPIxh6uK7udyhkmudoTzU3ziqUxuPBP2Y+j6k4Wbw==
-X-Received: by 2002:a05:622a:4cf:b0:4da:207:f0f8 with SMTP id d75a77b69052e-4e41c54839bmr12913881cf.11.1759263520062;
-        Tue, 30 Sep 2025 13:18:40 -0700 (PDT)
+X-Gm-Gg: ASbGncuPTwJG9o3itwSPLdzUBkAQeRPNpHbQ9/C49op5vysjbRUfqVEJEMP9Jvy9Xt7
+	L6Musrn1pcXigy3nq/483AuvSwNU1bJI6FSJFz7XEBRiW1MleXqiFO04ptuc40gyiv9+bkZDAWM
+	neqPKJGv845pCx5oXT9PEK47LqXaC9gksiVFvIx8xXvqtQABgqNR8SQB6Hl2j78FPha3D9c9HeB
+	j6garPr3sNR3wtDtk9HAGFyMM6M09wZOiEH8DXon+cacJ92o2Ob13HbgmQ3lSrV0jIpiWw+5zi+
+	871JJHogRcxI+pVPLaY7fMCUeGDdUgF/tT6MIp8EWQbO1KAPNWuC+1/vxrDhIgRE4ieBzszdeHP
+	+zRU+HEPrmW8NzLvQreBFAmIOgXWhLmHjIDVcNIdebjUG6Y3v47qVC2dWlg==
+X-Received: by 2002:a05:622a:5d4:b0:4b2:8ac4:f097 with SMTP id d75a77b69052e-4e27faf2456mr85876241cf.33.1759263667297;
+        Tue, 30 Sep 2025 13:21:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFs3xT3p2rzPd59HRBIpsMj0tVPI+tZJQCN5NZbJA76QgFcZCY2wPZXNF7YjDhP63JSlWg6Kw==
+X-Received: by 2002:a05:622a:5d4:b0:4b2:8ac4:f097 with SMTP id d75a77b69052e-4e27faf2456mr85875861cf.33.1759263666813;
+        Tue, 30 Sep 2025 13:21:06 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb528259dsm35069431fa.31.2025.09.30.13.18.37
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316a32113sm5289277e87.102.2025.09.30.13.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 13:18:37 -0700 (PDT)
-Date: Tue, 30 Sep 2025 23:18:35 +0300
+        Tue, 30 Sep 2025 13:21:05 -0700 (PDT)
+Date: Tue, 30 Sep 2025 23:21:02 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Damon Ding <damon.ding@rock-chips.com>
 Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
@@ -83,11 +83,11 @@ Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 10/18] drm/bridge: analogix_dp: Remove unused
- &analogix_dp_plat_data.get_modes()
-Message-ID: <hh4kn3qmwdbfev27xrs7eng7adfyli5xt7oiy7xgmviz2pzyql@rgggrhqckdjy>
+Subject: Re: [PATCH v6 11/18] drm/display: bridge_connector: Ensure last
+ bridge determines EDID/modes detection capabilities
+Message-ID: <4r25h5uaamfkprrmvrtdqfjlcgcnkfyca2o5q53hteta7rlrbq@xqlrjxhi7z2u>
 References: <20250930090920.131094-1-damon.ding@rock-chips.com>
- <20250930090920.131094-11-damon.ding@rock-chips.com>
+ <20250930090920.131094-12-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -96,46 +96,66 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930090920.131094-11-damon.ding@rock-chips.com>
-X-Proofpoint-GUID: IYLvtU0vV3ZI-IrQCa0U52h4GOG1Xehg
-X-Proofpoint-ORIG-GUID: IYLvtU0vV3ZI-IrQCa0U52h4GOG1Xehg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfX/jAqr1+bYkJM
- VzRrkWRPWRvZMlbArJtKBYDn1LVA5y4EoFDDg29VLuWtRq5R6ibWdPXAPh7cW3cldZ13ldHv3V7
- zGCRds4zsddgH/+spj+GHmkYDYs8t/heP/UldE5hkhrBSko4Wi2B4qrzymVr1SJVpPY3bsKe20s
- bLldy5V3nVqjfjBHI/2DKWtUXoojiJJ3GRFmKeME3cwLR4yfwpGJVLasXFe+bhsywe3C+ZF5MwR
- LpQ3+YoqMSRsQpRPSFekgvRY3ETIep3YVFJwivd16G73gFxLsSl4/4Trlqky57Mpd/Py5ESjCp5
- mlGaIwps4aYEzRtnFZTZ5Pm3dxM05wCA57buGE5S6JtIGqJtkEiBqWHe+pCrNCs0msTp5c/NLVf
- Uvc+TQsOsZWuupTlaB2EGClAovXTZw==
-X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dc3b22 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8
- a=eBbjTLbptxnSh8XXWekA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
- a=jGH_LyMDp9YhSvY-UuyI:22
+In-Reply-To: <20250930090920.131094-12-damon.ding@rock-chips.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyOSBTYWx0ZWRfXwVyeYU2nwydF
+ wKnFHgtnHn3f86mKSGrVUjrt62QIKvlaoveljFOw1T6F5M/gOWJpghNdnyNBS47/xWZkCvPSDNN
+ GYV0T2yVuAnjrcAbV19CGn3gGO0Ae/cN+LiyGwi9eNixYbiCH3Jb2/Bp2SyUsanCKtrWhMy9Tw4
+ VIfG18KdzZLt4O471pQ1Lv78H5TSiT8VaBR9+FFmSQn2nEswXX9Ytz52d4MhTkHWrxj0C7Ue9GE
+ 9OrK0/wmcgqJ6YH0+JVij98SCWDxRoiPk8GPWEYQ8cAztbLjb7a/EHt4dMiQRNK8gcmnl2KP3Vx
+ fKbVluOSSsOQdIi9WERGj6sMqArxRYJ0NI0a5IbHUqs57k+vJDvluP9zDhu0swqvy4kdXe01kVp
+ b17ttDHbMnbsAWUBf3MysNe97RsUdA==
+X-Proofpoint-GUID: DERDc0ZTwvA2zL_KrZ_hA8S4l66B6TBS
+X-Authority-Analysis: v=2.4 cv=OMkqHCaB c=1 sm=1 tr=0 ts=68dc3bb4 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=EUspDBNiAAAA:8 a=2L4VR2zxEnLzMnak7dgA:9
+ a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-ORIG-GUID: DERDc0ZTwvA2zL_KrZ_hA8S4l66B6TBS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270043
+ definitions=main-2509270029
 
-On Tue, Sep 30, 2025 at 05:09:12PM +0800, Damon Ding wrote:
-> The callback &analogix_dp_plat_data.get_modes() is not implemented
-> by either Rockchip side or Exynos side.
+On Tue, Sep 30, 2025 at 05:09:13PM +0800, Damon Ding wrote:
+> When multiple bridges are present, EDID detection capability
+> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
+> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
+> determined by the last bridge in the chain, we handle three cases:
+> 
+> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
+>  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
+>    &drm_bridge_connector.bridge_edid to NULL and set
+>    &drm_bridge_connector.bridge_modes to the later bridge.
+>  - Ensure modes detection capability of the later bridge will not
+>    be ignored.
+> 
+> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
+>  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
+>    &drm_bridge_connector.bridge_modes to NULL and set
+>    &drm_bridge_connector.bridge_edid to the later bridge.
+>  - Although EDID detection capability has higher priority, this
+>    operation is for balance and makes sense.
+> 
+> Case 3: the later bridge declares both of them
+>  - Assign later bridge as &drm_bridge_connector.bridge_edid and
+>    and &drm_bridge_connector.bridge_modes to this bridge.
+>  - Just leave transfer of these two capabilities as before.
 > 
 > Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 3 ---
->  include/drm/bridge/analogix_dp.h                   | 2 --
->  2 files changed, 5 deletions(-)
+>  .../gpu/drm/display/drm_bridge_connector.c    | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-> 
+But I'd suggest pulling this to a top of the series to let others also
+take a look at it.
 
 -- 
 With best wishes
