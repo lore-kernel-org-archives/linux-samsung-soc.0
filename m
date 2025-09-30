@@ -1,56 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB86211290
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 06:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1105299923
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 06:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759212114; cv=none; b=LQjlgNRT1oDRFWtMu4HQ4OVIC0aOK7zz0idR9QOmBL0RqMfsbYm69WpVX5ZoJK82WWVMnOV2EZJCxtp285T/1MZ8PPnXbK0+9bjlrH20F8Msdd7TxWgUBazodme8vIxFO7HdPUV/8vJe2SZ4662FEX2LUg5BEPrl1acc7AKSwtw=
+	t=1759214454; cv=none; b=KrAqXcfPyipXGwW1QjDPGEiwNT/AUoQQhEYsZpOSv5gJVhc9Bov4on9Tmr7BCCqNOAV3s7c+d+KsHHTb5zxV7tXGKM5KpgLXOPN513Ivh7X7LHhUEhOfiC/qFogDdrI67N1nCt+fuSeBoCnDyND6ligXPSvHGJ+hYDCQBaxJkgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759212114; c=relaxed/simple;
-	bh=tZFFRFKg0PUHDS6qSpNivs8Es7wMQjxESPTNTDMPml0=;
+	s=arc-20240116; t=1759214454; c=relaxed/simple;
+	bh=aY796e7ZjDJ3GpkqwDAOoDMWoCinINh6cbC/Z6IAkio=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=If7LcnwSe8cQkg0szsgfVMjc6Kqqxb3ZQXlmaOyBrb+Jj3UdOU35kPgIP+3sOT4rrRqTp8AbpGwlyo7YLxMdtJDzfHfUjGNRvd4HDrugI/pRhbUtUteymGZ+y9wrPH4dCnEhlgR1s7MeooB4ACQz7V3EKOkJPRGjfMhlZBEEdG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLxhi1Cv; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=YAtOvhSeIjk7cMzMFfV2u+MLR54QKPYCC9Cz/hDIgGXi2Mdu2OEbJaKcybOo1mHNeciIcxZpVQ4lSJ+BMpVnor461KaxETre54vFW0f3/sSCZpAyIVwxEIk7smpo8Dbg0ArDUdxRRAWFZDz6hX64jYNrwESq1rS4xSObHsv13S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKgSCAt1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLxhi1Cv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39E0C19421
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 06:01:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKgSCAt1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A9BC2BC87
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 06:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759212113;
-	bh=tZFFRFKg0PUHDS6qSpNivs8Es7wMQjxESPTNTDMPml0=;
+	s=k20201202; t=1759214454;
+	bh=aY796e7ZjDJ3GpkqwDAOoDMWoCinINh6cbC/Z6IAkio=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XLxhi1CvzOKNDGiOPSiJnKK0WeN6K0SSaPz1FVlANT+wEp0VU5yXdizG65L3VNObk
-	 8lbHU0vEXEjlJykluoK3Y2eWmxkO3keifks3tg6+iQustVWM2sgySl3y4YnwrEZajz
-	 KxNNn19DFc/RfVgL9shJsK6MpsDGZLt7KJgJtuRqVObY9d/yIQ4z0BMtdv2Aozi0B1
-	 2Y8S6HMkqLJXyi8ENAICuobWEUv6TYvLiWtszTCA09VtWNgAX1sgejIjsQ8hKvyYWh
-	 +Z2+AEq1TTwSyyAnwIoIdepLBVKVLZSLORs8z1vnOBZ1X/6z9bHTUaUo+vq4wlubyx
-	 PMr+luFX95Wbw==
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b58445361e8so2105634a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2025 23:01:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXwS+SnBJKNFfZyRd5y09AV2g9pRze9oX9G+di6oDehxWBLmX9aAh5biHsLVlEaXwpVwi+1Yn544CBc3EoMq3H1IQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAgI+mFa2cvtOpM/looNAiZFugdA72TPIPmnHcTdEtMuFIhoqN
-	qrrcv28XLYYDU4slNRbd8hbk9FaL3ol7v7lNCQQouMDHAg1DnhUUxUEchU5DyQc3rD+bg+Lqw5R
-	bGep6b9eAFKYORrB2iaSvg6U5O2sLdjs=
-X-Google-Smtp-Source: AGHT+IErIwwKQvXadjo8YStieZUDut9jWiBGKRpZXkgYC3IZFhh1kNcaf5JtiD61ISPp+z4nkDRXWDsI/3DHVQYxgZE=
-X-Received: by 2002:a17:902:f647:b0:269:aba9:ffd7 with SMTP id
- d9443c01a7336-28d1713873fmr34808755ad.25.1759212113208; Mon, 29 Sep 2025
- 23:01:53 -0700 (PDT)
+	b=DKgSCAt1CIUjTAPD85phyC6/D/engFWoLogA9Yz5lqVjDmSESvd0ZOchbg0bW326x
+	 SW3YgAa4BKIk40LZ6tlKLlg0+2AmH9iEDSDkRkpUyTmOL/yMRy6+l1DvFG4sNq92g5
+	 sy/a90b1stw+87lspEOgUef61/I56Yjy0Gx9rS9WSeSmXvC14Dd7DfSTvudUdeHmvs
+	 hyf2tiiH4u7VKMaBdzQnBPsrh+0ulbD0H5T3ez6ZO2r1S0BXDt/Ie+UoPYrB2Y77Zw
+	 nJdGsBiHyj7wChYx6E02wVyxskB4mWT6pVJP8RRkE4qkvJfPssQ/OibpAGmtBcuzZ0
+	 my/RmbK0cZuXA==
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27d2c35c459so44596715ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2025 23:40:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhAcp4k/RP41gPmjGuNlKZVeX/bM6ZI9FbqKRPHvMtcm+PB9drYJayb8ERUFNIBA8+wEkpVFLngEAdQIXPVUocVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBNtk7oZJqL7LEHY7P6AWMfD+P6pWYBsoNBdmIsUmUCvTdkfMF
+	FDU5SPwHTfJrEKXW7EHA5pyo5Icf7GUzSsHmBe42TyA5hgWc1fRbDJliGufbpw/pRRrmL5fAJBz
+	RZ17LnDRfiaaAo2wiVv8nUMzxYuHDd8g=
+X-Google-Smtp-Source: AGHT+IFilulwB7yZKk8NWBisCkRd9EVIUP8wmRYd1pqL/aVk/i4cqOXK4Ip+OXNthJdD/mk9ed9ZzEkUxbiiEQK8Lsg=
+X-Received: by 2002:a17:902:f68d:b0:276:842a:f9a7 with SMTP id
+ d9443c01a7336-27ed4a5aab7mr219005735ad.57.1759214453755; Mon, 29 Sep 2025
+ 23:40:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250930035521epcas5p428367b20b9498eb8862d17f4bb75f663@epcas5p4.samsung.com>
- <20250930040348.3702923-1-h.dewangan@samsung.com> <20250930040348.3702923-2-h.dewangan@samsung.com>
-In-Reply-To: <20250930040348.3702923-2-h.dewangan@samsung.com>
+References: <CGME20250930035525epcas5p3a1238a3a7bc6e52113838397187e36ba@epcas5p3.samsung.com>
+ <20250930040348.3702923-1-h.dewangan@samsung.com> <20250930040348.3702923-3-h.dewangan@samsung.com>
+In-Reply-To: <20250930040348.3702923-3-h.dewangan@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 30 Sep 2025 15:01:41 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPcpybYa4hvVohkRVv5WaRv3ydK-BY4i3i5WA5fD07osoA@mail.gmail.com>
-X-Gm-Features: AS18NWDDL4MOuOFlHqi4tRhQ26U6NLLMNyO6K7Q2H3O7rRfBNx3jEQQzLl1jkIs
-Message-ID: <CAJKOXPcpybYa4hvVohkRVv5WaRv3ydK-BY4i3i5WA5fD07osoA@mail.gmail.com>
-Subject: Re: [PATCH 01/29] dt-bindings: media: mfc: Add Exynos MFC devicetree binding
+Date: Tue, 30 Sep 2025 15:40:41 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPc+ass6ftbxrodVzXVPFW+8rUYW=VyxsmGTU1wR_jBiAg@mail.gmail.com>
+X-Gm-Features: AS18NWBGk7OJKwPJ5iy8_Rm-Qzpd87k2vQsijdmZj27-buhGtUmwdQhJcd2WDg0
+Message-ID: <CAJKOXPc+ass6ftbxrodVzXVPFW+8rUYW=VyxsmGTU1wR_jBiAg@mail.gmail.com>
+Subject: Re: [PATCH 02/29] arm64: dts: mfc: Add MFC device tree for Auto V920 SoC
 To: Himanshu Dewangan <h.dewangan@samsung.com>
 Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
 	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com, 
@@ -68,69 +68,48 @@ rote:
 >
 > From: Nagaraju Siddineni <nagaraju.s@samsung.com>
 >
-> Introduce a new DT binding file for exynos-mfc
+> Introduce the device=E2=80=91tree entries for the Samsung Exynos AUTO V92=
+0
+> multimedia=E2=80=91function controller (MFC). The patch defines:
+> - Reserved memory regions for firmware and CMA buffers.
+> - Core0 and Core1 memory mappings.
+> - The main MFC node with basic properties (compatible, reg, interrupts,
+>   clocks, DMA window, firmware name, debug mode, etc.).
+> - Per=E2=80=91core sub=E2=80=91nodes (MFC=E2=80=910 and MFC=E2=80=911) wi=
+th their own sysmmu,
+>   firmware region, and configuration parameters.
+> - Resource table listing supported codecs and their capabilities.
 >
-> Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-> which describes the Exynos Multi=E2=80=91Format Codec (MFC) IP.  The sche=
-ma
-> covers the core node properties, required fields, and provides an
-> example snippet.
+> Adds full support for the V920 MFC hardware to the mainline kernel
+> device=E2=80=91tree, enabling proper memory allocation, interrupt handlin=
+g and
+> codec operation on this platform.
 >
-> Signed-off-by: Himanshu Dewangan <h.dewangan@samsung.com>
 > Signed-off-by: Nagaraju Siddineni <nagaraju.s@samsung.com>
+> Signed-off-by: Himanshu Dewangan <h.dewangan@samsung.com>
 > ---
->  .../bindings/media/samsung,exynos-mfc.yaml    | 77 +++++++++++++++++++
->  MAINTAINERS                                   | 10 +++
->  2 files changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/samsung,exyno=
-s-mfc.yaml
+>  .../dts/exynos/exynosautov920-evt2-mfc.dtsi   | 187 ++++++++++++++++++
+
+No, there are no such files. Don't push your downstream here.
+
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi |   1 +
+>  2 files changed, 188 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-evt2-mfc.dt=
+si
 >
-> diff --git a/Documentation/devicetree/bindings/media/samsung,exynos-mfc.y=
-aml b/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-> new file mode 100644
-> index 000000000000..fbed987fb9cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/samsung,exynos-mfc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos Multi Format Codec (MFC)
-> +
-> +maintainers:
-> +  - Nagaraju Siddineni <nagaraju.s@samsung.com>
-> +  - Himanshu Dewangan <h.dewangan@samsung.com>
-> +
-> +description:
-> +  Multi Format Codec (MFC) is the IP present in Samsung SoCs which
-> +  supports high resolution decoding and encoding functionalities.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - samsung,exynos-mfc            # Exynos920
-> +          - samsung,mfc_core0_mem         # Reserved Memory
-> +          - samsung,mfc_core1_mem         # Reserved Memory
 
+This doesn't belong to media patchset, don't combine them.
 
-NAK
+Anyway, you completely disregarded DTS coding style and how we were
+Samsung DTS. Please don't send us downstream code.
 
-These bindings duplicate existing ones, do not follow any existing
-standards (wrong compatible) and are written completely different than
-any other binding, which means you probably created big AI slop.
+I won't be reviewing this, you need to start from scratch looming at
+other recent code.
 
-I'm not going to review this, it's quality is just beyond basic
-standards. Sending something like this from Samsung means you do not
-respect our time. You need to stay from scratch and read existing
-documentation and existing bindings
+Remember also about Samsung maintainer profile, although with such
+completely broken and non working bindings it's pointless now - this
+code couldn't even be reliably tested with them.
 
-I'll be organizing a mini meeting with Samsung on 13th Oct in Seoul,
-feel free to join if you are around. I can explain then more why
-wasting our time is making me very grumpy.
 
 Best regards,
 Krzysztof
