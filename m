@@ -1,63 +1,60 @@
 Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91783199252
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 00:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F923E35F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 03:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759193515; cv=none; b=LrtjnrTvfaYQ3osdyS73XAkf4U6fK4W4ETwILPrStXPe4jUMrzFM6jj9j85iY2BwKWbNqXVcn0etAxoCET9Ls6iqarNlX4lt7ozLCozrIcOKawn4Qz3mn4fgpPh7Hgm/CV1yZX2N/6cXzaj+LKV13qP45udG6Op+VivoEwbuKQI=
+	t=1759204526; cv=none; b=XkuNIa5okzCbBcvBV8661JcqNJGmDK+mUp2ybI6t2z9ZINYLkp5BuH3f/JmIVNeEfwt+cQIR3ATOgEV62z1SGunffDiRldvxvfzg/5btUwG8tFszIahG7zSgFjV98cXyfjDmx+7Vjx0fdpKQ6N9n0FJ7m7TEKgNd9WCTUWIIO7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759193515; c=relaxed/simple;
-	bh=nZ/OCImc1o1ZKL0kI36Xx6NpRJpxxnAVWRaNMmYGKbA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=YAKUy8yAsYtPfqBWJYa7It3wf0Au8C/cYlpEjcajvhXNflnUud5NrzvtDHFeJhQfPcfjDIC+2RvvtOuJNh4//ABYw8VJy30XsGbWXcksr8/qbHRbapCiBi31xpLPVn/GNTiW5GQ0K0pbpx8TugI357jqfS19dk5ItKwv+OqGmXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oNwAD1pU; arc=none smtp.client-ip=203.254.224.24
+	s=arc-20240116; t=1759204526; c=relaxed/simple;
+	bh=ckehFjR0PQkrMXE41ZL6VK9v0BAuyx0H1f3BpmBGLpg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=g71KoF8/h7krJF5xXJq51Iw8OFmxo2SLcyyXOcj3FF5vWxkgSF2Ha3C6xdkLQ3qt//wxlqXzGAG3WOsaNA+BLm4icnpDOBlFGU55U4P8cLBYt9ZRTnWhKDv+jWXchIygVqYfHEQTUCETKaCs2iYeOwqGoRgeDIgiM2+Btpu0z9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QRU19ADn; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oNwAD1pU"
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250930005149epoutp01a761da235de09a528d712da3ef0df153~p6S00n0Qb0349803498epoutp01n
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 00:51:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250930005149epoutp01a761da235de09a528d712da3ef0df153~p6S00n0Qb0349803498epoutp01n
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QRU19ADn"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250930035522epoutp014227510d40ee684d43dac9fd1e8d4885~p8zE8E1Nn2952829528epoutp01x
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2025 03:55:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250930035522epoutp014227510d40ee684d43dac9fd1e8d4885~p8zE8E1Nn2952829528epoutp01x
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759193509;
-	bh=dA1CYvQDGRn1/ZdhJBrhCBYPIdLgWWLwobxHE73JqQ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oNwAD1pUAm2w0gtjlVpoOw7uElTNTw3g2F+kOBm6+kr7Uwx/W5srKBsstX6Ry8jFr
-	 UZqD9P/3HLBTXxlBx4UkeiBeeSa6hamv5pOWsr/VBnvcpR4b7nsc4YM8xfTp7Sqkr9
-	 qaFEh4hVHdmtT2KLmc5GkAPok5Cuyl19bsmuzoQY=
+	s=mail20170921; t=1759204522;
+	bh=QECUfZbqQMlZRsjBXhrpes/0FC7+ibWW3C5tH5S5p7k=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=QRU19ADng5zDrnPr23QwppGPQIPJ291f0mjzTdEtf1O/qAYHGEtK+FhyqdULiiz+i
+	 G5PHtCADV5bCMlnxgZHFLg5t1YCNki0PDV0Tfye7ROcX9bJCtzZfJci+i6OhmbXWLQ
+	 yu6FmZ6TpJ33uz35AFo8ZgdPMnUiOQnYf+ZuX118=
 Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250930005149epcas2p1dc36063f9ae33e1f227e7b22f71d6abe~p6S0Ndgb20911009110epcas2p1d;
-	Tue, 30 Sep 2025 00:51:49 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.38.201]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cbKJN4vmRz2SSKp; Tue, 30 Sep
-	2025 00:51:48 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250930005148epcas2p237d163869c441affbb1f778680ca34a3~p6SzOhLQV2610426104epcas2p2n;
-	Tue, 30 Sep 2025 00:51:48 +0000 (GMT)
-Received: from asswp60 (unknown [10.229.9.60]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250930005147epsmtip281c7a4f2dc397101618ed718a89c4de2~p6SzG1ojn1179111791epsmtip2j;
-	Tue, 30 Sep 2025 00:51:47 +0000 (GMT)
-From: Shin Son <shin.son@samsung.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Henrik Grimler
-	<henrik@grimler.se>
-Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/3] thermal: exynos_tmu: Support new hardware and update
- TMU interface
-Date: Tue, 30 Sep 2025 09:51:38 +0900
-Message-ID: <20250930005139.1424963-3-shin.son@samsung.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250930005139.1424963-1-shin.son@samsung.com>
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250930035520epcas5p4841bbe85fa7f5a7749405a45691a12b6~p8zDunfnh2319723197epcas5p4f;
+	Tue, 30 Sep 2025 03:55:20 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cbPN748LQz2SSKZ; Tue, 30 Sep
+	2025 03:55:19 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250930035518epcas5p2395afdb6f22d2a6b42f9daaec6bc3c1f~p8zBiHt5M2195921959epcas5p24;
+	Tue, 30 Sep 2025 03:55:18 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250930035516epsmtip16ed3b2e0736c21a6e0b7cb21079089aa~p8y-KY6bu2882428824epsmtip1J;
+	Tue, 30 Sep 2025 03:55:15 +0000 (GMT)
+From: Himanshu Dewangan <h.dewangan@samsung.com>
+To: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+	alim.akhtar@samsung.com, manjun@samsung.com, nagaraju.s@samsung.com,
+	ih0206.lee@samsung.com, jehyung.lee@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, Himanshu Dewangan <h.dewangan@samsung.com>
+Subject: [PATCH 00/29] media: codec: add new Samsung Exynos-MFC driver
+Date: Tue, 30 Sep 2025 09:33:19 +0530
+Message-Id: <20250930040348.3702923-1-h.dewangan@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,564 +62,302 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250930005148epcas2p237d163869c441affbb1f778680ca34a3
+X-CMS-MailID: 20250930035518epcas5p2395afdb6f22d2a6b42f9daaec6bc3c1f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250930005148epcas2p237d163869c441affbb1f778680ca34a3
-References: <20250930005139.1424963-1-shin.son@samsung.com>
-	<CGME20250930005148epcas2p237d163869c441affbb1f778680ca34a3@epcas2p2.samsung.com>
+X-CMS-RootMailID: 20250930035518epcas5p2395afdb6f22d2a6b42f9daaec6bc3c1f
+References: <CGME20250930035518epcas5p2395afdb6f22d2a6b42f9daaec6bc3c1f@epcas5p2.samsung.com>
 
-The Exynos tmu driver's private data structure has been extended
-to support the exynosautov920 hardware, which requires per-sensor interrupt
-enablement and multiple-zone handling:
+Exynos MFC new driver upstream proposal
++++++++++++++++++++++++++++++++++++++++
 
-- Add 'slope_comp' : compensation parameter below 25 degrees.
-- Add 'calib_temp' : stores the fused calibaration temperature.
-- Add 'sensor_count' : reflects the maximum sensor numbers.
-- Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
+The s5p-mfc driver in the kernel is quite outdated and has not kept up with the hardware advances of the MFC IP. 
+Going forward, we want to provide support for all the later versions of MFC in open source (both mobile and
+ExynosAuto would be supported by Samsung)
 
-Since splitting this patch causes runtime errors during temperature
-emulation or problems where the read temperature feature fails to
-retrieve values, I have submitted it as a single commit. To add support
-for the exynosautov920 to the exisiting TMU interface, the following
-changes are included:
+We (Samsung) would like to propose a new driver for the latest generation of Samsung MFC (Multi-Format Codec) hardware. 
+Although the kernel already contains a Samsung MFC driver (drivers/media/platform/s5p-mfc/), the newer hardware 
+diverges significantly from the previous generations, in features supported, register interface and in system integration. 
+This has necessitated a new driver, rather than updating the existing one. 
 
-1. Simplify "temp_to_code" and "code_to_temp" to one computation path
-   by normalizing calib_temp.
-2. Loop over 'sensor_count' in critical-point setup.
-3. Introduce 'update_con_reg' for exynosautov920 control-register updates.
-4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp' function.
-5. Skip high & low temperature threshold setup in exynosautov920.
-6. Enable interrupts via sensor_count in exynosautov920.
-7. Initialize all new members during 'exynosautov920_tmu_initialize'.
-8. Clear IRQs by iterating the sensor_count in exynosautov920.
-9. Register each zone with 'devm_thermal_of_zone_register()'
-   based on 'sensor_count'.
 
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
-Signed-off-by: Shin Son <shin.son@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 322 ++++++++++++++++++++++++---
- 1 file changed, 285 insertions(+), 37 deletions(-)
+Current driver vs targetted driver comparison
++++++++++++++++++++++++++++++++++++++++++++++
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 47a99b3c5395..8fa188928b79 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -121,8 +121,51 @@
- 
- #define EXYNOS_NOISE_CANCEL_MODE		4
- 
-+/* ExynosAutov920 specific registers */
-+#define EXYNOSAUTOV920_SLOPE_COMP		25
-+#define EXYNOSAUTOV920_SLOPE_COMP_MASK		0xf
-+#define EXYNOSAUTOV920_CALIB_SEL_TEMP		30
-+#define EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK	0x2
-+
-+#define EXYNOSAUTOV920_SENSOR0_TRIM_INFO	0x10
-+#define EXYNOSAUTOV920_TRIM_MASK		0x1ff
-+#define EXYNOSAUTOV920_TRIMINFO_25_SHIFT	0
-+#define EXYNOSAUTOV920_TRIMINFO_85_SHIFT	9
-+
-+#define EXYNOSAUTOV920_TMU_REG_TRIMINFO2	0x04
-+
-+#define EXYNOSAUTOV920_TMU_REG_THRESHOLD(p)	(((p)) * 0x50 + 0x00d0)
-+#define EXYNOSAUTOV920_TMU_REG_INTEN(p)		(((p)) * 0x50 + 0x00f0)
-+#define EXYNOSAUTOV920_TMU_REG_INT_PEND(p)	(((p)) * 0x50 + 0x00f8)
-+
-+#define EXYNOSAUTOV920_CURRENT_TEMP_P1_P0	0x084
-+#define EXYNOSAUTOV920_TMU_REG_EMUL_CON		0x0b0
-+
-+#define EXYNOSAUTOV920_TMU_REG_CONTROL		0x50
-+#define EXYNOSAUTOV920_TMU_REG_CONTROL1		0x54
-+#define EXYNOSAUTOV920_TMU_REG_AVG_CONTROL	0x58
-+#define EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL	0x70
-+#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0	0x74
-+#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1	0x78
-+
-+#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT		8
-+#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK		0x1f
-+#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT	3
-+#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK		0xf
-+#define EXYNOSAUTOV920_TMU_NUM_PROBE_MASK		0xf
-+#define EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT		16
-+#define EXYNOSAUTOV920_TMU_LPI_MODE_MASK		1
-+#define EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT		10
-+
-+#define EXYNOSAUTOV920_TMU_AVG_CON_UPDATE		0x0008011a
-+#define EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE	0x030003c0
-+#define EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE	0x03c0004d
-+
- #define MCELSIUS	1000
- 
-+#define EXYNOS_DEFAULT_SENSOR_COUNT			1
-+#define EXYNOS_MAX_SENSOR_COUNT				15
-+
- enum soc_type {
- 	SOC_ARCH_EXYNOS3250 = 1,
- 	SOC_ARCH_EXYNOS4210,
-@@ -133,6 +176,7 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS5420_TRIMINFO,
- 	SOC_ARCH_EXYNOS5433,
- 	SOC_ARCH_EXYNOS7,
-+	SOC_ARCH_EXYNOSAUTOV920,
- };
- 
- /**
-@@ -150,6 +194,8 @@ enum soc_type {
-  * @efuse_value: SoC defined fuse value
-  * @min_efuse_value: minimum valid trimming data
-  * @max_efuse_value: maximum valid trimming data
-+ * @slope_comp: allocated value of the slope compensation.
-+ * @calib_temp: calibration temperature of the TMU.
-  * @temp_error1: fused value of the first point trim.
-  * @temp_error2: fused value of the second point trim.
-  * @gain: gain of amplifier in the positive-TC generator block
-@@ -157,7 +203,8 @@ enum soc_type {
-  * @reference_voltage: reference voltage of amplifier
-  *	in the positive-TC generator block
-  *	0 < reference_voltage <= 31
-- * @tzd: pointer to thermal_zone_device structure
-+ * @sensor_count: The maximum number of the sensors
-+ * @tzd_array: pointer array of thermal_zone_device structure
-  * @enabled: current status of TMU device
-  * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
-  * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
-@@ -174,6 +221,7 @@ struct exynos_tmu_data {
- 	void __iomem *base;
- 	void __iomem *base_second;
- 	int irq;
-+	int sensor_count;
- 	enum soc_type soc;
- 	struct mutex lock;
- 	struct clk *clk, *clk_sec, *sclk;
-@@ -181,10 +229,12 @@ struct exynos_tmu_data {
- 	u32 efuse_value;
- 	u32 min_efuse_value;
- 	u32 max_efuse_value;
-+	u16 slope_comp;
-+	u16 calib_temp;
- 	u16 temp_error1, temp_error2;
- 	u8 gain;
- 	u8 reference_voltage;
--	struct thermal_zone_device *tzd;
-+	struct thermal_zone_device *tzd_array[EXYNOS_MAX_SENSOR_COUNT];
- 	bool enabled;
- 
- 	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
-@@ -205,13 +255,20 @@ struct exynos_tmu_data {
-  */
- static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
- {
-+	s32 temp_diff, code;
-+
- 	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
- 		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
- 
--	return (temp - EXYNOS_FIRST_POINT_TRIM) *
--		(data->temp_error2 - data->temp_error1) /
--		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
--		data->temp_error1;
-+	temp_diff = temp - EXYNOS_FIRST_POINT_TRIM;
-+
-+	code = temp_diff * (data->temp_error2 - data->temp_error1) * MCELSIUS /
-+	       (data->calib_temp - EXYNOS_FIRST_POINT_TRIM);
-+
-+	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && temp_diff < 0)
-+		code = code * (57 + data->slope_comp) / 65;
-+
-+	return code / MCELSIUS + data->temp_error1;
- }
- 
- /*
-@@ -220,13 +277,20 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
-  */
- static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
- {
-+	s32 code_diff, temp;
-+
- 	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
- 		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
- 
--	return (temp_code - data->temp_error1) *
--		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
--		(data->temp_error2 - data->temp_error1) +
--		EXYNOS_FIRST_POINT_TRIM;
-+	code_diff = temp_code - data->temp_error1;
-+
-+	temp = code_diff * (data->calib_temp - EXYNOS_FIRST_POINT_TRIM) * MCELSIUS /
-+	       (data->temp_error2 - data->temp_error1);
-+
-+	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && code_diff < 0)
-+		temp = temp * 65 / (57 + data->slope_comp);
-+
-+	return temp / MCELSIUS + EXYNOS_FIRST_POINT_TRIM;
- }
- 
- static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
-@@ -262,6 +326,9 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		clk_enable(data->clk_sec);
- 
- 	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
-+	if (data->soc == SOC_ARCH_EXYNOSAUTOV920)
-+		status = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-+
- 	if (!status) {
- 		ret = -EBUSY;
- 	} else {
-@@ -280,27 +347,34 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- static int exynos_thermal_zone_configure(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct thermal_zone_device *tzd = data->tzd;
--	int ret, temp;
-+	struct thermal_zone_device *tzd;
-+	int ret, temp, idx;
- 
--	ret = thermal_zone_get_crit_temp(tzd, &temp);
--	if (ret) {
--		/* FIXME: Remove this special case */
--		if (data->soc == SOC_ARCH_EXYNOS5433)
--			return 0;
-+	for (idx = 0; idx < data->sensor_count; idx++) {
-+		tzd = data->tzd_array[idx];
- 
--		dev_err(&pdev->dev,
--			"No CRITICAL trip point defined in device tree!\n");
--		return ret;
--	}
-+		if (!tzd)
-+			continue;
- 
--	mutex_lock(&data->lock);
--	clk_enable(data->clk);
-+		ret = thermal_zone_get_crit_temp(tzd, &temp);
-+		if (ret) {
-+			/* FIXME: Remove this special case */
-+			if (data->soc == SOC_ARCH_EXYNOS5433)
-+				return 0;
- 
--	data->tmu_set_crit_temp(data, temp / MCELSIUS);
-+			dev_err(&pdev->dev,
-+				"No CRITICAL trip point defined in device tree!\n");
-+			return ret;
-+		}
- 
--	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
-+		mutex_lock(&data->lock);
-+		clk_enable(data->clk);
-+
-+		data->tmu_set_crit_temp(data, temp / MCELSIUS);
-+
-+		clk_disable(data->clk);
-+		mutex_unlock(&data->lock);
-+	}
- 
- 	return 0;
- }
-@@ -323,6 +397,37 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
- 	return con;
- }
- 
-+static void update_con_reg(struct exynos_tmu_data *data)
-+{
-+	u32 val, t_buf_vref_sel, t_buf_slope_sel;
-+
-+	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-+	t_buf_vref_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT)
-+				& EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK;
-+	t_buf_slope_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT)
-+				& EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK;
-+
-+	val = readl(data->base +  EXYNOSAUTOV920_TMU_REG_CONTROL);
-+	val &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
-+	val |= (t_buf_vref_sel << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
-+	val &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
-+	val |= (t_buf_slope_sel << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
-+	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
-+
-+	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
-+	val &= ~(EXYNOSAUTOV920_TMU_NUM_PROBE_MASK << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
-+	val &= ~(EXYNOSAUTOV920_TMU_LPI_MODE_MASK << EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT);
-+	val |= (data->sensor_count << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
-+	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
-+
-+	writel(1, data->base + EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL);
-+	writel(EXYNOSAUTOV920_TMU_AVG_CON_UPDATE, data->base + EXYNOSAUTOV920_TMU_REG_AVG_CONTROL);
-+	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE,
-+	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0);
-+	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE,
-+	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1);
-+}
-+
- static void exynos_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-@@ -354,9 +459,8 @@ static void exynos_tmu_update_temp(struct exynos_tmu_data *data, int reg_off,
- 	u16 tmu_temp_mask;
- 	u32 th;
- 
--	tmu_temp_mask =
--		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MASK
--						: EXYNOS_TMU_TEMP_MASK;
-+	tmu_temp_mask = (data->soc == SOC_ARCH_EXYNOS7 || data->soc == SOC_ARCH_EXYNOSAUTOV920)
-+		? EXYNOS7_TMU_TEMP_MASK	: EXYNOS_TMU_TEMP_MASK;
- 
- 	th = readl(data->base + reg_off);
- 	th &= ~(tmu_temp_mask << bit_off);
-@@ -582,6 +686,68 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
- 	sanitize_temp_error(data, trim_info);
- }
- 
-+static void exynosautov920_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	/*
-+	 * Failing thresholds are not supported on Exynosautov920.
-+	 * We use polling instead.
-+	 */
-+}
-+
-+static void exynosautov920_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	/*
-+	 * Rising thresholds are not supported on Exynosautov920.
-+	 * We use polling instead.
-+	 */
-+}
-+
-+static void exynosautov920_tmu_disable_low(struct exynos_tmu_data *data)
-+{
-+	/* Again, this is handled by polling. */
-+}
-+
-+static void exynosautov920_tmu_disable_high(struct exynos_tmu_data *data)
-+{
-+	/* Again, this is handled by polling. */
-+}
-+
-+static void exynosautov920_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	unsigned int idx;
-+
-+	for (idx = 0; idx < data->sensor_count; idx++) {
-+		if (!data->tzd_array[idx])
-+			continue;
-+
-+		exynos_tmu_update_temp(data, EXYNOSAUTOV920_TMU_REG_THRESHOLD(idx), 16, temp);
-+		exynos_tmu_update_bit(data, EXYNOSAUTOV920_TMU_REG_INTEN(idx), 7, true);
-+	}
-+}
-+
-+static void exynosautov920_tmu_initialize(struct platform_device *pdev)
-+{
-+	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-+	unsigned int val;
-+
-+	data->tmu_control(pdev, false);
-+
-+	update_con_reg(data);
-+
-+	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-+	data->cal_type = TYPE_TWO_POINT_TRIMMING;
-+	data->slope_comp = (val >> EXYNOSAUTOV920_SLOPE_COMP) & EXYNOSAUTOV920_SLOPE_COMP_MASK;
-+
-+	val = readl(data->base + EXYNOSAUTOV920_SENSOR0_TRIM_INFO);
-+	data->temp_error1 = (val >> EXYNOSAUTOV920_TRIMINFO_25_SHIFT) & EXYNOSAUTOV920_TRIM_MASK;
-+	data->temp_error2 = (val >> EXYNOSAUTOV920_TRIMINFO_85_SHIFT) & EXYNOSAUTOV920_TRIM_MASK;
-+
-+	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_TRIMINFO2);
-+	val = (val >> EXYNOSAUTOV920_CALIB_SEL_TEMP) & EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK;
-+
-+	data->calib_temp = (EXYNOS_SECOND_POINT_TRIM + (20 * val));
-+}
-+
- static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-@@ -633,6 +799,24 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
- }
- 
-+static void exynosautov920_tmu_control(struct platform_device *pdev, bool on)
-+{
-+	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-+	unsigned int con;
-+
-+	con = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
-+
-+	if (on) {
-+		con |= BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
-+		con |= BIT(EXYNOS_TMU_CORE_EN_SHIFT);
-+	} else {
-+		con &= ~BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
-+		con &= ~BIT(EXYNOS_TMU_CORE_EN_SHIFT);
-+	}
-+
-+	writel(con, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
-+}
-+
- static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
- {
- 	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-@@ -671,7 +855,7 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *data, unsigned int val,
- 
- 		val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
- 		val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
--		if (data->soc == SOC_ARCH_EXYNOS7) {
-+		if (data->soc == SOC_ARCH_EXYNOS7 || data->soc == SOC_ARCH_EXYNOSAUTOV920) {
- 			val &= ~(EXYNOS7_EMUL_DATA_MASK <<
- 				EXYNOS7_EMUL_DATA_SHIFT);
- 			val |= (temp_to_code(data, temp) <<
-@@ -703,6 +887,8 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
- 		emul_con = EXYNOS5433_TMU_EMUL_CON;
- 	else if (data->soc == SOC_ARCH_EXYNOS7)
- 		emul_con = EXYNOS7_TMU_REG_EMUL_CON;
-+	else if (data->soc == SOC_ARCH_EXYNOSAUTOV920)
-+		emul_con = EXYNOSAUTOV920_TMU_REG_EMUL_CON;
- 	else
- 		emul_con = EXYNOS_EMUL_CON;
- 
-@@ -756,11 +942,23 @@ static int exynos7_tmu_read(struct exynos_tmu_data *data)
- 		EXYNOS7_TMU_TEMP_MASK;
- }
- 
-+static int exynosautov920_tmu_read(struct exynos_tmu_data *data)
-+{
-+	return readw(data->base + EXYNOSAUTOV920_CURRENT_TEMP_P1_P0) &
-+		EXYNOS7_TMU_TEMP_MASK;
-+}
-+
- static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
- {
- 	struct exynos_tmu_data *data = id;
-+	int idx;
- 
--	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-+	for (idx = 0; idx < data->sensor_count; idx++) {
-+		if (!data->tzd_array[idx])
-+			continue;
-+
-+		thermal_zone_device_update(data->tzd_array[idx], THERMAL_EVENT_UNSPECIFIED);
-+	}
- 
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
-@@ -805,6 +1003,19 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
- 	writel(val_irq, data->base + tmu_intclear);
- }
- 
-+static void exynosautov920_tmu_clear_irqs(struct exynos_tmu_data *data)
-+{
-+	unsigned int idx, val_irq;
-+
-+	for (idx = 0; idx < data->sensor_count; idx++) {
-+		if (!data->tzd_array[idx])
-+			continue;
-+
-+		val_irq = readl(data->base + EXYNOSAUTOV920_TMU_REG_INT_PEND(idx));
-+		writel(val_irq, data->base + EXYNOSAUTOV920_TMU_REG_INT_PEND(idx));
-+	}
-+}
-+
- static const struct of_device_id exynos_tmu_match[] = {
- 	{
- 		.compatible = "samsung,exynos3250-tmu",
-@@ -833,6 +1044,9 @@ static const struct of_device_id exynos_tmu_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos7-tmu",
- 		.data = (const void *)SOC_ARCH_EXYNOS7,
-+	}, {
-+		.compatible = "samsung,exynosautov920-tmu",
-+		.data = (const void *)SOC_ARCH_EXYNOSAUTOV920,
- 	},
- 	{ },
- };
-@@ -865,6 +1079,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 
- 	data->soc = (uintptr_t)of_device_get_match_data(&pdev->dev);
- 
-+	data->sensor_count = EXYNOS_DEFAULT_SENSOR_COUNT;
-+
-+	data->calib_temp = EXYNOS_SECOND_POINT_TRIM;
-+
- 	switch (data->soc) {
- 	case SOC_ARCH_EXYNOS4210:
- 		data->tmu_set_low_temp = exynos4210_tmu_set_low_temp;
-@@ -945,6 +1163,19 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->min_efuse_value = 15;
- 		data->max_efuse_value = 100;
- 		break;
-+	case SOC_ARCH_EXYNOSAUTOV920:
-+		data->tmu_set_low_temp = exynosautov920_tmu_set_low_temp;
-+		data->tmu_set_high_temp = exynosautov920_tmu_set_high_temp;
-+		data->tmu_disable_low = exynosautov920_tmu_disable_low;
-+		data->tmu_disable_high = exynosautov920_tmu_disable_high;
-+		data->tmu_set_crit_temp = exynosautov920_tmu_set_crit_temp;
-+		data->tmu_initialize = exynosautov920_tmu_initialize;
-+		data->tmu_control = exynosautov920_tmu_control;
-+		data->tmu_read = exynosautov920_tmu_read;
-+		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
-+		data->tmu_clear_irqs = exynosautov920_tmu_clear_irqs;
-+		data->sensor_count = EXYNOS_MAX_SENSOR_COUNT;
-+		break;
- 	default:
- 		dev_err(&pdev->dev, "Platform not supported\n");
- 		return -EINVAL;
-@@ -952,6 +1183,14 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 
- 	data->cal_type = TYPE_ONE_POINT_TRIMMING;
- 
-+	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
-+		if (of_property_read_u32(pdev->dev.of_node, "samsung,sensors",
-+					 &data->sensor_count)) {
-+			dev_err(&pdev->dev, "failed to get sensor count\n");
-+			return -ENODEV;
-+		}
-+	}
-+
- 	/*
- 	 * Check if the TMU shares some registers and then try to map the
- 	 * memory of common registers.
-@@ -1006,7 +1245,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct exynos_tmu_data *data;
--	int ret;
-+	struct thermal_zone_device *tzd;
-+	int ret, idx;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -1084,11 +1324,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 		goto err_sclk;
- 	}
- 
--	data->tzd = devm_thermal_of_zone_register(dev, 0, data,
--						  &exynos_sensor_ops);
--	if (IS_ERR(data->tzd)) {
--		ret = dev_err_probe(dev, PTR_ERR(data->tzd), "Failed to register sensor\n");
--		goto err_sclk;
-+	for (idx = 0; idx < data->sensor_count; idx++) {
-+		tzd = devm_thermal_of_zone_register(dev, idx, data, &exynos_sensor_ops);
-+
-+		if (IS_ERR(tzd)) {
-+			if (PTR_ERR(tzd) == -ENODEV)
-+				continue;
-+
-+			ret = dev_err_probe(dev, PTR_ERR(data->tzd_array[idx]),
-+					    "Failed to register sensor\n");
-+			goto err_sclk;
-+		}
-+
-+		data->tzd_array[idx] = tzd;
- 	}
- 
- 	ret = exynos_thermal_zone_configure(pdev);
+Target Feature 
+Current mainline : Simple V4L2/ VB2 interface based encoder/ decoder
+New proposed driver: Dual core support, NAL-q support, LLC, Coredump, performance
+measurement, plugin driver architecture, hardware manager(meerkat), DRM/OTF,
+Resource manager, bandwidth compression, New Pixel formats (NV12N,  YV12, P010,
+SBWC,  RGB family), 10 bit support, HDR support, Prio and RR Process Scheduler support, 
+
+Register map	
+Current mainline : Fixed register layout, compatible across s5p variants
+New proposed driver: Completely redesigned register set, incompatible with old layout
+
+Command model
+Current mainline : Mailbox-style command queue
+New proposed driver: Ring-buffer command queue with different signaling
+
+Memory management
+Current mainline : CMA-backed contiguous buffers, ION legacy
+New proposed driver: dma-heap / scatter-gather buffers with strict alignment rules
+
+Firmware
+Current mainline : Supports up to Firmware v12, Legacy binary format, loaded via shared mechanism	
+New proposed driver: New firmware format, different protocol for control messages. Support Firmware v13 onwards
+
+DT bindings	
+Current mainline : Single clock + reset, simple PM	
+New proposed driver: Multiple clocks, reset domains, runtime PM dependencies
+
+Error handling	
+Current mainline : Simple IRQ error flags
+New proposed driver: Detailed error codes, recovery sequences required
+
+Code impact
+Current mainline :~8k LOC, minimal conditionals
+New proposed driver: ~65KLOC with full features
+
+
+Plan for supporting latest MFC (Best balance between code clarity and long-term kernel health, while still respecting ABI and legacy users.)
+1	We propose a new driver (exynos-mfc) for the latest generation of Samsung MFC (Multi-Format Codec) hardware. 
+2	MFC FW V6 to V12 will be supported by existing mainline (s5p-mfc) and later versions by Exynos-mfc driver
+3	The existing MFC driver will remain available for older SoC’s and will not be broken. The new driver will only bind
+	to new compatible strings in DT, avoiding regressions for legacy hardware. Samsung will take responsibility for 
+	maintaining both drivers until the old one can be formally marked as “legacy.”
+4	Keep it buildable for old SoCs but clearly say new SoCs should use the new driver.
+5	VIDEO_SAMSUNG_S5P_MFC and VIDEO_EXYNOS_MFC will both be supported for an agreed time
+6	Long term Support for new driver  - commitment from Samsung
+7	The hardware has diverged to the point where conditionally supporting both in one codebase is worse for long-term kernel health
+8	Splitting keeps the code clean, testable, and reviewable, while ensuring legacy users aren’t broken due to user space ABI  guarantees.
+	This seems more clean and easier approach Both can coexist without code spaghetti.
+
+Features and description supported
+++++++++++++++++++++++++++++++++++
+
+1	MFC driver registration	Probe functionality and video nodes registration
+2	MFC driver open & close support	MFC firmware loading,  "ls" & "cat" on the video nodes  and udev rules on the video nodes
+3	H264 decoding	H264 decoding support - HW supported profiles & levels (YUV420 Semi-Planar, 8-bit, min/max resolution)
+4	HEVC decoding	HEVC decoding support - HW supported profiles & levels (YUV420 Semi-Planar, 8-bit, min/max resolution)
+5	VP8 decoding	VP8 decoding support - HW supported profiles & levels (YUV420 Semi-Planar, 8-bit, min/max resolution)
+6	VP9 decoding	VP9 decoding support - HW supported profiles & levels (YUV420 Semi-Planar, 8-bit, min/max resolution)
+7	AV1 decoding	AV1 decoding support - HW supported profiles & levels (YUV420 Semi-Planar, 8-bit, min/max resolution)
+8	H264 encoding	H264 encoding support - Basic encoding (YUV420 Semi-Planar, 8-bit, min/max resolution)
+9	HEVC encoding	HEVC encoding support - Basic encoding (YUV420 Semi-Planar, 8-bit, min/max resolution)
+10	VP8 encoding	VP8 encoding support - Basic encoding (YUV420 Semi-Planar, 8-bit, min/max resolution)
+11	VP9 encoding	VP9 encoding support - Basic encoding (YUV420 Semi-Planar, 8-bit, min/max resolution)
+12	Debug fs support		Debug fs to control the MFC functionalities
+13	Debug log support		Debug logs to get on the dmesg prompt for debug purpose
+14	Debug SFR dump support		MFC SFR dumps during failures
+15	NAL Queue mode control		NAL Queue mode support
+16	Batch mode control		Batch mode support
+17	HW supported YUV formats	YUV 420, 422, 444 (planar, semi-planar) formats support as per MFC HW specification
+18	HW supported RGB formats	RGB format support as per MFC HW specification
+19	Multi instance decoding/encoding	Multi instance decoding/encoding
+20	Suspend and resume		Suspend and resume support
+21	Runtime suspend and resume	Runtime suspend and resume support
+22	Priority decoding (decoders)	Priority decoding support
+23	Frame delay configuration (decoders)	Frame delay configuration support
+24	Error handling and conceal control (decoders)	HW/Platform limitations should be gracefully exited and,
+							bit stream errors should be reported or concealed with warning indication
+25	Reference frame control (encoders)	Reference frame control support
+26	SPS/PPS control (encoders)	SPS/PPS control support
+27	Loop filter control (encoders)	Loop filter control support
+28	B frame support (encoders)	B frame support
+29	GOP control (encoders)		GOP control support
+30	Frame rate control (encoders)	Frame rate control support
+
+Features to be  supported in 2026
++++++++++++++++++++++++++++++++++
+
+31	Bit rate control (encoders)		Bit rate control support
+32	QP control (encoders)			QP control support
+33	I/IDR control (encoders)		I/IDR control support
+34	Scalable control (encoders)		Scalable control support
+35	ROI control (encoders)			ROI control support
+36	Multi slice control (encoders)		Multi slice control support
+37	Profile/Level control (encoders)	Profile/Level control support
+38	Padding control (encoders)		Padding control support
+39	Aspect ratio control (encoders)		Aspect ratio control support
+40	Buffer full handling (encoders)		Buffer full handling support
+41	SBWC					SBWC bandwidth compression support
+42	10-bit support				10-bit support as per MFC HW specification
+43	Secure signed FW support		Security signed FW support
+44	Secure playback				DRM content playback for decoders
+45	HDR Support (decoders)			HDR metadata support
+46	Dynamic resolution change		Dynamic resolution change support
+
+Nagaraju Siddineni (29):
+  dt-bindings: media: mfc: Add Exynos MFC devicetree binding
+  arm64: dts: mfc: Add MFC device tree for Auto V920 SoC
+  media: mfc: Add MFC driver data structures and debugging macros
+  media: mfc: Add full register map and bit definitions for MFC hardware
+  media: mfc: Add MFC driver header files and core utilities
+  media: mfc: Add MFC core hardware register and debugfs APIs
+  media: mfc: Add MFC core command, hwlock, ISR and run functionalities
+  media: mfc: Add Exynos‑MFC driver probe support
+  media: mfc: Add bus‑devfreq, QoS, multi‑view and control
+    infrastructure
+  media: mfc: Add buffer‑queue and IOVMM support
+  media: mfc: Add rate‑calculation framework and memory utilities
+  media: mfc: Introduce QoS support and instance context handling
+  media: mfc: Add decoder core sync functions
+  media: mfc: Add buffer‑control framework
+  media: mfc: Add decoder resource‑management (RM) support and
+    load‑balancing
+  media: mfc: Enhance HW‑lock handling, scheduling and error recovery
+  media: mfc: Add VB2 decoder support
+  media: mfc: Add V4L2 decoder driver
+  media: mfc: Add QoS, Butler workqueue, and priority‑based scheduling
+  media: mfc: Add H264 decoder support
+  media: mfc: Add multi‑codec support & QoS improvements
+  media: mfc: Add H.264 encoder support with buffer and QoS improvements
+  media: mfc: Add encoder parameters, ROI & QoS support
+  media: mfc: Add encoder VB2 support to driver
+  media: mfc: Add encoder v4l2 driver interface
+  media: mfc: Add full encoder support
+  media: mfc: Add H.264 encoder support
+  media: mfc: Add AVC, VP8, VP9, and HEVC encoding support
+  media: mfc: Hardware‑accelerated encoding support
+
+ .../bindings/media/samsung,exynos-mfc.yaml    |   77 +
+ MAINTAINERS                                   |   10 +
+ .../dts/exynos/exynosautov920-evt2-mfc.dtsi   |  630 +++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |    1 +
+ drivers/media/platform/samsung/Kconfig        |    7 +
+ drivers/media/platform/samsung/Makefile       |    1 +
+ .../media/platform/samsung/exynos-mfc/Kconfig |   34 +
+ .../platform/samsung/exynos-mfc/Makefile      |   26 +
+ .../samsung/exynos-mfc/base/mfc_buf.c         |  765 +++
+ .../samsung/exynos-mfc/base/mfc_buf.h         |   43 +
+ .../samsung/exynos-mfc/base/mfc_common.h      |  444 ++
+ .../samsung/exynos-mfc/base/mfc_data_struct.h | 2014 +++++++
+ .../samsung/exynos-mfc/base/mfc_debug.h       |  247 +
+ .../samsung/exynos-mfc/base/mfc_format.h      |  316 ++
+ .../samsung/exynos-mfc/base/mfc_macros.h      |   95 +
+ .../samsung/exynos-mfc/base/mfc_media.h       |  554 ++
+ .../samsung/exynos-mfc/base/mfc_mem.c         |  995 ++++
+ .../samsung/exynos-mfc/base/mfc_mem.h         |  155 +
+ .../samsung/exynos-mfc/base/mfc_qos.c         | 1070 ++++
+ .../samsung/exynos-mfc/base/mfc_qos.h         |   99 +
+ .../samsung/exynos-mfc/base/mfc_queue.c       |  966 ++++
+ .../samsung/exynos-mfc/base/mfc_queue.h       |  158 +
+ .../exynos-mfc/base/mfc_rate_calculate.c      |  640 +++
+ .../exynos-mfc/base/mfc_rate_calculate.h      |  106 +
+ .../samsung/exynos-mfc/base/mfc_regs.h        |   58 +
+ .../samsung/exynos-mfc/base/mfc_regs_mfc.h    | 1002 ++++
+ .../samsung/exynos-mfc/base/mfc_sched.h       |   30 +
+ .../samsung/exynos-mfc/base/mfc_utils.c       |  401 ++
+ .../samsung/exynos-mfc/base/mfc_utils.h       |  481 ++
+ .../media/platform/samsung/exynos-mfc/mfc.c   | 1366 +++++
+ .../platform/samsung/exynos-mfc/mfc_core.c    |  703 +++
+ .../samsung/exynos-mfc/mfc_core_buf_ctrl.c    |  543 ++
+ .../samsung/exynos-mfc/mfc_core_cmd.c         |  576 ++
+ .../samsung/exynos-mfc/mfc_core_cmd.h         |   41 +
+ .../samsung/exynos-mfc/mfc_core_enc_param.c   | 1463 ++++++
+ .../samsung/exynos-mfc/mfc_core_enc_param.h   |   23 +
+ .../samsung/exynos-mfc/mfc_core_hw_reg_api.c  |  122 +
+ .../samsung/exynos-mfc/mfc_core_hw_reg_api.h  |  144 +
+ .../samsung/exynos-mfc/mfc_core_hwlock.c      |  761 +++
+ .../samsung/exynos-mfc/mfc_core_hwlock.h      |   80 +
+ .../samsung/exynos-mfc/mfc_core_intlock.c     |   98 +
+ .../samsung/exynos-mfc/mfc_core_intlock.h     |   20 +
+ .../samsung/exynos-mfc/mfc_core_isr.c         | 2104 ++++++++
+ .../samsung/exynos-mfc/mfc_core_isr.h         |   25 +
+ .../samsung/exynos-mfc/mfc_core_ops.c         |  813 +++
+ .../samsung/exynos-mfc/mfc_core_ops.h         |   16 +
+ .../platform/samsung/exynos-mfc/mfc_core_pm.c |  209 +
+ .../platform/samsung/exynos-mfc/mfc_core_pm.h |   33 +
+ .../samsung/exynos-mfc/mfc_core_reg_api.c     |  597 +++
+ .../samsung/exynos-mfc/mfc_core_reg_api.h     |  380 ++
+ .../samsung/exynos-mfc/mfc_core_run.c         |  541 ++
+ .../samsung/exynos-mfc/mfc_core_run.h         |   35 +
+ .../samsung/exynos-mfc/mfc_core_sched_prio.c  |  431 ++
+ .../samsung/exynos-mfc/mfc_core_sync.c        |  423 ++
+ .../samsung/exynos-mfc/mfc_core_sync.h        |   34 +
+ .../samsung/exynos-mfc/mfc_ctx_ctrl.c         | 1469 ++++++
+ .../platform/samsung/exynos-mfc/mfc_debugfs.c |  248 +
+ .../platform/samsung/exynos-mfc/mfc_debugfs.h |   20 +
+ .../samsung/exynos-mfc/mfc_dec_v4l2.c         | 1739 +++++++
+ .../samsung/exynos-mfc/mfc_dec_v4l2.h         |   20 +
+ .../platform/samsung/exynos-mfc/mfc_dec_vb2.c |  394 ++
+ .../platform/samsung/exynos-mfc/mfc_dec_vb2.h |   19 +
+ .../samsung/exynos-mfc/mfc_enc_v4l2.c         | 4614 +++++++++++++++++
+ .../samsung/exynos-mfc/mfc_enc_v4l2.h         |   20 +
+ .../platform/samsung/exynos-mfc/mfc_enc_vb2.c |  443 ++
+ .../platform/samsung/exynos-mfc/mfc_enc_vb2.h |   19 +
+ .../platform/samsung/exynos-mfc/mfc_rm.c      | 2652 ++++++++++
+ .../platform/samsung/exynos-mfc/mfc_rm.h      |  110 +
+ 68 files changed, 34773 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-evt2-mfc.dtsi
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/Kconfig
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/Makefile
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_buf.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_buf.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_common.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_data_struct.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_debug.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_format.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_macros.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_media.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_mem.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_mem.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_qos.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_qos.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_queue.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_queue.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_rate_calculate.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_rate_calculate.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_regs.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_regs_mfc.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_sched.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_utils.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/base/mfc_utils.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_buf_ctrl.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_cmd.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_cmd.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_enc_param.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_enc_param.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_hw_reg_api.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_hw_reg_api.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_hwlock.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_hwlock.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_intlock.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_intlock.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_isr.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_isr.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_ops.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_ops.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_pm.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_pm.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_reg_api.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_reg_api.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_run.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_run.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_sched_prio.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_sync.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_core_sync.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_ctx_ctrl.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_debugfs.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_debugfs.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_dec_v4l2.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_dec_v4l2.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_dec_vb2.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_dec_vb2.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_enc_v4l2.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_enc_v4l2.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_enc_vb2.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_enc_vb2.h
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_rm.c
+ create mode 100644 drivers/media/platform/samsung/exynos-mfc/mfc_rm.h
+
 -- 
-2.50.1
+2.34.1
 
