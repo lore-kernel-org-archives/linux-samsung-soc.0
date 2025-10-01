@@ -1,173 +1,213 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08311262815
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Oct 2025 15:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6832517B9
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Oct 2025 15:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759331613; cv=none; b=N19mqyH3s+pyw3UnzyzF02n7y6x910ZiK6q9j+1R8brY9UbBanH+dNhV2SjHNdfAwOTxXXIa9806EAg8Lb9GGPv1RvvF584cLAJbOwQUjQSeq+VV0mHGglxD3xtpABlR8ebYm0UbvovgfB/08k8AVwGpda7DEre+Gn6bfoWhp5g=
+	t=1759333263; cv=none; b=rfuo+SDr6g+0AL+8y2iBoIhH4FVDVRwARf/VE5LBl1GYpJr2InMen+M6J1olkoDVLLF4FEBvMvN2SolY+CDOqRL1Mv2aGHOpteSsHcqObFt7miesy935meu0KfppHMwlNb061vTggNpAtN7Z9Cr9rXlvhHaOKyULQOi0KlEs0AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759331613; c=relaxed/simple;
-	bh=zRnYw0c/jEYg6tUfOIO2XTCeocsoj1LuLA2X2KUMWjo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sB9CJrtch/ZPKJasJ58cH++RxaH6YdiMjYjQgHJvnyhSPomXZIHa8XypobTRadNAKmlyk04iHzx9zCS+940eAaEcXfzOlwVh2XALfuuDH/x55HurxGl9NR+9dytl+dJAUDkOsBTsKUtK0hDyg0XRc4X9KXI2E/zJ2LhDlZAfqH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ci6/nRZ/; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1759333263; c=relaxed/simple;
+	bh=VPFhdajTzt4PMvSoazJy32tPKtXgLDASc3DZDYmsvgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gBabLYwFAAmqZW579MPsMGqAAAsEOnbM/cUaafKKWvAUivHYrEgGmgwr+ksTy4U72IFsaneLCKxYAvZCxlYyWnGIVRwrHgVp6plBnqv5kxPaMvSpoAYRO8zUYs56QzfuWsrSNq5tFH6V+afGRbFSSJ0xIPwJjy0nwl9j0cLJNMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e23n1Qc3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ci6/nRZ/"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-634a4829c81so12575849a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2025 08:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759331609; x=1759936409; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SEEUny1Be1BFGwKqqn+oNj/RmCjib3ttC0W23b9Ns+s=;
-        b=ci6/nRZ/4MuEYA0OJYZnxVJ21xzIPaqeqzs2qApreXIib0h2sZYflSBjBTDUvZvJ1J
-         9ZKLaZTaQTRqKXmns1BvGnil/+2OgVe8LlsZVNkNzWx72AVeSSg7qpTcoFeQSofpKxYR
-         rUUb7ceVKyS7LwM38RUxelEOWRm+eKXMynAhMQF/f+TAB0PU5CPznmftXaTee1xflzSE
-         IP7aGHRzddI2diFu7+fs3WrjkdxX8JckmFnJ9sjNniKcKsPQEMXMcVRbWDGmtskepumI
-         vC763HRwKFF7E1KIMrWmrCQ1j1C18K07+LX2Uq43H5/aifgtNN8zWA92boOUBUt4Nqq/
-         zNFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759331609; x=1759936409;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SEEUny1Be1BFGwKqqn+oNj/RmCjib3ttC0W23b9Ns+s=;
-        b=Vw9HOuyLWsnvRuIlkE6qAYLOr4zX/YZ1wS/sPYF4CHLR+HC8aZ72/ruNYzPJfZOHoy
-         ggLDh++tZSsLWMa5v6OW25sXwNueNvOfYlhf1YgsEFoAkmMgDGI9LQBzji6wom9J4K+Q
-         ZiLkHw6/XftZCIEUmrAzZrZ+e3LUGPb9m2ZB4eViOOo/zgZSeP8hUCfo9CxiExqJ1tg1
-         8+/bVAJ5jx13nYd0b3kC/8S9Xxhy+R+8Fh018bplwlfLk1Wu4Jj3YflxgnJEq7G2GJBY
-         Xgg7xFam990SHb6RSasSjFjIIe6Li3hTVCv9RE2ElPOC/8tGtMbIzYdJAyDXh535xc19
-         Z8nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoFFIf1kKX39BNic4cobfbgbEE3SJGtxw5GopEk5bo5FMXLt13rRgKhFdzZPEQPeJj8ixqGhSFM205CbQuEiIVVQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7/bW53LNTEPU+vAczjWyd+NJbxbvG83H1wxa3RLo4eao0u2g4
-	QrgjrldQgghRoF/eFYNG4cHsTaqzjErd9vuaX+anwqJTysJG2yHvjjqG9VCFcDWJIUs=
-X-Gm-Gg: ASbGncs3eMnQZqk73SZOkqJwlFc0Geyj5z8g0eMMBi/BA2Xh+Ge8B2gu0fcTUVjXNGd
-	Q+oK0IURG+rGnUKo2NcgmBuO4pukHhIzyLc19CsHZgU0hfKoL4mUNfW2PWZH1w7IGNLFTFmSQ33
-	9vdWii/fSv3tWNCBrT1T7RFHLhshDQCgkC9gbAUB5PA//VGvtDv33UUEb5nuOt1ngLBYYXo8iRJ
-	CV5qHeo+scbaFS0c3Nr3kl3MpGZHg7cGv0uhBfIGXqszEQjr/s5zIkcXpA5JeGjOqMKSNZpE5Jr
-	33sI808X1acDGUiuEAiAt5WBwOXZ7W17cYdp/mOOxcMLCegVFlhow5sE6bpRfZQ1CP5g/GbO6x7
-	qb7xFsoJoBOdJ4jfC1bJD2XYFmhHfDv6HjSCjNx2+Akzigpzw/YFlIDl2vLlT5ZST3Yo9adLp9F
-	U43Wv3IwwoPSMv/qChHZwX+vObHMdKK0dmRo5f
-X-Google-Smtp-Source: AGHT+IHBCc4NxqsoRLhxkWHk/fgJ6Xl1FY/slzvWV2YPuSfVBu5/dMpl+l0CNjy2qT0HCYNogprb6A==
-X-Received: by 2002:a17:906:3746:b0:b47:70bf:645 with SMTP id a640c23a62f3a-b4770bf06f8mr246716466b.58.1759331609281;
-        Wed, 01 Oct 2025 08:13:29 -0700 (PDT)
-Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3cedacd973sm797226866b.49.2025.10.01.08.13.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 08:13:28 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 01 Oct 2025 16:13:16 +0100
-Subject: [PATCH] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e23n1Qc3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A23C4AF0B
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Oct 2025 15:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759333263;
+	bh=VPFhdajTzt4PMvSoazJy32tPKtXgLDASc3DZDYmsvgc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e23n1Qc3HVN4q/9rR/RJ2z/QTpQP2EYU+7XtZXUBEmkvWg94/88Xcx5Xyohv2L02X
+	 oebDZeQoYJUp/eKPBkFFf9TDFrYIgNEFU+fjF4v6HUKXPTZEfAYpl6RodLriRyu59Y
+	 UZ58ngllpRf25ivv6yv1M7Uof/Sl+Di5nNGrlonEF2/+7x1WL2VRaiujoec/TMuAKP
+	 Lb6vNxovtX1mLMoAiOFoUGZX9qhxZ1vyW4F+u3ORWbkM7uMYo1rxvURMI1vaoqDBcM
+	 CSSTgzX4RL2s+PlNG62SiLPUABzoO57LA7caUyqy7xA9ZlKZj0jIZm9MGHbA7gW0fQ
+	 LW0hf6Kf0KcRA==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b41870fef44so756066b.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2025 08:41:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCViCHbLFmA4AtEAN3ovIDtZG+o4rAI11eYi0O5Y00uOhkR28i+6GYXNWajopzr5TT61K1fYVaiSwmR90jHTQu2kMw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpYN/B06bO9LS6SqGhPg0SmEiisZYWhIsS1Rqho1DVr58X0bt2
+	CmyhLzlIiompD3f/Q0xeQlphQLR+7uef2I9qOaBNyBgXdtGkhKNqOrh1WfPFlB8wF/1PkQoMIUc
+	4bqSnlAeAiRelOubgy7KbIzRWGKceYQ==
+X-Google-Smtp-Source: AGHT+IEQg/Wj/A5kVG6NeqjVifOVkTFeucuHaTw0oAe89TAlFoQQ9Maf0g7ETh3zkxolZbtxGs/+9BsGvGwwYEgRweU=
+X-Received: by 2002:a17:906:6a28:b0:b3d:e9be:7ad0 with SMTP id
+ a640c23a62f3a-b46e4d7dbdamr429653566b.6.1759333262008; Wed, 01 Oct 2025
+ 08:41:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAxF3WgC/x2NQQrCMBAAv1L23IXsiqB+pfQQ4qYupjFk2yKE/
- t3gcQ4z08Ckqhg8hgZVDjX95A40DhBePi+C+uwM7PhKzhGaX23PC4b0xpISmq4ladTgt67iRRz
- H252YmKFHSpWo3/9gms/zB//yC0hwAAAA
-X-Change-ID: 20251001-samsung-clk-pll-simplification-3e02f8912122
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
+ <175911189634.2556697.2474466935066391775.robh@kernel.org> <32036b3916a944be9450e48b6be30dc0@disroot.org>
+In-Reply-To: <32036b3916a944be9450e48b6be30dc0@disroot.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 1 Oct 2025 10:40:49 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLYCRfRuxtymiH50QrSXVsCQ_DFfP6E3GnnDP_Q0ofAJg@mail.gmail.com>
+X-Gm-Features: AS18NWBM0yEC5v7mwPKzU4adk5H2ji9GiLwA3JN9Wk_AB63JYvswUWeOPHSnB2c
+Message-ID: <CAL_JsqLYCRfRuxtymiH50QrSXVsCQ_DFfP6E3GnnDP_Q0ofAJg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-readl_relaxed_poll_timeout_atomic() has been updated in 2023 in
-commit 7349a69cf312 ("iopoll: Do not use timekeeping in
-read_poll_timeout_atomic()") to avoid usage of timekeeping APIs. It
-also never used udelay() when no delay was given.
+On Mon, Sep 29, 2025 at 5:05=E2=80=AFAM Kaustabh Chakraborty
+<kauschluss@disroot.org> wrote:
+>
+> On 2025-09-29 02:14, Rob Herring (Arm) wrote:
+> > On Sun, 28 Sep 2025 23:26:34 +0530, Kaustabh Chakraborty wrote:
+> >> Exynos7870 has a IP subsystem in its architecture dedicated to display
+> >> management. Notably, this block includes the Display Enhancement
+> >> Controller (DECON), and the DSI Master (DSIM).
+> >>
+> >> The following series and its sub-series implement all components for a
+> >> functioning display pipeline. All vital information which helped
+> >> shaping
+> >> up the patches have been retrieved from Exynos7870 vendor kernel
+> >> sources
+> >> as provided by Samsung.
+> >>
+> >> Testing has been done on all three devices available upstream, i.e.
+> >> Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
+> >> (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte).
+> >> Regrettably,
+> >> I've only been able to test the functionality on video mode, as none
+> >> of
+> >> the devices have panels working in command mode.
+> >>
+> >> This series implements changes in the SoC subsystem, which includes
+> >> devicetree additions. It depends on all sub-series listed below:
+> >> (Legend: [R]eviewed, [A]ccepted)
+> >>
+> >> exynos-sysmmu-resv-regions A
+> >> https://lore.kernel.org/r/20250712-exynos-sysmmu-resv-regions-v1-1-e79=
+681fcab1a@disroot.org
+> >> exynos7870-mipi-phy        A
+> >> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9=
+d3@disroot.org
+> >> exynos7870-mipi-phy-fix    A
+> >> https://lore.kernel.org/r/20250710-exynos7870-mipi-phy-fix-v2-1-5cf50d=
+69c9d7@disroot.org
+> >> exynos7870-dsim            A
+> >> https://lore.kernel.org/r/20250706-exynos7870-dsim-v3-0-9879fb9a644d@d=
+isroot.org
+> >> exynosdrm-decon            A
+> >> https://lore.kernel.org/r/20250706-exynosdrm-decon-v4-0-735fd215f4b3@d=
+isroot.org
+> >> panel-samsung-s6e8aa5x01   A
+> >> https://lore.kernel.org/r/20250721-panel-samsung-s6e8aa5x01-v5-0-1a315=
+aba530b@disroot.org
+> >> panel-synaptics-tddi       -
+> >> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d1=
+3c7@disroot.org
+> >>
+> >> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> >> ---
+> >> Changes in v3:
+> >> - fixed minor issues with devicetree in regards to compliance
+> >> - added memory-region to framebuffer region for decon device
+> >> - added related patchset to list: exynos-sysmmu-resv-regions
+> >> - replaced exynos7870-pmu with exynos7-pmu compatible to the list
+> >>   allowing a MIPI PHY subnode (krzk)
+> >> - updated compatible string and dt node for j6lte's panel
+> >> - reorder properties: ${x}, followed by ${x}-names (krzk)
+> >> - Link to v2:
+> >> https://lore.kernel.org/r/20250627-exynos7870-drm-dts-v2-0-d4a59207390=
+d@disroot.org
+> >>
+> >> Changes in v2:
+> >> - modified compatible hierarchy to use non-deprecated syntax (krzk)
+> >> - fixed subject prefixes of [v1 2/5], [v1 3/5], [v1 4/5], [v1 5/5]
+> >> (krzk)
+> >> - removed simplefb nodes instead of disabling it (krzk)
+> >> - added dt-bindings patch to allow mipi-phy node under PMU
+> >> - changed clock names of dsim node
+> >> - Link to v1:
+> >> https://lore.kernel.org/r/20250612-exynos7870-drm-dts-v1-0-88c0779af6c=
+b@disroot.org
+> >>
+> >> ---
+> >> Kaustabh Chakraborty (6):
+> >>       dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
+> >>       dt-bindings: soc: samsung: exynos-pmu: allow mipi-phy subnode
+> >> for Exynos7 PMU
+> >>       arm64: dts: exynos7870: add DSI support
+> >>       arm64: dts: exynos7870-on7xelte: enable display panel support
+> >>       arm64: dts: exynos7870-a2corelte: enable display panel support
+> >>       arm64: dts: exynos7870-j6lte: enable display panel support
+> >>
+> >>  .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
+> >>  .../soc/samsung/samsung,exynos-sysreg.yaml         |  2 +
+> >>  .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 57
+> >> +++++++++++----
+> >>  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 38 ++++++----
+> >>  arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 57
+> >> +++++++++++----
+> >>  arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 84
+> >> ++++++++++++++++++++++
+> >>  6 files changed, 197 insertions(+), 42 deletions(-)
+> >> ---
+> >> base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
+> >> change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
+> >>
+> >> Best regards,
+> >> --
+> >> Kaustabh Chakraborty <kauschluss@disroot.org>
+> >>
+> >>
+> >>
+> >
+> >
+> > My bot found new DTB warnings on the .dts files added or changed in
+> > this
+> > series.
+> >
+> > Some warnings may be from an existing SoC .dtsi. Or perhaps the
+> > warnings
+> > are fixed by another series. Ultimately, it is up to the platform
+> > maintainer whether these warnings are acceptable or not. No need to
+> > reply
+> > unless the platform maintainer has comments.
+> >
+> > If you already ran DT checks and didn't see these error(s), then
+> > make sure dt-schema is up to date:
+> >
+> >   pip3 install dtschema --upgrade
+> >
+> >
+> > This patch series was applied (using b4) to base:
+> >  Base: using specified base-commit
+> > 262858079afde6d367ce3db183c74d8a43a0e83f
+> >
+> > If this is not the correct base, please add 'base-commit' tag
+> > (or use b4 which does this automatically)
+> >
+> > New warnings running 'make CHECK_DTBS=3Dy for
+> > arch/arm64/boot/dts/exynos/' for
+> > 20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org:
+> >
+> > arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb:
+> > /soc@0/dsi@14800000/panel@0: failed to match any schema with
+> > compatible: ['syna,td4300-panel']
+> > arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb:
+> > /soc@0/dsi@14800000/panel@0: failed to match any schema with
+> > compatible: ['syna,td4101-panel']
+>
+> Note: This affects patches 4/6 and 5/6, rest should be mergeable.
 
-With the implementation avoiding timekeeping APIs, and with a caller
-not passing a delay, the timeout argument simply becomes a loop
-counter.
+You sent a series and it's easier for maintainers to take a whole
+series than figure out what they can and can't apply. In any case,
+we're in the middle of the merge window now, so you will need to
+resend everything after rc1. You should either fix the warnings or
+drop the 2 patches when you send it again.
 
-Therefore the code here can be simplified to unconditionally use
-readl_relaxed_poll_timeout_atomic(). The difference being the last
-argument, the timeout (loop counter). Simply adjust it to pass the
-more generous counter in all cases.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/clk/samsung/clk-pll.c | 31 ++++++++++---------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 7bea7be1d7e45c32f0b303ffa55ce9cde4a4f71d..a7e693f6983ec073bedd633ed8da7efafc1a20bb 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -17,8 +17,7 @@
- #include "clk.h"
- #include "clk-pll.h"
- 
--#define PLL_TIMEOUT_US		20000U
--#define PLL_TIMEOUT_LOOPS	1000000U
-+#define PLL_TIMEOUT_LOOPS	20000U
- 
- struct samsung_clk_pll {
- 	struct clk_hw		hw;
-@@ -84,7 +83,7 @@ arch_initcall(samsung_pll_disable_early_timeout);
- static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
- 				 unsigned int reg_mask)
- {
--	int i, ret;
-+	int ret;
- 	u32 val;
- 
- 	/*
-@@ -93,25 +92,15 @@ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
- 	 * initialized, another when the timekeeping is suspended. udelay() also
- 	 * cannot be used when the clocksource is not running on arm64, since
- 	 * the current timer is used as cycle counter. So a simple busy loop
--	 * is used here in that special cases. The limit of iterations has been
--	 * derived from experimental measurements of various PLLs on multiple
--	 * Exynos SoC variants. Single register read time was usually in range
--	 * 0.4...1.5 us, never less than 0.4 us.
-+	 * is used here.
-+	 * The limit of iterations has been derived from experimental
-+	 * measurements of various PLLs on multiple Exynos SoC variants. Single
-+	 * register read time was usually in range 0.4...1.5 us, never less than
-+	 * 0.4 us.
- 	 */
--	if (pll_early_timeout || timekeeping_suspended) {
--		i = PLL_TIMEOUT_LOOPS;
--		while (i-- > 0) {
--			if (readl_relaxed(pll->con_reg) & reg_mask)
--				return 0;
--
--			cpu_relax();
--		}
--		ret = -ETIMEDOUT;
--	} else {
--		ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
--					val & reg_mask, 0, PLL_TIMEOUT_US);
--	}
--
-+	ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
-+						val & reg_mask, 0,
-+						PLL_TIMEOUT_LOOPS);
- 	if (ret < 0)
- 		pr_err("Could not lock PLL %s\n", clk_hw_get_name(&pll->hw));
- 
-
----
-base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
-change-id: 20251001-samsung-clk-pll-simplification-3e02f8912122
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Rob
