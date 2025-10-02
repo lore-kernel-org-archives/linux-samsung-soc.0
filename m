@@ -1,217 +1,115 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48A2248F72
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Oct 2025 16:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED1F292918
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Oct 2025 06:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759334999; cv=none; b=WKikFgflDc/nY9UGZ3vLWGIRRkcqnq0IsxY4A9ZeN0x52xQySVNy+j1ycljJoCqcPXt40N65umY/3kI0XupXVeKzsy4CG2Hi1DdW5NwfNPjs2ZCZ6Hwug5+rvOYvqoUQNMyj2rB54i3ImbacIIoy9RjOIzz4LmdOOD5Qv+3Js7k=
+	t=1759387210; cv=none; b=eIfJbmyouhdC1DMSfXSUA5QDYs3lMRdL1tv9XHnyhAWZJWv0yBPU4vBTTy6D56CriZbAbF3YdZ9q+rTtrmqb28RZWMxlOt4wqbq/jYQBI0U20b+Eb3e7cmUc8Rq8E08DZGYkxnnJzAVTi74YHqeb8TQvKePn38mForesyePGO9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759334999; c=relaxed/simple;
-	bh=2k01JO4kLyXEdsY63gzIBYkAfPijzflAQjkb2arWM9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VzGItj6RzZdLtmP+dZ6vg0eB5CYyTmodSkT7Z/RTe+/CH1F/Tt8CaqGKJbiTkSq1Dr1hs0vqh4GnjhHv9RRVjmby+FrAgYFRdLJpiIVM4Jml+niyBhc2zOAuyiWBoEos5veH8MlpnwDrmWv8Eq33SvE7IGMuRWoxPRSJ3cl3o1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rv7pdWQx; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1759387210; c=relaxed/simple;
+	bh=oWqwEWx8zwWItcJwZ8fd27r7w2elRRbG49uTkJHmkqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V8YeKu/NziIUBKRAiJkkPlj+zRgC00zHe8QPxEorm8CvrTeDuOCqWSJ8wLE95xeSeXPhLi8/zXXaCAyVmH1RTPCicUDzv06HCcs4zJZGUG4SzrMWhYWYJ5ebsM2fsZtnh4XmY8Tr9ZU+Q/M2Q4/7FlL0Tp0Yclt98C8VcoILYNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlSxbq2a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rv7pdWQx"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 3A8AC1A1075;
-	Wed,  1 Oct 2025 16:09:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 093A5606BF;
-	Wed,  1 Oct 2025 16:09:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7266102F1A3E;
-	Wed,  1 Oct 2025 18:09:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759334993; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9CvJDGBSoVXbt+J412aK4yig9hsCig6aqy7YzBwhW2U=;
-	b=rv7pdWQxzoqrjN3bhcDG6IeHqv9N+XFI6QwkO+p2auYuGPT6LdtWBCRBaL+JXAoVwiZp3M
-	GCz4Tg3Kp9FHaQ9ya4b1XoJUTf6IrVRO2rb9kWsrBaj8QlhrQSzkcUKcKaIjBJevIfdKML
-	Wq9Hw3uoV22IEeAse398wh3dpFWcPNP4997mm0bXmVga+Na0ZqDBIom3Xkc/v8U54fbN0P
-	dUv7sLcbxNiQ6FHk4AuZ6ks4JvbyqGVlVceYlp2gOFBy2i4u7ZoQOFNKAjjRBjtVSLzzx1
-	IWzQUOqHYmLJoe+mlbvD6F85QWGNZgLSYs8vBFGYgIlNgCS9dU1HYJqlbZYC9A==
-Date: Wed, 1 Oct 2025 18:09:22 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, inki.dae@samsung.com,
- sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
- alim.akhtar@samsung.com, jingoohan1@gmail.com, p.zabel@pengutronix.de,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
- m.szyprowski@samsung.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 11/18] drm/display: bridge_connector: Ensure last
- bridge determines EDID/modes detection capabilities
-Message-ID: <20251001180922.6bbe42ac@booty>
-In-Reply-To: <20250930090920.131094-12-damon.ding@rock-chips.com>
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
-	<20250930090920.131094-12-damon.ding@rock-chips.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlSxbq2a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39C32C2BC9E
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Oct 2025 06:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759387210;
+	bh=oWqwEWx8zwWItcJwZ8fd27r7w2elRRbG49uTkJHmkqc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rlSxbq2aRzxfcMKB2aNQECztMvISDp8XZalihZIOzysf/FUerJ1qJ6sYMfHTeUONE
+	 62DOVUPnSTf0z2Gz7YC+gEt+IvcgptSvTab0KUw5vfuxhlHUA6CsMjvBF1+Th9JVjt
+	 mUmuKy2lMTbC3OyOoMGgZkCIR0Jf50TAQkAEmyd70lxN6m1n3WmohzZslosFXEzdHC
+	 cnEhaIVJlQz+riaPK0Y4Q7iUcjlRxNndIlZHkdMz6FSHql9EKIZ2JbazxfEijDpO27
+	 wfvi+waLKnJZ4ZqDJii7yAlSACnjNtNZznkNNEQ2Z23elLGfH8Z4gZ3vt4k6nO+Fsk
+	 6tHq+vxFarxNQ==
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b60971c17acso614296a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2025 23:40:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRKE6gSM31/xBbJMYw1SadYUWY1tzKR4EKhXCxYFyURiknH6dxu7jawaSzmDvzC82q6aSxIc/fx7bPitZJ5neAug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuTzze1LR4RXTjUkKB1UOCK1U3QXmunVFIezOhfG5qtRkjZzbs
+	UKI0U2CpYO4g6vKdV4Vm8Q9g4+B5I9IDtLRkkDO0Eo8Ap8ZTjtfAqGAC/eFXaco0Ck8yW3+p+sZ
+	o1k6RX/2dLSHGG6gJ7efop6TQOi0aArU=
+X-Google-Smtp-Source: AGHT+IGdtzOpvUYdPLtelHaB8zJ6rwGT1VrlFmtzCJU8l7UzsZsbFUnbb5aDI8NKj4eZKGgGJDmSr+LU1AO2yz3t6r0=
+X-Received: by 2002:a17:903:32c9:b0:270:ea84:324a with SMTP id
+ d9443c01a7336-28e7f328b47mr76608265ad.38.1759387209439; Wed, 01 Oct 2025
+ 23:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <CGME20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2@epcas5p1.samsung.com>
+ <20250901051926.59970-1-ravi.patel@samsung.com>
+In-Reply-To: <20250901051926.59970-1-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 2 Oct 2025 15:39:57 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
+X-Gm-Features: AS18NWDO2eUChAY4_CCzuKLny2cYJfsAdkZKqOgM2dKZNuIdZKWV3kyYmcxtbLo
+Message-ID: <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] Add support for the Axis ARTPEC-8 SoC
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, 
+	pjsin865@coasia.com, gwk1013@coasia.com, hgkim05@coasia.com, 
+	mingyoungbo@coasia.com, smn1196@coasia.com, shradha.t@samsung.com, 
+	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
+	dj76.yang@samsung.com, hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Damon,
+On Mon, 1 Sept 2025 at 14:42, Ravi Patel <ravi.patel@samsung.com> wrote:
+>
+> Add basic support for the Axis ARTPEC-8 SoC which contains
+> quad-core Cortex-A53 CPU and other several IPs. This SoC is an
+> Axis-designed chipset used in surveillance camera products such as
+> the AXIS Q1656-LE and AXIS Q3538-LVE.
+>
+> This ARTPEC-8 SoC has a variety of Samsung-specific IP blocks and
+> Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
+>
+> List of Samsung-provided IPs:
+> - UART
+> - Ethernet (Vendor: Synopsys)
+> - SDIO
+> - SPI
+> - HSI2C
+> - I2S
+> - CMU (Clock Management Unit)
+> - Pinctrl (GPIO)
+> - PCIe (Vendor: Synopsys)
+> - USB (Vendor: Synopsys)
+>
+> List of Axis-provided IPs:
+> - VIP (Image Sensor Processing IP)
+> - VPP (Video Post Processing)
+> - GPU
+> - CDC (Video Encoder)
+>
+> This patch series includes below changes:
+> - CMU (Clock Management Unit) driver and its bindings
+> - GPIO pinctrl configuration and its bindings
+> - Basic Device Tree for ARTPEC-8 SoC and boards
+>
 
-On Tue, 30 Sep 2025 17:09:13 +0800
-Damon Ding <damon.ding@rock-chips.com> wrote:
+Pretty useless cover letter since it doesn't say the damn most
+important thing : dependency!
 
-> When multiple bridges are present, EDID detection capability
-> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
-> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
-> determined by the last bridge in the chain, we handle three cases:
-> 
-> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->    &drm_bridge_connector.bridge_edid to NULL and set
->    &drm_bridge_connector.bridge_modes to the later bridge.
->  - Ensure modes detection capability of the later bridge will not
->    be ignored.
-> 
-> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->    &drm_bridge_connector.bridge_modes to NULL and set
->    &drm_bridge_connector.bridge_edid to the later bridge.
->  - Although EDID detection capability has higher priority, this
->    operation is for balance and makes sense.
-> 
-> Case 3: the later bridge declares both of them
->  - Assign later bridge as &drm_bridge_connector.bridge_edid and
->    and &drm_bridge_connector.bridge_modes to this bridge.
->  - Just leave transfer of these two capabilities as before.
+So this went unnoticed and now mainline (Linus tree) is affected. See
+Linus rant on soc pull request
 
-I think the whole explanation can be more concisely rewritten as:
+I'm very disappointed, actually mostly on me that I picked this up.
+Your future patches, need to improve quality and probably you need to
+go back to how Git works and how maintainer trees are organized. Read
+carefully, really carefully please maintainer profile .
 
-If the later bridge declares OP_EDID, OP_MODES or both, then both
-.bridge_modes and .bridge_edid should be set to NULL (if any was set
-from a previous bridge), and then .bridge_modes and/or .bridge_edid be
-set to the later bridge as is done already.
-
-Does this look correct (i.e. does it convey the same meaning)?
-
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -640,6 +640,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  	struct drm_connector *connector;
->  	struct i2c_adapter *ddc = NULL;
->  	struct drm_bridge *bridge, *panel_bridge = NULL;
-> +	struct drm_bridge *pre_bridge_edid, *pre_bridge_modes;
->  	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
->  	unsigned int max_bpc = 8;
->  	bool support_hdcp = false;
-> @@ -668,6 +669,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  	 */
->  	connector_type = DRM_MODE_CONNECTOR_Unknown;
->  	drm_for_each_bridge_in_chain(encoder, bridge) {
-> +		pre_bridge_edid = bridge_connector->bridge_edid;
-> +		pre_bridge_modes = bridge_connector->bridge_modes;
-> +
->  		if (!bridge->interlace_allowed)
->  			connector->interlace_allowed = false;
->  		if (!bridge->ycbcr_420_allowed)
-> @@ -681,6 +685,44 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  			bridge_connector->bridge_detect = bridge;
->  		if (bridge->ops & DRM_BRIDGE_OP_MODES)
->  			bridge_connector->bridge_modes = bridge;
-> +
-> +		/*
-> +		 * When multiple bridges are present, EDID detection capability
-> +		 * (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
-> +		 * (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities
-> +		 * are determined by the last bridge in the chain, we handle
-> +		 * three cases:
-> +		 *
-> +		 * Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
-> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
-> +		 *    &drm_bridge_connector.bridge_edid to NULL and set
-> +		 *    &drm_bridge_connector.bridge_modes to the later bridge.
-> +		 *  - Ensure modes detection capability of the later bridge
-> +		 *    will not be ignored.
-> +		 *
-> +		 * Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
-> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
-> +		 *    &drm_bridge_connector.bridge_modes to NULL and set
-> +		 *    &drm_bridge_connector.bridge_edid to the later bridge.
-> +		 *  - Although EDID detection capability has higher priority,
-> +		 *    this operation is for balance and makes sense.
-> +		 *
-> +		 * Case 3: the later bridge declares both of them
-> +		 *  - Assign later bridge as &drm_bridge_connector.bridge_edid
-> +		 *    and &drm_bridge_connector.bridge_modes to this bridge.
-> +		 *  - Just leave transfer of these two capabilities as before.
-> +		 */
-> +		if (bridge->ops & DRM_BRIDGE_OP_EDID &&
-> +		    !(bridge->ops & DRM_BRIDGE_OP_MODES)) {
-> +			if (pre_bridge_modes)
-> +				bridge_connector->bridge_modes = NULL;
-> +		}
-> +		if (bridge->ops & DRM_BRIDGE_OP_MODES &&
-> +		    !(bridge->ops & DRM_BRIDGE_OP_EDID)) {
-> +			if (pre_bridge_edid)
-> +				bridge_connector->bridge_edid = NULL;
-> +		}
-> +
-
-If the above rewrite is correct, then I think this patch can be
-rewritten in a simple way (build tested only):
-
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index a5bdd6c10643..bd5dbafe88bc 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -672,14 +672,18 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
-                if (!bridge->ycbcr_420_allowed)
-                        connector->ycbcr_420_allowed = false;
- 
--               if (bridge->ops & DRM_BRIDGE_OP_EDID)
--                       bridge_connector->bridge_edid = bridge;
-+               if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MODES) {
-+                       bridge_connector->bridge_edid = NULL;
-+                       bridge_connector->bridge_modes = NULL;
-+                       if (bridge->ops & DRM_BRIDGE_OP_EDID)
-+                               bridge_connector->bridge_edid = bridge;
-+                       if (bridge->ops & DRM_BRIDGE_OP_MODES)
-+                               bridge_connector->bridge_modes = bridge;
-+               }
-                if (bridge->ops & DRM_BRIDGE_OP_HPD)
-                        bridge_connector->bridge_hpd = bridge;
-                if (bridge->ops & DRM_BRIDGE_OP_DETECT)
-                        bridge_connector->bridge_detect = bridge;
--               if (bridge->ops & DRM_BRIDGE_OP_MODES)
--                       bridge_connector->bridge_modes = bridge;
-                if (bridge->ops & DRM_BRIDGE_OP_HDMI) {
-                        if (bridge_connector->bridge_hdmi)
-                                return ERR_PTR(-EBUSY);
-
-Another thing to note is that this patch conflicts with [0], which I
-plan to apply in the next few days. The two patches are orthogonal but
-they insist on the same lines (those assigning
-bridge_connector->bridge_* = bridge). Not a big deal, whichever patch
-comes later will be easily adapted. Just wanted to ensure you are aware.
-
-[0] https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
-
-Best regards,
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I'll be putting artpec 9 on hold, till you confirm what was wrong here
+and how are you going to fix it in the future.
