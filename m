@@ -1,110 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EDD10FD;
-	Mon,  6 Oct 2025 12:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A862DCF4B
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Oct 2025 16:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759752168; cv=none; b=QlERonl441m9+rSOEYkJpR8r8aVoTgqhyj49v6ry3HH5nM0LFb2QkvsWWDlX18Cco+DsWOdCpbQ0H5y9YGQEh5qOhwe59D0QGwLYRAd0gfJn5fl8Fxg9fzfZtoV1M3CNcxMaDQ3So5uGMua4M6oT2qWY/LbkuHCRGOGXoeCLe0g=
+	t=1759769012; cv=none; b=JxGJVwT4kFVSMzUnW8mk4yswzgEsGlA2tx/2WownVrUrvzIS0rYqpu+0kvuadRBmBfcLsI/nBcRewFsGvb6ub0xlAM291dJyCnK67cfuljVutVVcGJb83+m4o5DQXdjHk6eWyKAj1cNG6uDSg5E93liBisyxD2BwnS0WrFHMUQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759752168; c=relaxed/simple;
-	bh=cUe8CtrafWoQsXn9fWcPDQv7fF4kzWcQD9k5yUC/Uwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LKJz7zaQiJkV6OrMvdjmY6zhERdhkahIu/nFBq+RjAIwjMW+Yz/7Y9WEkT++5yuzGIv1l5HiDyD6Zd9aX3nNe/37XI0W6jgQNIi4o8ybwhvRhlNxxC+hsUWBo7oRItT/RHK3TVl8bvfLLlVy4NvgUAffS53R1S3tazxvb6FWRmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrCExbDG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759769012; c=relaxed/simple;
+	bh=HMtcLDEIKjq6G2Zgr0JytIoIw9ewVlt1cHK9VF+l//w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QljOfTGf5OQ2pd9SsWiwT6LNed8FBrCPHkLfD97ioPbimblMemvmxnWv5NeuQ7wNHfhgVDdUD0sX/0DEbWAHGfv3Hv3hd1wFN6wssj2R5SPVa5uM2GKS8VJEvEtM36lv6Z9JhsqCzVYUCuXvw4Axb4EVXihxHdUy+hxjfBpz7QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tMc9fMnW; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrCExbDG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB346C4CEF5;
-	Mon,  6 Oct 2025 12:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759752167;
-	bh=cUe8CtrafWoQsXn9fWcPDQv7fF4kzWcQD9k5yUC/Uwg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XrCExbDGUw0LYXohARq0wj5ixhBkiguFlV69LWhd/t5NkqihItIxVGgkJYVYebHeS
-	 bbGyaUuLZY+rwJSwZdtdSVGYP6I24TmlPhVDqN3Wu92pv+ho39wr+IsgKQ4bTbIXIF
-	 /rxkzb2rUvpt4jA4wBfhlKXw9LrjD5ZY3pm0GvalCYvKo8YZv0RDduhtmOOi5uTZcr
-	 5QGgim6xn/vbzvVz0I6jiD9IgFzb0QM0DR+KeRrjaciAgfDTBhDRWzcUBYkJdaez7v
-	 oj403k6Xyt+lqNwWRmPTY+GWjQCnvIg51e+wjQY/qGWc5qLIda+gQeEaowTaVrk0Rs
-	 AiZqBRuYNrzoQ==
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-mips@vger.kernel.org,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Dharma Balasubiramani <dharma.b@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Liu Ying <victor.liu@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	imx@lists.linux.dev,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Edmund Dea <edmund.j.dea@intel.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Sui Jingfeng <suijingfeng@loongson.cn>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	linux-rockchip@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sunxi@lists.linux.dev,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	Hans de Goede <hansg@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Subject: Re: [PATCH v5 00/39] drm/atomic: Get rid of existing states (not really)
-Date: Mon,  6 Oct 2025 14:02:42 +0200
-Message-ID: <175975215493.792368.2468724280200785252.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
-References: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tMc9fMnW"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-634a3327ff7so10616214a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2025 09:43:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759769008; x=1760373808; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oKtphuJ/4di9yNIsz6yNlkrtQKgCMc1BLXd/ATWAWto=;
+        b=tMc9fMnWJiszVnxWCzpauPGyIxTsvBolcKNfpM2X6yK1w79upYCSF4SuOdm78GkLbl
+         8uTaAwDZziqJrKughTM1EUR7cR5ztBLGVBlcTT1iza5Tvt4l+ZC5ENf2pjHYvhqv3vub
+         7Iqcu3KhnuCzkLuDSf2s+lARm11qdCUgqY2AjXic4HhKgHeA4Y48MkQ/S68k3kMbFoCl
+         Ha042F+gF4iJ3wHFXtz2lMrFMWH38w+6JpSkqGIVYZTkrSwfK2+5h1dmqDUHA4E8Gudn
+         eE+a/972ST2e5F01hWkVBbZR75stysD1C33NDz+paYOYmFYzBZuRLz1W386bsZ79QmVl
+         7bZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759769008; x=1760373808;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oKtphuJ/4di9yNIsz6yNlkrtQKgCMc1BLXd/ATWAWto=;
+        b=A5Nc2HAYTac5BtNBG//w1LDP4fZVLB1G/SxesB5/aFNMddMV+sJ72NsKMBIlXSmqvY
+         Nn2O1J+E9GtXK2VZ/q149T1mUo75ChxDzoLz/jVrFnUAyZ85rrLweQhxexcOVkC9GDTh
+         Wi09JmecDwlyQzqXRv8OeyRK1lik+0UfYM+QNGZ8RWs74arexMMahB7XwjZSwTdjL88O
+         u1GmBKg7CnS91RufPSLiYFijdUDCjgkXU2nu2XZEr+9VAEjYTI2jjtVl0yvBBNczLRse
+         rzKcMIqaO7V1kMofxLmij3lEOdFiC37yOVoD1QLppkVIkhq8YL9iI2/YV5P5hGt/iuQo
+         FJTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNCPQV4qe+eSwnXFUUlqN/Ab3m08hGZTN64mDOMKTH2Hi8ArnR8ZUj0IEVA+tg7JKufkmoDKytWZWatUcigDk4FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpLL5qn8J8BmzIvLCTrmAM+ih9KnoJQzKihH1pElz5GXpJnbxv
+	XNVzkwSi5EqwAk/U20YjU6zOP2/7z9VIW0cZpznzMUnymQiySLnY1Ja4HCJNGgCXD6I=
+X-Gm-Gg: ASbGncsIesz9VK5BPKIzNFVAOf+wr7o3K7FGoVy9IoVlaPtPQ4fZCiPHe/H2mcf4Z3n
+	g5d4MYSmpseBF5GptNwidofsciSmWF2yYQaVhFQyof+6Bmecx+k6RsAK2tLAYTu6GhY8dJTw1xV
+	mgtb7DU+ZCttzM1/tZQ992pcxgxQQBPv4vFXd3SCvBPDhtNc9TEc7HpoA1LC/rzGGnWhPnolmtT
+	7QpmeaS7SagcP1OznsKFbEKNw7Trkxt5f5bVOAwVBXymJVSR/PswQ0if9P3D4guArTaFVJ7gvOJ
+	ChtasrzGub2m/klCewOiMMRrbuvIfcd7NtXsm0u2wKa9CPS/PNeQdaP24R/J68i+schxddnGIXr
+	J/5snD5QF+l0iWC7f9a25x4khz3IkhCkeWXpA/7XkkvtJfUt7cmoB5fSgrMi98SqemhKj0VIVkD
+	fYKGuPEwNG4TZFvMZsept06wycc5TpeoqgJyeiHJqd0j4dhUgZ/dE=
+X-Google-Smtp-Source: AGHT+IEH9sBJd0VNAAJtz9rRu8u+k/yXhel69FaA4JYwSprBvbLGJFT33oMJuv5fmnK6KbnU7ExmwA==
+X-Received: by 2002:a17:906:7951:b0:b44:7c83:cd9 with SMTP id a640c23a62f3a-b49c47accbdmr1839696566b.40.1759769008357;
+        Mon, 06 Oct 2025 09:43:28 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa01esm1193841866b.2.2025.10.06.09.43.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 09:43:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 00/10] pmdomain: samsung: add supoort for Google GS101
+Date: Mon, 06 Oct 2025 17:43:26 +0100
+Message-Id: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -113,20 +69,58 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK7x42gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAwND3fRiQyBZkKKbYpKSbGmeYm6QaGGiBFReUJSallkBNio6trYWAAe
+ OGYtaAAAA
+X-Change-ID: 20251001-gs101-pd-d4dc97d70a84
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Tue, 30 Sep 2025 12:59:15 +0200, Maxime Ripard wrote:
-> Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
-> accessors.
-> 
-> The initial intent was to remove the __drm_*_state->state pointer to
-> only rely on old and new states, but we still need it now to know which
-> of the two we need to free: if a state has not been committed (either
-> dropped or checked only), then we need to free the new one, if it has
-> been committed we need to free the old state.
-> 
-> [...]
+Hi,
 
-Applied to misc/kernel.git (drm-misc-next).
+This series adds support for the power domains on Google GS101. It's
+fairly similar to SoCs already supported by this driver, except that
+register acces does not work via plain ioremap() / readl() / writel().
+Instead, the regmap created by the PMU driver must be used (which uses
+Arm SMCC calls under the hood).
 
-Thanks!
-Maxime
+The DT update to add the new required properties on gs101 will be
+posted separately.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (10):
+      dt-bindings: power: samsung: add google,gs101-pd
+      dt-bindings: soc: samsung: exynos-pmu: allow power domains as child on g101
+      pmdomain: samsung: use to devm_kstrdup_const() to simplify error handling
+      pmdomain: samsung: convert to using regmap
+      pmdomain: samsung: convert to regmap_read_poll_timeout()
+      pmdomain: samsung: don't hardcode offset for registers to 0 and 4
+      pmdomain: samsung: selectively handle enforced sync_state
+      pmdomain: samsung: try to get PMU (syscon) regmap
+      pmdomain: samsung: use dev_err() instead of pr_err()
+      pmdomain: samsung: add support for google,gs101-pd
+
+ .../devicetree/bindings/power/pd-samsung.yaml      |   1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  53 ++++++++-
+ drivers/pmdomain/samsung/exynos-pm-domains.c       | 126 +++++++++++++++------
+ 3 files changed, 145 insertions(+), 35 deletions(-)
+---
+base-commit: a5f97c90e75f09f24ece2dca34168722b140a798
+change-id: 20251001-gs101-pd-d4dc97d70a84
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
