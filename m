@@ -1,66 +1,67 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9657915667D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Oct 2025 06:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C286FBF
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Oct 2025 06:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759732608; cv=none; b=F32FbkRRQ6yeRFT1jbMU6tkNprCSkbpcuccZ83IG1Q8gmKNCxNUCqX+2T1EUE8K4qVJYkFyc55qIenqGM4P0sDHk5pRKgDMIM9MchMpY/l7vbH/mSG8+Nj/NXfKlkqOz9wjBjd6UiHfppqwy3Cm3hdrxsBkKJjygb0g1t6YFIkc=
+	t=1759733132; cv=none; b=i8NSIw2ZjDDkVSqfrvLD8hbR+jzWo1NDyt7aNFceIk2RZededjRpkttWAuu7KVPtss2sCEWq35MELenmQf1chz+uGoFItt9uxAJKmRfyFdffIf1CzdjWe7vZtZlZtaJKefs5EIPaJ9JhtLm7adtIGzcIDu8oC/BSeO31Xb59trQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759732608; c=relaxed/simple;
-	bh=v7EGOt8ZLtCdYqfpKtBHBaHqHtPw4J2BV/cWIZdOPiM=;
+	s=arc-20240116; t=1759733132; c=relaxed/simple;
+	bh=NMuoAimQl5z1QVIEkiLJdaqZSbw3bEnf0VXzo5Y71N4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aU+vYZYi1wfAr8ktyqbSoQ27jxT+a7j+x3KJBtw4XsKyIYFWvO7WfIoL4Y2PTGMW+MskehHn5d8lioC8PhneOHnhHgGRJTXyQ5+qxhkWVFUtZZMe0Nc46u8CaLRJszyBY0in8UBcrE4Mvz+BgKTA8ugb2BKv2YCXZSIfw2slhSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qnFq2d8f; arc=none smtp.client-ip=209.85.218.48
+	 Content-Type:MIME-Version; b=nuOJaP1Ga9TbqY0UjNZJqqCRvrUrXvdk/fxRO1sDeVhsrM+E851AL3LGxFw9xmvfKke3DCgdtFbkKH1gz7YO6lI8jqbtgHNZGRliLa4s0KUzdfIvOMaoKLY+F3yjDzj/PfL2uc/hQAexey5XC64m1/Is2QnRySu5WTd5gx/5RGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kyIOCUMV; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qnFq2d8f"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b472842981fso617073566b.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Oct 2025 23:36:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyIOCUMV"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso682762066b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Oct 2025 23:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759732605; x=1760337405; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759733129; x=1760337929; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=kzTTmtIJjh3pMYClCRnAXuDxLMNpIfi6xb344NjPp7s=;
-        b=qnFq2d8fz4ITnwUhUM3R2/ujVED4JHngHZSmUSq7tlvbzWUftfJcwSWdxue60KCD7v
-         nKAAX4EIJRyiUQEYMh+71iPBWxnVj/EJhGfmngPe952eSTwvhwODkjsW3FGJ0SMA9eap
-         PTs+MDPMTLIHMSL/GrNyrRE/GOeRXFHg5EfgslWUtfrR7VVCt64X9BHZUYewtRIE4MgT
-         oE/L2x1CXuZZfoIifWSCtxAhQ1xNS1bqB0cyDnVLKS98wdt+OGg++odVkCpfTw6c5JDw
-         G45IWXkj/Vq5aooevvEPqHoKM/bt/G7dMSDccl31xqWGOQbqGnuEfnzQM0qteTpnyEDa
-         lZjQ==
+        bh=NMuoAimQl5z1QVIEkiLJdaqZSbw3bEnf0VXzo5Y71N4=;
+        b=kyIOCUMVMlzyQK6ZRfkZvaclJKM+X/VaOctz23CLMfsvKi82cRS3P06wzjQLeQkMWq
+         7+q8KeYYLM01yVMb8InxH9iRXUJhwo9AMmFTagEoRiK/NVbsN1smtclH0Ay8SlUOn5x3
+         nNqtGNAJK4MPmk3z8h2FmVhE+p2MxYX+WIcEloBlHDTJluWEDzmHrz3EjF40k9nzBnBH
+         Sc5gYRP3w3FdR4+8psdfAraAG2LPdpaf0tTzEABZtmr/Dw/0oo+KVsF+m5zqG3SVzbsQ
+         XFgXHdUq6rl2riFXceouzYrgZh/wQEtI+UKqQtLL7FsPDkN9lHQOThgoerU2rtTSq/V5
+         tGKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759732605; x=1760337405;
+        d=1e100.net; s=20230601; t=1759733129; x=1760337929;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kzTTmtIJjh3pMYClCRnAXuDxLMNpIfi6xb344NjPp7s=;
-        b=Oe35qPeHvDbfAAu8wH/6NSJ8QHMxv7RBUG/JySnzv0C3v4w3GestNQ+kyfY1BjfmhY
-         eOGvp/sS5zG2X87xp+jW/u8He4u5qd6KosudmoEm14i4Vb3yfnWgXjFeuo6clmnzfNf1
-         OboiMASwZ0htQrkvecbgaKpzflW0XIxe7fdXmC3n3ggYPkWci7bA+LaYz3Y3OADuVydZ
-         en1yi4y2H30kREujn8ii8MvK1lD9QT1nmKPxwFsmAIfvvFj658ATouO1gGPS9+waWAS+
-         mOumA+XBekFG+9V0xPbRQiuAwurp4gb430/IdkgJB/fyUbUZb9wRYZ2k+4mkkhWUB4S7
-         OsHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfPAAHXeEP9xXT9voSwi6WGYZYDHjqjjns9oaV+2ozMQDc/IU8XH2ZPZ04yv4rk/sujjeszJ+YN2Wm8H0aBVvSsw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfF1Cws3g8sCy/gvVJP62T03X/6NXzv6N4NhCAPEH6kEKqFkei
-	2eIXMzqDiS1q0rNs6VW1efq9zbrqXrC7GtrVe8eCIVXYHlztyxSxc/0Z7Sy1C15nxg4=
-X-Gm-Gg: ASbGnctpczZF6ucPCR3tu0V1ppkSug7yBlOlA00oVhiSVdTAR8pD98Vys12L47o2y2q
-	a3lbIUew9ikgFjhwOW3Im8iBInG5ssg6dh61xhvxdolCo5IqK+EtdY6R2RzXEdUvKMHONj4xZ56
-	1+EN9HWda/14XDnasCBaZNgIaWqfV0dzB+MMfVqauo1DxYAa27b0dUN2KPzu2wud1ssX8LkjAW1
-	L6RiHspHG5T4gy6ZiP3VBQd0SbX/gCuIWKWB4G/K1TaD+WHolXN3B9951TvufuPGEcMJT2UyktJ
-	NZ2WsC2k4e48WJRR+1aV5wsR1IKU1SCCI+0LN02z5ZWvc5fMGpVSRBF3YsdTMboi9uRMmPlL/KC
-	5nUE9vdcP3aKfbrae+kqMurndmjrn2zrgWBa605QjFIgdL5CJC6G5d1+W/ybTDyzp
-X-Google-Smtp-Source: AGHT+IG80rNfNGj9kfBjq93mBxn3Pfh0reoh1uDQlKY6AnzLdS10YY2DqrfDOY/hXPnRQXKaKWtLjQ==
-X-Received: by 2002:a17:907:3da0:b0:b41:4e72:309f with SMTP id a640c23a62f3a-b49c393b428mr1271205966b.50.1759732604856;
-        Sun, 05 Oct 2025 23:36:44 -0700 (PDT)
+        bh=NMuoAimQl5z1QVIEkiLJdaqZSbw3bEnf0VXzo5Y71N4=;
+        b=dQeJU3rg/8Mn4K6CTxGpxLJT8kTHe5PJhyMb5nHEHda8sdyVP6nFbHB7+JakQ1ZV3D
+         GCv7/604vexKLh0EQIqbtrCUMMaNSYG/2/v5u1wYEmP5hor6ipfXOBX/pEaWz4ImGKgI
+         iq/Pp+cwQLVkt7IEh1M7uQVlGPpQ4247iSbG6Pwjt8CffUHHNXZNk+9QWfL8OA0uRqOb
+         WYARepAsa/qrlqDuOCjJbHi7sy49oEQUDNcomZUXRWPYOcWstbBm1yVTF6AdQbufJyL9
+         DcBFt9kXSLHltBzRdB1l7kUtdePpglYmg0IvGMfcSzOL3NMHY7YfUujStAjB0aW2J59i
+         9CqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNGE6XS2zUQgJwfQ/HOmOUusTKdn1gBN2LqFB3FdXlhLJJuXlqxC0SBbuouiQ06NTzbxw5jAskjKfPx7ySwBXkKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfF/OUuqD1G0TodBBYMOSoZeT0hX7lZrvqD9GzPfEbQ5goYdlx
+	lH+PalZ/8mDsu7gwMwLTmeTmMoJQTzvBDZHNRHPPqe6Jst3pMkkkMWyxXlwWqJGChio5qF5Lu9I
+	TXuPX
+X-Gm-Gg: ASbGncsglEmm0VHzbYd4vRvPO9uC5K4PMa7jUz1vTfOlDFaFohaY8wUTmDRKelBHaVZ
+	t3Cs9o7szt20SLthYtTCf3x90ji1FKu1+tdEHS/Tj4RaEUx+QdlNdtbZYm4QEyrCpGTG6eR8Yd7
+	dPfasqnr8nLKXrhCjKJUxZPcLQw1SM/147IrB3RmQi14RrzQeecas+r2GQa5wITKcT5IMprLySR
+	ee2RZ3RV7+3oTTg9n8xYBpZjKj5S+XW+OqYeV+uV6VgrzazeC8ka6+RGb/F3jzvwj3Zaef2T2c2
+	108mHJKazwyXqUbOVGfZdP//pWLQLiVSlU4MayMdkPAskZPzEplrkhi4WKhjGXndvQMoZ8AQnRj
+	i/lMo//zOGr4WyfSXLt264kvDUH2IGe9l61OcM6gUvOTYghLJg5BIcZNzmixQv2SN
+X-Google-Smtp-Source: AGHT+IGqbaxYVflPhQwlvzE4KWt9YOkvCpxShS92JNaxOYhBBBWeZkGh8ms2wjKFHVFGM9v06iNJOg==
+X-Received: by 2002:a17:907:608b:b0:b45:8370:eefd with SMTP id a640c23a62f3a-b49c146e6c8mr1381123966b.5.1759733128600;
+        Sun, 05 Oct 2025 23:45:28 -0700 (PDT)
 Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865986a9dsm1090613166b.21.2025.10.05.23.36.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9f50sm1068769666b.9.2025.10.05.23.45.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 23:36:44 -0700 (PDT)
-Message-ID: <a09b6b493b41bff39000df61dd14693af8b0f053.camel@linaro.org>
-Subject: Re: [PATCH 0/3] soc: samsung: exynos-pmu: gs101: avoid SError for
- inaccessible registers
+        Sun, 05 Oct 2025 23:45:28 -0700 (PDT)
+Message-ID: <662c6a56055a295e3f9bd594b8751e405590abff.camel@linaro.org>
+Subject: Re: [PATCH 1/3] soc: samsung: exynos-pmu: allow specifying read &
+ write access tables for secure regmap
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Sam Protsenko <semen.protsenko@linaro.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
@@ -69,10 +70,11 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
  <willmcvicker@google.com>, kernel-team@android.com, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 07:36:43 +0100
-In-Reply-To: <CAPLW+4kAzXmd7mv279wMJCT0gVP5A+2Xe0q3MgX1OENH5PC2dQ@mail.gmail.com>
+Date: Mon, 06 Oct 2025 07:45:27 +0100
+In-Reply-To: <CAPLW+4=mVbXex9Sxm2oEq0j3RJ0_KtXRq2Ttt5cfQ_dxXTuhSA@mail.gmail.com>
 References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org>
-	 <CAPLW+4kAzXmd7mv279wMJCT0gVP5A+2Xe0q3MgX1OENH5PC2dQ@mail.gmail.com>
+	 <20251002-gs101-pmu-regmap-tables-v1-1-1f96f0920eb3@linaro.org>
+	 <CAPLW+4=mVbXex9Sxm2oEq0j3RJ0_KtXRq2Ttt5cfQ_dxXTuhSA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-2 
@@ -85,62 +87,89 @@ MIME-Version: 1.0
 
 Hi Sam,
 
-On Fri, 2025-10-03 at 11:59 -0500, Sam Protsenko wrote:
-> Hi Andre,
->=20
+On Fri, 2025-10-03 at 12:22 -0500, Sam Protsenko wrote:
 > On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
 linaro.org> wrote:
+>=20
+
+[...]
+
 > >=20
-> > Accessing non-existent PMU registers causes an SError, halting the
-> > system and rendering it unuseable.
-> >=20
+> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exy=
+nos-pmu.c
+> > index 22c50ca2aa79bf1945255ee6cc7443d7309b2573..9f416de03610b1727d8cc77=
+616e5c87e2525cc69 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.c
+> > +++ b/drivers/soc/samsung/exynos-pmu.c
+> > @@ -635,6 +635,9 @@ static int exynos_pmu_probe(struct platform_device =
+*pdev)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 pmu_regmcfg =3D regmap_smccfg;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 pmu_regmcfg.max_register =3D resource_size(res) -
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmu_regmcfg.reg_stride;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 pmu_regmcfg.wr_table =3D pmu_context->pmu_data->wr_table;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 pmu_regmcfg.rd_table =3D pmu_context->pmu_data->rd_table;
+> > +
 >=20
-> I wonder if this issue you describe here is similar to what I'm seeing
-> on E850-96. When I'm trying to read these files
+> Seems like pmu_regmcfg declaration can be pulled under this "if" scope
+> -- just a thought for future.
+
+Yes, there is room for improvement. It might be even better if a platform c=
+ould
+provide its own regmap, rather than just a flag and the code here copying a=
+nd
+updating pmu_regmcfg.
+I wanted to keep changes minimal at this stage, as there might be other con=
+siderations.
+
 >=20
-> =C2=A0=C2=A0=C2=A0 /sys/kernel/debug/regmap/dummy-syscon@0x00000000100200=
-00/registers
-> =C2=A0=C2=A0=C2=A0 /sys/kernel/debug/regmap/dummy-chipid@0x00000000100000=
-00/registers
-> =C2=A0=C2=A0=C2=A0 /sys/kernel/debug/regmap/dummy-system-controller@0x000=
-0000011860000/registers
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 /* Need physical address for SMC call */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 regmap =3D devm_regmap_init(dev, NULL,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 (void *)(uintptr_t)res->start,
+> > diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exy=
+nos-pmu.h
+> > index 0938bb4fe15f439e2d8bddeec51b6077e79a7e84..113149ed32c88a09b075be8=
+2050c26970e4c0620 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.h
+> > +++ b/drivers/soc/samsung/exynos-pmu.h
+> > @@ -27,6 +27,10 @@ struct exynos_pmu_data {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*pmu_init)(void);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*powerdown_conf)(enum =
+sys_powerdown);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*powerdown_conf_extra)=
+(enum sys_powerdown);
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* for the pmu_secure case */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct regmap_access_table =
+*rd_table;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct regmap_access_table =
+*wr_table;
 >=20
-> I'm seeing "synchronous external abort" during regmap operations
-> (judging from the backtrace). Do you think this series fixes the same
-> issue on gs101?
+> Maybe it's worth to add #include <linux/regmap.h> in this header, or
+> at least forward declaration struct regmap_access_table?
 
-Yes, but for the system controller (PMU) only.
+Thanks! I'll add the forward declaration, as not all users of this header n=
+eed
+regmap.
 
-On E850, it appears to be the same and there are many holes in the PMU memo=
-ry
-range. You can confirm using debugfs by manually skipping invalid ones, e.g=
-.
+> Also, would be nice to have kernel-doc comment for struct
+> exynos_pmu_data at this point, but it might be out of scope for this
+> patch.
+>=20
+> Other than those minor nitpicks -- LGTM:
 
-dd if=3D/sys/kernel/debug/regmap/dummy-system-controller@0x0000000011860000=
-/registers \
-   ibs=3D15 count=3D1 \
-   skip=3D$(( 0x28 / 4 ))
-
-should give you register 0x28 without SError.
-
-while
-
-dd if=3D/sys/kernel/debug/regmap/dummy-system-controller@0x0000000011860000=
-/registers \
-   ibs=3D15 count=3D1 \
-   skip=3D$(( 0x4 / 4 ))
-
-should crash.
-
->  If so, I'd probably want to adapt it for Exynos850
-> later.
-
-+1. Note though that a custom regmap is used on gs101 for the PMU in the fi=
-rst place.
-
+I'll add something for the next version.
 
 Cheers,
 Andre'
-
-
->=20
