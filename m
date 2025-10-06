@@ -1,121 +1,120 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E3B2DF145
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Oct 2025 16:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1327212B2F
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Oct 2025 23:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759769018; cv=none; b=J23h4KEAS15vR9N9mHR4ASxEosSX24MmRgEhppwos/OTXSty/gHOI2k9z1X2kOvP6hASwGb1Dr1BS0AI3qATyyFdd7HmT0u73MG2QLM/Iayu0IghWzst8LCk0LDXMphCeTS6BM97ADJDxwNxnJeIhYJI67lsETzPYQs+AJHS87o=
+	t=1759792908; cv=none; b=iD0U5sglzeOuTOsFCbaPkQ0U+qKLINbeJrLEWnjZvfJcPyDLxoePAIW1MpNb8/BSGSgVHbuI0nrMtmEb3TdnJ0fbaUsCDRtvsXPYQktYp++Pz/AB7HeZoJVj44X+OKPxTfFceNpPOE9oBEzJV9vkvlj16xWRA5OqTe3suJ4FDjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759769018; c=relaxed/simple;
-	bh=WRwzPyOkvSFyJq+EK+JnNwxrggXXpznQVjTj0iqWREM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oSPudrOfjF82jxFoQJ8wm016hJYAxIcDVJ57L0ncUC4s/2t6Aq9KUNxgm7vgKRPextKhh9L3OqiO/HIsmWNT+hjfoVI0rLY+Ja5476GQoK5HKy7Ge8/c0RyBQwitR0kO11iyMc6fmaQJKTwjQe8x77n22YdW9lsiNT7wYRsTL54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zRiEdQXS; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1759792908; c=relaxed/simple;
+	bh=1qMbcIpf0Z3Ab03rwmeKct8kSYRJGu8/jk5K/4kkiK0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OhAjohISsNJMh71RWmjVjgbVymilf1Qht6N3FosywUAdYX1nlOyna/6jQaHxJ1Chrssc0S11sb/L16O6EHZ7ayQadnr4CF7W5bDZ97PZR2kDlEZ+Hrk8IUOdt8uIoX5V4nUKsYCkVzwN2OrSHyg/c8dPUqrcTraBh4q0fTmW5Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uDHvzIw+; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zRiEdQXS"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b3d50882cc2so990542866b.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2025 09:43:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uDHvzIw+"
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-780f914b5a4so4818538b3a.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2025 16:21:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759769013; x=1760373813; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ioPTwS2f0Ag/7Xgv7v9kcfqmqd+rCK/VtVviQkcgWcs=;
-        b=zRiEdQXSknS7fB2cddTuE5q9MzVvGJwUp/JOTgXRQUoXa+vg3b8sTWlvoiZGlA9IKQ
-         JGNxx+G4nTEpWdG23yVi5wtsv2J3uOS9U4TL+0RWW6dgcB66wFoXZf4rzJrTO+0EX8pz
-         ejY5AN52URLHsLhxKT7hMkzc8/AadDO6pd4Lb9p/bpFGIqGLYYUR+FKmJAd+iK/VhXkA
-         Y39vCGliEI7MnVjnpq/p65XmoI+CKUlRtkdwvSKQ52tsyJYEA1HFT7xR1RHePXonj2+l
-         61NlnT1PRMr99HsFQzmd8DPO50VJgezn6ayjLNycASWa+HZqyQoAjPDxcSR05J3lLkpr
-         6xvg==
+        d=google.com; s=20230601; t=1759792906; x=1760397706; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XzfK1528ICmc0tXAsZYoRPv5AMX4H8ddjdDCNZ7iAFo=;
+        b=uDHvzIw+AHaP65gAVE8yvZoZJOpGoCb1wZ7HrGR55Wf5C5Mqg8vo5L8Ssrkif1UVjK
+         U47iYDZrLCm/g1meLeuNUc8ET7eYnyJN6sa8/z7qNEwSGtjJUTjXIpWu8LY9JAb232c6
+         hEVR+mPRK9WBJBO3Uh07YWXyaafPOcNil9D1XTNn1JZfAGsnJhwJu9U8G67okTrsZTtE
+         nkrA4kVvR+UEMLAGv/0uj+eiyUcOkUM4HjPycFoXu51zCcdAYjH5qj0uTuaIlsVGnsVk
+         oH9c90qJsniby9EwfZj1uITIeHQm2+oDChmCP5FsfC1usqaKGYXRQpRB2Yu5D3go32ov
+         L1Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759769014; x=1760373814;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ioPTwS2f0Ag/7Xgv7v9kcfqmqd+rCK/VtVviQkcgWcs=;
-        b=Y/hLPOQIAYak8ZtIpXA/+DIxQ9AvWssjnYxfTd7qxaAqsvJzZNBLg+UYXXx2FlniE8
-         vhYK/odK2DByvwyvu6xpoR2l9vkuzoLxxBB2hJ5jOvc73DZYkFK4xJYcwiHd8Od3gwqj
-         R2+R8eaZfYp6/wR1Nj6iSjXqqeqfoqPKc6IOfvI7EkqQALE8Hw8/IauKJBrONWCcdPFQ
-         tLu/JvhHYaytRs93A1Zp/elwRS6xpTdsVSLar6HgN/VN5E5cWaQrHdJyWoe/261pPUZI
-         l4Fs+rCs90oOGyyl8mvp3UsFbiEprJZYKw0z82oKGYhiMWxZpPeO1If+zCKT4ba1Ps6f
-         egnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAzfPCJlS3E4R6k/Y+R97syvx/ZVYFDosbb3Zz68cKKbBe72FBFxaSHkqNwqEBOgs5T7sfMzcbIpGRB32f+LzOtQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt981M5+21fAZx4f9XlircW+NU4slcH3AzjH4ISpNyPj1Sl3av
-	IRrl5wXbTGXtIZGn8zSpofs8ACsheeT7e9UGw+7mD/dIGOws6pV31k2AEhgdtc5hsNU=
-X-Gm-Gg: ASbGncsqBHXKpkQyrDoHYFKXlYIZBwEiRNK1JgWJwgNxIcQuJsKxD97VzLT329WZ+eT
-	qDig/IaBS176P/tCsI6EJ9SVQsS4zghJiEcCmNAjjjm/Ahdu2lFhan/f6wykcqyT6tvFvEmyRUv
-	ffzaY81UKIv7+kQvzFOMVoYM8t5IK5gFS8glzXm2a5UpvkywvAuo4+rGhV0hJiQWzqlIEm10XK1
-	OmxY2vEgj16Rm21xWsFncWhVFyoQVMlxjb2a++pLUKkY6kraZSGMpdcJ/Y8J6MsreAM5uAKzjK/
-	aySJj/wxPTb1js6Z2L0+iLMUPjamYZmfcO85CAbp7GGQF5bGNfqiOFdAfm4fRKDLCh2SAaxEyxV
-	2jZbvNSNgU2yEwp32D30H+EEjAQlfHJ4fpj5Y098+IFWf/O981CDc4eOhk1MyACjPRfbGFebgns
-	D8kpFDDeoqrgV9wVJEHxpbLuDU8bFY9j5TnmN7vlF1Org+gYts5rg=
-X-Google-Smtp-Source: AGHT+IE5SECCGzL2stnGeMyacolLo8BRZWSL0FXQl2+Uco37ci1RopzDCJHNu/u5f/tWpHXHwAHqpw==
-X-Received: by 2002:a17:907:d90:b0:b3c:3c8e:1896 with SMTP id a640c23a62f3a-b49c47ad11bmr1593290866b.42.1759769013168;
-        Mon, 06 Oct 2025 09:43:33 -0700 (PDT)
-Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa01esm1193841866b.2.2025.10.06.09.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 09:43:32 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 06 Oct 2025 17:43:36 +0100
-Subject: [PATCH 10/10] pmdomain: samsung: add support for google,gs101-pd
+        d=1e100.net; s=20230601; t=1759792906; x=1760397706;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XzfK1528ICmc0tXAsZYoRPv5AMX4H8ddjdDCNZ7iAFo=;
+        b=StbzC4AXhipCuUkl/J/pBcbI4vLKsgMEvjEcsR1q3dq1IZfB/G99tmwc/Q8bCAQCGq
+         Iws6kbqgZQcI7V4ONZZP71CBLjZp+IuBiJ3/nb5l2ohUb5K2GUMjiZq/IKfX6tG78dZx
+         dHNu56DU8oqnlZWSoZTp2Xw7JC/2gPA6e68krZf+xL6RfdbVKg0sPlOE39cVkGpsk8xr
+         mgSacW0/BeiIKIaPb8xiXyX2hqCJGqmPDX7cAsnFjMbXoIgPRwGyzPMMT/x6I1npD4CW
+         KDkNP884nw4mAs0tAZWXW51Kp7VJFESToQEwQ72upiVtwZfMMY3bB1048WVuHjbeSg/5
+         3IdA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Ip2ag9AMvidS7+89bXhUabn6Kx0dc1+82fPETQ43xq0jnSXaw5LRvvayX0x7MJY3aVyevHTdpqMYTp5qFTZZ/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlTPBMBtZNsbbolH4OCb76q//DzbTjGxOgIuBqqrfHlMsbk9Ne
+	PGnF3uF2MsgZd6HOakhnOFKsTOAaKQcH/+VejaanL8L8vP5fSPcolct8xqnT1OMYtNlzKFz8tjw
+	KbSUp7g==
+X-Google-Smtp-Source: AGHT+IFQk/JRlFBeeVilrRKrIrWvH98VXOUhHqyPMmczUypQ4yLO+zGXFQ3cFbalFp6SbZeQtiGfVA0tVYA=
+X-Received: from pfbgj18.prod.google.com ([2002:a05:6a00:8412:b0:77d:12a5:d3dc])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:99a3:b0:261:b20d:3ee5
+ with SMTP id adf61e73a8af0-32b61e65fb4mr17776464637.23.1759792905892; Mon, 06
+ Oct 2025 16:21:45 -0700 (PDT)
+Date: Mon,  6 Oct 2025 23:21:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251006-gs101-pd-v1-10-f0cb0c01ea7b@linaro.org>
-References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
-In-Reply-To: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251006232125.1833979-1-royluo@google.com>
+Subject: [PATCH v1 0/4] Add Google Tensor SoC USB support
+From: Roy Luo <royluo@google.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Compared to other previous designs supported by this driver, the status
-is just one bit. There is nothing unusual here.
+This series introduces support for the USB controller and PHY found on
+Google Tensor SoCs (G5 and newer). This includes:
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+1.  DWC3 Glue Driver: A new glue layer for the Synopsys DesignWare USB 3.0
+    controller (DWC3) as integrated into Google Tensor SoCs, including
+    hibernation support.
+2.  DWC3 DT Bindings: Device Tree binding documentation for the Google
+    Tensor SoC DWC3 controller.
+3.  USB PHY Driver: A new driver for the Google Tensor SoC USB PHY,
+    initially supporting high-speed operations.
+4.  USB PHY DT Bindings: Device Tree binding documentation for the Google
+    Tensor SoC USB PHY.
+
+Co-developed-by: Joy Chakraborty <joychakr@google.com>
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+Co-developed-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Roy Luo <royluo@google.com>
 ---
- drivers/pmdomain/samsung/exynos-pm-domains.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Roy Luo (4):
+  usb: dwc3: Add Google SoC DWC3 glue driver
+  dt-bindings: usb: dwc3: Add Google SoC DWC3 USB
+  usb: dwc3: Add Google SoC USB PHY driver
+  dt-bindings: phy: google: Add Google SoC USB PHY
 
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index 06e1b0eaca18205a549c8e8136ee15279eb3089d..9e62da2162884fbc1f4b3809cdd89181fb534095 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -81,8 +81,15 @@ static const struct exynos_pm_domain_config exynos5433_cfg = {
- 	.need_early_sync_state	= true,
- };
- 
-+static const struct exynos_pm_domain_config gs101_cfg = {
-+	.local_pwr_cfg		= BIT(0),
-+};
-+
- static const struct of_device_id exynos_pm_domain_of_match[] = {
- 	{
-+		.compatible = "google,gs101-pd",
-+		.data = &gs101_cfg,
-+	}, {
- 		.compatible = "samsung,exynos4210-pd",
- 		.data = &exynos4210_cfg,
- 	}, {
+ .../bindings/phy/google,usb-phy.yaml          |  91 +++
+ .../bindings/usb/google,snps-dwc3.yaml        | 144 +++++
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/google/Kconfig                    |  15 +
+ drivers/phy/google/Makefile                   |   2 +
+ drivers/phy/google/phy-google-usb.c           | 286 +++++++++
+ drivers/usb/dwc3/Kconfig                      |   8 +
+ drivers/usb/dwc3/Makefile                     |   1 +
+ drivers/usb/dwc3/dwc3-google.c                | 597 ++++++++++++++++++
+ 10 files changed, 1146 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/google,usb-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
+ create mode 100644 drivers/phy/google/Kconfig
+ create mode 100644 drivers/phy/google/Makefile
+ create mode 100644 drivers/phy/google/phy-google-usb.c
+ create mode 100644 drivers/usb/dwc3/dwc3-google.c
 
+
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
 -- 
 2.51.0.618.g983fd99d29-goog
 
