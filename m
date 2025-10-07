@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCE81B2186;
-	Tue,  7 Oct 2025 06:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B291D554;
+	Tue,  7 Oct 2025 06:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818238; cv=none; b=SnZQuvnTLSpPJUuYFt6Oucqf+tcYcCd3BUKBLFWes2aOfAe1FgzWBCrzfJTw+6kHS1N6DX5oqUk47ooka1fek9a5F3g0n7NcrE7D2SCH5fUB0PxZlydr9L+euUirMPE50WOFqjobP5uM8RsefvyTwLvBOf9cQ33aWpTz8R+O3Ko=
+	t=1759818499; cv=none; b=uY5gvVVl7WDV4381dZn4b2g7nouXgL7E11ruust5L2zFDt7CLcgQZkUnKACiBpLTHu1VrGZv50MDsYi8RP2KcBOdmkZvV3DMiTPXIP9FBqB2vBq7nleYnEZdG5zBV87s0Dgxsjd7axAwDbqRZ/1xJ/XAdvXh9muHxL6q0AUNac8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818238; c=relaxed/simple;
-	bh=Ja59a957iBMaRAqpZPsZafADwu4TF7aqs2SwJJevMMM=;
+	s=arc-20240116; t=1759818499; c=relaxed/simple;
+	bh=Bd8f82F/uF2ciTLXa/EOwGoGys/UdwP162VIlDDpDqE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m7+PR2qkbMgauEcNWD4rt/bdVKZIicmLLf75ZuWl39GiaGWi9upmIkvJhP0IvUpRdrGDiLqzo8kkaOUvMLammxYi0yWi9leoQbJ5DzsWrQCf0PNshluAw928RgLvkkBZgjd9bX5mUoWu1odp/ucYPB0O1tufhj2QbDXA4RAV96o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ1brEeQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=c3KQ/JGk8fgrP8UjcteLdbbHUv62PdeIiDGwJ1+Iw59KP/2EtZ53Xq6VlWjoAy5NLT3a117bhVVVOM4cTtyX+JxeNhcpBKgak9his+3UCfePgtdxeCMg5XZqxjbRW8I4IDL29pIrV2EtppttOqFqzk5VGny5Oa1Ivm2V+QDByCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McziBS5i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ1brEeQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FD0C4CEF9;
-	Tue,  7 Oct 2025 06:23:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McziBS5i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183CDC4CEF1;
+	Tue,  7 Oct 2025 06:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759818237;
-	bh=Ja59a957iBMaRAqpZPsZafADwu4TF7aqs2SwJJevMMM=;
+	s=k20201202; t=1759818498;
+	bh=Bd8f82F/uF2ciTLXa/EOwGoGys/UdwP162VIlDDpDqE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fJ1brEeQD2obBuLpaLfbrBymik23ZetXBLtGIk8z3+ltZMufR0/kM7v6z8CdSfh9d
-	 zijTTHBiv8kQbfw/Og52EE3NWbPMQUpiJRCxJqX3WWwdIBk/kHjXcbH15d6HV4LH1l
-	 PJaPN8vbUiM65wzrEhM7izL9emODRhRgDvy4P8Um1Q0G2NXX4jl+JfDCSf/a7DR/n4
-	 YcdK2yiIHzgO2d+21DUMVIc5lceaOmhU/Gcz/u7AjTPdjqftUl/ALOrEbooO2Yxul/
-	 B5fNnlJTp6nlI/AHH/0LPLN0ZVO5gFunne88I5dZdflbdqLF999mLtpe07ZtC62+RA
-	 2hXKSyxiZdHgQ==
-Message-ID: <808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
-Date: Tue, 7 Oct 2025 15:23:46 +0900
+	b=McziBS5inuDDVlszSlvO0TiF/+6nsBj5nNltTQcJxsDu0t7V5n3jjnHBBV90AD5TA
+	 fub1Dd+m26vLQpAXP+ilxrcnBEcgi/z8wAT+h7gg5cVrKKHrRdRMxBsyaQoDa7UW+M
+	 uQJg/g2nIUGQkVLqFxiYXWHZTZPFan9Dz9lSIaNgQW4irbrYetyA+t6KsevskJ0e78
+	 DoarwMqqLa4lDa/oCqdxMv47EBaa6CKmdvNfvKEJdTYuWLt8T4fPSEs04kraTqto0Y
+	 hmgZtPwx9ivUsPUU9mH27QNGPHBdL7D+A/PNNFbBPxpRXIRRtVLTV8Swcq459cRa/z
+	 gtNyXgVFFlb6g==
+Message-ID: <945d5f68-66b9-40f3-afd7-64e746075d12@kernel.org>
+Date: Tue, 7 Oct 2025 15:28:10 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,26 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
- igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
- <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
- <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
- <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
- <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
+Subject: Re: [PATCH 1/4] dt-bindings: soc: samsung: exynos-sysreg: add hsi0
+ for ExynosAutov920
+To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
+ conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
+ kishon@kernel.org, m.szyprowski@samsung.com, jh80.chung@samsung.com,
+ shradha.t@samsung.com
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20250926073921.1000866-1-sh86.bae@samsung.com>
+ <CGME20250926074011epcas2p438f7edb31c720c0950e9df986983f5a5@epcas2p4.samsung.com>
+ <20250926073921.1000866-2-sh86.bae@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,27 +92,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
+In-Reply-To: <20250926073921.1000866-2-sh86.bae@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/09/2025 14:26, Pritam Manohar Sutar wrote:
-> This phy needs 0.75v, 0.18v and 3.3v supplies for its internal 
-> functionally. Power Supply's names are as per phy's User Data-Book.
-> These names, (dvdd, vdd18 and vdd33), are considered  for 0.75v, 1.8v 
-> and 3.3v respectively.  
-> "
+On 26/09/2025 16:39, Sanghoon Bae wrote:
+> Add hsi0 compatible for ExynosAutov920 PCIe settings for:
+> - PCIe PHY power control
+> - PLL settings for PCIe
+> - PCIe device direction (RC/EP)
 > 
->>
->> I still cannot find constraints for the rest of properties, though.
+> Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
+> ---
+>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Sorry I didn't get it completely. Can you please elaborate on the same? 
+This is not really related to PCIe or phy patchset, so putting it here
+just makes life of maintainers more difficult. There is really no reason
+for that.
 
-
-Writing bindings and introductory talks elaborate on that. You add
-properties without constraints. That's not what we want. We want
-constraints.
-
+Don't mix subsystems when not needed. DTS patchset targeting me, should
+be separate from other subsystems in such case and it only needs to
+mention in changelog or cover letter where are the bindings.
 
 Best regards,
 Krzysztof
