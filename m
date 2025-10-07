@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A80221FA4;
-	Tue,  7 Oct 2025 06:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CFE1D86DC;
+	Tue,  7 Oct 2025 06:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818602; cv=none; b=fawAZQ4PQCRZ9IT5wgZf4vUPphWnzcChp9ExcvDGa1xuf/zu40ffXBGiyZx+G00Hx7ZrYPKpgC/mvIfT5cm49oBdAhQ1C47klfPMJdMbi/h6VtvELLHlKSaEWqeHQHZvjvUl22o1YsyoRIxopaZgW9M6RkBLHDPB2Q63mYqBxrw=
+	t=1759818776; cv=none; b=hBNxqYqhOzdHh0+aW49+UHrAZiO4HGXA22dbZ5gWXGf6tnfLgW3JUqBR1tgboOo/VQjKIQ/lwjExouk1fsTPmQV+WK3lt1mPG43Veqqousqr2DWDcxxk1Tw+Dce7CQdczqrNy8f9cV5dnS7xp5saBL0ABM/EZ6fSY5E67o2Ppk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818602; c=relaxed/simple;
-	bh=wZYlzoA9J8+rJqVeCe4Q2o14fIltYpD6LEF2ajXIVss=;
+	s=arc-20240116; t=1759818776; c=relaxed/simple;
+	bh=yexCi0CSSbwuHHsbvKOWPYwornynNG9uwFDQFJBE5R0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cdt6JqnkijXEwV+52r9hbae/IurdFQhvFJ8wnJsTSLd8WUA4LZgIxyJW2NaT3urUUZoud0A5vWi7LQuJb3AaDqeMcaTgXkhuSy1ij86GddXj/2xoLdfzyxPC1nigaL9CymNHUfF6V1vOP5k0U2vaP68rACtv0fMlNKV88cLX1cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4njtDHJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Ys5DpDUv58TlFd1bFVXbs/MFFFDwF6TXpXPq56mLfnrWRmXtILjy412czHH4E3zG8nXXeCHSMv+ZVpGSwOs4buXWWg9SF0vnwz/9BTQ43ugfBKcMnsrC/80zQzmtcJBG/x9zGrblIYm9O1/42pbuAHgnf3ENfPHCM+AWOP1BXPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odz106TM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4njtDHJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A778C4CEF1;
-	Tue,  7 Oct 2025 06:29:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odz106TM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC31C4CEF1;
+	Tue,  7 Oct 2025 06:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759818601;
-	bh=wZYlzoA9J8+rJqVeCe4Q2o14fIltYpD6LEF2ajXIVss=;
+	s=k20201202; t=1759818775;
+	bh=yexCi0CSSbwuHHsbvKOWPYwornynNG9uwFDQFJBE5R0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b4njtDHJljGx4jj97mh0JBufnl4Z4jFHUt7eUxuxflsca4JW9bg/IVnFROaCE70vM
-	 Zertw3lUvmV1uMR7GUh6v8U49oQIYKPxsoXka2pV5PoiYSvAFVDKN6pYkLCeNR2e7c
-	 W/4hkXl+FApC6ZHisUoQiPQZEiYRrE1ZxkCj9N3GzNaq0LO5F5bBXurrA/jgBbPkQF
-	 6aFY3l5vR7UZyIz90r/+XLiCoOXSrc3p0JgjU2XFPVoe/R68FIk0Y/P0dscyx8CN3V
-	 P8pbTJk0csk0bzuhmVwuBxsqLse5H6O8UG4XBnBpaAqhFDa8IQNMQEZd0DcPQJYKzz
-	 vU2hhXKqnUk4Q==
-Message-ID: <649f8e90-d99b-401a-bb0f-ef0cf9c4fe7f@kernel.org>
-Date: Tue, 7 Oct 2025 15:29:54 +0900
+	b=odz106TM854yKNKoH36btKdFaOjbZQIb4dlLQFvGxMXlY2jgMrLgiMtVL72bOXBRS
+	 Z6DG4M4GAZZa24DaNemPF3b6DVS+QFKT8OehL3f8wLD5/TLe/kjZ50U1bARq8AosiK
+	 1aWcCrpqSP/pQsLB+oe4CgTCs+Bd30WC/GuOXm1w5fbYIlsDv7beuaQAtvbj2zk0vW
+	 50zq8i9cc8u9KG9yTBR4uaLCLzC4gzFQVVPxKaN3IUlDU30b3zlVpfsHg4QIvHxPM4
+	 pJxSCZvNQyjV+/aNfmt1jnvr1eWkXFtK3DY0d1LMNYGk5aS/lv1sb0FpqNMIQxaPrq
+	 mJ8GGHc06XpYw==
+Message-ID: <ea85d388-c0c1-4b4a-96d6-d3f27622ed54@kernel.org>
+Date: Tue, 7 Oct 2025 15:32:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: phy: Add PCIe PHY support for
- ExynosAutov920 SoC
+Subject: Re: [PATCH 3/4] arm64: dts: ExynosAutov920: add PCIe PHY DT nodes
 To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
  conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
  kishon@kernel.org, m.szyprowski@samsung.com, jh80.chung@samsung.com,
@@ -45,8 +44,8 @@ Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 References: <20250926073921.1000866-1-sh86.bae@samsung.com>
- <CGME20250926074017epcas2p18fb2fc616b92dc04ad9e018151c2ba29@epcas2p1.samsung.com>
- <20250926073921.1000866-3-sh86.bae@samsung.com>
+ <CGME20250926074021epcas2p36a8dc02c84c9ca11e2318a1a8931d68a@epcas2p3.samsung.com>
+ <20250926073921.1000866-4-sh86.bae@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,70 +91,58 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250926073921.1000866-3-sh86.bae@samsung.com>
+In-Reply-To: <20250926073921.1000866-4-sh86.bae@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/09/2025 16:39, Sanghoon Bae wrote:
-> Since the Exynosautov920 SoC uses the Samsung PCIe PHY, add support
-> for it in the Exynosautov920 PCIe PHY bindings.
+> Add pcie_4l_phy, pcie_2l_phy dt node for all PCIe PHY instances
+> in ExynosAutov920 SoC.
 > 
-> The Exynosautov920 SoC includes two PHY instances: one for a 4-lane PHY
-> and another for a 2-lane PHY. Each PHY can be used by separate
-> controllers through the bifurcation option. Therefore, from 2 up to 4
-> PCIe controllers can be supported and connected with this PHY driver.
-
-
-Describe hardware, not driver.
-
-> 
-> PCIe lane number is used to distinguish each PHY instance.
-> This is required since two PHY instances on ExynosAutov920 is not
-> identical.
-> On PHY driver code, need to check each instance and different settings.
-
-
-Describe hardware, not driver.
-
+> Add HSI sysreg to control PCIe sysreg registers.
 > 
 > Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
 > ---
->  .../bindings/phy/samsung,exynos-pcie-phy.yaml      | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> index 6295472696db..1e8b88d2cd56 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> @@ -19,6 +19,7 @@ properties:
->        - samsung,exynos5433-pcie-phy
->        - tesla,fsd-pcie-phy0
->        - tesla,fsd-pcie-phy1
-> +      - samsung,exynosautov920-pcie-phy
-
-Messed order.
-
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index 2cb8041c8a9f..9e45bfcd7980 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -1021,12 +1021,40 @@ cmu_hsi0: clock-controller@16000000 {
+>  				      "noc";
+>  		};
 >  
->    reg:
->      minItems: 1
-> @@ -34,6 +35,10 @@ properties:
->      description: phandle for FSYS sysreg interface, used to control
->                   sysreg registers bits for PCIe PHY
->  
-> +  num-lanes:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [2, 4]
+> +		syscon_hsi0: syscon@16030000 {
+> +			compatible = "samsung,exynosautov920-hsi0-sysreg",
+> +				     "syscon";
+> +			reg = <0x16030000 0x1000>;
+> +		};
 > +
->  allOf:
->    - if:
->        properties:
-> @@ -42,6 +47,7 @@ allOf:
->              enum:
->                - tesla,fsd-pcie-phy0
->                - tesla,fsd-pcie-phy1
-> +              - samsung,exynosautov920-pcie-phy
+>  		pinctrl_hsi0: pinctrl@16040000 {
+>  			compatible = "samsung,exynosautov920-pinctrl";
+>  			reg = <0x16040000 0x10000>;
+>  			interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+>  
+> +		pcie_2l_phy: pcie-phy2l@161c6000{
 
-Messed order.
+
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+Plus style issues... missing space.
+
+I would like to see also PCIe nodes somewhere, because I wonder if
+num-lanes should not be moved to PCI node (phy consumer) instead.
+Current approach feels better, but maybe it just duplicates num-lanes
+from the PCI?
 
 Best regards,
 Krzysztof
