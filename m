@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD4434BA5C;
-	Tue,  7 Oct 2025 00:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8817D34BA5C;
+	Tue,  7 Oct 2025 00:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797935; cv=none; b=nms/a/rYvlESGnCyholWDb3vLtk0lmwyz4NWXz6LF75QXkiTEKDc8s0WL+8l09nkXJxqcllIA/XVvQshm7ed2WttrdJ7LUtAU4kodZQuMe7l711Q3rDnG84LF/etrjdaRhf+Q7vEdjGR542x+DbMWanByYdUh/uO+SRKMjKpkQM=
+	t=1759797979; cv=none; b=V51U8cEaMMHCD0nHGEfU7GGfG8+XUntgMEORniGqvSy91K+5KpjaJjH/+Qegu9+WNpw6tAMsYK+cMRACqo8DPPUO/XVZryaYzGhWCiNRVGNXPa0Iq3iEo/rTzMc9earIDzWuIk0cXVas3D/eI0SiUkdxv6AYpvI4rq0bGc1RETE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797935; c=relaxed/simple;
-	bh=BevdJPBqnAV3hUEHEfQmo5jl85Rkrmx0vDxYo8WTNyM=;
+	s=arc-20240116; t=1759797979; c=relaxed/simple;
+	bh=J/zaUc12qRswCtMLNA9HDn+bfykmwATj9X6+LIzTD6E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MnBpX9kvUEB0dFOgCCCi6WGPciNCrE8beEhcNz6b5O2Xo9A3QXsnwQOqpercZEH28TywdDUS8EqN8M1SxgGJLwOCfMaZxCYa9DOD0GdiC/w18M5xL+QwQfyiaDwsbkb3t1b4tkCYmUZCIJWI1qmwbB1uMj3mtLJ4bBhZ2tx0Lcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRq1HY3M; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=pPSZZeiZ5m9ZD0hMtXUvzOLER6XXVSOkg/o6EVoiE2f0TWiH0GpbTGp3VaHR8Y0ynG2q17esuQCMt8gtZvBMLf+JYHfu1rU5Sj/pfAX/HEw5PbnPHKtmMLiZakkRCU45sUnLZixFPwLUF3O7YoslTHvSybbBvwKNTH1b7mQYJes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKJ3jqD/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRq1HY3M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBFCC4CEF5;
-	Tue,  7 Oct 2025 00:45:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKJ3jqD/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC4AC4CEF5;
+	Tue,  7 Oct 2025 00:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759797934;
-	bh=BevdJPBqnAV3hUEHEfQmo5jl85Rkrmx0vDxYo8WTNyM=;
+	s=k20201202; t=1759797979;
+	bh=J/zaUc12qRswCtMLNA9HDn+bfykmwATj9X6+LIzTD6E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hRq1HY3MF9bQowK5v42/l3ko8vnXOla3fuM7r8sR0RUWB3ydZKGdHFK+ERQ5w1m0L
-	 PsmhkMGDUBmo2U5NEIFsvBFf9VADfzvwyrUwCzJS/Ciez4yowuBImuPEUJYAuPNXbp
-	 ALAk/Wqfo2HuAXomzcG1ZjsVfr1zKA0Ki8AYhvYmMq0Vih+t5dV1DoUU/K2EzqukyM
-	 TwSk04xtpA1aAjlqdtv8RkUGFYE+Jc8K3Z70yWt/TJ05jpwb3jcEu8M567NIvy5N6k
-	 zPU2RLw+ohDO2hF14w69jPq1CfwLGKRmgYgscoLeOImhPev514FMuFTlZ4XrRbcf3C
-	 Dez8mQgfZO/zQ==
-Message-ID: <c9ac3ada-d527-40b6-a45a-41572ae1cc9b@kernel.org>
-Date: Tue, 7 Oct 2025 09:45:24 +0900
+	b=vKJ3jqD/p4lLzzDaCCEILVXtHTXk9GXdoP3rZt8aDXRFXgb69S4RY3b33FL5IImzn
+	 S/uSw1hVO0AgvGXRX0VHgOBOurjONtPVO36NOJPiSNwtExbpkcyU3BVQS2ektaS6EI
+	 0UxyNCcSUBCa9KRdoIcHmYYsQg4pdw3+oLU1qOEeWXj/uYS8fME3nvQbKyXjiyDto3
+	 YXMgbAPP+LjY8BdDzJXbSP1aC4wmvaJciVFYx/isPH10UXpWqB2uweL6rLnz82T1Qj
+	 +4IN76JTGFQ1j9QzBEt9eBQx5j18UvCys3eX1ycYtIHn0ynWK/fIfkeC+JORKn/lLH
+	 3FlcbhHrU89eA==
+Message-ID: <5c2c298b-b0c3-4fa5-97aa-75b44084248b@kernel.org>
+Date: Tue, 7 Oct 2025 09:46:08 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] dt-bindings: phy: google: Add Google SoC USB PHY
+Subject: Re: [PATCH v1 1/4] usb: dwc3: Add Google SoC DWC3 glue driver
 To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -50,7 +50,7 @@ Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 References: <20251006232125.1833979-1-royluo@google.com>
- <20251006232125.1833979-5-royluo@google.com>
+ <20251006232125.1833979-2-royluo@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,52 +96,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251006232125.1833979-5-royluo@google.com>
+In-Reply-To: <20251006232125.1833979-2-royluo@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/10/2025 08:21, Roy Luo wrote:
-> Document the USB PHY bindings for Google Tensor SoCs.
-> 
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
->  .../bindings/phy/google,usb-phy.yaml          | 91 +++++++++++++++++++
->  1 file changed, 91 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/google,usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-> new file mode 100644
-> index 000000000000..5552696edfff
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-> @@ -0,0 +1,91 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/google,usb-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google USB PHY
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description:
-> +  Describes the USB PHY block on Google Tensor SoCs.
+> This patch adds support for the DWC3 USB controller found on Google
 
-Which ones? You need to be VERY specific here.
+Please read submitting patches, how this should be written.
+
+> Tensor SoCs. The controller features dual-role functionality and
+> hibernation.
+
+
 
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - google,lga-usb-phy
-> +      - const: google,usb-phy
+> +static const struct dev_pm_ops dwc3_google_dev_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(dwc3_google_pm_suspend, dwc3_google_pm_resume)
+> +	SET_RUNTIME_PM_OPS(dwc3_google_runtime_suspend, dwc3_google_runtime_resume,
+> +			   dwc3_google_runtime_idle)
+> +	.complete = dwc3_google_complete,
+> +	.prepare = dwc3_google_prepare,
+> +};
+> +
+> +static const struct of_device_id dwc3_google_of_match[] = {
+> +	{ .compatible = "google,snps-dwc3" },
 
-Please read carefully  bindings. You cannot have generic compatible.
-Plus you are duplicating existing Samsung bindings.
+You cannot use compatible before documenting it. Read submitting patches.
 
 Best regards,
 Krzysztof
