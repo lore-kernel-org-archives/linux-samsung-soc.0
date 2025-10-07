@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8817D34BA5C;
-	Tue,  7 Oct 2025 00:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49872B9BA;
+	Tue,  7 Oct 2025 01:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797979; cv=none; b=V51U8cEaMMHCD0nHGEfU7GGfG8+XUntgMEORniGqvSy91K+5KpjaJjH/+Qegu9+WNpw6tAMsYK+cMRACqo8DPPUO/XVZryaYzGhWCiNRVGNXPa0Iq3iEo/rTzMc9earIDzWuIk0cXVas3D/eI0SiUkdxv6AYpvI4rq0bGc1RETE=
+	t=1759799193; cv=none; b=r0k/6QOSW48CmVzTFNbwY2kQuVYvMePVdwLvDz7+AjHa+O7phV4qe4y3pZ9jzMhDGqQXVPGcv659gCbPNObQkZugXOcBa5fwZZnhj14DChB87htmvmRv/uyeNpLnMJgNSpKE+qQmhaKTPUm9imWaOp3qLYi/U12JRBn4G4MtrGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797979; c=relaxed/simple;
-	bh=J/zaUc12qRswCtMLNA9HDn+bfykmwATj9X6+LIzTD6E=;
+	s=arc-20240116; t=1759799193; c=relaxed/simple;
+	bh=7oQcilkprt+ujFKdnktKU9R8kCtmHAjQf/bDn+u5dho=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pPSZZeiZ5m9ZD0hMtXUvzOLER6XXVSOkg/o6EVoiE2f0TWiH0GpbTGp3VaHR8Y0ynG2q17esuQCMt8gtZvBMLf+JYHfu1rU5Sj/pfAX/HEw5PbnPHKtmMLiZakkRCU45sUnLZixFPwLUF3O7YoslTHvSybbBvwKNTH1b7mQYJes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKJ3jqD/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=QLoMfebfkJanO+ZJSovgukuJfq/DC5qg/r8uCY7S+ck+NFBdgYVBCyI2aAzIQ3gdNcmcRb7ZnkIQaYAyk5K9PgPJ5o3hsdgCDeDNUTcUlD3ivTOTpXjyE+Kgdvu82lBUw5UUENc2XtTpkX3DCaD578J62I0KmVtiBfqbIv7F/ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjrZxTwH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKJ3jqD/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC4AC4CEF5;
-	Tue,  7 Oct 2025 00:46:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjrZxTwH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24489C4CEF5;
+	Tue,  7 Oct 2025 01:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759797979;
-	bh=J/zaUc12qRswCtMLNA9HDn+bfykmwATj9X6+LIzTD6E=;
+	s=k20201202; t=1759799193;
+	bh=7oQcilkprt+ujFKdnktKU9R8kCtmHAjQf/bDn+u5dho=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vKJ3jqD/p4lLzzDaCCEILVXtHTXk9GXdoP3rZt8aDXRFXgb69S4RY3b33FL5IImzn
-	 S/uSw1hVO0AgvGXRX0VHgOBOurjONtPVO36NOJPiSNwtExbpkcyU3BVQS2ektaS6EI
-	 0UxyNCcSUBCa9KRdoIcHmYYsQg4pdw3+oLU1qOEeWXj/uYS8fME3nvQbKyXjiyDto3
-	 YXMgbAPP+LjY8BdDzJXbSP1aC4wmvaJciVFYx/isPH10UXpWqB2uweL6rLnz82T1Qj
-	 +4IN76JTGFQ1j9QzBEt9eBQx5j18UvCys3eX1ycYtIHn0ynWK/fIfkeC+JORKn/lLH
-	 3FlcbhHrU89eA==
-Message-ID: <5c2c298b-b0c3-4fa5-97aa-75b44084248b@kernel.org>
-Date: Tue, 7 Oct 2025 09:46:08 +0900
+	b=FjrZxTwHmZpAxFmzGfPrpPMlq5p3lgmUUrlTQsrhabqgXg8nwqqBflXepSrsxG+1w
+	 riumzumvEsfza7Yi6rrMrts8Wh7IwRN1g+k41O4GdMiF3qlIh18USq89wUUKpXDJPh
+	 Z7xUWg2eo4m4VMIElTfEcdITLQFe4zQCCQny1ZmM+Y9Pe548u/aYnjLVT+KQ7DTktU
+	 GKrjKmlXLAkZGAuIVy2aQ3RuIpUVfs21FrjorHNFBHtheevK14Yo4d3BW+2uSx94kU
+	 f1x3kKBbc6qtfaGpl51S7WD/95nCKQuhyNUZCuxJE0P0ADxPP1Ry0m2CiZA8Xj1pko
+	 y4QcUR+qGi76g==
+Message-ID: <36068ca3-912e-4e71-b688-8689ead8194b@kernel.org>
+Date: Tue, 7 Oct 2025 10:06:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] usb: dwc3: Add Google SoC DWC3 glue driver
+Subject: Re: [PATCH v1 0/4] Add Google Tensor SoC USB support
 To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -50,7 +50,6 @@ Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 References: <20251006232125.1833979-1-royluo@google.com>
- <20251006232125.1833979-2-royluo@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,33 +95,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251006232125.1833979-2-royluo@google.com>
+In-Reply-To: <20251006232125.1833979-1-royluo@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/10/2025 08:21, Roy Luo wrote:
-> This patch adds support for the DWC3 USB controller found on Google
+> This series introduces support for the USB controller and PHY found on
+> Google Tensor SoCs (G5 and newer). This includes:
+> 
+> 1.  DWC3 Glue Driver: A new glue layer for the Synopsys DesignWare USB 3.0
+>     controller (DWC3) as integrated into Google Tensor SoCs, including
+>     hibernation support.
+> 2.  DWC3 DT Bindings: Device Tree binding documentation for the Google
+>     Tensor SoC DWC3 controller.
+> 3.  USB PHY Driver: A new driver for the Google Tensor SoC USB PHY,
+>     initially supporting high-speed operations.
+> 4.  USB PHY DT Bindings: Device Tree binding documentation for the Google
+>     Tensor SoC USB PHY.
 
-Please read submitting patches, how this should be written.
+This is useless message in the cover letter. We see what patches do from
+the patches.
 
-> Tensor SoCs. The controller features dual-role functionality and
-> hibernation.
-
-
-
-> +
-> +static const struct dev_pm_ops dwc3_google_dev_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(dwc3_google_pm_suspend, dwc3_google_pm_resume)
-> +	SET_RUNTIME_PM_OPS(dwc3_google_runtime_suspend, dwc3_google_runtime_resume,
-> +			   dwc3_google_runtime_idle)
-> +	.complete = dwc3_google_complete,
-> +	.prepare = dwc3_google_prepare,
-> +};
-> +
-> +static const struct of_device_id dwc3_google_of_match[] = {
-> +	{ .compatible = "google,snps-dwc3" },
-
-You cannot use compatible before documenting it. Read submitting patches.
+What you are supposed to explain here and in the bindings patches, is
+why we want this driver and what is Tensor SoC, considering we already
+have one Tensor SoC... IOW, explain everything which is not obvious -
+and duplicating SoCs with some generic name is for sure not obvious.
 
 Best regards,
 Krzysztof
