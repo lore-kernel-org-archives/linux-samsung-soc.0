@@ -1,183 +1,127 @@
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC1722173A
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Oct 2025 23:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9021D1AF0BB;
+	Tue,  7 Oct 2025 00:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759792923; cv=none; b=lvabtoeFqorasGAC+Yr1wP71Qo2Jxa9MSQ9+fbosqEk1vK+9LvvaMJJascOA3KH9Bz4M+0gWaYQvYNFExcx/jed3FlxXUX8rhsok1SJ3rRb9Ubew2ddZD0usA5kgZrw2vpha5PoQlBzrwhXKk2pzRr82U6pK68x+wUqk6LB0jHE=
+	t=1759797756; cv=none; b=NCZ+e453wYrNPUTdC+lJPU4YUWfjd8QVN6fzWJ6F/wq6CXAl2Lmb4tccFZTTX1YQaVVaBrFy0j9eJQjMbErJBMseByeLB249qkRMZsTGt1ebLIj4TvpbLjDgoexUpR5Zj6win+lK0IoL/o0gNdW69TAPAIXBatDBE2Ak+gVdPDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759792923; c=relaxed/simple;
-	bh=yWO1Gs1HXKZxClu1Io5peVisEcP6Olr5Y9XAWJrxUgs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XGYeHd8fUlUIXGQMWJYGCGLZlLAvztdu1cJsQ4WPI0mOpNfhvTSzqUzTZ9Gq0K43gpJPHUgZDHIhrJI94NrXlwnkghqds9XQ/7n9CPVwFjjLS8c0R/GImWqafnpYWASIhUTKcoaP4UtDRzKS83rCexqLE8iJrq2zxHUF1Sr+5G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lNgQRsqx; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
+	s=arc-20240116; t=1759797756; c=relaxed/simple;
+	bh=cgRSHlts17UojDBt2OucIf1/5WK81Z1KzVQEMgdRDBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uXFWOm7xC0SFMMKpUkyFnJPmAIeF/OuSeBQzg3sovH4CVNxSDBKwgkVaInmpBtSqBgbNETW8uLh7BU1Quwhr99mPP5SBsY7xSYY6G9xLodn6QdIID6erF0kLW+hsVIMF4G9dNkOn2uK82/LxnE/3E/Gy/kCgx703pEndErn7Q3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVxxxyZ7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lNgQRsqx"
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-26983c4d708so46164005ad.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2025 16:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759792921; x=1760397721; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkKChLn4ApubeBsamuYU7Hpmq4pwMsO67hlNXPMA5YY=;
-        b=lNgQRsqxC0ttP75sMuRU4ddnChKm1g7KqExea9Ft31YCWZHJDRIf6VN9y9On1IdcKb
-         JqFThTMp9LD1CfVOZWJttHZ9+WzyuyGO7euh6h+ut4SyZk9QNfcvmsf/5breAkmwU8R4
-         rBR+21nOik4P4FjKU/O+ALFhuMvLVRgdAcYTXJ8M9qVylidhWa5f3HuVbbPIewT5002V
-         jcqPxVVPgterRK4uZfNqlYgdkXUqOEHzslGC9CaZMtl/mfT30zw6fWA560Mx2iu4HBr4
-         1J7ubQVFtoBNa6BgAi2PnQSCKSQGKhL7UgZOKSlhmr2b2eGu02BIscJBRY5N8ajgeBuA
-         5vzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759792921; x=1760397721;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkKChLn4ApubeBsamuYU7Hpmq4pwMsO67hlNXPMA5YY=;
-        b=aaReeNyWtgZkoGDSWOW7eCv25jwKMdU0lPoEbMWp0PgYWM50NOPtm7xyRSDB2cjmee
-         iL9mNjEorfc0lfP+9QiDbBLTbQNwfl/yHHr1jBYZRFMn5tLU2Q3sxVlyTdmwh9JcbpUP
-         xqGxwhNrHLTCiHz8TdMm87tyTzdR9dwu4VU5uc2lyWEJYlMUNkv/rjD7ey8a9Sn4WdJk
-         15sL8PkYrD/oAJaHuUnUHgebIsYm1ni83AmLHbax5tJWy063yn9bbG0asM2IOdbwiaKs
-         Fz+Wvl5FTNbQpiVOehiYQibXKB6lHdterstDnp2S4VP9eqfit9AECz0KMHDTlqd/NkfL
-         wGeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBdsQUtXhHwmrl3l8I8COG9i1rAjNWPbxshmg/r3WRmRkWXVIPdqhyBcWJR9+v6SF4xVQYQrZRSkMmaX1G8NN2uQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7iJAODhE/wRijhQGxBjlpEfpxaqmytoi3h7KMC0kzJmDoBpHk
-	fpnJ5kkf20S75uiwrs7Y1fHOT5b5szDypZd4sqKy6MbARXlQ1tsanIU7Y4c3Tnn9Cq5DG3uhfH9
-	vnWXL/g==
-X-Google-Smtp-Source: AGHT+IE//h6xf8e8vLcxaIrD/3WT81vswv40/2L0nA0sc++ps1yK0/qbPo/CJtMHXxhA5J78s2QgfQ/fed8=
-X-Received: from plpa3.prod.google.com ([2002:a17:902:9003:b0:269:b01c:4f4b])
- (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f0d:b0:26c:4085:e3f5
- with SMTP id d9443c01a7336-28e9a6e07e8mr162017045ad.50.1759792920644; Mon, 06
- Oct 2025 16:22:00 -0700 (PDT)
-Date: Mon,  6 Oct 2025 23:21:25 +0000
-In-Reply-To: <20251006232125.1833979-1-royluo@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVxxxyZ7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D75DC4CEF5;
+	Tue,  7 Oct 2025 00:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759797756;
+	bh=cgRSHlts17UojDBt2OucIf1/5WK81Z1KzVQEMgdRDBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eVxxxyZ7+RrUf6D0UUkCECZobgQxfzOSahdlM64oNN+vIzzldN/CUctvePN02fKe5
+	 Vj+W+ulRZu8pcsmpb3AFLB3ZhF3dU638Vb+UV7gWWB0tIg752fIw8VHCq0+BrcrrHB
+	 08jkf7R9kTKvEn+YxFTLNMaN3vzQ7ms3m1ToIu9HAYRAuNBeS4WrzFnHte+hHBtDhp
+	 EQdOTpBQvI+2DPNHiW5VfngAopxzOZxOsRtrLwU/XfHhIwRfK7FB3/oSrdI9ZsO/P5
+	 eHzxn/Oo4gwWKQnavBbqNXnjkJVx2LsgW97bsXSbyfkM/E/gJyP4BvRrEHUwH6DFHv
+	 EtjoPPWXJgGFw==
+Message-ID: <923aea1b-6a15-426f-9c32-954a1fb95d0a@kernel.org>
+Date: Tue, 7 Oct 2025 09:42:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] usb: dwc3: Add Google SoC USB PHY driver
+To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 References: <20251006232125.1833979-1-royluo@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251006232125.1833979-5-royluo@google.com>
-Subject: [PATCH v1 4/4] dt-bindings: phy: google: Add Google SoC USB PHY
-From: Roy Luo <royluo@google.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <20251006232125.1833979-4-royluo@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251006232125.1833979-4-royluo@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Document the USB PHY bindings for Google Tensor SoCs.
+On 07/10/2025 08:21, Roy Luo wrote:
+> Support the USB PHY found on Google Tensor SoCs.
+> This particular USB PHY supports both high-speed and super-speed
+> operations, and is paired with the SNPS DWC3 controller that's also
+> integrated on the SoCs.
+> This initial patch specifically adds functionality for high-speed.
+> 
+> Co-developed-by: Joy Chakraborty <joychakr@google.com>
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> Co-developed-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  drivers/phy/Kconfig                 |   1 +
+>  drivers/phy/Makefile                |   1 +
+>  drivers/phy/google/Kconfig          |  15 ++
+>  drivers/phy/google/Makefile         |   2 +
+>  drivers/phy/google/phy-google-usb.c | 286 ++++++++++++++++++++++++++++
 
-Signed-off-by: Roy Luo <royluo@google.com>
----
- .../bindings/phy/google,usb-phy.yaml          | 91 +++++++++++++++++++
- 1 file changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/google,usb-phy.yaml
 
-diff --git a/Documentation/devicetree/bindings/phy/google,usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-new file mode 100644
-index 000000000000..5552696edfff
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-@@ -0,0 +1,91 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2025, Google LLC
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/google,usb-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Google USB PHY
-+
-+maintainers:
-+  - Roy Luo <royluo@google.com>
-+
-+description:
-+  Describes the USB PHY block on Google Tensor SoCs.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - google,lga-usb-phy
-+      - const: google,usb-phy
-+
-+  reg:
-+    minItems: 3
-+    maxItems: 3
-+
-+  reg-names:
-+    items:
-+      - const: usb2_cfg_csr
-+      - const: dp_top_csr
-+      - const: usb_top_cfg_csr
-+
-+  "#phy-cells":
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: usb2_phy_clk
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: usb2_phy_reset
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  orientation-switch:
-+    type: boolean
-+    description:
-+      Indicates the PHY as a handler of USB Type-C orientation changes
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - "#phy-cells"
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        usb_phy: usb_phy@c410000 {
-+            compatible = "google,lga-usb-phy", "google,usb-phy";
-+            reg = <0 0x0c450014 0 0xc>,
-+                  <0 0x0c637000 0 0xa0>,
-+                  <0 0x0c45002c 0 0x4>;
-+            reg-names = "usb2_cfg_csr", "dp_top_csr", "usb_top_cfg_csr";
-+            #phy-cells = <1>;
-+            clocks = <&hsion_usb2_phy_reset_clk>;
-+            clock-names = "usb2_phy_clk";
-+            resets = <&hsion_resets_usb2_phy>;
-+            reset-names = "usb2_phy_reset";
-+            power-domains = <&hsio_n_usb_pd>;
-+            orientation-switch;
-+        };
-+    };
-+...
--- 
-2.51.0.618.g983fd99d29-goog
+No, you don't get a new directory and new driver. That's a Samsung part,
+AFAIK. Re-use existing code.
 
+Best regards,
+Krzysztof
