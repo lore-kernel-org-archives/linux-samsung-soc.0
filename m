@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49872B9BA;
-	Tue,  7 Oct 2025 01:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AD534BA44;
+	Tue,  7 Oct 2025 01:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799193; cv=none; b=r0k/6QOSW48CmVzTFNbwY2kQuVYvMePVdwLvDz7+AjHa+O7phV4qe4y3pZ9jzMhDGqQXVPGcv659gCbPNObQkZugXOcBa5fwZZnhj14DChB87htmvmRv/uyeNpLnMJgNSpKE+qQmhaKTPUm9imWaOp3qLYi/U12JRBn4G4MtrGQ=
+	t=1759800169; cv=none; b=DeOss0UEZB9AFTTn41PjLjyMm51B4B2uLYT+wk6oBUw0VImi6rnPG8K1s4UzsIN/JbboxUngooSDN6GtSpy7sJFrOFJarbzVccTr1rEL9y3OyKMmw3ud7utP6otVSV3kYXz0F/HhW3fFGR/SRACc1VY7Ojs0L9Rye3nFr6DEOZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799193; c=relaxed/simple;
-	bh=7oQcilkprt+ujFKdnktKU9R8kCtmHAjQf/bDn+u5dho=;
+	s=arc-20240116; t=1759800169; c=relaxed/simple;
+	bh=Vs8T4yiVpaN+s1o4euNltw93FIm1uUMKtorrOmqCpZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QLoMfebfkJanO+ZJSovgukuJfq/DC5qg/r8uCY7S+ck+NFBdgYVBCyI2aAzIQ3gdNcmcRb7ZnkIQaYAyk5K9PgPJ5o3hsdgCDeDNUTcUlD3ivTOTpXjyE+Kgdvu82lBUw5UUENc2XtTpkX3DCaD578J62I0KmVtiBfqbIv7F/ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjrZxTwH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=b8F4BBmF1ZAumdaJqhHfk02vP1EbUkP+islt61U1YPbTvZlNskqfD6GOcsGvASYtFC9weou9e3cByLemJYi124QWuZ9Nf4ed05/lb0jfJMxvA+cPcJT19xYeObCvgExKZqIxPuC3mJ+59pfkTNbB3UCr2vSMW6NlegIh2pKmka4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G91qIAHv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjrZxTwH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24489C4CEF5;
-	Tue,  7 Oct 2025 01:06:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G91qIAHv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1993CC4CEF5;
+	Tue,  7 Oct 2025 01:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759799193;
-	bh=7oQcilkprt+ujFKdnktKU9R8kCtmHAjQf/bDn+u5dho=;
+	s=k20201202; t=1759800168;
+	bh=Vs8T4yiVpaN+s1o4euNltw93FIm1uUMKtorrOmqCpZE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FjrZxTwHmZpAxFmzGfPrpPMlq5p3lgmUUrlTQsrhabqgXg8nwqqBflXepSrsxG+1w
-	 riumzumvEsfza7Yi6rrMrts8Wh7IwRN1g+k41O4GdMiF3qlIh18USq89wUUKpXDJPh
-	 Z7xUWg2eo4m4VMIElTfEcdITLQFe4zQCCQny1ZmM+Y9Pe548u/aYnjLVT+KQ7DTktU
-	 GKrjKmlXLAkZGAuIVy2aQ3RuIpUVfs21FrjorHNFBHtheevK14Yo4d3BW+2uSx94kU
-	 f1x3kKBbc6qtfaGpl51S7WD/95nCKQuhyNUZCuxJE0P0ADxPP1Ry0m2CiZA8Xj1pko
-	 y4QcUR+qGi76g==
-Message-ID: <36068ca3-912e-4e71-b688-8689ead8194b@kernel.org>
-Date: Tue, 7 Oct 2025 10:06:22 +0900
+	b=G91qIAHvSrbBLW9CFc2StFQrPHsgaPm1ItS5zI91h+XFjLpUm26XUzUochvsolsXE
+	 fiSItSvAz5o2L+5/Anuz0B3Bi8KVyCS7SQRFphbysO89dGn4rG4kSIzd1lcRdakMTU
+	 ZJ8Tbf+k1O77qZ+uMEJFzfT0jl7135FUOC1zOyVurHI+IsknUPShFiYPBiH7W4t8b6
+	 5aKPHZm1fKpEFU3VlwH9sYiZJY0NFqE2GFJB9CjAnCpf4eesm2lA6riXLrsaFSEev6
+	 Gi4Ucbl5f74lhWm6jAxuWu3hToTBmquEFgAES2huW67Vb6TuoxIkRPjWvG7f0rssIG
+	 REGAMl8ti96Yw==
+Message-ID: <8a3b5248-ff46-4aaf-9797-202f85ef9b23@kernel.org>
+Date: Tue, 7 Oct 2025 10:22:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,21 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/4] Add Google Tensor SoC USB support
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20251006232125.1833979-1-royluo@google.com>
+Subject: Re: [PATCH 1/7] arm64: dts: exynos7870: relocate ${x}-names property
+ after ${x}
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250928-exynos7870-dt-fixes-v1-0-a40e77a73f16@disroot.org>
+ <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
+ <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
+ <6dff1e8256f3d0932d1f5ad941e129db@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,31 +91,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251006232125.1833979-1-royluo@google.com>
+In-Reply-To: <6dff1e8256f3d0932d1f5ad941e129db@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2025 08:21, Roy Luo wrote:
-> This series introduces support for the USB controller and PHY found on
-> Google Tensor SoCs (G5 and newer). This includes:
+On 29/09/2025 19:01, Kaustabh Chakraborty wrote:
+> On 2025-09-28 21:56, Krzysztof Kozlowski wrote:
+>> On Mon, 29 Sept 2025 at 01:44, Kaustabh Chakraborty
+>> <kauschluss@disroot.org> wrote:
+>>>
+>>> All ${x}-names properties are conventionally placed after their
+>>> corresponding ${x} properties. For instance, 'clock-names' must follow
+>>> 'clocks', 'interrupt-names' must follow 'interrupts'. Make necessary
+>>> changes to follow said convention. No functional changes made.
+>>>
+>>
+>> I don't intend to take such cosmetic changes, because they interfere
+>> with stable back porting, unless we have a tool for such cleanup. Did
+>> you use my prototype tool for that or some other tool?
 > 
-> 1.  DWC3 Glue Driver: A new glue layer for the Synopsys DesignWare USB 3.0
->     controller (DWC3) as integrated into Google Tensor SoCs, including
->     hibernation support.
-> 2.  DWC3 DT Bindings: Device Tree binding documentation for the Google
->     Tensor SoC DWC3 controller.
-> 3.  USB PHY Driver: A new driver for the Google Tensor SoC USB PHY,
->     initially supporting high-speed operations.
-> 4.  USB PHY DT Bindings: Device Tree binding documentation for the Google
->     Tensor SoC USB PHY.
+> No, I did it manually. This is due to your first remark in [1] and
+> my corresponding reply in [2]. What do I do here then?
 
-This is useless message in the cover letter. We see what patches do from
-the patches.
 
-What you are supposed to explain here and in the bindings patches, is
-why we want this driver and what is Tensor SoC, considering we already
-have one Tensor SoC... IOW, explain everything which is not obvious -
-and duplicating SoCs with some generic name is for sure not obvious.
+I asked for the new code to follow this style, but I don't want to fix
+yet existing code - before we come with a tool doing it.
+
 
 Best regards,
 Krzysztof
