@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B291D554;
-	Tue,  7 Oct 2025 06:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A80221FA4;
+	Tue,  7 Oct 2025 06:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818499; cv=none; b=uY5gvVVl7WDV4381dZn4b2g7nouXgL7E11ruust5L2zFDt7CLcgQZkUnKACiBpLTHu1VrGZv50MDsYi8RP2KcBOdmkZvV3DMiTPXIP9FBqB2vBq7nleYnEZdG5zBV87s0Dgxsjd7axAwDbqRZ/1xJ/XAdvXh9muHxL6q0AUNac8=
+	t=1759818602; cv=none; b=fawAZQ4PQCRZ9IT5wgZf4vUPphWnzcChp9ExcvDGa1xuf/zu40ffXBGiyZx+G00Hx7ZrYPKpgC/mvIfT5cm49oBdAhQ1C47klfPMJdMbi/h6VtvELLHlKSaEWqeHQHZvjvUl22o1YsyoRIxopaZgW9M6RkBLHDPB2Q63mYqBxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818499; c=relaxed/simple;
-	bh=Bd8f82F/uF2ciTLXa/EOwGoGys/UdwP162VIlDDpDqE=;
+	s=arc-20240116; t=1759818602; c=relaxed/simple;
+	bh=wZYlzoA9J8+rJqVeCe4Q2o14fIltYpD6LEF2ajXIVss=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c3KQ/JGk8fgrP8UjcteLdbbHUv62PdeIiDGwJ1+Iw59KP/2EtZ53Xq6VlWjoAy5NLT3a117bhVVVOM4cTtyX+JxeNhcpBKgak9his+3UCfePgtdxeCMg5XZqxjbRW8I4IDL29pIrV2EtppttOqFqzk5VGny5Oa1Ivm2V+QDByCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McziBS5i; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Cdt6JqnkijXEwV+52r9hbae/IurdFQhvFJ8wnJsTSLd8WUA4LZgIxyJW2NaT3urUUZoud0A5vWi7LQuJb3AaDqeMcaTgXkhuSy1ij86GddXj/2xoLdfzyxPC1nigaL9CymNHUfF6V1vOP5k0U2vaP68rACtv0fMlNKV88cLX1cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4njtDHJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McziBS5i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183CDC4CEF1;
-	Tue,  7 Oct 2025 06:28:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4njtDHJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A778C4CEF1;
+	Tue,  7 Oct 2025 06:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759818498;
-	bh=Bd8f82F/uF2ciTLXa/EOwGoGys/UdwP162VIlDDpDqE=;
+	s=k20201202; t=1759818601;
+	bh=wZYlzoA9J8+rJqVeCe4Q2o14fIltYpD6LEF2ajXIVss=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=McziBS5inuDDVlszSlvO0TiF/+6nsBj5nNltTQcJxsDu0t7V5n3jjnHBBV90AD5TA
-	 fub1Dd+m26vLQpAXP+ilxrcnBEcgi/z8wAT+h7gg5cVrKKHrRdRMxBsyaQoDa7UW+M
-	 uQJg/g2nIUGQkVLqFxiYXWHZTZPFan9Dz9lSIaNgQW4irbrYetyA+t6KsevskJ0e78
-	 DoarwMqqLa4lDa/oCqdxMv47EBaa6CKmdvNfvKEJdTYuWLt8T4fPSEs04kraTqto0Y
-	 hmgZtPwx9ivUsPUU9mH27QNGPHBdL7D+A/PNNFbBPxpRXIRRtVLTV8Swcq459cRa/z
-	 gtNyXgVFFlb6g==
-Message-ID: <945d5f68-66b9-40f3-afd7-64e746075d12@kernel.org>
-Date: Tue, 7 Oct 2025 15:28:10 +0900
+	b=b4njtDHJljGx4jj97mh0JBufnl4Z4jFHUt7eUxuxflsca4JW9bg/IVnFROaCE70vM
+	 Zertw3lUvmV1uMR7GUh6v8U49oQIYKPxsoXka2pV5PoiYSvAFVDKN6pYkLCeNR2e7c
+	 W/4hkXl+FApC6ZHisUoQiPQZEiYRrE1ZxkCj9N3GzNaq0LO5F5bBXurrA/jgBbPkQF
+	 6aFY3l5vR7UZyIz90r/+XLiCoOXSrc3p0JgjU2XFPVoe/R68FIk0Y/P0dscyx8CN3V
+	 P8pbTJk0csk0bzuhmVwuBxsqLse5H6O8UG4XBnBpaAqhFDa8IQNMQEZd0DcPQJYKzz
+	 vU2hhXKqnUk4Q==
+Message-ID: <649f8e90-d99b-401a-bb0f-ef0cf9c4fe7f@kernel.org>
+Date: Tue, 7 Oct 2025 15:29:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: soc: samsung: exynos-sysreg: add hsi0
- for ExynosAutov920
+Subject: Re: [PATCH 2/4] dt-bindings: phy: Add PCIe PHY support for
+ ExynosAutov920 SoC
 To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
  conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
  kishon@kernel.org, m.szyprowski@samsung.com, jh80.chung@samsung.com,
@@ -45,8 +45,8 @@ Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 References: <20250926073921.1000866-1-sh86.bae@samsung.com>
- <CGME20250926074011epcas2p438f7edb31c720c0950e9df986983f5a5@epcas2p4.samsung.com>
- <20250926073921.1000866-2-sh86.bae@samsung.com>
+ <CGME20250926074017epcas2p18fb2fc616b92dc04ad9e018151c2ba29@epcas2p1.samsung.com>
+ <20250926073921.1000866-3-sh86.bae@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,28 +92,70 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250926073921.1000866-2-sh86.bae@samsung.com>
+In-Reply-To: <20250926073921.1000866-3-sh86.bae@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/09/2025 16:39, Sanghoon Bae wrote:
-> Add hsi0 compatible for ExynosAutov920 PCIe settings for:
-> - PCIe PHY power control
-> - PLL settings for PCIe
-> - PCIe device direction (RC/EP)
+> Since the Exynosautov920 SoC uses the Samsung PCIe PHY, add support
+> for it in the Exynosautov920 PCIe PHY bindings.
+> 
+> The Exynosautov920 SoC includes two PHY instances: one for a 4-lane PHY
+> and another for a 2-lane PHY. Each PHY can be used by separate
+> controllers through the bifurcation option. Therefore, from 2 up to 4
+> PCIe controllers can be supported and connected with this PHY driver.
+
+
+Describe hardware, not driver.
+
+> 
+> PCIe lane number is used to distinguish each PHY instance.
+> This is required since two PHY instances on ExynosAutov920 is not
+> identical.
+> On PHY driver code, need to check each instance and different settings.
+
+
+Describe hardware, not driver.
+
 > 
 > Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
 > ---
->  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/phy/samsung,exynos-pcie-phy.yaml      | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-This is not really related to PCIe or phy patchset, so putting it here
-just makes life of maintainers more difficult. There is really no reason
-for that.
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> index 6295472696db..1e8b88d2cd56 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> @@ -19,6 +19,7 @@ properties:
+>        - samsung,exynos5433-pcie-phy
+>        - tesla,fsd-pcie-phy0
+>        - tesla,fsd-pcie-phy1
+> +      - samsung,exynosautov920-pcie-phy
 
-Don't mix subsystems when not needed. DTS patchset targeting me, should
-be separate from other subsystems in such case and it only needs to
-mention in changelog or cover letter where are the bindings.
+Messed order.
+
+>  
+>    reg:
+>      minItems: 1
+> @@ -34,6 +35,10 @@ properties:
+>      description: phandle for FSYS sysreg interface, used to control
+>                   sysreg registers bits for PCIe PHY
+>  
+> +  num-lanes:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [2, 4]
+> +
+>  allOf:
+>    - if:
+>        properties:
+> @@ -42,6 +47,7 @@ allOf:
+>              enum:
+>                - tesla,fsd-pcie-phy0
+>                - tesla,fsd-pcie-phy1
+> +              - samsung,exynosautov920-pcie-phy
+
+Messed order.
 
 Best regards,
 Krzysztof
