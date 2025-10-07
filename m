@@ -1,65 +1,65 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E2342AA3
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Oct 2025 15:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DB32E6CD6
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Oct 2025 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759852593; cv=none; b=OlvjaxNJ9hjLsJmwcCNA4GPS6ClLjyhztI9CimSZFBFlliaXP0UMLjzK/FFIYedsR9lsRu+YFoGSFHZ4KEFnhy6Ne+JXczfAraWWzhoqo72C/yQ0yObtn/jbFR3sh0Y+KsuQT+Nr/pRle+Pjc3R7sr3f3hls56JjGLRysukbtl0=
+	t=1759852995; cv=none; b=fXiGZqjR4RXPccRIMXkzeCvMNS9EgkHCcpmCuVBVZV6cChXW8VJKamAxPpdPqBRS8+y2nhmHEWGyEjSVCT7M7P+348jBtciiOu3HL4gTo2a/1CaYZTPFKM0bV0SzWssENinzzpZIbD6223bL1Fu6qWt+AKbH4wLEl32TsvmK8zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759852593; c=relaxed/simple;
-	bh=2PS1aw7dfUT0k1FWYcqJDnEg5AxccGVN6SkNj7bMjuk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U3tb74n4MyVXuQRMXHfWmigAkO5lAZZdEq3kqX3uyD6tVOcaH/Tbsqg12OiglfuePjd5EXC5OFOmJd6OShgjnIAUqr4K8dRuJZgMJmTh6Q+shjO+UfeqGLVJ11+YKCnB9syyj1fYUfEmVAaPNmMnFbgYjcRI1bu5pUzHe66MQwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L922AMHs; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1759852995; c=relaxed/simple;
+	bh=fJ72ZMhavTt/zW71hZxTnZ2SN+OoyfXQg3BT41sI8Lw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jqJ4hE629O4lJAF+ccA4bSGCmgOSUPEpiVvGnM85jOLkW/XoGigIxvKQaHX4AqwDg1ZFMTviDfAqhez0fYZksuhJHcW4rrrwDkOOD9nxwSnmjmOqOeuk/1OL8m7Dz8Wp0MccP1rThJXbcQ3FcWemfj5MDH9DKAfxXHaxLVSbzAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jFCCekN9; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L922AMHs"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb78ead12so1166148566b.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Oct 2025 08:56:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jFCCekN9"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b3ee18913c0so1017849266b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Oct 2025 09:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759852589; x=1760457389; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759852992; x=1760457792; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9iDWqoWfueHqY1DQn3UROh93hmAu+K7Xh14JdQEHAgE=;
-        b=L922AMHsQ5AJuI4epf0tAPOTsp3RJtAOWMo36afQ1pEbLGwffIShfXVmlPk+lLQQ93
-         EeBXopkUAMHLZuemTVYSEJ7m6jnIOVXykOyCs3FEBC0RlVwTrxkJEke+nEDN4W+l8P0u
-         aoA9rbAVUARM1+xA/n6y583bzIQ7LWOgAX0H/5SbCLYHdr5fwZYCodBd1+ZZeurkrw6A
-         Q3/1Xwy02u/BVJ8rroIOgYduqg082iHUNr5enYcJeaieueNxmVgNdxEHnlVE03tLzdb7
-         3TE+G3s+NmYwfC0d2WY46vBYIir3+5fizW/8OQuh3f2Xd2kH0Yt303aTmFk15RzrS437
-         8bew==
+        bh=7Cm5Dko9olaR4ZjBSYSeJvT1TaV6qKnd54YvU1t3L9I=;
+        b=jFCCekN9RwyDqx0qwWloiB2wwjxnod2enfPpmNxf62IebJoXUXrWni7d1z3/EnGHfy
+         aNjUnnfzdXYBXMN24SVO9QzcPUDwdeih3LIjXUTaLo5rLJQyZ9VQml+fPbGzSgoT5Ybd
+         loMdf0h4Qra0w/hNiQD++yk8JcJ7wz5QLH7DqqYa9/F+5XzltCrB49IxTZpEzjz9pyDG
+         BIoqsvlqBbcvI/GJM/sLpM8IMlgP1FTh7bH075VpkQ2xYaw60YQMBJ2X2YJ7JBqSl/6u
+         CUNvszkf+5wJEVfvKbnhLSm202BycDdQPadAoVY4BUgX+4BMlnGVCjNbKk6CqM3paVHe
+         Zj5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759852589; x=1760457389;
+        d=1e100.net; s=20230601; t=1759852992; x=1760457792;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9iDWqoWfueHqY1DQn3UROh93hmAu+K7Xh14JdQEHAgE=;
-        b=w7gbCO3QFXoPuJ4MWByKEMjslmEXsr1VSrvoPgxEBxaDr+pv0SXruWJOYXl/YmbIhy
-         ZYILrhnvzeYoOMiw+/q/YvS+azXL7sA9VcoTKLkl14+mMGYQiYYae4yn1BUguaIurRaB
-         qcexgGzaEEjZBTjsHIWhg1Ks+hZHYBudV8lCCGl4FBNl9ILqvLU7c5vXLn4pJSuLZgLc
-         vacO24ENnWttTkEuqXeUS6FYvIwZTIyyGy9G5tukggTOfNBjOXJ2jfI5Hm0VO5t36AMh
-         qrASdeiCuBPKrgj7kSjJiPnTH/OvkEwmbDLsHn9G7HpPerW2QNdhcAX/xbMCcsEzLOkR
-         kxjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX7spI9QZmjt1dJX3hXlh9+iq2vL0S/SRtM4LwcUZdsIZWTsIce7haTLtgIxAr/yQ2pwiwwtt9ct4v6iQjE6XabQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdjnXX0+U9mR+y7Jvof1JBEhrPPMvTSipOJUb6jXoR52oOHDtw
-	rvcIf/Nsn6w5MVcC2a8vnh+Atb1k8JrAL/GkOuClBoqxOargG1zQVTCBl/S6tyjm44c=
-X-Gm-Gg: ASbGnctB14I6Zta0X8ep1k00ghax5efMgfz3m1APLS06bBUUEK5QqMRJT90g+bFaZF5
-	rbV7O/l9M5dszegZ23TCjK2Wdb2NTfpjnPdtcv7L8Cn2BM0BkJCjT/ECrIbbk+G6C1HN/Bx7zM+
-	LJiK2JNQ9c1BzrG/b8PLvjzkzKbTmvbnBgmCghJ83KvkjPM7v2ESwNCD3D8npT9w5A5tikn7PPN
-	rr9AvdaAcm3QfiEdJ03vKn1Ia09RlLyZBYSeJ/c7QIkJxWR+vIM6XSwguGWKglUdb3jYZ98uThj
-	41W8ay7NBOgBm3qtz9kCzCciK/qciq7wSw0RGCDYIqBCO6fW9Inn1xQddnuZoeUKEnkJ+3mfjx6
-	FLgOzinCLkkqhR4jCZ0TOeW9oQeQDoC/hj8awa1dxTl+ZztHMJoo5YY0vjrLzdGP0dd0UX6i+7e
-	MMxJ7DQwYmvDWfvY4kqu5PFG4TqpeSOkwJsxKHRK5P
-X-Google-Smtp-Source: AGHT+IE9IcJVSPedWcpAGpdnmJW4z9APNCOE9dq2vD2s6GXK/hxjPEw6IveEriVdGAIUqOpPhoFZSg==
-X-Received: by 2002:a17:907:934a:b0:b48:730:dbb3 with SMTP id a640c23a62f3a-b50ac1cc3eemr13165366b.32.1759852589395;
-        Tue, 07 Oct 2025 08:56:29 -0700 (PDT)
+        bh=7Cm5Dko9olaR4ZjBSYSeJvT1TaV6qKnd54YvU1t3L9I=;
+        b=M2Is6bS4u2ov5Ez+krHdEgrRebBCXCYafaUZ2EYbQWw7nc6KQ+WKd3TUCFNQ8a1GOG
+         N0xf4qVyT/iOgqAAa3xyRidxRP2sx5EIw4HFYpP1tGHSK8djsshOkcQ6vfgibKLhCw+v
+         WAhKBKsk0ibDGQtEP01r+6kErBhBBYM2urv2HqVuqSvum1jM8LmaIMK2DpCqcMnABza8
+         BwR+V83V0zYaWfX8Y+QuQYIZ+pT5xHfetiy2fnhbGtULjHRp97O+/yu9JIECWSZBJRYx
+         abqjmJ6ypCd1euvXeZDoOJs0VZIRJRnvDZHHgzSuSbc/QZ58RJrxsehkDTZmuClMRaf+
+         jBhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQbzWfMmXVTfUk73G5nFxtGZjhJpwjtLUeia0qRsJtE4BIFw/3RMyHoZ1p+Qk74LkgiiVr62MjeGD8fhLCmqik/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1IZoGep47ThyS90aGsrNmIhsVixgZYl1yB+3LB6wHrawmshLP
+	lBEU+20Vvn/lJOCrrltgApD1pTfYLG50dG7wNndXE7aTQ4PGvTOo0LPRMZGPGoTXx10=
+X-Gm-Gg: ASbGnctaI4yj1TcEhTGEXkOsmm0yZQB9PBQNwkeY7DKss2/RAB+V2U7KFBbOwGQz7gH
+	xcfl+agi0qDpU0vP3vwyvbqXJQm7AXb9X/o/ECFd13AjQ3d5PDf+c6JEKm5S9r1Gefib3lcpUM9
+	8J/wqJb2n8swe8WErhumW3KTWstDNxDSOKi2bQbZbYa1o118S391tHEabDwB6fF2r+5Jzhd/jXh
+	KnoDFEW7kyaCMYiEJHBPyT6au7FF3N2nIIwCS9VW/I2ANYuB7D1OU1CXmOPTziZz22KsJT1uyZm
+	6aui6exBstyYPmDfmtXi00H6GsBt9kLTJdi3ZPqNjMiGwOj9QS0a64evCL7dWlkNfCyJOhgCJz+
+	vJEg0tWo4qbjPUmyT72bixvPPpi9M/mtb4Sq5CUEME4yE4PfChgZDJgDaYBtxCNWfS/jMoRt4BX
+	cP7b9SHPpY18r9UZJqzmErOEjuN0GSCOr4S5HKQmBm
+X-Google-Smtp-Source: AGHT+IGcHy/Jl0g2LAmEkVEntCtICg9hZqb+cVzIJexCEPogdkyReymHfPrFtWwic4ednSokiuHGag==
+X-Received: by 2002:a17:907:807:b0:b41:f729:77b0 with SMTP id a640c23a62f3a-b50aa1869bfmr22271266b.21.1759852991654;
+        Tue, 07 Oct 2025 09:03:11 -0700 (PDT)
 Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a173a5dsm1428820166b.85.2025.10.07.08.56.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa637sm1399772566b.12.2025.10.07.09.03.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 08:56:29 -0700 (PDT)
+        Tue, 07 Oct 2025 09:03:11 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 07 Oct 2025 16:56:28 +0100
-Subject: [PATCH] scsi: ufs: dt-bindings: exynos: add power-domains
+Date: Tue, 07 Oct 2025 17:03:10 +0100
+Subject: [PATCH] dt-bindings: clock: google,gs101-clock: add power-domains
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,50 +68,52 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251007-power-domains-scsi-ufs-dt-bindings-exynos-v1-1-1acfa81a887a@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACs45WgC/x3NPQ6DMAxA4asgz7UUoBVVr4I6kNihHuqgmF8h7
- t6o47e8d4JxFjZ4VSdkXsUkaUF9qyB8Bh0ZhYqhcc2jdq7DKW2ckdJ3EDW0YIJLNKQZvSiJjoa
- 8H5oMnx21HLxv491D6U2Zo+z/V/++rh/PMByuewAAAA==
-X-Change-ID: 20251007-power-domains-scsi-ufs-dt-bindings-exynos-87d3ecbb3f4b
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+Message-Id: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAL055WgC/y2NQQrCQAwAv1JyNpCsqK1fkR7qblyDdVM2oELp3
+ 13E48xhZgWXquJw7lao8lJXKw1410G8TyULamoMgcKBiU642FsqJntOWhzjbPGB2SzPgtmZ+K/
+ 2gforD0dKQw8ttlS56ec3uozb9gU0JNMieAAAAA==
+X-Change-ID: 20251007-power-domains-clock-google-gs101-clock-3208b1960d98
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
 Cc: Peter Griffin <peter.griffin@linaro.org>, 
  Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, 
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-The UFS controller can be part of a power domain, so we need to allow
-the relevant property 'power-domains'.
+The CMU can be part of a power domain, so we need to allow the relevant
+property 'power-domains'.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml | 3 +++
+ Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-index b4e744ebffd10aa237e01a675039f173e29c888a..a7eb7ad85a94e588473eab896e48934cd5f72313 100644
---- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-+++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-@@ -61,6 +61,9 @@ properties:
-   phy-names:
-     const: ufs-phy
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index caf442ead24bda57e531420d8a7d8de8713032ae..31e106ef913dead9a038b3b6d8b43b950587f6aa 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -46,6 +46,9 @@ properties:
+   "#clock-cells":
+     const: 1
  
 +  power-domains:
 +    maxItems: 1
 +
-   samsung,sysreg:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
+   reg:
+     maxItems: 1
+ 
 
 ---
 base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
-change-id: 20251007-power-domains-scsi-ufs-dt-bindings-exynos-87d3ecbb3f4b
+change-id: 20251007-power-domains-clock-google-gs101-clock-3208b1960d98
 
 Best regards,
 -- 
