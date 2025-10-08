@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A384EACD;
-	Wed,  8 Oct 2025 02:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2701E29B237;
+	Wed,  8 Oct 2025 02:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759889908; cv=none; b=P09wSo+iycU8Y6Jtjinrziv//XO9kaQSxzFohtWl1SUsm6XBaK3EubbFIKkQ1G6avLADNN+WAE0LbYpDNZRVppYjSplslotzz+YespP+mLeLs9qFOBD9kqrW28rcDgkbsYTp1VqR8OHHCNq7ORDOtxbxuABsda8d7eRse8t2nbs=
+	t=1759889924; cv=none; b=fzKHGvXjGF6z4VwbY3YcUqlSEkGwCAXCZlSjppW3L7KtppsWQt4UV6OHoMHCsusN8sTxLSk1ZqI13yPTvVoNVQy23QuswMqpZAl18/DBrwefHCG94rWc0rmcFSi5ADinxo2HcqDN8gl7P7FTF1U4p8t7F86BO33qFCYR07npgps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759889908; c=relaxed/simple;
-	bh=qBRDlryuuYHk5HHM3fRxvnEsr5zJwEtevKEETX9HboU=;
+	s=arc-20240116; t=1759889924; c=relaxed/simple;
+	bh=qzYdtmvXQ5VaBXqhrMuG+AP8VHh7NXN2Ax/Fkbv7SRg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hMIXJjcqHtX2WSOwI6jIuHMSQgUEfh3bcVYPrj3JCqiSQnUM+LvWRXlzHVgIZZ9XxBrn/vCBR6yPcLQJpVXFS3iowr4Vou1td6jhfGYZnXjYLu0e4nav2UHfmqWEfZ8DWdwNFPDCAubvDxRDwS59ZK7znTU5FuZOXAmi+yLodiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqXI03UR; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=OFRLQcw7G4mtzEe6emACHFraMfmoiONNg7lUkmPGGkw/7oJ7UH0pkesSNYjOCa81DxoJiWgGOb8rT6i3zDZF/W4Kf5W4VD2CpvgWzbor0oBqSEnHdYbDN0MqPV3adRtuP/blVUEU2xrgJiCqu1ZslYIZAdBRvehsxN6Wxb4nvvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkqOSIDh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqXI03UR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BFCC4CEF1;
-	Wed,  8 Oct 2025 02:18:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkqOSIDh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BE2C4CEF7;
+	Wed,  8 Oct 2025 02:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759889906;
-	bh=qBRDlryuuYHk5HHM3fRxvnEsr5zJwEtevKEETX9HboU=;
+	s=k20201202; t=1759889923;
+	bh=qzYdtmvXQ5VaBXqhrMuG+AP8VHh7NXN2Ax/Fkbv7SRg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mqXI03UR06RwZ+s2PWZlyAR7H6SDkCoV5FNj6qCC9KGqFo5QIHFtcFtIvC2k07KAg
-	 TZAnNfCin7beU4NhKcCSkx/2vyGwdYtQ4Y6DVrhYCQtBiOQTdcz77O4WGx2JPouaYF
-	 EHUEYrPhER+B6gdF3gRkfH3Z9LB+ZJwR9OiuyRzSr1aOMhH/QxYZbHFVI2pqmw3W6w
-	 akTO1PPfM9H40tNrMahUd5h9Ix0nmjKma822fQsrHgSPDv55cDL+8ei4SUeRe1fJHM
-	 edhE7QJyQgHl9/rhikKw3haIvwnAecYypqAHRDdA2034tq0qCrCUAPKJS8E2gxNfZ+
-	 XvMGbB0OqCezA==
-Message-ID: <5fc709d1-f5b8-4579-b958-2bd7c6b55a77@kernel.org>
-Date: Wed, 8 Oct 2025 11:18:17 +0900
+	b=VkqOSIDhNQAlzVE1qvyScU4EZ3lJzFNTGTiEJ7Wbj/C+MFJYjsO/n7tlpAyz50qmw
+	 xyKB1xi6szrJVo7P4QJGWhYa5s1x+4/TY1lbz2RC01Eq5KXGpAze6pgQniX9iRUdyH
+	 R1z2qA6v6OGcFS/O953/P3yhg9RG6/pe9083uQ8ayVAUr1GILco3+Es7lwTgKeAkXf
+	 RQ0KlFXkSKHSh3AtJDgsF6CjGUjgamA0Y0B/xQGBcONjzouXC4wRg/rrwG11v7/wOC
+	 H6RWun4G6Y5U1ScqXIfTvrY8HjL7HzPN1Hph6vo8lkNuXk06TI3ig2k6zwsbxPqYnT
+	 cja5VxW05XXtQ==
+Message-ID: <541e27a5-6794-4f9a-8f24-93d846900028@kernel.org>
+Date: Wed, 8 Oct 2025 11:18:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: dt-bindings: exynos: add power-domains
+Subject: Re: [PATCH] dt-bindings: usb: samsung,exynos-dwc3: add power-domains
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: Peter Griffin <peter.griffin@linaro.org>,
  Tudor Ambarus <tudor.ambarus@linaro.org>,
  Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20251007-power-domains-scsi-ufs-dt-bindings-exynos-v1-1-1acfa81a887a@linaro.org>
+References: <20251007-power-domains-dt-bindings-usb-samsung-exynos-dwc3-v1-1-b63bacad2b42@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,18 +92,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251007-power-domains-scsi-ufs-dt-bindings-exynos-v1-1-1acfa81a887a@linaro.org>
+In-Reply-To: <20251007-power-domains-dt-bindings-usb-samsung-exynos-dwc3-v1-1-b63bacad2b42@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 08/10/2025 00:56, André Draszik wrote:
-> The UFS controller can be part of a power domain, so we need to allow
-> the relevant property 'power-domains'.
+On 08/10/2025 00:55, André Draszik wrote:
+> The DWC3 can be part of a power domain, so we need to allow the
+> relevant property 'power-domains'.
 > 
 > Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
-
-Indeed, confirmed on Exynos 7420.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
