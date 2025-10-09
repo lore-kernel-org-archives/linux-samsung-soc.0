@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750D22C3745;
-	Wed,  8 Oct 2025 23:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318184C81;
+	Thu,  9 Oct 2025 00:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759967916; cv=none; b=Y26ynfQIaDb7LXhYi5uPwCs/GeMR9UqB+aTzfrnfQvyHdZekceppt2ezr87pCNWOSH4PqNFPuIONMDGatlo15gE+RQ0JwonKs41G+GAVDCRTKh4NYy9O+75n/+lhHUa1MLyMV1TwoHG54GcfnwfFhMjGluRlFh8L5wDm1xLkiQk=
+	t=1759968593; cv=none; b=pX0+kj9uNWY+A4rbLd5yHhzrHCfp+k/vQgAmZXn4arudgW2d8rojSFmmfnhFi74J0CZn+IevjCsds7J7V/E20ocvDMtH7MYQIC5EU/kIi2xFbao+QxFo/hyAVsI4vAgnqlOZtYdiniw6L0MpKxb70TwX0DZPZvAJwZkUDJzx6rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759967916; c=relaxed/simple;
-	bh=yOETAJ8eUiVZRfemtfdBWg3YPDkDwGKicuMdNzZFk3o=;
+	s=arc-20240116; t=1759968593; c=relaxed/simple;
+	bh=NBpI0P+cB8aSlVfqo5kTLUDgzKJkSKJ6dI+OAFbpW3Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qgVlX9p6/cHHQHjfY69Hqiz8qqAUwhpeUBqHzSIhoqFAOHAvPntcjPJzslgsqAAhAbO2uC43YPr14yLDa0enQp3YB8+yI6HxFsb5p0E5HU5sgM3NJJnoczbl9Qq62GAlZ0n60jW1spzAzC6OWOr1WWMjYWr/ji1Ah+moXhLdRt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JM97szmq; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=UGdpw3xUzif2MvP8aCInyjAEah7t/KdyA+23BkC8spIFS7U6iXl4uBxKRRKgbaqFt9XJWuvHjv+KLEUX/1iyjQzofLGRsEaq0PVDJdVS8J5Bm1BHbvUlDXZGwRaDsKlkJSuZEZ1LcnDQQmV/0Q1NEvBgMUela9EUYL8HFQmaYO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrnAP8e5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JM97szmq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4393C4CEF5;
-	Wed,  8 Oct 2025 23:58:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrnAP8e5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21109C4CEE7;
+	Thu,  9 Oct 2025 00:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759967916;
-	bh=yOETAJ8eUiVZRfemtfdBWg3YPDkDwGKicuMdNzZFk3o=;
+	s=k20201202; t=1759968592;
+	bh=NBpI0P+cB8aSlVfqo5kTLUDgzKJkSKJ6dI+OAFbpW3Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JM97szmqUfVhrnUyTFjgJfh1DPUIAa4clCKPXsmOjY5/pIkGqIiIquGdtmh3q4JRR
-	 GHsghCXyqDTrT2TV1ieAU9+/m1IIMpojrrCGaOGayZprHS9unp4D2HoPqCNpnhbYBw
-	 PW0spLDk1A2vHjOG+ri1+oRxDJPBPBXyzH5X+SYzQCDmVPvIc05kLMwk7OB69LBaEn
-	 OJSkLLHXhxJpR9JRmIVxoPvjuueKldWVH0e6Gu07EgEynDOob4fdMRNrUton7QRV0S
-	 2CzLq5c4ZVzsgQB0UmM2t4QEq5npbZhhTKl44fLCvocJxEcul9vgJxY2YxVOeDPvNi
-	 B/qHWy6iVhHXQ==
-Message-ID: <fa743412-d9f1-43fd-95e8-3b2a58cd6c25@kernel.org>
-Date: Thu, 9 Oct 2025 08:58:24 +0900
+	b=jrnAP8e5Q42pbeysN/KsyPikuzdHkNkKAQVw1nbVnwrojf9WKpWPkyONiv1iqWipd
+	 a/nwuOBoNs7Fs5b7Jb+pMI/DHIbmEAsWPRrguz48/SQjtW5G1O/09SRqQ6jbxNzR3O
+	 RiitiRKY1IEaCU67rG8IeIRskmKx6O4HKn9dyqUCERocS7TULZgaWLPhHKdsF4+X74
+	 9WGEiOsVCGz5xOftZsD2bYSiJuQ3D3dYY7pWCK2H3Zh7wyvaikTU83DWRxrkDboOmt
+	 FPQHwKFoLGdcCwbVtjee+BLzfEGDzTqjJ55GNDvgTEoLlVSTBaJPNIaKFOgkasqyhl
+	 ENOk8xBfD6rcA==
+Message-ID: <b0b9a78e-d54e-4f4f-b99c-b5e5fe071ced@kernel.org>
+Date: Thu, 9 Oct 2025 09:09:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,24 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
+Subject: Re: [PATCH 02/10] dt-bindings: soc: samsung: exynos-pmu: allow power
+ domains as child on g101
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-4-royluo@google.com>
+ linux-pm@vger.kernel.org
+References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
+ <20251006-gs101-pd-v1-2-f0cb0c01ea7b@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,126 +94,71 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251008060000.3136021-4-royluo@google.com>
+In-Reply-To: <20251006-gs101-pd-v1-2-f0cb0c01ea7b@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/10/2025 14:59, Roy Luo wrote:
-> Document the device tree bindings for the USB PHY interfaces integrated
-> with the DWC3 controller on Google Tensor SoCs, starting with G5
-> generation.
+On 07/10/2025 01:43, André Draszik wrote:
+> The power domains are a property of / implemented in the PMU. As such,
+> they should be modelled as child nodes of the PMU.
 > 
-> Due to a complete architectural overhaul in the Google Tensor G5, the
-> existing Samsung/Exynos USB PHY driver and binding for older generations
-> of Google silicons such as gs101 are no longer compatible.
+> Update the example while at it.
 > 
-> The USB PHY on Tensor G5 includes two integrated Synopsys PHY IPs: the
-> eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP. Currently only
-> USB high-speed is described and supported.
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > 
-> Signed-off-by: Roy Luo <royluo@google.com>
 > ---
->  .../bindings/phy/google,gs-usb-phy.yaml       | 96 +++++++++++++++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
+> Note: Ideally, the newly added properties (ranges, etc.) should only be
+> 'required' if "^power-domain@[0-9a-f]+$" exists as a patternProperty,
+> as they're needed only in that case. As-is, this patch now causes
+> warnings for existing DTs as they don't specify the new properties (and
+> they shouldn't need to). Only if DTs are updated to include
+> power-domains, such an update should also add the new properties.
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
-> new file mode 100644
-> index 000000000000..22961e2da6ef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/google,gs-usb-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Tensor Series (G5+) USB PHY
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description: |
-> +  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
-> +  Google Tensor SoCs, starting with the G5 generation.
-> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
-> +  and USB 3.2/DisplayPort combo PHY IP.
-> +  The first phandle argument within the PHY specifier is used to identify the
-> +  desired PHY. The currently supported value is::
-
-Currently supported as hardware will change? You describe here hardware
-ONLY.
-
-> +    0 - USB high-speed.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - google,gs5-usb-phy
-> +
-> +  reg:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    items:
-> +      - const: usb2_cfg_csr
-> +      - const: dp_top_csr
-> +      - const: usb_top_cfg_csr
-
-Drop csr
-
-> +
-> +  "#phy-cells":
+> I've not been able to come up with the correct schema syntax to achieve
+> that. dependencies, dependentRequired, and dependentSchemas don't seem
+> to support patterns. Similarly,
+>   - if:
+>       required:
+>         - ...
+>     then:
+>       required:
+>         - ...
+> 
+> doesn't allow patterns in the 'if' block (or I didn't get the syntax
+> right).
+> ---
+>  .../bindings/soc/samsung/exynos-pmu.yaml           | 53 +++++++++++++++++++++-
+>  1 file changed, 52 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> index f0fb24156da9b8980dcfd5339ae75f12a71cf6d6..c2db1cbb969a9a6fea5208dc2990f2144fa480e6 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> @@ -93,6 +93,14 @@ properties:
+>      minItems: 1
+>      maxItems: 32
+>  
+> +  '#address-cells':
 > +    const: 1
 > +
-> +  clocks:
-> +    maxItems: 1
+> +  '#size-cells':
+> +    const: 1
 > +
-> +  clock-names:
-> +    items:
-> +      - const: usb2_phy_clk
-
-Drop names, pointless for one entry.
-
+> +  ranges: true
 > +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: usb2_phy_reset
-
-Drop names, pointless for one entry.
-
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  orientation-switch:
-> +    type: boolean
-> +    description:
-> +      Indicates the PHY as a handler of USB Type-C orientation changes
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - "#phy-cells"
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +
+>    dp-phy:
+>      $ref: /schemas/phy/samsung,dp-video-phy.yaml
+>      unevaluatedProperties: false
+> @@ -138,7 +146,7 @@ required:
+>    - compatible
+>    - reg
+>  
+> -additionalProperties: false
 > +unevaluatedProperties: false
-> +
 
-
-additionalProps instead. Read writing schema or example schema.
-
+No. Properties must be defined in top level, as explained in writing
+schema. If this is getting to complex, GS101 can be moved to its own
+binding.
 
 Best regards,
 Krzysztof
