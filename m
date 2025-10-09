@@ -1,59 +1,60 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C641259CB2
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 04:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2C423816C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 05:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759984896; cv=none; b=dXwVZVYRO5lwM7GaxWlLqVfkEUlgrSbQAhn5oF405evMeBjivAdzmg57hVFke4MWps78ugwLqq8M1MS7oif0CJ3NBnqq6sj5txto7RTTVNIeBk3MQLOLFZzSa1OpoJleD1R2/Q29yeZoNgLtuTOcZcjA9tyhazWsAvqSW1h1NBY=
+	t=1759986806; cv=none; b=fxXx60JGUeWRoNc1QizLOr2mWjNZNcw6rSu6cTwMg5osig/0BVv+v3zyTVdOBZss3QoyXc1MqbEMlmAmnLw9nmp1ivcicsY4goggvsT43iIIZDOA3Rrw/h5RcGZnPZh11dfwKReovudb4BwZZjbIeozp798o+7pWZ6WZZ/g3et8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759984896; c=relaxed/simple;
-	bh=JSx+GA5ZXRbiW2N5KmdbA/YFhbngtu5rtQbXWzmld/E=;
+	s=arc-20240116; t=1759986806; c=relaxed/simple;
+	bh=XgKEUUpBVyKhaDmSmOHwqctzZ1yn4T/HwN7blucyAv4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iN1LnM1Wk9u9us7eCmGId6KSQVm2YkRmLAYMyOgqW77ujYHYL3Ml4koWcc/c1FzJo9A5Pzt+9JYtP4l88CKt0uUEW8WHe7wjK1fkHqDENUki619yfH1ygmbD8aUzWF6yWN8dxRFhLr8rvzx34Ek8VRVTevhrTkFqxYUuX64KQvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Kd3yZLW; arc=none smtp.client-ip=209.85.214.176
+	 To:Cc:Content-Type; b=hihvEbAQVc0ZIyKt9rtyDEOP2gAUosJSRyDcUZViWsB000qHQjdD6ucNUhawiSa0nzqmijgDorDcZLhKYRpOyPx21G1lygChimJQvl2HUc9MUBufVO+tB+ayorWzVfp2HD6I7pph/WZj2/EvSn21IdrFAspqvNwVMrj1ZjEK6/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D6wOMeSF; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Kd3yZLW"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-28e8c5d64d8so4789135ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Oct 2025 21:41:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D6wOMeSF"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b554bb615dcso322791a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Oct 2025 22:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759984894; x=1760589694; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759986804; x=1760591604; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qfg2KUrH0ld2loH5dM6+owKjkO3ztYQAbVtuXjduw8k=;
-        b=0Kd3yZLWRkcI6RhWR7P/x98nLJ98OFi8ZKJwjF5yxxCeCglXq1kopgT3Ahm/pMpB/P
-         u/x+bDOKBe7sWrXMUa3B3C2Ru2hxMuHTi8JTE2h/KuIBrtezQpYhI1zEz+m/eiP0XIG1
-         eqh4ooq/pKTnjDv23i+HDhpszMEPLNPGGt1VCzUBgZI61WREsY2Psqu/1HUOOpLlCmn9
-         Me4/7Hp+Heo4e+xJV7lGF+ObvAKFjhfO+4JNN9kJDXLNd5BWDXvJyJOcyE6WgJly7ef+
-         koCDlgnGy8sUv1nK9miY/VXX7aR0s7WkU3WBiw4KqT8L/SgvrX06oeuM6+HqCbvt5sJI
-         bICw==
+        bh=BWewaHokP8ZtNf5xV3DaenIr+l1N9Mpv+SreL8jsLig=;
+        b=D6wOMeSFlP1ic+i3VxQcP88RlxlHsDH/F8OBgITJvOe3Zfmf9X3mUXJb+FbM9DeSvb
+         WPnxgW+MJbksEM95TtJG/MQ9ZWV1UtETpKv8FzqhcRE3nycad3LiXxszbjhpCHf4W1km
+         /HAl66md19HaAOxX+ixLviKEjRp9rwz34RuefqWQ7yCKhbq8bX0XPSPLegm5mWH6qXfN
+         WYPhQR73gS22CbasH9pO7nJeRBKcrHBU8GFqtr3AakFoW8OJdEOcrI+UM32h0We5xmA9
+         4PxOIbKUKU1lq5BHP5j5bJK3uGkTwuaBvNM7P9nWNXBbc8+yPN3fiplisiadwPwxsNn5
+         y2cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759984894; x=1760589694;
+        d=1e100.net; s=20230601; t=1759986804; x=1760591604;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qfg2KUrH0ld2loH5dM6+owKjkO3ztYQAbVtuXjduw8k=;
-        b=s/v3qBampCfz8iWNjBg+xUBdU5IVwK2tQx+uvjHcoj4nYqFEWLbaEgqx0zI/eD8Wz1
-         +Qg+Z2Mul3fQxzs65UtrVAXsOfUNIswE0Jw63GFSVBrCgyh3TLt6u58sY8ABtWK9JPmD
-         mvWYzEHkHwuL0on/ohF2F4iMlLcM+kuwhNq/73W4WlgZKzH0E3E381XVXnaHrRZ37OrM
-         9M2OXOJLBbgi/ybpyWP9H7TCYFtvLCJ+0SOmsJQf3Q6fLDmhGhTPZYEmvcAo50qxg527
-         +/8F88UWS4QQay7K0bnxXVriFcnVzTVr3yXcB4mpbBZdpF8PLH/juw6a8pRJB4oxenem
-         qbKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ8NRacj/N8wAh0dvmeR9SS7dwPNf2ZNhXDSfjd0CF64Xdp8/5TBP3nwVcOlCCAd3osnDyGXmZ6Pqz7RmRZnfenw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1BbiGbL8VmvhSUjkVEuExI3U0CFZSlX0FcQDE502b6ynqkBhT
-	E/jIPUtKu+R5xw9KzF+lXQ/geIu9/gPVz1+Wk/3wDOPvLaIKIfwi5c3Fbt0Vbxgd1dhKW/VNpzc
-	3v7Ruicg8Ok0CMdYKBohhUAwlrZcn3o7N9pP4VRUg
-X-Gm-Gg: ASbGnctbhjKpgJ6AvQygDXXU2VPdeo5TEBi36+Shug+JZ2R9HY2GTmWgqSW1V1X4h/P
-	eOQz/08Y5slWc7438Pzv+gSbsMd6wdpabstrFBRzv3J6+eiaRcLjnC+8XSR16QVGISGiBYmLaLS
-	9OZ1M8znCZan/MANpPP5dtf7mATgfDbm4eswXcirOum3c3Liq41bGrXv+65tttehKANTWFIJcxa
-	6AEAPQfp13eKy5X2xCZm8B2V6safvXeaXBlNI1wl1atHMxPkR5jo+xswGDSAu1YOSAJwqA=
-X-Google-Smtp-Source: AGHT+IHq7WMGknZC9D22TiuSJobcSs2r+0inHJ0URZqm945Ibpmj/rMeznufzslM6ZAVx62ePKO1/By8R2qOoulx2p4=
-X-Received: by 2002:a17:903:240e:b0:25c:b1d6:c41a with SMTP id
- d9443c01a7336-290273568efmr77605215ad.11.1759984894045; Wed, 08 Oct 2025
- 21:41:34 -0700 (PDT)
+        bh=BWewaHokP8ZtNf5xV3DaenIr+l1N9Mpv+SreL8jsLig=;
+        b=H3PMB7BYeAknYUfGdf5V/RIdGcHLTTUmGaplu2pfPc3TwTu9GKkDoHdx5zi+xFGCjW
+         z/GEQn0pXfuCM8IzGx+VH8k73lWTqdvErKNcxgaH2lzySzmJcjBVGiBCLnNJ7XbfvRNZ
+         h55VCvnQhfqxoAWVaQ529HIvaY0kU2vG1OQKYBYNOT09ytDWxAgTBnwjFZfqSNv1rmGE
+         v0mMK4GfecD8u/C3hfY7PmXQc5DjNpFiPevyP1vmIM3sNhGG8a4VFBhm+GKD/13HC2ET
+         H9mvWoZHIqdfXsFGAdgCu/qj+J44a0QomCVThPBLNDVtazBR0MubquRZvdbES9cu78R6
+         BdwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeAnJnD+c+ctCkhHkD5GW5tTkgcOs/HuE5NTmaZBnSnDngTnc4e/Ulvpb2ikVwrlMjh3VKLXyGspHD49iE16jSUw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzagRxFgL/0MwPtL3en1OdilI02cPElg6fdv56xkBaf0xC52i0A
+	YIY6k/zwlajlmNCsc0ckoVcEXyG0V0qeYj89nTA2Id++cKnOYDqqeQ+WIo+cXqIiOSmo8tt/EUE
+	p86t6A7j8WFDmZ/hT/bFBDE8AJA9NqYoMP//QV3uz
+X-Gm-Gg: ASbGncueBM31n7FuX3bfoEq3BnvpQgdC0VrK6fQTNH3NhuBaW+UeNxVcFmvACLFmAGy
+	9VPfcPVsCZapgkxXcRi+G3rq+425KpSMpsp/HywwOSSEFYPbGItbLX+JS/HFytvEJSOcHioaw0s
+	bqgBJx5Vz2bvAuzFkln5MkbqtjLykk95A+yD9nzrgTaiYniUIwdXZSviyyt174tepSwh2zYQE/F
+	nnK1CKfVjYuxPZdJODupweCeiTF85SDM95dJ5NyQN55G1Twpc7KXCj1LtJCHbDOge60NctxmV+4
+	V80RaQ==
+X-Google-Smtp-Source: AGHT+IHftw1sTR4jx+skzjrqSGdfm/Q0+OudIaUszRZ3Jo7Mtg1ENnay4Sa6Pgawbis09A4Kl1WSaKxYdl0Pty1Yfo8=
+X-Received: by 2002:a17:903:1b46:b0:269:b65a:cbb2 with SMTP id
+ d9443c01a7336-2902738685emr79503305ad.47.1759986803355; Wed, 08 Oct 2025
+ 22:13:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,14 +62,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251008060000.3136021-1-royluo@google.com> <20251008060000.3136021-2-royluo@google.com>
- <20251008-slider-uncombed-66790ea92ea0@spud>
-In-Reply-To: <20251008-slider-uncombed-66790ea92ea0@spud>
+ <8966b6a9-ff70-4833-a5c7-c6d6c13c6c8b@kernel.org>
+In-Reply-To: <8966b6a9-ff70-4833-a5c7-c6d6c13c6c8b@kernel.org>
 From: Roy Luo <royluo@google.com>
-Date: Wed, 8 Oct 2025 21:40:57 -0700
-X-Gm-Features: AS18NWDwvHFFVwwFF0xyUsh6hOplsl-LTeW3KNkkNIVFS6G7WbYp6KqWo-pnIz8
-Message-ID: <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
+Date: Wed, 8 Oct 2025 22:12:46 -0700
+X-Gm-Features: AS18NWAeUlPdfPhpwSxxFxgtGGF4Sy9E3bq34jSmHpsPo17xNshrcbYfSpJ1QNc
+Message-ID: <CA+zupgwLu-y26X9eiENyC28i9ZxCkuhb0X8X9H6HBpqkqJ7O3w@mail.gmail.com>
 Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
@@ -82,18 +83,34 @@ Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, R
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 8, 2025 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
-e:
+On Wed, Oct 8, 2025 at 4:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
 >
-> On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
+> On 08/10/2025 14:59, Roy Luo wrote:
 > > Document the device tree bindings for the DWC3 USB controller found in
 > > Google Tensor SoCs, starting with the G5 generation.
 > >
 > > The Tensor G5 silicon represents a complete architectural departure fro=
 m
+>
+>
+> G5 does not have a model number like G1-G4?
+
+There's no model number for G5, I'm sticking to the existing "gs" prefix
+as they're still in the same SoC family.  Please let me know if you have an=
+y
+concerns.
+
+>
 > > previous generations (like gs101), including entirely new clock/reset
 > > schemes, top-level wrapper and register interface. Consequently,
 > > existing Samsung/Exynos DWC3 USB bindings and drivers are incompatible,
+>
+> Do not reference drivers. Explain the hardware.
+
+Ack, all mentions of "driver" will be removed in the next patch.
+
+>
 > > necessitating this new device tree binding.
 > >
 > > The USB controller on Tensor G5 is based on Synopsys DWC3 IP and featur=
@@ -113,9 +130,6 @@ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
 > > index 000000000000..9eb0bf726e8d
 > > --- /dev/null
 > > +++ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->
-> filename matching the compatible please.
->
 > > @@ -0,0 +1,145 @@
 > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 > > +# Copyright (c) 2025, Google LLC
@@ -130,6 +144,13 @@ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
 > > +  - Roy Luo <royluo@google.com>
 > > +
 > > +description: |
+>
+>
+> Do not need '|' unless you need to preserve formatting.
+
+Ack, will fix this in the next patch.
+
+>
 > > +  Describes the DWC3 USB controller block implemented on Google Tensor=
  SoCs,
 > > +  starting with the G5 generation. Based on Synopsys DWC3 IP, the cont=
@@ -141,12 +162,12 @@ roller
 > > +    items:
 > > +      - enum:
 > > +          - google,gs5-dwc3
->
-> items is redundant here.
->
 > > +
 > > +  reg:
 > > +    minItems: 3
+>
+> Drop
+>
 > > +    maxItems: 3
 > > +
 > > +  reg-names:
@@ -156,9 +177,10 @@ roller
 > > +        - host_cfg_csr: Hibernation control registers.
 > > +        - usbint_csr: Hibernation interrupt registers.
 >
-> Put this into reg as an items list, and you can drop the min/max items
-> from there.
-> Same applies to interrupts and power-domains.
+> Drop description or move it to items in reg. See other bindings.
+
+Ack, will use an item list in reg instead.
+
 >
 > > +    items:
 > > +      - const: dwc3_core
@@ -167,6 +189,12 @@ roller
 > > +
 > > +  interrupts:
 > > +    minItems: 3
+>
+> Drop
+
+Ack, will use an item list instead.
+
+>
 > > +    maxItems: 3
 > > +
 > > +  interrupt-names:
@@ -177,13 +205,31 @@ roller
 on.
 > > +        - ss_pme_irq: Super speed remote wakeup interrupt for hibernat=
 ion.
+>
+> From where did you get this style? Don't write bindings with chat gpt or
+> whatever other tool. it is a waste of our time.
+
+I referenced the style from a recent dt binding change [1] that adds
+"Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml".
+I thought it would be a good reference because it's relatively new
+and is also a binding for SNPS dwc3 glue logic. Perhaps that style
+doesn't apply here because qcom,snps-dwc3.yaml supports
+multiple compatible and here we have only one?
+
+Just to clarify, I'm a Gemini user and this patch is 100% organic,
+hand-crafted by a living human brain :)
+
+[1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-2-f015b358722d@os=
+s.qualcomm.com/
+
+Thanks,
+Roy Luo
+
+>
 > > +    items:
 > > +      - const: dwc_usb3
 > > +      - const: hs_pme_irq
 > > +      - const: ss_pme_irq
->
-> s/_irq//
->
 > > +
 > > +  clocks:
 > > +    minItems: 3
@@ -192,15 +238,13 @@ ion.
 > > +  clock-names:
 > > +    minItems: 3
 > > +    maxItems: 3
+>
+> From where did you get such syntax?
+>
 > > +
 > > +  resets:
 > > +    minItems: 5
 > > +    maxItems: 5
->
-> For clocks and resets, please provide descriptions. For clock-names, you
-> provided no names and therefore cannot use the property since anything
-> is valid!
->
 > > +
 > > +  reset-names:
 > > +    items:
@@ -209,10 +253,6 @@ ion.
 > > +      - const: usb_drd_bus
 > > +      - const: u2phy_apb
 > > +      - const: usb_top_csr
->
-> "csr" is an odd thing to have in a reset name, since it usually means
-> "control and status register". Why is it here.
->
 > > +
 > > +  power-domains:
 > > +    minItems: 2
@@ -231,93 +271,16 @@ e controller into power
 > > +                         into power gated state, turning it off comple=
 tely shuts off the
 > > +                         controller.
+>
+> Same comments.
+>
+>
 > > +    items:
 > > +      - const: usb_psw_pd
 > > +      - const: usb_top_pd
->
-> s/_pd// at the very least, but I would question the need to put "usb" in
-> any of the names given that this is a usb device.
->
 > > +
 > > +  iommus:
 > > +    maxItems: 1
 > > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - reg-names
-> > +  - interrupts
-> > +  - interrupt-names
-> > +  - clocks
-> > +  - resets
-> > +  - reset-names
-> > +  - power-domains
-> > +  - power-domain-names
-> > +
-> > +allOf:
-> > +  - $ref: snps,dwc3-common.yaml#
-> > +
-> > +unevaluatedProperties: false
->
-> So every property from snps,dwc3-common.yaml is valid here, with any of
-> the permitted values?
-
-Conor,
-
-Appreciate the review.
-Ack to all the comments, will fix them in the next patch.
-And yes, every property from snps,dwc3-common.yaml is valid here.
-You can find more context here [1], essentially the dwc3 glue would be
-operating on the same platform device as the dwc3 core, hence all
-properties are allowed.
-
-[1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722d@os=
-s.qualcomm.com/
-
-Thanks,
-Roy Luo
-
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    soc {
-> > +        #address-cells =3D <2>;
-> > +        #size-cells =3D <2>;
-> > +
-> > +        usb@c400000 {
-> > +            compatible =3D "google,gs5-dwc3";
-> > +            reg =3D <0 0x0c400000  0 0xd060>, <0 0x0c450000 0 0x14>, <=
-0 0x0c450020 0 0x8>;
-> > +            reg-names =3D "dwc3_core", "host_cfg_csr", "usbint_csr";
-> > +            interrupts =3D <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH 0>,
-> > +                         <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH 0>,
-> > +                         <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +            interrupt-names =3D "dwc_usb3", "hs_pme_irq", "ss_pme_irq"=
-;
-> > +            clocks =3D <&hsion_usbc_non_sticky_clk>,  <&hsion_usbc_sti=
-cky_clk>,
-> > +                     <&hsion_u2phy_apb_clk>;
-> > +            clock-names =3D "usbc_non_sticky", "usbc_sticky", "u2phy_a=
-pb";
-> > +            resets =3D <&hsion_resets_usbc_non_sticky>, <&hsion_resets=
-_usbc_sticky>,
-> > +                     <&hsion_resets_usb_drd_bus>, <&hsion_resets_u2phy=
-_apb>,
-> > +                     <&hsion_resets_usb_top_csr>;
-> > +            reset-names =3D "usbc_non_sticky", "usbc_sticky",
-> > +                     "usb_drd_bus", "u2phy_apb",
-> > +                     "usb_top_csr";
-> > +            power-domains =3D <&hsio_n_usb_psw_pd>, <&hsio_n_usb_pd>;
-> > +            power-domain-names =3D "usb_psw_pd", "usb_top_pd";
-> > +            phys =3D <&usb_phy 0>;
-> > +            phy-names =3D "usb2-phy";
-> > +            snps,quirk-frame-length-adjustment =3D <0x20>;
-> > +            snps,gfladj-refclk-lpm-sel-quirk;
-> > +            snps,incr-burst-type-adjustment =3D <4>;
-> > +        };
-> > +    };
-> > +...
->
-> pw-bot: cr
+> Best regards,
+> Krzysztof
