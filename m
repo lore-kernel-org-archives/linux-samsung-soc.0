@@ -1,67 +1,68 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700901862A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C46726D4F8
 	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 09:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760002292; cv=none; b=GeKMSalOjY2RrjigL1tdShClYlRKcauNDXK97NXHjKx0un4Ij42EfSpsWYns6z7dxUOJFRBVG1Cytkn+MKwAmNdkJowoDINaTV1vvFpnC1GH8BZcSj/k8P01K0aY/nquQS/nHymNmbY8rcIMIlLiLj85W5R3nUBhgSjUyU5fQAM=
+	t=1760002293; cv=none; b=iBHmk2un/xLwJadQ7xS1HFziLND1veaBIo9hMPjTPHxFYwAGFdaTwuriesCtz1ANk5EXf2tasYhae5sWQJDDTggDYngElU5NELLIGWmjR9tfzUB/CUW2ekpR+Up/NYCtECgi4v58TmMrg7eYxKXsXPloXDykudPNEYfKZBm+3E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760002292; c=relaxed/simple;
-	bh=NQ+MP9UQFifKSu2VgBLJEdIPCQK7TBnKXvvEwCt38zA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lyaEchUQfVd/UG7YwKqyK0+9wq5iLRZnntAVD1o+9EXyhgH1h1VQUHbYTn4NPC+hxNtFh+OirAIDI4xLmGCcdefJ5CBBobZUaBxnqYY1SnCTcZZC5uq/a82NJLEQYxk1278SV5+FH2mXNfTC6UzaXwIYRiZQYjdX4bgtOuBnWrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oIDG4Fop; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1760002293; c=relaxed/simple;
+	bh=hKOEli3CC73LXpkDN7O8qVN57wG2tCN4yTStwZ9/NHg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KJQKAFUHkghWzNOomzKZ2/+0XPnsKo5NdIZ7LG9+rotjXBHozKNiRGeB+UVUmqAO9nMef0kg92hX0epiOUZL9Lf1ejXf4TcGcCBlTKH34O78hZ1qN1WZjtJKk79s7vzDUq6KwFzW5R+Ikc/0kbRudyDYilZFeZhqtrEoeeJroAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D0z5bjfD; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIDG4Fop"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3d5088259eso97626266b.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D0z5bjfD"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3c2db014easo147578966b.0
         for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2025 02:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1760002289; x=1760607089; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D8Y2hQ4PF+BjFgeq/9cHEzG8SplUoZPxKltHoG6YiyA=;
-        b=oIDG4FopgDy4ZLRQWEQbN3zxezy+v0+ZOG/dnP+3Kn+CQjmx22HaT+jUfCotIW7QWp
-         Ezkt7bkg3Uyn5ZYLgqWLI/LSPPb85jHVkQM8vq57bdJytF09o1ScaF5zJ5qoQ4gVRSfj
-         SWIrOG2QD04UKo9SuV/1pdMmnHiaSTf0nwAg/eDPLXqms6TOKKv2RcVPDMvcdfy4Zd6E
-         Bl6nuXHR6ZTam+CJnWd6y2axftlmYfXKmQCYfteIob8C6+Qcwq+YW9BOaElLgj6CXROE
-         SfQWU0QI8zbrNUKqDGAzIsD+6fDqYrJnCuU5MmMasMVu7HrENNpCMFgmYsji2xBp7qpL
-         V2kg==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BnZwMqT5Z3k14agLqjdrnk3P1X+gmQLWShTQkVnycRg=;
+        b=D0z5bjfDliu8g4EhGn4bSHYCWp3rVKEfBBSALdlcM0UOx4ExOP7hiIlyxCy0sPZW2P
+         dmkUwlYwaClktyuiDJ6SSPhQMA+NYL2pyMl1gpeqtgJq9qLO6l72arR+z3o45PQjrWaa
+         sqiAdauwAOeKfFSAvHwyJ71w3N5zqEmzN8szTr73+SNTHc+iJXgQ4r5vsBuJS6ArCI6I
+         4Zadfe8kG5V6GouuY1qejaHXwr71LCKBIJnt/eubENdb91eGZqx0dLtI2msFrLbg9HWi
+         zddCa7o0czD6DjgGoqllumsV310zxiw8NmTDkOJ+DVlpVfq9ox3UG1QbBaMdYQCXXLrx
+         quiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1760002289; x=1760607089;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D8Y2hQ4PF+BjFgeq/9cHEzG8SplUoZPxKltHoG6YiyA=;
-        b=jF+au9N+r4dIvdsZQpwb5Ub+Xy1dye+zcjbkAgRjZF9RXIC1qmMGob+pyUKZMJrlOU
-         dizrcvrzrWFZmdfpXjQXovIYSOQCEnyKBbaOKvpTBhahc2cc/GxkNhmZUywAVvUCuBFU
-         VzXx8FN+QV9VB/no39iHo3bXIW92HRE0jQIMIoOQMbTMzVaCrjjnyqys6pk0V1CHd5Vn
-         oNM6ASY11rNWiRW+qk7+PvPw1qF0CR1fow4yG6WPAiMJInX0avFumsPa9FOuFHZYgLnz
-         bP0bDQ28zV1Ktel8llI3u4+LzyNUz0DKMdgOvnjAzyuRbtrtWxJ1+5Rxfat2vITfshjt
-         J8GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWko3LhwTipoPYnKGiXg/3F8zuS0tCyj4Pc7CTb/T57YnuTD/ioVMBcOTVSe0JPMFT5N+krqmH7VUf1k8NWDdgwzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRHrykd2G06YCqy2oE78mMOZXiiJ7bCypEVgRUzoSIIm090KRi
-	d8y0bPgfnsOZ1ax0cIQsAjsKA5F61gmocJPbjiMMIR+mNsLFGhhZnAvQG+TQ1kdOR1M=
-X-Gm-Gg: ASbGncvM2gzmCPrhVsF3ZxfHHqnUcjvLC/KOkQnUcsEpV0ChPH8UbAqkd7llIlXQeg7
-	ao+aHQKm9qNW8FIun+NWRuAzixv7Cu67yWVYLnCs+wb6+T165xvCdRAiKkEvi0xAIXGeZ+9lUvJ
-	9C7JXPgVCqfD2If1zbhuSltztKHKJuUjywWK0QGZLRejoRZvAA+WZ+H8OtJWPpmAo2vL4CB0UwZ
-	Iu4n43uACoBppeyzF3LvAV74JRaKbzEu/O1t2NGjIsfHeGQV2ZEPYgLfGkHpSNMn12WYLE8581i
-	55qGaklxYHd6uaG70rphD+WjippJorERyYBIibTg0n2+6jXKg25JVmVoh6jYltbAQNkaAaKKjvr
-	mmvPiCPWdIVuFIVbu8OrW396PfoHb2eS8oNfZPDw9VgNu0McNo4UTzpkxB4um7z9J0O6kgXtMBd
-	kKA2/pbc4eyQ3Mvre/oU7yspECt095e+22N7MmHHbV1KfeMle4TSI=
-X-Google-Smtp-Source: AGHT+IGbdEUE3PNoZYCS6NfJhqFXaPk0SnM9PnNIqtON966v5IoYDwxlU8rH3tGA/l00b+ZA3818Uw==
-X-Received: by 2002:a17:906:6a14:b0:afe:764d:6b22 with SMTP id a640c23a62f3a-b50aa48c4cfmr690831366b.9.1760002288707;
-        Thu, 09 Oct 2025 02:31:28 -0700 (PDT)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BnZwMqT5Z3k14agLqjdrnk3P1X+gmQLWShTQkVnycRg=;
+        b=uo/7LUoU5BvxlV5k/fHHAUcr2GunoJOlIWMtNY5z3+KGYYFBSQZeek+r2RjdwkDml8
+         0omq1GrtkRG0kJBa6y8Eg5trdgH+O9YPgjn+P+d/T4j590FlXzTemauPJ8stMP+do+Ho
+         3qP5s0E+1jB8Xr7YKtK9cJ1PMhVwuILlukpX9a/FwjMAqiYgrzpPD09xey7mHOZQypeS
+         wySDQDkOc6o6tljLQdHjiv2tENRTNAzP9satfRF6+kE4LBY7CEMlcP3TJ/x1hMC4zeqW
+         KjEQJU7w1MX1817mzsRMR5hmUn4k2LVE4bHs2Ja0KELIj5oc1A9U/tY/rupSS0utFa+M
+         1Y9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFEsGLjR/+YmiYobqriCg4DxcpltOpn8XZ/DinmZo0XCqILgRx4Ib0GXN5TSnjMzHqsbEJ9SGGhhrmavq42VGD6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws98DX9RLYh4nxuMPPA8Ci82sdfisStbWMVClUAEGNtqyqRsOz
+	OWeyck72wlfB3vbwEGOxDr85nsaNI2V+hP8HVHUwdR+wVwD5X+4eqdQMjUC8hl3aeC0=
+X-Gm-Gg: ASbGncvy76XM835xKh64tqnnC2YXDnrc1NxbQ5A/I6MTTf3hp9o90KxwSCzQsNIugdF
+	uyXBJ+CnWgk7J+oNh5xHL7lN1M9N/f2fOuFmAuIpzE4+Rf6i3N/rStUgj1kC5PBPnjU1bKwZ+Km
+	yKiJjWLSSYTB0sfwdxhU/NUvphEn50lm4ywr+4iWciU8g1ue9StFRgxqsEH6At+OxyvkdVG1Lq7
+	3qTMrhTXmuPgNTc5+ya+Iw0tCRKIH9UG3qQqPQhtV1R8vbf+SnsaUmueqpGYHfaKELdGuGXh1Vf
+	034D0NF6qXklxtsQX5qOf79Sa1JojNl8KBIhWxUq3amYnj4CaDHxjK2RHWBcKWiLIKrFQZWUkol
+	Z9z8FhmL91en7UURIAmh2Iri4bpZkLnoWnWTO52rQRefjZSDZJg9GLv5FnbkScTp9Q9rOi/eIXh
+	iuHp9DsRUti37UaIR3/LiN0mtb6fdUdohCiTGtn8U/
+X-Google-Smtp-Source: AGHT+IHA+lPS2DUQCATgDgIURdRFlX3C6OKochIcH8ifOEzHHA6ifhQXJjqURM+gkgnfCzyEiDrXWQ==
+X-Received: by 2002:a17:907:94d0:b0:b04:7232:3e97 with SMTP id a640c23a62f3a-b50aa3921edmr743792266b.21.1760002289304;
+        Thu, 09 Oct 2025 02:31:29 -0700 (PDT)
 Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a173a41sm1855670766b.87.2025.10.09.02.31.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 09 Oct 2025 02:31:28 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v2 0/3] soc: samsung: exynos-pmu: gs101: avoid SError for
- inaccessible registers
-Date: Thu, 09 Oct 2025 10:31:24 +0100
-Message-Id: <20251009-gs101-pmu-regmap-tables-v2-0-2d64f5261952@linaro.org>
+Date: Thu, 09 Oct 2025 10:31:25 +0100
+Subject: [PATCH v2 1/3] soc: samsung: exynos-pmu: allow specifying read &
+ write access tables for secure regmap
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,11 +71,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAOyA52gC/3WNwQqDMBBEf0X23C1JRKs99T+Kh2g3cUGNbKy0i
- P/eVOixl4E3MG82iCRMEa7ZBkIrRw5TAnPKoOvt5An5kRiMMoVWSqOPOuU8PlHIj3bGxbYDRaw
- uprRd7aoiJ0jrWcjx6zDfm8Q9xyXI+zha9bf9Oc1f56pRoXZ16VRtFLX5beDJSjgH8dDs+/4B4
- FuICL8AAAA=
-X-Change-ID: 20251001-gs101-pmu-regmap-tables-8726ac9f853e
+Message-Id: <20251009-gs101-pmu-regmap-tables-v2-1-2d64f5261952@linaro.org>
+References: <20251009-gs101-pmu-regmap-tables-v2-0-2d64f5261952@linaro.org>
+In-Reply-To: <20251009-gs101-pmu-regmap-tables-v2-0-2d64f5261952@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, 
  Peter Griffin <peter.griffin@linaro.org>, 
@@ -87,56 +86,107 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
 X-Mailer: b4 0.14.2
 
 Accessing non-existent PMU registers causes an SError, halting the
-system and rendering it unuseable.
+system.
 
-For gs101, we can avoid that by creating the underlying PMU regmap with
-the read- and writable register ranges in place, because on gs101 this
-driver controls creation of the regmap.
+regmap can help us with that by allowing to pass the list of valid
+registers as part of the config during creation. When this driver
+creates a new regmap itself rather than relying on
+syscon_node_to_regmap(), it's therefore easily possible to hook in
+custom access tables for valid read and write registers.
 
-This series updates the Exynos PMU driver and gs101 in particular to do
-just that. For gs101 this is easy, as the exynos-pmu driver creates a
-regmap and we can update the regmap config to pass in the registers.
-For other SoCs it's not as straight forward, as syscon_node_to_regmap()
-is used which doesn't allow passing a custom regmap config - those SoCs
-are out of scope for this series.
+Specifying access tables avoids SErrors for invalid registers and
+instead the regmap core can just return an error. Outside drivers, this
+is also helpful when using debugfs to access the regmap.
 
-With this in place, invalid registers (by drivers, or even plain
-debugfs), are now simply skipped by regmap, leaving the system useable
-in that case.
+Make it possible for drivers to specify read and write tables to be
+used on creation of the secure regmap by adding respective fields to
+struct exynos_pmu_data. Also add kerneldoc to same struct while
+updating it.
 
-Cheers,
-Andre'
-
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-Changes in v2:
-- Sam:
-  - add regmap_access_table forward declaration
-  - add kerneldoc for struct exynos_pmu_data
-  - update gs101-pmu.c header to C-style (Sam)
-  - ctx -> context
-- update commit messages as appropriate
-- collect tags
-- Link to v1: https://lore.kernel.org/r/20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org
+v2:
+* add regmap_access_table forward declaration (Sam)
+* add kerneldoc for struct exynos_pmu_data (Sam)
 
+The regmap_access_table forward declaration declaration triggers a
+checkpatch warning: 'struct regmap_access_table should normally be
+const'. In this case, it's just a forware declaration and the warning
+can be ignored.
 ---
-André Draszik (3):
-      soc: samsung: exynos-pmu: allow specifying read & write access tables for secure regmap
-      soc: samsung: exynos-pmu: move some gs101 related code into new file
-      soc: samsung: gs101-pmu: implement access tables for read and write
+ drivers/soc/samsung/exynos-pmu.c |  3 +++
+ drivers/soc/samsung/exynos-pmu.h | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
- MAINTAINERS                                 |   1 +
- drivers/soc/samsung/Makefile                |   3 +-
- drivers/soc/samsung/exynos-pmu.c            | 136 +--------
- drivers/soc/samsung/exynos-pmu.h            |  37 +++
- drivers/soc/samsung/gs101-pmu.c             | 446 ++++++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-regs-pmu.h | 343 ++++++++++++++++++++-
- 6 files changed, 824 insertions(+), 142 deletions(-)
----
-base-commit: 78578f59c6d2d7ece395fa438c7c82a25c9ed9e7
-change-id: 20251001-gs101-pmu-regmap-tables-8726ac9f853e
+diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+index 22c50ca2aa79bf1945255ee6cc7443d7309b2573..9f416de03610b1727d8cc77616e5c87e2525cc69 100644
+--- a/drivers/soc/samsung/exynos-pmu.c
++++ b/drivers/soc/samsung/exynos-pmu.c
+@@ -635,6 +635,9 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+ 		pmu_regmcfg = regmap_smccfg;
+ 		pmu_regmcfg.max_register = resource_size(res) -
+ 					   pmu_regmcfg.reg_stride;
++		pmu_regmcfg.wr_table = pmu_context->pmu_data->wr_table;
++		pmu_regmcfg.rd_table = pmu_context->pmu_data->rd_table;
++
+ 		/* Need physical address for SMC call */
+ 		regmap = devm_regmap_init(dev, NULL,
+ 					  (void *)(uintptr_t)res->start,
+diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
+index 0938bb4fe15f439e2d8bddeec51b6077e79a7e84..1658a55fe61c6fe70cc4cb0fcdcea2756096a268 100644
+--- a/drivers/soc/samsung/exynos-pmu.h
++++ b/drivers/soc/samsung/exynos-pmu.h
+@@ -13,11 +13,38 @@
+ 
+ #define PMU_TABLE_END	(-1U)
+ 
++struct regmap_access_table;
++
+ struct exynos_pmu_conf {
+ 	unsigned int offset;
+ 	u8 val[NUM_SYS_POWERDOWN];
+ };
+ 
++/**
++ * struct exynos_pmu_data - of_device_id (match) data
++ *
++ * @pmu_config: Optional table detailing register writes for target system
++ *              states: SYS_AFTR, SYS_LPA, SYS_SLEEP.
++ * @pmu_config_extra: Optional secondary table detailing additional register
++ *                    writes for target system states: SYS_AFTR, SYS_LPA,
++ *                    SYS_SLEEP.
++ * @pmu_secure: Whether or not PMU register writes need to be done via SMC call.
++ * @pmu_cpuhp: Whether or not extra handling is required for CPU hotplug and
++ *             CPUidle outside of standard PSCI calls, due to non-compliant
++ *             firmware.
++ * @pmu_init: Optional init function.
++ * @powerdown_conf: Optional callback before entering target system states:
++ *                  SYS_AFTR, SYS_LPA, SYS_SLEEP. This will be invoked before
++ *                  the registers from @pmu_config are written.
++ * @powerdown_conf_extra: Optional secondary callback before entering
++ *                        target system states: SYS_AFTR, SYS_LPA, SYS_SLEEP.
++ *                        This will be invoked after @pmu_config registers have
++ *                        been written.
++ * @rd_table: A table of readable register ranges in case a custom regmap is
++ *            used (i.e. when @pmu_secure is @true).
++ * @wr_table: A table of writable register ranges in case a custom regmap is
++ *            used (i.e. when @pmu_secure is @true).
++ */
+ struct exynos_pmu_data {
+ 	const struct exynos_pmu_conf *pmu_config;
+ 	const struct exynos_pmu_conf *pmu_config_extra;
+@@ -27,6 +54,9 @@ struct exynos_pmu_data {
+ 	void (*pmu_init)(void);
+ 	void (*powerdown_conf)(enum sys_powerdown);
+ 	void (*powerdown_conf_extra)(enum sys_powerdown);
++
++	const struct regmap_access_table *rd_table;
++	const struct regmap_access_table *wr_table;
+ };
+ 
+ extern void __iomem *pmu_base_addr;
 
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.51.0.710.ga91ca5db03-goog
 
