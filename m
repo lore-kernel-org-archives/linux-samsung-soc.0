@@ -1,120 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F3023B63F;
-	Thu,  9 Oct 2025 17:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D0F1B423B;
+	Thu,  9 Oct 2025 19:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760030022; cv=none; b=G+8EE/IwY36esDsFdTrJFz0XGHjsfq0oC4fjSCa4Vuse6p5FmEnuAzDnGi308FsTCpJk9Z25kD1pjoVAZdmdxzMqTJ3X3qBT8efNkt8hYbDcawMDdv7Df+X2PY4xcwabrOXpwbya/2oNlS/Km48ofOYpoXorNE3AFbWP/ihWInw=
+	t=1760038270; cv=none; b=F40lfVPeZzFJsNtXwtx/ApG6EJA6iPjRBEzlHR+4+LgQ7vBe5GlHES01SR95m4+73IABL+XKChBeV8hRR2QT6O+7MMwRgYXqa+UjTMphYvP76l8aP4KcDfS6HUI0Ub9LRzASnxFK2G9fDH8UlAJplGYmclxUVpo6AwhESqdaiFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760030022; c=relaxed/simple;
-	bh=4m/b40Q8HlHAkCFpCXHLrFt6Ce02CTpjazD5P0VykkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7n5E5FmZW9MJ/1vBbe0lh7J6JtgOjdHENmuYD1cw4WKDZjJiIPe8t/81Z7SsfmEC1E8dM35x1SjmsyTfbZR4QzUGBeY6B9favk+J8ZzS2yDiD40KEy2zS3qHqawHGMEb3N+w+DxUOaW3uw/mr+kz0dgvxaIAc6+VJmDgsvVJO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQ3mn/VD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760038270; c=relaxed/simple;
+	bh=BymKrN1KY0iUPYuubTEHc8AZ1vP3YNisJ6j8DS1jiuY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzwfZEQE1w3v6jhnwStDUJloo9xka0gLudl/EllbdTQDxmT/vAsNN6Q2/q5CeHVC+8U5MI0tGAZLcxi25uQ1DjDAwnJhi/smvEsYOVIx1lO8WzTllDv17mzSBmBe+RkqHQrc9ZooyTmOrMEt89aZYWuii8ouQmJ0HBbm7MPuMjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Rrpy17nB; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQ3mn/VD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6127AC4CEE7;
-	Thu,  9 Oct 2025 17:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760030022;
-	bh=4m/b40Q8HlHAkCFpCXHLrFt6Ce02CTpjazD5P0VykkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sQ3mn/VDly7N6oRo4YHgs3kB4pz8mCUs06Vf6MTzzHsGNRnR0UrMzRMakSX0IlDsO
-	 IDxfG4ti/zNQx92aK8O4FkV8izUQ88X1aD3M1R6rccbNrgaqDOqVUmw+wKTHXmvXyZ
-	 9gd7gPJF59QtGz5Gd++meMjtLhkcbufX0B2FzNwP1FJti+ONeTDDUvY5usngDNLJkM
-	 qzqMhuAFuIU8gNzmjiEWgHMP2w8VIIFi99yzpAR5rR09uEEQLHTUhbUAd2ZNqTCFkY
-	 1H/WAapbKklLusROb8CPfopsy7NKxeDDGtgzpxKWwV6PJtV1Gmv/+VXRK6gduHYyZS
-	 pJ9R2ZuMWH5vw==
-Date: Thu, 9 Oct 2025 18:13:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Joy Chakraborty <joychakr@google.com>,
-	Naveen Kumar <mnkumar@google.com>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Rrpy17nB"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=tw4U5ow5h6FPqPQ3p8BSDeHqWyCqOyJva3sSK1gq9wU=; b=Rrpy17nByDvTXKcuvVcCQjnAxY
+	f9ogDmNV3bsmRAENNWoDza9zFVKIH67/47SuVb5HpoNwc7vaANXPbKlE4nB3qdZGbF1smYFADF0qI
+	6r18qMIVLMEvXN2gYVo24ogGgEp4+L98xTY03FAY9WuYazvY/73mxctrf7jfsj8jG3eJvbEzuJl69
+	CkM9cd++SdDajDgT36qFIaSEi0+mS3ehzX/lc+4unZHys3//PsDXh2GdrF4LXovYFTJiu60ziXn98
+	KgEbfX+wh5FI6fUYcXKrR9KzJrOkcFyrwtsixT6f8GC05B4kQxd0p1wWMFYIsRxXuCnPXv0QH/lR3
+	dVCaodVw==;
+Received: from i53875bdd.versanet.de ([83.135.91.221] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v6wLW-000644-3I; Thu, 09 Oct 2025 21:30:38 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: damon.ding@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com
+Cc: m.szyprowski@samsung.com,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-Message-ID: <20251009-lizard-slapstick-4de7dfe2322d@spud>
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-2-royluo@google.com>
- <20251008-slider-uncombed-66790ea92ea0@spud>
- <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH] drm/bridge: analogix_dp: Fix connector status detection for bridges
+Date: Thu,  9 Oct 2025 21:30:28 +0200
+Message-ID: <20251009193028.4952-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V8Kj8DQ2DFM161Td"
-Content-Disposition: inline
-In-Reply-To: <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Right now if there is a next bridge attached to the analogix-dp controller
+the driver always assumes this bridge is connected to something, but this
+is of course not always true, as that bridge could also be a hotpluggable
+dp port for example.
 
---V8Kj8DQ2DFM161Td
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On the other hand, as stated in commit cb640b2ca546 ("drm/bridge: display-
+connector: don't set OP_DETECT for DisplayPorts"), "Detecting the monitor
+for DisplayPort targets is more complicated than just reading the HPD pin
+level" and we should be "letting the actual DP driver perform detection."
 
-On Wed, Oct 08, 2025 at 09:40:57PM -0700, Roy Luo wrote:
-> On Wed, Oct 8, 2025 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
-> >
-> > On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
+So use drm_bridge_detect() to detect the next bridge's state but ignore
+that bridge if the analogix-dp is handling the hpd-gpio.
 
-> > > +allOf:
-> > > +  - $ref: snps,dwc3-common.yaml#
-> > > +
-> > > +unevaluatedProperties: false
-> >
-> > So every property from snps,dwc3-common.yaml is valid here, with any of
-> > the permitted values?
->=20
-> Conor,
->=20
-> Appreciate the review.
-> Ack to all the comments, will fix them in the next patch.
-> And yes, every property from snps,dwc3-common.yaml is valid here.
-> You can find more context here [1], essentially the dwc3 glue would be
-> operating on the same platform device as the dwc3 core, hence all
-> properties are allowed.
->=20
-> [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722d@=
-oss.qualcomm.com/
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+As this patch stands, it would go on top of v6 of Damon's bridge-connector
+work, but could very well be also integrated into one of the changes there.
 
-I find it exceedingly hard to believe that every property from that
-file, with every permitted value, is possible. AFAIU, the tensor g5 is a
-phone chip that's only used in pixel devices, not something that people
-can just buy and integrate into whatever device they feel like. There
-should be a vanishingly small number of possible configurations,
-possibly exactly one configuration. There are dozens of properties in
-the dwc3 common binding, of which at least 10 are for "quirks" or other
-sorts of hardware errata that are not going to be variable from one
-phone to another.
+I don't know yet if my ordering and/or reasoning is the correct one or if
+a better handling could be done, but with that change I do get a nice
+hotplug behaviour on my rk3588-tiger-dp-carrier board, where the
+Analogix-DP ends in a full size DP port.
 
---V8Kj8DQ2DFM161Td
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index c04b5829712b..cdc56e83b576 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -983,8 +983,12 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
+ 	struct analogix_dp_device *dp = to_dp(bridge);
+ 	enum drm_connector_status status = connector_status_disconnected;
+ 
+-	if (dp->plat_data->next_bridge)
+-		return connector_status_connected;
++	/*
++	 * An optional next bridge should be in charge of detection the
++	 * connection status, except if we manage a actual hpd gpio.
++	 */
++	if (dp->plat_data->next_bridge && !dp->hpd_gpiod)
++		return drm_bridge_detect(dp->plat_data->next_bridge, connector);
+ 
+ 	if (!analogix_dp_detect_hpd(dp))
+ 		status = connector_status_connected;
+-- 
+2.47.2
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOftPwAKCRB4tDGHoIJi
-0orZAQDVQounnZp8XW0MZDnLxiorx4hG4jOujXdg9qHFe7k1qgD/eJp5UpO9UKjh
-jvA+gND8RxLGnuG3C6H3uJAs4WuugQw=
-=JWpo
------END PGP SIGNATURE-----
-
---V8Kj8DQ2DFM161Td--
