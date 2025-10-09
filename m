@@ -1,94 +1,142 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08D1241CB7;
-	Thu,  9 Oct 2025 09:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700901862A
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 09:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760002016; cv=none; b=dmuNRRIDs66CqRldvulcaGS9csSDScUCpET6lgqK8As65IHwoGH2JNYYsrslqpt2e6rV3x//zojLBUqNhOd2mXhT+2KuqapsSmpJp+sOQiU25ldDSDC7Ae2gDHUt9SiMaPf8HtzPeWxFYncM/uAA7sBjrNnQTzWtL6Clz4lMX0I=
+	t=1760002292; cv=none; b=GeKMSalOjY2RrjigL1tdShClYlRKcauNDXK97NXHjKx0un4Ij42EfSpsWYns6z7dxUOJFRBVG1Cytkn+MKwAmNdkJowoDINaTV1vvFpnC1GH8BZcSj/k8P01K0aY/nquQS/nHymNmbY8rcIMIlLiLj85W5R3nUBhgSjUyU5fQAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760002016; c=relaxed/simple;
-	bh=8WTQLafKA8kssI32iNLHS5hMP/bxEATA5wXnGRhRfS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pg5E0hKASas6ii6whHTP/h4O5HK/U2ECMVPHrlWIOcmrapUTF0u453aclZ9IOcuCAyeGsGYf0iJdtocyxW07h5+s8I0tn5F0nkNPN6JQZCaU/4veOr4CbM20VXsMhOWwLIvcLqhuwqZpprV+MFIa39x7/NpccerhR+JT50Z6CTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ow6/USIH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1760002292; c=relaxed/simple;
+	bh=NQ+MP9UQFifKSu2VgBLJEdIPCQK7TBnKXvvEwCt38zA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lyaEchUQfVd/UG7YwKqyK0+9wq5iLRZnntAVD1o+9EXyhgH1h1VQUHbYTn4NPC+hxNtFh+OirAIDI4xLmGCcdefJ5CBBobZUaBxnqYY1SnCTcZZC5uq/a82NJLEQYxk1278SV5+FH2mXNfTC6UzaXwIYRiZQYjdX4bgtOuBnWrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oIDG4Fop; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ow6/USIH"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=V60S/pormhoYRYxsu+Egzzzz8CK1VuNM11O4msG+Yr8=; b=ow6/USIHg4VDT4eTYw7fb5iEmJ
-	Ij+M3/EWF4tXFqlINgajlm1bN/m0IHjoNdAoTrmnfaoj7EdFWampbLbYHGl1PAGh1m8OtwUDIPSam
-	ZSgeL185eDu+E0npTPFLBHnvVBr1uVdz5jkHd4/VQNaU0+UQo7zJbOobneVWnBvechbGXR4D8qJmB
-	mz3NTm8SlX6MztJIgJRaI8gjaJBE0KzZeDEQZUjQZl18mwpS+LDJR92cc3k6P1ZcRpX8yVI8+jSdY
-	8+Kphlym7jq3Y2aixJ3xb/I2YIYHIaj5NEOFVADIQ6ZyRoXiIkGFmOrEV2amxG94kxz2RA7Kh8mIg
-	M8fYriwQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6mvA-00000004lLM-1Yeo;
-	Thu, 09 Oct 2025 09:26:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 11BDC300399; Thu, 09 Oct 2025 11:26:48 +0200 (CEST)
-Date: Thu, 9 Oct 2025 11:26:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, John Stultz <jstultz@google.com>,
-	x86@kernel.org,
-	'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
-Message-ID: <20251009092648.GW3419281@noisy.programming.kicks-ass.net>
-References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
- <175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
- <CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
- <e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
- <20250923220215.GH3419281@noisy.programming.kicks-ass.net>
- <eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIDG4Fop"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3d5088259eso97626266b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2025 02:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760002289; x=1760607089; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D8Y2hQ4PF+BjFgeq/9cHEzG8SplUoZPxKltHoG6YiyA=;
+        b=oIDG4FopgDy4ZLRQWEQbN3zxezy+v0+ZOG/dnP+3Kn+CQjmx22HaT+jUfCotIW7QWp
+         Ezkt7bkg3Uyn5ZYLgqWLI/LSPPb85jHVkQM8vq57bdJytF09o1ScaF5zJ5qoQ4gVRSfj
+         SWIrOG2QD04UKo9SuV/1pdMmnHiaSTf0nwAg/eDPLXqms6TOKKv2RcVPDMvcdfy4Zd6E
+         Bl6nuXHR6ZTam+CJnWd6y2axftlmYfXKmQCYfteIob8C6+Qcwq+YW9BOaElLgj6CXROE
+         SfQWU0QI8zbrNUKqDGAzIsD+6fDqYrJnCuU5MmMasMVu7HrENNpCMFgmYsji2xBp7qpL
+         V2kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760002289; x=1760607089;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D8Y2hQ4PF+BjFgeq/9cHEzG8SplUoZPxKltHoG6YiyA=;
+        b=jF+au9N+r4dIvdsZQpwb5Ub+Xy1dye+zcjbkAgRjZF9RXIC1qmMGob+pyUKZMJrlOU
+         dizrcvrzrWFZmdfpXjQXovIYSOQCEnyKBbaOKvpTBhahc2cc/GxkNhmZUywAVvUCuBFU
+         VzXx8FN+QV9VB/no39iHo3bXIW92HRE0jQIMIoOQMbTMzVaCrjjnyqys6pk0V1CHd5Vn
+         oNM6ASY11rNWiRW+qk7+PvPw1qF0CR1fow4yG6WPAiMJInX0avFumsPa9FOuFHZYgLnz
+         bP0bDQ28zV1Ktel8llI3u4+LzyNUz0DKMdgOvnjAzyuRbtrtWxJ1+5Rxfat2vITfshjt
+         J8GA==
+X-Forwarded-Encrypted: i=1; AJvYcCWko3LhwTipoPYnKGiXg/3F8zuS0tCyj4Pc7CTb/T57YnuTD/ioVMBcOTVSe0JPMFT5N+krqmH7VUf1k8NWDdgwzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRHrykd2G06YCqy2oE78mMOZXiiJ7bCypEVgRUzoSIIm090KRi
+	d8y0bPgfnsOZ1ax0cIQsAjsKA5F61gmocJPbjiMMIR+mNsLFGhhZnAvQG+TQ1kdOR1M=
+X-Gm-Gg: ASbGncvM2gzmCPrhVsF3ZxfHHqnUcjvLC/KOkQnUcsEpV0ChPH8UbAqkd7llIlXQeg7
+	ao+aHQKm9qNW8FIun+NWRuAzixv7Cu67yWVYLnCs+wb6+T165xvCdRAiKkEvi0xAIXGeZ+9lUvJ
+	9C7JXPgVCqfD2If1zbhuSltztKHKJuUjywWK0QGZLRejoRZvAA+WZ+H8OtJWPpmAo2vL4CB0UwZ
+	Iu4n43uACoBppeyzF3LvAV74JRaKbzEu/O1t2NGjIsfHeGQV2ZEPYgLfGkHpSNMn12WYLE8581i
+	55qGaklxYHd6uaG70rphD+WjippJorERyYBIibTg0n2+6jXKg25JVmVoh6jYltbAQNkaAaKKjvr
+	mmvPiCPWdIVuFIVbu8OrW396PfoHb2eS8oNfZPDw9VgNu0McNo4UTzpkxB4um7z9J0O6kgXtMBd
+	kKA2/pbc4eyQ3Mvre/oU7yspECt095e+22N7MmHHbV1KfeMle4TSI=
+X-Google-Smtp-Source: AGHT+IGbdEUE3PNoZYCS6NfJhqFXaPk0SnM9PnNIqtON966v5IoYDwxlU8rH3tGA/l00b+ZA3818Uw==
+X-Received: by 2002:a17:906:6a14:b0:afe:764d:6b22 with SMTP id a640c23a62f3a-b50aa48c4cfmr690831366b.9.1760002288707;
+        Thu, 09 Oct 2025 02:31:28 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a173a41sm1855670766b.87.2025.10.09.02.31.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 02:31:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 0/3] soc: samsung: exynos-pmu: gs101: avoid SError for
+ inaccessible registers
+Date: Thu, 09 Oct 2025 10:31:24 +0100
+Message-Id: <20251009-gs101-pmu-regmap-tables-v2-0-2d64f5261952@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAOyA52gC/3WNwQqDMBBEf0X23C1JRKs99T+Kh2g3cUGNbKy0i
+ P/eVOixl4E3MG82iCRMEa7ZBkIrRw5TAnPKoOvt5An5kRiMMoVWSqOPOuU8PlHIj3bGxbYDRaw
+ uprRd7aoiJ0jrWcjx6zDfm8Q9xyXI+zha9bf9Oc1f56pRoXZ16VRtFLX5beDJSjgH8dDs+/4B4
+ FuICL8AAAA=
+X-Change-ID: 20251001-gs101-pmu-regmap-tables-8726ac9f853e
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Mon, Sep 29, 2025 at 05:19:27PM +0200, Marek Szyprowski wrote:
+Accessing non-existent PMU registers causes an SError, halting the
+system and rendering it unuseable.
 
-> Thanks for some hints, but unfortunately†ARM64 doesn't support 
-> earlyprintk, so I was not able to use this method.
+For gs101, we can avoid that by creating the underlying PMU regmap with
+the read- and writable register ranges in place, because on gs101 this
+driver controls creation of the regmap.
 
-I've been told it is called earlycon= on arm; still sets up
-early_console and make early_printk() work.
+This series updates the Exynos PMU driver and gs101 in particular to do
+just that. For gs101 this is easy, as the exynos-pmu driver creates a
+regmap and we can update the regmap config to pass in the registers.
+For other SoCs it's not as straight forward, as syscon_node_to_regmap()
+is used which doesn't allow passing a custom regmap config - those SoCs
+are out of scope for this series.
 
-My patches just re-route everything printk() into early_printk().
+With this in place, invalid registers (by drivers, or even plain
+debugfs), are now simply skipped by regmap, leaving the system useable
+in that case.
 
-> However I've played a bit with this code and found that this strange 
-> wake-up of the CPU7 seems to be caused by the timer. If I restore
-> 
->  † if (!dl_se->server_has_tasks(dl_se))
->  ††††††††† return HRTIMER_NORESTART;
-> 
-> part in the dl_server_timer, the everything works again as before this 
-> patch.
+Cheers,
+Andre'
 
-Right, so something on your platform is not working right. Stray timers
-should not wake up CPUs.
+Signed-off-by: Andr√© Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- Sam:
+  - add regmap_access_table forward declaration
+  - add kerneldoc for struct exynos_pmu_data
+  - update gs101-pmu.c header to C-style (Sam)
+  - ctx -> context
+- update commit messages as appropriate
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org
 
-> This issue is however not Exynos5433 ARM 64bit specific. Similar lockup 
-> happens on Exynos5422 ARM 32bit boards, although there is no message in 
-> that case. Does it mean that handling of the hrtimers on Exynos boards 
-> is a bit broken in the context of CPU hotplug? 
+---
+Andr√© Draszik (3):
+      soc: samsung: exynos-pmu: allow specifying read & write access tables for secure regmap
+      soc: samsung: exynos-pmu: move some gs101 related code into new file
+      soc: samsung: gs101-pmu: implement access tables for read and write
 
-There is this thread:
+ MAINTAINERS                                 |   1 +
+ drivers/soc/samsung/Makefile                |   3 +-
+ drivers/soc/samsung/exynos-pmu.c            | 136 +--------
+ drivers/soc/samsung/exynos-pmu.h            |  37 +++
+ drivers/soc/samsung/gs101-pmu.c             | 446 ++++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h | 343 ++++++++++++++++++++-
+ 6 files changed, 824 insertions(+), 142 deletions(-)
+---
+base-commit: 78578f59c6d2d7ece395fa438c7c82a25c9ed9e7
+change-id: 20251001-gs101-pmu-regmap-tables-8726ac9f853e
 
-  https://lkml.kernel.org/r/20251009080007.GH3245006@noisy.programming.kicks-ass.net
+Best regards,
+-- 
+Andr√© Draszik <andre.draszik@linaro.org>
 
-I suspect this might be the same issue and we've made a little progress
-there.
