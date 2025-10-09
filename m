@@ -1,33 +1,26 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m15574.qiye.163.com (mail-m15574.qiye.163.com [101.71.155.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FA5211A09;
-	Thu,  9 Oct 2025 10:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B52C0292;
+	Thu,  9 Oct 2025 10:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760004804; cv=none; b=LjDZ55VmV6QIcJzzhhKKwG+uOlDeISbtxOiOyXT1Elr14P15dfJWK6eS9tJWgrgvQddTmNSNqjyFGMUTmB4EjyMTrK4e8b7aZltkCFGIXRcqSozTuVlhxfeQhKVopyOudyLfYORxEYZOGvFmp8nYBPVpCyDyWmCnyGEFQ0kapZM=
+	t=1760005981; cv=none; b=J3qXIpFNBwWzQ8gfqfS7OyprAxUPs/RujN/1Ngge+Z7xpDCVt3CcoPKIsAkNbN+4sHAY1o+iu5uQi2vjO8rMpVc38jlRUxLWEubI8TqC43vFu6B0c4Hf25KWTgHAHXAlhz54LKjHhrdKHDGZVFx/oGQnyMUbT6FHTTqpmnJHkws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760004804; c=relaxed/simple;
-	bh=A21j6BI0oshVWixafoxwDpeBkRBj2xvnQviHZfLid2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qNVmmUY6TaDkntL9zncSgwFm9nNzf1LSz258SLQj1FTSu7oyqPXX7mAKlvKBHyZDCBEcy9CdnTfGOYjkYVJqgVybRN9hDMEn71+r5Z/2CNQQj+SRDl11X4H8/I3LQT0voXa2tsw9JB0gjeW4EVgxZXH0OVpLvPX8DIlmkgvlT98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tnnv3eU4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760005981; c=relaxed/simple;
+	bh=eMvlU5OhYC+iS8Y//953L753gSz4ZcU4zPP2IlcFm0U=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=d5gv8alXLCXfseDKVaRbNKqjg1eU9iyu9p4rI33iIVOBoMg/aNrFEDgPJ1eh4YWsg74MZd+dIWxsAAE1M18Pe10I8yOB4ssBSF8wiV2JEP6d3tAr7wiMQt78kzEg2NR61OMQldMQ9MTOeiOQED89mca0f2k4dJ3dJq9UPnKXwTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PAzJtPog; arc=none smtp.client-ip=101.71.155.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tnnv3eU4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B4AC4CEE7;
-	Thu,  9 Oct 2025 10:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760004804;
-	bh=A21j6BI0oshVWixafoxwDpeBkRBj2xvnQviHZfLid2Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Tnnv3eU4N9kLuB1OI0d/dMZQLKXKdkuuETJEKZK2ix6CYAhWKKofU7oA0/iEy9jc9
-	 icwoiTjkylQWDMuqTRY7A4r7WTWfBsUtazTugWyXoKKTlPIRHat16u7O9Vjb6qcXB5
-	 MT0pVHtl5wua/qv15nAEMBxNt3YSjU/CQncYq6o/Bk8M0bfe5/tiyrhLPSp2Nr2jcj
-	 jolEu/88inxoWUqLAzFcrSnxykdV79BaOIXpXPga7z7sYvxNqMVTCty/Ymmyue1ag7
-	 USgYBQsPhJwb5oLu4cwdJzT1JQpCZy+GkfMsJRDpNWGRLUO/cD/xiAyfV/klHsuTtY
-	 /TDXFBsWrZ9vQ==
-Message-ID: <4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
-Date: Thu, 9 Oct 2025 19:13:14 +0900
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PAzJtPog"
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 253c93889;
+	Thu, 9 Oct 2025 09:29:43 +0800 (GMT+08:00)
+Message-ID: <642ee0da-5179-4790-ace3-c3035032c6d7@rock-chips.com>
+Date: Thu, 9 Oct 2025 09:29:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,79 +28,183 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
- exynosautov920-hsi2c compatible
-To: Faraz Ata <faraz.ata@samsung.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com
-References: <CGME20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336@epcas5p2.samsung.com>
- <20251009101911.2802433-1-faraz.ata@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v6 00/18] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ heiko@sntech.de, andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
+ dianders@chromium.org, luca.ceresoli@bootlin.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <CGME20250930091415eucas1p1f82ef0c96cbe0c7c673d975d502629e2@eucas1p1.samsung.com>
+ <20250930090920.131094-1-damon.ding@rock-chips.com>
+ <41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251009101911.2802433-1-faraz.ata@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a99c6969bbf03a3kunmdb30cebaa2e219
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU5OHlZLT0wdTR9OH0keGEJWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=PAzJtPogGAtKNZF9kobys+S/AKxHrq4GQv8D4Z+zLodxNHH4JYCTujogAXm9fgicqrAw7SJ1Ed/1y5ar44pfmhXbF3urj0ZGNVm3tQFTiqOHhYi0FRcJvpHZzCZZTol5n2XzaUvwtgW2y0xff7e202M52ezasiZAj3cQv8oueNU=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=kHQXpJLhL6Zuw3ZLmpn+nIKZ+QG/Z5d2ERurV4FyGmc=;
+	h=date:mime-version:subject:message-id:from;
 
-On 09/10/2025 19:19, Faraz Ata wrote:
-> Add "samsung,exynosautov920-hsi2c" dedicated compatible for
-> HSI2C found in ExynosAutov920 SoC.
+Hi Marek,
+
+On 9/30/2025 6:17 PM, Marek Szyprowski wrote:
+> On 30.09.2025 11:09, Damon Ding wrote:
+>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>> PATCH 3 is to add a new parameter to store the point of next bridge.
+>> PATCH 4 is to make legacy bridge driver more universal.
+>> PATCH 5-10 are preparations for apply drm_bridge_connector helper.
+>> PATCH 11 is to ensure last bridge determines OP_EDID/OP_MODES capabilities.
+>> PATCH 12 is to apply the drm_bridge_connector helper.
+>> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
+>> PATCH 16 is to attach the next bridge on Analogix side uniformly.
+>> PATCH 17-18 are to apply the panel_bridge helper.
 > 
-> Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
-> ---
-> Note: This patch was previously sent separately. Resending now as part of a
-> two-patch series to avoid dt-binding check error. No functional changes from the earlier submission[1]
+> Works fine on my Exynos based test boards with (e)DP displays. Thanks!
+> 
+> Feel free to update tags if needed:
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
 
-It's not necessary. You only need to provide lore link to bindings in
-patch changelog. Read carefully report you received.
+Thanks a lot for the testing and the tag!
 
-Also, do not resend non-fix patches during merge window. It's just noise.
+Apologies for the delayed reply as I was on vacation. ;-)
 
+> 
+>> Damon Ding (18):
+>>     drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+>>     drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
+>>       &drm_bridge_funcs.atomic_enable
+>>     drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
+>>     drm/bridge: Move legacy bridge driver out of imx directory for
+>>       multi-platform use
+>>     drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+>>     drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
+>>     drm/exynos: exynos_dp: Apply legacy bridge to parse the
+>>       display-timings node
+>>     drm/bridge: analogix_dp: Remove redundant
+>>       &analogix_dp_plat_data.skip_connector
+>>     drm/bridge: analogix_dp: Move the color format check to
+>>       .atomic_check() for Rockchip platforms
+>>     drm/bridge: analogix_dp: Remove unused
+>>       &analogix_dp_plat_data.get_modes()
+>>     drm/display: bridge_connector: Ensure last bridge determines
+>>       EDID/modes detection capabilities
+>>     drm/bridge: analogix_dp: Apply drm_bridge_connector helper
+>>     drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
+>>     drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
+>>     drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
+>>     drm/bridge: analogix_dp: Attach the next bridge in
+>>       analogix_dp_bridge_attach()
+>>     drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
+>>       in analogix_dp_unbind()
+>>     drm/bridge: analogix_dp: Apply panel_bridge helper
+>>
+>>    drivers/gpu/drm/bridge/Kconfig                |  10 +
+>>    drivers/gpu/drm/bridge/Makefile               |   1 +
+>>    drivers/gpu/drm/bridge/analogix/Kconfig       |   1 +
+>>    .../drm/bridge/analogix/analogix_dp_core.c    | 395 +++++++++---------
+>>    .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
+>>    drivers/gpu/drm/bridge/imx/Kconfig            |  10 -
+>>    drivers/gpu/drm/bridge/imx/Makefile           |   1 -
+>>    .../gpu/drm/bridge/imx/imx-legacy-bridge.c    |  91 ----
+>>    drivers/gpu/drm/bridge/legacy-bridge.c        |  99 +++++
+>>    .../gpu/drm/display/drm_bridge_connector.c    |  42 ++
+>>    drivers/gpu/drm/exynos/Kconfig                |   2 +
+>>    drivers/gpu/drm/exynos/exynos_dp.c            | 117 ++----
+>>    drivers/gpu/drm/imx/ipuv3/Kconfig             |   4 +-
+>>    drivers/gpu/drm/imx/ipuv3/imx-ldb.c           |   6 +-
+>>    drivers/gpu/drm/imx/ipuv3/parallel-display.c  |   4 +-
+>>    drivers/gpu/drm/rockchip/Kconfig              |   1 +
+>>    .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  67 +--
+>>    include/drm/bridge/analogix_dp.h              |   8 +-
+>>    include/drm/bridge/imx.h                      |  17 -
+>>    include/drm/bridge/legacy-bridge.h            |  18 +
+>>    20 files changed, 433 insertions(+), 466 deletions(-)
+>>    delete mode 100644 drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
+>>    create mode 100644 drivers/gpu/drm/bridge/legacy-bridge.c
+>>    delete mode 100644 include/drm/bridge/imx.h
+>>    create mode 100644 include/drm/bridge/legacy-bridge.h
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Update Exynos DP driver synchronously.
+>> - Move the panel/bridge parsing to the Analogix side.
+>>
+>> Changes in v3:
+>> - Rebase for the existing devm_drm_bridge_alloc() applying commit.
+>> - Fix the typographical error of panel/bridge check in exynos_dp_bind().
+>> - Squash all commits related to skip_connector deletion in both Exynos and
+>>     Analogix code into one.
+>> - Apply panel_bridge helper to make the codes more concise.
+>> - Fix the handing of bridge in analogix_dp_bridge_get_modes().
+>> - Remove unnecessary parameter struct drm_connector* for callback
+>>     &analogix_dp_plat_data.attach().
+>> - In order to decouple the connector driver and the bridge driver, move
+>>     the bridge connector initilization to the Rockchip and Exynos sides.
+>>
+>> Changes in v4:
+>> - Rebase for the applied &drm_bridge_funcs.detect() modification commit.
+>> - Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
+>> - Drop the drmm_encoder_init() modification commit.
+>> - Rename the &analogix_dp_plat_data.bridge to
+>>     &analogix_dp_plat_data.next_bridge.
+>>
+>> Changes in v5:
+>> - Add legacy bridge to parse the display-timings node under the dp node
+>>     for Exynos side.
+>> - Move color format check to &drm_connector_helper_funcs.atomic_check()
+>>     in order to get rid of &analogix_dp_plat_data.get_modes().
+>> - Remove unused callback &analogix_dp_plat_data.get_modes().
+>> - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
+>>     the downstream device is a panel, a bridge or neither.
+>> - Select DRM_DISPLAY_DP_AUX_BUS for DRM_ANALOGIX_DP, and remove it for
+>>     ROCKCHIP_ANALOGIX_DP.
+>> - Apply rockchip_dp_attach() to support the next bridge attachment for
+>>     the Rockchip side.
+>> - Move next_bridge attachment from Analogix side to Rockchip/Exynos sides.
+>>
+>> Changes in v6:
+>> - Move legacy bridge driver out of imx directory for multi-platform use.
+>> - Apply DRM legacy bridge to parse display timings intead of implementing
+>>     the same codes only for Exynos DP.
+>> - Ensure last bridge determines EDID/modes detection capabilities in DRM
+>>     bridge_connector driver.
+>> - Remove unnecessary drm_bridge_get_modes() in
+>>     analogix_dp_bridge_get_modes().
+>> - Simplify analogix_dp_bridge_edid_read().
+>> - If the next is a bridge, set DRM_BRIDGE_OP_DETECT and return
+>>     connector_status_connected in analogix_dp_bridge_detect().
+>> - Set flag DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment while
+>>     binding. Meanwhile, make DRM_BRIDGE_ATTACH_NO_CONNECTOR unsuppported
+>>     in analogix_dp_bridge_attach().
+>> - Move the next bridge attachment to the Analogix side rather than
+>>     scattered on Rockchip and Exynos sides.
+>> - Remove the unnecessary analogix_dp_bridge_get_modes().
+>> - Squash [PATCH v5 15/17] into [PATCH v5 17/17].
+>> - Fix the &drm_bridge->ops to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
+>>
 
 Best regards,
-Krzysztof
+Damon
+
