@@ -1,231 +1,115 @@
-Received: from mail-m3298.qiye.163.com (mail-m3298.qiye.163.com [220.197.32.98])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7E82DF71E;
-	Thu,  9 Oct 2025 11:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2281A2545
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 11:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007622; cv=none; b=ZEpDznQIf3n0B4jc3LAA5/y2ISjmz1sBen/up9Sfq+IVbcextnl53TP2d7hYHa8SL3OrZSgJXOC7i83TYH7e5HnrzUa7u1PoBRYnm/sFn/u0XBenj1qJyVVAqX4G1x2rEfe6dUlBupBG4QwiJwqywCbMHafrZpW98wts0t5jvps=
+	t=1760010191; cv=none; b=WFcT/Xdr0Z1PTKI3F9cFp0Eks+mXYC8nudzM5sOqEP6TKH4U+9TvzltYsNS990gsa5R2LtoV0eA36JWpHGAxcZYQuQZzfcx08mlNUo8eF+w/cHHu7dMGnLMtImDcDmrIeo0ApJVB4+v7M3AQb3Or1RN1332HmXyFU18aS8G4xxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007622; c=relaxed/simple;
-	bh=y7OlmIAK8vLkfU3+JxQ1Pkm7zAIwUPOpZpXABe/3DLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGxWitYCG2vmLxOmhocm8Rir8+wUpAbhUcKPcODJsyl0cPkDYtVx9SyKaSYqSqoEZwoh+HG7kiDeXio1qQ1n+HBp19KRi36Q4aB9EdNt99vfNLjggtv5AaTGL+49J4DWXPYUm4nCrejlnsvMueCT9gslE4BIKzxdY22SFtNkIBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CRpZqVpX; arc=none smtp.client-ip=220.197.32.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1760010191; c=relaxed/simple;
+	bh=o4ZC23bqkCzZRdyrb2q27Ia8Nl5pmYCkRwvOS6X6Po4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=oG63HzH0VuUik5PTUtfPr9/j30rvCvAe6dbdHnInOUjKeOg1kFhw3W5Tkvwb49n89rteVKIeORWimagau7a64NzbjdpxuR7xdJS5HNPQ5wl3LBNdoLJGkRaA6WcpwD81wuQOaQp2iiVO6kWjJ/ZVIXv2+IqJMDChNCT1HAlwx9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HRpXbQf+; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CRpZqVpX"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2543142d9;
-	Thu, 9 Oct 2025 12:10:40 +0800 (GMT+08:00)
-Message-ID: <a42ebdca-1cbc-498c-b859-336557823f26@rock-chips.com>
-Date: Thu, 9 Oct 2025 12:10:42 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HRpXbQf+"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251009114300euoutp021202b4ea3d4bd6e0e3d4d62cdd2c5c00~sz_9DbR_J0923009230euoutp02W
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 11:43:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251009114300euoutp021202b4ea3d4bd6e0e3d4d62cdd2c5c00~sz_9DbR_J0923009230euoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760010180;
+	bh=RlesILzdKyeLs7LcSyCstuiyY+nX+baBO2Ld+IQgDBU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=HRpXbQf+tpEz/XtDm0oqmXMR9YPCzRNdc/DanyHcAVQsCmabiTkx5sHmt6GUOua8K
+	 jn6u9W7ZJEdimwmB2pXXkjUbluaMfQnAyhNSflU1dFL9Gs4eh+cjXik9dmWdZWYevf
+	 ayNWy57XGqHFMagvb8UWh4pfdCFACYto36diP1bM=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251009114300eucas1p1f43957675255cd9687831cff3f177299~sz_80yY0V0410304103eucas1p1Y;
+	Thu,  9 Oct 2025 11:43:00 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251009114259eusmtip2099e83047b751e3eca3b23cab4329aff~sz_7xbw511293112931eusmtip2n;
+	Thu,  9 Oct 2025 11:42:59 +0000 (GMT)
+Message-ID: <0e1e61f6-6561-412b-9d45-1a000b3adc21@samsung.com>
+Date: Thu, 9 Oct 2025 13:42:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 11/18] drm/display: bridge_connector: Ensure last
- bridge determines EDID/modes detection capabilities
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- heiko@sntech.de, andy.yan@rock-chips.com, dianders@chromium.org,
- m.szyprowski@samsung.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
- <20250930090920.131094-12-damon.ding@rock-chips.com>
- <20251001180922.6bbe42ac@booty>
+User-Agent: Betterbird (Windows)
+Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, John Stultz <jstultz@google.com>,
+	x86@kernel.org, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <20251001180922.6bbe42ac@booty>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a99c729f83903a3kunm16370414a6fa98
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhISlZKSRgYQkhITx4fSEtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=CRpZqVpXED0SBtQWsNn3unDFg6hHUsSbzj0hQuFlxkwW+RHOgdqWJ+gRlo060O6EvTD8QiK/bJkRJC7jl8p3TKWpa+RYxJFZxheUO49caZ0+LEO/SzLEqHTLZz4OpdNo5ABc75WLQf70YZcuBwLuXIDCpICPiK4KZ7G+gX4C7Gg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=qQ2zeMeYDfoWTQYJ4xG+nhpK+0ZJUttKUUEWrzWjUSw=;
-	h=date:mime-version:subject:message-id:from;
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251009092648.GW3419281@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251009114300eucas1p1f43957675255cd9687831cff3f177299
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
+X-EPHeader: CA
+X-CMS-RootMailID: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
+References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+	<175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
+	<CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
+	<e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
+	<20250923220215.GH3419281@noisy.programming.kicks-ass.net>
+	<eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
+	<20251009092648.GW3419281@noisy.programming.kicks-ass.net>
 
-Hi Luca,
+On 09.10.2025 11:26, Peter Zijlstra wrote:
+> On Mon, Sep 29, 2025 at 05:19:27PM +0200, Marek Szyprowski wrote:
+>
+>> Thanks for some hints, but unfortunately ARM64 doesn't support
+>> earlyprintk, so I was not able to use this method.
+> I've been told it is called earlycon= on arm; still sets up
+> early_console and make early_printk() work.
 
-On 10/2/2025 12:09 AM, Luca Ceresoli wrote:
-> Hello Damon,
-> 
-> On Tue, 30 Sep 2025 17:09:13 +0800
-> Damon Ding <damon.ding@rock-chips.com> wrote:
-> 
->> When multiple bridges are present, EDID detection capability
->> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
->> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
->> determined by the last bridge in the chain, we handle three cases:
+ARM and ARM64 are almost completely separate architectures. 
+CONFIG_EARLY_PRINTK is not available on ARM64.
+
+
+> My patches just re-route everything printk() into early_printk().
+
+>> However I've played a bit with this code and found that this strange
+>> wake-up of the CPU7 seems to be caused by the timer. If I restore
 >>
->> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->>   - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->>     &drm_bridge_connector.bridge_edid to NULL and set
->>     &drm_bridge_connector.bridge_modes to the later bridge.
->>   - Ensure modes detection capability of the later bridge will not
->>     be ignored.
+>>     if (!dl_se->server_has_tasks(dl_se))
+>>             return HRTIMER_NORESTART;
 >>
->> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->>   - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->>     &drm_bridge_connector.bridge_modes to NULL and set
->>     &drm_bridge_connector.bridge_edid to the later bridge.
->>   - Although EDID detection capability has higher priority, this
->>     operation is for balance and makes sense.
->>
->> Case 3: the later bridge declares both of them
->>   - Assign later bridge as &drm_bridge_connector.bridge_edid and
->>     and &drm_bridge_connector.bridge_modes to this bridge.
->>   - Just leave transfer of these two capabilities as before.
-> 
-> I think the whole explanation can be more concisely rewritten as:
-> 
-> If the later bridge declares OP_EDID, OP_MODES or both, then both
-> .bridge_modes and .bridge_edid should be set to NULL (if any was set
-> from a previous bridge), and then .bridge_modes and/or .bridge_edid be
-> set to the later bridge as is done already.
-> 
-> Does this look correct (i.e. does it convey the same meaning)?
-> 
->> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
->> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
->> @@ -640,6 +640,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->>   	struct drm_connector *connector;
->>   	struct i2c_adapter *ddc = NULL;
->>   	struct drm_bridge *bridge, *panel_bridge = NULL;
->> +	struct drm_bridge *pre_bridge_edid, *pre_bridge_modes;
->>   	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
->>   	unsigned int max_bpc = 8;
->>   	bool support_hdcp = false;
->> @@ -668,6 +669,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->>   	 */
->>   	connector_type = DRM_MODE_CONNECTOR_Unknown;
->>   	drm_for_each_bridge_in_chain(encoder, bridge) {
->> +		pre_bridge_edid = bridge_connector->bridge_edid;
->> +		pre_bridge_modes = bridge_connector->bridge_modes;
->> +
->>   		if (!bridge->interlace_allowed)
->>   			connector->interlace_allowed = false;
->>   		if (!bridge->ycbcr_420_allowed)
->> @@ -681,6 +685,44 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->>   			bridge_connector->bridge_detect = bridge;
->>   		if (bridge->ops & DRM_BRIDGE_OP_MODES)
->>   			bridge_connector->bridge_modes = bridge;
->> +
->> +		/*
->> +		 * When multiple bridges are present, EDID detection capability
->> +		 * (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
->> +		 * (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities
->> +		 * are determined by the last bridge in the chain, we handle
->> +		 * three cases:
->> +		 *
->> +		 * Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->> +		 *    &drm_bridge_connector.bridge_edid to NULL and set
->> +		 *    &drm_bridge_connector.bridge_modes to the later bridge.
->> +		 *  - Ensure modes detection capability of the later bridge
->> +		 *    will not be ignored.
->> +		 *
->> +		 * Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->> +		 *    &drm_bridge_connector.bridge_modes to NULL and set
->> +		 *    &drm_bridge_connector.bridge_edid to the later bridge.
->> +		 *  - Although EDID detection capability has higher priority,
->> +		 *    this operation is for balance and makes sense.
->> +		 *
->> +		 * Case 3: the later bridge declares both of them
->> +		 *  - Assign later bridge as &drm_bridge_connector.bridge_edid
->> +		 *    and &drm_bridge_connector.bridge_modes to this bridge.
->> +		 *  - Just leave transfer of these two capabilities as before.
->> +		 */
->> +		if (bridge->ops & DRM_BRIDGE_OP_EDID &&
->> +		    !(bridge->ops & DRM_BRIDGE_OP_MODES)) {
->> +			if (pre_bridge_modes)
->> +				bridge_connector->bridge_modes = NULL;
->> +		}
->> +		if (bridge->ops & DRM_BRIDGE_OP_MODES &&
->> +		    !(bridge->ops & DRM_BRIDGE_OP_EDID)) {
->> +			if (pre_bridge_edid)
->> +				bridge_connector->bridge_edid = NULL;
->> +		}
->> +
-> 
-> If the above rewrite is correct, then I think this patch can be
-> rewritten in a simple way (build tested only):
-> 
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-> index a5bdd6c10643..bd5dbafe88bc 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -672,14 +672,18 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->                  if (!bridge->ycbcr_420_allowed)
->                          connector->ycbcr_420_allowed = false;
->   
-> -               if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> -                       bridge_connector->bridge_edid = bridge;
-> +               if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MODES) {
-> +                       bridge_connector->bridge_edid = NULL;
-> +                       bridge_connector->bridge_modes = NULL;
-> +                       if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> +                               bridge_connector->bridge_edid = bridge;
-> +                       if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> +                               bridge_connector->bridge_modes = bridge;
-> +               }
->                  if (bridge->ops & DRM_BRIDGE_OP_HPD)
->                          bridge_connector->bridge_hpd = bridge;
->                  if (bridge->ops & DRM_BRIDGE_OP_DETECT)
->                          bridge_connector->bridge_detect = bridge;
-> -               if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> -                       bridge_connector->bridge_modes = bridge;
->                  if (bridge->ops & DRM_BRIDGE_OP_HDMI) {
->                          if (bridge_connector->bridge_hdmi)
->                                  return ERR_PTR(-EBUSY);
-> 
+>> part in the dl_server_timer, the everything works again as before this
+>> patch.
+> Right, so something on your platform is not working right. Stray timers
+> should not wake up CPUs.
+>
+>> This issue is however not Exynos5433 ARM 64bit specific. Similar lockup
+>> happens on Exynos5422 ARM 32bit boards, although there is no message in
+>> that case. Does it mean that handling of the hrtimers on Exynos boards
+>> is a bit broken in the context of CPU hotplug?
+> There is this thread:
+>
+>    https://lkml.kernel.org/r/20251009080007.GH3245006@noisy.programming.kicks-ass.net
+>
+> I suspect this might be the same issue and we've made a little progress
+> there.
 
-Yes, this is correct and maintains functional equivalence with the 
-previous implementation.
+Indeed it looks like a similar issue and the proposed patch fixes the 
+problem on my Exynos based boards! Thanks! I will post my comment and 
+Tested-by tag there.
 
-I previously attempted to implement this feature by modifying the logic 
-in this section. However, that approach would obscure the explicit 
-propagation semantics of the bridge chain flags 
-(OP_EDID/OP_HPD/OP_DETECT/OP_MODES). Therefore, I finally decided to 
-implemented it as a specific check after this code block.
-
-Dmitry, what's your take on this?
-
-> Another thing to note is that this patch conflicts with [0], which I
-> plan to apply in the next few days. The two patches are orthogonal but
-> they insist on the same lines (those assigning
-> bridge_connector->bridge_* = bridge). Not a big deal, whichever patch
-> comes later will be easily adapted. Just wanted to ensure you are aware.
-> 
-> [0] https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
-> 
-
-This is indeed a clever approach to the managing bridge resource cleanup 
-in drm_bridge_connector. Thanks a lot for the heads-up! I'll resolve 
-this conflict and rebase the patch series.
-
-Apologies for the delayed reply as I was on vacation. ;-)
-
-Best regards,
-Damon
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
