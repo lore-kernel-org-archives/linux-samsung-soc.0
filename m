@@ -1,106 +1,150 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A43A2E092E
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 12:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB353363
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 13:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013927; cv=none; b=bn1uEXBaXx5dKoD/c4Q4rj0Rt3B4MjB6ghMVRGqePlhPs4OVijeCdSvBdEbUm2WbKTtx1+owTfRH4vaQhsMoZL/krYliJ8p4XEz66JWbZxTgfycwArSlMccYMoDEGkneoOBEmYjtudJpW9wsVE/khVRyigB3N4a/H93VwygODgw=
+	t=1760016178; cv=none; b=SgtNL4VO+ORIeeh+SzixfDJE3GXDBHS2THFD+dO/Y1TD32jDK28LT8Szcl4jKytaedUpLuCG76jVZhuuSN5vUhaZAP+5Gg95X+kBj79ihLKwHBByuUmTOyqdg/dThsyLQpThER8tYPlTY51F0qIbQpP42JXPILE5393SkX8ENJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013927; c=relaxed/simple;
-	bh=+qIn+RPmmwPv3OjgMXBX77cROFYyBV3LwSb/xEzaOA0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I5jBYMe3ouel2mfIH2GlOUsXu78XrcZKg4uqCzenKdcYDzwCJ/DyznCJVXPBKMvnaVKKpV7LWd70I9zPHsniBpU0PcvTitgcYxQPjYtN5l/SiMaIJduYcYeVJNQdLAP2trZKsnULAYL9pYXGgJjUMcU9OQO8eQG4C03QMH4dfIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XVjMyp9y; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760016178; c=relaxed/simple;
+	bh=9v7TGhLPRB7Hg6j0h7NT3Zr8ZuDwvfM8Ys5cFzGUZzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TfakDew2fxYcNXnW/NAC3YBgC81JinaxYnOvIQkRIM3eO2nTEIYn0bXiFWpuVbPLhFxC9QBMdUPRL9+2g3jJ7OCW1ZxTPm8G4Kpwj/YrGwrTRgdvEsiPFnQNhvkpkXJaB5OzLBFSLj6vpEy1416HEpMQvEaifguJmK8V6UutxvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=awaNgI7/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cwrjkfKR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=awaNgI7/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cwrjkfKR; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XVjMyp9y"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63994113841so1464704a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2025 05:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760013923; x=1760618723; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+qIn+RPmmwPv3OjgMXBX77cROFYyBV3LwSb/xEzaOA0=;
-        b=XVjMyp9ybbgsoaIoC6phHf0gwxtiqkvDTBltEZRWMXSk6fiOglqgNCBGLdih1aeLXi
-         wXwSmbwg+ykKhcO7s2ekQZiqcb6+L6GbxwAyGMJrF4w9/Du7pbucRWUN8zDwRam5Ui+z
-         I5fKc7qcG3dSzvD2cG4TzOCc61dyPqqBIKKtSMYmAPOgGYSrimg8vOIhlUZY3ClIbQWd
-         0kIbhYFBP9RCKAg3ZKqthtPQPcMOSL6vSG0TvkRh0XsXDjrjKTKGTqcSfb52Xp4A+qX6
-         4XHPyTEZ4uokAguOhB8yFBvn0wb8AIVgtofX57M5I1jVzH5WJWAqr1fR5A9XD/XihoSl
-         4RZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760013923; x=1760618723;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+qIn+RPmmwPv3OjgMXBX77cROFYyBV3LwSb/xEzaOA0=;
-        b=xIYvnqOFPMl25y0YYiImRrp6jXbR+0swuMex+y10nKRjYgTUjEgggcIPsfptNWEuew
-         TQRxVLdziQEuzTWTla0UqtjPp+P2Qjgynoc51WgNqga5XF9LlFrnVio4fJqOoXUECLHi
-         1yxDfkz2j/Jtdmpa1+AAjOD10oSFIDR6tei10DVaf4Ms2PRHV6tsVXjIZNWrWPW+08my
-         utvRDkn4Dsi+wfZRFscdnPmr2dMkPnuwsKoLQ5KpD9MsDluJAkVCbcQumk4vmasiFJ7R
-         bVtW9baf1/1AxxhiyNaXwmNyPexLj9fUNPpRbuxXKmR7nVxUZgWVIc9OYJMXjze0KKcW
-         vFLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXm/hO562lAY42cHqEzPa1tDHzLvIxN08UIW/BvKXvshLoFYdIrcZ2ijpfNMFK402Mu6t5TdZVIVutkUQ5bLg6kQQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwngDkRHscvQ99nxmA7VdFC2BmtyEg74Mh8HIB7ImUCWQkGa/6n
-	BEc2n+TGBRdjN9M46hj0c3S4Z2bNS0Pyxfo89WvblCfke315LcharJlJZ6w1aJfg1Ik=
-X-Gm-Gg: ASbGncvl6MKu17pJDFc6ZfSGTDxBUrlMBuHSUO7PNVPVkDgpYVK3z0kmIqwGeScPQEC
-	pTakZOGijIGRo0owhmEzUiusWs1++cIPoqGhf5tyLdcslAxgFq/Xp+KCnb5bjlp11J6zd508+Dk
-	tk8sJSfjWJX3AyvziL8JLGYgV1bO1qmyptWr5UQP57ORL2q1UBAMY9q1vQFyBz+W0UNRTY/RO2f
-	l3IRrjIG2n8G0pBZoNzncGW5qCgOpnA1jy3whQo/iLDrCWhTjg4/Rle4JQsDOxOFfp59O9mgb9/
-	hMarkIieQvIoRi4wsGcCucH9a3i3oSnNosfPECuYQ+5Lgpk3r482w2/X4kQ/YIF8gTE3/dZ+MVG
-	4zIT5Yve4/FvELuLLdxqts9aTjr3AzDZrau6E6+vKMf6+i5B/uWDSTA==
-X-Google-Smtp-Source: AGHT+IF1kryN6ovbJfIQc/Fy4MJIAskuq3zQgUsbduVZ1K8QdtBLyuZQWhuT43c/0DSCHjf+2b58hA==
-X-Received: by 2002:a17:907:3daa:b0:b45:60ad:daf9 with SMTP id a640c23a62f3a-b50a9a6cb4fmr894498966b.3.1760013923400;
-        Thu, 09 Oct 2025 05:45:23 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865f7420asm1880196166b.43.2025.10.09.05.45.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 05:45:23 -0700 (PDT)
-Message-ID: <8e95e30e0ca9a85ee40f93e01c23edbfb4e1b3ff.camel@linaro.org>
-Subject: Re: [PATCH] dt-bindings: soc: samsung: exynos-sysreg: add
- power-domains
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	 <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 09 Oct 2025 13:45:21 +0100
-In-Reply-To: <13426fe2-d4cc-4d87-bc4a-4a6dca955456@kernel.org>
-References: 
-	<20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
-	 <13426fe2-d4cc-4d87-bc4a-4a6dca955456@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="awaNgI7/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cwrjkfKR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="awaNgI7/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cwrjkfKR"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AAC411F74A;
+	Thu,  9 Oct 2025 13:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760016174; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nxbzPBH17ar9K23CahzAe5b30MTmOO7lOdw/AEZcP0U=;
+	b=awaNgI7/B8kYXqIFwTWq0bTxrrbbQgWzmYQL40a/KGIHLfrwsJezjNSwwQ5oBaRko8yH3L
+	zJnopVUZRPGe8w1zUAsf23kKmnS2KVtb0P/nZd+/paWDRlBXL6/LUOufHd7EJ3p5of4rMm
+	knVtAwJkGpGdK5RPUY0VgX03PRAagL8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760016174;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nxbzPBH17ar9K23CahzAe5b30MTmOO7lOdw/AEZcP0U=;
+	b=cwrjkfKRUzslGnFAMfnZN+BbuuRHgp8fiGPsw7EQNL51euzvgDiBbRojNyLdDUzWltIC1j
+	NbG6hac4zQvJojCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760016174; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nxbzPBH17ar9K23CahzAe5b30MTmOO7lOdw/AEZcP0U=;
+	b=awaNgI7/B8kYXqIFwTWq0bTxrrbbQgWzmYQL40a/KGIHLfrwsJezjNSwwQ5oBaRko8yH3L
+	zJnopVUZRPGe8w1zUAsf23kKmnS2KVtb0P/nZd+/paWDRlBXL6/LUOufHd7EJ3p5of4rMm
+	knVtAwJkGpGdK5RPUY0VgX03PRAagL8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760016174;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nxbzPBH17ar9K23CahzAe5b30MTmOO7lOdw/AEZcP0U=;
+	b=cwrjkfKRUzslGnFAMfnZN+BbuuRHgp8fiGPsw7EQNL51euzvgDiBbRojNyLdDUzWltIC1j
+	NbG6hac4zQvJojCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5308A13A61;
+	Thu,  9 Oct 2025 13:22:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0EDeEi6352iECAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 09 Oct 2025 13:22:54 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/4] drm/client: Implement free callback for fbdev and log
+Date: Thu,  9 Oct 2025 15:16:27 +0200
+Message-ID: <20251009132006.45834-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Thu, 2025-10-09 at 08:42 +0900, Krzysztof Kozlowski wrote:
-> On 08/10/2025 23:17, Andr=C3=A9 Draszik wrote:
-> > Sysreg can be part of a power domain, so we need to allow the relevant
-> > property 'power-domains'.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0.../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3 +++
->=20
-> It is not part of power domain for any existing SoCs, at least nothing
-> indicates that so this should be restricted as in example-schema to GS
-> sysregs only.
+Add struct drm_client_funcs.free and release the memory fbdev and
+log clients from its implementations. Also fix the locking in the
+log's unregister code.
 
-Thanks Krzysztof, will do.
+Resolves several corner cases in the current clients and avoids
+duplicated code.
 
-Cheers,
-Andre'
+Thomas Zimmermann (4):
+  drm/client: Add client free callback to unprepare fb_helper
+  drm/log: Do not hold lock across drm_client_release()
+  drm/log: Add free callback
+  drm/client: Do not free client memory by default
+
+ drivers/gpu/drm/armada/armada_fbdev.c      |  2 --
+ drivers/gpu/drm/clients/drm_fbdev_client.c | 17 +++++++++++++++--
+ drivers/gpu/drm/clients/drm_log.c          | 16 ++++++++++++----
+ drivers/gpu/drm/drm_client.c               |  4 ++++
+ drivers/gpu/drm/drm_client_event.c         |  9 +++++----
+ drivers/gpu/drm/drm_fbdev_dma.c            |  4 ----
+ drivers/gpu/drm/drm_fbdev_shmem.c          |  2 --
+ drivers/gpu/drm/drm_fbdev_ttm.c            |  2 --
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c  |  2 --
+ drivers/gpu/drm/gma500/fbdev.c             |  3 ---
+ drivers/gpu/drm/i915/display/intel_fbdev.c |  2 --
+ drivers/gpu/drm/msm/msm_fbdev.c            |  2 --
+ drivers/gpu/drm/omapdrm/omap_fbdev.c       |  2 --
+ drivers/gpu/drm/radeon/radeon_fbdev.c      |  2 --
+ drivers/gpu/drm/tegra/fbdev.c              |  2 --
+ include/drm/drm_client.h                   | 10 ++++++++++
+ 16 files changed, 46 insertions(+), 35 deletions(-)
+
+-- 
+2.51.0
+
