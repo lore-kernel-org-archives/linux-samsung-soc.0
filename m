@@ -1,33 +1,26 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m3290.qiye.163.com (mail-m3290.qiye.163.com [220.197.32.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A7C7082D;
-	Thu,  9 Oct 2025 07:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338A82D0C7A;
+	Thu,  9 Oct 2025 07:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994782; cv=none; b=WtHeaWBFQcPmekW1hX5qz+wsfAHYOBHInviUg25y3+UJW2Hukg84vZlFfINCTXMafx28p7SiUJJLL0YLzEg1XTargp6i98nplan21lkfHqJfNNcl9yxTKty0rC5/iefRbMibXQuvzQH2AFbicB8LCAaqREIPelMsql7gjotHCy0=
+	t=1759995871; cv=none; b=R8eqP3jl5AyTlGdMLOxb5cIwKL4FamVWbUFYcP9obNnWKKPjttL6je0nNZ7ARbs0nejuUT0wLFHCFpQwDP2xtG4NxEQhJrlpH7bhaZY0jxwsEUhUw9p9iK0WL/HBq5Kg1VejCicRlOqFJ0Y5T5RJSoREh012mD+1j7QjZMLOKNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994782; c=relaxed/simple;
-	bh=aUZwCKZriS2mx9oDnUC1YNntsIyiN+ubGEGIPBl8MwA=;
+	s=arc-20240116; t=1759995871; c=relaxed/simple;
+	bh=A6klI/zLMxJ2hB4Xd5d1g4rb3kQELZncCrSJWRc97i8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luKnM0udHhQnNYZ72lJHSkzw939dvM1ixNSCPPi/Axwyg4VYkfqaERV9o4RErS+B3wS1jy4CYYXzVFCqHPBQ87pNgQg8Vhtt6TGq/aFCi42ZtBIoM8//R9byTww6/nwaA2BdQhVPjyN5+6ne9mFqggGn3SH8fyydJpNaRotTeII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=En7eMwMe; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=AimM87RGF9WUg41YWxs6A2ga7v79+xHiwQSjrNaVbQnL9ll4jXVNOYTSN66bGauJmirIZHP48gAsiCoFEpBUnYCn+0oF8SbzBnI1XA9Up+4eyTEe5DjsNwiePtFM+nupuGoSFmL7zwoz4XI1xrmIfKXERKsgSf1s1CJNou5I+tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=g5bSR7Jc; arc=none smtp.client-ip=220.197.32.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="En7eMwMe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F072C4CEE7;
-	Thu,  9 Oct 2025 07:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759994781;
-	bh=aUZwCKZriS2mx9oDnUC1YNntsIyiN+ubGEGIPBl8MwA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=En7eMwMeJGkepvaJ8q2srUeiz31pgUGFFzkOIzFoManANQwcx6mbKGZs+E2G7b58P
-	 uZJjFFiIWFCKTpHTzKGIGNNsYl8lBBzUWfpLKaoZOTvSywrOLh9EMAF+2P1msiWk1j
-	 f4qZavZzm/ghXKSO4E4w3GSDLjAhtXbjlpAQYV0xyZTFZwlDa1Zac09X2UkPkd9A3s
-	 w/3kITa3qYybgFGNJ3JBpHGYHjTwF8Sx7RUD+L2f0+MepcjlTfSkRtI46gBSUR3//A
-	 ht2Up9KKwspeIpZCwqN7VC0V9TpD4gEHaULy3BBKSSwOsJxFW3gyj4G+H+VUkpD/W9
-	 9u2X+9Q3z94Og==
-Message-ID: <9ee299c1-edf4-4738-8b5e-6a684f683fbd@kernel.org>
-Date: Thu, 9 Oct 2025 16:26:08 +0900
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="g5bSR7Jc"
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 253de3988;
+	Thu, 9 Oct 2025 10:01:38 +0800 (GMT+08:00)
+Message-ID: <d4353b1e-53e5-4a5f-8da0-df3493d95ec3@rock-chips.com>
+Date: Thu, 9 Oct 2025 10:01:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,206 +28,155 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-2-royluo@google.com>
- <8966b6a9-ff70-4833-a5c7-c6d6c13c6c8b@kernel.org>
- <CA+zupgwLu-y26X9eiENyC28i9ZxCkuhb0X8X9H6HBpqkqJ7O3w@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 07/18] drm/exynos: exynos_dp: Apply legacy bridge to
+ parse the display-timings node
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ heiko@sntech.de, andy.yan@rock-chips.com, dianders@chromium.org,
+ m.szyprowski@samsung.com, luca.ceresoli@bootlin.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250930090920.131094-1-damon.ding@rock-chips.com>
+ <20250930090920.131094-8-damon.ding@rock-chips.com>
+ <73bpf77trhqdo5amfxbn4qhlwf4ta7hmouwfen7m3aslycd3bj@72artzwafbmq>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+zupgwLu-y26X9eiENyC28i9ZxCkuhb0X8X9H6HBpqkqJ7O3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <73bpf77trhqdo5amfxbn4qhlwf4ta7hmouwfen7m3aslycd3bj@72artzwafbmq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a99c6b3d38b03a3kunm9ba9a00aa3be80
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlLGFZPTh9CGUxIGUNMQklWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=g5bSR7JcicF4l8Xg5hsi1shmjZSmPq7LMdHC3p6KV19qTLOcogrtafU3cM+wvqokGzzEZTkyzGaDS7cVjiwUCI4qOWmqVd+YzemXrDWbkfLuzNP5flW+RxlNr/fEBr7DyIgul3sJ5uvZLX97Z1l67egKD79TmgMoVQjFgU3sJ50=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=hZLQq1cFpDnE3WeOTXxYAWB3fTkXBtyZpLnTjz0oWFs=;
+	h=date:mime-version:subject:message-id:from;
 
-On 09/10/2025 14:12, Roy Luo wrote:
-> On Wed, Oct 8, 2025 at 4:56 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 08/10/2025 14:59, Roy Luo wrote:
->>> Document the device tree bindings for the DWC3 USB controller found in
->>> Google Tensor SoCs, starting with the G5 generation.
->>>
->>> The Tensor G5 silicon represents a complete architectural departure from
->>
->>
->> G5 does not have a model number like G1-G4?
-> 
-> There's no model number for G5, I'm sticking to the existing "gs" prefix
-> as they're still in the same SoC family.  Please let me know if you have any
-> concerns.
-> 
->>
->>> previous generations (like gs101), including entirely new clock/reset
->>> schemes, top-level wrapper and register interface. Consequently,
->>> existing Samsung/Exynos DWC3 USB bindings and drivers are incompatible,
->>
->> Do not reference drivers. Explain the hardware.
-> 
-> Ack, all mentions of "driver" will be removed in the next patch.
-> 
->>
->>> necessitating this new device tree binding.
->>>
->>> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
->>> Dual-Role Device single port with hibernation support.
->>>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  .../bindings/usb/google,gs-dwc3.yaml          | 145 ++++++++++++++++++
->>>  1 file changed, 145 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->>> new file mode 100644
->>> index 000000000000..9eb0bf726e8d
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->>> @@ -0,0 +1,145 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +# Copyright (c) 2025, Google LLC
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/usb/google,gs-dwc3.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
->>> +
->>> +maintainers:
->>> +  - Roy Luo <royluo@google.com>
->>> +
->>> +description: |
->>
->>
->> Do not need '|' unless you need to preserve formatting.
-> 
-> Ack, will fix this in the next patch.
-> 
->>
->>> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
->>> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
->>> +  features Dual-Role Device single port with hibernation add-on.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - google,gs5-dwc3
->>> +
->>> +  reg:
->>> +    minItems: 3
->>
->> Drop
->>
->>> +    maxItems: 3
->>> +
->>> +  reg-names:
->>> +    description: |
->>> +      The following memory regions must present:
->>> +        - dwc3_core: Core DWC3 IP registers.
->>> +        - host_cfg_csr: Hibernation control registers.
->>> +        - usbint_csr: Hibernation interrupt registers.
->>
->> Drop description or move it to items in reg. See other bindings.
-> 
-> Ack, will use an item list in reg instead.
-> 
->>
->>> +    items:
->>> +      - const: dwc3_core
->>> +      - const: host_cfg_csr
->>> +      - const: usbint_csr
->>> +
->>> +  interrupts:
->>> +    minItems: 3
->>
->> Drop
-> 
-> Ack, will use an item list instead.
-> 
->>
->>> +    maxItems: 3
->>> +
->>> +  interrupt-names:
->>> +    description: |
->>> +      The following interrupts must present:
->>> +        - dwc_usb3: Core DWC3 interrupt.
->>> +        - hs_pme_irq: High speed remote wakeup interrupt for hibernation.
->>> +        - ss_pme_irq: Super speed remote wakeup interrupt for hibernation.
->>
->> From where did you get this style? Don't write bindings with chat gpt or
->> whatever other tool. it is a waste of our time.
-> 
-> I referenced the style from a recent dt binding change [1] that adds
-> "Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml".
-> I thought it would be a good reference because it's relatively new
-> and is also a binding for SNPS dwc3 glue logic. Perhaps that style
-> doesn't apply here because qcom,snps-dwc3.yaml supports
-> multiple compatible and here we have only one?
-> 
-> Just to clarify, I'm a Gemini user and this patch is 100% organic,
-> hand-crafted by a living human brain :)
-> 
-> [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-2-f015b358722d@oss.qualcomm.com/
+Hi Dmitry,
 
-Your code is not at all like above, you do not have any variants here,
-so you cannot use that syntax - is not correct here.
+On 10/1/2025 4:17 AM, Dmitry Baryshkov wrote:
+> On Tue, Sep 30, 2025 at 05:09:09PM +0800, Damon Ding wrote:
+>> If there is neither a panel nor a bridge, the display timing can be
+>> parsed from the display-timings node under the dp node.
+>>
+>> In order to get rid of &analogix_dp_plat_data.get_modes() and make
+>> the codes more consistent, apply DRM legacy bridge to parse display
+>> timings.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>>
+>> ------
+>>
+>> Changes in v6:
+>> - Apply DRM legacy bridge to parse display timings intead of
+>>    implementing the same codes only for Exynos DP.
+>> ---
+>>   drivers/gpu/drm/exynos/Kconfig     |  1 +
+>>   drivers/gpu/drm/exynos/exynos_dp.c | 71 +++++++++---------------------
+>>   2 files changed, 22 insertions(+), 50 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+>> index 0d13828e7d9e..66665d317848 100644
+>> --- a/drivers/gpu/drm/exynos/Kconfig
+>> +++ b/drivers/gpu/drm/exynos/Kconfig
+>> @@ -72,6 +72,7 @@ config DRM_EXYNOS_DP
+>>   	select DRM_ANALOGIX_DP
+>>   	select DRM_DISPLAY_DP_HELPER
+>>   	default DRM_EXYNOS
+>> +	select DRM_LEGACY_BRIDGE
+>>   	select DRM_PANEL
+>>   	help
+>>   	  This enables support for DP device.
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+>> index e20513164032..507d0a98fe5b 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+>> @@ -19,6 +19,7 @@
+>>   #include <video/videomode.h>
+>>   
+>>   #include <drm/bridge/analogix_dp.h>
+>> +#include <drm/bridge/legacy-bridge.h>
+>>   #include <drm/drm_atomic_helper.h>
+>>   #include <drm/drm_bridge.h>
+>>   #include <drm/drm_crtc.h>
+>> @@ -38,11 +39,23 @@ struct exynos_dp_device {
+>>   	struct drm_device          *drm_dev;
+>>   	struct device              *dev;
+>>   
+>> -	struct videomode           vm;
+>>   	struct analogix_dp_device *adp;
+>>   	struct analogix_dp_plat_data plat_data;
+>>   };
+>>   
+>> +static int exynos_dp_legacy_bridge_init(struct exynos_dp_device *dp,
+>> +					struct drm_bridge **bridge)
+>> +{
+>> +	if (!bridge)
+>> +		return -EINVAL;
+> 
+> Well, this can't happen, can it?
+> 
+>> +
+>> +	*bridge = devm_drm_legacy_bridge(dp->dev, dp->dev->of_node, DRM_MODE_CONNECTOR_eDP);
+>> +	if (IS_ERR(*bridge))
+>> +		return PTR_ERR(*bridge);
+>> +
+>> +	return 0;
+>> +}
+> 
+> I'd suggest inlining the function. It doesn't make sense to have
+> one-line wrapper.
+> 
+
+Will do in v7.
+
+>> +
+>>   static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+>>   				bool enable)
+>>   {
+> 
+> [...]
+> 
+>>   static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+>>   				   struct drm_bridge *bridge,
+>>   				   struct drm_connector *connector)
+>>   {
+>>   	struct exynos_dp_device *dp = to_dp(plat_data);
+>> +	enum drm_bridge_attach_flags flags = 0;
+>>   	int ret;
+>>   
+>>   	/* Pre-empt DP connector creation if there's a bridge */
+>>   	if (plat_data->next_bridge) {
+>> -		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
+>> -					0);
+>> +		if (drm_bridge_is_legacy(plat_data->next_bridge))
+> 
+> I see... You are going to kill this line in one of the next patches, but
+> the API will stay. I suggest adding a flag to the exynos_dp_device and
+> then removing the flag once you migrate to drm_bridge_connector.
+> 
+
+Yes, using a temporary flag is a better approach.
+
+>> +			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
+>> +
+>> +		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
+>>   		if (ret)
+>>   			return ret;
+>>   	}
+> 
 
 Best regards,
-Krzysztof
+Damon
+
