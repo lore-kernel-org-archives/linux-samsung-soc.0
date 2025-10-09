@@ -1,166 +1,106 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF412E11C5
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 13:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC9C2D63E2
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Oct 2025 13:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016204; cv=none; b=tI4MBFlUd0u+pM8q4akJ4ZgSoGMA1FssY7V6qN8NYQyo5iWe6AOWNPnTeM4SK3nQjYsj4YZJLUlTW4cg6f4Ggc8GonGnDxHqls5rL6NCSfyQhNhgVPRCjUrtoK/E6xrbpMnxv/QLQoL8cU3LGI55nUZj52cAZp5g4trw7Pouu0o=
+	t=1760016684; cv=none; b=jo/fjaXZWtbkyi1AjtgHKttIr0/KmZ87F2TCDSvFCwWUZlyOmowIS0jK/6qsyyBTE55qP0i5bDNdhpJbsyEDqrt3Fay3ZxtuF7YdD5QdWUov6APEiQwuBigpiQQAMorgKYHjzP6gCIkKGJQLqrvahWUy/wtm/mNzdHqUUR3bKFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016204; c=relaxed/simple;
-	bh=ePEY06Si2JO87LEXMrHddcY3YjreONO/ek5qx6BvAi8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VVsirjNAektDLeuk4bqjNq+3vrJUgz3bve8WGZN8gpDoETiDKdnUNhKmuWTA1kRANnUbnl+5Ur7cy/CZd3UxsgI69Yx36788EAD5MQEUXU+BDPPg9mAVEDNqHQak2gzj5P5jKTWGmjGnhaofMXK+FiJ/y+IkuB+6zbv0PDaGDJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aLgyG/QF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZJKWu9TK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aLgyG/QF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZJKWu9TK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1760016684; c=relaxed/simple;
+	bh=4uMuw9n5pwbOi9ibO0Djym5GMms0Of0kx57oeDZ/s/s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b0slTJ71UdZdYsIr03ZvfqRu1M/ZTKzyts0uTyBGHkChhtzaAuekL/Kzba+c2GWgI9MGzI+MWYneSXM+fqPlwlgNmaUZd1WmkFCLP6ly5nUGILMxQ09duBwS+AMZIWXDgwp0dJ5+BPYYVm+RkCN+Van/digQpQfVm1Dvta8IF2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QOYpd02K; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aLgyG/QF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZJKWu9TK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aLgyG/QF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZJKWu9TK"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 395571F7E7;
-	Thu,  9 Oct 2025 13:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760016176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xwzQ0SKlizCCwXOt8RJTik21J0MBmxveRLtKN2upYpQ=;
-	b=aLgyG/QFZTllg109Vm7VYEXNsyhv/4/6db2+Yc/scE/lBP7dkA7VheD4vgMfd4ebuV6UtZ
-	gdrBxdO03lTc2iw+FOcSR0eQgywhO+GCDcuDmJMiFUI2NyHseUxVNWhDgz7CdJ2Zk0uDnc
-	1WtPrFd6/xffZi5zxM6j/9nKyATDR2o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760016176;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xwzQ0SKlizCCwXOt8RJTik21J0MBmxveRLtKN2upYpQ=;
-	b=ZJKWu9TKYBlRfwE9H8hwUUeHlO2+k2aGaCU+DESSMtFvC6Ds+YbxdeA0bLnYRTibKr3TUq
-	ZGAabxf9mdeK12Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760016176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xwzQ0SKlizCCwXOt8RJTik21J0MBmxveRLtKN2upYpQ=;
-	b=aLgyG/QFZTllg109Vm7VYEXNsyhv/4/6db2+Yc/scE/lBP7dkA7VheD4vgMfd4ebuV6UtZ
-	gdrBxdO03lTc2iw+FOcSR0eQgywhO+GCDcuDmJMiFUI2NyHseUxVNWhDgz7CdJ2Zk0uDnc
-	1WtPrFd6/xffZi5zxM6j/9nKyATDR2o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760016176;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xwzQ0SKlizCCwXOt8RJTik21J0MBmxveRLtKN2upYpQ=;
-	b=ZJKWu9TKYBlRfwE9H8hwUUeHlO2+k2aGaCU+DESSMtFvC6Ds+YbxdeA0bLnYRTibKr3TUq
-	ZGAabxf9mdeK12Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7D1813A61;
-	Thu,  9 Oct 2025 13:22:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wHh/My+352iECAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 09 Oct 2025 13:22:55 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: jfalempe@redhat.com,
-	javierm@redhat.com,
-	mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 4/4] drm/client: Do not free client memory by default
-Date: Thu,  9 Oct 2025 15:16:31 +0200
-Message-ID: <20251009132006.45834-5-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251009132006.45834-1-tzimmermann@suse.de>
-References: <20251009132006.45834-1-tzimmermann@suse.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QOYpd02K"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6318855a83fso2009530a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2025 06:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760016681; x=1760621481; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4uMuw9n5pwbOi9ibO0Djym5GMms0Of0kx57oeDZ/s/s=;
+        b=QOYpd02K8BVgNunRW7q+mLlUaygR+qTqS46lbZKjTaHTxrBVGFu/XS56SXqS6lEl1s
+         AR9Z3Of9CdnuTxKzHufvGgPmBuMbj5wN7FdFS7OhblKcWPYcU0xVVk17QcnozeQc5NlN
+         3t58Ff9n8TcIXt5jbCIq2kiPrxypK/kxOAADc7VJU7FDn5QtnjF4jvkGa4RRJYvKs36g
+         CBdJOnige3e0uILxxLYTM0sW9xze/h9D4yZah453EBY7UqePVO6KOPtfXm303AkeAu7i
+         YZQ/qhx6NG+SZBA9vmKpN0skfQ1SbAVKZyEaZWwx8t+t/x4LCe1qt4ft4tdTVif1VQ6d
+         eXvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760016681; x=1760621481;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4uMuw9n5pwbOi9ibO0Djym5GMms0Of0kx57oeDZ/s/s=;
+        b=Kh0vtdwj4DyZW1I3Dc751qiVbfKAWyB5upjF8FJnbWVvf6cAOFM40IYe39h5NcWArF
+         ryB/k8LCcaXPhhppTIuz3YHYxmft3BTVa25+2ccLFyG+dS7v6Xj6sAxHRzIS/ix9vJEz
+         gg1bOGJjsVjFJO1b+w+2Z0sXTwPDwsyZx2hi6398AEDZsyHiKbvOoK4x5vFNUjbeS625
+         CJINgo+yKXDlwV1vb8M3FwXA9NCPUWr5zaGj6+N8nuQdkWt5YvQiZU+ff1juGjfrfRAh
+         MCO1o8cnzq3euenJgEmj+kCXJXDVrZSM8B4MT2S1Id8qUGwnCHAItsZN532wEyBJqBBV
+         istw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9SFioGuemNVRb2eZ5PXrMI6MYiSqFlDfRvjXlPs8XKB4Ga3fKM/TL/X2aS7B54UgJ4oWjHvxE4uCCcZAhFIRUIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUkthHbI5DljroMnLFJCfx6qhMfOuJQUSrZjrZSx6vSB3Ve/gk
+	HKkNOwSLkPhNKwxZAid11oypXdLq7MxbspMshcD9Ae+CJP8O7Z/Am/1kkWFxgUqvxpM=
+X-Gm-Gg: ASbGncu4FhHDOlsB2MpBamytHyOgtmiyQ70tiDiVpheI4GUamx+c9yc+ODZEuayuHLq
+	Z2I0fJwJot14mC+8Gfrzbs6KgSYIgnwlPOGX/VWOyWnUJSb1xly9UoBSa9z1ibOyBNGs1ZEo84Z
+	mPMrj1QZkR/kRdPmRBNLH6t6Y1wsDdscdV1MeDTgQt7WXLAWeREO++8TrlCP+Wy8EWgRypnWWuz
+	cA8XO7eJ/+Wq6t1eqzROG7WmIbxgp+rLh+vV070FtXzUQaugOVpdAXu5GfEK2cllflYEfDPH1M5
+	5zipt8oT1Y4aA6UMjfsFssZ0vdbp+8kw++xxzcEq+TvqFB8L8+SiZRVNdOML3DPyYztVg9rRG8h
+	bxHarlfzqvAlQZXBqkW+dDOUc0GF9+7nEiiCDaGibnl3weMflr2NmUw==
+X-Google-Smtp-Source: AGHT+IEnaDw79r99A3B3756aMdxT7SHXjMqW6rLoG3x0RAXtUbJZNUbfM/vMx/v7BA9OApMfoCnFYg==
+X-Received: by 2002:a17:907:9720:b0:b4b:dd7e:65f8 with SMTP id a640c23a62f3a-b50aaa9bbe9mr879682766b.25.1760016681115;
+        Thu, 09 Oct 2025 06:31:21 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9ebbsm1905425766b.7.2025.10.09.06.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 06:31:20 -0700 (PDT)
+Message-ID: <9d4ccadf76ccfff1a8b5f572b8aa190e2dc40c29.camel@linaro.org>
+Subject: Re: [PATCH 03/10] pmdomain: samsung: use to devm_kstrdup_const() to
+ simplify error handling
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Ulf
+ Hansson <ulf.hansson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Date: Thu, 09 Oct 2025 14:31:19 +0100
+In-Reply-To: <5df18f42-b567-4d27-9e12-29723af40d6e@kernel.org>
+References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
+	 <20251006-gs101-pd-v1-3-f0cb0c01ea7b@linaro.org>
+	 <5df18f42-b567-4d27-9e12-29723af40d6e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	R_RATELIMIT(0.00)[to_ip_from(RLb7ziy8p3fscxnwi7udzruu4s)];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -6.80
-X-Spam-Level: 
 
-Make no assumption on the allocation of the client's memory. For
-example, amdgpu stores a client within another data structures,
-where it cannot be freed by itself.
+On Thu, 2025-10-09 at 09:13 +0900, Krzysztof Kozlowski wrote:
+> On 07/10/2025 01:43, Andr=C3=A9 Draszik wrote:
+> > Convert to using devm_kstrdup_const() so as to simplify cleanup during
+> > error handling.
+>=20
+>=20
+> This is either a fix (then describe the fixed issue and add Fixed tag)
+> or you change the logic, not only simplify.
+>=20
+> Previously on of_genpd_add_provider_simple() the memory was not
+> kfree_const. Now it will be.
 
-The correct place to free the client's memory is the client's free
-callback. All existing clients implement this.
+Indeed it's a fix after all - While the driver doesn't allow unbind,
+I added this patch due to the followup patches that add potential error
+returns during probe, but somehow missed an already-existing error
+return after this call.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/drm_client_event.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_client_event.c b/drivers/gpu/drm/drm_client_event.c
-index c83196ad8b59..f36fe0392ce6 100644
---- a/drivers/gpu/drm/drm_client_event.c
-+++ b/drivers/gpu/drm/drm_client_event.c
-@@ -39,12 +39,13 @@ void drm_client_dev_unregister(struct drm_device *dev)
- 	mutex_lock(&dev->clientlist_mutex);
- 	list_for_each_entry_safe(client, tmp, &dev->clientlist, list) {
- 		list_del(&client->list);
--		if (client->funcs && client->funcs->unregister) {
-+		/*
-+		 * Unregistering consumes and frees the client.
-+		 */
-+		if (client->funcs && client->funcs->unregister)
- 			client->funcs->unregister(client);
--		} else {
-+		else
- 			drm_client_release(client);
--			kfree(client);
--		}
- 	}
- 	mutex_unlock(&dev->clientlist_mutex);
- }
--- 
-2.51.0
-
+Thanks Krzysztof!
