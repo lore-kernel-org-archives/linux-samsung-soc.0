@@ -1,67 +1,67 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A1E4414
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 12:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEA72F0C63
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 12:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100412; cv=none; b=XQLtgGmI5IAxnrvjKCcJAWLwWCxlZJEKtnRIfqmNGCrXGWmmvRIoW8y24o2D8+c7laAI0X4lKdOscnqLmejyfzPhR8m2MFzvHww9ZIIpctpnp9u5x1IgTfp/x4sW5KOQiJlvLkJA0vdA+YoD6Nb+Dl+dEh8bJ8+QrSrbYFOlB68=
+	t=1760100412; cv=none; b=eTKA/61fH025TrwmDMtrJkFxBu/P90W1oKY/xq0jGZ2e14tiZxpglozvI5rZvCiH3ZwBYGpxZp6lPc983Csb1J9rj8oOAmJoLyEuvgbRJSToN50vPAu7OdzzfEvfpTjo3A1zQDRK+FNilG0vDYATp3OedoBkgrtjQb+QWKVZszA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760100412; c=relaxed/simple;
-	bh=nht+0cVmRWVB4+ce3RyGxQzs5Rulvm6JKBBRx7syrdQ=;
+	bh=g3mKjgBA5eOmM+lFx4cmUAPX+2oV/GnRecyAQho2Lnc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ioQBSE2pLv5Ljp7gqWJBSq7b/EpZ9EFgQBO76yKgsPMDmQCz4ZgdPv8qdiD7wBXUanAp1RhOL87xKF/Jzy9kz49NEJ32+JUJW/a1rF3j8ybwYRYTZ/Mhb0F8CMs7roP4TvYurqpqakJ8uWDF4u2aSqU+xfWFPMZxcvU8c8BZZ/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WeXbz5Bz; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:To:Cc; b=ETzlhnt5Qg+/Ax17Z/30Uq4g7wUn1gwq+E0JKnMgVbEviAjjpN5irFvF/bX/5LpcU4H52cJo8Yo7gC1pEwGW8FZbCDHiFPEYncw0uNzad2yzf2X+BMYwBcxfw2NAgDXrGJtUYDZapwkHwjYd+AYkFsg3XPq/KyZDZqdTgtH3n/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XyX41Wqy; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WeXbz5Bz"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso15899365e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 05:46:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XyX41Wqy"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so16640735e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 05:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760100406; x=1760705206; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760100408; x=1760705208; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=z2nfE8+rIsshVHGW4LOPPJ8IkWn50qSI7r3Sg04LOS8=;
-        b=WeXbz5BzYYzDKX8TpZIUnQgh9nEJiRPM0tI/HqtcTpFAltCCScc0uHhv157GddB7gF
-         xiq0Kye74oF8VFLnfEellguY2pCRVgkoRZ1V5TJbyd6d6j+M4WM8z/IhfUXmnLLezjiD
-         HoSHIS11Q84L9ej6M2YUji5AQcOs70Z5V1C3RiZTjSf7kAI7/6f+5rS24qZTjl0K4jS1
-         e5FkO+H1gYwyy5AXdw8/hHzPW0EVkEX7fdAKTV3oUFZ8swnG+D/7mPwf3xtxP89gV0l9
-         CNI6BAQ8J2CVC7RKfppbh0svaDtlTgEJqGyBDZBhTJoymzXflZpq29qnbdlV25tIulps
-         c42Q==
+        bh=pI91YBUn0ODEJ37uAPOBfrBDVY8tx0luGRG7kO6Mtbk=;
+        b=XyX41WqyW6BugaY898VZBmSIZQl4cJakg7dvkTLYDBdufG9ltARL6bwvI4VkI3VwAP
+         IAJK+8olzsfwJF61pLKJ88kL/mLFzsjxWxSSWvaYMCr/5qEZ/fqvuO7wzqnh+8SUc1q0
+         vDKDbbL5ZeswYGt856bA6J66S/Qu5qEJnhbixUHvjnUXmE7gf/7j/muj5BI4qdE/F67Y
+         8iXS5hH7/H2tcDya966bbQ230ilJmqq9+uoLJ7ydVhIC5SqStNJi5iboEkwlcGWQBUjB
+         th18Qpm+Q4qKg/SLS26KSeM2fGGCoET0zlwS8SE2z6oQh48kkdun9UGzGDNr3mxbTqmw
+         j/eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760100406; x=1760705206;
+        d=1e100.net; s=20230601; t=1760100408; x=1760705208;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z2nfE8+rIsshVHGW4LOPPJ8IkWn50qSI7r3Sg04LOS8=;
-        b=jMiSvvXH73DOfKHM4yQSi7yHmW3/GULWqh7Neb09dj3TQ7P+z5NPV4l785TIf++NHe
-         g3TZCDBRmXYGCHcHzz++BcaT7HSo59+IOZLjgYt4dorT9TqXD3hYCIFQuuZ8i4zfDptB
-         hsB2jVaITha4Oc+A46dVSoQoRzpk0vqkNJ9a9s2q9VUizZ8YjJxUkwuZAIZee87fltiD
-         jcaMLb4xUOF72yviguogD0w7uXYZdo9tYNMvBV7hXlPBoGWD8M2lUuvb12Cvhi3eNcce
-         twgKJVBIMmqaPFAlaTaaNYMEd82eqWKT/dbIeYerfhH7j6mGa6FyytWhlelxxYhgaBMl
-         MDmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlVmK78t/8OXSDZnT5XoOK0hWScDAhAFD+BGcaLr7Ozwfgf6zdFqkDFuROjMFMtxVMEjVO4tECd8l3qMIctzbl/A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1AiC4jd9JANs2wtE4JQPjnzQEzaVelAYIicyHrrJDeD6rZAVH
-	olcEy9s4VRUkVfG2N/RScNrzTSoIRFfupOPKfeXx9gLcwcnbFKBDkH6eUObJfelDdkU=
-X-Gm-Gg: ASbGnct8r1pW0t+aT4vyrDfim8ZorPnNnYSsJOoIozjivv2feez419buuXpfurw5OQg
-	8mi3HdjTacVB8asckaG+T135WA5EuQ1rVZqQmYs6oQiUfOww41q8W1i8GxDDWp498bNhQHcJe5Q
-	Mg0GksK7u8ISH1zSnTYIP4wNq1jPgCKwzWsUehp8e7a43O59zbHZRRe2DEcns7sZQAKfPrLCl6I
-	RjTaEerNc8+7SV9Vn5EnEdJ1XPB+4qbJLjMyp5Urkx0QsrliCenfSqLiX15WJa55fTv8P/daJ4m
-	hl3BKQPm2b9JysvIm+RaLyspmzFSJXOKxdobXIgL8H+x8TTkZTOTx3HgIYoL7NyXZUs+CqKBY0s
-	7mfMdPFPMAwSSzvmgZaSDGK2pa3MarVjrDy4NmcPGvCmLvD/cdAKCdKbFH6a9uvUKb6vospEt0j
-	XcxjuyZ3Fn27lnXB940B83kQ==
-X-Google-Smtp-Source: AGHT+IEATMDjPVaW6xtHUuRAhcGKgkJK9KTgPht87/yGSDwr3glJqlrPD+XxdOBxV2tQdcqhsHLjjw==
-X-Received: by 2002:a05:600c:c0c3:20b0:46e:39ef:be77 with SMTP id 5b1f17b1804b1-46faef4161fmr41056625e9.14.1760100406013;
-        Fri, 10 Oct 2025 05:46:46 -0700 (PDT)
+        bh=pI91YBUn0ODEJ37uAPOBfrBDVY8tx0luGRG7kO6Mtbk=;
+        b=TVzbBc/7KZ4/PbVUj27gHX5JGyS4c81gxs4Jp35Jf8V5RvWjyqpaDjqe7itlkajAKL
+         Tp2UzZwIaSVAjYud/e2t+BGM1DKCiTqa7AhuPMf3mFEQ2JMC5WGNnVitUBZBRlcOJuQJ
+         ntE2pkZEn1aBqk6Ywi5YpXPvkWe5As9BVSb0XmzrI/7htXFaPaecGQJBElMZSCMuKbLv
+         1KxnzvXhnxh3p3T6QTgyO3ki8gVUFFbzvxeLf9axm3YJiuiorce3vbBeRCwQp4q9KzBb
+         uoaYdRr6ZXgFeGzFHTW8eRP57s7hFiCej1xxMlqZRe85ANBaWpL1VWpGgW4RxJRMGM1Y
+         kLfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDmZp/hRVr5gMQBJTjXM2KP5pJXCMDTpruMfSWfW8n1VrslkBF6AUgLqfmYvmPbXSaPZvI8hHLeSwKzTiKn6vtCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu7cLTI/HVMuHRospPTCu6i20fluqNsEj23IZj9R1nE/UgnAMG
+	5/1L+QAR0JrIp7h5NCUGZeibwpD+gvNh52QpaWMV7zQHo9lyyfKZTUQIe0yo2T0+lOM=
+X-Gm-Gg: ASbGncsX9LtEr3SPyKw/6CU2EU2iO6Dahx47DZ9tR9Y+W6XZ/1oxUU0Wu9RELE/w7M3
+	EdU7yvpssecgBJjEgTrbnqEvAZcuBh/9VFgaVLHyM9TSA3E4TEpK1SyoGRnqQAToXeS2hP10zSz
+	/us21D59uMtfzd+3NMwoHV5S8paOCFavHdjhhTKepXh3N1XLL1sg3TPGNDZrgEDR40eooE219JR
+	t7MEfgv5Ine1IfMcsn7sf8iVHkV5fr0YwK4RR8YeQO1P//Ux4obJZrifGGfvPnK0JGkdmElPd9T
+	eg4HoXPjBY+EfVOxWOkFgHc1CgPpCYPoteTL8ShkAdWJDyuOervH8DWvIFOGZglGYWXxsgvkm+p
+	TDPY7YVNg5k0bcZKZgeDazegr8fCXCuSQBuW/h1m4mjyOWi5AzpT0k0otdACbMior2lIVZ6Yo5W
+	0dKnJleoqzbyvbqWtuJ0wZRQ==
+X-Google-Smtp-Source: AGHT+IF4DKpiRzWSCX0rNDuTrRqKdF56LpWr4xVHOhNz6eYaEJ8Bb9XyBCJmGVJ2NHkQ9GmAaWccdA==
+X-Received: by 2002:a05:600c:548d:b0:46e:49fd:5e30 with SMTP id 5b1f17b1804b1-46fa9a8f4e3mr83469915e9.6.1760100408062;
+        Fri, 10 Oct 2025 05:46:48 -0700 (PDT)
 Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484d056sm46376895e9.9.2025.10.10.05.46.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484d056sm46376895e9.9.2025.10.10.05.46.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 05:46:45 -0700 (PDT)
+        Fri, 10 Oct 2025 05:46:47 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 10 Oct 2025 12:46:32 +0000
-Subject: [PATCH v6 2/6] firmware: exynos-acpm: add DVFS protocol
+Date: Fri, 10 Oct 2025 12:46:35 +0000
+Subject: [PATCH v6 5/6] arm64: defconfig: enable Exynos ACPM clocks
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-acpm-clk-v6-2-321ee8826fd4@linaro.org>
+Message-Id: <20251010-acpm-clk-v6-5-321ee8826fd4@linaro.org>
 References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
 In-Reply-To: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -88,206 +88,37 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760100401; l=6635;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760100402; l=946;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=nht+0cVmRWVB4+ce3RyGxQzs5Rulvm6JKBBRx7syrdQ=;
- b=Ypmn0zfN5S3D+Z1XySnzwHo/8CvSXRu297Zid604jR7WgDqUN2+K8z+acuLkiRU/DSEpo3Eps
- 598dHHMz/tSBPsYJVHKFhgTw6oRHWWPj0AQGWOxJ+HLXlgQVixyW1+w
+ bh=g3mKjgBA5eOmM+lFx4cmUAPX+2oV/GnRecyAQho2Lnc=;
+ b=NTVzlJxWw7xyeoGeBBqzM/8gvY/1az1ZXvATM9Z29dX7t5LcuktT1BATpk+ooyP6VGq7mm4+T
+ lssKF7XBzBZC5cew2mcDdiAvlteaBf9sTDx/nJY7jNJXG2Iu7gwaeJ9
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Add ACPM DVFS protocol handler. It constructs DVFS messages that
-the APM firmware can understand.
+Enable the Exynos ACPM clocks driver. Samsung Exynos platforms
+implement ACPM to provide support for clock configuration, PMIC
+and temperature sensors.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
 ---
- drivers/firmware/samsung/Makefile                  |  4 +-
- drivers/firmware/samsung/exynos-acpm-dvfs.c        | 80 ++++++++++++++++++++++
- drivers/firmware/samsung/exynos-acpm-dvfs.h        | 21 ++++++
- drivers/firmware/samsung/exynos-acpm.c             |  5 ++
- .../linux/firmware/samsung/exynos-acpm-protocol.h  | 10 +++
- 5 files changed, 119 insertions(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/samsung/Makefile b/drivers/firmware/samsung/Makefile
-index 7b4c9f6f34f54fd731886d97a615fe1aa97ba9a0..80d4f89b33a9558b68c9083da675c70ec3d05f19 100644
---- a/drivers/firmware/samsung/Makefile
-+++ b/drivers/firmware/samsung/Makefile
-@@ -1,4 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
--acpm-protocol-objs			:= exynos-acpm.o exynos-acpm-pmic.o
-+acpm-protocol-objs			:= exynos-acpm.o
-+acpm-protocol-objs			+= exynos-acpm-pmic.o
-+acpm-protocol-objs			+= exynos-acpm-dvfs.o
- obj-$(CONFIG_EXYNOS_ACPM_PROTOCOL)	+= acpm-protocol.o
-diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.c b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..1c5b2b143bcc3fa2d1f92146206a2351fe0b9e95
---- /dev/null
-+++ b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright 2020 Samsung Electronics Co., Ltd.
-+ * Copyright 2020 Google LLC.
-+ * Copyright 2025 Linaro Ltd.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-+#include <linux/ktime.h>
-+#include <linux/types.h>
-+#include <linux/units.h>
-+
-+#include "exynos-acpm.h"
-+#include "exynos-acpm-dvfs.h"
-+
-+#define ACPM_DVFS_ID			GENMASK(11, 0)
-+#define ACPM_DVFS_REQ_TYPE		GENMASK(15, 0)
-+
-+#define ACPM_DVFS_FREQ_REQ		0
-+#define ACPM_DVFS_FREQ_GET		1
-+
-+static void acpm_dvfs_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
-+			       unsigned int acpm_chan_id, bool response)
-+{
-+	xfer->acpm_chan_id = acpm_chan_id;
-+	xfer->txd = cmd;
-+	xfer->txlen = cmdlen;
-+
-+	if (response) {
-+		xfer->rxd = cmd;
-+		xfer->rxlen = cmdlen;
-+	}
-+}
-+
-+static void acpm_dvfs_init_set_rate_cmd(u32 cmd[4], unsigned int clk_id,
-+					unsigned long rate)
-+{
-+	cmd[0] = FIELD_PREP(ACPM_DVFS_ID, clk_id);
-+	cmd[1] = rate / HZ_PER_KHZ;
-+	cmd[2] = FIELD_PREP(ACPM_DVFS_REQ_TYPE, ACPM_DVFS_FREQ_REQ);
-+	cmd[3] = ktime_to_ms(ktime_get());
-+}
-+
-+int acpm_dvfs_set_rate(const struct acpm_handle *handle,
-+		       unsigned int acpm_chan_id, unsigned int clk_id,
-+		       unsigned long rate)
-+{
-+	struct acpm_xfer xfer = {0};
-+	u32 cmd[4];
-+
-+	acpm_dvfs_init_set_rate_cmd(cmd, clk_id, rate);
-+	acpm_dvfs_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id, false);
-+
-+	return acpm_do_xfer(handle, &xfer);
-+}
-+
-+static void acpm_dvfs_init_get_rate_cmd(u32 cmd[4], unsigned int clk_id)
-+{
-+	cmd[0] = FIELD_PREP(ACPM_DVFS_ID, clk_id);
-+	cmd[2] = FIELD_PREP(ACPM_DVFS_REQ_TYPE, ACPM_DVFS_FREQ_GET);
-+	cmd[3] = ktime_to_ms(ktime_get());
-+}
-+
-+unsigned long acpm_dvfs_get_rate(const struct acpm_handle *handle,
-+				 unsigned int acpm_chan_id, unsigned int clk_id)
-+{
-+	struct acpm_xfer xfer;
-+	unsigned int cmd[4] = {0};
-+	int ret;
-+
-+	acpm_dvfs_init_get_rate_cmd(cmd, clk_id);
-+	acpm_dvfs_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id, true);
-+
-+	ret = acpm_do_xfer(handle, &xfer);
-+	if (ret)
-+		return 0;
-+
-+	return xfer.rxd[1] * HZ_PER_KHZ;
-+}
-diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.h b/drivers/firmware/samsung/exynos-acpm-dvfs.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..9f2778e649c9d806646467c3f3f1425333b6acd8
---- /dev/null
-+++ b/drivers/firmware/samsung/exynos-acpm-dvfs.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright 2020 Samsung Electronics Co., Ltd.
-+ * Copyright 2020 Google LLC.
-+ * Copyright 2025 Linaro Ltd.
-+ */
-+#ifndef __EXYNOS_ACPM_DVFS_H__
-+#define __EXYNOS_ACPM_DVFS_H__
-+
-+#include <linux/types.h>
-+
-+struct acpm_handle;
-+
-+int acpm_dvfs_set_rate(const struct acpm_handle *handle,
-+		       unsigned int acpm_chan_id, unsigned int id,
-+		       unsigned long rate);
-+unsigned long acpm_dvfs_get_rate(const struct acpm_handle *handle,
-+				 unsigned int acpm_chan_id,
-+				 unsigned int clk_id);
-+
-+#endif /* __EXYNOS_ACPM_DVFS_H__ */
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 3a69fe3234c75e0b5a93cbea6bb210dc6f69d2a6..9fa0335ccf5db32892fdf09e8d4b0a885a8f8fb5 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -29,6 +29,7 @@
- #include <linux/types.h>
- 
- #include "exynos-acpm.h"
-+#include "exynos-acpm-dvfs.h"
- #include "exynos-acpm-pmic.h"
- 
- #define ACPM_PROTOCOL_SEQNUM		GENMASK(21, 16)
-@@ -590,8 +591,12 @@ static int acpm_channels_init(struct acpm_info *acpm)
-  */
- static void acpm_setup_ops(struct acpm_info *acpm)
- {
-+	struct acpm_dvfs_ops *dvfs_ops = &acpm->handle.ops.dvfs_ops;
- 	struct acpm_pmic_ops *pmic_ops = &acpm->handle.ops.pmic_ops;
- 
-+	dvfs_ops->set_rate = acpm_dvfs_set_rate;
-+	dvfs_ops->get_rate = acpm_dvfs_get_rate;
-+
- 	pmic_ops->read_reg = acpm_pmic_read_reg;
- 	pmic_ops->bulk_read = acpm_pmic_bulk_read;
- 	pmic_ops->write_reg = acpm_pmic_write_reg;
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index f628bf1862c25fa018a2fe5e7e123bf05c5254b9..b1e95435240fdb895a03f178d4fb3789411b1583 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -13,6 +13,15 @@
- struct acpm_handle;
- struct device_node;
- 
-+struct acpm_dvfs_ops {
-+	int (*set_rate)(const struct acpm_handle *handle,
-+			unsigned int acpm_chan_id, unsigned int clk_id,
-+			unsigned long rate);
-+	unsigned long (*get_rate)(const struct acpm_handle *handle,
-+				  unsigned int acpm_chan_id,
-+				  unsigned int clk_id);
-+};
-+
- struct acpm_pmic_ops {
- 	int (*read_reg)(const struct acpm_handle *handle,
- 			unsigned int acpm_chan_id, u8 type, u8 reg, u8 chan,
-@@ -32,6 +41,7 @@ struct acpm_pmic_ops {
- };
- 
- struct acpm_ops {
-+	struct acpm_dvfs_ops dvfs_ops;
- 	struct acpm_pmic_ops pmic_ops;
- };
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e3a2d37bd10423b028f59dc40d6e8ee1c610d6b8..646097e94efe7f1a18fb59d5b6dfc6268be91383 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1458,6 +1458,7 @@ CONFIG_CLK_GFM_LPASS_SM8250=m
+ CONFIG_SM_VIDEOCC_8450=m
+ CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+ CONFIG_CLK_RENESAS_VBATTB=m
++CONFIG_EXYNOS_ACPM_CLK=m
+ CONFIG_CLK_SOPHGO_CV1800=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_OMAP=m
 
 -- 
 2.51.0.740.g6adb054d12-goog
