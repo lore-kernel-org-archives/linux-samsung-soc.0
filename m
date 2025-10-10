@@ -1,90 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B432F3600;
-	Fri, 10 Oct 2025 14:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7302F7465
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 14:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760105639; cv=none; b=p4Xh5Q+Akdiqc6P5A1dWMIecuHhD4Zw8Z7ESEa4bPxlGxaTRhgkLWgrgH31r7Lrgc0gJB2PpDWn5B+M/cTqQzGMNH3pdXsvMatq5VlUqNPPqOrE4LaVgK7ZqBeS1gsH+OYgrYmd70fRU4eJ0wnKfFgjuJ3gh/DietT2fqctkN2c=
+	t=1760105820; cv=none; b=EXXU50cZOL20Tu+i1idSQB63mjKah7IB4zTMHabnpgE58EhRoxa1icK532r1uqKMRUtM/lOncQmRgOgfRl3plGBSEk94Nyi6NuqshffBRhU5jeGoBQ+uVvTRQCk63VIX4x+lQwRTM3+X4fGbA7N39K43S2XTbismGmC2Bmp8UIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760105639; c=relaxed/simple;
-	bh=A/9vTnU0ngIvMSKiBV7pVXM9Nx6z4gz//N6Gk+nd5r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaxfK0NI50R4+/Q0xGG0Ujdbu8ULVylVdr9j/LMWuZQxvsPSKyAtk8NoO3GzS4OMLhOR3rOp3Dw871sgPsWFxyKP48fJXZ2vBJsBBUsQyQtQwkf2cBJrMGrAu+ODuvg39jErhejvCfGH8jky4sQSCQRZwdvhs4zCVCaExCX5zGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYD5jrSU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760105820; c=relaxed/simple;
+	bh=qAfkS0FALkninDpobPdDXMtt67Z25RcuAR5Qg6PQot4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ALH6oTW15MBHACNNHvjmnpiUQAcQPEpL9DdYlR3HRMaDxRkD+tN18a8hFEB0OdXGCMB1zBR7QK1BHx02us6EEgYqlj/2Xr16dMBulHZOUpPbvpSe07IdG8TheRLPeHZPqZ4cvACMNQSD2o49/VnshagtwgVSvFyHpth+rjz+C1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AD9QMaiM; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYD5jrSU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8969C4CEF1;
-	Fri, 10 Oct 2025 14:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760105639;
-	bh=A/9vTnU0ngIvMSKiBV7pVXM9Nx6z4gz//N6Gk+nd5r8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GYD5jrSUgbAZexvCkuk9uiJYWiz0fDuY7Oh8X+fFOlFcjEfHPQ73ELn0MZEBOGWTG
-	 6Kzade07nj7deIgGH3OF2zZYVxBVjbXt2ldD7mRubGg5Uc/s+PJQe9lq7fVViTnogp
-	 xVffTZPZNyyEKI+ZK+YoT7eZQsskunkq1Ui5u2qEejXsNFZqSTHEC3V1n2pXV7FjUg
-	 OUJT7/JP9kNsHc8FxzRiwR+GI9fFkqXOu8EHMMAnTcjqrduDgNF65AmcF+5LKSSW97
-	 NmvBzPiZ4i8JNE1im3zel/3oe09HI5KzEjgrmTrCdLIgd8tWL2uMppcuJ7GlsYBUNa
-	 QPgV6/wdIOhTA==
-Date: Fri, 10 Oct 2025 09:13:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] dt-bindings: soc: samsung: gs101-pmu: allow
- power domains as children
-Message-ID: <20251010141357.GA219719-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AD9QMaiM"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso347213466b.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 07:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760105816; x=1760710616; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9ETTSmzMEMLXYvaO7iiXW2H9dZ8Hr5VPzXraeMoXOYA=;
+        b=AD9QMaiMR2R8edJNlxM5EiPgUp01Z+D755TSj9KpQxVuD9640FQX9bsaLo7sqobeuu
+         vuJRu+11YdJVJhXfI99dYwyKq0KFQa+uavwKfARP79LiyRO4aroQMWT9XrLTSPIg9+Ev
+         FN8jZZhyfZkDJWOogq2lpLsKlgGGwcVQsQyjVyfXYK0u0hd/bIFKN5ixzLWWLboU5/PY
+         WRd3Lx9mbKLPdMpkNKlWH2Gl7cC2nIJelAffmIktbTQfB0I7IEGmT+v3v6x7VCnNiS9s
+         nbQXgrvD96F3TQqi5HY5z2scs2EI4lzVNRzi26rOZAGC2cDfZy02KaIOxWGN6sq9H1Z2
+         chVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760105816; x=1760710616;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9ETTSmzMEMLXYvaO7iiXW2H9dZ8Hr5VPzXraeMoXOYA=;
+        b=ILEJT3jMOmLk+CRm+O9YfHdnQihyqOVWPCAZNLfqkoPjeDwYoq5gNDubk584tiMfR7
+         M8q+hoMResIZvGrSasIdLKDYgoq/wVm87AEIkdXouMg+8O1XZ1MDI3ZdJhrpFMFpVyKQ
+         Mvft7t+GCUn8xuNwTqH9EfK3FQeyZt/eJDscu8B1TgUiTCGIRiQxMqs++uv5WCzolMy/
+         FyXuae9X+U1CjrLY/M9NFai22fcN8Zu4ZBjCssOiRjmtzXSlJvs5qNbCZQ+CnRfVuJRI
+         QpmQaPRbSEo7Oz/4G7X+IN/r/WCoO5a64qyLvL5w6WJQoUx9D7+/ndvNmp+aYawnWsw0
+         hRyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwN17mufU2Gy3iHZNmBcn0Vv5J8P9RKHZeKxRpMIql6nibdC0sb8on22gC72AYJo7mzY5WFghARJnjm1YPefOZ0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yweb2Q47UKEoYzxjrzPnGNC23WASRveUcHWOgxTuomuM8hYRfED
+	Le3SM0Dpc0gQSABv5upWpLXVe+UstitJcZVGeVcA4nBDPqYmP1vg4BB2Y2Gr3JJZXxI=
+X-Gm-Gg: ASbGnctPXKBqWX79IZWTc179w9j/WAz8k9pSd+bYKdQbpc8wK6rj+lUWTWnLXKDYsBq
+	MJmxlgt4LLYH6wgbnbPumn/y8SghWujqBmeIbgMkDornk8TCPRqG2kkAU4u1pwARBACsn59J0nU
+	ktkcJABvP8Lzr2+EULZJanNSJryBr2VmJ/HMb6P+XTEy3qr7/SLN6eCuofMbG6u3qy8Tn5ow2km
+	9R0GYA2FiASpkX3PqLQddd8MufnCjyOISfxF8N4ROz6vE9rWUoLM67t6i4uGHhcZa+2fyoLcv/g
+	QqlbbLomEJTzZ4jJQj/g4dutotwr3BUATYwdQrGCoj9Smvhxvu9waho9Akfyr4Z7Z0kx3RF3nfp
+	6B3p2YNRj9X3CqcPCoqWRPwe5nmrd+mKg6gkU0+mNAItrXYZm
+X-Google-Smtp-Source: AGHT+IHEAsH6ZcFu+OEyw3ew5Qe/YQEPpYcPrHdEy87KxK9nyj76/ZCLGpnuNV/60Jx9Jzca5xe2iQ==
+X-Received: by 2002:a17:906:4795:b0:b41:1657:2b1d with SMTP id a640c23a62f3a-b50abfcc8dbmr1274289566b.50.1760105815884;
+        Fri, 10 Oct 2025 07:16:55 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d66cc4b8sm247352066b.30.2025.10.10.07.16.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 07:16:55 -0700 (PDT)
+Message-ID: <ccd3c985a202f3fdbead41fcb3f0ba45950f74f6.camel@linaro.org>
+Subject: Re: [PATCH v2 02/10] dt-bindings: soc: samsung: exynos-pmu: move
+ gs101-pmu into separate binding
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Ulf Hansson	
+ <ulf.hansson@linaro.org>, kernel-team@android.com, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof
+ Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek
+ Szyprowski	 <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Conor
+ Dooley	 <conor+dt@kernel.org>, linux-pm@vger.kernel.org, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Date: Fri, 10 Oct 2025 15:16:54 +0100
+In-Reply-To: <176009895995.7689.883182155048414797.robh@kernel.org>
 References: <20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org>
- <20251009-gs101-pd-v2-3-3f4a6db2af39@linaro.org>
+	 <20251009-gs101-pd-v2-2-3f4a6db2af39@linaro.org>
+	 <176009895995.7689.883182155048414797.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251009-gs101-pd-v2-3-3f4a6db2af39@linaro.org>
 
-On Thu, Oct 09, 2025 at 04:25:05PM +0100, André Draszik wrote:
-> The power domains are a property of / implemented in the PMU. As such,
-> they should be modelled as child nodes of the PMU.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> ---
-> Note: Ideally, the newly added properties (ranges, etc.) should only be
-> 'required' if "^power-domain@[0-9a-f]+$" exists as a patternProperty,
-> as they're needed only in that case. As-is, this patch now causes
-> warnings for existing DTs as they don't specify the new properties (and
-> they shouldn't need to). Only if DTs are updated to include
-> power-domains, such an update should also add the new properties.
-> 
-> I've not been able to come up with the correct schema syntax to achieve
-> that. dependencies, dependentRequired, and dependentSchemas don't seem
-> to support patterns. Similarly,
->   - if:
->       required:
->         - ...
->     then:
->       required:
->         - ...
-> 
-> doesn't allow patterns in the 'if' block (or I didn't get the syntax
-> right).
+On Fri, 2025-10-10 at 07:23 -0500, Rob Herring (Arm) wrote:
+>=20
+> On Thu, 09 Oct 2025 16:25:04 +0100, Andr=C3=A9 Draszik wrote:
+> > The gs101-pmu binding is going to acquire various additional (pattern)
+> > properties that don't apply to other PMUs supported by this binding.
+> >=20
+> > To enable this, move google,gs101-pmu into a separate binding.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0.../bindings/soc/google/google,gs101-pmu.yaml=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 67 ++++++++++++++++++++++
+> > =C2=A0.../bindings/soc/samsung/exynos-pmu.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 20 -------
+> > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> > =C2=A03 files changed, 68 insertions(+), 20 deletions(-)
+> >=20
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/s=
+oc/google/google,gs101-pmu.yaml: $id: Cannot determine base
+> path from $id, relative path/filename doesn't match actual path or filena=
+me
+> =C2=A0	 $id: http://devicetree.org/schemas/soc/samsung/google,gs101-pmu.y=
+aml
+> =C2=A0	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetr=
+ee/bindings/soc/google/google,gs101-pmu.yaml
 
-This is a known limitation in json-schema. Not sure if they've come up 
-with a solution yet.
+I moved the file ultimately but had restricted to samsung using DT_SCHEMA_F=
+ILES=3D
+during my binding check run :-(
 
-Rob
+A.
