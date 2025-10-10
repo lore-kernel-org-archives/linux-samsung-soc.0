@@ -1,220 +1,114 @@
-Received: from mail-m49231.qiye.163.com (mail-m49231.qiye.163.com [45.254.49.231])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F79182D0;
-	Fri, 10 Oct 2025 04:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252A2238175
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 04:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760069286; cv=none; b=NR+uTAryqKQL+Kmds2HYAKleGK2tcX/62HuJ18Bmp2AVJ7d1iJWoMrbfiMNHvb8Ns3Sp0sxVU6es5Dz5Ejze8DQJmryRV9lf9W2NmcXQclWB7aIlywC0b+7lHBbvXy1rpiWAHn3yL1AlpM56pMr3eRwBeH+ggW2H9+1RFoVkdoQ=
+	t=1760072169; cv=none; b=r5U376VRLslMJv+Erwc/htg1UGhWUE94Rq6KrF3cJchoyC6RxMR2h5z4jhw0eoBPDUckmU3WVFZscALRHNxsoBCtr4tLry7Nm/pBhhb9Wk8oTrfjN11KQXPgnE7Tz+z418iiuTWAO3rCTIjm7CeZ3D2M9IH7MkjFvuE0gwuDYrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760069286; c=relaxed/simple;
-	bh=X63iAn+aQH9VSzWIOvI40cDDjWVc1dw6bbn/t20RtYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UB4HO2yk1kTPDtT3BlhpZVpa20pDRCIwGI5EDMQYhQ4kkiX5TlfJZDIoiFXh7og/dOOxIkwSjD+Uhkx2jv0qDlQV6kmu2SgkUoJcfE0XZN1kt8+4yoUaOqZISpcyvIGST/BA7BAEmGx3WUaaoRVJhVUzS5cLOowH5zLsP8/0nFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VCOjjjWI; arc=none smtp.client-ip=45.254.49.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1760072169; c=relaxed/simple;
+	bh=BXQBEg49WGrsvFjprcDLou8kFWrRywhvTMF300kqw/0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=cWFbUNxSDKuD8tvwEvdb394PtKX3irL465Fr8ZnHKZNI1CDAUmlK1eMFfJBz9yQgklxBa6nk+rBL0x5+4ppRq/rv2R0UCtiLj6ETBeMmSvRNOPIqGz7oT/IuT5mET2uhTlwvJEcd3KHXWOMgDUiVTFO5dOmSvk5MrtwpoEc5lgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jJlEjJTp; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VCOjjjWI"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 256613dc5;
-	Fri, 10 Oct 2025 12:02:44 +0800 (GMT+08:00)
-Message-ID: <b47c5579-511e-4831-b86e-48ad4cefaa6c@rock-chips.com>
-Date: Fri, 10 Oct 2025 12:02:43 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jJlEjJTp"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251010045604epoutp04f8b00ebe13f8216c5f0a31680c22b4f0~tCE7XVTRw0794607946epoutp045
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 04:56:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251010045604epoutp04f8b00ebe13f8216c5f0a31680c22b4f0~tCE7XVTRw0794607946epoutp045
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760072164;
+	bh=b96lHOK7OOj9AgDqZ6liSCCMlFccuKNhL36Drok74AE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=jJlEjJTp5sq57ROgGm3SWlApL12iSHqaj1ZbI6qq+WRcptfj+qZv/BkrqBRfmdWoj
+	 WvTgmBaoyC+oOpFea+UpqRBUZ5dFLq/IIGN60LO9y/EgOfWwCdPm8xvpkbMXL622eu
+	 CbOb58rmLk7VrljvIGzseAayWQYJ5d1NehI8HocM=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251010045603epcas5p100e8b22da565c8ddedc855e3eee2a63d~tCE639vYj2303523035epcas5p1O;
+	Fri, 10 Oct 2025 04:56:03 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cjZFZ2QhXz3hhTD; Fri, 10 Oct
+	2025 04:56:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251010045601epcas5p29c5dc8d86df33b732d285b1ab7821bfd~tCE5MyevZ0899008990epcas5p2H;
+	Fri, 10 Oct 2025 04:56:01 +0000 (GMT)
+Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251010045559epsmtip1ef22b9497c9caa63d35fb46e3b9ed6e6~tCE3gwKOS3107331073epsmtip1L;
+	Fri, 10 Oct 2025 04:55:59 +0000 (GMT)
+From: "Faraz Ata" <faraz.ata@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <andi.shyti@kernel.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>
+Cc: <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>
+In-Reply-To: <4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
+Subject: RE: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
+ exynosautov920-hsi2c compatible
+Date: Fri, 10 Oct 2025 10:25:50 +0530
+Message-ID: <000001dc39a2$2cf5e570$86e1b050$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix connector status detection
- for bridges
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20251009193028.4952-1-heiko@sntech.de>
- <v6aqic6kffc3x42dkb4bika5tvoqdpmmloroqio2656g74pkws@7fe3bsfzbasn>
- <3572997.QJadu78ljV@diego>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <3572997.QJadu78ljV@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99cc49106703a3kunm83717e1fa8459
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGklOSlZPGUgZTkNMGh1DHU1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=VCOjjjWIpm8zpF9NqD0SP/ze5+hbIMIcSXoNvqOQfkmwmjkR5AcJwvXZDcLpheH0NZr8ZoT5Dlq8tfuxsW5qN4Y9ZRDF7m5Z1/TSpFCfjLJeqrJjzs7+YC0W2vMw+JhU2Ij7RyJydf4czuEd03Tx/NsyfP+Kir+EymCgdAoNXqk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=GjdmS7xtW1HFPjDkBq2hnFUV3l8gzHZMY6mZgqnMerE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHZnjCsweC3oVP5Ejv6M2pHGPEXvgKyFlopAbdTD1i0nLvhcA==
+Content-Language: en-us
+X-CMS-MailID: 20251010045601epcas5p29c5dc8d86df33b732d285b1ab7821bfd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336
+References: <CGME20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336@epcas5p2.samsung.com>
+	<20251009101911.2802433-1-faraz.ata@samsung.com>
+	<4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
 
-Hi,
+HI Krzysztof
 
-On 10/10/2025 7:42 AM, Heiko Stübner wrote:
-> Hi Dmitry,
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Thursday, October 9, 2025 3:43 PM
+> To: Faraz Ata <faraz.ata@samsung.com>; andi.shyti@kernel.org;
+> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> alim.akhtar@samsung.com
+> Cc: linux-i2c@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com
+> Subject: Re: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
+> exynosautov920-hsi2c compatible
 > 
-> Am Freitag, 10. Oktober 2025, 00:30:11 Mitteleuropäische Sommerzeit schrieb Dmitry Baryshkov:
->> On Thu, Oct 09, 2025 at 09:30:28PM +0200, Heiko Stuebner wrote:
->>> Right now if there is a next bridge attached to the analogix-dp controller
->>> the driver always assumes this bridge is connected to something, but this
->>> is of course not always true, as that bridge could also be a hotpluggable
->>> dp port for example.
->>>
->>> On the other hand, as stated in commit cb640b2ca546 ("drm/bridge: display-
->>> connector: don't set OP_DETECT for DisplayPorts"), "Detecting the monitor
->>> for DisplayPort targets is more complicated than just reading the HPD pin
->>> level" and we should be "letting the actual DP driver perform detection."
->>>
->>> So use drm_bridge_detect() to detect the next bridge's state but ignore
->>> that bridge if the analogix-dp is handling the hpd-gpio.
->>>
->>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->>> ---
->>> As this patch stands, it would go on top of v6 of Damon's bridge-connector
->>> work, but could very well be also integrated into one of the changes there.
->>>
->>> I don't know yet if my ordering and/or reasoning is the correct one or if
->>> a better handling could be done, but with that change I do get a nice
->>> hotplug behaviour on my rk3588-tiger-dp-carrier board, where the
->>> Analogix-DP ends in a full size DP port.
->>>
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++++--
->>>   1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> index c04b5829712b..cdc56e83b576 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> @@ -983,8 +983,12 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
->>>   	struct analogix_dp_device *dp = to_dp(bridge);
->>>   	enum drm_connector_status status = connector_status_disconnected;
->>>   
->>> -	if (dp->plat_data->next_bridge)
->>> -		return connector_status_connected;
->>> +	/*
->>> +	 * An optional next bridge should be in charge of detection the
->>> +	 * connection status, except if we manage a actual hpd gpio.
->>> +	 */
->>> +	if (dp->plat_data->next_bridge && !dp->hpd_gpiod)
->>> +		return drm_bridge_detect(dp->plat_data->next_bridge, connector);
-
-I have tried to use the drm_bridge_detect() API to do this as 
-simple-bridge driver, but it does not work well for bridges that do not 
-declare OP_DETECT.
-
-Take nxp-ptn3460 as an example, the connected status will be treated as 
-connector_status_unknown via the following call stack:
-
-drm_helper_probe_single_connector_modes()
-   -> drm_helper_probe_detect()
-      -> drm_bridge_connector_detect()
-         -> analogix_dp_bridge_detect()
-            -> drm_bridge_detect()
-               -> return connector_status_unknown due to !OP_DETECT
-
-However, the connected status will be connector_status_connected as 
-expected if Analogix DP does not declare OP_DETECT[0]:
-
-drm_helper_probe_single_connector_modes()
-   -> drm_helper_probe_detect()
-      -> drm_bridge_connector_detect()
-         -> return connector_status_connected due to CONNECTOR_LVDS
-
-Base on Andy's commit 5d156a9c3d5e ("drm/bridge: Pass down connector to 
-drm bridge detect hook"), the drm_connector becomes available in 
-drm_bridge_detect().
-
-It may be better to unify the logic of drm_bridge_detect() and 
-drm_bridge_connector_detect(), which sets the connected status according 
-to the connector_type. Then the codes will be more reasonable and become 
-similar to the simple-bridge demo via 
-'drm_bridge_detect(dp->plat_data->next_bridge, connector)'.
-
-But we still need a specific check for DP-connector to resolve this 
-issue. The '!dp->hpd_gpiod' may not be well-considered. Perhaps we could 
-introduce a new API, similar to drm_bridge_is_panel(), called 
-drm_bridge_is_display_connector()?
-
->>
->> And it's also not correct because the next bridge might be a retimer
->> with the bridge next to it being a one with the actual detection
->> capabilities. drm_bridge_connector solves that in a much better way. See
->> the series at [1]
->>
->> [1] https://lore.kernel.org/dri-devel/41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com/
+> On 09/10/2025 19:19, Faraz Ata wrote:
+> > Add "samsung,exynosautov920-hsi2c" dedicated compatible for HSI2C
+> > found in ExynosAutov920 SoC.
+> >
+> > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+> > ---
+> > Note: This patch was previously sent separately. Resending now as part
+> > of a two-patch series to avoid dt-binding check error. No functional
+> > changes from the earlier submission[1]
 > 
-> Hence my comment above about that possibly not being the right variant.
-> Sort of asking for direction :-) .
+> It's not necessary. You only need to provide lore link to bindings in patch
+> changelog. Read carefully report you received.
 > 
-> I am working on top of Damon's drm-bridge-connector series as noted above,
-> but it looks like the detect function still is called at does then stuff.
-> 
-> My board is the rk3588-tiger-displayport-carrier [0], with a dp-connector
-> which is the next bridge, so _without_ any changes, the analogix-dp
-> always assumes "something" is connected and I end up with
-> 
-> [    9.869198] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [    9.980422] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [   10.091522] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [   10.202419] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [   10.313651] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> 
-> when no display is connected.
-> 
-> With this change I do get the expected hotplug behaviour, so something is
-> missing still even with the bridge-connector series.
+> Also, do not resend non-fix patches during merge window. It's just noise.
+
+Thanks for your comment
+I will send v2 of dt patch with lore link to binding 
 > 
 > 
-> Heiko
-> 
-> 
-> [0] v3: https://lore.kernel.org/r/20250812083217.1064185-3-heiko@sntech.de
->      v4: https://lore.kernel.org/r/20251009225050.88192-3-heiko@sntech.de
->      (moved hpd-gpios from dp-connector back to analogix-dp per dp-connector
->      being not able to detect dp-monitors)
->>
->>>   
->>>   	if (!analogix_dp_detect_hpd(dp))
->>>   		status = connector_status_connected;
->>
->>
-> 
-> 
-
-I see... There is also a way to leave the connected status check in 
-Analogix DP bridge:
-
-1.If the later bridge does not support HPD function, the 'force-hpd' 
-property must be set under the DP DT node. The DT modifications may be
-large by this way.
-2.If the later bridge do support HPD function like the DP-connector, the
-connected status detection method is GPIO HPD or functional pin HPD.
-
-With the DT modifications for above 1, the analogix_dp_bridge_detect() 
-can be simplified to:
-
-static enum drm_connector_status
-analogix_dp_bridge_detect(struct drm_bridge *bridge, struct 
-drm_connector *connector)
-{
-	struct analogix_dp_device *dp = to_dp(bridge);
-	enum drm_connector_status status = connector_status_disconnected;
-
-	if (!analogix_dp_detect_hpd(dp))
-		status = connector_status_connected;
-
-	return status;
-}
-
-Best regards,
-Damon
-
-[0]https://lore.kernel.org/all/22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com/
+> Best regards,
+> Krzysztof
 
