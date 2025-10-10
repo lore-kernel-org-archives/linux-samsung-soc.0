@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E062F3C12;
-	Fri, 10 Oct 2025 12:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C91C5F27;
+	Fri, 10 Oct 2025 13:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100414; cv=none; b=YTlAYx9hC3iKM8xVYuS0fdBHb4KXptlVk0JUHU85uYECgR8Odjp4XXs+zgongPmp4jdmQ2hPlQUKmTf1HAzJMkkivLTD6XCrkbyVfecKP+M9dckb99Kc0NOhurdkMsax5QJBYOTWv/CrB2icSyhkCAENKdFJG8SjOQUiXoH1HeI=
+	t=1760101531; cv=none; b=QteLo74i0pLD/VzFWRSGylKXknxdL9HD/SHZsSvUkXPpUcaxpqJHvlChQ1UUmCv6zVepRg/mJehHh4oDhmvCHSF+GhwOfKizyxQKwAQDFNJVYYd1GS3IoL+hdcITPzOQnObNVIV4I108UrvFM2xqLD4RHBce3N0SmWt1O3BWPDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760100414; c=relaxed/simple;
-	bh=6J3MxmSorNdJ2bTS7zVr1jS464eqASj5QKaZksVmtBY=;
+	s=arc-20240116; t=1760101531; c=relaxed/simple;
+	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RqA7BGCoqGb7GLxO+HBrUxZR5oqA670QHKW11MaCUd3O9vXYavqF7bmASIbeDg5Qv8K/WFyofhPhJgqQDWpfdXvZWoGUMzC0jpf8+hdj2OsawELr5CmETKDMpay4Jr2adjNuQ8b0c7TTmZt6jw2SRVg8dZOfl5K0kfYXq1y3IjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wa2vD8sw; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=p5nZGE2lfCwds1eonaKarlPCy4a69SgTcKrv/7Uq5BUisQ5SrGIXqxB6/gh+07Qa4UHGstW/cxXTIOpEVYDi0X/hdtnpHHwrMz+w1fBlo7PTLObFrvtCGpPReVFXh79zxwzgRRde7s7F/WrJOl3hTaQmDqWRGikayDq/Jx6l5Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRCiNVm/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa2vD8sw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEB8C2BCB0;
-	Fri, 10 Oct 2025 12:46:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRCiNVm/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E597C4CEF1;
+	Fri, 10 Oct 2025 13:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760100413;
-	bh=6J3MxmSorNdJ2bTS7zVr1jS464eqASj5QKaZksVmtBY=;
+	s=k20201202; t=1760101530;
+	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wa2vD8swBO4bBks0FDuToy3ZwqHP8CeNOFpmciMCxs5rG/ptimIf64TKaTyBvrAi0
-	 p5hVtzYXGjE1av+KSbUxrk6WF24Nhc5zuXzLRg9oq6ArvKLGgmkpvELz+rG5kwMVeh
-	 X6H/OI3vqR6RptKAd4txYWOkrNZU4vogrZDTTfCuzjTu34yAI+BoM0A098CsDykIXX
-	 c8U+e61VvWgw3NiG08OLPsB2oeInxgWCEVXHLqwmMBtCBoWY9VbCBw0zDYK9dGaDkr
-	 n9h7EIInlXBWOw6nePMq8+9Fj8Kb/PjKR6Iqh57cakyZLY+HcUDRLevFLswmXZr4hT
-	 wwsnZrlamHitg==
-Message-ID: <9b1c2228-03c4-4eeb-8e8a-84b7756e8371@kernel.org>
-Date: Fri, 10 Oct 2025 14:46:47 +0200
+	b=fRCiNVm/3dF34ZzrUE+fvON/MgRL8ikYDRgTtPU9/UvueEfUu/zNhUZj35un78yc/
+	 F3og+IbYjn/0N2J/RQuvrTz85nnspTqKTzDoAcmY+pjHa61/1dGdL5IMheP+OO0YHx
+	 hvIl+2RS7kNnEY9Cv1rJ5/q7i97SsCaUvQROybd1pOc0+ImrZnVH1msl53wKXMNmnX
+	 JvjxQilFygro7QZcFTl9Ot+gsLtfQgLdISBfcTYTtru9F4We+yyoKQqfiCoDCvH6Th
+	 /k/L7Unq3lUY2YF6orKHwv9y9jkpbXrn8RLyT5GNIF8WglJ7AqRytp2w8IxMNWPF7n
+	 M4gDnXsmPHy8w==
+Message-ID: <d01ad1f7-dc46-4b9d-9823-9d69b1d2be54@kernel.org>
+Date: Fri, 10 Oct 2025 15:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,22 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov920: add mfc clock
- definitions
-To: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, conor+dt@kernel.org,
- sunyeal.hong@samsung.com, shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, chandan.vn@samsung.com,
- dev.tailor@samsung.com, karthik.sun@samsung.com
-References: <20250925130457.3476803-1-raghav.s@samsung.com>
- <CGME20250925125616epcas5p37346312c6a788a5398212f671d8a369d@epcas5p3.samsung.com>
- <20250925130457.3476803-2-raghav.s@samsung.com>
+Subject: Re: [PATCH v1 5/7] clk: s2mps11: add the support for S2MPS16 PMIC
+ clock
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,16 +96,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250925130457.3476803-2-raghav.s@samsung.com>
+In-Reply-To: <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/09/2025 15:04, Raghav Sharma wrote:
-> Add device tree clock binding definitions for CMU_MFC
+On 14/09/2025 14:42, Ivaylo Ivanov wrote:
+> Add the support for S2MPS16 PMIC clock, which is functionally the same
+> as the currently supported ones, with the exception of a different
+> register.
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  drivers/clk/clk-s2mps11.c | 8 ++++++++
 
-Wearing DT hat:
+This depends on mfd patch. Many maintainers would appreciate if you
+mention it also in the patch changelog (---), not only cover letter.
+
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
