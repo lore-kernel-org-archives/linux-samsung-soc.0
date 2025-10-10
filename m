@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75719748F;
-	Fri, 10 Oct 2025 12:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05C326FDA4;
+	Fri, 10 Oct 2025 12:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760099533; cv=none; b=A0FTQsjSUldBljigCv9KtZ5B6v+RRdYOQlXuQB4CncuXJxaUOhtu62vov1pxBBMI1zVxrsMR+XLlTggkaAjPIA6Z2UJEKU2U/G6ZTtlWtwS7sWugXrM47bZFSp/95WIRBCEqjn56KKiMdB3/JFfGRweccB2XpbKQeE7gXiv/isc=
+	t=1760099580; cv=none; b=AQlSkKpRh1FafRERxRY+N/5DW/pWmc0wgeFEDxGcgQnxhQXHu7eBlTo2RSUuCSCvlkGGxfp4Dskf7Fby2r3veH31CBmg7v96iKk2uJ9MaRrO4ms7c7tO1IQ/EHZWJv2pekyzqXBRz1fjcgC7epgapIoAluYOnUlkrkQG3YU3IEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760099533; c=relaxed/simple;
-	bh=h4IyewEJ2G0uOimKmF8vzglO/qOPNzWPmoP6feZDVys=;
+	s=arc-20240116; t=1760099580; c=relaxed/simple;
+	bh=+6EwSmp8+tZxqegQ5SmP2zhQSTfO9D3G5QM0x7pUY0k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tC/m6z2PQAoffXK/yCjL9bLlre56Bjib7TISP8As5hY36Bj7Ma9nC4hnzRQPHC/lvj1+paLBr86zOToYp0ekMG5LEsmIm5cq3HWuJ+dsilZSrgEqCsbABJP7YpjKG5qzesVBIQVmrY4eCz7a2YTLGfphiJbv/EQHLnCRQty7R4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q19Ci3d2; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=n293Z7vlTh+mTHjQaBIpblc0fT/fapJrd9zDLgVfrVhgPUJv2bvYAl59u5a6H8yu7G2AYwHej9494yBzGmTyHJBDRgwOl7+QD3GyO4az68sTu/2xy22Le3J+gggiXvygcdaVUcZKMqAIybOSh4YfeK1PFZbui1p30+hQes9E924=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CaUjPB5W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q19Ci3d2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F6BC4CEF1;
-	Fri, 10 Oct 2025 12:32:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CaUjPB5W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E26C4CEF1;
+	Fri, 10 Oct 2025 12:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760099533;
-	bh=h4IyewEJ2G0uOimKmF8vzglO/qOPNzWPmoP6feZDVys=;
+	s=k20201202; t=1760099580;
+	bh=+6EwSmp8+tZxqegQ5SmP2zhQSTfO9D3G5QM0x7pUY0k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q19Ci3d2MaEcf+nS1/+cA1pL/uwtGhQPvqaXqTUVaSP5AEbbFAWfh7RXlDC55W+zo
-	 AhWvnoQwwmsxbw+pxT1wmZLlBdujAR4vBmT9Rumq/TdMPWsUZEutopOY2kbwBJ/FYt
-	 C4Ox4GMUmV1JTUwWwvRGKUUl78u0VouG35IVgq5750bwwclmpRMwutiUv0TuGMiKCr
-	 oR8FHAQRsrTfiydM/kets4uzcFs9dRBiflBo8nBLoNvaWhjkmd5j1nfI2r7gWsFHBh
-	 bn8lP083x48PF3KHWhHG3VmY8ZWUI0xeic19/HdcIrbd/MMLM8Xh9zmeuUfjfBbB47
-	 KQnUBj5zia66w==
-Message-ID: <5bb3e836-9555-49bd-bd0c-a2649efe7db9@kernel.org>
-Date: Fri, 10 Oct 2025 14:32:05 +0200
+	b=CaUjPB5WTu5SaqnuuWOnCAHGjHJTO1mBA9lc5asIBrYMQGzNoIJAFp8bnk35oC6K3
+	 +/lcmPHNXF3utVxjcvlc/e2VTSurTKPqjvNAqFjmvxEEpf8KafxZdBFIXgFF2PIO5A
+	 MFPH8I+87NwEryCRzITUbOlaMiSlIolKL7VAMhlchUopjl1Az3aUnoF3n6WZVyL1ch
+	 IxEExuCsCItGXkbtkUHdVOdisLJhruUq48NGCFh6bSbXnvhKth9KyDQM3cEF7WazQK
+	 d+g2r9d7EFfhhu/hD4bxMsVJpolr6lszI8M/bXtYOCofTAJ6bYI0QmXdzFckd7Gtzm
+	 UP0yUpJOsWpEQ==
+Message-ID: <f5b4ed0f-85a8-4476-898e-0a13dcdc2c6e@kernel.org>
+Date: Fri, 10 Oct 2025 14:32:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: pinctrl: samsung: add exynos8890
- compatible
+Subject: Re: [PATCH v1] dt-bindings: pwm: samsung: add exynos8890 compatible
 To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+ Rob Herring <robh@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Conor Dooley <conor+dt@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250914114457.2610013-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914114457.2610013-2-ivo.ivanov.ivanov1@gmail.com>
+References: <20250914132033.2622886-1-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,16 +89,16 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250914114457.2610013-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250914132033.2622886-1-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/09/2025 13:44, Ivaylo Ivanov wrote:
-> Document the pinctrl compatible for the exynos8890 SoC. Let the
-> driver handle our clocks for pinctrl as well.
+On 14/09/2025 15:20, Ivaylo Ivanov wrote:
+> Add samsung,exynos8890-pwm compatible string to binding document.
 > 
 > Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > ---
+>  Documentation/devicetree/bindings/pwm/pwm-samsung.yaml | 1 +
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
