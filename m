@@ -1,167 +1,117 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2E61F0E32
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2025 00:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654661EF0B0;
+	Fri, 10 Oct 2025 02:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760056611; cv=none; b=OMDA3Kx6ZeuIeMs/4LlM0ilIB+YG/4wPdM7tK2s51eKrIvj6Nxkq7jsN3p39ajcGxL9V9bAQMt6mIIXRbLC2ETrCL4iNFLwyuEonjRCA3+PNnadOt2at0oUfl2BdGZEgWVpJskS2Wox/erZIeRRpbrdhSlZj8gULu2iw2TVmKBc=
+	t=1760061755; cv=none; b=I4d1VKqKVslc9xUhxsW5VDOjuSifqRwYNzNlrOJ+8+GYKpX0SKfrd0c7+XhB1rWJFI6bOoGNY6hFi9OsOZ6BJ7V0AbTv0hBGaUG+812iEkfEjtDENw3LvNnd9Ps0193wxOIqSZ7MU7BC4ncjVJofW2fegRhL8h/Wv0xL1IGFYB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760056611; c=relaxed/simple;
-	bh=VgIiVYfPPanTe5NtANzBkqzLHFkkV0yvS73sEK/bvBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tpsx90n9V6gpfkzudTY74+8AegG6sJnwK8P3e9LbzJ6qDwIhTF9jllx8mN2OTvt7oO39HyJK/iprgV+mjbTI1nxtRpZcnIA/1GrbV0CUwnvC1FFesPDaORn6tCYYIWAuEcCRQKAnGpaMlV5iZteMhY5AcG+87pHvd/B/LdGScaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rO42QQgp; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1760061755; c=relaxed/simple;
+	bh=/FJH5Vpkh52wcPrzkMVwtmP0OwkiIrTThiVP10A1rog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RIBdgk1lKbGeTQrkYCxgqlS/6cwlq9ExDUa7JhtYHEqjQIiPlJP5Zpeu8DwfX2FrZN9yHpMoZP40xwXm6hOf5Koc42cCbE322Qfrgo4bdA/3AQYCOmcenCX8K0mTQdL+Hi2w2s1OZQmrgNJ88rva+qZQAuWRahWvuqAtuo6Bk3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHC7gvou; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rO42QQgp"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-330a4d4359bso1329342a91.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2025 17:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760056607; x=1760661407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3uYueVCnhFig6wd4EAi1d6+7+lqgnd7MHxpQ+CybGP0=;
-        b=rO42QQgp+37nHbrYxbftDewtXDy7DpYyhJn24Vnh5sH8dXxBj8MCcr1jQhz+jMM09G
-         2N+ac3oN+pObcRF2xtEoHqFWero3qJYcZlIQGHzUucOlWhvyOwFelulTr5SmOeyhPRTs
-         tS2LAYmYr9i5bPdTuC9skNf9ptAVEEoXTdAmgnYNtcvqZrSAG/ca/s/c+MwEt/f4Ov/N
-         gY/SjQPSUMntvOrJm97k6so7VERolXVXUAbUBxryjhlA7m0YEO/S9mmgD9fVLbUNON1s
-         prew8aVnuHYdEq4hh3gGqskJOSRWdHBgRQxXbtYZOhJzlDOlDs9VEkhi48blczHoc4qa
-         VPzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760056607; x=1760661407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3uYueVCnhFig6wd4EAi1d6+7+lqgnd7MHxpQ+CybGP0=;
-        b=kr6Dtt5r+B1TkYnlCcDPduIkNUzfRbhurIMsjlPq9kMzxGsFfQaRvsTEBklysDDIin
-         nrGh9FTDye2LckXr3luCVh2zy1fD0Ak5Rggl5Klb33UAPXCjkszt/ElgBO2lRuHU+BY2
-         gYDGxPqUJwdZC2nlEaJMxexRr6Dw7ydVwlyqchyJnZ+FQd9Bjx3BQAwTn8l4N5lfzo7B
-         Ve2ccYll0C2oFir8UmXBz8IlVsxtUvs3ivUmht1p25Ol8IBg0LiShigVo9sFwB3ZQipK
-         IGtLywqQxVrpWwj/jRbHsOH7hVpqMlMdsSMlt6hFSE/BkVWQfPdOhdhj23tgPKaMZJRW
-         3RtA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/9S8FBj1Gv85rPI+SoEi5AS1r4/eaOpVV22+WsdwOq+X4pqYi4X1hILt6xBEO1XaY5cPvd4y74d2Ez5DBKDNrBA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxowoYtez972t6b4YLKzsAag3f7kl+e5F6dwEdFAm8yahkgvTYd
-	lRKfEsLGfP6QxgYFj9e6i1I+HWpDB8llcTDjoBX+MHbuIMaGhsX1fLesAWXnSN6WjAmY9QRWQFe
-	i3WlyEZMGmvEGQF1XgF6BRUvDqdcfOBgMnsSm8F9I
-X-Gm-Gg: ASbGnctiIyVKCg0ZJbO4zsoOxtlq4wiywNwo86SBr6/l6KZuRJMObLun/+gkTaeSlfZ
-	3OutLsaaHa6wju3lzs6L+iS1rsKfAzxrFtmzOGZtRe0Kp9jX3LKnZ2Utj8JX7ZyghI6uaLfKF3a
-	iRSdN71j7Dj5sbKfrdMgFVFtOV21dPULKYWoqI1Dh5jvw8KAvIyZSceeJaKrooxTLzaU2dLS8H3
-	PVg3yHiwi2nQ7PaP72I8GCzPl1Y5JCrVF76b70=
-X-Google-Smtp-Source: AGHT+IGKjXjPSXyUWNxjvvey/PIj1qEWv3CW3/XJrVZRUI28DQ4Y1brYwXDEUls30Lbe70Hr5PouwmW4vqkFNVZptJA=
-X-Received: by 2002:a17:90b:1c0a:b0:32d:e75a:5009 with SMTP id
- 98e67ed59e1d1-33b5114d4f2mr13047772a91.1.1760056606410; Thu, 09 Oct 2025
- 17:36:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHC7gvou"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699A1C4CEE7;
+	Fri, 10 Oct 2025 02:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760061755;
+	bh=/FJH5Vpkh52wcPrzkMVwtmP0OwkiIrTThiVP10A1rog=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=jHC7gvou25hLkuFkaYMvrSDcsTsOOuX2swQ0g+a61BPmUTAcrgSfElEtfNqjdmfMY
+	 y4gpfwakVAU7B/sVavKKAOMdUrp7UK82S2xwfp2wcs3LO5MqL4Cz+KthkT2/iNQNVz
+	 Am0ltYCrwDrAbFQy+YnZoNwwwtlHPRqI+yeSlx1Xobhcmp4MqSskfe4Y5xBxWfonyo
+	 f5aDkIX3//GuEg4MUDmQ2gdE2E2fYOr5FXiwtpU9STt5Sca4n1wEItvYNlq+N/lSFV
+	 zitKHfCrASOOprtFjenQwd9QTTlaJKtCqm2IZ+Rr5trfiOZMDKv6ZFD5TUIBnbUjuO
+	 RcaeHY/9urQbQ==
+Message-ID: <3a960143-ad3e-4c3a-88a7-48e69576caed@kernel.org>
+Date: Fri, 10 Oct 2025 04:02:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008060000.3136021-1-royluo@google.com> <20251008060000.3136021-2-royluo@google.com>
- <20251008-slider-uncombed-66790ea92ea0@spud> <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
- <20251009-lizard-slapstick-4de7dfe2322d@spud>
-In-Reply-To: <20251009-lizard-slapstick-4de7dfe2322d@spud>
-From: Roy Luo <royluo@google.com>
-Date: Thu, 9 Oct 2025 17:36:09 -0700
-X-Gm-Features: AS18NWDGN42gjmrB8C6_VuH2yevkuUM_X9h5rPKcbGr2ZgBfcB7UAfagMIfSoXY
-Message-ID: <CA+zupgwAXQEuhZUqbjxOC+9HbRG3SQ-_fhEX-49NpfCgqO4BZA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Conor Dooley <conor@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] clk: samsung: exynos5420: Add support for power
+ control registers
+To: Anand Moon <linux.amoon@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,
+ "open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250909180652.7130-1-linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250909180652.7130-1-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 9, 2025 at 10:13=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Wed, Oct 08, 2025 at 09:40:57PM -0700, Roy Luo wrote:
-> > On Wed, Oct 8, 2025 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
-> > >
-> > > On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
->
-> > > > +allOf:
-> > > > +  - $ref: snps,dwc3-common.yaml#
-> > > > +
-> > > > +unevaluatedProperties: false
-> > >
-> > > So every property from snps,dwc3-common.yaml is valid here, with any =
-of
-> > > the permitted values?
-> >
-> > Conor,
-> >
-> > Appreciate the review.
-> > Ack to all the comments, will fix them in the next patch.
-> > And yes, every property from snps,dwc3-common.yaml is valid here.
-> > You can find more context here [1], essentially the dwc3 glue would be
-> > operating on the same platform device as the dwc3 core, hence all
-> > properties are allowed.
-> >
-> > [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722=
-d@oss.qualcomm.com/
->
-> I find it exceedingly hard to believe that every property from that
-> file, with every permitted value, is possible. AFAIU, the tensor g5 is a
-> phone chip that's only used in pixel devices, not something that people
-> can just buy and integrate into whatever device they feel like. There
-> should be a vanishingly small number of possible configurations,
-> possibly exactly one configuration. There are dozens of properties in
-> the dwc3 common binding, of which at least 10 are for "quirks" or other
-> sorts of hardware errata that are not going to be variable from one
-> phone to another.
+On 09/09/2025 20:06, Anand Moon wrote:
+> As per the Exynos5422 user manual, settings for the PWR_CTRL, PWR_CTRL2,
+> PWR_CTRL_KFC, and PWR_CNTL_KFC registers manage ARM clock down and up
+> configurations for idle and standby states.
+> 
+> The Exynos5422's dynamic clock frequency down feature enables automatic
+> clock down when all CPU cores are in Wait For Event (WFE) or
+> Wait For Interrupt (WFI) states, utilizing this feature in standby
+> configurations.
+> 
+> These modifications enhance the power management capabilities of the
+> Exynos542x by providing finer control over the ARM clock behavior in
+> various states.
 
-To my knowledge, the properties in snps,dwc3-common.yaml can generally
-be categorized into two types:
-- Function knobs: These properties translate directly to register writes th=
-at
-  modify the controller's fundamental behavior. Most quirks fall into this
-  category. For example, "snps,gfladj-refclk-lpm-sel-quirk" enables SOF cou=
-nter.
-- Tunable Values: These properties also map to register writes to influence
-  hardware behavior, but they typically adjust performance or interoperabil=
-ity
-  rather than essential function. While the hardware usually works fine wit=
-h
-  default settings, these values allow for optimization. For example,
-  "tx-fifo-max-num" usually affects data throughput.
+This seems reasonable, but I need more detailed tests and Tested-by.
 
-For DWC3 hardware errata and workarounds, my understanding is that they
-are typically handled within the dwc3 driver, often involving a DWC3 revisi=
-on
-check (e.g. [1]), instead of in the device tree binding. While you may find
-properties related to errata, they generally serve to enable or disable an
-existing workaround (e.g. [2]).
-
-For Pixel devices, it's shipped with a preferred configuration, but the har=
-dware
-is fundamentally capable of supporting other configurations since the prope=
-rties
-are backed by the SNPS DWC3 IP. Whether that's optimal is a different story=
-.
-I haven't tried toggling every single property but I'm not aware of any pro=
-perty
-that obviously does not work on Tensor G5.
-
-I hope this addresses your concern.
-
-[1] https://github.com/torvalds/linux/commit/32a4a135847b1e600c64756b7c7c7a=
-91eb2f0aa9
-    (sorry I'm unable to find the kernel lore link for this commit)
-[2] https://lore.kernel.org/all/1509455515-5992-1-git-send-email-rogerq@ti.=
-com/
-
-Regards,
-Roy Luo
+Best regards,
+Krzysztof
