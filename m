@@ -1,268 +1,169 @@
-Received: from mail-m3286.qiye.163.com (mail-m3286.qiye.163.com [220.197.32.86])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B595FC1D;
-	Sat, 11 Oct 2025 02:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238631DF963;
+	Sat, 11 Oct 2025 03:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760150893; cv=none; b=FA10dE/DbQh1cgFlcXJsxSaBg9FvnJZOEWuNYuT+4HNMtfL9yWWYsVWnGNPAGMaf6S5sbcIE3NOSze5UygU5i80ONT7Lzp3Bn7OvBTfmxt3lX6ZFHGFXzv+4Q+OkPOD9Zmqrbxsicr5fvtrWNrdHnpkUkLAnFyHJry3A1wQmt0w=
+	t=1760154012; cv=none; b=mzCtvqOHLmQKULytC5hg9szHiWJrmEHtfExuyYDK4iGFOeFdYq1dw1sKIhxEMdFog+J8IeKjtO3BL6XwCSnnrwoV3X2F9cTOPI7OdXX4ONqO426vN+/ilfiBTEQnTMkGwzUxwDKsaxZbcA09X8iMqHUXz7nABB+Mh85faZNOVw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760150893; c=relaxed/simple;
-	bh=+ifMZr+ucvA6khS9N1drX3IJfpnWmR2QC6L0hEyCs5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0/t3UrEiW+PBSs3SNjZZkylwn0kLr5l+d344X3oEDQLMSWFSxKNFQU36uE0Dlm8yDmnH+bJt0TASEyuQHUKkt0D4GW2T/VlvmsAxU8yn8lQ5vngo608f3ns/ZqmOduTRQmUd5H5hiTIOu1kY9Jey/GCggyYF2XapJ+fDoFTOxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S2D9oCYG; arc=none smtp.client-ip=220.197.32.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1760154012; c=relaxed/simple;
+	bh=p/Sw6hsNG/Asjp0JRAo06u1WUs6i3eDXjAUi4btbFE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cmhR5gkkHnC9TDJkqxG4Z8Fatoh95IyBQtL59QcDPWG49+Nm/xVIDTyqKCa6c5QHmC02RXjnTqjZXKbEOY8cII3Lb89BrRdceKCQDZsy3P5aE8rRzeImdWylSZYrGuvzzS/cS82oNasmhpgxDladEixDS70LtmZsIRjOUcLVuv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d3lxvNWI; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S2D9oCYG"
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2583d42b4;
-	Sat, 11 Oct 2025 10:47:59 +0800 (GMT+08:00)
-Message-ID: <7d13fd2a-090e-4a58-b862-050f9ee4ff43@rock-chips.com>
-Date: Sat, 11 Oct 2025 10:47:59 +0800
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d3lxvNWI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760154012; x=1791690012;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=p/Sw6hsNG/Asjp0JRAo06u1WUs6i3eDXjAUi4btbFE4=;
+  b=d3lxvNWI85fwFg1oPznrC2VJeL2c1YqhGLuGgKOcppIVC/tCZwxT0R2b
+   p14OnxYM3SmFr8vkN9IuFaFNemw1Hkg8bycM2AOMeXF4VWAhR4lwqhYBW
+   rQvhRyzdrXPXAiThwgmXmQ40Gf3NdoTHmqgfLB3Ih/p4mFesPOHueVksU
+   1EOuW25HOXqSRENHPcmA2LFGyepqdrBOthq4IK6sv0jk4em6+iJQj+NmA
+   E2nXKJ5QC/TTB7N1burHZHOJiJ+mn3/DpL8W+EdANzPWBf8hEorPON6Em
+   cIWdqmSnr2p5cotoZ5NPT15tk97WE9VyZ2ObLfZHmPBr90CHpXBC5H3q4
+   Q==;
+X-CSE-ConnectionGUID: LXDx0pBURa2rrXlvENz4UQ==
+X-CSE-MsgGUID: 6pILyeEkQ+idl1n3WfkaXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="73476873"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="73476873"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:40:11 -0700
+X-CSE-ConnectionGUID: SsZEgcbATqSz7rgWvti7/A==
+X-CSE-MsgGUID: oc8A357CSaCUSoyqDnPI5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="180236749"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2025 20:40:06 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7QSh-0003UX-1s;
+	Sat, 11 Oct 2025 03:40:03 +0000
+Date: Sat, 11 Oct 2025 11:39:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] usb: dwc3: Add Google SoC DWC3 glue driver
+Message-ID: <202510111335.oyOAs9MB-lkp@intel.com>
+References: <20251006232125.1833979-2-royluo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix connector status detection
- for bridges
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20251009193028.4952-1-heiko@sntech.de>
- <v6aqic6kffc3x42dkb4bika5tvoqdpmmloroqio2656g74pkws@7fe3bsfzbasn>
- <3572997.QJadu78ljV@diego>
- <b47c5579-511e-4831-b86e-48ad4cefaa6c@rock-chips.com>
- <wzeleliof47ogogxqrlwswfbnvummoydtegpgwf463k5ve3uue@tpemjilgagpl>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <wzeleliof47ogogxqrlwswfbnvummoydtegpgwf463k5ve3uue@tpemjilgagpl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99d12afe2403a3kunme96870ed1c85ea
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxhIS1ZNHkhLSkJCGENMTktWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=S2D9oCYGGbu2NFv47nBijW+b2It8nOu6OPjaH0bEfyhlxOv+fJGk/cQhEwTpaHzqJyTcEV1rWfwCi0Sfw5mc0qO/An7Y9c7nxNr0uYxbYU9S/HymPkvmjU+kMYcpDK4CqElV0eE5rEwlrO8whFuUmzZUPiyuJ1+h0mJDd/3h5DM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=5+ihUYu0S1qJ7LbunOf2GjCHQGLK8SqoKsSPOioSnbk=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006232125.1833979-2-royluo@google.com>
 
-Hi Dmitry,
+Hi Roy,
 
-On 10/10/2025 8:43 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 10, 2025 at 12:02:43PM +0800, Damon Ding wrote:
->> Hi,
->>
->> On 10/10/2025 7:42 AM, Heiko Stübner wrote:
->>> Hi Dmitry,
->>>
->>> Am Freitag, 10. Oktober 2025, 00:30:11 Mitteleuropäische Sommerzeit schrieb Dmitry Baryshkov:
->>>> On Thu, Oct 09, 2025 at 09:30:28PM +0200, Heiko Stuebner wrote:
->>>>> Right now if there is a next bridge attached to the analogix-dp controller
->>>>> the driver always assumes this bridge is connected to something, but this
->>>>> is of course not always true, as that bridge could also be a hotpluggable
->>>>> dp port for example.
->>>>>
->>>>> On the other hand, as stated in commit cb640b2ca546 ("drm/bridge: display-
->>>>> connector: don't set OP_DETECT for DisplayPorts"), "Detecting the monitor
->>>>> for DisplayPort targets is more complicated than just reading the HPD pin
->>>>> level" and we should be "letting the actual DP driver perform detection."
->>>>>
->>>>> So use drm_bridge_detect() to detect the next bridge's state but ignore
->>>>> that bridge if the analogix-dp is handling the hpd-gpio.
->>>>>
->>>>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->>>>> ---
->>>>> As this patch stands, it would go on top of v6 of Damon's bridge-connector
->>>>> work, but could very well be also integrated into one of the changes there.
->>>>>
->>>>> I don't know yet if my ordering and/or reasoning is the correct one or if
->>>>> a better handling could be done, but with that change I do get a nice
->>>>> hotplug behaviour on my rk3588-tiger-dp-carrier board, where the
->>>>> Analogix-DP ends in a full size DP port.
->>>>>
->>>>>    drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++++--
->>>>>    1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>>> index c04b5829712b..cdc56e83b576 100644
->>>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>>> @@ -983,8 +983,12 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
->>>>>    	struct analogix_dp_device *dp = to_dp(bridge);
->>>>>    	enum drm_connector_status status = connector_status_disconnected;
->>>>> -	if (dp->plat_data->next_bridge)
->>>>> -		return connector_status_connected;
->>>>> +	/*
->>>>> +	 * An optional next bridge should be in charge of detection the
->>>>> +	 * connection status, except if we manage a actual hpd gpio.
->>>>> +	 */
->>>>> +	if (dp->plat_data->next_bridge && !dp->hpd_gpiod)
->>>>> +		return drm_bridge_detect(dp->plat_data->next_bridge, connector);
->>
->> I have tried to use the drm_bridge_detect() API to do this as simple-bridge
->> driver, but it does not work well for bridges that do not declare OP_DETECT.
->>
->> Take nxp-ptn3460 as an example, the connected status will be treated as
->> connector_status_unknown via the following call stack:
->>
->> drm_helper_probe_single_connector_modes()
->>    -> drm_helper_probe_detect()
->>       -> drm_bridge_connector_detect()
->>          -> analogix_dp_bridge_detect()
->>             -> drm_bridge_detect()
->>                -> return connector_status_unknown due to !OP_DETECT
->>
->> However, the connected status will be connector_status_connected as expected
->> if Analogix DP does not declare OP_DETECT[0]:
->>
->> drm_helper_probe_single_connector_modes()
->>    -> drm_helper_probe_detect()
->>       -> drm_bridge_connector_detect()
->>          -> return connector_status_connected due to CONNECTOR_LVDS
->>
->> Base on Andy's commit 5d156a9c3d5e ("drm/bridge: Pass down connector to drm
->> bridge detect hook"), the drm_connector becomes available in
->> drm_bridge_detect().
->>
->> It may be better to unify the logic of drm_bridge_detect() and
->> drm_bridge_connector_detect(), which sets the connected status according to
->> the connector_type. Then the codes will be more reasonable and become
->> similar to the simple-bridge demo via
->> 'drm_bridge_detect(dp->plat_data->next_bridge, connector)'.
-> 
-> I'm not sure, what you are trying to achieve here. The
-> drm_bridge_connector should handle the OP_DETECT and use the last bridge
-> in the chain that supports detection.
-> 
-> Note: OP_HPD and OP_DETECT are not that tightly connected, especially
-> for DP bridges. It is fine to have a later bridge which generates HPD
-> events, while Analogix DP bridge responds to .hpd_notify() events and
-> performs its duties.
-> 
-> For example, it's perfectly fine to have dp-connector with the HPD GPIO
-> pin routed to the connector (in which case it will declare OP_HPD). But
-> the Analogix bridge should perform actual detection. Normally this is
-> handled by reading DPCD and ensuring that there is an actual connected
-> device (i.e. either a non-branch device or a branch with at least 1
-> sink).
-> 
+kernel test robot noticed the following build warnings:
 
-I see. Your kind explanation helped me understand OP_HPD and OP_DETECT 
-better.
+[auto build test WARNING on e5f0a698b34ed76002dc5cff3804a61c80233a7a]
 
-Back to Heiko's issue, the v3, in which dp-connector declares OP_HPD, 
-should be better (refers to arm64/qcom/qcs6490-rb3gen2 and 
-arm64/qcom/sa8295p-adp). And the .hpd_notify() of Analogix DP bridge 
-will be supported in the future if something needs to be handle with the 
-HPD status changes (refers to driver drivers/gpu/drm/msm/dp/dp_display.c).
+url:    https://github.com/intel-lab-lkp/linux/commits/Roy-Luo/usb-dwc3-Add-Google-SoC-DWC3-glue-driver/20251010-092651
+base:   e5f0a698b34ed76002dc5cff3804a61c80233a7a
+patch link:    https://lore.kernel.org/r/20251006232125.1833979-2-royluo%40google.com
+patch subject: [PATCH v1 1/4] usb: dwc3: Add Google SoC DWC3 glue driver
+config: s390-randconfig-002-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111335.oyOAs9MB-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111335.oyOAs9MB-lkp@intel.com/reproduce)
 
-Additionally, I will keep analogix_dp_bridge_detect() the same as before.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510111335.oyOAs9MB-lkp@intel.com/
 
->>
->> But we still need a specific check for DP-connector to resolve this issue.
->> The '!dp->hpd_gpiod' may not be well-considered. Perhaps we could introduce
->> a new API, similar to drm_bridge_is_panel(), called
->> drm_bridge_is_display_connector()?
->>
->>>>
->>>> And it's also not correct because the next bridge might be a retimer
->>>> with the bridge next to it being a one with the actual detection
->>>> capabilities. drm_bridge_connector solves that in a much better way. See
->>>> the series at [1]
->>>>
->>>> [1] https://lore.kernel.org/dri-devel/41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com/
->>>
->>> Hence my comment above about that possibly not being the right variant.
->>> Sort of asking for direction :-) .
->>>
->>> I am working on top of Damon's drm-bridge-connector series as noted above,
->>> but it looks like the detect function still is called at does then stuff.
->>>
->>> My board is the rk3588-tiger-displayport-carrier [0], with a dp-connector
->>> which is the next bridge, so _without_ any changes, the analogix-dp
->>> always assumes "something" is connected and I end up with
->>>
->>> [    9.869198] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
->>> [    9.980422] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
->>> [   10.091522] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
->>> [   10.202419] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
->>> [   10.313651] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
->>>
->>> when no display is connected.
->>>
->>> With this change I do get the expected hotplug behaviour, so something is
->>> missing still even with the bridge-connector series.
->>>
->>>
->>> Heiko
->>>
->>>
->>> [0] v3: https://lore.kernel.org/r/20250812083217.1064185-3-heiko@sntech.de
->>>       v4: https://lore.kernel.org/r/20251009225050.88192-3-heiko@sntech.de
->>>       (moved hpd-gpios from dp-connector back to analogix-dp per dp-connector
->>>       being not able to detect dp-monitors)
->>>>
->>>>>    	if (!analogix_dp_detect_hpd(dp))
->>>>>    		status = connector_status_connected;
->>>>
->>>>
->>>
->>>
->>
->> I see... There is also a way to leave the connected status check in Analogix
->> DP bridge:
->>
->> 1.If the later bridge does not support HPD function, the 'force-hpd'
->> property must be set under the DP DT node. The DT modifications may be
->> large by this way.
-> 
-> Well... The drivers should continue to work with old DTs, if they did so
-> before.
-> 
->> 2.If the later bridge do support HPD function like the DP-connector, the
->> connected status detection method is GPIO HPD or functional pin HPD.
-> 
-> dp-connector should set OP_HPD
-> analogix-dp should set OP_DETECT
-> 
+All warnings (new ones prefixed by >>):
 
-Got it.
+>> drivers/usb/dwc3/dwc3-google.c:467:12: warning: 'dwc3_google_resume' defined but not used [-Wunused-function]
+     467 | static int dwc3_google_resume(struct dwc3_google *google, pm_message_t msg)
+         |            ^~~~~~~~~~~~~~~~~~
+>> drivers/usb/dwc3/dwc3-google.c:441:12: warning: 'dwc3_google_suspend' defined but not used [-Wunused-function]
+     441 | static int dwc3_google_suspend(struct dwc3_google *google, pm_message_t msg)
+         |            ^~~~~~~~~~~~~~~~~~~
 
->>
->> With the DT modifications for above 1, the analogix_dp_bridge_detect() can
->> be simplified to:
->>
->> static enum drm_connector_status
->> analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector
->> *connector)
->> {
->> 	struct analogix_dp_device *dp = to_dp(bridge);
->> 	enum drm_connector_status status = connector_status_disconnected;
->>
->> 	if (!analogix_dp_detect_hpd(dp))
->> 		status = connector_status_connected;
->>
->> 	return status;
->> }
->>
->> Best regards,
->> Damon
->>
->> [0]https://lore.kernel.org/all/22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com/
->>
-> 
 
-Best regards,
-Damon
+vim +/dwc3_google_resume +467 drivers/usb/dwc3/dwc3-google.c
 
+   440	
+ > 441	static int dwc3_google_suspend(struct dwc3_google *google, pm_message_t msg)
+   442	{
+   443		if (pm_runtime_suspended(google->dev))
+   444			return 0;
+   445	
+   446		if (google->dwc.current_dr_role == DWC3_GCTL_PRTCAP_HOST) {
+   447			/*
+   448			 * Follow dwc3_suspend_common() guidelines for deciding between
+   449			 * a full teardown and hibernation.
+   450			 */
+   451			if (PMSG_IS_AUTO(msg) || device_may_wakeup(google->dev)) {
+   452				dev_dbg(google->dev, "enter hibernation");
+   453				pm_runtime_get_sync(google->usb_top_pd);
+   454				device_wakeup_enable(google->usb_top_pd);
+   455				dwc3_google_enable_pme_irq(google);
+   456				google->is_hibernation = true;
+   457				return 0;
+   458			}
+   459		}
+   460	
+   461		reset_control_bulk_assert(google->num_rsts, google->rsts);
+   462		clk_bulk_disable_unprepare(google->num_clks, google->clks);
+   463	
+   464		return 0;
+   465	}
+   466	
+ > 467	static int dwc3_google_resume(struct dwc3_google *google, pm_message_t msg)
+   468	{
+   469		int ret;
+   470	
+   471		if (google->is_hibernation) {
+   472			dev_dbg(google->dev, "exit hibernation");
+   473			dwc3_google_disable_pme_irq(google);
+   474			device_wakeup_disable(google->usb_top_pd);
+   475			pm_runtime_put_sync(google->usb_top_pd);
+   476			google->is_hibernation = false;
+   477			return 0;
+   478		}
+   479	
+   480		ret = clk_bulk_prepare_enable(google->num_clks, google->clks);
+   481		if (ret)
+   482			return ret;
+   483	
+   484		ret = reset_control_bulk_deassert(google->num_rsts, google->rsts);
+   485		if (ret) {
+   486			clk_bulk_disable_unprepare(google->num_clks, google->clks);
+   487			return ret;
+   488		}
+   489	
+   490		return 0;
+   491	}
+   492	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
