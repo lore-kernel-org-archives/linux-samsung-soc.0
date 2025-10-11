@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D1129408;
-	Sat, 11 Oct 2025 00:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B793C2F;
+	Sat, 11 Oct 2025 00:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760141469; cv=none; b=PHz4TksfaUZX/eo6p2k5LhegA0Uz17WUbstOmVrayvqZhyE4bmJ/Y87euaJ7+GAF08GrpE1BJHdBmwFbc8zRdZ+miGGZ4xJtC/hMeGvJoT6Ui5zdPgSIfwOSBfdIkAOZ2vo3Vo8R5uhyjOeXlkJpCrTOCvjCQ+UjJzEH7GgRJqk=
+	t=1760141983; cv=none; b=drHV/pTtfByzaA7CVMSPrZN12grd30gL6pZYCM7pLWHyNsOKNMvW0DXk8H+PLx+GSO+gMj3UFheEypvh+p8Ie4jPECN9cpDkROxDmYqwpyU5+st43URr4bY+xG+xHYuq6BRgSbwgDFw1bCx5FH7I6pMLPoEwofiGCggSuOe0PzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760141469; c=relaxed/simple;
-	bh=PTZ7z5rFBEl2/QXVABRVVG+x/hnQk/3BWqNmlYNQWU0=;
+	s=arc-20240116; t=1760141983; c=relaxed/simple;
+	bh=OpLhmXy9ETBYlkFfaP2AkWUxtrwDNjuuRfMcM0Wl5M0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c8+QvvaZzxWansOeRn4THkG3R8kJlxevzUzIFZwww5E91xX9IlewvgpOxvahlORfMJFGQU/XDnjTmToQl9ffJnzL+holp1wW4772dDSRuroAW6vR8DJQ1VBAvQ3ehBMmm9mQ74DHtaZ8wX9eS+ghKg627K6F/vW3DY+PB85qguA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxfNSz1M; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HWnF0NKBjTPYBbVUeDqfRzV9ourg0Td5+NiMmNaYdjNi45FZiFBGkP079Vrr8OhmPstxXZD8cu0HovCFO40uc9sH9ISV6RevhQO2JrpkqKadSZ+dPd2k3zCKRDtR8khY1Jo1LxPkvvAXEWU8LU/+cJGMizieUdoV5pVxNnLNGaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndy49n1f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxfNSz1M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FF8C4CEF1;
-	Sat, 11 Oct 2025 00:11:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndy49n1f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE6A5C4CEF1;
+	Sat, 11 Oct 2025 00:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760141468;
-	bh=PTZ7z5rFBEl2/QXVABRVVG+x/hnQk/3BWqNmlYNQWU0=;
+	s=k20201202; t=1760141983;
+	bh=OpLhmXy9ETBYlkFfaP2AkWUxtrwDNjuuRfMcM0Wl5M0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CxfNSz1Mwm/dDZDOCfVVLjauOb3Kpa+ysqqhFneuLCIs6lx5Ysi9Z0+J5Yt/vuY/V
-	 r8ZRdwOrYEHn1vv5tbyVIepu8G2WVtr/3qjgxq5Ftl6nip1elpALDf/91Wzsz+tIUt
-	 xul5p6wiPpPH93mBd5sy8Ni817ogzglw4/iP0NUZt+XB8ZhwPkupo0Vinn73p7QE8f
-	 3TkCAhuCwWRMfdqYUyC5XTzVrwn2jAIELx4OV4x+Z6tSxObbj6FwQ7sUGKTK9N3Vsd
-	 mRtWtwuGvfJPO3WJGJLStnlRw3Myo+3o+e3INWD2gEcwnWQEkSHGvhGSSn1OV0Ue19
-	 UQut4jnbu8KGw==
-Message-ID: <75756635-b374-4441-8526-175210e01163@kernel.org>
-Date: Sat, 11 Oct 2025 02:10:58 +0200
+	b=ndy49n1fTS5dtLS6EQkGfiWA0cKIoAxNnLQuyZKXxd6/zrblB2ErzzpjGenCvpOmJ
+	 DPZPzkGcPeaBA8rmhN1ZEjXeO43rL6B6g4NQnr4FI+MmegC/uBM9Nd70ttRolF01c6
+	 NiFyo/DBD4rkygjx8fCia1w36/oB6HIuDjvRdCXC9cLMGJk7v7cjdgYTBTybBeowVp
+	 Ub32rx77O5S4H04IsKsYlp1R2LPO22SF1VihXUtjZ+jNaaCgLfiNS/+09PsPukchUO
+	 V7vpvIfH955isAx6Bzm3EVpsMMIkb9Sv4Y8P1SG32Z3JIVBsXFH3HZ9ruumSGvTT6D
+	 z1ZwDA5jqOtKA==
+Message-ID: <d99d7b54-88af-4649-84c2-02027b4d9655@kernel.org>
+Date: Sat, 11 Oct 2025 02:19:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,24 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251010201607.1190967-1-royluo@google.com>
- <20251010201607.1190967-4-royluo@google.com>
+Subject: Re: [PATCH v9 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, johan@kernel.org, ivo.ivanov.ivanov1@gmail.com,
+ m.szyprowski@samsung.com, s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20251010070912.3758334-1-pritam.sutar@samsung.com>
+ <CGME20251010070101epcas5p1be06087e5511f4a3fc387b232e0353b5@epcas5p1.samsung.com>
+ <20251010070912.3758334-6-pritam.sutar@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,80 +95,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251010201607.1190967-4-royluo@google.com>
+In-Reply-To: <20251010070912.3758334-6-pritam.sutar@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/10/2025 22:16, Roy Luo wrote:
-> +  reg:
-> +    items:
-> +      - description: USB2 PHY configuration registers.
-> +      - description: DisplayPort top-level registers.
-> +      - description: USB top-level configuration registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: u2phy_cfg
-> +      - const: dp_top
-> +      - const: usb_top_cfg
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  orientation-switch:
-> +    type: boolean
-> +    description:
-> +      Indicates the PHY as a handler of USB Type-C orientation changes
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - "#phy-cells"
-> +  - clocks
-> +  - resets
-> +  - power-domains
-> +  - orientation-switch
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        usb_phy: usb_phy@c410000 {
-> +            compatible = "google,gs5-usb-phy";
-> +            reg = <0 0x0c450014 0 0xc>,
-> +                  <0 0x0c637000 0 0xa0>,
+On 10/10/2025 09:09, Pritam Manohar Sutar wrote:
+> The USBDRD31 5nm controller consists of Synopsys USB20 femptoPhy and
+> USB31 SSP+ combophy. Document support for the USB31 SSP+ phy found on
+> combophy of the ExynosAutov920 SoC.
+> 
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> ---
 
-You probably miss DP support and this does not belong here.
-
-> +                  <0 0x0c45002c 0 0x4>;
-
-That's not a separate address space. I really, really doubt that
-hardware engineers came with address spaces of one word long.
-
-> +            reg-names = "u2phy_cfg", "dp_top", "usb_top_cfg";
-> +            #phy-cells = <1>;
-> +            clocks = <&hsion_usb2_phy_reset_clk>;
-> +            resets = <&hsion_resets_usb2_phy>;
-> +            power-domains = <&hsio_n_usb_pd>;
-> +            orientation-switch;
-> +        };
-> +    };
-> +...
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
