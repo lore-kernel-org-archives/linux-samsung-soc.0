@@ -1,63 +1,64 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AAF257828
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F1625DCE0
 	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364895; cv=none; b=ixoLBVvbPr6nn3yVynY1ib0pM+/wH1kFFeJt3KL7bctx1WI1PtPf0WLvmj9JQUyP2ZR+syacjNiRbBXvDNdqP3ETNFInjKC53I/8TgpG0YB31tKUWg1pnCahYafJfLYq+K17mNqrUXRpKKXO2txa6Zyj83Bfu4hYudg75sJT3Yw=
+	t=1760364896; cv=none; b=ujrzgTzuhj+A2+3KvvIwJycGyDlt9XBCJctPQidqHTy5GTSBVh4RgssZYvY9jfEMt7wKrpgkWL6u5XQAcyqm+a7DZ1G2MQq36ki0oaZvmWh8epSgSkvzJ4h8OGhgoBdU6/B7QZbS5GnvmucQDbNdCsFdD3aU2jBPmOjV3lTaiSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364895; c=relaxed/simple;
-	bh=xM6+M/SyFflYknH7dftgYleR+CqneUH3h+wd93U33vM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PiLM0C7pk0sfdo6aV1Dt1U3rJSXGIO8J91FGgFAP2s0lkt2pIrykj7bDfQ9QgBO2CDifte1FIz9cxvr9WszDLG7XU5omJUOAYwU+G2K4BdQYQWPd0/FtmR5OR+a8zay5fRuj2OH99BQ+TKOgrTxdRDJAXxbco9KNSKu8Ra5BGRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GyzHZvp1; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1760364896; c=relaxed/simple;
+	bh=zXe/wxZ6QqQI33wXbnF9l5/N0aHMRBU3Aplzl5QTEmE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qFC5O5FGFoGrfM8ZFQkXF9vSqbpYGyZ4XB3yoUhqse4efVtZ+E4iU7j3hJ20Vu378zIL+Fx+ZQtXbFOTn81ZVDxSQ8jCTIt0Fp6qcLu97A99TRnazFj0YFKShLPBKJcjBgCXjnHXbV9vP/1nHPCyRnh1j2yPlCzhGKwVmf0J0q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Rhr3+NVB; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GyzHZvp1"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57a604fecb4so5593463e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:14:51 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rhr3+NVB"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-59070c9111eso5223697e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760364890; x=1760969690; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4+LqH67jKM/F3LSKb9pvwKSduKssNZljIxm4L3nejxY=;
-        b=GyzHZvp1DOcvm7vHNL+Td8CmhMsk7TGVNgQIoBjFfw4L6zQ+OeVeqG20NlrFcVTiOo
-         4SQ1ZVy/dPholR5fEtit++d7J0+0xfUghp+joEVL3M0cVcWiLQ4/R+2J1Itjupw9xQF1
-         Amug60kwa5bWueyMVrjWpjKqRNCPdFu5Wt7tc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364890; x=1760969690;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1760364891; x=1760969691; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4+LqH67jKM/F3LSKb9pvwKSduKssNZljIxm4L3nejxY=;
-        b=xBWOJQZsucNhek8Kcg+RJnqnmPcc3zhSfl7Id0w+9Jc7X0ujphJoIpW4ho/ur5bR+q
-         GZHG3XqRsXyCNXrwU/0wJCcYcob8rbR14kkHp1gOOhGfawhU4iz7H6CCz2sTRBRekH/z
-         pq0v9k7Rf35tvgmE4IhEogfwdXxbHt85DompTYtlyvW3URCbiPAfbILSqFSAZIigmOSe
-         ulg87HhNNp4n/+LMaBTt1vnxiA6F5VmjHS1whRt4NCWR93oVYI9gSMrDwbzBxXQct+yy
-         2U/uDdgfdszdSdvNc7UUsYmYAXF7GSIcr++swg8iBDwiXUIi8S0DZTTqOMcXFS8fG74i
-         Oo5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXWaKeB9Ucv5MYc4LdLakiI7wmM3HxSBRB9jG7t0a6N8aC8TK+IG/2k1cqXTLnDBMMFJuF5LhQwkvn501+iFSGL7Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNZPPhrRowd0uogO4AepAJ5M1rjaZ8ybPpXC3QkwXlD9uNG8vN
-	jals9r3pEqPGBpBSg5lBIVOZDWmbLieWoBOVKipC55w4vZPxwhsrdBgryqcxLAwnUA==
-X-Gm-Gg: ASbGncthItpk61u9qhvmd45eHRTpnVNr7CIkvVtoDlmubRLtPj2wLF+VmLLKgI9P0re
-	S2dn0VsVw6gDpv/r6q3uPad9TghIHh5YHkXD2YQfwhcpcFBDTJPrwP/+Ymsmq/Cp0CmxVwJk5BN
-	DYW8sDKpwPZwCs4toocozqJCKUpO4+1oIbaAq+SkIM1duN9waBJFOHfA1KP5WaiG+E1LgBuJEwp
-	lCZgihygL+Oe0wSPJeHXFv8Gs9eFQ6J16/rznyKJm0oAH1Cx+qxAlMfhSvCX9bMrIhBOX3LUoid
-	M+YMnfCe4KV0P7zOdd7M9v+H+0NJ87NCShEds3NP46p1bXb/j0Ms7XY8oyf66m7x0rN0lKwmFUG
-	AVxeBi9Dm91iQTh7kI+gzDtFaNRAxYgulU72qEIvCgYkAXWJkuwz/cAVeQOfhE9lcyKur+7iwAj
-	ORbi8VlAdyG/VvV2R0Xbv7QzPxaT2U
-X-Google-Smtp-Source: AGHT+IG+iBDcqiuo6CtjHJApPQk8SPIEd1S5IwUf4U1/yNdgttxsX0zixn6oQdpzKAlIqjeJyJH+pw==
-X-Received: by 2002:a05:6512:1110:b0:590:656c:d114 with SMTP id 2adb3069b0e04-5906dae5d1bmr5995198e87.46.1760364890201;
+        bh=h+YhCU9BSkNGYIn59ygfcOhebsOBGxL8NqrMakgbz3w=;
+        b=Rhr3+NVBtrMqtmOV7k0EuZgzP7FBtL4IHDB8rNFTe1MTtc6ml9ImPosLhWFvFd85PI
+         xiwBZZBfiDQQSy18KFqn5ocaVQRKWax1tJDtnPSfZFk644HXmi2CE2VYBLncEibu8Das
+         f1P1HYqg5REIDaz2M8j9anQW65FZ16yU4vLfs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760364891; x=1760969691;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h+YhCU9BSkNGYIn59ygfcOhebsOBGxL8NqrMakgbz3w=;
+        b=DLwTYDX+5hzs660JK8MnpcNMNITcmOSKygLU3wPqm6IPFDCJciKQOMDgK0GjU+xbx4
+         IwhqROF4E8/DyMx+YjAb1cxwpKq5CFWVo1lfcABIsI0M7enmssU3DFoxo8hloIjx+q6B
+         z3uytAo7txMGko0No5ll9xzKvoMGfPjS+B7Rrp58jd3+mqHG9y3+ckw4JP/IjS62n1fr
+         T8xC58p9fVYPdOhr8SWxM90R6Nsa6JHVCX9cS/vFOnesOyrHAPLNiP0QN1iyCjYEKMR3
+         q+VlOAJaGgArXrX/2vhmPKlAuJtA4S1F0p+5SaQCXoA3bc/I3mgfZxUCCJty3bZ+LlbI
+         GbhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWshIUcYNj+pGLwRoWRg64TFt3gBlcKOolf35CzRngivsRoFp2LA5Ej8nhXwZJBxGdg2yDN8aoSYZi/7NspQO34Ug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvSFipWk6XIfz69CfIs7sQjEGHTWIgj+nsWFD+6HivFHC24N4a
+	sHxlIxFMy+KfFds9shHuEvruw8igNF+z1wrK1IU402S5RGFbMLcQPfPzz0KLRUS64w==
+X-Gm-Gg: ASbGnct2FByXY5Bn/UIS7TtGK26HdEa0clAbWjSwNVBic0yNDISRFHOUVpTY8x32ZHB
+	ufS/P7WtzTGNd2yE2dTsjMv205YgXHB9jZ6c6hk0dajFRHrjvZ3mPIj6hR2fLNHjVilGYrnURjy
+	TQpuoEqU8yGsqGSU4gR+7sPxL44whw1xQNDUHhgMKZ93bNFtvF76GI+FfxGSNLUxYeU2qEXv4sR
+	wNj2OrSCAt5X7GjW6XaDIGYjojAcxjlHUutG5NrEb4FFO62RS99Ymwl4PXKoqHaZEqom+gJWUwl
+	Ke7CzsTsctsyuIm/rdWXFf1twYWJ+SVkrtHi0L0qlgqIazURAjLsamEqpr3EEop9gevlv4jLQrv
+	0QOb/rTWJjYUJsTMiTSwnzx9V6p2vMWATtKp2PlhkBFG/kvfCfkBCkJR0yqM0mJbWaY1O3pkA3a
+	Bd1sqi54DoUfOcuonSwWiKISRp/gjf
+X-Google-Smtp-Source: AGHT+IG2QYB2+56krLBk85ko6pGpX0D4THrfkt1zz892JTpjDOUAww9G2kctwSbBGnVpsEQJrH5Ywg==
+X-Received: by 2002:a05:6512:3f12:b0:58a:fa11:b7af with SMTP id 2adb3069b0e04-5906d782160mr6219748e87.14.1760364890722;
         Mon, 13 Oct 2025 07:14:50 -0700 (PDT)
 Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.14.49
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:14:49 -0700 (PDT)
+        Mon, 13 Oct 2025 07:14:50 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Subject: [PATCH 00/32] media: Use %pe format specifier
-Date: Mon, 13 Oct 2025 14:14:40 +0000
-Message-Id: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
+Date: Mon, 13 Oct 2025 14:14:41 +0000
+Subject: [PATCH 01/32] Input: cyttsp5 - Use %pe format specifier
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -66,10 +67,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFAJ7WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA0Nj3YKSovjUoiJdy0RzSzOLtOQUQ8s0JaDqgqLUtMwKsEnRsbW1AKj
- z2DxZAAAA
-X-Change-ID: 20251013-ptr_err-9a7968fcd19f
+Message-Id: <20251013-ptr_err-v1-1-2c5efbd82952@chromium.org>
+References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
+In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -117,87 +117,32 @@ X-Mailer: b4 0.14.2
 
 The %pe format specifier is designed to print error pointers. It prints
 a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-omitting PTR_ERR().
+omitting PTR_ERR()
 
-The recently introduced test scripts/coccinelle/misc/ptr_err_to_pe.cocci
-checks that we use %pe. Let's make it happy.
+This patch fixes this cocci report:
+./cyttsp5.c:927:3-10: WARNING: Consider using %pe to print PTR_ERR()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-Ricardo Ribalda (32):
-      Input: cyttsp5 - Use %pe format specifier
-      media: dvbdev: Use %pe format specifier
-      media: mn88443x: Use %pe format specifier
-      media: adv7842: Use %pe format specifier
-      media: ar0521: Use %pe format specifier
-      media: ccs: Use %pe format specifier
-      media: i2c: ds90ub913: Use %pe format specifier
-      media: i2c: ds90ub953: Use %pe format specifier
-      media: i2c: imx274: Use %pe format specifier
-      media: i2c: imx335: Use %pe format specifier
-      media: i2c: imx412: Use %pe format specifier
-      media: i2c: max9286: Use %pe format specifier
-      media: i2c: max96717: Use %pe format specifier
-      media: i2c: mt9m111: Use %pe format specifier
-      media: i2c: mt9v111: Use %pe format specifier
-      media: i2c: ov5675: Use %pe format specifier
-      media: i2c: ov5693: Use %pe format specifier
-      media: i2c: ov9282: Use %pe format specifier
-      media: rj54n1cb0c: Use %pe format specifier
-      media: i2c: st-mipid02: Use %pe format specifier
-      media: ipu-bridge: Use %pe format specifier
-      media: ipu3-cio2: Use %pe format specifier
-      media: ipu6: isys: Use %pe format specifier
-      media: mediatek: vcodec: Use %pe format specifier
-      media: imx8mq-mipi-csi2: Use %pe format specifier
-      media: platform: rzg2l-cru: Use %pe format specifier
-      media: renesas: vsp1: Use %pe format specifier
-      media: rkisp1: Use %pe format specifier
-      media: samsung: exynos4-is: Use %pe format specifier
-      media: ti: cal Use %pe format specifier
-      media: staging: ipu3-imgu: Use %pe format specifier
-      media: staging/ipu7: Use %pe format specifier
+ drivers/input/touchscreen/cyttsp5.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/input/touchscreen/cyttsp5.c                          |  4 ++--
- drivers/media/dvb-core/dvbdev.c                              |  4 ++--
- drivers/media/dvb-frontends/mn88443x.c                       |  7 +++----
- drivers/media/i2c/adv7842.c                                  |  4 ++--
- drivers/media/i2c/ar0521.c                                   |  4 ++--
- drivers/media/i2c/ccs/ccs-core.c                             |  8 ++++----
- drivers/media/i2c/ds90ub913.c                                |  2 +-
- drivers/media/i2c/ds90ub953.c                                |  2 +-
- drivers/media/i2c/imx274.c                                   |  3 +--
- drivers/media/i2c/imx335.c                                   |  4 ++--
- drivers/media/i2c/imx412.c                                   |  4 ++--
- drivers/media/i2c/max9286.c                                  |  4 ++--
- drivers/media/i2c/max96717.c                                 |  2 +-
- drivers/media/i2c/mt9m111.c                                  |  4 ++--
- drivers/media/i2c/mt9v111.c                                  | 12 ++++++------
- drivers/media/i2c/ov5675.c                                   |  4 ++--
- drivers/media/i2c/ov5693.c                                   |  4 ++--
- drivers/media/i2c/ov9282.c                                   |  4 ++--
- drivers/media/i2c/rj54n1cb0c.c                               |  8 ++++----
- drivers/media/i2c/st-mipid02.c                               |  4 ++--
- drivers/media/pci/intel/ipu-bridge.c                         |  4 ++--
- drivers/media/pci/intel/ipu3/ipu3-cio2.c                     |  4 ++--
- drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c                |  4 ++--
- .../media/platform/mediatek/vcodec/common/mtk_vcodec_dbgfs.c |  4 ++--
- drivers/media/platform/nxp/imx8mq-mipi-csi2.c                |  4 ++--
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c        |  8 ++++----
- drivers/media/platform/renesas/vsp1/vsp1_drv.c               |  3 +--
- drivers/media/platform/rockchip/rkisp1/rkisp1-csi.c          |  4 ++--
- drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c          |  4 ++--
- drivers/media/platform/samsung/exynos4-is/media-dev.c        |  4 ++--
- drivers/media/platform/ti/cal/cal.c                          |  3 +--
- drivers/staging/media/ipu3/ipu3.c                            |  3 +--
- drivers/staging/media/ipu7/ipu7-isys-csi-phy.c               |  4 ++--
- drivers/staging/media/ipu7/ipu7-isys-csi2.c                  |  4 ++--
- 34 files changed, 72 insertions(+), 77 deletions(-)
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251013-ptr_err-9a7968fcd19f
+diff --git a/drivers/input/touchscreen/cyttsp5.c b/drivers/input/touchscreen/cyttsp5.c
+index 071b7c9bf566eb0b58e302a941ec085be1eb5683..47f4271395a69b8350f9be7266b57fe11d442ee3 100644
+--- a/drivers/input/touchscreen/cyttsp5.c
++++ b/drivers/input/touchscreen/cyttsp5.c
+@@ -923,8 +923,8 @@ static int cyttsp5_i2c_probe(struct i2c_client *client)
+ 
+ 	regmap = devm_regmap_init_i2c(client, &config);
+ 	if (IS_ERR(regmap)) {
+-		dev_err(&client->dev, "regmap allocation failed: %ld\n",
+-			PTR_ERR(regmap));
++		dev_err(&client->dev, "regmap allocation failed: %pe\n",
++			regmap);
+ 		return PTR_ERR(regmap);
+ 	}
+ 
 
-Best regards,
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.51.0.760.g7b8bcc2412-goog
 
