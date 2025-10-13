@@ -1,64 +1,64 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE052641FC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9CE2F7AC1
 	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364904; cv=none; b=ArG8cw3YUheCY7IE/z7NjhM+pcqtfOg0njA5jqKMNezS5B4RU4yUwAQgqlekHqSK+41XHZj3rI+ct2ctobaG65H/ArGpGc5KL55Rxrq0Wn4mBWc630T4MhBiApgOOg4UmjAefuGnaESIqpDujuUvRgkblS3KySgfwKNfqE6shfc=
+	t=1760364904; cv=none; b=oc6X+I3BWeQHUDDb3s6yaZrqagd9dpLQbPRXNsq9Xs92TJK+XVTDYf6YUCcbNZU8BVjYG9ro+tZCsqMPytQve1fh3SQlEBdXcrq890IrObq3mykELP1GP5eBYOLZLshIIoVdANZKuc+sFjrUjtAZ9rzG9KEn/+yzrgA9AwCeOKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760364904; c=relaxed/simple;
-	bh=pmGQL7z0+U5zmtLLLSlcQCPIG/Bd/l8NvjVo2rUdVUA=;
+	bh=v1chswa10XA6p6iwQSk8q4C1sH6EpIjnX5wmdhMAOFM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F1GFOscXdRKQ5Qe2JE9Y+0t2GJPB/thB0q1FmdBeMYF03w0x1IQ84fcjzFn6PfEGHDOLoTSimpDQEfyILHDfTf4uIdCOpzDwpvTh/+eF45QCgMS5oQWonLiwMgVAPG806rfriqLCAw4Ev8t5vASfQmgISTIoe9+/WbLdvrjYV/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Fxb7gTr9; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=OqdZJTgtJHzFW7ctXYSDQHhEIMQMexDszfU74tZNuDEhFZj+W6db19itWS7LNdU5OSw7vu4m/78mShX5itOT84choZftK0AJMtG9e/j5KyZ+dC5AK3N2B0rFwHnXmgOOHCWdk5C+nsG5KtaKXKkqeGB5OUzWYEOzYrImYAyZMQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Uup3Ks8b; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Fxb7gTr9"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso5390194e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:14:57 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Uup3Ks8b"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-58d29830058so5245345e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:14:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760364895; x=1760969695; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1760364894; x=1760969694; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=d45bLyS6OUqH7RU6UEzRVYwiTiUKaQxVUhJVNzyYRQY=;
-        b=Fxb7gTr991GUn7uo4xSbPt8iwdtilosl8pAeRTMnD9Lm278xC7w4wpPaQzXgJFzmbj
-         EfLCigGgxPUX3e8NU537x38CTPgPQciVPwIJR6Koj24ByOoY/scL0Gw2+yAEWsnyKjPf
-         GBZGSM+uqmIf2Cnh9Wk3lYrSpI8ylXSx3yDxQ=
+        bh=HQOTcbEIyF8Gidv4VnpqffbURmu3SD1oIPY/sSQVQc4=;
+        b=Uup3Ks8bF3JiomVVwUis6g5aliJ8KZSeM381ZCHWw9KOvEoa8LuZfR5uu+jQM6C0kp
+         Ucd+55EEHb6ewgpjk3nPBwBdeQhZ78Br4VIHYv/HZpWRgfRXK07ziONu/ithU+HGL7c2
+         ugVKe0F97WgDvUIi1qnCejUuXadWhtaO9KlOo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364895; x=1760969695;
+        d=1e100.net; s=20230601; t=1760364894; x=1760969694;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d45bLyS6OUqH7RU6UEzRVYwiTiUKaQxVUhJVNzyYRQY=;
-        b=KfIkS8bsdR1aA/3G88Owh3sAU1MKcoc+LShftFmdoSV0ROreAU+g9Q1N1abGFcULp0
-         ZdrE3A/lxqIVy4yHxKtqae0emAC+HZqmAM0eiixgb4wcJPY45tv0JjJ0EAJ0A+SmYZEa
-         gHNNnQBYMvv0lGqmbUX3aHfYAPDrtjlbusKBmfxDlNQbYuiYrr6GrFmGR7r5M/mzu4qK
-         YzZJo4/JLiA+Qxgoud7GitYQ4IDkFb+4HNcCVfIagVrqyQHXb1d56mtHmdnZ64Ml4C73
-         F/ARS262pZx4hZ8BlTbn6Zv6QdI9C/mO7nsMaxIUEbeNhOIpKBjBSULO5v2C4IGNvVpm
-         jeFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkCzba5m0k27wl0WkG1MkyIr2UKvmXwxGhIbx+fPflFQrrfB7W89S7xCC4kzr8DbwwWDmKbQPepDx1uF6HtkDBMg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP0hlPYfi5W+u9gCp8cppCBcq2wY3LJQ+vEq0+QRfjoDDGknk1
-	AP7qH3uoFXszJ7pseBBwGtZcH2dxGHg2CWiqoKX5oRzuAtwWgs5WzcM14TY5xVzAnw==
-X-Gm-Gg: ASbGncvxN2ziWQY9lbSfP01635oWgz+WjVgXABnpMZ437CRW6sEq51q/fwhT0374MM1
-	zVisw8jo44oFRpaOkf9f6EMetWpl+89ySA6ySg7YUlGkLq+7ck5Zxo73U+9cGE8xKtlHk8bWHfk
-	oHJ5fk48GhKmv2P5MT6rMAw3JbdNua87Xs9ayUb4dAo2AVN+TnhFZqWap6WGG+pRKK6vkW4r89A
-	lQFMqFNjutKdNLOl8tG/Gy+kc4hU7ynwwp1RwKt88TKRVbNaGYvT8mljrHvlsBjpC0Z69kG5aKJ
-	ZUSsKLW+Iur7RZjftQWN4QIpmPE+gx/R2wPf4wCzk9rmEnFZat8PdkCw1n5hJZNajZyT48dK/ZP
-	8PVd66Vf/1ibxpyz1/Jo8l8Bu8ok4rPWX1wZT+AJCXzNHIOynA2EIDScgtSHIQFa12Xr+l4Ngm9
-	CazeVgolyj0Va8BjQnMVIO+2iT67q4
-X-Google-Smtp-Source: AGHT+IHgHmnkM5LbjRZWE+rax/DE80YYaaKxmy85wL7to7vxyhdrC5Nac5EP5ziTh632ueTTsgzZbQ==
-X-Received: by 2002:a05:6512:2388:b0:57a:6d7d:dd7b with SMTP id 2adb3069b0e04-5906d773bedmr6253929e87.8.1760364895143;
-        Mon, 13 Oct 2025 07:14:55 -0700 (PDT)
+        bh=HQOTcbEIyF8Gidv4VnpqffbURmu3SD1oIPY/sSQVQc4=;
+        b=UluMBplTS+31ZyWTPOZnvJ0BEqEyJohAr99glL9EVbe5TOpogD8sRrsbZ/yXl/R2B9
+         +s01MA24Ie0T5i01XgZ3EO9YLtPi5OxOFLwcatlyFtIZA4csWKXoi9Rf39csaap9qQ0f
+         6qa03FFkmDmA4XYn5a+E1RzulDQxY6QGvUFjovHP4wTzV1wyYGSWTs9HIG24jaRjPe4V
+         svKPkJnKOJSX2sKmWW5U+VzuTw2cK5OArYkP9xnKgC2swuyX8p3mHyTbG7P4R3MPicWj
+         qoD4c+ZOUCZO1YGkSqkF4HDnzZxSrahydt2ARZF+0i17h5y5obkZvsgzD0NEzRcH/MXQ
+         zZxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVH5Tri9Vs77sF6vy23+QsuBhe41nKQiB/AcgQjHBbET5zPqkP7LIiR07PBezp6AYsUMka1F4jqM5gfh/q9YpY9cw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8SaQWVOfEVMIoGTp2lUqkG80MtNIGrqJq8Es56ry/Oda+FxlH
+	ovJgeEY7HENwQloRKmYtGX/MHK6gSLyrjRGduyRP+bcmH/kd3eGi40fvfeqzXL7PUw==
+X-Gm-Gg: ASbGncsLWwD3lIw7PmWqoss4vOagwkyt/Z8FNWQsybv1O1ayezOuKbJ8Vy2LdyfbCvI
+	LhkzN7GxGajb7oUoISbxf+VMk/IiS3iGio+R0VSaDSG8o040XovJA/l1+UtyHmdcUrRo81+3ftA
+	ePNd0QudqVuyC1GJE+/iSZUDDpCnDr5bbPKVxuPUkR79RuyDpmCTG9bqnMnXPk7EWfMtuS+qU9S
+	7LZx39fyXHs0f99KtL+Mk0pfgkh8xUoIYo8tRViqJzREKFzkMOv8JVVhB6tmxOadSn1AVBrL2f9
+	4uq3QcFmyStVlm2jTFrEBvGfsv9oizNfziDz6rDwNxvtOkwPVAywi9cMG96lkj1z/Hjhlv91BNu
+	cXBE+SmaXgnK69r3vQm39KP6G5KopGSkZZgfJN5jAqHJ0NQ19SyMbfa+emEBmMCaNEge3jKlqlu
+	WRoFRSPDicPrUb7Xyyng==
+X-Google-Smtp-Source: AGHT+IGDBA6vFVbdaAIVk4TqwO+W9UovYsrjETSu90SPXIb8+mEsMg943qVguajtHcsDf6ytgGLF1Q==
+X-Received: by 2002:a05:6512:6c3:b0:57e:f60:2327 with SMTP id 2adb3069b0e04-5906dae8090mr6097318e87.49.1760364893949;
+        Mon, 13 Oct 2025 07:14:53 -0700 (PDT)
 Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.14.54
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.14.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:14:54 -0700 (PDT)
+        Mon, 13 Oct 2025 07:14:53 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 13 Oct 2025 14:14:49 +0000
-Subject: [PATCH 09/32] media: i2c: imx274: Use %pe format specifier
+Date: Mon, 13 Oct 2025 14:14:47 +0000
+Subject: [PATCH 07/32] media: i2c: ds90ub913: Use %pe format specifier
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-ptr_err-v1-9-2c5efbd82952@chromium.org>
+Message-Id: <20251013-ptr_err-v1-7-2c5efbd82952@chromium.org>
 References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -120,26 +120,25 @@ a symbolic error name (eg. -EINVAL) and it makes the code simpler by
 omitting PTR_ERR().
 
 This patch fixes this cocci report:
-./i2c/imx274.c:2038:32-39: WARNING: Consider using %pe to print PTR_ERR()
+./i2c/ds90ub913.c:625:44-51: WARNING: Consider using %pe to print PTR_ERR()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/i2c/imx274.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/i2c/ds90ub913.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index d86d08c29174584b26e109a7858542313219c19a..8ec78b60bea6d47d2088b8251b679224e0d34980 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -2034,8 +2034,7 @@ static int imx274_probe(struct i2c_client *client)
- 	/* initialize regmap */
- 	imx274->regmap = devm_regmap_init_i2c(client, &imx274_regmap_config);
- 	if (IS_ERR(imx274->regmap)) {
--		dev_err(dev,
--			"regmap init failed: %ld\n", PTR_ERR(imx274->regmap));
-+		dev_err(dev, "regmap init failed: %pe\n", imx274->regmap);
- 		ret = -ENODEV;
- 		goto err_regmap;
+diff --git a/drivers/media/i2c/ds90ub913.c b/drivers/media/i2c/ds90ub913.c
+index 73150061ea458937ae4ba7a937ea030b0d98bce3..e97e499b04e6c2700d7d433ccb4fdc57ff12b586 100644
+--- a/drivers/media/i2c/ds90ub913.c
++++ b/drivers/media/i2c/ds90ub913.c
+@@ -622,7 +622,7 @@ static int ub913_v4l2_notifier_register(struct ub913_data *priv)
+ 	fwnode_handle_put(ep_fwnode);
+ 
+ 	if (IS_ERR(asd)) {
+-		dev_err(dev, "Failed to add subdev: %ld", PTR_ERR(asd));
++		dev_err(dev, "Failed to add subdev: %pe", asd);
+ 		v4l2_async_nf_cleanup(&priv->notifier);
+ 		return PTR_ERR(asd);
  	}
 
 -- 
