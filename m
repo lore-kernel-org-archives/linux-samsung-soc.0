@@ -1,64 +1,64 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B51F309F0F
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7D130AAAE
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364926; cv=none; b=ZVNmmBWj1y0WpLDWFcktmhFrAYh3ORsKcepF6lCjusRH3CsxFYZyj4pkTr+gLaSduhIE6ZE1FUWmLOY2bURXcmFBawYDp5rBtLPZPj87O2EqdB0JBsC1EqJCb5hK9Uq8Ej/okNow/5KmkYQe6JfTj8IN2BHyPp3Qbb7gLgKoW/M=
+	t=1760364929; cv=none; b=IFgRnMn+K8tOZ/mUAsVgAcTtcA9oLuTw1k6HUccuNCMc43XmPtQHdfb/u6EJFxuXUFOMoIgdLr8kzPUA1paF/FOD8WROgECd6cO6Yr/dS/CXi7uMlN6ClwdWhAtE26ajDA4PGpxvAlWg3C2qAnXvTCju/7Z0gWdhXYwyGJTWHBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364926; c=relaxed/simple;
-	bh=c9Kb2b0T3BLAmckMzo48k+Ue6UmlyuOLb1cyxCq4tlI=;
+	s=arc-20240116; t=1760364929; c=relaxed/simple;
+	bh=5KNyjJbgRQNGFLo6ZpLtI2lNcxP1iC+T2TtMMI7Vg6Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J1gUI71hMsAjo3UP7V3HFSYO+yHHO0MMGVxb+BVyAmZXFfMy5uMbwxLn4k80xPAkfvPd5QR3Mg+YuzCOylwQo6jSbD7jQRVbtRnB3rBflUO5/wpDIca6zdY4Egt+fo8qmw+jCMBgDDISdvrNcOyFNwGa65gDvqlhxrf9sBac7/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Obg8UI+A; arc=none smtp.client-ip=209.85.167.46
+	 In-Reply-To:To:Cc; b=XTFaaaJhkGfQ3aodp3VqrrPwEE3nvnPBka6N5+OdkYBJDg+chnpDCZ7CoeQvXoaxBHTqQYebVJ5N4Vvk4s+kMaEn0pL8RXVYd5NBOIqR+uudZzGtMlzUzDsa2lXqdhhi74FBXM7iZaLMmhGzUglJGd6EvTl/w4Os6TJkrW2+QbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VUGcie5S; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Obg8UI+A"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso5390519e87.3
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VUGcie5S"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57a59124323so4619940e87.2
         for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760364907; x=1760969707; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1760364908; x=1760969708; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Smwvmk+cDkyGjYaS177QmxkSssvQt/cgmiOzwIecscI=;
-        b=Obg8UI+AAndLMjNpmQNSR4pFxdQvBmATLrW0tjlJBW3Ga82UvE5E7Bd355kVGoaHO4
-         ttMWfRew/peUsFe5SIcszYqZy+eR2HHN2crwjPNUufybpRdiTHm0Bwnbfh/KyzTHuQqV
-         O8YBh5SXSt+L03mH/Ayyllpx3mbN6eJlqmJrc=
+        bh=LGG/+lvAfLoFYTFsHBbdKee0g975J4ynYIjn3miRvz8=;
+        b=VUGcie5S1susvs9eOKhoLdi24WXIQZAs74cSlLLObj/4B0VDJ7J255jCsK/xzGZS78
+         7y5FTc+nM1JS6L31w1D+yU4Uoa7NbxZyV+5ypjCnFK/CL5GdhWO+2O5RmFAep9xFciTn
+         O8yUSJ0NtB2k6PrjDzwY1S5fXvWXqNrB8weac=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364907; x=1760969707;
+        d=1e100.net; s=20230601; t=1760364908; x=1760969708;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Smwvmk+cDkyGjYaS177QmxkSssvQt/cgmiOzwIecscI=;
-        b=ai2Rl4PXek5NC9WPgbLnlf8mkFjhC7i6OfY9t0S+T96JUoHZf4aSzCqnr+0ZnH+xza
-         yid07FQLeheY9bdgJd1LytzHZNtmpEsqYfroYXr8cYvwU5qAcJ2U3PAb4VlybJxNJho9
-         irOjDbBfBZ26m+B3pia5CuSynvqY/j4bQAhvOnreSQxfeO5csqGKORqgCJnntHiSJigP
-         zGpsSCyBsW/JBn5OXLK3A/6kGS4KIBs592YuoynNru7YiLTgabZd5/fkG5LwHM4WGqn9
-         InSsCYjiAsppdx0FA2DsctlCR1FOFPaXJvUWw/1kcxHc0lg+hJJNHJVnMGBi2TLlpgAz
-         AS+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWonfIy2KqwgGPPS0a+db1TLQvKT1ixvD3xjdIq1Ibg5MDJRG6yuFaP3IcQCPWnCeQ8K4LMLbnISCgRNClWnChPqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YynKSuukDSF/gTEOBxCjsliEJvaVHUrJnIncQigDnONJdPhcM0v
-	B8BL56yawzrQ0SyCbA2HEEeTi2Oh0h2eXOZqJcTuPHU4xz0NRMKit3XTPiJqcjUJGA==
-X-Gm-Gg: ASbGncv90/wcX2Gti0z8C6GEMbDbR97M/GXKRUmU7oBIoU+8hS+nxTFdr8Wqjs1n3lg
-	CCHARRsXfhBVU23Y/KFsDfp+d9vmcpEQ4jqfn+BfcLndZPmyTDrEdR1eXH7T95orQSfpGxURZXI
-	qdcYwvzpfMcRai6gnf4AzkLbzX5bY46IUmKkyyDMB18eDuP2e3+/Ip/9C0pVThy0ism57C0KsRm
-	4sx+UmUNDjfEnVnThScuHjXV40K2cmAvlggrYujguystS91b7irQwhXyyEQNiW+CmGbA2Zx5GhE
-	ttwLevvEof9JjSuEOo+G0r8MT4Kb4PnNeiO2sPgmuXpnB1lVXcCB2qZkb2GOAQn5DY14QzyQuYK
-	r/iQvKV+mGPm0cWlit5fMTfpvVwHLAn+hXVAYVlvk6z20aa3iwHIgVkWa9YgypQKcxmliatcNMN
-	mND5Gc9DiRO4vJDehtmg==
-X-Google-Smtp-Source: AGHT+IG0XyykaxSpAJZEJBiMkxB//rHuKsliNYYIqdi4qrxeJQYdIviCb9iwNXvzzJnUAUziWI3Chw==
-X-Received: by 2002:a05:6512:ea9:b0:585:bc5e:237c with SMTP id 2adb3069b0e04-5906dafca4dmr5906081e87.49.1760364906745;
-        Mon, 13 Oct 2025 07:15:06 -0700 (PDT)
+        bh=LGG/+lvAfLoFYTFsHBbdKee0g975J4ynYIjn3miRvz8=;
+        b=uA4E0UjP1AR+QoqMhMaMEyTE2U0hmYZ7AbeP8kOakKOtLkPrwREMi3ZdHHB6Y5VRX0
+         S3FkGWw3rDeR7RMHBk6g6lJL04FD14Fx4XHQxxglxGq96RB1mg8znaq0z0bcUknkwnq+
+         eC0gVy3i/EXjzsS4XYUwFCUlqf1yTzLwn+aKJcEjtDr4PdbqifoxGtvMqDPt2sZGZ6vc
+         9BNt6mfAl9T/C+KEWsWShOaZXBzUYLNtjoDhQt+Oo2Un0sIAEZLXdwpUWGx0X9EhrcDD
+         SC/d9+ydQj8RdhFHOAm7HUjgJFmpnezjP+6kt12XbNDlSsWbZXcmxNPJ2OlZ0RNcoalk
+         McYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWjujek0dmdhbOYB5XBTFJV9NNSNxVg6+lXFQQlVVrYJfRTQ8d8j1KJqYLOgr2e9qBVBI2hUoFqa4cB7Kqcz9/fQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq6QEUjlsksXxdfoZxrL2QLq89ji4AsjX+V1MBEFobaH1TiOr4
+	4/v7FqnKXwYFs/Uz7BnJYiPXCtKMtLwblCQWvqrz6VTyCTYFgXJh2O5sC3L8nG7vKw==
+X-Gm-Gg: ASbGncsFfb2vPQSx2RQpS2XFBUE1iPuA3faWQo0rVzJRWj9bHpDrCGDuRBoUVznGfQE
+	1x5nrqL9b6eouiYp1xhdLhwhcZpuRseTU7NX18ep+VlMewvuvXwpH+xXPmnFoB9fWx+nhWhoxll
+	4tg6s0VgwlpzelyNn6r0VSWu9nRTOXBJJFzukkh5CudQHFgwGxblVCoVpumAi6lOOIRJQFZWjOQ
+	ODq5GeLf65KarCnSXnwl24Svn118m7Cf1y/B8U///WbA3ONQkuPvrZ2hqf36yj+8I4izwfHC+8D
+	h9vy5kz9DdXi1mWKJcKsqqEdWa6xAUI88wbyh95vaXlwi1cSOZHIGurqWCh/05mWmID4iNPmECU
+	VA8bTvPReq5MbFXmXFfKgstm/koAr94lh7cDKJqz5j5cnX9n7utzNBy9QjZ4Uf9EvJYK12g5X1j
+	YOmH1luMBNiZaF4lGGaBFxqmBdAVT60kHQY1Yg920=
+X-Google-Smtp-Source: AGHT+IHonGCa8by4IRlUhFwqne0G+xChLaB77A4Elu7KHX/ytkwCKxhNDSfo6zsqaOoV+Q8fGGx9SA==
+X-Received: by 2002:a05:6512:1093:b0:587:a4fa:1e50 with SMTP id 2adb3069b0e04-5906dae5b56mr5886844e87.41.1760364908274;
+        Mon, 13 Oct 2025 07:15:08 -0700 (PDT)
 Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.15.06
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.15.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:15:06 -0700 (PDT)
+        Mon, 13 Oct 2025 07:15:07 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 13 Oct 2025 14:15:09 +0000
-Subject: [PATCH 29/32] media: samsung: exynos4-is: Use %pe format specifier
+Date: Mon, 13 Oct 2025 14:15:12 +0000
+Subject: [PATCH 32/32] media: staging/ipu7: Use %pe format specifier
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-ptr_err-v1-29-2c5efbd82952@chromium.org>
+Message-Id: <20251013-ptr_err-v1-32-2c5efbd82952@chromium.org>
 References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -120,28 +120,45 @@ a symbolic error name (eg. -EINVAL) and it makes the code simpler by
 omitting PTR_ERR().
 
 This patch fixes this cocci report:
-./platform/samsung/exynos4-is/media-dev.c:1337:16-23: WARNING: Consider using %pe to print PTR_ERR()
+./ipu7/ipu7-isys-csi-phy.c:311:23-30: WARNING: Consider using %pe to print PTR_ERR()
+./ipu7/ipu7-isys-csi2.c:59:22-29: WARNING: Consider using %pe to print PTR_ERR()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/platform/samsung/exynos4-is/media-dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/media/ipu7/ipu7-isys-csi-phy.c | 4 ++--
+ drivers/staging/media/ipu7/ipu7-isys-csi2.c    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-index c781853586fd21996105c050e587bf8079cfc095..d6f7601de597e3d3517ef9195d728deb578e74f1 100644
---- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-@@ -1333,8 +1333,8 @@ static int fimc_md_register_clk_provider(struct fimc_md *fmd)
+diff --git a/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c b/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
+index b8c5db7ae3009e16264d7aaca6d4d237c1402ab7..2d57178835188a44b002b38712437cbd551751a5 100644
+--- a/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
++++ b/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
+@@ -307,8 +307,8 @@ static int ipu7_isys_csi_ctrl_dids_config(struct ipu7_isys_csi2 *csi2, u32 id)
  
- 		cp->clks[i] = clk_register(NULL, &camclk->hw);
- 		if (IS_ERR(cp->clks[i])) {
--			dev_err(dev, "failed to register clock: %s (%ld)\n",
--					init.name, PTR_ERR(cp->clks[i]));
-+			dev_err(dev, "failed to register clock: %s (%pe)\n",
-+				init.name, cp->clks[i]);
- 			ret = PTR_ERR(cp->clks[i]);
- 			goto err;
- 		}
+ 	pad = media_entity_remote_source_pad_unique(&csi2->asd.sd.entity);
+ 	if (IS_ERR(pad)) {
+-		dev_warn(dev, "can't get remote source pad of %s (%ld)\n",
+-			 csi2->asd.sd.name, PTR_ERR(pad));
++		dev_warn(dev, "can't get remote source pad of %s (%pe)\n",
++			 csi2->asd.sd.name, pad);
+ 		return PTR_ERR(pad);
+ 	}
+ 
+diff --git a/drivers/staging/media/ipu7/ipu7-isys-csi2.c b/drivers/staging/media/ipu7/ipu7-isys-csi2.c
+index 4023db4a6466dd57f0ac007847bdd74bcdf394f7..f34eabfe8a985f29fa48b4a8896a058fde2f2b2f 100644
+--- a/drivers/staging/media/ipu7/ipu7-isys-csi2.c
++++ b/drivers/staging/media/ipu7/ipu7-isys-csi2.c
+@@ -55,8 +55,8 @@ s64 ipu7_isys_csi2_get_link_freq(struct ipu7_isys_csi2 *csi2)
+ 	src_pad = media_entity_remote_source_pad_unique(&csi2->asd.sd.entity);
+ 	if (IS_ERR(src_pad)) {
+ 		dev_err(&csi2->isys->adev->auxdev.dev,
+-			"can't get source pad of %s (%ld)\n",
+-			csi2->asd.sd.name, PTR_ERR(src_pad));
++			"can't get source pad of %s (%pe)\n",
++			csi2->asd.sd.name, src_pad);
+ 		return PTR_ERR(src_pad);
+ 	}
+ 
 
 -- 
 2.51.0.760.g7b8bcc2412-goog
