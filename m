@@ -1,63 +1,62 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EB82080C1
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 01:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6E820DD42
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 01:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760317313; cv=none; b=fxz1gIRfjagIik92bv24Hmr4ySrnJZQgIAjbwvAV/FD/fxp1fOBDWkxwj6F/Mo/sUPQSfvXCi4qBh5m7iO6QWQRGudBi5KpHEsEBz3E02BtGctBBtm3ps1A2F9LNnPRUjmHDMosWtHZTk4fQyNnzoPTpLZ6ljUM2LohP+419G+k=
+	t=1760317318; cv=none; b=iaFCKxCPqdLLEw64gxyPXNrZtP+MPcg2SvOk23uYnICL6LHDqg1e8QJvgaS3YzwxTmH9JjIDAeseUT++zog51BKAXa1mp9HFchQAsDKD80tpjXo/4dlPlpcJGKdkG+hShJnvDmKZczcrNr/NY84cbgVEJax+9QOqTdizgyBhPbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760317313; c=relaxed/simple;
-	bh=uegJ+8RLoxxTRW6gNc5D5RPMM2auhwSLgi+Duc0LorQ=;
+	s=arc-20240116; t=1760317318; c=relaxed/simple;
+	bh=PslsRqEzoLUH7pRkVHXqIh8BJWHmrAu7uexd7fti8CM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JMUVcMBojhFuzZzVuIkGG5YLA9//A6q0FZo7vAWFjCHgY/76jjcBn5SGNkWRtWJ2VPiKq5zpsnA3rRvf5U3Cb+ZOcGLVEZv7wrXwlGF7a47IwWrbFixRf2DxYncKUEy1lZbiGOYOdsUq3ZRFRZRjm4CLHSX1w9wz96jUal2q5Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=srI11DOG; arc=none smtp.client-ip=209.85.216.49
+	 MIME-Version:Content-Type; b=up02wgIrB1R7pEAGe7640zyy0WQ+RIyVK554K/3ayJV8qLuTxHMN20JtyhBjB8ZYSLfpRNLV6ZY8jx/4xk/E/7DBM6tBC/5cTuOdLDSnG6HbdHL8u+N9DPkoiHYmxItNEl7/yBRLxzm0L+Jvbng4GhD8jKkor9Sy7Db/KDBewoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J7xiXVKY; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="srI11DOG"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32eb8144fecso517832a91.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Oct 2025 18:01:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J7xiXVKY"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2eb5c9c9so105673b3a.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Oct 2025 18:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760317310; x=1760922110; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760317316; x=1760922116; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+xGmBxaIsrwhsJmTSFTSbNR3poI1XoEoSNvgqP8h3X4=;
-        b=srI11DOGPmE/QUuEvkAzLf6p7bkc9aRz3JhFc3CNRFapxPd0PuYkC7YADBpTf32h2v
-         1ohAggbFACpMfll7ii4z3213a4nLeClpMSvCZ/lKIn3ltXI6J+NJjddaZKBVeX9F594L
-         foTJKIkX48x4Q7aUzD3UVxR7dWkmTesRnnmNtI+3kH9I8tgB31XDMvH1Axc1QWxqL2Nf
-         K/n8IqRIfSpEcDU/NhS1+QuaR+VJQ4RZchW6Lp8RGx4Rg3BJrdaxCtm9/yIhEFKDO2cO
-         UDFpRmGvUq7O+x2C7t9KyLKXcCv4243FeTAPmjboiU+UUDOzJWcYDHbel4tmgDAvKU4i
-         tc8w==
+        bh=1TEQtBfUYYndvsc8G1MAwUYtk9BHiNm9VJYBElay+b0=;
+        b=J7xiXVKYs9he+Fv7oGxRmRoyc/hOYnP7tWPI7wTXMJJfBkZz6dF6e0j01Bb6PLsXNf
+         m81QIZbrfn1THHBfPQpdOFM/hwPu1Khk+s518reatYGOTVzTOHo/f8wXGoEXyz8+Wxhu
+         2EVgUoqQ1GqQH/SaOITSWe0T+p0XxhJFqpoIFQFVT+FmIKDwTOLjik7OzrSHSkPYNh/3
+         pgzHAMkJclFMR3ud6KzxTIHrEcPxZFwuH0uCEuj0cLoJuhYT2PnVUyXlZF/ROhx+XNDg
+         Wd78oj/VKL05bC0l3FGciKrotulNmmO+G1nm4tWaDz3fgbPJ7YwOgE7BuGjKT7O7NmwS
+         NSWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760317310; x=1760922110;
+        d=1e100.net; s=20230601; t=1760317316; x=1760922116;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+xGmBxaIsrwhsJmTSFTSbNR3poI1XoEoSNvgqP8h3X4=;
-        b=Gg4lVrrdZFGmYoByyaxTi93RLBeo3V5GUsnsOh1MbcHxbmB0lpNyD8lb/+59Jozlp0
-         Pz9rW3I95ujzwv1GpOw83yPXo/oz6sBot9u6CuJyL2tVy+NxTSmHdx8wI2Q9+o3gMsaE
-         fAHHDHOazeqqr63ZWNXeJQ8OwTlq7nD0kMIAz8qUB8OOxNQr6BjL1Bz1HCxOq6nbcUdE
-         8Q9Sgse11MTAQmzzQkRT0Q6z39AJnQx7ULT2BRlA1cmYBmM9+p2Pk+o6xGVkjCgUvaWM
-         dNYA15sjpmc2JMXk/MixqXv0bn71caf+VEkdvFVSyFRM6tsXDIxWpWficS+kOyarkaD4
-         //Tg==
-X-Gm-Message-State: AOJu0Yw9bk5X/GB27wlikDf8bQGT+FcsqRM/Qqot886NPQAwJtF9tU2Z
-	SeZLTRfrdXZk+tFzf5mTjg5CWnbfMvhYjc/AiBEhteVi/N+yZ1DYEH4vWS4WlWGSrMI=
-X-Gm-Gg: ASbGncuu3DtZdkybt0NJkv2NB+XU9vkXGV79OHu3rx/gHR09Y5v6lw9pgJ+cBxl4ubK
-	0UAhQ/oki/Qi93jQBpGs3amiWcVHZCG0XpjX5jC8UNCuc6sB85BO62xTUDYIhZNOz8WIfYtRFEB
-	I5v8XEPUQ4FHnw7BThrSbpQUpJjOGvFTP1kgRYNk6v8MjBqDyhN+myYK2dpQfLgPwrS7FspzKGx
-	I6izzEXAyljzj5UJX4d3o+ERQ5nVVkqZ3ENFsxuJJlNw0I8igKPcZOzS00biHRcaFV7qydj+wgt
-	uIqLRSJxTsEhaBixLnbm6BL4OEI8sg8+vhPglqBLecrBV7OJCiXhR2c/IC07aBiKZQEUdRLVYIl
-	cVoInY5naJqjDj/okZj+RAT6vPHRE81DyBiedQqLnNuHNLETzeVrNhHe5Zn4VPzqIllnA0k0msn
-	/Ki8NZBw==
-X-Google-Smtp-Source: AGHT+IEdNeiQ4wkmg3jWNQmCnD1QT61xdTtWd43pEBCPOTtLFYBI/MtFdeLT6J/Z75wGvx4fFSNIgw==
-X-Received: by 2002:a17:90b:33d1:b0:330:6ce2:18d5 with SMTP id 98e67ed59e1d1-33b51395750mr14768734a91.6.1760317310483;
-        Sun, 12 Oct 2025 18:01:50 -0700 (PDT)
+        bh=1TEQtBfUYYndvsc8G1MAwUYtk9BHiNm9VJYBElay+b0=;
+        b=rI4T/ajKOvv/Bb+gQf8Xd9PWQUNB+wsI38PlITbDRojqThzZd2pboRfGPVFxHyB5hd
+         qzK0PJt8HiN1Q7GArf8SRBQzk7Ewe8XrnJdPIHQyVJ2zy0U+zMvCGugPzjpCID7GaAz8
+         CkzgYo5KOAl+NAph3oMaVk9bYRiR82Q5ArjT+J3F96CmxkuY+ukeeiO463pmnfm5Shq8
+         o9aMACjqVvgN2SS9HNNvYBBn+WkqUsiEO/gFu37qvG8TJrq5ofBvhGYxve3S8QUMUfb1
+         Xw91b2Ax395FtLJSD3Vx4lk4R3g4ZkzBIMjYqXXGDt2rU06m1uYFbn1KE6hFsHSyqvgd
+         jxpA==
+X-Gm-Message-State: AOJu0Yx0HZS2SZNxSNEVrhJsIaDFnnIdw3qHEkv0vjpt+xTZPMhNYF63
+	DJhTbctB3srcsU1o7k9GoiWxqJvlsgKM669pLCoIZlLlEnsf2OAFIJ/nggOr+kDQGSo=
+X-Gm-Gg: ASbGncsLyurhMB9QGkrHtKsJS5SRDsZOivk2ZgOJ9rge7aVoNrDyDK5ino6N0SBZAyL
+	+eIXXLJy2lMz/Fg+JILqrrrUlGneWR+cxnC26oomnt6cGTefaQCCqDFITytKP/PadHartFr3VCb
+	x8ALNRH22uTo/o6Nn6OdGg8pcO8gnJoNDGgcLgz2ryeOQtv0afgVkSAcgQspbSGFBv3kd7dR22w
+	PjOizYvgOMRvuvxhV+z/ZYjnA1tCtssaEWNZgzE1Mll1YWF45cRdI0T3EXEnnUKbXi5Y2cMpUSM
+	yKQmQCT6PC9Bpmey+VjSnBDbxV4I/KkN8LhdzIR0k896cWNMDo3r2bgNscaacvZznDIbbHTk/FH
+	Q2LtCEWrE2cgoI0IfiMHSKMnRi5ltNAnKn58hCJqRZS/qJ4c42arRGBfqf/ZvBAIGJJ3BG30=
+X-Google-Smtp-Source: AGHT+IE0pV2SdSy2BtqzzreV56Z2CBh5fAGnmk9U/0caCiZx4MMe4ASrcDCjjfJh9mw5C6vsUpzf3w==
+X-Received: by 2002:a05:6a00:2295:b0:781:220c:d2c8 with SMTP id d2e1a72fcca58-79387146ba5mr12386110b3a.3.1760317316323;
+        Sun, 12 Oct 2025 18:01:56 -0700 (PDT)
 Received: from [127.0.1.1] ([121.134.152.93])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm9512805b3a.64.2025.10.12.18.01.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm9512805b3a.64.2025.10.12.18.01.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 18:01:50 -0700 (PDT)
+        Sun, 12 Oct 2025 18:01:55 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
  alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
@@ -67,14 +66,14 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, chandan.vn@samsung.com, 
  dev.tailor@samsung.com, karthik.sun@samsung.com
-In-Reply-To: <20250925130457.3476803-3-raghav.s@samsung.com>
-References: <20250925130457.3476803-1-raghav.s@samsung.com>
- <CGME20250925125620epcas5p359a6c18a13f2a2f895433e4dd241020e@epcas5p3.samsung.com>
- <20250925130457.3476803-3-raghav.s@samsung.com>
-Subject: Re: (subset) [PATCH 2/3] clk: samsung: exynosautov920: add block
- mfc clock support
-Message-Id: <176031730436.32330.1825346216693912031.b4-ty@linaro.org>
-Date: Mon, 13 Oct 2025 03:01:44 +0200
+In-Reply-To: <20250915095401.3699849-4-raghav.s@samsung.com>
+References: <20250915095401.3699849-1-raghav.s@samsung.com>
+ <CGME20250915094517epcas5p2186fc92cca758b6fe610c0ec91ee51bc@epcas5p2.samsung.com>
+ <20250915095401.3699849-4-raghav.s@samsung.com>
+Subject: Re: (subset) [PATCH v2 3/3] arm64: dts: exynosautov920: add
+ CMU_M2M clock DT nodes
+Message-Id: <176031731074.32330.13412044019926403871.b4-ty@linaro.org>
+Date: Mon, 13 Oct 2025 03:01:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -86,16 +85,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Thu, 25 Sep 2025 18:34:56 +0530, Raghav Sharma wrote:
-> Add support for CMU_MFC which provides clocks to MFC block, and
-> register the required compatible and cmu_info for the same.
+On Mon, 15 Sep 2025 15:24:01 +0530, Raghav Sharma wrote:
+> Add required dt node for CMU_M2M block, which provides
+> clocks for M2M IP
 > 
 > 
 
 Applied, thanks!
 
-[2/3] clk: samsung: exynosautov920: add block mfc clock support
-      https://git.kernel.org/krzk/linux/c/25e476632cf7135aba11b27e3807a2692a3e5e13
+[3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT nodes
+      https://git.kernel.org/krzk/linux/c/7b0ccabb873de4b4dec3214b2a0ee3c32c326101
 
 Best regards,
 -- 
