@@ -1,64 +1,64 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370753081B5
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188193090C4
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364919; cv=none; b=S9DysPPxJP/xAM7JgRK5UZ93I4h8r/Dni8POBUcOQpZ8G5Sf84X5hJKCY4MrwMBCRJIm0QygQKWH1Fvw7KXc/B7u/L774dsopMVeMIieze3uZaiPpZvYEVG8Mp46VX8yWSz3hFK2YgromMO478acvJgwMGolIjuanpmkz3joMp8=
+	t=1760364918; cv=none; b=ZYixOYqCP+xmLDRoMRF/Nk7WBakDi7o//wrFLXh1UGq9thWQ46ek9Ni65SUlK2vvaZwjjYMDhcgmqRGVEOXUIxPOcFd5rBTOqTuP5/0AF/Lmwr/4xpnQHyF1ggGo1gVlUUuTh+qPPA9/SulN22OnD2NRNWrcGq+Yj/Upbrlq+nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364919; c=relaxed/simple;
-	bh=ERfT447rtvaR+wf88k95vj4wStZVfwDMtZt0ytTxV+k=;
+	s=arc-20240116; t=1760364918; c=relaxed/simple;
+	bh=Pzzu7GhYxyifz0hH0hqoTi5DPNxH7bOKzjeCFjKc3co=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DoQRX/SCc40xbUu9iG7RbbVrarAewDO4xReRODjig1vnBf0a8NE3UWbKBQqbrJLsgtwZ4tlvJE7LVE2lC4hgLEhTBDALQL/2PQPeshePGfktJ4LyrAUGHN4PbZVdpPU38cOrsvZlC2yql7HX2oTv+JAXdi+CHE3qHrZ2P3/T7Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fdZB/LPY; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=kZVKQ7oXj6fldf4kR+ASVL9HspF+7sxHlfnp0D8tezU+AYeBwLwAln8UA0QkcfNYqZjRD4Kt48d9IlrgxyuEab6Qrv5RNXQ2WIll0IDVA+drM4QL9AU0yQjm0pLlnwpES0v+wCT9a+rn810XQLXv+KWkHoFBIOoVPZvaAeafwwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C7jMGw5a; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fdZB/LPY"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-586883eb9fbso5711759e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:15:07 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C7jMGw5a"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57a59124323so4619787e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760364905; x=1760969705; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1760364901; x=1760969701; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MPyzKdSQgEFTOs6vrnV72MjIpSFJDGoFOT83Au3htUM=;
-        b=fdZB/LPYDTqAgmoK9RgXWW2qARG7f7n6iOtTFu9JTzlANYl6jP6FkFxkAu9ft2LXvo
-         qrtXpiWpao5RWeQ4k1uN+T/HOEdl4PYR06nZRvwkzhuOXNNQmOBSapqlKcNFg+3ggEn3
-         ga7E9bDQ+2cwdMofj6s9cOWOxgE18lHLjpyxA=
+        bh=uQZvCnP1P0SuqiqaQUtwVRm3JfcVlv6UnYBLGV8/TWE=;
+        b=C7jMGw5ap0b3UkHYi5TYPhtTGUfLpuyWVjuXwsJrSLgqJxJDxv8Jrs+je2ZCgNLctd
+         IPAHDOh3zhmKkw1CCI7aS2w3211raMFFlAQpiKVI+vR9tZpuhjrFx+t0h9uNW3k+nvfq
+         MIg4WjxOOEXDLl6YAqKyAG9au+eMxO3EnQrx0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364905; x=1760969705;
+        d=1e100.net; s=20230601; t=1760364901; x=1760969701;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MPyzKdSQgEFTOs6vrnV72MjIpSFJDGoFOT83Au3htUM=;
-        b=wV/0jFkTy+TpOIjJjAp8laDvun/Xpw1AjAV//aUu6KRwNXzqiBVAHkgSYb9969Lqo6
-         eQlRLUdFZtkRXhN7KSyDvvRbPnB5JAe5ozf7YNDl9imFkhyUtiyX+5XOejnkwU3eNr3W
-         c9yj6ssS7BD8FtaT+2wcdtUPU8foWvaFoIZ5VCUp61Hbc59Qs2zFQ8LaYHUOoFmAdMyu
-         TOK+wUImU0164oz4RUOOK9jVVdJd46ygIKOZfYS0+k+p6tyIV9y3c8tiqR6yOhLmBUAG
-         69haDU56CEiF5ri6/sRWL0EmyOhdneKfjwdXzFaIqon7qEIS9TLB81CiuJQ1sLq8/BRt
-         mmcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiobm2ijy9srZnJiQOX8el+eN2I0MhoXCgzTqvQ0NT8R80Y/ENYC0JW/ssjpzV2No7SlBbMhyDrjvDwDMUHkEaXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgD9Iv/nxFDbKhg1lydbdpaBZQEGfkRNwoOhKE/90sVVMNQpA6
-	y5cZqh4HIkErIt9N3BZy1Hn2rEw880kzpd7f0RP2XNhXzNM/NzwqnUupjKeo7GDM9Q==
-X-Gm-Gg: ASbGncsxMhXlcXXksmCWk4tDxskGcjX6cXi+PZbe+q/RoIDHFhcZrQUAL8mA/ZTtLHo
-	BGNvZ3fQhCq/ASdlDVZJ4Gval6iJiPX4qGpUTfinqQ871aeBG+mUBiVcdDkRd6y45kLniV4tVFv
-	X2zA72e5QV5lundNQnpA3AwdfdGt0VODYEvcYows9cT5gCaexaepFuu0JitoFCjvMRwigwy+vuF
-	2Q7VYTlKqZGDnlTEacHtiiTByQvOLD4cxwHqzBYkfuhJMAxlusFBaJ9R7py8ZnrYZnRCFUFBDkO
-	9mJwZqggjNoCU2m3BzkaEST6CvZscB01TAoIyYGcqBBAGqZM4ZV7I9AfjmkEeRGg86hPdbUwauu
-	9TTGJnrcMxqtY8YCMAPg4+b6fwewsjNY8ZjNOseBTP5Vp4gpW2s8Su6oaTyS0qL/5Kwf1k5xj7y
-	WG8BrNq5KfrgNmE9cn8yGvnDVtdVYA
-X-Google-Smtp-Source: AGHT+IHCybNyNMb0drsyz0aREmcwI4Uni6luvsP458rJiLZIzoW/QcUDGoAA5wmoQMp1unUYu7EgCQ==
-X-Received: by 2002:a05:6512:2c06:b0:58a:92cc:581d with SMTP id 2adb3069b0e04-5906dafd171mr5060480e87.50.1760364904884;
-        Mon, 13 Oct 2025 07:15:04 -0700 (PDT)
+        bh=uQZvCnP1P0SuqiqaQUtwVRm3JfcVlv6UnYBLGV8/TWE=;
+        b=I1OC+BNfjTATwGu7hZu5iNKKh5iQEzZ0rfcq1n8Y1iLaQXRUutSf/z1eAa2lvH76wW
+         gJBdIryRviEQM9JO2f8delB+SrxPe5CSCcWFCGJCcIzcItstNko+Mbvu+8GQ4hVOofgA
+         0n5h2KWWTO5Ehx7gdDa3meqp8wSionhobEwhXuoTFNwglVZJfp0efewdsQneYzkqWh9G
+         XFmlF/ov7MYbQNmD94fXdC55/ftiF0/ydXxltU8VRJkdK1s2YrFuEAWZZYon74x8k+ZW
+         kSzEbjeekHhFt4n551oyDzoKZ5bs64F0Ss2BaCoRSURAa+mymRwfjMtR/39mxk95N6jK
+         Urow==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rVbqaXFNsdBu4OTW0RMUr4CpVv6cxBNN2oNKl/gBbQwrAIHKobbXe0oGLzcQZ6c2hbxQmTK7WW25diI362l6DA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmxTcidvSy6Y8va/bYsAl9qhUrlsu89ShvxjeN5eu8JtniMU2f
+	J2tdw71UH0nfLZxs4LNu976t2JoCc34UUupGeEA7GxGsVi1YddomLURWp6wOu4ISnw==
+X-Gm-Gg: ASbGncvnO+yXn4t9WHgYMVhz53HCJPT6cv9p2VCL9VKHdBsTrhYNUxP/6QZAyKZ4UFW
+	teC8oilBOTlgtQimJXKlnvhEN5aFoABxPM+LCRuqWIUAzGcsqGo1hqyZKZf7zWKIAO4AiIU2Nxk
+	Xzm8RfB0HXfaCnvquAYbdHmsbgVu9UcPtgs2NhrlqcusmD4PUDIKdrFvwHFFMwgtwgfyGBqFA6B
+	f/rwsaGOLgrLgznmZxpU6UldfW/zz9frdqHcSJtd4FELG5pyTfV4+p4AK1/GrdIzWwaqegReg4G
+	Nn3ikESh9zvxo6SvmTXOsUNZcyuL5zneGCkBeuC8tfFKMrHzGSyI2Wgp0aDMSzCOxznhaZ3P1+2
+	2cD/XQHS045i6iNTWrYDUx/9HObtvD8szeyYhpUk1CumkrxJo/6PMPRL4iVkzgdcmrSuV1nLeVT
+	rVJQMhU3F7SZx5qQz2a4JwA2AiO4TI
+X-Google-Smtp-Source: AGHT+IHp8qUEbZiZFjcq8gL768jxh7/txPc1OJzdAQ1KXrMavPh6zmcAuzYCqI5NGEMHZ2sFOcmEXw==
+X-Received: by 2002:a05:6512:a90:b0:55f:6759:a792 with SMTP id 2adb3069b0e04-5906d8ed836mr5438343e87.34.1760364900643;
+        Mon, 13 Oct 2025 07:15:00 -0700 (PDT)
 Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.15.04
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.15.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:15:04 -0700 (PDT)
+        Mon, 13 Oct 2025 07:15:00 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 13 Oct 2025 14:15:06 +0000
-Subject: [PATCH 26/32] media: platform: rzg2l-cru: Use %pe format specifier
+Date: Mon, 13 Oct 2025 14:14:59 +0000
+Subject: [PATCH 19/32] media: rj54n1cb0c: Use %pe format specifier
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-ptr_err-v1-26-2c5efbd82952@chromium.org>
+Message-Id: <20251013-ptr_err-v1-19-2c5efbd82952@chromium.org>
 References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -120,40 +120,40 @@ a symbolic error name (eg. -EINVAL) and it makes the code simpler by
 omitting PTR_ERR().
 
 This patch fixes this cocci report:
-./platform/renesas/rzg2l-cru/rzg2l-csi2.c:307:30-37: WARNING: Consider using %pe to print PTR_ERR()
-./platform/renesas/rzg2l-cru/rzg2l-csi2.c:726:30-37: WARNING: Consider using %pe to print PTR_ERR()
+./i2c/rj54n1cb0c.c:1361:4-11: WARNING: Consider using %pe to print PTR_ERR()
+./i2c/rj54n1cb0c.c:1370:4-11: WARNING: Consider using %pe to print PTR_ERR()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 8 ++++----
+ drivers/media/i2c/rj54n1cb0c.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-index 1520211e74185fea3bca85f36239254f6b4651db..0fbdae280fdc49f963269a4bdaea38ff2e51884e 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-@@ -303,8 +303,8 @@ static int rzg2l_csi2_calc_mbps(struct rzg2l_csi2 *csi2)
- 
- 	remote_pad = media_pad_remote_pad_unique(&csi2->pads[RZG2L_CSI2_SINK]);
- 	if (IS_ERR(remote_pad)) {
--		dev_err(csi2->dev, "can't get source pad of %s (%ld)\n",
--			csi2->remote_source->name, PTR_ERR(remote_pad));
-+		dev_err(csi2->dev, "can't get source pad of %s (%pe)\n",
-+			csi2->remote_source->name, remote_pad);
- 		return PTR_ERR(remote_pad);
+diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0c.c
+index 6dfc912168510fb1bd308f834911f9de705844b7..e95342d706c39a853e8c18de1ce447a5fa508565 100644
+--- a/drivers/media/i2c/rj54n1cb0c.c
++++ b/drivers/media/i2c/rj54n1cb0c.c
+@@ -1357,8 +1357,8 @@ static int rj54n1_probe(struct i2c_client *client)
+ 	rj54n1->pwup_gpio = gpiod_get_optional(&client->dev, "powerup",
+ 					       GPIOD_OUT_LOW);
+ 	if (IS_ERR(rj54n1->pwup_gpio)) {
+-		dev_info(&client->dev, "Unable to get GPIO \"powerup\": %ld\n",
+-			 PTR_ERR(rj54n1->pwup_gpio));
++		dev_info(&client->dev, "Unable to get GPIO \"powerup\": %pe\n",
++			 rj54n1->pwup_gpio);
+ 		ret = PTR_ERR(rj54n1->pwup_gpio);
+ 		goto err_clk_put;
  	}
- 
-@@ -722,8 +722,8 @@ static int rzg2l_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
- 
- 	remote_pad = media_pad_remote_pad_unique(&csi2->pads[RZG2L_CSI2_SINK]);
- 	if (IS_ERR(remote_pad)) {
--		dev_err(csi2->dev, "can't get source pad of %s (%ld)\n",
--			csi2->remote_source->name, PTR_ERR(remote_pad));
-+		dev_err(csi2->dev, "can't get source pad of %s (%pe)\n",
-+			csi2->remote_source->name, remote_pad);
- 		return PTR_ERR(remote_pad);
+@@ -1366,8 +1366,8 @@ static int rj54n1_probe(struct i2c_client *client)
+ 	rj54n1->enable_gpio = gpiod_get_optional(&client->dev, "enable",
+ 						 GPIOD_OUT_LOW);
+ 	if (IS_ERR(rj54n1->enable_gpio)) {
+-		dev_info(&client->dev, "Unable to get GPIO \"enable\": %ld\n",
+-			 PTR_ERR(rj54n1->enable_gpio));
++		dev_info(&client->dev, "Unable to get GPIO \"enable\": %pe\n",
++			 rj54n1->enable_gpio);
+ 		ret = PTR_ERR(rj54n1->enable_gpio);
+ 		goto err_gpio_put;
  	}
- 	return v4l2_subdev_call(csi2->remote_source, pad, get_frame_desc,
 
 -- 
 2.51.0.760.g7b8bcc2412-goog
