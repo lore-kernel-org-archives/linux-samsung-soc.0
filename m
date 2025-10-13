@@ -1,68 +1,69 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9312C2EC0BB
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 20:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2672EFD95
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 20:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760388708; cv=none; b=P+mGa5N5nE57E6YW5EoYBt4POoGnmdxXMpXzUNihuzrSFhO3KFjz2s7xDu9SHELD+3jKzgX8Kfskv2ePYDm5+Arc/i3Z5yFrP8o+brhkof5rdDx6BDDhttpJp5qossDMPi79WsUJhTZpFj9e7da9w7cEFWM2kpkTWstOTnDfJuU=
+	t=1760388711; cv=none; b=ekfzBLzYLYtAGuOdYpaUHZbGsrU/Y95k/1c/Y6yhYpe+Myz0rU/iYxUT0UI/aXxMXZ4myiPvlbBoMjuBCfb9Ts9fsxZfJruhmSDPygHZeQsyMbdVTOLbWwsrIhOHoOljTI524IGB2zl04C3Sx290sseFHyUzhpQr9vGnb7EfldA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760388708; c=relaxed/simple;
-	bh=+oCGKuWrWlzzBKoMEL3/FfWoYnYmDhmOoA3Dn2HMS1M=;
+	s=arc-20240116; t=1760388711; c=relaxed/simple;
+	bh=giCCGOBlBChq6Ynpd6wXM0B4ZyryNCFfzlLAUn2NwOM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u14Bw1TSExrNYaGexLF3BAqkg9psfboyPeFm0r2Zh/VenX55rlug2ooHwyyQJAbA2sasyz4kHrZ88vfzeGWoU5iFsJwqSqOmPNQy/NrH1uc1dyUtaR7p2cIme/ot5og6IedXVEI9VAWnNAQtBsEAOeBx0LAWsep9oG7XkDgFsdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=whd88L0g; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:To:Cc; b=b/wQ2CxaDpudlvO+YSOyq/boY8EVaGzSRbioOM0vqQ2c25y9IDV+XMDsqs2Pm4uvHMHtYIN3Q1NKqBNGTrreI4Ax3b1a5KJEE9RMBxpNVGoLlTo+WyLu7v+Dn7BeNAPfQE/MjIsYBJkgSTg5vHFcdHBrUb4eji1IKFAbB46CRQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kfCuGwN2; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="whd88L0g"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso28066355e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 13:51:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kfCuGwN2"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so42729185e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2025 13:51:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760388704; x=1760993504; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760388706; x=1760993506; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DyAHXZfiSiZUnBesnTj/zEW972y8t9X4DG0As5mUToM=;
-        b=whd88L0gxlkCJEHNSMRw0rggeUWlkVWWFyk/RaqoqV8Z/DNANWLGEXXAqeJVl8Cw/a
-         CwRMEUR9k3ma9WJK7Ro04HuNuzWtaLW8Wa+Ac/qQKfTYbp6xpuNdMrLmSwp/6qMysT0G
-         a6fpVqDumpvratMKokWtmdoTI6pevaZ6XhkBHHV9JlX9vCfgOcD6PfpVVPXL4Ck3AXSy
-         TsKfHP7tcSlVAEW/e6qVloXRMBUhwKkM71Wl9VhoO9fkSlK5Gw8HZwcePwHUAe99Hp81
-         ARG9Ue5IGQm1MANE7ia/69uYiCfINgd+eJC6CpAmwU+lqWpGhnL4pEE7nCaoVDorpNrL
-         BV5A==
+        bh=DDipr+4PTExpx4Pus/pkesGLE+hZroTGsdhAMvKlEJ8=;
+        b=kfCuGwN2LqbEoYfWMztaz42qfLSsC/22EBQ3C+GQ3raYBP6D6EbLLNAS0KNp40NBFQ
+         UhmD0+BqaWk4Bxhkgiz41sQ8Dxxg84SzVlDISAIJEM6GCTK3/94km4RAxDpKNczzQ57Y
+         QHDuA+DqxZ92+vWW/1rgP/ucik3lTBkQtkAhEbVmafXifZytQIbhhfq1YNKUlebX1PU4
+         WblZ/QDh3ooPQPgUKz2hetX5B019jzknz+HEn6EqzeOmhO3Y9C3UFc2z/6YiIedgsbdp
+         zzhJX/23e08yEiwWDXFjaBvFPpopcyGTze4i5p0z2F7XkI2A6REgBpxC3ghq3YWs6bMq
+         H+dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760388704; x=1760993504;
+        d=1e100.net; s=20230601; t=1760388706; x=1760993506;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DyAHXZfiSiZUnBesnTj/zEW972y8t9X4DG0As5mUToM=;
-        b=U0R6mHy41aVq/ivLKA78k0pldkNbf0/xYYxep9xKARoX1FdkHXIPy0TWARtXqqZP0Q
-         L2RpHweH/MJ4N2R2Abg6eBb9ck49aXwGwMBQLVVBVgVERrKfW3pLnHr4tvxVx8hvVTls
-         s1kcp2HdX1Lm3HE659T8IvuQsSDL1P97hXwSlHQgeaPLeEYMCD1rt7G9W2Irbpjd9BSZ
-         UP3O4RTZDJgHtPLmaiDfAHBBdEwqAYENe6Kb6USPsLaL7oEaoohZRWZij/M630JA7a32
-         y+aq3tTtSEKaX/HIMNNGUsATr5kydCPRQGoEu/vL3mHhrdoUGHYz9tbICo+b53mZrwAg
-         R9Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUY0wZdAR6pxMkrCTL++lYI9MbNYwZNoxlIszvwEfkUYf3niKRLQ4qjWMDu7ElA2lhj3BsTxuoJJfmOrsQf3hIcjg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoims3wJSGWtdEakDQa+++A0rmsf5Fz8r5xn/++zwEssnL6HT4
-	BIm04BwyM3bcBaIWvg49Gukp/9OmzQUgPZdag+BHlcqYzkgDMYmePY/VwJI9ZIP5l+A=
-X-Gm-Gg: ASbGncsypZigFyNlI5ztVK0yZUwJS7RKq2WkPbKcp85RXUbtpHoRcBsT1i2HCdqZNx9
-	f9mNAlSz11FJ5yC/UeCG8WT2u8+9RNdV9Mi51W0gAhAoB75ZxfVOa33BKiMF6UDcbvnsTj3zfpM
-	qO8anOkoWZrlABPPnUunGfnNzDt1K6x3dRwnUduvwqHnDbKmkHZwopgvtu0I6L2Zy76VO5mvJtU
-	ENzvog857wYFQeFlosM7w/1eAWyMZNT6QeDVlxUlP4c4s53eBkHFTijeReXyWFegZHz/1fH2Ztf
-	SCFKHEmtKtMF6VJQMvneg4GzJ26mJYELW4BN9SWT4SM2p0Sx0dJHlaAjjWat1P7UtU0QUtA9GPg
-	gKPxE9VRe2Ovii1qBqrmhLo91J7M2lFT0GBOZJYzGvHcsRbhMN/H5OxqVIDn27pZlfA0qjYLS5S
-	uZ8wuEwT7b5vAGo4ftWB1k
-X-Google-Smtp-Source: AGHT+IGM/ohxNTkB5I5MkU/rwu4FNgrucoZDaWYhj1yomWR4i7pKzGV277cj7BDpJ/M4YUeEMDupkg==
-X-Received: by 2002:a05:600c:4752:b0:46e:49fb:4776 with SMTP id 5b1f17b1804b1-46fa9a9f05emr144983335e9.11.1760388703969;
-        Mon, 13 Oct 2025 13:51:43 -0700 (PDT)
+        bh=DDipr+4PTExpx4Pus/pkesGLE+hZroTGsdhAMvKlEJ8=;
+        b=arkLCCvjZss1Vy7WgyWIgJ7fEBKkmEsPxs6VBwzHB98olPgKRpTGta1GRpBVZuUAnZ
+         6X8KITI5VBO0T6p3y1zWChbVCb34as0fgb7EQPBDJUBp5iSaTEcgbaX0RIsHS848LL2T
+         WyiV7hjlgohDnRyAlJTcHHNymng4q9rRKSSL20/A7J28TTBqByYPh0l690dnvNRX49I5
+         sTJEPLm7cg6p7zKm52XE7T6Rdumkvs4NnOTUWM32f1uX0ZcMwdBvfddw7U6Apidk8y5+
+         c+/twKi9Z/sQj+AJ2fj08Gg50J3WjXSOAA2yLfLQmeuP8KBXlkc0LaA+atEZ3uu9reUX
+         JeoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8iOKfkkgl3YaLXcgPdF/M1kK8DQFGwRdPDuCmqccVay243lgAQEXoTRHyBVqf0xckUutUF0pBvatXmGIYqW1dKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj7P0HOGmhjmfVBqEVzncFyp16Jw5pEhXFbKQY8PXwChmS+q+1
+	7mEoONh8+pO6ue1ceKZ4eMpoAPrk3aGU5CbbXInqNyNqAzlartsDUlvSVhwTacVauyQ9/CXEYQa
+	/aGKu
+X-Gm-Gg: ASbGncu8yYLShSHlnCk4k20a9mdx2mQcWhV9vOB4K+mMaSteyT6fWus4mYcfMRkXGi7
+	xiyEjBw0Equdnes9b1zx6bjpAdSbTF2ScV5PFKF+1xmyEnawqjKYeTBGBDkM5omI3G9tIHC8L7m
+	iJzdIfGZflk+ilWKq1qzMBS7hW0WswVO+RahKhOAwOBYxL4zVmiM/sgT7WPLZQNyom+JNiTEKM8
+	y1A9GvoVXShByPYMLyzlFYAauAPjyUTpJ2UIXgUoz/ZuAPN8bhPhrMddIc8JsxBxmjLbbNgwNX8
+	vI5RNzgLYE3uhNSepBlm8Pw5Mmmi7FRyj7IF1KWieVG6CwsJ3Z0rXLT1hPwbT1WHXLbPSlIygdv
+	/KQ2ABHO1wH389xSVdQ9QuNWE51k0GpfBv6rPHMZCMyOYZCfZpcjnGFcvsDH1YpL1qRBk9Vk1Jl
+	Y9g8lCKhn0Pw==
+X-Google-Smtp-Source: AGHT+IHUTh+o+vvqt5ApZzeaETGYqZ/dYn4CYlZfPFo7NmH3AG3xdBAc5oRb1zg/wq6RL1rLN8M4Vw==
+X-Received: by 2002:a05:600c:1990:b0:46e:1b89:77f1 with SMTP id 5b1f17b1804b1-46fa9aa1c74mr143864665e9.9.1760388706278;
+        Mon, 13 Oct 2025 13:51:46 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([145.224.67.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3206sm133512615e9.4.2025.10.13.13.51.40
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3206sm133512615e9.4.2025.10.13.13.51.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 13:51:42 -0700 (PDT)
+        Mon, 13 Oct 2025 13:51:45 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 13 Oct 2025 21:51:30 +0100
-Subject: [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101
- hsi0 and misc compatibles
+Date: Mon, 13 Oct 2025 21:51:31 +0100
+Subject: [PATCH 2/9] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+Message-Id: <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
 References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
 In-Reply-To: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -89,56 +90,80 @@ Cc: Will McVicker <willmcvicker@google.com>,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1464;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1827;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=+oCGKuWrWlzzBKoMEL3/FfWoYnYmDhmOoA3Dn2HMS1M=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBo7WZX52tjaL/uhAfhCWfI8+Pih5EXQZpOFieP4
- jF2DKC4+SmJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaO1mVwAKCRDO6LjWAjRy
- uksXD/9TEH4aYwfIIwWKepmKdYexuyHJ3CBlsgHDqQplGtpixAO+QJV8YjxA1Yz2onhlSyDIReF
- LJ8S+5U97RrsWGDfLSRYIhgqfg+QM5ZJuC0GigZTPmh16qtd/jgr1tMsVCp71ymyVAXkKfJS6iT
- FhpOs2hM1ji3uqQNRTrm0w7k8Alh3lzTnoLkCdfy5a8YE0famciNH6ejpx+oyp+sC0QEuTDJtlS
- KsnfpNGv6obmQKx3DnR4Q4WIZhN4dlEraL4VwKfgmXUqRvujLeDPEvNVQumFNusyQD7pAw8leKX
- OiNpSkvLKtnq0X97+BX8NOUo1LSxieGNLpspBQuqZ+Zxeh+xZXiieXLU/A5I5zuGK0R0ZEUR+/O
- PSvAq6gPM2ZZf0mLZDxbj86nxtgspkfB7ViGWTzZzuMu0Wjbg3lD6YHDi0wJfO/ZQqD01UmARkG
- tFp/+8W9gykbIzOkxBqp06LeHQ8YLfP0EoKGNy/DVUDFx5O12In7qt86z7He7iYx1ExOvOglm0g
- u6XNjHSbxlttVpjOzgx7RgjmYdUhexg/KWG3CzZERx3mNqddVFJCF10z2se9vovsK7oeF+iE3ET
- b7xtbfB2zSJCEFqoqbUgeGmr+0X4PoyQC5bZ1+WAQ1efzxidhCoyDxgvHaiCigKIwiPz8BOqHJQ
- 2oG8XmMM35so5rQ==
+ bh=giCCGOBlBChq6Ynpd6wXM0B4ZyryNCFfzlLAUn2NwOM=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBo7WZXhdIsp2MxanlYhqND7ug7W/PmVbZa8LP19
+ rjZ/5sTC9KJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaO1mVwAKCRDO6LjWAjRy
+ ugIyEACaZbMs7e+zhFPqcpuN5R75PYl3O9TDmu+YtFIJuzesPfmdW6mjJ+pRYDuqG8vNpAPLfLp
+ HAaBp+R/VWQZgUeFhHLauLlJwp55XQVmkp2SDzcAssMfI4IRc9HcVz1ZkfnUNGbA1J+2W5wfyDs
+ VaLjZbo4dyfbjinCsne58VzgnUmfTeDEDs9l1pZyQp/8r0LYamyk1xJsSjdkc2VQd+A+Lsu6rvz
+ 1c6HO84D1MEdY53PWfG3e2zkfg2rQxk/M1Q38TeTzdo6KqK9knJz9f5JtEIC3x/evu28VVlqfOR
+ vmdhtv89j66zSiujb+9R3ADOXr+xiGlBKfI/S+JkODT/54ux18FIfEyyPFxjf/ixPP3HpSvT0vV
+ pnTA/1Kp2SNFJKsoM1sAgJBGKKtlK6AAITJEc+e8AuEUw9orw3BvGcCn8e482IWSE1dJ7it3c9C
+ NAJ8oHudoYuF7yuzqgJeGJT0AF43Bzfv1q6Tr7tJCRCRoiftfTCzcD/gvvHItNMTk5q2lsHSkku
+ SfG4DYzxyi9EKzjf38aW8OlIhtJhAmhu41QyD+xnmoaFdSstsuRrcMAUMra9QCapyciJgobJh8W
+ 2TTErWidX0cU4VwL6MPVNBNLss7ZB7dNa/uxvrolbp8dFyPlQxDD8KUWUNPDzV1esTP2yVJUUc6
+ g6L5JBsu9IYNUXg==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to the
-documentation.
+Update the bindings documentation so that all CMUs (with the exception of
+gs101-cmu-top) have samsung,sysreg as a required property.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../bindings/clock/google,gs101-clock.yaml         | 23 +++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index d8b302f975474a87e4886006cf0b21cf758e4479..289406fb586e1a8a9eccb8eb781f159fd5b9d6eb 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -15,7 +15,9 @@ properties:
-       - items:
-           - enum:
-               - google,gs101-apm-sysreg
-+              - google,gs101-hsi0-sysreg
-               - google,gs101-hsi2-sysreg
-+              - google,gs101-misc-sysreg
-               - google,gs101-peric0-sysreg
-               - google,gs101-peric1-sysreg
-               - samsung,exynos2200-cmgp-sysreg
-@@ -83,7 +85,9 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - google,gs101-hsi0-sysreg
-               - google,gs101-hsi2-sysreg
-+              - google,gs101-misc-sysreg
-               - google,gs101-peric0-sysreg
-               - google,gs101-peric1-sysreg
-               - samsung,exynos850-cmgp-sysreg
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index caf442ead24bda57e531420d8a7d8de8713032ae..5cfe98d9ba895d5207fffc82f3fd55b602b4a2bb 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -49,6 +49,11 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  samsung,sysreg:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to system registers interface.
++
+ required:
+   - compatible
+   - "#clock-cells"
+@@ -163,6 +168,22 @@ allOf:
+             - const: bus
+             - const: ip
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - google,gs101-cmu-apm
++              - google,gs101-cmu-misc
++              - google,gs101-hsi0
++              - google,gs101-cmu-hsi2
++              - google,gs101-cmu-peric0
++              - google,gs101-cmu-peric1
++
++    then:
++      required:
++        - samsung,sysreg
++
+ additionalProperties: false
+ 
+ examples:
+@@ -172,7 +193,7 @@ examples:
+ 
+     cmu_top: clock-controller@1e080000 {
+         compatible = "google,gs101-cmu-top";
+-        reg = <0x1e080000 0x8000>;
++        reg = <0x1e080000 0x10000>;
+         #clock-cells = <1>;
+         clocks = <&ext_24_5m>;
+         clock-names = "oscclk";
 
 -- 
 2.51.0.760.g7b8bcc2412-goog
