@@ -1,217 +1,221 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94FF2DC785;
-	Tue, 14 Oct 2025 08:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657152F8BC0
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Oct 2025 10:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430138; cv=none; b=HGWxbYFULhwszGbG/pI96Vh5U6JNRJydlGz5U8y3UbYBO9u1CFSe7u9xPHf2xTM6kj4azKdepZk2W9UPkEIkzWRbddkP2DrqJiknTuWi6gpIolKfUdbKr8DcKhTaEfj8CtL9nTKkHlYQWx5IBu+7I5qO6C8SzW3wbG63nbQaYgc=
+	t=1760438819; cv=none; b=grI/tKNhjDzFlRmaDt1ZN0WvzTJVuTe5502uZXCxo0xy3lt0lpEgC3aoPUuQijJv9+q2pHYFNs5dtkCGV11LVwKfFPiMfIiEsPim0KSBMIPBeNQ6fzlBBL7AM6SN4xByeYSs1PLHGskk0rK6kGz0LD/YOtiqlUQkAaQ5IWBlFHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430138; c=relaxed/simple;
-	bh=Vlj6tP3JBHPNk8PgyCr78TrY0haPC3Xs1lzW10Q8cLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZkEkrWErCSMPH/V/KNXZgkuEqQoSZM8iGGtsvKNi0OMlVVtdd8kC9nkZKKkP27C3+t8XzIxMbW0WgK7CjwPWEbuOCOl+LVz/zlQ1m8Gpch+p6pMGBNvYf4iFcv2NQc17XcE/6l2pkaovvqHH7YBhJObhIOdTyWE65Tt+mS0W6Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZh/f3/F; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760438819; c=relaxed/simple;
+	bh=8aocFyCOxCpoLJEbEuTq35PMVV63kXV+5jFoHk+IvTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=RPWtb9uzgkBDWgUzASGGcZ2kPz4bvlRoyeTR3WManytvgGSje+B8vtXf9+jXR74PQCCfjx9C07dUQOnh5/E4/dekidw0ewPugXomE39hhOo0KeFqrOpIf7LlO6gC49sjdAV5Enj4JbDSbtL4wXL7oBUIb91MUJRNHlSLQEFa334=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hMRTIaCu; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZh/f3/F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC85C4CEE7;
-	Tue, 14 Oct 2025 08:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760430137;
-	bh=Vlj6tP3JBHPNk8PgyCr78TrY0haPC3Xs1lzW10Q8cLQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lZh/f3/Fc7dCqb6CDiY5tbcF9lWWIzM7REjTEic65K1WxpJhP9paD7iOWZjj/Y+Wl
-	 MCwhrgVrUc2HiR6nIBY2UXCxb516F1/kDTinX8shqb2b+g5M4vLRBCdRSl4DcAMq2D
-	 nv+FOWHFuTQ9tv3hmz509d6OyfqKZWSPJnWQWj7GHIamJEaCB/IEhdg2RUA8aNrrBi
-	 Ys+gVyn7W4USl4yzyKCR0gqCgiCDDZpRwP4v//qwyN4LOSSi2nIoFwj4nKBWBtP5Gp
-	 Lr0ploa3eB3xB+jXVL2E5QMpBE65dRCaLJ6CLKEffRcdnsBSSHGfpFt3trToDEUu6/
-	 8PgGVHCVqCkCw==
-Message-ID: <b7b3de64-c656-4a84-8ba4-2d5c7eda9783@kernel.org>
-Date: Tue, 14 Oct 2025 10:22:07 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hMRTIaCu"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251014104654euoutp02985b9bee4d8d31226dd93496b4c94453~uVcZPswLd2565225652euoutp02a
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Oct 2025 10:46:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251014104654euoutp02985b9bee4d8d31226dd93496b4c94453~uVcZPswLd2565225652euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760438814;
+	bh=zkmQ5PPCGOMpS7lkgoZAul6Lf/MVygcQKOzt/YoDHLg=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hMRTIaCugssG/s6KTGhn/owQf2lt9ESLRQip68gzTsr+WuXn1NdD6V6UVyXd/56+s
+	 fPxUljIFihydZrPi4ZMFi8jPXP2fgNwwMhb3efj+kEnx7yrqIwXZFY589+KPagy3M0
+	 CMibQQjItzmN5KfcZecURMz6KpLY3qSSaunyPm5Q=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251014104654eucas1p19b0f4c8c17c0d5fca76ba1e12f74fbe4~uVcYzqshg0183901839eucas1p16;
+	Tue, 14 Oct 2025 10:46:54 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251014104653eusmtip1029c762e819539d11b084aa8582c35c3~uVcYZUAKX2950129501eusmtip1O;
+	Tue, 14 Oct 2025 10:46:53 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho
+	Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] media: samsung: exynos4-is: fix potential ABBA deadlock on
+ init
+Date: Tue, 14 Oct 2025 12:46:43 +0200
+Message-Id: <20251014104643.1884897-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251010201607.1190967-1-royluo@google.com>
- <20251010201607.1190967-2-royluo@google.com>
- <066a9598-ad30-4327-be68-87299bba6fda@kernel.org>
- <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251014104654eucas1p19b0f4c8c17c0d5fca76ba1e12f74fbe4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251014104654eucas1p19b0f4c8c17c0d5fca76ba1e12f74fbe4
+X-EPHeader: CA
+X-CMS-RootMailID: 20251014104654eucas1p19b0f4c8c17c0d5fca76ba1e12f74fbe4
+References: <CGME20251014104654eucas1p19b0f4c8c17c0d5fca76ba1e12f74fbe4@eucas1p1.samsung.com>
 
-On 14/10/2025 03:40, Roy Luo wrote:
-> On Fri, Oct 10, 2025 at 5:09 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 10/10/2025 22:16, Roy Luo wrote:
->>> Document the device tree bindings for the DWC3 USB controller found in
->>> Google Tensor SoCs, starting with the G5 generation.
->>>
->>> The Tensor G5 silicon represents a complete architectural departure from
->>> previous generations (like gs101), including entirely new clock/reset
->>> schemes, top-level wrapper and register interface. Consequently,
->>> existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitating
->>> this new device tree binding.
->>>
->>> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
->>> Dual-Role Device single port with hibernation support.
->>
->> You still mix, completely unnecessarily, subsystems. For Greg this is
->> actually even undesired, but regardless don't do this for any cases
->> because it just makes everything slower or more difficult to apply.
->>
->> Really, think how maintainers should deal with your patches.
->>
-> 
-> Understood, I will separate the patches into two distinct series: one for
-> the controller and one for the PHY.
-> Appreciate the feedback and the explanation.
-> 
->>>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  .../bindings/usb/google,gs5-dwc3.yaml         | 141 ++++++++++++++++++
->>>  1 file changed, 141 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
->>> new file mode 100644
->>> index 000000000000..6fadea7f41e8
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
->>> @@ -0,0 +1,141 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +# Copyright (c) 2025, Google LLC
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
->>> +
->>> +maintainers:
->>> +  - Roy Luo <royluo@google.com>
->>> +
->>> +description:
->>> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
->>> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
->>> +  features Dual-Role Device single port with hibernation add-on.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: google,gs5-dwc3
->>> +
->>> +  reg:
->>> +    items:
->>> +      - description: Core DWC3 IP registers.
->>> +      - description: USB host controller configuration registers.
->>> +      - description: USB custom interrrupts control registers.
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: dwc3_core
->>> +      - const: host_cfg
->>> +      - const: usbint_cfg
->>> +
->>> +  interrupts:
->>> +    items:
->>> +      - description: Core DWC3 interrupt.
->>> +      - description: High speed power management event for remote wakeup from hibernation.
->>> +      - description: Super speed power management event for remote wakeup from hibernation.
->>
->> Wrap at 80 (see coding style) or just shorten these.
-> 
-> Ack, will fix it in the next patch.
-> 
->>
->>> +
->>> +  interrupt-names:
->>> +    items:
->>> +      - const: dwc_usb3
->>
->> So just "core"?
-> 
-> I'd prefer to stick to "dwc_usb3" as that's
-> 1. more expressive by referring to the underlying IP name,
+v4l2_device_register_subdev_nodes() must called without taking
+media_dev->graph_mutex to avoid potential AB-BA deadlock on further
+subdevice driver initialization.
 
+Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This fixes a long standing bug that happens sometimes during driver
+intialization. This issue has been finally captured by the lock
+dependency tracker with the following log:
 
-But that's completely redundant name.
+ ======================================================
+ WARNING: possible circular locking dependency detected
+ 6.17.0-00001-g6ec53b34d5b7 #16049 Not tainted
+ ------------------------------------------------------
+ kworker/u16:3/50 is trying to acquire lock:
+ bf049068 (videodev_lock){+.+.}-{3:3}, at: __video_register_device+0xf0/0x1428 [videodev]
+ 
+ but task is already holding lock:
+ c3818a34 (&mdev->graph_mutex){+.+.}-{3:3}, at: subdev_notifier_complete+0x30/0x3cc [s5p_fimc]
+ 
+ which lock already depends on the new lock.
+ 
+ 
+ the existing dependency chain (in reverse order) is:
+ 
+ -> #1 (&mdev->graph_mutex){+.+.}-{3:3}:
+        __mutex_lock+0xb0/0x10c4
+        mutex_lock_nested+0x1c/0x24
+        media_device_register_entity+0x84/0x1ec [mc]
+        __video_register_device+0x958/0x1428 [videodev]
+        fimc_capture_subdev_registered+0x2a8/0x300 [s5p_fimc]
+        __v4l2_device_register_subdev+0xd0/0x164 [videodev]
+        fimc_md_probe+0x79c/0xcc0 [s5p_fimc]
+        platform_probe+0x5c/0x98
+        really_probe+0xe0/0x3d4
+        __driver_probe_device+0x9c/0x1e0
+        driver_probe_device+0x30/0xc0
+        __driver_attach+0x124/0x1d4
+        bus_for_each_dev+0x70/0xc4
+        bus_add_driver+0xe0/0x220
+        driver_register+0x7c/0x114
+        _note_18+0xc/0x1c [exynos_fimc_lite]
+        do_one_initcall+0x70/0x328
+        do_init_module+0x54/0x234
+        init_module_from_file+0x94/0xd4
+        sys_finit_module+0x1a4/0x2d4
+        ret_fast_syscall+0x0/0x1c
+ 
+ -> #0 (videodev_lock){+.+.}-{3:3}:
+        __lock_acquire+0x1650/0x29fc
+        lock_acquire+0x134/0x388
+        __mutex_lock+0xb0/0x10c4
+        mutex_lock_nested+0x1c/0x24
+        __video_register_device+0xf0/0x1428 [videodev]
+        __v4l2_device_register_subdev_nodes+0xd8/0x1a4 [videodev]
+        subdev_notifier_complete+0x1dc/0x3cc [s5p_fimc]
+        __v4l2_async_register_subdev+0xd0/0x1ac [v4l2_async]
+        s5c73m3_probe+0x620/0x724 [s5c73m3]
+        i2c_device_probe+0x1bc/0x364
+        really_probe+0xe0/0x3d4
+        __driver_probe_device+0x9c/0x1e0
+        driver_probe_device+0x30/0xc0
+        __device_attach_driver+0xa8/0x120
+        bus_for_each_drv+0x84/0xdc
+        __device_attach+0xb0/0x20c
+        bus_probe_device+0x8c/0x90
+        deferred_probe_work_func+0x98/0xe0
+        process_one_work+0x250/0x71c
+        worker_thread+0x1ac/0x3b0
+        kthread+0x13c/0x278
+        ret_from_fork+0x14/0x28
+ 
+ other info that might help us debug this:
+ 
+  Possible unsafe locking scenario:
+ 
+        CPU0                    CPU1
+        ----                    ----
+   lock(&mdev->graph_mutex);
+                                lock(videodev_lock);
+                                lock(&mdev->graph_mutex);
+   lock(videodev_lock);
+ 
+  *** DEADLOCK ***
+ 
+ 5 locks held by kworker/u16:3/50:
+  #0: c1c128b4 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1b0/0x71c
+  #1: f0a15f18 (deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1dc/0x71c
+  #2: c2617c9c (&dev->mutex){....}-{3:3}, at: __device_attach+0x30/0x20c
+  #3: bf09c040 (list_lock){+.+.}-{3:3}, at: __v4l2_async_register_subdev+0x50/0x1ac [v4l2_async]
+  #4: c3818a34 (&mdev->graph_mutex){+.+.}-{3:3}, at: subdev_notifier_complete+0x30/0x3cc [s5p_fimc]
+ 
+ stack backtrace:
+ CPU: 0 UID: 0 PID: 50 Comm: kworker/u16:3 Not tainted 6.17.0-00001-g6ec53b34d5b7 #16049 PREEMPT 
+ Hardware name: Samsung Exynos (Flattened Device Tree)
+ Workqueue: events_unbound deferred_probe_work_func
+ Call trace: 
+  unwind_backtrace from show_stack+0x10/0x14
+  show_stack from dump_stack_lvl+0x68/0x88
+  dump_stack_lvl from print_circular_bug+0x31c/0x394
+  print_circular_bug from check_noncircular+0x178/0x194
+  check_noncircular from __lock_acquire+0x1650/0x29fc
+  __lock_acquire from lock_acquire+0x134/0x388
+  lock_acquire from __mutex_lock+0xb0/0x10c4
+  __mutex_lock from mutex_lock_nested+0x1c/0x24
+  mutex_lock_nested from __video_register_device+0xf0/0x1428 [videodev]
+  __video_register_device [videodev] from __v4l2_device_register_subdev_nodes+0xd8/0x1a4 [videodev]
+  __v4l2_device_register_subdev_nodes [videodev] from subdev_notifier_complete+0x1dc/0x3cc [s5p_fimc]
+  subdev_notifier_complete [s5p_fimc] from __v4l2_async_register_subdev+0xd0/0x1ac [v4l2_async]
+  __v4l2_async_register_subdev [v4l2_async] from s5c73m3_probe+0x620/0x724 [s5c73m3]
+  s5c73m3_probe [s5c73m3] from i2c_device_probe+0x1bc/0x364
+  i2c_device_probe from really_probe+0xe0/0x3d4
+  really_probe from __driver_probe_device+0x9c/0x1e0
+  __driver_probe_device from driver_probe_device+0x30/0xc0
+  driver_probe_device from __device_attach_driver+0xa8/0x120
+  __device_attach_driver from bus_for_each_drv+0x84/0xdc
+  bus_for_each_drv from __device_attach+0xb0/0x20c
+  __device_attach from bus_probe_device+0x8c/0x90
+  bus_probe_device from deferred_probe_work_func+0x98/0xe0
+  deferred_probe_work_func from process_one_work+0x250/0x71c
+  process_one_work from worker_thread+0x1ac/0x3b0
+  worker_thread from kthread+0x13c/0x278
+  kthread from ret_from_fork+0x14/0x28
+ Exception stack(0xf0a15fb0 to 0xf0a15ff8)
+ 5fa0:                                     00000000 00000000 00000000 00000000
+ 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+---
+ drivers/media/platform/samsung/exynos4-is/media-dev.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> 2. consistent with established dwc3 bindings such as
->     Documentation/devicetree/bindings/usb/snps,dwc3.yaml,
+diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
+index c781853586fd..e9d7875cf01e 100644
+--- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
++++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
+@@ -1399,12 +1399,14 @@ static int subdev_notifier_complete(struct v4l2_async_notifier *notifier)
+ 	mutex_lock(&fmd->media_dev.graph_mutex);
+ 
+ 	ret = fimc_md_create_links(fmd);
+-	if (ret < 0)
+-		goto unlock;
++	if (ret < 0) {
++		mutex_unlock(&fmd->media_dev.graph_mutex);
++		return ret;
++	}
+ 
+-	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
+-unlock:
+ 	mutex_unlock(&fmd->media_dev.graph_mutex);
++
++	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-- 
+2.34.1
 
-If you use only one interrupt. You don't use one interrupt here.
-
->     Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml,
-> unless you have a strong preference for the alternative naming.
-
-Such namings are discouraged, because they tell absolutely nothing.
-Also, schematics or datasheets usually do not use them, either.
-
-
-Best regards,
-Krzysztof
