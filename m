@@ -1,175 +1,155 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AD32FAC0E;
-	Tue, 14 Oct 2025 14:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5EA1E47CA
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Oct 2025 21:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453606; cv=none; b=FV5+6LKKX5j3wfvtUpiTGHb5Z26s0S43SyPKssvoegNk5OfVszay+nM36KUoIZDKmQF/PN9uIm08mpAiFOQ+baP11CXSLVz0le87KJBaGmzL643woq/2/UcP4r4/nyJkNqaWTcGAbq2Cl1nZSOxFmGMgdTgmpQ+GZ4c8WtAz3Es=
+	t=1760476197; cv=none; b=Mrm64/hoz7ygEY61meO+sSRmPlVfeWe5EKzupFkjOsEbtQtEFB655QVNXkLg3R0jdPZDOKu/5CpOWsruEyYUQvAjw7VOLCouvBk7fM9Sf6Y9Y96LyxOPq6mV3tCx4vWOmlPckbJ0J9VkfAAweOJwg03MD+sY7/Is2ZC5grrNmbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453606; c=relaxed/simple;
-	bh=z6qNyT2/oj6cU0ryqpoJ0qcaj3pCu/T9Mq36j0ZaZyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sp/V5AP7qWM9SNoOqJHIoUkiVVDHL5bOVMIVEaJwnyvHu8oBtEiY8ppQ5KxZwTlZFwlf+VzuUYG++sga5hU2QMOVX/XBl3VNvZLil1kbdFlqa1NqJMU/jFdZEcdC/mnGbJQ+vo1MVcmvZqjKLIcPG9u9Z7dRLh5/xjAuhtHrB8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4sKEVR6; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1760476197; c=relaxed/simple;
+	bh=FEscob/e+90GaHE2E4U+4fd6PQekvU5FL8BnBdihcrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EbgA5Y43w2kB4MH5l7LvyoPNgEkOmk/b9aL9GOqGGauowdEu6dVCLeJTMND8NPrlQguwinISmOBk9NFihj8I30ohNeBAlF+Q8loV96VAvtI3DiD904DnueAblSO2CymG8I7/UDdG8d4UUTRhztsydF9cQEW1JROE3RaGx8ausHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OVnBbebO; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4sKEVR6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760453605; x=1791989605;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z6qNyT2/oj6cU0ryqpoJ0qcaj3pCu/T9Mq36j0ZaZyo=;
-  b=l4sKEVR66ZK+Cy48wJ5OpovUsLSslsJkYLDuGZDEyEUut3YxLFcTYLhL
-   TVOlB65xvps7t6sowFRHPy/DiK7s0lEFgPYgmw22LO9rvD8DfTmU6TBMx
-   fB67F0mZeEYh8udo1koN4OxQzNhUn0K+c0K7L5vTl1adoAStw6Xq8BU7P
-   6zgy++zrhPytlctb1eNCvSaH/1778TsUab2xsiQp6ZL2YbY83zZXw1TD8
-   LXrwVYIeeXTon/S1LMUdW5L4AQ7PTJc2wPemCBNPUzjXxaqM1KEU/ffji
-   OMxiiv7fJ/02deZskt+SDKW0ivjbymwsfngClO+guN7kJZdyHl5dNFLQJ
-   A==;
-X-CSE-ConnectionGUID: pC1ofzHLQx2J0vM7lnIo0g==
-X-CSE-MsgGUID: 9b1W4DuhRZOl5ayR7PRpgQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="73215493"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="73215493"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:53:24 -0700
-X-CSE-ConnectionGUID: poiBxSkoQCCEVEGLJGVzdw==
-X-CSE-MsgGUID: 8lac8hSAQea4DlnmA1UaEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="219043783"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 14 Oct 2025 07:53:14 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8gNb-0002tJ-14;
-	Tue, 14 Oct 2025 14:52:23 +0000
-Date: Tue, 14 Oct 2025 22:46:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel-team@android.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH 7/9] clk: samsung: Implement automatic clock gating mode
- for CMUs
-Message-ID: <202510142228.IQJSNIFa-lkp@intel.com>
-References: <20251013-automatic-clocks-v1-7-72851ee00300@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OVnBbebO"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e542196c7so1587115e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Oct 2025 14:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760476194; x=1761080994; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aAFIy48SiNIefLRd1BAuON2DcAPzB6rd2TTAzyi/zmQ=;
+        b=OVnBbebOPYmvppTEawHH7DqNLzG9FMcBK6Ik4fk3zeO40bwYGlgf1dTyA+0Q8nU0Wd
+         3eImoFfukZ5Yb1ds2vJFpo4fsQMuJx7auuObwTuGbpognVDUC869NUvjkmHj8Z6gDEZc
+         7+BA3s2jVFYBVsX+uD6zx34LD7tsZy+WrZ/r710UmV8uBJ4nAw0exnUlJ7oY+kKYLFgy
+         CignPqzaZDI4XiymQES4VkJ4GxrkycUXEEBQ9IjLchk7KiITwg99oPcPru7KtrdkcqRy
+         NyA0hZe50+GnxctAbjBEpatbXb5E7YaV9/nltPamC8NlatXc+4Am1IefgYWFyME7poa+
+         iyHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760476194; x=1761080994;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAFIy48SiNIefLRd1BAuON2DcAPzB6rd2TTAzyi/zmQ=;
+        b=gMkBWCoLDQM88+26Bqs9A4zPhQlWAjVorjKMnbLZmWynVj8dg5S6wdzdt2icAljKh/
+         ftFGEWSH9fX0xzFdjNhTWOTEKGb5Utsk8fy0oJHp02nM/PDhRtsQJcvEMoBoXfBjptov
+         cNMoaat2pxyYKv4Gn+vE+k+QINcMjndB1qlyeI5axgn5GG9hGrL6UwP+HMxzJurzVtkP
+         hW3Az4txK1Xz+DvIp91Vmi7TLWGLfO+9zcMpJJikAPDDi1Vbs9UjLDG2CN02o/m9Z7BJ
+         CmcBfFBx829uECL6fZ51KanWpX7lbBzkkk0nQv/HUz+SM2RwNcIweKjeJ1+LFNcFCrrJ
+         pJGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZiS8ozQqQ719VoArboliqTDzXEAeb7CMJSZYQLfD5VMuI6Z0GEaH6BbFErMHc4nZk4wdK0hWM7kSIKP/xxHFTVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwiMj2nDqMNhacaSEjPABivowF2ww9EZepinE8yvHbP5gUn3XD
+	rLUxZDuQeTT59vb4Alz1qu7xKXf6nHYVUQcuABUiDaaD4/GY+dE0qsnK8l0s6y7xJUM=
+X-Gm-Gg: ASbGncuf2Ovnpg8x0v233c8kHWG7BEJVXJ5YDg2TUqHHGWS5BhHv2IxbwhBLAfyJaXt
+	Lp6gzcPARLJjs6+KBq6C3V4Xxp/C20it9fRrD0wrRn16o/+sIHT+5Bej22yslONc/YW8x6gtKxI
+	Mq3LiNxnvDJ9IGoc0MQrx3J2SGTeK/N1gHjsg2J9AJkIY8nw+4LChqmYX9k7kUQvkIm/RV7wPUP
+	PTntDKCXiWv4TnE2AIp4e9IaDBjvjtFMebq437CXuDB5vQgiVJRzewj5tR24WzsZccu1mtLant6
+	JxikeqYvs97l4OCXc4wPaHWM96UHdwJRrR1imwcc2JXIXTDBVJw4E4nmGSM8Nc49wi/WAKPNp22
+	uiF9mOzUCKWAWWkDQJq4E77a2jegLGIjX9rqRtFJTlg9RTeEGaRTcm5/tRJbtGGpXTZOTPPClea
+	v7sXGDHWjTQgDwS4ZEgGCuKA==
+X-Google-Smtp-Source: AGHT+IHMLDEl/2OUqyd6dsVKt1UGXh3BaRNNfQRox5yRqmlsYRCZeNTg0aqnPOJfK+LSUdRcw9kJiQ==
+X-Received: by 2002:a05:6000:2389:b0:411:3c14:3ad9 with SMTP id ffacd0b85a97d-4266e7c7b2fmr20416940f8f.21.1760476194354;
+        Tue, 14 Oct 2025 14:09:54 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582b39sm25169444f8f.15.2025.10.14.14.09.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 14:09:53 -0700 (PDT)
+Message-ID: <ebc5be79-7184-4a91-92fc-8a181ba096b5@linaro.org>
+Date: Tue, 14 Oct 2025 22:09:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013-automatic-clocks-v1-7-72851ee00300@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/32] media: i2c: imx412: Use %pe format specifier
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Leon Luo <leonl@leopardimaging.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Jacopo Mondi <jacopo+renesas@jmondi.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Julien Massot <julien.massot@collabora.com>, Jacopo Mondi
+ <jacopo@jmondi.org>, Daniel Scally <djrscally@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, Yong Zhi
+ <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
+ Tianshu Qiu <tian.shu.qiu@intel.com>, Tiffany Lin
+ <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rui Miguel Silva <rmfrfs@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Dafna Hirschfeld <dafna@fastmail.com>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
+References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
+ <U1BUWm68sWNPUXHr6NOsnc48bb6eXIL5tcAzrNijItgutDvPaBTmCI0qf2ERLQB_2BFYEBVNvWTQdmx5z_UU-g==@protonmail.internalid>
+ <20251013-ptr_err-v1-11-2c5efbd82952@chromium.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20251013-ptr_err-v1-11-2c5efbd82952@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Peter,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 4a71531471926e3c391665ee9c42f4e0295a4585]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-soc-samsung-exynos-sysreg-add-gs101-hsi0-and-misc-compatibles/20251014-045559
-base:   4a71531471926e3c391665ee9c42f4e0295a4585
-patch link:    https://lore.kernel.org/r/20251013-automatic-clocks-v1-7-72851ee00300%40linaro.org
-patch subject: [PATCH 7/9] clk: samsung: Implement automatic clock gating mode for CMUs
-config: loongarch-randconfig-001-20251014 (https://download.01.org/0day-ci/archive/20251014/202510142228.IQJSNIFa-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251014/202510142228.IQJSNIFa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510142228.IQJSNIFa-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> drivers/clk/samsung/clk.c:481:13: error: too many arguments to function call, expected 5, have 6
-     478 |                 samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     479 |                                                 cmu->sysreg_clk_regs,
-     480 |                                                 cmu->nr_sysreg_clk_regs,
-     481 |                                                 NULL, 0);
-         |                                                       ^
-   drivers/clk/samsung/clk.h:453:20: note: 'samsung_clk_extended_sleep_init' declared here
-     453 | static inline void samsung_clk_extended_sleep_init(void __iomem *reg_base,
-         |                    ^                               ~~~~~~~~~~~~~~~~~~~~~~~
-     454 |                         const unsigned long *rdump,
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     455 |                         unsigned long nr_rdump,
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~
-     456 |                         const struct samsung_clk_reg_dump *rsuspend,
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     457 |                         unsigned long nr_rsuspend) {}
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.c:511:23: error: too many arguments to function call, expected 5, have 6
-     509 |                 samsung_clk_extended_sleep_init(reg_base, NULL,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     510 |                         cmu->clk_regs, cmu->nr_clk_regs,
-     511 |                         cmu->suspend_regs, cmu->nr_suspend_regs);
-         |                                            ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:453:20: note: 'samsung_clk_extended_sleep_init' declared here
-     453 | static inline void samsung_clk_extended_sleep_init(void __iomem *reg_base,
-         |                    ^                               ~~~~~~~~~~~~~~~~~~~~~~~
-     454 |                         const unsigned long *rdump,
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     455 |                         unsigned long nr_rdump,
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~
-     456 |                         const struct samsung_clk_reg_dump *rsuspend,
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     457 |                         unsigned long nr_rsuspend) {}
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
---
->> Warning: drivers/clk/samsung/clk-exynos-arm64.c:249 function parameter 'init_clk_regs' not described in 'exynos_arm64_register_cmu_pm'
-
-
-vim +481 drivers/clk/samsung/clk.c
-
-   462	
-   463	/* Enable Dynamic Root Clock Gating of bus components*/
-   464	void samsung_en_dyn_root_clk_gating(struct device_node *np,
-   465					    struct samsung_clk_provider *ctx,
-   466					    const struct samsung_cmu_info *cmu)
-   467	{
-   468		if (ctx && !ctx->auto_clock_gate)
-   469			return;
-   470	
-   471		ctx->sysreg = syscon_regmap_lookup_by_phandle(np, "samsung,sysreg");
-   472		if (!IS_ERR_OR_NULL(ctx->sysreg)) {
-   473			regmap_write(ctx->sysreg, ctx->drcg_offset, 0xffffffff);
-   474			/* not every sysreg controller has memclk reg*/
-   475			if (ctx->memclk_offset)
-   476				regmap_write_bits(ctx->sysreg, ctx->memclk_offset, 0x1, 0x0);
-   477	
-   478			samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
-   479							cmu->sysreg_clk_regs,
-   480							cmu->nr_sysreg_clk_regs,
- > 481							NULL, 0);
-   482		} else {
-   483			pr_warn("%pOF: Unable to get CMU sysreg\n", np);
-   484			ctx->sysreg = NULL;
-   485		}
-   486	}
-   487	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 13/10/2025 15:14, Ricardo Ribalda wrote:
+> The %pe format specifier is designed to print error pointers. It prints
+> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+> omitting PTR_ERR().
+> 
+> This patch fixes this cocci report:
+> ./i2c/imx412.c:931:3-10: WARNING: Consider using %pe to print PTR_ERR()
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>   drivers/media/i2c/imx412.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx412.c b/drivers/media/i2c/imx412.c
+> index 7bbd639a9ddfa7fa76d3a4594be1e1c4d002c98a..b3826f80354703b17b416dc233854da3f5736e38 100644
+> --- a/drivers/media/i2c/imx412.c
+> +++ b/drivers/media/i2c/imx412.c
+> @@ -927,8 +927,8 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
+>   	imx412->reset_gpio = devm_gpiod_get_optional(imx412->dev, "reset",
+>   						     GPIOD_OUT_LOW);
+>   	if (IS_ERR(imx412->reset_gpio)) {
+> -		dev_err(imx412->dev, "failed to get reset gpio %ld\n",
+> -			PTR_ERR(imx412->reset_gpio));
+> +		dev_err(imx412->dev, "failed to get reset gpio %pe\n",
+> +			imx412->reset_gpio);
+>   		return PTR_ERR(imx412->reset_gpio);
+>   	}
+> 
+> 
+> --
+> 2.51.0.760.g7b8bcc2412-goog
+> 
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
