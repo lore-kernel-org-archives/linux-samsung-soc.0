@@ -1,56 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F72325480;
-	Wed, 15 Oct 2025 18:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E565E325489;
+	Wed, 15 Oct 2025 18:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760553116; cv=none; b=ZKhUSNIet3zVykZ6HXFACq3o4BSonho6KQPdM/PAAEAnav68hqCTwEg5T00a3wThA1Vj3g1FdEhMA1fZ+LW59R8ZpJvwVrhv01IFhRZCFoVt4biI5qYIG050x9UaACX+BD6DH8SZTNWv/Af/OeD4JR36t7o7fek0dJF5toUo9Gk=
+	t=1760553151; cv=none; b=llVZ+jo1+koeG/3qUcYja1WVOFhSY7R8I9TTuxap8dsd5gTfk4C1aIo1yeojbEBcq6NMf7OKTG9sJkcqAU6Y5A7yTyuyBx8LYng9wqup4K87LoK85GIRyR519bZceL4bOLc9tuew01FWImni2zQ+L4ig2FonwT1FRbSNLAFr8fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760553116; c=relaxed/simple;
-	bh=745IEqjMLPClb39Tf9d1zUU3SvdsnRvc6cJCVLlU9Bo=;
+	s=arc-20240116; t=1760553151; c=relaxed/simple;
+	bh=fQ6Dvs6k0CQ3t/luHMYAgBo0nY4Veo8+0mTyWsYHiwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWh+BwbVO48y44glexu2to/8k6EcZ52FtwomkWyimJfUUVvRzqm77567JKHdEge3md7GvRx+dT6EXZPwGzUHsuKuWfDA8e1JTH1XWPIjapAIiIzwPM6fXbBuaoaVH/F4iMgfKxKfIqdybyy5fES9scK6x4ZatDJgIaCyrrt13lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=by9wpcsv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUQxM816g8EuNUiPWFqHC2CQ6ptEMhmJV/oLKSi3SHG+u8jUTXSqJo9cKk/ZHudu5RvZhMeD7WilW4XiXUBKvyZ/vG6cp2s/Kbx9LnAuGM37UOVjS2ZJD+J8SwIWlbUyA8QU7mhY9E37T8YO5soTPF5mVHO/VeiylfXRmn/lvTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEG4U2O8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="by9wpcsv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEA9C4CEF8;
-	Wed, 15 Oct 2025 18:31:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEG4U2O8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D3AC4CEF8;
+	Wed, 15 Oct 2025 18:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760553116;
-	bh=745IEqjMLPClb39Tf9d1zUU3SvdsnRvc6cJCVLlU9Bo=;
+	s=k20201202; t=1760553150;
+	bh=fQ6Dvs6k0CQ3t/luHMYAgBo0nY4Veo8+0mTyWsYHiwE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=by9wpcsvmDWWfdyRKF3SXdvPNP6Bhdym/3/NdTCz+DyPQGXuqijjPP9dxLllX8bW4
-	 L6CPRD8ggleEOHq4Bm1DIN+EJfxqTo3CY1TXfPDTjBYM+D7a14ucyyXIRfF+Ri4L7z
-	 KDGwJtLMaMl5lI60NlVw95oztEumktHRXN1ZS+AJxJWcCVW26sLGqhc5eFE09kOd/V
-	 k7SlQIvAJpwv2ivP13t54yOsh15++RJB04QN+uaiBf8dIpWcRf5fv9ooVVBjqzG5HM
-	 lYVNpswqVeXzoCN007ZfAC5OCPwusPDBFPLGpSIe66whJRI3/qb79NLzcHVjEcnUmR
-	 CYh6y/3MrFWOg==
-Date: Wed, 15 Oct 2025 13:31:53 -0500
+	b=VEG4U2O8yPqmF/FtLYfSbvUyTNChkJV8jzzx4HeGE1oz1q4G9b00Fh+HWj7b16kBn
+	 BwJElzg5wduStaoJgTlIH0HQKMuFD4gChKoSk+EeOcN7+xkWjO+ZOJJmpjF3Y5e93X
+	 Iq7ysnMH97lPOHsY8uMOKkq4oKcsjzEAqDxNFJ21JbRiaccYzeR+lOHtedTZ46Exnf
+	 KWVuVoD2Woa0q1vmnP7STrKQoE1CrqibKeL4z/xHsKZ0fPuPobmnpDHoqVn6vEDVVd
+	 lSMr5pDFiPEFIld19VlKmSAsyD1gIDy1mrNcHddNK4tZYjibmzAykMVROkAOFbHCHB
+	 XKvXJ4OYwcCuQ==
+Date: Wed, 15 Oct 2025 13:32:28 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
 	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Sam Protsenko <semen.protsenko@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	kernel-team@android.com, linux-kernel@vger.kernel.org,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101
- hsi0 and misc compatibles
-Message-ID: <176055311249.179333.13160204351428508138.robh@kernel.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel-team@android.com, Will McVicker <willmcvicker@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 2/9] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+Message-ID: <176055314794.180061.13794322940289476072.robh@kernel.org>
 References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
- <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+ <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,17 +59,17 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+In-Reply-To: <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
 
 
-On Mon, 13 Oct 2025 21:51:30 +0100, Peter Griffin wrote:
-> Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to the
-> documentation.
+On Mon, 13 Oct 2025 21:51:31 +0100, Peter Griffin wrote:
+> Update the bindings documentation so that all CMUs (with the exception of
+> gs101-cmu-top) have samsung,sysreg as a required property.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../bindings/clock/google,gs101-clock.yaml         | 23 +++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
