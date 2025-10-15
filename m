@@ -1,319 +1,199 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012069.outbound.protection.outlook.com [40.93.195.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E43429B766
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Oct 2025 17:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760548432; cv=none; b=nJmML06esKINnFIp4RehgdBILdwnuHjr5ilKhF5nCnnQQA0YYZBu6phA9pHS3DiFOHXmA1O+LA0H2JzyPrKHl7qK2kcuJJPkvR5367Lc7MumvqP3atQk/VTgtRBSKFHRWPYyC3AfTrUIGxa/ENNpZXBStcCDvQHihT0P6g8Lgmk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760548432; c=relaxed/simple;
-	bh=RuwwVGH6iji/5MFR99uLIc4nUmvenw/jgigS717qaCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nmZFSKoXwo71Xpa4CfrvmUlYUKPwgSA4x2B9sxesVaQrSFXDDWvmgoqcAlXq6mjplWawGEQck3eFVDifEzJtZHL2SFRGwoS1brRmqCl8Vi051TloN6smKAnxKNKSKQoKYCNE3P+YmXqbfEJfqbkBfZonGZm8Zptlk1DCfvtkwQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XBN4M+l9; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DAA1FDE14;
+	Wed, 15 Oct 2025 17:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760549741; cv=fail; b=twNXjgJ6BoAQT53qNM/OY+WtJJbatz8n0fBRj19Hpnu4LJfclFv19uKk8SbKZAP45J3FEbPbvhQIgoLxeBa0E+yHvv2WaQAFlglQytYUYwk9526oCZEuAeEpA3xRd9BNNz+YhJFedS3zlNLS2zIzmCzDZ+XHH+vxcJsKelM7vBA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760549741; c=relaxed/simple;
+	bh=Gcy0djEpDW3YoiV4uJfpD+9/ymZRRH/DD5Smah/RMIo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KyrgAP7xg0sz8a+GQmKmua094p+xWDas/p9Ke/JC30PLhSdR/hP8RoSKb9+13i14iMPbujlS/xrHqSfhoxK8Z+ad0OBBiLOAW7cazkXZQeVkc19RWhMB9tm9Y/8deVL9aONc6Oo7X0oEVCDaU9FJKMYVg/h4Kg83mE3s74qM2ec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VjgmJgDJ; arc=fail smtp.client-ip=40.93.195.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XBN4M+l9"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b67684e2904so4160927a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Oct 2025 10:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760548430; x=1761153230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTmCve7ow8KUe86m2S+D+TMV8DrrT745aVc8Mr0EBG4=;
-        b=XBN4M+l9zAHG5a/Ihj79peQVyAZSRsuzWwMdF2tmdlwAACQpCikspfoW073uKLG71M
-         kN0z6haR7u4k1oPAA/R92FS5PZM3qK6zfwBE1qMsOfSfgnn1MT1ZQudaAy8mz6sIsfBM
-         xHrM1vmCgLhK1gOLGO0b0uR7RMWXC2UeEheIIn5OPsE3Sq/a6mfmHybUx1xixkGw5KjL
-         iKvYGAh63fFkd0DKpimr8IBVQfTtnjgvQkXwUri3GHa4yg3kvLUl/qYqD3qQTwKJ639I
-         gc1zlr3qUJCxK2GNweXYO7P6P7A3AEwVgdTeiot8ny9Ltp3+FX2ktL6YD10VMYOFWQf5
-         E2iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760548430; x=1761153230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTmCve7ow8KUe86m2S+D+TMV8DrrT745aVc8Mr0EBG4=;
-        b=RLnNOLJcTWz+OzQQQ8xKlY+Vhc6mA51Ypx9L9lUicDyq8zu2ZUYcicFAQH7oYVs/uv
-         pQnv3t0xZL2zAvhRpIzNAcpRKNRbhTMSCCJlzGh9eXzsg8UG4OJpnLWeDs4/N1CR7Csl
-         y57xhfSGXHEiZ323PAZKrzvJGLKM2vNNutYahreltpsDQPE7uhzx+dg1lEWgfFhvplRj
-         gcGUbBrWsHOQIZadF1LrewvwjhpqUseMSSnLgndevxMZmOVXBLfQ1/Gn2ua8PdCvoA/f
-         nM/0DlAs9sNMUMUQ7g3GFqRN+XePPRhiJO6W05wCG/USdMXief/cKAtoYHrSg5fR6Qwj
-         WD9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVyfFZQYMMkpUh6tE5UVwHOuZgPaE70rjZl6iLb5di/OSoZXtmeFs8TDAjQ2PJd+CNn7AfvZzeqkpW0lEONTdIujA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYm5Gd9sPl5swfuBMrqxAlpasqDml58gfG5evyKkPTCUqHZZK2
-	yvxYmk6dj8H3Y7ChznHYqQVBvyuGYtwbltpZwEnWDLngoWkIRlfc3cD7LK1s9VbQnrmXAe8B3tE
-	+RtTnEEv2p8pI8mng0grSpF8vleFqgYNdV3qUxNjr
-X-Gm-Gg: ASbGncuMUrTAejXgqcWarz/VS8I9P9NrHwSe8TfLCjRzfT0ewmFly3HCV9LWuJQpyIA
-	td8BRSY0fHTeHDnTYjMEvPNBrqnQmoFov7ffetmIUN1tvNEdigqtHrDFsU5jSKjDt+dUExi1ubo
-	431Wz/ZinCiYcdx/4lcvrZLYxeeEPEviz7ebuhr8lbBjnQ/cUbe4pGdr5uy3yERbaRLwX9sOeUJ
-	Hb2PAxpxRNkj5bFcylTa+k08aQQSCyoAa319j60QhmMFfDUbKK6xP3GDcv0ShRC4ZALlvsoqG33
-X-Google-Smtp-Source: AGHT+IG7xm/DEDbS/nNDrpe7ReteweNLIKFfyokAzWV7zMp350kRJ3eICS85Rhzn8PDxA9SglM5C/lh1HX9E/pJg4Bg=
-X-Received: by 2002:a17:902:f650:b0:276:305b:14a7 with SMTP id
- d9443c01a7336-290273ef0ebmr363338475ad.33.1760548429863; Wed, 15 Oct 2025
- 10:13:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VjgmJgDJ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m4rd/8UneRUiYtebjgd3VqKK4G6zO/W3kvMSLh7/OGqiZA/e1mP4XaE23Lkf1b5bM7BUkipPLRCrTy4EsyGEC7uCjBOSv+hhKof1yqXqC+2GARYuCt/AcgLyKJ7Q7r8UG+z2jFd2UGlrB4WY+NZAONf9ZzXB0aZU2VWXVtutgfh28qvxHQMT4gHrh7ivNHgEQKl3+QqyVp3TIy4goBxi4+R/EhzH94OIwK7wAUf/C9ujHFyOrq9+J87N/R4qNFyu6msK1TroITWxYjDghw8ZEfFJFuY0sf2+fl9fQeHBn5kihcIDsRY/n2Z19ceGuLmyOr3yyKzSQJRHyplLHG2Ogg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ym5KXypVXoWNGKcpOctEcTYQtwndUzaCFTGYBCx9F9A=;
+ b=bzdvdM+WbMkQxpwkFfo3oyuoSO/jpYw/hkfK3Vvos2bfMmofn2U6bntE51bsrArkBzKJqHBYtivuq0+jEV/zIk0v5XOj2jqGE7f8vbzbKPmIuenp3NqdctmdTY0mCvGzbzVDdzZ0jm6F+KmZ1xtsbOlq8rtBSyiZ4SXX8mTkjJ/5wn4WpE/bWEQ++MGRmVYHnhHgzVQc3bj831eYPtHBAIYkL20bKuoN+dh7Y8Fj7kTxcguWX9S5Br/i59Z5ss5C9rkkpVgBnqJasWZFfM8D6PA/HX9jcdCwuwFL8YAM0iavLmpk2081qJm4KD4/Gs0W0kcRst7Zw2YqAtKw7GtAjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=8bytes.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ym5KXypVXoWNGKcpOctEcTYQtwndUzaCFTGYBCx9F9A=;
+ b=VjgmJgDJDGZCflKhKF9R6yn1mbUf7i9hGa7Th0jq/K/9kGnTaxfCoQHkxHixrsr3SBasLfQM6B/BjrfsUB21CYVYjEmOGco9ClJrnm72EnrzKbk9W4NkI7yvWSQTXgdaYQ9V37Wr+Ge+m2mCF1Ri3+b1P5NMgcSR+e5KLdp1wnTi9UDkuy0Yye9ALZF0308YjfxrwBGfEcbZpj3euryV/m9ej55MtpKTb32a+NKUM+fVtNbCGYydQsCGhSHf1m5GSAnyYvDbBgLeUk3zLmUYzPhlbgALMW4yoLxfc+KmO6lDS6NzxwwD3wYZmZl32WCrci2qr1HEOjcloPwb2jKlNg==
+Received: from BY3PR10CA0025.namprd10.prod.outlook.com (2603:10b6:a03:255::30)
+ by DS5PPF884E1ABEC.namprd12.prod.outlook.com (2603:10b6:f:fc00::658) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
+ 2025 17:35:35 +0000
+Received: from SJ5PEPF000001F6.namprd05.prod.outlook.com
+ (2603:10b6:a03:255:cafe::cf) by BY3PR10CA0025.outlook.office365.com
+ (2603:10b6:a03:255::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.10 via Frontend Transport; Wed,
+ 15 Oct 2025 17:35:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001F6.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 17:35:35 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 15 Oct
+ 2025 10:35:19 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Wed, 15 Oct 2025 10:35:18 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Oct 2025 10:35:17 -0700
+Date: Wed, 15 Oct 2025 10:35:15 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <joro@8bytes.org>, <jgg@nvidia.com>, <kevin.tian@intel.com>
+CC: <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <sven@kernel.org>, <j@jannau.net>,
+	<robin.clark@oss.qualcomm.com>, <m.szyprowski@samsung.com>,
+	<krzk@kernel.org>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+	<yong.wu@mediatek.com>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <tjeznach@rivosinc.com>,
+	<pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<heiko@sntech.de>, <schnelle@linux.ibm.com>, <mjrosato@linux.ibm.com>,
+	<orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>, <wens@csie.org>,
+	<jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<jean-philippe@linaro.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-tegra@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v1 6/6] iommu: Pass in old domain to attach_dev callback
+ functions
+Message-ID: <aO/bU6IFUBpo2iz/@Asurada-Nvidia>
+References: <cover.1760312540.git.nicolinc@nvidia.com>
+ <53e12066ebcaa1bb5a3f4ed1657e088f3d8e8464.1760312540.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010201607.1190967-1-royluo@google.com> <20251010201607.1190967-2-royluo@google.com>
- <066a9598-ad30-4327-be68-87299bba6fda@kernel.org> <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
- <b7b3de64-c656-4a84-8ba4-2d5c7eda9783@kernel.org> <CA+zupgzo9zRO2GHR2Np0Tm4M5_h8y0GF2JGGqE_S0BxSR_ZbqQ@mail.gmail.com>
- <20251015-backlash-overtime-4c636f12b165@spud>
-In-Reply-To: <20251015-backlash-overtime-4c636f12b165@spud>
-From: Roy Luo <royluo@google.com>
-Date: Wed, 15 Oct 2025 10:13:13 -0700
-X-Gm-Features: AS18NWCEm2YS-Sip7tv4iMJuDS6bNEhHmOhmHYieVj8y_mcbM2tH_CjtqCUTPM4
-Message-ID: <CA+zupgyKsnp5D9kW-AeoAsweODXx4BXLr7fVnB+J9tzYRbM_fg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <53e12066ebcaa1bb5a3f4ed1657e088f3d8e8464.1760312540.git.nicolinc@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F6:EE_|DS5PPF884E1ABEC:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98c03e62-0894-4e66-8494-08de0c113f85
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7hdTfa0JClrud6ghuQBWY+EiQx+m2L6DjbnnI2eDrzRJ/zkDVzBpbotKUls5?=
+ =?us-ascii?Q?32j7srKXh1k7BHRGglhjkRg3F+fjHdNuzqjKEal5ALo1f17GLbtOqW4j9gLe?=
+ =?us-ascii?Q?NI2854Y5XlrQ8Gq6lEUisT18pYZhAn9zvbyKXjgHCGDnaQD+xO10zZWxl33+?=
+ =?us-ascii?Q?mreU7n8IXxoRp7WinKvA/VA9AbuRygAzdIuzTt/dlD9pzz6ptExFnjdwwsEX?=
+ =?us-ascii?Q?4ZyvVRGfeFmHND611J6xgrxWtKW4uPW9a0qbFqSYcMVMvx7bxBqIM2PiHyuX?=
+ =?us-ascii?Q?vGUCO2XCLs5J+rfRR/l0okbHNURRDk4AtT55izrBVkBA8WWEczuI1Nre3xzs?=
+ =?us-ascii?Q?JEiI8PshwjnMkcDb7F0rPFrT5oZ86iaCL+InFaYyzErxd0uNmss7x7pJ6ssB?=
+ =?us-ascii?Q?pF4uMZytqOCsR4wC3lQh9Mdkhf/Lu9EVmINvjbw+FQJoXMy8Kt8Pxtac/3RG?=
+ =?us-ascii?Q?YerFM1bL4WGCjDy2X5kQHkarTCMyk0Zdjx/GjJQOtiu9NFUrv1Gfic3J8gTM?=
+ =?us-ascii?Q?an3HvX5PNhiZgoDlzACC0Wk1Mbj5dQvT1YQS/sAYCDuWE8k2e/GTt+0gl1W+?=
+ =?us-ascii?Q?rjv0Wx7fdN69lFRfsMskvU1JZ5USM4Cg+6kwww4BAV0D9fHVVtLJDQB0pNTi?=
+ =?us-ascii?Q?fWJUG4J6Hlh+xC1f39WyWXQwe6xPmh3JKWvddgrLRyGTqxhx0Yy02KUg6ryX?=
+ =?us-ascii?Q?ePMUNo2ezQa+UR/tFART6tkhN+m7tUksH8cGrGiEus1sFMqAtC/e1w3ABkMM?=
+ =?us-ascii?Q?NRYxeqGusrgBdK5wTO1g5tTM3Z+8uUqg62jmmt97fsxfUT8F8G+cjPCcFR70?=
+ =?us-ascii?Q?WScGMnZL0n7ePLYUA0vp20czAkiBJffbHbzvMVfMLa6yKNrZLTUJf3ohh0e8?=
+ =?us-ascii?Q?00GHRshzg6UgoAEvTK1qxD0CxnlSZGB0ckSJli1aMKq05fwpK/ECJ8mXGYdr?=
+ =?us-ascii?Q?QFQEb6ON93ffF20ob4dqJR3vLrSj87JaNpODjU8iWPN/qRL3N0G7kxZ5QdbB?=
+ =?us-ascii?Q?tbGNrgTpMMqoiJqS8uKd7Yf/8EuoXA4Fs0canAdGhBBrlw6z9OWzxlziFtQt?=
+ =?us-ascii?Q?UHRzILlQRigryajET3vgfeEmtCOrX8Qpp/VxwvxjltReGiPXthzc7F8xc0+R?=
+ =?us-ascii?Q?wo7QIsZGXQFJ+J9suxdLWEC4YShpntykGqc73j71XbfpAfjjUIG8M5H0f9Fu?=
+ =?us-ascii?Q?89Vd9sTNPJtGXZKF/Q1a24L2rwNGI/cei84mUh5EHQ82YrrTu1m0X/ApiJ4e?=
+ =?us-ascii?Q?Ja0eLj1Qk9VwtGbO4ZbpgkNU7NGNTt6wzYeBfagZG3UZW+OkHEdmqRkgbm5Z?=
+ =?us-ascii?Q?WafXM59vzueKpOdqGMfQGBrtANxGayPRy1iRlQTdPrwX1oApE/Vkqzh/U+Tv?=
+ =?us-ascii?Q?85LzbTW9nClRHYCyVCVb+EvlQkoJyP2Ve666jpkx5ba7gktcCaCGDjMEMeWB?=
+ =?us-ascii?Q?2u/NwN9nSSVuF/9jPREUIcpkgG53+SpKQfk8UOBYYseq/vgQ+paSj/ElpTYQ?=
+ =?us-ascii?Q?mXp9kzwzvXR8gJnxRtI73gZR74Zo6BcJPgPB0oQX11ZpoEDLlSFe3QYzTG+K?=
+ =?us-ascii?Q?XW0X09jPQsCnUUupNCw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 17:35:35.2391
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98c03e62-0894-4e66-8494-08de0c113f85
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF884E1ABEC
 
-On Wed, Oct 15, 2025 at 1:59=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Oct 14, 2025 at 05:50:17PM -0700, Roy Luo wrote:
-> > On Tue, Oct 14, 2025 at 1:22=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> > >
-> > > On 14/10/2025 03:40, Roy Luo wrote:
-> > > > On Fri, Oct 10, 2025 at 5:09=E2=80=AFPM Krzysztof Kozlowski <krzk@k=
-ernel.org> wrote:
-> > > >>
-> > > >> On 10/10/2025 22:16, Roy Luo wrote:
-> > > >>> Document the device tree bindings for the DWC3 USB controller fou=
-nd in
-> > > >>> Google Tensor SoCs, starting with the G5 generation.
-> > > >>>
-> > > >>> The Tensor G5 silicon represents a complete architectural departu=
-re from
-> > > >>> previous generations (like gs101), including entirely new clock/r=
-eset
-> > > >>> schemes, top-level wrapper and register interface. Consequently,
-> > > >>> existing Samsung/Exynos DWC3 USB bindings are incompatible, neces=
-sitating
-> > > >>> this new device tree binding.
-> > > >>>
-> > > >>> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and =
-features
-> > > >>> Dual-Role Device single port with hibernation support.
-> > > >>
-> > > >> You still mix, completely unnecessarily, subsystems. For Greg this=
- is
-> > > >> actually even undesired, but regardless don't do this for any case=
-s
-> > > >> because it just makes everything slower or more difficult to apply=
-.
-> > > >>
-> > > >> Really, think how maintainers should deal with your patches.
-> > > >>
-> > > >
-> > > > Understood, I will separate the patches into two distinct series: o=
-ne for
-> > > > the controller and one for the PHY.
-> > > > Appreciate the feedback and the explanation.
-> > > >
-> > > >>>
-> > > >>> Signed-off-by: Roy Luo <royluo@google.com>
-> > > >>> ---
-> > > >>>  .../bindings/usb/google,gs5-dwc3.yaml         | 141 ++++++++++++=
-++++++
-> > > >>>  1 file changed, 141 insertions(+)
-> > > >>>  create mode 100644 Documentation/devicetree/bindings/usb/google,=
-gs5-dwc3.yaml
-> > > >>>
-> > > >>> diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc=
-3.yaml b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> > > >>> new file mode 100644
-> > > >>> index 000000000000..6fadea7f41e8
-> > > >>> --- /dev/null
-> > > >>> +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> > > >>> @@ -0,0 +1,141 @@
-> > > >>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > >>> +# Copyright (c) 2025, Google LLC
-> > > >>> +%YAML 1.2
-> > > >>> +---
-> > > >>> +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
-> > > >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > >>> +
-> > > >>> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> > > >>> +
-> > > >>> +maintainers:
-> > > >>> +  - Roy Luo <royluo@google.com>
-> > > >>> +
-> > > >>> +description:
-> > > >>> +  Describes the DWC3 USB controller block implemented on Google =
-Tensor SoCs,
-> > > >>> +  starting with the G5 generation. Based on Synopsys DWC3 IP, th=
-e controller
-> > > >>> +  features Dual-Role Device single port with hibernation add-on.
-> > > >>> +
-> > > >>> +properties:
-> > > >>> +  compatible:
-> > > >>> +    const: google,gs5-dwc3
-> > > >>> +
-> > > >>> +  reg:
-> > > >>> +    items:
-> > > >>> +      - description: Core DWC3 IP registers.
-> > > >>> +      - description: USB host controller configuration registers=
-.
-> > > >>> +      - description: USB custom interrrupts control registers.
-> > > >>> +
-> > > >>> +  reg-names:
-> > > >>> +    items:
-> > > >>> +      - const: dwc3_core
-> > > >>> +      - const: host_cfg
-> > > >>> +      - const: usbint_cfg
-> > > >>> +
-> > > >>> +  interrupts:
-> > > >>> +    items:
-> > > >>> +      - description: Core DWC3 interrupt.
-> > > >>> +      - description: High speed power management event for remot=
-e wakeup from hibernation.
-> > > >>> +      - description: Super speed power management event for remo=
-te wakeup from hibernation.
-> > > >>
-> > > >> Wrap at 80 (see coding style) or just shorten these.
-> > > >
-> > > > Ack, will fix it in the next patch.
-> > > >
-> > > >>
-> > > >>> +
-> > > >>> +  interrupt-names:
-> > > >>> +    items:
-> > > >>> +      - const: dwc_usb3
-> > > >>
-> > > >> So just "core"?
-> > > >
-> > > > I'd prefer to stick to "dwc_usb3" as that's
-> > > > 1. more expressive by referring to the underlying IP name,
-> > >
-> > >
-> > > But that's completely redundant name.
-> > >
-> > > > 2. consistent with established dwc3 bindings such as
-> > > >     Documentation/devicetree/bindings/usb/snps,dwc3.yaml,
-> > >
-> > > If you use only one interrupt. You don't use one interrupt here.
-> >
-> > After looking into it further, I found that the interrupt name "dwc_usb=
-3"
-> > must be used here to adhere to the interrupt naming defined in
-> > "snps,dwc3.yaml".
->
-> Did you just chose to not read what Krzysztof said here? It must be used
-> only when that's the sole interrupt, which he stated is not the case for
-> your platform.
->
-> > This requirement stems from the device's corresponding glue driver
-> > utilizing a so-called "flattened" model (see [1] for context). This mod=
-el
-> > causes the glue driver to probe an underlying "snps,dwc3" device.
-> > Consequently, the core DWC3 interrupt defined here is consumed by
-> > the driver handling the "snps,dwc3" device, making it mandatory to
-> > follow the interrupt naming established in "snps,dwc3.yaml".
->
-> I look at the binding and noticed that interrupt-names isn't even a
-> required property by snps,dwc3.yaml, and this comment about driver
-> behaviour likely isn't accurate given that the code in for host mode
-> (and the others are identical) is written so that it will grab the first
-> interrupt if the specific names it looks for are absent:
-> | static int dwc3_host_get_irq(struct dwc3 *dwc)
-> | {
-> |       struct platform_device  *dwc3_pdev =3D to_platform_device(dwc->de=
-v);
-> |       int irq;
-> |
-> |       irq =3D platform_get_irq_byname_optional(dwc3_pdev, "host");
-> |       if (irq > 0) {
-> |               dwc3_host_fill_xhci_irq_res(dwc, irq, "host");
-> |               goto out;
-> |       }
-> |
-> |       if (irq =3D=3D -EPROBE_DEFER)
-> |               goto out;
-> |
-> |       irq =3D platform_get_irq_byname_optional(dwc3_pdev, "dwc_usb3");
-> |       if (irq > 0) {
-> |               dwc3_host_fill_xhci_irq_res(dwc, irq, "dwc_usb3");
-> |               goto out;
-> |       }
-> |
-> |       if (irq =3D=3D -EPROBE_DEFER)
-> |               goto out;
-> |
-> |       irq =3D platform_get_irq(dwc3_pdev, 0);
-> |       if (irq > 0)
-> |               dwc3_host_fill_xhci_irq_res(dwc, irq, NULL);
-> |
-> | out:
-> |       return irq;
-> | }
->
-> Since it grabs the first interrupt, as a fallback, in order to support
-> not having the interrupt-names property, the name of the first interrupt
-> ultimately doesn't matter at all to this driver (and likely any other
-> driver written in compliance with the bindings for the dwc3 core).
->
-> I'm not here to argue about what the name for the single interrupt
-> should be (keeping consistency with other devices might actually be
-> good), but ignoring what a maintainer says and the seemingly providing
-> an incorrect analysis is annoying. Did you perform the analysis on this
-> yourself, or did it perhaps come from Gemini?
->
-> Thanks,
-> Conor.
+On Sun, Oct 12, 2025 at 04:57:42PM -0700, Nicolin Chen wrote:
+> diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
+> index aa576736d60ba..366e47978ac07 100644
+> --- a/drivers/iommu/s390-iommu.c
+> +++ b/drivers/iommu/s390-iommu.c
+> @@ -670,7 +670,8 @@ int zpci_iommu_register_ioat(struct zpci_dev *zdev, u8 *status)
+>  }
+>  
+>  static int blocking_domain_attach_device(struct iommu_domain *domain,
+> -					 struct device *dev)
+> +					 struct device *dev,
+> +					 struct iommu_domain *old)
+>  {
+>  	struct zpci_dev *zdev = to_zpci_dev(dev);
+>  	struct s390_domain *s390_domain;
+> @@ -694,7 +695,8 @@ static int blocking_domain_attach_device(struct iommu_domain *domain,
+>  }
+>  
+>  static int s390_iommu_attach_device(struct iommu_domain *domain,
+> -				    struct device *dev)
+> +				    struct device *dev,
+> +				    struct iommu_domain *old)
+>  {
+>  	struct s390_domain *s390_domain = to_s390_domain(domain);
+>  	struct zpci_dev *zdev = to_zpci_dev(dev);
+> @@ -1131,7 +1133,8 @@ static int __init s390_iommu_init(void)
+>  subsys_initcall(s390_iommu_init);
+>  
+>  static int s390_attach_dev_identity(struct iommu_domain *domain,
+> -				    struct device *dev)
+> +				    struct device *dev,
+> +				    struct iommu_domain *old)
+>  {
+>  	struct zpci_dev *zdev = to_zpci_dev(dev);
+>  	u8 status;
 
-Hi Conor,
+kernel test robot complains a build break..
 
-My apologies for the incorrect analysis. I misinterpreted the code,
-which was a big mistake. I can assure you that I do value your
-feedback and take every comment seriously.
-Thanks for pointing out the error and raising your concern.
-This won't happen again.
+Both s390_iommu_attach_device and s390_attach_dev_identity calls
+the updated blocking_domain_attach_device function but are not
+updated.
 
-Thanks,
-Roy Luo
+I will fix and send v2.
 
->
-> > Essentially, the interrupts defined here are a mix of vendor specific
-> > implementation (like "hs_pme", "ss_pme") and the DWC3 core in
-> > "snps,dwc3.yaml" ("dwc_usb3").
-> >
-> > I don't know if there's a better way to express this implicit dependenc=
-y
-> > of the core DWC3 interrupt except for documenting it in the binding
-> > description. Any advice would be welcome.
-> >
-> > [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722=
-d@oss.qualcomm.com/
-> >
-> > Thanks,
-> > Roy Luo
-> >
-> > >
-> > > >     Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml,
-> > > > unless you have a strong preference for the alternative naming.
-> > >
-> > > Such namings are discouraged, because they tell absolutely nothing.
-> > > Also, schematics or datasheets usually do not use them, either.
-> > >
-> > >
-> > > Best regards,
-> > > Krzysztof
+Thanks
+Nicolin
