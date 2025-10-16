@@ -1,138 +1,131 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE9E369992
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2025 15:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93923346AF;
+	Thu, 16 Oct 2025 19:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760630337; cv=none; b=CVZkEizY8tWyBEojksx4sqCiToLqudrILpz8sEM1GN8erFKOWH9pWbB+mTe7H4uACE7SoBCMH1Re+onGN5pOy+eYxE7Flw7qAEnkTjpR5Z+uDvdcFFeoAeXaIvJApo8vc6A3ahHv8EqgA3zLsWiF4DOH+CxTVgOQiLmBu08NCgM=
+	t=1760642533; cv=none; b=Ktn78t6qPI5IeqP62OuW7vfRd09dBHa2JP9TUi8fbwfxY+UemxR1ABr2QQuk44J0bIFbMXgqIrSF0WATkvlZkCBGOXIwmpaEXeTfpXPhN7mVylZ3slS9zU/wUVhIbUPXEd/h3BLiIzLC/U/jrxhcHVfnI/Q5lPJ5vrITQYw7F3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760630337; c=relaxed/simple;
-	bh=ngrM+eWn9xbaRjAU/VwFL/GK16Xs8solvHiQs5E/TVs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bf2MTqzBpm/HyCyzZ52Y+ZzUCY/v5rJFkLIxkfEEHqudDM/skquQNLF76hG0U8DN4On/mOQ8LhwcKYBmu7viadPs6EMfChxrCkEyEda40enXN6rerRZM4EcSPNJNdBAzrqttvd/ShBN8UvscZalgluV+PLFhXGAWiIsvAeFlk78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IytOev9E; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760642533; c=relaxed/simple;
+	bh=70CHvEmZWEz+900ZJiNa3jXRD54PcFWARg2uD+iSNUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzKsZ6HI5Zz1T0dG9KjxCwvfbEwgNheGP0nHjusWg7BeZLT9F2+wi6vQDLuzW8WSPRCt/FNEOHJ/F9y/1I8DqC4m3THmv1dAnxmRocuT30gpFggrIJd2QjRPxU9yseCJ0oh5aG46UbUKoFfk684wA0OXjqhxc78JlB8MOTLqZNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HGhzUPvp; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IytOev9E"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so189400566b.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2025 08:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760630332; x=1761235132; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GRtuCWl6DsZm6id43RaQ+ggcTZIQA9X1wHdBvSFgFgY=;
-        b=IytOev9E/QILIygCo15TlnAtXJvDl/fxruSM9RvNvnlOI8jIDle3TDO5NIAkByMiqE
-         6NmYGg80GCs7+B3JHJbw44EggHlnKxkKG23u9Ic2oW16pcZBWRHcm1JXsckVC+sClPtx
-         HSI1YuQJVyA9EJxd8Yd8mPQP47O6kDCDgX0zkU+6qceGCKa6CAWSLYJdTDNJcJqJu34U
-         7T7p4Dai//Dx8kYQBoRKLPNbXGL4qVYCyCT+SZkFH+/jyCTbDt5A3PssNgacCRpTiLXr
-         bwIX42Z0B9nly1KS50SKujx+HeKWqU/zmafuTY69FtlMLlEoA80E5qPMkM0D/Myr60+N
-         t2Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760630332; x=1761235132;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GRtuCWl6DsZm6id43RaQ+ggcTZIQA9X1wHdBvSFgFgY=;
-        b=Trsuvh01IfUQK+EPsIiE0LogUDhk39qK6pKPi3TxbN3mBR5Pgc8WUahFoQEyGaFfU8
-         1uCGd+flkgdOwI4jlOkccHVT6VpfgLYeF4PcxyuXugDUzLgP6CDUrRSM72Sb9fhvZyZC
-         cyYGRkrSY5wFVoFxTAxFM+TR32/GCfYLX5dvwbDBe1uOr/YeiCOx6GUz++zvMv+b4BDG
-         NoShdrry3T/cfCKLK6RHFkbatgvqPw90VBaQtYhIOR4kcqb2CQSc82WlSADSw4RQ4S8T
-         7O0bTHezGSMAxP3WVEGEOH6zy9K+6u2UcEM3peBik0rRteaeHkx3CRcUcO3gNsG+QcVA
-         hi8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUU66Z1umFzjJ3p5dvwQkQOBoxvfMx1mroVmTVIoPSeKcFNWOhoLEQil/oVMw2yMEl9q5SDfQ4xW7F5va7+xtXn3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2ji1BR8fO4poVamCBW1sp5EV9pykD7XeuCE6yRZFoD5/XS7ON
-	SYm38AvKLRC9IneT+sdtCUJInxkjAA5XkULTHK8XwcW06tgCBSbvA+Oy4CRNqAy3Uo8=
-X-Gm-Gg: ASbGncstL6BS5uHyakPjsxR5TDID5thO++3gqUYYLl8tuz6h3MilnvJbm1lvPxTZ4rm
-	QSlAKrAt0CJ/KDYacUUevy+TKmvGtBQ9vZSpckOk1iUkdSpHX3TyDN0cmMDUbirVL1/Ihdn3CN5
-	AQW23S5rUTW5SH8gGzZj3AEbob7ow2QiBsLwVTUEDZ8VZakkbgK474+OjOgy387czy/O/oQhhh7
-	T0WaFEENfPdcweqZ15dpI+pPJESMqU/FxTKRMumpaazDx1EUnWLU22oTqSJAHaT0WwGrzjZUFK8
-	IKHfStEh2rxeNooLxcMsFDjaKkZgwvByh8RzTiGHUBKZCc//dZ9pmpUi3L79bMfNtlyrAhFUryS
-	Q3T2Z7o9oIKJZeKYTCXSjIGk7xWez5KYjrr6MMk0TmNwkP3TjpGPe3hblb3Ao8gmnfbNqRN8P2l
-	gkCkgbXAtH1Q3zQjdAXIvysVgFGcD5q24x9cTQ/juFhyJApj0JlDZkhQnwXDL9
-X-Google-Smtp-Source: AGHT+IEbUoUcanooKZDlk5mEzvgz5a6q2790fxYwvUg/eU6pRWdoDgf3AvUevu67xFJRES2YBilqRw==
-X-Received: by 2002:a17:906:4899:b0:b4f:f6ff:a82f with SMTP id a640c23a62f3a-b6474b371e4mr39583466b.32.1760630332293;
-        Thu, 16 Oct 2025 08:58:52 -0700 (PDT)
-Received: from puffmais2.c.googlers.com (254.48.34.34.bc.googleusercontent.com. [34.34.48.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccb4811sm549021666b.56.2025.10.16.08.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 08:58:51 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 16 Oct 2025 16:58:43 +0100
-Subject: [PATCH v3 10/10] pmdomain: samsung: use dev_err() instead of
- pr_err()
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HGhzUPvp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760642531; x=1792178531;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=70CHvEmZWEz+900ZJiNa3jXRD54PcFWARg2uD+iSNUs=;
+  b=HGhzUPvpWL40GT0HcNWBLlYVjFS9FkZ0DeQAtw1s9Z5CO81GoAMwtzUb
+   dE3Rc5IbPY1jWg54gI1YM4eDinCJxIBpQPv80o6NG3TTfwWuyd0BnG2bF
+   mtA3kx/B4fvYxUr5K612B8W2zwmzzydIV44L4qFUiDp0hisxEHT80HQ6t
+   iIDgv9RmYLHDXI9iW9G+ecpRKWusaxKu+zbv8U36hH3Uw3araZKfClEBz
+   my+KgEdbWG/tZpCb8zI4o895nzbR/abP/+V84x+vESIjt4qN5KxWYUkhB
+   qNXLxgtjgix3xUQhrqLpQJv4lBk1D0zPnZfjT/+kEkjLTtAEWg36mwgr4
+   Q==;
+X-CSE-ConnectionGUID: 7GGiTkBzSgOMazNgzFvpDg==
+X-CSE-MsgGUID: oxuD5VyQTiCQgCcQBsCsnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="66714822"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="66714822"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 12:22:10 -0700
+X-CSE-ConnectionGUID: jOJEvLFnQfOU96ZQuLGYWA==
+X-CSE-MsgGUID: ATJwx4GHQi6qptwFDH+2lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="187816513"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.31])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 12:22:09 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 936D312023C;
+	Thu, 16 Oct 2025 22:22:06 +0300 (EEST)
+Date: Thu, 16 Oct 2025 22:22:06 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Leon Luo <leonl@leopardimaging.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Julien Massot <julien.massot@collabora.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH 00/32] media: Use %pe format specifier
+Message-ID: <aPFF3n-e7pAUDH5x@kekkonen.localdomain>
+References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251016-gs101-pd-v3-10-7b30797396e7@linaro.org>
-References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
-In-Reply-To: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 
-dev_err() gives us more consistent error messages, which include the
-device. Switch to using dev_err().
+Hi Ricardo,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/pmdomain/samsung/exynos-pm-domains.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+On Mon, Oct 13, 2025 at 02:14:40PM +0000, Ricardo Ribalda wrote:
+> The %pe format specifier is designed to print error pointers. It prints
+> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+> omitting PTR_ERR().
+> 
+> The recently introduced test scripts/coccinelle/misc/ptr_err_to_pe.cocci
+> checks that we use %pe. Let's make it happy.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index a7e55624728a62545eac049c9a51012a229f44c2..387ee1c91caeae4519237af2ec659f56782e7bd7 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -29,6 +29,7 @@ struct exynos_pm_domain_config {
-  */
- struct exynos_pm_domain {
- 	struct regmap *regmap;
-+	struct device *dev;
- 	struct generic_pm_domain pd;
- 	u32 local_pwr_cfg;
- 	u32 configuration_reg;
-@@ -53,8 +54,9 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 				       (val & pd->local_pwr_cfg) == pwr,
- 				       100, 1 * USEC_PER_MSEC);
- 	if (err)
--		pr_err("Power domain %s %sable failed: %d (%#.2x)\n",
--		       domain->name, power_on ? "en" : "dis", err, val);
-+		dev_err(pd->dev,
-+			"Power domain %s %sable failed: %d (%#.2x)\n",
-+			domain->name, power_on ? "en" : "dis", err, val);
- 
- 	return err;
- }
-@@ -123,6 +125,8 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	if (!pd)
- 		return -ENOMEM;
- 
-+	pd->dev = dev;
-+
- 	pd->pd.name = exynos_get_domain_name(dev, np);
- 	if (!pd->pd.name)
- 		return -ENOMEM;
+Thanks for the set.
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-2.51.0.788.g6d19910ace-goog
+Kind regards,
 
+Sakari Ailus
