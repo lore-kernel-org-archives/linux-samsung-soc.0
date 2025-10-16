@@ -1,105 +1,178 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD0B242D72
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2025 05:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850DD2E5B1D
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2025 07:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760594174; cv=none; b=O4k/tPxBM8v2OirVTcxywlw3yv8U2RV4COFCf2nTTAImCO6vGKtLxubQvQNanVSS31jPL3SD8glcjVZR+niTn9TqeyHp/qMII3dNqGSAEuuRLLGT6dyq+SrVVVAcLe29PJH67jv1XbWml0zNfxjJQfJes2ABXO2ZnWkdGu/qAjM=
+	t=1760599485; cv=none; b=F2JomesmUuqNhXcuBq3ghDUXX31zzgpy9TvV+IXiBDmRqpHHISlgdNfyX3X43OGVqMeexvm3WBwUGwrZR+hMk5BNYnT7hO7Cw1p4rIJeZfgcdeqFewvTJc2qw1oUjaEsSvjdraJ/ZgspDeYn+18amF1x+xfmWsuBj1/F0ibUchk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760594174; c=relaxed/simple;
-	bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OWtZbP/9HaStYV8PhMaN8XYmNDovHc50ojP6PuSs9quW/qixCl00Hf6OWSHZh+ggOLKHg2eF021ciNgbmxrU4+tlDpjnQ2Vdjhgcu0fJKl8jZIGxEYcKC0ojmWdk77cAf+fnPMcBKitRy8ps8184iH+L59cOruJweiWxLHYoDHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tAo2SJwE; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760599485; c=relaxed/simple;
+	bh=UHWJLuWheeuOfykfnjuhI2yeC9VTO3Hkx5VGd1+/p7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=i2MCDqcPF2s2dd2+wNqDQUjPDjo5NON8cXV787T7VfddYewihr+H3j1ktaDiSTU+x/HIHMoSxQS2wtbS7sy8r0QSppt3Q6oaqmxP8T92oF4LbdsRlfGEse3r5XpTTxw9inVsCnxiKGFOpA+3McOf1AVsDEHiYkkoqnehgMKf/tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bcyTM3lC; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tAo2SJwE"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b456d2dc440so45662366b.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Oct 2025 22:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760594171; x=1761198971; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
-        b=tAo2SJwE9rpak8Mebz2GFYOXRsqg0Kq2i/y66sKssWolUVkV9CIztX8YztPD9Emt32
-         XldkFvb09so7lXyzGB9nxKHBkREzD3ELC0PuwM1l+vZY/4OipY3aOWuLAT2VvkgQi0VB
-         nsPrf6lmLMoG3kQm19zG4/lELk3W/6l0k4mW+xCRU5n6GgfBHz8tyBjhpF/8qZfxbYD7
-         SHQi1bueqjmwosezRUMMwjH7qDKfOwL29tAlaPagOUi6HPdxINwLAMUz1PbKoVphWsK3
-         GJtxP+fozZgho6HodUeDnboktHpi6RM4AV9tnj/QBjQD6QWB9FpoHKGSNB69hHaRTDFg
-         tTXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760594171; x=1761198971;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
-        b=ogPLnzIsLymTSyrh4qMnLnltEIdeMylOdj8M3dNpTr39qLUbQ/LrO7xS+S2nLBUZRV
-         YdZN+zGO2S+H+ImN38k5IHh0PS6E0CC4Ffq0KH8V3v5wdZ/9lXpxKh+mTAsGMIsBKcD6
-         Y74RjNR7wOphQqpCPD5u4pZaIePp74uy62WSHXT8oEZNzwAtQxtOQZBW0mjSGpO3V0cZ
-         ENwYydM6yS60wLPEvIURsRjRxpFydvyAIICRTIqJs9pMEqa7tfH7BC0+sOEH7WfhSkYF
-         bxO8XGyXvMGyt4rFvdnaaeU6ogq1+/F9Cjm2hOwJHypbHAk/fee5EB0A2hvgnfkEm6+G
-         QNkA==
-X-Forwarded-Encrypted: i=1; AJvYcCV18AbViMiZkNAb6DIIZd3NK09ClsDjDnTNDEbRgdesafouFw8sM+ujjDZWqhoQ75UNJdH6iljcYj6nplxm8aEYIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtfWMpX7zmBkzyNhNhV2ZeBStiPBmd0zXme4qQBIQ5MqsFUxZE
-	nMG/kMeiQpJ4ny606y+LGdpq5VQ8ZjgW6z5t8f2zSG1AxqGK1RiwU+ukKIZb3wQ7y3E=
-X-Gm-Gg: ASbGncsthUkTdo324IYXN1alXUBahj1ykPZg4y4YakcPiHHKo29mIFafpVA8doR0i45
-	zp+nI+fFOrjkUht00U+WzBysb91DbAnDW9xRkNHbIc2M2l0syBMu5u/ynux2XP1PvEnmW8X2qWz
-	eo6xCn79dZML6HSionT/Jn1gtWh+vuZpx4f6boKhbMBQs7lzvedfBVN3En6dqdb/JyDpn2bzZ53
-	6hNjd+H/fueMNYCsCoz50l3r/azx3K/++AHdFkI6KgUa0KkLBdqqwMaC21Ko/tum4sBrRDQ2yyU
-	trDOmd0E9tU4UbPDKDuvnijUxJN22mGE0sf2Hp24tNpLIFRJj9zCuHKeKtQNECb8bEh12JAXoC5
-	TgOXw7QrnbcdA3pctFAOffJPdQZHy/LDWgDRrrpoRGunugtw2hPsXtmTDR8d7g8VOuyrX+FkLKu
-	HY0ECTNzMmprpn8+0b5Q==
-X-Google-Smtp-Source: AGHT+IHRn6DJcub987XbIaCnD213XxBVwA1OkaUrOOTFR+bbpHbUgS+RyDdcriH37dmE0TK4LGPTbQ==
-X-Received: by 2002:a17:906:c149:b0:b41:2209:d35d with SMTP id a640c23a62f3a-b50a9d701b3mr3125674866b.1.1760594170719;
-        Wed, 15 Oct 2025 22:56:10 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccaab18sm419863266b.48.2025.10.15.22.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 22:56:10 -0700 (PDT)
-Message-ID: <30a0c50b682b990820d486e536f320c7ea31eabc.camel@linaro.org>
-Subject: Re: [PATCH 3/9] arm64: dts: exynos: gs101: add sysreg_misc and
- sysreg_hsi0 nodes
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sam Protsenko	
- <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski	
- <krzk@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Krzysztof
- Kozlowski	 <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
-Date: Thu, 16 Oct 2025 06:56:09 +0100
-In-Reply-To: <20251013-automatic-clocks-v1-3-72851ee00300@linaro.org>
-References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
-	 <20251013-automatic-clocks-v1-3-72851ee00300@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bcyTM3lC"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251016072440epoutp0217ae84fb4427d01f983679806dec3982~u5_ZdFo6L0385103851epoutp02o
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2025 07:24:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251016072440epoutp0217ae84fb4427d01f983679806dec3982~u5_ZdFo6L0385103851epoutp02o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760599480;
+	bh=lLbacaR5clbNto/ko7Nx4/YFPvA6DfmhL0b6nWQNI0I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bcyTM3lCfKEUKlgJe+3BnfJ7R4ZCYaafE0rn74rHaCwqOlfxv31eKKVXRksGDYKS+
+	 uzhD6MY4oa3PAnS9yLg2aCpiDXb1FGtvynv+pbrHuvSQ1L2JsmDFDvIOvk7PE8e6Ip
+	 cm8tM0XLknskzPLnHnRSrqVJiAuqijm5R28d/mtQ=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251016072440epcas2p1cd477800baf46f4d74c41efa8ab9f6ab~u5_Y_15eF1895118951epcas2p1g;
+	Thu, 16 Oct 2025 07:24:40 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.38.206]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cnKGJ0htsz6B9mM; Thu, 16 Oct
+	2025 07:24:40 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251016072439epcas2p1989ee82845107b8f5d1790aa66d93ab3~u5_XxaufD1895118951epcas2p1U;
+	Thu, 16 Oct 2025 07:24:39 +0000 (GMT)
+Received: from asswp60 (unknown [10.229.9.60]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251016072438epsmtip113d7afd72a26704e7544afd2248a49ee~u5_XoxzZQ2023420234epsmtip1d;
+	Thu, 16 Oct 2025 07:24:38 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Henrik Grimler
+	<henrik@grimler.se>
+Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v7 1/3] dt-bindings: thermal: samsung: Adjust
+ '#thermal-sensor-cells' to 1
+Date: Thu, 16 Oct 2025 16:24:27 +0900
+Message-ID: <20251016072429.1933024-2-shin.son@samsung.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251016072429.1933024-1-shin.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251016072439epcas2p1989ee82845107b8f5d1790aa66d93ab3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251016072439epcas2p1989ee82845107b8f5d1790aa66d93ab3
+References: <20251016072429.1933024-1-shin.son@samsung.com>
+	<CGME20251016072439epcas2p1989ee82845107b8f5d1790aa66d93ab3@epcas2p1.samsung.com>
 
-On Mon, 2025-10-13 at 21:51 +0100, Peter Griffin wrote:
-> Add syscon DT node for the hsi0 and misc sysreg controllers. These will b=
-e
-> referenced by their respective CMU nodes in future patchs.
+The ExynosAuto v920 SoC includes multiple TMU instances; each instance
+monitors a subset of the SoC's up to 16 hardware thermal sensors.
 
-s/patchs/patches :-)
+Additionally, add myself to the bindings' maintainers list, as I plan
+to actively work on the exynosautov920 TMU support and handle further
+updates in this area.
 
->=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> =C2=A0arch/arm64/boot/dts/exynos/google/gs101.dtsi | 12 ++++++++++++
-> =C2=A01 file changed, 12 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Shin Son <shin.son@samsung.com>
+---
+ .../thermal/samsung,exynos-thermal.yaml       | 33 ++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+index 29a08b0729ee..6b01f508542c 100644
+--- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+@@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
+ 
+ maintainers:
+   - Krzysztof Kozlowski <krzk@kernel.org>
++  - Shin Son <shin.son@samsung.com>
+ 
+ description: |
+   For multi-instance tmu each instance should have an alias correctly numbered
+@@ -27,6 +28,7 @@ properties:
+       - samsung,exynos5420-tmu-ext-triminfo
+       - samsung,exynos5433-tmu
+       - samsung,exynos7-tmu
++      - samsung,exynosautov920-tmu
+ 
+   clocks:
+     minItems: 1
+@@ -62,11 +64,17 @@ properties:
+     minItems: 1
+ 
+   '#thermal-sensor-cells':
+-    const: 0
++    enum: [0, 1]
+ 
+   vtmu-supply:
+     description: The regulator node supplying voltage to TMU.
+ 
++  samsung,sensors:
++    description: Number of thermal sensors monitored by this TMU instance.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 15
++
+ required:
+   - compatible
+   - clocks
+@@ -97,6 +105,8 @@ allOf:
+         reg:
+           minItems: 2
+           maxItems: 2
++        '#thermal-sensor-cells':
++          const: 0
+   - if:
+       properties:
+         compatible:
+@@ -119,6 +129,8 @@ allOf:
+         reg:
+           minItems: 1
+           maxItems: 1
++        '#thermal-sensor-cells':
++          const: 0
+ 
+   - if:
+       properties:
+@@ -139,6 +151,25 @@ allOf:
+         reg:
+           minItems: 1
+           maxItems: 1
++        '#thermal-sensor-cells':
++          const: 0
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-tmu
++    then:
++      properties:
++        clocks:
++          maxItems: 1
++        clock-names:
++          items:
++            - const: tmu_apbif
++        reg:
++          maxItems: 1
++        '#thermal-sensor-cells':
++          const: 1
+ 
+ additionalProperties: false
+ 
+-- 
+2.50.1
+
