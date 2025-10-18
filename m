@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C184C4A3E;
-	Sat, 18 Oct 2025 16:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672CA42065;
+	Sat, 18 Oct 2025 17:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760806250; cv=none; b=IjF4Ogy2mtOXQLbkclhSfowr33nEybxUNs9pUPeeP1G22BEKMOZObYFR851v5Rb+9HeHV2/qPJBbDt64RlE7ssSp1xo/Z7QRP7SDBboA6xU3cyOS5pebkQtw/nwy3+6Ub6eTddtShNmZCvrJFaOYwm/P33isw6rf6yrnvcOyNSU=
+	t=1760807163; cv=none; b=SeDK5J+Jc75ZrALL2ictEN9D+1e2wbV98sorgNICdVWeMFZZ4jIsSRPVET3RMu6f2U0ZbpMq1oANdCnou8+gQVULl4LJZZHV3kBWXhSiQSVl7k/5ouUNS2aRWdIZ7G0qeAxEULruAEEnJTqtlYLnKxgTO2455uJ0WDONAbuhiQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760806250; c=relaxed/simple;
-	bh=zwWgqI+OvE4zI08V7mXmQ7zQ8brvkoj9JjjUwiSA2P0=;
+	s=arc-20240116; t=1760807163; c=relaxed/simple;
+	bh=2x+8nVrwYwA8yCfBJaLAbxeu2GjEiw06hcYzBWsfWaw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PbvhJGoXraCNuGqwBG7QIODMoFR10FjzfWM6uD8shPWj2dvuVHcfue/9pDuekqeuG0UoBRlqSvpqtMAsduh0ICiOQozjYH6GMtIIorveUuBIrgCz5j61LDubDJWPYqnonJqzYjo5KX6VP5B0WLf9dLTf1fgVw7WNeGmPT+fK4wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLTMPtNM; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kpCDbRi1CL98GggJGm6lSC3tnPZTb8nGu9Po3VkUmFk4M0lIxMbxqXc2Bh2jzPaWr3PpbzRN5zEPARZAIn1G5nuRjP5/4+AgoGNoxSWIu7lnkuSY4YoWR/BoLBuP253iKZoQ894XkBLG+eqRiMCyWT6YsoiH6nxC99H4U54F064=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ne/BL92x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLTMPtNM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B40C4CEF8;
-	Sat, 18 Oct 2025 16:50:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ne/BL92x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAEBC4CEF8;
+	Sat, 18 Oct 2025 17:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760806249;
-	bh=zwWgqI+OvE4zI08V7mXmQ7zQ8brvkoj9JjjUwiSA2P0=;
+	s=k20201202; t=1760807162;
+	bh=2x+8nVrwYwA8yCfBJaLAbxeu2GjEiw06hcYzBWsfWaw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NLTMPtNMOSdnlqzWW1aNl2EF/LT6KYQPDgJ2V4lbS6EpXXJ+DmNHrA0cNfjsRjtCD
-	 KE0yvBaanehUFPEep/WsO2F4mHzx4RVQDp3ZbrxKPbHiE2ucA7UZysDdSiplPBEb2Q
-	 SqBPx07Eou7Az80DtN+JfBWhbX+sw1/B2jWWn5LbNQq53VenCtaSZo+4g/ZUkXEKgD
-	 Q40DO8IvF23aV6gi/uSW/crpgrqAJuw321CYxOy7nJ1BvxxfbYuoVyHKAhr3LNqM+G
-	 3C1abHJ5lT0n3KL7P9fljWrvjvfaux7DNS1dE9qo8CmyyMQBm1O2a0ceLRqokn/RON
-	 CsaUZTcG6y+mQ==
-Message-ID: <febca3a6-9681-4dc5-b254-e011df85a38c@kernel.org>
-Date: Sat, 18 Oct 2025 18:50:45 +0200
+	b=ne/BL92xXoLlX5oC8Zxa3RfndPNs2+CbW4wirFL6Yc+bB0k0893A4Yr8Hd7E4WwDN
+	 L8pxcvfnyW60imsIqZc7I00X8IXC4eTB/OF1rRC7mBE0ztI0Eqe17zjEyWVgoMKrxK
+	 9p64OEFuUltApFFhRN/HObl3bWXwyoS8HoSXlP/Xm9PQrD/Cp5m7d7ISxjz9EV6Ocg
+	 srINPmuT1Zm9k9j9YXgZuhzEm/w9Njic3582KvOOXmGfHeIjVljBVBe0GzT009sgmU
+	 AGj8Evq2iABNkubLv/y6avRA1PemmrenzvEk3inpciFn05kGm3RdU0XSJ2kj03Y10B
+	 7Aq+WVqphdlJA==
+Message-ID: <884448f6-89bf-49e4-8d1c-e91b666cbe3c@kernel.org>
+Date: Sat, 18 Oct 2025 19:05:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: soc: samsung: exynos-pmu: allow
- mipi-phy subnode for Exynos7 PMU
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+Subject: Re: [PATCH v2] dt-bindings: soc: samsung: exynos-sysreg: add
+ power-domains
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
- <20250928-exynos7870-drm-dts-v3-2-bb7d8e570860@disroot.org>
+References: <20251010-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v2-1-552f5787a3f3@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,35 +91,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250928-exynos7870-drm-dts-v3-2-bb7d8e570860@disroot.org>
+In-Reply-To: <20251010-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v2-1-552f5787a3f3@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/09/2025 19:56, Kaustabh Chakraborty wrote:
-> Add Exynos7's PMU compatible to the list of nodes which allow a MIPI
-> PHY driver. This helps defining the phy node on SoC DTSIs such as
-> exynos7870's as it has a compatibility fallback on Exynos7's PMU (and
-> others in future if support is added).
+On 10/10/2025 08:29, André Draszik wrote:
+> On gs101 only, sysreg can be part of a power domain, so we need to
+> allow the relevant property 'power-domains' for the relevant
+> compatibles google,gs101-*-sysreg.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > ---
->  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Changes in v2:
+> - limit to gs101 only (Krzysztof)
+> - Link to v1: https://lore.kernel.org/r/20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org
+> ---
+>  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> index f0fb24156da9b8980dcfd5339ae75f12a71cf6d6..9293c5eeaaedf1704a48c19226d35d183d34fcd1 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> @@ -172,6 +172,7 @@ allOf:
->                - samsung,exynos5250-pmu
->                - samsung,exynos5420-pmu
->                - samsung,exynos5433-pmu
-> +              - samsung,exynos7-pmu
 
-This should be rather exynos7870, unless you are sure that all devices
-compatible with exynos7 (see the binding) have it. If that's the case,
-please add such details to commit msg, e.g. which devices have it,
-except exynos7870.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
