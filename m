@@ -1,103 +1,150 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337982F83C4
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Oct 2025 10:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F8725A2B5
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Oct 2025 11:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954905; cv=none; b=O/XwDny5KQYdhNkSEUuc5Ob39MlShFTHZ1+4tRlhTs52ISFqaY3kyuGcgzjCf648LqgfpMi85kA7/vZup0J+A1Co1gWj2fDczFdaewrKgpYgjErA3bCxljhvzRHrNpICKUnrPTtyKRZ53tVs9h4QpBixEWPJiUxRuVCMKn/AJro=
+	t=1760958174; cv=none; b=KWLKuYVIRykxWesgIKoJ+26ilzeH52p5iIb9Rn5+cPG872u9RRBZ4VHZ3XDOSkhvFDAXZDTDo9z9f6dgjsP2Gr64qo4DIaO8QQDHdUrL5taG5h3mPy44Ldb1EYbQ8Rs65vD/4nT0vb5Pp/ymW0Adg1AEcpt3LBDC50niEqgS2hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954905; c=relaxed/simple;
-	bh=oA2ElgPBvOiCxkFvL8m89chK28aoV4jvlA52sYjC9wU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IhiVuXgv7ZhbYl5q7HkA4ybO7GySb2t/p71s/yq5F3bCnvEWEhe4FNEQu7SSoQqSpwlag9VbmtDtkKejF6dE7DnTNhxkxsuQC7ylChcPkIXodhNLjHbTpR25Y0IXpgqDZoegDoOMU35pCBNCg0XRAICcd8j0xXnHLCTQDGSAvv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CtilXS4w; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1760958174; c=relaxed/simple;
+	bh=W1JaE8rS+GbY/d7gvazS4gQFxDwV4eMwNOn47dqusZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vi+NwSvM8g4F/otXGc23IOqFYL+GUmb8UN3tTfKV5j1A7Dsp2ysMMwa0tPzS9AINZ9oZtyTHdmOYSOXgtYAMNGumdUbgE28Tk5dXFXQYkjbODKaf+JUN0kjFLSJC0hfPtyEk58ThrksdITEEYcByXFkmuruBp+NIRzal5u+12UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKLcgTV9; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CtilXS4w"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b47a5a17303so67235766b.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Oct 2025 03:08:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKLcgTV9"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46fcf9f63b6so22207605e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Oct 2025 04:02:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760954903; x=1761559703; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sAIc6gY01YpxCcQ99z0flPHCre83HKOO57mvnvOjC0A=;
-        b=CtilXS4wyzpoU8xJg5k3/lnfxmeGCV6m2HiQzCNiixi8pL6I75nth7u/vh/pbr+G/b
-         YJBeXOiMdVLWiTbXbrNqE7PCDQDAoYC7H6BPJjdVAxs7utzgBU2TcZtgjUm4PAQ4oT1m
-         /7F3l3GT4ky6GkA6dIeuzpNBKuzEdJTDqEs9BS0Bs893g1c3Ni1hfU3XsMROJiNeqHHB
-         kE4khEm+A8IOdN7xzEH74Aa4RmCgYPIv74eqJwVIN6+g8WPndCSi0RVo1i9yAmLzwHzJ
-         qb01d7/nRWAMlBKWCRkTB9ledytRRy7x5CwD7bZ8klfcIVcGkyP6DEVr9k0tvgbhZt1L
-         k3+A==
+        d=linaro.org; s=google; t=1760958171; x=1761562971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xaDzCk8g9Yg/TwlJeMcBMF5t+X3WKHYwMzLzHQCj6g=;
+        b=SKLcgTV96RTAEsTyKqdP//fl68SsWZs0++NzmzOy7PerGASaHwpFNYtLBOenc6ZAyK
+         0aB0ohdih/1OK6OQhvxx6+8S6rsfmOdXIpPrRncKOATOm2c7SqLsf/iQW82OE/IWNS7m
+         RsC84qBitEiy3uCsBfEItwgIJWHvra4zmElwiYHoyrbLptmGA07smCKzYhEVK9O20NgM
+         c/mhqOrbZRyuQvI3EjKcRd2cUjJ61xDaKanZX+HuZIdtSXy91d1gfovvNBXaXWfLikWm
+         H4eEVa1Gd3jUEvPSjAgzS2VHNoiF25McgSyd1/0qHiqBlkZsouuLUl2EKcYqjh/1zRXO
+         9aTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760954903; x=1761559703;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sAIc6gY01YpxCcQ99z0flPHCre83HKOO57mvnvOjC0A=;
-        b=DbirItwHXoKYzpOK/4MVdfDkbGz4BUkJfz1HsQ+GixnWHZbTrl/8GDFMS36P3uL5je
-         zKfvEy4BsEc4gfwY7cRXLRilNFQ9sRc+MxLXk3ija2eRHlEdbsX6GETUWWrw5/q2Z3j5
-         08papQ9tQonj4PcxQrVfe08Rjnp8wYd3SWDEXCnmyeObqZ108YqMNW0PlEYwQ6a9aJZ7
-         /3DKcSD4RtXYZFEdRXFPs+Da6Id/bRXo4LbXk3u6b/DqVxTDDdLoySr4+1Eyu4D0h4bd
-         wSCe3Vztc8AwObJGS52rYc8Q7s58QjrzL5E3W1QSIyHlD93SNLhdTClXzMw+V6UhgT7g
-         EgqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUKUWr0Wyyh/1W766JTNjpO9lC5qjcdNhM9Ba15MgBC4Nx/a9wjjHATjx6pg0x400eVYViihRHL7d9MWPYhMVwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZE4fQLiyxUODFaB5k+ut+/whLkF8M/64+uHY/s5tHjquODVVH
-	/t94UKqYejCes92fmkG7GvUCRyTdt/EexB2guW5KMGj8ABC3F3G1Dcab/QlheovHRl0=
-X-Gm-Gg: ASbGnct1RQDHkKZUEMz4eToiWOv+WWEfB4inG9e3DPRsSHOhwKECcR4cNnFcq5ZYOQW
-	XEQCRViols8B4qMBwsIEAfskj2p1uanIQt3nfIEVDFoE3HyHY4w3eJ/Hi8OWD9owHH4dD+YCuFT
-	qnxUBwSlVXU+AVJcQdVrv/xjpESf5/KXGQYOiiFgZZCHMY5sp8x4cO82MopD2J4cGl6YLfWODU6
-	w+KcjgpNQwGx7dxSllIlPY7HGfZtAcNJCjvhbYRw6EQVvlEen3B5b5wugIBfCDdQj3Efz8xsEtQ
-	2cS/WQBywjMp8dPNVtIj0NH/qBCGBnWnzhUtQQVSjBBgHlopmvV3L2aLSW9Q8PjHCjcxCvk4NZ5
-	Ca9KqLym3WcBPEuY7vsxvw6RpOt59ApQ+PRODLa4XF7khhFcJl4rMQAHf0ZTuFaAtwSoIkFOPCZ
-	JCUPopUenKi/RoBsGh
-X-Google-Smtp-Source: AGHT+IGbEPDs6ivtDg6VzwLTuv9vaft0NZuSPujUXbh434PC4DZqXM9ezasAKoGltsR6KlNX0oCeaA==
-X-Received: by 2002:a17:906:9c83:b0:b3e:c7d5:4cb9 with SMTP id a640c23a62f3a-b647395aab0mr801507466b.5.1760954902572;
-        Mon, 20 Oct 2025 03:08:22 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da33dcsm753414466b.12.2025.10.20.03.08.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 03:08:21 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251010-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v2-1-552f5787a3f3@linaro.org>
-References: <20251010-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v2-1-552f5787a3f3@linaro.org>
-Subject: Re: (subset) [PATCH v2] dt-bindings: soc: samsung: exynos-sysreg:
- add power-domains
-Message-Id: <176095490095.45974.5198951258133478877.b4-ty@linaro.org>
-Date: Mon, 20 Oct 2025 12:08:20 +0200
+        d=1e100.net; s=20230601; t=1760958171; x=1761562971;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xaDzCk8g9Yg/TwlJeMcBMF5t+X3WKHYwMzLzHQCj6g=;
+        b=T/2UwXzznyyDKT1iU+nQN4HZtYvyy3DVjma/A4zjaCqGifvF+gZsGeet+LrUWTodM/
+         TxDODAU2yyYQeSwc8bgJWKrJCNlwH8atQJlaVZD5VTqW7BzOII7vMPxL3VRuK+DFnejs
+         VCoBBh6HJAaeeR2b0ZMza1dMZZ0dZFmoHG5iDdw9dZbsK5fVrWnY/qJBHQgUp4zR6l/X
+         kCIcOiOCQ9cWG+paCj2dQdnlePbnAo+HiSPylz+PO/q4RU3vyy0grj4Xe+ezv3MjrJ3l
+         dpupcdFRiI2UlOSikd+hTD0quOzgQuflCzs6sdKlbj0LD0H9PMUiIcxhEGs+RNzNhHJS
+         TRHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ2/cOkyxKWil36tiwgU8GU75mCLtRDBXZp+W/g/Oau0rmgelER1x2xaP5FBo9xzflHnWop1reCof57B3zdmCrXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu4WydYh0iiTPqyp9kEAMlL3QEbigihX+1EjAvRw97LypLkqFw
+	+woMvoTMydWJn6O0byIL2hLF3rv+FwYN/px0svPTjXhqOuH+mwoXnn+05PxyVKSdb9I=
+X-Gm-Gg: ASbGncsLPnMljKTIYkIzeOtCVOEobjA+fLCIAXHXlAflgw+8tP7MbfmXd9k0Nb6Zzmd
+	FjnwUHQbkTtPJ2FBy7YoMfZUHB9cbgvNS+YSJhFL5KHdhd+hH20g5G16pFU/cw8+rU5UtgnKJtf
+	BenxdfKjKqdb2lbvrHMpylCXH8hq3JPt12wJWOUsXW2p48vt3Vh+MxGxnTu8qv3/x0v743yUfHS
+	8/I/S3K+9ByVe669k2HpYKNizkMY9Lreh1zKTn/jrgkMITkgEP9KSSmV5g9xCiYOsZU4HQGWC0H
+	MrBFK2AxnE4QB7/q1w+wvG4wf/Fy4bGdch92TlRI1GZAlXjzHyOjb62HGEWkKmd5Bq73h3msYO0
+	/jtTZGu8FMaxctYJ9aMLqUCUkkj6z1JZPcAcI2GA8bkkdja0a74eUU8nA2D3iLQ4rbYMbwQ2FQ9
+	mp+42bBPgU
+X-Google-Smtp-Source: AGHT+IHVRGuyj2IpvPopVEw/V/0JRaYFv5Zr9eggn9/gr+9TUMeVNtov2/qg5jgRutFZM+D2sOlUeg==
+X-Received: by 2002:a05:600c:820f:b0:46f:b42e:e365 with SMTP id 5b1f17b1804b1-4711791dce8mr93413745e9.39.1760958170945;
+        Mon, 20 Oct 2025 04:02:50 -0700 (PDT)
+Received: from [10.11.12.107] ([79.115.63.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715520dd65sm137785635e9.15.2025.10.20.04.02.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 04:02:50 -0700 (PDT)
+Message-ID: <de77e673-c2f2-4293-88bf-be9c6779a5dc@linaro.org>
+Date: Mon, 20 Oct 2025 12:02:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+ <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
+ <a03cd07f-8e9f-4b02-b301-f1bbb69eb7db@linaro.org>
+ <f6812244-8e8e-45b9-87b9-fe96d740a843@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <f6812244-8e8e-45b9-87b9-fe96d740a843@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Fri, 10 Oct 2025 07:29:01 +0100, André Draszik wrote:
-> On gs101 only, sysreg can be part of a power domain, so we need to
-> allow the relevant property 'power-domains' for the relevant
-> compatibles google,gs101-*-sysreg.
+
+On 10/20/25 10:58 AM, Krzysztof Kozlowski wrote:
+> On 20/10/2025 11:19, Tudor Ambarus wrote:
+>>
+>>
+>> On 10/20/25 9:22 AM, Krzysztof Kozlowski wrote:
+>>> On 20/10/2025 09:45, Tudor Ambarus wrote:
+>>>>
+>>>>
+>>>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>>>>> --- a/drivers/clk/samsung/Kconfig
+>>>>>> +++ b/drivers/clk/samsung/Kconfig
+>>>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>>>>  	  status of the certains clocks from SoC, but it could also be tied to
+>>>>>>  	  other devices as an input clock.
+>>>>>>  
+>>>>>> +config EXYNOS_ACPM_CLK
+>>>>>> +	tristate "Clock driver controlled via ACPM interface"
+>>>>>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+>>>>>
+>>>>> I merged the patches but I don't get why we are not enabling it by
+>>>>> default, just like every other clock driver. What is so special here?
+>>>>
+>>>> Thanks! Are you referring to the depends on line? I needed it otherwise
+>>>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+>>>
+>>>
+>>> No. I am referring to missing default and defconfig patch.
+>>>
+>>
+>> default m or y would force compilation of EXYNOS_ACPM_CLK and
+>> EXYNOS_ACPM_PROTOCOL for all ARCH_EXYNOS, even on Exynos platforms that
+>> don't use ACPM. Since ACPM is not universally required by the Exynos
+>> architecture, I thought to make it opt-in (default n).
 > 
 > 
+> Just like every clock driver. So again - how is it different?
 
-Applied, thanks!
+The key difference lies in the universality of the hardware interface
+across the ARCH_EXYNOS family. If EXYNOS_AUDSS_CLK_CON, EXYNOS_CLKOUT
+are considered core, integral, or nearly universal features across
+Exynos SoCs, then it's alright to have them by default. I can't tell how
+common is ACPM across the Samsung Exynos SoCs. I know it's present on
+gs{1,2)01 and e850. Heard it mentioned around some other phone but I
+can't remember which. Maybe we shall set to a default m when more users
+reveal themselves? I'm of course open to drop the defconfig patch and
+follow up with a patch setting EXYNOS_ACPM_CLK to
+"default m if ARCH_EXYNOS" if you think it's common enough.
 
-[1/1] dt-bindings: soc: samsung: exynos-sysreg: add power-domains
-      https://git.kernel.org/krzk/linux/c/ebd2160ee6ff3e8e4c7b17b45380900307a34b6b
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Cheers,
+ta
