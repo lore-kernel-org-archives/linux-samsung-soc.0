@@ -1,24 +1,24 @@
-Received: from mail-m49216.qiye.163.com (mail-m49216.qiye.163.com [45.254.49.216])
+Received: from mail-m49235.qiye.163.com (mail-m49235.qiye.163.com [45.254.49.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617EC17993;
-	Tue, 21 Oct 2025 02:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91D02773EC;
+	Tue, 21 Oct 2025 02:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761015494; cv=none; b=pv4uxYP9EMAeVGJYKwyeoPbfNfxbdK/WX4+UkjJonFo+zmmZr47np0QMSU7RRZ9TFQmW3IwYyVJ9ZxXxfAoaG+5+efkWEw4mEjEQUCvdnt/jaUdC66LbOe7vJVA4nhSRCHW+30CN1Dlr/ivQogxvWf2gmRU333CC3+2FqN4JXcE=
+	t=1761015516; cv=none; b=gXFxQy2aTO/Q9EA+NQeMBvEfb2XZDckRffNEryoumaxidaIHpFK3V6HWuJPJYBvZCzcT1wpXQGbvEqaCqcARTK6UpwZvFKSp3vvTb+S6UDpfRKIxgn7dPZduWUDKPrihTmBmlMsGc9Fz7rfnM+GQfMZkfW8HT+z3LhSVHUFPZJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761015494; c=relaxed/simple;
-	bh=6HiEBvF9/cqTs2Hrv7mnaaQJH39+EWu7eiPxCq5VaqI=;
+	s=arc-20240116; t=1761015516; c=relaxed/simple;
+	bh=sPTlUhToY43C8ioFvZtb2Cs7YWuS8oSV2iovoKCxIuQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ds1nWtIlDcLsne2b6CdiZbyoLNNtk19YAbYn4MDn3U91CUg2DUTH+FWiRIuR4rEqBgVVaNcobnE/6g6gzsEqle66Jg22Dhs3IAyGyHONdOxXGsJCl9vQmZfVcsKtpzp2ISFPn1o2ZvFJJy3MyE3FQ0qmOAVk5HQ45mvz4YQKKw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hxKYya17; arc=none smtp.client-ip=45.254.49.216
+	 MIME-Version; b=WYuQS6/rt4ngooM9vXWzbgCOdwUcLAH3PvnFSQ2U1/tXwL2zQarvjBNyzX60LKQR41G3GtPtPZE0/Nm5A1VbJG937xKxqgABoargrSWdQidx6zqy6q0Zn9olOup7xSK6ueAONdTRfJw2MvgT8AVuFdFnXz7mFq8acskIqwLQMuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=eCtvNgbA; arc=none smtp.client-ip=45.254.49.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hxKYya17"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="eCtvNgbA"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2697bbb2b;
-	Tue, 21 Oct 2025 10:58:00 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 26977b973;
+	Tue, 21 Oct 2025 10:53:12 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -57,13 +57,12 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v7 12/18] drm/bridge: analogix_dp: Apply drm_bridge_connector helper
-Date: Tue, 21 Oct 2025 10:56:58 +0800
-Message-Id: <20251021025701.1524229-5-damon.ding@rock-chips.com>
+Subject: [PATCH v7 03/18] drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to &drm_bridge_funcs.atomic_enable
+Date: Tue, 21 Oct 2025 10:52:36 +0800
+Message-Id: <20251021025240.1524169-1-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251021025701.1524229-1-damon.ding@rock-chips.com>
+In-Reply-To: <20251021023130.1523707-1-damon.ding@rock-chips.com>
 References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
- <20251021025701.1524229-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,543 +70,226 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a04b3bf8703a3kunmcdd3bf8c5a4503
+X-HM-Tid: 0a9a04af5cd803a3kunmb53d69df5a2760
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGklDS1ZMH0oZTx8ZGEgYSBpWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0MeSlZKTElJQhhDGk4YTE1WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=hxKYya17cSXtnXGE72txa/prbJxv04ciU4bflI9KpQucFTT4dtauvmS10kctl0ZXxovzXUlFv8FL7ifXcBMgRVm/vCuXu9O7f3lTX9VOlE3jb2IwIdlWsL0In7AIl332w94u/F3GTHsHPZ/mNGLItU4Y5kihdS7Ft25Hq6ZYB3I=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=0itlwcZuEjiPllJ/NFi68IIHlboiRVLtyTh+qoGhDqc=;
+	b=eCtvNgbAMDXDHUxTnHkDJs+hTIX+j066DiIFIkmq+ZxoO6Y3PQo5Oad627VEUaOnNLW/iPh/+9PlT0ggxmBntrRprphSEnL2BrlsC+fP7Ul9J6ZOBbE+AuyJ2FFvR37IJ3mfIv9cCxAefLSsRHBdpZPcjgISRGyaG7bTX/nEsAM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=LlUShgn0mdqY8jITI4+MoPclw1sVWOT2oJyVPP3wd5g=;
 	h=date:mime-version:subject:message-id:from;
 
-Apply drm_bridge_connector helper for Analogix DP driver.
-
-The following changes have been made:
-- Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
-  and &drm_connector_helper_funcs.
-- Remove unnecessary parameter struct drm_connector* for callback
-  &analogix_dp_plat_data.attach.
-- Remove &analogix_dp_device.connector.
-- Convert analogix_dp_atomic_check()/analogix_dp_detect() to
-  &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
-- Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
-  &drm_bridge_funcs.edid_read().
-- Set flag DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment while
-  binding. Meanwhile, make DRM_BRIDGE_ATTACH_NO_CONNECTOR unsuppported
-  in analogix_dp_bridge_attach().
-- Set &drm_bridge.ops according to different cases.
+According to the include/drm/drm_bridge.h, the callback
+&drm_bridge_funcs.mode_set is deprecated and it should be better to
+include the mode setting in the &drm_bridge_funcs.atomic_enable instead.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-------
-
-Changes in v2:
-- For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
-  DRM_BRIDGE_OP_EDID.
-- Add analogix_dp_bridge_edid_read().
-- Move &analogix_dp_plat_data.skip_connector deletion to the previous
-  patches.
-
-Changes in v3:
-- Rebase with the new devm_drm_bridge_alloc() related commit
-  48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
-  API").
-- Expand the commit message.
-- Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
-  bridge is available.
-- Remove unnecessary parameter struct drm_connector* for callback
-  &analogix_dp_plat_data.attach.
-- In order to decouple the connector driver and the bridge driver, move
-  the bridge connector initilization to the Rockchip and Exynos sides.
-
-Changes in v4:
-- Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
-  &drm_connector.
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
-
-Changes in v5:
-- Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
-  for next bridge attachment of Exynos side.
-- Distinguish the &drm_bridge->ops of Analogix bridge based on whether
-  the downstream device is a panel, a bridge or neither.
-- Remove the calls to &analogix_dp_plat_data.get_modes().
-
-Changes in v6:
-- Select DRM_BRIDGE_CONNECTOR for both Rockchip and Exynos sides.
-- Remove unnecessary drm_bridge_get_modes() in
-  analogix_dp_bridge_get_modes().
-- Simplify analogix_dp_bridge_edid_read().
-- If the next is a bridge, set DRM_BRIDGE_OP_DETECT and return
-  connector_status_connected in analogix_dp_bridge_detect().
-- Set flag DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment while
-  binding. Meanwhile, make DRM_BRIDGE_ATTACH_NO_CONNECTOR unsuppported
-  in analogix_dp_bridge_attach().
-- Simplify the check of bridge capabilities.
-
-Changes in v7:
-- Remove temporary flag &exynos_dp_device.has_of_bridge.
 ---
- .../drm/bridge/analogix/analogix_dp_core.c    | 148 ++++++++----------
- .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
- drivers/gpu/drm/exynos/Kconfig                |   1 +
- drivers/gpu/drm/exynos/exynos_dp.c            |  29 ++--
- drivers/gpu/drm/rockchip/Kconfig              |   1 +
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
- include/drm/bridge/analogix_dp.h              |   3 +-
- 7 files changed, 90 insertions(+), 104 deletions(-)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 161 +++++++++---------
+ 1 file changed, 82 insertions(+), 79 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index b0bc96693fdb..81c6e81dd352 100644
+index 1e834d3656c1..3caa47d31649 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -856,44 +856,32 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
+@@ -1086,12 +1086,88 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	return ret;
  }
  
--static int analogix_dp_get_modes(struct drm_connector *connector)
-+static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
- {
--	struct analogix_dp_device *dp = to_dp(connector);
--	const struct drm_edid *drm_edid;
++static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
++					const struct drm_display_mode *mode)
++{
 +	struct analogix_dp_device *dp = to_dp(bridge);
- 	int num_modes = 0;
- 
--	if (dp->plat_data->panel) {
-+	if (dp->plat_data->panel)
- 		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
--	} else {
--		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
--
--		drm_edid_connector_update(&dp->connector, drm_edid);
--
--		if (drm_edid) {
--			num_modes += drm_edid_connector_add_modes(&dp->connector);
--			drm_edid_free(drm_edid);
--		}
--	}
- 
- 	return num_modes;
- }
- 
--static struct drm_encoder *
--analogix_dp_best_encoder(struct drm_connector *connector)
-+static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
-+							   struct drm_connector *connector)
- {
--	struct analogix_dp_device *dp = to_dp(connector);
-+	struct analogix_dp_device *dp = to_dp(bridge);
- 
--	return dp->encoder;
-+	return drm_edid_read_ddc(connector, &dp->aux.ddc);
- }
- 
--
--static int analogix_dp_atomic_check(struct drm_connector *connector,
--				    struct drm_atomic_state *state)
-+static int analogix_dp_bridge_atomic_check(struct drm_bridge *bridge,
-+					   struct drm_bridge_state *bridge_state,
-+					   struct drm_crtc_state *crtc_state,
-+					   struct drm_connector_state *conn_state)
- {
--	struct analogix_dp_device *dp = to_dp(connector);
--	struct drm_display_info *di = &connector->display_info;
--	struct drm_connector_state *conn_state;
--	struct drm_crtc_state *crtc_state;
-+	struct analogix_dp_device *dp = to_dp(bridge);
-+	struct drm_display_info *di = &conn_state->connector->display_info;
- 	u32 mask = DRM_COLOR_FORMAT_YCBCR444 | DRM_COLOR_FORMAT_YCBCR422;
- 
- 	if (is_rockchip(dp->plat_data->dev_type)) {
-@@ -905,38 +893,21 @@ static int analogix_dp_atomic_check(struct drm_connector *connector,
- 		}
- 	}
- 
--	conn_state = drm_atomic_get_new_connector_state(state, connector);
--	if (WARN_ON(!conn_state))
--		return -ENODEV;
--
- 	conn_state->self_refresh_aware = true;
- 
--	if (!conn_state->crtc)
--		return 0;
--
--	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
--	if (!crtc_state)
--		return 0;
--
- 	if (crtc_state->self_refresh_active && !dp->psr_supported)
- 		return -EINVAL;
- 
- 	return 0;
- }
- 
--static const struct drm_connector_helper_funcs analogix_dp_connector_helper_funcs = {
--	.get_modes = analogix_dp_get_modes,
--	.best_encoder = analogix_dp_best_encoder,
--	.atomic_check = analogix_dp_atomic_check,
--};
--
- static enum drm_connector_status
--analogix_dp_detect(struct drm_connector *connector, bool force)
-+analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
- {
--	struct analogix_dp_device *dp = to_dp(connector);
-+	struct analogix_dp_device *dp = to_dp(bridge);
- 	enum drm_connector_status status = connector_status_disconnected;
- 
--	if (dp->plat_data->panel)
-+	if (dp->plat_data->panel || dp->plat_data->next_bridge)
- 		return connector_status_connected;
- 
- 	if (!analogix_dp_detect_hpd(dp))
-@@ -945,53 +916,20 @@ analogix_dp_detect(struct drm_connector *connector, bool force)
- 	return status;
- }
- 
--static const struct drm_connector_funcs analogix_dp_connector_funcs = {
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.detect = analogix_dp_detect,
--	.destroy = drm_connector_cleanup,
--	.reset = drm_atomic_helper_connector_reset,
--	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
--	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--};
--
- static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
- 				     struct drm_encoder *encoder,
- 				     enum drm_bridge_attach_flags flags)
- {
- 	struct analogix_dp_device *dp = to_dp(bridge);
--	struct drm_connector *connector = NULL;
- 	int ret = 0;
- 
--	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
--		DRM_ERROR("Fix bridge driver to make connector optional!");
-+	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
-+		DRM_ERROR("Unsupported connector creation\n");
- 		return -EINVAL;
- 	}
- 
--	if (!dp->plat_data->next_bridge) {
--		connector = &dp->connector;
--		connector->polled = DRM_CONNECTOR_POLL_HPD;
--
--		ret = drm_connector_init(dp->drm_dev, connector,
--					 &analogix_dp_connector_funcs,
--					 DRM_MODE_CONNECTOR_eDP);
--		if (ret) {
--			DRM_ERROR("Failed to initialize connector with drm\n");
--			return ret;
--		}
--
--		drm_connector_helper_add(connector,
--					 &analogix_dp_connector_helper_funcs);
--		drm_connector_attach_encoder(connector, encoder);
--	}
--
--	/*
--	 * NOTE: the connector registration is implemented in analogix
--	 * platform driver, that to say connector would be exist after
--	 * plat_data->attch return, that's why we record the connector
--	 * point after plat attached.
--	 */
- 	if (dp->plat_data->attach) {
--		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
-+		ret = dp->plat_data->attach(dp->plat_data, bridge);
- 		if (ret) {
- 			DRM_ERROR("Failed at platform attach func\n");
- 			return ret;
-@@ -1095,14 +1033,21 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- }
- 
- static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
-+					struct drm_atomic_state *state,
- 					const struct drm_display_mode *mode)
- {
- 	struct analogix_dp_device *dp = to_dp(bridge);
--	struct drm_display_info *display_info = &dp->connector.display_info;
- 	struct video_info *video = &dp->video_info;
- 	struct device_node *dp_node = dp->dev->of_node;
-+	struct drm_connector *connector;
-+	struct drm_display_info *display_info;
- 	int vic;
- 
-+	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
-+	if (!connector)
-+		return;
-+	display_info = &connector->display_info;
++	struct drm_display_info *display_info = &dp->connector.display_info;
++	struct video_info *video = &dp->video_info;
++	struct device_node *dp_node = dp->dev->of_node;
++	int vic;
 +
- 	/* Input video interlaces & hsync pol & vsync pol */
- 	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
- 	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
-@@ -1186,7 +1131,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
- 	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
- 	if (!new_crtc_state)
- 		return;
--	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
-+	analogix_dp_bridge_mode_set(bridge, old_state, &new_crtc_state->adjusted_mode);
++	/* Input video interlaces & hsync pol & vsync pol */
++	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
++	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
++	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
++
++	/* Input video dynamic_range & colorimetry */
++	vic = drm_match_cea_mode(mode);
++	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
++	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
++		video->dynamic_range = CEA;
++		video->ycbcr_coeff = COLOR_YCBCR601;
++	} else if (vic) {
++		video->dynamic_range = CEA;
++		video->ycbcr_coeff = COLOR_YCBCR709;
++	} else {
++		video->dynamic_range = VESA;
++		video->ycbcr_coeff = COLOR_YCBCR709;
++	}
++
++	/* Input vide bpc and color_formats */
++	switch (display_info->bpc) {
++	case 12:
++		video->color_depth = COLOR_12;
++		break;
++	case 10:
++		video->color_depth = COLOR_10;
++		break;
++	case 8:
++		video->color_depth = COLOR_8;
++		break;
++	case 6:
++		video->color_depth = COLOR_6;
++		break;
++	default:
++		video->color_depth = COLOR_8;
++		break;
++	}
++	if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
++		video->color_space = COLOR_YCBCR444;
++	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR422)
++		video->color_space = COLOR_YCBCR422;
++	else
++		video->color_space = COLOR_RGB;
++
++	/*
++	 * NOTE: those property parsing code is used for providing backward
++	 * compatibility for samsung platform.
++	 * Due to we used the "of_property_read_u32" interfaces, when this
++	 * property isn't present, the "video_info" can keep the original
++	 * values and wouldn't be modified.
++	 */
++	of_property_read_u32(dp_node, "samsung,color-space",
++			     &video->color_space);
++	of_property_read_u32(dp_node, "samsung,dynamic-range",
++			     &video->dynamic_range);
++	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
++			     &video->ycbcr_coeff);
++	of_property_read_u32(dp_node, "samsung,color-depth",
++			     &video->color_depth);
++	if (of_property_read_bool(dp_node, "hsync-active-high"))
++		video->h_sync_polarity = true;
++	if (of_property_read_bool(dp_node, "vsync-active-high"))
++		video->v_sync_polarity = true;
++	if (of_property_read_bool(dp_node, "interlaced"))
++		video->interlaced = true;
++}
++
+ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 					     struct drm_atomic_state *old_state)
+ {
+ 	struct analogix_dp_device *dp = to_dp(bridge);
+ 	struct drm_crtc *crtc;
+-	struct drm_crtc_state *old_crtc_state;
++	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+ 	int timeout_loop = 0;
+ 	int ret;
  
+@@ -1099,6 +1175,11 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	if (!crtc)
+ 		return;
+ 
++	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
++	if (!new_crtc_state)
++		return;
++	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
++
  	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
  	/* Not a full enable, just disable PSR and continue */
-@@ -1302,7 +1247,11 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	if (old_crtc_state && old_crtc_state->self_refresh_active) {
+@@ -1205,83 +1286,6 @@ static void analogix_dp_bridge_atomic_post_disable(struct drm_bridge *bridge,
+ 		DRM_ERROR("Failed to enable psr (%d)\n", ret);
+ }
+ 
+-static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
+-				const struct drm_display_mode *orig_mode,
+-				const struct drm_display_mode *mode)
+-{
+-	struct analogix_dp_device *dp = to_dp(bridge);
+-	struct drm_display_info *display_info = &dp->connector.display_info;
+-	struct video_info *video = &dp->video_info;
+-	struct device_node *dp_node = dp->dev->of_node;
+-	int vic;
+-
+-	/* Input video interlaces & hsync pol & vsync pol */
+-	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
+-	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
+-	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
+-
+-	/* Input video dynamic_range & colorimetry */
+-	vic = drm_match_cea_mode(mode);
+-	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
+-	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
+-		video->dynamic_range = CEA;
+-		video->ycbcr_coeff = COLOR_YCBCR601;
+-	} else if (vic) {
+-		video->dynamic_range = CEA;
+-		video->ycbcr_coeff = COLOR_YCBCR709;
+-	} else {
+-		video->dynamic_range = VESA;
+-		video->ycbcr_coeff = COLOR_YCBCR709;
+-	}
+-
+-	/* Input vide bpc and color_formats */
+-	switch (display_info->bpc) {
+-	case 12:
+-		video->color_depth = COLOR_12;
+-		break;
+-	case 10:
+-		video->color_depth = COLOR_10;
+-		break;
+-	case 8:
+-		video->color_depth = COLOR_8;
+-		break;
+-	case 6:
+-		video->color_depth = COLOR_6;
+-		break;
+-	default:
+-		video->color_depth = COLOR_8;
+-		break;
+-	}
+-	if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
+-		video->color_space = COLOR_YCBCR444;
+-	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR422)
+-		video->color_space = COLOR_YCBCR422;
+-	else
+-		video->color_space = COLOR_RGB;
+-
+-	/*
+-	 * NOTE: those property parsing code is used for providing backward
+-	 * compatibility for samsung platform.
+-	 * Due to we used the "of_property_read_u32" interfaces, when this
+-	 * property isn't present, the "video_info" can keep the original
+-	 * values and wouldn't be modified.
+-	 */
+-	of_property_read_u32(dp_node, "samsung,color-space",
+-			     &video->color_space);
+-	of_property_read_u32(dp_node, "samsung,dynamic-range",
+-			     &video->dynamic_range);
+-	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
+-			     &video->ycbcr_coeff);
+-	of_property_read_u32(dp_node, "samsung,color-depth",
+-			     &video->color_depth);
+-	if (of_property_read_bool(dp_node, "hsync-active-high"))
+-		video->h_sync_polarity = true;
+-	if (of_property_read_bool(dp_node, "vsync-active-high"))
+-		video->v_sync_polarity = true;
+-	if (of_property_read_bool(dp_node, "interlaced"))
+-		video->interlaced = true;
+-}
+-
+ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+@@ -1290,7 +1294,6 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
  	.atomic_enable = analogix_dp_bridge_atomic_enable,
  	.atomic_disable = analogix_dp_bridge_atomic_disable,
  	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
-+	.atomic_check = analogix_dp_bridge_atomic_check,
+-	.mode_set = analogix_dp_bridge_mode_set,
  	.attach = analogix_dp_bridge_attach,
-+	.get_modes = analogix_dp_bridge_get_modes,
-+	.edid_read = analogix_dp_bridge_edid_read,
-+	.detect = analogix_dp_bridge_detect,
  };
  
- static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
-@@ -1532,6 +1481,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
- 
- int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- {
-+	struct drm_bridge *bridge = &dp->bridge;
- 	int ret;
- 
- 	dp->drm_dev = drm_dev;
-@@ -1545,7 +1495,18 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		return ret;
- 	}
- 
--	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
-+	if (dp->plat_data->panel)
-+		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
-+	else
-+		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
-+
-+	bridge->of_node = dp->dev->of_node;
-+	bridge->type = DRM_MODE_CONNECTOR_eDP;
-+	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
-+	if (ret)
-+		goto err_unregister_aux;
-+
-+	ret = drm_bridge_attach(dp->encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret) {
- 		DRM_ERROR("failed to create bridge (%d)\n", ret);
- 		goto err_unregister_aux;
-@@ -1563,7 +1524,6 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
- void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
- 	analogix_dp_bridge_disable(&dp->bridge);
--	dp->connector.funcs->destroy(&dp->connector);
- 
- 	drm_panel_unprepare(dp->plat_data->panel);
- 
-@@ -1573,7 +1533,8 @@ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
- 
- int analogix_dp_start_crc(struct drm_connector *connector)
- {
--	struct analogix_dp_device *dp = to_dp(connector);
-+	struct analogix_dp_device *dp;
-+	struct drm_bridge *bridge;
- 
- 	if (!connector->state->crtc) {
- 		DRM_ERROR("Connector %s doesn't currently have a CRTC.\n",
-@@ -1581,13 +1542,26 @@ int analogix_dp_start_crc(struct drm_connector *connector)
- 		return -EINVAL;
- 	}
- 
-+	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
-+	if (bridge->type != DRM_MODE_CONNECTOR_eDP)
-+		return -EINVAL;
-+
-+	dp = to_dp(bridge);
-+
- 	return drm_dp_start_crc(&dp->aux, connector->state->crtc);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_start_crc);
- 
- int analogix_dp_stop_crc(struct drm_connector *connector)
- {
--	struct analogix_dp_device *dp = to_dp(connector);
-+	struct analogix_dp_device *dp;
-+	struct drm_bridge *bridge;
-+
-+	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
-+	if (bridge->type != DRM_MODE_CONNECTOR_eDP)
-+		return -EINVAL;
-+
-+	dp = to_dp(bridge);
- 
- 	return drm_dp_stop_crc(&dp->aux);
- }
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 91b215c6a0cf..17347448c6b0 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -154,7 +154,6 @@ struct analogix_dp_device {
- 	struct drm_encoder	*encoder;
- 	struct device		*dev;
- 	struct drm_device	*drm_dev;
--	struct drm_connector	connector;
- 	struct drm_bridge	bridge;
- 	struct drm_dp_aux	aux;
- 	struct clk		*clock;
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 380d9a8ce259..38bf070866f6 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -70,6 +70,7 @@ config DRM_EXYNOS_DP
- 	bool "Exynos specific extensions for Analogix DP driver"
- 	depends on DRM_EXYNOS_FIMD || DRM_EXYNOS7_DECON
- 	select DRM_ANALOGIX_DP
-+	select DRM_BRIDGE_CONNECTOR
- 	select DRM_DISPLAY_DP_HELPER
- 	default DRM_EXYNOS
- 	select DRM_OF_DISPLAY_MODE_BRIDGE
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 1eeb0b15f99a..478eaa6f3175 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -22,6 +22,7 @@
- #include <drm/bridge/of-display-mode-bridge.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
-@@ -41,8 +42,6 @@ struct exynos_dp_device {
- 
- 	struct analogix_dp_device *adp;
- 	struct analogix_dp_plat_data plat_data;
--
--	bool has_of_bridge;
- };
- 
- static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
-@@ -70,19 +69,15 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
- }
- 
- static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
--				   struct drm_bridge *bridge,
--				   struct drm_connector *connector)
-+				   struct drm_bridge *bridge)
- {
- 	struct exynos_dp_device *dp = to_dp(plat_data);
--	enum drm_bridge_attach_flags flags = 0;
- 	int ret;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
- 	if (plat_data->next_bridge) {
--		if (dp->has_of_bridge)
--			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
--
--		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
-+		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
-+					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 		if (ret)
- 			return ret;
- 	}
-@@ -112,6 +107,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 	struct drm_encoder *encoder = &dp->encoder;
- 	struct drm_device *drm_dev = data;
-+	struct drm_connector *connector;
- 	int ret;
- 
- 	dp->drm_dev = drm_dev;
-@@ -127,10 +123,19 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	dp->plat_data.encoder = encoder;
- 
- 	ret = analogix_dp_bind(dp->adp, dp->drm_dev);
--	if (ret)
-+	if (ret) {
- 		dp->encoder.funcs->destroy(&dp->encoder);
-+		return ret;
-+	}
-+
-+	connector = drm_bridge_connector_init(dp->drm_dev, dp->plat_data.encoder);
-+	if (IS_ERR(connector)) {
-+		ret = PTR_ERR(connector);
-+		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
-+		return ret;
-+	}
- 
--	return ret;
-+	return drm_connector_attach_encoder(connector, dp->plat_data.encoder);
- }
- 
- static void exynos_dp_unbind(struct device *dev, struct device *master,
-@@ -187,8 +192,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 									dp->dev->of_node,
- 									DRM_MODE_CONNECTOR_eDP);
- 		ret = IS_ERR(dp->plat_data.next_bridge) ? PTR_ERR(dp->plat_data.next_bridge) : 0;
--		if (!ret)
--			dp->has_of_bridge = true;
- 	}
- 	if (ret)
- 		return ret;
-diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-index b7b025814e72..61e95a3ca6ab 100644
---- a/drivers/gpu/drm/rockchip/Kconfig
-+++ b/drivers/gpu/drm/rockchip/Kconfig
-@@ -43,6 +43,7 @@ config ROCKCHIP_VOP2
- config ROCKCHIP_ANALOGIX_DP
- 	bool "Rockchip specific extensions for Analogix DP driver"
- 	depends on ROCKCHIP_VOP
-+	select DRM_BRIDGE_CONNECTOR
- 	select DRM_DISPLAY_HELPER
- 	select DRM_DISPLAY_DP_HELPER
- 	help
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 0a185ebd26af..3b6b2d3ca5d1 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -25,6 +25,7 @@
- #include <drm/display/drm_dp_helper.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/bridge/analogix_dp.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
-@@ -368,6 +369,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- {
- 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
- 	struct drm_device *drm_dev = data;
-+	struct drm_connector *connector;
- 	int ret;
- 
- 	dp->drm_dev = drm_dev;
-@@ -387,7 +389,14 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 	if (ret)
- 		goto err_cleanup_encoder;
- 
--	return 0;
-+	connector = drm_bridge_connector_init(dp->drm_dev, dp->plat_data.encoder);
-+	if (IS_ERR(connector)) {
-+		ret = PTR_ERR(connector);
-+		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
-+		goto err_cleanup_encoder;
-+	}
-+
-+	return drm_connector_attach_encoder(connector, dp->plat_data.encoder);
- err_cleanup_encoder:
- 	dp->encoder.encoder.funcs->destroy(&dp->encoder.encoder);
- 	return ret;
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 3301392eda5f..3428ffff24c5 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -33,8 +33,7 @@ struct analogix_dp_plat_data {
- 
- 	int (*power_on)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
--	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
--		      struct drm_connector *);
-+	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *);
- };
- 
- int analogix_dp_resume(struct analogix_dp_device *dp);
 -- 
 2.34.1
 
