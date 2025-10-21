@@ -1,143 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3801338903;
-	Tue, 21 Oct 2025 19:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF9134846D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 19:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761074554; cv=none; b=k0snty9iVXDSw5o2V9fy84eji+0+0YNPtCotsr88OybLadgdhjIhSRJIhQhbEQdvqLVdqh5CuCS/UPZJ5ISPYjTEPIG3g//fzIq+aq/WJJ9W9HelKe5oUk998YpoKA0Kwd/Tsar65nVLLvmYDG5gKvA+ThBqpFCcdLZ1tq2OKa4=
+	t=1761074831; cv=none; b=LQ78RwwOcN/n/cQ4nHM9pVVikAQeQfGt+k5CnaCDS7uv8n1BohQGkW89GnYY+99y+qdy7TTkA6vZd8wnkHu5zsr2iB5yOup1/SASJbZn2lhYe1JVDyWInjG7FCrU6mLLiU4OZ+1DOyJ/d54ii9MQvndisFdCASn/byH/WeQS/ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761074554; c=relaxed/simple;
-	bh=IedmbNipS6znWib9hB4ynpV/yMH3BWVObpFXIyJ/VA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAF7vmSULcl2x3YYHEOM7rHRHJeTJRK548q87nzujG4kb1ZWeJ0Kb939FmIX3ht8sQqXZ8pBo22PRjBpes3Xj4rrhuoftn7Y0vKO4NB6BrTSZFJ5dxMaaucV1tL/s6xQyhoMkUvX5SauwKb+8l8GmHj1AB+4Bjn9Afe26cmm0IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIiYuJnq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761074831; c=relaxed/simple;
+	bh=H7mmLnyjS4IJj8j/5Cfb777523++/Yd9MxdaxBFMvi4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=b6irCc7keFhK0B/EVB7hoyBxS9x7Adzt9FWQOgH3tCDuh8YImHBCTG9vdq+TEEItG1xdivp7+/dBRLOeq1qDa9cjLpkfTuWSJxkhzjDLfi3diDBMo3F7FFXPMmPqz3GH0mkXAtrW1HvlNLm+3owen9eN9G70uoN97CMuLFaqF4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RjfCV8K2; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIiYuJnq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B23CC4CEF7;
-	Tue, 21 Oct 2025 19:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761074553;
-	bh=IedmbNipS6znWib9hB4ynpV/yMH3BWVObpFXIyJ/VA8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KIiYuJnqoNF7+ysQ69ZkyxSrYH5i6vrRIpxgG9S76lGCpABxppkdM6PUXzP1lGi8T
-	 MvW5cNuxaD6iZQ/A4DVBFbx66nM1KzP0bTtcqaZi+aUn2rpRMhLGIa17VlwYoLly4t
-	 Akh/yT/7PUE32kDfQvijbBx/xRG/WcLIp2GIsj37xiu3icD+EXIw6dhBjUNdpT20uS
-	 bWQvrOWl6ssUpK8bocssmGbNQppYQ17FP5NnBoBe6Cc59n/9c677c9Z4sCXc9XaFHe
-	 Cq8lU6xCASpDwsvE5J3mdb0bcj9R9KiJIUhdJla4PXqBXuaSRXnefV7qUPvM0fxZWI
-	 1k0XZVdyRiR/Q==
-Message-ID: <4a6251da-fe12-4992-af0d-9336dc254c4f@kernel.org>
-Date: Tue, 21 Oct 2025 21:22:27 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RjfCV8K2"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42844985499so374162f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 12:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761074827; x=1761679627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ibZxuBONFvP6tEfHo6ray/hwM+JhW2wvVnRgxqq2YE=;
+        b=RjfCV8K29Df2WMDDautePGhbt4yPIGXXLemqb9cmy/qDY+kqtUaInAUH8IXOAVwNM8
+         4vVC+BfmXn243+566kVfTaanfMYJR/4icPDIi9JbUzHP51+LWdHAlOkZARxGx8Ow1Lwe
+         aNVUMdhDaYwxVynnhUegwo2e6k0xRK/rtTCQbUUNgb/RyPoSJHBttg96nrt2GeEBFiwd
+         TGFV+QtblNI2Uq83wHfYmWFx1slMcXUFHKUP8P6n1DS+yzg+xZOOEf+I/DbWu/q2N8d2
+         ei7n9iL6vZYQTB53u6lnrhjTOk2AimvAMxYH9+IVAGsNlI65to1b1ssO1HtShwo0VRRn
+         HCNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761074827; x=1761679627;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1ibZxuBONFvP6tEfHo6ray/hwM+JhW2wvVnRgxqq2YE=;
+        b=jfk5kNGaqQJL/CcXi76PkMRXlSpmmv9huz8p9f76JaWE8tZ1grLbnks+wfPM/Oikna
+         5r8f+dwuTF+Wd/oMNX+LWQWCgaYH3mi1032k/1EaA2IRj5R5FdD55olLOfwtc1hvuRm0
+         KB1jWean9EmHgw+XDVPJMMelG/UQ8ah8s+ubQ77ySyFKxWUKY6BM8z/Dux467uCf2lMC
+         PU143WCUbNnVEVDVCn+TiBt4GTjsGUb1aDz4+dKO3heWI5LwME98mA3D1iIsbTU/nA7x
+         M9SQO5/It/OTlcRT4GslB8JaPdlrJVMwIMwWwiH7AUl7HxoGTNfqFijSq+l/0SnxeB6A
+         TJsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWxSBYSoDGh2RiEpKQzpCiXai8/l6VjVBmQCsJVx/Cpghr4CLbBgY8pHy3fXo4Ob0KtRd32RErax6a1JChyWyaVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyw5aT9RaXHEw1PyRr+ZP0Fm28te95/bdzVb7awsoZ6SQVElfg
+	ec9p6wrcwBY6QENPyUfYgAOVrXVUHjMPyjawSmHCixR44LJtmYRPrUIM49LcQbp+/pM=
+X-Gm-Gg: ASbGncsKbCgBFtaD0MxETpT9iwou0HZ0f81V2iwKP82WQv0PWvieZ3fIjJ++vDPyVVH
+	TqoIGx0CJKD8922GUGMGgzW8JMr2ABAL6HRNAd5WJMKclWShlR6QBzYe3p2KlAMTX9g12pOz0h5
+	IPXAyg5qa29u5LBf2I08Vn6sr6EQMtqAASlgb3tO58eVCb050VHMEo4/o6G6wDlmd8yGzXev2Aa
+	SbOa1oOprLZMPloStpBs0rYaz+6AGtN1z2HlkwX52t4ZvamoACTKO+WKEck9kngy+T964QF3Lld
+	AQzAAjZI5ekWqGjP3xPuDTLlFGlykgA/AKXmwKPQ7JM6kkwc3Sr5Z2dlARVx/sDNDrXwkFVOdMC
+	2q5aDbO8m41+pxCilwXE+19YDdi0VBH9l9+v4XEp/WSV4G9wvJSE3RM736gqru6XkBNmVMD2ATk
+	SGvDmhzbnW775cUko1Oytp/7yaARE=
+X-Google-Smtp-Source: AGHT+IFxRo7mh1kCIiwBlgFSzvscGIsov6AOIfRYcDiKlEW/2CZnKxnmXX+fOq8J1wvQblUD1sFg2A==
+X-Received: by 2002:a05:600c:3106:b0:46e:31a1:c07d with SMTP id 5b1f17b1804b1-474942605damr21467615e9.2.1761074826918;
+        Tue, 21 Oct 2025 12:27:06 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c42b48c9sm7839115e9.15.2025.10.21.12.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 12:27:06 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ kernel-team@android.com
+In-Reply-To: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+ <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+Subject: Re: (subset) [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg:
+ add gs101 hsi0 and misc compatibles
+Message-Id: <176107482513.33931.5052547244710731509.b4-ty@linaro.org>
+Date: Tue, 21 Oct 2025 21:27:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dt-bindings: clock: google,gs101-clock: add
- samsung,sysreg property as required
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
-References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
- <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-
-On 13/10/2025 22:51, Peter Griffin wrote:
-> Update the bindings documentation so that all CMUs (with the exception of
-> gs101-cmu-top) have samsung,sysreg as a required property.
+X-Mailer: b4 0.14.3
 
 
-Why? You described the patch contents, which I can see. I don't
-understand why we need it, especially that this is ABI break.
-
+On Mon, 13 Oct 2025 21:51:30 +0100, Peter Griffin wrote:
+> Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to the
+> documentation.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  .../bindings/clock/google,gs101-clock.yaml         | 23 +++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> index caf442ead24bda57e531420d8a7d8de8713032ae..5cfe98d9ba895d5207fffc82f3fd55b602b4a2bb 100644
-> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> @@ -49,6 +49,11 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  samsung,sysreg:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to system registers interface.
 
+Applied, thanks!
 
-Your description should say here: for what purpose, how this device is
-going to use it.
+[1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101 hsi0 and misc compatibles
+      https://git.kernel.org/krzk/linux/c/33fd5a7103959113ea3b60389a7582ec0cc2f15e
 
-> +
->  required:
->    - compatible
->    - "#clock-cells"
-> @@ -163,6 +168,22 @@ allOf:
->              - const: bus
->              - const: ip
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
