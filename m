@@ -1,158 +1,135 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0B812CDBE
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 13:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0603B341ADD
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 15:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761054894; cv=none; b=BMa3Cwlt5e93HffDidm2T7TJxUSFY21F+/g24Wabb04avQuyq0EJAr3qoj9k20UITkmMkAZRT7yQ2Zvl6IrRuEJ7jt57945RiJ+w830b1WaSknBEvNW4VykXywrq2k5jCGpfQVNW/INV/kpAlQBfkj9bYiV/JLGcU3tZ/7vfCnY=
+	t=1761060293; cv=none; b=UNQdHQU/HbmijG7vwZ1DnQzgtXNc4014Mmm3jhNVeAPuhukYFHGvzBKa7goYVmtkgXSXw/7g+qyEPxCcJyoBS+8fjA+gPrZoJ4B7yNTy1leGv5aq+Ueo6TH28g+H8MDnwOB1/epq+laKL3H0QikV9f5ef4zir5EQiTw10HYZlSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761054894; c=relaxed/simple;
-	bh=WjXVc6EHp/g4iSC0dgl+mBlijG+pJ2E1MMjbyg07e+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3A0E8cxYd7/1fu/FRrXR49/xXJ3i7/4V8QXuRqhlkarIZO91OLZbFuMujESeKqOaJEl9Egw7O9YwOzZA1EkCRpYRxcmOVoMWoCsD+n4cRmeURZemg8UGS1QnTvT7rUT1MKn+Q++0IIJAbww/KWQ55q29JsdlB5Gwp+BvABPyO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z7MiLYc9; arc=none smtp.client-ip=74.125.224.50
+	s=arc-20240116; t=1761060293; c=relaxed/simple;
+	bh=0pTWYSKeF/umD/wXcGJB6RFTk+048J5zAPQ2CewtX1k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Dx/rxKtPePhnkdimoy5Mhu12dPfsp+X8XwitJDg3qBl7EyjFyxvBWOkHg28CP1kL+b3luXcrqOEl1/Yr7h6TMzgKyozlDLh4c0m/nZyu5AkUP6/mt9WL5A2nB0Nz9bGHQC7mVpMdhp8I28FB7H9vXicUe7OqdQFWW94fKat5zUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Os6wH+lx; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7MiLYc9"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63d0692136bso5808266d50.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 06:54:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Os6wH+lx"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47117f92e32so38072455e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 08:24:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761054892; x=1761659692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7l2S0fTu5SAF3VSsMCSsLrp+bmdGs9v0RGyTD+mw5o=;
-        b=Z7MiLYc94MoWtpRRdN94cauHSrYJHA2B/Y6/IEgd5CgGX96YFHY3fVWOtro0a4Gaaa
-         41wtWTBU/Aeo13JTK860LTl8Is3s5pnxRuIa5yayhMDPjkCjVD1UFfBo+pNaqQAx+Di7
-         +zM1UpZBKht2heAxtX4OZ1oeIdb5SfzogJ0pfrbcwaz0thc4EOWL4K1OgpnajXudnKR9
-         K0qVRXO3gytM2LZRHcib8v/LBLYc97EjKP/schY7KPeJ3AvK81cCBI1zccA7cceTIMal
-         K+zRA1QAe7rCu1HNMXgi05P9J9exSmXwqQ7eMoVWBygUVXRVmwsmX0J+qkBDIhITDbTj
-         3HiQ==
+        d=linaro.org; s=google; t=1761060290; x=1761665090; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLGRjFMRFj/0Wr7Pbd6Nha7Fn1G9Rd12lG5MFWvKdFA=;
+        b=Os6wH+lxDLLTGdD1vINdZ6KzET0ZihNfs3S2VgORIOkx5PBlfYNwHyuxHloE9q3H/h
+         HH6pFDK6hrdJ6XjFpQkt0cFT584GeBSzwHmsoGOQlvOfq+F/G64CgG/EVpox0TaBk/Q4
+         Me6g9zoEkid5JaEcuBw7hKx+OQWfWop4aRSrsfxIQHk6gjo4kBOvJLBCY84B8b9TLrK6
+         8V+MCx+UKfmYY++AD335smT59UlQdHQiKJ71r7+WKGu1cObjQEPRwgum3xpmH8Tjn2tc
+         76bRrvlu3EkT5nyYIpLhCtjMsl3kbynNZJgTVpeeABy5E40kTwmI3IyQlXPHucGZITIS
+         Gvqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761054892; x=1761659692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t7l2S0fTu5SAF3VSsMCSsLrp+bmdGs9v0RGyTD+mw5o=;
-        b=YGFBJeyYtRdaAraP4OKWjwZCmkic1/uByKjZ8+vedlt2d+4GfgMZkPyZfHq5hVK0MR
-         mclCMQi3IiJhKLNk0yCWAlRgQMKXb5V2T2mzoNm7/9b6pYRA5hbl66wo6RIZ2o4R15K2
-         3j4j9OTe/3LZ9v3Es4T5Tqy2lY8ju3ZfnEI5O8r8cTSXjgmvNhaxWIbc59Ehgc4Q1Fz0
-         edUUN8BnKAlJ2jRibJNnHj9ULtWDVTFuHSGRS82Z4FkbSHKg0J93RRUvP36BUlo+LoeS
-         7Iz6qckNEUHS5usAH/23bSrgam4I3Kd2yLsNG0kNLfHFeRkOy26H8gSHNst57dAG0yQO
-         RQRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe2A8M+RAbFhZ8iDyuW9Ucv4H56XSUUoiFomIF4JAInCU1Zw/fb95df+6EoFP4xXrt+16ZRt75xEIA58ktQzYcnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy23XjEftlDzWBWD0JfJD1ylq+e0pBpUGH1508KebAGg6GJMMPS
-	0qr3+gMMKlgtf2iTAoz1vrYKKPXO8eloPlSoZYcoe+DI4fk9JJ2e0pt8INduPZeSNWj5NRIaN8l
-	30AJrFHNjWaHjdG9uurLXThFR9Lirnwkb6KlJ839F/A==
-X-Gm-Gg: ASbGncvMd0JsvPQ7uEFoGneMEzQuJVbmndJMwjJwHrmYoaUWqvGjQhMiZorIcFs3Kn9
-	nOtmfzhxOCdM7eznC5PRJMGkiXiFRPPJKL8kzXfFoUg2WPnNI3KNKO2DliMKWBVPDis/10VETHu
-	4r+q3rmxdQtWNWr/M2G39XX3ao7mStefM9GVVUHJNYfai3SITGodEnwl5qSz/NJlWLbF5PwE9IE
-	5DUiylKNdHuQp4BqvJsksyvWQcK/S0QfAVi2KBdeUmm5RgQUW9AJtT5tnp5xfSZ8AnR9Fs/
-X-Google-Smtp-Source: AGHT+IHBbKVNcuM7l9dFMzW3m4txAHgl/oBl0HllzJAJ6dzOGjsTsg6Juv5F+fWERMC7Ma504B1opcnGXEPDICN6WPQ=
-X-Received: by 2002:a05:690e:134a:b0:63e:34ed:a131 with SMTP id
- 956f58d0204a3-63e34eda971mr6291641d50.31.1761054891971; Tue, 21 Oct 2025
- 06:54:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761060290; x=1761665090;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xLGRjFMRFj/0Wr7Pbd6Nha7Fn1G9Rd12lG5MFWvKdFA=;
+        b=BeaclASIlKLIgwpwDURFi5cAnDyCpDE5ovFKmDvFCXeW+TWmPwnMtNi1bmiFew2ztq
+         yZb//+G/HpioYhRD1+R/rChso282zqCywIpLglB/ba5WZwEjxjx7mcpOgTubkI36mgTI
+         sSmO/h/t7pfYWoCtYMrxO0QQ+BTxCR86ibzcGbNHkHSO/iDw38WxA28iTIAqkSewBJrf
+         C7i1qsa6UFCEq66BxEqJY7THlV4PybQos5/pNdO8ZRGeJQWvfFlGW+QYni1GyiQL/cgY
+         QDJPONl68ryve//Y8rdDHA8z7tn2spYgK7Sr2UsC+pKrOTWNEfazvM8W6tFR1422KgEs
+         4zTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFSbqSFr14dT9Ly2sl0F4RNT1CMZrA3IRDvUW+QR5e9i7KUN1yYN7KSu7qMWxQfbZagiPArBrulQU+X6MgQF21EQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvYZutmc2iCNgCydCxP3T0maKauFm+gadTBsWjCg4nZH4O5OmD
+	WCsepJvTNehjFBhcNWmg7c330+y+a8IyV3Hiv3PBrg+wMkLyd6G//9doP41xDEbGNq4=
+X-Gm-Gg: ASbGncvP2iHgYIW/yXunzaypDYXSiJ+aZXcTczBHwnRYwy1sWIez0k4Gl1EdW1VuAZH
+	ZxbjYf7YZHFYkqQOg+1iaclnQtB8TTnIt54wCixMDyWUA8LlSXxyAAmWybeNuP6a2qDvJ6NCNbA
+	7jOQ65/84np0OLfHAi7lESpwcogpmo9ht/9+TzFVnluITtaCnGW5tw7XGnpNM0hQDiIzxEyhXBM
+	ElcKgHhVSxdLKlou+ecj4cYGtOH361iyUkNtDvaN0EdBGThm5cQBnxsh8NfrA00yNjDrA/Lrr9J
+	rlRmrc/sAlrfqzGTd1OLgW4d/WDNa/rOFsm4cu0voYRxgr5ht+mln20swcJifOwxleoDj/MkmKG
+	rKnAHOPsWyKtGBs2QtpHIiCQkdON7VdPfqq76BIjP83WMqsX0tiI0w6tRIJGgwSmvhi0sCSHkcd
+	YjzFciTFVHNwRZw9AofwKT/xDiThGXp2msI/5DF1vYOZQk5kL/Pz1ttXBFU4u7Dd0=
+X-Google-Smtp-Source: AGHT+IGeQKcOKpzdCgFr8S2qcXAD3y1kKSzzFmSzcQgg2oWkU9A1Cyk+uTNL56azhWjBHMZtPZpvVw==
+X-Received: by 2002:a05:600c:5287:b0:46e:6a6a:5cec with SMTP id 5b1f17b1804b1-47117876738mr151626285e9.2.1761060290113;
+        Tue, 21 Oct 2025 08:24:50 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d90bsm201578635e9.2.2025.10.21.08.24.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 08:24:49 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Tue, 21 Oct 2025 15:24:47 +0000
+Subject: [PATCH] firmware: exynos-acpm: add empty method to allow compile
+ test
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org> <20251016-gs101-pd-v3-4-7b30797396e7@linaro.org>
-In-Reply-To: <20251016-gs101-pd-v3-4-7b30797396e7@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 21 Oct 2025 15:54:16 +0200
-X-Gm-Features: AS18NWDpF262ybo6_Emnnj0aCX8cQdB1lik5qoOWoSB0z0MgCBOGMTnmDv5nouE
-Message-ID: <CAPDyKFpH2p=JhkuXOxL4V3QMH8GObh0qSphPCK=OM9cNe+QmJg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] pmdomain: samsung: plug potential memleak during probe
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, stable@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAL+l92gC/x2MSQqAMAwAvyI5GzCVKvoV8VBr1OBKW0UQ/27xO
+ DAzD3h2wh7q5AHHl3jZtwiUJmAns42M0kcGlSlNmSIc5EZjjxXtMmN3ytJjYB+QKtJDbgpd2hJ
+ ifTiO6n9u2vf9ADpJznNpAAAA
+X-Change-ID: 20251021-fix-acpm-clk-build-test-1915f3a657c7
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
+ kernel test robot <lkp@intel.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761060289; l=1489;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=0pTWYSKeF/umD/wXcGJB6RFTk+048J5zAPQ2CewtX1k=;
+ b=2+vXOE49ULPO9WgunsDjzAmwON+BhVkCg2nx7Ql3O90/K3s+zZo6VXA8+hD/KclCTMNDWouKt
+ bmloW7AwrluD7l09YBYniO+0BEm/t4+HYgSRcZtg8bA2zLaKSNzvVVW
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On Thu, 16 Oct 2025 at 17:58, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> of_genpd_add_provider_simple() could fail, in which case this code
-> leaks the domain name, pd->pd.name.
->
-> Use devm_kstrdup_const() to plug this leak. As a side-effect, we can
-> simplify existing error handling.
->
-> Fixes: c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular platfo=
-rm driver")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Provide empty method for devm_acpm_get_by_node() if we aren't
+building in the CONFIG_EXYNOS_ACPM_PROTOCOL. This allows to
+test-build the CONFIG_EXYNOS_ACPM_CLK code.
 
-Applied for fixes, thanks!
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510211905.RgfWkgss-lkp@intel.com/
+Fixes: 40498a742053 ("clk: samsung: add Exynos ACPM clock driver")
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+ include/linux/firmware/samsung/exynos-acpm-protocol.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Kind regards
-Uffe
+diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
+index b1e95435240fdb895a03f178d4fb3789411b1583..2091da965a5ad238b5e16c567a72fe88fafe6095 100644
+--- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
++++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
+@@ -55,7 +55,16 @@ struct acpm_handle {
+ 
+ struct device;
+ 
++#if IS_ENABLED(CONFIG_EXYNOS_ACPM_PROTOCOL)
+ const struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
+ 						struct device_node *np);
++#else
++
++static inline const struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
++							      struct device_node *np)
++{
++	return NULL;
++}
++#endif
+ 
+ #endif /* __EXYNOS_ACPM_PROTOCOL_H */
 
+---
+base-commit: ad97aba3e64f8e474ecbce0c4e08486023ce8ab2
+change-id: 20251021-fix-acpm-clk-build-test-1915f3a657c7
 
-> ---
-> v2:
-> mark as fix, as this isn't a pure simplification
-> ---
->  drivers/pmdomain/samsung/exynos-pm-domains.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdom=
-ain/samsung/exynos-pm-domains.c
-> index 5d478bb37ad68afc7aed7c6ae19b5fefc94a9035..f53e1bd2479807988f969774b=
-4b7b4c5739c1aba 100644
-> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-> @@ -92,13 +92,14 @@ static const struct of_device_id exynos_pm_domain_of_=
-match[] =3D {
->         { },
->  };
->
-> -static const char *exynos_get_domain_name(struct device_node *node)
-> +static const char *exynos_get_domain_name(struct device *dev,
-> +                                         struct device_node *node)
->  {
->         const char *name;
->
->         if (of_property_read_string(node, "label", &name) < 0)
->                 name =3D kbasename(node->full_name);
-> -       return kstrdup_const(name, GFP_KERNEL);
-> +       return devm_kstrdup_const(dev, name, GFP_KERNEL);
->  }
->
->  static int exynos_pd_probe(struct platform_device *pdev)
-> @@ -115,15 +116,13 @@ static int exynos_pd_probe(struct platform_device *=
-pdev)
->         if (!pd)
->                 return -ENOMEM;
->
-> -       pd->pd.name =3D exynos_get_domain_name(np);
-> +       pd->pd.name =3D exynos_get_domain_name(dev, np);
->         if (!pd->pd.name)
->                 return -ENOMEM;
->
->         pd->base =3D of_iomap(np, 0);
-> -       if (!pd->base) {
-> -               kfree_const(pd->pd.name);
-> +       if (!pd->base)
->                 return -ENODEV;
-> -       }
->
->         pd->pd.power_off =3D exynos_pd_power_off;
->         pd->pd.power_on =3D exynos_pd_power_on;
->
-> --
-> 2.51.0.788.g6d19910ace-goog
->
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
