@@ -1,124 +1,161 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F31A1DED4C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 09:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE382E6CAB
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 10:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761040489; cv=none; b=Mf+aTmOq4VCVr89Bs3843FX9smcR8yN4f1c830CqcTHpACISZD2PSgkp2J1SMmS1KA/NOWGOK//xuUnmvIghA+cTJlSFHPZ4Oh1ncBPZM/kyOfXn3WGjNFUXz4Ph+NAZ6PWxq2hjGLOq1SFNHkCjiBKqTTsZBCFKJFNnWxMLaAY=
+	t=1761042724; cv=none; b=UgT/281cWPPqBajE+06LQ+vXcgFNQpJDzT8uwdfEjn3HkcXDFRTz3elI4ACPWHEhc+20YS17T3WNhOf58eeU/3U7iezOaXs0JBG8yPRnPpvxXyuIACKj1rfKtjs0Bg5zMG3GBjRtWv4DFcM/4tCCXGJUzGlSD/3ZGJII9gDLN8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761040489; c=relaxed/simple;
-	bh=r9mqtQbvHpUswv+RMdbgD3FsvcrUibcGXabhqOtDVoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qiTbLeV8Xjh7WU51LyBYt+F0O8uJl27sbc3zt1lQx3Bb/WdiZixKW8dFyNBwECANoWs18wzIidh7alnrFZUizmdcXAcMCyphdyo7ptBBHDSywrgppZhJMUepVhi/Ybmz6zT/zZgN7P3zSL67ZSKSH8k4YlwfCPdaXOQJcX2gg4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ySx4ajmI; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761042724; c=relaxed/simple;
+	bh=Rv6B8AtJGjKvNQJhTVSXBcpvGM+PYPF74L5rDuuA9O0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=IT6MLfakconNUwEn+uwbdAQTIokRDA8DoUXuVkEAMc7iNAn9KwJYnwi7OjH7aOi4/lAU+owHbtJ/Dt3xWg69mMMj/e4yzgqzu3ZUr2IzkkPRaUZQSA5IrMbUEgRTuou0GyDBbnUqD1TyA15QOgvBrKwNZ1Yjm54zzU0ZkPa4+7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UAKVwMh6; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ySx4ajmI"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4270a072a0bso560950f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 02:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761040486; x=1761645286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGJuDFRRuSHDHUNQgyFQLmeRV65OPg6adZAytCP4ys0=;
-        b=ySx4ajmIEzPEFJ5cQ0bCBG9oZAwASpUuu4zEZMceSFJD/ii3ke7THN6Jhj6kcnqEuc
-         k/QlPtt9d5EaAy1RiqUm/VNI+rDfft2CvzCjkXhzK8OiIzs17QqHTNV039BLIrb3fgFs
-         6MASnF7F9EE9Kch56y+jtYqsU57nrZ1w/bW+oWqprMp9/uh7zlVAqmAgl6V90zK1m/Vi
-         RkxuGdEnKBef6J0zKNNJRBLjtd2A9M+MuqAV3zJJsE6dNAvXr6AVk8DcbmmW8mDxKXn3
-         BvBI3bx6LWVsJid24MXspKKfHP27BTc3y0C2FEzfreoUtOgbx1p0thQFOsiAzrgw/G3q
-         gUkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761040486; x=1761645286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iGJuDFRRuSHDHUNQgyFQLmeRV65OPg6adZAytCP4ys0=;
-        b=cfKU5jYaUb4Cw4x3u/gFs+x2iDOEpJFp0t2UMj6LEeGDuH6V1pgunM0V17qT4dey/W
-         dC6dDQSQVjqXWDtgWDOFC1luRXyNRXBJ0BxQgsbMBycokdtydYYCvccUf2jCAO5clLwY
-         Y3l3NS4LSJj9N24NDnYT2Yrn1XJK9gQfuaj76MV4x76V1Id2uxWAIebh9FC9+45L4rMI
-         lo+SE7szkOdR7pv/lsd5cXCDlpibs1+FVO+8R2/0CcHZgW8R5BzTfDWMSbhRHsXuRO7N
-         ICVjj0pSru1RrYeA8fyB0aiFUw/ItW5/G4e/CSggeQnsGkzbVhBEfTc/dRh2wZ3ZqnrV
-         +rVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkKngbgPBzXediKn3/v8Blc4l3whc7xX2P1g6teSOfKZawuWp4a5KPzu1ax4bg4pES9aF1au5pE5toYI6RG8yrNA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzovhUSahK2h0FYFYh5sqQYK33EaOjJBK6ZGyxH8DnV/x8wt2Im
-	2ZmBDUSucXGBnvrNNNyF4j/P1HyxZTPS+AC9e7TD53U2ldLwJOsfc9OoXKkcfCentp0=
-X-Gm-Gg: ASbGnctOOhj/dpXRvnKxSuRF5rV1nUQOEBjhsLoLChsMdAR93nIsP1lBTwY4G35M4Et
-	RN/ltzrG1SGducrBFZem/DIe7zCayeanZvMADcIAQQQUcuD7qaZgR1EjaSaEDshRSHbncNc6lfq
-	T7ZoDb2fpHmHOLRMlgBdPz7PDZ+GagvmNTX+o+TdfmFkAkAtnEM2AY4aFDN99/Sfx661vyw6aOp
-	I14BwUz765V/rtAmtoWDoHZOBB9BWmTD0dco9SzGP3neDWHRMH36C39EEpUcin4gW4ZFhwFOof3
-	KGfLOyef+HxXIf/GzokC4pvZ13/I6XBuuGBvZM9NjSerszudXZpRSJjcsP0krv04BuFE8UGV8sx
-	93oPVMBYeQke/D19qeHSl9cVLm3epvu0S+5/w92K7hiMtrmOv1WcFcJ8lkHpVCP+Rixbu+J8l7j
-	OiP0xT8FNOnwKG7LeBMoRuWw==
-X-Google-Smtp-Source: AGHT+IGWw71OlcYgXji+89JG5Sz0DKNTCPD0GYaCIpd2i/j7WhXpZlNWd4iMSirznEOwKDsUpO+ZUg==
-X-Received: by 2002:a05:600c:6308:b0:45d:da49:c47d with SMTP id 5b1f17b1804b1-474941ec4b9mr10231385e9.0.1761040486310;
-        Tue, 21 Oct 2025 02:54:46 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0febsm19491256f8f.6.2025.10.21.02.54.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 02:54:45 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] MAINTAINERS: Update Krzysztof Kozlowski's email
-Date: Tue, 21 Oct 2025 11:54:25 +0200
-Message-ID: <20251021095426.86549-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UAKVwMh6"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DBB56C0B88C;
+	Tue, 21 Oct 2025 10:31:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6FBD860680;
+	Tue, 21 Oct 2025 10:31:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 050A6102F238A;
+	Tue, 21 Oct 2025 12:31:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761042712; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=YuVVLdxM0un/2EVnLCzvPprS2wmsm9jt4ri10VpX44E=;
+	b=UAKVwMh67iPoBl4NTClw0ksLV00XODy/DIHEJ+Abr2eO5IqpQcehz/93nuSEIk1KNn1Bmg
+	alRZgs0hHh6R//b9Djv11rXnVg0M3E+zSIsxC47sYWAJyGtBqcFsIVJo+s20tNSMGbhOor
+	eyrx4hjsFi7ZY638H2w5XkfJ2MlT/Z227QFyUd5rEkIdAeesvlToC3vmxcoH4ehhF9PII8
+	zbM6HzvGFQmw1YC877GgY3McN5LwDhQmATKGTMlq8UENwmFokLOU0KtyQWXnW3mlO7fJAu
+	j9PCgp7hTfzSMz4K/v7Wh0IGkXn6qFI19aHgSoubt+UeSXbN8tO7oymiMdGsUQ==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 21 Oct 2025 12:31:11 +0200
+Message-Id: <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
+Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+ <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+ <simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+ <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
+ <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
+ <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
+ <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
+ <andy.yan@rock-chips.com>, <dmitry.baryshkov@oss.qualcomm.com>,
+ <dianders@chromium.org>, <m.szyprowski@samsung.com>,
+ <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH v7 01/18] drm/display: bridge_connector: Ensure last
+ bridge determines EDID/modes detection capabilities
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
+ <neil.armstrong@linaro.org>, <rfoss@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
+ <20251021023130.1523707-2-damon.ding@rock-chips.com>
+In-Reply-To: <20251021023130.1523707-2-damon.ding@rock-chips.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Update Krzysztof Kozlowski's email address in mailmap to stay reachable.
+Hello Damon,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .mailmap    | 1 +
- MAINTAINERS | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+On Tue Oct 21, 2025 at 4:31 AM CEST, Damon Ding wrote:
+> When multiple bridges are present, EDID detection capability
+> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
+> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
+> determined by the last bridge in the chain, we handle three cases:
+>
+> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
+>  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
+>    &drm_bridge_connector.bridge_edid to NULL and set
+>    &drm_bridge_connector.bridge_modes to the later bridge.
+>  - Ensure modes detection capability of the later bridge will not
+>    be ignored.
+>
+> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
+>  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
+>    &drm_bridge_connector.bridge_modes to NULL and set
+>    &drm_bridge_connector.bridge_edid to the later bridge.
+>  - Although EDID detection capability has higher priority, this
+>    operation is for balance and makes sense.
+>
+> Case 3: the later bridge declares both of them
+>  - Assign later bridge as &drm_bridge_connector.bridge_edid and
+>    and &drm_bridge_connector.bridge_modes to this bridge.
+>  - Just leave transfer of these two capabilities as before.
+>
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> ---
+>
+> Changes in v7:
+> - As Luca suggested, simplify the code and related comment.
+> ---
+>  drivers/gpu/drm/display/drm_bridge_connector.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu=
+/drm/display/drm_bridge_connector.c
+> index baacd21e7341..7c2936d59517 100644
+> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+> @@ -673,14 +673,22 @@ struct drm_connector *drm_bridge_connector_init(str=
+uct drm_device *drm,
+>  		if (!bridge->ycbcr_420_allowed)
+>  			connector->ycbcr_420_allowed =3D false;
+>
+> -		if (bridge->ops & DRM_BRIDGE_OP_EDID)
+> -			bridge_connector->bridge_edid =3D bridge;
+> +		/*
+> +		 * Ensure the last bridge declares OP_EDID or OP_MODES or both.
+> +		 */
+> +		if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MO=
+DES) {
+> +			bridge_connector->bridge_edid =3D NULL;
+> +			bridge_connector->bridge_modes =3D NULL;
+> +			if (bridge->ops & DRM_BRIDGE_OP_EDID)
+> +				bridge_connector->bridge_edid =3D bridge;
+> +			if (bridge->ops & DRM_BRIDGE_OP_MODES)
+> +				bridge_connector->bridge_modes =3D bridge;
+> +		}
+>  		if (bridge->ops & DRM_BRIDGE_OP_HPD)
+>  			bridge_connector->bridge_hpd =3D bridge;
+>  		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
+>  			bridge_connector->bridge_detect =3D bridge;
+> -		if (bridge->ops & DRM_BRIDGE_OP_MODES)
+> -			bridge_connector->bridge_modes =3D bridge;
+> +
 
-diff --git a/.mailmap b/.mailmap
-index 8a19cb96f448..797eeb6aacab 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -435,6 +435,7 @@ Krishna Manikandan <quic_mkrishn@quicinc.com> <mkrishn@codeaurora.org>
- Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski.k@gmail.com>
- Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski@samsung.com>
- Krzysztof Kozlowski <krzk@kernel.org> <krzysztof.kozlowski@canonical.com>
-+Krzysztof Kozlowski <krzk@kernel.org> <krzysztof.kozlowski@linaro.org>
- Krzysztof Wilczyński <kwilczynski@kernel.org> <krzysztof.wilczynski@linux.com>
- Krzysztof Wilczyński <kwilczynski@kernel.org> <kw@linux.com>
- Kshitiz Godara <quic_kgodara@quicinc.com> <kgodara@codeaurora.org>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 04193ceb9365..13fed9ee260c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16196,7 +16196,7 @@ MEMORY CONTROLLER DRIVERS
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
--B:	mailto:krzysztof.kozlowski@linaro.org
-+B:	mailto:krzk@kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git
- F:	Documentation/devicetree/bindings/memory-controllers/
- F:	drivers/memory/
-@@ -21165,7 +21165,7 @@ F:	Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
- F:	drivers/i2c/busses/i2c-qcom-cci.c
- 
- QUALCOMM INTERCONNECT BWMON DRIVER
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
--- 
-2.48.1
+This does not apply on current drm-misc-next, due to the patch I mentioned
+in a previous iteration, now applied as commit 2be300f9a0b6 ("drm/display:
+bridge_connector: get/put the stored bridges").
 
+However I'm sorry I have to mention that patch turned out being buggy, so
+I've sent a series to apply a corrected version [0]. I suggest watching the
+disucssion about the fix series, and if that gets approved rebase on top of
+that and adapt your changes.
+
+Sorry about the mess. :(
+
+[0] https://lore.kernel.org/r/20251017-drm-bridge-alloc-getput-bridge-conne=
+ctor-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
