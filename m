@@ -1,161 +1,204 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE382E6CAB
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 10:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F78336ED9
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 13:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761042724; cv=none; b=UgT/281cWPPqBajE+06LQ+vXcgFNQpJDzT8uwdfEjn3HkcXDFRTz3elI4ACPWHEhc+20YS17T3WNhOf58eeU/3U7iezOaXs0JBG8yPRnPpvxXyuIACKj1rfKtjs0Bg5zMG3GBjRtWv4DFcM/4tCCXGJUzGlSD/3ZGJII9gDLN8Q=
+	t=1761051618; cv=none; b=XMuzQIH5ysEq1IaDIfp60nYgPDNgVRTGwQslqC4En9OGOI0RKzSquRmHXoX11QHcI25WyqrKvVzcYOyRLFsuxZMe++EBgPt2+EPhwK/Pm3isEGIres4ZDLA3kZ+NWpzOjEhkpE8Xq6THbDMeUoaMBUZXeR/1uK5XL6Sy9Onjh7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761042724; c=relaxed/simple;
-	bh=Rv6B8AtJGjKvNQJhTVSXBcpvGM+PYPF74L5rDuuA9O0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IT6MLfakconNUwEn+uwbdAQTIokRDA8DoUXuVkEAMc7iNAn9KwJYnwi7OjH7aOi4/lAU+owHbtJ/Dt3xWg69mMMj/e4yzgqzu3ZUr2IzkkPRaUZQSA5IrMbUEgRTuou0GyDBbnUqD1TyA15QOgvBrKwNZ1Yjm54zzU0ZkPa4+7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UAKVwMh6; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1761051618; c=relaxed/simple;
+	bh=5CwFdvA3X29Kv1mhM21fPBuZSIHfzjJ7q9hLb6A09cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ceEKQgQiYKcTPXj4qov5xbApuvqchTS44MnFcCSitiw3be3fBehkcPN9OEE2l2lXjqWezp/A+lBsVDOpI/PYgWrHc5O1+0o6Feb+EQkNRbSAzltZnEhRqhHlG9OthcqCMkJOUmqUAWJBMgIcA/rAtO8X7w1cDMduft49sRAyKRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c2NdSUn0; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UAKVwMh6"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id DBB56C0B88C;
-	Tue, 21 Oct 2025 10:31:34 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6FBD860680;
-	Tue, 21 Oct 2025 10:31:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 050A6102F238A;
-	Tue, 21 Oct 2025 12:31:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761042712; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=YuVVLdxM0un/2EVnLCzvPprS2wmsm9jt4ri10VpX44E=;
-	b=UAKVwMh67iPoBl4NTClw0ksLV00XODy/DIHEJ+Abr2eO5IqpQcehz/93nuSEIk1KNn1Bmg
-	alRZgs0hHh6R//b9Djv11rXnVg0M3E+zSIsxC47sYWAJyGtBqcFsIVJo+s20tNSMGbhOor
-	eyrx4hjsFi7ZY638H2w5XkfJ2MlT/Z227QFyUd5rEkIdAeesvlToC3vmxcoH4ehhF9PII8
-	zbM6HzvGFQmw1YC877GgY3McN5LwDhQmATKGTMlq8UENwmFokLOU0KtyQWXnW3mlO7fJAu
-	j9PCgp7hTfzSMz4K/v7Wh0IGkXn6qFI19aHgSoubt+UeSXbN8tO7oymiMdGsUQ==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2NdSUn0"
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-63bcfcb800aso5966585d50.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 06:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761051615; x=1761656415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vlEJkGo4jbFcLLHgPauAsvkvtRdewAA4g7rPzfOb2+8=;
+        b=c2NdSUn0yplebnJZ75R6Fkskgf29aH6hwjhW3+d4F2fJQdm/ZCzrJKO8fnhpqjZLLF
+         OGHQ7naJyKgqlfdPS7UOG0qdaX+Ud+iFqlLqFjncvPgt21vAOw9NZCJmwVcu7tfkD1DM
+         Gn4ShpqDV/dDRYX+tM1hZSnwdqI6N3H/9VT2y/ZW1RMFlWODymVfpVvtngQ/v7jvwLJi
+         5sbU1Ywmkah9oxwMu50UuDWgfxe5JZ9l9YULd43ScHOtynICOWaB1JB3DpvzEAe9FfI+
+         0wkb3MI1QslQ+puDVgcvoXJS4o0HFkgaZ0yy7luqDTuEPN/1LUDKaldntaD8n/GR+8ck
+         32xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761051615; x=1761656415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vlEJkGo4jbFcLLHgPauAsvkvtRdewAA4g7rPzfOb2+8=;
+        b=bDW5Mvd1Quq1utZBXYFpyyRd/XSUYCL0xxHVXOyW6chwnLKoAuc3IDEEFottvlCNUi
+         cRB4vx21ZjBSn6lcTvWPtb117DbkY/mIS6wmaq04FdKTd4T0MHvu9SMPT+U8CR/doKC8
+         PeS1BYYeB0Gzy9eVCekwOshS8FgzZq94on5Xdqb6UWphVZXX1DSTxtrGxjKT+M6a3eyl
+         EWQbT5aNnR9eDMIzXNLyPeZtUrLUG+gSaOE3mIUvZlDj+7wD7W68s3afDaBRcTmDV0Yu
+         RNDxh95apTIA3ijFE/Xv5xRx6Vb0eUX5OmfDnbGlNnhe88NlFIdff7NxAM03ppk8WMoT
+         XhSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo+087ZvYqryJY/Pc5L8sRuiobYp/OTZPnq3+mgUTSE6Yjm4HkHwdOSonccAkk0pw2KePZXMvT4Y12W0wPot0tRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5M+1gNxgkQJFDiBuhQABoVhB+zh8Ct0nZ9VRJ43L12m99lneE
+	+U6CJTopzLvFtpk7Jr9Uo9x5g9D4cThdV1oVMSgIlESRxHYKj+lrOEKSPOkVLEYtXahqyp5G692
+	9883yTS8mh9/Pf3mQjiNgh10wgb0H1CfRZYedVtlR0Q==
+X-Gm-Gg: ASbGncu/LMqSBS5xEgkmpvgguQbHG4V9T89r68I2lqcIve13DL24eTFfiHv1Ii0VAh/
+	8Z3vLoQZR1/PyPjdkTH8mlVg/2jGQfZi8U9sZGrB1Ww6q2y8PWKtZJ/ySLNabki7NMuJIHK/W9h
+	qSMHY7m+IHSFzPYRWt6mHWB/YfEyJQaJPwAJpfdlnsaaOUGD9GYiH9fH+NPf61KMhuR75qxactz
+	6dw0HMN2iOtiXosaqW+v+qgRr16ExYEyyfhSbyNIV6JIwbTb2PTJks5yVGH69SMMjUD+bcP
+X-Google-Smtp-Source: AGHT+IH3Bsal993llg86W2aSSM1eiZS3yAmHYuPkrL2KcynJ1XAI6y+Y0IumRaTcK/qZuaGYZjT8+fHPq/Xs9WCQQDY=
+X-Received: by 2002:a05:690e:2049:b0:63c:f5a7:406 with SMTP id
+ 956f58d0204a3-63e161f865emr9077055d50.58.1761051614403; Tue, 21 Oct 2025
+ 06:00:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org> <20251016-gs101-pd-v3-3-7b30797396e7@linaro.org>
+In-Reply-To: <20251016-gs101-pd-v3-3-7b30797396e7@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 21 Oct 2025 14:59:37 +0200
+X-Gm-Features: AS18NWAWrX3EdOi49ik_edQ7hyw6I5dlqupwh8B2wvDucY-SMETDIx3Qc3I521g
+Message-ID: <CAPDyKFqNEN_yfmGWZr=sC-W8-Drv7zn82WYa-y=v+Suk-JHvtQ@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] dt-bindings: soc: samsung: gs101-pmu: allow
+ power domains as children
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 Oct 2025 12:31:11 +0200
-Message-Id: <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
-Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
- <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
- <simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
- <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
- <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
- <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
- <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
- <andy.yan@rock-chips.com>, <dmitry.baryshkov@oss.qualcomm.com>,
- <dianders@chromium.org>, <m.szyprowski@samsung.com>,
- <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH v7 01/18] drm/display: bridge_connector: Ensure last
- bridge determines EDID/modes detection capabilities
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
- <neil.armstrong@linaro.org>, <rfoss@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
- <20251021023130.1523707-2-damon.ding@rock-chips.com>
-In-Reply-To: <20251021023130.1523707-2-damon.ding@rock-chips.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Damon,
-
-On Tue Oct 21, 2025 at 4:31 AM CEST, Damon Ding wrote:
-> When multiple bridges are present, EDID detection capability
-> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
-> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
-> determined by the last bridge in the chain, we handle three cases:
+On Thu, 16 Oct 2025 at 17:58, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->    &drm_bridge_connector.bridge_edid to NULL and set
->    &drm_bridge_connector.bridge_modes to the later bridge.
->  - Ensure modes detection capability of the later bridge will not
->    be ignored.
+> The power domains are a property of / implemented in the PMU. As such,
+> they should be modelled as child nodes of the PMU.
 >
-> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->    &drm_bridge_connector.bridge_modes to NULL and set
->    &drm_bridge_connector.bridge_edid to the later bridge.
->  - Although EDID detection capability has higher priority, this
->    operation is for balance and makes sense.
->
-> Case 3: the later bridge declares both of them
->  - Assign later bridge as &drm_bridge_connector.bridge_edid and
->    and &drm_bridge_connector.bridge_modes to this bridge.
->  - Just leave transfer of these two capabilities as before.
->
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 >
 > ---
+> Note: Ideally, the newly added properties (ranges, etc.) should only be
+> 'required' if "^power-domain@[0-9a-f]+$" exists as a patternProperty,
+> as they're needed only in that case. As-is, this patch now causes
+> warnings for existing DTs as they don't specify the new properties (and
+> they shouldn't need to). Only if DTs are updated to include
+> power-domains, such an update should also add the new properties.
 >
-> Changes in v7:
-> - As Luca suggested, simplify the code and related comment.
+> I've not been able to come up with the correct schema syntax to achieve
+> that. dependencies, dependentRequired, and dependentSchemas don't seem
+> to support patterns. Similarly,
+>   - if:
+>       required:
+>         - ...
+>     then:
+>       required:
+>         - ...
+>
+> doesn't allow patterns in the 'if' block (or I didn't get the syntax
+> right).
+>
+> Rob said in
+> https://lore.kernel.org/all/20251010141357.GA219719-robh@kernel.org/
+> that this is a known limitation in json-schema.
 > ---
->  drivers/gpu/drm/display/drm_bridge_connector.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
+>  .../bindings/soc/google/google,gs101-pmu.yaml      | 40 ++++++++++++++++=
+++++++
+>  1 file changed, 40 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu=
-/drm/display/drm_bridge_connector.c
-> index baacd21e7341..7c2936d59517 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -673,14 +673,22 @@ struct drm_connector *drm_bridge_connector_init(str=
-uct drm_device *drm,
->  		if (!bridge->ycbcr_420_allowed)
->  			connector->ycbcr_420_allowed =3D false;
+> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-pm=
+u.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> index f7119e7a39a3fe0a0a23d1faa251d356f83ba501..a24390f6d2a54afe1aa84935e=
+03f719a62f4fc8e 100644
+> --- a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> @@ -26,6 +26,14 @@ properties:
+>    reg:
+>      maxItems: 1
 >
-> -		if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> -			bridge_connector->bridge_edid =3D bridge;
-> +		/*
-> +		 * Ensure the last bridge declares OP_EDID or OP_MODES or both.
-> +		 */
-> +		if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MO=
-DES) {
-> +			bridge_connector->bridge_edid =3D NULL;
-> +			bridge_connector->bridge_modes =3D NULL;
-> +			if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> +				bridge_connector->bridge_edid =3D bridge;
-> +			if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> +				bridge_connector->bridge_modes =3D bridge;
-> +		}
->  		if (bridge->ops & DRM_BRIDGE_OP_HPD)
->  			bridge_connector->bridge_hpd =3D bridge;
->  		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
->  			bridge_connector->bridge_detect =3D bridge;
-> -		if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> -			bridge_connector->bridge_modes =3D bridge;
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+> +  ranges: true
+> +
+>    reboot-mode:
+>      $ref: /schemas/power/reset/syscon-reboot-mode.yaml
+>      type: object
+> @@ -49,9 +57,23 @@ properties:
+>      description:
+>        Phandle to PMU interrupt generation interface.
+>
+> +patternProperties:
+> +  "^power-domain@[0-9a-f]+$":
+> +    type: object
+> +    description: Child node describing one power domain within the PMU
 > +
 
-This does not apply on current drm-misc-next, due to the patch I mentioned
-in a previous iteration, now applied as commit 2be300f9a0b6 ("drm/display:
-bridge_connector: get/put the stored bridges").
+I think we should specify the power-domain-cells too, along the lines
+of the below.
 
-However I'm sorry I have to mention that patch turned out being buggy, so
-I've sent a series to apply a corrected version [0]. I suggest watching the
-disucssion about the fix series, and if that gets approved rebase on top of
-that and adapt your changes.
+'#power-domain-cells'
+ const: 0
 
-Sorry about the mess. :(
 
-[0] https://lore.kernel.org/r/20251017-drm-bridge-alloc-getput-bridge-conne=
-ctor-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      compatible:
+> +        const: google,gs101-pd
+> +
+>  required:
+>    - compatible
+>    - reg
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +  - ranges
+>    - google,pmu-intr-gen-syscon
+>
+>  additionalProperties: false
+> @@ -61,6 +83,24 @@ examples:
+>      system-controller@17460000 {
+>          compatible =3D "google,gs101-pmu", "syscon";
+>          reg =3D <0x17460000 0x10000>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +        ranges;
+>
+>          google,pmu-intr-gen-syscon =3D <&pmu_intr_gen>;
+> +
+> +        pd_g3d: power-domain@1e00 {
+> +            compatible =3D "google,gs101-pd";
+> +            reg =3D <0x1e00 0x80>;
+> +            #power-domain-cells =3D <0>;
+> +            label =3D "g3d";
+> +        };
+> +
+> +        power-domain@2000 {
+> +            compatible =3D "google,gs101-pd";
+> +            reg =3D <0x2000 0x80>;
+> +            #power-domain-cells =3D <0>;
+> +            power-domains =3D <&pd_g3d>;
+> +            label =3D "embedded_g3d";
+> +        };
+>      };
+>
+> --
+> 2.51.0.788.g6d19910ace-goog
+>
 
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kind regards
+Uffe
