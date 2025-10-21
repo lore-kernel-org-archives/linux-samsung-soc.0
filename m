@@ -1,380 +1,158 @@
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE2E338932
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 13:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0B812CDBE
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 13:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761054865; cv=none; b=rXuFheI8f88SMJtPSG9PjvfVH+Z1MwdjSpVAKQfEFuA2NfOmJytZIC7+lEhqPMRebZJSKM4fDOfGmwofWY9YHv0D3j9wdgXbdHoXM1lnHN8pY+a3ogN0H40O26Gyyn4RpvmbtftSpMSpJnDxldGXq5lwvkxm7wAvzHTyXlEzciM=
+	t=1761054894; cv=none; b=BMa3Cwlt5e93HffDidm2T7TJxUSFY21F+/g24Wabb04avQuyq0EJAr3qoj9k20UITkmMkAZRT7yQ2Zvl6IrRuEJ7jt57945RiJ+w830b1WaSknBEvNW4VykXywrq2k5jCGpfQVNW/INV/kpAlQBfkj9bYiV/JLGcU3tZ/7vfCnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761054865; c=relaxed/simple;
-	bh=1BS07wVlaR+GmTdXUBQw1RRQpTfobfta2+p2OKYdtaQ=;
+	s=arc-20240116; t=1761054894; c=relaxed/simple;
+	bh=WjXVc6EHp/g4iSC0dgl+mBlijG+pJ2E1MMjbyg07e+k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aISTSJrpjcOkKH5X5PUbyzhHOHqvX/ZO6DAg7OQiyLHi51rjQ6HJxLu0OLJPgGCGzEM6bZ5xSZCqJgW6a3jHhOaSrQzRdnvgAwjrHp+F5atJvhoq59jVhxQlDKDHLW2/kfUbobuoLZWjd/Jvh3D0eAZdR/cXbAJq0XP2nLZjipU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0Yue/jb; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=o3A0E8cxYd7/1fu/FRrXR49/xXJ3i7/4V8QXuRqhlkarIZO91OLZbFuMujESeKqOaJEl9Egw7O9YwOzZA1EkCRpYRxcmOVoMWoCsD+n4cRmeURZemg8UGS1QnTvT7rUT1MKn+Q++0IIJAbww/KWQ55q29JsdlB5Gwp+BvABPyO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z7MiLYc9; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0Yue/jb"
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-651cda151f0so2264004eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 06:54:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7MiLYc9"
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63d0692136bso5808266d50.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 06:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761054862; x=1761659662; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761054892; x=1761659692; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7zRCoVsDUrAKkHnPzEPaybWLTpv8PSDVhOpYhyOZPuA=;
-        b=c0Yue/jbJP2Ghd+dfjldfrYr+m2OLEq4lD8+JnuXYzehQBhdMjqIomSxlOvaKPwLpj
-         EC+vqy2ChAJD50kopeyChNP9OyaiNmNnuQw1Bd3hv918N6sX3H+EybZYZ/jpUAJYmIiI
-         OvId8DJ3wKjeJ8pgKh3cack/buMve2l6cE4/MRz5lTsYMWwtymhoaPYDqNBUaTHrnmQf
-         g3CncXw/CYeTY2e4jmzp09aGdHdrQcLI6r5BvL/AlCP5BMTetcqiDsIOOV82BwLryaxa
-         ze6nxmuPiOzZTQqqKnL57HD0LtSRlJcdsojRuf6D3g67Bb5ZSXI34egbvkJgojnF9Hwj
-         cp0w==
+        bh=t7l2S0fTu5SAF3VSsMCSsLrp+bmdGs9v0RGyTD+mw5o=;
+        b=Z7MiLYc94MoWtpRRdN94cauHSrYJHA2B/Y6/IEgd5CgGX96YFHY3fVWOtro0a4Gaaa
+         41wtWTBU/Aeo13JTK860LTl8Is3s5pnxRuIa5yayhMDPjkCjVD1UFfBo+pNaqQAx+Di7
+         +zM1UpZBKht2heAxtX4OZ1oeIdb5SfzogJ0pfrbcwaz0thc4EOWL4K1OgpnajXudnKR9
+         K0qVRXO3gytM2LZRHcib8v/LBLYc97EjKP/schY7KPeJ3AvK81cCBI1zccA7cceTIMal
+         K+zRA1QAe7rCu1HNMXgi05P9J9exSmXwqQ7eMoVWBygUVXRVmwsmX0J+qkBDIhITDbTj
+         3HiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761054862; x=1761659662;
+        d=1e100.net; s=20230601; t=1761054892; x=1761659692;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7zRCoVsDUrAKkHnPzEPaybWLTpv8PSDVhOpYhyOZPuA=;
-        b=kupqHE0tXpglOvHHTuCK5zcVrl+jUrNtQzw3uxGaDE9erHNnX27cmtx51hjZirsr3d
-         C6Z+Ug4Db8U6R8Izt9aPYNF1jxvZ60tMvydZULP7V6Zbw1rUBvYwRR87AKuCXL19s0wL
-         IrN5Funh4/+LCdGh2dlPGipQE472uZR/q5IAOx0L3Zt49Bp9eMyxktLqcmS4d5wMiRrM
-         YEIwb/xibnfGDzHUuTt/Hf+JR4UDK+SKGfITep9e0Ffr2MCMg+NLPNsbxdt0gE/40+ur
-         fSQ5pUIJWs3uHVbHX+T9l0pk32wxX2JAvI/k+yBuwFnHX03GkyOoVTA9l/7eBZQ0C3bE
-         Ocag==
-X-Forwarded-Encrypted: i=1; AJvYcCX74L3zL+mS2ROb0JY6juurbV+OQOuT8qzCgzB09fNZXmZuguPgJfyBV9T6QsA1E0NfKMyd1Ttzf/DMkO2ZJGsM4g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgPRFh0GumCX9Y1E/aku5auu/qxLcv4th9HgOXFEBNEwz+dyYY
-	67V2Z04RHu6wYecYAm2c21Nd207lYvK5CW9uZb89AfYy7ZFdXX3Go3O02vBOFNf7jfd2YkRa3K2
-	tnaiVj5vS/T+P3yzAaT0hYnzjRGFl/tM=
-X-Gm-Gg: ASbGnctLHkBGT8Y1qG/VS/26PDqVi+aJB1KzrA1MYoMFfr4FL6az+ltF8PeVoJX4r47
-	/ac6cMh8HmGvM4hmJ8+mBzdyCVLPme+ByToYYJxau3FfQ6XUAibvKkJH3p61gKLfxSXdrfqAMIE
-	P412K5zEms+WYFoJxTvVryA0EiuxzCeguTcMX7AR3VQ0+OqUF644aEqGDStMAXIARrSQ0A9p1g/
-	LBifP6edEZB0A0NgMe9iMttQq/14xEhkBmd9eRnEO41SQhXPnBK0z89wAdJDjJzfMC1FyEDD+p7
-	rmTW
-X-Google-Smtp-Source: AGHT+IEEJhV+7HDnd1rLWzRKPuVeGqK0sxHNPjpMcz5TApDVHa18O8uA1yfTw5iWk/coCiGbH7jCRQhrN34RTrEXqCE=
-X-Received: by 2002:a05:6808:1889:b0:43c:afd4:646d with SMTP id
- 5614622812f47-443a2ed23f8mr6546477b6e.14.1761054862105; Tue, 21 Oct 2025
- 06:54:22 -0700 (PDT)
+        bh=t7l2S0fTu5SAF3VSsMCSsLrp+bmdGs9v0RGyTD+mw5o=;
+        b=YGFBJeyYtRdaAraP4OKWjwZCmkic1/uByKjZ8+vedlt2d+4GfgMZkPyZfHq5hVK0MR
+         mclCMQi3IiJhKLNk0yCWAlRgQMKXb5V2T2mzoNm7/9b6pYRA5hbl66wo6RIZ2o4R15K2
+         3j4j9OTe/3LZ9v3Es4T5Tqy2lY8ju3ZfnEI5O8r8cTSXjgmvNhaxWIbc59Ehgc4Q1Fz0
+         edUUN8BnKAlJ2jRibJNnHj9ULtWDVTFuHSGRS82Z4FkbSHKg0J93RRUvP36BUlo+LoeS
+         7Iz6qckNEUHS5usAH/23bSrgam4I3Kd2yLsNG0kNLfHFeRkOy26H8gSHNst57dAG0yQO
+         RQRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2A8M+RAbFhZ8iDyuW9Ucv4H56XSUUoiFomIF4JAInCU1Zw/fb95df+6EoFP4xXrt+16ZRt75xEIA58ktQzYcnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy23XjEftlDzWBWD0JfJD1ylq+e0pBpUGH1508KebAGg6GJMMPS
+	0qr3+gMMKlgtf2iTAoz1vrYKKPXO8eloPlSoZYcoe+DI4fk9JJ2e0pt8INduPZeSNWj5NRIaN8l
+	30AJrFHNjWaHjdG9uurLXThFR9Lirnwkb6KlJ839F/A==
+X-Gm-Gg: ASbGncvMd0JsvPQ7uEFoGneMEzQuJVbmndJMwjJwHrmYoaUWqvGjQhMiZorIcFs3Kn9
+	nOtmfzhxOCdM7eznC5PRJMGkiXiFRPPJKL8kzXfFoUg2WPnNI3KNKO2DliMKWBVPDis/10VETHu
+	4r+q3rmxdQtWNWr/M2G39XX3ao7mStefM9GVVUHJNYfai3SITGodEnwl5qSz/NJlWLbF5PwE9IE
+	5DUiylKNdHuQp4BqvJsksyvWQcK/S0QfAVi2KBdeUmm5RgQUW9AJtT5tnp5xfSZ8AnR9Fs/
+X-Google-Smtp-Source: AGHT+IHBbKVNcuM7l9dFMzW3m4txAHgl/oBl0HllzJAJ6dzOGjsTsg6Juv5F+fWERMC7Ma504B1opcnGXEPDICN6WPQ=
+X-Received: by 2002:a05:690e:134a:b0:63e:34ed:a131 with SMTP id
+ 956f58d0204a3-63e34eda971mr6291641d50.31.1761054891971; Tue, 21 Oct 2025
+ 06:54:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009132006.45834-1-tzimmermann@suse.de> <20251009132006.45834-2-tzimmermann@suse.de>
-In-Reply-To: <20251009132006.45834-2-tzimmermann@suse.de>
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date: Tue, 21 Oct 2025 15:54:11 +0200
-X-Gm-Features: AS18NWD9WGUNOjZaiHNhwA1jJulHFlj-NuelchpaG-8PGVgNFP5jcKmCav4IxoA
-Message-ID: <CAMeQTsbLQcUbFvDMgMoA2EZqO-f5j1fkjtBKWKQmKdMBeJ7Yzw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] drm/client: Add client free callback to unprepare fb_helper
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: jfalempe@redhat.com, javierm@redhat.com, mripard@kernel.org, 
-	maarten.lankhorst@linux.intel.com, dri-devel@lists.freedesktop.org, 
+References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org> <20251016-gs101-pd-v3-4-7b30797396e7@linaro.org>
+In-Reply-To: <20251016-gs101-pd-v3-4-7b30797396e7@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 21 Oct 2025 15:54:16 +0200
+X-Gm-Features: AS18NWDpF262ybo6_Emnnj0aCX8cQdB1lik5qoOWoSB0z0MgCBOGMTnmDv5nouE
+Message-ID: <CAPDyKFpH2p=JhkuXOxL4V3QMH8GObh0qSphPCK=OM9cNe+QmJg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] pmdomain: samsung: plug potential memleak during probe
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, stable@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 3:31=E2=80=AFPM Thomas Zimmermann <tzimmermann@suse.=
-de> wrote:
+On Thu, 16 Oct 2025 at 17:58, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> Add free callback to struct drm_client_funcs. Invoke function to
-> free the client memory as part of the release process. Implement
-> free for fbdev emulation.
+> of_genpd_add_provider_simple() could fail, in which case this code
+> leaks the domain name, pd->pd.name.
 >
-> Fbdev emulation allocates and prepares client memory in
-> drm_fbdev_client_setup(). The release happens in fb_destroy from
-> struct fb_ops. Multiple implementations of this callback exist in
-> the various drivers that provide fbdev implementation. Each of them
-> needs to follow the implementation details of the fbdev setup code.
+> Use devm_kstrdup_const() to plug this leak. As a side-effect, we can
+> simplify existing error handling.
 >
-> Adding a free callback for the client puts the unprepare and release
-> of the fbdev client in a single place.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Fixes: c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular platfo=
+rm driver")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-For gma500:
-Acked-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Applied for fixes, thanks!
+
+Kind regards
+Uffe
+
 
 > ---
->  drivers/gpu/drm/armada/armada_fbdev.c      |  2 --
->  drivers/gpu/drm/clients/drm_fbdev_client.c | 17 +++++++++++++++--
->  drivers/gpu/drm/drm_client.c               |  4 ++++
->  drivers/gpu/drm/drm_fbdev_dma.c            |  4 ----
->  drivers/gpu/drm/drm_fbdev_shmem.c          |  2 --
->  drivers/gpu/drm/drm_fbdev_ttm.c            |  2 --
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c  |  2 --
->  drivers/gpu/drm/gma500/fbdev.c             |  3 ---
->  drivers/gpu/drm/i915/display/intel_fbdev.c |  2 --
->  drivers/gpu/drm/msm/msm_fbdev.c            |  2 --
->  drivers/gpu/drm/omapdrm/omap_fbdev.c       |  2 --
->  drivers/gpu/drm/radeon/radeon_fbdev.c      |  2 --
->  drivers/gpu/drm/tegra/fbdev.c              |  2 --
->  include/drm/drm_client.h                   | 10 ++++++++++
->  14 files changed, 29 insertions(+), 27 deletions(-)
+> v2:
+> mark as fix, as this isn't a pure simplification
+> ---
+>  drivers/pmdomain/samsung/exynos-pm-domains.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/arma=
-da/armada_fbdev.c
-> index cb53cc91bafb..22e2081bfa04 100644
-> --- a/drivers/gpu/drm/armada/armada_fbdev.c
-> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
-> @@ -28,8 +28,6 @@ static void armada_fbdev_fb_destroy(struct fb_info *inf=
-o)
->         fbh->fb->funcs->destroy(fbh->fb);
+> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdom=
+ain/samsung/exynos-pm-domains.c
+> index 5d478bb37ad68afc7aed7c6ae19b5fefc94a9035..f53e1bd2479807988f969774b=
+4b7b4c5739c1aba 100644
+> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
+> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> @@ -92,13 +92,14 @@ static const struct of_device_id exynos_pm_domain_of_=
+match[] =3D {
+>         { },
+>  };
 >
->         drm_client_release(&fbh->client);
-> -       drm_fb_helper_unprepare(fbh);
-> -       kfree(fbh);
->  }
->
->  static const struct fb_ops armada_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm=
-/clients/drm_fbdev_client.c
-> index f894ba52bdb5..5336accab1b6 100644
-> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> @@ -13,16 +13,28 @@
->   * struct drm_client_funcs
->   */
->
-> +static void drm_fbdev_client_free(struct drm_client_dev *client)
-> +{
-> +       struct drm_fb_helper *fb_helper =3D drm_fb_helper_from_client(cli=
-ent);
-> +
-> +       drm_fb_helper_unprepare(fb_helper);
-> +       kfree(fb_helper);
-> +}
-> +
->  static void drm_fbdev_client_unregister(struct drm_client_dev *client)
+> -static const char *exynos_get_domain_name(struct device_node *node)
+> +static const char *exynos_get_domain_name(struct device *dev,
+> +                                         struct device_node *node)
 >  {
->         struct drm_fb_helper *fb_helper =3D drm_fb_helper_from_client(cli=
-ent);
+>         const char *name;
 >
->         if (fb_helper->info) {
-> +               /*
-> +                * Fully probed framebuffer device
-> +                */
->                 drm_fb_helper_unregister_info(fb_helper);
->         } else {
-> +               /*
-> +                * Partially initialized client, no framebuffer device ye=
-t
-> +                */
->                 drm_client_release(&fb_helper->client);
-> -               drm_fb_helper_unprepare(fb_helper);
-> -               kfree(fb_helper);
->         }
+>         if (of_property_read_string(node, "label", &name) < 0)
+>                 name =3D kbasename(node->full_name);
+> -       return kstrdup_const(name, GFP_KERNEL);
+> +       return devm_kstrdup_const(dev, name, GFP_KERNEL);
 >  }
 >
-> @@ -88,6 +100,7 @@ static int drm_fbdev_client_resume(struct drm_client_d=
-ev *client, bool holds_con
+>  static int exynos_pd_probe(struct platform_device *pdev)
+> @@ -115,15 +116,13 @@ static int exynos_pd_probe(struct platform_device *=
+pdev)
+>         if (!pd)
+>                 return -ENOMEM;
 >
->  static const struct drm_client_funcs drm_fbdev_client_funcs =3D {
->         .owner          =3D THIS_MODULE,
-> +       .free           =3D drm_fbdev_client_free,
->         .unregister     =3D drm_fbdev_client_unregister,
->         .restore        =3D drm_fbdev_client_restore,
->         .hotplug        =3D drm_fbdev_client_hotplug,
-> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-> index 3fa38d4ac70b..fe9c6d7083ea 100644
-> --- a/drivers/gpu/drm/drm_client.c
-> +++ b/drivers/gpu/drm/drm_client.c
-> @@ -168,6 +168,10 @@ void drm_client_release(struct drm_client_dev *clien=
-t)
+> -       pd->pd.name =3D exynos_get_domain_name(np);
+> +       pd->pd.name =3D exynos_get_domain_name(dev, np);
+>         if (!pd->pd.name)
+>                 return -ENOMEM;
 >
->         drm_client_modeset_free(client);
->         drm_client_close(client);
-> +
-> +       if (client->funcs && client->funcs->free)
-> +               client->funcs->free(client);
-> +
->         drm_dev_put(dev);
->  }
->  EXPORT_SYMBOL(drm_client_release);
-> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_=
-dma.c
-> index 8bd626ef16c7..c6196293e424 100644
-> --- a/drivers/gpu/drm/drm_fbdev_dma.c
-> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
-> @@ -57,8 +57,6 @@ static void drm_fbdev_dma_fb_destroy(struct fb_info *in=
-fo)
->         drm_client_buffer_vunmap(fb_helper->buffer);
->         drm_client_framebuffer_delete(fb_helper->buffer);
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
+>         pd->base =3D of_iomap(np, 0);
+> -       if (!pd->base) {
+> -               kfree_const(pd->pd.name);
+> +       if (!pd->base)
+>                 return -ENODEV;
+> -       }
 >
->  static const struct fb_ops drm_fbdev_dma_fb_ops =3D {
-> @@ -92,8 +90,6 @@ static void drm_fbdev_dma_shadowed_fb_destroy(struct fb=
-_info *info)
->         drm_client_buffer_vunmap(fb_helper->buffer);
->         drm_client_framebuffer_delete(fb_helper->buffer);
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
+>         pd->pd.power_off =3D exynos_pd_power_off;
+>         pd->pd.power_on =3D exynos_pd_power_on;
 >
->  static const struct fb_ops drm_fbdev_dma_shadowed_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/drm_fbdev_shmem.c b/drivers/gpu/drm/drm_fbde=
-v_shmem.c
-> index 1e827bf8b815..51573058df6f 100644
-> --- a/drivers/gpu/drm/drm_fbdev_shmem.c
-> +++ b/drivers/gpu/drm/drm_fbdev_shmem.c
-> @@ -65,8 +65,6 @@ static void drm_fbdev_shmem_fb_destroy(struct fb_info *=
-info)
->         drm_client_buffer_vunmap(fb_helper->buffer);
->         drm_client_framebuffer_delete(fb_helper->buffer);
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
->
->  static const struct fb_ops drm_fbdev_shmem_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/drm_fbdev_ttm.c b/drivers/gpu/drm/drm_fbdev_=
-ttm.c
-> index 85feb55bba11..ccf460fbc1f0 100644
-> --- a/drivers/gpu/drm/drm_fbdev_ttm.c
-> +++ b/drivers/gpu/drm/drm_fbdev_ttm.c
-> @@ -53,8 +53,6 @@ static void drm_fbdev_ttm_fb_destroy(struct fb_info *in=
-fo)
->         drm_client_framebuffer_delete(fb_helper->buffer);
->
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
->
->  static const struct fb_ops drm_fbdev_ttm_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/=
-exynos/exynos_drm_fbdev.c
-> index 93de25b77e68..a3bd21a827ad 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -42,8 +42,6 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
->         drm_framebuffer_remove(fb);
->
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
->
->  static const struct fb_ops exynos_drm_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/gma500/fbdev.c b/drivers/gpu/drm/gma500/fbde=
-v.c
-> index a6af21514cff..bc92fa24a1e2 100644
-> --- a/drivers/gpu/drm/gma500/fbdev.c
-> +++ b/drivers/gpu/drm/gma500/fbdev.c
-> @@ -84,9 +84,6 @@ static void psb_fbdev_fb_destroy(struct fb_info *info)
->         drm_gem_object_put(obj);
->
->         drm_client_release(&fb_helper->client);
-> -
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
->
->  static const struct fb_ops psb_fbdev_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm=
-/i915/display/intel_fbdev.c
-> index 3fbdf75415cc..d5f26c8bb102 100644
-> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> @@ -146,8 +146,6 @@ static void intel_fbdev_fb_destroy(struct fb_info *in=
-fo)
->         drm_framebuffer_remove(fb_helper->fb);
->
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
->
->  __diag_push();
-> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fb=
-dev.c
-> index b5969374d53f..aad6fb77f0de 100644
-> --- a/drivers/gpu/drm/msm/msm_fbdev.c
-> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
-> @@ -52,8 +52,6 @@ static void msm_fbdev_fb_destroy(struct fb_info *info)
->         drm_framebuffer_remove(fb);
->
->         drm_client_release(&helper->client);
-> -       drm_fb_helper_unprepare(helper);
-> -       kfree(helper);
->  }
->
->  static const struct fb_ops msm_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapd=
-rm/omap_fbdev.c
-> index 948af7ec1130..b5df2923d2a6 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -103,8 +103,6 @@ static void omap_fbdev_fb_destroy(struct fb_info *inf=
-o)
->         drm_framebuffer_remove(fb);
->
->         drm_client_release(&helper->client);
-> -       drm_fb_helper_unprepare(helper);
-> -       kfree(helper);
->  }
->
->  /*
-> diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/rade=
-on/radeon_fbdev.c
-> index dc81b0c2dbff..4df6c9167bf0 100644
-> --- a/drivers/gpu/drm/radeon/radeon_fbdev.c
-> +++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
-> @@ -184,8 +184,6 @@ static void radeon_fbdev_fb_destroy(struct fb_info *i=
-nfo)
->         radeon_fbdev_destroy_pinned_object(gobj);
->
->         drm_client_release(&fb_helper->client);
-> -       drm_fb_helper_unprepare(fb_helper);
-> -       kfree(fb_helper);
->  }
->
->  static const struct fb_ops radeon_fbdev_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.=
-c
-> index 1b70f5e164af..91aece6f34e0 100644
-> --- a/drivers/gpu/drm/tegra/fbdev.c
-> +++ b/drivers/gpu/drm/tegra/fbdev.c
-> @@ -53,8 +53,6 @@ static void tegra_fbdev_fb_destroy(struct fb_info *info=
-)
->         drm_framebuffer_remove(fb);
->
->         drm_client_release(&helper->client);
-> -       drm_fb_helper_unprepare(helper);
-> -       kfree(helper);
->  }
->
->  static const struct fb_ops tegra_fb_ops =3D {
-> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-> index bdd845e383ef..eecb8d6e15c7 100644
-> --- a/include/drm/drm_client.h
-> +++ b/include/drm/drm_client.h
-> @@ -28,6 +28,16 @@ struct drm_client_funcs {
->          */
->         struct module *owner;
->
-> +       /**
-> +        * @free:
-> +        *
-> +        * Called when the client gets unregistered. Implementations shou=
-ld
-> +        * release all client-specific data and free the memory.
-> +        *
-> +        * This callback is optional.
-> +        */
-> +       void (*free)(struct drm_client_dev *client);
-> +
->         /**
->          * @unregister:
->          *
 > --
-> 2.51.0
+> 2.51.0.788.g6d19910ace-goog
 >
