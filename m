@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C4342C95;
-	Tue, 21 Oct 2025 16:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3801338903;
+	Tue, 21 Oct 2025 19:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761063489; cv=none; b=JNwQyNNcp/ez4V8Y+tPxcn14Va0zcDw0qpcES703LVKfZvlNyIu9BS5FEGnY6wjOFWYGPHrKVQ2Y+BFuZ98SvSF//YfoHwANHCcFD6yIqziKEr8e4CbrWxHQlFJwgw9DT/CCA+4bEmW1ZX/VMP4pJhCNgVKMrYkBS/A10iiH19I=
+	t=1761074554; cv=none; b=k0snty9iVXDSw5o2V9fy84eji+0+0YNPtCotsr88OybLadgdhjIhSRJIhQhbEQdvqLVdqh5CuCS/UPZJ5ISPYjTEPIG3g//fzIq+aq/WJJ9W9HelKe5oUk998YpoKA0Kwd/Tsar65nVLLvmYDG5gKvA+ThBqpFCcdLZ1tq2OKa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761063489; c=relaxed/simple;
-	bh=rMKSb1cRH4lEqywTI0wGc0Q4LAQSR6tQ9gDaQ7eSNSU=;
+	s=arc-20240116; t=1761074554; c=relaxed/simple;
+	bh=IedmbNipS6znWib9hB4ynpV/yMH3BWVObpFXIyJ/VA8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P9Q3Nie8eqPvvr3iC6+5//ZL04bDRi3FARD1JeDSufC5O7l2QX3fNtjRca78k9wdnIoAoqUxvRHt8qcccnfX4Ulzq9lkfG//fHvsFFk8f+Se7Fcy7MRi3lr7ObJTblPdFCgbqTeGjhvDVRhDn60kPOtxDyd7VoHR9lIuBEI3NtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMu1787S; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kAF7vmSULcl2x3YYHEOM7rHRHJeTJRK548q87nzujG4kb1ZWeJ0Kb939FmIX3ht8sQqXZ8pBo22PRjBpes3Xj4rrhuoftn7Y0vKO4NB6BrTSZFJ5dxMaaucV1tL/s6xQyhoMkUvX5SauwKb+8l8GmHj1AB+4Bjn9Afe26cmm0IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIiYuJnq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMu1787S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BFAC4CEF1;
-	Tue, 21 Oct 2025 16:18:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIiYuJnq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B23CC4CEF7;
+	Tue, 21 Oct 2025 19:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761063488;
-	bh=rMKSb1cRH4lEqywTI0wGc0Q4LAQSR6tQ9gDaQ7eSNSU=;
+	s=k20201202; t=1761074553;
+	bh=IedmbNipS6znWib9hB4ynpV/yMH3BWVObpFXIyJ/VA8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rMu1787SOmOck0wMgaYUexJPtS5DjeH/RABt9BSbEZuDCLPdEeECLAcdme3/jm0oe
-	 XrLow66A/nQbxVpEwDrgNLPl5iBgbtSqtnSCNR9hwriJma+pCNTRJTHwqtbd91Jk64
-	 TKxxSYHdQ6c4XpQnywTih9HZdIXj+cEjThiF+CMpM2OTtJNIJqYlE3oT23McD6KUlB
-	 fPqLmuWyJr/KltDWNa6oVArf2E/3n2kQsky5dm7ggC/OBHG80W47OfWZOctC1Y24OC
-	 S9us6T1SsmiBEcF/uDS7VV3Gw79Hch6Yv+ZIKohOytiCoHL8zqWcH5EahNVwKsjuP0
-	 XNvbrTyZVjVfw==
-Message-ID: <838a2a9f-9d4f-4c04-bab3-c6a7d52b60b3@kernel.org>
-Date: Tue, 21 Oct 2025 18:18:02 +0200
+	b=KIiYuJnqoNF7+ysQ69ZkyxSrYH5i6vrRIpxgG9S76lGCpABxppkdM6PUXzP1lGi8T
+	 MvW5cNuxaD6iZQ/A4DVBFbx66nM1KzP0bTtcqaZi+aUn2rpRMhLGIa17VlwYoLly4t
+	 Akh/yT/7PUE32kDfQvijbBx/xRG/WcLIp2GIsj37xiu3icD+EXIw6dhBjUNdpT20uS
+	 bWQvrOWl6ssUpK8bocssmGbNQppYQ17FP5NnBoBe6Cc59n/9c677c9Z4sCXc9XaFHe
+	 Cq8lU6xCASpDwsvE5J3mdb0bcj9R9KiJIUhdJla4PXqBXuaSRXnefV7qUPvM0fxZWI
+	 1k0XZVdyRiR/Q==
+Message-ID: <4a6251da-fe12-4992-af0d-9336dc254c4f@kernel.org>
+Date: Tue, 21 Oct 2025 21:22:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,22 +35,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/10] dt-bindings: soc: samsung: gs101-pmu: allow
- power domains as children
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
+Subject: Re: [PATCH 2/9] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
- <20251016-gs101-pd-v3-3-7b30797396e7@linaro.org>
- <CAPDyKFqNEN_yfmGWZr=sC-W8-Drv7zn82WYa-y=v+Suk-JHvtQ@mail.gmail.com>
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
+References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+ <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,24 +97,47 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAPDyKFqNEN_yfmGWZr=sC-W8-Drv7zn82WYa-y=v+Suk-JHvtQ@mail.gmail.com>
+In-Reply-To: <20251013-automatic-clocks-v1-2-72851ee00300@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/10/2025 14:59, Ulf Hansson wrote:
->> +  "^power-domain@[0-9a-f]+$":
->> +    type: object
->> +    description: Child node describing one power domain within the PMU
->> +
-> 
-> I think we should specify the power-domain-cells too, along the lines
-> of the below.
-> 
-> '#power-domain-cells'
->  const: 0
+On 13/10/2025 22:51, Peter Griffin wrote:
+> Update the bindings documentation so that all CMUs (with the exception of
+> gs101-cmu-top) have samsung,sysreg as a required property.
 
-That's not needed. The child (this child device node) schema will
-enforce it. Parent (so the PMU) is supposed only to list compatible.
 
+Why? You described the patch contents, which I can see. I don't
+understand why we need it, especially that this is ABI break.
+
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../bindings/clock/google,gs101-clock.yaml         | 23 +++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> index caf442ead24bda57e531420d8a7d8de8713032ae..5cfe98d9ba895d5207fffc82f3fd55b602b4a2bb 100644
+> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> @@ -49,6 +49,11 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  samsung,sysreg:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to system registers interface.
+
+
+Your description should say here: for what purpose, how this device is
+going to use it.
+
+> +
+>  required:
+>    - compatible
+>    - "#clock-cells"
+> @@ -163,6 +168,22 @@ allOf:
+>              - const: bus
+>              - const: ip
 Best regards,
 Krzysztof
