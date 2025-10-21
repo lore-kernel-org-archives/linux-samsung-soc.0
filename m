@@ -1,135 +1,119 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0603B341ADD
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 15:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C4342C95;
+	Tue, 21 Oct 2025 16:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761060293; cv=none; b=UNQdHQU/HbmijG7vwZ1DnQzgtXNc4014Mmm3jhNVeAPuhukYFHGvzBKa7goYVmtkgXSXw/7g+qyEPxCcJyoBS+8fjA+gPrZoJ4B7yNTy1leGv5aq+Ueo6TH28g+H8MDnwOB1/epq+laKL3H0QikV9f5ef4zir5EQiTw10HYZlSo=
+	t=1761063489; cv=none; b=JNwQyNNcp/ez4V8Y+tPxcn14Va0zcDw0qpcES703LVKfZvlNyIu9BS5FEGnY6wjOFWYGPHrKVQ2Y+BFuZ98SvSF//YfoHwANHCcFD6yIqziKEr8e4CbrWxHQlFJwgw9DT/CCA+4bEmW1ZX/VMP4pJhCNgVKMrYkBS/A10iiH19I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761060293; c=relaxed/simple;
-	bh=0pTWYSKeF/umD/wXcGJB6RFTk+048J5zAPQ2CewtX1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Dx/rxKtPePhnkdimoy5Mhu12dPfsp+X8XwitJDg3qBl7EyjFyxvBWOkHg28CP1kL+b3luXcrqOEl1/Yr7h6TMzgKyozlDLh4c0m/nZyu5AkUP6/mt9WL5A2nB0Nz9bGHQC7mVpMdhp8I28FB7H9vXicUe7OqdQFWW94fKat5zUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Os6wH+lx; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761063489; c=relaxed/simple;
+	bh=rMKSb1cRH4lEqywTI0wGc0Q4LAQSR6tQ9gDaQ7eSNSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P9Q3Nie8eqPvvr3iC6+5//ZL04bDRi3FARD1JeDSufC5O7l2QX3fNtjRca78k9wdnIoAoqUxvRHt8qcccnfX4Ulzq9lkfG//fHvsFFk8f+Se7Fcy7MRi3lr7ObJTblPdFCgbqTeGjhvDVRhDn60kPOtxDyd7VoHR9lIuBEI3NtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMu1787S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Os6wH+lx"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47117f92e32so38072455e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 08:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761060290; x=1761665090; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xLGRjFMRFj/0Wr7Pbd6Nha7Fn1G9Rd12lG5MFWvKdFA=;
-        b=Os6wH+lxDLLTGdD1vINdZ6KzET0ZihNfs3S2VgORIOkx5PBlfYNwHyuxHloE9q3H/h
-         HH6pFDK6hrdJ6XjFpQkt0cFT584GeBSzwHmsoGOQlvOfq+F/G64CgG/EVpox0TaBk/Q4
-         Me6g9zoEkid5JaEcuBw7hKx+OQWfWop4aRSrsfxIQHk6gjo4kBOvJLBCY84B8b9TLrK6
-         8V+MCx+UKfmYY++AD335smT59UlQdHQiKJ71r7+WKGu1cObjQEPRwgum3xpmH8Tjn2tc
-         76bRrvlu3EkT5nyYIpLhCtjMsl3kbynNZJgTVpeeABy5E40kTwmI3IyQlXPHucGZITIS
-         Gvqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761060290; x=1761665090;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xLGRjFMRFj/0Wr7Pbd6Nha7Fn1G9Rd12lG5MFWvKdFA=;
-        b=BeaclASIlKLIgwpwDURFi5cAnDyCpDE5ovFKmDvFCXeW+TWmPwnMtNi1bmiFew2ztq
-         yZb//+G/HpioYhRD1+R/rChso282zqCywIpLglB/ba5WZwEjxjx7mcpOgTubkI36mgTI
-         sSmO/h/t7pfYWoCtYMrxO0QQ+BTxCR86ibzcGbNHkHSO/iDw38WxA28iTIAqkSewBJrf
-         C7i1qsa6UFCEq66BxEqJY7THlV4PybQos5/pNdO8ZRGeJQWvfFlGW+QYni1GyiQL/cgY
-         QDJPONl68ryve//Y8rdDHA8z7tn2spYgK7Sr2UsC+pKrOTWNEfazvM8W6tFR1422KgEs
-         4zTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFSbqSFr14dT9Ly2sl0F4RNT1CMZrA3IRDvUW+QR5e9i7KUN1yYN7KSu7qMWxQfbZagiPArBrulQU+X6MgQF21EQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvYZutmc2iCNgCydCxP3T0maKauFm+gadTBsWjCg4nZH4O5OmD
-	WCsepJvTNehjFBhcNWmg7c330+y+a8IyV3Hiv3PBrg+wMkLyd6G//9doP41xDEbGNq4=
-X-Gm-Gg: ASbGncvP2iHgYIW/yXunzaypDYXSiJ+aZXcTczBHwnRYwy1sWIez0k4Gl1EdW1VuAZH
-	ZxbjYf7YZHFYkqQOg+1iaclnQtB8TTnIt54wCixMDyWUA8LlSXxyAAmWybeNuP6a2qDvJ6NCNbA
-	7jOQ65/84np0OLfHAi7lESpwcogpmo9ht/9+TzFVnluITtaCnGW5tw7XGnpNM0hQDiIzxEyhXBM
-	ElcKgHhVSxdLKlou+ecj4cYGtOH361iyUkNtDvaN0EdBGThm5cQBnxsh8NfrA00yNjDrA/Lrr9J
-	rlRmrc/sAlrfqzGTd1OLgW4d/WDNa/rOFsm4cu0voYRxgr5ht+mln20swcJifOwxleoDj/MkmKG
-	rKnAHOPsWyKtGBs2QtpHIiCQkdON7VdPfqq76BIjP83WMqsX0tiI0w6tRIJGgwSmvhi0sCSHkcd
-	YjzFciTFVHNwRZw9AofwKT/xDiThGXp2msI/5DF1vYOZQk5kL/Pz1ttXBFU4u7Dd0=
-X-Google-Smtp-Source: AGHT+IGeQKcOKpzdCgFr8S2qcXAD3y1kKSzzFmSzcQgg2oWkU9A1Cyk+uTNL56azhWjBHMZtPZpvVw==
-X-Received: by 2002:a05:600c:5287:b0:46e:6a6a:5cec with SMTP id 5b1f17b1804b1-47117876738mr151626285e9.2.1761060290113;
-        Tue, 21 Oct 2025 08:24:50 -0700 (PDT)
-Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d90bsm201578635e9.2.2025.10.21.08.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 08:24:49 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 21 Oct 2025 15:24:47 +0000
-Subject: [PATCH] firmware: exynos-acpm: add empty method to allow compile
- test
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMu1787S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BFAC4CEF1;
+	Tue, 21 Oct 2025 16:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761063488;
+	bh=rMKSb1cRH4lEqywTI0wGc0Q4LAQSR6tQ9gDaQ7eSNSU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rMu1787SOmOck0wMgaYUexJPtS5DjeH/RABt9BSbEZuDCLPdEeECLAcdme3/jm0oe
+	 XrLow66A/nQbxVpEwDrgNLPl5iBgbtSqtnSCNR9hwriJma+pCNTRJTHwqtbd91Jk64
+	 TKxxSYHdQ6c4XpQnywTih9HZdIXj+cEjThiF+CMpM2OTtJNIJqYlE3oT23McD6KUlB
+	 fPqLmuWyJr/KltDWNa6oVArf2E/3n2kQsky5dm7ggC/OBHG80W47OfWZOctC1Y24OC
+	 S9us6T1SsmiBEcF/uDS7VV3Gw79Hch6Yv+ZIKohOytiCoHL8zqWcH5EahNVwKsjuP0
+	 XNvbrTyZVjVfw==
+Message-ID: <838a2a9f-9d4f-4c04-bab3-c6a7d52b60b3@kernel.org>
+Date: Tue, 21 Oct 2025 18:18:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/10] dt-bindings: soc: samsung: gs101-pmu: allow
+ power domains as children
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
+ <20251016-gs101-pd-v3-3-7b30797396e7@linaro.org>
+ <CAPDyKFqNEN_yfmGWZr=sC-W8-Drv7zn82WYa-y=v+Suk-JHvtQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAPDyKFqNEN_yfmGWZr=sC-W8-Drv7zn82WYa-y=v+Suk-JHvtQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAL+l92gC/x2MSQqAMAwAvyI5GzCVKvoV8VBr1OBKW0UQ/27xO
- DAzD3h2wh7q5AHHl3jZtwiUJmAns42M0kcGlSlNmSIc5EZjjxXtMmN3ytJjYB+QKtJDbgpd2hJ
- ifTiO6n9u2vf9ADpJznNpAAAA
-X-Change-ID: 20251021-fix-acpm-clk-build-test-1915f3a657c7
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
- kernel test robot <lkp@intel.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761060289; l=1489;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=0pTWYSKeF/umD/wXcGJB6RFTk+048J5zAPQ2CewtX1k=;
- b=2+vXOE49ULPO9WgunsDjzAmwON+BhVkCg2nx7Ql3O90/K3s+zZo6VXA8+hD/KclCTMNDWouKt
- bmloW7AwrluD7l09YBYniO+0BEm/t4+HYgSRcZtg8bA2zLaKSNzvVVW
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Provide empty method for devm_acpm_get_by_node() if we aren't
-building in the CONFIG_EXYNOS_ACPM_PROTOCOL. This allows to
-test-build the CONFIG_EXYNOS_ACPM_CLK code.
+On 21/10/2025 14:59, Ulf Hansson wrote:
+>> +  "^power-domain@[0-9a-f]+$":
+>> +    type: object
+>> +    description: Child node describing one power domain within the PMU
+>> +
+> 
+> I think we should specify the power-domain-cells too, along the lines
+> of the below.
+> 
+> '#power-domain-cells'
+>  const: 0
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510211905.RgfWkgss-lkp@intel.com/
-Fixes: 40498a742053 ("clk: samsung: add Exynos ACPM clock driver")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- include/linux/firmware/samsung/exynos-acpm-protocol.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index b1e95435240fdb895a03f178d4fb3789411b1583..2091da965a5ad238b5e16c567a72fe88fafe6095 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -55,7 +55,16 @@ struct acpm_handle {
- 
- struct device;
- 
-+#if IS_ENABLED(CONFIG_EXYNOS_ACPM_PROTOCOL)
- const struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
- 						struct device_node *np);
-+#else
-+
-+static inline const struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
-+							      struct device_node *np)
-+{
-+	return NULL;
-+}
-+#endif
- 
- #endif /* __EXYNOS_ACPM_PROTOCOL_H */
-
----
-base-commit: ad97aba3e64f8e474ecbce0c4e08486023ce8ab2
-change-id: 20251021-fix-acpm-clk-build-test-1915f3a657c7
+That's not needed. The child (this child device node) schema will
+enforce it. Parent (so the PMU) is supposed only to list compatible.
 
 Best regards,
--- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
-
+Krzysztof
