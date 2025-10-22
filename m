@@ -1,170 +1,118 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9DD34AAED
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Oct 2025 13:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9182D35A92E;
+	Wed, 22 Oct 2025 16:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140714; cv=none; b=cqLkL0Faef5wdkI47LzIplYOA1eb8zZkGPzZSPrX+x+79AVZZV19/u9ZUqmD/YW0pe+Os8xOPjUwppnZcozWWq2Z9aqxXUnPOWPrxmAxc/k0nnyVQeVVGOilsJBSaNnl3mmRQmtQb+GGa1Dzq/LGZqRXoLW4zd/eYBFGlPDtbDU=
+	t=1761150671; cv=none; b=UjQk2cvmi6AK+jL+6uNa1G4XMbNrf5TWkA8+LYXbVfQmbwxJeyUc7vlCwtg3ftrtG8hVTUx6CFszH11lVhIQ2jcPjBAHKDML0u50YRuoEYc3xNzqaoonihu649cuyjFhjhMcQTF0BcrktYYEtbeMkxqBMecmlk8Gbgii3iFnW5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140714; c=relaxed/simple;
-	bh=/m4NmFCniT6JSPGXkBNpQ06V7pNeEBakNlH8t8yHOEM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=EAXN1b/DVqD9/Urd+u1At8XIbEIOoRqC3XPUcdy1opQptUNo/tbgbTb8ph/EmvlfvuIF3Gf2GckfdheT3YUHkNKqOL8Ug+1+ws6jJM1X86IH1PQ2V44YEpDvrH6ZTuVunUxWSiEM3C+7w/jLRM36fwYu0+d1ByL+e786zTuJA0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CZryngLg; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1761150671; c=relaxed/simple;
+	bh=Cqctev3zr4r6SJScwYfCN1B9WhFCbP6FZYJ7toOtRRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pe4t47nsUcZudkzm+gBw6uUjryVEurCyJu5bMZ6gtjrao2j3nMb8qeVDAgoIZaDl/UK62x5FaPcWsVnfAQaW/xrLxQyZeCF6lRZPYdQStyoH+AW/nRtsPohS6JaTHPuKMuDfU27gi7yvgtUnsY9NLhk8Rzch6m8LyPubULmbzws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhORvJvv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CZryngLg"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251022134510euoutp0291abf08f59390e0653c8ad0bd801c373~w1CUeLhL-1145311453euoutp02F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Oct 2025 13:45:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251022134510euoutp0291abf08f59390e0653c8ad0bd801c373~w1CUeLhL-1145311453euoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761140710;
-	bh=uVOoyF07iVYQ24dFE2kJcX0p9ox+bw4w5ywwtjuXGNM=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=CZryngLgbYRbGFm/ihPNVB9ukl/429AnUUsVxxCUcbjSI/Lu1diT/A7KiU7IzeeG6
-	 coz4p5Uhslnv5JVHPlOadDhREbFd5sVox2JbdDYoJu+XDDJr8pNc9UWrpteHVZRPAo
-	 bYBObZC5/v+zcbjyxqZ0qdHqps6WOfHuAXkKc8Ns=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251022134509eucas1p1789fd89e07d10b550b7f21decd862d52~w1CT44nK50583205832eucas1p1W;
-	Wed, 22 Oct 2025 13:45:09 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251022134508eusmtip2d638eeea6ab8ba407c25e72a5591ac57~w1CS6lJHO0945309453eusmtip2K;
-	Wed, 22 Oct 2025 13:45:08 +0000 (GMT)
-Message-ID: <5c19e4ef-c4fd-4bf5-88b3-46c86751b14e@samsung.com>
-Date: Wed, 22 Oct 2025 15:45:07 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhORvJvv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA32C4CEE7;
+	Wed, 22 Oct 2025 16:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761150671;
+	bh=Cqctev3zr4r6SJScwYfCN1B9WhFCbP6FZYJ7toOtRRo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OhORvJvv4MPlrGFjrRKOoEtf/pc6bZ9lIsJ7YIuMA5Awo+jQz/T2cuvexWtDcP/+J
+	 KG9lChBZM8jWCE5+qSoukhEdJa8o0NBhLPzkds8VY3O6Kg4jKgIt+t+iVtIiqKrKV2
+	 rr/xW1ZTqhrSyfI0u5k6KZtPHVD+eMiACflDdrvxOVj2ud3bPL4QV23AehxoUGaRy2
+	 dieN/C3JdacxaYaaUeDknbZlVKROZ48Qklme70nUlYUAzBtQJylDPwFTSTD7nhIvhw
+	 VhcGuS5fOexBHUZ//B46j6UAJHo7S21PZiIhM98b1Kyk2LR7Iep/VuAVVV4oGIfe1/
+	 SRAAylvYzykDg==
+Message-ID: <113ee339-566a-4cc2-9786-89252ae072e0@kernel.org>
+Date: Wed, 22 Oct 2025 18:31:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v3 06/10] pmdomain: samsung: convert to
- regmap_read_poll_timeout()
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>,
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: rng: add google,gs101-trng compatible
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Olivia Mackall <olivia@selenic.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: semen.protsenko@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com, linux-samsung-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251022-gs101-trng-v1-0-8817e2d7a6fc@linaro.org>
+ <20251022-gs101-trng-v1-1-8817e2d7a6fc@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <2e38e6c2-0548-432f-ae34-daf3972877ac@samsung.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251022134509eucas1p1789fd89e07d10b550b7f21decd862d52
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016155855eucas1p2ccc516861548e963761133fc52fc560e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016155855eucas1p2ccc516861548e963761133fc52fc560e
-References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
-	<CGME20251016155855eucas1p2ccc516861548e963761133fc52fc560e@eucas1p2.samsung.com>
-	<20251016-gs101-pd-v3-6-7b30797396e7@linaro.org>
-	<2e38e6c2-0548-432f-ae34-daf3972877ac@samsung.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251022-gs101-trng-v1-1-8817e2d7a6fc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 21.10.2025 22:38, Marek Szyprowski wrote:
-> On 16.10.2025 17:58, André Draszik wrote:
->> Replace the open-coded PD status polling with
->> regmap_read_poll_timeout(). This change simplifies the code without
->> altering functionality.
->>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->> ---
->>   drivers/pmdomain/samsung/exynos-pm-domains.c | 29 
->> ++++++++--------------------
->>   1 file changed, 8 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c 
->> b/drivers/pmdomain/samsung/exynos-pm-domains.c
->> index 
->> 383126245811cb8e4dbae3b99ced3f06d3093f35..431548ad9a7e40c0a77ac6672081b600c90ddd4e 
->> 100644
->> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
->> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
->> @@ -13,7 +13,6 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/slab.h>
->>   #include <linux/pm_domain.h>
->> -#include <linux/delay.h>
->>   #include <linux/of.h>
->>   #include <linux/pm_runtime.h>
->>   #include <linux/regmap.h>
->> @@ -35,7 +34,8 @@ struct exynos_pm_domain {
->>   static int exynos_pd_power(struct generic_pm_domain *domain, bool 
->> power_on)
->>   {
->>       struct exynos_pm_domain *pd;
->> -    u32 timeout, pwr;
->> +    unsigned int val;
->> +    u32 pwr;
->>       int err;
->>         pd = container_of(domain, struct exynos_pm_domain, pd);
->> @@ -45,25 +45,12 @@ static int exynos_pd_power(struct 
->> generic_pm_domain *domain, bool power_on)
->>       if (err)
->>           return err;
->>   -    /* Wait max 1ms */
->> -    timeout = 10;
->> -    while (timeout-- > 0) {
->> -        unsigned int val;
->> -
->> -        err = regmap_read(pd->regmap, 0x4, &val);
->> -        if (err || ((val & pd->local_pwr_cfg) != pwr)) {
->> -            cpu_relax();
->> -            usleep_range(80, 100);
->> -            continue;
->> -        }
->> -
->> -        return 0;
->> -    }
->> -
->> -    if (!err)
->> -        err = -ETIMEDOUT;
->> -    pr_err("Power domain %s %sable failed: %d\n", domain->name,
->> -           power_on ? "en" : "dis", err);
->> +    err = regmap_read_poll_timeout(pd->regmap, 0x4, val,
->> +                       (val & pd->local_pwr_cfg) == pwr,
->> +                       100, 1 * USEC_PER_MSEC);
->> +    if (err)
->> +        pr_err("Power domain %s %sable failed: %d (%#.2x)\n",
->> +               domain->name, power_on ? "en" : "dis", err, val);
->
-> I've posted my 'tested-by' tag for this patchset, but in meantime I 
-> found that this patch causes regression from time to time on old 
-> Exynos SoCs (especially when all debugs are disabled). It looks that 
-> there are some subtle differences between reading the status register 
-> up to 10 times with cpu_relax()+usleep_range() and the 
-> regmap_read_poll_timeout(). I will try to analyze this a bit more and 
-> provide details, but I suspect that the old loop might take a bit 
-> longer than the 1ms from the comment above this code.
+On 22/10/2025 13:19, Tudor Ambarus wrote:
+> Add support for the TRNG found on GS101. It works well with the current
+> exynos850 TRNG support.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  .../devicetree/bindings/rng/samsung,exynos5250-trng.yaml       | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-It looks that during the early boot all calls to 
-regmap_read_poll_timeout() lasts exactly 10ms (measured with ktime_get() 
-and ktime_to_ms()), what means that timekeeping source doesn't provide 
-resolution high enough for the 1ms timeout. This in turn results in 
-premature end of regmap_read_poll_timeout() loop after only one cycle of 
-read+wait+read, what is not always enough for power domain to turn on/off.
 
-According to the commit 7349a69cf312 ("iopoll: Do not use timekeeping in 
-read_poll_timeout_atomic()"), ktime_get(), which is used also by 
-regmap_read_poll_timeout(), is not reliable in all contexts, so I think 
-that this patch should be dropped as there is no easy way to fix this.
+No power domains here? I would prefer to see such additions together
+with the compatible, if that is possible.
 
-The alternative would be to use regmap_read_poll_timeout_atomic(), which 
-need to be fixed the same way as regmap_read_poll_timeout_atomic() by 
-the mentioned commit, but in such case we would effectively switch from 
-usleep to udelay.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best regards,
+Krzysztof
