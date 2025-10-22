@@ -1,264 +1,159 @@
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m3275.qiye.163.com (mail-m3275.qiye.163.com [220.197.32.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C3280033
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 21:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D4613E02A;
+	Wed, 22 Oct 2025 02:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080622; cv=none; b=FRabSn9Gf5QcMk+sj8jrxfc+YGAvaOWF8xfQUi9LdpEdhti0rjfwspMUBJ+0xb/6cMaUeFPmDVAuinMIW9BhheXJ3n/jCVjvI8WGMpXUOixZBqXoJ361tFR+VxAVdYsoaFGnxawlCdDnCithSeehwRea5UQfekYAwvsHdVh7Sfs=
+	t=1761100302; cv=none; b=jkf3tfXCX4WLyiyAx0+OykSQSi4uHa5G7YrFaUgHC/qsM3ggeSUE9kk/yk5dU/53X4izrwqXoYy+u+qGtMZtXnDMuXtto7Q92aZ54Ocnmz0WCz7+ri9Az9Fe4cCAT4vTCoS6xZMMt4EpqM0jgJPaQe1IDPStNYpfBqQGySAkY5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080622; c=relaxed/simple;
-	bh=fsNzpsKif2XiBWrqxMzGb+TCCzigMM4Kzyxjq7uUsEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=By+RGMTFICcYMVF1ZhwOjszl8w99PdgnT/9S4Aeex+6P4gIev98aODHNZJfUQtCBLrf/50CVwa9ZsjGobfx8DKso0gCgeWhHbGfipouf/pCrc4I1jTFye32LQomd2P+1AjqD7emoDF8un7pEK6z61t1JSC82g1vj+5/Ys1lulyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lC7NtZwG; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761100302; c=relaxed/simple;
+	bh=cBRz0RRJDinH4NIFc2MNyQ84IjGm7KmyCTz8GUuWGOk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=h6BJcIrlZm8MHXXYk8Sn3aIXXN4j8A6Nxfg8fYh9zQZLaBCIup1XNoRoSYTBJgO1oSibUt2MjOkQsXX6Dcc6mUU6Kbw7Dd0tyZOG00lqw8vS/wpqNeK4XGMzvRLiOaQ0nnF+g4C3frwWfkZWqEF3Yz2iXJLtf231pRWNk0n16Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=G3IBa/UR; arc=none smtp.client-ip=220.197.32.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lC7NtZwG"
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-651cda151f0so2519850eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2025 14:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761080618; x=1761685418; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMiBejLPKhYPEtqA8D8Oln6QNM1cO/EDknKj+TQbAkw=;
-        b=lC7NtZwGod3lqgdTMQkq0Pd/FPzDYv6OQuX36tUrXktms5FdY5oVd1j94iP/1sqSGp
-         G5v80beK/8dIzZ1HJsb1howfnJYiMwhg0MbbmDQaHEuNJRVtGVN9BDX9WJrzzpnND4n9
-         3nqCX4BdMeWJ9v+7NJ8fkTnTAUNOliNDgCLXEX8jely1G8YJRtAcUydvDAyMPbKUXkpl
-         6iw8Z3BM4DK3vsnBR0i8lHcHzzv72MqDInH93NuM8BcmuJl514Z7EHvgLqbefuHSt2BJ
-         X/kutIdcHnLb9gVCmbnbnaUFq2cGknUYzjKRDRtnpgChOAbwioDZ2tTO5omUQHFsM0Jk
-         Hq0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761080618; x=1761685418;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tMiBejLPKhYPEtqA8D8Oln6QNM1cO/EDknKj+TQbAkw=;
-        b=KdcZ+8RN6BrAPiJL3hdR1JC/AIf1zVEtWAYvMOElLZilaKY0XNoPOLcE4zh5Ig6suM
-         WZzHGyfMT5KkpoMrexoquecIBzQ1wlp9yGfiGfvNyfKhy44c4X+7MgD19YqNOWuzmfwz
-         J78G10ulNBE7geWe/s3lor6Wic2l+eu9vIcS+BEXZD1Jk7iTZk8YY5foF+PIpvSiE24x
-         8nnodxF41NVR96As3H221bhyzOdO06GYygH98eEyxz/uaW7T2/Ma7+dYyuWkGvxWRlqN
-         QsM9B1Jrf/syP564PTHaplRFTDmB8FPb1QImErnDQlo1Zc95EN+u5MyucH3LGlIES/1A
-         fRPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnudOARRNydGE13uae+PvlH6yz34kblhTFxNDuvxe39QG4Yg4AzRSWlBXOKJQFzBsSDfQ0PL0HuCq1iZCFCOxvtA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLsanW3IAMMiEOe8uPijIoXbo9YZUfSzP+i+mQ/Kr6JbSEjVMa
-	IpPQ/BVkUDfxQSHZMxIf0rcL683NyE7+fi8/4IRonRST5c/KBxQ7vUT0v//qX8gxRiSnygffsqD
-	kR/JZ9VVAu6nh5V3J7L1LsT9jy7PNcpePYpDoDxnNJQ==
-X-Gm-Gg: ASbGncupNyKTx+74hlVsP0guxSCy/88GOalAW02nGvuiiHq2mm96wllkUcaeR05zXci
-	XoYOFgdiU3rHDA2oSnUdm7DFM2PZs+pkY1iGaH35QL4sqcF/V8WSXRi4PIB1xTM5EsONfQmDbMS
-	bGYl7a4jpgssmc6WZcZMUj9vDEgiHZbYCy0zX3H3DfQMzpJuJEkZ51vD1ioVP4ecmS6IbTytdLL
-	krH7zTLof5cENakt60lEEpN4hxwyCeAz+9a9KkIf9MpUmrsfezHpCtZy8kNUwbM2waVERpmSpBl
-	L9xgeoE=
-X-Google-Smtp-Source: AGHT+IGhhxXOWUhypLR513EstnVpxP2n9PBtNjWPgYEhC5md6NPI4NHWrGoHnBDHjXCimVbmmxclmA3LGRFQCjGw+oI=
-X-Received: by 2002:a05:6820:201:b0:64e:8106:bb91 with SMTP id
- 006d021491bc7-651c7e6c8c2mr7330485eaf.8.1761080617763; Tue, 21 Oct 2025
- 14:03:37 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="G3IBa/UR"
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 26b816b55;
+	Wed, 22 Oct 2025 09:15:54 +0800 (GMT+08:00)
+Message-ID: <ff65f453-68a9-41fc-b9e3-02733bba96e3@rock-chips.com>
+Date: Wed, 22 Oct 2025 09:15:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
- <20251013-automatic-clocks-v1-8-72851ee00300@linaro.org> <4383c2fb-5267-4b7b-90e9-6046c2686912@kernel.org>
-In-Reply-To: <4383c2fb-5267-4b7b-90e9-6046c2686912@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 21 Oct 2025 22:03:26 +0100
-X-Gm-Features: AS18NWDGDGo3ssrAJMIVVsew6HYnxHA2tTZVJevoKlj0HODQs8C9nRRKXRt97mU
-Message-ID: <CADrjBPov=7t876dqpTS71j_xNFOrJv7_Ym7abYVLzjypoOYKng@mail.gmail.com>
-Subject: Re: [PATCH 8/9] clk: samsung: gs101: Enable auto_clock_gate mode for
- each gs101 CMU
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v7 01/18] drm/display: bridge_connector: Ensure last
+ bridge determines EDID/modes detection capabilities
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ heiko@sntech.de, andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
+ dianders@chromium.org, m.szyprowski@samsung.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
+ <20251021023130.1523707-2-damon.ding@rock-chips.com>
+ <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a9a097ca16b03a3kunm40777dd76b3afa
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU5NTVZIGRkYGB1CSENNHk5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=G3IBa/UR/LuPN+iUHG5BfBsR0wakY08fMpbIcc22chg3Yl2mDJuP3hApodwjF7Dp3I5RcHlsanrTg0887GoJUZgyuAx5TMRcyEawoDSmH9l/4xI5P1euGxlyg400GezPKB85JhtiTT1ZShmJwtVe+NOdaGsfV+2hDV4p/3K+h9E=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=zauBUVRHLTtxfE8FEqH72ce8GCghwo6SRo4GbUPwtY0=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Krzysztof,
+Hi Luca,
 
-Thanks for the review feedback.
+On 10/21/2025 6:31 PM, Luca Ceresoli wrote:
+> Hello Damon,
+> 
+> On Tue Oct 21, 2025 at 4:31 AM CEST, Damon Ding wrote:
+>> When multiple bridges are present, EDID detection capability
+>> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
+>> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
+>> determined by the last bridge in the chain, we handle three cases:
+>>
+>> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
+>>   - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
+>>     &drm_bridge_connector.bridge_edid to NULL and set
+>>     &drm_bridge_connector.bridge_modes to the later bridge.
+>>   - Ensure modes detection capability of the later bridge will not
+>>     be ignored.
+>>
+>> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
+>>   - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
+>>     &drm_bridge_connector.bridge_modes to NULL and set
+>>     &drm_bridge_connector.bridge_edid to the later bridge.
+>>   - Although EDID detection capability has higher priority, this
+>>     operation is for balance and makes sense.
+>>
+>> Case 3: the later bridge declares both of them
+>>   - Assign later bridge as &drm_bridge_connector.bridge_edid and
+>>     and &drm_bridge_connector.bridge_modes to this bridge.
+>>   - Just leave transfer of these two capabilities as before.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>
+>> ---
+>>
+>> Changes in v7:
+>> - As Luca suggested, simplify the code and related comment.
+>> ---
+>>   drivers/gpu/drm/display/drm_bridge_connector.c | 16 ++++++++++++----
+>>   1 file changed, 12 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+>> index baacd21e7341..7c2936d59517 100644
+>> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+>> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+>> @@ -673,14 +673,22 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+>>   		if (!bridge->ycbcr_420_allowed)
+>>   			connector->ycbcr_420_allowed = false;
+>>
+>> -		if (bridge->ops & DRM_BRIDGE_OP_EDID)
+>> -			bridge_connector->bridge_edid = bridge;
+>> +		/*
+>> +		 * Ensure the last bridge declares OP_EDID or OP_MODES or both.
+>> +		 */
+>> +		if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MODES) {
+>> +			bridge_connector->bridge_edid = NULL;
+>> +			bridge_connector->bridge_modes = NULL;
+>> +			if (bridge->ops & DRM_BRIDGE_OP_EDID)
+>> +				bridge_connector->bridge_edid = bridge;
+>> +			if (bridge->ops & DRM_BRIDGE_OP_MODES)
+>> +				bridge_connector->bridge_modes = bridge;
+>> +		}
+>>   		if (bridge->ops & DRM_BRIDGE_OP_HPD)
+>>   			bridge_connector->bridge_hpd = bridge;
+>>   		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
+>>   			bridge_connector->bridge_detect = bridge;
+>> -		if (bridge->ops & DRM_BRIDGE_OP_MODES)
+>> -			bridge_connector->bridge_modes = bridge;
+>> +
+> 
+> This does not apply on current drm-misc-next, due to the patch I mentioned
+> in a previous iteration, now applied as commit 2be300f9a0b6 ("drm/display:
+> bridge_connector: get/put the stored bridges").
+> 
+> However I'm sorry I have to mention that patch turned out being buggy, so
+> I've sent a series to apply a corrected version [0]. I suggest watching the
+> disucssion about the fix series, and if that gets approved rebase on top of
+> that and adapt your changes.
+> 
+> Sorry about the mess. :(
+> 
+> [0] https://lore.kernel.org/r/20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com
+> 
+> 
 
-On Tue, 21 Oct 2025 at 20:48, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 13/10/2025 22:51, Peter Griffin wrote:
-> > Enable auto clock mode, and define the additional fields which are used
-> > when this mode is enabled.
-> >
-> > /sys/kernel/debug/clk/clk_summary now reports approximately 308 running
-> > clocks and 298 disabled clocks. Prior to this commit 586 clocks were
-> > running and 17 disabled. To ensure compatability with older DTs the
->
-> Typo
+I saw your fix patches before sending this series. I think your patches 
+will likely be merged relatively quickly, so I plan to wait until the 
+other patches in my patch series are confirmed to be fine, then submit 
+v8 version based on the latest bridge_connector driver. :-)
 
-Will fix.
+Best regards,
+Damon
 
->
-> > resource size is checked and an error issued if the DT needs updating.
->
-> I fail to see how you keek it compatible. See further.
->
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/clk/samsung/clk-gs101.c | 80 +++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 80 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-> > index 70b26db9b95ad0b376d23f637c7683fbc8c8c600..baf41ae6c9e2480cb83531acf7eae190c6aff819 100644
-> > --- a/drivers/clk/samsung/clk-gs101.c
-> > +++ b/drivers/clk/samsung/clk-gs101.c
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/mod_devicetable.h>
-> >  #include <linux/of.h>
-> > +#include <linux/of_address.h>
-> >  #include <linux/platform_device.h>
-> >
-> >  #include <dt-bindings/clock/google,gs101.h>
-> > @@ -17,6 +18,8 @@
-> >  #include "clk-exynos-arm64.h"
-> >  #include "clk-pll.h"
-> >
-> > +int check_cmu_res_size(struct device_node *np);
-> > +
-> >  /* NOTE: Must be equal to the last clock ID increased by one */
-> >  #define CLKS_NR_TOP  (CLK_GOUT_CMU_TPU_UART + 1)
-> >  #define CLKS_NR_APM  (CLK_APM_PLL_DIV16_APM + 1)
-> > @@ -26,6 +29,10 @@
-> >  #define CLKS_NR_PERIC0       (CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
-> >  #define CLKS_NR_PERIC1       (CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-> >
-> > +#define GS101_GATE_DBG_OFFSET 0x4000
-> > +#define GS101_DRCG_EN_OFFSET  0x104
-> > +#define GS101_MEMCLK_OFFSET   0x108
-> > +
-> >  /* ---- CMU_TOP ------------------------------------------------------------- */
-> >
-> >  /* Register Offset definitions for CMU_TOP (0x1e080000) */
-> > @@ -1433,6 +1440,9 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
-> >       .nr_clk_ids             = CLKS_NR_TOP,
-> >       .clk_regs               = cmu_top_clk_regs,
-> >       .nr_clk_regs            = ARRAY_SIZE(cmu_top_clk_regs),
-> > +     .auto_clock_gate        = true,
-> > +     .gate_dbg_offset        = GS101_GATE_DBG_OFFSET,
-> > +     .option_offset          = CMU_CMU_TOP_CONTROLLER_OPTION,
-> >  };
-> >
-> >  static void __init gs101_cmu_top_init(struct device_node *np)
-> > @@ -1900,6 +1910,11 @@ static const struct samsung_gate_clock apm_gate_clks[] __initconst = {
-> >            CLK_CON_GAT_GOUT_BLK_APM_UID_XIU_DP_APM_IPCLKPORT_ACLK, 21, CLK_IS_CRITICAL, 0),
-> >  };
-> >
-> > +static const unsigned long dcrg_memclk_sysreg[] __initconst = {
-> > +     GS101_DRCG_EN_OFFSET,
-> > +     GS101_MEMCLK_OFFSET,
-> > +};
-> > +
-> >  static const struct samsung_cmu_info apm_cmu_info __initconst = {
-> >       .mux_clks               = apm_mux_clks,
-> >       .nr_mux_clks            = ARRAY_SIZE(apm_mux_clks),
-> > @@ -1912,6 +1927,12 @@ static const struct samsung_cmu_info apm_cmu_info __initconst = {
-> >       .nr_clk_ids             = CLKS_NR_APM,
-> >       .clk_regs               = apm_clk_regs,
-> >       .nr_clk_regs            = ARRAY_SIZE(apm_clk_regs),
-> > +     .sysreg_clk_regs        = dcrg_memclk_sysreg,
-> > +     .nr_sysreg_clk_regs     = ARRAY_SIZE(dcrg_memclk_sysreg),
-> > +     .auto_clock_gate        = true,
-> > +     .gate_dbg_offset        = GS101_GATE_DBG_OFFSET,
-> > +     .drcg_offset            = GS101_DRCG_EN_OFFSET,
-> > +     .memclk_offset          = GS101_MEMCLK_OFFSET,
-> >  };
-> >
-> >  /* ---- CMU_HSI0 ------------------------------------------------------------ */
-> > @@ -2375,7 +2396,14 @@ static const struct samsung_cmu_info hsi0_cmu_info __initconst = {
-> >       .nr_clk_ids             = CLKS_NR_HSI0,
-> >       .clk_regs               = hsi0_clk_regs,
-> >       .nr_clk_regs            = ARRAY_SIZE(hsi0_clk_regs),
-> > +     .sysreg_clk_regs        = dcrg_memclk_sysreg,
-> > +     .nr_sysreg_clk_regs     = ARRAY_SIZE(dcrg_memclk_sysreg),
-> >       .clk_name               = "bus",
-> > +     .auto_clock_gate        = true,
-> > +     .gate_dbg_offset        = GS101_GATE_DBG_OFFSET,
-> > +     .option_offset          = HSI0_CMU_HSI0_CONTROLLER_OPTION,
-> > +     .drcg_offset            = GS101_DRCG_EN_OFFSET,
-> > +     .memclk_offset          = GS101_MEMCLK_OFFSET,
-> >  };
-> >
-> >  /* ---- CMU_HSI2 ------------------------------------------------------------ */
-> > @@ -2863,7 +2891,14 @@ static const struct samsung_cmu_info hsi2_cmu_info __initconst = {
-> >       .nr_clk_ids             = CLKS_NR_HSI2,
-> >       .clk_regs               = cmu_hsi2_clk_regs,
-> >       .nr_clk_regs            = ARRAY_SIZE(cmu_hsi2_clk_regs),
-> > +     .sysreg_clk_regs        = dcrg_memclk_sysreg,
-> > +     .nr_sysreg_clk_regs     = ARRAY_SIZE(dcrg_memclk_sysreg),
-> >       .clk_name               = "bus",
-> > +     .auto_clock_gate        = true,
-> > +     .gate_dbg_offset        = GS101_GATE_DBG_OFFSET,
-> > +     .option_offset          = HSI2_CMU_HSI2_CONTROLLER_OPTION,
-> > +     .drcg_offset            = GS101_DRCG_EN_OFFSET,
-> > +     .memclk_offset          = GS101_MEMCLK_OFFSET,
-> >  };
-> >
-> >  /* ---- CMU_MISC ------------------------------------------------------------ */
-> > @@ -3423,11 +3458,37 @@ static const struct samsung_cmu_info misc_cmu_info __initconst = {
-> >       .nr_clk_ids             = CLKS_NR_MISC,
-> >       .clk_regs               = misc_clk_regs,
-> >       .nr_clk_regs            = ARRAY_SIZE(misc_clk_regs),
-> > +     .sysreg_clk_regs        = dcrg_memclk_sysreg,
-> > +     .nr_sysreg_clk_regs     = ARRAY_SIZE(dcrg_memclk_sysreg),
-> >       .clk_name               = "bus",
-> > +     .auto_clock_gate        = true,
-> > +     .gate_dbg_offset        = GS101_GATE_DBG_OFFSET,
-> > +     .option_offset          = MISC_CMU_MISC_CONTROLLER_OPTION,
-> > +     .drcg_offset            = GS101_DRCG_EN_OFFSET,
-> > +     .memclk_offset          = GS101_MEMCLK_OFFSET,
-> >  };
-> >
-> > +/* for old DT compatbility with incorrect CMU size*/
-> > +int check_cmu_res_size(struct device_node *np)
-> > +{
-> > +     struct resource res;
-> > +     resource_size_t size;
-> > +
-> > +     if (of_address_to_resource(np, 0, &res))
-> > +             return -ENODEV;
-> > +
-> > +     size = resource_size(&res);
-> > +     if (size != 0x10000) {
-> > +             pr_warn("%pOF: resource to small. Please update your DT\n", np);
-> > +             return -ENODEV;
-> > +     }
-> > +     return 0;
-> > +}
-> > +
-> >  static void __init gs101_cmu_misc_init(struct device_node *np)
-> >  {
-> > +     if (check_cmu_res_size(np))
-> > +             return;
->
-> You will not register CMU on old DTB.
-
-By "compatible" I meant the driver detects an old DTB with an
-incorrect reg size and issues an error message on the console to
-update your DT (as opposed to crashing trying to access a register
-that hasn't been mapped).
-
-Is it enough to re-word the commit message to make it clearer what will happen?
-
-An alternative might be to try registering all the gates in manual
-mode, but that seems like it would add more complexity for not much
-benefit. It would also require that clk_ignore_unused kernel parameter
-to have been passed (as manual clock mode has never worked without it)
-and whilst it might boot today I imagine it would bitrot fast as
-additional CMUs are added (and thus probably crash in a much more
-obscure way).
-
-Peter
