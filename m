@@ -1,430 +1,235 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F51333727
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 15:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B420221FDA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 20:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761233992; cv=none; b=gKB+hJH7wFv5LBO0GWT/IT/remffoX7qRQWMqgzc/WMR3GM0aPdJM72rbM+3Z6Wqq8wggG2gVXok43x+CSoKloZ2a2zuK6/ipfngdQEGE6qkvTKTSD6XA99Zx2TwXVE2qLlsSicST4QlbVBZQqUfNXYNXyzW+exxYKnxkeu6g6Q=
+	t=1761252651; cv=none; b=ukIhvWFtleAZeNjAjMg65ldYOUJbtZtVOozIGotqb+qGR6XtQ69+tnOmdHDLFyCBLdx4DatkrX6j9Kp2Tx4apC3Urbc1kd1NndFpVHpykhtDsBrfEL+KIs2Olr87JeTK4av3iTy2yMbuNt5ZX+nFNNcn2wVirLpOUfO7QjAf1fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761233992; c=relaxed/simple;
-	bh=k7Tch+RywkBmHtHYtls1zPCKqLMIlrcnbvkjFLq+MMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LnvxpLJLxnmXuAUkScgToOrsxTZFlv15NlBrcLBpiOR3pU0PLdLWPJalyNCd4t+SAlALO3tABMKzzYEQuxruQ8WJWSQv3QQmJz1/DpBw/uMWtMAwJjTH9qMc8YVIozS0cgA/KwApZmrhasydNc3LJMFeihhBD/MHQPMozI6erI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rOOk+1L8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mYDNeC29; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DAlA3sZc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ySnrNCRC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1761252651; c=relaxed/simple;
+	bh=8zqWw3/DzF0JbCkSbYoLHCYTqNuxWleoVqC0QqgZxyA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TfUAmI+PI54ItZqUW1qK+2IokfDI1Fm1/Qt2da1qxyJZPyo5g153wIFfgzmZHDT3Yzn28YzSW0ei88abNota6cuA7mMgbBwjrFu0M2Mz861M7zXveJs3D8VGkrUROVOeS7wvcY5YqPmACI+6ZhfdCsvqKo8/UtbB685cnYEqNLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YFXCcmsK; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rOOk+1L8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mYDNeC29";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DAlA3sZc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ySnrNCRC"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38AC321187;
-	Thu, 23 Oct 2025 15:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761233983; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=rOOk+1L8Um5iOXXt85CJNrMgUxmzOVrAYvM+tfLETiCGLl2aiJttREq8V3mSKUpcxTqqdj
-	l7TViKhxC0xQVhT6iShwws/h5oGPMkztPOi078I6xr6Uteps0EYGkai+oRAVFx5nyFv6Vn
-	1O8pNJi3YSFsfXJDrweOYfqpid31cf4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761233983;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=mYDNeC298lzqFC8qoZuZk5pNwTUK0YntJyAJtllNJNwZ/toC8a4IZDW8Z6SgJA7xxU8H5k
-	fok4BvyFKK5MrzDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761233979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=DAlA3sZcZeuOjOFICW30MLLWNxNhjXDLqzmJqQrGX9qWDKTIWBN2A2EoFjI0emJdLEFFTa
-	Xy490TDIoI4lzA1jHkx2uCbfi4FN/0kAZSaNlYyg3DiH9kDtT987gwlO79m3H4UB4N/2Lj
-	XwXnnNWvs4GANBXdlNDc7KKSXmZGqLs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761233979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=ySnrNCRC698xP5gkeFXzPyzRo9yOOVBWHgBM3q98Rk7ngacFmPwelNmhM99uFpvyvUArD1
-	eKLz4ieDlW08yWBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8204A136CF;
-	Thu, 23 Oct 2025 15:39:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z1hfHTpM+mihKQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 23 Oct 2025 15:39:38 +0000
-Message-ID: <38e59db5-eae2-4b6e-bdec-8205f1303d9b@suse.de>
-Date: Thu, 23 Oct 2025 17:39:37 +0200
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YFXCcmsK"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso1979483a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 13:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761252648; x=1761857448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J/CuDqQKYrCjFmmuQ7Z7ZrmkPpP9qzjAbWKHA6vZ3F0=;
+        b=YFXCcmsKbtBMiz2XI+VcreiWw2vZqpkh0YCorYLWRyzamnbBEcAyl/ufAXq0Uc+R3t
+         NuJF/5v9AnSamlvebhFCV83aq0D1gewrez8BTxCXUsdA+FfwRJIIO2rrA9gYhFFU9J+m
+         VKk1XkqUam9ZIl7uxwueZk/5Z2G7b6L82QlkeSvHOcTs40mSBLPS3w3ZLjBeYXTCrStC
+         uu29IPvGk4wsbrAbGa8/PBbkYKgqVJhmurzVjFo8/wTgSkqya9VnkP/YfiqAC0Uyqg3E
+         9ohqlEPxSI9SAroe9WAKFjCX+nqKwR7cMuTcHVGNNPwAj9UREgLyd0E5Ey7/ykXW5wK8
+         3l7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761252648; x=1761857448;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J/CuDqQKYrCjFmmuQ7Z7ZrmkPpP9qzjAbWKHA6vZ3F0=;
+        b=bWRv/B30v12bck6wvcduETUjoEqNaN/55SbcI5qhNqfxvi4WS5HdkZ8FGKwNB4iWfu
+         g1uhZUmRv+u3dQUK01+BnVF2108wlejCU85kByDNJ+87GODJzAfERAqqLl4XvLdxk5C2
+         mVzhIyMQ2BnZRxVXxgorRl7P6Kj/7OWRTkkTKdCBlbrpWitjWb1Z5D2ejMZBBTB9a4Nz
+         9Xby2VnoJokJjhOk1kfJLlPPhX5FyTEI89e09fJButmPBqqOTlEV9Sw0oFoGYNY92W04
+         Vs0KLNLlmbEFvRdHoPXQLuAZheIFJjxaxPJ0Rj7apnasycrdI1tRJjAkG9ZoSbLSlKgp
+         +zkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0dzDwWOhSpES1aWV6mj6ajoNYug+6YGQOwG55wKqpoBLlPXaJP3VkyhxdyLqof5pfx+AQWzoLhOq9aSMsdxPAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOja5gwMLxgIZtCrSr9FHLkRRXI6RzQUoNNmVsQzCrSvy/wC2g
+	tnSTeUXott2rXZY77Wbkxsdp+y75dtJzoCmiAE4teWc+ylsBplIVoP/pCnO8oeVJMDhROuwvkWn
+	TNo6Nfq87nPYNT/LA1eOgELcXE99BvQ==
+X-Google-Smtp-Source: AGHT+IHCv+iwDGJO8KEDUioy4nOYWkjvJbAezYpNBnUyVCizEPR3YPZK7WXcrL5qP149uizbsOzs5ZNlsJ9NvJ1PSCs=
+X-Received: from pjcc13.prod.google.com ([2002:a17:90b:574d:b0:33d:813f:6829])
+ (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:55cf:b0:329:d8d2:3602 with SMTP id 98e67ed59e1d1-33bcf8f9c49mr35638804a91.17.1761252647860;
+ Thu, 23 Oct 2025 13:50:47 -0700 (PDT)
+Date: Thu, 23 Oct 2025 20:50:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] drm/client: Add client free callback to unprepare
- fb_helper
-To: jfalempe@redhat.com, javierm@redhat.com, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-tegra@vger.kernel.org
-References: <20251009132006.45834-1-tzimmermann@suse.de>
- <20251009132006.45834-2-tzimmermann@suse.de>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251009132006.45834-2-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
+Message-ID: <20251023205041.2027336-1-willmcvicker@google.com>
+Subject: [PATCH v5 0/7] Add module support for Arm64 Exynos MCT driver
+From: Will McVicker <willmcvicker@google.com>
+To: Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Ingo Molnar <mingo@kernel.org>, Youngmin Nam <youngmin.nam@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, Hosung Kim <hosung0.kim@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, John Stultz <jstultz@google.com>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+This series adds support to build the Arm64 Exynos MCT driver as a module.
+This is only possible on Arm64 SoCs since they can use the Arm architected
+timer as the clocksource. Once the Exynos MCT module is loaded and the
+device probes, the MCT is used as the wakeup source for the arch_timer to
+ensure the device can wakeup from the "c2" idle state.
+
+These patches are originally from the downstream Pixel 6 (gs101) kernel
+found at [1] and have been adapted for upstream. Not only has the Exynos MC=
+T
+driver been shipping as a module in the field with Android, but I've also
+tested this series with the upstream kernel on my Pixel 6 Pro.
+
+To verify the module on Pixel 6 Pro is used and the arch_timer is used as t=
+he
+main clocksource, I ran these tests:
+---
+# lsmod | grep exynos_mct
+exynos_mct             20480  9 [permanent]
+
+# cat /proc/interrupts | grep -E "mct|arch_timer"
+ 23:        759       1009        741        477        601        405     =
+  1350        789    GICv3  30 Level     arch_timer
+117:          1          0          0          0          0          0     =
+     0          0    GICv3 785 Level     mct_comp_irq
+118:       2126          0          0          0          0          0     =
+     0          0    GICv3 789 Level     mct_tick0
+119:          0       1442          0          0          0          0     =
+     0          0    GICv3 790 Level     mct_tick1
+120:          0          0       4617          0          0          0     =
+     0          0    GICv3 791 Level     mct_tick2
+121:          0          0          0       2617          0          0     =
+     0          0    GICv3 792 Level     mct_tick3
+122:          0          0          0          0       4173          0     =
+     0          0    GICv3 793 Level     mct_tick4
+123:          0          0          0          0          0       2217     =
+     0          0    GICv3 794 Level     mct_tick5
+124:          0          0          0          0          0          0     =
+  1618          0    GICv3 795 Level     mct_tick6
+125:          0          0          0          0          0          0     =
+     0        894    GICv3 796 Level     mct_tick7
+
+# cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+arch_sys_counter
+---
+
+I also compile tested for ARCH=3DARM DEFCONFIG=3Dmulti_v7_defconfig with th=
+e
+following debug configs to ensure the section mismatches are fixed:
+  CONFIG_DEBUG_SECTION_MISMATCH=3Dy
+  # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+
+Any additional testing is much appreciated!
+
+Thanks,
+Will
+
+Note1, instructions to build and flash a Pixel 6 device with the upstream
+kernel can be found at [2].
+
+Note2, this series is based off of krzk/for-next commit 73f7017e6636 ("Merg=
+e
+branch 'fixes' into for-next").
+
+[1] https://android.googlesource.com/kernel/gs/+log/refs/heads/android-gs-r=
+aviole-5.10-android12-d1
+[2] https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main=
+/README.md?ref_type=3Dheads
+
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>
+Cc: Hosung Kim <hosung0.kim@samsung.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Changes in v5:
+- Fixed section mismatch issues.
+- Addressed Arnd's concerns regarding potential issues with unloading and/o=
+r
+  unbinding the driver.
+- Fixed SoB concerns to clarify the development chain from AOSP to Linux.
+- Pulled in https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprows=
+ki@samsung.com/
+  to limit percpu interrupts only for ARM64.
+
+Changes in v4:
+- Missed the "v3" string in the previous series for the actual patches
+- Re-generated patches with --base a15edf91668beefdb5171c53fa698c9b43dd1e0d
+  for kernel test robot.
+
+Changes in v3:
+- Rebased on top of Daniel's timer modularization prep series [3] and
+  krzk/for-next commit a15edf91668b ("Merge branch 'next/dt64' into
+  for-next")
+- Added owner references to Exynos MCT clocksource and clockevent objects.
+- Dropped #ifdef MODULE conditional section in favor of just using
+  module_platform_driver() which will properly handle setting up the
+  of_device_id table based on if the driver is built-in or a module.
+- Update commit message for patch 2 based on John's feedback.
+- Dropped DT change from v2 as it was picked up by Krzysztof for CPU Idle.
+
+Changes in v2:
+- Re-worked patch v1 5 based on Rob Herring's review to use the compatible
+  data for retrieving the mct_init function pointer.
+- Updated the Kconfig logic to disallow building the Exynos MCT driver as
+  a module for ARM32 configurations based on Krzysztof Kozlowski's findings=
+.
+- Added comments and clarified commit messages in patches 1 and 2 based on
+  reviews from John Stultz and Youngmin Nam.
+- Fixed an issue found during testing that resulted in the device getting
+  stuck on boot. This is included in v2 as patch 5.
+- Collected *-by tags
+- Rebased to the latest linux-next/master.
+---
+
+Donghoon Yu (2):
+  clocksource/drivers/exynos_mct: Don't register as a sched_clock on
+    arm64
+  clocksource/drivers/exynos_mct: Add module support
+
+Hosung Kim (1):
+  clocksource/drivers/exynos_mct: Set local timer interrupts as percpu
+
+Marek Szyprowski (1):
+  clocksource/drivers/exynos_mct: Use percpu interrupts only on ARM64
+
+Will McVicker (3):
+  ARM: make register_current_timer_delay() accessible after init
+  clocksource/drivers/exynos_mct: Fix uninitialized irq name warning
+  arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
+
+ arch/arm/lib/delay.c             |  2 +-
+ arch/arm64/Kconfig.platforms     |  1 -
+ drivers/clocksource/Kconfig      |  3 +-
+ drivers/clocksource/exynos_mct.c | 81 ++++++++++++++++++++++++++------
+ 4 files changed, 70 insertions(+), 17 deletions(-)
 
 
-
-Am 09.10.25 um 15:16 schrieb Thomas Zimmermann:
-> Add free callback to struct drm_client_funcs. Invoke function to
-> free the client memory as part of the release process. Implement
-> free for fbdev emulation.
->
-> Fbdev emulation allocates and prepares client memory in
-> drm_fbdev_client_setup(). The release happens in fb_destroy from
-> struct fb_ops. Multiple implementations of this callback exist in
-> the various drivers that provide fbdev implementation. Each of them
-> needs to follow the implementation details of the fbdev setup code.
->
-> Adding a free callback for the client puts the unprepare and release
-> of the fbdev client in a single place.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-
-via irc
-
-https://people.freedesktop.org/~cbrill/dri-log/?channel=radeon&highlight_names=&date=2025-10-23&show_html=true
-
-> ---
->   drivers/gpu/drm/armada/armada_fbdev.c      |  2 --
->   drivers/gpu/drm/clients/drm_fbdev_client.c | 17 +++++++++++++++--
->   drivers/gpu/drm/drm_client.c               |  4 ++++
->   drivers/gpu/drm/drm_fbdev_dma.c            |  4 ----
->   drivers/gpu/drm/drm_fbdev_shmem.c          |  2 --
->   drivers/gpu/drm/drm_fbdev_ttm.c            |  2 --
->   drivers/gpu/drm/exynos/exynos_drm_fbdev.c  |  2 --
->   drivers/gpu/drm/gma500/fbdev.c             |  3 ---
->   drivers/gpu/drm/i915/display/intel_fbdev.c |  2 --
->   drivers/gpu/drm/msm/msm_fbdev.c            |  2 --
->   drivers/gpu/drm/omapdrm/omap_fbdev.c       |  2 --
->   drivers/gpu/drm/radeon/radeon_fbdev.c      |  2 --
->   drivers/gpu/drm/tegra/fbdev.c              |  2 --
->   include/drm/drm_client.h                   | 10 ++++++++++
->   14 files changed, 29 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-> index cb53cc91bafb..22e2081bfa04 100644
-> --- a/drivers/gpu/drm/armada/armada_fbdev.c
-> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
-> @@ -28,8 +28,6 @@ static void armada_fbdev_fb_destroy(struct fb_info *info)
->   	fbh->fb->funcs->destroy(fbh->fb);
->   
->   	drm_client_release(&fbh->client);
-> -	drm_fb_helper_unprepare(fbh);
-> -	kfree(fbh);
->   }
->   
->   static const struct fb_ops armada_fb_ops = {
-> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> index f894ba52bdb5..5336accab1b6 100644
-> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> @@ -13,16 +13,28 @@
->    * struct drm_client_funcs
->    */
->   
-> +static void drm_fbdev_client_free(struct drm_client_dev *client)
-> +{
-> +	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
-> +
-> +	drm_fb_helper_unprepare(fb_helper);
-> +	kfree(fb_helper);
-> +}
-> +
->   static void drm_fbdev_client_unregister(struct drm_client_dev *client)
->   {
->   	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
->   
->   	if (fb_helper->info) {
-> +		/*
-> +		 * Fully probed framebuffer device
-> +		 */
->   		drm_fb_helper_unregister_info(fb_helper);
->   	} else {
-> +		/*
-> +		 * Partially initialized client, no framebuffer device yet
-> +		 */
->   		drm_client_release(&fb_helper->client);
-> -		drm_fb_helper_unprepare(fb_helper);
-> -		kfree(fb_helper);
->   	}
->   }
->   
-> @@ -88,6 +100,7 @@ static int drm_fbdev_client_resume(struct drm_client_dev *client, bool holds_con
->   
->   static const struct drm_client_funcs drm_fbdev_client_funcs = {
->   	.owner		= THIS_MODULE,
-> +	.free		= drm_fbdev_client_free,
->   	.unregister	= drm_fbdev_client_unregister,
->   	.restore	= drm_fbdev_client_restore,
->   	.hotplug	= drm_fbdev_client_hotplug,
-> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-> index 3fa38d4ac70b..fe9c6d7083ea 100644
-> --- a/drivers/gpu/drm/drm_client.c
-> +++ b/drivers/gpu/drm/drm_client.c
-> @@ -168,6 +168,10 @@ void drm_client_release(struct drm_client_dev *client)
->   
->   	drm_client_modeset_free(client);
->   	drm_client_close(client);
-> +
-> +	if (client->funcs && client->funcs->free)
-> +		client->funcs->free(client);
-> +
->   	drm_dev_put(dev);
->   }
->   EXPORT_SYMBOL(drm_client_release);
-> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-> index 8bd626ef16c7..c6196293e424 100644
-> --- a/drivers/gpu/drm/drm_fbdev_dma.c
-> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
-> @@ -57,8 +57,6 @@ static void drm_fbdev_dma_fb_destroy(struct fb_info *info)
->   	drm_client_buffer_vunmap(fb_helper->buffer);
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_dma_fb_ops = {
-> @@ -92,8 +90,6 @@ static void drm_fbdev_dma_shadowed_fb_destroy(struct fb_info *info)
->   	drm_client_buffer_vunmap(fb_helper->buffer);
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_dma_shadowed_fb_ops = {
-> diff --git a/drivers/gpu/drm/drm_fbdev_shmem.c b/drivers/gpu/drm/drm_fbdev_shmem.c
-> index 1e827bf8b815..51573058df6f 100644
-> --- a/drivers/gpu/drm/drm_fbdev_shmem.c
-> +++ b/drivers/gpu/drm/drm_fbdev_shmem.c
-> @@ -65,8 +65,6 @@ static void drm_fbdev_shmem_fb_destroy(struct fb_info *info)
->   	drm_client_buffer_vunmap(fb_helper->buffer);
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_shmem_fb_ops = {
-> diff --git a/drivers/gpu/drm/drm_fbdev_ttm.c b/drivers/gpu/drm/drm_fbdev_ttm.c
-> index 85feb55bba11..ccf460fbc1f0 100644
-> --- a/drivers/gpu/drm/drm_fbdev_ttm.c
-> +++ b/drivers/gpu/drm/drm_fbdev_ttm.c
-> @@ -53,8 +53,6 @@ static void drm_fbdev_ttm_fb_destroy(struct fb_info *info)
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_ttm_fb_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 93de25b77e68..a3bd21a827ad 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -42,8 +42,6 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops exynos_drm_fb_ops = {
-> diff --git a/drivers/gpu/drm/gma500/fbdev.c b/drivers/gpu/drm/gma500/fbdev.c
-> index a6af21514cff..bc92fa24a1e2 100644
-> --- a/drivers/gpu/drm/gma500/fbdev.c
-> +++ b/drivers/gpu/drm/gma500/fbdev.c
-> @@ -84,9 +84,6 @@ static void psb_fbdev_fb_destroy(struct fb_info *info)
->   	drm_gem_object_put(obj);
->   
->   	drm_client_release(&fb_helper->client);
-> -
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops psb_fbdev_fb_ops = {
-> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> index 3fbdf75415cc..d5f26c8bb102 100644
-> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> @@ -146,8 +146,6 @@ static void intel_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb_helper->fb);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   __diag_push();
-> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-> index b5969374d53f..aad6fb77f0de 100644
-> --- a/drivers/gpu/drm/msm/msm_fbdev.c
-> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
-> @@ -52,8 +52,6 @@ static void msm_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&helper->client);
-> -	drm_fb_helper_unprepare(helper);
-> -	kfree(helper);
->   }
->   
->   static const struct fb_ops msm_fb_ops = {
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index 948af7ec1130..b5df2923d2a6 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -103,8 +103,6 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&helper->client);
-> -	drm_fb_helper_unprepare(helper);
-> -	kfree(helper);
->   }
->   
->   /*
-> diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/radeon/radeon_fbdev.c
-> index dc81b0c2dbff..4df6c9167bf0 100644
-> --- a/drivers/gpu/drm/radeon/radeon_fbdev.c
-> +++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
-> @@ -184,8 +184,6 @@ static void radeon_fbdev_fb_destroy(struct fb_info *info)
->   	radeon_fbdev_destroy_pinned_object(gobj);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops radeon_fbdev_fb_ops = {
-> diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
-> index 1b70f5e164af..91aece6f34e0 100644
-> --- a/drivers/gpu/drm/tegra/fbdev.c
-> +++ b/drivers/gpu/drm/tegra/fbdev.c
-> @@ -53,8 +53,6 @@ static void tegra_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&helper->client);
-> -	drm_fb_helper_unprepare(helper);
-> -	kfree(helper);
->   }
->   
->   static const struct fb_ops tegra_fb_ops = {
-> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-> index bdd845e383ef..eecb8d6e15c7 100644
-> --- a/include/drm/drm_client.h
-> +++ b/include/drm/drm_client.h
-> @@ -28,6 +28,16 @@ struct drm_client_funcs {
->   	 */
->   	struct module *owner;
->   
-> +	/**
-> +	 * @free:
-> +	 *
-> +	 * Called when the client gets unregistered. Implementations should
-> +	 * release all client-specific data and free the memory.
-> +	 *
-> +	 * This callback is optional.
-> +	 */
-> +	void (*free)(struct drm_client_dev *client);
-> +
->   	/**
->   	 * @unregister:
->   	 *
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+base-commit: 73f7017e663620a616171cc80d62504a624dc4de
+--=20
+2.51.1.821.gb6fe4d2222-goog
 
