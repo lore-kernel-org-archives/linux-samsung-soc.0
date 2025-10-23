@@ -1,107 +1,102 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A5326B2AD
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 20:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EED26158C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 20:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761252798; cv=none; b=K5hikja0JTuvH1IaV2WBdHeRzdX7p8gqrGWT28CxWsyTr/CHmntmQm+xEae59oPZvdNm+/hqv+d7ggc0Bg5QbbfB2VsftOe3Zr/9Y65fDLHewNa6DTKaWhMlLE5HlYOppJrvJUKa5wLEEm+vqK4NJ3FXJJdASouLRgZzu0vztD4=
+	t=1761253049; cv=none; b=pjwoXnX3+heWQ7bOWzGL4bTDgPmyGihLHGbwzS1Lgx8CtjEDATIl0u1TvUV0YihzRyfZniErl8JaSGe0iNCwLY7Im3ihvGndq3KoK8CxPnz3mnqDltdM+Kr0OoW+cQfYO5IghsQhsN9yVWHANEsl/LNUvAYRRn2NSLaBnmAP+Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761252798; c=relaxed/simple;
-	bh=osKoAFkbQ+bMRzkFjXuuMZNRDBV5CkEsQ+WWxrz7Ba0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Mz0ehrDS9f/fh5PH0KSg8gHAXI+vMMJ8YTi/VTbv7aACHbTMxJnj1iM56HYPrBEBydrIcsGBigDWdezQ9YGY+MViNu3WqEta4BGDRQMog/OqpR6h60vN8KYgMaDpDRRKuG8JXGiISXLKGw++X6h9vpG7IQTaH8aBRnPWoJwdD48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0xXSNNGl; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1761253049; c=relaxed/simple;
+	bh=m8ASc2OAY4fv8+TtsrJxQF9H5kewxn0+auSNH+ttR9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXG7niKCg1YnBMtmvNP6gRR9H5qrNbRlfQaTncsBxELSHNpuLBZZSQvr9uGTRPb20UbBcUvYwXfGHVDc9dw4LhMfmbDV78dTFxV5N+j5m6/jw+XejPXeukoTuwQoo3jOZw9fOwSR/Oa9JJd8cLS8I8Mtr8UQm2L21HOUgNGiPIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T65CGYWe; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0xXSNNGl"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bb3b235ebso2930961a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 13:53:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T65CGYWe"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33ba37b3ff7so1321598a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2025 13:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761252796; x=1761857596; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8cB2JKISSz6B9qz7HS2qbamQvKm9jtJ2xZpz8CPDiY=;
-        b=0xXSNNGlk3OBpWsqmFbyQ7A6HsB1mLX4k8T63bSix2UHLlEGhw1771xDCq2oScOWXl
-         ZhCui+UStZHYopiiP/8DE83xLBzICnJB1sep032z/qltbyUDQD2K+o4d6ZzrfnDJIxTg
-         g84HQNcTAoWB2rXS9kJ1PpjOrAHpOPOmTfezds8ESFqYBdGjJ9B7AmgXDEsClprf40gX
-         rQ+Rl8RMPBKu2GlggeUOVHqLLWTLnriCBvPUgGpeZmexEMOJ7NTi3dwh95xN+B8nYcld
-         UgYl4n0NBENyevcY8gRR/p6ER1EV+tphjXNjJsA5KhFFDTnNWtGyiVE3MgROtExFEPbd
-         gY3A==
+        d=google.com; s=20230601; t=1761253047; x=1761857847; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5tTG1pwP7TykWxe8MPff4LTF6nEVfVWG3Z8SQ568z2A=;
+        b=T65CGYWeI/JtDHZc5Q8LaWWi8b2TJQGiEA+U0YTSZXNfm1HjolauayNPqv1XxhofWx
+         FtgHjvLZ1c6Q3AbdhY/MhuKzLBVzJ1tCU6C3Nhp/taq+D5yVNVA137Gf5lo1/u+jiN0K
+         1Z7D+ECmcmZx0IW+NWS4qmBtZEwDfszVihuUgs5nWuscZN/La7wIsjDnNRn3oPKVUrfG
+         FYtiY38GS5VYupd+ObMSyJf4MwfHBcrWJBu2fTwoGPE+QKqn/dh40Sza8v2WInfHzY71
+         dwMxWVkRdQb/U3VhSnkDyNzVMx7HyAHipzdIGdvAFCUwoHyFX2i5oISfgfNAyUq7rKjf
+         I6mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761252796; x=1761857596;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8cB2JKISSz6B9qz7HS2qbamQvKm9jtJ2xZpz8CPDiY=;
-        b=mWogi63VfNai6kZTVOJ8Ih4wy6eFlHLko7YdibORY1808BrSEM03UoLdDHKavIRWAe
-         90seaBv47+F/EYqNBTzwSuPQCw3bcz4WmiANQzrsszb8Jku6xNAR4gBd6AlGzE5JjyEx
-         ipr5QgG2JgNA8JhOS+9JtZ0VogogPOH6i924AxQUM/RXP6WGhq0hZhEMRgWSbABtRXB8
-         eIb9BCuf/F600/klrznZ1/qUTqqkosMSvTVJh4wAY/b54XKY6XO7Ta63Wb4NVBjTNjyp
-         GpiY9cteC5VGyEqVDXjYPErust3/uSYhhniYIOHs/kqaIzLrREgxiw26MrcewXphgZ+w
-         3cKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgWcjD3yLZcFugMGwg71GAaCTAzmfTyxAkMFz09qTCK1VFclMYn507P00ASCDVRSPufoNW0N/NYGoP7q+y+gDkSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw59U6lqbhpflSIJwziisqF6ioiU5B7HQUqqdqgWFitgWSsGYY1
-	UMZppCm7Kns5g07chZQjpujt3kpO2H0WwLj9PEfQk23HQJy0Dem3plut4mZSQ5jNNOWL2tIZFf4
-	BpOBb0IvZeZlN/TnJCtyR6V7xoNgZFg==
-X-Google-Smtp-Source: AGHT+IGHJ6pvvQTONfUgausz91DB8YXTKIZ2yC/0dVMsDeXg0rMdse/dnPjwuJXay8ZVELJRf+0mhTMoklNFavlOnNM=
-X-Received: from pjqf18.prod.google.com ([2002:a17:90a:a792:b0:329:e84e:1c50])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d44c:b0:33b:da53:d116 with SMTP id 98e67ed59e1d1-33bda53d1f3mr36146909a91.26.1761252795891;
- Thu, 23 Oct 2025 13:53:15 -0700 (PDT)
-Date: Thu, 23 Oct 2025 20:52:49 +0000
-In-Reply-To: <20251023205257.2029526-1-willmcvicker@google.com>
+        d=1e100.net; s=20230601; t=1761253047; x=1761857847;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5tTG1pwP7TykWxe8MPff4LTF6nEVfVWG3Z8SQ568z2A=;
+        b=pYVGXuKgXF6FUHUDtMnUsP0ERT16GnUsjIFlU5p7A+xWCgZ7kpIfpcjhh6epMyeabp
+         J81FLFTrNb8djB5ljSBMG8EtpwWUGwZs01kh90fexgzlHwmOlnFaql6XNtEpNrbWehSG
+         CyR8id5kxdQceb98z24lXspAJMU7TjHhp5atYXVtOsbqSYNcxyIjCzPrGgk09XWgeT3g
+         ZMJ4NBy+r62Nx5shYt3613CW0u9KJyMGqNoGNtNzY/aC8+IRE1bwFvDbOjZ47KULmc8D
+         JdGrq7r2iDhtR7wfqLLavVOeU6NQgbRY8wfmMgBLXEBjDnRu/LGWDNb2mCi3pWcv+pXN
+         p5gA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCqlTEIpSAAyv8trn4oFExkP5eYYsB2AVq+2ScsuC928svmTiMOcfoWlA13tALjfJ+OfTkllP7VYD8WzRaotlVZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq5PRbTtTc1Lczaytoqji6CckdTgwaFHSis1LQBY2XtwrHGOtN
+	HRdx0uDdQaDZf2easT2PrHau4RkfwwBaBl9sSW04Q1Aq2U7wlayafuJ81NsXjG61Vg==
+X-Gm-Gg: ASbGnct2JKoueL6+ewyHD4zlYvHrCG06xGSZW4GGfAXG/3u08sW9Tl0lBKeyB96rous
+	JeWq9JAdSw/7cEdqsIeZhrMNqb/ipaEZ068rf+Y7tdlupS8HKEVhCWC5Zq/XsQfPIdBGpb4NGeE
+	w7z8ZYBF/WBCA1VXgUPduKMni5aVwLJ96iBBhLVgmsAzwuVLNxIlX2LcEn8n26f3LTj0ido3/By
+	PQhJaLJWvSHrXpSg9m+tFP6HbPsohJP2dOrCXrJpPe3ttnfm+WORI6iuNg+DJWVjVuawtXujyld
+	F3rUZ32CbHcbWFf2W0nBUrcA10OMY0diYl5hgGvO6XezoOrUghLYUUibBHQFuaxX2CSUDYwp+Gf
+	O0HlZrEMevFtB6yen1DRBZzu/lYiPTLh1FANaaGHYR4fr+5Y8ymNr8UKg5R9pCOYpxlQignnPIH
+	yQgBMagchVbQIt8Gmdh5lZP7tsLFyPYBqaesPlvn+nX3q86HO9AE53Fz3U90M=
+X-Google-Smtp-Source: AGHT+IG8WEMgflsND+5AmBeFxzQTcqL/T08P5hnlVq90L3tdTnALjw3mEYnO3w9FtfRAZWoL1HpF8A==
+X-Received: by 2002:a17:90b:50c7:b0:327:53f0:6368 with SMTP id 98e67ed59e1d1-33fd3a61ad3mr335524a91.2.1761253046760;
+        Thu, 23 Oct 2025 13:57:26 -0700 (PDT)
+Received: from google.com (80.88.82.34.bc.googleusercontent.com. [34.82.88.80])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2090eff6sm3795056a91.2.2025.10.23.13.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 13:57:26 -0700 (PDT)
+Date: Thu, 23 Oct 2025 20:57:22 +0000
+From: William McVicker <willmcvicker@google.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Hosung Kim <hosung0.kim@samsung.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	John Stultz <jstultz@google.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/7] Add module support for Arm64 Exynos MCT driver
+Message-ID: <aPqWsjUCmplMda_S@google.com>
+References: <20251023205257.2029526-1-willmcvicker@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251023205257.2029526-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
-Message-ID: <20251023205257.2029526-8-willmcvicker@google.com>
-Subject: [PATCH v5 7/7] arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
-From: Will McVicker <willmcvicker@google.com>
-To: Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Hosung Kim <hosung0.kim@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, Ingo Molnar <mingo@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Youngmin Nam <youngmin.nam@samsung.com>
-Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, John Stultz <jstultz@google.com>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023205257.2029526-1-willmcvicker@google.com>
 
-Since the Exynos MCT driver can be built as a module for some Arm64 SoCs
-like gs101, drop force-selecting it as a built-in driver by ARCH_EXYNOS
-and instead depend on `default y if ARCH_EXYNOS` to select it
-automatically. This allows platforms like Android to build the driver as
-a module if desired.
+Sorry, I missed the "v5" prefix for the patches in the first v5 series. Please
+ignore this cover letter and refer to the updated series here:
 
-Signed-off-by: Will McVicker <willmcvicker@google.com>
-Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
----
- arch/arm64/Kconfig.platforms | 1 -
- 1 file changed, 1 deletion(-)
+  https://lore.kernel.org/all/20251023205257.2029526-1-willmcvicker@google.com/
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 13173795c43d..fc6026c368ca 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -128,7 +128,6 @@ config ARCH_CIX
- config ARCH_EXYNOS
- 	bool "Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
--	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select PINCTRL
--- 
-2.51.1.821.gb6fe4d2222-goog
-
+Regards,
+Will
