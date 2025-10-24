@@ -1,177 +1,122 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918AB30EF7A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 11:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D999F2C0290
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 12:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761306046; cv=none; b=jUioQ14uN7gbxjQi69z9jZoPweU5PP85BmkTj57dXHPjxTKOayuV2XUhnu4YinqpeMkxiAyvgcARC6sSzAvr5kixbzOjMowfRYfzjo0K74BmVAa5PKPjJhumgi+gvbrAg28J5E4gm5CcSX5EkXc8hZswI7RqVVMHe0dQck8SJUk=
+	t=1761307693; cv=none; b=WOLC9n5wf6FlXh48otI2nogk/Ckei3BI2tUkcvAG0nn9kXWD0KLVt232l+pIl2nwWCMu5KCZTdwt+uhm6EFxC8MSN2rY9uIS7ljuziqbLiikOFvQx6vvy8k72Avp4tm7bzTtcs3Adh0+6uezHqWeqqpel4Z8x/mJpBba/F2pyOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761306046; c=relaxed/simple;
-	bh=TBycVuEsoNnS8u/NOeJHPnKmqWfftrX+OE33WfKoKEE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=NgczqR+3NGUhVygCrW1ml9O7pbPK/lZ7sdSJUNDXCwUjpxqQOewRbNwEP2G5Km3/KPfRkIZPKfK3fz/BDeYWulw+95Kqwewgid+TNu0LCP9rhPFc+/DUh4D47jWeGAxdVynmLqLwp+Gs5iWTDq4zex9kqCJkciNUaI1ZWu7qAf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A7ghF2Y2; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1761307693; c=relaxed/simple;
+	bh=COjWgkw9dDrdv/qXOqDicnzuNLFa/NRxYwpYvY/xWlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dDWmSQidLgG2U+5EqQu73N3ZoUevuZVQ1nh4vua8xhbWjr0sycVw4oxpW86O1ktpJGVrvk4UOLo4kQ6JluZy/vJmQxamGfyU3ILA4jeiFo96z2VVcGJNSI74IFQj9uDrMffAwCuM/PPYogRC4sG78zlhxZAUb2y55sTEGn6C97w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x3B++aHZ; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A7ghF2Y2"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251024114042epoutp044343db67502fd171843faa27ac72e01a~xaoOpwDF01180111801epoutp04X
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 11:40:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251024114042epoutp044343db67502fd171843faa27ac72e01a~xaoOpwDF01180111801epoutp04X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761306043;
-	bh=jIcbVnj3waROYb5DR8qb9eF/AvAmo/ZNkBO/tKnnrh0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A7ghF2Y2lDZy+CEIXo5HiZZd0IzeJwD85Nx2wyEuh6O38C/ZT5SEyecO6s4uYJEFE
-	 swzQwDSMM/Fr4nHXItkFQb/Vv/3ci2xYfhd99n3VYIx17XwQLNwF7XAKoCeoJ/PqGH
-	 ZoyPqU8cV81vpRlpcDlhUGO/a7QlWoVKjpaQrVPI=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251024114042epcas5p229e91b907fedbafd8d86b757a29a6321~xaoOKzgdj0371803718epcas5p2H;
-	Fri, 24 Oct 2025 11:40:42 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ctLZ15319z6B9m4; Fri, 24 Oct
-	2025 11:40:41 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce~xaoMhI6Sw1719017190epcas5p3s;
-	Fri, 24 Oct 2025 11:40:40 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251024114030epsmtip1b81fba1ba23f43edafb902c806aa3a1a~xaoC5qBsj0323903239epsmtip1Q;
-	Fri, 24 Oct 2025 11:40:30 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
-	muhammed.ali@samsung.com, selvarasu.g@samsung.com, pritam.sutar@samsung.com
-Subject: [PATCH 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB nodes
-Date: Fri, 24 Oct 2025 17:18:45 +0530
-Message-Id: <20251024114845.2395166-4-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251024114845.2395166-1-pritam.sutar@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x3B++aHZ"
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-651d30a5ba1so515865eaf.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 05:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761307691; x=1761912491; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=COjWgkw9dDrdv/qXOqDicnzuNLFa/NRxYwpYvY/xWlc=;
+        b=x3B++aHZuzDU+UsqYFGGrFui3YK/ujxY/mx7kALgNYZmBFJwGOGkiBJD3msQH/KOsn
+         6jbr+Vr6b0sB1/bsRleGBz4ngW5gO5HzBn7JbCPqPPFPBSjprqQjAKYlKkGXnbPQbumc
+         hfcJeSK0x1ZgPu/a5b0i/I4wQyZepPuO7y80Tfx3ruI4AHcCid8UlfF6hiSzuJFawXen
+         FMkLMO5HMCov1VwhzOR229G2uxqp8Q5LPI9OTU05Ac3tUQ79e0VQYBy0o/HaVoQQnaZP
+         i9RNy1uWCJ5o+ujHBxIxX1W6mc0pbBXQ6ifKI5OKjHiscZutWzY21H9IKNGb13lx2KtA
+         RxuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761307691; x=1761912491;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=COjWgkw9dDrdv/qXOqDicnzuNLFa/NRxYwpYvY/xWlc=;
+        b=WrSpz8AlshxTiMVHHJDKomp2EtY96Jrh+SleY+5nhUdy2cbYztvJIUjwpBWiKzYwtD
+         BCGE/YeKOPqXt7Iax1/6YgjG6mvZB8X2Pg+0/KPueW+577ZEZqMhjHQOTPga6/Up/qQJ
+         z9HfqNl7R76+0WJctYerDA6R6g9UByCzExKFDdJ7J23pYuktZSbhQ4Z39On4pkgOYOga
+         cClWhGSkDIKDIxFYHmHLqRnv8vn6ODWbbLi8cA7+R6C31R0FGVqVUR+6MJ4hnd3Kfjeg
+         i7XONn1fvCGZkvmEvHsXYeYcDqW5o0BKP+pKyDer9ObeCmF2PCWpKAZiQqxlUrMzDRVm
+         fKJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnTLw8R8FT2y3seON8nPR2G7DdzKTe5/u7hP1Yvmuomd41ZJNp5TMW+G54HKPWbnJgQhDPZbT/qnG2qYQ4EhwvPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgsa+24qTNUHhj60deHx1xyv4HacOFx1y1qQbNv8i9NgarNy4M
+	if92xeUfuVggSPQ4eXeHAofg3JFf0sVLDHhA5aLcGuD6mnEaV/dATKVvvpePTpTUZ2q2vzQhx+J
+	HxErPnseVOFJJ0gHG/KG04EL98c/UnX7geXEY5Grr1g==
+X-Gm-Gg: ASbGnct8fIc8o9wHev2Jd5TOvOcjGm7LUvZndzqGz1+YsEW6/qEnAcvpxQBA3zHdL8l
+	2w3QlynPb801rpqdQoSIcLEvY5pB9041URuIBBXE4H4Af9c4/YY/9SLIbJgPgfJmKMza95WmJfK
+	IHyYKjuk8IBIKpgFFVgJqF5HPSknDenwim/50+82gNhLI4snHjAPkAaiNtBkX29P78EqJVPOldV
+	PIQZzcLiNBtUNXmaXkvvwXxXpJ6at6OXRLHQwJz0BhFGrO2FObQCs1L6Gf/H+fWwlCjqg1e
+X-Google-Smtp-Source: AGHT+IFK3AnKwDQRprltuo5XmV2qevB0nUvb+or9PjdKZzh/743jqc+V2+ARd8+ZQ7WpzNC3YOgS1joB5oC1GEn+TyE=
+X-Received: by 2002:a05:6871:6907:b0:37a:4e25:be38 with SMTP id
+ 586e51a60fabf-3c98d0ae92amr11006141fac.24.1761307690791; Fri, 24 Oct 2025
+ 05:08:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce
-References: <20251024114845.2395166-1-pritam.sutar@samsung.com>
-	<CGME20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce@epcas5p3.samsung.com>
+References: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
+ <20251017161334.1295955-6-ivo.ivanov.ivanov1@gmail.com> <20251022-savvy-sly-auk-a60073@kuoka>
+In-Reply-To: <20251022-savvy-sly-auk-a60073@kuoka>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 24 Oct 2025 13:07:59 +0100
+X-Gm-Features: AS18NWDM7YGw9UM3N9Wo3yJyRSbUnDcW25LmVLX4EpOUlRGSSHFV5er9HRrrlAA
+Message-ID: <CADrjBPpXStuuvbaPZ+knb8fiGQja_hdX42PKfj=bTNCdXPCN9w@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] clk: samsung: introduce exynos8890 clock driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable USB PHY and DWC3 USB controllers' nodes.
+Hi Ivaylo & Krzysztof,
 
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
----
- .../boot/dts/exynos/exynosautov920-sadk.dts   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+On Wed, 22 Oct 2025 at 08:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Fri, Oct 17, 2025 at 07:13:33PM +0300, Ivaylo Ivanov wrote:
+> > Introduce a clocks management driver for exynos8890, providing clocks
+> > for the peripherals of that SoC.
+> >
+> > As exynos8890 is the first exynos SoC to feature Hardware Auto Clock
+> > Gating (HWACG), it differs from newer SoCs. Q-channel and Q-state bits
+> > are separate registers, unlike the CLK_CON_GAT_* ones that feature HWACG
+> > bits in the same register that controls manual gating. Hence, don't use
+> > the clk-exynos-arm64 helper, but implement logic that enforces manual
+> > gating.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-index f90f7704597c..5896dd69334a 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-@@ -160,15 +160,20 @@ &xtcxo {
- &usbdrd31_ssphy {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd31_hsphy {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd31_dwc3 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "super-speed-plus";
- 	usb-phy = <&usb_phy0>;
- };
-@@ -176,15 +181,20 @@ &usbdrd31_dwc3 {
- &usbdrd31 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_phy0 {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_dwc3_0 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "high-speed";
- 	usb-phy = <&usb_phy1>;
- };
-@@ -192,15 +202,20 @@ &usbdrd20_dwc3_0 {
- &usbdrd20_0 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_phy1 {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_dwc3_1 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "high-speed";
- 	usb-phy = <&usb_phy2>;
- };
-@@ -208,15 +223,20 @@ &usbdrd20_dwc3_1 {
- &usbdrd20_1 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_phy2 {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_dwc3_2 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "high-speed";
- 	usb-phy = <&usb_phy3>;
- };
-@@ -224,4 +244,5 @@ &usbdrd20_dwc3_2 {
- &usbdrd20_2 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
--- 
-2.34.1
+For sure it isn't the only upstream SoC with HWACG, gs101 and e850 and
+probably lots of Exynos SoCs have it. Whether it is the "first" in
+terms of release date of the SoC I don't know (and I'm not sure how
+anyone who isn't Samsung would know), unless there is some comment in
+downstream code to that effect). Your CMU registers do look like a
+different layout though.
 
+Just fyi gs101 also has Q-Channel registers that contain HWACG Enable
+bits. The reset state of all these bits on gs101 (both for QCH_CON_XXX
+registers, QCH_EN bit and HWACG bit in CLK_CON_GAT_* regs is off). In
+my case I suspect the bootloader doesn't initialize any of them
+because of the CMUs "global enable override" bits in the CMU_OPTION
+register (which is initialized by the bootloader).
+
+>
+> Please CC @Peter Griffin in future versions.
+>
+> How much of this can be shared between this and GS101?
+> https://lore.kernel.org/all/20251013-automatic-clocks-v1-0-72851ee00300@linaro.org/
+>
+
+It seems from the commit description Ivaylo is still wanting to put
+all the gates into manual mode, so is only initializing these
+registers to ensure HWACG is disabled. Happy to help review it though.
+
+Thanks,
+
+Peter.
