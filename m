@@ -1,279 +1,263 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E682FE041
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 10:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F6C3115A2
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 11:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302347; cv=none; b=hPZM+vsGvHrlKcGSSRk3p/iw4FfMr+ZFnk823yQnUYZv3RJmokRRDEu9dRC8xn09a1IYPs/Oq5+YazeR0p6ITPBq1bUn5tPg7oXOJJmyGnBX8eUkPHQ+OJyqvN59UA7W8+r0XgEXXv5QEOVwhZGePcWKbHd86j2m7qSws8mQ16Q=
+	t=1761304450; cv=none; b=dKulpTL4Dl/Npgsw0RSJj7C8lpCN7vD5P98A92862nKBnLoZGrdPk+MF2mpWO83c573CixVODowiuwLstv+XWNtX84Q7sSpJz7QHBxEh6VK2abgUHUQ6iIH4vLR/f7ezGUtRZwbfIdjzYrw79kjivXhfldPkfc/oo2fowTsBt8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302347; c=relaxed/simple;
-	bh=ffnzHTbM2tnQfXrbkSdSzIXQ/9kj/ptECGfxoD9sqUM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Juwc1ixGyQkYCNroWzXvlk8U3WZ/dQZdLYslO5DX//0QWMG8G3Nh7DBh6mPUckFPk2+7LPa5GsiSr77iaBhhRxzY87oIaUkVP0/e5BxNXyjwjzWJTndn8j/JhlRxhBaBK6YwTnWR63wHGkvZ3KI4YGF3/G3z1bWdMUOpnQ3DKvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=o8mXKmRT; arc=none smtp.client-ip=203.254.224.25
+	s=arc-20240116; t=1761304450; c=relaxed/simple;
+	bh=Qwh8RSKZnBFo5ZcGcPeuFd5FBKO8pj2EieDkvz3YQsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=IGC37ICnpQgkccWQpduiIU9kwJJqHWWT9+hs2/QToBwkAuxdlnb7Vxzr4MJpalAbsSk2R+NfCz/S3xDAMIuCNWx+NM5NkNj5kd5zLiAAZKMiPZKohqasvpBMcgMaOjTgaTlPN3TSfs52FUSve3gzMk8ldbe18LsngQKpWo5aHGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FpWTwSc+; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="o8mXKmRT"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251024103902epoutp0259d4d6220ba6377281ffde2ac9b719cb~xZyYT148A2677626776epoutp02n
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 10:39:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251024103902epoutp0259d4d6220ba6377281ffde2ac9b719cb~xZyYT148A2677626776epoutp02n
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FpWTwSc+"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251024111405euoutp0224b87c90017cbc6aff4602aaeee806b8~xaQ_6d2Wa1495014950euoutp02m
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 11:14:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251024111405euoutp0224b87c90017cbc6aff4602aaeee806b8~xaQ_6d2Wa1495014950euoutp02m
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761302342;
-	bh=dl+b+dAk76gbfMu7WsZhTUofWjMUuUVuug8qmGt/SgQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=o8mXKmRTF4GpGc+Y7y/mMG2e4F1PCJgR0h7n8wKARyOFtPYc2dRTkSOgZfCO6Dh25
-	 xhqPdurCb3a0/f+CUB0FdL0e2T+LNvRxAXKArp18lCHuPiT8Mcle1QJ0aDuxhTwooI
-	 TNUNQmfpgWf5PTcN1Zc02sWX+PU4ZXwXSu/7YAR0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251024103901epcas5p2a433be2f9b5a01c5d29e22cc1f251194~xZyXic9CG0277602776epcas5p2i;
-	Fri, 24 Oct 2025 10:39:01 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ctKBr53G0z6B9m6; Fri, 24 Oct
-	2025 10:39:00 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251024103859epcas5p49b77262f51a3ffad8c3f4fc2032d156c~xZyVe6IAy1394013940epcas5p4i;
-	Fri, 24 Oct 2025 10:38:59 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251024103855epsmtip1f303eee714eb0c38a99ca9281c48225a~xZyR-qtpQ3110431104epsmtip1I;
-	Fri, 24 Oct 2025 10:38:55 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <johan@kernel.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>
-Cc: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <20251010070912.3758334-1-pritam.sutar@samsung.com>
-Subject: RE: [PATCH v9 0/6] initial usbdrd phy support for Exynosautov920
- soc
-Date: Fri, 24 Oct 2025 16:08:51 +0530
-Message-ID: <000701dc44d2$67f0d690$37d283b0$@samsung.com>
+	s=mail20170921; t=1761304445;
+	bh=1Hi8u1lp50SMUMXxbxpf7z2cRbzcET+EFm9wOdxACGU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=FpWTwSc+OlCCgF/qXiFqllM93OsVrylTTvbWD4aR4LFiyJczfHC0cfcSJfKDv0I2/
+	 +joZH6DmtgwjHfkptyxe7KemDxT1xRUwDH9ufp/atUu/0xyAj8OS5Ss+/j+DgTOSml
+	 s4tNC0eOaoXLpgnrSC1ChhUCLxwJGyyGJOCDYbZY=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251024111404eucas1p279196bfb70d895089480dae2843fe1ac~xaQ_Pd0kE1224212242eucas1p2U;
+	Fri, 24 Oct 2025 11:14:04 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251024111402eusmtip2c0c489842fb75ca365e7aa96f2a89b32~xaQ8GsPF82766527665eusmtip2A;
+	Fri, 24 Oct 2025 11:14:02 +0000 (GMT)
+Message-ID: <40d3f3c9-7526-440b-9dbd-7ead22c8562a@samsung.com>
+Date: Fri, 24 Oct 2025 13:14:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQF7oV+n5BMArQ7/Kr7NJhFkLim/CAId6djPtYFw0bA=
-Content-Language: en-in
-X-CMS-MailID: 20251024103859epcas5p49b77262f51a3ffad8c3f4fc2032d156c
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v5 6/7] clocksource/drivers/exynos_mct: Add module
+ support
+To: Will McVicker <willmcvicker@google.com>, Russell King
+	<linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
+	Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
+	Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>, Ingo Molnar <mingo@kernel.org>, Peter
+	Griffin <peter.griffin@linaro.org>, Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, John Stultz <jstultz@google.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+	<andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251023205257.2029526-7-willmcvicker@google.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251024111404eucas1p279196bfb70d895089480dae2843fe1ac
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251010070037epcas5p312b0463a6a757e9b0c03aed6adc48595
-References: <CGME20251010070037epcas5p312b0463a6a757e9b0c03aed6adc48595@epcas5p3.samsung.com>
-	<20251010070912.3758334-1-pritam.sutar@samsung.com>
+X-RootMTR: 20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab
+X-EPHeader: CA
+X-CMS-RootMailID: 20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab
+References: <20251023205257.2029526-1-willmcvicker@google.com>
+	<CGME20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab@eucas1p2.samsung.com>
+	<20251023205257.2029526-7-willmcvicker@google.com>
 
-Hi Vinod,=20
+On 23.10.2025 22:52, Will McVicker wrote:
+> From: Donghoon Yu <hoony.yu@samsung.com>
+>
+> On Arm64 platforms the Exynos MCT driver can be built as a module. On
+> boot (and even after boot) the arch_timer is used as the clocksource and
+> tick timer. Once the MCT driver is loaded, it can be used as the wakeup
+> source for the arch_timer.
+>
+> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> [original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
+> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
+> Tested-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
+> ---
+>   drivers/clocksource/Kconfig      |  3 +-
+>   drivers/clocksource/exynos_mct.c | 56 +++++++++++++++++++++++++++-----
+>   2 files changed, 49 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index ffcd23668763..9450cfaf982f 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -451,7 +451,8 @@ config ATMEL_TCB_CLKSRC
+>   	  Support for Timer Counter Blocks on Atmel SoCs.
+>   
+>   config CLKSRC_EXYNOS_MCT
+> -	bool "Exynos multi core timer driver" if COMPILE_TEST
+> +	tristate "Exynos multi core timer driver" if ARM64
+> +	default y if ARCH_EXYNOS || COMPILE_TEST
+>   	depends on ARM || ARM64
+>   	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
+>   	help
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index fece6bbc190e..a87caf3928ef 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -15,9 +15,11 @@
+>   #include <linux/cpu.h>
+>   #include <linux/delay.h>
+>   #include <linux/percpu.h>
+> +#include <linux/module.h>
+>   #include <linux/of.h>
+>   #include <linux/of_irq.h>
+>   #include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+>   #include <linux/clocksource.h>
+>   #include <linux/sched_clock.h>
+>   
+> @@ -217,6 +219,7 @@ static struct clocksource mct_frc = {
+>   	.mask		= CLOCKSOURCE_MASK(32),
+>   	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+>   	.resume		= exynos4_frc_resume,
+> +	.owner		= THIS_MODULE,
+>   };
+>   
+>   /*
+> @@ -241,7 +244,7 @@ static cycles_t exynos4_read_current_timer(void)
+>   }
+>   #endif
+>   
+> -static int __init exynos4_clocksource_init(bool frc_shared)
+> +static int exynos4_clocksource_init(bool frc_shared)
+>   {
+>   	/*
+>   	 * When the frc is shared, the main processor should have already
+> @@ -336,6 +339,7 @@ static struct clock_event_device mct_comp_device = {
+>   	.set_state_oneshot	= mct_set_state_shutdown,
+>   	.set_state_oneshot_stopped = mct_set_state_shutdown,
+>   	.tick_resume		= mct_set_state_shutdown,
+> +	.owner			= THIS_MODULE,
+>   };
+>   
+>   static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
+> @@ -476,6 +480,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+>   	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
+>   			CLOCK_EVT_FEAT_PERCPU;
+>   	evt->rating = MCT_CLKEVENTS_RATING;
+> +	evt->owner = THIS_MODULE;
+>   
+>   	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+>   
+> @@ -511,7 +516,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+>   	return 0;
+>   }
+>   
+> -static int __init exynos4_timer_resources(struct device_node *np)
+> +static int exynos4_timer_resources(struct device_node *np)
+>   {
+>   	struct clk *mct_clk, *tick_clk;
+>   
+> @@ -539,7 +544,7 @@ static int __init exynos4_timer_resources(struct device_node *np)
+>    * @local_idx: array mapping CPU numbers to local timer indices
+>    * @nr_local: size of @local_idx array
+>    */
+> -static int __init exynos4_timer_interrupts(struct device_node *np,
+> +static int exynos4_timer_interrupts(struct device_node *np,
+>   					   unsigned int int_type,
+>   					   const u32 *local_idx,
+>   					   size_t nr_local)
+> @@ -653,7 +658,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
+>   	return err;
+>   }
+>   
+> -static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+> +static int mct_init_dt(struct device_node *np, unsigned int int_type)
+>   {
+>   	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
+>   	u32 local_idx[MCT_NR_LOCAL] = {0};
+> @@ -701,15 +706,48 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>   	return exynos4_clockevent_init();
+>   }
+>   
+> -
+> -static int __init mct_init_spi(struct device_node *np)
+> +static int mct_init_spi(struct device_node *np)
+>   {
+>   	return mct_init_dt(np, MCT_INT_SPI);
+>   }
+>   
+> -static int __init mct_init_ppi(struct device_node *np)
+> +static int mct_init_ppi(struct device_node *np)
+>   {
+>   	return mct_init_dt(np, MCT_INT_PPI);
+>   }
+> -TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+> -TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
+> +
+> +static int exynos4_mct_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	int (*mct_init)(struct device_node *np);
+> +
+> +	mct_init = of_device_get_match_data(dev);
+> +	if (!mct_init)
+> +		return -EINVAL;
+> +
+> +	return mct_init(dev->of_node);
+> +}
+> +
+> +static const struct of_device_id exynos4_mct_match_table[] = {
+> +	{ .compatible = "samsung,exynos4210-mct", .data = &mct_init_spi, },
+> +	{ .compatible = "samsung,exynos4412-mct", .data = &mct_init_ppi, },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
+> +
+> +static struct platform_driver exynos4_mct_driver = {
+> +	.probe		= exynos4_mct_probe,
+> +	.driver		= {
+> +		.name	= "exynos-mct",
+> +		.of_match_table = exynos4_mct_match_table,
+> +	},
+> +};
+> +
+> +static __init int exynos_mct_init(void)
+> +{
+> +  return platform_driver_register(&exynos4_mct_driver);
+> +}
+> +module_init(exynos_mct_init);
+> +
+> +MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
+> +MODULE_LICENSE("GPL");
 
-Gentle reminder. Can you please take this to your tree=20
-and let me know if any comments?=20
+Sorry, but this still won't work on legacy ARM 32bit systems with MCT as 
+the only clocksource, which needs a driver available very early (that's 
+why it used TIMER_OF_DECLAREmacro). You need to make it conditional 
+under CONFIG_ARM:
 
-> -----Original Message-----
-> From: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> Sent: 10 October 2025 12:39 PM
-> To: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> andre.draszik=40linaro.org; peter.griffin=40linaro.org; kauschluss=40disr=
-oot.org;
-> johan=40kernel.org; ivo.ivanov.ivanov1=40gmail.com;
-> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com;
-> pritam.sutar=40samsung.com
-> Cc: linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: =5BPATCH v9 0/6=5D initial usbdrd phy support for Exynosautov920=
- soc
->=20
-> This SoC has a single USB 3.1 DRD combo phy and three USB2.0 only DRD phy
-> controllers as mentined below
->=20
->   * Combo phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
->     compatible to the USB3.0 SS(5Gbps). 'Add-on USB2.0' phy is added
->     to support USB2.0 HS(480Mbps), FS(12Mbps) and LS(1.5Mbps) data rates.
->     These two phys are combined to form a combo phy as mentioned below.
->=20
->=20
->    USB30DRD_0 port
->=20
->  +------------------------------------------------------------+
->  =7C                                                            =7C
->  =7C                (combo) USB phy controller                  =7C
->  =7C      +----------------------------------------------+      =7C
->  =7C      =7C                  USB HSPHY                   =7C      =7C
->  =7C      =7C  (samsung,exynosautov920-usbdrd-combo-hsphy) =7C      =7C
->  =7C      +----------------------------------------------+      =7C
->  =7C                                                            =7C
->  =7C    +--------------------------------------------------+    =7C
->  =7C    =7C                   USB SSPHY                      =7C    =7C
->  =7C    =7C   (samsung,exynosautov920-usb31drd-combo-ssphy)  =7C    =7C
->  =7C    +--------------------------------------------------+-   =7C
->  =7C                                                            =7C
->  +------------------------------------------------------------+
->  =7C                                                            =7C
->  =7C                     USBDRD30 Link                          =7C
->  =7C                       Controller                           =7C
->  +------------------------------------------------------------+
->=20
->   * USB2.0 phy supports only UTMI+ interface. USB2.0DRD phy
->     is very similar to the existing Exynos850 support in this driver.
->=20
->     USB20DRD_0/1/2 ports
->=20
->       +---------------------------------------------------+
->       =7C                                                   =7C
->       =7C                USB PHY controller                 =7C
->       =7C    +-----------------------------------------+    =7C
->       =7C    =7C              USB HSPHY                  =7C    =7C
->       =7C    =7C  (samsung,exynosautov920-usbdrd-phy)    =7C    =7C
->       =7C    +-----------------------------------------+    =7C
->       =7C                                                   =7C
->       +---------------------------------------------------+
->       =7C                                                   =7C
->       =7C             USBDRD20_* Link                       =7C
->       =7C                Controller                         =7C
->       =7C                                                   =7C
->       +---------------------------------------------------+
->=20
-> The =22USB20 phy output isolation=22 is shared across the USB20 phys.
-> We have to bypass isolation when any one of the USBs is configured and en=
-able
-> it when all are turned off. The =22USB31 phy isolation=22
-> is seperate for USB31 phy.
->=20
-> This patchset only supports device mode and same is verified with as NCM
-> device
->=20
-> changelog
-> ----------
-> Changes in v9:
-> - added RB tags those were given in v7 =5B1=5D and v8.
-> - updated commit message in patch no.1 by adding supplies'
->   names those are taken from phy User Manual =5B2=5D
->   link for v8: https://lore.kernel.org/linux-phy/20250903073827.3015662-1=
--
-> pritam.sutar=40samsung.com/
-> =5B1=5D: https://lore.kernel.org/linux-phy/20250824-mustang-of-glorious-
-> sufficiency-b55bf4=40kuoka/
-> =5B2=5D: https://lore.kernel.org/linux-phy/02ef5180-ad56-45f0-a56f-
-> 87f442bf6793=40kernel.org/
->=20
-> Changes in v8:
-> - modified supplies' names in schema and driver.
-> - Since supplies' names are changed, modified patch no 5. to
->   fix warnings in dtbs_check dt_binding_check.
-> - updated commit message for patch no. 1, 3 and 5 to describe
->   hardware details.
->   link for v7: https://lore.kernel.org/linux-phy/20250822093845.1179395-1=
--
-> pritam.sutar=40samsung.com/
->=20
-> Changes in v7:
-> - added fixes for driver build warnings
->   link for v6: https://lore.kernel.org/linux-phy/20250821073703.2498302-1=
--
-> pritam.sutar=40samsung.com/
->=20
-> Changes in v6:
-> - added else part for new supplies in schemas those are only
->   supported for exynosautov920.
-> - addressed comments for driver given in v5.
->   link for v5: https://lore.kernel.org/linux-phy/20250805115216.3798121-1=
--
-> pritam.sutar=40samsung.com/
->=20
-> Changes in v5:
->=20
-> - addressed comments from v4 patchset.
->   - patch (1/6)
->     - DTS style is corrected and added required supplies in code/schema.
->     - schema block added to resolve below failure during 'dtbs_check'.
->       Unevaluated properties are not allowed ('dvdd075-usb-supply', 'vdd1=
-8-
-> usb20-supply', 'vdd33-usb20-supply' were unexpected.
->   - patch (2/6)
->     - removed usage_counter(take this later in subsequent patch-sets)
->   - patch (3/6)
->     - There are 3 types of the phys in this SoC.
->       - one is simmilar with exynos850 as mentioned in patch no.1.
->       - second supports only USB3.1 SSP+ and denoted in patch no 5
->       - third supports only USB2.0 HS as in patch3.
->     - hs phy in combo phy is =22NOT=22 same as phy. (in patch no. 1)
->     - These three phys(usbdrd-phy, combo-hsphy, combo-ssphy) are totally
->       deferent, =22NOT=22 same, hence added three compatible for three ph=
-ys.
->   - patch (5/6)
->     - Since there are two phys in combo phy, explaination is given
->       in each patch.
->   link for v4: https://lore.kernel.org/linux-phy/20250701120706.2219355-1=
--
-> pritam.sutar=40samsung.com/
->=20
-> Changes in v4:
-> - addressed comments from v3 patchset
->   - removed dts related patches, to be posted in new patchset.
->   - added regulator, pmu and power sequences.
->   - phy isol is shared across USBs, added usage counter to bypass or
->     enable phy isolation.
->   - modified schemas with hs and combo phy compatible names
->     (used =22combo=22 to denote combo phy) and regulators
-> - modified code to work with binding and unbinding devices/drivers
-> - added =22Reviewed-by=22 tag.
->   link for v3: https://lore.kernel.org/linux-phy/20250613055613.866909-1-
-> pritam.sutar=40samsung.com/
->=20
-> Changes in v3:
-> - Updated dt-bindings for USB2.0 only.
-> - Added dt-bindings for combo phy.
-> - Added implementation for combo phy (SS and HS phy).
-> - Added added DTS nodes for all the phys
->   link for v2: https://lore.kernel.org/linux-phy/20250516102650.2144487-1=
--
-> pritam.sutar=40samsung.com/
->=20
-> Changes in v2:
-> - Used standard GENMASK() and FIELD_GET() to get the major version
->   from controller version register.
->   link for v1: https://lore.kernel.org/linux-phy/20250514134813.380807-1-
-> pritam.sutar=40samsung.com/
->=20
-> Pritam Manohar Sutar (6):
->   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 HS phy
->     compatible
->   phy: exynos5-usbdrd: support HS phy for ExynosAutov920
->   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo hsphy
->   phy: exynos5-usbdrd: support HS combo phy for ExynosAutov920
->   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo ssphy
->   phy: exynos5-usbdrd: support SS combo phy for ExynosAutov920
->=20
->  .../bindings/phy/samsung,usb3-drd-phy.yaml    =7C  48 ++
->  drivers/phy/samsung/phy-exynos5-usbdrd.c      =7C 651 ++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h   =7C   3 +
->  3 files changed, 702 insertions(+)
->=20
-> --
-> 2.34.1
+#ifdef CONFIG_ARM
 
-Thank you,
+TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
 
-Regards,
-Pritam
+#else
+
+... (module-based intialization).
+
+#endif
+
+The latter case might skip the legacy exynos4412-style case, as all MCT 
+variants used on ARM 64bit systems are exynos4210 compatible.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
