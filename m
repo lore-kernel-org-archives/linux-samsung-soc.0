@@ -1,274 +1,174 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACB2332EC4
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 16:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0F8340279
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 17:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321725; cv=none; b=OKgNNUfTl5bEuPe2KmGyLfofBolegJ7bYzuCG3k76bWLrDU/E//wEryoGAwXR3dv3QVk0xtpjhY29snow7+lddD/IufLZsiwsAq4pXMtO35WCTeREwKi3OrXSArAUursr1zQyNRi9YKJ79lea9dhCqmwVoyOx7CoDWyWcdW2l5Q=
+	t=1761328268; cv=none; b=gqChpCd3MH9XrHZjFkmdN3Y4clBRFQcnvsqsAUnnyQB6vsLuLsAnChJfCRGKhz+1OpVI9J90qf2ibZXpe7mXk0uKlxhsiMygR/45dgJQ+m+lT7y32XXtNQDLHAND3A//ZN2HmI76lXmcpDj9oW+GQp/yBq6X0yK5ih2iBrhXq/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321725; c=relaxed/simple;
-	bh=1ug7A3mOZrGeWd/Rzt+yJHRcpIvwTYP5BB9SnW7CpnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Ykh2KIYZXHq3WQZia24lYX0Y2+4+Gj6p2E1aRhiWBSpWUnzwBHQHXT0KlFClN72bQmBrJmJDFZB97NZTwA4gFGXpHKt7mMvuHK2e4fxRCoolder6BBdPscyBhqYAYdg39m+E861Y5gjVZ1PWcdbiMFmgp+s0XY94Wrz+RUvwil4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=V/mLSGd+; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1761328268; c=relaxed/simple;
+	bh=F6iAmNHD3Luf8UVaQkuxniLBvlzU+vxigo4O0hw+ZNM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cOLMjcivygD4cjI7ibO+zIUVAc8sBb7ng6XESD1G7Y0HSGPPRRyqlrzDpP1EhM8oHvIWPGUsuHuJwFHRUTAqpUxkEk34XZha+p91M50ZhTpmuBywxGa8Z4oB2W1/fVK/igVBKGoDDWvGOF0BIf/i6hu/G5FalukK0Cbf+JI+Zw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZSONfhXY; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="V/mLSGd+"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251024160155euoutp01dc9a28a918c5dbdcdb1d78b62f2b9764~xeMTH6gz12395023950euoutp01d
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 16:01:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251024160155euoutp01dc9a28a918c5dbdcdb1d78b62f2b9764~xeMTH6gz12395023950euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761321715;
-	bh=Z2YCwLGa2MhaukmLh5mLstroKMu1Oe9RmJGj54Raf4U=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=V/mLSGd+PNgYjzt8A8U4GzwRVcjLqZGhmZ3I7otCWaIKsf/ympw+J2E9+CZUg+Z2H
-	 n302pwdFA1NYz0fqMnzH7p2JW1HvlpeEvg/7Ut6E04D8buEGqmne87BSClR+urERtu
-	 l7qkn1xTBVkPG6xaRRMgccIzKCwjqAgoGBLWeP2I=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251024160155eucas1p22cf28a5bc04ac9ea6bd32260abf32112~xeMSctpLS0527105271eucas1p24;
-	Fri, 24 Oct 2025 16:01:55 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251024160153eusmtip2ce7463592396f996413bf3cd359e5ae4~xeMRY8Nyc1017610176eusmtip2B;
-	Fri, 24 Oct 2025 16:01:53 +0000 (GMT)
-Message-ID: <6fc8731e-6e8c-4c45-9b3b-509a1fb71a1a@samsung.com>
-Date: Fri, 24 Oct 2025 18:01:53 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZSONfhXY"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-475c9881821so15713945e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Oct 2025 10:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761328264; x=1761933064; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3BkkNIM05MRslMrtDcvAYAmE9IErpoiznLkYTr/hTV8=;
+        b=ZSONfhXYHFqvqScUu1ShPmS1hfFl1XSlDM5cPdqXbPbNht2WcxYgAQcwXrPFAKjULG
+         FNVwxTQojKRyzQXPANUdmWozolqapWp7dtaxLGBdlfTBx/SeV3pihy3VoBTOv9fJLULl
+         r2PG7H7l7ZgBmgk+7u6fdE7k0vQvKTW7Bs1LpjdWdIilFy3TQsaZPca0FaMw+KuNJlS3
+         3l2epEn+zPHvYgONQ2u4SlnzZ/wSMUt2kDS5KtGgseVuB1UnptVvePRkaXk9c/6IqQBR
+         QZoFrk1TcF3ur4neB/m9x+42YKsTmuugq2k6tbMJ4EpfG8zvEY+8e7f4s8chycqH672P
+         C7AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761328264; x=1761933064;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3BkkNIM05MRslMrtDcvAYAmE9IErpoiznLkYTr/hTV8=;
+        b=Be71TcvQqzGnCE/6ZJUvbSJPwynTkrucy9I7CQGTPvlaMEnY5Xz/xABWZvjxZRfPc4
+         4933QHgyaZGbTGHED6CCkPKGEojRjOvizTGXsXHblKnrSR5f7DbxNcKzd8N8MsLXtzJk
+         cf+ADz8TIx6au3Y2zaG6OwePrR94YL/dJLlEzd9+A5phT8PVtKtzcIbmKGVaF18veC7c
+         wDP5+YWlgsDL3IBHGibz7BzKAiZTZ/k9VbfPR9eHsiyfyjS2J73Q1GlUD6orZWfn5mZq
+         xT1znZJKkTAJSCjf6LJjLOcPGh6yethMQpaDkaoXwGoSM8Xq0jxjAAg3EXPcbKkjoCr7
+         ASVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdBWK5fnrDBl8ahZ8J82ZSMWli/fvyendgrUalH7jP04r8eZxe+oAk4yUj0lCQzrnJIOEsshhiB5HynDrN3UhL2g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy17me10zI5Cd07MyV/msi7hyHaARMlkKpxHVQ9k9Q2B1NV2pW
+	6PwQrmvlatU+8mAkLX+wWMFI9DFmYFm+5px7Zyv0YPcrIHciLsGb46UrNJC5EN6aZec=
+X-Gm-Gg: ASbGncuAPPJ6tQ0Hr4EU33+MHfujWNYQkrsNSyj32qeExR1vNQ3dEkOIDZfjRzIAsbl
+	fwERXEdURWADqDRB0L0QrocLMAcGui5/6iRpsGkTMc6Oix1UCPwNI2U/V7ri85o/W+96nJz/Sl2
+	aP5CQICf1nkvLzrk5mCgqueqTK8XYCQb1wFEO2VyzH2jwOBu35/TBT2aqLLQnWPgkU6eO7g9iwj
+	bmmeFI9fKJ9HN6gv7Cs7Xscq71om4S3nx4LU4eOMhnl22fYiajARWL4FFtme+ppyvk0aKk/shVp
+	HLkRENFkHLuZurmUsnfKyv7kE9V6wbglvnGLaleOwUsqbP912K6639s1dx6xuvXqX9fYyOnw/AC
+	/bN8b9VTQ63IA7QcMSFe3sFmWBv0cZvDPQ5lR0YsuMv1ETlmz/0ToQNas7p0WTeXZJ0nS7dbSaY
+	VmDGF+aMpI7e3YlA3KIL7pC2gbjgwPi9smL4oecMPuIG1ha8jRq5ynKd9z94ILt5s=
+X-Google-Smtp-Source: AGHT+IGuCTB2VzxXr4BdWdJgj04b2GPHh8io8QNAnLWecfk99iG6qqbQtTimEzngfZJQ+vUUG31i1Q==
+X-Received: by 2002:a05:6000:4706:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-4298f5671c2mr3093463f8f.19.1761328264273;
+        Fri, 24 Oct 2025 10:51:04 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e7622sm10321900f8f.8.2025.10.24.10.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 10:51:03 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v2 0/2] hwrng: exynos: enable GS101 TRNG support
+Date: Fri, 24 Oct 2025 17:50:59 +0000
+Message-Id: <20251024-gs101-trng-v2-0-c2bb81322da4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v5 6/7] clocksource/drivers/exynos_mct: Add module
- support
-To: William McVicker <willmcvicker@google.com>
-Cc: Russell King <linux@armlinux.org.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ingo
-	Molnar <mingo@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
-	Youngmin Nam <youngmin.nam@samsung.com>, Donghoon Yu <hoony.yu@samsung.com>,
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, John
-	Stultz <jstultz@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Conor Dooley
-	<conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <aPuhDFKINM9iXOKb@google.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251024160155eucas1p22cf28a5bc04ac9ea6bd32260abf32112
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab
-X-EPHeader: CA
-X-CMS-RootMailID: 20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab
-References: <20251023205257.2029526-1-willmcvicker@google.com>
-	<CGME20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab@eucas1p2.samsung.com>
-	<20251023205257.2029526-7-willmcvicker@google.com>
-	<40d3f3c9-7526-440b-9dbd-7ead22c8562a@samsung.com>
-	<aPuhDFKINM9iXOKb@google.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIS8+2gC/22MQQrCMBAAv1L2bCS7pKZ48h/SQ2zTdEES2ZSgl
+ Pzd2LPHGZjZIXthn+Ha7SC+cOYUG9Cpg2l1MXjFc2MgTT1qIhUyalSbxKB687DN4WDIQAte4hd
+ +H7P72HjlvCX5HO+CP/t3U1BpNQxoPc3WXZbp9uToJJ2TBBhrrV+rSZYNpQAAAA==
+X-Change-ID: 20251022-gs101-trng-54b710218424
+To: =?utf-8?q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+ Olivia Mackall <olivia@selenic.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org, 
+ willmcvicker@google.com, kernel-team@android.com, 
+ linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761328263; l=2560;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=F6iAmNHD3Luf8UVaQkuxniLBvlzU+vxigo4O0hw+ZNM=;
+ b=ouVjCdPSl7fPMeHYeiWolPcUlNg12vHEoXqNjHhaXd63O9uks3zaSartd8eLZeXLkrXwT5cCY
+ XNmjsPndu2xBZSBSz3ao97449DqyuDNw4HpVv7szgd7EV/5zBSkdi4i
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On 24.10.2025 17:53, William McVicker wrote:
-> On 10/24/2025, Marek Szyprowski wrote:
->> On 23.10.2025 22:52, Will McVicker wrote:
->>> From: Donghoon Yu <hoony.yu@samsung.com>
->>>
->>> On Arm64 platforms the Exynos MCT driver can be built as a module. On
->>> boot (and even after boot) the arch_timer is used as the clocksource and
->>> tick timer. Once the MCT driver is loaded, it can be used as the wakeup
->>> source for the arch_timer.
->>>
->>> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
->>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
->>> Signed-off-by: Will McVicker <willmcvicker@google.com>
->>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> [original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
->>> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
->>> Tested-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
->>> ---
->>>    drivers/clocksource/Kconfig      |  3 +-
->>>    drivers/clocksource/exynos_mct.c | 56 +++++++++++++++++++++++++++-----
->>>    2 files changed, 49 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->>> index ffcd23668763..9450cfaf982f 100644
->>> --- a/drivers/clocksource/Kconfig
->>> +++ b/drivers/clocksource/Kconfig
->>> @@ -451,7 +451,8 @@ config ATMEL_TCB_CLKSRC
->>>    	  Support for Timer Counter Blocks on Atmel SoCs.
->>>    
->>>    config CLKSRC_EXYNOS_MCT
->>> -	bool "Exynos multi core timer driver" if COMPILE_TEST
->>> +	tristate "Exynos multi core timer driver" if ARM64
->>> +	default y if ARCH_EXYNOS || COMPILE_TEST
->>>    	depends on ARM || ARM64
->>>    	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
->>>    	help
->>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
->>> index fece6bbc190e..a87caf3928ef 100644
->>> --- a/drivers/clocksource/exynos_mct.c
->>> +++ b/drivers/clocksource/exynos_mct.c
->>> @@ -15,9 +15,11 @@
->>>    #include <linux/cpu.h>
->>>    #include <linux/delay.h>
->>>    #include <linux/percpu.h>
->>> +#include <linux/module.h>
->>>    #include <linux/of.h>
->>>    #include <linux/of_irq.h>
->>>    #include <linux/of_address.h>
->>> +#include <linux/platform_device.h>
->>>    #include <linux/clocksource.h>
->>>    #include <linux/sched_clock.h>
->>>    
->>> @@ -217,6 +219,7 @@ static struct clocksource mct_frc = {
->>>    	.mask		= CLOCKSOURCE_MASK(32),
->>>    	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
->>>    	.resume		= exynos4_frc_resume,
->>> +	.owner		= THIS_MODULE,
->>>    };
->>>    
->>>    /*
->>> @@ -241,7 +244,7 @@ static cycles_t exynos4_read_current_timer(void)
->>>    }
->>>    #endif
->>>    
->>> -static int __init exynos4_clocksource_init(bool frc_shared)
->>> +static int exynos4_clocksource_init(bool frc_shared)
->>>    {
->>>    	/*
->>>    	 * When the frc is shared, the main processor should have already
->>> @@ -336,6 +339,7 @@ static struct clock_event_device mct_comp_device = {
->>>    	.set_state_oneshot	= mct_set_state_shutdown,
->>>    	.set_state_oneshot_stopped = mct_set_state_shutdown,
->>>    	.tick_resume		= mct_set_state_shutdown,
->>> +	.owner			= THIS_MODULE,
->>>    };
->>>    
->>>    static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
->>> @@ -476,6 +480,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
->>>    	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
->>>    			CLOCK_EVT_FEAT_PERCPU;
->>>    	evt->rating = MCT_CLKEVENTS_RATING;
->>> +	evt->owner = THIS_MODULE;
->>>    
->>>    	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
->>>    
->>> @@ -511,7 +516,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
->>>    	return 0;
->>>    }
->>>    
->>> -static int __init exynos4_timer_resources(struct device_node *np)
->>> +static int exynos4_timer_resources(struct device_node *np)
->>>    {
->>>    	struct clk *mct_clk, *tick_clk;
->>>    
->>> @@ -539,7 +544,7 @@ static int __init exynos4_timer_resources(struct device_node *np)
->>>     * @local_idx: array mapping CPU numbers to local timer indices
->>>     * @nr_local: size of @local_idx array
->>>     */
->>> -static int __init exynos4_timer_interrupts(struct device_node *np,
->>> +static int exynos4_timer_interrupts(struct device_node *np,
->>>    					   unsigned int int_type,
->>>    					   const u32 *local_idx,
->>>    					   size_t nr_local)
->>> @@ -653,7 +658,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
->>>    	return err;
->>>    }
->>>    
->>> -static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
->>> +static int mct_init_dt(struct device_node *np, unsigned int int_type)
->>>    {
->>>    	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
->>>    	u32 local_idx[MCT_NR_LOCAL] = {0};
->>> @@ -701,15 +706,48 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
->>>    	return exynos4_clockevent_init();
->>>    }
->>>    
->>> -
->>> -static int __init mct_init_spi(struct device_node *np)
->>> +static int mct_init_spi(struct device_node *np)
->>>    {
->>>    	return mct_init_dt(np, MCT_INT_SPI);
->>>    }
->>>    
->>> -static int __init mct_init_ppi(struct device_node *np)
->>> +static int mct_init_ppi(struct device_node *np)
->>>    {
->>>    	return mct_init_dt(np, MCT_INT_PPI);
->>>    }
->>> -TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
->>> -TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
->>> +
->>> +static int exynos4_mct_probe(struct platform_device *pdev)
->>> +{
->>> +	struct device *dev = &pdev->dev;
->>> +	int (*mct_init)(struct device_node *np);
->>> +
->>> +	mct_init = of_device_get_match_data(dev);
->>> +	if (!mct_init)
->>> +		return -EINVAL;
->>> +
->>> +	return mct_init(dev->of_node);
->>> +}
->>> +
->>> +static const struct of_device_id exynos4_mct_match_table[] = {
->>> +	{ .compatible = "samsung,exynos4210-mct", .data = &mct_init_spi, },
->>> +	{ .compatible = "samsung,exynos4412-mct", .data = &mct_init_ppi, },
->>> +	{}
->>> +};
->>> +MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
->>> +
->>> +static struct platform_driver exynos4_mct_driver = {
->>> +	.probe		= exynos4_mct_probe,
->>> +	.driver		= {
->>> +		.name	= "exynos-mct",
->>> +		.of_match_table = exynos4_mct_match_table,
->>> +	},
->>> +};
->>> +
->>> +static __init int exynos_mct_init(void)
->>> +{
->>> +  return platform_driver_register(&exynos4_mct_driver);
->>> +}
->>> +module_init(exynos_mct_init);
->>> +
->>> +MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
->>> +MODULE_LICENSE("GPL");
->> Sorry, but this still won't work on legacy ARM 32bit systems with MCT as
->> the only clocksource, which needs a driver available very early (that's
->> why it used TIMER_OF_DECLAREmacro). You need to make it conditional
->> under CONFIG_ARM:
-> Can we rely on the bootloader to setup the MCT timer and then hand-off at boot
-> once the driver is initialized?
+Hi,
 
-I'm not sure if we can expect anything from the legacy bootloaders and 
-kernel requires timer quite early during boot, much earlier than kernel 
-modules get initialized.
+I propose the bindings to go through the Samsung tree as well so that we
+can match the compatible with the schema when pulling the DT patch.
 
+Thanks!
+ta
 
-> Daniel was working on a solution to transparently handle calling
-> TIMER_OF_DECLARE() when a timer driver can be configured as both a module or
-> built-in here:
->
->    https://lore.kernel.org/all/20250625085715.889837-1-daniel.lezcano@linaro.org/
->
-> Daniel, do you have plans to finish that? In the meantime, can we go with the
-> `#if CONFIG_ARM` solution?
->
-> Thanks,
-> Will
->
-> <snip>
->
-Best regards
+---
+Enable GS101 TRNG support. It works well with the current Exynos850 TRNG
+support. Tested on pixel 6 like this:
+
+cat /sys/devices/virtual/misc/hw_random/rng_current
+10141400.rng
+
+dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+1+0 records in
+1+0 records out
+100000 bytes (100 kB, 98 KiB) copied, 2.03619 s, 49.1 kB/s
+
+rngtest -c 1000 < /dev/hwrng
+rngtest 6.17
+...
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 1000
+rngtest: FIPS 140-2 failures: 0
+rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+rngtest: FIPS 140-2(2001-10-10) Poker: 0
+rngtest: FIPS 140-2(2001-10-10) Runs: 0
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=380.570; avg=385.422; max=386.964)Kibits/s
+rngtest: FIPS tests speed: (min=75.092; avg=81.784; max=84.771)Mibits/s
+rngtest: Program run time: 50908949 microseconds
+
+To: Łukasz Stelmach <l.stelmach@samsung.com>
+To: Olivia Mackall <olivia@selenic.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+To: André Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: semen.protsenko@linaro.org
+Cc: willmcvicker@google.com
+Cc: kernel-team@android.com
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+---
+Changes in v2:
+- dt-bindings: add power-domains. Collect R-b.
+- Link to v1: https://lore.kernel.org/r/20251022-gs101-trng-v1-0-8817e2d7a6fc@linaro.org
+
+---
+Tudor Ambarus (2):
+      dt-bindings: rng: add google,gs101-trng compatible
+      arm64: dts: exynos: gs101: add TRNG node
+
+ .../devicetree/bindings/rng/samsung,exynos5250-trng.yaml    | 13 ++++++++++---
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi                |  9 +++++++++
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+---
+base-commit: 73f7017e663620a616171cc80d62504a624dc4de
+change-id: 20251022-gs101-trng-54b710218424
+
+Best regards,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
