@@ -1,107 +1,119 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C392321257A
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 11:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35FD2868A2
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 12:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761562933; cv=none; b=mxMj2JqqjRmtv0Pyj5WxfYkSbGSpx4s3A3M65Ji9t8salBW+KkulzLbyzxVRGEuA9QyPT+O+eNU+eWlWtS1m11q5dPPdfSnpP80pphl30nTQY2FWRnNWL8UGs/t7vWSLDrCCU6DuI6UUjX5SQUg9H4eW5SqxWpATIVq3QHeE4PI=
+	t=1761569726; cv=none; b=I4K8fzcnSzR89vZKazbUS+von5Vy0AKQaoPy+E0yy6yA7EOg7fIkZbaJ0DFf0j/dKuTvFG6sJ5B9CSzfgnyuEz/5plNNMgbcCjN/r3istW7pqkAL7HePwEXbF/oz7bYdD+CueUbU5LPSDkXjB+RunaFbkARIGgnGmsCHEscrACk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761562933; c=relaxed/simple;
-	bh=IexYyBUFGVqj56nMhFW49UCXf1rGo+YKZA9koYJgDw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=UJvQJmGu8IV0oC9PKwtVKssGpoipaaQ6Yj97nXG956ZBD1hn7a6u0t1FYDQBOKs3JsN1FlTZZlIeONlBaZ8X66hqPWSizwHtNdSJ0bOeCuAIAY77fZfF0rfudt1XUaCYHwVBYMqCVjorl4BCm9h50n/+mzN2C1LVhphkh685K2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ft/HPJ7Y; arc=none smtp.client-ip=210.118.77.12
+	s=arc-20240116; t=1761569726; c=relaxed/simple;
+	bh=ORKglqCo4AjS+KWVxrkbHpKfb2BNZWgSgiMcqdjFSbw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=sHGXvuhfCFQJTfSKesSMsBOTguLja2sSoa7Uv2t0MTXM7xcNhuk/V6k4KshN/XYQf41HX5X9mGZWbSWHsGuHhTnLe+y7HrwzLY7SenOI1FV5ZTWBjdt+wynx8/jqPthjlwUD1/mlFWC5uHuTAp8mcyxCBs3RC+KOI+Bin54zbxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AhPmuOpg; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ft/HPJ7Y"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AhPmuOpg"
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251027110208euoutp02fab7edeece48b4e3abd01348936a3c83~yVCaTgOd00307203072euoutp02k
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 11:02:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251027110208euoutp02fab7edeece48b4e3abd01348936a3c83~yVCaTgOd00307203072euoutp02k
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251027125521euoutp0244e5cf8c3e31d3b87a293554f2f1b248~yWlQvxXCN0696106961euoutp02B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 12:55:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251027125521euoutp0244e5cf8c3e31d3b87a293554f2f1b248~yWlQvxXCN0696106961euoutp02B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761562928;
-	bh=yKSoAYzsAkTVdUSfjeRUX+gYObcTUR5Pslm7NwedGLM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Ft/HPJ7YNwWECRELAlNw73YWWzq6in5prpYBuO6h2fEBag/XEuSTD2F/wi8lzofkY
-	 8Nn8MpgwTetmr+S1fezmkqr2ahNNoVxEkPC73syjCGHAZ6kXNdq0WnT/T9euTVqCPn
-	 u4ZWWOT56noIZokQuA0pbXM/4OU+ar42B4C+tWOc=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	s=mail20170921; t=1761569721;
+	bh=dv9p2PP04hgk3atZfF1Zb7GieMRi3LedopvsYd1QhVs=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=AhPmuOpgiccMMpOjpudMb57mB2ZYCemLXV0laGDvJQIlI+QB9wLzW6JBNK9WGDGei
+	 NQMSK32llANhRm2SyCg1HN1kuPHBx34QiD+85YquVZMIcZBnmF3RX2QlgYFW83AKIn
+	 y3i8pD3IICLokZM5T5Kit6f+TiR9foXURIvs9dT8=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251027110208eucas1p21dcf1e224465db221933aca7bae65cc0~yVCaBvSuz1350613506eucas1p2f;
-	Mon, 27 Oct 2025 11:02:08 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251027110208eusmtip2811a11738e88ccd4f87527e549aa16de~yVCZn64751647516475eusmtip2o;
-	Mon, 27 Oct 2025 11:02:08 +0000 (GMT)
-Message-ID: <d376f705-bed3-4ca7-8448-b364e243f8b7@samsung.com>
-Date: Mon, 27 Oct 2025 12:02:07 +0100
+	20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706~yWlQdWXw22667626676eucas1p2z;
+	Mon, 27 Oct 2025 12:55:21 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251027125521eusmtip172f4dc9597a7f656f2e8e95f00d14fbb~yWlQD4ef20921809218eusmtip1w;
+	Mon, 27 Oct 2025 12:55:21 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, =?UTF-8?q?Andr=C3=A9=20Draszik?=
+	<andre.draszik@linaro.org>, Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2] pmdomain: samsung: Rework legacy splash-screen handover
+ workaround
+Date: Mon, 27 Oct 2025 13:55:15 +0100
+Message-Id: <20251027125515.1219940-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] pmdomain: samsung: Rework legacy splash-screen handover
- workaround
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
-	<andre.draszik@linaro.org>, Peter Griffin <peter.griffin@linaro.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <75884c14-8063-43cd-b0f8-da3db1ca3dc4@kernel.org>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251027110208eucas1p21dcf1e224465db221933aca7bae65cc0
+X-CMS-MailID: 20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251024093617eucas1p2a84deaa88e39692fd4933d14684aaeb9
+X-RootMTR: 20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706
 X-EPHeader: CA
-X-CMS-RootMailID: 20251024093617eucas1p2a84deaa88e39692fd4933d14684aaeb9
-References: <CGME20251024093617eucas1p2a84deaa88e39692fd4933d14684aaeb9@eucas1p2.samsung.com>
-	<20251024093603.3484783-1-m.szyprowski@samsung.com>
-	<cf9bc771-78a0-4439-a913-dfb8bd62c46c@kernel.org>
-	<deeeba6b-af85-44ad-ad78-efa7e923621a@samsung.com>
-	<8efa8233-6f55-4df7-9625-a7addc101ea3@kernel.org>
-	<e8362b57-ffc8-4f2b-af03-ed37882844ef@samsung.com>
-	<75884c14-8063-43cd-b0f8-da3db1ca3dc4@kernel.org>
+X-CMS-RootMailID: 20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706
+References: <CGME20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706@eucas1p2.samsung.com>
 
-On 27.10.2025 11:37, Krzysztof Kozlowski wrote:
-> On 27/10/2025 11:33, Marek Szyprowski wrote:
->> On 27.10.2025 11:18, Krzysztof Kozlowski wrote:
->>>> If this sounds like a bit rude hack, then we can use
->>>> GENPD_FLAG_NO_STAY_ON workaround (like Rockchip and Renesas).
->>>>
->>>>> If these were different devices, we would need front compatibles, but
->>>>> since this is purely a bootloader stage, then we need a property for
->>>>> that. Something like regulator-boot-on.
->>>> Just to clarify - this splash screen issue has not much with power
->>>> domain driver itself, but a side-effect of old genpd behavior has hidden
->>>> this issue deep enough that it was ignored for years.
->>>>
->>> Issue is still in the bootloader and how the handover should work, so
->>> for me, since we do not have dedicated front compatible, property sounds
->>> reasonable.
->> The problem is that such hypothetical property would be rather a
->> properly of display controller, so it would be really hard to find it by
->> the power domain driver.
-> No, just regulator-boot-on is not a property of the regulator consumer.
+Limit the workaround for the lack of the proper splash-screen handover
+handling to the legacy ARM 32bit systems and replace forcing a sync_state
+by explicite power domain shutdown. This approach lets compiler to
+optimize it out on newer ARM 64bit systems.
 
-But regulator-style (regulator-boot-on) analogy is completely wrong here.
+Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 0745658aebbe ("pmdomain: samsung: Fix splash-screen handover by enforcing a sync_state")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- removed label check, as this violates ABI
 
-We force turning power domain off just to reset everything and ignore 
-the proper hand-over protocol.
+v1: https://lore.kernel.org/all/20251024093603.3484783-1-m.szyprowski@samsung.com/
+---
+ drivers/pmdomain/samsung/exynos-pm-domains.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-For product-like target one might want to have the splash screen 
-displayed properly until userspace starts and such case would need 
-completely different handling by the all relevant hardware drivers 
-(display controller, IOMMU, power domains, etc).
-
-Best regards
+diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
+index f53e1bd24798..5c3aa8983087 100644
+--- a/drivers/pmdomain/samsung/exynos-pm-domains.c
++++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+@@ -128,6 +128,15 @@ static int exynos_pd_probe(struct platform_device *pdev)
+ 	pd->pd.power_on = exynos_pd_power_on;
+ 	pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
+ 
++	/*
++	 * Some Samsung platforms with bootloaders turning on the splash-screen
++	 * and handing it over to the kernel, requires the power-domains to be
++	 * reset during boot.
++	 */
++	if (IS_ENABLED(CONFIG_ARM) &&
++	    of_device_is_compatible(np, "samsung,exynos4210-pd"))
++		exynos_pd_power_off(&pd->pd);
++
+ 	on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
+ 
+ 	pm_genpd_init(&pd->pd, NULL, !on);
+@@ -146,15 +155,6 @@ static int exynos_pd_probe(struct platform_device *pdev)
+ 				parent.np, child.np);
+ 	}
+ 
+-	/*
+-	 * Some Samsung platforms with bootloaders turning on the splash-screen
+-	 * and handing it over to the kernel, requires the power-domains to be
+-	 * reset during boot. As a temporary hack to manage this, let's enforce
+-	 * a sync_state.
+-	 */
+-	if (!ret)
+-		of_genpd_sync_state(np);
+-
+ 	pm_runtime_enable(dev);
+ 	return ret;
+ }
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.34.1
 
