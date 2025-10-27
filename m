@@ -1,119 +1,102 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35FD2868A2
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 12:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0484F24169D;
+	Mon, 27 Oct 2025 12:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569726; cv=none; b=I4K8fzcnSzR89vZKazbUS+von5Vy0AKQaoPy+E0yy6yA7EOg7fIkZbaJ0DFf0j/dKuTvFG6sJ5B9CSzfgnyuEz/5plNNMgbcCjN/r3istW7pqkAL7HePwEXbF/oz7bYdD+CueUbU5LPSDkXjB+RunaFbkARIGgnGmsCHEscrACk=
+	t=1761569759; cv=none; b=isT81xFxsGKsHMiUdQmGhicigFp4PhSC8JOZiFcsHVrthgzlr/X8gPmy63Xj/RFF1nerD1+R187PcLAuzTbRvpwfEFz9zvijO54gHbsz94BnJCvv8GXI4/Xmp6Q7EeRsAuFv7OXgQ/phCUKFCsw6se0lxc8i8m04mRX02SjC7J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569726; c=relaxed/simple;
-	bh=ORKglqCo4AjS+KWVxrkbHpKfb2BNZWgSgiMcqdjFSbw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=sHGXvuhfCFQJTfSKesSMsBOTguLja2sSoa7Uv2t0MTXM7xcNhuk/V6k4KshN/XYQf41HX5X9mGZWbSWHsGuHhTnLe+y7HrwzLY7SenOI1FV5ZTWBjdt+wynx8/jqPthjlwUD1/mlFWC5uHuTAp8mcyxCBs3RC+KOI+Bin54zbxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AhPmuOpg; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1761569759; c=relaxed/simple;
+	bh=wdPrvvPNgCJ92pfYnd82XapNMb2/K9Lk7SnMdXsPwYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EcxjKKuroC0M+JM/6H3PTXelv5YUJUaRVBaBlump9zUQEFADlhhcYntmpeub5vf3hjGcblHLCpBw9dccC5iPf1B+yXbbwXj4vbf0GKyH+bhl3QV31b90Tf1EuP7MOHgTSfjncgROJu/kG0BgyCmumZifBhOlpdDp5F/lWEw2ej8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=HA4IsI57; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AhPmuOpg"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251027125521euoutp0244e5cf8c3e31d3b87a293554f2f1b248~yWlQvxXCN0696106961euoutp02B
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 12:55:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251027125521euoutp0244e5cf8c3e31d3b87a293554f2f1b248~yWlQvxXCN0696106961euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761569721;
-	bh=dv9p2PP04hgk3atZfF1Zb7GieMRi3LedopvsYd1QhVs=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=AhPmuOpgiccMMpOjpudMb57mB2ZYCemLXV0laGDvJQIlI+QB9wLzW6JBNK9WGDGei
-	 NQMSK32llANhRm2SyCg1HN1kuPHBx34QiD+85YquVZMIcZBnmF3RX2QlgYFW83AKIn
-	 y3i8pD3IICLokZM5T5Kit6f+TiR9foXURIvs9dT8=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706~yWlQdWXw22667626676eucas1p2z;
-	Mon, 27 Oct 2025 12:55:21 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251027125521eusmtip172f4dc9597a7f656f2e8e95f00d14fbb~yWlQD4ef20921809218eusmtip1w;
-	Mon, 27 Oct 2025 12:55:21 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, =?UTF-8?q?Andr=C3=A9=20Draszik?=
-	<andre.draszik@linaro.org>, Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v2] pmdomain: samsung: Rework legacy splash-screen handover
- workaround
-Date: Mon, 27 Oct 2025 13:55:15 +0100
-Message-Id: <20251027125515.1219940-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="HA4IsI57"
+Received: from 8bytes.org (p549214ac.dip0.t-ipconnect.de [84.146.20.172])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 574F959993;
+	Mon, 27 Oct 2025 13:55:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1761569756;
+	bh=wdPrvvPNgCJ92pfYnd82XapNMb2/K9Lk7SnMdXsPwYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HA4IsI57/crRJKm5huZnz2yM9cueuQ83JrqqF31F0g7mwiTfeSnd43x0jF6LZthZc
+	 xInJr7Dl8APiu4Qf/1dKwgAOW7EJNTBxKaqeF3SCeMWstoORITwx7nsvUeINWh5k+9
+	 Ny8WfW/m0sLSzi4YzjffMfU5XZZBpghT634JsVKbHjtinJ84F0IqokpBXMlZ9vPJO6
+	 HareDmhYXldiDUpmdDec87KCRVmJXWOlsHVldVZQAV6o+WAdhsPOkS6ZLKvwvFxjCx
+	 iZSNYPT42T4jbU1r7D4nVssf6XfXSjG7/V3tsl+vP1evUijU+Z9RswofRmqxeAExhN
+	 NJmXcf6NEl0nQ==
+Date: Mon, 27 Oct 2025 13:55:55 +0100
+From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, suravee.suthikulpanit@amd.com, 
+	will@kernel.org, robin.murphy@arm.com, sven@kernel.org, j@jannau.net, 
+	robin.clark@oss.qualcomm.com, m.szyprowski@samsung.com, krzk@kernel.org, dwmw2@infradead.org, 
+	baolu.lu@linux.intel.com, yong.wu@mediatek.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, tjeznach@rivosinc.com, pjw@kernel.org, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, heiko@sntech.de, schnelle@linux.ibm.com, mjrosato@linux.ibm.com, 
+	orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, wens@csie.org, 
+	jernej.skrabec@gmail.com, samuel@sholland.org, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, jean-philippe@linaro.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, patches@lists.linux.dev
+Subject: Re: [PATCH v2 0/6] iommu: Pass in old_domain pointer to attach_dev
+Message-ID: <xlu227m6u3wubnexhxh2cpx7nwudhvbmgqcqoas57a6sqgvege@p4s5i5p77v7a>
+References: <cover.1761017765.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706
-X-EPHeader: CA
-X-CMS-RootMailID: 20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706
-References: <CGME20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1761017765.git.nicolinc@nvidia.com>
 
-Limit the workaround for the lack of the proper splash-screen handover
-handling to the legacy ARM 32bit systems and replace forcing a sync_state
-by explicite power domain shutdown. This approach lets compiler to
-optimize it out on newer ARM 64bit systems.
+On Wed, Oct 22, 2025 at 07:21:03PM -0700, Nicolin Chen wrote:
+> Jason Gunthorpe (1):
+>   iommu: Generic support for RMRs during device release
+> 
+> Nicolin Chen (5):
+>   iommu/arm-smmu-v3: Set release_domain to arm_smmu_blocked_domain
+>   iommu/exynos-iommu: Set release_domain to exynos_identity_domain
+>   iommu/amd: Set release_domain to blocked_domain
+>   iommu: Do not revert set_domain for the last gdev
+>   iommu: Pass in old domain to attach_dev callback functions
+> 
+>  include/linux/iommu.h                         |  3 +-
+>  arch/powerpc/kernel/iommu.c                   |  5 ++-
+>  drivers/iommu/amd/iommu.c                     | 21 +++------
+>  drivers/iommu/apple-dart.c                    |  9 ++--
+>  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     |  5 ++-
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 31 ++++++-------
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c         |  9 ++--
+>  drivers/iommu/arm/arm-smmu/qcom_iommu.c       | 11 ++---
+>  drivers/iommu/exynos-iommu.c                  | 11 ++---
+>  drivers/iommu/fsl_pamu_domain.c               | 12 ++---
+>  drivers/iommu/intel/iommu.c                   | 10 +++--
+>  drivers/iommu/intel/nested.c                  |  2 +-
+>  drivers/iommu/iommu.c                         | 44 +++++++++++++------
+>  drivers/iommu/iommufd/selftest.c              |  2 +-
+>  drivers/iommu/ipmmu-vmsa.c                    | 10 ++---
+>  drivers/iommu/msm_iommu.c                     | 11 ++---
+>  drivers/iommu/mtk_iommu.c                     |  8 ++--
+>  drivers/iommu/mtk_iommu_v1.c                  |  7 ++-
+>  drivers/iommu/omap-iommu.c                    | 12 ++---
+>  drivers/iommu/riscv/iommu.c                   |  9 ++--
+>  drivers/iommu/rockchip-iommu.c                | 20 ++++++---
+>  drivers/iommu/s390-iommu.c                    | 13 +++---
+>  drivers/iommu/sprd-iommu.c                    |  3 +-
+>  drivers/iommu/sun50i-iommu.c                  |  8 ++--
+>  drivers/iommu/tegra-smmu.c                    | 10 ++---
+>  drivers/iommu/virtio-iommu.c                  |  6 ++-
+>  26 files changed, 172 insertions(+), 120 deletions(-)
 
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Fixes: 0745658aebbe ("pmdomain: samsung: Fix splash-screen handover by enforcing a sync_state")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- removed label check, as this violates ABI
-
-v1: https://lore.kernel.org/all/20251024093603.3484783-1-m.szyprowski@samsung.com/
----
- drivers/pmdomain/samsung/exynos-pm-domains.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index f53e1bd24798..5c3aa8983087 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -128,6 +128,15 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	pd->pd.power_on = exynos_pd_power_on;
- 	pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
- 
-+	/*
-+	 * Some Samsung platforms with bootloaders turning on the splash-screen
-+	 * and handing it over to the kernel, requires the power-domains to be
-+	 * reset during boot.
-+	 */
-+	if (IS_ENABLED(CONFIG_ARM) &&
-+	    of_device_is_compatible(np, "samsung,exynos4210-pd"))
-+		exynos_pd_power_off(&pd->pd);
-+
- 	on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
- 
- 	pm_genpd_init(&pd->pd, NULL, !on);
-@@ -146,15 +155,6 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 				parent.np, child.np);
- 	}
- 
--	/*
--	 * Some Samsung platforms with bootloaders turning on the splash-screen
--	 * and handing it over to the kernel, requires the power-domains to be
--	 * reset during boot. As a temporary hack to manage this, let's enforce
--	 * a sync_state.
--	 */
--	if (!ret)
--		of_genpd_sync_state(np);
--
- 	pm_runtime_enable(dev);
- 	return ret;
- }
--- 
-2.34.1
-
+Applied, thanks.
