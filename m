@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7601F03D9;
-	Mon, 27 Oct 2025 13:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B81A2797B5;
+	Mon, 27 Oct 2025 14:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570072; cv=none; b=uZThCD6h2A5mv9+GtL3z2w5yGpmFAQWeIT5bt9ZKWSKTz/xG7x+sonhr3BLYA3ab0/q4E8A96MSRSojaaom3V4pjK+2SaHb14higAw10FPL1yqkn2pMBaMi2f+QN3+st26wl7d5wL7/xoG5rHoX1lTAQX/EuRA3Ytm3p1CvRQ6E=
+	t=1761573774; cv=none; b=Ce25DHvvxZUGt+5yNm3Y5/EMQLMOSisORE0qnicI8K6FQeAlgglyqdDjO2QzAvlbbrpv7srscocJr3dk1oEJ3SNQxDeg3VqwFlGWCsqn4lacnmvlf4J/Wje1ehe30NzNEM7rRnG39xxw0sR4o1PlGYV00oKvB5oeBquwiEKrny8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570072; c=relaxed/simple;
-	bh=og/BC2xfTl5/QRkO5qfzHEqURh0mcs/pBCQCuTkNfV8=;
+	s=arc-20240116; t=1761573774; c=relaxed/simple;
+	bh=+ST9ufHu58j28Ts6nVeN1rz7S/b1aHIA8XFSEZT4kHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kCF42W3TG4yhdD4LiEgxdsQMyWqscr9yHV6hlqMtd3uA/Kr1jsdmerudTd+T2qLMnXyBTK2dUsgWebhutlUomXHLJjt7tOJavhpqzKUAgBuVmWbb/wUdAe1Bv3edRhePoCFtmqEize+YOCSyyU6akH6r+VcjT6QmGbsHNgRQ1S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4t57y/h; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=uKRhIh4iTAvy7sHsrdLEE38BG+O/BVBa5Y8xKPUbBImVPL5lWD/xLhSVkMsSTgy3KyqLc5b9L9JBM8Qo+EslP+gQGHjiJU1l685txvygD2JIb3r1+3lkpUhJnR3i5ayA0OplTek8xeQMqe5JLNpFN9R1596P8q3fv20KqUSDvkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKRUaqy6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4t57y/h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43066C113D0;
-	Mon, 27 Oct 2025 13:01:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKRUaqy6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E169C4CEF1;
+	Mon, 27 Oct 2025 14:02:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761570070;
-	bh=og/BC2xfTl5/QRkO5qfzHEqURh0mcs/pBCQCuTkNfV8=;
+	s=k20201202; t=1761573774;
+	bh=+ST9ufHu58j28Ts6nVeN1rz7S/b1aHIA8XFSEZT4kHM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G4t57y/hX8aK0mPp9WfrwfQI3tazHl7CEwwPmeeBh6VzZAKd+9xuKmGx6sTvbl8uj
-	 9mHQKX1B7DvQcad0HTCTw3JU4FTz4djmhHtVWd7LBl29JSO2rKkBCJG2tlGjCbuPIK
-	 cWmotkVIyNbLZ6DH59MDhX3Pvqi94rhJe1FL8URNiazz6c2CZ6IvsQDdI+aaYVUIGa
-	 yEf7AU/mdObMNSKLoyS21wpBTm7N2oFbESpzFNB4xv611aKc5nB0KrXZ8PFEo/PysU
-	 KcM8JoNVEX2YrvFbeMPi+heBzXOUedES+Wfn70cslFPPHzbceU3Ezpur2+GlKQQxcd
-	 1jKVL5p+EnYZg==
-Message-ID: <a91bcd9f-a319-480a-941d-b19102020509@kernel.org>
-Date: Mon, 27 Oct 2025 14:01:06 +0100
+	b=iKRUaqy6VsiPeaGL+9xgk6jV32mELION86nQQkiqDChs0Qk89z+omcC67+xbup0d/
+	 VpfxTlEB/mZtuRdmTonKQSWXNOF6xy23jYpCA1NfVG8ZyQliCuq1+CwefvSpaOF0Pj
+	 i5miS2VH8zhL+1edoYy22EzdY37lvbUuK+qjBtGp6oGTIH2C/tx/PX6WlNX5spat9M
+	 gqMnPcPzcuDea1TI4DUcFhAaOSoAU+vGwYj8Z99pBnCeZPAWpJJECknkwgQwCBFren
+	 +H43pDHrHVVcUtxmqeAqn+PQP6qMc9ZHA/MnuQKdLeIj6Na1IUbwCNG2lyGFRtCTrU
+	 5Pm8r0PQSl91Q==
+Message-ID: <8e4c8875-10bc-4f4c-a675-a7cefc68c863@kernel.org>
+Date: Mon, 27 Oct 2025 15:02:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,24 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pmdomain: samsung: Rework legacy splash-screen
- handover workaround
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
+Subject: Re: [PATCH v4 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB
+ PHY
+To: Roy Luo <royluo@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>
-References: <CGME20251027125521eucas1p206cd5a0dd4c3a80bc8abe7d9a5e61706@eucas1p2.samsung.com>
- <20251027125515.1219940-1-m.szyprowski@samsung.com>
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
+ Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20251017235159.2417576-1-royluo@google.com>
+ <20251017235159.2417576-2-royluo@google.com>
+ <20251023-collie-of-impossible-plenty-fc9382@kuoka>
+ <CA+zupgwQTLEs8_7i-VsGbGV7O2Y3XFA1C3aV7iuv2HLOwKns3w@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,23 +98,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251027125515.1219940-1-m.szyprowski@samsung.com>
+In-Reply-To: <CA+zupgwQTLEs8_7i-VsGbGV7O2Y3XFA1C3aV7iuv2HLOwKns3w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/10/2025 13:55, Marek Szyprowski wrote:
-> Limit the workaround for the lack of the proper splash-screen handover
-> handling to the legacy ARM 32bit systems and replace forcing a sync_state
-> by explicite power domain shutdown. This approach lets compiler to
-> optimize it out on newer ARM 64bit systems.
+On 24/10/2025 00:22, Roy Luo wrote:
+>>> +
+>>> +  clocks:
+>>> +    items:
+>>> +      - description: USB2 PHY clock.
+>>> +      - description: USB2 PHY APB clock.
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: usb2_phy
+>>
+>> core
+>>
+>>> +      - const: u2phy_apb
+>>
+>> apb
+>>
 > 
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Fixes: 0745658aebbe ("pmdomain: samsung: Fix splash-screen handover by enforcing a sync_state")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+> Just to provide the full context, these two clocks/resets
+> (usb2_phy and u2phy_apb) are specifically for eUSB2 PHY.
+> USB3/DP combo PHY has its own clock/reset that hasn't
+> been added yet, we would have to differentiate them once
 
+That's confusing a bit. You must add all clocks, all resets, all power
+domains, all pins etc. Bindings are supposed to be complete, see writing
+bindings doc.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
