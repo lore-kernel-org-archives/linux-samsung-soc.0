@@ -1,110 +1,111 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721F158874
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Oct 2025 03:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936AB1B425C;
+	Tue, 28 Oct 2025 08:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761621348; cv=none; b=CVitD002c2Ro+V+sJBNQaLLa6Hg3qIenPp5VQWfGpartRpN71vU0smgj9g4Opd8gR8nRUUmu40iIphvBexPSjSuuAhQzRw7atSvjSvvIDGMq3WVLjVn4YNAq64et2JRSDwm+ovnO3+EnmafxTbveaABMb4jux4gyvD7/CFxcvlw=
+	t=1761640976; cv=none; b=D+TjfFSS1lGOZ53gGincOmZkM8Kr/mDM4hLczlZn0cm/S+raXB01aU4Ktdm/tx1eSw3jC6hSZ8/ez2qrHTjV6SxZnUjmNWZaorO9ED1Te2UYu34h55QgQJYlhfLTH2COrW26w+JZBdckmJfjnCKU/pqT86SrgBoJIY5skNC9qTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761621348; c=relaxed/simple;
-	bh=WSsr4NQM/X+04B22IETHzX/8ocEsGUdwUHkdEc1qYYU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nTt8S3fDaXpUjMVJRukFQBSTD4ZiHQBYap63arJ/y4P2w2iaD160gUbhTm803LT/HK9CciPyP40/QB/4xF/5858fp0M6wrCVxjwUZt0Oqx3OT/0vULKa3fdb+VyppW6XiVWCxTVmT/t6uCrgqgOASABHfwu9ZtJIp7Ed87tRpOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWzsOQRt; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761640976; c=relaxed/simple;
+	bh=UV4oir0NthIcdJCUepqN6ek1/TklMFd0MsJcOql+rHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Czj5+gn/OE91oq1HJboKvXkmyYKTIA5dY9wNDFAdybr4j3fv8bRq9fqynoO4RP7c87PSKXfGw5aQiMY3273UuuEtLDde+73T58fWCeJnshzqXwno27dJd4r6EDqWc5ZzPwbdV8030vZ5WjpKrrqB1yi+Rve5MF5ydNfBB7LawI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcUPkXbN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWzsOQRt"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7811a02316bso3911809b3a.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2025 20:15:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761621346; x=1762226146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iwk85JlTUEBI3yJjsshayntPryiTY23zzfTEHf0Um/k=;
-        b=LWzsOQRttv7yvjSu9wrVk5l3D6T+jR9/1I9CYLKqUydBp9ZobDKxk15MuVKV/dXg8l
-         w8k8zOgahvYxTN+ElQdrvz6v4VbdGeB94/fKRhhgn5a1XnXyL7FdEcgXzOZ00HDo20NZ
-         C5f5SFA11xnYq1WeoN55FbpAb+kOmu5XhY6BJzH8t1/HQx/tZu/7ArXftTCA9rVQpojq
-         HGVnQD2yQM3ZIQClv+BkLVsOIVV9P19GHR4BetK5QMullRFhLcs1gkxQiI7AFRJKUJlk
-         ho1+BVrm3WN1mHqMkQlPTJhastU5Dud/jMZ4MuiWLp7Jlp+2mERSbDRaSp0syC9amybS
-         HgWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761621346; x=1762226146;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Iwk85JlTUEBI3yJjsshayntPryiTY23zzfTEHf0Um/k=;
-        b=wLd5wJmOS3Z/DsuoRsKwAwzGnaFUKce4sAlxukTEX3ey9Lk/LzoKnsQBGoTrysm5z6
-         MykGI6vi0tSrpTNkZtpX4lr09u+/Gm6GLRlH3tI7304ee7LDUJReI3arPy7n6InOMbvs
-         88h+EQLkkxcnW1fuo1I3TzlSPGvHw++lYOsG0nnFwcpidSj2pmBVO7zyWUzV78r0rJab
-         IA0Ke6ZwnVrj263I6RMvRcLZUInH1xqw2TynmuWOsAtWOKu4n1tkgW5Zd4bbocbMa1T8
-         jaAe+mqa4j2zGQh8GHnwCkZw07imbgiKsszzX+I2Bplbans8T4JS47TAF2mCQ0N6JFYL
-         kQ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUg5fozKCwVaG2yzHUiQaxPC5qMFQXPwgilgpfYQ0VZuwd5XNKXjj6omoxKtZhzKZR6nVKtBUdalwswVusHzFZ8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygyqWYU7xNis8pHazE9wfX6PkjpifrFi6eYa7SuwT1H9n8GL9b
-	Chq4P3BmVc/QJSu5RfLQgYqs6uNDG3Vg1qwPubjyOtvdy10r+dIbT2vZ
-X-Gm-Gg: ASbGncsWM9LrKaxBREqsmWiEDeSiWSspru0mmQAMwL0i9gi8LIaYC8nj3Ayzteeb3wE
-	QjO3atavqQzANjWjSGYsfavM/Lqxyj01Z2lbn3spteUNEF+cS0w1aMkiUcI0kYN6wqIW/m1gJlJ
-	qhulO0AblFNjHvvZL4qumeueKjQKwdlHD6oygwqSd6uhrkmfWl+HouDUrD7ZhyZ5LebVeNvyarb
-	TU69b5uOuOq6I7SMkgyI/MbeDKgVEmz0uYLT63l+PNXQDBu8Y2EXROk5HSs4+9DrgcZLCNGanpA
-	JLcXTnEXlADXdtuZ6koP8fXujWNoS5/LhHKSBfxktpSuepG/BgDTIT8YV7uyP0ioNty9rVvRB91
-	xxl65rg0NNfnmsrgM489kEXRySUoXCLhOcHmkhsHcydzyFgYJwxKTe2KRAZ+aRFbCxWk3diZFi0
-	5OAFfyT830fO2kXoV/vSOtnA==
-X-Google-Smtp-Source: AGHT+IGuxaZzDv7SIXihLd34aYSMzDHA1ChbWY+uD7KdVdbaExQIFl+ZQhnMyiYov0T8YhmH+laVjQ==
-X-Received: by 2002:a05:6a20:734c:b0:342:c891:a9c6 with SMTP id adf61e73a8af0-344d1baa8a7mr2317412637.1.1761621345900;
-        Mon, 27 Oct 2025 20:15:45 -0700 (PDT)
-Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b71268bdd50sm9123455a12.0.2025.10.27.20.15.43
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 27 Oct 2025 20:15:45 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] soc: samsung: exynos-pmu: fix reference count leak in exynos_get_pmu_regmap_by_phandle
-Date: Tue, 28 Oct 2025 11:15:27 +0800
-Message-Id: <20251028031527.43003-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcUPkXbN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396E7C4CEE7;
+	Tue, 28 Oct 2025 08:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761640976;
+	bh=UV4oir0NthIcdJCUepqN6ek1/TklMFd0MsJcOql+rHU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IcUPkXbNIoEY/0P1q1DK3Wfu6i74xqtfd9iwW7AJcP8oqemLSoe3vEbvVO4sVvAf0
+	 0GWkyotvcLpGF5ma8FTx0Qp1RswdJxBj0RY5G2z64ePmNut7eZTYtde4zdDp1TdIuq
+	 pDQNojO6+W82rsww219uNMaA2Gtg7jW39U5ib6NOrc8Pie1ct8TUrrGzMLblhvPtY4
+	 XKyWyBCLQ0JAdIYG7F7ia1PtbQ8p/+abeuDRx+hIMnt7rajzcziBWtTxYsbsGOs5sH
+	 c9ZCwh3RZcnZ4c19tzAbNzfixdGtgc5RkCLQDmp5jnw7IOGbT3sZaic9m4lh4VDBGj
+	 BaN3xGpLwvJVw==
+Message-ID: <0103d31e-f7f8-45df-9add-76adcca3ec40@kernel.org>
+Date: Tue, 28 Oct 2025 09:42:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-The driver_find_device_by_of_node() function calls driver_find_device
-and returns a device with its reference count incremented.
-Add the missing put_device() call to
-release this reference after the device is used.
-
-Found via static analysis.
-
-Fixes: 0b7c6075022c ("soc: samsung: exynos-pmu: Add regmap support for SoCs that protect PMU regs")
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: fix reference count leak in
+ exynos_get_pmu_regmap_by_phandle
+To: Miaoqian Lin <linmq006@gmail.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/soc/samsung/exynos-pmu.c | 1 +
- 1 file changed, 1 insertion(+)
+References: <20251028031527.43003-1-linmq006@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251028031527.43003-1-linmq006@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index 22c50ca2aa79..a53c1f882e1a 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -346,6 +346,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
-+	put_device(dev);
- 	return syscon_node_to_regmap(pmu_np);
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
--- 
-2.39.5 (Apple Git-154)
+On 28/10/2025 04:15, Miaoqian Lin wrote:
+> The driver_find_device_by_of_node() function calls driver_find_device
+> and returns a device with its reference count incremented.
+> Add the missing put_device() call to
+> release this reference after the device is used.
+> 
+> Found via static analysis.
 
+What static analysis? You must name the tool.
+
+Anyway, same comments as before.
+
+https://lore.kernel.org/all/?q=dfn%3Adrivers%2Fsoc%2Fsamsung%2Fexynos-pmu.c
+
+Best regards,
+Krzysztof
