@@ -1,119 +1,143 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1D134C82D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2025 12:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB273451BF
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2025 13:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915377; cv=none; b=cqPVBI9qaNP9/ZfaQlngs0ZOF4O+sLoYnKZLCfkiOub5p+P3X38QlDcBoH45+qi9/LvEn/mopTaT9fUCp5sZRzl4z2+nxetfSNLKMOMblnvdhloYFZA0Jv/7NSeevMRO6O0+jZ8WCjm43uYXkvo4Ep3/4GToziyLKxU5N+6fxHg=
+	t=1761918655; cv=none; b=qXshm+ydnb1pBTgs7oI9dnQXxUNu3nUXkGSgDsSSeLTlnfo+BZQNzsC8dEZPeTvXJVoECw2OEb34VSexqo5FZV3KTwfvlJ9Rdez0oFl2Lkwo3nBGEeNELTo2eyU2V/3Gn9gQH5AM+KSIqG3Ldi8jz5MSxzvNY4BfiBl9e9NzCCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915377; c=relaxed/simple;
-	bh=SNitQ6iR1OrWkD+1kTT2otCfVrWRB5Aki2fWLfOjKbs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UqC58KCC8RMlg5hA7zwtAwjoPJeQWcxpxTE6V6UOs30CJJ0hVZEb8QnVULQmFikL3gmni7z+DG6fkSqj7Q1N0vVOk0AOqFdkIkMdWoyghwE3jPrsqSmzA5+AA8ydGzxxI510digdAdmhe0VTBTg5qTeB20Voy6+HFW9qTKcGMdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UBhQa6kw; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1761918655; c=relaxed/simple;
+	bh=SmfR1ZQDKDR/gPIplrtS+9dHdS1dhkdiyMyQwkEDbCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p72CPlKb+hpQ/wVmWVnKWxz8FQb+2fXCaXpskK+tcTIw2J7KhsApwXxagTM99WHsF92p3Or5/0xw1e1yjNNy8cYrLZtFCJoLgjxJqTb6pzJa45Rn/JhJEjQBmNHtP9E/aT3/XGxrhpod6IKvv1LfqOwcxWQf/miQa3k/82mC7is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MQMJwG96; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UBhQa6kw"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-475dab5a5acso11441355e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2025 05:56:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MQMJwG96"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c479268efso445420a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2025 06:50:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761915373; x=1762520173; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nPmKs28lkpvHoRqiGTUvXenyc4ndbMqG/sODnZUvqnA=;
-        b=UBhQa6kwo34GlyUttobY4UbBFhkSUX69JB3wD3r5ahlx6xQQmccAOyqoVX+UZ01waQ
-         iNGOBnaexOYyzA2x8335AAwVIy//i0AzXSJ71R1dlVWdaZD+f3FIuZU931nU/cGTYjgX
-         /MBF5n3g+/kQTM2vRzHport5NmNvl0QdRP29ee3xw205Ffz2DW6wy8S3lCWEUNM9aGgj
-         cQUA16K/77T/8/WLbnE6zvoDkgS7XWKlt8p5uhISY8Bq78wNIkpVuTCnKPMAecsugdUV
-         DUk4Gg8JD/QPLpKHMeAle8/3X/y9JPpDzkDdX/h6/V/1JRJApbKz78tR6hDOw9u3RWHo
-         MHhg==
+        d=linaro.org; s=google; t=1761918652; x=1762523452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqCRP9/Mbai8FOF4N9IAH1BiG9vM0x9aR5MB26eKXF8=;
+        b=MQMJwG96ELbGMo/JAee94yTqJ/4EF/wfHcv9bxpdbYSmw+WkJFubic2yD+qcjX6PTt
+         t/Luz7JaXdLwpXehGtR9aso3f76a96aPWq8IRecqldC+zRiH1fgBHzYTxqLNafBq1PMc
+         wFCu33Zn1XnfMF0f+2Kf0xoeLNJBivrbeIWquYWHQLXw5LZH2uK0r0cmg7z4IdE4zWJs
+         8C3n9qZ0z7jPXS9umWA8SuY4LU/8HXymWmHocyVlFIzdpf8oFce2hLxba/NYLcEH2gOA
+         9hiXdYd2Y2DlAlw27MmYYfnMcv/OeaKJnwlUr0KnJUK9qauwINcbBwC5kxiN6LzVF7Ip
+         O3tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761915373; x=1762520173;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nPmKs28lkpvHoRqiGTUvXenyc4ndbMqG/sODnZUvqnA=;
-        b=JYDZD2QeoToIyTEoCiOmVY9t13X9UN23SDLYrj4/k1DnK2tKHSZvrOBe/kHrESUfOp
-         ReuZaCxNzlSn7yqG3PBrSvbdSRPVIr4L23XI4kzbsEcX78QJ8pdoaw+pZ3bWrTBL7YW5
-         lb7AMglnR64Z+Zato7akego4to9ZF9MdUnT6boUExabbpANRQR0AF+bwWuI+pKh1vGkM
-         l5oWNZ/96KpDl7rwX2PVyw1NKg+SfGOqJORMv062NbSaZGzYrwP1V5JeHC6W5MrFXOhI
-         vC6iMWnQ9vnSDZ2yKPZCVmOyBHoc2Zs/9wNxD08pBi+AYEglfrz49EPhDmITiXwqx8u2
-         BhDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWV60q5EpqGgp+vO60XCKnFM0d5ZGk0dFwSm8aRbyDiAryaInTQ92cpQT5O5dRm0t9Pf2XSefNcjVC0QwB2SCxdMg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxSfL79lF1EJYxJJ2vtWnxn8y9ilVS/w5DlC3WhWwy4KQ5tX8W
-	eJFIBdeFv92wFDzQyOLxxu9skvmWyNUbKKsQxYWLjz2RdsWba74ft8E9K9TKMZKikkI=
-X-Gm-Gg: ASbGnct2IHs2vFoFCmBqfWmfKtdEP5RJyBdyEd0d3PkWLORmO0HNPqD3kYMZnnpyXAa
-	PobGYB8abf+PSnICNArVUSZgIsouuH5JcZXp2nk5+tQMe13PdUVjZKDCr2bm1hqEwT5Xhulo79+
-	eA3F/MwHmkjAu4rOe3KWzkUVBzo0yinh+Ec3IYfpaQf3tc+xikqhmOOCdc1thqNm7Z4eLUs5slt
-	d2LPYMdDxkikKnDck5pc1bD0+UzmFpw/vSfA5oUPjTnTjmCyB5kGPn3RnOeY7+YFxAu9dD8xmWc
-	Q6bkmfe9qIXzDnpDisBw2yow39WASjizzV7NDIVDtXlCRZu0UnO5gSz5eYe333xi3yHvIIqFAMm
-	luDfhMnrRP4MdqmdC7GyIX/D5oWVG0/OGLa9tcoisYIWrT/hr7T1JnrdxLtraEeukYHndc27fXB
-	8x0gM0opGclNKwpyOiTlJIIxZwOl5ZDbpgzICV4kmWSTYuzUUv5QxoovbiDq0d1wI=
-X-Google-Smtp-Source: AGHT+IEgFt2drlICBdE8c15ZSdRAo3YhHP301vNjyBeBb0HaK8c5JkyxDlcHps+bf8XyCx+ZBmNPVQ==
-X-Received: by 2002:a05:600c:538e:b0:46e:33b2:c8da with SMTP id 5b1f17b1804b1-47730890e99mr33964965e9.32.1761915372724;
-        Fri, 31 Oct 2025 05:56:12 -0700 (PDT)
-Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47732fe1075sm31814585e9.11.2025.10.31.05.56.12
+        d=1e100.net; s=20230601; t=1761918652; x=1762523452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MqCRP9/Mbai8FOF4N9IAH1BiG9vM0x9aR5MB26eKXF8=;
+        b=bMBW2xBoykCBUMDl6bGff++in6bvNzW2n7o6ZlCplP3wiCAlHzTVQ/QR+aI+cp+o74
+         uTUBksqMl5q7JByS0ucHYtn45lP6VYx91oqNMuvviDIHSJCvnfSjZslVhHQ0pHd9O1Gw
+         rkk6MsmWdPRMor3oprpi4/yOY6rsIJDid7KIRzKL5Q8eNR0KFtf9GJp890QfJBvot7Iv
+         AX/ld7MGTYIuo4tsCr+IyjlEjQY3BJ8ryoGWO4lkpe3ykG4i0sJuXQHw2HtOSy3TD9a9
+         eObGR7qgpUMCdLz2OixsZ3g7zfUSHMhet9CsX8FojBWEyZv/gj0O2hXG8TQJw+Dawk/K
+         heiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxLLFveouHyM+gIWuoGWhvtYBoLyYWH3cJ5b7L4RBaw3j6NND3EjHwAg2Tn+2InJYzojMYceBr501rlrjGjed2Iw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO693B5qVQObadSCGJHBI3hPjyWvggnjsdg8RCVtn5+dCPNtrp
+	kejCRJnZbr5Ijve46Zs2XWZChOr9Pxjj+V9BwYg5w3Pccg1Vzfx7nHbR6UlWYm5qdjE=
+X-Gm-Gg: ASbGncuVVETJPOntth+8DkJtyh1+ZQLqTfcTo14KMPvgp3ozU9oFiz6aQM2N/m8heJf
+	HIFuctfmgmXnw7uVjZHNlJuBlAFqMIXYKSYtBmmEAtX5tlX1mD05X3w4rUFn3dNGzRCN7+66WUx
+	Lxi5oA9y6kl4d1nhRGEPDQiwHvaPwDHvseda4F0Yd/vZig9P65TokHXtH1AmsZOq8yiBxIHGWzd
+	jvdhhnQUVStIzvqRZsLteMu5GdcEjEj+1CbNOERYUaOMwFM6C0sdgeFofTeJ05cAdGpVrhBQtwN
+	pYEojytPOmaFLekYWV1WyyepjuOfRStdEQJRhTvv2is+iBnJgFjaBrBgtTvIrVAHN7oDbL2O4rP
+	uRiQcII98K6p3ud1VCAVfUJSj4BvnQAEbKIqnVFIVuYXjjcfXXq+TWl5DqkyF/E6FUmX7MofouP
+	oWaFMpmKUYUAY=
+X-Google-Smtp-Source: AGHT+IG4ALcuZ2ZkrRAVrLeUPvJuTLghF2aRSPyjEkOrlsMOO2oZQiqthEsk9HuFzyEGo/NHGSB7Vw==
+X-Received: by 2002:a05:6402:2812:b0:637:e5dd:ef81 with SMTP id 4fb4d7f45d1cf-640770412e2mr1525778a12.8.1761918652041;
+        Fri, 31 Oct 2025 06:50:52 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b438ca4sm1647724a12.29.2025.10.31.06.50.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 05:56:12 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 31 Oct 2025 12:56:10 +0000
-Subject: [PATCH 11/11] arm64: defconfig: enable Samsung Exynos chipid
- driver
+        Fri, 31 Oct 2025 06:50:51 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH fixes] MAINTAINERS: Update Krzysztof Kozlowski's email
+Date: Fri, 31 Oct 2025 14:50:39 +0100
+Message-ID: <20251031135041.78789-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-gs101-chipid-v1-11-d78d1076b210@linaro.org>
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
-In-Reply-To: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org, 
- willmcvicker@google.com, kernel-team@android.com, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761915362; l=829;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=SNitQ6iR1OrWkD+1kTT2otCfVrWRB5Aki2fWLfOjKbs=;
- b=tiltm92a6lWnlNHMGe7UFecCrk/97yelVtT3Nd5y3c3b6toA4eFvJ9l/AoAY69Wscue1C6ZYq
- vOAuVToq/TGCmsCXChXNd7/Jjdxd10s8Y2Ky3SlZlKDxTR1t/jGCqZq
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1959; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=SmfR1ZQDKDR/gPIplrtS+9dHdS1dhkdiyMyQwkEDbCI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpBL6xj/1/uZGgWmRCMjhesc0s7ijjyTpdGyik9
+ o3dmzeDDMCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQS+sQAKCRDBN2bmhouD
+ 10xWD/0VNvesF6NpXo8GEMwtCDZGsmu1Ez1bxfGh4Wcx8onnFQYnJNNM0nZS4Wra8wGmIXEs2yw
+ ++O7yRYY32m3kWy7wl1tJONc8eJPqu77N1N1J0jeXL4Cz8FHBNH31WAsiSIVY+apYXuoOxs42dP
+ kOzCCOelWYKPetbG0HTVRPbUFz4woOj0T4iP7DHfedmRhvm/8hyEnMNlOLa03C5ui0vSu+b/tBw
+ Z9qHcDlE+VzHsmLdEPH9Xlin29uUzxZHrbUfEZMJU/TKfF+Zkwch+U1LP9hm+6ba0ac9RWRD9NA
+ aqa7RJMb9S4Z3gDXjntdUxKqOwhj/GJaRlfbtR3tkBo5fCwDA3/qDEg49bIefrWNoIddZAC8VLI
+ +Gs8ExA/Wfsg/INK6QdWmSK+MHsaVW4o7MMnt5112zF691VElnAGnu1ALJryqz3IDqvy9juiYXr
+ kRrKPAt9w6gQ8PTEj5yr2hV1SRIc5PFxNbO+txUTBigl0D4Q0TVxNCJYOh5kSMQCB6/Ly7fF4Qh
+ tDKuudpRKh4mic+mjJ/9K+j8+PlO1KszRubCHAMKbfOZ1T0iLvjK42x66Zw2Og3puPRWwAN9x52
+ JoK8EpG7tYRyyWk9lpcG8I44Puhr/v/k/8cmmzeuc1m17fRq8s6uOXfcdah9P+nX3W9/b1dsbhv iBSYSdgq8bvnv0A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The Samsung Exynos chipid driver provides SoC information to userspace
-using the standard soc interface. Enable this to allow certain user
-space tools to acquire this information.
+Update Krzysztof Kozlowski's email address in mailmap to stay reachable.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Link: https://patch.msgid.link/20251021095426.86549-2-krzysztof.kozlowski@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Patch for current cycle please.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 646097e94efe7f1a18fb59d5b6dfc6268be91383..cf1a548034d28db201bab0d48b838b4136dbb59c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1530,6 +1530,7 @@ CONFIG_QCOM_APR=m
- CONFIG_QCOM_ICC_BWMON=m
- CONFIG_QCOM_PBS=m
- CONFIG_ROCKCHIP_IODOMAIN=y
-+CONFIG_EXYNOS_CHIPID=m
- CONFIG_ARCH_TEGRA_132_SOC=y
- CONFIG_ARCH_TEGRA_210_SOC=y
- CONFIG_ARCH_TEGRA_186_SOC=y
+ .mailmap    | 1 +
+ MAINTAINERS | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/.mailmap b/.mailmap
+index d2edd256b19d..9811c2a979cf 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -435,6 +435,7 @@ Krishna Manikandan <quic_mkrishn@quicinc.com> <mkrishn@codeaurora.org>
+ Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski.k@gmail.com>
+ Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski@samsung.com>
+ Krzysztof Kozlowski <krzk@kernel.org> <krzysztof.kozlowski@canonical.com>
++Krzysztof Kozlowski <krzk@kernel.org> <krzysztof.kozlowski@linaro.org>
+ Krzysztof Wilczyński <kwilczynski@kernel.org> <krzysztof.wilczynski@linux.com>
+ Krzysztof Wilczyński <kwilczynski@kernel.org> <kw@linux.com>
+ Kshitiz Godara <quic_kgodara@quicinc.com> <kgodara@codeaurora.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 46126ce2f968..811a89d61b87 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16186,7 +16186,7 @@ MEMORY CONTROLLER DRIVERS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+-B:	mailto:krzysztof.kozlowski@linaro.org
++B:	mailto:krzk@kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git
+ F:	Documentation/devicetree/bindings/memory-controllers/
+ F:	drivers/memory/
+@@ -21148,7 +21148,7 @@ F:	Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+ F:	drivers/i2c/busses/i2c-qcom-cci.c
+ 
+ QUALCOMM INTERCONNECT BWMON DRIVER
+-M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
++M:	Krzysztof Kozlowski <krzk@kernel.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
 -- 
-2.51.1.930.gacf6e81ea2-goog
+2.48.1
 
