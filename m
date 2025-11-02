@@ -1,165 +1,269 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FF8246333
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Nov 2025 16:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF50C86348
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Nov 2025 20:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762101572; cv=none; b=jaGc7ImIN2tKa9zsJ2/jWNh4dFH9b4iqJ4szxVcmc57frK8ySca0p/i/m8Ve1ItneFqncDtW+hhI62Dhqd51vWTAebmL74IQBvQcnw99wWa0LyAMEQD80HXcA0vb+yZeGSOKp8uTZop5NnvAWvwjtiXj9/adlEqou9eyCn+Wk4c=
+	t=1762115252; cv=none; b=pXrzMw26J6nrsGfiVwRmDe7Baaw1BofKwV5hpAod0DK5Cp+wI+zX/YPX1uwlq4CP1gNxVcsNpcyyIR/vS+7zEX8xwOAsYfSvp0f9BbN2rZspSxDYWjdmwdqUBHT6L2sQ9sdSIRN5zzZiXtC37/ybvPXTsOdlUX8TnZ/qa8RDyZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762101572; c=relaxed/simple;
-	bh=/wk0r2WF7kQ5J/280jubxtFtMyKSbwHx02KsbYzueY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHElUUSd12Us5i171oyFT9AgvjEp40ffHA8O9mfpaVcTdJlpYQhRrGkoucCnui1t7/MYHwmBNKQFtLj7i65iy+E0xJuU1O9KCSq4Dr9iGhejkb2eibWcQqZ5EqxP2vUEnQMXzzxEfIGvrNYRxAXoPWFJlFgBzkbtCenP/N0N/Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MofBD+Fv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=i4/WYBMG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1762115252; c=relaxed/simple;
+	bh=OhekFW3h+d47C/5AQdp3ggOLmxhgBAEJIvtUoN5VEas=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jXwMzqItRoUDY6z9vabe+iEHgUxJMnLOwf+ZSyLq/KDagH7y05eXa42qYUU4P9W4vvrW+BIHWTIVuw5tbx6p+xFuBigjjWmwaYfnODoW1lKu23Uk4WBVrcNXyZpI/9hykrIynjRHpMw2ZjnxCcUW2CNUNCPWnn7TLhwHh0f8SiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tlu9OeP9; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MofBD+Fv";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="i4/WYBMG"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A2FEhqh477159
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 2 Nov 2025 16:39:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Vsudp5PRE81p+UL97II9GrFo
-	Q82PxOzVdfpShaNANXY=; b=MofBD+FvgCKPFuq3/UZeyNcPO7m4lbnHivOxOn7h
-	/9eQpsVBicILU9Wyi7oVMysvN7k7Mw9FwfT4cK38MU7Xn9j/1v/0p6/Jf6+/PVhO
-	gWjMNLjyOeisd7CIbEtHAh3y7coy+AFabvbvPQNy5jnA6RaGEUMgR++iZmAmLSpe
-	FcF9U8T7xzAOGwsxol6eOhhJkNqSmZlDbcZrzrZiAZn9Ez/KyqbMLuBybNFobZGt
-	AKrAXmbeaQ/JJrjNAqJO71reaAmJEanyzsfP6lFJkKGi84AHIyY/ZHYgjIvjNIlD
-	VzG8fDkGWx/j74iJT8C/kUi3FZfSjsTjW7BgeK1e/d4lMA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5ayfa9yn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Nov 2025 16:39:29 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8916e8d4aso86521311cf.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Nov 2025 08:39:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tlu9OeP9"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-475dd559b0bso51122195e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Nov 2025 12:27:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762101569; x=1762706369; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vsudp5PRE81p+UL97II9GrFoQ82PxOzVdfpShaNANXY=;
-        b=i4/WYBMGUBnEaKfVK+XxEk/1dI9+8icftO6Ih6AsYPQ5iNvgJNFgMwv/camZavyLKi
-         iQawi7tyzOpGmVcVQATYY+a/wPi4CsicQPW/cUF5yPf6LhDseLy82Pqxz+SjkEy5nQwg
-         4wzi/Gb3p98CLAY+6k3CJhIVs0luMkkVMvDE7eNSPUtQSm94l9011DJpvMQx3u34fVko
-         cYWuKIbJ+sLCBQv5vwAA1tczUf23smCJLhwmSHfjHHuyQPPfs3IHL3PyNKxh19uTDcz4
-         bJPp6UeFd4pURhT9ffnL8RHsgcFpcVxZ+A2zdYkNSTfrpLeW5dDQBhkfdPUcxXVoyA/3
-         DnlQ==
+        d=linaro.org; s=google; t=1762115248; x=1762720048; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nT7uAiV0xMGo0ccwsBEgegZqRMJyigLwSqhDtIUoOXM=;
+        b=tlu9OeP9lbiEJNTHM0ZkedCcHjWz3bELuVdqkz3TUNxPd2mKBgJUhwunyxXXTrGW9d
+         4YsSH52ZUnloJptjDL1KVYSCvdet1uEZJgFxwRlX5J/tD+dG4pC3nE7RKrkNlaGwiJsC
+         u1QwPKlzxmuMHvFnJBRgAL2l8QHy5ZWgz7rzkZIqWYur3JQBMR8mRTOFmd669m4euulP
+         0KBfWDrbTnfG325Sowm5p8vLIKFahW+zGX/AyrT4D/OaXhlvAM+4lhNq6CQp7iurysJS
+         yUnCBC5S7jMrgs1uzrShWSbYjvlHweVsl9qW9uIXSdqIFaoMeLa2XhuGQbNaetaKnP2n
+         LUWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762101569; x=1762706369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vsudp5PRE81p+UL97II9GrFoQ82PxOzVdfpShaNANXY=;
-        b=Xs6KfYYm+4s4oW6sdrGreN0lUXqnsiXCOotjdvdQhi/xwqJFT477sRl9lO1loXWTJZ
-         66AqdI/4U5Py+r04YeadoKWbVN71xITbtGItg46qoXIdjGBZoSkoHUtbGhGS+6G9w7Bo
-         sFDfEJWu5h+mJ38VtnU7wAmr4b69Yq79gy88ch3e7dA2dqrvhlB/pqWMj6cWq7FVGXy9
-         Iul1Dse/TrsMZ4fbgBYTpn1xqQ/rIYrfI7ONYzXoLpa29NKZ/3RkFqq3JTruC2Pkhizm
-         JW0Y1M8S4rcj/JqE8AwQiTfoJFAUXJM5dvvQjg6uF0VjO/i3Xd7prqw0I+McVufGcdK5
-         4T4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkJn/nzdaKf0wxC6J8uI7CzY0Oy5pUNdCWLjsaSoDRPZbtVpjg01hAhNTPj3JxuDDD+K4vjUHKIIHVUdDJRWKd5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJJftsy5FGVVojvab5rs3G8rmLwWS9/FogTxSnaQ+4xyRtcZH8
-	ZSQrJxoR3OhYjiMEhSJ/bfTRzPb5qOKZHVjYDagfRwHQVW2j5KkEOJ7VKvL8mZi8itaXPNPxvFm
-	fApp0tp8GGJPATJLPUeB1QV+ixYFX+bM8a4WM9jGZk5voWAAKAL+nvW0KrJ06F4t9TXdwn8sYAA
-	==
-X-Gm-Gg: ASbGncuvEP0xZX8GJW8sFJ0IVQi9D8diodOe/Meamp12cdVn6H+vpBuTVhmwbg1grdm
-	am77h6nawpX8XQ1M7mTOwiu5l8YudzUJFaqJT975XOCmt1uC9gwuJ/HTZnbAbsdRM6KqnG7K8T/
-	/FNapDzsqao3Tu1UhG5JSbXGv2m9GtsR5GTzqITGNjI5AwLIB8DIXLpCNF/u7HuVtUJwFoShNZL
-	4QxbSszmToIE111ykYhOL/ycyEOtzWJ/mdGoFKtntOf1V+CoeqnO/ec47sOcKClesqd5VK9WCGF
-	x67EGzd6mrt/oc/UC6pi2k/pEFJOFjRDPWGNcsXbcsYk7rJsu/Q6FqV7tmzemtjJAinI3mGlfuq
-	NFwumwtVuoKi5lfGd7deafj/1NGm1qGh0oHwuc6k3m2/d44o99exMHgPUtFhVvIZqj8ZnXmYs8Y
-	g2Gk6zL9ZPvCuI
-X-Received: by 2002:a05:622a:834f:b0:4ed:423d:48d4 with SMTP id d75a77b69052e-4ed423d4eccmr57411191cf.54.1762101568698;
-        Sun, 02 Nov 2025 08:39:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFBDCWJDKPzqxu7f2En5m/zHiJp5IOVrgHqGPH6qz1rOivQAZXaoWbSK0Fgiw9Mg8qUeB+6cA==
-X-Received: by 2002:a05:622a:834f:b0:4ed:423d:48d4 with SMTP id d75a77b69052e-4ed423d4eccmr57410861cf.54.1762101568242;
-        Sun, 02 Nov 2025 08:39:28 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-594282be8adsm789469e87.51.2025.11.02.08.39.26
+        d=1e100.net; s=20230601; t=1762115248; x=1762720048;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nT7uAiV0xMGo0ccwsBEgegZqRMJyigLwSqhDtIUoOXM=;
+        b=Fp8lCdTi9hAmsiFutsWyVrVTVKZj77EvjCHFj1fD1TQtFdB1fB39Gec3w7QHxYk84N
+         voiGGaGY4TiyHF3xIasyGOLXkXUES+v/dILHRxGkpELKLuny3XB/xPaMvVvmUdkUHGq3
+         AT/p0Y3j47tvji2PV3tk05PWVqfNSieXolKxDcEBbFrryB6bO5TXwNlbhT6GZzQWsRmV
+         XeuFlh+u3z1ay7CpxdiYmETsuhhV3EtM7IYC9tZAzd9dlBUqEqMy2bu/kQR7DuowrllE
+         vCTfh5HwyJLxgKNDfFlIKEgEW61MbuPY1n7afq+vvqm9gnxFCwRM0II4yi/0AGxaKDd1
+         8J3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7FsSBpJerlzt6TeOHU9Cue1UKx59awHyAyhsXAnLLFCj4eZihwOp4TYuEPD0SXfMqnlODpMDxt+Q3BL00qtAI6w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza7s3uxEsJRUwCUWD511+527PUVJ+jnftLSxC/qBVWqQj7WhKM
+	5dKk+uFQCWCb3d+gADeXgHhOcRyQljMLDQtL3dpsPvo9AuHxNemINsn6gdaJxRqVx8M=
+X-Gm-Gg: ASbGncvvm5fOK7iVJdnpDD+BMv9hx6iPCnql7Fe/E7Occ3NsKFRMkf/EFLoykk0u8sR
+	+KPjVnB0tkf0raSM+k5Ta18cCSdVAXQNcD96OffNt3usvKHcbJhWLPkBSSJIdRY73eBEDfY3Dj0
+	VfWY5rnvmyjgsw8N1cXiSVfZGN8r+8yxX47Js7IsSlIY3klu+FJ6p0UTOc0dWEWww8hUiDpJcjM
+	yEOn/oa6GYwVO31gVn6QyCvVEQu/+53joYoDPMDeiEG2fQkOhorXsX/kLMnJSSrf3I70EUX6y6Z
+	L3B5e7AR0y6+A5tR+iJ/YDyIvcwsKTEu8RQ22hEXwM/Qd/vTP132rgm/jwaUrz3d3G7vzjmSl2P
+	CMJaM5hZS84EUngUPPH+MmvvJYa2jsLMgk1i6QB69nf6zhqYhZ8q3g5KPyvGr1uuvXkjouh9XQZ
+	KYLcs2ahz2IFdpl0S38aV3q7e1/1P2LMJ9/0pAG3mzgw==
+X-Google-Smtp-Source: AGHT+IHIKkiQwKtmGAzKOmgbA356fRiVBqvIHDiF+GGEZBhFiNyjM9x7OLxG5XcUh3gmeu6263UQKA==
+X-Received: by 2002:a05:600c:530f:b0:46f:b327:ecfb with SMTP id 5b1f17b1804b1-4773082d988mr91469825e9.9.1762115247938;
+        Sun, 02 Nov 2025 12:27:27 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.65.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c374f84sm114664165e9.0.2025.11.02.12.27.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 08:39:27 -0800 (PST)
-Date: Sun, 2 Nov 2025 18:39:25 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: simona@ffwll.ch, airlied@gmail.com, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, geert@linux-m68k.org,
-        tomi.valkeinen@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
-        linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org,
-        xen-devel@lists.xenproject.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Subject: Re: [PATCH v6 13/25] drm/msm: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-Message-ID: <vptw5tquup34e3jen62znnw26qe76f3pys4lpsal5g3czwev6y@2q724ibos7by>
-References: <20250821081918.79786-1-tzimmermann@suse.de>
- <20250821081918.79786-14-tzimmermann@suse.de>
+        Sun, 02 Nov 2025 12:27:27 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v3 0/4] Implement hardware automatic clock gating (HWACG)
+ for gs101
+Date: Sun, 02 Nov 2025 20:27:13 +0000
+Message-Id: <20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821081918.79786-14-tzimmermann@suse.de>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAyMDE1NCBTYWx0ZWRfX/Cnds3wgEXyT
- EgElzYk7rcdc9yosRECGUsnGq46rs4WSwIJzXwyqEgyI36Qf+AuX6EqR/HI3dt5Dg+hqgRRkYdz
- FiOgb7JqxdLZToJe9MJ7JhhfVZbZ4GFXQqjdtVEh6MntgDDoyk3ZdW1z+345rkf8dvroIhmoZh4
- Iq4aMd3yjQWre0lY7YUOLVbGIEA4A6SwM7D70sogFGL95Najdcf0aUw+G0bT0ckBcNh97zHK2Re
- w8Q2RSIxCVU7J+pHO2y16vJckonhUU+Dsbr8CZYv+lB8NV6x76/GGWd5q7NyFcx6IcKrkievjaz
- 8AwMa8EGwA3U4iPo2Qm2vSEmSMhHgBBZjiUyKrKvpPWcgsoAGRRtxViz4zHyfYu/wdsSXRFYBMr
- RQw9fAgxzymddfjEZRN8qqlimAajXQ==
-X-Authority-Analysis: v=2.4 cv=Scj6t/Ru c=1 sm=1 tr=0 ts=69078941 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8 a=tVI0ZWmoAAAA:8
- a=4vBwfh3hQKJL6CJddaEA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22 a=-BPWgnxRz2uhmvdm1NTO:22
-X-Proofpoint-GUID: UOvSFWPpKmrCpi0kGNGVoC3HRdsuD-vg
-X-Proofpoint-ORIG-GUID: UOvSFWPpKmrCpi0kGNGVoC3HRdsuD-vg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511020154
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKG+B2kC/23NQQ6CMBCF4auQrq2ZTgWLK+9hXJQyQCNS02KjI
+ dzdQlxodPm/ZL6ZWCBvKbBDNjFP0QbrhhRykzHT6aElbuvUDAFzAaC4vo/uqkdruOmduQSOu1J
+ XBTQFGmLp7OapsY+VPJ1TdzaMzj/XD1Es6xsT8heLggPfo8oFEYAEOPZ20N5tnW/ZokX8ELD8I
+ 2ASGkV1LTXWCqsvYZ7nF4AB82nzAAAA
+X-Change-ID: 20251008-automatic-clocks-249ab60f62ce
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8200;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=OhekFW3h+d47C/5AQdp3ggOLmxhgBAEJIvtUoN5VEas=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpB76pXUE6B9l/PyF19LGMSvyFgmTlaR0K/ip7w
+ JLdHmop57WJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaQe+qQAKCRDO6LjWAjRy
+ uhm7EACjNzKyTNo/pp6snc9dOYQUWRVlkURbNVn7v4DbhPB95Okxryn6+xv7IN0Rc2pJMT9dtLJ
+ DNbJqy+TSx1y19jEgZFPggl+TEVQ+iJdH3GR8lA/dxT8ZKJXvQpUt9Nn0i4pFvtNIZXBaJr13RY
+ 8O5eNmFOVYkcx27T7KAbpCaPeK9MUf4fQ7vO2liCQ5UPwXb1xdGtilNhaUQvPeFpZrM3qn7S+Qr
+ lO912goKd56OXbPud0vhI4wjbsNMVx/AInuQAzT2AKb0oCUodwnnHGqsUQI50KkzhCTq8wmkjFO
+ kkeOFN8Tb28a8/lfY5IgZGaKU84brFPoxcmMRpgwESqoJVPzlb/KU3boRC1io9JM9qhcJl3mP9s
+ 42Oqu8L998pReG92a+fMaVR3zmQi08QbAohXWIieBQL4is3+nQDU74fO6Iq/Uo2p7tND2Hmu9XX
+ sG1dFInzatdYUaeP9GHJ2sh7PAzH+6DnfkPy/T+x289JrLMKATUSCvaEqdzZoJlUDPi6aw4t2KR
+ 5YJgOp4b4FSUhuwNj9xRxkNtqReWi3BLCRnx8bIJlz9x6nJx3TWLCHlNcurSZ4vmMGvIenmZ1Ft
+ wjOCho7fg7HM17/fr06t/0mtuyBOpw33a+rfQXgzEyGQw6w28rUUAVQ8TLFO3YZD134CErQZfYE
+ XsoqbMcMuFLOeyw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Thu, Aug 21, 2025 at 10:17:20AM +0200, Thomas Zimmermann wrote:
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch
-> and buffer size. Alignment is specified in bytes, but the hardware
-> requires the scanline pitch to be a multiple of 32 pixels. Therefore
-> compute the byte size of 32 pixels in the given color mode and align
-> the pitch accordingly. This replaces the existing code in the driver's
-> align_pitch() helper.
-> 
-> v3:
-> - clarify pitch alignment in commit message (Dmitry)
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: Marijn Suijten <marijn.suijten@somainline.org>
-> ---
->  drivers/gpu/drm/msm/msm_gem.c | 27 +++++++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
-> 
+Hi folks,
 
-This broke kms_getfb@getfb-reject-nv12 and kms_getfb@getfb2-accept-nv12
-IGT tests. I'll submit a fix separately.
+This series addresses an issue with Samsung Exynos based upstream clock driver
+whereby the upstream clock driver sets all the clock gates into "manual mode"
+(which uses a bit that is documented as reserved in the gate registers).
 
+Another issue with the current "manual clock gating" approach upstream is
+there are many bus/interconnect clocks whose relationships to the IPs
+are not well documented or defined in the specs. When adding a new CMU until
+now we have tried to label these clocks appropriately with CLK_IS_CRITICAL and
+CLK_IGNORE_UNUSED but doing so is both error prone and time consuming. If
+your lucky disabling a critical bus clock causes an immediate hang. Other
+clocks however aren't so obvious and show up through random instability
+some period of time later.
+
+Fortunately each CMU (at least on newer Exynos) provides a "hardware
+automatic clock gating" HWACG feature that is used by the downstream
+Samsung clock drivers. Hardware automatic clock gating uses a hardware
+interface between the CMU and IP to control all clocks required by the
+IP. This interface is called Q-channel, and is part of the Arm AMBA low
+power interface specification [1].
+
+The advantage of using this Qchannel hardware interface for
+enabling/disabling the clocks is that it takes care of all clocks
+(including bus/interconnect) ones for the IP automatically thereby reducing
+the dynamic power.
+
+Whilst each clock component (GATE, MUX, DIV, QCH etc) has a HWACG enable
+bit there are also some "global enable override" bits for the entire CMU in
+the CMU_CONTROLLER_OPTION register.
+
+This series makes use of those "global enable" override bits to enable auto
+clock mode for the entire CMU and every component within it. Through
+experimentation we can see that setting the "manual mode" reserved gate bit
+on a particular gate register overides the global enable bits. So the code
+is updated accordingly not to do that.
+
+Auto clock mode has been implemented as a "opt in" by setting a new
+auto_clock_gate flag in the CMU static data. The intention is existing
+platforms in manual mode should not be effected by any of these changes.
+
+If auto_clock_mode flag is set and the option_offset field is specified
+then the global enable override bits will be written for the
+CMU (to avoid relying on any prior bootstage configuration). Again if auto
+mode is enabled the code no longer sets MANUAL and clears HWACG bits on
+each gate register.
+
+To ensure compatibility with older DTs (that specified an incorrect CMU
+size) the resource size is checked and the driver falls back to manual
+clock gate mode in such cases. As the CLK_IGNORE_UNUSED and CLK_IS_CRITICAL
+flags are required for manual clock gate mode, the patch removing these
+flags has been dropped from v2. I tested with an old DT and we successfully
+switch to manual clock gate mode and the system correctly boots.
+
+To have dynamic root clock gating (drcg) of bus components and memclk
+enabled, it is required to set the bus_component_drcg and memclk registers
+in the correspondingly named sysreg controller. If auto clock mode is
+enabled the clock driver will now attempt to get the sysreg syscon via the
+samsung,sysreg property (as used by other Exynos drivers upstream) and set
+the registers accordingly. The suspend/resume code paths are also updated
+to handle saving/restoring registers using a regmap. Note cmu_top is an
+exception and does not have a corresondingly named sysreg_top.
+
+As all clock gates are currently exposed in the gs101 drivers and DT, we
+continue to register all of these gates in auto clock mode, but with some new
+samsung_auto_clk_gate_ops. As clk enable and clk disable are now handled by
+Q-channel interface the .enable and .disable implementations are
+no-ops. However by using some CMU qchannel debug registers we can report
+the current clock status (enabled or disabled) of every clock gate in the
+system. This has the nice effect of still being able to dump the entire
+clock tree from /sys/kernel/debug/clk/clk_summary and see a live view of
+every auto clock in the system.
+
+With the infrastructure in place, all the CMUs registered in clk-gs101 are
+now updated to enable auto clock mode. From dumping
+/sys/kernel/debug/clk/clk_summary it is possible to see that after enabling
+auto clock mode approximately 305 clocks are enabled, and 299 are now
+disabled. This number goes up and down a bit by 3-5 clocks just on a idle
+system sat at a console.
+
+With auto clock mode enabled it is now also possible to boot without the
+clk_ignore_unused kernel command line property for the first time!
+
+For future CMUs in gs101 I propose we continue to expose all gates, but
+register the CMU in "auto mode". For new device drivers or updates to
+existing dt bindings related to clocks to support gs101 I suggest we only
+use the "obviously correct" clock(s). By "obviously correct" I mean a clock
+has the IP name in the clock register name, but not try to deduce other
+obsucurely named bus/interconnect clocks which will now all be handled
+automatically. Note it is still possible to test whether the "obviously
+correct" clock is indeed correct by putting the individual gate in manual
+mode and disabling the clock (e.g. by using devmem).
+
+Note: As everything here will go via one of Krzysztof's trees I've sent it
+as one series.
+
+regards,
+
+Peter
+
+[1] https://documentation-service.arm.com/static/5f915e69f86e16515cdc3b3e?token=
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v3:
+- Add missing 'np' func param to kerneldoc in samsung_cmu_register_clocks
+(0-DAY CI )
+- Link to v2: https://lore.kernel.org/r/20251029-automatic-clocks-v2-0-f8edd3a2d82b@linaro.org
+
+Changes in v2:
+- Rebased onto next-20251024
+- Fallback to manual clock gate mode for old DTs with incorrect CMU reg
+  size (added samsung_is_auto_capable(). Tested with old DT and it works as
+  expected. It does require keeping all the CLK_IS_CRITICAL
+  CLK_IGNORE_UNUSED flags in clk-gs101 so patch removing those is
+  dropped. (Krzysztof)
+- Rename OPT_UNKNOWN bit to OPT_EN_LAYER2_CTRL (Andre)
+- Rename OPT_EN_MEM_PM_GATING to OPT_EN_MEM_PWR_GATING (Peter)
+- Reverse Option bit definitions LSB -> MSB (Krzysztof)
+- Update kerneldoc init_clk_regs comment (Andre)
+- Fix space on various comments (Andre)
+- Fix regmap typo on samsung_clk_save/restore calls (Andre)
+- Include error code in pr_err message (Andre)
+- Add macros for dcrg and memclk (Andre)
+- Avoid confusing !IS_ERR_OR_NULL(ctx->sysreg) test (Krzysztof)
+- Update kerneldoc to mention drcg_offset & memclk_offset are in sysreg
+(Andre)
+- Update bindings commit description as to why the sysreg is required
+(Krzysztof)
+- Link to v1: https://lore.kernel.org/r/20251013-automatic-clocks-v1-0-72851ee00300@linaro.org
+
+---
+Peter Griffin (4):
+      dt-bindings: clock: google,gs101-clock: add samsung,sysreg property as required
+      arm64: dts: exynos: gs101: add samsung,sysreg property to CMU nodes
+      clk: samsung: Implement automatic clock gating mode for CMUs
+      clk: samsung: gs101: Enable auto_clock_gate mode for each gs101 CMU
+
+ .../bindings/clock/google,gs101-clock.yaml         |  23 ++-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |   6 +
+ drivers/clk/samsung/clk-exynos-arm64.c             |  62 ++++++-
+ drivers/clk/samsung/clk-exynos4.c                  |  12 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c           |   4 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   2 +-
+ drivers/clk/samsung/clk-exynos5420.c               |   4 +-
+ drivers/clk/samsung/clk-gs101.c                    |  56 ++++++
+ drivers/clk/samsung/clk-s3c64xx.c                  |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c                  |   2 +-
+ drivers/clk/samsung/clk.c                          | 200 +++++++++++++++++++--
+ drivers/clk/samsung/clk.h                          |  55 +++++-
+ 12 files changed, 386 insertions(+), 44 deletions(-)
+---
+base-commit: 72fb0170ef1f45addf726319c52a0562b6913707
+change-id: 20251008-automatic-clocks-249ab60f62ce
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Peter Griffin <peter.griffin@linaro.org>
+
