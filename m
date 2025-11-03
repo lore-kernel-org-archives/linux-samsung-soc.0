@@ -1,143 +1,112 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661CB2D7D27
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 08:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2842E7F0B
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 08:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157001; cv=none; b=WHXlUK0xVCEm2wxhqfr7DTD0uUsGEUrf2pm+k4G/hBHnHHuQfGztsLrM+RBOpHjkOtEjMGVo98YXqZIVctuIJ+drGKlqRQUCrgs2g619zjlpzjqD1+xbPrG2C6GEGa6gvoZn6waGNUQoMf8Qyn1xuS02u1RpZ/oyLSLSEYDpm7g=
+	t=1762160341; cv=none; b=slqVA66nzuLgTYR0ZwgmkInBvQ2zHXwKPeXVLk7l0zYkD6/KKymkOLQo8sHDJyIV1L1GW+YjdlYIl+Aed6sx3P51TNJbLU58rrkToQZnto5KhtvsG52+lPeoKKVgdObhM7W2Qjk9bmOd2l+8odLyvR0HU6+X4G6GsUoS5U9bFYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157001; c=relaxed/simple;
-	bh=UGPgjULdS+we3HJqc3I3soms/UG6+af7wQFeI8hNCdo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cRJXviX/pcvEy/MxB/oA7XD2VqnVcAEswhbb3bB6s3ws3+XKgphN5zN1uyBUdCPnV5isq2X8GcUuhuvnkiPwfxnFgFGJRU8bJOx5NQFodmr8BTM4vg8b8yOBsB3Y8PESZPAJ7IVNCIBZb7oV1EfwW+dDdh2t1ubn+5yK7/0r40o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fpQ+G/iF; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762160341; c=relaxed/simple;
+	bh=GVk69UBEns6Ie0+2RlqPFg6p8JcoK9Chuxd6pApBJ1U=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=tG2LaXLo05jVhOyVVKMK2NLM+VyeiS/ItSz4jLp4EAgVNlF/qH4uQBS1LBKoo/dpoJdosdqsGgMT4mJbRrZ7U/hbT+Pvi72Y0TgIdYo8TKk3H6+G3QcMUFS0WcOUoWdaq7lgHHVusqf6JksRPXiqjWrkGwqtQJD4hVhQ2Fz5q1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rvZkkq4s; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fpQ+G/iF"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429cf861327so736353f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2025 00:03:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762156997; x=1762761797; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H26VIwt+agnnRoIUvWCQXs/2JOF56AwXUHjfpfr4mpA=;
-        b=fpQ+G/iF5/F99ya+dF03RyzCqd0Qg0fgiQTzCPfVh2VcHkhNeBz1qYeKccutr70RSH
-         ZSEMEFAIzDrWIY7D/PWP+1YrETaRq5cNc+I5ufki1mD22uLA/OHuOYp640aLb4u5DtFX
-         AHjqqJ8hpnlKFNMmOO/5I82/GUJx5zXBWAbwBPxgDAKhi3o1frPr1OVYLTmBBu44f82h
-         9g3DSc6VhF1/08rumJXTrrJgbdIuClh9LrJkyULv27DCoEu6+Af5DptitsUOrc1WwmHw
-         h1FRHmpMuGorhSduD6t8u0wh5fA38wFz2+KZlHIYciqrwrCPbR+SMHTczs+QT/DJTs2U
-         wCvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156997; x=1762761797;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H26VIwt+agnnRoIUvWCQXs/2JOF56AwXUHjfpfr4mpA=;
-        b=IlpMv6s9E4dIPKn1X2Kq9mmxQs0CiopuEzDBPIDCHkdz1nWN/yWo7dPITa7sMgq9Es
-         jEDyMIHc+/lYfGs2BGeGm7EbjdUaa5RNGGfOqf8qf8HmuFwyBJ1b+UQhCNrDMeVj8yrv
-         o4RzMZKBGtHe5VkgDDVlQNv3x4oWnTOYalcJlTC3xxct+p6OxGZHrKD89elQhdfDtYdQ
-         oiZn8kvbLlZoOR+rnEC4LYcxLjzgA2LDVIXhe4YDuowdvY34Kk7jGRMD4F+J3y6ryZDl
-         7gQneA5xFQrIdTUn+TDQKcLVlgpQXnn0ZScJ8s0gXAN5djm3SmGc8kbApnmkAVgMLH5C
-         mf6w==
-X-Forwarded-Encrypted: i=1; AJvYcCV80oWPKzjM/zkuvoDT/YZLjQV6atwNLTQhatuUyWUELexG8NP7MwRjLFQ5eHSFsdkZb5ByE5nwXPhE6k8Btg/OEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZlzGLs6Of93qWXa2oAowp8g/Sd6kvfb3sB63yqXRNdsUb1Vhz
-	a9aKqyAioGDPKwmioj3cUlfR7Oy3dhHrr/oWKhVs3oCOJCZED7OANaKIkyONgiggiaAusBbPgqz
-	s+gx0U6Q=
-X-Gm-Gg: ASbGncsB4Qc20esrTZJG5RL36J8aHZc2wgCnu45OPaGUVadTS/mzA9whyLIy6ECvGE1
-	eW55xxfsgSid09K/TC5w0pghLAm3fhXPuyYSBomdXBwqnyqHCRoSjzNcy47mPszvqiDv/hdgdS/
-	Asu0LiPNUzBVcf85l6MgzzHHB8Ait/cCv4c1APWskAVdqfOXlQx5f0/YC7PdeIprPE25wWnzC/x
-	ix5rXGBsLFNLUsngDAaEKqMWu75kD99jYNazWW6Tsw19rLxjTtRXdoPe2CsriUWniO2+liz5/3Q
-	gAwYgib/HpOGGWRj6XyHheYMIWG7hNG3dNzLOkcjB9asjvy8oZ0CXmt5BppBVKrF0VNL5DYt/HQ
-	uxOnV/wuTr+x+0570wonTJYK+oXDNuB5ZpBL1ICmsEcsRODYPzQmU+9kntlCQbD46bt/AuFG7r5
-	G/CyOP7dDOmjT3f1SwI66f+RBmYbjeUk4=
-X-Google-Smtp-Source: AGHT+IGNz9UjeIUIyTmrdpy1PxW7eeOvbLMlDXLQPjJMq+zpapydUSIPBZjaS+Vh5y+ecN3Jkbp6Fw==
-X-Received: by 2002:a05:6000:2501:b0:429:ca7f:8d72 with SMTP id ffacd0b85a97d-429ca7f903emr4511698f8f.23.1762156997401;
-        Mon, 03 Nov 2025 00:03:17 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.65.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c4ac5d6sm142336215e9.8.2025.11.03.00.03.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 00:03:17 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 03 Nov 2025 08:03:11 +0000
-Subject: [PATCH 2/2] arm64: dts: exynos: gs101: remove syscon compatible
- from pmu node
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rvZkkq4s"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251103085851epoutp02938a1153a23f7de1d4eba54f24f8883b~0c3wfAzTB1931919319epoutp02a
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 08:58:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251103085851epoutp02938a1153a23f7de1d4eba54f24f8883b~0c3wfAzTB1931919319epoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762160331;
+	bh=6fMD/AjwIISKuN8oFMxJTN08Tu9bmpimCJrNB1XLa5w=;
+	h=Date:To:Cc:From:Subject:References:From;
+	b=rvZkkq4sP3gD3ndRljSxuFPwQ+0sIddsyR/riRrb6x7FYBEZ8SkW8bILVZwUcCris
+	 SlxLr6Y/P2m3b+BuxzBvY+/l9uUgPcXg8BRQPQHa6bKThjbOflVtpDyUPebsxynJY3
+	 ZxdSF0j4/pZ1Aq3dG8/ODtHYI34I8sXuUpAKIWYs=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251103085850epcas2p16cf9e91b08f51d2ed7a86c86f1f6614c~0c3v8hBfl0547205472epcas2p1B;
+	Mon,  3 Nov 2025 08:58:50 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.38.204]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4d0QVf1Zfpz3hhTC; Mon,  3 Nov
+	2025 08:58:50 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f~0c3u8M3_G2953729537epcas2p23;
+	Mon,  3 Nov 2025 08:58:49 +0000 (GMT)
+Received: from [12.36.160.98] (unknown [12.36.160.98]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251103085849epsmtip1fddcc0463f2e11525e730035a11f688d~0c3u3gGOu0266402664epsmtip1V;
+	Mon,  3 Nov 2025 08:58:49 +0000 (GMT)
+Message-ID: <b467a9dc-3953-48a8-88ed-c8a3361006c8@samsung.com>
+Date: Mon, 3 Nov 2025 17:59:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: krzysztof.kozlowski@linaro.org, krzk@kernel.org,
+	peter.griffin@linaro.org, alim.akhtar@samsung.com, Sam Protsenko
+	<semen.protsenko@linaro.org>, youngmin.nam@samsung.com, ryu.real@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org
+From: Youngmin Nam <youngmin.nam@samsung.com>
+Subject: [RFC] pinctrl: samsung: Consolidate Exynos pinctrl macros (incl.
+ GS101)
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-remove-pmu-syscon-compat-v1-2-f2cb7f9ade6f@linaro.org>
-References: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
-In-Reply-To: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dan.carpenter@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- dan.carpenter@linaro.org, arnd@arndb.de, robh@kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1645;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=UGPgjULdS+we3HJqc3I3soms/UG6+af7wQFeI8hNCdo=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpCGHBKP/enJRrOYHc08VISfExyYfUCOIHP/hNH
- NbGGlSpBV6JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaQhhwQAKCRDO6LjWAjRy
- uiiWD/97FQHrIvR7Ad+ObGfq9pO2VhDQDunpWCIekHI474m6k3nUj2ags+XEydrybbUAlBAJS5S
- si656ToMn2SK+oYw+BO2niz2Pnh58THEqnm5FlS9Q1Fw0RJgiyFaPhfWKR0dR6MTPrso9RSjEEc
- wx+vGME5loVJgJHMvBwdrtyy/L6m7g7TV4OWB8DBuExigkqdQLacipDGXbONDP/j5mMrEDQ2Vdo
- Ga30F3f/pW5rr5mVrtVHEjzV4+Z1UVsfJw5L4qUeyZY7/Mh0HAMQ1sh0jixf8UUkUTrQhlOyv4u
- Z4Lq8D5GirrHGhFoNmC/X1GlxGSlhc1ltUzAyyMhQ7rolomG4gsBqPY5XwwOLcN6sokE184lhJT
- i/lw0r6FicCx76Sh2r0Kno9sFUpPl7pibEXgKfeSCT76z3wnN685iKmTZvdbUI/LRFzxITlhtXe
- 2vMgFIbxfimbqKqCI1F53ty/eBHVvbqsJ9YZbDplSLYkFOXXzmztRZ5HG9rg6y6HYDCMMUWi9mo
- UPmWmJT9SbbjnVgz1L0S+rd2mExb8FEZZ4opckU9JwoX36t+3qjTkxLcrXpln64RGdoGpBnRJpk
- 6UAIy+QaOQt91LDA3BGDxPC1+yu3UKgv5FjICgKUkKCPNo/bun1F5f2T7XLSD0s4Fkg57+Qz4eY
- GbB0Tw4cdgP5DSg==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f
+References: <CGME20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f@epcas2p2.samsung.com>
 
-Since commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes without a
-"syscon" compatible") it is possible to register a regmap without the
-syscon compatible in the node.
+Hi Krzysztof and folks,
 
-As mentioned in that commit, it's not correct to claim we are compatible
-with syscon, as a MMIO regmap created by syscon won't work. Removing the
-syscon compatible means syscon driver won't ever create a mmio regmap.
 
-Note this isn't usually an issue today as exynos-pmu runs at an early
-initcall so the custom regmap will have been registered first. However
-changes proposed in [1] will bring -EPROBE_DEFER support to syscon allowing
-this mechanism to be more robust, especially in highly modularized systems.
+While looking at the current Exynos pinctrl macros, I think we can refactor and consolidate them.
 
-Technically this is a ABI break but no other platforms are affected.
+Today, several macros are used across Exynos2200, Exynos7870, Exynos7885, Exynos850, Exynos990, Exynos9810, Exynos8895, exynosautov9, and Tesla FSD:
 
-Link: https://lore.kernel.org/lkml/aQdHmrchkmOr34r3@stanley.mountain/ [1]
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* EXYNOS7870_PIN_BANK_
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index d06d1d05f36408137a8acd98e43d48ea7d4f4292..e1a7d33fd4a369f7b352b81d2070beb62a0ced16 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1705,7 +1705,7 @@ sysreg_apm: syscon@17420000 {
- 		};
- 
- 		pmu_system_controller: system-controller@17460000 {
--			compatible = "google,gs101-pmu", "syscon";
-+			compatible = "google,gs101-pmu";
- 			reg = <0x17460000 0x10000>;
- 			google,pmu-intr-gen-syscon = <&pmu_intr_gen>;
- 
+* EXYNOS850_PIN_BANK_
 
--- 
-2.51.1.930.gacf6e81ea2-goog
+* EXYNOS8895_PIN_BANK_
 
+* GS101_PIN_BANK_
+
+I propose introducing a new EXYNOS9_PIN_BANK_ macro to unify these into a single style. 
+The GS101_PIN_BANK_ style seems appropriate for modern Exynos platforms, so the new macro would follow that approach.
+
+The only functional difference between GS101_PIN_BANK_ and the existing macros is the presence/absence of the filter-control register offset. 
+If we add this offset as a parameter to the unified macro, we can integrate all variants under one definition. 
+I’ve checked the SoC user manuals listed above to confirm the filter-control offsets.
+
+Planned patch series:
+
+1. Introduce EXYNOS9_PIN_BANK_ and replace the macros above. Rename the exynos850_bank_type_ data structure to exynos9_ for general naming.
+
+2. Fix any incorrect declarations in existing platforms (if any).
+
+3. Add the filter-control register offset to all platforms mentioned above.
+
+4. Replace GS101_PIN_BANK_ with EXYNOS9_PIN_BANK_.
+
+5. Rename gs101_pinctrl_{suspend,resume} to exynos9_pinctrl_{suspend,resume} and use this on modern Exynos platforms, including GS101.
+
+
+I believe this will make the Exynos pinctrl driver cleaner and more consistent.
+Comments and suggestions would be appreciated.
+
+Thanks,
+Youngmin
