@@ -1,67 +1,33 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523B52FFDEA
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 10:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC6E34D38E;
+	Mon,  3 Nov 2025 11:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167057; cv=none; b=cnZZv66rZCuL+G/WNpsIRAkbkaDLk3m2AHyFysW3/cwwTXVW8ZWYlHqe//VV+kCW9aFxqsd5JKb4XqnEOhASpcDO07dzUgtyPnqkbLyK2QankxlunBw1bWkkIZkDStF9qz7taOEk4CrD7HXmaaGpDqJuftEake+5wTQY1/cIpV8=
+	t=1762167673; cv=none; b=SfHOwINGCl0k+g1sz45jqg4R1dWFB60+/LEt7n0eqGESKs4YoLjSp0QJ/71C4ZKsvtCRETdqZJ3bYQZqCMycYIm5lGdJnZo0x0/8CxxwupyOQ9FliCb7VWWDbaivoZY8SRUag5+3ug//ciSAj1Bx9RC9AOL9zajhyMUvl99FngY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167057; c=relaxed/simple;
-	bh=K/DZtMl6bTbXSyX1kAX6cDkUuBNHfLB6DitBcsu4woE=;
+	s=arc-20240116; t=1762167673; c=relaxed/simple;
+	bh=PgwV48yiH4Zrfj9LOluY+lg13XH9bgFzeKLBu+yBr0w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=da0/ZQzCybKlJ/D6JtOyNZrAVG8rYsK3qHFgRlRVRDrtzvwY4S6hvaWQhpqg+JTeqDY1D+dMpkNGWutZP5F8wBcpci7ot8Ug56/jMSgvXd7nn34KBd7UUVJcC2gWK3sBlVvEgLc4wE1ZlBGQ+mQRG2zEDwoV8A7KWIN6evD306Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Db1WiWvp; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=VFv/bsLeeBNKYzw6QN6a/6cwv2Rq/4BHgsOooK8a3TmdnUP2EkryMoKYlvUyganXkZtLAc5WqXbLLYtaUZ5nkChwPoWToJCRUcjkZm54kunjKrrOPO/aQuwts6dbMlKh9U2FCDJcCpxLPGybrlc7+h4T7nHangLFA+Uqz/VucOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFxuoSuQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Db1WiWvp"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b64cdbb949cso696747266b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2025 02:50:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762167054; x=1762771854; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6aAPWr6sG6plHcRAb74AERMut+3PIj3xR4C7ijLuCgY=;
-        b=Db1WiWvpl+hkZBbwI9ag7Df6MHc9U8E5LwVFjmJ/JhNqOQd7gRgMfQjvZoqDMRUDbV
-         NzHLozZgrQKBoHYjxkjELN0DT9U2YrEXGgIEEnydTXFXxdSBO2SIraTh/QTrkfVfuhT9
-         kMZKgqtQyrKCG4R8oDFNNq+00wpTJpT3vAP52eldtqBcxCTQqUT3Eez6TK0T4GaD3KN0
-         9CviyO2M9SLHS+XqOeqK6HL9Bgm26fLu9nNr4e3TLLbxBM4QOkx1qAqp0eib9J193P8K
-         Lb1/RCTjXk+M6My2QctUV9i1PeG/5lUu3+azOW0vxz+RAp8e8zpPoYBVESf/ayoRrYMp
-         BMew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762167054; x=1762771854;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6aAPWr6sG6plHcRAb74AERMut+3PIj3xR4C7ijLuCgY=;
-        b=wjv39TSMksLcKFFe1tvmB+LPnCyKGV5qU3XlmHxLrzCapy1HQF0sSsiCWAXEc/IH1L
-         VgN2OhzFxBDEQE8cG6X6gE7RYaJX2khKNrf9ONoManaElzP/bajGTClcQ9mDPSB0ythy
-         9RakMUahpL0B3eVQzjC8fJZU9FbnQ33wfel7/Y9tEGAAacqpOduymekrnqXLnqx/vDvP
-         pFnxDXeIIL/JcfRcQ91ORvHcFF34JCr92fcXGnNmS3CYUP/C6zK/I2Dy8Vm6paEVyqON
-         PMbZ1quQ7rD5rEr8sLf65ZrS19wjvMMzT7of1QSH8/eqIX9ofYFdUV4MzZRURu40pW8r
-         fqHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMoyzpEIXdBVCr5nfXuU3udAIaN/xblRYe3iTQ+IzOno7rdAhA/mz9raGdWmSZN7FoSfQ03RwhuyLA0KGFzd0QEw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztTvV7kgHQ8VbiZY+X2feJKtHb+F8QVSPW/syGIjh3UOopYYrx
-	+GhM3sNbLjXpH2gBx2zhmI/hvZVLFq63CE2XMQ8C8wTJqiOXztWk36unQcymqDpF1E89U3nukPI
-	/D7QI
-X-Gm-Gg: ASbGncudTqXOliP50yOgIjn6OxBU0yL7fuS2nYnanFrRFtPQM6l3e5OeKSwCcULHG/t
-	QHb2kAG6PzcO4pyoaQXYKHsR+u7PFOigeygkSLu7jxn0Q7n0P4EDY5BYYFf4TRyHe3Nt5yAFUQr
-	nwfMD+WEwre+Kk6kIrgNutqfrIUt66mvMvr6gtMjUphvOZBwxNJ/QNsdl54ej0czjte37DzFGFE
-	0ZpbvOAO2u80yhnk3lBdThdMRSOoaXgyd0aDGOiR1wWa5r+QxELrU0vQm0SvZVzhMM//w2lV+dG
-	KoE6ainRzoqTL5TMoWaewR7iWoBMlqgnMGwlStDD/LRkY/HnvhRFTseyWGEZQUCYA7MOEAMUkyx
-	ETAq3VuW151MgKzpzct8y2UkkKe0ZTEZ+g5+xeDsjsgrA8nj8qzvhRemLyadzht8PVvHdVru5Q8
-	alBEpLkdPbMc9p
-X-Google-Smtp-Source: AGHT+IGAsmHIJSxBw8Ivjg8wV5c1LPLNuyYfSnhOFaJTNn0jDUJaTnBR+1poGrO0LFeXhX5G5jmT/Q==
-X-Received: by 2002:a17:907:e98b:b0:b6d:8d8d:3010 with SMTP id a640c23a62f3a-b7070840e1bmr1281242166b.56.1762167053554;
-        Mon, 03 Nov 2025 02:50:53 -0800 (PST)
-Received: from [172.20.10.10] ([213.233.110.172])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70b374067esm411112266b.64.2025.11.03.02.50.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 02:50:52 -0800 (PST)
-Message-ID: <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
-Date: Mon, 3 Nov 2025 12:50:48 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFxuoSuQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6DEC4CEF8;
+	Mon,  3 Nov 2025 11:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762167673;
+	bh=PgwV48yiH4Zrfj9LOluY+lg13XH9bgFzeKLBu+yBr0w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OFxuoSuQqiNPt+TjwfwRZrEoocZyR9V0MWVf6Vt3QyqVw342vL17aV9Vvy6BdTA0Y
+	 B4iLe4adTXc6ulOr43nbKn88pJ4CzXggwXr8sfsNI9eszZQH0P62e3GC2USWkem4qk
+	 sfW83jcqOoLh+4xlgSD9ippbFoLRXq8+fllahIaMi9M1aJWw6Qs0IT0tCx30zzXkuB
+	 /1MluyrYm1/4vZxwGZp2/HhYoIys2M594m2GWSQWopwl/051tqusrsBXJ4KUH0s07/
+	 tmTYPpt2fzOKc+K0Z0UuqWQ4Y0eJUDwcu0cTZiw2esegROwAJm4oxGJx1XbSD1jkGG
+	 KiaCsc5eX1tmw==
+Message-ID: <abd5b16b-1467-449c-b452-7699cbe5d9f5@kernel.org>
+Date: Mon, 3 Nov 2025 12:01:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +36,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 10/11] arm64: dts: exynos: gs101: add the chipid node
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Peter Griffin <peter.griffin@linaro.org>,
@@ -82,56 +48,112 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
  <20251031-gs101-chipid-v1-10-d78d1076b210@linaro.org>
  <20251103-pompous-lean-jerboa-c7b8ee@kuoka>
+ <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251103-pompous-lean-jerboa-c7b8ee@kuoka>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/3/25 12:18 PM, Krzysztof Kozlowski wrote:
-> On Fri, Oct 31, 2025 at 12:56:09PM +0000, Tudor Ambarus wrote:
->> Add the chipid node.
+On 03/11/2025 11:50, Tudor Ambarus wrote:
+> 
+> 
+> On 11/3/25 12:18 PM, Krzysztof Kozlowski wrote:
+>> On Fri, Oct 31, 2025 at 12:56:09PM +0000, Tudor Ambarus wrote:
+>>> Add the chipid node.
+>>>
+>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>> ---
+>>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>>> index d06d1d05f36408137a8acd98e43d48ea7d4f4292..11622da2d46ff257b447a3dfdc98abdf29a45b9a 100644
+>>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>>> @@ -467,6 +467,12 @@ opp-2802000000 {
+>>>  		};
+>>>  	};
+>>>  
+>>> +	chipid {
+>>> +		compatible = "google,gs101-chipid";
 >>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 6 ++++++
->>  1 file changed, 6 insertions(+)
+>> That's not a real device, sorry.
 >>
->> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->> index d06d1d05f36408137a8acd98e43d48ea7d4f4292..11622da2d46ff257b447a3dfdc98abdf29a45b9a 100644
->> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->> @@ -467,6 +467,12 @@ opp-2802000000 {
->>  		};
->>  	};
->>  
->> +	chipid {
->> +		compatible = "google,gs101-chipid";
+>> I had some doubts when reading the bindings, then more when reading
+>> driver - like chipid probe() was basically empty, no single device
+>> access, except calling other kernel subsystem - and now here no single
+>> actual hardware resource, except reference to other node.
+>>
+>> Are you REALLY REALLY sure you have in your datasheet such device as
+>> chipid?
+>>
+>> It is damn basic question, which you should start with.
 > 
-> That's not a real device, sorry.
+> Documentation says that  GS101 "includes a CHIPID block for the software
+> that sends and receives APB interface signals to and from the bus system.
+> The first address of the SFR region (0x1000_0000) contains the product ID."
 > 
-> I had some doubts when reading the bindings, then more when reading
-> driver - like chipid probe() was basically empty, no single device
-> access, except calling other kernel subsystem - and now here no single
-> actual hardware resource, except reference to other node.
+> 0x1000_0000 is the base address of the OTP controller (OTP_CON_TOP).
 > 
-> Are you REALLY REALLY sure you have in your datasheet such device as
-> chipid?
+> "CHIPID block" tells it's a device, no? But now I think it was just an
+> unfortunate datasheet description. Do you have an advice on how I shall
+> treat this next please? Maybe register to the soc interface directly from
+> the OTP controller driver?
 > 
-> It is damn basic question, which you should start with.
 
-Documentation says that  GS101 "includes a CHIPID block for the software
-that sends and receives APB interface signals to and from the bus system.
-The first address of the SFR region (0x1000_0000) contains the product ID."
 
-0x1000_0000 is the base address of the OTP controller (OTP_CON_TOP).
+Huh, then I am confused, because:
+1. That's the same message as in other Exynos and it has SFR region
+2. Your binding said there is no SFR region.
+3. Anyway, please post complete DTS, so if this has SFR region it must
+have proper reg entry. You cannot skip it.
 
-"CHIPID block" tells it's a device, no? But now I think it was just an
-unfortunate datasheet description. Do you have an advice on how I shall
-treat this next please? Maybe register to the soc interface directly from
-the OTP controller driver?
+Of course next question would be what is the OTP controller...
 
-Thanks!
-ta
+
+Best regards,
+Krzysztof
