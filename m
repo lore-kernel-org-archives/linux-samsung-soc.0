@@ -1,112 +1,79 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2842E7F0B
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D262EFDBB;
+	Mon,  3 Nov 2025 09:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762160341; cv=none; b=slqVA66nzuLgTYR0ZwgmkInBvQ2zHXwKPeXVLk7l0zYkD6/KKymkOLQo8sHDJyIV1L1GW+YjdlYIl+Aed6sx3P51TNJbLU58rrkToQZnto5KhtvsG52+lPeoKKVgdObhM7W2Qjk9bmOd2l+8odLyvR0HU6+X4G6GsUoS5U9bFYE=
+	t=1762162903; cv=none; b=fMwTj7AAL3eCn+Lh4Qc9NZKubRd9FvFv50MSGswyI8GhNw+MSg8LIO4IzkDh1eyE/XI89T/cqlG6KMho28KUCVpM6qaXsaMhpTMBuG6qCEtkUsUSBmeSweu+JUrvSVu6Lg6mb0fF9OsLHTZ++oOwObzYi6OLOS7UiXd5C/+Eg9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762160341; c=relaxed/simple;
-	bh=GVk69UBEns6Ie0+2RlqPFg6p8JcoK9Chuxd6pApBJ1U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
-	 References; b=tG2LaXLo05jVhOyVVKMK2NLM+VyeiS/ItSz4jLp4EAgVNlF/qH4uQBS1LBKoo/dpoJdosdqsGgMT4mJbRrZ7U/hbT+Pvi72Y0TgIdYo8TKk3H6+G3QcMUFS0WcOUoWdaq7lgHHVusqf6JksRPXiqjWrkGwqtQJD4hVhQ2Fz5q1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rvZkkq4s; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1762162903; c=relaxed/simple;
+	bh=8gK5j7Hv3paRWGmWznTyKoeIXmyc+VmCy3aM/L3TTSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3hLzYC/+h6be9FBecrs0V6Z8w/VKIvVcE9/1cjeeFFgpNLT1ztzEsd5b8cfv3ZIgNcCWV8degjhFiRMLHa+IuOQ7vJeGGFben4+0IYTx5O17DEym3uJDIuA+ewcTLbzEUR9FL/e9m/r1yIBBA7+PlmC4uX/zSivj65hsJXxri4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mN+kLgdN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rvZkkq4s"
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251103085851epoutp02938a1153a23f7de1d4eba54f24f8883b~0c3wfAzTB1931919319epoutp02a
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 08:58:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251103085851epoutp02938a1153a23f7de1d4eba54f24f8883b~0c3wfAzTB1931919319epoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762160331;
-	bh=6fMD/AjwIISKuN8oFMxJTN08Tu9bmpimCJrNB1XLa5w=;
-	h=Date:To:Cc:From:Subject:References:From;
-	b=rvZkkq4sP3gD3ndRljSxuFPwQ+0sIddsyR/riRrb6x7FYBEZ8SkW8bILVZwUcCris
-	 SlxLr6Y/P2m3b+BuxzBvY+/l9uUgPcXg8BRQPQHa6bKThjbOflVtpDyUPebsxynJY3
-	 ZxdSF0j4/pZ1Aq3dG8/ODtHYI34I8sXuUpAKIWYs=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251103085850epcas2p16cf9e91b08f51d2ed7a86c86f1f6614c~0c3v8hBfl0547205472epcas2p1B;
-	Mon,  3 Nov 2025 08:58:50 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.38.204]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4d0QVf1Zfpz3hhTC; Mon,  3 Nov
-	2025 08:58:50 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f~0c3u8M3_G2953729537epcas2p23;
-	Mon,  3 Nov 2025 08:58:49 +0000 (GMT)
-Received: from [12.36.160.98] (unknown [12.36.160.98]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251103085849epsmtip1fddcc0463f2e11525e730035a11f688d~0c3u3gGOu0266402664epsmtip1V;
-	Mon,  3 Nov 2025 08:58:49 +0000 (GMT)
-Message-ID: <b467a9dc-3953-48a8-88ed-c8a3361006c8@samsung.com>
-Date: Mon, 3 Nov 2025 17:59:46 +0900
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN+kLgdN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28452C4CEE7;
+	Mon,  3 Nov 2025 09:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762162902;
+	bh=8gK5j7Hv3paRWGmWznTyKoeIXmyc+VmCy3aM/L3TTSs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mN+kLgdN/IlFgRwDuxyePznZM9KxTK4XQxaS7KEnQUWbLGJDBLYHYQcWjZicvIXwT
+	 MrAQ1Xtj/qvXNDRqIZ2WSvasOL/rcevsH73NgmCEJrcCG0WflgNX4n3G9duyJ9huv6
+	 OjnPYEjd52FLmf62HUYuhp3ss5EDEaXORmSQq1fa5kOMkVoSA0k1+LZ3+Jp9aNRDsO
+	 fSjG57EhkEW2wCG54zGxNcjhf2le/DRUc0w7evopDQjRy9i4gVNla5yBIStGbndJ+H
+	 eLe6sduFPAwDxfkw9XdhhDEoQCn4EZxA07EH39rBXlF5QUISp+LYmrTzWYV8sZGvGg
+	 d+rUtEOvIVy6Q==
+Date: Mon, 3 Nov 2025 10:41:40 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	kernel-team@android.com
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+Message-ID: <20251103-smoky-rustling-bloodhound-7590ce@kuoka>
+References: <20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org>
+ <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: krzysztof.kozlowski@linaro.org, krzk@kernel.org,
-	peter.griffin@linaro.org, alim.akhtar@samsung.com, Sam Protsenko
-	<semen.protsenko@linaro.org>, youngmin.nam@samsung.com, ryu.real@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
-From: Youngmin Nam <youngmin.nam@samsung.com>
-Subject: [RFC] pinctrl: samsung: Consolidate Exynos pinctrl macros (incl.
- GS101)
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f
-References: <CGME20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f@epcas2p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org>
 
-Hi Krzysztof and folks,
+On Sun, Nov 02, 2025 at 08:27:14PM +0000, Peter Griffin wrote:
+> Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
+> that contains the BUSCOMPONENT_DRCG_EN and MEMCLK registers.
+> 
+> If present these registers need to be initialised 
 
 
-While looking at the current Exynos pinctrl macros, I think we can refactor and consolidate them.
+... for what exactly? What would happen if this was not initialized?
+What is the exact justification for ABI break - wasn't this working
+before? Or new feature will not work (thus no ABI break allowed)?
 
-Today, several macros are used across Exynos2200, Exynos7870, Exynos7885, Exynos850, Exynos990, Exynos9810, Exynos8895, exynosautov9, and Tesla FSD:
+You need to provide rationale and "driver needs to do something" is not
+enough, because everything could be justified that way.
 
-* EXYNOS7870_PIN_BANK_
+> in the clock driver.
+> Update the bindings documentation so that all CMUs (with the exception of
+> gs101-cmu-top) have samsung,sysreg as a required property.
+> 
+> Additionally update the DT example to included the correct CMU size as
+> registers in that region are used for auto clock mode.
 
-* EXYNOS850_PIN_BANK_
+Best regards,
+Krzysztof
 
-* EXYNOS8895_PIN_BANK_
-
-* GS101_PIN_BANK_
-
-I propose introducing a new EXYNOS9_PIN_BANK_ macro to unify these into a single style. 
-The GS101_PIN_BANK_ style seems appropriate for modern Exynos platforms, so the new macro would follow that approach.
-
-The only functional difference between GS101_PIN_BANK_ and the existing macros is the presence/absence of the filter-control register offset. 
-If we add this offset as a parameter to the unified macro, we can integrate all variants under one definition. 
-I’ve checked the SoC user manuals listed above to confirm the filter-control offsets.
-
-Planned patch series:
-
-1. Introduce EXYNOS9_PIN_BANK_ and replace the macros above. Rename the exynos850_bank_type_ data structure to exynos9_ for general naming.
-
-2. Fix any incorrect declarations in existing platforms (if any).
-
-3. Add the filter-control register offset to all platforms mentioned above.
-
-4. Replace GS101_PIN_BANK_ with EXYNOS9_PIN_BANK_.
-
-5. Rename gs101_pinctrl_{suspend,resume} to exynos9_pinctrl_{suspend,resume} and use this on modern Exynos platforms, including GS101.
-
-
-I believe this will make the Exynos pinctrl driver cleaner and more consistent.
-Comments and suggestions would be appreciated.
-
-Thanks,
-Youngmin
