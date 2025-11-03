@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0606314B88
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 15:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE12531B80C
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 15:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762182376; cv=none; b=CK4o6hUWucni3ZiHdm3v4SGkQROYxRYJomGgGv64W4i7a58ffAXWwtis7Y0EhagmLBt9gtsnTaazz8c56O+iQknrSRLQOLb10Asg0mKODajLgA5i71611zvZTmuLGR9TszWug1okg8nWPAnBi3UigElhZPe3Onryfn1LsEfQUFA=
+	t=1762183959; cv=none; b=OVLMkYZDAF/TB1yyjw7uUj99sobqu0tlLvr0va7lT8yBhzvkjBSi5Yu8yiSPJZfN+W2H/UFi4tPqFNxPKLzDJtGe5uQv7+ZbHLZyS7jwiRsLayJ7IB5+c/ovbXpT9hbwuv+IQV8GI94+IxkAMFCjppHI9FXkF/yCchRWCjeR+5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762182376; c=relaxed/simple;
-	bh=ytBbM40zja4k6s62Z8s/ZjgVNGl2sfJyDIYDLNADa0w=;
+	s=arc-20240116; t=1762183959; c=relaxed/simple;
+	bh=hqyVCvE8dTI0/nUgcmQNuYmRPg2yNtzLpjcqgQhKnrA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cf4We7/kfvbs9AtranZQXd0Z9XMz7QZHpG7jg6Nohyi6zbDoLGWOrO1vRX+WtskfPX+96eJQmHySNqI5H2Dj5lmFtbkrwmlaPrAaG5iH56CHG49LivW7iwkWmOEfYlWVH55gW/rBlfmveyxZLwN2VHBKeqiq8WHyLDIAlJ46n9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2wNiOEG; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=JUODNRWnnf+7maTVUR6grEs5ZpP9yTmEQW8/mZHbgUFDXdykdxN/FjuJdzyp5W1Y03L8UI7yedz+dT3FzgaowFCAWT780FFyWdTPgHOhNn9/7gJfFmkClKsWgudvbEtN6Zx3bHhsPyNObXuUuElEGGvKfWMHluvsnZ17u/4Rejs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pg+M7q6g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2wNiOEG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58CF5C4CEE7;
-	Mon,  3 Nov 2025 15:06:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pg+M7q6g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C90C116C6;
+	Mon,  3 Nov 2025 15:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762182376;
-	bh=ytBbM40zja4k6s62Z8s/ZjgVNGl2sfJyDIYDLNADa0w=;
+	s=k20201202; t=1762183959;
+	bh=hqyVCvE8dTI0/nUgcmQNuYmRPg2yNtzLpjcqgQhKnrA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B2wNiOEGd9BZ9Nxa86jXx3uK5faxCi8g/f+kKELItWoVtsp/pWK7VVaFPpeTj0JY8
-	 73HZCk3jCEVUHBmKqLXVSlmN2WGVhePOJvsqAiTJvY3np0hMvrj13Mt/YkbENvdOUu
-	 bnwtLG80lk25a5LE02LW8VKVg71dx4lt38OGvEWhbAw35c+9bLGg1P40RxG/Pt3Snp
-	 oOHPA0bX9zDetJUCq33U28kmq/4QxCE+uzdGAK1AT3YxniheyQB4yKdbbg4Xy+5i7H
-	 pk4K4hYeWGj/92gS4lIqildTxeTlPWvR/77ET1VrX554uAvn/LJ3QfQEE74HrPtIeJ
-	 LSoH1VAxRn0cw==
-Message-ID: <96e37370-1c23-4e7e-a0b3-c066cd1620f3@kernel.org>
-Date: Mon, 3 Nov 2025 16:06:12 +0100
+	b=pg+M7q6gq20uuJo6+xFQu7fLt3PaSOHtjHtOLW6wHiSieOGIP6/Pypge9aJ7kH7CT
+	 JioLjjc5EomeDynx1A46O8+NiL9FKQ4Uw+vVMRc9ggno2F5O1pdtIWP7FrmLtiKnln
+	 5E9wpIyl4ATp85jq/iLNlqJrayuSWvN17V8pX3YyA/wuI0JVEmXVeLTGodlSGNGAQT
+	 GH2Qf3lXQBkUHT6nXerl/9x37kbGosBFnbO5uPslr5LLRqguSwkw9aNzdVCi/CDt68
+	 lknOtAX+yPitPJVzHJhV/610d4fFe17KbRsuRUegOzcE3csUflQ58wR4JU2Gj1aIpF
+	 /VUuoh3bix94Q==
+Message-ID: <996c1e80-f63a-416e-a3cc-82137321fe32@kernel.org>
+Date: Mon, 3 Nov 2025 16:32:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,14 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable RESET_GPIO driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@bgdev.pl>
-References: <CGME20251103140610eucas1p2ddb79e5a3cb47af66713e61a246f9f14@eucas1p2.samsung.com>
- <20251103140602.2359058-1-m.szyprowski@samsung.com>
+Subject: Re: [RFC] pinctrl: samsung: Consolidate Exynos pinctrl macros (incl.
+ GS101)
+To: Youngmin Nam <youngmin.nam@samsung.com>, krzysztof.kozlowski@linaro.org,
+ peter.griffin@linaro.org, alim.akhtar@samsung.com,
+ Sam Protsenko <semen.protsenko@linaro.org>, ryu.real@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org
+References: <CGME20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f@epcas2p2.samsung.com>
+ <b467a9dc-3953-48a8-88ed-c8a3361006c8@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,25 +88,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251103140602.2359058-1-m.szyprowski@samsung.com>
+In-Reply-To: <b467a9dc-3953-48a8-88ed-c8a3361006c8@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/11/2025 15:06, Marek Szyprowski wrote:
-> Commit 25d4d4604d01 ("reset: always bail out on missing RESET_GPIO
-> driver") reworked GPIO-based reset controller initialization, so now
-> RESET_GPIO driver is required to properly instantiate MMC device for
-> most of WLAN and SDIO chips.
+On 03/11/2025 09:59, Youngmin Nam wrote:
+> Hi Krzysztof and folks,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 2 ++
+> 
+> While looking at the current Exynos pinctrl macros, I think we can refactor and consolidate them.
+> 
+> Today, several macros are used across Exynos2200, Exynos7870, Exynos7885, Exynos850, Exynos990, Exynos9810, Exynos8895, exynosautov9, and Tesla FSD:
+> 
+> * EXYNOS7870_PIN_BANK_
+> 
+> * EXYNOS850_PIN_BANK_
+> 
+> * EXYNOS8895_PIN_BANK_
+> 
+> * GS101_PIN_BANK_
+> 
+> I propose introducing a new EXYNOS9_PIN_BANK_ macro to unify these into a single style. 
 
-This nicely shows how broken commit 25d4d4604d01 is or this commit msg
-is incomplete. Since when Exynos uses reset-gpio? I did not convert
-anything there and I do not recall any changes around it.
 
-Was there a change in core MMC that forces everyone to use reset-gpio?
+I don't get what you want to achieve. If you want to revert earlier
+commits which split these, then answer is probably no. At least without
+proper rationale.
+
+If you want something else, then I don't know - but anyway talk is
+cheap, so please always send patches/code with rationale why you are
+doing that.
 
 Best regards,
 Krzysztof
