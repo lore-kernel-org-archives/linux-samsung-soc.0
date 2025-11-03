@@ -1,48 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D262EFDBB;
-	Mon,  3 Nov 2025 09:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25ED92E8B6C;
+	Mon,  3 Nov 2025 09:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162903; cv=none; b=fMwTj7AAL3eCn+Lh4Qc9NZKubRd9FvFv50MSGswyI8GhNw+MSg8LIO4IzkDh1eyE/XI89T/cqlG6KMho28KUCVpM6qaXsaMhpTMBuG6qCEtkUsUSBmeSweu+JUrvSVu6Lg6mb0fF9OsLHTZ++oOwObzYi6OLOS7UiXd5C/+Eg9k=
+	t=1762163913; cv=none; b=kMI9jWlACNFjLxYImW4keoR0Y98hV4HggzAUupYzwKGt08XovjiRnBLW1Yru7XCTQX31JU8FQCi23FG64sFMnJass+P90hN0B1zHJjTi2Fm1qEazdXLGoo4gJdP5kt/lGjJSFl42Jl0EZvY55/O/KCAy0ZC+YsADKKe43ji26+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162903; c=relaxed/simple;
-	bh=8gK5j7Hv3paRWGmWznTyKoeIXmyc+VmCy3aM/L3TTSs=;
+	s=arc-20240116; t=1762163913; c=relaxed/simple;
+	bh=AQVt53EcUhGtycvRvdbhIy9l4ZVj1BQDK1Eh3TQzU3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3hLzYC/+h6be9FBecrs0V6Z8w/VKIvVcE9/1cjeeFFgpNLT1ztzEsd5b8cfv3ZIgNcCWV8degjhFiRMLHa+IuOQ7vJeGGFben4+0IYTx5O17DEym3uJDIuA+ewcTLbzEUR9FL/e9m/r1yIBBA7+PlmC4uX/zSivj65hsJXxri4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mN+kLgdN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqxiGOh9qZ6D2zv18jiyZ4r9i3soJbc5Mkca5kCt2Zjy86MkvsjpyhykR5m43LToAiXPTRMI5pkkJgt9OZD1LU9igWLAxok389TUVYnLUpxZY0VsQbQtxq3uIM25q5fJ5zTZx+VUQHZXzIEkS4xAd7jcZR1pfrBbf+GNcbj4gJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdTyXk64; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN+kLgdN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28452C4CEE7;
-	Mon,  3 Nov 2025 09:41:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdTyXk64"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2284CC4CEE7;
+	Mon,  3 Nov 2025 09:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762162902;
-	bh=8gK5j7Hv3paRWGmWznTyKoeIXmyc+VmCy3aM/L3TTSs=;
+	s=k20201202; t=1762163912;
+	bh=AQVt53EcUhGtycvRvdbhIy9l4ZVj1BQDK1Eh3TQzU3U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mN+kLgdN/IlFgRwDuxyePznZM9KxTK4XQxaS7KEnQUWbLGJDBLYHYQcWjZicvIXwT
-	 MrAQ1Xtj/qvXNDRqIZ2WSvasOL/rcevsH73NgmCEJrcCG0WflgNX4n3G9duyJ9huv6
-	 OjnPYEjd52FLmf62HUYuhp3ss5EDEaXORmSQq1fa5kOMkVoSA0k1+LZ3+Jp9aNRDsO
-	 fSjG57EhkEW2wCG54zGxNcjhf2le/DRUc0w7evopDQjRy9i4gVNla5yBIStGbndJ+H
-	 eLe6sduFPAwDxfkw9XdhhDEoQCn4EZxA07EH39rBXlF5QUISp+LYmrTzWYV8sZGvGg
-	 d+rUtEOvIVy6Q==
-Date: Mon, 3 Nov 2025 10:41:40 +0100
+	b=TdTyXk64a6SoBF2/pJUMVlz5jU5aR1tzVMqXCULhfRj4pIkOvFOf6FIp+Ztipbk37
+	 KceYPFct5Ya2Kr/NdS+C/NlBh8/5uvfFmh/skUwiiLLZHxvtaE8XEBITkduTZjiqxy
+	 FwVsyV5BGaAFbsuJc08/jCym+PZLc5KVtgQrsSseXLgxRmvKcEn9Vx1YEdA/jZdY1A
+	 RP64pPjO6lJfT3PZJANA13sTylaYqnIgJa4D+YlLvKrkrHF6q3FcRmG0VWT013FYEf
+	 tigiuqxVdb4JSkLftXkezpKX6Snt1DXr9Cud3xLuGWk4Nqo0jZtCarQkDMX9fCiwxX
+	 y27WIfxuUYpqg==
+Date: Mon, 3 Nov 2025 10:58:30 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: google,gs101-clock: add
- samsung,sysreg property as required
-Message-ID: <20251103-smoky-rustling-bloodhound-7590ce@kuoka>
-References: <20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org>
- <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org>
+	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, semen.protsenko@linaro.org, willmcvicker@google.com, 
+	kernel-team@android.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] dt-bindings: hwinfo: samsung,exynos-chipid: add
+ google,gs101 compatible
+Message-ID: <20251103-economic-tuscan-mink-0ebfa1@kuoka>
+References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
+ <20251031-gs101-chipid-v1-1-d78d1076b210@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,29 +48,102 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org>
+In-Reply-To: <20251031-gs101-chipid-v1-1-d78d1076b210@linaro.org>
 
-On Sun, Nov 02, 2025 at 08:27:14PM +0000, Peter Griffin wrote:
-> Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
-> that contains the BUSCOMPONENT_DRCG_EN and MEMCLK registers.
+On Fri, Oct 31, 2025 at 12:56:00PM +0000, Tudor Ambarus wrote:
+> Google GS101 Chip ID references the nvmem cells from the OTP controller,
+> it doesn't need a reg space. Add the google,gs101-chipid compatible.
 > 
-> If present these registers need to be initialised 
-
-
-... for what exactly? What would happen if this was not initialized?
-What is the exact justification for ABI break - wasn't this working
-before? Or new feature will not work (thus no ABI break allowed)?
-
-You need to provide rationale and "driver needs to do something" is not
-enough, because everything could be justified that way.
-
-> in the clock driver.
-> Update the bindings documentation so that all CMUs (with the exception of
-> gs101-cmu-top) have samsung,sysreg as a required property.
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  .../bindings/hwinfo/samsung,exynos-chipid.yaml     | 51 +++++++++++++++++++++-
+>  1 file changed, 50 insertions(+), 1 deletion(-)
 > 
-> Additionally update the DT example to included the correct CMU size as
-> registers in that region are used for auto clock mode.
+> diff --git a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
+> index b9cdfe52b62ff3a365d61368c39db21facff6565..6d6260be02d47712ebf1e4d31973802e8340cdfe 100644
+> --- a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
+> +++ b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
+> @@ -33,6 +33,16 @@ properties:
+>                - samsung,exynosautov9-chipid
+>                - samsung,exynosautov920-chipid
+>            - const: samsung,exynos850-chipid
+> +      - items:
+> +          - const: google,gs101-chipid
 
-Best regards,
-Krzysztof
+That's a part of first enum at the beginning.
 
+> +
+> +  nvmem-cells:
+> +    maxItems: 2
+> +
+> +  nvmem-cell-names:
+> +    items:
+> +      - const: product-id
+> +      - const: chip-id
+>  
+>    reg:
+>      maxItems: 1
+> @@ -47,7 +57,46 @@ properties:
+>  
+>  required:
+>    - compatible
+> -  - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            oneOf:
+
+No, don't copy. It's just redundant. Just like the fallbacks under one
+enum.
+
+> +              - enum:
+> +                  - samsung,exynos4210-chipid
+> +                  - samsung,exynos850-chipid
+> +              - items:
+> +                  - enum:
+> +                      - samsung,exynos5433-chipid
+> +                      - samsung,exynos7-chipid
+> +                      - samsung,exynos7870-chipid
+> +                      - samsung,exynos8890-chipid
+> +                  - const: samsung,exynos4210-chipid
+> +              - items:
+> +                  - enum:
+> +                      - samsung,exynos2200-chipid
+> +                      - samsung,exynos7885-chipid
+> +                      - samsung,exynos8895-chipid
+> +                      - samsung,exynos9610-chipid
+> +                      - samsung,exynos9810-chipid
+> +                      - samsung,exynos990-chipid
+> +                      - samsung,exynosautov9-chipid
+> +                      - samsung,exynosautov920-chipid
+> +                  - const: samsung,exynos850-chipid
+> +    then:
+
+properties:
+  nvmem-cells: false
+  same for names
+
+> +      required:
+> +        - reg
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: google,gs101-chipid
+> +    then:
+
+reg: false, similarly.
+
+> +      required:
+> +        - nvmem-cells
+> +        - nvmem-cell-names
+>  
+>  additionalProperties: false
+>  
+> 
+> -- 
+> 2.51.1.930.gacf6e81ea2-goog
+> 
