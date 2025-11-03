@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5822F39A7;
-	Mon,  3 Nov 2025 10:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D094B14A60F;
+	Mon,  3 Nov 2025 10:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762164241; cv=none; b=iAVLbIZDlZTKF3QIodOhlj+Yh7K9zuapeclOH7mcC3qMErnA/4vH6gd9RJq5v8RriuUkkMKk28AjU4+bpv/4B7HFaPvHxIYG8vn3ov3EPsXlYK7KhDo8hOFU+tSYfggjif4VEOhXTiblSZAwWrwKjErMgVd5Go0M8qEWcp0ICiQ=
+	t=1762164340; cv=none; b=uKRR9WnIijnh8JDqrbL9fXjHNqL8wy2zMk6zFYxrs3h7O3FqkAVOsp7ijHvipKtjJlmtRw+6cO2gkSEyn/nPWdl0L8AstGdxLfrJVPRWkx8EVI7UZaDpc4qiOxVNGBCVjdDEJGrzkxuER4M6wvPQ2A736WqtU1PPCf0u8zctenA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762164241; c=relaxed/simple;
-	bh=9RzhQqecN6YFsQXxZsZSBnwAFeaFnaljJyT67SZFxMU=;
+	s=arc-20240116; t=1762164340; c=relaxed/simple;
+	bh=r5ZAahRc6Rn7ZJ6STU/KlsskUpNdQLHqPWsUeMUM35M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ch4ZAr8gAmFHYWSNoyxCvcAcfAYa62X4aQZiUzStl6HfkU38AfBlVvrVfT2K/pKw9fRtCxbGliYF3io6jpQiVnG6QnKwpnCqtSYOFzpp6/Oa+hWqPSwRQxPz8FwD/Wnc4XXOkJ/4ImvtNN0FLu3ud2D0q0I5GToXwfjyJgyy6pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFM/2cKZ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=K3YkS4/7W2AXlqIIy2uerU5/aezoB0lGrfS6nCW04jtbd20zBzKDPTv+GRiSdUBZeAvzybuE3/5QVQIrFUWlI9HQPkkhG6N+UDjRQUp6Ht7keUdkMzxSNCaS7z5pn4nCER+ljswgO8rdNSJpg+XRRlO1XibFINOCfCmuAgEafgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eL2lC8rm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFM/2cKZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27298C4CEFD;
-	Mon,  3 Nov 2025 10:03:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eL2lC8rm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9E4C4CEE7;
+	Mon,  3 Nov 2025 10:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762164240;
-	bh=9RzhQqecN6YFsQXxZsZSBnwAFeaFnaljJyT67SZFxMU=;
+	s=k20201202; t=1762164340;
+	bh=r5ZAahRc6Rn7ZJ6STU/KlsskUpNdQLHqPWsUeMUM35M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tFM/2cKZiOYPgwzPgB45BzAPDDsYfilXWPvAgYafNmVfx7KeFC+R7U67qSY64knv2
-	 E0sRkiZ1NYNk/cCHmB5wQHg1YmfX98q7ZnxokhZenMFarmsorzV1LTt+dkxHdaj2Pi
-	 v/8b/EEjuQBfUxp2wRX4LHctWKzSYK2auuY3gdg+9U1OcI7gZ4m5j66S8AR6fP9Bb7
-	 5IMgdvv6iZPfzQPQ4vqBsmDygl7ZDGDAZxtmAdDA47AW3Td2iC7zthxn6jEeVgBmqD
-	 cmt1Ha+3SMcZDPPb0NUa4Jf+70ofWI2sxKr1MO5+QiXoWNjgFSLci5i70qbMguQk0W
-	 qmLov/yZ5sI2A==
-Date: Mon, 3 Nov 2025 11:03:58 +0100
+	b=eL2lC8rmaq3O60XkiGTmkNNrnvk5bW+DcBQt4+I+zrOPAFhoS9KuvvFe2U7Rxbmn4
+	 34oXI5MPb3x8rohfCg0fSGKA7G2RwdqwlK7vDJ3Fj5q7Dg5ycOSitET8XcMlPC0tCH
+	 ktUcd/T3lYGGWtvNqqsZDuu1G/fyFOs3pbPGd8TRKAltwkPECc5arOxFvLHJjWrNIv
+	 JeUXSLJ5IqVO7RQK2LOSg2Sas+Z/wvGF7Cbwc14NSDYVoi00vhBmzMEKOxHPyc7od/
+	 oXSWLvQV7hFFGw4R8IwigjbdH/Roobxvjvc/K/c4v6mMuXeKOqSHxrIgBfHzN985d1
+	 QKnj0fWt/Z9tw==
+Date: Mon, 3 Nov 2025 11:05:38 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -35,11 +35,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, semen.protsenko@linaro.org, willmcvicker@google.com, 
 	kernel-team@android.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] soc: samsung: exynos-chipid: use heap allocated
- driver data
-Message-ID: <20251103-sassy-flashy-panther-6b9b42@kuoka>
+Subject: Re: [PATCH 04/11] soc: samsung: exynos-chipid: refer to match->data
+ as data
+Message-ID: <20251103-spoonbill-of-incredible-resistance-d5befc@kuoka>
 References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-3-d78d1076b210@linaro.org>
+ <20251031-gs101-chipid-v1-4-d78d1076b210@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,20 +48,29 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251031-gs101-chipid-v1-3-d78d1076b210@linaro.org>
+In-Reply-To: <20251031-gs101-chipid-v1-4-d78d1076b210@linaro.org>
 
-On Fri, Oct 31, 2025 at 12:56:02PM +0000, Tudor Ambarus wrote:
-> Prepare for GS101 chipid addition, it will requre more driver data. Use
-> heap allocated driver data, it's easily extensible. Together with
-
-Moving from stack to heap does not give you "extensibility". It is
-extensible in current form as well. It allows to use it past probe,
-which probably is what you wanted for some reason.
-
-> the change s/soc_info/exynos_chipid, it better indicates that it is the
-> driver data structure.
+On Fri, Oct 31, 2025 at 12:56:03PM +0000, Tudor Ambarus wrote:
+> Be consistent across the driver and refer to match->data as data.
 > 
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  drivers/soc/samsung/exynos-chipid.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> index f5107b8b339e8884d6a67a80650a95441510c66c..ab6bdf24a754a0faf974190c1fa1f99735cbef8e 100644
+> --- a/drivers/soc/samsung/exynos-chipid.c
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -106,7 +106,7 @@ static int exynos_chipid_get_chipid_info(struct regmap *regmap,
+>  
+>  static int exynos_chipid_probe(struct platform_device *pdev)
+>  {
+> -	const struct exynos_chipid_variant *drv_data;
+> +	const struct exynos_chipid_variant *data;
+
+I would prefer name drv_data, to mark clearly this is driver data.
+Sometimes driver state container is called "data".
 
 Best regards,
 Krzysztof
