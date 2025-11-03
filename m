@@ -1,123 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE12531B80C
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 15:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2313168EA
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Nov 2025 16:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183959; cv=none; b=OVLMkYZDAF/TB1yyjw7uUj99sobqu0tlLvr0va7lT8yBhzvkjBSi5Yu8yiSPJZfN+W2H/UFi4tPqFNxPKLzDJtGe5uQv7+ZbHLZyS7jwiRsLayJ7IB5+c/ovbXpT9hbwuv+IQV8GI94+IxkAMFCjppHI9FXkF/yCchRWCjeR+5w=
+	t=1762187122; cv=none; b=Yg3Rx/5Dh7fPi5Rt8yyicmbavoGlWcEwPH9c6IPSo34rQN/nPS81fgVjug+BEmPj9zulfnMOm8L2xwU8xftnHLmzRYrlMx7Dy8MHzq5aOL3mA6+Yt+XoEJUGO/1DRDORrK0oZ0xi0x31q/KO27N09Qku9FSvhIdEw0TF1eaueAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183959; c=relaxed/simple;
-	bh=hqyVCvE8dTI0/nUgcmQNuYmRPg2yNtzLpjcqgQhKnrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JUODNRWnnf+7maTVUR6grEs5ZpP9yTmEQW8/mZHbgUFDXdykdxN/FjuJdzyp5W1Y03L8UI7yedz+dT3FzgaowFCAWT780FFyWdTPgHOhNn9/7gJfFmkClKsWgudvbEtN6Zx3bHhsPyNObXuUuElEGGvKfWMHluvsnZ17u/4Rejs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pg+M7q6g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762187122; c=relaxed/simple;
+	bh=Ie1ztFzxSPbpvqpKsuFgqxlGSxkGlpXE2rRP2x4OnvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=STUZzg8FESuj/xM0QckxB3Jqr4V4sZ+B3xd3c84voWu3SnQI6dXV9FFbMTL5FCNH/JUR8Kyyi1h3JiG6LPJD/UKWytQwO8YuWn+cKqfsHtUzwIrffKvZTI8UmF8Z5aHJUzpLGJJzCQP5H1eEaMPK3KzwMD2e8xsNq6Y1jRBxkXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wELhL0L4; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pg+M7q6g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C90C116C6;
-	Mon,  3 Nov 2025 15:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762183959;
-	bh=hqyVCvE8dTI0/nUgcmQNuYmRPg2yNtzLpjcqgQhKnrA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pg+M7q6gq20uuJo6+xFQu7fLt3PaSOHtjHtOLW6wHiSieOGIP6/Pypge9aJ7kH7CT
-	 JioLjjc5EomeDynx1A46O8+NiL9FKQ4Uw+vVMRc9ggno2F5O1pdtIWP7FrmLtiKnln
-	 5E9wpIyl4ATp85jq/iLNlqJrayuSWvN17V8pX3YyA/wuI0JVEmXVeLTGodlSGNGAQT
-	 GH2Qf3lXQBkUHT6nXerl/9x37kbGosBFnbO5uPslr5LLRqguSwkw9aNzdVCi/CDt68
-	 lknOtAX+yPitPJVzHJhV/610d4fFe17KbRsuRUegOzcE3csUflQ58wR4JU2Gj1aIpF
-	 /VUuoh3bix94Q==
-Message-ID: <996c1e80-f63a-416e-a3cc-82137321fe32@kernel.org>
-Date: Mon, 3 Nov 2025 16:32:35 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wELhL0L4"
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-443a7490a54so2297156b6e.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2025 08:25:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762187118; x=1762791918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WTAlZXiaIMnwUZVq1sutIXo1v8ID+rDo5kChNciDhpU=;
+        b=wELhL0L4Upakilxpc3Lsd82TXgci/esRq886yqUYBpMG797GnezHaJ/fykDuzL73Zd
+         cyrLatGEQozgTblxCoyIphwZS++7BH7vc9nPcxZiye9Y0aACvBjYHHmh0ylw75a56WQs
+         X9azuX58kFoFN2RHn0Qy2a4c8Xlzebs1uOB0zgwLbouTeHJXHxDBEYf/DE5Y1olh8rUQ
+         Tvv4xYeTy/KikdvtDWOqXPwBxiCNbml/4HtWRSId/LuMsX6yG3DQJx+MUeDR2LaJymxJ
+         ljrpjoOEW+j+AT6155xo/Z7BOQtHbOrzbUqF3Y9mPdVwwIu4oJh8aADrwF3xfUK813RB
+         7/CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762187118; x=1762791918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WTAlZXiaIMnwUZVq1sutIXo1v8ID+rDo5kChNciDhpU=;
+        b=oTqpwvt7Rd6VoQ53f+YzEKEGEH8T5Z9sG1a9uUcx0VhkEuIFDsw0tgeiN8iescfw5h
+         vlCicyW3bLoIOGiwsybM7Y/AttuFBdzKEfG+ywSGkUCavX6228iibkiDbC0ci1OWnMbi
+         h+BQYg1fUXWLZCCPSJcZmL4nRNz2W5CgLMRdzYHNxdYehoVdED2mw7k1j4KSrcWskSRZ
+         V6fRiHumfUHIj3gpuvpX5yopto1mbVraBBV0FYOZzWkhuKCd7sgTrgPie+yA4q8ZHo1Z
+         wR8dVZTwNRnRXiABxgYdOWBQpGEpcUXyzpKXj2nNORZdKANhUyIjWW5Xum7VE5v8rASc
+         ntTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUeHbOHW3LbXzKkD3xDhkbZDI8cJLbMe5wVgS4a+mxuKXE8qKDU/uxIb0j2sJQh/b9axsosoTycKdEqyiFZeJRWQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS9yLGCA2HBHYcbPHP267uS9eTIpKiLNgnXL3pMQX7rYU4XmFT
+	0sI+JR/3CFNWzEPYvQvXOcb3eOghlQL/4NNwoNVPg/Fm4Yt3mgssJUK0ywI28pyyRMuSd1RhGBv
+	EOjoZCE8umlew95UKZkf3NjztbUXXBIpV1COgqjuTBey4g+IsuXSwb2I=
+X-Gm-Gg: ASbGncuv8QpJ8C4j1GZMKqjpSBBYEdSMtahd5GfDZcIlHiTCFLDay58s7tbHkAstJtV
+	w+pR08CGiJt/c/PLy2C5V7dlznov1+MMPgzgNJEVSG39v0HGbbxeGyG52fx74FEyclejEhdtOsz
+	HwJRSZdfVT0Dhw3LGCAvrhoXHCqya2T9Q2d44zpKPTImbDKckptdkZKY0LzdfL/2UbZJ2Eo4IBj
+	bPfijnisYFb0vsOG8uxr3S5HXmSxAEEMyMRv7Ea1LlpmJ7orpz7qfgRspVBiQ==
+X-Google-Smtp-Source: AGHT+IHbOCEod+vwr0o0M8EjAvwtvOa1OmZXrzktC3381lHRz22GKSeMqt33exVl0j3qBsMsZ4mZpgJp76VxYZBMPkQ=
+X-Received: by 2002:a05:6808:1827:b0:44f:6d9e:5355 with SMTP id
+ 5614622812f47-44f9606a6a2mr6120804b6e.46.1762187118611; Mon, 03 Nov 2025
+ 08:25:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] pinctrl: samsung: Consolidate Exynos pinctrl macros (incl.
- GS101)
-To: Youngmin Nam <youngmin.nam@samsung.com>, krzysztof.kozlowski@linaro.org,
- peter.griffin@linaro.org, alim.akhtar@samsung.com,
- Sam Protsenko <semen.protsenko@linaro.org>, ryu.real@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
 References: <CGME20251103085849epcas2p25cfc49959513dadc59aeaf166aba236f@epcas2p2.samsung.com>
  <b467a9dc-3953-48a8-88ed-c8a3361006c8@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
 In-Reply-To: <b467a9dc-3953-48a8-88ed-c8a3361006c8@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 3 Nov 2025 16:25:07 +0000
+X-Gm-Features: AWmQ_bmbWgChC_bEY-3U5XXOK4CUpqZfilmDT0HkFykCTWRojeoS4jt4kh1iB9U
+Message-ID: <CADrjBPpsd6k3HLBfiE2qp9F9LrUxEYK8y3Czxq1z76efoKRcNQ@mail.gmail.com>
+Subject: Re: [RFC] pinctrl: samsung: Consolidate Exynos pinctrl macros (incl. GS101)
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: krzysztof.kozlowski@linaro.org, krzk@kernel.org, alim.akhtar@samsung.com, 
+	Sam Protsenko <semen.protsenko@linaro.org>, ryu.real@samsung.com, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/11/2025 09:59, Youngmin Nam wrote:
+Hi Youngmin,
+
+On Mon, 3 Nov 2025 at 08:58, Youngmin Nam <youngmin.nam@samsung.com> wrote:
+>
 > Hi Krzysztof and folks,
-> 
-> 
-> While looking at the current Exynos pinctrl macros, I think we can refactor and consolidate them.
-> 
-> Today, several macros are used across Exynos2200, Exynos7870, Exynos7885, Exynos850, Exynos990, Exynos9810, Exynos8895, exynosautov9, and Tesla FSD:
-> 
+>
+>
+> While looking at the current Exynos pinctrl macros, I think we can refact=
+or and consolidate them.
+>
+> Today, several macros are used across Exynos2200, Exynos7870, Exynos7885,=
+ Exynos850, Exynos990, Exynos9810, Exynos8895, exynosautov9, and Tesla FSD:
+>
 > * EXYNOS7870_PIN_BANK_
-> 
+>
 > * EXYNOS850_PIN_BANK_
-> 
+>
 > * EXYNOS8895_PIN_BANK_
-> 
+>
 > * GS101_PIN_BANK_
-> 
-> I propose introducing a new EXYNOS9_PIN_BANK_ macro to unify these into a single style. 
+>
+> I propose introducing a new EXYNOS9_PIN_BANK_ macro to unify these into a=
+ single style.
+> The GS101_PIN_BANK_ style seems appropriate for modern Exynos platforms, =
+so the new macro would follow that approach.
 
+IIRC regarding the macro naming I think there was already some
+discussion when Sam tried to upstream pinctrl e850 macros (originally
+using EXYNOS9_ prefix same as the downstream kernel). I'm struggling
+to find the discussion now on lore, but you might be better placed to
+authoritatively help answer the questions that were raised previously.
+IIRC it was along the lines of "what does EXYNOS9 name actually mean?"
 
-I don't get what you want to achieve. If you want to revert earlier
-commits which split these, then answer is probably no. At least without
-proper rationale.
+>
+> The only functional difference between GS101_PIN_BANK_ and the existing m=
+acros is the presence/absence of the filter-control register offset.
+> If we add this offset as a parameter to the unified macro, we can integra=
+te all variants under one definition.
+> I=E2=80=99ve checked the SoC user manuals listed above to confirm the fil=
+ter-control offsets.
 
-If you want something else, then I don't know - but anyway talk is
-cheap, so please always send patches/code with rationale why you are
-doing that.
+I was aware that the e850 SoC had filtcon offset, but I don't have SoC
+manuals for the other SoCs. As you have access to the specs it seems
+like you are well placed to do this macro consolidation. It makes
+sense to me to add the fltcon register offset for any SoCs that have
+the register (and then also benefit from setting the analog/digital
+filter accordingly).
 
-Best regards,
-Krzysztof
+For gs101 we have tried to upstream all functionality present in the
+downstream pinctrl driver with the goal of replacing the downstream
+driver with the upstreamed one. My hope is this will also make it
+easier for Samsung to adopt the upstream pinctrl driver for future
+BSPs  as well.
+
+>
+> Planned patch series:
+>
+> 1. Introduce EXYNOS9_PIN_BANK_ and replace the macros above. Rename the e=
+xynos850_bank_type_ data structure to exynos9_ for general naming.
+>
+> 2. Fix any incorrect declarations in existing platforms (if any).
+>
+> 3. Add the filter-control register offset to all platforms mentioned abov=
+e.
+>
+> 4. Replace GS101_PIN_BANK_ with EXYNOS9_PIN_BANK_.
+>
+> 5. Rename gs101_pinctrl_{suspend,resume} to exynos9_pinctrl_{suspend,resu=
+me} and use this on modern Exynos platforms, including GS101.
+>
+>
+> I believe this will make the Exynos pinctrl driver cleaner and more consi=
+stent.
+> Comments and suggestions would be appreciated.
+
+The above sounds like a reasonable approach to me. I don't really have
+a strong opinion on macro naming, but I think you should be prepared
+to justify your choice of name when you submit the patches.
+
+Thanks,
+
+Peter
