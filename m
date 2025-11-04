@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E7EEC0;
-	Tue,  4 Nov 2025 08:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED40320CB5;
+	Tue,  4 Nov 2025 08:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245070; cv=none; b=UCb1pZYFNyOtkzqVPdOlJW76XXqZIhPdyNZA+KkuGQuRt7Wy5bjdrtLV9V1PGufeO45BQNytH5DrAlrC6hJkF3Q+eXr+Ly6vLiTh9QuypFRqhJeIJeg7Ek/BK0bQ0aTv6VlNML8NBrlgS5+6QG3nWSsYk5KRNsG1zHozAhM67G8=
+	t=1762245446; cv=none; b=nvwHpI0LuJKmQqEfG2sgcidIumkgjwUhAHtLPHFrHm6ruWBxZYOqe6MisCYDV7TErS8569bcSyRBmrUo03NQEaE0OHkLhKZLso396Z828yhiNmJRRrkpGWV+9WUhdeXrXqEE+dHDwhPMdrNJlJOD+yoPo6fC5IrcrQnR+IDi08M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245070; c=relaxed/simple;
-	bh=3xceHsxXhCdcgtIdMQ5qJFYY8DSrH0P3Oh57cMWibVw=;
+	s=arc-20240116; t=1762245446; c=relaxed/simple;
+	bh=foCiIsSb/QzMBNXONPuDU6fZ9CxIPNvgssjQ2N/7VoM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rN/krvQ8HbUw2u0Yzwqm6dWAVyqY34WHHFq6t3cCPpgCcZ3loEnKn/Rhjls6gKsvsqn8SsvMeZfunAGw6g2mcG0ZYO2Wx+sTv41Uw1du3nQupCxf+5WOjp2NMkadG/LWhNtEsafILjzXfFxppvGvniaAGvXRfViKcUiC6t+Cz5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7/Zsfoc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpiDIBT2l8pnsBo9v3nip2dB+ptZodQP59aNwFFrVl8bsHDq/IO4AyFxwi1TjT+oe5FYDStm0hr5LyD2Pj6r2RuI0RROwCtfm1yRMYgHC63jcBC7n8dTM+RkFa0uwjCnsLpqckrDIOMInaLzK36WxqlUYOA44S2+kwds2AHs+/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnhENImu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7/Zsfoc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF666C4CEF7;
-	Tue,  4 Nov 2025 08:31:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnhENImu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A4C6C4CEF7;
+	Tue,  4 Nov 2025 08:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762245067;
-	bh=3xceHsxXhCdcgtIdMQ5qJFYY8DSrH0P3Oh57cMWibVw=;
+	s=k20201202; t=1762245446;
+	bh=foCiIsSb/QzMBNXONPuDU6fZ9CxIPNvgssjQ2N/7VoM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r7/ZsfocgWcavXRz5mce/0NqwSfnLGokwYxa4JjTB1YZVH1/up/3juZNYYvaSZ+cc
-	 TbH18iCnMtmR2iwPzGm6gaFxXfwNPS/OSy9fcifBThKvJmWUfKEJiIJ++rI/cPE0Cz
-	 gGCOzJYpl8BUNHelyuT8JbV7gga/BBib0waopzKLxFLtbJ6MFUX/2GoGxgmw6vyOTF
-	 gnYdnpdKW5Zaavx/nEGOAWP8hfP8kF77c6lMwEsgSluecQojiCV+TczSEWaGfWa3Ot
-	 St61y02YsPaSif1iRBhOYRJtcuhMcbaJdfNjoOELhUiYxxz6VKjLJeAozNZ4R54/8D
-	 PrT4K5KYTJgTg==
-Date: Tue, 4 Nov 2025 09:31:05 +0100
+	b=GnhENImuJBLXNH+o0kZQcdwodiyRLlSXdWyu1XnV/mhLcHwQxruBSL7BD4oHTnxi6
+	 krFMSBEr0oC2n60Dzs+iWBUtWZFUd3ZDac2CKTZwJwyHzZlM0P//vOBAgKtHTs0KhZ
+	 jh+SE2ZYfz51op7vPIygdx8IKi+yXPj4j/tpnge8z5T1BlYjU+Z9LOu1gcgQayn0w6
+	 2ODs2KBnAFB4AhIgMeXn4s/LYLfWqDvglIDo9j3fl9mV/4IPN9my5BC3+UYlO9wbAL
+	 GEKHX4YhnTwt7FelTjy8M4pw5mDFwLoBvwEtJAqATKCrBw2rR1g7cm6mKXRbek8JeY
+	 QJroEwaNsjFDA==
+Date: Tue, 4 Nov 2025 09:37:23 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
 Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -36,11 +36,11 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
 	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
 	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 07/20] dt-bindings: firmware: google,gs101-acpm-ipc:
- update PMIC examples
-Message-ID: <20251104-awesome-tacky-magpie-bacd9f@kuoka>
+Subject: Re: [PATCH v3 06/20] dt-bindings: mfd: samsung,s2mpg10: Add
+ s2mpg11-pmic
+Message-ID: <20251104-glossy-frog-of-grandeur-a345d1@kuoka>
 References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
- <20251103-s2mpg1x-regulators-v3-7-b8b96b79e058@linaro.org>
+ <20251103-s2mpg1x-regulators-v3-6-b8b96b79e058@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,45 +50,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251103-s2mpg1x-regulators-v3-7-b8b96b79e058@linaro.org>
+In-Reply-To: <20251103-s2mpg1x-regulators-v3-6-b8b96b79e058@linaro.org>
 
-On Mon, Nov 03, 2025 at 07:14:46PM +0000, Andr=C3=A9 Draszik wrote:
-> In a typical system using the Samsung S2MPG10 PMIC, an S2MPG11 is used
-> as a sub-PMIC.
->=20
-> The interface for both is the ACPM firmware protocol, so update the
-> example here to describe the connection for both.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->  .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 40 ++++++++++++++++=
-++++--
->  1 file changed, 37 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm=
--ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ip=
-c.yaml
-> index 4a1e3e3c0505aad6669cadf9b7b58aa4c7f284cb..c25e155926e5f44bd74f195cd=
-bff3672c7499f8e 100644
-> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> @@ -45,6 +45,15 @@ properties:
->        compatible:
->          const: samsung,s2mpg10-pmic
-> =20
-> +  pmic2:
+On Mon, Nov 03, 2025 at 07:14:45PM +0000, Andr=C3=A9 Draszik wrote:
+> +  "^vinb[abd]-supply$":
+> +    description: |
+> +      Phandle to the power supply for the additional buck rails of the S=
+2MPG11
+> +      PMIC. The mapping of supply to rail is as follows::
+> +        vinba - bucka
+> +        vinbb - buck boost
+> +        vinbd - buckd
+> +
+> +  "^vinl[1-6]s-supply$":
+> +    description: |
+> +      Phandle to the power supply for one or multiple LDO rails of the S=
+2MPG11
+> +      PMIC. The mapping of supply to rail(s) is as follows:
+> +        vinl1s - ldo1s, ldo2s
+> +        vinl2s - ldo8s, ldo9s
+> +        vinl3s - ldo3s, ldo5s, ldo7s, ldo15s
+> +        vinl4s - ldo10s, ldo11s, ldo12s, ldo14s
+> +        vinl5s - ldo4s, ldo6s
+> +        vinl6s - ldo13s
+> +
+>  required:
+>    - compatible
+>    - interrupts
+> @@ -81,3 +102,23 @@ allOf:
+>        properties:
+>          regulators:
+>            $ref: /schemas/regulator/samsung,s2mpg10-regulator.yaml
+> +
+> +      patternProperties:
+> +        "[^m]-supply$": false
+> +
+> +  - if:
 
-pmic-2
+OK, so this explains why earlier you put $ref in if:then:. I propose to
+move it to separate new MFD schema, because half or more of properties
+are not applicable between each of the devices.
 
-Are there more pmics? Bindings are supposed to be complete (see writing
-bindings) and if you did follow this approach earlier, you would nicely
-call first "pmic-1" (instead of "pmic") and then "pmic-2".
-
-> +    description: Child node describing the sub PMIC.
-> +    type: object
-> +    additionalProperties: true
 
 Best regards,
 Krzysztof
