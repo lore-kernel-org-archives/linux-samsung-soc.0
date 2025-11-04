@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857093019CB;
-	Tue,  4 Nov 2025 07:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5241B87EB;
+	Tue,  4 Nov 2025 07:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762240455; cv=none; b=BLuXSytnoirEchIjIlS5hfYEB0b58pLnv0xYmOsANlpGhgDUM8C8E7o+Y7Se0GYQRqS1d5PsVUQ98UGtyHhygNip+vmbUTVlkXin4TmqOpglEF0Enf53qotLALj1TICIv++wK+OtslnO9pWs6HdHIOO/gdwDcvHr0eAP+nZ/i3g=
+	t=1762240754; cv=none; b=k2H4ALL8GhcDs9BglKUHPVxZtgvyuiZegAT5ErlVR7mv9M8dZ03uCLcNoBcAXd7caf3NJRPzppbNCNIis5/NuJ4QdHVSU18D12ME60yTMLpoyuGy340GEtVB2G4tq8GavXkqVWuz77MKM6ibppz23ctjf00iyns9L1JMsedBbzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762240455; c=relaxed/simple;
-	bh=SSf0Rpn+K0mGokCfLmx8pESVX/TTUwsxUbFN2NWZMRA=;
+	s=arc-20240116; t=1762240754; c=relaxed/simple;
+	bh=1VqBPJua0R0bHLpOZL5JtWuxPmhUkmKa6r9tyoIY7UM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WpLalxyWtiwsYw9v+S6jp1Nv8YPiZNJbY1hwfHCJiFwws19PuihSG6gkv8k0ZQni5qXz8p2FdiAtHuvjn4alJ8UG28HxYgLxyZnBROOexyl7JmLhy1sprn4poBKE/wpbPzSTG6N7gcuY4WUbfDScY3/R18bv5elvhx7xSs1m69Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3B5caX/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=RjSV9qLIvfybvMDOHgpStd6JuGkbQ1kMiH5TPcnlHXLfpFiniLzMUI2/mqx/JNaXX/xxIY9/3i6fIHFfADOidcF0zBFrtiJz4rzndQrdcU/tAazth2BVGpLIVOV3Qat0uIlQwAr018a6zlxvAP7NLB1fm1jRPA7GbLg0D/RvIH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBGBC9p4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3B5caX/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB39CC4CEF7;
-	Tue,  4 Nov 2025 07:14:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBGBC9p4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BEB4C4CEF7;
+	Tue,  4 Nov 2025 07:19:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762240454;
-	bh=SSf0Rpn+K0mGokCfLmx8pESVX/TTUwsxUbFN2NWZMRA=;
+	s=k20201202; t=1762240753;
+	bh=1VqBPJua0R0bHLpOZL5JtWuxPmhUkmKa6r9tyoIY7UM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j3B5caX/k4j5t/VKIWrVuRTYvuua5zD2wSPJhdRsD+cA/MSFwoh7q0I/3GMqB4xjp
-	 1fiBNFayP8CRHZtPizm2E/rKxcupAAxbtkHevSaHaINyU7QavY87C7rTry9Ouguip8
-	 /XyUdglfw056D1nyy5pHsoHdrscc6WdLSqGGLkevJPTQqPPulpF/zPGuq9eGVv7v+8
-	 KGrDTCdfZvmPy1yiTk9u0Ijl7sDMQMeVTR7+PcGrOUjHun1dPeZmdn/D69rV9I/9m3
-	 hiN1+Hd+bG1he3OjmFUU36L/d0gs86URZcMV9qCwq8cYmtK/D1kRb3MJh25NcD5mEX
-	 k8wQ8lDMipvJw==
-Message-ID: <b9b10943-0ece-495f-a6a8-403fc1ab9213@kernel.org>
-Date: Tue, 4 Nov 2025 08:14:08 +0100
+	b=kBGBC9p4mQpg3XS12E3RweaLskIYe0bC27PMWxy9Suk8qzQMpMyYDG3/yx2cEX90L
+	 T8a5LAlAC7Jhl6qfrXsRA2LLgASVTSuCgxFiqSNJtUZll4oUi3QqGPiD0AQmeOjKLc
+	 qvvhY1/Re51Y4o1oysLltK4vM+oeDjIfRkHVWEeAhFPXmkCjuH4qLD0MG/yE9cD3PC
+	 I9aTjL9JIPPKGEMhPxQ/dDxJI4VeOsklwMFO55UCi0pLlHlyxWDJHn9yrRzBoi1tw5
+	 k+fkzC0eObQ/GS6bJEqgZUh7wEGViBUbRyqgMezlvZ+fo8yfL+F1k8LAf+WPn6VMQ3
+	 fvNRXQ5Wsj7QA==
+Message-ID: <93d5636b-a515-4976-b68c-9606924eab8f@kernel.org>
+Date: Tue, 4 Nov 2025 08:19:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] arm64: dts: exynos: gs101: add the chipid node
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+Subject: Re: [PATCH 2/5] nvmem: add Samsung Exynos OTP support
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- semen.protsenko@linaro.org, willmcvicker@google.com,
- kernel-team@android.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-10-d78d1076b210@linaro.org>
- <20251103-pompous-lean-jerboa-c7b8ee@kuoka>
- <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: semen.protsenko@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251031-gs101-otp-v1-0-2a54f6c4e7b6@linaro.org>
+ <20251031-gs101-otp-v1-2-2a54f6c4e7b6@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,67 +93,107 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
+In-Reply-To: <20251031-gs101-otp-v1-2-2a54f6c4e7b6@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/11/2025 11:50, Tudor Ambarus wrote:
+On 31/10/2025 13:45, Tudor Ambarus wrote:
+> Add support for the Samsung Exynos OTP controller. On the Google GS101
+> SoC, this controller provides 32 Kbit of OTP memory space that can be
+> read/program/lock using a specific sequence of register accesses.
 > 
+> The OTP controller register space is of interest as well because it
+> contains dedicated registers for the Product ID and the Chip ID (apart
+> other things like TMU or ASV info). Register the OTP controller
+> register space as a nvmem device so that other drivers can access its
+> contents using nvmem cells.
 > 
-> On 11/3/25 12:18 PM, Krzysztof Kozlowski wrote:
->> On Fri, Oct 31, 2025 at 12:56:09PM +0000, Tudor Ambarus wrote:
->>> Add the chipid node.
->>>
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> index d06d1d05f36408137a8acd98e43d48ea7d4f4292..11622da2d46ff257b447a3dfdc98abdf29a45b9a 100644
->>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> @@ -467,6 +467,12 @@ opp-2802000000 {
->>>  		};
->>>  	};
->>>  
->>> +	chipid {
->>> +		compatible = "google,gs101-chipid";
->>
->> That's not a real device, sorry.
->>
->> I had some doubts when reading the bindings, then more when reading
->> driver - like chipid probe() was basically empty, no single device
->> access, except calling other kernel subsystem - and now here no single
->> actual hardware resource, except reference to other node.
->>
->> Are you REALLY REALLY sure you have in your datasheet such device as
->> chipid?
->>
->> It is damn basic question, which you should start with.
+> Support for the OTP memory space can follow and be modeled as a
+> dedicated nvmem device.
 > 
-> Documentation says that  GS101 "includes a CHIPID block for the software
-> that sends and receives APB interface signals to and from the bus system.
-> The first address of the SFR region (0x1000_0000) contains the product ID."
-
-So chipid@1000_0000
-
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  drivers/nvmem/Kconfig      | 10 +++++
+>  drivers/nvmem/Makefile     |  2 +
+>  drivers/nvmem/exynos-otp.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 110 insertions(+)
 > 
-> 0x1000_0000 is the base address of the OTP controller (OTP_CON_TOP).
+> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+> index e0d88d3199c11a3b71cc274b2114e9554ac486fc..f973e009737f2fbdc8511e50f1aa9e6003286065 100644
+> --- a/drivers/nvmem/Kconfig
+> +++ b/drivers/nvmem/Kconfig
+> @@ -84,6 +84,16 @@ config NVMEM_BRCM_NVRAM
+>  	  This driver provides support for Broadcom's NVRAM that can be accessed
+>  	  using I/O mapping.
+>  
+> +config NVMEM_EXYNOS_OTP
+> +	tristate "Samsung Exynos OTP support"
+> +	depends on ARCH_EXYNOS || COMPILE_TEST
+> +	help
+> +	  This driver provides support for the OTP controller found on some
+> +	  Samsung Exynos SoCs.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called exynos-otp.
+> +
+>  config NVMEM_IMX_IIM
+>  	tristate "i.MX IC Identification Module support"
+>  	depends on ARCH_MXC || COMPILE_TEST
+> diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
+> index 70a4464dcb1e25cf9116280a32f4a0f4f9941a75..920a536fc359a5a7d8f3aabba6a712e85c277ee7 100644
+> --- a/drivers/nvmem/Makefile
+> +++ b/drivers/nvmem/Makefile
+> @@ -20,6 +20,8 @@ obj-$(CONFIG_NVMEM_BCM_OCOTP)		+= nvmem-bcm-ocotp.o
+>  nvmem-bcm-ocotp-y			:= bcm-ocotp.o
+>  obj-$(CONFIG_NVMEM_BRCM_NVRAM)		+= nvmem_brcm_nvram.o
+>  nvmem_brcm_nvram-y			:= brcm_nvram.o
+> +obj-$(CONFIG_NVMEM_EXYNOS_OTP)		+= nvmem-exynos-otp.o
+> +nvmem-exynos-otp-y			:= exynos-otp.o
+>  obj-$(CONFIG_NVMEM_IMX_IIM)		+= nvmem-imx-iim.o
+>  nvmem-imx-iim-y				:= imx-iim.o
+>  obj-$(CONFIG_NVMEM_IMX_OCOTP)		+= nvmem-imx-ocotp.o
+> diff --git a/drivers/nvmem/exynos-otp.c b/drivers/nvmem/exynos-otp.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3bff9421e6f2b80a8f20533b490a289687d117e8
+> --- /dev/null
+> +++ b/drivers/nvmem/exynos-otp.c
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2025 Linaro Ltd.
+> + *
+> + * Samsung Exynos OTP driver.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/ioport.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-provider.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mod_devicetable.h>
+> +
+> +struct exynos_otp {
+> +	struct clk *pclk;
+> +	struct regmap *regmap;
+> +};
+> +
+> +static int exynos_otp_read(void *context, unsigned int offset, void *val,
+> +			   size_t bytes)
+> +{
+> +	struct exynos_otp *eotp = context;
+> +
+> +	return regmap_bulk_read(eotp->regmap, offset, val, bytes / 4);
 
 
-and efuse@1000_0000 from your other patchset and your sentence above.
+So you are just reading MMIO and pretending this is NVMEM?
 
-Please add them to DTS and check for warnings.
-
-> 
-> "CHIPID block" tells it's a device, no? But now I think it was just an
-> unfortunate datasheet description. Do you have an advice on how I shall
-> treat this next please? Maybe register to the soc interface directly from
-> the OTP controller driver?
-I think in the SoC it is impossible or at least never happening that you
-create two devices for the same address, therefore either chipid is a
-device or efuse is a device.
+Is it possible to actually do the other actions from your commit msg
+"read/program/lock"? If not, then you just created NVMEM abstraction
+over existing chipid completely duplicating the driver (with more
+translation layers).
 
 Best regards,
 Krzysztof
