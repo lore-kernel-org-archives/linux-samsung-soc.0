@@ -1,375 +1,193 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0939A29A1
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Nov 2025 02:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38F52253F2
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Nov 2025 02:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762395415; cv=none; b=S1BpZN/g4UmkZ2UrLZ6PMuek5eyAzH1Yg8ZSOMoqZ64VXt7FbXHOa59KEt8T4L3zRE5iabg/4IQp5iKKpK7+HbbCLoaOD5N0xU8r3ECxT9LQB0P+AzMR/n/IMT2i0nWnFSOPiEpGQNNxOYIgeGECpme0U4Lm7sVnyJOVSlAbyM4=
+	t=1762396776; cv=none; b=RJzpvn/mC3KGXWHDV/Edl+/Qo9H0gkKjlYn+AcK28I2ZcsJd4YEv8bXRPXT2o4LGuoxpcYQMplqolOk8z/n4SNQMIrPvFeZTNzfvd7Dl10d3/SD3NIG1yKNPcgwftxgY2tWKqMI3RItLWaIaEn+RPd0au4CT13wiRFB+N5UULmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762395415; c=relaxed/simple;
-	bh=+STBS4uoFqw4fD1hWetERZmlzJqM/3/SdIAIFd4Zn1I=;
+	s=arc-20240116; t=1762396776; c=relaxed/simple;
+	bh=8nMHKixdk8Eg3L25o5gBG9d2JmKTyF3seoQc5DhhPLA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QtQqtxNGoQvCkYhZn1+JPkd4GK9QokdZhbAhkUTke3i67z1dDRwEr9euelQErlfC0mj08RDSOKTguEXsEwNhhOrn/ZwSi4hVCTjSouZ6lJUZVoTT8z4rHUJgJ5tq+2fXk2FsWnxZQsXNLgreUFlCTJH0bph1mmLdRktjUOshgH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWVG0MMc; arc=none smtp.client-ip=209.85.215.171
+	 To:Cc:Content-Type; b=sdgia5Rp0WljrJYksOrxvU4dAWWaSPuMaKOXzujUAJYn5LuIRx/8a1TDpWvu9A8U2o3Vud9eK6m0AJ6tpPL50pRQ+drJRa3FNU7EjnuOUk4zqpcyS3qgxfuTvBc4Y7bFBBN2qx76NyzqrTHGmZnpaYK5bdKOHisWStrWOOwplR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dSmWP9lw; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWVG0MMc"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b95cdcacd95so273036a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Nov 2025 18:16:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dSmWP9lw"
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-8804a4235edso6138056d6.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Nov 2025 18:39:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762395413; x=1763000213; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762396773; x=1763001573; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wrNYBY0uDogTJqDUTL8SdY3sJ+APNZYWuMmVdEToT+s=;
-        b=nWVG0MMcnGhsywA+sIHAeFmrDLYIrxvucHiZRPbG+FB5WrvHWVVWUHAHKv3Fdh6crd
-         JSAy6I4CU1SafRjEvU5ueflHXnerBsvasx+lB4CM19ylr2xaKTi2dGfbkbuIxgeUGJMW
-         gO5eMWSrfD4k4FEr94e2i3fDUlFtKab9D/9GPDMQsy8SxOix930ppOifwwKuW6TyMYBJ
-         TlMQGfBFekB59bKD9PRkJ8XU83hIJbRNdmvrVQA1mZyiolrQDRCxmSPfulIePdz1Z/af
-         W7Jm4lqnG9ItP5WkCpqs4wvB/IDAJvNSj8pIKOq8yzWDSqSMBWSa3fNd5LUzANf7HGYz
-         VxuA==
+        bh=2eNR0gXNmIUmw89GQXgujHZG/9SWMVHpsfLzK4O6o7I=;
+        b=dSmWP9lw2cEUYNS6YfT3N/Hvdf6/hiplOMEZLQuyu+/jb+okczgC2LBp9wHT8kygTK
+         kq92pgyTK9OUY5gJ2G0Aq3ioKjzFG3MzgcNpZVARsfIkm/qn18k2gP0usclMDeo1VpCq
+         E8KnYZ20zPgMqyDeBXqqx5A5jJ7N0Pc4lNE+eHY07OputKisRieuT1ZcxlnstF9pt4S3
+         wv1UlFn84748cUQHiH+/MlQghJczwoE2MnKHQjZcQFXmvGeykZG7XZyCLbDmjDI0G5Hm
+         Pjcqy8nlhiWgiqTQWqwg1SlZBIcT+UfuHwhLBwIMA3A/TasmUJMhaq9uweMB6osQykvd
+         JrKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762395413; x=1763000213;
+        d=1e100.net; s=20230601; t=1762396773; x=1763001573;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wrNYBY0uDogTJqDUTL8SdY3sJ+APNZYWuMmVdEToT+s=;
-        b=rMrYw4ixq5KgJfQsNkDuP8ggt3VgIWQC8RguGB2x3463pngD6/Gqhwbj9dglWbOLbV
-         ux4DLZrnZXOlSW8VTcGox24pcxXfsj7qgLRq7pmA927Q+GY+3oivLuxjgRlBon9TE0nb
-         ci+0BMYqcTJIsYntsQiEe4LId3V4Bq2cXK+h/LyV1TvqQp4vGUNukXQVhDeTihxxX/ym
-         hhsZen5sAVOFsRkmMb1vf9kWWGVxE9cfym8bnXtae1OkbM0t+PSm6vyYq1Qj5nWUujRO
-         JdRCsWK+Q2NVKJPcd0JGEZcXtL6cfdnt3lY766wt9yFu4zgPSfVva4hNjUFGA5/jT5Kn
-         KB8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxHJ0FTW+gbNhAP+MXh7nBM2AZaGc6s49bm4U23r9Rs+ICOSLLvY2tA54fT/KdN7kv1Jz6P4BUxOQSGW1CSMh3cg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU3/3A6hE5Es4PIbsnxn8/aabmbhHCAdBrWzkjAxczk3DVPoZC
-	BKMZmdoNkibos1IAkN4OZpBaKkfZuZ61APk2k5Dn9uUIKOdHVnYazdw2NUdc/MpbtU8FdyAQwDA
-	Iufq9CCQGAaFx0zKN8Uv+el87lo3410hMZjuY1mNS
-X-Gm-Gg: ASbGncvTjvXFd1nr6f4eLnxRA3SkmZCL9sGmB9ijPTY9Qx8ryiFnKjg6O3+Vw3TslGV
-	CjrTSUkQTz1CPAAKuS13ljyp82Gmgw45XF5jrjjM2wria892p6NT88I77P+7oaMw0OD2idwygmg
-	KBYVdO+/nWd0JojcoyyPHQ6Nhi7vckiYk5HxRTOynnTcgu40CeR11HHZhNLygoiTW/lv2wjkWz9
-	QeWb8LPu8drHEondyycSQNO9GXJH7CmkFL38nwhTmt9TOz1jxwx7Jlxs+GsuvysuIsYmhU=
-X-Google-Smtp-Source: AGHT+IFYUtRUnq5Tlp2AO4zwtJX03OzLHRNivbEQJDmktuqmlXs8Cal9wRhNwuoZpTtabe8XyDCfLQP2a9LsycDuD/s=
-X-Received: by 2002:a05:6a20:a126:b0:32d:a91a:7713 with SMTP id
- adf61e73a8af0-34f85b0e96bmr7217192637.40.1762395412805; Wed, 05 Nov 2025
- 18:16:52 -0800 (PST)
+        bh=2eNR0gXNmIUmw89GQXgujHZG/9SWMVHpsfLzK4O6o7I=;
+        b=J3YRhuDdp7OCgKjukQzE7wp+Ia3lzkO//zLt63sHqzKTTBKuRMp2Nb7E+vSUXPzFlS
+         cAAALLH3ENryglhQCKf/XBKWSTb2FEOUpNnKwku3gg769TtdWJrqCJzIJWBtLf8hURSX
+         8iQ1dl0e2m7XOGPruw8bn8m8PAsEFFsBANAml/jWF8in6fFxSIBHT5TR5aM57nPa1t+D
+         c1Bx6/UGxxJG6sHx/eScRJaM/QCdX3uGSb3DSmWiuvYdHVSVrb2mMQXiS5Gup1mBBcU+
+         OAky9RFIQxmg71kIVBtwWgpAN2JOdLiwuUJ3JJ9bpfSzSPFMlztTn9aZ8XvpmYqCY9/e
+         8geQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsz5weOR8JB5hCGwz9C6gqTARx7MIXyOU19UoDiU8uQyxl08OE1sxyRuyAns/5P0WjPCooJPrZXJVybb67vaefjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFWrYgYnnQVPmFbklWWVw67EeqWLSat8a++UavBWJ3GRJ7FbLF
+	bCJG0/zQD8HMvfWYESr7oAaqUojPpxQSKioyKmHZ9OMr1W7cn6hlMo6SN0d08jTXUhfhEj8sZJG
+	3kmMaMMgpnuUDYQWNcCk4AesZBISOtTPY5H+QcsQL
+X-Gm-Gg: ASbGnct8Wl9UJ0II89kf/KuubHF0ALxunRkpGOSzgn544HBZi2T+N786PZP4YJ5D/3v
+	8Y7RH40gmLVPn8NAt/7Bo9JOWU+br8P869HqM6nF7PAPUCzmIDYpbOZVIxQT5Tl0c9NRoKrLq/t
+	/SLlbZWLKjH/oiqNyByWtLdW2eLwx615wTlchqLRhTfaI9crkoSNRVOyXyZVzW9+bVV5xUQN6Y9
+	qmyMPFpMTCMUgr9PLEHpqripKt4m/QoPD00GWstB4e1EZuUAyQ51nsh+XvQ
+X-Google-Smtp-Source: AGHT+IGJuTr7VhSikUdL+mJyzKmkBgWLGxAfoFqQyzKGSsZmlf2Gkc/1quZmoJrqJlupKDcyB0Th/ppvrz0DqNyO9kE=
+X-Received: by 2002:a05:6214:1312:b0:880:2f75:c525 with SMTP id
+ 6a1803df08f44-88071197e64mr79530726d6.25.1762396773064; Wed, 05 Nov 2025
+ 18:39:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029214032.3175261-1-royluo@google.com> <20251029214032.3175261-2-royluo@google.com>
- <20251030-cunning-copper-jellyfish-1b5f3b@kuoka> <CA+zupgxV7SH8Jmghg7HUkWi63dN3m6KLQNBbf+BOQPFbRsiKiw@mail.gmail.com>
- <89733ddf-8af3-42d0-b6e5-20b7a4ef588c@kernel.org>
-In-Reply-To: <89733ddf-8af3-42d0-b6e5-20b7a4ef588c@kernel.org>
+References: <20251017233459.2409975-1-royluo@google.com> <20251017233459.2409975-3-royluo@google.com>
+ <20251030011659.bmgdry3wwf4kgjwv@synopsys.com> <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
+ <20251104020713.orax7rk6qhko5p4m@synopsys.com> <CA+zupgy4qO9X=R7KqEru5kr7tYhgdw=9Z70sLNKj5DTS_J7KZw@mail.gmail.com>
+ <20251106003830.v22dnomurtqmqc2y@synopsys.com>
+In-Reply-To: <20251106003830.v22dnomurtqmqc2y@synopsys.com>
 From: Roy Luo <royluo@google.com>
-Date: Thu, 6 Nov 2025 10:16:15 +0800
-X-Gm-Features: AWmQ_bkHoYFyaQeybc5UvezN4EWqbJT4bKEyxsgJMFmGBzo51vQ6CZ14ESkjq80
-Message-ID: <CA+zupgwwKS=FJxXaW9n1=W2V8hSdQ_y5zw1FcC4Gm4sgo-4PRA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+Date: Thu, 6 Nov 2025 10:38:56 +0800
+X-Gm-Features: AWmQ_bkphrNIx4CfxBiTp-P4PkFughKyJrDHinuM5icObzFEnLxeXlpmyW-7ie4
+Message-ID: <CA+zupgzNRG3vAukQe89bTJ_EaC2A=o+_pY6QoVOdRfXu8BJOAg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
 	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Doug Anderson <dianders@google.com>, 
-	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, 
-	Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 5, 2025 at 3:35=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Thu, Nov 6, 2025 at 8:38=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys.=
+com> wrote:
 >
-> On 01/11/2025 00:45, Roy Luo wrote:
-> > On Thu, Oct 30, 2025 at 12:37=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>
-> >> On Wed, Oct 29, 2025 at 09:40:31PM +0000, Roy Luo wrote:
-> >>> Document the device tree bindings for the USB PHY interfaces integrat=
-ed
-> >>> with the DWC3 controller on Google Tensor SoCs, starting with G5
-> >>> generation. The USB PHY on Tensor G5 includes two integrated Synopsys
-> >>> PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP=
-.
-> >>>
-> >>> Due to a complete architectural overhaul in the Google Tensor G5, the
-> >>> existing Samsung/Exynos USB PHY binding for older generations of Goog=
-le
-> >>> silicons such as gs101 are no longer compatible, necessitating this n=
-ew
-> >>> device tree binding.
-> >>>
-> >>> Signed-off-by: Roy Luo <royluo@google.com>
-> >>> ---
-> >>>  .../bindings/phy/google,gs5-usb-phy.yaml      | 127 ++++++++++++++++=
-++
-> >>>  1 file changed, 127 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-=
-usb-phy.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy=
-.yaml b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..8a590036fbac
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
-> >>> @@ -0,0 +1,127 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>> +# Copyright (C) 2025, Google LLC
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Google Tensor Series (G5+) USB PHY
-> >>> +
-> >>> +maintainers:
-> >>> +  - Roy Luo <royluo@google.com>
-> >>> +
-> >>> +description: |
-> >>> +  Describes the USB PHY interfaces integrated with the DWC3 USB cont=
-roller on
-> >>> +  Google Tensor SoCs, starting with the G5 generation.
-> >>> +  Two specific PHY IPs from Synopsys are integrated, including eUSB =
-2.0 PHY IP
-> >>> +  and USB 3.2/DisplayPort combo PHY IP.
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    const: google,gs5-usb-phy
-> >>> +
-> >>> +  reg:
-> >>> +    items:
-> >>> +      - description: USB3.2/DisplayPort combo PHY core registers.
-> >>> +      - description: USB3.2/DisplayPort combo PHY Type-C Assist regi=
-sters.
-> >>> +      - description: USB2 PHY configuration registers.
-> >>> +      - description: USB3.2/DisplayPort combo PHY top-level register=
-s.
-> >>> +
-> >>> +  reg-names:
-> >>> +    items:
-> >>> +      - const: usb3_core
-> >>> +      - const: usb3_tca
-> >>> +      - const: usb2_cfg
-> >>> +      - const: usb3_top
-> >>
-> >> These prefixes are redundant. Also, you are still referencing here
-> >> completely different devices. MMIO of IP blocks do not have size of 0x=
-c
-> >> and they do not span over other blocks (0x0c410000 and then next one i=
+> On Tue, Nov 04, 2025, Roy Luo wrote:
+> > On Tue, Nov 4, 2025 at 10:07=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@syno=
+psys.com> wrote:
+> > >
+> > > On Fri, Oct 31, 2025, Roy Luo wrote:
+> > > > On Wed, Oct 29, 2025 at 6:35=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@=
+synopsys.com> wrote:
+> > >
+> > > In dwc3_google_suspend(), looks like is_hibernation is set after you
+> > > enable pme irq, probably very unlikely, but can the interrupt be
+> > > asserted then? If so, will there be another interrupt asserted?
+> > > Otherwise the current logic may think it was spurious interrupt a mis=
 s
-> >> 0x0c637000).
+> > > an event.
 > >
-> > I'd like to explain why MMIO of IP blocks looks discontinuous.
-> > As outlined in the description, this device contains two SNPS PHY IPs
-> > including eUSB2 PHY and USB3.2/DP combo PHY, and is integrated
-> > with the SNPS DWC3 USB controller. A top-level subsystem wrapper
-> > sits above the PHYs and controller. This wrapper integrates these IPs
-> > and is where the Tensor-specific implementation resides. It's essential
-> > to touch these wrapper registers to control the underlying SNSP IPs.
-> > Unfortunately, the top-level wrapper's MMIO space lacks a clear
-> > boundary between these IPs. Specifically, the registers required to
-> > configure a particular IP are not always adjacent to that IP, and in
-> > some cases, multiple IPs may even share the same address space.
+> > The pme interrupt can only be asserted after controller is in
+> > hibernation, that is, after the usb psw dom is turned off and
+> > the dwc3_google_usb_psw_pd_notifier() callback is
+> > completed. So no, the interrupt won't fire before is_hibernation
+> > is set.
+>
+> Thanks for the confirmation.
+>
+>
+> <snip>
+>
+>
+> > > > >
+> > > > > I'm still trying to wrap my head around how usb_top_pd, usb_psw_p=
+d, and
+> > > > > the google->dev are working together in the glue here, particular=
+ly why
+> > > > > usb_top_pd is needed. It seems usb_top_pd shouldn't be handled by=
+ this
+> > > > > glued? Do you do anything except setting wakeup-capable?
+> > > > >
+> > > > > BR,
+> > > > > Thinh
+> > > >
+> > > > To provide more context, the underlying usb power domain has 3 powe=
+r
+> > > > states: Full Power, Power Gated, Off. The usb_top_pd and usb_psw_pd
+> > > > are the logical power domains to represent the 3 power states.
+> > > > - Full Power:     usb_psw_pd ON,   usb_top_p ON.
+> > > > - Power Gated: usb_psw_pd OFF, usb_top_p ON.
+> > > > - Off:                 usb_psw_pd OFF, usb_top_p OFF.
+> > > >
+> > > > To enter hibernation, the usb power domain must enter Power Gated
+> > > > state. To achieve this, this glue driver holds a handle to usb_top_=
+pd
+> > > > and would cast a vote to keep it ON when attempting to enter
+> > > > hibernation. In addition, the usb_psw_pd runtime PM is directly tie=
+d
+> > > > to google->dev so that usb_psw_pd would be OFF when google->dev
+> > > > suspends. Together, the usb power domain would reach Power Gated
+> > > > state when device suspends.
+> > > >
+> > > > I hope this information helps.
+> > > >
+> > >
+> > > Yes. This is very helpful.
+> > >
+> > > So, while the glue driver is bound, usb_top_pd is always ON? Even whe=
+n
+> > > xhci driver is not bound or when in device mode?
 > >
-> > The following is the register layout overview:
-> > - 0xc400000: Dedicated address space for DWC3 controller IP.
-> > - 0xc410000: Dedicated address space for USB3.2/DP combo PHY IP.
-> > - 0cc440000: Dedicated address space for the eUSB2 PHY IP.
-> >                       While this is not in use, it should perhaps be
-> > called out in
-> >                       the binding for completeness.
-> > - 0xc450000: This address range contains top-level wrapper registers
-> >                       and its space is shared by two devices: the DWC3
-> >                       controller and the eUSB2 PHY.
-> >                       It includes control registers for the DWC3 contro=
-ller
-> >                       (e.g. hibernation control and interrupt registers=
-) and
-> >                       the eUSB2 PHY (e.g. registers for USB2 PHY
-> >                       frequency configuration).
-> >                       Because the space is shared, the MMIO range for t=
-he
-> >                       PHY becomes fragmented and is only allocated a si=
-ze
-> >                       of 0xc, as the remaining registers in this range =
-are
-> >                       assigned to the DWC3 controller.
-> > - 0xc460000: This address range contains registers for other blocks
-> >                       within the same top-level wrapper (such as PCIe P=
-HY
-> >                       and DP controller) which are not relevant to USB.
-> > - 0xc637000: Another region of top-level wrapper registers.
-> >                       This area is relevant to both the eUSB2 PHY IP
-> >                       (e.g. control register for vbus valid) and USB3.2=
-/DP
-> >                       combo PHY (e.g. registers relevant to PHY firmwar=
-e).
->
-> To me it all feels like you pick up individual registers from the
-> common, miscellaneous register region aka syscon.
->
-> And if that's the case then you create a narrowly constrained binding
-> which won't work with next generations where hardware engineers decide
-> to make that shared region a bigger syscon.
-
-Ack. Will go with syscon.
-
->
+> > Since usb_top_pd is the parent power domain of usb_psw_pd, and
+> > usb_psw_pd RPM is directly tied to glue device, usb_top_pd would
+> > be ON when glue device is active (because usb_psw_pd is ON)
+> > and would be OFF when glue device suspends in non-hibernation
+> > scenarios (because usb_psw_pd is OFF). In hibernation scenario,
+> > a vote is casted for usb_top_pd to keep it on even when the
+> > glue device is suspended and usb_psw_pd is OFF.
 > >
-> > Thanks for taking the time to go through this wall of text.
-> > This is definitely not an ideal register layout, but I'm open
-> > to any suggestions on how best to address this fragmentation.
-> > If discontinuous MMIO space is a concern, does it make sense to
-> > make the wrapper registers a syscon node so that it can be
-> > shared by multiple devices?
->
-> 0xc450014 looks like that. 0x0c637000, depends how other devices really
-> use it.
-
-Agree it makes sense to make region 0xc450000 a syscon node provided
-it's shared by two distinct devices (the controller and the PHY). I will
-implement this change in the next version.
-A heads up, I will also need to send a new version for the corresponding
-dwc3 controller binding patch that has already been reviewed [1] to reflect
-this syscon change.
-
-As for region 0x0c637000, this range is exclusive to this PHY device, which
-includes both eUSB2 PHY and USB3.2/DP combo PHY. (It would be a
-different story if the USB2 PHY and the USB3 PHY were to be treated as
-two distinct devices.) Therefore, I'm hesitant to convert this region to a
-syscon node. I recommend keeping the region as-is and add a more
-detailed description for this reg entry to clarify that this is top-level
-subsystem wrapper registers distinct from the core IP's register space.
-
-[1] https://lore.kernel.org/linux-usb/20251017233459.2409975-2-royluo@googl=
-e.com/
-
->
-> You should post somewhere full DTS for clarity. It's not a requirement
-> but it actually can answer several questions.
-
-Yes, I can definitely share the DTS I'm using to test this PHY and controll=
-er
-patch series. Could you recommend the most appropriate way to do so?
-I came across a previous patch thread [2] that used gist link for sharing c=
-ode
-snippets and logs. Is that generally considered acceptable?
-
-[2] https://lore.kernel.org/all/20240715120936.1150314-1-s-vadapalli@ti.com=
-/
-
->
+> > To your question, usb_top_pd is not always ON because it would be
+> > turned off when the glue device suspends in non-hibernation scenario.
+> > When in device mode and provided dwc3 dev is active, usb_top_pd
+> > would be ON because its child usb_psw_pd is ON.
 > >
-> >>
-> >>
-> >>> +            reg =3D <0 0x0c410000 0 0x20000>,
-> >>> +                  <0 0x0c430000 0 0x1000>,
-> >>> +                  <0 0x0c450014 0 0xc>,
-> >>> +                  <0 0x0c637000 0 0xa0>;
-> >>> +
-> >>> +  "#phy-cells":
-> >>> +    description: |
-> >>> +      The phandle's argument in the PHY specifier selects one of the=
- three
-> >>> +      following PHY interfaces.
-> >>> +      - 0 for USB high-speed.
-> >>> +      - 1 for USB super-speed.
-> >>> +      - 2 for DisplayPort.
-> >>> +    const: 1
-> >>> +
-> >>> +  clocks:
-> >>> +    minItems: 2
-> >>> +    items:
-> >>> +      - description: USB2 PHY clock.
-> >>> +      - description: USB2 PHY APB clock.
-> >>> +      - description: USB3.2/DisplayPort combo PHY clock.
-> >>> +      - description: USB3.2/DisplayPort combo PHY firmware clock.
-> >>> +    description:
-> >>> +      USB3 clocks are optional if the device is intended for USB2-on=
-ly
-> >>> +      operation.
-> >>
-> >> No, they are not. SoCs are not made that internal wires are being
-> >> disconnected when you solder it to a different board.
-> >>
-> >> I stopped reviewing here.
-> >>
-> >> You are making unusual, unexpected big changes after v4. At v4 you
-> >> received only few nits because the review process was about to finish.
-> >>
-> >> Now you rewrite everything so you ask me to re-review from scratch.
-> >
-> > Apologies for the trouble, my intent was to address your feedback on v4
-> > by describing the USB3/DP PHY block for completeness.
-> > Like mentioned earlier, this device contains two underlying IPs: eUSB2
-> > PHY and USB3.2/DP combo PHY. The device can operate in USB2-only
-> > mode by initializing just the eUSB2 block without touching the USB3
-> > PHY block - but not the other way around. The v4 patch reflected this
-> > USB2-only configuration.
 >
-> You describe the device in your SoC. This SoC either has both or has
-> not. The case of "can operate in USB2-only mode" is simply not real.
+> Thanks for the clarification and bearing with my questions.
+>
+> If there's no device connected, do you role-switch back to default mode?
+> Often I see that the role-switch is defaulted to peripheral and switch
+> to default mode if there's no connection.
 
-Ack.
+Yes, the default mode would be peripheral and it would switch
+to peripheral mode if there's no connection.
 
 >
-> > I tried to support the USB 2.0-only configuration in the binding by
-> > making the USB 3.0 clocks and resets optional. However, if I
-> > understand your comment correctly, the binding should describe
-> > FULL hardware capability. I will make USB3 resources mandatory
-> > in the next version, please let me know if I've misunderstood it.
->
-> Yes, binding should describe complete hardware picture, so with USB3 and
-> all wires/signals being required.
+> I want to check the case where the device may wakeup by connection but
+> cannot because it is not in host mode. Do you have a separate
+> TCPC/connector that can wakeup the system on attachment?
 
-Ack.
+Yes, there's a separate TCPC/connector to trigger a role
+switch when there's an incoming connection.
 
->
-> >
-> >>
-> >>> +
-> >>> +  clock-names:
-> >>> +    minItems: 2
-> >>> +    items:
-> >>> +      - const: usb2
-> >>> +      - const: usb2_apb
-> >>> +      - const: usb3
-> >>> +      - const: usb3_fw
-> >>
-> >> Again, what's with the prefixes? apb is bus clock, so how you could ha=
-ve
-> >> bus clock for usb2 and usb3? This means you have two busses, so two
-> >> devices.
-> >
-> > The prefixes are to differentiate the clocks and resets for the
-> > underlying two SNPS IP as outlined in the device description.
-> > - eUSB2 PHY IP needs clocks and resets for the phy itself
-> >   and its apb bus.
-> > - USB3.2/DP combo PHY has its own clocks and resets for
-> >   the phy, plus it needs a clock for its PHY firmware.
->
-> If you have two bus clocks I think you have two separate devices...
->
-> > Technically these are two separate IPs, but they're deeply
-> > integrated together so that they share top-level wrapper
-> > register space (see the register layout above), and they
-> > have implicit hardware dependency like mentioned earlier
-> > (USB2 PHY can work without USB3 PHY, but not vice-versa),
-> > hence I'm describing them in the same device.
->
-> But okay, if that's the case naming is fine.
-
-Thanks,
+Regards,
 Roy Luo
 
 >
->
-> Best regards,
-> Krzysztof
+> BR,
+> Thinh
