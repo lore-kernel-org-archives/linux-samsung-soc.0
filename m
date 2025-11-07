@@ -1,225 +1,138 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA05316907
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Nov 2025 09:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A552D239A
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Nov 2025 11:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762506735; cv=none; b=sbF0/+phNxpSHIkLGXg+Pu2lNn2DdsHWU3Qj8WsI0kdr7dFobcFVlG6O/HA/n9YVTqHW1ni2kzAePzBTxlI8WG3Q+gArM7FDE6NkLBMXXNp/qt5+RHK2K6OKZgSuTQuu21f7YYf1B6sVLBbgvAcSGh2X9CL5oYPOwCDl8QlXH7g=
+	t=1762513322; cv=none; b=i4HG2oT00EGiETboKTGPCeiLEVEZ82kXg2EboRHc8AMgf/StNDFivHFhF5t7tLTkkULhPxS5FFSWF9fZxuUzjzMPO7Zr7GslJoLzfoW+Ybt0v0EBJtmO95aeY/JMeHP0zvtiZtPOJ8IHCa3qpcNwfjawdSAM2KgQUD0Lkq/LA5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762506735; c=relaxed/simple;
-	bh=TNmjgWT8K07xW+rkVyxtkNOCHhbFvM5lquafFX2QXz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u2Rqvm/hTQkRjTkosQOMd26N+3amA845hwJWeR2Bw6U4ZPqiDuLcqIqkZGsCEwVZ7L6plOcAngkFmD24Ze2zaF6HqhAGtWEA6RwyWteie/C46IXQ2EwCv3UOIA4qt8f7f6X1nmErn6wVixtnnRUuIs4lMuzGyqfTAUI2aHZFlFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WmHJDP2l; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1762513322; c=relaxed/simple;
+	bh=oIe/oaHgQwNjBV5UTPEvhpn/AHX5Js+8Yh8l+CiK11M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YTyawNGetAemcd53vUpR8ce3C4ifnaioAjmbjRibvdSxtwLptWsp2sNp3u2iZ9octJR8T7ZX4iillHfrc/utYOKnehtAmjv86cNd4bE3D0/WpwcFyByNO4ZuCI99Is/0/xe2elyo24wN33iKTRohfHX9lMzWk92UKxUa4iw9Bx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rVv4kHIN; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WmHJDP2l"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b6271ea3a6fso382250a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Nov 2025 01:12:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rVv4kHIN"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640ace5f283so760519a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Nov 2025 03:02:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762506732; x=1763111532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5b+M3zzopCvof55wzjaKXg+MrS7xrBcOB8Vyij7yJyg=;
-        b=WmHJDP2lxMEULUIBA7G4RBKU/wYPQFGUqdSAMj7+toe51jplE3kfh7bpsWr8QxTuDT
-         j4pXp4xQ3h7A5pQlI4zwdPdGHSGL18esO6wGGI4G7R9rxfBf51E2yy/uYd20m1idk/1f
-         2kFGGgtT379aefDdSPW8LMpQwCOXPOQx4DgqBLKwjPYABv2RBOdu3oY56AyqIRE1ZCcT
-         56UG5cT6ehCFLWFYTcS12bBCNgaCe+gt2kO79thuoI8z3pEnd5g1sMfKmyxrZwQNc+yX
-         nR/YWB+XK0fpYy+D3lgRIr7zvKWnZqQeqeR6m6TGBFY8TWiELxvvozdYu1lTkmEY3nQO
-         uv0Q==
+        d=linaro.org; s=google; t=1762513319; x=1763118119; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oIe/oaHgQwNjBV5UTPEvhpn/AHX5Js+8Yh8l+CiK11M=;
+        b=rVv4kHINydsSw5IBxFuk3qlNgHkvkBkaRPEzwdK24tH5a2QD1M34a+wWmKgUxem+al
+         6SwFEPxUslc+5/VIhjUll2mPf0VetI3ofBq+up8ZnNr0reeN8vr1OPgIhjRKDVS2u7dK
+         HDOE6yBjg9WdwELGArqjSgOHHIE5qsMLKDdmnZ+H/rrDsKQh6jcolioUP94DZ050CAzV
+         RF91F5TXTZrhulKybVlkP3YUn6L+4m4+f2rJjHwKUV/0tlDjiC0NJMWrK5XlSt5HPxva
+         NCho4CJj9t7Yaxnbx4rDgXtn1v+BPJtjd/1GksYbTbx7pjSktOrdh5ASMagsOSgKx0U7
+         tJGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762506732; x=1763111532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5b+M3zzopCvof55wzjaKXg+MrS7xrBcOB8Vyij7yJyg=;
-        b=YKDZ4be35GozLtxoYFh24ZiR0p/9JHQpGRQNOd0Prx2457Q27aisjQCbV2zvjzwavB
-         iBPuX/kf7UF9NP+w5Hmniji+uwYjiZ7d7wtUMNBodQnwFH3DLCWlasKym2RFnhNwdH7t
-         aGk5/loP1H96zVgVU/tZLMzgcBbxhLKdXgW4vmeDYgJKKEWAfmL8bPiJmzcPNxnvZsDf
-         oCATzXOiq2rB3u6s9XsOHwlex7aN/9xeb1bBzWL2exB6M63JzFWxcLI8X06LvkPApF7T
-         y9RKDKEDCEQfh5VwStJp87zD9qRK8zRFvT4V5tumc7iFJtyHS9EzU7J8RxQo3L1Safw7
-         xIoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhyo3/Z3SdfQ2pZFfpdKf1LPTxt+lP/jtqje6VrcjQZtq5mBi5ylRiW+g/vJklg+vpb5kpk5CDOBK5+m5v5WyWSA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbQKEhFX5e1NAc/LqIxOREbXTiVfMWZjREMRd8+4Xr8W8HgWTW
-	xoZ0PfZXTCpq4IyZpHXF4yq7Pg32Maw5uuPnEa+MV3OHkkd8hlg8uZJ7krXnQKVZe0bhkNcWxTw
-	IVz2Fewl59LobMwsoaxJ7Ogn1e9LFuGJiLYcjl60v
-X-Gm-Gg: ASbGnctvd3MLwyVpz9Cybzq/vXSCJ9PKOLnZqAssT4jgxykJlQp9oqRjXE4a86P09jC
-	3W449C0Y5oOfCRkKdhAKRRTqzmE0vOX5DNrMP4TnsH/3xHEApwjqsqWSKbuz7AhfVe5N/+UthBW
-	+nXg+uxQeGNORmzl1W5psULO8fMbrdP5X5TRvxaUJcfUzp50fWHY2L6j5zLI+6ej4qQNHeVdKFU
-	WZ1gc8G/t/niXKAEv+5zNxPGfQIOoJWZOWHVfmOMOLD4y/ywWdWFuDE1KAa3CTSPx5IJLM=
-X-Google-Smtp-Source: AGHT+IHWENirlvcfA41rvumMc/AZyRmx9tfkjQkwROpRjDKeutH5HgnBVz2Cj4Uw9rrJPEek8xG2BFZODl9IVdlK3Gc=
-X-Received: by 2002:a17:903:388b:b0:28e:ccd7:dd61 with SMTP id
- d9443c01a7336-297c04a11e6mr33698895ad.57.1762506731353; Fri, 07 Nov 2025
- 01:12:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762513319; x=1763118119;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIe/oaHgQwNjBV5UTPEvhpn/AHX5Js+8Yh8l+CiK11M=;
+        b=Axn8a427k/34vnEIjnAU25PfRnE2bw73PZigqyu3BdYqZ+Uu8LqP2re2ifb6gMMRPW
+         /IMWArvGQP2LVeRJLb6XNZUjAOEYNOqKarXLnsBPDxGS3vih760kcoVDfCWP7pCQnlJR
+         MfmxVEZ6e10zD6U2t4KW2oNLZbSokLVbFzpEM/93f8VYc4hAsPJql1zOFwBvTY13Ocdb
+         frrVVE7h298QLcKtWCpCUS4TgOkaT8Moo3Zt8E+zQLhVTY1C4Zg8KYgiYqfNYmxF5crE
+         V9wgQ/GD4WWEb8693mLbRFL9r02ItQoU4IS9xDC13nURmlxYTHRpq7DnQFiefNT4AcTZ
+         U0JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNNLGOlCNzI3SkxQ3o46uns/5NEtZkDCrOnMPVM/sMGz7OlRMqCdofaXBHY8fsW8K9RqJ43ceX5nwND4AV1Y7isA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdzHaBcWHRp3Wk2nEfUKizSHLGbaDVNU66TxrBEOQcxvgeLY2v
+	8WPdu70S0yOTastnzmZan/MbJ/gnX2ksUM7OOULMKzYDqRjw9etqEZD+LnuzjZf0DznsdvDLP3J
+	eakoS+HI=
+X-Gm-Gg: ASbGncuQY5/huBSUlT7Smbm4hZRRbwEfmHEoGOTRpci5iIXQjOsWMJQZQuiiSi/mw1S
+	bsYUrm4Q0A/30hIyEsvOGaYbDF9tOynKyKbmpNxxyY7qxFQHlQQEeXBjlkgsgCmwKWTVaHCxelq
+	EsCPKWS+wExOZvCBF0bgV7EHtn6USbV2tjR1m1RgomCF8Hmflcga6SgArta4evPqEwzt/WTpu1Z
+	bu3MU5S7v5Y9xMUktrGPh+Z5bFENUflMgaEJxDpAaaYJ/9lVdR4gP/WS5V28mZ7aO6kKihNPh6u
+	sJq3benA6a215ReI7r4D/OIQsVS5jGtErvtvWqV9cmMmdUgzjvJuEwh7Bq4bKd6OYjSWH1ivHyc
+	+GYs9IqI7bCuMCRd7BbpwZkUcg8ytV4jYKnicCJ/OhzuZKXkYoaJyucaKJOfTilfvoQn0l9aYNp
+	Ou3kjsT1jLB1XVXlDyzQVQ5cUsWG374jn0Bg==
+X-Google-Smtp-Source: AGHT+IFk0e/C96dMXnjyE1xo1+GSR/mT2N99AaE/c44DQdiQ046jLT2uBYcSUl46ZYSZfSsKq3vwBA==
+X-Received: by 2002:a05:6402:1d55:b0:640:980c:a952 with SMTP id 4fb4d7f45d1cf-6413eed163dmr2286341a12.11.1762513319349;
+        Fri, 07 Nov 2025 03:01:59 -0800 (PST)
+Received: from [172.20.148.133] ([87.213.113.147])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713a7esm3841624a12.7.2025.11.07.03.01.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 03:01:59 -0800 (PST)
+Message-ID: <729dcf73a1c3d03ca2b22dd278cb0bc502b6b7d5.camel@linaro.org>
+Subject: Re: [PATCH v3 02/20] dt-bindings: mfd: samsung,s2mps11: split
+ s2mpg10 into separate file
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org
+Date: Fri, 07 Nov 2025 11:01:58 +0000
+In-Reply-To: <20251104-armored-vehement-boar-55bde4@kuoka>
+References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
+	 <20251103-s2mpg1x-regulators-v3-2-b8b96b79e058@linaro.org>
+	 <20251104-armored-vehement-boar-55bde4@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017233459.2409975-1-royluo@google.com> <20251017233459.2409975-3-royluo@google.com>
- <20251030011659.bmgdry3wwf4kgjwv@synopsys.com> <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
- <20251104020713.orax7rk6qhko5p4m@synopsys.com> <CA+zupgy4qO9X=R7KqEru5kr7tYhgdw=9Z70sLNKj5DTS_J7KZw@mail.gmail.com>
- <20251106003830.v22dnomurtqmqc2y@synopsys.com> <CA+zupgzNRG3vAukQe89bTJ_EaC2A=o+_pY6QoVOdRfXu8BJOAg@mail.gmail.com>
- <20251106234839.kezpk2okjhkajqp3@synopsys.com>
-In-Reply-To: <20251106234839.kezpk2okjhkajqp3@synopsys.com>
-From: Roy Luo <royluo@google.com>
-Date: Fri, 7 Nov 2025 17:11:34 +0800
-X-Gm-Features: AWmQ_blqfpqntmKv9_TI2d4T2dFjIvyvpvXv_YU9eXLSRtz2Ua5X5nKU0YFMoFo
-Message-ID: <CA+zupgzxjEXJaVJLj=O1MirV6Y-o5uSWPQyQ26kjXO=gfv+W0g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 7, 2025 at 7:48=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys.=
-com> wrote:
->
-> On Thu, Nov 06, 2025, Roy Luo wrote:
-> > On Thu, Nov 6, 2025 at 8:38=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synop=
-sys.com> wrote:
-> > >
-> > > On Tue, Nov 04, 2025, Roy Luo wrote:
-> > > > On Tue, Nov 4, 2025 at 10:07=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@=
-synopsys.com> wrote:
-> > > > >
-> > > > > On Fri, Oct 31, 2025, Roy Luo wrote:
-> > > > > > On Wed, Oct 29, 2025 at 6:35=E2=80=AFPM Thinh Nguyen <Thinh.Ngu=
-yen@synopsys.com> wrote:
-> > > > >
-> > > > > In dwc3_google_suspend(), looks like is_hibernation is set after =
-you
-> > > > > enable pme irq, probably very unlikely, but can the interrupt be
-> > > > > asserted then? If so, will there be another interrupt asserted?
-> > > > > Otherwise the current logic may think it was spurious interrupt a=
- miss
-> > > > > an event.
-> > > >
-> > > > The pme interrupt can only be asserted after controller is in
-> > > > hibernation, that is, after the usb psw dom is turned off and
-> > > > the dwc3_google_usb_psw_pd_notifier() callback is
-> > > > completed. So no, the interrupt won't fire before is_hibernation
-> > > > is set.
-> > >
-> > > Thanks for the confirmation.
-> > >
-> > >
-> > > <snip>
-> > >
-> > >
-> > > > > > >
-> > > > > > > I'm still trying to wrap my head around how usb_top_pd, usb_p=
-sw_pd, and
-> > > > > > > the google->dev are working together in the glue here, partic=
-ularly why
-> > > > > > > usb_top_pd is needed. It seems usb_top_pd shouldn't be handle=
-d by this
-> > > > > > > glued? Do you do anything except setting wakeup-capable?
-> > > > > > >
-> > > > > > > BR,
-> > > > > > > Thinh
-> > > > > >
-> > > > > > To provide more context, the underlying usb power domain has 3 =
-power
-> > > > > > states: Full Power, Power Gated, Off. The usb_top_pd and usb_ps=
-w_pd
-> > > > > > are the logical power domains to represent the 3 power states.
-> > > > > > - Full Power:     usb_psw_pd ON,   usb_top_p ON.
-> > > > > > - Power Gated: usb_psw_pd OFF, usb_top_p ON.
-> > > > > > - Off:                 usb_psw_pd OFF, usb_top_p OFF.
-> > > > > >
-> > > > > > To enter hibernation, the usb power domain must enter Power Gat=
-ed
-> > > > > > state. To achieve this, this glue driver holds a handle to usb_=
-top_pd
-> > > > > > and would cast a vote to keep it ON when attempting to enter
-> > > > > > hibernation. In addition, the usb_psw_pd runtime PM is directly=
- tied
-> > > > > > to google->dev so that usb_psw_pd would be OFF when google->dev
-> > > > > > suspends. Together, the usb power domain would reach Power Gate=
-d
-> > > > > > state when device suspends.
-> > > > > >
-> > > > > > I hope this information helps.
-> > > > > >
-> > > > >
-> > > > > Yes. This is very helpful.
-> > > > >
-> > > > > So, while the glue driver is bound, usb_top_pd is always ON? Even=
- when
-> > > > > xhci driver is not bound or when in device mode?
-> > > >
-> > > > Since usb_top_pd is the parent power domain of usb_psw_pd, and
-> > > > usb_psw_pd RPM is directly tied to glue device, usb_top_pd would
-> > > > be ON when glue device is active (because usb_psw_pd is ON)
-> > > > and would be OFF when glue device suspends in non-hibernation
-> > > > scenarios (because usb_psw_pd is OFF). In hibernation scenario,
-> > > > a vote is casted for usb_top_pd to keep it on even when the
-> > > > glue device is suspended and usb_psw_pd is OFF.
-> > > >
-> > > > To your question, usb_top_pd is not always ON because it would be
-> > > > turned off when the glue device suspends in non-hibernation scenari=
-o.
-> > > > When in device mode and provided dwc3 dev is active, usb_top_pd
-> > > > would be ON because its child usb_psw_pd is ON.
-> > > >
-> > >
-> > > Thanks for the clarification and bearing with my questions.
-> > >
-> > > If there's no device connected, do you role-switch back to default mo=
-de?
-> > > Often I see that the role-switch is defaulted to peripheral and switc=
-h
-> > > to default mode if there's no connection.
-> >
-> > Yes, the default mode would be peripheral and it would switch
-> > to peripheral mode if there's no connection.
-> >
-> > >
-> > > I want to check the case where the device may wakeup by connection bu=
-t
-> > > cannot because it is not in host mode. Do you have a separate
-> > > TCPC/connector that can wakeup the system on attachment?
-> >
-> > Yes, there's a separate TCPC/connector to trigger a role
-> > switch when there's an incoming connection.
-> >
->
-> This addressed my concerns. My other comments are minor nits.
->
-> You can include this on your next submission:
->
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
->
-> Thanks,
-> Thinh
+Hi Krzysztof,
 
-Thinh,
+Thanks for your review.
 
-Thanks for the review, appreciate it!
-I'd like to give you a heads up on a change I'm going to make
-in the next version. Per Krzysztof's suggestion in [1], I'm making
-a register region that's shared between the controller and the
-PHY a syscon node. The impact to this patch is that mmio
-space "host_cfg" and "usbint_cfg" would be accessed through
-syscon API instead, but there won't be any functional change.
+On Tue, 2025-11-04 at 09:26 +0100, Krzysztof Kozlowski wrote:
+> On Mon, Nov 03, 2025 at 07:14:41PM +0000, Andr=C3=A9 Draszik wrote:
+> > +properties:
+> > +=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0 const: samsung,s2mpg10-pmic
+> > +
+> > +=C2=A0 clocks:
+> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/clock/samsung,s2mps11.yaml
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Child node describing clock provider.
+> > +
+> > +=C2=A0 interrupts:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +
+> > +=C2=A0 regulators:
+> > +=C2=A0=C2=A0=C2=A0 type: object
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 List of child nodes that specify the re=
+gulators.
+> > +
+> > +=C2=A0 system-power-controller: true
+> > +
+> > +=C2=A0 wakeup-source: true
+> > +
+> > +required:
+> > +=C2=A0 - compatible
+> > +=C2=A0 - interrupts
+> > +=C2=A0 - regulators
+> > +
+> > +additionalProperties: false
+>=20
+> You need a complete example here.
 
-[1] https://lore.kernel.org/linux-phy/89733ddf-8af3-42d0-b6e5-20b7a4ef588c@=
-kernel.org/
+Patch 7 adds / updates the example for these to the ACPM binding. I can ext=
+end that
+example, but I'd prefer to keep it there to give it a bit more context. Add=
+ing an
+example here would duplicate things.
 
-Regards,
-Roy Luo
+Do you agree to that approach?
+
+Thanks,
+Andre
+
