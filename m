@@ -1,118 +1,280 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688AD221DAC
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2025 06:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F6834D393
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2025 06:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762756259; cv=none; b=qG9ipQeSRY6VodPgWWHbZf6AOJXZ9N5Sq+DAsb/MEVxiOnzYCQK0b5g8FuB9z8b4W4oWS3ZHUr9ZO7Hxdh9d7I0FUUwZRtukeDnUgrp881JqrZoSIEvXhes8S70Cbpmad4TbIU8xJ662fr9Lbl22tbG6pYHMQbefRdrmttzXMNE=
+	t=1762757126; cv=none; b=RNy4VJ3Ay2JHYS19y1gDBLvDMtfG4zbWoUN5Qab4JcRMgwkALtG5tmMyVrQi6kz2s7ElrfCs3KbO6GNu4M99wwqylS9b08TQEoOpmRfbv0uqL8TXvt5V4UBqGWMBP/kY7xd/o3wHauD3XwBt/3fsPSBBWTJnWmCxWsLvGR0g2RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762756259; c=relaxed/simple;
-	bh=gz2Tc2+ZpOYG2OzBbxLbgilswkkGbcUQjbej9kT3ykY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sxhubVL/rkP7C6hR455h3hQ8d41LRA80KGxsy9wUVZn1B0G6JLAtLh3R64M1NrkFjtBWqCpvX4h5Vv60wDFVNwBHtOYd4nccx4oFTrYywN4BkP8mxQ6mKF5tWKB6QwrDJzfmOh2iKdi2ptiG0bkL5730t3yThqQBidUoYDCLuDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o5K2ISc6; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762757126; c=relaxed/simple;
+	bh=SWhRAqoJWYfwuU+QfxmwEFfoLW7aWiiZJRRnU+Smsew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y7TGg1o6meOFgQLFxYlfuXW/dKTBhj0IX9oWNTmVWrbB0cCch3Lgosa6lCy82RJKy28r28BRnGp+XP7AeaGrimV4e46EmxDtTC5sbkqdQ8DTh7VhSshNfnk4vOMMWei3ubLl9QyM74I/uEQ3YGxl0ucI0xlNF8eQBCmNysEZfIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0Wbm6VK; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o5K2ISc6"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4711810948aso16811185e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Nov 2025 22:30:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0Wbm6VK"
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5d967b67003so2457375137.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Nov 2025 22:45:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762756256; x=1763361056; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gz2Tc2+ZpOYG2OzBbxLbgilswkkGbcUQjbej9kT3ykY=;
-        b=o5K2ISc6bhNVXY8bIHTQ4KKcAedMfYbNe98yDermdBMwnpULRRTdKPKZ3Zvut28qJR
-         cmwK2eUxwEOxqO5EkuHQD/7u7OnUAKrhopL2L3XSi6NEbUN1+C2dL4jn/gewrnZ9mXzE
-         2y+BsrEIQxSTyOcPON2cc5Uol1PsFSuDLAnBKm/NaipaFdHG6v6vjL+tO1cCnFb0/XAY
-         01NGw6434F0cvFxzmB3Y/2nbw392X8uIUo7aaelS0hPTc2ZTZV7JWHz6gDypHZxnii0z
-         S2jnPJ+/h7LdB5vdqWS6uj7/mU1ba1hNDmCGgANENjkgbhEu5PPW252M96TViTBBtiqi
-         bP3g==
+        d=gmail.com; s=20230601; t=1762757123; x=1763361923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TJ7LYF5rARcfLsBpxePOybR+1y8/o3ZLz4XlyN978+M=;
+        b=A0Wbm6VKGDvlrEppg4WgZXHlE32wq8ku+dNXBIfbvQfOx7q4rRtyU+YBYkOZbPcBbd
+         35FOJW+jsSQSnB3j6vpjWVgSmV4aYw03TGWBE+eg2IfuqwKXtSlQRvrDEKA0ougXQU27
+         1WYbR+4PuDXyigo8/ijGnaOBKObVZ24vWOz0G9AbKfgWlm4ahTBzszscNjQOKiFm098g
+         1vJFFRaUFQXpofFu47koadjAs96R3xXx7LzFd1Gi9bw8t57cGOC8cf/YHnpuyAefaWDt
+         EyiUKyh48pS62FtzZeYsNumOU5limhlfItCn7G9lSDhzyWxL0/SLA12eALkk3Zq3raTS
+         cG+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762756256; x=1763361056;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gz2Tc2+ZpOYG2OzBbxLbgilswkkGbcUQjbej9kT3ykY=;
-        b=GaolmQTgDEsbronof/+F2r/beuUjjbosmH3UKA237Ggn7l8VWUJL1D2WC+x8t3tiFk
-         AARHt71YM3XdBRz8QKv0hM7a3epyPhmvScWkmuvYJaAOf2+71iN62rHw2jHT0lZNa8ip
-         iIQ/I6CxGXLJ4xRkDYxJmVucZPNRECN7BrJgQ2KuWIH+ewUdOzABU4J0OeYc4wrLqqWr
-         cLJk26bo1DSDyPd5IdLm2ssOtsQKV+5uLU67i/7xXQMO6ULy/fNxaqFqCdWnd1/cU9Qf
-         OhEVEoyMHoEpiB2jYZKhkzdRwO0e3v9RSqeIaEdT+nhiWZm7rVzRKAYAaWy4XYSdf3b1
-         T2Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXXGrQ2BfY6g6dfJSbUtIsoo3aa+lfC5afQShshEEVdHn844RzyCEo6UoTAWkzaxqWRQtxNrE4Pbd0lBlN6gVrGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU2Lu8JiM+sfwkGH5D4rnDw7jbkPikt4PjMPyl1PKV+n/P1vPh
-	bpwUgXmJeKHCEOOAhdBuOsE/eP3R6WuxgM1oZtdRCxveIxmjeIrVNho+//jFLpcdEOs=
-X-Gm-Gg: ASbGncscD2KMkkfHHzAbg++lhsbt6LwQg0NMrelVmRZX9l1LXXGSj3nTN0rf36KW4mF
-	J3S8OyRuTy9H2G6ufPYHKlsjClJpgjf96Q2WJeFq3qjwgx/NC3JxzQiWAY5OeESzNtlwkLXbUQD
-	KhGge9DkHcVsV0LiHLkHEXeHAzEYhG/7zmDpfGAxi1gY+pAhehfG3H9m0Ff78ARBrkxsxL1OXCZ
-	343JNINU5pLYJvId6TWRZ42mVYOlo0pkUA/HABtyxo1zyMWZV7Hr6C/HY90+B0LFkZ8wXHTKtGN
-	Iaz6aCS9So/n3STY0v2LeVo6b30IqKKI+BMkXjhkDo3COx9+R0iC5AmL08XeLJTEPN4Ib2+B3A7
-	HFwM9DXFtob2pHoG7+YZKAGRcgyiXW4WrSN4OA/rQmDylMFa45/tmQCyRLdL2TpibjUVXf990P4
-	vhjJcs7hU=
-X-Google-Smtp-Source: AGHT+IEQw4YGmWYhhezCKKZpNUcmlZEpIju4sVG4oIvS3Njw1N4sMl3EeFVFvYxb/VKOCKvrHAj0Vg==
-X-Received: by 2002:a05:600c:c84:b0:477:598c:6e1d with SMTP id 5b1f17b1804b1-4777325ab5emr48703165e9.17.1762756255657;
-        Sun, 09 Nov 2025 22:30:55 -0800 (PST)
-Received: from draszik.lan ([212.129.86.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776419d869sm106249085e9.3.2025.11.09.22.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 22:30:55 -0800 (PST)
-Message-ID: <776ac9f7ec2858a89c03b735653070f2749b986d.camel@linaro.org>
-Subject: Re: [PATCH v3 04/20] regulator: dt-bindings: add s2mpg11-pmic
- regulators
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org
-Date: Mon, 10 Nov 2025 06:30:47 +0000
-In-Reply-To: <7d9fa7ab-8484-4d41-bc3b-be2eff3b6e95@kernel.org>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
-	 <20251103-s2mpg1x-regulators-v3-4-b8b96b79e058@linaro.org>
-	 <20251104-zircon-lobster-of-agility-cbcbb0@kuoka>
-	 <46b008c946e36ea0b317691356ff874c4a78882d.camel@linaro.org>
-	 <7d9fa7ab-8484-4d41-bc3b-be2eff3b6e95@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+        d=1e100.net; s=20230601; t=1762757123; x=1763361923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TJ7LYF5rARcfLsBpxePOybR+1y8/o3ZLz4XlyN978+M=;
+        b=CrLsE0EiARz9gAJ8MjWVS8v2KG7AblWj9fY2wMFVzhsjWolbsla/exiDVlxuvKoFeP
+         wFCVjrS7UNkC20tckbJrmhPrzsVGXv9WpiXG36s+WD0aklfwl6oq8kT+xNylpVa0kVkx
+         GCJ5ztdmIzYbDPnfnicOSymuOAUWS6imtpNqTjkZ5Lpz6lEcrHAwuAcjOdwpeewwzxkX
+         ZyFyokWc3yGcrhAFkmVzBDd99nsyqec4m5qaTy9azP85czS7ricfsNvQJHNYDA0pqPZR
+         jJP9uLu5vcdZ7Qxgd671ujV39xk1/SlOZsCkCPHLddbhER0bud2jo975qufykAAsMBqe
+         5fkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOKIEBVgxN3QWwPNQ4EvpCFryr80csG2d8ysRK4WLF72e5gRPlTSCNNBXjz6ZqCK8JwKcqEB/fLjKrIEWiN9K0BQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqG4Hvo1ZE60RHUgczXy4/907LG+X1dTlSVpwmgE50QufhIduY
+	VegCwCYKRjGasvyPhiDvPjAPNBGiaILh1zB4xgGi8mUVwG63KlBp7Aeq6WCCu4jD6ngPLcIpjgK
+	0z/Ate55dqFT1StfDaN+eNCypOjYJHAE=
+X-Gm-Gg: ASbGncskQAeSkAuNL1jzwcCWhwh26I2Sg4GSXxK+i6oPCOxbDzaJjPvYC5HVAs5hBAs
+	dJ2wLPVwTE+00L81STC+dGg4dY3EZRFFxNPFH5czgz7wLieebFfg97YuVXUF/juAf91dqCf1+xi
+	ICkTWWOKJA7TUJocTRnCdHei+7HIF2/EZew7JbtmV04KD0Vcg0uyTKk8nbTOFCouBGgfEfaC5ZR
+	kr5QUXiTLLm11OQ/f4nWPQ+oycBu7UW/8oOHUMSLwC3QXIxvRm3Dd+d7kCVA95VqAP6NQ==
+X-Google-Smtp-Source: AGHT+IF+gs9QIahGISXKJRHjGuXprvZlDgmBa+ZvpM71d+5sssU4cyVVLoFXELWcuPET2oDoTXg/lkyadapsy4GEvcw=
+X-Received: by 2002:a05:6102:c51:b0:5dd:a69a:b935 with SMTP id
+ ada2fe7eead31-5ddc468ea63mr2373148137.16.1762757123612; Sun, 09 Nov 2025
+ 22:45:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CGME20250929042917epcas2p43d95408c9c43ff49ff6674136d7c64d3@epcas2p4.samsung.com>
+ <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-4-hy_fifty.lee@samsung.com>
+In-Reply-To: <20250929043110.3631025-4-hy_fifty.lee@samsung.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Mon, 10 Nov 2025 15:44:46 +0900
+X-Gm-Features: AWmQ_bnm9xQ99kNtPGcygx_UKQxpZ_ctsO76xXZQ0SPcCmu0BnofZ2Xoq2-JZF4
+Message-ID: <CAAQKjZMDe-nXN14qQQTHR9HMwqCcbTospjMg_P98G0e=XAO5NQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/exynos: Move mode_config setup from fb.c to drv.c
+To: Hoyoung Lee <hy_fifty.lee@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2025-11-09 at 20:00 +0100, Krzysztof Kozlowski wrote:
-> On 07/11/2025 12:14, Andr=C3=A9 Draszik wrote:
-> > On Tue, 2025-11-04 at 10:39 +0100, Krzysztof Kozlowski wrote:
-> > > On Mon, Nov 03, 2025 at 07:14:43PM +0000, Andr=C3=A9 Draszik wrote:
-> > > > +=C2=A0 The S2MPG11 PMIC provides 12 buck, 1 buck-boost, and 15 LDO=
- regulators.
-> > > > +
-> > > > +=C2=A0 See also Documentation/devicetree/bindings/mfd/samsung,s2mp=
-s11.yaml for
-> > > > +=C2=A0 additional information and example.
-> > > > +
-> > > > +definitions:
-> > >=20
-> > > defs:
-> >=20
-> > All existing bindings are using definitions, not defs. Shouldn't this s=
-tay
-> > consistent?
->=20
-> Huh? git grep gives me 3 cases, so how is it "all existing"?
->=20
-> But for defs it gives me ~98!=09
+2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:29, H=
+oyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Relocate exynos_drm_mode_config_init() and the mode_config funcs/helpers
+> from exynos_drm_fb.c to exynos_drm_drv.c, and invoke
+> drm_mode_config_init() from inside exynos_drm_mode_config_init().
+>
+> Rationale: resolve the historical fb.c placement, align with common DRM
+> layering (mode_config is device-wide policy that belongs in the core
+> driver), and make initialization order explicit before creating KMS
+> objects and binding components.
+>
+> No functional change intended.
 
-Didn't know it's ^$defs:, not ^defs: - thanks Krzysztof.
+This patch looks fine to me.
+However, since the second patch should be applied first, please repost
+them as v2.
 
-Cheers,
-Andre'
+Thanks,
+Inki Dae
+
+>
+> Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 47 ++++++++++++++++++++++---
+>  drivers/gpu/drm/exynos/exynos_drm_fb.c  | 34 ++----------------
+>  drivers/gpu/drm/exynos/exynos_drm_fb.h  |  7 ++--
+>  3 files changed, 49 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_drv.c
+> index 1aea71778ab1..6362cd417a4e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -233,6 +233,43 @@ static struct component_match *exynos_drm_match_add(=
+struct device *dev)
+>         return match ?: ERR_PTR(-ENODEV);
+>  }
+>
+> +static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helper=
+s =3D {
+> +       .atomic_commit_tail =3D drm_atomic_helper_commit_tail_rpm,
+> +};
+> +
+> +static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs =
+=3D {
+> +       .fb_create =3D exynos_user_fb_create,
+> +       .atomic_check =3D drm_atomic_helper_check,
+> +       .atomic_commit =3D drm_atomic_helper_commit,
+> +};
+> +
+> +static int exynos_drm_mode_config_init(struct drm_device *dev)
+> +{
+> +       int ret;
+> +
+> +       ret =3D drmm_mode_config_init(dev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       dev->mode_config.min_width =3D 0;
+> +       dev->mode_config.min_height =3D 0;
+> +
+> +       /*
+> +        * set max width and height as default value(4096x4096).
+> +        * this value would be used to check framebuffer size limitation
+> +        * at drm_mode_addfb().
+> +        */
+> +       dev->mode_config.max_width =3D 4096;
+> +       dev->mode_config.max_height =3D 4096;
+> +
+> +       dev->mode_config.funcs =3D &exynos_drm_mode_config_funcs;
+> +       dev->mode_config.helper_private =3D &exynos_drm_mode_config_helpe=
+rs;
+> +
+> +       dev->mode_config.normalize_zpos =3D true;
+> +
+> +       return 0;
+> +}
+> +
+>  static int exynos_drm_bind(struct device *dev)
+>  {
+>         struct exynos_drm_private *private;
+> @@ -257,9 +294,9 @@ static int exynos_drm_bind(struct device *dev)
+>         dev_set_drvdata(dev, drm);
+>         drm->dev_private =3D (void *)private;
+>
+> -       drmm_mode_config_init(drm);
+> -
+> -       exynos_drm_mode_config_init(drm);
+> +       ret =3D exynos_drm_mode_config_init(drm);
+> +       if (ret)
+> +               goto err_free_private;
+>
+>         /* setup possible_clones. */
+>         clone_mask =3D 0;
+> @@ -272,7 +309,7 @@ static int exynos_drm_bind(struct device *dev)
+>         /* Try to bind all sub drivers. */
+>         ret =3D component_bind_all(drm->dev, drm);
+>         if (ret)
+> -               goto err_mode_config_cleanup;
+> +               goto err_free_private;
+>
+>         ret =3D drm_vblank_init(drm, drm->mode_config.num_crtc);
+>         if (ret)
+> @@ -296,7 +333,7 @@ static int exynos_drm_bind(struct device *dev)
+>         drm_kms_helper_poll_fini(drm);
+>  err_unbind_all:
+>         component_unbind_all(drm->dev, drm);
+> -err_mode_config_cleanup:
+> +err_free_private:
+>         exynos_drm_cleanup_dma(drm);
+>         kfree(private);
+>         dev_set_drvdata(dev, NULL);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exy=
+nos/exynos_drm_fb.c
+> index ddd73e7f26a3..c118a079d308 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> @@ -8,8 +8,7 @@
+>   *     Seung-Woo Kim <sw0312.kim@samsung.com>
+>   */
+>
+> -#include <drm/drm_atomic.h>
+> -#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_modeset_helper.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_framebuffer.h>
+>  #include <drm/drm_fourcc.h>
+> @@ -93,7 +92,7 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
+>         return ERR_PTR(ret);
+>  }
+>
+> -static struct drm_framebuffer *
+> +struct drm_framebuffer *
+>  exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv=
+,
+>                       const struct drm_format_info *info,
+>                       const struct drm_mode_fb_cmd2 *mode_cmd)
+> @@ -150,32 +149,3 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebu=
+ffer *fb, int index)
+>         exynos_gem =3D to_exynos_gem(fb->obj[index]);
+>         return exynos_gem->dma_addr + fb->offsets[index];
+>  }
+> -
+> -static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helper=
+s =3D {
+> -       .atomic_commit_tail =3D drm_atomic_helper_commit_tail_rpm,
+> -};
+> -
+> -static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs =
+=3D {
+> -       .fb_create =3D exynos_user_fb_create,
+> -       .atomic_check =3D drm_atomic_helper_check,
+> -       .atomic_commit =3D drm_atomic_helper_commit,
+> -};
+> -
+> -void exynos_drm_mode_config_init(struct drm_device *dev)
+> -{
+> -       dev->mode_config.min_width =3D 0;
+> -       dev->mode_config.min_height =3D 0;
+> -
+> -       /*
+> -        * set max width and height as default value(4096x4096).
+> -        * this value would be used to check framebuffer size limitation
+> -        * at drm_mode_addfb().
+> -        */
+> -       dev->mode_config.max_width =3D 4096;
+> -       dev->mode_config.max_height =3D 4096;
+> -
+> -       dev->mode_config.funcs =3D &exynos_drm_mode_config_funcs;
+> -       dev->mode_config.helper_private =3D &exynos_drm_mode_config_helpe=
+rs;
+> -
+> -       dev->mode_config.normalize_zpos =3D true;
+> -}
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.h b/drivers/gpu/drm/exy=
+nos/exynos_drm_fb.h
+> index fdc6cb40cc9c..0c79ce5d4a8d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.h
+> @@ -19,8 +19,11 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
+>                             struct exynos_drm_gem **exynos_gem,
+>                             int count);
+>
+> -dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)=
+;
+> +struct drm_framebuffer *
+> +exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv=
+,
+> +                     const struct drm_format_info *info,
+> +                     const struct drm_mode_fb_cmd2 *mode_cmd);
+>
+> -void exynos_drm_mode_config_init(struct drm_device *dev);
+> +dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)=
+;
+>
+>  #endif
+> --
+> 2.34.1
+>
+>
