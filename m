@@ -1,74 +1,74 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C08B3F9FB
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2025 02:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A782747B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2025 05:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762741503; cv=none; b=Sv2gwrXgY/gnMWjMwyk5SESBKsy6aySEhZrHy1X/yubbl82AwtPVJHoKfLQaRzj+50vd3GIIuPjB+lPslRgfuh7cp28kmtqz6Xsb14/vv682nApVHtZ6mFa9kVHHI01S+MNP7t11yJpHBEzGTxTXs4Pyt2koWRH5sEVa/1CppBI=
+	t=1762752161; cv=none; b=SB0GGGf6rBZoVER0aE4dy7nY3xKfnEqL0FwF6dKYFtPDm7gIj5gG8E9dJqPgN2JZCooDJhtB4Q4qx3OI3rCCUiLirzouupieIPYVBFF2HL1crPAOv822nGNxWhrmTqj32eaJPkP7EWC4soXsWYcuRPNqBbcv4wmA5qnXSN1qFBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762741503; c=relaxed/simple;
-	bh=zMmWG4XTZZReZm7Z4Ca/2dbr/V0sWN6r2sMwECjTims=;
+	s=arc-20240116; t=1762752161; c=relaxed/simple;
+	bh=6MAGRIH5WEH+fMjOR2/tlElu/d29Oz7xmVfA9gjEHmQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P7S0HzUInscL+06CSOijt9ReZSkykckyNq3sWV/bMibQn4zUrFt128Y3mOx6vjVmYiFDw6l3gBj+aZapSg74cZN+HMvG1xmBn7yf6W0nRioNbofk78Rh9l2FTy3d0yzSW67yb490W1Vu50IIPajwgPT3w2xlBIvMWELX6mzjem8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/Xhksbz; arc=none smtp.client-ip=209.85.222.44
+	 To:Cc:Content-Type; b=UGUVy8OdI9KAZl7eDB2sQwiwtTbwa237uassWOTWIhnVZB74nnIf+GBJGJ0FVLZ4lCyBJpQir1XG2qr67xMYjsTn8NzSkGsdvnfKpPXoaI12hxm3JcD5LJAgT1LMnznHPpIBhy2NXIHiZoTeDw1haPks4PBFwfqWUeJqYkxvzPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRrQ4ig1; arc=none smtp.client-ip=209.85.217.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/Xhksbz"
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-93526e2842dso559632241.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Nov 2025 18:25:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRrQ4ig1"
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5dde4444e0cso189463137.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Nov 2025 21:22:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762741501; x=1763346301; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762752159; x=1763356959; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RQYjb15LQkUsCJVby49O7R+AcuVLuxsTRLE2IcB39qA=;
-        b=M/XhksbzQXf8ypeeUTl4LQxB3ErXz1inESIfPKgLDtnrw/3h2uenZzO6MP2vw38JyC
-         qo9721Erm6dJqr4xPWeUKrgMfZCmjuWiTf8I85nqOiq+6JtMcg1QguQ9TxRWIzxvqccR
-         7H/fI6+57kjh1BpwNeEtId02pg8jg3k1vyU3NxdOQZA72VOouh4Yk9BmGAxSNQ3Uhw+W
-         1Hfwd8ZLHQOb6GgO6WjerrR2h6XRcc9cWcrkJTGKf1pp+X7AjQZLXEvubHUjNbbz0JkA
-         8YhW5R0IBHz3+Uzi7L+fshYZrkDu098kpBmv7T4IlogI+D/IG8jqcqv49HJjchd2zwf1
-         7wKg==
+        bh=tVbcQdsxhGJ251GekmogRgMgrAHB7EALgaSbuq0BgLg=;
+        b=FRrQ4ig1rWd6k5szKlAfhB5MZL+nttmAtvfziX8ItT+kZBqh9ZLoVGwmU8Aa6QcurK
+         l7aYV2SDGrZLQiLCxtZAQVFTc7vPXFooxjflIxjMLKRgsvw6xrnMJ5rJXIVuIPoFqyUm
+         9bXmMZsLP50+HHMBI3EeELTZXeOlZ8NvXouItYt0ay5c0l+eTs5EhYebzbap1c74H9bQ
+         CvZBKfcPpwa/4Xkrp4qRWj/soJojbz4ORSa4dUWHhiOi2mJBrgi9zWraQCr3FBoQ0SFD
+         SR2cHtzF6JC00RKnTYo9H6rklOmnf3LTHPmfAalgx0jwvLt2GmwvK4MPiV3z1R6pig0N
+         SrbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762741501; x=1763346301;
+        d=1e100.net; s=20230601; t=1762752159; x=1763356959;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=RQYjb15LQkUsCJVby49O7R+AcuVLuxsTRLE2IcB39qA=;
-        b=MR387u0wbF74TAmGtTb7qG6U52hcHUN4uhWlCk9q1Oe9qGo/xLPOiCLoask7lvEyx7
-         laje3Du7YLom0lPFmdbbszqJVPwKzbvZyNBZz74sau3GgQdVqutuiTJ5GMl0D1sxB3pg
-         FRI8LT57olGH6EkDuTCS7H+1a4uCS3FHtfg7vup/AnuXYlYBwwXrrL4T2M6JUUdw/UiB
-         7Ucc2km7M6hI98ZvThO/FlCYFoLhcAsfALUY5C0XRxM0r4etGz0DgPjBrIZA9gNKgvDL
-         9xmOZ6Gqot8c5x9KKZux6lZN9MFnbf8fEfutAqEbvE356WeoazknoLf6EjiC6IVGnrGs
-         G13g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMZGYwZrkFvAi5cVztXalCHKBLEtNdmGvVcCVXfWAvWm+aIkRObdLaI8MGRTiDjWQ1aI3LZUsX1VlcMftFdxGlGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAqxPKD81pxguTW2qhjGIpXD6B88xNbABtPMtttinN6tDiphaQ
-	8uE3P6Z6gFSMPG9aJWU47d8TMZWe9JBcbo4y5xebm+JrukT/T+3mM/sFP8Cuca3ieFOCnAH6QVl
-	PxvcK18wmcrPDSH6etSBB4m+VQw2zZ70=
-X-Gm-Gg: ASbGncviUJOhiN/xUUD0XmEynb+HVEDF5VfPbTFDYMz0w7E2/lZ0Cf1Mjy8iwhYgGAq
-	4xKf/odd+INPFJKLMrawRf0w3tnxxwhDRawfHWU1OIM8z2lbd4QVpLSqCXdazRt61uxhXprWudk
-	KUk46GmueSvgUShMG0gkO35emsREWM4y541J4p+P6tIaWa/Mk8UEoltMY6pppVDcM0oeA4Swrek
-	wexsvys2NyA5BtZz3llBglj/Ks1qGKxAheTp+DKP95yoB7Wq2zy9cBEKnwYk4X858gQjw==
-X-Google-Smtp-Source: AGHT+IF2EMlurBzuMt0qOjdQBCv2IFE0TWGHtCo4RfIbED7bE2bHbiRvxWtYQJUkcmfpI0qEQHMqGsLRQb6EJAlUMEM=
-X-Received: by 2002:a05:6102:2ac7:b0:5db:fb4c:3a8f with SMTP id
- ada2fe7eead31-5ddc485e4edmr2017252137.39.1762741501079; Sun, 09 Nov 2025
- 18:25:01 -0800 (PST)
+        bh=tVbcQdsxhGJ251GekmogRgMgrAHB7EALgaSbuq0BgLg=;
+        b=gP0ntgtJNo1uekzQD9NXba9kvHpF9sXPsvC1iI7f64TtRzdG/JqPVgT0fIDiLblBX4
+         Qgcaluv9GycGwrWYDxAXD//KKRRR3KGAwRVVIcajhgeqnk+YR9I4mBFAQU93rqQtGRwd
+         2TPmRFTPZsLUHNe/lB0xW3Reh4CefMoNg7qc5a4UhRpZ0DgyHgEKxbyHhI2Dustw6d25
+         S9LJnbczTkE5sk9hkrtgWQwrdkd1tT0W6y6JONXAnykSCkhtGDMZcxYhUR/cpjBwIupw
+         w1xFaGgWxGwC9HS98af3LC2V/hvAUf5HS/gQw9Ijh5W8eSyrmwY6BDaePavdi9pZcIA1
+         sfKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXd+EUTDZNm2oafBhprfeGDQAsPhU6Jzb30+ujhUPpto/JrzW7zxDJ3/Lz0t5fpldOoh/5aaKChftluPYanQfbcxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCNsQpWtAeFgonAz2+mm/xxtxdIZI7ONYN1S0lHZbroOlTojSD
+	lGTomP6dn5zYK9xkZJPHUuktxVZ4nKpM5tZzfhoI71gqFT7Dawvfii2EvpoZNnkxnO6EL50a6fZ
+	2BnJZnjivgk4tt27JlGxG0IUBSfda/dA=
+X-Gm-Gg: ASbGncuMcpAtaokX3N2oDAv0ezYdYjz9cEUxc1IQzbbTcZv9VDgYNOGPaLeDnhtAWRD
+	WKtLrAGLj7XeDsyefzENvF69tcdbKqnBwPH1ru5qBDL2rE3XcOHq5IS7bqQxwEFXlBTaSGVA0dh
+	hgz6hQKht6IF4Jgxdzt6NQ29RQLkamCLwqs/+DHIkW5IogLrdZEmQMqxfBgBJdeF5hz5hw6dExQ
+	rR+VmSQ9cBY88ExSU9ZhSRoYQpDug2Tsc/lfe/1WWf8Di7IG7nxNgPvnKg=
+X-Google-Smtp-Source: AGHT+IEeFVULUntPJGmAB60bMxKjcERl9eTW1jbOHV8XuGq9ZMrcrkcUimjG5F2o26/OwntJmcCh8HHKGulh3BYrYP4=
+X-Received: by 2002:a05:6102:390f:b0:5dd:8c81:d7ab with SMTP id
+ ada2fe7eead31-5ddc452d062mr2218860137.0.1762752159000; Sun, 09 Nov 2025
+ 21:22:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250929042917epcas2p4c8f375cc2355b3a48141cdddb04a01c4@epcas2p4.samsung.com>
- <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-2-hy_fifty.lee@samsung.com>
-In-Reply-To: <20250929043110.3631025-2-hy_fifty.lee@samsung.com>
+References: <CGME20250929042917epcas2p2569e213500997dfa6ba43c8f361f50f7@epcas2p2.samsung.com>
+ <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
+In-Reply-To: <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
 From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 10 Nov 2025 11:24:23 +0900
-X-Gm-Features: AWmQ_bnpaBAd4D4AdmA6qBIjSKlXa89V9KyU_fLfaAFw_TI3ApflT_I8g0W-s48
-Message-ID: <CAAQKjZM3qgQO=FaAuc4d1aUT1fCT6Vfo0X7Y7B=NwRNM=B34wA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] drm/exynos: plane: Disable fully off-screen planes
- instead of zero-sized update
+Date: Mon, 10 Nov 2025 14:22:01 +0900
+X-Gm-Features: AWmQ_bnqaqpr6mbii-XcWKvzW_ttKXH-Eb8J1UjIIWLeqzt5jQH_vRs30wQTWl8
+Message-ID: <CAAQKjZNCpK4rq6DFUtiQ2rxCeb_34Mp54quVto+9LRJMH3=ZhQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] drm/exynos: Convert to drmm_mode_config_init() and
+ drop manual cleanup
 To: Hoyoung Lee <hy_fifty.lee@samsung.com>
 Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -78,114 +78,84 @@ Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for contribution,
-
-2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:29, H=
+2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:54, H=
 oyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> Some configurations require additional actions when all windows are
-> disabled to keep DECON operating correctly. Programming a zero-sized wind=
-ow
-> in ->atomic_update() leaves the plane logically enabled and can bypass
-> those disable semantics.
+> Switch mode-config initialization to drmm_mode_config_init() so that the
+> lifetime is tied to drm_device. Remove explicit drm_mode_config_cleanup()
+> from error and unbind paths since cleanup is now managed by DRM.
 >
-> Treat a fully off-screen plane as not visible and take the explicit disab=
-le
-> path.
->
-> Implementation details:
-> - exynos_plane_mode_set(): if computed actual_w/actual_h is zero, mark
->   state->visible =3D false and return early.
-> - exynos_plane_atomic_check(): if !visible, skip further checks and
->   return 0.
-> - exynos_plane_atomic_update(): if !visible, call ->disable_plane();
->   otherwise call ->update_plane().
->
-> No functional change for visible planes; off-screen planes are now cleanl=
-y
-> disabled, ensuring the disable hooks run consistently.
+> No functional change intended.
 >
 > Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_plane.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/=
-exynos/exynos_drm_plane.c
-> index 7c3aa77186d3..842974154d79 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -91,6 +91,11 @@ static void exynos_plane_mode_set(struct exynos_drm_pl=
-ane_state *exynos_state)
->         actual_w =3D exynos_plane_get_size(crtc_x, crtc_w, mode->hdisplay=
-);
->         actual_h =3D exynos_plane_get_size(crtc_y, crtc_h, mode->vdisplay=
-);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_drv.c
+> index 6cc7bf77bcac..1aea71778ab1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -257,7 +257,7 @@ static int exynos_drm_bind(struct device *dev)
+>         dev_set_drvdata(dev, drm);
+>         drm->dev_private =3D (void *)private;
 >
-> +       if (!actual_w || !actual_h) {
-> +               state->visible =3D false;
+> -       drm_mode_config_init(drm);
+> +       drmm_mode_config_init(drm);
+>
+>         exynos_drm_mode_config_init(drm);
+>
+> @@ -297,7 +297,6 @@ static int exynos_drm_bind(struct device *dev)
+>  err_unbind_all:
+>         component_unbind_all(drm->dev, drm);
+>  err_mode_config_cleanup:
+> -       drm_mode_config_cleanup(drm);
 
-The state->visible field in the DRM atomic framework is set to true
-only when the following conditions are met:
-- Both state->crtc and state->fb are present (having only one of them
-results in an error).
-- src_w/src_h and crtc_w/crtc_h are non-zero.
-- The source rectangle does not exceed the framebuffer bounds (e.g.,
-src_x + src_w <=3D fb->width).
-- Rotation and clipping checks pass successfully.
+In the current implementation, there is a potential dereference issue
+because the private object may be freed before to_dma_dev(dev) is
+called.
+When drmm_mode_config_init() is invoked, it registers
+drm_mode_config_cleanup() as a managed action. This means that the
+cleanup function will be automatically executed later when
+drm_dev_put() is called.
 
-However, this patch modifies the state->visible value within
-vendor-specific code. Doing so can be problematic because it overrides
-a field that is managed by the DRM atomic framework. Even if it
-currently works, it may lead to unexpected behavior in the future.
+The problem arises when drm_dev_put() is called without explicitly
+invoking drm_mode_config_cleanup() first, as in the original code. In
+that case, the managed cleanup is performed later, which allows
+to_dma_dev(dev) to be called after the private object has already been
+released.
 
-For example, if the DRM atomic framework sets visible =3D true after
-validating the above conditions and begins processing certain logic,
-but the vendor driver later changes it to false, the framework may
-still assume the variable remains true, resulting in inconsistent
-states.
+For reference, the following sequence may occur internally when
+drm_mode_config_cleanup() is executed:
+1. drm_mode_config_cleanup() is called.
+2. During the cleanup of FBs, planes, CRTCs, encoders, and connectors,
+framebuffers or GEM objects may be released.
+3. At this point, Exynos-specific code could invoke to_dma_dev(dev).
 
-Turning off a plane when it doesn=E2=80=99t need to be displayed is a good
-idea I think. You might consider contributing this behavior upstream
-so it can be properly handled within the DRM atomic framework itself.
+Therefore, the private object must remain valid until
+drm_mode_config_cleanup() completes.
+It would be safer to adjust the code so that kfree(private) is
+performed after drm_dev_put(drm) to ensure the private data remains
+available during cleanup.
 
 Thanks,
 Inki Dae
 
-> +               return;
-> +       }
-> +
->         if (crtc_x < 0) {
->                 if (actual_w)
->                         src_x +=3D ((-crtc_x) * exynos_state->h_ratio) >>=
- 16;
-> @@ -244,6 +249,9 @@ static int exynos_plane_atomic_check(struct drm_plane=
- *plane,
->         /* translate state into exynos_state */
->         exynos_plane_mode_set(exynos_state);
+>         exynos_drm_cleanup_dma(drm);
+>         kfree(private);
+>         dev_set_drvdata(dev, NULL);
+> @@ -317,7 +316,6 @@ static void exynos_drm_unbind(struct device *dev)
+>         drm_atomic_helper_shutdown(drm);
 >
-> +       if (!new_plane_state->visible)
-> +               return 0;
-> +
->         ret =3D exynos_drm_plane_check_format(exynos_plane->config, exyno=
-s_state);
->         if (ret)
->                 return ret;
-> @@ -263,8 +271,10 @@ static void exynos_plane_atomic_update(struct drm_pl=
-ane *plane,
->         if (!new_state->crtc)
->                 return;
+>         component_unbind_all(drm->dev, drm);
+> -       drm_mode_config_cleanup(drm);
+
+Ditto.
+
+>         exynos_drm_cleanup_dma(drm);
 >
-> -       if (exynos_crtc->ops->update_plane)
-> +       if (new_state->visible && exynos_crtc->ops->update_plane)
->                 exynos_crtc->ops->update_plane(exynos_crtc, exynos_plane)=
-;
-> +       else if (exynos_crtc->ops->disable_plane)
-> +               exynos_crtc->ops->disable_plane(exynos_crtc, exynos_plane=
-);
->  }
->
->  static void exynos_plane_atomic_disable(struct drm_plane *plane,
+>         kfree(drm->dev_private);
 > --
 > 2.34.1
 >
