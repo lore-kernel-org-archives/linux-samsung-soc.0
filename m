@@ -1,119 +1,182 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64001348477
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Nov 2025 10:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1783F34BA21
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Nov 2025 10:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856342; cv=none; b=jWUbe4mVPJfYyhucr234JOZ8oUz0bJVKKsFMsXyrFZaDLF7mjZJHKVHojqsY/nkPXy8UuAjdfiFSOxPYENEygZePW7Gz4Ym9drAEcxUsWUritdE1YMXaWtwTdC9nN7CujKGnq45zyOTg9ol/jWl9klE6sTY8lp07EI9K5dT5rog=
+	t=1762856994; cv=none; b=lHgndaDWx/F4cR1zEj4a/1zTSwn7rHilJVF7SBQPb1Nse9JlxP0Ga6IppThr7eXnGP/Yi092/22kMwTe4XsouguQo1kBubdg3pFvapF3qIjib8NXHigeMLWMb7HJQThONJVGFSVi71t+ZkGOYsaY8HWnaZGxF623Zw2C2qJXErI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856342; c=relaxed/simple;
-	bh=sD00pU9m45ar5Ai3zpltFpzvxBL4raSGmlVVUZkRQc4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A9GTxIBnV3PLXgbiW+UrB2zCXTFx23PrdS1GsYRm4Au2D2BMxz7SC/AG50zWA+6lcwfAHdIZT86UdG1niuN2YzqMrUZanF/QeB9YZgtG5kZ5NV3Nd9+nXTE8kuoIfrFGAvVb9bF7NVLCklVaHRCg/qW8dE2u2JecjWIQWeyilUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c4rMP1zd; arc=none smtp.client-ip=209.85.160.48
+	s=arc-20240116; t=1762856994; c=relaxed/simple;
+	bh=HLKGy0mKbpQ8h+3kSmFm7cUNZcoYemdFaDqBdUyA25s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t3310raX9OtOqbk1H14wQsupA2z+oGKaPMdvnmjYhitC+/1buozNosld1BSy0UF7PB/DPVMjzdouxeo7v3KgmJ+xbaZkYVTnMdMXIDz11au0c8TvJbqGoVhpCul6h9Z1ldP73v7VKuY0XeMMejC0Lr7x9whJG6g84Jcvthk4GT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLCrMhPQ; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c4rMP1zd"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-3e10d1477afso3353355fac.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Nov 2025 02:19:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLCrMhPQ"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4777771ed1aso18513825e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Nov 2025 02:29:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762856339; x=1763461139; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sD00pU9m45ar5Ai3zpltFpzvxBL4raSGmlVVUZkRQc4=;
-        b=c4rMP1zd0R6QfymMZQTLwQOe4Wsw1fFq5AvCnd1LKNIRLcs2jPV4VJUrpeK33tYsrO
-         S9/VK2RWJAiUsCIuEtwe6whzRAxiBUTCqBLh1FUMXpWHCCijMq+ExydGhKBBqk8QdXRg
-         aWDI0C3OvfZNcKY4ot1QUlufdjXyEHPWtSvCyS/wMADYvuIoL9sWjpVNV1lTXl/y7FaX
-         mT9sT1hiq/mgyk2iHrdAJreBFMIZkEKIVUDIIhTSXn+TEyvLHUw6DZQHYXMYMIAepPRH
-         9UvaP+W2wEPAfxMZR2rg+Uk+xJAg1X9+SRaxOA4Zbwjeu+J3w4xVKUTif52lkqxsI4wf
-         nSlg==
+        d=linaro.org; s=google; t=1762856990; x=1763461790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
+        b=TLCrMhPQRzB5j1v8TSW+sC6RojrdNXA+tcJLfzUaCy67lu0rwRNX671GZX7SEsO7VJ
+         jf0LIWKMK6zabvAzsT9FcnEJpS6oZPVF50f5PsBDi6j0i4NxgYvSVGc5GgyIyO22tZRw
+         TZwMmziLkzn5BPKWVbOdWRYwZjKSWuNpyjueKv7Kgatde6o7ePHyG5fcb/l9XGktgzlo
+         tWmxMNqjOEMdG8BmqKjM3lqwtnxvbQQiAiDM8u6IllVDiwPnGDAykBzVQ3FkrHsLXxwo
+         Yn/ZInsymFSXOIZiCtFurlKCJMRleUvC6//X8eCPEMGQYrLxeXbnQYNkF4S6ABIlVsLT
+         +e1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762856339; x=1763461139;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sD00pU9m45ar5Ai3zpltFpzvxBL4raSGmlVVUZkRQc4=;
-        b=jpoaWxQDMyySvh5IVnB/PDTtKyo66kgh8FpZU8bSsL6auxIOgyJ0IqSKijL4SmygQ8
-         1ermuVW9qyy9sb6+nTwOOc72Euuspdw38d+5PiD1SDFGexJkARs5VGWA9Q1qgEkSweUC
-         BJC1X2ufkBZ/pedL0E9i15xx0Af9R8FY6X79INC6RtPOnRy3buw7tfiGZyWxyiviQEN/
-         946Q6HtwXy9nnjrAlf46fbFNrGkpcV50SH+Ybe0EUWJDexiQK3CAV0GtTshhxCD/wXm5
-         rkirgsxD5EIr1FkvejZjjF9RDkoL9VRJNVz4o902piqHJKzxDtUSoQAS2M7KcW4hnReT
-         skZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmkbvCN6K2V+/DFHn59V1nPwnQFB2vyn/H42Qb/KIx89BBToRj350qHuqaWd030VvTyc+uGH6yiM99VqmkIX73Nw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjDeYctwaGpQYg2DuGbb7SiFrDLKL7Mhn90bYbPugwjMwqOMOV
-	wLFWcGEYkq8TsJJ7nVmS8PmSIzDDdnFDpilnsa83k+tXRW0gSNqDLdslRDfoyIcY9yc69ECeO0U
-	JUmNRKiHR4gUEyFTPaOYkioUHl8cMTfRHiC6AG49enw==
-X-Gm-Gg: ASbGncsaENTLIVzjZLT6bVOjAxEdJFS+witL+Eh7t1nDi4d57BvgAO8aqsfci0Ah94Q
-	6vmr6dhrm+alG8Lc71354yKsrSKxL+GXk76UXJGZ7G+Jj8Fj0dWqdXx7SLmkZ65LtSj4WkfmB/u
-	jScTCIVRbrBcj0vYheXJFyUodOIS3xnyyAbPsnNO7XWVTxG833pLqnPtLQXpPCQyyX92kq3CDYA
-	Gl9YLywCNDq71OYKNQmPPNq1+v7TqLsbvH/Nd+MDaWQgL2RmisR9kcgY6j2bjw/iObe2KM=
-X-Google-Smtp-Source: AGHT+IFKS2q0YYMWvzAONoaylj8ozlLuIkMm1yaexf13YEyXcWtqn/MOGkO+d0PlUIAQQu2z38TBPdf0/w+7VAh46B8=
-X-Received: by 2002:a05:6871:660d:b0:3d4:7d3d:be84 with SMTP id
- 586e51a60fabf-3e7c2865eb3mr6778775fac.23.1762856339399; Tue, 11 Nov 2025
- 02:18:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762856990; x=1763461790;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
+        b=XKGIyTNDF5L6uikyeO6ijYyB2yKsLu7+AEmzu1sHTzwz90AHZCVXqfDbb2RsH7GiHj
+         GFTklR92EzgUHH+D88pXpap3zAEK3lS9Mhr8eUJSE/H+v8bZ+4ImH1k2aPVtOXdWPjcb
+         D9NML+i+kdHIUH5z7PqgbWR3KwMMuo2L2kB6pJOrqrPJxXAhuGfl3A4oD+J8RLKk3aDb
+         kovY97aDT1ZZKDOx2XbyQLf+V9/R8TbhkriO46Gdro2yXY8Po5yLmPTtB/DIokDaASrl
+         uaOwPKljMHQd7HWYPV7/qgEnPVkUMa2DEOC+Pvv7YWMy3FUy/RdOJLOaiP/quYdw2wYu
+         GobQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqcjZ5kbGire6x0W3JLXx3ANFBwtq7eDAyljJWVwx21oHY8ymi28tTznaAGZSpaAAeF1uN+394Jikg/0jwG/ellw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqhoDuXGwx0NGOR4fDIBPU/gsnehBYXZjihvooXXqWoWZoYLUi
+	9fMGfERoV2MnMp5ZdXoIDcydVyP7sW3ZroRQAlM4jQ8xrIgXDkCUoc3t9wQ6eG1bKE4=
+X-Gm-Gg: ASbGncs+h9nD0D6ifqfyVwf9rfMXUqVk+nnIHl5t1bSaJaRODvNMs1H2yPLevM2ii7t
+	iUgcDf0hofmbNo14U1JXdPJBesxFUHM7r6lakzivejMmnIKYWrrEX4h1WYwcmiSz18vl2CGSbou
+	Bb4fH16LpQaBl8I5IxeCPXlUbsTPR1w1pWmrGIAMTzleAxe6donxM4dnabR6P5TR1vGStrxOPqn
+	kw1GEwYEFjSG3WjGg4pglu2yH6FF35+mNWTAPY+nA9UvRa3sqoSN3oLU6eS4k0TNrN5q03Tf2bu
+	Hpqv0qXTVhKJfW/iBDdGSp4UIiBMamtBNkeiYalIegtmL6jdmDhblSazLsyBdVJJBidfarWgajs
+	7trlA6cvssp1aEt1F2NGc3wFEZFNSGSj5TjrhpahT/9SFICt1wrhUzVi707wLMj1A7N/sZzcCnw
+	EIR6HEIzjcwyedgSY+ZscZMkFRUy4=
+X-Google-Smtp-Source: AGHT+IEvLEjIZw4+8whQM79OrY00R9vJVyO1rxoxD4fhQm/KifAlq8r0yaMnGCz1oNKbvCj2h/xcDg==
+X-Received: by 2002:a05:600c:c4a3:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-47773290e9dmr106627935e9.29.1762856990270;
+        Tue, 11 Nov 2025 02:29:50 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675caecsm27313955f8f.30.2025.11.11.02.29.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 02:29:49 -0800 (PST)
+Message-ID: <5eaaf3cf-a271-467f-b015-9cb9b49590f0@linaro.org>
+Date: Tue, 11 Nov 2025 12:29:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
- <20251103-remove-pmu-syscon-compat-v1-1-f2cb7f9ade6f@linaro.org> <20251105-guillemot-of-demonic-courtesy-6127ac@kuoka>
-In-Reply-To: <20251105-guillemot-of-demonic-courtesy-6127ac@kuoka>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 11 Nov 2025 10:18:47 +0000
-X-Gm-Features: AWmQ_bkZo0YG0fQozggW7w_kHLivwxPGKZYOmMZ80TBXcmQKFtFsfLDWdlG11ZY
-Message-ID: <CADrjBPog8u8sRsUjcgKNG87kdcF5HHx94tUXPdTrCUG-PxSXWg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: samsung: exynos-pmu: remove syscon
- for google,gs101-pmu
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org, 
-	kernel-team@android.com, willmcvicker@google.com, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+ <176282517011.11952.1566372681481575091@lazor>
+ <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+Content-Language: en-US
+In-Reply-To: <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
 
-On Wed, 5 Nov 2025 at 08:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Mon, Nov 03, 2025 at 08:03:10AM +0000, Peter Griffin wrote:
-> > Since commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes without a
-> > "syscon" compatible") it is possible to register a regmap without the
-> > syscon compatible in the node.
-> >
-> > Update the bindings for google,gs101-pmu so that the syscon compatible is
->
-> That's an ABI break...
->
-> > no longer required. As it isn't really correct to claim we are compatible with
-> > syscon (as a mmio regmap created by syscon will not work on gs101).
->
-> ... with kind of a reason, but then the question I have: was the
-> standard MMIO regmap exposed via syscon ever working for any part of
-> this PMU?
->
-> Original posting here:
-> https://lore.kernel.org/all/20231209233106.147416-2-peter.griffin@linaro.org/
-> did not change PMU driver and did not express that the syscon is broken.
 
-With the benefit of hindsight, no, PMU write register access was never
-working for any part of the PMU.
+On 11/11/25 8:24 AM, Tudor Ambarus wrote:
+> 
+> 
+> On 11/11/25 3:39 AM, Stephen Boyd wrote:
+> 
+> Hi, Stephen!
+> 
+>> Quoting Tudor Ambarus (2025-10-20 00:45:58)
+>>>
+>>>
+>>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>>>> --- a/drivers/clk/samsung/Kconfig
+>>>>> +++ b/drivers/clk/samsung/Kconfig
+>>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>>>        status of the certains clocks from SoC, but it could also be tied to
+>>>>>        other devices as an input clock.
+>>>>>  
+>>>>> +config EXYNOS_ACPM_CLK
+>>>>> +    tristate "Clock driver controlled via ACPM interface"
+>>>>> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+>>>>
+>>>> I merged the patches but I don't get why we are not enabling it by
+>>>> default, just like every other clock driver. What is so special here?
+>>>
+>>> Thanks! Are you referring to the depends on line? I needed it otherwise
+>>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+>>>
+>>> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+>>>
+>>
+>> I don't understand that part. The depends on statement "COMPILE_TEST &&
+>> !EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=y and
+>> EXYNOS_ACPM_PROTOCOL=n, so are you trying to avoid
+>> EXYNOS_ACPM_PROTOCOL=y when COMPILE_TEST=y?
+> 
+> My previous comment was misleading.
+> The depends on line allows CONFIG_EXYNOS_ACPM_CLK to be selected in two
+> main scenarios:
+> 1/ if EXYNOS_ACPM_PROTOCOL is enabled the clock driver that uses it can
+>    be enabled (the normal case).
+> 2/ COMPILE_TEST is enabled AND EXYNOS_ACPM_PROTOCOL is NOT enabled. This
+>    is the special scenario for build testing. I want to build test the
+>    clock driver even if EXYNOS_ACPM_PROTOCOL is NOT enabled. For that I
+>    also needed the following patch:
+> 
+> https://lore.kernel.org/linux-samsung-soc/20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org/
+> 
 
-On the initial posting I didn't hit this as we were only disabling the
-Watchdog on boot (which doesn't write any PMU registers). Once the
-issue with accessing PMU regs became clear, I first suspected some
-missing clock. Then later it became apparent we needed a SMC call and
-after some initial proposals the syscon driver was enhanced with the
-of_syscon_register_regmap() API in 769cb63166d9 ("mfd: syscon: Add
-of_syscon_register_regmap() API"). At the time that commit was merged,
-syscon driver required a "syscon" compatible, but since ba5095ebbc7a
-("mfd: syscon: Allow syscon nodes without a "syscon" compatible") that
-is no longer the case.
+What I described in 2/ EXYNOS_ACPM_PROTOCOL [=n] && EXYNOS_ACPM_CLK [=y] 
+can be achieved with a more relaxed:
+depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
+because of the stub (dummy method) that I referenced in the link above.
 
-Peter.
+It's really what Krzysztof explained in his reply, I wanted to avoid
+the link failure for COMPILE_TEST [=y] when
+EXYNOS_ACPM_PROTOCOL [=m] && EXYNOS_ACPM_CLK [=y].
+
+We have the following possibilities with:
+depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+1/ CONMPILE_TEST=n
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+
+2/COMPILE_TEST=y
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+
+We have the following possibilities with:
+depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
+1/ CONMPILE_TEST=n
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+
+2/COMPILE_TEST=y
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m,y <- link failure when y
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+
+Thanks,
+ta
