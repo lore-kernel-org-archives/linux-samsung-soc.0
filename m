@@ -1,100 +1,79 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0082A2F5A2C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2025 20:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C7DDAB;
+	Tue, 11 Nov 2025 01:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808266; cv=none; b=g0v4vEsZw4dOXmHuI8FskW0WDezQ1L4Az7nG9iYDwmtBX+T05BfNl5gsNftXw+KsgOpZQ1dRE39UUCRoiC/EeqbwOi1uWmdeHqmIuNHwhXdYMpLlgXoaUrqUQOSUy/aa+RUJloB5ZBe3P1z2rYt3dm29yF1b0L29elM7JrYHD6Q=
+	t=1762825172; cv=none; b=Lr/Xhd1GpdZ/tCLt4jRV4pdGxhjwPLgZA0rbKocVznzwKMFu4fJANykD0pFEpGjHbbwG8xdTjfSQiHVdTkTZQL4gbsRnHHmjSCUwVmvEFsFciDmTpGuNSQhQnpX8vUjCRoSQY2FfGTtd6FIxtZWc30lbN7MSZOfxt9KXSP8tWUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808266; c=relaxed/simple;
-	bh=EMkFach/QW4lYNE6AmvM9HnCCahChKAdwsSK9+U2fRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c1NmWYIpOLiaCTvup+IVzY4SaVBZcnPeGdCum9lqM9wCUGxK8xvRqVEvsQ6Fass+mJysY/eulmJzMvclDMEswNLqYc+URKTZyU/wsff8G6ZE4Nsy26OoY2rVfdD75J4gWoxemFITQLBKdLQ1VQywjWuHxbOF2SOMHsPQrrBozCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRxCRWZr; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762825172; c=relaxed/simple;
+	bh=/hQhWs6fIWq4LVxZQYUO5IFlDz6QLmh4TLjAbavYSeo=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=mldEp7dBnA5A5z3OMNHBu7Nx0G7VSQncsttSZrgINuXz1gRKK/pgq5lS0wQJI73vhp2z4T4BFOO+/WV13qUhyo//9OsS2iYkpFt81RVEuSNXvh90dafRMXtIK7jg0Yy5VjZM0E0r2dcwBap9bku9kk0tSz2O6OuSWMtKQWsjyDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAvMRy35; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRxCRWZr"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5943f39bf9dso162635e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2025 12:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762808263; x=1763413063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mh/JsKiFmpvDenrO2RV6pyacRnngWdajIKt4QMpWgfw=;
-        b=NRxCRWZrHXnwtg6qXEtxxQ+QMCxgBV9+plu1durTIcxBiM7+2UXavjPov9hOqOv5mu
-         4dVdgTTvswiNadLbAKzX1oJEBfaRz8Ug/SKcCUkbPrQQj9foRQB0z3JHhESku0vxfw+c
-         tzC3N/oCcoGD+mq9Z0MwI2/lYUbtoPKWsmretsoyPDUFGqDXa+c0Gwkl6POiEPnflJ7c
-         85/rweXlKlreJ//KppqbmBNvZoSAi6peMnSFaCxryGFQPQTJ8PXHyey/qAYvuNCt5GvB
-         CefYiSRfPdBmZw0NiYFgBF7zwJQpWc0/CWHnMxzcMDQCmJpBQIWhquvlu25DVS653mNY
-         7rQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762808263; x=1763413063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mh/JsKiFmpvDenrO2RV6pyacRnngWdajIKt4QMpWgfw=;
-        b=J77r5r0xGPAASrxmtIMhjUDtXP3XI6Ney53RhbVVsYB+UqAZI2vKyoF/rFdL/eJLjA
-         +hsxP4ICEdopfIbzuSCKNsKmNO3wW4vFL/IcY28JnWIt5S3QQ+GbDP097U1zPgjOS8to
-         9iqWnHFQMHABNzQxMqkQsjw22ewmtR76bXkpi32vf+VlB6Ey1lbBJQEwkOsXIk/OYsyV
-         T2SNX4DlTaiYrTd1AVJbLA5QiSMRDJaOR0PfviDO7qZozK/E9Kk/Y1+2ez+KCqqxKAEF
-         N4XUD/bhqdhVSapXBsTATulloVGgoa+smxbIFXs/+lExrG6mCUFR0h+bgUM93kQlLP+W
-         uPUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2+x0/+wIrtbpUf9mUhT4ZhfyciN1hN+FM/6jghXrT1EyWljAc1po3vxYy1AzRT3fBSwTcFHqAzr3lvt13dpk+7w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxAkhDTVhYJuGdgLazSCSE+KRNG7RRmG/iOqPJfBHMh49qS70J
-	pMhzL8qDJpCyM8z1ZOU5FVo4gM6LpVyjzapMaZRedupo2jQAslqMJ/CtirY2GCtubZOF3Lf77Sh
-	kS113Vm4C8NbGn49//HryGft/3uuhdnVeOe3Dlr/APg==
-X-Gm-Gg: ASbGncv9k6pZQTUOU0JgjAKRGlEwZIYEj+TYi8ILlisTsdw3I28ufOg1sYRAXOVKtw7
-	lMXTpuXCnyFLRP4zHPSQy0EdV7dUPOq/Lcdhc73Wx8JXQso8dnUBQQM+7+onq6qukMcP172GOqq
-	xHq1acrppc5+vPTP3lNS9WmJM/v0Rst9WyuE0OCewIZECxJye9YRvlTREVrw1N/F4lSTsmXQUQt
-	4Q3jPQSdOCmslF5W1sTVTl7IsHBiyymSSjKccgLti7ujjL2Cy4dbChsIeyFk5rrw3OdQog=
-X-Google-Smtp-Source: AGHT+IFHiFVtHs99mXmuYb2B2m+2rnv0hdsnrgmUGdiZxDbZObBH5hPXt0Fy2L1RfDUF3gekviGcSla2Cs8MXuCvEww=
-X-Received: by 2002:a05:6512:31d1:b0:594:5d87:af7f with SMTP id
- 2adb3069b0e04-5947459355bmr191945e87.4.1762808263115; Mon, 10 Nov 2025
- 12:57:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAvMRy35"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBA8C4CEF5;
+	Tue, 11 Nov 2025 01:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762825172;
+	bh=/hQhWs6fIWq4LVxZQYUO5IFlDz6QLmh4TLjAbavYSeo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=cAvMRy35HQERZPOVzojVm2TlYCAXBcctFxoIXTcorOoTfHhvEszBVwiGaW4gq9sPg
+	 K54ZxzmczCK6gDw3qHe8OLHe9nRHasdiZOsDEtJ37UbUk9xOdUC+8F1YNIyjUNCmd0
+	 I04rD7EV4VNWJxhwUbFAdRCf3A5VA194KT7VVk45J2Kn4fSjcBgJJc9aQMfWMsQyBW
+	 jJB38dVKnn97s0AFhIqGXOADW1OoqnKgG4Y/N8m389F7NC2U99v4HzIO4vJK+5ES1b
+	 as9LbCb9N3fMafkzcQ6f3dbcqsiX8RQKdQuYbMXqXz/AaRo4/K7oxyM7eL1JzTaNfD
+	 JgzrJ/BuVi+yQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110202748.10090-2-krzk@kernel.org>
-In-Reply-To: <20251110202748.10090-2-krzk@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 10 Nov 2025 21:57:28 +0100
-X-Gm-Features: AWmQ_bmB5CQero0WghGpIbdSZsMKfEtwVkS8ALsJg7LOxphzKT9kTeNJBD-rCAM
-Message-ID: <CACRpkdYvPS=WDLuUiEovtSsY=3JDqjb+8kKDZK2=FTj4n+qs-g@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.19
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org> <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org> <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org> <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will Deacon <will@kernel.org>
+Date: Mon, 10 Nov 2025 17:39:30 -0800
+Message-ID: <176282517011.11952.1566372681481575091@lazor>
+User-Agent: alot/0.11
 
-On Mon, Nov 10, 2025 at 9:27=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+Quoting Tudor Ambarus (2025-10-20 00:45:58)
+>=20
+>=20
+> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+> >> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> >> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8f=
+f95e029c52436e5c7f 100644
+> >> --- a/drivers/clk/samsung/Kconfig
+> >> +++ b/drivers/clk/samsung/Kconfig
+> >> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+> >>        status of the certains clocks from SoC, but it could also be ti=
+ed to
+> >>        other devices as an input clock.
+> >> =20
+> >> +config EXYNOS_ACPM_CLK
+> >> +    tristate "Clock driver controlled via ACPM interface"
+> >> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_=
+PROTOCOL)
+> >=20
+> > I merged the patches but I don't get why we are not enabling it by
+> > default, just like every other clock driver. What is so special here?
+>=20
+> Thanks! Are you referring to the depends on line? I needed it otherwise
+> on randconfigs where COMPILE_TEST=3Dy and EXYNOS_ACPM_PROTOCOL=3Dn I get:
+>=20
+> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko]=
+ undefined!
+>=20
 
-> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
-87:
->
->   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
-s/samsung-pinctrl-6.19
->
-> for you to fetch changes up to 3cfc60e09bdc95483875f0b63cfdc23aea67135b:
->
->   pinctrl: samsung: Add ARTPEC-9 SoC specific configuration (2025-10-13 0=
-3:02:21 +0200)
-
-Pulled in, nice to see some conclusion of the ARTPEC work.
-Thanks for handling the Exynos pin control!
-
-Yours,
-Linus Walleij
+I don't understand that part. The depends on statement "COMPILE_TEST &&
+!EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=3Dy and
+EXYNOS_ACPM_PROTOCOL=3Dn, so are you trying to avoid
+EXYNOS_ACPM_PROTOCOL=3Dy when COMPILE_TEST=3Dy?
