@@ -1,106 +1,161 @@
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A47B32B985
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 16:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D6133DED3
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 16:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964240; cv=none; b=KyjfmonIzbi+wrKzV0mSkC1XnvGkQdIyBAOrHLZfYbqlck0fxEaO/24VqbK0+h6PWRDTNVB8jjHDSq0KzeqXMRDNjJ1QKu2lOBIW0G3duRyPupAK6vlK0cGy2yBl1fxQQFlf0lavAaEPA4S8E/FXttTC4XMDy8+OHolNxeLprso=
+	t=1762964838; cv=none; b=QLtlRARHt+kxxNcLOC/uvungV0/83PjinnqJWEcmsGAKmss8IXlQQOSM3oIYmLyRU2b7oMc46XEfWsd3MSdQxXCm12iV1Au8O+FvhzmDPh2yLPC1q9UbY+/brmYA7R/BJXDH/5VOmFZSO4/SMBKUFrsIM1WkDFq9htdZa9dB++w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964240; c=relaxed/simple;
-	bh=thLeYsmvUb/JgavOrdcC/1uELN8ZrLnaCGB0hQzFcLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bD01yYdupn9RFDdOh+cinfXyooc3FPTiXcTwNTr1si6mZ1PMSs6z66AoGso1fs5YTi2A2yQRfRyI8OMSlwVWkoBi6tIJUZTnrQXxZ57BT4y/KLhHWnSwdkMn63OUL41v87mkuocvyOC0ew+pW4FyCprJbVrALt1CoQ/3ayNYcpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pVU8gTQ1; arc=none smtp.client-ip=209.85.160.42
+	s=arc-20240116; t=1762964838; c=relaxed/simple;
+	bh=2J28k+rkBGEIQnqpoey6EUz8XjM8ez1dZhEzYa6oxzE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=spHAm/zMDGY3LvP3rgbg070B2o/r3+XfO60A8q24YRAB3bfkXIUVarfndxLWePVKLCwVwS83ohtbuzF1ARfFiXpvOOGCnG0fIi4w9LuA4Hai85UtyjYT7qvKq17BxhYmv/sgt1Q8dNlqEUThnxQITh7CsnzyZgJVOIzpss1uPzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wHSSCKHn; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pVU8gTQ1"
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3e0f19a38d0so615084fac.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 08:17:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHSSCKHn"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so6080925e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 08:27:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762964237; x=1763569037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8VMCABcDQg3bj1MpLgUPb6hZG0b0uHbN8RDXsa01+ho=;
-        b=pVU8gTQ1772fztDyH2UbsxuA1//phf7Xrj4lEoSuGPQnmB7fPDCawyCA9yRiDVhEx3
-         E5OQwn7B1QvvT6KtdM6cUU62OP0jSWuJd/aE2o4Hdq0ic0XojUXfcQW2wqlhPU1uV//C
-         sed6Ugoqio6+pBZI+5Mp0pQ8AKalhVV4ymAXD+xVhgQ8klL3pYQiWcKggYvOrctfK1Gg
-         sVGdtA89ITajjH/FR9Kp8SmCUTWVVk5MzE3azza3+ziCQiBCZM58JhacOY1mMREg1OCO
-         Y+Uv9iscC/0oRlPj9cVs+NmQ/TvTgJukiqTlVU8u/b3Q1+4GaMmzqKieMUNIiLzDl1nP
-         xs2w==
+        d=linaro.org; s=google; t=1762964834; x=1763569634; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YPkr/JoKjH8U6Lko6pTK2QTabDhqIIQDxw6EgSjYcZo=;
+        b=wHSSCKHnFTRV00rAxT009La1Du5NEQJaKZH9AbdB26v4vqbTgXKgj3mip6not0+Lwg
+         A4gNov04WOH0YsN8SPaHW10GP7KGY9yPwHtl2IKsNrhqf1rRg+n4STC/Zf8s4x4B1KLd
+         k8x12lI/BaQ+9eXdQ13uhPxQccKZnJUMCaXVjlqVm0qDxmf1Vv3EQ3WxaArVLzofA5O/
+         NK/dEWeJknpSvn4iFNSdKIJ1ET/8wbSdcQbfpQE/hvDDVEPoNlv8w/fakLKYXYA8fR5R
+         GKzAKYfp3Pa5nzfIqs8S4gNG8GMWvLrAsi1IiAmzbsmne8fPYroaxVvjpDaSA6J+s5Vw
+         8lIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762964237; x=1763569037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762964834; x=1763569634;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8VMCABcDQg3bj1MpLgUPb6hZG0b0uHbN8RDXsa01+ho=;
-        b=ah01aM9Z3CwFnja1CI9YEwRXm51RuKbNK0f06chH/xaQP8O/HO1FhFHpEwhn2nK0b8
-         yqNj9vACvPLxhYDq50hHXIIU5rSuWmn85N1FAw+BwK8CWN75XSbwlEupyECT2H6xxOXo
-         zJLfOLZiVdTWhbtMmVIy+f6SYibJqxAgg11m0J5ilzi9r+Sbur+kjnOMm6WzNm6gzswS
-         9m28T5KAnrVXl+nSazKsX8hI1x3LdqOMZzdOk7GMIS4/eqMFNGAdbaka/9bPc7d6jFRn
-         ht9+nwx3wE3ceEKS5ktoYx50t/NBW5pfbM1+3vmwHf7zuolGzUuwU76EeIPc1YB5wa7N
-         wbRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAmvTY8zN3pBebmUDmCS7K4GlE49u5AftzkUXVM8pZSv4P6sKWk5KQlo7oyIx0FvQCPSOApkTYOo+CSf7aCGFcgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzS/mMnvUUibe2qDZG+FHfYnUZQU+4aa4aeoLIjn0Mb3cQSP8o
-	bMSE317cK2gpnBL21J1w6L/AwVbdT3608jgModLqHyEj9S6BzHgAER51sfcEwCDxpFTDfvjO+Gm
-	91YMiF3luzsVPtCcfucDnCnwkkkFZvZVVrEM9Eaa1jA==
-X-Gm-Gg: ASbGncu4ZISEz+yUXKNX2M+Ho9nl1CpeMpO+luTwV8sbmNjkhsojlR4kZyVzwaspRwj
-	v560lI6ndKIS5mGzI2aYoB2HJkPe7driOhllmfgicHJaRZLNs06tdv1D1quuHuvuyqcg87zuT99
-	IkBbmYwxVZ0fTMJXAoLf3fgkpq5vAVNEpZXYX9hRlh5HiGQ0jsz3FNQGqnAFWcJD70SyCqnSEsP
-	twYAfqJyXDqSwOeA4paJK8PdsiRhMebUs1ToRDUVdFrjpF2yj4NxeeMsd3kEA==
-X-Google-Smtp-Source: AGHT+IEsUM5mecSa8OvDA3eHi3Rt//Ce7dwGX8jwgmu78EO/L2nrGwzBPId/luKJz03aDcGKbnhMLH136z6/UVOOfm4=
-X-Received: by 2002:a05:6870:5694:b0:367:6cdd:8c52 with SMTP id
- 586e51a60fabf-3e833fe5841mr1730179fac.14.1762964237482; Wed, 12 Nov 2025
- 08:17:17 -0800 (PST)
+        bh=YPkr/JoKjH8U6Lko6pTK2QTabDhqIIQDxw6EgSjYcZo=;
+        b=cFwgeWFYjGz7eNogRGfIgGiVUDkvp+29PnQ0Ov6wCVN6KHfZcyzw5jXqCsS1ztylD+
+         7DJO2w7Tl1uf9dbJHj/Krh/0B4h7EtNI5NcNwdCU7c10hvGHXmBte2Kgn0X8QnVaPOGa
+         CswB7DAoFGYxKKx/H70g8waez17z4jYX1kXzX8nX3NMYWvLcBTFI132xq4Y6EOWKpi7v
+         tOogUiC2vT74X8gDdd92YNedJVsobTuaedyRzz/hxH3eVwdlv98u8O/0BGtkriKuppEg
+         wjqNSiD8ndLrxOphpFuLcvb1B4rYZ3r042JE2PpaA1GzT+C+2XRu0zi5+XDJjXTlCQYJ
+         lzOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrns7O7hrg+xU/edrkkV+pWNnddE9+yjhlmMJkqM8keNKB8EcN6KdBrhjnvaT8UjT/vY49/7zLVsjIzm15pm+v7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG9BRNifynfaIMo9chkIpiCKDh321F/YZfuMzrkvvabAiKxymw
+	rTir7zmqLmiiaJbni+jzmMQ4pP4Vatb58ocd8PSjTO7ac2nUlV5OqQqq35GwkMEqANc=
+X-Gm-Gg: ASbGncuOwwS+ogcnqxDeGOIxYzoQA2HsKKPQIs1oEXITIe329zIBY/9cLIiJhnsXWjT
+	zxsyFYXvJOIe4GDOFloOjkTXWRSk374pKg+JNj+0O6cMDZPiLCIawLZkG2yUmHvi2EB7qCyMJRd
+	dgjp1VBnn8POHi4cnoNW5OrIivdmfBak9p9LGXJ5TFBB7A8FcFSNE53QakFEaNgj7iW483vxEC9
+	Cy6SkAMPhAr+U7lR4mlY4PyEILnJev8UdiQzQ8nNP+5KGqO44VbqI8QNUXtZEmO5Ytg/uFBua4I
+	6OvfhHZzu9UY4T0h9ST1xK1n28G0PtV942Y0p9oXCAEvr2Pl6xuoESlNXtJNdYJa5XYScaposHt
+	XrC7cV1M7tEJiwJCXkHkyYkXqmrTWNw5GoZ/7eRzoDetETmO0jguaih+VKU1SErLhKqAInOj+cn
+	QV1Ip7/TsUO+gie327fUZSJugJBCfmOVs=
+X-Google-Smtp-Source: AGHT+IGkEoN4sWg2lAUJ3rXUtrl89smNrKDWX680+800326hJYTJQMWhDrBhsVLjs3L/pc050EyNZw==
+X-Received: by 2002:a05:600c:1c85:b0:477:76cb:4812 with SMTP id 5b1f17b1804b1-47787000e64mr38038745e9.0.1762964834332;
+        Wed, 12 Nov 2025 08:27:14 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e36ca3sm48534815e9.5.2025.11.12.08.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 08:27:13 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v5 0/2] Add new phy_notify_state() api
+Date: Wed, 12 Nov 2025 16:27:05 +0000
+Message-Id: <20251112-phy-notify-pmstate-v5-0-39df622d8fcb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112-phy-notify-pmstate-v4-0-717d78009d15@linaro.org>
- <20251112-phy-notify-pmstate-v4-1-717d78009d15@linaro.org> <aRSyTst8Vd-Qb2Ha@shell.armlinux.org.uk>
-In-Reply-To: <aRSyTst8Vd-Qb2Ha@shell.armlinux.org.uk>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 12 Nov 2025 16:17:06 +0000
-X-Gm-Features: AWmQ_bmeUqnv9Axu23X8v5l7CIA0NkBrp9BKset-SthjnPv3fEKplJqCJGUzBUo
-Message-ID: <CADrjBPqPUOQThv+KmeYyUhMA1S5HL_F8FwTa_srcZM43P4GzyA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] phy: add new phy_notify_state() api
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, kernel-team@android.com, 
-	William Mcvicker <willmcvicker@google.com>, Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFm1FGkC/3XOQWrDMBAF0KsErSszM/JEdle9R8lCiSRb0FpGE
+ qYm+O6RA20pSZd/4L8/V5FdCi6L18NVJLeEHOJUA78cxGU00+BksDULAmLQoOQ8rnKKJfhVzp+
+ 5mOKkBzob5o78kUUtzsn58HVH3081jyGXmNb7xoL7dedaBCACZOZGKUWoOklydsWlZkjB+zC9f
+ YTJpNjENIgdWui7/O8vC0mQ/oLHHlrVI+oHQ/0aHT43VDXU2Rrugdla9WC0PwYi0lOjrYZGbXU
+ H0FvkP8a2bTdj3YVgegEAAA==
+X-Change-ID: 20250703-phy-notify-pmstate-f02ba5582f65
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2163;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=2J28k+rkBGEIQnqpoey6EUz8XjM8ez1dZhEzYa6oxzE=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpFLVcYFXUfJuYXtUM4uyqJbaJ6Y1c9sCsE32zd
+ GbAifZjux+JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaRS1XAAKCRDO6LjWAjRy
+ uuElD/4upiReXgng0xFPts/n3ptS/LaaZKG8BuwXA9peTmNePtMCmrgipdYQQQsNQZT9JEnLwcE
+ QeLVgaAbODCp1WU4xlw0FbDR8+OMJciud3OLA8iOEOJyFC2vulmkIsS2QIaQO55LJeRhV7L2Iuu
+ qC0S6fV8h8R8NJhJS0eQmrvfOXcMt7X8QFWO83xULfVXJWokZws2c29b7EMmEVn1e5mXTXo8F/t
+ HToMgLlEvniN5KzxOLHsP1JyOuO5Olv3CeN9T9aIsgu4g4MWOUNp9WcMiyctkWhteU+JCpU+7+1
+ 2hBbhq+w4MKQNZUwk+Zp29lg/GvHe3jKc8kBMigkZdMZj0PTC11GmRw32DUdefMIuQd009Cmq+C
+ FmI11O9/5DbloYzPvg6YAqVY9a+161ADKITnyKyNG/gqk3fUvb1RMYXMcliZlmMi8Yk98/jlDzc
+ YwhGGmuv7jM2/74e59posAroBT8heOInlLav7HBMLlOnBfB6FffTE58bhIxFbFu5ciQ+Iqutf6K
+ KzVQoeGGKtmYv2cnxrTTBwgEMrqGpNnod3X+cN8WArmlhDOotvgoK8HP71X3l/l3SaXav6bvDus
+ +SRPz7xb1rHLxLRZHelG9PmQrZwriY8z3QAQhfT5Z5M8StdtGAi9jmxfWYeappyFNvp7T2Hb3e0
+ P1VM8WhxE15WVgg==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi Russell,
+This series adds a new phy_notify_state() API to the phy subsystem. It is
+designed to be used when some specific runtime configuration parameters
+need to be changed when transitioning to the desired state which can't be
+handled by phy_calibrate()or phy_power_{on|off}().
 
-On Wed, 12 Nov 2025 at 16:14, Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Wed, Nov 12, 2025 at 04:05:58PM +0000, Peter Griffin wrote:
-> > +int phy_notify_state(struct phy *phy, union phy_notify state)
-> ...
-> > @@ -255,6 +266,7 @@ int phy_reset(struct phy *phy);
-> >  int phy_calibrate(struct phy *phy);
-> >  int phy_notify_connect(struct phy *phy, int port);
-> >  int phy_notify_disconnect(struct phy *phy, int port);
-> > +int phy_notify_state(struct phy *phy, union phy_notify state);
-> >  static inline int phy_get_bus_width(struct phy *phy)
-> >  {
-> >       return phy->attrs.bus_width;
-> > @@ -412,6 +424,13 @@ static inline int phy_notify_disconnect(struct phy *phy, int index)
-> >       return -ENOSYS;
-> >  }
-> >
-> > +static inline int phy_notify_phystate(struct phy *phy, union phy_notify state)
->
-> Should this be phy_notify_state() ?
+The first user of the new API is phy-samsung-ufs and phy-gs101-ufs which
+need to issue some register writes when entering and exiting the hibern8
+link state.
 
-Yes, that's a good point! Let me send a new version fixing that.
+A separate patch will be sent for ufs-exynos driver to make use of this new
+API in the hibern8 callbacks.
 
-Peter
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v5:
+- Fix typo phy_notify_phystate to phy_notify_state in phy.h (Russell)
+- Link to v4: https://lore.kernel.org/r/20251112-phy-notify-pmstate-v4-0-717d78009d15@linaro.org
+
+Changes in v4:
+- Add missing 'used' word in commit description (Vinod)
+- Fix 0-day compiler warning
+- Link to v3: https://lore.kernel.org/r/20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org
+
+Changes in v3:
+- Rename API to phy_notify_state(). (Mani/Neil)
+- Remove inline kerneldoc comment (Mani)
+- s/phy/PHY (Mani)
+- peripheral specific enums in phy.h (Vinod)
+
+- Link to v2: https://lore.kernel.org/r/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org
+
+Changes in v2:
+- Add new phy_notify_pmstate API() instead of using phy_set_mode() (Vinod)
+- Link to v1: https://lore.kernel.org/r/20241002201555.3332138-1-peter.griffin@linaro.org
+
+---
+Peter Griffin (2):
+      phy: add new phy_notify_state() api
+      phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
+
+ drivers/phy/phy-core.c                | 25 ++++++++++++++++++++++
+ drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c | 40 +++++++++++++++++++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.h |  7 ++++++
+ include/linux/phy/phy.h               | 19 +++++++++++++++++
+ 5 files changed, 119 insertions(+)
+---
+base-commit: b179ce312bafcb8c68dc718e015aee79b7939ff0
+change-id: 20250703-phy-notify-pmstate-f02ba5582f65
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
