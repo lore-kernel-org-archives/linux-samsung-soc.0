@@ -1,169 +1,265 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DEB2FDC36
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 08:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1502FD7D8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937327; cv=none; b=QqvLjykPcxBL87jwyDR4hKKVqch5jyse+hOomkYlG3+WDz3IWvlk0h4QyyxV7VEQ0QKuxwGRNq6A80sxtdF3Wp8t6F20jaUoV40GQxzE9gqtF7UV3TpaMBCU0K+o5S8beYXE3qRyOZzuwhHPbeWjD8czIF8N4pqY7u1oSsxFnes=
+	t=1762940153; cv=none; b=K7UxKtdPAguLCQBNtWmra6F9j2ux5T3pjxEn8+5lDiQmcBdC0YCGk8gyTbdb/zvetRNnYDSZ9nTYXpNy3CdJo9UE3zaJkgffKHijDsYaUILaG694O9IfIH6QnFdxf833628EPDR9nz8j2zVPrRCxpv4azbgWrfqDhDexC+J6Qwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937327; c=relaxed/simple;
-	bh=n57AkQX/19Tb7iHOH+H3uEtUeyVRBEzgRBixRLiXHFw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q68+FwrYeJQWi8NsjL37ARB5IDYPmxVb/W3Rr+u61w43Aqts8PLJVYEj+eEFWhecs0KXpiQJYtZcIlJylll/egv8iNQ0j2l75ChDrhQDL+cXzW4xwZ6N5GBNUjq5ADBZMR5Wx0p9MJJppryAwaFCXCTKpQIgWjFYEEafV1QYvpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFPGKxn5; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762940153; c=relaxed/simple;
+	bh=NieFD+5uLTt3MKk9kjig/GoQJy6wWKl5wH9u0vd8/98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ngNO97WpU/j9SSZrZz4CNN++7A7crJmDx06sYsHtoZ62vgu56RFzn6pYPioPt1+dVGCxigXGFMOrx2ZYb02w/NMjReeoaaG7iaaCxrEWMJ1bQUiIqp7bIzCSeAmunv7P+exA660hAo0aP39klMe2341s3P/MHCfK0o7zBkdj+HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GeWc7lLC; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFPGKxn5"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so3900525e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 00:48:45 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GeWc7lLC"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-591c74fd958so507803e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 01:35:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762937324; x=1763542124; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YHCwzReQ17B3LDkchxkIz3eblf2i0j4UnwMVHJlClGg=;
-        b=PFPGKxn5zBt9prhjOxKgV6FPoSOd9VYvzVnAH2K4Cn0HVyBMCjEoUxzD2QwQoySfJn
-         TKSYOIccp/l+yD7x/zH23sWWiUjVZhvMg64V9keL/vFxNAoQG5kclLa0tuqzcDiQTbmh
-         UNg3GfnQc46GpXEU97QSvI0i7TxdLf1yVgVeFu8QkjGMUvKwS/QT3vb1xJYMnw8qZFv0
-         ALiq1xtvQgSXmijkNIM7IqUrVsYWIkgHDbsGNiqTTJlQ1vaDAdYJYuNWEdyEL7H0cNnZ
-         Ec/BbVboYCYtC6RPgxgYUaL6LCGkAvhRMBoVoLm18yyJ5U9AqDru9r8OuYVylmSbxrSL
-         0Rmg==
+        d=chromium.org; s=google; t=1762940148; x=1763544948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0/ewDW90X3KFTr8zgTOSbV/dxfkjfmzPzprK+iIMiAE=;
+        b=GeWc7lLCaOzTyboH6rhWgpx9b9bfhYChLUMuoNZIbmNmkU3LX+Upn/Qd3Kyb0HCxsV
+         zYHoKrCXGH/Po5rDJt6TvEAk2yLaDarE5KMATLH7418mfvIcxa2rmxY8mKDg1ENB8o+T
+         IPn1B31M1grcGtGPiPr4jz1vXlJTVlppAImHI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762937324; x=1763542124;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YHCwzReQ17B3LDkchxkIz3eblf2i0j4UnwMVHJlClGg=;
-        b=jTDdHtZySvRiaAICfvweHDUmE0Iy7k2IM7O7juWq5/BwaH00/4UIzT3agl0k2BxUz2
-         WdP8CuxCREStQoZOe8EjNkiMEcHTXEYr77wvZ4SS/hrZNlvFzPvSe6iACLAV5fqtGA0U
-         E+jGN33XLQ1JPzWjK/sQJgjP49WaplagjjgAk1eEHBs4Wa2f6LDt8pEKYHWf/WgwilcN
-         zti9rjsXFR8M93FedjcFtkb06nc31ahSJcPiAehtkHsBgNAXvckDPezGVFSNF9tZ8K39
-         YPBrh46i902Hl/xysFIXi0tZwjuUphXZIT7mPfDd91+XTvmHTA399deUH6sVlz2lpcUn
-         6V6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUOxLyQhYZdQ/dyCygXT5My4znMsZ97325Pmb2mNdJ2A8eFjDFloq6ZvbFA0++8H1oHjvx4TV3YpRlRdBDli67fiQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2tczl/HnzTl3AVGMAwGlDdZISrrtSZhZXDdctdrhZu37lmhF8
-	anyBUNH99drgcHfBunRyXLEu5LcnWnwKyT46Eic3HV1EAMm9UmVF7l1ES4oGfW6ol9U=
-X-Gm-Gg: ASbGnct0Z1lP1/qOkF2YAtXipDAEos9KwyljSLqjXGHZrLyEylsRx4HCLZqJJyCC8/H
-	jly2HrUJLRPZwqPd2RY0lTEKGuYnv12KTKV+UJST5Fq/ymv5TS9DN+3Hy/zw/2xbWlMS4HJrrkd
-	44uE7DniA/NlGZX8n0QUkSm85yWb6QDzFQ8dPYUu6hZ/kLkXOFtcIc+wVOq6P0HJLT6Y/07irao
-	Gw/L/ZSBey1viME5u9VKv02Kj47TuqZqn0iAADHnM+qFu1j4xV08WcZhcz73LqUpXkK+TzmlAAx
-	DhZPOir8c2g51PYIl05maE6rjP2ftT1GdYoyfGWykvFdRh5zRB7U0bsgDnyDkE5AOCNPj2ub/AY
-	LFGKMj7edLJOkjQGCfbMZ25c2ecbxHtpySY1SfrBk2SpXvZudL8XOMM/shyC2cpDRiDOUJPFsUT
-	W6KM1GCWiWJBTASjS9bfSULZH2HLC+bK/JzdpAdW9tb4NUJtwyWvjHTv7e
-X-Google-Smtp-Source: AGHT+IER3DYH8U9sYwYLoN8VfKXngSp0sef0ZPfwedq+Ay/0zM7XddiA+Z2Mq/fUyg1ZnrUUB2uTBg==
-X-Received: by 2002:a05:600c:35c9:b0:477:6373:f3eb with SMTP id 5b1f17b1804b1-477870a8b57mr21511475e9.31.1762937323522;
-        Wed, 12 Nov 2025 00:48:43 -0800 (PST)
-Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47789ffea1esm3732645e9.13.2025.11.12.00.48.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 00:48:43 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Wed, 12 Nov 2025 08:48:23 +0000
-Subject: [PATCH 4/4] soc: samsung: exynos-chipid: use devm action to
- unregister soc device
+        d=1e100.net; s=20230601; t=1762940148; x=1763544948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0/ewDW90X3KFTr8zgTOSbV/dxfkjfmzPzprK+iIMiAE=;
+        b=UsMdZVTx2V68qsQbH1fSOQoc1LZy0SVXOtbeisTIX/tQoI7Rt4Ba7/bOqrWqqYjqr+
+         UZ2cR0q4snIdTmg8mtX/kbBUrrsp3h1Gsjd03WVifUKUdl/Ll79S49ww4hhKmJ5rVbZZ
+         at7omJ6JwaYZCgZQU40qb4U/dZ8KghwKJCgVgXEWd+MsYJFlMJkQQXjYpoVwA9HUS40R
+         oHKOyCXTXxNSdisPrAYr11jt81o3Xzntnj1L5m5CHOO1hWfqHAEi4l3mmyAbNrg2ef8y
+         Zl+F7mjDL5jbnpuKG0XRgSR3RRDk+tZONPSd4HNFyghZA7UDyMP47bxgoL/rM/StSRx1
+         LP5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWevQcsQF4wGt5EO8AbtKXlgT27WeoX/ucKPdPKx2G2Uo6ndbalyyLYiwsUTa21lLPBbb/NLro8msvQzHX6V7jmZA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybDiEmzXRtuER8RvCFK51oE9NgyBPraQSVZK+CW0yDx1nHtOBi
+	L9GB8x2U/TtLZDXKapHhcJ+Ftl5qBt9sNrxCojwf6e4ULvnbo5nzJSd1ppvv4tEUgdEd0rXg/yl
+	WRRLc62joxCeBzW4WAHSSAsQvsRwsngF20R+C2Zvv
+X-Gm-Gg: ASbGncsdktRDEaqSVnvmO1XgvgDOud4pozp8SsnwLIUIH7CD3u8s4/fx5GNoVCSyLWF
+	XxOpLHmy7175kO5VEnzC6kbuZ2ytw5cmaHsthafyiZVcF9GDaWuja2v8vi//uSHtwhj/noAHSW2
+	KgtzyrtzVpl7T8IX4D7+x2SFGUsYCiL81YeCRL4wGutle2gUxlOTIwB1dv1yaYIw6Axx61Jies3
+	PPWbaq2/FDbYp0i4jNsz+ZHTyJ/1Bk8XUuzwznCTV/ARGgrykDZIrg390PZ9rYRXYEcDLnZTDGA
+	sGlqMnz1x9z79jY=
+X-Google-Smtp-Source: AGHT+IH4kkN0jv4f4riUhHsGo1TkywqGJEgMdfA5L0prck6UiZDTgJbXV7KZAlTlvrt958YCpRbpDE0MAyggBZLPz1A=
+X-Received: by 2002:a05:6512:61d4:10b0:595:7c47:cd47 with SMTP id
+ 2adb3069b0e04-5957c47cf67mr249292e87.2.1762940148359; Wed, 12 Nov 2025
+ 01:35:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-chipid-trivial-v1-4-ec2dea03bd83@linaro.org>
-References: <20251112-chipid-trivial-v1-0-ec2dea03bd83@linaro.org>
-In-Reply-To: <20251112-chipid-trivial-v1-0-ec2dea03bd83@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, peter.griffin@linaro.org, 
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762937318; l=2293;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=n57AkQX/19Tb7iHOH+H3uEtUeyVRBEzgRBixRLiXHFw=;
- b=bMyB0dF9A7s2TwSb6EVYiRGLCLForFlgHHMYDdy3K5A6G2Ioi2jiFOZ13zx6ejNWqrQuMYtg/
- v1Svk1Zmeo6DeqIub2Zm7ixB/YNYSXR4VxOo/yq1VXDQvkqPk2UcVcn
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid> <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org>
+In-Reply-To: <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 12 Nov 2025 17:35:37 +0800
+X-Gm-Features: AWmQ_bkz66WuK7bpsdgzsJ4nib9M9mUy7aSiXoY3YFH5rVqdswgkmIG1p6Kqm7g
+Message-ID: <CAGXv+5Gx+skrUR3PXt=RSL8YyKZYeQCkJ-3qW9wtrHrr9aqWAg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: google: Add initial dts for frankel,
+ blazer, and mustang
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	Roy Luo <royluo@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Julius Werner <jwerner@chromium.org>, 
+	William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Simplify the unwinding of the soc device by using a devm action.
+On Wed, Nov 12, 2025 at 4:14=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 11/11/2025 20:22, Douglas Anderson wrote:
+> > Add barebones device trees for frankel (Pixel 10), blazer (Pixel 10
+> > Pro), and mustang (Pixel 10 Pro XL). These device trees are enough to
+> > boot to a serial prompt using an initramfs.
+> >
+> > Many things can be noted about these device trees:
+> >
+> > 1. They are organized as "dts" files for the main SoC and "dtso"
+> >    overlays for the boards. There is discussion about this in the
+> >    bindings patch ("dt-bindings: arm: google: Add bindings for
+> >    frankel/blazer/mustang").
+> > 2. They won't boot with the currently shipping bootloader. The current
+> >    bootloader hardcodes several paths to nodes that it wants to update
+> >    and considers it a fatal error if it can't find these nodes.
+> >    Interested parties will need to wait for fixes to land and a new
+> >    bootloader to be rolled out before attempting to use these.
+> > 3. They only add one revision (MP1) of each of frankel, blazer, and
+> >    mustang. With this simple barebones device tree, there doesn't
+> >    appear to be any difference between the revisions. More revisions
+> >    will be added as needed in the future. The heuristics in the
+> >    bootloader will pick the MP1 device tree if there are not any
+> >    better matches.
+> > 4. They only add the dts for the B0 SoC for now. The A0 SoC support
+> >    can be added later if we find the need.
+> > 5. Even newer versions of the bootloader will still error out if they
+> >    don't find a UFS node to add calibration data to. Until UFS is
+> >    supported, we provide a bogus UFS node for the bootloader. While
+> >    the bootloader could be changed, there is no long-term benefit
+> >    since eventually the device tree will have a UFS node.
+> > 6. They purposely choose to use the full 64-bit address and size cells
+> >    for the root node and the `soc@0` node. Although I haven't tested
+> >    the need for this, I presume the arguments made in commit
+> >    bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address and size
+> >    cells for soc") would apply here.
+> > 7. Though it looks as if the UART is never enabled, the bootloader
+> >    knows to enable the UART when the console is turned on. Baud rate
+> >    is configurable in the bootloader so is never hardcoded in the
+> >    device tree.
+> >
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> > To avoid fragmenting the discussion, IMO:
+> > * Let's have the discussion about using the "dts" for SoC and the
+> >   "dtso" for the boards in response to the bindings (patch #1).
+>
+> That's discussion here, bindings are irrelevant to this.
+>
+> > * If we want to have a discussion about putting "board-id" and
+> >   "model-id" at the root of the board overlays, we can have it
+> >   here. I'll preemptively note that the "board-id" and "model-id"
+> >   won't show up in the final combined device tree and they are just
+> >   used by the tool (mkdtimg). We could change mkdtimg to parse the
+> >   "compatible" strings of the overlays files (since I've put the IDs
+> >   there too), but official the docs [1] seem to indicate that
+> >   top-level properties like this are OK.
+> >
+> > In order for these device trees to pass validation without warnings,
+> > it's assumed you have my dtc patches:
+> > * https://lore.kernel.org/r/20251110204529.2838248-1-dianders@chromium.=
+org
+> > * https://lore.kernel.org/r/20251110204529.2838248-2-dianders@chromium.=
+org
+> >
+> > [1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation=
+/dt-object-internal.txt?h=3Dmain
+> >
+> >  arch/arm64/boot/dts/google/Makefile           |   9 +
+> >  arch/arm64/boot/dts/google/lga-b0.dts         | 391 ++++++++++++++++++
+> >  .../arm64/boot/dts/google/lga-blazer-mp1.dtso |  22 +
+> >  .../boot/dts/google/lga-frankel-mp1.dtso      |  22 +
+> >  .../boot/dts/google/lga-mustang-mp1.dtso      |  22 +
+> >  .../boot/dts/google/lga-muzel-common.dtsi     |  17 +
+> >  6 files changed, 483 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/google/lga-b0.dts
+> >  create mode 100644 arch/arm64/boot/dts/google/lga-blazer-mp1.dtso
+> >  create mode 100644 arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+> >  create mode 100644 arch/arm64/boot/dts/google/lga-mustang-mp1.dtso
+> >  create mode 100644 arch/arm64/boot/dts/google/lga-muzel-common.dtsi
+> >
+> > diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/=
+google/Makefile
+> > index a6b187e2d631..276001e91632 100644
+> > --- a/arch/arm64/boot/dts/google/Makefile
+> > +++ b/arch/arm64/boot/dts/google/Makefile
+> > @@ -1 +1,10 @@
+> >  # SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> > +
+> > +dtb-$(CONFIG_ARCH_GOOGLE) +=3D \
+> > +     lga-blazer-mp1.dtb \
+> > +     lga-frankel-mp1.dtb \
+> > +     lga-mustang-mp1.dtb
+> > +
+> > +lga-blazer-mp1-dtbs          :=3D lga-b0.dtb lga-blazer-mp1.dtbo
+> > +lga-frankel-mp1-dtbs         :=3D lga-b0.dtb lga-frankel-mp1.dtbo
+> > +lga-mustang-mp1-dtbs         :=3D lga-b0.dtb lga-mustang-mp1.dtbo
+> > diff --git a/arch/arm64/boot/dts/google/lga-b0.dts b/arch/arm64/boot/dt=
+s/google/lga-b0.dts
+> > new file mode 100644
+> > index 000000000000..83c2db4f20ef
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/google/lga-b0.dts
+> > @@ -0,0 +1,391 @@
+> > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> > +/*
+> > + * Google Tensor G5 (laguna) SoC rev B0
+> > + *
+> > + * Copyright 2024-2025 Google LLC.
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +/ {
+> > +     model =3D "Google Tensor G5 rev B0";
+> > +     compatible =3D "google,soc-id-0005-rev-10", "google,lga";
+>
+> So that's SoC, thus must not be a DTS file, but DTSI.
+>
+> ...
+>
+>
+> ...
+>
+>
+> > diff --git a/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso b/arch/arm=
+64/boot/dts/google/lga-frankel-mp1.dtso
+> > new file mode 100644
+> > index 000000000000..133494de7a9b
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+>
+> And that's a board, so DTS.
+>
+> > @@ -0,0 +1,22 @@
+> > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> > +/*
+> > + * Google Pixel 10 (frankel) MP 1
+> > + *
+> > + * Copyright 2024-2025 Google LLC.
+> > + */
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +
+> > +#include "lga-muzel-common.dtsi"
+> > +
+> > +/ {
+> > +     board-id =3D <0x070306>;
+> > +     board-rev =3D <0x010000>;
+>
+> Undocumented ABI, which you cannot document because these properties are
+> not allowed. You cannot have them.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/soc/samsung/exynos-chipid.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+This is part of the discussion I want to have at Plumbers. But I suppose
+we can start here.
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index b5866a324d8ae911a5c99d0290328efdcc072dfd..d5b4d4f8d43da4c50d0e856e914550a9322725a1 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -14,6 +14,7 @@
- 
- #include <linux/array_size.h>
- #include <linux/device.h>
-+#include <linux/device/devres.h>
- #include <linux/errno.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-@@ -104,6 +105,11 @@ static int exynos_chipid_get_chipid_info(struct regmap *regmap,
- 	return 0;
- }
- 
-+static void exynos_chipid_unregister_soc(void *data)
-+{
-+	soc_device_unregister(data);
-+}
-+
- static int exynos_chipid_probe(struct platform_device *pdev)
- {
- 	const struct exynos_chipid_variant *drv_data;
-@@ -151,28 +157,19 @@ static int exynos_chipid_probe(struct platform_device *pdev)
- 	if (IS_ERR(soc_dev))
- 		return PTR_ERR(soc_dev);
- 
--	ret = exynos_asv_init(dev, regmap);
-+	ret = devm_add_action_or_reset(dev, exynos_chipid_unregister_soc,
-+				       soc_dev);
- 	if (ret)
--		goto err;
-+		return dev_err_probe(dev, ret, "failed to add devm action\n");
- 
--	platform_set_drvdata(pdev, soc_dev);
-+	ret = exynos_asv_init(dev, regmap);
-+	if (ret)
-+		return ret;
- 
- 	dev_dbg(dev, "Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
- 		soc_dev_attr->soc_id, soc_info.product_id, soc_info.revision);
- 
- 	return 0;
--
--err:
--	soc_device_unregister(soc_dev);
--
--	return ret;
--}
--
--static void exynos_chipid_remove(struct platform_device *pdev)
--{
--	struct soc_device *soc_dev = platform_get_drvdata(pdev);
--
--	soc_device_unregister(soc_dev);
- }
- 
- static const struct exynos_chipid_variant exynos4210_chipid_drv_data = {
-@@ -205,7 +202,6 @@ static struct platform_driver exynos_chipid_driver = {
- 		.of_match_table = exynos_chipid_of_device_ids,
- 	},
- 	.probe = exynos_chipid_probe,
--	.remove = exynos_chipid_remove,
- };
- module_platform_driver(exynos_chipid_driver);
- 
+The Android DTB partition format uses six 32-bit integers for matching,
+as opposed to a compatible string used in FIT images. Two of the integers
+are the "id" and "rev" numbers in the example above. The remaining four
+are custom and left up to the (vendor) bootloader implementation.
 
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+The values for these fields need to be stored somewhere with the .dts.
+The compiled DTB is useless if the user cannot build a proper image for
+the bootloader to consume, and that involves putting in the right numbers
+in these fields. The android "mkdtimg" tool can either take the values
+from some known properties within the DTB, or have them fed to it
+externally.
 
+So if we don't want these numbers in the dts itself, then we should come
+up with some format to store them beside the dts files.
+
+
+On a similar note, we would have a similar problem with FIT images and
+overlays. The FIT image format maps a (series of) compatible string(s)
+to one DTB and any number of overlays. If overlays are involved, then
+the compatible string cannot come from the DTB itself, and the mapping
+must be stored somewhere.
+
+
+ChenYu
