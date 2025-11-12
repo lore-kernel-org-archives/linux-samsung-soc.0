@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2D12DEA77;
-	Wed, 12 Nov 2025 08:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFDA2C08C2;
+	Wed, 12 Nov 2025 08:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762935014; cv=none; b=Sme0W18qcbKrjGQx3KAWKksXtTdkgWhwY2oL7cQ4oTPG+/wOF42N5Xat5tjrwefgAvo/qO9jvSrVnkpm45V2cYKFwaWBAOpxo9uG1EAnqQ5FKXVaT6ZpeWeUieXu+24nlj1qSLLUPOeJx8TvBSqQdh9hmOgT+b96J17bWvE8kss=
+	t=1762935258; cv=none; b=WW2naF+CbJcbjk6xGTPOYGZsTyatlFdscV5YbULZ7LNi1vI3OTXqAp0qUddBTT/brlBlJoYDgG89Gw0TJKO0SPJEI2JQIroAMjOYD+0GWRp4Y+EagvRpV/kYchSW/7SicmTfEecM5Mx/tRkRUrAO0OgOmKnxuFkbQcjgh9PKZEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762935014; c=relaxed/simple;
-	bh=iv/OPEfQvs2X2gEq4hDNQaM+Mdv+7H4qcOkVCuUzYvc=;
+	s=arc-20240116; t=1762935258; c=relaxed/simple;
+	bh=ZLUHJ3nXQoAGNsQe7fgeAz8Dvgy6taFR/cCsG/Xfe5U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WfuYODuv1eh+k3LLknG7HYQiYtTh4ZPNNwJlYQR80L4jeejtXokc54LKzSoKC3bi76IUjvkpCEvIXL/pPXK4A3d5hFDxbudQNd3tShEC5v7zlcOGGdKyn9h9i2hAgdCTy5k9joOerrzLuXQB+vu0WEPXExuatVUXEjjps0m9sFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+16XDEn; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=X0LnO2nM5Hfnjy8vykEuFu3LY8oVr9260BqkGzSo2GPVQEjKB1EqpKcg0xg4xAWZgLqQ0DaoGxFPGZTx3eC2imAyr1eysfSs6FrIbnr267fH2p4yk9jG7xXCESskmF3Oi7WL3QMe7cQcH13+DwN9SODt/lqXSIRDQti/364OK+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXI4NbVg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+16XDEn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9FAC16AAE;
-	Wed, 12 Nov 2025 08:10:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXI4NbVg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755F4C4CEF5;
+	Wed, 12 Nov 2025 08:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762935013;
-	bh=iv/OPEfQvs2X2gEq4hDNQaM+Mdv+7H4qcOkVCuUzYvc=;
+	s=k20201202; t=1762935257;
+	bh=ZLUHJ3nXQoAGNsQe7fgeAz8Dvgy6taFR/cCsG/Xfe5U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t+16XDEn2tz88QHz1qof4GA7lGaNoQ8SBVlOT4YHqqiRtEU/n0xdDxY70KEIN1Wlq
-	 5yj91quFLQHofrnrYAoI4AB88x5AcfpbI1KTRthlrRcclbAJQ99ykS9p/sHTVlrJtb
-	 6BZZd9MFBCGPVX/PJYmQKKAmcueOQYjbJnf7ZEGlQ6056yRXBN7WJcqQdlbKtT0/vg
-	 adASYXnaVFyHVDYqsVK70Z0ZRoomJTkoYMaOckyP3P9hGmyV/41wbjyjRoyv5Btf5P
-	 fLVoU+X8FkLDZJHnmemrY7QhmJHtdjqHxzURQGY2dedz6DD6J6HrCY6Kp9PsRKCDCJ
-	 jUfZALiZyMLvg==
-Message-ID: <b55d94f2-6b79-407f-af58-b9847db3c9a2@kernel.org>
-Date: Wed, 12 Nov 2025 09:10:07 +0100
+	b=JXI4NbVgLixO0GOgeRVClcNs8W1nh0RJcDMkuYRSiUwgx2FPy4L/BjH5k/OqHZjA/
+	 67PrSg2ug51TbcbbTfzas5QPw9Vda1B6HPhOvxOP47+aG6NozWJs4J2t3+LXBulvC5
+	 nLrKB11ju8V1BDMNgNzSMUXmtAKKIZTs/k2/dwVTJN8Fqyxr/4VyerE8ng5Kf1HU2P
+	 5wc5e7OMsjPxtrwayEG2x1oYIV/rZaVJjoD/za30PYZMaS2FegvPT7qUY2cZ52ZObP
+	 wSsnUn2gU4BPEIYsaK/G+jx/tN/4u6EXxfGOL9ePJY9gcgk5LTB+khqmqXoIjbR3uK
+	 ptKL5XRz7zbAA==
+Message-ID: <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org>
+Date: Wed, 12 Nov 2025 09:14:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: google: Add dts directory for
- Google-designed silicon
+Subject: Re: [PATCH 4/4] arm64: dts: google: Add initial dts for frankel,
+ blazer, and mustang
 To: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
@@ -45,14 +45,9 @@ To: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
 Cc: linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>,
- William McVicker <willmcvicker@google.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Drew Fustini <fustini@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
- soc@lists.linux.dev
+ William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
 References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.3.I35b9e835ac49ab408e5ca3e0983930a1f1395814@changeid>
+ <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,85 +93,158 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251111112158.3.I35b9e835ac49ab408e5ca3e0983930a1f1395814@changeid>
+In-Reply-To: <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 11/11/2025 20:22, Douglas Anderson wrote:
-> The first four Google Tensor SoCs were offshoots of Samsung Exynos
-> SoCs and their device trees were organized under the "exynos/google"
-> directory. Starting with the Google Tensor G5 SoC in Pixel 10 phones,
-> Google Tensor SoCs are now of Google's own design. Add a location in
-> the tree to store these device tree files.
+> Add barebones device trees for frankel (Pixel 10), blazer (Pixel 10
+> Pro), and mustang (Pixel 10 Pro XL). These device trees are enough to
+> boot to a serial prompt using an initramfs.
+> 
+> Many things can be noted about these device trees:
+> 
+> 1. They are organized as "dts" files for the main SoC and "dtso"
+>    overlays for the boards. There is discussion about this in the
+>    bindings patch ("dt-bindings: arm: google: Add bindings for
+>    frankel/blazer/mustang").
+> 2. They won't boot with the currently shipping bootloader. The current
+>    bootloader hardcodes several paths to nodes that it wants to update
+>    and considers it a fatal error if it can't find these nodes.
+>    Interested parties will need to wait for fixes to land and a new
+>    bootloader to be rolled out before attempting to use these.
+> 3. They only add one revision (MP1) of each of frankel, blazer, and
+>    mustang. With this simple barebones device tree, there doesn't
+>    appear to be any difference between the revisions. More revisions
+>    will be added as needed in the future. The heuristics in the
+>    bootloader will pick the MP1 device tree if there are not any
+>    better matches.
+> 4. They only add the dts for the B0 SoC for now. The A0 SoC support
+>    can be added later if we find the need.
+> 5. Even newer versions of the bootloader will still error out if they
+>    don't find a UFS node to add calibration data to. Until UFS is
+>    supported, we provide a bogus UFS node for the bootloader. While
+>    the bootloader could be changed, there is no long-term benefit
+>    since eventually the device tree will have a UFS node.
+> 6. They purposely choose to use the full 64-bit address and size cells
+>    for the root node and the `soc@0` node. Although I haven't tested
+>    the need for this, I presume the arguments made in commit
+>    bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address and size
+>    cells for soc") would apply here.
+> 7. Though it looks as if the UART is never enabled, the bootloader
+>    knows to enable the UART when the console is turned on. Baud rate
+>    is configurable in the bootloader so is never hardcoded in the
+>    device tree.
 > 
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
+> To avoid fragmenting the discussion, IMO:
+> * Let's have the discussion about using the "dts" for SoC and the
+>   "dtso" for the boards in response to the bindings (patch #1).
+
+That's discussion here, bindings are irrelevant to this.
+
+> * If we want to have a discussion about putting "board-id" and
+>   "model-id" at the root of the board overlays, we can have it
+>   here. I'll preemptively note that the "board-id" and "model-id"
+>   won't show up in the final combined device tree and they are just
+>   used by the tool (mkdtimg). We could change mkdtimg to parse the
+>   "compatible" strings of the overlays files (since I've put the IDs
+>   there too), but official the docs [1] seem to indicate that
+>   top-level properties like this are OK.
 > 
->  MAINTAINERS                         | 1 +
->  arch/arm64/Kconfig.platforms        | 6 ++++++
->  arch/arm64/boot/dts/Makefile        | 1 +
->  arch/arm64/boot/dts/google/Makefile | 1 +
->  4 files changed, 9 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/google/Makefile
+> In order for these device trees to pass validation without warnings,
+> it's assumed you have my dtc patches:
+> * https://lore.kernel.org/r/20251110204529.2838248-1-dianders@chromium.org
+> * https://lore.kernel.org/r/20251110204529.2838248-2-dianders@chromium.org
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ddecf1ef3bed..f73a247ec61c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10606,6 +10606,7 @@ C:	irc://irc.oftc.net/pixel6-kernel-dev
->  F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
->  F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
->  F:	arch/arm64/boot/dts/exynos/google/
-> +F:	arch/arm64/boot/dts/google/
->  F:	drivers/clk/samsung/clk-gs101.c
->  F:	drivers/phy/samsung/phy-gs101-ufs.c
->  F:	include/dt-bindings/clock/google,gs101.h
-
-
-I am fine with this but also please consider having separate maintainers
-entry, because, as you said, this is a completely different SoC.
-
-In any case, up to you folks.
-
-
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 13173795c43d..044af9a3b45f 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -138,6 +138,12 @@ config ARCH_EXYNOS
->  	help
->  	  This enables support for ARMv8 based Samsung Exynos SoC family.
->  
-> +config ARCH_GOOGLE
-> +	bool "Google-Designed SoC family"
-> +	help
-> +	  This enables support for Google Tensor chips starting at the
-> +	  Google Tensor G5.
-> +
->  config ARCH_K3
->  	bool "Texas Instruments Inc. K3 multicore SoC architecture"
->  	select SOC_TI
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index b0844404eda1..b4b5023d61d2 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -17,6 +17,7 @@ subdir-y += cavium
->  subdir-y += cix
->  subdir-y += exynos
->  subdir-y += freescale
-> +subdir-y += google
->  subdir-y += hisilicon
->  subdir-y += intel
->  subdir-y += lg
+> [1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dt-object-internal.txt?h=main
+> 
+>  arch/arm64/boot/dts/google/Makefile           |   9 +
+>  arch/arm64/boot/dts/google/lga-b0.dts         | 391 ++++++++++++++++++
+>  .../arm64/boot/dts/google/lga-blazer-mp1.dtso |  22 +
+>  .../boot/dts/google/lga-frankel-mp1.dtso      |  22 +
+>  .../boot/dts/google/lga-mustang-mp1.dtso      |  22 +
+>  .../boot/dts/google/lga-muzel-common.dtsi     |  17 +
+>  6 files changed, 483 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/google/lga-b0.dts
+>  create mode 100644 arch/arm64/boot/dts/google/lga-blazer-mp1.dtso
+>  create mode 100644 arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+>  create mode 100644 arch/arm64/boot/dts/google/lga-mustang-mp1.dtso
+>  create mode 100644 arch/arm64/boot/dts/google/lga-muzel-common.dtsi
+> 
 > diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> new file mode 100644
-> index 000000000000..a6b187e2d631
-> --- /dev/null
+> index a6b187e2d631..276001e91632 100644
+> --- a/arch/arm64/boot/dts/google/Makefile
 > +++ b/arch/arm64/boot/dts/google/Makefile
-> @@ -0,0 +1 @@
-> +# SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-Drop the '+' in GPL license.
+> @@ -1 +1,10 @@
+>  # SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +
+> +dtb-$(CONFIG_ARCH_GOOGLE) += \
+> +	lga-blazer-mp1.dtb \
+> +	lga-frankel-mp1.dtb \
+> +	lga-mustang-mp1.dtb
+> +
+> +lga-blazer-mp1-dtbs		:= lga-b0.dtb lga-blazer-mp1.dtbo
+> +lga-frankel-mp1-dtbs		:= lga-b0.dtb lga-frankel-mp1.dtbo
+> +lga-mustang-mp1-dtbs		:= lga-b0.dtb lga-mustang-mp1.dtbo
+> diff --git a/arch/arm64/boot/dts/google/lga-b0.dts b/arch/arm64/boot/dts/google/lga-b0.dts
+> new file mode 100644
+> index 000000000000..83c2db4f20ef
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/google/lga-b0.dts
+> @@ -0,0 +1,391 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +/*
+> + * Google Tensor G5 (laguna) SoC rev B0
+> + *
+> + * Copyright 2024-2025 Google LLC.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +/ {
+> +	model = "Google Tensor G5 rev B0";
+> +	compatible = "google,soc-id-0005-rev-10", "google,lga";
 
+So that's SoC, thus must not be a DTS file, but DTSI.
+
+...
+
+
+...
+
+
+> diff --git a/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+> new file mode 100644
+> index 000000000000..133494de7a9b
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+
+And that's a board, so DTS.
+
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +/*
+> + * Google Pixel 10 (frankel) MP 1
+> + *
+> + * Copyright 2024-2025 Google LLC.
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +#include "lga-muzel-common.dtsi"
+> +
+> +/ {
+> +	board-id = <0x070306>;
+> +	board-rev = <0x010000>;
+
+Undocumented ABI, which you cannot document because these properties are
+not allowed. You cannot have them.
 
 Best regards,
 Krzysztof
