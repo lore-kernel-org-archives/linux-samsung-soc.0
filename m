@@ -1,45 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7362522068D;
-	Wed, 12 Nov 2025 10:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FB22594BD;
+	Wed, 12 Nov 2025 10:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942238; cv=none; b=RBL9k4mC/MEpPRIjETJIJfs8I1N0H7FnxP9IeahWd/waSW+PKHIvnH0pc5h7SRFGNQN3Alm20JEb2+fus0HWKWFH4N9RGdqeSQXBjKy6WYU5yrSaqbtmsIrBSK9CZ379hFL9r88JQUgWtRFQnCPD+rE06H/RypdaXb2CJf20wcQ=
+	t=1762942857; cv=none; b=DHLUAfR7aMiex+5pwhT8iepr/T7kj4T8HHRNwz8RoaisI7Lvfm+pXgfiKJk4Du0KN5YWxcg8bJHqBJ8qbmzoN9Ce/Tc6WXwBOh3BguW67r7RSuQ/2mYbC7qcsfhVcsNVVBnG9TQ1DWQAPTBby1TgcAr/GWWKnBS6R9APkY7j4Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942238; c=relaxed/simple;
-	bh=OI4OUlvhHmDSAzWOa/KlNdjQ8BpXsKJB7zSPJd/P6F8=;
+	s=arc-20240116; t=1762942857; c=relaxed/simple;
+	bh=BjbMbn6QXuES5GSmGzJYQMBQyUywLDkryqleK8Yl/iA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFuY7Odx2XA5gdxff95NoXu0S5Ju5rpX7aeaRre4UTEPnH6JprzTYDkdyqHdIIKvw7w4vCBomSN09LgYMXyYDiw6/h0d/m1XF/kawUGDPbUlrMZYyP315AyT1xBS/pI2r7i+yBhkCu3olV1BXfOLyPGuMna2AQrPAtimyFEsyQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owB01Lqi; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=OnaFPdtK+ZiHWQp7RWvSGKN/F2G5aJahBMu+RGDUPI10pd0NCTZmZH3SJbx7ncmkoi8konEZXqYQl/CglNksX+Cj4KjIc0ykdIN9STYZ2rGojCuGzAq7v9lgeaJ6CO6nG7orwOjhM0Q9tPBwojCvuNB7lRPzg6Qcwb9+LT88KXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnfEQmj1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owB01Lqi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A061EC16AAE;
-	Wed, 12 Nov 2025 10:10:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnfEQmj1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55556C4CEF5;
+	Wed, 12 Nov 2025 10:20:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762942238;
-	bh=OI4OUlvhHmDSAzWOa/KlNdjQ8BpXsKJB7zSPJd/P6F8=;
+	s=k20201202; t=1762942856;
+	bh=BjbMbn6QXuES5GSmGzJYQMBQyUywLDkryqleK8Yl/iA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=owB01LqiOZhRt6lQkLYrDIKUxIaRF3ajlHqurrNjK9jZeTgy+J9AnzbT7B4MfCiKj
-	 5ERwfd67DAGdbfY12lFCv4KLfi+JwHF2NZjcin5p+4mxug0QSCUtwtQr2sA9aZnafN
-	 VSXxV6ONT5U6tpZWLzUr6SYwI5MApyvbYGLcFKM+sD/kzG5driYk5m1zFYM3Pp54H1
-	 tWKQUlNquokdosF93TVtmG5PxllL5qHRFZQ/aGOtGMJP8WCSfh7Qv1S869GUJT+03V
-	 fUvmG69RDVO02rcOK7CH2MYr8KsjP5cowwxa0bwoCpZdZ3La6NbR3sWyHek8g2eqFI
-	 KkWexN3WkJA+w==
-Date: Wed, 12 Nov 2025 11:10:35 +0100
+	b=KnfEQmj1uZS0TGaWKSAdADLFlu8oZecWfpLq1rdx4dQ/8lV7AWqVTXLhFTOOfgGHT
+	 uROw5hHAKgy1wnTlRXE29p2DOem+o3fTD8DuxWSXAJQEF7aBjGP0SA7s20cl9dEYjg
+	 xR37clnTdSJ582ojs//Mw/i6t1b4Fgz4lI3APhbTp9v0Mb1goh4mbVH3fwOYvdTZhn
+	 5E2C/E8XrkA41m/eVgxiLnNQ/44X6QfqXwmQ5HvS7AlF9do4VJT5TiNQlDhsec6JN9
+	 bfOPEUH1LH4G8d2BpjjXabyEiDdkof2BuyXY2maoGNZ6G5HOQJe6EgunyVsnHGmoU9
+	 OTS+ZPZTHtO0Q==
+Date: Wed, 12 Nov 2025 11:20:54 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 06/20] dt-bindings: mfd: Add samsung,s2mpg11-pmic
-Message-ID: <20251112-winged-kangaroo-of-superiority-af06a2@kuoka>
-References: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
- <20251110-s2mpg1x-regulators-v4-6-94c9e726d4ba@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dan.carpenter@linaro.org, kernel-team@android.com, willmcvicker@google.com, arnd@arndb.de
+Subject: Re: [PATCH 1/2] dt-bindings: soc: samsung: exynos-pmu: remove syscon
+ for google,gs101-pmu
+Message-ID: <20251112-airborne-tungsten-chupacabra-1c668c@kuoka>
+References: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
+ <20251103-remove-pmu-syscon-compat-v1-1-f2cb7f9ade6f@linaro.org>
+ <20251105-guillemot-of-demonic-courtesy-6127ac@kuoka>
+ <CADrjBPog8u8sRsUjcgKNG87kdcF5HHx94tUXPdTrCUG-PxSXWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,34 +50,38 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251110-s2mpg1x-regulators-v4-6-94c9e726d4ba@linaro.org>
+In-Reply-To: <CADrjBPog8u8sRsUjcgKNG87kdcF5HHx94tUXPdTrCUG-PxSXWg@mail.gmail.com>
 
-On Mon, Nov 10, 2025 at 07:28:49PM +0000, Andr=C3=A9 Draszik wrote:
-> The Samsung S2MPG11 PMIC is similar to the existing S2MPG10 PMIC
-> supported by this binding, but still differs enough from it to justify
-> a separate binding.
->=20
-> It is a Power Management IC for mobile applications with buck
-> converters, various LDOs, power meters, NTC thermistor inputs, and
-> additional GPIO interfaces and typically complements an S2MPG10 PMIC in
-> a main/sub configuration as the sub-PMIC.
->=20
-> Like S2MPG10, communication is via the Samsung ACPM firmware and it
-> therefore needs to be a child of the ACPM firmware node.
->=20
-> Add the PMIC, the regulators node, and the supply inputs of the
-> regulator rails, with the supply names matching the datasheet.
->=20
-> Note: S2MPG11 is typically used as the sub-PMIC together with an
-> S2MPG10 PMIC in a main/sub configuration, hence the datasheet and the
-> binding both suffix the supplies with an 's'.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
+On Tue, Nov 11, 2025 at 10:18:47AM +0000, Peter Griffin wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 5 Nov 2025 at 08:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Mon, Nov 03, 2025 at 08:03:10AM +0000, Peter Griffin wrote:
+> > > Since commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes without a
+> > > "syscon" compatible") it is possible to register a regmap without the
+> > > syscon compatible in the node.
+> > >
+> > > Update the bindings for google,gs101-pmu so that the syscon compatible is
+> >
+> > That's an ABI break...
+> >
+> > > no longer required. As it isn't really correct to claim we are compatible with
+> > > syscon (as a mmio regmap created by syscon will not work on gs101).
+> >
+> > ... with kind of a reason, but then the question I have: was the
+> > standard MMIO regmap exposed via syscon ever working for any part of
+> > this PMU?
+> >
+> > Original posting here:
+> > https://lore.kernel.org/all/20231209233106.147416-2-peter.griffin@linaro.org/
+> > did not change PMU driver and did not express that the syscon is broken.
+> 
+> With the benefit of hindsight, no, PMU write register access was never
+> working for any part of the PMU.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please add it to the last paragraph of your commit msg, that this was
+never working in practice thus changing ABI is justified.
 
 Best regards,
 Krzysztof
