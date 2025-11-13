@@ -1,66 +1,33 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656EE320CA0
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 10:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72966331A7D;
+	Thu, 13 Nov 2025 10:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763029599; cv=none; b=PnaqObZrjliEYCPSsFcqS2uwTJsoYViGoGzJdIhzBKuu3fzIn18s2EDjJ619UZpHAnYKHYvdU6zHVX8NFjicMFMRDyaoCA4WppPsHF7Kapv3hORjVhgtZw30dyvI1J9KRrAAlwW3tRfPa0S57HXcTYyiYJarCkbq6sBd9ATmCHs=
+	t=1763030630; cv=none; b=DmTvR575CgpwkobdawdaV0hN4kU1xpy9l8wQcJXrDi1vuHGmgumetj/HAlblyQX3+alxWWbR3Lm/F5F7aDg5DMPUs4jLlLF6ipKQOWzL8dtYCsOg6Y8QLqa4tCudtIIDva9IbiXAXNb5dF2yxljRV5pgYLiZrAUv53srIev2Bbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763029599; c=relaxed/simple;
-	bh=ZCFF04RJ9CJCCxVRA1yz9U8VC4BnDMiI7a/ozJ4Gsyw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=brv2xS8gqY65/xFmv/GWQWne33LKkgNjTWTUAxvfPfP5pKxC+bOcFiOdasQSX2zyXyWb/xVLhtgI7KLHZHSd6L3RqhbS4E+AWlhwwp6nybbFh7YADNJPWScyl1sJvQowpCB9LAMfMEQIBY3WmfF+9be2btUXwTj0cnJ1GEw+XRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dpl7fpkX; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763030630; c=relaxed/simple;
+	bh=pO1LaCxbxGxU97YcM8QiLnR+asiXqGQGIHK5kqR2StQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3KCeqxkHHlq7o/1VlEhNdVv+3FgB8W9+2zP/KTlSrqdpfR/mzgSf0Df5BykQ4ZJraOlXqxIaV9lrWvMAuO9++NMHQGLuRnq/xPaIheY8TgnKQ9C2taz5KdvIdjUoMoTYRYwUTOcSAHLRCWo+JEn8gicy1stDZXbfMOerxYVEcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfFKJJu6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dpl7fpkX"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42b312a08a2so515542f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 02:26:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763029596; x=1763634396; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v8GhrcAyMh3A+V43CTkvvT8Jy87HXinsSZJMcVDG3s0=;
-        b=Dpl7fpkXF0gkobSFHf7scS5hTiYA3Phb2KISMxQhISZdJwWqpX4PR5Y5rcSmmfMLo+
-         l6HO1l4GiuSmzym5hv+H7QXd362GlKGj/AP/N/TGPD/crZYyIvzvZ/1am8Cu0NyWlwUg
-         7k/xgszsuJKLy55vRK0M0WIe/eUbtbCsRNC8BC/GB3Wsd28mWqtisUeKPFNQ60lprpce
-         xHK1RtURMlL+ZJb+SWH5vfrA8ts2Dhj2pho/SNvLW+Jdz9Yoeab4hC5InmXnqJFqbCRS
-         XHw7BJl4RADFY3sm4ldIjewGF3OdMFfdcdcAcbnSQu+onp8G9brFGBrMFwyEKdecIl5q
-         Wbzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763029596; x=1763634396;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8GhrcAyMh3A+V43CTkvvT8Jy87HXinsSZJMcVDG3s0=;
-        b=XyoVQInNydJSABfSQmNOQhnFMyjStJ+/yf3nVKIgVAw3JSU99U5T9CNpYn9XopTgAY
-         J58EyjNtiwLtZWJB6yw9h6QBcaUsarE2MFOq6WM5bIJiPif4iIr38/A0N2Bq8zn/hypt
-         VaizUBgP/d0403bT7wfE+sIovbQqXR0mjKWnJrivmzSK636l8wVdHIXCcEGosydST9hz
-         0Lz5/TDXVPiToiicoIIdh7jlCpYlyo9tLn8D5Z1VuOPqxW2zcuA6GyZ/N8KjEilx/xks
-         ttO1/a2eGxB04gvVmIxbL4DyCOOjSri2LIf3QS6D7TYmiAHdMRle/tCPSOBOarVn5io2
-         JGUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVN0dZYvfxuiehs8/U3C4OedvV5Gxew6TGyrtZlxa+C/MGMiBFsw38w5UA3sOci9awvbSZ0o4RSZLJ2JnAxQen1+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMQVAqt+OCUKLuiC8sQFZPcDHcJVRag93uDKqi5OCWUfd6hN+N
-	YhJ9H9sRIWQRLScuzEJMlvEkDuQsIFvYMeDyauJd5Xfz+Kd4tahQshJoz/7yzOtiWmQ=
-X-Gm-Gg: ASbGncvvvrJ6ADRvgD8dVPKRHhr25+aZyGpVgkRKmHikUKu6fmr2KBT74ysOaN0C1Vx
-	jVBVEDK75AUkwaD1KFlOjikJhmvjuh07t6Q/uf9QG4eD0Mmz38CEmPPind+kDz9ZpN8Nyug8/dV
-	ZZFcfuY3jXUdmX/VJau4EOwphXl9bi4tg60FgZeyZu+d2qQ/6iTHWtI/RQvVHF++PtW8JD3RaRP
-	K+WIgtS1YPHXj0eniDotARYEAU1cnu/rWGSvSKsuVTKrCOzBZkHuNkcKxih23R5fcAcRh0ciE5o
-	ZVhLJtRsCwXLaWIYbUINGh+/dWWQoMHnnJmzF9ABl3QLZ+mipVCvzNDdSrm8jKqJ7Is/Ps7o53i
-	zlulZSV/v98+8vg/faJspsLcqiCg/ERNwRkEI1gUc/d3wFpifnQMLuUjtKFnbW2ZyrXoHOgY2n1
-	gfiv6FiQ==
-X-Google-Smtp-Source: AGHT+IFappH0cJvSx4iLsRJxGuedr9FOAfOnQi4qZr3vNlHJHTAAZOTa3M8ohns19ObiXS0otCFe/Q==
-X-Received: by 2002:a5d:5848:0:b0:42b:3dfb:6436 with SMTP id ffacd0b85a97d-42b4bdaeacbmr6137389f8f.60.1763029595613;
-        Thu, 13 Nov 2025 02:26:35 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b57asm3088931f8f.27.2025.11.13.02.26.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 02:26:35 -0800 (PST)
-Message-ID: <62bb6c08-a1d0-4dba-a431-0d6ce49d66b2@linaro.org>
-Date: Thu, 13 Nov 2025 12:26:33 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfFKJJu6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E320FC2BC87;
+	Thu, 13 Nov 2025 10:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763030630;
+	bh=pO1LaCxbxGxU97YcM8QiLnR+asiXqGQGIHK5kqR2StQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AfFKJJu6dEC+O5OY7p9fppV2wVQvMcWDsKcqXcyTBl61rqPLUE4/Tr8oZH1RI4ZJo
+	 JjN2SHggzBE46Gdajk8cbv03oMd38NuiAJJ1m7TI/hX3ZTuwKrpgdPVdNlWgcmDWBP
+	 VJvj5SlLCsMbtMhbXjuOWuX20fxep8mHGX+BE/X+l5k9e+SFs1SluZrqErnBtkAyzB
+	 +TeBEpmJ+ZL+QIR4J95JnTG9PbGJIMOb8n8Tfp+Vb/fZhOXmwX+cOKYVDUZ30Gp3S5
+	 0k/MT/oqOh1ehqkFPN0pNQ4hAn6pXgYmv1b3+YvUiaEUqFto2N9wp/f5y8LdgciYaQ
+	 e0xv2IGGHEb1A==
+Message-ID: <4ff4c304-fb37-4b4d-a9bc-d5cc80e0a274@kernel.org>
+Date: Thu, 13 Nov 2025 11:43:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,8 +36,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -87,13 +53,55 @@ References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
  <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
  <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
 In-Reply-To: <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/13/25 11:51 AM, Tudor Ambarus wrote:
+On 13/11/2025 10:51, Tudor Ambarus wrote:
 > 
 > 
 > On 11/13/25 11:35 AM, Krzysztof Kozlowski wrote:
@@ -173,24 +181,34 @@ On 11/13/25 11:51 AM, Tudor Ambarus wrote:
 > 
 > +		chipid@10000000 {
 > +			compatible = "google,gs101-chipid";
+
+No. I said about driver. Why are you mixing these?
+
+In previous v1 I said that bindings are wrong, because you created two
+bindings for the same device. This was fixed and bindings look okay.
+That's done.
+
+We speak here ONLY about the driver.
+
 > +			reg = <0x10000000 0xf084>;
 > +			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
 > +			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
 > +		};
 > 
 > Maybe remove the interrupts because I don't need them for reading OTP regs.
+
+No, they must stay because hardware description must be complete.
+
 > 
 > What happens in the maybe unlikely case we do want to add support for OTP
 > for GS101? How will we describe that in DT?
-> 
 
-Ah, I guess you meant to keep the node as I described it in patch 3/5,
-an efuse node with a google,gs101-otp compatible, that will bind to the
-existing exynos-chipid driver. Then if/when we add OTP support, move
-everything to a new OTP driver. That can work, yes. Unless I add some
-OTP support now, to justify the new driver. Both shall be okay, right?
+You add nvmem-cells to that node. You can add them even now to the
+binding to make hardware description complete, but because we do not see
+any use of that and nvmem-cells are mostly for other consumers of the
+node, it does not matter that much. Maybe mention that in commit msg,
+that you skip nvmem-cells because this OTP is not used at all as NVMEM
+anywhere in downstream, upstream and you do not see such possibility.
 
-Thanks,
-ta
-
-
+Best regards,
+Krzysztof
