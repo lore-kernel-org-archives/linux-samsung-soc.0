@@ -1,384 +1,290 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36901F5834
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 02:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F142F99B5;
+	Thu, 13 Nov 2025 02:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763000708; cv=none; b=EQmGcJhqdzFSHB864MqiAsE1mhP4AF1wymZojGeM1asUbwxhoYpHJNPQSM22ZvI5Cbo7aCqwA1FZdnY5TKtSqftygpjLv5NjIQFJLwxFTwMl2Pvj3f792nGIadYvFZ2eQg5lGE96xIZmKH8xPZ8wqAAt5LZSzj9djnBx+8ZG+Mw=
+	t=1763000841; cv=none; b=nPXThc18PhQj3GvqQx3okLYyiArEGBMbBK1cD87IR55L6ut46+9uVq8uVokLiTRDL2pljzFyE+xDxWNGYNyYUnCMLIEb66EEunfoXfr+h300nCSH5epbUNROVktGEl05nxY1dABf/gfuXN/p1WOO6le69F8o3HvaqLmIQU/xxKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763000708; c=relaxed/simple;
-	bh=Ml9Ykm1Z3bq0beAly9optdGdngZ9IF5m2Caf3Zc30oo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJzCx9IduxTMCrH2FH8o6tAYiy/iO/ehZccB1iL8Yhl8X5xyMOLQQevY15P2RKNY7afAwtrB51k9OHggdHI5gacwRt7O8c7bKCeen1NccE4PCHnYNkBUswbFpwrA1JGNtUE17SFhI5moppKgnMvDqQeRA8MIZGmZ7zoVdFQd/1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ioTD63NH; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763000841; c=relaxed/simple;
+	bh=yNXVjwB02D6ijpBD4DNv7JfxSUtsr+AkiMEO13PQgwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbCAHuQMNOy35+iX9ezTJgt40aa+ggM569BweUggHt6LiAerCHZBXdnzauzF3N0lz7fcd1hmbkO5vUnzMjieQ/tJikoYymBlLDENGxOuBvdik+arsM4Fp3zfERkXmgEzSDudIAdt0edfA7qpP66Hg7kNC1hjevtcwnPlWCzPwNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYbPAsSD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ioTD63NH"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7815092cd0bso3480557b3.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 18:25:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763000705; x=1763605505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vpS8KaArpznUhK/i8V7RPAif5JPdnBo+2tROHA42EAI=;
-        b=ioTD63NHO/xwgGSFoD6V2qC8B2WmnoTud/9jgJ8NHlnjgQD/c5xCu5OaNkD+Ak0STA
-         P9/Nkct7RaaqN33Gz/NTfq/mcD+KXjfxw5KPazYMxHfiGfwhzd6XKXco+N6eBujD7iSt
-         lIMqYuUA3Vu0htnmq2Xs5+TXOr74/gZ2W9FpaRdG7imf2VQF0G4soHtTimBFQt0inXNf
-         V4OkO1OM8k6GHFt7IrUH/4DkIPGhNHofUAkZ2ijm+UWeHboz1CujO13gPeWlEX64cfUB
-         ER1a1xNxa5xo7Xv16NZUq7ZF8jwMXEl2HJ4CMQLTw7PGFLvo3tatHvhr5FRcz0vQSQkb
-         zKqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763000705; x=1763605505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vpS8KaArpznUhK/i8V7RPAif5JPdnBo+2tROHA42EAI=;
-        b=DB3leNZ1aJgnylo/AfOecNsec/erKtAViBtKHj2LCFDebtYNBtA7FQ8RfVB1bvkdQ5
-         Plz4bntfGyAcb8J8FipAC+8PyZ/2Q8s4slkwz4ojhMAOFkoIJ6uoRs+VJTw3ILr11C8I
-         3t+jVvRXskxjIZb0J9mgXq6fFL+po7NvzICOUHqOborwQPLezGN/obsjOKFri/gfNB5D
-         BCZy2Ut4j2hMrpFVID8OrMywBsX+76c728Q7FtT2rbgao6LqTkADhVDirXubc4muU2hr
-         aAsMFVHq3hm69dSg3mAyBsaMchoGRGZfoBTUTtt5sqZB7nSEkT3fVmfuWsbBwmJZewk/
-         ZlDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW52zrnDdY63azayslXPvjbnWiBZdR1OUJ+DTJcizgAjiONOHWQJmTVeUD9G2I6/MsLnAP4aGvwSEj/tZzsAgDqaA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNWMLMYooFL0CmKmbllBGLFYWakh4ak8mD4WiZsuTV8a7ZVA75
-	FiNesrNydrBGUtBGbSgtMkeIPG+Yb88LzoGLuCFtE8AlMibLwuahGjUveNK7PqU4PLh3hBaNmZr
-	22w5cfCBU72G3Z0PM8QB4eLz3zPlbddrnqS97Rm+riQ==
-X-Gm-Gg: ASbGncsh2S8CEz9HDm1I0ZFUzAxIpgwvzWp9fNNUFn97l46HoxRNRd/ZAM2PQtoAZya
-	UF+nTN3yoVUZc6K47Fb+1QQrzqxcVNUAA5QKCwnfaOC5jJzYiSAkm75eCr7gj+T8KXNp8Ucd2CV
-	L3djzDy1ZhOHoQyBnA1jm5ri44fGqWWPsKEENKGTupyMHMTcfcEGzId+6RP5zvsDG05l5MGaI3s
-	OXTlMfpkxw1Z10bn5uuQkJ8wtTkKGNNAn/RoV8K06GqUmOZvw7DgShBRTmylDA2ImJKMLvan7b8
-	x3P6FHZhYGiIRORi90M=
-X-Google-Smtp-Source: AGHT+IE9nw79ok3XVYsnuZRzmWffEr2r7gNXoUrKtnl63L+YsA3Oe+wKl96YiZ3F2poj1t2mJW1YjQd/vouEkz+SJPQ=
-X-Received: by 2002:a05:690c:560c:b0:786:a774:e415 with SMTP id
- 00721157ae682-788136a9efcmr58233327b3.56.1763000704785; Wed, 12 Nov 2025
- 18:25:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYbPAsSD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE269C113D0;
+	Thu, 13 Nov 2025 02:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763000841;
+	bh=yNXVjwB02D6ijpBD4DNv7JfxSUtsr+AkiMEO13PQgwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cYbPAsSDm/ZWgd+yI2erQND0RM9Lbv7i360mOyJRQfzKH0BndtuOo9LAK0qaD0XyW
+	 adbQrqVymdGQiQL0GHO6mdEaqTBk2Gtr53D8N16btB80RNoNbDKlrJy0MktAkJ9BtL
+	 BOPIbtlT00hWq9b75NNvNIxrWcHVGdd7VRnmIyDDeROxsaONG1LwF98mK0OX2CNhnm
+	 I4dFEyvmhjeXiJrY8d3xI0rQbprd/XI8gkjkcxuVXzLAsV5rgk1NOz7nD0d+SGTPX/
+	 W7TR7GxItsO/b3/OzmaQdKwNc+mg4nR47yoseOqoiiriumLRAMicGOzfu2wBMKg6WV
+	 V2vtpjhWSCGZw==
+Date: Wed, 12 Nov 2025 20:27:19 -0600
+From: Rob Herring <robh@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Julius Werner <jwerner@chromium.org>,
+	William McVicker <willmcvicker@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for
+ frankel/blazer/mustang
+Message-ID: <20251113022719.GA2281498-robh@kernel.org>
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20251110082143epcas2p264578c49f1ac241c3ae721d5e23149ff@epcas2p2.samsung.com>
- <20251110082649.3109858-1-youngmin.nam@samsung.com> <20251110082649.3109858-5-youngmin.nam@samsung.com>
-In-Reply-To: <20251110082649.3109858-5-youngmin.nam@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 12 Nov 2025 20:24:53 -0600
-X-Gm-Features: AWmQ_bnE2aLrQQBbPuIUIN3YkM_h-hHAIsBVkI4nJ59IEGnJlp8CMF73aSymTzM
-Message-ID: <CAPLW+4mQQ=fWAxD4yBYan4fUEOBTJ-k0K6zNjoULi9X4MjOe8w@mail.gmail.com>
-Subject: Re: [RFT PATCH v1 4/5] pinctrl: samsung: exynos: fold GS101 pin-bank
- macros into EXYNOS9_*
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
-	linus.walleij@linaro.org, peter.griffin@linaro.org, ryu.real@samsung.com, 
-	d7271.choe@samsung.com, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
 
-On Mon, Nov 10, 2025 at 2:21=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung.=
-com> wrote:
->
-> GS101 had dedicated GS101_PIN_BANK_EINT{G,W} helpers,
+On Tue, Nov 11, 2025 at 11:22:04AM -0800, Douglas Anderson wrote:
+> Add top-level DT bindings useful for Pixel 10 (frankel), Pixel 10 Pro
+> (blazer), and Pixel 10 Pro XL (mustang).
+> 
+> Since overlays are fairly well-supported these days and the downstream
+> Pixel bootloader assumes that the SoC is the base overlay and specific
+> board revisions are overlays, reflect the SoC / board split in the
+> bindings.
+> 
+> The SoC in the Pixel 10 series has the marketing name of "Tensor
+> G5". Despite the fact that it sounds very similar to the "Tensor G4",
+> it's a very different chip. Tensor G4 was, for all intents and
+> purposes, a Samsung Exynos offshoot whereas Tensor G5 is entirely its
+> own SoC. This SoC is known internally as "laguna" and canonically
+> referred to in code as "lga". There are two known revisions of the
+> SoC: an A0 pre-production variant (ID 0x000500) and a B0 variant (ID
+> 0x000510) used in production. The ID is canonicaly broken up into a
+> 16-bit SoC product ID, a 4-bit major rev, and a 4-bit minor rev.
+> 
+> The dtb for all supported SoC revisions is appended to one of the boot
+> partitions and the bootloader will look at the device trees and pick
+> the correct one. The current bootloader uses a downstream
+> `soc_compatible` node to help it pick the correct device tree. It
+> looks like this:
+>   soc_compatible {
+>     B0 {
+>       description = "LGA B0";
+>       product_id = <0x5>;
+>       major = <0x1>;
+>       minor = <0x0>;
+>       pkg_mode = <0x0>;
+>     };
+>   };
+> Note that `pkg_mode` isn't currently part of the ID on the SoC and the
+> bootloader always assumes 0 for it.
+> 
+> In this patch, put the SoC IDs straight into the compatible. Though
+> the bootloader doesn't look at the compatible at the moment, this
+> should be easy to teach the bootloader about.
+> 
+> Boards all know their own platform_id / product_id / stage / major /
+> minor / variant. For instance, Google Pixel 10 Pro XL MP1 is:
+> * platform_id (8-bits): 0x07 - frankel/blazer/mustang
+> * product_id (8-bits):  0x05 - mustang
+> * stage (4-bits):       0x06 - MP
+> * major (8-bits):       0x01 - MP 1
+> * minor (8-bits):       0x00 - MP 1.0
+> * variant (8-bits):     0x00 - No special variant
+> 
+> When board overlays are packed into the "dtbo" partition, a tool
+> (`mkdtimg`) extracts a board ID and board rev from the overlay and
+> stores that as metadata with the overlay. Downstream, the dtso
+> intended for the Pixel 10 Pro XL MP1 has the following properties at
+> its top-level:
+>   board_id = <0x70506>;
+>   board_rev = <0x010000>;
+> 
+> The use of top-level IDs can probably be used for overlays upstream as
+> well, but also add the IDs to the compatible string in case it's
+> useful.
+> 
+> Compatible strings are added for all board revisions known to be
+> produced based on downstream sources.
+> 
+> A few notes:
+> * If you look at `/proc/device-tree/compatible` and
+>   `/proc/device-tree/model` on a running device, that won't
+>   necessarily be an exact description of the hardware you're running
+>   on. If the bootloader can't find a device tree that's an exact match
+>   then it will pick the best match (within reason--it will never pick
+>   a device tree for a different product--just for different revs of
+>   the same product).
+> * There is no merging of the top-level compatible from the SoC and
+>   board. The compatible string containing IDs for the SoC will not be
+>   found in the device-tree passed to the OS.
 
-Style: please make line as long as possible (AFAIR the limit for
-commit messages is 72 characters). And no UTF-8 characters, if
-possible. This goes for all patches.
+I think this is a problem...
 
-> but they are redundant with EXYNOS9_PIN_BANK_EINT{G,W} (same semantics,
-> including the per-bank .eint_fltcon_offset).
-> This change removes the GS101_* macros and
-> switches the GS101 pin-bank tables to the EXYNOS9_* helpers
-> with exynos9_bank_type_{alive,off}.
-> While here, update the struct comment to note
-> FLTCON is Exynos9-specific (not =E2=80=9CGS101-specific=E2=80=9D).
->
-> One macro family for all Exynos9-era SoCs (incl. GS101) reduces
-> copy-paste drift and keeps the FLTCON handling consistent.
-> There is no functional change.
->
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
+> In the past, attempts to have the SoC as a base device tree and boards
+> supported as overlays has been NAKed. From a previous discussion [1]
+> "Nope, boards are not overlays. Boards are DTB." I believe this needs
+> to be relitigated.
 
-LGTM:
+I think it is worth having the discussion. There's been some discussions 
+about an overlay split with SoMs and baseboards as well. I think that's 
+what is driving this addition[1]. I don't think this case is much 
+different.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+As a different way to combine things compared to .dtsi files, I don't 
+care too much how things are structured to the extent that's just 
+internal structure and we're moving the combining of files from one 
+point in time to another.
 
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 98 +++++++++----------
->  drivers/pinctrl/samsung/pinctrl-exynos.h      | 22 -----
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |  4 +-
->  3 files changed, 51 insertions(+), 73 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pin=
-ctrl/samsung/pinctrl-exynos-arm64.c
-> index d4b2e9f8baef..ea11543e4e26 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> @@ -1842,83 +1842,83 @@ const struct samsung_pinctrl_of_match_data fsd_of=
-_data __initconst =3D {
->
->  /* pin banks of gs101 pin-controller (ALIVE) */
->  static const struct samsung_pin_bank_data gs101_pin_alive[] =3D {
-> -       GS101_PIN_BANK_EINTW(8, 0x0, "gpa0", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTW(7, 0x20, "gpa1", 0x04, 0x08),
-> -       GS101_PIN_BANK_EINTW(5, 0x40, "gpa2", 0x08, 0x10),
-> -       GS101_PIN_BANK_EINTW(4, 0x60, "gpa3", 0x0c, 0x18),
-> -       GS101_PIN_BANK_EINTW(4, 0x80, "gpa4", 0x10, 0x1c),
-> -       GS101_PIN_BANK_EINTW(7, 0xa0, "gpa5", 0x14, 0x20),
-> -       GS101_PIN_BANK_EINTW(8, 0xc0, "gpa9", 0x18, 0x28),
-> -       GS101_PIN_BANK_EINTW(2, 0xe0, "gpa10", 0x1c, 0x30),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x0, "gpa0", 0=
-x00, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 7, 0x20, "gpa1", =
-0x04, 0x08),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 5, 0x40, "gpa2", =
-0x08, 0x10),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 4, 0x60, "gpa3", =
-0x0c, 0x18),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 4, 0x80, "gpa4", =
-0x10, 0x1c),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 7, 0xa0, "gpa5", =
-0x14, 0x20),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0xc0, "gpa9", =
-0x18, 0x28),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 2, 0xe0, "gpa10",=
- 0x1c, 0x30),
+My concern here is largely around validation. Can the SoC DTB pass 
+validation, and can we still validate the whole thing at build time? To 
+start with, it's not great if we have to make the schema allow only an 
+SoC compatible without a board compatible. Then suddenly omitting a 
+board compatible is always valid. Solving that with an entirely 
+different SoC compatible as you have doesn't seem great.
 
-As mentioned before, please try to keep the lines at 80 characters max.
+My other concern is whether this is an ABI between the SoC and board 
+DTBs? And I don't mean just you, but for anyone wanting to do anything 
+remotely similar. An ABI is a problem as we don't really have any way to 
+validate each piece separately. (This is already a problem for existing 
+overlays.)
 
->  };
->
->  /* pin banks of gs101 pin-controller (FAR_ALIVE) */
->  static const struct samsung_pin_bank_data gs101_pin_far_alive[] =3D {
-> -       GS101_PIN_BANK_EINTW(8, 0x0, "gpa6", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTW(4, 0x20, "gpa7", 0x04, 0x08),
-> -       GS101_PIN_BANK_EINTW(8, 0x40, "gpa8", 0x08, 0x0c),
-> -       GS101_PIN_BANK_EINTW(2, 0x60, "gpa11", 0x0c, 0x14),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x0, "gpa6", 0=
-x00, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 4, 0x20, "gpa7", =
-0x04, 0x08),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x40, "gpa8", =
-0x08, 0x0c),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 2, 0x60, "gpa11",=
- 0x0c, 0x14),
->  };
->
->  /* pin banks of gs101 pin-controller (GSACORE) */
->  static const struct samsung_pin_bank_data gs101_pin_gsacore[] =3D {
-> -       GS101_PIN_BANK_EINTG(2, 0x0, "gps0", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTG(8, 0x20, "gps1", 0x04, 0x04),
-> -       GS101_PIN_BANK_EINTG(3, 0x40, "gps2", 0x08, 0x0c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x0, "gps0", 0x0=
-0, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 8, 0x20, "gps1", 0x=
-04, 0x04),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 3, 0x40, "gps2", 0x=
-08, 0x0c),
->  };
->
->  /* pin banks of gs101 pin-controller (GSACTRL) */
->  static const struct samsung_pin_bank_data gs101_pin_gsactrl[] =3D {
-> -       GS101_PIN_BANK_EINTW(6, 0x0, "gps3", 0x00, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 6, 0x0, "gps3", 0=
-x00, 0x00),
->  };
->
->  /* pin banks of gs101 pin-controller (PERIC0) */
->  static const struct samsung_pin_bank_data gs101_pin_peric0[] =3D {
-> -       GS101_PIN_BANK_EINTG(5, 0x0, "gpp0", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTG(4, 0x20, "gpp1", 0x04, 0x08),
-> -       GS101_PIN_BANK_EINTG(4, 0x40, "gpp2", 0x08, 0x0c),
-> -       GS101_PIN_BANK_EINTG(2, 0x60, "gpp3", 0x0c, 0x10),
-> -       GS101_PIN_BANK_EINTG(4, 0x80, "gpp4", 0x10, 0x14),
-> -       GS101_PIN_BANK_EINTG(2, 0xa0, "gpp5", 0x14, 0x18),
-> -       GS101_PIN_BANK_EINTG(4, 0xc0, "gpp6", 0x18, 0x1c),
-> -       GS101_PIN_BANK_EINTG(2, 0xe0, "gpp7", 0x1c, 0x20),
-> -       GS101_PIN_BANK_EINTG(4, 0x100, "gpp8", 0x20, 0x24),
-> -       GS101_PIN_BANK_EINTG(2, 0x120, "gpp9", 0x24, 0x28),
-> -       GS101_PIN_BANK_EINTG(4, 0x140, "gpp10", 0x28, 0x2c),
-> -       GS101_PIN_BANK_EINTG(2, 0x160, "gpp11", 0x2c, 0x30),
-> -       GS101_PIN_BANK_EINTG(4, 0x180, "gpp12", 0x30, 0x34),
-> -       GS101_PIN_BANK_EINTG(2, 0x1a0, "gpp13", 0x34, 0x38),
-> -       GS101_PIN_BANK_EINTG(4, 0x1c0, "gpp14", 0x38, 0x3c),
-> -       GS101_PIN_BANK_EINTG(2, 0x1e0, "gpp15", 0x3c, 0x40),
-> -       GS101_PIN_BANK_EINTG(4, 0x200, "gpp16", 0x40, 0x44),
-> -       GS101_PIN_BANK_EINTG(2, 0x220, "gpp17", 0x44, 0x48),
-> -       GS101_PIN_BANK_EINTG(4, 0x240, "gpp18", 0x48, 0x4c),
-> -       GS101_PIN_BANK_EINTG(4, 0x260, "gpp19", 0x4c, 0x50),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 5, 0x0, "gpp0", 0x0=
-0, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x20, "gpp1", 0x=
-04, 0x08),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x40, "gpp2", 0x=
-08, 0x0c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x60, "gpp3", 0x=
-0c, 0x10),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x80, "gpp4", 0x=
-10, 0x14),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0xa0, "gpp5", 0x=
-14, 0x18),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0xc0, "gpp6", 0x=
-18, 0x1c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0xe0, "gpp7", 0x=
-1c, 0x20),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x100, "gpp8", 0=
-x20, 0x24),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x120, "gpp9", 0=
-x24, 0x28),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x140, "gpp10", =
-0x28, 0x2c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x160, "gpp11", =
-0x2c, 0x30),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x180, "gpp12", =
-0x30, 0x34),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x1a0, "gpp13", =
-0x34, 0x38),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x1c0, "gpp14", =
-0x38, 0x3c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x1e0, "gpp15", =
-0x3c, 0x40),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x200, "gpp16", =
-0x40, 0x44),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x220, "gpp17", =
-0x44, 0x48),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x240, "gpp18", =
-0x48, 0x4c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x260, "gpp19", =
-0x4c, 0x50),
->  };
->
->  /* pin banks of gs101 pin-controller (PERIC1) */
->  static const struct samsung_pin_bank_data gs101_pin_peric1[] =3D {
-> -       GS101_PIN_BANK_EINTG(8, 0x0, "gpp20", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTG(4, 0x20, "gpp21", 0x04, 0x08),
-> -       GS101_PIN_BANK_EINTG(2, 0x40, "gpp22", 0x08, 0x0c),
-> -       GS101_PIN_BANK_EINTG(8, 0x60, "gpp23", 0x0c, 0x10),
-> -       GS101_PIN_BANK_EINTG(4, 0x80, "gpp24", 0x10, 0x18),
-> -       GS101_PIN_BANK_EINTG(4, 0xa0, "gpp25", 0x14, 0x1c),
-> -       GS101_PIN_BANK_EINTG(5, 0xc0, "gpp26", 0x18, 0x20),
-> -       GS101_PIN_BANK_EINTG(4, 0xe0, "gpp27", 0x1c, 0x28),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 8, 0x0, "gpp20", 0x=
-00, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x20, "gpp21", 0=
-x04, 0x08),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x40, "gpp22", 0=
-x08, 0x0c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 8, 0x60, "gpp23", 0=
-x0c, 0x10),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0x80, "gpp24", 0=
-x10, 0x18),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0xa0, "gpp25", 0=
-x14, 0x1c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 5, 0xc0, "gpp26", 0=
-x18, 0x20),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 4, 0xe0, "gpp27", 0=
-x1c, 0x28),
->  };
->
->  /* pin banks of gs101 pin-controller (HSI1) */
->  static const struct samsung_pin_bank_data gs101_pin_hsi1[] =3D {
-> -       GS101_PIN_BANK_EINTG(6, 0x0, "gph0", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTG(7, 0x20, "gph1", 0x04, 0x08),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 6, 0x0, "gph0", 0x0=
-0, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 7, 0x20, "gph1", 0x=
-04, 0x08),
->  };
->
->  /* pin banks of gs101 pin-controller (HSI2) */
->  static const struct samsung_pin_bank_data gs101_pin_hsi2[] =3D {
-> -       GS101_PIN_BANK_EINTG(6, 0x0, "gph2", 0x00, 0x00),
-> -       GS101_PIN_BANK_EINTG(2, 0x20, "gph3", 0x04, 0x08),
-> -       GS101_PIN_BANK_EINTG(6, 0x40, "gph4", 0x08, 0x0c),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 6, 0x0, "gph2", 0x0=
-0, 0x00),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 2, 0x20, "gph3", 0x=
-04, 0x08),
-> +       EXYNOS9_PIN_BANK_EINTG(exynos9_bank_type_off, 6, 0x40, "gph4", 0x=
-08, 0x0c),
->  };
->
->  static const struct samsung_pin_ctrl gs101_pin_ctrl[] __initconst =3D {
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/s=
-amsung/pinctrl-exynos.h
-> index c0f4639dbb0e..476346d163d8 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-> @@ -187,28 +187,6 @@
->                 .name                   =3D id                           =
- \
->         }
->
-> -#define GS101_PIN_BANK_EINTG(pins, reg, id, offs, fltcon_offs) \
-> -       {                                                       \
-> -               .type                   =3D &exynos9_bank_type_off,      =
- \
-> -               .pctl_offset            =3D reg,                  \
-> -               .nr_pins                =3D pins,                 \
-> -               .eint_type              =3D EINT_TYPE_GPIO,       \
-> -               .eint_offset            =3D offs,                 \
-> -               .eint_fltcon_offset     =3D fltcon_offs,          \
-> -               .name                   =3D id                    \
-> -       }
+> In the previous NAK, I didn't see any links to documentation
+> explicitly stating that DTBs have to represent boards. It's also
+> unclear, at least to me, _why_ a DTB would be limited to represent a
+> "board" nor what the definition of a "board" is.
+> 
+> As at least one stab at why someone might not want an overlay scheme
+> like this, one could point out that the top-level compatible can be a
+> bit of a mess. Specifically in this scheme the board "compatible" from
+> the overlay will fully replace/hide the SoC "compatible" from the base
+> SoC. If this is truly the main concern, it wouldn't be terribly hard
+> to add a new semantic (maybe selectable via a new additional
+> property?) that caused the compatible strings to be merged in a
+> reasonable way.
+> 
+> Aside from dealing with the compatible string, let's think about what
+> a "board" is. I will make the argument here that the SoC qualifies as
+> a "board" and that the main PCB of a phone can be looked at as a
+> "cape" for this SoC "board". While this may sound like a stretch, I
+> would invite a reader to propose a definition of "board" that excludes
+> this. Specifically, it can be noted:
+> * I have a development board at my desk that is "socketed". That is, I
+>   can pull the SoC out and put a different one in. I can swap in a
+>   "rev A0" or a "rev B0" SoC into this socket. Conceivably, I could
+>   even put a "Tensor G6", G7, G8, or G999 in the socket if it was
+>   compatible. In this sense, the "SoC" is a standalone thing that can
+>   be attached to the devboard "cape". The SoC being a standalone thing
+>   is in the name. It's a "system" on a chip.
+> * In case the definition of a board somehow needs a PCB involved, I
+>   can note that on my dev board the CPU socket is soldered onto to a
+>   CPU daughtercard (a PCB!) that then has a board-to-board connector
+>   to the main PCB.
+> * Perhaps one could argue that a dev board like I have describe would
+>   qualify for this SoC/board overlay scheme but that a normal cell
+>   phone wouldn't because the SoC isn't removable. Perhaps removability
+>   is a requirement here? If so, imagine if some company took a
+>   Raspberry Pi, soldered some components directly onto the "expansion"
+>   pins, and resold that to consumers. Does this mean they can't use
+>   overlays?
+> 
+> To me, the above arguments justify why SoC DTBs + "board" overlays
+> should be accepted. As far as I can tell, there is no downside and
+> many people who would be made happy with this.
+> 
+> [1] https://lore.kernel.org/all/dbeb28be-1aac-400b-87c1-9764aca3a799@kernel.org/
+> 
+>  .../devicetree/bindings/arm/google.yaml       | 87 +++++++++++++++----
+>  1 file changed, 68 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
+> index 99961e5282e5..f9f9ea1c8050 100644
+> --- a/Documentation/devicetree/bindings/arm/google.yaml
+> +++ b/Documentation/devicetree/bindings/arm/google.yaml
+> @@ -13,27 +13,18 @@ description: |
+>    ARM platforms using SoCs designed by Google branded "Tensor" used in Pixel
+>    devices.
+>  
+> -  Currently upstream this is devices using "gs101" SoC which is found in Pixel
+> -  6, Pixel 6 Pro and Pixel 6a.
+> +  These bindings for older Pixel devices don't use device tree overlays so
+> +  no separate SoC entry is added. This may change in the future.
+>  
+> -  Google have a few different names for the SoC:
+> -  - Marketing name ("Tensor")
+> -  - Codename ("Whitechapel")
+> -  - SoC ID ("gs101")
+> -  - Die ID ("S5P9845")
 > -
-> -#define GS101_PIN_BANK_EINTW(pins, reg, id, offs, fltcon_offs) \
-> -       {                                                               \
-> -               .type                   =3D &exynos9_bank_type_alive,    =
- \
-> -               .pctl_offset            =3D reg,                         =
- \
-> -               .nr_pins                =3D pins,                        =
- \
-> -               .eint_type              =3D EINT_TYPE_WKUP,              =
- \
-> -               .eint_offset            =3D offs,                        =
- \
-> -               .eint_fltcon_offset     =3D fltcon_offs,                 =
- \
-> -               .name                   =3D id                           =
- \
-> -       }
+> -  Likewise there are a couple of names for the actual device
+> -  - Marketing name ("Pixel 6")
+> -  - Codename ("Oriole")
 > -
->  #define ARTPEC_PIN_BANK_EINTG(pins, reg, id, offs)                     \
->         {                                                               \
->                 .type                   =3D &artpec_bank_type_off,       =
- \
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/=
-samsung/pinctrl-samsung.h
-> index 0f7b2ea98158..0209c2d28858 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> @@ -145,7 +145,7 @@ struct samsung_pin_bank_type {
->   * @eint_con_offset: ExynosAuto SoC-specific EINT control register offse=
-t of bank.
->   * @eint_mask_offset: ExynosAuto SoC-specific EINT mask register offset =
-of bank.
->   * @eint_pend_offset: ExynosAuto SoC-specific EINT pend register offset =
-of bank.
-> - * @eint_fltcon_offset: GS101 SoC-specific EINT filter config register o=
-ffset.
-> + * @eint_fltcon_offset: Exynos9 SoC-specific EINT filter config register=
- offset.
->   * @name: name to be prefixed for each pin in this pin bank.
->   */
->  struct samsung_pin_bank_data {
-> @@ -180,7 +180,7 @@ struct samsung_pin_bank_data {
->   * @eint_con_offset: ExynosAuto SoC-specific EINT register or interrupt =
-offset of bank.
->   * @eint_mask_offset: ExynosAuto SoC-specific EINT mask register offset =
-of bank.
->   * @eint_pend_offset: ExynosAuto SoC-specific EINT pend register offset =
-of bank.
-> - * @eint_fltcon_offset: GS101 SoC-specific EINT filter config register o=
-ffset.
-> + * @eint_fltcon_offset: Exynos9 SoC-specific EINT filter config register=
- offset.
->   * @name: name to be prefixed for each pin in this pin bank.
->   * @id: id of the bank, propagated to the pin range.
->   * @pin_base: starting pin number of the bank.
-> --
-> 2.39.2
->
+> -  Devicetrees should use the lowercased SoC ID and lowercased board codename,
+> -  e.g. gs101 and gs101-oriole.
+> +  Newer Pixel devices are expected to have the SoC device tree as the base
+> +  and specific board device trees as overlays.
+>  
+>  properties:
+>    $nodename:
+>      const: '/'
+>    compatible:
+>      oneOf:
+> +      # Google Tensor G1 AKA gs101 AKA whitechapel AKA Die ID S5P9845 boards
+>        - description: Google Pixel 6 or 6 Pro (Oriole or Raven)
+>          items:
+>            - enum:
+> @@ -41,13 +32,71 @@ properties:
+>                - google,gs101-raven
+>            - const: google,gs101
+>  
+> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
+> +      - description: Tensor G5 SoC (laguna)
+> +        items:
+> +          - enum:
+> +              - google,soc-id-0005-rev-00  # A0
+> +              - google,soc-id-0005-rev-10  # B0
+> +          - const: google,lga
+> +      - description: Google Pixel 10 Board (Frankel)
+> +        items:
+> +          - enum:
+> +              - google,pixel-id-070302-rev-000000  # Proto 0
+> +              - google,pixel-id-070302-rev-010000  # Proto 1
+> +              - google,pixel-id-070302-rev-010100  # Proto 1.1
+> +              - google,pixel-id-070303-rev-010000  # EVT 1
+> +              - google,pixel-id-070303-rev-010100  # EVT 1.1
+> +              - google,pixel-id-070303-rev-010101  # EVT 1.1 Wingboard
+> +              - google,pixel-id-070304-rev-010000  # DVT 1
+> +              - google,pixel-id-070305-rev-010000  # PVT 1
+> +              - google,pixel-id-070306-rev-010000  # MP 1
+
+Should upstream really care about anything other than MP1? I don't think 
+so. Which ones are useful in 1 year, 2 years, 10 years?
+
+> +          - const: google,lga-frankel
+> +          - const: google,lga
+
+It's not clear to me how you map boards to SoC revision? You boot up 
+using the SoC DTB and then select the board DTBO based on? This all 
+needs to be well defined and general enough any (existing) platform 
+could use it. If [1] helps or doesn't work for you I'm interested in 
+hearing that.
+
+Rob
+
+[1] https://lore.kernel.org/devicetree-spec/20250911151436.2467758-1-raymond.mao@linaro.org/
