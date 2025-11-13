@@ -1,215 +1,315 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C462C11D9
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 14:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6C12FA0DF
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 16:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044443; cv=none; b=ZItnfS+kJE2V4kZ2zNEQJTbDOzofVuO61o3vxzbu1VRzHaXQG6Sl0uRJpbhH7VdsC5GnkfAxnQNg+t7eUTe/rrLJ8UY/G8qSx8yxrt3MRnxObA4MeLZsEyCjVPKH3NOqDK6ouVVh8qd0XhMgLM4xo1N/Hd5GRXM/QYkxlClZCRE=
+	t=1763051054; cv=none; b=CHivliKTSKyrf4Q22oan7b8Z5mHQ2ZGnj+db++j5hch8irCUsjaMCUyBUl4Ux3s4bSqbqwMPwJim0d3K8D3JzlJfg+Q+gNVXWxh646lA4cpj8hCfTTdu1IU4kauW95EHsRdLMFVg7CMXWncOvowsa29o3bTQn/SFHs2rY1K/4i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044443; c=relaxed/simple;
-	bh=7XvmeYXrTMA06jMNyj1/CDdfDjivHudVL9xtzZF5quw=;
+	s=arc-20240116; t=1763051054; c=relaxed/simple;
+	bh=YrHg4D4Rn+vC2SZi4KRny6/RVdR+R0c8DKxuDoshRZk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BtERZ7Rd4tRHtR3nJKHwHmB5pMgn7fiBKUeu4pWNr/V0R8quaYA7KRZciBf5aq4PFiVx6V5jfYuP5JHW/2siHc2sFyBw2CQRAhM52qJZKGyBZEaCMX2mcd5ZY279go+iZ5vOzSXG45mWGRvmuYMPWiSkXYNIBdtajFh+lpuXHaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRd1O6+6; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=R5rJ+e8vlb+WJQvcN9anLaA670IZg0uRFDr7gHzUuwtjezpe+ydwuZ6VqQY0rQa3fsxei77Qnd00zDJLUlMrTeGsdDvHaj65GecLOjrCq5FfJ5qs0cF6LZtEaF74T0remNLQaLrZGAysVcmYHaTT2f7XSA1Ho14wKeFzKVjyuMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iWgoGHTl; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRd1O6+6"
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-9372164d768so1114950241.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 06:34:00 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iWgoGHTl"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b7277324054so135240966b.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 08:24:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763044440; x=1763649240; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1763051048; x=1763655848; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qv/JrdhbRZlCEd1ubK+jM9jWPBpAjvw/CP7fZPI2C48=;
-        b=RRd1O6+67Ciz5lxl40fn6oWaGoqnPcyHqRXio7iWOOcD8YIiChq4FAkKeBf3BQVis8
-         uEf9MKQTsFf1IyBs3n/LXCSGgrln7+UzTC9alxHzd3Gfb6YASn3NHZK+JE8bv396EcsK
-         4bAOBjfv3HmShJ4CRKmVhiUjLPtbBWkRhJSVcLHBPGrzIDyA2qks9UrlSQxch5X5F/H3
-         4Ae3f7ACsklbv1fo6UFnI5jWY7FOB5v1I2onGdUVfmjAhuwvON0ESv5JBCc+u+pIT1N2
-         f2eDsdPkDRRVH95j28S0OP77joVxqSk049zEa3YDNEjVtTNJgTfjCGsaQQOPBgOYVVny
-         IBZA==
+        bh=K5wt2b9AIytvZm3PkDsPhENWn/BTbuYs0T0/KW2/iVE=;
+        b=iWgoGHTlW2or0Ic3PrDeRllQ3GiAWUSeeUnmRlOxGS5uYHS93y1Cb3sikP+leI/HHb
+         9e1JXxe9DbPIYqCf8YGXzH+S51QLRNFKvo73SvzuGln4dANItoYoCzamtCD+rXUks02A
+         6G+m6DvTuP1I7CtCEOng22eLXXq556/kQB+GU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044440; x=1763649240;
+        d=1e100.net; s=20230601; t=1763051048; x=1763655848;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Qv/JrdhbRZlCEd1ubK+jM9jWPBpAjvw/CP7fZPI2C48=;
-        b=tyA0L+SX2SEsWGujw66q0n0eBkXqsWgpofcaeY/WIynfnc+z6AzFDgCUrA1+xESys3
-         4jy4y8ik8khdb8D0EFsJ7GWr2HbSjFok/x/RFoXm9QZ8+GEw07eFiD39vmKUCozN/j2V
-         LPoo35IY+viqIE5KqH75n5CnDBzonReXNrFlHm0eMGxKncVSc9Yv1hF9H0Jtt86dxxIg
-         hdCEeQLV9GAT86YIjbniEVrn/8vpNOaJlCIux6sIJNd5968J8PHZ16vPUGCPwZQCz2B5
-         OrJ0TePUXBzih7YUNrB96UAmnSQkV877Mq+VZjlH5WbvYIpCM7vw3Yg6/7SjO5Jejchd
-         3WDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQgk9FYxTA2xsRoaTiiG6WU1PVZuWHL/DarhW4LGB5TafW+0f2xr4K/tCYyXqorkrAUGOrH+9jgVXweZc0i1AM2Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Bq1XDa5m3b/iT0yPhhiZin91LcVGk5M/9eDsDjPT+vSWwNqN
-	QL3WxByE66FLUSTwn60FCGfDwfigh1uueTB9fluqhHrtpQld/0mPRkWGDzkuGDmMQsRxj4NMGfQ
-	GSWg+bypIIEbPLbLm/IyFhk0LS40TzbY=
-X-Gm-Gg: ASbGncvygeMNjdtbdEHt0nEaxDE1e42EpaD0NOApbmh6iodfTbYJFFhWvJw6pSuV52+
-	Td/+njAeR1GW6rnv/OtQf/HZEiRrgTTZcgtjpNeXEqqVu9JShraVYQ/AVP+LhWl/unoOz+yxSLY
-	wpZnPfSnW6WrOhwrj+PQhgHj5NwkP6a0HXX5Qyb9vnzGJttzTGobYcEYhrbBSubk7k1U3KWi9EJ
-	tBOrXYe6mVdiNE4osb1IirK0hAHT6VB02mQVPe9PJlCjTpJ6T7arr/bDBA=
-X-Google-Smtp-Source: AGHT+IFxA8P7U0p67nbntMP+AJ/1Ive98feU9XP0hJpbEsfyGiZ2cTCG1H/uw7OcCvUbNCvlNz2awdpPad36suAN8GQ=
-X-Received: by 2002:a05:6102:38ce:b0:5db:1e4e:6b04 with SMTP id
- ada2fe7eead31-5dfb40e9347mr1377780137.18.1763044439813; Thu, 13 Nov 2025
- 06:33:59 -0800 (PST)
+        bh=K5wt2b9AIytvZm3PkDsPhENWn/BTbuYs0T0/KW2/iVE=;
+        b=WmoRT0k+WkTpXiLSe9tMk/HhQhfvawhv+dS8udY/gzIIaFjwHB5ZwBe7TDdsV6Hb1o
+         JYBfhNNhH//z0XHtpWfDOxT+p61uPriYDC3lyvxFYyEBdKOzhAzpS51ue3hwauKOb+fv
+         U70GmbC+WaYXvg+3QiZnfPzsB3SrLrjgpDza30r5aQO2A3H1ZvkdLp9JRXcxHdlkUE5C
+         7+QmAaTkPkQTY+kQXUfOsF3hX2dqYT9ccOduALv7Dn11COala3ovS4MbUCrKIE65p25k
+         jQoGjR4UWvXiDoPjB75UAIBfWnJ4j6cDJYGCq39RxFz4tZoeUdW+swBGJWVuXCi9M2KV
+         qL+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVFt2s+wa33vJDcYVTgbb82cL4nVGn5jTekdJ3o0duZiRG7fn3S51AYygTpb0trjtfzSaGRi0g4dGRuMlCtU8Picg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPDxTln1mDjwyKQpG+mVYH88ZvlXiFq8NhqzM59dPG9ZuXUG6x
+	JbLJCs7YXos9nWgPk6hPPz423phcSAeglDbBDrav3/0kbFjyHBNrjtzoGo4e3zT6e2ypQmJ8bDG
+	MX97fcRjn
+X-Gm-Gg: ASbGncsmTGDptB3gzBaL0nhrrXO77Oqd0TLGOi1zKAgk6iRHC9H9IjWQzfzncrbSGtW
+	7o3KDfP9BzWfbjh9Y3Ju0yXvcavvP5+MyF47o/+MI4u+TRwJn+xuKcAPOwZpkrsekHrv22XFwx/
+	4Nr6J9N/7zLHuhVs+Wnc8lekHfsi40xIaJLXgLSJjvvsvNJOnnh+GYQgpE2qkIknvmLYjaoSQyl
+	KzEkpi6XJVw8+Us7u2RTKVFbCnHt+30tvb773Vrh3f4tY16PVbGk9Oc05QbQBXEB++GVNSkvnpQ
+	+oHx0AuPZB2SXnwlQtY1QohlnNwTTrFfOyi8LznRn4EOA1OvWr0Zcd6HG4wDf58nDY93ueo0mhm
+	Ek5tkICjrKpo203Lta44bZoa5YFOVkouWaLRBYoZKmKxNenFJFrKItPieJcIiDIa8CiT5M8lJWk
+	KkEs4QYEQthUWJazu31Hjq6aDJaAOdzZTcKLCHzvmEYQSGFIPRJw==
+X-Google-Smtp-Source: AGHT+IHhlIVZs1o0RATqAcHeqXmU6sTjENdCE9aNUtX8enrfisTCl1Z07/ap2IFKBVMVmZsYACSXBw==
+X-Received: by 2002:a17:907:3ccb:b0:b73:56a7:a36e with SMTP id a640c23a62f3a-b7356a7a6b8mr212470166b.50.1763051048328;
+        Thu, 13 Nov 2025 08:24:08 -0800 (PST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fedb2eesm190171266b.68.2025.11.13.08.24.04
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 08:24:05 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477632d9326so7395145e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 08:24:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXCPmgqhkPZTaJVR28zchF2ENVGIHrVnPYm45a0lKzvsXooCT8lTqTbfKJqIQc3DP8lvBcMkL6iyFVnshdE3iPeEg==@vger.kernel.org
+X-Received: by 2002:a05:600c:350d:b0:46e:32a5:bd8d with SMTP id
+ 5b1f17b1804b1-4778fe553famr1167935e9.3.1763051043969; Thu, 13 Nov 2025
+ 08:24:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250929042917epcas2p2569e213500997dfa6ba43c8f361f50f7@epcas2p2.samsung.com>
- <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
- <CAAQKjZNCpK4rq6DFUtiQ2rxCeb_34Mp54quVto+9LRJMH3=ZhQ@mail.gmail.com> <000101dc5380$e33e1c10$a9ba5430$@samsung.com>
-In-Reply-To: <000101dc5380$e33e1c10$a9ba5430$@samsung.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Thu, 13 Nov 2025 23:33:21 +0900
-X-Gm-Features: AWmQ_blbp07LBsfmhZq6Hj3qdkeaTe0fO1yFd3NukemDqBNNd4mt1U2vsVx-eHg
-Message-ID: <CAAQKjZM23M3hr6Xqk6_f9whWw+CQB5oyvs=JEkBQPp2H3-ocag@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/exynos: Convert to drmm_mode_config_init() and
- drop manual cleanup
-To: hy_fifty.lee@samsung.com
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+ <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org> <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
+ <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
+In-Reply-To: <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 13 Nov 2025 08:23:52 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bkn8U9vLweoLL7ChsWq65S9_NbSZw7csl7J0f4Er_fIbKu-AjDA18N3giM
+Message-ID: <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for frankel/blazer/mustang
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	Roy Luo <royluo@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, 
+	Julius Werner <jwerner@chromium.org>, William McVicker <willmcvicker@google.com>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-2025=EB=85=84 11=EC=9B=94 12=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 12:03,=
- <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> > -----Original Message-----
-> > From: Inki Dae <daeinki@gmail.com>
-> > Sent: Monday, November 10, 2025 2:22 PM
-> > To: Hoyoung Lee <hy_fifty.lee@samsung.com>
-> > Cc: Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin Park
-> > <kyungmin.park@samsung.com>; David Airlie <airlied@gmail.com>; Simona
-> > Vetter <simona@ffwll.ch>; Krzysztof Kozlowski <krzk@kernel.org>; Alim
-> > Akhtar <alim.akhtar@samsung.com>; dri-devel@lists.freedesktop.org; linu=
-x-
-> > arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linu=
-x-
-> > kernel@vger.kernel.org
-> > Subject: Re: [PATCH 2/3] drm/exynos: Convert to drmm_mode_config_init()
-> > and drop manual cleanup
-> >
-> > 2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:5=
-4, Hoyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91
-> > =EC=84=B1:
-> > >
-> > > Switch mode-config initialization to drmm_mode_config_init() so that
-> > > the lifetime is tied to drm_device. Remove explicit
-> > > drm_mode_config_cleanup() from error and unbind paths since cleanup i=
-s
-> > now managed by DRM.
-> > >
-> > > No functional change intended.
-> > >
-> > > Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
-> > > ---
-> > >  drivers/gpu/drm/exynos/exynos_drm_drv.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > index 6cc7bf77bcac..1aea71778ab1 100644
-> > > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > @@ -257,7 +257,7 @@ static int exynos_drm_bind(struct device *dev)
-> > >         dev_set_drvdata(dev, drm);
-> > >         drm->dev_private =3D (void *)private;
-> > >
-> > > -       drm_mode_config_init(drm);
-> > > +       drmm_mode_config_init(drm);
-> > >
-> > >         exynos_drm_mode_config_init(drm);
-> > >
-> > > @@ -297,7 +297,6 @@ static int exynos_drm_bind(struct device *dev)
-> > >  err_unbind_all:
-> > >         component_unbind_all(drm->dev, drm);
-> > >  err_mode_config_cleanup:
-> > > -       drm_mode_config_cleanup(drm);
-> >
-> > In the current implementation, there is a potential dereference issue
-> > because the private object may be freed before to_dma_dev(dev) is calle=
-d.
-> > When drmm_mode_config_init() is invoked, it registers
-> > drm_mode_config_cleanup() as a managed action. This means that the clea=
-nup
-> > function will be automatically executed later when
-> > drm_dev_put() is called.
-> >
-> > The problem arises when drm_dev_put() is called without explicitly
-> > invoking drm_mode_config_cleanup() first, as in the original code. In t=
-hat
-> > case, the managed cleanup is performed later, which allows
-> > to_dma_dev(dev) to be called after the private object has already been
-> > released.
-> >
-> > For reference, the following sequence may occur internally when
-> > drm_mode_config_cleanup() is executed:
-> > 1. drm_mode_config_cleanup() is called.
-> > 2. During the cleanup of FBs, planes, CRTCs, encoders, and connectors,
-> > framebuffers or GEM objects may be released.
-> > 3. At this point, Exynos-specific code could invoke to_dma_dev(dev).
-> >
-> > Therefore, the private object must remain valid until
-> > drm_mode_config_cleanup() completes.
-> > It would be safer to adjust the code so that kfree(private) is performe=
-d
-> > after drm_dev_put(drm) to ensure the private data remains available dur=
-ing
-> > cleanup.
-> >
-> > Thanks,
-> > Inki Dae
-> >
-> > >         exynos_drm_cleanup_dma(drm);
-> > >         kfree(private);
-> > >         dev_set_drvdata(dev, NULL);
-> > > @@ -317,7 +316,6 @@ static void exynos_drm_unbind(struct device *dev)
-> > >         drm_atomic_helper_shutdown(drm);
-> > >
-> > >         component_unbind_all(drm->dev, drm);
-> > > -       drm_mode_config_cleanup(drm);
-> >
-> > Ditto.
-> >
-> > >         exynos_drm_cleanup_dma(drm);
-> > >
-> > >         kfree(drm->dev_private);
-> > > --
-> > > 2.34.1
-> > >
-> > >
->
-> Hi, Inki
-> Thanks for the review and for pointing out the to_dma_dev() path
->
-> If I understand you correctly, fine with using DRMM, but kfree(priv) shou=
-ld occur after drm_dev_put(drm)
-> That would mean releasing the drm_device first and freeing dev_private af=
-terwards.
-> Of course, we will also need to adjust the probe() error-unwind (err_free=
-) order accordingly.
-> Do you anticipate any side effects from this ordering change? I=E2=80=99d=
- appreciate your thoughts.
->
+Hi,
 
-Yes, that is correct. Also, changing the order of the cleanup steps
-should not introduce any issues, because this simply restores the
-original sequence that the code previously followed. In fact, the
-current patch is, strictly speaking, altering the existing behavior I
-think.
-
-Thanks,
-Inki Dae
-
-> BRs,
-> Hoyoung Lee
+On Wed, Nov 12, 2025 at 11:23=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
 >
+> >>> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
+> >>> +      - description: Tensor G5 SoC (laguna)
+> >>> +        items:
+> >>> +          - enum:
+> >>> +              - google,soc-id-0005-rev-00  # A0
+> >>> +              - google,soc-id-0005-rev-10  # B0
+> >>
+> >> SoCs cannot be final compatibles.
+> >
+> > Right. I talked about this at length "after the cut" in my patch. See
+> > above. I wish to relitigate this policy and wish to know more details
+> > about where it is documented, the reasons for decision, and where the
+> > boundary exactly lies between something that's allowed to be a final
+> > compatible and something that's not. I made several arguments above
+> > for why I think the SoC should be allowed as a final compatible, so it
 >
+> Because this represents a actual device users run. It is electronically,
+> physically impossible to run the SoC alone.
+
+I'm not convinced that this definition is as clear as you're making it
+out to be. It's physically impossible to run many "boards" alone.
+
+Want to boot up a Raspberry Pi? Provide it with power. Hook up a
+display to it. Hook up a keyboard to it. Plug in an Ethernet cable.
+Plug an SD card in it. Without those things it doesn't run.
+
+Want to boot up a lga-B0 SoC? Hook up power to the power pins. Connect
+a MIPI panel to the MIPI pins. Connect a UFS chip to the UFS pins.
+Without those things it doesn't run.
+
+Yes, the complexity of just "hooking up" the components on an SoC is
+an order of magnitude harder than a Raspberry Pi, but it's still just
+hooking it up to external components. In both cases, we are modeling
+the core "brains" (the part that contains the processor) as the DTB
+and everything else just "hooks up" to interfaces.
+
+If I had to make a definition for what the base DTB should be it
+should be the component with the boot CPU. _Why_ is that the wrong
+definition?
+
+
+> There are few - one or two - exceptions for the SoMs, but never for SoC.
+
+OK, but the big question: _WHY???_
+
+Where does it say that a DTB has to be something that can run "alone"
+and (most importantly) what benefit do we get for making that
+requirement (AKA _WHY_)? This is the question you're not answering.
+From Rob's response, he doesn't seem to think that a DTB needs to be
+for something that can boot alone and he seems OK with allowing a
+fairly flexible split here. Rob's response was focused on making sure
+we can do validation and I'd love to continue on with that discussion.
+
+
+> > would be great if you could respond to them and tell me where I got it
+> > wrong.
+> >
+> >
+> >> Your commit msg does not explain what
+> >> is 'soc-id' or 'soc_id' in this context.
+> >
+> > In the commit message I do say: "SoC: an A0 pre-production variant (ID
+> > 0x000500) and a B0 variant (ID 0x000510) used in production. The ID is
+> > canonicaly broken up into a 16-bit SoC product ID, a 4-bit major rev,
+> > and a 4-bit minor rev."
+>
+> >
+> > ...then, I further say "In this patch, put the SoC IDs straight into
+>
+> That's fine.
+>
+> > the compatible. Though the bootloader doesn't look at the compatible
+> > at the moment, this should be easy to teach the bootloader about."
+>
+> But nothing explains why this SoC can be run alone without board.
+> >
+> > The idea here is for the bootloader, which can read the ID of the
+> > current SoC, to be able to pick the right device tree from among
+> > multiple. I am certainly not married to putting the SoC ID in the
+>
+> I am not discussing about style of the compatible. I said - you cannot
+> have SoC compatible alone. None of above gives any argument for that.
+>
+> > compatible like this. As I mentioned above, in downstream device trees
+> > the SoC is stored in a custom node and I thought upstream would hate
+> > that. I also considered giving the `soc@0` node a custom compatible
+> > string and adding properties about the SoC ID underneath that and
+> > teaching the bootloader how to find this, and I can switch to this if
+> > you prefer.
+> >
+> > If you have an alternate technique for which the bootloader could pick
+> > a device tree based on the current SoC ID or you have specific wording
+> > that you think I should add to the commit message to explain my
+> > current scheme, I'm happy to adjust things.
+> >
+> >
+> >>> +          - const: google,lga
+> >>> +      - description: Google Pixel 10 Board (Frankel)
+> >>> +        items:
+> >>> +          - enum:
+> >>> +              - google,pixel-id-070302-rev-000000  # Proto 0
+> >>> +              - google,pixel-id-070302-rev-010000  # Proto 1
+> >>> +              - google,pixel-id-070302-rev-010100  # Proto 1.1
+> >>> +              - google,pixel-id-070303-rev-010000  # EVT 1
+> >>> +              - google,pixel-id-070303-rev-010100  # EVT 1.1
+> >>> +              - google,pixel-id-070303-rev-010101  # EVT 1.1 Wingboa=
+rd
+> >>> +              - google,pixel-id-070304-rev-010000  # DVT 1
+> >>> +              - google,pixel-id-070305-rev-010000  # PVT 1
+> >>> +              - google,pixel-id-070306-rev-010000  # MP 1
+> >>> +          - const: google,lga-frankel
+> >>> +          - const: google,lga
+> >>
+> >> So what is the lga?
+> >
+> > "google,lga" is the name of the processor. I was under the impression
+> > that the last entry in the top-level compatible string was supposed to
+> > be the SoC compatible string. Certainly this was true in every board
+>
+> google,soc-id-0005-rev-00 is the soc compatible string.
+>
+> > I've worked with and I seem to even recall it being requested by DT
+> > folks. It also seems to match what I see in examples in the kernel
+> > docs [1].
+>
+> Sorry but no. Writing bindings do not request having two compatibles for
+> the same soc in two different, independent (orthogonal) lists.
+>
+> So it is rev-xyz + google,lga-frankel + soc-id + lga, if you need that
+> soc-id part.
+
+Probably not worth continuing to discuss until we can agree that the
+SoC can be in its own dtb. If we can agree upon that we can talk about
+if we need the SoC part in the top-level compatible and how to
+accomplish that. I had a few ideas / suggestions in my response to Rob
+that roughly break down into:
+
+* Don't model the SoC in the top-level compatible. Maybe put it in the
+soc@0 node.
+
+* Come up with a rule for "merging" top-level compatibles if a base
+and overlay both define.
+
+Whatever solution we come up with, I want to make sure it handles our
+socketed dev boards where the SoC can be removed and replaced with a
+different one.
+
+
+> >>> +allOf:
+> >>>    # Bootloader requires empty ect node to be present
+> >>> -  ect:
+> >>> -    type: object
+> >>> -    additionalProperties: false
+> >>
+> >> Please keep it here
+> >
+> > "it" being "additionalProperties", I think? I'm not sure I understand,
+> > but let's discuss below in the context of full examples and not diffs.
+>
+> I meant ect node, existing hunk. Properties must be defined in top-level.
+
+OK, much clearer. Thanks!
+
+
+> > The best my brain can parse your request, I think you're asking for thi=
+s:
+> >
+> > --
+> >
+> > properties:
+> >   ...
+> >   ...
+> >   ect:
+> >     type: object
+> >     additionalProperties: false
+> >
+> > allOf:
+> >   # Bootloader requires empty ect node to be present
+> >   - if:
+> >       properties:
+> >         compatible:
+> >           not:
+> >             contains:
+> >               const: google,gs101
+> >     then:
+> >       properties:
+> >         ect: false
+> >     else:
+> >       required:
+> >       - ect
+>
+> Yes, actually now I see you could drop the "not:" and exchange the
+> "then:else:" branches.
+
+For the sake of clarity, I'll go with this:
+
+properties:
+  ...
+  ...
+  ect:
+    type: object
+    additionalProperties: false
+
+allOf:
+  # Bootloader requires empty ect node to be present
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: google,gs101
+    then:
+      required:
+      - ect
+
+additionalProperties: true
