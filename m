@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F7C3321A4;
-	Thu, 13 Nov 2025 10:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B45C2D5C6C;
+	Thu, 13 Nov 2025 11:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763030655; cv=none; b=uz0NXcAVnmSARcf3T8qP5WtdpEBWxkTrXRwLzLe1igUKN5Nj8U9U1Br1t/Hi2k6MxyBcbbd5KxcbZcRrTI94CSpgztpBveNftOZYRprTrHEeCSblQn/lXgqiKWvrc00l7Id1a6049CHrbPn2zOyOXcmnJxzejGls/+VPlG75Nkc=
+	t=1763032431; cv=none; b=iAFkZkIGxP5b01uTwxbW78k8og6V7+aCGkWFTvaZp0CsvSsgkYyugkSPQt8nU3zgKfSlEk3bIA5jmiHEjFC4sGI//rkL21yQAYoj6B6lkzdsRbQw4KTe1kTJqBfs/cfzZUWPRgXKgrmUu1DMlhGEHUGsrKCMonp2FTBwLnMDMbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763030655; c=relaxed/simple;
-	bh=/KuQbQ1XBKAT9RmYZtPnZa404uPS8QlYbR7LnYoq0GA=;
+	s=arc-20240116; t=1763032431; c=relaxed/simple;
+	bh=BoMIB6Cgo57Hjts4k6r7afy8LmhwKcqYc1FVVQP9p1k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ie+MmNfhy2YoQXpCPAUey+3vbge0/skZPX3eUY4SRkWcUYi2k483ECXljo+7GmG6tnVOVghTC1mXZWmiU4MpMc8PtUou46aPAtNmcPgk8upZ8hgKEpLbtaoAMy07AUE4++m2uvnfQF1BO5eOgrQTyGQRMKfJPdlpFbCImlJ4P2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXw4hCyU; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=gw8c4x2u9sqqzHYHGQ5Htge0oUOsN7D+F2JDO/i/2ZQU+RidZ4pLKeeqPIetMZqo7F8hkVEdvnJW1h4q4CInmVXEgdhxikqnSllYgKCLiULqaAqLgBrjkhM2Eo7jQAYv/ValVO02kUFFsyGwKhqiHC5GZ6yRiky0E9a31izhNVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8reU62B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXw4hCyU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6021C113D0;
-	Thu, 13 Nov 2025 10:44:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8reU62B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E170FC4CEF5;
+	Thu, 13 Nov 2025 11:13:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763030655;
-	bh=/KuQbQ1XBKAT9RmYZtPnZa404uPS8QlYbR7LnYoq0GA=;
+	s=k20201202; t=1763032430;
+	bh=BoMIB6Cgo57Hjts4k6r7afy8LmhwKcqYc1FVVQP9p1k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MXw4hCyUuiOVkUptaA1npF7ZuOnvlE+4UkLkyePgScCWoawEeVQv35zehuRHqtEle
-	 pssslC8zpv2dW0+5809yyiEg6OYBh6rKgf2n/GpDFyC5JmjLm7E/5Wh1LaDjw5u8Ia
-	 /RV62w/dBjRSuQZhNUrj847c6/0pyy4Fod3q39rUfz4b+HCION3dkYNVBe9PJ01ZWX
-	 BT2g6x6P0WakqSpCVNCcZBHoW1XduTIC3sNBkD9CWued/mWcNzNdMO4AM828mavI59
-	 iccXuKxakxrSh4/019CKYJ8tVkQSVutbHwUymPCrfTohEJdFS+MMGQBQS602wPVcfS
-	 faweT90J4lucQ==
-Message-ID: <8eea72ea-c106-4dff-979f-c1acd6b0d617@kernel.org>
-Date: Thu, 13 Nov 2025 11:44:10 +0100
+	b=F8reU62BrOOOflqvWMIeTQmSfcVW0KPhbuLZuSLDliq0wNaMUxxFmBhwHbeVBzYUM
+	 uK9HfX9TGGofrW/y5Ip92+F87+xvW6T2MHvIZ5E6erIpoxr253b2GcYhnfzNb6FbSh
+	 2nJDqaxnaqfxKhy0he7wfqnysIh9Cu37yXeXkVwfmCknqcacj2NQhrcwVHICMDqxSm
+	 9TEqAtw1lwsTeTwFVrnEcXMoCtk5vFQRSISxmjLz2X3RXsYYBC7J0XKgKQShWkaYgV
+	 tk2XwRN72zLu4XkDrj96ELA3Nb6Dms5fh+2Ttbggk5Zewz5tVKBCX2sohoQxWtZKQM
+	 X264vq6FSz9EA==
+Message-ID: <7dc40cbf-3d00-4843-88f2-91990f7807ea@kernel.org>
+Date: Thu, 13 Nov 2025 12:13:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,26 +35,22 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- semen.protsenko@linaro.org, willmcvicker@google.com,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
- <20251112-gs101-otp-v2-2-bff2eb020c95@linaro.org>
- <20251113-benign-macaw-of-development-dbd1f8@kuoka>
- <9d77461c-4487-4719-98db-1c5c5025c87e@linaro.org>
- <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
- <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
- <62bb6c08-a1d0-4dba-a431-0d6ce49d66b2@linaro.org>
-Content-Language: en-US
+Subject: Re: [PATCH v4 02/20] regulator: dt-bindings: add s2mpg10-pmic
+ regulators
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
+ <20251110-s2mpg1x-regulators-v4-2-94c9e726d4ba@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -98,41 +94,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <62bb6c08-a1d0-4dba-a431-0d6ce49d66b2@linaro.org>
+In-Reply-To: <20251110-s2mpg1x-regulators-v4-2-94c9e726d4ba@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/11/2025 11:26, Tudor Ambarus wrote:
->>
->>>>> this can easily be just customized chipid driver - with different
->>>>> implementation of exynos_chipid_get_chipid_info().
->>>>
->>>> If the answer is no to my question above, how shall I model the device
->>>> that binds to the existing exynos-chipid driver?
->>> Just extend the existing driver.
->>>
->> So you mean I shall have something like that in DT:
->>
->> +		chipid@10000000 {
->> +			compatible = "google,gs101-chipid";
->> +			reg = <0x10000000 0xf084>;
->> +			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
->> +			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
->> +		};
->>
->> Maybe remove the interrupts because I don't need them for reading OTP regs.
->>
->> What happens in the maybe unlikely case we do want to add support for OTP
->> for GS101? How will we describe that in DT?
->>
+On 10/11/2025 20:28, André Draszik wrote:
+> The S2MPG10 PMIC is a Power Management IC for mobile applications with
+> buck converters, various LDOs, power meters, RTC, clock outputs, and
+> additional GPIO interfaces.
 > 
-> Ah, I guess you meant to keep the node as I described it in patch 3/5,
-> an efuse node with a google,gs101-otp compatible, that will bind to the
-> existing exynos-chipid driver. Then if/when we add OTP support, move
-> everything to a new OTP driver. That can work, yes. Unless I add some
-> OTP support now, to justify the new driver. Both shall be okay, right?
+> It has 10 buck and 31 LDO rails. Several of these can either be
+> controlled via software (register writes) or via external signals, in
+> particular by:
+>     * one out of several input pins connected to a main processor's:
+>         *  GPIO pins
+>         * other pins that are e.g. firmware- or power-domain-controlled
+>           without explicit driver intervention
+>     * a combination of input pins and regist
 
-Yes.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
