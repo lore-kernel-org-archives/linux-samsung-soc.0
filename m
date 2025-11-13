@@ -1,290 +1,616 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F142F99B5;
-	Thu, 13 Nov 2025 02:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A868A23ED5B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2025 02:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763000841; cv=none; b=nPXThc18PhQj3GvqQx3okLYyiArEGBMbBK1cD87IR55L6ut46+9uVq8uVokLiTRDL2pljzFyE+xDxWNGYNyYUnCMLIEb66EEunfoXfr+h300nCSH5epbUNROVktGEl05nxY1dABf/gfuXN/p1WOO6le69F8o3HvaqLmIQU/xxKw=
+	t=1763001363; cv=none; b=sIuwNtLi3nbI2ERYaUqfO+/atRX3mrw8E02y8JCqfxqx3z4VJvln6L09fnA+q3zzXiH+y/nOw9BjN4bZ7IVEGNmupzj31yqGssKxMv3f+exlJeY/RvMN4K9ddvam9+VEWni/R3WEjNmcqP6EkYfZ4PZBQz9cHn9fvtpaKj8Ked8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763000841; c=relaxed/simple;
-	bh=yNXVjwB02D6ijpBD4DNv7JfxSUtsr+AkiMEO13PQgwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbCAHuQMNOy35+iX9ezTJgt40aa+ggM569BweUggHt6LiAerCHZBXdnzauzF3N0lz7fcd1hmbkO5vUnzMjieQ/tJikoYymBlLDENGxOuBvdik+arsM4Fp3zfERkXmgEzSDudIAdt0edfA7qpP66Hg7kNC1hjevtcwnPlWCzPwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYbPAsSD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763001363; c=relaxed/simple;
+	bh=ubIlJfsZaSXJGvpZwKwcGPU+DMBtEsx5Rg/eYpjZ6zk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qq+pi/Qs89dyOb2AkrAG8+Va5es6MmHkWN3J74XYUbEZeOzqCwGkxxAkPA8fDPzT+J29ayC0OUky+iuQjXspUSl6b6NtmcYSAfA81LzvodQ6g5lDlubefCurC/fiSceoQa6rOcEEz6cUBJZbTenH2QbqaR5Jn/L82WpLTBBg0pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WMpGCJRy; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYbPAsSD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE269C113D0;
-	Thu, 13 Nov 2025 02:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763000841;
-	bh=yNXVjwB02D6ijpBD4DNv7JfxSUtsr+AkiMEO13PQgwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cYbPAsSDm/ZWgd+yI2erQND0RM9Lbv7i360mOyJRQfzKH0BndtuOo9LAK0qaD0XyW
-	 adbQrqVymdGQiQL0GHO6mdEaqTBk2Gtr53D8N16btB80RNoNbDKlrJy0MktAkJ9BtL
-	 BOPIbtlT00hWq9b75NNvNIxrWcHVGdd7VRnmIyDDeROxsaONG1LwF98mK0OX2CNhnm
-	 I4dFEyvmhjeXiJrY8d3xI0rQbprd/XI8gkjkcxuVXzLAsV5rgk1NOz7nD0d+SGTPX/
-	 W7TR7GxItsO/b3/OzmaQdKwNc+mg4nR47yoseOqoiiriumLRAMicGOzfu2wBMKg6WV
-	 V2vtpjhWSCGZw==
-Date: Wed, 12 Nov 2025 20:27:19 -0600
-From: Rob Herring <robh@kernel.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Julius Werner <jwerner@chromium.org>,
-	William McVicker <willmcvicker@google.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for
- frankel/blazer/mustang
-Message-ID: <20251113022719.GA2281498-robh@kernel.org>
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WMpGCJRy"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-786a85a68c6so3367787b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2025 18:36:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763001359; x=1763606159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GWon0gagLotUYcfgUQnl+pqNZXNf3Ov8QiqzoiU14FA=;
+        b=WMpGCJRy0iH/0ByndHdF+UoeS/XIV3cXjZcIwCtoXTw87oNRUFcUVnP2Lk57UQzfpS
+         bc5nNW3uBAxBVG2zQJJlrWU5ZmJIPxOUTTgpj8m/G+BEPL89vN2Q+Ykt3atbP3bSa5ej
+         RmBnFp16E+/iDXeN39QGa6JzvB9Xrb1PkPo+H1KQvYdyyuphWGZ069MzsPO0by/KFR7s
+         4RXBlE4tg2qTmctmxJbTLgiIYYlMIfk++NtCL6OpmhRb3mlGnbpv9aL4xQ1YmQUYXx+r
+         vh0LjJLtgEUQp5OorHX9RblgUy3xxLNZ/IGbx2AK6E/FkESCsXDJODVJbxGsZV6ei2iN
+         6DwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763001359; x=1763606159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GWon0gagLotUYcfgUQnl+pqNZXNf3Ov8QiqzoiU14FA=;
+        b=baQRvmg+1dcQdn0wdyDuf1wB82FKE0mQOjqW9uvhftQN8BGMgcQF5F23k+K21MTtJY
+         miSpzcm7UT5oWZC0fh8OJtXeiLNTC57EuZl32IPgIj2Oz6nish8D3CaMuJfSSPaIheGn
+         GtiGzIEP/lyEivkLLNg0uN64bBuyqxJ1V7Cvr1pasLPXrviyuGd+R0ASJqZTBNkorRiJ
+         hOWYHFHzmSfLUNWDDonBCnYwP/SH1YU0H3C2z0Ypgo2qtf2f8YHYO3IDAgvk06fGIbrr
+         MOJ8u7jB8qp/8w7HbROpaRmxZV2BNUWaJssC0zA/qwhDMwtS/yj1Q/ldL990MrKCbWXW
+         QjmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlEc1mlTVyBxKVsbqSpTuQrnnY5IAFbhezOm4jqF/DToECrKfBWgcC9DP+i3hWiU+C5xAG9xE1ELtAaCYtxQFYog==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+cLatqAmpr4TojFItKkdFzd/FWu3oDewSKbIB64g9DTd3M6S+
+	GHvkijPXC8stUjnFM6BXxXmYn4n6ireCiznbDbwSDqIYlqYNXzK5/wMe1YDnkWHXxkmyYWXotaR
+	UUuc1Cmc5b08H7jO+z6t21Qi13XJrKY2MSKcJ3lvXREDZkEvyZLER5wM=
+X-Gm-Gg: ASbGncsWJGQNi6evlGKxQMawVHokW+ezM8zlxtI76hftdgs1oEGSjbNsOhdVAxfO50x
+	f8jhQIFqjRkFvo/BgimXYDsO8FbeRx3qxN9LWPe2AaSR/8YkiQst6+68e1asDw9cEVXsBnDCytL
+	LT7g6QHJl1C23HXiA0Xa0ROaHk6IVww6HkcvCRwB+KfyOYQvf0AOcV1WTTbdX1CywTa6NvtaUox
+	gJMH1cOPOTVPys+G3q+SGzWHtmJsQjmD+Ao+aqNn9Lw+soJN9/dTnU0tjmUBRMag3Re+3y9HQI8
+	kjCYnhJ28SHcQNsZfXk=
+X-Google-Smtp-Source: AGHT+IGGRYC6aP/aYZ/xvOKq/SDKbfUHmCU2sTi9MYM5jRStgyMU0GDlogV17HVsWR3WXEqHF2nDsmERjGPCevOD3SI=
+X-Received: by 2002:a05:690c:6ac9:b0:786:896d:8858 with SMTP id
+ 00721157ae682-788136c2887mr43144067b3.47.1763001359439; Wed, 12 Nov 2025
+ 18:35:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+References: <CGME20251110082145epcas2p1e56790e7aa72d7d3bcad4cc1faae07ef@epcas2p1.samsung.com>
+ <20251110082649.3109858-1-youngmin.nam@samsung.com> <20251110082649.3109858-6-youngmin.nam@samsung.com>
+In-Reply-To: <20251110082649.3109858-6-youngmin.nam@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 12 Nov 2025 20:35:47 -0600
+X-Gm-Features: AWmQ_bne75c3kVDDhYnC9P0fQXZ2GY8wO37bEGf66FXqroJMyqcMyG1DQt0Y3tY
+Message-ID: <CAPLW+4m3=-957mqPC_Gb=2MjHCsQf7sSiBY-k-S=B14yq5bggA@mail.gmail.com>
+Subject: Re: [RFT PATCH v1 5/5] pinctrl: samsung: rename gs101_pinctrl_* to exynos9_pinctrl_*
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
+	linus.walleij@linaro.org, peter.griffin@linaro.org, ryu.real@samsung.com, 
+	d7271.choe@samsung.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 11:22:04AM -0800, Douglas Anderson wrote:
-> Add top-level DT bindings useful for Pixel 10 (frankel), Pixel 10 Pro
-> (blazer), and Pixel 10 Pro XL (mustang).
-> 
-> Since overlays are fairly well-supported these days and the downstream
-> Pixel bootloader assumes that the SoC is the base overlay and specific
-> board revisions are overlays, reflect the SoC / board split in the
-> bindings.
-> 
-> The SoC in the Pixel 10 series has the marketing name of "Tensor
-> G5". Despite the fact that it sounds very similar to the "Tensor G4",
-> it's a very different chip. Tensor G4 was, for all intents and
-> purposes, a Samsung Exynos offshoot whereas Tensor G5 is entirely its
-> own SoC. This SoC is known internally as "laguna" and canonically
-> referred to in code as "lga". There are two known revisions of the
-> SoC: an A0 pre-production variant (ID 0x000500) and a B0 variant (ID
-> 0x000510) used in production. The ID is canonicaly broken up into a
-> 16-bit SoC product ID, a 4-bit major rev, and a 4-bit minor rev.
-> 
-> The dtb for all supported SoC revisions is appended to one of the boot
-> partitions and the bootloader will look at the device trees and pick
-> the correct one. The current bootloader uses a downstream
-> `soc_compatible` node to help it pick the correct device tree. It
-> looks like this:
->   soc_compatible {
->     B0 {
->       description = "LGA B0";
->       product_id = <0x5>;
->       major = <0x1>;
->       minor = <0x0>;
->       pkg_mode = <0x0>;
->     };
->   };
-> Note that `pkg_mode` isn't currently part of the ID on the SoC and the
-> bootloader always assumes 0 for it.
-> 
-> In this patch, put the SoC IDs straight into the compatible. Though
-> the bootloader doesn't look at the compatible at the moment, this
-> should be easy to teach the bootloader about.
-> 
-> Boards all know their own platform_id / product_id / stage / major /
-> minor / variant. For instance, Google Pixel 10 Pro XL MP1 is:
-> * platform_id (8-bits): 0x07 - frankel/blazer/mustang
-> * product_id (8-bits):  0x05 - mustang
-> * stage (4-bits):       0x06 - MP
-> * major (8-bits):       0x01 - MP 1
-> * minor (8-bits):       0x00 - MP 1.0
-> * variant (8-bits):     0x00 - No special variant
-> 
-> When board overlays are packed into the "dtbo" partition, a tool
-> (`mkdtimg`) extracts a board ID and board rev from the overlay and
-> stores that as metadata with the overlay. Downstream, the dtso
-> intended for the Pixel 10 Pro XL MP1 has the following properties at
-> its top-level:
->   board_id = <0x70506>;
->   board_rev = <0x010000>;
-> 
-> The use of top-level IDs can probably be used for overlays upstream as
-> well, but also add the IDs to the compatible string in case it's
-> useful.
-> 
-> Compatible strings are added for all board revisions known to be
-> produced based on downstream sources.
-> 
-> A few notes:
-> * If you look at `/proc/device-tree/compatible` and
->   `/proc/device-tree/model` on a running device, that won't
->   necessarily be an exact description of the hardware you're running
->   on. If the bootloader can't find a device tree that's an exact match
->   then it will pick the best match (within reason--it will never pick
->   a device tree for a different product--just for different revs of
->   the same product).
-> * There is no merging of the top-level compatible from the SoC and
->   board. The compatible string containing IDs for the SoC will not be
->   found in the device-tree passed to the OS.
+On Mon, Nov 10, 2025 at 2:21=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung.=
+com> wrote:
+>
+> The suspend/resume helpers named gs101_pinctrl_{suspend,resume} are not
+> GS101-specific. They implement the generic save/restore sequence used by
+> Exynos9-style controllers that have EINT filter configuration (eint_fltco=
+n)
+> to preserve.
+>
+> Rename them to exynos9_pinctrl_{suspend,resume} and update all users:
+>   - exynos2200, exynos9810, exynos8895, exynos7885, exynos7870,
+>     exynosautov9, fsd, and gs101 controller tables
 
-I think this is a problem...
+Not strictly related to this patch, but I wonder if we should also
+enable suspend/resume operations for exynos850_pin_ctrl[] later.
 
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>   - prototypes in pinctrl-exynos.h
+>   - definitions in pinctrl-exynos.c
+>
+> This aligns naming with the earlier macro/doc cleanups (e.g. using
+> EXYNOS9_PIN_BANK_* and describing eint_fltcon as Exynos9-specific) and
+> makes the helpers clearly reusable by other Exynos9-like SoCs.
+>
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+
+It looks to me as this patch actually fixes handling pinctrl during
+suspend/resume for some chips. If it's the case, suggest adding
+"Fixes:" tag here.
+
 > ---
-> In the past, attempts to have the SoC as a base device tree and boards
-> supported as overlays has been NAKed. From a previous discussion [1]
-> "Nope, boards are not overlays. Boards are DTB." I believe this needs
-> to be relitigated.
 
-I think it is worth having the discussion. There's been some discussions 
-about an overlay split with SoMs and baseboards as well. I think that's 
-what is driving this addition[1]. I don't think this case is much 
-different.
+LGTM:
 
-As a different way to combine things compared to .dtsi files, I don't 
-care too much how things are structured to the extent that's just 
-internal structure and we're moving the combining of files from one 
-point in time to another.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-My concern here is largely around validation. Can the SoC DTB pass 
-validation, and can we still validate the whole thing at build time? To 
-start with, it's not great if we have to make the schema allow only an 
-SoC compatible without a board compatible. Then suddenly omitting a 
-board compatible is always valid. Solving that with an entirely 
-different SoC compatible as you have doesn't seem great.
+(Not sure how to test it on my E850-96, as suspend/resume is not
+enabled there yet, and this patch doesn't really affect Exynos850
+anyway; so only R-b tag for this one.)
 
-My other concern is whether this is an ABI between the SoC and board 
-DTBs? And I don't mean just you, but for anyone wanting to do anything 
-remotely similar. An ABI is a problem as we don't really have any way to 
-validate each piece separately. (This is already a problem for existing 
-overlays.)
-
-> In the previous NAK, I didn't see any links to documentation
-> explicitly stating that DTBs have to represent boards. It's also
-> unclear, at least to me, _why_ a DTB would be limited to represent a
-> "board" nor what the definition of a "board" is.
-> 
-> As at least one stab at why someone might not want an overlay scheme
-> like this, one could point out that the top-level compatible can be a
-> bit of a mess. Specifically in this scheme the board "compatible" from
-> the overlay will fully replace/hide the SoC "compatible" from the base
-> SoC. If this is truly the main concern, it wouldn't be terribly hard
-> to add a new semantic (maybe selectable via a new additional
-> property?) that caused the compatible strings to be merged in a
-> reasonable way.
-> 
-> Aside from dealing with the compatible string, let's think about what
-> a "board" is. I will make the argument here that the SoC qualifies as
-> a "board" and that the main PCB of a phone can be looked at as a
-> "cape" for this SoC "board". While this may sound like a stretch, I
-> would invite a reader to propose a definition of "board" that excludes
-> this. Specifically, it can be noted:
-> * I have a development board at my desk that is "socketed". That is, I
->   can pull the SoC out and put a different one in. I can swap in a
->   "rev A0" or a "rev B0" SoC into this socket. Conceivably, I could
->   even put a "Tensor G6", G7, G8, or G999 in the socket if it was
->   compatible. In this sense, the "SoC" is a standalone thing that can
->   be attached to the devboard "cape". The SoC being a standalone thing
->   is in the name. It's a "system" on a chip.
-> * In case the definition of a board somehow needs a PCB involved, I
->   can note that on my dev board the CPU socket is soldered onto to a
->   CPU daughtercard (a PCB!) that then has a board-to-board connector
->   to the main PCB.
-> * Perhaps one could argue that a dev board like I have describe would
->   qualify for this SoC/board overlay scheme but that a normal cell
->   phone wouldn't because the SoC isn't removable. Perhaps removability
->   is a requirement here? If so, imagine if some company took a
->   Raspberry Pi, soldered some components directly onto the "expansion"
->   pins, and resold that to consumers. Does this mean they can't use
->   overlays?
-> 
-> To me, the above arguments justify why SoC DTBs + "board" overlays
-> should be accepted. As far as I can tell, there is no downside and
-> many people who would be made happy with this.
-> 
-> [1] https://lore.kernel.org/all/dbeb28be-1aac-400b-87c1-9764aca3a799@kernel.org/
-> 
->  .../devicetree/bindings/arm/google.yaml       | 87 +++++++++++++++----
->  1 file changed, 68 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
-> index 99961e5282e5..f9f9ea1c8050 100644
-> --- a/Documentation/devicetree/bindings/arm/google.yaml
-> +++ b/Documentation/devicetree/bindings/arm/google.yaml
-> @@ -13,27 +13,18 @@ description: |
->    ARM platforms using SoCs designed by Google branded "Tensor" used in Pixel
->    devices.
->  
-> -  Currently upstream this is devices using "gs101" SoC which is found in Pixel
-> -  6, Pixel 6 Pro and Pixel 6a.
-> +  These bindings for older Pixel devices don't use device tree overlays so
-> +  no separate SoC entry is added. This may change in the future.
->  
-> -  Google have a few different names for the SoC:
-> -  - Marketing name ("Tensor")
-> -  - Codename ("Whitechapel")
-> -  - SoC ID ("gs101")
-> -  - Die ID ("S5P9845")
-> -
-> -  Likewise there are a couple of names for the actual device
-> -  - Marketing name ("Pixel 6")
-> -  - Codename ("Oriole")
-> -
-> -  Devicetrees should use the lowercased SoC ID and lowercased board codename,
-> -  e.g. gs101 and gs101-oriole.
-> +  Newer Pixel devices are expected to have the SoC device tree as the base
-> +  and specific board device trees as overlays.
->  
->  properties:
->    $nodename:
->      const: '/'
->    compatible:
->      oneOf:
-> +      # Google Tensor G1 AKA gs101 AKA whitechapel AKA Die ID S5P9845 boards
->        - description: Google Pixel 6 or 6 Pro (Oriole or Raven)
->          items:
->            - enum:
-> @@ -41,13 +32,71 @@ properties:
->                - google,gs101-raven
->            - const: google,gs101
->  
-> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
-> +      - description: Tensor G5 SoC (laguna)
-> +        items:
-> +          - enum:
-> +              - google,soc-id-0005-rev-00  # A0
-> +              - google,soc-id-0005-rev-10  # B0
-> +          - const: google,lga
-> +      - description: Google Pixel 10 Board (Frankel)
-> +        items:
-> +          - enum:
-> +              - google,pixel-id-070302-rev-000000  # Proto 0
-> +              - google,pixel-id-070302-rev-010000  # Proto 1
-> +              - google,pixel-id-070302-rev-010100  # Proto 1.1
-> +              - google,pixel-id-070303-rev-010000  # EVT 1
-> +              - google,pixel-id-070303-rev-010100  # EVT 1.1
-> +              - google,pixel-id-070303-rev-010101  # EVT 1.1 Wingboard
-> +              - google,pixel-id-070304-rev-010000  # DVT 1
-> +              - google,pixel-id-070305-rev-010000  # PVT 1
-> +              - google,pixel-id-070306-rev-010000  # MP 1
-
-Should upstream really care about anything other than MP1? I don't think 
-so. Which ones are useful in 1 year, 2 years, 10 years?
-
-> +          - const: google,lga-frankel
-> +          - const: google,lga
-
-It's not clear to me how you map boards to SoC revision? You boot up 
-using the SoC DTB and then select the board DTBO based on? This all 
-needs to be well defined and general enough any (existing) platform 
-could use it. If [1] helps or doesn't work for you I'm interested in 
-hearing that.
-
-Rob
-
-[1] https://lore.kernel.org/devicetree-spec/20250911151436.2467758-1-raymond.mao@linaro.org/
+>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 176 +++++++++---------
+>  drivers/pinctrl/samsung/pinctrl-exynos.c      |   4 +-
+>  drivers/pinctrl/samsung/pinctrl-exynos.h      |   4 +-
+>  3 files changed, 92 insertions(+), 92 deletions(-)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pin=
+ctrl/samsung/pinctrl-exynos-arm64.c
+> index ea11543e4e26..ccaa8b6b39a9 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> @@ -195,16 +195,16 @@ static const struct samsung_pin_ctrl exynos2200_pin=
+_ctrl[] =3D {
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks0),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 CMGP data */
+>                 .pin_banks      =3D exynos2200_pin_banks1,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks1),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 2 HSI1 data */
+>                 .pin_banks      =3D exynos2200_pin_banks2,
+> @@ -214,36 +214,36 @@ static const struct samsung_pin_ctrl exynos2200_pin=
+_ctrl[] =3D {
+>                 .pin_banks      =3D exynos2200_pin_banks3,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks3),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 4 HSI1UFS data */
+>                 .pin_banks      =3D exynos2200_pin_banks4,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks4),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 5 PERIC0 data */
+>                 .pin_banks      =3D exynos2200_pin_banks5,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks5),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 6 PERIC1 data */
+>                 .pin_banks      =3D exynos2200_pin_banks6,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks6),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 7 PERIC2 data */
+>                 .pin_banks      =3D exynos2200_pin_banks7,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos2200_pin_banks7),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 8 VTS data */
+>                 .pin_banks      =3D exynos2200_pin_banks8,
+> @@ -710,8 +710,8 @@ static const struct samsung_pin_ctrl exynos7870_pin_c=
+trl[] __initconst =3D {
+>                 .pin_banks      =3D exynos7870_pin_banks0,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks0),
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 DISPAUD data */
+>                 .pin_banks      =3D exynos7870_pin_banks1,
+> @@ -721,43 +721,43 @@ static const struct samsung_pin_ctrl exynos7870_pin=
+_ctrl[] __initconst =3D {
+>                 .pin_banks      =3D exynos7870_pin_banks2,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks2),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 3 FSYS data */
+>                 .pin_banks      =3D exynos7870_pin_banks3,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks3),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 4 MIF data */
+>                 .pin_banks      =3D exynos7870_pin_banks4,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks4),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 5 NFC data */
+>                 .pin_banks      =3D exynos7870_pin_banks5,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks5),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 6 TOP data */
+>                 .pin_banks      =3D exynos7870_pin_banks6,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks6),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 7 TOUCH data */
+>                 .pin_banks      =3D exynos7870_pin_banks7,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7870_pin_banks7),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         },
+>  };
+>
+> @@ -819,8 +819,8 @@ static const struct samsung_pin_ctrl exynos7885_pin_c=
+trl[] __initconst =3D {
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7885_pin_banks0),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 DISPAUD data */
+>                 .pin_banks      =3D exynos7885_pin_banks1,
+> @@ -830,15 +830,15 @@ static const struct samsung_pin_ctrl exynos7885_pin=
+_ctrl[] __initconst =3D {
+>                 .pin_banks      =3D exynos7885_pin_banks2,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7885_pin_banks2),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 3 TOP data */
+>                 .pin_banks      =3D exynos7885_pin_banks3,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos7885_pin_banks3),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         },
+>  };
+>
+> @@ -1175,8 +1175,8 @@ static const struct samsung_pin_ctrl exynos9810_pin=
+_ctrl[] __initconst =3D {
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks0),
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 AUD data */
+>                 .pin_banks      =3D exynos9810_pin_banks1,
+> @@ -1186,44 +1186,44 @@ static const struct samsung_pin_ctrl exynos9810_p=
+in_ctrl[] __initconst =3D {
+>                 .pin_banks      =3D exynos9810_pin_banks2,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks2),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 3 CMGP data */
+>                 .pin_banks      =3D exynos9810_pin_banks3,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks3),
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 4 FSYS0 data */
+>                 .pin_banks      =3D exynos9810_pin_banks4,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks4),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 5 FSYS1 data */
+>                 .pin_banks      =3D exynos9810_pin_banks5,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks5),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 6 PERIC0 data */
+>                 .pin_banks      =3D exynos9810_pin_banks6,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks6),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 7 PERIC1 data */
+>                 .pin_banks      =3D exynos9810_pin_banks7,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos9810_pin_banks7),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 8 VTS data */
+>                 .pin_banks      =3D exynos9810_pin_banks8,
+> @@ -1295,8 +1295,8 @@ static const struct samsung_pin_ctrl exynosautov9_p=
+in_ctrl[] __initconst =3D {
+>                 .pin_banks      =3D exynosautov9_pin_banks0,
+>                 .nr_banks       =3D ARRAY_SIZE(exynosautov9_pin_banks0),
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 AUD data */
+>                 .pin_banks      =3D exynosautov9_pin_banks1,
+> @@ -1306,36 +1306,36 @@ static const struct samsung_pin_ctrl exynosautov9=
+_pin_ctrl[] __initconst =3D {
+>                 .pin_banks      =3D exynosautov9_pin_banks2,
+>                 .nr_banks       =3D ARRAY_SIZE(exynosautov9_pin_banks2),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 3 FSYS1 data */
+>                 .pin_banks      =3D exynosautov9_pin_banks3,
+>                 .nr_banks       =3D ARRAY_SIZE(exynosautov9_pin_banks3),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 4 FSYS2 data */
+>                 .pin_banks      =3D exynosautov9_pin_banks4,
+>                 .nr_banks       =3D ARRAY_SIZE(exynosautov9_pin_banks4),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 5 PERIC0 data */
+>                 .pin_banks      =3D exynosautov9_pin_banks5,
+>                 .nr_banks       =3D ARRAY_SIZE(exynosautov9_pin_banks5),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 6 PERIC1 data */
+>                 .pin_banks      =3D exynosautov9_pin_banks6,
+>                 .nr_banks       =3D ARRAY_SIZE(exynosautov9_pin_banks6),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         },
+>  };
+>
+> @@ -1715,8 +1715,8 @@ static const struct samsung_pin_ctrl exynos8895_pin=
+_ctrl[] __initconst =3D {
+>                 .nr_banks       =3D ARRAY_SIZE(exynos8895_pin_banks0),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 ABOX data */
+>                 .pin_banks      =3D exynos8895_pin_banks1,
+> @@ -1731,36 +1731,36 @@ static const struct samsung_pin_ctrl exynos8895_p=
+in_ctrl[] __initconst =3D {
+>                 .pin_banks      =3D exynos8895_pin_banks3,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos8895_pin_banks3),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 4 FSYS1 data */
+>                 .pin_banks      =3D exynos8895_pin_banks4,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos8895_pin_banks4),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 5 BUSC data */
+>                 .pin_banks      =3D exynos8895_pin_banks5,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos8895_pin_banks5),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 6 PERIC0 data */
+>                 .pin_banks      =3D exynos8895_pin_banks6,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos8895_pin_banks6),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 7 PERIC1 data */
+>                 .pin_banks      =3D exynos8895_pin_banks7,
+>                 .nr_banks       =3D ARRAY_SIZE(exynos8895_pin_banks7),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         },
+>  };
+>
+> @@ -1819,15 +1819,15 @@ static const struct samsung_pin_ctrl fsd_pin_ctrl=
+[] __initconst =3D {
+>                 .pin_banks      =3D fsd_pin_banks0,
+>                 .nr_banks       =3D ARRAY_SIZE(fsd_pin_banks0),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 1 PERIC data */
+>                 .pin_banks      =3D fsd_pin_banks1,
+>                 .nr_banks       =3D ARRAY_SIZE(fsd_pin_banks1),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D exynos_pinctrl_suspend,
+> -               .resume         =3D exynos_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin-controller instance 2 PMU data */
+>                 .pin_banks      =3D fsd_pin_banks2,
+> @@ -1927,16 +1927,16 @@ static const struct samsung_pin_ctrl gs101_pin_ct=
+rl[] __initconst =3D {
+>                 .pin_banks      =3D gs101_pin_alive,
+>                 .nr_banks       =3D ARRAY_SIZE(gs101_pin_alive),
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D gs101_pinctrl_suspend,
+> -               .resume         =3D gs101_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>                 .retention_data =3D &no_retention_data,
+>         }, {
+>                 /* pin banks of gs101 pin-controller (FAR_ALIVE) */
+>                 .pin_banks      =3D gs101_pin_far_alive,
+>                 .nr_banks       =3D ARRAY_SIZE(gs101_pin_far_alive),
+>                 .eint_wkup_init =3D exynos_eint_wkup_init,
+> -               .suspend        =3D gs101_pinctrl_suspend,
+> -               .resume         =3D gs101_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>                 .retention_data =3D &no_retention_data,
+>         }, {
+>                 /* pin banks of gs101 pin-controller (GSACORE) */
+> @@ -1951,29 +1951,29 @@ static const struct samsung_pin_ctrl gs101_pin_ct=
+rl[] __initconst =3D {
+>                 .pin_banks      =3D gs101_pin_peric0,
+>                 .nr_banks       =3D ARRAY_SIZE(gs101_pin_peric0),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D gs101_pinctrl_suspend,
+> -               .resume         =3D gs101_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin banks of gs101 pin-controller (PERIC1) */
+>                 .pin_banks      =3D gs101_pin_peric1,
+>                 .nr_banks       =3D ARRAY_SIZE(gs101_pin_peric1),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D gs101_pinctrl_suspend,
+> -               .resume         =3D gs101_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin banks of gs101 pin-controller (HSI1) */
+>                 .pin_banks      =3D gs101_pin_hsi1,
+>                 .nr_banks       =3D ARRAY_SIZE(gs101_pin_hsi1),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D gs101_pinctrl_suspend,
+> -               .resume         =3D gs101_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         }, {
+>                 /* pin banks of gs101 pin-controller (HSI2) */
+>                 .pin_banks      =3D gs101_pin_hsi2,
+>                 .nr_banks       =3D ARRAY_SIZE(gs101_pin_hsi2),
+>                 .eint_gpio_init =3D exynos_eint_gpio_init,
+> -               .suspend        =3D gs101_pinctrl_suspend,
+> -               .resume         =3D gs101_pinctrl_resume,
+> +               .suspend        =3D exynos9_pinctrl_suspend,
+> +               .resume         =3D exynos9_pinctrl_resume,
+>         },
+>  };
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
+amsung/pinctrl-exynos.c
+> index 81fe0b08a9af..a6dd0fa59230 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -906,7 +906,7 @@ void exynos_pinctrl_suspend(struct samsung_pin_bank *=
+bank)
+>         }
+>  }
+>
+> -void gs101_pinctrl_suspend(struct samsung_pin_bank *bank)
+> +void exynos9_pinctrl_suspend(struct samsung_pin_bank *bank)
+>  {
+>         struct exynos_eint_gpio_save *save =3D bank->soc_priv;
+>         const void __iomem *regs =3D bank->eint_base;
+> @@ -961,7 +961,7 @@ void exynosautov920_pinctrl_suspend(struct samsung_pi=
+n_bank *bank)
+>         }
+>  }
+>
+> -void gs101_pinctrl_resume(struct samsung_pin_bank *bank)
+> +void exynos9_pinctrl_resume(struct samsung_pin_bank *bank)
+>  {
+>         struct exynos_eint_gpio_save *save =3D bank->soc_priv;
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/s=
+amsung/pinctrl-exynos.h
+> index 476346d163d8..7421cb5fa2dc 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> @@ -225,8 +225,8 @@ void exynosautov920_pinctrl_resume(struct samsung_pin=
+_bank *bank);
+>  void exynosautov920_pinctrl_suspend(struct samsung_pin_bank *bank);
+>  void exynos_pinctrl_suspend(struct samsung_pin_bank *bank);
+>  void exynos_pinctrl_resume(struct samsung_pin_bank *bank);
+> -void gs101_pinctrl_suspend(struct samsung_pin_bank *bank);
+> -void gs101_pinctrl_resume(struct samsung_pin_bank *bank);
+> +void exynos9_pinctrl_suspend(struct samsung_pin_bank *bank);
+> +void exynos9_pinctrl_resume(struct samsung_pin_bank *bank);
+>  struct samsung_retention_ctrl *
+>  exynos_retention_init(struct samsung_pinctrl_drv_data *drvdata,
+>                       const struct samsung_retention_data *data);
+> --
+> 2.39.2
+>
