@@ -1,151 +1,104 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C8933121B;
-	Fri, 14 Nov 2025 15:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1F929A30A;
+	Fri, 14 Nov 2025 16:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763135910; cv=none; b=RAW+ZRulAWxDeqv4Bdy0lAuOtJfpptAbjzB+aDnWF2qu3RMPCfUOuAbh1b+0GBo6ZJ9fo0iOvzQiT1nk3zfMxUDDn+Fz1wgF5AvqvMarMdNLKbqMpXsp/f8q0fnYMR0CuzMypDK0nh3q2194Ku62lsqQvvIaaRLFC7Q1HMr4Gac=
+	t=1763138821; cv=none; b=jycAZ5Ztcjwj7iExcHkhoAfHmCmrDmfG/4xA21/GRVTyeeYKziwNDo5rsqUTNJp6zXkIv51YE392e18LCGVNuDX4PrehAPWQ5gK5/h1XJdP36UUlCiHFwiECgoUL6QBV1EypVShRLgXV85DeGPFGO3kau5z6L2DXespyLq8eQvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763135910; c=relaxed/simple;
-	bh=/4jpfOVdwxaqs5UuVbb+nzeLmNtMSQLkUWtDXm7PJeM=;
+	s=arc-20240116; t=1763138821; c=relaxed/simple;
+	bh=4EpMRFeYHj1in4XKS+Dlo+4mLzX8SiIfcEMg1hebD0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgCBxegqWgGKFi/7iQ+CxlvUNZFfTaHmLVob0V61QaporXOBmKoXahWQxmhC3AeNfN7U1J4Ii1Hgq3P8WT9Mo4Y3kGP68gRyVx8QXhsePvKd6fJVK7ZgbgmRE9vHcCfQgrTDqBjtKh2YY0DAyBuN15fKWmFs5IJHukUBuTqVExo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FSHfay3A; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=rYoxFhl2f91KOSJJM6msPQmF6JNWTAWaAyPKjW0R7fwNnbas0Ac/6asf8Y0URNZrvuZDALP3DPhYBdxBgMfO/1CJCfzsK3InR5+s5+NN6DvWAELnSBsUuFibIBNW1VPfk1NzlFa4FVTODSQfH3PYklyyUpzxH7dTFkMN08gzru0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K30ipYDu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FSHfay3A"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 72517C10F64;
-	Fri, 14 Nov 2025 15:58:03 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4114C6060E;
-	Fri, 14 Nov 2025 15:58:25 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 71864102F23EE;
-	Fri, 14 Nov 2025 16:58:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763135904; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ateTgk+5rjws/58LFnBTFYJ2F6CnbGYyxzpZqXut2Hk=;
-	b=FSHfay3A0McuC6t6OlkmslKsXxEHWuaPHvzGO346RrJxdiQ3y9WMOUNULJ4WHA7XB5WA/n
-	VkO1reeq1lc7WqlPXR75B1PkCvRfq+QWJ1WSM82O9HA9vvnR5rQvt0vDwHigaj874d08lL
-	rA6fKpLtkBzBU06WexJPT7+F5JHdUN5LyHCGO9ASaRbKd3XJ2QcBZ0BkiPpeVSxTtNhDV/
-	auy4L9HnnM2DwoFxRRZgwkr1XrM0Mr6hTZmNt9I8pi7B6kAMcmvomO6PXIy48tYL0WOGEa
-	ex7d5dhMshKIma6fR/X5eq05FmbRb5MYA9smwRRjx88lBBHoYTObHcMeLSUGfw==
-Date: Fri, 14 Nov 2025 16:58:21 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K30ipYDu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E88C4CEFB;
+	Fri, 14 Nov 2025 16:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763138820;
+	bh=4EpMRFeYHj1in4XKS+Dlo+4mLzX8SiIfcEMg1hebD0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K30ipYDuR/RUrNmkVc7gm/zBnjjveNhFDABC4izAmhLcDJUFonKiI0G5vLlL6u/LO
+	 TeJ0wYSOE73rEdYcMoA6nR3i496qxne3PZihBlID9tEPoXOaTyt4ie3uyyIq9BgLBw
+	 PZJSb75fArEiccCcnjRALq60MFwd8TEqtK++9S5GnJ9RD62wbNFzJCGXVewGTrOZZ6
+	 mFU4euj93FqTdJfqoyGkaIjeSl5gcbO46LE2c6jjvEi4BnfXDk3zaMeKxwPTQr7zEQ
+	 gERyKvSX5UerE+mDcfN45nfSgQ+bg4rUomyFKu5AHF775QwAbx8ZkDuCYTamt4cTbJ
+	 ea3KEVbFnM+jw==
+Date: Fri, 14 Nov 2025 16:46:54 +0000
+From: Mark Brown <broonie@kernel.org>
 To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+Cc: Lee Jones <lee@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Juan Yescas <jyescas@google.com>,
-	Douglas Anderson <dianders@chromium.org>, kernel-team@android.com,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
 	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 2/3] rtc: s5m: query platform device IRQ resource for
- alarm IRQ
-Message-ID: <2025111415582194c6ee16@mail.local>
-References: <20251114-s5m-alarm-v1-0-c9b3bebae65f@linaro.org>
- <20251114-s5m-alarm-v1-2-c9b3bebae65f@linaro.org>
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 09/20] mfd: sec: Add support for S2MPG11 PMIC via ACPM
+Message-ID: <db7e95dd-2361-4579-b52c-b9556da4633a@sirena.org.uk>
+References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
+ <20251103-s2mpg1x-regulators-v3-9-b8b96b79e058@linaro.org>
+ <20251113162534.GO1949330@google.com>
+ <45ce203c03ec34631a0170baa7e4cf26c98b9cd3.camel@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Qn5lIfBNzUCscegG"
+Content-Disposition: inline
+In-Reply-To: <45ce203c03ec34631a0170baa7e4cf26c98b9cd3.camel@linaro.org>
+X-Cookie: Causes moderate eye irritation.
+
+
+--Qn5lIfBNzUCscegG
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251114-s5m-alarm-v1-2-c9b3bebae65f@linaro.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 
-On 14/11/2025 11:47:22+0000, André Draszik wrote:
-> The core driver now exposes the alarm IRQ as a resource, so we can drop
-> the lookup from here to simplify the code and make adding support for
-> additional variants easier in this driver.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+On Thu, Nov 13, 2025 at 09:43:29PM +0000, Andr=E9 Draszik wrote:
+> On Thu, 2025-11-13 at 16:25 +0000, Lee Jones wrote:
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > > +static const struct mfd_cell s2mpg11_devs[] =3D {
+> > > +	MFD_CELL_NAME("s2mpg11-meter"),
+> > > +	MFD_CELL_BASIC("s2mpg11-regulator", NULL, NULL, 0, S2MPG11_BUCKBOOS=
+T),
 
-> ---
->  drivers/rtc/rtc-s5m.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index a7220b4d0e8dd35786b060e2a4106e2a39fe743f..c6ed5a4ca8a0e4554b1c88c879b01fc384735007 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -15,7 +15,6 @@
->  #include <linux/rtc.h>
->  #include <linux/platform_device.h>
->  #include <linux/mfd/samsung/core.h>
-> -#include <linux/mfd/samsung/irq.h>
->  #include <linux/mfd/samsung/rtc.h>
->  #include <linux/mfd/samsung/s2mps14.h>
->  
-> @@ -683,22 +682,18 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  		case S2MPS15X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps15_rtc_regs;
-> -			alarm_irq = S2MPS14_IRQ_RTCA0;
->  			break;
->  		case S2MPS14X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps14_rtc_regs;
-> -			alarm_irq = S2MPS14_IRQ_RTCA0;
->  			break;
->  		case S2MPS13X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps13_rtc_regs;
-> -			alarm_irq = S2MPS14_IRQ_RTCA0;
->  			break;
->  		case S5M8767X:
->  			regmap_cfg = &s5m_rtc_regmap_config;
->  			info->regs = &s5m_rtc_regs;
-> -			alarm_irq = S5M8767_IRQ_RTCA1;
->  			break;
->  		default:
->  			return dev_err_probe(&pdev->dev, -ENODEV,
-> @@ -719,7 +714,6 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  					     "Failed to allocate regmap\n");
->  	} else if (device_type == S2MPG10) {
->  		info->regs = &s2mpg10_rtc_regs;
-> -		alarm_irq = S2MPG10_IRQ_RTCA0;
->  	} else {
->  		return dev_err_probe(&pdev->dev, -ENODEV,
->  				     "Unsupported device type %d\n",
-> @@ -730,13 +724,14 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  	info->s5m87xx = s5m87xx;
->  	info->device_type = device_type;
->  
-> -	if (s5m87xx->irq_data) {
-> -		info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
-> -		if (info->irq <= 0)
-> -			return dev_err_probe(&pdev->dev, -EINVAL,
-> -					     "Failed to get virtual IRQ %d\n",
-> -					     alarm_irq);
-> -	}
-> +	alarm_irq = platform_get_irq_byname_optional(pdev, "alarm");
-> +	if (alarm_irq > 0)
-> +		info->irq = alarm_irq;
-> +	else if (alarm_irq == -ENXIO)
-> +		info->irq = 0;
-> +	else
-> +		return dev_err_probe(&pdev->dev, alarm_irq ? : -EINVAL,
-> +				     "IRQ 'alarm' not found\n");
->  
->  	platform_set_drvdata(pdev, info);
->  
-> 
-> -- 
-> 2.52.0.rc1.455.g30608eb744-goog
-> 
+> > This is highly irregular - in that, we've never done this before.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > We're going to need to have Mark look at this.
+
+> I did see this in at least one other driver, ah yes at least
+> drivers/mfd/88pm860x-core.c is doing something similar, maybe others, too
+> (I stopped there).
+
+Other drivers doing something doesn't mean that they're following good
+practice.  We do also have drivers which have multiple identical IP
+blocks and are passing in resources with base address, interrupt and
+whatever for the IP blocks which is different to just passing a Linux
+internal ID number through.
+
+--Qn5lIfBNzUCscegG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkXXP0ACgkQJNaLcl1U
+h9AEDQf/fuZp1M50wSKQchrgoKDudU423oxJuyVfXaRPVzOrj/euxCZ6NgE4HQbM
+88EwVcbDcWsGa/wH6JjZBKW5qr6T+16zJZYTNf1RlE1pTa2OY0hDI2wRxdlfhIJ7
+QmM4+GxY2iW/cTfL27Vc/ViELbaD9XDlNkHUQTTnB9EE52zHIHj87ZJsRolF8Uls
+HkAomvBJm6QxzNsqc3qqnwOxeybUwvOh+v/lKkChUYwCkX0YE3ubgJXdapAcqeEA
+3dNCryPywswLotFv8Az/W35UNEFyLAsoMrkpdgc7Ef0qIXNiLZfRXdrragi0m4xz
+jDcoIxDQkU5bP6Ql0JiUhFxi4XhBJg==
+=QkOk
+-----END PGP SIGNATURE-----
+
+--Qn5lIfBNzUCscegG--
