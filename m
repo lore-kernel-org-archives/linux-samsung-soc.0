@@ -1,135 +1,165 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFD33168E1
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 11:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C50313E2B
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 12:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763121339; cv=none; b=D7IWnzSxdtgEsGgnyQXiulmXP9gA2VwK9eNMrJpsuJUk/KXrOGXNmcIiPVKTI1+CAi9DnZDICQ03wpkNOF3oU58r+FFx+sm6f3lWfgDOtU1FtKn/jwUOdN2ReiAybDmE2Of4Y5wZpDxe/N3dv1BvhJXwA7E7Jw3DVnQIXdG2O9Y=
+	t=1763121639; cv=none; b=frXEx9HoiKo/EcqZMW3y0rgj4S/P3Sp8LClw5e7p8ji1UHmfqYoVPIiS3OPUUCFQsMpSM7dsDTmecdA5FkATCHjtxh/60Zr8p55rn7xvHIorDsKlVQoUFNQFXwzX6RVFDJoMfrot1qHxsZVt/MiHh+Bhn7nNbnmjAEcRRDubDiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763121339; c=relaxed/simple;
-	bh=kSsVcz8630KwHo4IO7LJsqMTZrFWGAD+oaRzx2FLL3w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VEhEntn+FY7ocWugltBUAHODqL0Nk4taZqKOdT0pbIRyJYM45LfIaGG6IUWSlcAEYBFb3jRwqWfOrqmFsER2zz6CI49Z+GisuswN4O3fNlSqrd3y1kW6xVrtVFyOeZc4YBYlsleabnhaA47aodOlspm92d8OAZK/3XTt9OUZAgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SLawjDEm; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1763121639; c=relaxed/simple;
+	bh=ZaIyBTnwagX+mg5Fm8v7qCDLfAe76rRU3qsBSCjnAxg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kGlhCCss7zyOSks6ql02JVVfc0Vxu44KrnIbraUb4j9272xw6ACZeMR7bd1zNaVTOyoZPDNAChSIt/1bWFkeBjnPOGpB8FSN7M5aBdJpTqq0kw2TSpKfDJUGcZU01XBsoVi61ePVLXok4iIOHDWjoZDAJBFCQ3heAvtDNqbZLUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wimegOr3; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SLawjDEm"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477442b1de0so12929775e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 03:55:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wimegOr3"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4775ae77516so21012045e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 04:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763121335; x=1763726135; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kSsVcz8630KwHo4IO7LJsqMTZrFWGAD+oaRzx2FLL3w=;
-        b=SLawjDEmIkye7FklV/K0NRjVRjISwZlLXhh7NLhMp5I8d6eIDNFW3ENbEsrnKlOEbK
-         wP0JiezJ6FXzc0YP0NiJOoRTpo2jTNUHgpttC37nd6OidVHmg+Z64cRg9Honr90y+7fD
-         vY4U5+gOET7UBDi2+6m0nE3IHVqTC+n8b2MjOoukKLSqOQdSZcbd7UFfL1zB8pbmmyxV
-         nzCfQmH8JdYSC1KDcjNxE6slEewY9NdKw+gPg7Qt9glB4DcEfcCKGThdsdB/7uqtGY+c
-         Icm6rA+EMa6fppbBYI178ND65UVjuOU36LmpQdA7TaLx/mqrvylgW2CLEK+1YSXtpTqF
-         //2Q==
+        d=linaro.org; s=google; t=1763121636; x=1763726436; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPjgwRy+onJPS+IqkIcaIi3lzoC2BxsDCzhVvVFR+2A=;
+        b=wimegOr3jyPK2z4+3HY6sYSZy9n4HsF4FvXPc3yHiHTfGRfFtZ9MT1VCAEDA6VHluQ
+         VzjqxuWa7DKh3EklWUJmQuZkPnrdyuqj5Je3j3XdexLd+grlyA1hGmOh1889GFSaikjr
+         sYjJnxwkb8Vhv4HQzfiRnFGhsdTX5scj5dsNf3YmGV72pBH4JHVEljsZzoAZ4ZwA82uI
+         SpIkXtumV9s3UhQppz0wuyDe8zTlLMXPwimW6pqi9GHJSnTWpkYIqjXanMuakgHpV7X6
+         sm8cdk6ZxbHydgfFVQEHCkGHINb7YMeM6QWGfk5MVeq4qZ+Azbp92xQgtg4gJTPmB1pE
+         67jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763121335; x=1763726135;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSsVcz8630KwHo4IO7LJsqMTZrFWGAD+oaRzx2FLL3w=;
-        b=kNM4vRy3a8eCAJpU2UtBG390GHlkpU2jVwRmLvw30WxFwNgyF5sVxienlnO0jONSyE
-         3QktllKzNKx046vd7kQug+KPfjLp4o3BNpq9rECZRrXB3nX+8IyJVKHp+PrZ/pWODIz8
-         HIU0jJDmZLMpN8BcKEgp5uaA19Y7TcqHAMeBUCuq8oeMfFj0BjwP2QjUPuGnUVTtUWgG
-         TR4IaqnH7IEO9m5E4dLHdSgsM27gPrU7ZxP0yNOeVM5szZ9NFtCLSNj8miPpQqUVdHYJ
-         u3K3tjNriWzpvXeVxaOOpbV7tuPMoT1zISb9qPzCKIndgopbmECkFWdZoUZKphChabaS
-         A44w==
-X-Forwarded-Encrypted: i=1; AJvYcCWnUo6hmuTjei8+P9ai+hXFJICcMgTSivavynmU72o/td2GEg8OQL6XHhyg/J2ZUK4Ti7niL22gwlQ2BmJaofKQtw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6XYSVHlkVM0SRSPeK/BGzdz16MlbUkdvPz5RBJYetGlLCgt2H
-	Z7K5HUR1JbR367rSBC3vQ7UKGycsxGDNTH04BsNTcE0Kl186JGVTm4rvOgvz+OSL6Ag=
-X-Gm-Gg: ASbGncsZIEBfDiCKOgOIkrPrNu19P4kXf+JId7gPVbFXv7f5OdjSA096qR7/mwnoUZF
-	t2wx0WMcpwORA1M8ELHK+S4B+8K5X2UHeO7hcESADBOOCQKuz/F970B8mBAJdX1HIGeMofqslgI
-	vdKhE4YQXwTalx+/tpTgad8eDgXB43B+Bd3NOUJI7mO/7OvVWpqLoQdm7TufcGNL0Z1Hwo55uVB
-	I4mCJ5qvbibKmkL8UHVQSOOAQeCYTcpJ+mNNMvk1PblXa7tZeaBphjBYaiKI4PvzlYUNfL/RaNv
-	hHMhW3NGDETQ2NWhxnshPtsRJPdf6tR6m+v1FkvEyhVX++u3Pji128SZZ4t/BmWKO8jAvYSBrv9
-	Vro2+1ramTrsCgiJS5UfFb31qsXGDKBmrtcmNqzU4Alg8aHsBJXlefwdr8M0CciICksjPwxPdJP
-	4Fd6dW4w==
-X-Google-Smtp-Source: AGHT+IGaX63VyG7288bvhFhh9mADvgY7EJnU+zr1vNcvBNVERTkgMmla9vn+invb7igtQmyDtjSXdw==
-X-Received: by 2002:a05:600c:1c16:b0:476:4efc:8ed4 with SMTP id 5b1f17b1804b1-4778fe49c3bmr26839345e9.11.1763121335290;
-        Fri, 14 Nov 2025 03:55:35 -0800 (PST)
-Received: from draszik.lan ([212.129.74.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e85e6fsm9688761f8f.18.2025.11.14.03.55.33
+        d=1e100.net; s=20230601; t=1763121636; x=1763726436;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DPjgwRy+onJPS+IqkIcaIi3lzoC2BxsDCzhVvVFR+2A=;
+        b=O0CCRklmt0jDkPflepJWeMU/5lTI+maKKMG1P2a/V0MjbpHqucjvMuLHfYfAgcdA9h
+         7JODFVkXT5IniFXxV/fH8kvCXoH3TJ3/IdmqOZJ3yPWBp1GCbiDVuQMThVW+IwEKVQWT
+         nUJf904mPbSViznfYK0H0CjNLXxWyKEzZHKL5DJBgx/+Cxsv+czNPQW0b83/k0utOglZ
+         QAFdsuUJT0sQvnJjwuoeoJ3FHIcFPvnreJA24S5HETuDChtI5svI7uVuNJ+OaFIf51uk
+         6787oekaPfbg+Kfh+qc2zvUlhDYihoMrfL68s45D5c9xJ0R6aFg2/R09aVSEZ+Yfa8CN
+         ze/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUFVPPuVtOw2GA0DYtY/rdsJ6JPvmZKSehzFNIm6VeKowngqel+a2elkulx8nZVOXE//3OhKFj5y1qzZpHVEWFRJg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7h1osK1WXIK0qUtcjMrqV3mkVBfcaulO6w1onxPFO/dpyuRfv
+	8hwdIe3Eh2CLS7UDTyIX57qKWv5mR/FJ5xjCVAu75+uE/vt+FLVycykSJyanqKOr3y0=
+X-Gm-Gg: ASbGnct5IGi0LDNLc+KINz+FcFKUooqVJboYcZTy436RQtiIA+myW9dPhBHyVCZfmVV
+	dCPZUB4gAY9OMLrig8Y6lHEHKqqrM9f/4iAMMP507CNUoLzGuBKj/umUuOq/0ZmhAprXBg+hCYj
+	qmmxgYXaWPXSh6knoxRczTJ+TjhAAEAC51OIZIu94IMN7TsngecLr5/20DmopTgib4S0zWWS98X
+	/qoyHL8lVHmbmXif4B8oQx13/7z19HM+HTFhOnc7/sby7oRoKDxFf4naaNnVyCgLpD+Ht+8GAnN
+	foAZHXp9ODkRS9ZzmLwRwuPmXjFryAPnmPfWtTQZSGQCxzV4lxggZzsUGXmIIaRNeVyg8JoTD0F
+	j86V1p4bfAyRForVw0vf8LNEIJSgRxJicF5uBFJ2tKSyjv9zvgx9Tc2WrPQH3LfceLYGh7q3Ofq
+	30VCttUg9k9S1Lo5OTa0fA7SumcZrJ5g==
+X-Google-Smtp-Source: AGHT+IHX2390ivkvLs2uDJJ/4xAE1crzQXympMenKA3YTmHg28FuFzWNtXvAz1hi1yPzry+bv5rDqw==
+X-Received: by 2002:a05:6000:1ace:b0:3ff:17ac:a34b with SMTP id ffacd0b85a97d-42b59383b2dmr2998163f8f.42.1763121635434;
+        Fri, 14 Nov 2025 04:00:35 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.65.83])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7ae5bsm9487578f8f.8.2025.11.14.04.00.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 03:55:34 -0800 (PST)
-Message-ID: <6479a8d84052b326ffeb5609959aaf3a1aac9ff8.camel@linaro.org>
-Subject: Re: [PATCH 06/13] mfd: sec-irq: add support for creating multiple
- IRQ chips
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Kaustabh Chakraborty
-	 <kauschluss@disroot.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo
- Choi	 <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-leds@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, 	linux-rtc@vger.kernel.org,
- linux-doc@vger.kernel.org
-Date: Fri, 14 Nov 2025 11:55:34 +0000
-In-Reply-To: <20251114075004a444bff0@mail.local>
-References: <20251114-s2mu005-pmic-v1-0-9e3184d3a0c9@disroot.org>
-	 <20251114-s2mu005-pmic-v1-6-9e3184d3a0c9@disroot.org>
-	 <20251114075004a444bff0@mail.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+        Fri, 14 Nov 2025 04:00:34 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/2] Remove syscon compatible from google,gs101-pmu node
+Date: Fri, 14 Nov 2025 12:00:15 +0000
+Message-Id: <20251114-remove-pmu-syscon-compat-v2-0-9496e8c496c7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM8ZF2kC/3WNQQ6CMBBFr0K6dgytqMGV9zAsSpnCJNIhU2wkh
+ LtbSVy6fC/5768qohBGdStWJZgoEocM5lAoN9jQI1CXWZnSnLUuDQiOnBCm8QVxiY4DOB4nO0P
+ Xtq6qja0QrcrzSdDTe08/mswDxZll2Z+S/tpf9PQ/mjSU4I1rr762HV78/UnBCh9ZetVs2/YBQ
+ 1IRWsEAAAA=
+X-Change-ID: 20251102-remove-pmu-syscon-compat-dbbc492a4eea
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@android.com, willmcvicker@google.com, dan.carpenter@linaro.org, 
+ arnd@arndb.de, robh@kernel.org, Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2515;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=ZaIyBTnwagX+mg5Fm8v7qCDLfAe76rRU3qsBSCjnAxg=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpFxndB6OL9nN24aNIm+o9cKItyW9b1+ko0K+Iq
+ yFeHy0GxaOJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaRcZ3QAKCRDO6LjWAjRy
+ uhmSD/wPTru0lXRPUMWeofXVH/cZCkVFn8jaWh/YseuFJHZwg1JWLdjRynJqe+K3kJIBZ27WWcW
+ TcW86aJ0UT1oNYmV9Wd9czCKPp8Lnon0hVOTXVgnUU7/cmg+pq9vLu2uAJvUb45sd60K/WffmGl
+ DnNeWABUDi21VZLU8hXysxShZh6SIZ5E7euBcq/Xktl1ffo8vcjsFuyFCPvazTlDdiSrkf+HtZh
+ cwDZLR5loTi5ATtShLh0YEPZHkFn4KIlMZQTA+Ts2zdjEiNZ7VogsSV/ns0ECAi19sHE8dz5s8t
+ H+UgJAQcNCoCrl4x4ti9hfTsFWZu5c3gZ3cORU3orEdb0Qo+J8kDfPopMwsZbTzoSoZNoTqF86W
+ kEqnSqFQgFn4j0rkgYKyR48D82z5T+8DClouk2bHmFJqyWcAh2e5AvG85z+FxoZLcfRJOR2OBY3
+ 9Xvl1elZZJcmuNSj48UnXO+tPtVwWKii/KaNNtY05tfiaQD/qyDmSF4N++1Tz0bYZzX5LcBwvaT
+ u2NOYKdARwJ77m9Ag2pQhOq+jKr8iapK0PlZFwyqPRj0ZGccZT2dneqccGmyyXaGhGFqDfL78yJ
+ n/SCRenDrP6MXRUK6LVM3yMDbw5OSb5WDFkEdw7uablX/nVwpRTB5vynh7Kv5HUyRMeZ6FwnyIG
+ Ckhc5SWTFM3b1gw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Fri, 2025-11-14 at 08:50 +0100, Alexandre Belloni wrote:
-> On 14/11/2025 00:35:07+0530, Kaustabh Chakraborty wrote:
-> > The current state of the driver only allows creating only one IRQ chip
-> > per PMIC. On some PMICs, such as Samsung's S2MU005, there are multiple
-> > interrupt blocks, for which the current implementation stands insuffici=
-ent.
-> >=20
-> > Add support for creating multiple IRQ chips for a PMIC. Every IRQ chip =
-is
-> > given it's own index, which is used by sub-device drivers to request IR=
-Qs.
-> >=20
-> > A macro is defined which states the maximum number of chips supported.
-> > It's set to 1 as currently, no PMIC requires more than one IRQ chip. Th=
-e
-> > value must be changed accordingly on adding new PMICs requiring multipl=
-e
-> > IRQ chips.
-> >=20
-> > Moreover, adjust the s5m RTC driver to initialize IRQs with the
-> > appropriate IRQ chip index.
-> >=20
-> > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->=20
-> > ---
-> > =C2=A0drivers/mfd/sec-irq.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 163 +++++++++++++++++++++++----------------
-> > =C2=A0drivers/rtc/rtc-s5m.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 15 +++-
-> > =C2=A0include/linux/mfd/samsung/core.h |=C2=A0=C2=A0 5 +-
-> > =C2=A0include/linux/mfd/samsung/irq.h=C2=A0 |=C2=A0 14 ++++
-> > =C2=A04 files changed, 127 insertions(+), 70 deletions(-)
+Hi folks,
 
-Your patch reminded me to finally send
-https://lore.kernel.org/all/20251114-s5m-alarm-v1-0-c9b3bebae65f@linaro.org=
-/
+This series removes the syscon compatible from the pmu_system_controller
+node, by updating both yaml bindings and device tree.
 
-If applied first, you wouldn't need to touch rtc-s5m.c I believe.
+Since commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes without a
+"syscon" compatible") it is possible to register a regmap without the
+syscon compatible in the node.
 
-Equally, I can rebase mine on top of yours - no strong feelings.
+As noted in that commit, it isn't really correct to claim we are compatible
+with syscon, as a MMIO regmap created by syscon driver won't work on gs101.
+Removing the syscon compatible means the syscon driver won't ever attempt
+to create a mmio regmap.
 
-Cheers,
-Andre'
+Currently we rely on exynos-pmu running and registering its regmap at a
+very early initcall level, so no mmio created regmap is returned. For
+pinctrl driver that runs at the same initcall level as exynos-pmu today we
+have a custom exynos_get_pmu_regmap_by_phandle() API that supports
+-EPROBE_DEFER.
+
+However with the changes proposed in [1] -EPROBE_DEFER will become
+supported in the syscon driver directly making this whole approach more
+robust especially in a highly modularized system with other drivers at the
+same initcall level. We should also be able to remove the custom API
+referenced above.
+
+Technically this is a ABI break but no other platforms are affected. With
+an old DT we will have the behaviour of today (rely on early initcall
+levels). But once [1] is merged, with a new DT we will benefit from
+-EPROBE_DEFER. Additionally PMU write register access was never working
+with a mmio syscon so the ABI break is justified.
+
+regards,
+
+Peter
+
+Link: https://lore.kernel.org/lkml/aQdHmrchkmOr34r3@stanley.mountain/ [1]
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v2:
+- Update commit description (Krzysztof)
+- Change Items to enum, remove const (Krzysztof)
+- Checkpatch warning commit msg length (Krzysztof)
+- Link to v1: https://lore.kernel.org/r/20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org
+
+---
+Peter Griffin (2):
+      dt-bindings: soc: samsung: exynos-pmu: remove syscon for google,gs101-pmu
+      arm64: dts: exynos: gs101: remove syscon compatible from pmu node
+
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 3 ++-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi                  | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+---
+base-commit: 72fb0170ef1f45addf726319c52a0562b6913707
+change-id: 20251102-remove-pmu-syscon-compat-dbbc492a4eea
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
