@@ -1,130 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFDF2BE04F;
-	Fri, 14 Nov 2025 09:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C276C2F49EA
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 11:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763112412; cv=none; b=FRqfVHS8YyfyfLVB5qIx9OaSUEzt6xwjFYEBV8JvH9bcvPmfBz6qgqokDngwVcWKD6HQUDvWlUdKIT5R/wzcBfbvncjO2I/WwLmQwpCEVDLV3+Frgv/BdLwLZF1geDVsGhPcmLTRAsi/ZAm+POJEYQoYEOsJqEudiOdlV2xOKEA=
+	t=1763120846; cv=none; b=Xd8IKOtRo8YRtxaj0AvlRfw/CvnYm5WCTj8+4MCkcc3UtQ1U3ZOxiOC0f3O+4MH1DDdBJsMg4Qq8W7hFV0AyL+HeS8R+vTAfkghkZ026944+y6nBTM8BuIyrTKwq93E/RG3Ck4g8xYgszKN++cPZjzq55FHbh78IUfR5osOrVjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763112412; c=relaxed/simple;
-	bh=sX+HOIylT+s1DfHSzoGBLyVtWwyxqB+zreyy1Q1PrXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=beE8PDnU6kB/hWrXu9Cf6wo307a0P5wXqHDnyTBz/pdm0gzuwxQjz+83Href88VSP0FM/ucJHMDgKf1csFsMddcXGAYuiHcmhyIUZCC9pK76BJB6ms91HuCuAy7BWWqZNYNuEmR9Rs+/k03tNFrORf7/7D5BP7/xdaiSwWQrsDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oy12Wodc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763120846; c=relaxed/simple;
+	bh=FmJLj2gjTlRUIVzX5Hg5p/BaNu3xSopsXsqdTo3WKhw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eeYy7IzQxpqRsaH0YWqWYv4OvzPstNff9TRnsockQ3irXVcX2r7zivtSZnmnnwzdymldhFPnU0WJMSWSW/gwOuiNybeJWqedlIZBvscJesWhvE51pFFgaRBjCISVvvu+lcoEJqgskKQofHfVvTboyhX65hBzh4xhJcixrlUwQbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tV0ie2uu; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oy12Wodc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5C4C4CEF8;
-	Fri, 14 Nov 2025 09:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763112411;
-	bh=sX+HOIylT+s1DfHSzoGBLyVtWwyxqB+zreyy1Q1PrXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oy12WodcEZ0xjE9jQd3zfg3IH6YfscOfbxRppFoSsNZW7bJyLB3pLIK5oT52nwSbz
-	 FS8Apk088s5krjYBuc8/f3d4tJ0P8D9Glrx83vItqgS40sx+cCKT0djYA6HtQ122WE
-	 XbsYCh1lI/aGEds70C/Y9jlamxM9HI8XbrTpHKiFue1WVgNsqqfSbRaQ1qiDNFwrgR
-	 oqiY4wCvBF2CMR1LZzF4h3yt39zNIB2i2EhZaJZn/D23lRqDNx2MLq7c7uFNgoDb4Q
-	 6I0JLax3LGu9aA3amA9aYnG12RbC7wYERUc0JHGM4Nnnpn2btIb2QywcmkxQafd+Ry
-	 8y9x9CWfXYMnw==
-Date: Fri, 14 Nov 2025 10:26:49 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>, 
-	William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for
- frankel/blazer/mustang
-Message-ID: <20251114-elite-refined-yak-bf9e64@kuoka>
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
- <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org>
- <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
- <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
- <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
- <6490f20a-2492-4ee0-8f34-d529e0df0bad@kernel.org>
- <CAD=FV=Us7SU_OifVkS4mdfVhc=xGYSBiBpBk9aA1Ki0y+iYBpQ@mail.gmail.com>
- <abb77afe-c285-46ba-88ac-08574bd67712@kernel.org>
- <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tV0ie2uu"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b733707e0b5so281213066b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 03:47:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763120843; x=1763725643; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3+s27uAymnJrt4l84jxnUee+ZrUHMdiTsQjpcnX2dO0=;
+        b=tV0ie2uuzIES5zySImNmsXvlzhnoAoEz46ppIqlH6bQTPZoAhrtOPzABj66ai8FNAA
+         QNZGIGP8uQFY+cf1LAER8qhhPkY9Rj8bnPEfdcYKQHRAzUTFf7rSds9rW20V5FIQxx6e
+         UQBQ5j63OpnVRJRw9rG29OgY6nGU1GXMN7XeDU3ffW/i0+W/JxjtdarOw6QWMPOxnRFW
+         Ju4FDDBnjexjCb885teG5lGI8hWCQTh7ctiAWoYyjNAxv9Y+Fz7+Qq3aTiSIx1d6fj/o
+         a4pQao168QBcTq65u460EDyL5tKTlEKQti++5bByRS4zJL3yHKJcU/FjEEhe0GAoHoP0
+         7Wdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763120843; x=1763725643;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3+s27uAymnJrt4l84jxnUee+ZrUHMdiTsQjpcnX2dO0=;
+        b=s+a7kQrlCl1jnk38PODSXy5NKCHSmE9Mx9BuZrmdmRUtH2cdfaYloEasPQuhM2cEEG
+         FADYyFbMlI139vOKVF/tA8oIy75YvWjCRRW9pKZvFuBRYliKQN0+IF1eGWUa1eoO1Qf3
+         EB4tgnv7/kDA8aSi+dgRzuv0WMjHbZ4gdYLP4G9YnHwevUg9xqmmYyy1ChNSHZWnSiWz
+         uaG7/Y0obFXX7d2dSZIg7qFBIvEex7aLcwnjDxnCH8M212cRFlKAJ5+9LSdEZpE33oE+
+         vLP/YK9hA1GtNTr1WU+PGDtdLEwZ4wrZpdjz3FCpuT/HNfxIu36x2yyUD8g7pMZLG0aa
+         QW8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWp/XiVIh2fnMo2OocG6uKvd6u5xaISMAEMYHsiTyerMVDz3SxDQMDRnTU1YzoiqQ6cyorOMBK+gd4ACOSlDJ/TAw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZI7xb9Rj8IzO9Z+BFl9h6n4b3vPgRfeoX5PUMPchpnrglZwSV
+	5nb1pLkyuaPcgdFd9o79bmb6y1eldb2W8oVF0bY6zE+bvZdBzwDKvidBa5zEETZFaVM=
+X-Gm-Gg: ASbGncugDnKWOrOJjQO4OFa6H+u3yjL8meoynlFTHs/2O0dItmqG4WroFlpCgAjh37i
+	0PzljAE4g7DqSV5aNsDth6DNxkGd5i+z+w9JwOEbsQ4TrwVWIBUgXIkLLhmBwSlqtABx9sSZNVQ
+	s5/KgHfaoAWWgoadMaImcBaspsaqwNbwS+cCxArreLwXAbPTgWauTjzjm5PiGk81YmlE14O2JSW
+	2Ac/6VGoQtgok+lSWiAz0pxETF9y8k/8eb7xvuDmlPtxtva/RLlq0FsiICdvTfZTblagUzDgoY1
+	8taAaIHC/pPl02yh9axCeU5jysTglC2Ifm97L1oZu/ARi4fS2TcOLJF3V+M74/nnFpwx985xmRs
+	H93Eg6k1JINaBi5qYGMpiiSYO0iRjWAX1UEkFG8C091oCHPLQhLAPoLTEZUrAicD93YyKKHZtqS
+	5BZP5EP5fyRfOVN94QedcWK7H0stSSjRCr1zGscpBftHX8rPJiR0w+3P9/oKptJjwoc4mypfDJk
+	J8RHg==
+X-Google-Smtp-Source: AGHT+IHPnTCBO5JG9atXjpC3DFDHuSHqyX6Plx6mhaARcdXOJUR8ud7LCgaahGyg0RloR+HqZ+3boQ==
+X-Received: by 2002:a17:907:7f20:b0:b72:5983:db0a with SMTP id a640c23a62f3a-b736780c56emr277846466b.15.1763120843119;
+        Fri, 14 Nov 2025 03:47:23 -0800 (PST)
+Received: from puffmais2.c.googlers.com (180.192.141.34.bc.googleusercontent.com. [34.141.192.180])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fb11d94sm372950166b.30.2025.11.14.03.47.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Nov 2025 03:47:22 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/3] Samsung mfd/rtc driver alarm IRQ simplification
+Date: Fri, 14 Nov 2025 11:47:20 +0000
+Message-Id: <20251114-s5m-alarm-v1-0-c9b3bebae65f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMgWF2kC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQ0MT3WLTXN3EnMSiXF3jlFRzA9PURFPj5FQloPqCotS0zAqwWdGxtbU
+ AZD0St1sAAAA=
+X-Change-ID: 20251114-s5m-alarm-3de705ea53ce
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+ Douglas Anderson <dianders@chromium.org>, kernel-team@android.com, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Thu, Nov 13, 2025 at 10:04:53AM -0800, Doug Anderson wrote:
-> Hi,
->=20
->=20
-> On Thu, Nov 13, 2025 at 9:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.=
-org> wrote:
-> >
-> > >>> Yes, the complexity of just "hooking up" the components on an SoC is
-> > >>> an order of magnitude harder than a Raspberry Pi, but it's still ju=
-st
-> > >>> hooking it up to external components. In both cases, we are modeling
-> > >>> the core "brains" (the part that contains the processor) as the DTB
-> > >>> and everything else just "hooks up" to interfaces.
-> > >>
-> > >> You mix the topics, so I don't follow. I speak here about bindings -=
- you
-> > >> cannot have the that compatible alone, because it is incomplete, just
-> > >> like compatible for "transistor" is not correct in that context. You
-> > >> speak what could or could be DTB, different topic.
-> > >
-> > > A "SoC" is "complete". It has a processor that can run instructions.
-> >
-> > Then show me executing any piece of software, which is the consumer of
-> > the bindings, and runs on the SoC without the rest of the hardware syst=
-em.
->=20
-> Show me something that runs on a Raspberry Pi (the models that don't
-> have eMMC) that runs without hooking up power and plugging in an SD
-> card. :-P
+Hi,
 
-It has MMC controller/slot described in the DTS and the SDcard itself is
-DT-transparent, meaning you do not describe it in DTS, plus I can easily
-insert such card, thus for sake of this discussion that RPi still works
-fine with DTS.
+With the attached patches the Samsung s5m RTC driver is simplified a
+little bit with regards to alarm IRQ acquisition.
 
-This SoC cannot work without other pieces described in DT, that's why it
-is incomplete and unusable on its own.
+The end result is that instead of having a list of IRQ numbers for each
+variant (and a BUILD_BUG_ON() to ensure consistency), the RTC driver
+queries the 'alarm' platform resource from the parent (mfd cell).
 
-You are right that my previous arguments of hooking components are
-incomplete, so let me rephrase it - the DTS file should be complete from
-DT point of view and completly usable on its own. That's why DTS
-represents board (with the exceptions of few SoMs as explaiend to me
-long time ago).
+Additionally, we can drop a now-useless field from runtime data,
+reducing memory consumption slightly.
 
-SoC does not meet this criteria, therefore it is not suitable for DTS.
+The attached patches must be applied in-order. I would expect them all
+to go via the MFD tree. Alternatively, they could be applied one after
+another during multiple kernel release cycles, but that seems a
+needless complication.
 
-And if you claim that SoC could be fitting DTS, then I claim that
-individual transistor or one IP block like DWC USB3 could be there as
-well. With your arguments we could create DTS files for DWC USB3 nodes.
-Fact that transistor or DWC USB3 cannot execute code on their own does
-not matter, because it is nowhere said that DTS represents something
-which can execute code. CPU executes code, so following this argument
-DTS could contain only CPU device nodes..
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (3):
+      mfd: sec: add rtc alarm IRQ as platform device resource
+      rtc: s5m: query platform device IRQ resource for alarm IRQ
+      mfd: sec: drop now unused struct sec_pmic_dev::irq_data
 
-If we allow subpieces, like SoC components or SoCs (both still unusable
-on their own), as DTS files we open the pandora box of all possible
-styles and formats. I don't see reasoon why would we want it, what
-benefits this would bring to the ecosystem maintenance.
-
-We did not document it that DTS represents usable board, but it is
-implied all over the software projects, like GRUB devicetree [1] which
-takes one DTB to load. Only one.
-
-[1] https://www.gnu.org/software/grub/manual/grub/html_node/devicetree.html
+ drivers/mfd/sec-common.c         | 41 ++++++++++++++++++++++++++++++----------
+ drivers/mfd/sec-core.h           |  2 +-
+ drivers/mfd/sec-irq.c            | 10 ++--------
+ drivers/rtc/rtc-s5m.c            | 21 ++++++++------------
+ include/linux/mfd/samsung/core.h |  1 -
+ 5 files changed, 42 insertions(+), 33 deletions(-)
+---
+base-commit: b179ce312bafcb8c68dc718e015aee79b7939ff0
+change-id: 20251114-s5m-alarm-3de705ea53ce
 
 Best regards,
-Krzysztof
+-- 
+André Draszik <andre.draszik@linaro.org>
 
