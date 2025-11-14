@@ -1,484 +1,197 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E38C2F4A1B;
-	Fri, 14 Nov 2025 07:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5705B2D8DA3
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 08:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763106614; cv=none; b=BTKmHp26gDsGNNgvtajloRWkwhqg0vxj8tIayNQdBdmc3Rsa0du3SxAIk/2/KE8OtJzeotrCoeb+LU4zV4KqmL0ZcDB2BHAX5DRQcfTkk4w5irHrq5xQ9fUY3zzoln0CDfjsC67BDoJJXFvRoQXW/Sc0GYYgCt+E462px1SW8h4=
+	t=1763107810; cv=none; b=HtMZlpDQSKX8pL88orpomOrFipEJeFC0UnjSmG2xkAjdVzyg2QD3tpkydNkLWaiTgVFaNMI2HPdKchzGeZrdDczTAHx7guOL3K0FiQaUxwr10nlfozHvYp5FI0wxplQTPAQuNDNuZtktScl5lUeCr1MHZERzJ9CEx5f8wtKtkRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763106614; c=relaxed/simple;
-	bh=My1DkSx6E8NH1/g/2YUqKSOXU94pnaYksctIemj4gWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Djkne36c1ihTibW4laqhMthCMUIRYC2kHB1olQnLTMKo6Pxqjxn4mUlhIxUm0Nt29eEegLxBpmMLiY0sf4GzmZFG1zBzvg6/ymcONjkFpBtMmbbxyEZJlo7uvNnS8/+0RRL2BJhJpYZNGgU+nCOrjUGEyTFHOaFaET8+nr0AlxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DxG0tymF; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1763107810; c=relaxed/simple;
+	bh=dNx+gPGDCYbWolsyNaW94zcewda/H+5Ta8kxiAjUzjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=RkM12trmRzZ4qwulWrFyv1AlhZKjEZLwrOR5xPhnEDJ7sH3tfH7dStDwdJVK9hr3WNN0l2jozxg/A8m0nPRn02zDEdAi7lBHIJj6Ne+t/1rcLESolYsv6iJC41htjb+ix0n8f0R3UpFVneThOWv73cFZANhez1Hx0Zg4vkzNigg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DrJ5PxNI; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DxG0tymF"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 078C5C10F5B;
-	Fri, 14 Nov 2025 07:49:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BB2756060E;
-	Fri, 14 Nov 2025 07:50:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 22A71102F2A6F;
-	Fri, 14 Nov 2025 08:50:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763106608; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=vou/PSvtoM9CuF1Iut3e8wcLV2zmRLJ9tzJ9Bc7FteA=;
-	b=DxG0tymFHZP8aF0T9HNNjCVnOtqgWqBQZopOzLsGe+MG7KLBS4zvwmPb2xNNRrCkT+nrkD
-	yil4rKK2fwvvvOC+Z+9QK6Aur4ok9ME9aaGiBROB50aI0G+zjNJSjP4LlVl5oin9PHUKm5
-	nI+hL41DkAq14lsblJe0evNclURr5zQGvZkZFw0DqGD0wUqCUY9cwlXE2RFuyDHRnhGXiM
-	ytuL5oJuyJNECkpMaInkO3/uNepVPmMrLBD/WjX39hgnceVCtw0kgw4YCDqNW2GKZQspJM
-	q9OZ0HAscsCb1vyXLDXOCal4YNeRgm2QLHCE054nvuBiGsye+4PCvXe4w/EiPg==
-Date: Fri, 14 Nov 2025 08:50:04 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 06/13] mfd: sec-irq: add support for creating multiple
- IRQ chips
-Message-ID: <20251114075004a444bff0@mail.local>
-References: <20251114-s2mu005-pmic-v1-0-9e3184d3a0c9@disroot.org>
- <20251114-s2mu005-pmic-v1-6-9e3184d3a0c9@disroot.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DrJ5PxNI"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251114081004epoutp012c3d627c276410effb008652658fe5d0~30TTatBRI0230702307epoutp01A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 08:10:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251114081004epoutp012c3d627c276410effb008652658fe5d0~30TTatBRI0230702307epoutp01A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763107804;
+	bh=X7MEhwDJbrEf86GCGqWBax7+BgoJHvyn1sQqqm9i5Og=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=DrJ5PxNIogDpoHSb3lto9Jd6SYRDO1qbsbM6C4I5ChoWbFKEH1RNBBGLnjUHCAXin
+	 fKaScA2FZqg+8jBmpTUXiZ/mH6v3jN9Std2M/X8Z2Y6FSQNH+ndpaMDKOZEzwXlOpc
+	 5Urd32Z9lCRGFxYBO7Xld3AjDQYYl6FDowJMg5a0=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251114081003epcas2p18931f0c80d0a287320244bb3fa8c7258~30TTC6ZxT0267502675epcas2p1z;
+	Fri, 14 Nov 2025 08:10:03 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.38.208]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4d78vH2PhFz3hhTB; Fri, 14 Nov
+	2025 08:10:03 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20251114081002epcas2p488dbea7bd799dee299d24d3fd86acadb~30TSPGo5p0569205692epcas2p43;
+	Fri, 14 Nov 2025 08:10:02 +0000 (GMT)
+Received: from [12.36.160.98] (unknown [12.36.160.98]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251114081002epsmtip2e2b396b1004f4670ef2a6a692388631e~30TSFp_jd1709417094epsmtip2U;
+	Fri, 14 Nov 2025 08:10:02 +0000 (GMT)
+Message-ID: <9ea931e1-57a9-4b83-b71f-39d5c3ab7e69@samsung.com>
+Date: Fri, 14 Nov 2025 17:11:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251114-s2mu005-pmic-v1-6-9e3184d3a0c9@disroot.org>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT PATCH v1 1/5] pinctrl: samsung: Consolidate pin-bank
+ macros under EXYNOS9_* and pass bank_type explicitly
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org, peter.griffin@linaro.org, ryu.real@samsung.com,
+	d7271.choe@samsung.com, linux-samsung-soc@vger.kernel.org
+Content-Language: en-US
+From: Youngmin Nam <youngmin.nam@samsung.com>
+In-Reply-To: <CAPLW+4k0EwTAn0LLunKsyCbL5SORCfF05HXACSxNKxNBSOsX7Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251114081002epcas2p488dbea7bd799dee299d24d3fd86acadb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251110082138epcas2p3ef6274056af49f2619030c766412b36d
+References: <CGME20251110082138epcas2p3ef6274056af49f2619030c766412b36d@epcas2p3.samsung.com>
+	<20251110082649.3109858-1-youngmin.nam@samsung.com>
+	<20251110082649.3109858-2-youngmin.nam@samsung.com>
+	<CAPLW+4k0EwTAn0LLunKsyCbL5SORCfF05HXACSxNKxNBSOsX7Q@mail.gmail.com>
 
-On 14/11/2025 00:35:07+0530, Kaustabh Chakraborty wrote:
-> The current state of the driver only allows creating only one IRQ chip
-> per PMIC. On some PMICs, such as Samsung's S2MU005, there are multiple
-> interrupt blocks, for which the current implementation stands insufficient.
+On 11/13/25 10:12, Sam Protsenko wrote:
+> On Mon, Nov 10, 2025 at 2:21 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
+>>
+>> Modern Exynos platforms have several near-duplicate pin-bank macro
+>> families (EXYNOS850_*, EXYNOS8895_*, EXYNOS7870_*), which makes
+>> tables verbose and harder to share across SoCs that differ only by
+>> bank_type (alive/off) layout.
+>>
+>> This patch unifies them into one EXYNOS9_* macro family and makes the
+>> bank_type an explicit argument. The common 850-era bank types are also
+>> renamed to `exynos9_bank_type_{alive,off}` to reflect their reuse on
+>> later Exynos 9xxx–generation parts.
+>>
+>> Naming rationale:
+>> - Use of the EXYNOS9_* prefix indicates that these macros target
+>>   current Exynos generations sharing the same register layout and
+>>   EINT wiring model. Compared to SoC-specific prefixes
+>>   (EXYNOS850_*, EXYNOS8895_*),
+>>   EXYNOS9_* is clearer and more future-proof for modern parts.
+>>
 > 
-> Add support for creating multiple IRQ chips for a PMIC. Every IRQ chip is
-> given it's own index, which is used by sub-device drivers to request IRQs.
-> 
-> A macro is defined which states the maximum number of chips supported.
-> It's set to 1 as currently, no PMIC requires more than one IRQ chip. The
-> value must be changed accordingly on adding new PMICs requiring multiple
-> IRQ chips.
-> 
-> Moreover, adjust the s5m RTC driver to initialize IRQs with the
-> appropriate IRQ chip index.
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-> ---
->  drivers/mfd/sec-irq.c            | 163 +++++++++++++++++++++++----------------
->  drivers/rtc/rtc-s5m.c            |  15 +++-
->  include/linux/mfd/samsung/core.h |   5 +-
->  include/linux/mfd/samsung/irq.h  |  14 ++++
->  4 files changed, 127 insertions(+), 70 deletions(-)
-> 
-> diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-> index c5c80b1ba104..053c28f31ec9 100644
-> --- a/drivers/mfd/sec-irq.c
-> +++ b/drivers/mfd/sec-irq.c
-> @@ -181,25 +181,31 @@ static const struct regmap_irq s5m8767_irqs[] = {
->  };
->  
->  /* All S2MPG10 interrupt sources are read-only and don't require clearing */
-> -static const struct regmap_irq_chip s2mpg10_irq_chip = {
-> -	.name = "s2mpg10",
-> -	.irqs = s2mpg10_irqs,
-> -	.num_irqs = ARRAY_SIZE(s2mpg10_irqs),
-> -	.num_regs = 6,
-> -	.status_base = S2MPG10_PMIC_INT1,
-> -	.mask_base = S2MPG10_PMIC_INT1M,
-> +static const struct regmap_irq_chip s2mpg10_irq_chip[] = {
-> +	[S2MPG10_IRQ_CHIP] = {
-> +		.name = "s2mpg10",
-> +		.irqs = s2mpg10_irqs,
-> +		.num_irqs = ARRAY_SIZE(s2mpg10_irqs),
-> +		.num_regs = 6,
-> +		.status_base = S2MPG10_PMIC_INT1,
-> +		.mask_base = S2MPG10_PMIC_INT1M,
-> +	},
->  };
->  
-> -static const struct regmap_irq_chip s2mps11_irq_chip = {
-> -	.name = "s2mps11",
-> -	.irqs = s2mps11_irqs,
-> -	.num_irqs = ARRAY_SIZE(s2mps11_irqs),
-> -	.num_regs = 3,
-> -	.status_base = S2MPS11_REG_INT1,
-> -	.mask_base = S2MPS11_REG_INT1M,
-> -	.ack_base = S2MPS11_REG_INT1,
-> +static const struct regmap_irq_chip s2mps11_irq_chip[] = {
-> +	[S2MPS11_IRQ_CHIP] = {
-> +		.name = "s2mps11",
-> +		.irqs = s2mps11_irqs,
-> +		.num_irqs = ARRAY_SIZE(s2mps11_irqs),
-> +		.num_regs = 3,
-> +		.status_base = S2MPS11_REG_INT1,
-> +		.mask_base = S2MPS11_REG_INT1M,
-> +		.ack_base = S2MPS11_REG_INT1,
-> +	},
->  };
->  
-> +#define S2MPS1X_IRQ_CHIP		S2MPS14_IRQ_CHIP
-> +
->  #define S2MPS1X_IRQ_CHIP_COMMON_DATA		\
->  	.irqs = s2mps14_irqs,			\
->  	.num_irqs = ARRAY_SIZE(s2mps14_irqs),	\
-> @@ -208,85 +214,106 @@ static const struct regmap_irq_chip s2mps11_irq_chip = {
->  	.mask_base = S2MPS14_REG_INT1M,		\
->  	.ack_base = S2MPS14_REG_INT1		\
->  
-> -static const struct regmap_irq_chip s2mps13_irq_chip = {
-> -	.name = "s2mps13",
-> -	S2MPS1X_IRQ_CHIP_COMMON_DATA,
-> +static const struct regmap_irq_chip s2mps13_irq_chip[] = {
-> +	[S2MPS1X_IRQ_CHIP] = {
-> +		.name = "s2mps13",
-> +		S2MPS1X_IRQ_CHIP_COMMON_DATA,
-> +	},
->  };
->  
-> -static const struct regmap_irq_chip s2mps14_irq_chip = {
-> -	.name = "s2mps14",
-> -	S2MPS1X_IRQ_CHIP_COMMON_DATA,
-> +static const struct regmap_irq_chip s2mps14_irq_chip[] = {
-> +	[S2MPS1X_IRQ_CHIP] = {
-> +		.name = "s2mps14",
-> +		S2MPS1X_IRQ_CHIP_COMMON_DATA,
-> +	},
->  };
->  
-> -static const struct regmap_irq_chip s2mps15_irq_chip = {
-> -	.name = "s2mps15",
-> -	S2MPS1X_IRQ_CHIP_COMMON_DATA,
-> +static const struct regmap_irq_chip s2mps15_irq_chip[] = {
-> +	[S2MPS1X_IRQ_CHIP] = {
-> +		.name = "s2mps15",
-> +		S2MPS1X_IRQ_CHIP_COMMON_DATA,
-> +	},
->  };
->  
-> -static const struct regmap_irq_chip s2mpu02_irq_chip = {
-> -	.name = "s2mpu02",
-> -	.irqs = s2mpu02_irqs,
-> -	.num_irqs = ARRAY_SIZE(s2mpu02_irqs),
-> -	.num_regs = 3,
-> -	.status_base = S2MPU02_REG_INT1,
-> -	.mask_base = S2MPU02_REG_INT1M,
-> -	.ack_base = S2MPU02_REG_INT1,
-> +static const struct regmap_irq_chip s2mpu02_irq_chip[] = {
-> +	[S2MPU02_IRQ_CHIP] = {
-> +		.name = "s2mpu02",
-> +		.irqs = s2mpu02_irqs,
-> +		.num_irqs = ARRAY_SIZE(s2mpu02_irqs),
-> +		.num_regs = 3,
-> +		.status_base = S2MPU02_REG_INT1,
-> +		.mask_base = S2MPU02_REG_INT1M,
-> +		.ack_base = S2MPU02_REG_INT1,
-> +	},
->  };
->  
-> -static const struct regmap_irq_chip s2mpu05_irq_chip = {
-> -	.name = "s2mpu05",
-> -	.irqs = s2mpu05_irqs,
-> -	.num_irqs = ARRAY_SIZE(s2mpu05_irqs),
-> -	.num_regs = 3,
-> -	.status_base = S2MPU05_REG_INT1,
-> -	.mask_base = S2MPU05_REG_INT1M,
-> -	.ack_base = S2MPU05_REG_INT1,
-> +static const struct regmap_irq_chip s2mpu05_irq_chip[] = {
-> +	[S2MPU05_IRQ_CHIP] = {
-> +		.name = "s2mpu05",
-> +		.irqs = s2mpu05_irqs,
-> +		.num_irqs = ARRAY_SIZE(s2mpu05_irqs),
-> +		.num_regs = 3,
-> +		.status_base = S2MPU05_REG_INT1,
-> +		.mask_base = S2MPU05_REG_INT1M,
-> +		.ack_base = S2MPU05_REG_INT1,
-> +	},
->  };
->  
-> -static const struct regmap_irq_chip s5m8767_irq_chip = {
-> -	.name = "s5m8767",
-> -	.irqs = s5m8767_irqs,
-> -	.num_irqs = ARRAY_SIZE(s5m8767_irqs),
-> -	.num_regs = 3,
-> -	.status_base = S5M8767_REG_INT1,
-> -	.mask_base = S5M8767_REG_INT1M,
-> -	.ack_base = S5M8767_REG_INT1,
-> +static const struct regmap_irq_chip s5m8767_irq_chip[] = {
-> +	[S5M8767_IRQ_CHIP] = {
-> +		.name = "s5m8767",
-> +		.irqs = s5m8767_irqs,
-> +		.num_irqs = ARRAY_SIZE(s5m8767_irqs),
-> +		.num_regs = 3,
-> +		.status_base = S5M8767_REG_INT1,
-> +		.mask_base = S5M8767_REG_INT1M,
-> +		.ack_base = S5M8767_REG_INT1,
-> +	},
->  };
->  
->  int sec_irq_init(struct sec_pmic_dev *sec_pmic)
->  {
->  	const struct regmap_irq_chip *sec_irq_chip;
-> -	int ret;
-> +	int sec_irq_chip_num, i, ret;
->  
->  	switch (sec_pmic->device_type) {
->  	case S5M8767X:
-> -		sec_irq_chip = &s5m8767_irq_chip;
-> +		sec_irq_chip = s5m8767_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s5m8767_irq_chip);
->  		break;
->  	case S2DOS05:
->  		return 0;
->  	case S2MPA01:
-> -		sec_irq_chip = &s2mps14_irq_chip;
-> +		sec_irq_chip = s2mps14_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mps14_irq_chip);
->  		break;
->  	case S2MPG10:
-> -		sec_irq_chip = &s2mpg10_irq_chip;
-> +		sec_irq_chip = s2mpg10_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mpg10_irq_chip);
->  		break;
->  	case S2MPS11X:
-> -		sec_irq_chip = &s2mps11_irq_chip;
-> +		sec_irq_chip = s2mps11_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mps11_irq_chip);
->  		break;
->  	case S2MPS13X:
-> -		sec_irq_chip = &s2mps13_irq_chip;
-> +		sec_irq_chip = s2mps13_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mps13_irq_chip);
->  		break;
->  	case S2MPS14X:
-> -		sec_irq_chip = &s2mps14_irq_chip;
-> +		sec_irq_chip = s2mps14_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mps14_irq_chip);
->  		break;
->  	case S2MPS15X:
-> -		sec_irq_chip = &s2mps15_irq_chip;
-> +		sec_irq_chip = s2mps15_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mps15_irq_chip);
->  		break;
->  	case S2MPU02:
-> -		sec_irq_chip = &s2mpu02_irq_chip;
-> +		sec_irq_chip = s2mpu02_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mpu02_irq_chip);
->  		break;
->  	case S2MPU05:
-> -		sec_irq_chip = &s2mpu05_irq_chip;
-> +		sec_irq_chip = s2mpu05_irq_chip;
-> +		sec_irq_chip_num = ARRAY_SIZE(s2mpu05_irq_chip);
->  		break;
->  	default:
->  		return dev_err_probe(sec_pmic->dev, -EINVAL,
-> @@ -300,13 +327,19 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
->  		return 0;
->  	}
->  
-> -	ret = devm_regmap_add_irq_chip(sec_pmic->dev, sec_pmic->regmap_pmic,
-> -				       sec_pmic->irq, IRQF_ONESHOT,
-> -				       0, sec_irq_chip, &sec_pmic->irq_data);
-> -	if (ret)
-> -		return dev_err_probe(sec_pmic->dev, ret,
-> -				     "Failed to add %s IRQ chip\n",
-> -				     sec_irq_chip->name);
-> +	for (i = 0; i < sec_irq_chip_num; i++) {
-> +		ret = devm_regmap_add_irq_chip(sec_pmic->dev,
-> +					       sec_pmic->regmap_pmic,
-> +					       sec_pmic->irq,
-> +					       IRQF_ONESHOT | IRQF_SHARED, 0,
-> +					       sec_irq_chip + i,
-> +					       sec_pmic->irq_data + i);
-> +		if (ret) {
-> +			return dev_err_probe(sec_pmic->dev, ret,
-> +					     "Failed to add %s IRQ chip\n",
-> +					     sec_irq_chip->name);
-> +		}
-> +	}
->  
->  	/*
->  	 * The rtc-s5m driver requests S2MPS14_IRQ_RTCA0 also for S2MPS11
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index a7220b4d0e8d..726915deff7a 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -668,7 +668,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  	enum sec_device_type device_type =
->  		platform_get_device_id(pdev)->driver_data;
->  	struct s5m_rtc_info *info;
-> -	int ret, alarm_irq;
-> +	int ret, alarm_irq, irq_chip;
->  
->  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
->  	if (!info)
-> @@ -684,21 +684,25 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps15_rtc_regs;
->  			alarm_irq = S2MPS14_IRQ_RTCA0;
-> +			irq_chip = S2MPS11_IRQ_CHIP;
->  			break;
->  		case S2MPS14X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps14_rtc_regs;
->  			alarm_irq = S2MPS14_IRQ_RTCA0;
-> +			irq_chip = S2MPS14_IRQ_CHIP;
->  			break;
->  		case S2MPS13X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps13_rtc_regs;
->  			alarm_irq = S2MPS14_IRQ_RTCA0;
-> +			irq_chip = S2MPS14_IRQ_CHIP;
->  			break;
->  		case S5M8767X:
->  			regmap_cfg = &s5m_rtc_regmap_config;
->  			info->regs = &s5m_rtc_regs;
->  			alarm_irq = S5M8767_IRQ_RTCA1;
-> +			irq_chip = S5M8767_IRQ_CHIP;
->  			break;
->  		default:
->  			return dev_err_probe(&pdev->dev, -ENODEV,
-> @@ -720,6 +724,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  	} else if (device_type == S2MPG10) {
->  		info->regs = &s2mpg10_rtc_regs;
->  		alarm_irq = S2MPG10_IRQ_RTCA0;
-> +		irq_chip = S2MPG10_IRQ_CHIP;
->  	} else {
->  		return dev_err_probe(&pdev->dev, -ENODEV,
->  				     "Unsupported device type %d\n",
-> @@ -730,12 +735,14 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  	info->s5m87xx = s5m87xx;
->  	info->device_type = device_type;
->  
-> -	if (s5m87xx->irq_data) {
-> -		info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
-> -		if (info->irq <= 0)
-> +	if (s5m87xx->irq_data[irq_chip]) {
-> +		info->irq = regmap_irq_get_virq(s5m87xx->irq_data[irq_chip],
-> +						alarm_irq);
-> +		if (info->irq <= 0) {
->  			return dev_err_probe(&pdev->dev, -EINVAL,
->  					     "Failed to get virtual IRQ %d\n",
->  					     alarm_irq);
-> +		}
->  	}
->  
->  	platform_set_drvdata(pdev, info);
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index d785e101fe79..dcd741c4f0d6 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -33,6 +33,9 @@
->  #define STEP_12_5_MV		12500
->  #define STEP_6_25_MV		6250
->  
-> +/* Maximum number of IRQ chips in a PMIC */
-> +#define MAX_IRQ_CHIPS		1
-> +
->  struct gpio_desc;
->  
->  enum sec_device_type {
-> @@ -69,7 +72,7 @@ struct sec_pmic_dev {
->  
->  	int device_type;
->  	int irq;
-> -	struct regmap_irq_chip_data *irq_data;
-> +	struct regmap_irq_chip_data *irq_data[MAX_IRQ_CHIPS];
->  };
->  
->  struct sec_platform_data {
-> diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
-> index b4805cbd949b..78eb894e350e 100644
-> --- a/include/linux/mfd/samsung/irq.h
-> +++ b/include/linux/mfd/samsung/irq.h
-> @@ -34,6 +34,8 @@ enum s2mpa01_irq {
->  	S2MPA01_IRQ_NR,
->  };
->  
-> +#define S2MPA01_IRQ_CHIP		0
-> +
->  #define S2MPA01_IRQ_PWRONF_MASK		(1 << 0)
->  #define S2MPA01_IRQ_PWRONR_MASK		(1 << 1)
->  #define S2MPA01_IRQ_JIGONBF_MASK	(1 << 2)
-> @@ -58,6 +60,8 @@ enum s2mpa01_irq {
->  #define S2MPA01_IRQ_B35_TSD_MASK	(1 << 5)
->  
->  enum s2mpg10_irq {
-> +#define S2MPG10_IRQ_CHIP		0
-> +
->  	/* PMIC */
->  	S2MPG10_IRQ_PWRONF,
->  	S2MPG10_IRQ_PWRONR,
-> @@ -183,6 +187,8 @@ enum s2mps11_irq {
->  	S2MPS11_IRQ_NR,
->  };
->  
-> +#define S2MPS11_IRQ_CHIP		0
-> +
->  #define S2MPS11_IRQ_PWRONF_MASK		(1 << 0)
->  #define S2MPS11_IRQ_PWRONR_MASK		(1 << 1)
->  #define S2MPS11_IRQ_JIGONBF_MASK	(1 << 2)
-> @@ -226,6 +232,8 @@ enum s2mps14_irq {
->  	S2MPS14_IRQ_NR,
->  };
->  
-> +#define S2MPS14_IRQ_CHIP		0
-> +
->  enum s2mpu02_irq {
->  	S2MPU02_IRQ_PWRONF,
->  	S2MPU02_IRQ_PWRONR,
-> @@ -250,6 +258,8 @@ enum s2mpu02_irq {
->  	S2MPU02_IRQ_NR,
->  };
->  
-> +#define S2MPU02_IRQ_CHIP		0
-> +
->  /* Masks for interrupts are the same as in s2mps11 */
->  #define S2MPS14_IRQ_TSD_MASK		(1 << 2)
->  
-> @@ -277,6 +287,8 @@ enum s2mpu05_irq {
->  	S2MPU05_IRQ_NR,
->  };
->  
-> +#define S2MPU05_IRQ_CHIP		0
-> +
->  #define S2MPU05_IRQ_PWRONF_MASK		BIT(0)
->  #define S2MPU05_IRQ_PWRONR_MASK		BIT(1)
->  #define S2MPU05_IRQ_JIGONBF_MASK	BIT(2)
-> @@ -321,6 +333,8 @@ enum s5m8767_irq {
->  	S5M8767_IRQ_NR,
->  };
->  
-> +#define S5M8767_IRQ_CHIP		0
-> +
->  #define S5M8767_IRQ_PWRR_MASK		(1 << 0)
->  #define S5M8767_IRQ_PWRF_MASK		(1 << 1)
->  #define S5M8767_IRQ_PWR1S_MASK		(1 << 3)
-> 
-> -- 
-> 2.51.2
+> Exynos9 sounds like a name for SoC generation or family to me. I
+> wonder if Samsung has some specific name for chips covered in this
+> series (i.e. modern ARM64 Exynos chips) internally, and if it's
+> actually Exynos9?
 > 
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yes, internally we also use “Exynos9” as an umbrella name for this family of modern ARM64 Exynos SoCs.
+
+>> Key changes:
+>> - Introduce:
+>>   - `EXYNOS9_PIN_BANK_EINTN(types, pins, reg, id)`
+>>   - `EXYNOS9_PIN_BANK_EINTG(types, pins, reg, id, offs)`
+>>   - `EXYNOS9_PIN_BANK_EINTW(types, pins, reg, id, offs)`
+> 
+> Suggestion: change "types" to "type", as it means "bank's type".
+> 
+Ack, thanks.
+Since the struct field is named .type, I’ll rename the macro parameter to bank_type to avoid build error.
+
+>> - Rename:
+>>   - `exynos850_bank_type_alive` -> `exynos9_bank_type_alive`
+>>   - `exynos850_bank_type_off`   -> `exynos9_bank_type_off`
+>> - Convert pin-bank tables for:
+>>   - Exynos2200, 7870, 7885, 850, 990, 9810, 8890, 8895,
+>>     AutoV9, AutoV920, FSD
+>> - Update GS101/EXYNOSV920 helpers to reference `exynos9_bank_type_*`
+>>   instead of the old exynos850 names.
+>> - Standardize on EXYNOS9_* macros while keeping SoC-specific
+>>   `*_bank_type_*` when layouts differ (e.g., 7870/8895).
+>>
+>> No functional change intended.
+>>
+>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+>> ---
+> 
+> Except for the minor comments below:
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> 
+> I can tell a lot of tedious work went into this, and having reviewed
+> it to the best of my abilities, I didn't find any real errors. Tested
+> on E850-96.
+> 
+
+Thanks a lot for the thorough review and testing on E850-96, and for recognizing the tedious work.
+
+>>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 785 +++++++++---------
+>>  drivers/pinctrl/samsung/pinctrl-exynos.h      |  49 +-
+>>  2 files changed, 402 insertions(+), 432 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>> index 627dca504d7a..f8fbdd921d00 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>> @@ -53,7 +53,7 @@ static const struct samsung_pin_bank_type exynos7870_bank_type_alive = {
+>>   * Bank type for non-alive type. Bit fields:
+>>   * CON: 4, DAT: 1, PUD: 4, DRV: 4, CONPDN: 2, PUDPDN: 4
+>>   */
+>> -static const struct samsung_pin_bank_type exynos850_bank_type_off  = {
+>> +static const struct samsung_pin_bank_type exynos9_bank_type_off  = {
+>>         .fld_width = { 4, 1, 4, 4, 2, 4, },
+>>         .reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, },
+>>  };
+>> @@ -62,7 +62,7 @@ static const struct samsung_pin_bank_type exynos850_bank_type_off  = {
+>>   * Bank type for alive type. Bit fields:
+>>   * CON: 4, DAT: 1, PUD: 4, DRV: 4
+>>   */
+>> -static const struct samsung_pin_bank_type exynos850_bank_type_alive = {
+>> +static const struct samsung_pin_bank_type exynos9_bank_type_alive = {
+>>         .fld_width = { 4, 1, 4, 4, },
+>>         .reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
+>>  };
+>> @@ -90,11 +90,11 @@ static atomic_t exynos_shared_retention_refcnt;
+>>
+>>  /* pin banks of exynos2200 pin-controller - ALIVE */
+>>  static const struct samsung_pin_bank_data exynos2200_pin_banks0[] __initconst = {
+>> -       EXYNOS850_PIN_BANK_EINTW(8, 0x0, "gpa0", 0x00),
+>> -       EXYNOS850_PIN_BANK_EINTW(8, 0x20, "gpa1", 0x04),
+>> -       EXYNOS850_PIN_BANK_EINTW(8, 0x40, "gpa2", 0x08),
+>> -       EXYNOS850_PIN_BANK_EINTW(8, 0x60, "gpa3", 0x0c),
+>> -       EXYNOS850_PIN_BANK_EINTW(2, 0x80, "gpa4", 0x10),
+>> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x0, "gpa0", 0x00),
+>> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x20, "gpa1", 0x04),
+>> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x40, "gpa2", 0x08),
+>> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 8, 0x60, "gpa3", 0x0c),
+>> +       EXYNOS9_PIN_BANK_EINTW(exynos9_bank_type_alive, 2, 0x80, "gpa4", 0x10),
+> 
+> For all patches in the series: please break the lines to not exceed 80
+> characters, as stated in the kernel coding style doc [1]. Not sure
+> what's the maintainers' stance on this nowadays, but I'd prefer this
+> for consistency and other reasons.
+> 
+> [1] https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-long-lines-and-strings
+> 
+
+Since checkpatch allows up to 100 columns, I kept that limit for now.
+I’d like to follow the 80-column rule as much as possible, but I’m concerned that splitting macro invocations like this
+into two lines may hurt readability. Would you prefer that I break them into two lines, or keep them within 100 columns?
+
