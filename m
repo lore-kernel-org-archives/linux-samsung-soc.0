@@ -1,118 +1,130 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF77C2727E5
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 08:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFDF2BE04F;
+	Fri, 14 Nov 2025 09:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763109032; cv=none; b=XlYMGkNYUhNCvmNsNp4Xtn1vG6DN4E87D+7m0xC7lILPwHuoYN4c9zcBQRY/GHhl0Vbk16ZZW00jYobd4a5XNLa7hW41eYvLip8KlFNrB/rYXSD4VsdrwtlebAqw01JKe5k1Zt/lu5e1v+S7LXfKc1uwH9D+uE6SJUpX2IABeVY=
+	t=1763112412; cv=none; b=FRqfVHS8YyfyfLVB5qIx9OaSUEzt6xwjFYEBV8JvH9bcvPmfBz6qgqokDngwVcWKD6HQUDvWlUdKIT5R/wzcBfbvncjO2I/WwLmQwpCEVDLV3+Frgv/BdLwLZF1geDVsGhPcmLTRAsi/ZAm+POJEYQoYEOsJqEudiOdlV2xOKEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763109032; c=relaxed/simple;
-	bh=pDRzcTiVhh+S8uzs9dsZ1gW4Ty7MEmxFv3VPjMCdUCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=blJ64GRg2y3xQPjRGNUjpSFOjSAj135297AvYMMO4LD578RepyYqRA31QGIpfEAXx7Jh9TBkvfTkF8vZlM8KpeAGtfLoPyRovjaZYJSfQP2QHoNJKxrbXLYcoqofb/z08zeOROCyj53cZc3qba4UOaFw6qtKwJYRre6vJrWbxPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PAD4hy62; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1763112412; c=relaxed/simple;
+	bh=sX+HOIylT+s1DfHSzoGBLyVtWwyxqB+zreyy1Q1PrXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=beE8PDnU6kB/hWrXu9Cf6wo307a0P5wXqHDnyTBz/pdm0gzuwxQjz+83Href88VSP0FM/ucJHMDgKf1csFsMddcXGAYuiHcmhyIUZCC9pK76BJB6ms91HuCuAy7BWWqZNYNuEmR9Rs+/k03tNFrORf7/7D5BP7/xdaiSwWQrsDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oy12Wodc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PAD4hy62"
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251114083027epoutp01b0a75ba70f717eabc6ccbefb026f4179~30lHFDjlj2281222812epoutp01R
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Nov 2025 08:30:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251114083027epoutp01b0a75ba70f717eabc6ccbefb026f4179~30lHFDjlj2281222812epoutp01R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763109027;
-	bh=I9pvcD/YJ0XiTAnF8DiPikfg8bjgfz67gTnQlpoSkUI=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=PAD4hy62ZADevl9e0bRG0AwHcGDec96kyeEWhUMZ68wljAWnETq4ZgWC327QtI20P
-	 WIF5OyxCLclF8yBlUb/jvttRiR8UdfVr1qgiCjsQBW7rhR7mvWBTRLCZsD7lMqyGgh
-	 ISa+cQPmeOta/vhMtcZHaXr0OPlV0ykqrJKUVQLQ=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251114083027epcas2p182ff34cae6b1f987dcdd8ef03a478fb2~30lGYu-h32496524965epcas2p1i;
-	Fri, 14 Nov 2025 08:30:27 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.38.209]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4d79Lp50Vpz2SSKg; Fri, 14 Nov
-	2025 08:30:26 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251114083026epcas2p44329381dca32185522674806eee7f97c~30lFinLh62507925079epcas2p4b;
-	Fri, 14 Nov 2025 08:30:26 +0000 (GMT)
-Received: from [12.36.160.98] (unknown [12.36.160.98]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251114083026epsmtip278051f24b4887a647696fcb492f01cd1~30lFe_9Qd2902229022epsmtip26;
-	Fri, 14 Nov 2025 08:30:26 +0000 (GMT)
-Message-ID: <7f1fc293-0db6-4387-9f4b-e05110203c82@samsung.com>
-Date: Fri, 14 Nov 2025 17:31:41 +0900
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oy12Wodc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5C4C4CEF8;
+	Fri, 14 Nov 2025 09:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763112411;
+	bh=sX+HOIylT+s1DfHSzoGBLyVtWwyxqB+zreyy1Q1PrXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oy12WodcEZ0xjE9jQd3zfg3IH6YfscOfbxRppFoSsNZW7bJyLB3pLIK5oT52nwSbz
+	 FS8Apk088s5krjYBuc8/f3d4tJ0P8D9Glrx83vItqgS40sx+cCKT0djYA6HtQ122WE
+	 XbsYCh1lI/aGEds70C/Y9jlamxM9HI8XbrTpHKiFue1WVgNsqqfSbRaQ1qiDNFwrgR
+	 oqiY4wCvBF2CMR1LZzF4h3yt39zNIB2i2EhZaJZn/D23lRqDNx2MLq7c7uFNgoDb4Q
+	 6I0JLax3LGu9aA3amA9aYnG12RbC7wYERUc0JHGM4Nnnpn2btIb2QywcmkxQafd+Ry
+	 8y9x9CWfXYMnw==
+Date: Fri, 14 Nov 2025 10:26:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>, 
+	William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for
+ frankel/blazer/mustang
+Message-ID: <20251114-elite-refined-yak-bf9e64@kuoka>
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+ <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org>
+ <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
+ <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
+ <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
+ <6490f20a-2492-4ee0-8f34-d529e0df0bad@kernel.org>
+ <CAD=FV=Us7SU_OifVkS4mdfVhc=xGYSBiBpBk9aA1Ki0y+iYBpQ@mail.gmail.com>
+ <abb77afe-c285-46ba-88ac-08574bd67712@kernel.org>
+ <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH v1 5/5] pinctrl: samsung: rename gs101_pinctrl_* to
- exynos9_pinctrl_*
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org, peter.griffin@linaro.org, ryu.real@samsung.com,
-	d7271.choe@samsung.com, linux-samsung-soc@vger.kernel.org
-Content-Language: en-US
-From: Youngmin Nam <youngmin.nam@samsung.com>
-In-Reply-To: <CAPLW+4m3=-957mqPC_Gb=2MjHCsQf7sSiBY-k-S=B14yq5bggA@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251114083026epcas2p44329381dca32185522674806eee7f97c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251110082145epcas2p1e56790e7aa72d7d3bcad4cc1faae07ef
-References: <CGME20251110082145epcas2p1e56790e7aa72d7d3bcad4cc1faae07ef@epcas2p1.samsung.com>
-	<20251110082649.3109858-1-youngmin.nam@samsung.com>
-	<20251110082649.3109858-6-youngmin.nam@samsung.com>
-	<CAPLW+4m3=-957mqPC_Gb=2MjHCsQf7sSiBY-k-S=B14yq5bggA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
 
-On 11/13/25 11:35, Sam Protsenko wrote:
-> On Mon, Nov 10, 2025 at 2:21 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
->>
->> The suspend/resume helpers named gs101_pinctrl_{suspend,resume} are not
->> GS101-specific. They implement the generic save/restore sequence used by
->> Exynos9-style controllers that have EINT filter configuration (eint_fltcon)
->> to preserve.
->>
->> Rename them to exynos9_pinctrl_{suspend,resume} and update all users:
->>   - exynos2200, exynos9810, exynos8895, exynos7885, exynos7870,
->>     exynosautov9, fsd, and gs101 controller tables
-> 
-> Not strictly related to this patch, but I wonder if we should also
-> enable suspend/resume operations for exynos850_pin_ctrl[] later.
-> 
-There should be no problems enabling these operations on Exynos850.
+On Thu, Nov 13, 2025 at 10:04:53AM -0800, Doug Anderson wrote:
+> Hi,
+>=20
+>=20
+> On Thu, Nov 13, 2025 at 9:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.=
+org> wrote:
+> >
+> > >>> Yes, the complexity of just "hooking up" the components on an SoC is
+> > >>> an order of magnitude harder than a Raspberry Pi, but it's still ju=
+st
+> > >>> hooking it up to external components. In both cases, we are modeling
+> > >>> the core "brains" (the part that contains the processor) as the DTB
+> > >>> and everything else just "hooks up" to interfaces.
+> > >>
+> > >> You mix the topics, so I don't follow. I speak here about bindings -=
+ you
+> > >> cannot have the that compatible alone, because it is incomplete, just
+> > >> like compatible for "transistor" is not correct in that context. You
+> > >> speak what could or could be DTB, different topic.
+> > >
+> > > A "SoC" is "complete". It has a processor that can run instructions.
+> >
+> > Then show me executing any piece of software, which is the consumer of
+> > the bindings, and runs on the SoC without the rest of the hardware syst=
+em.
+>=20
+> Show me something that runs on a Raspberry Pi (the models that don't
+> have eMMC) that runs without hooking up power and plugging in an SD
+> card. :-P
 
+It has MMC controller/slot described in the DTS and the SDcard itself is
+DT-transparent, meaning you do not describe it in DTS, plus I can easily
+insert such card, thus for sake of this discussion that RPi still works
+fine with DTS.
 
->>   - prototypes in pinctrl-exynos.h
->>   - definitions in pinctrl-exynos.c
->>
->> This aligns naming with the earlier macro/doc cleanups (e.g. using
->> EXYNOS9_PIN_BANK_* and describing eint_fltcon as Exynos9-specific) and
->> makes the helpers clearly reusable by other Exynos9-like SoCs.
->>
->> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> 
-> It looks to me as this patch actually fixes handling pinctrl during
-> suspend/resume for some chips. If it's the case, suggest adding
-> "Fixes:" tag here.
-> 
->> ---
-> 
-> LGTM:
-> 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> 
-> (Not sure how to test it on my E850-96, as suspend/resume is not
-> enabled there yet, and this patch doesn't really affect Exynos850
-> anyway; so only R-b tag for this one.)
-> 
-Thank you.
+This SoC cannot work without other pieces described in DT, that's why it
+is incomplete and unusable on its own.
+
+You are right that my previous arguments of hooking components are
+incomplete, so let me rephrase it - the DTS file should be complete from
+DT point of view and completly usable on its own. That's why DTS
+represents board (with the exceptions of few SoMs as explaiend to me
+long time ago).
+
+SoC does not meet this criteria, therefore it is not suitable for DTS.
+
+And if you claim that SoC could be fitting DTS, then I claim that
+individual transistor or one IP block like DWC USB3 could be there as
+well. With your arguments we could create DTS files for DWC USB3 nodes.
+Fact that transistor or DWC USB3 cannot execute code on their own does
+not matter, because it is nowhere said that DTS represents something
+which can execute code. CPU executes code, so following this argument
+DTS could contain only CPU device nodes..
+
+If we allow subpieces, like SoC components or SoCs (both still unusable
+on their own), as DTS files we open the pandora box of all possible
+styles and formats. I don't see reasoon why would we want it, what
+benefits this would bring to the ecosystem maintenance.
+
+We did not document it that DTS represents usable board, but it is
+implied all over the software projects, like GRUB devicetree [1] which
+takes one DTB to load. Only one.
+
+[1] https://www.gnu.org/software/grub/manual/grub/html_node/devicetree.html
+
+Best regards,
+Krzysztof
+
