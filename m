@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D2E31AF07;
-	Mon, 17 Nov 2025 09:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B89269D18
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2025 11:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763371390; cv=none; b=HotHfvX55Xk8q6Faav3iSiaSdE/r1WEV9TRrIhYajw42phrTSewMm1BSXdG4G08bs0mmQqM4GPaeXftdyRRMzPdm318QeRID1qa+XHZPzoo9Ty9xGrdb8eXVJeTHu2WjlFjAVBK9wcG//dYctvWtB9fOCc5f7dJ6yUOvZ0sWTMc=
+	t=1763379989; cv=none; b=DU7LWFPJydHF6ryJXGhdB6nZihwSGDt7MpveVlMtlRxzmHMEQGJkEDF3rpBZYqtBK8TZr+HEWSA1cbTDC5fscl4S2CkmSUknZVIStzHGABxzZIg63MB02pqo6tAUUQ3DGlN0DKfD2OOBd7JXmikBW0M/p3qv/tW2qaw9W2WZcRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763371390; c=relaxed/simple;
-	bh=0sMMx4MfSOaFvjx+yLdM0phssRJeVg0VF+S/BNLWbtg=;
+	s=arc-20240116; t=1763379989; c=relaxed/simple;
+	bh=WYQPM7sFR1PYqOvjaSnXh4ZPk1fNGJ1EVGV7m5He4zw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VlfWyIzOqusVSus5OI1a/tlBmzC8VkUhbaR9yJcA1mF9VmxRJ0BJd5nVG1/Zl3X7G14ml1wSfTNmOi/4lTOQvWeRTyQRTYnmn27aSpk0Dy5VLsNcmWq/r65IvYxs9mCIc9q+cxUww7lzVuko7NikypLu24PhEvitkJyhJ6Urp6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pU1tYpYP; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=bu5G5MGQmpYsuDv1vtdTXTtydUNxWDwq8AjL8vPvzQh1p2OE53DLUysTnFJr+uo6ss2I2iLi+y9OwjtcfuX+CuOjgPODEoMJZj+LDU2wwXKBbIY4xNIIsZR5L20tHJyyrwt96dKsIPc8Ste2IwINiXtrcfjoibr/wgv3krbHruI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J5XXbhNr; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pU1tYpYP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02E6C116B1;
-	Mon, 17 Nov 2025 09:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763371390;
-	bh=0sMMx4MfSOaFvjx+yLdM0phssRJeVg0VF+S/BNLWbtg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pU1tYpYPyrFMqcxZu3ppxTqkjfqAAjYrbXaCPr8KzlEmCB8OfiCjdJvpZb03KTxfA
-	 AIaEfV/vts/TxHLc7OlEpbYF91lTYNyB/ZG7wbISHnl2SGGxv4agvcMinIq5P2vwEf
-	 NVUX6txBnRvL3TszxiZrFumnDScwiEN7bKHEi3W9wdpvCEVXr4z+x2c8UQqenUNvt8
-	 A8lgTyX2KxdQBodmAyOLvikTXZkBtHJ15oIMZ1RmVNpvNT0FIQJHWwSxTDUnv0nJeP
-	 dXXsmzvGkCIJROgHerhTKDTk6PyR4u52RG71ADvuAq5w/+SV1nCtqsK6spzoe0fm88
-	 nAu562rcRQ12g==
-Message-ID: <474a7e3d-a506-4f4a-8bfb-fa6d203707cd@kernel.org>
-Date: Mon, 17 Nov 2025 10:23:05 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5XXbhNr"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-477632b0621so27698805e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2025 03:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763379986; x=1763984786; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5PmAE4/SlQNnA4RBQKLIAp7T7uRex/v+oYXbbVoL1Es=;
+        b=J5XXbhNrpfE/1DtN70VfdGGtDojjbhZuWDfh4FCKfmn3ALopJ4+gKIJ5jiZEabldfk
+         SY/eIk8HkzoGBFyXovhbN2dk9s4S0YzE3dXUpRdVAj3NKzwvg4NWoRDuvHTUSje2Gnz+
+         onz/NhtqdLB3S/+2iHdznfSZzC3XxfTPbGfNxLTS5QjAhWqGYRrUdBoK7vYjqWpVF6fS
+         UIru59ntPWmRYswoZUhpH1ynGq4sfKOgWm029nq1kvFT6/oiwzMDJA/stAKhP8qH3wCk
+         bX7YeDowiImOUphc52Rp9s99UP6Nnn4EAaz/dQXWFxqU8DML7LD+But/8l6c54Gbybf/
+         6uGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763379986; x=1763984786;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5PmAE4/SlQNnA4RBQKLIAp7T7uRex/v+oYXbbVoL1Es=;
+        b=Ngxg7RUVUWcIrYOWNvt24O7sOHAPdJiX4KsL8gHtje8a+vVuAavzQ363+YxXBpigw3
+         UjfiGK5N/t1ZN2bo/X/r6hx1X5Ub2LoEJYr0H0R4DCW0aTrBMq9iom/o069J1LX9c5qV
+         LXX/7rQbMSI0loi1GSrGt/5Ao+r+EKrOZe/W9926Y2NMFgKuV15nR1sNV7A+2raX6n2n
+         b34lWX16KmO+dT2bHD9GeoBsguNjyQmQ+EFkz5uEjEpgU+jr3tArclYlv4bM39RPx2ae
+         YVTs41kAPZqFEZ7zs7d5RqkHmRGoyyF/66b8doEHMOYGppzoNpfO+CJcaTU/zaMRUKLf
+         UNkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQCCMLd/q/JgM6cUzAsxoZ1DtEh4cO9avoIM/Whx9qDgMbmJ9Ku4IhFUcpzj8ye4PkLZEEuN+CG58/+1xLtvFhzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxGZIU46DbMbfTol6GRnGNUU2KAhlTgBYGoKPVwgDTTjd22URL
+	AYCPH9BpIdSlWg+pv/NqFT5bEJmfeh0QdeherBiVR/Gdq56Mx1nDiaIp6CSnIVpVlZs=
+X-Gm-Gg: ASbGncuxcFu5K7qb5yut0wHa1bisuLf7oCkMx76sn0ea/GBwkiTErrUUqc2Xh76rHD8
+	gXdnNsCIk66WpAt94+9WHPNSlJ2lLxRcZJWzF6VZEH9uXU7glme3AA4uljxjBIfPGFk+xI4ejmG
+	axLJQmeBur2xDx39w33UnIFGydKz3f1WcVkqI6o4AdHLs847fMHVM84mwdRhBVHemcKzr//74rY
+	HTLfyu8SnCYp0oiPWnDb5KoXcIHeDdtvVDJir0MMq3p7/bVcmaB4+ZGSAHVAqPNTcIH05Vj5Jnk
+	NT/Mj5i8WDH1+Lcgfru0ccIz09ZrMKj86KIHuYf4Gb6NBu3/SZB+1Ata0qKc/akG2VVgD9+/wf9
+	X+qcfigCPRvN/FULmP+t55U/6oIO36CP/AF8b1xGnN8nDMfjge49cPU0QamBXP+c6JnVj+dvuRU
+	KWOCjbSVf6ulOKZCAeA/LEJFJFWcYjFKbBOD2ltL05FFW0TfBDcwsnvxk=
+X-Google-Smtp-Source: AGHT+IFNvzfA8+IBQKGT5ANa4HDP2N9QX+3VtWlf5b77T6VzgwZ3FHSemKzoXYJh9ES00ThV6nFG0w==
+X-Received: by 2002:a05:600c:1f12:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-4778fe9aedcmr115869275e9.26.1763379986306;
+        Mon, 17 Nov 2025 03:46:26 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:b121:89be:2e42:dd71? ([2a05:6e02:1041:c10:b121:89be:2e42:dd71])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-477a81c567bsm901765e9.9.2025.11.17.03.46.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Nov 2025 03:46:25 -0800 (PST)
+Message-ID: <f1c5a4b6-3e75-418d-b7d8-7899dcd28ca3@linaro.org>
+Date: Mon, 17 Nov 2025 12:46:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,78 +69,66 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: soc: samsung: exynos-sysreg: add hsi0
- for ExynosAutov920
-To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
- conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
- kishon@kernel.org
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- sowon.na@samsung.com
-References: <20251117085134.289371-1-sh86.bae@samsung.com>
- <CGME20251117085146epcas2p303931d9501af51f08639b17ab7cbe34b@epcas2p3.samsung.com>
- <20251117085134.289371-2-sh86.bae@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 6/7] clocksource/drivers/exynos_mct: Add module support
+To: William McVicker <willmcvicker@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Youngmin Nam <youngmin.nam@samsung.com>, Donghoon Yu <hoony.yu@samsung.com>,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ John Stultz <jstultz@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251023205257.2029526-1-willmcvicker@google.com>
+ <CGME20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab@eucas1p2.samsung.com>
+ <20251023205257.2029526-7-willmcvicker@google.com>
+ <40d3f3c9-7526-440b-9dbd-7ead22c8562a@samsung.com>
+ <aPuhDFKINM9iXOKb@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251117085134.289371-2-sh86.bae@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <aPuhDFKINM9iXOKb@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 17/11/2025 09:51, Sanghoon Bae wrote:
-> Add hsi0 compatible for ExynosAutov920 PCIe settings for:
-> - PCIe PHY power control
-> - PLL settings for PCIe
-> - PCIe device direction (RC/EP)
+
+Hi Will,
+
+On 10/24/25 17:53, William McVicker wrote:
+> On 10/24/2025, Marek Szyprowski wrote:
+>> On 23.10.2025 22:52, Will McVicker wrote:
+>>> From: Donghoon Yu <hoony.yu@samsung.com>
+
+[ ... ]
+>> Sorry, but this still won't work on legacy ARM 32bit systems with MCT as
+>> the only clocksource, which needs a driver available very early (that's
+>> why it used TIMER_OF_DECLAREmacro). You need to make it conditional
+>> under CONFIG_ARM:
 > 
-> Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
-> ---
->  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
->  1 file changed, 1 insertion(+)
+> Can we rely on the bootloader to setup the MCT timer and then hand-off at boot
+> once the driver is initialized?
+> 
+> Daniel was working on a solution to transparently handle calling
+> TIMER_OF_DECLARE() when a timer driver can be configured as both a module or
+> built-in here:
+> 
+>    https://lore.kernel.org/all/20250625085715.889837-1-daniel.lezcano@linaro.org/
+> 
+> Daniel, do you have plans to finish that? In the meantime, can we go with the
+> `#if CONFIG_ARM` solution?
 
-You miss an user for this binding.
+I have a plan to finish that but it is low in my priority list. So I 
+guess we can go for the CONFIG_ARM solution in the meantime.
 
-Best regards,
-Krzysztof
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
