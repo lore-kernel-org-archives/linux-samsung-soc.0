@@ -1,68 +1,69 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F06F30749E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7BB331214
 	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2025 13:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763474183; cv=none; b=HFVXbLL+qjA2ag8U4JC+UQBMpnTbU9W7D9E0/fhmWHTRQeG19QqmnXpAt1f/r5nNmO1mKXoZP/X0YQd1DHbSFWupMfq6QPV2q2qQFAMgyK25oVAu7RCa4fkBSgwcuXY3FN4GEXvrNemRFAl5YgVdNtJdjA5A1fQDAo0K5N6M4JU=
+	t=1763474185; cv=none; b=LRCArkl+b8jF1l7WCqbpeRBmJINuKVypXgoNk/BKW81AzfUEmS2meEQoOdGfRn+9hA/zuRj5v7nf5O6mJB0EzfUCiFTUVKu3Cmc/G1vr1n+Ebg5SppIfIIDUkhBpFy8CKe9LHbCS85Q/NwWKKHR6FF3nUxfAQHS6qcTseFnx7ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763474183; c=relaxed/simple;
-	bh=hE9pu4zL09R2VnRw1hPAh8QPybkRzkJsjvziTMQK6lI=;
+	s=arc-20240116; t=1763474185; c=relaxed/simple;
+	bh=AYey41JluNvIXnVAMYRQRudvFDMHByFQlXtTmWlf5rA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lsEgLFjlyL5Q6jD9dZ0A0ZWBaAKobIsEmNkKMofc6Pp1mzabk8k76jesbsDFQtemvZKHPz9QzZc20QdLVxnTGvayaC+JzHNanvW7+rpuZt1bJZ95Sh9TMrfji9Ug+DwYGM42xtWAeuXMLup+Clw1U4Z3yh8NDUYbTQtbSCGhHIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VKrjRJrt; arc=none smtp.client-ip=209.85.221.51
+	 In-Reply-To:To:Cc; b=Aa/RjeNhoBjBYJ82e/tUrixlJRAjwfPaePPOj8r5fT455Mtc0W4gNfMzMHyYFhiH3Nxn7a5u/UqDMT1d88fNTKJXeVc2aJgI4C3P6Y7rGoOskL9mQWmqsoYCYdHVJCjA8OCtCrZjMeSDegGx/QftcnrHxRP6zk4Ym/SPdx1m4gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EVkDV6lu; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKrjRJrt"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42b3c965ca9so2780263f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2025 05:56:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EVkDV6lu"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429c8632fcbso3934089f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2025 05:56:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763474179; x=1764078979; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1763474180; x=1764078980; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mT9D4mxJaHrktugW+TtOKGoZWS1UVqUBb8i2CtMbCwk=;
-        b=VKrjRJrt4E9ve7xMjcOl8HIgloLsJ0YzmKJcLmkQV6YYWaZWxGS/TiQ17OdTcc+l3j
-         K65ygQ+BME2B1U8WvzXaDLoJka1ly+l0Kjhk0XwAc6FBdJ3r8Desy7y0NDFgIqcDDXkD
-         LzgPknmB/Kvn/8tO1W//gLbXC7qTZhnSMERlx8OfRAhrDPIyvrcrffSd+kKMn2DVP979
-         MEqylFkib95L1JsEKkInG/Ixe+gFST+a8W3M1e+Dkd6vVW9tHEDfMBI7T+cgpROA9MCE
-         DXhCltDo20bZBE+uJPkhffpyvNBiivvqkmpNUC/jLDHbOJelIZU1VF01RAgmsWEfEGcO
-         5n3g==
+        bh=mGSZdccmXWk8F5qnJeoPtGkKc8FpBWygh4CtyjO0Ar4=;
+        b=EVkDV6luUWBcOPU+pXGUG01wxqRMSbPZQF9P0X9GWC5icPHQqaoQE+woPEx7O6+vdF
+         UdX08d2RWtkGertFxWzbcAokaufgbpKb1LECFW4F9TTUnSICPphy79O4SYv96AVAROjQ
+         b7sYWiBYbard1ot5ptdcuHoSmHkabarbSDNPFzt/4DZa1u7Vl3c8olDRdYYHJokX75Hn
+         j8Vf86Dv/GRgso3zmT8PtfsO9VLC7ULVtG933LtePkuc5mOAuaZyKj/Yu9Bpy5HJoozS
+         5XJLHLT8IgCEKkOhVgs8xWotHAzZ3uTI6IadGmchtPY2PZBOg3MDWwAjG2O6NOZjAQRm
+         SvCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763474179; x=1764078979;
+        d=1e100.net; s=20230601; t=1763474180; x=1764078980;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=mT9D4mxJaHrktugW+TtOKGoZWS1UVqUBb8i2CtMbCwk=;
-        b=w+IjnBSmNDqmEDKRt8gmUtzAp/QmFJgBMmBvzY+t2VDCSR/CPkq7frjg9Wz1oL1+Sw
-         +geX7tW39kFN46etdJEqB9kdLpjMz/lcm0fkSdPH3BUkVRFKIrWTFsG7sTOTV3SGKDg6
-         KqQ4v2a81DAlufQOn/iw7V+tIEdZV4ew/xjHrODM28NU1c0e31HEjBbUD1E/8ZjEK8hA
-         1kdQ3rPXZYwZs5nnpwuTxlVzo2j8YHYsoduq6O/9oK0TEqHD9gbaOkIUS+3tHJXH5KMp
-         SjN5o45mlnFRvDdAbM+1YfuYOqNBpVLoVZCRsywi4nGpcoJ/L/Jf4i93IRzzqiUeliVl
-         Yvew==
-X-Forwarded-Encrypted: i=1; AJvYcCX4g7jQnPZ4rhRm8GYvyjAZiDRU9A1w7IYqNq1n8DXFQp/LeZBDcEze/Vj98nvv2Fj5WlQBaQCy84iayQxFk+53ig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqyymSr7//dPPEGcx9D6035TH2ARBQQjAqkYqJF/UuIGPRYkyC
-	HXsfJXcSTCVcBivdC0rxxXdVC3O0gR/wnL+U2LwAnekh7AcVdcZiQuDO8ZTdmMO00J8=
-X-Gm-Gg: ASbGncvoGSyE350BdtM+gCRQINBdXCyD/gGpV1O3kyTTy6uiNgBtjLNRpFjk9N7GNUO
-	shPQuwanJbZd9beigTjP0R8Q8g32nDDqHBGphyU5mr1SsCuKBo1VqQ6kI8qsfpjup8yG9kUj3fD
-	x2BR7sByICESv966LpvxWlUGdP6moAjerWe9+vlHg4nupHPZs2l6qMvftkhip/5hc4oZBUMnrtZ
-	RIiRjnXJNUDGQ1YUVncdVzUVwAtX5euOviKqtFp3Gknf8w27wSNMFd3ZDVfd15i+GzBtixSROxO
-	6bqO/6GAL7wR8x1mhqCrdUWB0mmizp5XZDwCXsog/aaMVHQWGIflo/vAMKj1txts8oKvg67n8OS
-	ZCyPik+mC7QxQkodnVranh5/DocIcKI+6a83IGB6kn/wS+R72kD1/Naj8XWy4vBhqBEZ8KMICG7
-	oc0eCOjn9L5L9+j4HObn3P5niG9Yy4ZOwmjvMB+hFGfmUJidAHm1U1CIulRfbrYo5tvOxKqhtN2
-	Xoxvg==
-X-Google-Smtp-Source: AGHT+IFSeYnPbCw3tis4yQRZI08iOt4XrwHVQj4yd7amd2aPdf7DLT9bDe6bDLKPiGXs0lIp0USpvw==
-X-Received: by 2002:a05:6000:430e:b0:429:c4bb:fbd6 with SMTP id ffacd0b85a97d-42b5936c4a2mr14623335f8f.31.1763474178959;
-        Tue, 18 Nov 2025 05:56:18 -0800 (PST)
+        bh=mGSZdccmXWk8F5qnJeoPtGkKc8FpBWygh4CtyjO0Ar4=;
+        b=B3GXHOaGMfradJHHJqkFiY5FGhXoAokgH9U21coP0DHJFDsl2muxvA034YsqGx8B5b
+         rRDYewRNvM0sC97p4cgHlup9MmpCRiOz80u30q5xSH54On1/CziCPGAisoBBM2OYlhY+
+         sihxAo0QpqfEWiNqCvqzaHHR02WEC/95NYFwC8mNuI49lkq0+3HoqJp6Ey7pdqEXgjYh
+         mYBarOC247Jd0lRLD+CsJ4cGU23o6JbznPc/ZESIZpUeiWqF9z7VyLtL/ka5ONvo4aKt
+         V3gsVo/Fu4HBY9Ye1WYxbvAT8sHvMbWt9LTL5BGT7P6MCNwiiYYNdq9h9RHZbG4L2UDC
+         w10w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkk4vuIDbukebp9cMsciYCFjrQQJQnEyhFJlaMocJCRyfeOn6xWYEmLX/Y37iky6OO1Iuz8XHlVqM4vLw/AqLgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4LPFwVPeN74PjPOCuLw5/90d4KEL3ITWqZw1CGHjxf3PonjSe
+	s3Q1/qaIhEiogCMhNNbrCHwQ2HXdowf5Ad2Nr0zp0sH9nDIAEmXu3Yy39edJ4MwQhwI=
+X-Gm-Gg: ASbGncvRz9NXvuYG/PHyw+e5jgMEXCiSyxyU1dXNsQZUc3nmq3VkrKtaE2LbAS6jvlo
+	DAZJNrjJuCdzaJ+4rW90djw0/hsjPzdDR6s5U1vc7BdO691e7XYYHMyjXrPBcy467jLQ3/WJp4l
+	N3I3oSGG4RGEKvTDFneqs9jIlP4y4l1JrGc9DCBnD1w+7XkC55y3wyGXDyvSMaorUHTLkxiWPaa
+	ZdNlRCGugZmceG7fucGjCoPRLr6O3xGJ9vv6GdBm33gwx9imH28Vy1wx9xdyfcu6RJQw3yGu0/9
+	wMpfcw9k6MEVnfFOabzYkWtd//dBofH1BqMbZZlqcCIzgRYEN9tUVBth0zj/XH2RHH580MR6cJd
+	yhQTQ4BXFntHJi0K55Vse/uQQi8jULYLjIgeY5mQOhMCiDsGyZeG5rr2oZb0T0eOsBWu/aUySXf
+	n7bl6wHRnUtRRfsKMEHXpFB4rZqbrJN32OyMNi2GWlSJeT1778H3W3Ww9RwtPq0w5drxqcI1Qfi
+	weO6Q==
+X-Google-Smtp-Source: AGHT+IGJOqGPGMa/xpFl50AjeI6gLPwIWReT5xV4tI/TQp6aNhxWJYaCSsA7r2uIJZrDLJkG2ExunA==
+X-Received: by 2002:a05:6000:2509:b0:42b:4803:75e8 with SMTP id ffacd0b85a97d-42b5937335fmr16390114f8f.43.1763474180302;
+        Tue, 18 Nov 2025 05:56:20 -0800 (PST)
 Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7ae16sm32728666f8f.3.2025.11.18.05.56.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7ae16sm32728666f8f.3.2025.11.18.05.56.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Nov 2025 05:56:18 -0800 (PST)
+        Tue, 18 Nov 2025 05:56:19 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 18 Nov 2025 13:56:08 +0000
-Subject: [PATCH v2 1/7] dt-bindings: nvmem: add google,gs101-otp
+Date: Tue, 18 Nov 2025 13:56:10 +0000
+Subject: [PATCH v2 3/7] soc: samsung: exynos-chipid: use devm action to
+ unregister soc device
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,8 +71,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251118-gs101-chipid-v2-1-e9f1e7460e35@linaro.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251118-gs101-chipid-v2-3-e9f1e7460e35@linaro.org>
 References: <20251118-gs101-chipid-v2-0-e9f1e7460e35@linaro.org>
 In-Reply-To: <20251118-gs101-chipid-v2-0-e9f1e7460e35@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -83,88 +84,84 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org,
  willmcvicker@google.com, kernel-team@android.com, 
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>
+ Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763474177; l=2105;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763474177; l=2261;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=hE9pu4zL09R2VnRw1hPAh8QPybkRzkJsjvziTMQK6lI=;
- b=rOjp9fByKIiYv2zyDGDmfAh5uHoPJlkPj+pJH/Wo7/4XVrDXytSpx2NxMD3/6YvsMTnrew6jU
- MLbn/+h0vuFCoeJHn589V0xkn5CgCijQecUkHEOp3AFcz3Urq6cHgrN
+ bh=AYey41JluNvIXnVAMYRQRudvFDMHByFQlXtTmWlf5rA=;
+ b=/BoUySuXF+LzGbF8Xi0BjukaCLCcgm542pIxGyPIv9c71vz9fpN2QT6L/bYOX6wdCuHw/i8BZ
+ CmaqZLVmv3sDkYpUE5IuVIAml7k3WYlIgKtBidL/6Exyw7Ub0FBh/46
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Add binding for the OTP controller found on Google GS101.
+Simplify the unwinding of the soc device by using a devm action.
+Add the action before the exynos_asv_init() to avoid an explicit call
+to soc_device_unregister().
 
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- .../bindings/nvmem/google,gs101-otp.yaml           | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ drivers/soc/samsung/exynos-chipid.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..8ed65e906a2a1b0c216a09c9444f87af61090b81
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/nvmem/google,gs101-otp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 8904ffdaf9a6f6d069cc6af18a24dd00a2780892..db73dfad4e1b4fb001cb653bc8caf8aa08d85f2d 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -145,6 +145,11 @@ static struct regmap *exynos_chipid_get_efuse_regmap(struct platform_device *pde
+ 	return devm_regmap_init_mmio(&pdev->dev, base, &reg_config);
+ }
+ 
++static void exynos_chipid_unregister_soc(void *data)
++{
++	soc_device_unregister(data);
++}
 +
-+title: Google GS101 OTP Controller
-+
-+maintainers:
-+  - Tudor Ambarus <tudor.ambarus@linaro.org>
-+
-+description: |
-+  OTP controller drives a NVMEM memory where system or user specific data
-+  can be stored. The OTP controller register space is of interest as well
-+  because it contains dedicated registers where it stores the Product ID
-+  and the Chip ID (apart other things like TMU or ASV info).
-+
-+allOf:
-+  - $ref: nvmem.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: google,gs101-otp
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/google,gs101.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    efuse@10000000 {
-+        compatible = "google,gs101-otp";
-+        reg = <0x10000000 0xf084>;
-+        clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
-+        interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH>;
-+    };
+ static int exynos_chipid_probe(struct platform_device *pdev)
+ {
+ 	const struct exynos_chipid_variant *drv_data;
+@@ -207,28 +212,19 @@ static int exynos_chipid_probe(struct platform_device *pdev)
+ 	if (IS_ERR(soc_dev))
+ 		return PTR_ERR(soc_dev);
+ 
+-	ret = exynos_asv_init(dev, regmap);
++	ret = devm_add_action_or_reset(dev, exynos_chipid_unregister_soc,
++				       soc_dev);
+ 	if (ret)
+-		goto err;
++		return dev_err_probe(dev, ret, "failed to add devm action\n");
+ 
+-	platform_set_drvdata(pdev, soc_dev);
++	ret = exynos_asv_init(dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	dev_info(dev, "Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
+ 		 soc_dev_attr->soc_id, soc_info.product_id, soc_info.revision);
+ 
+ 	return 0;
+-
+-err:
+-	soc_device_unregister(soc_dev);
+-
+-	return ret;
+-}
+-
+-static void exynos_chipid_remove(struct platform_device *pdev)
+-{
+-	struct soc_device *soc_dev = platform_get_drvdata(pdev);
+-
+-	soc_device_unregister(soc_dev);
+ }
+ 
+ static const struct exynos_chipid_variant exynos4210_chipid_drv_data = {
+@@ -270,7 +266,6 @@ static struct platform_driver exynos_chipid_driver = {
+ 		.of_match_table = exynos_chipid_of_device_ids,
+ 	},
+ 	.probe = exynos_chipid_probe,
+-	.remove = exynos_chipid_remove,
+ };
+ module_platform_driver(exynos_chipid_driver);
+ 
 
 -- 
 2.52.0.rc1.455.g30608eb744-goog
