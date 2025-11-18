@@ -1,97 +1,79 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB3F341649
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2025 14:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7E43A5E63;
+	Tue, 18 Nov 2025 17:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763474474; cv=none; b=WfuFbGb/Z/PMjtE/tk/s0Pq/hjXGZ1wLvIym6VjXHAYNplSv1jSor0lVWHJ4fryAlZcYfhOC65HcYPFdugBpvVUV3Dq61iCXTVwws0vBeM7+VsZcR7J2pCJ9xzf00pzezcjKua2LwQGKuvE0sDtqDtiXPKrKPlqP0ZhBsy6aCjo=
+	t=1763486306; cv=none; b=W9Ia82zNCuh0bGqAkRai0y+1BJl8wRcwXR+rJ05QTf8gmtjV9R+64TqzH7j1qAaTEUJWqNtK1xLl9GLED7MWI1NTpQcY1I1ZtV1500wQji57yr5e2vAsQeG4JXrkK0uVnAP3dcyjfg+LpISuxgHAWnGZ9SyDpeU1WWNnX15L04Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763474474; c=relaxed/simple;
-	bh=c37Cf/9bjBOxdwmowi+zlvWmHXcs2B9uOXkYp2h8vG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R4L0fJCPQuvFyI99WjCwCc/2YpOJ7c+0wtQluaQQ563l2uuEoErY61dMcLxwBM6JIEvwqbNTMvJC6rhJEQ2jXgj3ABf5zIKPPHHsfE+U94xY/fZyh05bycDhb+1S0UJd8tBzQa9RWWmo2t4usiOsixcHLrB1Tpqn4OGBCxryB1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HCOf4zLG; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763486306; c=relaxed/simple;
+	bh=EEwSzAuRM0kq1EprADYYK7v3yQkWwLAJQjIqfYobBFE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dB2dOh2aI03f/cJDO4BFSZk7oJSzJLSv5s5gWlJL1OU5lh3NMJl+zYbFzvsrurTAFD3A09KNegOIZWWfmcOCEQBZp8ECtuaxFYOovQlKCIN2ktnfz3YRkv/rPR9af2jpn1w/f1DbuBcoDw3WkBE5AnvSNVyeuWB1bdVMwk+irC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HG31WzSo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HCOf4zLG"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477a219dbcaso20676125e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2025 06:01:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763474471; x=1764079271; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kUQiNM1iR2tDzAghTzR3NUuXi2I+iCz3M8l6XyCorP4=;
-        b=HCOf4zLG6B3ILdR0MA4/LAZMiXEpWKuhYC/8TV1uHsOASbaaC0lbctY1yX5mMp1PL5
-         atPslXo8lBADxxUJn6+Uk86tskV/X4Nvh8WO66e8mT4c9lB8x6SulvkkcJmpuKRriEaM
-         hAH1VUQDjgVppa+MKsr8IuswwlFZ0pTCeWE9Ij20lfjgQaN3Sv5KuR9f9marTDoz/+Y7
-         iXeES35xz1Okec+82IaRuZG9E8EEhB/sUASyXRILwCpQQsmlm1FgssxihkG00Vq5th8F
-         jlXxfJFfNs7+Q9TIrr84MaRCUoUrX0Q3v0lrCJsNu3NKFXLOgOJiJRUJug3eKWxtRYOe
-         ZYBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763474471; x=1764079271;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kUQiNM1iR2tDzAghTzR3NUuXi2I+iCz3M8l6XyCorP4=;
-        b=a9Xe4YmZEMXCiH2amyX0qyeicE+bWamCRWKRfv9xmVZL4x4BHuNlJ0bqqWvXgUFAxc
-         cZKVTb0GKJsXqAAUtgIeWvdSOhfgKfRGZ1Bku+jJlxO78sEigq8pPNptRKSi7zB6gsg8
-         91rbrKhIee3xLmlu5NTYwa0QrAJpQNI/tMppZCF62SesLQmT2YOvl5A1ny9/7blR1KKz
-         49pG6qzdFNyA5akAV2EngCx4fIhKBFcZz7mL58gKnB5QFiye3C4MI4Ad6cshE++fDFHP
-         87DX96NQzaljXb6vaHQ9uejdhzs5hW7lwzHg87sxWk7fmjIWrVYpDsF6cHKu64djwx1r
-         I3Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCWiScTIdcwNeCHpU6NIH5rm0klnDK7JAPeBleR4NZZ2hxzy6rehBQ70zV1rPot07AVu9AEwgQg4hgTC0/FtbNcZcQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6p39/2Hyp/EhwiDsY/4RD7SfHKw6l+jzNOcC46n+Zlo0tERcI
-	EtLwDRlMcgFzjJDMp2sXWSQ1L4EZv6FyC8wrKBK3GCYJ5HgYLNAs8fkoixVEiXZe9HY=
-X-Gm-Gg: ASbGncuY7cqVeaI3OLTjkaUDSQC6xHAARqQKdwmZ0rr1wfXdZ9N7Xi2O95pdhdHOQtD
-	BQ9W8wtxK4sJt0iOY0XwolS+etYqFZCvU/ZaDSLsx7hTnbW9ZTqX3c+FTlyiw+GdG88URpRHtZp
-	mqKdscVAlT2ssJVOKsCgh3ZBY37nRLsRGIXx+rAPCfInYg6IKWGIq1eA+seWEm7wuPVqCBYimai
-	mWFa1Ngo7lzBwNVS2LXEcm7aaLpQvKGxBTeUBhtfGNsKo957XXxg3MRAdoCbxFjCfczizOq/RRF
-	paQ4v1WtUSPKlCTAtzMPG3+NXYSPD2M/9vRyvS/Ok9wh35DmemEXfTrw9hklh6KbFqcGMG2t+w1
-	bGL5jUzQlz2WaRX05v08vH8Czp1QqOq0cy7PKYbWJHpfimky7dep70gS9UAfYbvGiCq4qbm7l/Y
-	MA7FJPP2yeOoLjnopiSAuH62NqXWk=
-X-Google-Smtp-Source: AGHT+IFV7jGZZLi+9VlgcvikNoydlmxYBSoOTOe6Mj5xjf+0oslhVnUW95h+9A6e60q9KlZeiWFBjw==
-X-Received: by 2002:a05:600c:8b22:b0:477:7b16:5fb1 with SMTP id 5b1f17b1804b1-4778fe553a5mr150619835e9.7.1763474470556;
-        Tue, 18 Nov 2025 06:01:10 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42c97745f79sm18177019f8f.23.2025.11.18.06.01.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Nov 2025 06:01:10 -0800 (PST)
-Message-ID: <729cddf3-a21b-4503-b9c8-d3b5708243e9@linaro.org>
-Date: Tue, 18 Nov 2025 16:01:08 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HG31WzSo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3632C4CEF5;
+	Tue, 18 Nov 2025 17:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763486305;
+	bh=EEwSzAuRM0kq1EprADYYK7v3yQkWwLAJQjIqfYobBFE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HG31WzSorwr9uYMM1jp8y4FNbu4d/kPuj16fkX4cfdoCG7Zpnz5qD2/cDfexk8+rg
+	 o0tC1flc/yJG1IC5wU7Q/CofQRbx9tWoXaVJcLOhCMx6ZOf/lcmuxrsQd4NiXliFO3
+	 fESWiu80RjXGA7I7qmRbP0ezuIpgEYsCtbUq1NaNZVeuEmje3M3RPJsa/RkFloy1Ec
+	 dzUj17G8wV+xF78foJ8RUbI9EttwezeeoWjSTEDIGyX1nsyYpXB7baIYGDN38LN5rP
+	 ujIl/WxR+uZGhv3JZ/YGkCAMt0iDvx6RXBT1MrbLb5pK3jl5OJQ8JIyYhEFTn0v0mg
+	 LN37zgN5/oKRg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org
+In-Reply-To: <20251112-phy-notify-pmstate-v5-0-39df622d8fcb@linaro.org>
+References: <20251112-phy-notify-pmstate-v5-0-39df622d8fcb@linaro.org>
+Subject: Re: [PATCH v5 0/2] Add new phy_notify_state() api
+Message-Id: <176348630114.62598.12188488023476027485.b4-ty@kernel.org>
+Date: Tue, 18 Nov 2025 22:48:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] soc: samsung: exynos-chipid: trivial updates to
- simplify code
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peter.griffin@linaro.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251112-chipid-trivial-v1-0-ec2dea03bd83@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251112-chipid-trivial-v1-0-ec2dea03bd83@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
-
-On 11/12/25 10:48 AM, Tudor Ambarus wrote:
-> Trivial patches to simplify code done while handling the GS101 chipid
-> support. Compile tested only.
+On Wed, 12 Nov 2025 16:27:05 +0000, Peter Griffin wrote:
+> This series adds a new phy_notify_state() API to the phy subsystem. It is
+> designed to be used when some specific runtime configuration parameters
+> need to be changed when transitioning to the desired state which can't be
+> handled by phy_calibrate()or phy_power_{on|off}().
 > 
+> The first user of the new API is phy-samsung-ufs and phy-gs101-ufs which
+> need to issue some register writes when entering and exiting the hibern8
+> link state.
+> 
+> [...]
 
-These trivial patches are superseded by the following patch set:
-https://lore.kernel.org/linux-samsung-soc/20251118-gs101-chipid-v2-0-e9f1e7460e35@linaro.org/T/#t
+Applied, thanks!
 
-Please consider reviewing the replacement set instead. Thanks!
-ta
+[1/2] phy: add new phy_notify_state() api
+      commit: 4edf654be5471659e3260be0a557eaa2ece668ab
+[2/2] phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
+      commit: a1af5d2be169ecec92cb4d85c811450d68164aec
+
+Best regards,
+-- 
+~Vinod
+
+
