@@ -1,42 +1,42 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CF235A931;
-	Wed, 19 Nov 2025 13:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A11B359F8B
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 13:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763557673; cv=none; b=d+i5HdQ52Yrv5EysVSVbywtClMfPF0M1ZY5myOPPrdBL3a5DJI9gHDtkNz/nZIZRrbWUxB9EkP4uL+NBntfiu3B4L9fy0+yyoXt478cuhXLiuZ0ww11KqfZpnVyqPjxmBVmgd4syN7HyhFElBcK/9vmddG0g8tTkwCOo5IUMJek=
+	t=1763557680; cv=none; b=uzbz4JZMQjgCawPIiIfz9EY+/GHcBsqurYDYH8JNGxNdL2xdrC9grKK9xJUd2KvPiyqLv1PQvGlv5PZCFUvCC1GwXxvd7PRWuyRVmDpakJDpy0WB5UyIQfLPgZ54VOf2rw3wayGkwuUCWocZNehiDsWdrORqVrRh1sgqd2nuNQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763557673; c=relaxed/simple;
-	bh=Ee1ANQ8piG2Xy1kvkmKEVNulcZW14BhOEuIymfYVqdI=;
+	s=arc-20240116; t=1763557680; c=relaxed/simple;
+	bh=ik4fAk83EoAUjeT8BJBWroOtJcHG2mk9wyTkwYR1gUw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rMwZ/8fS7fme+4e1Iiv3shJ5+gqvX8Is+WDF2Yb7KHpaAFOOAaK03TnkJ+Y32zvSk53R3OYfSixexNNLFeXO3WZxkeQesvUPGhQw7tuSwRm1BOCIhW+kteEIMXVGVcQajw31g+9aa9A1BUZbLeBapsSHfk1ExFxNtX7zi6W0Z0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cJJeech+; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=vFK+t15MShZfVDVybCECkA0tzHMj1yDc/OwGWUNmy2Cm7CpA3xy3JvHew1X3i+ITcZZMfisJtxIBqGnS66wREh9s4p89fKLTmV1MaUcV7z/W+U9X9LMBXrpCtgOsB7srUe9KYz6LbQRUkMTrXCjcEN8OynDVkEN5Vl6Czf3Xci8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uxnBVIjB; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cJJeech+"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uxnBVIjB"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id B78554E4179F;
-	Wed, 19 Nov 2025 13:07:49 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id B5F44C11188;
+	Wed, 19 Nov 2025 13:07:35 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8223660699;
-	Wed, 19 Nov 2025 13:07:49 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6880010371A51;
-	Wed, 19 Nov 2025 14:07:39 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EA9F660699;
+	Wed, 19 Nov 2025 13:07:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 05BB710371A4D;
+	Wed, 19 Nov 2025 14:07:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763557667; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1763557676; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=L/DuXoetl753XeoH5JBP+Wrs0bAqi1NwkMF5ggTwKPI=;
-	b=cJJeech+j8YzxD1bMIO6H2SeggKIcT8NrESK47EY4eYT0VexKcOBmJLBu4WtHcx/wQ2NHJ
-	b/w49MB76ictNWa/evG+tVJvZj4gMXn/v0LDHtcQOn1hjOzpoguGOK6bXsQo1PE2zGhvvV
-	LOZy+PhrHWZsESe9TnbqBHqFhS6RAutEfjCbnft0/7qilzMaF6ZLhdkPKjKduQWXABowzi
-	qqTtQAmY9j6DYQ7Tc4sU0D050lBFGkRnHT9hfGRGks1IRpNhOFSBOU3f1RDzlsjSW4GwXD
-	xPKxq/rnnMx1d63ckr4JuoQiQUNB1RtFgpZyCJ75dent2JfupK8/sDB4rBdK6Q==
+	bh=MmpUcHVH4AV/UOJX3A0mnvWDkPDADuc2PuGmVA8vqXc=;
+	b=uxnBVIjB1u0Ryuyc/Y3TLB0AABl4E/d5EvaNX1Hzww2fiZj7I6R7MKAoQWss0ZsAme6oja
+	0+zU9y8nnTPbbOF9PBUCcGP1ym2Di51Lm403M3KikDnuKuGa5sDoX36PVxhACPpXQOfy32
+	CCS0r4NinwdNrP12XfUkAPDUUW+RS6AO2b3636QrCqgP9/ieItSOvVqx51dYkNQ8E32xsR
+	iO+tHilJdxfNqGm2uHv5esAb12kXHDxcpXtRVGwZAF8uMt5eSfw2tUTJTsKygOsVbS/lSR
+	Fbrhd1iJXmmNVktCWSxTdIk9MMEjfqSzjnUwvItMb7uHTtg1En6E6wzip3fACg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 19 Nov 2025 14:05:43 +0100
-Subject: [PATCH 12/26] drm/bridge: imx8qxp-pxl2dpi: use
- devm_drm_of_find_bridge() to put the next and companion bridges
+Date: Wed, 19 Nov 2025 14:05:44 +0100
+Subject: [PATCH 13/26] drm/bridge: lt8912b: use devm_drm_of_find_bridge()
+ to put the hdmi bridge
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-12-0db98a7fe474@bootlin.com>
+Message-Id: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-13-0db98a7fe474@bootlin.com>
 References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
 In-Reply-To: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -96,31 +96,22 @@ reference on remove or on probe failure.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/lontium-lt8912b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c
-index 111310acab2c..82c407525c01 100644
---- a/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c
-+++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c
-@@ -279,7 +279,7 @@ imx8qxp_pxl2dpi_find_next_bridge(struct imx8qxp_pxl2dpi *p2d)
- 		goto out;
+diff --git a/drivers/gpu/drm/bridge/lontium-lt8912b.c b/drivers/gpu/drm/bridge/lontium-lt8912b.c
+index 342374cb8fc6..eb2b607948a7 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt8912b.c
++++ b/drivers/gpu/drm/bridge/lontium-lt8912b.c
+@@ -723,7 +723,7 @@ static int lt8912_parse_dt(struct lt8912 *lt)
+ 		goto err_free_host_node;
  	}
  
--	next_bridge = of_drm_find_bridge(remote);
-+	next_bridge = devm_drm_of_find_bridge(p2d->dev, remote);
- 	if (!next_bridge) {
- 		next_bridge = ERR_PTR(-EPROBE_DEFER);
- 		goto out;
-@@ -347,7 +347,7 @@ static int imx8qxp_pxl2dpi_parse_dt_companion(struct imx8qxp_pxl2dpi *p2d)
- 		goto out;
- 	}
- 
--	p2d->companion = of_drm_find_bridge(companion);
-+	p2d->companion = devm_drm_of_find_bridge(dev, companion);
- 	if (!p2d->companion) {
+-	lt->hdmi_port = of_drm_find_bridge(port_node);
++	lt->hdmi_port = devm_drm_of_find_bridge(lt->dev, port_node);
+ 	if (!lt->hdmi_port) {
  		ret = -EPROBE_DEFER;
- 		DRM_DEV_DEBUG_DRIVER(p2d->dev,
+ 		dev_err_probe(lt->dev, ret, "%s: Failed to get hdmi port\n", __func__);
 
 -- 
 2.51.1
