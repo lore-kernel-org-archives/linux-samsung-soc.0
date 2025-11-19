@@ -1,121 +1,75 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBA22C3244
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 15:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2A02F5A25;
+	Wed, 19 Nov 2025 21:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763565240; cv=none; b=GkjxcRrj4OdTVmVYupemohE+U/OXcNY/it+pFo1n41fAOCii3Pznak90ph0AVeWwcoJmk3cgdLzwxGVKeXDc1KamMEptxft2epS+Qoz7SAAX4h6dcffmwlDzVQRMccL9NbXZjqXRScwfYh8V7y73MKRNmvchs2yJPhdJbCyO0vU=
+	t=1763589116; cv=none; b=Qq/l93fwQwYRER7nboqlcJ5a8bX9uCej0EgTOK6GIq8/1ealf8FVG97CaOTYLQYUJmuxhOTabt9uJKMzj1OQfxXZmnz/cLcTyDzLZI8I5VR2P9eCFfhTJxZUWz0i5+9cptOk358g52jsZR4p1v7iivKxDWf+cV51BwoXhQRUxVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763565240; c=relaxed/simple;
-	bh=jTVZWb1z3cijgYgnTd2OTnTD3iYb79u3u3LIuyPG89o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=F2Mj9l1cAIV42jVPUl+EW6BwjsX/rKGFEitmogbfjEIeZZgGTyYkLmRpKFhLMpWaxBKGVz5Iv0I/0lFCQW4k5gq46JLbho/bDFGv3dGtA7FqX38hwygrq1Uqit72552oBXcjFK7PSvX+/wc/zNYQDScMyb/ldi3ok3pFJjklhSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m7vF4ll1; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1763589116; c=relaxed/simple;
+	bh=nwi+ZvFeDSI2K72amAnDtVwqMnAIb0w5EqXwQ4IVpAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccOBSQN/0xOwAMekV4wC7vX1KLMD2Wilhs0b8EQSIvnVvwd8evfvr6lt3TL4T2WK/aMtxn5Q/cnWW0Pzq12LBFyb5p+gJqOZz8U/EMw5YkNi02wzPsJa4n9ZZA0cKuWF11mPB9IpD+HZ+Bo7JIoo89EgyqPBuUXVeGhLWyZT5NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1j8K/Th; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m7vF4ll1"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 06AC14E417A3;
-	Wed, 19 Nov 2025 15:13:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B484260699;
-	Wed, 19 Nov 2025 15:13:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8CF7910371A8A;
-	Wed, 19 Nov 2025 16:13:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763565233; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=7NujdOdzUvG8wdCZQfUnNhZngIGWDfpoPw7syCRBlyU=;
-	b=m7vF4ll1ceXLHQ7SOaiZpgd4CxFPgYohzfJ0NlZ0aTzSJaXD9VTyQ0b6Nca2vIQ/wrWegN
-	X7lT/+WK9S++6avBgiOXY9NP7+MI1jjWHWI7RBsLQX6wfWReUJ54QYX3K53QOZ6/y8dBoc
-	rwTJVJ7c+G9WaXQ8N7tTqpG6uDWPHNfn1xUUQJ6LI4Em7jpXR+JjigURq762sngel+VEcW
-	YeNbzw3ktmsl5OOmcChfp5qJ6/9qH6bPrQk2TgiRq9mOSsRfXE2q6j3dzq+QEA4YtrRHS0
-	cD5J70cFAFYr33yZY126C/B2axcVbx4hl6oArAJtX+b6b2pfPjSYBIGdWMXGmQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1j8K/Th"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 122B7C4CEF5;
+	Wed, 19 Nov 2025 21:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763589116;
+	bh=nwi+ZvFeDSI2K72amAnDtVwqMnAIb0w5EqXwQ4IVpAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y1j8K/Thkm7qVc4L5T1qzRf5mvjXoFl6aQpZ9ld0naktl7muueng0UxfJFtohyJXK
+	 w+VJNlaLcXcW9yTHawr/YRztaqfB3MiodZA75XSj98MHZQf+b73RFRh+do7C+Va6zo
+	 F0aAV9zZKD1Bbpi7OUMi+wlEj8UvIXXWCJmvudqfgd9DQtxh+tFbx+T5ZU4H3NpqkY
+	 yFbp41+SswGWScOhhmHrVH09OLel9PuaBw7eRVoSZb/Avir8bFIfB1SjfMGr9nXPLf
+	 A3mBTN4qgaZBn0exCLw0BmtcTjnXyUoK45PeiXilZ1LioSXL6OoSVaX0SsXwvfM+IF
+	 eWLNS03ZGMdTw==
+Date: Wed, 19 Nov 2025 15:51:54 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] of/irq: Handle explicit interrupt parent
+Message-ID: <176358911083.3363410.10556334198340567279.robh@kernel.org>
+References: <e89669c9b3a4fbac4a972ffadcbe00fddb365472.1763557994.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 19 Nov 2025 16:13:41 +0100
-Message-Id: <DECRP2E0HI3I.APSIIQR4TVWK@bootlin.com>
-Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-renesas-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
-To: "Louis Chauvet" <louis.chauvet@bootlin.com>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jonathan Corbet"
- <corbet@lwn.net>, "Alexey Brodkin" <abrodkin@synopsys.com>, "Phong LE"
- <ple@baylibre.com>, "Liu Ying" <victor.liu@nxp.com>, "Shawn Guo"
- <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Adrien Grassein" <adrien.grassein@gmail.com>,
- "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Tomi
- Valkeinen" <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
- <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Kevin
- Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>, "Chun-Kuang Hu"
- <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@collabora.com>, "Anitha Chrisanthus"
- <anitha.chrisanthus@intel.com>, "Edmund Dea" <edmund.j.dea@intel.com>,
- "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo Kim"
- <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 02/26] drm/bridge: deprecate of_drm_find_bridge()
-X-Mailer: aerc 0.20.1
-References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com> <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-2-0db98a7fe474@bootlin.com> <66cdbe39-d065-4aa4-86e4-84a38b49c09c@bootlin.com>
-In-Reply-To: <66cdbe39-d065-4aa4-86e4-84a38b49c09c@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e89669c9b3a4fbac4a972ffadcbe00fddb365472.1763557994.git.geert+renesas@glider.be>
 
-On Wed Nov 19, 2025 at 3:28 PM CET, Louis Chauvet wrote:
->
->
-> On 11/19/25 13:05, Luca Ceresoli wrote:
->> of_drm_find_bridge() does not increment the returned bridge
->> refcount. drm_of_find_bridge() is to be used as a replacement.
->>
->> Suggested-by: Maxime Ripard <mripard@kernel.org>
->> Link: https://lore.kernel.org/dri-devel/20250319-stylish-lime-mongoose-0=
-a18ad@houat/
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-...
+On Wed, 19 Nov 2025 14:19:11 +0100, Geert Uytterhoeven wrote:
+> If an interrupt controller is used as a proxy, it may have an
+> "interrupt-parent" property, but lack "interrupts" and
+> "interrupts-extended" properties.  In that case, the "interrupt-parent"
+> property in the interrupt controller node is ignored, causing the
+> interrupt controller to fail to probe, and leading to system boot
+> failures or crashes.
+> 
+> Fix this by also considering an explicit "interrupt-parent" property in
+> the interrupt controller node itself.
+> 
+> Fixes: 1b1f04d8271e7ba7 ("of/irq: Ignore interrupt parent for nodes without interrupts")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/20251118115037.1866871-1-m.szyprowski@samsung.com
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/b037f67a-b241-4689-9914-57ff578c1454@sirena.org.uk
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/of/irq.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
->> @@ -1452,6 +1452,9 @@ EXPORT_SYMBOL(drm_of_find_bridge);
->>    *
->>    * @np: device node
->>    *
->> + * This function is deprecated. Use drm_of_find_bridge() instead for pr=
-oper
->> + * refcounting.
->> + *
->
-> I think it should be more explicit that the refcounting is not done by
-> this function, like:
->
-> 	This function is deprecated. The returned bridge is not refcounted, you
-> should not use drm_bridge_put(). Use drm_of_find_bridge() instead for
-> proper refcounting.
+Applied, thanks!
 
-OK.
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
