@@ -1,127 +1,225 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A6134320F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 12:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EA92E7623
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 13:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763555531; cv=none; b=EHa37KFu52sq0Nlnamokv4bfbJ3GXfwSOR6JZhoCRLWLVi5r0La4Xm59sHTDpLLMu710vzfahJUh+pjswgqIy7aWBNMD2InQacNF+wMUU1kpUzErF9JLv6fvfGsV2OU1oUdTkpBtOsjVgqCBp69TbubJAMrW4zM2bQil10f3hw0=
+	t=1763557567; cv=none; b=dbXSG1iN1P89I8vt4acihaQHH72ZOlWoyQfRN55/cDg1WmmETy6SVC3+kxsgMuneNcjtchYFzyESX4trGiOy7mm7mc7Gyr2OdumF1djgevIQNS0fy7pVcHfjil4evh8W5PvNzzJRud92ZtPr3TYBWUn9VgC2sknmiJyswFXgR+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763555531; c=relaxed/simple;
-	bh=PZPwRC9NTS19AKjvwWboxFPsOd+EmRW0YrND1bb3kqI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=hYKG3yM7PHA6i38nVpoof/8Qu70RLhwPChCuLrNrBAQVzs4OORXocwuCU7STUGVzzUZZfEcf+LOwn7EWSwLlEcrg86wVPzwpgdVsiik2aCRp4TaBY+tOPKMAZr0kgJ2AoGcicQldytmzW6+FDPJuHHTdQ9qDooTexWKvYKR6Eo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uPLF5zSB; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1763557567; c=relaxed/simple;
+	bh=b8EKp14H49Ot9XSVMf8ZxQJmimucdZ2FiI1BESzLv54=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Sih0OTTp4jA2kgoz/BcRLjQCpHK6L4t3O4iKlSSPHLdnx7nPC5MY4fMabM32j7JHyu8jDsSdClbQARQ8PtyoH5ZYAc4LhquSmza1DPY4lo+g56GP7J8KSQVIfAxM8n+a45vwG/LafPQ5t79q2VusbWoXxew51su+z5D189US+YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wONIZlzx; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uPLF5zSB"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251119123206epoutp011b7ce98097d94d9522210cd7ce03cf1d~5aGhcB6222664026640epoutp01V
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 12:32:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251119123206epoutp011b7ce98097d94d9522210cd7ce03cf1d~5aGhcB6222664026640epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763555526;
-	bh=emxCFhe6JqYKv2dF3aZnO8Bo+hWOx+Kdh42BHQei1RI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=uPLF5zSBFNWPpoauRbyrvM9qj+kgMmrDj2+FL4BP7z3Mz5z6xprbK4/aD4GOkPbz0
-	 RxHcLWvpXz9lplG85zylF9VF44Yhw2PdtBjA7CwgLt+fjG3d7ZJJVLZkAAgbPitAb+
-	 K5ZK/Pvl9s/augmmxaS1GM0pLOwdyuDCzH0+WLw4=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20251119123205epcas5p32b4bdf32def98ead9a370bc9d5eec895~5aGgdYLD_0313203132epcas5p3W;
-	Wed, 19 Nov 2025 12:32:05 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4dBLTJ3WC9z2SSKf; Wed, 19 Nov
-	2025 12:32:04 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251119123203epcas5p4dd8f8d47fe08b9875f99f7d61eeda57a~5aGe_2NT10773007730epcas5p4Z;
-	Wed, 19 Nov 2025 12:32:03 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251119123159epsmtip175bc7abf4ad459f5bd64c41bf4a42406~5aGbPORQD2984229842epsmtip1d;
-	Wed, 19 Nov 2025 12:31:59 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jesper.nilsson@axis.com>,
-	<lars.persson@axis.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<alim.akhtar@samsung.com>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>
-Cc: <ksk4725@coasia.com>, <smn1196@coasia.com>, <linux-arm-kernel@axis.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <pjsin865@coasia.com>, <gwk1013@coasia.com>,
-	<bread@coasia.com>, <jspark@coasia.com>, <limjh0823@coasia.com>,
-	<lightwise@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<shradha.t@samsung.com>, <swathi.ks@samsung.com>, <kenkim@coasia.com>
-In-Reply-To: <de2f6c52-e9d6-48ae-8620-7c518b686ffd@kernel.org>
-Subject: RE: (subset) [PATCH v3 1/4] dt-bindings: clock: Add ARTPEC-9 clock
- controller
-Date: Wed, 19 Nov 2025 18:01:57 +0530
-Message-ID: <03e701dc5950$824d44f0$86e7ced0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wONIZlzx"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 5F516C11188;
+	Wed, 19 Nov 2025 13:05:39 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 586B260720;
+	Wed, 19 Nov 2025 13:06:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F349A10371A4D;
+	Wed, 19 Nov 2025 14:05:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1763557559; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=qjKCnJ8MWt1XzGq8HDqxEVxZ5da/4Lf/GYebHfI6vFs=;
+	b=wONIZlzx6P2Z4sicT6r6z6gD+PYJghZTD15EHcfmR1Q6FWaW29w4/JWDMohCBRR0cKcQYk
+	0M0XYcvRMY6mb3QqxiozdtPamzSECPaMwIsKaK6QiVPtzJhMrFOvv0a2HBPioi9XIPzWMe
+	zz8kk4kcEaZ5zJIomhf7RpHxHVs9ATPCKH3J6P34x6Lpmv81RYDVCWPhQAKVyOgUNPvQP8
+	lWXGJ/owLp9038/CpGurPlotLSAmv7+FBq8gzitIgeS6yvNKEdp8e9/zLMPevXMyHSXh0P
+	f52+E19RPI3jxUMuU4EAS1nK44qc6g6SnRuuXhEGqyadTbwKodoeQ4BIc8O9jQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 00/26] drm/bridge: add drm_of_find_bridge(), deprecate
+ of_drm_find_bridge()
+Date: Wed, 19 Nov 2025 14:05:31 +0100
+Message-Id: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLr0KoHjPqm8iVboT8Q2O7+qgWovgMI9Oa5AjEfx9QCeSN36wHF7Q86so815vA=
-Content-Language: en-in
-X-CMS-MailID: 20251119123203epcas5p4dd8f8d47fe08b9875f99f7d61eeda57a
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251029130826epcas5p180506ff38fb57ecca0e33b2f5c57ed6c
-References: <20251029130731.51305-1-ravi.patel@samsung.com>
-	<CGME20251029130826epcas5p180506ff38fb57ecca0e33b2f5c57ed6c@epcas5p1.samsung.com>
-	<20251029130731.51305-2-ravi.patel@samsung.com>
-	<176355242978.116968.261312419155141714.b4-ty@kernel.org>
-	<de2f6c52-e9d6-48ae-8620-7c518b686ffd@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJvAHWkC/y2NUQqDMBAFryL73YDR2NhepZRg3Y0u2EQ2tgji3
+ U2ln/MG5m2QSJgS3IsNhL6cOIYM+lJAP3ZhIMWYGaqyarTWVqG81UsYs+mmKfZqoGX+LL/dRe8
+ 8B3R/b82trOurNaZFyMFZyPN6nj2e+34Aj3ziYHwAAAA=
+X-Change-ID: 20251117-drm-bridge-alloc-getput-drm_of_find_bridge-74903367448d
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jonathan Corbet <corbet@lwn.net>, Alexey Brodkin <abrodkin@synopsys.com>, 
+ Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Adrien Grassein <adrien.grassein@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Edmund Dea <edmund.j.dea@intel.com>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Thanks Krzysztof!
+This series deprecated of_drm_find_bridge(), adds a replacement which
+handles bridge refcounting, and converts most of the direct users.
 
-I will send the ARTPEC-9 device tree related patches soon.
+This is part of the work to support hotplug of DRM bridges. The grand plan
+was discussed in [0].
 
-Thanks,
-Ravi
+Here's the work breakdown (➜ marks the current series):
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 19 November 2025 17:13
-...
-> 
-> On 19/11/2025 12:40, Krzysztof Kozlowski wrote:
-> >
-> > On Wed, 29 Oct 2025 18:37:28 +0530, Ravi Patel wrote:
-> >> Add dt-schema for Axis ARTPEC-9 SoC clock controller.
-> >>
-> >> The Clock Management Unit (CMU) has a top-level block CMU_CMU
-> >> which generates clocks for other blocks.
-> >>
-> >> Add device-tree binding definitions for following CMU blocks:
-> >> - CMU_CMU
-> >> - CMU_BUS
-> >> - CMU_CORE
-> >> - CMU_CPUCL
-> >> - CMU_FSYS0
-> >> - CMU_FSYS1
-> >> - CMU_IMEM
-> >> - CMU_PERI
-> >>
-> >> [...]
-> >
-> > Applied, thanks!
-> >
-> > [1/4] dt-bindings: clock: Add ARTPEC-9 clock controller
-> >       (no commit info)
-> 
-> 
-> All applied regardless of above missing commit info.
-> 
-> Best regards,
-> Krzysztof
+ 1. ➜ add refcounting to DRM bridges struct drm_bridge,
+      based on devm_drm_bridge_alloc()
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17)
+    C. ✔ kunit tests (v6.17)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17)
+    E. ➜ add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge(), add cleanup action (v6.18)
+       2. ✔ drm_bridge_get_prev_bridge() (v6.18)
+       3. ✔ drm_bridge_get_next_bridge() (v6.19)
+       4. ✔ drm_for_each_bridge_in_chain() (v6.19)
+       5. ✔ drm_bridge_connector_init (v6.19)
+       6. … protect encoder bridge chain with a mutex
+       7. ➜ of_drm_find_bridge()
+          a. ➜ add drm_of_fund_bridge(), convert most direct users
+	  b. convert other direct users
+	  c. convert bridge-only drm_of_find_panel_or_bridge() users
+       8. drm_of_find_panel_or_bridge, *_of_get_bridge
+       9. ✔ enforce drm_bridge_add before drm_bridge_attach (v6.19)
+    F. ✔ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ✔ show refcount and list lingering bridges (v6.19)
+ 2. … handle gracefully atomic updates during bridge removal
+    A. … Add drm_dev_enter/exit() to protect device resources
+    B. … protect private_obj removal from list
+ 3. … DSI host-device driver interaction
+ 4. ✔ removing the need for the "always-disconnected" connector
+ 5. finish the hotplug bridge work, moving code to the core and potentially
+    removing the hotplug-bridge itself (this needs to be clarified as
+    points 1-3 are developed)
+
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
+
+Almost all the functions returning a struct drm_bridge pointer have been
+modified to drm_bridge_get() the returned bridge, and their users updated
+to drm_bridge_put() it.
+
+of_drm_find_bridge() could be modified easily in the same way, but it has a
+lot of (direct + indirect) callers, and most notably
+drm_of_find_panel_or_bridge() which is very hard to adapt without reowrking
+the panel_bridge lifetime.
+
+Moreover of_drm_find_bridge() shold be called drm_of_find_bridge() by the
+DRM subsystem conventions.
+
+This has been discussed in [1] and Maxime proposed an incremental approach:
+
+> One way to solve it would be that, for example, of_drm_find_bridge is
+> oddly named according to our convention and it would make more sense to
+> be called drm_of_find_bridge().
+>
+> So maybe we can just create drm_of_find_bridge() that takes a reference,
+> make of_drm_find_bridge() deprecated in favour of drm_of_find_bridge(),
+> add a TODO, and call it a day. People will gradually switch to the new
+> API over time.
+
+That proposal is implemented by this series. Most of the direct callers are
+also converted: they are all trivial conversions except for one, which is
+handled by the last 3 patches.
+
+[1] https://lore.kernel.org/dri-devel/20250319-stylish-lime-mongoose-0a18ad@houat/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Luca Ceresoli (26):
+      drm/bridge: add drm_of_find_bridge()
+      drm/bridge: deprecate of_drm_find_bridge()
+      drm/todo: add entry about converting to drm_of_find_bridge()
+      drm/bridge: make of_drm_find_bridge() a wrapper of drm_of_find_bridge()
+      drm/arcpgu: convert to drm_of_find_bridge()
+      drm/bridge: add devm_drm_of_find_bridge
+      drm/bridge: ite-it66121: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: imx8qxp-pixel-combiner: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: simple-bridge: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: tpd12s015: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: thc63lvd1024: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: imx8qxp-pxl2dpi: use devm_drm_of_find_bridge() to put the next and companion bridges
+      drm/bridge: lt8912b: use devm_drm_of_find_bridge() to put the hdmi bridge
+      drm/bridge: tfp410: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: imx8qxp-ldb: use devm_drm_of_find_bridge() to put the companion bridge
+      drm/rcar-du: lvds: use devm_drm_of_find_bridge() to put the next bridge
+      drm/meson: encoder_*: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: sii902x: use devm_drm_of_find_bridge() to put the next bridge
+      drm/mediatek: use devm_drm_of_find_bridge() to put the next bridge
+      drm/kmb: dsi: use devm_drm_of_find_bridge() to put the next bridge
+      drm/imx/ipuv3: use devm_drm_of_find_bridge() to put the next bridge
+      drm/exynos: hdmi: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: dw-hdmi: use devm_drm_of_find_bridge() to put the next bridge
+      drm/bridge: imx8qxp-pixel-link: simplify logic to find next bridge
+      drm/bridge: imx8qxp-pixel-link: simplify freeing of the remote device_node
+      drm/bridge: imx8qxp-pixel-link: convert to drm_of_find_bridge()
+
+ Documentation/gpu/todo.rst                         | 16 ++++++
+ drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c           |  2 +-
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    |  2 +-
+ drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c    | 37 ++++++------
+ drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c       |  4 +-
+ drivers/gpu/drm/bridge/ite-it66121.c               |  2 +-
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |  2 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |  2 +-
+ drivers/gpu/drm/bridge/simple-bridge.c             |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  2 +-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  2 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  2 +-
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |  2 +-
+ drivers/gpu/drm/drm_bridge.c                       | 66 ++++++++++++++++++++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  2 +-
+ drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c            |  2 +-
+ drivers/gpu/drm/kmb/kmb_dsi.c                      |  2 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c         |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_dsi.c          |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         |  2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  2 +-
+ drivers/gpu/drm/tiny/arcpgu.c                      |  4 +-
+ include/drm/drm_bridge.h                           | 10 ++++
+ 24 files changed, 125 insertions(+), 48 deletions(-)
+---
+base-commit: 92c49b3f4df8f9acfa95551ef38fc00c675319fd
+change-id: 20251117-drm-bridge-alloc-getput-drm_of_find_bridge-74903367448d
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
