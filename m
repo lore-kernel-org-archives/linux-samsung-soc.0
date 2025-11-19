@@ -1,112 +1,198 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ACFC133
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 14:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0F22877D8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 15:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763564178; cv=none; b=ZQKhJTneffPvFCFivPitg6wEfF2ucirowQ2PGKC96FwAa/M8wG9my7jNh1XAstdf23lN0FxIoZwBGjOPEgFVG/TWaElLwJ3hLi0kyKM3IBapU5n2EPn0bTt1p2ZHMfSH+Uhploh2QzwsEpPcCdRPH0cG+dS+q8rHaFO0+jAFOy0=
+	t=1763564725; cv=none; b=Al8AbnstwrbL78hUWYGOPBOIUG6F+w+QGrMRBiUJdWhZyz1e1yUgDc0V2ZwtZhnFtOG5v1Etmpd+m/wSDb5hc60FmMnVI+eO8fcTr5ZQI1DB4z9P2ciOObED62iVaKbOaIqZuQe7SAwSaifX+Uj8Wi56Ihx9tv1Jz4zCex36tH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763564178; c=relaxed/simple;
-	bh=/LJ42jm+ZDIp0e8bSLx2Y1EDOT4x58zPFjO5t9ov3FM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=XaG3aW7lEz/UJBegCnlbsOdH491fpA9Fxjy6kh7Z/XwbQRVfVadZaUOt8DuWmbGqtM9jYQGNMywtnDl6F3s4HzD6HpoyW8mT18oa0OCR452z1Q4Ozkhy8VVxGoymAqWgabl+JhPtPIKKtLey4uGH74mzNml/0Fo0pQPvx2R5NR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pvf8N5GN; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1763564725; c=relaxed/simple;
+	bh=Qqus3GcZo9UeS54mCFvjyr0P2gu9agHXL/0LSp5j8e8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=E6tipuHTDk4q0g1k8/wqnhaskqjU/GPTzNhwAuIK5lWt0STgS81C7YZM7d6rok0shFL34712Sg/hPQ0Bcwhc/CkWTNd+QdPDrXyigMVvj1uln5LV4/k/bUQN0a+2P8uk/ZclzgHGi8xuryV1yGwyvAZfoJ+opioMQUq4h9LmfPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sOEuzAxE; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pvf8N5GN"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251119145608euoutp01eb77f4847bd28602e05a376b578b4a39~5cESP8nU02993429934euoutp01J
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 14:56:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251119145608euoutp01eb77f4847bd28602e05a376b578b4a39~5cESP8nU02993429934euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763564168;
-	bh=bTNOqgaZlRM7M6ydZWtUNZLt3QeCgjYKGj5gs/tpHsA=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=pvf8N5GNJzdWKkKbxIxfhxtvIqvVRjK2vXIEPuwGUxCXklo4bzKPbxvu4LPhrsmyM
-	 9e97DCqbG1y/p+Xn/eQvA3D/oBvxIWxtqpI6JIljahRcgph41sV4ABzIZlEF1dsDLD
-	 ntxVCWv27H6J0KDd9svUG0xMeVPatpHwd5BwGxEc=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251119145608eucas1p2bafd557fd8e8730f7482117f024d6e29~5cER5zeD30435804358eucas1p2H;
-	Wed, 19 Nov 2025 14:56:08 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251119145607eusmtip22c2420a597a9ce378c48929f165f131a~5cERKU-j22216322163eusmtip2x;
-	Wed, 19 Nov 2025 14:56:07 +0000 (GMT)
-Message-ID: <94216440-dea1-4346-9086-fc20a3e6fe7b@samsung.com>
-Date: Wed, 19 Nov 2025 15:56:07 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sOEuzAxE"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 92D171A1BB0;
+	Wed, 19 Nov 2025 15:05:22 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5ACA160699;
+	Wed, 19 Nov 2025 15:05:22 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A4C1410371A6A;
+	Wed, 19 Nov 2025 16:05:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1763564719; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=F7QYsJvko3OwXBuoQqrMWaiZs2Tw0yizTy6p7UD4rac=;
+	b=sOEuzAxEZWuQ3AUbFtEgUlf2cgtfZWFBSyylVKX8jZsilf0pjAXIS/1dUfJVSv11XNTJuI
+	C0XUe2nv5ky9Mn/3MfiFXv1n/0JLHDWaG0itUKmX2QaboBI96GBbNFKrjGYu+8SCdV0DBT
+	LKR1vwDMaGbq7Lkp1S3fONcv4bUe4hEcHgUnX1la5CRLY0y1raK/rkHodxNqKDleqAdoSi
+	l3OyZqJGWvRsUtgJI97b41UaOy9g8IytQezx8tiRjlP6MmIfs6wVpTYa4Exv8EJrrMgsKh
+	R21w3WrZaNqF/CfQUtZMsjnN4+WrwU+pd84dsLKf7gEcDQXt1HEx0nqD76YBcA==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] of/irq: Handle explicit interrupt parent
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring
-	<robh@kernel.org>, Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marc Zyngier
-	<maz@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <e89669c9b3a4fbac4a972ffadcbe00fddb365472.1763557994.git.geert+renesas@glider.be>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251119145608eucas1p2bafd557fd8e8730f7482117f024d6e29
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251119131924eucas1p1667eb6127eeb0f19671bc02b0e67fb02
-X-EPHeader: CA
-X-CMS-RootMailID: 20251119131924eucas1p1667eb6127eeb0f19671bc02b0e67fb02
-References: <CGME20251119131924eucas1p1667eb6127eeb0f19671bc02b0e67fb02@eucas1p1.samsung.com>
-	<e89669c9b3a4fbac4a972ffadcbe00fddb365472.1763557994.git.geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 19 Nov 2025 16:05:05 +0100
+Message-Id: <DECRIHBXOEXY.WX45FITGF5DA@bootlin.com>
+Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
+Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
+To: "Louis Chauvet" <louis.chauvet@bootlin.com>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jonathan Corbet"
+ <corbet@lwn.net>, "Alexey Brodkin" <abrodkin@synopsys.com>, "Phong LE"
+ <ple@baylibre.com>, "Liu Ying" <victor.liu@nxp.com>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Adrien Grassein" <adrien.grassein@gmail.com>,
+ "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Tomi
+ Valkeinen" <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Anitha Chrisanthus"
+ <anitha.chrisanthus@intel.com>, "Edmund Dea" <edmund.j.dea@intel.com>,
+ "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo Kim"
+ <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com> <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com> <0858117f-9397-4045-9b7d-490ad24926cb@bootlin.com>
+In-Reply-To: <0858117f-9397-4045-9b7d-490ad24926cb@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 19.11.2025 14:19, Geert Uytterhoeven wrote:
-> If an interrupt controller is used as a proxy, it may have an
-> "interrupt-parent" property, but lack "interrupts" and
-> "interrupts-extended" properties.  In that case, the "interrupt-parent"
-> property in the interrupt controller node is ignored, causing the
-> interrupt controller to fail to probe, and leading to system boot
-> failures or crashes.
+Hi Louis,
+
+On Wed Nov 19, 2025 at 3:33 PM CET, Louis Chauvet wrote:
 >
-> Fix this by also considering an explicit "interrupt-parent" property in
-> the interrupt controller node itself.
 >
-> Fixes: 1b1f04d8271e7ba7 ("of/irq: Ignore interrupt parent for nodes without interrupts")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/20251118115037.1866871-1-m.szyprowski@samsung.com
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Closes: https://lore.kernel.org/b037f67a-b241-4689-9914-57ff578c1454@sirena.org.uk
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-This fixes the issue observed on 32bit Samsung Exynos based boards.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> ---
->   drivers/of/irq.c | 2 ++
->   1 file changed, 2 insertions(+)
+> On 11/19/25 13:05, Luca Ceresoli wrote:
+>> Several drivers (about 20) follow the same pattern:
+>>
+>>   1. get a pointer to a bridge (typically the next bridge in the chain) =
+by
+>>      calling of_drm_find_bridge()
+>>   2. store the returned pointer in the private driver data, keep it unti=
+l
+>>      driver .remove
+>>   3. dereference the pointer at attach time and possibly at other times
+>>
+>> of_drm_find_bridge() is now deprecated because it does not increment the
+>> refcount and should be replaced with drm_of_find_bridge() +
+>> drm_bridge_put().
+>>
+>> However some of those drivers have a complex code flow and adding a
+>> drm_bridge_put() call in all the appropriate locations is error-prone,
+>> leads to ugly and more complex code, and can lead to errors over time wi=
+th
+>> code flow changes.
+>>
+>> To handle all those drivers in a straightforward way, add a devm variant=
+ of
+>> drm_of_find_bridge() that adds a devm action to invoke drm_bridge_put()
+>> when the said driver is removed. This allows all those drivers to put th=
+e
+>> reference automatically and safely with a one line change:
+>>
+>>    - priv->next_bridge =3D of_drm_find_bridge(remote_np);
+>>    + priv->next_bridge =3D devm_drm_of_find_bridge(dev, remote_np);
+>>
+>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> ---
+>>   drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
+>>   include/drm/drm_bridge.h     |  5 +++++
+>>   2 files changed, 35 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+>> index 09ad825f9cb8..c7baafbe5695 100644
+>> --- a/drivers/gpu/drm/drm_bridge.c
+>> +++ b/drivers/gpu/drm/drm_bridge.c
+>> @@ -1446,6 +1446,36 @@ struct drm_bridge *drm_of_find_bridge(struct devi=
+ce_node *np)
+>>   }
+>>   EXPORT_SYMBOL(drm_of_find_bridge);
+>>
+>> +/**
+>> + * devm_drm_of_find_bridge - find the bridge corresponding to the devic=
+e
+>> + *			     node in the global bridge list and add a devm
+>> + *			     action to put it
+>> + *
+>> + * @dev: device requesting the bridge
+>> + * @np: device node
+>> + *
+>> + * On success the returned bridge refcount is incremented, and a devm
+>> + * action is added to call drm_bridge_put() when @dev is removed. So th=
+e
+>> + * caller does not have to put the returned bridge explicitly.
+>> + *
+>> + * RETURNS:
+>> + * drm_bridge control struct on success, NULL on failure
 >
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index a68272db9879bedf..f374d8b212b8669c 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -685,6 +685,8 @@ void __init of_irq_init(const struct of_device_id *matches)
->   		desc->interrupt_parent = of_parse_phandle(np, "interrupts-extended", 0);
->   		if (!desc->interrupt_parent && of_property_present(np, "interrupts"))
->   			desc->interrupt_parent = of_irq_find_parent(np);
-> +		else if (!desc->interrupt_parent)
-> +			desc->interrupt_parent = of_parse_phandle(np, "interrupt-parent", 0);
->   		if (desc->interrupt_parent == np) {
->   			of_node_put(desc->interrupt_parent);
->   			desc->interrupt_parent = NULL;
+> I am not sure for the "NULL on failure", you return ERR_PTR(err), which
+> is probably not NULL but an error code.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Indeed.
 
+Apologies for the mess in this series: it was adapted from an old one using
+a different approach, so I had to adapt lots of details, and missed a few
+along the way. :(
+
+About the value to return, maybe it's better to use the same semantics as
+drm_of_find_bridge(), i.e. NULL on error. I don't think a caller would have
+anything clever to do with an error return value other tan bailing out. And
+the only error path for devm_add_action_or_reset() is on a small
+allocation, so it basically cannot happen.
+
+>> +struct drm_bridge *devm_drm_of_find_bridge(struct device *dev, struct d=
+evice_node *np)
+>> +{
+>> +	struct drm_bridge *bridge =3D drm_of_find_bridge(np);
+>> +
+>> +	if (bridge) {
+>> +		int err =3D devm_add_action_or_reset(dev, drm_bridge_put_void, bridge=
+);
+>> +
+>> +		if (err)
+>> +			return ERR_PTR(err);
+>> +	}
+
+So this would become:
+
+	if (bridge) {
+		if (devm_add_action_or_reset(dev, drm_bridge_put_void, bridge))
+			return NULL;
+	}
+
+>> +
+>> +	return bridge;
+>> +}
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
