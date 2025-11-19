@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F49B34D4D2;
-	Wed, 19 Nov 2025 12:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AA435E548
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 12:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763554446; cv=none; b=hCvJ4+tS229bN7mpc/5qmkkl+0ddn32QAenDakdylMxXiiF5Hn1Vvo4KT1CxBIo5zYabn2BghB5IqWt/mlczQJlIm5m0frtZfp/jprBzJX36dy3mDgbxGpOobJNK15RyTaMRNkz3aBZhEzAYhMB8ALd/KWu7s4OyWPwHvnXiMyI=
+	t=1763555433; cv=none; b=f+0RlKs17ro2VbqKjanPPT/eU3tMHp14Dt6aKcuzshWK4pWtzBNhMQdXYlN6NRgLDyzLlaKGAYY8+XCl97YoHEj7nc/q7PXdKq46Kxc2LnQifHZ5BxHH1Vm9fiixUZeypW+85wHnjuPTSfWhmkk+WBwVb9EjvZDCMxYqPioPZRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763554446; c=relaxed/simple;
-	bh=QLifMXuofRLvBzC10/jwJe/e8B4mmFP7h0J7ELx0+rw=;
+	s=arc-20240116; t=1763555433; c=relaxed/simple;
+	bh=kXPjrkL1yFxBo0v4ux0Of/j01hMOeLRVISHZiR1+1yU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HqjPSnCxDThZqeOmSP3bRsJgSZgmcUWG2sQ5zCKgPq2CeyIzvH0tqjGjHI3Ueqmv3PZujEiNMJkveFST7HSj+klTQM8B+xLEzCfGPIovOBjpjeeGbPFrK+BnCU2Q+ivonImGb5QV4ChywHgPoOSPCI5TUiqq7sfgbAMsmaKl00c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaKBS3xg; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=jrEKAr52BIXkICdHWIRJIUwb4JcCjn9LXqNG/iehRjPHxqDWUwGpbbdiwCvK7B7zQxrDbB0jaF094s6UiDmuk2kPMJZThrSHncB3jgNq8UAebxjO9WXmhLL3u0VyG/D6Cq7vttdxEu90+zA4Q9yCoEigGX1SiL1Ivgkq6UTajRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bnfSHyM7; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaKBS3xg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6881FC19423;
-	Wed, 19 Nov 2025 12:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763554443;
-	bh=QLifMXuofRLvBzC10/jwJe/e8B4mmFP7h0J7ELx0+rw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gaKBS3xgc/9yjSNbdbVkzSV+xtBY1Y0ofDqeNE7MwaA5OLAYawA5SopweTVP1dhtL
-	 SECob3rFCL2lfikVcv+D7PtbLlBTkvtyaVgdWSLaudbDHwkeBFbnhctOuBVKGoA3l4
-	 HzrRmY1ZsoYXdEY8DxKuxxBfujm46dECKqNKIeyJm2FwU1e+RNtbFxkqqaWK+BVQFC
-	 PWN8JySHzFLjUrd6LNgarW9VQNKc/tUzSCu4ctCnQ+bAcVzELm2AVwvyFuCfsxjMmD
-	 vt0ZwYU50L1FsJAPW6mSCPqIZZNNketfRweC/SNcGGJlgk3kbbxlH4rmF9757hfCqr
-	 xc6hxfjGgq7BA==
-Message-ID: <e25b9f14-b583-434d-ac4f-364b962f0ed1@kernel.org>
-Date: Wed, 19 Nov 2025 13:13:57 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnfSHyM7"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4777771ed1aso46646565e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 04:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763555428; x=1764160228; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ANuLCsNtCUF8tPoNyJV9ss6Pl4S7P3c/OwbemWzc+jQ=;
+        b=bnfSHyM77VNkMvXIqgyNMIdSQHUWytulsBEYKYMSkui+KSV9JdE/I6xCNDRLVocKAq
+         nfOqx2J6gtidiDJKKtkp8iGNvBzQYdw7K3RXqgBrxXwM1kRu4tPUK1QC4FEO5KXOkDii
+         e9/vI9dul7hoizGWEFNQ3zYEyXJscJlWcueXwHelunGg5KAm7XnjLpYJJY/0/nwQxuUH
+         cRCG6T9JvcjhHNJwk9bvX8yp6B8fu+/DpkEkmVSVI9aNZbFZRvoLFyPrIaYc+VhSb/Wb
+         XX1crldlApuD4hUyn6gljbWsWom9wGWtMHoDwT4igBL1XjRt0FYwCrEys2ewHxUAR1Tg
+         xdVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763555428; x=1764160228;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ANuLCsNtCUF8tPoNyJV9ss6Pl4S7P3c/OwbemWzc+jQ=;
+        b=IQ48EkAnDTYumiMlsr5uwWluaBOs9qp3odG5shW+E4W9HpEaFXVcgxHksZh+VSBmRt
+         Bt3PATqBsmjfXYsIfiuAAsmUbctza72c2ncnkEINgbthF3M0673zc7At4Gs5dpq03J2X
+         J+mvuc62j7zhdqWeFPjTPqyYOebeDfzbeeQfrTBZ9IwrpvA7JIVLR1kteHLk/0nN+Eh0
+         iIiaiLjdFKGCL0mvLqUqPAFBNSvrBQkVuf4lGBmG8wuO4FeFfF/tVZWskFbrlNsia9S3
+         nfFaBey/86NAUtlwGW+EO942XvN+r2kcYUuJq3u3KFDsnm4vEXBG5oiy9ZSW2otV4j4a
+         vpiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUTPg95EEOwcgGpXGnpl8gxWND5zrB+VeEaHYGi2Kg//siZ/6tCcPwwgLu44nEWX6lwEagE7C0xi6A7tXzq2gqDw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVyGx2xq3PMQOaoic5Lt8Mplf+g4IagzHIaAdtiSxEuGn8ErAI
+	tmjTJ+68+B7OOFYInD9iHlEdGMrrG/+4gYJkRcTI+PTK62phFDhqK8Z1aly73GDbyUw=
+X-Gm-Gg: ASbGnctOp2kdrfgsCzMBecyHV19b0ypbcrzh49VX1L0jTvBE95JjoWJvkzw4i5ZB7/p
+	X6QaalmA8aY2W3o8md0ThQpSgVX6qsYPOG5E+DfA7b0q4iSfY3QNVCWE1Pne4Xa1/VHOsVy0wUr
+	sjK7RdyqAnOswNwzvXOpeuvZPYR6J+SCibiB8+EBhlkzmDYSxEhJ0fXFiuh+VsDG8qD9LTW72QM
+	JSw0DUg1IjGXiCLEUd7sUMISiyhltpio1WjpTJQhOKJKUtfsayHt0+M/rCHbS1give1yb/484J1
+	vJCDRRSBPF77geV6aziGo2fl7Y2vSnA+OhgrkfPTcjI+5MpmSMjpqD3Cp/KBH/CLoJewW1NRQkp
+	wuTA4E6IpOTvBwQAjl1eIzlGBGV9QroGFS1EAogswRpngdnvxFR9PhWMFzwWaFYER0+OikUDP15
+	tpGo3utLDfwP1K1g9igLMaaEqQu98=
+X-Google-Smtp-Source: AGHT+IHqhbbvVZExNtwvyM5VtD1QzsNi1upkWPblMC3uEuvom1Rb/Pq0EdVbzlawrXFh3afQBP4jgw==
+X-Received: by 2002:a05:600c:19cc:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-477b19e248cmr19240965e9.29.1763555427738;
+        Wed, 19 Nov 2025 04:30:27 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477afb54774sm23714085e9.3.2025.11.19.04.30.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Nov 2025 04:30:27 -0800 (PST)
+Message-ID: <4a94884d-ffc1-45b7-b014-65f9724a820a@linaro.org>
+Date: Wed, 19 Nov 2025 14:30:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,7 +71,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 3/7] soc: samsung: exynos-chipid: use devm action to
  unregister soc device
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Peter Griffin <peter.griffin@linaro.org>,
@@ -49,68 +83,33 @@ Cc: semen.protsenko@linaro.org, willmcvicker@google.com,
  linux-kernel@vger.kernel.org
 References: <20251118-gs101-chipid-v2-0-e9f1e7460e35@linaro.org>
  <20251118-gs101-chipid-v2-3-e9f1e7460e35@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <e25b9f14-b583-434d-ac4f-364b962f0ed1@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251118-gs101-chipid-v2-3-e9f1e7460e35@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <e25b9f14-b583-434d-ac4f-364b962f0ed1@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/11/2025 14:56, Tudor Ambarus wrote:
-> Simplify the unwinding of the soc device by using a devm action.
-> Add the action before the exynos_asv_init() to avoid an explicit call
-> to soc_device_unregister().
+
+
+On 11/19/25 2:13 PM, Krzysztof Kozlowski wrote:
+> On 18/11/2025 14:56, Tudor Ambarus wrote:
+>> Simplify the unwinding of the soc device by using a devm action.
+>> Add the action before the exynos_asv_init() to avoid an explicit call
+>> to soc_device_unregister().
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  drivers/soc/samsung/exynos-chipid.c | 27 +++++++++++----------------
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/soc/samsung/exynos-chipid.c | 27 +++++++++++----------------
+> Can I take the cleanups before new GS support?
 
-Can I take the cleanups before new GS support?
+Fine by me. I'll send v3 then, to have the cleanups first.> 
+> That's btw preferred order for all work. Fixes should be independent or
+> first in the patchset. Then cleanups before features/new support.
+I agree for the fixes. In the past I used to do the cleanups before new
+support, and I got feedback that the cleanups might delay the integration
+of the new support. I'm okay with both approaches, v3 will come.
 
-That's btw preferred order for all work. Fixes should be independent or
-first in the patchset. Then cleanups before features/new support.
-
-Best regards,
-Krzysztof
+Thanks,
+ta
