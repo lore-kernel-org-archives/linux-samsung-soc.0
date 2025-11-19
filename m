@@ -1,173 +1,120 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D97535BDD2
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 13:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A588363C69
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 13:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763557795; cv=none; b=abNmQGNst+/EzeBQVKD/gsH3ss0eveW4J+H/gTr9ljSFGdKF6k1TSmXxgov6kF1w4vLMSr/zRbwqwxEPE91XrkdLymL8gu4kRRgEXMYJnx30gc7jSPlVuz+V55cC91aVqZn9zXKGXWhohXgCmmZ7Q9IiFr6TYgcK8FXLFrucMlc=
+	t=1763558077; cv=none; b=IGqC0NyLO+oueF2G13G6Z7lEL92a5FTkFZHUXONx0AfsrcW9Xv4wIhcUjrhvu2uDM5d2p5kPIjYN7Cz1ZJtnFPxU0GHJovZDa13vm8qrRtypqC5vTLEDuN03D5HhSgcStoDSDJLgWCSpiXfH7mDddrB60b1XyrFsPy4I2xQFFzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763557795; c=relaxed/simple;
-	bh=5cuWxFruSbmINQkfu8xBEDBSefUx4G9GS7gD5IXtbMQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GNfY0b2QyILeavvfmzGFm2T0Mod+X3QUuzvwyZxyOeAPYR0Ap44dj/aYrYDwYhqkSRam1GfibKfHWK4C7c0Sx8W495V3q45YKp6/dXRJvBPfFaqHbDAVNmSF7OVM5BG9T0+5f2kOr6RBgeOv6Xs20OIHkGJE0d8/P/GiIlXziwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OlX/PF+d; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1763558077; c=relaxed/simple;
+	bh=lM1FFVYGG5sVmGCJdUBpFnhHa3ZMvumPKC3jDxptqIw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=mm6CSBe3N/hAiOWSHlLSPby5EJPpzRutfk5zF8iTCVULQT6zOpmGF51DDO5LMgvUchLIEuxD6TivezNhwGL11jAhHmMPkbGiQcbWSRbLcdpF+nJiI3b0MFHxjXk+BMarhkMbvfs5DVGsbzDIjjxJ9r308vj5L+MBioAh/Kt/PQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oNAVTcsY; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OlX/PF+d"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id EC2CEC11188;
-	Wed, 19 Nov 2025 13:09:29 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2F04860699;
-	Wed, 19 Nov 2025 13:09:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D2F8810371A53;
-	Wed, 19 Nov 2025 14:09:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763557790; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=axXT5p39UcLgfeXlnv3r+PQb3eCsVz2C9lrKQC2f4Uk=;
-	b=OlX/PF+dhNGJG27mrsK1i4MNguYEVaaiKq83NP0yOr041d9TgIxWfbA2GyldpQEAfPLd3J
-	wNbvXQz9oBqELh/fqHBdK3mPbEJ3JKZLLabdZdqhqGE7GiQMZKWviSVNIdzuN1DuSJ9D6O
-	ji63oyId+HMuMeLvrrbb9/FhGf8/Vn2JH5T3bED5Ab473KCMMc1GmDK6PMlKKy03bJn35W
-	CR9esGIgCRwjBUdDQ8G/Q3ByDThJhNj95m+NHds8C3IrJVQlptjCCcIy0X+k2qNcCYxnYs
-	7W0XT05zHAApmNT3EVv8sRDwLVGvyuBhAK9DAMINTmHuHkuNsVeo/QElxQso7A==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 19 Nov 2025 14:05:57 +0100
-Subject: [PATCH 26/26] drm/bridge: imx8qxp-pixel-link: convert to
- drm_of_find_bridge()
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oNAVTcsY"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251119131426epoutp0392a7a4814cc635953328887dad31dbc7~5arfGyl1M3241032410epoutp035
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2025 13:14:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251119131426epoutp0392a7a4814cc635953328887dad31dbc7~5arfGyl1M3241032410epoutp035
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763558066;
+	bh=bLpW5qbNlOAyZrV0HryRmDY/8NDIwEwROLHp5IJHhaE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=oNAVTcsYVm1+GLAH/ozHljvXSy/hwLhQgbSI9c5DkKPOHB7r3Vz7T7vYblzwgnegT
+	 1c/qlQTu/mLwuJAblmwJJ6cAqHBTRMaTXW710vQg3FmbzNZCzvNDrRiGSYHpcLan/m
+	 crsTD1XRRuBiatXZFd573Zy7soRxRuXGsPBrAZ5I=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20251119131425epcas5p33febd27e982d546d4e6db9ec38627dbb~5areYrE9x3149731497epcas5p3a;
+	Wed, 19 Nov 2025 13:14:25 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4dBMQ86Rbyz2SSKX; Wed, 19 Nov
+	2025 13:14:24 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20251119131424epcas5p44eb0d15d8ba28d94152dbbea23e32714~5arc--Hu72519125191epcas5p4m;
+	Wed, 19 Nov 2025 13:14:24 +0000 (GMT)
+Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251119131404epsmtip10da0ffddcca29538b5d5500d4b288960~5arKcXT9c2550425504epsmtip1v;
+	Wed, 19 Nov 2025 13:14:03 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jesper.nilsson@axis.com, lars.persson@axis.com, alim.akhtar@samsung.com
+Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
+	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, pjsin865@coasia.com, gwk1013@coasia.com,
+	bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com,
+	lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+	shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com,
+	kitak81.kim@samsung.com
+Subject: [PATCH v2 0/3] Add basic device tree support for the Axis ARTPEC-9
+ SoC
+Date: Wed, 19 Nov 2025 18:42:59 +0530
+Message-Id: <20251119131302.79088-1-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-CMS-MailID: 20251119131424epcas5p44eb0d15d8ba28d94152dbbea23e32714
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251119131424epcas5p44eb0d15d8ba28d94152dbbea23e32714
+References: <CGME20251119131424epcas5p44eb0d15d8ba28d94152dbbea23e32714@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-26-0db98a7fe474@bootlin.com>
-References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
-In-Reply-To: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jonathan Corbet <corbet@lwn.net>, Alexey Brodkin <abrodkin@synopsys.com>, 
- Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Adrien Grassein <adrien.grassein@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
- Edmund Dea <edmund.j.dea@intel.com>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-of_drm_find_bridge() is deprecated. Move to its replacement
-drm_of_find_bridge() which gets a bridge reference, and put it when done.
+Add basic device tree support for the Axis ARTPEC-9 SoC
+which contains 6-core Cortex-A55 CPU and other several IPs.
+This SoC is an Axis-designed chipset used in surveillance camera products.
 
-This needs to be handled in various steps:
+This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
+Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
 
- * the bridge returned drm_of_find_bridge() is stored in next_bridge whose
-   scope is the for loop, so a cleanup action is enough
- * the value of next_bridge is copied into selected_bridge, potentially
-   more than once, so a cleanup action at function scope is useful here too
- * however on successful return selected_bridge must be returned and
-   ultimately stored, so it should not be put in that case: use
-   return_ptr() to defuse the cleanup action on successful return
- * finally, put the bridge reference on device remove
+This patch series includes below changes:
+- Bindings document update for ARTPEC-9 board (patch #1)
+- Device tree for ARTPEC-9 board (patch #2 and #3)
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+The patch series has been tested on the ARTPEC-9 EVB with
+Linux Samsung SoC tree (for-next branch) and intended
+to be merged via the `arm-soc` tree.
+
+Pinctrl and UART DT-bindings are present in another patches which are listed below:
+- https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git/commit/?id=e671a1bb5d1cf9ca4dbab61b9a3e1e77579f99ba
+- https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-next&id=85f17e130dc7189acf03eb0f8e2455c4ea2c4f9e
 
 ---
+Changes in v2:
+- Decouple the device tree related patches which was present in v1 (Patch #5 to #7)
+  Device tree related patches will be sent in separate series.
 
-Cc: Liu Ying <victor.liu@nxp.com>
+Link to v1: https://lore.kernel.org/linux-samsung-soc/20250917085005.89819-1-ravi.patel@samsung.com/
 ---
- drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-index 2ecc3c1051e5..9818239cf6e7 100644
---- a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-+++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-@@ -256,12 +256,13 @@ static int imx8qxp_pixel_link_disable_all_controls(struct imx8qxp_pixel_link *pl
- 	return imx8qxp_pixel_link_disable_sync(pl);
- }
- 
-+/* The returned bridge has its refcount incremented */
- static struct drm_bridge *
- imx8qxp_pixel_link_find_next_bridge(struct imx8qxp_pixel_link *pl)
- {
- 	struct device_node *np = pl->dev->of_node;
- 	struct device_node *port;
--	struct drm_bridge *selected_bridge = NULL;
-+	struct drm_bridge *selected_bridge __free(drm_bridge_put) = NULL;
- 	u32 port_id;
- 	bool found_port = false;
- 	int reg;
-@@ -298,7 +299,7 @@ imx8qxp_pixel_link_find_next_bridge(struct imx8qxp_pixel_link *pl)
- 			continue;
- 		}
- 
--		struct drm_bridge *next_bridge = of_drm_find_bridge(remote);
-+		struct drm_bridge *next_bridge __free(drm_bridge_put) = drm_of_find_bridge(remote);
- 		if (!next_bridge)
- 			return ERR_PTR(-EPROBE_DEFER);
- 
-@@ -306,13 +307,15 @@ imx8qxp_pixel_link_find_next_bridge(struct imx8qxp_pixel_link *pl)
- 		 * Select the next bridge with companion PXL2DPI if
- 		 * present, otherwise default to the first bridge
- 		 */
--		if (!selected_bridge || of_property_present(remote, "fsl,companion-pxl2dpi"))
--			selected_bridge = next_bridge;
-+		if (!selected_bridge || of_property_present(remote, "fsl,companion-pxl2dpi")) {
-+			drm_bridge_put(selected_bridge);
-+			selected_bridge = drm_bridge_get(next_bridge);
-+		}
- 	}
- 
- 	pl->mst_addr = port_id - 1;
- 
--	return selected_bridge;
-+	return_ptr(selected_bridge);
- }
- 
- static int imx8qxp_pixel_link_bridge_probe(struct platform_device *pdev)
-@@ -392,6 +395,7 @@ static void imx8qxp_pixel_link_bridge_remove(struct platform_device *pdev)
- 	struct imx8qxp_pixel_link *pl = platform_get_drvdata(pdev);
- 
- 	drm_bridge_remove(&pl->bridge);
-+	drm_bridge_put(pl->next_bridge);
- }
- 
- static const struct of_device_id imx8qxp_pixel_link_dt_ids[] = {
+Ravi Patel (2):
+  dt-bindings: arm: axis: Add ARTPEC-9 alfred board
+  arm64: dts: axis: Add ARTPEC-9 Alfred board support
 
--- 
-2.51.1
+SungMin Park (1):
+  arm64: dts: exynos: axis: Add initial ARTPEC-9 SoC support
+
+ .../devicetree/bindings/arm/axis.yaml         |   6 +
+ arch/arm64/boot/dts/exynos/axis/Makefile      |   3 +-
+ .../boot/dts/exynos/axis/artpec9-alfred.dts   |  36 +++
+ .../boot/dts/exynos/axis/artpec9-pinctrl.dtsi | 115 ++++++++
+ arch/arm64/boot/dts/exynos/axis/artpec9.dtsi  | 277 ++++++++++++++++++
+ 5 files changed, 436 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9.dtsi
+
+--
+2.17.1
 
