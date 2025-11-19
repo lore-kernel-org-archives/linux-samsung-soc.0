@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8B3446AF;
-	Wed, 19 Nov 2025 11:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD83334CFC9;
+	Wed, 19 Nov 2025 12:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763552609; cv=none; b=EhLYuwAri67jC3xSj0+wRSHNnPkdccq40imKacRVLGNTvzYQTbRii5EfPYmH7b/hgCgvNH/SEWaA16a70BBxPbvs/kaPXIevxNGy2SilY7SHY3JaxbMpBh5swwsYZnwzN4lfNEjmfjcLw7TB7rQRjr+JglX+elNj91mrww9ZVgA=
+	t=1763554338; cv=none; b=scqjY2CPtxtrRAAM1D84or3pFCBPznTFKImpMvHOabV8n/2jNfS3FUtOya+FQ1z3M0Px1A2Y/P2XPJeTmSkmftaVpH7eMsqntuuUvWBJ20BKBJkFm+o94p8oipAKaqkAb8ia+b9FnsA6WkmhgN/9nBFzOEogqyoNDchgxGDf9hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763552609; c=relaxed/simple;
-	bh=d6KwsYhHbPVt4kfOy79+X9Arnp2t89fn5b7QI+PWzCw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qmqiuzwJiqMemgh+hUyeARV40fLtgRjiqWRd/uOh/cEwifPcvYPyHALN12p7R35/pUUZQR+/1fgYFfLeQHUn5ConWO9asZfyo/HK23pXmshjqcmgJS42TL3vPpF7d6pPLMvV1rqd4i2E+mC4XSvnOK21yBroG+tHg5vpHPGeskk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dM1250PN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763554338; c=relaxed/simple;
+	bh=M0pWsknYQ4B/+y5p7fi+jo79BRzh/3AOxSQ5/8qdynk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pQ8VZJss8Rh9FsGrqLTSur/QLxlvrN4Bx4sy3nyz2K9xBVf4Tuu8Zs+ZNeaUC0bVOmoPHaYW6DI3I950o6kZyTgTOrTSYwaOk82QJGITi8mVbYQT1rPSoU/xSs6IREh7TV3ou7AcnyjsizBiyONzGPOMnJrKWkGa9TPoND//FZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPljgb/a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dM1250PN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13CF1C2BCB0;
-	Wed, 19 Nov 2025 11:43:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPljgb/a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EC9C16AAE;
+	Wed, 19 Nov 2025 12:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763552608;
-	bh=d6KwsYhHbPVt4kfOy79+X9Arnp2t89fn5b7QI+PWzCw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=dM1250PNGbcwhV8Gr3h6Z6OgVj6Ao1fmKsclt6bo2czfNh08/KX7e6nCVjRpvCqgP
-	 FjIxikjVrg3F3dNfP6/lYTEV/o79llk4D0NshKjnqR4u234TbnxdIxxhdatGOOfZ9e
-	 CZ09mq8N6Wsp/u63OyTdE8JDOit+Ju70RiMEsHA/4s7/PZTuYPWurrU+NfFnQi+QqD
-	 DtHlHeioCi6Anrgdz/eRQKkaN3FNNjRnqMHd/VydoZ31aHOwWnB9mZGm4+XYlbHiFq
-	 DRZvb9NUn5HMEaXTwje9MNAdqJipKJjiHfFPdi3bWWbnFyKcN0ZjShqKzfRjIe1s5r
-	 RzWU83ieQ/MkQ==
-Message-ID: <de2f6c52-e9d6-48ae-8620-7c518b686ffd@kernel.org>
-Date: Wed, 19 Nov 2025 12:43:18 +0100
+	s=k20201202; t=1763554338;
+	bh=M0pWsknYQ4B/+y5p7fi+jo79BRzh/3AOxSQ5/8qdynk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KPljgb/aiYqjR/2eO0Uy6pBuETB1adM9Bcj08tbRXQxk2ffYmCeuLed3r92eX2ZCO
+	 cVVHIdapeW6a0OeNEU4Yf7FRb6xryQ/PYi7c9cjjkTG0I3fUoqpX0N3xLblnwibcxp
+	 A1QA41wKrGfoV/BxLxEUcPBZzeHunjBQgttLrBjOpapUD193x4qmDbnWL5xWymxwqu
+	 jTEpaIp7atDAbQ4RxJBo0gD3oiqvggjRz6rLncdf2t/PShZANOSeKPC7n3dRJzSi8v
+	 6Xu8nCzKxYM4Ei0kYN6VjlWAxeubVLaQE3BWHvLl8LPiyhZDRoUHalBUB6S8ELzc20
+	 hSwbDqXrlTAvQ==
+Message-ID: <782da69d-d118-4d7c-baf7-a8164fc550b8@kernel.org>
+Date: Wed, 19 Nov 2025 13:12:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,24 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v3 1/4] dt-bindings: clock: Add ARTPEC-9 clock
- controller
+Subject: Re: [PATCH 0/4] soc: samsung: exynos-chipid: trivial updates to
+ simplify code
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peter.griffin@linaro.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251112-chipid-trivial-v1-0-ec2dea03bd83@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
- sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, Ravi Patel <ravi.patel@samsung.com>
-Cc: ksk4725@coasia.com, smn1196@coasia.com, linux-arm-kernel@axis.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, pjsin865@coasia.com, gwk1013@coasia.com,
- bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com,
- lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
- shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com
-References: <20251029130731.51305-1-ravi.patel@samsung.com>
- <CGME20251029130826epcas5p180506ff38fb57ecca0e33b2f5c57ed6c@epcas5p1.samsung.com>
- <20251029130731.51305-2-ravi.patel@samsung.com>
- <176355242978.116968.261312419155141714.b4-ty@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -97,37 +88,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <176355242978.116968.261312419155141714.b4-ty@kernel.org>
+In-Reply-To: <20251112-chipid-trivial-v1-0-ec2dea03bd83@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/11/2025 12:40, Krzysztof Kozlowski wrote:
+On 12/11/2025 09:48, Tudor Ambarus wrote:
+> Trivial patches to simplify code done while handling the GS101 chipid
+> support. Compile tested only.
 > 
-> On Wed, 29 Oct 2025 18:37:28 +0530, Ravi Patel wrote:
->> Add dt-schema for Axis ARTPEC-9 SoC clock controller.
->>
->> The Clock Management Unit (CMU) has a top-level block CMU_CMU
->> which generates clocks for other blocks.
->>
->> Add device-tree binding definitions for following CMU blocks:
->> - CMU_CMU
->> - CMU_BUS
->> - CMU_CORE
->> - CMU_CPUCL
->> - CMU_FSYS0
->> - CMU_FSYS1
->> - CMU_IMEM
->> - CMU_PERI
->>
->> [...]
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+> Tudor Ambarus (4):
+>       soc: samsung: exynos-chipid: prepend exynos_ to a method's name
+>       soc: samsung: exynos-chipid: downgrade dev_info to dev_dbg for soc info
+>       soc: samsung: exynos-chipid: simplify with dev_err_probe
+>       soc: samsung: exynos-chipid: use devm action to unregister soc device
 > 
-> Applied, thanks!
-> 
-> [1/4] dt-bindings: clock: Add ARTPEC-9 clock controller
->       (no commit info)
 
-
-All applied regardless of above missing commit info.
+AFAIU, this patchset is superseded with v2 using OTP bindings, so I am
+dropping it.
 
 Best regards,
 Krzysztof
