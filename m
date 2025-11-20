@@ -1,73 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4D61547E7;
-	Thu, 20 Nov 2025 10:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD58B32D0CC;
+	Thu, 20 Nov 2025 10:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763634590; cv=none; b=SXDb5jiz3Mbm3OV4/VeOZEifuCbsniQLDbrn2f5Onr+InPdWuQl4RxlApJft85v5ID0Ji2uWPF0fpUFyERLkHHxj1vrN+tWR6X7LKELPnMEpsJBp5DwT9Fuik3Wf6JCOJtXVARg6Num9u0RHhyA7mjs7SVmCtqAHjvk997NjIKE=
+	t=1763634672; cv=none; b=fjws925p4zE/oWRJKJEg+gcWBVRTn7kRIKkVQiasAxsGiVAWkBDCrguRFst/44nOJ5pBcFXDDAvAtQPM9fkt8TKn3XfNgrAPWzjF5z/STSF5aYlNlifVOQpnWrKJivgU2ARPnA03Rzm73M4vsX1ll7Opa3oogNrJEqjwxt+Wh2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763634590; c=relaxed/simple;
-	bh=ASXbZBDr/oWUGE5d0sOCR2JWPcV5cPBNzrDFvE0Hvnk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rlf9AktIiLebPIUBQQdcR0yCJ/3lDyNVeWkGsWpPFpoC9wopNeXKNJGC33GnY/DUn1dUkHWbtXjUeOjV54xcqpZGoscCF5+78AMmIioQD4kwf6YWcEbVZDTnbrVPIDFuaFlfAVOCncr85SDAkEQZwdR/Q7oWqqq4Xibs9fWISIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4Up6EbI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763634672; c=relaxed/simple;
+	bh=ca/nnBhAmoTtF1NVKpguLLq42GQlchXgceGb6iEpvdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fE1YIDE6J15spfblrMs8mAZvXiSKo2JcGETjaxorJrTEpAkDx/LuKqJuLcQ3RqGzbXJOyMMnEvBEY3nsjJhbj6pQ1qavIwM0cGGJJMNvl+Nc2t8dESBB24hDJg3jBu/EZw0POKmzWB0eKLyI0pPMnLS9MKLVtoLniO/eu2UqtME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jr9HHDax; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4Up6EbI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87596C4CEF1;
-	Thu, 20 Nov 2025 10:29:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr9HHDax"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4873DC116B1;
+	Thu, 20 Nov 2025 10:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763634589;
-	bh=ASXbZBDr/oWUGE5d0sOCR2JWPcV5cPBNzrDFvE0Hvnk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=o4Up6EbIImL0S03mACS/c6as2UjmkTy1kYbeQFQpVlw4UKJFE5c8tlvqZS7tdMGCM
-	 nLC8F4yjztTMOsTkKRRKYx2UGRvfbFqw6h4Kp3tdCgxo9CquYoTvsjj5+/mXMrex75
-	 zPaU55Gkk7/qGgt+21nWg0CaVXxNmqY/9Gy69YV1KbmrBdqZxZ24YSYZRurGH49Gzr
-	 GrAAdrah1nvQQh0YgDsS31z9VpuJLAmcvHEfG0w/z97ktqY5hs+/4bQ8F0tpaUyPg6
-	 Hmd4NmfamP0LdCJBtlLtkymJwx8xIkbKXstM5NToV1WwdobzRTvAOHKZwIwKLXoFIo
-	 Bs5doITlM6TdA==
+	s=k20201202; t=1763634670;
+	bh=ca/nnBhAmoTtF1NVKpguLLq42GQlchXgceGb6iEpvdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jr9HHDaxPHK9zWv+WVDgFSq5LR1K+LtxJJyiCTccg1nsaGbfpSQP/tpjFW4v//HjQ
+	 oHsJCOC3yL7IVmelgkImFKyQXgcQdzPgY22Jt4nJAhrk0NL3W9eb+bc06Ivhf6OUbQ
+	 5KJ+OZxfbPzIK0UL0JBnCb0/gFPfid8Vabr7J+Hk7J5RJ7eDIkAQ2RWOz7aFCC3NW9
+	 NGQtvYug4g+MJaJZy5xoxhUHlkHreXELAJDhLenwxixpO/kQldrF7VIkMVagS5y7vc
+	 +1Hq0dxK1V8VIPVqhPBbw+lL7bWhdDOP4ERw7mVuDFe4wvZHDXoyFk8Q3NpFZZ2825
+	 q4ggfVH9/v6QQ==
+Date: Thu, 20 Nov 2025 10:31:04 +0000
 From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
- Douglas Anderson <dianders@chromium.org>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20251114-s2mpg10-chained-irq-v1-1-34ddfa49c4cd@linaro.org>
-References: <20251114-s2mpg10-chained-irq-v1-1-34ddfa49c4cd@linaro.org>
-Subject: Re: (subset) [PATCH] mfd: sec: Use chained IRQs for s2mpg10
-Message-Id: <176363458726.601076.17998415477527766315.b4-ty@kernel.org>
-Date: Thu, 20 Nov 2025 10:29:47 +0000
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Juan Yescas <jyescas@google.com>,
+	Douglas Anderson <dianders@chromium.org>, kernel-team@android.com,
+	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 0/3] Samsung mfd/rtc driver alarm IRQ simplification
+Message-ID: <20251120103104.GY1949330@google.com>
+References: <20251114-s5m-alarm-v1-0-c9b3bebae65f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-52d38
+In-Reply-To: <20251114-s5m-alarm-v1-0-c9b3bebae65f@linaro.org>
 
-On Fri, 14 Nov 2025 14:10:59 +0000, André Draszik wrote:
-> On S2MPG10 (and similar like S2MPG11), top-level interrupt status and
-> mask registers exist which need to be unmasked to get the PMIC
-> interrupts. This additional status doesn't seem to exist on other PMICs
-> in the S2MP* family, and the S2MPG10 driver is manually dealing with
-> masking and unmasking currently.
+On Fri, 14 Nov 2025, André Draszik wrote:
+
+> Hi,
 > 
-> The correct approach here is to register this hierarchy as chained
-> interrupts, though, without any additional manual steps. Doing so will
-> also simplify addition of other, similar, PMICs (like S2MPG11) in the
-> future.
+> With the attached patches the Samsung s5m RTC driver is simplified a
+> little bit with regards to alarm IRQ acquisition.
 > 
-> [...]
+> The end result is that instead of having a list of IRQ numbers for each
+> variant (and a BUILD_BUG_ON() to ensure consistency), the RTC driver
+> queries the 'alarm' platform resource from the parent (mfd cell).
+> 
+> Additionally, we can drop a now-useless field from runtime data,
+> reducing memory consumption slightly.
+> 
+> The attached patches must be applied in-order. I would expect them all
+> to go via the MFD tree. Alternatively, they could be applied one after
+> another during multiple kernel release cycles, but that seems a
+> needless complication.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+> André Draszik (3):
+>       mfd: sec: add rtc alarm IRQ as platform device resource
+>       rtc: s5m: query platform device IRQ resource for alarm IRQ
+>       mfd: sec: drop now unused struct sec_pmic_dev::irq_data
+> 
+>  drivers/mfd/sec-common.c         | 41 ++++++++++++++++++++++++++++++----------
+>  drivers/mfd/sec-core.h           |  2 +-
+>  drivers/mfd/sec-irq.c            | 10 ++--------
+>  drivers/rtc/rtc-s5m.c            | 21 ++++++++------------
+>  include/linux/mfd/samsung/core.h |  1 -
+>  5 files changed, 42 insertions(+), 33 deletions(-)
 
-Applied, thanks!
+This needs to be rebased now, right?
 
-[1/1] mfd: sec: Use chained IRQs for s2mpg10
-      commit: ee19b52c31b3b111f140c1affd88eca1ed11edd0
-
---
+-- 
 Lee Jones [李琼斯]
-
