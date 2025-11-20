@@ -1,67 +1,68 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8D626ED3D
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2025 21:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EEE28CF66
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2025 21:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763672787; cv=none; b=VrE0D8PhpzIAgFznrxDn+IwUqQAqh0uo/bKQjclz5o0CCrpLhv+HzrUdaiQNTtiuHwlzlYKkBkC+1EQ5cFpU8XeRlrCZKEnINEmA9ANIs6LG+BEqsxtVcOKnnXy/D8L6LJ2cfvtiBE++JaNjPrt5J9U6rL2MKxX9GiWXXlPkMh8=
+	t=1763672787; cv=none; b=M/USF6hd0qTk/oOo5GF5wQEKboy9vXU4DzkhDVUOp+W9x3BGQAdGDShT42GBX7F7+qX3mDlbOPxtHbqCZWQDgjYi4kJsOXXSDo+PT6987034pnWfyVXzin2DqxOvnNCCip58WsJ8ZjcPsJZforf8e+Tx1Esl2GEz1rSuV8q1K04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763672787; c=relaxed/simple;
-	bh=zMmyX4hI98rT4xIF+GHY3RVx8brKYrtm3BxZE7xSi9Q=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S9uUf2Taw9VR6cJPBGio4n+1asEmIFqNDPGWis4b6Atrxft7PxCNPHvF29nvskAnKxpXjCrv8XIyehlaZj3mglLqc8NFHlk0KfoLOYjl2cw7bpgE9ISK+2IIcX1R8A7b79YSG4MayP3GK7TEm4XTMmVVW6t6/h20jP5//40JLTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zQPGZnxD; arc=none smtp.client-ip=209.85.221.52
+	bh=AEAW1zkV8OeqaCPbh6SWv6MdSofvSEdgd3/hIrLWqaw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=F+d7KcnLXcJcxpACfYxNp3ge1vTUitM8nNnaN2XDfqINnANQxfqLawrnE3j1LMvXEAEPgJR9jzjQp6wRhwKIyk1wKvOkjoTdpRA8bUnxXIGGDPFk4w1MSDFWh1LKquMmB7K2TmdZvBDeZj1XKO+o8RIFqQfKRLIdyHcWsvlKNcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=joAWUcDn; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zQPGZnxD"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b3720e58eso1113694f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2025 13:06:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="joAWUcDn"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-429c4c65485so1117497f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2025 13:06:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763672783; x=1764277583; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SnSclzJUYUD1UpejWX4wHVJELscJwkV6MRhyXGKL86M=;
-        b=zQPGZnxDWDxhkQpTQyDQdfsu8ONYjANifpf8jIVELVbEcHJRk8l33W/HHmSx122I0U
-         18WmItFlOLhnVcpD1xXt0ohMEOkQnDxgFsdKBHBNQVGgHb3KC0LGvHKVaAr1RyKYPSsa
-         mDXdA3UIjMp8dIUh5a4HaGJ3mdWjzH+TABev6YrZhmS/fM7q51fEhGtcVfJWBnZAMrDv
-         nTUycWHYtmDawBSJCz3APqr9A/opFl7t85a8Gfo9BQI3KpJjaq9dEAbpxHRgHJHNzhKd
-         0tqCmJQc+jiSI3aqMisKXmfbqit/TsGngvpQm8Vlttebd7/cqMKdn0xTIF0ghGuDy26i
-         FoEw==
+        d=linaro.org; s=google; t=1763672784; x=1764277584; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4P55c+msKlLldk8RQlFeWnhvqXv9aJ+FbKMuCPpgPH4=;
+        b=joAWUcDndOoNaIKDQfnBYU+hgMr6KdpHrGnnkJA7vSlNJHMwdnou8m7q+okTlJM599
+         5Vnya8vIAoo/C6f52hgNViii0v3FM92SPrBKS+S02vyuJg0tKi3t2aRqXCvYwtBW+Uhp
+         kmKWOF8x+0pYHV+n815jcHwwIyIvHDTlhUp/qYbylt1NlLLjc5xteY89rTfUeg4W49Bs
+         WUrnN6NEPH4xZWxCFs+evcvt2wGz6hnjMU3ovqorppRu+ldgirCtpENXgOZXdR1ZMv0V
+         7PBVTrcNQEa5l2AUxehdQhfSxeE+hWPVTJTdvLzaF5d7hExQcXJYq4WAcsS+CPoB5yDW
+         ZUvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763672783; x=1764277583;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SnSclzJUYUD1UpejWX4wHVJELscJwkV6MRhyXGKL86M=;
-        b=mZ2TtDWSNkvQBoh8EkvtSt0PIp4V5CDcScKmBv2ZnGpzvl5g6g2DzDOye3P33fVscS
-         NWMVGZfNK+jIfSR6Ioo0/x8adbXTFDPE3RoehpycQK5/smXhw7CQu2gdrz32t+AdQ38l
-         +6JOAXhq1i7Sm5eSpg9JeH+4Vxe8QEHyfrjx2vEtdUJmAlqVIJClbLfVCKQsV3atfP9q
-         Ob19bIQcSklcgyk3INR2F8r8vPSB6lAvGtmZ/tQv0FSXjcgEEtpsEAVW0WSeWmbrrPr2
-         H/KTafiW1RIxvq2QC+YuTnihAZQHa0Qalw/HUPmJ097FtRUoyVjxELyzxfUZnku6m8hK
-         CLvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5aHS/kUOXnCyqgZN4vdOvCNk1hrlIQT6dVyZg0GZ1Rand6x0Abh7YpCCuhF8kbv2U8BGVa+p2RJrJBmanrr4F2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI+RKgJy8T1voD0SyifnIgbchQvkye63JYmAmrubGH6+Ln3sXz
-	l+oBmNOua2nnRcpUnKTF3sGjlW8v+KzZIu0BNAGcFbCnG7l1F7pBH/RK6K+mxc6os7U=
-X-Gm-Gg: ASbGncuDcPB59+LvHUZy19rafVQdNbqB//qjaNsovXDpW04lBB+5bhwx3EtIbA6Gz3s
-	QoY+mCY36iZamr0Bhpyp/Kv71frgEsptTwdNHNULhHOaSb/0i1PCX5u8LI/BpCYqf0OgPq7b9Sv
-	ntBp8Px0egasV/ZfQ9uKPylAF9+Wz1/NHe0KZGZ3yUeNSbCqkfVBksRvCqeck57AFLsKfni+8TP
-	FLwizWq2DLEEQ7Z3cE5ZG6sHEytbBp7RpKBUO0+SLXCNN6J69UxWkxIl3k8OT18fCx9/XGTvex1
-	Lxu2a4M/d20c/US/PSvy9UcAjRofjME+BJBGlQySz7ClNiYCnLRG7vbmhQfTftSLDMLAojB+odS
-	b+p1Z7AJdaG+gFLf45pHxfbnmHaLD80QgQJmAnR+7k8eHXfxLbD3tTTyeJOxqIQGfGruRAP94tq
-	IiivgNIUjsj7LNgAwwxA9Ea9d/h38Omkup/WoQrCA=
-X-Google-Smtp-Source: AGHT+IHCr7elXViwZypO3vz2gMF/QMkjwbp8BwuhgflwUBLArbYypsOsxTUGiDrcTKcrsd4O9fOqQA==
-X-Received: by 2002:a05:6000:25c2:b0:42b:3ccc:91ec with SMTP id ffacd0b85a97d-42cb99f66b9mr4773737f8f.22.1763672782827;
-        Thu, 20 Nov 2025 13:06:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763672784; x=1764277584;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4P55c+msKlLldk8RQlFeWnhvqXv9aJ+FbKMuCPpgPH4=;
+        b=ukucyyE/Nussi1ttqUSsywbIQwrN4mFp8CpkS2J9C12w2NhCcUStGG8/VOHlcrjyih
+         xWGMRrglycI/weI0SD6kJAeK+YBZxOQtbpTVT5b2D5aJ7aOEKtDVBBW/hflWCToozMzT
+         pml/p0LB8BHDimul662Q6RZORkhhF0BQ0sWT9YJ7M+gVdkP0Hf5rc8z2I2zbkdqoAlgN
+         LNf9YGduXpSMMVxLkZN8cGROCns9hGvvdqlkrZTL/J7uK+fPDaOuuriNHbQBWCQSd4vn
+         VLYXAfTZIl4R2UlynuabNPQoM4ckyLasMS17YFLOs/12K9pGDhela565f0Nsy2/AeeAw
+         BD3w==
+X-Forwarded-Encrypted: i=1; AJvYcCX64ZXuMZ2EQqgkpWUJ6i5G4PJ2v+z6rlAXSO5qgCc+LFQ1pHTiiTBLRg0QyKpago4aC8KkYOvfeeYA13mO42LiLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIwpSiXqJBdWP3aZHXKnWrKaejfunrUDt0udNz4l9iBIezVcR6
+	Lah9WvtfHp2+Q3IjYv51yIEonRmgkJtrlfb0wzlOm8BJmspNfl8ra/8Ddb5U2y3rKmY=
+X-Gm-Gg: ASbGnctY30NkOpwsfMzseHMHiJHjpvl3BZpsi0LoDWOQ6NGxPzjr8RjNYq2LXNntLZH
+	ByFpQgZrH/OM/A4+YTw/pYAD7JPKn6Kgdh96Sf4LB/BnAOm0UBiiIWgpMOca3AV9SeH/qGNWuRQ
+	Yv8W6F08TSk9oQDNxGJ54ZfyXyPywtokLXPYEr+IavMteZRp1HQcuF3qjeN2rADvEh88k/2qply
+	ew50ZOCqISRTisFBPn2mukTehFNXuoCDzPTAAFh30MErT8X865IyBqtsxiWlNt243kx9WIz7BNH
+	os7XecVNXe1zroN/wzV3dBnLBfH4Ns2Rv6ZU2eVQgk6BTk5m3i23CG4Yc75r/MseogkNpMIe1iX
+	uHtoLahfxb+r4Sly3KzVEVGqwT6sgIL23pfkAmt+QVFhTHniVQciUk2OXipVZx3EkLXgRbO1wbi
+	pz8FBAgwGXX+qOkSCFpyjdEqkkygU/kLCaeaPzlb4=
+X-Google-Smtp-Source: AGHT+IGIJwaSzwyO+MTFf7E/UmXMY9JoeBa+FWmaF27jX5h2wNx7Xs7QpA0f1RkN48GTo1rGH2syUA==
+X-Received: by 2002:a05:6000:228a:b0:42b:3090:2680 with SMTP id ffacd0b85a97d-42cb9a0c90emr4361812f8f.10.1763672784217;
+        Thu, 20 Nov 2025 13:06:24 -0800 (PST)
 Received: from gpeter-l.roam.corp.google.com ([150.228.9.80])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f2e5b6sm7321287f8f.1.2025.11.20.13.06.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f2e5b6sm7321287f8f.1.2025.11.20.13.06.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 13:06:22 -0800 (PST)
+        Thu, 20 Nov 2025 13:06:23 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 0/4] gs101: Add support for Display Process Unit (DPU)
- clocks
-Date: Thu, 20 Nov 2025 21:06:10 +0000
-Message-Id: <20251120-dpu-clocks-v1-0-11508054eab8@linaro.org>
+Date: Thu, 20 Nov 2025 21:06:11 +0000
+Subject: [PATCH 1/4] dt-bindings: clock: google,gs101-clock: Add DPU clock
+ management unit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,10 +71,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMKCH2kC/0XMywrCMBCF4VcJszYwCaaNeRXpIk2mGtS25lKE0
- nc3tIjL/8D5VkgUAyUwbIVIS0hhGmuIEwN3t+ONePC1QaJUQkjkfi7cPSf3SLzttVQelcbWQj3
- MkYbw2bFrd3Skd6lmPsY/adgOImpuS55eNgf3Y+X5YvsGh0Y6MouCbtu+qQhbh6cAAAA=
-X-Change-ID: 20251120-dpu-clocks-7b825d05807a
+Message-Id: <20251120-dpu-clocks-v1-1-11508054eab8@linaro.org>
+References: <20251120-dpu-clocks-v1-0-11508054eab8@linaro.org>
+In-Reply-To: <20251120-dpu-clocks-v1-0-11508054eab8@linaro.org>
 To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
  Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -89,63 +89,117 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  Juan Yescas <jyescas@google.com>, Doug Anderson <dianders@google.com>, 
  Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1640;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3579;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=zMmyX4hI98rT4xIF+GHY3RVx8brKYrtm3BxZE7xSi9Q=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpH4LJSo5MK/FUkk0o+R9pPfE6qXx/ssGLCKTbJ
- odvNLZFlHKJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaR+CyQAKCRDO6LjWAjRy
- um7ND/0QmnOKBDjDsGJEHzq8JoLBEeeRK+2iHo4jSPsh+LX6XSG/y5frQ2LXNKkiX0wYn4lkuPZ
- 7oCSxcRzsW0IDoorM07gZICU/rdPiqQ9I/E+Fwny2Nx4YsG0X3UrdHXhVmz6xQn+eSeb4f2oM9S
- Ev1yhUq2lJxsqGjvgXUDJ8q/5kjUOqsOzw+oNbUHCkXsWff3jBr2b0Y4yxA4C2desQuBs+ss352
- PzLes/1adCC8rKf92yV9XPZAy8sYpQDcbsQya9DL8S5qiqRAexOESoHOw5neKT6bGunmSfCi5/D
- bc/N3+VDG99bGQwlUxcj7t7/KJQWx4ezgVWKdfCjPc6jpQZl7t/nA8FahEnmNVaFvvMFHJceZxH
- 0dLlYKVXHLFXWtB28NRzgWLWRko5182DPk7GrHlq9pJpL1XHRa/EPzd5OMJEbnkuY/bO2kRjtej
- WeOqcXAglj41e+YEhI72ap3qfAPRP1NUmMjBpivMbG08w6SxMWP2uwvZMw0lYcBvt8A/ZX23t8D
- Xm3ygoQMxEpBzyEPP8yFwXKopT9/8Lmglb0rqZZgGkJEiQ1FlG9vOyWFg3u7QZbQf7UIzDrJMrp
- tsRfthtirfylRyQHmPQXvUWxubwTXoCEczsNvuVim2htorwsdoMvt0rvn+wquxSdQeaORGU0HLV
- tYWkXgAZ+qp0nKw==
+ bh=AEAW1zkV8OeqaCPbh6SWv6MdSofvSEdgd3/hIrLWqaw=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpH4LKxot89zhu24NNYx1+eiy+Zwr9lORhgN/Jz
+ xQZOkSi7H+JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaR+CygAKCRDO6LjWAjRy
+ uo3aD/9g9k0zz3UXUDo7aMqJSONMZmDHvPz/woh+qQn2TNuKjaDa146nRp9NPCQVUIwKcDx6aRU
+ pChHevHf+p7y3yDwltHYJenGXOth8wgzZKHFnIUiehTSnqMC2tPuCv7mEbDYCpYfEUrql2NQX4M
+ BdvAJZs0AFMQzRijdxZyBJi5awaVcg5+jRqinP/EnCYM28jTGlSn7zWDdbrehJQ9YJSCcUyjTUg
+ FtkaKbzJ9XNnbBuO56V0MamL3YVb4gwJLt8Ajv/2RiWvl7b/nFl/ByXfApCLBYYjjhq+7PJEx8s
+ RcJ5OvrRGyyzd2m39Ix6Lng7/F9XbmuDfPi2lq1LkG7uEqeIXOyL2GYDSMTzOj/EdRMfSjL8Stm
+ Bh8p+ZYAHin9iW/SSfSiqzzwzDkjfDUR0Nj1uBRfEv9KfSUCqKuTNda3Rgx1f0JUv6AiAx5zPls
+ udrSZqPNh0mN3adzPUamcGaAKOa7Khlhewh2kFhimdhYo2zziABZiyIM0Co8Q3QABOCuG9MxT0X
+ bxJsEJKopm/ZVPcKEh8UAiH7QRZc9CFLonoNvVQ2xCZcS72LIiijR1BSjSuXfFvQ2hUXgoJd+xx
+ E4KXBF2E9fAIN9Rvi7Y1Pgh30pT8SWTMTLkKwps2dWL1Sb8Ovv22FHNQQpWOAxATgUmswVnhDrP
+ uxGprmJfFeMEtww==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi folks,
-
-This series adds support for the Display Process Unit Clock Management Unit
-(CMU_DPU) found on gs101. I've based this on top of the automatic clock
-series to avoid conflicts [1].
-
-As all the patches will go via Krzysztof tree it has been sent as one
-series.
-
-regards,
-
-Peter.
-
-[Link] https://lore.kernel.org/lkml/20251114-automatic-clocks-v5-0-efb9202ffcd7@linaro.org/ [1]
+Add dt schema documentation and clock IDs for the Display Process Unit
+(DPU) clock management unit (CMU). This CMU feeds IPs such as image scaler,
+enhancer and compressor.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Peter Griffin (4):
-      dt-bindings: clock: google,gs101-clock: Add DPU clock management unit
-      dt-bindings: samsung: exynos-sysreg: add gs101 dpu compatible
-      arm64: dts: exynos: gs101: add cmu_dpu and sysreg_dpu dt nodes
-      clk: samsung: gs101: add support for Display Process Unit (DPU) clocks
+ .../bindings/clock/google,gs101-clock.yaml         | 19 ++++++++++++
+ include/dt-bindings/clock/google,gs101.h           | 36 ++++++++++++++++++++++
+ 2 files changed, 55 insertions(+)
 
- .../bindings/clock/google,gs101-clock.yaml         |  19 ++
- .../soc/samsung/samsung,exynos-sysreg.yaml         |   2 +
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  17 ++
- drivers/clk/samsung/clk-gs101.c                    | 283 +++++++++++++++++++++
- include/dt-bindings/clock/google,gs101.h           |  36 +++
- 5 files changed, 357 insertions(+)
----
-base-commit: 7850d78b1aaae4eef59e519993bd8a8552b7c79d
-change-id: 20251120-dpu-clocks-7b825d05807a
-prerequisite-change-id: 20251008-automatic-clocks-249ab60f62ce:v5
-prerequisite-patch-id: 6fec555c9a6442c6f0c53b27d096c90dc9f6e32a
-prerequisite-patch-id: f01cfd5b3de005b646c158bb7277f417ca6b27d9
-prerequisite-patch-id: 08f5690839af740c7975caff424288043474926d
-prerequisite-patch-id: fee79bd7b5b1df942a0aedafd4d057faa354b057
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index 09e679c1a9def03d53b8b493929911ea902a1763..1257be9c54a42ea2387e1112e53b5ee1f03e09f5 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -34,6 +34,7 @@ properties:
+       - google,gs101-cmu-hsi2
+       - google,gs101-cmu-peric0
+       - google,gs101-cmu-peric1
++      - google,gs101-cmu-dpu
+ 
+   clocks:
+     minItems: 1
+@@ -171,6 +172,24 @@ allOf:
+             - const: bus
+             - const: ip
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-cmu-dpu
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++            - description: DPU bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+index 442f9e9037dc33198a1cee20af62fc70bbd96605..4ee46503663c1f8d9463536c347de5d991474145 100644
+--- a/include/dt-bindings/clock/google,gs101.h
++++ b/include/dt-bindings/clock/google,gs101.h
+@@ -634,4 +634,40 @@
+ #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
+ #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
+ 
++/* CMU_DPU */
++#define CLK_MOUT_DPU_BUS_USER				1
++#define CLK_DOUT_DPU_BUSP				2
++#define CLK_GOUT_DPU_PCLK				3
++#define CLK_GOUT_DPU_CLK_DPU_OSCCLK_CLK			4
++#define CLK_GOUT_DPU_AD_APB_DPU_DMA_PCLKM		5
++#define CLK_GOUT_DPU_DPUF_ACLK_DMA			6
++#define CLK_GOUT_DPU_DPUF_ACLK_DPP			7
++#define CLK_GOUT_DPU_D_TZPC_DPU_PCLK			8
++#define CLK_GOUT_DPU_GPC_DPU_PCLK			9
++#define CLK_GOUT_DPU_LHM_AXI_P_DPU_I_CLK		10
++#define CLK_GOUT_DPU_LHS_AXI_D0_DPU_I_CLK		11
++#define CLK_GOUT_DPU_LHS_AXI_D1_DPU_I_CLK		12
++#define CLK_GOUT_DPU_LHS_AXI_D2_DPU_I_CLK		13
++#define CLK_GOUT_DPU_PPMU_DPUD0_ACLK			14
++#define CLK_GOUT_DPU_PPMU_DPUD0_PCLK			15
++#define CLK_GOUT_DPU_PPMU_DPUD1_ACLK			16
++#define CLK_GOUT_DPU_PPMU_DPUD1_PCLK			17
++#define CLK_GOUT_DPU_PPMU_DPUD2_ACLK			18
++#define CLK_GOUT_DPU_PPMU_DPUD2_PCLK			19
++#define CLK_GOUT_DPU_CLK_DPU_BUSD_CLK			20
++#define CLK_GOUT_DPU_CLK_DPU_BUSP_CLK			21
++#define CLK_GOUT_DPU_SSMT_DPU0_ACLK			22
++#define CLK_GOUT_DPU_SSMT_DPU0_PCLK			23
++#define CLK_GOUT_DPU_SSMT_DPU1_ACLK			24
++#define CLK_GOUT_DPU_SSMT_DPU1_PCLK			25
++#define CLK_GOUT_DPU_SSMT_DPU2_ACLK			26
++#define CLK_GOUT_DPU_SSMT_DPU2_PCLK			27
++#define CLK_GOUT_DPU_SYSMMU_DPUD0_CLK_S1		28
++#define CLK_GOUT_DPU_SYSMMU_DPUD0_CLK_S2		29
++#define CLK_GOUT_DPU_SYSMMU_DPUD1_CLK_S1		30
++#define CLK_GOUT_DPU_SYSMMU_DPUD1_CLK_S2		31
++#define CLK_GOUT_DPU_SYSMMU_DPUD2_CLK_S1		32
++#define CLK_GOUT_DPU_SYSMMU_DPUD2_CLK_S2		33
++#define CLK_GOUT_DPU_SYSREG_DPU_PCLK			34
++
+ #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
 
-Best regards,
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+2.52.0.rc2.455.g230fcf2819-goog
 
