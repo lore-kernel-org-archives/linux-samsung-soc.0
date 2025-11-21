@@ -1,431 +1,418 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7830BB87
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2025 21:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573891A9B46
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2025 08:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763672793; cv=none; b=ECtA8nd43v9sdGPEOLt/R0DlGH2ofPJqsgeBjeVUJj8hZrETRx/Sew2tvuHQ3U8t3PULcnZNYgXK+I6mrxd3vT4Um7OgzNhkIctQPv5edVn/rR72uK+XgT9nsgsJA2pZyxyfkz1Chy/XPr9Pd57+s1xvjZVCGMceU6duTEX1btI=
+	t=1763712388; cv=none; b=XgoLX9eNBkLYHjWNrB5SrXCIgeQqXJqaSYn89bdw1dYT+DaGU31A0cdjBEOxQtreiKjyC/3KRnz0ueaX1zu0E6zhOzv9GO9VIwYfjgQQGIfveEMvBxX3MvjSqs2oYBPk0woiHY5PrWIHCHuHQm+bMX9WHHo7+kA02gmpxhX3q4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763672793; c=relaxed/simple;
-	bh=QHk8SiPa/eaPMZxAsAQiLzZk+6fLpZAERsS/cFDDl8A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=moYSqeknnTQ7YBTqdxXGlpQ+pT03Q6c1LZuQvsFYa3CjXiWieiK3K95TWef++FEofu0TiueGQcRfigQpssq/cPuaU9dqtgtX1ZojBi2yyqWowX7j3/pfrLe0KdjPvJfTuUXMfs1S34MTq3/Bet2Ss5g9y1u6VCSEvhGAwfdIzIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LVRZkR60; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763712388; c=relaxed/simple;
+	bh=+FlNs/8I0phHVdUAZB8vk8tbDtFCZcsZUWzS1+fbdJo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=XYMChhJlK3+wYRYFA6MP2FL4u5OdqmasN5W2/xRQ7GGXI1/Pyw25qMrR7bK4zSxi8XqWkUGWKe/raTDHRmOQuIPzjOb/1O8//vpByIwsErN56aSl1BSUP6obiCKa87bmvloipCHWL5qEUU0ppWQ6Z+x4SaoyRWh7shOTwUGcfmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tetsIlOU; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LVRZkR60"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42bb288c1bfso869198f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2025 13:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763672789; x=1764277589; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K8BXYkJo09cffbco27DiXaVUKDDylvywu2kiuIHEYbM=;
-        b=LVRZkR60NkJPy9hN4oUaj+PKWggxEnjH9hAs+JvT1CLT2xmdsydrIwVvXAKULSpOMj
-         s1YMeWvKbO8/uc45Mb0EeVzEUO+Q26cdl7Vdn/i+2NSbmSHA79vWu73Ae5nRKBPKS0Dj
-         YDifd4GGbjzPhsCXD/+9WvekRGwKiJF024OQrpSc6kbPXEuvp9o1ttgQBZRrRrIlqbGB
-         kOugUlPuTRVhNFCyx1ulBZBUH8qkWe3RuG6XHBO9YqFr9JPqLUNdMU3uIB77585ZN+FT
-         vGXykntK6N3+4EHmU5q4/N2o5ZiiX4O9Zt1Ya8Bz4qtnzmug761QiGhhIj66Oo+okXnN
-         adDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763672789; x=1764277589;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=K8BXYkJo09cffbco27DiXaVUKDDylvywu2kiuIHEYbM=;
-        b=LXby+k1VX34YAdiJMA6Hsswegyw2PAOeuifdJ35+9RZTlgsuQblx3CQRs0M9IK4rMK
-         j7EVldyO20oH8xvThb8MelAsG1rFgcD7BCfDUMzp3UHQpOctu2tlUkQ48AXuwTbmlATJ
-         jHQcnddfwAduJyDQdYxGdQm5RAtMHlmBJWJ3MWn887/ZzZRb+76HKwKDOrtqE9TLLwTv
-         2lVex9NOLf37SAalD+rsnFKfbszCx97ztP2Zjo+K+1w1QhdMK+MUA9CWKHTYU68FoWwa
-         jqPJPp+6hU4/ahrAXhPdw5vNq/lgzOZ4TXHfVCTUtlfJAPw8SO/OOunYBtNgIHvcWlia
-         FH3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWT5zJ3QWimwysvBUSRlvozmb7ycGfhQqR8pm6SwqjdstInVS2mUcHAai7szhcUyGpKu6VaBq4Q0m6Uifo/Wxhmvg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVCK4u8XmnLWMNXNJWl6zFg+7HQWL/y+Q/QZnUijdWPPtXob9F
-	XqURZ4MGWLLygZ74AkmOW80DfO0edhJaFTRG95WKgQvKfQ9bhqXeNHajgW1HAfGoOPQ=
-X-Gm-Gg: ASbGnctpym6a5dOziLIUB7tmjPkKJ4enOsVoU/IdrgtBGuwApJCHA7+nKRIKEBInbqh
-	9305jNQjC/Ul2SyVQyWxlzOOWba2Jd/Z1F1wIfxTRzxWPqvo4g8MhAksxnAf0V41OAwTSA+MBLh
-	ywuTrny0wBYyUqrxBoRgaQ0PV9WhiDxzzYsf3vRqf8bpmk1xeVvZF7wk5ZeBOYX+dN4Fo78suwS
-	6M6SjCBjgbkpUWF05P9P5IMIj2tc+FmwyltqLnd3uBCe+rlS2KqvG6jeidk+IKUHH1DteHIfN8K
-	AqW7ZrgVVrUVZlpRUq8XwpTEx9AFya2Owj73jFRTZApBxcrXXJ46kwd+m34JhVO1osxrhC/K6DX
-	WkNGcAFLnsJNqHcI7XLYvvEfMKLXDqSkv8suUYpYah4E2pgFGjX0gl4ZuL7TWWms71BaIrcIJ1C
-	s+D18k4Uf9i5g4K4D61CHpN9WiGomkmo3mzHR6+LA=
-X-Google-Smtp-Source: AGHT+IF1y8NS7fSk9ziWEi5PszSWt8O9ekApxvVjAqVjXDU6OKQ3ZcI1ywbVKU56ntpqV90CAcY/xw==
-X-Received: by 2002:a5d:5d0a:0:b0:42b:4177:7136 with SMTP id ffacd0b85a97d-42cb9a6075fmr5196598f8f.32.1763672789027;
-        Thu, 20 Nov 2025 13:06:29 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([150.228.9.80])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f2e5b6sm7321287f8f.1.2025.11.20.13.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 13:06:28 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 20 Nov 2025 21:06:14 +0000
-Subject: [PATCH 4/4] clk: samsung: gs101: add support for Display Process
- Unit (DPU) clocks
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tetsIlOU"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251121080623epoutp02cbff11c09c51b69f4f89a1354f5cafb9~59xFr7I7y2345323453epoutp02D
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2025 08:06:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251121080623epoutp02cbff11c09c51b69f4f89a1354f5cafb9~59xFr7I7y2345323453epoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763712383;
+	bh=bicOhB3lxHr36qOBr/Cji/9SyYsIhCzg0MNSw9q5xJQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=tetsIlOUt0/NwiaYVagXRXVNUQEWwOmWhLC8jaWhxFTeHZYz3guaCOepRylF6NU5s
+	 mX1vDEF/cHMlsBMBVrjOpwhZUyBLK3oUQwCNZoSxrvKPO79frkJU/5OJV2kgm4mtr2
+	 SoU61KWRNjIcqqvWzP73Na+wOpnECNkrFdmJvoDA=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251121080622epcas5p17eb6ede357292c192ae4b66fa293b18a~59xE47lI80272402724epcas5p1H;
+	Fri, 21 Nov 2025 08:06:22 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4dCSTn3Dtnz3hhT7; Fri, 21 Nov
+	2025 08:06:21 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20251121080620epcas5p36b7649efb1c754829beeca1761f84a9b~59xDcEAGk2569925699epcas5p3R;
+	Fri, 21 Nov 2025 08:06:20 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251121080617epsmtip2ce5f185be502f2976a0bda80eba7721f~59xAhUARY2184821848epsmtip2b;
+	Fri, 21 Nov 2025 08:06:17 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Vinod Koul'" <vkoul@kernel.org>
+Cc: <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <johan@kernel.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <aR9DtJuwpzoq6spx@vaman>
+Subject: RE: [PATCH v9 4/6] phy: exynos5-usbdrd: support HS combo phy for
+ ExynosAutov920
+Date: Fri, 21 Nov 2025 13:36:03 +0530
+Message-ID: <00ef01dc5abd$b8aac3b0$2a004b10$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251120-dpu-clocks-v1-4-11508054eab8@linaro.org>
-References: <20251120-dpu-clocks-v1-0-11508054eab8@linaro.org>
-In-Reply-To: <20251120-dpu-clocks-v1-0-11508054eab8@linaro.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- kernel-team@android.com, Will McVicker <willmcvicker@google.com>, 
- Juan Yescas <jyescas@google.com>, Doug Anderson <dianders@google.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15641;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=QHk8SiPa/eaPMZxAsAQiLzZk+6fLpZAERsS/cFDDl8A=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpH4LLaQE+sYqCV4pJQLUBYS+awWcWDoBUANWyY
- B9Qz+UNyreJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaR+CywAKCRDO6LjWAjRy
- umlID/93RgADTcD22ilasX9gZ4Sdeps/lGe7ouZBzFVb4ZJ1GW+ehklO8xMW9bocRQ0bPS8dchZ
- jU/EZUk5+PLE20IJPra5D+QaCr06c7yuKHIIWXhcY73kbs+UaxSwnq1jpTpOinQifo4TPaMqWzB
- u4MHhUlyVw9jlHs5Zj0vs/gjTJmyXpSzzfGv3IOo3Pg0VElyt3OVSZEbWWU0oqzT5pXEdG0bciy
- Fb3FP6AaVBr7/vYjCuQmzN0+WQcTn90URC0L29DaxMBLG/4s85ro9OBdCneE/t+IDa6NWC2cJcQ
- 29mtKBjvUDBZF6FudmmIBnmgUmpJytm09zq69+NJaBhFmgVZo50JQWd5IXzuR7xE31DO6O9MXqE
- UoIwdSPGm5VnsUvKTAqdp/X8Pi/UNuDsmv2c65QAFrXsGYwMrOLLosR87tiU0ow43ao4ZTT2czC
- 1Po77OSkwdmnzw2OPmYigiIxLorjsGI1gQLLj3s/m+8YlGTV9KXHEwsZPTxw6ZM/4iSNWGO9+ku
- BT+0zU16Q3dMLfTyxjnh+AuI6zOtq0ixt7BZc/C6QeEPpzW0/uDFTP5EBiHNVzmaY9fjxJ2JEfT
- +r2Mvtf+9PmQe0NqNEXr1/ZjRIw2PLVatn+B46Y+MTh06xVBW+2ldE6JT7gkNGfuTEMVDjyRIOz
- FQTpfE2EtNlNy6Q==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQId6djPdSPyHc1kqH9U3Yvp+ju6FgNTbNUIAjBcJ0ECKt+0kLQ8L78w
+Content-Language: en-in
+X-CMS-MailID: 20251121080620epcas5p36b7649efb1c754829beeca1761f84a9b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251010070057epcas5p31b6ee42004594b2b2fb414494180753c
+References: <20251010070912.3758334-1-pritam.sutar@samsung.com>
+	<CGME20251010070057epcas5p31b6ee42004594b2b2fb414494180753c@epcas5p3.samsung.com>
+	<20251010070912.3758334-5-pritam.sutar@samsung.com> <aR9DtJuwpzoq6spx@vaman>
 
-cmu_dpu is the clock management unit used for the Display Process Unit
-block. It generates clocks for image scaler, compressor etc.
+Hi Vinod,
 
-Add support for the muxes, dividers and gates in cmu_dpu.
+> -----Original Message-----
+> From: Vinod Koul <vkoul@kernel.org>
+> Sent: 20 November 2025 10:07 PM
+> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Cc: kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+> peter.griffin@linaro.org; kauschluss@disroot.org; johan@kernel.org;
+> ivo.ivanov.ivanov1@gmail.com; m.szyprowski@samsung.com;
+> s.nawrocki@samsung.com; linux-phy@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> rosa.pila@samsung.com; dev.tailor@samsung.com;
+> faraz.ata@samsung.com; muhammed.ali@samsung.com;
+> selvarasu.g@samsung.com
+> Subject: Re: [PATCH v9 4/6] phy: exynos5-usbdrd: support HS combo phy for
+> ExynosAutov920
+> 
+> On 10-10-25, 12:39, Pritam Manohar Sutar wrote:
+> > Support UTMI+ combo phy for this SoC which is somewhat simmilar to
+>                                                         ^^^^^^^^ typo
+> 
+> > what the existing Exynos850 support does. The difference is that some
+> > register offsets and bit fields are defferent from Exynos850.
+>                                            ^^^^^^^^ again
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 283 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 283 insertions(+)
+Thank for the review and sorry for the typo and can you please
+confirm if updated commit message is fine, mentioned as below?
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 8551289b46eb88ec61dd1914d0fe782ae6794000..82f2343ecc63cc285343cc79692f3a199a9c16cc 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -25,6 +25,7 @@
- #define CLKS_NR_MISC	(CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
- #define CLKS_NR_PERIC0	(CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
- #define CLKS_NR_PERIC1	(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-+#define CLKS_NR_DPU	(CLK_GOUT_DPU_SYSREG_DPU_PCLK + 1)
- 
- #define GS101_GATE_DBG_OFFSET 0x4000
- #define GS101_DRCG_EN_OFFSET  0x104
-@@ -4426,6 +4427,285 @@ static const struct samsung_cmu_info peric1_cmu_info __initconst = {
- 	.drcg_offset		= GS101_DRCG_EN_OFFSET,
- };
- 
-+/* ---- CMU_DPU ------------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_DPU (0x1c000000) */
-+#define PLL_CON0_MUX_CLKCMU_DPU_BUS_USER					0x0600
-+#define PLL_CON1_MUX_CLKCMU_DPU_BUS_USER					0x0604
-+#define DPU_CMU_DPU_CONTROLLER_OPTION						0x0800
-+#define CLKOUT_CON_BLK_DPU_CMU_DPU_CLKOUT0					0x0810
-+#define CLK_CON_DIV_DIV_CLK_DPU_BUSP						0x1800
-+#define CLK_CON_GAT_CLK_BLK_DPU_UID_DPU_CMU_DPU_IPCLKPORT_PCLK			0x2000
-+#define CLK_CON_GAT_CLK_BLK_DPU_UID_RSTNSYNC_CLK_DPU_OSCCLK_IPCLKPORT_CLK	0x2004
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_AD_APB_DPU_DMA_IPCLKPORT_PCLKM		0x2008
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_DPUF_IPCLKPORT_ACLK_DMA			0x200c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_DPUF_IPCLKPORT_ACLK_DPP			0x2010
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_D_TZPC_DPU_IPCLKPORT_PCLK			0x2014
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_GPC_DPU_IPCLKPORT_PCLK			0x2018
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_LHM_AXI_P_DPU_IPCLKPORT_I_CLK		0x201c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D0_DPU_IPCLKPORT_I_CLK		0x2020
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D1_DPU_IPCLKPORT_I_CLK		0x2024
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D2_DPU_IPCLKPORT_I_CLK		0x2028
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD0_IPCLKPORT_ACLK			0x202c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD0_IPCLKPORT_PCLK			0x2030
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD1_IPCLKPORT_ACLK			0x2034
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD1_IPCLKPORT_PCLK			0x2038
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD2_IPCLKPORT_ACLK			0x203c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD2_IPCLKPORT_PCLK			0x2040
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_RSTNSYNC_CLK_DPU_BUSD_IPCLKPORT_CLK	0x2044
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_RSTNSYNC_CLK_DPU_BUSP_IPCLKPORT_CLK	0x2048
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU0_IPCLKPORT_ACLK			0x204c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU0_IPCLKPORT_PCLK			0x2050
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU1_IPCLKPORT_ACLK			0x2054
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU1_IPCLKPORT_PCLK			0x2058
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU2_IPCLKPORT_ACLK			0x205c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU2_IPCLKPORT_PCLK			0x2060
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD0_IPCLKPORT_CLK_S1		0x2064
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD0_IPCLKPORT_CLK_S2		0x2068
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD1_IPCLKPORT_CLK_S1		0x206c
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD1_IPCLKPORT_CLK_S2		0x2070
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD2_IPCLKPORT_CLK_S1		0x2074
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD2_IPCLKPORT_CLK_S2		0x2078
-+#define CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSREG_DPU_IPCLKPORT_PCLK			0x207c
-+#define PCH_CON_LHM_AXI_P_DPU_PCH						0x3000
-+#define PCH_CON_LHS_AXI_D0_DPU_PCH						0x3004
-+#define PCH_CON_LHS_AXI_D1_DPU_PCH						0x3008
-+#define PCH_CON_LHS_AXI_D2_DPU_PCH						0x300c
-+#define QCH_CON_DPUF_QCH_DPU_DMA						0x3010
-+#define QCH_CON_DPUF_QCH_DPU_DPP						0x3014
-+#define QCH_CON_DPU_CMU_DPU_QCH							0x301c
-+#define QCH_CON_D_TZPC_DPU_QCH							0x3020
-+#define QCH_CON_GPC_DPU_QCH							0x3024
-+#define QCH_CON_LHM_AXI_P_DPU_QCH						0x3028
-+#define QCH_CON_LHS_AXI_D0_DPU_QCH						0x302c
-+#define QCH_CON_LHS_AXI_D1_DPU_QCH						0x3030
-+#define QCH_CON_LHS_AXI_D2_DPU_QCH						0x3034
-+#define QCH_CON_PPMU_DPUD0_QCH							0x3038
-+#define QCH_CON_PPMU_DPUD1_QCH							0x303c
-+#define QCH_CON_PPMU_DPUD2_QCH							0x3040
-+#define QCH_CON_SSMT_DPU0_QCH							0x3044
-+#define QCH_CON_SSMT_DPU1_QCH							0x3048
-+#define QCH_CON_SSMT_DPU2_QCH							0x304c
-+#define QCH_CON_SYSMMU_DPUD0_QCH_S1						0x3050
-+#define QCH_CON_SYSMMU_DPUD0_QCH_S2						0x3054
-+#define QCH_CON_SYSMMU_DPUD1_QCH_S1						0x3058
-+#define QCH_CON_SYSMMU_DPUD1_QCH_S2						0x305c
-+#define QCH_CON_SYSMMU_DPUD2_QCH_S1						0x3060
-+#define QCH_CON_SYSMMU_DPUD2_QCH_S2						0x3064
-+#define QCH_CON_SYSREG_DPU_QCH							0x3068
-+#define QUEUE_CTRL_REG_BLK_DPU_CMU_DPU						0x3c00
-+
-+static const unsigned long dpu_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_DPU_BUS_USER,
-+	PLL_CON1_MUX_CLKCMU_DPU_BUS_USER,
-+	DPU_CMU_DPU_CONTROLLER_OPTION,
-+	CLKOUT_CON_BLK_DPU_CMU_DPU_CLKOUT0,
-+	CLK_CON_DIV_DIV_CLK_DPU_BUSP,
-+	CLK_CON_GAT_CLK_BLK_DPU_UID_DPU_CMU_DPU_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_CLK_BLK_DPU_UID_RSTNSYNC_CLK_DPU_OSCCLK_IPCLKPORT_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_AD_APB_DPU_DMA_IPCLKPORT_PCLKM,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_DPUF_IPCLKPORT_ACLK_DMA,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_DPUF_IPCLKPORT_ACLK_DPP,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_D_TZPC_DPU_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_GPC_DPU_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_LHM_AXI_P_DPU_IPCLKPORT_I_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D0_DPU_IPCLKPORT_I_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D1_DPU_IPCLKPORT_I_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D2_DPU_IPCLKPORT_I_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD0_IPCLKPORT_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD0_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD1_IPCLKPORT_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD1_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD2_IPCLKPORT_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD2_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_RSTNSYNC_CLK_DPU_BUSD_IPCLKPORT_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_RSTNSYNC_CLK_DPU_BUSP_IPCLKPORT_CLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU0_IPCLKPORT_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU0_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU1_IPCLKPORT_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU1_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU2_IPCLKPORT_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU2_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD0_IPCLKPORT_CLK_S1,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD0_IPCLKPORT_CLK_S2,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD1_IPCLKPORT_CLK_S1,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD1_IPCLKPORT_CLK_S2,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD2_IPCLKPORT_CLK_S1,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD2_IPCLKPORT_CLK_S2,
-+	CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSREG_DPU_IPCLKPORT_PCLK,
-+	PCH_CON_LHM_AXI_P_DPU_PCH,
-+	PCH_CON_LHS_AXI_D0_DPU_PCH,
-+	PCH_CON_LHS_AXI_D1_DPU_PCH,
-+	PCH_CON_LHS_AXI_D2_DPU_PCH,
-+	QCH_CON_DPUF_QCH_DPU_DMA,
-+	QCH_CON_DPUF_QCH_DPU_DPP,
-+	QCH_CON_DPU_CMU_DPU_QCH,
-+	QCH_CON_D_TZPC_DPU_QCH,
-+	QCH_CON_GPC_DPU_QCH,
-+	QCH_CON_LHM_AXI_P_DPU_QCH,
-+	QCH_CON_LHS_AXI_D0_DPU_QCH,
-+	QCH_CON_LHS_AXI_D1_DPU_QCH,
-+	QCH_CON_LHS_AXI_D2_DPU_QCH,
-+	QCH_CON_PPMU_DPUD0_QCH,
-+	QCH_CON_PPMU_DPUD1_QCH,
-+	QCH_CON_PPMU_DPUD2_QCH,
-+	QCH_CON_SSMT_DPU0_QCH,
-+	QCH_CON_SSMT_DPU1_QCH,
-+	QCH_CON_SSMT_DPU2_QCH,
-+	QCH_CON_SYSMMU_DPUD0_QCH_S1,
-+	QCH_CON_SYSMMU_DPUD0_QCH_S2,
-+	QCH_CON_SYSMMU_DPUD1_QCH_S1,
-+	QCH_CON_SYSMMU_DPUD1_QCH_S2,
-+	QCH_CON_SYSMMU_DPUD2_QCH_S1,
-+	QCH_CON_SYSMMU_DPUD2_QCH_S2,
-+	QCH_CON_SYSREG_DPU_QCH,
-+	QUEUE_CTRL_REG_BLK_DPU_CMU_DPU,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_DPU */
-+PNAME(mout_dpu_bus_user_p)	= { "oscclk", "dout_cmu_dpu_bus" };
-+
-+static const struct samsung_mux_clock dpu_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_DPU_BUS_USER, "mout_dpu_bus_user",
-+	    mout_dpu_bus_user_p, PLL_CON0_MUX_CLKCMU_DPU_BUS_USER, 4, 1),
-+};
-+
-+static const struct samsung_div_clock dpu_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_DPU_BUSP, "dout_dpu_busp", "",
-+	    CLK_CON_DIV_DIV_CLK_DPU_BUSP, 0, 3),
-+};
-+
-+static const struct samsung_gate_clock dpu_gate_clks[] __initconst = {
-+	GATE(CLK_GOUT_DPU_PCLK, "gout_dpu_dpu_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_CLK_BLK_DPU_UID_DPU_CMU_DPU_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_CLK_DPU_OSCCLK_CLK, "gout_dpu_clk_dpu_oscclk_clk",
-+	     "oscclk",
-+	     CLK_CON_GAT_CLK_BLK_DPU_UID_RSTNSYNC_CLK_DPU_OSCCLK_IPCLKPORT_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_AD_APB_DPU_DMA_PCLKM, "gout_dpu_ad_apb_dpu_dma_pclkm",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_AD_APB_DPU_DMA_IPCLKPORT_PCLKM,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_DPUF_ACLK_DMA, "gout_dpu_dpuf_aclk_dma",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_DPUF_IPCLKPORT_ACLK_DMA, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_DPUF_ACLK_DPP, "gout_dpu_dpuf_aclk_dpp",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_DPUF_IPCLKPORT_ACLK_DPP, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_D_TZPC_DPU_PCLK, "gout_dpu_d_tzpc_dpu_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_D_TZPC_DPU_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_GPC_DPU_PCLK, "gout_dpu_dpu_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_GPC_DPU_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_LHM_AXI_P_DPU_I_CLK, "gout_dpu_lhm_axi_p_dpu_i_clk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_LHM_AXI_P_DPU_IPCLKPORT_I_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_LHS_AXI_D0_DPU_I_CLK, "gout_dpu_lhs_axi_d0_dpu_i_clk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D0_DPU_IPCLKPORT_I_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_LHS_AXI_D1_DPU_I_CLK, "gout_dpu_lhs_axi_d1_dpu_i_clk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D1_DPU_IPCLKPORT_I_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_LHS_AXI_D2_DPU_I_CLK, "gout_dpu_lhs_axi_d2_dpu_i_clk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_LHS_AXI_D2_DPU_IPCLKPORT_I_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_PPMU_DPUD0_ACLK, "gout_dpu_ppmu_dpud0_aclk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD0_IPCLKPORT_ACLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_PPMU_DPUD0_PCLK, "gout_dpu_ppmu_dpud0_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD0_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_PPMU_DPUD1_ACLK, "gout_dpu_ppmu_dpud1_aclk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD1_IPCLKPORT_ACLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_PPMU_DPUD1_PCLK, "gout_dpu_ppmu_dpud1_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD1_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_PPMU_DPUD2_ACLK, "gout_dpu_ppmu_dpud2_aclk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD2_IPCLKPORT_ACLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_PPMU_DPUD2_PCLK, "gout_dpu_ppmu_dpud2_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_PPMU_DPUD2_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_CLK_DPU_BUSD_CLK, "gout_dpu_clk_dpu_busd_clk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_RSTNSYNC_CLK_DPU_BUSD_IPCLKPORT_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_CLK_DPU_BUSP_CLK, "gout_dpu_clk_dpu_busp_clk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_RSTNSYNC_CLK_DPU_BUSP_IPCLKPORT_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SSMT_DPU0_ACLK, "gout_dpu_ssmt_dpu0_aclk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU0_IPCLKPORT_ACLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SSMT_DPU0_PCLK, "gout_dpu_ssmt_dpu0_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU0_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SSMT_DPU1_ACLK, "gout_dpu_ssmt_dpu1_aclk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU1_IPCLKPORT_ACLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SSMT_DPU1_PCLK, "gout_dpu_ssmt_dpu1_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU1_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SSMT_DPU2_ACLK, "gout_dpu_ssmt_dpu2_aclk",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU2_IPCLKPORT_ACLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SSMT_DPU2_PCLK, "gout_dpu_ssmt_dpu2_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SSMT_DPU2_IPCLKPORT_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSMMU_DPUD0_CLK_S1, "gout_dpu_sysmmu_dpud0_clk_s1",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD0_IPCLKPORT_CLK_S1,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSMMU_DPUD0_CLK_S2, "gout_dpu_sysmmu_dpud0_clk_s2",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD0_IPCLKPORT_CLK_S2,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSMMU_DPUD1_CLK_S1, "gout_dpu_sysmmu_dpud1_clk_s1",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD1_IPCLKPORT_CLK_S1,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSMMU_DPUD1_CLK_S2, "gout_dpu_sysmmu_dpud1_clk_s2",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD1_IPCLKPORT_CLK_S2,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSMMU_DPUD2_CLK_S1, "gout_dpu_sysmmu_dpud2_clk_s1",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD2_IPCLKPORT_CLK_S1,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSMMU_DPUD2_CLK_S2, "gout_dpu_sysmmu_dpud2_clk_s2",
-+	     "mout_dpu_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSMMU_DPUD2_IPCLKPORT_CLK_S2, 21, 0, 0),
-+	GATE(CLK_GOUT_DPU_SYSREG_DPU_PCLK, "gout_dpu_sysreg_dpu_pclk",
-+	     "dout_dpu_busp",
-+	     CLK_CON_GAT_GOUT_BLK_DPU_UID_SYSREG_DPU_IPCLKPORT_PCLK, 21, 0, 0),
-+};
-+
-+static const struct samsung_cmu_info dpu_cmu_info __initconst = {
-+	.mux_clks		= dpu_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(dpu_mux_clks),
-+	.div_clks		= dpu_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(dpu_div_clks),
-+	.gate_clks		= dpu_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(dpu_gate_clks),
-+	.nr_clk_ids		= CLKS_NR_DPU,
-+	.clk_regs		= dpu_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(dpu_clk_regs),
-+	.sysreg_clk_regs	= dcrg_memclk_sysreg,
-+	.nr_sysreg_clk_regs	= ARRAY_SIZE(dcrg_memclk_sysreg),
-+	.clk_name		= "bus",
-+	.auto_clock_gate        = true,
-+	.gate_dbg_offset        = GS101_GATE_DBG_OFFSET,
-+	.option_offset		= DPU_CMU_DPU_CONTROLLER_OPTION,
-+	.drcg_offset		= GS101_DRCG_EN_OFFSET,
-+};
-+
- /* ---- platform_driver ----------------------------------------------------- */
- 
- static int __init gs101_cmu_probe(struct platform_device *pdev)
-@@ -4443,6 +4723,9 @@ static const struct of_device_id gs101_cmu_of_match[] = {
- 	{
- 		.compatible = "google,gs101-cmu-apm",
- 		.data = &apm_cmu_info,
-+	}, {
-+		.compatible = "google,gs101-cmu-dpu",
-+		.data = &dpu_cmu_info,
- 	}, {
- 		.compatible = "google,gs101-cmu-hsi0",
- 		.data = &hsi0_cmu_info,
+"
+    phy: exynos5-usbdrd: support HS combo phy for ExynosAutov920
 
--- 
-2.52.0.rc2.455.g230fcf2819-goog
+    Support UTMI+ combo phy for this SoC, which is somewhat similar to
+    what the existing Exynos850 supports. The difference is that some
+    register offsets and bit fields are different from Exynos850.
+
+    Add required change in phy driver to support combo HS phy for this SoC.
+"
+
+> >
+> > Add required change in phy driver to support combo HS phy for this SoC.
+> >
+> > Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> > ---
+> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 211
+> > +++++++++++++++++++++++
+> >  1 file changed, 211 insertions(+)
+> >
+> > diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > index dfc2cc71e579..c52b0e25a423 100644
+> > --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > @@ -41,6 +41,13 @@
+> >  #define EXYNOS2200_CLKRST_LINK_PCLK_SEL		BIT(1)
+> >
+> >  #define EXYNOS2200_DRD_UTMI			0x10
+> > +
+> > +/* ExynosAutov920 bits */
+> > +#define UTMICTL_FORCE_UTMI_SUSPEND		BIT(13)
+> > +#define UTMICTL_FORCE_UTMI_SLEEP		BIT(12)
+> > +#define UTMICTL_FORCE_DPPULLDOWN		BIT(9)
+> > +#define UTMICTL_FORCE_DMPULLDOWN		BIT(8)
+> > +
+> >  #define EXYNOS2200_UTMI_FORCE_VBUSVALID		BIT(1)
+> >  #define EXYNOS2200_UTMI_FORCE_BVALID		BIT(0)
+> >
+> > @@ -250,6 +257,22 @@
+> >  #define EXYNOS850_DRD_HSP_TEST			0x5c
+> >  #define HSP_TEST_SIDDQ				BIT(24)
+> >
+> > +#define EXYNOSAUTOV920_DRD_HSP_CLKRST		0x100
+> > +#define HSPCLKRST_PHY20_SW_PORTRESET		BIT(3)
+> > +#define HSPCLKRST_PHY20_SW_POR			BIT(1)
+> > +#define HSPCLKRST_PHY20_SW_POR_SEL		BIT(0)
+> > +
+> > +#define EXYNOSAUTOV920_DRD_HSPCTL		0x104
+> > +#define HSPCTRL_VBUSVLDEXTSEL			BIT(13)
+> > +#define HSPCTRL_VBUSVLDEXT			BIT(12)
+> > +#define HSPCTRL_EN_UTMISUSPEND			BIT(9)
+> > +#define HSPCTRL_COMMONONN			BIT(8)
+> > +
+> > +#define EXYNOSAUTOV920_DRD_HSP_TEST		0x10c
+> > +
+> > +#define EXYNOSAUTOV920_DRD_HSPPLLTUNE		0x110
+> > +#define HSPPLLTUNE_FSEL				GENMASK(18, 16)
+> > +
+> >  /* Exynos9 - GS101 */
+> >  #define EXYNOS850_DRD_SECPMACTL			0x48
+> >  #define SECPMACTL_PMA_ROPLL_REF_CLK_SEL
+> 	GENMASK(13, 12)
+> > @@ -2054,6 +2077,140 @@ static const struct
+> exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
+> >  	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
+> >  };
+> >
+> > +static void
+> > +exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy
+> *phy_drd) {
+> > +	void __iomem *reg_phy = phy_drd->reg_phy;
+> > +	u32 reg;
+> > +
+> > +	/*
+> > +	 * Disable HWACG (hardware auto clock gating control). This
+> > +	 * forces QACTIVE signal in Q-Channel interface to HIGH level,
+> > +	 * to make sure the PHY clock is not gated by the hardware.
+> > +	 */
+> > +	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +	reg |= LINKCTRL_FORCE_QACT;
+> > +	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +
+> > +	/* De-assert link reset */
+> > +	reg = readl(reg_phy + EXYNOS2200_DRD_CLKRST);
+> > +	reg &= ~CLKRST_LINK_SW_RST;
+> > +	writel(reg, reg_phy + EXYNOS2200_DRD_CLKRST);
+> > +
+> > +	/* Set PHY POR High */
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSP_CLKRST);
+> > +	reg |= HSPCLKRST_PHY20_SW_POR |
+> HSPCLKRST_PHY20_SW_POR_SEL;
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSP_CLKRST);
+> > +
+> > +	/* Enable UTMI+ */
+> > +	reg = readl(reg_phy + EXYNOS2200_DRD_UTMI);
+> > +	reg &= ~(UTMICTL_FORCE_UTMI_SUSPEND |
+> UTMICTL_FORCE_UTMI_SLEEP |
+> > +		UTMICTL_FORCE_DPPULLDOWN |
+> UTMICTL_FORCE_DMPULLDOWN);
+> > +	writel(reg, reg_phy + EXYNOS2200_DRD_UTMI);
+> > +
+> > +	/* set phy clock & control HS phy */
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
+> > +	reg |= HSPCTRL_EN_UTMISUSPEND | HSPCTRL_COMMONONN;
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
+> > +
+> > +	fsleep(100);
+> > +
+> > +	/* Set VBUS Valid and DP-Pull up control by VBUS pad usage */
+> > +	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +	reg |= FIELD_PREP_CONST(LINKCTRL_BUS_FILTER_BYPASS, 0xf);
+> > +	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +
+> > +	reg = readl(reg_phy + EXYNOS2200_DRD_UTMI);
+> > +	reg |= EXYNOS2200_UTMI_FORCE_VBUSVALID |
+> EXYNOS2200_UTMI_FORCE_BVALID;
+> > +	writel(reg, reg_phy + EXYNOS2200_DRD_UTMI);
+> > +
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
+> > +	reg |= HSPCTRL_VBUSVLDEXTSEL | HSPCTRL_VBUSVLDEXT;
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
+> > +
+> > +	/* Setting FSEL for refference clock */
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSPPLLTUNE);
+> > +	reg &= ~HSPPLLTUNE_FSEL;
+> > +
+> > +	switch (phy_drd->extrefclk) {
+> > +	case EXYNOS5_FSEL_50MHZ:
+> > +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 7);
+> > +		break;
+> > +	case EXYNOS5_FSEL_26MHZ:
+> > +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 6);
+> > +		break;
+> > +	case EXYNOS5_FSEL_24MHZ:
+> > +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 2);
+> > +		break;
+> > +	case EXYNOS5_FSEL_20MHZ:
+> > +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 1);
+> > +		break;
+> > +	case EXYNOS5_FSEL_19MHZ2:
+> > +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 0);
+> > +		break;
+> > +	default:
+> > +		dev_warn(phy_drd->dev, "unsupported ref clk: %#.2x\n",
+> > +			 phy_drd->extrefclk);
+> > +		break;
+> > +	}
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSPPLLTUNE);
+> > +
+> > +	/* Enable PHY Power Mode */
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSP_TEST);
+> > +	reg &= ~HSP_TEST_SIDDQ;
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSP_TEST);
+> > +
+> > +	/* before POR low, 10us delay is needed to Finish PHY reset */
+> > +	fsleep(10);
+> > +
+> > +	/* Set PHY POR Low */
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSP_CLKRST);
+> > +	reg |= HSPCLKRST_PHY20_SW_POR_SEL;
+> > +	reg &= ~(HSPCLKRST_PHY20_SW_POR |
+> HSPCLKRST_PHY20_SW_PORTRESET);
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSP_CLKRST);
+> > +
+> > +	/* after POR low and delay 75us, PHYCLOCK is guaranteed. */
+> > +	fsleep(75);
+> > +
+> > +	/* force pipe3 signal for link */
+> > +	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +	reg |= LINKCTRL_FORCE_PIPE_EN;
+> > +	reg &= ~LINKCTRL_FORCE_PHYSTATUS;
+> > +	reg |= LINKCTRL_FORCE_RXELECIDLE;
+> > +	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL); }
+> > +
+> > +static void
+> > +exynosautov920_usbdrd_hsphy_disable(struct exynos5_usbdrd_phy
+> > +*phy_drd) {
+> > +	u32 reg;
+> > +	void __iomem *reg_phy = phy_drd->reg_phy;
+> > +
+> > +	/* set phy clock & control HS phy */
+> > +	reg = readl(reg_phy + EXYNOS2200_DRD_UTMI);
+> > +	reg |= UTMICTL_FORCE_UTMI_SUSPEND |
+> UTMICTL_FORCE_UTMI_SLEEP;
+> > +	reg &= ~(UTMICTL_FORCE_DPPULLDOWN |
+> UTMICTL_FORCE_DMPULLDOWN);
+> > +	writel(reg, reg_phy + EXYNOS2200_DRD_UTMI);
+> > +
+> > +	/* Disable PHY Power Mode */
+> > +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSP_TEST);
+> > +	reg |= HSP_TEST_SIDDQ;
+> > +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSP_TEST);
+> > +
+> > +	/* clear force q-channel */
+> > +	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +	reg &= ~LINKCTRL_FORCE_QACT;
+> > +	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL);
+> > +
+> > +	/* link sw reset is need for USB_DP/DM high-z in host mode */
+> > +	reg = readl(reg_phy + EXYNOS2200_DRD_CLKRST);
+> > +	reg |= CLKRST_LINK_SW_RST;
+> > +	writel(reg, reg_phy + EXYNOS2200_DRD_CLKRST);
+> > +	fsleep(10);
+> > +	reg &= ~CLKRST_LINK_SW_RST;
+> > +	writel(reg, reg_phy + EXYNOS2200_DRD_CLKRST); }
+> > +
+> >  static int exynosautov920_usbdrd_phy_init(struct phy *phy)  {
+> >  	struct phy_usb_instance *inst = phy_get_drvdata(phy); @@ -2095,6
+> > +2252,27 @@ static int exynosautov920_usbdrd_phy_exit(struct phy *phy)
+> >  	return 0;
+> >  }
+> >
+> > +static int exynosautov920_usbdrd_combo_phy_exit(struct phy *phy) {
+> > +	struct phy_usb_instance *inst = phy_get_drvdata(phy);
+> > +	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+> > +	int ret = 0;
+> 
+> Superfluous init
+> 
+> > +
+> > +	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks,
+> phy_drd->clks);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (inst->phy_cfg->id == EXYNOS5_DRDPHY_UTMI)
+> > +		exynosautov920_usbdrd_hsphy_disable(phy_drd);
+> > +
+> > +	/* enable PHY isol */
+> > +	inst->phy_cfg->phy_isol(inst, true);
+> > +
+> > +	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks,
+> > +phy_drd->clks);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int exynosautov920_usbdrd_phy_power_on(struct phy *phy)  {
+> >  	struct phy_usb_instance *inst = phy_get_drvdata(phy); @@ -2146,6
+> > +2324,36 @@ static const char * const exynosautov920_usb20_regulators[]
+> = {
+> >  	"dvdd", "vdd18", "vdd33",
+> >  };
+> >
+> > +static const struct phy_ops exynosautov920_usbdrd_combo_hsphy_ops
+> = {
+> > +	.init		= exynosautov920_usbdrd_phy_init,
+> > +	.exit		= exynosautov920_usbdrd_combo_phy_exit,
+> > +	.power_on	= exynosautov920_usbdrd_phy_power_on,
+> > +	.power_off	= exynosautov920_usbdrd_phy_power_off,
+> > +	.owner		= THIS_MODULE,
+> > +};
+> > +
+> > +static const struct
+> > +exynos5_usbdrd_phy_config usbdrd_hsphy_cfg_exynosautov920[] = {
+> > +	{
+> > +		.id		= EXYNOS5_DRDPHY_UTMI,
+> > +		.phy_isol	= exynos5_usbdrd_phy_isol,
+> > +		.phy_init	= exynosautov920_usbdrd_utmi_init,
+> > +	},
+> > +};
+> > +
+> > +static const
+> > +struct exynos5_usbdrd_phy_drvdata
+> exynosautov920_usbdrd_combo_hsphy = {
+> > +	.phy_cfg		= usbdrd_hsphy_cfg_exynosautov920,
+> > +	.phy_ops		=
+> &exynosautov920_usbdrd_combo_hsphy_ops,
+> > +	.pmu_offset_usbdrd0_phy	=
+> EXYNOSAUTOV920_PHY_CTRL_USB20,
+> > +	.clk_names		= exynos5_clk_names,
+> > +	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
+> > +	.core_clk_names		= exynos5_core_clk_names,
+> > +	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
+> > +	.regulator_names	= exynosautov920_usb20_regulators,
+> > +	.n_regulators		=
+> ARRAY_SIZE(exynosautov920_usb20_regulators),
+> > +};
+> > +
+> >  static const struct phy_ops exynosautov920_usbdrd_phy_ops = {
+> >  	.init		= exynosautov920_usbdrd_phy_init,
+> >  	.exit		= exynosautov920_usbdrd_phy_exit,
+> > @@ -2380,6 +2588,9 @@ static const struct of_device_id
+> exynos5_usbdrd_phy_of_match[] = {
+> >  	}, {
+> >  		.compatible = "samsung,exynos990-usbdrd-phy",
+> >  		.data = &exynos990_usbdrd_phy
+> > +	}, {
+> > +		.compatible = "samsung,exynosautov920-usbdrd-combo-
+> hsphy",
+> > +		.data = &exynosautov920_usbdrd_combo_hsphy
+> >  	}, {
+> >  		.compatible = "samsung,exynosautov920-usbdrd-phy",
+> >  		.data = &exynosautov920_usbdrd_phy
+> > --
+> > 2.34.1
+> 
+> --
+> ~Vinod
+
+Thank you,
+
+Regards,
+Pritam
 
