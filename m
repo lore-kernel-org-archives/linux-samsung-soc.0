@@ -1,41 +1,49 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF17034AB12;
-	Fri, 21 Nov 2025 13:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5C3350D4C;
+	Fri, 21 Nov 2025 14:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763732737; cv=none; b=WjXGRQMeeeEt78Plt6nB2983cGgmcz5qgKUcdh92qozD6V3+6ZMNbEdrhoHmuTAmHG4ZY68cUptNjxrIwHvY2oc3Ny62kbPydEtgv8jKx9bNONKu9f1rhJBJ80PCxqOdyQNv8BUqttg1Om3zZo0bGm+/rdrzhqgCmkkscZQwASg=
+	t=1763735167; cv=none; b=JL2/2sZoIVt8b5LkJ6j0p/mltokNPLDtsbnBePvNrfrk71FUJLG4FDtqYg06hCjgalbzlrfriwcvo3YKljrxJQOI2DPcHzGt72vKs2Jf8pl8E5Iy2fFZqev/5+nNW8IahN+Mab0rtjA88avQc2lFbTzS8qnMtOKXpz5cMhqpIg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763732737; c=relaxed/simple;
-	bh=pkEhB1z/yBfx/Q1It2/9tQfikBIEO5wl2VmkUiqSOfw=;
+	s=arc-20240116; t=1763735167; c=relaxed/simple;
+	bh=YbrPtkB06/Jg3xfKlxAAt1KSm17776sC1HO/GQZ1S88=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0xJIUOcuAKk5Q79/U8Z9nFRT3bVpOFN3KNH/1//8P9FeXaKN8UqrmslhiLojbTqPQE0DwmpdoPJ5FRUfgps3xBip4zandYIULBF79fwAdXT4Ux+ovK0ITkvxSnvC44pXjUmg64sOMI8M9/sYEkAukedpdwSn6WRNgJeDtl36p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4dCc112TK1z9tKs;
-	Fri, 21 Nov 2025 14:45:25 +0100 (CET)
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of linux@timmermann.space designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=linux@timmermann.space
-Date: Fri, 21 Nov 2025 14:45:20 +0100
-From: Lukas Timmermann <linux@timmermann.space>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alexandre Marquet <tb@a-marquet.fr>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: ARM: samsung: Add Samsung Manta (Google
- Nexus 10)
-Message-ID: <zgyxb6jqfvfr6iah4lw7rvweextbwxrtlysap4dfzeejqgulwo@ik25opshvwxd>
-References: <20251120144018.961604-1-linux@timmermann.space>
- <20251120144018.961604-2-linux@timmermann.space>
- <20251121-convivial-wren-of-wind-cefe21@kuoka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ps6mOmuuRBKKMWAQacJrmSrffmvZ7M8rM/joZ1MnldhnIQMiPD5ZX5nvZe3v+Qkz7JPVU+cxbO+sz9QqxTAg9Mpo678WFdRjgEXOPfbc454YJXJhLKiH6xhDT9xAdjlaftdKJ4+wPVP4uv/ojq8iO8emDFpP6FAPkmGgJXnW9pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YhMTPHHb; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YhMTPHHb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F5AC4CEF1;
+	Fri, 21 Nov 2025 14:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1763735166;
+	bh=YbrPtkB06/Jg3xfKlxAAt1KSm17776sC1HO/GQZ1S88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YhMTPHHbVjfqaYVVAyXmbfZ6m+WxBdDRDNMYB/aFueMvGaIimyUb3L6orZbC3BrCi
+	 x4FPHuL/zwELdgYWE/x9SUl5ZFMdEVqWkCGId/cjsX+wyC8Io1ld2f/OKrOvDtb8NX
+	 CF4w3J6HAfPSji1auxCoxp8e44KYJ0c+FrDMPGVA=
+Date: Fri, 21 Nov 2025 15:21:49 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Roy Luo <royluo@google.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	Doug Anderson <dianders@google.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+Message-ID: <2025112144-claw-recolor-49c3@gregkh>
+References: <20251119093749.292926-1-royluo@google.com>
+ <20251119093749.292926-3-royluo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,43 +52,75 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251121-convivial-wren-of-wind-cefe21@kuoka>
-X-Rspamd-Queue-Id: 4dCc112TK1z9tKs
+In-Reply-To: <20251119093749.292926-3-royluo@google.com>
 
-On Fri, Nov 21, 2025 at 10:04:43AM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Nov 20, 2025 at 03:40:14PM +0100, Lukas Timmermann wrote:
-> > From: Alexandre Marquet <tb@a-marquet.fr>
-> > 
-> > Add the Google Nexus 10 board to documentation.
-> > 
-> > Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
-> > Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> > ---
-> >  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> > index f8e20e602c20..97a5a678f43c 100644
-> > --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> > @@ -120,6 +120,7 @@ properties:
-> >                - google,snow-rev5                # Google Snow Rev 5+
-> >                - google,spring                   # Google Spring
-> >                - insignal,arndale                # Insignal Arndale
-> > +              - samsung,nexus10-manta           # Samsung Manta (Google Nexus 10)
+On Wed, Nov 19, 2025 at 09:37:48AM +0000, Roy Luo wrote:
+> Add support for the DWC3 USB controller found on Google Tensor G5
+> (codename: laguna). The controller features dual-role functionality
+> and hibernation.
 > 
-> Google Nexus or Samsung Nexus or Samsung Manta? I am sorry, but I am
-> 100% sure that Samsung and Google are two different companies. Google
-> products use only google prefixes, see all other Google devices.
+> The primary focus is implementing hibernation support in host mode,
+> enabling the controller to enter a low-power state (D3). This is
+> particularly relevant during system power state transition and
+> runtime power management for power efficiency.
+> Highlights:
+> - Align suspend callback with dwc3_suspend_common() for deciding
+>   between a full teardown and hibernation in host mode.
+> - Integration with `psw` (power switchable) and `top` power domains,
+>   managing their states and device links to support hibernation.
+> - A notifier callback dwc3_google_usb_psw_pd_notifier() for
+>   `psw` power domain events to manage controller state
+>   transitions to/from D3.
+> - Coordination of the `non_sticky` reset during power state
+>   transitions, asserting it on D3 entry and deasserting on D0 entry
+>   in hibernation scenario.
+> - Handling of high-speed and super-speed PME interrupts
+>   that are generated by remote wakeup during hibernation.
 > 
-> Best regards,
-> Krzysztof
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> Co-developed-by: Joy Chakraborty <joychakr@google.com>
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> Co-developed-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  drivers/usb/dwc3/Kconfig       |  10 +
+>  drivers/usb/dwc3/Makefile      |   1 +
+>  drivers/usb/dwc3/dwc3-google.c | 628 +++++++++++++++++++++++++++++++++
+>  3 files changed, 639 insertions(+)
+>  create mode 100644 drivers/usb/dwc3/dwc3-google.c
 > 
-Google sold the device under it's Nexus brand. But it was built by
-Samsung, not just it's SoC. It's codename is "manta". Google places it 
-in the Samsung directory instead of their own.
-See: https://android.googlesource.com/device/samsung/manta/
-It is a Samsung board, but also a Google device.
+> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+> index 4925d15084f8..bb0e4dc97da3 100644
+> --- a/drivers/usb/dwc3/Kconfig
+> +++ b/drivers/usb/dwc3/Kconfig
+> @@ -200,4 +200,14 @@ config USB_DWC3_GENERIC_PLAT
+>  	  the dwc3 child node in the device tree.
+>  	  Say 'Y' or 'M' here if your platform integrates DWC3 in a similar way.
+>  
+> +config USB_DWC3_GOOGLE
+> +	tristate "Google Platform"
+> +	depends on OF && COMMON_CLK && RESET_CONTROLLER
 
-Best regards,
-Lukas Timmermann
+No build testing?
+
+> +	default n
+
+This is always the default, no need to list it here.
+
+> +	help
+> +	  Support the DesignWare Core USB3 IP found on Google Tensor
+> +	  SoCs, starting with the G5 generation. This driver includes
+> +	  support for hibernation in host mode.
+> +	  Say 'Y' or 'M' if you have one such device.
+
+You forgot the module name :(
+
+> +#define to_dwc3_google(d) container_of((d), struct dwc3_google, dwc)
+
+container_of_const() please.
+
+
+thanks,
+
+greg k-h
