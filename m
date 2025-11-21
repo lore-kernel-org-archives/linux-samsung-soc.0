@@ -1,126 +1,95 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388AF2F066A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2025 08:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EBF219E8C;
+	Fri, 21 Nov 2025 08:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763712678; cv=none; b=bYWWQaJPJ9TY0B1LaWpHh2AvVQbt+v0YqanPjO7F7FhlXSvuboKOncugDNmk4f3VBzAzXvkyY/jqEnLbcsvWZRY4/CS7V+hrZijeU3mhnaMgUj6BpZ9XbSgP9YgTqa9H1etSmCZ9RgGUnXadrgumPt3R0YxjsWLk8zTerTfuJVw=
+	t=1763712977; cv=none; b=N5SB9M5y4eeN2OpUEkFR6R/N3AS5fKctXFjMDIiKLv4iMwTJXnZNbqK/giupGEF+88/G0my4JhNX2VblGp3SvphNngUeGjpduePYIIVloyV22HNlBLXm1MZPyMnH8BN+cK7GNFhq9jvDKp9oHmzPhNsKGDmO5Xl+SKyzi02Mq3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763712678; c=relaxed/simple;
-	bh=sszqIw8VWjdlo11n69qb0lYxc8G42zCRNwnv/cRKMVw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=McRa3czOQzebR3KMBCaLdbmKmZyXCuZDlBtORL6j+i675dA9vZCeITOmo9X9Kk+ceb0hhxwo4DoebE314CspKzcaG7rFJbmgwfhMXNFYW9BsGu3ldfesR0C7nWMN/l5F3qVUdLRqTuVri/LPNIafFuraZ50sao9jMScRYwGerYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ay75cYit; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1763712977; c=relaxed/simple;
+	bh=++S1fgLBKiTEYDVr3ZDON6U+2JRDih2JeUGeY62KsMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/r8OMLOfQXwwVnuDFa/Hd+hkK3WFyzb86xXyT45qW0tCBzeLK1x2SXkynvv5+Aey2uKHyALeSwXktBILSm2XOUKq+CEOmhmbhNAF80P2/yQAGQ5RkJcrAiya49RNaJLbjv0k2DOfgdTaDx+41CypQ7HUfIKh0QjQeuCIDUWwBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elLChGXp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ay75cYit"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251121081114epoutp01b8c8da7f0dbab78be031d54f30edf016~591UyPpzC1175911759epoutp01g
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2025 08:11:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251121081114epoutp01b8c8da7f0dbab78be031d54f30edf016~591UyPpzC1175911759epoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763712674;
-	bh=4E9M62Me/h6erfMIN1DQKUjCF0wnRycI4GmGTblPxAU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=ay75cYitLrlhnC+2yJytnzNnKCLTN+27BHiRDR17aWeZcKA9bW+X4U7SGgLNkXB1p
-	 JDUq2l6n/uAcznsAiRGP61mkjhz+00/oDcKssN/k7NXNvuROa0z3vxGxhFE/uEJ4ln
-	 PGt5RtFZAmhsgjyg8qLAqDkHg3uXvXtgGjenb2qs=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251121081113epcas5p2ff50cb9e60abb66cea9c21e303196e74~591UB06qW0583405834epcas5p2y;
-	Fri, 21 Nov 2025 08:11:13 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4dCSbN41Gpz3hhTL; Fri, 21 Nov
-	2025 08:11:12 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251121081111epcas5p4058d461e132b62b19353c324e4945af4~591SY40PU2083220832epcas5p4d;
-	Fri, 21 Nov 2025 08:11:11 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251121081108epsmtip20f5444687891e55a700ba969ef877ec4~591Padg460059200592epsmtip2Y;
-	Fri, 21 Nov 2025 08:11:08 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Vinod Koul'" <vkoul@kernel.org>
-Cc: <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <johan@kernel.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <aR9EAj82IiLWFQ-t@vaman>
-Subject: RE: [PATCH v9 6/6] phy: exynos5-usbdrd: support SS combo phy for
- ExynosAutov920
-Date: Fri, 21 Nov 2025 13:40:52 +0530
-Message-ID: <00f001dc5abe$66163610$3242a230$@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elLChGXp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD03FC4CEF1;
+	Fri, 21 Nov 2025 08:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763712976;
+	bh=++S1fgLBKiTEYDVr3ZDON6U+2JRDih2JeUGeY62KsMg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=elLChGXpWDVPBrFpLE1IMMMZbQmItEXg8wIZsiVNThvnVWAwhSlHRhSHwHHmvW+81
+	 TEez/dFfS9abZWaMRRW6OLxo1LoAl7jqzg4nsAiyLCa5rjzSPdAFeGZoFpxrh87qdw
+	 OStHA8cVb6t2+jbLYta2FFOJKA7Qo5ROABcFQgYuSgt5Tf+CixYL9UuWwbVHR6LW5e
+	 UEbkzhg5lEBl7zHCe/y1ynUtIDnhdhLPhV5XSBGEYhmwM/7TvWqfUa/BWsCWWGekAC
+	 Ug0KjbHZszjSI/bX5BU748T4F4rAsF759f380d2A5vRc1igU195dCW2eQEHSYEaKNk
+	 MW5knPl/batYw==
+Date: Fri, 21 Nov 2025 09:16:13 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Roy Luo <royluo@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Badhri Jagan Sridharan <badhri@google.com>, Doug Anderson <dianders@google.com>, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: phy: google: Add Google Tensor G5
+ USB PHY
+Message-ID: <20251121-attentive-demonic-jacamar-fc4afb@kuoka>
+References: <20251120-phyb4-v6-0-b6694e1f0caf@google.com>
+ <20251120-phyb4-v6-1-b6694e1f0caf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQId6djPdSPyHc1kqH9U3Yvp+ju6FgKXgK1iAO7OvGACspMeQbRH4LFA
-Content-Language: en-in
-X-CMS-MailID: 20251121081111epcas5p4058d461e132b62b19353c324e4945af4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251010070106epcas5p2a7e051ce5edc0768e5a5d3b3c267f984
-References: <20251010070912.3758334-1-pritam.sutar@samsung.com>
-	<CGME20251010070106epcas5p2a7e051ce5edc0768e5a5d3b3c267f984@epcas5p2.samsung.com>
-	<20251010070912.3758334-7-pritam.sutar@samsung.com> <aR9EAj82IiLWFQ-t@vaman>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251120-phyb4-v6-1-b6694e1f0caf@google.com>
 
-Hi Vinod, 
+On Thu, Nov 20, 2025 at 05:36:41PM +0000, Roy Luo wrote:
 
-> -----Original Message-----
-> From: Vinod Koul <vkoul@kernel.org>
-> Sent: 20 November 2025 10:08 PM
-> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> Cc: kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
-> peter.griffin@linaro.org; kauschluss@disroot.org; johan@kernel.org;
-> ivo.ivanov.ivanov1@gmail.com; m.szyprowski@samsung.com;
-> s.nawrocki@samsung.com; linux-phy@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> rosa.pila@samsung.com; dev.tailor@samsung.com;
-> faraz.ata@samsung.com; muhammed.ali@samsung.com;
-> selvarasu.g@samsung.com
-> Subject: Re: [PATCH v9 6/6] phy: exynos5-usbdrd: support SS combo phy for
-> ExynosAutov920
-> 
-> On 10-10-25, 12:39, Pritam Manohar Sutar wrote:
-> > Add required change in phy driver to support combo SS phy for this SoC.
-> 
-> what is the 'required change', would be good to describe.
-> 
+I read last discussion and patch is fine, except one issue in example I
+never noticed before (see at the end), which I want to fix. Apologies
+for not bringing it up anytime earlier, I missed it. While at it also
+one more nit.
 
-Can you please confirm if commit message is described as below?
+> +description: |
 
-"
-    phy: exynos5-usbdrd: support SS combo phy for ExynosAutov920
+nit: drop |, do not need '|' unless you need to preserve formatting.
 
-    Update phy driver to enable SS combo phy for this SoC. New register
-    definitions, init/reset helper functions and a dedicated PHY
-    configuration structure are added. Add these changes in driver
-    to support combo SS phy for this SoC.
-"
+> +  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
+> +  Google Tensor SoCs, starting with the G5 generation (laguna).
+> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
+> +  and USB3.2/DisplayPort combo PHY IP.
 
-> --
-> ~Vinod
+...
 
-Thank you,
+> > +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        usb_phy: usb_phy@c410000 {
 
-Regards,
-Pritam
+node name: usb-phy, because there are no underscors used anywhere in
+upstream. While at it, you can drop the label as well, because it is not
+uised, so just usb-phy@..... {
+
+Please send new version with these two fixed and:
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
 
