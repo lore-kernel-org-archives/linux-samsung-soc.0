@@ -1,126 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5C3350D4C;
-	Fri, 21 Nov 2025 14:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648112FF673
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2025 14:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763735167; cv=none; b=JL2/2sZoIVt8b5LkJ6j0p/mltokNPLDtsbnBePvNrfrk71FUJLG4FDtqYg06hCjgalbzlrfriwcvo3YKljrxJQOI2DPcHzGt72vKs2Jf8pl8E5Iy2fFZqev/5+nNW8IahN+Mab0rtjA88avQc2lFbTzS8qnMtOKXpz5cMhqpIg4=
+	t=1763735867; cv=none; b=XGUh8HU8l/2MDTAhi71/zQODPrqDJ4hW7zYj3o1HevG6+0iELrCDXA/HGsxyC71XADEToBH2I4W76YLnm7BE2OeNkt+7cnOvdI9x9Y+LjSxm7hB9wK4IFFrTDy7DaxJtStzr1GwHqqV8FSKuC+G+2WwiaOsYYldR+boklWQRHKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763735167; c=relaxed/simple;
-	bh=YbrPtkB06/Jg3xfKlxAAt1KSm17776sC1HO/GQZ1S88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ps6mOmuuRBKKMWAQacJrmSrffmvZ7M8rM/joZ1MnldhnIQMiPD5ZX5nvZe3v+Qkz7JPVU+cxbO+sz9QqxTAg9Mpo678WFdRjgEXOPfbc454YJXJhLKiH6xhDT9xAdjlaftdKJ4+wPVP4uv/ojq8iO8emDFpP6FAPkmGgJXnW9pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YhMTPHHb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763735867; c=relaxed/simple;
+	bh=0mZQY/uQXJ36BbaHR+QAr7ab4swYKuFR9rDpdYSph9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDn81/99Ix6/0cluTR7zAozIw7nVWHR73pK8jw9PpwuPQC6uxR39Wggrer6f2QL7etLiBy2PWe5am4gEg5zUFx6Ymu59wMe4FkDHrtUmNw9Rp0YfHl1V7Tz3G99SXgQCat1cksht3Ju4dvCdEV1OfwJ50EMvHn4jfl1LnxjeLU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MnYY5ovm; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YhMTPHHb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F5AC4CEF1;
-	Fri, 21 Nov 2025 14:26:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1763735166;
-	bh=YbrPtkB06/Jg3xfKlxAAt1KSm17776sC1HO/GQZ1S88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YhMTPHHbVjfqaYVVAyXmbfZ6m+WxBdDRDNMYB/aFueMvGaIimyUb3L6orZbC3BrCi
-	 x4FPHuL/zwELdgYWE/x9SUl5ZFMdEVqWkCGId/cjsX+wyC8Io1ld2f/OKrOvDtb8NX
-	 CF4w3J6HAfPSji1auxCoxp8e44KYJ0c+FrDMPGVA=
-Date: Fri, 21 Nov 2025 15:21:49 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Roy Luo <royluo@google.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Joy Chakraborty <joychakr@google.com>,
-	Naveen Kumar <mnkumar@google.com>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Doug Anderson <dianders@google.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-Message-ID: <2025112144-claw-recolor-49c3@gregkh>
-References: <20251119093749.292926-1-royluo@google.com>
- <20251119093749.292926-3-royluo@google.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MnYY5ovm"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477bf34f5f5so7402725e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2025 06:37:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763735863; x=1764340663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sSqjmw47egF/N94mEdR3iEsMh8hAGTJSLEFFawVJke0=;
+        b=MnYY5ovmWVmtpoO9ACqFSvT1oqMx6goIWNWEHHkHB7hGFx9atCSX4HK7fOs7UKnCvH
+         DA5ApYF5mUlZnWmdiUIcjwmY0mFBZXAmRgjRdISEKgv7uQu0JAaR+zijZLIHRastCEaC
+         RCpYyRD7iWzHP8CpuSeoh4K+X/qajNrOBfkH8a0oRf3/Wg+XNnok4lbPyhB7LRaYl5NS
+         yf1d5ZvxthoBS0cqmrYRA4eW/3XoT1CavO5RaUDFSCWVxS/fWKsdvqYmG3GI4nxGgSzn
+         R8aTLHnV+QO5M5imTACt3Tv62hhly8Hx2LE2s74lekreFbNDhfMe/5KlP1s+T+r0tSco
+         pU1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763735863; x=1764340663;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sSqjmw47egF/N94mEdR3iEsMh8hAGTJSLEFFawVJke0=;
+        b=jH5uwsS1JhgjjIsMKFO132qmZg0NiN3K0uzZpVZb/iNlDBZcxDXQvmNiLQhlAwYtTr
+         oME1hQdWPKCob+GfbYCnLInnyj8hsJ2zNqWjs/Hgf+laJE2QE1Sr5gb+eWW82mQ8k4mg
+         diV66TdO5e1Cy2yiDHPwkVgBMuTna7RQhNJMrpNb4UGRhcOlyOmL9BgAhaCzqqTQosV7
+         P1bGL1xiWfndlOU6fbDjXzJzegMRd2+62DwCNK4sO4yoe71ub/qOCkNM9pIQpGu5OlOy
+         yzxtpofTRMJxb1+UbJ4iQ0FDYGiNWCe0cXPZZ/koF4iscklA7jdhPqctKuBkpsMnGZDy
+         CwJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwibHrDrA1S2txLvhKC8xrjwqyghozd4+3q2bw9NN3nU7Jo4vASMVIqpdu9rZx568n23y42nuyTrN1p1tRTmjP2g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX6rKvC+lTxzzgmTWIDC+sK30QoVqPIGpoqWT69/SojntZVYnh
+	IENMOoHmYcCU8XslC69bm4qZ2dLbAbl5ilUl3paO+5CZrThd5AT/4FMOX3Zan4eik4c=
+X-Gm-Gg: ASbGncsgUyIYHNm+TLE9DqOGa4I6QlEahtbsLt8TIQF/iHqgj1VsylildWhq4Jq+Tns
+	NKGXpDopakSDx8AVJHSF0QLbIEPiuN/ZDLjB0ne4VYDco1mh2SfKURq5QaB5KfUH0jGfTApAuQ+
+	fbbpMUECIcV0TCfojIxDmET/kNjtLj34J43bw5lH9n9m/LeceSEN3jQwseeKq4aD0oSizxIEEbS
+	mspJ1QiqD8nTpsMcS4+h6NIs87vXgGa5Vq6M7Y9NnrYK7GQGV4hcja1hBIDThVMbB9Ou//kClE7
+	3iU9F1KUkdOL5adEComrrqxP09UpXa7+KbfV+y3Ph7nvxaiO8kdnGziTFkqK7OJ9H93/n0FxrNV
+	sShy/Tl7CxPP45/XqyxPpC3poP1enMdHWCvHRtaSZ8Gr3VmxIfN9FMSdvX/X/wM7LfZn5IQyNk1
+	h8G57uQJUPfj7klZwJpWPbR2mpqY5RVLr/EJo+7Opc+jRdJ9jihrDZ9DZuntnA5zgYNBcYsTeb8
+	nYV
+X-Google-Smtp-Source: AGHT+IFD1wPtEuNTYpQ8xE6F8oI1MRv/OML7G8ADOWBdJfI5P969OqsJ7Zy8eXH/iFI9OqcudodJig==
+X-Received: by 2002:a05:600c:190c:b0:477:5c58:3d42 with SMTP id 5b1f17b1804b1-477c017d879mr28676045e9.10.1763735863512;
+        Fri, 21 Nov 2025 06:37:43 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:37e6:ed62:3c8b:2621? ([2a05:6e02:1041:c10:37e6:ed62:3c8b:2621])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-477bf22dfcesm46879155e9.13.2025.11.21.06.37.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Nov 2025 06:37:42 -0800 (PST)
+Message-ID: <79cb0a99-1431-4a3e-9ec2-f70b4154b41f@linaro.org>
+Date: Fri, 21 Nov 2025 15:37:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119093749.292926-3-royluo@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/6] ARM: make register_current_timer_delay()
+ accessible after init
+To: Will McVicker <willmcvicker@google.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Hosung Kim <hosung0.kim@samsung.com>,
+ Rob Herring <robh@kernel.org>, John Stultz <jstultz@google.com>,
+ Youngmin Nam <youngmin.nam@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251120184242.1625820-1-willmcvicker@google.com>
+ <20251120184242.1625820-2-willmcvicker@google.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20251120184242.1625820-2-willmcvicker@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 19, 2025 at 09:37:48AM +0000, Roy Luo wrote:
-> Add support for the DWC3 USB controller found on Google Tensor G5
-> (codename: laguna). The controller features dual-role functionality
-> and hibernation.
-> 
-> The primary focus is implementing hibernation support in host mode,
-> enabling the controller to enter a low-power state (D3). This is
-> particularly relevant during system power state transition and
-> runtime power management for power efficiency.
-> Highlights:
-> - Align suspend callback with dwc3_suspend_common() for deciding
->   between a full teardown and hibernation in host mode.
-> - Integration with `psw` (power switchable) and `top` power domains,
->   managing their states and device links to support hibernation.
-> - A notifier callback dwc3_google_usb_psw_pd_notifier() for
->   `psw` power domain events to manage controller state
->   transitions to/from D3.
-> - Coordination of the `non_sticky` reset during power state
->   transitions, asserting it on D3 entry and deasserting on D0 entry
->   in hibernation scenario.
-> - Handling of high-speed and super-speed PME interrupts
->   that are generated by remote wakeup during hibernation.
-> 
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-> Co-developed-by: Joy Chakraborty <joychakr@google.com>
-> Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> Co-developed-by: Naveen Kumar <mnkumar@google.com>
-> Signed-off-by: Naveen Kumar <mnkumar@google.com>
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
->  drivers/usb/dwc3/Kconfig       |  10 +
->  drivers/usb/dwc3/Makefile      |   1 +
->  drivers/usb/dwc3/dwc3-google.c | 628 +++++++++++++++++++++++++++++++++
->  3 files changed, 639 insertions(+)
->  create mode 100644 drivers/usb/dwc3/dwc3-google.c
-> 
-> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> index 4925d15084f8..bb0e4dc97da3 100644
-> --- a/drivers/usb/dwc3/Kconfig
-> +++ b/drivers/usb/dwc3/Kconfig
-> @@ -200,4 +200,14 @@ config USB_DWC3_GENERIC_PLAT
->  	  the dwc3 child node in the device tree.
->  	  Say 'Y' or 'M' here if your platform integrates DWC3 in a similar way.
->  
-> +config USB_DWC3_GOOGLE
-> +	tristate "Google Platform"
-> +	depends on OF && COMMON_CLK && RESET_CONTROLLER
+On 11/20/25 19:42, Will McVicker wrote:
+> The function register_current_timer_delay() is called from the
+> exynos_mct clocksource driver at probe time. In the event that the
+> exynos_mct driver is probed deferred or the platform manually unbinds
+> and rebinds the driver we need this function available. So drop the
+> __init tag.
 
-No build testing?
-
-> +	default n
-
-This is always the default, no need to list it here.
-
-> +	help
-> +	  Support the DesignWare Core USB3 IP found on Google Tensor
-> +	  SoCs, starting with the G5 generation. This driver includes
-> +	  support for hibernation in host mode.
-> +	  Say 'Y' or 'M' if you have one such device.
-
-You forgot the module name :(
-
-> +#define to_dwc3_google(d) container_of((d), struct dwc3_google, dwc)
-
-container_of_const() please.
+Is this change supposed to fix an existing bug or is it a guess it could 
+happen ? If the latter, I prefer to not pick this patch until is proven 
+it fixes an observed issue.
 
 
-thanks,
 
-greg k-h
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
