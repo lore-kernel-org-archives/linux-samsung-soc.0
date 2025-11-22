@@ -1,171 +1,93 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E17E2F8BEE
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2025 09:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11325785E;
+	Sat, 22 Nov 2025 11:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763803956; cv=none; b=YPEFSQLjcdc9K/Myu3qOosWbAtMcCBsnnUzn6go9abHC3gNArGDjl9VzQI8JGbqWGJwmTaoArCiqN6L4KLmuh46L7BfKexABO238Dq3dKH+eLmGYMQd9Y9BDFccQ5FVkFpp/WbuX1bNhXyYb3Z2cOqMT2EwYsaVtBXd6QdAMsAo=
+	t=1763811319; cv=none; b=b7YzXjs4K8pbwjlgwbD9U+/2sA3br5ggcVU8rBPf6SB+9i3B+yDOwYbo3zo/sfouUNT9Ml8JUyVKhFfBiDB9oZxvstjhQ5G9tXhN2LvezrjlnF85VP5q94Szizmr17D2gAyGsIufNFJVW4PHpAeFp+H+7Wa4Dzx/XVL55JjY8uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763803956; c=relaxed/simple;
-	bh=Q5HPNMlb7k8H4bR8V/awshYeVlGPISIIO6iiMymH7Ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LrXjYHFHfVzbdsvosiItKPQC++lSUwUOc7TwipndEnZlEWQNpo5AuLslkjfCqI3sQviKbjEIoZ0hHTXqfQk6fHmhdKBohcNt2QrW9ZOrnWUPtMJ4KolL7baWkyX25uzsWWz/U5xnp90uQFjKR6GgVY+YecGxySWy67WOBInaMCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VfEq4Bsy; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1763811319; c=relaxed/simple;
+	bh=IxDDJj+ygRvaEnL6Mv9NBj7KbnZR8hk1nQd27frJE4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=klCc86Swbd7toQdUYD4MuM7pC4PSqN8HSsp1lxPZc9I7XvTb8VZkz9N1jUqzmH/Pu0Sc+CICA3NmFYAHxsskx53jltzVXklII+4O1STTnuKNlDFNEUsfpQWjvKHVwvCptY7IxMDUdBuLKWDewK3xaDDScs+XlmsNk3GH2iIrYKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVWk8ULv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VfEq4Bsy"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7b6dd81e2d4so2587783b3a.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2025 01:32:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763803954; x=1764408754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PwfSbVA0IF+INvF3WYKe7TTnKMqGNeoc7QfEa9rVX5E=;
-        b=VfEq4BsyS9P8xXKArM18nG0gmmHEBz2W36s5LX/OJ3y4A4Li7fB4wy8SNZu6zgRjDv
-         DvVtaTYXR0Td0PdmS7DN7Ti9HJgl/mMhBdA8O0Vb3UCvpVv2PYV1YLnOxm7Cbn9pXVli
-         3IZDa7b+HdpEA/IZL+QggOr3evSLQUK+YU3YMIjT8LzrzwWDo2V3IDElWDGbx8E+05fh
-         iiXqwaYioVQgx2NDP4ATStTzssAxN8Nnc/EB33HQwq1xs+cEHtX+78NKoDqvC37eHXRo
-         p0Wx1ARwbHpRd7eE8+uS/fOdSwxQVqgqPtVkJWkeB4L9aZzyF8H2TGEwBgJSmAa6P5uR
-         QCSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763803954; x=1764408754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PwfSbVA0IF+INvF3WYKe7TTnKMqGNeoc7QfEa9rVX5E=;
-        b=FCppwM0Bbw+X6UBcFFJc6I8pNDzYN9k8HmW7otEJ4kEbp3XxZt0KvFC9HDU/sfFJpE
-         rBqdrnSWy0BCVOqw9NGYcBDra3f4X+qpeWF00einqRbpixQs2fpvmrRvEpq1sbQ946QC
-         5hFDqaN7GfkoHGrnXjzZgGnEeuTf6uPyYXZ0SXRYvLKWxcbTDRabjTykJUXOyDe67EEe
-         8DSvY4w5+dU1/bDyAP0twExF3bLBRTHYNrNKm6Vyi02vl4MbeLAzH0G04U+k/tz2ZXXX
-         xSWcrwoRGbDDRSHoL3XuAg3GPm4SxyvLuMMGC1wjApDJFQiBEPNtWt9o9J8E3XGkYJH/
-         nAaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXO6/3CRLuGKXuhYQiqsTNrA5dVWHp8KUkFE+JHOrk218SE8lzJW5dfaPza3hXyMUmk3L6wplINZNOZjdXFoTsNrQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdrFLawj5HdHwlGwJ1OK+T8UF0dzoWJ6wPY9vPQMZRJWJqeVym
-	rSzBnCI7fU/GP332BJQKWLBqdPD9m6RUJAAlFCmzLgCqb5o+aYcQ/HUOAm5MSiYetqgZE0N2gi3
-	ZVag152sGaITao8COorbDv3UDDwdHBRROoyH4dESF
-X-Gm-Gg: ASbGncsq/mSIZaAIOYGK8Z4swbs+am6mi/spNwhXB5RYjxNXv37SjtE212luKwggC4A
-	Rc41WbjdP2Qclp/JMrzuGFVSA1Vx1naWuh7FMv+wicJKdmmlTeKXly9FT8wV5tdMGAQLsE9vjKM
-	1cjCA+Gt+hVXM6D8BkaHUoPQoqGnPZ5BrfkuiRraX8oaSX1X9hjYRoZaEMgZq4yY6hlE5QQ+SJI
-	uTUZewPpVRM4s1NqftujMALkDGeaKFyk/l893uzcZtPyhkLLl9qw/AExjKMiNWGzfe026k=
-X-Google-Smtp-Source: AGHT+IEtl9+0xCjdQa9+R+GC+GJziEZM6X7VYbuzp+qoVNZuwKZ3umLayWIhnoniyzbglxAh3nD2e8iWh7BCQ7kfWaI=
-X-Received: by 2002:a05:7022:6727:b0:119:e56c:18a7 with SMTP id
- a92af1059eb24-11c9d712aebmr2102850c88.15.1763803953323; Sat, 22 Nov 2025
- 01:32:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVWk8ULv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD82FC4CEF5;
+	Sat, 22 Nov 2025 11:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763811319;
+	bh=IxDDJj+ygRvaEnL6Mv9NBj7KbnZR8hk1nQd27frJE4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LVWk8ULvqh2xe440+nRdtGXjxKjU3mwEtE8JpOGjuvw9xErXSWy6vhAc+JoKF19Lu
+	 K9sOBsXMExNo4MNoVOlbYm3cjE530lDTTw+1ePxmwKS5b7AMm8vt4a2jC5FeoZeQ10
+	 Wn+2fpjpzbOKWhpOA5cVrbvgWIwrgCty25xWdmSDH4hniMXOIER0Z2u8lqntilAuBJ
+	 UA+9V19LjRhwX2GbkQAssqQCM87gLF8q01hTuqIw+Py3Z+J3IYzM6qb0oiZFet5fev
+	 rWia9kvLG3i+KW2pca2px+ssMax4/5XvPLL1stNrZwglf/XRrG+WcEHIe5ocgYoAIf
+	 eXC792xrgoSqg==
+Date: Sat, 22 Nov 2025 12:35:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, Will McVicker <willmcvicker@google.com>, 
+	Juan Yescas <jyescas@google.com>, Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: google,gs101-clock: Add DPU
+ clock management unit
+Message-ID: <20251122-silent-fluffy-agama-9a9ad1@kuoka>
+References: <20251120-dpu-clocks-v1-0-11508054eab8@linaro.org>
+ <20251120-dpu-clocks-v1-1-11508054eab8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251119093749.292926-1-royluo@google.com> <20251119093749.292926-3-royluo@google.com>
- <2025112144-claw-recolor-49c3@gregkh>
-In-Reply-To: <2025112144-claw-recolor-49c3@gregkh>
-From: Roy Luo <royluo@google.com>
-Date: Sat, 22 Nov 2025 17:31:56 +0800
-X-Gm-Features: AWmQ_blaOp8wg2UyednGm_iXI4eOxC8hbQ1lsk34Jq7M1OwHCTll441SPBByo04
-Message-ID: <CA+zupgyEP+_q0uO1SpvR_wpk0ZP2EWf_E6FGQpOCLW63dKp5Fw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
-	Doug Anderson <dianders@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251120-dpu-clocks-v1-1-11508054eab8@linaro.org>
 
-On Fri, Nov 21, 2025 at 10:26=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Nov 19, 2025 at 09:37:48AM +0000, Roy Luo wrote:
-> > Add support for the DWC3 USB controller found on Google Tensor G5
-> > (codename: laguna). The controller features dual-role functionality
-> > and hibernation.
-> >
-> > The primary focus is implementing hibernation support in host mode,
-> > enabling the controller to enter a low-power state (D3). This is
-> > particularly relevant during system power state transition and
-> > runtime power management for power efficiency.
-> > Highlights:
-> > - Align suspend callback with dwc3_suspend_common() for deciding
-> >   between a full teardown and hibernation in host mode.
-> > - Integration with `psw` (power switchable) and `top` power domains,
-> >   managing their states and device links to support hibernation.
-> > - A notifier callback dwc3_google_usb_psw_pd_notifier() for
-> >   `psw` power domain events to manage controller state
-> >   transitions to/from D3.
-> > - Coordination of the `non_sticky` reset during power state
-> >   transitions, asserting it on D3 entry and deasserting on D0 entry
-> >   in hibernation scenario.
-> > - Handling of high-speed and super-speed PME interrupts
-> >   that are generated by remote wakeup during hibernation.
-> >
-> > Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-> > Co-developed-by: Joy Chakraborty <joychakr@google.com>
-> > Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> > Co-developed-by: Naveen Kumar <mnkumar@google.com>
-> > Signed-off-by: Naveen Kumar <mnkumar@google.com>
-> > Signed-off-by: Roy Luo <royluo@google.com>
-> > ---
-> >  drivers/usb/dwc3/Kconfig       |  10 +
-> >  drivers/usb/dwc3/Makefile      |   1 +
-> >  drivers/usb/dwc3/dwc3-google.c | 628 +++++++++++++++++++++++++++++++++
-> >  3 files changed, 639 insertions(+)
-> >  create mode 100644 drivers/usb/dwc3/dwc3-google.c
-> >
-> > diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> > index 4925d15084f8..bb0e4dc97da3 100644
-> > --- a/drivers/usb/dwc3/Kconfig
-> > +++ b/drivers/usb/dwc3/Kconfig
-> > @@ -200,4 +200,14 @@ config USB_DWC3_GENERIC_PLAT
-> >         the dwc3 child node in the device tree.
-> >         Say 'Y' or 'M' here if your platform integrates DWC3 in a simil=
-ar way.
-> >
-> > +config USB_DWC3_GOOGLE
-> > +     tristate "Google Platform"
-> > +     depends on OF && COMMON_CLK && RESET_CONTROLLER
->
-> No build testing?
+On Thu, Nov 20, 2025 at 09:06:11PM +0000, Peter Griffin wrote:
+> Add dt schema documentation and clock IDs for the Display Process Unit
+> (DPU) clock management unit (CMU). This CMU feeds IPs such as image scaler,
+> enhancer and compressor.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../bindings/clock/google,gs101-clock.yaml         | 19 ++++++++++++
+>  include/dt-bindings/clock/google,gs101.h           | 36 ++++++++++++++++++++++
+>  2 files changed, 55 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> index 09e679c1a9def03d53b8b493929911ea902a1763..1257be9c54a42ea2387e1112e53b5ee1f03e09f5 100644
+> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> @@ -34,6 +34,7 @@ properties:
+>        - google,gs101-cmu-hsi2
+>        - google,gs101-cmu-peric0
+>        - google,gs101-cmu-peric1
+> +      - google,gs101-cmu-dpu
 
-Will add depends on COMPILE_TEST.
+Standard comment - oddly placed. d < p. Or you just always keep adding
+at the end?
 
->
-> > +     default n
->
-> This is always the default, no need to list it here.
+>  
+>    clocks:
+>      minItems: 1
+> @@ -171,6 +172,24 @@ allOf:
+>              - const: bus
+>              - const: ip
+>  
+> +  - if:
 
-Will drop it.
+This as well follows alphanumeric placement.
 
->
-> > +     help
-> > +       Support the DesignWare Core USB3 IP found on Google Tensor
-> > +       SoCs, starting with the G5 generation. This driver includes
-> > +       support for hibernation in host mode.
-> > +       Say 'Y' or 'M' if you have one such device.
->
-> You forgot the module name :(
->
-> > +#define to_dwc3_google(d) container_of((d), struct dwc3_google, dwc)
->
-> container_of_const() please.
+Best regards,
+Krzysztof
 
-Ack, will fix it in the next version.
-
->
->
-> thanks,
->
-> greg k-h
-
-Thanks for the review.
-
-Regards,
-Roy Luo
