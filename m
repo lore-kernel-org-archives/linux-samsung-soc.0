@@ -1,150 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67B315665C;
-	Sun, 23 Nov 2025 09:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461BA1BBBE5;
+	Sun, 23 Nov 2025 20:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763890249; cv=none; b=cwtUEfYykAWcGsmX34oZVuN+k8GxvdEU7x2WGy95vXsYEnCRatNyMgv41V2vAYWE4/eWtzBGhe/NYUBpvyl+AYDq10wSYRSLZXXwhbjf5rBdIZ65Ae9JpPh2WyBSI6acJPFXylAnabd9s4OwxEObgTgLmbMgo7rtDXAX3r/JgRs=
+	t=1763930044; cv=none; b=EzCy3Y9KBVE1fc1EMotggrVHzGn8smAoFyEGtghvL/nJ7GcpcNtfRtGhPjrQqj0uxYrEEktihbNLmkvu91D9t4wng3uM3ZkebKd8iZZXW25R6bQnjMUIyW5f2dlTuJzs2Lkp3Q39qlXEUbIP+n9WHahrWeEW6/+bOaT+9hjCYzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763890249; c=relaxed/simple;
-	bh=K3TpFSb9ANyNnS8xU/rAnNEn5bG4SKZpFHbcEF2yWDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ss3syIl5opOaUclXfz7FTrRMYUR1uqMy55GNM5Syzc6lSLDcqQuGgQtpXr3Bx+QgHzIxYnWchpFQnlQWsXEQcufs6RBb78QCpkehy1wz9LpVscis8mB08G2Cg6jAxCTkbp2yslWtvIWkSvADGuX3WtjMArIvuTJVm/F+rCwtpjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPoLXw+X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763930044; c=relaxed/simple;
+	bh=DsPcWInfZ6GVQ99m1bNCsnMq1TkaF+RzApr7FO+cajs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFnirH26rDwJjJBjifmFCWSc0QcbAmn4xvxgMrXY/ONYGscIPyDkP5nroX0mZPQUvk4UqL1CKV5VKsTTFdoQ9zb9v6p/EVv6Zq7zGvMAOCtsOMMo2OGY3lAj67QT51DeZL8oF67QbOMHvdY5hBzA8NP87MqrPYj6fmf8RZDICqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=EUxLKgZv; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPoLXw+X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353CFC113D0;
-	Sun, 23 Nov 2025 09:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763890248;
-	bh=K3TpFSb9ANyNnS8xU/rAnNEn5bG4SKZpFHbcEF2yWDc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BPoLXw+XdWH117b9FBR/onCqy6kVXPJb3E1ZvIjTilTnCsCox4SuljHotuF3Ky5aN
-	 CO/E1LHNxYOZwtXOcMaahZLbFgaWiC2QN3RHEycUOFr8OoWyT1YKKmB/wbgv8UZBwd
-	 XsCBnqGHqnMqnQfcw8yTcYchtgcqOiO1/NkNLMSB2gHbJvPIEdujWz2KhwzMXnSVu6
-	 sGJ6tOkqO76OYbY4yc121Ku9LDIgS+Nk0E4cRj41TKGrV8GmRTY1xsujvhtG7vithP
-	 jhWM0fsXYklEHxLIxgjo8PWBxH5yONGF1D2KuCMgBx7EjbqAeE3NgWx0xlZplx/A2T
-	 UAmxq/1rwk+4w==
-Message-ID: <699d4476-aaaa-4cec-9e2c-240348950e4c@kernel.org>
-Date: Sun, 23 Nov 2025 10:30:42 +0100
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="EUxLKgZv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CSgH1ZaYBrxKmSAB6ChlLxpJ6NUOOuEnqqcyJnSbdbw=; b=EUxLKgZvejQzA83OMk/dgKzdez
+	DtjkRGcx3Abo0/ozjfZ8XDtFsuqAclp5UUdY0DkSZ9jO0CXZZVgfDiVTfdLoZZMjREIJZr2qZWKaq
+	2c6Ll4p5qKdlEPyekY4XaJ7aDjx1wX3q7O6i5UMewlYPLPk/LelEW4njYFka7R5MX+GqfUWJgi79H
+	4J5bhbELxKUXt2CGBSv262saQhAXhF2PRV0uPwuVu8ciyq09Py9qM1ZZIcg1JN9L5SIolg76UWeBc
+	F4NCsDmZWODHMum0v8i+R/qBTIA8WVe/vKH+yBrgx+0KgnaoRMM1bA35UBRajWdcY/nalc/zSDXg5
+	SCrh9MNQ==;
+Received: from authenticated user
+	by stravinsky.debian.org with utf8esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <jspricke@debian.org>)
+	id 1vNGmL-0022dN-Vb; Sun, 23 Nov 2025 20:33:50 +0000
+Date: Sun, 23 Nov 2025 21:33:47 +0100
+From: Jochen Sprickerhof <jspricke@debian.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Salvatore Bonaccorso <carnil@debian.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, 1121211@bugs.debian.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: Bug#1121211: UBSAN: array-index-out-of-bounds in
+ /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:178:18
+Message-ID: <aSNvq-YjABITPQV5@vis>
+References: <176383554642.17713.6408785381758213911.reportbug@vis>
+ <aSIYDN5eyKFKoXKL@eldamar.lan>
+ <20251122203856.GA1099833@ax162>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: mfd: maxim,max77759: add charger child
- node
-To: amitsd@google.com, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
- <20251123-max77759-charger-v1-2-6b2e4b8f7f54@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251123-max77759-charger-v1-2-6b2e4b8f7f54@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 23/11/2025 09:35, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
-> 
-> The Maxim MAX77759 MFD includes a charger function, hence add its
-> binding as a property. Also, update the example to include charger.
-> 
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> ---
->  Documentation/devicetree/bindings/mfd/maxim,max77759.yaml | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> index 525de9ab3c2b..29132f73f2c8 100644
-> --- a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> @@ -37,6 +37,9 @@ properties:
->    nvmem-0:
->      $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
->  
-> +  charger:
-> +    $ref: /schemas/power/supply/maxim,max77759-charger.yaml
-
-You need to explain dependencies/merging in the cover letter. This patch
-now cannot be merged alone through MFD.
-
-Or just decouple the dependency and list here only compatible, assuming
-this child node even stays.
-
-> +
->  required:
->    - compatible
->    - interrupts
-> @@ -95,5 +98,14 @@ examples:
->                      };
->                  };
->              };
-> +
-> +            charger {
-> +                compatible = "maxim,max77759-charger";
-> +                power-supplies = <&maxtcpc>;
-
-Feels like you miss here battery.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="//E4p0t+s0jrCbp/"
+Content-Disposition: inline
+In-Reply-To: <20251122203856.GA1099833@ax162>
+Organization: The Debian Project
+X-Debian-User: jspricke
 
 
-Best regards,
-Krzysztof
+--//E4p0t+s0jrCbp/
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+
+Hi Nathan,
+
+* Nathan Chancellor <nathan@kernel.org> [2025-11-22 13:38]:
+>I bet it is the same problem as the ones I fixed in
+>
+>  6dc445c19050 ("clk: bcm: rpi: Assign ->num before accessing ->hws")
+>  9368cdf90f52 ("clk: bcm: dvp: Assign ->num before accessing ->hws")
+>
+>So something like this?
+>
+>Cheers,
+>Nathan
+>
+>diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+>index 5f1a4f5e2e59..5b21025338bd 100644
+>--- a/drivers/clk/samsung/clk-exynos-clkout.c
+>+++ b/drivers/clk/samsung/clk-exynos-clkout.c
+>@@ -175,6 +175,7 @@ static int exynos_clkout_probe(struct platform_device *pdev)
+> 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
+> 	clkout->mux.lock = &clkout->slock;
+>
+>+	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
+> 	clkout->data.hws[0] = clk_hw_register_composite(NULL, "clkout",
+> 				parent_names, parent_count, &clkout->mux.hw,
+> 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
+>@@ -185,7 +186,6 @@ static int exynos_clkout_probe(struct platform_device *pdev)
+> 		goto err_unmap;
+> 	}
+>
+>-	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
+> 	ret = of_clk_add_hw_provider(clkout->np, of_clk_hw_onecell_get, &clkout->data);
+> 	if (ret)
+> 		goto err_clk_unreg;
+>
+
+This fixes it for me, feel free to add a
+
+Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
+
+Thanks!
+
+Jochen
+
+--//E4p0t+s0jrCbp/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAmkjb6cACgkQW//cwljm
+lDMoDg//WSStBBpXj6C9bzA/OXvHMMCtdAs1iFeSvljh/6z+MJLvZ1b4Vo5zok1/
+lbQHn5aM/rYeSKlCM4vEiIJdMEaDD8tYD0TLgGAwDirnB/GStWYVRClBiEyLlhmf
+0/9at7smuicoYDM6/5AMglwznd4Dqx8WzNjDfBFe5PzkDd41+/vQ+M9uc8ql9F0A
+KI4YpGrwXCo86y213ke/9EALuafdzI0iY3+/DVypdB5sp5dtwhvfY3T0B1Is4Ldh
+wBhZqz3f5eOn5U87MHEFmcRDr01z37Oyj8kRFwMPWy7WJ9wn5Xc8o4wC36oRgwBY
+5FpvRXTcoZL4V6fnL+9243yz2BOV6ZUtQ5PQEvtHcwGDn/COlU4Ibn6XO1pryRxO
+lEksJbWGN5c6wd+NwxaXdb+U3wABQY8r12RwhZHEXAgIdBBHnmJ5NVNQDR+OF/kX
+iSpW2QokVWpi/D6U5gjuSC+bkce0XLoKHawDV8eNDnLpW9hQU/1mhhbNZZGzp2Ur
+YBul0za2dSfSklh/bH/7PsIiQrKJvYD+14u6ZWOuF2bZLZ/mMr6bjYr6k/x4iC0J
+njfvrmxBMq0c8kYBaS+g7mOTGEON7vbnP0JK6BW/MfQjYZO/jKmu1MCUhIgKhwsq
+EcGRUeH+NeSuA1DUbVd4t/NbxzzQjhTH1jQFxj8jCHEFdtB/oMM=
+=txjC
+-----END PGP SIGNATURE-----
+
+--//E4p0t+s0jrCbp/--
