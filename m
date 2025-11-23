@@ -1,134 +1,104 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461BA1BBBE5;
-	Sun, 23 Nov 2025 20:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE6974C14;
+	Sun, 23 Nov 2025 22:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763930044; cv=none; b=EzCy3Y9KBVE1fc1EMotggrVHzGn8smAoFyEGtghvL/nJ7GcpcNtfRtGhPjrQqj0uxYrEEktihbNLmkvu91D9t4wng3uM3ZkebKd8iZZXW25R6bQnjMUIyW5f2dlTuJzs2Lkp3Q39qlXEUbIP+n9WHahrWeEW6/+bOaT+9hjCYzc=
+	t=1763936848; cv=none; b=jdY8qyMhwntQen4u7AZSbAHcZ7INTllxVN49UotZ4dAZ8QHRLiJ1Bdk2GW29KP9lpEJ0ZuOiGU8oWN9r7l+agFolK0HdlbeFJeGc1xKTbq9GlDlkax6M077m/9JsAnVDWhZqjkwBLloBkmDizxzJrHq+y1glWJIngF6ijzRW4oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763930044; c=relaxed/simple;
-	bh=DsPcWInfZ6GVQ99m1bNCsnMq1TkaF+RzApr7FO+cajs=;
+	s=arc-20240116; t=1763936848; c=relaxed/simple;
+	bh=quDPOJ1bxIEUTCsg+6JgowNESYD93x73iDlGuTIuswM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFnirH26rDwJjJBjifmFCWSc0QcbAmn4xvxgMrXY/ONYGscIPyDkP5nroX0mZPQUvk4UqL1CKV5VKsTTFdoQ9zb9v6p/EVv6Zq7zGvMAOCtsOMMo2OGY3lAj67QT51DeZL8oF67QbOMHvdY5hBzA8NP87MqrPYj6fmf8RZDICqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=EUxLKgZv; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXC1jZPunAcoLJBRYj6X6oUxiqJIJ/rj02ETs9BfLPQJsW6u8Fq+H43yTxsSmxaGxqlqsPQDA0tg/gnpUGGHUfuWsXwy6b8AOJ3h+KWJixk/Ppqput3IlcamDOlrhagcndJLwR6ndkWGNQI3p5SDxgIJ2QxFupLM7r8Co+7pSPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=eZctvz/A; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="EUxLKgZv"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CSgH1ZaYBrxKmSAB6ChlLxpJ6NUOOuEnqqcyJnSbdbw=; b=EUxLKgZvejQzA83OMk/dgKzdez
-	DtjkRGcx3Abo0/ozjfZ8XDtFsuqAclp5UUdY0DkSZ9jO0CXZZVgfDiVTfdLoZZMjREIJZr2qZWKaq
-	2c6Ll4p5qKdlEPyekY4XaJ7aDjx1wX3q7O6i5UMewlYPLPk/LelEW4njYFka7R5MX+GqfUWJgi79H
-	4J5bhbELxKUXt2CGBSv262saQhAXhF2PRV0uPwuVu8ciyq09Py9qM1ZZIcg1JN9L5SIolg76UWeBc
-	F4NCsDmZWODHMum0v8i+R/qBTIA8WVe/vKH+yBrgx+0KgnaoRMM1bA35UBRajWdcY/nalc/zSDXg5
-	SCrh9MNQ==;
-Received: from authenticated user
-	by stravinsky.debian.org with utf8esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <jspricke@debian.org>)
-	id 1vNGmL-0022dN-Vb; Sun, 23 Nov 2025 20:33:50 +0000
-Date: Sun, 23 Nov 2025 21:33:47 +0100
-From: Jochen Sprickerhof <jspricke@debian.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Salvatore Bonaccorso <carnil@debian.org>,
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="eZctvz/A"
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 953B51C00AB; Sun, 23 Nov 2025 23:27:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1763936843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xAznBhU7b6p8zrOxLbtkgNtB3cV8Rju+4Nj3dJJodo=;
+	b=eZctvz/AuXpRgwETlv1Z76brt46sfWxyZhJzJJYhqbkkreqWfOEmZbhoFcyVgHOka59Cq9
+	khR5WEhVnzLBx/wPiaxlkz9oI2vkUApME9IEhexQqCfe8IFDTerizsPYYCji2GnTplKXqw
+	XrwAHnIJkkD0x55zUhov5YKJb4YpzDQ=
+Date: Sun, 23 Nov 2025 23:27:23 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Julius Werner <jwerner@chromium.org>,
+	William McVicker <willmcvicker@google.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Drew Fustini <fustini@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, 1121211@bugs.debian.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: Bug#1121211: UBSAN: array-index-out-of-bounds in
- /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:178:18
-Message-ID: <aSNvq-YjABITPQV5@vis>
-References: <176383554642.17713.6408785381758213911.reportbug@vis>
- <aSIYDN5eyKFKoXKL@eldamar.lan>
- <20251122203856.GA1099833@ax162>
+	Linus Walleij <linus.walleij@linaro.org>,
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 0/4] arm64: google: Introduce frankel, blazer, and
+ mustang boards
+Message-ID: <aSOKS35/huSWd/RW@duo.ucw.cz>
+References: <20251111192422.4180216-1-dianders@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="//E4p0t+s0jrCbp/"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YeGGzS8kR2qSk1N0"
 Content-Disposition: inline
-In-Reply-To: <20251122203856.GA1099833@ax162>
-Organization: The Debian Project
-X-Debian-User: jspricke
+In-Reply-To: <20251111192422.4180216-1-dianders@chromium.org>
 
 
---//E4p0t+s0jrCbp/
-Content-Type: text/plain; charset=us-ascii; format=flowed
+--YeGGzS8kR2qSk1N0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nathan,
+Hi!
 
-* Nathan Chancellor <nathan@kernel.org> [2025-11-22 13:38]:
->I bet it is the same problem as the ones I fixed in
->
->  6dc445c19050 ("clk: bcm: rpi: Assign ->num before accessing ->hws")
->  9368cdf90f52 ("clk: bcm: dvp: Assign ->num before accessing ->hws")
->
->So something like this?
->
->Cheers,
->Nathan
->
->diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
->index 5f1a4f5e2e59..5b21025338bd 100644
->--- a/drivers/clk/samsung/clk-exynos-clkout.c
->+++ b/drivers/clk/samsung/clk-exynos-clkout.c
->@@ -175,6 +175,7 @@ static int exynos_clkout_probe(struct platform_device *pdev)
-> 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
-> 	clkout->mux.lock = &clkout->slock;
->
->+	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
-> 	clkout->data.hws[0] = clk_hw_register_composite(NULL, "clkout",
-> 				parent_names, parent_count, &clkout->mux.hw,
-> 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
->@@ -185,7 +186,6 @@ static int exynos_clkout_probe(struct platform_device *pdev)
-> 		goto err_unmap;
-> 	}
->
->-	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
-> 	ret = of_clk_add_hw_provider(clkout->np, of_clk_hw_onecell_get, &clkout->data);
-> 	if (ret)
-> 		goto err_clk_unreg;
->
+> This series adds barebones device trees for Pixel 10 (frankel), Pixel
+> 10 Pro (blazer), and Pixel 10 Pro XL (mustang). With a yet-unreleased
+> bootloader these can boot to a UART command prompt from an initramfs.
 
-This fixes it for me, feel free to add a
+Well, booting to full system with working cameras would be nicer, but
+this is good start. Do you plan / do you have resources for full
+support in some reasonable timeframe?=20
 
-Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
+Please cc phone-devel@vger with phone related patches.
 
-Thanks!
+And... thanks! :-).
 
-Jochen
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, Netanyahu and Musk!
 
---//E4p0t+s0jrCbp/
+--YeGGzS8kR2qSk1N0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAmkjb6cACgkQW//cwljm
-lDMoDg//WSStBBpXj6C9bzA/OXvHMMCtdAs1iFeSvljh/6z+MJLvZ1b4Vo5zok1/
-lbQHn5aM/rYeSKlCM4vEiIJdMEaDD8tYD0TLgGAwDirnB/GStWYVRClBiEyLlhmf
-0/9at7smuicoYDM6/5AMglwznd4Dqx8WzNjDfBFe5PzkDd41+/vQ+M9uc8ql9F0A
-KI4YpGrwXCo86y213ke/9EALuafdzI0iY3+/DVypdB5sp5dtwhvfY3T0B1Is4Ldh
-wBhZqz3f5eOn5U87MHEFmcRDr01z37Oyj8kRFwMPWy7WJ9wn5Xc8o4wC36oRgwBY
-5FpvRXTcoZL4V6fnL+9243yz2BOV6ZUtQ5PQEvtHcwGDn/COlU4Ibn6XO1pryRxO
-lEksJbWGN5c6wd+NwxaXdb+U3wABQY8r12RwhZHEXAgIdBBHnmJ5NVNQDR+OF/kX
-iSpW2QokVWpi/D6U5gjuSC+bkce0XLoKHawDV8eNDnLpW9hQU/1mhhbNZZGzp2Ur
-YBul0za2dSfSklh/bH/7PsIiQrKJvYD+14u6ZWOuF2bZLZ/mMr6bjYr6k/x4iC0J
-njfvrmxBMq0c8kYBaS+g7mOTGEON7vbnP0JK6BW/MfQjYZO/jKmu1MCUhIgKhwsq
-EcGRUeH+NeSuA1DUbVd4t/NbxzzQjhTH1jQFxj8jCHEFdtB/oMM=
-=txjC
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaSOKSwAKCRAw5/Bqldv6
+8sPoAJ9cO3b8E0fHRQKhJnNaeZSI9nez0QCcDEiBnY8VsCk6Oi+ran/TdVPmbIw=
+=DqOt
 -----END PGP SIGNATURE-----
 
---//E4p0t+s0jrCbp/--
+--YeGGzS8kR2qSk1N0--
