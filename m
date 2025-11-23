@@ -1,178 +1,116 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD00C296BBF;
-	Sun, 23 Nov 2025 07:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AB621A449;
+	Sun, 23 Nov 2025 08:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763884644; cv=none; b=hF+9EA6jQy8ErlEdYMzubLq0//Oo+SIRJvXNCdcJIcVd4LcfFvqHgUPPuBhk+35pTu2yeyuZIGu+MGVzAAL2wW6mK73/YSnprbpGvsfBWAHI4rU3FYbqD3Ve4nYBt2pAxfMKFM6ZZsh/X5RUJE5ziEU2Yytjl+6ivGef28mUJqc=
+	t=1763886984; cv=none; b=f1G9+bYthwZimRoPLSv+X+qAHQa4qEcJ3caeAe6IXCmwVzXvJWZp5je7s10u0tt8Q+p7IDIn8Kz4BeHw6+dIoCToIs2gW7ppMtNMnApFu8ZXI0CVDXhWz4sqn5+chGzFl0ud2d4GGDtjkgcy7d7P3HPqD9AIieLpczPcX419rK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763884644; c=relaxed/simple;
-	bh=07fibrjq3AehFBiLvBRlFXLmwbeNPWka5aOPAVe/Xg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PB09sRSW8HuarYpPvTWL3Rd/AJujcRYSZFasgmv+8ZkUlCh1mPHs4AXIQ5ySVHkgBFRTp/0Bzc5SsBOniz9uRdrbap17Wg4kIcssortR1+bn3RFrD3dyr9T4/noFfh4eWV3ia2m5dfoSnxD6omx/RsV7edw1sevd59bUB9Vtv48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=vL32KQFI; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+	s=arc-20240116; t=1763886984; c=relaxed/simple;
+	bh=BpGpxP773zsyhDqiIdTbkt1LHwhw61h1r+wf9K8eXBA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gs17CM6ovRqKEEA5zKGVklumo5I4ilmDg9RgsFNBp9fSw2dO8f35zYfVkEoFt6KWnCu/v0ChhTSM6bVDThRiCUBhlO1B0Zk6Mf02oLqAP854lGjBRiiW4R5kx5x1T//1spxR5UUQOpsR+mNNMvGDaxYN/ZlXeQwOyKDt+uSb0Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQ2e94La; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="vL32KQFI"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GpB4yh45qCp43guBMnthfLFR1O8G6mMWycl7GO89RSQ=; b=vL32KQFIIphQiUMdbofpGGQ8jR
-	VL5I+OsiTb8b4+wYFd9pBnewgn4tzUCMMQ9QimR3TdDdhKqFY1Ep3QImhyRIXhfMVcWJjfACmehXm
-	TqrX/LC0tkUvSFOTVyedoAUeMDD+kIgCks35BFx+Ke4TveiXB2nVdFvG7iEyK66VoU9gDFrYksZ+2
-	GIqWQGGb3EPssVZPxUQ9i/FJRmlJtKjyqzSy8nQLzEYBO3XNW3kdfDQTbWfiyVvRP9+fdbzhJuSgb
-	SJe0bqnFhIkfvHgmKSaqd+hFRt/C0dJCNOs+f7liPxDBRpxaVawk05iommkBsFMOz3v4OFrTUsH5z
-	X+XwP0XA==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <carnil@debian.org>)
-	id 1vN4y6-001by6-M1; Sun, 23 Nov 2025 07:57:11 +0000
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 85DA4BE2EE7; Sun, 23 Nov 2025 08:57:09 +0100 (CET)
-Date: Sun, 23 Nov 2025 08:57:09 +0100
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Nathan Chancellor <nathan@kernel.org>, 1121211@bugs.debian.org,
-	Jochen Sprickerhof <jspricke@debian.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: Bug#1121211: UBSAN: array-index-out-of-bounds in
- /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:178:18
-Message-ID: <aSK-VbbaGL4fAfkh@eldamar.lan>
-References: <176383554642.17713.6408785381758213911.reportbug@vis>
- <aSIYDN5eyKFKoXKL@eldamar.lan>
- <176383554642.17713.6408785381758213911.reportbug@vis>
- <20251122203856.GA1099833@ax162>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQ2e94La"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C90EC113D0;
+	Sun, 23 Nov 2025 08:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763886984;
+	bh=BpGpxP773zsyhDqiIdTbkt1LHwhw61h1r+wf9K8eXBA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=hQ2e94LaWlWci7Q2fJQVO0RbwNmlcAiWS0JKfKgDd1tMjCImRXuTmxt57poYlYSSA
+	 ILX0dRv3sKWG/8l0R31AoAd3PQWPEWAnpZpW0GiuuhXdYtrIl+Of2vqnSRD27uHhLE
+	 /c8S9dRVbORd8DXUoFs5VGbCfhUztn/K9KG2mQbDrJnjRcZi1Tdk2eDA4FZNyUe7J1
+	 jABSOiZOvdAsCExuLcUBtwl1QE2NDg2viN9D3Lyi0ymiNOu9W8tMgUasJ0R2MG3BaA
+	 xYFJis95h5HPt8CSAIMTUwDGogH8RRpNoKwye9NpiQoQeBMM406jj3zyib/ENoudg8
+	 nh68fYuRS28+g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394EFCFA46B;
+	Sun, 23 Nov 2025 08:36:24 +0000 (UTC)
+From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
+Subject: [PATCH 0/6] Introduce MAX77759 charger driver
+Date: Sun, 23 Nov 2025 08:35:47 +0000
+Message-Id: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251122203856.GA1099833@ax162>
-X-Debian-User: carnil
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGPHImkC/x2MQQqAIBAAvyJ7TlBBrb4SHaw220MWK4QQ/j3pO
+ AwzL2RkwgyjeIHxoUxXaqA7AesRUkRJW2MwylitlZVnKN57O8imOSLL3prFGbc5pwO07Gbcqfz
+ Laa71A6K3ftdiAAAA
+X-Change-ID: 20251105-max77759-charger-852b626d661a
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Badhri Jagan Sridharan <badhri@google.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
+ Amit Sunil Dhamne <amitsd@google.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763886983; l=1935;
+ i=amitsd@google.com; s=20241031; h=from:subject:message-id;
+ bh=BpGpxP773zsyhDqiIdTbkt1LHwhw61h1r+wf9K8eXBA=;
+ b=BWVPQuQsjLSNkUQqrd15xu/QTq3ozxwwQ2vwMMcB/GYDKnpH5yHZo2OYSKPSBUfx/euLcrJbV
+ nJPACkoU7CFCwihqtmUdLp8NRbWZ13t2vr/ibMQv0GZBPk8vharpQqE
+X-Developer-Key: i=amitsd@google.com; a=ed25519;
+ pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
+X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
+ auth_id=262
+X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
+Reply-To: amitsd@google.com
 
-Hi Nathan,
+MAX77759 PMIC is used in Pixel 6 and 6 Pro (Oriole/Raven) boards.
+One of the functions of the MAX77759 PMIC is a battery charger. This
+patchset introduces a driver for this function. One of the unique
+features of this charger driver is that it works with a USB input where
+the Type-C controller is TCPCI based.
 
-On Sat, Nov 22, 2025 at 01:38:56PM -0700, Nathan Chancellor wrote:
-> On Sat, Nov 22, 2025 at 09:07:40PM +0100, Salvatore Bonaccorso wrote:
-> > Hi,
-> > 
-> > Jochen reported the folowing while booting 6.17.8 based kernel in
-> > Debian:
-> > 
-> > On Sat, Nov 22, 2025 at 07:19:06PM +0100, Jochen Sprickerhof wrote:
-> > > Package: src:linux
-> > > Version: 6.17.8-1
-> > > Severity: normal
-> > > 
-> > > First time booting into 6.17.8-1 and first time I see UBSAN in my logs:
-> > > 
-> > > [Nov21 08:31] Booting Linux on physical CPU 0x100
-> > > [  +0,012977] ------------[ cut here ]------------
-> > > [  +0,000017] UBSAN: array-index-out-of-bounds in /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:178:18
-> > > [  +0,000038] index 0 is out of range for type 'clk_hw *[*]'
-> > > [  +0,000025] CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.8+deb14-armmp #1 NONE  Debian 6.17.8-1
-> > > [  +0,000018] Hardware name: Samsung Exynos (Flattened Device Tree)
-> > > [  +0,000007] Call trace:
-> > > [  +0,000009]  unwind_backtrace from show_stack+0x18/0x1c
-> > > [  +0,000042]  show_stack from dump_stack_lvl+0x54/0x68
-> > > [  +0,000036]  dump_stack_lvl from ubsan_epilogue+0x8/0x34
-> > > [  +0,000025]  ubsan_epilogue from __ubsan_handle_out_of_bounds+0x88/0x8c
-> > > [  +0,000024]  __ubsan_handle_out_of_bounds from exynos_clkout_probe+0x38c/0x428
-> > > [  +0,000029]  exynos_clkout_probe from platform_probe+0x64/0x98
-> > > [  +0,000034]  platform_probe from really_probe+0xd8/0x3ac
-> > > [  +0,000031]  really_probe from __driver_probe_device+0x94/0x1dc
-> > > [  +0,000027]  __driver_probe_device from driver_probe_device+0x3c/0xd8
-> > > [  +0,000027]  driver_probe_device from __driver_attach+0xd8/0x1d8
-> > > [  +0,000028]  __driver_attach from bus_for_each_dev+0x84/0xd4
-> > > [  +0,000026]  bus_for_each_dev from bus_add_driver+0xf4/0x218
-> > > [  +0,000023]  bus_add_driver from driver_register+0x8c/0x140
-> > > [  +0,000027]  driver_register from do_one_initcall+0x50/0x24c
-> > > [  +0,000023]  do_one_initcall from kernel_init_freeable+0x288/0x2fc
-> > > [  +0,000022]  kernel_init_freeable from kernel_init+0x24/0x140
-> > > [  +0,000022]  kernel_init from ret_from_fork+0x14/0x28
-> > > [  +0,000015] Exception stack(0xf0835fb0 to 0xf0835ff8)
-> > > [  +0,000012] 5fa0:                                     00000000 00000000 00000000 00000000
-> > > [  +0,000011] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > > [  +0,000009] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > > [  +0,000007] ---[ end trace ]---
-> > > [  +0,000226] ------------[ cut here ]------------
-> > > [  +0,000012] UBSAN: array-index-out-of-bounds in /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:183:29
-> > > [  +0,000032] index 0 is out of range for type 'clk_hw *[*]'
-> > > [  +0,000021] CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.8+deb14-armmp #1 NONE  Debian 6.17.8-1
-> > > [  +0,000014] Hardware name: Samsung Exynos (Flattened Device Tree)
-> > > [  +0,000006] Call trace:
-> > > [  +0,000006]  unwind_backtrace from show_stack+0x18/0x1c
-> > > [  +0,000032]  show_stack from dump_stack_lvl+0x54/0x68
-> > > [  +0,000033]  dump_stack_lvl from ubsan_epilogue+0x8/0x34
-> > > [  +0,000023]  ubsan_epilogue from __ubsan_handle_out_of_bounds+0x88/0x8c
-> > > [  +0,000020]  __ubsan_handle_out_of_bounds from exynos_clkout_probe+0x354/0x428
-> > > [  +0,000024]  exynos_clkout_probe from platform_probe+0x64/0x98
-> > > [  +0,000031]  platform_probe from really_probe+0xd8/0x3ac
-> > > [  +0,000031]  really_probe from __driver_probe_device+0x94/0x1dc
-> > > [  +0,000031]  __driver_probe_device from driver_probe_device+0x3c/0xd8
-> > > [  +0,000028]  driver_probe_device from __driver_attach+0xd8/0x1d8
-> > > [  +0,000027]  __driver_attach from bus_for_each_dev+0x84/0xd4
-> > > [  +0,000025]  bus_for_each_dev from bus_add_driver+0xf4/0x218
-> > > [  +0,000023]  bus_add_driver from driver_register+0x8c/0x140
-> > > [  +0,000027]  driver_register from do_one_initcall+0x50/0x24c
-> > > [  +0,000022]  do_one_initcall from kernel_init_freeable+0x288/0x2fc
-> > > [  +0,000019]  kernel_init_freeable from kernel_init+0x24/0x140
-> > > [  +0,000020]  kernel_init from ret_from_fork+0x14/0x28
-> > > [  +0,000016] Exception stack(0xf0835fb0 to 0xf0835ff8)
-> > > [  +0,000010] 5fa0:                                     00000000 00000000 00000000 00000000
-> > > [  +0,000009] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > > [  +0,000009] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > > [  +0,000098] ---[ end trace ]---
-> > 
-> > Can you have a look into it? The downstream report is at
-> > https://bugs.debian.org/1121211
-> 
-> I bet it is the same problem as the ones I fixed in
-> 
->   6dc445c19050 ("clk: bcm: rpi: Assign ->num before accessing ->hws")
->   9368cdf90f52 ("clk: bcm: dvp: Assign ->num before accessing ->hws")
-> 
-> So something like this?
-> 
-> Cheers,
-> Nathan
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-> index 5f1a4f5e2e59..5b21025338bd 100644
-> --- a/drivers/clk/samsung/clk-exynos-clkout.c
-> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
-> @@ -175,6 +175,7 @@ static int exynos_clkout_probe(struct platform_device *pdev)
->  	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
->  	clkout->mux.lock = &clkout->slock;
->  
-> +	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
->  	clkout->data.hws[0] = clk_hw_register_composite(NULL, "clkout",
->  				parent_names, parent_count, &clkout->mux.hw,
->  				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
-> @@ -185,7 +186,6 @@ static int exynos_clkout_probe(struct platform_device *pdev)
->  		goto err_unmap;
->  	}
->  
-> -	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
->  	ret = of_clk_add_hw_provider(clkout->np, of_clk_hw_onecell_get, &clkout->data);
->  	if (ret)
->  		goto err_clk_unreg;
+Changes to the board files will follow soon once this patchset is reviewed.
 
-Thank you very much. Jochen, can you test the patch and report back?
+For reference to the MAX77759 MFD based patchset (present in upstream):
+https://lore.kernel.org/all/20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org/
 
-Regards,
-Salvatore
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+---
+Amit Sunil Dhamne (6):
+      dt-bindings: power: supply: Add Maxim MAX77759 charger
+      dt-bindings: mfd: maxim,max77759: add charger child node
+      dt-bindings: usb: maxim,max33359: Add supply property for VBUS in OTG mode
+      mfd: max77759: modify irq configs
+      power: supply: max77759: add charger driver
+      usb: typec: tcpm/tcpci_maxim: deprecate WAR for setting charger mode
+
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    |  12 +
+ .../power/supply/maxim,max77759-charger.yaml       |  36 +
+ .../devicetree/bindings/usb/maxim,max33359.yaml    |   4 +
+ MAINTAINERS                                        |   7 +
+ drivers/mfd/max77759.c                             |  27 +-
+ drivers/power/supply/Kconfig                       |  11 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/max77759_charger.c            | 866 +++++++++++++++++++++
+ drivers/usb/typec/tcpm/tcpci_maxim.h               |   1 +
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c          |  48 +-
+ include/linux/mfd/max77759.h                       |   9 +
+ 11 files changed, 999 insertions(+), 23 deletions(-)
+---
+base-commit: 39f90c1967215375f7d87b81d14b0f3ed6b40c29
+change-id: 20251105-max77759-charger-852b626d661a
+
+Best regards,
+-- 
+Amit Sunil Dhamne <amitsd@google.com>
+
+
