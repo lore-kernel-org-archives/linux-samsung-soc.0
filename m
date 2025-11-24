@@ -1,72 +1,72 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FEB165F16
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 17:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336632C0287
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 17:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764005059; cv=none; b=NYIvngtfGHJ8z+4CEeHG73CpD3b4/YEVF5dpVCES/bbWysmYtupxniQCaOqGtazNMc7rX2RPjGOop23E/smsHXapQahnH6L9Nj7aMpS8zTUQXFTQmEdki5Zn4bcljqqlRM4xhemS7VY/YBdwK8mNYaK/vL0IwwvFRJRY/zFRSZU=
+	t=1764006159; cv=none; b=bifEol1EW9sv34+QnSf0cunYGbBGfrMUsK6heaWNMRV+GUnJclY/CfCl05GN9ygfKKTR3DXpgwUryZUMZheCIPPiFeF0RvSHhppbCFYeE3jlYF1p+GHAWWvM5HghDaSCz0YDJx1KaU2pzm3InRdrP8lOul24iL+Oo1zJrVIRZuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764005059; c=relaxed/simple;
-	bh=RYQLGxxiC287sxK1jBPaeJUKtK0g7/ftRatFNFZN57s=;
+	s=arc-20240116; t=1764006159; c=relaxed/simple;
+	bh=f3RguNWyNPblPkEEAtjriyDmmiD8h8nq2mR8oBqONQc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ap/dFIgvo329tgu9FnRMMgetgBE+/Gxojp1Oxm0yXOm9j+O+IsXt2BF+RHgW08hbJ9H+pT/NdPr3H1YevY84kfLyUWreD0Y3ygUwDogukUSZSaFquxvXefCcC0QwzaZnW/lz2F8+KidAYWGzaM7A7m0qpSTd5uVKbH3vv6Nt6dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P1kYCZWU; arc=none smtp.client-ip=209.85.219.47
+	 To:Cc:Content-Type; b=oUXMkB3EI+aiRl/ELQFQguUptWsdRGZreM1NFuhurAJBsRoQr2f4nIfDLi7aumN/bSYI56+jpEzc8r3mdQjSGzIU27Zr/DyMWG5rIsD1NviWxvbu2mGxbsE9bNZUHveYFvZNLDpzJV4Fo4E4pNmKc8Tk8QJ0HsWmwZFEYHB0csM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wb1SiZ4c; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P1kYCZWU"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-882475d8851so53548726d6.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 09:24:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wb1SiZ4c"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ee14ba3d9cso45806491cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 09:42:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764005056; x=1764609856; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764006155; x=1764610955; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BwPH+P89qWOfRnemNosIIZCTQ+b7gKnqulQnrIBXs9U=;
-        b=P1kYCZWUGmqNX3MXHrgiQbTEja7zK12xtqAQM2Rx46gjOX8qY3f2BIkgb4zjVRY/eo
-         AT1cxFvjCA7JEfZ60T8k9748faU6qwhISAUuwzDqUltwE6bHbgJYGqLyz/8Q0x2B2CDK
-         QzfW011Lkal8vwV1myI/sHZSHkpb7mp1vfz+2l3cRdCKovtbI+FoSD0E5Jt3Mc8nPWd2
-         r2Z6rX1QMw/MdC3KNHU8wOWiwAHT1W71/TjJn1N4qquk96s/m/OMDQbZr4f1mLCoXlqt
-         OLuQCx7iespNMinBlpCrLb688JBQiyvfpLzmtxl8Lf69oVggPbS1IXfirqPsMVbuwSpc
-         KY1Q==
+        bh=wJlK4WkEfRbWEw3zV/b5T4Bu/Nyg8DEPoH+DiAjRgFs=;
+        b=Wb1SiZ4c2nIJGy/B9gOjHrGH6uPHmfHYtVr5B3KW57BeudBQ0nY6hzwi5Hqt+D1h7d
+         KONMMD5EET4h600XwC522X1gOzkaWTqkKZ3RqxlKJR2rM9HgCbJKXZi0UsEJhhEFadSP
+         MNYOReePYX4FVwx5ob5cGkWX+mLsYyy8i/NO133VnPDueb89MUDu5hMyjiSDpU6ytK6e
+         kevg/X0wP4hgSQ1vBVo6zdMgZ0LVtkSBCYZOx8wXo39+Qm+U08dgpWcE0Dc1ENs62WZf
+         nqHh0CxK7sInPOQLDv++CuXW98TK6E9vTAUiQW3vGYsOZVH0fE6sMmvw7m/nBnmSZBWN
+         Rq8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764005056; x=1764609856;
+        d=1e100.net; s=20230601; t=1764006155; x=1764610955;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BwPH+P89qWOfRnemNosIIZCTQ+b7gKnqulQnrIBXs9U=;
-        b=R2NOiPuaWYLrDd9CWNYfQ5QMB8JcAS5kRwmAW4xCz/19brmDMSxFBXEf7/V40X4WRB
-         dt+re1xRq1AVDMNMM/V6fcy2Q2IEpyhCu+Od8jP5nt88W6hq5NBsj26fvXsdwBhHtETP
-         tvuBP4tV4qAekm4EBs7qOxWnomemR5R6A+GwOB+tbs+vGrX22UbBAYYvzyewk+wMlsD2
-         z/FvEp0wI23fJMU6CoQkDrT7JRQ+8Qk5HbTjIryJoeh1WSsLy6P/RhrzWk/OOck4xi7A
-         qHA7/WS6LW2VZDe3W/Yb7r3d1xPSoMT3xb4wg9BQVb5NjHExm1LFG9iBE1x6Y4SVeYJp
-         oOOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5P3oIYgTpmUrew+33xHv/YazY+Lxrc/58CPAgScQKys1NAQuAwKt8ZgcBjvVcfgowoW6Jc3lBFIy6D046AsahoA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9PS8Fic0OaVrQAe2oiO/MoDeku0i9k1lMFhqf13NE+rHwjrMd
-	56OX1Hhu1JZWjMXrG8Emtzi5sG9/K26o05/vL0veIZ2L23Vat/mdkS7xIkKEhUoXJKX3bFs9YHi
-	eBCCmB5Iun/Dwxiuarj+AH4PU7Gv56MAabcuW3fhJgw==
-X-Gm-Gg: ASbGncueSNlq6Xs+w4PlNC0/HrOupGfZmCRtku3RtsJn8L4q5HawshxAd7R8x/yz+K7
-	eBNRJ+sQ3ayjTkwoHooWenHHZWjhl1YPKMd5Hd1Z5PDrv8+6d6M/8QRczTdP684rAtQ/GEyi4g1
-	6JLGCN+G1q0vIYCnZdIFQhy6XvRqo/AZe8Lvjb5MuA2/utyUU23vZ6MvdHS9DTEKcuDi7BxO+v6
-	0EIAAfQDpcsvmwU7D1mHe2d30BEF9j2118EI+idwcrtN9cB1SUidsPFhRDTp5hW8cTyzCk=
-X-Google-Smtp-Source: AGHT+IFnvdWmjJCRzYLrbPvZGNPiEJ5Q839vHfC1gV/jBx6hNY1xoYFkx0yUuNsyMUDPM1RLCsF8HVzcVzBbZ0/NXV8=
-X-Received: by 2002:a05:6214:3286:b0:880:48c6:acfb with SMTP id
- 6a1803df08f44-8847c52771emr181588346d6.49.1764005056039; Mon, 24 Nov 2025
- 09:24:16 -0800 (PST)
+        bh=wJlK4WkEfRbWEw3zV/b5T4Bu/Nyg8DEPoH+DiAjRgFs=;
+        b=vx/DIUTIXVc7YgHP48rhOoKKsn1OMBsNVUX1T9iLM9/ytF/FMyUvuZ8yO3ixo++udR
+         5PVTdmKMmhl7siyvkXXGzP3nVsItFP6Qdn6WEEl/+GBaFlczc5JSIspB5jdqkj0aqdaJ
+         11vfQpVQNUOsT+esUrns/Ng3FnjgBmlDHnjDBOrj4+4DzBKD2tEff14r2gOR08O1128b
+         AGS0udxeA6u7TpVhIEEyUqUBvy4pZWvgZOafeG9uJxi8sb9o6WSHGkhXfY1E2dIjm8vc
+         euDFEvx4F7kWYyQ1wtVjtxNtsoezjWuiWSpA/8Abfp+vsV185QbELH97ubLTUVy3DUJr
+         icrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUe8TfEfducsGADqkW1dKqncdCeOFAR1qrrIJBcqt/cjzdlD93oHd6BtjsYtb+edYxBr5nHVz60Ye5z9dyKvmHr2g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3aNJQMjwb7VzfC8jipdFVix6e4QcPi/Nk/wtaprmYL0UtRZbX
+	TOFti3gu+MJ/Nqv7IjPyFVoEa/alujeo9hCyN7CxOTNb2IREMRXKEAIvZmMAGxUOYUHb/vN/rOb
+	J34UwjlpYX+/zmGh3SJ5ggh7s+AjNjkFlPd995Jv0EA==
+X-Gm-Gg: ASbGncvKvKjoaoW3DiGeqMPoPxBQsrGGAhOfbNgeOX43vFFdvHDgjM0MdlNFienpn2t
+	tbQlMHMgvkphg0VHbZ+H3jCDuDJ0wCUBHr+gjfMSiOCxaOJtS3g+8wPupAR2sa6melpapD56cHK
+	UvizRAxFAoAjp/d95/wLi5w+78aBFxGgi2Zh238hjmpJ5JjhxGPSDFVHtXh3zgIoRKH9EhwqulE
+	7S05fV7HY9q7Q7mrKnJ5ooiK0DJ4mRDfNDuRdglJf/rGf1sAxVpmJhebhYDqdaHevBIaDo=
+X-Google-Smtp-Source: AGHT+IH68eFLCxGAwB70YXKDcrzscx1x/5nopbEjXq3rg0i05BtoHBXKwXgwKJ1Je/SGb0RGBvXAIWmKGfE/9kaXr84=
+X-Received: by 2002:ac8:59c5:0:b0:4ee:24e8:c9a1 with SMTP id
+ d75a77b69052e-4ee588908eamr163978631cf.44.1764006154636; Mon, 24 Nov 2025
+ 09:42:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20251117073605epcas2p19eac6ba9cf1d4fd2e866e5de6a843802@epcas2p1.samsung.com>
- <20251117074140.4090939-1-youngmin.nam@samsung.com> <20251117074140.4090939-6-youngmin.nam@samsung.com>
-In-Reply-To: <20251117074140.4090939-6-youngmin.nam@samsung.com>
+References: <CGME20251117073601epcas2p2c72bdd8689a69b35b988894653300c75@epcas2p2.samsung.com>
+ <20251117074140.4090939-1-youngmin.nam@samsung.com>
+In-Reply-To: <20251117074140.4090939-1-youngmin.nam@samsung.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Nov 2025 17:24:04 +0000
-X-Gm-Features: AWmQ_bkGzF2wniRoBjZTDbuGXNp0h_ztTCTVOwPYyYiq_8xUg5WYRfFqZfMc01Y
-Message-ID: <CADrjBPo79HCUVsX_pv6EZ2_C5qB=pFMS=KMkMz8xkageuFvmAA@mail.gmail.com>
-Subject: Re: [RFT PATCH v2 5/5] pinctrl: samsung: rename gs101_pinctrl_* to exynos9_pinctrl_*
+Date: Mon, 24 Nov 2025 17:42:22 +0000
+X-Gm-Features: AWmQ_bkIQmeVVQ1__i6Ji95mfG_JBQNHpbx1ya0fFzrMqWuIcxJaF_YHxRYrtX0
+Message-ID: <CADrjBPrPpgy93At1bBanBoka14eyRbAArep5zuvbGWcOEnOuRQ@mail.gmail.com>
+Subject: Re: [RFT PATCH v2 0/5] pinctrl: samsung: exynos9 cleanups and fixes
 To: Youngmin Nam <youngmin.nam@samsung.com>
 Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
 	linus.walleij@linaro.org, semen.protsenko@linaro.org, ryu.real@samsung.com, 
@@ -79,24 +79,106 @@ Hi Youngmin,
 
 On Mon, 17 Nov 2025 at 07:36, Youngmin Nam <youngmin.nam@samsung.com> wrote:
 >
-> The suspend/resume helpers named gs101_pinctrl_{suspend,resume} are not
-> GS101-specific. They implement the generic save/restore sequence used by
-> Exynos9-style controllers that have EINT filter configuration
-> (eint_fltcon) to preserve.
+> Several SoCs carried near-duplicate pin bank macro families, making
+> tables verbose and hard to share when only the bank type (alive/off)
+> differs.
 >
-> Rename them to exynos9_pinctrl_{suspend,resume} and update all users:
->   - exynos2200, exynos9810, exynos8895, exynos7885, exynos7870,
->     exynosautov9, fsd, and gs101 controller tables
->   - prototypes in pinctrl-exynos.h
->   - definitions in pinctrl-exynos.c
+> GS101 had its own helpers even though the newer EXYNOS9_* helpers cover
+> the same semantics, including per-bank filter control (FLTCON) offsets.
 >
-> This aligns naming with the earlier macro/doc cleanups (e.g. using
-> EXYNOS9_PIN_BANK_* and describing eint_fltcon as Exynos9-specific) and
-> makes the helpers clearly reusable by other Exynos9-like SoCs.
+> Some pin-bank tables didn't match the SoC TRMs (bank type, EINT class,
+> or bank names), and FLTCON wasn't always at a contiguous offset from
+> EINT.
 >
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+> This series does
+> - Consolidate on EXYNOS9_* pin-bank macros. Pass bank_type explicitly.
+> - Fix table errors on Exynos2200/7885/8890/8895 per TRM.
+> - Add explicit per-bank FLTCON offsets and update affected tables.
+> - Drop GS101-specific macros in favor of EXYNOS9_*.
+> - Rename gs101_pinctrl_{suspend,resume} ->
+>   exynos9_pinctrl_{suspend,resume}.
+>
+> This series was based on the pinctrl/samsung tree [1].
+>
+> I tested on Exynos850 through boot and verified the pin values as
+> follows:
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Tested-by:  Peter Griffin <peter.griffin@linaro.org> (tested on Pixel 6 / gs101)
+One thing I just noticed is exynos850_pin_ctrl isn't actually setting
+the .suspend and .resume callbacks so some of this code won't be
+executed there (specifically saving/restoring the fltcon register). If
+you're using e850 platform to test this series, you likely want to set
+
+.suspend = exynos9_pinctrl_suspend,
+.resume = exynos9_pinctrl_resume,
+
+in exynos850_pin_ctrl for the alive bank
+
+You can then #define DEBUG in drivers/pinctrl/samsung/pinctrl-exynos.c
+
+Recompile, and do
+
+echo platform > /sys/power/pm_test
+echo mem > /sys/power/state
+
+and you should see all the debug from the newly enabled exynos9
+suspend/resume callbacks
+
+[  871.104840][  T741] gph2: save     con 0x00000000
+[  871.104932][  T741] gph2: save fltcon0 0x00000000
+[  871.105022][  T741] gph2: save fltcon1 0x00000000
+[  871.105109][  T741] gph2: save    mask 0x0000003f
+<snip>
+
+Prior to adding fltcon_offset and the gs101 (now exynos9) specific
+suspend/resume callbacks this would generate a SError on gs101
+
+Thanks,
+
+Peter
+
+>
+> $:/sys/kernel/debug/pinctrl/139b0000.pinctrl-samsung-pinctrl# cat pins
+> registered pins: 42
+> pin 0 (gpg0-0) 0:gpg0 CON(0x0) DAT(0x0) PUD(0x1) DRV(0x2) CON_PDN(0x2) PUD_PDN(0x1)
+> pin 1 (gpg0-1) 1:gpg0 CON(0x0) DAT(0x0) PUD(0x1) DRV(0x2) CON_PDN(0x2) PUD_PDN(0x1)
+> ...
+>
+> Additional testing on the affected Exynos9-era platforms would be
+> appreciated.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+>
+> Changes in v2:
+>   - Added base tree for this series (pinctrl/samsung).
+>   - Renamed the macro parameter from 'types' to 'bank_type' for clarity
+>     (struct member remains 'type').
+>   - Reflowed commit messages (wrap at ~72 cols).
+>   - Replaced non-ASCII characters with ASCII equivalents.
+>   - Collected tags:
+>       Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+>       Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+>   - Normalized hex literals to lowercase and removed double spaces.
+>   - Aligned backslashes in macro definitions to form a vertical column
+>     for readability.
+>   - Added missing mailing lists (including linux-kernel) to Cc per
+>     scripts/get_maintainer.pl.
+>
+> Youngmin Nam (5):
+>   pinctrl: samsung: Consolidate pin-bank macros under EXYNOS9_* and pass
+>     bank_type explicitly
+>   pinctrl: samsung: fix incorrect pin-bank entries on
+>     Exynos2200/7885/8890/8895
+>   pinctrl: samsung: add per-bank FLTCON offset to EXYNOS9_PIN_BANK_* and
+>     fix tables
+>   pinctrl: samsung: fold GS101 pin-bank macros into EXYNOS9_*
+>   pinctrl: samsung: rename gs101_pinctrl_* to exynos9_pinctrl_*
+>
+>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 1069 ++++++++---------
+>  drivers/pinctrl/samsung/pinctrl-exynos.c      |    4 +-
+>  drivers/pinctrl/samsung/pinctrl-exynos.h      |   97 +-
+>  drivers/pinctrl/samsung/pinctrl-samsung.h     |    4 +-
+>  4 files changed, 562 insertions(+), 612 deletions(-)
+>
+> --
+> 2.39.2
+>
