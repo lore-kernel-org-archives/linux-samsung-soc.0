@@ -1,169 +1,237 @@
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C70C2874ED
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 02:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6FD262FE7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 06:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763951653; cv=none; b=M/QyNFScuD4UPz0Ucv0+lTg8tmnIbYVotdMyZgapDq+hMtDLZIpvMpAElgFJ8e4lwZCbucNIUvxm8MbQmZPGnZVG1+D14PVkxvPpppmXvr9HVeeXI4Bw7ce+KgCXED1LCgzJlPt+74KmvyQLXJTFYXy6ivrgnTfUwTLQOZANut4=
+	t=1763965253; cv=none; b=YydcJ5Lo/ENnw0s6hdlY4t29Kctno2W1eszR0l/9q81B4uqCMleJydDlJy+4yMVHDTfziOgUQ3uqnahSrrgy3I7sOyx1neNZLIxBS/LZKpf1RmH16W5DUfZjLjTS3VpMAwoWfFHMEusAlaU8LEsoLc06E17fR1y74siygVqS0Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763951653; c=relaxed/simple;
-	bh=u50wiEtGTDGab7ZHLTtEof0ZVgdLfgY/RffYitv2A9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gi3FckYzPxFwlZQhTqQ4y3Oz4nKqrtJBMRZJQWe6bjPW1C0DIMDuwr3rkW193D1/jR+N9pa5/qPXIWFjBQapAQHpbUIrHnxv2WJk+psWIBCV7jYLwPs98QU4QYzASiznHEqyByGlloTVC/KpG+zckfRZZcN+eBpLc4dlQI1vPxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m8x/Irwa; arc=none smtp.client-ip=74.125.224.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1763965253; c=relaxed/simple;
+	bh=yknGv046L7yMedwEjSmM6+EdFvU3S2cf1Pirgu5kUDk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HvFpM0z5sRLUXqXNm7WkRMT7tgdWG4/bkOXiAkPDJyt8x7PV6E2KqLryHx/wft/OUh56xhjtYMIDhqz3jxiLBFWWyNsyVahXbh7Vxg8LwNWZBr5Hfub1YMcPzUyuK21ZlunHNlMMb4qKJu9k5T0T+rexfaVheZq/EkCO03rozZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rTx2fQ4Q; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m8x/Irwa"
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-640d4f2f13dso3106657d50.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Nov 2025 18:34:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rTx2fQ4Q"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4779a637712so23076275e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Nov 2025 22:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763951649; x=1764556449; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kJnKQ9oJ9uOzEtfzk8AKk4PwanNXBUdVi5ibWSqh/IQ=;
-        b=m8x/IrwaiGnCb0YBQz7bEJk0cbf46DK1nrNm2Kwf8vW9VvfhJto4J7VC6xJdKeWM58
-         GEWqUnq2+rVPoIN+62SlrcgIizlmxlvmG50u0HenUdY3x7ttd2jzBxl7Fo08vaqaJXLU
-         1lGuLVic55gDwMu+dOLEa9KHlp/YqJCukKMKeiZKRwyyq9WyIypGGv+Kh8wntAI3/Tgs
-         RzDKPQOETilaHBt0vgwifEkDh24ZrSqIkox8G9aqwCOzyXZ+KVBt9nQqpqUahk3jc0yS
-         U/2W2W4UvLW6njF1ue9GuGHZwkt1He9eUc8hRVE0rcX7BMQAttBfHYqs+Iog8XQl53M/
-         WOLg==
+        d=linaro.org; s=google; t=1763965249; x=1764570049; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=REZ04im9FdK76DRTIwu+Cc/Q2WxCSUPnF2cnra53O5Y=;
+        b=rTx2fQ4Qk8jEIihvh86EgMDzgo6/L1tTd/B3a7eqIVhrkIZlZPWGE+r6rjJ3D1OeS9
+         7Bu/WZot5WHBeTL6PYG3wVXOTvqqTp3HQ2bH0E66J+Oab8OC+2imVrQcRnnB0iIUq11H
+         F9XUfcN7Bf1dNOR42M2RxYWtwslAWeYfGJgvQUfptX8McOnHvPQMbYefbNadDsT/xqhw
+         +rXJ7X5jE4CgHfa4MeOT1KK1l3Rxbo1t+Wwr5WwYL/eYkg1pImmAI7RVYSxSiiF5xlQH
+         htDFq5WFQugeSe9pcdv2XFmUBlkcmbcfdNeTIO9Ud+OEZd2AcEV4Ap1HM97Dca5Im0zR
+         Mpgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763951649; x=1764556449;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kJnKQ9oJ9uOzEtfzk8AKk4PwanNXBUdVi5ibWSqh/IQ=;
-        b=U2FwvemUe2xpoAriDjIssDfX26/ZgrVIQ9rQSaSuwOhSl+tZndHFMOYHj1xh3EW5SY
-         k2+Lchhg9+PicTUlA6dI5TLqlm+aFbYEfXbC7AIx6Lk3xR+L7b57BH/Sd+VE58bNUNIi
-         T+mEwp4vsOcc0O1ay8W0et0Ez3KfYlKps0ibzzmR34s+sgsFe93gdplEVUcZBs50FLhV
-         fxWhLfbT+xFyc0NEaEApjVU/EiyF6QHgqeW4S8g6f2ajIDmL6VeJTxx7AlZ/zPzfJwAX
-         EiF9Jz8EE3liFpHNP/jMz9AAW2i7Q1+V0Ns4cCi46DveTvjkPzJia9St06f9pzvVd0Nq
-         LABg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUorkkGaK7GaBUFAM6qH8gDEUyF8NKQB2lHKrwxuXuVoRmjEmwJpZfMDy7SBKcnA0kjeXhg89yi/iGzLNjQUv4mQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZlh+/unbPOF+yRpRuOEsqGgg/cuXx+fl6oAUXLqpSCM+oIogu
-	OWGcqRY5dj6NYYJY4SZLws0GU/b/V+6LGi0xkflJXuEG1z/kfxxn/myyHAwuILv9Gg==
-X-Gm-Gg: ASbGnctYc3AHKSKdb+S7b05Abk5asJhfmHmfsgWRwattQUiZve7t3jesfbA+ocpAmgY
-	bSb2m2TmNSNQ5yDkJcmbv4M9iwrLXajaI1qW7PKnEvBcpZlf9Hu9ZMGvsvxcjJU+M2c3oSfrh6Y
-	nvVnq9pUbofArt9rTXSkBCkrceiA2GvpFGyAB5goKh4ibTpOwUW1MHpk7U8t/zgIwdf2RXDAgFG
-	2agvmyVgaG/2OP7sfKCsRR8UEJ8NAMeC91ZP0XEMP4PhPc2rbYVeGe9VAbxMpdy1RYXwKVy7wAB
-	NXBgzqR/KbK+FrCPXXjSjygdPHGBdb1QF92xcTIiccQK95H5nDpMXxHBYGcRB8P68/LdExIWZcW
-	2BXtUUrrdacIhpy7nWyFQDs6uSoMsWttLgi2QLeoK25M/G1JgER+QQ7YkMqrxfA6XSQrOAphIlh
-	yPUGWMXVxWeC7Jr3j7BmFCDaf0w/MWpL/hY760xt3mW+lMJL5erFx0oV3skg4=
-X-Google-Smtp-Source: AGHT+IHxC+BdP7vzl95DrlP/y364+xUvzMJ0RS3cskY282bYh7RWJ066M6U+GDgwPwRF2d9d7KuiRA==
-X-Received: by 2002:a05:690e:400d:b0:641:f5bc:699a with SMTP id 956f58d0204a3-64302b37d39mr6827251d50.72.1763951649099;
-        Sun, 23 Nov 2025 18:34:09 -0800 (PST)
-Received: from ?IPV6:2600:1700:4570:89a0:1806:1fd4:facd:d088? ([2600:1700:4570:89a0:1806:1fd4:facd:d088])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a798a5decsm40005717b3.21.2025.11.23.18.34.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Nov 2025 18:34:08 -0800 (PST)
-Message-ID: <c9b059f8-9219-4219-95c8-23a3733fea58@google.com>
-Date: Sun, 23 Nov 2025 18:34:05 -0800
+        d=1e100.net; s=20230601; t=1763965249; x=1764570049;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=REZ04im9FdK76DRTIwu+Cc/Q2WxCSUPnF2cnra53O5Y=;
+        b=ZemAa/qsgqg0C3awhPtR32GE9qKuI2Gje2xtR1i5bWMV0r27FF/wGAil7QCYqqUdyz
+         jw+en4hTfcqUfQcJ5BXJaeaHVE/hFlyyQaFtHdAYVjaPo0+Hd+A1LqqzQBB32rxg9srN
+         VSAmkm+any0C2tBC7FZuQ4gWql3/w4OaeuXZ2mBdsYaEtfOomYy0LET1ePtR5RRm+vSX
+         pKr5iG3ZuN1jdvOEblcTMpLOMGeTcU2UZBpJhLjKdeVG3Lh83M0dldhqoYkR8u38yA0j
+         NEnpzkv/2IMGWYaTbP/tGyjPO9LgCF8PkbELQYLhrmap4X7/IYH3XhdSQsJHZj9ngQh6
+         umaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQx3l8vqRfZb3FqPBPCXrNRK/u8tEvN4NUZGmlROLxW7rE67DJaOo/fz2ly9aKe0mFF2zwF4HgxfiXTBYKiVdMmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzacngpUefkVBg3A4e/MNcV3wUGgKkonp+pVhjzS1FSubUz4URl
+	aMt1LlVtqAx4iR8IAFetGhLufSlk0j1Mi+p5dDE2uY0FaIXMrnYUA/5Kzq8ZIvyMYYZ81wRJZZj
+	xtnKx
+X-Gm-Gg: ASbGncsTrfILJazlSjrTW4+S/Jb+rb7TIJlqBxGoAvHBo4t6u8y7FE8Stkgxb4DMKfX
+	Q3kodLu5RckI4tfhEWVM7TKHpw3iciqe+3kbDYKLab0XKfiUtNHDSkthTNVG/O4sWbn/D+jTc3t
+	vCzZzqIxS88eHJjG/LM5/yJ6Azcr4yVTeAwg9jMCw2gFzP9pY0fMgHkGQO2AUa5i+f66XopGT7Y
+	frjvVheGqxv7ZV/nqvEGB1HTBXxs2LM9FJn6N9qNBuLCRKTAyVWBz2HA0yWWLBwxIpIAtUTvpg1
+	yQg8birvzLspuSDVdcmVtD9cMxmC7PQiKdNDLzmaLliRFIvMKT4COcDcMC1n8zEjkangSqpREaC
+	afD04rYiy2i1AKvTjy7Sv3D+POzDJLRtn1RU9QPoCyf+A+1f3U270J+AD6Be+KRrO7sUuIYy4Nw
+	3PVCc0piKScvCsrOFiZJG3z/sLXZRV
+X-Google-Smtp-Source: AGHT+IEkAHuQrVSean0CMnJmgdroQFGEXS2JnDMuJL0ECBf4DUqCtzz0alMdPUQuLJolnNwjmMRrhw==
+X-Received: by 2002:a05:600c:3110:b0:477:632c:5b91 with SMTP id 5b1f17b1804b1-477c01b4b2amr122845505e9.16.1763965249310;
+        Sun, 23 Nov 2025 22:20:49 -0800 (PST)
+Received: from draszik.lan ([212.129.72.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f2e454sm26304551f8f.2.2025.11.23.22.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Nov 2025 22:20:48 -0800 (PST)
+Message-ID: <5c901a6c831775a04924880cc9f783814f75b6aa.camel@linaro.org>
+Subject: Re: [PATCH 4/6] mfd: max77759: modify irq configs
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: amitsd@google.com, Sebastian Reichel <sre@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, Greg Kroah-Hartman	
+ <gregkh@linuxfoundation.org>, Badhri Jagan Sridharan <badhri@google.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus	 <tudor.ambarus@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, RD
+ Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+Date: Mon, 24 Nov 2025 06:21:00 +0000
+In-Reply-To: <20251123-max77759-charger-v1-4-6b2e4b8f7f54@google.com>
+References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
+	 <20251123-max77759-charger-v1-4-6b2e4b8f7f54@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: power: supply: Add Maxim MAX77759
- charger
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
- <20251123-max77759-charger-v1-1-6b2e4b8f7f54@google.com>
- <d4455f4b-2a0f-4bc0-b897-14f2e27af3ea@kernel.org>
-From: Amit Sunil Dhamne <amitsd@google.com>
-Content-Language: en-US
-In-Reply-To: <d4455f4b-2a0f-4bc0-b897-14f2e27af3ea@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+Hi Amit,
 
-On 11/23/25 1:28 AM, Krzysztof Kozlowski wrote:
-> On 23/11/2025 09:35, Amit Sunil Dhamne via B4 Relay wrote:
->> From: Amit Sunil Dhamne <amitsd@google.com>
->>
->> Add bindings for Maxim max77759 charger device.
->>
->> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->> ---
->>  .../power/supply/maxim,max77759-charger.yaml       | 36 ++++++++++++++++++++++
->>  1 file changed, 36 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml
->> new file mode 100644
->> index 000000000000..71f866419774
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml
->> @@ -0,0 +1,36 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/power/supply/maxim,max77759-charger.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Maxim Integrated MAX77759 Battery charger
->> +
->> +maintainers:
->> +  - Amit Sunil Dhamne <amitsd@google.com>
->> +
->> +description: |
->> +  This module is part of the MAX77759 PMIC. For additional information, see
->> +  Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
->> +
->> +  The Maxim MAX77759 is a dual input switch mode battery charger for portable
->> +  applications. It supports wired and wireless charging and can operate in buck
->> +  and boost mode.
->> +
->> +allOf:
->> +  - $ref: power-supply.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: maxim,max77759-charger
->> +
-> This should be just folded into parent node, no need for separate
-> charger device or is just incomplete.
+Thanks for your patches to enable the charger!
 
-Thanks for the review! You are right, the binding is incomplete. This
-charger block actually listens on its own I2C address, distinct from the
-main PMIC.
+> From: Amit Sunil Dhamne <amitsd@google.com>
+>=20
+> Define specific bit-level masks for charger's registers and modify the
+> irq mask for charger irq_chip. Also, configure the max77759 interrupt
+> lines as active low to all interrupt registrations to ensure the
+> interrupt controllers are configured with the correct trigger type.
+>=20
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> ---
+> =C2=A0drivers/mfd/max77759.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 24 +++=
+++++++++++++++-------
+> =C2=A0include/linux/mfd/max77759.h |=C2=A0 9 +++++++++
+> =C2=A02 files changed, 26 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/mfd/max77759.c b/drivers/mfd/max77759.c
+> index 6cf6306c4a3b..5fe22884f362 100644
+> --- a/drivers/mfd/max77759.c
+> +++ b/drivers/mfd/max77759.c
+> @@ -256,8 +256,17 @@ static const struct regmap_irq max77759_topsys_irqs[=
+] =3D {
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct regmap_irq max77759_chgr_irqs[] =3D {
+> -	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_1, 0, GENMASK(7, 0)),
+> -	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_2, 1, GENMASK(7, 0)),
+> +	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_1, 0,
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT_AICL |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT_CHGIN |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT_CHG |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT_INLIM),
+> +	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_2, 1,
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT2_BAT_OI=
+LO |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT2_CHG_ST=
+A_CC |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT2_CHG_ST=
+A_CV |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT2_CHG_ST=
+A_TO |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX77759_CHGR_REG_CHG_INT2_CHG_ST=
+A_DONE),
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct regmap_irq_chip max77759_pmic_irq_chip =3D {
+> @@ -486,8 +495,8 @@ static int max77759_add_chained_irq_chip(struct devic=
+e *dev,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get parent vIRQ(%d) for chi=
+p %s\n",
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 pirq, chip->name);
+> =C2=A0
+> -	ret =3D devm_regmap_add_irq_chip(dev, regmap, irq,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_ONESHOT | IRQF_SHARED, 0, =
+chip,
+> +	ret =3D devm_regmap_add_irq_chip(dev, regmap, irq, IRQF_ONESHOT |
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_SHARED | IRQF_TRIGGER_LOW,=
+ 0, chip,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data);
 
-I will update v2 to include the reg property. I will also add the
-standard properties `constant-charge-current-max-microamp` and
-`constant-charge-voltage-max-microvolt` to configure the hardware
-limits, as this charger device does not manage the battery profile
-directly (that is handled by a separate fuel gauge).
+Please correct me if I'm wrong, but I don't think this makes sense for a
+chained IRQ in this case. What problem does this change fix?
+
+> =C2=A0	if (ret)
+> =C2=A0		return dev_err_probe(dev, ret, "failed to add %s IRQ chip\n",
+> @@ -519,8 +528,9 @@ static int max77759_add_chained_maxq(struct i2c_clien=
+t *client,
+> =C2=A0
+> =C2=A0	ret =3D devm_request_threaded_irq(&client->dev, apcmdres_irq,
+> =C2=A0					NULL, apcmdres_irq_handler,
+> -					IRQF_ONESHOT | IRQF_SHARED,
+> -					dev_name(&client->dev), max77759);
+> +					IRQF_ONESHOT | IRQF_SHARED |
+> +					IRQF_TRIGGER_LOW, dev_name(&client->dev),
+> +					max77759);
+
+dito.
+
+> =C2=A0	if (ret)
+> =C2=A0		return dev_err_probe(&client->dev, ret,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "MAX77759_MAXQ_INT_APCMDRESI failed\n"=
+);
+> @@ -633,7 +643,7 @@ static int max77759_probe(struct i2c_client *client)
+> =C2=A0		return dev_err_probe(&client->dev, -EINVAL,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "invalid IRQ: %d\n", client->irq);
+> =C2=A0
+> -	irq_flags =3D IRQF_ONESHOT | IRQF_SHARED;
+> +	irq_flags =3D IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_LOW;
+
+I don't believe IRQF_TRIGGER_LOW should be added here, as this is board-spe=
+cific.
+The polarity is meant to be set via DT (and the only current user of this d=
+river
+does so).
+
+> =C2=A0	irq_flags |=3D irqd_get_trigger_type(irq_data);
+
+That's what gets us the config from DT.
+
+> =C2=A0
+> =C2=A0	ret =3D devm_regmap_add_irq_chip(&client->dev, max77759->regmap_to=
+p,
+> diff --git a/include/linux/mfd/max77759.h b/include/linux/mfd/max77759.h
+> index c6face34e385..0ef29a48deec 100644
+> --- a/include/linux/mfd/max77759.h
+> +++ b/include/linux/mfd/max77759.h
+> @@ -62,7 +62,16 @@
+> =C2=A0#define MAX77759_CHGR_REG_CHG_INT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0xb0
+> =C2=A0#define MAX77759_CHGR_REG_CHG_INT2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0xb1
+> =C2=A0#define MAX77759_CHGR_REG_CHG_INT_MASK=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 0xb2
+> +#define MAX77759_CHGR_REG_CHG_INT_AICL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 BIT(7)
+> +#define MAX77759_CHGR_REG_CHG_INT_CHGIN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 BIT(6)
+> +#define MAX77759_CHGR_REG_CHG_INT_CHG=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(4)
+> +#define MAX77759_CHGR_REG_CHG_INT_INLIM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 BIT(2)
+> =C2=A0#define MAX77759_CHGR_REG_CHG_INT2_MASK=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 0xb3
+> +#define MAX77759_CHGR_REG_CHG_INT2_BAT_OILO=C2=A0=C2=A0=C2=A0=C2=A0 BIT(=
+4)
+> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_CC=C2=A0=C2=A0 BIT(3)
+> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_CV=C2=A0=C2=A0 BIT(2)
+> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_TO=C2=A0=C2=A0 BIT(1)
+> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_DONE BIT(0)
+
+Even if wireless out of scope, it'd still be nice to add macros for
+the remaining bits to make this complete and avoid having to update
+these again in case wireless support gets added in the future.
+
+Also, would be nice to keep existing style and indent the bits from
+the registers (see existing bit definitions in this file a few lines
+further up).
+
+Finally, can you add the bits below the respective register (0xb0 / 0xb1)
+please, to keep suffix meaningful, and to follow existing style for cases
+like this (see MAX77759_MAXQ_REG_UIC_INT1).
 
 
-Thanks,
-
-Amit
-
->
->> +  usb-otg-vbus-regulator:
->> +    type: object
->> +    description: Provides Boost for sourcing VBUS.
->> +    $ref: /schemas/regulator/regulator.yaml#
->> +    unevaluatedProperties: false
->> +
-> Best regards,
-> Krzysztof
+Cheers,
+Andre'
