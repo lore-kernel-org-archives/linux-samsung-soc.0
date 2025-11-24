@@ -1,193 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED444274B32;
-	Mon, 24 Nov 2025 10:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA372F7468
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 10:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763980781; cv=none; b=JTOqH7n2y/+RYfmeNJbz7wkDwcizwhpCGqe3+wYmHdeXrLDHtc9IQZHwuNdEjcygV27YCOe1D4W9ARtrfbhZxSCvqPL1iYroNoj/xomBLqaqe0k3EIDMv/OX5PPadrOapRDJ/z+35CvQrlxflyZCm9stmHZBap7e2blSjXJKsYI=
+	t=1763981010; cv=none; b=aekvUrPzbuspD5enc5HalJLynleMYxf1r1L/EpiHUk846vGvEWrYu+/rqEGYir8uFoaDdC4Y/W7T4PC1fR+Zec9ML6H9n4n5/k1Nu+yc0NGHHxwZubneqFhr9fRbkuqjZIbxEzzXBpghhcKOwYt2a5ld/ES4IknW7wfv22WTe9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763980781; c=relaxed/simple;
-	bh=wG0LtNXrjp+tZ6+DjiOmVw4tWhV/2DPiV64zQMWzD6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LbTrkqcqF3JRxH4yuaGMiDgXGWQ/7plYPfcK0yZKJLK1asI2XPK0z+VcLNlYEJwiCnzoAB/gsL1moSAa4xUbAFk/ZRnWHUKYlhaNGnh/u8ALcwRM2cN7mFiS4vbvLk6rhvTTEl2/lrFlEk7h64kWzPp9hMf5yrE6TuVmgu1tTw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=firEdU2g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763981010; c=relaxed/simple;
+	bh=STw9mn4JKSYAcv2RgsR/6Ms7OqDpmTWYEdATXDvIKRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HKLCslWO139r2yRgTPJAbGwDOG6GsStItqV6e7+75UjStKSTDYmtPpAFwoOhvM2qVZYKOG8/CNF7olIKUczr8mfIvZFBwcYI8JpXebD/3BkKsPYi+bcZfYEEB4oFT2JD/10Vh8XXVqmCv6+qspcV14N+D2U3jXEvgzACjgwP7Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nsfPsICG; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="firEdU2g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0016EC4CEF1;
-	Mon, 24 Nov 2025 10:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763980780;
-	bh=wG0LtNXrjp+tZ6+DjiOmVw4tWhV/2DPiV64zQMWzD6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=firEdU2gCtMh4N6YI19W5r3iOxB5sPvAIKExbAF0UKd6W/4+e4/WHnpUVVGhgtWBA
-	 a5pHIpAfdiYTEv1sen/+Y5y19BThHuf5QV7YsTbMjr03yNiePn6xxPFM9rBmFBGO/F
-	 TiEtraXUzP3fH1UnA4jBQAQTFMtojoqtoTg6/MraXPZFWcHy/puTwsedmw3WE0jHV2
-	 mylk4e1h00mN8rZh9xIGkDDB+u8aHBXDegba3zOnzn4UzfAVX9HfqEA2VqqP1N7+9d
-	 IFknDENgch1ihKzPP3CXf7xAiwSA7GPydZqDuHvGrkcGVvyUSstDSkj3J6juuaQQUN
-	 40rHR4ovEobtg==
-Date: Mon, 24 Nov 2025 11:39:37 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Alexey Brodkin <abrodkin@synopsys.com>, Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Adrien Grassein <adrien.grassein@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
-	Edmund Dea <edmund.j.dea@intel.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
-Message-ID: <hs44z4b2dgisemuewgtvl4epjcqqilg6cy36po25pubaog4hmq@33qgl4o3hwoa>
-References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
- <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nsfPsICG"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4779a637712so24709685e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 02:43:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763981006; x=1764585806; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IPMaYfKvhruxz/7aEIx8rHbzh3ajqn2UKQXi0f0Mf6g=;
+        b=nsfPsICG24dLEfSwQ7dmS1m/WKoRBixHZ4DR61RU6j+RKsf4mgX811LN9kt24OU4F6
+         muj+yRYHN3EHx1jC4ouvsMee0pNFZD/fwTYHaa5UzcyHcK2FEgg4+zkxqDlJlTDm0vGK
+         oNjhg3Y84FmZLNXj+i+hhQOJurOyamFAWG0AmD2NzARQUwVB0rK6cxMSob4Mmgp6QQjy
+         tEtmYGx7Mw6sMscGlxlkwSQJcLcYSNJEC6Wfah1v+ycO/fq6EzECeQ3oqWU6PB/r6WbM
+         iStHa3zIXf6gxGrHuOVcFaq8NK4w3FEz37gH0zEn3KUVx1WUIxE7upqSdX4IPXcdLh5b
+         3Cpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763981006; x=1764585806;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IPMaYfKvhruxz/7aEIx8rHbzh3ajqn2UKQXi0f0Mf6g=;
+        b=mX9tRha/hGLYM8LVUiK9BuLtcf0+n4pe39XgDCyHgg65vdh2bRqQO8n0ZGcg0meXwZ
+         zwERunqyim01VoMdlvVaZuPgpYRJi15TffEbKVACu+UQrkTmDnKSksmEy2/MACudrasX
+         dECCBW7VLg8ZdCeqer36Prtafr7LZ+WnGt+ng/UaPntGRTfNibbb/4EHIbZrFu1qNhZ0
+         c8AAFaRmMaHM0z5mflE9DKD1QTRlPTTTCoPuR/1y4egO5+AX8nzjIpzvnq84JzNeKgLY
+         pc+fy/XH6hqRZlU/Cm6Sl5eKRKpNt7z/PPDU6bFGOR5mzERQxB9oh/udws+ZLxqhk89L
+         //PA==
+X-Forwarded-Encrypted: i=1; AJvYcCXut0aH/ZREUvZvoEm6Ppx3PSRdsgSeB9LsyhmGrpoaOLTJeymCBee5nzP03GJwRrN7dKj/Gp4BEKUV19J1gjpFxw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFpsPQ5/T8LpeJZXeRiTdgbIsdZbY7LK5lpO2HJ12HWN2OF3FS
+	1zDxUc7fJ3dcDTF0wSzn8hOybPNb7CN1nGEeoyMBG3Fj2HAdeA4nsP2tnW8s7/79gSs=
+X-Gm-Gg: ASbGncsOveLtyq9k1nWcRqU7/LylFkOa/1bIRCsTAzGSqisf7xI4LZA/tuYgvlHuq/y
+	LY0RI2wYY0XCSJb7a5X0eSku7X1ieYUDfzUgoARGQ6BgdmXDYJE0Vnb1eEd2z9agSA47IaeS7WN
+	vHnP1aFem1ZRsx//a9BrEMlXdbBexaJSqza6y2FfugpxuJwEnlpmmCukSQZJtGffXXkpXFFN4E0
+	CJ7uE8/Q2/jW8Aj326r7e9qdwU/J9IRHZvyG+0Axi9eTJgyoe3jTbU2nvwPuqRW4XHbtUc3XA8H
+	injfdpWHRaMtssszUgx2c+5PFts9afw+Xtvemfc8SJarVhntldgh9PmNQqKyGPbG/f9tGtdyqHP
+	hA5Mm1kGYiWUem/rON7A5BWL1zjmrvAvoLksSU9Xkwfr/bEae4Mi9WjIgYKHRK5Z8RS+8PYMkMI
+	Y5PZ5MeyMeGKFwgOuN8lQ2jPD1VXc=
+X-Google-Smtp-Source: AGHT+IHUwHL8Ak/SSQPUMF7+OGU9CxDUvw1EzBytBVdE43sHRPf2JfCvp+pEC30Sy8UWing4gkJFBg==
+X-Received: by 2002:a05:600c:450f:b0:46d:ba6d:65bb with SMTP id 5b1f17b1804b1-477c01eb9bdmr122420585e9.31.1763981006460;
+        Mon, 24 Nov 2025 02:43:26 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477bf22ea00sm190158965e9.14.2025.11.24.02.43.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Nov 2025 02:43:25 -0800 (PST)
+Message-ID: <12346382-7718-4942-a497-4de278b1d5a0@linaro.org>
+Date: Mon, 24 Nov 2025 12:43:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="wbm42ghgit2cp5t3"
-Content-Disposition: inline
-In-Reply-To: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 RESEND 2/3] thermal: exynos_tmu: Support new hardware
+ and update TMU interface
+To: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>,
+ 'Daniel Lezcano' <daniel.lezcano@linaro.org>,
+ 'Bartlomiej Zolnierkiewicz' <bzolnier@gmail.com>,
+ 'Krzysztof Kozlowski' <krzk@kernel.org>,
+ "'Rafael J . Wysocki'" <rafael@kernel.org>, 'Zhang Rui'
+ <rui.zhang@intel.com>, 'Lukasz Luba' <lukasz.luba@arm.com>,
+ 'Rob Herring' <robh@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>
+Cc: 'Henrik Grimler' <henrik@grimler.se>, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ William McVicker <willmcvicker@google.com>, jyescas@google.com
+References: <20251113064022.2701578-1-shin.son@samsung.com>
+ <CGME20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237@epcas2p1.samsung.com>
+ <20251113064022.2701578-3-shin.son@samsung.com>
+ <2180a854-8ba6-4424-add2-eb34637530c1@linaro.org>
+ <000001dc5d2a$0697bf10$13c73d30$@samsung.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <000001dc5d2a$0697bf10$13c73d30$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi, Shin,
 
---wbm42ghgit2cp5t3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
-MIME-Version: 1.0
+On 11/24/25 12:06 PM, 손신 wrote:
+>>> +static void update_con_reg(struct exynos_tmu_data *data) {
+>>> +	u32 val, t_buf_vref_sel, t_buf_slope_sel;
+>>> +
+>>> +	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+>>> +	t_buf_vref_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT)
+>>> +				& EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK;
+>>> +	t_buf_slope_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT)
+>>> +				& EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK;
+>>> +
+>>> +	val = readl(data->base +  EXYNOSAUTOV920_TMU_REG_CONTROL);
+>>> +	val &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK <<
+>> EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+>>> +	val |= (t_buf_vref_sel << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+>>> +	val &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK <<
+>> EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+>>> +	val |= (t_buf_slope_sel << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+>>> +	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
+>>> +
+>>> +	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
+>>> +	val &= ~(EXYNOSAUTOV920_TMU_NUM_PROBE_MASK <<
+>> EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
+>>> +	val &= ~(EXYNOSAUTOV920_TMU_LPI_MODE_MASK <<
+>> EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT);
+>>> +	val |= (data->sensor_count << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
+>>> +	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
+>>> +
+>>> +	writel(1, data->base + EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL);
+>>> +	writel(EXYNOSAUTOV920_TMU_AVG_CON_UPDATE, data->base +
+>> EXYNOSAUTOV920_TMU_REG_AVG_CONTROL);
+>>> +	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE,
+>>> +	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0);
+>>> +	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE,
+>>> +	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1);
+>>> +}
+>>> +
+>> This is unreadable; please make it understandable for those who don’t have
+>> the documentation (explicit static inline functions, comments, etc ...).
+> I'll restructure this code by introducing explicit static inline helper functions and proper comments to improve readability.
 
-On Wed, Nov 19, 2025 at 02:05:37PM +0100, Luca Ceresoli wrote:
-> Several drivers (about 20) follow the same pattern:
->=20
->  1. get a pointer to a bridge (typically the next bridge in the chain) by
->     calling of_drm_find_bridge()
->  2. store the returned pointer in the private driver data, keep it until
->     driver .remove
->  3. dereference the pointer at attach time and possibly at other times
->=20
-> of_drm_find_bridge() is now deprecated because it does not increment the
-> refcount and should be replaced with drm_of_find_bridge() +
-> drm_bridge_put().
->=20
-> However some of those drivers have a complex code flow and adding a
-> drm_bridge_put() call in all the appropriate locations is error-prone,
-> leads to ugly and more complex code, and can lead to errors over time with
-> code flow changes.
->=20
-> To handle all those drivers in a straightforward way, add a devm variant =
-of
-> drm_of_find_bridge() that adds a devm action to invoke drm_bridge_put()
-> when the said driver is removed. This allows all those drivers to put the
-> reference automatically and safely with a one line change:
->=20
->   - priv->next_bridge =3D of_drm_find_bridge(remote_np);
->   + priv->next_bridge =3D devm_drm_of_find_bridge(dev, remote_np);
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->
-> ---
->  drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
->  include/drm/drm_bridge.h     |  5 +++++
->  2 files changed, 35 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index 09ad825f9cb8..c7baafbe5695 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -1446,6 +1446,36 @@ struct drm_bridge *drm_of_find_bridge(struct devic=
-e_node *np)
->  }
->  EXPORT_SYMBOL(drm_of_find_bridge);
-> =20
-> +/**
-> + * devm_drm_of_find_bridge - find the bridge corresponding to the device
-> + *			     node in the global bridge list and add a devm
-> + *			     action to put it
-> + *
-> + * @dev: device requesting the bridge
-> + * @np: device node
-> + *
-> + * On success the returned bridge refcount is incremented, and a devm
-> + * action is added to call drm_bridge_put() when @dev is removed. So the
-> + * caller does not have to put the returned bridge explicitly.
-> + *
-> + * RETURNS:
-> + * drm_bridge control struct on success, NULL on failure
-> + */
-> +struct drm_bridge *devm_drm_of_find_bridge(struct device *dev, struct de=
-vice_node *np)
-> +{
-> +	struct drm_bridge *bridge =3D drm_of_find_bridge(np);
-> +
-> +	if (bridge) {
-> +		int err =3D devm_add_action_or_reset(dev, drm_bridge_put_void, bridge);
-> +
-> +		if (err)
-> +			return ERR_PTR(err);
-> +	}
-> +
-> +	return bridge;
-> +}
-> +EXPORT_SYMBOL(devm_drm_of_find_bridge);
+We likely shouldn't use inlines here, see Linus's reply from 2006:
+https://lore.kernel.org/all/Pine.LNX.4.64.0601021105000.3668@g5.osdl.org/T/#u
 
-That's inherently unsafe though, because even if the bridge is removed
-other parts of DRM might still have a reference to it and could call
-into it.
+I guess you can make this easier to read if you use FIELD_GET/SET from
+bitfield.h. Other improvement would be using the regmap api.
 
-We'd then have dropped our reference to the next bridge, which could
-have been freed, and it's a use-after-free.
+Shin, a bit unrelated with the patch, but I wanted to let you know that
+I started looking at the GS101 TMU. I assume it's very similar with the 
+TMU on exynosautov920. Do you know if they share the same IP version?
 
-It's more complicated than it sounds, because we only have access to the
-drm_device when the bridge is attached, so later than probe.
+I noticed GS101 uses ACPM calls to communicate with the TMU. Why did you
+choose to not use ACPM for exynosautov920 TMU?
 
-I wonder if we shouldn't tie the lifetime of that reference to the
-lifetime of the bridge itself, and we would give up the next_bridge
-reference only when we're destroyed ourselves.
-
-Storing a list of all the references we need to drop is going to be
-intrusive though, so maybe the easiest way to do it would be to create a
-next_bridge field in drm_bridge, and only drop the reference stored
-there?
-
-And possibly tie the whole thing together using a helper?
-
-Anyway, I'm not sure it should be a prerequisite to this series. I we do
-want to go the devm_drm_of_find_bridge route however, we should at least
-document that it's unsafe, and add a TODO entry to clean up the mess
-later on.
-
-Maxime
-
---wbm42ghgit2cp5t3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaSQ16QAKCRAnX84Zoj2+
-drTLAX0QBwwX78SPwaYEqj6Om+7ADsxYhVrgX1HoD1xpc0ILj+Ur57K6wtKDIc5l
-JWSP6zkBgJA2DSWw4vHzHhFRbZQ+eGEUkynilMkrpEr/EsrHbAzT3gfgz8IOyhGR
-Vs8tk3i2Uw==
-=/E1G
------END PGP SIGNATURE-----
-
---wbm42ghgit2cp5t3--
+Thanks!
+ta
