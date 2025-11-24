@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1A4256C88;
-	Mon, 24 Nov 2025 07:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938352E8B75;
+	Mon, 24 Nov 2025 07:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763969842; cv=none; b=lWEmOq72d5pEzVilMRVBeJuCLleTDiFQ3pat4vi+cG4Ey+ADphFkT6WuYRN8HTWAhXTWhWYOdvReSQMHeAUe5T/zCAIdNL9hJeYAiTQ23WZAkjd418jBgo7aeH/kpudC1FrUhQ5t3LiPMO1pk46481Jx8Nsk60ExKw2zzxhfhRQ=
+	t=1763969923; cv=none; b=mJ93E+RvEmN3uYUmEXI1XFWOuLZaUJcMqiFmS8dLp7+UX5+D20VX12hGA6WN74uUZIUN1wQIH4ZyqPQaeYZy6GVoKH7EZhgiYqjE+7DrekhZvfDSUeIV61JZR2W/MjLacMoRijRudk9IpgpR+BAXLaj7/bi9uRw0Gh/urEGtzUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763969842; c=relaxed/simple;
-	bh=IFJe5Tu+9U1tnq5qSQyjrnLzVnWL6hU9r9rwzyPHduU=;
+	s=arc-20240116; t=1763969923; c=relaxed/simple;
+	bh=jcqHT8d/CWoQ3azcqnOtlOMFkmeAcleUjrV6ER4fSB0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hZw+nQFlTYtChsduyGNQtSVhH/Sfc/Uxgt4NZZgw84h+aWqUBlqL3+X68MrDPHwjJ3ep2dOr94Ey19CR2eG1FnpNCpn5QyyU786u3otZEJ6EnojY0fHY8e87Io3+t6GNFLfPMbHGkFPE5oqgVWNRfHbmwyekRqgYAEShYN5fqzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyoRi7Wd; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KRtPS3B6LOCOuDMckScw8n8mWi2fr0QAQE1wOFqQEbqo/tIzQ5Wj+9hkFf21LfCIGIalfjSDiPOXkiFMskzImD/zTTABDaEGYpApARuk5oiaiCATImKiG5xIQ1Sje4KsB7fP/Kj+mv3AtB1NELC42isRJiKbAmw/tS4O2VkWWYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJB/Gigq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyoRi7Wd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CEFC4CEF1;
-	Mon, 24 Nov 2025 07:37:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJB/Gigq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD434C4CEF1;
+	Mon, 24 Nov 2025 07:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763969842;
-	bh=IFJe5Tu+9U1tnq5qSQyjrnLzVnWL6hU9r9rwzyPHduU=;
+	s=k20201202; t=1763969923;
+	bh=jcqHT8d/CWoQ3azcqnOtlOMFkmeAcleUjrV6ER4fSB0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hyoRi7WdySoeFcpa0uaWMRF4Yh4MIABkvZMEKNerfKPhgOfQIhJb2JewuUJBjRjNn
-	 JUQKeJO5lko7LR40G96qy9VQxA538VJtPsq7UAsSyspUIkmZaGZd/BiC8b/p1XbBB3
-	 zPUdMR+4ZggDqsNUPN1aVjLH1FojZSsOaNNT4DxHhNjR4hdijUnZRDQMQ7cP6UruM9
-	 wav75J5KUqa6dh/TElX7r06UgVWfpf8p22Dsde33p1EmSKCSochVQzZ+cUAJEmQXoO
-	 vasfmP26KRWQMLRsWODol/Vg+4fblb/v+hVxFFZqITXgdjn3Vb2JfxuM2GtZk3vpTf
-	 WokB/Vudwz/EA==
-Message-ID: <68391234-49b3-46db-b882-9508d831895a@kernel.org>
-Date: Mon, 24 Nov 2025 08:37:18 +0100
+	b=SJB/GigqJovwxfBej0jv7UuRin8x9M2yVhnawzc02sEz3/cQrN7w+iKwlBP4L0AKo
+	 yJh5zaTiesTiLEfeWepvhwDD475Ij2sAjOBOS4uSY3dWzpfill/zBKwQkcOL35SIve
+	 xhlGgo20C6VTgJ2iwqd/N1bzxFTJeXNf3gSTkeLgBHvuTNZ6BcCI0Ctq4CBBQ6wrQ2
+	 bEpk5PqgQfy/Aw4BSQKttxIfVpkRUSXloz6Y5fQ0gxvA/mTQLAuFqiXRNeqx7Ogrmp
+	 59b1gJ7WMzx87AbmyqzmM8UUdr8nvi/sjUTcFzkf1m/f70ySoo0ZGuaqwvg+qvYD6p
+	 O7spWg3+NzJgA==
+Message-ID: <86e922e9-f314-44f6-a8de-d804d38d593c@kernel.org>
+Date: Mon, 24 Nov 2025 08:38:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,12 +35,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: sec: Drop a stray semicolon
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20251124-s2mpg10-chained-irq-semicolon-v1-1-578ba2d7adca@linaro.org>
+Subject: Re: [PATCH 4/6] mfd: max77759: modify irq configs
+To: amitsd@google.com, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
+ <20251123-max77759-charger-v1-4-6b2e4b8f7f54@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -86,22 +97,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251124-s2mpg10-chained-irq-semicolon-v1-1-578ba2d7adca@linaro.org>
+In-Reply-To: <20251123-max77759-charger-v1-4-6b2e4b8f7f54@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/11/2025 07:47, André Draszik wrote:
-> A stray and unneeded semicolon was added here by accident, just drop
-> it.
+On 23/11/2025 09:35, Amit Sunil Dhamne via B4 Relay wrote:
+> From: Amit Sunil Dhamne <amitsd@google.com>
 > 
-> Fixes: ee19b52c31b3 ("mfd: sec: Use chained IRQs for s2mpg10")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202511230909.zk7EkTnb-lkp@intel.com/
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
+> Define specific bit-level masks for charger's registers and modify the
+> irq mask for charger irq_chip. Also, configure the max77759 interrupt
+> lines as active low to all interrupt registrations to ensure the
+> interrupt controllers are configured with the correct trigger type.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+This is just redundant explanation. You did not actually explain why you
+need to set the trigger.
 
 Best regards,
 Krzysztof
