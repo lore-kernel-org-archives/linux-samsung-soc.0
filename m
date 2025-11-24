@@ -1,159 +1,107 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1033161A9;
-	Mon, 24 Nov 2025 16:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B261199234
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 17:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764002669; cv=none; b=SjJwT0NENR6qWAWD1RduQLALR/OVx/Cy/XJEpliC3j3vlA1qY+k5ZQpmtXmYM83T0SmFZ0ibsM/SQGyojGSorz7zxFU048zZCnHgt9YLVPoNTnIR5UypUJENDyUAK3HdXXV+fbF0CIHLJ1/Z1CG/1twiVd+YFa3MuBcQbAxH0LE=
+	t=1764004937; cv=none; b=NxWWLnHLfAZUw9ll3LANjlPeq2WtV2DO6ssftUsHdUQ1ukD0qce+p6MZKaU/HoImixi6BMfJ7hVuCJdG5nnrh3SQDviR8r2fqX1NBh++YQI/v7hWamroxTquNMPzghavk9ChE1wwfa8krTkQK8pMT1615HaQaNqIVAZsa3mt88A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764002669; c=relaxed/simple;
-	bh=uSemw84f5ckyGShXecvyFgO27QOKWBIVsqm1RZd2KFA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=G9L18e4JEhwmUn8IT5mWOLEzqpvGzlXMdXJ+Kx5U6WgwBveDRg4E27rsmGD3axFWvEV+XXpP6roDzB/5/ITlpgsbn8Ch2uXRU9HDsrOf1LRlWjN6LTwmwxL3oifonXbjogI8p9KCpiBVpN8LGYEG0UvFGWGUqxNjLFpXnQe6Hl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KrEWDBIw; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1764004937; c=relaxed/simple;
+	bh=bZpxwxVUi3Yu9Xp5tgpTDN3djeM5sWGLN5I4BpYPP84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ch17dxxbHRRRqPLMKrO3Winm+bNSdjDguiI9uSeaeQiqkeKhLkp9JYMF4M1kM4OkwJY8r2QV0MD8QIRGvynIwrsu7m2GXB7VyBqT9b+B7ezxiadRL575c9jYonaR4bheZnjC45sBbGY+Fsf8RFozTs2CSI8FCvZ8X54qcPL1LkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZfMNV86; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KrEWDBIw"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 472BEC139B2;
-	Mon, 24 Nov 2025 16:44:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B7547606FC;
-	Mon, 24 Nov 2025 16:44:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1410710371A8F;
-	Mon, 24 Nov 2025 17:44:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764002662; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=8VxkXwHyVWJtMQb4rGcL9+DawEiYCDxx29eMOS81RRA=;
-	b=KrEWDBIww4g7nDza6Zc7hbr+ZoXaAgKnm9t/c7uQL8DjmTM4Lqn6U4mOBDG5vMoUDsvrd2
-	z/Sp/kXw6JnOSTYIFsmfxY3UrknEd6H/JIDub3AwK87pZ+UJrv5fYOmUNSbSYDq4WsP5v0
-	oneufTmETBFZmFUh0DxP15w3p8E74Qylz6WR0Fur6qK4EEAxebJte+/MSikZrha0b/9Gls
-	WRJzAXFmzZG7qJu0L63Dv+MuAQdNPhwTUxava0scvHSMJ7nqGhN0bidohpBwZuGxE/Vr0T
-	7wEt+C6kFsdbn3+p0AzKRiI549ZbqiSwVxZK8aOtKlYFNJxrJuYIWVmjCUBcsA==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZfMNV86"
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-8824a756771so53382936d6.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 09:22:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1764004934; x=1764609734; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=H+dXzu+OtwVQATYT2SD8WXaq/eak4pH3LzFk0SdSmXo=;
+        b=KZfMNV86lGrroT3A2k4PSTjO4MI3foYAYqP/ONRtUw3Ri7UjfcL7HYU3kUD8IkC3ae
+         AFoCO+s0LvidM8P6kO1jrxmJXWXlRr3CoTYkF/Iip42AvfmNMT3cnnbHx8509cprmxkv
+         mAJs6EGSO+DptVDd0vJKAw+o19fb2sv3DPjykKaM8FQa+ydK6qD3zhFZPjMMEnBfY8JI
+         xMKuitfHntivzif/gQ7DHJj3FZghYf2ffT3wxuXULWEi2OjAydf9npO+0wuYjuQKGBcQ
+         kILlT4ysXUphVm7khYl+99pKnmuozccqMcDLYJ2Ie/Aeix5wLSpQ/ggV0zHk0ZENypLV
+         I1+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764004934; x=1764609734;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H+dXzu+OtwVQATYT2SD8WXaq/eak4pH3LzFk0SdSmXo=;
+        b=EafDRqpll0n73dkGgOvhsqB2bzx6XiM6uOZoY8J4myDMrQDOjJpBfKfyae0Jdhz4B0
+         /Iv8Uy4gADuNAop5sGMNC3ThhWKQMv8q+6WWpAuUgdAqD+6mw1cDD5KAs/gSXNEzGadC
+         hYL+3xMmBtHRWRDQOVLSBdMA8hupA7msm9CcEhPmZ0b27noYjYONk+TdU0E7ZUnjqKe4
+         Us7kgMeI+wG+IvbToyZ5cFowNNDLFn9ZgO2xHHRmYGVkXV0ZKBnIGurOKFPU6MV7QVcO
+         D2vK+PSxhSNhSPYaZ/ivb0mRy9yAKPweb4zVtAy06o+PmjCFUrVa7L8C/R9DyyW0gse3
+         cqlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYF62HNKvBdmaz3v5QJanMEGyLQF08t+rEJhnVgiXmx05e5jQO8Gz8dhWf40tzhNWqAqAroUoNIFB5S47Czz5upg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBxRrJQpRzWwNfVyrWimefwwZnvRVC80yFqqRqEqvul3P5I6e4
+	oAqMcKqlCjXEW36ss54BhjyFuOVACNgD7Azn+Cs+z4CNS7XV+6JgfnEmooJ3MUQz88i9xeVA5AC
+	w3DXSfY+ug8t+6Yxz2702lMondpC/dqHvlwgaXcc0gQ==
+X-Gm-Gg: ASbGncsXeCOgX8TRoykTnOnwe5kNY3pAa67apv+aQOBw3mKasNSt4FKEi1cfym4lFxj
+	e1jyTNtYZmvdVtzm+gXzbAPdKLaFI+6VrjbhY4XX6XAVT5x0dt2HoxPGYA/JdqVMgcJx0koOY8X
+	J+grypUYG4megjbKQpgNygpNLobege3WLxM8vlofsyd1qAEcKZP+bXXgslnb1zq2uHjrYWxB9SR
+	cNBGnO4MLAQQeY8nRPsAYDQA7ZPb75W9WW3qLIx3JsnGd2eC3f8isHHc9sv1bRSlOwxh4g=
+X-Google-Smtp-Source: AGHT+IGur7qIOhwydiDE1YdricdgFBJKpzAzcrVA0e8HEfbCvBR/llLvZ/uw2OutwktsYwyQUs0eBjA/3PkYC9zPCKk=
+X-Received: by 2002:ad4:5e8e:0:b0:884:6f86:e09a with SMTP id
+ 6a1803df08f44-8847c440274mr206409366d6.6.1764004934295; Mon, 24 Nov 2025
+ 09:22:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Nov 2025 17:44:09 +0100
-Message-Id: <DEH2R1Q0XJJG.1NMESYMX9GMFL@bootlin.com>
-Subject: Re: [PATCH 04/26] drm/bridge: make of_drm_find_bridge() a wrapper
- of drm_of_find_bridge()
-Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Jonathan Corbet" <corbet@lwn.net>, "Alexey Brodkin"
- <abrodkin@synopsys.com>, "Phong LE" <ple@baylibre.com>, "Liu Ying"
- <victor.liu@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer"
- <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Adrien
- Grassein" <adrien.grassein@gmail.com>, "Laurent Pinchart"
- <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
- <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
- <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Kevin
- Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>, "Chun-Kuang Hu"
- <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@collabora.com>, "Anitha Chrisanthus"
- <anitha.chrisanthus@intel.com>, "Edmund Dea" <edmund.j.dea@intel.com>,
- "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo Kim"
- <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-renesas-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
- "Anusha Srivatsa" <asrivats@redhat.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com> <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-4-0db98a7fe474@bootlin.com> <wxxjp7fmsnh2k4huvg2thmfi6kcszdphrag3zosrnykn7abeua@cdlywqj32jd7>
-In-Reply-To: <wxxjp7fmsnh2k4huvg2thmfi6kcszdphrag3zosrnykn7abeua@cdlywqj32jd7>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+References: <CGME20251117073604epcas2p3f35b42617fb26aa087409eb84c19724c@epcas2p3.samsung.com>
+ <20251117074140.4090939-1-youngmin.nam@samsung.com> <20251117074140.4090939-5-youngmin.nam@samsung.com>
+In-Reply-To: <20251117074140.4090939-5-youngmin.nam@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 24 Nov 2025 17:22:03 +0000
+X-Gm-Features: AWmQ_bk4g88xYV4Wotp3KJG1hjaYXqURmaKu-TssPY9mMy-anug4aQBTum0eDz4
+Message-ID: <CADrjBPoG_omRShNhwUJZ0yeRLAzQxmGHvO6OzsR2NOfLczoptg@mail.gmail.com>
+Subject: Re: [RFT PATCH v2 4/5] pinctrl: samsung: fold GS101 pin-bank macros
+ into EXYNOS9_*
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
+	linus.walleij@linaro.org, semen.protsenko@linaro.org, ryu.real@samsung.com, 
+	d7271.choe@samsung.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Youngmin,
 
-+Cc Anusha
+Thanks for taking the time to do this cleanup!
 
-On Mon Nov 24, 2025 at 11:22 AM CET, Maxime Ripard wrote:
-> Hi,
+On Mon, 17 Nov 2025 at 07:36, Youngmin Nam <youngmin.nam@samsung.com> wrote:
 >
-> On Wed, Nov 19, 2025 at 02:05:35PM +0100, Luca Ceresoli wrote:
->> of_drm_find_bridge() is identical to drm_of_find_bridge() except it does
->> not increment the refcount. Rewrite it as a wrapper and put the bridge
->> being returned so the behaviour is still the same.
->>
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> GS101 had dedicated GS101_PIN_BANK_EINT{G,W} helpers, but they are
+> redundant with EXYNOS9_PIN_BANK_EINT{G,W} (same semantics, including
+> the per-bank .eint_fltcon_offset).
+> This change removes the GS101_* macros and switches the GS101 pin-bank
+> tables to the EXYNOS9_* helpers with exynos9_bank_type_{alive,off}.
+> While here, update the struct comment to note FLTCON is Exynos9-specific
+> (not 'GS101-specific').
 >
-> Kind of the same comment than on the TODO. Is it worth doing that patch
-> when we could just remove it at the end of the series?
-
-This series is not converting all users I'm afraid.
-
-There are still some drivers to convert, but not a big deal.
-
-The main user to be converted is drm_of_find_panel_or_bridge(), which is
-very tricky, and in turn it is used by devm_drm_of_get_bridge(). We
-discussed this in the past and the conclusion was a rework of the drm_panel
-lifetime was needed to be able to properly replace
-drm_of_find_panel_or_bridge().
-
-A drm_panel rework had started very well with devm_drm_panel_alloc() that
-got upstreamed by Anusha, but I'm not sure if it has made further progress
-after that. So AFAICT the plan is still "People will gradually switch to
-the new API over time", and the deprecated of_drm_find_bridge() will be
-removed after that.
-
-Does it still make sense to you?
-
-Maxime, Anusha, are you aware of any steps forward about dynamic panel
-lifetime, after devm_drm_panel_alloc()?
-
->> @@ -1460,19 +1460,11 @@ EXPORT_SYMBOL(drm_of_find_bridge);
->>   */
->>  struct drm_bridge *of_drm_find_bridge(struct device_node *np)
->>  {
->> -	struct drm_bridge *bridge;
->> -
->> -	mutex_lock(&bridge_lock);
->> +	struct drm_bridge *bridge =3D drm_of_find_bridge(np);
->>
->> -	list_for_each_entry(bridge, &bridge_list, list) {
->> -		if (bridge->of_node =3D=3D np) {
->> -			mutex_unlock(&bridge_lock);
->> -			return bridge;
->> -		}
->> -	}
->> +	drm_bridge_put(bridge);
+> One macro family for all Exynos9-era SoCs (incl. GS101) reduces
+> copy-paste drift and keeps the FLTCON handling consistent.
+> There is no functional change.
 >
-> And if it does make sense to keep that patch, we should add a comment
-> here to document why we are doing this.
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
 
-OK, what about:
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by:  Peter Griffin <peter.griffin@linaro.org> (tested on Pixel 6 / gs101)
 
-/**
- * We need to emulate the original semantice of of_drm_find_bridge(), which
- * was not getting any bridge reference. Being now based on
- * drm_of_find_bridge() which gets a reference, put it before returning.
- */
+regards,
 
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Peter
