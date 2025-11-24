@@ -1,184 +1,122 @@
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336632C0287
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 17:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B352147E6;
+	Mon, 24 Nov 2025 19:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764006159; cv=none; b=bifEol1EW9sv34+QnSf0cunYGbBGfrMUsK6heaWNMRV+GUnJclY/CfCl05GN9ygfKKTR3DXpgwUryZUMZheCIPPiFeF0RvSHhppbCFYeE3jlYF1p+GHAWWvM5HghDaSCz0YDJx1KaU2pzm3InRdrP8lOul24iL+Oo1zJrVIRZuw=
+	t=1764011478; cv=none; b=OmdNic571o3sVi76w5tZPAK6Dkn1rdCLWajfoUEmHTtRKEoE7eGTIJiTW1QEffC+mwJ/jqM+VEfeRGIyLVZzEqvY7XR2g1I6G8I31XCxlRcTj/cU7NypuVHGdkQ02Wh7v0TYlrVM1ItKEqrgJRf+371x20DIihqijjgU1s/K3JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764006159; c=relaxed/simple;
-	bh=f3RguNWyNPblPkEEAtjriyDmmiD8h8nq2mR8oBqONQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oUXMkB3EI+aiRl/ELQFQguUptWsdRGZreM1NFuhurAJBsRoQr2f4nIfDLi7aumN/bSYI56+jpEzc8r3mdQjSGzIU27Zr/DyMWG5rIsD1NviWxvbu2mGxbsE9bNZUHveYFvZNLDpzJV4Fo4E4pNmKc8Tk8QJ0HsWmwZFEYHB0csM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wb1SiZ4c; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764011478; c=relaxed/simple;
+	bh=O3EyU3E5bo9vSzH59x8bJJr1BEBx3anTP1amwii3DyI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gUVDXjN61T5miSS5mu570IQvE31PXGR573LfXVmmMy+NauPOluS5fhif6A1/jwUTjVeMXkltmmKZTJZcS6Z9I5oQ8RmaO/+0Um896ypnHgO9tSBHKS5bVuxCTjKxs8utQS0GGpZTYzh2o/rzGPf00dBbgaHIHHysy2jpKxSQDGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QG8mRcC5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wb1SiZ4c"
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ee14ba3d9cso45806491cf.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2025 09:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764006155; x=1764610955; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJlK4WkEfRbWEw3zV/b5T4Bu/Nyg8DEPoH+DiAjRgFs=;
-        b=Wb1SiZ4c2nIJGy/B9gOjHrGH6uPHmfHYtVr5B3KW57BeudBQ0nY6hzwi5Hqt+D1h7d
-         KONMMD5EET4h600XwC522X1gOzkaWTqkKZ3RqxlKJR2rM9HgCbJKXZi0UsEJhhEFadSP
-         MNYOReePYX4FVwx5ob5cGkWX+mLsYyy8i/NO133VnPDueb89MUDu5hMyjiSDpU6ytK6e
-         kevg/X0wP4hgSQ1vBVo6zdMgZ0LVtkSBCYZOx8wXo39+Qm+U08dgpWcE0Dc1ENs62WZf
-         nqHh0CxK7sInPOQLDv++CuXW98TK6E9vTAUiQW3vGYsOZVH0fE6sMmvw7m/nBnmSZBWN
-         Rq8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764006155; x=1764610955;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wJlK4WkEfRbWEw3zV/b5T4Bu/Nyg8DEPoH+DiAjRgFs=;
-        b=vx/DIUTIXVc7YgHP48rhOoKKsn1OMBsNVUX1T9iLM9/ytF/FMyUvuZ8yO3ixo++udR
-         5PVTdmKMmhl7siyvkXXGzP3nVsItFP6Qdn6WEEl/+GBaFlczc5JSIspB5jdqkj0aqdaJ
-         11vfQpVQNUOsT+esUrns/Ng3FnjgBmlDHnjDBOrj4+4DzBKD2tEff14r2gOR08O1128b
-         AGS0udxeA6u7TpVhIEEyUqUBvy4pZWvgZOafeG9uJxi8sb9o6WSHGkhXfY1E2dIjm8vc
-         euDFEvx4F7kWYyQ1wtVjtxNtsoezjWuiWSpA/8Abfp+vsV185QbELH97ubLTUVy3DUJr
-         icrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe8TfEfducsGADqkW1dKqncdCeOFAR1qrrIJBcqt/cjzdlD93oHd6BtjsYtb+edYxBr5nHVz60Ye5z9dyKvmHr2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3aNJQMjwb7VzfC8jipdFVix6e4QcPi/Nk/wtaprmYL0UtRZbX
-	TOFti3gu+MJ/Nqv7IjPyFVoEa/alujeo9hCyN7CxOTNb2IREMRXKEAIvZmMAGxUOYUHb/vN/rOb
-	J34UwjlpYX+/zmGh3SJ5ggh7s+AjNjkFlPd995Jv0EA==
-X-Gm-Gg: ASbGncvKvKjoaoW3DiGeqMPoPxBQsrGGAhOfbNgeOX43vFFdvHDgjM0MdlNFienpn2t
-	tbQlMHMgvkphg0VHbZ+H3jCDuDJ0wCUBHr+gjfMSiOCxaOJtS3g+8wPupAR2sa6melpapD56cHK
-	UvizRAxFAoAjp/d95/wLi5w+78aBFxGgi2Zh238hjmpJ5JjhxGPSDFVHtXh3zgIoRKH9EhwqulE
-	7S05fV7HY9q7Q7mrKnJ5ooiK0DJ4mRDfNDuRdglJf/rGf1sAxVpmJhebhYDqdaHevBIaDo=
-X-Google-Smtp-Source: AGHT+IH68eFLCxGAwB70YXKDcrzscx1x/5nopbEjXq3rg0i05BtoHBXKwXgwKJ1Je/SGb0RGBvXAIWmKGfE/9kaXr84=
-X-Received: by 2002:ac8:59c5:0:b0:4ee:24e8:c9a1 with SMTP id
- d75a77b69052e-4ee588908eamr163978631cf.44.1764006154636; Mon, 24 Nov 2025
- 09:42:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QG8mRcC5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B88C4CEF1;
+	Mon, 24 Nov 2025 19:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764011478;
+	bh=O3EyU3E5bo9vSzH59x8bJJr1BEBx3anTP1amwii3DyI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=QG8mRcC579NKEbAZxe3afv0EhlOFaXQB4THuLOwr+uDjWlasFCKCWFKRoLxmEvVLu
+	 oc7bqMqxhOlj4Q3GiPBIsYhnJI8XB1O5NbsjCGIQeIWMFSJx0asHIS0SDOGiEbdiJK
+	 Or1vEf+RbdI6b1nMW6EOs7xVaNg2LKFksR7LUPIRT1HTD3ncTlXNRu4nz0wJT5fVN5
+	 mRkzdoSwO0+eRde2lFv4VYSP9D6rbcgqcX18W2eKP1hCQPZICuA4l6Qy5ImX2bhXW+
+	 L63bVsvoS9DbbuPgbAhi3mIfLQryJQNQuojFrl/zh/Wl2uaxVpKfSXEQ6Zs+JjZZ8U
+	 MT6TZiKzY7fZA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Mon, 24 Nov 2025 12:11:06 -0700
+Subject: [PATCH] clk: samsung: exynos-clkout: Assign .num before accessing
+ .hws
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20251117073601epcas2p2c72bdd8689a69b35b988894653300c75@epcas2p2.samsung.com>
- <20251117074140.4090939-1-youngmin.nam@samsung.com>
-In-Reply-To: <20251117074140.4090939-1-youngmin.nam@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Nov 2025 17:42:22 +0000
-X-Gm-Features: AWmQ_bkIQmeVVQ1__i6Ji95mfG_JBQNHpbx1ya0fFzrMqWuIcxJaF_YHxRYrtX0
-Message-ID: <CADrjBPrPpgy93At1bBanBoka14eyRbAArep5zuvbGWcOEnOuRQ@mail.gmail.com>
-Subject: Re: [RFT PATCH v2 0/5] pinctrl: samsung: exynos9 cleanups and fixes
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
-	linus.walleij@linaro.org, semen.protsenko@linaro.org, ryu.real@samsung.com, 
-	d7271.choe@samsung.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251124-exynos-clkout-fix-ubsan-bounds-error-v1-1-224a5282514b@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMqtJGkC/yXN0QrCMAyF4VcZuTawdo6qryJerF3UqDSSrDIZe
+ 3erXn5w+M8CRspkcGgWUHqxseQKt2kgXYd8IeSxGnzre+f8Fml+ZzFMj7uUCc88Y4k2ZIxS8mh
+ IqqK479rgutBTCjuoqadSXf5ujqe/rcQbpenbhnX9AEXISzGIAAAA
+X-Change-ID: 20251124-exynos-clkout-fix-ubsan-bounds-error-93071375ec78
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Salvatore Bonaccorso <carnil@debian.org>, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, stable@vger.kernel.org, 
+ Jochen Sprickerhof <jochen@sprickerhof.de>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2434; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=O3EyU3E5bo9vSzH59x8bJJr1BEBx3anTP1amwii3DyI=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDJkqay9VW7gv2v0sLjfCWjXnqNZ295dH9dZ9mhenlPQoS
+ D24NZy9o5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAExk0UuG/3m2W2MLXBl9HBy2
+ t4lO3vphj5PbJJUPVlv+v+tc2yr5NYThn81vm4jAieJnbeLFI/i1Jv/yF6u/L5m3Sobv0+UrEz5
+ f4gcA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Hi Youngmin,
+Commit f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with
+__counted_by") annotated the hws member of 'struct clk_hw_onecell_data'
+with __counted_by, which informs the bounds sanitizer (UBSAN_BOUNDS)
+about the number of elements in .hws[], so that it can warn when .hws[]
+is accessed out of bounds. As noted in that change, the __counted_by
+member must be initialized with the number of elements before the first
+array access happens, otherwise there will be a warning from each access
+prior to the initialization because the number of elements is zero. This
+occurs in exynos_clkout_probe() due to .num being assigned after .hws[]
+has been accessed:
 
-On Mon, 17 Nov 2025 at 07:36, Youngmin Nam <youngmin.nam@samsung.com> wrote:
->
-> Several SoCs carried near-duplicate pin bank macro families, making
-> tables verbose and hard to share when only the bank type (alive/off)
-> differs.
->
-> GS101 had its own helpers even though the newer EXYNOS9_* helpers cover
-> the same semantics, including per-bank filter control (FLTCON) offsets.
->
-> Some pin-bank tables didn't match the SoC TRMs (bank type, EINT class,
-> or bank names), and FLTCON wasn't always at a contiguous offset from
-> EINT.
->
-> This series does
-> - Consolidate on EXYNOS9_* pin-bank macros. Pass bank_type explicitly.
-> - Fix table errors on Exynos2200/7885/8890/8895 per TRM.
-> - Add explicit per-bank FLTCON offsets and update affected tables.
-> - Drop GS101-specific macros in favor of EXYNOS9_*.
-> - Rename gs101_pinctrl_{suspend,resume} ->
->   exynos9_pinctrl_{suspend,resume}.
->
-> This series was based on the pinctrl/samsung tree [1].
->
-> I tested on Exynos850 through boot and verified the pin values as
-> follows:
+  UBSAN: array-index-out-of-bounds in drivers/clk/samsung/clk-exynos-clkout.c:178:18
+  index 0 is out of range for type 'clk_hw *[*]'
 
-One thing I just noticed is exynos850_pin_ctrl isn't actually setting
-the .suspend and .resume callbacks so some of this code won't be
-executed there (specifically saving/restoring the fltcon register). If
-you're using e850 platform to test this series, you likely want to set
+Move the .num initialization to before the first access of .hws[],
+clearing up the warning.
 
-.suspend = exynos9_pinctrl_suspend,
-.resume = exynos9_pinctrl_resume,
+Cc: stable@vger.kernel.org
+Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __counted_by")
+Reported-by: Jochen Sprickerhof <jochen@sprickerhof.de>
+Closes: https://lore.kernel.org/aSIYDN5eyKFKoXKL@eldamar.lan/
+Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-in exynos850_pin_ctrl for the alive bank
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 5f1a4f5e2e59..5b21025338bd 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -175,6 +175,7 @@ static int exynos_clkout_probe(struct platform_device *pdev)
+ 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
+ 	clkout->mux.lock = &clkout->slock;
+ 
++	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
+ 	clkout->data.hws[0] = clk_hw_register_composite(NULL, "clkout",
+ 				parent_names, parent_count, &clkout->mux.hw,
+ 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
+@@ -185,7 +186,6 @@ static int exynos_clkout_probe(struct platform_device *pdev)
+ 		goto err_unmap;
+ 	}
+ 
+-	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
+ 	ret = of_clk_add_hw_provider(clkout->np, of_clk_hw_onecell_get, &clkout->data);
+ 	if (ret)
+ 		goto err_clk_unreg;
 
-You can then #define DEBUG in drivers/pinctrl/samsung/pinctrl-exynos.c
+---
+base-commit: b6430552c8cd95e90bb842ce2f421e7a5381859f
+change-id: 20251124-exynos-clkout-fix-ubsan-bounds-error-93071375ec78
 
-Recompile, and do
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
-echo platform > /sys/power/pm_test
-echo mem > /sys/power/state
-
-and you should see all the debug from the newly enabled exynos9
-suspend/resume callbacks
-
-[  871.104840][  T741] gph2: save     con 0x00000000
-[  871.104932][  T741] gph2: save fltcon0 0x00000000
-[  871.105022][  T741] gph2: save fltcon1 0x00000000
-[  871.105109][  T741] gph2: save    mask 0x0000003f
-<snip>
-
-Prior to adding fltcon_offset and the gs101 (now exynos9) specific
-suspend/resume callbacks this would generate a SError on gs101
-
-Thanks,
-
-Peter
-
->
-> $:/sys/kernel/debug/pinctrl/139b0000.pinctrl-samsung-pinctrl# cat pins
-> registered pins: 42
-> pin 0 (gpg0-0) 0:gpg0 CON(0x0) DAT(0x0) PUD(0x1) DRV(0x2) CON_PDN(0x2) PUD_PDN(0x1)
-> pin 1 (gpg0-1) 1:gpg0 CON(0x0) DAT(0x0) PUD(0x1) DRV(0x2) CON_PDN(0x2) PUD_PDN(0x1)
-> ...
->
-> Additional testing on the affected Exynos9-era platforms would be
-> appreciated.
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
->
-> Changes in v2:
->   - Added base tree for this series (pinctrl/samsung).
->   - Renamed the macro parameter from 'types' to 'bank_type' for clarity
->     (struct member remains 'type').
->   - Reflowed commit messages (wrap at ~72 cols).
->   - Replaced non-ASCII characters with ASCII equivalents.
->   - Collected tags:
->       Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
->       Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
->   - Normalized hex literals to lowercase and removed double spaces.
->   - Aligned backslashes in macro definitions to form a vertical column
->     for readability.
->   - Added missing mailing lists (including linux-kernel) to Cc per
->     scripts/get_maintainer.pl.
->
-> Youngmin Nam (5):
->   pinctrl: samsung: Consolidate pin-bank macros under EXYNOS9_* and pass
->     bank_type explicitly
->   pinctrl: samsung: fix incorrect pin-bank entries on
->     Exynos2200/7885/8890/8895
->   pinctrl: samsung: add per-bank FLTCON offset to EXYNOS9_PIN_BANK_* and
->     fix tables
->   pinctrl: samsung: fold GS101 pin-bank macros into EXYNOS9_*
->   pinctrl: samsung: rename gs101_pinctrl_* to exynos9_pinctrl_*
->
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 1069 ++++++++---------
->  drivers/pinctrl/samsung/pinctrl-exynos.c      |    4 +-
->  drivers/pinctrl/samsung/pinctrl-exynos.h      |   97 +-
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |    4 +-
->  4 files changed, 562 insertions(+), 612 deletions(-)
->
-> --
-> 2.39.2
->
