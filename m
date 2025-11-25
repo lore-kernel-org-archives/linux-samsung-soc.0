@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A28325712;
-	Tue, 25 Nov 2025 15:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ED91C84BD;
+	Tue, 25 Nov 2025 15:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764084054; cv=none; b=mEfl9CjSi2fJgzbYPKBHQloMF785A3gsMwbjHQPp5wMn3po6p8SGxNvrMAyifZZLRHolORKTIHneN+cxPW2yAzfR6/y2l3PvvPsglkTdtyS1zU9tWPRLXZQ8i8XPmV1GHSJ06QUGGyqbhDmMQuVRPPT8By3VGrVEsN5Wr23H5K4=
+	t=1764084169; cv=none; b=Vyt6VmykojrEaL0aTb0ftSr5e6WWNoa+Ll1maZWCnlakABIYO4iTQiMajHAD6ol2S+UKQHE+R18BGEgr1B2t+AxmhyJNIa1sV5u9Nh03beHo8vFDu6ASCNLUU2/+Y9d0e4XdEaSvgLrPmhsRxKUpoMP6OzKWTllFfw/3dgJ70t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764084054; c=relaxed/simple;
-	bh=BCA8gecQ3jJz8DBdFOqLh4OALdI1WHN0hfpkk/7n8pY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q+Kt5EEaMDTVAUNOeN1ixQxMEWlxJ5u4R5Qvl4ZLnxXz8asaWNp/yzLdMm5DAnMiqe/amj0cjwxR+P/mZPY3Adw6D2MIB/sqmyMBL+MecS+3hvvLbUdWYSkbjMnDpBf0JIxE2zv9McTz7s3zMjKPDfbrNXQQtf0yP20ddTZy5yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8idKUxj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764084169; c=relaxed/simple;
+	bh=MPNblq4mG15gjOci6IPAXY2vrTTh/GoLPR4P1hIGfhw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c+hYhzVd6N43WtinAIk7q+TcqSFOzRIEBTDpCVtNYzTIe2ea5Rdls5FMD9kyumd1E6tWcOangg6H5pQ9vEKkb332M5Ny9j8EYGAN296ycFRbi5rSaBiktdSy7ge2y4yJSHxC+x7BE0HsrMUxfwOvOxgctdH87HDvDpULQMU3C7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6QZJdLP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8idKUxj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46FFEC4CEF1;
-	Tue, 25 Nov 2025 15:20:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6QZJdLP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF0CC4CEF1;
+	Tue, 25 Nov 2025 15:22:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764084053;
-	bh=BCA8gecQ3jJz8DBdFOqLh4OALdI1WHN0hfpkk/7n8pY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p8idKUxjKA+57pibMAm68jJjT+fXczK225xsHYTZR3aLRLsWm/U3ltAQ6wF9uty75
-	 8N9WsTWbcjjQkt5mQU/yTHSaOvkcMT0hbcPVY4V6QggX2pmDKAs2iXWfIUXBDB+XMc
-	 m8UmMvInGICR7qNS8MTZciQe9kOv5cZO4gwcPh9C9GqpXecsGaLZjQ5BuVInLZxZXn
-	 lyYkQ1oCfoS6wPd1DAGlz8LoJ0px9pxaYmw6KmENyuoN+OmIGt0j4qJTM4DJd8enb5
-	 /hrYU9iqnv7+4nfzTQKJcdzReh6Xs60IjXjVRcGCVi2No9KGENZVcOckt0V15BwUr1
-	 12o1FBhsmBXqg==
-Message-ID: <84f68f5f-2b38-410f-81b1-7f349c870a66@kernel.org>
-Date: Tue, 25 Nov 2025 16:20:49 +0100
+	s=k20201202; t=1764084169;
+	bh=MPNblq4mG15gjOci6IPAXY2vrTTh/GoLPR4P1hIGfhw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=G6QZJdLP0zp67kcwM305/SM2MYzN8O1Y7xv+TjD/ZNhZSdeQ8ThW3NBogm5huZr3Q
+	 DInskdz9GO5+4kMSJ8dhBlha/C87xCUBxZgEeJrxVIfih6l05UUu3ZtCGNq75LyUS+
+	 gwufv2J0eBos850MIfPemf01ckaXvLeSLSC0EE3rZaUSjoAARUmd2hhnuioOll96aS
+	 UJ7Mn+M+D0mfcBcYCl2543Pi07+H7MDWQx/6ROz3uut6XOD+FW85ypwLXRtac31lLd
+	 0fg0yJgMgk9ewr3mMo5APrzPsEuQWNVZRVfUlDnBfqkRIGhNqzqGbPXTtoof27la2Y
+	 vses5zjX3PfTA==
+Message-ID: <ee3a70bf-ff44-4d84-944f-04447945d8b3@kernel.org>
+Date: Tue, 25 Nov 2025 16:22:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -36,6 +36,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 0/3] Add support for exynos5250-manta (Google Nexus 10)
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Lukas Timmermann <linux@timmermann.space>,
  Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
@@ -43,7 +44,7 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  Alexandre Marquet <tb@a-marquet.fr>
 References: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <84f68f5f-2b38-410f-81b1-7f349c870a66@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -88,26 +89,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
+In-Reply-To: <84f68f5f-2b38-410f-81b1-7f349c870a66@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/11/2025 16:12, Lukas Timmermann wrote:
-> This patch series adds initial support for the google-manta board, known
-> as Google Nexus 10 to users. The device is powered by
-> the Exynos 5250 SoC. The notification led driver (as3668) is already 
-> (tho not applied) in the kernel mailing list and can be found here:
-> https://lore.kernel.org/linux-leds/20251125114015.355487-1-linux@timmermann.space/
+On 25/11/2025 16:20, Krzysztof Kozlowski wrote:
+> On 25/11/2025 16:12, Lukas Timmermann wrote:
+>> This patch series adds initial support for the google-manta board, known
+>> as Google Nexus 10 to users. The device is powered by
+>> the Exynos 5250 SoC. The notification led driver (as3668) is already 
+>> (tho not applied) in the kernel mailing list and can be found here:
+>> https://lore.kernel.org/linux-leds/20251125114015.355487-1-linux@timmermann.space/
+>>
 > 
+> Thank you for your patches.
+> 
+> Nothing in the cover letter improved regarding my request - you clearly
+> need to document, in a very explicit and obvious way, that this uses
+> bindings where not applied. Drivers don't matter here. I need here list
 
-Thank you for your patches.
+... "bindings which were not applied."
 
-Nothing in the cover letter improved regarding my request - you clearly
-need to document, in a very explicit and obvious way, that this uses
-bindings where not applied. Drivers don't matter here. I need here list
-of bindings this is using which were not yet applied by maintainers.
+> of bindings this is using which were not yet applied by maintainers.
+> 
+> If there is going to be v3, please be sure you fix the cover letter.
+> 
+> Best regards,
+> Krzysztof
 
-If there is going to be v3, please be sure you fix the cover letter.
 
 Best regards,
 Krzysztof
