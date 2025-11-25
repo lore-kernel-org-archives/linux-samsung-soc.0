@@ -1,33 +1,68 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ED91C84BD;
-	Tue, 25 Nov 2025 15:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D62F33A715
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2025 20:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764084169; cv=none; b=Vyt6VmykojrEaL0aTb0ftSr5e6WWNoa+Ll1maZWCnlakABIYO4iTQiMajHAD6ol2S+UKQHE+R18BGEgr1B2t+AxmhyJNIa1sV5u9Nh03beHo8vFDu6ASCNLUU2/+Y9d0e4XdEaSvgLrPmhsRxKUpoMP6OzKWTllFfw/3dgJ70t0=
+	t=1764101617; cv=none; b=luoHXvJRfz2kMQFv3iVoH2laL12MWgTwF6jrola1yQQEM6Y376zm/pvaQkYSFRA43oIl27IYTmwCu1lIIg626/c1h9vXxwEQwLArxWo/4yzOfsIlpk6d2GOVIfjgZPD6OxTRrpU8GclxW7a40rtGcSPMR9IwZyup0eAvMGuCBTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764084169; c=relaxed/simple;
-	bh=MPNblq4mG15gjOci6IPAXY2vrTTh/GoLPR4P1hIGfhw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c+hYhzVd6N43WtinAIk7q+TcqSFOzRIEBTDpCVtNYzTIe2ea5Rdls5FMD9kyumd1E6tWcOangg6H5pQ9vEKkb332M5Ny9j8EYGAN296ycFRbi5rSaBiktdSy7ge2y4yJSHxC+x7BE0HsrMUxfwOvOxgctdH87HDvDpULQMU3C7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6QZJdLP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764101617; c=relaxed/simple;
+	bh=89CYleDV3lSw4EhOz1KbzHaBTT/MlUH9EZ2vYE5n4hQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pvQZuT0tuJFwnhSttiVVpfOXFO1bTSMdffZM3sMJjdQmOetEZ6iVLAWA1jkcwvbZPRIUu/wm7DOr7QaIZqVVW7cWHn7pwbVp2ZaczRpvO9toOoaqcxx0UD6ac61X1iPKGg26DHZDvLXE6DOWLqVyPrW/JN8Yk5pnP0gIapdJCzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxKW3oOW; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6QZJdLP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF0CC4CEF1;
-	Tue, 25 Nov 2025 15:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764084169;
-	bh=MPNblq4mG15gjOci6IPAXY2vrTTh/GoLPR4P1hIGfhw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=G6QZJdLP0zp67kcwM305/SM2MYzN8O1Y7xv+TjD/ZNhZSdeQ8ThW3NBogm5huZr3Q
-	 DInskdz9GO5+4kMSJ8dhBlha/C87xCUBxZgEeJrxVIfih6l05UUu3ZtCGNq75LyUS+
-	 gwufv2J0eBos850MIfPemf01ckaXvLeSLSC0EE3rZaUSjoAARUmd2hhnuioOll96aS
-	 UJ7Mn+M+D0mfcBcYCl2543Pi07+H7MDWQx/6ROz3uut6XOD+FW85ypwLXRtac31lLd
-	 0fg0yJgMgk9ewr3mMo5APrzPsEuQWNVZRVfUlDnBfqkRIGhNqzqGbPXTtoof27la2Y
-	 vses5zjX3PfTA==
-Message-ID: <ee3a70bf-ff44-4d84-944f-04447945d8b3@kernel.org>
-Date: Tue, 25 Nov 2025 16:22:44 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxKW3oOW"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-297f35be2ffso89011455ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2025 12:13:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1764101615; x=1764706415; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RfK2UtCRp3qKogO3H5nzh+puMsdKQP2QnVSL7A2UN44=;
+        b=VxKW3oOWAtVSdaZiFCUPsvxPV7erJbX7v+fhDsUrRrkFeUlUUUqALw8IjCrvuoiFw2
+         NZ+bBuUFYdMmzOkd8r/pWCX1vYRtn9fMxUXdP66SO1VgUPfHLRaT71ns2IdVyieXKOj5
+         hziaOPm8Unjb1ROGgGAfOaBz56eEgJH9qzlSckTi40gPgwP7VN6b/I1p//rc5OTzQWda
+         Aos6CIaFox/B2wtHLzctvY6LMXwFt9OSTybQvkHbyte1c1s7ExKqYWNRlwc0hPSRWCsZ
+         duPsh4RWMZePK1ENh5P7vGItv5xO6IcVkAPfTI/8QztARVKiUyvyED/s66Wjy40xbcz7
+         lXXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764101615; x=1764706415;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RfK2UtCRp3qKogO3H5nzh+puMsdKQP2QnVSL7A2UN44=;
+        b=YwYy5yEvZizSmQZbN5/ulgWNipCcuPPQJRHiVL7eNvvkNGsOVrYkDSFyI2JhuwM0W4
+         ZvrgLnWarKSaWQcKY5rcpHuwtVehDZZCr61WKus0AL232DQ6iHb8Z6GfZyn8e5hGXEFa
+         o9lzuWfzRPQsYnuws6OOb0P13ATSZHbimbuRnwjgzMeBnU4Eb2rOW3dMXAlTic1YnVgg
+         VEEZ15hn1eaZxgvMtBpuYMJdOYtNJMaghLzWt0B12QzwiKSZxq1PcDhcUIriZZAYdsfl
+         gC5cCblkiaZrzyU9KM4l7OlUINkbFNYlC9UmID98JjPaZVUHsanaf2WtuHZLA1Fi8Bv9
+         GGIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU58NzktWZkNYq7CaW0s7nLLkwArSxNlvs6qUUEZTYdmpGTcM9ulxtKSEVnRUHHcaAwV/WxrIY9TH46VQeqIR519Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwuD7847SM2q84TxmslzI0Bto/JRaHCtwKxZ+lTaEskQpDIl48
+	E1MI+n+QjfXlRNRWt4u7beUqiZc8fTl5dSZYPDC3187F/8FMRZiIyDK98luHQeKD4g==
+X-Gm-Gg: ASbGncsbByEBAUuEynJACCfbCeig3h+e4+i+hHOPhLaLCtW1ru6z6BhZmu67HnY9uu4
+	fVyNYBm6/kYYxOCJHQKxgRzM8h4vYz/4EuuwapJowfMw2KAmwycwIqrAyZgGe6U5Vrfnj7TC756
+	CtrC18RaLqxCkF1P/R7XakFSwIL1dNqhpX/k9zYE9JjzWTD3kBS3bUM2vcU3tALBEsjQG6Bleu3
+	daq7Gd3U0uv3UUfNHmW84GUOJkqAFIaXoL184E36AiM+8cFrjiP7pDGXCZkxN84eYtAHFD+vxtc
+	i5tVBNDX+YdWzZX/9Z9I3mO6tGh8Zh9OWWy92ow2CHZtnQZFktcHpwgclK0ARk/w4tf+jl3dVSn
+	srRjXTLLpUuVPuEfCr2L8Whs4DowinK94ct53nZcee5BitESSE8okdSvipta0ibn+v281hXcaXC
+	c5FDmnUsJxC+6HVyYtbfKzMCSEFunMHLff86rsIhiNoKFl817kDiJQKxMx7ZI/KBez6/g63Rs2J
+	2FLt7bFZ4AUmw==
+X-Google-Smtp-Source: AGHT+IG9kG01ZIUmMJzmeQwMlH61r7mcmKmX15F17Yg0ycZqophUcVw0eG5SWVAXcyDMCqwBRpETuA==
+X-Received: by 2002:a17:902:e545:b0:295:8c80:fb94 with SMTP id d9443c01a7336-29b6c6f1516mr170593005ad.59.1764101615123;
+        Tue, 25 Nov 2025 12:13:35 -0800 (PST)
+Received: from ?IPV6:2a00:79e0:2e7c:8:744c:4262:57e5:31a7? ([2a00:79e0:2e7c:8:744c:4262:57e5:31a7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b1075c6sm175965955ad.17.2025.11.25.12.13.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Nov 2025 12:13:34 -0800 (PST)
+Message-ID: <adc2d6ec-e666-4dd0-aaad-7ef014efafb6@google.com>
+Date: Tue, 25 Nov 2025 12:13:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,88 +70,59 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Add support for exynos5250-manta (Google Nexus 10)
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexandre Marquet <tb@a-marquet.fr>
-References: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
- <84f68f5f-2b38-410f-81b1-7f349c870a66@kernel.org>
+Subject: Re: [PATCH 3/6] dt-bindings: usb: maxim,max33359: Add supply property
+ for VBUS in OTG mode
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
+ Kyle Tso <kyletso@google.com>
+References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
+ <20251123-max77759-charger-v1-3-6b2e4b8f7f54@google.com>
+ <20251124-rook-of-exotic-innovation-fedcc5@kuoka>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <84f68f5f-2b38-410f-81b1-7f349c870a66@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <20251124-rook-of-exotic-innovation-fedcc5@kuoka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/11/2025 16:20, Krzysztof Kozlowski wrote:
-> On 25/11/2025 16:12, Lukas Timmermann wrote:
->> This patch series adds initial support for the google-manta board, known
->> as Google Nexus 10 to users. The device is powered by
->> the Exynos 5250 SoC. The notification led driver (as3668) is already 
->> (tho not applied) in the kernel mailing list and can be found here:
->> https://lore.kernel.org/linux-leds/20251125114015.355487-1-linux@timmermann.space/
+Hi Krzysztof,
+
+On 11/23/25 11:53 PM, Krzysztof Kozlowski wrote:
+> On Sun, Nov 23, 2025 at 08:35:50AM +0000, Amit Sunil Dhamne wrote:
+>> Add a regulator supply property for VBUS when usb is in OTG mode.
 >>
-> 
-> Thank you for your patches.
-> 
-> Nothing in the cover letter improved regarding my request - you clearly
-> need to document, in a very explicit and obvious way, that this uses
-> bindings where not applied. Drivers don't matter here. I need here list
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+>> ---
+>>   Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> index 3de4dc40b791..a529f18c4918 100644
+>> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> @@ -32,6 +32,9 @@ properties:
+>>       description:
+>>         Properties for usb c connector.
+>>   
+>> +  otg-vbus-supply:
+> How is the pin or supply called in the datasheet?
 
-... "bindings which were not applied."
+The pin that supplies the VBUS power in OTG is referred to as Vchgin in 
+the datasheet.
 
-> of bindings this is using which were not yet applied by maintainers.
-> 
-> If there is going to be v3, please be sure you fix the cover letter.
-> 
+>
 > Best regards,
 > Krzysztof
-
-
-Best regards,
-Krzysztof
+>
