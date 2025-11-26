@@ -1,118 +1,320 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4331A2BE04F;
-	Wed, 26 Nov 2025 07:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E0A2C0265
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 07:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764142784; cv=none; b=PfrX6ttp0iN6rCzPvZKREzIcKK9o3vwbeyhZgcm7qpYR6egMeDn/IvlDNlVg8NwakR8Ef9KwOs9+G4nbwptVJENH49zeJH1n7R/ZX4vx9GoLIAQPD9DCL42xST8rUo6j5c6pZSPFjpGhBH6LbSGMkQT1gsKOZGClOjQi402NYYM=
+	t=1764142821; cv=none; b=TIHTV4iPWeu552CotUCT4e+JobClnKq2pkxsvn6pQqzo1/MrLRw2x1phLksJN4UjH5KYL8O7WDX2eLMeaZ9gNdHRSlDfHO/wK4/EoBstY1iEXvmg16E7kXVeioRT11/FtS0Gk9DfRu2OcrRRn2BxTNxF9y/VSNXVM9omNV74WXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764142784; c=relaxed/simple;
-	bh=EMct42WoiiGjcksMl7vwP//cvhacHtrR+zrVyuvWuGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n7Q8M3Gguvxmhf2eZFOhdpg1mCbdbMzQqrf7Y79fiSdyuM7xHtEG76EDZYy0C7OrlSU+gE2ajqzTI37Uv8cKgLB/HoQiztbfD6t/5aH2Ow0a2DI/cfbQhxlQ/YwT14n87H3kbQCogNiZLuaEM68Fbbi08FuWCPLumKDxNGgcOmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GhLPpFNV; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1764142821; c=relaxed/simple;
+	bh=wQ/9/DY5ZYccAaDZksK7IFxZDLe0yw3KxcFfeF+Rn3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sOHgh8PFHfVpAFfywthKZVaudMuyJtIABMzqzukKjom3xXFoxqh22PA/bReg2a4HIPC8GCp6pFdL0y+nPjfnuPvd+f1N3+z7p+M8YtWJB/r8DBgggqnw9tpo9BuYlD4vhoAZKQ5ZjySPgQBNvYUb48bhdnh7VppEDixHbSrl5s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nxsdbyPw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+VLEA8R0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nxsdbyPw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+VLEA8R0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GhLPpFNV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764142784; x=1795678784;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EMct42WoiiGjcksMl7vwP//cvhacHtrR+zrVyuvWuGI=;
-  b=GhLPpFNVgOverOCUQfJGJCSkLsHbY8xqZVaP+7fgRIoy5kDDlWeH8zSx
-   fsDwRTTU1VioNK3pJhS5bH3x/aApBEpixA3ejB3YWJjsuRSrzE8fHmau8
-   hsaTx6bMI7QU79dcISQDdFxLqkPxngUO3zO9gBP6c36RQn3C9DMRKqakp
-   kcXldyFQKpFpvz+w4QkbnMQKVLklZX8DqMJb3unRYTdW5LFy1dVXn0YSg
-   i7o5xvt2kNF1RNEjjoYprOohTS3BmLREZAtVQe4Uc/UqP02EX5wvsHE45
-   RVxKI/vgkxKAT1Tgz4dxeclyUKpUCnf27/buelwASbJq/4fLFV33NxVqm
-   A==;
-X-CSE-ConnectionGUID: qcCy/TseTMC0yI3U/jV/IQ==
-X-CSE-MsgGUID: EAQlX/hCRPeNIt/D5RhMvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11624"; a="83563493"
-X-IronPort-AV: E=Sophos;i="6.20,227,1758610800"; 
-   d="scan'208";a="83563493"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2025 23:39:43 -0800
-X-CSE-ConnectionGUID: U+ariKqbS4mjldTk3ROtsw==
-X-CSE-MsgGUID: LJpZH5gTQ9ah/6mzKzzK6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,227,1758610800"; 
-   d="scan'208";a="193297094"
-Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 25 Nov 2025 23:39:37 -0800
-Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vOA7i-000000002bl-41Uh;
-	Wed, 26 Nov 2025 07:39:34 +0000
-Date: Wed, 26 Nov 2025 15:38:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>,
-	Amit Sunil Dhamne <amitsd@google.com>
-Subject: Re: [PATCH 5/6] power: supply: max77759: add charger driver
-Message-ID: <202511261521.hSYp4ttf-lkp@intel.com>
-References: <20251123-max77759-charger-v1-5-6b2e4b8f7f54@google.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nxsdbyPw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+VLEA8R0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nxsdbyPw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+VLEA8R0"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5C6CA22C7B;
+	Wed, 26 Nov 2025 07:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1764142810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/IKV4NTtJDFriBCvdPujoI7Ss0dmnp2XYDv3sBK7Do=;
+	b=nxsdbyPwMPWjnG5L8rQDkkJKR+yuEw2QDk1AxcRidFERWys4o+v8VAgfQvHrM26PCj9Wyv
+	Wnt1aYIPzuKMZ0jTkgOT4WQxIQkuGEz/laT1YlcwTWqRpIvuMC8IFT/HOkyuE2Fw4hheDM
+	J2zRAnG9B9cfHlTTelwwpCOfrUZQQW0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1764142810;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/IKV4NTtJDFriBCvdPujoI7Ss0dmnp2XYDv3sBK7Do=;
+	b=+VLEA8R0mOGMJCFmnuWFparRdoUKNmXgpZ7YnSUkRUbCju5PQ8EpYFuuIW0TdhGD0Ajpz1
+	EExCAwui7CyMDZCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nxsdbyPw;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+VLEA8R0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1764142810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/IKV4NTtJDFriBCvdPujoI7Ss0dmnp2XYDv3sBK7Do=;
+	b=nxsdbyPwMPWjnG5L8rQDkkJKR+yuEw2QDk1AxcRidFERWys4o+v8VAgfQvHrM26PCj9Wyv
+	Wnt1aYIPzuKMZ0jTkgOT4WQxIQkuGEz/laT1YlcwTWqRpIvuMC8IFT/HOkyuE2Fw4hheDM
+	J2zRAnG9B9cfHlTTelwwpCOfrUZQQW0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1764142810;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/IKV4NTtJDFriBCvdPujoI7Ss0dmnp2XYDv3sBK7Do=;
+	b=+VLEA8R0mOGMJCFmnuWFparRdoUKNmXgpZ7YnSUkRUbCju5PQ8EpYFuuIW0TdhGD0Ajpz1
+	EExCAwui7CyMDZCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9E573EA63;
+	Wed, 26 Nov 2025 07:40:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pmTZL9muJmmfKgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Nov 2025 07:40:09 +0000
+Message-ID: <58b768ad-00fb-4fe5-924c-9cf6ec12f75c@suse.de>
+Date: Wed, 26 Nov 2025 08:40:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251123-max77759-charger-v1-5-6b2e4b8f7f54@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 03/25] drm/gem-dma: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Ludovic.Desroches@microchip.com, simona@ffwll.ch, airlied@gmail.com,
+ mripard@kernel.org, maarten.lankhorst@linux.intel.com, geert@linux-m68k.org,
+ tomi.valkeinen@ideasonboard.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org
+References: <20250821081918.79786-1-tzimmermann@suse.de>
+ <20250821081918.79786-4-tzimmermann@suse.de>
+ <52600bf4-2c1c-49a6-82c5-b31818141a43@microchip.com>
+ <a11c195d-197c-45a4-962a-e2336c7360c2@suse.de>
+ <2fbe0d43-67c5-4816-aff0-c23ac1507ec5@microchip.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <2fbe0d43-67c5-4816-aff0-c23ac1507ec5@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 5C6CA22C7B
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[microchip.com,ffwll.ch,gmail.com,kernel.org,linux.intel.com,linux-m68k.org,ideasonboard.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[microchip.com:email,suse.com:url];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-Hi Amit,
+Hi
 
-kernel test robot noticed the following build errors:
+Am 26.11.25 um 07:24 schrieb Ludovic.Desroches@microchip.com:
+> On 11/25/25 16:03, Thomas Zimmermann wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know
+>> the content is safe
+>>
+>> Hi
+>>
+>> Am 25.11.25 um 15:39 schrieb Ludovic.Desroches@microchip.com:
+>>> On 8/21/25 10:17, Thomas Zimmermann wrote:
+>>>> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
+>>>> buffer size. Align the pitch to a multiple of 8.
+>> I missed a chance to explain it here. :/
+> I was wondering if it was 8-bits or 8-bytes.
+>
+>>>> Push the current calculation into the only direct caller imx. Imx's
+>>>> hardware requires the framebuffer width to be aligned to 8. The
+>>>> driver's current approach is actually incorrect, as it only guarantees
+>>>> this implicitly and requires bpp to be a multiple of 8 already. A
+>>>> later commit will fix this problem by aligning the scanline pitch
+>>>> such that an aligned width still fits into each scanline's memory.
+>>>>
+>>>> A number of other drivers are build on top of gem-dma helpers and
+>>>> implement their own dumb-buffer allocation. These drivers invoke
+>>>> drm_gem_dma_dumb_create_internal(), which is not affected by this
+>>>> commit.
+>>>>
+>>>> v5:
+>>>> - avoid reset of arguments (Tomi)
+>>>>
+>>>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>>> ---
+>>>>     drivers/gpu/drm/drm_gem_dma_helper.c     | 7 +++++--
+>>>>     drivers/gpu/drm/imx/ipuv3/imx-drm-core.c | 4 +++-
+>>>>     2 files changed, 8 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/
+>>>> drm_gem_dma_helper.c
+>>>> index 4f0320df858f..ab1a70b1d6f1 100644
+>>>> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
+>>>> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+>>>> @@ -20,6 +20,7 @@
+>>>>     #include <drm/drm.h>
+>>>>     #include <drm/drm_device.h>
+>>>>     #include <drm/drm_drv.h>
+>>>> +#include <drm/drm_dumb_buffers.h>
+>>>>     #include <drm/drm_gem_dma_helper.h>
+>>>>     #include <drm/drm_vma_manager.h>
+>>>>
+>>>> @@ -304,9 +305,11 @@ int drm_gem_dma_dumb_create(struct drm_file
+>>>> *file_priv,
+>>>>                           struct drm_mode_create_dumb *args)
+>>>>     {
+>>>>       struct drm_gem_dma_object *dma_obj;
+>>>> +    int ret;
+>>>>
+>>>> -    args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+>>>> -    args->size = args->pitch * args->height;
+>>>> +    ret = drm_mode_size_dumb(drm, args, SZ_8, 0);
+>>>> +    if (ret)
+>>>> +            return ret;
+>>> Hi,
+>>>
+>>> Was it intentional for this change to alter the pitch?
+>> Most hardware does not need the pitch to be of a certain alignment. But
+>> these buffers are possibly shared with other hardware, which sometimes
+>> needs alignment to certain values. Using SZ_8 improves compatible with
+>> that hardware.
+>>
+>>> The alignment requirement has been updated—from 8-bit alignment to
+>>> 64-bit alignment. Since the pitch is expressed in bytes, we should pass
+>>> SZ_1 instead of SZ_8 for hw_patch_align.
+>>>
+>>> For example, for an 850×480 framebuffer at 16 bpp, the pitch should be
+>>> 1700 bytes. With the new alignment, the pitch becomes 1704 bytes.
+>> Many display modes have an 8-byte alignment in their width. 850 pixels
+>> is somewhat of an exception.
+> Indeed, but overlay-type planes are often used to display windows that
+> are not the same size as the screen, and therefore potentially not on
+> 8-bytes aligned.
+>
+>>> Please let me know if you’d like me to submit a fix.
+>> Do you see a bug with your hardware? Unless this creates a real problem,
+>> I'd like to keep it as it is now.
+> Yes, that’s how I noticed this change. I have an application that
+> requests a framebuffer larger than my screen, in this case 850x480 in
+> RGB565 for an 800x480 display. So I have a pitch of 1700 bytes. Now it’s
+> using a pitch of 1704, which shifts my lines.
 
-[auto build test ERROR on 39f90c1967215375f7d87b81d14b0f3ed6b40c29]
+Honestly, your application is broken. The ioctl returns the pitch value 
+to user space and that's what the program should use. Some hardware has 
+hard constraints on the pitch, so you will sooner or later run into the 
+same problem again.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Amit-Sunil-Dhamne-via-B4-Relay/dt-bindings-power-supply-Add-Maxim-MAX77759-charger/20251123-163840
-base:   39f90c1967215375f7d87b81d14b0f3ed6b40c29
-patch link:    https://lore.kernel.org/r/20251123-max77759-charger-v1-5-6b2e4b8f7f54%40google.com
-patch subject: [PATCH 5/6] power: supply: max77759: add charger driver
-config: um-randconfig-001-20251126 (https://download.01.org/0day-ci/archive/20251126/202511261521.hSYp4ttf-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251126/202511261521.hSYp4ttf-lkp@intel.com/reproduce)
+Anyway, feel free to submit a patch to call drm_mode_size_dumb() without 
+SZ_8. The best value would be 0, so that the function picks a default by 
+itself. Since you're at it, maybe also look at patches 4 and 5 of this 
+series. They have similar code for other memory managers.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511261521.hSYp4ttf-lkp@intel.com/
+Best regards
+Thomas
 
-All errors (new ones prefixed by >>):
-
-   /usr/bin/ld: warning: .tmp_vmlinux1 has a LOAD segment with RWX permissions
-   /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `max77759_charger_probe':
->> max77759_charger.c:(.ltext+0x27b): undefined reference to `devm_regulator_register'
-   /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `enable_usb_otg':
->> max77759_charger.c:(.ltext+0x983): undefined reference to `rdev_get_drvdata'
-   /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `disable_usb_otg':
-   max77759_charger.c:(.ltext+0x9c3): undefined reference to `rdev_get_drvdata'
-   /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `usb_otg_status':
-   max77759_charger.c:(.ltext+0xa06): undefined reference to `rdev_get_drvdata'
-   clang: error: linker command failed with exit code 1 (use -v to see invocation)
+>
+> Regards,
+> Ludovic
+>
+>> Best regards
+>> Thomas
+>>
+>>> Regards,
+>>> Ludovic
+>>>
+>>>
+>>>>       dma_obj = drm_gem_dma_create_with_handle(file_priv, drm, args-
+>>>>> size,
+>>>>                                                &args->handle);
+>>>> diff --git a/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c b/drivers/gpu/
+>>>> drm/imx/ipuv3/imx-drm-core.c
+>>>> index ec5fd9a01f1e..af4a30311e18 100644
+>>>> --- a/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c
+>>>> +++ b/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c
+>>>> @@ -145,8 +145,10 @@ static int imx_drm_dumb_create(struct drm_file
+>>>> *file_priv,
+>>>>       int ret;
+>>>>
+>>>>       args->width = ALIGN(width, 8);
+>>>> +    args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+>>>> +    args->size = args->pitch * args->height;
+>>>>
+>>>> -    ret = drm_gem_dma_dumb_create(file_priv, drm, args);
+>>>> +    ret = drm_gem_dma_dumb_create_internal(file_priv, drm, args);
+>>>>       if (ret)
+>>>>               return ret;
+>>>>
+>> -- 
+>> -- 
+>> Thomas Zimmermann
+>> Graphics Driver Developer
+>> SUSE Software Solutions Germany GmbH
+>> Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+>> GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG
+>> Nürnberg)
+>>
+>>
+>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
+
+
