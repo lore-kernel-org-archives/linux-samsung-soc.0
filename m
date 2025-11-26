@@ -1,114 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30EC2E541E;
-	Wed, 26 Nov 2025 09:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B9C2874F6;
+	Wed, 26 Nov 2025 10:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764149938; cv=none; b=hWRCARQKxr5J3btDnYq42BzSPVit0GG0G2KkwIzK+dEDZfj3rsjjg7r9C1UUr+nrqqGze69wlgN4wI2+2ze8JtsvKgvbmloT9Uj3hPqEevnoB4hF1ZW/qFMtjcVFAPxHV/m7febpLQ0+ooJ/ecpmAYQb9tjBVJoR9dLWDNuXkwg=
+	t=1764151283; cv=none; b=RA5l7U2/nY0KmR2OU62zSxEUEPXZhhJrVdX18sqRCibDUu0HhreT3W9zj54lb2+sQjRDD8siYAOd5cQ+GVlQjQ/HPya4j0a/A4gwrlrDiI1daEJRvxvofh3glJyj3S5MHUrLdIWbCSOBqmdGkZhdhHpYGMhuZyhFiVe6ek3TlEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764149938; c=relaxed/simple;
-	bh=GQ/+agVZ8GdF0ABN7jQLAQhCBRHcmo/PMooBUd7dMBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RtEIyTB331/FjtfTTtenGRSsIE1R6CyF5lRM6YIeWwkWJjdlDohkIbtaTQdY1vOsbqItrkaWRXbLp28ScWhZQE5d5MJmOBLM0IzrLHLxrNFRrTRw90kKCsfWOdpUU5cS29Nr5BP4+wnaBDIScJA1u6UfjLaZJr+trmho/q5+1vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQj9LB+q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764151283; c=relaxed/simple;
+	bh=e4cSdFEpo2kqlF5v6+j+zFUBcsT+moYHxEeI0riTT7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adSZVVD8/ULkTgvQDDD+rFbgmgpqNdeex0OVw7mrVlt98WcmloVd5l5CXnRcP+ws7MsSfa4wgjXwNX91HrBcYZTiLDCalQGcyFIMsIA5s1OYlrPgeOLCERxnBLYDocTOlc06Nd2vBESnKiTGTVnOfLe63mre8a5f3TIOX6zB/JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dKAS426d; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQj9LB+q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8256DC113D0;
-	Wed, 26 Nov 2025 09:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764149937;
-	bh=GQ/+agVZ8GdF0ABN7jQLAQhCBRHcmo/PMooBUd7dMBc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lQj9LB+qK42kvWayMms1CBrideIQUXbJ097RCBRvRENB651dSjwRGqlkvk+TfU9cG
-	 XE05fRi3pvMMrv2Yt6BXiEUqbDZrCFlOnfuXKjW9C/x5mEEUHcjM+dAyE+9+n/4guQ
-	 kzaNAcq7j3+FpS9c6RpCwEoOjU6jE5OMoDjOQTbMubSQSCsjqxD8eyl/C6ZZaHLvM7
-	 lkA/R36J1PdwroDPjf//9XWsXB0+XY1BNCNXzgv7l5LSo0mpDi1m5DJIjqpBD7P/TA
-	 DV7WsJDYHCh1S+cZoPiLy6JNpGx7+HVASOTQr7pqJyEvr7+zeEtstNNdu0XXMhBRhA
-	 7OR9ZFtSUDikA==
-Message-ID: <6dd18bd5-401d-4cdb-8765-f1ea6364034d@kernel.org>
-Date: Wed, 26 Nov 2025 10:38:53 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dKAS426d"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764151282; x=1795687282;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e4cSdFEpo2kqlF5v6+j+zFUBcsT+moYHxEeI0riTT7Y=;
+  b=dKAS426dyEU3rIHWKnzToP4/hSgdEbMdVVDQiFlbFoMWbRyDhcRHagjt
+   EktW4sqfgOt4naz168e7auWcG+6Z5bvUWbCQtB7R+7mbI6ZRGiPTLdn/L
+   PIADpVRPvxROpP7ZvX2DKEK1hqWS6qs0YlOOxWFfrT0fk8lncdCdMlxYo
+   GVMEc2HDPVUnzsS94FUrByR+FVuyO/kwl/8xlROemxQ40C9VE4T068zcv
+   AUxMzEKQJddM2XP66JMNOX5Ghz+VISoGbGNwzTeV1L+9Y6EkJ3lyxNkea
+   Nk5D5I93vT+y14KEim8bNoCLpPei4DfpINNjEYOQ7Zo3QNF5dEtqfYZsr
+   g==;
+X-CSE-ConnectionGUID: LiYMwGu4Sxmwq01uArf12A==
+X-CSE-MsgGUID: LwcW/V9MQWaR2hh1MB2SbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11624"; a="76806452"
+X-IronPort-AV: E=Sophos;i="6.20,228,1758610800"; 
+   d="scan'208";a="76806452"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 02:01:21 -0800
+X-CSE-ConnectionGUID: t9JDLjGRT8yGW+fJ5xCWzA==
+X-CSE-MsgGUID: JdFY+pn8TA2cP8IiLg/HxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,228,1758610800"; 
+   d="scan'208";a="192916164"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha) ([10.124.223.25])
+  by orviesa007.jf.intel.com with SMTP; 26 Nov 2025 02:01:14 -0800
+Received: by kuha (sSMTP sendmail emulation); Wed, 26 Nov 2025 12:01:08 +0200
+Date: Wed, 26 Nov 2025 12:01:08 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: amitsd@google.com
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+Subject: Re: [PATCH 3/6] dt-bindings: usb: maxim,max33359: Add supply
+ property for VBUS in OTG mode
+Message-ID: <aSbP5OanDUGhEXXV@kuha>
+References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
+ <20251123-max77759-charger-v1-3-6b2e4b8f7f54@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: samsung: exynos4: turn off SDIO WLAN chip
- during system suspend
-To: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-References: <CGME20251126093704eucas1p1b93e5c1240c11622e901ba6feb660ca3@eucas1p1.samsung.com>
- <20251126093652.3101226-1-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251126093652.3101226-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251123-max77759-charger-v1-3-6b2e4b8f7f54@google.com>
 
-On 26/11/2025 10:36, Marek Szyprowski wrote:
-> Commit 8c3170628a9c ("wifi: brcmfmac: keep power during suspend if board
-> requires it") changed default behavior of the BRCMFMAC driver, which now
-> keeps SDIO card powered during system suspend to enable optional support
-> for WOWL. This feature is not supported by the legacy Exynos4 based
-> boards and leads to WLAN disfunction after system suspend/resume cycle.
-> Fix this by annotating SDIO host used by WLAN chip with
-> 'cap-power-off-card' property, which should have been there from the
-> beginning.
+Sun, Nov 23, 2025 at 08:35:50AM +0000, Amit Sunil Dhamne via B4 Relay kirjoitti:
+> From: Amit Sunil Dhamne <amitsd@google.com>
 > 
-> Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for the Galaxy S2")
-> Fixes: a19f6efc01df ("ARM: dts: exynos: Enable WLAN support for the Trats board")
-> Fixes: f1b0ffaa686f ("ARM: dts: exynos: Enable WLAN support for the UniversalC210 board")
-> Fixes: f77cbb9a3e5d ("ARM: dts: exynos: Add bcm4334 device node to Trats2")
+> Add a regulator supply property for VBUS when usb is in OTG mode.
 
-Thanks Marek for the fix, but please separate commits for each of these
-boards.
+What is "OTG mode"?
 
-Best regards,
-Krzysztof
+OTG is usually used to refer to the USB in device role, even though the
+specification actually defines OTG device as a device capable of both
+host and device roles. So the term was confusing already before.
+Nevertheless, the emphasis is always on data-role, _not_ power-role.
+
+Here it seems MAX33359 uses the term OTG as a synonym for "source", so
+power-role?
+
+Please don't use the term OTG unless you really have to - it's too
+confusing. I know the MAX33359 datasheet uses it, but what you really
+do here is regulate VBUS. So please:
+
+        s/otg-vbus/vbus/
+
+thanks,
+
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+> ---
+>  Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+> index 3de4dc40b791..a529f18c4918 100644
+> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+> @@ -32,6 +32,9 @@ properties:
+>      description:
+>        Properties for usb c connector.
+>  
+> +  otg-vbus-supply:
+> +    description: Regulator to control OTG VBUS supply.
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -53,6 +56,7 @@ examples:
+>              reg = <0x25>;
+>              interrupt-parent = <&gpa8>;
+>              interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+> +            otg-vbus-supply = <&otg_vbus_reg>;
+>  
+>              connector {
+>                  compatible = "usb-c-connector";
+> 
+> -- 
+> 2.52.0.rc2.455.g230fcf2819-goog
+> 
+
+-- 
+heikki
