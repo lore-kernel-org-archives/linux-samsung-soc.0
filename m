@@ -1,132 +1,122 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C60E30E0F2
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 22:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28188188713;
+	Wed, 26 Nov 2025 22:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764194697; cv=none; b=cs1lH92UzzML6M8FzpdIOeUqo6cn5Lpukvp1zzvx9S6ZGiuTGCQtD2LSI1eyoFz3c/7qz0VToCcPLjKA9HvFE6YQEVVZJ/kmRLoIP+zcY486X2W+dfmjlHHN6+wC6/Kbp8yTZVLpuYV+lyAT0SrmNHC+HrDagvWKeSEJj3ulGr0=
+	t=1764197190; cv=none; b=tsHmmPTuCAPAYWOB1PJra+ghUyK8FtxaBK3R6vH/4kv53Qt9abc+h9xB391qgl9NENSPx4ljcCIg1HotApvEv1CE/RlEMJlcMs3DO/voqHJuYvTETflUCLQN9H35kj+gBQrCMrX5pvkcZm+icbHXfje5JhTyR0YwS4bbm5TGMsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764194697; c=relaxed/simple;
-	bh=gqLSwHsrGZkhN+aFNTbmKSZgZc3SbCkcYs3ExiI7vJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8JaFl0pa5GqYizp66qF4tetGe1c7w2vG9IAmhkSFFHqXyVeqbJ83gF743JO9K4OzVitrIW6Z2mvvQFDY5fqSKcmXwQFgWMAwPvE7y/IN6z8RTogm6nBM5uTBzZuFtovclw4Zg5fCSp6pGUrLWxfRdTPMHndA/skGMDHfl71GXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WS9TcaZy; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1764197190; c=relaxed/simple;
+	bh=mpEgD7T+cSmzwIvW7UnTNgT/3UN7QoNuldwzSnsc2HQ=;
+	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uqSrx/wQ3pZN3Ht5ZSYTIfXjF7+HUcdNWLwnt983jTAZTuC05lh+9+BFJat7dlAR9FfciQxdP7Ho0c/0CMfih7NbI9sMaCgX1/qMq/IGqut6NoFq34MEkHDt/0aCXBx/RQd1TeEMF81mM/8m4VkBAA3cIt2Ds7ROVAnkim0JDiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syayuq00; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WS9TcaZy"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7a435a3fc57so178865b3a.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 14:04:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764194694; x=1764799494; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ay1HyD/YXcJtqug9NBApq+fmqHdHRxdWGXWcfRUTS3Q=;
-        b=WS9TcaZy5nuL1InS9I6cg8WwqY/z6Ctxns7IUCSRhChQqYh2yMEnMxO6jaD0ZdbyR+
-         lVu8SiRoFXlsdMDMV1CePKlW1YyuOBd+ndZfLwgYqh/2/FY5mpExu57DZS0IeCcO8OeG
-         1/KVfvchS0fOaNRA1IO2NFXi3qA6Zf4hfhQl8kqXdChI7hNItu+Gmsr6tSxjSY/Ke2xq
-         gQjTpgMcNNtAex69WlIKxy1C/15AF300gW8aVpKg3n+cKng6u/z7id6POkFNbK1W9LtM
-         G6QlTjUF8jXOw7youvpnryZqExjsOFb7YBWMDNgK2UXe5jjurBkHkqsJMEdTheqORaVX
-         x+3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764194694; x=1764799494;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ay1HyD/YXcJtqug9NBApq+fmqHdHRxdWGXWcfRUTS3Q=;
-        b=kNydVowRMutVWGUN/44SgSmeQuGCiD6VUxJATsK1Kj3hBNXfgI/4Gpy3MFCRSY7qaO
-         28mx4VhqB5M7LTjX+lO1HSyKWCb9j/NPIsqHvRxg+up8ZN3zK1GpVMjxyP/zdsa5bMV1
-         dX+PSmlvrjLB1oRnsZflZJf74g7RFphoAt0BNMPISRJRZ2JW5zoH2diOHxSqUQUEPjGv
-         O5JOgm1eyCxgjDx+shgP8Y6R5yD+OzzGW+sst0ABBdZy9ATJHjXGF/ik0/t/OPoHq745
-         ykLYa8J0nxjv6edhqRaGrjUO8NYq35/hEDLSW53eyaQhzqC2Ug5NsRfc1YTbwj3Y84HR
-         An6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxMTI3k60ELi6bRwrzUMtoft2kiVWwlGGk3D4ktj1GYpJDmfrUnta/rG47LT4pvpCq/9qPZx2rsdK9POrCTVvpyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt3nkhUPQzEN0xPIUg0pPvupUWDuqMWvRYm3y9PHZ6QAhAEUz1
-	jlJp6xmB0QtEXJHmCJKtOJJvjCDoFM2OwFlvTc2rPVLpuHAUxk5Sgi5+W+6JCT+NbQ==
-X-Gm-Gg: ASbGnctAU4D8f6+ONdNGG1n/HPkPV2Ew2Dth+sxovSJXXteEAFFvSSfSm7R479KX2J9
-	BDQ5KzVQmPkGq3XGV8Bwjxl2oyQau3ZH8mc1XeGZJmoN4jadG7LsdQyrcXrnQ5TSRebl6YzHa25
-	P6u8tpda+kmOuumloM3uivyQCIRv/lvD9diAj07X+VU6NEa1gwzQxxXHTfpXvTES7dktSSHPfwz
-	oQRRjebN3ULkaZVNVGRpC+loVv8j7ugTowSNhX+a+dhE7In25JaTR8E7JTbE7kVdPODC5i7ziXF
-	SOMo2x/6DZpWaIdjxfEZtcTeiHYILSIXNOmPv/mD8WjYmXiEDJxQOiJwNrqMFRx19pBBSYpII53
-	M3128nUtjuGrl2cY9GwEEF4KH77Td083bNbUSB3np+x/+4BJWQQDGyanZ0WUsx3+k//zu+otYQI
-	FqAo4oceWQKiVnepQIo0h8vp96ezYLqn5C6q8FRV+Shx45KVaRyxlYr6k7h5gDWvWe2hpb8J6kj
-	iqhQYLFTZTHrQ==
-X-Google-Smtp-Source: AGHT+IHgCBAVlJ/1/Oj2H+nvmtjVOEfs8Cj4GuvQ7p3t9lR/WHGAMof8mvn31hs8D+Fx43GprBkfMw==
-X-Received: by 2002:a05:6a20:244d:b0:343:64dc:8cc with SMTP id adf61e73a8af0-3614eb15e9fmr24287915637.12.1764194693250;
-        Wed, 26 Nov 2025 14:04:53 -0800 (PST)
-Received: from ?IPV6:2a00:79e0:2e7c:8:c116:b1c9:632d:a902? ([2a00:79e0:2e7c:8:c116:b1c9:632d:a902])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bd75def6346sm20451772a12.4.2025.11.26.14.04.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 14:04:52 -0800 (PST)
-Message-ID: <be908072-fd0a-48dc-97e0-b120539f5584@google.com>
-Date: Wed, 26 Nov 2025 14:04:51 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syayuq00"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87C91C4CEF7;
+	Wed, 26 Nov 2025 22:46:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764197189;
+	bh=mpEgD7T+cSmzwIvW7UnTNgT/3UN7QoNuldwzSnsc2HQ=;
+	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
+	b=syayuq003B1hcNtLi7XKLgfkbkpv/Kp4m008QzM5IfJYeIoj0X187jotHnrw8BH8r
+	 K2AsNyyel45bff58zaTtmJCEE/z4YNwcwYCZekfLiIJ9G+sVMcBMhg+fcjyAWlNjdG
+	 3if1NVNo/R7+L7SzZZTUapkp7vhabn7YM+VCTzIQt5r08IOs5e7uUkh0s+afHf5D7n
+	 D0WvcY7/JrXdMXK4PiYiMRi8h442VXVuIpXigl8w4KKXOEgdfco2StDFAmZKSDh+Og
+	 dP4K/EMlQNk8QDuY/G2sbkH0raPB9blpXbpxCnMOnsO2kUKVOWZ2aqNnXqnxWjTEdT
+	 Krj8Zubrg9PTQ==
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 26 Nov 2025 16:46:27 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] power: supply: max77759: add charger driver
-To: kernel test robot <lkp@intel.com>,
- Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20251123-max77759-charger-v1-5-6b2e4b8f7f54@google.com>
- <202511261521.hSYp4ttf-lkp@intel.com>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <202511261521.hSYp4ttf-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Alexandre Marquet <tb@a-marquet.fr>
+To: Lukas Timmermann <linux@timmermann.space>
+In-Reply-To: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
+References: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
+Message-Id: <176419714377.2726224.15005423904347214785.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] Add support for exynos5250-manta (Google Nexus
+ 10)
 
 
-On 11/25/25 11:38 PM, kernel test robot wrote:
-> Hi Amit,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on 39f90c1967215375f7d87b81d14b0f3ed6b40c29]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Amit-Sunil-Dhamne-via-B4-Relay/dt-bindings-power-supply-Add-Maxim-MAX77759-charger/20251123-163840
-> base:   39f90c1967215375f7d87b81d14b0f3ed6b40c29
-> patch link:    https://lore.kernel.org/r/20251123-max77759-charger-v1-5-6b2e4b8f7f54%40google.com
-> patch subject: [PATCH 5/6] power: supply: max77759: add charger driver
-> config: um-randconfig-001-20251126 (https://download.01.org/0day-ci/archive/20251126/202511261521.hSYp4ttf-lkp@intel.com/config)
-> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251126/202511261521.hSYp4ttf-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511261521.hSYp4ttf-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->     /usr/bin/ld: warning: .tmp_vmlinux1 has a LOAD segment with RWX permissions
->     /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `max77759_charger_probe':
->>> max77759_charger.c:(.ltext+0x27b): undefined reference to `devm_regulator_register'
->     /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `enable_usb_otg':
->>> max77759_charger.c:(.ltext+0x983): undefined reference to `rdev_get_drvdata'
->     /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `disable_usb_otg':
->     max77759_charger.c:(.ltext+0x9c3): undefined reference to `rdev_get_drvdata'
->     /usr/bin/ld: drivers/power/supply/max77759_charger.o: in function `usb_otg_status':
->     max77759_charger.c:(.ltext+0xa06): undefined reference to `rdev_get_drvdata'
->     clang: error: linker command failed with exit code 1 (use -v to see invocation)
-I believe this is because of a missing "depends on REGULATOR". Will fix 
-it in the next revision.
+On Tue, 25 Nov 2025 16:12:39 +0100, Lukas Timmermann wrote:
+> This patch series adds initial support for the google-manta board, known
+> as Google Nexus 10 to users. The device is powered by
+> the Exynos 5250 SoC. The notification led driver (as3668) is already
+> (tho not applied) in the kernel mailing list and can be found here:
+> https://lore.kernel.org/linux-leds/20251125114015.355487-1-linux@timmermann.space/
+> 
+> The first two patches add the necessary device tree files and
+> bindings, while the last patch makes a small modification to
+> allow CPU1 to boot, as it requires a call to it's underlying firmware.
+> 
+> This first iteration only provides basic support to get the board
+> up and running and usable via UART and with WiFi support. We will upstream additional
+> features in future patches. All patches have been tested on real hardware.
+> 
+> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+> ---
+> Alexandre Marquet (3):
+>       dt-bindings: ARM: samsung: Add Google Manta (Nexus 10)
+>       ARM: dts: exynos: Add Google Manta (Nexus 10)
+>       ARM: samsung: exynos5250: Allow CPU1 to boot
+> 
+>  .../bindings/arm/samsung/samsung-boards.yaml       |   1 +
+>  arch/arm/boot/dts/samsung/Makefile                 |   1 +
+>  arch/arm/boot/dts/samsung/exynos5250-manta.dts     | 516 +++++++++++++++++++++
+>  arch/arm/mach-exynos/firmware.c                    |   4 +-
+>  4 files changed, 520 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 6a23ae0a96a600d1d12557add110e0bb6e32730c
+> change-id: 20251125-google-manta-79545e179d10
+> 
+> Best regards,
+> --
+> Lukas Timmermann <linux@timmermann.space>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: 6a23ae0a96a600d1d12557add110e0bb6e32730c (use --merge-base to override)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/samsung/' for 20251125-google-manta-v2-0-0f097cfff39c@timmermann.space:
+
+arch/arm/boot/dts/samsung/exynos5250-manta.dtb: /soc/i2c@12c70000/led-controller@42: failed to match any schema with compatible: ['ams,as3668']
+arch/arm/boot/dts/samsung/exynos5250-manta.dtb: rtc@101e0000 (samsung,s3c6410-rtc): clock-names: ['rtc'] is too short
+	from schema $id: http://devicetree.org/schemas/rtc/s3c-rtc.yaml
+arch/arm/boot/dts/samsung/exynos5250-manta.dtb: rtc@101e0000 (samsung,s3c6410-rtc): clocks: [[2, 337]] is too short
+	from schema $id: http://devicetree.org/schemas/rtc/s3c-rtc.yaml
+
+
+
+
+
