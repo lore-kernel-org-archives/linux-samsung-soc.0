@@ -1,68 +1,68 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31C331A06A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 20:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5910311969
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 20:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764188841; cv=none; b=bcbcg/nUfD1zrPMh2cnxkDu7qdKGUAcCsifc9iblSFahinwKzexCx1lYcE26jgAnM6WgOT9KR9vvtWQaYyjb9DkhNUmHqQXNXLNMiVlNGk+jW9iHCx2sKLNGzh54/EFQkWdDIz9DKzDuFOcpRttnc/8DoIQQ5TuQ3ee+QfAniCI=
+	t=1764190224; cv=none; b=MQ8sSl0fwIyNRiW9BVVuHrJZoSyCj4zQx1fsjYOE98HF/pMrUTzLUwi8Dhni+tx/P0e4KXD9p1eLqEXaA3g4O5N/V4rmqfuC7YZefn/DYRfhGjTBm2w4gE75N6cdztK9DWwxiRevXrsmFbapKMM/pf9yaWy2OXox/IXm8MNF2C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764188841; c=relaxed/simple;
-	bh=BUKUk8XbTFbg4rBCIooaYc9015FQ2fbX5halOJx9HyI=;
+	s=arc-20240116; t=1764190224; c=relaxed/simple;
+	bh=2hcVpa9scm0PygAHV2yhPwb8b1VqKc8achD9dLmNggM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sETKelIWMgIvphdgmHTb9E6LL/vl8u2mCI+2B9yAj7nG/NT8/6SNYfV5cHjT4bGP65AolffPg72PA6vz87gcA+KRIN17BpI0IcDORAFOhIIS2vdmwuRnEVbx+kZaY9H/Zrj1HSG2m4aQazJLYVjvskFORnkUx4g3dMquS8w8swE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s6AgJ+k+; arc=none smtp.client-ip=209.85.214.169
+	 In-Reply-To:Content-Type; b=d8bRVmzrEZW1nJZk30nQAnEet8pwMdTLqCryQGJjkBTk5Z7mSB8rO+dmc8A3sK3o6DOHkHnc+qxkgZvr0OdK58eOqgnWHoLLRG7ehVcVwvoFOTwoTwcw14T/yYbH0VsdC7C5dXaFjZ3aNQCzKuZxlFQvCoLiAz7g0t06DP7iEi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HGbDdCz7; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s6AgJ+k+"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-297e264528aso1785105ad.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 12:27:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HGbDdCz7"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-299d40b0845so2697925ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 12:50:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764188838; x=1764793638; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1764190221; x=1764795021; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=A5r3za4Hd/VcLzmDqeRuo9GjhPbaMT68/WQ/4wPSlvg=;
-        b=s6AgJ+k+S05B8VA8DFZWOL2d5TbrYxk6tma4DHRIF0l5l3jtDLGUrbZxPZmH09adwO
-         cg8HXhneoJdVQ2K1tIYT2RJsM0oEkBUC+MNOWOY4XG2pr+GPN1zaR1DiFJ3oSYuoJR6z
-         AqdGwjk0rQJs2ePWrolt5B+OIb9egoFhaZ9AZvt647nS5HsTxdmZnYWOoGythSyIDLVS
-         1z0F+LDYeOR3wrfXDD5ZHnaA/Ozhn0ojJ/OU3dlzmeQJ+kC5puBYCT8H/H5Qyf5d1fAb
-         6MTuupBGvBHCKxHx5eijCK+6sS6rLGq40qfzsdQrrK+lV75TU60t6RJxuJcsBeQUmUOh
-         XBCA==
+        bh=nAe7krNX/FWdcfazYkx0OEalo6w7fciX1p3CljsQHjE=;
+        b=HGbDdCz7fMh9auA5giOKC+up0GbVoGyfdlmnW3fyA3Gxeb/N0VXaJ7h8z9oxYb4vjA
+         g+p+ZRULTy1pYN7EVv5B4HrwMHmGfgjly+28BhEPlXXtD/KWdwSqMfXw9NDqftFHdE/T
+         CXq15IsJHKr6bJHsZs8IrqaLSSTkzKPU2I82uX6u58ZouSHjfKSYxKn/4eti0kglBfqH
+         6FT1XKbMuy2JP+yi2OjHZQnX1+RHfCIkvrp4b5z+VaJHg6EoexoTIpw0JsUIvp4E42Qi
+         xpVhXmwS0s1ou8X0njK31DhtPHOxTRa4nDS1mJWmErhGiynAQh7U5JJC+nlAPID9A7qR
+         FYOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764188838; x=1764793638;
+        d=1e100.net; s=20230601; t=1764190221; x=1764795021;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A5r3za4Hd/VcLzmDqeRuo9GjhPbaMT68/WQ/4wPSlvg=;
-        b=HvhEoVGlwRabYl4W/u+VJvEB98QIqzvuatUD1TBG2dMRoRQwpQuwn6K8N/1/IHrnuE
-         6Of3N2DWBlVsij4gq8kQO2fYyptSiCALbeoVj3LKji5IGQgD7eY3lPGM7nnKwTAzRWk2
-         S6kJbJfETITl451xz+mbGTXkMOal8puZEbFuvkAg4Ufm45PEAR80+a+elCMgdgH0p5b9
-         /TJLTXBvjriKFI8cN6RHWwMg02Q0zhiYbRfCm5iIttfkqHc7Ejz7cMhxMWjvklqfo+W6
-         oFzY7XdKQ91XD2UsllTITACRUGQkg9n6MkUE5S7ifG6pnRB+YHNv61xpOiFOipyieZCT
-         G2kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWW34zNsyeS3McSjhvrv8HVcKVquN4ecTgFO85IQQwZDjsMKhibk+dYZscpnUciIbnha4dqp/2hNdcCUt5trQkeyw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvHyzT//Lf3kdE9O7ZIi20oTxa/HLygHjko7rGtAOkhkF1iWS+
-	7MUQJDYfQWfhGNjkeFTkU1PkcXXsveelP5+mfTRxYgXW7qE3lxCA4w0aphtRxs6pig==
-X-Gm-Gg: ASbGnct2oyqwSpGuOdc4C3fMMK1a6PbHaLAvQld2RyqlLYRvjLXeQHLWbis+MlRv7Xf
-	POP18zmkoi43RSnnemJ6LLJpUEnP2hbGvLJQCGNv4qWtUf5AzV5sK05en3YhI99cV+o5ex/zclt
-	qi/jtk3naoRKMARTMuMle6i2Hf2jXulyWG+sG7K1ygCvYuwMddOB/jEF0ElVHaFnNKMo+VdGrM4
-	TFxfenEWCJPPBrAlqObsVlbjxL4hEzuXe38P9BoSu+xbQL4LH+EePs0zBlRs8wCcPAIkrmQ+1CK
-	9RUgdjRIXEt81xN+v3yQkvIRZ7HsqM4N1HDjC3dMTX9ZbUG6XoCe0lrGf+ms7YFalx1vH2ISnQp
-	qhEbWXD+8gwxAXgGpn9OwhGA4gK078cBG6wmslBbiS6oCZgAVFyKiwrF48AR9oszZf0XI9GN7qf
-	mKdbkQPEaJR7WTC4olASN3Df65Jgmx+IRNj+jEgpDzuzFfp2HZqWoAPOQIxhndK/ORBqjt/tXst
-	5955FUwMpmQNA==
-X-Google-Smtp-Source: AGHT+IGs7j+rISQURjI4KHJiRtxo72A6EAIFd8qUy73nZRmTVJ6HUMi3Fk8FYXZXKGlB3rSWFkwohg==
-X-Received: by 2002:a17:902:d58c:b0:294:fcae:826 with SMTP id d9443c01a7336-29bab2fa50bmr92368305ad.59.1764188837611;
-        Wed, 26 Nov 2025 12:27:17 -0800 (PST)
+        bh=nAe7krNX/FWdcfazYkx0OEalo6w7fciX1p3CljsQHjE=;
+        b=NdHBkoo8tGX/mhloxCn2T6mivfFQxxqgMfyLH29i4GCcUS8B9p+LLIiwCLNLTdbULy
+         N6nJkwxUzUoAe1i2aMBjuvgJfXHzrqHVe3g/2dBiEOQuR+SurrQVozg9bfkF4KIzh3lT
+         2IlXn6Mg16s52fT57jOlHr0kxjhrZ5sgYhV5nPO/N92K7wb1eajqOU7ThBKNLFb2J+Ud
+         bCwE6xDfMXk6nsW8VZQdGmv7UlxPsyhPvWfocDuokGBQyVZyqDGKpczp/0Gi2/qrAbx+
+         RlGRvYVl+LzDJ2jX7u6dLYnyDNXMGyqTENcLEWAEFnTXF4FqRoHOeqcwvmya1tUL6WD0
+         Ebww==
+X-Forwarded-Encrypted: i=1; AJvYcCVCmBvNKaRVCtr6ZcFImVFo3NFMnLuYnRXBnzbnxM+2ZpLRw+KfAHL0IoF5JYRUDckAxfTIAX6Q8mrP/IWaPskrig==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZMbGTkqMBxxhaklR2/M7AOSC3kwuqLdxRbJJKU4yFcroDP0CP
+	DjQYM7NfnKk9zWQXhRVqha9XiMPsnQKTbUan3bTIdQ8f3GAhwmo0mSDLNNe1jvFXew==
+X-Gm-Gg: ASbGnct0Lrr8Il2pVAPuktM4tY4zOVR9mVCzk9nWfn7QDUmPl776DEsrfrAjlwZBoaU
+	Vd1TMcO3lOtHjbv5V4XUyf3ZP39MK6Gxw3Vng898KOx8y2zQVY559e3TgM+MR2iStgrTOjJy2ej
+	W+Id5V8Aokygjo6GU0pKK/x260f0ah/LUgI5VQ0uUbmn7iFEkKnPCC3eHr+pWE+6H3ZihHvVoYA
+	/XGdd0jK9lhmcEWquJCi1YHstnAMpPb51tXRXI02ehaabMPUDMhJCbS/CNk77kwTdqxTR4pRqGP
+	9ECcV3ebks6Pej59NCmp9wtpBjIHkn7KgSj2G79v0Le1dZe8lT48oImx27HVIOjVMWbMIebtlwa
+	BWIAAH8tITnBp/t4W1vzIPzmwwkVUdhtpzerjf6o+PeU/8dHpSzgQVtqCEER+VB4FKX10U+asdj
+	CrVGsIOnbhWPG8EQRupKSUn9jZ+2au0WFqWJC3rNJdbumPh7mvr9p8ThK99kJq1vnfMnZTqe8OE
+	KYSY50MXtuPrhfFmlpoJSAi
+X-Google-Smtp-Source: AGHT+IFjQZz19LkV6uSbQD7V0osJzTvl1J8TedsGIZ78YPP9aLGTQiFmGEhYv2+QMQ+JGAYgRK90Dg==
+X-Received: by 2002:a17:902:d4ce:b0:295:596f:8507 with SMTP id d9443c01a7336-29baac9f621mr97893625ad.0.1764190220828;
+        Wed, 26 Nov 2025 12:50:20 -0800 (PST)
 Received: from ?IPV6:2a00:79e0:2e7c:8:c116:b1c9:632d:a902? ([2a00:79e0:2e7c:8:c116:b1c9:632d:a902])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b274752sm205771575ad.75.2025.11.26.12.27.16
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b12f988sm203367425ad.27.2025.11.26.12.50.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 12:27:17 -0800 (PST)
-Message-ID: <1be015d7-201b-4e3a-a71a-130162205e5e@google.com>
-Date: Wed, 26 Nov 2025 12:27:15 -0800
+        Wed, 26 Nov 2025 12:50:20 -0800 (PST)
+Message-ID: <3c72e1f3-7873-4f13-a5cd-0aecc5163aab@google.com>
+Date: Wed, 26 Nov 2025 12:50:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,14 +72,13 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 3/6] dt-bindings: usb: maxim,max33359: Add supply property
  for VBUS in OTG mode
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
  Peter Griffin <peter.griffin@linaro.org>,
  Tudor Ambarus <tudor.ambarus@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
@@ -89,48 +88,84 @@ Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
  Kyle Tso <kyletso@google.com>
 References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
  <20251123-max77759-charger-v1-3-6b2e4b8f7f54@google.com>
- <20251124-rook-of-exotic-innovation-fedcc5@kuoka>
- <adc2d6ec-e666-4dd0-aaad-7ef014efafb6@google.com>
- <8d8201de13b4694b26812722356a3a55637406c4.camel@linaro.org>
+ <aSbP5OanDUGhEXXV@kuha>
 Content-Language: en-US
 From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <8d8201de13b4694b26812722356a3a55637406c4.camel@linaro.org>
+In-Reply-To: <aSbP5OanDUGhEXXV@kuha>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Heikki,
 
-On 11/26/25 8:18 AM, André Draszik wrote:
-> On Tue, 2025-11-25 at 12:13 -0800, Amit Sunil Dhamne wrote:
->> Hi Krzysztof,
+On 11/26/25 2:01 AM, Heikki Krogerus wrote:
+> Sun, Nov 23, 2025 at 08:35:50AM +0000, Amit Sunil Dhamne via B4 Relay kirjoitti:
+>> From: Amit Sunil Dhamne <amitsd@google.com>
 >>
->> On 11/23/25 11:53 PM, Krzysztof Kozlowski wrote:
->>> On Sun, Nov 23, 2025 at 08:35:50AM +0000, Amit Sunil Dhamne wrote:
->>>> Add a regulator supply property for VBUS when usb is in OTG mode.
->>>>
->>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>>> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
->>>> b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
->>>> index 3de4dc40b791..a529f18c4918 100644
->>>> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
->>>> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
->>>> @@ -32,6 +32,9 @@ properties:
->>>>        description:
->>>>          Properties for usb c connector.
->>>>    
->>>> +  otg-vbus-supply:
->>> How is the pin or supply called in the datasheet?
->> The pin that supplies the VBUS power in OTG is referred to as Vchgin in
-> I think that should be chgin (without V prefix)
+>> Add a regulator supply property for VBUS when usb is in OTG mode.
+> What is "OTG mode"?
+>
+> OTG is usually used to refer to the USB in device role, even though the
+> specification actually defines OTG device as a device capable of both
+> host and device roles. So the term was confusing already before.
+> Nevertheless, the emphasis is always on data-role, _not_ power-role.
 
-Right, it's just CHGIN. These CHGIN pins source the USB VBUS power in 
-OTG mode.
+Thanks for the insight!
+
 
 >
->> the datasheet.
-> Cheers,
-> Andre'
+> Here it seems MAX33359 uses the term OTG as a synonym for "source", so
+> power-role?
+
+Essentially. The datasheet refers to the mode where VBUS is sourced as 
+OTG mode.
+
+
+> Please don't use the term OTG unless you really have to - it's too
+> confusing. I know the MAX33359 datasheet uses it, but what you really
+> do here is regulate VBUS. So please:
+>
+>          s/otg-vbus/vbus/
+
+I will drop OTG term at least in the USB world and restrict it to the 
+charger driver.
+
+
+BR,
+
+Amit
+
+>
+> thanks,
+>
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+>> ---
+>>   Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> index 3de4dc40b791..a529f18c4918 100644
+>> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> @@ -32,6 +32,9 @@ properties:
+>>       description:
+>>         Properties for usb c connector.
+>>   
+>> +  otg-vbus-supply:
+>> +    description: Regulator to control OTG VBUS supply.
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>> @@ -53,6 +56,7 @@ examples:
+>>               reg = <0x25>;
+>>               interrupt-parent = <&gpa8>;
+>>               interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+>> +            otg-vbus-supply = <&otg_vbus_reg>;
+>>   
+>>               connector {
+>>                   compatible = "usb-c-connector";
+>>
+>> -- 
+>> 2.52.0.rc2.455.g230fcf2819-goog
+>>
