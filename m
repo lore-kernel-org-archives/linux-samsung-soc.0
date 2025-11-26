@@ -1,247 +1,270 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013059.outbound.protection.outlook.com [40.93.196.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE9E1799F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 02:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764124368; cv=none; b=u3XUciyspo93/XIUFaqqAQzF/GmHWSoQnDkSjWK9z/99p/r6j+KozY2DFFfYeim3Qd8Oija9ogKHsB2zrVe7FuT8gujAw3CXr6fbJWBgUe/MdPYPWBzmrrlahB65ZoBjlNKLL4mxTJm8UGy5GrKd4oKn91BjzkQkHdU+tWeNYsA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764124368; c=relaxed/simple;
-	bh=pQngsHEG4NnfhIZkLQVe7DkTOMOLWnWJE7Wzcaz5SsA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AEV9/+7wSQ+8iVIdlo7c56KMsY2VNsM/racNaPO3wpfzu1e5M/tQXaDrJqllTZe3rIXWUJ3ebv0E9BuhdjitjsYFPdwqBlmZal2BT41uw+sIqff2S9GbO7gBw7kW+uJH0LLKTBL5SVyR1sJQ6ST/JeMMQJ3UXT2kuAypkwemVMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=txpuY2ZM; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92DC284B29;
+	Wed, 26 Nov 2025 06:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764138283; cv=fail; b=DxMzB6AjJ2sx1O4xCQu0btOWRXllafhRJejxfisv8tuOCfINuRe2rbzm89AIcU8PQO5ymyc8gEck5IzR3Py2h1F0Hbc0mpiL+78uI/PTZDbNdOqvA+lXmuxI1/BMuA3sOAXM9NtBRic0eXFbWhYbghBW2yUxxdsVSp3pfsd8wdM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764138283; c=relaxed/simple;
+	bh=XHDGgDNYgE1/seMLZfEy3qZPl+EvOli7IWibvVDjYfQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=C8ocYHK4wNd1+pCbP00FzEfldbNk+v87/2W885byq/ICrr4NI6FJ+yZCO/DRP4qsrh7z4005y/UDmmjTLZ6F0Wx5DTPDhkFajYefrMgrwEf0ECDMhV2UbbdBuUjsSOCL6cxtZ2fuy6ubN6vr/sl82SpE9HOr6hhch81XAnb4ePg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QudScayE; arc=fail smtp.client-ip=40.93.196.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="txpuY2ZM"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-343684a06b2so6197194a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2025 18:32:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764124366; x=1764729166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=viQFfejLa2fvgnA/CMY2Ia3y/w3OWlv3mFzKSwgxerg=;
-        b=txpuY2ZMijKoio/0XlYRGtLMXO8CeXuhH71iJmqTT8hVorqT/OQbenHQX4Mv0YNVwW
-         5yCrpb5hJB5fHau3Iba1QdZa6EKnvNLE6nmT0EkX9zTRLBuSKEPMQWcbkntkR7WNlY9v
-         UGf7scEjRGqsFCiIqYEkE7bVReEOEhwQVlZM0sfrpJ3p7RiUg0SE7QVmEMkfPuJQmt1w
-         T8nKCyNlCPJwP+vh9LR7LNHT4a9wgbHuNWWRDKa9TzqOaxQe29ds0zSlGhdXXEvYNRMH
-         I+K6CcDAYvVjTNu2RBIdyOLjcuNDk0AHoO76ZHVnV7vTDw1kOXCrAzWcHYffdEMZXXsQ
-         qvwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764124366; x=1764729166;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=viQFfejLa2fvgnA/CMY2Ia3y/w3OWlv3mFzKSwgxerg=;
-        b=L5fDQqIEEXadn/RFYiC+vyMJlGq3GpjbaTd0lTu3bUTdGU14fvr2EK2nKLNanv6duX
-         HAfIoJyxVnQ6DO2DUFdAaHgYceC1jsEiLamJHpEdpRdU54hLRkRh4jtRtf1IuGPxo1Jb
-         WY8q/jUnQuxQ72iRBrwVHsh3VNR/6xD+VD+qujiypWbfOlBAJ1t1Kdw1lggwKnBsuPWK
-         c0I8GStXPiFx1SRv+o4bK61Ym3lOeeEgOlyDA2f5PhP8ZfDM9N4xkrO5uZWIGBeI/7CD
-         gFpP1DkELjBejyjXgznLMilokd1fo6Lia6TTicoNKkrPxSw1sBJ2K8yC3kJKocxCUmiF
-         KFvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSKVdcLHV8v+kaXejo64Hw5BvLz4t/Ea5BXQIXCLEJlvEiw4UiuecPyFEUIZOBseQ8lGK4bH/cKf2EzrFwE0sO5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS56DbpcN8lsekjHuz1LOFc6lcL1dFGMdkKl0t/MowY439GfYy
-	woHHRuSgYOutJXbyNNbE3Yuqeidl+jhZ0/adjcWkRLpKPHTO7xspOYnRkDkafcDffA==
-X-Gm-Gg: ASbGncspaS4P/1laGV3IKCPrcwv21jSi5DTmJNY+H+LxSWR4ALAr9B3U7ryPEooNqev
-	5Ua79e5k2C0jW7NJilRKYNM8Hf80mJScxjPM2NumS0/hq4/VzMHF1rD/tnmFQyhPSITEw7NqzrB
-	XeZsksAPXfBhqZMYX8a8pwJ7xaW3jVE3sc0xt7cVfe5DGLsqMoR/TY7Hsr3IXzwZkIFAubYB3v9
-	yitIuEs8blQyYhLlVL5ykE9e4MIS3C4ALb4WwCle4IL6fAKT6ZEdmOXojJvTRl/aRKQKkmoU8zy
-	DvQoUWXulCzJMTz433L7FjsQgdWssWI9Ra8uX+A+5CSFDlH6eUuZ+3AltEWWu7mHHgAoVcTZTAt
-	+ZqJW1F0Wbf7aBTM4tNN1IlZk56zNw10Q1QGJe4rM5eCgeteaRyTnPaNR+Vj8qHZD18FG29JBrU
-	qRe8iyM4LX8v08UauinhxBjFEOx3PfNLc5YmAzg2xQo0hCQoF843RRHxWtBLw/LYmk1U8Adp59t
-	+/Egq0dLqAs0g==
-X-Google-Smtp-Source: AGHT+IGD1s0jwsigC9CKjP4TkneuimTCZulkIKuNhVDm4i5DPzY9T5r6E8+KK5g9yvP0crM19wwRsw==
-X-Received: by 2002:a05:7300:230e:b0:2a4:3593:645c with SMTP id 5a478bee46e88-2a71910598amr11369897eec.12.1764124365326;
-        Tue, 25 Nov 2025 18:32:45 -0800 (PST)
-Received: from ?IPV6:2a00:79e0:2e7c:8:c98d:9e96:d0be:bc30? ([2a00:79e0:2e7c:8:c98d:9e96:d0be:bc30])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11c93e6dbc8sm91444566c88.10.2025.11.25.18.32.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Nov 2025 18:32:44 -0800 (PST)
-Message-ID: <0a43b5a2-dc2f-402a-8ec7-1d5c88602ffc@google.com>
-Date: Tue, 25 Nov 2025 18:32:43 -0800
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QudScayE"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nlG1ASmjfvGxjG1gJ5mI/jHE63FysfHXO8D2KLXysAaPTJQ+FzniAOAH0Z86gajJFuJA6EyfL9S8TNNAVc8fy09OzvNcGENVAlaYC/4Lw/ONrFPsgByuM7wCH5lXkJAiFPSFKGBP0xpqh8dHygZxTxsnOrzA22MMlaFVhCk0mA/nKfAY1ragxa0Wm5Xvo5WMXqTkVS52OaC30L5jke2wlAVt44rXnK06UeWv9tVsgmCIBZIjq9rzkTvVo35dbg4K068K+pkHBlmd93mq6QuZzr3U0CrFgGE5D8seXtlipFXy4RD+QMp16siUSG6Gt80Vf7CLC1BUghhzlUaC0jUfWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XHDGgDNYgE1/seMLZfEy3qZPl+EvOli7IWibvVDjYfQ=;
+ b=uhIMW8y4L40x47apxB/adNZadwM4/YITjOTVXdiy3dgaKhB7iA5O+mh4+wm0y+his+/jxJhFUZaW35nlRLG+yHqg0E6YQDggSHkQx2pr498u6Tvq1RtVPujku0BmyrCs0I7WPbRWtOVkZ9C/qw9TPy5UvKvV/LGWiAs4Dp6Z0/s3+M1WtqM/Wy7D5kSRToCXtQ4vHYCen0nMX6jRCuveeCkTQGI6P36Ni86RSv78kY1S0WGPZ3UjYUkXtBNs9RwhdhYRBjZv3PdeLhBgbIlb0v7R9P2O/B8hR2sU2z8uVM9A4ZL5dBF20sOW0KeotJAv6Jm8kJdi9eoA07+92CH7pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XHDGgDNYgE1/seMLZfEy3qZPl+EvOli7IWibvVDjYfQ=;
+ b=QudScayE9q2kkscbUIg80rDj89JJli2LhtJlSMrj3HZbdjOfjlmhwxzTGSJLWol6QK5J/YzLRUCF7Y7cldWbwSgdS4rPibg+/WWw5k7MTv7w5rQOLxy38y3lbysbISfnf8hhYFUCPQgRKrZPmCc+vBiqRWaE6ofix+GgkPpRoOsHrxpyYHEN4Uf2YJargcbR7qWQ3YnbNCEi/aZBTbE4ik/AlZTkMG1aBjBwrp0iPGbo+etZX1NMyAe+AZNBITPaXSkjf1JXOW/AYN2StSdzRiYF3097uiJ4o6GxTVQ5KrPlku2zd6TVhzlOytL3SJqxRlTYFI2S64uyx/A3RPJ4zg==
+Received: from IA0PR11MB7257.namprd11.prod.outlook.com (2603:10b6:208:43e::21)
+ by DM4PR11MB7207.namprd11.prod.outlook.com (2603:10b6:8:111::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.11; Wed, 26 Nov
+ 2025 06:24:38 +0000
+Received: from IA0PR11MB7257.namprd11.prod.outlook.com
+ ([fe80::a3f:c748:c7a6:d2e3]) by IA0PR11MB7257.namprd11.prod.outlook.com
+ ([fe80::a3f:c748:c7a6:d2e3%5]) with mapi id 15.20.9343.016; Wed, 26 Nov 2025
+ 06:24:38 +0000
+From: <Ludovic.Desroches@microchip.com>
+To: <tzimmermann@suse.de>, <simona@ffwll.ch>, <airlied@gmail.com>,
+	<mripard@kernel.org>, <maarten.lankhorst@linux.intel.com>,
+	<geert@linux-m68k.org>, <tomi.valkeinen@ideasonboard.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<freedreno@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-samsung-soc@vger.kernel.org>,
+	<nouveau@lists.freedesktop.org>, <virtualization@lists.linux.dev>,
+	<spice-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<intel-xe@lists.freedesktop.org>, <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH v6 03/25] drm/gem-dma: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+Thread-Topic: [PATCH v6 03/25] drm/gem-dma: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+Thread-Index: AQHcEnS8fucA3LjqjkuGZw8r9BxHgrUEDdaAgAAGpQCAAQFLgA==
+Date: Wed, 26 Nov 2025 06:24:38 +0000
+Message-ID: <2fbe0d43-67c5-4816-aff0-c23ac1507ec5@microchip.com>
+References: <20250821081918.79786-1-tzimmermann@suse.de>
+ <20250821081918.79786-4-tzimmermann@suse.de>
+ <52600bf4-2c1c-49a6-82c5-b31818141a43@microchip.com>
+ <a11c195d-197c-45a4-962a-e2336c7360c2@suse.de>
+In-Reply-To: <a11c195d-197c-45a4-962a-e2336c7360c2@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB7257:EE_|DM4PR11MB7207:EE_
+x-ms-office365-filtering-correlation-id: ea781b90-eedd-40ee-e1c3-08de2cb479ce
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?aXYwVmRnaHYrQklnTm94L0JCRGF0YnJSOWNDZ29Zb2dTMURqQWFJQ1F3MVVt?=
+ =?utf-8?B?by8rZ1N4T0d6NG5PaWlhb3Brb0huYUVGemtRNU91TkUxdjU0WGp2TUMvd2FY?=
+ =?utf-8?B?SmM1ZWdqTWFKSnhGM0ZLbkliakRBc3dFMTBxa3M3Yzg5NFlUc1kzeUQxd211?=
+ =?utf-8?B?RHgzVlpLckF1VlJacStIMHNWbUFQZ09aYWJGYVJwbVZoWUppUmc5cE91U21s?=
+ =?utf-8?B?M2VPWGs1OFRvR2VkSDAzek9jelVlVWhxWVMvOFlpdlFPRm1Lc09ETFJUbXN2?=
+ =?utf-8?B?b3dyQmEyWDVKdDgrVGVjQi8wSEwza1NGQ2hkSmJVSzZrK2lzTVV2U0wzVWt6?=
+ =?utf-8?B?TThtWGhuWTFxbnRYYlFpYWx2Q3Y1ZEpmYmg1YWpkVk84Y2ZRVFlkWVNsNURD?=
+ =?utf-8?B?VHlLNldwSEZLakpIaTVJeWNiK0RKRVV1a3VzQStYdEV3cDl2eUl3WTdxbmhC?=
+ =?utf-8?B?anRjUVp0Rlc5azd6VEpIVlJvNlY0K05GbUl1d3YvSkFFSlZud3RMTDZKRUc4?=
+ =?utf-8?B?ZTRlL3R6MXl1U1ZFT2tlajRxSGZ1VS80ekc0T3d3TTdSOGtVc0ZLanIybThI?=
+ =?utf-8?B?M0lLK3lRaDZ4bHU4NW1Ya3RNVHRQQTR0NVF6Y2ZNb3U3TnBXUy9ydnYwejIy?=
+ =?utf-8?B?dnhxV3o4cVJIU085ZThjSkJmMGRYcDdCUmgzWnVWeERRcW9BVzR2d3JiTVdy?=
+ =?utf-8?B?eERydm9MbVFtYmNDV1ZicGZ0ZUtvTldsbHYxbnhnRGF1MjkwTkxBUWhOd3Np?=
+ =?utf-8?B?MWx5L1RZWUNDU1gvcnROcXFlSXIrVFg0OGJEc3F6TW9MYjdoQzRRWmJpbmJ1?=
+ =?utf-8?B?czV0YzVMUXk2VkdjcERjRktQZlYxV1VnNmdwSXF0MTR3UW9UeGFOSG0veko2?=
+ =?utf-8?B?WXFMYkVrQitlL0srQ2tBakRMMU5qNGpXWUo2VGVmQ2l4TWo5S0hEMVM0TUUy?=
+ =?utf-8?B?c1ZnZUhOQlpKZEtBR2FIWExkVmVTOEpMQVE4TTRUSXhnMDlpUk5DQW1HNExV?=
+ =?utf-8?B?SjNaV2l4RllEdktBd2E4OWwwY0ROOHVkZHhMOHkzODE0dllid2k5WnpGcWti?=
+ =?utf-8?B?OWswcStwSGc4ZWtKTnJ2SlcvVDFvY0NCVmFKL3d3TUJndVpSNDI1bzgxTFk0?=
+ =?utf-8?B?VTV5UVgvdVk0cWs1L0lEY1NTbDE1ajFPUll1bXdCUjRzVkJoLy92eXJMUG11?=
+ =?utf-8?B?cDE5OXNBbHo1WlU2S0lpdUVsTEg0bEhic09CSS80T0RmakxNbHV0eFpWL1Bu?=
+ =?utf-8?B?ZEF3YVRsL2lKZVlwS0NXTGJheWVCbTB1YmJQaEE5UTZ1bE1qMXJmdVJlaTJ5?=
+ =?utf-8?B?V3U0UW1uc2FrNFlMeG9IdmhsY2J1RUpMamNGa2daODZGeEh1RDB1aDZReTYx?=
+ =?utf-8?B?M3FIdFhQVTdtQUI3aGk2UGRvR0ZqN1U1K1BDYy9kU1N3NjVmdWVDNkVmODNL?=
+ =?utf-8?B?THltRVVaMjY4VWNmakdsNW5xRUJEbENiZldlUlB1LzNGbDl4TWxLQ1ovQko1?=
+ =?utf-8?B?QkQvMnVEcmU1QWYvVTFmKzRMTktlUmluYnVodnFUSWlsVzZUaDQyZnNuUFZU?=
+ =?utf-8?B?NWpRN2ZadkFaRTdaWFVUREhxVFFXaWNUZzNtMnMzMmYyYWhSZk54WUViSUFn?=
+ =?utf-8?B?bkcvcHhqQlNYNkJvV3lGYjR1bGorMmJyR1hNcGZoOW81SlhkSXRDdjcySklU?=
+ =?utf-8?B?UzJxekNhemRGU2ptbjZJdlM2M3pGeVhUSVRRQi9HQWttNC9tQTlOOERJMUNs?=
+ =?utf-8?B?T2dXS0kza2ZlZHJ1OUZRb0E2MVhoUG82aG1VV3JsaXArZ0NMcHBkd0NnRmIz?=
+ =?utf-8?B?YVlZcVhKYU42YVRoVzloYkVJUTRORElGemJMdVpRQndoREQybzd3WG81MFFM?=
+ =?utf-8?B?b2ttSzdMekVXdGQ3WkNaZkNZMmNsN25FaDNGOWVCRzlGbWRvR1o4MGRjVlFQ?=
+ =?utf-8?B?dkZIclVmcWxWWnJNWklIVHMzRUdTMTFjbzhFNjM3NWplR1VVL1VzcG0xRGpG?=
+ =?utf-8?B?UWQ0NlRnVXJUMWtMelVUY0hiOFdSRDZiVzlvMGJZVFRCNGxOMXRvOEV0UGxh?=
+ =?utf-8?Q?Z56loj?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7257.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VGdEMENBdEZmTm9KQ2JhY3IzbnY0QnZKdFZ4Wmp2K0haV0tJMTV2aU5OaDky?=
+ =?utf-8?B?Um9HaTc1WEtqc0FjSkExUU1jUnU1VEw1SUZtQkhvVmhxNXdkZDB2c2NkVUU3?=
+ =?utf-8?B?OEszcGYyTU9iYWNLWVVLZ0haS3BHSmNuWDFhMm1yS1lSUTlUb1JFQjlxYnZu?=
+ =?utf-8?B?ZGNHZkNqbExtdjRpNDc3Z3NYdlBIMzg5by9RMFhCRnRxQmhiNm9sbXBCeWoy?=
+ =?utf-8?B?VjdPVExZOHdZa0M5RUJYdHh0dUE1UDhSK3k4alRiUnVGVlA2d3Fza1N2azlm?=
+ =?utf-8?B?c3FaNi9tWHora3pzdDg3ekdwVzlZdWdOZ0JjRklFMXZ1dXh0YlBXQ3h6dnpG?=
+ =?utf-8?B?MGpjL2dRdHE5R1JLQXcvZFlvUEQ3clh0dVVyRWNmdjFlQ0lHNGw0YXNIRFBY?=
+ =?utf-8?B?VTEyVGEwZTlIUmtmZmpZaDA1QTdxd0t4ZG5Jc3dzNWdjZ3JOKzBsU0M5RnFr?=
+ =?utf-8?B?MFFTQ2tVODBSaDdTZkFaUU82dlg3ckhSWG5ib0puWkZtT0U1ZG1KQkxCVFh3?=
+ =?utf-8?B?dGRZM05JNENqNmtUNFJIV2xxVTVoYkgvZk1IdnRyYUlaYkRnSXp0MVV0clpj?=
+ =?utf-8?B?bloxOExpa0pPejVQMDdPYjBBS2g3L2NTeWFMa2JRazM5YjFjSS91S3FDSXJQ?=
+ =?utf-8?B?bk55VVdxYjlGdVZFcnUxdktHQ0pFaVdmTytDVEdhRGJjSXE5T29ZSU92dFFn?=
+ =?utf-8?B?SGFGYUpic3NMb1RUazN5NUNEQ2FqcnBoRWN6bm9EZzYyUk1rSE9uamh6eWdr?=
+ =?utf-8?B?YlJvNUszMkVpUHAzRWhhVXJ5OWllWWtWbldnZ3M1YURiSzNOU05ZVHlST0NC?=
+ =?utf-8?B?Ri9Lck9hZEhvcTNkL1NkNTBTbGo2emhEQ2Q5RExZVzdSdVVRaTlBWG1DenVJ?=
+ =?utf-8?B?K2s3R3JnT21NNDdHamN6dTNycUk1T0NJZkdYU28xekpMQ2x5T05VakhUSFZw?=
+ =?utf-8?B?WmpIeE1kVkQxZ0JlMWwrbVI0SGh6STc0VUphMURzaEFqc1JLcnpHT1dqM1dB?=
+ =?utf-8?B?RXYwLzFkMGVqdXpydTNTZnZDYVk5L1VvUlBZdlRCeU9wR3B1S2hRSGhzeHVz?=
+ =?utf-8?B?bjAyRjV3b255YXZkRnlnZUFiSjZhNng2REdxWDllbG9RRS9FM0F5S2c0WjJn?=
+ =?utf-8?B?cWczbTV3MmhpOFVZU29vSHFaNmpiZm9EazI0SWdjRHhqamJUQ2puUkNCSFRY?=
+ =?utf-8?B?MGZmOVp6dS85V24zRFlUdkRGYzVtckFFemhOU1NjVDR1Y3RqeHlZUEdJMXpF?=
+ =?utf-8?B?UW1ZRHF2R2kvNVFCU3Rpa2NzeE12SHExMFZtU1hTMmpicHhyakFjUU9hV1Nn?=
+ =?utf-8?B?OS9WbUFkdEg5QndPcklkYUl5bCtuOXk3WDVzei96RUI0QjVWMUN6ajAvY1lq?=
+ =?utf-8?B?MG5tVHV4ZWVpNEZrKzdtcEpCWUdUOWk4c0NhaitaSVhyNjdwSzltY3dCVExw?=
+ =?utf-8?B?SFlNYU9PaWMwMHc1QndwaUkwM0xmZytRY1JmNHdld0EwOUNnMjdJc21EeFA2?=
+ =?utf-8?B?cHhCQkVTdUQ2cm5zUnRoNHovcmgxbEhkSU9VelZWRCt5K3ljdlhUVGJydjVY?=
+ =?utf-8?B?NUVCZWoyT1RwOW5VNkhNbVVoMUZXMWQvTHhLTHUyN3ltQnBJUDFBTlBKRG1B?=
+ =?utf-8?B?TkxJOFpTMUpueW5oN3Q1M0ZCYlJJa2E1QlAzVThaQzJOb0xLMDc0ZUlIQ3JI?=
+ =?utf-8?B?YkxycVc2YWhoTG1MREIxZ255ZWx4UzIrWWduUGF6M21ETGUvTjFnalhROEc4?=
+ =?utf-8?B?QWNjdzFLb01LeVhpdWJ6Y2dhWXNSM0FRaUg2SG5DdGNUejg1NEhDS204OVJL?=
+ =?utf-8?B?d0tKR0c0a21aMVlZcExlTDlGLy9VSkwvcHZkRWVHQyt2SWpvVjFIVjRYMVpY?=
+ =?utf-8?B?bnprZStCZExNZDBnSk04VzEzUVVqN2c2UVZLZlp6R0laLzNtUE5xcVMzei94?=
+ =?utf-8?B?KzZSMjVKZVVodkl3WG1BSktjbFEyTlFmWWg3am5tWDFnUVNBeEJ6clUvSmNW?=
+ =?utf-8?B?WEF1MmdLdzhQM0JHNThMQXNUOTBaeTVKYVJaQlpiSTVaZkRVSm1YcW1zaklj?=
+ =?utf-8?B?cnBuelVLdVh6bDE3WTlldmRWNW1sUWMxRXM3NGdTR3UvcUFMMG83M25rbkl6?=
+ =?utf-8?B?eDczamE5N0ZscXp2bFVaMnBVRldDOUxQL0VscmhyMW5KU3BlSmhwSmVVYmgy?=
+ =?utf-8?B?U0E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EDF1B0E5AFC87D4081CE30A7DFECC81A@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] usb: typec: tcpm/tcpci_maxim: deprecate WAR for
- setting charger mode
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
- <20251123-max77759-charger-v1-6-6b2e4b8f7f54@google.com>
- <9cad7b42dbfea351fb3b708736bf6f6715bcf694.camel@linaro.org>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <9cad7b42dbfea351fb3b708736bf6f6715bcf694.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7257.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea781b90-eedd-40ee-e1c3-08de2cb479ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2025 06:24:38.2101
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 28pnl6PDYZubyFlYc+YWMdCWowN0qfPZleuZzT55U+68krWzh+ucmR3qrbLIP/p7huRshESybBO3myjzgC3tOVpZrm+gcvNLAMOCjL1Ot1c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7207
 
-
-On 11/24/25 1:09 AM, André Draszik wrote:
-> Hi Amit,
->
-> On Sun, 2025-11-23 at 08:35 +0000, Amit Sunil Dhamne via B4 Relay wrote:
->> From: Amit Sunil Dhamne <amitsd@google.com>
->>
->> TCPCI maxim driver directly writes to the charger's register space to
->> set charger mode depending on the power role. As MAX77759 chg driver
->> exists, this WAR is not required.
->>
->> Instead, use a regulator interface to set OTG Boost mode.
->>
->> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->> ---
->>   drivers/usb/typec/tcpm/tcpci_maxim.h      |  1 +
->>   drivers/usb/typec/tcpm/tcpci_maxim_core.c | 48 +++++++++++++++++++++----------
->>   2 files changed, 34 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.h b/drivers/usb/typec/tcpm/tcpci_maxim.h
->> index b33540a42a95..6c82a61efe46 100644
->> --- a/drivers/usb/typec/tcpm/tcpci_maxim.h
->> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.h
->> @@ -60,6 +60,7 @@ struct max_tcpci_chip {
->>   	struct tcpm_port *port;
->>   	enum contamiant_state contaminant_state;
->>   	bool veto_vconn_swap;
->> +	struct regulator *otg_reg;
->>   };
->>   
->>   static inline int max_tcpci_read16(struct max_tcpci_chip *chip, unsigned int reg, u16 *val)
->> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
->> index 19f638650796..6d819a762fa1 100644
->> --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
->> +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/kernel.h>
->>   #include <linux/module.h>
->>   #include <linux/regmap.h>
->> +#include <linux/regulator/consumer.h>
->>   #include <linux/usb/pd.h>
->>   #include <linux/usb/tcpci.h>
->>   #include <linux/usb/tcpm.h>
->> @@ -202,32 +203,49 @@ static void process_rx(struct max_tcpci_chip *chip, u16 status)
->>   	tcpm_pd_receive(chip->port, &msg, rx_type);
->>   }
->>   
->> +static int get_otg_regulator_handle(struct max_tcpci_chip *chip)
->> +{
->> +	if (IS_ERR_OR_NULL(chip->otg_reg)) {
->> +		chip->otg_reg = devm_regulator_get_exclusive(chip->dev,
->> +							     "otg-vbus");
->> +		if (IS_ERR_OR_NULL(chip->otg_reg)) {
->> +			dev_err(chip->dev,
->> +				"Failed to get otg regulator handle");
->> +			return -ENODEV;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   static int max_tcpci_set_vbus(struct tcpci *tcpci, struct tcpci_data *tdata, bool source, bool sink)
->>   {
->>   	struct max_tcpci_chip *chip = tdata_to_max_tcpci(tdata);
->> -	u8 buffer_source[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_SOURCE};
->> -	u8 buffer_sink[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_SINK};
->> -	u8 buffer_none[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_OFF};
-> You should also remove the corresponding #defines at the top of this file.
-
-Ack!
-
-
->
->> -	struct i2c_client *i2c = chip->client;
->>   	int ret;
->>   
->> -	struct i2c_msg msgs[] = {
->> -		{
->> -			.addr = MAX_BUCK_BOOST_SID,
->> -			.flags = i2c->flags & I2C_M_TEN,
->> -			.len = 2,
->> -			.buf = source ? buffer_source : sink ? buffer_sink : buffer_none,
->> -		},
->> -	};
->> -
->>   	if (source && sink) {
->>   		dev_err(chip->dev, "Both source and sink set\n");
->>   		return -EINVAL;
->>   	}
->>   
->> -	ret = i2c_transfer(i2c->adapter, msgs, 1);
->> +	ret = get_otg_regulator_handle(chip);
->> +	if (ret) {
->> +		/*
->> +		 * Regulator is not necessary for sink only applications. Return
->> +		 * success in cases where sink mode is being modified.
->> +		 */
->> +		return source ? ret : 1;
->> +	}
->> +
->> +	if (source) {
->> +		if (!regulator_is_enabled(chip->otg_reg))
->> +			ret = regulator_enable(chip->otg_reg);
->> +	} else {
->> +		if (regulator_is_enabled(chip->otg_reg))
->> +			ret = regulator_disable(chip->otg_reg);
->> +	}
-> Given otg_reg is the fake regulator created by a previous patch in this
-> series, this means that the regulator API is really used to configure two
-> out of 16 possible charger modes here. That doesn't look right.
-
-
-I understand the concern, but I believe the regulator framework is the 
-correct interface here for three reasons:
-
-1.  The TCPCI driver's responsibility is only to signal the intent to 
-source VBUS (OTG) or not. It should not be aware of the specific 
-register values or mode bits of the companion charger chip. The charger 
-driver (via the regulator enable op) is responsible for translating that 
-intent into the correct hardware-specific register value (e.g., 
-selecting the correct OTG mode).
-
-2. While the charger supports multiple modes, sourcing VBUS via OTG and 
-sinking VBUS (charging) are mutually exclusive states on Type-C and 
-there are no modes to support both. If complex scenarios arise (like 
-wireless charging + USB OTG), the logic to select the specific register 
-mode belongs in the charger driver (the regulator provider), not the 
-TCPCI consumer. Now say theoretically, we support wireless charging and 
-want to turn it on (sink) while USB OTG mode (source) is on. The charger 
-driver would set an appropriate mode based on this info (wireless 
-power-supply on, USB otg regulator on, so select XX mode). We can game 
-this for any 10 of the *valid* modes (refer [1]) supported by the chip 
-and this would work. Using a regulator framework here will not pose a 
-restriction on the number of charger modes now or in the future.
-
-3. This design pattern is standard in the kernel from my study. Drivers 
-such as bq24190_charger and rt9471 expose USB OTG functionality via the 
-regulator framework.
-
-[1] 
-https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/android-gs-raviole-mainline/max77759_regs.h#52
-
-BR,
-
-Amit
-
->
-> Cheers,
-> Andre'
+T24gMTEvMjUvMjUgMTY6MDMsIFRob21hcyBaaW1tZXJtYW5uIHdyb3RlOg0KPiBFWFRFUk5BTCBF
+TUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSBr
+bm93IA0KPiB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBIaQ0KPiANCj4gQW0gMjUuMTEuMjUg
+dW0gMTU6Mzkgc2NocmllYiBMdWRvdmljLkRlc3JvY2hlc0BtaWNyb2NoaXAuY29tOg0KPj4gT24g
+OC8yMS8yNSAxMDoxNywgVGhvbWFzIFppbW1lcm1hbm4gd3JvdGU6DQo+Pj4gQ2FsbCBkcm1fbW9k
+ZV9zaXplX2R1bWIoKSB0byBjb21wdXRlIGR1bWItYnVmZmVyIHNjYW5saW5lIHBpdGNoIGFuZA0K
+Pj4+IGJ1ZmZlciBzaXplLiBBbGlnbiB0aGUgcGl0Y2ggdG8gYSBtdWx0aXBsZSBvZiA4Lg0KPiAN
+Cj4gSSBtaXNzZWQgYSBjaGFuY2UgdG8gZXhwbGFpbiBpdCBoZXJlLiA6Lw0KDQpJIHdhcyB3b25k
+ZXJpbmcgaWYgaXQgd2FzIDgtYml0cyBvciA4LWJ5dGVzLg0KDQo+IA0KPj4+DQo+Pj4gUHVzaCB0
+aGUgY3VycmVudCBjYWxjdWxhdGlvbiBpbnRvIHRoZSBvbmx5IGRpcmVjdCBjYWxsZXIgaW14LiBJ
+bXgncw0KPj4+IGhhcmR3YXJlIHJlcXVpcmVzIHRoZSBmcmFtZWJ1ZmZlciB3aWR0aCB0byBiZSBh
+bGlnbmVkIHRvIDguIFRoZQ0KPj4+IGRyaXZlcidzIGN1cnJlbnQgYXBwcm9hY2ggaXMgYWN0dWFs
+bHkgaW5jb3JyZWN0LCBhcyBpdCBvbmx5IGd1YXJhbnRlZXMNCj4+PiB0aGlzIGltcGxpY2l0bHkg
+YW5kIHJlcXVpcmVzIGJwcCB0byBiZSBhIG11bHRpcGxlIG9mIDggYWxyZWFkeS4gQQ0KPj4+IGxh
+dGVyIGNvbW1pdCB3aWxsIGZpeCB0aGlzIHByb2JsZW0gYnkgYWxpZ25pbmcgdGhlIHNjYW5saW5l
+IHBpdGNoDQo+Pj4gc3VjaCB0aGF0IGFuIGFsaWduZWQgd2lkdGggc3RpbGwgZml0cyBpbnRvIGVh
+Y2ggc2NhbmxpbmUncyBtZW1vcnkuDQo+Pj4NCj4+PiBBIG51bWJlciBvZiBvdGhlciBkcml2ZXJz
+IGFyZSBidWlsZCBvbiB0b3Agb2YgZ2VtLWRtYSBoZWxwZXJzIGFuZA0KPj4+IGltcGxlbWVudCB0
+aGVpciBvd24gZHVtYi1idWZmZXIgYWxsb2NhdGlvbi4gVGhlc2UgZHJpdmVycyBpbnZva2UNCj4+
+PiBkcm1fZ2VtX2RtYV9kdW1iX2NyZWF0ZV9pbnRlcm5hbCgpLCB3aGljaCBpcyBub3QgYWZmZWN0
+ZWQgYnkgdGhpcw0KPj4+IGNvbW1pdC4NCj4+Pg0KPj4+IHY1Og0KPj4+IC0gYXZvaWQgcmVzZXQg
+b2YgYXJndW1lbnRzIChUb21pKQ0KPj4+DQo+Pj4gU2lnbmVkLW9mZi1ieTogVGhvbWFzIFppbW1l
+cm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+DQo+Pj4gUmV2aWV3ZWQtYnk6IFRvbWkgVmFsa2Vp
+bmVuIDx0b21pLnZhbGtlaW5lbkBpZGVhc29uYm9hcmQuY29tPg0KPj4+IC0tLQ0KPj4+IMKgwqAg
+ZHJpdmVycy9ncHUvZHJtL2RybV9nZW1fZG1hX2hlbHBlci5jwqDCoMKgwqAgfCA3ICsrKysrLS0N
+Cj4+PiDCoMKgIGRyaXZlcnMvZ3B1L2RybS9pbXgvaXB1djMvaW14LWRybS1jb3JlLmMgfCA0ICsr
+Ky0NCj4+PiDCoMKgIDIgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9u
+cygtKQ0KPj4+DQo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZ2VtX2RtYV9o
+ZWxwZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS8gDQo+Pj4gZHJtX2dlbV9kbWFfaGVscGVyLmMNCj4+
+PiBpbmRleCA0ZjAzMjBkZjg1OGYuLmFiMWE3MGIxZDZmMSAxMDA2NDQNCj4+PiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZHJtX2dlbV9kbWFfaGVscGVyLmMNCj4+PiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZHJtX2dlbV9kbWFfaGVscGVyLmMNCj4+PiBAQCAtMjAsNiArMjAsNyBAQA0KPj4+IMKgwqAg
+I2luY2x1ZGUgPGRybS9kcm0uaD4NCj4+PiDCoMKgICNpbmNsdWRlIDxkcm0vZHJtX2RldmljZS5o
+Pg0KPj4+IMKgwqAgI2luY2x1ZGUgPGRybS9kcm1fZHJ2Lmg+DQo+Pj4gKyNpbmNsdWRlIDxkcm0v
+ZHJtX2R1bWJfYnVmZmVycy5oPg0KPj4+IMKgwqAgI2luY2x1ZGUgPGRybS9kcm1fZ2VtX2RtYV9o
+ZWxwZXIuaD4NCj4+PiDCoMKgICNpbmNsdWRlIDxkcm0vZHJtX3ZtYV9tYW5hZ2VyLmg+DQo+Pj4N
+Cj4+PiBAQCAtMzA0LDkgKzMwNSwxMSBAQCBpbnQgZHJtX2dlbV9kbWFfZHVtYl9jcmVhdGUoc3Ry
+dWN0IGRybV9maWxlIA0KPj4+ICpmaWxlX3ByaXYsDQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBkcm1fbW9kZV9jcmVhdGVfZHVtYiAq
+YXJncykNCj4+PiDCoMKgIHsNCj4+PiDCoMKgwqDCoCBzdHJ1Y3QgZHJtX2dlbV9kbWFfb2JqZWN0
+ICpkbWFfb2JqOw0KPj4+ICvCoMKgwqAgaW50IHJldDsNCj4+Pg0KPj4+IC3CoMKgwqAgYXJncy0+
+cGl0Y2ggPSBESVZfUk9VTkRfVVAoYXJncy0+d2lkdGggKiBhcmdzLT5icHAsIDgpOw0KPj4+IC3C
+oMKgwqAgYXJncy0+c2l6ZSA9IGFyZ3MtPnBpdGNoICogYXJncy0+aGVpZ2h0Ow0KPj4+ICvCoMKg
+wqAgcmV0ID0gZHJtX21vZGVfc2l6ZV9kdW1iKGRybSwgYXJncywgU1pfOCwgMCk7DQo+Pj4gK8Kg
+wqDCoCBpZiAocmV0KQ0KPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiByZXQ7DQo+
+PiBIaSwNCj4+DQo+PiBXYXMgaXQgaW50ZW50aW9uYWwgZm9yIHRoaXMgY2hhbmdlIHRvIGFsdGVy
+IHRoZSBwaXRjaD8NCj4gDQo+IE1vc3QgaGFyZHdhcmUgZG9lcyBub3QgbmVlZCB0aGUgcGl0Y2gg
+dG8gYmUgb2YgYSBjZXJ0YWluIGFsaWdubWVudC4gQnV0DQo+IHRoZXNlIGJ1ZmZlcnMgYXJlIHBv
+c3NpYmx5IHNoYXJlZCB3aXRoIG90aGVyIGhhcmR3YXJlLCB3aGljaCBzb21ldGltZXMNCj4gbmVl
+ZHMgYWxpZ25tZW50IHRvIGNlcnRhaW4gdmFsdWVzLiBVc2luZyBTWl84IGltcHJvdmVzIGNvbXBh
+dGlibGUgd2l0aA0KPiB0aGF0IGhhcmR3YXJlLg0KPiANCj4+DQo+PiBUaGUgYWxpZ25tZW50IHJl
+cXVpcmVtZW50IGhhcyBiZWVuIHVwZGF0ZWTigJRmcm9tIDgtYml0IGFsaWdubWVudCB0bw0KPj4g
+NjQtYml0IGFsaWdubWVudC4gU2luY2UgdGhlIHBpdGNoIGlzIGV4cHJlc3NlZCBpbiBieXRlcywg
+d2Ugc2hvdWxkIHBhc3MNCj4+IFNaXzEgaW5zdGVhZCBvZiBTWl84IGZvciBod19wYXRjaF9hbGln
+bi4NCj4+DQo+PiBGb3IgZXhhbXBsZSwgZm9yIGFuIDg1MMOXNDgwIGZyYW1lYnVmZmVyIGF0IDE2
+IGJwcCwgdGhlIHBpdGNoIHNob3VsZCBiZQ0KPj4gMTcwMCBieXRlcy4gV2l0aCB0aGUgbmV3IGFs
+aWdubWVudCwgdGhlIHBpdGNoIGJlY29tZXMgMTcwNCBieXRlcy4NCj4gDQo+IE1hbnkgZGlzcGxh
+eSBtb2RlcyBoYXZlIGFuIDgtYnl0ZSBhbGlnbm1lbnQgaW4gdGhlaXIgd2lkdGguIDg1MCBwaXhl
+bHMNCj4gaXMgc29tZXdoYXQgb2YgYW4gZXhjZXB0aW9uLg0KDQpJbmRlZWQsIGJ1dCBvdmVybGF5
+LXR5cGUgcGxhbmVzIGFyZSBvZnRlbiB1c2VkIHRvIGRpc3BsYXkgd2luZG93cyB0aGF0IA0KYXJl
+IG5vdCB0aGUgc2FtZSBzaXplIGFzIHRoZSBzY3JlZW4sIGFuZCB0aGVyZWZvcmUgcG90ZW50aWFs
+bHkgbm90IG9uIA0KOC1ieXRlcyBhbGlnbmVkLg0KDQo+IA0KPj4NCj4+IFBsZWFzZSBsZXQgbWUg
+a25vdyBpZiB5b3XigJlkIGxpa2UgbWUgdG8gc3VibWl0IGEgZml4Lg0KPiANCj4gRG8geW91IHNl
+ZSBhIGJ1ZyB3aXRoIHlvdXIgaGFyZHdhcmU/IFVubGVzcyB0aGlzIGNyZWF0ZXMgYSByZWFsIHBy
+b2JsZW0sDQo+IEknZCBsaWtlIHRvIGtlZXAgaXQgYXMgaXQgaXMgbm93Lg0KDQpZZXMsIHRoYXTi
+gJlzIGhvdyBJIG5vdGljZWQgdGhpcyBjaGFuZ2UuIEkgaGF2ZSBhbiBhcHBsaWNhdGlvbiB0aGF0
+IA0KcmVxdWVzdHMgYSBmcmFtZWJ1ZmZlciBsYXJnZXIgdGhhbiBteSBzY3JlZW4sIGluIHRoaXMg
+Y2FzZSA4NTB4NDgwIGluIA0KUkdCNTY1IGZvciBhbiA4MDB4NDgwIGRpc3BsYXkuIFNvIEkgaGF2
+ZSBhIHBpdGNoIG9mIDE3MDAgYnl0ZXMuIE5vdyBpdOKAmXMgDQp1c2luZyBhIHBpdGNoIG9mIDE3
+MDQsIHdoaWNoIHNoaWZ0cyBteSBsaW5lcy4NCg0KUmVnYXJkcywNCkx1ZG92aWMNCg0KPiANCj4g
+QmVzdCByZWdhcmRzDQo+IFRob21hcw0KPiANCj4+DQo+PiBSZWdhcmRzLA0KPj4gTHVkb3ZpYw0K
+Pj4NCj4+DQo+Pj4NCj4+PiDCoMKgwqDCoCBkbWFfb2JqID0gZHJtX2dlbV9kbWFfY3JlYXRlX3dp
+dGhfaGFuZGxlKGZpbGVfcHJpdiwgZHJtLCBhcmdzLSANCj4+PiA+c2l6ZSwNCj4+PiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJmFyZ3MtPmhhbmRsZSk7DQo+Pj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9pbXgvaXB1djMvaW14LWRybS1jb3JlLmMgYi9kcml2ZXJzL2dw
+dS8gDQo+Pj4gZHJtL2lteC9pcHV2My9pbXgtZHJtLWNvcmUuYw0KPj4+IGluZGV4IGVjNWZkOWEw
+MWYxZS4uYWY0YTMwMzExZTE4IDEwMDY0NA0KPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pbXgv
+aXB1djMvaW14LWRybS1jb3JlLmMNCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vaW14L2lwdXYz
+L2lteC1kcm0tY29yZS5jDQo+Pj4gQEAgLTE0NSw4ICsxNDUsMTAgQEAgc3RhdGljIGludCBpbXhf
+ZHJtX2R1bWJfY3JlYXRlKHN0cnVjdCBkcm1fZmlsZSANCj4+PiAqZmlsZV9wcml2LA0KPj4+IMKg
+wqDCoMKgIGludCByZXQ7DQo+Pj4NCj4+PiDCoMKgwqDCoCBhcmdzLT53aWR0aCA9IEFMSUdOKHdp
+ZHRoLCA4KTsNCj4+PiArwqDCoMKgIGFyZ3MtPnBpdGNoID0gRElWX1JPVU5EX1VQKGFyZ3MtPndp
+ZHRoICogYXJncy0+YnBwLCA4KTsNCj4+PiArwqDCoMKgIGFyZ3MtPnNpemUgPSBhcmdzLT5waXRj
+aCAqIGFyZ3MtPmhlaWdodDsNCj4+Pg0KPj4+IC3CoMKgwqAgcmV0ID0gZHJtX2dlbV9kbWFfZHVt
+Yl9jcmVhdGUoZmlsZV9wcml2LCBkcm0sIGFyZ3MpOw0KPj4+ICvCoMKgwqAgcmV0ID0gZHJtX2dl
+bV9kbWFfZHVtYl9jcmVhdGVfaW50ZXJuYWwoZmlsZV9wcml2LCBkcm0sIGFyZ3MpOw0KPj4+IMKg
+wqDCoMKgIGlmIChyZXQpDQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiByZXQ7
+DQo+Pj4NCj4gDQo+IC0tIA0KPiAtLSANCj4gVGhvbWFzIFppbW1lcm1hbm4NCj4gR3JhcGhpY3Mg
+RHJpdmVyIERldmVsb3Blcg0KPiBTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgN
+Cj4gRnJhbmtlbnN0ci4gMTQ2LCA5MDQ2MSBOw7xybmJlcmcsIEdlcm1hbnksIHd3dy5zdXNlLmNv
+bQ0KPiBHRjogSm9jaGVuIEphc2VyLCBBbmRyZXcgTWNEb25hbGQsIFdlcm5lciBLbm9ibGljaCwg
+KEhSQiAzNjgwOSwgQUcgDQo+IE7DvHJuYmVyZykNCj4gDQo+IA0KDQoNCg==
