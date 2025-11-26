@@ -1,68 +1,68 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D0B1DD877
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 01:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689062459D7
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2025 01:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764119405; cv=none; b=nv1LsElaq80vOBtwbuGIn1Mv1Ctbsm/NRbltocNPgyxuPcNfLip5o86cNyB5g0/FrY+/jQfjvNYaOWXB89peqbREmQqtgg8zW6yhDaBA0ytdQ79LqfmsSMGLpBYlP3mUCF1QJ0rljzm2awSkAmQpCPixLYia6ABMal3e+2e4qWs=
+	t=1764119969; cv=none; b=Ps+Mh1C5jXxK0W9OYR6gsYZ1Wj4PwaD3GGmwy0VloNaYIHeCIV9unfvM8et2WyTa6e05vhECG7/SfhtjAm2LlS+SHf0MxjgpO+gjL/KgsmYaepB7peNEn5vi8BxRAcZ5qY02uIA074RBQtt9Q3KqcpUPVxLcRfnPDF+yWZSGfLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764119405; c=relaxed/simple;
-	bh=7JSwRjVY7+7OLgODPV18aJxzmBQ1LQ3WuDOx/jYCwjY=;
+	s=arc-20240116; t=1764119969; c=relaxed/simple;
+	bh=G7ZNDNiR8Djja/TvyR9CLyYYZM1cA+rALARCuQmH59Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r1umvXrPRaB17WMlA1PdOiUA9jVugSnHGf2wTQ445+ha/O5HgMm+Gmx/qrNJXTsAQPaY9w8Gp/EBdl98ljiKfL4+y1M1QNpOrd7JCTNIhp7I9uyttv98b8gBBAYgtt1if+gF9fIN9wDT5c6yEg7sexTR2gly5/ugGyfJhSQyfyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nklmkAs7; arc=none smtp.client-ip=209.85.215.181
+	 In-Reply-To:Content-Type; b=QxNZKflTZefbjNw/cpKM8nuJfj9mOknj6Tkpz6wmx4OMRIpFhy2UBAnTItN+qKuPzGBFlprsUA812mRZ6LjYd+zlIhRSq8q+BUDCoStW2RXwBZJWwdwvxlb1FjK8PleGd7cBl8l8fmBfvyEBh6NlhdjO/xvp4ZCPIrf0oGapQUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pxpSk3bT; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nklmkAs7"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-bc09b3d3afeso3340901a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2025 17:10:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pxpSk3bT"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-bc1f6dfeb3dso3670867a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2025 17:19:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764119403; x=1764724203; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1764119967; x=1764724767; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4uKMid7mHBul9Q0TO4PibzdXQbMZDvFms1DpBKwMu7E=;
-        b=nklmkAs7aK43rwIFPnA7lQWZWTBbVq6a1x+JFsE3KmqrhfzEN3HmtMas9dQwgkw1yw
-         9NhombBqQTQXyn+haoVU4SWU/Y5x/tkIgGZFIy5WpIxi8EnMXIg5QcoWWliIdX77tQck
-         LB97D9ua4TeJYpgqpMur7DLc4j0r0xZ2/k1EwYzWdbn+2iok5IsukiqMm7EklVkKPklY
-         IxGvo3LfykPm1jrZmInC7TMzeOyz14XO+5+yy1gUrWv7MJXujkOArLw7/HUAAn6UQGEo
-         IWP5CT4I5x66dsMBcTGcSpA+1VJHwF9NTF0TdLqHAaTPpdrDk7rGw/RI5+yIZ01Azak8
-         X00Q==
+        bh=ONQMnRlPCQWGLqZuet9LBiEJ0IZkYpFPjI5nCq6R0G0=;
+        b=pxpSk3bTCdrqI0/hGfTwDSWmA1Ae/c6VVXHVR6i7LxRQ1XjdCPQt5Xw36GS3uFW2Db
+         yh9fdw0KUKP8Fy+nZv/8zMkTgEmjk1MARz9zK2UlqXsVF2gQIacY+4JFyK7HhhH4JTDh
+         bla1WZUox51rprOi+n0Ma0omV7K49ntby/qKxfXjNo+kLSSthSTbcZYRkDXSJCIng2Ra
+         9MdWyGnosmOwR4NGRgipUhaSkcU1noLKZWMkR0/anT/EcjlTlMDZ9IbnolLHmozJqOFP
+         pAG26EhmHanwv0eqaSfhTuBi/cou30WvJ/EYMHUKOPMRmI68o6LiJ6i2UcEl0Cmwu8ln
+         CkOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764119403; x=1764724203;
+        d=1e100.net; s=20230601; t=1764119967; x=1764724767;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4uKMid7mHBul9Q0TO4PibzdXQbMZDvFms1DpBKwMu7E=;
-        b=Gd41wQchjWEkoCENZmqRAqt8vZ1J2hKNopiRaRSBSJnMQuhaFRFPtbjv0neXQdNOaw
-         P+R7Xf84UBddSH4aHj+FJfqkKyOcv0+NwG9X4ZdEBtbISUwThIaoKy9B7u87T+8DPF+y
-         Nr6imtsoOyddI4AVvU3Zxb3+dBk8ihZBHrn1nmViApgypJg0I4FCBtKMw3YBLd5ZylCw
-         OWxJrjEAok7anSPCP5artGW1bZKAZtZlfY08mdlW1RYUbLS3lIZ3Ddgq6UKMQl9Lz4i7
-         Mqhk7nUhFG1D4rp/SIiv1542W7PZd56pvU8YoEk7PTdr/iaHJQ3nCqMIVlxf+lnxHpbe
-         hq3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWPWSKIunwvxl4vPFcboOAYOou2fcFfD4tJ9QUVL+WLZWu5gcDb1k6UHOSoyNLJip+7LZIZaJobkj7BpykNIxjHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsmlMs5yWgQ+O7tX6mIf+4+BjK+Ux6TK4j72WRu8ujL/wHwERn
-	A5bMDgkG17EK/LJ8rTaF/T64W01QU92QHR1N6G22u0h7QfKbFnR50KbMM5bj+k27vg==
-X-Gm-Gg: ASbGnctF1yHphMBKFeLcHVi/1m3yEvVPxEhckfb5Jh95y6cWPQXanvW/a3GDkaEWBaM
-	9r+ODPBBjsl314gdzjPzre4dDeWxvma5JIpdMYApj0CGCgEmt0Gd9x0mk7LVFc3FqFxPH3CHj8f
-	a+VncNqGBaDAyhVfjhXMMlhycIm5ZrPy7rPl0YUsYvcpEwgNUcbWNcexrCXDdsCSJeyvEJoM57v
-	GU5UHL5+IAbMwfXl5DxOwduxw88xs2W1f/Hnfgv3i7utBfm6da/OHszvMUgNiQM3KhW7x1zxk3t
-	FrlVZ+v3LrOhOMioZHFz3OaGVhho7fRSaZOnJ6Sb8jS4Y+qOMBeAXZ+icrMd2rc95uJvHZAG9XV
-	nOokOQz1a12Zlbly1AbWjpD5a+Xb70IMdHqFWCXSfz9BXoGtNQEf7gaMoPU5wzadRbiTsiYM7Kp
-	bggKdgKI87hdiPpW8lLOxhG1ne9kUcu052UTiGFu/J5jCwJ4asTC5L+SxMIV4bUF0lxCFhiQ+zZ
-	GBQcFR+xC2DCA==
-X-Google-Smtp-Source: AGHT+IFsz/ljJrcpzA2pBF+IG/pUKgJQ17kleGBABcAzWrEfAKNQP91IPN/fvXc4LjZFpbtSbbWOBg==
-X-Received: by 2002:a05:7022:ec16:b0:119:e56b:91da with SMTP id a92af1059eb24-11c9d811990mr11140572c88.11.1764119402831;
-        Tue, 25 Nov 2025 17:10:02 -0800 (PST)
+        bh=ONQMnRlPCQWGLqZuet9LBiEJ0IZkYpFPjI5nCq6R0G0=;
+        b=vcjlRqFIVtfu6OglanwMhn24lY6bs5fkVD8jviTzEgWdQxaXMtxRDrdNsPIyBiSzLC
+         DOhsrNE2vlktL8u0W4ypNoNmmGzxreYvwI+RptSJIPx+3oXYMh5BuhQmYIIrwOD8z0fw
+         9P9OvUMQWnNPLETgneCBzb3249gUSX2wTo4SLsywySism+OSyC1S5KLPODpYAVqL0ssc
+         sOpr91+2SuU6OPEuNWfZiWyG5za+3dvPfrwECTnKwqfue1CwTVgSEwfN0ax0OqjLDCDK
+         qr8EM4mhdJwePjNj+D+G5bh028OQFWUrNR6uwp4dSnFxtDInK/zBlDJYFAj65Js/DcEk
+         nU/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbNhRf7eJt+mDZsLBir5gPFbAEG/sGCLVBBqpsZA9L2OvRqKuc5pAKw1wdXyoaCRMC0WiK0YKiQoy1jrLEnD9L0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZwqE3ABkCheTe8Q9fy54fiCw1nuu7CM6fUFmKakLb+4lJG5OD
+	A9H5XPuywRaUOUmJyhxW2zu+IO+q0Stry9a+PRROd5MbiVmXlJ3x0H55vs7vHThZ8g==
+X-Gm-Gg: ASbGncue4PZk4bQz40Vwx1x769eZdUryjPxX6F8reeB7prryJ668yy1jeaIeT5IDywm
+	tV2ugAW6nPHfrTLvTFGRRnvKnfrhPO9wAL3WkHs7Ahvuyf8yCeBJGwDYRBdiLLht1Wxk0JSpP6y
+	LCOrTKnXRck7j+WeDmcc50QuAPqoTVkxayAqYPjWD9POPTEeLXlnQRvi6TAzOBu8UM338NBJ9ZZ
+	HqYuZPVqmRF/N5FrGXYbYMtQasoAk3EXz5AN48qBuOH5xNsYoGjXVavwrBnZgJmcViZsKDKLW9q
+	L8uuVUjY1v8fsDXj1M4rkD+r6iqKQlhZOZOI3TcdgMP7DWO+fWWThqmX4PLoCtPQI3l4z+AuQND
+	bIvYmyua7Ihm0Zj/Kcz+L6WuvvnQoeHqHve3UGkrEZSvujcu0HuwnIPGNHDFOC9wwK6GgPQ1ePz
+	fRJnCCf6bYpqiao5tLfdohnPzYh3xP/zrXgocmE67ZGiH4Pstx2JtcKWc04+OJ0H3YoN2FCyYY+
+	ublWtiG/R/PjA==
+X-Google-Smtp-Source: AGHT+IG7vAAdnJdBV1xPAxMSocFYLV08aRb8J8ZFA9YU4wW1fgRuVRFaXJs0v7uY7YYTEmsaJSmrhw==
+X-Received: by 2002:a05:7301:da82:b0:2a4:4e8f:5861 with SMTP id 5a478bee46e88-2a94188c7d0mr2414680eec.28.1764119967060;
+        Tue, 25 Nov 2025 17:19:27 -0800 (PST)
 Received: from ?IPV6:2a00:79e0:2e7c:8:c98d:9e96:d0be:bc30? ([2a00:79e0:2e7c:8:c98d:9e96:d0be:bc30])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11cc631c236sm17216416c88.7.2025.11.25.17.10.01
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2a6fc3d0bb6sm95954083eec.2.2025.11.25.17.19.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Nov 2025 17:10:02 -0800 (PST)
-Message-ID: <aa7bdeb1-c8a9-4353-af56-869f16a083c2@google.com>
-Date: Tue, 25 Nov 2025 17:10:01 -0800
+        Tue, 25 Nov 2025 17:19:26 -0800 (PST)
+Message-ID: <bb2ecf99-6153-4623-81ae-0fd41e4d306a@google.com>
+Date: Tue, 25 Nov 2025 17:19:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +71,8 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 4/6] mfd: max77759: modify irq configs
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
@@ -88,164 +89,41 @@ Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
 References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
  <20251123-max77759-charger-v1-4-6b2e4b8f7f54@google.com>
  <5c901a6c831775a04924880cc9f783814f75b6aa.camel@linaro.org>
+ <d2184e6b-ba22-423a-8d3c-3b8c2f8ec329@kernel.org>
 Content-Language: en-US
 From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <5c901a6c831775a04924880cc9f783814f75b6aa.camel@linaro.org>
+In-Reply-To: <d2184e6b-ba22-423a-8d3c-3b8c2f8ec329@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi André,
 
-On 11/23/25 10:21 PM, André Draszik wrote:
-> Hi Amit,
->
-> Thanks for your patches to enable the charger!
-
-Ack!
-
-
->> From: Amit Sunil Dhamne <amitsd@google.com>
+On 11/23/25 11:39 PM, Krzysztof Kozlowski wrote:
+> On 24/11/2025 07:21, André Draszik wrote:
+>>>   	if (ret)
+>>>   		return dev_err_probe(&client->dev, ret,
+>>>   				     "MAX77759_MAXQ_INT_APCMDRESI failed\n");
+>>> @@ -633,7 +643,7 @@ static int max77759_probe(struct i2c_client *client)
+>>>   		return dev_err_probe(&client->dev, -EINVAL,
+>>>   				     "invalid IRQ: %d\n", client->irq);
+>>>   
+>>> -	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
+>>> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_LOW;
+>> I don't believe IRQF_TRIGGER_LOW should be added here, as this is board-specific.
+>> The polarity is meant to be set via DT (and the only current user of this driver
+>> does so).
 >>
->> Define specific bit-level masks for charger's registers and modify the
->> irq mask for charger irq_chip. Also, configure the max77759 interrupt
->> lines as active low to all interrupt registrations to ensure the
->> interrupt controllers are configured with the correct trigger type.
->>
->> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->> ---
->>   drivers/mfd/max77759.c       | 24 +++++++++++++++++-------
->>   include/linux/mfd/max77759.h |  9 +++++++++
->>   2 files changed, 26 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/mfd/max77759.c b/drivers/mfd/max77759.c
->> index 6cf6306c4a3b..5fe22884f362 100644
->> --- a/drivers/mfd/max77759.c
->> +++ b/drivers/mfd/max77759.c
->> @@ -256,8 +256,17 @@ static const struct regmap_irq max77759_topsys_irqs[] = {
->>   };
->>   
->>   static const struct regmap_irq max77759_chgr_irqs[] = {
->> -	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_1, 0, GENMASK(7, 0)),
->> -	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_2, 1, GENMASK(7, 0)),
->> +	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_1, 0,
->> +		       MAX77759_CHGR_REG_CHG_INT_AICL |
->> +		       MAX77759_CHGR_REG_CHG_INT_CHGIN |
->> +		       MAX77759_CHGR_REG_CHG_INT_CHG |
->> +		       MAX77759_CHGR_REG_CHG_INT_INLIM),
->> +	REGMAP_IRQ_REG(MAX77759_CHARGER_INT_2, 1,
->> +		       MAX77759_CHGR_REG_CHG_INT2_BAT_OILO |
->> +		       MAX77759_CHGR_REG_CHG_INT2_CHG_STA_CC |
->> +		       MAX77759_CHGR_REG_CHG_INT2_CHG_STA_CV |
->> +		       MAX77759_CHGR_REG_CHG_INT2_CHG_STA_TO |
->> +		       MAX77759_CHGR_REG_CHG_INT2_CHG_STA_DONE),
->>   };
->>   
->>   static const struct regmap_irq_chip max77759_pmic_irq_chip = {
->> @@ -486,8 +495,8 @@ static int max77759_add_chained_irq_chip(struct device *dev,
->>   				     "failed to get parent vIRQ(%d) for chip %s\n",
->>   				     pirq, chip->name);
->>   
->> -	ret = devm_regmap_add_irq_chip(dev, regmap, irq,
->> -				       IRQF_ONESHOT | IRQF_SHARED, 0, chip,
->> +	ret = devm_regmap_add_irq_chip(dev, regmap, irq, IRQF_ONESHOT |
->> +				       IRQF_SHARED | IRQF_TRIGGER_LOW, 0, chip,
->>   				       data);
-> Please correct me if I'm wrong, but I don't think this makes sense for a
-> chained IRQ in this case. What problem does this change fix?
+> If this is the main chip interrupt, then you are right and the code is
+> obviously wrong. What's more, it is completely unexplained in the commit
+> msg, because that vague statement cannot be taken as any reasonable
+> explanation.
 
-While this patch was meant only for modifying the interrupt mask, I 
-added this for consistency because the main SoC -> PMIC line is active 
-low. However, I agree it is not strictly necessary here. I will drop it 
-in the next revision.
-
-
->
->>   	if (ret)
->>   		return dev_err_probe(dev, ret, "failed to add %s IRQ chip\n",
->> @@ -519,8 +528,9 @@ static int max77759_add_chained_maxq(struct i2c_client *client,
->>   
->>   	ret = devm_request_threaded_irq(&client->dev, apcmdres_irq,
->>   					NULL, apcmdres_irq_handler,
->> -					IRQF_ONESHOT | IRQF_SHARED,
->> -					dev_name(&client->dev), max77759);
->> +					IRQF_ONESHOT | IRQF_SHARED |
->> +					IRQF_TRIGGER_LOW, dev_name(&client->dev),
->> +					max77759);
-> dito.
-
-Agreed, will drop.
-
-
->
->>   	if (ret)
->>   		return dev_err_probe(&client->dev, ret,
->>   				     "MAX77759_MAXQ_INT_APCMDRESI failed\n");
->> @@ -633,7 +643,7 @@ static int max77759_probe(struct i2c_client *client)
->>   		return dev_err_probe(&client->dev, -EINVAL,
->>   				     "invalid IRQ: %d\n", client->irq);
->>   
->> -	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
->> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_LOW;
-> I don't believe IRQF_TRIGGER_LOW should be added here, as this is board-specific.
-> The polarity is meant to be set via DT (and the only current user of this driver
-> does so).
-
-You are correct. Since I am already retrieving the trigger type from DT 
-via irqd_get_trigger_type() below, I will drop this change.
-
-
->>   	irq_flags |= irqd_get_trigger_type(irq_data);
-> That's what gets us the config from DT.
->
->>   
->>   	ret = devm_regmap_add_irq_chip(&client->dev, max77759->regmap_top,
->> diff --git a/include/linux/mfd/max77759.h b/include/linux/mfd/max77759.h
->> index c6face34e385..0ef29a48deec 100644
->> --- a/include/linux/mfd/max77759.h
->> +++ b/include/linux/mfd/max77759.h
->> @@ -62,7 +62,16 @@
->>   #define MAX77759_CHGR_REG_CHG_INT               0xb0
->>   #define MAX77759_CHGR_REG_CHG_INT2              0xb1
->>   #define MAX77759_CHGR_REG_CHG_INT_MASK          0xb2
->> +#define MAX77759_CHGR_REG_CHG_INT_AICL          BIT(7)
->> +#define MAX77759_CHGR_REG_CHG_INT_CHGIN         BIT(6)
->> +#define MAX77759_CHGR_REG_CHG_INT_CHG           BIT(4)
->> +#define MAX77759_CHGR_REG_CHG_INT_INLIM         BIT(2)
->>   #define MAX77759_CHGR_REG_CHG_INT2_MASK         0xb3
->> +#define MAX77759_CHGR_REG_CHG_INT2_BAT_OILO     BIT(4)
->> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_CC   BIT(3)
->> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_CV   BIT(2)
->> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_TO   BIT(1)
->> +#define MAX77759_CHGR_REG_CHG_INT2_CHG_STA_DONE BIT(0)
-> Even if wireless out of scope, it'd still be nice to add macros for
-> the remaining bits to make this complete and avoid having to update
-> these again in case wireless support gets added in the future.
-
-I would prefer to only define the macros I am currently using to keep 
-the review focused, unless you consider this a strict requirement.
-
-
->
-> Also, would be nice to keep existing style and indent the bits from
-> the registers (see existing bit definitions in this file a few lines
-> further up).
-> Finally, can you add the bits below the respective register (0xb0 / 0xb1)
-> please, to keep suffix meaningful, and to follow existing style for cases
-> like this (see MAX77759_MAXQ_REG_UIC_INT1).
-
-I will fix the indentation and ordering in the next revision.
-
-Regarding bit definitions: In [PATCH 5/6], the max77759_charger.c driver 
-defines bits for the register addresses defined in this file. Currently, 
-those macros are only used locally by the max77759 charger driver. Would 
-you prefer I move those definitions to this header file as well?
+You are right. As discussed in the thread with André, I will drop this 
+particular change in the next rev.
 
 BR,
 
 Amit
 
-
 >
->
-> Cheers,
-> Andre'
+> Best regards,
+> Krzysztof
