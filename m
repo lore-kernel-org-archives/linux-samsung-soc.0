@@ -1,172 +1,58 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DF32C0F75
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 16:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EDC23E34C;
+	Fri, 28 Nov 2025 17:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348938; cv=none; b=uSt+fSYcPBldhqBt2hO5cnEvxyaiKXis7diIVM5WtQTRWGzx3F8ZZvAMteO9DLA5MYD3BtI03N9ASq4iZpf/oBdaap7f8Hicd8PB9mjpirblASZBM6rFxzJtoDQL8XnQCkgPRKCt0fNBFYlvBUeYqTz+w0NGd8EiZ91Tnwj3/6A=
+	t=1764350212; cv=none; b=EA4fMs8gy3//cQikwRErCxk9oyZsM7Y4rnhA0TNpulsQNkuSqbDM2P+iYUSc4Opoxcawl/4PDMJxJT1zDCbOl3Y7pnSPZum4esJadhUjzKh3y/axHFLhZpaqut/SD6aiLOCI58EGcHGkfVrrFuXcbQBH/SzgpfjommVBOsdWP3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348938; c=relaxed/simple;
-	bh=kdMvbE9NXnFedS4vlmdyGovXQv35HqvvYWQQJDVYKzM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ClYJI4aY9xduk1xIas2tKcwus5HCm16LHeaqK2devRyE7V4277lgkXEbdTm4u9H1eGw1VZXm92FUxBlEPcZGyzpajeZ+Zb/Q2B3BvnOhzfs0QaejeZYkT2FDVTWrxGuO1DO26awaBaxYLatm0rjxy5yvycdeIxb4/FvRZk5+9EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k/OYs4Rp; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k/OYs4Rp"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D69FBC16A3C;
-	Fri, 28 Nov 2025 16:55:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C272B60706;
-	Fri, 28 Nov 2025 16:55:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 832B510B021A5;
-	Fri, 28 Nov 2025 17:55:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764348933; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=w1vAMoKEVFgHijlnGupKEv319mUXS/TmzsSZZzLsZgQ=;
-	b=k/OYs4RpuyCO8HqfjtIrYwBUOVvdUHmV4yuUO/y2/qxRq0uW+XkyslVfrZqAdsPoWdaXEw
-	v7uAdiYQNA558rxnUuUvPi8SNTBPOeEvfdAz4X/mzlIif74abvEt/uAtnQvzGPA2qgdqut
-	+/+wLFobRLBhH1E+kBtUEeZslXY/9Maed+C+aB3sIuS1+rpAjH392PgbRlYwOTdGFDsYcV
-	NXsRj+53bfJwu/Y0MhMctKIa7TWEj7OZzQEcIsnfMD3gtG/l2tTKV+DgrjPWk6wTB+yl4X
-	GyaheEwLH7Le2FfG6wgKVIptLkDQLscwXE5iznKIc36DNuFBZntPPdlNYaW6NA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 28 Nov 2025 17:50:36 +0100
-Subject: [PATCH v2 26/26] drm/bridge: imx8qxp-pixel-link: convert to
- of_drm_get_bridge()
+	s=arc-20240116; t=1764350212; c=relaxed/simple;
+	bh=3YDnKw4WOsV4HcQQ9rti2zBzy5hkLujDf8tBfYuNFc4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fcerOtCf5WB+asjgZYWlU0XU45HgwBA5s42EmiaFpESRFm6rL/u7Wxglf/OFD7oQXdgGM7BMVD7wMaZWFaFQ/A4PWswUqBLMXcQOJlI0lD42Rao9cK/ERsl+q2OCZpdl1x8YIw8fjKL4iALNFqd7f9inVFp6dU4Vwhe5oOfoFT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id CED5B92009C; Fri, 28 Nov 2025 18:16:47 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id BFC7492009B;
+	Fri, 28 Nov 2025 17:16:47 +0000 (GMT)
+Date: Fri, 28 Nov 2025 17:16:47 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+cc: Manivannan Sadhasivam <mani@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+    Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+    Krzysztof Kozlowski <krzk@kernel.org>, 
+    Alim Akhtar <alim.akhtar@samsung.com>, 
+    Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] PCI: dwc: Support ECAM mechanism by enabling iATU
+ 'CFG Shift Feature'
+In-Reply-To: <cabf4c20-095b-4579-adc1-146a566b19b9@oss.qualcomm.com>
+Message-ID: <alpine.DEB.2.21.2511281714030.36486@angie.orcam.me.uk>
+References: <20250909-controller-dwc-ecam-v9-0-7d5b651840dd@kernel.org> <20250909-controller-dwc-ecam-v9-4-7d5b651840dd@kernel.org> <alpine.DEB.2.21.2511280256260.36486@angie.orcam.me.uk> <c7aea2b3-6984-40f5-8234-14d265dabefc@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511280755440.36486@angie.orcam.me.uk> <cabf4c20-095b-4579-adc1-146a566b19b9@oss.qualcomm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-26-88f8a107eca2@bootlin.com>
-References: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
-In-Reply-To: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jonathan Corbet <corbet@lwn.net>, Alexey Brodkin <abrodkin@synopsys.com>, 
- Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Adrien Grassein <adrien.grassein@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Louis Chauvet <louis.chauvet@bootlin.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
 
-of_drm_find_bridge() is deprecated. Move to its replacement
-of_drm_get_bridge() which gets a bridge reference, and put it when done.
+On Fri, 28 Nov 2025, Krishna Chaitanya Chundru wrote:
 
-This needs to be handled in various steps:
+> >   I have no slightest idea why it should cause a regression such as this,
+> > it seems totally unrelated.  Yet it's 100% reproducible.  Could this be
+> > because it's the only device in the system that actually uses PCI/e port
+> > I/O?
+> Hi Maciej, Can you try attached patch and let me know if that is helping you
+> or not. - Krishna Chaitanya.
 
- * the bridge returned of_drm_get_bridge() is stored in next_bridge whose
-   scope is the for loop, so a cleanup action is enough
- * the value of next_bridge is copied into selected_bridge, potentially
-   more than once, so a cleanup action at function scope is useful here too
- * however on successful return selected_bridge must be returned and
-   ultimately stored, so it should not be put in that case: use
-   return_ptr() to defuse the cleanup action on successful return
- * finally, put the bridge reference on device remove
+ No change, it's still broken, sorry.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
----
-
-Cc: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-index 2ecc3c1051e5..4f2f730142ea 100644
---- a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-+++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-@@ -256,12 +256,13 @@ static int imx8qxp_pixel_link_disable_all_controls(struct imx8qxp_pixel_link *pl
- 	return imx8qxp_pixel_link_disable_sync(pl);
- }
- 
-+/* The returned bridge has its refcount incremented */
- static struct drm_bridge *
- imx8qxp_pixel_link_find_next_bridge(struct imx8qxp_pixel_link *pl)
- {
- 	struct device_node *np = pl->dev->of_node;
- 	struct device_node *port;
--	struct drm_bridge *selected_bridge = NULL;
-+	struct drm_bridge *selected_bridge __free(drm_bridge_put) = NULL;
- 	u32 port_id;
- 	bool found_port = false;
- 	int reg;
-@@ -298,7 +299,7 @@ imx8qxp_pixel_link_find_next_bridge(struct imx8qxp_pixel_link *pl)
- 			continue;
- 		}
- 
--		struct drm_bridge *next_bridge = of_drm_find_bridge(remote);
-+		struct drm_bridge *next_bridge __free(drm_bridge_put) = of_drm_get_bridge(remote);
- 		if (!next_bridge)
- 			return ERR_PTR(-EPROBE_DEFER);
- 
-@@ -306,13 +307,15 @@ imx8qxp_pixel_link_find_next_bridge(struct imx8qxp_pixel_link *pl)
- 		 * Select the next bridge with companion PXL2DPI if
- 		 * present, otherwise default to the first bridge
- 		 */
--		if (!selected_bridge || of_property_present(remote, "fsl,companion-pxl2dpi"))
--			selected_bridge = next_bridge;
-+		if (!selected_bridge || of_property_present(remote, "fsl,companion-pxl2dpi")) {
-+			drm_bridge_put(selected_bridge);
-+			selected_bridge = drm_bridge_get(next_bridge);
-+		}
- 	}
- 
- 	pl->mst_addr = port_id - 1;
- 
--	return selected_bridge;
-+	return_ptr(selected_bridge);
- }
- 
- static int imx8qxp_pixel_link_bridge_probe(struct platform_device *pdev)
-@@ -392,6 +395,7 @@ static void imx8qxp_pixel_link_bridge_remove(struct platform_device *pdev)
- 	struct imx8qxp_pixel_link *pl = platform_get_drvdata(pdev);
- 
- 	drm_bridge_remove(&pl->bridge);
-+	drm_bridge_put(pl->next_bridge);
- }
- 
- static const struct of_device_id imx8qxp_pixel_link_dt_ids[] = {
-
--- 
-2.51.1
-
+  Maciej
