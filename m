@@ -1,42 +1,42 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE812F360A;
-	Fri, 28 Nov 2025 16:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7162F49F1
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 16:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348844; cv=none; b=hZhowdHwdFIBRV8sT/V00p6rgr2AiRdoIprQhm288elXf4hAqdISET0669HNze2oKXvOoRkL2cQjk9nk5IWH5QKHsS4p8Va/L7LP6HXRtd/fe45p3SWY/z9w6dsiGsjt/+cDwzk9r1kT7OaEtbucE3JU0170jwUe6xF7ET/bxeo=
+	t=1764348854; cv=none; b=M7uILIEclq1+TQdNcPVDmrQUiCwDTNy8L3cgsTfzyYOKCK/u/0nwftwMU8fZrGNcyVeZgzgBrY6nstNAhyCP7pP+DjU6dzwSM7UZRR4nSxIPCnW5LHNsmzeVcoiHykRnTQ0MW7PJ1rS4ma6pDDSFlQGmk3BmsboM31vjxhrxpqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348844; c=relaxed/simple;
-	bh=AqjkhcoF3fTqOyuLn4+6aSrPs6qITOvGOWT/HgUzk7Y=;
+	s=arc-20240116; t=1764348854; c=relaxed/simple;
+	bh=QslyN0LXfSiI9HAiT7HMIQq8bBQnK8kDKTZ2LrRWj3Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YRz3Z7O4WrPjR1s3nWhSRVhfmJLk/SA3NVdvgbNSue2mBKGe5UO9X+oKL1/nUBQMA1XAsM2Rtr4jKJApbwFVZgsBqKVOeu5JgcLw3cJ9pQQLGN+FEu/fWG4roB/yI4xHJ36WA3XmivXszDScOpdeNAuFYyvCSq3Iu02UTkscHG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ouE32eOM; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=XS9HpuNDODzZL6/oI3vQbJtY/qOk9idSzcPnuevwC2gcNo5ec2K/1pUIQnlyh+XBbOkPJL3Bj3QmOcE4Beo2xT/wjQUv8rYKcmsjOxB1aaxB4BR+0RFO0KhJ4oT93caRr6wAAv+ldGwmYqoG/FLAVsalUvAkflTxrwJwH00ZiMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2skVqUO2; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ouE32eOM"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2skVqUO2"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 94D341A1E09;
-	Fri, 28 Nov 2025 16:54:01 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 429A5C16A3C;
+	Fri, 28 Nov 2025 16:53:47 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 67BC460706;
-	Fri, 28 Nov 2025 16:54:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F5CD10B02195;
-	Fri, 28 Nov 2025 17:53:50 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2C14D60706;
+	Fri, 28 Nov 2025 16:54:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0EEA610B02187;
+	Fri, 28 Nov 2025 17:53:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764348839; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1764348848; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=AjHLZ/oS8bDyMocQGjl3IyCNeVOq4ZwFmOT6Ey5ZFAg=;
-	b=ouE32eOMmyZkNjAWkjY3zun3JUktr7gy54sR11ENbpWqISBzqMX7fHxXOLOKtZvT+W2v1I
-	kiuon0bcxIG/+yQnaVBMGD8X2/IzQpNCYWoKWPdmLiMstwIyasuu0Bp3BOi7aGsI6S1BWa
-	133tnVl8iLXT3pamUHPwhRkZHMgivBiyj9u0oAlSprphZL12FXLLCB5sXtirXSU8lrjl7f
-	0k39aIJMEzrro/sTqHbZ0uYbQxVCOBmAQhXY9N3+mO+DCV0BAnO4eqaLRPmGZRqX1SaFBf
-	DGhNgnBqJpZ1k/min4zloYLcCOBX3qNnwI0Mmj0l19ozvoYAN4I0JwBisko+sw==
+	bh=P7PuQnrr2U0mS6+K0q3iGdpY5r4F/rhA/7tugsaTWHQ=;
+	b=2skVqUO2wpq9PHtRVHRtqRhujv2FbueuNpP1H5JWR6CVK7xatL4uwySXumc3/taO9CvVMb
+	acdli3XiqiV9CdPG5t8Qh3060lAfnNWjI2VPpk8RzD30MX13YdAas9gX/xJI+V5stGJ9IF
+	QMH5qEERVOgRkIBJ381RLvqZ46+x/Sv0HHJQUeu21s2J1xRIOi9XngP+WMtr6FzDBX329V
+	U87a1CUVxVq3zlNfVkGzc1y+sh9gaBb+ChDYlklggLCAaOMizlEfNE4HN5DHjPnhCkjqDX
+	xtna16A1xSoMZcoauwJAsmEKEJxKySi463KCX3OOU9NqVtVl/UJy/drjwNFnOQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 28 Nov 2025 17:50:25 +0100
-Subject: [PATCH v2 15/26] drm/bridge: imx8qxp-ldb: use
- devm_of_drm_get_bridge() to put the companion bridge
+Date: Fri, 28 Nov 2025 17:50:26 +0100
+Subject: [PATCH v2 16/26] drm/rcar-du: lvds: use devm_of_drm_get_bridge()
+ to put the next bridge
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-15-88f8a107eca2@bootlin.com>
+Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-16-88f8a107eca2@bootlin.com>
 References: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 In-Reply-To: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -95,22 +95,22 @@ reference on remove or on probe failure.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c | 2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c b/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c
-index 122502968927..4a3741c9f319 100644
---- a/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c
-+++ b/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c
-@@ -552,7 +552,7 @@ static int imx8qxp_ldb_parse_dt_companion(struct imx8qxp_ldb *imx8qxp_ldb)
- 		goto out;
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
+index 001b3543924a..2dd95fd52e71 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
+@@ -740,7 +740,7 @@ static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+ 		goto done;
  	}
  
--	imx8qxp_ldb->companion = of_drm_find_bridge(companion_port);
-+	imx8qxp_ldb->companion = devm_of_drm_get_bridge(dev, companion_port);
- 	if (!imx8qxp_ldb->companion) {
+-	lvds->companion = of_drm_find_bridge(companion);
++	lvds->companion = devm_of_drm_get_bridge(dev, companion);
+ 	if (!lvds->companion) {
  		ret = -EPROBE_DEFER;
- 		DRM_DEV_DEBUG_DRIVER(dev,
+ 		goto done;
 
 -- 
 2.51.1
