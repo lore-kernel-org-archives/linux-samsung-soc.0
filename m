@@ -1,307 +1,230 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEF232E681
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 13:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0B932F74C;
+	Fri, 28 Nov 2025 16:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764337512; cv=none; b=Raq+oswuCbq/w7BFRAk3U8vz2qk6yIj9MopYkWDHbBAy3a4JcKOlf3mG1DGfijxeVIEMqdSQ7VQ6I9OqcRPGW8KU0awgERaJH/tdJswcPus8nNBqLDaUlIq0DqmP9YKHOWjE+iwSFag+nYXxizuJMedU02qlTNtX7Ubgxe0OPX0=
+	t=1764348719; cv=none; b=PBU1mdGI7zcT+F3B4HJkJNaT2WUC1iSq4tkmVLlJfShsYT3P60jinQaa12NwYul19PW8mKzeL+lUDLIpKWFuN5xmjoKBPH+Eo6aFUlOJmQSM27Zm4UMNoQE/pluYU5dXCYRwyoBSZv6yvhs3cU30BuZbaDwASAJW6fjQ1f+afjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764337512; c=relaxed/simple;
-	bh=HcZSMtPxYYDm2H+B4ynOD3NDlKaC/gZ94QvNAf73zK0=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=QFPpz6HrJWBZjEaO00/ZMxQNw0B0mQuUpOJc3olYvvB4TYdueg2Mo1KuQSUFZoca+3Nzmqkxo4SVuOB4vy910MelORzsBppa0VvGSUY5UQQSzV1lRljpk1OelVHSMKbR3ZB0t8QSB+4tMiBDLgYk844FtT8nv+Nn0JyxFZluRNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D40JwBYc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ecNNBV04; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1764348719; c=relaxed/simple;
+	bh=lbq7/9hM4h0tP9G0otpE2sQlBcOtnUST2OFtBTbJm3o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=g9zpTRVuz8J87hgLNwxO8zglvOZSQiZvBj7pwmvZ7vPkRGwV0e/g6iDGEbUeW991Vgw5unV/RAvASqKgJnvqLUetFRkAispju1sBSVdXJzUakxOm+k30VS8g4wpj4wUkorOIZanKIkZ7QaXH7Hl0e5LRCHI0YMS7Gbpcmwf5ht0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VUX78Sy4; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D40JwBYc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ecNNBV04"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AS8OMsu3967418
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 13:45:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6YyryhNyygboe2JvHqFf5MSM
-	jhcrOpz4yYfzU98fo3A=; b=D40JwBYcqs5NnYnL8h52mHgXRtiJNyGmwQoJE7cS
-	6GY9GALwqf7VFRYVUnZbpZWhBmb1h6PjxVXEYjLdvnh73HGCSUSu3NJSkhwCAszW
-	e/xvrwtjU5QWYtRlCvcCh/myw4IkL9w7GT6vf0QyIrCS8DWxwJiGU5DKXlOLuv1g
-	zQihRlOLAe2iPFqxHHE4kAr0wfwan7xpiXo6ZI7fqrTzIbldLrQ3/vrB5Ajdhui4
-	4vC5jmZvAHoDRjbZEit0KYBB3hQTxd0yRv7POReM4WdnFKKCYQLUVpCoKTqBVoEd
-	CcaPreSzHWnlwwWvNq9GFbirrIzAQ9Yifsj1kyku3CN3ng==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4apkv5kq3c-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 13:45:02 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2956f09f382so11312075ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 05:45:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764337501; x=1764942301; darn=vger.kernel.org;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6YyryhNyygboe2JvHqFf5MSMjhcrOpz4yYfzU98fo3A=;
-        b=ecNNBV04V1ucXLh/QoSRCxkZtDN2b0m6pfr+cUSkPLiaHzc7DRzaRNJIzFIXWl4e+v
-         6BjVvoPZKjfyzi6xEgCYbMTlVb/Yb2fqZp5sqnaIWmUW80TV3e+a8UHt3ru/EYmi7kMD
-         9xVnJoEudyBtZl6NzXPx+hh6YSTrBJ3pCKQNMVKToQ4tMGveTF4B1DW8+G5nOx6pmCaV
-         QmY9Q/38enocoM0fjlLfRqVnXtCske+zw0TVxB3cKQ6kIPZnmCYhYkYhyNwZ3jHue/yz
-         7QQVt95059/t4g1rzRh57EygCmo66Wc/8XtvgwiGvqKN1DqtfB3yap5TWXiOvg9W6a+x
-         qNww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764337501; x=1764942301;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6YyryhNyygboe2JvHqFf5MSMjhcrOpz4yYfzU98fo3A=;
-        b=oOLafJ9+zuN6n98mgO5TrReGfFhdw3ffX9Gj4Uhhp1Ar50F7IxSCXfpGuOuqvcYXka
-         2G62vG30aNMuDbpQyb/tW/eRrJSHbzl86PIdXguSRt4y6smPA9nPWWF8UWRVeFdClCl2
-         AidDqri4H2VrkfJTEb8FAr9idlw7RUdI3eGNGXrr6+CIdVF/gWc3ElTqTVueFDXYLdsT
-         lvdCTHI3KZg3AjV8vD1kbbsb6u66wxX4rJn7n4kRIeW6KSh2wsrKbsLzqMnfeUd7SOOM
-         UOtx/p/80UKebzYU/Vlhm/QFt8W9vDg4hlzdDwnfYsH8CnG6dZ/AF6IDxU2yAxq259g3
-         gOAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdoYvvHy9nHf55FrCohOyujhTnYZoDdm+qG9RIREVrbBiO5ms8P1D1A2oQ0sKmgj0+Eumc3tF1VYE28j52CCvjjQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLE180P8YXLDzu6QEBw4WsGENQgEXxSs7e2ldNlnRidzxmWl0L
-	MRy6ig9RP9cvRaK6/L+Rr3j4621V74yEFCelMSpd9on0bEX6FAs7QK3slP+S+2wBBesxjeQjnCj
-	egrAN3hKu/ENzcYf5b1SpPlHXTOO2LBdjf/Yzr8IS2X6UyiW0KtwdVGHcNjGJM5vY9w4O6UeqCg
-	==
-X-Gm-Gg: ASbGncuLZ6KTcqf3xKNh8UumwSvFFOQzVP2+vDtc3Xm3TI/tLFSJBcjp5H4QEeGFdY1
-	ZRhOTD6z9jjWoq8i3rvhj2ZOmqJNEe0UtF2qDrhD6iWmlHYRMW6XDHAYfBhz0TRX7K6jP867Asd
-	wmUn3p91hbbIKyxFfi3OVJsxHI/jETK/x9WHh9+7J+prL5AAVpLCvgqT12XnGKtYt8p4OxqmZsZ
-	/kmWWJ1b5c9WeutjGfZzjRkkI/ulN2OuxgBlGU3eS1JNbZQ8YnYtZYGtGc76bqdoOyIfw/YI92x
-	dyqPX279/eyhB6SN1UXNwOSREI7sTwVVF1AHQO3azyX3gnh367SqUHwjmX8H9p1pwg+lpF9LQ8X
-	fiOb0QWHZm43WxjHZFgfZy8URY332UTYMSRRHMxT75A==
-X-Received: by 2002:a17:902:ea0f:b0:295:28a4:f0c6 with SMTP id d9443c01a7336-29b6bd53abamr329509835ad.0.1764337501441;
-        Fri, 28 Nov 2025 05:45:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE9TkAK8Rmvf0zxxdLd2ijdUeVHt1sgppFq66t5hDBI6qct1c8VXLlLvqtfClJadzxEfdM7VA==
-X-Received: by 2002:a17:902:ea0f:b0:295:28a4:f0c6 with SMTP id d9443c01a7336-29b6bd53abamr329509475ad.0.1764337500900;
-        Fri, 28 Nov 2025 05:45:00 -0800 (PST)
-Received: from [10.218.35.45] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce445927sm47808035ad.37.2025.11.28.05.44.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Nov 2025 05:45:00 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------1nJtw7LajxHAbIw02IPdWaj5"
-Message-ID: <cabf4c20-095b-4579-adc1-146a566b19b9@oss.qualcomm.com>
-Date: Fri, 28 Nov 2025 19:14:54 +0530
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VUX78Sy4"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id BFB2E4E4194E;
+	Fri, 28 Nov 2025 16:51:53 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 83CD460706;
+	Fri, 28 Nov 2025 16:51:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3B46510B02155;
+	Fri, 28 Nov 2025 17:51:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1764348710; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=4LXnxBJlqd2UazTmBhwXwFStb/3+5cf3TPNAlsU5TvA=;
+	b=VUX78Sy4XiyC9MPlVpttqJ9SQIQnLJGEto9dm/Wz9ym7T7bN/CgnVlY9YH1bFcC0CgzUQe
+	cZofZ4OEZUrrcGm7JEzsnL/etiRVBFwZzGGetbM0bgfGQ8fhKl1CmChVPekpLxS7jOlSK/
+	B1kea5ki5mVy1By5DwWomHJRAzf/5aB3po6F7XpWKHUzRNA/KlBEfcw2dr1S/BoUKwTmTY
+	jTevGUZnNFJkK/0JxyFshBgnAEB0h6+hbX3C2stg8aS1MNDCf/acKsU6YDTC4b6Xv/aXH9
+	y6s8LhEMqH9Ez7UYbhzo3zb3DijYvmvDN8X+0amDd5uaA6wuXX7uEGzIbnqiwg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v2 00/26] drm/bridge: add drm_of_find_bridge(), deprecate
+ of_drm_find_bridge()
+Date: Fri, 28 Nov 2025 17:50:10 +0100
+Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/4] PCI: dwc: Support ECAM mechanism by enabling iATU
- 'CFG Shift Feature'
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-        Jingoo Han
- <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar
- <alim.akhtar@samsung.com>,
-        Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250909-controller-dwc-ecam-v9-0-7d5b651840dd@kernel.org>
- <20250909-controller-dwc-ecam-v9-4-7d5b651840dd@kernel.org>
- <alpine.DEB.2.21.2511280256260.36486@angie.orcam.me.uk>
- <c7aea2b3-6984-40f5-8234-14d265dabefc@oss.qualcomm.com>
- <alpine.DEB.2.21.2511280755440.36486@angie.orcam.me.uk>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <alpine.DEB.2.21.2511280755440.36486@angie.orcam.me.uk>
-X-Proofpoint-ORIG-GUID: CE_juWbJ7TWYmRby2USIQ75gvpGU8xFX
-X-Authority-Analysis: v=2.4 cv=O8k0fR9W c=1 sm=1 tr=0 ts=6929a75e cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=r77TgQKjGQsHNAKrUKIA:9 a=bdmupUJtxhvzhX6DKHMA:9 a=QEXdDO2ut3YA:10
- a=x4N52Ti7FsAKUhfMTz8A:9 a=B2y7HmGcmWMA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI4MDEwMCBTYWx0ZWRfXzVsr168/4uMV
- Uad5/Cdk/H9d3XstsP/VNQn6OFSH443ttjHlHclrUJGGxJPo2vCLlfXrYyRZ6lHH/ZHgPDFmf2J
- XN5JDAhIccxFtQK7c3+uMLH3G1BoxxWWFfiXdvZycA9Kz+6UTY2T+HnKMYjbZ4dhUdRfJMGFMcp
- xaHhbM3tkRALOLukeWJ6FvB5fBWSxtUAIceogE2k1aCKAwr1dLgarMKuE/riRS+lZ1CnB8c6Vhj
- 2EZYTfGrINqmRo+8wBHAJeGm4TkCDE1jHwG9eEnaNaa1TgoEM9T/tSrEqYNr/HMyeMlL6/IUNkc
- ICZmA08LoKKjb8PEq+gLBJipGnWn93UHswcNEC3jWeFAvJsfnoZJRxGX1Yar2i8FxBArNPAtCIr
- HYo7ns5hKHiUKn5S/Clf8/xuzTEflg==
-X-Proofpoint-GUID: CE_juWbJ7TWYmRby2USIQ75gvpGU8xFX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-28_03,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511280100
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMLSKWkC/5WNQQ6DIBQFr2JYlwaQFu2q92iMUQH9ifINUNPGe
+ PeiaQ/Q5cxL3qwkGA8mkFu2Em8WCIAugThlpBsa1xsKOjERTFw454pqP9HWg05LM47Y0d7E+Rl
+ 3X6OtLThdf3clS5bnVyVloUk6nL2x8DpijyrxACGifx/the/2lyn/ySycMsp0WxaNskYqeW8R4
+ wju3OFEqm3bPvDOx3LmAAAA
+X-Change-ID: 20251117-drm-bridge-alloc-getput-drm_of_find_bridge-74903367448d
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jonathan Corbet <corbet@lwn.net>, Alexey Brodkin <abrodkin@synopsys.com>, 
+ Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Adrien Grassein <adrien.grassein@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-This is a multi-part message in MIME format.
---------------1nJtw7LajxHAbIw02IPdWaj5
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+This series deprecated of_drm_find_bridge(), adds a replacement which
+handles bridge refcounting, and converts most of the direct users.
 
+This is part of the work to support hotplug of DRM bridges. The grand plan
+was discussed in [0].
 
+Here's the work breakdown (➜ marks the current series):
 
-On 11/28/2025 2:07 PM, Maciej W. Rozycki wrote:
-> On Fri, 28 Nov 2025, Krishna Chaitanya Chundru wrote:
->
->>>> Designware databook r5.20a, sec 3.10.10.3 documents the 'CFG Shift
->>>> Feature'
->>>> of the internal Address Translation Unit (iATU). When this feature is
->>>> enabled, it shifts/maps the BDF contained in the bits [27:12] of the
->>>> target
->>>> address in MEM TLP to become BDF of the CFG TLP. This essentially
->>>> implements the Enhanced Configuration Address Mapping (ECAM) mechanism as
->>>> defined in PCIe r6.0, sec 7.2.2.
->>>    So this broke a parallel port on my HiFive Unmatched machine (a SiFive
->>> FU740-C000 based system), the driver no longer registers the device, no
->>> /dev/parport0 anymore.
->> Hi Maciej, can you share us lspci -vvv o/p with working & non working case and
->> also can you point us parport driver. - Krishna Chaitanya.
->   I'm not sure what you mean as to the parport driver; it's standard stuff:
->
-> $ zgrep PARPORT /proc/config.gz
-> CONFIG_PARPORT=y
-> CONFIG_PARPORT_PC=y
-> # CONFIG_PARPORT_SERIAL is not set
-> CONFIG_PARPORT_PC_FIFO=y
-> CONFIG_PARPORT_1284=y
-> # CONFIG_PATA_PARPORT is not set
-> # CONFIG_I2C_PARPORT is not set
-> # CONFIG_USB_SERIAL_MOS7715_PARPORT is not set
-> $
->
-> I've attached output from `lspci -xxxx' so that you can decode it yourself
-> however you need, though I fail to see anything standing out there.
->
->   If you can't figure out what's going on here, then I'll try to poke at
-> the driver to see what exactly it is that causes it to fail there, but I'm
-> a little constrained on the resources and completely unfamiliar with the
-> ECAM feature (and the lack of documentation for the DW IP does not help).
->
->   I have no slightest idea why it should cause a regression such as this,
-> it seems totally unrelated.  Yet it's 100% reproducible.  Could this be
-> because it's the only device in the system that actually uses PCI/e port
-> I/O?
-Hi Maciej, Can you try attached patch and let me know if that is helping 
-you or not. - Krishna Chaitanya.
-> # cat /proc/ioports
-> 00000000-0000ffff : pcie@e00000000
->    00001000-00002fff : PCI Bus 0000:01
->      00001000-00002fff : PCI Bus 0000:02
->        00001000-00002fff : PCI Bus 0000:05
->          00001000-00002fff : PCI Bus 0000:06
->            00001000-00001fff : PCI Bus 0000:07
->            00001000-00001007 : 0000:07:00.0
->            00001000-00001002 : parport0
->            00001003-00001007 : parport0
->            00001008-0000100b : 0000:07:00.0
->            00001008-0000100a : parport0
->            00002000-00002fff : PCI Bus 0000:08
->            00002000-00002fff : PCI Bus 0000:09
->            00002000-000020ff : 0000:09:01.0
->            00002100-0000217f : 0000:09:02.0
-> #
->
-> (Hmm, indentation does not appear correct to me for buses below 0000:07.)
->
->    Maciej
+ 1. ➜ add refcounting to DRM bridges struct drm_bridge,
+      based on devm_drm_bridge_alloc()
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17)
+    C. ✔ kunit tests (v6.17)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17)
+    E. ➜ add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge(), add cleanup action (v6.18)
+       2. ✔ drm_bridge_get_prev_bridge() (v6.18)
+       3. ✔ drm_bridge_get_next_bridge() (v6.19)
+       4. ✔ drm_for_each_bridge_in_chain() (v6.19)
+       5. ✔ drm_bridge_connector_init (v6.19)
+       6. … protect encoder bridge chain with a mutex
+       7. ➜ of_drm_find_bridge()
+          a. ➜ add of_drm_get_bridge(), convert most direct users
+	  b. convert other direct users
+	  c. convert bridge-only drm_of_find_panel_or_bridge() users
+       8. drm_of_find_panel_or_bridge, *_of_get_bridge
+       9. ✔ enforce drm_bridge_add before drm_bridge_attach (v6.19)
+    F. ✔ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ✔ show refcount and list lingering bridges (v6.19)
+ 2. … handle gracefully atomic updates during bridge removal
+    A. … Add drm_dev_enter/exit() to protect device resources
+    B. … protect private_obj removal from list
+ 3. … DSI host-device driver interaction
+ 4. ✔ removing the need for the "always-disconnected" connector
+ 5. finish the hotplug bridge work, moving code to the core and potentially
+    removing the hotplug-bridge itself (this needs to be clarified as
+    points 1-3 are developed)
 
---------------1nJtw7LajxHAbIw02IPdWaj5
-Content-Type: text/plain; charset=UTF-8;
- name="0001-PCI-qcom-Enable-iATU-mapping-for-memory-IO-regions.patch"
-Content-Disposition: attachment;
- filename*0="0001-PCI-qcom-Enable-iATU-mapping-for-memory-IO-regions.patc";
- filename*1="h"
-Content-Transfer-Encoding: base64
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
 
-RnJvbSBhZDAwMjY2MWMyZTU1OWVlM2VjNTIzYjAwZTIzOTQ4NDA3OTY4Y2Q3IE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBLcmlzaG5hIENoYWl0YW55YSBDaHVuZHJ1IDxrcmlz
-aG5hLmNodW5kcnVAb3NzLnF1YWxjb21tLmNvbT4KRGF0ZTogRnJpLCAyOCBOb3YgMjAyNSAx
-Njo0NDoxNyArMDUzMApTdWJqZWN0OiBbUEFUQ0hdIFBDSTogcWNvbTogRW5hYmxlIGlBVFUg
-bWFwcGluZyBmb3IgbWVtb3J5ICYgSU8gcmVnaW9ucwoKU2lnbmVkLW9mZi1ieTogS3Jpc2hu
-YSBDaGFpdGFueWEgQ2h1bmRydSA8a3Jpc2huYS5jaHVuZHJ1QG9zcy5xdWFsY29tbS5jb20+
-Ci0tLQogLi4uL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWRlc2lnbndhcmUtaG9zdC5jIHwg
-MjQgKysrKysrKysrKysrKystLS0tLQogZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNp
-ZS1kZXNpZ253YXJlLmMgIHwgIDMgKysrCiBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9w
-Y2llLWRlc2lnbndhcmUuaCAgfCAgMiArLQogMyBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRp
-b25zKCspLCA3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRy
-b2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS1ob3N0LmMgYi9kcml2ZXJzL3BjaS9jb250cm9s
-bGVyL2R3Yy9wY2llLWRlc2lnbndhcmUtaG9zdC5jCmluZGV4IGU5MjUxM2M1YmRhNS4uYTYw
-ZjE1MzlmYWRjIDEwMDY0NAotLS0gYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2ll
-LWRlc2lnbndhcmUtaG9zdC5jCisrKyBiL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3Bj
-aWUtZGVzaWdud2FyZS1ob3N0LmMKQEAgLTM2LDYgKzM2LDcgQEAgc3RhdGljIHN0cnVjdCBw
-Y2lfb3BzIGR3X2NoaWxkX3BjaWVfb3BzOwogCiAjZGVmaW5lIElTXzI1Nk1CX0FMSUdORUQo
-eCkgSVNfQUxJR05FRCh4LCBTWl8yNTZNKQogCitzdGF0aWMgaW50IGR3X3BjaWVfaWF0dV9z
-ZXR1cChzdHJ1Y3QgZHdfcGNpZV9ycCAqcHApOwogc3RhdGljIGNvbnN0IHN0cnVjdCBtc2lf
-cGFyZW50X29wcyBkd19wY2llX21zaV9wYXJlbnRfb3BzID0gewogCS5yZXF1aXJlZF9mbGFn
-cwkJPSBEV19QQ0lFX01TSV9GTEFHU19SRVFVSVJFRCwKIAkuc3VwcG9ydGVkX2ZsYWdzCT0g
-RFdfUENJRV9NU0lfRkxBR1NfU1VQUE9SVEVELApAQCAtNDI3LDEzICs0MjgsMTcgQEAgc3Rh
-dGljIGludCBkd19wY2llX2NvbmZpZ19lY2FtX2lhdHUoc3RydWN0IGR3X3BjaWVfcnAgKnBw
-KQogCiAJYnVzID0gcmVzb3VyY2VfbGlzdF9maXJzdF90eXBlKCZwcC0+YnJpZGdlLT53aW5k
-b3dzLCBJT1JFU09VUkNFX0JVUyk7CiAKKwlyZXQgPSBkd19wY2llX2lhdHVfc2V0dXAocHAp
-OworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CisKIAkvKgogCSAqIFJvb3QgYnVzIHVuZGVy
-IHRoZSBob3N0IGJyaWRnZSBkb2Vzbid0IHJlcXVpcmUgYW55IGlBVFUgY29uZmlndXJhdGlv
-bgogCSAqIGFzIERCSSByZWdpb24gd2lsbCBiZSB1c2VkIHRvIGFjY2VzcyByb290IGJ1cyBj
-b25maWcgc3BhY2UuCiAJICogSW1tZWRpYXRlIGJ1cyB1bmRlciBSb290IEJ1cywgbmVlZHMg
-dHlwZSAwIGlBVFUgY29uZmlndXJhdGlvbiBhbmQKIAkgKiByZW1haW5pbmcgYnVzZXMgbmVl
-ZCB0eXBlIDEgaUFUVSBjb25maWd1cmF0aW9uLgogCSAqLwotCWF0dS5pbmRleCA9IDA7CisJ
-YXR1LmluZGV4ID0gcHAtPm9iX2F0dV9pbmRleDsKIAlhdHUudHlwZSA9IFBDSUVfQVRVX1RZ
-UEVfQ0ZHMDsKIAlhdHUucGFyZW50X2J1c19hZGRyID0gcHAtPmNmZzBfYmFzZSArIFNaXzFN
-OwogCS8qIDFNaUIgaXMgdG8gY292ZXIgMSAoYnVzKSAqIDMyIChkZXZpY2VzKSAqIDggKGZ1
-bmN0aW9ucykgKi8KQEAgLTQ0MywxOSArNDQ4LDI2IEBAIHN0YXRpYyBpbnQgZHdfcGNpZV9j
-b25maWdfZWNhbV9pYXR1KHN0cnVjdCBkd19wY2llX3JwICpwcCkKIAlpZiAocmV0KQogCQly
-ZXR1cm4gcmV0OwogCisKIAlidXNfcmFuZ2VfbWF4ID0gcmVzb3VyY2Vfc2l6ZShidXMtPnJl
-cyk7CiAKIAlpZiAoYnVzX3JhbmdlX21heCA8IDIpCiAJCXJldHVybiAwOwogCisJcHAtPm9i
-X2F0dV9pbmRleCsrOworCiAJLyogQ29uZmlndXJlIHJlbWFpbmluZyBidXNlcyBpbiB0eXBl
-IDEgaUFUVSBjb25maWd1cmF0aW9uICovCi0JYXR1LmluZGV4ID0gMTsKKwlhdHUuaW5kZXgg
-PSBwcC0+b2JfYXR1X2luZGV4OwogCWF0dS50eXBlID0gUENJRV9BVFVfVFlQRV9DRkcxOwog
-CWF0dS5wYXJlbnRfYnVzX2FkZHIgPSBwcC0+Y2ZnMF9iYXNlICsgU1pfMk07CiAJYXR1LnNp
-emUgPSAoU1pfMU0gKiBidXNfcmFuZ2VfbWF4KSAtIFNaXzJNOwogCWF0dS5jdHJsMiA9IFBD
-SUVfQVRVX0NGR19TSElGVF9NT0RFX0VOQUJMRTsKIAotCXJldHVybiBkd19wY2llX3Byb2df
-b3V0Ym91bmRfYXR1KHBjaSwgJmF0dSk7CisJcmV0ID0gZHdfcGNpZV9wcm9nX291dGJvdW5k
-X2F0dShwY2ksICZhdHUpOworCWlmICghcmV0KQorCQlwcC0+b2JfYXR1X2luZGV4Kys7CisK
-KwlyZXR1cm4gcmV0OwogfQogCiBzdGF0aWMgaW50IGR3X3BjaWVfY3JlYXRlX2VjYW1fd2lu
-ZG93KHN0cnVjdCBkd19wY2llX3JwICpwcCwgc3RydWN0IHJlc291cmNlICpyZXMpCkBAIC05
-NDIsNyArOTU0LDcgQEAgc3RhdGljIGludCBkd19wY2llX2lhdHVfc2V0dXAoc3RydWN0IGR3
-X3BjaWVfcnAgKnBwKQogCQlkZXZfd2FybihwY2ktPmRldiwgIlJhbmdlcyBleGNlZWQgb3V0
-Ym91bmQgaUFUVSBzaXplICglZClcbiIsCiAJCQkgcGNpLT5udW1fb2Jfd2luZG93cyk7CiAK
-LQlwcC0+bXNnX2F0dV9pbmRleCA9IGk7CisJcHAtPm9iX2F0dV9pbmRleCA9IGk7CiAKIAlp
-ID0gMDsKIAlyZXNvdXJjZV9saXN0X2Zvcl9lYWNoX2VudHJ5KGVudHJ5LCAmcHAtPmJyaWRn
-ZS0+ZG1hX3JhbmdlcykgewpAQCAtMTExMyw3ICsxMTI1LDcgQEAgc3RhdGljIGludCBkd19w
-Y2llX3BtZV90dXJuX29mZihzdHJ1Y3QgZHdfcGNpZSAqcGNpKQogCXZvaWQgX19pb21lbSAq
-bWVtOwogCWludCByZXQ7CiAKLQlpZiAocGNpLT5udW1fb2Jfd2luZG93cyA8PSBwY2ktPnBw
-Lm1zZ19hdHVfaW5kZXgpCisJaWYgKHBjaS0+bnVtX29iX3dpbmRvd3MgPD0gcGNpLT5wcC5v
-Yl9hdHVfaW5kZXgpCiAJCXJldHVybiAtRU5PU1BDOwogCiAJaWYgKCFwY2ktPnBwLm1zZ19y
-ZXMpCkBAIC0xMTIzLDcgKzExMzUsNyBAQCBzdGF0aWMgaW50IGR3X3BjaWVfcG1lX3R1cm5f
-b2ZmKHN0cnVjdCBkd19wY2llICpwY2kpCiAJYXR1LnJvdXRpbmcgPSBQQ0lFX01TR19UWVBF
-X1JfQkM7CiAJYXR1LnR5cGUgPSBQQ0lFX0FUVV9UWVBFX01TRzsKIAlhdHUuc2l6ZSA9IHJl
-c291cmNlX3NpemUocGNpLT5wcC5tc2dfcmVzKTsKLQlhdHUuaW5kZXggPSBwY2ktPnBwLm1z
-Z19hdHVfaW5kZXg7CisJYXR1LmluZGV4ID0gcGNpLT5wcC5vYl9hdHVfaW5kZXg7CiAKIAlh
-dHUucGFyZW50X2J1c19hZGRyID0gcGNpLT5wcC5tc2dfcmVzLT5zdGFydCAtIHBjaS0+cGFy
-ZW50X2J1c19vZmZzZXQ7CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIv
-ZHdjL3BjaWUtZGVzaWdud2FyZS5jIGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNp
-ZS1kZXNpZ253YXJlLmMKaW5kZXggYzY0NDIxNjk5NWY2Li5kMjdiNDY5YjQxN2IgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jCisr
-KyBiL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jCkBAIC00
-NzgsNiArNDc4LDkgQEAgaW50IGR3X3BjaWVfcHJvZ19vdXRib3VuZF9hdHUoc3RydWN0IGR3
-X3BjaWUgKnBjaSwKIAogCWxpbWl0X2FkZHIgPSBwYXJlbnRfYnVzX2FkZHIgKyBhdHUtPnNp
-emUgLSAxOwogCisJaWYgKGF0dS0+aW5kZXggPiBwY2ktPm51bV9vYl93aW5kb3dzKQorCQly
-ZXR1cm4gLUVOT1NQQzsKKwogCWlmICgobGltaXRfYWRkciAmIH5wY2ktPnJlZ2lvbl9saW1p
-dCkgIT0gKHBhcmVudF9idXNfYWRkciAmIH5wY2ktPnJlZ2lvbl9saW1pdCkgfHwKIAkgICAg
-IUlTX0FMSUdORUQocGFyZW50X2J1c19hZGRyLCBwY2ktPnJlZ2lvbl9hbGlnbikgfHwKIAkg
-ICAgIUlTX0FMSUdORUQoYXR1LT5wY2lfYWRkciwgcGNpLT5yZWdpb25fYWxpZ24pIHx8ICFh
-dHUtPnNpemUpIHsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3Bj
-aWUtZGVzaWdud2FyZS5oIGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS1kZXNp
-Z253YXJlLmgKaW5kZXggZTk5NWY2OTJhMWVjLi42OWQwYmQ4YjNjNTcgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5oCisrKyBiL2Ry
-aXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5oCkBAIC00MjMsOCAr
-NDIzLDggQEAgc3RydWN0IGR3X3BjaWVfcnAgewogCXN0cnVjdCBwY2lfaG9zdF9icmlkZ2Ug
-ICpicmlkZ2U7CiAJcmF3X3NwaW5sb2NrX3QJCWxvY2s7CiAJREVDTEFSRV9CSVRNQVAobXNp
-X2lycV9pbl91c2UsIE1BWF9NU0lfSVJRUyk7CisJaW50CQkJb2JfYXR1X2luZGV4OwogCWJv
-b2wJCQl1c2VfYXR1X21zZzsKLQlpbnQJCQltc2dfYXR1X2luZGV4OwogCXN0cnVjdCByZXNv
-dXJjZQkJKm1zZ19yZXM7CiAJYm9vbAkJCXVzZV9saW5rdXBfaXJxOwogCXN0cnVjdCBwY2lf
-ZXFfcHJlc2V0cwlwcmVzZXRzOwotLSAKMi4zNC4xCgo=
+Almost all the functions returning a struct drm_bridge pointer have been
+modified to drm_bridge_get() the returned bridge, and their users updated
+to drm_bridge_put() it. See items 1.E.{1-6} above.
 
---------------1nJtw7LajxHAbIw02IPdWaj5--
+of_drm_find_bridge() could be modified easily in the same way, but it has a
+lot of (direct + indirect) callers, and most notably
+drm_of_find_panel_or_bridge() which is very hard to adapt without reowrking
+the panel_bridge lifetime.
+
+This has been discussed in [1] and Maxime proposed an incremental approach:
+
+> So maybe we can just create drm_of_find_bridge() that takes a reference,
+> make of_drm_find_bridge() deprecated in favour of drm_of_find_bridge(),
+> add a TODO, and call it a day. People will gradually switch to the new
+> API over time.
+
+That proposal is implemented by this series. Most of the direct callers are
+also converted: they are all trivial conversions except for one, which is
+handled by the last 3 patches.
+
+Follow-up series will:
+- convert remaining direct callers of of_drm_find_bridge()
+- convert simple cases of drm_of_find_panel_or_bridge()
+
+[1] https://lore.kernel.org/dri-devel/20250319-stylish-lime-mongoose-0a18ad@houat/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- All patches: renamed drm_of_find_bridge() -> of_drm_get_bridge()
+- Various fixes and improvements to patches 1-6, see individual patches
+  changelog
+- Removed bouncing recipient: Edmund Dea <edmund.j.dea@intel.com>
+- Link to v1: https://lore.kernel.org/r/20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com
+
+---
+Luca Ceresoli (26):
+      drm/bridge: add of_drm_get_bridge()
+      drm/bridge: deprecate of_drm_find_bridge()
+      drm/todo: add entry about converting to of_drm_get_bridge()
+      drm/bridge: make of_drm_find_bridge() a wrapper of of_drm_get_bridge()
+      drm/arcpgu: convert to of_drm_get_bridge()
+      drm/bridge: add devm_of_drm_get_bridge
+      drm/bridge: ite-it66121: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: imx8qxp-pixel-combiner: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: simple-bridge: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: tpd12s015: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: thc63lvd1024: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: imx8qxp-pxl2dpi: use devm_of_drm_get_bridge() to put the next and companion bridges
+      drm/bridge: lt8912b: use devm_of_drm_get_bridge() to put the hdmi bridge
+      drm/bridge: tfp410: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: imx8qxp-ldb: use devm_of_drm_get_bridge() to put the companion bridge
+      drm/rcar-du: lvds: use devm_of_drm_get_bridge() to put the next bridge
+      drm/meson: encoder_*: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: sii902x: use devm_of_drm_get_bridge() to put the next bridge
+      drm/mediatek: use devm_of_drm_get_bridge() to put the next bridge
+      drm/kmb: dsi: use devm_of_drm_get_bridge() to put the next bridge
+      drm/imx/ipuv3: use devm_of_drm_get_bridge() to put the next bridge
+      drm/exynos: hdmi: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: dw-hdmi: use devm_of_drm_get_bridge() to put the next bridge
+      drm/bridge: imx8qxp-pixel-link: simplify logic to find next bridge
+      drm/bridge: imx8qxp-pixel-link: simplify freeing of the remote device_node
+      drm/bridge: imx8qxp-pixel-link: convert to of_drm_get_bridge()
+
+ Documentation/gpu/todo.rst                         | 16 ++++
+ drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c           |  2 +-
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    |  2 +-
+ drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c    | 37 +++++----
+ drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c       |  4 +-
+ drivers/gpu/drm/bridge/ite-it66121.c               |  2 +-
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |  2 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |  2 +-
+ drivers/gpu/drm/bridge/simple-bridge.c             |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  2 +-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  2 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  2 +-
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |  2 +-
+ drivers/gpu/drm/drm_bridge.c                       | 91 ++++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  2 +-
+ drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c            |  2 +-
+ drivers/gpu/drm/kmb/kmb_dsi.c                      |  2 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c         |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_dsi.c          |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         |  2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  2 +-
+ drivers/gpu/drm/tiny/arcpgu.c                      |  4 +-
+ include/drm/drm_bridge.h                           | 10 +++
+ 24 files changed, 143 insertions(+), 55 deletions(-)
+---
+base-commit: e85e9ccf3f8404007f62dff9a02273fcdeb44206
+change-id: 20251117-drm-bridge-alloc-getput-drm_of_find_bridge-74903367448d
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
