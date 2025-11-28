@@ -1,41 +1,41 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F952E7BB4;
-	Fri, 28 Nov 2025 16:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126222E9EC7;
+	Fri, 28 Nov 2025 16:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348802; cv=none; b=cOSi0jut4pTGxhDJ/R0RHSYuBdFWnb2Ci+0VNQj70dHwbwvPEka8SZn2E32o8lx9DtlJtalQG004WCD1RBnCnp9MkfSk1bLSPdPv4XCY9igg7BumEtRkYlPDAtumPH0xp63zpPqeU2+wtTLpn7nu125np6KMBe3Mkh7q6MgiC98=
+	t=1764348811; cv=none; b=YENz+s+LetNwBK2BMBBC1dXmGnd5SR6zOIP0JbnL2sNcMbEdFo9bxpwLESeEkN0lWeqC5tRWOcyG/NZoQIn0SnMkMuMgNXRmbTeb+c9zZqb1GgLu0eyBZ7A19xb+WN88guG26WC3JoRafjgDmAciD0exfqrcDPxzJCFHylfeiGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348802; c=relaxed/simple;
-	bh=Xz7HqSxIL/DKQxqUG37mwnMeJEPp0n2QQHnuSWJs+bk=;
+	s=arc-20240116; t=1764348811; c=relaxed/simple;
+	bh=ep2Lt397aadlfGBlXBzIrdkNOQ8zoihSYXcvGrwq13E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MWv50upYuKyRGd9Q5+NMkYwttL1NKgCUboZ6yFtFuUfbCAVr2WI6b2Rh3srP/FIhCn+Xx1x4eKunaUw64jHisKTercwSa3pL/J7iB82gMslxbHl4q5rQCmpp20i5GL4rWfHwTOGreuLa5v/mNra+HHQmOlxavcHwpU1/lcDYtTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RIu8P2D/; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=qZooq+/Cko6ROjA/IpkCoUCnXdV1JIohZ9ivB9+WkBmXzx7g3PjYvYG0Vt/+qAa34Kn48PnNyRCkqVQeaIGkSPZcYBNqBBLAexxh2OQJ5JBt51MTk36OeykLbmw2PxEGRtIu0li8dIu8BSWO5t5ByADK/MX+ucBrVP8d1Lprhqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Iz2LSUNb; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RIu8P2D/"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Iz2LSUNb"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id F39DA4E4194E;
-	Fri, 28 Nov 2025 16:53:18 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 33F894E4194E;
+	Fri, 28 Nov 2025 16:53:27 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C577060706;
-	Fri, 28 Nov 2025 16:53:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 430A710B0218B;
-	Fri, 28 Nov 2025 17:53:09 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0815460706;
+	Fri, 28 Nov 2025 16:53:27 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6DE6510B02187;
+	Fri, 28 Nov 2025 17:53:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764348796; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1764348805; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=2ChhIl0+ldGC8p5KK03RGS0rr4Xk1x33c4qi2wzMWjU=;
-	b=RIu8P2D/x2i3PYKhRCv/1m6mJsgfZFpqwRo6hOCu2/h1pA7jy+ug5906U6n4y/1pzfFk+K
-	4Tw3bYMmxmjUDs2CsnZ2wgqQRUELhFl2eAWkHsHEn63MWWy3JJoP51zeBv8n65rwkMGOUC
-	dWOCLf4pFh94A28aFr4q/219jDGkYX1PK2irSsD6xNc9a/RDHBDETqYIbUTTAbJsUppmf+
-	Cr6C6NePlwcCEiBN1R9oSbWBpwM+XVC17Mumglv5K2jO6Nn9A7aRciCpZUqaRKa3TtmGag
-	kOiDsxL8thmJa6299/P+BTj8FjRVJfBRjj6BlSawlfzDIWuge9EjesnCSSdrgQ==
+	bh=bmOUlN0UVJAM0C/s09gC1kYNCy1SQGGvj7K0PWE8bOo=;
+	b=Iz2LSUNbnAXjFoGpAXOE7HIf0yqZ782BSWNJOmW4YTDm4ExlbAXO17NXqDwCsMkQOEcHca
+	l1DOVFsRUttddvLgeHScvhIt9vUT4VOmGiSxkPNNcC1zcW0oxkWXwyinn8MKlON8QQEPiF
+	MXitDa7KELYex6X6rBNXDdljeuQ+4gYNB26ET7bh0ZrLqVrOIpr5twJXGB7NgsOBN/kbUw
+	fActsfG3y6OOygf+xhuH1jTAQwDUPZ7UMzdFqPyNciKv0gxJ5oJ7UdfRJoCAf1j3k6GuDf
+	en6GUvKiQByrHmvo0MGQa0+BpzyPbRe2FCyXuuVUa9zL7eP2BPKs0l9T9OAr/g==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 28 Nov 2025 17:50:20 +0100
-Subject: [PATCH v2 10/26] drm/bridge: tpd12s015: use
+Date: Fri, 28 Nov 2025 17:50:21 +0100
+Subject: [PATCH v2 11/26] drm/bridge: thc63lvd1024: use
  devm_of_drm_get_bridge() to put the next bridge
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-10-88f8a107eca2@bootlin.com>
+Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-11-88f8a107eca2@bootlin.com>
 References: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 In-Reply-To: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -95,22 +95,22 @@ reference on remove or on probe failure.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/bridge/ti-tpd12s015.c | 2 +-
+ drivers/gpu/drm/bridge/thc63lvd1024.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/ti-tpd12s015.c b/drivers/gpu/drm/bridge/ti-tpd12s015.c
-index dcf686c4e73d..539ffacd0715 100644
---- a/drivers/gpu/drm/bridge/ti-tpd12s015.c
-+++ b/drivers/gpu/drm/bridge/ti-tpd12s015.c
-@@ -138,7 +138,7 @@ static int tpd12s015_probe(struct platform_device *pdev)
- 	if (!node)
+diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+index 2cb7cd0c0608..a240a68f6405 100644
+--- a/drivers/gpu/drm/bridge/thc63lvd1024.c
++++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+@@ -132,7 +132,7 @@ static int thc63_parse_dt(struct thc63_dev *thc63)
  		return -ENODEV;
+ 	}
  
--	tpd->next_bridge = of_drm_find_bridge(node);
-+	tpd->next_bridge = devm_of_drm_get_bridge(&pdev->dev, node);
- 	of_node_put(node);
- 
- 	if (!tpd->next_bridge)
+-	thc63->next = of_drm_find_bridge(remote);
++	thc63->next = devm_of_drm_get_bridge(thc63->dev, remote);
+ 	of_node_put(remote);
+ 	if (!thc63->next)
+ 		return -EPROBE_DEFER;
 
 -- 
 2.51.1
