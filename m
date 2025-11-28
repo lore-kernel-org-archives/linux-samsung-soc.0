@@ -1,42 +1,42 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE22F5A3F
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 16:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233EF2F744A;
+	Fri, 28 Nov 2025 16:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348861; cv=none; b=sWP6MFzwpC380qxbOmAo435tndlCukss4974LfT0As7gP5aEfplT0QOqg2ovzrsfBt9XQafEvirpG3iJKqwcnBB8lwYhxl+KqIVvE7AdBHL/g48IQU5Rth5ywplz2fT/uy4K32JPsbd7ehkKXl+HKjT27QgKWIUrP+8IV3qjNzQ=
+	t=1764348869; cv=none; b=XeqEr2I/ko0vPPf0+e/93lwFJRfaMfseVeuzTILTekPd7XLyIG8F3OfF4wT7UJoDlEJtk/TODTEsaVsurBylOYpRJeWkfrEFmle7KtslZtOzUXZXOUt3WLOY24Ym/Lts6ZOHTK6nt8JKRqspenOTWeIVae1TF+XhqsvYd/ia2Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348861; c=relaxed/simple;
-	bh=Q9kayNqF9azFJ6cPzl47mPimmHyuw46QpsZzx41o/4c=;
+	s=arc-20240116; t=1764348869; c=relaxed/simple;
+	bh=4rptIOlGi0h4zEuajQu8vj281l1H86SBciGRt0NsDkg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TyK5O7RmTSfXILmWfeticmTBd79GOmv/X02lF4oTo6R/6j0tbgdUox6VdIyY82SepiQ0fHB1rb5FcSX8ESr8FAKxPf7o8j3ipwP8C2B3po6DtNxMueH1v+ECv20DIewus0k+77vmjmkKNP1VfNIajPN+nL0JDetcDqWk8wNyLaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZJRXdtVJ; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=u94cUyVAnWHkrALhmf8TskLDrVx7usSM6dX82FOrJ02i+lLUWzQar9uvMYyTZdP9EVWtJm74i6fk+8HD+hm88TrQgybwBq2rf6I9I0jy1rvbouw7uu+sEBFTBreuXZuXTX3TjeIAsFUVGCUoDnc9sjjB4hT8d2Aixi56y92MpLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IERrNhWu; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZJRXdtVJ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IERrNhWu"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 649E1C16A3C;
-	Fri, 28 Nov 2025 16:53:55 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id A62D61A1E09;
+	Fri, 28 Nov 2025 16:54:26 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4F4E160706;
-	Fri, 28 Nov 2025 16:54:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C8D2A10B02189;
-	Fri, 28 Nov 2025 17:54:08 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 797CF60706;
+	Fri, 28 Nov 2025 16:54:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EAFFA10B02187;
+	Fri, 28 Nov 2025 17:54:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764348856; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1764348864; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=5WAdl9mF/5vmOeq7HjMbS/w4YcaMEw0PcVLTVO9N8Bg=;
-	b=ZJRXdtVJ+OtHF5FjaXM78TLQNKNjEsmYao6LihS0FqfEsa3rxyeylnvgf0yQdP4kGfGRN+
-	dx+RmgVTwOX7KcHCMkjxLsSepp6Aws+MkEnhswjWuZ99+7PhAECdC3WGz0mkpKngocZRyC
-	fb1lxDLX4ahZyiXxMbPybSYnGIkSdSdyftsaRZvTfhBFpRB3ZSLCLbftxY5oiB0uRtva+h
-	91uqysczMslvOk4r69/DYMDImuw+z/yKbz3c/38+D0Uu5/U9tp3VxPUmqr44DwPgfzaWFM
-	a4pva8vH1LOSqyG03DDkRi3l0g7zSo4EdrmPcSVcCwQOeEoPrKiKafFuunB4oA==
+	bh=uiRJ+1p8B5XEFR9iZp0xUXFXjbFLGX+6dfxJeGBUSeo=;
+	b=IERrNhWuhgq1uF46t/1Qd3JXjqeSdk/orz93/tRY/D1yvNbsSIrzdsjf/Xa3cf5tTE56rW
+	+XEF2UzscWxCnCu3HwFkikibXQenxjZk9owNh21YQ4QxXQS6zPNeUMe6sgVd82AbMrJRWZ
+	5TROwuM4gMVLttTvmhIfBJdI2AM7Ggeo2rVCp7FQRKfOzKUq2VEv2Bic+j+dB1/07Hzzqs
+	8O/e1OBDpbbGxqfaf0qB/tj9Co0VtdEglXymHjaDLC2vUIi4tqzToVy0dWGChOCHJ+6FTC
+	g2BOsXuDbAOlzPIcpComG7aGIUKhdbrqkw8NecoG2bzFSWUuB6yleFjb4bDh2A==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 28 Nov 2025 17:50:27 +0100
-Subject: [PATCH v2 17/26] drm/meson: encoder_*: use
- devm_of_drm_get_bridge() to put the next bridge
+Date: Fri, 28 Nov 2025 17:50:28 +0100
+Subject: [PATCH v2 18/26] drm/bridge: sii902x: use devm_of_drm_get_bridge()
+ to put the next bridge
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-17-88f8a107eca2@bootlin.com>
+Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-18-88f8a107eca2@bootlin.com>
 References: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 In-Reply-To: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -95,50 +95,22 @@ reference on remove or on probe failure.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/meson/meson_encoder_cvbs.c | 2 +-
- drivers/gpu/drm/meson/meson_encoder_dsi.c  | 2 +-
- drivers/gpu/drm/meson/meson_encoder_hdmi.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/sii902x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_encoder_cvbs.c b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
-index dc374bfc5951..bf8588a5f6dd 100644
---- a/drivers/gpu/drm/meson/meson_encoder_cvbs.c
-+++ b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
-@@ -241,7 +241,7 @@ int meson_encoder_cvbs_probe(struct meson_drm *priv)
- 		return 0;
- 	}
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index d537b1d036fb..1bf58e9eb452 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -1208,7 +1208,7 @@ static int sii902x_probe(struct i2c_client *client)
+ 			return -ENODEV;
+ 		}
  
--	meson_encoder_cvbs->next_bridge = of_drm_find_bridge(remote);
-+	meson_encoder_cvbs->next_bridge = devm_of_drm_get_bridge(priv->dev, remote);
- 	of_node_put(remote);
- 	if (!meson_encoder_cvbs->next_bridge)
- 		return dev_err_probe(priv->dev, -EPROBE_DEFER,
-diff --git a/drivers/gpu/drm/meson/meson_encoder_dsi.c b/drivers/gpu/drm/meson/meson_encoder_dsi.c
-index 6c6624f9ba24..6304f51a7e7e 100644
---- a/drivers/gpu/drm/meson/meson_encoder_dsi.c
-+++ b/drivers/gpu/drm/meson/meson_encoder_dsi.c
-@@ -120,7 +120,7 @@ int meson_encoder_dsi_probe(struct meson_drm *priv)
- 		return 0;
- 	}
- 
--	meson_encoder_dsi->next_bridge = of_drm_find_bridge(remote);
-+	meson_encoder_dsi->next_bridge = devm_of_drm_get_bridge(priv->dev, remote);
- 	if (!meson_encoder_dsi->next_bridge)
- 		return dev_err_probe(priv->dev, -EPROBE_DEFER,
- 				     "Failed to find DSI transceiver bridge\n");
-diff --git a/drivers/gpu/drm/meson/meson_encoder_hdmi.c b/drivers/gpu/drm/meson/meson_encoder_hdmi.c
-index 8205ee56a691..e2a871347136 100644
---- a/drivers/gpu/drm/meson/meson_encoder_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_encoder_hdmi.c
-@@ -390,7 +390,7 @@ int meson_encoder_hdmi_probe(struct meson_drm *priv)
- 		return 0;
- 	}
- 
--	meson_encoder_hdmi->next_bridge = of_drm_find_bridge(remote);
-+	meson_encoder_hdmi->next_bridge = devm_of_drm_get_bridge(priv->dev, remote);
- 	if (!meson_encoder_hdmi->next_bridge) {
- 		ret = dev_err_probe(priv->dev, -EPROBE_DEFER,
- 				    "Failed to find HDMI transceiver bridge\n");
+-		sii902x->next_bridge = of_drm_find_bridge(remote);
++		sii902x->next_bridge = devm_of_drm_get_bridge(dev, remote);
+ 		of_node_put(remote);
+ 		if (!sii902x->next_bridge)
+ 			return dev_err_probe(dev, -EPROBE_DEFER,
 
 -- 
 2.51.1
