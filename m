@@ -1,41 +1,41 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1D52F9DB2;
-	Fri, 28 Nov 2025 16:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55C3330D3D
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2025 16:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348878; cv=none; b=tgcMHcZZPMMJOlvT2uI1KuNDjEYxef45f603ZYJ50UGQJK+05DLwCXyMBrOF2S5h4SVm6CJQksYszGRXfkGpiOSN2/mrXRSdeGQSqIqJ9jXXjVud9NH30XCnc/RNgp3T/ztmXM4vi2SUzRL/GPjFeplOWlZpbfnht1/Ev6C/c2A=
+	t=1764348888; cv=none; b=gj4Iu+bhLY5/KRZPwHshWfSvA0dw613wL7+cm8oXEVMmGEtWlP78XkK/W1BOhH2/4n2SItVqjKeQhl+g1k/pjZTGA2FKefO6dxexsVsAclftdqkLphojND27BoDjP5IqdWOaKeZGWcsE1i8FRzSrT0z1NSA0uK7E6U3nYuUAgOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348878; c=relaxed/simple;
-	bh=hFNvCaC8vJiESlD3aCrc1phGcApWrdr5KZclH7CUxIU=;
+	s=arc-20240116; t=1764348888; c=relaxed/simple;
+	bh=/hFeALh0BUnoQt0sjf0gpM6MLqoeQGrNOTTnWri9Jqo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jtlAq9cTaZoSAwSiHdJumxij0BsXKTwlElP74MESByBnupF0C7f4Lzo9yMdxgE+bcy4W6G0pu6I0qXAE9QNViN7O6OSNWMAgQb6rKy2YbO+VFJ6Zwa/Uglsb6bzLPd3MNFJpzSsIjlFTunuEQccenVfytu525bsvG9uhfjL9yBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=r7HJfM8K; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=qoXklYDO9bcakPINuJtLBw0IZM7/8mWMlFPdBm05+BBmG5ZAKyV5vJUvr2oLCGXWTnl08C4qecKQQRf7oTRbOz/VTb92AyHZ0L4g+OwYBLQdmQhRRPVCW6ltLcrlGUMQ7eYiyFuj5aTjppzQgq/IJNRSyQ6lUDFqNZ9pmyLgc6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Lct+BQgf; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="r7HJfM8K"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Lct+BQgf"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id B734BC16A3C;
-	Fri, 28 Nov 2025 16:54:12 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 434C21A1E09;
+	Fri, 28 Nov 2025 16:54:44 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A166D60706;
-	Fri, 28 Nov 2025 16:54:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3442010B02199;
-	Fri, 28 Nov 2025 17:54:25 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1521F60706;
+	Fri, 28 Nov 2025 16:54:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC02210B02187;
+	Fri, 28 Nov 2025 17:54:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764348872; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1764348882; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=T/ajfWLbtK8lrMpLCmkQue6UOEIx8pB0MdCSCd0DGYo=;
-	b=r7HJfM8KX64ewUw77qw735Vol+NTr0YHeIDQMwMKmf05JhCnGjVpyMRdeBCPksZuy8nSrD
-	duOnFekExGLVfJo35bTDCUoyh3jU23V7ah51NmPjtHF3jvgYYEkNjyP7KkCoNL2mL7t/7l
-	pUsWKHGkHYWyHTt1haZMC8b9TOMn2YndTbp9n1VfGygqvTMBupfv+zX9n/TZFd2nYvm66b
-	A9JoppIfGZqKasQfiuO+YTKBf8JbhrFGeZNT643XISEwKo7mqyzGpDVblidL/6seonbtGr
-	rAbGZFgnMGtcHaqe6mStNnWpyJ+moUQ1e8tGQE4bt+zuTQ8S27WKseWp+m7NtQ==
+	bh=AZ8m/oljMfzkBhnWN7LPrmnSLsM9M8AOim/5tjq0a3U=;
+	b=Lct+BQgflYZTNliJCBPFcBgPfdGOuEb/xH17LNr+ShkqSjEFB1Faf7yLZrl5Lwo8hCWbjy
+	BTGRo6AbG7hLBz1IIc5rn8O8l1Jt6Ft4WkYg5twfUerZjb8iOGQlV1ESll2CwrvudjOG6x
+	FORGcgdhLTAfAEVe3J5lLqZhvBs2cQYQbAz3X3ZLCP9A1alwi2hxQxEU9MsDpuPxQjCmJA
+	IlxTuVTVeVAbbsMisJOfrnp/V1eOBs+Fay1kwz3doyiN+QXYsuSoeHsU3ov1LbK+I9IU2W
+	16Tg7oV3exPmhUKVnCqkQ9BLIw4bmOOaqW3kOki893SXI1mNUZtG5atDmUZJ9w==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 28 Nov 2025 17:50:29 +0100
-Subject: [PATCH v2 19/26] drm/mediatek: use devm_of_drm_get_bridge() to put
+Date: Fri, 28 Nov 2025 17:50:30 +0100
+Subject: [PATCH v2 20/26] drm/kmb: dsi: use devm_of_drm_get_bridge() to put
  the next bridge
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-19-88f8a107eca2@bootlin.com>
+Message-Id: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-20-88f8a107eca2@bootlin.com>
 References: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 In-Reply-To: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -93,24 +93,29 @@ function and stores it until driver removal. of_drm_find_bridge() is
 deprecated. Move to devm_of_drm_get_bridge() which puts the bridge
 reference on remove or on probe failure.
 
+Note: this driver stores the bridge pointer in the adv_bridge global
+variable, which could hold a value from a previous probe. However the code
+flow always sets the adv_bridge value in the probe function before it is
+read, so the change is safe.
+
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c | 2 +-
+ drivers/gpu/drm/kmb/kmb_dsi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index b766dd5e6c8d..6246d356bc3b 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1405,7 +1405,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+diff --git a/drivers/gpu/drm/kmb/kmb_dsi.c b/drivers/gpu/drm/kmb/kmb_dsi.c
+index faf38ca9e44c..0a69e91aa136 100644
+--- a/drivers/gpu/drm/kmb/kmb_dsi.c
++++ b/drivers/gpu/drm/kmb/kmb_dsi.c
+@@ -251,7 +251,7 @@ int kmb_dsi_host_bridge_init(struct device *dev)
  		return -EINVAL;
- 
- 	if (!of_device_is_compatible(remote, "hdmi-connector")) {
--		hdmi->next_bridge = of_drm_find_bridge(remote);
-+		hdmi->next_bridge = devm_of_drm_get_bridge(dev, remote);
- 		if (!hdmi->next_bridge) {
- 			dev_err(dev, "Waiting for external bridge\n");
- 			of_node_put(remote);
+ 	}
+ 	/* Locate drm bridge from the hdmi encoder DT node */
+-	adv_bridge = of_drm_find_bridge(encoder_node);
++	adv_bridge = devm_of_drm_get_bridge(dev, encoder_node);
+ 	of_node_put(dsi_out);
+ 	of_node_put(encoder_node);
+ 	if (!adv_bridge) {
 
 -- 
 2.51.1
