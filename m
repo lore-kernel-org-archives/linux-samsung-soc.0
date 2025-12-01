@@ -1,145 +1,170 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A94303A3D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Dec 2025 09:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF6E2F1FCF;
+	Mon,  1 Dec 2025 11:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764582798; cv=none; b=UWFCW9y4FFe750mgcm6OWe+opL57IpliZBwDHzRZ69iIV1D6QAeB1LUWcsAwGYrJ/4CUcE2xIckcdWIWid6D49WTpD1xt7kf/2yBzlZQsheY/utUPn5nSI5hHT50Eor3hNWwAW7kJC3TKKiAAg/nesz07a8yvhbIeL8thrHDHCc=
+	t=1764589910; cv=none; b=bQYfXqjLv2TtCXxwEK3DwEr1Gw4DOA2jYNYiu8O0QubKDu/NnwU/lXQKVsuYvOExWemaaGjWzdfthZhX7vBDw/F4liOmOCn70lb+APnCGoAnFBtAM/rp5UmykLgl0iISx6QHqSk3El8a6GLyI55m2kwH2UiJ03S9T1AO2Y3qRSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764582798; c=relaxed/simple;
-	bh=9cRgAbYQXR7xy6nlmC3uUYHd3gxNIuhaH3YPvhwzjI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Gb9kuUheaDXda9mtcEYC9XvU2gcXP50oEf739CbgWIwlmAHTMJ+H8xTSg8SxTjRW1zK64GZnnaUuUOGn3TgreGSH6vXwMCe/7fDoeoBGvP7lmuTT0mAJ4O0/TuJrqqP/IXaGVPFaa3lYvS1U/N/khaVxOqKu0Nneul6m8gtG6+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Snc06rJS; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1764589910; c=relaxed/simple;
+	bh=3HC8X3QnxHsDdV1qdXMUkclAd82ZLov/gFh81kRCVuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOG5ICaCve+ve/ilTtJN69zLo2ABI/V1FI7lvHmQAWsVAGVYXPHZeiyg7XLNfk7eIR2komYNUsSqHFVJXG5FV3a5/4b5cSfIr+jQAGcdvcL6XXM1KrBV5pIIDYBOiY3gRmH0n2i+b5Lu7a75QBTVYCP4acNU70+9uaSIFQS3eUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxxVMSdR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Snc06rJS"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251201095314epoutp01e79e8e4829d8a92c0eeae91f29dfef8a~9DrPQzhrX1758217582epoutp01j
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Dec 2025 09:53:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251201095314epoutp01e79e8e4829d8a92c0eeae91f29dfef8a~9DrPQzhrX1758217582epoutp01j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1764582794;
-	bh=S3kURdZsSXe6pN91I7sgh33BC3O3x51+tQtkwxRDdIY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Snc06rJS+4VPNhZJHpEjq8+Sd7g38GyVq1x02r0f1gFjGQ7iDBnkTYobRFYPGd5Op
-	 wUxFOTX1DTWFw8HWnCSLvy2iCz4dKNTBwyvaRCSiDc/HwTiZV7AzKlmI+O7GLP38z9
-	 tN66daf4Nq8ZzyqJOEVJceI+CMviIyaTYtZYYVb0=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20251201095313epcas2p4cf56a03f07e4d606b4c50a923b0fc2e5~9DrOxJWg10546505465epcas2p4z;
-	Mon,  1 Dec 2025 09:53:13 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.38.209]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4dKfNT3Lntz2SSKb; Mon,  1 Dec
-	2025 09:53:13 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251201095312epcas2p4d5f93312996f492487f51eb3ba0e5873~9DrNu0QB60783507835epcas2p4I;
-	Mon,  1 Dec 2025 09:53:12 +0000 (GMT)
-Received: from [12.36.160.98] (unknown [12.36.160.98]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251201095312epsmtip2b42d4a7316a5583f10e05c912e0a63b4~9DrNm75Fc3074230742epsmtip2C;
-	Mon,  1 Dec 2025 09:53:12 +0000 (GMT)
-Message-ID: <c3cc4b6f-ac75-448e-9fdf-c3c45e2ceed7@samsung.com>
-Date: Mon, 1 Dec 2025 18:54:59 +0900
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxxVMSdR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1CFC4CEF1;
+	Mon,  1 Dec 2025 11:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764589910;
+	bh=3HC8X3QnxHsDdV1qdXMUkclAd82ZLov/gFh81kRCVuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cxxVMSdRYaTGz7G2omN0JBxOHZ3CcZ9mhrs//pSijQsiiPaJIso1SqReYJBs0jEpm
+	 XJpNxdIivIO2KdC2D7r944Fc7aTMl2XqBp4nhQ3ZBsgPyA0KYWJjibmcdLv8OKdcEm
+	 EQrebsr6Uo47RM4k86dE15Gq3XH1CmGgW5zI4ZcNpjr/Rog/9FMG9ASYnaVvIH92ky
+	 oF+GDmFTqYRQTkZQTbJj3jFrOef62kmz9pbOq2jRuImXtQOMJDm1oZXfHEwSHxDfzP
+	 1hw/WpaH1eAnFKF14GTxAfvCtBXjc4Hw+UQuIG7cisBjI536GiDTCgWbjCeS+FcA4J
+	 8+O4GNY101p6g==
+Date: Mon, 1 Dec 2025 17:21:33 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] PCI: dwc: Support ECAM mechanism by enabling iATU
+ 'CFG Shift Feature'
+Message-ID: <h7pgm3lqolm53sb4wrcpcurk4ghz4tulqnr7vgd7rzxy4hscue@jcn5tepevlwl>
+References: <20250909-controller-dwc-ecam-v9-0-7d5b651840dd@kernel.org>
+ <20250909-controller-dwc-ecam-v9-4-7d5b651840dd@kernel.org>
+ <alpine.DEB.2.21.2511280256260.36486@angie.orcam.me.uk>
+ <c7aea2b3-6984-40f5-8234-14d265dabefc@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511280755440.36486@angie.orcam.me.uk>
+ <cabf4c20-095b-4579-adc1-146a566b19b9@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511281714030.36486@angie.orcam.me.uk>
+ <a4c6d47f-28b5-40d3-bc82-10aeb14f8e78@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511290428340.36486@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 RESEND 2/3] thermal: exynos_tmu: Support new hardware
- and update TMU interface
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?B?7IaQ7Iug?=
-	<shin.son@samsung.com>, 'Bartlomiej Zolnierkiewicz' <bzolnier@gmail.com>,
-	'Krzysztof Kozlowski' <krzk@kernel.org>, "'Rafael J . Wysocki'"
-	<rafael@kernel.org>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Zhang
-	Rui' <rui.zhang@intel.com>, 'Lukasz Luba' <lukasz.luba@arm.com>, 'Rob
-	Herring' <robh@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>, 'Alim
-	Akhtar' <alim.akhtar@samsung.com>
-Cc: 'Henrik Grimler' <henrik@grimler.se>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Peter
-	Griffin' <peter.griffin@linaro.org>, =?UTF-8?Q?=27Andr=C3=A9_Draszik=27?=
-	<andre.draszik@linaro.org>, 'William McVicker' <willmcvicker@google.com>,
-	jyescas@google.com
-Content-Language: en-US
-From: Youngmin Nam <youngmin.nam@samsung.com>
-In-Reply-To: <401ed9b9-19a4-4a19-b397-0f353e9f0c97@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251201095312epcas2p4d5f93312996f492487f51eb3ba0e5873
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237
-References: <20251113064022.2701578-1-shin.son@samsung.com>
-	<CGME20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237@epcas2p1.samsung.com>
-	<20251113064022.2701578-3-shin.son@samsung.com>
-	<5a6a749b-b2b7-41bb-bcb4-a2342e7f4e98@linaro.org>
-	<015501dc5ea5$0c7dd460$25797d20$@samsung.com>
-	<401ed9b9-19a4-4a19-b397-0f353e9f0c97@linaro.org>
+In-Reply-To: <alpine.DEB.2.21.2511290428340.36486@angie.orcam.me.uk>
 
-On 11/26/25 18:21, Tudor Ambarus wrote:
-> Hi, Shin Son,
+On Sat, Nov 29, 2025 at 06:04:24AM +0000, Maciej W. Rozycki wrote:
+> On Sat, 29 Nov 2025, Krishna Chaitanya Chundru wrote:
 > 
-> On 11/26/25 9:19 AM, 손신 wrote:
->>> Looking at the exynosautov9 registers that you described and comparing
->>> them with
->>> gs101 I see just 2 differences:
->>> 1/ exnosautov2 has a TRIMINFO_CONFIG2 register, while gs101 doesn't 2/
->>> EXYNOSAUTOV920_PEND register fields differ from GS101
->> TRIMINFO_CONFIG2 doesn't exist on eav920 either; I simply misnamed it.
->> However, the PEND register indeed differs from GS101.
->>
->>> Given the similarities, and considering the EXYNOS9_ registers rename from:
->>> https://lore.kernel.org/linux-samsung-soc/20251117074140.4090939-5-
->>> youngmin.nam@samsung.com/
->>> would it make sense to use the SoC-era name instead of specific SoC, i.e.
->>> s/EXYNOSAUTOV920_/EXYNOS9_ and use the latter for both exynosautov9 and
->>> gs101?
->>>
->> First of all, as far as I know, EXYNOS9 is not the same as exynosautov9, and exynosautov920 also differs from exynosautov9.
+> > > > Hi Maciej, Can you try attached patch and let me know if that is helping
+> > > > you
+> > > > or not. - Krishna Chaitanya.
+> > >   No change, it's still broken, sorry.
+> > HI Maciej,
+> > For the previous patch can you apply this diff and share me dmesg o/p
 > 
-> See also see this patch, or maybe the entire patch set:
-> https://lore.kernel.org/linux-samsung-soc/20251117074140.4090939-2-youngmin.nam@samsung.com/
+>  Your patch came though garbled, likely due to:
 > 
-> It's not just autov9 and gs101 that have similar TMU registers (with the two
-> exceptions AFAICT), it's also exynos850 that seems identical with autov9.
+> Content-Type: text/plain; charset=UTF-8; format=flowed
 > 
-> All seem to be part of the same "Exynos9-era" SoCs. Let's think about how
-> gs101/exynos850 TMU addition will follow. Shall one use the EXYNOSAUTOV920
-> registers? That seems misleading. Shall one redefine the entire register set?
-> That won't fly because of the code duplication.
+> Please refer Documentation/process/email-clients.rst and reconfigure your 
+> e-mail client if possible.
 > 
-> Thus I propose to use the EXYNOS9 prefix for the register definitions, and if
-> there are SoCs with slight differences, that can be handled with compatible
-> match data and specific SoC definitions, but only where things differ.
+>  Regardless, I've fixed it up by hand and the only difference in the log, 
+> except for usual noise which I removed, is this:
 > 
->> So while sharing a common prefix is a good suggestion in general, I believe it's not appropriate here
->> Because the register definitions are not fully compatible across these SoCs. Using a common name array may introduce confusion later.
+> --- dmesg-bad.log	2025-11-28 03:47:29.582049781 +0100
+> +++ dmesg-debug.log	2025-11-29 05:41:23.384645926 +0100
+> @@ -164,6 +164,8 @@
+>  fu740-pcie e00000000.pcie: ECAM at [mem 0xdf0000000-0xdffffffff] for [bus 00-ff]
+>  fu740-pcie e00000000.pcie: Using 256 MSI vectors
+>  fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4096G
+> +fu740-pcie e00000000.pcie: Current iATU OB index 2
+> +fu740-pcie e00000000.pcie: Current iATU OB index 4
+>  fu740-pcie e00000000.pcie: cap_exp at 70
+>  fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
+>  fu740-pcie e00000000.pcie: changing speed back to original
 > 
-> Please reconsider this. Maybe Youngmin Nam or others can intervene.
+> I've attached a full copy of the debug log too.  I hope this helps you 
+> narrow the issue down or otherwise let me know what to try next.
 > 
-> Thanks!
-> ta
+>  NB I note that code you've been poking at only refers resources of the 
+> IORESOURCE_MEM type.  What about IORESOURCE_IO, which seems more relevant 
+> here?
 > 
-Hi Tudor,
+>  Also as a quick check I've now reconfigured the defxx driver for PCI port 
+> I/O (which is a one-liner; the mapping used to be selectable by hand, but 
+> distributions got it wrong for systems w/o PCI port I/O, so I switched the 
+> driver to an automatic choice a few years ago, but the logic remains):
+> 
+> # cat /proc/ioports
+> 00000000-0000ffff : pcie@e00000000
+>   00001000-00002fff : PCI Bus 0000:01
+>     00001000-00002fff : PCI Bus 0000:02
+>       00001000-00002fff : PCI Bus 0000:05
+>         00001000-00002fff : PCI Bus 0000:06
+>           00001000-00001fff : PCI Bus 0000:07
+>           00001000-00001007 : 0000:07:00.0
+>           00001000-00001002 : parport0
+>           00001003-00001007 : parport0
+>           00001008-0000100b : 0000:07:00.0
+>           00001008-0000100a : parport0
+>           00002000-00002fff : PCI Bus 0000:08
+>           00002000-00002fff : PCI Bus 0000:09
+>           00002000-000020ff : 0000:09:01.0
+>           00002100-0000217f : 0000:09:02.0
+>           00002100-0000217f : defxx
+> # 
+> 
+> and:
+> 
+> defxx 0000:09:02.0: assign IRQ: got 40
+> defxx: v1.12 2021/03/10  Lawrence V. Stefani and others
+> defxx 0000:09:02.0: enabling device (0000 -> 0003)
+> defxx 0000:09:02.0: enabling bus mastering
+> 0000:09:02.0: DEFPA at I/O addr = 0x2100, IRQ = 40, Hardware addr = 00-60-6d-xx-xx-xx
+> 0000:09:02.0: registered as fddi0
+> 
+> (as at commit 4660e50cf818) and likewise it has stopped working here from 
+> commit 0da48c5b2fa7 onwards:
+> 
+> defxx 0000:09:02.0: assign IRQ: got 40
+> defxx: v1.12 2021/03/10  Lawrence V. Stefani and others
+> defxx 0000:09:02.0: enabling device (0000 -> 0003)
+> defxx 0000:09:02.0: enabling bus mastering
+> 0000:09:02.0: Could not read adapter factory MAC address!
+> 
+> So it's definitely nothing specific to the parport driver, but rather a 
+> general issue with PCI/e port I/O not working anymore.  I do hope these 
+> observations will let you address the issue now.  You might be able to 
+> reproduce it with hardware you have available even.
+> 
 
-First, thank you for referencing my pinctrl patch and asking for my input.
-Yes. That's exactly my intent. Use the EXYNOS9 prefix to minimize fragmentation.
+Yes, looks like the I/O port access is not working with the CFG Shift feature.
+The spec says that both I/O and MEM TLPs should be handled by this feature, so
+we are currently unsure why MEM works, but not I/O.
 
-Even if some registers aren't fully compatible,
-I'd prefer to maximize the common EXYNOS9 definitions and handle SoC-specific differences via match data or small deltas,
-rather than introducing SoC-specific register names.
+The issue you reported with parport_pc driver is that the driver gets probed,
+but it fails to detect the parallel ports on the device. More precisely, it
+fails due to the parport_SPP_supported() check in drivers/parport/parport_pc.c.
+This function performs some read/write checks to make sure that the port exists,
+but most likely the read value doesn't match the written one. And since there is
+no log printed in this function, it just failed silently.
 
-Hi Shin Son,
-if possible, please consider this approach as well.
+We will check why I/O access fails with ECAM mode and revert back asap. Since
+the merge window is now open, it becomes difficult to revert the CFG shift
+feature cleanly. The timing of the report also made it difficult to fix the
+issue in v6.18. Hopefully, we can backport the fix once we identify the culprit.
 
-Thanks,
-Youngmin
+Sorry for the inconvenience!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
