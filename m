@@ -1,32 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6553C17;
-	Sun, 30 Nov 2025 19:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D927B78F4A
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Dec 2025 01:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764531276; cv=none; b=B0Y/DOcrAxFYGEqFjKXK4Oa307RRxyb80GUPM4rXrGlIj69jVUUzpii2GKzHYP8HhbsEh4loSln+jd/ViX1i6ZUCvGjr8+dur9DJyuC0V8XdvLVvKofXg3zdaHp9DDtqRKVPaq0V4B2zUqIxIGDBHWcu2Mdfb+ezvgjdVBg4K8g=
+	t=1764553135; cv=none; b=J98O0VhHY+Ld06PgMQAqQqWSQOxIxrDAbt8jy6uS6VQn8TrmAfhK92kH3WnAWpuxHQ7rv2p+13H3nZqpP6xbZ8xfr/1mqDwNjebkXykoWy0xAO/86ajDkOvZxTH3HpvVmo5rYgSrTYR5VKGkaAFPTtREbrtsUMn6PKrtd9vQRqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764531276; c=relaxed/simple;
-	bh=fDk5Jal1lnccSK3N9WMpugaH0WztpLXYnlHQgtFU4zA=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=aSB7bqqJuzVFKARoO8efFRjv0QpbPFFjHfxJNcPvCrw3IYrGsWSh8tFbpuURH/Bhevy8zX/d28re+Jo8x/2NddG/qAd/h4y86W5ZCWcY9s5ZUhzCMN2lII2sAmioV7GYmtNEO5JrGmNysG/VcCBxQK2a5Xq2uL9dhPuf+Y2wG+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hW8SipWA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764553135; c=relaxed/simple;
+	bh=EsphNECWH6FlY+/fe8I5Dr8EOrnC9119goArJKPN7Mg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Yfi8pYzh9/mAQZfB/RfDAbTnQKLJk6jROvbSDmAccNzeXqeN9bz0ENGXUO2inH8Ag0lo/righhLWok4V8we61oDdFs6GlnqpqF9/MPn2pMyKO/PaqbhGUrQUrGJU14kfSHRcMPDxNw1nYOofExJWU0yWubXn/UI/HI0h/0NSlUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CPZfh8Ix; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hW8SipWA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B7EC4CEF8;
-	Sun, 30 Nov 2025 19:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764531276;
-	bh=fDk5Jal1lnccSK3N9WMpugaH0WztpLXYnlHQgtFU4zA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=hW8SipWAFM+89QshRWlSDcseWRuvJj+jQZUbCa2B18aMOhrANvfUOVuLIpF/EFj0r
-	 O4IiNK3mEMvA2d96o51OZMKjcJuM7VNhjDdarUmiBzCaL7dUF00/eDTzBhAciTy3SF
-	 HSlc32F59LlvSxNfTdJHZIVv9i6hKv4jHmx13TH8Xz5DHAatiQoqebZ2GJId17yVCW
-	 LuUhfthJfOxTSVvT0phgm9L8iWO4IWgLIxdewQwf+l/Ycrk+lB7xfWvhfidGtY5KB3
-	 wX3gn2+p9nZzJuwP7yzpmiMnHfX5DvK9/hc9RkGGfDG5t5+q7y1CfG6mA4oY8i3wdM
-	 y/mOQoMtaC8xA==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CPZfh8Ix"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251201013844epoutp01fd75494ddac2c103e91bdfbb700c0a91~887fKIJMZ0785507855epoutp01U
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Dec 2025 01:38:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251201013844epoutp01fd75494ddac2c103e91bdfbb700c0a91~887fKIJMZ0785507855epoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764553124;
+	bh=EsphNECWH6FlY+/fe8I5Dr8EOrnC9119goArJKPN7Mg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=CPZfh8IxcqENs97fdEl013f3S5nszJhFabG63EbOh6ZrvHK4Nb+Evqh4rY+ZmpQuc
+	 QWuEZWCdQl4tF3huMtqgMCPqxAomKYgrvDKBpodQ6OJoCNcWhgbP8J+xGRYo96Hqk9
+	 wTgHf/Yx7/0t+DmBjpuaVbAKdm/lKYN8hPH6gD/k=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251201013843epcas2p2944a9c960745b2537458a3359803b97a~887ee830e2497924979epcas2p2p;
+	Mon,  1 Dec 2025 01:38:43 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.38.206]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4dKRPv3wjpz6B9m7; Mon,  1 Dec
+	2025 01:38:43 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20251201013842epcas2p358dd69f1ccf89e6641f18de7aa36c405~887dgwr212919429194epcas2p3d;
+	Mon,  1 Dec 2025 01:38:42 +0000 (GMT)
+Received: from KORCO115296 (unknown [12.80.207.128]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251201013842epsmtip156a337ee8ce3fd5c1b4ac983debd2da6~887dYx5zk1615416154epsmtip1i;
+	Mon,  1 Dec 2025 01:38:42 +0000 (GMT)
+From: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>
+To: "'Tudor Ambarus'" <tudor.ambarus@linaro.org>, "'Bartlomiej
+ Zolnierkiewicz'" <bzolnier@gmail.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Rafael J . Wysocki'" <rafael@kernel.org>, "'Daniel
+ Lezcano'" <daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>,
+	"'Lukasz Luba'" <lukasz.luba@arm.com>, "'Rob	Herring'" <robh@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>, "'Alim	Akhtar'"
+	<alim.akhtar@samsung.com>, <youngmin.nam@samsung.com>
+Cc: "'Henrik Grimler'" <henrik@grimler.se>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	"'Peter	Griffin'" <peter.griffin@linaro.org>,
+	=?UTF-8?Q?'Andr=C3=A9_Draszik'?= <andre.draszik@linaro.org>, "'William
+ McVicker'" <willmcvicker@google.com>, <jyescas@google.com>,
+	<shin.son@samsung.com>
+In-Reply-To: <1704827d-f273-4360-bcd5-c18818a85034@linaro.org>
+Subject: RE: [PATCH v7 RESEND 2/3] thermal: exynos_tmu: Support new hardware
+ and update TMU interface
+Date: Mon, 1 Dec 2025 10:38:35 +0900
+Message-ID: <01da01dc6263$39efe660$adcfb320$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -34,42 +69,65 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251124-exynos-clkout-fix-ubsan-bounds-error-v1-1-224a5282514b@kernel.org>
-References: <20251124-exynos-clkout-fix-ubsan-bounds-error-v1-1-224a5282514b@kernel.org>
-Subject: Re: [PATCH] clk: samsung: exynos-clkout: Assign .num before accessing .hws
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Salvatore Bonaccorso <carnil@debian.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, stable@vger.kernel.org, Jochen Sprickerhof <jochen@sprickerhof.de>, Nathan Chancellor <nathan@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Gustavo A. R. Silva <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Nathan Chancellor <nathan@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Sun, 30 Nov 2025 11:34:33 -0800
-Message-ID: <176453127378.11952.4906451561257794028@lazor>
-User-Agent: alot/0.11
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: ko
+Thread-Index: AQJR08pAfg/+KuTfxFjIW+Bmb4uKqAKoesbtAuyt0KICEvKvogHXMeJ7AVgXt0UBNbSBZgGsluTSs7NOStA=
+X-CMS-MailID: 20251201013842epcas2p358dd69f1ccf89e6641f18de7aa36c405
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237
+References: <20251113064022.2701578-1-shin.son@samsung.com>
+	<CGME20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237@epcas2p1.samsung.com>
+	<20251113064022.2701578-3-shin.son@samsung.com>
+	<5a6a749b-b2b7-41bb-bcb4-a2342e7f4e98@linaro.org>
+	<015501dc5ea5$0c7dd460$25797d20$@samsung.com>
+	<401ed9b9-19a4-4a19-b397-0f353e9f0c97@linaro.org>
+	<019301dc5f4a$e9aadd60$bd009820$@samsung.com>
+	<1704827d-f273-4360-bcd5-c18818a85034@linaro.org>
 
-Quoting Nathan Chancellor (2025-11-24 11:11:06)
-> Commit f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with
-> __counted_by") annotated the hws member of 'struct clk_hw_onecell_data'
-> with __counted_by, which informs the bounds sanitizer (UBSAN_BOUNDS)
-> about the number of elements in .hws[], so that it can warn when .hws[]
-> is accessed out of bounds. As noted in that change, the __counted_by
-> member must be initialized with the number of elements before the first
-> array access happens, otherwise there will be a warning from each access
-> prior to the initialization because the number of elements is zero. This
-> occurs in exynos_clkout_probe() due to .num being assigned after .hws[]
-> has been accessed:
->=20
->   UBSAN: array-index-out-of-bounds in drivers/clk/samsung/clk-exynos-clko=
-ut.c:178:18
->   index 0 is out of range for type 'clk_hw *[*]'
->=20
-> Move the .num initialization to before the first access of .hws[],
-> clearing up the warning.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __cou=
-nted_by")
-> Reported-by: Jochen Sprickerhof <jochen@sprickerhof.de>
-> Closes: https://lore.kernel.org/aSIYDN5eyKFKoXKL@eldamar.lan/
-> Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
+Hello, Tudor Ambarus.
 
-Applied to clk-next
+> > Yes, Do you have any plans to upstream the GS101 TMU code? From what I
+> > understand,
+>=20
+> Yes, I'm currently working on upstreaming the GS101 TMU code. My plan is
+> to do the acpm tmu helpers and then integrate the gs101 TMU support with
+> what will be the new exynos TMU driver.
+
+Ok, Understood.
+
+
+> > Autov9 and exynos850 are unlikely to be upstreamed in their current for=
+m.
+>=20
+> From what I understand from your email exchanges with Daniel, you're goin=
+g
+> to propose a new driver. Is my understanding correct? Do you have a
+> timeline for it?
+> I'll then follow with the gs101 support.
+
+We don't have a timeline yet. Separating the driver was not our initial pla=
+n,
+So this work will likely be postponed to next year. When we resume it, I wi=
+ll CC you.
+
+
+> exynos850 has the same reg layout as eav920 and gs101 too. If Exynos9-era
+> is a common terminology used inside Samsung then we should be good to go
+> with
+> Exynos9 prefix I think. Especially since we have a predecessor, the
+> renaming tried in pinctrl. But if you're not sure about it, use just
+> EXYNOS_ then.
+>=20
+> Cheers,
+> ta
+
+Got it. Thank you for your clarification.
+
+Best regards,
+Shin
+
