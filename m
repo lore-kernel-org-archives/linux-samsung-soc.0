@@ -1,335 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F345C36D507;
-	Mon,  1 Dec 2025 16:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B361F95C
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Dec 2025 00:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764607918; cv=none; b=qqk14XpjLfcKlHRI1fBC4U7hZmErs0Polrh06caAYp38fpT6gl1Cgr/Iyjltpcgpv2RNzAif2nNdLVqET6MueQYNusSq/FfwUwbXwwH0/Woo2r4N260LuFrK0ZksTJtC8Ibo72LmRJbZ+vvIeumYhvFljel/XZsMp7rASEYyBgU=
+	t=1764635499; cv=none; b=QqF0CvzBoN7gXHEbDiBmtQCD1O6GMKftrz+i6nyj0jcRrBpbUqgwUf0mAtZgwdC67S/DEJGPlaH1Wyf8pNeEnhjYv2i02zLOywwO5LTpZ3ZnYrsajII6BKfshE/bw0yoNMGAHAtQBlgqJdMMk89MeFlqQlazPDpfyO5e9cpYdNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764607918; c=relaxed/simple;
-	bh=++Pjz2EWGu+Di5eo/zjDna0mHdfDsBWr6pvA6L4UET0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGMkpVRkyunP8C6lCB04EyxTV9NjztnVjheZCGUaQiDEaHhI9YBG5m2nB3/anhu9STjx0bD2brKDlssy+Iu9u2MuYImWVy/KCPCF17EXlSsbznQX5RjYKJXOroUOKkYsuf5KtbOJC9sP9hkOZTU+X6IU8xKUOqPka5tja6qF6mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZd9JKHd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764635499; c=relaxed/simple;
+	bh=6nQ7CHXUD5DNsZgGpGIHq00pzr32pifTx9D3xVMpP6U=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=UeREQFp/XUNOVgb0o9lISYnyCNUlKF6i64YMgy8JeIDht2k8fpz9OcqzeMuwmtmgoqyr2gUdeMIXY3/XtV+eTyE7T2cTLQd2/VmUfmj457RZs6WQ0+8oHvEjhgnj0VXOdRcyUukUz6+Eye1CUv9qGoq7izrPDAB7Gug4roN3Z40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BB5s1QU/; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZd9JKHd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14EE0C4CEF1;
-	Mon,  1 Dec 2025 16:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764607917;
-	bh=++Pjz2EWGu+Di5eo/zjDna0mHdfDsBWr6pvA6L4UET0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QZd9JKHdL2MMfPYJAs+GzDwf6s8hAGngHPTWngKTVs/z7HbMFK1M4Ll7tbgyXFMlo
-	 P1arM0NWcAdfGZUuEHCcB8AnsHP/1FhNK5tIoN+6BIzkRbJLsg1A1XhuWljEty1ZN6
-	 HF2SI/6Ct4mn56Qng0LY5SKyVqRLniNb1gIsbn6mwDUVid6AaLKuzmgqZCcKDz6lt+
-	 FswBf7hfcsAfvjtK49vpR85jEeEEtdAoRCyLYHHGPCu5WdRNJkQZUHrxe1lKGByybL
-	 TZqORCuiTWIan8wW0fcnnsNlDEMPqMgyD6GZ21r3D+oQ8q0fCXCTqkkEJAO2CcE9Cv
-	 MPMOsWmPH8FWg==
-Date: Mon, 1 Dec 2025 17:51:54 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Alexey Brodkin <abrodkin@synopsys.com>, Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Adrien Grassein <adrien.grassein@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
-	Edmund Dea <edmund.j.dea@intel.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
-Message-ID: <20251201-thick-jasmine-oarfish-1eceb0@houat>
-References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
- <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com>
- <hs44z4b2dgisemuewgtvl4epjcqqilg6cy36po25pubaog4hmq@33qgl4o3hwoa>
- <DEH2CVQV21Z2.25PJBAQAKFJSG@bootlin.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BB5s1QU/"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251202003134epoutp014ac73c56e7e5a959fedd94be52cde35f~9PqIZfe_52556325563epoutp01p
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Dec 2025 00:31:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251202003134epoutp014ac73c56e7e5a959fedd94be52cde35f~9PqIZfe_52556325563epoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764635494;
+	bh=KFnBHkWxVElb54NLeG+ptXXjdRVbe7DkPWr+FQzj0HE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=BB5s1QU/Mxe3333UqcFs6G9d8kKQbbmdva/4o5lXVXTQQbAPFLN37Esn/nVIyesu5
+	 InLb7g3yzNqNZT8+Ekqpulsq1rVrSYbb2JSVqv+7maKONZcrqPJsPFA2Ez9D7328Qi
+	 BGrqPgQhqodQ9TW8sTCz/f6/SEOBiIN4bUHeplKw=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251202003134epcas2p1fa31937e020b763ba81d61dca9442d0c~9PqHxqywI1926719267epcas2p1d;
+	Tue,  2 Dec 2025 00:31:34 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.38.209]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4dL1sx6Xd0z6B9m6; Tue,  2 Dec
+	2025 00:31:33 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20251202003133epcas2p47e7fc8d62bf92c698df9c996d6b3d3d7~9PqG1MUaC0426004260epcas2p47;
+	Tue,  2 Dec 2025 00:31:33 +0000 (GMT)
+Received: from KORCO115296 (unknown [12.80.207.128]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251202003133epsmtip2e09f100cb125186b33f363fb7f9d62c5~9PqGregYo0713407134epsmtip2q;
+	Tue,  2 Dec 2025 00:31:33 +0000 (GMT)
+From: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>
+To: "'Youngmin Nam'" <youngmin.nam@samsung.com>, "'Tudor Ambarus'"
+	<tudor.ambarus@linaro.org>, "'Bartlomiej Zolnierkiewicz'"
+	<bzolnier@gmail.com>, "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Rafael J
+ . Wysocki'" <rafael@kernel.org>, "'Daniel Lezcano'"
+	<daniel.lezcano@linaro.org>, "'Zhang	Rui'" <rui.zhang@intel.com>, "'Lukasz
+ Luba'" <lukasz.luba@arm.com>, "'Rob	Herring'" <robh@kernel.org>, "'Conor
+ Dooley'" <conor+dt@kernel.org>, "'Alim	Akhtar'" <alim.akhtar@samsung.com>
+Cc: "'Henrik Grimler'" <henrik@grimler.se>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	"'Peter	Griffin'" <peter.griffin@linaro.org>,
+	=?UTF-8?Q?'Andr=C3=A9_Draszik'?= <andre.draszik@linaro.org>, "'William
+ McVicker'" <willmcvicker@google.com>, <jyescas@google.com>,
+	<shin.son@samsung.com>
+In-Reply-To: <c3cc4b6f-ac75-448e-9fdf-c3c45e2ceed7@samsung.com>
+Subject: RE: [PATCH v7 RESEND 2/3] thermal: exynos_tmu: Support new hardware
+ and update TMU interface
+Date: Tue, 2 Dec 2025 09:31:29 +0900
+Message-ID: <022e01dc6323$028136a0$0783a3e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="vysorlzfm2p6uhgc"
-Content-Disposition: inline
-In-Reply-To: <DEH2CVQV21Z2.25PJBAQAKFJSG@bootlin.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: ko
+Thread-Index: AQJR08pAfg/+KuTfxFjIW+Bmb4uKqAKoesbtAuyt0KICEvKvogHXMeJ7AVgXt0UB8c+VXLO8VEzQ
+X-CMS-MailID: 20251202003133epcas2p47e7fc8d62bf92c698df9c996d6b3d3d7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237
+References: <20251113064022.2701578-1-shin.son@samsung.com>
+	<CGME20251113064044epcas2p1b87addb21473eca7cc52052e4e2e9237@epcas2p1.samsung.com>
+	<20251113064022.2701578-3-shin.son@samsung.com>
+	<5a6a749b-b2b7-41bb-bcb4-a2342e7f4e98@linaro.org>
+	<015501dc5ea5$0c7dd460$25797d20$@samsung.com>
+	<401ed9b9-19a4-4a19-b397-0f353e9f0c97@linaro.org>
+	<c3cc4b6f-ac75-448e-9fdf-c3c45e2ceed7@samsung.com>
+
+Hello, Youngmin Nam.
+
+> Hi Shin Son,
+> if possible, please consider this approach as well.
+> 
+> Thanks,
+> Youngmin
 
 
---vysorlzfm2p6uhgc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
-MIME-Version: 1.0
+Ok, Understood. When I resume this task, I'll CC you.
+Thank you for your opinion.
 
-On Mon, Nov 24, 2025 at 05:25:39PM +0100, Luca Ceresoli wrote:
-> Hi Maxime,
->=20
-> On Mon Nov 24, 2025 at 11:39 AM CET, Maxime Ripard wrote:
-> > On Wed, Nov 19, 2025 at 02:05:37PM +0100, Luca Ceresoli wrote:
-> >> Several drivers (about 20) follow the same pattern:
-> >>
-> >>  1. get a pointer to a bridge (typically the next bridge in the chain)=
- by
-> >>     calling of_drm_find_bridge()
-> >>  2. store the returned pointer in the private driver data, keep it unt=
-il
-> >>     driver .remove
-> >>  3. dereference the pointer at attach time and possibly at other times
-> >>
-> >> of_drm_find_bridge() is now deprecated because it does not increment t=
-he
-> >> refcount and should be replaced with drm_of_find_bridge() +
-> >> drm_bridge_put().
-> >>
-> >> However some of those drivers have a complex code flow and adding a
-> >> drm_bridge_put() call in all the appropriate locations is error-prone,
-> >> leads to ugly and more complex code, and can lead to errors over time =
-with
-> >> code flow changes.
-> >>
-> >> To handle all those drivers in a straightforward way, add a devm varia=
-nt of
-> >> drm_of_find_bridge() that adds a devm action to invoke drm_bridge_put()
-> >> when the said driver is removed. This allows all those drivers to put =
-the
-> >> reference automatically and safely with a one line change:
-> >>
-> >>   - priv->next_bridge =3D of_drm_find_bridge(remote_np);
-> >>   + priv->next_bridge =3D devm_drm_of_find_bridge(dev, remote_np);
-> >>
-> >> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> >>
-> >> ---
-> >>  drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
-> >>  include/drm/drm_bridge.h     |  5 +++++
-> >>  2 files changed, 35 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge=
-=2Ec
-> >> index 09ad825f9cb8..c7baafbe5695 100644
-> >> --- a/drivers/gpu/drm/drm_bridge.c
-> >> +++ b/drivers/gpu/drm/drm_bridge.c
-> >> @@ -1446,6 +1446,36 @@ struct drm_bridge *drm_of_find_bridge(struct de=
-vice_node *np)
-> >>  }
-> >>  EXPORT_SYMBOL(drm_of_find_bridge);
-> >>
-> >> +/**
-> >> + * devm_drm_of_find_bridge - find the bridge corresponding to the dev=
-ice
-> >> + *			     node in the global bridge list and add a devm
-> >> + *			     action to put it
-> >> + *
-> >> + * @dev: device requesting the bridge
-> >> + * @np: device node
-> >> + *
-> >> + * On success the returned bridge refcount is incremented, and a devm
-> >> + * action is added to call drm_bridge_put() when @dev is removed. So =
-the
-> >> + * caller does not have to put the returned bridge explicitly.
-> >> + *
-> >> + * RETURNS:
-> >> + * drm_bridge control struct on success, NULL on failure
-> >> + */
-> >> +struct drm_bridge *devm_drm_of_find_bridge(struct device *dev, struct=
- device_node *np)
-> >> +{
-> >> +	struct drm_bridge *bridge =3D drm_of_find_bridge(np);
-> >> +
-> >> +	if (bridge) {
-> >> +		int err =3D devm_add_action_or_reset(dev, drm_bridge_put_void, brid=
-ge);
-> >> +
-> >> +		if (err)
-> >> +			return ERR_PTR(err);
-> >> +	}
-> >> +
-> >> +	return bridge;
-> >> +}
-> >> +EXPORT_SYMBOL(devm_drm_of_find_bridge);
-> >
-> > That's inherently unsafe though, because even if the bridge is removed
-> > other parts of DRM might still have a reference to it and could call
-> > into it.
-> >
-> > We'd then have dropped our reference to the next bridge, which could
-> > have been freed, and it's a use-after-free.
->=20
-> I think you refer to this scenario:
->=20
->   1. pipeline: encoder --> bridge A --> bridge B --> bridge C
->   2. encoder takes a reference to bridge B
->      using devm_drm_of_find_bridge() or other means
->   3. bridge B takes a next_bridge reference to bridge C
->      using devm_drm_of_find_bridge()
->   4. encoder calls (bridge B)->foo(), which in turns references
->      next_bridge, e.g.:
->=20
->        b_foo() {
->            bar(b->next_bridge);
->        }
->=20
-> If bridges B and C are removed, bridge C can be freed but B is still
-> allocated because the encoder holds a ref. So when step 4 happens, 'b->c'
-> would be a use-after-free (or NULL deref if b.remove cleared it, which is
-> just as bad).
+Best regards,
+Shin Son
 
-Yep.
-
-> If I got you correctly, then I'm a bit surprised by your comment. This
-> series is part of the first chapter of the hotplug work, which does not a=
-im
-> at fixing everything but rather at fixing one part: handle dynamic
-> _allocation_ lifetime of drm_bridges by adding a refcount and
-> drm_bridge_get/put().
->=20
-> Chapter 2 of the work is adding drm_bridge_enter/exit/unplug() [1] and
-> other changes in order to avoid code of drivers of removed bridges to
-> access fields they shouldn't. So the above example at point 4 would becom=
-e:
->=20
->        b_foo() {
->            if (!drm_bridge_enter())
->                return;
->            bar(b->c);
->            drm_bridge_exit();
->        }
->=20
-> And that avoids 'b->c' after bridge B is removed.
->=20
-> Does that answer your remark?
-
-Not really. I wasn't really questionning your current focus, or the way
-you laid out the current agenda or whatever.
-
-What I am questionning though is whether or not we want to introduce
-something we will have to untangle soon, and even more so when we're not
-mentioning it anywhere.
-
-> > It's more complicated than it sounds, because we only have access to the
-> > drm_device when the bridge is attached, so later than probe.
-> >
-> > I wonder if we shouldn't tie the lifetime of that reference to the
-> > lifetime of the bridge itself, and we would give up the next_bridge
-> > reference only when we're destroyed ourselves.
->=20
-> I'm afraid I'm not following you, sorry. Do you refer to the time between
-> the bridge removal (driver .remove) and the last bridge put (when
-> deallocation happens)?
->=20
-> In that time frame the struct drm_bridge is still allocated along with any
-> next_bridge pointer it may contain, but the following bridge could have
-> been deallocated.
->=20
-> What do you mean by "give up the next_bridge"?
-
-What I was trying to say was that if we want to fix the problem you
-illustrated about, we need to give up the reference at __drm_bridge_free
-time. So each bridge having a reference to a bridge would need to do so
-in its destroy hook.
-
-Since it's quite a common pattern, it would make sense to add a
-next_bridge field to drm_bridge itself, so the core can do it
-automatically in __drm_bridge_free if that pointer is !NULL.
-
-But...
-
-> > Storing a list of all the references we need to drop is going to be
-> > intrusive though, so maybe the easiest way to do it would be to create a
-> > next_bridge field in drm_bridge, and only drop the reference stored
-> > there?
-> >
-> > And possibly tie the whole thing together using a helper?
-> >
-> > Anyway, I'm not sure it should be a prerequisite to this series. I we do
-> > want to go the devm_drm_of_find_bridge route however, we should at least
-> > document that it's unsafe, and add a TODO entry to clean up the mess
-> > later on.
-
-=2E.. I *really* don't consider it something you need to work on right now.
-
-> Do you mean the drm variant is unsafe while the original
-> (drm_of_find_bridge() in this series, might be renamed) is not? I
-> don't see how that can happen. If the driver for bridge B were to use
-> drm_of_find_bridge(), that driver would be responsible to
-> drm_bridge_put(b->next_bridge) in its .remove() function or earlier.
-> So the next_bridge pointing to bridge C would equally become subject
-> to use-after-free.
-
-No, I was saying that both are equally unsafe. But we're adding a new,
-broken, helper, and we don't mention anywhere that it is. So what I was
-saying is mostly do we really want to introduce some more broken code
-when we know it is. And if we do, we should be really clear about it.
-
-> devm does not make it worse, on the opposite it postpones the
-> drm_bridge_put(next_bridge) as late as possible: just after
-> b.remove().
-
-Which doesn't really change anything, does it? I'd expect the window
-between the remove and final drm_bridge_put to be much wider than the
-execution time of remove itself.
-
-> One final, high-level thought about the various 'next_bridge' pointers th=
-at
-> many bridge drivers have. Most of them do:
->=20
->  0. have a 'struct drm_bridge next_bridge *' in their private struct
->  1. take the next_bridge reference during probe or another startup phase
->  2. store it in their private driver struct
->  3. use it to call drm_bridge_attach
->  4. (pending) put the reference to it in their .remove or earlier
->=20
-> I'm wondering whether we could let the DRM bridge core do it all, by
-> removing items 0, 1, 2 and 4, and change 3 as:
->=20
-> -     drm_bridge_attach(encoder, me->next_bridge, &me->bridge, flags);
-> +  drm_of_bridge_attach(encoder, &me->bridge, dev->of_node, 1, -1, flags);
->=20
-> where dev->of_node and the following integers are the same flags passed to
-> devm_drm_of_get_bridge() and the like, i.e. the endpoint info needed to
-> walk the DT graph and reach the next bridge.
->=20
-> This would allow the core to take care of all locking and lifetime of the
-> next bridge, and most (all?) bridges would never access any pointers to t=
-he
-> next bridge. The idea is to let the core do the right thing in a single
-> place instead of trying to make all drivers do the right thing (and
-> touching dozen files when needing to touch the logic).
->=20
-> That is more a long-term ideal than something I'd do right now, but having
-> opinions would be very interesting.
-
-That was pretty much my point, yeah.
-
-Maxime
-
---vysorlzfm2p6uhgc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaS3HqgAKCRAnX84Zoj2+
-dtkvAX4rXtiifHgBMiNuTE+oq5YRpJHiwuAryr1vVp5dRFs89l7GaqjGKfUTsivq
-vi/sGEYBgJqDs2PwFTGrO+7VA0R8yw/cmqsfGVuImcSZfLiyy6oWHU4ftq7JQjBk
-x6/eNlgihA==
-=gjHT
------END PGP SIGNATURE-----
-
---vysorlzfm2p6uhgc--
