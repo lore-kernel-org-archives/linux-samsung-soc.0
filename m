@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5966821770B;
-	Tue,  2 Dec 2025 09:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E337E30F818;
+	Tue,  2 Dec 2025 09:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764668000; cv=none; b=SupQnXw4g8St+ZOMHZBTYb6cVyMXI9iia60M+0tzXc27ep3Xyj7uS8G/TuPsijyJi4UFByHDEwMXRClzQt/okV1rZpVnTJTF+TNu9H/Ww3Hc/MLaTMMO7N7Y2wNWttZBrnE1iLMLmF+cLc3wcEW/f+de1VFV4ZF0GKY9tVterew=
+	t=1764668565; cv=none; b=sBLhUPYZQFtrnH5sBcNWA7Q5O+0vTWXynVQ4VaIrwsgvWvttbcfpJv/Ef4hI2MAz6LpvtdZ9bRvO2yF1Rcc5oczsoPbd8PMEodFkgHMUpoEVYRhlVMf3RSNK3zl7PFMWeVa3fGby9GPltIWq3K6CUFT473QuxlLdJUlGYwi1PBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764668000; c=relaxed/simple;
-	bh=dXfXeRsOG1QiTIFUVAKiTF7MiYxReRFI6R5EL1w+Ewg=;
+	s=arc-20240116; t=1764668565; c=relaxed/simple;
+	bh=0vFwPwr69dUxB+23zt64JFqnHSS+DXXyYRo5msdrQgs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fmZvFt4Qjy+riKFESjD6DdymuFObbkqBIWMy9z/xUNYTILcf3CGsoliOPX1MYfqnjhZPY8HtAjvvjFLLA9Oq7DIS3u6V22u8LxzmAifjkWyx1JDsXtHF0fLgpeZGJij1yMV5LaA5RfqPCX4iGHfBPWqY1sLBT52y+JDiMhILLK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMQQL9xZ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=fLM2ZjoZ9NDTaOGLkSiEgPjO2Kf5UQXhVmHaDGYzFvas7G4xCCTFb08xEvHDQbVMC4nXmShP+fJIK0u4W9GrZLgPeRjvXgFiUe0NZFIhJIPp0OjEjpxF+tkvWosw1zOBEQDd51D9mpLp7BTc2inR2xCQ7kgmRA4NXYl0ZhMlHN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwp4JlLM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMQQL9xZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4E7C4CEF1;
-	Tue,  2 Dec 2025 09:33:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwp4JlLM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B31C4CEF1;
+	Tue,  2 Dec 2025 09:42:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764668000;
-	bh=dXfXeRsOG1QiTIFUVAKiTF7MiYxReRFI6R5EL1w+Ewg=;
+	s=k20201202; t=1764668564;
+	bh=0vFwPwr69dUxB+23zt64JFqnHSS+DXXyYRo5msdrQgs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HMQQL9xZNndEwCpW4y87WifwHAuErY3n4QQ419K057sf/inoQxhLE3AssmG9PMDcJ
-	 oSeB+ARU95wHO5Hsqutkc6gdriVYD3jGYSbrqUHZtKDTpIKFwrGNMSrhF2Oc8ZH6ET
-	 4D75qxMDY0Mk2FbnkwF8Sf1aA4l0nSoHrC/0L88zxx4T1cPFfeIrNe8wGOXOefhXui
-	 WKPETgHHc0aTqrSfteLjeyXXqOVQAQxufD7DGzQjIzOHry/OWIqzMTAvsZbzExCIVH
-	 ByZsGzwEZ48X0TXDVIVxL3rdh+MLfuNw4XYXMO7s6iu4UVo3oMfKgDGyrzB0vPwNjL
-	 VLv8e/vhCqBuw==
-Message-ID: <0039d36f-dfca-44e7-9898-11f9e3eb9b9d@kernel.org>
-Date: Tue, 2 Dec 2025 10:33:14 +0100
+	b=mwp4JlLMt6908s+AwuLH5sT3eeeu1kUsiDY2VppF9E39AKhrdGlVYNT6OpCgTTvnp
+	 0C7lXHnFoW6M9dwa620esR8oWLKfhfn1bWeN9aptq4Cg26JDxEW1F0xE/57hNqY1dc
+	 IRinLqE6nTFeAocBmTZBB8MNM7O1RFxmcChHqwUWBRM49UMj9cl2LSjntb3yUj4sUX
+	 gp9700panjvIva1xnSgeBScnMWnTxffdTkxGfPyUqeQrhAViyN5XOt89YcsOxfI72S
+	 PkAdoTUHY0pRH1UiYE7poiDTVPhEX1WbXtm0XyGjoshi5WCvkMij2uiokVBHo64638
+	 zwU6pBJ0weIww==
+Message-ID: <00d75fd3-a796-402a-a1a3-2172862fcf91@kernel.org>
+Date: Tue, 2 Dec 2025 10:42:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -36,8 +36,8 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v8 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Roy Luo <royluo@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Roy Luo <royluo@google.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Peter Griffin
  <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
@@ -53,6 +53,7 @@ References: <20251122-controller-v8-0-e7562e0df658@google.com>
  <20251122-controller-v8-2-e7562e0df658@google.com>
  <2025112226-heave-refrain-53e6@gregkh>
  <CA+zupgwzQ5r=-_L79D74=9VRqRO94N0yTApHChM+Nu0cn1ss3w@mail.gmail.com>
+ <2025120209-unstylish-john-2a6c@gregkh>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,107 +99,91 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CA+zupgwzQ5r=-_L79D74=9VRqRO94N0yTApHChM+Nu0cn1ss3w@mail.gmail.com>
+In-Reply-To: <2025120209-unstylish-john-2a6c@gregkh>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 02/12/2025 10:01, Roy Luo wrote:
-> On Sat, Nov 22, 2025 at 8:59 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> On Sat, Nov 22, 2025 at 09:32:06AM +0000, Roy Luo wrote:
->>> Add support for the DWC3 USB controller found on Google Tensor G5
->>> (codename: laguna). The controller features dual-role functionality
->>> and hibernation.
+On 02/12/2025 10:27, Greg Kroah-Hartman wrote:
+>>>         depends on (OF && COMMON_CLK && RESET_CONTROLLER) || COMPILE_TEST
 >>>
->>> The primary focus is implementing hibernation support in host mode,
->>> enabling the controller to enter a low-power state (D3). This is
->>> particularly relevant during system power state transition and
->>> runtime power management for power efficiency.
->>> Highlights:
->>> - Align suspend callback with dwc3_suspend_common() for deciding
->>>   between a full teardown and hibernation in host mode.
->>> - Integration with `psw` (power switchable) and `top` power domains,
->>>   managing their states and device links to support hibernation.
->>> - A notifier callback dwc3_google_usb_psw_pd_notifier() for
->>>   `psw` power domain events to manage controller state
->>>   transitions to/from D3.
->>> - Coordination of the `non_sticky` reset during power state
->>>   transitions, asserting it on D3 entry and deasserting on D0 entry
->>>   in hibernation scenario.
->>> - Handling of high-speed and super-speed PME interrupts
->>>   that are generated by remote wakeup during hibernation.
+>>> I shouldn't have to enable those options to just get a build test here,
+>>> the apis should be properly stubbed out if those options are not
+>>> enabled, right?
 >>>
->>> Co-developed-by: Joy Chakraborty <joychakr@google.com>
->>> Signed-off-by: Joy Chakraborty <joychakr@google.com>
->>> Co-developed-by: Naveen Kumar <mnkumar@google.com>
->>> Signed-off-by: Naveen Kumar <mnkumar@google.com>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  drivers/usb/dwc3/Kconfig       |  13 +
->>>  drivers/usb/dwc3/Makefile      |   1 +
->>>  drivers/usb/dwc3/dwc3-google.c | 628 +++++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 642 insertions(+)
+>>> thanks,
 >>>
->>> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
->>> index 4925d15084f816d3ff92059b476ebcc799b56b51..f58c70dabf108878cbefe0abea88572d9ae81e26 100644
->>> --- a/drivers/usb/dwc3/Kconfig
->>> +++ b/drivers/usb/dwc3/Kconfig
->>> @@ -200,4 +200,17 @@ config USB_DWC3_GENERIC_PLAT
->>>         the dwc3 child node in the device tree.
->>>         Say 'Y' or 'M' here if your platform integrates DWC3 in a similar way.
->>>
->>> +config USB_DWC3_GOOGLE
->>> +     tristate "Google Platform"
->>> +     depends on COMPILE_TEST
->>> +     depends on OF && COMMON_CLK && RESET_CONTROLLER
+>>> greg k-h
 >>
->> Shouldn't this be:
->>         depends on (OF && COMMON_CLK && RESET_CONTROLLER) || COMPILE_TEST
+>> Hi Greg,
 >>
->> I shouldn't have to enable those options to just get a build test here,
->> the apis should be properly stubbed out if those options are not
->> enabled, right?
+>> I agree with your interpretation of COMPILE_TEST but it doesn't
+>> seem to align with upstream convention. I found the following pattern
+>> in several device driver Kconfig files (including but not limited to usb,
+>> pinctrl and phy).
 >>
->> thanks,
+>>     depends on COMPILE_TEST || ARCH_XXX
+>>     depends on CONFIG_A && CONFIG_B...
 >>
->> greg k-h
+>> For this patch, the APIs exposed by OF, COMMON_CLK
+>> and RESET_CONTROLLER are properly stubbed out so
+>> I'm all good to go with your suggestion, but I'd like to make
+>> sure this approach is conventional.
 > 
-> Hi Greg,
+> Whatever works for building properly, as-is, what you have in this patch
+> didn't work for my systems at all.
 > 
-> I agree with your interpretation of COMPILE_TEST but it doesn't
-> seem to align with upstream convention. I found the following pattern
-
-The problem is not in Greg's solution but your code:
-	depends on COMPILE_TEST
-
-which makes absolutely no sense because it means this cannot be used
-anywhere (in reasonable terms).
-
-
-> in several device driver Kconfig files (including but not limited to usb,
-> pinctrl and phy).
+>> I plan to add ARCH_GOOGLE as a dependency in the next
+>> version per [1], so the "depends on" would probably look like
+>> the following per your suggestion:
 > 
->     depends on COMPILE_TEST || ARCH_XXX
->     depends on CONFIG_A && CONFIG_B...
+> But "Google" is not an arch :(
 > 
-> For this patch, the APIs exposed by OF, COMMON_CLK
-> and RESET_CONTROLLER are properly stubbed out so
-> I'm all good to go with your suggestion, but I'd like to make
-> sure this approach is conventional.
-> 
-> I plan to add ARCH_GOOGLE as a dependency in the next
-> version per [1], so the "depends on" would probably look like
-> the following per your suggestion:
-> 
->     depends on (OF && COMMON_CLK && RESET_CONTROLLER && ARCH_GOOGLE)
-> || COMPILE_TEST
-> 
+> And really, the whole "only have a sub-arch symbol" is something that
+> personally, I think is totally wrong and prevents kernel images from
+> being built for more than one "arch".  As an example, the Android GKI
 
+Probably you think ARCH_FOO as arch/FOO/ directory, but this is not the
+case. ARCH_FOO in this context is SoC platform, so e.g.
+arch/arm64/boot/dts/FOO/.
 
-No, instead depends ARCH_foo || COMPILE_TEST
+All of ARCH_FOO build into one image and that's recommended way to limit
+unnecessary drivers.
 
-and drop all other dependencies. You don't need them.
+It's just confusing naming for whatever reason.
+
+> kernel has to support more than one of these, so what does putting this
+> behind a symbol that no one will actually use mean anything?  Android
+> will never be only building a ARCH_GOOGLE kernel.
+
+But distros will be, people will be. OK, maybe not for ARCH_GOOGLE, but
+ARCH_QCOM we do for Qualcomm-based laptops and embedded folks even more.
+
+We had this talk in the past. The point is that these drivers here are
+unusable outside of that hardware platform, so only when you choose
+hardware platform (ARCH_EXYNOS, ARCH_GOOGLE, ARCH_QCOM) you will be able
+to choose these drivers.
+
+You can also look at ARCH_FOO a bit orthogonal to actual kernel
+architecture, because ARCH_EXYNOS is for both arm (arm32) and arm64. The
+drivers should be available for all Exynos-platforms, regardless whether
+this is arm32 or arm64.
+
+> 
+>>     depends on (OF && COMMON_CLK && RESET_CONTROLLER && ARCH_GOOGLE)
+>> || COMPILE_TEST
+>>
+>> Please let me know your thoughts.
+>> [1] https://lore.kernel.org/linux-phy/1a53d473-fc13-4ac5-ba52-4701d95e3073@kernel.org/
+> 
+> Again, I hate the ARCH_ stuff, but Krzysztof does seem to like it for
+> some reason, so I'll defer to others here.  But note, as someone who
+> helps maintain a "generic" ARM64 kernel, these ARCH_* usages for
+> different platforms do nothing at all to help anyone out.
+
+True and that's not their goal. The truly generic kernels, like you
+mentioned or arch/arm64/configs/defconfig, build everything for arm64.
+The entire point is to limit this for actual users wanting much smaller
+kernels and distros, which do not need these on for example RISC-V.
 
 
 Best regards,
