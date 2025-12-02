@@ -1,190 +1,331 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E337E30F818;
-	Tue,  2 Dec 2025 09:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082A2296BA5;
+	Tue,  2 Dec 2025 11:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764668565; cv=none; b=sBLhUPYZQFtrnH5sBcNWA7Q5O+0vTWXynVQ4VaIrwsgvWvttbcfpJv/Ef4hI2MAz6LpvtdZ9bRvO2yF1Rcc5oczsoPbd8PMEodFkgHMUpoEVYRhlVMf3RSNK3zl7PFMWeVa3fGby9GPltIWq3K6CUFT473QuxlLdJUlGYwi1PBQ=
+	t=1764675886; cv=none; b=ia26F42vqfSPv7VO5CF011+ORZNUAWYd79vv2guH33zBFhLC0ybD/CMOSz4r+KxCW+aiPGFFICIQ+T/KPhID9y7CH29vlfodX0YZBhsWiZ13MgRmcJM4/g0o7S2gHL5Rn151aNPDBjt/w6jHxAeUcngkYpo43Fho2LqSEFj6RPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764668565; c=relaxed/simple;
-	bh=0vFwPwr69dUxB+23zt64JFqnHSS+DXXyYRo5msdrQgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fLM2ZjoZ9NDTaOGLkSiEgPjO2Kf5UQXhVmHaDGYzFvas7G4xCCTFb08xEvHDQbVMC4nXmShP+fJIK0u4W9GrZLgPeRjvXgFiUe0NZFIhJIPp0OjEjpxF+tkvWosw1zOBEQDd51D9mpLp7BTc2inR2xCQ7kgmRA4NXYl0ZhMlHN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwp4JlLM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764675886; c=relaxed/simple;
+	bh=A2OtBjHKMPsv5ieu0X0QAARKlZkIcWNozF8zp2T2n7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQ0QxSkuzTe8JlZBZvDKBJwVllHLmrlB9MgY64k6jRfi1EY48VHKkeEF9ks8K54iKWykUfj2UnVm9ZpknkeZl3ZgW2GZNKP33VElCjIE71He6K0MxEddRAxxQJAvB/s+anR7qd1G+RyQaFGFyOJTu7H/s4myxLH3bQF3jcHsjME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWPsL1ju; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwp4JlLM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B31C4CEF1;
-	Tue,  2 Dec 2025 09:42:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWPsL1ju"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E566C4CEF1;
+	Tue,  2 Dec 2025 11:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764668564;
-	bh=0vFwPwr69dUxB+23zt64JFqnHSS+DXXyYRo5msdrQgs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mwp4JlLMt6908s+AwuLH5sT3eeeu1kUsiDY2VppF9E39AKhrdGlVYNT6OpCgTTvnp
-	 0C7lXHnFoW6M9dwa620esR8oWLKfhfn1bWeN9aptq4Cg26JDxEW1F0xE/57hNqY1dc
-	 IRinLqE6nTFeAocBmTZBB8MNM7O1RFxmcChHqwUWBRM49UMj9cl2LSjntb3yUj4sUX
-	 gp9700panjvIva1xnSgeBScnMWnTxffdTkxGfPyUqeQrhAViyN5XOt89YcsOxfI72S
-	 PkAdoTUHY0pRH1UiYE7poiDTVPhEX1WbXtm0XyGjoshi5WCvkMij2uiokVBHo64638
-	 zwU6pBJ0weIww==
-Message-ID: <00d75fd3-a796-402a-a1a3-2172862fcf91@kernel.org>
-Date: Tue, 2 Dec 2025 10:42:38 +0100
+	s=k20201202; t=1764675885;
+	bh=A2OtBjHKMPsv5ieu0X0QAARKlZkIcWNozF8zp2T2n7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XWPsL1juzkH3Cy///Ny5yKw9iel0mf0OoPe7j9SDtdwUYKGAqWZTLKIL+6DIganYy
+	 rboC8MZXuN2GKqELrn9+ubeSNSZF+aXY7SUfNuPAf5CEwj3tkMAWQuRBTcRcKemsiN
+	 hEhqNdJUuKmqq+gDN8y5XNBvvS24gCT8JszlIjNz6SW+y+KfaA9wjJMdMHg7Gbe4J4
+	 MjNKDTsgoSV2ZMxRO3y06JdAi4gaM4+HxFKFIY2MuXHdThj5i0eG1jY7DvYmn4G7qG
+	 WHN8Diy6D5uTFusOcg8mDMs7MQUnvqge8y3jk2zGUghVC5HWetCsknCUxEkG2ekQsg
+	 ZWv9UFaYK5Dew==
+Date: Tue, 2 Dec 2025 17:14:31 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] PCI: dwc: Support ECAM mechanism by enabling iATU
+ 'CFG Shift Feature'
+Message-ID: <ps5jjiqv5mw2g3exzvfcfsa4bcda7hois2h6riarwb2d2son4u@2onu4bibw2hb>
+References: <alpine.DEB.2.21.2511280256260.36486@angie.orcam.me.uk>
+ <c7aea2b3-6984-40f5-8234-14d265dabefc@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511280755440.36486@angie.orcam.me.uk>
+ <cabf4c20-095b-4579-adc1-146a566b19b9@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511281714030.36486@angie.orcam.me.uk>
+ <a4c6d47f-28b5-40d3-bc82-10aeb14f8e78@oss.qualcomm.com>
+ <alpine.DEB.2.21.2511290428340.36486@angie.orcam.me.uk>
+ <h7pgm3lqolm53sb4wrcpcurk4ghz4tulqnr7vgd7rzxy4hscue@jcn5tepevlwl>
+ <syg7vpbt3w53s24hgl7b6w64odmif5bq557lwlvzlbvgkukwcn@66jtzzc3vtiu>
+ <alpine.DEB.2.21.2512011617250.49654@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Roy Luo <royluo@google.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Doug Anderson <dianders@google.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>
-References: <20251122-controller-v8-0-e7562e0df658@google.com>
- <20251122-controller-v8-2-e7562e0df658@google.com>
- <2025112226-heave-refrain-53e6@gregkh>
- <CA+zupgwzQ5r=-_L79D74=9VRqRO94N0yTApHChM+Nu0cn1ss3w@mail.gmail.com>
- <2025120209-unstylish-john-2a6c@gregkh>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <2025120209-unstylish-john-2a6c@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="3my6bnxaowecwlhh"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.2512011617250.49654@angie.orcam.me.uk>
 
-On 02/12/2025 10:27, Greg Kroah-Hartman wrote:
->>>         depends on (OF && COMMON_CLK && RESET_CONTROLLER) || COMPILE_TEST
->>>
->>> I shouldn't have to enable those options to just get a build test here,
->>> the apis should be properly stubbed out if those options are not
->>> enabled, right?
->>>
->>> thanks,
->>>
->>> greg k-h
->>
->> Hi Greg,
->>
->> I agree with your interpretation of COMPILE_TEST but it doesn't
->> seem to align with upstream convention. I found the following pattern
->> in several device driver Kconfig files (including but not limited to usb,
->> pinctrl and phy).
->>
->>     depends on COMPILE_TEST || ARCH_XXX
->>     depends on CONFIG_A && CONFIG_B...
->>
->> For this patch, the APIs exposed by OF, COMMON_CLK
->> and RESET_CONTROLLER are properly stubbed out so
->> I'm all good to go with your suggestion, but I'd like to make
->> sure this approach is conventional.
+
+--3my6bnxaowecwlhh
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+On Mon, Dec 01, 2025 at 04:42:42PM +0000, Maciej W. Rozycki wrote:
+> On Mon, 1 Dec 2025, Manivannan Sadhasivam wrote:
 > 
-> Whatever works for building properly, as-is, what you have in this patch
-> didn't work for my systems at all.
+> > > > So it's definitely nothing specific to the parport driver, but rather a 
+> > > > general issue with PCI/e port I/O not working anymore.  I do hope these 
+> > > > observations will let you address the issue now.  You might be able to 
+> > > > reproduce it with hardware you have available even.
+> > > > 
+> > > 
+> > > Yes, looks like the I/O port access is not working with the CFG Shift feature.
+> > > The spec says that both I/O and MEM TLPs should be handled by this feature, so
+> > > we are currently unsure why MEM works, but not I/O.
 > 
->> I plan to add ARCH_GOOGLE as a dependency in the next
->> version per [1], so the "depends on" would probably look like
->> the following per your suggestion:
+>  As I say, last time I checked (for another reason) documentation was not 
+> available to the general public, so I can't help with that.
 > 
-> But "Google" is not an arch :(
+
+Sure. I know that the DWC documentation is well secured behind firewalls. So not
+asking for help here.
+
+> > > The issue you reported with parport_pc driver is that the driver gets probed,
+> > > but it fails to detect the parallel ports on the device. More precisely, it
+> > > fails due to the parport_SPP_supported() check in drivers/parport/parport_pc.c.
+> > > This function performs some read/write checks to make sure that the port exists,
+> > > but most likely the read value doesn't match the written one. And since there is
+> > > no log printed in this function, it just failed silently.
 > 
-> And really, the whole "only have a sub-arch symbol" is something that
-> personally, I think is totally wrong and prevents kernel images from
-> being built for more than one "arch".  As an example, the Android GKI
-
-Probably you think ARCH_FOO as arch/FOO/ directory, but this is not the
-case. ARCH_FOO in this context is SoC platform, so e.g.
-arch/arm64/boot/dts/FOO/.
-
-All of ARCH_FOO build into one image and that's recommended way to limit
-unnecessary drivers.
-
-It's just confusing naming for whatever reason.
-
-> kernel has to support more than one of these, so what does putting this
-> behind a symbol that no one will actually use mean anything?  Android
-> will never be only building a ARCH_GOOGLE kernel.
-
-But distros will be, people will be. OK, maybe not for ARCH_GOOGLE, but
-ARCH_QCOM we do for Qualcomm-based laptops and embedded folks even more.
-
-We had this talk in the past. The point is that these drivers here are
-unusable outside of that hardware platform, so only when you choose
-hardware platform (ARCH_EXYNOS, ARCH_GOOGLE, ARCH_QCOM) you will be able
-to choose these drivers.
-
-You can also look at ARCH_FOO a bit orthogonal to actual kernel
-architecture, because ARCH_EXYNOS is for both arm (arm32) and arm64. The
-drivers should be available for all Exynos-platforms, regardless whether
-this is arm32 or arm64.
-
+>  Whatever the exact transaction conditions are port I/O TLPs seem not to 
+> make it through to the requested target device anymore.
 > 
->>     depends on (OF && COMMON_CLK && RESET_CONTROLLER && ARCH_GOOGLE)
->> || COMPILE_TEST
->>
->> Please let me know your thoughts.
->> [1] https://lore.kernel.org/linux-phy/1a53d473-fc13-4ac5-ba52-4701d95e3073@kernel.org/
+>  FWIW the defxx driver issues a command to the device's command register 
+> and wants to see a successful completion status in the status register 
+> before retrieving the MAC address via the data register.  So it's not a 
+> simple case of poking at a register and reading it back, but the end 
+> result is the same: the device cannot be talked to.
 > 
-> Again, I hate the ARCH_ stuff, but Krzysztof does seem to like it for
-> some reason, so I'll defer to others here.  But note, as someone who
-> helps maintain a "generic" ARM64 kernel, these ARCH_* usages for
-> different platforms do nothing at all to help anyone out.
+> > > We will check why I/O access fails with ECAM mode and revert back asap. Since
+> > > the merge window is now open, it becomes difficult to revert the CFG shift
+> > > feature cleanly. The timing of the report also made it difficult to fix the
+> > > issue in v6.18. Hopefully, we can backport the fix once we identify the culprit.
+> 
+>  No worries, I've been around for long enough (short of 30 years) to know 
+> the process.
+> 
+>  FWIW the original change would've best been reverted for 6.18 as a fatal 
+> regression, however port I/O is uncommon enough nowadays we can defer any 
+> final decision to 6.19 I suppose.  I'm glad I've tripped over this in the 
+> first place as I'm not eager to upgrade all my lab devices all the time, 
+> and it was owing to another issue only that I chose this moment to move 
+> forward, not so long after the original commit.
+> 
+> > Can you try the attached patch? It is a reworked version of Krishna's patch. I
+> > just moved things around to check potential override issue.
+> 
+>  No change in behaviour, sorry.  I suppose it's this range of host address 
+> decoding:
+> 
+> fu740-pcie e00000000.pcie:       IO 0x0060080000..0x006008ffff -> 0x0060080000
+> 
+> aka:
+> 
+> pci_bus 0000:00: root bus resource [io  0x0000-0xffff] (bus address [0x60080000-0x6008ffff])
+> 
+> that you're after.  Are you sure your code discovers it correctly?  As I 
+> say I can only see IORESOURCE_MEM references and no IORESOURCE_IO ones as 
+> would be appropriate for the root bus resource quoted.
+> 
 
-True and that's not their goal. The truly generic kernels, like you
-mentioned or arch/arm64/configs/defconfig, build everything for arm64.
-The entire point is to limit this for actual users wanting much smaller
-kernels and distros, which do not need these on for example RISC-V.
+The I/O resource is discovered by the driver correctly as seen from the logs:
+
+pci_bus 0000:00: root bus resource [io  0x0000-0xffff] (bus address [0x60080000-0x6008ffff])
+pci_bus 0000:00: root bus resource [mem 0x60090000-0x7fffffff]
+pci_bus 0000:00: root bus resource [mem 0x2000000000-0x3fffffffff pref]
+
+But we believe that the iATU is not programmed for the I/O port, resulting in
+the I/O access not going out to the device.
+
+Krishna found an issue in the previous patch that got shared. So I've attached a
+new one. Could you please try and let us know? If it didn't help, please share
+the dmesg log that will have some more info.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
+
+--3my6bnxaowecwlhh
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-PCI-qcom-Enable-iATU-mapping-for-memory-IO-regions.patch"
+
+From 5acab1289f8fd20ecead7c517e7e282584946ff0 Mon Sep 17 00:00:00 2001
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Date: Fri, 28 Nov 2025 16:44:17 +0530
+Subject: [PATCH] PCI: qcom: Enable iATU mapping for memory & IO regions
+
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+---
+ .../pci/controller/dwc/pcie-designware-host.c | 42 ++++++++++++-------
+ drivers/pci/controller/dwc/pcie-designware.c  |  3 ++
+ drivers/pci/controller/dwc/pcie-designware.h  |  2 +-
+ 3 files changed, 31 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index e92513c5bda5..d977bb92cf3b 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -36,6 +36,7 @@ static struct pci_ops dw_child_pcie_ops;
+ 
+ #define IS_256MB_ALIGNED(x) IS_ALIGNED(x, SZ_256M)
+ 
++static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp);
+ static const struct msi_parent_ops dw_pcie_msi_parent_ops = {
+ 	.required_flags		= DW_PCIE_MSI_FLAGS_REQUIRED,
+ 	.supported_flags	= DW_PCIE_MSI_FLAGS_SUPPORTED,
+@@ -433,7 +434,7 @@ static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
+ 	 * Immediate bus under Root Bus, needs type 0 iATU configuration and
+ 	 * remaining buses need type 1 iATU configuration.
+ 	 */
+-	atu.index = 0;
++	atu.index = pp->ob_atu_index;
+ 	atu.type = PCIE_ATU_TYPE_CFG0;
+ 	atu.parent_bus_addr = pp->cfg0_base + SZ_1M;
+ 	/* 1MiB is to cover 1 (bus) * 32 (devices) * 8 (functions) */
+@@ -448,14 +449,20 @@ static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
+ 	if (bus_range_max < 2)
+ 		return 0;
+ 
++	pp->ob_atu_index++;
++
+ 	/* Configure remaining buses in type 1 iATU configuration */
+-	atu.index = 1;
++	atu.index = pp->ob_atu_index;
+ 	atu.type = PCIE_ATU_TYPE_CFG1;
+ 	atu.parent_bus_addr = pp->cfg0_base + SZ_2M;
+ 	atu.size = (SZ_1M * bus_range_max) - SZ_2M;
+ 	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
+ 
+-	return dw_pcie_prog_outbound_atu(pci, &atu);
++	ret = dw_pcie_prog_outbound_atu(pci, &atu);
++	if (!ret)
++		pp->ob_atu_index++;
++
++	return ret;
+ }
+ 
+ static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *res)
+@@ -630,14 +637,6 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+ 	if (ret)
+ 		goto err_free_msi;
+ 
+-	if (pp->ecam_enabled) {
+-		ret = dw_pcie_config_ecam_iatu(pp);
+-		if (ret) {
+-			dev_err(dev, "Failed to configure iATU in ECAM mode\n");
+-			goto err_free_msi;
+-		}
+-	}
+-
+ 	/*
+ 	 * Allocate the resource for MSG TLP before programming the iATU
+ 	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
+@@ -919,6 +918,8 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+ 		}
+ 	}
+ 
++	dev_info(pci->dev, "%s: %d MEM index: %d", __func__, __LINE__, i);
++
+ 	if (pp->io_size) {
+ 		if (pci->num_ob_windows > ++i) {
+ 			atu.index = i;
+@@ -936,13 +937,16 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+ 		} else {
+ 			pp->cfg0_io_shared = true;
+ 		}
++
++		dev_info(pci->dev, "%s: %d I/O index: %d", __func__, __LINE__, i);
+ 	}
+ 
+ 	if (pci->num_ob_windows <= i)
+ 		dev_warn(pci->dev, "Ranges exceed outbound iATU size (%d)\n",
+ 			 pci->num_ob_windows);
+ 
+-	pp->msg_atu_index = i;
++	pp->ob_atu_index = ++i;
++	dev_info(pci->dev, "%s: %d Final index: %d", __func__, __LINE__, i);
+ 
+ 	i = 0;
+ 	resource_list_for_each_entry(entry, &pp->bridge->dma_ranges) {
+@@ -1086,12 +1090,20 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+ 	 * the platform uses its own address translation component rather than
+ 	 * ATU, so we should not program the ATU here.
+ 	 */
+-	if (pp->bridge->child_ops == &dw_child_pcie_ops) {
++	if (pp->bridge->child_ops == &dw_child_pcie_ops || pp->ecam_enabled) {
+ 		ret = dw_pcie_iatu_setup(pp);
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
++	if (pp->ecam_enabled) {
++		ret = dw_pcie_config_ecam_iatu(pp);
++		if (ret) {
++			dev_err(pci->dev, "Failed to configure iATU in ECAM mode\n");
++			return ret;
++		}
++	}
++
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
+ 
+ 	/* Program correct class for RC */
+@@ -1113,7 +1125,7 @@ static int dw_pcie_pme_turn_off(struct dw_pcie *pci)
+ 	void __iomem *mem;
+ 	int ret;
+ 
+-	if (pci->num_ob_windows <= pci->pp.msg_atu_index)
++	if (pci->num_ob_windows <= pci->pp.ob_atu_index)
+ 		return -ENOSPC;
+ 
+ 	if (!pci->pp.msg_res)
+@@ -1123,7 +1135,7 @@ static int dw_pcie_pme_turn_off(struct dw_pcie *pci)
+ 	atu.routing = PCIE_MSG_TYPE_R_BC;
+ 	atu.type = PCIE_ATU_TYPE_MSG;
+ 	atu.size = resource_size(pci->pp.msg_res);
+-	atu.index = pci->pp.msg_atu_index;
++	atu.index = pci->pp.ob_atu_index;
+ 
+ 	atu.parent_bus_addr = pci->pp.msg_res->start - pci->parent_bus_offset;
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index c644216995f6..d27b469b417b 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -478,6 +478,9 @@ int dw_pcie_prog_outbound_atu(struct dw_pcie *pci,
+ 
+ 	limit_addr = parent_bus_addr + atu->size - 1;
+ 
++	if (atu->index > pci->num_ob_windows)
++		return -ENOSPC;
++
+ 	if ((limit_addr & ~pci->region_limit) != (parent_bus_addr & ~pci->region_limit) ||
+ 	    !IS_ALIGNED(parent_bus_addr, pci->region_align) ||
+ 	    !IS_ALIGNED(atu->pci_addr, pci->region_align) || !atu->size) {
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index e995f692a1ec..69d0bd8b3c57 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -423,8 +423,8 @@ struct dw_pcie_rp {
+ 	struct pci_host_bridge  *bridge;
+ 	raw_spinlock_t		lock;
+ 	DECLARE_BITMAP(msi_irq_in_use, MAX_MSI_IRQS);
++	int			ob_atu_index;
+ 	bool			use_atu_msg;
+-	int			msg_atu_index;
+ 	struct resource		*msg_res;
+ 	bool			use_linkup_irq;
+ 	struct pci_eq_presets	presets;
+-- 
+2.48.1
 
 
-Best regards,
-Krzysztof
+--3my6bnxaowecwlhh--
