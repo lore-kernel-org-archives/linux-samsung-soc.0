@@ -1,60 +1,59 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD4E22A7E9
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Dec 2025 08:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D866530748C
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Dec 2025 09:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764664540; cv=none; b=KxqzuzrFvpzhhHnmnraz+qZe1HkPQqIvUyzSUewUUqypF5ZjWryK6gKgNQ+aGf5YuVQZupJqM5fpKIghAUIkO8EiYUYBCKki1Rs5mn0aHVUW16hbW47hjOOxFBNiTEl44gvG6ZCK4gDt1+DKKjAauQoCX/AhCq8TuvMB8ABO3FI=
+	t=1764666122; cv=none; b=LdpD1ggpNg5eN67C8cTEYeOhDhJ4sigM3IdGjiULmed53OXmFXqEHdcgC95Oj6ZVuDRTWZ0+vDNm7Vs2oPKDpwoMzA5NyHuhXS6NKkUhp+Lz5EBNwHPobEgRuUCRdkd7auND5Nc7IAWusX361B8BX2fyob8oIbVdBaVxq6DJpsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764664540; c=relaxed/simple;
-	bh=4vaQ9WNJT1i5QQHGxZbypcSK2+H2d1p6oOPk1sZfpiY=;
+	s=arc-20240116; t=1764666122; c=relaxed/simple;
+	bh=i1w1KgmggzJXL98eGvitaCcA9E6kmwV4ViMaGE9iZ0E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E4+YvOaVY49Yk0vSpWM/lfNLX/nQZH8CgnCcn28+L4l41rTcrYCcYP6f7yEO9dwpzPlS7huZPtDI6PTg/GQqNt7AucByVvg7UGArp+yr7ZJHiFLWSSY0xH7LVUBVm616OexLGBizj8pXSr0mKg3UJW1eestzKWGVnvDd3/iQU4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V4q6+Zvz; arc=none smtp.client-ip=209.85.215.175
+	 To:Cc:Content-Type; b=hcvXxNpOuQwbZqEImbPGATg8iM0hOF7TGm4IG3NGeVxv/A91C8bdcd5rIUMCiQEWSMxDbIBQTjTkL8HQVQUTQR5NPfIxVxOWyhrIcu8cBOWKAqQ7E8VapnxvlZ6oh8pkquLQzO3ExAvPif0bueNqCw4GTRtxFalMLKQLqShb98E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qh4/SewR; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V4q6+Zvz"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-bc4b952cc9dso4759267a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Dec 2025 00:35:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qh4/SewR"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297dd95ffe4so45826875ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Dec 2025 01:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764664538; x=1765269338; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1764666119; x=1765270919; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JjuUELaIuU1gd/2FdtvzglPjtUaEtmlP48ZimdLyUps=;
-        b=V4q6+ZvzZylpy3qbS0GLNnsuewVGJVHl6YF/J57Mx6sOymKyuVg/smV9YKHoHwSK2x
-         T4AoSXAVIpHtwikun+KDsOm8inlWy4sgAZoUBcNhl2EytlAv9+rT7PmlgSh/lBNgsV2/
-         qNKupcazMjhC+dnWgTh8HiAaBy7J9Nwh9Gn5vWLolZcSXwqHPnVoTOiteOoHnY1wwega
-         H3IQlHPtQNP9MLiRffvFe7ONQAIsgAXOVPY2D4WNqjNDzh97r1979GtcRxk/rqUhOBUR
-         PyGtxvxPpnLqicVQiUIs05l65U1Bw1ASv8EuqWCRr9DdEENJuQgo45SfnsUJLG7IrfWF
-         fQeg==
+        bh=3XHkkGY2cNGbvvZiNneWk2OoD80gfsi3EfjvphamSbE=;
+        b=Qh4/SewRydkj8nvWpCR7cwOLwVs2Tm9coswXkBwsf+L+AFENzK2zJ+VMh/7QGYm6jp
+         TVx1lB4tGz5PRygjNma1tzZeI5wLUPKlQ31Y0FU8Coq06OI+X7XueUK8lV0ybR15rvqT
+         jgB//mYeWAzZOOYUHkEwe3XDStKIVt0u0C5pDNA8S2xxhmtrRtPYVVO445gt0C8FFcxL
+         EPywAnko1C5jQS1+IF6qyYasBKds5nSRQE53VdVemChpErFJq2Tg2d5DyiEFlBChJfOS
+         yrB/qEbxWhw5Cv1HqpTUsvCZHGvKguOVT90Lr8TETxNief89lhK9VtX6NtK+MvWvxEgz
+         FSkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764664538; x=1765269338;
+        d=1e100.net; s=20230601; t=1764666119; x=1765270919;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=JjuUELaIuU1gd/2FdtvzglPjtUaEtmlP48ZimdLyUps=;
-        b=Vv+ZGjr/mZ0fbRNHlPpn9zJ9X/48jDIfX/k3f+buXWzuJSaCmOmxufvJrq8I1SdXOV
-         my8kgJxzaCz0aBm8ltum5LSzWL+0Kt+SKaUW3LuNcAmCtihup+SW36lMiqSghJOEJa1Z
-         0bAz4Q5e8fW7WXOyn5MrYbOm5yRzMqcjfGIzYjjXHM7gR0vLCcLyGYO/ysBy69oC9O7A
-         GKFYnvXc78oNgFYtmZe671kvFU3kiVTqQ+wSfucbUa/TFNwuU7Zn8Qf9MhXxUVN+EfaO
-         M5RLxq/3URbgLvtMX+qHJ4nbG0VOU2V326to+LrAlRXuV2Y2GQkm0H9Lkfg8/3F9fDqm
-         Gf6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvrakI6ynLpy4WnkLjjiUp8lmfKvDxc0eUPLqmL4L9GniH3+OIbCLWwgQCZQAOtBYRA45VRiQGaau79gR3RA6Kmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywmpSnpnvq7iRyH4O/KyOZ4+PTJ32WaqkkpCM5OR6/46gUQQmF
-	dOD7PvoUKgI3glt5UDp/ux2TXY31SIBiVOGlrDcbrQwSlH3e4+bLjWOYy956QbP+AGbS8YcT7mR
-	1/S0ieHBTqWdK3TnZ4rHQgV0Gh6Cg/bBhYIZyQ5ji
-X-Gm-Gg: ASbGncsvjVxTGVnpEjBYbH6RhDLGOX754LAMhqVqha7LdWHk+amrEBkp5cn6pWHRJ+d
-	OX4LdJMGkYHOtwBRW6Y1Jj8Ro+6wLh+aZ7/tDwFHPbFVEQd9M7nlFolwe2i77ivxZG76DMM3lGt
-	Z9ENT2crpbuVk3JF2PNmfAYBVG943r69O9zzHWOwSUwbW/fbXS85gg2Jn9l6d6kAporxuyoOkiU
-	3s25SaxIxH0PNPg6UTNZ9ZZD+udjvabtejjxnNknR+BDgs80urEzwDORL0qU6uzFbdBzXEGINwh
-	3d4A9w==
-X-Google-Smtp-Source: AGHT+IE4K+rC1T0nxBLda3rMJ7Xh3tPJApYjBfQYjhEN+PQBck3O++fb17f2VhiEsxBvds6BzbdMR2BO+hO3HQSpzKc=
-X-Received: by 2002:a05:7301:4616:b0:2a4:50ca:9234 with SMTP id
- 5a478bee46e88-2a719d7d25cmr21780225eec.26.1764664537612; Tue, 02 Dec 2025
- 00:35:37 -0800 (PST)
+        bh=3XHkkGY2cNGbvvZiNneWk2OoD80gfsi3EfjvphamSbE=;
+        b=VP/rHUVEmbLWYkYw+nFZTL/rZw2Al6yfgKjWG/XG8jT8n32LrlbTm8KAl3pxLzTYfO
+         moY5yZGSS+7SzLhUrACCK2/1NzYZ/lCtL4qL9Lc3Wr77Dd3HEhsHvT+8B34SCweyUX9k
+         P/alruUSOx1WD99sCfkNdF02JuQnwlM036cMDPoL5U4mO08Y3O7D1YPh0UjcDospt3dk
+         7abXCy9mpF5CxxupK1e9eFrkl6J97/iBlkmf31wWct0+zNBhmc6ZodOxhTSuVrFZYkMN
+         r03wRq/niDAT673TGgi98Y3V0WqZg1hnDkX7cTOOWy1HlctETIgiwLzbQRGUMo9Cw5wK
+         zgZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFgZSyaDBEN4wP0YFddo3/Ilw/hFFuRcL4nORABuPG9+T7u4N6jHjDysj0CAW1sEVzg2SgSd6Lsp7cq2pfS5v8gQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNumRL2dAwnyE+cu1cpJJty1aQxyYp2ahOTsSbSP5TmhyL9/+9
+	tE6JPDGsvy0jq7tlmS2O4HOEBpzYDR+48+57npG3Q2soryJ0sI5sUJvVYeiqTnXqeQGKXCSHfXe
+	5HfObKu9uA6kB7FKIUhG8Pgu1JdxZ9O9XybLFVnWX
+X-Gm-Gg: ASbGncv5Z3PkzY4XxRtYks2M3dg0PlIg82cdJ3Q8km7S5O9gRIDPYIbDqqa8tQEp83h
+	6TmpykVaAk256XKrd4XFR2TEvBB4UvwVZZdYpNBFXgvx6f7mOhEUfLQoe9cPtcLn24F/k/uXlEQ
+	5ze6LeDBJ8/JMl8EnanFZ9ekIXGmg9q62mPi5sggX5qTjF0xTrxGV7LG9XU+xgCX0SiXfsBqj3L
+	Qy6XGgwZNRE32l90PD2Hhseq8+Uw9RCIUELpU6puowPUe7oNYutyJl/ndWjIf8DZHWyLlQ=
+X-Google-Smtp-Source: AGHT+IGiBzRHl7TPtYwtQi06ZiaJhnVzUcHhh5xBVlcMIML+l0+f6MQo/KbqNIpZ30wUru3qydCRc5k9yej1kRpZNRQ=
+X-Received: by 2002:a05:7022:1111:b0:11b:9386:826c with SMTP id
+ a92af1059eb24-11cbba5508fmr13693558c88.41.1764666110328; Tue, 02 Dec 2025
+ 01:01:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,16 +61,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251122-controller-v8-0-e7562e0df658@google.com>
- <20251122-controller-v8-2-e7562e0df658@google.com> <CADrjBPqPsPBBSbhx8ZFreFWX2tRxaATT=azS-b1H2b=TJoVAAw@mail.gmail.com>
-In-Reply-To: <CADrjBPqPsPBBSbhx8ZFreFWX2tRxaATT=azS-b1H2b=TJoVAAw@mail.gmail.com>
+ <20251122-controller-v8-2-e7562e0df658@google.com> <2025112226-heave-refrain-53e6@gregkh>
+In-Reply-To: <2025112226-heave-refrain-53e6@gregkh>
 From: Roy Luo <royluo@google.com>
-Date: Tue, 2 Dec 2025 02:35:00 -0600
-X-Gm-Features: AWmQ_bl1YCwZSA7pQNoH9cFjlkJSn831NjN8Dq9QhCXB5pUpJEJxffvLo_epzic
-Message-ID: <CA+zupgyopHGCCb-HcNvyi4m5-UDerYZFmT7S0cNYLYONz-wzwg@mail.gmail.com>
+Date: Tue, 2 Dec 2025 03:01:13 -0600
+X-Gm-Features: AWmQ_bnlSStXeZAFzAhajdXf-6yqBRh8xzoWnHdfQbF_eyEVNWCr_wtC1nkDZig
+Message-ID: <CA+zupgwzQ5r=-_L79D74=9VRqRO94N0yTApHChM+Nu0cn1ss3w@mail.gmail.com>
 Subject: Re: [PATCH v8 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
 	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
 	Tudor Ambarus <tudor.ambarus@linaro.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
 	Philipp Zabel <p.zabel@pengutronix.de>, Badhri Jagan Sridharan <badhri@google.com>, 
@@ -82,16 +81,10 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.or
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 22, 2025 at 7:58=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
+On Sat, Nov 22, 2025 at 8:59=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Hi Roy,
->
-> Thanks for your patch. It's great to see Laguna support being added upstr=
-eam.
->
-> On Sat, 22 Nov 2025 at 09:32, Roy Luo <royluo@google.com> wrote:
-> >
+> On Sat, Nov 22, 2025 at 09:32:06AM +0000, Roy Luo wrote:
 > > Add support for the DWC3 USB controller found on Google Tensor G5
 > > (codename: laguna). The controller features dual-role functionality
 > > and hibernation.
@@ -132,92 +125,51 @@ bea88572d9ae81e26 100644
 > > --- a/drivers/usb/dwc3/Kconfig
 > > +++ b/drivers/usb/dwc3/Kconfig
 > > @@ -200,4 +200,17 @@ config USB_DWC3_GENERIC_PLAT
-> >           the dwc3 child node in the device tree.
-> >           Say 'Y' or 'M' here if your platform integrates DWC3 in a sim=
-ilar way.
+> >         the dwc3 child node in the device tree.
+> >         Say 'Y' or 'M' here if your platform integrates DWC3 in a simil=
+ar way.
 > >
 > > +config USB_DWC3_GOOGLE
-> > +       tristate "Google Platform"
-> > +       depends on COMPILE_TEST
-> > +       depends on OF && COMMON_CLK && RESET_CONTROLLER
-> > +       help
-> > +         Support the DesignWare Core USB3 IP found on Google Tensor
-> > +         SoCs, starting with the G5 generation. This driver includes
+> > +     tristate "Google Platform"
+> > +     depends on COMPILE_TEST
+> > +     depends on OF && COMMON_CLK && RESET_CONTROLLER
 >
-> consider adding: (Laguna)
-
-Ack, will add it in the next revision.
-
+> Shouldn't this be:
+>         depends on (OF && COMMON_CLK && RESET_CONTROLLER) || COMPILE_TEST
 >
-> > +         support for hibernation in host mode.
-> > +         Say 'Y' or 'M' if you have one such device.
-> > +
-> > +         To compile this driver as a module, choose M here: the
-> > +         module will be called dwc3-google.ko.
-> > +
-> >  endif
-> > diff --git a/drivers/usb/dwc3/Makefile b/drivers/usb/dwc3/Makefile
-> > index 96469e48ff9d189cc8d0b65e65424eae2158bcfe..cf1cd408d938b3ac26d58b9=
-be7fcc5af3ee82660 100644
-> > --- a/drivers/usb/dwc3/Makefile
-> > +++ b/drivers/usb/dwc3/Makefile
-> > @@ -58,3 +58,4 @@ obj-$(CONFIG_USB_DWC3_XILINX)         +=3D dwc3-xilin=
-x.o
-> >  obj-$(CONFIG_USB_DWC3_OCTEON)          +=3D dwc3-octeon.o
-> >  obj-$(CONFIG_USB_DWC3_RTK)             +=3D dwc3-rtk.o
-> >  obj-$(CONFIG_USB_DWC3_GENERIC_PLAT)    +=3D dwc3-generic-plat.o
-> > +obj-$(CONFIG_USB_DWC3_GOOGLE)          +=3D dwc3-google.o
-> > diff --git a/drivers/usb/dwc3/dwc3-google.c b/drivers/usb/dwc3/dwc3-goo=
-gle.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..53e04a5409d8a11eb025b0f=
-5cd351cb1b33281ab
-> > --- /dev/null
-> > +++ b/drivers/usb/dwc3/dwc3-google.c
-> > @@ -0,0 +1,628 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * dwc3-google.c - Google DWC3 Specific Glue Layer
-> > + *
-> > + * Copyright (c) 2025, Google LLC
-> > + * Author: Roy Luo <royluo@google.com>
-> > + */
-> > +
-> > +#include <linux/of.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/irq.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/module.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/pm_domain.h>
-> > +#include <linux/iopoll.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/mfd/syscon.h>
+> I shouldn't have to enable those options to just get a build test here,
+> the apis should be properly stubbed out if those options are not
+> enabled, right?
 >
-> Please sort the headers alphabetically. It helps avoid duplicates and
-> is easier when adding new headers.
-
-As Greg pointed out, no such requirement exists for usb drivers, but
-if it makes things look nicer, why not?
-Will sort the headers alphabetically in the next revision.
-
+> thanks,
 >
-> Also can you add this file, and the bindings patch to the Tensor SoC
-> MAINTAINERS entry, so it's easier to review future patches?
+> greg k-h
 
-Sure! Will update MAITAINERS in the next revision.
-Appreciate the review!
+Hi Greg,
+
+I agree with your interpretation of COMPILE_TEST but it doesn't
+seem to align with upstream convention. I found the following pattern
+in several device driver Kconfig files (including but not limited to usb,
+pinctrl and phy).
+
+    depends on COMPILE_TEST || ARCH_XXX
+    depends on CONFIG_A && CONFIG_B...
+
+For this patch, the APIs exposed by OF, COMMON_CLK
+and RESET_CONTROLLER are properly stubbed out so
+I'm all good to go with your suggestion, but I'd like to make
+sure this approach is conventional.
+
+I plan to add ARCH_GOOGLE as a dependency in the next
+version per [1], so the "depends on" would probably look like
+the following per your suggestion:
+
+    depends on (OF && COMMON_CLK && RESET_CONTROLLER && ARCH_GOOGLE)
+|| COMPILE_TEST
+
+Please let me know your thoughts.
+[1] https://lore.kernel.org/linux-phy/1a53d473-fc13-4ac5-ba52-4701d95e3073@=
+kernel.org/
 
 Thanks,
 Roy Luo
-
-
->
-> With those nits  addressed:
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
->
-> regards,
->
-> Peter.
