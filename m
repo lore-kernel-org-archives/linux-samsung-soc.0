@@ -1,166 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2822F5332;
-	Tue,  2 Dec 2025 09:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1016A2D9EE6
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Dec 2025 09:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764667662; cv=none; b=riBphGpYsCug6GaOdu4DI7btwqv9tanb52oYM8PfimzLOOrpNKw13p9vr85oSj+kEK49avWE1NBgQ4DkplT51svNyYOqdOn6p4kzBy8Vjveq8RqWiDfbQ/7i2lFK2P3FSk3QjkYKrvVuF0vJKCbeIfKwoKI4NrJRl+2MRObtfxc=
+	t=1764667831; cv=none; b=edwsR9z3k3mYvzdynYlblUsAHDpO/+vlM1IVzUmiWdAYjx0wcTOPVr0hF42M8fYBkI3Xy1/Wa6yAb2qzk6xNnRicSylC/WTs+WBys0agEkiyrnewofg9zxJsrtzNvg7xTmyF+tkbCAPrFHTLJGoVpFjMayMXckifwlhRDhLVIgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764667662; c=relaxed/simple;
-	bh=BALjdQsLcT14uiuNhmlNyxPxxPDYE/UJ0M1HcNCiBZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvyR+6Jes26cGJeDZFFchSVxd55MIDhuFz/T+h0LpjgHhThUA0iV266gMF8Z4S+4xJnNdvuK+rjlAQ2ecHtLV2N8oOjHKsYgIZ++KetVZ5bfa87bi1QLbymD3VDCQa9FeyNc7+ryDJDPg3O6XXtldXisHHT1q+vsFG8tkMpFQdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZW0i6t4Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764667831; c=relaxed/simple;
+	bh=523W9k3a1vFky2+bY7jK0eqnyoZyuuNWrBcmQbPl4iY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=plNpReUlDiQi+qI14XJriEVE0mcfQDLRppd4WQ/aXw+H6AVHfbRQ4TjUioMBsz8MNk9WXafx04URLeL/iILwsO4Om4RAwOT1oO71rM8hy4wM0dSzPFdEUIOGibXyDiyYPs8JVQEzs9O9t9Cs1Pt6rM9hBFhVfnkDbyZg0roSS1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LockMcLK; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZW0i6t4Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8ADC116D0;
-	Tue,  2 Dec 2025 09:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1764667661;
-	bh=BALjdQsLcT14uiuNhmlNyxPxxPDYE/UJ0M1HcNCiBZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZW0i6t4YkdwaPTFOUPcOLpx713GubMhd+yoZyRnQkuRX82QMOCrxHlYE3m67DeoRD
-	 kVEaOmMu2zml4N6j29oeXnopijGZMxKZmEAl11c/nHt/0Xtk6kEjLngdONdaWDv8z2
-	 jusJMDgTusxSXykS1DTy71q/lw6AOSzQAxP4Sphw=
-Date: Tue, 2 Dec 2025 10:27:38 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Roy Luo <royluo@google.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Doug Anderson <dianders@google.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Joy Chakraborty <joychakr@google.com>,
-	Naveen Kumar <mnkumar@google.com>
-Subject: Re: [PATCH v8 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-Message-ID: <2025120209-unstylish-john-2a6c@gregkh>
-References: <20251122-controller-v8-0-e7562e0df658@google.com>
- <20251122-controller-v8-2-e7562e0df658@google.com>
- <2025112226-heave-refrain-53e6@gregkh>
- <CA+zupgwzQ5r=-_L79D74=9VRqRO94N0yTApHChM+Nu0cn1ss3w@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LockMcLK"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251202093025epoutp03b0010b76b1618e7eda3d15f67d2075f1~9XAnCVY031777017770epoutp03Z
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Dec 2025 09:30:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251202093025epoutp03b0010b76b1618e7eda3d15f67d2075f1~9XAnCVY031777017770epoutp03Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764667826;
+	bh=ddem7pRfXjH2CsY6jhzQQzzqAVw4nJRV9oahcR7IXNA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=LockMcLKH7V15WqJ2iRMUoPkRCoPWY1oj6CMYOjFkzKzLDUlUBwVHuLpbN0VL/3Ul
+	 zxoTJWn8xaoCm81Ijq9stnr22vXoBLdsBwNRKDBXNix3mVO1enYbcyFEEb1gKt9dB7
+	 8qsw4JIDKbi9js2EkCw8yTKysADeexTA/V0Jf+lg=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251202093025epcas2p135ab56fb84d8bad6f905880addcb2e57~9XAmehDkm0391603916epcas2p1K;
+	Tue,  2 Dec 2025 09:30:25 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.38.203]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4dLFqj0V6Nz6B9m8; Tue,  2 Dec
+	2025 09:30:25 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251202093024epcas2p1567dddf09e3599867e9dc14a9a234d38~9XAlhC1440393603936epcas2p1h;
+	Tue,  2 Dec 2025 09:30:24 +0000 (GMT)
+Received: from perf.dsn.sec.samsung.com (unknown [10.229.95.91]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251202093024epsmtip1f37c0608a18fb17f998cf72feb2edadc~9XAlbrQhs1253612536epsmtip1V;
+	Tue,  2 Dec 2025 09:30:24 +0000 (GMT)
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org, peter.griffin@linaro.org,
+	semen.protsenko@linaro.org, ivo.ivanov.ivanov1@gmail.com
+Cc: ryu.real@samsung.com, d7271.choe@samsung.com, shin.son@samsung.com,
+	jaewon02.kim@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Youngmin Nam <youngmin.nam@samsung.com>
+Subject: [PATCH v3 0/5] pinctrl: samsung: exynos9 cleanups and fixes
+Date: Tue,  2 Dec 2025 18:36:07 +0900
+Message-ID: <20251202093613.852109-1-youngmin.nam@samsung.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+zupgwzQ5r=-_L79D74=9VRqRO94N0yTApHChM+Nu0cn1ss3w@mail.gmail.com>
+X-CMS-MailID: 20251202093024epcas2p1567dddf09e3599867e9dc14a9a234d38
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251202093024epcas2p1567dddf09e3599867e9dc14a9a234d38
+References: <CGME20251202093024epcas2p1567dddf09e3599867e9dc14a9a234d38@epcas2p1.samsung.com>
 
-On Tue, Dec 02, 2025 at 03:01:13AM -0600, Roy Luo wrote:
-> On Sat, Nov 22, 2025 at 8:59 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sat, Nov 22, 2025 at 09:32:06AM +0000, Roy Luo wrote:
-> > > Add support for the DWC3 USB controller found on Google Tensor G5
-> > > (codename: laguna). The controller features dual-role functionality
-> > > and hibernation.
-> > >
-> > > The primary focus is implementing hibernation support in host mode,
-> > > enabling the controller to enter a low-power state (D3). This is
-> > > particularly relevant during system power state transition and
-> > > runtime power management for power efficiency.
-> > > Highlights:
-> > > - Align suspend callback with dwc3_suspend_common() for deciding
-> > >   between a full teardown and hibernation in host mode.
-> > > - Integration with `psw` (power switchable) and `top` power domains,
-> > >   managing their states and device links to support hibernation.
-> > > - A notifier callback dwc3_google_usb_psw_pd_notifier() for
-> > >   `psw` power domain events to manage controller state
-> > >   transitions to/from D3.
-> > > - Coordination of the `non_sticky` reset during power state
-> > >   transitions, asserting it on D3 entry and deasserting on D0 entry
-> > >   in hibernation scenario.
-> > > - Handling of high-speed and super-speed PME interrupts
-> > >   that are generated by remote wakeup during hibernation.
-> > >
-> > > Co-developed-by: Joy Chakraborty <joychakr@google.com>
-> > > Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> > > Co-developed-by: Naveen Kumar <mnkumar@google.com>
-> > > Signed-off-by: Naveen Kumar <mnkumar@google.com>
-> > > Signed-off-by: Roy Luo <royluo@google.com>
-> > > ---
-> > >  drivers/usb/dwc3/Kconfig       |  13 +
-> > >  drivers/usb/dwc3/Makefile      |   1 +
-> > >  drivers/usb/dwc3/dwc3-google.c | 628 +++++++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 642 insertions(+)
-> > >
-> > > diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> > > index 4925d15084f816d3ff92059b476ebcc799b56b51..f58c70dabf108878cbefe0abea88572d9ae81e26 100644
-> > > --- a/drivers/usb/dwc3/Kconfig
-> > > +++ b/drivers/usb/dwc3/Kconfig
-> > > @@ -200,4 +200,17 @@ config USB_DWC3_GENERIC_PLAT
-> > >         the dwc3 child node in the device tree.
-> > >         Say 'Y' or 'M' here if your platform integrates DWC3 in a similar way.
-> > >
-> > > +config USB_DWC3_GOOGLE
-> > > +     tristate "Google Platform"
-> > > +     depends on COMPILE_TEST
-> > > +     depends on OF && COMMON_CLK && RESET_CONTROLLER
-> >
-> > Shouldn't this be:
-> >         depends on (OF && COMMON_CLK && RESET_CONTROLLER) || COMPILE_TEST
-> >
-> > I shouldn't have to enable those options to just get a build test here,
-> > the apis should be properly stubbed out if those options are not
-> > enabled, right?
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> Hi Greg,
-> 
-> I agree with your interpretation of COMPILE_TEST but it doesn't
-> seem to align with upstream convention. I found the following pattern
-> in several device driver Kconfig files (including but not limited to usb,
-> pinctrl and phy).
-> 
->     depends on COMPILE_TEST || ARCH_XXX
->     depends on CONFIG_A && CONFIG_B...
-> 
-> For this patch, the APIs exposed by OF, COMMON_CLK
-> and RESET_CONTROLLER are properly stubbed out so
-> I'm all good to go with your suggestion, but I'd like to make
-> sure this approach is conventional.
+Several SoCs carried near-duplicate pin bank macro families, making
+tables verbose and hard to share when only the bank type (alive/off)
+differs.
 
-Whatever works for building properly, as-is, what you have in this patch
-didn't work for my systems at all.
+GS101 had its own helpers even though the newer EXYNOS9_* helpers cover
+the same semantics, including per-bank filter control (FLTCON) offsets.
 
-> I plan to add ARCH_GOOGLE as a dependency in the next
-> version per [1], so the "depends on" would probably look like
-> the following per your suggestion:
+Some pin-bank tables didn't match the SoC TRMs (bank type, EINT class,
+or bank names), and FLTCON wasn't always at a contiguous offset from
+EINT.
 
-But "Google" is not an arch :(
+This series does
+- Consolidate on EXYNOS9_* pin-bank macros. Pass bank_type explicitly.
+- Fix table errors on Exynos2200/7885/8890/8895 per TRM.
+- Add explicit per-bank FLTCON offsets and update affected tables.
+- Drop GS101-specific macros in favor of EXYNOS9_*.
+- Rename gs101_pinctrl_{suspend,resume} ->
+  exynos9_pinctrl_{suspend,resume}.
 
-And really, the whole "only have a sub-arch symbol" is something that
-personally, I think is totally wrong and prevents kernel images from
-being built for more than one "arch".  As an example, the Android GKI
-kernel has to support more than one of these, so what does putting this
-behind a symbol that no one will actually use mean anything?  Android
-will never be only building a ARCH_GOOGLE kernel.
+This series was based on the pinctrl/samsung tree [1].
 
->     depends on (OF && COMMON_CLK && RESET_CONTROLLER && ARCH_GOOGLE)
-> || COMPILE_TEST
-> 
-> Please let me know your thoughts.
-> [1] https://lore.kernel.org/linux-phy/1a53d473-fc13-4ac5-ba52-4701d95e3073@kernel.org/
+I tested on Exynos850 through boot and verified the pin values as
+follows:
 
-Again, I hate the ARCH_ stuff, but Krzysztof does seem to like it for
-some reason, so I'll defer to others here.  But note, as someone who
-helps maintain a "generic" ARM64 kernel, these ARCH_* usages for
-different platforms do nothing at all to help anyone out.
+$:/sys/kernel/debug/pinctrl/139b0000.pinctrl-samsung-pinctrl# cat pins
+registered pins: 42
+pin 0 (gpg0-0) 0:gpg0 CON(0x0) DAT(0x0) PUD(0x1) DRV(0x2) CON_PDN(0x2) PUD_PDN(0x1)
+pin 1 (gpg0-1) 1:gpg0 CON(0x0) DAT(0x0) PUD(0x1) DRV(0x2) CON_PDN(0x2) PUD_PDN(0x1)
+...
 
-thanks,
+Additional testing on the affected Exynos9-era platforms would be
+appreciated.
 
-greg k-h
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+
+Changes in v2:
+  - Added base tree for this series (pinctrl/samsung).
+  - Renamed the macro parameter from 'types' to 'bank_type' for clarity
+    (struct member remains 'type').
+  - Reflowed commit messages (wrap at ~72 cols).
+  - Replaced non-ASCII characters with ASCII equivalents.
+  - Collected tags:
+      Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+      Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+  - Normalized hex literals to lowercase and removed double spaces.
+  - Aligned backslashes in macro definitions to form a vertical column
+    for readability.
+  - Added missing mailing lists (including linux-kernel) to Cc per
+    scripts/get_maintainer.pl.
+
+Changes in v3:
+  - Collected tags:
+      Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+      Tested-by: Peter Griffin <peter.griffin@linaro.org> (tested on Pixel6/gs101)
+
+Youngmin Nam (5):
+  pinctrl: samsung: Consolidate pin-bank macros under EXYNOS9_* and pass
+    bank_type explicitly
+  pinctrl: samsung: fix incorrect pin-bank entries on
+    Exynos2200/7885/8890/8895
+  pinctrl: samsung: add per-bank FLTCON offset to EXYNOS9_PIN_BANK_* and
+    fix tables
+  pinctrl: samsung: fold GS101 pin-bank macros into EXYNOS9_*
+  pinctrl: samsung: rename gs101_pinctrl_* to exynos9_pinctrl_*
+
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 1069 ++++++++---------
+ drivers/pinctrl/samsung/pinctrl-exynos.c      |    4 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.h      |   97 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    4 +-
+ 4 files changed, 562 insertions(+), 612 deletions(-)
+
+-- 
+2.52.0
+
