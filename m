@@ -1,114 +1,105 @@
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113B233CEAE;
-	Thu,  4 Dec 2025 11:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9121D6AA;
+	Thu,  4 Dec 2025 11:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764847373; cv=none; b=OG75sLVWnrxs0MvBbm5epyG4oY+2LIy8JqZglMhNoE18szvtrusAtTjTKJe4STJKPEC/Q966axMwRLC3+vaolrBEnCjSdE/3CiuR4hO5dZB4rNPqIc4GOceE8URwJXV4dCwElzVa+C75KhqdImHU+v+f7t8It3/UHSSmqeyhe78=
+	t=1764849101; cv=none; b=QVhvXUvsG33sx540MiveKaAp8X4nnICecz6bPp+wQePDjtQ4Fq1ZASUY1uCo9fy4Cg7IzjliNYha7UezyY9kSXYynVlX5ZDkObOZy31whIoZHNaO1finz4X3i3sGgJkeMtCDKV/LSp4pRsHevXKv8ori0dvm658kEdseuFf+sNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764847373; c=relaxed/simple;
-	bh=SZt1BFxKXA3f9l50WE1fkYB2IzPxlfIsJrbHpD/7+js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kXTQsqDV9qY+Fkub+0WW+OGayQ5HxJZCij3JZOjoyenZpkB/lLWltdt2YCpOwWmDrvUpC4qSo7gYlkAJrYN+I3UI0Qt2Wx5uMzqv9B2Z9LGWb9r5ojqPjC2KXhlstsrPmsDZIlHFMWNz3wK5KKYlCP7GPk9jRyNJYnnus3vho0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=f1l+oW+U; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+	s=arc-20240116; t=1764849101; c=relaxed/simple;
+	bh=i/3jRNqNFD1iK+Me3t4Y2akcRgsWyx94y3iXkS4oogg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V8SbK8J4xkHbxMFzsFuFKNUWWz325yOAAklgG03NX2N78cIgWS9P9X6LUtYlqgnffJDLQrN0ehY/HlbO8jNtANmb9NZnMtEhE355M6zRuNvjZPNm/kZmoRvGcizjkC3+4Ht6Xm00bEru9jOQ0BjbqIEC2WACROa89mYpEjjW0rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h19luQ/K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="f1l+oW+U"
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id CF1B81C008F; Thu,  4 Dec 2025 12:22:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1764847367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U4HN1ODRxsnTDmi4098i1Q+naahHnMBRsf+Px2cNeZU=;
-	b=f1l+oW+Ujo9yqI4ZLtQ4rFS54wszz2IFaGz/gJnFhj8Yo3J2lvjV26d/vfTsN2l/08zcwi
-	zWQTbkOnGdf4km4Z+hfMBdbiK9HtWzbZkaT3s6XKatraHD2r9YUFjQThShOAsrp1+q95gp
-	xfIwC1H+8wmk3TV/u8WKzYDJh3Hek34=
-Date: Thu, 4 Dec 2025 12:22:47 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alexandre Marquet <tb@a-marquet.fr>
-Subject: Re: [PATCH v2 3/3] ARM: samsung: exynos5250: Allow CPU1 to boot
-Message-ID: <aTFvBwjms8msxIae@duo.ucw.cz>
-References: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
- <20251125-google-manta-v2-3-0f097cfff39c@timmermann.space>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h19luQ/K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE29C4CEFB;
+	Thu,  4 Dec 2025 11:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764849100;
+	bh=i/3jRNqNFD1iK+Me3t4Y2akcRgsWyx94y3iXkS4oogg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h19luQ/KUQcE8R7+l28QD8ojZUGUFi5qUqHY12CZg0wLCEesVbsiD22UuzqZqInkf
+	 Aeu0SReEL1k0M1KF9PHmXXZTvb+ABx+OQZW2TYNQ16aA3xaZGoRNP+hrvb0CBIKlt0
+	 NO4lFIRtKF2dPQtVNi4hIl2HiInh3O9SQlQcKOiWFNwzaTYPA3PcHVCH26Qr/WkS9c
+	 EivxCEXdBglor5Xj32KPAU6jq/UuU6tsnfCXXWwn92xWqDCD7zdldMemAEigiFpIG1
+	 ha9r3jtcq7Vdc2WDwq/siMqEWb3MHIXIM0/WASoJv57NDumzW/SbgBfbraDou7NYuz
+	 7WEzv5aKq0O+Q==
+Message-ID: <73efeaeb-0cde-45af-af92-4fd7b5d4589c@kernel.org>
+Date: Thu, 4 Dec 2025 12:51:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XH4lO7UPQqMRxwOD"
-Content-Disposition: inline
-In-Reply-To: <20251125-google-manta-v2-3-0f097cfff39c@timmermann.space>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] ARM: samsung: exynos5250: Allow CPU1 to boot
+To: Lukas Timmermann <linux@timmermann.space>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexandre Marquet <tb@a-marquet.fr>, Pavel Machek <pavel@ucw.cz>
+References: <20251125-google-manta-v2-0-0f097cfff39c@timmermann.space>
+ <20251125-google-manta-v2-3-0f097cfff39c@timmermann.space>
+ <aTFvBwjms8msxIae@duo.ucw.cz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aTFvBwjms8msxIae@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 04/12/2025 12:22, Pavel Machek wrote:
+> Also please cc: phone-devel mailing list with phone related patches.
 
---XH4lO7UPQqMRxwOD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You don't have to. This list is not part of any upstream Linux kernel
+process (see `git grep`), it's not relevant to upstream kernel development.
 
-On Tue 2025-11-25 16:12:42, Lukas Timmermann wrote:
-> From: Alexandre Marquet <tb@a-marquet.fr>
->=20
-> Add an exception to let the secondary CPU boot.
->=20
-> Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> ---
->  arch/arm/mach-exynos/firmware.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmw=
-are.c
-> index a5e22678e27b..80e645b4d338 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -61,10 +61,10 @@ static int exynos_cpu_boot(int cpu)
->  	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
->  	 * because Exynos3250 removes WFE in secure mode.
->  	 *
-> -	 * On Exynos5 devices the call is ignored by trustzone firmware.
-> +	 * On most Exynos5 devices the call is ignored by trustzone firmware.
->  	 */
->  	if (!soc_is_exynos4210() && !soc_is_exynos4212() &&
-> -	    !soc_is_exynos4412())
-> +	    !soc_is_exynos4412() && !of_machine_is_compatible("samsung,nexus10-=
-manta"))
->  		return 0;
-
-Strange -- +       compatible =3D "google,manta", "samsung,exynos5250", "sa=
-msung,exynos5";
-
-Should this be google,manta or something?
-
-Also please cc: phone-devel mailing list with phone related patches.
 
 Best regards,
-								Pavel
-
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
-
---XH4lO7UPQqMRxwOD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaTFvBwAKCRAw5/Bqldv6
-8n+vAKCsQYO2dRBSz9dpzzGmMIKoUrmaTwCdGFG1KdJa3VKWcrHRT/yQ/yhaVno=
-=V8Ni
------END PGP SIGNATURE-----
-
---XH4lO7UPQqMRxwOD--
+Krzysztof
